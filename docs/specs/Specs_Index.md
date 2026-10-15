@@ -4,7 +4,7 @@
 **Purpose:** Single map of canonical product truth
 **Audience:** Product, Engineering, Analytics, Strategy
 **Status:** Authoritative
-**Last Updated:** 2026-10-12 (post-ship closure 2026-10-08__release-v9.11 — §51 Test Coverage Gaps v9.11 section added, 3 gaps each already tracked by a backlog item, TSG sweep 7 Open checked / 0 resolved, endpoint coverage drift 0 gap; see Changelog table for history)
+**Last Updated:** 2026-10-15 (post-ship closure 2026-10-12__release-v9.12 — §52 Test Coverage Gaps v9.12 section added, 2 gaps each already tracked by a backlog item, TSG sweep 10 Open checked / 3 resolved; see Changelog)
 
 ---
 
@@ -1239,7 +1239,7 @@ Identified during delivery verification (`verification_report.md §6`): **4 test
 ### 49.3 TSG-v9.9-03 — EPIC-04: `scripts/compute_role_share_history.py` has no unit tests
 
 **Identified:** 2026-10-06 (delivery verification 2026-09-30__release-v9.9; first raised at PR #1891 review)
-**Status:** Open
+**Status:** RESOLVED — 2026-10-15 (cycle 2026-10-12__release-v9.12, ST-45, BLG-QA-212 COMPLETE; post-ship closure STEP 7.3 sweep)
 **Owner:** QA & Testing Owner
 **Gap:** `scripts/compute_role_share_history.py` has no unit tests, although `roadmap_prompt.md` §7.2 now depends on it. Qualifying reason: No scenario coverage for a governance-critical script.
 **Backlog item:** BLG-QA-212
@@ -1247,7 +1247,7 @@ Identified during delivery verification (`verification_report.md §6`): **4 test
 ### 49.4 TSG-v9.9-04 — EPIC-05: No automated regression guard for the re-applied `positions.fees_paid NOT NULL` invariant (entry flow and SQL seeds)
 
 **Identified:** 2026-10-06 (delivery verification 2026-09-30__release-v9.9; first raised at PR #1892 review)
-**Status:** Open
+**Status:** RESOLVED — 2026-10-15 (cycle 2026-10-12__release-v9.12, ST-47, BLG-QA-213 COMPLETE; post-ship closure STEP 7.3 sweep)
 **Owner:** QA & Testing Owner
 **Gap:** No automated regression guard for the re-applied `positions.fees_paid NOT NULL` invariant (entry flow and SQL seeds). Qualifying reason: Spec section uncovered: `data_model.md` DS-23.
 **Backlog item:** BLG-QA-213
@@ -1311,7 +1311,7 @@ Identified during delivery verification (`verification_report.md §6`): **3 test
 ### 51.1 TSG-v9.11-01 — EPIC-01: Journal-summary Playwright spec never exercises the real UUID request shape
 
 **Identified:** 2026-10-12 (delivery verification 2026-10-08__release-v9.11; found by ST-02's staging run)
-**Status:** Open
+**Status:** RESOLVED — 2026-10-15 (cycle 2026-10-12__release-v9.12, ST-01, BLG-BE-162 COMPLETE; post-ship closure STEP 7.3 sweep)
 **Owner:** QA & Testing Owner
 **Gap:** The journal-summary Playwright spec mocks the API, so CI never sent real UUID `trade_ids` and the HTTP 422 escaped from 2026-04-18 until ST-02's staging run. Qualifying reason: Core user journey: AI journal summary from Trade History.
 **Backlog item:** BLG-BE-162 (its AC requires a backend test posting real UUID `trade_ids`)
@@ -1338,6 +1338,38 @@ Identified during delivery verification (`verification_report.md §6`): **3 test
 
 ---
 
+## 52. Test Coverage Gaps — v9.12 (2026-10-12__release-v9.12)
+
+Identified during delivery verification (`verification_report.md §6`): **2 test coverage weaknesses, each already tracked by a backlog item filed in-cycle during PR review, and 1 not-applicable row**, so no new backlog items were needed. All 56 referenced `test_scenarios` files exist on disk and were confirmed run.
+
+| gap_id | EPIC | Description | Disposition |
+|--------|------|-------------|-------------|
+| TSG-v9.12-01 | EPIC-01 | The `ai_audit_log` `UUID[]` path and the `claude_audit_log` daily cost sum are tested only against a stubbed database, not real Postgres | backlog_item_created — `BLG-QA-221` |
+| TSG-v9.12-02 | EPIC-04 | `settings_change_log` SQL is not exercised against real Postgres | backlog_item_created — `BLG-QA-226` |
+| TSG-v9.12-03 | EPIC-05 | ST-34–ST-38 have no automated scenarios | not_applicable — spec/doc-only stories; manual acceptance review is the correct method (no register entry) |
+
+### 52.1 TSG-v9.12-01 — EPIC-01: Journal-summary UUID path and daily cost sum tested only against a stubbed database
+
+**Identified:** 2026-10-15 (delivery verification 2026-10-12__release-v9.12; first raised at PR #2022 review)
+**Status:** Open
+**Owner:** QA & Testing Owner
+**Gap:** The `ai_audit_log.trade_ids` `UUID[]` write/read path (DS-31) and the `claude_audit_log` daily cost sum used by `POST /ai/check-daily-cost` are covered only by tests against a stubbed database. Qualifying reason: Spec sections partly uncovered: `data_model.md#DS-31`; `ai_endpoints.md#POST /ai/check-daily-cost`.
+**Backlog item:** BLG-QA-221
+
+### 52.2 TSG-v9.12-02 — EPIC-04: Settings change-log SQL not exercised against real Postgres
+
+**Identified:** 2026-10-15 (delivery verification 2026-10-12__release-v9.12; first raised at PR #2027 review)
+**Status:** Open
+**Owner:** QA & Testing Owner
+**Gap:** The `settings_change_log` insert and last-change read (DS-33) are tested only against a stubbed database. Qualifying reason: Spec section partly uncovered: `data_model.md#DS-33`.
+**Backlog item:** BLG-QA-226
+
+**Endpoint coverage drift check (STEP 6 advisory):** Post-ship closure re-ran `scripts/check_api_performance_baseline_drift.py`: PASSED, no new drift (151 normalised `openapi.yaml` endpoints, 0 missing from `api_performance_baseline.md`). The one new route this cycle, `GET /market/atr/{ticker}`, falls under the existing `/market` prefix in `categorizeEndpoint()`.
+
+**TSG backlog reconciliation (§7.3 — full-document sweep):** Scanned all 36 pre-existing `### N.N TSG-*` entries for `**Status:** Open` before adding §52. 10 Open entries found (TSG-v9.9-01..04, TSG-v9.10-01..03, TSG-v9.11-01..03). 3 resolved: TSG-v9.9-03 (`BLG-QA-212`, ST-45), TSG-v9.9-04 (`BLG-QA-213`, ST-47) and TSG-v9.11-01 (`BLG-BE-162`, ST-01), all COMPLETE this cycle. The other 7 remain Open; their backlog items are still open.
+
+---
+
 ## 12. Guiding Principle
 
 > Specs explain decisions.
@@ -1351,6 +1383,7 @@ Identified during delivery verification (`verification_report.md §6`): **3 test
 
 | Date | Change |
 |------|--------|
+| 2026-10-15 | Post-ship closure `2026-10-12__release-v9.12` — §52 Test Coverage Gaps (v9.12) added: 2 gaps (TSG-v9.12-01..02), each already tracked by a backlog item (`BLG-QA-221`, `BLG-QA-226`), plus 1 not-applicable row; endpoint coverage drift check PASSED, 0 gaps; full-document TSG sweep: 10 Open entries checked, 3 resolved (TSG-v9.9-03, TSG-v9.9-04, TSG-v9.11-01); §6/§7: no items resolved by this delivery |
 | 2026-10-12 | Post-ship closure `2026-10-08__release-v9.11` — §51 Test Coverage Gaps (v9.11) added: 3 gaps (TSG-v9.11-01..03), each already tracked by a backlog item (`BLG-BE-162`, `BLG-QA-220`, `BLG-QA-219`); endpoint coverage drift check PASSED, 0 gaps; full-document TSG sweep: 7 Open entries checked, 0 resolved; §6/§7: no items resolved by this delivery |
 | 2026-10-07 | Post-ship closure `2026-10-06__release-v9.10` — §50 Test Coverage Gaps (v9.10) added: 3 gaps (TSG-v9.10-01..03), each already tracked by a backlog item filed in-cycle during PR review (`BLG-QA-214`/`215`/`216`); endpoint coverage drift check PASSED, 0 gaps, no new routes; full-document TSG sweep: 4 Open entries checked (TSG-v9.9-01..04), 0 resolved; §6/§7: 0 open items, none resolved this cycle. |
 | 2026-10-06 | Post-ship closure `2026-09-30__release-v9.9` — §49 Test Coverage Gaps (v9.9) added: 4 gaps (TSG-v9.9-01..04), each already tracked by a backlog item filed in-cycle during PR review (`BLG-QA-204`/`210`/`212`/`213`); endpoint coverage drift check PASSED, 0 gaps, no new routes; full-document TSG reconciliation sweep found 0 Open entries. Header `**Last Updated:**` corrected — it had not been advanced at the 2026-09-30 v9.8 closure. |

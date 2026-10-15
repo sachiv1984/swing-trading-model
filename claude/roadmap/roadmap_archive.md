@@ -1,13 +1,36 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-10-12 (post-ship closure 2026-10-08__release-v9.11, manage roadmap STEP 11 — "v9.11 — Committed items" Now-horizon section retired: BLG-BE-152, BLG-BE-150, BLG-FE-206, BLG-BE-154 shipped v9.11); prior — 2026-10-07 (post-ship closure 2026-10-06__release-v9.10, manage roadmap STEP 11 — "v9.10 — Committed items" Now-horizon section retired: BLG-BE-138, BLG-FE-193, BLG-FE-198 shipped v9.10); prior — 2026-09-28 (post-ship closure 2026-09-23__release-v9.7, manage roadmap STEP 11 — PO-05 Lightweight Replay Mode retired: shipped v9.7, `BLG-FEAT-74`); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-15 (post-ship closure 2026-10-12__release-v9.12, manage roadmap STEP 11 — "v9.12 — Committed items" Now-horizon section retired: BLG-BE-162 shipped v9.12); prior — 2026-10-12 (post-ship closure 2026-10-08__release-v9.11, manage roadmap STEP 11 — "v9.11 — Committed items" Now-horizon section retired: BLG-BE-152, BLG-BE-150, BLG-FE-206, BLG-BE-154 shipped v9.11); prior — 2026-10-07 (post-ship closure 2026-10-06__release-v9.10, manage roadmap STEP 11 — "v9.10 — Committed items" Now-horizon section retired: BLG-BE-138, BLG-FE-193, BLG-FE-198 shipped v9.10); prior history retained — see prior entries in version control
 
 # Roadmap Archive — Momentum Trading Assistant
 
 This document is the permanent record of completed and killed roadmap items retired from `claude/roadmap/current_roadmap.md`. Items are listed in retirement order, most recent first.
 
 Entries are append-only. Do not edit existing entries.
+
+---
+
+## v9.12 — Committed items (Now horizon)
+
+**Original roadmap location:** §3 Delivery Plan — Horizon: Now
+**Status at retirement:** ✅ Complete
+**Retired from active roadmap:** 2026-10-15
+**Shipped version:** v9.12
+**Cycle reference:** 2026-10-12__release-v9.12
+**Verification report:** claude/cycles/2026-10-12__release-v9.12/verification_report.md
+**Decision log reference:** DL-085 (Product Owner direction 2026-10-12 — named v9.12 and committed `BLG-BE-162`; not a kill/defer decision)
+**Retirement confirmed by:** Product Owner (acceptance recorded in `verification_report.md` §9, agent-mediated per §5.3)
+
+### Original Roadmap Entry
+
+### v9.12 — Committed items (Product Owner direction 2026-10-12, DL-085) — ✅ Complete — Shipped 2026-10-15 — cycle: 2026-10-12__release-v9.12
+
+*Added by Product Owner direction at post-ship closure `2026-10-08__release-v9.11`, not by a rebalance or Release Planning. Its purpose is to name the next release so `plan release v9.12` can open without a scheduled rebalance. The release's full scope, capacity fit and story breakdown are set at `plan release v9.12`.*
+
+| Item | Why it is here | Priority | Effort |
+|------|----------------|----------|--------|
+| `BLG-BE-162` — journal summary returns HTTP 422 on UUID `trade_ids` | Condition of the v9.11 verification P1 acceptance (ST-02): stays P1 and is seated in v9.12. | P1 | see backlog item — ✅ Shipped as ST-01 (EPIC-01), 2026-10-15 |
 
 ---
 

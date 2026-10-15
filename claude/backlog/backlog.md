@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-15 (session — 2 new items added from the PR #2027 review, EPIC-04, 2026-10-12__release-v9.12: BLG-BE-181, BLG-QA-226); prior — 2026-10-15 (session — 1 new item added from Sprint Execution ST-28, EPIC-04, 2026-10-12__release-v9.12: BLG-TECH-24); prior — 2026-10-15 (session — ST-29, EPIC-04, 2026-10-12__release-v9.12: BLG-OPS-181 Notes cause line (plan-authorised, sprint_backlog.md ST-29 Notes); 1 new item BLG-OPS-189); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-15 (groom backlog, post-ship closure 2026-10-12__release-v9.12 STEP 12 — 48 v9.12 shipped items archived to backlog_archive.md); prior — 2026-10-15 (post-ship closure 2026-10-12__release-v9.12 STEP 3 — 48 shipped items marked ✅ COMPLETE (pending archival at STEP 12)); prior — 2026-10-15 (session — 2 new items added from the PR #2027 review, EPIC-04, 2026-10-12__release-v9.12: BLG-BE-181, BLG-QA-226); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -332,90 +332,6 @@ Two consecutive npm-audit triages (2026-08-16, 2026-10-06) have been dominated b
 
 ---
 
-### BLG-BE-144 — First-time Settings save writes NULL strategy columns; trade-plan settings snapshot records editable-row multipliers
-**Priority:** P3 (Low)
-**Type:** Backend / Data Integrity
-**Owner:** Backend Engineering Patterns Owner; Data Model & Domain Schema Owner
-**Source:** ST-01/ST-02/ST-04 (EPIC-01, cycle `2026-10-06__release-v9.10`) — agent-mediated Director of Quality review of the EPIC-01 PR — 2026-10-06
-**Effort:** S (~0.5 day)
-**Provisional-Target:** TBD
-
-**Problem**
-After ST-01 (ruling (a)), the Settings page no longer sends `min_hold_days`, `atr_period`, `atr_multiplier_initial` or `atr_multiplier_trailing`. On the first-time create path, `SettingsRequest.dict()` fills them as None, and `create_settings` inserts every key (`database.py`), which overrides the column defaults with NULL. No stop path reads them, but `routers/trade_plans.py` still copies those row values into `effective_settings_snapshot`. Under ruling (a) that snapshot is misleading.
-
-**Scope**
-- `create_settings` (and update) drops None values.
-- Trade-plan snapshots record the fixed §11 values from `utils/strategy_parameters.py`.
-- A Playwright or API test covers the create path (SC-SPF-04 covers update only).
-
-**Acceptance Criteria**
-- [ ] A first-time Settings save leaves the four columns at their defaults
-- [ ] New trade-plan snapshots carry the §11 values
-
----
-
-### BLG-BE-145 — US position with NULL fill_price crashes both stop recompute paths; no US coverage in parity tests
-**Priority:** P3 (Low)
-**Type:** Backend / Robustness
-**Owner:** Head of Engineering
-**Source:** ST-01/ST-02/ST-04 (EPIC-01, cycle `2026-10-06__release-v9.10`) — agent-mediated Director of Quality review of the EPIC-01 PR — 2026-10-06 (pre-existing; not introduced by EPIC-01)
-**Effort:** S (~0.5 day)
-**Provisional-Target:** TBD
-
-**Problem**
-`pos.get('fill_price', entry_price)` returns None when the key exists but is NULL (`position_service.py`, in `analyze_positions` and `run_nightly_trailing_stop_update`). A US position with a NULL `fill_price` would raise in stop arithmetic. The ST-01 parity and ST-02 provenance fixtures are all UK, so the US branch is untested on both paths.
-
-**Scope**
-- Fall back to `entry_price` when `fill_price` is NULL, as `pos.get('fill_price') or entry_price`.
-- Add US-position cases to `tests/test_strategy_parameter_parity.py` and `tests/test_atr_provenance.py`.
-
-**Acceptance Criteria**
-- [ ] A NULL `fill_price` US position recomputes without error on both paths. Both test files include a US case.
-
----
-
-### BLG-BE-148 — Gap-risk "next trading session" ignores exchange holidays and the US market date
-**Priority:** P3 (Low)
-**Type:** Backend / Correctness
-**Owner:** Head of Engineering; Strategy Rules & System Intent Owner
-**Source:** ST-13/ST-14 (EPIC-03, cycle `2026-10-06__release-v9.10`) — agent-mediated Director of Quality / Product Owner pre-PR review of the EPIC-03 branch — 2026-10-07
-**Effort:** S (~1 day)
-**Provisional-Target:** TBD
-
-**Problem**
-`gap_risk_service._days_to_next_trading_day` uses a weekday calendar and the server's `date.today()` (UTC), as the ST-13 addendum discloses. Two cases miss an actionable flag:
-1. **Holidays.** Viewed Friday before a Monday market holiday, Tuesday earnings are 4 days away and are not flagged. On Monday no session exists, so the last actionable session goes unflagged.
-2. **Date basis.** Between 00:00 and about 05:00 UTC the US trading date is still the previous day. In that window, earnings due the next US session read as day 0 and are not flagged.
-
-**Scope**
-- Use the US exchange calendar (holidays, the `America/New_York` date) for "today" and the next session. Keep it deterministic, with no network call at request time.
-- If this changes Ruling 3's stated rule, record a dated addendum note in the §13 review record (Strategy Rules & System Intent Owner).
-
-**Acceptance Criteria**
-- [ ] A Friday view before a Monday holiday flags Tuesday earnings (unit test).
-- [ ] A 02:00 UTC view uses the US market date (unit test).
-
----
-
-### BLG-BE-149 — Risk page `display_status` decides LOSING/PROFITABLE on GBP P&L; the lifecycle badge uses native P&L
-**Priority:** P3 (Low)
-**Type:** Backend / Spec–Code Consistency
-**Owner:** Head of Engineering; Strategy Rules & System Intent Owner
-**Source:** ST-11 (EPIC-03, cycle `2026-10-06__release-v9.10`) — agent-mediated Director of Quality / Product Owner pre-PR review of the EPIC-03 branch — 2026-10-07
-**Effort:** S (~0.5 day)
-**Provisional-Target:** TBD
-
-**Problem**
-ST-11 ruled that post-grace LOSING/PROFITABLE follow §9's P&L sign, on the native price against entry, which is the test that picks the §7.2 stop multiplier (`is_profitable = pnl_native > 0`). `display_status` in `position_service.py` and `portfolio_service.py` uses `pnl_gbp > 0`, which includes FX movement. It is shown on the Risk page (`PositionRiskTable.js`). A US position that is up in dollars but down in sterling (or the reverse) therefore shows LOSING on one page and PROFITABLE on the other, contrary to role charter §5 ("UI, backend logic, and analytics interpret states consistently").
-
-**Scope**
-- Derive `display_status` from the same native test, or from `position_state`, and state the basis in `position_endpoints.md` / `portfolio_endpoints.md`.
-
-**Acceptance Criteria**
-- [ ] For a US position with native P&L > 0 and GBP P&L < 0, `display_status` and `position_state` agree (unit test).
-
----
-
 ### BLG-QA-214 — Behaviour test that alerts grace warning ignores settings.min_hold_days
 **Priority:** P4 (Low)
 **Type:** QA / Test Coverage
@@ -451,27 +367,6 @@ After ST-01 (ruling (a)), `POST /settings` and `PATCH /settings/{settings_id}` s
 
 **Acceptance Criteria**
 - [ ] A write that includes any of the four fields is rejected or flagged in the response, and documented
-
----
-
-### BLG-TECH-22 — Batch the in-range dependency patch/minor bumps from the October 2026 quarterly review
-**Priority:** P3 (Low)
-**Type:** Platform / Technical Debt
-**Owner:** Infrastructure & Operations Owner; Head of Engineering
-**Source:** ST-17 (BLG-OPS-92), EPIC-04, cycle `2026-10-06__release-v9.10` — `docs/security/dependency_update_review_2026-10-06.md` — 2026-10-06
-**Effort:** S (~0.5-1 day)
-**Provisional-Target:** TBD
-
-**Problem**
-The quarterly review found 8 backend and 20 frontend direct dependencies behind their latest patch/minor release, with no known vulnerabilities. They were not applied in-story because each lockfile or requirements change needs its own full CI run. yfinance (1.3.0 → 1.7.0) matters most: it tracks Yahoo's changing endpoints, so falling behind risks silent price/ATR fetch failures.
-
-**Scope**
-- Backend: fastapi + starlette, pandas, numpy, pydantic, psycopg2-binary, hypothesis, yfinance, at the versions in the review's §3
-- Frontend: every row marked "Batch" in the review's §4–§5 (`npm update` within the existing ranges, plus eslint 9.39.5)
-
-**Acceptance Criteria**
-- [ ] Bumps applied in one PR. The full pytest suite and all Playwright shards pass in CI, including the focus-restoration specs, because `@radix-ui/react-dialog` changes.
-- [ ] A staging check confirms yfinance price and ATR fetches still work for one US and one UK ticker
 
 ---
 
@@ -3114,45 +3009,6 @@ The read-only credential available to sprint-execution sessions is for **staging
 
 ---
 
-### BLG-QA-202 — backend/setup.cfg's mutmut comment references a leaked sandbox-local /tmp path
-**Priority:** P3 (Low)
-**Type:** QA / Test Tooling
-**Owner:** QA Lead
-**Source:** PR #1845 review (Director of Quality persona), cycle 2026-09-28__release-v9.8 — 2026-09-29
-**Effort:** XS (<1h)
-**Provisional-Target:** TBD
-
-**Problem**
-`backend/setup.cfg`'s `[mutmut]` section header comment says to invoke via `/tmp/mutmut_pilot_venv/venv/bin/python3 -m mutmut run` — a session-specific temporary path from the original pilot's own sandbox investigation (used to temporarily relocate `backend/.venv` out of the way) that will not exist for anyone else reproducing the pilot. `docs/testing/mutation_testing_pilot_sizing_and_stop_ratchet.md`'s own "Reproducing this pilot" section correctly uses a generic `python3 -m pip install mutmut` / `python3 -m mutmut run` with no such path, so the `setup.cfg` comment is now the only place with the stale reference.
-
-**Scope**
-- Correct `backend/setup.cfg`'s comment to reference the backend venv (e.g. `backend/.venv/bin/python3`) or simply match the doc's generic invocation, dropping the `/tmp` path
-
-**Acceptance Criteria**
-- `backend/setup.cfg` contains no sandbox-specific `/tmp` path
-
----
-
-### BLG-SPEC-176 — DELETE /trade-plans/{id} uses a different success envelope than conventions.md §12's documented DELETE convention
-**Priority:** P4 (Trivial)
-**Type:** Spec Debt / API Contracts
-**Owner:** API Contracts & Documentation Owner
-**Source:** ST-23/EPIC-05 (BLG-SPEC-153), cycle 2026-09-28__release-v9.8 — openapi.yaml response-schema authoring — 2026-09-29
-**Effort:** XS (<1h)
-**Provisional-Target:** TBD
-
-**Problem**
-`conventions.md` §12 (DELETE Response Convention) states successful DELETE operations return `{"status": "ok", "data": {"deleted": true, "id": "..."}}`, and every other DELETE endpoint's documented example in this codebase follows that shape. `trade_plan_endpoints.md`'s `DELETE /trade-plans/{id}` is the one exception: its documented response is `{"status": "ok", "message": "Trade plan deleted"}` — a `message` field instead of a `data.deleted`/`data.id` object. Found while authoring `openapi.yaml`'s response schema for this endpoint (ST-23) — the schema was written to match what is actually documented (not silently reconciled to the convention), since changing which side is "correct" is a decision, not a typo fix.
-
-**Scope**
-- Confirm which side is authoritative: does the live `DELETE /trade-plans/{id}` route actually return `{status, message}` (in which case `conventions.md` §12 should note this endpoint as a named exception, or the route should be migrated to the standard envelope), or was the markdown simply never updated when the route was built against the standard envelope
-- Reconcile the losing side (code or doc) to match
-
-**Acceptance Criteria**
-- `DELETE /trade-plans/{id}`'s documented response and its live behaviour agree with each other, and conventions.md §12 either lists this endpoint as an explicit exception or the endpoint is migrated to the standard DELETE envelope
-
----
-
 ### BLG-QA-204 — test_position_atr_timestamp_persistence.py doesn't mock get_settings(), so active_atr_multiplier assertions don't confirm production values
 **Priority:** P4 (Low)
 **Type:** QA / Test Debt
@@ -3173,71 +3029,6 @@ The read-only credential available to sprint-execution sessions is for **staging
 
 ---
 
-### BLG-SPEC-178 — New live-vs-doc divergences found by the ST-28 drift-detector tool, beyond the 5 originally known
-**Priority:** P3 (Low)
-**Type:** Spec Debt / Data Model
-**Owner:** Data Model & Domain Schema Owner
-**Source:** ST-28/EPIC-05, cycle `2026-09-30__release-v9.9` (`scripts/check_data_model_drift.py`, `BLG-SPEC-157`) — 2026-10-01
-**Effort:** S (~1d, triage + disposition; may grow if any finding requires a live migration)
-**Provisional-Target:** TBD
-
-**Problem**
-Running the new `scripts/check_data_model_drift.py` against this sandbox's `readonly_staging` `DATABASE_URL` reproduced the 2 of 5 originally-known divergence classes still live today (BLG-SPEC-148's missing-index pattern, BLG-SPEC-150's orphaned-columns pattern — see below), confirming the tool works as intended. It also surfaced genuinely new findings beyond the original 5 that no prior story has triaged:
-
-1. **DS-17's unique index (`idx_positions_open_ticker_entry_date_unique`) is absent from staging's live `positions` table**, despite `data_model.md`'s own DS-17 section recording it "confirmed live in production as of 2026-09-23." The verification query cited there was run against **production** only — this is the first time anyone has checked staging specifically since. Staging and production may have been migrated independently and now disagree, or staging was never migrated. Needs a Data Model & Domain Schema Owner check against production (write access this sandbox does not have) to confirm whether production still has it, and if staging should be brought in line.
-2. **3 further undocumented, always-present `positions` columns** beyond the 4 already known and disclosed (`BLG-SPEC-150`/`BLG-SPEC-164`): `last_reviewed_at`, `risk_off_exit`, `strategy_version_at_entry`. Unlike the 4 known orphans, these are **not confirmed always-NULL** by this story — only their absence from `data_model.md`'s Fields table was checked. Needs its own live NULL/populated check and disposition (document vs. drop) before being folded into the existing orphaned-columns item.
-3. **8 nullable mismatches between `data_model.md`'s Fields table and live `positions`** — `created_at`, `holding_days`, `pnl`, `pnl_pct`, `portfolio_id`, `status`, `total_cost`, `updated_at` are all documented `NO` (not nullable) but report `YES` (nullable) live. Severity varies: `portfolio_id`/`total_cost`/`status` have an explicit `NOT NULL` in the documented `CREATE TABLE` block itself (a real, more concerning doc-vs-enforcement gap), while the other 5 (`created_at`, `holding_days`, `pnl`, `pnl_pct`, `updated_at`) only carry a `DEFAULT` in the documented SQL with no `NOT NULL` keyword — i.e. the Fields table's "NO" already disagreed with this document's own `CREATE TABLE` block before live was even checked.
-4. **`notifications.updated_at` is documented but not present live.**
-5. **10 documented `CREATE INDEX` names and 1 documented `ADD CONSTRAINT ... CHECK` name (`settings_risk_percent_check`) were not found live** — not yet individually triaged; at least one spot-checked case (`idx_trade_plans_ticker`) turned out to be a false positive from the tool reading a "Reversible:" rollback block's old index name rather than the current migration's actual index (`idx_trade_plans_ticker_upper`), so each of these 11 names needs a manual check before assuming it is a genuine gap rather than another rollback-text false positive.
-
-**Scope**
-- Data Model & Domain Schema Owner triages findings 1–5 above, one disposition each (confirm/correct `data_model.md`, or schedule a live migration)
-- Finding 5's false-positive risk means each of the 11 names needs individual confirmation, not a bulk assumption
-
-**Acceptance Criteria**
-- Each of the 5 findings above has an explicit disposition recorded (matches known pattern / needs live action / false positive / documentation fix)
-- Any genuine gap gets its own canonical-spec correction or migration-scheduling item, per the existing `BLG-SPEC-150`/`BLG-SPEC-151` precedent for the original 4 orphaned columns
-
----
-
-### BLG-QA-205 — No backend test asserts the §4.1.5 FX defaulting/echo or the §4.1.6 insufficient-cash sizing result
-**Priority:** P3 (Low)
-**Type:** QA / Test Automation
-**Owner:** Director of Quality; QA & Testing Owner
-**Source:** ST-11/EPIC-03, cycle `2026-09-30__release-v9.9` — strategy-rule → test traceability matrix (`docs/testing/strategy_rule_test_traceability_matrix.md`) — 2026-10-05
-**Effort:** S (~0.5d)
-**Provisional-Target:** TBD
-
-**Problem**
-The traceability matrix found `services/sizing_service.py::size_position`'s FX handling and cash constraint unasserted in CI: C4.1.5-01 (user FX override, Partial), C4.1.5-02 (live FX default, None), C4.1.5-03 (`fx_rate_used` returned, None), C4.1.6-01 (`cash_sufficient: false` when estimated cost exceeds cash, None), C4.1.6-02 (`max_affordable_shares`, None). The only backend tests of the cash path live in `backend/mutmut_pilot_tests/`, which no CI workflow runs; Playwright mocks the response.
-
-**Scope**
-- Add pytest coverage of `size_position` for: US with no `fx_rate` (uses `get_live_fx_rate()`), US with an override (override used and echoed as `fx_rate_used`), UK (`fx_rate_used == 1.0`), estimated cost above available cash (`cash_sufficient` false, `max_affordable_shares` present and affordable), and below it
-
-**Acceptance Criteria**
-- Each clause above asserted by a CI-run test; matrix rows updated to Asserted
-
----
-
-### BLG-QA-206 — §4.1.7 sizing-widget behaviours have no Playwright coverage
-**Priority:** P3 (Low)
-**Type:** QA / Test Automation
-**Owner:** Director of Quality; QA & Testing Owner
-**Source:** ST-11/EPIC-03, cycle `2026-09-30__release-v9.9` — strategy-rule → test traceability matrix (`docs/testing/strategy_rule_test_traceability_matrix.md`) — 2026-10-05
-**Effort:** M (~1d)
-**Provisional-Target:** TBD
-
-**Problem**
-The traceability matrix found most of `strategy_rules.md` §4.1.7's Position Sizing Calculator UI rules unasserted: C4.1.7-01 always visible / no toggle (Partial), C4.1.7-02 auto-recalculation with 300ms debounce, C4.1.7-03 loading state, C4.1.7-05 manually entered shares not overwritten + "use this" affordance, C4.1.7-06 no auto-fill on INSUFFICIENT_CASH with MaxAffordableShares shown as information, C4.1.7-07 no auto-fill on an invalid result + inline message, C4.1.7-08 sizing result never blocks form submission (all None). The no-overwrite rule is described in §4.1.7 as a financial safety constraint.
-
-**Scope**
-- Add Playwright scenarios (mocked `POST /portfolio/size`, per `shared_standards.md` §18) for each clause listed
-
-**Acceptance Criteria**
-- Each listed clause has a passing CI Playwright scenario; matrix rows updated
-
----
-
 ### BLG-QA-208 — Entry required-field set and the advisory panel's non-blocking rule are untested at their boundary
 **Priority:** P4 (Backlog)
 **Type:** QA / Test Automation
@@ -3255,27 +3046,6 @@ The traceability matrix found C4-01 (`POST /portfolio/position` requires ticker,
 
 **Acceptance Criteria**
 - Both clauses asserted by CI-run tests; matrix rows updated
-
----
-
-### BLG-QA-209 — Test files leave permanent utils.* stubs in sys.modules, so a reordered run fails 32 tests and one collection
-**Priority:** P3 (Low)
-**Type:** QA / Test Automation
-**Owner:** Director of Quality; QA & Testing Owner
-**Source:** ST-14/EPIC-03, cycle `2026-09-30__release-v9.9` — BLG-QA-190's "widen the audit to utils.formatting" scope item — 2026-10-05
-**Effort:** M (~1d)
-**Provisional-Target:** TBD
-
-**Problem**
-ST-14 removed every unrestored `sys.modules["database"]` swap and added a conftest guard against new ones. The same shape of leak exists for `utils.*`. `tests/test_alerts_service.py`, `tests/test_plan_vs_reality.py` and `tests/test_trade_service.py` install module-level stubs for `utils`, `utils.pricing`, `utils.calculations`, `utils.formatting` (and others) with no restore. Meanwhile `test_money_arithmetic_golden.py`, `test_nightly_computations.py`, `test_golden_outputs.py` and `test_rebalance_exit_signal_numpy_regression.py` pop them again to recover. The default alphabetical order happens to pass. Run in reverse file order, the suite fails identically on `main` and with ST-14: 32 failures (`test_replay_service.py`, `test_atr_consolidation.py`, `test_upstream_call_helper.py`, `test_strategy_engine_*`, `test_production_strategy.py`, `test_pre_entry_validation.py::TestMarketRegimeCache`, `test_backtest_rule_service.py`, ...) plus a collection error in `tests/test_pagination.py` (`'utils' is not a package`).
-
-**Scope**
-- Convert the stub-installing files to scoped stubs (`patch.dict(sys.modules, ...)` around the import, as `tests/test_reflection_reminder.py` does), and drop the compensating pops where they become unnecessary
-- Extend `tests/conftest.py`'s ST-14 leak guard (or add a sibling) to cover the `utils` package modules
-
-**Acceptance Criteria**
-- `pytest $(ls tests/test_*.py | sort -r)` passes with no failures, matching the default order
-- The guard fails a file that leaves a `utils.*` stub installed
 
 ---
 
@@ -3339,25 +3109,6 @@ ST-24 replaced the restated AI adoption window gate text on its 5 named items (B
 
 ---
 
-### BLG-SPEC-179 — positions.md Gap Risk Badge names the wrong data source (GET /positions field vs dedicated gap-risk endpoint)
-**Priority:** P3 (Low)
-**Type:** Spec Debt / Frontend Spec Drift
-**Owner:** Head of Specs Team; Frontend Specification Owner
-**Source:** §13 retroactive review of the Gap Risk Flag (ST-20, EPIC-04, v9.9; `docs/product/decisions/decisions--2026-09-30__release-v9.9--gap-risk-flag-section13-review.md`, Remediation Item 2)
-**Effort:** XS (<0.5 day)
-**Provisional-Target:** TBD (may be folded into BLG-BE-136 if that lands first)
-
-**Problem**
-`docs/specs/frontend/pages/positions.md:482` states the Gap Risk Badge's data source is "`gap_risk` object from `GET /positions` (new field…)". The shipped implementation uses a dedicated, lazily fetched `GET /positions/{position_id}/gap-risk` endpoint (`backend/main.py:1759`; `src/hooks/useGapRisk.js:23`). This alternative was pre-authorised and is already documented in `docs/specs/api_contracts/position_endpoints.md` (2.4.0 changelog row, `:37`; implementation note in the endpoint section). The frontend spec was never updated to match.
-
-**Scope**
-- Update `positions.md` §Gap Risk Badge's Data source line to name `GET /positions/{position_id}/gap-risk` (lazily fetched per position, independent per-cell loading state), with a version bump and changelog row per the document lifecycle guide
-
-**Acceptance Criteria**
-- `positions.md` §Gap Risk Badge names the shipped endpoint; no remaining reference claims a `gap_risk` field on `GET /positions`
-
----
-
 ### BLG-GOV-360 — Apply the §13.3 gap-risk clarification and §13.5 roster row for the Gap Risk Flag to strategy_rules.md
 **Priority:** P2 (Medium)
 **Type:** Governance Process / Strategy Boundary
@@ -3378,118 +3129,6 @@ The ST-20 determination (CONDITIONAL) finds §13.3's literal text ("Exposing a g
 **Acceptance Criteria**
 - §13.3 distinguishes standing/real-time gap risk monitoring (excluded) from a display-only, on-request, position-specific dated-event flag, and cites the decision record
 - §13.5's roster lists the Gap Risk Flag as CONDITIONAL with the 2027-02-06 weekend-hold disposition deadline
-
----
-
-### BLG-QA-212 — Add unit tests for scripts/compute_role_share_history.py now that roadmap §7.2 depends on it
-**Priority:** P3 (Low)
-**Type:** QA / Test Coverage
-**Owner:** QA & Testing Owner; PMO Lead
-**Source:** PR #1891 agent-mediated Director of Quality review (EPIC-04, cycle `2026-09-30__release-v9.9`) — 2026-10-05
-**Effort:** S (~0.5 day)
-**Provisional-Target:** TBD
-
-**Problem**
-`roadmap_prompt.md` v9.30 §7.2 step 1 now requires running `scripts/compute_role_share_history.py` to append each shipped cycle's row to `claude/roadmap/role_share_history.md`. The script has no tests (`git grep compute_role_share_history -- tests` returns nothing). It silently drops any ST block that has no `**Owner:**` line, which understates the total. It also matches only `#### ST-` headings. Today its totals equal the ST-heading counts for every cycle from v7.6 to v9.9, but nothing would catch a format drift in a future `sprint_backlog.md`. The same gap exists for STEP 7.1 in `compute_rebalance_diagnostics.py`: only STEP 2.4 is pinned against the real changelog, and a 7.1 pin would have caught the 84.0%/84.8% misstatement (finding F-1).
-
-**Scope**
-- Add `tests/test_compute_role_share_history.py` covering:
-  - a fixture with simple and compound Owner strings
-  - a story with no Owner line, which should produce a warning or non-zero exit rather than a silent drop
-  - the `--json` output shape
-  - a regression pin against `claude/cycles/2026-09-28__release-v9.8/sprint_backlog.md` (39 stories, Head of Specs Team 12)
-- Make the script report stories it found but could not attribute, rather than dropping them silently
-- Add a STEP 7.1 real-changelog pin to `tests/test_compute_rebalance_diagnostics.py` (v9.6–v9.8 window → 84/99 = 84.8%)
-
-**Acceptance Criteria**
-- New test file passes in CI Phase B and covers compound owners, a missing Owner line and the v9.8 regression pin
-- The script's total equals the number of ST headings, or it reports the difference
-- The STEP 7.1 real-changelog figure is pinned in a test
-
----
-
-### BLG-GOV-367 — Skill-Silo rolling-3-cycle series mixes a plain per-cycle average with §7.1's pooled formula
-**Priority:** P3 (Low)
-**Type:** Governance Process / Metrics Integrity
-**Owner:** Metrics Definitions & Analytics Owner; Head of Specs Team
-**Source:** PR #1891 agent-mediated Product Owner review (EPIC-04, cycle `2026-09-30__release-v9.9`) — 2026-10-05
-**Effort:** S (~0.5d)
-**Provisional-Target:** TBD
-
-**Problem**
-`roadmap_prompt.md:563` defines Governance story % as a pooled ratio: (G+D+P) ÷ total stories over the last 3 cycles. The recorded series in `claude/roadmap/decision_log.md` is labelled "rolling-3-cycle avg" and matches a plain mean of the per-cycle percentages. For example, 85.7% = mean(100.0, 75.0, 82.1). ST-25's `scripts/compute_rebalance_diagnostics.py` computes the pooled form (84.8% for v9.6–v9.8, against the recorded 83.7%). Once rebalances adopt the script, the "improving/worsening" comparison against prior readings mixes the two methods. That comparison drives §7.1's mandatory pull-forward after 3 consecutive worsening readings, so a change of method could flip a trend reading that the data does not support.
-
-**Scope**
-- Confirm which method §7.1 intends (pooled per its formula, or plain mean per the recorded series) and state it explicitly in §7.1
-- Restate the recent readings (at least the last 4) under the chosen method, or record an explicit method-break note the next rebalance must honour when judging trend direction
-- Align `compute_rebalance_diagnostics.py`'s output (or add a flag) with the chosen method; apply the CLAUDE.md §6 checklist if `roadmap_prompt.md` changes
-
-**Acceptance Criteria**
-- §7.1 names one aggregation method unambiguously
-- The next rebalance's trend comparison uses readings computed by that single method, or cites the recorded method-break note
-
----
-
-### BLG-SPEC-182 — Refresh the Gap Risk Flag §13 decision record to match strategy_rules.md v1.14 as applied
-**Priority:** P3 (Low)
-**Type:** Spec Debt / §13 Record Integrity
-**Owner:** Strategy Rules & System Intent Owner; Head of Specs Team
-**Source:** PR #1891 agent-mediated Product Owner review (EPIC-04, cycle `2026-09-30__release-v9.9`) — 2026-10-05
-**Effort:** XS (<1h)
-**Provisional-Target:** TBD (before the first §13.5 re-attestation, 2027-02-06)
-
-**Problem**
-`docs/product/decisions/decisions--2026-09-30__release-v9.9--gap-risk-flag-section13-review.md` was updated only in its appendix after the v1.14 wording was applied. The body's write-scope note (`:11`) and Binding Condition 9 (`:175`) still state that Sprint Execution cannot write `strategy_rules.md` and that registration is pending. Remediation Item 4 (`:188`) still reads as open. Binding Condition 6 (`:172`) permits any "known, dated event specific to the position's ticker", which is wider than the second-pass-amended §13.3 (`strategy_rules.md:504`: only events already recognised as gap-risk events by a canonical rule — today only earnings). The 2027-02-06 re-attestation will read this record's binding conditions as the operative terms.
-
-**Scope**
-- Update the write-scope note, Binding Condition 9 and Remediation Item 4 to record that registration was completed in `strategy_rules.md` v1.14 (`a5d4dbd2`, BLG-GOV-360 resolved)
-- Narrow Binding Condition 6's wording to match §13.3 as applied, or add an explicit note that §13.3 v1.14 supersedes it where they differ
-- Bump the record's `**Last Updated:**` per the 3-entry rule
-
-**Acceptance Criteria**
-- No statement in the record's body contradicts `strategy_rules.md` v1.14 §13.3/§13.5 or describes BLG-GOV-360 as pending
-- Binding Condition 6's permitted-trigger scope equals §13.3's carve-out
-
----
-
-### BLG-GOV-363 — Script the execution_state.json read-back check introduced by execution_prompt.md v3.81 §9.2
-**Priority:** P3 (Low)
-**Type:** Governance Tooling
-**Owner:** Head of Engineering; Head of Specs Team
-**Source:** Head of Specs Team ruling on ESC-CLOSE-20260930-02 (agent-mediated, user-directed) — 2026-10-05
-**Effort:** S (~0.5d)
-**Provisional-Target:** TBD
-
-**Problem**
-`execution_prompt.md` v3.81 §9.2 makes the top-level `completed_items`, `blocked_items`, `delegated_items` and `merge_gate` fields projections of per-story `status` / per-EPIC `pr_status`, and requires a 4-equality read-back from disk after every state write. The check is currently performed by hand, which is the same memory-dependent failure mode the ruling exists to remove.
-
-**Scope**
-- Add `scripts/check_execution_state_consistency.py <execution_state.json>` asserting the 4 equalities in §9.2 (plus `status: done` ⇒ `commit_sha`/`completed_utc` set), exiting non-zero with a per-field diff
-- Reference it from §9.2 as the mechanical form of the read-back (CLAUDE.md §6 checklist applies)
-
-**Acceptance Criteria**
-- Script passes on a consistent file and fails, naming the field, for each of the 4 equality breaks
-- Unit tests cover each failure mode
-
----
-
-### BLG-GOV-364 — Decide whether idea-intake windows may run with a reduced roster, and if so cap them
-**Priority:** P3 (Low)
-**Type:** Governance Process
-**Owner:** Head of Specs Team; Product Owner
-**Source:** ESC-CLOSE-20260930-01 Product Owner review (agent-mediated, confirmed by the human Product Owner) — 2026-10-05
-**Effort:** S (~0.5d)
-**Provisional-Target:** TBD
-
-**Problem**
-`idea_intake_prompt.md` §4 and STEP 0 assume every role in `eligible_agents` is exercised, yet `IW-20260928-01` (3 roles) and `IW-20260930-01` (2 roles) ran with a disclosed reduced roster. v2.10's roster rule now constrains such windows while a build-and-ship pull-forward is mandatory, but whether reduced windows are permitted at all — and how they interact with `roadmap_prompt.md` STEP -1.6's standalone pre-run exception — has never been ruled on. `IW-20260928-01` exercised no user-facing role, which left the PO Modify directive unsatisfiable at v9.8.
-
-**Scope**
-- Rule on whether §4/STEP 0 should permit reduced-roster windows; if yes, define when and set a cap (e.g. no two consecutive reduced windows)
-- Apply the CLAUDE.md §6 checklist to any prompt changed
-
-**Acceptance Criteria**
-- A recorded ruling; any adopted change ships with the full CLAUDE.md §6 checklist
 
 ---
 
@@ -3553,72 +3192,6 @@ ST-20 corrected the PO-05 pre-assessment, the roadmap and `replay_mode.md` after
 **Acceptance Criteria**
 - The paragraph no longer cites a NULL `positions.fees_paid` as a reachable cause of a NULL trade_history fee leg
 - No change to the `null_fee_trade_count` contract or computation
-
----
-
-### BLG-SPEC-181 — Action-rate metric spec and query docstring still cite the dropped positions.stop_price column
-**Priority:** P3 (Low)
-**Type:** Spec Debt / Metrics
-**Owner:** Metrics Definitions & Analytics Owner; Data Model & Domain Schema Owner
-**Source:** EPIC-05 agent-mediated Director of Quality review (ST-29), cycle `2026-09-30__release-v9.9` — 2026-10-05
-**Effort:** XS (<1h)
-**Provisional-Target:** TBD
-
-**Problem**
-ST-29 dropped the orphaned, always-NULL `positions.stop_price` column (`data_model.md` DS-24). `docs/specs/metrics_definitions.md` (the action-rate definition, around lines 687 and 1110) and the docstring near `backend/database.py:2421` still describe the action-rate query as matching a later `PATCH /positions/{id}` that set `positions.stop_price >= recommended_stop`. The live stop column is `current_stop`. Nothing breaks today because the action-rate metric is not yet computed, but an implementation built from this text would query a column that no longer exists.
-
-**Scope**
-- Replace `positions.stop_price` with `positions.current_stop` in both `metrics_definitions.md` passages (version bump per the document's lifecycle) and in the `database.py` docstring
-
-**Acceptance Criteria**
-- No spec or code comment refers to `positions.stop_price` as a live column
-- `grep -rn "positions.stop_price" docs backend` returns only historical/migration references (DS-24)
-
----
-
-### BLG-QA-213 — Regression guard for the positions.fees_paid NOT NULL invariant (entry flow and SQL seeds)
-**Priority:** P3 (Low)
-**Type:** Testing Gap / Data Model
-**Owner:** QA & Testing Owner
-**Source:** PR #1892 agent-mediated Director of Quality review (EPIC-05, cycle `2026-09-30__release-v9.9`) — 2026-10-05
-**Effort:** S (~0.5d)
-**Provisional-Target:** TBD
-
-**Problem**
-DS-23 (`docs/specs/data_model.md:2517`) re-applied `NOT NULL` with no default on `positions.fees_paid` in staging and production. Its justification is that every write path supplies a numeric value. Nothing in the test suite enforces this. `create_position()` binds `position_data.get('fees_paid')` (`backend/database.py:98-135`), so a refactor of `position_service.py`'s entry flow (`:838-888`) that drops or renames the key would pass all 2054 tests and fail only in production, as a `NOT NULL` violation on every new position. In the same way, no test checks that the SQL seeds (`backend/test_data/seed_chart_test_data.sql`, `scripts/seeds/seed_portfolio_trades.sql`) supply `fees_paid`. The chart seed omitted it until ST-30, and it is run against staging by `.github/workflows/seed-preview.yml:64`.
-
-**Scope**
-- Unit test (database layer mocked): open a UK and a US position through the service entry flow, capture the `position_data` passed to `create_position()`, and assert that `fees_paid` is present, non-None and numeric (≥ 0).
-- Unit test: a partial exit passes a numeric, non-None `fees_paid` to `update_position()`.
-- Static test: every `INSERT INTO positions` statement in `*.sql` files under `backend/` and `scripts/` names `fees_paid` in its column list, and has as many values as columns.
-
-**Acceptance Criteria**
-- [ ] Both tests fail if `'fees_paid'` is removed from `position_data` in `position_service.py`, or if its value is `None`, for either market.
-- [ ] The static test fails on a fixture or temporary copy of a seed insert that omits `fees_paid`, and passes on the current repo.
-- [ ] Runs under the stub `DATABASE_URL` convention, with no live DB access.
-
----
-
-### BLG-SPEC-183 — positions.entry_price currency: specs say native, code stores GBP
-**Priority:** P3 (Low)
-**Type:** Spec Debt / Data Model
-**Owner:** Data Model & Domain Schema Owner
-**Source:** PR #1892 agent-mediated Director of Quality review (EPIC-05, cycle `2026-09-30__release-v9.9`) — 2026-10-05
-**Effort:** S (~0.5d; includes a read-only live sample check of US rows)
-**Provisional-Target:** TBD
-
-**Problem**
-`docs/specs/data_model.md:114` ("Entry price in native currency (USD for US, GBP for UK)") and `docs/specs/data_model_positions_dictionary.md:53,58` (US `total_cost = entry_price × shares / fx_rate + fees_paid`) describe `positions.entry_price` as native currency. The application stores `entry_price_gbp` (`backend/services/position_service.py:845,882`) and the native price in `fill_price`. Readers work around this by using `fill_price` for US (`backend/services/portfolio_service.py:141`). DS-23 (`data_model.md:2536`), added in PR #1892, asserts that `entry_price` is GBP. The canonical model now contradicts itself, and the dictionary's US derivation formula is wrong for application-created rows. The fee reconstruction guidance in DS-23 and any future analytics built from the Fields table can therefore be wrong by a factor of the FX rate on US positions. The chart seed adds a third convention: UK prices in pence (`seed_chart_test_data.sql:45`).
-
-**Scope**
-- Confirm the stored convention with a read-only sample of live US rows (`entry_price` vs `fill_price / fx_rate`).
-- Correct `data_model.md:114` and the dictionary's `entry_price`/`total_cost` rows (or file a code defect if native was the intended convention), and align the DS-23 reconstruction note.
-- Note the pence convention in the chart seed, or normalise it.
-
-**Acceptance Criteria**
-- [ ] `data_model.md`, `data_model_positions_dictionary.md` and DS-23 state one consistent `entry_price` currency that matches `create_position()`'s input.
-- [ ] The dictionary's US `total_cost` derivation matches `position_service.py`'s computation.
-- [ ] The decision (doc fix vs code fix) is recorded with Data Model & Domain Schema Owner sign-off.
 
 ---
 
@@ -3708,105 +3281,6 @@ v9.9 made stop recalculation time observable, but no metric reports how stale op
 
 ---
 
-### BLG-SEC-41 — Audit trail for strategy-parameter changes in Settings
-**Priority:** P3 (Low)
-**Type:** Security / Integrity
-**Owner:** Cybersecurity & Trust Lead
-**Source:** `IDEA-cybersecurity-20261006-01` (`IW-20261006-01`), roadmap rebalance `2026-10-06__scheduled`
-**Effort:** S (~1 day)
-**Provisional-Target:** TBD
-
-**Problem**
-Settings writes overwrite ATR multipliers and hold days in place. They drive the on-load stop recompute and §7.3's ratchet makes the effect permanent, but nothing records who changed what and when.
-
-**Scope**
-- Append a change-log row (field, old, new, timestamp, request source) on every settings write; show the last change on the Settings page.
-
-**Acceptance Criteria**
-- [ ] Every settings write produces a log row (test).
-
----
-
-### BLG-SEC-42 — Re-assess the bundled `REACT_APP_API_KEY` against its actual write scope
-**Priority:** P3 (Low)
-**Type:** Security / Credential Policy
-**Owner:** Cybersecurity & Trust Lead; Product Owner (accept-risk)
-**Source:** `IDEA-cybersecurity-20261006-02` (`IW-20261006-01`), roadmap rebalance `2026-10-06__scheduled`
-**Effort:** S (~0.5 day)
-**Provisional-Target:** TBD
-
-**Problem**
-`docs/operations/credential_policy.md:34` classes the frontend key, which is embedded in the JS bundle, as 'low-sensitivity'. The same key authorises settings writes, position entry/exit and `GET /positions/analyze` (which writes stops).
-
-**Scope**
-- Re-rate the key; either scope a narrower frontend key or record an explicit Product Owner accept-risk.
-
-**Acceptance Criteria**
-- [ ] `credential_policy.md` classification states the key's write scope and the decision taken.
-
----
-
-### BLG-GOV-369 — Strategy-copy conformance: frontend constants module, lint for UI text restating §5–§11, and a named owner
-**Priority:** P3 (Low)
-**Type:** Governance Process / Strategy Conformance
-**Owner:** Head of Specs Team; Frontend Specifications & UX Documentation Owner; Director of HR (charter update)
-**Source:** `IDEA-head-of-specs-20261006-02`, `IDEA-base44-frontend-20261006-02`, `IDEA-director-of-hr-20261006-02` (consolidated, `IW-20261006-01`), roadmap rebalance `2026-10-06__scheduled`
-**Effort:** S (~1-1.5 days)
-**Provisional-Target:** TBD
-
-**Problem**
-Strategy numbers and formulas are literals in several pages (`TradeEntry.js`, `Settings.js`, `Positions.js`, `SignalContextPanel.js`) and have drifted apart; four UI texts contradicting §5–§11 were found by chance in one idea window. No role charter owns this check.
-
-**Scope**
-- `src/constants/strategy.js` mirroring §11, used by those pages.
-- A script listing `src/` strings with ATR multiples, grace lengths or stop formulas that differ from §5–§11 (CI warning).
-- Add the duty to the Frontend Specifications & UX Documentation Owner charter.
-
-**Acceptance Criteria**
-- [ ] No strategy-number literals outside the constants module.
-- [ ] Lint runs in CI and reports zero contradictions after `BLG-FE-195`/`196`/`197` ship.
-- [ ] Charter updated.
-
----
-
-### BLG-GOV-371 — Inventory the scheduled GitHub workflows: owner, cron, tables written, monthly minutes
-**Priority:** P3 (Low)
-**Type:** Operations / Governance
-**Owner:** Infrastructure & Operations Owner; FinOps & Resource Architect
-**Source:** `IDEA-finops-20261006-02`, `IDEA-infra-ops-20261006-02` (consolidated, `IW-20261006-01`), roadmap rebalance `2026-10-06__scheduled`
-**Effort:** S (~1 day)
-**Provisional-Target:** TBD
-
-**Problem**
-20 workflows run on a schedule and nothing lists what each writes or costs. Two of them (`daily-snapshot.yml`, `nightly-stop-update.yml`) both write stops with different parameter sources; this was found only by reading code.
-
-**Scope**
-- One table in `docs/ops/` (owner, cron, tables written, minutes/month); reviewed at each `run audit`.
-
-**Acceptance Criteria**
-- [ ] All scheduled workflows listed with a 'writes' column.
-
----
-
-### BLG-GOV-372 — Add a split-credit secondary tally to `compute_role_share_history.py`
-**Priority:** P3 (Low)
-**Type:** Governance Process / Workforce Metrics
-**Owner:** Director of HR; PMO Lead
-**Source:** `IDEA-director-of-hr-20261006-01` (`IW-20261006-01`, refines `BLG-GOV-353` and the deferred Owner-field canonicalisation patch), roadmap rebalance `2026-10-06__scheduled`
-**Effort:** S (~0.5 day)
-**Provisional-Target:** TBD
-
-**Problem**
-At v9.9 all 35 stories had compound Owner strings, so the raw tally that §7.2 reads names only compound buckets and cannot show whether one role carries the load.
-
-**Scope**
-- Secondary output splitting each compound story's credit equally across its named roles; `role_share_history.md` gains a split-credit column; raw tally stays primary.
-
-**Acceptance Criteria**
-- [ ] Script emits both tallies; tests cover compound strings (extends `BLG-QA-212`).
-
----
-
 ### BLG-GOV-373 — Known-false-positive allow-list for `scan_backlog_gate_conditions.py`
 **Priority:** P3 (Low)
 **Type:** Governance Tooling
@@ -3867,26 +3341,6 @@ Monthly P&L cannot show realised P&L by stop exit, risk-off exit and discretiona
 
 ---
 
-### BLG-FE-200 — Reports and Notifications pages fail WCAG colour contrast in the light theme
-**Priority:** P3 (Low)
-**Type:** Frontend / Accessibility
-**Owner:** Head of UX & Design; Frontend Specifications & UX Documentation Owner
-**Source:** ST-19 (BLG-QA-195), EPIC-04, cycle `2026-10-06__release-v9.10` — first axe scan of these pages in both themes, 2026-10-06
-**Effort:** M (~2-3 days)
-**Provisional-Target:** TBD
-
-**Problem**
-The axe-core scan added by ST-19 finds serious `color-contrast` violations on the Reports page and on the Notification Preferences and History pages in the **light** theme only. The dark theme passes. Reports' Monthly tab (restated month expanded) has 25 nodes, and its Tax Year tab has 14. The pages hard-code dark-theme classes (`bg-slate-800/50` cards, `text-white`, `text-slate-200`, `text-emerald-400` / `text-rose-400`) with no light variant, so text lands at contrast ratios of 1.1–3.4:1. Notification History has 2 nodes: the active tab link (`text-cyan-400` on `#f1f5f9`) and the type-filter value (`text-white`). Notification Preferences has 3: the same tab link and two `text-white` section headings. `docs/frontend/design_system.md` (line 200) says light mode is not implemented and defines no light-mode tokens. ST-19's AC requires fixes to use existing tokens, so these could not be fixed in-story.
-
-**Scope**
-- Decide whether light mode is a supported theme (the Layout toggle exists). If it is, add light-mode colour tokens to `design_system.md`.
-- Apply them to Reports (Monthly, Tax Year) and Notification Preferences and History, and remove the `color-contrast` entries from the light-theme `KNOWN_VIOLATIONS` baseline in `tests/e2e/accessibility-axe-scan.spec.js` in the same commit.
-
-**Acceptance Criteria**
-- [ ] The light-theme Reports and Notifications axe scans pass with no `color-contrast` baseline entry
-
----
-
 ### BLG-GOV-376 — Update strategy_rules.md §13.3 now that the Gap Risk Flag's weekend-hold trigger is removed
 **Priority:** P3 (Low)
 **Type:** Governance Process / Strategy Text Alignment
@@ -3909,92 +3363,6 @@ ST-14 removed the Gap Risk Flag's standalone `weekend_hold` trigger, and ST-13 r
 
 ---
 
-### BLG-FE-201 — Settings helper text for the fixed strategy parameters contradicts §6 and §7.2
-**Priority:** P3 (Low)
-**Type:** Frontend / UX Copy
-**Owner:** Frontend Specifications & UX Documentation Owner; Head of UX & Design
-**Source:** ST-01/ST-02/ST-04 (EPIC-01, cycle `2026-10-06__release-v9.10`) — agent-mediated Product Owner review of the EPIC-01 PR — 2026-10-06
-**Effort:** XS (<0.5 day)
-**Provisional-Target:** TBD
-
-**Problem**
-The read-only Strategy Parameters on Settings keep their old helper text. The ST-01 decision record (§2.2) said to keep it, but the text is wrong:
-- "Days before stop can trail": during grace there is no active stop.
-- "e.g., 5 = Entry − 5×ATR": the losing stop is current price − 5×ATR, per §7.2 and the ST-03 contract correction.
-- "e.g., 2 = High − 2×ATR": the code uses current price.
-- The "e.g." framing no longer fits fixed values.
-
-**Scope**
-- Replace the four helper lines with §6/§7.2-accurate text. Update `settings.md` §1 and the Playwright text assertions.
-
-**Acceptance Criteria**
-- [ ] Each helper line matches `strategy_rules.md` §6/§7.2 wording; covered by Playwright (wording-only, FI-P3-02 may apply)
-
----
-
-### BLG-FE-202 — Positions with no ATR available are never shown to the user
-**Priority:** P3 (Low)
-**Type:** Frontend / Backend / Transparency
-**Owner:** Frontend Specifications & UX Documentation Owner; Head of Engineering
-**Source:** ST-01/ST-02/ST-04 (EPIC-01, cycle `2026-10-06__release-v9.10`) — agent-mediated Product Owner review of the EPIC-01 PR — 2026-10-06 (ST-02 AC 2 met only in the analyze response)
-**Effort:** S (~1 day)
-**Provisional-Target:** TBD
-
-**Problem**
-ST-02 keeps the stored stop when no ATR is available and sets `atr_unavailable: true`, but only on the `GET /positions/analyze` response. Nothing stores it, `GET /positions` does not return it, and no `src/` code reads it. When the nightly job hits the same case, it skips the position ("ATR unavailable") and raises no flag. The user cannot see that a position's stop is frozen for lack of ATR.
-
-**Scope**
-- Expose an ATR-unavailable indicator on `GET /positions`, stored or derived, and show it in the Positions stop cell (ties in with ST-06's provenance line).
-
-**Acceptance Criteria**
-- [ ] A position whose last recompute had no ATR shows a visible indicator on Positions (Playwright). Contract and OpenAPI updated in the same commit.
-
----
-
-### BLG-BE-146 — Add an ATR preview so Trade Entry can show the stop, risk and size before save
-**Priority:** P3 (Low)
-**Type:** Backend / Frontend — Trade Entry
-**Owner:** Head of Engineering; Frontend Specifications & UX Documentation Owner; API Contracts & Documentation Owner
-**Source:** Agent-mediated pre-PR review of EPIC-02 (Director of Quality + Product Owner roles), cycle `2026-10-06__release-v9.10`, finding on ST-07 (BLG-FE-197) — 2026-10-07
-**Effort:** S (~1 day)
-**Provisional-Target:** TBD
-
-**Problem**
-Since ST-07, Trade Entry shows only the stop the backend will store: entry − 5× ATR. When the ATR field is blank, the backend fetches ATR only at save. Until then the Initial Stop, Risk (to stop) and the Position Sizing widget all show "Calculated on save" or an empty state. A user who does not know the ticker's ATR can no longer size a position before submitting it. Previously they could type a stop. No endpoint exposes the `calculate_atr()` value that `add_position()` uses.
-
-**Scope**
-- A read-only endpoint (e.g. `GET /market/atr/{ticker}?market=`) returning the 14-day ATR from the same `calculate_atr()` path `add_position()` uses, with a `null` result when unavailable. Contract, `openapi.yaml`, `backend/routers/test.py` and SystemStatus count updated per CLAUDE.md §2.
-- Trade Entry calls it once the ticker and market are known and the ATR field is blank, and uses the result for the system stop, risk and sizing preview, labelled as fetched. A typed ATR still takes precedence.
-
-**Acceptance Criteria**
-- With a ticker and entry price entered and ATR blank, Trade Entry shows a numeric system stop, risk and suggested shares before save (Playwright, mocked endpoint)
-- The stop shown before save equals the `initial_stop` returned by `POST /portfolio/position` for the same inputs (backend test)
-- When the endpoint returns no ATR, the existing "Calculated on save" states remain
-
----
-
-### BLG-FE-203 — Show the currency unit on Trade Entry's ATR field and reject implausible typed ATRs
-**Priority:** P3 (Low)
-**Type:** Frontend / Backend Validation
-**Owner:** Frontend Specifications & UX Documentation Owner; Head of Engineering
-**Source:** Agent-mediated pre-PR review of EPIC-02 (Director of Quality + Product Owner roles), cycle `2026-10-06__release-v9.10`, finding on ST-07 (BLG-FE-197) — 2026-10-07
-**Effort:** S (~0.5 day)
-**Provisional-Target:** TBD
-
-**Problem**
-The ATR field ("ATR (14-day)") shows no unit, while the backend treats a typed ATR as native currency (pounds for UK, dollars for US). Since ST-07 the typed ATR alone sets the stored initial stop. A UK user who types ATR in pence, the unit UK quotes are often read in, gets a stop 100× too far below entry. It is stored with `atr_source = user` and nothing checks it.
-
-**Scope**
-- Show the market's currency symbol on the ATR field label, as the old Stop Price field did (e.g. "ATR (14-day, £)").
-- In `add_position()`, reject a typed ATR that is implausible relative to entry (e.g. ATR ≥ 20% of entry, or 5× ATR ≥ entry so the stop would be ≤ 0) with a clear 400 message. Trade Entry shows the same warning inline before submit.
-
-**Acceptance Criteria**
-- The ATR label shows £ for UK and $ for US (Playwright)
-- A typed ATR whose 5× multiple meets or exceeds the entry price is rejected by the API with a 400 and an explanatory message (backend test)
-- Trade Entry shows the warning inline and disables submit for that input (Playwright)
-
----
-
 ### BLG-QA-215 — Assert the stop-details tooltip time under a non-UTC browser timezone
 **Priority:** P3 (Low)
 **Type:** QA / Test Automation
@@ -4011,76 +3379,6 @@ The per-row "How this stop was set" tooltip formats `stop_calculated_at` in the 
 
 **Acceptance Criteria**
 - New SC-SCP case asserts "Last recalculated 5 Oct 2026, 22:15 — nightly update" for a `21:15+00:00` input under Europe/London, passing in CI
-
----
-
-### BLG-OPS-181 — Find out why a staging-deploy.yml hook deploy of a governance-only main commit never went live
-**Priority:** P3 (Low)
-**Type:** Operations / Infrastructure
-**Owner:** Infrastructure & Operations Owner
-**Source:** Sprint Execution, ST-18 / EPIC-04, cycle `2026-10-06__release-v9.10` — 2026-10-07
-**Effort:** XS (<1h)
-**Provisional-Target:** TBD
-
-**Problem**
-`staging-deploy.yml` run 37600608347 (`workflow_dispatch`, `main` at `1639c956`, a commit touching only `claude/`) got HTTP 200 and deploy `dep-db310hp42hec7387gh90` from the Render deploy hook. Staging stayed on `ef4088b4` for the whole 480s wait, and the job failed. A manual "Deploy latest commit" from the Render dashboard then went live on `1639c956`. The cause is unconfirmed: a dashboard-only Build Filter skipping hook deploys, a failed build, or a slow build. If hook deploys are silently skipped, `workflow_dispatch` of `staging-deploy.yml` can't be used to bring staging level with `main`.
-
-**Scope**
-- Check `dep-db310hp42hec7387gh90`'s final state and the staging backend's Settings → Build Filters in the Render dashboard.
-- If a filter skips hook deploys, either document it in `docs/ops/staging_deploy_notes.md` or change the filter.
-
-**Acceptance Criteria**
-- The cause is recorded against this item
-- If it is a filter: the staging deploy notes say whether a `workflow_dispatch` deploy of a non-code commit is expected to go live
-
-**Notes**
-- **Cause found (ST-29, EPIC-04, v9.12, 2026-10-15, Render dashboard read by the user, acting for the Infrastructure & Operations Owner; DEL-20261015-02):** not a Build Filter (none set) and not a failed build (none). Two configuration faults: (1) `RENDER_STAGING_DEPLOY_HOOK` holds the **staging frontend's** deploy hook, not the backend's. Today's hook call (07:39:19 UTC, `dep-db8869u89jmc73cjn4n0`) appears only as a frontend deploy at that second. `wait_for_staging_deploy_live.py` polls the **backend**, which the hook never deploys, so every `staging-deploy.yml` run has timed out since 2026-09-03 (last success run 33769711448). With Render auto-deploy off (correct for the hook approach), the staging backend moved only by manual deploy: `90099bec` went live on 2026-10-13 09:11 UTC from a manual deploy. (2) The staging frontend's branch was `exec/2026-09-09__release-v9.3/EPIC-02`, not `main`, so each hook deploy rebuilt that branch's tip, `76283f43` (2026-09-10). The user is resetting it to `main` (2026-10-15). `dep-db310hp42hec7387gh90` (this item's 2026-10-07 case) fits the same cause: a frontend deploy while the backend was watched. A `workflow_dispatch` deploy of a non-code commit is therefore not blocked by any filter; it failed for the same reason as every other run. Fix filed as BLG-OPS-189.
-- **Second finding (ST-29, 2026-10-15):** after both staging services were deployed to `efdd9494` (Render API drift check: both up to date), `staging-smoke-test.yml` still read `deployed_commit_sha = 90099bec` from `STAGING_API_URL` (runs 38714787907, 38715664252). None of the three Render services (staging frontend, staging backend, production backend) was on `90099bec`, and the staging backend had no manual `RENDER_GIT_COMMIT`. The user overwrote `STAGING_API_URL` with the staging backend's URL, and run 38721722314 passed. The secret had pointed at another host answering as `90099bec`, so earlier staging smoke results may not have tested `srv-d6rtdg94tr6s73ce2j6g`. Which host that was is not identified. BLG-OPS-189's scope covers checking it.
-
----
-
-### BLG-OPS-182 — Live-fire the stale-staging check from main against a deliberate staging/main divergence
-**Priority:** P3 (Low)
-**Type:** Operations / Infrastructure
-**Owner:** Infrastructure & Operations Owner
-**Source:** Sprint Execution, ST-18 / EPIC-04, cycle `2026-10-06__release-v9.10` (agent-mediated Director of Quality review; ST-18 AC 1 narrowed) — 2026-10-07
-**Effort:** XS (<1h)
-**Provisional-Target:** v9.11
-**Depends on:** EPIC-04 (v9.10) merged to `main`
-
-**Problem**
-ST-18's failing run (37598457966) was dispatched on the EPIC-04 branch: staging `ef4088b4` lacked the branch's deploy-path commit `d6644b25`. It proved the check and the Telegram alert fire on a real divergence, but not a deliberately introduced staging/`main` divergence as AC 1 worded it. The new comparison target in `scripts/staging_smoke_test.py` (latest staging-deploying commit, ancestor-aware) has not yet run from `main`'s copy of the workflow.
-
-**Scope**
-- After EPIC-04 merges, deliberately put staging behind `main` on a deploy-path commit (e.g. hold a code commit's deploy, or redeploy an older commit from the Render dashboard).
-- Run `staging-smoke-test.yml` on `main`, then restore staging and run it again.
-
-**Acceptance Criteria**
-- A failing `main` run URL showing `STALE STAGING DEPLOY` for the deliberate divergence, with the Telegram alert received
-- A passing `main` run URL after staging is restored
-
----
-
-### BLG-OPS-183 — Make the daily AI cost alert count Claude calls, not only Gemini calls
-**Priority:** P2 (Medium)
-**Type:** Operations / Infrastructure
-**Owner:** Infrastructure & Operations Owner
-**Source:** Sprint Execution, ST-25 / EPIC-04, cycle `2026-10-08__release-v9.11` (agent-mediated Cybersecurity & Trust Lead review of the ST-25 AI endpoint security checklist) — 2026-10-09
-**Effort:** S (~0.5 day)
-**Provisional-Target:** v9.12
-
-**Problem**
-`POST /ai/check-daily-cost` → `check_and_alert_daily_cost()` → `database.get_daily_ai_cost()` sums `estimated_cost_usd` from `gemini_audit_log` only. `gemini_audit_log` is written only by `gemini_service._log_audit`, for plan and thesis generation. Every Claude-calling feature (daily briefing, chat, journal summary, post-trade debrief, and ST-25's monthly P&L narrative) logs to `claude_audit_log`, so its spend is never counted, and the $1.00 `AI_DAILY_COST_THRESHOLD` alert can never fire for it. `docs/ops/ai_monthly_pnl_narrative_cost_estimate_2026-10-08.md` (ST-23) relies on this alert ("fires well before this"), as did the first draft of ST-25's security checklist. The per-endpoint anomaly check (`check-endpoint-anomalies`, reading `claude_audit_log`) and `GET /ai/monthly-cost-by-feature` do cover Claude spend.
-
-**Scope**
-- Make `get_daily_ai_cost()` sum today's `claude_audit_log.cost_usd` only, and alert on that. `gemini_service._log_audit` writes both tables on every plan and thesis call, so summing both would count those calls twice; `claude_audit_log` already holds every call.
-- Confirm which scheduler calls `POST /ai/check-daily-cost` and that it runs.
-- Add a correction note to the ST-23 cost estimate's runaway row.
-
-**Acceptance Criteria**
-- A pytest showing a `claude_audit_log` row counted in the daily total, a plan-generation call counted once, and the alert firing when Claude spend passes the threshold
-- The scheduler that calls `POST /ai/check-daily-cost` named in `ai_endpoints.md`, with its last successful run recorded
-- The ST-23 cost estimate notes the corrected coverage
 
 ---
 
@@ -4183,27 +3481,6 @@ The §13 review limits the model's output to one observational sentence, which m
 
 **Acceptance Criteria**
 - A recorded decision (keep or amend), with rationale, from the AI Compliance Governance Officer and Product Owner
-
----
-
-### BLG-FE-207 — Grace Period panel: link each row to its position, and align text and date format with the spec
-**Priority:** P3 (Low)
-**Type:** Frontend / UX
-**Owner:** Head of UX & Design; Product Owner
-**Source:** Idea intake `IW-20261008-01` — consolidates `IDEA-product-owner-20261008-02` and `IDEA-head-of-ux-20261008-02` (same component, `GracePeriodPanel.js`); roadmap rebalance `2026-10-08__scheduled` STEP 4 (Backlog, ungated)
-**Effort:** S (~0.5 day)
-**Provisional-Target:** TBD
-
-**Problem**
-The Risk Dashboard's Grace Period panel (`src/components/risk/GracePeriodPanel.js`) lists grace positions with no route to the position, where notes, thesis and exit detail live. Its text has also drifted from `risk_dashboard.md` §5.2: the heading is "Grace Period" (spec: "Grace Period Positions"), the badge reads "N positions" (spec: "N positions in grace period"), and entry dates render `dd MMM yy` (spec: DD MMM YYYY).
-
-**Scope**
-- Make each grace row a link to the Positions page for that position.
-- Align the heading, badge text and entry-date format with §5.2, or amend §5.2 if the Product Owner prefers the shipped text.
-
-**Acceptance Criteria**
-- [ ] Playwright: clicking a grace row opens the Positions page showing that position
-- [ ] Heading, badge and date format match `risk_dashboard.md` §5.2 (wording-only ACs may be code-reviewed per FI-P3-02)
 
 ---
 
@@ -4338,28 +3615,6 @@ ST-14's suppression predicate (`Positions.js` ~592, `PositionCard.js` ~97) reads
 
 ---
 
-### BLG-BE-159 — Trail Stop "apply" calls an endpoint that does not exist, and add-position ignores a supplied stop
-**Priority:** P2 (Medium)
-**Type:** Backend Engineering / Correctness
-**Owner:** Head of Engineering; Strategy Rules & System Intent Owner
-**Source:** ST-30 (BLG-SPEC-173), EPIC-05, cycle `2026-10-08__release-v9.11` — found while tracing which code path writes each `positions` field — 2026-10-08
-**Effort:** S (~0.5-1d)
-**Provisional-Target:** TBD
-
-**Problem**
-1. The Positions page's Trail Stop modal applies a recommended stop with `PATCH /positions/{id}` and body `{stop_price}` (`src/pages/Positions.js`, `updateStopMutation`). No such route exists: the backend has only `PATCH /positions/{id}/note`, `/tags` and `/mark-reviewed`, and no contract or `openapi.yaml` entry documents it. Every apply therefore fails and shows "Failed to update stop". `GET /positions/{id}/stop-trail` and the trail-stop recommendation log assume the user can act on the recommendation.
-2. `POST /portfolio/position` accepts `stop_price` (`AddPositionRequest`), and `add_position()`'s docstring says it is used "if provided", but the code always stores `entry − 5 × ATR` as `initial_stop`, so a supplied stop is silently dropped.
-
-**Scope**
-- Decide (Strategy Rules & System Intent Owner) whether a user may set or raise a stop manually, given `strategy_rules.md` §7.3's ratchet. Then either add the route (contract, `openapi.yaml`, `routers/test.py`, ratchet-only validation) or remove the apply action from the modal.
-- Either honour `stop_price` at entry (with validation) or remove it from the request model and docstring
-
-**Acceptance Criteria**
-- The Trail Stop modal's action succeeds against a real route, or the action is gone; a Playwright test covers whichever ships
-- A supplied entry stop is either stored or rejected with a clear error, never silently ignored
-
----
-
 ### BLG-SPEC-190 — Positions data dictionary states `entry_price` is native currency; the code stores GBP
 **Priority:** P3 (Low)
 **Type:** Spec Debt
@@ -4445,27 +3700,6 @@ The axe scan added by ST-37 finds serious `color-contrast` violations on the Rep
 
 ---
 
-### BLG-FE-210 — White text on amber-600 badges fails WCAG contrast outside Replay
-**Priority:** P3 (Low)
-**Type:** Frontend / Accessibility
-**Owner:** Frontend Specifications & UX Documentation Owner
-**Source:** ST-37 (BLG-QA-196), EPIC-06, cycle `2026-10-08__release-v9.11` — out-of-scope finding while fixing the Replay Risk-Off badge — 2026-10-08
-**Effort:** XS (<1h plus test updates)
-**Provisional-Target:** TBD
-
-**Problem**
-White 12px bold text on `bg-amber-600` measures 3.18:1 (axe `color-contrast`, serious; 4.5:1 needed). ST-37 fixed the Replay page's Risk-Off badge by moving it to `bg-amber-700` (the `BLG-FE-165` precedent). The same class pair remains in pages the axe scan does not cover: `StrategyBenchmark.js` (Risk-Off badges, lines 26–27), `AiChatWidget.js` (line 70) and `AiDailyBriefing.js` (`MONITOR` action, line 14).
-
-**Scope**
-- Move those badges to `bg-amber-700` (or the design-system token for an amber badge with white text)
-- Update any Playwright assertion that names `bg-amber-600` for them
-
-**Acceptance Criteria**
-- No `bg-amber-600 text-white` pair remains in `src/`
-- The affected specs pass; an axe scan of each changed component reports no `color-contrast` finding on the badge
-
----
-
 ### BLG-GOV-383 — Split `release_planning_prompt.md` so it fits a single read
 **Priority:** P3 (Low)
 **Type:** Governance Process — Prompt Size Budget
@@ -4485,48 +3719,6 @@ White 12px bold text on `bg-amber-600` measures 3.18:1 (axe `color-contrast`, se
 - The core file is at or under 68,500 bytes (`wc -c`)
 - No mandatory STEP is moved out of the core (every STEP heading in the pre-split file is still in the core or reached by an explicit pointer from it)
 - `governance-drift` reports all versions in sync
-
----
-
-### BLG-BE-157 — Batch signal sizing gives a zero-ATR signal a 5% allocation
-**Priority:** P2 (Medium)
-**Type:** Backend Engineering / Correctness
-**Owner:** Head of Engineering; Strategy Rules & System Intent Owner
-**Source:** ST-39 (BLG-QA-199), EPIC-06, cycle `2026-10-08__release-v9.11` — found while writing mutation-testing cases for `size_batch_inv_vol` — 2026-10-08
-**Effort:** S (~0.5d)
-**Provisional-Target:** TBD
-
-**Problem**
-`sizing_service.size_batch_inv_vol()` (used by `signal_service.py` for every new signal's suggested shares) gives a signal with `atr_value` 0 or missing an inverse-ATR weight of 0, then clamps every weight to the 5% minimum, so that signal still receives 5% of available cash (before renormalisation) and a non-zero share count. Its own docstring says "Signals with atr_value == 0 get 0 shares". Reproduced 2026-10-08: signals with ATR 1, 0 and 2 and £10,000 cash gave the zero-ATR signal a weight of 0.111 and 22 shares. `tests/test_signal_sizing.py::test_zero_atr_produces_zero_shares` passes only because it uses a batch where every ATR is 0, which takes the early-exit branch; the mixed case is untested.
-
-**Scope**
-- Exclude zero/missing-ATR signals from the clamp and renormalisation, and give them 0 shares with a reason
-- Add a mixed-batch test (some zero-ATR, some valid)
-
-**Acceptance Criteria**
-- In a mixed batch, a zero-ATR signal gets `suggested_shares` 0, `inv_vol_weight` 0 and a reason, and the other signals' weights sum to 1.0
-- The existing all-zero and capping tests still pass
-
----
-
-### BLG-BE-158 — Batch signal sizing never adds entry fees to total cost
-**Priority:** P2 (Medium)
-**Type:** Backend Engineering / Correctness
-**Owner:** Head of Engineering; Financial Reporting & Records Owner
-**Source:** ST-39 (BLG-QA-199), EPIC-06, cycle `2026-10-08__release-v9.11` — found while writing mutation-testing cases for `size_batch_inv_vol` — 2026-10-08
-**Effort:** XS (<1h plus tests)
-**Provisional-Target:** TBD
-
-**Problem**
-`sizing_service.size_batch_inv_vol()` reads the fee as `calculate_uk_entry_fees(...).get('total_fee', 0)` (and the same for US), but both fee functions return the key `total`, not `total_fee`. The fee is therefore always 0, and every signal's `total_cost` is the gross cost only: no stamp duty or commission for UK, no FX fee for US. Reproduced 2026-10-08: a UK signal of 44 shares at £100 showed `total_cost` 4,400.00 with no fees. Signal costs on the Signals page are understated, and cash checks based on them are optimistic. Note also that `gross_cost` uses `current_price` (native) for US signals while `allocation_gbp` is GBP; confirm the intended currency when fixing.
-
-**Scope**
-- Read the fee functions' `total` key, and confirm the currency basis of `gross_cost` / `total_cost` for US signals
-- Add tests asserting UK and US fees are included
-
-**Acceptance Criteria**
-- A UK batch signal's `total_cost` equals gross cost plus stamp duty and commission; a US signal's includes the FX fee in the documented currency
-- `signal_endpoints.md` states the currency of `total_cost`
 
 ---
 
@@ -4574,25 +3766,6 @@ White 12px bold text on `bg-amber-600` measures 3.18:1 (axe `color-contrast`, se
 
 ---
 
-### BLG-BE-160 — Rounding the stored stop to 2 dp can lower it, breaching the §7.3 ratchet
-**Priority:** P3 (Low)
-**Type:** Backend Engineering / Correctness
-**Owner:** Head of Engineering; Strategy Rules & System Intent Owner
-**Source:** ST-16 (BLG-BE-143), EPIC-03, cycle `2026-10-08__release-v9.11` — raised in the Strategy Rules & System Intent Owner's ruling on `ESC-EXEC-20261008-01` (2026-10-09)
-**Effort:** XS (<0.5d)
-**Provisional-Target:** TBD
-
-**Problem**
-`add_position()` stores `initial_stop` and `current_stop` unrounded in `DECIMAL(10,4)` columns. The post-grace stop writes, `analyze_positions()` (`'current_stop': round(trailing_stop_native, 2)`) and `run_nightly_trailing_stop_update()` (`round(new_stop_native, 2)`), round to 2 dp after the `max()`. When `calculate_trailing_stop` keeps the stored stop (no rise), rounding can lower it by up to 0.005. `strategy_rules.md` §7.3 says stops "must never move downwards" and that the rule is absolute. ST-16 removed the in-grace write, so this now affects only positions past grace.
-
-**Scope**
-- Write the stop at the column's own precision (4 dp), or round only a genuinely new stop and never round below the stored value
-
-**Acceptance Criteria**
-- A test with a 4-dp stored stop that the recompute keeps shows the written value is never below the stored one, on both the on-load and nightly paths
-
----
-
 ### BLG-BE-161 — Standalone `position_manager.py` still ratchets the stop during grace
 **Priority:** P3 (Low)
 **Type:** Backend Engineering / Strategy alignment
@@ -4609,30 +3782,6 @@ White 12px bold text on `bg-amber-600` measures 3.18:1 (axe `color-contrast`, se
 
 **Acceptance Criteria**
 - `position_manager.py` matches §6.3, or `strategy_rules.md` names it as an exception with the Owner's sign-off
-
----
-
-### BLG-BE-162 — Journal summary rejects every request: trade_ids typed as integers but trade IDs are UUIDs
-**Priority:** P1 (High)
-**Type:** Backend Engineering / Correctness
-**Owner:** Backend Engineering Patterns Owner; AI Compliance & Governance Officer
-**Source:** ST-02 staging run (EPIC-01, cycle `2026-10-08__release-v9.11`), staging at `82633f5` — 2026-10-09
-**Effort:** S (~0.5d)
-**Provisional-Target:** v9.12
-
-**Problem**
-`POST /ai/journal-summary` declares `trade_ids: list[int]` (`backend/routers/ai.py`), but `trade_history.id` is a UUID, so every request from Trade History fails with HTTP 422 `int_parsing` before reaching the AI. The int assumption also runs through `fetch_journal_notes()` and the `ai_audit_log.trade_ids INTEGER[]` column, and `ai_endpoints.md` documents "array of integers". The Playwright spec (`trade-history-ai-journal-summary.spec.js`) mocks the API, so CI never exercised the real request shape.
-
-**Scope**
-- Type `trade_ids` as UUID strings in the request model, `fetch_journal_notes()` and `log_ai_run()`
-- Migrate `ai_audit_log.trade_ids` from `INTEGER[]` to `UUID[]` via the existing `ensure_*()` pattern, and record the migration in `data_model.md`
-- Update `ai_endpoints.md` and `openapi.yaml` to "array of string (UUID)"
-- Add a backend test that posts real UUID trade IDs, and check the `GET /ai/journal-summary/history?trade_id=` filter
-
-**Acceptance Criteria**
-- A journal summary requested from Trade History on staging returns generated content
-- The run is written to `ai_audit_log` with the UUID trade IDs
-- A backend test posting UUID `trade_ids` passes; integer IDs are rejected with 422
 
 ---
 
@@ -4658,28 +3807,6 @@ White 12px bold text on `bg-amber-600` measures 3.18:1 (axe `color-contrast`, se
 - `POST /trade-plans/{plan_id}/generate-thesis` returns 404, and the OpenAPI drift gate passes
 - "Improve with AI" and the template "Generate thesis" button behave as before (Playwright `trade-plan.spec.js` passes)
 - One thesis-generation contract file remains, documenting `generate-plan`
-
----
-
-### BLG-AI-10 — Check that briefing and chat responses citing a stop include its recalculation time
-**Priority:** P3 (Low)
-**Type:** AI Compliance / Correctness
-**Owner:** AI Compliance & Governance Officer; Backend Engineering Patterns Owner
-**Source:** EPIC-01 DoQ consolidation (ST-08, BLG-BE-141), cycle `2026-10-08__release-v9.11` — 2026-10-12
-**Effort:** S (~0.5d)
-**Provisional-Target:** v9.12
-
-**Problem**
-ST-08 puts `stop_calculated_at` in the briefing and chat context and tells the model to state it whenever it cites a stop, but nothing checks the response: a reply quoting a stop without its recalculation time is returned as-is. The AC asked for responses to include the time; only the prompt side is enforced.
-
-**Scope**
-- Add a post-generation check (like the debrief numeric check) that flags a briefing/chat response citing a stop price without a recalculation time
-- Decide the action on failure (append the time from context, or log and count it), with AI Compliance & Governance Officer sign-off
-- Add the check to the boundary-sample audit so sampled outputs are scored on it
-
-**Acceptance Criteria**
-- A fixture response citing a stop without its time is caught; one with the time passes
-- The chosen failure action is applied and tested for both briefing and chat
 
 ---
 
@@ -4887,91 +4014,6 @@ ST-10's `StaleMarker` (`PositionRiskTable.js`) and the Dashboard Card 2 notice e
 
 ---
 
-### BLG-AI-11 — Daily briefing can recommend ENTER for a ticker that does not exist
-**Priority:** P2 (Medium)
-**Type:** AI Compliance / Correctness
-**Owner:** AI Compliance & Governance Officer; Backend Engineering Patterns Owner
-**Source:** ST-02 staging run (2026-10-09) and PR #1968 agent-mediated review (EPIC-01, cycle `2026-10-08__release-v9.11`) — Product Owner note 3 — 2026-10-12
-**Effort:** S (~0.5d)
-**Provisional-Target:** v9.12
-
-**Problem**
-On staging, with only held tickers among the top signals, the daily briefing returned an ENTER action for the placeholder ticker `NEW_SIGNAL`. Nothing in the prompt forbids invented tickers and nothing checks the returned actions against the signals the model was given. An advisory feature recommending a ticker that does not exist undermines trust.
-
-**Scope**
-- Validate each returned action's ticker against held positions and the provided signals; drop or relabel any that match neither, and log it
-- Tell the prompt that actions may only name tickers from the context, and bump `BRIEFING_PROMPT_VERSION`
-
-**Acceptance Criteria**
-- A fixture briefing response with an ENTER for an unknown ticker is not returned as an action, and the drop is logged
-- Golden-fixture tests pass with the recorded prompt-version bump
-
----
-
-### BLG-AI-12 — Daily briefing reads starting cash as a target cash level
-**Priority:** P3 (Low)
-**Type:** AI Compliance / Correctness
-**Owner:** AI Compliance & Governance Officer; Backend Engineering Patterns Owner
-**Source:** ST-02 staging run (2026-10-09) and PR #1968 agent-mediated review (EPIC-01, cycle `2026-10-08__release-v9.11`) — Product Owner note 3 — 2026-10-12
-**Effort:** XS (<1h plus tests)
-**Provisional-Target:** v9.12
-
-**Problem**
-The briefing context renders cash as "cash £X of £{initial_cash}". On staging `initial_cash` is 0, and the model reported "£15,006 against a £0 target cash level", treating starting capital as a target. The wording invites that reading whatever the value.
-
-**Scope**
-- Label the figures explicitly (e.g. "available cash £X; starting capital £Y"), and omit starting capital when it is 0 or missing
-- Bump `BRIEFING_PROMPT_VERSION` and update the golden fixture
-
-**Acceptance Criteria**
-- The briefing context no longer uses "of £{initial_cash}", and omits starting capital when it is 0
-- Golden-fixture tests pass with the recorded prompt-version bump
-
----
-
-### BLG-AI-13 — Monthly P&L narrative: widen the instrument-directive scan to inflected and indirect wording
-**Priority:** P3 (Low)
-**Type:** AI Compliance / Correctness
-**Owner:** AI Compliance & Governance Officer; Backend Engineering Patterns Owner
-**Source:** Sprint Execution, ST-25 / EPIC-04, cycle `2026-10-08__release-v9.11` (agent-mediated AI Compliance & Governance Officer review of the new narrative endpoint) — 2026-10-12
-**Effort:** XS (<1h plus tests)
-**Provisional-Target:** v9.12
-
-**Problem**
-`_INSTRUMENT_DIRECTIVE_RE` in `backend/services/monthly_pnl_narrative_service.py` matches only base verb forms followed directly by a pronoun or an upper-case ticker. Inflected or indirect wording passes the D4 scan: "Consider buying MSFT" and "sell the position" both return no finding. Risk is low because the narrative's inputs carry no tickers (§13 Condition 2) and the prescriptive scan still runs, but a model-invented ticker would be caught only if its wording matched.
-
-**Scope**
-- Extend the pattern to inflected forms (buying/selling/shorting, "consider/should buy", "sell the position/holding") without false positives on past-tense reporting ("you sold 9 trades")
-- Add B-MPN-04 cases for the new forms and negative cases for past-tense reporting
-
-**Acceptance Criteria**
-- "Consider buying MSFT" and "sell the position" are reported as `instrument_directive`
-- The representative output and the code-written fallback still scan clean
-- `tests/test_monthly_pnl_narrative.py` passes
-
----
-
-### BLG-OPS-184 — Stop the post-grace stop-health monitor alerting on the morning a position's grace ends
-**Priority:** P2 (Medium)
-**Type:** Operations / Monitoring
-**Owner:** Infrastructure & Operations Owner; Backend Engineering Patterns Owner
-**Source:** PR #1970 agent-mediated review (EPIC-03, cycle `2026-10-08__release-v9.11`), Director of Quality finding 1: ST-18 × ST-16 interaction — 2026-10-12
-**Effort:** S (~0.5d)
-**Provisional-Target:** v9.12
-
-**Problem**
-ST-16 stops the nightly job (and the on-load path) stamping `active_atr_multiplier` while a position is in grace. The first post-grace stamp happens only at the next nightly run (22:30 UTC, weekdays) or an on-load `/positions/analyze` call, and after ST-19 no frontend screen calls `/positions/analyze`. ST-18's `scripts/check_post_grace_stop_health.py` runs at 07:30 UTC on weekdays and after every deploy, and flags any post-grace position whose `active_atr_multiplier` is null. So every position raises a false Telegram alert on the first check after its day 10: the same morning on a weekday, or Monday morning when day 10 falls on a weekend. Repeated false alerts teach the user to ignore the monitor.
-
-**Scope**
-- Choose one fix and record it in the script docstring: (a) the monitor treats a null multiplier as pending, not a violation, while `stop_calculated_at` is null and the position is no more than 3 calendar days past grace (covers weekends and one missed nightly); or (b) stamp the multiplier at the grace boundary, e.g. the nightly job processes positions with `holding_days == GRACE_PERIOD_DAYS - 1` so that the stop is in place at day 10. Option (b) changes live stop behaviour and needs a Strategy Rules & System Intent Owner ruling first
-- Add a fixture for a position on day 10 with a null multiplier and no `stop_calculated_at`
-
-**Acceptance Criteria**
-- `tests/test_post_grace_stop_health.py` passes the new day-10 fixture and still fails `non_s11_multiplier.json` and `missing_stop.json`
-- A post-grace position whose multiplier stays null beyond the tolerance window is still reported as a violation (test)
-
----
-
 ### BLG-BE-170 — Price-alert duplicate fallback returns 500 when the threshold has more than 4 decimal places
 **Priority:** P3 (Low)
 **Type:** Backend Engineering / Correctness
@@ -5012,28 +4054,6 @@ ST-16 stops the nightly job (and the on-load path) stamping `active_atr_multipli
 **Acceptance Criteria**
 - The rule for behavioural effective dates is written in `strategy_version_registry.py`'s docstring
 - v1.15's window and the `strategy_version_at_entry` stamps agree for every trade entered from 9 October 2026 onwards (query output or test)
-
----
-
-### BLG-OPS-185 — Add requirements-dev.txt to the local backend setup instructions
-**Priority:** P3 (Low)
-**Type:** Operations / Infrastructure
-**Owner:** Infrastructure & Operations Owner
-**Source:** PR #1971 review (EPIC-06, ST-43 / BLG-OPS-178), v9.11 — 2026-10-12
-**Effort:** XS (<1h)
-**Provisional-Target:** v9.12
-
-**Problem**
-ST-43 moved `pytest`, `pytest-cov` and `hypothesis` out of `backend/requirements.txt` into `backend/requirements-dev.txt` and updated every CI test workflow, but the local setup instructions were not updated. `README.md`'s backend setup still runs only `.venv/bin/pip install -r requirements.txt`, so a fresh venv built from it cannot run the CLAUDE.md §9 command `backend/.venv/bin/python3 -m pytest` (No module named pytest). Existing venvs still have pytest installed, which hides the gap. `docs/ops/quarterly_dependency_upgrade_cadence_policy.md`'s verification step has the same stale install command.
-
-**Scope**
-- `README.md` backend setup: install `-r requirements.txt -r requirements-dev.txt`
-- `docs/ops/quarterly_dependency_upgrade_cadence_policy.md` verification step: same change
-- Mention `requirements-dev.txt` in CLAUDE.md §9's description of the venv, if the Head of Specs Team agrees (governance file)
-
-**Acceptance Criteria**
-- Following `README.md` from a fresh clone yields a venv in which `backend/.venv/bin/python3 -m pytest --collect-only -q` succeeds
-- `grep -rn "pip install -r .*requirements.txt" README.md docs/ops/quarterly_dependency_upgrade_cadence_policy.md` shows `requirements-dev.txt` alongside every test-running install
 
 ---
 
@@ -5289,51 +4309,6 @@ ST-31 corrected every TradePlan `status` enum in `openapi.yaml` to DS-21's 7 val
 **Acceptance Criteria**
 - `python3 scripts/check_contract_example_freshness.py` exits 0 on `main`
 - Each correction is recorded in the changed contract's changelog
-
----
-
-### BLG-GOV-385 — Check backlog item integrity after every cross-EPIC merge resolution
-**Priority:** P2 (Medium)
-**Type:** Governance Process / Tooling
-**Owner:** PMO Lead; Head of Specs Team
-**Source:** EPIC-05, cycle `2026-10-08__release-v9.11` — PR #1973 agent-mediated review — 2026-10-12
-**Effort:** S (~0.5d)
-**Provisional-Target:** TBD
-
-**Problem**
-The CLAUDE.md §8 merge of `main` (EPIC-06, PR #1971) into EPIC-05 (`3237cb5e`) reported no conflict on `backlog.md` but spliced two items: BLG-SPEC-190's header kept only its first 5 metadata lines, and its Problem/Scope/AC landed inside BLG-BE-157, which then carried two bodies. Both items end with the same `**Effort:** S (~0.5d)` / `**Provisional-Target:** TBD` lines, so git's line merge treated them as shared context. Merging PR #1973 unrepaired would have put the corrupted P2 item on `main`. No step in §8 or STEP 4 step 3c checks item structure after a clean auto-merge.
-
-**Scope**
-- Add `scripts/check_backlog_item_integrity.py`: every `### BLG-…` item has exactly one `**Problem**`, `**Scope**` and `**Acceptance Criteria**` block and the required metadata fields, and no ID repeats
-- Run it in CI on PRs touching `backlog.md`, and add it to CLAUDE.md §8 step 2b (or a new step) as a mandatory post-merge check
-- Optionally compare each item's text against both merge parents and flag any item that matches neither
-
-**Acceptance Criteria**
-- The script fails on `3237cb5e`'s `backlog.md` and passes on the repaired file
-- The check is wired into CI and named in CLAUDE.md §8
-
----
-
-### BLG-GOV-386 — Report gated items whose gating backlog item has shipped, and read that list in Release Planning §1.3a
-**Priority:** P2 (Medium)
-**Type:** Governance Tooling
-**Owner:** Head of Specs Team; Head of Engineering
-**Source:** Post-ship closure `2026-10-08__release-v9.11`, closure_record.md §6 row 7 (v9.11 Release Planning Friction Item 1) — 2026-10-12
-**Effort:** S (~0.5–1d)
-**Provisional-Target:** v9.12
-
-**Problem**
-`scripts/scan_backlog_gate_conditions.py` reports date-lapsed gates and resolution banners, but a gate whose condition is "`BLG-X` shipped/complete" stays gated after `BLG-X` ships, because nothing re-reads it. At v9.11 Release Planning a manual check found 26 gated items whose gate names only items no longer in the active backlog. `BLG-OPS-179` was genuinely ready and `BLG-FE-195` had already been delivered. Ready work is silently excluded from the ungated pool.
-
-**Scope**
-- Add a "gating item shipped — verify" output list to `scan_backlog_gate_conditions.py`: gated items whose `Gate criteria` names one or more `BLG-*` IDs, all of which are absent from the active `backlog.md` (archived or bannered ✅ COMPLETE). Mirror the format of the date-lapsed list.
-- Add unit tests covering: all named items shipped (listed), one still open (not listed), no `BLG-*` reference (not listed).
-- Update `release_planning_prompt.md` §1.3a so the new list is read in the same read-before-fixing-the-pool step as the date-lapsed list (CLAUDE.md §6 checklist applies).
-
-**Acceptance Criteria**
-- Running the script against a fixture where a gate names only an archived item lists that item under the new heading.
-- An item whose gate names at least one still-active item is not listed.
-- `release_planning_prompt.md` §1.3a names the new list, with the version bump, OPERATIONAL_GUIDE.md §14 and `prompt_change_log.md` updates in the same commit.
 
 ---
 

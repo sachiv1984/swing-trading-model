@@ -3,11 +3,86 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-10-12 (post-ship closure 2026-10-08__release-v9.11 — v9.11 entry added); prior — 2026-10-07 (post-ship closure 2026-10-06__release-v9.10 — v9.10 entry added); prior — 2026-10-06 (post-ship closure 2026-09-30__release-v9.9 — v9.9 entry added); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-15 (post-ship closure 2026-10-12__release-v9.12 — v9.12 entry added); prior — 2026-10-12 (post-ship closure 2026-10-08__release-v9.11 — v9.11 entry added); prior — 2026-10-07 (post-ship closure 2026-10-06__release-v9.10 — v9.10 entry added); prior history retained — see prior entries in version control
 
 > This document is a human-maintained record of what was shipped in each product version and when. It records delivery milestones and notable decisions. It is not an immutable system record — for point-in-time system status reports, see `docs/operations/status_reports/`.
 
 > **Authoring convention — `User Impact` column (added v8.8, ST-13, BLG-FE-161):** each `### Changes shipped` table row carries a `User Impact` cell in addition to `Description`. Write `User Impact` only for EPICs that changed something a user can see, click, or notice the effect of — one to two sentences, present tense (or implied second person), no ticket IDs, no implementation nouns (endpoint/table/component names). Leave it `—` for backend/infra/governance/test-coverage rows with no user-facing effect. `Description` is retained unchanged as the engineering record — it is not replaced. `GET /changelog/latest` sources the in-app "What's New" panel from `User Impact` only; rows with a blank/`—` cell are excluded from that feed entirely (`docs/specs/api_contracts/changelog_endpoints.md`).
+
+---
+
+## v9.12 — Journal Summary Fix, Stop & Sizing Correctness, Trade Entry Preview — 2026-10-15
+Cycle: 2026-10-12__release-v9.12
+Verified: Verified_with_deviations
+Verification report: claude/cycles/2026-10-12__release-v9.12/verification_report.md
+
+### Changes shipped
+| EPIC | Description | User Impact | Spec sections updated |
+|------|-------------|-------------|----------------------|
+| EPIC-01 | AI Feature Correctness & Cost Visibility — the journal summary accepts UUID trade IDs end to end, with `ai_audit_log.trade_ids` migrated to `UUID[]` on staging and production (BLG-BE-162, P1; DS-31); briefing actions naming a ticker outside the context are dropped; the briefing context labels available cash and starting capital separately; briefing and chat responses that cite a stop are checked for its recalculation time; the monthly P&L narrative's instrument-directive scan widened to inflected and indirect wording; and the daily AI cost alert now counts Claude calls, including the journal summary's | The AI journal summary on Trade History works again for all your trades. Daily briefings no longer suggest actions for tickers you do not hold or watch, and they distinguish the cash you have available from your starting capital. | `docs/specs/data_model.md#DS-31`; `docs/specs/api_contracts/ai_endpoints.md#POST /ai/journal-summary`, `#POST /ai/daily-briefing`, `#POST /ai/chat`, `#POST /ai/check-daily-cost`; `docs/specs/qa/ai_s13_boundary_test_suite.md#Scenario B-MPN-04` |
+| EPIC-02 | Stop, Sizing & Position Correctness — batch sizing gives zero-ATR signals no allocation and includes entry fees in total cost; the §4.1.5 FX and §4.1.6 insufficient-cash results asserted in CI; Trail Stop made read-only against a real route and a supplied entry stop honoured; 2-dp rounding can no longer lower a stored stop; US positions with a NULL `fill_price` recompute without error; the Risk page's LOSING/PROFITABLE status uses native P&L; gap risk's "next trading session" uses the US exchange calendar; a frozen-stop indicator when ATR is missing (DS-32); and first-time Settings saves no longer write NULL strategy columns, with §11 values snapshotted on trade plans | Signal sizes now leave out signals with no volatility data and include fees in the total cost. Positions show when a stop is frozen because volatility data is missing, the Risk page's winning/losing status matches the position badge, and the gap-risk date skips US market holidays. | `docs/specs/api_contracts/signal_endpoints.md#Field notes`; `docs/specs/frontend/pages/positions.md#Trail Stop Action`, `#Frozen Stop Indicator`; `docs/specs/api_contracts/portfolio_endpoints.md#POST /portfolio/position`, `#GET /portfolio`; `docs/specs/api_contracts/position_endpoints.md#GET /positions`, `#GET /positions/{position_id}/gap-risk`; `docs/specs/frontend/pages/risk_dashboard.md#6.3 State Badges`; `docs/specs/data_model.md#DS-32`; `docs/specs/api_contracts/settings_endpoints.md#POST /settings`; `docs/specs/data_model_positions_dictionary.md#5. Key Derivation Rules` |
+| EPIC-03 | Trade Entry, Settings & Accessibility — a `GET /market/atr/{ticker}` preview so Trade Entry shows the stop, risk and size before save; the ATR field shows its currency unit and rejects implausible typed values; Playwright coverage of the §4.1.7 sizing-widget behaviours; corrected Settings helper text for the fixed strategy parameters; a frontend strategy-constants module with a CI copy lint and a named owner; Grace Period rows link to their position; and WCAG contrast fixes for Reports, Notifications and white-on-amber badges in the light theme | Trade Entry now shows the initial stop, the amount at risk and the position size before you save. The volatility field shows its currency and catches values that look wrong, each Grace Period row opens its position, and Reports, Notifications and amber badges are easier to read in the light theme. | `docs/specs/api_contracts/market_endpoints.md#GET /market/atr/{ticker}`; `docs/specs/frontend/components/position_form.md#ATR (14-day)`, `#Validation Errors`; `docs/specs/frontend/pages/settings.md#Settings Groups & Fields`; `docs/specs/frontend/pages/risk_dashboard.md#5.2 Display`; `docs/specs/frontend/pages/positions.md#Position Deep Link`, `#Gap Risk Badge`; `docs/specs/frontend/design_system.md#Light-Theme Colour Tokens` |
+| EPIC-04 | Security, Operations & Platform — the post-grace stop-health monitor no longer alerts on the morning grace ends; an audit trail for strategy-parameter changes with a Settings "last change" line (DS-33, RLS enabled); the bundled `REACT_APP_API_KEY` re-assessed (Product Owner accept-risk, `ESC-EXEC-20261015-01`); 7 of 8 in-range backend dependency bumps plus the frontend bumps (`numpy` held, `BLG-TECH-24`); the staging-deploy governance-commit miss traced to the staging frontend's branch setting (`BLG-OPS-189`); the stale-staging check live-fired from `main`; `requirements-dev.txt` in the local setup instructions; and an inventory of scheduled GitHub workflows | Settings now shows when a strategy parameter was last changed. | `docs/specs/data_model.md#DS-33`; `docs/specs/api_contracts/settings_endpoints.md#GET /settings`; `docs/specs/frontend/pages/settings.md#Last Change Line`; `docs/operations/credential_policy.md`; `docs/security/dependency_update_review_2026-10-06.md`; `docs/ops/staging_deploy_notes.md`; `docs/ops/scheduled_workflows_inventory.md` |
+| EPIC-05 | Spec & Data Model Hygiene — `DELETE /trade-plans/{id}`'s success envelope reconciled with conventions §12; the drift detector's live-vs-doc findings triaged; the Gap Risk Badge's real data source named; `positions.stop_price` replaced with `current_stop` in the action-rate spec; the Gap Risk Flag §13 decision record refreshed to `strategy_rules.md` v1.14; and `positions.entry_price`'s currency settled in the specs | — | `docs/specs/api_contracts/conventions.md#12.1 Named exceptions`; `docs/specs/api_contracts/trade_plan_endpoints.md#DELETE /trade-plans/{id}`; `docs/specs/data_model.md#Drift Detector Triage`, `#2. Positions Table`; `docs/specs/frontend/pages/positions.md#Gap Risk Badge`; `docs/specs/metrics_definitions.md#Trailing Stop Action Rate`; `docs/product/decisions/decisions--2026-09-30__release-v9.9--gap-risk-flag-section13-review.md` |
+| EPIC-06 | Governance Tooling & Test Integrity — a backlog item integrity check after cross-EPIC merges (CLAUDE.md §8 step 2c, CI workflow); a "gating item shipped" list read in Release Planning §1.3a; the §9.2 execution-state read-back scripted; one Skill-Silo aggregation method named; a ruling and cap on reduced-roster idea-intake windows; a split-credit role-share tally with unit tests; `utils.*` test stubs scoped so reordered runs pass; the `positions.fees_paid` NOT NULL invariant guarded; and a leaked sandbox path removed from `backend/setup.cfg` | — | `CLAUDE.md#8. Cross-EPIC Merge Conflict Resolution`; `claude/system/release_planning_prompt.md#1.3a`; `claude/system/execution_prompt.md#9.2`; `claude/system/roadmap_prompt.md#7.1 Skill-Silo Alert`; `claude/system/idea_intake_prompt.md#4.1 Reduced-Roster Windows`; `claude/roadmap/role_share_history.md`; `docs/specs/data_model.md#DS-23` |
+
+### Deviations accepted
+None. No P0, P1 or P2 deviations.
+
+3 minor deviations (QA-evidence-classified, P3-default per `verification_report.md §2.1`) — see `verification_report.md §4`: ST-06 AC 2's live cost-alert run closed post-merge with no remainder (`ESC-EXEC-20261013-02`); ST-28 AC 1 narrowed to 7 of 8 backend bumps with `numpy` held at 2.4.6 (`BLG-TECH-24`); ST-34 AC 1 partly met, 3 of 11 finding-5 names unrecoverable (`BLG-QA-223`). No canonical-spec `DEV-*` records were filed.
+
+### Tech backlog items shipped
+- [ST-01] [U] Journal summary accepts UUID trade IDs end to end; `ai_audit_log.trade_ids` migrated to `UUID[]` (BLG-BE-162)
+- [ST-02] [U] Briefing actions naming a ticker outside the context are dropped (BLG-AI-11)
+- [ST-03] [U] Briefing context labels available cash and starting capital separately (BLG-AI-12)
+- [ST-04] [D] Briefing and chat responses citing a stop checked for its recalculation time (BLG-AI-10)
+- [ST-05] [D] Monthly P&L narrative's instrument-directive scan widened to inflected and indirect wording (BLG-AI-13)
+- [ST-06] [D] Daily AI cost alert counts Claude calls (BLG-OPS-183)
+- [ST-07] [U] Zero-ATR signals get no allocation in batch sizing (BLG-BE-157)
+- [ST-08] [U] Entry fees included in batch signal total cost (BLG-BE-158)
+- [ST-09] [D] §4.1.5 FX defaulting/echo and §4.1.6 insufficient-cash sizing asserted in CI (BLG-QA-205)
+- [ST-10] [U] Trail Stop action read-only against a real route; a supplied entry stop is honoured (BLG-BE-159)
+- [ST-11] [D] 2-dp rounding can no longer lower a stored stop (BLG-BE-160)
+- [ST-12] [D] US positions with a NULL `fill_price` recompute without error; US parity cases added (BLG-BE-145)
+- [ST-13] [U] Risk page LOSING/PROFITABLE decided on native P&L, matching the lifecycle badge (BLG-BE-149)
+- [ST-14] [U] Gap-risk "next trading session" uses the US exchange calendar (BLG-BE-148)
+- [ST-15] [U] Frozen-stop indicator when a position's stop is frozen for lack of ATR (BLG-FE-202)
+- [ST-16] [D] First-time Settings saves keep strategy columns; §11 values snapshotted on trade plans (BLG-BE-144)
+- [ST-17] [U] ATR preview endpoint; Trade Entry shows stop, risk and size before save (BLG-BE-146)
+- [ST-18] [U] Trade Entry's ATR field shows its currency unit and rejects implausible values (BLG-FE-203)
+- [ST-19] [D] Playwright coverage of the §4.1.7 sizing-widget behaviours (BLG-QA-206)
+- [ST-20] [U] Settings helper text corrected for the fixed strategy parameters (BLG-FE-201)
+- [ST-21] [D] Strategy-copy conformance: frontend constants module, CI copy lint and named owner (BLG-GOV-369)
+- [ST-22] [U] Grace Period rows link to their position; panel text and dates aligned with the spec (BLG-FE-207)
+- [ST-23] [U] Reports and Notifications pass WCAG colour contrast in the light theme (BLG-FE-200)
+- [ST-24] [U] White-on-amber-600 badges moved to a passing contrast outside Replay (BLG-FE-210)
+- [ST-25] [D] Post-grace stop-health monitor no longer alerts on the morning grace ends (BLG-OPS-184)
+- [ST-26] [U] Audit trail for strategy-parameter changes, with a Settings "last change" line (BLG-SEC-41)
+- [ST-27] [D] Bundled `REACT_APP_API_KEY` re-assessed against its write scope (BLG-SEC-42)
+- [ST-28] [D] In-range dependency bumps from the October 2026 quarterly review (BLG-TECH-22)
+- [ST-29] [D] Staging-deploy governance-commit miss traced to the staging frontend's branch setting (BLG-OPS-181)
+- [ST-30] [D] Stale-staging check live-fired from `main` (BLG-OPS-182)
+- [ST-31] [D] `requirements-dev.txt` added to the local backend setup instructions (BLG-OPS-185)
+- [ST-32] [D] Inventory of scheduled GitHub workflows (BLG-GOV-371)
+- [ST-33] [D] `DELETE /trade-plans/{id}` success envelope reconciled with conventions §12 (BLG-SPEC-176)
+- [ST-34] [D] Drift detector live-vs-doc findings triaged (BLG-SPEC-178)
+- [ST-35] [D] Gap Risk Badge's real data source named in `positions.md` (BLG-SPEC-179)
+- [ST-36] [D] `positions.stop_price` replaced with `current_stop` in the action-rate spec and docstring (BLG-SPEC-181)
+- [ST-37] [D] Gap Risk Flag §13 decision record refreshed to `strategy_rules.md` v1.14 (BLG-SPEC-182)
+- [ST-38] [D] `positions.entry_price`'s currency settled in the specs (BLG-SPEC-183)
+- [ST-39] [G] Backlog item integrity check after every cross-EPIC merge resolution (BLG-GOV-385)
+- [ST-40] [G] Gated items whose gating item has shipped reported and read in Release Planning §1.3a (BLG-GOV-386)
+- [ST-41] [G] `execution_state.json` §9.2 read-back check scripted (BLG-GOV-363)
+- [ST-42] [G] One Skill-Silo aggregation method named in `roadmap_prompt.md` §7.1 (BLG-GOV-367)
+- [ST-43] [G] Reduced-roster idea-intake windows ruled on and capped (BLG-GOV-364)
+- [ST-44] [G] Split-credit secondary tally in `compute_role_share_history.py` (BLG-GOV-372)
+- [ST-45] [D] Unit tests for `compute_role_share_history.py` and a STEP 7.1 pin (BLG-QA-212)
+- [ST-46] [D] `utils.*` test stubs scoped so a reordered run passes (BLG-QA-209)
+- [ST-47] [D] `positions.fees_paid` NOT NULL invariant guarded in the entry flow and SQL seeds (BLG-QA-213)
+- [ST-48] [D] Leaked sandbox `/tmp` path removed from `backend/setup.cfg` (BLG-QA-202)
+
+Sign-off: Product Owner — 2026-10-15 (agent-mediated, §5.3)
+QA sign-off: Director of Quality — 2026-10-15 (agent-mediated, §5.3)
 
 ---
 
