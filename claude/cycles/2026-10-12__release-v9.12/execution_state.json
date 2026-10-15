@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-13T07:21:28Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-15T07:16:14Z",
+  "last_updated_utc": "2026-10-15T07:48:30Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-06",
@@ -539,10 +539,10 @@
       "merge_commit": "61317385"
     },
     "EPIC-03": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-10-12__release-v9.12/EPIC-03",
       "pr_number": 2026,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-10-12__release-v9.12/qa_evidence_EPIC-03.md",
       "test_scenarios": [
@@ -571,7 +571,7 @@
         "ST-17": {
           "title": "Add an ATR preview endpoint so Trade Entry shows the stop, risk and size before save",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1990,
           "branch": "exec/2026-10-12__release-v9.12/EPIC-03",
@@ -598,7 +598,7 @@
         "ST-18": {
           "title": "Show the currency unit on Trade Entry's ATR field and reject implausible typed ATRs",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1991,
           "branch": "exec/2026-10-12__release-v9.12/EPIC-03",
@@ -625,7 +625,7 @@
         "ST-19": {
           "title": "Cover the §4.1.7 sizing-widget behaviours with Playwright",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1992,
           "branch": "exec/2026-10-12__release-v9.12/EPIC-03",
@@ -650,7 +650,7 @@
         "ST-20": {
           "title": "Correct the Settings helper text for the fixed strategy parameters",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1993,
           "branch": "exec/2026-10-12__release-v9.12/EPIC-03",
@@ -674,7 +674,7 @@
         "ST-21": {
           "title": "Strategy-copy conformance: a frontend constants module, a CI lint for UI text restating §5–§11, and a named owner",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "Head of Specs Team; Frontend Specifications & UX Documentation Owner; Director of HR",
           "github_issue": 1994,
           "branch": "exec/2026-10-12__release-v9.12/EPIC-03",
@@ -709,7 +709,7 @@
         "ST-22": {
           "title": "Link each Grace Period row to its position, and align the panel's text and date format with the spec",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1995,
           "branch": "exec/2026-10-12__release-v9.12/EPIC-03",
@@ -734,7 +734,7 @@
         "ST-23": {
           "title": "Make the Reports and Notifications pages pass WCAG colour contrast in the light theme",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1996,
           "branch": "exec/2026-10-12__release-v9.12/EPIC-03",
@@ -759,7 +759,7 @@
         "ST-24": {
           "title": "Move white-on-amber-600 badges to a passing contrast outside Replay",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1997,
           "branch": "exec/2026-10-12__release-v9.12/EPIC-03",
@@ -1487,10 +1487,10 @@
       "EPIC-01",
       "EPIC-06",
       "EPIC-05",
-      "EPIC-02"
+      "EPIC-02",
+      "EPIC-03"
     ],
     "epics_pending": [
-      "EPIC-03",
       "EPIC-04"
     ],
     "all_merged": false
@@ -1508,7 +1508,8 @@
     "2026-10-13 EPIC-06 PR #2023 merged by the human Product Owner at 2026-10-13T14:44:32Z (merge commit ccce1fc3). STEP 4 orphaned post-merge commit check: none. STEP 4 step 3c sibling sync: no other EPIC branch exists yet (EPIC-02..05 not started), so nothing to propagate.",
     "2026-10-13 EPIC-05 PR #2024 merged by the human Product Owner at 2026-10-13T17:15:51Z (merge commit a35aaffe). STEP 4 orphaned post-merge commit check: none (origin/main..origin/exec/2026-10-12__release-v9.12/EPIC-05 is empty). STEP 4 step 3c sibling sync: no pending EPIC branch exists yet (EPIC-02..04 not started), so nothing to propagate.",
     "2026-10-13 EPIC-02 PR #2025 opened. Agent-mediated Director of Quality and Product Owner review (user-directed) posted as one PR comment, labelled agent-mediated (OA-6): both Approved with Comments, 0 blocking. Fix-now in 1b4068ff; backlog BLG-BE-176..179, BLG-FE-218/219, BLG-QA-224 in c005a5dc. Merge left to the human.",
-    "2026-10-13 EPIC-02 PR #2025 merged by the human user at 2026-10-13T19:04:30Z (merge commit 61317385). STEP 4 orphaned post-merge commit check: 1 found, aab25c49 (PO acceptance and DoQ human confirmation in qa_evidence_EPIC-02.md), pushed after the merged head 73465b4c. Reconciled onto main by a clean cherry-pick. STEP 4 step 3c sibling sync: no pending EPIC branch exists yet (EPIC-03/EPIC-04 not started), so nothing to propagate."
+    "2026-10-13 EPIC-02 PR #2025 merged by the human user at 2026-10-13T19:04:30Z (merge commit 61317385). STEP 4 orphaned post-merge commit check: 1 found, aab25c49 (PO acceptance and DoQ human confirmation in qa_evidence_EPIC-02.md), pushed after the merged head 73465b4c. Reconciled onto main by a clean cherry-pick. STEP 4 step 3c sibling sync: no pending EPIC branch exists yet (EPIC-03/EPIC-04 not started), so nothing to propagate.",
+    "2026-10-15 EPIC-03 PR #2026 merged by the human user at 2026-10-15T07:39:08Z (merge commit 1200e1b0); execution_state.json still read pr_status: open on resume and was synced. STEP 4 orphaned post-merge commit check: 2 found, f1c0adb7 (human Director of Quality and Director of HR confirmations: qa_evidence_EPIC-03.md, execution_escalations.md) and 370b73d3 (human Product Owner acceptance: qa_evidence_EPIC-03.md), both pushed after the merged head 9c2a90ab. Reconciled onto main by a clean cherry-pick. STEP 4 step 3c sibling sync: no EPIC-04 branch exists yet (not started), so nothing to propagate."
   ],
   "sealed": false,
   "sealed_utc": null
