@@ -4,8 +4,8 @@
   "backlog_slice_source": "claude/cycles/2026-10-12__release-v9.12/stage4_backlog_slice.md (read with claude/cycles/2026-10-12__release-v9.12/stage4_backlog_slice_addendum.md)",
   "invoked_utc": "2026-10-13T07:21:28Z",
   "mode": "standard",
-  "status": "Running",
-  "last_updated_utc": "2026-10-15T13:49:22Z",
+  "status": "Sealed",
+  "last_updated_utc": "2026-10-15T13:55:29Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-06",
@@ -785,7 +785,9 @@
           "notes": "0128205a. AC1: no bg-amber-600 text-white pair (nor any bg-amber-600) in src/ outside Replay; the addendum's three extra sites moved too (TradePlans research_pending, TradePlan Abandon amber-700/hover amber-800, Gap Risk #B45309 in Positions.js and PositionCard.js); strategy-benchmark.spec.js line-267 assertion updated in the same commit. AC2: affected specs pass; a scoped axe color-contrast scan of each changed badge reports nothing (SC-SB-04a, SC-GR-02, SC-GVP-04, SC-TPS-05, SC-E03-15, SC-AC-06, SC-PD-01). Finding: the Abandon button never rendered its custom fill (Button bg-primary wins; cn() has no tailwind-merge) - fixed here with !bg-amber-700, systemic cause filed BLG-FE-221. Design gate teal observation filed BLG-FE-220. Deviation check: none. Playwright CI run 38483457947 success on head 0128205a."
         }
       },
-      "pr_url": "https://github.com/sachiv1984/swing-trading-model/pull/2026"
+      "pr_url": "https://github.com/sachiv1984/swing-trading-model/pull/2026",
+      "merged_utc": "2026-10-15T07:39:08Z",
+      "merge_commit": "1200e1b0"
     },
     "EPIC-04": {
       "status": "merged",
@@ -803,7 +805,7 @@
         "ST-25": {
           "title": "Stop the post-grace stop-health monitor alerting on the morning a position's grace ends",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1998,
           "branch": "exec/2026-10-12__release-v9.12/EPIC-04",
@@ -827,7 +829,7 @@
         "ST-26": {
           "title": "Audit trail for strategy-parameter changes in Settings",
           "classification": "delegated_backend",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "Cybersecurity & Trust Lead",
           "github_issue": 1999,
           "branch": "exec/2026-10-12__release-v9.12/EPIC-04",
@@ -860,7 +862,7 @@
         "ST-27": {
           "title": "Re-assess the bundled `REACT_APP_API_KEY` against its actual write scope",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "Cybersecurity & Trust Lead; Product Owner",
           "github_issue": 2000,
           "branch": "exec/2026-10-12__release-v9.12/EPIC-04",
@@ -890,7 +892,7 @@
         "ST-28": {
           "title": "Apply the in-range dependency patch/minor bumps from the October 2026 quarterly review",
           "classification": "delegated_qa",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "Infrastructure & Operations Owner; Head of Engineering",
           "github_issue": 2001,
           "branch": "exec/2026-10-12__release-v9.12/EPIC-04",
@@ -921,7 +923,7 @@
         "ST-29": {
           "title": "Find out why a staging-deploy.yml hook deploy of a governance-only commit never went live",
           "classification": "delegated_backend",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "Infrastructure & Operations Owner",
           "github_issue": 2002,
           "branch": "exec/2026-10-12__release-v9.12/EPIC-04",
@@ -952,7 +954,7 @@
         "ST-30": {
           "title": "Live-fire the stale-staging check from main against a deliberate divergence",
           "classification": "delegated_backend",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "Infrastructure & Operations Owner",
           "github_issue": 2003,
           "branch": "exec/2026-10-12__release-v9.12/EPIC-04",
@@ -982,7 +984,7 @@
         "ST-31": {
           "title": "Add requirements-dev.txt to the local backend setup instructions",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2004,
           "branch": "exec/2026-10-12__release-v9.12/EPIC-04",
@@ -1006,7 +1008,7 @@
         "ST-32": {
           "title": "Inventory the scheduled GitHub workflows: owner, cron, tables written, monthly minutes",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2005,
           "branch": "exec/2026-10-12__release-v9.12/EPIC-04",
@@ -1035,7 +1037,9 @@
         "reference": "qa_evidence_EPIC-04.md",
         "retries": 0
       },
-      "pr_url": "https://github.com/sachiv1984/swing-trading-model/pull/2027"
+      "pr_url": "https://github.com/sachiv1984/swing-trading-model/pull/2027",
+      "merged_utc": "2026-10-15T13:48:59Z",
+      "merge_commit": "0c1f5025"
     },
     "EPIC-05": {
       "status": "merged",
@@ -1217,7 +1221,9 @@
         "date": "2026-10-13",
         "reference": "qa_evidence_EPIC-05.md",
         "retries": 0
-      }
+      },
+      "merged_utc": "2026-10-13T17:15:51Z",
+      "merge_commit": "a35aaffe"
     },
     "EPIC-06": {
       "status": "merged",
@@ -1505,7 +1511,9 @@
         "date": "2026-10-13",
         "reference": "qa_evidence_EPIC-06.md",
         "retries": 0
-      }
+      },
+      "merged_utc": "2026-10-13T14:44:32Z",
+      "merge_commit": "ccce1fc3"
     }
   },
   "blocked_items": [],
@@ -1588,8 +1596,12 @@
     "2026-10-13 EPIC-02 PR #2025 opened. Agent-mediated Director of Quality and Product Owner review (user-directed) posted as one PR comment, labelled agent-mediated (OA-6): both Approved with Comments, 0 blocking. Fix-now in 1b4068ff; backlog BLG-BE-176..179, BLG-FE-218/219, BLG-QA-224 in c005a5dc. Merge left to the human.",
     "2026-10-13 EPIC-02 PR #2025 merged by the human user at 2026-10-13T19:04:30Z (merge commit 61317385). STEP 4 orphaned post-merge commit check: 1 found, aab25c49 (PO acceptance and DoQ human confirmation in qa_evidence_EPIC-02.md), pushed after the merged head 73465b4c. Reconciled onto main by a clean cherry-pick. STEP 4 step 3c sibling sync: no pending EPIC branch exists yet (EPIC-03/EPIC-04 not started), so nothing to propagate.",
     "2026-10-15 EPIC-03 PR #2026 merged by the human user at 2026-10-15T07:39:08Z (merge commit 1200e1b0); execution_state.json still read pr_status: open on resume and was synced. STEP 4 orphaned post-merge commit check: 2 found, f1c0adb7 (human Director of Quality and Director of HR confirmations: qa_evidence_EPIC-03.md, execution_escalations.md) and 370b73d3 (human Product Owner acceptance: qa_evidence_EPIC-03.md), both pushed after the merged head 9c2a90ab. Reconciled onto main by a clean cherry-pick. STEP 4 step 3c sibling sync: no EPIC-04 branch exists yet (not started), so nothing to propagate.",
-    "2026-10-15 EPIC-04 PR #2027 merged by the human user at 2026-10-15T13:48:59Z (merge commit 0c1f5025), after the agent-mediated DoQ sign-off (reaffirmed) and human Product Owner acceptance in-session. STEP 4 orphaned post-merge commit check: none (origin/main..EPIC-04 empty). STEP 4 step 3c sibling sync: no pending EPIC branch remains. merge_gate.all_merged = true; STEP 5 Sprint Close runs on re-invocation."
+    "2026-10-15 EPIC-04 PR #2027 merged by the human user at 2026-10-15T13:48:59Z (merge commit 0c1f5025), after the agent-mediated DoQ sign-off (reaffirmed) and human Product Owner acceptance in-session. STEP 4 orphaned post-merge commit check: none (origin/main..EPIC-04 empty). STEP 4 step 3c sibling sync: no pending EPIC branch remains. merge_gate.all_merged = true; STEP 5 Sprint Close runs on re-invocation.",
+    "2026-10-15 STEP 5 sprint close metadata corrections: EPIC-03/04/05/06 merged_utc and merge_commit backfilled from gh pr view (#2026, #2027, #2024, #2023); EPIC-04's 8 stories moved done -> merged to match the other five merged EPICs.",
+    "2026-10-15 STEP 5 orphaned post-merge commit re-check (LL-v6.8-P3-01): origin/main..origin/exec/<cycle>/EPIC-xx lists aab25c49 (EPIC-02) and f1c0adb7, 370b73d3 (EPIC-03). All three were already reconciled onto main (bfefe04c, ec8116bd), and their added lines are present on main. Nothing further to reconcile; the other four branches list nothing.",
+    "2026-10-15 STEP 5.1 checks: all 48 stories have acceptance_verified: true and deviations_filed: true; every spec_references and test_scenarios path resolves on disk (LL-v9.10-P4-01), so no path correction was needed; item count matches (48 in sprint_backlog.md, 'All 48 slice items are in scope', and 48 in execution_state.json); no EPIC branch has unpushed commits; scripts/check_execution_state_consistency.py exits 0.",
+    "2026-10-15 STEP 5.1 observation (not corrected): qa_evidence_EPIC-01.md ST-06 row's Deviations cell still describes ESC-EXEC-20261013-02 as Open and DEL-20261013-02 as In Progress, while the Result cell of the same row records both closed post-merge on 2026-10-13. The signed-off evidence file was left unedited; both records read Resolved/Unblocked in their own files and in .claude_current_state.json."
   ],
-  "sealed": false,
-  "sealed_utc": null
+  "sealed": true,
+  "sealed_utc": "2026-10-15T13:55:29Z"
 }
