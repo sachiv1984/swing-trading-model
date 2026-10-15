@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-13T07:21:28Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-15T10:58:56Z",
+  "last_updated_utc": "2026-10-15T11:09:40Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-06",
@@ -910,7 +910,7 @@
           "deviations_filed": false,
           "last_completed_substep": "3.1.C.qa_evidence",
           "sign_off_record": null,
-          "notes": "Engine commit 2909e67e2fbe7d47d1d6b8d933f09aeedb42dfd4 (2026-10-15T08:19:45Z): 8 backend + 20 frontend bumps at exact reviewed versions. Local full pytest 2668/21 skipped; 84/84 Playwright incl. focus-restoration."
+          "notes": "Engine commit 2909e67e2fbe7d47d1d6b8d933f09aeedb42dfd4 (2026-10-15T08:19:45Z): 8 backend + 20 frontend bumps at exact reviewed versions. Local full pytest 2668/21 skipped; 84/84 Playwright incl. focus-restoration. 2026-10-15 correction: numpy 2.5.3 requires Python 3.12 (backend pinned 3.11.0); Render staging build and CI Pytest failed from 2909e67e (engine had checked only Playwright CI). Reverted to numpy 2.4.6 in 4736cf27; CI Pytest run 38725094192 green. AC 1 Pass_with_deviation, BLG-TECH-24."
         },
         "ST-29": {
           "title": "Find out why a staging-deploy.yml hook deploy of a governance-only commit never went live",
