@@ -38,7 +38,7 @@
   "sprint2_gate_confirmed_utc": "2026-08-18T00:00:00Z",
   "sprint2_close_utc": "2026-08-20T11:58:57Z",
   "verification_utc": "2026-10-15T14:38:04Z",
-  "last_sync_utc": "2026-10-15T15:03:13Z",
+  "last_sync_utc": "2026-10-15T16:02:47Z",
   "blocked_sla_breached": false,
   "last_deviation_consolidation_review_utc": "2026-10-07T11:21:38Z",
   "deviation_consolidation_review_cycle_count": 2,
@@ -339,14 +339,6 @@
       "resolved_utc": "2026-10-15T09:03:12Z",
       "resolved_by": "Product Owner (human, in-session)",
       "resolution_summary": "Option (b) accept-risk. credential_policy.md v1.1 §1.1 states the key's full write scope (single API_KEY, 150 routes, 61 writes, public bundle) and the decision with review triggers (ST-27, commit 8aae01e6)."
-    },
-    "ESC-CLOSE-20261015-01": {
-      "summary": "scan_backlog_gate_conditions.py None/N/A gate handling carried 3 cycles; named vehicle BLG-GOV-373 does not cover it — decide vehicle or withdraw",
-      "owner": "Head of Specs Team",
-      "sla_due_utc": "2026-10-18T15:01:43Z",
-      "cycle": "2026-10-12__release-v9.12",
-      "disposition": "Open",
-      "blocks_execution": false
     }
   },
   "deferred_escalations": {

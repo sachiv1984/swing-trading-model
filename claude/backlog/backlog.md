@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-15 (groom backlog, post-ship closure 2026-10-12__release-v9.12 STEP 12 — 48 v9.12 shipped items archived to backlog_archive.md); prior — 2026-10-15 (post-ship closure 2026-10-12__release-v9.12 STEP 3 — 48 shipped items marked ✅ COMPLETE (pending archival at STEP 12)); prior — 2026-10-15 (session — 2 new items added from the PR #2027 review, EPIC-04, 2026-10-12__release-v9.12: BLG-BE-181, BLG-QA-226); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-15 (session — 1 new item added: BLG-GOV-390, ESC-CLOSE-20261015-01 ruling); prior — 2026-10-15 (groom backlog, post-ship closure 2026-10-12__release-v9.12 STEP 12 — 48 v9.12 shipped items archived to backlog_archive.md); prior — 2026-10-15 (post-ship closure 2026-10-12__release-v9.12 STEP 3 — 48 shipped items marked ✅ COMPLETE (pending archival at STEP 12)); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -5057,3 +5057,28 @@ Since ST-26, `GET /settings` (`backend/main.py` `get_settings_endpoint`) calls `
 
 ---
 
+### BLG-GOV-390 — Treat `Gate criteria: None`/`N/A` as ungated in scan_backlog_gate_conditions.py
+**Priority:** P2 (Medium)
+**Type:** Governance Tooling
+**Owner:** Head of Engineering; Head of Specs Team
+**Source:** `ESC-CLOSE-20261015-01` Head of Specs Team ruling, option (a), post-ship closure `2026-10-12__release-v9.12`; originally v9.10 Release Planning Friction Item 1, carried 3 cycles under `BLG-GOV-373`, which does not cover it — 2026-10-15
+**Effort:** XS (<1h, ~0.25d)
+**Provisional-Target:** v9.13
+
+**Problem**
+`GATE_CRITERIA_RE` in `scripts/scan_backlog_gate_conditions.py` captures any non-empty value, so a literal `**Gate criteria:** None` is reported as a gate condition. On 2026-10-15 this counted 17 active items as gated (`BLG-GOV-178`, `184`, `185`, `186`, `189`, `191`–`196`, `198`, `200`, `201`, `BLG-SPEC-77`, `BLG-OPS-105`, `BLG-QA-93`) and inflated the gated count to 124. Release Planning §1.3a uses this list to fix the ready pool, so these items are silently left out of every release.
+
+**Scope**
+- In `classify_item()`, treat a `Gate criteria` value of `None`, `N/A` or `-`/`—` (case-insensitive, trimmed, optional trailing period) as ungated
+- Report those items in a separate informational "explicitly ungated" count, so the change is visible in the scan output
+- Add tests covering `None`, `N/A` and a real gate
+- Confirm each of the 17 newly ungated items still deserves a ready-pool slot, and record the result in the PR (no item edits required)
+
+**Acceptance Criteria**
+- The 17 items above no longer appear in the gated list, and the gated count drops by 17
+- A real gate (for example `BLG-GOV-382`, 2027-01-03) is still reported as gated
+- New tests pass under `backend/.venv/bin/python3 -m pytest`
+
+**Notes:** `BLG-GOV-373` (known-false-positive allow-list for date-lapse matches) is a separate problem and keeps its own scope.
+
+---

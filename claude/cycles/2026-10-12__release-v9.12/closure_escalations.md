@@ -1,7 +1,7 @@
 Owner: PMO Lead
 Class: Operational Record (Class 3)
 Status: Active
-Last Updated: 2026-10-15 (ESC-CLOSE-20261015-01 raised — post-ship closure STEP 8.5, §3.7 recurrence escalation)
+Last Updated: 2026-10-15 (ESC-CLOSE-20261015-01 disposition set to Resolved — Head of Specs Team ruling, option (a), BLG-GOV-390 filed)
 Cycle: 2026-10-12__release-v9.12
 
 ---
@@ -21,7 +21,7 @@ Format per `claude/system/shared_standards.md §4`.
 | Escalated to | Head of Specs Team (with Head of Engineering, as script owner) |
 | Reason | The closure engine cannot write `scripts/` or add a non-Phase-4 backlog item. The fix needs a decision on its vehicle: (a) file a dedicated backlog item for `None`/`N/A` gate handling with a sprint target; (b) widen `BLG-GOV-373`'s scope and ACs to include it; or (c) withdraw the patch with a stated reason. |
 | Tracking | SLA 2026-10-18T15:01:43Z (72h from filing). Related: `BLG-GOV-373`, v9.11 `closure_record.md` §6 row 5. Non-blocking: the next `plan release` can proceed by reading `None`/`N/A` gates by hand. |
-| Disposition | Open |
-| Resolved by | *(complete when resolved)* |
-| Resolution | *(complete when resolved)* |
+| Disposition | Resolved — 2026-10-15T16:02:47Z |
+| Resolved by | Head of Specs Team (agent-mediated per `execution_prompt.md` §5.3, on explicit user direction 2026-10-15; role ownership checked per the CLAUDE.md §2 role-ownership rule: the escalation's owner is the Head of Specs Team) |
+| Resolution | **Option (a): dedicated backlog item `BLG-GOV-390`** (P2, Provisional-Target v9.13, owners Head of Engineering and Head of Specs Team). The defect is live: a re-run of the scan at ruling time showed 17 active items with a literal `Gate criteria: None` reported as gated (`BLG-GOV-178`–`201` series, `BLG-SPEC-77`, `BLG-OPS-105`, `BLG-QA-93`), so they are silently dropped from every Release Planning ready pool. P2 rather than P3 for that reason. Option (b), widening `BLG-GOV-373`, was rejected: that item fixes a different problem (date-lapse false positives) and merging the two would blur both ACs. Option (c), withdrawal, was rejected because the defect is still live. `BLG-GOV-373` keeps its own scope. The deferred patch now has a covering vehicle, so it leaves the closure's carried deferred-patch list. |
 | Filed | 2026-10-15T15:01:43Z |
