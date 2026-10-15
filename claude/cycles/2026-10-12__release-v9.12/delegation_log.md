@@ -92,7 +92,7 @@ Last Updated: 2026-10-13
 - **Spec reference:** `docs/specs/data_model.md#DS-33 — Add settings_change_log (v2.62, 2026-10-15)`; `docs/specs/api_contracts/settings_endpoints.md#GET /settings`; `stage4_backlog_slice.md#ST-26` AC 3
 - **Unblock criteria:** DS-33 Verification output from staging and production (8 columns as listed; indexes `idx_settings_change_log_changed_at` and `settings_change_log_pkey`), recorded in DS-33's Live Confirmation and in `qa_evidence_EPIC-04.md` under ST-26.
 - **Commit format required:** `[EPIC-04][ST-26] <description>` (DS-33 Live Confirmation) pushed to `exec/2026-10-12__release-v9.12/EPIC-04`
-- **Status:** Pending
+- **Status:** Unblocked — 2026-10-15, unblocked in-session by the user (human, acting for the Data Model & Domain Schema Owner), in the same session as the delegation. (a) Sign-off: DS-33 applied on staging, then production, each with Row Level Security enabled (no policies) after Supabase flagged the table; both Up Migrations returned "Success. No rows returned", both column verifications returned the 8 expected rows and both index checks `idx_settings_change_log_changed_at`, `settings_change_log_pkey`. Recorded in `data_model.md` DS-33 Live Confirmation; status `sign_off_cleared`. (b) Push: story commit `87dea43a30b84f39ecec663d92db22235687b825`; Live Confirmation commit `6fb36482fff03267fad035d36d51c9760217afc1`. Terminal: Unblocked (2026-10-15T08:57:10Z).
 
 ## DEL-20261015-02
 
