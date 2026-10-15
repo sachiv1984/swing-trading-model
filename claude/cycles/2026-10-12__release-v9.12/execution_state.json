@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-13T07:21:28Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-15T09:03:29Z",
+  "last_updated_utc": "2026-10-15T09:37:06Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-06",
@@ -915,26 +915,33 @@
         "ST-29": {
           "title": "Find out why a staging-deploy.yml hook deploy of a governance-only commit never went live",
           "classification": "delegated_backend",
-          "status": "blocked_backend",
+          "status": "done",
           "assigned_to": "Infrastructure & Operations Owner",
           "github_issue": 2002,
           "branch": "exec/2026-10-12__release-v9.12/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "745cc1f72b5159084c08b2b23cb423b65ec6e590",
           "delegation_record_id": "DEL-20261015-02",
           "blocked_since_utc": "2026-10-15T08:05:59Z",
           "unblock_criteria": "Cause from the Render dashboard (dep-db310hp42hec7387gh90 final state, staging Build Filters, recent deploy history), recorded as a Notes line on BLG-OPS-181; staging_deploy_notes.md updated if a Build Filter.",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-10-15T09:36:47Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/ops/staging_deploy_notes.md",
-            ".github/workflows/staging-deploy.yml"
+            ".github/workflows/staging-deploy.yml",
+            "scripts/wait_for_staging_deploy_live.py"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "New evidence: staging-deploy.yml has not succeeded since 2026-09-03 (run 33769711448); last 10 runs time out after 480s waiting for the deploy, code merges included. Staging stuck on 90099bec (EPIC-01 merge)."
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.B.unblocked",
+          "sign_off_record": {
+            "role": "Infrastructure & Operations Owner",
+            "method": "human_in_session",
+            "status": "cleared",
+            "signed_utc": "2026-10-15T09:36:47Z",
+            "notes": "Render dashboard read in-session by the user. DEL-20261015-02."
+          },
+          "notes": "New evidence: staging-deploy.yml has not succeeded since 2026-09-03 (run 33769711448); last 10 runs time out after 480s waiting for the deploy, code merges included. Staging stuck on 90099bec (EPIC-01 merge). Cause: RENDER_STAGING_DEPLOY_HOOK is the frontend hook; wait polls backend; frontend branch was a stale v9.3 exec branch. Recorded on BLG-OPS-181 (AC 1). AC 2 conditional on a Build Filter: not a filter, N/A; notes updated anyway. Fix filed BLG-OPS-189."
         },
         "ST-30": {
           "title": "Live-fire the stale-staging check from main against a deliberate divergence",
@@ -1483,7 +1490,6 @@
   "blocked_items": [],
   "delegated_items": [
     "ST-28",
-    "ST-29",
     "ST-30"
   ],
   "completed_items": [
@@ -1514,6 +1520,7 @@
     "ST-25",
     "ST-26",
     "ST-27",
+    "ST-29",
     "ST-31",
     "ST-32",
     "ST-33",

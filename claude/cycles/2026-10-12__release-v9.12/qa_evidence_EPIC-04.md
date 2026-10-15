@@ -81,7 +81,13 @@ Per-story entries are recorded as each story completes or is delegated (STEP 3.1
 
 ## Staging hook-deploy investigation
 
-- **Story:** ST-29 (BLG-OPS-181), delegated_backend. Pending: DEL-20261015-02 (Render dashboard).
+- **Story:** ST-29 (BLG-OPS-181), delegated_backend
+- **Spec references:** `docs/ops/staging_deploy_notes.md` v1.3 §4; `.github/workflows/staging-deploy.yml`; `scripts/wait_for_staging_deploy_live.py`
+- **Commit:** `745cc1f72b5159084c08b2b23cb423b65ec6e590`
+- **Acceptance criteria and evidence:**
+  - AC 1, cause recorded against BLG-OPS-181: Notes line added. `RENDER_STAGING_DEPLOY_HOOK` is the staging frontend's hook, while the wait polls the backend; the frontend's branch was `exec/2026-09-09__release-v9.3/EPIC-02`. Evidence: the user's Render dashboard read (no filters, no failed builds; frontend deploy at the exact second of the 2026-10-15 hook call; backend's last deploy manual on 2026-10-13) and the workflow logs. Pass.
+  - AC 2, conditional on a Build Filter: not a filter, so not triggered. `staging_deploy_notes.md` §4 still states that a non-code `workflow_dispatch` deploy is expected to go live once the hook targets the right service. Pass (N/A, documented).
+- **Deviations:** none found. Fix filed as **BLG-OPS-189**.
 
 ## Stale-staging check live fire from main
 

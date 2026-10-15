@@ -108,7 +108,7 @@ Last Updated: 2026-10-13
 - **Spec reference:** `docs/ops/staging_deploy_notes.md`; `.github/workflows/staging-deploy.yml`; `stage4_backlog_slice.md#ST-29`
 - **Unblock criteria:** The cause, from the dashboard, supplied in-session or in a comment on #2002. The engine records it as a `Notes` line on `BLG-OPS-181` (named-file write, `sprint_backlog.md` ST-29 Notes) and, if it is a Build Filter, states in `docs/ops/staging_deploy_notes.md` whether a `workflow_dispatch` deploy of a non-code commit is expected to go live (AC 2). If the cause needs a fix outside ST-29 (e.g. a longer wait or a filter change), a backlog item is filed.
 - **Commit format required:** `[EPIC-04][ST-29] <description>` pushed to `exec/2026-10-12__release-v9.12/EPIC-04`
-- **Status:** Pending
+- **Status:** Unblocked — 2026-10-15, unblocked in-session by the user (human, acting for the Infrastructure & Operations Owner) from the Render dashboard, same session as the delegation. (a) Sign-off: no Build Filters, no failed builds, backend branch `main`; staging frontend deploy at 2026-10-15 07:39:19 UTC (= the hook call), backend last deploy 2026-10-13 09:11 UTC (manual, after a branch test reset to main); frontend branch was `exec/2026-09-09__release-v9.3/EPIC-02`. Cause: the hook secret is the frontend's, and the wait polls the backend. Status `sign_off_cleared`. (b) Push: `745cc1f72b5159084c08b2b23cb423b65ec6e590` (BLG-OPS-181 Notes, staging_deploy_notes.md v1.3, BLG-OPS-189 filed). Terminal: Unblocked (2026-10-15T09:36:47Z).
 
 ## DEL-20261015-03
 
