@@ -67,6 +67,8 @@ The workflow reads this secret at runtime. If the secret is absent, the job fail
 
 **Found 2026-10-15 (ST-29, BLG-OPS-181):** the secret held the frontend's hook, and the frontend's branch was `exec/2026-09-09__release-v9.3/EPIC-02`. Every run since 2026-09-03 deployed the frontend from that old branch and timed out waiting on the backend, which changed only by manual deploy (Render auto-deploy is off). The fix (two hooks, both waited on) is BLG-OPS-189. Until it ships, bring staging level with `main` by **Manual Deploy → Deploy latest commit** on each service.
 
+**Also found 2026-10-15:** `STAGING_API_URL` pointed at a host other than the staging backend, which answered as `90099bec` after both staging services were live on `efdd9494`. The user reset the secret to the staging backend's URL; the smoke test then passed (run 38721722314). If the smoke test's deployed commit disagrees with the Render dashboard, check this secret first.
+
 ---
 
 ## 5. BLG-OPS-25 Dependency (Smoke Test Integration)
