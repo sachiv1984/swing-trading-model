@@ -4,7 +4,7 @@
   "status": "Executing",
   "prior_status": "Sprint_Planning_Complete",
   "engine": "Sprint Execution",
-  "last_updated_utc": "2026-10-15T08:09:18Z",
+  "last_updated_utc": "2026-10-15T09:03:39Z",
   "execution_state_path": "claude/cycles/2026-10-12__release-v9.12/execution_state.json",
   "backlog_slice_path": "claude/cycles/2026-10-12__release-v9.12/stage4_backlog_slice.md",
   "design_gate_required": true,
@@ -335,7 +335,10 @@
       "raised_utc": "2026-10-15T08:05:59Z",
       "sla_due_utc": "2026-10-16T08:05:59Z",
       "blocks_execution": false,
-      "disposition": "Open"
+      "disposition": "Resolved",
+      "resolved_utc": "2026-10-15T09:03:12Z",
+      "resolved_by": "Product Owner (human, in-session)",
+      "resolution_summary": "Option (b) accept-risk. credential_policy.md v1.1 §1.1 states the key's full write scope (single API_KEY, 150 routes, 61 writes, public bundle) and the decision with review triggers (ST-27, commit 8aae01e6)."
     }
   },
   "deferred_escalations": {
