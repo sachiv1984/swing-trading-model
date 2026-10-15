@@ -3183,7 +3183,7 @@ Expect 1 row: `stop_frozen_reason`, `character varying`, `20`, `YES`.
 
 **Rationale:** settings writes overwrite values in place and nothing recorded who changed what or when. This table is an append-only audit trail: `POST /settings` and `PATCH /settings/{settings_id}` add one row per changed field in the same transaction as the write (`settings_endpoints.md` v1.5.0 §Settings change log), and `GET /settings` returns the latest save as `last_change` for the Settings page's last-change line (`settings.md` §Last Change Line). Values are stored as text so one column fits every settings type.
 
-**RISK (no live DB write access in this execution environment):** as with DS-32, the sandbox `DATABASE_URL` is read-only staging. After this change every settings write inserts into this table and `GET /settings` reads it, so the Up Migration must be applied to **staging and production before EPIC-04 deploys**. Otherwise settings saves and `GET /settings` fail. **Status: PENDING — staging applied 2026-10-15, verification partly supplied; production pending** (DEL-20261015-01).
+**RISK (no live DB write access in this execution environment):** as with DS-32, the sandbox `DATABASE_URL` is read-only staging. After this change every settings write inserts into this table and `GET /settings` reads it, so the Up Migration must be applied to **staging and production before EPIC-04 deploys**. Otherwise settings saves and `GET /settings` fail. **Status: staging CONFIRMED APPLIED 2026-10-15; production PENDING** (DEL-20261015-01).
 
 ### Up Migration (v2.61 → v2.62)
 
@@ -3242,7 +3242,7 @@ Expect 8 columns: `id` bigint NO, `settings_id` uuid NO, `batch_id` uuid NO, `fi
 
 **Sign-off:**
 - Data Model & Domain Schema Owner: migration content is additive and reversible; no pre-check needed. To be applied by the user (human, with live write access, acting for the Data Model & Domain Schema Owner), DEL-20261015-01.
-- **Live Confirmation — staging, applied 2026-10-15 (with RLS enabled):** Up Migration returned "Success. No rows returned". Index verification: `idx_settings_change_log_changed_at`, `settings_change_log_pkey` (2 rows, as expected). Column verification and the owner/role check: pending. Supplied in-session by the user (human, acting for the Data Model & Domain Schema Owner), DEL-20261015-01.
+- **Live Confirmation — staging, applied 2026-10-15 (with RLS enabled):** Up Migration returned "Success. No rows returned". Index verification: `idx_settings_change_log_changed_at`, `settings_change_log_pkey` (2 rows, as expected). Column verification: 8 rows exactly as expected (`id` bigint NO, `settings_id` uuid NO, `batch_id` uuid NO, `field` character varying NO, `old_value` text YES, `new_value` text YES, `changed_at` timestamp with time zone NO, `request_source` character varying NO). Role check: `postgres` has `rolbypassrls = true`; the SQL editor ran as `postgres`, so the table is owned by `postgres` (the editor showed only the last statement's result). The backend's `DATABASE_URL` connects as `postgres` (the pooler user `postgres.<ref>`), so RLS does not block it. The first settings save on staging after EPIC-04 deploys is the end-to-end proof. Supplied in-session by the user (human, acting for the Data Model & Domain Schema Owner), DEL-20261015-01.
 
 ## Drift Detector Triage (2026-10-13, v2.60)
 
