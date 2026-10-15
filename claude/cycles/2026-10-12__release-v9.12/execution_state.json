@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-13T07:21:28Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-15T07:15:44Z",
+  "last_updated_utc": "2026-10-15T07:16:14Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-06",
@@ -541,8 +541,8 @@
     "EPIC-03": {
       "status": "done",
       "branch": "exec/2026-10-12__release-v9.12/EPIC-03",
-      "pr_number": null,
-      "pr_status": "none",
+      "pr_number": 2026,
+      "pr_status": "open",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-10-12__release-v9.12/qa_evidence_EPIC-03.md",
       "test_scenarios": [
@@ -784,7 +784,8 @@
           "sign_off_record": null,
           "notes": "0128205a. AC1: no bg-amber-600 text-white pair (nor any bg-amber-600) in src/ outside Replay; the addendum's three extra sites moved too (TradePlans research_pending, TradePlan Abandon amber-700/hover amber-800, Gap Risk #B45309 in Positions.js and PositionCard.js); strategy-benchmark.spec.js line-267 assertion updated in the same commit. AC2: affected specs pass; a scoped axe color-contrast scan of each changed badge reports nothing (SC-SB-04a, SC-GR-02, SC-GVP-04, SC-TPS-05, SC-E03-15, SC-AC-06, SC-PD-01). Finding: the Abandon button never rendered its custom fill (Button bg-primary wins; cn() has no tailwind-merge) - fixed here with !bg-amber-700, systemic cause filed BLG-FE-221. Design gate teal observation filed BLG-FE-220. Deviation check: none. Playwright CI run 38483457947 success on head 0128205a."
         }
-      }
+      },
+      "pr_url": "https://github.com/sachiv1984/swing-trading-model/pull/2026"
     },
     "EPIC-04": {
       "status": "not_started",
