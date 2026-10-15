@@ -91,4 +91,13 @@ Per-story entries are recorded as each story completes or is delegated (STEP 3.1
 
 ## Stale-staging check live fire from main
 
-- **Story:** ST-30 (BLG-OPS-182), delegated_backend. Pending: DEL-20261015-03 (needs staging restored first).
+- **Story:** ST-30 (BLG-OPS-182), delegated_backend
+- **Spec references:** `scripts/staging_smoke_test.py`; `.github/workflows/staging-smoke-test.yml`
+- **Live fire (2026-10-15, user acting for the Infrastructure & Operations Owner, DEL-20261015-03):**
+  - Precondition: both staging services deployed to `main` (`efdd9494`) after the ST-29 fixes (frontend branch reset to `main`; `STAGING_API_URL` reset to the staging backend). Baseline pass: run 38721722314.
+  - Deliberate divergence: the user rolled the staging backend back to `90099bec` in the Render dashboard (live).
+  - AC 1, failing `main` run with `STALE STAGING DEPLOY` and the Telegram alert received: https://github.com/sachiv1984/swing-trading-model/actions/runs/38722585429 (`main` at `efdd9494`). "STALE STAGING DEPLOY: staging is running commit '90099bec…' but the latest staging-deploying commit is 'f3f732fd…'". Telegram API returned `message_id` 1355, and the user confirmed receiving the alert (11:46 local). Pass.
+  - Restore: the user ran Manual Deploy → Deploy latest commit on the staging backend (live on `efdd9494`).
+  - AC 2, passing `main` run after restore: https://github.com/sachiv1984/swing-trading-model/actions/runs/38723949916 (`main` at `efdd9494`). Staging is on the latest merged commit and all 4 smoke checks pass. Pass.
+- **Not counted as AC 1 evidence:** runs 38714787907 and 38715664252 (the stale `STAGING_API_URL` host; accidental, not the deliberate divergence).
+- **Deviations:** none found.
