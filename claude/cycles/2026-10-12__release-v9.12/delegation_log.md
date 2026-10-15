@@ -77,3 +77,51 @@ Last Updated: 2026-10-13
 - **Unblock criteria:** DS-32 Verification output from staging and production (expect `stop_frozen_reason | character varying | 20 | YES`), recorded in DS-32's Live Confirmation.
 - **Commit format required:** `[EPIC-02][ST-15] <description>` (DS-32 Live Confirmation) pushed to `exec/2026-10-12__release-v9.12/EPIC-02`
 - **Status:** Unblocked — 2026-10-13, unblocked in-session by the user (human, acting for the Data Model & Domain Schema Owner), in the same session as the delegation. (a) Sign-off: DS-32 applied on staging, then production. Both Up Migrations returned "Success. No rows returned", and both Verifications returned `stop_frozen_reason | character varying | 20 | YES`. Recorded in `data_model.md` DS-32 Live Confirmation; status `sign_off_cleared`. (b) Push: story commit `52debab3697edf66df13708df37577ea4b1c3d37`; Live Confirmation commit follows on the EPIC-02 branch. Terminal: Unblocked (2026-10-13T18:16:30Z).
+
+## DEL-20261015-01
+
+- **ST Item:** ST-26 — Audit trail for strategy-parameter changes in Settings
+- **EPIC:** EPIC-04
+- **Classification:** delegated_backend (live migration, Human-Delegation; DS-32 precedent, RISK-01). The story code, tests and docs are engine-autonomous.
+- **Assigned to:** Data Model & Domain Schema Owner (with Infrastructure & Operations Owner)
+- **GitHub Issue:** #1999
+- **Branch:** exec/2026-10-12__release-v9.12/EPIC-04
+- **Delegated at:** 2026-10-15T08:05:59Z
+- **What is needed:** Every `POST /settings` and `PATCH /settings/{settings_id}` now inserts into the new `settings_change_log` table in the same transaction, and `GET /settings` reads it for `last_change`. The sandbox `DATABASE_URL` is read-only staging, so the engine cannot apply DS-33. On **staging, then production**, run the DS-33 Up Migration in `docs/specs/data_model.md` (`CREATE TABLE IF NOT EXISTS settings_change_log (...)` plus `idx_settings_change_log_changed_at`), then the two Verification queries. This must happen **before EPIC-04 deploys to production**. Otherwise settings saves and `GET /settings` fail.
+- **Workflow viability (LL-v9.10-P3-01):** Not a workflow dispatch. Manual SQL in the Supabase SQL editor; no GitHub Actions run is involved.
+- **Spec reference:** `docs/specs/data_model.md#DS-33 — Add settings_change_log (v2.62, 2026-10-15)`; `docs/specs/api_contracts/settings_endpoints.md#GET /settings`; `stage4_backlog_slice.md#ST-26` AC 3
+- **Unblock criteria:** DS-33 Verification output from staging and production (8 columns as listed; indexes `idx_settings_change_log_changed_at` and `settings_change_log_pkey`), recorded in DS-33's Live Confirmation and in `qa_evidence_EPIC-04.md` under ST-26.
+- **Commit format required:** `[EPIC-04][ST-26] <description>` (DS-33 Live Confirmation) pushed to `exec/2026-10-12__release-v9.12/EPIC-04`
+- **Status:** Pending
+
+## DEL-20261015-02
+
+- **ST Item:** ST-29 — Find out why a staging-deploy.yml hook deploy of a governance-only commit never went live
+- **EPIC:** EPIC-04
+- **Classification:** delegated_backend (Render dashboard read, Human-Delegation; `sprint_backlog.md` ST-29 Notes, RISK-01)
+- **Assigned to:** Infrastructure & Operations Owner
+- **GitHub Issue:** #2002
+- **Branch:** exec/2026-10-12__release-v9.12/EPIC-04
+- **Delegated at:** 2026-10-15T08:05:59Z
+- **What is needed:** In the Render dashboard, for the **staging backend** service: (1) the final state of deploy `dep-db310hp42hec7387gh90` (BLG-OPS-181); (2) Settings → Build Filters (included/ignored paths), which the repo cannot see; (3) the deploy history since 2026-10-12. **New evidence (engine, 2026-10-15):** the symptom is not limited to governance-only commits. Every `staging-deploy.yml` run since 2026-09-03 has failed, the last 10 (2026-10-12 to 2026-10-15) on the same step: the Render hook is accepted, then "Timed out after 480s waiting for staging backend to deploy <sha>". These include code merges (EPIC-01 `90099bec`, EPIC-02 `61317385`, EPIC-03 `1200e1b0`). Staging went live on `90099bec` some time after its run timed out and has stayed there, so it is now 4 EPIC merges behind `main`. Scheduled `staging-smoke-test.yml` runs on `main` report `STALE STAGING DEPLOY` (staging `90099bec`, expected `1b4068ff`) and Telegram alerts are sent (e.g. run 38676419956, message 1350). Please record which it is for these recent deploys: skipped by a filter, failed build, build slower than 480s, or queued behind another deploy.
+- **Workflow viability (LL-v9.10-P3-01):** `staging-deploy.yml`: no success in the last 10 runs; last success run 33769711448 (2026-09-03). The failure is the subject of this item, so it is not a prerequisite to fix first.
+- **Spec reference:** `docs/ops/staging_deploy_notes.md`; `.github/workflows/staging-deploy.yml`; `stage4_backlog_slice.md#ST-29`
+- **Unblock criteria:** The cause, from the dashboard, supplied in-session or in a comment on #2002. The engine records it as a `Notes` line on `BLG-OPS-181` (named-file write, `sprint_backlog.md` ST-29 Notes) and, if it is a Build Filter, states in `docs/ops/staging_deploy_notes.md` whether a `workflow_dispatch` deploy of a non-code commit is expected to go live (AC 2). If the cause needs a fix outside ST-29 (e.g. a longer wait or a filter change), a backlog item is filed.
+- **Commit format required:** `[EPIC-04][ST-29] <description>` pushed to `exec/2026-10-12__release-v9.12/EPIC-04`
+- **Status:** Pending
+
+## DEL-20261015-03
+
+- **ST Item:** ST-30 — Live-fire the stale-staging check from main against a deliberate divergence
+- **EPIC:** EPIC-04
+- **Classification:** delegated_backend (control of staging deploys and a real Telegram receipt, Human-Delegation; `sprint_backlog.md` ST-30 Notes, RISK-01)
+- **Assigned to:** Infrastructure & Operations Owner
+- **GitHub Issue:** #2003
+- **Branch:** exec/2026-10-12__release-v9.12/EPIC-04
+- **Delegated at:** 2026-10-15T08:05:59Z
+- **What is needed:** (1) Bring staging level with `main` (prerequisite; see below). (2) Deliberately put staging behind `main` on a deploy-path commit (e.g. redeploy an older commit from the Render dashboard). (3) Run `staging-smoke-test.yml` on `main` (`gh workflow run staging-smoke-test.yml --ref main`); confirm it fails with `STALE STAGING DEPLOY` and the Telegram alert arrives. (4) Restore staging to `main`'s commit and run it again; confirm it passes. Supply both run URLs and confirm the Telegram receipt.
+- **Workflow viability (LL-v9.10-P3-01):** `staging-smoke-test.yml` on `main`: most recent success run 38406834420 (2026-10-13T13:40Z). 7 of the last 10 scheduled runs failed, all because staging is genuinely stale, not a workflow fault: `STALE STAGING DEPLOY`, staging on `90099bec` (the Telegram alert step works, e.g. run 38676419956). **Prerequisite:** the passing run (AC 2) needs staging deployed at `main`'s latest staging-deploying commit, which `staging-deploy.yml` has not achieved since 2026-09-03 (DEL-20261015-02). Restoring staging manually from the dashboard is acceptable for this item. These scheduled failures are an accidental divergence; they do not count as the deliberate one AC 1 asks for.
+- **Spec reference:** `scripts/staging_smoke_test.py`; `.github/workflows/staging-smoke-test.yml`; `stage4_backlog_slice.md#ST-30`
+- **Unblock criteria:** A failing `main` run URL showing `STALE STAGING DEPLOY` for the deliberate divergence with the Telegram alert received (AC 1), and a passing `main` run URL after restore (AC 2), recorded in `qa_evidence_EPIC-04.md` under ST-30.
+- **Commit format required:** `[EPIC-04][ST-30] <description>` (evidence record) pushed to `exec/2026-10-12__release-v9.12/EPIC-04`
+- **Status:** Pending
