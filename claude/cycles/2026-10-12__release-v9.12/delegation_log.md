@@ -124,7 +124,7 @@ Last Updated: 2026-10-13
 - **Spec reference:** `scripts/staging_smoke_test.py`; `.github/workflows/staging-smoke-test.yml`; `stage4_backlog_slice.md#ST-30`
 - **Unblock criteria:** A failing `main` run URL showing `STALE STAGING DEPLOY` for the deliberate divergence with the Telegram alert received (AC 1), and a passing `main` run URL after restore (AC 2), recorded in `qa_evidence_EPIC-04.md` under ST-30.
 - **Commit format required:** `[EPIC-04][ST-30] <description>` (evidence record) pushed to `exec/2026-10-12__release-v9.12/EPIC-04`
-- **Status:** Pending
+- **Status:** Unblocked — 2026-10-15, unblocked in-session by the user (human, acting for the Infrastructure & Operations Owner), same session as the delegation. Prerequisite met after the ST-29 fixes (frontend branch reset to `main`, `STAGING_API_URL` reset; baseline pass 38721722314). (a) Sign-off: deliberate rollback of the staging backend to `90099bec` → run 38722585429 failed with `STALE STAGING DEPLOY`, Telegram message 1355 received by the user (11:46 local); restore to `efdd9494` → run 38723949916 passed. Status `sign_off_cleared`. (b) Push: `4e685901aca319cc288878c0959d70074ba67253` (evidence in `qa_evidence_EPIC-04.md`). Terminal: Unblocked (2026-10-15T10:58:43Z).
 
 ## DEL-20261015-04
 
