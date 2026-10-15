@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-13T07:21:28Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-15T08:09:06Z",
+  "last_updated_utc": "2026-10-15T08:20:12Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-06",
@@ -876,23 +876,27 @@
         "ST-28": {
           "title": "Apply the in-range dependency patch/minor bumps from the October 2026 quarterly review",
           "classification": "delegated_qa",
-          "status": "not_started",
+          "status": "blocked_qa",
           "assigned_to": "Infrastructure & Operations Owner; Head of Engineering",
           "github_issue": 2001,
           "branch": "exec/2026-10-12__release-v9.12/EPIC-04",
           "commit_sha": null,
-          "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
+          "delegation_record_id": "DEL-20261015-04",
+          "blocked_since_utc": "2026-10-15T08:20:12Z",
+          "unblock_criteria": "EPIC-04 PR full CI green (pytest + all Playwright shards); staging yfinance price/ATR check for a US and a UK ticker (DEL-20261015-04); Director of Quality disposition in qa_evidence_EPIC-04.md.",
           "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": [],
+          "spec_references": [
+            "docs/security/dependency_update_review_2026-10-06.md",
+            "backend/requirements.txt",
+            "package.json"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
-          "last_completed_substep": null,
+          "last_completed_substep": "3.1.C.qa_evidence",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Engine commit 2909e67e2fbe7d47d1d6b8d933f09aeedb42dfd4 (2026-10-15T08:19:45Z): 8 backend + 20 frontend bumps at exact reviewed versions. Local full pytest 2668/21 skipped; 84/84 Playwright incl. focus-restoration."
         },
         "ST-29": {
           "title": "Find out why a staging-deploy.yml hook deploy of a governance-only commit never went live",
@@ -1467,6 +1471,7 @@
   ],
   "delegated_items": [
     "ST-26",
+    "ST-28",
     "ST-29",
     "ST-30"
   ],

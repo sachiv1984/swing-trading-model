@@ -125,3 +125,19 @@ Last Updated: 2026-10-13
 - **Unblock criteria:** A failing `main` run URL showing `STALE STAGING DEPLOY` for the deliberate divergence with the Telegram alert received (AC 1), and a passing `main` run URL after restore (AC 2), recorded in `qa_evidence_EPIC-04.md` under ST-30.
 - **Commit format required:** `[EPIC-04][ST-30] <description>` (evidence record) pushed to `exec/2026-10-12__release-v9.12/EPIC-04`
 - **Status:** Pending
+
+## DEL-20261015-04
+
+- **ST Item:** ST-28 — Apply the in-range dependency patch/minor bumps from the October 2026 quarterly review
+- **EPIC:** EPIC-04
+- **Classification:** delegated_qa (Director of Quality sign-off) with a Human-Delegation for AC 2's staging check (`sprint_backlog.md` ST-28 Notes)
+- **Assigned to:** Infrastructure & Operations Owner (staging check); Director of Quality (sign-off)
+- **GitHub Issue:** #2001
+- **Branch:** exec/2026-10-12__release-v9.12/EPIC-04
+- **Delegated at:** 2026-10-15T08:20:11Z
+- **What is needed:** Once the bumped build (commit `2909e67e`, yfinance 1.7.0) is live on staging, call `GET /market/atr/AAPL?market=US` and `GET /market/atr/VOD?market=UK` and confirm a current price fetch works for both tickers (e.g. `GET /positions` on a seeded US and UK position, or Trade Entry's ATR preview). Supply the responses. Local supporting evidence (not a substitute): on yfinance 1.7.0, the backend's own `get_current_price`/`calculate_atr` returned AAPL 342.96 / ATR 6.58 and VOD.L 120.40 / ATR 0.032 (pence-to-pounds conversion, existing convention) on 2026-10-15.
+- **Workflow viability (LL-v9.10-P3-01):** depends on `staging-deploy.yml`, which has no success in its last 10 runs (last success 33769711448, 2026-09-03); staging is stuck on `90099bec`. Prerequisite: DEL-20261015-02 (ST-29), or a manual Render "Deploy latest commit" after EPIC-04 merges. Staging deploys from `main`, so this check can only run after merge.
+- **Spec reference:** `docs/security/dependency_update_review_2026-10-06.md` §3; `stage4_backlog_slice.md#ST-28` AC 2
+- **Unblock criteria:** the two staging responses recorded in `qa_evidence_EPIC-04.md` under ST-28; AC 1's full CI (pytest and all Playwright shards) green on the EPIC-04 PR; Director of Quality disposition.
+- **Commit format required:** `[EPIC-04][ST-28] <description>` (evidence record)
+- **Status:** Pending
