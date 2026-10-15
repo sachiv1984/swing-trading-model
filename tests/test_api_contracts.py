@@ -168,8 +168,9 @@ class TestCoreEndpoints(unittest.TestCase):
 
 class TestSettingsEndpoints(unittest.TestCase):
 
+    @patch("main.get_last_settings_change", return_value=None)  # ST-26 (v9.12)
     @patch("main.get_settings", return_value=[MOCK_SETTINGS])
-    def test_get_settings_returns_ok(self, _):
+    def test_get_settings_returns_ok(self, *_):
         body = _ok(CLIENT.get("/settings"))
         assert isinstance(body["data"], list)
         assert len(body["data"]) == 1

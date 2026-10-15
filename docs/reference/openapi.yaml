@@ -2,7 +2,10 @@ openapi: 3.0.3
 
 info:
   title: Momentum Trading Assistant API
-  version: 3.30.1
+  version: 3.31.0
+  # v3.31.0 (2026-10-15, ST-26, EPIC-04, v9.12): GET /settings returns last_change on the settings
+  # object (the latest settings_change_log save, DS-33; BLG-SEC-41). POST /settings and
+  # PATCH /settings/{settings_id} accept an optional X-Request-Source header. No new endpoint.
   # v3.30.1 (2026-10-13, ST-18, EPIC-03, v9.12): POST /portfolio/position rejects a typed atr_value
   # where 5 × ATR ≥ entry_price with 400 (BLG-FE-203). Description only; no new endpoint.
   # v3.30.0 (2026-10-13, ST-17, EPIC-03, v9.12): new GET /market/atr/{ticker}, the read-only
@@ -4273,7 +4276,17 @@ paths:
       summary: Create settings record
       description: |
         Creates a new settings record. Used to initialise settings if none exist.
-        Canonical contract: docs/specs/api_contracts/settings_endpoints.md v1.1.0
+        Every non-null column of the new row is logged to settings_change_log (ST-26).
+        Canonical contract: docs/specs/api_contracts/settings_endpoints.md v1.5.0
+      parameters:
+        - in: header
+          name: X-Request-Source
+          required: false
+          schema:
+            type: string
+          description: |
+            ST-26 (v9.12): "settings_page" tags this write's settings_change_log rows as
+            made from the Settings page. Any other value, or none, is logged as "api".
       requestBody:
         required: false
         content:
@@ -4294,9 +4307,18 @@ paths:
       summary: Update strategy settings by ID
       description: |
         Updates one or more settings fields on an existing record.
-        Fields not provided remain unchanged.
-        Canonical contract: docs/specs/api_contracts/settings_endpoints.md v1.1.0
+        Fields not provided remain unchanged. Each field whose value changes is
+        logged to settings_change_log (ST-26); a write that changes nothing logs nothing.
+        Canonical contract: docs/specs/api_contracts/settings_endpoints.md v1.5.0
       parameters:
+        - in: header
+          name: X-Request-Source
+          required: false
+          schema:
+            type: string
+          description: |
+            ST-26 (v9.12): "settings_page" tags the change-log rows as made from the
+            Settings page. Any other value, or none, is logged as "api".
         - in: path
           name: settings_id
           required: true
@@ -7175,7 +7197,33 @@ components:
       description: |
         Intentionally broad to avoid drift. Canonical nested field definitions live in:
         docs/specs/api_contracts/settings_endpoints.md
+      properties:
+        last_change:
+          nullable: true
+          description: |
+            GET /settings only (ST-26, v9.12). The most recent logged settings save, or
+            null when nothing is logged. Values are text, as stored in settings_change_log.
+          allOf:
+            - $ref: "#/components/schemas/SettingsLastChange"
       additionalProperties: true
+
+    SettingsLastChange:
+      type: object
+      properties:
+        field: { type: string, description: First field changed in the save }
+        old_value: { type: string, nullable: true }
+        new_value: { type: string, nullable: true }
+        changed_at: { type: string, format: date-time }
+        request_source: { type: string, enum: [settings_page, api] }
+        changes:
+          type: array
+          description: Every field changed in the same save, in logged order
+          items:
+            type: object
+            properties:
+              field: { type: string }
+              old_value: { type: string, nullable: true }
+              new_value: { type: string, nullable: true }
 
     UpdateSettingsRequest:
       type: object

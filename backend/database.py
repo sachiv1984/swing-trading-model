@@ -9,6 +9,8 @@ from typing import Optional, List, Dict
 from datetime import datetime, timezone, timedelta
 import pandas as pd
 import time
+import uuid
+from decimal import Decimal
 import requests
 from urllib.parse import urlparse, urlencode, urlunparse, parse_qs
 from utils.upstream_call import get_timeout
@@ -616,7 +618,40 @@ def get_settings():
             return []
 
 
-def create_settings(data):
+# ST-26 (BLG-SEC-41, EPIC-04, v9.12): every settings write appends one
+# settings_change_log row per changed field (data_model.md DS-33), in the same
+# transaction as the write. One save shares one batch_id, so GET /settings can
+# return the whole save as last_change.
+SETTINGS_REQUEST_SOURCES = ("settings_page", "api")
+_SETTINGS_LOG_SKIPPED_COLUMNS = {"id", "created_at", "updated_at"}
+
+
+def _settings_value_text(value):
+    """Stored text form of a settings value: numbers without trailing zeros."""
+    if value is None:
+        return None
+    if isinstance(value, bool) or not isinstance(value, (int, float, Decimal)):
+        return str(value)
+    text = format(Decimal(str(value)).normalize(), "f")
+    return "0" if text in ("-0", "") else text
+
+
+def _log_settings_changes(cur, settings_id, changes, request_source):
+    """Insert one settings_change_log row per (field, old, new) change, sharing a batch_id."""
+    if not changes:
+        return
+    source = request_source if request_source in SETTINGS_REQUEST_SOURCES else "api"
+    batch_id = str(uuid.uuid4())
+    for field, old_value, new_value in changes:
+        cur.execute(
+            "INSERT INTO settings_change_log "
+            "(settings_id, batch_id, field, old_value, new_value, request_source) "
+            "VALUES (%s, %s, %s, %s, %s, %s)",
+            (str(settings_id), batch_id, field, old_value, new_value, source),
+        )
+
+
+def create_settings(data, request_source="api"):
     """Create new settings record.
 
     ST-16 (BLG-BE-144, v9.12): None values are dropped, as update_settings()
@@ -624,50 +659,98 @@ def create_settings(data):
     Since the v9.10 parameter-authority ruling the Settings page no longer sends
     min_hold_days, atr_period, atr_multiplier_initial or atr_multiplier_trailing,
     and inserting the request model's None for them wrote NULL over the defaults.
+
+    ST-26 (BLG-SEC-41, v9.12): logs every non-null column of the new row,
+    including column defaults, with old_value NULL.
     """
     data = {k: v for k, v in data.items() if v is not None}
     with get_db() as conn:
         with conn.cursor() as cur:
             if not data:
                 cur.execute("INSERT INTO settings DEFAULT VALUES RETURNING *")
-                return dict(cur.fetchone())
-            columns = ', '.join(data.keys())
-            placeholders = ', '.join(['%s'] * len(data))
-            query = f"INSERT INTO settings ({columns}) VALUES ({placeholders}) RETURNING *"
-            
-            cur.execute(query, list(data.values()))
-            result = cur.fetchone()
-            return dict(result)
+            else:
+                columns = ', '.join(data.keys())
+                placeholders = ', '.join(['%s'] * len(data))
+                query = f"INSERT INTO settings ({columns}) VALUES ({placeholders}) RETURNING *"
+                cur.execute(query, list(data.values()))
+            result = dict(cur.fetchone())
+            changes = [
+                (k, None, _settings_value_text(v)) for k, v in result.items()
+                if k not in _SETTINGS_LOG_SKIPPED_COLUMNS and v is not None
+            ]
+            _log_settings_changes(cur, result["id"], changes, request_source)
+            return result
 
 
-def update_settings(settings_id: str, data: dict) -> dict:
-    """Update existing settings"""
+def update_settings(settings_id: str, data: dict, request_source: str = "api") -> dict:
+    """Update existing settings.
+
+    ST-26 (BLG-SEC-41, v9.12): reads the row FOR UPDATE first and logs each field
+    whose value changes. A write that changes no value logs nothing.
+    """
     with get_db() as conn:
         with conn.cursor() as cur:
             # Filter out None values
             filtered_data = {k: v for k, v in data.items() if v is not None}
-            
+
+            cur.execute("SELECT * FROM settings WHERE id = %s FOR UPDATE", (settings_id,))
+            current = cur.fetchone()
+            if not current:
+                raise ValueError(f"Settings with id {settings_id} not found")
+            current = dict(current)
+
             if not filtered_data:
-                cur.execute("SELECT * FROM settings WHERE id = %s", (settings_id,))
-                result = cur.fetchone()
-                if not result:
-                    raise ValueError(f"Settings with id {settings_id} not found")
-                return dict(result)
-            
+                return current
+
             # Build SET clause
             set_parts = [f"{k} = %s" for k in filtered_data.keys()]
             set_clause = ', '.join(set_parts)
             query = f"UPDATE settings SET {set_clause}, updated_at = NOW() WHERE id = %s RETURNING *"
-            
+
             # Execute
             values = list(filtered_data.values()) + [settings_id]
             cur.execute(query, values)
             result = cur.fetchone()
-            
+
             if not result:
                 raise ValueError(f"Settings with id {settings_id} not found")
-            
+
+            changes = []
+            for k, v in filtered_data.items():
+                if k in _SETTINGS_LOG_SKIPPED_COLUMNS:
+                    continue
+                old_text, new_text = _settings_value_text(current.get(k)), _settings_value_text(v)
+                if old_text != new_text:
+                    changes.append((k, old_text, new_text))
+            _log_settings_changes(cur, settings_id, changes, request_source)
+
             return dict(result)
+
+
+def get_last_settings_change():
+    """The most recent settings save as {field, old_value, new_value, changed_at,
+    request_source, changes: [...]}, or None when nothing is logged (ST-26)."""
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                "SELECT field, old_value, new_value, changed_at, request_source "
+                "FROM settings_change_log WHERE batch_id = ("
+                "SELECT batch_id FROM settings_change_log ORDER BY changed_at DESC, id DESC LIMIT 1"
+                ") ORDER BY id"
+            )
+            rows = [dict(r) for r in cur.fetchall()]
+    if not rows:
+        return None
+    first = rows[0]
+    changed_at = first["changed_at"]
+    return {
+        "field": first["field"],
+        "old_value": first["old_value"],
+        "new_value": first["new_value"],
+        "changed_at": changed_at.isoformat() if hasattr(changed_at, "isoformat") else changed_at,
+        "request_source": first["request_source"],
+        "changes": [{"field": r["field"], "old_value": r["old_value"], "new_value": r["new_value"]} for r in rows],
+    }
 
 def download_ticker_data(ticker: str, start_date: str, end_date: str = None):
     """Download historical data for a single ticker using Yahoo API"""
