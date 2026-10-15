@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-13 (session — 1 new item added from the BLG-SPEC-199 fix on PR #2024, EPIC-05, 2026-10-12__release-v9.12: BLG-SPEC-200); prior — 2026-10-13 (session — 1 new item added from the PR #2024 review, EPIC-05, 2026-10-12__release-v9.12: BLG-SPEC-199); prior — 2026-10-13 (session — 4 new items added from Sprint Execution EPIC-05, 2026-10-12__release-v9.12: BLG-SPEC-196, BLG-SPEC-197, BLG-QA-223 (ST-34 drift triage), BLG-SPEC-198 (ST-38 ruling condition C2)); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-15 (session — 1 new item added from Sprint Execution ST-31, EPIC-04, 2026-10-12__release-v9.12: BLG-QA-225); prior — 2026-10-13 (session — 1 new item added from the BLG-SPEC-199 fix on PR #2024, EPIC-05, 2026-10-12__release-v9.12: BLG-SPEC-200); prior — 2026-10-13 (session — 1 new item added from the PR #2024 review, EPIC-05, 2026-10-12__release-v9.12: BLG-SPEC-199); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -5676,6 +5676,27 @@ DS-17's `idx_positions_open_ticker_entry_date_unique` was confirmed live in prod
 
 **Acceptance Criteria**
 - No scenario ID is used in more than one file under `tests/e2e` (a script or test checks this)
+
+---
+
+### BLG-QA-225 — Keep a bare `pytest` from the repo root out of backend/mutmut_pilot_tests
+**Priority:** P3 (Low)
+**Type:** QA / Test Infrastructure
+**Owner:** QA & Testing Owner
+**Source:** ST-31/EPIC-04, cycle `2026-10-12__release-v9.12` (AC 1 fresh-clone verification) — 2026-10-15
+**Effort:** XS (<0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+With no path argument, `backend/.venv/bin/python3 -m pytest --collect-only -q` from the repo root collects `backend/mutmut_pilot_tests/test_pilot.py` (the ST-15/v9.8 mutation-testing pilot, meant to run only from `backend/` via `mutmut run`) before `tests/`. Its standalone conftest and module-level `import database` leave `sys.modules["database"]` as something other than `tests/conftest.py`'s stub, so the BLG-QA-190 leak guard fails collection of the first `tests/` file (`tests/test_add_position_stop_handling.py`) with "replaced sys.modules['database'] ... without restoring it". Result: 2690 collected, 1 error. `pytest tests/` collects cleanly (2674), and CI always passes `tests/`, so CI is unaffected, but CLAUDE.md §9 and `README.md` both show the bare form.
+
+**Scope**
+- Make a bare root `pytest` collect only `tests/` (for example a root pytest config with `testpaths = tests`), confirming that `cd backend && python3 -m mutmut run` still selects `mutmut_pilot_tests/test_pilot.py` with the same rootdir and node IDs
+- Or make the pilot's conftest restore `sys.modules["database"]`, if the config route breaks mutmut
+
+**Acceptance Criteria**
+- `backend/.venv/bin/python3 -m pytest --collect-only -q` from the repo root exits 0
+- The mutmut pilot's pytest selection still collects its tests from `backend/`
 
 ---
 

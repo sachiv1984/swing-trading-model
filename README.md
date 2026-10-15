@@ -12,7 +12,7 @@ cd backend
 pyenv install $(cat .python-version)   # no-op if already installed
 pyenv local $(cat .python-version)     # writes/confirms .python-version is picked up
 python3 -m venv .venv
-.venv/bin/pip install -r requirements.txt
+.venv/bin/pip install -r requirements.txt -r requirements-dev.txt
 ```
 
 Verify the venv resolved to the pinned version before running anything:
@@ -20,6 +20,8 @@ Verify the venv resolved to the pinned version before running anything:
 ```bash
 backend/.venv/bin/python3 --version   # should print Python 3.11.0
 ```
+
+`requirements-dev.txt` holds the test-only packages (`pytest`, `pytest-cov`, `hypothesis`). The production build installs only `requirements.txt`, so a venv built without the dev file cannot run the test suite.
 
 Always invoke pytest via this venv, not the system Python — see `CLAUDE.md` §9 for why.
 
