@@ -1,7 +1,7 @@
 Owner: PMO Lead
 Class: Operational Record (Class 3)
 Status: Active
-Last Updated: 2026-10-15 (follow-up — §6 row 1 resolved, ESC-CLOSE-20261015-01 Head of Specs Team ruling)
+Last Updated: 2026-10-15 (follow-up — §6 rows 1 and 2 resolved: ESC-CLOSE-20261015-01 ruling; human confirmation of v9.12 sign-offs)
 Cycle: 2026-10-12__release-v9.12
 
 ---
@@ -97,7 +97,7 @@ Full detail: `claude/cycles/2026-10-12__release-v9.12/lessons_learnt_closure.md`
 | # | Description | Owner | Deadline | Escalation path | Resolution |
 |---|-------------|-------|----------|-----------------|------------|
 | 1 | Decide the vehicle for `scan_backlog_gate_conditions.py` `None`/`N/A` gate handling: a dedicated backlog item, widening `BLG-GOV-373`, or withdrawal. Carried 3 cycles (from v9.10). | Head of Specs Team / Head of Engineering | 2026-10-18T15:01:43Z | `ESC-CLOSE-20261015-01` | ✅ Resolved 2026-10-15: Head of Specs Team ruling, option (a). Filed as `BLG-GOV-390` (P2, v9.13) |
-| 2 | Verification DoQ sign-off and PO acceptance were agent-mediated (§5.3, user-directed) and are marked "Pending human confirmation". This is the 5th consecutive cycle (v9.8–v9.12). Confirm or amend. | Product Owner; Director of Quality | Before `plan release v9.13` | `verification_report.md` §9 | *(open)* |
+| 2 | Verification DoQ sign-off and PO acceptance were agent-mediated (§5.3, user-directed) and are marked "Pending human confirmation". This is the 5th consecutive cycle (v9.8–v9.12). Confirm or amend. | Product Owner; Director of Quality | Before `plan release v9.13` | `verification_report.md` §9 | ✅ Resolved 2026-10-15: confirmed by the human Product Owner / Director of Quality, together with the five open v9.12 EPIC DoQ sign-offs (`docs/governance/human_signoff_confirmation_2026-10-15.md`) |
 | 3 | `DEV-REPORTS-ST06-01` (P3, `reports.md`) has had no active tracking item since v8.1: `BLG-SPEC-87` was archived without shipping. Restore or re-file it, and update the deviation's backlog reference. (Carried from v9.10 #2, 3rd closure.) | Frontend Specifications & UX Documentation Owner | Next `groom backlog` | Deviation consolidation review 2026-10-07, Finding 1 | *(open)* |
 | 4 | `release_planning_prompt.md` §1.3a / STEP 3.9: acquire the backlog lock before the first §1.3a edit, or move the edits after STEP 3.9 (v9.11 Release Planning FI-2, 2nd cycle). If the design choice is not made by the target, file it via `/backlog-add` with a sprint target (`post_ship_closure.md` v2.41 STEP 8). | Head of Specs Team | 2026-10-20 | Deferred (lessons_learnt_closure.md) | *(open)* |
 | 5 | `DEV-v3.4-01` (`trade_plan.md` Known Deviations table) still shows target "v3.5", although `BLG-SPEC-31` is COMPLETE in v3.5. Mark it resolved. (Carried from v9.10 #3.) | Frontend Specifications & UX Documentation Owner | Next `trade_plan.md` revision | Deviation consolidation review 2026-10-07, Finding 3 | *(open)* |
