@@ -53,8 +53,9 @@ Per-story entries are recorded as each story completes or is delegated (STEP 3.1
 - **Acceptance criteria and evidence:**
   - AC 1, every settings write produces a log row with field, old value, new value, timestamp and request source: `tests/test_settings_change_log.py` (16 tests: PATCH per-field rows, one batch per save, source tagging and fallback, same-transaction ordering, create logs every non-null column, `GET /settings` `last_change`). Interpretation, recorded under the intent check: a PATCH that changes no value logs nothing, so `last_change` always names a real change.
   - AC 2, the Settings page shows the last change (Playwright): SC-SLC-01..05, all passing locally on a fresh production build (15/15 Settings specs; axe scan 18/18). CI conclusion pending (Playwright run 38703606378).
-  - AC 3, migration recorded in `data_model.md` (done, DS-33) and applied on staging and production with verification output: **pending, DEL-20261015-01**.
-- **Status:** blocked_backend until DEL-20261015-01 clears.
+  - AC 3, migration recorded in `data_model.md` (DS-33) and applied on staging and production with verification output: applied 2026-10-15 by the user (human, acting for the Data Model & Domain Schema Owner) on both, with Row Level Security enabled (no policies) after Supabase flagged the table. Both returned 8 columns and 2 indexes as expected. Recorded in DS-33 Live Confirmation. Pass.
+  - Open check, not an AC: confirm the deployed backend's `DATABASE_URL` role is `postgres` (or `postgres.<ref>`). That role bypasses RLS. Any other role would have its change-log writes blocked. The first staging settings save after EPIC-04 deploys is the end-to-end proof.
+- **Status:** done (DEL-20261015-01 unblocked in-session).
 
 ## Dependency patch/minor bumps from the October 2026 review
 
