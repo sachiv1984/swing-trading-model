@@ -1,8 +1,8 @@
 **Owner:** Infrastructure & Operations Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 1.2
-**Last Updated:** 2026-10-07 (ST-18, EPIC-04, v9.10, BLG-OPS-171 — §7 stale-deploy check now compares staging against the latest staging-deploying commit, not main's tip); prior — 2026-09-29 (ST-17, EPIC-04, v9.8, BLG-OPS-169 — added §7, stale-staging detection via `staging-smoke-test.yml` + `deployed_commit_sha`); prior — 2026-08-21 (ST-13, EPIC-03, v9.0, BLG-OPS-25 — added post-deploy smoke test suite to `deploy-staging`, plus a new independent scheduled smoke test workflow; §3 build minute assessment updated); prior history retained — see prior entries in version control.
+**Version:** 1.3
+**Last Updated:** 2026-10-15 (ST-29, EPIC-04, v9.12, BLG-OPS-181 — §4: which service the hook deploys, and the 2026-10-15 finding that the secret held the frontend's hook); prior — 2026-10-07 (ST-18, EPIC-04, v9.10, BLG-OPS-171 — §7 stale-deploy check now compares staging against the latest staging-deploying commit, not main's tip); prior — 2026-09-29 (ST-17, EPIC-04, v9.8, BLG-OPS-169 — added §7, stale-staging detection via `staging-smoke-test.yml` + `deployed_commit_sha`); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -63,6 +63,10 @@ This ensures governance-only commits (sprint artefacts, changelogs, audit record
 
 The workflow reads this secret at runtime. If the secret is absent, the job fails with an explicit error message.
 
+**A deploy hook deploys one service, and only from that service's configured branch.** Staging has two services: `trading-assistant-api-staging` (backend, `srv-d6rtdg94tr6s73ce2j6g`) and `trading-assistant-staging` (frontend, `srv-d6rtdg94tr6s73ce2j60`). `wait_for_staging_deploy_live.py` waits on the **backend**, so `RENDER_STAGING_DEPLOY_HOOK` must be the backend's hook. A hook builds the latest commit on the service's Branch setting, not the commit that triggered the workflow, so both services must be on `main`. No Build Filters are set on staging (checked 2026-10-15), so a `workflow_dispatch` deploy of a non-code commit is expected to go live like any other once the hook targets the right service.
+
+**Found 2026-10-15 (ST-29, BLG-OPS-181):** the secret held the frontend's hook, and the frontend's branch was `exec/2026-09-09__release-v9.3/EPIC-02`. Every run since 2026-09-03 deployed the frontend from that old branch and timed out waiting on the backend, which changed only by manual deploy (Render auto-deploy is off). The fix (two hooks, both waited on) is BLG-OPS-189. Until it ships, bring staging level with `main` by **Manual Deploy → Deploy latest commit** on each service.
+
 ---
 
 ## 5. BLG-OPS-25 Dependency (Smoke Test Integration)
@@ -89,7 +93,9 @@ on:
 
 ---
 
-## 7. Stale-Staging Detection (Post-Merge Redeploy Verification) (ST-17, BLG-OPS-169, EPIC-04, v9.8)
+## 7. Stale-Staging Detection (Post-Merge Redeploy Verification)
+
+*Added by ST-17 (BLG-OPS-169, EPIC-04, v9.8).*
 
 **Background:** Staging was found on 2026-09-24 still running pre-v9.6 code — a merged schema change (`alert_type` CHECK constraint gaining `reflection_reminder`) had not actually taken effect on staging, because this application applies schema changes via startup-run `ensure_*()` functions rather than a separate migration step, and nothing checked that staging had actually restarted with the new code. The only thing that surfaced it was a manual verification story.
 

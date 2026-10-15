@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-15 (session — 1 new item added from Sprint Execution ST-32, EPIC-04, 2026-10-12__release-v9.12: BLG-OPS-188); prior — 2026-10-15 (session — 1 new item added from Sprint Execution ST-31, EPIC-04, 2026-10-12__release-v9.12: BLG-QA-225); prior — 2026-10-13 (session — 1 new item added from the BLG-SPEC-199 fix on PR #2024, EPIC-05, 2026-10-12__release-v9.12: BLG-SPEC-200); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-15 (session — ST-29, EPIC-04, 2026-10-12__release-v9.12: BLG-OPS-181 Notes cause line (plan-authorised, sprint_backlog.md ST-29 Notes); 1 new item BLG-OPS-189); prior — 2026-10-15 (session — 1 new item added from Sprint Execution ST-32, EPIC-04, 2026-10-12__release-v9.12: BLG-OPS-188); prior — 2026-10-15 (session — 1 new item added from Sprint Execution ST-31, EPIC-04, 2026-10-12__release-v9.12: BLG-QA-225); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -4012,6 +4012,9 @@ The per-row "How this stop was set" tooltip formats `stop_calculated_at` in the 
 - The cause is recorded against this item
 - If it is a filter: the staging deploy notes say whether a `workflow_dispatch` deploy of a non-code commit is expected to go live
 
+**Notes**
+- **Cause found (ST-29, EPIC-04, v9.12, 2026-10-15, Render dashboard read by the user, acting for the Infrastructure & Operations Owner; DEL-20261015-02):** not a Build Filter (none set) and not a failed build (none). Two configuration faults: (1) `RENDER_STAGING_DEPLOY_HOOK` holds the **staging frontend's** deploy hook, not the backend's. Today's hook call (07:39:19 UTC, `dep-db8869u89jmc73cjn4n0`) appears only as a frontend deploy at that second. `wait_for_staging_deploy_live.py` polls the **backend**, which the hook never deploys, so every `staging-deploy.yml` run has timed out since 2026-09-03 (last success run 33769711448). With Render auto-deploy off (correct for the hook approach), the staging backend moved only by manual deploy: `90099bec` went live on 2026-10-13 09:11 UTC from a manual deploy. (2) The staging frontend's branch was `exec/2026-09-09__release-v9.3/EPIC-02`, not `main`, so each hook deploy rebuilt that branch's tip, `76283f43` (2026-09-10). The user is resetting it to `main` (2026-10-15). `dep-db310hp42hec7387gh90` (this item's 2026-10-07 case) fits the same cause: a frontend deploy while the backend was watched. A `workflow_dispatch` deploy of a non-code commit is therefore not blocked by any filter; it failed for the same reason as every other run. Fix filed as BLG-OPS-189.
+
 ---
 
 ### BLG-OPS-182 — Live-fire the stale-staging check from main against a deliberate staging/main divergence
@@ -5591,6 +5594,29 @@ ST-05 widened `_INSTRUMENT_DIRECTIVE_RE` (`backend/services/monthly_pnl_narrativ
 **Acceptance Criteria**
 - A `ci-usage-report.yml` run succeeds and its report reaches `docs/ops/ci_usage_reports/` (or the agreed destination)
 - `docs/ops/ci_usage_reports/2026-09.md` exists
+
+---
+
+### BLG-OPS-189 — Point staging-deploy.yml at both staging services' deploy hooks and wait on the one it deployed
+**Priority:** P2 (Medium)
+**Type:** Operations / Infrastructure
+**Owner:** Infrastructure & Operations Owner
+**Source:** ST-29/EPIC-04, cycle `2026-10-12__release-v9.12` (BLG-OPS-181 cause, DEL-20261015-02) — 2026-10-15
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+`staging-deploy.yml` calls one deploy hook, `RENDER_STAGING_DEPLOY_HOOK`, and that secret holds the staging **frontend's** hook. `wait_for_staging_deploy_live.py` then waits for the staging **backend** (`srv-d6rtdg94tr6s73ce2j6g`) to go live on the pushed commit. The backend is never hook-deployed, so every run has failed since 2026-09-03, and with Render auto-deploy off the staging backend changes only by manual deploy. Staging has two services, and one hook can deploy only one of them.
+
+**Scope**
+- Two secrets, `RENDER_STAGING_BACKEND_DEPLOY_HOOK` and `RENDER_STAGING_FRONTEND_DEPLOY_HOOK`, each copied from that service's Settings → Deploy Hook; retire `RENDER_STAGING_DEPLOY_HOOK`
+- `staging-deploy.yml` calls both; the wait step checks both services (or each hook's returned deploy ID) reach the pushed commit
+- Check the hook response's deploy ID belongs to the expected service (Render API `GET /v1/services/{id}/deploys`), so a mis-pasted hook fails loudly
+- Update `docs/ops/staging_deploy_notes.md` §4 and `docs/ops/github_actions_secrets_ownership_map.md`
+
+**Acceptance Criteria**
+- A `staging-deploy.yml` run on `main` succeeds, with both staging services live on the run's commit
+- A test fails if the workflow calls only one hook or waits on a service it did not deploy
 
 ---
 
