@@ -4,4 +4,4 @@
 # No -r include here: scripts/check_non_registry_dependencies.py rejects one.
 pytest==9.1.1
 pytest-cov==7.1.0
-hypothesis==6.168.4
+hypothesis==6.168.5
