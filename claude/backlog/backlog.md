@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-15 (session — 1 new item added from Sprint Execution ST-28, EPIC-04, 2026-10-12__release-v9.12: BLG-TECH-24); prior — 2026-10-15 (session — ST-29, EPIC-04, 2026-10-12__release-v9.12: BLG-OPS-181 Notes cause line (plan-authorised, sprint_backlog.md ST-29 Notes); 1 new item BLG-OPS-189); prior — 2026-10-15 (session — 1 new item added from Sprint Execution ST-32, EPIC-04, 2026-10-12__release-v9.12: BLG-OPS-188); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-15 (session — 2 new items added from the PR #2027 review, EPIC-04, 2026-10-12__release-v9.12: BLG-BE-181, BLG-QA-226); prior — 2026-10-15 (session — 1 new item added from Sprint Execution ST-28, EPIC-04, 2026-10-12__release-v9.12: BLG-TECH-24); prior — 2026-10-15 (session — ST-29, EPIC-04, 2026-10-12__release-v9.12: BLG-OPS-181 Notes cause line (plan-authorised, sprint_backlog.md ST-29 Notes); 1 new item BLG-OPS-189); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -6037,3 +6037,48 @@ The PROFITABLE lifecycle tooltip in `src/pages/Positions.js` (~69) says "Advance
 
 **Acceptance Criteria**
 - The tooltip's threshold is either defined in `strategy_rules.md` and imported from `src/constants/strategy.js`, or no longer stated as a number; `scripts/check_strategy_copy.py` passes
+
+---
+
+### BLG-BE-181 — Keep GET /settings working when the settings change-log read fails
+**Priority:** P3 (Low)
+**Type:** Backend Engineering
+**Owner:** Head of Engineering
+**Source:** PR #2027 review (Director of Quality, agent-mediated), ST-26/EPIC-04, cycle `2026-10-12__release-v9.12` — 2026-10-15
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.13
+
+**Problem**
+Since ST-26, `GET /settings` (`backend/main.py` `get_settings_endpoint`) calls `get_last_settings_change()` inside the endpoint's single `try`. Any failure of that read becomes a 500 for the whole settings read: the `settings_change_log` table missing in an environment, a permission error, or a bad row. Every page that loads settings then fails, not just the last-change line. The migration is applied on staging and production, so this is latent. It bites on any new or rebuilt environment, and on any future change to the table.
+
+**Scope**
+- Wrap the `get_last_settings_change()` call so a failure logs a warning and returns `last_change: null`; the rest of the settings payload is unaffected
+- Add a test: when `get_last_settings_change` raises, `GET /settings` returns 200 with the settings row and `last_change` null
+
+**Acceptance Criteria**
+- With the change-log read raising, `GET /settings` returns 200 and the settings data, with `last_change: null` (test)
+- The failure is logged at warning level or above
+
+---
+
+### BLG-QA-226 — Run the settings change-log SQL against a real Postgres in CI
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** Director of Quality; Head of Engineering
+**Source:** PR #2027 review (Director of Quality, agent-mediated), ST-26/EPIC-04, cycle `2026-10-12__release-v9.12` — 2026-10-15
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.13
+
+**Problem**
+`tests/test_settings_change_log.py` mocks the cursor. The SQL that ST-26 added in `backend/database.py` is never executed in CI: the `SELECT ... FOR UPDATE`, the `INSERT INTO settings_change_log`, and the `batch_id` subquery in `get_last_settings_change()`. `ci-tests.yml` Pytest Phase B starts a real `postgres:15` service, but no test creates the DS-33 schema in it. A typo or type mismatch in that SQL would first show up on staging or production as a failed settings save, because the log insert shares the save's transaction.
+
+**Scope**
+- In Phase B, create `settings` and the DS-33 `settings_change_log` table (from `data_model.md` DS-33) and run `create_settings` / `update_settings` / `get_last_settings_change` against it
+- Skip cleanly when no real `DATABASE_URL` is available, as the existing Phase A/B split expects
+
+**Acceptance Criteria**
+- A Phase B test saves settings twice against real Postgres and asserts the log rows (field, old, new, source, shared `batch_id`) and the `last_change` payload
+- A deliberately broken column name in the insert makes that test fail in CI
+
+---
+
