@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-16 (session — 4 new item(s) added: BLG-BE-187, BLG-SPEC-206, BLG-FE-231, BLG-BE-188; sprint execution `2026-10-16__release-v9.13` EPIC-01 findings); prior — 2026-10-16 (session — 1 new item added: BLG-GOV-395, execution_state_path ownership after the PR #2029 CI failure); prior — 2026-10-16 (roadmap rebalance `2026-10-16__scheduled` STEP 4 — 21 items filed from `IW-20261016-01`: BLG-FE-226–230, BLG-BE-182–186, BLG-QA-227–228, BLG-SPEC-204–205, BLG-SEC-43, BLG-OPS-190–191, BLG-GOV-391–394; BLG-FE-226/BLG-FE-227/BLG-BE-182 Provisional-Target v9.13); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-16 (session — 3 new item(s) added: BLG-OPS-192, BLG-FE-232, BLG-BE-189; PR #2071 review findings, EPIC-01 v9.13); prior — 2026-10-16 (session — 4 new item(s) added: BLG-BE-187, BLG-SPEC-206, BLG-FE-231, BLG-BE-188; sprint execution `2026-10-16__release-v9.13` EPIC-01 findings); prior — 2026-10-16 (session — 1 new item added: BLG-GOV-395, execution_state_path ownership after the PR #2029 CI failure); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -5640,5 +5640,65 @@ Three patches deferred on 2026-10-06 (target 2026-10-20) went OVERDUE by carry c
 
 **Acceptance Criteria**
 - One pytest per error case asserts the status and `detail`
+
+---
+
+### BLG-OPS-192 — Tell "no qualifying tickers" apart from "momentum run missing" in the month-end rebalance job
+**Priority:** P3 (Low)
+**Type:** Operations / Job Dependencies
+**Owner:** Infrastructure & Operations Owner; Strategy Rules & System Intent Owner
+**Source:** PR #2071 review (ST-05 / EPIC-01), sprint execution `2026-10-16__release-v9.13` — 2026-10-16
+**Effort:** S (~0.5 day)
+**Provisional-Target:** TBD
+
+**Problem**
+Since v9.13 (`strategy_rules.md` §8.4), `POST /signals/rebalance-exit` returns 503 and creates nothing when no momentum signal rows are dated today. It cannot tell a missing run from a completed run that found no qualifying tickers, because `generate_momentum_signals` persists no run record. On a month-end where no ticker passes the trend and regime filters, the job raises a false alert and makes no §8.4 recommendations, although every held position is then out of the ranking.
+
+**Scope**
+- Persist a completion marker for each momentum signal run (date, tickers ranked, count), or reuse an existing run table
+- Rebalance job: no marker today → 503 (unchanged); marker with zero tickers → an empty ranking and the §8.4 recommendations it implies
+
+**Acceptance Criteria**
+- pytest: zero-qualifier completed run → signals for non-risk-off, post-§8.1 positions and no 503; missing run → 503 as now
+
+---
+
+### BLG-FE-232 — Positions page exit failures still use a browser alert; adopt ExitModal's inline error
+**Priority:** P3 (Low)
+**Type:** Frontend / UX Consistency
+**Owner:** Head of UX & Design; Frontend Specifications & UX Documentation Owner
+**Source:** PR #2071 review (ST-01 / EPIC-01), sprint execution `2026-10-16__release-v9.13`; `monitor-exit-queue/decision_record.md` §5 ("The Positions page can adopt the same error state") — 2026-10-16
+**Effort:** XS (~0.5 day)
+**Provisional-Target:** TBD
+
+**Problem**
+v9.13 gave `ExitModal` an inline `exit-error` state that keeps the dialog and its values when an exit fails, but only the Monitor's exit queue uses it. The Positions page's exit mutation still calls `alert()` on failure and the dialog stays open without saying what failed, so the same dialog behaves differently depending on where it was opened.
+
+**Scope**
+- Positions page passes an awaitable `onConfirm` so `ExitModal` shows its inline error, "Exiting…" and retry; remove the `alert()`
+- Update `positions.md` §Exit Dialog to say the failure state applies everywhere
+
+**Acceptance Criteria**
+- A failed Positions-page exit shows `exit-error` with the backend detail and keeps entered values (Playwright)
+
+---
+
+### BLG-BE-189 — Decide whether checklist_skipped should count plans rather than saves
+**Priority:** P3 (Low)
+**Type:** Backend / Product Decision
+**Owner:** Product Owner; Strategy Rules & System Intent Owner
+**Source:** PR #2071 review (ST-04 / EPIC-01), sprint execution `2026-10-16__release-v9.13`; DoQ review non-blocking finding 5 — 2026-10-16
+**Effort:** XS (~0.5 day)
+**Provisional-Target:** TBD
+
+**Problem**
+v9.13 writes one `checklist_skipped` event on every create or update of a plan whose checklist is still incomplete (`red_flag_journal.md` contract v1.1.0). Editing a plan's thesis five times before completing the checklist therefore records five deviations. The Red Flag Journal then reads as a count of incomplete saves, which overstates how often the user skipped the checklist.
+
+**Scope**
+- Product Owner decides: one event per save (as now), per plan, or only when the unchecked count changes
+- If changed: implement in `trade_plans.py::_maybe_write_checklist_skipped_event` and update the contract
+
+**Acceptance Criteria**
+- Decision recorded; if changed, pytest covers repeated saves of the same incomplete plan
 
 ---
