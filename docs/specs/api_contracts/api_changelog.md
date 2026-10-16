@@ -49,6 +49,15 @@ Rules:
 |--------|---------|
 | Updated endpoint: POST /positions/{position_id}/exit | Enforces the documented `exit_reason` list: an unlisted value, an empty string or a legacy snake-case spelling returns `400` before anything is written; omitted or `null` still means `Manual Exit` (BLG-SPEC-186). The list matches `data_model.md` DS-34's CHECK constraints. |
 
+### signal_endpoints.md — v1.9 (UPDATED)
+
+**EPIC:** EPIC-01
+**ST:** ST-05
+
+| Change | Details |
+|--------|---------|
+| Updated endpoint: POST /signals/rebalance-exit | Implements `strategy_rules.md` §8.4 (v1.17): the ranking is every ticker today's momentum signal run wrote, whatever its status; `risk_off_exit` positions and positions at their stop are skipped; with no run recorded today it creates nothing and returns 503 (BLG-GOV-391, BLG-OPS-190). |
+
 ### red_flag_journal.md — v1.1.0 (UPDATED)
 
 **EPIC:** EPIC-01

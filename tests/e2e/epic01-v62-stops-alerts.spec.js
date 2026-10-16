@@ -22,6 +22,8 @@
  *   SC-RB-01  exit_rebalance signal shows "Month-End Exit" label (ST-03/AC-05)
  *   SC-RB-02  exit_rebalance badge has amber styling — distinct from new-signal cyan (ST-03/AC-05)
  *   SC-RB-03  exit_rebalance signal visible alongside new signals in list (ST-03/AC-05)
+ *   SC-RB-04  v9.13 ST-05: rebalance exits are strategy_rules.md §8.4 (v1.17), so the card keeps
+ *             "Month-End Exit" and shows no interim "Outside §8 — informational" label
  *
  * Visual assertions use CSS class checks (not pixel screenshots) — consistent with
  * visual-snapshots.spec.js. Reliable across platforms in CI; no snapshot baselines needed.
@@ -330,6 +332,26 @@ test('SC-RB-01: exit_rebalance signal shows "Month-End Exit" label', async ({ pa
 
   await page.waitForSelector('text=TSLA', { timeout: 8000 });
   await expect(page.locator('text=Month-End Exit').first()).toBeVisible({ timeout: 5000 });
+});
+
+test('SC-RB-04: §8.4 rebalance exit keeps "Month-End Exit" with no interim "Outside §8" label', async ({ page }) => {
+  // v9.13 ST-05 (BLG-GOV-391): the Strategy Rules & System Intent Owner ruled the
+  // rebalance exit into §8 (ESC-EXEC-20261016-01), so signals.md v0.6 retires the
+  // interim label in the same change (decision record §2.2).
+  const sig = makeSignal({
+    ticker: 'TSLA',
+    status: 'exit_rebalance',
+    suggested_shares: 0,
+    allocation_gbp: 0,
+    total_cost: 0,
+  });
+  await stubSignalsPage(page, [sig]);
+  await page.goto('/#/Signals');
+
+  await page.waitForSelector('text=TSLA', { timeout: 8000 });
+  await expect(page.locator('text=Month-End Exit').first()).toBeVisible({ timeout: 5000 });
+  await expect(page.getByTestId('rebalance-outside-s8-label')).toHaveCount(0);
+  await expect(page.getByText('Outside §8')).toHaveCount(0);
 });
 
 test('SC-RB-02: exit_rebalance badge has amber styling — distinct from new-signal cyan', async ({ page }) => {

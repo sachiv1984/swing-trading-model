@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 1.8
-**Last Updated:** 2026-10-13 (ST-07/ST-08, EPIC-02, v9.12, BLG-BE-157/158 — `total_cost` stated in GBP with entry fees; zero-ATR signals get no allocation); prior — 2026-09-29 (ST-21, EPIC-05, v9.8, BLG-API-05 — added a 401 error example to GET /signals); prior — 2026-06-24
+**Version:** 1.9
+**Last Updated:** 2026-10-16 (ST-05, EPIC-01, v9.13, BLG-GOV-391 — `POST /signals/rebalance-exit` implements `strategy_rules.md` §8.4: status-independent ranking, §8.1/§8.2 precedence, 503 when today's momentum signal run is missing); prior — 2026-10-13 (ST-07/ST-08, EPIC-02, v9.12, BLG-BE-157/158 — `total_cost` stated in GBP with entry fees; zero-ATR signals get no allocation); prior — 2026-09-29 (ST-21, EPIC-05, v9.8, BLG-API-05 — added a 401 error example to GET /signals); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Overview
@@ -141,11 +141,13 @@ Generates `exit_rebalance` signals on the last trading day of each calendar mont
 
 - `POST /signals/rebalance-exit`
 
-**Logic:**
-1. If today is not the last trading day of the month (weekend-aware), returns immediately with `is_last_trading_day: false` and no records created.
-2. Fetches the most recent momentum signal batch to determine the current top-5 tickers.
-3. For each open position NOT in the top-5 list, creates an `exit_rebalance` signal.
-4. Deduplication: skips any position whose `current_price ≤ current_stop` (trailing stop already triggered — exit_rebalance is redundant).
+**Logic** (implements `strategy_rules.md` §8.4, v1.17; updated v1.9, ST-05, BLG-GOV-391):
+1. If today is not the last trading day of the month (weekend-aware; exchange holidays are not modelled), returns immediately with `is_last_trading_day: false` and no records created.
+2. Reads today's momentum ranking: every ticker that today's momentum signal run (`POST /signals/generate`) wrote, **whatever its status since** (`new`, `already_held`, `entered`, `dismissed`, `expired`). Dismissing a signal does not change the ranking. `exit_rebalance` rows are not ranking rows.
+3. If that run wrote nothing for today, creates no signals and returns **503** with `screener_run_missing: true` (see Errors). The job is recorded as an error in `GET /health/scheduler`, and `rebalance-exit.yml`'s `curl -f` step fails, which is the alert (BLG-OPS-190).
+4. For each open position NOT in the ranking, creates an `exit_rebalance` signal, except:
+   - a position with `risk_off_exit = true`: §8.2 governs it;
+   - a position whose `current_price ≤ current_stop`: §8.1 governs it.
 5. Uses `UNIQUE(portfolio_id, ticker, signal_date)` — re-running on the same day updates rather than duplicating.
 
 **Inv-vol sizing note:** `exit_rebalance` signals do not include share sizing fields (`suggested_shares = 0`). These are exit signals, not entries.
@@ -179,6 +181,12 @@ No body required.
 ### Errors
 
 Errors use the standard error envelope from **conventions.md**.
+
+| Status | Condition |
+|--------|-----------|
+| 404 | Portfolio not found |
+| 503 | Last trading day of the month, but no momentum signal run recorded today. No signals created. Body: `{"status": "error", "message": "No momentum signal run recorded for <date>: ...", "data": {"run_date", "is_last_trading_day": true, "screener_run_missing": true, "signals_created": 0, "message"}}` (v1.9) |
+| 500 | Unexpected error |
 
 ---
 
@@ -366,6 +374,7 @@ Errors use the standard error envelope from **conventions.md**.
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.9 | 2026-10-16 | ST-05 (EPIC-01, v9.13, BLG-GOV-391; absorbs BLG-OPS-190): `POST /signals/rebalance-exit` implements `strategy_rules.md` §8.4 (v1.17). The ranking is every ticker today's momentum signal run wrote, whatever its status; `risk_off_exit` positions are skipped (§8.2 governs), as are positions at their stop (§8.1); with no run recorded today it creates nothing and returns 503 (`screener_run_missing: true`). Strategy Rules & System Intent Owner ruling `ESC-EXEC-20261016-01`. |
 | 1.8 | 2026-10-13 | ST-07/ST-08 (EPIC-02, v9.12; BLG-BE-157, BLG-BE-158): `total_cost` field note added: GBP for both markets, including estimated entry fees (UK stamp duty and commission; US commission and FX fee converted at `fx_rate`). `inv_vol_weight` field note added: zero/missing-ATR signals get weight 0, 0 shares and a reason. `allocation_gbp` description corrected (excludes fees). API Contracts & Documentation Owner. |
 | 1.5 | 2026-06-19 | ST-01 (BLG-BE-36, v6.0): Replace cash-allocation sizing model with risk-based `sizing_service.size_position()` per `strategy_rules.md §4.1`. `suggested_shares` now reflects `portfolio_value × risk_percent / stop_distance` — independent of concurrent signal count. `allocation_gbp` is now estimated_cost from the canonical sizing calculator. `reason` field updated: no longer describes cap-overshoot; now set when sizing produces 0 shares (invalid stop, or sizing invalid). `allocation_insufficient` status is legacy — no longer generated. `volatility` field description corrected (not used for sizing). API Contracts & Documentation Owner. |
 | 1.4 | 2026-06-03 | Hotfix: Revise `allocation_insufficient` semantics — now only fires when total cash < price of 1 share. When 20% cap prevents 1 share but total cash is sufficient, signal stays `new` with `suggested_shares = 1` and `reason` note. Update `reason` field description accordingly. |

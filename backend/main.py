@@ -760,6 +760,12 @@ def rebalance_exit_signals_endpoint():
     """
     try:
         result = generate_rebalance_exit_signals()
+        if result.get("screener_run_missing"):
+            # ST-05 (BLG-GOV-391 / BLG-OPS-190, v9.13): month-end with no momentum
+            # ranking for today. No signals were created; a 503 fails
+            # rebalance-exit.yml (curl -f), which is the alert.
+            record_nightly_job("rebalance_exit", "error", error=result["message"], detail=result)
+            return JSONResponse(status_code=503, content={"status": "error", "message": result["message"], "data": result})
         record_nightly_job("rebalance_exit", "ok", detail=result)
         # inv_vol_sizing runs inside generate_rebalance_exit_signals for sized signals
         record_nightly_job("inv_vol_sizing", "ok", detail={"note": "co-invoked by rebalance-exit"})

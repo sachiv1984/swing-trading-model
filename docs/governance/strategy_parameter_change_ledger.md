@@ -1,7 +1,7 @@
 **Owner:** Strategy Rules & System Intent Owner
 **Class:** Reference Document (Class 2)
 **Status:** Active
-**Last Updated:** 2026-10-01 (ST-22, EPIC-04, v9.9, BLG-GOV-344 — initial creation, backfilled from `claude/strategy/strategy_rules.md`'s own Change log, versions 1.0–1.12)
+**Last Updated:** 2026-10-16 (ST-05, EPIC-01, v9.13, BLG-GOV-391 — momentum ranking and rebalance frequency rows added, first listed in §11 at v1.17; values unchanged since v1.0); prior — 2026-10-01 (ST-22, EPIC-04, v9.9, BLG-GOV-344 — initial creation, backfilled from `claude/strategy/strategy_rules.md`'s own Change log, versions 1.0–1.12)
 
 # Strategy Parameter Change Ledger
 
@@ -19,6 +19,8 @@ This ledger is a derived index, not a parallel source of truth: `claude/strategy
 | Initial / losing stop multiplier | 5 × ATR | 1.0 | February 2026 | Never changed since v1.0 | — |
 | Profitable stop multiplier | 2 × ATR | 1.0 | February 2026 | Never changed since v1.0 | — |
 | ATR period | 14 days | 1.0 | February 2026 | Never changed since v1.0 | — |
+| Momentum ranking size and lookback | Top 5 by 252-day momentum | 1.17 (first listed in §11) | 16 October 2026 | Not changed since listed. Same values as entry signal generation (`generate_momentum_signals` defaults) and the production backtest (`strategy_engine.py` `LIVE_PARAMS`) | `strategy_rules.md` v1.17 Change log row; ruling `ESC-EXEC-20261016-01` |
+| Rebalance frequency | Month-end | 1.17 (first listed in §11) | 16 October 2026 | Not changed since listed. Backtest `rebalance_freq = "ME"`; live month-end signal since v6.2 (`BLG-FEAT-47`) | `strategy_rules.md` v1.17 Change log row; ruling `ESC-EXEC-20261016-01` |
 
 ## Backfill Method
 
@@ -32,4 +34,6 @@ Cross-referenced every entry in `strategy_rules.md`'s Change log table (v1.0 thr
 
 ### Change History (post-creation)
 
-*(No entries yet — this ledger was created with all four parameters still at their v1.0 initial values. The first real parameter change will add its own dated row here.)*
+*(No listed value has changed since it was listed.)*
+
+- **2026-10-16 — v1.17 (ST-05, BLG-GOV-391):** two parameters that were already in force but not listed in §11 were added to it: momentum ranking (top 5 by 252-day momentum) and rebalance frequency (month-end), with §8.4. This records existing values; nothing changed.
