@@ -49,6 +49,15 @@ Rules:
 |--------|---------|
 | Updated endpoint: POST /positions/{position_id}/exit | Enforces the documented `exit_reason` list: an unlisted value, an empty string or a legacy snake-case spelling returns `400` before anything is written; omitted or `null` still means `Manual Exit` (BLG-SPEC-186). The list matches `data_model.md` DS-34's CHECK constraints. |
 
+### red_flag_journal.md — v1.1.0 (UPDATED)
+
+**EPIC:** EPIC-01
+**ST:** ST-04
+
+| Change | Details |
+|--------|---------|
+| Updated endpoint: GET /portfolio/red-flag-journal | Can now return `checklist_skipped` events, written when `POST /trade-plans` or `PUT /trade-plans/{id}` saves a non-empty, incomplete checklist; context `source`, `plan_id`, `unchecked_items`, `total_items` (BLG-BE-182). Response shape unchanged. |
+
 ## v9.12.0 (2026-10-13 — Release v9.12)
 
 ### market_endpoints.md — v0.3 (UPDATED)

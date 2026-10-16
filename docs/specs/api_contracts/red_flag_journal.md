@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 1.0.0
-**Last Updated:** 2026-05-22
+**Version:** 1.1.0
+**Last Updated:** 2026-10-16 (ST-04, EPIC-01, v9.13, BLG-BE-182 — `checklist_skipped` written on incomplete-checklist plan saves; unwritten types marked); prior — 2026-05-22
 **Shipped:** v3.9 — ST-07, EPIC-03, cycle 2026-05-21__release-v3.9
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
@@ -36,9 +36,11 @@ Global response envelopes, error shape, and defaults are defined in **convention
 
 Returns a paginated log of strategy deviation events. Events are written when the operator:
 - Acknowledges a pre-entry validation override (rule status `fail` or `warn`) via the SI-01 advisory panel
-- Dismisses a strategy checklist prompt (`checklist_skipped`)
-- Dismisses a stop loss prompt (`stop_prompt_dismissed`)
-- Dismisses a drawdown prompt (`drawdown_prompt_dismissed`)
+- Saves a trade plan with a non-empty, incomplete entry checklist (`checklist_skipped`, v1.1.0)
+- Dismisses a stop loss prompt (`stop_prompt_dismissed`) — **not yet recorded**: no writer exists
+- Dismisses a drawdown prompt (`drawdown_prompt_dismissed`) — **not yet recorded**: no writer exists
+
+Only `pre_entry_override` and `checklist_skipped` are written today. `tests/test_red_flag_checklist_skipped.py` checks that every declared type has a writer or a dated allow-list entry, and that the frontend's `RECORDED_EVENT_TYPES` matches the written set.
 
 **Method & Path**
 
@@ -65,9 +67,9 @@ Returns a paginated log of strategy deviation events. Events are written when th
 | Value | Trigger |
 |-------|---------|
 | `pre_entry_override` | Operator acknowledged a `fail` or `warn` result from the SI-01 pre-entry validation panel |
-| `checklist_skipped` | Operator dismissed a strategy checklist prompt without completing it |
-| `stop_prompt_dismissed` | Operator dismissed a stop loss advisory prompt |
-| `drawdown_prompt_dismissed` | Operator dismissed a drawdown advisory prompt |
+| `checklist_skipped` | A trade plan was created or updated with its entry checklist saved non-empty and incomplete (one event per such save) |
+| `stop_prompt_dismissed` | Operator dismissed a stop loss advisory prompt. Not yet recorded |
+| `drawdown_prompt_dismissed` | Operator dismissed a drawdown advisory prompt. Not yet recorded |
 
 ### Response (200 OK)
 
@@ -119,7 +121,7 @@ The `context` field is a free-form JSONB object. Common fields by event type:
 | event_type | Typical context fields |
 |------------|----------------------|
 | `pre_entry_override` | `source` (e.g. `"trade_plan"`), `override_acknowledged: true` |
-| `checklist_skipped` | `source`, `checklist_id` (if available) |
+| `checklist_skipped` | `source: "trade_plan"`, `plan_id`, `unchecked_items` (integer), `total_items` (integer) |
 | `stop_prompt_dismissed` | `source`, `position_id` |
 | `drawdown_prompt_dismissed` | `source`, `drawdown_pct` (if available) |
 
@@ -141,7 +143,7 @@ Context is informational; callers must not depend on specific context fields for
 
 ### Write Path (Internal)
 
-The `create_red_flag_event` function in `backend/database.py` is the only authorised write path. It is invoked by SI-01 (pre-entry override acknowledgement) and any strategy prompt dismissal handlers. This endpoint has no write surface; it is GET-only.
+The `create_red_flag_event` function in `backend/database.py` is the only authorised write path. It is invoked by SI-01 (pre-entry override acknowledgement, `trade_plans.py::_maybe_write_override_event`) and by `POST /trade-plans` and `PUT /trade-plans/{id}` when the saved checklist is incomplete (`trade_plans.py::_maybe_write_checklist_skipped_event`, v1.1.0). An update that does not include `checklist_items` writes nothing. Both writes are non-blocking: the plan is saved even if the event write fails. This endpoint has no write surface; it is GET-only.
 
 ---
 
@@ -168,4 +170,5 @@ Indexes: `event_type`, `UPPER(ticker)`, `created_at DESC`.
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.1.0 | 2026-10-16 | ST-04 (BLG-BE-182, EPIC-01, v9.13): `checklist_skipped` is now written, once per trade-plan create or update that saves a non-empty, incomplete checklist; context `source`, `plan_id`, `unchecked_items`, `total_items`. `stop_prompt_dismissed` and `drawdown_prompt_dismissed` are marked not yet recorded. No endpoint change. |
 | 1.0.0 | 2026-05-22 | Initial contract authored — spec debt closure for SI-03 (shipped v3.9). Content extracted from portfolio_endpoints.md §GET /portfolio/red-flag-journal and expanded with data model, context field notes, and write path documentation. BLG-SPEC-33. Authority: API Contracts & Documentation Owner (OA-02, 2026-05-22__scheduled). |
