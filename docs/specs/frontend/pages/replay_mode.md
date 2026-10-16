@@ -1,8 +1,9 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 0.3
-**Last Updated:** 2026-10-07 (ST-20, EPIC-04, v9.10, BLG-SPEC-171 — determinism guarantee and engine-versus-live rule divergences stated; results caption gains the engine-rules sentence); prior — 2026-09-25 (ST-01c, EPIC-01, v9.7, BLG-FEAT-74 — implementation lands: wire contract referenced, §13 item 5 IT-06 premise corrected, route/column-label corrections, FX-basis caption and independence/skipped-trade notice added); prior — 2026-09-23 (v9.7 design gate — ST-01/BLG-FEAT-74: new page, V1 shape)
+**Version:** 0.4
+**Last Updated:** 2026-10-16 (v9.13 design gate — ST-26/BLG-FE-209: new §Light Theme applying the light-theme token set); prior — 2026-10-07 (ST-20, EPIC-04, v9.10, BLG-SPEC-171 — determinism guarantee and engine-versus-live rule divergences stated; results caption gains the engine-rules sentence); prior — 2026-09-25 (ST-01c, EPIC-01, v9.7, BLG-FEAT-74 — implementation lands: wire contract referenced, §13 item 5 IT-06 premise corrected, route/column-label corrections, FX-basis caption and independence/skipped-trade notice added); prior history retained — see prior entries in version control
+**Design Source (v0.4 light theme):** docs/design/2026-10-12__release-v9.12/light-theme-support/decision_record.md §3 (pre-existing rule)
 **Design Source:** docs/design/2026-09-23__release-v9.7/po05-replay-mode/decision_record.md
 **Wire Contract:** docs/product/decisions/po05_replay_scope_confirmation.md (rev 3); implemented as `docs/specs/api_contracts/replay_endpoints.md` v1.0
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
@@ -137,6 +138,26 @@ inside the output view).
 
 ---
 
+## Light Theme (v0.4 — ST-26, BLG-FE-209)
+
+Light mode is a supported theme. Every Replay surface uses the `design_system.md` §Light-Theme Colour Tokens pairs (design source `docs/design/2026-10-12__release-v9.12/light-theme-support/decision_record.md` §3, a pre-existing rule with no new decision record). A bare dark value is a defect. Dark values are unchanged.
+
+| Element | Light | Dark |
+|---------|-------|------|
+| Selector and output cards | `bg-white border-slate-200` | `bg-slate-800/50 border-slate-700/50` |
+| Nested rows, table header and inputs | `bg-slate-50` | `bg-slate-800` / `bg-slate-700/20` (as now) |
+| Headings, figures, table values | `text-slate-900` | `text-white` |
+| Body text | `text-slate-800` | `text-slate-300` |
+| Labels and captions | `text-slate-600` | `text-slate-400` |
+| Positive / negative P&L | `text-emerald-700` / `text-rose-700` | `text-emerald-400` / `text-rose-400` |
+| Retrospective and skipped-trade notices (amber text) | `text-amber-700` | `text-amber-400` (`text-amber-600` is withdrawn: 3.19:1 on white) |
+| Failure banner | `bg-rose-50 border-rose-200 text-rose-700` | `bg-rose-500/10 border-rose-500/30 text-rose-300` |
+| Filled badges (e.g. `bg-amber-700` + white) | Unchanged, theme-independent | Unchanged |
+
+The 700-shade colour tokens are used only on white, `slate-50` or `slate-100` (token rule 2). The light-theme axe scans of Date Range, Trade Set and the populated result pass, with no `color-contrast` entry in `KNOWN_VIOLATIONS`.
+
+---
+
 ## Motion / Timing
 
 None beyond the design system's default. No new animation, debounce, or delay-before-show parameter is introduced by this page.
@@ -169,6 +190,7 @@ the Trade Set checkbox list itself (ticker, exit date, toggling).
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.4 | 2026-10-16 | v9.13 design gate — ST-26 (EPIC-04, BLG-FE-209): new §Light Theme, which applies the v9.12 light-theme token set to every Replay surface, so the three light-theme axe scans pass and their `KNOWN_VIOLATIONS` entries are removed. Design source: `docs/design/2026-10-12__release-v9.12/light-theme-support/decision_record.md` §3 (pre-existing rule). Head of UX & Design sign-off: 2026-10-16. Product Owner approved: 2026-10-16. Head of Specs Team confirmed. |
 | 0.3 | 2026-10-07 | ST-20 (EPIC-04, v9.10, BLG-SPEC-171): §13 item 5 states the fingerprint-checkable determinism guarantee (F2) and the engine-versus-live rule divergences (F4). §Output View item 5 caption gains the engine-rules sentence decided by the Strategy Rules & System Intent Owner (`ESC-EXEC-20261006-05`). Wording-only (FI-P3-02); asserted in `replay-mode.spec.js`. |
 | 0.2 | 2026-09-25 | ST-01c (EPIC-01, BLG-FEAT-74): implementation. §13 item 5 corrected — no IT-06/Alpaca reuse, per the wire contract's Finding F1. Route corrected `/replay` → `/Replay` (actual `pages.config.js` convention). Results table column corrected "Simulated Entry Date" → "Entry Date" (entry is never simulated). Added the independence note, skipped-trades notice, and FX-basis caption (wire contract §7 items 2–3). API Reference filled in. Design source and V1 shape otherwise unchanged. Authority: Sprint Execution Engine (agent-mediated, Frontend Specifications & UX Documentation Owner role — §5.3), on the user's explicit direction. |
 | 0.1 | 2026-09-23 | v9.7 design gate — ST-01 (EPIC-01, BLG-FEAT-74): new page, V1 shape (selector, output view, §13 boundary, states). Design source: `docs/design/2026-09-23__release-v9.7/po05-replay-mode/decision_record.md`. Design Only — Implementation Pending (no backend endpoint yet). Authority: Head of Specs Team. |

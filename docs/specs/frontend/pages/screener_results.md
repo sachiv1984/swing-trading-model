@@ -1,8 +1,9 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 1.9
-**Last Updated:** 2026-09-29 (ST-26, EPIC-05, v9.8, BLG-SPEC-161 — §4/§5.3 column lists corrected to match the live `SCREENER_COLUMNS`: added the missing Earnings column, and replaced the stale separate "Actions" column with the actual shape — Watchlist/Research actions live inside the News cell); prior — 2026-09-28 (v9.8 design gate — ST-02/BLG-FE-185: new §14 Column Definition Architecture note — `SCREENER_COLUMNS` is the single source for header, body cell and CSV value; no visual change); prior — 2026-09-21 (v9.6 design gate — ST-03/BLG-FEAT-97: new §5.3 CSV Export); prior history retained — see prior entries in version control.
+**Version:** 1.10
+**Last Updated:** 2026-10-16 (v9.13 design gate — ST-25/BLG-FE-221: "Add to Watchlist" and empty-state Scan buttons use emerald-700 with white text); prior — 2026-09-29 (ST-26, EPIC-05, v9.8, BLG-SPEC-161 — §4/§5.3 column lists corrected to match the live `SCREENER_COLUMNS`: added the missing Earnings column, and replaced the stale separate "Actions" column with the actual shape — Watchlist/Research actions live inside the News cell); prior — 2026-09-28 (v9.8 design gate — ST-02/BLG-FE-185: new §14 Column Definition Architecture note — `SCREENER_COLUMNS` is the single source for header, body cell and CSV value; no visual change); prior history retained — see prior entries in version control
+**Design Source (v1.10 button fills):** docs/design/2026-10-16__release-v9.13/coloured-button-fills/decision_record.md
 **Design Source (v1.8 column architecture):** docs/design/2026-09-28__release-v9.8/screener-watchlist-shared-column-definitions/decision_record.md
 **Design Source (v1.7 CSV export):** docs/design/2026-09-21__release-v9.6/screener-watchlist-csv-export/decision_record.md
 **Design Source (v1.5):** docs/design/2026-09-14__release-v9.4/loading-skeleton-standardisation/decision_record.md
@@ -154,7 +155,7 @@ The screener results page must handle all empty states gracefully:
 
 | Condition | Display |
 |-----------|---------|
-| No screener runs yet | Full-page empty state: "No screener results yet. Run your first screen." + Scan button |
+| No screener runs yet | Full-page empty state: "No screener results yet. Run your first screen." + Scan button (`bg-emerald-700 hover:bg-emerald-800 text-white`, v1.10) |
 | All tickers filtered (post-filter) | In-table empty state: "No tickers match your current filters. Adjust filters to see results." |
 | No tickers pass strategy gates | Full-page empty state: "No tickers pass your current strategy filters. This may indicate a risk-off market regime." + link to Strategy Settings |
 | No Alpaca data available (US tickers) | Inline data-source warning banner: "US market data using Yahoo Finance fallback — Alpaca data temporarily unavailable." Show results using fallback data |
@@ -178,6 +179,8 @@ When the user clicks "Add to Watchlist" on a screener result row:
 3. On success: row shows "Added ✓" chip; "Add to Watchlist" button becomes disabled for that row in the current session
 
 4. On error: show inline error "Could not add to watchlist — try again"
+
+**Button fill (v1.10 — ST-25, BLG-FE-221; design source `docs/design/2026-10-16__release-v9.13/coloured-button-fills/decision_record.md`):** the "Add to Watchlist" button is `bg-emerald-700 hover:bg-emerald-800 text-white` (5.48:1 / 7.68:1). The shipped `bg-emerald-600` never rendered, because `cn()` let the default `bg-primary` win, and it would measure 3.77:1 with white text if it did.
 
 **One-click scenario:** If the user has previously disabled confirmation (user preference setting, future scope), the confirmation popover is skipped. This preference is not in scope for v2.9 spec — document as a future enhancement.
 
@@ -326,6 +329,7 @@ This spec covers all DS-02 interaction patterns:
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.10 | 2026-10-16 | v9.13 design gate — ST-25 (EPIC-04, BLG-FE-221): "Add to Watchlist" and the empty-state Scan button are `bg-emerald-700 hover:bg-emerald-800 text-white`. Their authored `bg-emerald-600` never rendered and fails AA with white text. Design source: `docs/design/2026-10-16__release-v9.13/coloured-button-fills/decision_record.md`. Head of UX & Design sign-off: 2026-10-16. Product Owner approved: 2026-10-16. Head of Specs Team confirmed. |
 | 1.9 | 2026-09-29 | ST-26 (EPIC-05, v9.8, BLG-SPEC-161): §4/§5.3 corrected to match live `SCREENER_COLUMNS` — added the missing Earnings column (present in code since an earlier cycle but never documented) and replaced the stale separate "Actions" column with its actual shape (Watchlist + Research actions live inside the News cell, not a distinct column). No code change. Authority: Head of Specs Team. |
 | 1.8 | 2026-09-28 | v9.8 design gate — ST-02 (EPIC-01, BLG-FE-185): added §14 Column Definition Architecture — `SCREENER_COLUMNS` documented as the single source for header, body cell and CSV value. No visual change. Design source: `docs/design/2026-09-28__release-v9.8/screener-watchlist-shared-column-definitions/decision_record.md`. Authority: Head of Specs Team. |
 | 1.7 | 2026-09-21 | v9.6 design gate — ST-03 (EPIC-01, BLG-FEAT-97): added §5.3 CSV Export — "Download CSV" button in the filter bar; exports displayed (filtered/sorted) rows and the full §4 columns except Actions; machine-readable values; UTF-8/RFC 4180, dated filename, formula-injection guard; disabled at zero rows. Design source: `docs/design/2026-09-21__release-v9.6/screener-watchlist-csv-export/decision_record.md`. Authority: Head of Specs Team. |

@@ -3,8 +3,9 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 0.4
-**Last Updated:** 2026-06-24
+**Version:** 0.5
+**Last Updated:** 2026-10-16 (v9.13 design gate — ST-05/BLG-GOV-391: new §Rebalance Exit Interim Label); prior — 2026-06-24
+**Design Source (v0.5 rebalance interim label):** docs/design/2026-10-16__release-v9.13/rebalance-exit-interim-label/decision_record.md
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Design Source (v0.2 date default):** docs/design/2026-05-09__release-v3.3/trade-plan-quick-wins/ux_spec.md §E
 **Design Source (v0.3 watchlist CTA):** docs/design/2026-05-18__release-v3.7/signals-add-to-watchlist/ux_spec.md
@@ -96,6 +97,18 @@ Badge format: white text, weight 500, 11px, rounded pill. Signal type text label
 
 The frontend maps API snake_case type values to display labels via a client-side constant (not runtime-derived).
 
+### Rebalance Exit Interim Label (v0.5 — ST-05, BLG-GOV-391)
+
+**Design source:** `docs/design/2026-10-16__release-v9.13/rebalance-exit-interim-label/decision_record.md`
+
+Month-end rebalance exits are not one of `strategy_rules.md` §8's three exit conditions. Until the Strategy Rules & System Intent Owner's determination is applied, every `exit_rebalance` signal card shows the following directly under its status badge row ("Month-End Exit"), and so does the "Rebalance Exit" type badge where the table renders it:
+
+- `Info` icon (12 px, `aria-hidden`) + "Outside §8 — informational" (`text-xs font-medium`)
+- A muted second line: "Not one of the strategy's three exit conditions. No action is required."
+- `text-slate-600 dark:text-slate-400`; `data-testid="rebalance-outside-s8-label"`; the full sentence is also in `title`
+
+**Removal:** if §8 is amended to include rebalance exits, the label is removed in the same change. If the signal is withdrawn, the card state and label are retired with `rebalance-exit.yml`. Either way it is temporary.
+
 ---
 
 ## Signal Card Actions (v3.7 — BLG-FE-33)
@@ -155,6 +168,7 @@ The frontend must not calculate or derive signal scores, rankings, or fields. Al
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.5 | 2026-10-16 | v9.13 design gate — §Rebalance Exit Interim Label added (ST-05, BLG-GOV-391): "Outside §8 — informational" on `exit_rebalance` signals until the §8 determination is applied. Design source: `docs/design/2026-10-16__release-v9.13/rebalance-exit-interim-label/decision_record.md`. Head of UX & Design sign-off: 2026-10-16. Product Owner approved: 2026-10-16. Head of Specs Team confirmed. |
 | 0.4 | 2026-06-24 | v6.2 design gate — §Signal Type Badge Styling added (ST-03, BLG-FEAT-47): `exit_rebalance` signals rendered as "Rebalance Exit" teal badge (#0891B2); `stop_exit` signals rendered as "Stop Exit" red badge (#DC2626); visual distinction satisfies AC-05. Design source: rebalance-exit-signal-style/ux_spec.md. Approved: Product Owner 2026-06-24. |
 | 0.3 | 2026-05-18 | v3.7 design gate — added §Signal Card Actions (BLG-FE-33: "Add to Watchlist" CTA replaces "Add Position"; watchlisted state with "View in Watchlist" link; duplicate add handling; Dismiss retained). Design source: signals-add-to-watchlist/ux_spec.md. Approved: Product Owner 2026-05-18. |
 | 0.2 | 2026-05-09 | v3.3 design gate — added Date control (BLG-FE-25: default to most recent trading day; "Latest" quick-link; date parameter added to API call); updated empty state message to include date. Design source: trade-plan-quick-wins/ux_spec.md §E. Approved: Product Owner 2026-05-09. |

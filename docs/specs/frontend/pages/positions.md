@@ -3,8 +3,9 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.19
-**Last Updated:** 2026-10-13 (ST-14, EPIC-02, v9.12, BLG-BE-148 — §Gap Risk Badge: next trading session is the next NYSE session on the US market date); prior — 2026-10-13 (ST-10, EPIC-02, v9.12, BLG-BE-159 — §Trail Stop Action: Branch B ruled, read-only "View Trail"; Branch A deleted); prior — 2026-10-13 (ST-35, EPIC-05, v9.12, BLG-SPEC-179 — §Gap Risk Badge: confirmed the data source is `GET /positions/{position_id}/gap-risk` and stated that `gap_risk.*` names the endpoint's `data` object, not a `GET /positions` field); prior history retained — see prior entries in version control
+**Version:** 2.20
+**Last Updated:** 2026-10-16 (v9.13 design gate — ST-01/BLG-FE-226: new §Daily Position Monitor Exit Queue; ST-22/BLG-FE-208: §AI Trade Advisor Widget gains §Answer Rating); prior — 2026-10-13 (ST-14, EPIC-02, v9.12, BLG-BE-148 — §Gap Risk Badge: next trading session is the next NYSE session on the US market date); prior — 2026-10-13 (ST-10, EPIC-02, v9.12, BLG-BE-159 — §Trail Stop Action: Branch B ruled, read-only "View Trail"; Branch A deleted); prior history retained — see prior entries in version control
+**Design Source (v9.13 additions):** docs/design/2026-10-16__release-v9.13/monitor-exit-queue/decision_record.md, docs/design/2026-10-16__release-v9.13/chat-answer-rating/decision_record.md
 **Design Source (v9.11 additions):** docs/design/2026-10-08__release-v9.11/grace-alert-calendar-days/decision_record.md
 **Design Source (v9.10 additions):** docs/design/2026-10-06__release-v9.10/stop-cell-provenance/decision_record.md, docs/design/2026-10-06__release-v9.10/exit-condition-surfacing/decision_record.md, docs/design/2026-10-06__release-v9.10/lifecycle-badge-grace-calendar-days/decision_record.md, docs/design/2026-10-06__release-v9.10/gap-risk-trigger-label-alignment/decision_record.md
 **Design Source (v8.2 additions):** docs/design/2026-08-04__release-v8.2/compliance-recheck-all-pass-state/decision_record.md
@@ -26,6 +27,7 @@
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.20 | 2026-10-16 | v9.13 design gate. (ST-01, BLG-FE-226) New §Daily Position Monitor Exit Queue: the Monitor's exits run one `ExitModal` per selected position through `POST /positions/{id}/exit`, with Monitor-sourced pre-selection, a queue indicator and a failure state that keeps the queue. (ST-22, BLG-FE-208) §AI Trade Advisor Widget gains §Answer Rating. Design sources: `docs/design/2026-10-16__release-v9.13/monitor-exit-queue/decision_record.md`, `docs/design/2026-10-16__release-v9.13/chat-answer-rating/decision_record.md`. Head of UX & Design sign-off: 2026-10-16. Product Owner approved: 2026-10-16. Head of Specs Team confirmed. |
 | 2.19 | 2026-10-13 | v9.12 sprint execution (ST-14, EPIC-02, BLG-BE-148): §Gap Risk Badge and §Gap Risk Reason Labels — "next trading day" is the next NYSE session on the US market date (Revised Ruling 3, `ESC-EXEC-20261013-07`). Label text unchanged. |
 | 2.18 | 2026-10-13 | v9.12 sprint execution (ST-10, EPIC-02, BLG-BE-159): §Trail Stop Action — the Strategy Rules & System Intent Owner ruled Branch B (ESC-EXEC-20261013-06: no manual stop change). Branch A ("Raise stop to …", `PATCH /positions/{id}/stop`) and the conditional note are deleted. The button is "View Trail", and the modal is read-only with the no-raise note. |
 | 2.17 | 2026-10-13 | v9.12 sprint execution (ST-35, BLG-SPEC-179): §Gap Risk Badge — data source confirmed as `GET /positions/{position_id}/gap-risk` (already corrected at 2.14); the trigger line now says `gap_risk.*` refers to that endpoint's `data` object and that `GET /positions` has no `gap_risk` field. The v6.9 UX spec's §9 API Dependency row was corrected to match (`ux_spec.md` v1.2). Documentation only. |
@@ -612,6 +614,31 @@ Tooltip structure, `aria-label` pattern, colour, stacking and clearing are uncha
 
 ---
 
+## Daily Position Monitor Exit Queue (v2.20 — ST-01, BLG-FE-226)
+
+**Design source:** `docs/design/2026-10-16__release-v9.13/monitor-exit-queue/decision_record.md`
+
+The Daily Position Monitor (Dashboard → Quick Actions → Run Monitor, `MonitorModal.js`) records exits only through `ExitModal` and `POST /positions/{id}/exit`. No code path calls `PATCH /positions/{id}`.
+
+**Flow:** "Exit Selected" starts a queue of the selected positions, in display order. The Monitor closes, and `ExitModal` opens for the first position. Only one dialog is open at a time.
+- **Success:** the next queued position's `ExitModal` opens. After the last one, a toast reads "Exited {n} position{s}." and the positions, portfolio, `portfolioApi` and trades queries are invalidated. The Trade Reflection prompt is not opened inside the queue.
+- **Cancel / ✕ / Escape:** ends the queue. The Monitor reopens with the positions not yet exited still selected. Exits already recorded stay recorded.
+
+**Queue indicator:** while `n > 1`, `ExitModal`'s description reads "Exit {i} of {n} from the Daily Position Monitor. You are about to close your position in {TICKER}." (`data-testid="exit-queue-progress"`).
+
+**Pre-selection:** the queue passes the Monitor's suggestion. It overrides `getExitCondition()` for that open:
+
+| Monitor suggestion | Pre-selected Exit Reason | Note (`exit-reason-preselect-note`) |
+|--------------------|--------------------------|-------------------------------------|
+| "Stop price hit" | "Stop Loss Hit" | "Pre-selected from the Daily Position Monitor: the price is at or below the stop." |
+| "Market risk off" | "Risk-Off Signal" | "Pre-selected from the Daily Position Monitor: the {US\|UK} market is in a risk-off regime." |
+
+**Failure** (network error or non-2xx): `ExitModal` stays open with every entered value and the queue intact. An inline error appears at the top of the body: `AlertTriangle` + "Could not record the exit for {TICKER}. Nothing was changed for this position.", plus the response `detail` on a second line if present. `role="alert"`, `data-testid="exit-error"`, `text-rose-700 dark:text-rose-400` on `bg-rose-50 dark:bg-rose-500/10`, `border-rose-200 dark:border-rose-500/30`. The confirm button re-enables for a retry. While a submit is in flight it reads "Exiting…" and is disabled.
+
+**§13:** each exit is confirmed by the user, one position at a time. Nothing is submitted automatically.
+
+---
+
 ## Position Deep Link (v2.16 — ST-22, BLG-FE-207)
 
 **Design source:** `docs/design/2026-10-12__release-v9.12/grace-panel-position-link/decision_record.md`
@@ -686,9 +713,28 @@ Rounded pill button: chat icon + "Ask Advisor" text (white on `#1D4ED8` blue-700
 | Error | Inline error in messages area: "Unable to get a response. Please try again." Input re-enabled |
 | ✕ close | Collapses to button; message history cleared |
 
+### Answer Rating (v2.20 — ST-22, BLG-FE-208)
+
+**Design source:** `docs/design/2026-10-16__release-v9.13/chat-answer-rating/decision_record.md`
+
+Each AI answer that `POST /ai/chat` returns with an `answer_id` (a model response) shows a rating control directly under its bubble. Fixed fallback messages ("Unable to get a response…", "Unable to load portfolio data.", the not-configured message) and user bubbles have none.
+
+- `role="group"`, `aria-label="Rate this answer"`, `data-testid="chat-rating"`. Two `<button>`s with `aria-pressed`: `ThumbsUp` + "Useful" (`chat-rating-useful`) and `ThumbsDown` + "Not useful" (`chat-rating-not-useful`). Lucide 12 px, `text-xs`, `gap-3`, `mt-1`.
+- The panel is a fixed dark surface in both themes, so single dark tokens apply, as for the bubbles.
+
+| State | Display |
+|-------|---------|
+| Unrated | Both `text-slate-400`, hover `text-slate-200` |
+| Saving | Both disabled; the clicked one in its selected colour |
+| Rated | Useful `text-emerald-400` / Not useful `text-rose-400`, both disabled (one rating per answer). "Thanks — recorded." (muted) for 3 s. |
+| Save failed | Both re-enabled, unselected. `text-xs text-rose-400` "Couldn't save your rating. Try again." (`role="status"`) |
+| Already rated (server reports a prior rating) | Shown as Rated with the stored value |
+
+The rating is stored server-side against the answer and feeds the Response Acceptance Rate (`metrics_definitions.md` § AI Chat Engagement). It changes nothing else. Widget history still clears on close.
+
 ### Stateless per request
 
-Each POST /ai/chat is stateless (no session state persisted to backend). In-memory conversation display only — cleared on widget close.
+Each POST /ai/chat is stateless (no session state persisted to backend; the v2.20 answer rating is stored per answer and does not make the conversation stateful). In-memory conversation display only — cleared on widget close.
 
 **§13 constraint:** Display-only advisory. No trade entry, exit, or modification action executable from widget.
 

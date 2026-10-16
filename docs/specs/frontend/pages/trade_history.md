@@ -3,8 +3,9 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 1.15
-**Last Updated:** 2026-10-08 (v9.11 design gate — ST-05/BLG-FE-205: §Post-Trade Debrief Regenerate button made recognisable, generated time shown, regenerate failure message); prior — 2026-09-28 (ST-05, EPIC-01, v9.8, BLG-SPEC-158 — §Responsive Behavior corrected to match `TradeHistoryTable.js`); prior — 2026-09-04 (v9.1 ST-07, BLG-SPEC-99: added §Keyboard Navigation Requirements)
+**Version:** 1.16
+**Last Updated:** 2026-10-16 (v9.13 design gate — ST-03/BLG-FE-227: new §Exit Reason Labels and Badges; ST-21/BLG-FE-212: §Post-Trade Debrief error text and card surface get light-theme tokens); prior — 2026-10-08 (v9.11 design gate — ST-05/BLG-FE-205: §Post-Trade Debrief Regenerate button made recognisable, generated time shown, regenerate failure message); prior — 2026-09-28 (ST-05, EPIC-01, v9.8, BLG-SPEC-158 — §Responsive Behavior corrected to match `TradeHistoryTable.js`); prior history retained — see prior entries in version control
+**Design Source (v1.16):** docs/design/2026-10-16__release-v9.13/exit-reason-badges/decision_record.md; light-theme tokens per docs/design/2026-10-12__release-v9.12/light-theme-support/decision_record.md §3
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Design Source (v1.15 Debrief Regenerate):** docs/design/2026-10-08__release-v9.11/debrief-regenerate-feedback/decision_record.md
 **Design Source (v2.8 AI Journal Summary):** docs/design/2026-04-17__release-v2.8/ai-journal-summary/ux_spec.md
@@ -392,8 +393,22 @@ Shows “No debrief generated yet for this trade.” and a **Generate Debrief** 
 #### Loading / Error
 
 - On row expand (API in flight): single-line skeleton placeholder for the section.
-- On generation failure: an inline error message; the empty-state Generate button remains available to retry.
-- *(v1.15 — ST-05)* On **regenerate** failure (any non-2xx response from `POST /trades/{id}/debrief` in the populated state): the existing debrief stays on screen unchanged, and an inline message appears under the action row in `text-rose-400 text-xs`: "Could not regenerate the debrief. The previous version is still shown. Try again shortly." `data-testid="debrief-regenerate-error"`, `role="status"`. It clears on the next Regenerate click.
+- On generation failure: an inline error message in `text-xs text-rose-700 dark:text-rose-400` (v1.16 — ST-21, BLG-FE-212); the empty-state Generate button remains available to retry.
+- *(v1.15 — ST-05)* On **regenerate** failure (any non-2xx response from `POST /trades/{id}/debrief` in the populated state): the existing debrief stays on screen unchanged, and an inline message appears under the action row in `text-xs text-rose-700 dark:text-rose-400` (v1.16 — ST-21; was bare `text-rose-400`): "Could not regenerate the debrief. The previous version is still shown. Try again shortly." `data-testid="debrief-regenerate-error"`, `role="status"`. It clears on the next Regenerate click.
+
+#### Light Theme (v1.16 — ST-21, BLG-FE-212)
+
+The whole section uses the `design_system.md` §Light-Theme Colour Tokens pairs, so its axe scan passes in both themes in every state, including errors. Design source: `docs/design/2026-10-12__release-v9.12/light-theme-support/decision_record.md` §3 (pre-existing rule; no new decision record).
+
+| Element | Light | Dark (unchanged) | Light contrast |
+|---------|-------|------------------|----------------|
+| Card surface | `bg-white border-slate-200` (violet left accent unchanged) | `bg-slate-800/50 border-slate-700/30` | — |
+| Section label, Focus area label, `Sparkles` icon | `text-violet-700` | `text-violet-400` | 7.10 on white |
+| "AI-generated" badge | `bg-violet-100 text-violet-800 border-violet-200` | `bg-violet-500/20 text-violet-300 border-violet-500/30` | 7.57 |
+| Summary and focus-area text | `text-slate-800` | `text-slate-300` | 14.63 |
+| Muted and empty-state text | `text-slate-600` | `text-slate-400` | 7.58 |
+| Generate and regenerate error text | `text-rose-700` | `text-rose-400` | 6.29 |
+| Inner dividers | `border-slate-200` | `border-slate-700/30` | — |
 
 #### API Dependency
 
@@ -401,6 +416,28 @@ Shows “No debrief generated yet for this trade.” and a **Generate Debrief** 
 |----------|---------|
 | `GET /trades/{id}/debrief` | Returns the existing debrief, or 404 if none generated yet. Called lazily on row expand. |
 | `POST /trades/{id}/debrief` | Generates (or regenerates, overwriting) the debrief on demand. |
+
+---
+
+## Exit Reason Labels and Badges (v1.16 — ST-03, BLG-FE-227)
+
+**Design source:** `docs/design/2026-10-16__release-v9.13/exit-reason-badges/decision_record.md`
+
+One module, `src/constants/exitReasons.js`, is the only frontend source of exit-reason labels, colours and §8 categories. Every consumer imports it: Trade History, Trade Reflections, the Trade Reflection modal, `ExitModal`, Performance Analytics, Reports breakdown, Monthly Heatmap and Export. The §8 category for each value comes from `data_model.md` (ST-02).
+
+| Stored value | Full label (text, tables, exports) | Short label (badges) | Colour family |
+|--------------|-------------------------------------|----------------------|---------------|
+| "Stop Loss Hit" | Stop Loss Hit | Stop Hit | rose |
+| "Trailing Stop" | Trailing Stop | Trailing Stop | cyan |
+| "Risk-Off Signal" | Risk-Off Signal | Risk-Off | amber |
+| "Manual Exit" | Manual Exit | Manual | violet |
+| "Target Reached" | Target Reached | Target | emerald |
+| "Partial Profit Taking" | Partial Profit Taking | Partial | blue |
+
+- **Legacy aliases** resolve first: `stop_hit`; `manual`, `manual_exit`; `target`, `target_reached`; `market_regime`, `risk_off`, `risk_off_signal`; `trailing_stop`; `partial`, `partial_profit_taking`.
+- **Unknown** values are shown as stored with the slate badge. **Null** shows "—".
+- **Badge tokens** (`rounded-full border px-2 py-0.5 text-xs font-medium`), per family `{c}`: `bg-{c}-100 text-{c}-800 border-{c}-200 dark:bg-{c}-500/20 dark:text-{c}-400 dark:border-{c}-500/30`. Slate fallback uses the same pattern. Measured: light 6.37–13.35:1, dark 4.77–6.77:1 (decision record §2.3).
+- The Trade History column shows the short label in the badge. Dark-theme colours are unchanged from v1.15.
 
 ---
 
@@ -559,6 +596,7 @@ Documentation-only requirements baseline for this table-based page — no implem
 
 | Version | Date | Change |
 | --- | --- | --- |
+| 1.16 | 2026-10-16 | v9.13 design gate. (ST-03, BLG-FE-227) New §Exit Reason Labels and Badges: one shared module, six stored values, legacy aliases, light/dark badge tokens. (ST-21, BLG-FE-212) §Post-Trade Debrief: error text `text-rose-700 dark:text-rose-400`, and a new §Light Theme token table for the section. Design sources: `docs/design/2026-10-16__release-v9.13/exit-reason-badges/decision_record.md`; light-theme tokens per `docs/design/2026-10-12__release-v9.12/light-theme-support/decision_record.md` §3. Head of UX & Design sign-off: 2026-10-16. Product Owner approved: 2026-10-16. Head of Specs Team confirmed. |
 | 1.15 | 2026-10-08 | v9.11 design gate (ST-05, EPIC-01, BLG-FE-205): §Post-Trade Debrief — Regenerate uses the `outline` variant; "Generated {relative time}" label from `generated_at`; regenerate failure keeps the existing debrief and shows an inline error. Design source: `docs/design/2026-10-08__release-v9.11/debrief-regenerate-feedback/decision_record.md`. Head of UX & Design sign-off: 2026-10-08. Product Owner approved: 2026-10-08. Head of Specs Team confirmed. |
 | 1.14 | 2026-09-28 | ST-05 (BLG-SPEC-158, EPIC-01, v9.8): §Responsive Behavior corrected to match `TradeHistoryTable.js`'s actual implementation — the table scrolls horizontally (no card collapse, no column-hiding); journal expansion is an in-table expanded row, not a card panel. Documentation-only; no implementation change. |
 | 1.13 | 2026-09-04 | v9.1 ST-07 (BLG-SPEC-99, EPIC-01): added §Keyboard Navigation Requirements — documentation-only baseline covering Trade History Table row/expand tab order, Expandable Journal Row / Plan vs Reality / Post-Trade Debrief control tab order, Filters (incl. Saved Filter Presets), Calendar View day-cell keyboard activation, and focus-indicator contrast. No implementation change. |

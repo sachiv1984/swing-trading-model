@@ -3,8 +3,9 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 0.3
-**Last Updated:** 2026-09-28 (ST-27, EPIC-05, v9.8, BLG-SPEC-162 — §4 missing-value glyph corrected from en dash to em dash to match the already-shipped modal and canonical convention; R-Multiple/P&L/price fields now specified as formatting via the shared helper); prior — 2026-09-21 (ST-04, EPIC-01, v9.6, BLG-FEAT-98 — §2 cross-reference to the Reflection Reminder and its `/TradeHistory?reflect=` re-entry); prior — 2026-03-06 (initial spec)
+**Version:** 0.4
+**Last Updated:** 2026-10-16 (v9.13 design gate — ST-03/BLG-FE-227: §4 Exit Reason shows the full label from the shared exit-reason module); prior — 2026-09-28 (ST-27, EPIC-05, v9.8, BLG-SPEC-162 — §4 missing-value glyph corrected from en dash to em dash to match the already-shipped modal and canonical convention; R-Multiple/P&L/price fields now specified as formatting via the shared helper); prior — 2026-09-21 (ST-04, EPIC-01, v9.6, BLG-FEAT-98 — §2 cross-reference to the Reflection Reminder and its `/TradeHistory?reflect=` re-entry); prior history retained — see prior entries in version control
+**Design Source (v0.4 exit-reason labels):** docs/design/2026-10-16__release-v9.13/exit-reason-badges/decision_record.md
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Release:** v1.9
 **EPIC:** EPIC-01
@@ -54,7 +55,7 @@ Displayed at the top of the modal. All fields are read-only, sourced from the tr
 | Exit Price | `trade.exit_price` | GBP, 2dp |
 | Hold Time | `trade.holding_days` | "N days" |
 | R-Multiple | `trade.r_multiple` | Signed, 2dp, "R" suffix — from backend |
-| Exit Reason | `trade.exit_reason` | STOP / MANUAL / REGIME |
+| Exit Reason | `trade.exit_reason` | Full label from the shared exit-reason module, e.g. "Stop Loss Hit" (v0.4; `trade_history.md` §Exit Reason Labels and Badges). Legacy keys resolve to their stored value; unknown values are shown as stored. |
 | Exit State | `trade.exit_state` | GRACE / LOSING / PROFITABLE |
 | Exit Date | `trade.exit_date` | ISO date, formatted DD Mon YYYY |
 
@@ -141,6 +142,7 @@ Reflection responses require a storage table linked to the trade record. The Dat
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.4 | 2026-10-16 | v9.13 design gate (ST-03, EPIC-01, BLG-FE-227): §4 Exit Reason shows the full label from the shared exit-reason module, replacing STOP / MANUAL / REGIME, which matched no stored value. Design source: `docs/design/2026-10-16__release-v9.13/exit-reason-badges/decision_record.md`. Head of UX & Design sign-off: 2026-10-16. Product Owner approved: 2026-10-16. Head of Specs Team confirmed. |
 | 0.3 | 2026-09-28 | ST-27 (v9.8, EPIC-05, BLG-SPEC-162): §4 missing-value glyph corrected "–" → "—" (em dash), matching `format.js`'s canonical `MISSING` glyph and the already-shipped modal (documentation-only — code was already correct). §4 gains a formatting note: Entry Price, Exit Price and R-Multiple specified as using the shared helper (`formatCurrency`/`formatR`) rather than page-local logic; same output. Design source: `docs/design/2026-09-28__release-v9.8/trade-reflection-em-dash-consistency/decision_record.md`. Authority: Head of Specs Team. |
 | 0.2 | 2026-09-21 | ST-04 (v9.6, EPIC-01, BLG-FEAT-98): §2 cross-reference to the Reflection Reminder re-entry (`/TradeHistory?reflect={trade_id}`) — the cross-reference the design gate left to this story's spec-sync commit. Documentation only; no behaviour change to the modal. |
 | 0.1 | 2026-03-06 | Initial spec — v1.9 EPIC-01 ST-02. |
