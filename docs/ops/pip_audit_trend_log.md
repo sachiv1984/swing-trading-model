@@ -2,7 +2,7 @@
 **Class:** Operational Record (Class 3)
 **Status:** Active
 **Version:** 1.0
-**Last Updated:** 2026-10-13 (sprint planning `2026-10-12__release-v9.12` — trend row appended); prior — 2026-10-08 (sprint planning `2026-10-08__release-v9.11` — trend row appended); prior — 2026-10-06 (sprint planning `2026-10-06__release-v9.10` — trend row appended); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-10-16 (sprint planning `2026-10-16__release-v9.13` — trend row appended); prior — 2026-10-13 (sprint planning `2026-10-12__release-v9.12` — trend row appended); prior — 2026-10-08 (sprint planning `2026-10-08__release-v9.11` — trend row appended); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -32,6 +32,7 @@ A recurring `Unavailable` reading (the same environment gap appearing 2+ consecu
 
 | Cycle | Date | Dependencies scanned | Result | Resolution status | Notes |
 |-------|------|----------------------|--------|--------------------|-------|
+| `2026-10-16__release-v9.13` | 2026-10-16 | 53 | Clean | — | Sprint planning STEP -1.6. Run via the project virtualenv (`backend/.venv/bin/pip-audit`). 53 dependencies, up from 52 at v9.12. |
 | `2026-10-12__release-v9.12` | 2026-10-13 | 52 | Clean | — | Sprint planning STEP -1.6. Run via the project virtualenv (`backend/.venv/bin/pip-audit`). The count dropped from 60 to 52 with no change to `backend/requirements.txt` in this cycle, so the drop is in transitive resolution. Not investigated here; ST-28's dependency bumps will move it again. |
 | `2026-10-08__release-v9.11` | 2026-10-08 | 60 | Clean | — | Sprint planning STEP -1.6. Run via the project virtualenv (`backend/.venv/bin/pip-audit`). Same 60-dependency count as v9.10. |
 | `2026-10-06__release-v9.10` | 2026-10-06 | 60 | Clean | — | Sprint planning STEP -1.6. Run via the project virtualenv (`backend/.venv/bin/pip-audit`). The scan covers 60 resolved dependencies, up from 58, which reflects transitive resolution and is not a new direct requirement. The v9.9 reading recorded in that cycle's `sprint_planning_notes.md` (clean, 58) has no row here; it was not backfilled. |
