@@ -1,10 +1,10 @@
 {
   "active_cycle": "2026-10-16__release-v9.13",
   "cycle_name": "v9.13 — Monitor Exit Fix, Exit Reasons & API Call Integrity",
-  "status": "Sprint_Planning_Complete",
-  "prior_status": "Design_Gate_Passed",
-  "engine": "Sprint Planning",
-  "last_updated_utc": "2026-10-16T10:28:57Z",
+  "status": "Executing",
+  "prior_status": "Sprint_Planning_Complete",
+  "engine": "Sprint Execution",
+  "last_updated_utc": "2026-10-16T12:17:33Z",
   "execution_state_path": "claude/cycles/2026-10-16__release-v9.13/execution_state.json",
   "backlog_slice_path": "claude/cycles/2026-10-16__release-v9.13/stage4_backlog_slice.md",
   "design_gate_required": true,
@@ -38,7 +38,7 @@
   "sprint2_gate_confirmed_utc": "2026-08-18T00:00:00Z",
   "sprint2_close_utc": "2026-08-20T11:58:57Z",
   "verification_utc": "2026-10-15T14:38:04Z",
-  "last_sync_utc": "2026-10-16T10:28:57Z",
+  "last_sync_utc": "2026-10-16T12:17:33Z",
   "blocked_sla_breached": false,
   "last_deviation_consolidation_review_utc": "2026-10-07T11:21:38Z",
   "deviation_consolidation_review_cycle_count": 2,
@@ -339,6 +339,19 @@
       "resolved_utc": "2026-10-15T09:03:12Z",
       "resolved_by": "Product Owner (human, in-session)",
       "resolution_summary": "Option (b) accept-risk. credential_policy.md v1.1 §1.1 states the key's full write scope (single API_KEY, 150 routes, 61 writes, public bundle) and the decision with review triggers (ST-27, commit 8aae01e6)."
+    },
+    "ESC-EXEC-20261016-01": {
+      "cycle": "2026-10-16__release-v9.13",
+      "summary": "ST-05/EPIC-01 - Strategy Rules & System Intent Owner determination: month-end rebalance exits enter §8 or are withdrawn",
+      "trigger_type": "Strategy",
+      "owning_authority": "Strategy Rules & System Intent Owner",
+      "raised_utc": "2026-10-16T11:05:32Z",
+      "sla_due_utc": "2026-10-19T11:05:32Z",
+      "blocks_execution": false,
+      "disposition": "Resolved",
+      "resolved_utc": "2026-10-16T12:16:18Z",
+      "resolved_by": "Strategy Rules & System Intent Owner (agent-mediated, §5.3, user-directed)",
+      "resolution_summary": "Ruling (A): rebalance exit enters §8 as §8.4 (strategy_rules.md v1.17); live signal aligned (status-independent ranking, §8.2 precedence, 503 when today's run is missing); BLG-BE-187 and BLG-SPEC-206 filed."
     }
   },
   "deferred_escalations": {
