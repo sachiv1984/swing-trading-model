@@ -3269,17 +3269,31 @@ Expect 8 columns: `id` bigint NO, `settings_id` uuid NO, `batch_id` uuid NO, `fi
 
 A title-case value with stray spaces (for example `"Stop Loss Hit "`) is trimmed to the allowed value. Any other value is not guessed at. The Pre-check lists it, and the Up Migration's `ADD CONSTRAINT` fails and rolls back the whole transaction, backfill included, until the Data Model & Domain Schema Owner decides that value's mapping.
 
-**Deploy order:** the constraints and the code can go in either order. The v9.13 code writes only allowed values: `ExitModal`'s select, the API's 400 on anything else, and `position_manager.py`'s `Stop Loss Hit` / `Risk-Off Signal`. The Up Migration is applied to **staging and production** by the Data Model & Domain Schema Owner with the Infrastructure & Operations Owner (ST-02 AC 2, RISK-01, DS-23 pattern). The sandbox `DATABASE_URL` is read-only staging. **Status: PENDING — awaiting live application (`DEL-20261016-01`).**
+**Deploy order:** the constraints and the code can go in either order. The v9.13 code writes only allowed values: `ExitModal`'s select, the API's 400 on anything else, and `position_manager.py`'s `Stop Loss Hit` / `Risk-Off Signal`. The Up Migration is applied to **staging and production** by the Data Model & Domain Schema Owner with the Infrastructure & Operations Owner (ST-02 AC 2, RISK-01, DS-23 pattern). The sandbox `DATABASE_URL` is read-only staging. **Status: CONFIRMED APPLIED, 2026-10-16** (staging and production; see Live Confirmation below; `DEL-20261016-01`).
 
 ### Pre-check
 
 ```sql
 SELECT 'positions' AS table_name, exit_reason, COUNT(*) AS row_count,
-       (exit_reason IS NULL OR exit_reason = ANY (ARRAY['Stop Loss Hit', 'Trailing Stop', 'Risk-Off Signal', 'Manual Exit', 'Target Reached', 'Partial Profit Taking'])) AS allowed
+       (exit_reason IS NULL OR exit_reason = ANY (ARRAY[
+        'Stop Loss Hit',
+        'Trailing Stop',
+        'Risk-Off Signal',
+        'Manual Exit',
+        'Target Reached',
+        'Partial Profit Taking'
+    ])) AS allowed
 FROM positions GROUP BY exit_reason
 UNION ALL
 SELECT 'trade_history', exit_reason, COUNT(*),
-       (exit_reason IS NULL OR exit_reason = ANY (ARRAY['Stop Loss Hit', 'Trailing Stop', 'Risk-Off Signal', 'Manual Exit', 'Target Reached', 'Partial Profit Taking']))
+       (exit_reason IS NULL OR exit_reason = ANY (ARRAY[
+        'Stop Loss Hit',
+        'Trailing Stop',
+        'Risk-Off Signal',
+        'Manual Exit',
+        'Target Reached',
+        'Partial Profit Taking'
+    ]))
 FROM trade_history GROUP BY exit_reason
 ORDER BY 1, 2;
 ```
@@ -3312,7 +3326,14 @@ UPDATE positions SET exit_reason = CASE lower(btrim(exit_reason))
         WHEN '' THEN NULL
         ELSE exit_reason END
 WHERE exit_reason IS NOT NULL
-  AND NOT (exit_reason = ANY (ARRAY['Stop Loss Hit', 'Trailing Stop', 'Risk-Off Signal', 'Manual Exit', 'Target Reached', 'Partial Profit Taking']));
+  AND NOT (exit_reason = ANY (ARRAY[
+        'Stop Loss Hit',
+        'Trailing Stop',
+        'Risk-Off Signal',
+        'Manual Exit',
+        'Target Reached',
+        'Partial Profit Taking'
+    ]));
 
 UPDATE trade_history SET exit_reason = CASE lower(btrim(exit_reason))
         WHEN 'stop_hit' THEN 'Stop Loss Hit'
@@ -3335,16 +3356,37 @@ UPDATE trade_history SET exit_reason = CASE lower(btrim(exit_reason))
         WHEN '' THEN NULL
         ELSE exit_reason END
 WHERE exit_reason IS NOT NULL
-  AND NOT (exit_reason = ANY (ARRAY['Stop Loss Hit', 'Trailing Stop', 'Risk-Off Signal', 'Manual Exit', 'Target Reached', 'Partial Profit Taking']));
+  AND NOT (exit_reason = ANY (ARRAY[
+        'Stop Loss Hit',
+        'Trailing Stop',
+        'Risk-Off Signal',
+        'Manual Exit',
+        'Target Reached',
+        'Partial Profit Taking'
+    ]));
 
 ALTER TABLE positions DROP CONSTRAINT IF EXISTS chk_positions_exit_reason;
 ALTER TABLE positions ADD CONSTRAINT chk_positions_exit_reason CHECK (
-    exit_reason IS NULL OR exit_reason IN ('Stop Loss Hit', 'Trailing Stop', 'Risk-Off Signal', 'Manual Exit', 'Target Reached', 'Partial Profit Taking')
+    exit_reason IS NULL OR exit_reason IN (
+        'Stop Loss Hit',
+        'Trailing Stop',
+        'Risk-Off Signal',
+        'Manual Exit',
+        'Target Reached',
+        'Partial Profit Taking'
+    )
 );
 
 ALTER TABLE trade_history DROP CONSTRAINT IF EXISTS chk_trade_history_exit_reason;
 ALTER TABLE trade_history ADD CONSTRAINT chk_trade_history_exit_reason CHECK (
-    exit_reason IS NULL OR exit_reason IN ('Stop Loss Hit', 'Trailing Stop', 'Risk-Off Signal', 'Manual Exit', 'Target Reached', 'Partial Profit Taking')
+    exit_reason IS NULL OR exit_reason IN (
+        'Stop Loss Hit',
+        'Trailing Stop',
+        'Risk-Off Signal',
+        'Manual Exit',
+        'Target Reached',
+        'Partial Profit Taking'
+    )
 );
 
 COMMIT;
@@ -3370,10 +3412,23 @@ WHERE conname IN ('chk_positions_exit_reason', 'chk_trade_history_exit_reason')
 ORDER BY 1;
 ```
 
-Expect 2 rows, one per table, each `CHECK (((exit_reason IS NULL) OR ((exit_reason)::text = ANY (...))))` listing the six values. Then re-run the Pre-check: every row must show `allowed = true`.
+Expect 2 rows, one per table, each `CHECK (((exit_reason IS NULL) OR ((exit_reason)::text = ANY (...))))` listing the six values. Then confirm that no value picked up a line break when the script was pasted (each value is on its own line above for this reason; see the staging Live Confirmation):
+
+```sql
+SELECT conrelid::regclass AS table_name, conname,
+       pg_get_constraintdef(oid) LIKE '%''Partial Profit Taking''%' AS partial_literal_ok,
+       position(E'\n' IN pg_get_constraintdef(oid)) = 0 AS no_line_breaks
+FROM pg_constraint
+WHERE conname IN ('chk_positions_exit_reason', 'chk_trade_history_exit_reason')
+ORDER BY 1;
+```
+
+Expect 2 rows, both columns `true`. Then re-run the Pre-check: every row must show `allowed = true`.
 
 **Sign-off:**
-- Data Model & Domain Schema Owner: to be applied by the user (human, with live write access, acting for the Data Model & Domain Schema Owner with the Infrastructure & Operations Owner) on staging, then production. Record each environment's Pre-check and Verification output below as its Live Confirmation.
+- Data Model & Domain Schema Owner: applied by the user (human, with live write access, acting for the Data Model & Domain Schema Owner with the Infrastructure & Operations Owner) on staging, then production, in the Supabase SQL editor, on 2026-10-16. Output pasted into the execution session.
+- **Live Confirmation — staging, applied 2026-10-16.** Pre-check (before): `positions` NULL 2 (allowed); `trade_history` `manual` 1, `stop_hit` 5 and `target` 6 (not allowed, all legacy aliases), `Stop Loss Hit` 1 and `Trailing Stop` 1 (allowed). The Up Migration returned "Success. No rows returned". **Line-break incident:** the first Verification showed both constraints listing `'Partial \r\n  Profit Taking'`. The original one-line script had wrapped inside that literal when pasted into the SQL editor, so staging would have rejected a real `Partial Profit Taking` exit. The backfill was unaffected (its matched values were not wrapped, and no row held that value). Both constraints were dropped and re-added the same day with one value per line (in one transaction). The line-break check then returned 2 rows, both `partial_literal_ok = true` and `no_line_breaks = true`. This section's SQL was reformatted to one value per line, and the line-break check added to Verification, before production was run. Pre-check (after): `positions` NULL 2; `trade_history` `Manual Exit` 1, `Stop Loss Hit` 6, `Target Reached` 6, `Trailing Stop` 1; every row allowed. 12 rows backfilled, 14 `trade_history` rows before and after.
+- **Live Confirmation — production, applied 2026-10-16** (reformatted script). Pre-check (before): `positions` `Manual Exit` 8, `Stop Loss Hit` 7, `Trailing Stop` 11, NULL 1; `trade_history` `Manual Exit` 8, `Stop Loss Hit` 7, `Trailing Stop` 12. The first Pre-check, run from the original one-line script, showed `trade_history` `Manual Exit` as not allowed while `positions`' `Manual Exit` was allowed. A byte-level diagnostic of `trade_history`'s non-allowed values (reformatted script) returned no rows, so the stored values were clean and the `false` came from a wrapped `'Manual Exit'` literal in that query, the same paste fault as on staging. The Up Migration returned "Success. No rows returned". Line-break check: 2 rows, both `partial_literal_ok = true` and `no_line_breaks = true`. Pre-check (after): identical counts, every row allowed. No rows needed backfilling.
 
 ## Drift Detector Triage (2026-10-13, v2.60)
 
