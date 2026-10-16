@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 9.34
-**Last Updated:** 2026-10-13 (ST-43, EPIC-06, v9.12, BLG-GOV-364 — STEP -1.6 standalone pre-run exception bounded by idea_intake_prompt.md §4.1 (reduced-roster windows)); prior — 2026-10-13 (ST-42, EPIC-06, v9.12, BLG-GOV-367 — §7.1 names the pooled Skill-Silo aggregation method, with a method-break note restating the last 4 readings); prior — 2026-10-09 (ST-34, EPIC-06, v9.11, BLG-GOV-355 — STEP 2.4 also records the effort-weighted PVR reading in the same History row, diagnostic only, no tier; BLG-GOV-339 Head of Specs Team + Product Owner sign-off, ESC-EXEC-20261008-03); prior history retained — see prior entries in version control
+**Version:** 9.35
+**Last Updated:** 2026-10-16 (Head of Specs Team action-now patches, user-directed, roadmap rebalance `2026-10-16__scheduled` STEP -1.5, clearing 3 OVERDUE deferred patches — STEP 7.3 reads `claude/roadmap/ready_pool_history.md` (BLG-GOV-374); §7.1 defines "worsened or remained unresolved" (ESC-RB-20261008-01); rationale moved to appendix Part B so the core fits under 24k tokens); prior — 2026-10-13 (ST-43, EPIC-06, v9.12, BLG-GOV-364 — STEP -1.6 standalone pre-run exception bounded by idea_intake_prompt.md §4.1 (reduced-roster windows)); prior — 2026-10-13 (ST-42, EPIC-06, v9.12, BLG-GOV-367 — §7.1 names the pooled Skill-Silo aggregation method, with a method-break note restating the last 4 readings); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -65,6 +65,7 @@ Agent definitions: `claude/agents/*.md`. Switch agent perspective explicitly whe
 - `claude/roadmap/initiative_register.md`
 - `claude/roadmap/workforce_capacity.md`
 - `claude/roadmap/product_value_ratio_history.md` (STEP 2.4 — append History row, refresh sparkline; listed retroactively, Head of Specs Team ruling ESC-EXEC-20261001-04)
+- `claude/roadmap/ready_pool_history.md` (STEP 7.3 — append a missing release row only; BLG-GOV-374, v9.35)
 - `claude/roadmap/role_share_history.md` (§7.2 — append the newest shipped cycle's row and breakdown only; ESC-EXEC-20261001-04)
 - `claude/roadmap/decision_log.md`
 - `claude/backlog/backlog.md`
@@ -105,7 +106,7 @@ Create-if-missing:
 **Scheduled:** `--reason "scheduled"` — no completion event required; record "Scheduled run — no completion event."
 `cycle_id = YYYY-MM-DD__scheduled`
 
-**Same-day collision check (v8.7, 2026-07-12):** Before creating `claude/cycles/<cycle_id>/`, check whether that path already exists. If it does (a prior scheduled or completion-triggered run already used this exact `cycle_id` today): do not write into it. Append `-2`, `-3`, … (lowest unused integer) to form the new `cycle_id`, and record the collision and resolved `cycle_id` in `run_manifest.md`. Non-blocking, automatic — no user confirmation required.
+**Same-day collision check (v8.7):** if `claude/cycles/<cycle_id>/` already exists, do not write into it. Append `-2`, `-3`, … (lowest unused integer) and record the collision and resolved `cycle_id` in `run_manifest.md`. Automatic and non-blocking.
 
 No execution steps begin until this precondition is satisfied.
 
@@ -152,8 +153,8 @@ Any unresolved action with no carry-forward path → halt.
 **Prompt patch confirmation:** Load deferred patches from prior `lessons_learnt.md`. For each:
 - Present in target file → record "applied" in run manifest.
 - Absent and **second consecutive cycle** carrying this patch → classify OVERDUE; escalate to Head of Specs Team immediately. Run may not proceed past -1.5 with any OVERDUE patch.
-- **Out-of-scope OVERDUE resolution (v8.7, 2026-07-12):** If an OVERDUE patch's target file is outside this engine's Write Scope §4 (e.g. `CLAUDE.md`), "outside scope" is not itself a valid carry-forward reason once a named authority holds a standing out-of-band write privilege for that file (e.g. `shared_standards.md` §17). The escalation to Head of Specs Team must then instruct applying the patch directly under that standing authority this session, rather than carrying it forward again. Full history: `roadmap_prompt_appendix.md` §STEP -1.5.
-- **Condition-gated defer exemption (v8.8, 2026-07-13):** A deferred patch whose Target field names a recurrence condition (not a cycle_id or absolute date) is **not** subject to the "second consecutive cycle → OVERDUE" rule. Instead, apply a **Stale Condition-Gated Defer** advisory (non-blocking) once such a defer has been carried for **6 or more consecutive cycles** without its condition recurring: escalate to Head of Specs Team to assess whether the condition is realistic, and consider rewriting it as an unconditional action-now patch or retiring it. Full history: `roadmap_prompt_appendix.md` §STEP -1.5.
+- **Out-of-scope OVERDUE resolution (v8.7):** if an OVERDUE patch's target is outside §4 but a named authority holds a standing write privilege for it (e.g. `shared_standards.md` §17), "outside scope" is not a valid carry-forward reason. The escalation instructs applying the patch under that authority this session.
+- **Condition-gated defer exemption (v8.8):** a deferred patch whose Target is a recurrence condition (not a cycle_id or date) is exempt from the OVERDUE rule. After 6 or more consecutive carries without the condition recurring, raise a non-blocking **Stale Condition-Gated Defer** advisory to Head of Specs Team (rewrite as action-now, or retire).
 - **Stale release target check:** If a deferred patch's target event is a named release (`plan release vX.Y`), verify whether that release has already shipped by checking the release summary table in `current_roadmap.md`. If shipped → classify the patch as OVERDUE immediately; do not wait for the second-consecutive-cycle rule to fire. Record outcome in run manifest.
 
 Record all outcomes under "Prior Cycle Outstanding Actions" in run manifest.
@@ -181,7 +182,7 @@ Count `claude/ideas/ideas_register.md` rows where Status is `Submitted` or `Park
 - **< 20 open ideas (or register absent/empty):** invoke `claude/system/idea_intake_prompt.md` inline — open window, collect submissions, close. Proceed with new submissions available.
 - **≥ 20 open ideas:** note count, skip intake.
 
-**Standalone pre-run exception (v9.27, `2026-09-30__scheduled`):** If a `run ideas` window was already opened and closed standalone within the same session-chain immediately prior to this invocation — its submissions still `Submitted`, not yet processed by STEP 4 — do not open a second inline window merely because the open-idea count is still < 20; proceed directly to STEP 4 with those submissions. Does not apply when the open rows are all `Parked-cycle-<n>` carries with no fresh `Submitted` rows — that case still triggers a fresh inline window. Record which path was taken in `run_manifest.md`. Full rationale: `roadmap_prompt_appendix.md` §STEP -1.6. **Reduced-roster bound (ST-43, BLG-GOV-364, v9.12):** the exception applies only if that standalone window complied with `idea_intake_prompt.md` §4.1. An inline window opened by this step is full roster unless §4.1 conditions 1–4 are met and recorded in `run_manifest.md`.
+**Standalone pre-run exception (v9.27):** if a standalone `run ideas` window was opened and closed in the same session-chain immediately before this run, and its rows are still `Submitted`, do not open a second inline window: go to STEP 4 with those submissions. This does not apply when the only open rows are `Parked-cycle-<n>` carries; that case still opens a fresh inline window. Record the path taken in `run_manifest.md`. **Reduced-roster bound (ST-43, BLG-GOV-364, v9.12):** the exception applies only if that standalone window complied with `idea_intake_prompt.md` §4.1. An inline window opened by this step is full roster unless §4.1 conditions 1–4 are met and recorded in `run_manifest.md`.
 
 **Large-window budget note:** When the inline window produces >30 submissions, budget additional context depth for STEPs 4 and 5. If advancing idea count exceeds 15, prioritise advancing only the highest-scoring ideas (per STEP 6 criteria) and park the remainder.
 
@@ -195,7 +196,7 @@ Compute per OPERATIONAL_GUIDE.md §15 and record in `run_manifest.md` under `## 
 
 1. **Header Compliance %** — compliant docs ÷ total docs in `claude/cycles/<active_cycle_id>/`
 2. **Deferred Patch Indicator** — Green < 1 cycle / Amber 1–2 cycles / Red > 2 cycles since filed
-3. **Outstanding Action Count** — from `open_escalations` (state file + execution_state.json) + prior `lessons_learnt.md`, **plus a due-date-aware scan (v9.3, widened v9.4)**: read the last 3 completed cycles' `lessons_learnt_closure.md`/`lessons_learnt.md` files across all five routines, and surface any escalation whose stated deadline falls on or before the current cycle's date, regardless of named owner. Check both the standard `^## ESC-`/`SLA due-by`/`Disposition: Open` pattern and any `## Recurrence Escalations` table (per `lessons_learnt_prompt.md §5`) naming "next roadmap review" or an equivalent checkpoint. List each by ID (or description) and owning routine.
+3. **Outstanding Action Count** — from `open_escalations` (state file + execution_state.json) and prior `lessons_learnt.md`, plus a due-date scan (v9.3, widened v9.4): read the last 3 completed cycles' `lessons_learnt_closure.md`/`lessons_learnt.md` across all five routines and list, by ID and owning routine, every escalation due on or before this cycle's date, whatever its owner. Check both `^## ESC-`/`SLA due-by`/`Disposition: Open` entries and any `## Recurrence Escalations` row naming "next roadmap review" or an equivalent checkpoint.
 
 Missing source file → record "N/A — source file absent". Advisory only — do not halt.
 
@@ -242,7 +243,7 @@ Classify (evaluate in order):
 | Idea debate (STEP 4–5) | Skipped if zero advancing | Full | Full |
 | Hard gates | All apply | All apply | All apply |
 
-**Condensed-tier trigger threshold (ST-38, EPIC-04, v9.2, BLG-GOV-247):** reviewed and decided — retain the single "no new FTE required" test as-is; no additional thresholds added (the Lightweight tier's own entry conditions already tightly scope this). Full rationale: `roadmap_prompt_appendix.md` §STEP 0.C.
+**Condensed-tier threshold (ST-38, v9.2, BLG-GOV-247):** reviewed; the single "no new FTE required" test is retained.
 
 All working content (STEPS 2–8) written as labelled sections of `claude/cycles/<cycle_id>/cycle_record.md`. `run_manifest.md`, `cycle_summary.md`, and `lessons_learnt.md` remain separate.
 
@@ -266,7 +267,7 @@ Create `claude/cycles/<cycle_id>/run_manifest.md` (Class 3, Owner: Infrastructur
 - Canonical inputs used; decision authorities and non-decision roles activated
 - **Prior Cycle Outstanding Actions** — outcome for each
 - **Cycle Velocity** — from `claude/cycles/velocity_metrics.md`: last cycle velocity + 6-cycle rolling average; or "velocity_metrics.md not found"
-- **Meta-Review Countdown (ST-27, EPIC-04, v9.2, BLG-GOV-217):** read `last_meta_review_cycle` from `.claude_current_state.json` and count completed rebalance cycles since. Record as `"<n> of 3 cycles since <last_meta_review_cycle> — not due"` or `"DUE this cycle — see §11.4"` when `n >= 3`. This is the same count §11.4 itself computes at STEP 11.4 — surfacing it here at STEP 1.1 makes the countdown visible from the very first artefact of the session instead of only appearing once STEP 11.4 runs near the end.
+- **Meta-Review Countdown (ST-27, v9.2, BLG-GOV-217):** from `last_meta_review_cycle` in `.claude_current_state.json`, count completed rebalance cycles since. Record `"<n> of 3 cycles since <last_meta_review_cycle> — not due"`, or `"DUE this cycle — see §11.4"` when n ≥ 3 (the same count STEP 11.4 computes).
 
 Cannot write lifecycle-compliant manifest → halt.
 
@@ -321,13 +322,13 @@ Roadmap must use Now / Next / Later structure. If absent: record required update
 
 For each Later item: case for promoting to Next? For each Next item: promote to Now, stay, or demote to Later? Record outcomes in a `### Horizon Review` subsection within `## STEP 2`. Extended tier: explicit Now→Next promotion check required.
 
-**SI-02 gate read instruction (v8.4, LP-09):** When citing the SI-02 trade-count gate, read the structured `**Last formally confirmed:**` / `**Unverified report:**` sub-fields directly below the SI-02 row in `current_roadmap.md` §5 (Arc 5 Later horizon table) rather than re-deriving the distinction from prose. Cite `**Last formally confirmed:**` as the authoritative value for gate-clearance decisions; note `**Unverified report:**` as context only. Only a governed routine with direct production database/API access may update `**Last formally confirmed:**`.
+**SI-02 gate read (v8.4, LP-09):** cite the SI-02 row's `**Last formally confirmed:**` sub-field in `current_roadmap.md` §5 as the authoritative gate value; treat `**Unverified report:**` as context only. Only a governed routine with direct production database/API access may update `**Last formally confirmed:**`.
 
-**Credential-fallback guidance (v9.6):** Before attempting a live re-check, confirm production API credentials are actually available in the executing checkout. If absent or the live call fails auth: do not write a "live re-confirmed" claim; cite the existing `**Last formally confirmed:**` field unchanged; record in `run_manifest.md` that a live check was attempted and why it did not succeed. A read-only *staging* `DATABASE_URL` (per `BLG-OPS-121`) may be cited opportunistically as context only — never updates `**Last formally confirmed:**`. **Standing-behaviour decision (ST-15, EPIC-03, v8.2, BLG-GOV-279):** Product Owner formally decided (2026-08-04) this fallback-citation pattern is permanent, intended behaviour — future sessions must not file a new carry-forward item requesting "a genuine live re-check next cycle." Full rationale and history: `roadmap_prompt_appendix.md` §STEP 2.3.
+**Credential fallback (v9.6):** before a live re-check, confirm production API credentials exist in this checkout. If they are absent or the call fails auth, write no "live re-confirmed" claim, cite `**Last formally confirmed:**` unchanged, and record the attempt and why it failed in `run_manifest.md`. A read-only staging `DATABASE_URL` (`BLG-OPS-121`) is context only and never updates that field. This fallback is permanent behaviour (Product Owner, 2026-08-04, ST-15, BLG-GOV-279): do not file carry-forward items asking for a live re-check next cycle.
 
 Horizon movements are candidates in STEP 5 only if they represent new commitments — zero-sum displacement rules apply.
 
-**Six-Arc model vs. backlog-driven delivery — standing operating-mode note (v9.20):** Empty Now/Next horizons with every Later/Gated pre-condition genuinely unmet is expected operating-mode behaviour, not a process failure needing a fresh friction item each cycle. Record the operating mode in `run_manifest.md`/`cycle_record.md`. Does **not** retire the Horizon Review — still check each gate/pre-condition against current data every cycle. Full rationale: `roadmap_prompt_appendix.md` §STEP 2.3.
+**Operating mode (v9.20):** empty Now/Next horizons with every Later/Gated pre-condition unmet is expected in backlog-driven delivery, not a friction item. Record the operating mode in `run_manifest.md`/`cycle_record.md`, and still check every gate against current data each cycle.
 
 ---
 
@@ -341,7 +342,7 @@ Look back at the last 5 completed cycles from `docs/product/changelog.md`. For e
 - **D** — Debt clearance (spec, QA, ops baseline, audit, pre-planning)
 - **P** — Pre-work for a future feature (pre-design, pre-planning, pre-spec)
 
-**Read the tag, don't re-derive it, when one exists:** from `post_ship_closure.md` v2.17 onward, each `Tech backlog items shipped` line carries an inline `[U|G|D|P]` tag assigned at ship time — use it directly. Only fall back to judgment-based classification for cycles shipped before this tagging convention existed (pre-v6.6) or if a line is missing its tag. (Removes reconstruction-variance risk — see `2026-07-02__scheduled`/`2026-07-03__scheduled` lessons learnt.)
+**Read the tag, don't re-derive it:** from `post_ship_closure.md` v2.17 onward each `Tech backlog items shipped` line carries an inline `[U|G|D|P]` tag; use it. Classify by judgement only for pre-v6.6 cycles or untagged lines.
 
 Compute: `user_value_ratio = U stories ÷ total stories` across the 5 cycles (one decimal, e.g. 0.42).
 
@@ -353,13 +354,13 @@ Compute: `user_value_ratio = U stories ÷ total stories` across the 5 cycles (on
 
 Record the classification table and computed ratio in `run_manifest.md` under `## Product Value Ratio Diagnostic`.
 
-**Optional acceleration (ST-25, EPIC-04, v9.9, BLG-GOV-352):** `python3 scripts/compute_rebalance_diagnostics.py docs/product/changelog.md` reproduces this computation mechanically from the changelog's own `[U|G|D|P]` tags. It is an acceleration, not a hard dependency — this STEP's own manual procedure above remains authoritative if the two ever disagree (e.g. a cycle shipped before the tagging convention existed, pre-v6.6, which the script silently skips).
+**Optional acceleration (ST-25, v9.9, BLG-GOV-352):** `python3 scripts/compute_rebalance_diagnostics.py docs/product/changelog.md` reproduces this computation from the changelog tags. The manual procedure is authoritative if the two disagree (the script skips pre-v6.6 cycles).
 
-**Structured history (ST-22, BLG-FEAT-72, v8.5):** In the same commit, append one row to `claude/roadmap/product_value_ratio_history.md`'s History table (cycle_id, date, ratio, tier, U/G/D/P, total, window, this cycle's `decision_log.md` `DL-xxx` reference) and refresh its sparkline. This is the durable, structured trend record — read it (not `decision_log.md` prose) when checking the sustained-tier consecutive-readings rules below. `decision_log.md`'s own prose sentence is still written as before (unchanged) — this is an addition, not a replacement.
+**Structured history (ST-22, BLG-FEAT-72, v8.5):** in the same commit, append one row to `claude/roadmap/product_value_ratio_history.md` (cycle_id, date, ratio, tier, U/G/D/P, total, window, this cycle's `DL-xxx`) and refresh its sparkline. Use this file, not `decision_log.md` prose, for the consecutive-readings rules below. The `decision_log.md` prose sentence is still written.
 
-**Effort-weighted reading (ST-34, EPIC-06, v9.11, BLG-GOV-355 / BLG-GOV-339):** In the same History row, also fill the `Effort-weighted Ratio` column, to three decimals: effort-days of U stories ÷ effort-days of U+G+D+P stories over the same 5-cycle window, using the same U/G/D/P tags as the story-count ratio. Weight each story by the `**Estimated effort:**` line under its `#### ST-xx` block in its own cycle's `sprint_backlog.md`, converted to days with the normalisation table in `docs/specs/metrics_definitions.md` Appendix F (PVR Measurement Package, "1. Effort-weighted PVR"). Exclude from both numerator and denominator any story with no matching `#### ST-xx` block, no `**Estimated effort:**` line, or a value the table does not cover — never assign it an assumed weight. Record the coverage (weighted stories / total stories, e.g. `153/155`) and the excluded `ST-xx` IDs in `run_manifest.md`. If no story in the window can be weighted, write `—` in the column and give the reason in `run_manifest.md`. Record both readings in `run_manifest.md`'s `## Product Value Ratio Diagnostic` section. `scripts/compute_effort_weighted_pvr.py` implements the same method, but its windows are hard-coded and `scripts/` is outside §4 write scope: run it only if its `WINDOWS` map already contains this rebalance's window, and do not edit it during a rebalance — otherwise compute by hand; this manual procedure is authoritative if the two disagree. The effort-weighted reading is diagnostic only and carries no tier: the tier table above, the Product Value Alert and the sustained-Advisory rule below all continue to use the story-count `user_value_ratio`, even when the two readings fall in different bands.
+**Effort-weighted reading (ST-34, v9.11, BLG-GOV-355 / BLG-GOV-339):** in the same History row, fill `Effort-weighted Ratio` (3 decimals): effort-days of U stories ÷ effort-days of U+G+D+P stories, over the same window and tags. Weight each story by the `**Estimated effort:**` line under its `#### ST-xx` block in its own cycle's `sprint_backlog.md`, converted to days with the normalisation table in `docs/specs/metrics_definitions.md` Appendix F ("1. Effort-weighted PVR"). Exclude from numerator and denominator any story with no such block, no effort line, or a value the table does not cover; never assume a weight. Record the coverage (e.g. `153/155`) and the excluded IDs in `run_manifest.md`; if no story can be weighted, write `—` and give the reason. Run `scripts/compute_effort_weighted_pvr.py` only if its `WINDOWS` map already contains this window, and never edit it (`scripts/` is outside §4); otherwise compute by hand. The manual method is authoritative. Record both readings under `## Product Value Ratio Diagnostic`. The effort-weighted reading is diagnostic only: tiers, the Alert and the sustained-Advisory rule use the story-count ratio.
 
-**Mandatory pull-forward on sustained Advisory tier (added v9.9 — ST-04, BLG-GOV-268, mirrors the Skill-Silo sustained-failure clause in §7.1):** Read the last several rows of `claude/roadmap/product_value_ratio_history.md` (not `decision_log.md` prose) to determine the consecutive-readings count. If the ratio has remained in the **Advisory band (0.30–0.49)** for **3 or more consecutive readings** (neither Healthy ≥0.50 nor Alert <0.30), the "Facilitator surfaces in STEP 8" action becomes a **mandatory scope requirement**: the Product Owner must commit **at least 1 build-and-ship-shaped U-item** at the next release, using the same content-based test as §7.1. Full rationale: `roadmap_prompt_appendix.md` §STEP 2.4.
+**Mandatory pull-forward on sustained Advisory tier (v9.9, ST-04, BLG-GOV-268):** if `product_value_ratio_history.md` shows the ratio in the Advisory band (0.30–0.49) for 3 or more consecutive readings, the Product Owner must commit **at least 1 build-and-ship-shaped U-item** at the next release (same content test as §7.1).
 
 ---
 
@@ -376,14 +377,14 @@ Categorise every active backlog item as one of:
 - **D** — Data-density-gated (depends on trade count, journal volume, or screener history; estimate clearance date from current rate — state the estimate explicitly)
 - **L** — Long-horizon-gated (condition clears > 3 months away, or gate owner is external / uncontrollable)
 
-**Scale-appropriate methodology (v9.1, 2026-07-16 — closes the deferred patch from `2026-07-15__scheduled` Friction Item 2, confirmed on its 2nd occurrence at `2026-07-16__scheduled`):** A full manual per-item read is the default method while the active backlog is below ~150 items. At or above ~150 active items, apply this structural heuristic instead:
+**Scale-appropriate methodology (v9.1):** a full manual per-item read is the default below ~150 active items. At or above ~150, use this structural heuristic:
 1. **A vs. gated split:** grep for the `**Gate criteria:**` field. Items without it are **A**. Items with it are gated (T/D/L, differentiated in step 2).
 2. **T/D/L differentiation of gated items:** scan each `**Gate criteria:**` line's text for a keyword pattern: a date or "≥ N days"/"live for N days" phrase → **T**; a trade-count, closed-trade, or journal-volume phrase (e.g. "closed trades", "trade history") → **D**; anything else (external dependency, no stated timeframe) → **L**.
 3. Record which method was used (manual or structural-heuristic) in `run_manifest.md` alongside the counts, so cross-cycle comparisons note a methodology change rather than treating the two series as directly comparable.
 
 This does not change the reporting requirements below — only how the per-item classification is derived at scale.
 
-**Date-lapse re-check (v9.25, closes `2026-09-19__scheduled` Friction Item 1):** the structural heuristic's step 2 classifies by keyword only, so an item whose gate date has passed stays counted gated indefinitely unless re-checked. After the A/T/D/L split, for every gated item whose `**Gate criteria:**` text names an ISO date or `~YYYY-MM-DD`, compare the **latest** such date with the run date; also check any gate naming a completed prior item against the archive. If the date is ≤ the run date, or the named event has occurred, re-classify the item **A (date-lapsed — verify)**, list it by ID in `run_manifest.md` with any *remaining* non-date conditions, and carry the list into the cycle summary's capacity outlook. A lapsed date is **not** proof the gate is met — it flags that nothing is currently checking it. Full history: `roadmap_prompt_appendix.md` §STEP 3.1.
+**Date-lapse re-check (v9.25):** after the A/T/D/L split, for every gated item whose `**Gate criteria:**` names an ISO date or `~YYYY-MM-DD`, compare the **latest** such date with the run date, and check any gate naming a completed prior item against the archive. If the date has passed or the event has occurred, re-classify the item **A (date-lapsed — verify)**, list it by ID in `run_manifest.md` with any remaining non-date conditions, and carry the list into the cycle summary's capacity outlook. A lapsed date is **not** proof the gate is met.
 
 Report in `run_manifest.md` under `## Actionable Backlog Assessment`:
 - Count per category (A / T / D / L)
@@ -547,7 +548,7 @@ Scores inform decisions but do not decide them. Proximity score and effort band 
 
 Write: `claude/scoring/scored_initiatives.md` (create if needed — use bash heredoc if directory does not exist). This file reflects only the current cycle's scoring — it is overwritten each run and does not retain history. Do not create cycle-dated copies (e.g. `scored_initiatives_<date>.md`); any such file found in `claude/scoring/` is an orphan and should be removed.
 
-**Overwrite verification (v8.6, resolves `2026-07-08__scheduled` Friction Item 1):** Before writing, if the file already exists, read it first and confirm the write fully replaces its content rather than appending. After writing, re-read the file and confirm it contains no section dated to a prior cycle — if it does, this is non-compliant drift, not intentional history; overwrite fully rather than append.
+**Overwrite verification (v8.6):** if the file exists, read it first and replace it fully; after writing, re-read it and confirm no section is dated to a prior cycle.
 
 ---
 
@@ -560,21 +561,21 @@ For every in-scope initiative: estimated FTE load, skill type, duration, opportu
 
 Classify each initiative: **Governance-heavy** (PO, Strategy Owner, Head of Specs, PMO Lead) or **Execution-heavy** (engineering, QA, design, infrastructure).
 
-**Workload-composition framing (ST-24, EPIC-04, v9.2, BLG-GOV-209):** the "Governance story %" formula uses STEP 2.4's U/G/D/P tags (a product-value lens), which can diverge from a workload-composition lens (who/what skill did the work). Prefer the role-based bucketing in `docs/specs/metrics_definitions.md` Appendix D's Skill-Category Taxonomy — driven by the story's `**Owner:**` field — over the U/G/D/P proxy where the two disagree; the U/G/D/P formula remains the default otherwise. Full rationale: `roadmap_prompt_appendix.md` §STEP 7.1.
+**Workload-composition framing (ST-24, v9.2, BLG-GOV-209):** where `**Owner:**`-field data exists and disagrees with the U/G/D/P proxy, prefer the role-based buckets in `docs/specs/metrics_definitions.md` Appendix D's Skill-Category Taxonomy; otherwise use the U/G/D/P formula.
 
 Governance story % = (G + D + P stories from STEP 2.4) ÷ total stories delivered in last 3 cycles × 100, refined per the workload-composition note above when Owner-field data is available. Use story count, not FTE hours — this is a solo-developer context where FTE is not a meaningful unit.
 
-**Aggregation method: pooled, and only pooled (ST-42, BLG-GOV-367, v9.12).** The rolling 3-cycle figure is the pooled ratio: the sum of G + D + P stories across the 3 cycles divided by the sum of all their stories, × 100. It is **not** the plain mean of the three per-cycle percentages. The two differ whenever cycle sizes differ. `scripts/compute_rebalance_diagnostics.py` computes the pooled form and labels it `method: pooled`, and `--silo-history N` prints the last N rolling readings by the same method. Every reading recorded in `## STEP 8` and every "improving / worsening / unresolved" judgement in this section (including the sustained-failure clause below) must compare pooled readings only. **Method-break note:** `claude/roadmap/decision_log.md` recorded plain means up to the v9.6–v9.8 reading and switched to pooled at DL-084 (v9.7–v9.9). Restated under the pooled method, the last 4 recorded readings are v9.3–v9.5 **99.0%** (97/98; recorded 98.8%), v9.5–v9.7 **87.4%** (90/103; recorded 85.7%), v9.6–v9.8 **84.8%** (84/99; recorded 83.7%) and v9.7–v9.9 **91.2%** (93/102; recorded as pooled). The trend directions are unchanged by the restatement: improving, improving, worsening. When judging trend direction, the next rebalance compares against these restated figures, not the recorded plain means.
+**Aggregation method: pooled, and only pooled (ST-42, BLG-GOV-367, v9.12).** The rolling 3-cycle figure is the sum of G + D + P stories across the 3 cycles ÷ the sum of all their stories × 100, not the mean of the per-cycle percentages. `scripts/compute_rebalance_diagnostics.py` computes it (`method: pooled`; `--silo-history N` prints the last N readings). Every reading in `## STEP 8` and every improving / worsening / unresolved judgement in this section compares pooled readings only. Readings recorded before DL-084 were plain means: compare against the restated pooled figures in the appendix (Part B "Core wording moved at v9.35", STEP 7.1 aggregation method), not the recorded ones.
 
-**> 40% Ceiling:** Skill-Silo Alert. Scan backlog for highest-priority user-facing item (U-classified, no blockers, within available capacity) — present as pull-forward candidate. PO decides. Check is mandatory; result recorded in `## STEP 8`. A single U-item pull-forward is not guaranteed to bring the rolling average back under the ceiling — if the alert has fired for 2+ consecutive cycles despite a prior pull-forward, the PO should consider prioritising more than one user-facing item. Full rationale: `roadmap_prompt_appendix.md` §STEP 7.1.
+**> 40% Ceiling:** Skill-Silo Alert. Scan the backlog for the highest-priority U-classified item with no blockers and within capacity, and present it as a pull-forward candidate; the PO decides. The check is mandatory; record the result in `## STEP 8`. If the alert has fired for 2+ consecutive cycles despite a pull-forward, the PO should consider more than one U-item.
 
-**Candidate gate verification (LP-05, v8.2):** Before naming any item as a pull-forward candidate, read that item's own backlog entry (`claude/backlog/backlog.md`) for a `**Gate criteria:**` line. If a gate exists, confirm it is met or near-term-clearing. If unmet with no confirmed near-term clearance: do not name it as a candidate — select the next-highest-priority ungated U-item instead, or name it explicitly marked `[gate status unverified/unmet — release planning to confirm before accepting into scope]`.
+**Candidate gate verification (LP-05, v8.2):** before naming a candidate, read its `backlog.md` entry for `**Gate criteria:**`. If it is gated and the gate is not met or near-term clearing, name the next-highest-priority ungated U-item instead, or name it marked `[gate status unverified/unmet — release planning to confirm before accepting into scope]`.
 
-**Candidate live-status cross-check (v9.7):** Before naming any item as a pull-forward candidate, confirm it is still present and open in `claude/backlog/backlog.md` (not archived, not already `✅ COMPLETE`) — including any `groom backlog`/post-ship-closure action taken earlier in this same session. If archived or shipped within this same session: do not name it — select the next-highest-priority ungated U-item instead.
+**Candidate live-status cross-check (v9.7):** confirm the candidate is still open in `backlog.md` (not archived or `✅ COMPLETE`, including by a `groom backlog`/post-ship action earlier this session); otherwise name the next-highest-priority ungated U-item.
 
-**Mandatory pull-forward on sustained failure (v8.3):** If the rolling 3-cycle Skill-Silo average has worsened or remained unresolved for 3 or more consecutive readings, the pull-forward recommendation becomes mandatory: the Product Owner must commit **at least 2 build-and-ship-shaped U-items** at the next release (acceptance criteria require a shipped, user-visible change; an audit/investigation-shaped story does not count even if nominally labelled user-facing — classify using the same content-based test as STEP 2.4). Full rationale and history for all four rules above: `roadmap_prompt_appendix.md` §STEP 7.1.
+**Mandatory pull-forward on sustained failure (v8.3):** if the rolling 3-cycle Skill-Silo average has worsened or remained unresolved for 3 or more consecutive readings, the Product Owner must commit **at least 2 build-and-ship-shaped U-items** at the next release (acceptance criteria require a shipped, user-visible change; an audit/investigation-shaped story does not count even if labelled user-facing — same content test as STEP 2.4). **Definition (v9.35, Head of Specs Team ruling `ESC-RB-20261008-01`):** a reading counts as "worsened or remained unresolved" when the pooled rolling average is above the 40% ceiling at that reading, whatever its direction from the prior reading. Only a reading at or below 40% resets the consecutive count.
 
-**Optional acceleration (ST-25, EPIC-04, v9.9, BLG-GOV-352):** `python3 scripts/compute_rebalance_diagnostics.py docs/product/changelog.md` also reproduces the default U/G/D/P-proxy form of this STEP's "Governance story %" figure. It is an acceleration, not a hard dependency, and does **not** implement the workload-composition (Owner-field) refinement two paragraphs above — when that refinement is in use for a given cycle (Owner data available and it diverges from the U/G/D/P proxy), the manual procedure remains authoritative and the script's output should be treated as the proxy baseline only.
+**Optional acceleration (ST-25, v9.9, BLG-GOV-352):** the same script gives the U/G/D/P-proxy Governance story %. It does not apply the Owner-field refinement; when that refinement is in use, the manual procedure is authoritative and the script output is the proxy baseline only.
 
 **Cross-role pairing rotation note (ST-37, EPIC-05, v9.5, BLG-GOV-322):** When naming a pull-forward candidate under either path above, also read `claude/roadmap/workforce_capacity.md`'s "Cross-Role Pairing Rotation Note" section — advisory context, does not override candidate selection by priority/gate-status.
 
@@ -587,28 +588,28 @@ Write: `claude/roadmap/workforce_capacity.md` and/or `claude/economics/workforce
 Distinct from §7.1's Skill-Silo Alert, which classifies story *shape* (governance-heavy vs execution-heavy) — this check tallies story *ownership by named role* (the `**Owner:**` field on each ST item in `sprint_backlog.md`), to catch a single role silently carrying a disproportionate share of delivery across consecutive cycles even when the governance/execution shape ratio itself looks healthy.
 
 **Method:**
-1. Read `claude/roadmap/role_share_history.md` — the structured per-cycle role-share record (raw-tally method: each ST item's `**Owner:**` string tallied verbatim, compound multi-role strings as their own bucket). If the most recently shipped cycle has no row yet, first run `python3 scripts/compute_role_share_history.py claude/cycles/<that cycle_id>/sprint_backlog.md` and append its History row and Full Per-Role Breakdown section to the file (same table formats; update the rolling-aggregate line) in this run's commit. Then take the last 3 shipped cycles (same rolling window as §7.1, for consistency) from the file — do not re-parse `sprint_backlog.md` Owner fields by hand for cycles already recorded there. **Fallback:** if the file is missing or unreadable, tally each cycle's `sprint_backlog.md` `**Owner:**` fields directly (the pre-v9.30 method) and record the fallback in `run_manifest.md`. (Structured history source added ST-26, BLG-GOV-353, EPIC-04, v9.9.)
+1. Read `claude/roadmap/role_share_history.md` (raw-tally method: each `**Owner:**` string tallied verbatim, compound multi-role strings as their own bucket). If the most recently shipped cycle has no row, run `python3 scripts/compute_role_share_history.py claude/cycles/<that cycle_id>/sprint_backlog.md` and append its History row and Full Per-Role Breakdown section (same formats; update the rolling-aggregate line) in this run's commit. Take the last 3 shipped cycles from the file; do not re-parse recorded cycles by hand. **Fallback:** if the file is missing or unreadable, tally each cycle's `sprint_backlog.md` `**Owner:**` fields directly and record the fallback in `run_manifest.md`. (ST-26, BLG-GOV-353, v9.9.)
 2. Compute each role's share: role's story count ÷ total stories across the 3-cycle window × 100.
 3. **> 40% Ceiling (mirrors §7.1's ceiling):** if any single role's rolling 3-cycle share exceeds 40%, surface as an advisory: "⚠ Cross-role workload balance: `<role>` owned N% of stories across the last 3 cycles (v<X>–v<Z>)." Record in `## STEP 8`, alongside the Skill-Silo Alert output.
-4. This check is **advisory only** — it does not gate release scope and has no mandatory-pull-forward escalation (unlike §7.1's sustained-failure clause). Its purpose is visibility for the Product Owner and Director of HR to consider when scoping future releases (e.g. deliberately routing more stories to underrepresented roles' domains), not a hard rebalancing rule — role-story-count concentration can legitimately reflect the release's actual thematic focus (e.g. a governance-heavy debt-clearance cycle naturally skews toward Head of Specs Team) rather than a genuine bottleneck.
+4. **Advisory only:** no scope gate and no mandatory pull-forward. Role concentration can reflect a release's theme; the check gives the Product Owner and Director of HR visibility when scoping future releases.
 
-**Formal threshold review (ST-37, EPIC-04, v9.2, BLG-GOV-300):** reviewed against mirroring §7.1's mandatory-pull-forward escalation. **Decision: retain advisory-only, no mandatory escalation added** — role concentration can legitimately reflect a release's genuine thematic focus, unlike §7.1's product-value lens. Full rationale and sign-off: `roadmap_prompt_appendix.md` §STEP 7.2.
+**Formal threshold review (ST-37, v9.2, BLG-GOV-300):** advisory-only retained; no mandatory escalation.
 
 Write: same target as §7.1 (`claude/roadmap/workforce_capacity.md` and/or `claude/economics/workforce_economics.md`), plus `claude/roadmap/role_share_history.md` (append-only, step 1).
 
-#### 7.3 Ready-Pool Capacity Gap Trend (added — post-ship closure `2026-09-14__release-v9.4`, `LL-v9.4-Release-Carry-03`)
+#### 7.3 Ready-Pool Capacity Gap Trend (LL-v9.4-Release-Carry-03)
 
-Distinct from §7.1/§7.2 (story *shape* and *role concentration*) — tracks whether the ungated/ready backlog pool is growing faster than sprint capacity can consume it. Full origin and history: `roadmap_prompt_appendix.md` §STEP 7.3.
+Distinct from §7.1/§7.2 (story shape and role concentration): tracks whether the ready (ungated) backlog pool grows faster than sprint capacity consumes it.
 
 **Method:**
-1. At each rebalance, read the most recent Release Planning `run_manifest.md`'s recorded ready-pool size (items/days) and the confirmed capacity band's upper bound (days) — the newest `claude/cycles/*__release-v*/run_manifest.md`, `**Result:**` line under Scope Construction. Do not record "not re-measured" without naming the manifest checked (v9.31).
-2. Compute the gap: ready-pool days minus capacity-band upper bound. A positive, growing gap across consecutive releases indicates the ready pool is outpacing what any single release can select.
-3. **Mandatory review trigger:** if the gap has grown (not merely stayed positive, but increased release-over-release) for **3 or more consecutive releases**, this is no longer an advisory watch-item — it becomes a mandatory decision point: the Product Owner and Head of Specs Team must jointly decide, at that rebalance, between (a) raising the confirmed capacity band, or (b) introducing a secondary prioritisation pass within the P3 tier (sub-tiering), or (c) an explicit documented decision that the growing gap is acceptable and no action is needed. Record the decision and rationale in `decision_log.md`.
-4. Below the 3-consecutive-release threshold: advisory only — note the gap and trend in `## STEP 8` output, no mandatory action.
+1. Read `claude/roadmap/ready_pool_history.md` (BLG-GOV-374, v9.35). Release Planning §1.4c appends one row per release. **Missing row:** if the newest release with a Release Planning `run_manifest.md` has no row, read that manifest's Scope Construction `**Result:**` line, append the row in the file's own format, and record the fallback in `run_manifest.md`. Never record "not re-measured".
+2. The gap is ready-pool days minus the capacity band's upper bound (the file's `Gap` column). A positive gap that grows release-over-release means the pool is outpacing what any single release can select.
+3. **Mandatory review trigger:** if the gap has increased release-over-release for **3 or more consecutive releases**, the Product Owner and Head of Specs Team must jointly decide at this rebalance between (a) raising the confirmed capacity band, (b) a secondary prioritisation pass within the P3 tier (sub-tiering), or (c) an explicit documented decision that the gap is acceptable. Record the decision and rationale in `decision_log.md`.
+4. Below that threshold: advisory only. Note the gap and trend in `## STEP 8`.
 
-**Runway projection (ST-32, EPIC-06, v9.8, BLG-GOV-340):** in addition to the gap-vs-ceiling check above, `docs/specs/metrics_definitions.md` Appendix F's "Ready-Pool Runway Forecast" metric projects a "cycles until empty" figure from the same leftover-pool figures, using a rolling-3-cycle trailing net-change average. When that figure is finite (the trailing trend is net-shrinking), cite it in this STEP's output alongside the gap reading; when it reads "N/A — pool growing", state that instead. If Appendix F lags the latest release, compute the reading from the run-manifest figures and record it here and in `workforce_capacity.md` — Appendix F is outside §4 write scope and is updated by its owner (`BLG-GOV-374`) (v9.31).
+**Runway (ST-32, EPIC-06, v9.8, BLG-GOV-340):** cite the newest row's `Runway` value (the `docs/specs/metrics_definitions.md` Appendix F "Ready-Pool Runway Forecast" method: leftover days ÷ |mean of the last 3 Δ leftover values|), or "N/A — pool growing". Record it in `## STEP 8` and in `workforce_capacity.md`. The rebalance does not write Appendix F; Appendix F takes its data from `ready_pool_history.md`.
 
-**Sign-off:** Head of Specs Team + PMO Lead — Approved, 2026-09-15. Full reading history and sign-off detail: `roadmap_prompt_appendix.md` §STEP 7.3.
+**Sign-off:** Head of Specs Team + PMO Lead — Approved, 2026-09-15. Source moved to `ready_pool_history.md`, 2026-10-16 (Head of Specs Team, user-directed). Reading history and sign-off detail: appendix §STEP 7.3.
 
 ---
 
@@ -621,7 +622,7 @@ Hard rules: Adds require stops; stops ≥ adds; scarce skills protected. Quality
 
 **Displacement candidate flag:** If any initiative is the natural next-stop candidate, record in `claude/roadmap/initiative_register.md`: `Displacement candidate: Yes — <rationale> — <date>`. Not in `cycle_record.md` or `current_roadmap.md`.
 
-**Displacement Debt Register update (ST-21, BLG-GOV-264, v8.9):** Also update `claude/roadmap/displacement_debt_register.md` (create first if missing — seed content per `roadmap_prompt_appendix.md` §STEP 8). If the candidate has no row: add one (`Candidate`, `Rationale as flagged`, `First flagged` = this cycle's DL ID/date, `Times re-flagged` = 0, `Disposition` = "Named, not yet displaced"). If it has a row: increment `Times re-flagged` by 1 (unless added this cycle). If THIS step's Kill/Replace decision resolves a prior "Named, not yet displaced" row: set `Disposition` = "Displaced" with this cycle's DL ID/date.
+**Displacement Debt Register update (ST-21, BLG-GOV-264, v8.9):** also update `claude/roadmap/displacement_debt_register.md` (create if missing; seed per appendix §STEP 8). New candidate: add a row (`Rationale as flagged`, `First flagged` = this cycle's DL ID/date, `Times re-flagged` 0, `Disposition` "Named, not yet displaced"). Existing row: increment `Times re-flagged` (unless added this cycle). A Kill/Replace here that resolves a "Named, not yet displaced" row: `Disposition` "Displaced" with this cycle's DL ID/date.
 
 Valid outcome: no changes made. Still requires roadmap Last Updated refresh and a "no change" decision log entry.
 
@@ -663,9 +664,9 @@ Single canonical definition called by both STEP 8.0.5 and STEP 8.2 (previously e
 
 **Fire at two points: (1) STEP 3 — when compiling the v5.x horizon candidate list from backlog items; (2) STEP 8.1 — immediately before presenting the candidate list to the PO for the Now horizon section.**
 
-For each `BLG-<ID>` in the candidate list, run the Candidate/Item Backlog-Status Verification Subroutine above. Record removed items in `run_manifest.md` as "Already shipped — excluded from candidates." (Since these candidates were compiled directly from the active backlog at STEP 3, subroutine step 1's active-backlog check will always pass for them at this call site — the effective behaviour here is unchanged from the pre-extraction grep-and-marker-check.)
+For each `BLG-<ID>` in the candidate list, run the verification subroutine above. Record removals in `run_manifest.md` as "Already shipped — excluded from candidates."
 
-This is **not advisory** — presenting complete items to the PO wastes debate time and inflates apparent scope. Full root cause and history: `roadmap_prompt_appendix.md` §STEP 8.0.5.
+This is **not advisory**. History: appendix §STEP 8.0.5.
 
 ---
 
@@ -689,7 +690,7 @@ This is **non-blocking** — either choice clears the gate. The gate prevents si
 
 If this gate fires on consecutive scheduled rebalances without a recorded decision, escalate to Product Owner as a recurring advisory in `run_manifest.md`.
 
-**Version-labeling a resolved condition-1b carry-forward (v9.10 — ST-09, BLG-GOV-240):** Once condition 1b's un-versioned carry-forward heading has been adopted into a firm release, it no longer needs a full `run roadmap` invocation just to relabel it. `shared_standards.md` §17 grants Head of Specs Team standing authority to apply that narrow relabeling edit directly (heading label + adjacent metadata only — item content changes still require `run roadmap`/`plan release`).
+**Relabeling a resolved condition-1b carry-forward (v9.10, ST-09, BLG-GOV-240):** once adopted into a firm release, Head of Specs Team may relabel the heading directly under `shared_standards.md` §17 (heading label and adjacent metadata only; content changes still need `run roadmap`/`plan release`).
 
 ---
 
@@ -700,11 +701,11 @@ If this gate fires on consecutive scheduled rebalances without a recorded decisi
 **Check:** at every rebalance, scan for §13-adjacent items that have remained gated — no §13 review opened, no gate resolution recorded — for **more than 2 completed rebalance cycles** since first flagged as gated. For each such item found:
 - Surface as an advisory: `"⚠ §13-adjacent expiry: [Item] has been gated on an unopened §13 review for [n] cycles since [first-flagged date]."`
 - Record in `## STEP 8` alongside the other advisory outputs (Skill-Silo Alert, Cross-Role Workload Balance).
-- This is **non-blocking** (soft gate, like STEP 8.1) — it does not force the §13 review to open, but it does force the finding to be surfaced rather than silently re-carried cycle after cycle. Strategy Rules & System Intent Owner is the role who can either schedule the review or record an explicit "still not ready, re-check next cycle" note; either response clears this cycle's surfacing (the item remains tracked and re-checked next cycle regardless).
+- **Non-blocking** (soft gate): it forces the finding to be surfaced, not the review to open. The Strategy Rules & System Intent Owner either schedules the review or records "still not ready, re-check next cycle"; either clears this cycle's surfacing, and the item is re-checked next cycle.
 
 Write: `run_manifest.md` (advisory output), same location as §7.1/§7.2.
 
-**Sign-off:** Strategy Rules & System Intent Owner — Approved, 2026-09-08 (agent-mediated, §5.3). Retroactive validation against real `rejected_but_strong.md` entries and full sign-off rationale: `roadmap_prompt_appendix.md` §STEP 8.1.5.
+**Sign-off:** Strategy Rules & System Intent Owner — Approved, 2026-09-08. Detail: appendix §STEP 8.1.5.
 
 ---
 
@@ -739,7 +740,7 @@ If a change is not implied by a STEP 8 decision or required for lifecycle compli
 3. Construct the write plan using `claude/system/templates/write_plan_template.md`.
 4. **Register row status verification:** Every `Status: Advancing` row from §4.2 must have a terminal status in the write plan (`Promoted-Added` or `Promoted-Rejected`). Missing → add explicitly.
 
-5. **BLG-ID collision advisory (non-blocking):** Before assigning new BLG-IDs in STEP 5 debate summaries or STEP 8 decision records, grep **both** `backlog.md` **and** `backlog_archive.md` for the highest existing ID in each series (e.g. `grep -o 'BLG-GOV-[0-9]*' claude/backlog/backlog.md claude/backlog/backlog_archive.md | sort -t'-' -k3,3n | tail -1`). Assign IDs starting from highest+1 across both files — prevents both a same-day collision and reissuing an archived-only ID invisible to a `backlog.md`-only grep. Advisory only — does not halt. Full history: `roadmap_prompt_appendix.md` §STEP 8.5.B.
+5. **BLG-ID collision advisory (non-blocking):** before assigning new BLG-IDs, find the highest ID in each series across **both** `backlog.md` and `backlog_archive.md` (e.g. `grep -o 'BLG-GOV-[0-9]*' claude/backlog/backlog.md claude/backlog/backlog_archive.md | sort -t'-' -k3,3n | tail -1`) and assign from highest+1. History: appendix §STEP 8.5.B.
 
 #### 8.5.C Verification Rules (Hard)
 
@@ -760,13 +761,13 @@ Not traceable to A or B → remove from plan.
 
 Any violation → discard pending write plan; report offending file path(s), violated rule, and what would have been written; halt.
 
-> **Extended-tier advisory:** For Extended-tier scheduled runs (40+ ideas), STEP 9 write volume (~13 files) may require a new session. Confirm the STEP 8.5.B write plan is complete and recorded in `cycle_record.md` before closing. The write plan is the resumption artefact — a new session executes STEP 9 by reading `cycle_record.md §8.5.B` directly without re-running STEPS 2–8.
+> **Extended-tier advisory:** STEP 9 for a large Extended-tier run (40+ ideas; ~13 files) may need a new session. Record the complete STEP 8.5.B write plan in `cycle_record.md` first; a new session runs STEP 9 from it without re-running STEPS 2–8.
 
 ---
 
 ## Continuation — STEP 9 Onward
 
-This core file covers Sections 1–8 through STEP 8.5 (preflight through the verified write plan). **STEP 9 (Canonical Write) through STEP 12 (Stage, Commit & Global State Update), plus the closing Invariants and Completion Condition sections, continue in `claude/system/roadmap_prompt_appendix.md` Part A.** This is not optional or supplementary material — it is the direct continuation of this same mandatory process, split out only so this core file fits a single read. Read Part A immediately after completing STEP 8.5 below.
+**STEP 9 (Canonical Write) through STEP 12 (Stage, Commit & Global State Update), with the closing Invariants and Completion Condition, are in `claude/system/roadmap_prompt_appendix.md` Part A.** They are the mandatory continuation of this process, not supplementary material. Read Part A immediately after STEP 8.5.
 
 ---
 
