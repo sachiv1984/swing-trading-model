@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import CashManagementModal from "../components/cash/CashManagementModal";
@@ -60,6 +60,10 @@ export default function Dashboard() {
   const [monitorOpen, setMonitorOpen] = useState(false);
   // Exit queue started from the Monitor: { items: [{ position, reason }], index }
   const [exitQueue, setExitQueue] = useState(null);
+  // The queue the current exit request belongs to. A cancel clears it, so a
+  // request that finishes after Cancel/Escape records its exit but does not
+  // advance a queue that no longer exists.
+  const activeQueueRef = useRef(null);
   const [monitorRestoreSelection, setMonitorRestoreSelection] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [libraryOpen, setLibraryOpen] = useState(false);
@@ -164,14 +168,17 @@ export default function Dashboard() {
   // confirms it (§8.1, §13). Nothing is submitted in bulk.
   const handleExitPositions = (exits) => {
     if (!exits.length) return;
+    const queue = { items: exits, index: 0 };
     setMonitorRestoreSelection(null);
     setMonitorOpen(false);
-    setExitQueue({ items: exits, index: 0 });
+    activeQueueRef.current = queue;
+    setExitQueue(queue);
   };
 
   const queued = exitQueue ? exitQueue.items[exitQueue.index] : null;
 
   const handleQueuedExit = async (exitPayload) => {
+    const queue = exitQueue;
     // Throws on a network error or non-2xx; ExitModal keeps the queue and shows the error.
     await base44.entities.Position.exit(exitPayload);
 
@@ -181,11 +188,18 @@ export default function Dashboard() {
     queryClient.invalidateQueries({ queryKey: ["portfolioApi"] });
     queryClient.invalidateQueries({ queryKey: ["trades"] });
 
-    const next = exitQueue.index + 1;
-    if (next < exitQueue.items.length) {
-      setExitQueue({ ...exitQueue, index: next });
+    // Cancelled while this request was in flight: the exit is recorded, the
+    // queue stays ended.
+    if (activeQueueRef.current !== queue) return;
+
+    const next = queue.index + 1;
+    if (next < queue.items.length) {
+      const advanced = { ...queue, index: next };
+      activeQueueRef.current = advanced;
+      setExitQueue(advanced);
     } else {
-      const n = exitQueue.items.length;
+      const n = queue.items.length;
+      activeQueueRef.current = null;
       setExitQueue(null);
       toast.success(`Exited ${n} position${n === 1 ? "" : "s"}.`);
     }
@@ -195,6 +209,7 @@ export default function Dashboard() {
   // positions not yet exited still selected. Recorded exits stay recorded.
   const handleQueueCancel = () => {
     if (!exitQueue) return;
+    activeQueueRef.current = null;
     setMonitorRestoreSelection(exitQueue.items.slice(exitQueue.index).map((i) => i.position.id));
     setExitQueue(null);
     setMonitorOpen(true);
@@ -638,7 +653,11 @@ export default function Dashboard() {
 
       <MonitorModal
         open={monitorOpen}
-        onClose={() => setMonitorOpen(false)}
+        onClose={() => {
+          setMonitorOpen(false);
+          // A restored selection applies to the reopen after a cancelled queue only.
+          setMonitorRestoreSelection(null);
+        }}
         positions={openPositions}
         marketRegimes={marketRegimes}
         isLoading={loadingPositions}

@@ -11,6 +11,8 @@
  *              reopens the Monitor with the position still selected (AC 3, AC 4b)
  *   SC-MEQ-03  Two queued positions: progress reads "Exit 1 of 2" then "Exit 2 of 2", the
  *              risk-off suggestion pre-selects "Risk-Off Signal", and the toast counts both
+ *   SC-MEQ-04  Cancel while an exit request is in flight: the Monitor reopens, and when the request
+ *              then succeeds the queue does not advance (no second ExitModal, no toast) (DoQ finding)
  *
  * Infrastructure: page.route() network interception — no live backend required.
  * ROUTING NOTE: App uses HashRouter — navigate via page.goto('/#/PageKey').
@@ -45,7 +47,7 @@ const UK_RISK_OFF = makePosition({
  * a successful exit removes the position from it, as the backend would.
  * Returns the list of position-route requests seen ("METHOD path").
  */
-async function stubDashboard(page, state, { exitStatus = 200, regimes = [] } = {}) {
+async function stubDashboard(page, state, { exitStatus = 200, regimes = [], exitGate = null } = {}) {
   const calls = [];
   await page.route(new RegExp(`${API}/`), (r) =>
     r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok', data: [] }) })
@@ -62,6 +64,7 @@ async function stubDashboard(page, state, { exitStatus = 200, regimes = [] } = {
     }
     const exit = path.match(/^\/positions\/([^/]+)\/exit$/);
     if (req.method() === 'POST' && exit) {
+      if (exitGate) await exitGate;
       if (exitStatus !== 200) {
         return r.fulfill({ status: exitStatus, contentType: 'application/json', body: JSON.stringify({ detail: 'Price feed unavailable' }) });
       }
@@ -172,5 +175,37 @@ test.describe('Daily Position Monitor exit queue (ST-01)', () => {
 
     await expect(page.getByText('Exited 2 positions.')).toBeVisible();
     await expect(page.getByRole('dialog')).toHaveCount(0);
+  });
+
+  test('SC-MEQ-04: cancelling during an in-flight exit ends the queue even if the request succeeds', async ({ page }) => {
+    let release;
+    const exitGate = new Promise((resolve) => { release = resolve; });
+    const state = { open: [STOP_HIT, UK_RISK_OFF] };
+    await stubDashboard(page, state, {
+      exitGate,
+      regimes: [{ market: 'UK', status: 'risk_off' }, { market: 'US', status: 'risk_on' }],
+    });
+    await page.goto('/#/Dashboard');
+    await openMonitor(page);
+    await selectAndConfirm(page, ['STOP', 'RISK.L']);
+
+    const posted = page.waitForRequest((req) => req.method() === 'POST' && req.url().endsWith('/positions/pos-stop/exit'));
+    await page.getByRole('button', { name: 'Confirm Exit' }).click();
+    await posted;
+    await expect(page.getByRole('button', { name: 'Exiting…' })).toBeDisabled();
+
+    await page.keyboard.press('Escape');
+    await expect(page.getByRole('heading', { name: 'Daily Position Monitor' })).toBeVisible();
+
+    const response = page.waitForResponse((res) => res.url().endsWith('/positions/pos-stop/exit'));
+    release();
+    await response;
+
+    // The exit is recorded (STOP leaves the list) but the queue stays ended.
+    await expect(page.getByRole('dialog')).not.toContainText('STOP');
+    await expect(page.getByRole('heading', { name: 'Daily Position Monitor' })).toBeVisible();
+    await expect(page.getByTestId('exit-queue-progress')).toHaveCount(0);
+    await expect(page.getByText(/Exited \d+ position/)).toHaveCount(0);
+    await expect(page.getByRole('dialog')).toContainText('1 position selected for exit');
   });
 });

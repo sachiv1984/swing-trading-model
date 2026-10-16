@@ -53,6 +53,9 @@ export default function MonitorModal({
   };
 
   const exitSuggestions = positions?.filter(p => getPositionStatus(p).status === "exit") || [];
+  // A restored selection can name a position whose exit was recorded after
+  // Cancel; count only positions still listed.
+  const selectedCount = selectedExits.filter(id => positions?.some(p => p.id === id)).length;
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
@@ -159,8 +162,8 @@ export default function MonitorModal({
         <DialogFooter className="border-t border-slate-700 pt-4">
           <div className="flex items-center justify-between w-full">
             <p className="text-sm text-slate-600 dark:text-slate-400">
-              {selectedExits.length > 0 
-                ? `${selectedExits.length} position${selectedExits.length > 1 ? "s" : ""} selected for exit`
+              {selectedCount > 0 
+                ? `${selectedCount} position${selectedCount > 1 ? "s" : ""} selected for exit`
                 : exitSuggestions.length > 0 
                   ? `${exitSuggestions.length} exit suggestion${exitSuggestions.length > 1 ? "s" : ""}`
                   : "All positions healthy"
@@ -174,7 +177,7 @@ export default function MonitorModal({
               >
                 Close
               </Button>
-              {selectedExits.length > 0 && (
+              {selectedCount > 0 && (
                 <Button 
                   onClick={handleConfirm}
                   className="bg-rose-600 hover:bg-rose-500 text-white"
