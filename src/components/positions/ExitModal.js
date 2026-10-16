@@ -6,7 +6,8 @@ import { Label } from "../ui/label";
 import { Textarea } from "../ui/textarea";
 import {Select,SelectContent,SelectItem,SelectTrigger,SelectValue,} from "../ui/select";
 import { AlertTriangle, Info } from "lucide-react";
-import { getExitCondition, exitPreselectNote, EXIT_REASON_MANUAL } from "../../lib/exitCondition";
+import { getExitCondition, exitPreselectNote } from "../../lib/exitCondition";
+import { EXIT_REASONS, EXIT_REASON_VALUES, EXIT_REASON_MANUAL } from "../../constants/exitReasons";
 import { useQuery } from "@tanstack/react-query";
 import { base44 } from "../../api/base44Client";
 import { cn } from "../../lib/utils";
@@ -25,7 +26,7 @@ export default function ExitModal({ position, open, onClose, onConfirm, preselec
   const [exitData, setExitData] = useState({
     shares: "",
     exit_price: "",
-    exit_reason: "Manual Exit",
+    exit_reason: EXIT_REASON_MANUAL,
     exit_fx_rate: 1,
     exit_date: new Date().toISOString().split("T")[0],
     exit_note: "" // ✅ NEW: Exit note field
@@ -406,12 +407,9 @@ export default function ExitModal({ position, open, onClose, onConfirm, preselec
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent className="bg-slate-800 border-slate-700">
-                      <SelectItem value="Manual Exit">Manual Exit</SelectItem>
-                      <SelectItem value="Stop Loss Hit">Stop Loss Hit</SelectItem>
-                      <SelectItem value="Target Reached">Target Reached</SelectItem>
-                      <SelectItem value="Risk-Off Signal">Risk-Off Signal</SelectItem>
-                      <SelectItem value="Trailing Stop">Trailing Stop</SelectItem>
-                      <SelectItem value="Partial Profit Taking">Partial Profit Taking</SelectItem>
+                      {EXIT_REASON_VALUES.map((value) => (
+                        <SelectItem key={value} value={value}>{EXIT_REASONS[value].label}</SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                   {preselectedReason && exitData.exit_reason === preselectedReason && (

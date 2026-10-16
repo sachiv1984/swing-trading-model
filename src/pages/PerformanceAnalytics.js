@@ -14,6 +14,7 @@ import AdvancedMetricsGrid from "../components/analytics/AdvancedMetricsGrid";
 import MonthlyHeatmap from "../components/analytics/MonthlyHeatmap";
 import MarketComparison from "../components/analytics/MarketComparison";
 import ExitReasonTable from "../components/analytics/ExitReasonTable";
+import { exitReasonGroupKey, exitReasonLabel } from "../constants/exitReasons";
 import TimeBasedCharts from "../components/analytics/TimeBasedCharts";
 import TopPerformers from "../components/analytics/TopPerformers";
 import ConsistencyMetrics from "../components/analytics/ConsistencyMetrics";
@@ -431,7 +432,8 @@ export default function PerformanceAnalytics() {
   const getExitReasonData = () => {
     const reasonMap = {};
     filteredTrades.forEach(t => {
-      const reason = t.exit_reason || "manual";
+      // Legacy spellings group with their stored value; null reads as Manual Exit.
+      const reason = exitReasonGroupKey(t.exit_reason);
       if (!reasonMap[reason]) {
         reasonMap[reason] = { count: 0, wins: 0, totalPnl: 0 };
       }
@@ -440,15 +442,8 @@ export default function PerformanceAnalytics() {
       if (t.pnl > 0) reasonMap[reason].wins += 1;
     });
 
-    const reasonLabels = {
-      stop_hit: "Stop Loss Hit",
-      manual: "Manual Exit",
-      target: "Target Reached",
-      market_regime: "Risk-Off Signal"
-    };
-
     return Object.entries(reasonMap).map(([reason, data]) => ({
-      reason: reasonLabels[reason] || reason,
+      reason: exitReasonLabel(reason),
       count: data.count,
       winRate: (data.wins / data.count) * 100,
       totalPnl: data.totalPnl,
@@ -522,7 +517,7 @@ export default function PerformanceAnalytics() {
       pnl: t.pnl,
       pnlPercent: t.pnl_percent || 0,
       daysHeld: Math.round((new Date(t.exit_date) - new Date(t.entry_date)) / (1000 * 60 * 60 * 24)),
-      exitReason: t.exit_reason || "manual"
+      exitReason: exitReasonLabel(exitReasonGroupKey(t.exit_reason))
     }));
     const topLosers = sorted.slice(-5).reverse().map(t => ({
       ticker: t.ticker,
@@ -530,7 +525,7 @@ export default function PerformanceAnalytics() {
       pnl: t.pnl,
       pnlPercent: t.pnl_percent || 0,
       daysHeld: Math.round((new Date(t.exit_date) - new Date(t.entry_date)) / (1000 * 60 * 60 * 24)),
-      exitReason: t.exit_reason || "manual"
+      exitReason: exitReasonLabel(exitReasonGroupKey(t.exit_reason))
     }));
     return { topWinners, topLosers };
   };

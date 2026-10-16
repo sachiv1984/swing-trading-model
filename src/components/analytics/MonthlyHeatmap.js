@@ -2,13 +2,7 @@ import { useState, useEffect } from "react";
 import { X } from "lucide-react";
 import { cn } from "../../lib/utils";
 import { formatCurrency, formatR } from "../../lib/format";
-
-const EXIT_REASON_LABELS = {
-  stop_hit: "Stop Hit",
-  manual: "Manual",
-  target: "Target",
-  market_regime: "Risk-Off",
-};
+import { exitReasonLabel } from "../../constants/exitReasons";
 
 const calcRMultiple = (trade) => {
   if (!trade.stop_price || !trade.entry_price || !trade.exit_price) return null;
@@ -208,7 +202,7 @@ export default function MonthlyHeatmap({ monthlyData, trades = [] }) {
                           }
                         </td>
                         <td className="px-4 py-3 text-sm text-slate-300">
-                          {EXIT_REASON_LABELS[trade.exit_reason] || trade.exit_reason || "Manual"}
+                          {exitReasonLabel(trade.exit_reason)}
                         </td>
                       </tr>
                     );
