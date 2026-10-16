@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-16T10:49:11Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-16T12:17:12Z",
+  "last_updated_utc": "2026-10-16T14:48:41Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-06",
@@ -61,16 +61,16 @@
         "ST-02": {
           "title": "Define the allowed exit reasons and map each to one of §8's three exit conditions",
           "classification": "delegated_backend",
-          "status": "blocked_backend",
+          "status": "done",
           "assigned_to": "Data Model & Domain Schema Owner; Metrics Definitions & Analytics Owner",
           "github_issue": 2032,
           "branch": "exec/2026-10-16__release-v9.13/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "7eed6d38aca455c230c31be62ac0e877d13e1f8c",
           "delegation_record_id": "DEL-20261016-01",
           "blocked_since_utc": "2026-10-16T11:05:32Z",
           "unblock_criteria": "DS-34 Pre-check counts and Verification output from staging and production (AC 2 live half), recorded in data_model.md DS-34 Live Confirmation and qa_evidence_EPIC-01.md under ST-02.",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-10-16T14:48:19Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/specs/data_model.md#Exit Reason Values",
             "docs/specs/data_model.md#DS-34 — Allowed exit_reason values with CHECK constraints on positions and trade_history (v2.63, 2026-10-16)",
@@ -80,10 +80,16 @@
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": "3.1.B.delegated",
-          "sign_off_record": null,
-          "notes": "Engine commit aded4d63549a3a156fb4a0d027fc808861f020b3 (2026-10-16T11:05:01Z) pushed: AC1 and AC2's documentation half (allowed values with §8 category in data_model.md §3 and metrics_definitions.md; backend/exit_reasons.py; POST /positions/{id}/exit 400 on an unlisted value; DS-34 backfill + CHECK constraints). CI on aded4d63: all 7 workflows success (CI Pytest 38891442637). Live half (backfill + constraints on staging and production) delegated: DEL-20261016-01. commit_sha is set when the delegation unblocks. Resolves a pre-existing contract gap: position_endpoints.md already documented 400 for an invalid exit_reason; the backend accepted any string."
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.B.unblocked",
+          "sign_off_record": {
+            "role": "Data Model & Domain Schema Owner; Infrastructure & Operations Owner",
+            "method": "human_in_session",
+            "status": "cleared",
+            "signed_utc": "2026-10-16T14:48:19Z",
+            "notes": "User (human) applied and verified DS-34 on staging and production in-session, 2026-10-16. DEL-20261016-01."
+          },
+          "notes": "Engine commit aded4d63549a3a156fb4a0d027fc808861f020b3 (2026-10-16T11:05:01Z) pushed: AC1 and AC2's documentation half (allowed values with §8 category in data_model.md §3 and metrics_definitions.md; backend/exit_reasons.py; POST /positions/{id}/exit 400 on an unlisted value; DS-34 backfill + CHECK constraints). CI on aded4d63: all 7 workflows success (CI Pytest 38891442637). Live half (backfill + constraints on staging and production) delegated: DEL-20261016-01. commit_sha is set when the delegation unblocks. Resolves a pre-existing contract gap: position_endpoints.md already documented 400 for an invalid exit_reason; the backend accepted any string. 2026-10-16: AC2 live half done — DS-34 applied and verified on staging (12 rows backfilled) and production (none needed); both CHECK constraints confirmed, every Pre-check row allowed (data_model.md DS-34 Live Confirmation). Staging's first constraint pass stored a line-wrapped 'Partial Profit Taking' literal from the pasted script; recreated and verified the same day, script reformatted before production. DEL-20261016-01 Unblocked. commit_sha is the evidence commit; implementation commit aded4d63549a3a156fb4a0d027fc808861f020b3. CI on 7eed6d38: docs-only change; implementation CI was green on aded4d63. Deviation check: none — implementation matches data_model.md §3 and DS-34."
         },
         "ST-03": {
           "title": "One shared exit-reason module so Trade Reflections badges and labels match stored values",
@@ -172,7 +178,7 @@
             "signed_utc": "2026-10-16T12:16:18Z",
             "notes": "Ruling (A) on ESC-EXEC-20261016-01, first pass Approved, user-directed agent-mediated ruling (§5.3). Code evidence spot-checked by the engine (strategy_engine.py:69, :339-345; signal_service.py:445-449)."
           },
-          "notes": "Reclassified delegated_decision -> autonomous after ESC-EXEC-20261016-01 resolved (Strategy Rules & System Intent Owner ruling (A), agent-mediated §5.3, user-directed). AC1: dated determination recorded (escalation resolution). AC3: §8 amended to §8.4 under RISK-02's route (commit cites the authorising line), strategy_rules.md v1.17 with a §16-format Change log row; v1.17 registered; parameter ledger updated; live code aligned (status-independent ranking, §8.2 precedence, 503 when today's run is missing; RX-06..RX-09). AC2: the interim label applies 'until the determination is applied'; the determination was applied in this same story, so per the decision record §2.2 the label was removed in the same change and never shipped; SC-RB-04 checks it is absent and 'Month-End Exit' remains. Binding conditions 5 and 6 filed as BLG-BE-187 and BLG-SPEC-206. Known deviation recorded in strategy_rules.md §8.4 itself: live month-end check ignores exchange holidays (BLG-BE-187). ci_pending: CI on 6ed7e568 was running at write time (CI Pytest 38899363411, Playwright E2E 38899363103) — STEP 3.2.A must clear this before DoQ sign-off."
+          "notes": "Reclassified delegated_decision -> autonomous after ESC-EXEC-20261016-01 resolved (Strategy Rules & System Intent Owner ruling (A), agent-mediated §5.3, user-directed). AC1: dated determination recorded (escalation resolution). AC3: §8 amended to §8.4 under RISK-02's route (commit cites the authorising line), strategy_rules.md v1.17 with a §16-format Change log row; v1.17 registered; parameter ledger updated; live code aligned (status-independent ranking, §8.2 precedence, 503 when today's run is missing; RX-06..RX-09). AC2: the interim label applies 'until the determination is applied'; the determination was applied in this same story, so per the decision record §2.2 the label was removed in the same change and never shipped; SC-RB-04 checks it is absent and 'Month-End Exit' remains. Binding conditions 5 and 6 filed as BLG-BE-187 and BLG-SPEC-206. Known deviation recorded in strategy_rules.md §8.4 itself: live month-end check ignores exchange holidays (BLG-BE-187). CI on 6ed7e568: all 8 workflows success (CI Pytest 38899363411, Playwright E2E 38899363103) — earlier ci_pending cleared 2026-10-16."
         }
       }
     },
@@ -968,11 +974,10 @@
     }
   },
   "blocked_items": [],
-  "delegated_items": [
-    "ST-02"
-  ],
+  "delegated_items": [],
   "completed_items": [
     "ST-01",
+    "ST-02",
     "ST-03",
     "ST-04",
     "ST-05"
