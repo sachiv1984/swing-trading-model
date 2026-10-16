@@ -502,6 +502,15 @@ Today you find stocks through external research and add them to the watchlist ma
 | `BLG-FE-227` — one shared exit-reason module; Trade Reflections badges and labels match stored values | §7.1 sustained-failure pull-forward (PO-committed build-and-ship U-item). Ungated. | P2 | S (~0.5-1 day) |
 | `BLG-BE-182` — record `checklist_skipped` events; Red Flag Journal stops offering filters that can never match | §7.1 sustained-failure pull-forward and STEP 2.4 Product Value Alert pull-forward (PO-committed build-and-ship U-item). Ungated. | P2 | S (~1-1.5 days) |
 
+<!-- roadmap-annotation-marker: RA:v9.13:2026-10-16__release-v9.13 -->
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-10-16__release-v9.13
+- Plan published: 2026-10-16
+- Cycle folder: claude/cycles/2026-10-16__release-v9.13/
+- Backlog slice: claude/cycles/2026-10-16__release-v9.13/stage4_backlog_slice.md
+- Status at annotation: Committed (40 stories, 6 EPICs, 28.00d; `BLG-FE-226` seated as ST-01 at P1, `BLG-FE-227` as ST-03 and `BLG-BE-182` as ST-04)
+
 <!-- roadmap-annotation-marker: RA:v7.4:2026-07-17__release-v7.4 -->
 
 -----
