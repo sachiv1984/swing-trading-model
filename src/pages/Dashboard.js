@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 import CashManagementModal from "../components/cash/CashManagementModal";
 import { base44, apiFetch } from "../api/base44Client";
 import { Loader2, Settings2, Plus, RotateCcw, Check, LayoutDashboard } from "lucide-react";
@@ -13,6 +14,8 @@ import PageHeader from "../components/ui/PageHeader";
 import DashboardWidget from "../components/dashboard/DashboardWidget";
 import WidgetLibrary from "../components/dashboard/WidgetLibrary";
 import MonitorModal from "../components/monitor/MonitorModal";
+import ExitModal from "../components/positions/ExitModal";
+import { EXIT_REASON_RISK_OFF, EXIT_REASON_STOP } from "../lib/exitCondition";
 import { useDashboardLayout } from "../components/dashboard/useDashboardLayout";
 
 // Widget components
@@ -33,8 +36,31 @@ import MarketRegimeCard from "../components/dashboard/MarketRegimeCard";
 import QuickActions from "../components/dashboard/QuickActions";
 import RecentTradesWidget from "../components/dashboard/widgets/RecentTradesWidget";
 
+// Monitor suggestion → ExitModal pre-selection
+// (positions.md §Daily Position Monitor Exit Queue).
+function monitorPreselect(position, reason) {
+  if (reason === "Stop price hit") {
+    return {
+      reason: EXIT_REASON_STOP,
+      note: "Pre-selected from the Daily Position Monitor: the price is at or below the stop.",
+    };
+  }
+  if (reason === "Market risk off") {
+    const market = position?.market === "UK" ? "UK" : "US";
+    return {
+      reason: EXIT_REASON_RISK_OFF,
+      note: `Pre-selected from the Daily Position Monitor: the ${market} market is in a risk-off regime.`,
+    };
+  }
+  return null;
+}
+
 export default function Dashboard() {
+  const queryClient = useQueryClient();
   const [monitorOpen, setMonitorOpen] = useState(false);
+  // Exit queue started from the Monitor: { items: [{ position, reason }], index }
+  const [exitQueue, setExitQueue] = useState(null);
+  const [monitorRestoreSelection, setMonitorRestoreSelection] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [libraryOpen, setLibraryOpen] = useState(false);
   const [cashModalOpen, setCashModalOpen] = useState(false);
@@ -133,18 +159,45 @@ export default function Dashboard() {
   const isLoading = loadingPortfolio || loadingPositions || loadingRegimes || !isLoaded;
   const isError = positionsError;
 
-  const handleExitPositions = async (positionsToExit) => {
-    for (const position of positionsToExit) {
-      await base44.entities.Position.update(position.id, {
-        status: "closed",
-        exit_date: new Date().toISOString().split("T")[0],
-        exit_price: position.current_price,
-        exit_reason: "market_regime",
-        pnl: (position.current_price - position.entry_price) * position.shares,
-        pnl_percent: ((position.current_price - position.entry_price) / position.entry_price) * 100
-      });
-    }
+  // "Exit Selected" in the Monitor starts a queue: one ExitModal per selected
+  // position, each recorded through POST /positions/{id}/exit after the user
+  // confirms it (§8.1, §13). Nothing is submitted in bulk.
+  const handleExitPositions = (exits) => {
+    if (!exits.length) return;
+    setMonitorRestoreSelection(null);
     setMonitorOpen(false);
+    setExitQueue({ items: exits, index: 0 });
+  };
+
+  const queued = exitQueue ? exitQueue.items[exitQueue.index] : null;
+
+  const handleQueuedExit = async (exitPayload) => {
+    // Throws on a network error or non-2xx; ExitModal keeps the queue and shows the error.
+    await base44.entities.Position.exit(exitPayload);
+
+    queryClient.invalidateQueries({ queryKey: ["positions"] });
+    queryClient.invalidateQueries({ queryKey: ["allPositions"] });
+    queryClient.invalidateQueries({ queryKey: ["portfolio"] });
+    queryClient.invalidateQueries({ queryKey: ["portfolioApi"] });
+    queryClient.invalidateQueries({ queryKey: ["trades"] });
+
+    const next = exitQueue.index + 1;
+    if (next < exitQueue.items.length) {
+      setExitQueue({ ...exitQueue, index: next });
+    } else {
+      const n = exitQueue.items.length;
+      setExitQueue(null);
+      toast.success(`Exited ${n} position${n === 1 ? "" : "s"}.`);
+    }
+  };
+
+  // Cancel / ✕ / Escape ends the queue; the Monitor reopens with the
+  // positions not yet exited still selected. Recorded exits stay recorded.
+  const handleQueueCancel = () => {
+    if (!exitQueue) return;
+    setMonitorRestoreSelection(exitQueue.items.slice(exitQueue.index).map((i) => i.position.id));
+    setExitQueue(null);
+    setMonitorOpen(true);
   };
 
   const handleDragEnd = (result) => {
@@ -590,6 +643,16 @@ export default function Dashboard() {
         marketRegimes={marketRegimes}
         isLoading={loadingPositions}
         onConfirmExits={handleExitPositions}
+        restoreSelection={monitorRestoreSelection}
+      />
+
+      <ExitModal
+        position={queued?.position || null}
+        open={!!queued}
+        onClose={handleQueueCancel}
+        onConfirm={handleQueuedExit}
+        preselect={queued ? monitorPreselect(queued.position, queued.reason) : null}
+        queue={exitQueue ? { index: exitQueue.index + 1, total: exitQueue.items.length } : null}
       />
 
       <CashManagementModal

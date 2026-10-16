@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "../ui/dialog";
 import { Button } from "../ui/button";
 import { CheckCircle2, XCircle, Loader2, AlertTriangle } from "lucide-react";
@@ -12,9 +12,16 @@ export default function MonitorModal({
   positions, 
   marketRegimes, 
   isLoading,
-  onConfirmExits 
+  onConfirmExits,
+  restoreSelection = null
 }) {
   const [selectedExits, setSelectedExits] = useState([]);
+
+  // When an exit queue is cancelled the Monitor reopens with the positions
+  // not yet exited still selected (positions.md §Daily Position Monitor Exit Queue).
+  useEffect(() => {
+    if (open && restoreSelection) setSelectedExits(restoreSelection);
+  }, [open, restoreSelection]);
 
   const getPositionStatus = (position) => {
     const regime = marketRegimes?.find(r => r.market === position.market);
@@ -35,10 +42,14 @@ export default function MonitorModal({
     );
   };
 
+  // "Exit Selected" submits nothing itself: it hands the selected positions,
+  // in display order and with their suggestion, to the Dashboard's exit queue.
   const handleConfirm = () => {
-    const positionsToExit = positions.filter(p => selectedExits.includes(p.id));
-    onConfirmExits(positionsToExit);
+    const exits = positions
+      .filter(p => selectedExits.includes(p.id))
+      .map(p => ({ position: p, reason: getPositionStatus(p).reason }));
     setSelectedExits([]);
+    onConfirmExits(exits);
   };
 
   const exitSuggestions = positions?.filter(p => getPositionStatus(p).status === "exit") || [];
