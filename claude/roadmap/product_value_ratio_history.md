@@ -2,7 +2,7 @@
 **Class:** Operational Record (Class 3)
 **Status:** Active
 **Version:** 1.2
-**Last Updated:** 2026-10-09 (ST-34, EPIC-06, v9.11, BLG-GOV-355 — column note: STEP 2.4 now appends both readings; Tier is derived from the story-count Ratio only); prior — 2026-10-08 (ST-34, EPIC-06, v9.11, BLG-GOV-355 — History table gains the effort-weighted ratio, backfilled for the 5 windows computed in metrics_definitions.md Appendix F); prior — 2026-10-08 (roadmap rebalance 2026-10-08__scheduled — appended row for DL-084, refreshed sparkline (0.161, min/max unchanged)); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-16 (roadmap rebalance `2026-10-16__scheduled` STEP 2.4 — appended row for DL-086 (0.204, effort-weighted 0.361); refreshed sparkline); prior — 2026-10-09 (ST-34, EPIC-06, v9.11, BLG-GOV-355 — column note: STEP 2.4 now appends both readings; Tier is derived from the story-count Ratio only); prior — 2026-10-08 (ST-34, EPIC-06, v9.11, BLG-GOV-355 — History table gains the effort-weighted ratio, backfilled for the 5 windows computed in metrics_definitions.md Appendix F); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Created by:** ST-22 (BLG-FEAT-72, EPIC-06, v8.5)
 
@@ -19,7 +19,7 @@ This file is the structured, durable record going forward: one row per rebalance
 ## Sparkline (all readings, chronological, ▁=0.046 min · █=0.42 max recorded)
 
 ```
-▇▇▇▆▆▅▄▄▆▆▅▇██▇▂▂▁▂▂▂▃
+▇▇▇▆▆▅▄▄▆▆▅▇██▇▂▂▁▂▂▂▃▄
 ```
 
 ## History
@@ -48,6 +48,7 @@ This file is the structured, durable record going forward: one row per rebalance
 | 2026-09-30__scheduled | 2026-09-30 | 0.094 | — | 🔴 Alert (5th consecutive Alert-tier reading, marginal further improvement) | 16 | 41 | 109 | 4 | 170 | v9.4-v9.8 | DL-082 |
 | 2026-10-06__scheduled | 2026-10-06 | 0.096 | — | 🔴 Alert (6th consecutive Alert-tier reading, flat) | 17 | 43 | 114 | 3 | 177 | v9.5-v9.9 | DL-083 |
 | 2026-10-08__scheduled | 2026-10-08 | 0.161 | — | 🔴 Alert (7th consecutive Alert-tier reading, improving) | 25 | 36 | 94 | 0 | 155 | v9.6-v9.10 | DL-084 |
+| 2026-10-16__scheduled | 2026-10-16 | 0.204 | 0.361 | 🔴 Alert (8th consecutive Alert-tier reading, improving) | 38 | 33 | 113 | 2 | 186 | v9.8-v9.12 | DL-086 |
 
 **Effort-weighted Ratio column (ST-34, BLG-GOV-355, v9.11):** effort-days of U stories ÷ effort-days of U+G+D+P stories over the same window, defined in `docs/specs/metrics_definitions.md` Appendix F (PVR Measurement Package, `BLG-GOV-339`). The 5 readings shown are the backfill computed and cross-validated there (`scripts/compute_effort_weighted_pvr.py`), placed on the rows whose `Window` they cover; v7.5–v7.9 has no breakdown on its row but its story-count reading reconstructs to the recorded 0.38. "—" means not computed for that row. From `roadmap_prompt.md` v9.32 (STEP 2.4, `BLG-GOV-339` sign-off recorded 2026-10-09, `ESC-EXEC-20261008-03`), each rebalance appends both readings; coverage and any excluded stories are recorded in that rebalance's `run_manifest.md`. The 2026-09-30, 2026-10-06 and 2026-10-08 rows were not computed and stay "—". The Tier column is derived from the story-count Ratio column only; the effort-weighted reading is diagnostic and carries no tier.
 
@@ -65,7 +66,9 @@ This file is the structured, durable record going forward: one row per rebalance
 
 **7th consecutive Alert-tier reading, largest improvement since the Alert began (2026-10-08):** 0.161 (window v9.6-v9.10, U=25/G=36/D=94/P=0 of 155) — up from 0.096. v9.10 shipped 8 U-classified stories of 21 (the `BLG-FE-193`/`BLG-FE-198` commitments plus its EPIC-02 build-and-ship scope), and the all-debt v9.5 (0 U of 43) rolled out of the window. Still below the 0.30 floor; PO response **Modify** with commitments: `BLG-FE-206` and `BLG-BE-154` (both from a direct read of the Risk Dashboard in `IW-20261008-01`) are committed to a new `v9.11` Now section, alongside the STEP 8.0 fast-tracked `BLG-BE-152`. See `cycle_record.md` 2026-10-08__scheduled STEP 2.4.
 
-**Most recent scheduled rebalance:** 2026-10-08__scheduled — this history is current as of that run.
+**8th consecutive Alert-tier reading, improving (2026-10-16):** 0.204 (window v9.8-v9.12, U=38/G=33/D=113/P=2 of 186), up from 0.161. v9.11 shipped 10 U-stories of 43 and v9.12 shipped 16 of 48, the highest U count in any single release in the window. The effort-weighted reading is 0.361 (Advisory band if it were tiered; diagnostic only), with 186/186 stories weighted: U stories were larger on average than G/D stories in these releases. The streak continues because v9.8 (2 U of 39) and v9.9 (2 U of 35) are still in the window; both roll out over the next two readings.
+
+**Most recent scheduled rebalance:** 2026-10-16__scheduled — this history is current as of that run.
 
 ## Backfill Method
 

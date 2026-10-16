@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-10-08 (rebalance 2026-10-08__scheduled — new "Rebalance 2026-10-08__scheduled" section: Skill-Silo 87.4% pooled, improved but above ceiling, §7.1 pull-forward applied (BLG-FE-206 + BLG-BE-154 → v9.11); §7.3 gap grew 1 release (33.80 d), runway N/A); prior — 2026-10-06 (rebalance 2026-10-06__scheduled — new "Rebalance 2026-10-06__scheduled" section: Skill-Silo 91.2% pooled, worsened, §7.1 sustained-failure pull-forward applied (BLG-FE-193 + BLG-FE-198 → v9.10); §7.3 re-measured, gap narrowing, runway ≈1 cycle); prior — 2026-09-30 (rebalance 2026-09-30__scheduled — "Rebalance 2026-09-30__scheduled" section appended; header not refreshed at the time); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-16 (rebalance `2026-10-16__scheduled` — new "Rebalance 2026-10-16__scheduled" section: Skill-Silo 69.6% pooled, above ceiling, sustained-failure clause applied (BLG-FE-226/BLG-FE-227/BLG-BE-182); §7.2 max 8.0%; §7.3 gap 26.70 d from ready_pool_history.md; PVR 0.204); prior — 2026-10-08 (rebalance 2026-10-08__scheduled — new "Rebalance 2026-10-08__scheduled" section: Skill-Silo 87.4% pooled, improved but above ceiling, §7.1 pull-forward applied (BLG-FE-206 + BLG-BE-154 → v9.11); §7.3 gap grew 1 release (33.80 d), runway N/A); prior — 2026-10-06 (rebalance 2026-10-06__scheduled — new "Rebalance 2026-10-06__scheduled" section: Skill-Silo 91.2% pooled, worsened, §7.1 sustained-failure pull-forward applied (BLG-FE-193 + BLG-FE-198 → v9.10); §7.3 re-measured, gap narrowing, runway ≈1 cycle); prior history retained — see prior entries in version control
 
 > ⚠️ Standing Notice: This document records workforce planning estimates. All effort figures are indicative. Canonical project records take precedence.
 
@@ -850,3 +850,19 @@ Both approved candidates (`BLG-FEAT-52` ungated/descoped, new `BLG-FEAT-71`) are
 
 **Workforce constraints:** none new.
 
+
+## Rebalance 2026-10-16__scheduled
+
+**Skill-Silo Alert (STEP 7.1):** window v9.10–v9.12 (U/G/D/P proxy; `scripts/compute_rebalance_diagnostics.py`, `method: pooled`). **Pooled: 78/112 = 69.6%** (v9.10 13/21, v9.11 33/43, v9.12 32/48). Improved from 87.4% at `2026-10-08__scheduled` (the unrecorded v9.9–v9.11 reading was 79.8%) but still above the 40% ceiling. Under the v9.35 definition (`ESC-RB-20261008-01`) every above-ceiling reading counts as unresolved, so the sustained-failure clause applies: ≥2 build-and-ship U-items, met by `BLG-FE-226`, `BLG-FE-227` and `BLG-BE-182` in the v9.13 Now section. Candidate gate verification: none has a `**Gate criteria:**` line. Live-status cross-check: all three are active, filed this run. Cross-Role Pairing Rotation Note read; no conflict.
+
+**Cross-Role Workload Balance (STEP 7.2):** `role_share_history.md`, after appending the v9.11 and v9.12 rows (neither had been added, because no rebalance ran between them). Window v9.10–v9.12, 112 stories: Infrastructure & Operations Owner (solo bucket) highest at **8.0%** (9/112); split-credit top: Head of Engineering 12.5%. Below the 40% ceiling, so no advisory.
+
+**Ready-Pool Capacity Gap Trend (STEP 7.3):** first reading from `claude/roadmap/ready_pool_history.md` (created this run, BLG-GOV-374). Newest row v9.12: 101-item / 54.70-day pool against the 28-day ceiling, a gap of **26.70 days**. Series: v9.9 8.20 → v9.10 33.80 → v9.11 33.67 → v9.12 26.70, so the gap has shrunk for 2 releases. Below the 3-consecutive-growth threshold; advisory only. **Runway:** N/A — pool growing (rolling Δ leftover +6.13 days/release).
+
+**Product Value Ratio (STEP 2.4):** 0.204 🔴 Alert (window v9.8–v9.12, U=38/G=33/D=113/P=2/186), the 8th consecutive Alert-tier reading, improving. Effort-weighted 0.361 (diagnostic). PO response: **Modify** — `BLG-BE-182` and `BLG-FE-227` committed with `BLG-FE-226`. See `product_value_ratio_history.md`.
+
+**v9.13 capacity outlook:** committed so far: `BLG-FE-226` (S ~1-1.5 d, STEP 8.0 fast-track), `BLG-FE-227` (S ~0.5-1 d), `BLG-BE-182` (S ~1-1.5 d), ≈2.5-4 days of the ~24–28-day band. Release Planning fills the rest. Worth reading first: `BLG-QA-227` and `BLG-QA-228` (they would have caught the Monitor defect); `BLG-GOV-391` (Strategy determination on month-end rebalance exits); `BLG-GOV-390` (17 "Gate criteria: None" items still counted as gated by the scan script).
+
+**Sprint capacity:** not re-evaluated; held at ~24–28 working-day-equivalent units.
+
+**Workforce constraints:** none new.
