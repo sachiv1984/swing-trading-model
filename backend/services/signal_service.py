@@ -408,6 +408,29 @@ def _is_last_trading_day_of_month(check_date: datetime) -> bool:
     return next_day.month != d.month
 
 
+def _in_grace_period(pos: Dict, today) -> bool:
+    """True while the position is in its §6 grace period (calendar days since
+    entry below GRACE_PERIOD_DAYS), the same test the production backtest uses
+    (strategy_engine.py: holding_days < min_hold_days). An unknown entry date
+    is treated as post-grace."""
+    # Local import: tests patch this module's `datetime`.
+    from datetime import date as _date, datetime as _datetime
+    from strategy_parameters import GRACE_PERIOD_DAYS
+    entry = pos.get('entry_date')
+    if not entry:
+        return False
+    if isinstance(entry, _datetime):
+        entry_date = entry.date()
+    elif isinstance(entry, _date):
+        entry_date = entry
+    else:
+        try:
+            entry_date = _datetime.strptime(str(entry)[:10], '%Y-%m-%d').date()
+        except ValueError:
+            return False
+    return (today.date() - entry_date).days < GRACE_PERIOD_DAYS
+
+
 def generate_rebalance_exit_signals() -> Dict:
     """
     ST-03 (BLG-FEAT-47): Generate exit_rebalance signals on the last trading day
@@ -426,7 +449,9 @@ def generate_rebalance_exit_signals() -> Dict:
          failure (BLG-OPS-190).
       3. For each open position NOT in the ranking:
          - Skip if §8.2 applies (risk_off_exit set): the risk-off exit governs.
-         - Skip if §8.1 applies (price at or below the trailing stop).
+         - Skip if §8.1 applies: price at or below the trailing stop, after
+           the grace period. In grace §8.1 is inactive (§6.3), so §8.4 still
+           applies, as in the backtest.
          - Otherwise generate an exit_rebalance signal record.
       4. Returns summary + list of exit_rebalance signals created.
     """
@@ -488,10 +513,11 @@ def generate_rebalance_exit_signals() -> Dict:
         if pos.get('risk_off_exit'):
             continue
 
-        # §8.4 precedence: §8.1 governs a position already at its trailing stop.
+        # §8.4 precedence: §8.1 governs a position at its trailing stop, but
+        # only after grace (§8.1 is inactive during grace, §6.3).
         current_price = pos.get('current_price', 0) or 0
         current_stop = pos.get('current_stop', 0) or 0
-        if current_stop > 0 and current_price <= current_stop:
+        if current_stop > 0 and current_price <= current_stop and not _in_grace_period(pos, today):
             continue  # Stop already triggered — exit_rebalance is redundant
 
         is_uk = pos['market'] == 'UK'

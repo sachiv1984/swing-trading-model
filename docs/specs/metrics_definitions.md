@@ -816,7 +816,7 @@ if total_trades = 0: return 0.0
 ## Exit Condition Category
 
 ### Definition
-The `strategy_rules.md` §8 exit condition a closed trade's `exit_reason` maps to. §8 defines exactly three: §8.1 Stop-loss trigger, §8.2 Market risk-off override and §8.3 Manual exit. Every allowed `exit_reason` maps to exactly one of them (v1.30.0; ST-02, BLG-SPEC-186).
+The `strategy_rules.md` §8 exit condition a closed trade's `exit_reason` maps to. §8 defines four (v1.17): §8.1 Stop-loss trigger, §8.2 Market risk-off override, §8.3 Manual exit and §8.4 Month-end rebalance exit. Every allowed `exit_reason` maps to exactly one of the first three (v1.30.0; ST-02, BLG-SPEC-186). §8.4 has no stored value yet, so a rebalance exit is recorded as `Manual Exit` and counted under §8.3 until BLG-SPEC-206 adds one.
 
 ### Canonical Mapping
 

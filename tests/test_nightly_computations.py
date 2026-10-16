@@ -16,7 +16,7 @@ import json
 import math
 import sys
 import pytest
-from datetime import datetime
+from datetime import date, datetime
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
@@ -392,6 +392,26 @@ def test_RX07_risk_off_position_is_left_to_section_8_2(database_stub):
     result = _run_rebalance(database_stub, signals, positions)
     assert result["signals_created"] == 1
     assert database_stub.create_rebalance_exit_signal.call_args.kwargs["ticker"] == "TSLA"
+
+
+def test_RX10_in_grace_position_at_its_stop_still_gets_a_rebalance_signal(database_stub):
+    """RX-10 (ST-05, §8.4 / §6.3, DoQ finding): §8.1 is inactive during grace, so an
+    in-grace position at or below its stop that is out of the ranking still gets a
+    §8.4 signal, as in the backtest (holding_days < min_hold_days skips the stop).
+    The same position after grace is left to §8.1."""
+    signals = [{"ticker": "AAPL", "signal_date": "2026-06-30", "status": "new"}]
+    positions = [
+        # Day 4 of grace (entered 2026-06-26), price below the initial stop.
+        {"ticker": "GRCE", "market": "US", "current_price": 90.0, "current_stop": 95.0, "entry_date": "2026-06-26"},
+        # Day 10 (entered 2026-06-20): grace over, §8.1 governs.
+        {"ticker": "POST", "market": "US", "current_price": 90.0, "current_stop": 95.0, "entry_date": date(2026, 6, 20)},
+        # Day 9, last grace day, datetime-typed entry date.
+        {"ticker": "EDGE", "market": "US", "current_price": 90.0, "current_stop": 95.0, "entry_date": datetime(2026, 6, 21)},
+    ]
+    result = _run_rebalance(database_stub, signals, positions)
+    tickers = sorted(c.kwargs["ticker"] for c in database_stub.create_rebalance_exit_signal.call_args_list)
+    assert tickers == ["EDGE", "GRCE"]
+    assert result["signals_created"] == 2
 
 
 def test_RX08_no_run_today_creates_nothing_and_flags_it(database_stub):

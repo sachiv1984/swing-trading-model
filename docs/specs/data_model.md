@@ -245,7 +245,7 @@ CREATE INDEX idx_trade_history_position_id ON public.trade_history USING btree (
 
 ### Exit Reason Values
 
-These are the only values `trade_history.exit_reason` and `positions.exit_reason` may hold, apart from `NULL` (v2.63, DS-34; ST-02, BLG-SPEC-186). Each maps to exactly one of the three exit conditions in `strategy_rules.md` §8. The backend copy is `backend/exit_reasons.py`; the frontend copy is `src/constants/exitReasons.js`.
+These are the only values `trade_history.exit_reason` and `positions.exit_reason` may hold, apart from `NULL` (v2.63, DS-34; ST-02, BLG-SPEC-186). Each maps to exactly one exit condition in `strategy_rules.md` §8: §8.1, §8.2 or §8.3. §8.4 Month-end rebalance exit (v1.17) has no stored value yet, so a rebalance exit is recorded as `Manual Exit` (BLG-SPEC-206). The backend copy is `backend/exit_reasons.py`; the frontend copy is `src/constants/exitReasons.js`.
 
 | Value | §8 exit condition | Description |
 |-------|-------------------|-------------|
