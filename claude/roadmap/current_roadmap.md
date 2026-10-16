@@ -1,8 +1,8 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-10-15 (post-ship closure 2026-10-12__release-v9.12, manage roadmap STEP 11 — §3 "v9.12 — Committed items" section retired to roadmap_archive.md (its one item shipped); its RA:v9.12 execution-notes block moved to §1 alongside the other release annotations); prior — 2026-10-15 (post-ship closure 2026-10-12__release-v9.12 — v9.12 marked ✅ Complete in §1 and §3; §1 headers updated (Current Version → v9.12, Next planned release → [TBD] — unscoped, `next_release` equals the release just shipped); §8 Release Summary row added); prior — 2026-10-12 (Product Owner direction, DL-085 — §1 Next planned release → v9.12; §3 gains a `v9.12` section committing BLG-BE-162 (P1); named in place of a scheduled rebalance); prior history retained — see prior entries in version control
-**Last rebalance:** 2026-10-08 (cycle 2026-10-08__scheduled — Standard tier, CPS=N/A (0 active initiatives, 17th consecutive cycle); STEP 8.0 Correctness Fast-Track promoted BLG-BE-152 (P1 — post-trade debrief lacks R achieved and the stop at exit, and told a user correct trade data was contradictory) to a new v9.11 Now section; 🔴 Product Value Ratio 0.161 (U=25/G=36/D=94/P=0 of 155, v9.6–v9.10) — 7th consecutive Alert, improving; Skill-Silo 87.4% pooled (v9.8–v9.10), improved but above the 40% ceiling — §7.1 pull-forward applied: BLG-FE-206 + BLG-BE-154 committed to v9.11; STEP 8.1 Option (a) — v9.11 section added; reduced-roster idea intake IW-20261008-01 (8 submissions, 4 user-facing roles, user-approved) → 6 backlog items; DL-084)
+**Last Updated:** 2026-10-16 (roadmap rebalance `2026-10-16__scheduled`, DL-086 — §1 Next planned release → v9.13; §3 gains a `v9.13 — Committed items` section: BLG-FE-226 (P1, STEP 8.0 fast-track), BLG-FE-227 and BLG-BE-182 (§7.1/STEP 2.4 pull-forward)); prior — 2026-10-15 (post-ship closure 2026-10-12__release-v9.12, manage roadmap STEP 11 — §3 "v9.12 — Committed items" section retired to roadmap_archive.md (its one item shipped); its RA:v9.12 execution-notes block moved to §1 alongside the other release annotations); prior — 2026-10-15 (post-ship closure 2026-10-12__release-v9.12 — v9.12 marked ✅ Complete in §1 and §3; §1 headers updated (Current Version → v9.12, Next planned release → [TBD] — unscoped, `next_release` equals the release just shipped); §8 Release Summary row added); prior history retained — see prior entries in version control
+**Last rebalance:** 2026-10-16 (cycle 2026-10-16__scheduled — Standard tier, CPS=N/A (0 active initiatives, 18th consecutive cycle); STEP -1.5 cleared after 3 OVERDUE deferred patches were applied (Head of Specs Team, user-directed); full-roster intake IW-20261016-01 (32 ideas → 21 backlog items, 1 rejected); STEP 8.0 Correctness Fast-Track promoted BLG-FE-226 (P1); PVR 0.204 (8th consecutive Alert, improving); Skill-Silo 69.6% pooled (above ceiling, sustained-failure clause applies); STEP 8.1 Option (a), v9.13 section added; DL-086)
 
 > ⚠️ **Standing Notice:** This document records product intent and prioritisation thinking. All implementation detail (formulas, schemas, endpoint paths) is illustrative and indicative only. Before any feature moves to implementation, the relevant canonical specifications must be authored or updated by the appropriate domain owner. This document must not be cited as canonical intent.
 
@@ -11,7 +11,7 @@
 ## 1. Current Version
 
 **v9.12** — Journal Summary Fix, Stop & Sizing Correctness, Trade Entry Preview — ✅ Complete — Shipped 2026-10-15 — cycle: 2026-10-12__release-v9.12
-**Next planned release:** [TBD] — unscoped (`next_release` equals the release just shipped; a rebalance or scoping decision is needed before `plan release`)
+**Next planned release:** v9.13 — Committed (roadmap rebalance `2026-10-16__scheduled`, DL-086; 3 items committed in §3, full scope set at `plan release v9.13`)
 
 <!-- roadmap-annotation-marker: RA:v9.12:2026-10-12__release-v9.12 -->
 
@@ -491,6 +491,16 @@ Today you find stocks through external research and add them to the watchlist ma
 *RA:v9.11-committed-items retired — see roadmap_archive.md 2026-10-12 (post-ship closure 2026-10-08__release-v9.11; all four committed items shipped in v9.11).*
 
 *RA:v9.12-committed-items retired — see roadmap_archive.md 2026-10-15 (post-ship closure 2026-10-12__release-v9.12; the one committed item, `BLG-BE-162`, shipped in v9.12).*
+
+### v9.13 — Committed items (roadmap rebalance `2026-10-16__scheduled`, DL-086)
+
+*Added by the rebalance, not by Release Planning: the release's full scope, capacity fit and story breakdown are set at `plan release v9.13`. These three items are committed to it.*
+
+| Item | Why it is here | Priority | Effort |
+|------|----------------|----------|--------|
+| `BLG-FE-226` — Daily Position Monitor "confirm exits" opens the real exit flow (it calls a route that does not exist) | STEP 8.0 Production Correctness Fast-Track: since 2026-01-24 every Monitor exit confirmation has failed with a 405 and no message, so the home page's exit shortcut does nothing when §8.1/§8.2 say to exit. Also counts toward the §7.1 sustained-failure pull-forward (build-and-ship U-item). | P1 | S (~1-1.5 days) |
+| `BLG-FE-227` — one shared exit-reason module; Trade Reflections badges and labels match stored values | §7.1 sustained-failure pull-forward (PO-committed build-and-ship U-item). Ungated. | P2 | S (~0.5-1 day) |
+| `BLG-BE-182` — record `checklist_skipped` events; Red Flag Journal stops offering filters that can never match | §7.1 sustained-failure pull-forward and STEP 2.4 Product Value Alert pull-forward (PO-committed build-and-ship U-item). Ungated. | P2 | S (~1-1.5 days) |
 
 <!-- roadmap-annotation-marker: RA:v7.4:2026-07-17__release-v7.4 -->
 

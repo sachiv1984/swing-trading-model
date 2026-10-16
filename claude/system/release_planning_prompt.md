@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.64
-**Last Updated:** 2026-10-15 (Head of Specs Team ruling, user-directed, closing post-ship closure `2026-10-12__release-v9.12` §6 row 4 — §1.3a acquires the backlog lock before its first gate edit; STEP 3.9 re-enters it); prior — 2026-10-15 (post-ship closure `2026-10-12__release-v9.12` STEP 8, immediate lessons-learnt actions — STEP 4 calibration check applies to the ready pool before §1.4c selection (LL-v9.12-Release-03); §1.3a bound 5 covers gates removed by a Product Owner decision outside Release Planning (v9.11 closure action #8(b))); prior — 2026-10-13 (ST-40, EPIC-06, v9.12, BLG-GOV-386 — §1.3a reads the scripted "gating item shipped — verify" list alongside the date-lapsed list); prior history retained — see prior entries in version control
+**Version:** 2.65
+**Last Updated:** 2026-10-16 (Head of Specs Team action-now patch, user-directed, roadmap rebalance `2026-10-16__scheduled` STEP -1.5 OVERDUE patch, BLG-GOV-374 — §1.4c appends a row to `claude/roadmap/ready_pool_history.md`; §7 write scope lists it); prior — 2026-10-15 (Head of Specs Team ruling, user-directed, closing post-ship closure `2026-10-12__release-v9.12` §6 row 4 — §1.3a acquires the backlog lock before its first gate edit; STEP 3.9 re-enters it); prior — 2026-10-15 (post-ship closure `2026-10-12__release-v9.12` STEP 8, immediate lessons-learnt actions — STEP 4 calibration check applies to the ready pool before §1.4c selection (LL-v9.12-Release-03); §1.3a bound 5 covers gates removed by a Product Owner decision outside Release Planning (v9.11 closure action #8(b))); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -96,6 +96,7 @@ Authoritative planning inputs:
 - `claude/backlog/backlog.md` (release slice only; no global reprioritisation)
 - `claude/backlog/backlog.md` — **§1.3a gate-field carve-out (ESC-CLOSE-20261007-01, Head of Specs Team ruling, 2026-10-07):** the `**Gate criteria:**` field of an existing item that appears on that run's scripted date-lapsed list and was read this run. The bounds are set in §1.3a. No other field of an existing item may be edited.
 - `claude/roadmap/current_roadmap.md` (ONLY to add execution notes/links under the existing release section; no scope change)
+- `claude/roadmap/ready_pool_history.md` (§1.4c — append this release's row only; BLG-GOV-374, v2.65)
 - `docs/product/scope/*` (scope document created at STEP 2)
 - `docs/product/decisions/*` (decisions record created at STEP 3; also when required to resolve an escalation; must be lifecycle-compliant)
 - `claude/scoring/*` (only if explicitly requested by Product Owner for sequencing support)
@@ -634,6 +635,8 @@ Before finalising sprint capacity and scope classification, identify any candida
 4. **Stop at capacity:** Stop selecting once the cumulative estimated days reaches the top of the confirmed capacity band (per the standing "use full capacity" instruction) or the pool is exhausted, whichever comes first.
 
 **Record in `run_manifest.md`:** the ready-pool size (items/days), the capacity band used, and a one-line statement that this method was applied (e.g. "category-balanced, oldest-first, P2-first selection from a 74-item/~65.05-day ready pool"). This is the same statement pattern already used in `v8.5`–`v9.4`'s own release plans — this section makes that pattern a named, citable rule rather than an unstated convention.
+
+**Append the ready-pool history row (BLG-GOV-374, v2.65).** In the same run, append one row for this release to `claude/roadmap/ready_pool_history.md`, in the format and with the column definitions set out in that file: pool, selected and leftover (items and days, as recorded on the `**Result:**` line), the capacity ceiling, the gap, Δ leftover, rolling Δ and runway. Append whether or not the ready pool exceeds the capacity band. Do not edit earlier rows. `roadmap_prompt.md` STEP 7.3 reads this file instead of searching release run manifests.
 
 **Not a hard gate.** This method may be overridden by explicit Product Owner instruction for a specific cycle (e.g. a named anchor item pulled forward ahead of its round-robin turn per a Skill-Silo mandatory-pull-forward clause) — record any override and its rationale in `run_manifest.md`.
 

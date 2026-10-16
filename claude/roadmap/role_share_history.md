@@ -2,7 +2,7 @@
 **Class:** Operational Record (Class 3)
 **Status:** Active
 **Version:** 1.0
-**Last Updated:** 2026-10-13 (ST-44, EPIC-06, v9.12, BLG-GOV-372 — split-credit secondary tally: History column "Split-Credit Top Role" and per-cycle "Split-credit" sub-tables, back-filled for v9.5–v9.10; raw tally unchanged); prior — 2026-10-08 (roadmap rebalance `2026-10-08__scheduled` §7.2 — v9.10 row and breakdown appended via `scripts/compute_role_share_history.py`; rolling aggregate advanced to v9.8–v9.10); prior — 2026-10-06 (roadmap rebalance `2026-10-06__scheduled` §7.2 — v9.9 row and breakdown appended via `scripts/compute_role_share_history.py`; rolling aggregate advanced to v9.7–v9.9); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-16 (roadmap rebalance `2026-10-16__scheduled` §7.2 — v9.11 and v9.12 rows and breakdowns appended via `scripts/compute_role_share_history.py`; rolling aggregate v9.10–v9.12); prior — 2026-10-13 (ST-44, EPIC-06, v9.12, BLG-GOV-372 — split-credit secondary tally: History column "Split-Credit Top Role" and per-cycle "Split-credit" sub-tables, back-filled for v9.5–v9.10; raw tally unchanged); prior — 2026-10-08 (roadmap rebalance `2026-10-08__scheduled` §7.2 — v9.10 row and breakdown appended via `scripts/compute_role_share_history.py`; rolling aggregate advanced to v9.8–v9.10); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Created by:** ST-33 (BLG-GOV-341, EPIC-06, v9.8) — interim; migrated to this canonical home by ST-26 (BLG-GOV-353, EPIC-04, v9.9)
 
@@ -34,10 +34,14 @@ Migrated verbatim from the interim cycle-scoped copy `claude/cycles/2026-09-28__
 | 2026-09-28__release-v9.8 | 2026-09-28 | 39 | Head of Specs Team | 12 | 30.8% | Head of Specs Team — 13.00 (33.3%) |
 | 2026-09-30__release-v9.9 | 2026-09-30 | 35 | Director of Quality; QA & Testing Owner — tied with Head of Specs Team; PMO Lead | 9 | 25.7% | Head of Specs Team — 8.00 (22.9%) |
 | 2026-10-06__release-v9.10 | 2026-10-06 | 21 | Frontend Specifications & UX Documentation Owner; Head of UX & Design | 3 | 14.3% | Head of Engineering — 3.67 (17.5%) |
+| 2026-10-08__release-v9.11 | 2026-10-08 | 43 | QA & Testing Owner | 6 | 14.0% | QA & Testing Owner — 6.50 (15.1%) |
+| 2026-10-12__release-v9.12 | 2026-10-12 | 48 | Head of Engineering; Strategy Rules & System Intent Owner | 5 | 10.4% | Head of Engineering — 6.83 (14.2%) |
 
 **Rolling 3-cycle aggregate (v9.7–v9.9, 105 total stories — appended by roadmap rebalance `2026-10-06__scheduled`):** Head of Specs Team (solo bucket) leads at 17 stories (16.2%) — 5 (v9.7) + 12 (v9.8) + 0 (v9.9). Next: Director of Quality 13 (12.4%), Frontend Specifications & UX Documentation Owner 11 (10.5%), Head of Specs Team; PMO Lead 10 (9.5%), Director of Quality; QA & Testing Owner 9 (8.6%). Raw-tally method. Below the 40% advisory ceiling — no advisory required. **Method note:** every one of v9.9's 35 Owner values is a compound string, so v9.9 contributes nothing to any solo bucket; the raw tally under-reports single-role load for that cycle. A split-credit secondary tally is tracked as `BLG-GOV-372`.
 
 **Rolling 3-cycle aggregate (v9.8–v9.10, 95 total stories — appended by roadmap rebalance `2026-10-08__scheduled`):** Head of Specs Team (solo bucket) leads at 12 stories (12.6%) — 12 (v9.8) + 0 (v9.9) + 0 (v9.10). Next: Head of Specs Team; PMO Lead 11 (11.6%), Director of Quality; QA & Testing Owner 9 (9.5%), Director of Quality 8 (8.4%), Frontend Specifications & UX Documentation Owner 6 (6.3%). Raw-tally method. Below the 40% advisory ceiling — no advisory required. 19 of v9.10's 21 Owner values are compound strings (`BLG-GOV-372` tracks a split-credit tally).
+
+**Rolling 3-cycle aggregate (v9.10–v9.12, 112 total stories — appended by roadmap rebalance `2026-10-16__scheduled`, which also appended the v9.11 and v9.12 rows; neither had been added because no rebalance ran between them):** Infrastructure & Operations Owner (solo bucket) leads at 9 stories (8.0%) — 1 (v9.10) + 4 (v9.11) + 4 (v9.12). Next: QA & Testing Owner 8 (7.1%), Frontend Specifications & UX Documentation Owner; Head of UX & Design 6 (5.4%), Head of Engineering; Strategy Rules & System Intent Owner 5 (4.5%), API Contracts & Documentation Owner 4 (3.6%). Raw-tally method. Below the 40% advisory ceiling — no advisory required. Split-credit (secondary): Head of Engineering 14.00 (12.5%), Infrastructure & Operations Owner 12.33 (11.0%), QA & Testing Owner 11.00 (9.8%).
 
 *Prior window, kept for reference:* v9.6–v9.8 (102 total stories): Head of Specs Team leads at 18 stories (17.6%), as used by the `2026-09-30__scheduled` rebalance. Below the 40% advisory ceiling.
 
@@ -256,3 +260,118 @@ Split-credit (secondary; each story's credit shared equally across its named rol
 | Cybersecurity & Trust Lead | 0.50 | 2.4% |
 | PMO Lead | 0.50 | 2.4% |
 | Product Owner and Strategy Rules & System Intent Owner | 0.50 | 2.4% |
+
+### 2026-10-08__release-v9.11 (43 stories)
+
+| Role | Count | Share |
+|------|-------|-------|
+| QA & Testing Owner | 6 | 14.0% |
+| Infrastructure & Operations Owner | 4 | 9.3% |
+| Backend Engineering Patterns Owner | 3 | 7.0% |
+| Head of Engineering; API Contracts & Documentation Owner | 3 | 7.0% |
+| API Contracts & Documentation Owner | 3 | 7.0% |
+| Frontend Specifications & UX Documentation Owner; Head of UX & Design | 2 | 4.7% |
+| Metrics Definitions & Analytics Owner | 2 | 4.7% |
+| Backend Engineering Patterns Owner; AI Compliance & Governance Officer | 1 | 2.3% |
+| AI Compliance & Governance Officer; Infrastructure & Operations Owner | 1 | 2.3% |
+| AI Compliance & Governance Officer; Data Model & Domain Schema Owner | 1 | 2.3% |
+| AI Compliance & Governance Officer | 1 | 2.3% |
+| Head of Engineering | 1 | 2.3% |
+| Head of Engineering; Frontend Specifications & UX Documentation Owner | 1 | 2.3% |
+| Frontend Specifications & UX Documentation Owner | 1 | 2.3% |
+| Strategy Rules & System Intent Owner; Head of Engineering | 1 | 2.3% |
+| Financial Reporting & Records Owner; Data Model & Domain Schema Owner | 1 | 2.3% |
+| Data Model & Domain Schema Owner; Infrastructure & Operations Owner | 1 | 2.3% |
+| Head of Specs Team | 1 | 2.3% |
+| Head of Specs Team; Metrics Definitions & Analytics Owner | 1 | 2.3% |
+| Head of Specs Team; Strategy Rules & System Intent Owner | 1 | 2.3% |
+| Director of Quality; QA & Testing Owner | 1 | 2.3% |
+| Financial Reporting & Records Owner | 1 | 2.3% |
+| Financial Reporting & Records Owner; Strategy Rules & System Intent Owner; Head of UX & Design | 1 | 2.3% |
+| Metrics Definitions & Analytics Owner; Data Model & Domain Schema Owner | 1 | 2.3% |
+| Head of UX & Design | 1 | 2.3% |
+| Frontend Specifications & UX Documentation Owner; API Contracts & Documentation Owner | 1 | 2.3% |
+| Data Model & Domain Schema Owner | 1 | 2.3% |
+
+Split-credit (secondary; each story's credit shared equally across its named roles):
+
+| Role | Split Credit | Share |
+|------|--------------|-------|
+| QA & Testing Owner | 6.50 | 15.1% |
+| API Contracts & Documentation Owner | 5.00 | 11.6% |
+| Infrastructure & Operations Owner | 5.00 | 11.6% |
+| Backend Engineering Patterns Owner | 3.50 | 8.1% |
+| Head of Engineering | 3.50 | 8.1% |
+| Data Model & Domain Schema Owner | 3.00 | 7.0% |
+| Frontend Specifications & UX Documentation Owner | 3.00 | 7.0% |
+| Metrics Definitions & Analytics Owner | 3.00 | 7.0% |
+| AI Compliance & Governance Officer | 2.50 | 5.8% |
+| Head of UX & Design | 2.33 | 5.4% |
+| Head of Specs Team | 2.00 | 4.7% |
+| Financial Reporting & Records Owner | 1.83 | 4.3% |
+| Strategy Rules & System Intent Owner | 1.33 | 3.1% |
+| Director of Quality | 0.50 | 1.2% |
+
+### 2026-10-12__release-v9.12 (48 stories)
+
+| Role | Count | Share |
+|------|-------|-------|
+| Head of Engineering; Strategy Rules & System Intent Owner | 5 | 10.4% |
+| AI Compliance & Governance Officer; Backend Engineering Patterns Owner | 4 | 8.3% |
+| Infrastructure & Operations Owner | 4 | 8.3% |
+| Director of Quality; QA & Testing Owner | 3 | 6.2% |
+| Data Model & Domain Schema Owner | 2 | 4.2% |
+| Frontend Specifications & UX Documentation Owner; Head of Engineering | 2 | 4.2% |
+| Backend Engineering Patterns Owner; AI Compliance & Governance Officer | 1 | 2.1% |
+| PMO Lead; Head of Specs Team | 1 | 2.1% |
+| Head of Specs Team; Head of Engineering | 1 | 2.1% |
+| Head of Engineering; Head of Specs Team | 1 | 2.1% |
+| Metrics Definitions & Analytics Owner; Head of Specs Team | 1 | 2.1% |
+| Head of Specs Team; Product Owner | 1 | 2.1% |
+| Director of HR; PMO Lead | 1 | 2.1% |
+| QA & Testing Owner; PMO Lead | 1 | 2.1% |
+| QA & Testing Owner | 1 | 2.1% |
+| QA Lead | 1 | 2.1% |
+| API Contracts & Documentation Owner | 1 | 2.1% |
+| Head of Specs Team; Frontend Specifications & UX Documentation Owner | 1 | 2.1% |
+| Metrics Definitions & Analytics Owner; Data Model & Domain Schema Owner | 1 | 2.1% |
+| Strategy Rules & System Intent Owner; Head of Specs Team | 1 | 2.1% |
+| Head of Engineering; Financial Reporting & Records Owner | 1 | 2.1% |
+| Head of Engineering | 1 | 2.1% |
+| Backend Engineering Patterns Owner; Data Model & Domain Schema Owner | 1 | 2.1% |
+| Head of Engineering; Frontend Specifications & UX Documentation Owner; API Contracts & Documentation Owner | 1 | 2.1% |
+| Frontend Specifications & UX Documentation Owner; Head of UX & Design | 1 | 2.1% |
+| Head of Specs Team; Frontend Specifications & UX Documentation Owner; Director of HR | 1 | 2.1% |
+| Head of UX & Design; Product Owner | 1 | 2.1% |
+| Head of UX & Design; Frontend Specifications & UX Documentation Owner | 1 | 2.1% |
+| Frontend Specifications & UX Documentation Owner | 1 | 2.1% |
+| Infrastructure & Operations Owner; Backend Engineering Patterns Owner | 1 | 2.1% |
+| Cybersecurity & Trust Lead | 1 | 2.1% |
+| Cybersecurity & Trust Lead; Product Owner | 1 | 2.1% |
+| Infrastructure & Operations Owner; Head of Engineering | 1 | 2.1% |
+| Infrastructure & Operations Owner; FinOps & Resource Architect | 1 | 2.1% |
+
+Split-credit (secondary; each story's credit shared equally across its named roles):
+
+| Role | Split Credit | Share |
+|------|--------------|-------|
+| Head of Engineering | 6.83 | 14.2% |
+| Infrastructure & Operations Owner | 5.50 | 11.5% |
+| Frontend Specifications & UX Documentation Owner | 4.17 | 8.7% |
+| Head of Specs Team | 3.83 | 8.0% |
+| Backend Engineering Patterns Owner | 3.50 | 7.3% |
+| Data Model & Domain Schema Owner | 3.00 | 6.2% |
+| QA & Testing Owner | 3.00 | 6.2% |
+| Strategy Rules & System Intent Owner | 3.00 | 6.2% |
+| AI Compliance & Governance Officer | 2.50 | 5.2% |
+| Cybersecurity & Trust Lead | 1.50 | 3.1% |
+| Director of Quality | 1.50 | 3.1% |
+| Head of UX & Design | 1.50 | 3.1% |
+| PMO Lead | 1.50 | 3.1% |
+| Product Owner | 1.50 | 3.1% |
+| API Contracts & Documentation Owner | 1.33 | 2.8% |
+| Metrics Definitions & Analytics Owner | 1.00 | 2.1% |
+| QA Lead | 1.00 | 2.1% |
+| Director of HR | 0.83 | 1.7% |
+| FinOps & Resource Architect | 0.50 | 1.0% |
+| Financial Reporting & Records Owner | 0.50 | 1.0% |

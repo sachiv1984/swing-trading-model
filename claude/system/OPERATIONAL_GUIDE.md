@@ -4,8 +4,8 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.240
-**Last Updated:** 2026-10-15 (Head of Specs Team ruling — release_planning_prompt.md v2.63→v2.64, §1.3a backlog lock before first gate edit); prior — 2026-10-15 (Post-ship closure `2026-10-12__release-v9.12` STEP 8 — execution_prompt.md v3.86→v3.87, release_planning_prompt.md v2.62→v2.63, post_ship_closure.md v2.40→v2.41); prior — 2026-10-13 (Sprint execution `2026-10-12__release-v9.12` EPIC-06/ST-43 (BLG-GOV-364) — roadmap_prompt.md v9.33→v9.34); prior history retained — see prior entries in version control
+**Version:** 4.241
+**Last Updated:** 2026-10-16 (Roadmap rebalance `2026-10-16__scheduled` STEP -1.5 OVERDUE patches — roadmap_prompt.md v9.34→v9.35, roadmap_prompt_appendix.md v1.0→v1.1, release_planning_prompt.md v2.64→v2.65); prior — 2026-10-15 (Head of Specs Team ruling — release_planning_prompt.md v2.63→v2.64, §1.3a backlog lock before first gate edit); prior — 2026-10-15 (Post-ship closure `2026-10-12__release-v9.12` STEP 8 — execution_prompt.md v3.86→v3.87, release_planning_prompt.md v2.62→v2.63, post_ship_closure.md v2.40→v2.41); prior history retained — see prior entries in version control
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -398,7 +398,7 @@ The idea template includes a "What Would You Stop?" field as a thinking prompt �
 
 ## 6. Phase 1 — Roadmap Rebalance (Optional)
 
-**Source prompt:** `claude/system/roadmap_prompt.md` (v9.34) + `claude/system/roadmap_prompt_appendix.md` (STEP 9 onward, plus detailed rationale for the core's compacted rules)
+**Source prompt:** `claude/system/roadmap_prompt.md` (v9.35) + `claude/system/roadmap_prompt_appendix.md` (STEP 9 onward, plus detailed rationale for the core's compacted rules)
 **Invoke when:** A roadmap item completes and a priority reassessment is warranted before proceeding to release planning, or on a scheduled review cadence without a completion event.
 
 ### 6.1 Invocation
@@ -622,7 +622,7 @@ If the gate is bypassed (Sprint Planning run without a passing design gate), thi
 
 ## 6B. Phase 1B — Release Planning
 
-**Source prompt:** `claude/system/release_planning_prompt.md` (v2.64)
+**Source prompt:** `claude/system/release_planning_prompt.md` (v2.65)
 **Purpose:** Translate an already-approved roadmap release into an execution-ready plan: sequencing, dependencies, acceptance gates, backlog slice, optional GitHub issues.
 
 > **This routine does NOT rebalance the roadmap.** It may not add, replace, defer, or kill initiatives. Those remain reserved for Phase 1.
@@ -1377,7 +1377,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 4.240 |
+| Version | 4.241 |
 | Last Updated | 2026-10-15 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.12 |
@@ -1391,9 +1391,9 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Shared Lock Recovery Procedure | `claude/system/shared/lock_recovery_procedure.md` v1.0 |
 | Shared Preflight Common Checks | `claude/system/shared/preflight_common.md` v1.1 |
 | Shared Publish Gate | `claude/system/shared/publish_gate.md` v1.1 |
-| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v9.34 (+ `roadmap_prompt_appendix.md`) |
-| Roadmap Engine Appendix | `claude/system/roadmap_prompt_appendix.md` v1.0 |
-| Release Engine Source | `claude/system/release_planning_prompt.md` v2.64 |
+| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v9.35 (+ `roadmap_prompt_appendix.md`) |
+| Roadmap Engine Appendix | `claude/system/roadmap_prompt_appendix.md` v1.1 |
+| Release Engine Source | `claude/system/release_planning_prompt.md` v2.65 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.22 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.9 |
 | Execution Engine Source | `claude/system/execution_prompt.md` v3.87 |
@@ -1518,6 +1518,7 @@ Living references introduced in v3.2: `component_inventory.md`, `design_system.m
 **Header-drift prevention (added v4.85, roadmap rebalance 2026-07-08__scheduled, Friction Item — 4th recurrence of this exact pattern per the 4.79/4.80/4.81 entries below):** Before bumping the top `**Version:**`/`**Last Updated:**` header fields, read the highest version number already present in this table's top row — do not increment from the header field alone, since it has drifted below the table's actual latest entry on at least 4 prior occasions.
 
 | Version | Date | Change Summary |
+| 4.241 | 2026-10-16 | **Roadmap rebalance `2026-10-16__scheduled` STEP -1.5, three OVERDUE deferred patches applied action-now (Head of Specs Team, user-directed) — 3 source prompts bumped.** `roadmap_prompt.md` v9.34→v9.35: STEP 7.3 reads `claude/roadmap/ready_pool_history.md` (new, backfilled v9.3–v9.12) instead of release run manifests, appending a missing row as fallback; §4 lists the file; the runway is cited from the file and Appendix F is not written (BLG-GOV-374, deferred 2026-10-06). §7.1 defines "worsened or remained unresolved" as the pooled average above the 40% ceiling at that reading, whatever its direction (ESC-RB-20261008-01 ruling, deferred 2026-10-06). Rationale and history paragraphs across STEPs 6, -1.5, -1.6, -1.7, 0.C, 1.1, 2.3, 2.4, 3.1, 7.1–7.3, 8–8.5 shortened; v9.34 wording moved verbatim to appendix Part B; core 68,882→~59,800 bytes (~23.3k tokens, under 24k; deferred 2026-10-06). No rule changed except the two above. `roadmap_prompt_appendix.md` v1.0→v1.1: Part B gains "Core wording moved at v9.35 (verbatim)", holding the v9.34 core paragraphs that `roadmap_prompt.md` v9.35 shortened. `release_planning_prompt.md` v2.64→v2.65: §1.4c appends one row per release to `claude/roadmap/ready_pool_history.md`; §7 write scope lists the file (BLG-GOV-374, OVERDUE deferred patch from `2026-10-06__scheduled`). §6/§6B source-prompt headers and §14 rows updated; §14 self-row and header 4.240→4.241. |
 | 4.240 | 2026-10-15 | **Head of Specs Team ruling (user-directed), closing post-ship closure `2026-10-12__release-v9.12` §6 row 4 — release_planning_prompt.md v2.63→v2.64.** §1.3a acquires the backlog lock before its first gate edit; STEP 3.9 re-enters it (v9.11 Release Planning FI-2). Source-prompt header and §14 row updated; §14 self-row and header 4.239→4.240. |
 | 4.239 | 2026-10-15 | **Post-ship closure `2026-10-12__release-v9.12` STEP 8, immediate lessons-learnt actions — 3 source prompts bumped.** `execution_prompt.md` v3.86→v3.87: §3.1.A step 4d every CI workflow for the story SHA (LL-v9.12-P3-01); §3.2.B step 7 and STEP 4 merged-PR check before merge-gate record commits (LL-v9.12-P3-02); §5.3 separate deviation and tracking-item priorities (LL-v9.12-P4-01). `release_planning_prompt.md` v2.62→v2.63: STEP 4 calibration before §1.4c selection (LL-v9.12-Release-03); §1.3a bound 5 covers gates removed outside Release Planning (v9.11 closure #8(b)). `post_ship_closure.md` v2.40→v2.41: STEP 8 no "before `plan release`" deadline on deferred prompt changes (LL-v9.12-Release-01). §8/§9/§10-equivalent source-prompt headers and §14 rows updated; §14 self-row and header 4.238→4.239. |
 | 4.238 | 2026-10-13 | **Sprint execution `2026-10-12__release-v9.12` EPIC-06/ST-43 (BLG-GOV-364) — roadmap_prompt.md v9.33→v9.34.** ST-43 (BLG-GOV-364): STEP -1.6 standalone pre-run exception bounded by idea_intake_prompt.md §4.1; inline windows full roster unless §4.1 met. Source-prompt header and §14 row updated; §14 self-row and header 4.237→4.238. |

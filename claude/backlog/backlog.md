@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-15 (session — post-ship closure `2026-10-12__release-v9.12` §6 follow-ups: BLG-SPEC-203 added (re-files BLG-SPEC-87 for DEV-REPORTS-ST06-01); BLG-GOV-368 closed as met; BLG-QA-223 priority P4 confirmed); prior — 2026-10-15 (session — 1 new item added: BLG-GOV-390, ESC-CLOSE-20261015-01 ruling); prior — 2026-10-15 (groom backlog, post-ship closure 2026-10-12__release-v9.12 STEP 12 — 48 v9.12 shipped items archived to backlog_archive.md); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-16 (roadmap rebalance `2026-10-16__scheduled` STEP 4 — 21 items filed from `IW-20261016-01`: BLG-FE-226–230, BLG-BE-182–186, BLG-QA-227–228, BLG-SPEC-204–205, BLG-SEC-43, BLG-OPS-190–191, BLG-GOV-391–394; BLG-FE-226/BLG-FE-227/BLG-BE-182 Provisional-Target v9.13); prior — 2026-10-15 (session — post-ship closure `2026-10-12__release-v9.12` §6 follow-ups: BLG-SPEC-203 added (re-files BLG-SPEC-87 for DEV-REPORTS-ST06-01); BLG-GOV-368 closed as met; BLG-QA-223 priority P4 confirmed); prior — 2026-10-15 (session — 1 new item added: BLG-GOV-390, ESC-CLOSE-20261015-01 ruling); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -5106,5 +5106,434 @@ Since ST-26, `GET /settings` (`backend/main.py` `get_settings_endpoint`) calls `
 - If (a): the Reports and Positions unrealised figures match at the same moment (verified on staging)
 - If (b): the `unrealised_note` text states the snapshot time basis and is reviewed by the Head of UX & Design
 - `DEV-REPORTS-ST06-01` is marked resolved, citing this item
+
+---
+
+### BLG-FE-226 — Make the Daily Position Monitor's "confirm exits" open the real exit flow (it calls a route that does not exist)
+**Priority:** P1 (High)
+**Type:** Frontend / Correctness
+**Owner:** Head of Engineering; Product Owner
+**Source:** `IDEA-head-of-engineering-20261016-01`, `IDEA-product-owner-20261016-01`, `IDEA-qa-lead-20261016-01`, `IDEA-financial-reporting-20261016-01` (consolidated), roadmap rebalance `2026-10-16__scheduled` (`IW-20261016-01`) — 2026-10-16
+**Effort:** S (~1-1.5 days)
+**Provisional-Target:** v9.13
+
+**Problem**
+Dashboard → Quick Actions → Run Monitor (`MonitorModal.js`) suggests exits for positions with a stop hit or a risk-off market. Its confirm calls `Dashboard.js::handleExitPositions`, which calls `base44.entities.Position.update` → `PATCH /positions/{id}` (`base44Client.js:223`). No such route exists; only `GET /positions/{position_id}` and three `PATCH` sub-routes do, so FastAPI returns 405. The handler has no try/catch: the first failure is an unhandled rejection, the modal stays open with the selection cleared, and no position closes and no error shows. The payload also computes `pnl = (current_price − entry_price) × shares` itself, with no fees, broker fill or exit FX, and writes no `trade_history` row, unlike `POST /positions/{id}/exit` (`ExitPositionRequest`). The defect dates from commit `997ed1b2` (2026-01-24).
+
+**Scope**
+- Replace the bulk `Position.update` loop with a queue that opens the existing ExitModal for each selected position, pre-selecting the exit reason ("Stop Loss Hit" for a stop suggestion, "Risk-Off Signal" for a regime suggestion)
+- Show a visible error and keep the queue state if any exit fails
+- Delete `Position.update` from `base44Client.js`
+- Playwright: select a suggested exit, confirm, complete the exit flow and assert the position leaves the open list (staging seed); a failed request shows an error
+
+**Acceptance Criteria**
+- [ ] No code path calls `PATCH /positions/{id}`
+- [ ] Confirming a Monitor exit records the exit through `POST /positions/{id}/exit`, with fees, fill price and FX captured as in every other exit
+- [ ] A failed exit shows an error message; the modal does not silently clear
+- [ ] Both Playwright tests pass in CI
+
+---
+
+### BLG-FE-227 — One shared exit-reason module: Trade Reflections badges and labels never match stored values
+**Priority:** P2 (Medium)
+**Type:** Frontend / UX Correctness
+**Owner:** Head of UX & Design; Head of Engineering
+**Source:** `IDEA-head-of-ux-20261016-01`, `IDEA-head-of-engineering-20261016-02` (consolidated), roadmap rebalance `2026-10-16__scheduled` (`IW-20261016-01`) — 2026-10-16
+**Effort:** S (~0.5-1 day)
+**Provisional-Target:** v9.13
+
+**Problem**
+`TradeReflection.js:12-22`, `TradeReflectionModal.js:23-26` and `PerformanceAnalytics.js:443-448` map legacy keys (`stop_hit`, `manual`, `target`, `market_regime`) that `ExitModal.js` never writes. Stored values are "Manual Exit", "Stop Loss Hit", "Trailing Stop", "Risk-Off Signal", "Target Reached" and "Partial Profit Taking". Every Trade Reflections card therefore shows a grey badge with raw uppercase text, and the colour coding that separates stop exits from discretionary exits never renders.
+
+**Scope**
+- `src/constants/exitReasons.js`: the 6 stored values with label, colour and §8 category; legacy keys kept as aliases
+- Import it in ExitModal, TradeReflection, TradeReflectionModal, PerformanceAnalytics and TradeHistoryTable
+- Playwright coverage of each badge colour on Trade Reflections
+
+**Acceptance Criteria**
+- [ ] Each of the 6 stored values renders its own label and colour on Trade Reflections cards and in the modal
+- [ ] No frontend file keeps its own exit-reason map
+- [ ] Playwright colour tests pass
+
+**Notes:** Refines `BLG-SPEC-186` (allowed values and §8 mapping in the specs and a DB constraint) with the frontend consumers it does not touch. If `BLG-SPEC-186` lands first, take the §8 category from it.
+
+---
+
+### BLG-BE-182 — Record `checklist_skipped` events and stop offering Red Flag Journal filters that can never match
+**Priority:** P2 (Medium)
+**Type:** Backend + Frontend / Strategy Discipline
+**Owner:** Strategy Rules & System Intent Owner; Head of UX & Design; QA & Testing Owner
+**Source:** `IDEA-strategy-owner-20261016-02`, `IDEA-head-of-ux-20261016-02`, `IDEA-qa-testing-20261016-01` (consolidated), roadmap rebalance `2026-10-16__scheduled` (`IW-20261016-01`) — 2026-10-16
+**Effort:** S (~1-1.5 days)
+**Provisional-Target:** v9.13
+
+**Problem**
+`database.py::_VALID_EVENT_TYPES` and the Red Flag Journal contract (`red_flag_journal.md:39-40, 68`) define 4 event types, but only `pre_entry_override` is ever written (`trade_plans.py:174-185`). TradePlan saves plans with `checklist_completed: false` (`TradePlan.js:442, 674`), the case `checklist_skipped` exists for, but nothing records it. The journal's filter (`RedFlagJournal.js:43-49`) still offers Checklist Skipped, Stop Prompt Dismissed and Drawdown Prompt Dismissed, which always return an empty list. A user filtering for skipped checklists concludes they never skipped one.
+
+**Scope**
+- On plan create or update where a non-empty checklist is saved incomplete, write a non-blocking `checklist_skipped` event (ticker, plan id, unchecked item count)
+- In the journal filter, mark types with no writer as "not yet recorded" (or hide them), and say in the empty state which types are recorded
+- Pytest: each declared event type has a writer, or a dated allow-list entry for the two prompt types
+
+**Acceptance Criteria**
+- [ ] Saving a plan with an incomplete checklist produces one `checklist_skipped` row, visible in the journal (Playwright)
+- [ ] Filter options for types with no writer are labelled as such
+- [ ] The writer-coverage test passes and fails if a declared type loses its writer
+
+---
+
+### BLG-BE-183 — Grace-period warning numbers days differently from the Positions page
+**Priority:** P3 (Low)
+**Type:** Backend + Frontend / Copy Correctness
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** `IDEA-frontend-specs-20261016-01`, roadmap rebalance `2026-10-16__scheduled` (`IW-20261016-01`) — 2026-10-16
+**Effort:** XS (~0.5 day)
+**Provisional-Target:** TBD
+
+**Problem**
+`alerts_service.py:697-713` writes "(day 8 of 10)" from 0-based `holding_days`. Positions numbers the entry day as Day 1 (`Positions.js:146-148`), so the same position on the same day is Day 9 there. `NotificationPreferences.js:20` says "Notify on days 8–9 of the grace period", also 0-based.
+
+**Scope**
+- Use entry-day-is-Day-1 numbering in the alert message and context
+- Preference copy: "Notify on the last 2 days of the grace period", built from `GRACE_PERIOD_DAYS`
+
+**Acceptance Criteria**
+- [ ] For a position on its last grace day, feed/email and Positions show the same day number
+- [ ] Preference copy contains no hard-coded day numbers
+
+---
+
+### BLG-FE-228 — Alert History compact values look for keys the backend never writes
+**Priority:** P3 (Low)
+**Type:** Frontend / Display Correctness
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** `IDEA-frontend-specs-20261016-02`, roadmap rebalance `2026-10-16__scheduled` (`IW-20261016-01`) — 2026-10-16
+**Effort:** XS (~0.25 day)
+**Provisional-Target:** TBD
+
+**Problem**
+`NotificationsHistory.js` expects `grace_period_days` and `positions_count`/`total_pnl`. The backend writes `min_hold_days` (`alerts_service.py:697-701`) and `open_positions` (line 763), so the Grace Period value never appears and summary rows fall back to raw keys.
+
+**Scope**
+- Align UI keys and labels with the backend (or rename backend keys) and record the mapping in the Alert History page spec
+
+**Acceptance Criteria**
+- [ ] All 4 alert types show their intended compact fields (unit or Playwright test)
+
+---
+
+### BLG-FE-229 — Trade Reflections says "No closed trades yet" when a ticker search has no match
+**Priority:** P3 (Low)
+**Type:** Frontend / UX Copy
+**Owner:** Base44 Frontend Prompt Owner
+**Source:** `IDEA-base44-frontend-20261016-01`, roadmap rebalance `2026-10-16__scheduled` (`IW-20261016-01`) — 2026-10-16
+**Effort:** XS (~0.25 day)
+**Provisional-Target:** TBD
+
+**Problem**
+`TradeReflection.js:61-66` shows "No closed trades yet — close a trade to write your first reflection" both for an empty list and for a search with no match.
+
+**Scope**
+- Separate no-match empty state with a clear-search action
+
+**Acceptance Criteria**
+- [ ] With ≥1 closed trade and a non-matching search, the page shows a no-match message (Playwright)
+
+---
+
+### BLG-FE-230 — Remove dead Base44 client methods and the unused bearer-token path
+**Priority:** P3 (Low)
+**Type:** Frontend / Security Hygiene
+**Owner:** Base44 Frontend Prompt Owner; Cybersecurity & Trust Lead
+**Source:** `IDEA-base44-frontend-20261016-02`, `IDEA-cybersecurity-20261016-01` (consolidated), roadmap rebalance `2026-10-16__scheduled` (`IW-20261016-01`) — 2026-10-16
+**Effort:** S (~0.5 day)
+**Provisional-Target:** TBD
+
+**Problem**
+`base44Client.js` keeps `Signal.create` (`POST /signals`, no route), `getPublicSettingsById` and `exchangeCodeForToken` (`POST /auth/callback`, no route), none with a caller. `getToken` reads a `localStorage` token and `doFetch` sends it as `Authorization: Bearer` on every request, but no backend code reads `Authorization`.
+
+**Scope**
+- Delete the uncalled methods, `getToken`/`setToken` and the `Authorization` header
+- Note in `credential_policy.md` that the frontend sends only `X-API-Key`
+
+**Acceptance Criteria**
+- [ ] No client method targets a route missing from `openapi.yaml`
+- [ ] No request carries an `Authorization` header
+- [ ] Full frontend and e2e suites pass
+
+---
+
+### BLG-SEC-43 — Per-environment CORS allow-list (production accepts localhost:3000)
+**Priority:** P3 (Low)
+**Type:** Security / Configuration
+**Owner:** Cybersecurity & Trust Lead; Infrastructure & Operations Owner
+**Source:** `IDEA-cybersecurity-20261016-02`, roadmap rebalance `2026-10-16__scheduled` (`IW-20261016-01`) — 2026-10-16
+**Effort:** S (~0.5 day)
+**Provisional-Target:** TBD
+
+**Problem**
+`backend/config.py:12-17` uses one `ALLOWED_ORIGINS` list for every environment, so production accepts credentialed cross-origin requests from `http://localhost:3000`, the staging frontend and its own origin (`allow_credentials=True`, `allow_methods=['*']`).
+
+**Scope**
+- Build the list from an environment variable per deployment, with documented defaults
+
+**Acceptance Criteria**
+- [ ] Production preflight from `http://localhost:3000` is rejected; the Pages origin is accepted (staging/production check recorded)
+
+---
+
+### BLG-BE-184 — Daily Portfolio Summary notification carries only an open-position count
+**Priority:** P3 (Low)
+**Type:** Backend / Notification Content
+**Owner:** Product Owner; Backend Engineering Patterns Owner
+**Source:** `IDEA-product-owner-20261016-02`, roadmap rebalance `2026-10-16__scheduled` (`IW-20261016-01`) — 2026-10-16
+**Effort:** S (~1 day)
+**Provisional-Target:** TBD
+
+**Problem**
+Notification Preferences promises "a daily digest of portfolio status" (`NotificationPreferences.js:31-45`), but the message is "Daily summary: N open position(s) as of today." (`alerts_service.py:763-766`).
+
+**Scope**
+- Add total unrealised P&L (GBP), the day's change, positions within the stop-approach threshold and grace periods ending in ≤2 days, from existing computations; numeric only
+
+**Acceptance Criteria**
+- [ ] The daily summary row and email contain the 5 fields (unit test)
+- [ ] No narrative text is generated
+
+---
+
+### BLG-QA-227 — Fail Playwright on any 404/405 from the app's API and sweep state-changing primary actions
+**Priority:** P2 (Medium)
+**Type:** QA / Test Infrastructure
+**Owner:** Director of Quality; QA Lead
+**Source:** `IDEA-director-of-quality-20261016-01`, `IDEA-challenger-20261016-01` (consolidated), roadmap rebalance `2026-10-16__scheduled` (`IW-20261016-01`) — 2026-10-16
+**Effort:** M (~2-3 days)
+**Provisional-Target:** TBD
+
+**Problem**
+The Daily Position Monitor's confirm has returned 405 since January (`BLG-FE-226`) while every gate passed. SC-DCO-03 opens the Monitor but checks only layout, and no e2e test asserts that a state-changing button's request succeeds.
+
+**Scope**
+- Shared Playwright fixture that fails a test on any 404/405 from the app's own API origin (with an allow-list for intentional probes)
+- List every state-changing primary action in `src/` and add a test for each not already exercised
+
+**Acceptance Criteria**
+- [ ] The fixture is applied suite-wide and fails on a deliberate 405
+- [ ] The action list is recorded in `docs/testing/` with its coverage status, and every listed action is covered or has a dated backlog item
+
+---
+
+### BLG-QA-228 — CI check that every frontend API call exists in openapi.yaml
+**Priority:** P2 (Medium)
+**Type:** QA / Contract Tooling
+**Owner:** API Contracts & Documentation Owner
+**Source:** `IDEA-api-contracts-20261016-01`, roadmap rebalance `2026-10-16__scheduled` (`IW-20261016-01`) — 2026-10-16
+**Effort:** S (~1 day)
+**Provisional-Target:** TBD
+
+**Problem**
+`check_openapi_drift.py` compares routers, contracts and `openapi.yaml`; `check_consumer_contract_drift.js` covers only the `api` object's response fields. Neither checks that the frontend's method and path exist, so `PATCH /positions/{id}` and `POST /signals` went unnoticed.
+
+**Scope**
+- Script extracting every `doFetch`/`apiFetch` method and path in `src/` and comparing it with `docs/reference/openapi.yaml` (allow-list for external calls), run in the quality gate
+
+**Acceptance Criteria**
+- [ ] The check fails on a call to a non-existent route and passes on `main` once `BLG-FE-226` and `BLG-FE-230` land
+
+---
+
+### BLG-SPEC-204 — Weekly Digest calls journal completion rate "Compliance Score"
+**Priority:** P3 (Low)
+**Type:** Spec Debt / Metric Naming
+**Owner:** Metrics Definitions & Analytics Owner; API Contracts & Documentation Owner
+**Source:** `IDEA-metrics-20261016-01`, `IDEA-api-contracts-20261016-02` (consolidated), roadmap rebalance `2026-10-16__scheduled` (`IW-20261016-01`) — 2026-10-16
+**Effort:** S (~0.5 day)
+**Provisional-Target:** TBD
+
+**Problem**
+`GET /digest/weekly` returns `compliance_score_current`/`_7d_ago`, computed as journal completion rate (`database.py:5255`), and the Weekly Digest labels them "Compliance Score". `metrics_definitions.md` defines compliance as the Arc 5 composite, and the v7.7 Strategy Owner decision says one field must mean one thing.
+
+**Scope**
+- Relabel the rows "Journal Completion Rate" (or source them from the composite)
+- Add `journal_completion_rate_*` fields with the old names as deprecated aliases; update contract and `openapi.yaml`
+
+**Acceptance Criteria**
+- [ ] No UI label or API field named "compliance" carries the journal completion rate
+- [ ] Contract, `openapi.yaml` and `metrics_definitions.md` agree
+
+---
+
+### BLG-SPEC-205 — "Alerts Dismissed (7d)" computation differs from its definition
+**Priority:** P3 (Low)
+**Type:** Spec Debt / Metric Definition
+**Owner:** Metrics Definitions & Analytics Owner
+**Source:** `IDEA-metrics-20261016-02`, roadmap rebalance `2026-10-16__scheduled` (`IW-20261016-01`) — 2026-10-16
+**Effort:** XS (~0.5 day)
+**Provisional-Target:** TBD
+
+**Problem**
+`routers/digest.py:59` defines `alerts_dismissed_7d` as notifications marked read in the last 7 days. The SQL counts notifications created in the last 7 days that are now read.
+
+**Scope**
+- Either add `read_at` and count by it, or change the definition and label; record the choice in `metrics_definitions.md`
+
+**Acceptance Criteria**
+- [ ] Definition and computation match (unit test with an old alert read inside the window)
+
+---
+
+### BLG-BE-185 — Log and count failed red-flag override writes instead of discarding them
+**Priority:** P3 (Low)
+**Type:** Backend / Observability
+**Owner:** Backend Engineering Patterns Owner
+**Source:** `IDEA-backend-engineering-20261016-01`, roadmap rebalance `2026-10-16__scheduled` (`IW-20261016-01`) — 2026-10-16
+**Effort:** XS (~0.25 day)
+**Provisional-Target:** TBD
+
+**Problem**
+`trade_plans.py::_maybe_write_override_event` (lines 174-185) wraps the write in `except Exception: pass`, so a failed override insert is lost without a trace.
+
+**Scope**
+- Keep it non-blocking; log at WARNING with ticker and event type; expose a failure count on `GET /health`
+
+**Acceptance Criteria**
+- [ ] A forced insert failure produces a log line and increments the count (unit test)
+
+---
+
+### BLG-BE-186 — Link override events to their position, and bound the AI debrief's flags to the trade's window
+**Priority:** P3 (Low)
+**Type:** Backend / Data Model / AI Advisory
+**Owner:** Data Model & Domain Schema Owner; AI Compliance & Governance Officer
+**Source:** `IDEA-data-model-20261016-01`, `IDEA-ai-compliance-20261016-01` (consolidated), roadmap rebalance `2026-10-16__scheduled` (`IW-20261016-01`) — 2026-10-16
+**Effort:** S (~1 day)
+**Provisional-Target:** TBD
+
+**Problem**
+Pre-entry override events are written at plan creation with a null `position_id` (`trade_plans.py:260`) and never back-filled. The AI Post-Trade Debrief then fetches the 5 most recent flags for the ticker with no date bound (`debrief_service.py:413-421`), so a debrief can cite overrides from later plans in the same ticker.
+
+**Scope**
+- Set `position_id` on a plan's override events when the plan is linked to a position; back-fill existing linked rows; document the column lifecycle in `data_model.md`
+- Debrief: filter flags by `position_id`, or by the trade's own date window
+
+**Acceptance Criteria**
+- [ ] Override events for plan-linked trades carry `position_id`
+- [ ] The debrief cites no flag dated outside the trade's window (unit test)
+
+---
+
+### BLG-GOV-391 — Strategy determination: month-end rebalance exits are live but not in strategy_rules.md
+**Priority:** P2 (Medium)
+**Type:** Strategy Conformance
+**Owner:** Strategy Rules & System Intent Owner
+**Source:** `IDEA-strategy-owner-20261016-01`, roadmap rebalance `2026-10-16__scheduled` (`IW-20261016-01`) — 2026-10-16
+**Effort:** S (~0.5-1 day, determination)
+**Provisional-Target:** TBD
+
+**Problem**
+Since v6.2 (`BLG-FEAT-47`), `generate_rebalance_exit_signals` (`signal_service.py:411`) recommends exiting every open position outside the current top-5 momentum ranking on the last trading day of each month; `rebalance-exit.yml` runs it nightly. `strategy_rules.md` never mentions rebalancing, §8 allows "exactly three" exit conditions, and §1 requires any outcome-affecting behaviour to be specified there.
+
+**Scope**
+- Strategy Rules & System Intent Owner determines whether rebalance exit enters §8 through §12.3 change control or is withdrawn; record the decision
+- Until decided, label the signal "outside §8 — informational" in the UI
+
+**Acceptance Criteria**
+- [ ] A dated determination is recorded and either `strategy_rules.md` §8 is amended under §12.3 or the signal is withdrawn
+
+---
+
+### BLG-OPS-190 — Rebalance-exit generation should check that today's screener run completed
+**Priority:** P3 (Low)
+**Type:** Operations / Job Dependencies
+**Owner:** Infrastructure & Operations Owner
+**Source:** `IDEA-infra-ops-20261016-01`, roadmap rebalance `2026-10-16__scheduled` (`IW-20261016-01`) — 2026-10-16
+**Effort:** S (~0.5 day)
+**Provisional-Target:** TBD
+
+**Problem**
+`screener-refresh.yml` (22:00 UTC), `nightly-stop-update.yml` (22:30) and `rebalance-exit.yml` (22:45) rely on start times for ordering. Nothing checks that the screener finished, so a month-end run after a screener failure ranks on stale signals without warning.
+
+**Scope**
+- Freshness precondition in the rebalance-exit endpoint or workflow: skip and alert if no screener run completed today
+
+**Acceptance Criteria**
+- [ ] With no completed screener run today, rebalance-exit creates no signals and raises an alert (test)
+
+---
+
+### BLG-OPS-191 — Skip the five code-test workflows on governance-only and docs-only pushes
+**Priority:** P3 (Low)
+**Type:** Operations / CI Efficiency
+**Owner:** FinOps & Resource Architect; Infrastructure & Operations Owner
+**Source:** `IDEA-finops-20261016-01`, roadmap rebalance `2026-10-16__scheduled` (`IW-20261016-01`) — 2026-10-16
+**Effort:** S (~0.5 day)
+**Provisional-Target:** TBD
+
+**Problem**
+878 of 1,034 commits on `main` since 2026-09-15 touch only `claude/` or `docs/`, yet CI Pytest, Critical-Path Smoke, Service Layer Coverage, Golden Output and Portfolio Integration run on every push (~5,500 run-minutes in 2026-08).
+
+**Scope**
+- `paths-ignore: ['claude/**', 'docs/**']` with a pass-through job so required checks still report (constraint noted at `backlog_archive.md:2167`)
+
+**Acceptance Criteria**
+- [ ] A governance-only PR completes with all required checks reported, without running the five suites
+- [ ] A code PR still runs them
+
+---
+
+### BLG-GOV-392 — Reconcile shared_standards §2's "write Blocked before halting" with engines that may not write status
+**Priority:** P3 (Low)
+**Type:** Governance Process
+**Owner:** Head of Specs Team
+**Source:** `IDEA-head-of-specs-20261016-01`, roadmap rebalance `2026-10-16__scheduled` (`IW-20261016-01`) — 2026-10-16
+**Effort:** XS (~0.25 day)
+**Provisional-Target:** TBD
+
+**Problem**
+`shared_standards.md` §2 step 3 requires setting state to `Blocked` before any hard-gate halt. `roadmap_prompt.md` §4/STEP 12.1 forbid the rebalance engine to write `status`. At `2026-10-16__scheduled` STEP -1.5 the two could not both be followed.
+
+**Scope**
+- State in §2 how non-cycle engines record a halt (own artefact or a `last_halt` key), with the §6 checklist
+
+**Acceptance Criteria**
+- [ ] §2 and each engine's state-write rule agree
+
+---
+
+### BLG-GOV-393 — File a backlog item for every deferred roadmap prompt patch so a sprint can seat it
+**Priority:** P3 (Low)
+**Type:** Governance Process
+**Owner:** PMO Lead; Head of Specs Team
+**Source:** `IDEA-pmo-lead-20261016-01`, roadmap rebalance `2026-10-16__scheduled` (`IW-20261016-01`) — 2026-10-16
+**Effort:** XS (~0.5 day)
+**Provisional-Target:** TBD
+
+**Problem**
+Three patches deferred on 2026-10-06 (target 2026-10-20) went OVERDUE by carry count at `2026-10-16__scheduled` and halted STEP -1.5. Two sprints ran in between, but no step turned the deferred patches into backlog work.
+
+**Scope**
+- `roadmap_prompt.md` STEP 11.2: a deferred patch also files a backlog item; STEP -1.5: a patch whose item is seated in the current release counts as carried
+
+**Acceptance Criteria**
+- [ ] Both prompt changes applied with the §6 checklist
+
+---
+
+### BLG-GOV-394 — Append the role-share history row at post-ship closure
+**Priority:** P3 (Low)
+**Type:** Governance Process
+**Owner:** Director of HR; PMO Lead
+**Source:** `IDEA-director-of-hr-20261016-01`, roadmap rebalance `2026-10-16__scheduled` (`IW-20261016-01`) — 2026-10-16
+**Effort:** XS (~0.25 day)
+**Provisional-Target:** TBD
+
+**Problem**
+`role_share_history.md` rows are appended only at rebalances, so it ended at v9.10 while v9.11 and v9.12 had shipped (both appended at `2026-10-16__scheduled`).
+
+**Scope**
+- Post-ship closure runs `scripts/compute_role_share_history.py` for the closed cycle and appends the row
+
+**Acceptance Criteria**
+- [ ] After the next closure the file includes that cycle's row
 
 ---
