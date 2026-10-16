@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-16 (roadmap rebalance `2026-10-16__scheduled` STEP 4 — 21 items filed from `IW-20261016-01`: BLG-FE-226–230, BLG-BE-182–186, BLG-QA-227–228, BLG-SPEC-204–205, BLG-SEC-43, BLG-OPS-190–191, BLG-GOV-391–394; BLG-FE-226/BLG-FE-227/BLG-BE-182 Provisional-Target v9.13); prior — 2026-10-15 (session — post-ship closure `2026-10-12__release-v9.12` §6 follow-ups: BLG-SPEC-203 added (re-files BLG-SPEC-87 for DEV-REPORTS-ST06-01); BLG-GOV-368 closed as met; BLG-QA-223 priority P4 confirmed); prior — 2026-10-15 (session — 1 new item added: BLG-GOV-390, ESC-CLOSE-20261015-01 ruling); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-16 (session — 1 new item added: BLG-GOV-395, execution_state_path ownership after the PR #2029 CI failure); prior — 2026-10-16 (roadmap rebalance `2026-10-16__scheduled` STEP 4 — 21 items filed from `IW-20261016-01`: BLG-FE-226–230, BLG-BE-182–186, BLG-QA-227–228, BLG-SPEC-204–205, BLG-SEC-43, BLG-OPS-190–191, BLG-GOV-391–394; BLG-FE-226/BLG-FE-227/BLG-BE-182 Provisional-Target v9.13); prior — 2026-10-15 (session — post-ship closure `2026-10-12__release-v9.12` §6 follow-ups: BLG-SPEC-203 added (re-files BLG-SPEC-87 for DEV-REPORTS-ST06-01); BLG-GOV-368 closed as met; BLG-QA-223 priority P4 confirmed); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -5535,5 +5535,28 @@ Three patches deferred on 2026-10-06 (target 2026-10-20) went OVERDUE by carry c
 
 **Acceptance Criteria**
 - [ ] After the next closure the file includes that cycle's row
+
+---
+
+### BLG-GOV-395 — Make Release Planning's STEP 7 sync write execution_state_path with active_cycle
+**Priority:** P3 (Low)
+**Type:** Governance Process
+**Owner:** Head of Specs Team
+**Source:** Release Planning `2026-10-16__release-v9.13`, PR #2029 CI failure (`test_state_execution_path_consistency.py`, fixed by `9f85acfe`); same failure on PR #1923 at v9.11 (fixed by `15d24fda`) — 2026-10-16
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`.claude_current_state.json`'s `execution_state_path` has no owning engine (`claude/schemas/state_field_owners.json`: "corrected manually at cycle transition"). Release Planning's STEP 7 sync switches `active_cycle` but does not touch the field, so `test_state_execution_path_consistency.py` fails on the release-plan PR. This has happened twice: v9.11 (PR #1923) and v9.13 (PR #2029). Each time a follow-up commit was needed before the PR could merge.
+
+**Scope**
+- Add `execution_state_path: claude/cycles/<cycle_id>/execution_state.json` to `release_planning_prompt.md` STEP 7's intermediate-sync YAML block, written atomically with `active_cycle`
+- Set the field's owner in `state_field_owners.json` to `release_planning_prompt.md` (Phase 1B, STEP 7), replacing the "none — advisory" entry
+- Run the CLAUDE.md §6 governance-file checklist for the prompt bump
+
+**Acceptance Criteria**
+- `release_planning_prompt.md` STEP 7 writes `execution_state_path` in the same sync as `active_cycle`
+- `state_field_owners.json` names Release Planning as the field's owner
+- The next release-plan PR passes `test_state_execution_path_consistency.py` with no follow-up commit
 
 ---
