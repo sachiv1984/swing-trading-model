@@ -16,11 +16,11 @@
   ],
   "epics": {
     "EPIC-01": {
-      "status": "in_progress",
+      "status": "done",
       "branch": "exec/2026-10-16__release-v9.13/EPIC-01",
       "pr_number": null,
       "pr_status": "none",
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-10-16__release-v9.13/qa_evidence_EPIC-01.md",
       "test_scenarios": [
         "tests/e2e/monitor-exit-queue.spec.js",
@@ -56,7 +56,7 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": "AC1: Position.update removed from base44Client.js; grep finds no PATCH /positions/{id} caller. AC2: Monitor 'Exit Selected' starts a queue of ExitModals with Stop Loss Hit / Risk-Off Signal pre-selected and the spec notes; each exit goes through POST /positions/{id}/exit (Position.exit) with shares, price, FX (SC-MEQ-01 asserts the body and that no PATCH is sent). AC3: a failed exit shows exit-error and keeps modal, values and queue; Cancel reopens the Monitor with the rest selected (SC-MEQ-02). AC4: both Playwright tests pass in CI, plus SC-MEQ-03 (two-position progress, decision record §6). CI on e9d4b699: Playwright E2E 38890449489 success; CI Pytest 38890449492 success; all 8 workflows success. Implementation note (no deviation): queries are invalidated after each recorded exit, not only after the last, so a cancelled queue's Monitor shows the already-exited positions gone. Deviation check: none."
+          "notes": "AC1: Position.update removed from base44Client.js; grep finds no PATCH /positions/{id} caller. AC2: Monitor 'Exit Selected' starts a queue of ExitModals with Stop Loss Hit / Risk-Off Signal pre-selected and the spec notes; each exit goes through POST /positions/{id}/exit (Position.exit) with shares, price, FX (SC-MEQ-01 asserts the body and that no PATCH is sent). AC3: a failed exit shows exit-error and keeps modal, values and queue; Cancel reopens the Monitor with the rest selected (SC-MEQ-02). AC4: both Playwright tests pass in CI, plus SC-MEQ-03 (two-position progress, decision record §6). CI on e9d4b699: Playwright E2E 38890449489 success; CI Pytest 38890449492 success; all 8 workflows success. Implementation note (no deviation): queries are invalidated after each recorded exit, not only after the last, so a cancelled queue's Monitor shows the already-exited positions gone. Deviation check: none. DoQ follow-up 68200248 (non-blocking finding 1): a Cancel during an in-flight exit no longer lets a late success advance the ended queue; restored Monitor selection cleared on close; SC-MEQ-04 added. commit_sha stays the story commit e9d4b699."
         },
         "ST-02": {
           "title": "Define the allowed exit reasons and map each to one of §8's three exit conditions",
@@ -178,8 +178,15 @@
             "signed_utc": "2026-10-16T12:16:18Z",
             "notes": "Ruling (A) on ESC-EXEC-20261016-01, first pass Approved, user-directed agent-mediated ruling (§5.3). Code evidence spot-checked by the engine (strategy_engine.py:69, :339-345; signal_service.py:445-449)."
           },
-          "notes": "Reclassified delegated_decision -> autonomous after ESC-EXEC-20261016-01 resolved (Strategy Rules & System Intent Owner ruling (A), agent-mediated §5.3, user-directed). AC1: dated determination recorded (escalation resolution). AC3: §8 amended to §8.4 under RISK-02's route (commit cites the authorising line), strategy_rules.md v1.17 with a §16-format Change log row; v1.17 registered; parameter ledger updated; live code aligned (status-independent ranking, §8.2 precedence, 503 when today's run is missing; RX-06..RX-09). AC2: the interim label applies 'until the determination is applied'; the determination was applied in this same story, so per the decision record §2.2 the label was removed in the same change and never shipped; SC-RB-04 checks it is absent and 'Month-End Exit' remains. Binding conditions 5 and 6 filed as BLG-BE-187 and BLG-SPEC-206. Known deviation recorded in strategy_rules.md §8.4 itself: live month-end check ignores exchange holidays (BLG-BE-187). CI on 6ed7e568: all 8 workflows success (CI Pytest 38899363411, Playwright E2E 38899363103) — earlier ci_pending cleared 2026-10-16."
+          "notes": "Reclassified delegated_decision -> autonomous after ESC-EXEC-20261016-01 resolved (Strategy Rules & System Intent Owner ruling (A), agent-mediated §5.3, user-directed). AC1: dated determination recorded (escalation resolution). AC3: §8 amended to §8.4 under RISK-02's route (commit cites the authorising line), strategy_rules.md v1.17 with a §16-format Change log row; v1.17 registered; parameter ledger updated; live code aligned (status-independent ranking, §8.2 precedence, 503 when today's run is missing; RX-06..RX-09). AC2: the interim label applies 'until the determination is applied'; the determination was applied in this same story, so per the decision record §2.2 the label was removed in the same change and never shipped; SC-RB-04 checks it is absent and 'Month-End Exit' remains. Binding conditions 5 and 6 filed as BLG-BE-187 and BLG-SPEC-206. Known deviation recorded in strategy_rules.md §8.4 itself: live month-end check ignores exchange holidays (BLG-BE-187). CI on 6ed7e568: all 8 workflows success (CI Pytest 38899363411, Playwright E2E 38899363103) — earlier ci_pending cleared 2026-10-16. DoQ follow-up 2841b3a9 (blocking finding 1): §8.1 precedence over §8.4 now applies only after grace (§8.1 inactive in grace, §6.3; backtest skips the stop check in grace); RX-10 added; CI on 2841b3a9 all 7 workflows success (CI Pytest 38920193736). commit_sha stays the story commit 6ed7e568."
         }
+      },
+      "sign_off_record": {
+        "role": "Director of Quality",
+        "method": "agent_mediated",
+        "status": "cleared",
+        "signed_utc": "2026-10-16T15:07:35Z",
+        "notes": "Agent-mediated DoQ review (§5.3, user-directed 'do an DOQ sign off'): first pass Blocked (ST-05 §8.1 precedence applied during grace) — fixed in 2841b3a9 (RX-10); second pass Approved with 5 evidence-wording edits, applied. Non-blocking ST-01 cancel race fixed in 68200248. PR QA sign-off comment and Product Owner acceptance remain human."
       }
     },
     "EPIC-02": {
@@ -995,7 +1002,9 @@
     ],
     "all_merged": false
   },
-  "process_notes": [],
+  "process_notes": [
+    "2026-10-16: agent-mediated DoQ review of EPIC-01 (§5.3, user-directed) — first pass Blocked on ST-05's in-grace stop precedence; fixed in 2841b3a9 (RX-10). Non-blocking findings: ST-01 cancel-during-submit fixed in 68200248 (SC-MEQ-04); stale 'three exit conditions' wording fixed in 2841b3a9; evidence wording updated (FI-P3-02 for ST-03's modal half; ST-05 graded Pass with notes; ST-04 per-save note)."
+  ],
   "sealed": false,
   "sealed_utc": null
 }
