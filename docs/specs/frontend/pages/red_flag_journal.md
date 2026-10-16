@@ -1,8 +1,9 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 1.3
-**Last Updated:** 2026-09-15 (v9.4 sprint execution — ST-25/BLG-FE-174: `SkeletonRow` implementation confirmed refactored to compose from the shared `Skeleton` primitive; no visual change, new Playwright coverage passes); prior — 2026-09-14 (v9.4 design gate — ST-25/BLG-FE-174: §8 loading state now cites the canonical loading-skeleton pattern/shared `Skeleton` primitive); prior — 2026-09-04 (v9.1 ST-07, BLG-SPEC-99: added §9 Keyboard Navigation Requirements)
+**Version:** 1.4
+**Last Updated:** 2026-10-16 (v9.13 design gate — ST-04/BLG-BE-182: unrecorded event types disabled in the filter and named in the empty states; Checklist Skipped row context); prior — 2026-09-15 (v9.4 sprint execution — ST-25/BLG-FE-174: `SkeletonRow` implementation confirmed refactored to compose from the shared `Skeleton` primitive; no visual change, new Playwright coverage passes); prior — 2026-09-14 (v9.4 design gate — ST-25/BLG-FE-174: §8 loading state now cites the canonical loading-skeleton pattern/shared `Skeleton` primitive); prior history retained — see prior entries in version control
+**Design Source (v1.4):** docs/design/2026-10-16__release-v9.13/red-flag-journal-recorded-types/decision_record.md
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Design Source (v1.2):** docs/design/2026-09-14__release-v9.4/loading-skeleton-standardisation/decision_record.md
 **Design Source:** docs/design/2026-05-21__release-v3.9/red-flag-journal/ux_spec.md
@@ -54,11 +55,13 @@ Located above the event list.
 
 | Control | Type | Options |
 |---------|------|---------|
-| Event Type | Dropdown | "All types" (default); "Pre-Entry Override"; "Checklist Skipped"; "Stop Prompt Dismissed"; "Drawdown Prompt Dismissed" |
+| Event Type | Dropdown | "All types" (default); "Pre-Entry Override"; "Checklist Skipped"; "Stop Prompt Dismissed — not yet recorded" (disabled); "Drawdown Prompt Dismissed — not yet recorded" (disabled) — v1.4 |
 | Ticker | Text input | Free-text; `ticker` query param |
 | Date Range | From / To date inputs | ISO dates; From → `since` query param |
 
 Filters applied additively (AND logic). Changing any filter triggers a new API request.
+
+**Recorded types (v1.4 — ST-04, BLG-BE-182; design source `docs/design/2026-10-16__release-v9.13/red-flag-journal-recorded-types/decision_record.md`):** an event type with no backend writer is shown disabled with the suffix " — not yet recorded", so the user knows it exists but cannot filter for a list that is always empty. The enabled set is one frontend constant, `RECORDED_EVENT_TYPES` (`pre_entry_override`, `checklist_skipped`), which must match the backend writer-coverage test. A stored filter (`redFlagJournal.filters`) naming a disabled type resets to "All types" on load.
 
 ---
 
@@ -76,6 +79,8 @@ Paginated list. 20 events per page. Most recent first.
 | Context summary | `context` JSON | Short human-readable summary extracted from context (fallback: raw JSON string) |
 | Date | `created_at` | Relative time (e.g. "2 hours ago"); absolute date shown on hover |
 
+**Checklist Skipped context summary (v1.4):** "{n} of {m} checklist items unchecked when the plan was saved", or "{n} checklist item(s) unchecked" when the total is absent.
+
 ---
 
 ## 6. Pagination
@@ -90,8 +95,10 @@ Paginated list. 20 events per page. Most recent first.
 
 | Condition | Display |
 |-----------|---------|
-| No events, no active filters | "No strategy deviations recorded yet" + sub-text: "Override events will appear here when you proceed past a strategy gate warning." |
-| No events, active filters | "No events match your current filters." + "Clear filters" link |
+| No events, no active filters | "No strategy deviations recorded yet" + the recorded-types note (v1.4) |
+| No events, active filters | "No events match your current filters." + "Clear filters" link + the recorded-types note (v1.4) |
+
+**Recorded-types note (v1.4):** "Pre-entry overrides and skipped checklists are recorded here. Stop and drawdown prompt dismissals are not recorded yet." Built from `RECORDED_EVENT_TYPES`, `text-sm text-slate-600 dark:text-slate-400`, `data-testid="recorded-types-note"`. It replaces v1.3's "Override events will appear here…" sub-text, which no longer covers every recorded type.
 
 ---
 
@@ -121,6 +128,7 @@ Paginated list. 20 events per page. Most recent first.
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.4 | 2026-10-16 | v9.13 design gate — ST-04 (EPIC-01, BLG-BE-182): §4 unrecorded event types disabled with "— not yet recorded"; `RECORDED_EVENT_TYPES` constant; §5 Checklist Skipped context summary; §7 empty states carry the recorded-types note. Design source: `docs/design/2026-10-16__release-v9.13/red-flag-journal-recorded-types/decision_record.md`. Head of UX & Design sign-off: 2026-10-16. Product Owner approved: 2026-10-16. Head of Specs Team confirmed. |
 | 1.3 | 2026-09-15 | v9.4 sprint execution — ST-25 (EPIC-06, BLG-FE-174): §8 implementation confirmed — `RedFlagJournal.js`'s `SkeletonRow` refactored to compose from the shared `Skeleton` primitive (colour overrides preserve visual output). New `SC-RFJ-06` Playwright coverage added, passes. |
 | 1.2 | 2026-09-14 | v9.4 design gate — ST-25 (EPIC-06, BLG-FE-174): §8 Loading state now cites the canonical loading-skeleton pattern — Table/List Row Skeleton template (`base44_prompt_template_library.md` §8) backed by the shared `Skeleton` primitive. No visual change. Design source: `docs/design/2026-09-14__release-v9.4/loading-skeleton-standardisation/decision_record.md`. Head of UX & Design sign-off: 2026-09-14. Product Owner approved: 2026-09-14. Head of Specs Team confirmed. |
 | 1.1 | 2026-09-04 | v9.1 ST-07 (BLG-SPEC-99, EPIC-01): added §9 Keyboard Navigation Requirements — documentation-only baseline covering Filter Controls, Event List, Pagination, empty/error-state controls, and focus-indicator contrast. No implementation change. |

@@ -3,8 +3,9 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 1.2
-**Last Updated:** 2026-09-22 (P1 hotfix — entry point moved to a global nav/header trigger, present on every page; the old widget-based Dashboard.js "Cash Balance" tile this doc previously described was replaced by DashboardHome.js, EPIC-03/ST-05, without carrying an equivalent trigger forward, leaving this modal unreachable from the shipped UI); prior — 2026-03-18
+**Version:** 1.3
+**Last Updated:** 2026-10-16 (v9.13 design gate — ST-25/BLG-FE-221: submit-button fills and hover at AA contrast); prior — 2026-09-22 (P1 hotfix — entry point moved to a global nav/header trigger, present on every page; the old widget-based Dashboard.js "Cash Balance" tile this doc previously described was replaced by DashboardHome.js, EPIC-03/ST-05, without carrying an equivalent trigger forward, leaving this modal unreachable from the shipped UI); prior — 2026-03-18
+**Design Source (v1.3 button fills):** docs/design/2026-10-16__release-v9.13/coloured-button-fills/decision_record.md
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Purpose & Usage Context
@@ -75,6 +76,16 @@ The history supports quick audits and verification of previous adjustments.
 On success:
 - The modal updates the transaction list.  
 - Portfolio cash summary is refreshed.  
+
+### Submit Button Fill (v1.3 — ST-25, BLG-FE-221)
+
+**Design source:** `docs/design/2026-10-16__release-v9.13/coloured-button-fills/decision_record.md`
+
+The submit button's fill follows the transaction type, always with `text-white`:
+- **Deposit:** `bg-emerald-700 hover:bg-emerald-800` (5.48:1 / 7.68:1)
+- **Withdrawal:** `bg-rose-600 hover:bg-rose-700` (4.70:1 / 6.29:1)
+
+Before v1.3, the deposit fill (`bg-emerald-600`, 3.77:1) never rendered, because the Button default variant's `bg-primary` won. Neither fill set a text colour, so dark theme used near-black text.
 
 ### Validation Errors
 - **Transaction Type**  

@@ -3,8 +3,9 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 1.2
-**Last Updated:** 2026-09-28 (v9.8 design gate — ST-04/BLG-FE-191: new §Endpoint Test Category Labels documenting the endpoint-test-grid categorisation scheme, including the new Replay category); prior — 2026-03-18 (initial spec).
+**Version:** 1.3
+**Last Updated:** 2026-10-16 (v9.13 design gate — ST-10/BLG-SPEC-188: new §Stop Freshness Panel); prior — 2026-09-28 (v9.8 design gate — ST-04/BLG-FE-191: new §Endpoint Test Category Labels documenting the endpoint-test-grid categorisation scheme, including the new Replay category); prior — 2026-03-18 (initial spec)
+**Design Source (v1.3 stop freshness):** docs/design/2026-10-16__release-v9.13/stop-freshness-status/decision_record.md
 **Design Source (v1.2 endpoint category labels):** docs/design/2026-09-28__release-v9.8/system-status-replay-categorisation/decision_record.md
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
@@ -66,6 +67,31 @@ Each card includes:
 - Status indicator (e.g., OK, Delayed, Unavailable)  
 - Description of any detected issues  
 - Last successful update timestamp  
+
+---
+
+## Stop Freshness Panel (v1.3 — ST-10, BLG-SPEC-188)
+
+**Design source:** `docs/design/2026-10-16__release-v9.13/stop-freshness-status/decision_record.md`
+
+A full-width card placed after Component Health Checks and before Endpoint Tests. It reports how recently open-position stops were recalculated (§7.1), using the metric defined in `metrics_definitions.md`. The figures come from the backend, not computed in the browser.
+
+| Element | Display | `data-testid` |
+|---------|---------|---------------|
+| Heading | "Stop Freshness" | — |
+| Median age | "Median stop age" + value | `stop-freshness-median` |
+| Maximum age | "Oldest stop" + value + " · {TICKER}"; `title` holds the exact timestamp | `stop-freshness-max` |
+| Coverage | "{k} of {n} open positions" (`k` = positions with a `stop_calculated_at`) | `stop-freshness-coverage` |
+| Never recalculated | "{m} never recalculated", only when `m > 0` | `stop-freshness-never` |
+| As-of | "As of {local time}" (muted) | — |
+
+- **Age format:** hours with one decimal below 48 h ("18.4 h"), otherwise days and hours ("3 d 6 h").
+- NULL `stop_calculated_at` positions are excluded from the median and maximum and counted as never recalculated.
+- **Neutral display:** no status colour or threshold in v1.3.
+- **States:** no open positions shows "No open positions." (muted). Source unavailable shows "Stop freshness unavailable." (muted, `stop-freshness-unavailable`) and leaves the rest of the page unaffected. Loading shows a single-line `Skeleton`.
+- **Tokens:** card `bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700/50`; values `text-slate-900 dark:text-white`; labels `text-slate-600 dark:text-slate-400` (`design_system.md` §Light-Theme Colour Tokens).
+
+**§13:** display only.
 
 ---
 

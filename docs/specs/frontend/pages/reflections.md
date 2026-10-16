@@ -1,8 +1,9 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 0.2
-**Last Updated:** 2026-07-06
+**Version:** 0.3
+**Last Updated:** 2026-10-16 (v9.13 design gate — ST-03/BLG-FE-227: §5.2 Exit Reason Badge uses the shared exit-reason vocabulary and light/dark badge tokens); prior — 2026-07-06
+**Design Source (v0.3 exit-reason badges):** docs/design/2026-10-16__release-v9.13/exit-reason-badges/decision_record.md
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Release:** v6.7
 **EPIC:** EPIC-01
@@ -75,13 +76,20 @@ Each card is a clickable button; full card surface is the click target.
 
 ### 5.2 Exit Reason Badge
 
-| Exit Reason | Label | Colour |
-|-------------|-------|--------|
-| `stop_hit` | STOP | `bg-rose-500/20 text-rose-400 border-rose-500/30` |
-| `manual` | MANUAL | `bg-violet-500/20 text-violet-400 border-violet-500/30` |
-| `target` | TARGET | `bg-emerald-500/20 text-emerald-400 border-emerald-500/30` |
-| `market_regime` | REGIME | `bg-amber-500/20 text-amber-400 border-amber-500/30` |
-| other / null | Uppercased raw value | Slate default |
+*(v0.3 — ST-03, BLG-FE-227; design source `docs/design/2026-10-16__release-v9.13/exit-reason-badges/decision_record.md`)* The badge shows the **short label** and colour from the shared exit-reason module (`src/constants/exitReasons.js`). The canonical table is `trade_history.md` §Exit Reason Labels and Badges. In summary:
+
+| Stored value (legacy aliases resolve first) | Label | Colour family |
+|---------------------------------------------|-------|---------------|
+| "Stop Loss Hit" (`stop_hit`) | Stop Hit | rose |
+| "Trailing Stop" (`trailing_stop`) | Trailing Stop | cyan |
+| "Risk-Off Signal" (`market_regime`, `risk_off`, `risk_off_signal`) | Risk-Off | amber |
+| "Manual Exit" (`manual`, `manual_exit`) | Manual | violet |
+| "Target Reached" (`target`, `target_reached`) | Target | emerald |
+| "Partial Profit Taking" (`partial`, `partial_profit_taking`) | Partial | blue |
+| Unknown value | As stored (not upper-cased) | slate |
+| null | — | — |
+
+Tokens per family `{c}`: `bg-{c}-100 text-{c}-800 border-{c}-200 dark:bg-{c}-500/20 dark:text-{c}-400 dark:border-{c}-500/30`. This replaces the v0.1 legacy-key table, which matched no stored value.
 
 ### 5.3 Metrics Row (3-column grid within card)
 
@@ -173,5 +181,6 @@ The modal spec is documented separately in `trade_reflection.md`.
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.3 | 2026-10-16 | v9.13 design gate (ST-03, EPIC-01, BLG-FE-227): §5.2 Exit Reason Badge maps the six stored values (legacy keys as aliases) to short labels and light/dark badge tokens from the shared exit-reason module. Design source: `docs/design/2026-10-16__release-v9.13/exit-reason-badges/decision_record.md`. Head of UX & Design sign-off: 2026-10-16. Product Owner approved: 2026-10-16. Head of Specs Team confirmed. |
 | 0.2 | 2026-07-06 | v6.7 design gate — R-Multiple N/A / loading-dash text contrast fix (ST-01/ST-02, BLG-FE-87/BLG-FE-88): `text-slate-500` → `text-slate-600 dark:text-slate-400` (bare class failed 3.07–4.24:1 dark-theme and had no light-mode companion). Icon-only usages (§6 empty-state `BookOpen`, §7 loading-spinner `Loader2`) are out of scope per the design decision record's §5 scope boundary — not text, not remediated this cycle. Design source: `docs/design/2026-07-06__release-v6.7/secondary-text-contrast/ux_spec.md`. Head of UX & Design sign-off: 2026-07-06. Head of Specs Team confirmed. |
 | 0.1 | 2026-06-26 | Initial spec — v6.3 EPIC-01 ST-02. Covers card grid, R-Multiple display rules (N/A vs —), exit reason badges, search filter, empty state, loading state. Design source: r-multiple-reflection-fix/ux_spec.md. Approved: Product Owner 2026-06-26. Head of Specs Team confirmed. |
