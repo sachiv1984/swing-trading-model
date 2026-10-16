@@ -2,8 +2,8 @@
 **Owner:** Metrics Definitions & Analytics Canonical Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 1.29.0
-**Last Updated:** 2026-10-13 (ST-36, EPIC-05, v9.12, BLG-SPEC-181 — Trailing Stop Action Rate join and Position Risk data sources no longer cite the dropped `positions.stop_price` column); prior — 2026-10-09 (ST-26, EPIC-04, v9.11, BLG-SPEC-174 — added AI Monthly P&L Narrative Usage: the generation count named as evidence for the 2027-01-03 AI feature usage review, BLG-GOV-382); prior — 2026-10-08 (ST-24, EPIC-04, v9.11, BLG-FEAT-60 — added AI Chat Engagement: sessions per week, questions per session, response acceptance rate); prior history retained — see prior entries in version control
+**Version:** 1.30.0
+**Last Updated:** 2026-10-16 (ST-02, EPIC-01, v9.13, BLG-SPEC-186 — added Exit Condition Category: each allowed `exit_reason` maps to one `strategy_rules.md` §8 exit condition; Stop-Based Exit Rate cross-referenced); prior — 2026-10-13 (ST-36, EPIC-05, v9.12, BLG-SPEC-181 — Trailing Stop Action Rate join and Position Risk data sources no longer cite the dropped `positions.stop_price` column); prior — 2026-10-09 (ST-26, EPIC-04, v9.11, BLG-SPEC-174 — added AI Monthly P&L Narrative Usage: the generation count named as evidence for the 2027-01-03 AI feature usage review, BLG-GOV-382); prior history retained — see prior entries in version control
 **Review Cycle:** Monthly
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
@@ -808,6 +808,43 @@ if total_trades = 0: return 0.0
 - No trades: `stop_exit_rate = 0.0`.
 - Null `exit_reason` values are treated as non-stop exits (they map to `"Manual Exit"`).
 
+### Relationship to §8
+`stop_exits` is exactly the trades whose Exit Condition Category (below) is §8.1 Stop-loss trigger.
+
+---
+
+## Exit Condition Category
+
+### Definition
+The `strategy_rules.md` §8 exit condition a closed trade's `exit_reason` maps to. §8 defines exactly three: §8.1 Stop-loss trigger, §8.2 Market risk-off override and §8.3 Manual exit. Every allowed `exit_reason` maps to exactly one of them (v1.30.0; ST-02, BLG-SPEC-186).
+
+### Canonical Mapping
+
+| `exit_reason` | Exit condition category |
+|---------------|-------------------------|
+| `Stop Loss Hit` | §8.1 Stop-loss trigger |
+| `Trailing Stop` | §8.1 Stop-loss trigger |
+| `Risk-Off Signal` | §8.2 Market risk-off override |
+| `Manual Exit` | §8.3 Manual exit |
+| `Target Reached` | §8.3 Manual exit |
+| `Partial Profit Taking` | §8.3 Manual exit |
+| `NULL` | §8.3 Manual exit (read as `Manual Exit`) |
+
+`Target Reached` and `Partial Profit Taking` are §8.3 because §8 has no target-based or partial exit rule: both are the user's decision.
+
+### Canonical Formula
+
+```text
+exit_condition(trade) = CATEGORY[trade.exit_reason ?? "Manual Exit"]
+```
+
+### Data Sources
+- `trade_history.exit_reason`: allowed values and their category per `data_model.md` §3 Exit Reason Values. DS-34's CHECK constraint rejects any other value, so the mapping is total.
+- Code copies: `backend/exit_reasons.py` (`EXIT_REASONS`) and `src/constants/exitReasons.js`. `tests/test_exit_reason_values.py` checks that the backend copy matches `data_model.md`.
+
+### Failure Behaviour
+- No unmapped value can be stored after DS-34, so there is no "unknown" category. A legacy snake-case spelling read from a source DS-34 did not cover (for example an export made before the backfill) resolves through the alias table in `data_model.md` DS-34.
+
 ---
 
 ## Average Position Size (% of Portfolio)
@@ -1391,6 +1428,7 @@ Validation is performed by `POST /validate/calculations` comparing computed metr
 ## Appendix D — Change Log
 | Date | Version | Change | Author |
 |---|---|---|---|
+| 2026-10-16 | 1.30.0 | ST-02 (EPIC-01, v9.13, BLG-SPEC-186): added Exit Condition Category, mapping each allowed `exit_reason` to one of `strategy_rules.md` §8's three exit conditions (`Target Reached` and `Partial Profit Taking` → §8.3; `NULL` read as `Manual Exit`). Stop-Based Exit Rate gains a note that its `stop_exits` set is the §8.1 category. Allowed values enforced by `data_model.md` DS-34. | Metrics Definitions & Analytics Owner |
 | 2026-10-13 | 1.29.0 | ST-36 (EPIC-05, v9.12, BLG-SPEC-181): Trailing Stop Action Rate — the join condition and its anomaly note use `positions.current_stop`, the live stop column; `positions.stop_price` was dropped by DS-24 (`data_model.md`). Position Risk's data sources list `positions.initial_stop` (the entry stop the metric uses) instead of `stop_price`. No formula change. | Metrics Definitions & Analytics Owner |
 | 2026-10-09 | 1.28.0 | ST-26 (EPIC-04, v9.11, BLG-SPEC-174): Added AI Monthly P&L Narrative Usage. A generation is one completed request that stored a new summary (one terminal `claude_audit_log` row), not a model call. Defines the SQL query and three measures (generations, distinct months used, fallback rate); the months-used measure carries the Product Owner's success test. Named as evidence for the 2027-01-03 review (BLG-GOV-382). | Metrics Definitions & Analytics Owner |
 | 2026-10-08 | 1.27.0 | ST-24 (EPIC-04, v9.11, BLG-FEAT-60): Added AI Chat Engagement — chat session (30-minute gap) and three measures: sessions per week, questions per session, response acceptance rate (not yet instrumented; rating control filed as a backlog item). Baseline from the 2026-09-24 usage review. | Metrics Definitions & Analytics Owner |

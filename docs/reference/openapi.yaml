@@ -2,7 +2,9 @@ openapi: 3.0.3
 
 info:
   title: Momentum Trading Assistant API
-  version: 3.31.0
+  version: 3.32.0
+  # v3.32.0 (2026-10-16, ST-02, EPIC-01, v9.13): ExitPositionRequest.exit_reason lists its allowed
+  # values (data_model.md DS-34); POST /positions/{position_id}/exit returns 400 for any other (BLG-SPEC-186).
   # v3.31.0 (2026-10-15, ST-26, EPIC-04, v9.12): GET /settings returns last_change on the settings
   # object (the latest settings_change_log save, DS-33; BLG-SEC-41). POST /settings and
   # PATCH /settings/{settings_id} accept an optional X-Request-Source header. No new endpoint.
@@ -6937,7 +6939,11 @@ components:
         shares: { type: number, minimum: 0.0001 }
         exit_price: { type: number, minimum: 0.0001 }
         exit_date: { type: string, format: date }
-        exit_reason: { type: string, nullable: true }
+        exit_reason:
+          type: string
+          nullable: true
+          enum: ["Stop Loss Hit", "Trailing Stop", "Risk-Off Signal", "Manual Exit", "Target Reached", "Partial Profit Taking", null]
+          description: Allowed values (data_model.md §3 Exit Reason Values, DS-34). Omitted or null means "Manual Exit"; any other value returns 400.
         exit_fx_rate: { type: number, nullable: true }
         exit_note: { type: string, maxLength: 500, nullable: true }
 
