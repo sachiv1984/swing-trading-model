@@ -38,3 +38,51 @@ Last Updated: 2026-10-16
 - **Blocks execution:** No
 - **Disposition:** Resolved
 - **Resolution summary (2026-10-17T15:23:13Z):** PMO Lead approval, agent-mediated per `execution_prompt.md` §5.3, dated 2026-10-17: **Approved**, first pass. Charter grounds: `pmo_lead.md` §5.1, §5.2, GI-3, GI-5. The count was checked independently and the working is shown: the script gives 19 distinct Owner strings covering 21 stories (one string has 3 stories, 18 have 1 each). 4 have no `"; "` separator (`Strategy Rules & System Intent Owner (ruling)`, `Infrastructure & Operations Owner`, `QA & Testing Owner`, `Frontend Specifications & UX Documentation Owner`, 1 each), so 21 − 4 = 17 are compound. The old "19" appears to be the number of distinct strings, which is a different measure. The diff touches only that line's figure, with an inline note, and the `Last Updated` header. The header holds the current entry plus 2 prior entries (CLAUDE.md §2). The write records a figure and decides nothing (named-file rule, case a). ST-40 is reclassified `autonomous` and committed.
+
+## ESC-EXEC-20261017-02
+
+- **Raised at:** 2026-10-17T16:06:04Z
+- **Routine:** Sprint Execution
+- **Cycle ID:** 2026-10-16__release-v9.13
+- **Step:** STEP 3.1.D (EPIC-02 execution loop, raised at EPIC start per `sprint_backlog.md` ST-06 Dependencies: "ruling: reject with 400 or floor (first sub-step)")
+- **ST/EPIC item:** ST-06 / EPIC-02 (BLG-BE-180)
+- **Trigger type:** Strategy
+- **Blocking statement:** `add_position()` rejects a *typed* ATR when 5 × ATR ≥ entry (v9.12 ST-18), but a *fetched* or 2%-fallback ATR has no such check: `calculate_initial_stop()` can return a stop at or below zero and save stores it, and Trade Entry's preview shows the negative stop. ST-06 AC 1 needs a Strategy Rules & System Intent Owner ruling: **(A) reject** — `POST /portfolio/position` returns 400 when entry − 5 × (fetched or fallback) ATR ≤ 0; Trade Entry shows "No valid stop" and disables Submit (`initial-stop-at-or-below-zero/decision_record.md` §2.1); no `strategy_rules.md` change, since §5 already gives no stop for such an entry; or **(B) floor** — store a floored stop (the ruling must state the floor rule, e.g. "1% of the entry price") and record it in `strategy_rules.md` §5 under the RISK-02 route with a Change Log row; Trade Entry shows the floored value and caption (§2.2).
+- **Engine recommendation (non-binding):** none on the branch; it decides stop behaviour, which is a strategy call. Note for the Owner: (A) needs no rule change and matches the typed-ATR path; (B) introduces a new stop rule not in the backtest.
+- **Owning authority:** Strategy Rules & System Intent Owner
+- **Unblock criteria:** a dated ruling, (A) or (B) with the floor wording, recorded in this escalation's resolution. The engine then implements it with the backend test and Playwright scenario the AC names.
+- **SLA due-by:** 2026-10-20T16:06:04Z (72h — Strategy)
+- **Blocks execution:** No
+- **Disposition:** Open
+
+## ESC-EXEC-20261017-03
+
+- **Raised at:** 2026-10-17T16:06:04Z
+- **Routine:** Sprint Execution
+- **Cycle ID:** 2026-10-16__release-v9.13
+- **Step:** STEP 3.1.D (EPIC-02 execution loop, raised at EPIC start per `sprint_backlog.md` ST-07 Dependencies)
+- **ST/EPIC item:** ST-07 / EPIC-02 (BLG-BE-161)
+- **Trigger type:** Strategy
+- **Blocking statement:** `strategy_rules.md` §6.3 (v1.15+) says the stored stop is not recalculated or ratcheted during the 10-day grace period. The live paths follow it; the legacy standalone tool `backend/position_manager.py` still applies `max(current_stop, current_price − 5 × ATR)` in grace. It is off the live path and already a named exception for §7.2's multipliers. ST-07's AC needs the Owner's choice: **(A) align** — `position_manager.py` stops trailing during grace, with a unit test; no strategy change (the sprint plan's default, RISK-03); or **(B) exception** — `strategy_rules.md` names it as an exception next to the §7.2 one, with the Owner's sign-off, under the RISK-02 route.
+- **Engine recommendation (non-binding):** (A). It removes a divergence rather than documenting one, needs no `strategy_rules.md` bump, and the tool is not on the live path.
+- **Owning authority:** Strategy Rules & System Intent Owner
+- **Unblock criteria:** a dated choice, (A) or (B), recorded in this escalation's resolution.
+- **SLA due-by:** 2026-10-20T16:06:04Z (72h — Strategy)
+- **Blocks execution:** No
+- **Disposition:** Open
+
+## ESC-EXEC-20261017-04
+
+- **Raised at:** 2026-10-17T16:06:04Z
+- **Routine:** Sprint Execution
+- **Cycle ID:** 2026-10-16__release-v9.13
+- **Step:** STEP 3.1.D (EPIC-02 execution loop, raised at EPIC start per `sprint_backlog.md` ST-08 Dependencies)
+- **ST/EPIC item:** ST-08 / EPIC-02 (BLG-API-07)
+- **Trigger type:** Lifecycle
+- **Blocking statement:** `POST /settings` and `PATCH /settings/{settings_id}` still accept and store `min_hold_days`, `atr_period`, `atr_multiplier_initial` and `atr_multiplier_trailing`, which no stop path reads since v9.10 (§11 fixed source). A caller gets a 200 and cannot tell the change was ignored. ST-08 AC 1 needs the API Contracts & Documentation Owner's choice: **(A) 400** naming the §11 rule when a write includes any of the four fields (the sprint plan's default, RISK-03); or **(B) deprecation warning** — the write succeeds and the response carries a warning field listing the ignored fields. Either way `settings_endpoints.md` and `openapi.yaml` change in the same commit. Engine finding for the Owner: the Settings page already holds these four as `FIXED_STRATEGY_FIELDS` (`src/pages/Settings.js:19`) and seeds them with the §11 constants (lines 48–51); under (A) the engine will confirm whether the page sends them on save and stop it doing so in the same story (design gate: a defect, not a design change).
+- **Engine recommendation (non-binding):** (A), the planned default: it makes an ignored write impossible to miss.
+- **Owning authority:** API Contracts & Documentation Owner
+- **Unblock criteria:** a dated choice, (A) or (B), recorded in this escalation's resolution.
+- **SLA due-by:** 2026-10-18T16:06:04Z (24h — Lifecycle)
+- **Blocks execution:** No
+- **Disposition:** Open

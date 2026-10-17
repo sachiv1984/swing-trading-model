@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-16T10:49:11Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-17T15:44:15Z",
+  "last_updated_utc": "2026-10-17T16:06:04Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-06",
@@ -203,25 +203,35 @@
       "merge_commit": "2bca2001"
     },
     "EPIC-02": {
-      "status": "not_started",
-      "branch": null,
+      "status": "in_progress",
+      "branch": "exec/2026-10-16__release-v9.13/EPIC-02",
       "pr_number": null,
       "pr_status": "none",
       "qa_signed_off": false,
       "qa_evidence_log": "claude/cycles/2026-10-16__release-v9.13/qa_evidence_EPIC-02.md",
-      "test_scenarios": [],
+      "test_scenarios": [
+        "tests/e2e/monthly-pnl-restatement.spec.js",
+        "tests/e2e/system-status.spec.js",
+        "tests/e2e/trade-plan.spec.js",
+        "tests/test_entry_required_fields.py",
+        "tests/test_monthly_pnl_snapshot.py",
+        "tests/test_monthly_pnl_snapshot_failure_endpoint.py",
+        "tests/test_position_atr_timestamp_persistence.py",
+        "tests/test_stop_freshness_service.py",
+        "tests/test_strategy_invariants_property.py"
+      ],
       "stories": {
         "ST-06": {
           "title": "Reject a fetched ATR that puts the initial stop at or below zero",
           "classification": "delegated_decision",
-          "status": "not_started",
+          "status": "blocked_decision",
           "assigned_to": "Strategy Rules & System Intent Owner; Backend Engineering Patterns Owner",
           "github_issue": 2036,
           "branch": "exec/2026-10-16__release-v9.13/EPIC-02",
           "commit_sha": null,
           "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
+          "blocked_since_utc": "2026-10-17T16:06:04Z",
+          "unblock_criteria": "Strategy Rules & System Intent Owner ruling recorded in ESC-EXEC-20261017-02's resolution.",
           "completed_utc": null,
           "acceptance_verified": false,
           "spec_references": [],
@@ -230,19 +240,19 @@
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Ruling escalated as ESC-EXEC-20261017-02 (first sub-step)."
         },
         "ST-07": {
           "title": "Align the standalone position_manager.py with §6.3 (no stop ratchet during grace)",
           "classification": "delegated_decision",
-          "status": "not_started",
+          "status": "blocked_decision",
           "assigned_to": "Backend Engineering Patterns Owner; Strategy Rules & System Intent Owner",
           "github_issue": 2037,
           "branch": "exec/2026-10-16__release-v9.13/EPIC-02",
           "commit_sha": null,
           "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
+          "blocked_since_utc": "2026-10-17T16:06:04Z",
+          "unblock_criteria": "Strategy Rules & System Intent Owner ruling recorded in ESC-EXEC-20261017-03's resolution.",
           "completed_utc": null,
           "acceptance_verified": false,
           "spec_references": [],
@@ -251,19 +261,19 @@
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Ruling escalated as ESC-EXEC-20261017-03 (first sub-step)."
         },
         "ST-08": {
           "title": "Reject or flag the four fixed strategy-parameter fields on Settings writes",
           "classification": "delegated_decision",
-          "status": "not_started",
+          "status": "blocked_decision",
           "assigned_to": "API Contracts & Documentation Owner; Backend Engineering Patterns Owner",
           "github_issue": 2038,
           "branch": "exec/2026-10-16__release-v9.13/EPIC-02",
           "commit_sha": null,
           "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
+          "blocked_since_utc": "2026-10-17T16:06:04Z",
+          "unblock_criteria": "API Contracts & Documentation Owner ruling recorded in ESC-EXEC-20261017-04's resolution.",
           "completed_utc": null,
           "acceptance_verified": false,
           "spec_references": [],
@@ -272,133 +282,155 @@
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Ruling escalated as ESC-EXEC-20261017-04 (first sub-step)."
         },
         "ST-09": {
           "title": "Keep the Monthly P&L report up when the snapshot store fails",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 2039,
           "branch": "exec/2026-10-16__release-v9.13/EPIC-02",
-          "commit_sha": null,
+          "commit_sha": "30560e3154c01943da619b27ce95217f2353049c",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-17T15:48:34Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/reports_endpoints.md#GET /reports/monthly-pnl",
+            "docs/specs/frontend/pages/reports.md#Monthly Restatement Marker (v0.18 — ST-08, BLG-FR-05; field names corrected v0.19 — ST-04, BLG-FE-188)",
+            "tests/test_monthly_pnl_snapshot.py",
+            "tests/test_monthly_pnl_snapshot_failure_endpoint.py",
+            "tests/e2e/monthly-pnl-restatement.spec.js"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "AC1: snapshot read/connection/write failure -> 200 with realised P&L for every month and none of the four restatement fields; logged with exc_info (TestMonthlyPnlSnapshotFailure; endpoint test via TestClient). AC2: Playwright SC-MPR-05c (local CI-mode run passed; CI Playwright E2E 39046675823 success). AC3: reports_endpoints.md v0.18, reports.md v0.25 (Known limitation dropped), api_changelog.md v1.18.0. CI on 30560e31: all 8 workflows success (CI Pytest 39046675803). No deviation."
         },
         "ST-10": {
           "title": "Define a stop-freshness metric and show it on System Status",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "blocked_backend",
           "assigned_to": "engine",
           "github_issue": 2040,
           "branch": "exec/2026-10-16__release-v9.13/EPIC-02",
-          "commit_sha": null,
-          "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
+          "commit_sha": "5c4b38e77ab512536f53f28891e3c5dc6d9586f4",
+          "delegation_record_id": "DEL-20261017-01",
+          "blocked_since_utc": "2026-10-17T16:06:04Z",
+          "unblock_criteria": "Panel values and the metrics_definitions.md §Stop Freshness manual-check query output from one deployed environment running 5c4b38e7+, recorded in qa_evidence_EPIC-02.md under ST-10 (DEL-20261017-01).",
           "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": [],
+          "spec_references": [
+            "docs/specs/metrics_definitions.md#Stop Freshness",
+            "docs/specs/frontend/pages/system_status.md#Stop Freshness Panel (v1.3 — ST-10, BLG-SPEC-188)",
+            "docs/specs/api_contracts/position_endpoints.md#GET /positions/stop-freshness",
+            "tests/test_stop_freshness_service.py",
+            "tests/e2e/system-status.spec.js"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "AC1 and the automated half of AC2 delivered at 5c4b38e7: metric (metrics_definitions.md v1.32.0), GET /positions/stop-freshness with full registration chain (contract v2.17.0, openapi 3.33.0, test.py 129->130, SystemStatus.js fallback 130, SC-SS-01b), panel, pytest (9) and Playwright SC-SS-09a-e (local CI-mode run 27 passed; full pytest 2759 passed). Staging-only half of AC2 (manual check against a deployed environment) delegated as DEL-20261017-01; staging-deploy.yml has no success in its last 40 runs (EPIC-05 ST-29 / BLG-TECH-24). ci_pending: 39047888217 (CI Pytest), 39047888248 (Playwright E2E) on 5c4b38e7 — clear before DoQ sign-off. No deviation."
         },
         "ST-11": {
           "title": "Correct metrics_definitions.md's claim about NULL positions.fees_paid",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 2041,
           "branch": "exec/2026-10-16__release-v9.13/EPIC-02",
-          "commit_sha": null,
+          "commit_sha": "23253b9e43109ed4c3d5b0e5d679627be080aa14",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-17T15:49:10Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/metrics_definitions.md#Fee-Netting Basis (ST-07, EPIC-02, v9.6, BLG-FR-04)"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Fee-Netting Basis no longer cites NULL positions.fees_paid as a reachable cause (NOT NULL since DS-23; exit_position raises on NULL); names legacy and manually inserted trade_history rows, cross-references DS-23. null_fee_trade_count contract and computation unchanged. metrics_definitions.md v1.31.0. CI on 23253b9e: all 7 workflows success. No deviation."
         },
         "ST-12": {
           "title": "Mock get_settings() so the stored ATR multiplier is asserted exactly",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 2042,
           "branch": "exec/2026-10-16__release-v9.13/EPIC-02",
-          "commit_sha": null,
+          "commit_sha": "18d8118eeb9cde347ee7cb5a20ff0a2c6e85b384",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-17T15:49:56Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "tests/test_position_atr_timestamp_persistence.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "get_settings() mocked to 2.0/5.0; asserts active_atr_multiplier == 2.0 (profitable) and == 5.0 (losing). Implementation note (intent check, not a deviation): analyze_positions() now takes multipliers from strategy_parameters.stop_multiplier_settings() (§11), not get_settings(); a third test mocks a divergent settings row and confirms 2.0 is stored. CI on 18d8118e: all 7 workflows success (CI Pytest 39046773608)."
         },
         "ST-13": {
           "title": "Test the entry required-field set and the non-blocking advisory panel at their boundary",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 2043,
           "branch": "exec/2026-10-16__release-v9.13/EPIC-02",
-          "commit_sha": null,
+          "commit_sha": "085625c69855d36873d557774e36760cebf05a61",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-17T15:57:48Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "tests/test_entry_required_fields.py",
+            "tests/e2e/trade-plan.spec.js",
+            "docs/testing/strategy_rule_test_traceability_matrix.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "AC1 C4-01: each of ticker/market/entry_date/entry_price/shares omitted -> 422 before add_position(); required set pinned to AddPositionRequest; ATR derived server-side (test_atr_provenance TestEntryProvenance). AC2 C4.2.6: Playwright SC-TP-31 (fail, warn) saves a plan with the panel showing Fail/Warn (local CI-mode run 6 passed; CI Playwright E2E 39047338314 success). AC3: matrix rows updated, Summary recounted 48/49. First commit attempt was blocked by the pre-commit OpenAPI drift hook (it scans the working tree, which held ST-10's undocumented route); nothing was committed, and a fresh commit was made after the contract was written (no amend). CI on 085625c6: all 8 workflows success. No deviation."
         },
         "ST-14": {
           "title": "Give the valid-input sizing property a lower bound",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 2044,
           "branch": "exec/2026-10-16__release-v9.13/EPIC-02",
-          "commit_sha": null,
+          "commit_sha": "a8dc301929c78457896e9383a014a95cbe23b34e",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-17T15:53:03Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "tests/test_strategy_invariants_property.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Lower bound: shares within one 4dp floor step of RiskAmount/(StopDistance x FX). test_zeroed_or_halved_suggested_shares_falsifies_the_property patches _floor_4dp to zero/half and confirms the property raises (UK, US). CI on a8dc3019: all 7 workflows success (CI Pytest 39047004002). No deviation."
         }
       }
     },
@@ -1044,14 +1076,25 @@
       "merge_commit": "27430d29"
     }
   },
-  "blocked_items": [],
-  "delegated_items": [],
+  "blocked_items": [
+    "ST-06",
+    "ST-07",
+    "ST-08"
+  ],
+  "delegated_items": [
+    "ST-10"
+  ],
   "completed_items": [
     "ST-01",
     "ST-02",
     "ST-03",
     "ST-04",
     "ST-05",
+    "ST-09",
+    "ST-11",
+    "ST-12",
+    "ST-13",
+    "ST-14",
     "ST-35",
     "ST-36",
     "ST-37",
@@ -1064,6 +1107,21 @@
       "item": "ST-40",
       "disposition": "Resolved",
       "resolved_utc": "2026-10-17T15:23:13Z"
+    },
+    "ESC-EXEC-20261017-02": {
+      "item": "ST-06",
+      "disposition": "Open",
+      "raised_utc": "2026-10-17T16:06:04Z"
+    },
+    "ESC-EXEC-20261017-03": {
+      "item": "ST-07",
+      "disposition": "Open",
+      "raised_utc": "2026-10-17T16:06:04Z"
+    },
+    "ESC-EXEC-20261017-04": {
+      "item": "ST-08",
+      "disposition": "Open",
+      "raised_utc": "2026-10-17T16:06:04Z"
     }
   },
   "merge_gate": {
@@ -1085,7 +1143,8 @@
     "2026-10-17: EPIC-06 branch cut from main 8845b7c6 (after the EPIC-01 merge). ST-35..ST-40 committed (6a4a5fd0, c89dba4e, 935ea1fc, 63314028 [ST-38+ST-39], 3903e9fc). ST-40 went through ESC-EXEC-20261017-01, PMO Lead agent-mediated approval, then was reclassified autonomous. The autonomous DoQ class is not claimed because Criterion 1 is borderline (ST-40 is delegated_decision in the sealed plan), so the EPIC takes a standard DoQ sign-off (v9.12 EPIC-06 precedent).",
     "2026-10-17: EPIC-06 DoQ sign-off, agent-mediated (Director of Quality role, §5.3, user-directed): Approved on the first pass. Non-blocking notes N1-N4 are recorded in qa_evidence_EPIC-06.md and the PR body.",
     "2026-10-17: EPIC-06 PR #2072 opened. Pre-PR checks: API baseline drift script exit 0, no foreign-EPIC commits in origin/main..HEAD, signer format matches the agent-mediated pattern.",
-    "2026-10-17T15:43:26Z: EPIC-06 PR #2072 merged by the repository owner (merge commit 27430d29) right after the engine posted the user-directed QA sign-off and PO acceptance comments. The merge-gate record commit was redirected from the EPIC-06 branch to main: the §3.2.B step 7 merged-PR check fired (LL-v9.12-P3-02), so no commit landed on the merged branch. Orphaned post-merge commit check (LL-v6.8-P3-01): git log origin/main..origin/exec/.../EPIC-06 is empty. Step 3c sibling sync: no other EPIC branch exists yet; EPIC-02 (next in merge order) is cut from this main."
+    "2026-10-17T15:43:26Z: EPIC-06 PR #2072 merged by the repository owner (merge commit 27430d29) right after the engine posted the user-directed QA sign-off and PO acceptance comments. The merge-gate record commit was redirected from the EPIC-06 branch to main: the §3.2.B step 7 merged-PR check fired (LL-v9.12-P3-02), so no commit landed on the merged branch. Orphaned post-merge commit check (LL-v6.8-P3-01): git log origin/main..origin/exec/.../EPIC-06 is empty. Step 3c sibling sync: no other EPIC branch exists yet; EPIC-02 (next in merge order) is cut from this main.",
+    "2026-10-17: EPIC-02 branch cut from main 6b1b8bb4 (after EPIC-06 merge). Autonomous ST-09, ST-11, ST-12, ST-13, ST-14 done; ST-10 automated scope committed, manual-check half delegated (DEL-20261017-01). ST-06/ST-07/ST-08 rulings escalated (ESC-EXEC-20261017-02/-03/-04). The pre-commit OpenAPI drift hook scans the working tree, so an in-progress story's undocumented route blocked an unrelated story's commit once (ST-13); recovered with a fresh commit, no amend."
   ],
   "sealed": false,
   "sealed_utc": null
