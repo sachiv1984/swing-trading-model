@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Class 2
 **Status:** Canonical
-**Version:** 1.17.0
-**Last Updated:** 2026-10-16 (ST-02, EPIC-01, v9.13, BLG-SPEC-186 — v9.13.0 entry: POST /positions/{position_id}/exit enforces the exit_reason list); prior — 2026-10-13 (ST-17, EPIC-03, v9.12, BLG-BE-146 — v9.12.0 entry: GET /market/atr/{ticker}); prior — 2026-10-09 (ST-25, EPIC-04, v9.11, BLG-FEAT-59 — v9.11.0 entry: GET and POST /reports/monthly-pnl/narrative); prior history retained — see prior entries in version control
+**Version:** 1.18.0
+**Last Updated:** 2026-10-17 (ST-09, EPIC-02, v9.13, BLG-BE-156 — v9.13.0 entry: GET /reports/monthly-pnl stays up when the snapshot store fails); prior — 2026-10-16 (ST-02, EPIC-01, v9.13, BLG-SPEC-186 — v9.13.0 entry: POST /positions/{position_id}/exit enforces the exit_reason list); prior — 2026-10-13 (ST-17, EPIC-03, v9.12, BLG-BE-146 — v9.12.0 entry: GET /market/atr/{ticker}); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 # API Changelog
@@ -66,6 +66,15 @@ Rules:
 | Change | Details |
 |--------|---------|
 | Updated endpoint: GET /portfolio/red-flag-journal | Can now return `checklist_skipped` events, written when `POST /trade-plans` or `PUT /trade-plans/{id}` saves a non-empty, incomplete checklist; context `source`, `plan_id`, `unchecked_items`, `total_items` (BLG-BE-182). Response shape unchanged. |
+
+### reports_endpoints.md — v0.18 (UPDATED)
+
+**EPIC:** EPIC-02
+**ST:** ST-09
+
+| Change | Details |
+|--------|---------|
+| Updated endpoint: GET /reports/monthly-pnl | A failure to read or write `monthly_pnl_snapshots` no longer fails the request: it returns `200` with realised P&L for every month and none of the four restatement fields, and logs the failure with `exc_info` (BLG-BE-156). Success shape unchanged. |
 
 ## v9.12.0 (2026-10-13 — Release v9.12)
 

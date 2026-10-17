@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 0.17
-**Last Updated:** 2026-10-12 (EPIC-04 merged to main, PR #1972, carried into EPIC-05 by the main merge — 0.17 (ST-25 narrative endpoints) and 0.16 (ST-29) both kept; version 0.17 is the highest); prior — 2026-10-09 (ST-25, EPIC-04, v9.11, BLG-FEAT-59 — new `GET` and `POST /reports/monthly-pnl/narrative`, the AI-assisted Monthly P&L summary; 0.16 is EPIC-05's ST-29 entry); prior — 2026-10-08 (ST-29, EPIC-05, v9.11, BLG-SPEC-170 — GET /reports/monthly-pnl: no snapshot date, no partial-failure field, client unavailable signal documented); prior history retained — see prior entries in version control
+**Version:** 0.18
+**Last Updated:** 2026-10-17 (ST-09, EPIC-02, v9.13, BLG-BE-156 — `GET /reports/monthly-pnl` returns 200 with realised P&L and no restatement fields when `monthly_pnl_snapshots` fails); prior — 2026-10-12 (EPIC-04 merged to main, PR #1972, carried into EPIC-05 by the main merge — 0.17 (ST-25 narrative endpoints) and 0.16 (ST-29) both kept; version 0.17 is the highest); prior — 2026-10-09 (ST-25, EPIC-04, v9.11, BLG-FEAT-59 — new `GET` and `POST /reports/monthly-pnl/narrative`); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Overview
@@ -462,7 +462,7 @@ Array of monthly summary objects, sorted descending by year then month. Only mon
 
 **Restatement fields: what the response does not carry (v0.16 — ST-29, BLG-SPEC-170):**
 - **No snapshot date.** The response carries no date for `snapshot_realised_pnl_gbp`; the snapshot is the month-end baseline of that month. `reports.md` §Monthly Restatement Marker shows "As reviewed" undated to match.
-- **No partial-failure field.** The four restatement fields are present on every month of a successful response. A failure to read or write `monthly_pnl_snapshots` fails the whole request with the standard error envelope, so the realised P&L is not returned either (follow-up: `BLG-BE-156`, return P&L without the snapshot fields instead). A client should treat a response in which no month carries a boolean `restated` as "restatement check unavailable"; that is the signal `reports.md` defines.
+- **No partial-failure field; snapshot failure is non-blocking.** *(v0.18 — ST-09, BLG-BE-156)* When `monthly_pnl_snapshots` is read and written successfully, the four restatement fields are present on every month. When reading or writing it fails (connection, table-ensure, read or baseline insert), the request still returns `200` with `year`, `month`, `realised_pnl_gbp`, `trade_count` and `null_fee_trade_count` for every month, and **none** of the four restatement fields on **any** month (never a partial set). The failure is logged server-side with its traceback (`exc_info`). A client should treat a response in which no month carries a boolean `restated` as "restatement check unavailable"; that is the signal `reports.md` defines. Other failures (e.g. the realised P&L query itself) still return the standard `500` envelope.
 
 **Scope:** By default, returns data for the current calendar year and the prior calendar year only (24 months maximum). When `year` is given, returns data for that UK tax year instead (12 months maximum). Empty array if no closed trades exist in scope.
 
@@ -826,6 +826,7 @@ GET /reports/reconciliation?year=2025
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.18 | 2026-10-17 | ST-09 (EPIC-02, v9.13, BLG-BE-156): `GET /reports/monthly-pnl` no longer fails when `monthly_pnl_snapshots` cannot be read or written. It returns `200` with realised P&L for every month and none of the four restatement fields, and logs the failure with `exc_info`. Response shape on success unchanged. Agrees with `reports.md` v0.25. |
 | 0.17 | 2026-10-09 | ST-25 (EPIC-04, v9.11, BLG-FEAT-59): Added `## GET /reports/monthly-pnl/narrative` and `## POST /reports/monthly-pnl/narrative` — the AI-assisted Monthly P&L summary: stored per tax year and input hash, daily cap of 40 model calls (429), fail-closed 503, output checks with a code-written fallback, `advisory: true`. §13 CONDITIONAL (`decisions--2026-10-08__release-v9.11--ST-25-monthly-pnl-narrative-section13-review.md`). Numbered 0.17 because EPIC-05's ST-29 holds 0.16. |
 | 0.16 | 2026-10-08 | ST-29 (EPIC-05, v9.11, BLG-SPEC-170): Stated what `GET /reports/monthly-pnl`'s restatement fields do not carry — no snapshot date, no partial-failure field — and the client-side "unavailable" signal, agreeing with `reports.md` v0.22. Documentation only. |
 | 0.13 | 2026-09-22 | ST-07 + ST-08 (v9.6, EPIC-02, BLG-FR-04 + BLG-FR-05): **ST-07** added `null_fee_trade_count` to `GET /reports/monthly-pnl`'s per-month `data[]` objects — count of that month's closed trades with `entry_fees` or `exit_fees` NULL in `trade_history` (audit signal only; does not change `realised_pnl_gbp`). **ST-08** added month-end immutable snapshotting: per-month `snapshotted`/`restated`/`snapshot_realised_pnl_gbp`/`restated_diff_gbp` fields on `GET /reports/monthly-pnl`, and a derived `summary.restated_month_count`/`restated_months_notice` pair on `GET /reports/tax-year` (backed by the new `monthly_pnl_snapshots` table, `data_model.md` DS-20 — no live action currently triggers a restatement, see DS-20's disclosure). None of these fields are added to either endpoint's `format=csv` export — CSV byte shape unchanged. |
