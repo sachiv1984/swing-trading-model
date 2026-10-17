@@ -2,7 +2,11 @@ openapi: 3.0.3
 
 info:
   title: Momentum Trading Assistant API
-  version: 3.32.0
+  version: 3.33.0
+  # v3.33.0 (2026-10-17, EPIC-02, v9.13): new GET /positions/stop-freshness — median/maximum age of
+  # stop_calculated_at across open positions, for System Status (ST-10, BLG-SPEC-188).
+  # GET /reports/monthly-pnl: a monthly_pnl_snapshots failure returns 200 without the four
+  # restatement fields (ST-09, BLG-BE-156); the schema already marks them optional.
   # v3.32.0 (2026-10-16, ST-02, EPIC-01, v9.13): ExitPositionRequest.exit_reason lists its allowed
   # values (data_model.md DS-34); POST /positions/{position_id}/exit returns 400 for any other (BLG-SPEC-186).
   # ST-05 (same release): POST /signals/rebalance-exit implements strategy_rules.md §8.4 and returns 503
@@ -2374,6 +2378,58 @@ paths:
         "500":
           $ref: "#/components/responses/InternalError"
 
+  /positions/stop-freshness:
+    get:
+      tags: [Positions]
+      summary: Stop freshness across open positions
+      description: >
+        Median and maximum age, in hours, of stop_calculated_at across open positions, with the oldest
+        stop's ticker and timestamp. Positions with a NULL stop_calculated_at are excluded from the median
+        and maximum and counted in never_recalculated. Definition: metrics_definitions.md §Stop Freshness.
+        Read by System Status's Stop Freshness panel (v9.13 ST-10, BLG-SPEC-188).
+        §13 display-only — reading the age changes no stop.
+        Spec: docs/specs/api_contracts/position_endpoints.md
+      responses:
+        "200":
+          description: Stop freshness figures.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  data:
+                    type: object
+                    properties:
+                      as_of:
+                        type: string
+                        format: date-time
+                      open_positions:
+                        type: integer
+                      recalculated_positions:
+                        type: integer
+                        description: Open positions with a stop_calculated_at.
+                      never_recalculated:
+                        type: integer
+                        description: open_positions − recalculated_positions.
+                      median_age_hours:
+                        type: number
+                        nullable: true
+                        description: null when recalculated_positions is 0.
+                      max_age_hours:
+                        type: number
+                        nullable: true
+                      oldest_ticker:
+                        type: string
+                        nullable: true
+                      oldest_stop_calculated_at:
+                        type: string
+                        format: date-time
+                        nullable: true
+        "500":
+          description: Internal server error.
   /positions/grace-period-alerts:
     get:
       tags: [Positions]

@@ -171,6 +171,8 @@ async def test_all_endpoints(request: Request):
         {"name": "POST /positions/00000000-0000-0000-0000-000000000000/refresh-state", "method": "POST", "url": f"{base_url}/positions/00000000-0000-0000-0000-000000000000/refresh-state", "critical": False},
         # Position Lifecycle Decision Support (v3.3 / EPIC-02)
         {"name": "GET /positions/grace-period-alerts", "method": "GET", "url": f"{base_url}/positions/grace-period-alerts", "critical": True},
+        # Stop Freshness (v9.13 / EPIC-02 ST-10)
+        {"name": "GET /positions/stop-freshness", "method": "GET", "url": f"{base_url}/positions/stop-freshness", "critical": False},
         {"name": "GET /positions/{id}/stop-trail", "method": "GET", "url": f"{base_url}/positions/00000000-0000-0000-0000-000000000000/stop-trail", "critical": False},
 
         # On-Demand Compliance Recheck / Gap Risk Flag (v6.9 / EPIC-01 ST-01, EPIC-02 ST-02)

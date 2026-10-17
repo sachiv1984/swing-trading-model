@@ -2,8 +2,8 @@
 **Owner:** Metrics Definitions & Analytics Canonical Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 1.31.0
-**Last Updated:** 2026-10-17 (ST-11, EPIC-02, v9.13, BLG-SPEC-180 — Fee-Netting Basis no longer cites a NULL `positions.fees_paid` as a cause of a NULL `trade_history` fee leg; names legacy and manually inserted rows, cross-references DS-23); prior — 2026-10-16 (ST-02, EPIC-01, v9.13, BLG-SPEC-186 — added Exit Condition Category: each allowed `exit_reason` maps to one `strategy_rules.md` §8 exit condition; Stop-Based Exit Rate cross-referenced); prior — 2026-10-13 (ST-36, EPIC-05, v9.12, BLG-SPEC-181 — Trailing Stop Action Rate join and Position Risk data sources no longer cite the dropped `positions.stop_price` column); prior history retained — see prior entries in version control
+**Version:** 1.32.0
+**Last Updated:** 2026-10-17 (ST-10, EPIC-02, v9.13, BLG-SPEC-188 — new §Stop Freshness: median and maximum age of `stop_calculated_at` across open positions, NULLs excluded and counted); prior — 2026-10-17 (ST-11, EPIC-02, v9.13, BLG-SPEC-180 — Fee-Netting Basis no longer cites a NULL `positions.fees_paid` as a cause of a NULL `trade_history` fee leg; names legacy and manually inserted rows, cross-references DS-23); prior — 2026-10-16 (ST-02, EPIC-01, v9.13, BLG-SPEC-186 — added Exit Condition Category: each allowed `exit_reason` maps to one `strategy_rules.md` §8 exit condition; Stop-Based Exit Rate cross-referenced); prior history retained — see prior entries in version control
 **Review Cycle:** Monthly
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
@@ -1173,6 +1173,51 @@ The rate itself is bounded by construction (`0.0`–`1.0`, or `null` per the Ret
 
 ---
 
+## Stop Freshness
+
+**Added:** v1.32.0 — ST-10 (EPIC-02, v9.13, BLG-SPEC-188)
+
+Stop freshness measures how recently the stops on open positions were recalculated. `strategy_rules.md` §7.1 says the ATR, and with it the stop, is recalculated daily (on-load recompute and the nightly job). Since v9.9 each recompute stamps `positions.stop_calculated_at` (`data_model.md` DS-22). This metric makes that rule visible in operation. It is shown on System Status (`system_status.md` v1.3 §Stop Freshness Panel) and served by `GET /positions/stop-freshness` (`position_endpoints.md` v2.17.0).
+
+### Definition
+
+```
+age_i              = as_of − positions.stop_calculated_at_i     (hours)
+                     for each open position i with stop_calculated_at NOT NULL
+median_stop_age    = MEDIAN(age_i)
+max_stop_age       = MAX(age_i), with that position's ticker and stop_calculated_at
+never_recalculated = COUNT(open positions with stop_calculated_at IS NULL)
+```
+
+- **Population:** `positions` rows with `status = 'open'` in the portfolio.
+- **Source:** `positions.stop_calculated_at` (TIMESTAMPTZ, DS-22), written by `GET /positions/analyze` on a post-grace recompute and by `POST /positions/nightly-stop-update`. In-grace positions are not recomputed (§6.3), so a position inside its grace period may have no stamp yet.
+- **`as_of`:** the server's UTC time when the figures are computed.
+- **NULL handling:** positions with a NULL `stop_calculated_at` are **excluded** from the median and the maximum and counted in `never_recalculated`. They are never treated as age 0 or as infinitely old.
+- **Median:** the middle age; with an even count, the mean of the two middle ages.
+- **Rounding:** ages in hours to 2 dp (API); System Status formats them (one decimal below 48 h, else days and hours).
+- **Returns:** the age fields are `null` when no open position has a stamp; the counts are still returned.
+- **Threshold:** none. This is a neutral reading; a weekend or holiday gap is expected and is not an alert condition.
+
+### Manual check
+
+The displayed figures can be reproduced in SQL (read-only):
+
+```sql
+SELECT ticker, stop_calculated_at,
+       EXTRACT(EPOCH FROM (now() - stop_calculated_at)) / 3600 AS age_hours
+FROM positions
+WHERE status = 'open'
+ORDER BY stop_calculated_at NULLS FIRST;
+```
+
+The median of `age_hours` over non-NULL rows, the maximum with its ticker, and the NULL row count should match System Status at the same moment, allowing for the seconds between the two reads.
+
+### Sign-off
+
+Metrics Definitions & Analytics Owner: definition per the v9.13 design record (`docs/design/2026-10-16__release-v9.13/stop-freshness-status/decision_record.md`), 2026-10-17.
+
+---
+
 ## AI Chat Engagement
 
 **Added:** v1.27.0 — ST-24 (EPIC-04, v9.11, BLG-FEAT-60)
@@ -1428,6 +1473,7 @@ Validation is performed by `POST /validate/calculations` comparing computed metr
 ## Appendix D — Change Log
 | Date | Version | Change | Author |
 |---|---|---|---|
+| 2026-10-17 | 1.32.0 | ST-10 (EPIC-02, v9.13, BLG-SPEC-188): new §Stop Freshness — median and maximum age of `positions.stop_calculated_at` across open positions, with formula, source (DS-22), NULL exclusion (counted as never recalculated) and a manual-check query. No threshold. Served by `GET /positions/stop-freshness`; shown on System Status. | Metrics Definitions & Analytics Owner |
 | 2026-10-17 | 1.31.0 | ST-11 (EPIC-02, v9.13, BLG-SPEC-180): Fee-Netting Basis — removed the claim that a NULL `positions.fees_paid` can cause a NULL `trade_history` fee leg (the column is `NOT NULL` since DS-23 and `exit_position()` raises on NULL); the reachable sources are legacy and manually inserted `trade_history` rows. No change to `null_fee_trade_count`'s contract or computation. | Metrics Definitions & Analytics Owner |
 | 2026-10-16 | 1.30.0 | ST-02 (EPIC-01, v9.13, BLG-SPEC-186): added Exit Condition Category, mapping each allowed `exit_reason` to one of `strategy_rules.md` §8's three exit conditions (`Target Reached` and `Partial Profit Taking` → §8.3; `NULL` read as `Manual Exit`). Stop-Based Exit Rate gains a note that its `stop_exits` set is the §8.1 category. Allowed values enforced by `data_model.md` DS-34. | Metrics Definitions & Analytics Owner |
 | 2026-10-13 | 1.29.0 | ST-36 (EPIC-05, v9.12, BLG-SPEC-181): Trailing Stop Action Rate — the join condition and its anomaly note use `positions.current_stop`, the live stop column; `positions.stop_price` was dropped by DS-24 (`data_model.md`). Position Risk's data sources list `positions.initial_stop` (the entry stop the metric uses) instead of `stop_price`. No formula change. | Metrics Definitions & Analytics Owner |

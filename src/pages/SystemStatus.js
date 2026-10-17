@@ -5,6 +5,7 @@ import { Button } from "../components/ui/button";
 import { Badge } from "../components/ui/badge";
 import { Switch } from "../components/ui/switch";
 import { Label } from "../components/ui/label";
+import { Skeleton } from "../components/ui/skeleton";
 import {
   Activity,
   RefreshCw,
@@ -31,6 +32,81 @@ import {
 import { cn } from "../lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import moment from "moment";
+
+// ST-10 (EPIC-02, v9.13, BLG-SPEC-188): hours with one decimal below 48 h, else
+// days and hours (system_status.md v1.3 §Stop Freshness Panel).
+export function formatStopAge(hours) {
+  if (hours < 48) return `${hours.toFixed(1)} h`;
+  const totalHours = Math.floor(hours);
+  return `${Math.floor(totalHours / 24)} d ${totalHours % 24} h`;
+}
+
+// Stop Freshness panel — figures come from GET /positions/stop-freshness, not the browser.
+function StopFreshnessPanel({ apiUrl }) {
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ['stopFreshness'],
+    queryFn: async () => {
+      const response = await apiFetch(`${apiUrl}/positions/stop-freshness`);
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const json = await response.json();
+      return json.data;
+    },
+    retry: false,
+  });
+
+  const muted = "text-sm text-slate-600 dark:text-slate-400";
+  let body;
+  if (isLoading) {
+    body = <Skeleton className="h-5 w-full" />;
+  } else if (isError || !data || Array.isArray(data) || typeof data.open_positions !== 'number') {
+    body = <p data-testid="stop-freshness-unavailable" className={muted}>Stop freshness unavailable.</p>;
+  } else if (data.open_positions === 0) {
+    body = <p className={muted}>No open positions.</p>;
+  } else {
+    const hasAges = data.median_age_hours !== null && data.median_age_hours !== undefined;
+    body = (
+      <div className="space-y-2">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div>
+            <p className="text-xs text-slate-600 dark:text-slate-400">Median stop age</p>
+            <p data-testid="stop-freshness-median" className="text-lg font-semibold text-slate-900 dark:text-white">
+              {hasAges ? formatStopAge(data.median_age_hours) : '—'}
+            </p>
+          </div>
+          <div>
+            <p className="text-xs text-slate-600 dark:text-slate-400">Oldest stop</p>
+            <p
+              data-testid="stop-freshness-max"
+              title={data.oldest_stop_calculated_at || undefined}
+              className="text-lg font-semibold text-slate-900 dark:text-white"
+            >
+              {hasAges ? `${formatStopAge(data.max_age_hours)} · ${data.oldest_ticker}` : '—'}
+            </p>
+          </div>
+          <div>
+            <p className="text-xs text-slate-600 dark:text-slate-400">Coverage</p>
+            <p data-testid="stop-freshness-coverage" className="text-lg font-semibold text-slate-900 dark:text-white">
+              {data.recalculated_positions} of {data.open_positions} open positions
+            </p>
+            {data.never_recalculated > 0 && (
+              <p data-testid="stop-freshness-never" className="text-xs text-slate-600 dark:text-slate-400">
+                {data.never_recalculated} never recalculated
+              </p>
+            )}
+          </div>
+        </div>
+        <p className="text-xs text-slate-600 dark:text-slate-400">As of {moment(data.as_of).format('HH:mm, D MMM YYYY')}</p>
+      </div>
+    );
+  }
+
+  return (
+    <div data-testid="stop-freshness-panel" className="p-5 rounded-xl border bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700/50">
+      <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-4">Stop Freshness</h2>
+      {body}
+    </div>
+  );
+}
 
 export default function SystemStatus() {
   const [autoRefresh, setAutoRefresh] = useState(false);
@@ -479,6 +555,9 @@ export default function SystemStatus() {
         </div>
       </div>
 
+      {/* Stop Freshness (ST-10, v9.13) — after Component Health Checks, before Endpoint Tests */}
+      <StopFreshnessPanel apiUrl={API_URL} />
+
       {/* Endpoint Tests Section */}
       <div>
         <div className="flex items-center justify-between mb-4">
@@ -534,7 +613,7 @@ export default function SystemStatus() {
             <div className="text-center">
               <Play className="w-10 h-10 text-slate-400 mx-auto mb-3" />
               <p className="text-slate-600 dark:text-slate-400">Click 'Run Tests' to verify all endpoints</p>
-              <p className="text-slate-600 dark:text-slate-400 text-sm mt-1">Tests {totalTests || '129'} endpoints</p>
+              <p className="text-slate-600 dark:text-slate-400 text-sm mt-1">Tests {totalTests || '130'} endpoints</p>
             </div>
           </div>
         ) : (

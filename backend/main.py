@@ -1722,6 +1722,28 @@ def _calendar_days_since(entry):
         return None
 
 
+@app.get("/positions/stop-freshness")
+def get_stop_freshness_endpoint():
+    """
+    GET /positions/stop-freshness
+
+    Median and maximum age of stop_calculated_at across open positions, with the
+    oldest stop's ticker and the never-recalculated count (ST-10, EPIC-02, v9.13,
+    BLG-SPEC-188). Definition: metrics_definitions.md §Stop Freshness. Read by
+    System Status's Stop Freshness panel.
+
+    §13 display-only: reading the age changes no stop.
+    Spec: docs/specs/api_contracts/position_endpoints.md §GET /positions/stop-freshness
+    """
+    from services.stop_freshness_service import get_stop_freshness
+    try:
+        return {"status": "ok", "data": get_stop_freshness()}
+    except Exception:
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail="Internal server error")
+
+
 @app.get("/positions/grace-period-alerts")
 def get_grace_period_alerts_endpoint():
     """

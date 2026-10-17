@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Class 2
 **Status:** Canonical
-**Version:** 1.18.0
-**Last Updated:** 2026-10-17 (ST-09, EPIC-02, v9.13, BLG-BE-156 — v9.13.0 entry: GET /reports/monthly-pnl stays up when the snapshot store fails); prior — 2026-10-16 (ST-02, EPIC-01, v9.13, BLG-SPEC-186 — v9.13.0 entry: POST /positions/{position_id}/exit enforces the exit_reason list); prior — 2026-10-13 (ST-17, EPIC-03, v9.12, BLG-BE-146 — v9.12.0 entry: GET /market/atr/{ticker}); prior history retained — see prior entries in version control
+**Version:** 1.19.0
+**Last Updated:** 2026-10-17 (ST-10, EPIC-02, v9.13, BLG-SPEC-188 — v9.13.0 entry: new GET /positions/stop-freshness); prior — 2026-10-17 (ST-09, EPIC-02, v9.13, BLG-BE-156 — v9.13.0 entry: GET /reports/monthly-pnl stays up when the snapshot store fails); prior — 2026-10-16 (ST-02, EPIC-01, v9.13, BLG-SPEC-186 — v9.13.0 entry: POST /positions/{position_id}/exit enforces the exit_reason list); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 # API Changelog
@@ -75,6 +75,15 @@ Rules:
 | Change | Details |
 |--------|---------|
 | Updated endpoint: GET /reports/monthly-pnl | A failure to read or write `monthly_pnl_snapshots` no longer fails the request: it returns `200` with realised P&L for every month and none of the four restatement fields, and logs the failure with `exc_info` (BLG-BE-156). Success shape unchanged. |
+
+### position_endpoints.md — v2.17.0 (UPDATED)
+
+**EPIC:** EPIC-02
+**ST:** ST-10
+
+| Change | Details |
+|--------|---------|
+| New endpoint: GET /positions/stop-freshness | Median and maximum age of `stop_calculated_at` across open positions, with the oldest stop's ticker and the never-recalculated count, for System Status (BLG-SPEC-188). Read-only. |
 
 ## v9.12.0 (2026-10-13 — Release v9.12)
 
