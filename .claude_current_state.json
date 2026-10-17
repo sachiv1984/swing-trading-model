@@ -38,7 +38,7 @@
   "sprint2_gate_confirmed_utc": "2026-08-18T00:00:00Z",
   "sprint2_close_utc": "2026-08-20T11:58:57Z",
   "verification_utc": "2026-10-15T14:38:04Z",
-  "last_sync_utc": "2026-10-17T16:06:04Z",
+  "last_sync_utc": "2026-10-17T16:20:29Z",
   "blocked_sla_breached": false,
   "last_deviation_consolidation_review_utc": "2026-10-07T11:21:38Z",
   "deviation_consolidation_review_cycle_count": 2,
@@ -370,31 +370,40 @@
       "cycle": "2026-10-16__release-v9.13",
       "raised_utc": "2026-10-17T16:06:04Z",
       "blocks_execution": false,
-      "disposition": "Open",
+      "disposition": "Resolved",
       "summary": "ST-06/EPIC-02 - Strategy Rules & System Intent Owner ruling: fetched/fallback ATR giving a stop at or below zero — (A) reject with 400 or (B) floor recorded in strategy_rules.md §5 (BLG-BE-180)",
       "trigger_type": "Strategy",
       "owning_authority": "Strategy Rules & System Intent Owner",
-      "sla_due_utc": "2026-10-20T16:06:04Z"
+      "sla_due_utc": "2026-10-20T16:06:04Z",
+      "resolved_utc": "2026-10-17T16:16:44Z",
+      "resolved_by": "Strategy Rules & System Intent Owner (agent-mediated, §5.3, user-directed)",
+      "resolution_summary": "Ruling (A) reject, no floor: a fetched/fallback ATR with 5 x ATR >= entry returns 400 and nothing is stored; Trade Entry shows \"No valid stop\" and disables submit. No strategy_rules.md change. Applied by ST-06 at 5c39e3f2."
     },
     "ESC-EXEC-20261017-03": {
       "cycle": "2026-10-16__release-v9.13",
       "raised_utc": "2026-10-17T16:06:04Z",
       "blocks_execution": false,
-      "disposition": "Open",
+      "disposition": "Resolved",
       "summary": "ST-07/EPIC-02 - Strategy Rules & System Intent Owner choice: align backend/position_manager.py with §6.3 (no ratchet in grace) or record an exception (BLG-BE-161)",
       "trigger_type": "Strategy",
       "owning_authority": "Strategy Rules & System Intent Owner",
-      "sla_due_utc": "2026-10-20T16:06:04Z"
+      "sla_due_utc": "2026-10-20T16:06:04Z",
+      "resolved_utc": "2026-10-17T16:11:36Z",
+      "resolved_by": "User (human, in-session) for the Strategy Rules & System Intent Owner",
+      "resolution_summary": "(A) align: position_manager.py keeps the stored stop during grace (§6.3), with unit tests. No strategy_rules.md change. Applied by ST-07 at 87c63c23."
     },
     "ESC-EXEC-20261017-04": {
       "cycle": "2026-10-16__release-v9.13",
       "raised_utc": "2026-10-17T16:06:04Z",
       "blocks_execution": false,
-      "disposition": "Open",
+      "disposition": "Resolved",
       "summary": "ST-08/EPIC-02 - API Contracts & Documentation Owner choice: (A) 400 naming §11 or (B) deprecation warning for the four fixed strategy fields on Settings writes (BLG-API-07)",
       "trigger_type": "Lifecycle",
       "owning_authority": "API Contracts & Documentation Owner",
-      "sla_due_utc": "2026-10-18T16:06:04Z"
+      "sla_due_utc": "2026-10-18T16:06:04Z",
+      "resolved_utc": "2026-10-17T16:16:44Z",
+      "resolved_by": "API Contracts & Documentation Owner (agent-mediated, §5.3, user-directed)",
+      "resolution_summary": "(A) POST/PATCH settings return 400 naming strategy_rules.md §11 when the body sets a fixed strategy field to a non-null value. settings_endpoints.md v1.6.0. Applied by ST-08 at 5c39e3f2."
     }
   },
   "deferred_escalations": {
