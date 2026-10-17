@@ -81,6 +81,14 @@ condition. An item whose gate names at least one still-active item is not
 listed. Consumed by `release_planning_prompt.md` §1.3a alongside the
 date-lapsed list.
 
+Explicitly-ungated values (ST-35, EPIC-06, v9.13, BLG-GOV-390): a gate
+field whose whole value is `None`, `N/A`, `-` or `—` (case-insensitive,
+trimmed, optional trailing period) says the item has no gate. The field
+regexes capture any non-empty value, so these used to be reported as gated:
+17 items on 2026-10-15, silently left out of every Release Planning ready
+pool. They are now treated as ungated and counted separately as
+"explicitly ungated", so the change stays visible in the scan output.
+
 Usage:
     python3 scripts/scan_backlog_gate_conditions.py [--json] [--as-of YYYY-MM-DD] [--backlog PATH]
 
@@ -111,6 +119,8 @@ GATE_CRITERIA_RE = re.compile(r"^\*\*Gate criteria:\*\*\s*(.+)$", re.MULTILINE)
 GATE_SHORT_RE = re.compile(r"^\*\*Gate:\*\*\s*(.+)$", re.MULTILINE)
 GATE_DATE_RE = re.compile(r"^\*\*Gate date:\*\*\s*(.+)$", re.MULTILINE)
 PROVISIONAL_TARGET_RE = re.compile(r"^\*\*Provisional-Target:\*\*\s*(.+)$", re.MULTILINE)
+# ST-35 (BLG-GOV-390): a gate field value that says "no gate".
+EXPLICITLY_UNGATED_RE = re.compile(r"(?:none|n/a|-|—)\.?", re.IGNORECASE)
 
 # Free-text signals inside Provisional-Target that suggest an embedded gate
 # condition masquerading as a plain target (the BLG-OPS-48 pattern before
@@ -238,34 +248,27 @@ def classify_item(item_id, title, body, as_of):
         "date_lapsed": None,
         "date_ambiguous": False,
         "already_resolved": None,
+        "explicitly_ungated": None,
     }
 
     ar = ALREADY_RESOLVED_RE.search(body)
     if ar:
         result["already_resolved"] = ar.group(0)
 
-    m = GATE_CRITERIA_RE.search(body)
-    if m:
+    for source, regex in (("Gate criteria", GATE_CRITERIA_RE), ("Gate", GATE_SHORT_RE), ("Gate date", GATE_DATE_RE)):
+        m = regex.search(body)
+        if not m:
+            continue
+        condition = m.group(1).strip()
+        if EXPLICITLY_UNGATED_RE.fullmatch(condition):
+            # ST-35 (BLG-GOV-390): "None"/"N/A" means no gate; keep looking
+            # at the other gate fields rather than reporting it as gated.
+            result["explicitly_ungated"] = f"{source}: {condition}"
+            continue
         result["gated"] = True
-        result["gate_source"] = "Gate criteria"
-        result["gate_condition"] = m.group(1).strip()
-        result["date_lapsed"], result["date_ambiguous"] = _lapsed_date(result["gate_condition"], as_of)
-        return result
-
-    m = GATE_SHORT_RE.search(body)
-    if m:
-        result["gated"] = True
-        result["gate_source"] = "Gate"
-        result["gate_condition"] = m.group(1).strip()
-        result["date_lapsed"], result["date_ambiguous"] = _lapsed_date(result["gate_condition"], as_of)
-        return result
-
-    m = GATE_DATE_RE.search(body)
-    if m:
-        result["gated"] = True
-        result["gate_source"] = "Gate date"
-        result["gate_condition"] = m.group(1).strip()
-        result["date_lapsed"], result["date_ambiguous"] = _lapsed_date(result["gate_condition"], as_of)
+        result["gate_source"] = source
+        result["gate_condition"] = condition
+        result["date_lapsed"], result["date_ambiguous"] = _lapsed_date(condition, as_of)
         return result
 
     # No formal gate field found — check for an embedded-gate signal inside
@@ -318,6 +321,7 @@ def main():
     warnings = [r for r in results if r["data_quality_warning"]]
     date_lapsed = [r for r in gated if r["date_lapsed"]]
     already_resolved = [r for r in results if r["already_resolved"]]
+    explicitly_ungated = [r for r in results if r["explicitly_ungated"] and not r["gated"]]
     shipped = gating_item_shipped(results, items)
 
     if args.json:
@@ -327,6 +331,7 @@ def main():
             "date_lapsed": [{**r, "date_lapsed": r["date_lapsed"].isoformat()} for r in date_lapsed],
             "data_quality_warnings": warnings,
             "already_resolved": already_resolved,
+            "explicitly_ungated": explicitly_ungated,
             "gating_item_shipped": [{**r, "shipped_gating_items": refs} for r, refs in shipped],
             "total_items": len(results),
         }, indent=2, default=str))
@@ -352,6 +357,11 @@ def main():
         print(f"\n{len(shipped)} item(s) whose gate names only shipped backlog items (gating item shipped — verify; re-read the gate, do not auto-clear):")
         for r, refs in shipped:
             print(f"  {r['id']} — gating item(s) {', '.join(refs)} archived or ✅ COMPLETE — {r['gate_condition']}")
+
+    if explicitly_ungated:
+        print(f"\n{len(explicitly_ungated)} explicitly ungated item(s) (gate field reads None/N/A — informational, not gated):")
+        for r in explicitly_ungated:
+            print(f"  {r['id']} — [{r['explicitly_ungated']}]")
 
     if warnings:
         print(f"\n{len(warnings)} data-quality warning(s) (embedded gate language, no formal Gate field):")
