@@ -38,7 +38,7 @@
   "sprint2_gate_confirmed_utc": "2026-08-18T00:00:00Z",
   "sprint2_close_utc": "2026-08-20T11:58:57Z",
   "verification_utc": "2026-10-15T14:38:04Z",
-  "last_sync_utc": "2026-10-16T12:17:33Z",
+  "last_sync_utc": "2026-10-17T16:06:04Z",
   "blocked_sla_breached": false,
   "last_deviation_consolidation_review_utc": "2026-10-07T11:21:38Z",
   "deviation_consolidation_review_cycle_count": 2,
@@ -365,6 +365,36 @@
       "resolved_utc": "2026-10-17T15:23:13Z",
       "resolved_by": "PMO Lead (agent-mediated, §5.3)",
       "resolution_summary": "Approved: script re-derivation shows 4 of 21 v9.10 Owner values are non-compound, so 17 are compound; diff limited to that figure and the Last Updated header. ST-40 reclassified autonomous."
+    },
+    "ESC-EXEC-20261017-02": {
+      "cycle": "2026-10-16__release-v9.13",
+      "raised_utc": "2026-10-17T16:06:04Z",
+      "blocks_execution": false,
+      "disposition": "Open",
+      "summary": "ST-06/EPIC-02 - Strategy Rules & System Intent Owner ruling: fetched/fallback ATR giving a stop at or below zero — (A) reject with 400 or (B) floor recorded in strategy_rules.md §5 (BLG-BE-180)",
+      "trigger_type": "Strategy",
+      "owning_authority": "Strategy Rules & System Intent Owner",
+      "sla_due_utc": "2026-10-20T16:06:04Z"
+    },
+    "ESC-EXEC-20261017-03": {
+      "cycle": "2026-10-16__release-v9.13",
+      "raised_utc": "2026-10-17T16:06:04Z",
+      "blocks_execution": false,
+      "disposition": "Open",
+      "summary": "ST-07/EPIC-02 - Strategy Rules & System Intent Owner choice: align backend/position_manager.py with §6.3 (no ratchet in grace) or record an exception (BLG-BE-161)",
+      "trigger_type": "Strategy",
+      "owning_authority": "Strategy Rules & System Intent Owner",
+      "sla_due_utc": "2026-10-20T16:06:04Z"
+    },
+    "ESC-EXEC-20261017-04": {
+      "cycle": "2026-10-16__release-v9.13",
+      "raised_utc": "2026-10-17T16:06:04Z",
+      "blocks_execution": false,
+      "disposition": "Open",
+      "summary": "ST-08/EPIC-02 - API Contracts & Documentation Owner choice: (A) 400 naming §11 or (B) deprecation warning for the four fixed strategy fields on Settings writes (BLG-API-07)",
+      "trigger_type": "Lifecycle",
+      "owning_authority": "API Contracts & Documentation Owner",
+      "sla_due_utc": "2026-10-18T16:06:04Z"
     }
   },
   "deferred_escalations": {
