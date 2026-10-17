@@ -858,8 +858,8 @@
     "EPIC-06": {
       "status": "done",
       "branch": "exec/2026-10-16__release-v9.13/EPIC-06",
-      "pr_number": null,
-      "pr_status": "none",
+      "pr_number": 2072,
+      "pr_status": "open",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-10-16__release-v9.13/qa_evidence_EPIC-06.md",
       "test_scenarios": [
@@ -1070,7 +1070,8 @@
     "2026-10-16: agent-mediated DoQ review of EPIC-01 (§5.3, user-directed) — first pass Blocked on ST-05's in-grace stop precedence; fixed in 2841b3a9 (RX-10). Non-blocking findings: ST-01 cancel-during-submit fixed in 68200248 (SC-MEQ-04); stale 'three exit conditions' wording fixed in 2841b3a9; evidence wording updated (FI-P3-02 for ST-03's modal half; ST-05 graded Pass with notes; ST-04 per-save note).",
     "2026-10-17T15:08:57Z: STEP 4 post-merge sync for EPIC-01 (PR #2071, merge commit 2bca2001). Orphaned post-merge commit check (LL-v6.8-P3-01): git log origin/main..origin/exec/2026-10-16__release-v9.13/EPIC-01 empty, nothing to reconcile. Step 3c sibling sync: no other EPIC branch exists yet; EPIC-06 (next in merge order) is cut from this main.",
     "2026-10-17: EPIC-06 branch cut from main 8845b7c6 (after the EPIC-01 merge). ST-35..ST-40 committed (6a4a5fd0, c89dba4e, 935ea1fc, 63314028 [ST-38+ST-39], 3903e9fc). ST-40 went through ESC-EXEC-20261017-01, PMO Lead agent-mediated approval, then was reclassified autonomous. The autonomous DoQ class is not claimed because Criterion 1 is borderline (ST-40 is delegated_decision in the sealed plan), so the EPIC takes a standard DoQ sign-off (v9.12 EPIC-06 precedent).",
-    "2026-10-17: EPIC-06 DoQ sign-off, agent-mediated (Director of Quality role, §5.3, user-directed): Approved on the first pass. Non-blocking notes N1-N4 are recorded in qa_evidence_EPIC-06.md and the PR body."
+    "2026-10-17: EPIC-06 DoQ sign-off, agent-mediated (Director of Quality role, §5.3, user-directed): Approved on the first pass. Non-blocking notes N1-N4 are recorded in qa_evidence_EPIC-06.md and the PR body.",
+    "2026-10-17: EPIC-06 PR #2072 opened. Pre-PR checks: API baseline drift script exit 0, no foreign-EPIC commits in origin/main..HEAD, signer format matches the agent-mediated pattern."
   ],
   "sealed": false,
   "sealed_utc": null
