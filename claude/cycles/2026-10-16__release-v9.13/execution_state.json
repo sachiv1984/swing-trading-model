@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-16T10:49:11Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-17T16:06:04Z",
+  "last_updated_utc": "2026-10-17T16:20:29Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-06",
@@ -223,66 +223,96 @@
       "stories": {
         "ST-06": {
           "title": "Reject a fetched ATR that puts the initial stop at or below zero",
-          "classification": "delegated_decision",
-          "status": "blocked_decision",
+          "classification": "autonomous",
+          "status": "done",
           "assigned_to": "Strategy Rules & System Intent Owner; Backend Engineering Patterns Owner",
           "github_issue": 2036,
           "branch": "exec/2026-10-16__release-v9.13/EPIC-02",
-          "commit_sha": null,
+          "commit_sha": "5c39e3f295730f57e2f61bf3ce4ada976a3c6b8b",
           "delegation_record_id": null,
           "blocked_since_utc": "2026-10-17T16:06:04Z",
           "unblock_criteria": "Strategy Rules & System Intent Owner ruling recorded in ESC-EXEC-20261017-02's resolution.",
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-17T16:20:29Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/components/position_form.md#Initial Stop",
+            "docs/specs/api_contracts/portfolio_endpoints.md#POST /portfolio/position",
+            "tests/test_add_position_stop_handling.py",
+            "tests/e2e/trade-entry-atr-preview.spec.js"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "Ruling escalated as ESC-EXEC-20261017-02 (first sub-step)."
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
+          "sign_off_record": {
+            "role": "Strategy Rules & System Intent Owner",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "signed_utc": "2026-10-17T16:16:44Z",
+            "notes": "Ruling (A) reject on ESC-EXEC-20261017-02, first pass Approved, user-directed agent-mediated (§5.3). Quantitative claim evidenced inline: fallback stop = E - 5 x 0.02E = 0.90E > 0."
+          },
+          "notes": "Reclassified delegated_decision -> autonomous after ESC-EXEC-20261017-02 resolved (A). AC1: ruling recorded; no strategy_rules.md change (§5 already gives no stop; RISK-02 authorisation unused). AC2: TestFetchedAtrRejected (boundary and above -> 400, nothing stored; fallback 0.9 x E stored). AC3: Playwright SC-TAP-06/07/08 (local CI-mode run 24 passed). ci_pending: 39048984770 (CI Pytest), 39048984810 (Playwright E2E) on 5c39e3f2. No deviation."
         },
         "ST-07": {
           "title": "Align the standalone position_manager.py with §6.3 (no stop ratchet during grace)",
-          "classification": "delegated_decision",
-          "status": "blocked_decision",
+          "classification": "autonomous",
+          "status": "done",
           "assigned_to": "Backend Engineering Patterns Owner; Strategy Rules & System Intent Owner",
           "github_issue": 2037,
           "branch": "exec/2026-10-16__release-v9.13/EPIC-02",
-          "commit_sha": null,
+          "commit_sha": "87c63c236a9b13cb7eee6e9687f6fe5865b8b31a",
           "delegation_record_id": null,
           "blocked_since_utc": "2026-10-17T16:06:04Z",
           "unblock_criteria": "Strategy Rules & System Intent Owner ruling recorded in ESC-EXEC-20261017-03's resolution.",
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-17T16:11:46Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/strategy/strategy_rules.md#6.3",
+            "tests/test_stop_reconciliation.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "Ruling escalated as ESC-EXEC-20261017-03 (first sub-step)."
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
+          "sign_off_record": {
+            "role": "Strategy Rules & System Intent Owner",
+            "method": "human_in_session",
+            "status": "cleared",
+            "signed_utc": "2026-10-17T16:11:36Z",
+            "notes": "User decision (A) align the code, for the Owner, in-session 2026-10-17 (ESC-EXEC-20261017-03)."
+          },
+          "notes": "Reclassified delegated_decision -> autonomous after ESC-EXEC-20261017-03 resolved (A) by the user in-session. position_manager.py keeps the stored stop during grace; TestPositionManagerGracePeriodStop (two in-grace tests fail on the old code). No strategy_rules.md change. CI on 87c63c23: all 7 workflows success (CI Pytest 39048350242). No deviation."
         },
         "ST-08": {
           "title": "Reject or flag the four fixed strategy-parameter fields on Settings writes",
-          "classification": "delegated_decision",
-          "status": "blocked_decision",
+          "classification": "autonomous",
+          "status": "done",
           "assigned_to": "API Contracts & Documentation Owner; Backend Engineering Patterns Owner",
           "github_issue": 2038,
           "branch": "exec/2026-10-16__release-v9.13/EPIC-02",
-          "commit_sha": null,
+          "commit_sha": "5c39e3f295730f57e2f61bf3ce4ada976a3c6b8b",
           "delegation_record_id": null,
           "blocked_since_utc": "2026-10-17T16:06:04Z",
           "unblock_criteria": "API Contracts & Documentation Owner ruling recorded in ESC-EXEC-20261017-04's resolution.",
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-17T16:20:29Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/settings_endpoints.md#POST /settings",
+            "docs/specs/api_contracts/settings_endpoints.md#PATCH /settings/{settings_id}",
+            "tests/test_settings_fixed_strategy_fields_rejected.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "Ruling escalated as ESC-EXEC-20261017-04 (first sub-step)."
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
+          "sign_off_record": {
+            "role": "API Contracts & Documentation Owner",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "signed_utc": "2026-10-17T16:16:44Z",
+            "notes": "Ruling (A) 400 naming §11 on ESC-EXEC-20261017-04, first pass Approved, user-directed agent-mediated (§5.3). Caller survey cited file:line (Settings.js strips the fields)."
+          },
+          "notes": "Reclassified delegated_decision -> autonomous after ESC-EXEC-20261017-04 resolved (A). AC1: choice recorded. AC2: tests/test_settings_fixed_strategy_fields_rejected.py (each field x POST/PATCH -> 400, nothing written; multi-field order; null no-op; Settings page body 200). AC3: settings_endpoints.md v1.6.0 and openapi.yaml 3.35.0 in the same commit. Settings page already omits the fields (no frontend change). ci_pending: 39048984770, 39048984810 on 5c39e3f2. No deviation."
         },
         "ST-09": {
           "title": "Keep the Monthly P&L report up when the snapshot store fails",
@@ -336,7 +366,7 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": "AC1 and the automated half of AC2 delivered at 5c4b38e7: metric (metrics_definitions.md v1.32.0), GET /positions/stop-freshness with full registration chain (contract v2.17.0, openapi 3.33.0, test.py 129->130, SystemStatus.js fallback 130, SC-SS-01b), panel, pytest (9) and Playwright SC-SS-09a-e (local CI-mode run 27 passed; full pytest 2759 passed). Staging-only half of AC2 (manual check against a deployed environment) delegated as DEL-20261017-01; staging-deploy.yml has no success in its last 40 runs (EPIC-05 ST-29 / BLG-TECH-24). ci_pending: 39047888217 (CI Pytest), 39047888248 (Playwright E2E) on 5c4b38e7 — clear before DoQ sign-off. No deviation."
+          "notes": "AC1 and the automated half of AC2 delivered at 5c4b38e7: metric (metrics_definitions.md v1.32.0), GET /positions/stop-freshness with full registration chain (contract v2.17.0, openapi 3.33.0, test.py 129->130, SystemStatus.js fallback 130, SC-SS-01b), panel, pytest (9) and Playwright SC-SS-09a-e (local CI-mode run 27 passed; full pytest 2759 passed). Staging-only half of AC2 (manual check against a deployed environment) delegated as DEL-20261017-01; staging-deploy.yml has no success in its last 40 runs (EPIC-05 ST-29 / BLG-TECH-24). CI on 5c4b38e7: all 8 workflows success (CI Pytest 39047888217, Playwright E2E 39047888248). No deviation."
         },
         "ST-11": {
           "title": "Correct metrics_definitions.md's claim about NULL positions.fees_paid",
@@ -1076,11 +1106,7 @@
       "merge_commit": "27430d29"
     }
   },
-  "blocked_items": [
-    "ST-06",
-    "ST-07",
-    "ST-08"
-  ],
+  "blocked_items": [],
   "delegated_items": [
     "ST-10"
   ],
@@ -1090,6 +1116,9 @@
     "ST-03",
     "ST-04",
     "ST-05",
+    "ST-06",
+    "ST-07",
+    "ST-08",
     "ST-09",
     "ST-11",
     "ST-12",
@@ -1110,18 +1139,21 @@
     },
     "ESC-EXEC-20261017-02": {
       "item": "ST-06",
-      "disposition": "Open",
-      "raised_utc": "2026-10-17T16:06:04Z"
+      "disposition": "Resolved",
+      "raised_utc": "2026-10-17T16:06:04Z",
+      "resolved_utc": "2026-10-17T16:16:44Z"
     },
     "ESC-EXEC-20261017-03": {
       "item": "ST-07",
-      "disposition": "Open",
-      "raised_utc": "2026-10-17T16:06:04Z"
+      "disposition": "Resolved",
+      "raised_utc": "2026-10-17T16:06:04Z",
+      "resolved_utc": "2026-10-17T16:11:36Z"
     },
     "ESC-EXEC-20261017-04": {
       "item": "ST-08",
-      "disposition": "Open",
-      "raised_utc": "2026-10-17T16:06:04Z"
+      "disposition": "Resolved",
+      "raised_utc": "2026-10-17T16:06:04Z",
+      "resolved_utc": "2026-10-17T16:16:44Z"
     }
   },
   "merge_gate": {
@@ -1144,7 +1176,8 @@
     "2026-10-17: EPIC-06 DoQ sign-off, agent-mediated (Director of Quality role, §5.3, user-directed): Approved on the first pass. Non-blocking notes N1-N4 are recorded in qa_evidence_EPIC-06.md and the PR body.",
     "2026-10-17: EPIC-06 PR #2072 opened. Pre-PR checks: API baseline drift script exit 0, no foreign-EPIC commits in origin/main..HEAD, signer format matches the agent-mediated pattern.",
     "2026-10-17T15:43:26Z: EPIC-06 PR #2072 merged by the repository owner (merge commit 27430d29) right after the engine posted the user-directed QA sign-off and PO acceptance comments. The merge-gate record commit was redirected from the EPIC-06 branch to main: the §3.2.B step 7 merged-PR check fired (LL-v9.12-P3-02), so no commit landed on the merged branch. Orphaned post-merge commit check (LL-v6.8-P3-01): git log origin/main..origin/exec/.../EPIC-06 is empty. Step 3c sibling sync: no other EPIC branch exists yet; EPIC-02 (next in merge order) is cut from this main.",
-    "2026-10-17: EPIC-02 branch cut from main 6b1b8bb4 (after EPIC-06 merge). Autonomous ST-09, ST-11, ST-12, ST-13, ST-14 done; ST-10 automated scope committed, manual-check half delegated (DEL-20261017-01). ST-06/ST-07/ST-08 rulings escalated (ESC-EXEC-20261017-02/-03/-04). The pre-commit OpenAPI drift hook scans the working tree, so an in-progress story's undocumented route blocked an unrelated story's commit once (ST-13); recovered with a fresh commit, no amend."
+    "2026-10-17: EPIC-02 branch cut from main 6b1b8bb4 (after EPIC-06 merge). Autonomous ST-09, ST-11, ST-12, ST-13, ST-14 done; ST-10 automated scope committed, manual-check half delegated (DEL-20261017-01). ST-06/ST-07/ST-08 rulings escalated (ESC-EXEC-20261017-02/-03/-04). The pre-commit OpenAPI drift hook scans the working tree, so an in-progress story's undocumented route blocked an unrelated story's commit once (ST-13); recovered with a fresh commit, no amend.",
+    "2026-10-17: ST-06/ST-08 rulings agent-mediated (§5.3, user-directed), ST-07 decided by the user in-session; all three reclassified autonomous and committed (87c63c23, 5c39e3f2). ST-06 and ST-08 share one commit because both touch openapi.yaml and api_changelog.md (CLAUDE.md §2 multi-ID format)."
   ],
   "sealed": false,
   "sealed_utc": null
