@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-16 (session — 3 new item(s) added: BLG-OPS-192, BLG-FE-232, BLG-BE-189; PR #2071 review findings, EPIC-01 v9.13); prior — 2026-10-16 (session — 4 new item(s) added: BLG-BE-187, BLG-SPEC-206, BLG-FE-231, BLG-BE-188; sprint execution `2026-10-16__release-v9.13` EPIC-01 findings); prior — 2026-10-16 (session — 1 new item added: BLG-GOV-395, execution_state_path ownership after the PR #2029 CI failure); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-17 (session — 3 new item(s) added: BLG-SPEC-207, BLG-GOV-396, BLG-SPEC-208; PR #2072 review findings, EPIC-06 v9.13); prior — 2026-10-16 (session — 3 new item(s) added: BLG-OPS-192, BLG-FE-232, BLG-BE-189; PR #2071 review findings, EPIC-01 v9.13); prior — 2026-10-16 (session — 4 new item(s) added: BLG-BE-187, BLG-SPEC-206, BLG-FE-231, BLG-BE-188; sprint execution `2026-10-16__release-v9.13` EPIC-01 findings); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -5700,5 +5700,70 @@ v9.13 writes one `checklist_skipped` event on every create or update of a plan w
 
 **Acceptance Criteria**
 - Decision recorded; if changed, pytest covers repeated saves of the same incomplete plan
+
+---
+
+### BLG-SPEC-207 — check_data_model_drift.py: strip SQL comments only outside quotes, and fix two default-normalisation false positives
+**Priority:** P4 (Trivial)
+**Type:** Spec Debt / Tooling
+**Owner:** Data Model & Domain Schema Owner
+**Source:** PR #2072 agent-mediated review (Director of Quality role), ST-37 / EPIC-06, sprint execution `2026-10-16__release-v9.13` — 2026-10-17
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`_create_table_columns()` in `scripts/check_data_model_drift.py` (ST-37, BLG-SPEC-184) strips `--` comments from each line before it tracks quotes. A quoted default that contains `--` (for example `DEFAULT '--'`) therefore loses its closing quote, and the rest of the `CREATE TABLE` block is read as one string: later columns go missing and the default comes out as garbage. No current `data_model.md` row triggers this. `normalize_default()` also has two false positives: `'NaN'::numeric` never equals itself, because it becomes a Decimal NaN, and `ARRAY[]::text[]` is reported as different from `'{}'::text[]`.
+
+**Scope**
+- Strip `--` comments only outside single-quoted literals
+- Compare NaN/Infinity numeric defaults as text, and normalise empty-array forms (`ARRAY[]` and `'{}'`) to one form
+- Add tests in `tests/test_check_data_model_drift.py` for each case
+
+**Acceptance Criteria**
+- A fixture with `DEFAULT '--'` followed by another column parses both columns correctly
+- `'NaN'::numeric` vs `'NaN'::numeric` and `ARRAY[]::text[]` vs `'{}'::text[]` do not report a mismatch
+- The existing drift/orphan/dashboard tests still pass
+
+---
+
+### BLG-GOV-396 — Release Planning §1.3a: read the gate scan's "explicitly ungated" and "known non-gate dates" sections
+**Priority:** P3 (Low)
+**Type:** Governance Process / Tooling Integration
+**Owner:** Head of Specs Team; PMO Lead
+**Source:** PR #2072 agent-mediated review (Product Owner role), ST-35/ST-36 / EPIC-06, sprint execution `2026-10-16__release-v9.13` — 2026-10-17
+**Effort:** XS (~0.25 day)
+**Provisional-Target:** TBD (before BLG-OPS-53's allow-list review date, 2026-11-22)
+
+**Problem**
+`release_planning_prompt.md` §1.3a tells Release Planning to read the gate scan's "date-lapsed — verify", "gating item shipped — verify" and already-resolved lists. It does not mention the two sections added by ST-35 (BLG-GOV-390, "explicitly ungated") and ST-36 (BLG-GOV-373, "known non-gate dates"). So nothing asks Release Planning to record the explicitly-ungated count next to the gated count in `run_manifest.md`. Nothing asks it to act when an allow-list entry is flagged `REVIEW DUE` or "not in the item's current gate" either. Without that, the review dates in `KNOWN_NON_GATE_DATES` are recorded but nothing enforces them. BLG-OPS-53's entry comes due on 2026-11-22.
+
+**Scope**
+- Add both sections to §1.3a's read list: record the explicitly-ungated count in `run_manifest.md`, and review any allow-list entry flagged `REVIEW DUE` or no longer present, keeping it with a new review date or raising its removal
+- Apply the CLAUDE.md §6 governance edit checklist (version bump, OPERATIONAL_GUIDE.md §14, `prompt_change_log.md`)
+
+**Acceptance Criteria**
+- §1.3a names both sections and the disposition for each
+- The next Release Planning run's `run_manifest.md` records the explicitly-ungated count and any allow-list review outcome
+
+---
+
+### BLG-SPEC-208 — First live run of check_data_model_drift.py's default-mismatch comparison
+**Priority:** P3 (Low)
+**Type:** Spec Debt / Data Integrity
+**Owner:** Data Model & Domain Schema Owner
+**Source:** PR #2072 agent-mediated review (Product Owner role), ST-37 / EPIC-06, sprint execution `2026-10-16__release-v9.13` — 2026-10-17
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+ST-37 (BLG-SPEC-184) added a default-mismatch class to `scripts/check_data_model_drift.py`, but it has only been tested against fixtures and mocked rows. No live database was queried, under the rule that a live query needs the user's permission. Until a real run happens, nobody knows whether `data_model.md`'s `CREATE TABLE` defaults have drifted elsewhere the way `fees_paid DEFAULT 0` had. Nor is it known how many false positives come from defaults set later by `ALTER TABLE`, which the comparison does not read.
+
+**Scope**
+- With the user's permission, run `python3 scripts/check_data_model_drift.py docs/specs/data_model.md` read-only against staging (and production, if permitted)
+- Triage every default mismatch: correct `data_model.md`, or record it as a known false positive in §Drift Detector Triage
+
+**Acceptance Criteria**
+- The run is recorded with its date and target environment
+- Every reported default mismatch has a recorded disposition
 
 ---
