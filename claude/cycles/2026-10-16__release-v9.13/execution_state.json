@@ -1018,7 +1018,7 @@
             "cleared_utc": "2026-10-17T15:23:13Z",
             "reference": "ESC-EXEC-20261017-01"
           },
-          "notes": "Reclassified delegated_decision -> autonomous after PMO Lead approval ESC-EXEC-20261017-01 (agent-mediated, §5.3, 2026-10-17); no DEL record was raised (§3.1.D escalation only). Docs-only commit. ci_pending: CI on 3903e9fc not yet concluded."
+          "notes": "Reclassified delegated_decision -> autonomous after PMO Lead approval ESC-EXEC-20261017-01 (agent-mediated, §5.3, 2026-10-17); no DEL record was raised (§3.1.D escalation only). Docs-only commit. CI on 3903e9fc: all 7 workflows success (CI Pytest Suite 39044877325, Playwright 39044877475)."
         }
       }
     }
