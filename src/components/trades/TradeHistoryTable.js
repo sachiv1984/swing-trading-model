@@ -6,6 +6,7 @@ import { cn } from "../../lib/utils";
 import PlanVsReality from "./PlanVsReality";
 import TradeDebrief from "./TradeDebrief";
 import { formatCurrency, formatPercent, formatR as formatRShared } from "../../lib/format";
+import { exitReasonBadgeClass, exitReasonShortLabel } from "../../constants/exitReasons";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // R-multiple helpers
@@ -83,49 +84,6 @@ const SORT_NONE = "none";
 const SORT_ASC  = "asc";
 const SORT_DESC = "desc";
 
-const exitReasonLabels = {
-  // Title-case values (position_manager.py)
-  "Stop Loss Hit":        "Stop Hit",
-  "Manual Exit":          "Manual",
-  "Target Reached":       "Target",
-  "Risk-Off Signal":      "Risk Off",
-  "Trailing Stop":        "Trailing",
-  "Partial Profit Taking":"Partial",
-  // Snake-case aliases (seed data / legacy DB rows)
-  "stop_hit":             "Stop Hit",
-  "manual":               "Manual",
-  "manual_exit":          "Manual",
-  "target":               "Target",
-  "target_reached":       "Target",
-  "risk_off":             "Risk Off",
-  "risk_off_signal":      "Risk Off",
-  "market_regime":        "Risk Off",
-  "trailing_stop":        "Trailing",
-  "partial":              "Partial",
-  "partial_profit_taking":"Partial",
-};
-
-const exitReasonColors = {
-  // Title-case values
-  "Stop Loss Hit":        "bg-rose-500/20 text-rose-400 border-rose-500/30",
-  "Manual Exit":          "bg-violet-500/20 text-violet-400 border-violet-500/30",
-  "Target Reached":       "bg-emerald-500/20 text-emerald-400 border-emerald-500/30",
-  "Risk-Off Signal":      "bg-amber-500/20 text-amber-400 border-amber-500/30",
-  "Trailing Stop":        "bg-cyan-500/20 text-cyan-400 border-cyan-500/30",
-  "Partial Profit Taking":"bg-blue-500/20 text-blue-400 border-blue-500/30",
-  // Snake-case aliases
-  "stop_hit":             "bg-rose-500/20 text-rose-400 border-rose-500/30",
-  "manual":               "bg-violet-500/20 text-violet-400 border-violet-500/30",
-  "manual_exit":          "bg-violet-500/20 text-violet-400 border-violet-500/30",
-  "target":               "bg-emerald-500/20 text-emerald-400 border-emerald-500/30",
-  "target_reached":       "bg-emerald-500/20 text-emerald-400 border-emerald-500/30",
-  "risk_off":             "bg-amber-500/20 text-amber-400 border-amber-500/30",
-  "risk_off_signal":      "bg-amber-500/20 text-amber-400 border-amber-500/30",
-  "market_regime":        "bg-amber-500/20 text-amber-400 border-amber-500/30",
-  "trailing_stop":        "bg-cyan-500/20 text-cyan-400 border-cyan-500/30",
-  "partial":              "bg-blue-500/20 text-blue-400 border-blue-500/30",
-  "partial_profit_taking":"bg-blue-500/20 text-blue-400 border-blue-500/30",
-};
 
 /**
  * TradeHistoryTable
@@ -453,11 +411,8 @@ export default function TradeHistoryTable({ trades, tradesForCharts = [] }) {
 
                 {/* Exit reason — primary, always visible */}
                 <TableCell className={TD_CLASS}>
-                  <span className={cn(
-                    "text-xs px-2.5 py-1 rounded-full border",
-                    exitReasonColors[trade.exit_reason] || "bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-700"
-                  )}>
-                    {exitReasonLabels[trade.exit_reason] || trade.exit_reason || "Unknown"}
+                  <span data-testid="exit-reason-badge" className={exitReasonBadgeClass(trade.exit_reason)}>
+                    {exitReasonShortLabel(trade.exit_reason)}
                   </span>
                 </TableCell>
 

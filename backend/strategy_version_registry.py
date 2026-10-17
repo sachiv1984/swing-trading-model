@@ -53,6 +53,10 @@ STRATEGY_VERSION_REGISTRY = [
     # ST-16 (BLG-BE-143, EPIC-03, v9.11): §6.3 in-grace stop freeze. Behavioural
     # (the nightly job no longer ratchets in-grace positions), so registered.
     {"version": "1.15", "effective_date": date(2026, 10, 9)},
+    # ST-05 (BLG-GOV-391, EPIC-01, v9.13): §8.4 month-end rebalance exit.
+    # Behavioural (live rebalance signals gain §8.1/§8.2 precedence, a
+    # status-independent ranking and a same-day-run precondition), so registered.
+    {"version": "1.17", "effective_date": date(2026, 10, 16)},
 ]
 
 # Change Log versions classified as documentation-only under the 2026-10-06

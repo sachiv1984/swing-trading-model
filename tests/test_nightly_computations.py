@@ -16,7 +16,7 @@ import json
 import math
 import sys
 import pytest
-from datetime import datetime
+from datetime import date, datetime
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
@@ -351,6 +351,101 @@ def test_RX05_mixed_portfolio_one_exit_one_retain(database_stub):
     assert result["signals_created"] == 1
     call_args = database_stub.create_rebalance_exit_signal.call_args
     assert call_args.kwargs.get("ticker") == "TSLA"
+
+
+def _run_rebalance(database_stub, signals, positions, day=datetime(2026, 6, 30)):
+    database_stub.get_portfolio.return_value = {"id": "portfolio-001"}
+    database_stub.get_signals.return_value = signals
+    database_stub.get_positions.return_value = positions
+    database_stub.create_rebalance_exit_signal.reset_mock()
+    database_stub.create_rebalance_exit_signal.side_effect = lambda **kw: {"id": f"sig-{kw['ticker']}", **kw}
+    with patch("services.signal_service.datetime") as mock_dt, \
+         patch("services.signal_service.get_live_fx_rate", return_value=1.27), \
+         patch("services.signal_service.decimal_to_float", side_effect=lambda x: x):
+        mock_dt.now.return_value = day
+        result = generate_rebalance_exit_signals()
+    database_stub.create_rebalance_exit_signal.side_effect = None
+    return result
+
+
+def test_RX06_ranking_ignores_signal_status(database_stub):
+    """RX-06 (ST-05, §8.4, v9.13): a dismissed, entered or expired signal is still
+    part of the day's ranking, so dismissing a signal cannot trigger an exit."""
+    statuses = ["dismissed", "entered", "expired", "already_held", "new"]
+    tickers = ["AAPL", "MSFT", "NVDA", "AMZN", "META"]
+    signals = [{"ticker": t, "signal_date": "2026-06-30", "status": st} for t, st in zip(tickers, statuses)]
+    positions = [{"ticker": t, "market": "US", "current_price": 100.0, "current_stop": 80.0} for t in tickers]
+    result = _run_rebalance(database_stub, signals, positions)
+    assert result["signals_created"] == 0
+    assert set(result["top5_tickers"]) == set(tickers)
+    database_stub.create_rebalance_exit_signal.assert_not_called()
+
+
+def test_RX07_risk_off_position_is_left_to_section_8_2(database_stub):
+    """RX-07 (ST-05, §8.4 precedence): a position whose market is risk-off gets no
+    rebalance signal; §8.2 governs it."""
+    signals = [{"ticker": "AAPL", "signal_date": "2026-06-30", "status": "new"}]
+    positions = [
+        {"ticker": "VOD.L", "market": "UK", "current_price": 70.0, "current_stop": 60.0, "risk_off_exit": True},
+        {"ticker": "TSLA", "market": "US", "current_price": 250.0, "current_stop": 200.0, "risk_off_exit": False},
+    ]
+    result = _run_rebalance(database_stub, signals, positions)
+    assert result["signals_created"] == 1
+    assert database_stub.create_rebalance_exit_signal.call_args.kwargs["ticker"] == "TSLA"
+
+
+def test_RX10_in_grace_position_at_its_stop_still_gets_a_rebalance_signal(database_stub):
+    """RX-10 (ST-05, §8.4 / §6.3, DoQ finding): §8.1 is inactive during grace, so an
+    in-grace position at or below its stop that is out of the ranking still gets a
+    §8.4 signal, as in the backtest (holding_days < min_hold_days skips the stop).
+    The same position after grace is left to §8.1."""
+    signals = [{"ticker": "AAPL", "signal_date": "2026-06-30", "status": "new"}]
+    positions = [
+        # Day 4 of grace (entered 2026-06-26), price below the initial stop.
+        {"ticker": "GRCE", "market": "US", "current_price": 90.0, "current_stop": 95.0, "entry_date": "2026-06-26"},
+        # Day 10 (entered 2026-06-20): grace over, §8.1 governs.
+        {"ticker": "POST", "market": "US", "current_price": 90.0, "current_stop": 95.0, "entry_date": date(2026, 6, 20)},
+        # Day 9, last grace day, datetime-typed entry date.
+        {"ticker": "EDGE", "market": "US", "current_price": 90.0, "current_stop": 95.0, "entry_date": datetime(2026, 6, 21)},
+    ]
+    result = _run_rebalance(database_stub, signals, positions)
+    tickers = sorted(c.kwargs["ticker"] for c in database_stub.create_rebalance_exit_signal.call_args_list)
+    assert tickers == ["EDGE", "GRCE"]
+    assert result["signals_created"] == 2
+
+
+def test_RX08_no_run_today_creates_nothing_and_flags_it(database_stub):
+    """RX-08 (ST-05 / BLG-OPS-190): on a month-end with no momentum signal run for
+    today, only older rows exist, so no signal is created and the result says so."""
+    signals = [
+        {"ticker": "AAPL", "signal_date": "2026-06-29", "status": "new"},
+        {"ticker": "TSLA", "signal_date": "2026-06-30", "status": "exit_rebalance"},
+    ]
+    positions = [{"ticker": "TSLA", "market": "US", "current_price": 250.0, "current_stop": 200.0}]
+    result = _run_rebalance(database_stub, signals, positions)
+    assert result["screener_run_missing"] is True
+    assert result["signals_created"] == 0
+    assert "No momentum signal run recorded for 2026-06-30" in result["message"]
+    database_stub.create_rebalance_exit_signal.assert_not_called()
+
+
+def test_RX09_endpoint_returns_503_when_the_run_is_missing():
+    """RX-09: POST /signals/rebalance-exit returns 503 (failing rebalance-exit.yml's
+    curl -f, which is the alert) and records the job as an error."""
+    from tests._real_database import real_database_imports
+    with real_database_imports():
+        from fastapi.testclient import TestClient
+        import main
+    missing = {"run_date": "2026-06-30", "is_last_trading_day": True, "screener_run_missing": True,
+               "signals_created": 0, "message": "No momentum signal run recorded for 2026-06-30"}
+    client = TestClient(main.app, raise_server_exceptions=False)
+    with patch.object(main, "generate_rebalance_exit_signals", return_value=missing), \
+         patch.object(main, "record_nightly_job") as record:
+        response = client.post("/signals/rebalance-exit")
+    assert response.status_code == 503
+    assert response.json()["status"] == "error"
+    record.assert_called_once()
+    assert record.call_args.args[:2] == ("rebalance_exit", "error")
 
 
 # ===========================================================================

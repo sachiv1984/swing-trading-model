@@ -40,13 +40,56 @@ const EVENT_TYPE_CONFIG = {
   },
 };
 
+// Event types that have a backend writer (red_flag_journal.md v1.4, ST-04).
+// Must equal the written set checked by tests/test_red_flag_checklist_skipped.py:
+// adding a writer means editing that test's allow-list and this list.
+export const RECORDED_EVENT_TYPES = ["pre_entry_override", "checklist_skipped"];
+
 const EVENT_TYPE_OPTIONS = [
   { value: "", label: "All types" },
-  { value: "pre_entry_override", label: "Pre-Entry Override" },
-  { value: "checklist_skipped", label: "Checklist Skipped" },
-  { value: "stop_prompt_dismissed", label: "Stop Prompt Dismissed" },
-  { value: "drawdown_prompt_dismissed", label: "Drawdown Prompt Dismissed" },
+  ...Object.entries(EVENT_TYPE_CONFIG).map(([value, { label }]) =>
+    RECORDED_EVENT_TYPES.includes(value)
+      ? { value, label }
+      : { value, label: `${label} — not yet recorded`, disabled: true }
+  ),
 ];
+
+// Phrases for the recorded-types note, built from RECORDED_EVENT_TYPES.
+const NOTE_PHRASES = {
+  pre_entry_override: "pre-entry overrides",
+  checklist_skipped: "skipped checklists",
+  stop_prompt_dismissed: "stop prompt dismissals",
+  drawdown_prompt_dismissed: "drawdown prompt dismissals",
+};
+
+function joinPhrases(phrases) {
+  // "stop prompt dismissals" + "drawdown prompt dismissals" → "stop and drawdown prompt dismissals"
+  const suffix = " prompt dismissals";
+  if (phrases.length > 1 && phrases.every((p) => p.endsWith(suffix))) {
+    return joinPhrases(phrases.map((p) => p.slice(0, -suffix.length))) + suffix;
+  }
+  if (phrases.length <= 1) return phrases.join("");
+  return `${phrases.slice(0, -1).join(", ")} and ${phrases[phrases.length - 1]}`;
+}
+
+function capitalise(text) {
+  return text ? text[0].toUpperCase() + text.slice(1) : text;
+}
+
+export function recordedTypesNote() {
+  const types = Object.keys(EVENT_TYPE_CONFIG);
+  const recorded = types.filter((t) => RECORDED_EVENT_TYPES.includes(t)).map((t) => NOTE_PHRASES[t]);
+  const unrecorded = types.filter((t) => !RECORDED_EVENT_TYPES.includes(t)).map((t) => NOTE_PHRASES[t]);
+  let note = `${capitalise(joinPhrases(recorded))} are recorded here.`;
+  if (unrecorded.length) note += ` ${capitalise(joinPhrases(unrecorded))} are not recorded yet.`;
+  return note;
+}
+
+// A stored filter naming a type with no writer resets to "All types".
+function storedEventTypeFilter() {
+  const stored = loadStoredFilters()?.eventTypeFilter ?? "";
+  return stored && !RECORDED_EVENT_TYPES.includes(stored) ? "" : stored;
+}
 
 const FILTER_STORAGE_KEY = "redFlagJournal.filters";
 const FILTER_STORAGE_VERSION = 1;
@@ -88,9 +131,15 @@ function relativeTime(isoStr) {
   return `${days} day${days === 1 ? "" : "s"} ago`;
 }
 
-function contextSummary(context) {
+function contextSummary(eventType, context) {
   if (!context) return "";
   if (typeof context === "string") return context;
+  if (eventType === "checklist_skipped" && context.unchecked_items != null) {
+    const n = context.unchecked_items;
+    return context.total_items != null
+      ? `${n} of ${context.total_items} checklist items unchecked when the plan was saved`
+      : `${n} checklist item${n === 1 ? "" : "s"} unchecked`;
+  }
   if (context.source && context.override_acknowledged) {
     return `Override acknowledged (${context.source})`;
   }
@@ -110,7 +159,7 @@ function EventRow({ event }) {
   };
   const Icon = config.icon;
   const displayTicker = stripLSuffix(event.ticker);
-  const summary = contextSummary(event.context);
+  const summary = contextSummary(event.event_type, event.context);
   const relTime = relativeTime(event.created_at);
   const absDate = event.created_at
     ? new Date(event.created_at).toLocaleString()
@@ -174,9 +223,7 @@ function SkeletonRow() {
 
 export default function RedFlagJournal() {
   const [page, setPage] = useState(1);
-  const [eventTypeFilter, setEventTypeFilter] = useState(
-    () => loadStoredFilters()?.eventTypeFilter ?? ""
-  );
+  const [eventTypeFilter, setEventTypeFilter] = useState(storedEventTypeFilter);
   const [tickerFilter, setTickerFilter] = useState(
     () => loadStoredFilters()?.tickerFilter ?? ""
   );
@@ -267,7 +314,7 @@ export default function RedFlagJournal() {
             className="bg-slate-800 border border-slate-600 text-slate-200 text-sm rounded px-2 py-1.5 focus:outline-none focus:border-slate-400"
           >
             {EVENT_TYPE_OPTIONS.map((o) => (
-              <option key={o.value} value={o.value}>
+              <option key={o.value} value={o.value} disabled={o.disabled}>
                 {o.label}
               </option>
             ))}
@@ -358,13 +405,11 @@ export default function RedFlagJournal() {
               </button>
             </>
           ) : (
-            <>
-              <p className="text-slate-300">No strategy deviations recorded yet</p>
-              <p className="text-xs text-slate-600 dark:text-slate-400 max-w-xs">
-                Override events will appear here when you proceed past a strategy gate warning.
-              </p>
-            </>
+            <p className="text-slate-300">No strategy deviations recorded yet</p>
           )}
+          <p data-testid="recorded-types-note" className="text-sm text-slate-600 dark:text-slate-400 max-w-sm">
+            {recordedTypesNote()}
+          </p>
         </div>
       )}
 

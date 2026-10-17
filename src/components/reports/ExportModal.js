@@ -4,22 +4,10 @@ import { Button } from "../ui/button";
 import { FileSpreadsheet, FileText, Download, Loader2, Check } from "lucide-react";
 import { motion } from "framer-motion";
 import { formatCurrency, formatPercent } from "../../lib/format";
+import { exitReasonLabel } from "../../constants/exitReasons";
 
-// Covers both legacy snake_case values (stop_hit) and current human-readable values
-const EXIT_REASON_LABELS = {
-  "stop_hit":             "Stop Hit",
-  "manual":               "Manual",
-  "target":               "Target",
-  "market_regime":        "Market Regime",
-  "Stop Loss Hit":        "Stop Hit",
-  "Manual Exit":          "Manual Exit",
-  "Target Reached":       "Target Reached",
-  "Risk-Off Signal":      "Risk-Off Signal",
-  "Trailing Stop":        "Trailing Stop",
-  "Partial Profit Taking":"Partial Profit Taking",
-};
-
-const formatExitReason = (reason) => EXIT_REASON_LABELS[reason] || reason || '—';
+// Exports use the full label from the shared module (legacy spellings resolve).
+const formatExitReason = exitReasonLabel;
 
 export default function ExportModal({ open, onClose, positions, metrics, period, portfolio }) {
   const [exporting, setExporting] = useState(null);

@@ -3,9 +3,10 @@
 // "Exit Conditions Met" row. Spec: positions.md §Exit Dialog Pre-Selection
 // and Deep Link. Display-only: nothing here submits an exit.
 
-export const EXIT_REASON_RISK_OFF = "Risk-Off Signal";
-export const EXIT_REASON_STOP = "Stop Loss Hit";
-export const EXIT_REASON_MANUAL = "Manual Exit";
+// The reason strings come from the shared exit-reason module (v9.13 ST-03).
+import { EXIT_REASON_RISK_OFF, EXIT_REASON_STOP } from "../constants/exitReasons";
+
+export { EXIT_REASON_RISK_OFF, EXIT_REASON_STOP, EXIT_REASON_MANUAL } from "../constants/exitReasons";
 
 // Same GBP-basis comparison as the Positions breach badge.
 export function isPostGraceStopBreach(position) {

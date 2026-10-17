@@ -6,28 +6,41 @@ import { Label } from "../ui/label";
 import { Textarea } from "../ui/textarea";
 import {Select,SelectContent,SelectItem,SelectTrigger,SelectValue,} from "../ui/select";
 import { AlertTriangle, Info } from "lucide-react";
-import { getExitCondition, exitPreselectNote, EXIT_REASON_MANUAL } from "../../lib/exitCondition";
+import { getExitCondition, exitPreselectNote } from "../../lib/exitCondition";
+import { EXIT_REASONS, EXIT_REASON_VALUES, EXIT_REASON_MANUAL } from "../../constants/exitReasons";
 import { useQuery } from "@tanstack/react-query";
 import { base44 } from "../../api/base44Client";
 import { cn } from "../../lib/utils";
 import { formatCurrency, formatPercent, currencyForMarket } from "../../lib/format";
 
-export default function ExitModal({ position, open, onClose, onConfirm }) {
+// Optional props (v9.13 ST-01, positions.md §Daily Position Monitor Exit Queue):
+//   preselect — { reason, note }: explicit Exit Reason pre-selection that
+//               overrides getExitCondition() for this open (Monitor queue).
+//   queue     — { index, total }: 1-based queue position; the description
+//               shows "Exit {i} of {n}…" when total > 1.
+// If onConfirm returns a promise, the modal waits for it: the button reads
+// "Exiting…" while in flight, and a rejection keeps the modal open with an
+// inline error so the user can retry.
+export default function ExitModal({ position, open, onClose, onConfirm, preselect = null, queue = null }) {
   // Unconditional hooks
   const [exitData, setExitData] = useState({
     shares: "",
     exit_price: "",
-    exit_reason: "Manual Exit",
+    exit_reason: EXIT_REASON_MANUAL,
     exit_fx_rate: 1,
     exit_date: new Date().toISOString().split("T")[0],
     exit_note: "" // ✅ NEW: Exit note field
   });
   const [preselectedReason, setPreselectedReason] = useState(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState(null);
 
   // Seed/reset when position changes
   useEffect(() => {
     if (!position) return;
-    const preselected = getExitCondition(position).reason;
+    setSubmitting(false);
+    setSubmitError(null);
+    const preselected = preselect?.reason || getExitCondition(position).reason;
     setPreselectedReason(preselected);
     setExitData({
       shares: String(position.shares ?? ""),
@@ -43,6 +56,8 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
       exit_date: new Date().toISOString().split("T")[0],
       exit_note: "" // ✅ NEW: Reset exit note
     });
+    // preselect is read only when the position changes (a new open).
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [position]);
 
   // Load settings
@@ -75,7 +90,7 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
   const isValidShares =
     !!position && exitShares > 0 && exitShares <= Number(position.shares || 0);
   const isValidPrice = exitPrice > 0;
-  const canSubmit = !!position && isValidShares && isValidPrice;
+  const canSubmit = !!position && isValidShares && isValidPrice && !submitting;
 
   // === EXIT PROCEEDS CALCULATION ===
   
@@ -178,7 +193,7 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
       : 0;
 
   // Actions - FIX: Ensure proper number conversion and validation
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     if (!canSubmit || !position) {
       console.error("Invalid exit data:", { 
         exitShares, 
@@ -225,8 +240,25 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
     }
 
     console.log("Sending exit payload:", exitPayload);
-    onConfirm(exitPayload);
+    const result = onConfirm(exitPayload);
+    if (!result || typeof result.then !== "function") return;
+
+    setSubmitting(true);
+    setSubmitError(null);
+    try {
+      await result;
+    } catch (error) {
+      const detail = error?.data?.detail;
+      setSubmitError({
+        ticker: position.ticker,
+        detail: typeof detail === "string" && detail.trim() ? detail : null,
+      });
+    } finally {
+      setSubmitting(false);
+    }
   };
+
+  const preselectNote = preselect?.note || (position ? exitPreselectNote(position) : null);
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
@@ -239,7 +271,11 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
             Exit Position
           </DialogTitle>
           <DialogDescription className="text-slate-600 dark:text-slate-400">
-            {position ? (
+            {position && queue && queue.total > 1 ? (
+              <span data-testid="exit-queue-progress">
+                Exit {queue.index} of {queue.total} from the Daily Position Monitor. You are about to close your position in {position.ticker}.
+              </span>
+            ) : position ? (
               <>You are about to close your position in {position.ticker}</>
             ) : (
               <>No position selected</>
@@ -251,6 +287,20 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
         <div className="space-y-4 py-4 overflow-y-auto min-h-0">
           {!position ? null : (
             <>
+              {submitError && (
+                <div
+                  role="alert"
+                  data-testid="exit-error"
+                  className="flex items-start gap-2 p-3 rounded-lg border text-sm text-rose-700 dark:text-rose-400 bg-rose-50 dark:bg-rose-500/10 border-rose-200 dark:border-rose-500/30"
+                >
+                  <AlertTriangle className="w-4 h-4 mt-0.5 shrink-0" aria-hidden="true" />
+                  <div>
+                    <p>Could not record the exit for {submitError.ticker}. Nothing was changed for this position.</p>
+                    {submitError.detail && <p>{submitError.detail}</p>}
+                  </div>
+                </div>
+              )}
+
               {/* Top summary */}
               <div className="p-3 rounded-lg bg-slate-800/50 border border-slate-700/50 grid grid-cols-3 gap-3 text-center">
                 <div>
@@ -357,12 +407,9 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent className="bg-slate-800 border-slate-700">
-                      <SelectItem value="Manual Exit">Manual Exit</SelectItem>
-                      <SelectItem value="Stop Loss Hit">Stop Loss Hit</SelectItem>
-                      <SelectItem value="Target Reached">Target Reached</SelectItem>
-                      <SelectItem value="Risk-Off Signal">Risk-Off Signal</SelectItem>
-                      <SelectItem value="Trailing Stop">Trailing Stop</SelectItem>
-                      <SelectItem value="Partial Profit Taking">Partial Profit Taking</SelectItem>
+                      {EXIT_REASON_VALUES.map((value) => (
+                        <SelectItem key={value} value={value}>{EXIT_REASONS[value].label}</SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                   {preselectedReason && exitData.exit_reason === preselectedReason && (
@@ -371,7 +418,7 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
                       className="flex items-start gap-1 text-xs text-slate-600 dark:text-slate-400"
                     >
                       <Info className="w-3 h-3 mt-0.5 shrink-0" aria-hidden="true" />
-                      <span>{exitPreselectNote(position)}</span>
+                      <span>{preselectNote}</span>
                     </p>
                   )}
                 </div>
@@ -503,7 +550,7 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
             className="bg-rose-600 hover:bg-rose-500 text-white"
             disabled={!canSubmit}
           >
-            Confirm Exit
+            {submitting ? "Exiting…" : "Confirm Exit"}
           </Button>
         </DialogFooter>
       </DialogContent>

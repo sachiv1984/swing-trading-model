@@ -6,6 +6,7 @@ import { Loader2, BookOpen, CheckCircle2 } from "lucide-react";
 import { cn } from "../../lib/utils";
 import { api } from "../../api/base44Client";
 import { formatCurrency, formatR, currencyForMarket } from "../../lib/format";
+import { exitReasonLabel } from "../../constants/exitReasons";
 
 // Spec: docs/specs/frontend/pages/trade_reflection.md v0.1
 // EPIC-01, ST-02, v1.9
@@ -19,11 +20,6 @@ const REFLECTION_FIELDS = [
 ];
 
 const MAX_CHARS = 500;
-
-function formatExitReason(reason) {
-  const map = { stop_hit: "STOP", manual: "MANUAL", target: "TARGET", market_regime: "REGIME" };
-  return map[reason] || (reason ? reason.toUpperCase() : "—");
-}
 
 function SummaryRow({ label, value }) {
   return (
@@ -141,7 +137,7 @@ export default function TradeReflectionModal({ trade, open, onClose }) {
                   </span>
                 ) : null}
               />
-              <SummaryRow label="Exit Reason" value={formatExitReason(trade.exit_reason)} />
+              <SummaryRow label="Exit Reason" value={exitReasonLabel(trade.exit_reason)} />
               <SummaryRow label="Exit State"  value={exitState} />
               <SummaryRow label="Exit Date"   value={exitDateFormatted} />
             </div>

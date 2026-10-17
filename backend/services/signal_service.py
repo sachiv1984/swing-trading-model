@@ -408,17 +408,51 @@ def _is_last_trading_day_of_month(check_date: datetime) -> bool:
     return next_day.month != d.month
 
 
+def _in_grace_period(pos: Dict, today) -> bool:
+    """True while the position is in its §6 grace period (calendar days since
+    entry below GRACE_PERIOD_DAYS), the same test the production backtest uses
+    (strategy_engine.py: holding_days < min_hold_days). An unknown entry date
+    is treated as post-grace."""
+    # Local import: tests patch this module's `datetime`.
+    from datetime import date as _date, datetime as _datetime
+    from strategy_parameters import GRACE_PERIOD_DAYS
+    entry = pos.get('entry_date')
+    if not entry:
+        return False
+    if isinstance(entry, _datetime):
+        entry_date = entry.date()
+    elif isinstance(entry, _date):
+        entry_date = entry
+    else:
+        try:
+            entry_date = _datetime.strptime(str(entry)[:10], '%Y-%m-%d').date()
+        except ValueError:
+            return False
+    return (today.date() - entry_date).days < GRACE_PERIOD_DAYS
+
+
 def generate_rebalance_exit_signals() -> Dict:
     """
     ST-03 (BLG-FEAT-47): Generate exit_rebalance signals on the last trading day
     of each calendar month.
 
+    Implements strategy_rules.md §8.4 (v1.17; ST-05, BLG-GOV-391, ruling
+    ESC-EXEC-20261016-01).
+
     Logic:
       1. If today is not the last trading day of the month, return early.
-      2. Fetch current top-5 momentum signal tickers (most recent signal_date).
-      3. For each open position NOT in the top-5 list:
-         - Generate an exit_rebalance signal record.
-         - Skip if the position is already at a trailing stop (avoid duplicate exit).
+      2. Read today's momentum ranking: every ticker the momentum signal run
+         (generate_momentum_signals) wrote for today, whatever its status
+         since, so dismissing or entering a signal cannot change it.
+         If that run has not written anything today, create no signals and
+         return screener_run_missing=True; the endpoint reports it as a
+         failure (BLG-OPS-190).
+      3. For each open position NOT in the ranking:
+         - Skip if §8.2 applies (risk_off_exit set): the risk-off exit governs.
+         - Skip if §8.1 applies: price at or below the trailing stop, after
+           the grace period. In grace §8.1 is inactive (§6.3), so §8.4 still
+           applies, as in the backtest.
+         - Otherwise generate an exit_rebalance signal record.
       4. Returns summary + list of exit_rebalance signals created.
     """
     today = datetime.now()
@@ -438,17 +472,28 @@ def generate_rebalance_exit_signals() -> Dict:
     live_fx_rate = get_live_fx_rate()
     signal_date_str = today.strftime('%Y-%m-%d')
 
-    # Get the latest set of momentum signals (top-5 tickers from most recent run)
+    # Today's momentum ranking (§8.4). Status is ignored: a dismissed,
+    # entered or expired signal is still part of the day's ranking. Only
+    # exit_rebalance rows (this job's own output) are not ranking rows.
     all_signals = db_get_signals(portfolio_id, status=None)
-    if all_signals:
-        latest_date = max(s['signal_date'] for s in all_signals if s.get('signal_date'))
-        top5_tickers = {
-            s['ticker'] for s in all_signals
-            if s.get('signal_date') == latest_date
-            and s.get('status') not in ('dismissed', 'expired', 'exit_rebalance')
+    ranking_rows = [
+        s for s in (all_signals or [])
+        if str(s.get('signal_date') or '')[:10] == signal_date_str
+        and s.get('status') != 'exit_rebalance'
+        and s.get('signal_type') != 'exit_rebalance'
+    ]
+    if not ranking_rows:
+        return {
+            "run_date": signal_date_str,
+            "is_last_trading_day": True,
+            "screener_run_missing": True,
+            "signals_created": 0,
+            "message": (
+                f"No momentum signal run recorded for {signal_date_str}: no month-end "
+                "rebalance exit signals created (strategy_rules.md §8.4)"
+            ),
         }
-    else:
-        top5_tickers = set()
+    top5_tickers = {s['ticker'] for s in ranking_rows}
 
     # Get current open positions
     positions = get_positions(portfolio_id, status='open')
@@ -464,10 +509,15 @@ def generate_rebalance_exit_signals() -> Dict:
         if ticker in top5_tickers:
             continue
 
-        # Deduplication: skip if position is already at its trailing stop
+        # §8.4 precedence: §8.2 governs a position whose market is risk-off.
+        if pos.get('risk_off_exit'):
+            continue
+
+        # §8.4 precedence: §8.1 governs a position at its trailing stop, but
+        # only after grace (§8.1 is inactive during grace, §6.3).
         current_price = pos.get('current_price', 0) or 0
         current_stop = pos.get('current_stop', 0) or 0
-        if current_stop > 0 and current_price <= current_stop:
+        if current_stop > 0 and current_price <= current_stop and not _in_grace_period(pos, today):
             continue  # Stop already triggered — exit_rebalance is redundant
 
         is_uk = pos['market'] == 'UK'

@@ -2,7 +2,11 @@ openapi: 3.0.3
 
 info:
   title: Momentum Trading Assistant API
-  version: 3.31.0
+  version: 3.32.0
+  # v3.32.0 (2026-10-16, ST-02, EPIC-01, v9.13): ExitPositionRequest.exit_reason lists its allowed
+  # values (data_model.md DS-34); POST /positions/{position_id}/exit returns 400 for any other (BLG-SPEC-186).
+  # ST-05 (same release): POST /signals/rebalance-exit implements strategy_rules.md §8.4 and returns 503
+  # when today's momentum signal run is missing (BLG-GOV-391, BLG-OPS-190). No new endpoint.
   # v3.31.0 (2026-10-15, ST-26, EPIC-04, v9.12): GET /settings returns last_change on the settings
   # object (the latest settings_change_log save, DS-33; BLG-SEC-41). POST /settings and
   # PATCH /settings/{settings_id} accept an optional X-Request-Source header. No new endpoint.
@@ -1934,10 +1938,13 @@ paths:
       tags: [Signals]
       summary: Generate exit_rebalance signals on last trading day of month (ST-03 v6.2 BLG-FEAT-47)
       description: |
-        Month-end rebalance: on the last trading day, generates exit_rebalance signals
-        for open positions not in the current top-5 momentum list.
+        Month-end rebalance (strategy_rules.md §8.4): on the last trading day, generates
+        exit_rebalance signals for open positions not in today's momentum ranking (every
+        ticker today's momentum signal run wrote, whatever its status).
         No-op if today is not the last trading day.
-        Deduplicates: skips positions already at their trailing stop.
+        Skips positions with risk_off_exit (§8.2 governs) and positions at their trailing stop (§8.1).
+        Returns 503 with screener_run_missing=true, creating nothing, when no momentum signal
+        run is recorded for today.
       responses:
         "200":
           description: Rebalance exit signal summary
@@ -1952,6 +1959,22 @@ paths:
                     properties:
                       run_date: { type: string }
                       is_last_trading_day: { type: boolean }
+                      signals_created: { type: integer }
+        "503":
+          description: Last trading day, but no momentum signal run recorded today; no signals created (v3.32.0, ST-05)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, example: error }
+                  message: { type: string }
+                  data:
+                    type: object
+                    properties:
+                      run_date: { type: string }
+                      is_last_trading_day: { type: boolean }
+                      screener_run_missing: { type: boolean }
                       signals_created: { type: integer }
         "500":
           $ref: "#/components/responses/InternalError"
@@ -6937,7 +6960,11 @@ components:
         shares: { type: number, minimum: 0.0001 }
         exit_price: { type: number, minimum: 0.0001 }
         exit_date: { type: string, format: date }
-        exit_reason: { type: string, nullable: true }
+        exit_reason:
+          type: string
+          nullable: true
+          enum: ["Stop Loss Hit", "Trailing Stop", "Risk-Off Signal", "Manual Exit", "Target Reached", "Partial Profit Taking", null]
+          description: Allowed values (data_model.md §3 Exit Reason Values, DS-34). Omitted or null means "Manual Exit"; any other value returns 400.
         exit_fx_rate: { type: number, nullable: true }
         exit_note: { type: string, maxLength: 500, nullable: true }
 

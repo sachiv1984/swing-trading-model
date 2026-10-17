@@ -184,6 +184,42 @@ def _maybe_write_override_event(ticker: str, position_id=None) -> None:
         pass
 
 
+def _unchecked_count(checklist_items) -> tuple:
+    """(unchecked, total) for a saved checklist; (0, 0) when there is none."""
+    if not isinstance(checklist_items, list) or not checklist_items:
+        return 0, 0
+    total = len(checklist_items)
+    unchecked = sum(
+        1 for item in checklist_items
+        if not (isinstance(item, dict) and item.get("checked") is True)
+    )
+    return unchecked, total
+
+
+def _maybe_write_checklist_skipped_event(plan: dict, checklist_items) -> None:
+    """ST-04 (BLG-BE-182, v9.13): a plan saved with a non-empty, incomplete
+    checklist writes one checklist_skipped event. Non-blocking: the plan is
+    saved whether or not this write succeeds (red_flag_journal.md)."""
+    unchecked, total = _unchecked_count(checklist_items)
+    if unchecked == 0:
+        return
+    try:
+        ensure_red_flag_events_table()
+        create_red_flag_event(
+            event_type="checklist_skipped",
+            ticker=plan.get("ticker", ""),
+            position_id=str(plan["position_id"]) if plan.get("position_id") else None,
+            context={
+                "source": "trade_plan",
+                "plan_id": str(plan.get("id")) if plan.get("id") else None,
+                "unchecked_items": unchecked,
+                "total_items": total,
+            },
+        )
+    except Exception:
+        pass
+
+
 @router.post("", status_code=201)
 def create_plan(body: TradePlanCreate):
     """POST /trade-plans — create a new trade plan.
@@ -258,6 +294,7 @@ def create_plan(body: TradePlanCreate):
             plan = create_trade_plan(portfolio_id, plan_data)
             if body.pre_entry_override_acknowledged:
                 _maybe_write_override_event(body.ticker, body.position_id)
+            _maybe_write_checklist_skipped_event(plan, body.checklist_items)
             return {"status": "ok", "data": _serialize(plan)}
 
         if body.idempotency_key:
@@ -577,6 +614,9 @@ def update_plan(plan_id: str, body: TradePlanUpdate):
             raise HTTPException(status_code=404, detail="Trade plan not found")
         if body.pre_entry_override_acknowledged:
             _maybe_write_override_event(plan.get("ticker", ""), plan.get("position_id"))
+        # Only an update that saves the checklist can skip it.
+        if "checklist_items" in data:
+            _maybe_write_checklist_skipped_event(plan, data["checklist_items"])
         return {"status": "ok", "data": _serialize(plan)}
     except HTTPException as e:
         return JSONResponse(

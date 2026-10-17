@@ -220,12 +220,8 @@ export const base44 = {
         return filtered;
       },
       create: async (positionData) => api.portfolio.addPosition(positionData),
-      update: async (id, data) =>
-        doFetch(`/positions/${id}`, {
-          method: 'PATCH',
-          body: JSON.stringify(data),
-          raw: true, // backend returns raw json for this route
-        }),
+      // No generic update: PATCH /positions/{id} does not exist (v9.13 ST-01).
+      // Exits go through exit() below; notes and tags through their own routes.
 
       // ✅ NEW: Update position note
       updateNote: async (positionId, entryNote) =>

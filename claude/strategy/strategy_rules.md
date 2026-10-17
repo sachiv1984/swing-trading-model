@@ -2,8 +2,8 @@
 
 **Owner:** Strategy Rules & System Intent Owner  
 **Status:** Canonical  
-**Version:** 1.16
-**Last Updated:** 2026-10-09 (ST-25, EPIC-04, v9.11, BLG-FEAT-59 — AI-assisted Monthly P&L narrative added to §13.5's re-attestation roster as CONDITIONAL; documentation only, no behaviour change. v1.15 is EPIC-03's ST-16 §6.3 edit, which merges first); prior — 2026-10-09 (ST-16, EPIC-03, v9.11, BLG-BE-143 — §6.3 clarified: in-grace stop frozen at the §5 initial stop, no recalculation or ratchet on either live path, already-raised stops kept); prior — 2026-10-05 (BLG-GOV-360, from ST-20, EPIC-04, v9.9 — §13.3 clarified: standing/real-time gap risk monitoring stays excluded; a display-only, on-request flag tied to a canonically recognised, ticker-specific dated event (today only earnings, §4.2.3) is permitted under its own §13 review; the Gap Risk Flag's weekend-hold trigger recorded as a time-boxed deviation; Gap Risk Flag added to §13.5's roster as CONDITIONAL — no behaviour change); prior history retained — see prior entries in version control
+**Version:** 1.17
+**Last Updated:** 2026-10-16 (ST-05, EPIC-01, v9.13, BLG-GOV-391 — §8.4 Month-end rebalance exit added, §8 becomes four exit conditions; §6.3/§10/§11/§12.2 consequential. Strategy Rules & System Intent Owner ruling ESC-EXEC-20261016-01; behavioural, registered); prior — 2026-10-09 (ST-25, EPIC-04, v9.11, BLG-FEAT-59 — AI-assisted Monthly P&L narrative added to §13.5's re-attestation roster as CONDITIONAL; documentation only, no behaviour change. v1.15 is EPIC-03's ST-16 §6.3 edit, which merges first); prior — 2026-10-09 (ST-16, EPIC-03, v9.11, BLG-BE-143 — §6.3 clarified: in-grace stop frozen at the §5 initial stop, no recalculation or ratchet on either live path, already-raised stops kept); prior history retained — see prior entries in version control
 **Applies to:** Production backtests, live system, and documentation  
 
 ---
@@ -12,6 +12,7 @@
 
 | Version | Date | Summary |
 |---|---|---|
+| 1.17 | 16 October 2026 | §8.4 Month-end rebalance exit added; §8 becomes four exit conditions; §6.3, §10, §11 and §12.2 updated to match (ST-05, EPIC-01, v9.13, `BLG-GOV-391`) — Behavioural. Rationale: the live month-end rebalance signal (since v6.2, `BLG-FEAT-47`) and the production backtest (`strategy_engine.py` `rebalance_freq = "ME"`, the "No longer qualifies" exit) both rebalance monthly; §8 omitted it. Impact: live signal generation gains §8.1/§8.2 precedence, a ranking that does not depend on signal status, and a same-day momentum-signal-run precondition. No backtest change: live moves closer to the backtest, so backtest comparability improves. The existing nightly production backtest is the evidence; no new backtest is needed. Known deviation: the live last-trading-day check does not model public holidays (backlog item filed). §13: deterministic, rule-based, manually confirmed recommendation (§13.1); no boundary change. §15 re-run: no undated current-version citation found. Strategy Rules & System Intent Owner ruling `ESC-EXEC-20261016-01`, agent-mediated (§5.3), 2026-10-16. |
 | 1.16 | 9 October 2026 | AI-assisted Monthly P&L narrative added to §13.5's re-attestation roster (ST-25, EPIC-04, v9.11, `BLG-FEAT-59`) — Documentation only: a roster row recording the feature's first §13 clearance, per §13.5's Maintenance rule; no §4–§13 rule, parameter or live behaviour change. Rationale: ESC-EXEC-20261008-02 (RISK-06 confirmation route) asked for a §13 determination before build; the determination is CONDITIONAL (12 binding conditions) and records that no §13 clause names financial reporting, so that question is controlled by its Conditions 5 and 6. Impact: documentation only — no backtest, live-logic or parameter change; §12.3 comparability acknowledgement not applicable. §13 reference: `docs/product/decisions/decisions--2026-10-08__release-v9.11--ST-25-monthly-pnl-narrative-section13-review.md`, CONDITIONAL. Numbered 1.16 because v1.15 (ST-16, EPIC-03) merges first. |
 | 1.15 | 9 October 2026 | §6.3 clarified: during grace the stored stop is the §5 initial stop and is neither recalculated nor ratcheted by the on-load or nightly path; trailing starts on day 10 (ST-16, EPIC-03, v9.11, BLG-BE-143) — Behavioural clarification: the nightly job no longer ratchets in-grace positions; on-load behaviour unchanged apart from no longer rewriting the in-grace stop. Rationale: §6.3's "calculated and stored" was ambiguous and the two live paths disagreed; §6.4's purpose and §7's "post-grace" scope support freezing, and the production backtest (`strategy_engine.py`) and replay engine already skip trailing during grace. Impact: live logic only — positions entered after deploy may carry a lower day-10 stop than under the old nightly ratchet; this moves live into line with backtests (improves comparability rather than losing it); in-grace stops already ratcheted before deploy are kept (§7.3), a transitional effect that ends within 10 calendar days. No §11 parameter change. Ruling: ESC-EXEC-20261008-01, 2026-10-09. |
 | 1.14 | 5 October 2026 | §13.3 gap-risk exclusion clarified and the Overnight/Weekend Gap Risk Flag added to §13.5's re-attestation roster (ST-20, EPIC-04, v9.9, `BLG-GOV-358`/`BLG-GOV-360`) — Documentation-only boundary clarification: §13.3's literal wording narrowed to the scope its §13 review established; no §4–§11 rule, parameter or live behaviour changes. Rationale: the shipped BLG-FEAT-65 flag (v6.9) contradicted §13.3's literal text and had never been reviewed against it (its v6.9 AC-04 sign-off tested §13.2 only); the retroactive review finds the earnings trigger outside the exclusion (actionable before the gap, ticker-specific, already recognised by §4.2.3) and the standalone weekend-hold trigger within it, now recorded in §13.3 as a time-boxed deviation (`BLG-BE-136`, due 2027-02-06); new event types need their own §13 review. Impact: documentation only — no backtest, live-logic or parameter change; §12.3 comparability acknowledgement not applicable. §13 reference: `docs/product/decisions/decisions--2026-09-30__release-v9.9--gap-risk-flag-section13-review.md`, CONDITIONAL, 9 binding conditions. |
@@ -332,6 +333,7 @@ Grace period length: **10 calendar days** (days 0–9 inclusive)
 - The stop price is calculated once, at entry (§5), and stored. During the grace period the stored stop is not recalculated, not ratcheted and not rewritten: neither the on-load recompute path nor the nightly job applies §7.2 or §7.3 to a position whose holding days are below the grace period length. On day 10 the §7 trailing framework starts from the stored stop.  
 - A stored stop that was already raised above the initial stop during the grace period, before this clarification (v1.15), is kept as it is. §7.3 forbids lowering it.  
 - No stop-based exit recommendation may be generated.  
+- A §8.4 rebalance exit recommendation is not stop-based and may be generated during the grace period.  
 - Manual exit is always permitted.
 
 ### 6.4 Rationale
@@ -390,7 +392,7 @@ Stops must never move downwards. Once tightened, a stop must not be loosened. Th
 
 ## 8. Exit conditions
 
-A position may exit under exactly three conditions.
+A position may exit under exactly four conditions.
 
 ### 8.1 Stop-loss trigger
 - Active only after the grace period.  
@@ -405,6 +407,15 @@ A position may exit under exactly three conditions.
 ### 8.3 Manual exit
 - User-initiated.  
 - Available at any time.
+
+### 8.4 Month-end rebalance exit
+- Evaluated once, on the last trading day of each calendar month.  
+- Triggered when an open position is not in that day's momentum ranking: the top 5 tickers from the active universe by 252-day momentum, with price above the 200-day moving average and the relevant market risk-on. This is the ranking used to generate entry signals.  
+- Exit is recommended and requires manual confirmation.  
+- Not stop-based. It applies during the grace period (§6), as it does in the production backtest.  
+- Precedence: if §8.1 or §8.2 applies to the position on the same day, that condition governs and no §8.4 recommendation is generated.  
+- The ranking is computed from that day's completed momentum signal run (the run that generates entry signals). If no completed run exists for that day, no §8.4 recommendation is generated and the failure is alerted.  
+- Known deviation (v1.17): the live last-trading-day check skips weekends but does not model exchange holidays; the backtest does. Tracked in the backlog.
 
 ---
 
@@ -433,6 +444,7 @@ States are mutually exclusive and deterministic.
 
 **Portfolio-level**
 - Market regime override.  
+- Month-end momentum rebalance.  
 - Currency-aware P&L.  
 - Cash-flow-adjusted performance tracking.
 
@@ -444,6 +456,8 @@ States are mutually exclusive and deterministic.
 - Initial / losing stop multiplier: 5 × ATR  
 - Profitable stop multiplier: 2 × ATR  
 - ATR period: 14 days  
+- Momentum ranking: top 5 by 252-day momentum (§8.4)  
+- Rebalance frequency: month-end (§8.4)  
 
 These parameters must be consistent across production backtests, live system logic, and reported performance metrics.
 
@@ -463,6 +477,7 @@ The values above are parameters, not immutable rules. They describe how the stra
 - Grace period length.  
 - ATR multipliers.  
 - ATR lookback period.
+- Ranking size, momentum lookback and rebalance frequency.
 
 **Data-volume threshold trigger (ST-39, EPIC-04, v9.2, BLG-GOV-262):** the elements above were calibrated against the trade history available at the time each was set — with a small closed-trade sample, any recalibration proposal is itself low-confidence. A review of these elements' calibration is triggered once **100 closed trades** have accumulated since the last time any element in this list was reviewed (whether or not it was changed) — tracked via a running count in `docs/specs/metrics_definitions.md`'s trade-count-dependent metrics infrastructure, not a new separate counter. Below 100 closed trades since the last review, a recalibration proposal may still be raised (nothing here prevents it) but must explicitly disclose the small-sample caveat per §12.3's "state the rationale and expected impact" requirement. This does not lower the bar §12.3 already sets for an actual change — it only defines when a *review* (not necessarily a change) is warranted on data-volume grounds specifically, distinct from a review prompted by a specific observed problem.
 

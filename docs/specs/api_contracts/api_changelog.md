@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Class 2
 **Status:** Canonical
-**Version:** 1.16.0
-**Last Updated:** 2026-10-13 (ST-17, EPIC-03, v9.12, BLG-BE-146 — v9.12.0 entry: GET /market/atr/{ticker}); prior — 2026-10-09 (ST-25, EPIC-04, v9.11, BLG-FEAT-59 — v9.11.0 entry: GET and POST /reports/monthly-pnl/narrative); prior — 2026-09-25 (ST-01b, EPIC-01, v9.7, BLG-FEAT-74 — v9.7.0 entry: new file replay_endpoints.md v1.0, POST /replay/run); prior history retained — see prior entries in version control
+**Version:** 1.17.0
+**Last Updated:** 2026-10-16 (ST-02, EPIC-01, v9.13, BLG-SPEC-186 — v9.13.0 entry: POST /positions/{position_id}/exit enforces the exit_reason list); prior — 2026-10-13 (ST-17, EPIC-03, v9.12, BLG-BE-146 — v9.12.0 entry: GET /market/atr/{ticker}); prior — 2026-10-09 (ST-25, EPIC-04, v9.11, BLG-FEAT-59 — v9.11.0 entry: GET and POST /reports/monthly-pnl/narrative); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 # API Changelog
@@ -37,6 +37,35 @@ Rules:
 **Sign-off:** Head of Specs Team — Approved. Formalising an already-consistently-used structure (rather than introducing a new one requiring migration) is the right scope for this story — the conformance check confirms there was nothing to migrate. Sprint Execution Engine (agent-mediated, Head of Specs Team role — §5.3), 2026-09-08.
 
 ---
+
+## v9.13.0 (2026-10-16 — Release v9.13)
+
+### position_endpoints.md — v2.16.1 (UPDATED)
+
+**EPIC:** EPIC-01
+**ST:** ST-02
+
+| Change | Details |
+|--------|---------|
+| Updated endpoint: POST /positions/{position_id}/exit | Enforces the documented `exit_reason` list: an unlisted value, an empty string or a legacy snake-case spelling returns `400` before anything is written; omitted or `null` still means `Manual Exit` (BLG-SPEC-186). The list matches `data_model.md` DS-34's CHECK constraints. |
+
+### signal_endpoints.md — v1.9 (UPDATED)
+
+**EPIC:** EPIC-01
+**ST:** ST-05
+
+| Change | Details |
+|--------|---------|
+| Updated endpoint: POST /signals/rebalance-exit | Implements `strategy_rules.md` §8.4 (v1.17): the ranking is every ticker today's momentum signal run wrote, whatever its status; `risk_off_exit` positions and positions at their stop are skipped; with no run recorded today it creates nothing and returns 503 (BLG-GOV-391, BLG-OPS-190). |
+
+### red_flag_journal.md — v1.1.0 (UPDATED)
+
+**EPIC:** EPIC-01
+**ST:** ST-04
+
+| Change | Details |
+|--------|---------|
+| Updated endpoint: GET /portfolio/red-flag-journal | Can now return `checklist_skipped` events, written when `POST /trade-plans` or `PUT /trade-plans/{id}` saves a non-empty, incomplete checklist; context `source`, `plan_id`, `unchecked_items`, `total_items` (BLG-BE-182). Response shape unchanged. |
 
 ## v9.12.0 (2026-10-13 — Release v9.12)
 

@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import { motion } from "framer-motion";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from "recharts";
 import { formatCurrency } from "../../lib/format";
+import { exitReasonGroupKey, exitReasonLabel } from "../../constants/exitReasons";
 
 const COLORS = ['#22d3ee', '#a78bfa', '#f472b6', '#34d399', '#fbbf24', '#f87171'];
 
@@ -23,7 +24,8 @@ export default function TradeBreakdown({ positions }) {
     // By exit reason
     const byReason = {};
     closedPositions.forEach(p => {
-      const reason = p.exit_reason || "unknown";
+      // Legacy spellings group with their stored value; null reads as Manual Exit.
+      const reason = exitReasonGroupKey(p.exit_reason);
       if (!byReason[reason]) {
         byReason[reason] = { trades: 0, pnl: 0 };
       }
@@ -37,16 +39,8 @@ export default function TradeBreakdown({ positions }) {
       pnl: data.pnl
     }));
 
-    const reasonLabels = {
-      stop_hit: "Stop Hit",
-      manual: "Manual",
-      target: "Target",
-      market_regime: "Market Regime",
-      unknown: "Unknown"
-    };
-
     const reasonData = Object.entries(byReason).map(([name, data]) => ({
-      name: reasonLabels[name] || name,
+      name: exitReasonLabel(name),
       value: data.trades,
       pnl: data.pnl
     }));

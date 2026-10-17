@@ -58,6 +58,7 @@ from utils.calculations import calculate_initial_stop
 from utils.formatting import decimal_to_float
 from utils.position_lifecycle_states import GRACE
 from strategy_parameters import INITIAL_ATR_MULTIPLIER
+from exit_reasons import EXIT_REASONS, INVALID_EXIT_REASON
 from pydantic import BaseModel
 from routers import validation, analytics, test, portfolio_size, trades_export, prospective_heat, alerts
 from routers import watchlist as watchlist_router
@@ -609,6 +610,10 @@ def get_portfolio_endpoint():
 
 @app.post("/positions/{position_id}/exit")
 def exit_position_endpoint(position_id: str, request: ExitPositionRequest):
+    # ST-02 (BLG-SPEC-186, v9.13): only the allowed values (DS-34 CHECK
+    # constraint) are stored; anything else is a 400, as the contract says.
+    if request.exit_reason is not None and request.exit_reason not in EXIT_REASONS:
+        raise HTTPException(status_code=400, detail=INVALID_EXIT_REASON)
     result = exit_position(
         position_id=position_id,
         exit_price=request.exit_price,
@@ -755,6 +760,12 @@ def rebalance_exit_signals_endpoint():
     """
     try:
         result = generate_rebalance_exit_signals()
+        if result.get("screener_run_missing"):
+            # ST-05 (BLG-GOV-391 / BLG-OPS-190, v9.13): month-end with no momentum
+            # ranking for today. No signals were created; a 503 fails
+            # rebalance-exit.yml (curl -f), which is the alert.
+            record_nightly_job("rebalance_exit", "error", error=result["message"], detail=result)
+            return JSONResponse(status_code=503, content={"status": "error", "message": result["message"], "data": result})
         record_nightly_job("rebalance_exit", "ok", detail=result)
         # inv_vol_sizing runs inside generate_rebalance_exit_signals for sized signals
         record_nightly_job("inv_vol_sizing", "ok", detail={"note": "co-invoked by rebalance-exit"})

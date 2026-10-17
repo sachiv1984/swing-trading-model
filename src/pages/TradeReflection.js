@@ -8,20 +8,7 @@ import PageHeader from "../components/ui/PageHeader";
 import { Input } from "../components/ui/input";
 import TradeReflectionModal from "../components/trades/TradeReflectionModal";
 import { formatCurrency, formatR } from "../lib/format";
-
-function exitReasonLabel(r) {
-  const map = { stop_hit: "STOP", manual: "MANUAL", target: "TARGET", market_regime: "REGIME" };
-  return map[r] || (r ? r.toUpperCase() : "—");
-}
-
-function exitReasonColor(r) {
-  return {
-    stop_hit:      "bg-rose-500/20 text-rose-400 border-rose-500/30",
-    manual:        "bg-violet-500/20 text-violet-400 border-violet-500/30",
-    target:        "bg-emerald-500/20 text-emerald-400 border-emerald-500/30",
-    market_regime: "bg-amber-500/20 text-amber-400 border-amber-500/30",
-  }[r] || "bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-700";
-}
+import { exitReasonBadgeClass, exitReasonShortLabel } from "../constants/exitReasons";
 
 export default function TradeReflection() {
   const [search, setSearch] = useState("");
@@ -82,11 +69,8 @@ export default function TradeReflection() {
                       {r.market || "—"}
                     </span>
                   </div>
-                  <span className={cn(
-                    "text-xs px-2.5 py-1 rounded-full border",
-                    exitReasonColor(r.exit_reason)
-                  )}>
-                    {exitReasonLabel(r.exit_reason)}
+                  <span data-testid="exit-reason-badge" className={exitReasonBadgeClass(r.exit_reason)}>
+                    {exitReasonShortLabel(r.exit_reason)}
                   </span>
                 </div>
 

@@ -3,8 +3,8 @@
 **Owner:** Data Model & Domain Schema Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.62
-**Last Updated:** 2026-10-15 (ST-26, EPIC-04, v9.12, BLG-SEC-41 — DS-33 (v2.62): new `settings_change_log` table, settings-write audit trail; note under §6); prior — 2026-10-13 (ST-15, EPIC-02, v9.12, BLG-FE-202 — DS-32 (v2.61): `positions.stop_frozen_reason`, added to §2 DDL and Fields); prior — 2026-10-13 (ST-38, EPIC-05, v9.12, BLG-SPEC-183 — v2.60: `entry_price` currency decision recorded under §2, doc fix; DS-23's reconstruction note no longer calls the currency ambiguous; chart-seed pence convention noted); prior history retained — see prior entries in version control
+**Version:** 2.63
+**Last Updated:** 2026-10-16 (ST-02, EPIC-01, v9.13, BLG-SPEC-186 — DS-34 (v2.63): allowed `exit_reason` values mapped to `strategy_rules.md` §8, legacy spellings backfilled, CHECK constraints on `positions` and `trade_history`); prior — 2026-10-15 (ST-26, EPIC-04, v9.12, BLG-SEC-41 — DS-33 (v2.62): new `settings_change_log` table, settings-write audit trail; note under §6); prior — 2026-10-13 (ST-15, EPIC-02, v9.12, BLG-FE-202 — DS-32 (v2.61): `positions.stop_frozen_reason`, added to §2 DDL and Fields); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 This document describes the complete database schema and data structures used in the **Position Manager Web App**.
@@ -82,7 +82,7 @@ CREATE TABLE positions (
     status VARCHAR(20) DEFAULT 'open' CHECK (status IN ('open', 'closed')),
     exit_date DATE,
     exit_price DECIMAL(10, 4),
-    exit_reason VARCHAR(50),
+    exit_reason VARCHAR(50),  -- §3 Exit Reason Values or NULL; chk_positions_exit_reason (DS-34)
     entry_note TEXT,
     tags TEXT[],
     user_fill_price DECIMAL(10, 4),
@@ -132,7 +132,7 @@ CREATE INDEX idx_positions_tags ON positions USING GIN(tags);
 | status | VARCHAR(20) | YES | system-stamped | `'open'` or `'closed'`; set to `'closed'` by the exit flow |
 | exit_date | DATE | YES | user-entered | Exit date (null while open); user-entered at exit, defaulting to today |
 | exit_price | DECIMAL(10,4) | YES | user-entered | Exit price in native currency (null while open) |
-| exit_reason | VARCHAR(50) | YES | user-entered | Reason for exit (null while open); user-chosen at exit, defaulting to `Manual Exit` |
+| exit_reason | VARCHAR(50) | YES | user-entered | Reason for exit (null while open); user-chosen at exit, defaulting to `Manual Exit`. One of §3 Exit Reason Values or `NULL`, enforced by `chk_positions_exit_reason` (DS-34) |
 | entry_note | TEXT | YES | user-entered | Journal note at entry |
 | tags | TEXT[] | YES | user-entered | Strategy/classification tags |
 | user_fill_price | DECIMAL(10,4) | YES | user-entered | User-provided actual broker fill price in native currency (optional). Used to compute slippage. Null when not provided (pre-v2.1 trades). |
@@ -186,7 +186,7 @@ CREATE TABLE public.trade_history (
     pnl NUMERIC(12, 2) NULL,
     pnl_pct NUMERIC(10, 2) NULL,
     holding_days INTEGER NULL,
-    exit_reason VARCHAR(100) NULL,
+    exit_reason VARCHAR(100) NULL,  -- §3 Exit Reason Values or NULL; chk_trade_history_exit_reason (DS-34)
     entry_fx_rate NUMERIC(10, 4) NULL,
     exit_fx_rate NUMERIC(10, 4) NULL,
     created_at TIMESTAMP WITHOUT TIME ZONE NULL DEFAULT now(),
@@ -229,7 +229,7 @@ CREATE INDEX idx_trade_history_position_id ON public.trade_history USING btree (
 | pnl | NUMERIC(12,2) | YES | Realised P&L in GBP (`net_proceeds − total_cost`) |
 | pnl_pct | NUMERIC(10,2) | YES | P&L as percentage of entry cost. API also returns as `pnl_percent` for compatibility |
 | holding_days | INTEGER | YES | Calendar days from entry_date to exit_date inclusive |
-| exit_reason | VARCHAR(100) | YES | Reason for exit. `null` normalised to `"Manual Exit"` by analytics service at read time |
+| exit_reason | VARCHAR(100) | YES | Reason for exit: one of §3 Exit Reason Values or `NULL`, enforced by `chk_trade_history_exit_reason` (DS-34). `null` normalised to `"Manual Exit"` by analytics service at read time |
 | entry_fx_rate | NUMERIC(10,4) | YES | GBP/USD rate at entry (US stocks only) |
 | exit_fx_rate | NUMERIC(10,4) | YES | GBP/USD rate at exit (US stocks only) |
 | created_at | TIMESTAMP | YES | Record creation time (defaults to now()) |
@@ -245,16 +245,20 @@ CREATE INDEX idx_trade_history_position_id ON public.trade_history USING btree (
 
 ### Exit Reason Values
 
-| Value | Description |
-|-------|-------------|
-| `"Manual Exit"` | User-initiated exit outside of automated logic |
-| `"Stop Loss Hit"` | Initial or trailing stop level breached |
-| `"Trailing Stop"` | Trailing stop triggered after profitable period |
-| `"Risk-Off Signal"` | Market regime turned risk-off |
-| `"Target Reached"` | User defined profit target met |
-| `"Partial Profit Taking"` | Partial exit to lock in gains |
+These are the only values `trade_history.exit_reason` and `positions.exit_reason` may hold, apart from `NULL` (v2.63, DS-34; ST-02, BLG-SPEC-186). Each maps to exactly one exit condition in `strategy_rules.md` §8: §8.1, §8.2 or §8.3. §8.4 Month-end rebalance exit (v1.17) has no stored value yet, so a rebalance exit is recorded as `Manual Exit` (BLG-SPEC-206). The backend copy is `backend/exit_reasons.py`; the frontend copy is `src/constants/exitReasons.js`.
 
-> **Note:** `null` values in `exit_reason` are normalised to `"Manual Exit"` by the analytics service at read time. They are stored as `null` in this table.
+| Value | §8 exit condition | Description |
+|-------|-------------------|-------------|
+| `"Stop Loss Hit"` | §8.1 Stop-loss trigger | Initial or trailing stop level breached |
+| `"Trailing Stop"` | §8.1 Stop-loss trigger | Trailing stop triggered after profitable period |
+| `"Risk-Off Signal"` | §8.2 Market risk-off override | Market regime turned risk-off |
+| `"Manual Exit"` | §8.3 Manual exit | User-initiated exit outside of automated logic |
+| `"Target Reached"` | §8.3 Manual exit | User defined profit target met. §8 has no target-based exit, so a target exit is a user decision |
+| `"Partial Profit Taking"` | §8.3 Manual exit | Partial exit to lock in gains, a user decision |
+
+> **Note:** `null` values in `exit_reason` are normalised to `"Manual Exit"` (§8.3) by the analytics service at read time. They are stored as `null` in this table.
+
+**Enforcement (DS-34):** a CHECK constraint on each table rejects any other value. `POST /positions/{position_id}/exit` rejects an unlisted `exit_reason` with a 400 before anything is written (`position_endpoints.md`). Legacy snake-case spellings were backfilled to these values before the constraints were added; the alias list is in DS-34.
 
 ---
 
@@ -3245,6 +3249,187 @@ Expect 8 columns: `id` bigint NO, `settings_id` uuid NO, `batch_id` uuid NO, `fi
 - **Live Confirmation — staging, applied 2026-10-15 (with RLS enabled):** Up Migration returned "Success. No rows returned". Index verification: `idx_settings_change_log_changed_at`, `settings_change_log_pkey` (2 rows, as expected). Column verification: 8 rows exactly as expected (`id` bigint NO, `settings_id` uuid NO, `batch_id` uuid NO, `field` character varying NO, `old_value` text YES, `new_value` text YES, `changed_at` timestamp with time zone NO, `request_source` character varying NO). Role check: `postgres` has `rolbypassrls = true`; the SQL editor ran as `postgres`, so the table is owned by `postgres` (the editor showed only the last statement's result). Not yet confirmed: which role the deployed backend's `DATABASE_URL` uses. If it is `postgres` (or the pooler user `postgres.<ref>`), RLS does not block it. The first settings save on staging after EPIC-04 deploys is the end-to-end proof. Supplied in-session by the user (human, acting for the Data Model & Domain Schema Owner), DEL-20261015-01.
 - **Live Confirmation — production, applied 2026-10-15 (with RLS enabled):** Up Migration returned "Success. No rows returned". Index verification: `idx_settings_change_log_changed_at`, `settings_change_log_pkey`. Column verification: 8 rows identical to staging. Role check: `postgres` has `rolbypassrls = true`. The deployed backend's `DATABASE_URL` role is still to be confirmed as for staging. Supplied in-session by the user, DEL-20261015-01.
 
+## DS-34 — Allowed exit_reason values with CHECK constraints on positions and trade_history (v2.63, 2026-10-16)
+
+**Story:** ST-02 (EPIC-01, v9.13) — `BLG-SPEC-186`. Delegation `DEL-20261016-01`.
+
+**Rationale:** `exit_reason` was free text. `ExitModal.js` stores six title-case values, while older rows and older code used snake-case spellings (`stop_hit`, `market_regime`, …) that analytics and Trade Reflections could not group. `strategy_rules.md` §8 defines exactly three exit conditions, and three of the six values had no stated mapping to them. §3 Exit Reason Values now lists the allowed values with their §8 condition. This migration backfills legacy spellings, then adds a CHECK constraint to each table so that no other value can be stored.
+
+**Legacy aliases backfilled** (matched case-insensitively, after trimming spaces):
+
+| Stored spelling | Becomes |
+|-----------------|---------|
+| `stop_hit` | `Stop Loss Hit` |
+| `trailing_stop` | `Trailing Stop` |
+| `market_regime`, `risk_off`, `risk_off_signal` | `Risk-Off Signal` |
+| `manual`, `manual_exit` | `Manual Exit` |
+| `target`, `target_reached` | `Target Reached` |
+| `partial`, `partial_profit_taking` | `Partial Profit Taking` |
+| empty or blank | `NULL` (read as `Manual Exit`, §3 note) |
+
+A title-case value with stray spaces (for example `"Stop Loss Hit "`) is trimmed to the allowed value. Any other value is not guessed at. The Pre-check lists it, and the Up Migration's `ADD CONSTRAINT` fails and rolls back the whole transaction, backfill included, until the Data Model & Domain Schema Owner decides that value's mapping.
+
+**Deploy order:** the constraints and the code can go in either order. The v9.13 code writes only allowed values: `ExitModal`'s select, the API's 400 on anything else, and `position_manager.py`'s `Stop Loss Hit` / `Risk-Off Signal`. The Up Migration is applied to **staging and production** by the Data Model & Domain Schema Owner with the Infrastructure & Operations Owner (ST-02 AC 2, RISK-01, DS-23 pattern). The sandbox `DATABASE_URL` is read-only staging. **Status: CONFIRMED APPLIED, 2026-10-16** (staging and production; see Live Confirmation below; `DEL-20261016-01`).
+
+### Pre-check
+
+```sql
+SELECT 'positions' AS table_name, exit_reason, COUNT(*) AS row_count,
+       (exit_reason IS NULL OR exit_reason = ANY (ARRAY[
+        'Stop Loss Hit',
+        'Trailing Stop',
+        'Risk-Off Signal',
+        'Manual Exit',
+        'Target Reached',
+        'Partial Profit Taking'
+    ])) AS allowed
+FROM positions GROUP BY exit_reason
+UNION ALL
+SELECT 'trade_history', exit_reason, COUNT(*),
+       (exit_reason IS NULL OR exit_reason = ANY (ARRAY[
+        'Stop Loss Hit',
+        'Trailing Stop',
+        'Risk-Off Signal',
+        'Manual Exit',
+        'Target Reached',
+        'Partial Profit Taking'
+    ]))
+FROM trade_history GROUP BY exit_reason
+ORDER BY 1, 2;
+```
+
+Every row with `allowed = false` must be a legacy alias from the table above, or blank. Any other value must be resolved first. Record the full output as the pre-migration counts.
+
+### Up Migration (v2.62 → v2.63)
+
+```sql
+BEGIN;
+
+UPDATE positions SET exit_reason = CASE lower(btrim(exit_reason))
+        WHEN 'stop_hit' THEN 'Stop Loss Hit'
+        WHEN 'stop loss hit' THEN 'Stop Loss Hit'
+        WHEN 'trailing_stop' THEN 'Trailing Stop'
+        WHEN 'trailing stop' THEN 'Trailing Stop'
+        WHEN 'market_regime' THEN 'Risk-Off Signal'
+        WHEN 'risk_off' THEN 'Risk-Off Signal'
+        WHEN 'risk_off_signal' THEN 'Risk-Off Signal'
+        WHEN 'risk-off signal' THEN 'Risk-Off Signal'
+        WHEN 'manual' THEN 'Manual Exit'
+        WHEN 'manual_exit' THEN 'Manual Exit'
+        WHEN 'manual exit' THEN 'Manual Exit'
+        WHEN 'target' THEN 'Target Reached'
+        WHEN 'target_reached' THEN 'Target Reached'
+        WHEN 'target reached' THEN 'Target Reached'
+        WHEN 'partial' THEN 'Partial Profit Taking'
+        WHEN 'partial_profit_taking' THEN 'Partial Profit Taking'
+        WHEN 'partial profit taking' THEN 'Partial Profit Taking'
+        WHEN '' THEN NULL
+        ELSE exit_reason END
+WHERE exit_reason IS NOT NULL
+  AND NOT (exit_reason = ANY (ARRAY[
+        'Stop Loss Hit',
+        'Trailing Stop',
+        'Risk-Off Signal',
+        'Manual Exit',
+        'Target Reached',
+        'Partial Profit Taking'
+    ]));
+
+UPDATE trade_history SET exit_reason = CASE lower(btrim(exit_reason))
+        WHEN 'stop_hit' THEN 'Stop Loss Hit'
+        WHEN 'stop loss hit' THEN 'Stop Loss Hit'
+        WHEN 'trailing_stop' THEN 'Trailing Stop'
+        WHEN 'trailing stop' THEN 'Trailing Stop'
+        WHEN 'market_regime' THEN 'Risk-Off Signal'
+        WHEN 'risk_off' THEN 'Risk-Off Signal'
+        WHEN 'risk_off_signal' THEN 'Risk-Off Signal'
+        WHEN 'risk-off signal' THEN 'Risk-Off Signal'
+        WHEN 'manual' THEN 'Manual Exit'
+        WHEN 'manual_exit' THEN 'Manual Exit'
+        WHEN 'manual exit' THEN 'Manual Exit'
+        WHEN 'target' THEN 'Target Reached'
+        WHEN 'target_reached' THEN 'Target Reached'
+        WHEN 'target reached' THEN 'Target Reached'
+        WHEN 'partial' THEN 'Partial Profit Taking'
+        WHEN 'partial_profit_taking' THEN 'Partial Profit Taking'
+        WHEN 'partial profit taking' THEN 'Partial Profit Taking'
+        WHEN '' THEN NULL
+        ELSE exit_reason END
+WHERE exit_reason IS NOT NULL
+  AND NOT (exit_reason = ANY (ARRAY[
+        'Stop Loss Hit',
+        'Trailing Stop',
+        'Risk-Off Signal',
+        'Manual Exit',
+        'Target Reached',
+        'Partial Profit Taking'
+    ]));
+
+ALTER TABLE positions DROP CONSTRAINT IF EXISTS chk_positions_exit_reason;
+ALTER TABLE positions ADD CONSTRAINT chk_positions_exit_reason CHECK (
+    exit_reason IS NULL OR exit_reason IN (
+        'Stop Loss Hit',
+        'Trailing Stop',
+        'Risk-Off Signal',
+        'Manual Exit',
+        'Target Reached',
+        'Partial Profit Taking'
+    )
+);
+
+ALTER TABLE trade_history DROP CONSTRAINT IF EXISTS chk_trade_history_exit_reason;
+ALTER TABLE trade_history ADD CONSTRAINT chk_trade_history_exit_reason CHECK (
+    exit_reason IS NULL OR exit_reason IN (
+        'Stop Loss Hit',
+        'Trailing Stop',
+        'Risk-Off Signal',
+        'Manual Exit',
+        'Target Reached',
+        'Partial Profit Taking'
+    )
+);
+
+COMMIT;
+```
+
+The migration is idempotent: a second run updates no rows and recreates the same constraints.
+
+### Down Migration (v2.63 → v2.62)
+
+```sql
+ALTER TABLE positions DROP CONSTRAINT IF EXISTS chk_positions_exit_reason;
+ALTER TABLE trade_history DROP CONSTRAINT IF EXISTS chk_trade_history_exit_reason;
+```
+
+The backfill is not reversed: the original spellings are recorded in the Pre-check output, and the backfilled values mean the same thing. The v2.62 code also writes only allowed values, so no code rollback is needed.
+
+### Verification
+
+```sql
+SELECT conrelid::regclass AS table_name, conname, pg_get_constraintdef(oid) AS definition
+FROM pg_constraint
+WHERE conname IN ('chk_positions_exit_reason', 'chk_trade_history_exit_reason')
+ORDER BY 1;
+```
+
+Expect 2 rows, one per table, each `CHECK (((exit_reason IS NULL) OR ((exit_reason)::text = ANY (...))))` listing the six values. Then confirm that no value picked up a line break when the script was pasted (each value is on its own line above for this reason; see the staging Live Confirmation):
+
+```sql
+SELECT conrelid::regclass AS table_name, conname,
+       pg_get_constraintdef(oid) LIKE '%''Partial Profit Taking''%' AS partial_literal_ok,
+       position(E'\n' IN pg_get_constraintdef(oid)) = 0 AS no_line_breaks
+FROM pg_constraint
+WHERE conname IN ('chk_positions_exit_reason', 'chk_trade_history_exit_reason')
+ORDER BY 1;
+```
+
+Expect 2 rows, both columns `true`. Then re-run the Pre-check: every row must show `allowed = true`.
+
+**Sign-off:**
+- Data Model & Domain Schema Owner: applied by the user (human, with live write access, acting for the Data Model & Domain Schema Owner with the Infrastructure & Operations Owner) on staging, then production, in the Supabase SQL editor, on 2026-10-16. Output pasted into the execution session.
+- **Live Confirmation — staging, applied 2026-10-16.** Pre-check (before): `positions` NULL 2 (allowed); `trade_history` `manual` 1, `stop_hit` 5 and `target` 6 (not allowed, all legacy aliases), `Stop Loss Hit` 1 and `Trailing Stop` 1 (allowed). The Up Migration returned "Success. No rows returned". **Line-break incident:** the first Verification showed both constraints listing `'Partial \r\n  Profit Taking'`. The original one-line script had wrapped inside that literal when pasted into the SQL editor, so staging would have rejected a real `Partial Profit Taking` exit. The backfill was unaffected (its matched values were not wrapped, and no row held that value). Both constraints were dropped and re-added the same day with one value per line (in one transaction). The line-break check then returned 2 rows, both `partial_literal_ok = true` and `no_line_breaks = true`. This section's SQL was reformatted to one value per line, and the line-break check added to Verification, before production was run. Pre-check (after): `positions` NULL 2; `trade_history` `Manual Exit` 1, `Stop Loss Hit` 6, `Target Reached` 6, `Trailing Stop` 1; every row allowed. 12 rows backfilled, 14 `trade_history` rows before and after.
+- **Live Confirmation — production, applied 2026-10-16** (reformatted script). Pre-check (before): `positions` `Manual Exit` 8, `Stop Loss Hit` 7, `Trailing Stop` 11, NULL 1; `trade_history` `Manual Exit` 8, `Stop Loss Hit` 7, `Trailing Stop` 12. The first Pre-check, run from the original one-line script, showed `trade_history` `Manual Exit` as not allowed while `positions`' `Manual Exit` was allowed. A byte-level diagnostic of `trade_history`'s non-allowed values (reformatted script) returned no rows, so the stored values were clean and the `false` came from a wrapped `'Manual Exit'` literal in that query, the same paste fault as on staging. The Up Migration returned "Success. No rows returned". Line-break check: 2 rows, both `partial_literal_ok = true` and `no_line_breaks = true`. Pre-check (after): identical counts, every row allowed. No rows needed backfilling.
+
 ## Drift Detector Triage (2026-10-13, v2.60)
 
 **Story:** ST-34 (EPIC-05, `2026-10-12__release-v9.12`), BLG-SPEC-178. Triage of the findings `scripts/check_data_model_drift.py` reported on its first run (ST-28, v9.9, 2026-10-01) beyond the 5 known divergence classes.
@@ -3279,6 +3464,6 @@ Expect 8 columns: `id` bigint NO, `settings_id` uuid NO, `batch_id` uuid NO, `fi
 
 ---
 
-**Document Version:** 2.62
+**Document Version:** 2.63
 **Maintained By:** Data Model & Domain Schema Owner
-**Last Review:** 2026-10-15 (ST-26, EPIC-04, v9.12, BLG-SEC-41 — DS-33 (v2.62): new `settings_change_log` table, settings-write audit trail; note under §6); prior — 2026-10-13 (ST-15, EPIC-02, v9.12, BLG-FE-202 — DS-32 (v2.61): `positions.stop_frozen_reason`, added to §2 DDL and Fields); prior — 2026-10-13 (ST-38, EPIC-05, v9.12, BLG-SPEC-183 — v2.60: `entry_price` currency decision recorded under §2, doc fix; DS-23's reconstruction note no longer calls the currency ambiguous; chart-seed pence convention noted); prior history retained — see prior entries in version control
+**Last Review:** 2026-10-16 (ST-02, EPIC-01, v9.13, BLG-SPEC-186 — DS-34 (v2.63): allowed `exit_reason` values mapped to `strategy_rules.md` §8, legacy spellings backfilled, CHECK constraints on `positions` and `trade_history`); prior — 2026-10-15 (ST-26, EPIC-04, v9.12, BLG-SEC-41 — DS-33 (v2.62): new `settings_change_log` table, settings-write audit trail; note under §6); prior — 2026-10-13 (ST-15, EPIC-02, v9.12, BLG-FE-202 — DS-32 (v2.61): `positions.stop_frozen_reason`, added to §2 DDL and Fields); prior history retained — see prior entries in version control

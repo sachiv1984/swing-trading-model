@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 2.16.0
-**Last Updated:** 2026-10-13 (ST-15, EPIC-02, v9.12, BLG-FE-202 — `GET /positions` gains `stop_frozen_reason` (DS-32); both recompute paths write it); prior — 2026-10-13 (ST-14, EPIC-02, v9.12, BLG-BE-148 — gap-risk window uses the NYSE session calendar on the US market date); prior — 2026-10-13 (ST-13, EPIC-02, v9.12, BLG-BE-149 — `display_status` and `position_state` both decided on native P&L; a US row's native entry is `fill_price`, else `entry_price × fx_rate`); prior history retained — see prior entries in version control
+**Version:** 2.16.1
+**Last Updated:** 2026-10-16 (ST-02, EPIC-01, v9.13, BLG-SPEC-186 — `POST /positions/{position_id}/exit` now enforces the allowed `exit_reason` list with a 400, as already documented; DS-34); prior — 2026-10-13 (ST-15, EPIC-02, v9.12, BLG-FE-202 — `GET /positions` gains `stop_frozen_reason` (DS-32); both recompute paths write it); prior — 2026-10-13 (ST-14, EPIC-02, v9.12, BLG-BE-148 — gap-risk window uses the NYSE session calendar on the US market date); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Overview
@@ -28,6 +28,7 @@ Global response envelopes, error shape, defaults, and multi-currency/stop rules 
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.16.1 | 2026-10-16 | ST-02 (BLG-SPEC-186, EPIC-01, v9.13): `POST /positions/{position_id}/exit` enforces the documented `exit_reason` list. An unlisted value (including an empty string or a legacy snake-case spelling) returns `400` before anything is written; omitted or `null` still means `Manual Exit`. The rule and the `400 Invalid exit_reason` error were already documented; the backend had accepted any string. Same list as `data_model.md` DS-34's CHECK constraints. |
 | 2.16.0 | 2026-10-13 | ST-15 (BLG-FE-202, EPIC-02, v9.12): `GET /positions` gains `stop_frozen_reason` (`"atr_unavailable"` \| `null`, DS-32). `GET /positions/analyze` writes it on a post-grace recompute (set without ATR, cleared with ATR). `POST /positions/nightly-stop-update`'s "ATR unavailable" skip now writes `stop_frozen_reason` only (no stop, ATR or timestamp), and a nightly recompute with ATR clears it. |
 | 2.15.0 | 2026-10-13 | ST-14 (BLG-BE-148, EPIC-02, v9.12): `GET /positions/{position_id}/gap-risk` — the window runs to the next **NYSE session** (weekends, NYSE full-closure holidays and dated one-off closures excluded; early closes count), measured from the **US market date**. `days_until` is computed from the earnings date. A Friday view before a Monday holiday now flags Tuesday earnings. No shape change. Strategy Rules & System Intent Owner ruling `ESC-EXEC-20261013-07` (v9.12 addendum to the §13 record). |
 | 2.14.0 | 2026-10-13 | ST-13 (BLG-BE-149, EPIC-02, v9.12): `display_status` on `GET /positions` is decided on native P&L, the same basis as `position_state`, and its field note states this. `position_state` compares the native price with the **native** entry (`fill_price`, else `entry_price × fx_rate` for US). The implementation had compared the GBP `entry_price` with a USD price, which showed a US position down by up to about 20% in dollars as `PROFITABLE`. Values change for US rows only; no shape change. |
@@ -494,7 +495,7 @@ Response uses the standard success envelope from **conventions.md**.
 - `position_id` must identify an existing open position.
 - `exit_price` must be greater than 0.
 - If provided, `shares` must be > 0 and must not exceed position size.
-- `exit_reason` must be one of the allowed values listed above.
+- `exit_reason` must be one of the allowed values listed above, or omitted / `null` (stored as `Manual Exit`). Any other value, including an empty string or a legacy snake-case spelling, returns `400` with `detail` "exit_reason must be one of: Stop Loss Hit, Trailing Stop, Risk-Off Signal, Manual Exit, Target Reached, Partial Profit Taking." before anything is written. Enforced from v2.16.1 (ST-02, BLG-SPEC-186); the same list is a database CHECK constraint (`data_model.md` DS-34), and each value's `strategy_rules.md` §8 exit condition is in `data_model.md` §3 Exit Reason Values.
 - For US positions, `exit_fx_rate` is required; the backend rejects requests without it.
 
 ### Errors

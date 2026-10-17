@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "../ui/dialog";
 import { Button } from "../ui/button";
 import { CheckCircle2, XCircle, Loader2, AlertTriangle } from "lucide-react";
@@ -12,9 +12,16 @@ export default function MonitorModal({
   positions, 
   marketRegimes, 
   isLoading,
-  onConfirmExits 
+  onConfirmExits,
+  restoreSelection = null
 }) {
   const [selectedExits, setSelectedExits] = useState([]);
+
+  // When an exit queue is cancelled the Monitor reopens with the positions
+  // not yet exited still selected (positions.md §Daily Position Monitor Exit Queue).
+  useEffect(() => {
+    if (open && restoreSelection) setSelectedExits(restoreSelection);
+  }, [open, restoreSelection]);
 
   const getPositionStatus = (position) => {
     const regime = marketRegimes?.find(r => r.market === position.market);
@@ -35,13 +42,20 @@ export default function MonitorModal({
     );
   };
 
+  // "Exit Selected" submits nothing itself: it hands the selected positions,
+  // in display order and with their suggestion, to the Dashboard's exit queue.
   const handleConfirm = () => {
-    const positionsToExit = positions.filter(p => selectedExits.includes(p.id));
-    onConfirmExits(positionsToExit);
+    const exits = positions
+      .filter(p => selectedExits.includes(p.id))
+      .map(p => ({ position: p, reason: getPositionStatus(p).reason }));
     setSelectedExits([]);
+    onConfirmExits(exits);
   };
 
   const exitSuggestions = positions?.filter(p => getPositionStatus(p).status === "exit") || [];
+  // A restored selection can name a position whose exit was recorded after
+  // Cancel; count only positions still listed.
+  const selectedCount = selectedExits.filter(id => positions?.some(p => p.id === id)).length;
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
@@ -148,8 +162,8 @@ export default function MonitorModal({
         <DialogFooter className="border-t border-slate-700 pt-4">
           <div className="flex items-center justify-between w-full">
             <p className="text-sm text-slate-600 dark:text-slate-400">
-              {selectedExits.length > 0 
-                ? `${selectedExits.length} position${selectedExits.length > 1 ? "s" : ""} selected for exit`
+              {selectedCount > 0 
+                ? `${selectedCount} position${selectedCount > 1 ? "s" : ""} selected for exit`
                 : exitSuggestions.length > 0 
                   ? `${exitSuggestions.length} exit suggestion${exitSuggestions.length > 1 ? "s" : ""}`
                   : "All positions healthy"
@@ -163,7 +177,7 @@ export default function MonitorModal({
               >
                 Close
               </Button>
-              {selectedExits.length > 0 && (
+              {selectedCount > 0 && (
                 <Button 
                   onClick={handleConfirm}
                   className="bg-rose-600 hover:bg-rose-500 text-white"
