@@ -352,6 +352,19 @@
       "resolved_utc": "2026-10-16T12:16:18Z",
       "resolved_by": "Strategy Rules & System Intent Owner (agent-mediated, §5.3, user-directed)",
       "resolution_summary": "Ruling (A): rebalance exit enters §8 as §8.4 (strategy_rules.md v1.17); live signal aligned (status-independent ranking, §8.2 precedence, 503 when today's run is missing); BLG-BE-187 and BLG-SPEC-206 filed."
+    },
+    "ESC-EXEC-20261017-01": {
+      "cycle": "2026-10-16__release-v9.13",
+      "summary": "ST-40/EPIC-06 - PMO Lead approval of the role_share_history.md v9.8-v9.10 compound count correction (19 -> 17 of 21)",
+      "trigger_type": "Lifecycle",
+      "owning_authority": "PMO Lead",
+      "raised_utc": "2026-10-17T15:21:52Z",
+      "sla_due_utc": "2026-10-18T15:21:52Z",
+      "blocks_execution": false,
+      "disposition": "Resolved",
+      "resolved_utc": "2026-10-17T15:23:13Z",
+      "resolved_by": "PMO Lead (agent-mediated, §5.3)",
+      "resolution_summary": "Approved: script re-derivation shows 4 of 21 v9.10 Owner values are non-compound, so 17 are compound; diff limited to that figure and the Last Updated header. ST-40 reclassified autonomous."
     }
   },
   "deferred_escalations": {
