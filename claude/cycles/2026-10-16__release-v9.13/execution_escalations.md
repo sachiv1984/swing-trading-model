@@ -69,7 +69,8 @@ Last Updated: 2026-10-16
 - **Unblock criteria:** a dated choice, (A) or (B), recorded in this escalation's resolution.
 - **SLA due-by:** 2026-10-20T16:06:04Z (72h — Strategy)
 - **Blocks execution:** No
-- **Disposition:** Open
+- **Disposition:** Resolved
+- **Resolution summary (2026-10-17T16:11:36Z):** User decision for the Strategy Rules & System Intent Owner (human, in-session, 2026-10-17, via the engine's ruling question): **(A) align the code.** `backend/position_manager.py` no longer recalculates or ratchets the stop while `holding_days < min_hold_days` (§6.3); the stop trails as before after grace. No `strategy_rules.md` change. Unit tests `tests/test_stop_reconciliation.py::TestPositionManagerGracePeriodStop` (in-grace frozen, last grace day frozen, post-grace trails, in-grace price below stop holds); the two in-grace tests fail against the previous code. ST-07 reclassified `autonomous`.
 
 ## ESC-EXEC-20261017-04
 
