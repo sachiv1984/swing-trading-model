@@ -85,13 +85,20 @@ class TestGetPositionsWithPricesExposesNewFields:
         assert pos["active_atr_multiplier"] == 2.0
 
 
+# ST-12 (EPIC-02, v9.13, BLG-QA-204): the production multiplier values
+# (strategy_rules.md §7.2 / §11: 2.0 profitable, 5.0 losing). get_settings() is
+# mocked to them so no test-environment settings row can leak in.
+REAL_MULTIPLIER_SETTINGS = [{"atr_multiplier_trailing": 2.0, "atr_multiplier_initial": 5.0}]
+
+
 class TestAnalyzePositionsWritesTimestamps:
 
-    def _run(self, position):
+    def _run(self, position, current_price=110.0, settings=REAL_MULTIPLIER_SETTINGS):
         with patch.object(position_service, "get_portfolio", return_value={"id": "portfolio-1"}), \
              patch.object(position_service, "get_positions", return_value=[position]), \
+             patch.object(position_service, "get_settings", return_value=settings), \
              patch.object(position_service, "get_live_fx_rate", return_value=1.0), \
-             patch.object(position_service, "get_current_price", return_value=110.0), \
+             patch.object(position_service, "get_current_price", return_value=current_price), \
              patch.object(position_service, "check_market_regime",
                            return_value={"spy_risk_on": True, "ftse_risk_on": True}), \
              patch.object(position_service, "update_position") as mock_update:
@@ -106,7 +113,27 @@ class TestAnalyzePositionsWritesTimestamps:
         updates = mock_update.call_args.args[1]
         assert "stop_calculated_at" in updates
         assert "active_atr_multiplier" in updates
-        assert updates["active_atr_multiplier"] > 0  # a real multiplier, not the grace-period sentinel 0
+        # Profitable (110 > entry 100): the tight trailing multiplier, exactly.
+        assert updates["active_atr_multiplier"] == 2.0
+
+    def test_post_grace_losing_position_stores_wide_multiplier(self):
+        mock_update = self._run(
+            _base_position(entry_date=date.today() - timedelta(days=30), current_stop=60.0, initial_stop=60.0),
+            current_price=95.0,  # below entry 100, above the stop
+        )
+        updates = mock_update.call_args.args[1]
+        assert updates["active_atr_multiplier"] == 5.0
+
+    def test_stored_multiplier_ignores_a_divergent_settings_row(self):
+        """The multiplier comes from the fixed §11 source (stop_multiplier_settings()),
+        not the editable settings row: a settings row carrying other values must not
+        change what is stored."""
+        mock_update = self._run(
+            _base_position(entry_date=date.today() - timedelta(days=30)),
+            settings=[{"atr_multiplier_trailing": 1.0, "atr_multiplier_initial": 1.0}],
+        )
+        updates = mock_update.call_args.args[1]
+        assert updates["active_atr_multiplier"] == 2.0
 
     def test_grace_period_write_omits_stop_calculated_at(self):
         mock_update = self._run(_base_position(
