@@ -153,6 +153,39 @@ def test_invalid_inputs_always_rejected_with_deterministic_reason(risk_percent, 
     assert "suggested_shares" not in result
 
 
+def _size_valid_input(entry_price, stop_price, risk_percent, portfolio_value, market, fx_rate):
+    with patch.object(sizing_service, "get_portfolio", return_value={"id": "p1", "cash": 1_000_000.0}), \
+         patch.object(sizing_service, "get_latest_snapshot", return_value={"total_value": portfolio_value}), \
+         patch.object(sizing_service, "get_settings", return_value=[{}]), \
+         patch.object(sizing_service, "_calculate_heat_impact", return_value=None):
+        return sizing_service.size_position(
+            entry_price=entry_price, stop_price=stop_price, risk_percent=risk_percent,
+            market=market, fx_rate=fx_rate if market == "US" else None,
+        )
+
+
+def _assert_valid_conservative_size(result, entry_price, stop_price, risk_percent, portfolio_value, market, fx_rate):
+    assert result["valid"] is True
+    shares = result["suggested_shares"]
+    assert shares >= 0
+    # At most 4 decimal places. round() is exact here: floor-to-4dp yields the
+    # float nearest k/10000, which round(.., 4) maps back to itself
+    # (a `* 10000` comparison is not -- 0.0006 * 10000 == 5.999...).
+    assert round(shares, 4) == shares, f"shares {shares} has more than 4dp"
+    fx_used = fx_rate if market == "US" else 1.0
+    risk_amount = portfolio_value * risk_percent / 100
+    risked = shares * (entry_price - stop_price) * fx_used
+    assert risked <= risk_amount * (1 + 1e-9), f"risks {risked} > RiskAmount {risk_amount}"
+    # ST-14 (EPIC-02, v9.13, BLG-QA-210): lower bound. shares is within one 4dp
+    # floor step of RiskAmount / (StopDistance x FX) -- the §4.1.3 result before the
+    # ST-04 concentration adjustment, which ticker=None disables. A zeroed or
+    # halved suggested_shares falls below it.
+    raw_shares = risk_amount / ((entry_price - stop_price) * fx_used)
+    assert raw_shares - shares < 0.0001 + 1e-9 * max(1.0, raw_shares), (
+        f"shares {shares} is more than one 4dp floor step below {raw_shares}"
+    )
+
+
 @PROPERTY_SETTINGS
 @given(
     entry_price=positive_price,
@@ -165,25 +198,28 @@ def test_invalid_inputs_always_rejected_with_deterministic_reason(risk_percent, 
 def test_valid_inputs_produce_valid_conservative_size(entry_price, stop_fraction, risk_percent, portfolio_value, market, fx_rate):
     stop_price = entry_price * stop_fraction
     assume(0 < stop_price < entry_price)
-    with patch.object(sizing_service, "get_portfolio", return_value={"id": "p1", "cash": 1_000_000.0}), \
-         patch.object(sizing_service, "get_latest_snapshot", return_value={"total_value": portfolio_value}), \
-         patch.object(sizing_service, "get_settings", return_value=[{}]), \
-         patch.object(sizing_service, "_calculate_heat_impact", return_value=None):
-        result = sizing_service.size_position(
-            entry_price=entry_price, stop_price=stop_price, risk_percent=risk_percent,
-            market=market, fx_rate=fx_rate if market == "US" else None,
-        )
-    assert result["valid"] is True
-    shares = result["suggested_shares"]
-    assert shares >= 0
-    # At most 4 decimal places. round() is exact here: floor-to-4dp yields the
-    # float nearest k/10000, which round(.., 4) maps back to itself
-    # (a `* 10000` comparison is not -- 0.0006 * 10000 == 5.999...).
-    assert round(shares, 4) == shares, f"shares {shares} has more than 4dp"
-    fx_used = fx_rate if market == "US" else 1.0
-    risk_amount = portfolio_value * risk_percent / 100
-    risked = shares * (entry_price - stop_price) * fx_used
-    assert risked <= risk_amount * (1 + 1e-9), f"risks {risked} > RiskAmount {risk_amount}"
+    result = _size_valid_input(entry_price, stop_price, risk_percent, portfolio_value, market, fx_rate)
+    _assert_valid_conservative_size(result, entry_price, stop_price, risk_percent, portfolio_value, market, fx_rate)
+
+
+_REAL_FLOOR_4DP = sizing_service._floor_4dp
+
+
+@pytest.mark.parametrize("market,fx_rate", [("UK", None), ("US", 1.27)])
+@pytest.mark.parametrize("mutation", [
+    pytest.param(lambda v: 0.0, id="zeroed"),
+    pytest.param(lambda v: _REAL_FLOOR_4DP(v / 2), id="halved"),
+])
+def test_zeroed_or_halved_suggested_shares_falsifies_the_property(mutation, market, fx_rate):
+    """ST-14 (BLG-QA-210): the property must reject a sizing regression that
+    returns too few shares, not only too many. 100 / 90 / 1% of 10,000 gives
+    RawShares 10 (UK) or ~7.874 (US), far above one floor step."""
+    args = (100.0, 90.0, 1.0, 10_000.0, market, fx_rate)
+    _assert_valid_conservative_size(_size_valid_input(*args), *args)  # unmutated passes
+    with patch.object(sizing_service, "_floor_4dp", side_effect=mutation):
+        mutated = _size_valid_input(*args)
+    with pytest.raises(AssertionError, match="floor step below"):
+        _assert_valid_conservative_size(mutated, *args)
 
 
 @PROPERTY_SETTINGS
