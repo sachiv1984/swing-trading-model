@@ -2,7 +2,11 @@ openapi: 3.0.3
 
 info:
   title: Momentum Trading Assistant API
-  version: 3.33.0
+  version: 3.35.0
+  # v3.35.0 (2026-10-17, ST-08, EPIC-02, v9.13): POST /settings and PATCH /settings/{settings_id} return
+  # 400 when the body sets one of the four strategy_rules.md §11-fixed fields (BLG-API-07). No new endpoint.
+  # v3.34.0 (2026-10-17, ST-06, EPIC-02, v9.13): POST /portfolio/position rejects a fetched or fallback
+  # ATR where 5 × ATR ≥ entry_price with 400 (BLG-BE-180). No new endpoint.
   # v3.33.0 (2026-10-17, EPIC-02, v9.13): new GET /positions/stop-freshness — median/maximum age of
   # stop_calculated_at across open positions, for System Status (ST-10, BLG-SPEC-188).
   # GET /reports/monthly-pnl: a monthly_pnl_snapshots failure returns 200 without the four
@@ -158,7 +162,9 @@ paths:
         Auto-calculates fees and ATR (if not provided). The initial stop is always
         system-set at entry_price − 5 × ATR (strategy_rules.md §5, §11); a non-null
         stop_price is rejected with 400 (ST-10, BLG-BE-159, v9.12). A typed atr_value where
-        5 × atr_value ≥ entry_price is rejected with 400 (ST-18, BLG-FE-203, v9.12).
+        5 × atr_value ≥ entry_price is rejected with 400 (ST-18, BLG-FE-203, v9.12). A fetched (or
+        fallback) ATR where 5 × ATR ≥ entry_price is also rejected with 400: §5 gives no stop, nothing
+        is stored (ST-06, BLG-BE-180, v9.13).
       requestBody:
         required: true
         content:
@@ -4356,7 +4362,10 @@ paths:
       description: |
         Creates a new settings record. Used to initialise settings if none exist.
         Every non-null column of the new row is logged to settings_change_log (ST-26).
-        Canonical contract: docs/specs/api_contracts/settings_endpoints.md v1.5.0
+        ST-08 (v9.13, BLG-API-07): a body that sets min_hold_days, atr_period,
+        atr_multiplier_initial or atr_multiplier_trailing to a non-null value is rejected
+        with 400 (fixed by strategy_rules.md §11); nothing is written. Absent or null is a no-op.
+        Canonical contract: docs/specs/api_contracts/settings_endpoints.md v1.6.0
       parameters:
         - in: header
           name: X-Request-Source
@@ -4388,7 +4397,10 @@ paths:
         Updates one or more settings fields on an existing record.
         Fields not provided remain unchanged. Each field whose value changes is
         logged to settings_change_log (ST-26); a write that changes nothing logs nothing.
-        Canonical contract: docs/specs/api_contracts/settings_endpoints.md v1.5.0
+        ST-08 (v9.13, BLG-API-07): a body that sets min_hold_days, atr_period,
+        atr_multiplier_initial or atr_multiplier_trailing to a non-null value is rejected
+        with 400 (fixed by strategy_rules.md §11); nothing is written. Absent or null is a no-op.
+        Canonical contract: docs/specs/api_contracts/settings_endpoints.md v1.6.0
       parameters:
         - in: header
           name: X-Request-Source
@@ -7313,7 +7325,9 @@ components:
       description: |
         All fields optional. Only provided fields are updated.
         Canonical field meanings and constraints live in:
-        docs/specs/api_contracts/settings_endpoints.md v1.3.0
+        docs/specs/api_contracts/settings_endpoints.md v1.6.0
+        min_hold_days, atr_period, atr_multiplier_initial and atr_multiplier_trailing
+        remain in the schema but a non-null value returns 400 (ST-08, v9.13, §11).
         Includes default_risk_percent (float, > 0, <= 100) added in v1.8.0.
         Includes concentration_position_threshold_pct and
         concentration_sector_threshold_pct (both float, optional) added in v5.0.

@@ -12,6 +12,11 @@
  *   SC-TAP-03  Preview call fails (500) — "Calculated on save", no error banner (AC 3)
  *   SC-TAP-04  A typed ATR takes precedence: the hint hides and the typed ATR drives the stop
  *   SC-TAP-05  The submitted payload carries a blank ATR when only the preview was used
+ *   SC-TAP-06  ST-06 (EPIC-02, v9.13, BLG-BE-180): a preview ATR where 5 × ATR ≥ entry shows "No valid stop",
+ *              never a negative or zero stop, explains why, shows Risk "—" and disables Create Position
+ *              (position_form.md v1.11 §Initial Stop, Branch A — ESC-EXEC-20261017-02)
+ *   SC-TAP-07  ST-06: the boundary 5 × ATR == entry is also "No valid stop"
+ *   SC-TAP-08  ST-06: a 400 at save (ATR moved between preview and save) shows the server's message
  *
  * Backend AC 2 (preview stop == saved initial_stop) is pinned in tests/test_market_atr_preview_endpoint.py.
  *
@@ -167,3 +172,57 @@ test('SC-TAP-05: the payload submits a blank ATR when only the preview was used'
   expect(captured.atr_value).toBeNull();
   expect(captured).not.toHaveProperty('stop_price');
 });
+
+// ---------------------------------------------------------------------------
+// ST-06 (EPIC-02, v9.13, BLG-BE-180) — fetched ATR gives no §5 stop (Branch A, reject)
+// Backend: tests/test_add_position_stop_handling.py TestFetchedAtrRejected.
+// ---------------------------------------------------------------------------
+
+test('SC-TAP-06: a preview ATR with 5 × ATR above entry shows "No valid stop", Risk "—", and disables submit', async ({ page }) => {
+  await mockFallback(page);
+  await mockAtrPreview(page, { atr: 25 }); // 100 − 5 × 25 = −25
+  await gotoTradeEntry(page);
+  await fillUkEntryNoAtr(page, { entry: '100', shares: '10' });
+
+  await expect(page.getByTestId('system-initial-stop-value')).toHaveText('No valid stop');
+  const caption = page.getByTestId('initial-stop-invalid');
+  await expect(caption).toHaveAttribute('role', 'status');
+  await expect(caption).toHaveText(
+    '5× the fetched 14-day ATR (£25.00) is at or above the entry price, so the stop would be at or below zero. §5 cannot set a stop for this entry.'
+  );
+  // No negative or zero stop is displayed anywhere in the stop block.
+  await expect(page.getByTestId('system-initial-stop')).not.toContainText('−£');
+  await expect(page.getByTestId('system-initial-stop')).not.toContainText('-£');
+  await expect(page.getByTestId('system-initial-stop')).not.toContainText('£0.00');
+  await expect(page.getByTestId('risk-to-stop')).toHaveText('—');
+  await expect(page.getByTestId('sizing-empty-hint')).toBeVisible();
+  await expect(page.getByRole('button', { name: /create position/i })).toBeDisabled();
+});
+
+test('SC-TAP-07: the boundary 5 × ATR == entry is also "No valid stop"', async ({ page }) => {
+  await mockFallback(page);
+  await mockAtrPreview(page, { atr: 20 }); // 100 − 5 × 20 = 0
+  await gotoTradeEntry(page);
+  await fillUkEntryNoAtr(page, { entry: '100', shares: '10' });
+
+  await expect(page.getByTestId('system-initial-stop-value')).toHaveText('No valid stop');
+  await expect(page.getByTestId('initial-stop-invalid')).toBeVisible();
+  await expect(page.getByRole('button', { name: /create position/i })).toBeDisabled();
+});
+
+test('SC-TAP-08: a 400 at save (the ATR moved after the preview) shows the server message', async ({ page }) => {
+  await mockFallback(page);
+  await mockAtrPreview(page, { atr: 2 });
+  const message = 'The fetched 14-day ATR (21) is too large for this entry: 5 × ATR is at or above the entry price (100), '
+    + 'so the stop would be at or below zero and strategy_rules.md §5 gives no stop. The position was not recorded.';
+  await page.route(`${API}/portfolio/position`, (route) =>
+    route.fulfill({ status: 400, contentType: 'application/json', body: JSON.stringify({ detail: message }) })
+  );
+  await gotoTradeEntry(page);
+  await fillUkEntryNoAtr(page, { entry: '100', shares: '10' });
+  await expect(page.getByTestId('system-initial-stop-value')).toHaveText('£90.00');
+
+  await page.getByRole('button', { name: /create position/i }).click();
+  await expect(page.getByText(/strategy_rules\.md §5 gives no stop/)).toBeVisible({ timeout: 8000 });
+});
+

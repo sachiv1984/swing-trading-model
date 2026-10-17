@@ -188,7 +188,44 @@ class TestImplausibleTypedAtrRejected:
         assert data["atr_source"] == "user"
         assert response["initial_stop"] == pytest.approx(2.5)  # 10 − 5 × 1.5
 
-    def test_blank_atr_is_not_checked_against_entry(self):
-        # A fetched ATR is never rejected here: the check applies to typed input only.
-        data, _ = TestAddPositionStopHandling()._add_with_cleanup(entry_price=10.0, atr_value=None, fetched_atr=3.0)
+    def test_blank_atr_is_not_checked_by_the_typed_atr_rule(self):
+        # The typed-ATR rule (and its pence/cents hint) applies to typed input only;
+        # a fetched ATR is checked by ST-06's own rule (TestFetchedAtrRejected).
+        data, _ = TestAddPositionStopHandling()._add_with_cleanup(entry_price=10.0, atr_value=None, fetched_atr=1.5)
         assert data["atr_source"] == "fetched"
+
+
+class TestFetchedAtrRejected:
+    """ST-06 (EPIC-02, v9.13, BLG-BE-180): a fetched ATR whose 5x multiple meets or
+    exceeds the entry price is rejected with a 400 and nothing is stored
+    (Strategy Rules & System Intent Owner ruling (A), ESC-EXEC-20261017-02)."""
+
+    _BODY = {"ticker": "VOD.L", "market": "UK", "entry_date": "2026-10-13", "shares": 10, "entry_price": 10.0}
+
+    @pytest.mark.parametrize("fetched_atr", [2.0, 3.0])  # 5 x ATR == 10 (boundary), > 10
+    def test_endpoint_returns_400_and_stores_nothing(self, fetched_atr):
+        client, main = TestSuppliedEntryStopRejected._client()
+        with patch("services.position_service.create_position") as mock_create, \
+             patch("services.position_service.update_portfolio_cash") as mock_cash, \
+             patch("services.position_service.calculate_atr", return_value=fetched_atr), \
+             patch("services.position_service.get_portfolio", return_value={"id": "portfolio-1", "cash": 1_000_000.0}):
+            response = client.post("/portfolio/position", json=self._BODY)
+        assert response.status_code == 400
+        detail = response.json()["detail"]
+        assert f"The fetched 14-day ATR ({fetched_atr:g})" in detail
+        assert f"{INITIAL_ATR_MULTIPLIER:g} × ATR is at or above the entry price (10)" in detail
+        assert "strategy_rules.md §5 gives no stop" in detail
+        assert "pence or cents" not in detail
+        mock_create.assert_not_called()
+        mock_cash.assert_not_called()
+
+    def test_service_never_stores_a_stop_at_or_below_zero(self):
+        with pytest.raises(ValueError, match="gives no stop"):
+            TestAddPositionStopHandling()._add_with_cleanup(entry_price=10.0, atr_value=None, fetched_atr=2.5)
+
+    def test_fallback_atr_cannot_trigger_it(self):
+        # calculate_atr() returns None -> fallback ATR = 0.02 x entry; stop = entry - 5 x 0.2 = 0.9 x entry.
+        data, response = TestAddPositionStopHandling()._add_with_cleanup(entry_price=10.0, atr_value=None, fetched_atr=None)
+        assert data["atr_source"] == "fallback"
+        assert response["initial_stop"] == pytest.approx(9.0)
+

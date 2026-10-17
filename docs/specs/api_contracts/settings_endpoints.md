@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 1.5.0
-**Last Updated:** 2026-10-15 (ST-26, EPIC-04, v9.12, BLG-SEC-41 — settings writes are logged to settings_change_log; GET /settings returns last_change; X-Request-Source header); prior — 2026-10-13 (ST-16, EPIC-02, v9.12, BLG-BE-144 — POST /settings keeps column defaults for omitted or null fields); prior — 2026-10-06 (ST-03, EPIC-01, v9.10, BLG-SPEC-187 — the four strategy-parameter fields are stored only; changing them affects no stop, per the ST-01 ruling (a)); prior history retained — see prior entries in version control
+**Version:** 1.6.0
+**Last Updated:** 2026-10-17 (ST-08, EPIC-02, v9.13, BLG-API-07 — POST /settings and PATCH /settings/{settings_id} reject the four §11-fixed strategy fields with 400); prior — 2026-10-15 (ST-26, EPIC-04, v9.12, BLG-SEC-41 — settings writes are logged to settings_change_log; GET /settings returns last_change; X-Request-Source header); prior — 2026-10-13 (ST-16, EPIC-02, v9.12, BLG-BE-144 — POST /settings keeps column defaults for omitted or null fields); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 # settings_endpoints.md
@@ -129,7 +129,7 @@ Since v1.5.0 (ST-26, BLG-SEC-41), every settings write is recorded in `settings_
 
 **Strategy parameter context:**
 
-The default values (`min_hold_days: 10`, `atr_multiplier_initial: 5.0`, `atr_multiplier_trailing: 2.0`) reflect the backtest-optimised parameters that produced 26.37% CAGR, 1.29 Sharpe Ratio, and −25.38% maximum drawdown. **Effect of changing them on open positions (v9.10, ST-03 / ST-01, `BLG-BE-138`): none.** Under the ST-01 parameter-authority ruling (a), 2026-10-06 (`ESC-EXEC-20261006-01`), the stop parameters are fixed by `strategy_rules.md` §11 and read from `backend/strategy_parameters.py`. No stop path reads these columns: not `GET /positions/analyze`, not `POST /positions/nightly-stop-update`, not the exit decision, grace countdown or alerts. `POST /settings` and `PATCH /settings/{settings_id}` still accept and store `min_hold_days`, `atr_period`, `atr_multiplier_initial` and `atr_multiplier_trailing` for compatibility, but a stored value changes no stop, grace window or exit signal, for open or new positions. The Settings page shows them read-only and no longer sends them (`settings.md` §Strategy Parameter Presentation). Changing a §11 value is a §12.3 strategy change, not a settings edit. See `position_endpoints.md` (`GET /positions/analyze`, Side effects) for how stops are recalculated.
+The default values (`min_hold_days: 10`, `atr_multiplier_initial: 5.0`, `atr_multiplier_trailing: 2.0`) reflect the backtest-optimised parameters that produced 26.37% CAGR, 1.29 Sharpe Ratio, and −25.38% maximum drawdown. **Effect of changing them on open positions (v9.10, ST-03 / ST-01, `BLG-BE-138`): none.** Under the ST-01 parameter-authority ruling (a), 2026-10-06 (`ESC-EXEC-20261006-01`), the stop parameters are fixed by `strategy_rules.md` §11 and read from `backend/strategy_parameters.py`. No stop path reads these columns: not `GET /positions/analyze`, not `POST /positions/nightly-stop-update`, not the exit decision, grace countdown or alerts. *(v1.6.0 — ST-08, BLG-API-07, v9.13)* `POST /settings` and `PATCH /settings/{settings_id}` reject a write that sets `min_hold_days`, `atr_period`, `atr_multiplier_initial` or `atr_multiplier_trailing` to a non-null value with `400` (see Errors under each). The columns still exist and `GET /settings` still returns them; existing stored values change no stop, grace window or exit signal. The Settings page shows them read-only and no longer sends them (`settings.md` §Strategy Parameter Presentation). Changing a §11 value is a §12.3 strategy change, not a settings edit. See `position_endpoints.md` (`GET /positions/analyze`, Side effects) for how stops are recalculated.
 
 ### Errors
 
@@ -174,10 +174,6 @@ All fields are optional. Fields not provided, or sent as `null`, are not inserte
 
 ```json
 {
-  "min_hold_days": 10,
-  "atr_multiplier_initial": 5.0,
-  "atr_multiplier_trailing": 2.0,
-  "atr_period": 14,
   "default_currency": "GBP",
   "theme": "dark",
   "uk_commission": 9.95,
@@ -195,10 +191,7 @@ All fields are optional. Fields not provided, or sent as `null`, are not inserte
 
 | Field | Type | Constraint |
 |-------|------|------------|
-| `min_hold_days` | integer | Must be ≥ 1 |
-| `atr_multiplier_initial` | float | Must be > 0 |
-| `atr_multiplier_trailing` | float | Must be > 0 |
-| `atr_period` | integer | Must be ≥ 1 |
+| `min_hold_days`, `atr_period`, `atr_multiplier_initial`, `atr_multiplier_trailing` | — | **Not settable** (v1.6.0, ST-08): a non-null value returns `400` (below). Absent or `null` is a no-op. Fixed by `strategy_rules.md` §11. |
 | `default_currency` | string | `"GBP"` only (multi-currency support is position-level, not portfolio-level) |
 | `theme` | string | `"dark"` or `"light"` |
 | `uk_commission` | float | Must be ≥ 0 |
@@ -242,7 +235,8 @@ Returns the created settings object.
 
 Errors use the standard error envelope from **conventions.md**.
 
-- `400` Invalid field value (e.g. negative commission, multiplier ≤ 0, `default_risk_percent` ≤ 0 or > 100)
+- `400` Invalid field value (e.g. negative commission, `default_risk_percent` ≤ 0 or > 100)
+- `400` §11-fixed field set (v1.6.0, ST-08, BLG-API-07): the body sets one or more of `min_hold_days`, `atr_period`, `atr_multiplier_initial`, `atr_multiplier_trailing` to a non-null value. Nothing is written. Envelope `{"status": "error", "message": ...}`; the message lists the offending fields in that order and reads "{fields} cannot be set through the Settings API. These strategy parameters are fixed by strategy_rules.md §11 (grace period 10 days, ATR period 14, initial multiplier 5×, trailing multiplier 2×); changing them is a §12.3 strategy change." The figures are read from `backend/strategy_parameters.py`. A mixed body is rejected whole. API Contracts & Documentation Owner ruling (A), `claude/cycles/2026-10-16__release-v9.13/execution_escalations.md` ESC-EXEC-20261017-04.
 
 ---
 
@@ -282,10 +276,6 @@ All fields are optional. Include only the fields to be changed.
 
 ```json
 {
-  "min_hold_days": 10,
-  "atr_multiplier_initial": 5.0,
-  "atr_multiplier_trailing": 2.0,
-  "atr_period": 14,
   "default_currency": "GBP",
   "theme": "dark",
   "uk_commission": 9.95,
@@ -303,10 +293,7 @@ All fields are optional. Include only the fields to be changed.
 
 | Field | Type | Constraint |
 |-------|------|------------|
-| `min_hold_days` | integer | Must be ≥ 1 |
-| `atr_multiplier_initial` | float | Must be > 0 |
-| `atr_multiplier_trailing` | float | Must be > 0 |
-| `atr_period` | integer | Must be ≥ 1 |
+| `min_hold_days`, `atr_period`, `atr_multiplier_initial`, `atr_multiplier_trailing` | — | **Not settable** (v1.6.0, ST-08): a non-null value returns `400` (below). Absent or `null` is a no-op. Fixed by `strategy_rules.md` §11. |
 | `default_currency` | string | `"GBP"` only (multi-currency support is position-level, not portfolio-level) |
 | `theme` | string | `"dark"` or `"light"` |
 | `uk_commission` | float | Must be ≥ 0 |
@@ -349,7 +336,7 @@ Returns the full updated settings object.
 
 ### Validation rules & constraints
 
-- Strategy parameter changes (`min_hold_days`, ATR multipliers) take effect on the **next** call to `GET /positions/analyze`. Open positions are not retroactively affected.
+- Strategy parameters (`min_hold_days`, `atr_period`, the ATR multipliers) cannot be changed through this API (v1.6.0, ST-08, BLG-API-07): they are fixed by `strategy_rules.md` §11 and a write that sets one returns `400`. Changing one is a §12.3 strategy change.
 - Fee parameter changes (`uk_commission`, `stamp_duty_rate`, etc.) apply to new transactions only. Existing trade history is not recalculated.
 - `default_risk_percent` changes take effect immediately on the next load of the Trade Entry page. No existing trades or open positions are affected.
 - `concentration_position_threshold_pct` and `concentration_sector_threshold_pct` changes take effect on the next call to `GET /portfolio/concentration-status`.
@@ -358,7 +345,8 @@ Returns the full updated settings object.
 
 Errors use the standard error envelope from **conventions.md**.
 
-- `400` Invalid field value (e.g. negative commission, multiplier ≤ 0, `default_risk_percent` ≤ 0 or > 100)
+- `400` Invalid field value (e.g. negative commission, `default_risk_percent` ≤ 0 or > 100)
+- `400` §11-fixed field set (v1.6.0, ST-08, BLG-API-07): the body sets one or more of `min_hold_days`, `atr_period`, `atr_multiplier_initial`, `atr_multiplier_trailing` to a non-null value. Nothing is written. Envelope `{"status": "error", "message": ...}`; the message lists the offending fields in that order and reads "{fields} cannot be set through the Settings API. These strategy parameters are fixed by strategy_rules.md §11 (grace period 10 days, ATR period 14, initial multiplier 5×, trailing multiplier 2×); changing them is a §12.3 strategy change." The figures are read from `backend/strategy_parameters.py`. A mixed body is rejected whole. API Contracts & Documentation Owner ruling (A), `claude/cycles/2026-10-16__release-v9.13/execution_escalations.md` ESC-EXEC-20261017-04.
 - `404` Settings record with provided `settings_id` not found
 
 ---
@@ -367,6 +355,7 @@ Errors use the standard error envelope from **conventions.md**.
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.6.0 | 2026-10-17 | ST-08 (BLG-API-07, EPIC-02, v9.13): behavioural change — `POST /settings` and `PATCH /settings/{settings_id}` return `400` when the body sets `min_hold_days`, `atr_period`, `atr_multiplier_initial` or `atr_multiplier_trailing` to a non-null value (fixed by `strategy_rules.md` §11); previously stored and ignored. Absent or `null` is a no-op. The four fields are removed from the request examples and stay in `GET /settings` responses. The Settings page already omits them. API Contracts & Documentation Owner ruling (A), ESC-EXEC-20261017-04. |
 | 1.5.0 | 2026-10-15 | ST-26 (BLG-SEC-41, EPIC-04, v9.12): every `POST /settings` and `PATCH /settings/{settings_id}` write is logged to `settings_change_log` (DS-33), tagged by the optional `X-Request-Source` header. `GET /settings` returns `last_change` on the settings object. Additive; no new endpoint. |
 | 1.4.1 | 2026-10-13 | ST-16 (BLG-BE-144, EPIC-02, v9.12): `POST /settings` no longer inserts omitted or `null` fields, so a first-time save keeps the column defaults for `min_hold_days`, `atr_period`, `atr_multiplier_initial` and `atr_multiplier_trailing`. No shape change. |
 | 1.4.0 | 2026-10-06 | ST-03 (BLG-SPEC-187, EPIC-01, v9.10), following the ST-01 parameter-authority ruling (a): `min_hold_days`, `atr_period`, `atr_multiplier_initial` and `atr_multiplier_trailing` are stored only. No stop path reads them, so changing them affects no open or new position. The Strategy parameter context and field notes now say so and cross-reference `position_endpoints.md`. The request and response shapes are unchanged. No new endpoints. |

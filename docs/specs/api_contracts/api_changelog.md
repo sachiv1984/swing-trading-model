@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Class 2
 **Status:** Canonical
-**Version:** 1.19.0
-**Last Updated:** 2026-10-17 (ST-10, EPIC-02, v9.13, BLG-SPEC-188 — v9.13.0 entry: new GET /positions/stop-freshness); prior — 2026-10-17 (ST-09, EPIC-02, v9.13, BLG-BE-156 — v9.13.0 entry: GET /reports/monthly-pnl stays up when the snapshot store fails); prior — 2026-10-16 (ST-02, EPIC-01, v9.13, BLG-SPEC-186 — v9.13.0 entry: POST /positions/{position_id}/exit enforces the exit_reason list); prior history retained — see prior entries in version control
+**Version:** 1.21.0
+**Last Updated:** 2026-10-17 (ST-08, EPIC-02, v9.13, BLG-API-07 — v9.13.0 entry: settings writes reject the four §11-fixed fields); prior — 2026-10-17 (ST-06, EPIC-02, v9.13, BLG-BE-180 — v9.13.0 entry: POST /portfolio/position rejects a fetched ATR that gives no stop); prior — 2026-10-17 (ST-10, EPIC-02, v9.13, BLG-SPEC-188 — v9.13.0 entry: new GET /positions/stop-freshness); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 # API Changelog
@@ -84,6 +84,25 @@ Rules:
 | Change | Details |
 |--------|---------|
 | New endpoint: GET /positions/stop-freshness | Median and maximum age of `stop_calculated_at` across open positions, with the oldest stop's ticker and the never-recalculated count, for System Status (BLG-SPEC-188). Read-only. |
+
+### portfolio_endpoints.md — v2.13.0 (UPDATED)
+
+**EPIC:** EPIC-02
+**ST:** ST-06
+
+| Change | Details |
+|--------|---------|
+| Updated endpoint: POST /portfolio/position | A fetched (or fallback) ATR where `5 × ATR ≥ entry_price` is rejected with `400` before anything is stored: `strategy_rules.md` §5 gives no stop for the entry (BLG-BE-180; Strategy Rules & System Intent Owner ruling (A)). |
+
+### settings_endpoints.md — v1.6.0 (UPDATED)
+
+**EPIC:** EPIC-02
+**ST:** ST-08
+
+| Change | Details |
+|--------|---------|
+| Updated endpoint: POST /settings | Behavioural change: a body that sets `min_hold_days`, `atr_period`, `atr_multiplier_initial` or `atr_multiplier_trailing` to a non-null value returns `400` naming `strategy_rules.md` §11; nothing is written (was stored and ignored). Absent or `null` is a no-op (BLG-API-07). |
+| Updated endpoint: PATCH /settings/{settings_id} | Same rule as `POST /settings`; a mixed body is rejected whole (BLG-API-07). |
 
 ## v9.12.0 (2026-10-13 — Release v9.12)
 

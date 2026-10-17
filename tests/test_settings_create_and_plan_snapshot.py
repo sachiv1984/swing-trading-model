@@ -80,11 +80,12 @@ class TestFirstTimeSettingsSave:
         assert None not in params
         assert set(columns) == set(SETTINGS_PAGE_BODY)
 
-    def test_supplied_values_are_still_inserted(self):
+    def test_supplied_strategy_value_is_rejected_not_inserted(self):
+        # ST-08 (EPIC-02, v9.13, BLG-API-07): a write that sets a §11-fixed field is
+        # now a 400 and nothing is inserted (was: stored and silently ignored).
         response, executed = _post_settings({**SETTINGS_PAGE_BODY, "min_hold_days": 10})
-        assert response.status_code == 200
-        sql, params = executed[0]
-        assert "min_hold_days" in sql and 10 in params
+        assert response.status_code == 400
+        assert executed == []
 
     def test_empty_body_inserts_defaults_only(self):
         response, executed = _post_settings({})
