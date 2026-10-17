@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-16T10:49:11Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-16T14:48:41Z",
+  "last_updated_utc": "2026-10-17T15:08:12Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-06",
@@ -187,6 +187,17 @@
         "status": "cleared",
         "signed_utc": "2026-10-16T15:07:35Z",
         "notes": "Agent-mediated DoQ review (§5.3, user-directed 'do an DOQ sign off'): first pass Blocked (ST-05 §8.1 precedence applied during grace) — fixed in 2841b3a9 (RX-10); second pass Approved with 5 evidence-wording edits, applied. Non-blocking ST-01 cancel race fixed in 68200248. PR QA sign-off comment and Product Owner acceptance remain human."
+      },
+      "merge_gate_record": {
+        "qa_signoff_comment": "https://github.com/sachiv1984/swing-trading-model/pull/2071#issuecomment-6235498325",
+        "po_acceptance_comment": "https://github.com/sachiv1984/swing-trading-model/pull/2071#issuecomment-6235498505",
+        "agent_review_comment": "https://github.com/sachiv1984/swing-trading-model/pull/2071#issuecomment-6218547465",
+        "method": "agent_recorded_on_explicit_human_direction",
+        "direction": "user, 2026-10-17: 'post DOQ and PO acceptance under my direction'",
+        "recorded_utc": "2026-10-17T15:08:12Z",
+        "head": "0d016b7a",
+        "ci": "43/43 checks green at 0d016b7a",
+        "merge": "pending — human decision"
       }
     },
     "EPIC-02": {
