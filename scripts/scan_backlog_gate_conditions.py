@@ -89,6 +89,21 @@ regexes capture any non-empty value, so these used to be reported as gated:
 pool. They are now treated as ungated and counted separately as
 "explicitly ungated", so the change stays visible in the scan output.
 
+Known non-gate dates (ST-36, EPIC-06, v9.13, BLG-GOV-373): some gate
+conditions embed a date that does not govern the gate, such as a counting
+start or a provenance note. BLG-OPS-53 (the v4.0 ship date, 2026-05-22) and
+BLG-FEAT-92 (a 2026-09-03 decision date) were reported as date-lapsed at
+every rebalance from 2026-09-28 to 2026-10-06 and excluded by hand each
+time. KNOWN_NON_GATE_DATES lists those items, each with a reason and a
+review date. An entry with a `date` ignores only that date when deciding
+whether the gate has lapsed, so any other date in the same condition
+(BLG-OPS-53's `clears 2026-11-22`) still counts. An entry with `date: None`
+ignores every date in the item's gate, for a gate that has no date of its
+own (BLG-FEAT-92 inherits BLG-FEAT-30's gate, and its provenance notes
+carried three different dates). The entries are reported in their own
+"known non-gate dates" section, which also says when an entry is past its
+review date or its date is no longer in the item's gate.
+
 Usage:
     python3 scripts/scan_backlog_gate_conditions.py [--json] [--as-of YYYY-MM-DD] [--backlog PATH]
 
@@ -154,6 +169,33 @@ ALREADY_RESOLVED_RE = re.compile(
 )
 
 
+# ST-36 (BLG-GOV-373): items whose embedded gate date(s) do not govern the
+# gate. Each needs a reason and a review date. "date": None ignores every
+# date in that item's gate; review the entry by its review_by date.
+KNOWN_NON_GATE_DATES = [
+    {
+        "id": "BLG-OPS-53",
+        "date": "2026-05-22",
+        "reason": "v4.0 ship date: the start of the 6-month claude_audit_log age count, not the gate date",
+        "review_by": "2026-11-22",
+    },
+    {
+        "id": "BLG-FEAT-92",
+        "date": None,
+        "reason": "provenance notes (Product Owner reconciliation decision 2026-09-03 and later); the gate is inherited from BLG-FEAT-30 and carries no date of its own",
+        "review_by": "2027-01-16",
+    },
+]
+
+
+def _ignored_dates(item_id, allow_list):
+    """Dates to ignore for item_id, or None when every date is ignored."""
+    entries = [e for e in allow_list if e["id"] == item_id]
+    if any(e["date"] is None for e in entries):
+        return None
+    return {datetime.date.fromisoformat(e["date"]) for e in entries}
+
+
 def parse_items(text: str):
     """Split backlog.md into (item_id, title, body) blocks using heading
     boundaries only — never the `---` separator (failure mode 4 fix)."""
@@ -172,7 +214,7 @@ def parse_items(text: str):
     return items
 
 
-def _lapsed_date(gate_condition, as_of):
+def _lapsed_date(gate_condition, as_of, ignored=frozenset()):
     """Return (lapsed_date_or_None, ambiguous) for the embedded ISO date(s)
     in gate_condition.
 
@@ -206,20 +248,23 @@ def _lapsed_date(gate_condition, as_of):
            explicitly flagged for manual disambiguation) rather than
            choosing only one.
     """
-    kw = GOVERNING_KEYWORD_DATE_RE.search(gate_condition)
-    if kw:
+    for kw in GOVERNING_KEYWORD_DATE_RE.finditer(gate_condition):
         try:
             governing = datetime.date.fromisoformat(kw.group(1))
-            return (governing if governing <= as_of else None), False
         except ValueError:
-            pass  # fall through to the no-keyword-match path below
+            continue  # fall through to the no-keyword-match path below
+        if governing in ignored:
+            continue
+        return (governing if governing <= as_of else None), False
 
     found_dates = []
     for raw in EMBEDDED_DATE_RE.findall(gate_condition):
         try:
-            found_dates.append(datetime.date.fromisoformat(raw))
+            found = datetime.date.fromisoformat(raw)
         except ValueError:
             continue
+        if found not in ignored:
+            found_dates.append(found)
 
     if not found_dates:
         return None, False
@@ -237,7 +282,7 @@ def _lapsed_date(gate_condition, as_of):
     return None, False
 
 
-def classify_item(item_id, title, body, as_of):
+def classify_item(item_id, title, body, as_of, allow_list=KNOWN_NON_GATE_DATES):
     result = {
         "id": item_id,
         "title": title,
@@ -268,7 +313,9 @@ def classify_item(item_id, title, body, as_of):
         result["gated"] = True
         result["gate_source"] = source
         result["gate_condition"] = condition
-        result["date_lapsed"], result["date_ambiguous"] = _lapsed_date(condition, as_of)
+        ignored = _ignored_dates(item_id, allow_list)
+        if ignored is not None:
+            result["date_lapsed"], result["date_ambiguous"] = _lapsed_date(condition, as_of, ignored)
         return result
 
     # No formal gate field found — check for an embedded-gate signal inside
@@ -282,6 +329,21 @@ def classify_item(item_id, title, body, as_of):
         )
 
     return result
+
+
+def known_non_gate_dates(results, as_of, allow_list=KNOWN_NON_GATE_DATES):
+    """ST-36 (BLG-GOV-373): one row per allow-list entry, with whether its
+    date still appears in the item's gate and whether its review is due."""
+    by_id = {r["id"]: r for r in results}
+    rows = []
+    for e in allow_list:
+        r = by_id.get(e["id"])
+        rows.append({
+            **e,
+            "present": bool(r and r["gated"] and (e["date"] is None or e["date"] in r["gate_condition"])),
+            "review_due": datetime.date.fromisoformat(e["review_by"]) <= as_of,
+        })
+    return rows
 
 
 def gating_item_shipped(results, items):
@@ -323,6 +385,7 @@ def main():
     already_resolved = [r for r in results if r["already_resolved"]]
     explicitly_ungated = [r for r in results if r["explicitly_ungated"] and not r["gated"]]
     shipped = gating_item_shipped(results, items)
+    non_gate_dates = known_non_gate_dates(results, as_of)
 
     if args.json:
         print(json.dumps({
@@ -332,6 +395,7 @@ def main():
             "data_quality_warnings": warnings,
             "already_resolved": already_resolved,
             "explicitly_ungated": explicitly_ungated,
+            "known_non_gate_dates": non_gate_dates,
             "gating_item_shipped": [{**r, "shipped_gating_items": refs} for r, refs in shipped],
             "total_items": len(results),
         }, indent=2, default=str))
@@ -352,6 +416,14 @@ def main():
         for r in date_lapsed:
             ambiguous_note = " [AMBIGUOUS — multiple embedded dates disagree on lapsed status; manually confirm which date actually governs this gate]" if r["date_ambiguous"] else ""
             print(f"  {r['id']} — gate date {r['date_lapsed'].isoformat()} — {r['gate_condition']}{ambiguous_note}")
+
+    if non_gate_dates:
+        print(f"\n{len(non_gate_dates)} known non-gate date(s) (allow-listed; ignored for date-lapse, other dates in the same gate still count):")
+        for e in non_gate_dates:
+            flags = "" if e["present"] else "  [not in the item's current gate — check whether the entry is still needed at review]"
+            if e["review_due"]:
+                flags += f"  [REVIEW DUE {e['review_by']}]"
+            print(f"  {e['id']} — {e['date'] or 'all dates'} — {e['reason']} (review by {e['review_by']}){flags}")
 
     if shipped:
         print(f"\n{len(shipped)} item(s) whose gate names only shipped backlog items (gating item shipped — verify; re-read the gate, do not auto-clear):")
