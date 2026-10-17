@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-16T10:49:11Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-17T15:08:12Z",
+  "last_updated_utc": "2026-10-17T15:08:57Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-06",
@@ -16,10 +16,10 @@
   ],
   "epics": {
     "EPIC-01": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-10-16__release-v9.13/EPIC-01",
       "pr_number": 2071,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-10-16__release-v9.13/qa_evidence_EPIC-01.md",
       "test_scenarios": [
@@ -36,7 +36,7 @@
         "ST-01": {
           "title": "Make the Daily Position Monitor's exit confirmation open the real exit flow",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2031,
           "branch": "exec/2026-10-16__release-v9.13/EPIC-01",
@@ -61,7 +61,7 @@
         "ST-02": {
           "title": "Define the allowed exit reasons and map each to one of §8's three exit conditions",
           "classification": "delegated_backend",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "Data Model & Domain Schema Owner; Metrics Definitions & Analytics Owner",
           "github_issue": 2032,
           "branch": "exec/2026-10-16__release-v9.13/EPIC-01",
@@ -94,7 +94,7 @@
         "ST-03": {
           "title": "One shared exit-reason module so Trade Reflections badges and labels match stored values",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2033,
           "branch": "exec/2026-10-16__release-v9.13/EPIC-01",
@@ -121,7 +121,7 @@
         "ST-04": {
           "title": "Record checklist_skipped events and stop offering journal filters that can never match",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2034,
           "branch": "exec/2026-10-16__release-v9.13/EPIC-01",
@@ -148,7 +148,7 @@
         "ST-05": {
           "title": "Strategy determination on month-end rebalance exits, which are live but not in strategy_rules.md",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "Strategy Rules & System Intent Owner",
           "github_issue": 2035,
           "branch": "exec/2026-10-16__release-v9.13/EPIC-01",
@@ -197,8 +197,10 @@
         "recorded_utc": "2026-10-17T15:08:12Z",
         "head": "0d016b7a",
         "ci": "43/43 checks green at 0d016b7a",
-        "merge": "pending — human decision"
-      }
+        "merge": "human — merged by sachiv1984 at 2026-10-17T15:08:21Z, merge commit 2bca2001"
+      },
+      "merged_utc": "2026-10-17T15:08:21Z",
+      "merge_commit": "2bca2001"
     },
     "EPIC-02": {
       "status": "not_started",
@@ -1002,9 +1004,10 @@
   ],
   "open_escalations": [],
   "merge_gate": {
-    "epics_merged": [],
+    "epics_merged": [
+      "EPIC-01"
+    ],
     "epics_pending": [
-      "EPIC-01",
       "EPIC-02",
       "EPIC-03",
       "EPIC-04",
@@ -1014,7 +1017,8 @@
     "all_merged": false
   },
   "process_notes": [
-    "2026-10-16: agent-mediated DoQ review of EPIC-01 (§5.3, user-directed) — first pass Blocked on ST-05's in-grace stop precedence; fixed in 2841b3a9 (RX-10). Non-blocking findings: ST-01 cancel-during-submit fixed in 68200248 (SC-MEQ-04); stale 'three exit conditions' wording fixed in 2841b3a9; evidence wording updated (FI-P3-02 for ST-03's modal half; ST-05 graded Pass with notes; ST-04 per-save note)."
+    "2026-10-16: agent-mediated DoQ review of EPIC-01 (§5.3, user-directed) — first pass Blocked on ST-05's in-grace stop precedence; fixed in 2841b3a9 (RX-10). Non-blocking findings: ST-01 cancel-during-submit fixed in 68200248 (SC-MEQ-04); stale 'three exit conditions' wording fixed in 2841b3a9; evidence wording updated (FI-P3-02 for ST-03's modal half; ST-05 graded Pass with notes; ST-04 per-save note).",
+    "2026-10-17T15:08:57Z: STEP 4 post-merge sync for EPIC-01 (PR #2071, merge commit 2bca2001). Orphaned post-merge commit check (LL-v6.8-P3-01): git log origin/main..origin/exec/2026-10-16__release-v9.13/EPIC-01 empty, nothing to reconcile. Step 3c sibling sync: no other EPIC branch exists yet; EPIC-06 (next in merge order) is cut from this main."
   ],
   "sealed": false,
   "sealed_utc": null
