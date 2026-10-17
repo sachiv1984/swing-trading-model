@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-16T10:49:11Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-17T15:25:25Z",
+  "last_updated_utc": "2026-10-17T15:44:15Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-06",
@@ -856,10 +856,10 @@
       }
     },
     "EPIC-06": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-10-16__release-v9.13/EPIC-06",
       "pr_number": 2072,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-10-16__release-v9.13/qa_evidence_EPIC-06.md",
       "test_scenarios": [
@@ -1028,7 +1028,20 @@
         "cleared_utc": "2026-10-17",
         "user_directed": true,
         "reference": "qa_evidence_EPIC-06.md"
-      }
+      },
+      "merge_gate_record": {
+        "qa_signoff_comment": "https://github.com/sachiv1984/swing-trading-model/pull/2072#issuecomment-6235960173",
+        "po_acceptance_comment": "https://github.com/sachiv1984/swing-trading-model/pull/2072#issuecomment-6235960501",
+        "agent_review_comment": "https://github.com/sachiv1984/swing-trading-model/pull/2072#issuecomment-6235916613",
+        "method": "agent_recorded_on_explicit_human_direction",
+        "direction": "user, 2026-10-17: 'Give DOQ and PO acceptance on this PR'",
+        "recorded_utc": "2026-10-17T15:43:28Z",
+        "head": "d95723df",
+        "ci": "33/33 checks green at d95723df",
+        "merge": "merged 2026-10-17T15:43:26Z by the repository owner (27430d29)"
+      },
+      "merged_utc": "2026-10-17T15:43:26Z",
+      "merge_commit": "27430d29"
     }
   },
   "blocked_items": [],
@@ -1055,14 +1068,14 @@
   },
   "merge_gate": {
     "epics_merged": [
-      "EPIC-01"
+      "EPIC-01",
+      "EPIC-06"
     ],
     "epics_pending": [
       "EPIC-02",
       "EPIC-03",
-      "EPIC-04",
       "EPIC-05",
-      "EPIC-06"
+      "EPIC-04"
     ],
     "all_merged": false
   },
@@ -1071,7 +1084,8 @@
     "2026-10-17T15:08:57Z: STEP 4 post-merge sync for EPIC-01 (PR #2071, merge commit 2bca2001). Orphaned post-merge commit check (LL-v6.8-P3-01): git log origin/main..origin/exec/2026-10-16__release-v9.13/EPIC-01 empty, nothing to reconcile. Step 3c sibling sync: no other EPIC branch exists yet; EPIC-06 (next in merge order) is cut from this main.",
     "2026-10-17: EPIC-06 branch cut from main 8845b7c6 (after the EPIC-01 merge). ST-35..ST-40 committed (6a4a5fd0, c89dba4e, 935ea1fc, 63314028 [ST-38+ST-39], 3903e9fc). ST-40 went through ESC-EXEC-20261017-01, PMO Lead agent-mediated approval, then was reclassified autonomous. The autonomous DoQ class is not claimed because Criterion 1 is borderline (ST-40 is delegated_decision in the sealed plan), so the EPIC takes a standard DoQ sign-off (v9.12 EPIC-06 precedent).",
     "2026-10-17: EPIC-06 DoQ sign-off, agent-mediated (Director of Quality role, §5.3, user-directed): Approved on the first pass. Non-blocking notes N1-N4 are recorded in qa_evidence_EPIC-06.md and the PR body.",
-    "2026-10-17: EPIC-06 PR #2072 opened. Pre-PR checks: API baseline drift script exit 0, no foreign-EPIC commits in origin/main..HEAD, signer format matches the agent-mediated pattern."
+    "2026-10-17: EPIC-06 PR #2072 opened. Pre-PR checks: API baseline drift script exit 0, no foreign-EPIC commits in origin/main..HEAD, signer format matches the agent-mediated pattern.",
+    "2026-10-17T15:43:26Z: EPIC-06 PR #2072 merged by the repository owner (merge commit 27430d29) right after the engine posted the user-directed QA sign-off and PO acceptance comments. The merge-gate record commit was redirected from the EPIC-06 branch to main: the §3.2.B step 7 merged-PR check fired (LL-v9.12-P3-02), so no commit landed on the merged branch. Orphaned post-merge commit check (LL-v6.8-P3-01): git log origin/main..origin/exec/.../EPIC-06 is empty. Step 3c sibling sync: no other EPIC branch exists yet; EPIC-02 (next in merge order) is cut from this main."
   ],
   "sealed": false,
   "sealed_utc": null
