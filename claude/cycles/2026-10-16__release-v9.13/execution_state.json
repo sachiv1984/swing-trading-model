@@ -496,8 +496,8 @@
     "EPIC-03": {
       "status": "done",
       "branch": "exec/2026-10-16__release-v9.13/EPIC-03",
-      "pr_number": null,
-      "pr_status": "none",
+      "pr_number": 2074,
+      "pr_status": "open",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-10-16__release-v9.13/qa_evidence_EPIC-03.md",
       "test_scenarios": [
