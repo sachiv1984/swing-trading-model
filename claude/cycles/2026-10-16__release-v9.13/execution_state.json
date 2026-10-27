@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-16T10:49:11Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-27T08:20:00Z",
+  "last_updated_utc": "2026-10-27T09:00:00Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-06",
@@ -203,21 +203,25 @@
       "merge_commit": "2bca2001"
     },
     "EPIC-02": {
-      "status": "in_progress",
+      "status": "done",
       "branch": "exec/2026-10-16__release-v9.13/EPIC-02",
       "pr_number": null,
       "pr_status": "none",
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-10-16__release-v9.13/qa_evidence_EPIC-02.md",
       "test_scenarios": [
         "tests/e2e/monthly-pnl-restatement.spec.js",
         "tests/e2e/system-status.spec.js",
+        "tests/e2e/trade-entry-atr-preview.spec.js",
         "tests/e2e/trade-plan.spec.js",
+        "tests/test_add_position_stop_handling.py",
         "tests/test_entry_required_fields.py",
         "tests/test_monthly_pnl_snapshot.py",
         "tests/test_monthly_pnl_snapshot_failure_endpoint.py",
         "tests/test_position_atr_timestamp_persistence.py",
+        "tests/test_settings_fixed_strategy_fields_rejected.py",
         "tests/test_stop_freshness_service.py",
+        "tests/test_stop_reconciliation.py",
         "tests/test_strategy_invariants_property.py"
       ],
       "stories": {
