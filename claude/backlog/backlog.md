@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-27 (session — 2 new item(s) added: BLG-QA-229, BLG-BE-190; EPIC-02 v9.13 DoQ review findings); prior — 2026-10-27 (session — 1 new item(s) added: BLG-OPS-193; frontend build failure found during EPIC-02 v9.13 staging check); prior — 2026-10-17 (session — 3 new item(s) added: BLG-SPEC-207, BLG-GOV-396, BLG-SPEC-208; PR #2072 review findings, EPIC-06 v9.13); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-27 (session — 4 new item(s) added: BLG-BE-191, BLG-FE-233, BLG-UX-06, BLG-FEAT-100; PR #2073 review findings, EPIC-02 v9.13); prior — 2026-10-27 (session — 2 new item(s) added: BLG-QA-229, BLG-BE-190; EPIC-02 v9.13 DoQ review findings); prior — 2026-10-27 (session — 1 new item(s) added: BLG-OPS-193; frontend build failure found during EPIC-02 v9.13 staging check); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -5834,5 +5834,96 @@ The system's FX rate is GBP/USD, i.e. USD per GBP: `add_position()` stores `entr
 - For a US position, `suggested_shares × StopDistance / fx` is within one 4dp floor step of `RiskAmount`
 - The property test asserts the corrected relationship and fails against the old formula
 - Any other inverted calculation found is fixed or filed
+
+---
+
+### BLG-BE-191 — Monthly P&L narrative treats missing restatement fields as "not restated"
+**Priority:** P3 (Low)
+**Type:** Backend Engineering / AI Input Correctness
+**Owner:** Backend Engineering Lead; Strategy Rules & System Intent Owner (§13 check)
+**Source:** PR #2073 agent-mediated review (Director of Quality role), ST-09 / EPIC-02, sprint execution `2026-10-16__release-v9.13` — 2026-10-27
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.14
+
+**Problem**
+Since v9.13 ST-09, `get_monthly_pnl_report` leaves out all four restatement fields when the `monthly_pnl_snapshots` store fails, instead of failing the request. `monthly_pnl_narrative_service.build_inputs` sets `"restated": bool(r.get("restated"))`, so a missing field becomes `False`. During a snapshot outage, `POST /reports/monthly-pnl/narrative` therefore spends a model call, counts against the daily cap, and stores a narrative whose inputs say no month was restated when the status is unknown. Before ST-09 that path failed with the request.
+
+**Scope**
+- Decide the behaviour: fail closed (503, no model call) or pass an explicit restatement-unavailable flag in the inputs and prompt
+- Update `build_inputs` and the input hash accordingly
+- Update `reports_endpoints.md` §POST /reports/monthly-pnl/narrative
+
+**Acceptance Criteria**
+- With the snapshot read mocked to fail, the narrative endpoint either returns 503 without calling the model or sends inputs that mark restatement as unavailable (unit test)
+- No stored narrative row records `restated: false` for a month whose restatement status was unknown
+- The contract documents the behaviour
+
+---
+
+### BLG-FE-233 — Stop Freshness panel: fix the 48 h and negative-age formats, follow page refresh, and explain its states
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Frontend Engineering Lead; Frontend Specifications & UX Documentation Owner
+**Source:** PR #2073 agent-mediated reviews (Director of Quality and Product Owner roles), ST-10 / EPIC-02, sprint execution `2026-10-16__release-v9.13` — 2026-10-27
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.14
+
+**Problem**
+`formatStopAge` (`src/pages/SystemStatus.js`) picks the branch before rounding, so ages from 47.95 h to just under 48 h show "48.0 h" while 48.0 h shows "2 d 0 h"; SC-SS-09b pins "48.0 h" under a "below 48 h" comment. A negative age from small clock skew would show "-0.1 h". The panel's own query is not tied to the page's Refresh button (which refetches health only) or auto-refresh, so its figures and "As of" time go stale until remount. "Stop freshness unavailable." has no retry, and "N never recalculated" does not say when stops get stamped.
+
+**Scope**
+- Round first, then choose the branch; clamp negative ages to 0 (or state the intended rounding in `system_status.md`)
+- Refetch the panel from the page's Refresh button and auto-refresh
+- Add a retry action to the unavailable state and a muted hint to the never-recalculated state (grace period, on-load recompute, nightly job)
+- Correct SC-SS-09b's comment and expectation; update `system_status.md`
+
+**Acceptance Criteria**
+- 47.96 h renders "2 d 0 h" (or the spec states otherwise and the test matches); a negative age renders "0.0 h"
+- Playwright: clicking Refresh, and auto-refresh, re-request `GET /positions/stop-freshness` and update "As of"
+- The unavailable state's retry works; the never-recalculated hint renders only when `never_recalculated > 0`
+
+---
+
+### BLG-UX-06 — Plain-language guidance when Trade Entry has no valid stop, and no internal references in stop-rule errors
+**Priority:** P3 (Low)
+**Type:** UX / Copy
+**Owner:** Head of UX & Design; Frontend Specifications & UX Documentation Owner; API Contracts & Documentation Owner (400 wording)
+**Source:** PR #2073 agent-mediated reviews (Product Owner and Director of Quality roles), ST-06 and ST-08 / EPIC-02, sprint execution `2026-10-16__release-v9.13` — 2026-10-27
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.14
+
+**Problem**
+ST-06's "No valid stop" caption on Trade Entry explains why there is no stop but cites "§5" and gives no next step (for example, that the instrument is too volatile for the strategy). When the fetched ATR is rejected at save, the trader sees the backend 400 only in a toast that disappears, and it cites "strategy_rules.md §5"; the ST-08 settings 400 similarly cites §11/§12.3, with precedent at `main.py` and `pre_entry_validation.py`. The fetched-ATR 400 in `position_service.add_position` also hard-codes "14-day" instead of `ATR_PERIOD_DAYS`, unlike the caption and the settings 400. The current wording was set by `ESC-EXEC-20261017-02` condition 2, so a change needs a recorded decision.
+
+**Scope**
+- Decide, with a decision record, whether user-facing errors drop document references; revise the `initial-stop-invalid` caption and the fetched-ATR 400 to plain language with a next step, keeping the ATR, its source and the entry figures
+- Build the 400 from `ATR_PERIOD_DAYS`
+- Decide whether the save-time rejection should stay visible on the form rather than only in a toast
+- Update `position_form.md`, `portfolio_endpoints.md` (and `settings_endpoints.md` if its wording changes), SC-TAP-06 and SC-TAP-08
+
+**Acceptance Criteria**
+- No hard-coded ATR period in the message (a test patches the constant)
+- If adopted, the caption and messages contain no document or section references and state a next step; contract text matches the code exactly
+- The Strategy Rules & System Intent Owner confirms the reject behaviour is unchanged
+
+---
+
+### BLG-FEAT-100 — Decide whether Stop Freshness needs a staleness threshold
+**Priority:** P4 (Backlog)
+**Type:** Product Feature / Decision
+**Owner:** Product Owner; Metrics Definitions & Analytics Owner; Strategy Rules & System Intent Owner
+**Source:** PR #2073 agent-mediated review (Product Owner role), ST-10 / EPIC-02, sprint execution `2026-10-16__release-v9.13` — 2026-10-27
+**Effort:** XS (<1h) for the decision; S if adopted
+**Provisional-Target:** TBD
+
+**Problem**
+§7.1 recalculates stops daily, but the v9.13 Stop Freshness metric is deliberately neutral ("Threshold: none"). A trader cannot tell from the panel whether an oldest stop of 3 days is normal (a weekend) or a failed recalculation job, so the panel informs but never alerts.
+
+**Scope**
+- Decide whether a threshold is wanted; if so, define a trading-day-aware one in `metrics_definitions.md` §Stop Freshness and add a design record for a status indication on the panel
+
+**Acceptance Criteria**
+- A dated decision is recorded
+- If adopted: the definition is in `metrics_definitions.md` and the panel shows the status for a stale case, covered by Playwright; if rejected: the rationale is on the "Threshold: none" line
 
 ---
