@@ -35,4 +35,4 @@ Last Updated: 2026-10-16
 - **Spec reference:** `docs/specs/metrics_definitions.md#Stop Freshness`; `docs/specs/frontend/pages/system_status.md#Stop Freshness Panel (v1.3 — ST-10, BLG-SPEC-188)`; `docs/specs/api_contracts/position_endpoints.md#GET /positions/stop-freshness`
 - **Unblock criteria:** the panel values and the query output from one deployed environment, recorded in `qa_evidence_EPIC-02.md` under ST-10 with the date and environment.
 - **Commit format required:** `[EPIC-02][ST-10] <description>` on `exec/2026-10-16__release-v9.13/EPIC-02` (or a `[GOVERNANCE]` commit on `main` if EPIC-02 has merged)
-- **Status:** Pending
+- **Status:** sign_off_cleared — 2026-10-27. The user (human, acting for the Infrastructure & Operations Owner) deployed both staging services from this branch at `826ee17a`, read the System Status panel (As of 08:12, 27 Oct 2026: median —, oldest —, coverage 0 of 2, 2 never recalculated) and ran the read-only manual-check query on staging (BARC and LGEN, both `stop_calculated_at` NULL). They match. Recorded in `qa_evidence_EPIC-02.md` §Staging Manual Check — Stop Freshness. Commit SHA: pending (set at push).
