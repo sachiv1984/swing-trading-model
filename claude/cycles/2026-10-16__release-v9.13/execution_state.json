@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-16T10:49:11Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-27T21:14:28Z",
+  "last_updated_utc": "2026-10-27T21:17:56Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-06",
@@ -1009,23 +1009,26 @@
         "ST-33": {
           "title": "Assess data-provider risk and failover options",
           "classification": "delegated_decision",
-          "status": "not_started",
+          "status": "blocked_decision",
           "assigned_to": "Infrastructure & Operations Owner; FinOps & Resource Architect",
           "github_issue": 2063,
           "branch": "exec/2026-10-16__release-v9.13/EPIC-05",
           "commit_sha": null,
           "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
+          "blocked_since_utc": "2026-10-27T21:17:56Z",
+          "unblock_criteria": "Accepted-risk statement (data_provider_risk_assessment.md §4) signed off by the Infrastructure & Operations Owner and the FinOps & Resource Architect (ESC-EXEC-20261027-04).",
           "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": [],
+          "spec_references": [
+            "docs/operations/data_provider_risk_assessment.md",
+            "docs/ops/external_api_dependency_register.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
-          "last_completed_substep": null,
+          "last_completed_substep": "3.1.D.escalated",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Assessment at 02d4a2b3: every active market-data provider (Alpaca data/news/paper, Yahoo chart API and yfinance), failure modes and impact, quick wins QW-1..5, re-evaluation conditions. Findings: regime fails open to risk-on and FX freezes at 1.27 on Yahoo loss; Stooq/Twelve Data fetchers are unused; register's newsapi.org entry is stale. Follow-ups BLG-BE-192/193/194, BLG-FE-234, BLG-SPEC-209. AC3 sign-off escalated: ESC-EXEC-20261027-04."
         },
         "ST-34": {
           "title": "Assess the major and breaking dependency upgrades from the October 2026 review",
@@ -1242,7 +1245,9 @@
       "merge_commit": "27430d29"
     }
   },
-  "blocked_items": [],
+  "blocked_items": [
+    "ST-33"
+  ],
   "delegated_items": [
     "ST-29"
   ],

@@ -443,6 +443,16 @@
       "resolved_by": "AI Compliance & Governance Officer (agent-mediated, §5.3)",
       "summary": "ST-18/EPIC-03 - journal-summary output-language check failure action (BLG-AI-15)",
       "resolution_summary": "(A) regenerate once, then a code-written fallback; JOURNAL_SUMMARY_PROMPT_VERSION v1.1. Applied by ST-18 at c8fd54e7."
+    },
+    "ESC-EXEC-20261027-04": {
+      "cycle": "2026-10-16__release-v9.13",
+      "summary": "ST-33/EPIC-05 - accepted-risk sign-off on data_provider_risk_assessment.md by Infrastructure & Operations Owner and FinOps & Resource Architect",
+      "trigger_type": "Lifecycle",
+      "owning_authority": "Infrastructure & Operations Owner; FinOps & Resource Architect",
+      "raised_utc": "2026-10-27T21:17:56Z",
+      "sla_due_utc": "2026-10-28T21:17:56Z",
+      "blocks_execution": false,
+      "disposition": "Open"
     }
   },
   "deferred_escalations": {

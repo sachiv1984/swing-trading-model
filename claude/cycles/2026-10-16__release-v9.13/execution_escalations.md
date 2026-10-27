@@ -140,3 +140,19 @@ Last Updated: 2026-10-16
 - **Blocks execution:** No
 - **Disposition:** Resolved
 - **Resolution summary (2026-10-27T08:54:27Z):** AI Compliance & Governance Officer ruling, agent-mediated per `execution_prompt.md` §5.3, first pass: **Approved (A) — regenerate once, then a code-written fallback.** Grounds: charter §4.3 consistency with the debrief and monthly narrative; wording suggesting stop or sizing changes is the §13 risk the check exists for. Binding conditions: (1) fail on `scan_prescriptive` or a new `_TRADING_CHANGE_RE` — subject (stops, stop-loss, stop placement/level/distance, position size/sizing, setups) then within 40 characters a present-tense or modal word (needs, should, ought, requires, warrants, may/might need, could use) then within 25 characters a change verb (adjust, change, tighten, widen, loosen, revise, revisit, reconsider, rethink, review, modify, refine, move, reduce, increase, cut, lower, raise), case-insensitive, within one sentence; past-tense needed/required excluded on purpose; (2) categories `prescriptive`, `trading_change`; `compliance_check_result` per model call: `pass`, `pass_on_regenerate`, `fail_regenerate:<cats>`, `fail_fallback:<cats>`; `model_call_failed` unchanged; (3) fallback `{"summary": null, "model": null, "message": "The AI summary was withheld because it did not pass the advisory-language check. Your journal notes are unchanged; please try again later."}`; (4) sampling hook gets each attempt's raw output; logs carry categories only; (5) prompt adds "Describe what the notes record; do not suggest changing stops, position sizing or setups." and `JOURNAL_SUMMARY_PROMPT_VERSION` v1.0 → v1.1; (6) `ai_endpoints.md` and `ai_s13_boundary_test_suite.md` updated; tests cover the staging sentence, a prescriptive one, a descriptive pass, pass on regeneration and the fallback. The ruling's own sentence-classification claim is re-verified by the ST-18 tests, not relied on alone (LL-v8.6-P3-01). ST-18 reclassified `autonomous`.
+
+## ESC-EXEC-20261027-04
+
+- **Raised at:** 2026-10-27T21:17:56Z
+- **Routine:** Sprint Execution
+- **Cycle ID:** 2026-10-16__release-v9.13
+- **Step:** STEP 3.1.D (EPIC-05 execution loop)
+- **ST/EPIC item:** ST-33 / EPIC-05 (BLG-OPS-77)
+- **Trigger type:** Lifecycle
+- **Blocking statement:** ST-33 AC 3 needs the accepted-risk statement in `docs/operations/data_provider_risk_assessment.md` §4 signed off by the Infrastructure & Operations Owner and the FinOps & Resource Architect. The statement accepts Yahoo Finance as the sole source for UK prices and bars, GBP/USD FX, the FTSE regime and reference data, and Alpaca's free tier as the primary US source, on cost grounds. It does not accept the fail-open regime or frozen FX as permanent; follow-ups BLG-BE-192/193/194 and BLG-FE-234 are filed.
+- **Engine recommendation (non-binding):** accept as drafted.
+- **Owning authority:** Infrastructure & Operations Owner; FinOps & Resource Architect
+- **Unblock criteria:** both roles' decisions, dated, recorded in §4 of the assessment and in this escalation's resolution.
+- **SLA due-by:** 2026-10-28T21:17:56Z (24h — Lifecycle)
+- **Blocks execution:** No
+- **Disposition:** Open
