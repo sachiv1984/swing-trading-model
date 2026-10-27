@@ -23,6 +23,11 @@
  *
  * ST-20 (EPIC-03, v9.13, BLG-FE-211): a successful response with no `data`
  * leaves the previous debrief (or the empty state) on screen.
+ *
+ * ST-21 (EPIC-03, v9.13, BLG-FE-212): the whole section takes the
+ * light-theme tokens in trade_history.md v1.16 §Post-Trade Debrief §Light
+ * Theme (card bg-white, violet-700 labels, violet-100/800 badge, slate-800
+ * text, rose-700 error text); dark theme unchanged.
  */
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -36,8 +41,8 @@ const API_URL = process.env.REACT_APP_API_URL || "http://localhost:8000";
 function Skeleton() {
   return (
     <div className="space-y-2 animate-pulse" data-testid="debrief-skeleton">
-      <div className="h-3 bg-slate-700 rounded w-2/3" />
-      <div className="h-3 bg-slate-700 rounded w-1/2" />
+      <div className="h-3 bg-slate-200 dark:bg-slate-700 rounded w-2/3" />
+      <div className="h-3 bg-slate-200 dark:bg-slate-700 rounded w-1/2" />
     </div>
   );
 }
@@ -90,10 +95,10 @@ export default function TradeDebrief({ tradeId }) {
     return (
       <div className="space-y-2.5">
         <div className="flex items-center gap-2">
-          <Sparkles className="w-3.5 h-3.5 text-violet-400" />
-          <h4 className="text-xs font-semibold uppercase tracking-wider text-violet-400">Post-Trade Debrief</h4>
+          <Sparkles className="w-3.5 h-3.5 text-violet-700 dark:text-violet-400" />
+          <h4 className="text-xs font-semibold uppercase tracking-wider text-violet-700 dark:text-violet-400">Post-Trade Debrief</h4>
         </div>
-        <div className="w-full bg-slate-800/50 rounded-xl p-4 border border-violet-600/20 shadow-lg">
+        <div className="w-full bg-white dark:bg-slate-800/50 rounded-xl p-4 border border-slate-200 dark:border-violet-600/20 shadow-lg">
           <Skeleton />
         </div>
       </div>
@@ -107,12 +112,12 @@ export default function TradeDebrief({ tradeId }) {
   return (
     <div className="space-y-2.5" data-testid="trade-debrief-section">
       <div className="flex items-center gap-2">
-        <Sparkles className="w-3.5 h-3.5 text-violet-400" />
-        <h4 className="text-xs font-semibold uppercase tracking-wider text-violet-400">Post-Trade Debrief</h4>
-        <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-violet-500/20 text-violet-300 border border-violet-500/30">AI-generated</span>
+        <Sparkles className="w-3.5 h-3.5 text-violet-700 dark:text-violet-400" />
+        <h4 className="text-xs font-semibold uppercase tracking-wider text-violet-700 dark:text-violet-400">Post-Trade Debrief</h4>
+        <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-violet-100 text-violet-800 border border-violet-200 dark:bg-violet-500/20 dark:text-violet-300 dark:border-violet-500/30">AI-generated</span>
       </div>
 
-      <div className="w-full bg-slate-800/50 rounded-xl border-l-4 border-l-violet-500 border border-slate-700/30 shadow-lg p-4 space-y-3">
+      <div className="w-full bg-white dark:bg-slate-800/50 rounded-xl border-l-4 border-l-violet-500 border border-slate-200 dark:border-slate-700/30 shadow-lg p-4 space-y-3">
         {!debrief && (notFound || !!generateMutation.error) && (
           <div className="space-y-2.5" data-testid="debrief-empty-state">
             <p className="text-xs text-slate-600 dark:text-slate-400">No debrief generated yet for this trade.</p>
@@ -127,29 +132,29 @@ export default function TradeDebrief({ tradeId }) {
               {generateMutation.isPending ? "Generating…" : "Generate Debrief"}
             </Button>
             {generateMutation.error && (
-              <p className="text-xs text-rose-400">Could not generate a debrief right now. Try again shortly.</p>
+              <p className="text-xs text-rose-700 dark:text-rose-400">Could not generate a debrief right now. Try again shortly.</p>
             )}
           </div>
         )}
 
         {debrief && (
           <div className="space-y-3" data-testid="debrief-content">
-            <p className="text-sm text-slate-300 leading-relaxed">{debrief.summary_text}</p>
+            <p className="text-sm text-slate-800 dark:text-slate-300 leading-relaxed">{debrief.summary_text}</p>
 
             {debrief.focus_area_text && (
-              <div className="pt-2 border-t border-slate-700/30">
-                <span className="text-[10px] uppercase tracking-wider text-violet-400 font-semibold">Focus area</span>
-                <p className="text-sm text-slate-300 leading-relaxed italic mt-1">{debrief.focus_area_text}</p>
+              <div className="pt-2 border-t border-slate-200 dark:border-slate-700/30">
+                <span className="text-[10px] uppercase tracking-wider text-violet-700 dark:text-violet-400 font-semibold">Focus area</span>
+                <p className="text-sm text-slate-800 dark:text-slate-300 leading-relaxed italic mt-1">{debrief.focus_area_text}</p>
               </div>
             )}
 
             {!debrief.focus_area_text && STATUS_LABEL[debrief.generation_status] && (
-              <p className="text-xs text-slate-600 dark:text-slate-400 italic pt-2 border-t border-slate-700/30">
+              <p className="text-xs text-slate-600 dark:text-slate-400 italic pt-2 border-t border-slate-200 dark:border-slate-700/30">
                 {STATUS_LABEL[debrief.generation_status]}
               </p>
             )}
 
-            <div className="pt-2 border-t border-slate-700/30 space-y-1.5">
+            <div className="pt-2 border-t border-slate-200 dark:border-slate-700/30 space-y-1.5">
               <div className="flex items-center justify-between gap-3">
                 {generatedLabel ? (
                   <span
@@ -172,7 +177,7 @@ export default function TradeDebrief({ tradeId }) {
                 </Button>
               </div>
               {generateMutation.error && (
-                <p className="text-xs text-rose-400" role="status" data-testid="debrief-regenerate-error">
+                <p className="text-xs text-rose-700 dark:text-rose-400" role="status" data-testid="debrief-regenerate-error">
                   Could not regenerate the debrief. The previous version is still shown. Try again shortly.
                 </p>
               )}
