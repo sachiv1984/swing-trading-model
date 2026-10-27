@@ -5,7 +5,7 @@ Provides journal summarisation, daily briefing, and chat advisory via Anthropic.
 AI output is display-only — must NOT be used in any signal, scoring,
 or recommendation pipeline. SRB-v1.7 CONDITIONALLY COMPLIANT.
 
-Contract: docs/specs/api_contracts/ai_endpoints.md v1.27
+Contract: docs/specs/api_contracts/ai_endpoints.md v1.28
 
 Post-generation stop-time check (ST-04, BLG-AI-10, v9.12; AI Compliance &
 Governance Officer ruling, ESC-EXEC-20261013-01): when a briefing or chat
@@ -217,13 +217,17 @@ def _stop_time_present(text: str, position: dict) -> bool:
 
 
 def _append_missing_stop_times(text, positions: list, endpoint: str, field: str,
-                               prompt_version: str, own_ticker: Optional[str] = None):
+                               prompt_version: str, own_ticker: Optional[str] = None,
+                               focus_ticker: Optional[str] = None):
     """Return (text, outcome) for one response field. outcome is None (no
     miss), "appended" or "unattributed". Per the ESC-EXEC-20261013-01 ruling:
     a sentence containing the word "stop" or "stops" cites a stop; it is attributed to every
     open-position ticker it names (whole word), plus `own_ticker` for an
     action. Tickers are compared in normalised form (ST-15: upper case, ".L"
-    folded). A cited position whose stop_calculated_at date (or "not
+    folded). For chat, `focus_ticker` (context.ticker) takes a stop sentence
+    that names no held ticker, if it is itself held (ST-16, BLG-AI-18; ruling
+    ESC-EXEC-20261027-01 (B)); a sentence naming a held ticker is attributed
+    only to the tickers it names. A cited position whose stop_calculated_at date (or "not
     recalculated since entry", when NULL) appears nowhere in the field gets
     its label appended after the model's text. Fails open."""
     if not isinstance(text, str) or not text:
@@ -237,21 +241,26 @@ def _append_missing_stop_times(text, positions: list, endpoint: str, field: str,
                 by_ticker[t] = p
                 by_normalised[n] = t
         own = by_normalised.get(_normalise_ticker(own_ticker))
-        missing, unattributed = [], False
+        focus = by_normalised.get(_normalise_ticker(focus_ticker))
+        missing, via_focus, unattributed = [], set(), False
         for sentence in _SENTENCE_SPLIT_RE.split(text):
             if not _STOP_WORD_RE.search(sentence):
                 continue
             cited = [t for t in by_ticker if _ticker_in(t, sentence)]
             if own and own not in cited:
                 cited.append(own)
+            if not cited and focus:
+                cited.append(focus)
+                if focus not in missing and not _stop_time_present(text, by_ticker[focus]):
+                    via_focus.add(focus)
             if not cited:
                 unattributed = True
             for t in cited:
                 if t not in missing and not _stop_time_present(text, by_ticker[t]):
                     missing.append(t)
         for t in missing:
-            logger.warning("stop-time check: endpoint=%s field=%s ticker=%s action=appended prompt_version=%s",
-                           endpoint, field, t, prompt_version)
+            logger.warning("stop-time check: endpoint=%s field=%s ticker=%s action=appended prompt_version=%s%s",
+                           endpoint, field, t, prompt_version, " attribution=focus" if t in via_focus else "")
         if unattributed:
             logger.warning("stop-time check: endpoint=%s field=%s ticker=unattributed action=unattributed_no_append "
                            "prompt_version=%s", endpoint, field, prompt_version)
@@ -766,7 +775,8 @@ def ai_chat(question: str, context_opts: Optional[dict] = None) -> dict:
         output_tokens = usage.output_tokens if usage else None
 
         checked, outcome = _append_missing_stop_times(content, positions, "POST /ai/chat", "response",
-                                                      CHAT_PROMPT_VERSION)
+                                                      CHAT_PROMPT_VERSION,
+                                                      focus_ticker=(context_opts or {}).get("ticker"))
 
         try:
             cost_usd = None

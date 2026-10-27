@@ -502,7 +502,8 @@
       "qa_evidence_log": "claude/cycles/2026-10-16__release-v9.13/qa_evidence_EPIC-03.md",
       "test_scenarios": [
         "tests/test_briefing_uk_ticker_normalisation.py",
-        "tests/test_chat_cash_context.py"
+        "tests/test_chat_cash_context.py",
+        "tests/test_ai_stop_time_focus_attribution.py"
       ],
       "stories": {
         "ST-15": {
@@ -532,7 +533,7 @@
         "ST-16": {
           "title": "Attribute chat stop citations to the focused ticker and case-normalise action tickers",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "in_progress",
           "assigned_to": "AI Compliance & Governance Officer; Backend Engineering Patterns Owner",
           "github_issue": 2046,
           "branch": "exec/2026-10-16__release-v9.13/EPIC-03",
@@ -542,7 +543,10 @@
           "unblock_criteria": "AI Compliance & Governance Officer ruling recorded in ESC-EXEC-20261027-01's resolution.",
           "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": [],
+          "spec_references": [
+            "docs/specs/api_contracts/ai_endpoints.md#POST /ai/chat",
+            "tests/test_ai_stop_time_focus_attribution.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
@@ -613,26 +617,26 @@
         "ST-19": {
           "title": "Label available cash and starting capital separately in the AI chat context",
           "classification": "autonomous",
-          "status": "in_progress",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 2049,
           "branch": "exec/2026-10-16__release-v9.13/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "3d43c672a2d63ef325a8eb8c32c971afb66b4267",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-10-27T08:55:08Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/specs/api_contracts/ai_endpoints.md#POST /ai/chat",
             "tests/test_chat_cash_context.py"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "AC1: chat context uses _briefing_cash_line (no \"of £\", starting capital omitted when 0/None) - tests/test_chat_cash_context.py. AC2: CHAT_PROMPT_VERSION v1.1->v1.2, golden fixture prompt_version updated, version-pinned tests in test_ai_stop_time_check.py/test_ai_stop_recalculation_time.py updated; ai_endpoints.md v1.27 §POST /ai/chat context list. ci_pending: 40476899633 (CI Pytest), 40476899767 (Playwright); other 5 workflows success. No deviation."
         },
         "ST-20": {
           "title": "Keep the debrief card populated when Regenerate returns no data",
@@ -1180,6 +1184,7 @@
     "ST-13",
     "ST-14",
     "ST-15",
+    "ST-19",
     "ST-35",
     "ST-36",
     "ST-37",

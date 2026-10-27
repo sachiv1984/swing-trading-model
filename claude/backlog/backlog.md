@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-27 (session — 4 new item(s) added: BLG-BE-191, BLG-FE-233, BLG-UX-06, BLG-FEAT-100; PR #2073 review findings, EPIC-02 v9.13); prior — 2026-10-27 (session — 2 new item(s) added: BLG-QA-229, BLG-BE-190; EPIC-02 v9.13 DoQ review findings); prior — 2026-10-27 (session — 1 new item(s) added: BLG-OPS-193; frontend build failure found during EPIC-02 v9.13 staging check); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-27 (session — 1 new item(s) added: BLG-UX-07; ST-16 AC 4 Head of UX & Design answer, EPIC-03 v9.13); prior — 2026-10-27 (session — 4 new item(s) added: BLG-BE-191, BLG-FE-233, BLG-UX-06, BLG-FEAT-100; PR #2073 review findings, EPIC-02 v9.13); prior — 2026-10-27 (session — 2 new item(s) added: BLG-QA-229, BLG-BE-190; EPIC-02 v9.13 DoQ review findings); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -5905,6 +5905,29 @@ ST-06's "No valid stop" caption on Trade Entry explains why there is no stop but
 - No hard-coded ATR period in the message (a test patches the constant)
 - If adopted, the caption and messages contain no document or section references and state a next step; contract text matches the code exactly
 - The Strategy Rules & System Intent Owner confirms the reject behaviour is unchanged
+
+---
+
+### BLG-UX-07 — Mark code-written notes in AI briefing and chat answers as system-added
+**Priority:** P3 (Low) — provisional; set from the `[STOP-TIME-MISSING]` miss rate before planning
+**Type:** UX / AI Advisory Presentation
+**Owner:** Head of UX & Design; Frontend Specifications & UX Documentation Owner; API Contracts & Documentation Owner (response shape)
+**Source:** ST-16 AC 4 / EPIC-03, sprint execution `2026-10-16__release-v9.13` — Head of UX & Design answer (agent-mediated, §5.3) recorded in `ESC-EXEC-20261027-01` — 2026-10-27
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.14
+
+**Problem**
+Code appends deterministic notes to AI text: the stop-time note "(<TICKER> stop last recalculated …)" (ST-04, v9.12; chat focus ticker ST-16, v9.13) and, from ST-17 (v9.13), the briefing caveat for a ticker outside the context. They render exactly like model prose, so the reader cannot tell what the system added from what the model wrote. The Head of UX & Design answered that provenance needs visible "system-added" styling. Because `summary`, `actions[].description` and chat `response` are plain strings, styling needs a structured field or a delimiter, which changes the contract and `openapi.yaml`.
+
+**Scope**
+- Before planning: pull the `[STOP-TIME-MISSING]` miss rate (with the user's permission for the read-only DB query) and set priority from it
+- Choose how the notes are carried (separate field such as `system_notes`, or a delimiter) and record it in `ai_endpoints.md` and `openapi.yaml`
+- Style the notes as system-added in the Daily Briefing card and the AI Trade Advisor widget, covering both note kinds
+
+**Acceptance Criteria**
+- The miss rate and resulting priority are recorded before the item enters a sprint
+- Both note kinds render with a visible system-added treatment that passes AA contrast in both themes (Playwright, including an axe scan)
+- Model text is still never edited; the contract and `openapi.yaml` describe the new shape
 
 ---
 

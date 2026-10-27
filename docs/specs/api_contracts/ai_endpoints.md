@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical (Class 1)
 **Status:** Canonical
-**Version:** 1.27
-**Last Updated:** 2026-10-27 (ST-19, EPIC-03, v9.13, BLG-AI-14 — `POST /ai/chat` context labels available cash and starting capital separately; `CHAT_PROMPT_VERSION` v1.2); prior — 2026-10-27 (ST-15, EPIC-03, v9.13, BLG-AI-17 — briefing ticker filter and stop-time attribution treat a UK `.L` ticker and its bare form as one instrument); prior — 2026-10-13 (ST-06, EPIC-01, v9.12, BLG-OPS-183 — `POST /ai/journal-summary` writes a `claude_audit_log` row per model call, so the daily cost alert really does cover every Claude feature; feature-tag taxonomy completed); prior history retained — see prior entries in version control
+**Version:** 1.28
+**Last Updated:** 2026-10-27 (ST-16, EPIC-03, v9.13, BLG-AI-18 — `POST /ai/chat` stop-time check attributes an unnamed stop citation to the held focus ticker); prior — 2026-10-27 (ST-19, EPIC-03, v9.13, BLG-AI-14 — `POST /ai/chat` context labels available cash and starting capital separately; `CHAT_PROMPT_VERSION` v1.2); prior — 2026-10-27 (ST-15, EPIC-03, v9.13, BLG-AI-17 — briefing ticker filter and stop-time attribution treat a UK `.L` ticker and its bare form as one instrument); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -298,7 +298,7 @@ Each call is independent — the backend loads fresh portfolio and signal state 
 
 ### Post-generation stop-time check (ST-04, v9.12)
 
-The same code-authored check as `POST /ai/daily-briefing` check 2, applied to `response` (the note is appended after the model's text; `compliance_check_result` takes the same values; the sampling hook receives the raw output). `CHAT_PROMPT_VERSION` was unchanged by this check; it is v1.2 from ST-19 (cash labelling).
+The same code-authored check as `POST /ai/daily-briefing` check 2, applied to `response` (the note is appended after the model's text; `compliance_check_result` takes the same values; the sampling hook receives the raw output). **Focus ticker (ST-16, v9.13, BLG-AI-18; AI Compliance & Governance Officer ruling `ESC-EXEC-20261027-01` (B)):** when `context.ticker` is set and, normalised, is an open position, a stop sentence that names no held ticker is attributed to it (so "Your stop is at £450" asked from a position gets that position's note); a sentence naming a held ticker is attributed only to the tickers it names, and a non-held focus ticker changes nothing. The warning line then ends `attribution=focus`. `CHAT_PROMPT_VERSION` was unchanged by this check; it is v1.2 from ST-19 (cash labelling).
 
 ### Rate limiting
 
@@ -886,6 +886,7 @@ Not a new endpoint — this is internal instrumentation, not part of this contra
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.28 | 2026-10-27 | ST-16 (EPIC-03, v9.13, BLG-AI-18; ruling `ESC-EXEC-20261027-01` (B)): `POST /ai/chat` stop-time check passes `context.ticker` as a focus ticker — a stop sentence naming no held ticker is attributed to the focus ticker when it is an open position; warning line adds `attribution=focus`. Briefing action tickers are compared case- and `.L`-normalised (from ST-15). `compliance_check_result` values and prompts unchanged. No request/response schema change; no `openapi.yaml` change. |
 | 1.27 | 2026-10-27 | ST-19 (EPIC-03, v9.13, BLG-AI-14): `POST /ai/chat` context no longer renders "Cash: £X of £Y initial capital"; it uses the briefing's labelled line (available cash; starting capital, omitted when 0 or missing). `CHAT_PROMPT_VERSION` v1.1 → v1.2, golden fixture updated. No request/response schema change; no `openapi.yaml` change. |
 | 1.26 | 2026-10-27 | ST-15 (EPIC-03, v9.13, BLG-AI-17): `POST /ai/daily-briefing` check 1 (actions limited to context tickers) and the stop-time check's ticker attribution (briefing and chat) compare tickers in normalised form — upper case, trailing `.L` removed — so a UK ticker matches with or without its suffix. No request/response schema change; no prompt change; no `openapi.yaml` change. |
 | 1.25 | 2026-10-13 | ST-06 (EPIC-01, v9.12, BLG-OPS-183), from the agent-mediated Director of Quality review: `POST /ai/journal-summary` wrote no `claude_audit_log` row, so v1.24's "covers every Claude-calling feature" was not yet true for it. Each journal-summary model call now writes one (cost, tokens, prompt hash, latency; failed calls marked `model_call_failed`). The feature-tag taxonomy gains `POST /ai/journal-summary` and the previously unlisted `POST /reports/monthly-pnl/narrative` (v9.11). No request/response change. |
