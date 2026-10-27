@@ -89,3 +89,51 @@ Last Updated: 2026-10-16
 - **Blocks execution:** No
 - **Disposition:** Resolved
 - **Resolution summary (2026-10-17T16:16:44Z):** API Contracts & Documentation Owner ruling, agent-mediated per `execution_prompt.md` §5.3 (user-directed, in-session 2026-10-17), first pass: **Approved (A) — 400 naming §11.** Grounds: a 200 that silently ignores a write is neither accurate nor developer-friendly (charter §1); no success response in `docs/specs/api_contracts/` carries a request-warnings field, while `conventions.md` already maps invalid input to 400, so (A) needs no new convention; no first-party caller breaks (charter §4): the Settings page strips `FIXED_STRATEGY_FIELDS` before saving (`src/pages/Settings.js:19`, `:129-133`, asserted by `settings-strategy-parameters-fixed.spec.js`), and no script or workflow posts them. Binding conditions, as applied by ST-08: (1) both handlers return `JSONResponse` 400 `{status, message}` before the `try`; (2) message names `strategy_rules.md §11` and §12.3 and lists the offending fields in the order min_hold_days, atr_period, atr_multiplier_initial, atr_multiplier_trailing; (3) a field counts only when in `model_fields_set` and non-null; (4) check in the handlers, no pydantic validator, fields kept in `SettingsRequest`, a mixed body rejected whole; (5) `settings_endpoints.md` v1.6.0; (6) `openapi.yaml` descriptions and version; (7) no frontend change; (8) new backend tests; (9) `tests/test_main_500_no_raw_exception_text.py` and `tests/test_settings_create_and_plan_snapshot.py` updated. ST-08 reclassified `autonomous`.
+
+## ESC-EXEC-20261027-01
+
+- **Raised at:** 2026-10-27T08:48:35Z
+- **Routine:** Sprint Execution
+- **Cycle ID:** 2026-10-16__release-v9.13
+- **Step:** STEP 3.1.D (EPIC-03 execution loop, raised at EPIC start per `sprint_backlog.md` ST-16 Notes)
+- **ST/EPIC item:** ST-16 / EPIC-03 (BLG-AI-18)
+- **Trigger type:** Lifecycle
+- **Blocking statement:** ST-16 AC 1 needs the AI Compliance & Governance Officer to sign off extending the `ESC-EXEC-20261013-01` stop-time ruling to chat: `ai_chat()` passes `context_opts.ticker` as `own_ticker` to `_append_missing_stop_times`, so a ticker-focused reply such as "Your stop is at £450" is attributed to the focused position and gets its code-written recalculation note, instead of being counted `unattributed` with no note. The same story case-normalises `own_ticker` (upper case, `.L` folded per ST-15) against the position tickers. Choice: **(A) extend** — attribute a stop sentence with no named ticker to the focused ticker, but only when that ticker is an open position (a non-held focus ticker adds nothing); a sentence that names another held ticker is attributed to that ticker as today, plus the focused one. **(B) extend narrowly** — attribute to the focused ticker only when the sentence names no held ticker at all. **(C) decline** — keep chat as `unattributed`. ST-16 AC 4 (Head of UX & Design answer on visible "system-added" styling) is asked separately.
+- **Engine recommendation (non-binding):** (B). It covers the common case the item names without attributing a sentence about another holding to the focused one.
+- **Owning authority:** AI Compliance & Governance Officer
+- **Unblock criteria:** a dated choice, (A), (B) or (C), recorded in this escalation's resolution.
+- **SLA due-by:** 2026-10-28T08:48:35Z (24h — Lifecycle)
+- **Blocks execution:** No
+- **Disposition:** Open
+
+## ESC-EXEC-20261027-02
+
+- **Raised at:** 2026-10-27T08:48:35Z
+- **Routine:** Sprint Execution
+- **Cycle ID:** 2026-10-16__release-v9.13
+- **Step:** STEP 3.1.D (EPIC-03 execution loop, raised at EPIC start per `sprint_backlog.md` ST-17 Notes)
+- **ST/EPIC item:** ST-17 / EPIC-03 (BLG-AI-16)
+- **Trigger type:** Lifecycle
+- **Blocking statement:** ST-02 (v9.12) drops briefing actions naming a ticker outside the context, but the `summary` prose is returned unchecked. ST-17 scans the summary for upper-case ticker-like tokens not among the open positions or context signals (normalised per ST-15; known non-ticker words such as SPY, FTSE, MA200, UK, US, EXIT, ENTER, MONITOR, HOLD, P&L excluded). AC 1 needs the AI Compliance & Governance Officer to choose the action on a hit: **(A) log and count** — summary returned unchanged, result recorded; **(B) code-written caveat** — append "(Note: <TICKER> is not in your portfolio or today's signals.)" after the model text, the same form as the stop-time note; **(C) regenerate once**, then (A) or (B) if the retry also fails. Whichever is chosen, the result is recorded alongside the stop-time result in `claude_audit_log.compliance_check_result` (AC 4).
+- **Engine recommendation (non-binding):** (B). It tells the reader at the point of use, follows the ruled stop-time pattern (code-authored, model text never edited), and costs no extra model call.
+- **Owning authority:** AI Compliance & Governance Officer
+- **Unblock criteria:** a dated choice, (A), (B) or (C), recorded in this escalation's resolution.
+- **SLA due-by:** 2026-10-28T08:48:35Z (24h — Lifecycle)
+- **Blocks execution:** No
+- **Disposition:** Open
+
+## ESC-EXEC-20261027-03
+
+- **Raised at:** 2026-10-27T08:48:35Z
+- **Routine:** Sprint Execution
+- **Cycle ID:** 2026-10-16__release-v9.13
+- **Step:** STEP 3.1.D (EPIC-03 execution loop, raised at EPIC start per `sprint_backlog.md` ST-18 Notes)
+- **ST/EPIC item:** ST-18 / EPIC-03 (BLG-AI-15)
+- **Trigger type:** Lifecycle
+- **Blocking statement:** `POST /ai/journal-summary` runs no output-language check; its staging output once ended "...or if stop placements need adjustment". ST-18 adds a post-generation check reusing the debrief's `scan_prescriptive` plus a pattern for wording that suggests changing stops, sizing or setups. AC 1 needs the AI Compliance & Governance Officer to choose the failure action: **(A) regenerate once, then a code-written fallback** (summary `null` with an explanatory `message`, the debrief / monthly-narrative pattern); **(B) return the text with the result logged**. Either way each call's result goes in `claude_audit_log.compliance_check_result`, and `JOURNAL_SUMMARY_PROMPT_VERSION` is bumped if the prompt text is tightened.
+- **Engine recommendation (non-binding):** (A). It matches the two other AI narrative features, so text suggesting stop or sizing changes never reaches the user.
+- **Owning authority:** AI Compliance & Governance Officer
+- **Unblock criteria:** a dated choice, (A) or (B), recorded in this escalation's resolution.
+- **SLA due-by:** 2026-10-28T08:48:35Z (24h — Lifecycle)
+- **Blocks execution:** No
+- **Disposition:** Open

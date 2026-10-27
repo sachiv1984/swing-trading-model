@@ -5,7 +5,7 @@ Provides journal summarisation, daily briefing, and chat advisory via Anthropic.
 AI output is display-only — must NOT be used in any signal, scoring,
 or recommendation pipeline. SRB-v1.7 CONDITIONALLY COMPLIANT.
 
-Contract: docs/specs/api_contracts/ai_endpoints.md v1.25
+Contract: docs/specs/api_contracts/ai_endpoints.md v1.26
 
 Post-generation stop-time check (ST-04, BLG-AI-10, v9.12; AI Compliance &
 Governance Officer ruling, ESC-EXEC-20261013-01): when a briefing or chat
@@ -129,17 +129,31 @@ def _stop_recalculated_label(position: dict) -> str:
 
 
 
+def _normalise_ticker(ticker) -> Optional[str]:
+    """ST-15 (BLG-AI-17, v9.13): upper case with a trailing ".L" removed, so a
+    UK ticker matches with or without its suffix (as the trade-plan lookup in
+    database.py already does). None for a non-string or empty ticker."""
+    if not isinstance(ticker, str):
+        return None
+    t = ticker.strip().upper()
+    if t.endswith(".L"):
+        t = t[:-2]
+    return t or None
+
+
 def _filter_actions_to_context(actions, allowed_tickers: set) -> list:
     """ST-02 (BLG-AI-11, v9.12): keep only briefing actions whose ticker is a
     held position or one of the signals given to the model. The model once
     returned ENTER for the placeholder ticker NEW_SIGNAL. Dropped actions are
-    logged (ticker and type only)."""
+    logged (ticker and type only). Both sides are normalised (ST-15), so
+    `VOD` matches a held `VOD.L` and the reverse."""
     if not isinstance(actions, list):
         return []
+    allowed = {_normalise_ticker(t) for t in allowed_tickers} - {None}
     kept = []
     for action in actions:
         ticker = action.get("ticker") if isinstance(action, dict) else None
-        if isinstance(ticker, str) and ticker.strip().upper() in allowed_tickers:
+        if _normalise_ticker(ticker) in allowed:
             kept.append(action)
         else:
             logger.warning(
@@ -182,7 +196,12 @@ def _stop_time_date(position: dict) -> Optional[str]:
 
 
 def _ticker_in(ticker: str, sentence: str) -> bool:
-    return re.search(rf"(?<![A-Za-z0-9.]){re.escape(ticker)}(?![A-Za-z0-9])", sentence) is not None
+    """Whole-word match of the ticker's normalised form, with or without a
+    ".L" suffix (ST-15): a held `VOD.L` is cited by "VOD" and the reverse."""
+    bare = _normalise_ticker(ticker)
+    if not bare:
+        return False
+    return re.search(rf"(?<![A-Za-z0-9.]){re.escape(bare)}(?:\.L)?(?![A-Za-z0-9])", sentence) is not None
 
 
 def _stop_time_present(text: str, position: dict) -> bool:
@@ -202,24 +221,28 @@ def _append_missing_stop_times(text, positions: list, endpoint: str, field: str,
     miss), "appended" or "unattributed". Per the ESC-EXEC-20261013-01 ruling:
     a sentence containing the word "stop" or "stops" cites a stop; it is attributed to every
     open-position ticker it names (whole word), plus `own_ticker` for an
-    action. A cited position whose stop_calculated_at date (or "not
+    action. Tickers are compared in normalised form (ST-15: upper case, ".L"
+    folded). A cited position whose stop_calculated_at date (or "not
     recalculated since entry", when NULL) appears nowhere in the field gets
     its label appended after the model's text. Fails open."""
     if not isinstance(text, str) or not text:
         return text, None
     try:
-        by_ticker = {}
+        by_ticker, by_normalised = {}, {}
         for p in positions or []:
             t = p.get("ticker")
-            if isinstance(t, str) and t and t not in by_ticker:
+            n = _normalise_ticker(t)
+            if n and n not in by_normalised:
                 by_ticker[t] = p
+                by_normalised[n] = t
+        own = by_normalised.get(_normalise_ticker(own_ticker))
         missing, unattributed = [], False
         for sentence in _SENTENCE_SPLIT_RE.split(text):
             if not _STOP_WORD_RE.search(sentence):
                 continue
             cited = [t for t in by_ticker if _ticker_in(t, sentence)]
-            if own_ticker in by_ticker and own_ticker not in cited:
-                cited.append(own_ticker)
+            if own and own not in cited:
+                cited.append(own)
             if not cited:
                 unattributed = True
             for t in cited:

@@ -494,18 +494,20 @@
       "merge_commit": "8ebd879a"
     },
     "EPIC-03": {
-      "status": "not_started",
-      "branch": null,
+      "status": "in_progress",
+      "branch": "exec/2026-10-16__release-v9.13/EPIC-03",
       "pr_number": null,
       "pr_status": "none",
       "qa_signed_off": false,
       "qa_evidence_log": "claude/cycles/2026-10-16__release-v9.13/qa_evidence_EPIC-03.md",
-      "test_scenarios": [],
+      "test_scenarios": [
+        "tests/test_briefing_uk_ticker_normalisation.py"
+      ],
       "stories": {
         "ST-15": {
           "title": "Treat UK .L and bare tickers as the same instrument in the briefing ticker filter",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "in_progress",
           "assigned_to": "engine",
           "github_issue": 2045,
           "branch": "exec/2026-10-16__release-v9.13/EPIC-03",
@@ -515,7 +517,10 @@
           "unblock_criteria": null,
           "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": [],
+          "spec_references": [
+            "docs/specs/api_contracts/ai_endpoints.md#POST /ai/daily-briefing",
+            "tests/test_briefing_uk_ticker_normalisation.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
@@ -526,14 +531,14 @@
         "ST-16": {
           "title": "Attribute chat stop citations to the focused ticker and case-normalise action tickers",
           "classification": "delegated_decision",
-          "status": "not_started",
+          "status": "blocked_decision",
           "assigned_to": "AI Compliance & Governance Officer; Backend Engineering Patterns Owner",
           "github_issue": 2046,
           "branch": "exec/2026-10-16__release-v9.13/EPIC-03",
           "commit_sha": null,
           "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
+          "blocked_since_utc": "2026-10-27T08:48:35Z",
+          "unblock_criteria": "AI Compliance & Governance Officer ruling recorded in ESC-EXEC-20261027-01's resolution.",
           "completed_utc": null,
           "acceptance_verified": false,
           "spec_references": [],
@@ -547,14 +552,14 @@
         "ST-17": {
           "title": "Check the briefing summary text for tickers outside the context",
           "classification": "delegated_decision",
-          "status": "not_started",
+          "status": "blocked_decision",
           "assigned_to": "AI Compliance & Governance Officer; Backend Engineering Patterns Owner",
           "github_issue": 2047,
           "branch": "exec/2026-10-16__release-v9.13/EPIC-03",
           "commit_sha": null,
           "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
+          "blocked_since_utc": "2026-10-27T08:48:35Z",
+          "unblock_criteria": "AI Compliance & Governance Officer ruling recorded in ESC-EXEC-20261027-02's resolution.",
           "completed_utc": null,
           "acceptance_verified": false,
           "spec_references": [],
@@ -568,14 +573,14 @@
         "ST-18": {
           "title": "Add an output-language check to the journal summary",
           "classification": "delegated_decision",
-          "status": "not_started",
+          "status": "blocked_decision",
           "assigned_to": "AI Compliance & Governance Officer; Backend Engineering Patterns Owner",
           "github_issue": 2048,
           "branch": "exec/2026-10-16__release-v9.13/EPIC-03",
           "commit_sha": null,
           "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
+          "blocked_since_utc": "2026-10-27T08:48:35Z",
+          "unblock_criteria": "AI Compliance & Governance Officer ruling recorded in ESC-EXEC-20261027-03's resolution.",
           "completed_utc": null,
           "acceptance_verified": false,
           "spec_references": [],
@@ -1135,7 +1140,11 @@
       "merge_commit": "27430d29"
     }
   },
-  "blocked_items": [],
+  "blocked_items": [
+    "ST-16",
+    "ST-17",
+    "ST-18"
+  ],
   "delegated_items": [],
   "completed_items": [
     "ST-01",
@@ -1182,6 +1191,21 @@
       "disposition": "Resolved",
       "raised_utc": "2026-10-17T16:06:04Z",
       "resolved_utc": "2026-10-17T16:16:44Z"
+    },
+    "ESC-EXEC-20261027-01": {
+      "item": "ST-16",
+      "disposition": "Open",
+      "raised_utc": "2026-10-27T08:48:35Z"
+    },
+    "ESC-EXEC-20261027-02": {
+      "item": "ST-17",
+      "disposition": "Open",
+      "raised_utc": "2026-10-27T08:48:35Z"
+    },
+    "ESC-EXEC-20261027-03": {
+      "item": "ST-18",
+      "disposition": "Open",
+      "raised_utc": "2026-10-27T08:48:35Z"
     }
   },
   "merge_gate": {
@@ -1192,8 +1216,8 @@
     ],
     "epics_pending": [
       "EPIC-03",
-      "EPIC-05",
-      "EPIC-04"
+      "EPIC-04",
+      "EPIC-05"
     ],
     "all_merged": false
   },
@@ -1206,7 +1230,8 @@
     "2026-10-17T15:43:26Z: EPIC-06 PR #2072 merged by the repository owner (merge commit 27430d29) right after the engine posted the user-directed QA sign-off and PO acceptance comments. The merge-gate record commit was redirected from the EPIC-06 branch to main: the §3.2.B step 7 merged-PR check fired (LL-v9.12-P3-02), so no commit landed on the merged branch. Orphaned post-merge commit check (LL-v6.8-P3-01): git log origin/main..origin/exec/.../EPIC-06 is empty. Step 3c sibling sync: no other EPIC branch exists yet; EPIC-02 (next in merge order) is cut from this main.",
     "2026-10-17: EPIC-02 branch cut from main 6b1b8bb4 (after EPIC-06 merge). Autonomous ST-09, ST-11, ST-12, ST-13, ST-14 done; ST-10 automated scope committed, manual-check half delegated (DEL-20261017-01). ST-06/ST-07/ST-08 rulings escalated (ESC-EXEC-20261017-02/-03/-04). The pre-commit OpenAPI drift hook scans the working tree, so an in-progress story's undocumented route blocked an unrelated story's commit once (ST-13); recovered with a fresh commit, no amend.",
     "2026-10-17: ST-06/ST-08 rulings agent-mediated (§5.3, user-directed), ST-07 decided by the user in-session; all three reclassified autonomous and committed (87c63c23, 5c39e3f2). ST-06 and ST-08 share one commit because both touch openapi.yaml and api_changelog.md (CLAUDE.md §2 multi-ID format).",
-    "2026-10-27T08:45:05Z: EPIC-02 PR #2073 merged by the repository owner (merge commit 8ebd879a) after the agent-mediated Director of Quality and Product Owner review comment (both Approved with Comments, nothing blocking). Follow-ups filed on main: BLG-OPS-193, BLG-QA-229, BLG-BE-190, BLG-BE-191, BLG-FE-233, BLG-UX-06, BLG-FEAT-100. Branch fully contained in main (no orphaned post-merge commits). Merge record written on main per STEP 4 mid-session re-sync."
+    "2026-10-27T08:45:05Z: EPIC-02 PR #2073 merged by the repository owner (merge commit 8ebd879a) after the agent-mediated Director of Quality and Product Owner review comment (both Approved with Comments, nothing blocking). Follow-ups filed on main: BLG-OPS-193, BLG-QA-229, BLG-BE-190, BLG-BE-191, BLG-FE-233, BLG-UX-06, BLG-FEAT-100. Branch fully contained in main (no orphaned post-merge commits). Merge record written on main per STEP 4 mid-session re-sync.",
+    "2026-10-27: EPIC-03 branch cut from main e8097f2d (after EPIC-02 merge). ST-16/ST-17/ST-18 rulings escalated at EPIC start (ESC-EXEC-20261027-01/-02/-03); agent-mediated sign-off attempted per §5.3."
   ],
   "sealed": false,
   "sealed_utc": null
