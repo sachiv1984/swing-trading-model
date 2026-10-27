@@ -966,7 +966,7 @@
           "deviations_filed": false,
           "last_completed_substep": "3.1.B.delegated",
           "sign_off_record": null,
-          "notes": "Engine commit b48ebe753b08d16e93c62fe18149024bd843af60 (2026-10-27T21:38:00Z): combined weekly cost baseline \\$0.00 (all sources free, basis per source), >2x advisory threshold on volume, cost and failures (AC 2 met), gate verified at Release Planning (AC 3). Follow-up BLG-OPS-195 (automated check). AC 1 weekly volumes delegated: DEL-20261027-06 (post-merge, 7 days of production data)."
+          "notes": "Engine commit b48ebe753b08d16e93c62fe18149024bd843af60 (2026-10-27T21:38:00Z): combined weekly cost baseline $0.00 (all sources free, basis per source), >2x advisory threshold on volume, cost and failures (AC 2 met), gate verified at Release Planning (AC 3). Follow-up BLG-OPS-195 (automated check). AC 1 weekly volumes delegated: DEL-20261027-06 (post-merge, 7 days of production data)."
         },
         "ST-31": {
           "title": "Attribute each external API call to the feature that triggered it",
