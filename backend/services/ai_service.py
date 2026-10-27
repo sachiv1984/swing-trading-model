@@ -5,7 +5,7 @@ Provides journal summarisation, daily briefing, and chat advisory via Anthropic.
 AI output is display-only — must NOT be used in any signal, scoring,
 or recommendation pipeline. SRB-v1.7 CONDITIONALLY COMPLIANT.
 
-Contract: docs/specs/api_contracts/ai_endpoints.md v1.28
+Contract: docs/specs/api_contracts/ai_endpoints.md v1.29
 
 Post-generation stop-time check (ST-04, BLG-AI-10, v9.12; AI Compliance &
 Governance Officer ruling, ESC-EXEC-20261013-01): when a briefing or chat
@@ -15,6 +15,10 @@ that field. This is a deterministic, code-authored addition built only from
 the context the model was given: model text is never edited, reordered or
 removed, and the boundary-sample hook receives the raw model output.
 Every miss is logged and counted in claude_audit_log.compliance_check_result.
+
+Summary ticker check (ST-17, BLG-AI-16, v9.13; ruling ESC-EXEC-20261027-02):
+a ticker named in the briefing summary that is outside the context gets a
+code-written caveat appended the same way, logged and counted.
 """
 
 import hashlib
@@ -305,6 +309,62 @@ def _check_briefing_stop_times(parsed: dict, positions: list):
     return summary, actions, _stop_time_check_result(outcomes)
 
 
+# ─── ST-17 (BLG-AI-16, v9.13): briefing summary tickers outside the context ─
+# AI Compliance & Governance Officer ruling ESC-EXEC-20261027-02 (B): a
+# ticker-like token in the raw summary that is not an open position or a
+# context signal (ST-15 normalised), does not appear in the context sent to
+# the model, and is not a known non-ticker word gets a code-written caveat
+# appended after the model's text (and after any stop-time notes). Logged and
+# counted; model text is never edited; fails open.
+_TICKER_TOKEN_RE = re.compile(r"(?<![A-Za-z0-9_.&$£])[A-Z][A-Z0-9_]{1,14}(?:\.[A-Z]{1,2})?(?![A-Za-z0-9_&])")
+_NON_TICKER_WORDS = frozenset({
+    "UK", "US", "USD", "GBP", "GBX", "EXIT", "ENTER", "MONITOR", "HOLD", "ATR", "MA", "ETF", "AI", "UTC",
+    "SPY", "FTSE", "RISK", "ON", "OFF", "STOP", "BREACH", "OK", "YTD",
+})
+
+
+def _word_in(token: str, text: str) -> bool:
+    return re.search(rf"(?<![A-Za-z0-9_.]){re.escape(token)}(?![A-Za-z0-9_])", text) is not None
+
+
+def _summary_ticker_caveat(summary, context_tickers, context: str):
+    """Return (caveat, outcome) for the raw briefing summary. caveat is the
+    text to append (or None); outcome is None (no hit), "appended" or "error"."""
+    if not isinstance(summary, str) or not summary:
+        return None, None
+    try:
+        known = {_normalise_ticker(t) for t in context_tickers} - {None}
+        unknown = []
+        for m in _TICKER_TOKEN_RE.finditer(summary):
+            token = m.group(0)
+            if (token in unknown or token in _NON_TICKER_WORDS or _normalise_ticker(token) in known
+                    or _word_in(token, context)):
+                continue
+            unknown.append(token)
+        if not unknown:
+            return None, None
+        for token in unknown:
+            logger.warning("ticker check: endpoint=POST /ai/daily-briefing field=summary ticker=%s "
+                           "action=caveat_appended prompt_version=%s", token, BRIEFING_PROMPT_VERSION)
+        if len(unknown) == 1:
+            return f"(Note: {unknown[0]} is not one of your open positions or today's top signals.)", "appended"
+        return f"(Note: {', '.join(unknown)} are not among your open positions or today's top signals.)", "appended"
+    except Exception:
+        logger.error("ticker check failed for the briefing summary; summary returned unchanged", exc_info=True)
+        return None, "error"
+
+
+def _with_ticker_result(stop_time_result: str, outcome: Optional[str]) -> str:
+    """Combine the stop-time result with the ST-17 ticker result (ruling condition 5)."""
+    if outcome == "appended":
+        if stop_time_result == "pass":
+            return "ticker_outside_context_appended"
+        return f"{stop_time_result}+ticker_outside_context_appended"
+    if outcome == "error":
+        return f"{stop_time_result}+ticker_check_error"
+    return stop_time_result
+
+
 def _validate_context_ticker(context_opts: Optional[dict]) -> None:
     """Validate context_opts['ticker'] before it is interpolated into the system prompt (BLG-SEC-01)."""
     if not context_opts:
@@ -592,6 +652,12 @@ def generate_daily_briefing() -> dict:
                 logger.error("daily briefing ticker filter failed; actions returned unfiltered", exc_info=True)
             summary, actions, stop_time_result = _check_briefing_stop_times(
                 {"summary": parsed.get("summary", ""), "actions": actions}, positions)
+            caveat, ticker_outcome = _summary_ticker_caveat(
+                parsed.get("summary", ""),
+                [p.get("ticker") for p in positions] + [s.get("ticker") for s in top_signals], context)
+            if caveat:
+                summary = f"{summary} {caveat}"
+            stop_time_result = _with_ticker_result(stop_time_result, ticker_outcome)
 
         try:
             cost_usd = None

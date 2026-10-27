@@ -503,7 +503,8 @@
       "test_scenarios": [
         "tests/test_briefing_uk_ticker_normalisation.py",
         "tests/test_chat_cash_context.py",
-        "tests/test_ai_stop_time_focus_attribution.py"
+        "tests/test_ai_stop_time_focus_attribution.py",
+        "tests/test_briefing_summary_ticker_check.py"
       ],
       "stories": {
         "ST-15": {
@@ -533,24 +534,24 @@
         "ST-16": {
           "title": "Attribute chat stop citations to the focused ticker and case-normalise action tickers",
           "classification": "autonomous",
-          "status": "in_progress",
+          "status": "done",
           "assigned_to": "AI Compliance & Governance Officer; Backend Engineering Patterns Owner",
           "github_issue": 2046,
           "branch": "exec/2026-10-16__release-v9.13/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "d1a71c134fccd678e38101a44c238923d7cfa3d2",
           "delegation_record_id": null,
           "blocked_since_utc": "2026-10-27T08:48:35Z",
           "unblock_criteria": "AI Compliance & Governance Officer ruling recorded in ESC-EXEC-20261027-01's resolution.",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-10-27T08:56:43Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/specs/api_contracts/ai_endpoints.md#POST /ai/chat",
             "tests/test_ai_stop_time_focus_attribution.py"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": {
             "role": "AI Compliance & Governance Officer",
             "method": "agent_mediated",
@@ -558,12 +559,12 @@
             "signed_utc": "2026-10-27T08:54:27Z",
             "notes": "Ruling (B) extend narrowly on ESC-EXEC-20261027-01, first pass Approved, agent-mediated (§5.3). Binding conditions in the escalation resolution. AC 4: Head of UX & Design (agent-mediated, same pass) answered Yes, styling filed as a separate backlog item."
           },
-          "notes": "Reclassified delegated_decision -> autonomous after ESC-EXEC-20261027-01 resolved (B) extend narrowly."
+          "notes": "Reclassified delegated_decision -> autonomous after ESC-EXEC-20261027-01 resolved (B) extend narrowly. AC1: ruling recorded. AC2: focused chat reply without ticker gets the note (TestFocusAttribution, chat end-to-end). AC3: lower-case held action ticker gets the note (TestActionTickerCase). AC4: Head of UX & Design answered Yes; filed BLG-UX-07. ai_endpoints.md v1.28. CI on d1a71c13: all 7 workflows success (CI Pytest 40477089034). No deviation."
         },
         "ST-17": {
           "title": "Check the briefing summary text for tickers outside the context",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "in_progress",
           "assigned_to": "AI Compliance & Governance Officer; Backend Engineering Patterns Owner",
           "github_issue": 2047,
           "branch": "exec/2026-10-16__release-v9.13/EPIC-03",
@@ -573,7 +574,10 @@
           "unblock_criteria": "AI Compliance & Governance Officer ruling recorded in ESC-EXEC-20261027-02's resolution.",
           "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": [],
+          "spec_references": [
+            "docs/specs/api_contracts/ai_endpoints.md#POST /ai/daily-briefing",
+            "tests/test_briefing_summary_ticker_check.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
@@ -636,7 +640,7 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": "AC1: chat context uses _briefing_cash_line (no \"of £\", starting capital omitted when 0/None) - tests/test_chat_cash_context.py. AC2: CHAT_PROMPT_VERSION v1.1->v1.2, golden fixture prompt_version updated, version-pinned tests in test_ai_stop_time_check.py/test_ai_stop_recalculation_time.py updated; ai_endpoints.md v1.27 §POST /ai/chat context list. ci_pending: 40476899633 (CI Pytest), 40476899767 (Playwright); other 5 workflows success. No deviation."
+          "notes": "AC1: chat context uses _briefing_cash_line (no \"of £\", starting capital omitted when 0/None) - tests/test_chat_cash_context.py. AC2: CHAT_PROMPT_VERSION v1.1->v1.2, golden fixture prompt_version updated, version-pinned tests in test_ai_stop_time_check.py/test_ai_stop_recalculation_time.py updated; ai_endpoints.md v1.27 §POST /ai/chat context list. CI on 3d43c672: all 7 workflows success (CI Pytest 40476899633, Playwright 40476899767). No deviation."
         },
         "ST-20": {
           "title": "Keep the debrief card populated when Regenerate returns no data",
@@ -1184,6 +1188,7 @@
     "ST-13",
     "ST-14",
     "ST-15",
+    "ST-16",
     "ST-19",
     "ST-35",
     "ST-36",
