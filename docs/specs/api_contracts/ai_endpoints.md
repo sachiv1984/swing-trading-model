@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical (Class 1)
 **Status:** Canonical
-**Version:** 1.30
-**Last Updated:** 2026-10-27 (ST-18, EPIC-03, v9.13, BLG-AI-15 — `POST /ai/journal-summary` output-language check, regenerate once then a code-written fallback; `JOURNAL_SUMMARY_PROMPT_VERSION` v1.1); prior — 2026-10-27 (ST-17, EPIC-03, v9.13, BLG-AI-16 — briefing summary tickers outside the context get a code-written caveat, logged and counted); prior — 2026-10-27 (ST-16, EPIC-03, v9.13, BLG-AI-18 — `POST /ai/chat` stop-time check attributes an unnamed stop citation to the held focus ticker); prior history retained — see prior entries in version control
+**Version:** 1.31
+**Last Updated:** 2026-10-27 (ST-22, EPIC-03, v9.13, BLG-FE-208 — new `POST /ai/chat/{answer_id}/rating`; `POST /ai/chat` returns `answer_id` for a model answer); prior — 2026-10-27 (ST-18, EPIC-03, v9.13, BLG-AI-15 — `POST /ai/journal-summary` output-language check, regenerate once then a code-written fallback; `JOURNAL_SUMMARY_PROMPT_VERSION` v1.1); prior — 2026-10-27 (ST-17, EPIC-03, v9.13, BLG-AI-16 — briefing summary tickers outside the context get a code-written caveat, logged and counted); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -20,6 +20,7 @@ All AI output is **display-only** and must NOT be used as input to any signal, s
 - [POST /ai/journal-summary](#post-aijournal-summary)
 - [POST /ai/daily-briefing](#post-aidaily-briefing)
 - [POST /ai/chat](#post-aichat)
+- [POST /ai/chat/{answer_id}/rating](#post-aichatanswer_idrating)
 - [POST /ai/check-daily-cost](#post-aicheck-daily-cost)
 - [POST /ai/check-endpoint-anomalies](#post-aicheck-endpoint-anomalies)
 - [GET /ai/claude-audit-log](#get-aiclaude-audit-log)
@@ -291,7 +292,8 @@ Content-Type: application/json
 {
   "response": "NVDA is currently closest to its trailing stop, sitting 2.8% above the stop level of £450.00.",
   "advisory": true,
-  "model": "claude-sonnet-4-6"
+  "model": "claude-sonnet-4-6",
+  "answer_id": "3f2b7c1e-9a4d-4e21-8c55-0d6f1a2b3c4d"
 }
 ```
 
@@ -300,6 +302,7 @@ Content-Type: application/json
 | `response` | string | AI-generated answer grounded in live portfolio state. |
 | `advisory` | boolean | Always `true`. |
 | `model` | string or null | Model identifier used. |
+| `answer_id` | string (UUID), optional | *(ST-22, v9.13, BLG-FE-208)* The `claude_audit_log` row id for this answer, used by `POST /ai/chat/{answer_id}/rating`. Present only for a model answer whose audit row was written; absent on fixed messages ("Unable to get a response…", "Unable to load portfolio data.", the not-configured message, "I was unable to generate a response."). |
 
 ### Stateless behaviour
 
@@ -359,6 +362,63 @@ Content-Type: application/json
 - No writes to any table. Conversation state is not persisted.
 - `advisory: true` always present.
 - Rate limit implementation: in-memory sliding-window (`backend/services/rate_limiter.py`). Limit applies per client IP. Single-process scope; sufficient for single-instance Render deployment.
+
+---
+
+## POST /ai/chat/{answer_id}/rating
+
+**Added:** v1.31 (ST-22, EPIC-03, v9.13, BLG-FE-208). Design source: `docs/design/2026-10-16__release-v9.13/chat-answer-rating/decision_record.md`. UI: `positions.md` §AI Trade Advisor Widget §Answer Rating. Storage: `data_model.md` DS-35 (`chat_answer_ratings`).
+
+Stores the user's useful / not-useful rating for one chat answer. One rating per answer: a second is rejected, never overwritten. The rating feeds the Response Acceptance Rate (`metrics_definitions.md` § AI Chat Engagement) and changes nothing else. It is not an input to any signal, score or recommendation (§13; decision record §3).
+
+### Request
+
+| Parameter | In | Type | Description |
+|-----------|----|------|-------------|
+| `answer_id` | path | UUID | The `answer_id` returned by `POST /ai/chat` |
+
+```json
+{ "rating": "useful" }
+```
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `rating` | string | Yes | `useful` or `not_useful` |
+
+### Response — 201 Created
+
+```json
+{
+  "status": "ok",
+  "data": { "answer_id": "3f2b7c1e-9a4d-4e21-8c55-0d6f1a2b3c4d", "rating": "useful", "rated_at": "2026-10-27T09:30:00+00:00" }
+}
+```
+
+### Response — 409 Conflict (already rated)
+
+The stored rating is returned so the UI can show it.
+
+```json
+{
+  "status": "error",
+  "message": "This answer has already been rated.",
+  "data": { "answer_id": "3f2b7c1e-9a4d-4e21-8c55-0d6f1a2b3c4d", "rating": "useful", "rated_at": "2026-10-27T09:30:00+00:00" }
+}
+```
+
+### Error responses
+
+| Status | Condition |
+|--------|-----------|
+| 404 | `{"status": "error", "message": "Chat answer not found."}`: no `claude_audit_log` row with this id for `POST /ai/chat`, or the row is a failed call (`model_call_failed`) |
+| 422 | `answer_id` is not a UUID, or `rating` is missing or not `useful` / `not_useful` |
+| 401 | Missing or invalid API key |
+
+### Implementation constraints
+
+- Router → `ai_service.rate_chat_answer()` → `database.create_chat_answer_rating()`. The insert uses `ON CONFLICT (answer_id) DO NOTHING`; when nothing is inserted, the stored row is returned with 409.
+- The table is created on first use by `database.ensure_chat_answer_ratings_table()` (DS-35 Up Migration, idempotent).
+- Registered in `backend/routers/test.py` with the zero UUID, which returns 404 and writes nothing.
 
 ---
 
@@ -902,6 +962,7 @@ Not a new endpoint — this is internal instrumentation, not part of this contra
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.31 | 2026-10-27 | ST-22 (EPIC-03, v9.13, BLG-FE-208): new `POST /ai/chat/{answer_id}/rating` — one useful / not-useful rating per chat answer, stored in `chat_answer_ratings` (DS-35); 201, 409 with the stored rating on a second attempt, 404 for an unknown or failed answer. `POST /ai/chat` returns an optional `answer_id` (the `claude_audit_log` row id) for model answers only. `openapi.yaml` 3.36.0. |
 | 1.30 | 2026-10-27 | ST-18 (EPIC-03, v9.13, BLG-AI-15; ruling `ESC-EXEC-20261027-03` (A)): `POST /ai/journal-summary` checks each output (prescriptive scan plus stop/sizing/setup-change wording); a failing output is regenerated once, then a 200 with `summary: null`, `model: null` and a withheld `message` is returned. `compliance_check_result` per call: `pass`, `pass_on_regenerate`, `fail_regenerate:<cats>`, `fail_fallback:<cats>`. Prompt tightened, `JOURNAL_SUMMARY_PROMPT_VERSION` v1.0 → v1.1. Response schema unchanged (fields already nullable); no `openapi.yaml` change. |
 | 1.29 | 2026-10-27 | ST-17 (EPIC-03, v9.13, BLG-AI-16; ruling `ESC-EXEC-20261027-02` (B)): `POST /ai/daily-briefing` post-generation check 3 — a ticker in the raw `summary` that is outside the context gets a code-written caveat appended; `compliance_check_result` gains `ticker_outside_context_appended` / `+ticker_outside_context_appended` / `+ticker_check_error`. No request/response schema change; no prompt change; no `openapi.yaml` change. |
 | 1.28 | 2026-10-27 | ST-16 (EPIC-03, v9.13, BLG-AI-18; ruling `ESC-EXEC-20261027-01` (B)): `POST /ai/chat` stop-time check passes `context.ticker` as a focus ticker — a stop sentence naming no held ticker is attributed to the focus ticker when it is an open position; warning line adds `attribution=focus`. Briefing action tickers are compared case- and `.L`-normalised (from ST-15). `compliance_check_result` values and prompts unchanged. No request/response schema change; no `openapi.yaml` change. |

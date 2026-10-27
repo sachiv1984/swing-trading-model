@@ -3,8 +3,8 @@
 **Owner:** Data Model & Domain Schema Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.63
-**Last Updated:** 2026-10-16 (ST-02, EPIC-01, v9.13, BLG-SPEC-186 — DS-34 (v2.63): allowed `exit_reason` values mapped to `strategy_rules.md` §8, legacy spellings backfilled, CHECK constraints on `positions` and `trade_history`); prior — 2026-10-15 (ST-26, EPIC-04, v9.12, BLG-SEC-41 — DS-33 (v2.62): new `settings_change_log` table, settings-write audit trail; note under §6); prior — 2026-10-13 (ST-15, EPIC-02, v9.12, BLG-FE-202 — DS-32 (v2.61): `positions.stop_frozen_reason`, added to §2 DDL and Fields); prior history retained — see prior entries in version control
+**Version:** 2.64
+**Last Updated:** 2026-10-27 (ST-22, EPIC-03, v9.13, BLG-FE-208 — DS-35 (v2.64): new `chat_answer_ratings` table, one useful / not-useful rating per AI chat answer); prior — 2026-10-16 (ST-02, EPIC-01, v9.13, BLG-SPEC-186 — DS-34 (v2.63): allowed `exit_reason` values mapped to `strategy_rules.md` §8, legacy spellings backfilled, CHECK constraints on `positions` and `trade_history`); prior — 2026-10-15 (ST-26, EPIC-04, v9.12, BLG-SEC-41 — DS-33 (v2.62): new `settings_change_log` table, settings-write audit trail; note under §6); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 This document describes the complete database schema and data structures used in the **Position Manager Web App**.
@@ -3430,6 +3430,66 @@ Expect 2 rows, both columns `true`. Then re-run the Pre-check: every row must sh
 - **Live Confirmation — staging, applied 2026-10-16.** Pre-check (before): `positions` NULL 2 (allowed); `trade_history` `manual` 1, `stop_hit` 5 and `target` 6 (not allowed, all legacy aliases), `Stop Loss Hit` 1 and `Trailing Stop` 1 (allowed). The Up Migration returned "Success. No rows returned". **Line-break incident:** the first Verification showed both constraints listing `'Partial \r\n  Profit Taking'`. The original one-line script had wrapped inside that literal when pasted into the SQL editor, so staging would have rejected a real `Partial Profit Taking` exit. The backfill was unaffected (its matched values were not wrapped, and no row held that value). Both constraints were dropped and re-added the same day with one value per line (in one transaction). The line-break check then returned 2 rows, both `partial_literal_ok = true` and `no_line_breaks = true`. This section's SQL was reformatted to one value per line, and the line-break check added to Verification, before production was run. Pre-check (after): `positions` NULL 2; `trade_history` `Manual Exit` 1, `Stop Loss Hit` 6, `Target Reached` 6, `Trailing Stop` 1; every row allowed. 12 rows backfilled, 14 `trade_history` rows before and after.
 - **Live Confirmation — production, applied 2026-10-16** (reformatted script). Pre-check (before): `positions` `Manual Exit` 8, `Stop Loss Hit` 7, `Trailing Stop` 11, NULL 1; `trade_history` `Manual Exit` 8, `Stop Loss Hit` 7, `Trailing Stop` 12. The first Pre-check, run from the original one-line script, showed `trade_history` `Manual Exit` as not allowed while `positions`' `Manual Exit` was allowed. A byte-level diagnostic of `trade_history`'s non-allowed values (reformatted script) returned no rows, so the stored values were clean and the `false` came from a wrapped `'Manual Exit'` literal in that query, the same paste fault as on staging. The Up Migration returned "Success. No rows returned". Line-break check: 2 rows, both `partial_literal_ok = true` and `no_line_breaks = true`. Pre-check (after): identical counts, every row allowed. No rows needed backfilling.
 
+## DS-35 — Add chat_answer_ratings (v2.64, 2026-10-27)
+
+**Story:** ST-22 (EPIC-03, v9.13) — `BLG-FE-208`. Delegation `DEL-20261027-01` (Live Confirmation on staging and production).
+
+**Rationale:** `metrics_definitions.md` § AI Chat Engagement defines a Response Acceptance Rate (answers rated useful ÷ answers rated) that had no data: nothing stored a rating. Each AI chat answer is one `claude_audit_log` row (`endpoint = 'POST /ai/chat'`), so a rating is stored against that row's `id`, which `POST /ai/chat` now returns as `answer_id`. A separate table, not a column on `claude_audit_log`: that table is an append-only call log written before any rating exists, and a rating is a later user action. The values follow DS-09 `thesis_feedback` (`useful` / `not_useful`). One rating per answer, enforced by a unique constraint; a second attempt is rejected, not overwritten (`ai_endpoints.md` §POST /ai/chat/{answer_id}/rating). Design source: `docs/design/2026-10-16__release-v9.13/chat-answer-rating/decision_record.md`.
+
+**Deploy order:** not a risk. `database.ensure_chat_answer_ratings_table()` runs the Up Migration's `CREATE TABLE IF NOT EXISTS` on first use, the same pattern as `monthly_pnl_narratives` (DS-30). Applying it ahead of deploy is optional. The Live Confirmation below is the Verification query run on each environment (sprint backlog ST-22, AC 2; RISK-01).
+
+### Up Migration (v2.63 → v2.64)
+
+```sql
+CREATE TABLE IF NOT EXISTS chat_answer_ratings (
+    id        UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    answer_id UUID NOT NULL REFERENCES claude_audit_log(id),
+    rating    VARCHAR(20) NOT NULL,
+    rated_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    CONSTRAINT uq_chat_answer_ratings_answer UNIQUE (answer_id),
+    CONSTRAINT ck_chat_answer_ratings_rating CHECK (rating IN ('useful', 'not_useful'))
+);
+```
+
+| Column | Meaning |
+|--------|---------|
+| `answer_id` | The rated answer: a `claude_audit_log.id` with `endpoint = 'POST /ai/chat'` that is not a failed call (checked by `database.create_chat_answer_rating()`). Unique: one rating per answer |
+| `rating` | `useful` or `not_useful` |
+| `rated_at` | When the rating was stored |
+
+### Down Migration (v2.64 → v2.63)
+
+```sql
+DROP TABLE IF EXISTS chat_answer_ratings;
+```
+
+Only ratings are lost; the Response Acceptance Rate returns to `null`. No other table references this one.
+
+### Verification
+
+```sql
+SELECT column_name, data_type, is_nullable
+FROM information_schema.columns
+WHERE table_name = 'chat_answer_ratings'
+ORDER BY ordinal_position;
+
+SELECT conname, pg_get_constraintdef(oid)
+FROM pg_constraint
+WHERE conrelid = 'chat_answer_ratings'::regclass
+ORDER BY conname;
+```
+
+Expect 4 rows, `id` through `rated_at`, none nullable; and 4 constraints: `chat_answer_ratings_answer_id_fkey` (`FOREIGN KEY (answer_id) REFERENCES claude_audit_log(id)`), `chat_answer_ratings_pkey`, `ck_chat_answer_ratings_rating` and `uq_chat_answer_ratings_answer`.
+
+**Response Acceptance Rate:** implemented as `database.get_response_acceptance_rate(date_from, date_to)`; the query is in `metrics_definitions.md` § AI Chat Engagement, measure 3.
+
+**Sign-off:**
+- Data Model & Domain Schema Owner: new, self-contained table, reversible. One foreign key to `claude_audit_log(id)` (that table's rows are never deleted by the app). Created at runtime by an idempotent ensure-function. Live Confirmation pending (`DEL-20261027-01`).
+- **Live Confirmation — staging:** pending.
+- **Live Confirmation — production:** pending.
+
+---
+
 ## Drift Detector Triage (2026-10-13, v2.60)
 
 **Story:** ST-34 (EPIC-05, `2026-10-12__release-v9.12`), BLG-SPEC-178. Triage of the findings `scripts/check_data_model_drift.py` reported on its first run (ST-28, v9.9, 2026-10-01) beyond the 5 known divergence classes.
@@ -3464,6 +3524,6 @@ Expect 2 rows, both columns `true`. Then re-run the Pre-check: every row must sh
 
 ---
 
-**Document Version:** 2.63
+**Document Version:** 2.64
 **Maintained By:** Data Model & Domain Schema Owner
-**Last Review:** 2026-10-16 (ST-02, EPIC-01, v9.13, BLG-SPEC-186 — DS-34 (v2.63): allowed `exit_reason` values mapped to `strategy_rules.md` §8, legacy spellings backfilled, CHECK constraints on `positions` and `trade_history`); prior — 2026-10-15 (ST-26, EPIC-04, v9.12, BLG-SEC-41 — DS-33 (v2.62): new `settings_change_log` table, settings-write audit trail; note under §6); prior — 2026-10-13 (ST-15, EPIC-02, v9.12, BLG-FE-202 — DS-32 (v2.61): `positions.stop_frozen_reason`, added to §2 DDL and Fields); prior history retained — see prior entries in version control
+**Last Review:** 2026-10-27 (ST-22, EPIC-03, v9.13, BLG-FE-208 — DS-35 (v2.64): new `chat_answer_ratings` table, one useful / not-useful rating per AI chat answer); prior — 2026-10-16 (ST-02, EPIC-01, v9.13, BLG-SPEC-186 — DS-34 (v2.63): allowed `exit_reason` values mapped to `strategy_rules.md` §8, legacy spellings backfilled, CHECK constraints on `positions` and `trade_history`); prior — 2026-10-15 (ST-26, EPIC-04, v9.12, BLG-SEC-41 — DS-33 (v2.62): new `settings_change_log` table, settings-write audit trail; note under §6); prior history retained — see prior entries in version control

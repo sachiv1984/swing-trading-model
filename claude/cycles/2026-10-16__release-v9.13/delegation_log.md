@@ -36,3 +36,19 @@ Last Updated: 2026-10-16
 - **Unblock criteria:** the panel values and the query output from one deployed environment, recorded in `qa_evidence_EPIC-02.md` under ST-10 with the date and environment.
 - **Commit format required:** `[EPIC-02][ST-10] <description>` on `exec/2026-10-16__release-v9.13/EPIC-02` (or a `[GOVERNANCE]` commit on `main` if EPIC-02 has merged)
 - **Status:** Unblocked — 2026-10-27. (a) Sign-off: sign_off_cleared. The user (human, acting for the Infrastructure & Operations Owner) deployed both staging services from this branch at `826ee17a`, read the System Status panel (As of 08:12, 27 Oct 2026: median —, oldest —, coverage 0 of 2, 2 never recalculated) and ran the read-only manual-check query on staging (BARC and LGEN, both `stop_calculated_at` NULL). They match. Recorded in `qa_evidence_EPIC-02.md` §Staging Manual Check — Stop Freshness. (b) Commit SHA: `49055e805d5beee4efa8cdad38d492ec9c7644be` (evidence commit; engine implementation commit `5c4b38e77ab512536f53f28891e3c5dc6d9586f4`). ST-10 set to done in `execution_state.json` in the same commit as this entry.
+
+## DEL-20261027-01
+
+- **ST Item:** ST-22 — Add a useful / not-useful rating to each AI chat answer
+- **EPIC:** EPIC-03
+- **Classification:** delegated_backend (Human-Delegation for the live half of AC 2 — `sprint_backlog.md` ST-22 Staging-only ACs: "AC 2, live half only (DS entry's Live Confirmation on staging and production)"; RISK-01)
+- **Assigned to:** Data Model & Domain Schema Owner (with the Infrastructure & Operations Owner; live database write access is the user's)
+- **GitHub Issue:** #2052
+- **Branch:** exec/2026-10-16__release-v9.13/EPIC-03
+- **Delegated at:** 2026-10-27T09:25:54Z
+- **What is needed:** The engine has delivered AC 1, AC 3 and the documentation half of AC 2 in the ST-22 commit on this branch (`chat_answer_ratings`, `data_model.md` DS-35 v2.64; `POST /ai/chat/{answer_id}/rating`; the widget control; pytest, real-Postgres tests and Playwright SC-CAR-01..05). Remaining, on **staging, then production**, in the Supabase SQL editor: (1) run DS-35's Up Migration (`CREATE TABLE IF NOT EXISTS chat_answer_ratings …`, idempotent; the app also creates it on first use, so order against deploy does not matter); (2) run DS-35's Verification (two queries); (3) paste both outputs. It passes if the first query returns 4 rows (`id`, `answer_id`, `rating`, `rated_at`, all `is_nullable = NO`) and the second returns the 4 named constraints.
+- **Workflow viability (LL-v9.10-P3-01):** not applicable — the action is SQL run in the Supabase editor, not a GitHub Actions workflow.
+- **Spec reference:** `docs/specs/data_model.md#DS-35 — Add chat_answer_ratings (v2.64, 2026-10-27)`; `docs/specs/api_contracts/ai_endpoints.md#POST /ai/chat/{answer_id}/rating`
+- **Unblock criteria:** both environments' Verification output recorded in DS-35's Live Confirmation lines, with the date.
+- **Commit format required:** `[EPIC-03][ST-22] <description>` on `exec/2026-10-16__release-v9.13/EPIC-03` (or a `[GOVERNANCE]` commit on `main` if EPIC-03 has merged)
+- **Status:** Pending

@@ -5,7 +5,7 @@ Provides journal summarisation, daily briefing, and chat advisory via Anthropic.
 AI output is display-only — must NOT be used in any signal, scoring,
 or recommendation pipeline. SRB-v1.7 CONDITIONALLY COMPLIANT.
 
-Contract: docs/specs/api_contracts/ai_endpoints.md v1.30
+Contract: docs/specs/api_contracts/ai_endpoints.md v1.31
 
 Post-generation stop-time check (ST-04, BLG-AI-10, v9.12; AI Compliance &
 Governance Officer ruling, ESC-EXEC-20261013-01): when a briefing or chat
@@ -893,11 +893,14 @@ def ai_chat(question: str, context_opts: Optional[dict] = None) -> dict:
                                                       CHAT_PROMPT_VERSION,
                                                       focus_ticker=(context_opts or {}).get("ticker"))
 
+        answer_id = None
         try:
             cost_usd = None
             if input_tokens and output_tokens:
                 cost_usd = (input_tokens * 3.0 + output_tokens * 15.0) / 1_000_000
-            create_claude_audit_entry(
+            # ST-22 (BLG-FE-208, v9.13): the audit row's id is the answer_id a
+            # rating attaches to.
+            answer_id = create_claude_audit_entry(
                 endpoint="POST /ai/chat",
                 model_id=MODEL_BRIEFING,
                 prompt_version=CHAT_PROMPT_VERSION,
@@ -913,10 +916,33 @@ def ai_chat(question: str, context_opts: Optional[dict] = None) -> dict:
             pass
 
         # Raw model output, before any code-written addition (ST-04 Condition 2).
-        if content and content != "I was unable to generate a response.":
+        model_answered = bool(content) and content != "I was unable to generate a response."
+        if model_answered:
             sample_ai_output("chat (POST /ai/chat)", content, MODEL_BRIEFING)
-        return {"response": checked, "advisory": True, "model": MODEL_BRIEFING}
+        result = {"response": checked, "advisory": True, "model": MODEL_BRIEFING}
+        # Only a model answer with a stored audit row can be rated (fixed
+        # messages carry no answer_id; decision record §2.1).
+        if model_answered and isinstance(answer_id, str):
+            result["answer_id"] = answer_id
+        return result
     except Exception:
         # ST-03 (BLG-BE-151, v9.11): log the cause before returning the fallback.
         logger.error("ai_chat failed; returning fallback message", exc_info=True)
         return {"response": "Unable to get a response. Please try again.", "advisory": True}
+
+
+# ---------------------------------------------------------------------------
+# ST-22 — Chat answer rating (POST /ai/chat/{answer_id}/rating)
+# ---------------------------------------------------------------------------
+
+def rate_chat_answer(answer_id: str, rating: str) -> Optional[dict]:
+    """Store a useful / not-useful rating for one chat answer, once.
+
+    Returns None when the answer does not exist, else
+    {"answer_id", "rating", "rated_at", "created"}; created is False when the
+    answer was already rated (the stored rating is returned, not replaced).
+    The rating is a usefulness measure only: it is not an input to any
+    signal, score or recommendation (decision record §3)."""
+    from database import create_chat_answer_rating
+    return create_chat_answer_rating(answer_id, rating)
+

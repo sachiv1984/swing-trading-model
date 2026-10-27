@@ -1,9 +1,55 @@
 'use strict';
 
 import { useState, useRef, useEffect } from 'react';
-import { MessageCircle, X, Send } from 'lucide-react';
+import { MessageCircle, X, Send, ThumbsUp, ThumbsDown } from 'lucide-react';
 import { api } from '../api/base44Client';
 import AiDisclaimer from './shared/AiDisclaimer';
+
+// ST-22 (EPIC-03, v9.13, BLG-FE-208): useful / not-useful rating under each
+// model answer. Design: docs/design/2026-10-16__release-v9.13/chat-answer-rating/decision_record.md
+// (positions.md §AI Trade Advisor Widget §Answer Rating). The panel is a fixed
+// dark surface in both themes, so single dark tokens apply.
+const RATING_OPTIONS = [
+  { value: 'useful', label: 'Useful', Icon: ThumbsUp, testId: 'chat-rating-useful', selected: 'text-emerald-400' },
+  { value: 'not_useful', label: 'Not useful', Icon: ThumbsDown, testId: 'chat-rating-not-useful', selected: 'text-rose-400' },
+];
+
+function AnswerRating({ msg, onRate }) {
+  const locked = msg.ratingState === 'saving' || msg.ratingState === 'rated';
+  return (
+    <div className="mt-1">
+      <div className="flex gap-3" role="group" aria-label="Rate this answer" data-testid="chat-rating">
+        {RATING_OPTIONS.map(({ value, label, Icon, testId, selected }) => {
+          const isSelected = msg.rating === value;
+          return (
+            <button
+              key={value}
+              type="button"
+              aria-pressed={isSelected}
+              disabled={locked}
+              onClick={() => onRate(value)}
+              className={`flex items-center gap-1 text-xs ${
+                isSelected ? selected : `text-slate-400${locked ? '' : ' hover:text-slate-200'}`
+              } disabled:cursor-default`}
+              data-testid={testId}
+            >
+              <Icon className="w-3 h-3" />
+              {label}
+            </button>
+          );
+        })}
+        {msg.thanks && (
+          <span className="text-xs text-slate-400" data-testid="chat-rating-thanks">Thanks — recorded.</span>
+        )}
+      </div>
+      {msg.ratingState === 'failed' && (
+        <p className="text-xs text-rose-400 mt-1" role="status" data-testid="chat-rating-error">
+          Couldn't save your rating. Try again.
+        </p>
+      )}
+    </div>
+  );
+}
 
 export default function AiChatWidget() {
   const [open, setOpen] = useState(false);
@@ -12,6 +58,28 @@ export default function AiChatWidget() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const messagesEndRef = useRef(null);
+  const thanksTimers = useRef([]);
+
+  useEffect(() => () => thanksTimers.current.forEach(clearTimeout), []);
+
+  const updateMessage = (index, patch) =>
+    setMessages(prev => prev.map((m, i) => (i === index ? { ...m, ...patch } : m)));
+
+  const handleRate = async (index, answerId, rating) => {
+    updateMessage(index, { rating, ratingState: 'saving' });
+    try {
+      const saved = await api.ai.rateChatAnswer(answerId, rating);
+      updateMessage(index, { rating: saved?.rating || rating, ratingState: 'rated', thanks: true });
+      thanksTimers.current.push(setTimeout(() => updateMessage(index, { thanks: false }), 3000));
+    } catch (err) {
+      const stored = err?.status === 409 ? err?.data?.data?.rating : null;
+      if (stored) {
+        updateMessage(index, { rating: stored, ratingState: 'rated' });
+      } else {
+        updateMessage(index, { rating: null, ratingState: 'failed' });
+      }
+    }
+  };
 
   useEffect(() => {
     if (messagesEndRef.current) {
@@ -43,7 +111,7 @@ export default function AiChatWidget() {
 
     try {
       const data = await api.ai.chat(question);
-      setMessages(prev => [...prev, { role: 'ai', text: data.response }]);
+      setMessages(prev => [...prev, { role: 'ai', text: data.response, answerId: data.answer_id || null, rating: null, ratingState: 'unrated' }]);
     } catch {
       setError('Unable to get a response. Please try again.');
     } finally {
@@ -93,14 +161,20 @@ export default function AiChatWidget() {
                 key={i}
                 className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
               >
-                <div
-                  className={`max-w-[80%] rounded-lg px-3 py-2 text-sm ${
-                    msg.role === 'user'
-                      ? 'bg-blue-700 text-white'
-                      : 'bg-slate-700 text-slate-200'
-                  }`}
-                >
-                  {msg.text}
+                <div className="max-w-[80%]">
+                  <div
+                    className={`rounded-lg px-3 py-2 text-sm ${
+                      msg.role === 'user'
+                        ? 'bg-blue-700 text-white'
+                        : 'bg-slate-700 text-slate-200'
+                    }`}
+                    data-testid={msg.role === 'ai' ? 'ai-chat-answer' : undefined}
+                  >
+                    {msg.text}
+                  </div>
+                  {msg.role === 'ai' && msg.answerId && (
+                    <AnswerRating msg={msg} onRate={rating => handleRate(i, msg.answerId, rating)} />
+                  )}
                 </div>
               </div>
             ))}

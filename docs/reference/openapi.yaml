@@ -2,7 +2,9 @@ openapi: 3.0.3
 
 info:
   title: Momentum Trading Assistant API
-  version: 3.35.0
+  version: 3.36.0
+  # v3.36.0 (2026-10-27, ST-22, EPIC-03, v9.13): POST /ai/chat returns answer_id for a model answer; new
+  # POST /ai/chat/{answer_id}/rating stores a useful / not-useful rating once per answer (BLG-FE-208).
   # v3.35.0 (2026-10-17, ST-08, EPIC-02, v9.13): POST /settings and PATCH /settings/{settings_id} return
   # 400 when the body sets one of the four strategy_rules.md §11-fixed fields (BLG-API-07). No new endpoint.
   # v3.34.0 (2026-10-17, ST-06, EPIC-02, v9.13): POST /portfolio/position rejects a fetched or fallback
@@ -4125,6 +4127,12 @@ paths:
                   model:
                     type: string
                     nullable: true
+                  answer_id:
+                    type: string
+                    format: uuid
+                    description: |
+                      Present only for a model answer (ST-22, v9.13): the claude_audit_log row id a
+                      rating attaches to. Absent on fixed fallback messages.
         "401":
           $ref: "#/components/responses/Unauthorized"
         "422":
@@ -4144,6 +4152,57 @@ paths:
                   detail:
                     type: string
                     example: "Rate limit exceeded. Try again later."
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /ai/chat/{answer_id}/rating:
+    post:
+      tags: [AI]
+      summary: Rate an AI chat answer useful or not useful
+      description: |
+        Stores one rating per chat answer (ST-22, EPIC-03, v9.13, BLG-FE-208; DS-35
+        chat_answer_ratings). A second rating is rejected with 409 and the stored rating;
+        it is never overwritten. Feeds the Response Acceptance Rate (metrics_definitions.md
+        § AI Chat Engagement). Changes nothing else; not an input to any signal or score.
+        Canonical contract: docs/specs/api_contracts/ai_endpoints.md v1.31 §POST /ai/chat/{answer_id}/rating
+      parameters:
+        - name: answer_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: The answer_id returned by POST /ai/chat.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [rating]
+              properties:
+                rating:
+                  type: string
+                  enum: [useful, not_useful]
+      responses:
+        "201":
+          description: Rating stored.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ChatAnswerRatingEnvelope"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          description: No rateable chat answer has this id (unknown, not a chat answer, or a failed call).
+        "409":
+          description: The answer was already rated; the stored rating is returned in data.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ChatAnswerRatingEnvelope"
+        "422":
+          description: answer_id is not a UUID, or rating is not useful / not_useful.
         "500":
           $ref: "#/components/responses/InternalError"
 
@@ -6314,6 +6373,28 @@ paths:
 
 components:
   schemas:
+    ChatAnswerRatingEnvelope:
+      type: object
+      description: ST-22 (v9.13) — a stored chat answer rating.
+      properties:
+        status:
+          type: string
+          enum: [ok, error]
+        message:
+          type: string
+          description: Present on 409.
+        data:
+          type: object
+          properties:
+            answer_id:
+              type: string
+              format: uuid
+            rating:
+              type: string
+              enum: [useful, not_useful]
+            rated_at:
+              type: string
+              format: date-time
     ApiOk:
       type: object
       required: [status, data]

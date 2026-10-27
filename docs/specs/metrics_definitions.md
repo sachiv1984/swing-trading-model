@@ -2,8 +2,8 @@
 **Owner:** Metrics Definitions & Analytics Canonical Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 1.32.0
-**Last Updated:** 2026-10-17 (ST-10, EPIC-02, v9.13, BLG-SPEC-188 — new §Stop Freshness: median and maximum age of `stop_calculated_at` across open positions, NULLs excluded and counted); prior — 2026-10-17 (ST-11, EPIC-02, v9.13, BLG-SPEC-180 — Fee-Netting Basis no longer cites a NULL `positions.fees_paid` as a cause of a NULL `trade_history` fee leg; names legacy and manually inserted rows, cross-references DS-23); prior — 2026-10-16 (ST-02, EPIC-01, v9.13, BLG-SPEC-186 — added Exit Condition Category: each allowed `exit_reason` maps to one `strategy_rules.md` §8 exit condition; Stop-Based Exit Rate cross-referenced); prior history retained — see prior entries in version control
+**Version:** 1.33.0
+**Last Updated:** 2026-10-27 (ST-22, EPIC-03, v9.13, BLG-FE-208 — §AI Chat Engagement Response Acceptance Rate instrumented: stored ratings, its query, `null` when none); prior — 2026-10-17 (ST-10, EPIC-02, v9.13, BLG-SPEC-188 — new §Stop Freshness: median and maximum age of `stop_calculated_at` across open positions, NULLs excluded and counted); prior — 2026-10-17 (ST-11, EPIC-02, v9.13, BLG-SPEC-180 — Fee-Netting Basis no longer cites a NULL `positions.fees_paid` as a cause of a NULL `trade_history` fee leg; names legacy and manually inserted rows, cross-references DS-23); prior history retained — see prior entries in version control
 **Review Cycle:** Monthly
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
@@ -1275,7 +1275,22 @@ response_acceptance_rate = COUNT(chat responses the user marked useful)
 - **Denominator:** successful chat responses rated "useful" or "not useful". Unrated responses are excluded, the same convention as the trade-plan thesis feedback (`trade_plans.thesis_feedback`, DS-09).
 - **Returns:** `null` when no response has been rated.
 
-**Instrumentation status: not yet measurable.** The chat widget has no per-response rating control and nothing stores one, so this measure has no data today. It needs a useful / not-useful control on each chat answer and a place to store it, following the DS-09 `thesis_feedback` pattern. That is filed as a backlog item (see Appendix E). Until it ships, report this measure as "not instrumented", never as 0.
+**Instrumentation status: instrumented from v1.33.0** (ST-22, EPIC-03, v9.13, BLG-FE-208). Each AI chat answer that the model produced carries an `answer_id` (its `claude_audit_log.id`) and a useful / not-useful control in the chat widget (`positions.md` §AI Trade Advisor Widget §Answer Rating). One rating per answer is stored in `chat_answer_ratings` (`data_model.md` DS-35) by `POST /ai/chat/{answer_id}/rating`. Ratings exist only from the v9.13 release, so a window starting earlier counts only answers rated since then.
+
+**Query** (implemented as `database.get_response_acceptance_rate(date_from, date_to)`; the window is on the answer's `generated_at`, `date_from` inclusive, `date_to` exclusive):
+
+```sql
+SELECT COUNT(*) AS rated,
+       COUNT(*) FILTER (WHERE r.rating = 'useful') AS useful,
+       COUNT(*) FILTER (WHERE r.rating = 'useful')::numeric / NULLIF(COUNT(*), 0) AS response_acceptance_rate
+FROM chat_answer_ratings r
+JOIN claude_audit_log a ON a.id = r.answer_id
+WHERE a.endpoint = 'POST /ai/chat'
+  AND a.compliance_check_result IS DISTINCT FROM 'model_call_failed'
+  AND a.generated_at >= :date_from AND a.generated_at < :date_to;
+```
+
+`response_acceptance_rate` is `NULL` when no answer in the window has been rated (`NULLIF` on a zero denominator); the function returns `rate: None` in that case. Report it with its denominator (`rated`): a rate from a handful of ratings is not meaningful.
 
 ### Baseline (from the 2026-09-24 usage review)
 
@@ -1283,7 +1298,7 @@ response_acceptance_rate = COUNT(chat responses the user marked useful)
 |---|---|---|
 | Chat sessions per week | ≈ 0.2 (at most 3 sessions in 14.6 weeks) | 10 chat calls on 3 active days. Per-call timestamps were not in the review's output, so 1 session per active day is assumed; the true count is between 3 and 10 |
 | Questions per session | ≈ 3.3 (10 questions / 3 sessions) | Same assumption. 1.0 if every question was its own session |
-| Response acceptance rate | Not instrumented | No rating control existed |
+| Response acceptance rate | Not instrumented | No rating control existed (instrumented from v9.13, ST-22; first reading at the 2027-01-03 review) |
 
 The next real reading is due at the 2027-01-03 AI feature usage review (tracked by ST-28).
 
@@ -1473,6 +1488,7 @@ Validation is performed by `POST /validate/calculations` comparing computed metr
 ## Appendix D — Change Log
 | Date | Version | Change | Author |
 |---|---|---|---|
+| 2026-10-27 | 1.33.0 | ST-22 (EPIC-03, v9.13, BLG-FE-208): §AI Chat Engagement measure 3 (Response Acceptance Rate) is instrumented — ratings stored in `chat_answer_ratings` (DS-35) against the answer's `claude_audit_log` row; the query is documented and implemented as `database.get_response_acceptance_rate()`; `null` when nothing is rated. "Not instrumented" status removed. |
 | 2026-10-17 | 1.32.0 | ST-10 (EPIC-02, v9.13, BLG-SPEC-188): new §Stop Freshness — median and maximum age of `positions.stop_calculated_at` across open positions, with formula, source (DS-22), NULL exclusion (counted as never recalculated) and a manual-check query. No threshold. Served by `GET /positions/stop-freshness`; shown on System Status. | Metrics Definitions & Analytics Owner |
 | 2026-10-17 | 1.31.0 | ST-11 (EPIC-02, v9.13, BLG-SPEC-180): Fee-Netting Basis — removed the claim that a NULL `positions.fees_paid` can cause a NULL `trade_history` fee leg (the column is `NOT NULL` since DS-23 and `exit_position()` raises on NULL); the reachable sources are legacy and manually inserted `trade_history` rows. No change to `null_fee_trade_count`'s contract or computation. | Metrics Definitions & Analytics Owner |
 | 2026-10-16 | 1.30.0 | ST-02 (EPIC-01, v9.13, BLG-SPEC-186): added Exit Condition Category, mapping each allowed `exit_reason` to one of `strategy_rules.md` §8's three exit conditions (`Target Reached` and `Partial Profit Taking` → §8.3; `NULL` read as `Manual Exit`). Stop-Based Exit Rate gains a note that its `stop_exits` set is the §8.1 category. Allowed values enforced by `data_model.md` DS-34. | Metrics Definitions & Analytics Owner |
