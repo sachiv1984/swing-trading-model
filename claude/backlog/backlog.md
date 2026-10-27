@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-17 (session — 3 new item(s) added: BLG-SPEC-207, BLG-GOV-396, BLG-SPEC-208; PR #2072 review findings, EPIC-06 v9.13); prior — 2026-10-16 (session — 3 new item(s) added: BLG-OPS-192, BLG-FE-232, BLG-BE-189; PR #2071 review findings, EPIC-01 v9.13); prior — 2026-10-16 (session — 4 new item(s) added: BLG-BE-187, BLG-SPEC-206, BLG-FE-231, BLG-BE-188; sprint execution `2026-10-16__release-v9.13` EPIC-01 findings); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-27 (session — 1 new item(s) added: BLG-OPS-193; frontend build failure found during EPIC-02 v9.13 staging check); prior — 2026-10-17 (session — 3 new item(s) added: BLG-SPEC-207, BLG-GOV-396, BLG-SPEC-208; PR #2072 review findings, EPIC-06 v9.13); prior — 2026-10-16 (session — 3 new item(s) added: BLG-OPS-192, BLG-FE-232, BLG-BE-189; PR #2071 review findings, EPIC-01 v9.13); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -5765,5 +5765,29 @@ ST-37 (BLG-SPEC-184) added a default-mismatch class to `scripts/check_data_model
 **Acceptance Criteria**
 - The run is recorded with its date and target environment
 - Every reported default mismatch has a recorded disposition
+
+---
+
+### BLG-OPS-193 — Restore eslint-config-react-app so the frontend builds on Render and GitHub Pages
+**Priority:** P1 (High)
+**Type:** Operations / Build & Deploy
+**Owner:** Infrastructure & Operations Owner
+**Source:** Sprint execution `2026-10-16__release-v9.13` EPIC-02, ST-10 staging manual check (DEL-20261017-01): the Render staging frontend build of `826ee17a` failed — 2026-10-27
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.14
+
+**Problem**
+`react-scripts build` lints with the `react-app` config named in `package.json` `eslintConfig`, which comes from the `eslint-config-react-app` package. `2909e67e` (ST-28, EPIC-04, v9.12 dependency bumps) regenerated `package-lock.json` without that package, so the build fails with `[eslint] Failed to load config "react-app" to extend from.` The Render staging frontend failed this way on 2026-10-27, and the production GitHub Pages deploy (`deploy.yml`) has failed at its Build step on every `main` push since `2909e67e`; its last success was `efdd9494` on 2026-10-15 (the failed runs' logs have expired, so the cause there is inferred). CI and Playwright set `DISABLE_ESLINT_PLUGIN=true` (`playwright.config.js`), so no check exercises the real build.
+
+**Scope**
+- Restore `eslint-config-react-app` to the lockfile (declare it explicitly in `devDependencies` if `npm install` drops it again), or remove the `eslintConfig` block if lint-at-build is not wanted, and record which
+- Confirm `CI=false npm run build` passes without `DISABLE_ESLINT_PLUGIN`, then re-run `deploy.yml` and confirm production goes live
+- Add a CI step that runs the production build without `DISABLE_ESLINT_PLUGIN`, so a lockfile change that breaks it fails a PR
+- Remove the temporary `DISABLE_ESLINT_PLUGIN=true` environment variable from the Render `trading-assistant-staging` service if it was added as a workaround, or record it in `render.yaml` if kept
+
+**Acceptance Criteria**
+- `deploy.yml` succeeds on `main` and production serves the new build
+- The Render staging frontend builds from `main` with no dashboard-only ESLint workaround, or the workaround is in `render.yaml`
+- A PR that removes `eslint-config-react-app` from the lockfile fails CI
 
 ---
