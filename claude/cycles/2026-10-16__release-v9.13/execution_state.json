@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-16T10:49:11Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-27T09:10:00Z",
+  "last_updated_utc": "2026-10-27T08:50:00Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-06",
@@ -203,10 +203,10 @@
       "merge_commit": "2bca2001"
     },
     "EPIC-02": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-10-16__release-v9.13/EPIC-02",
       "pr_number": 2073,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-10-16__release-v9.13/qa_evidence_EPIC-02.md",
       "test_scenarios": [
@@ -472,7 +472,26 @@
           "sign_off_record": null,
           "notes": "Lower bound: shares within one 4dp floor step of RiskAmount/(StopDistance x FX). test_zeroed_or_halved_suggested_shares_falsifies_the_property patches _floor_4dp to zero/half and confirms the property raises (UK, US). CI on a8dc3019: all 7 workflows success (CI Pytest 39047004002). No deviation."
         }
-      }
+      },
+      "sign_off_record": {
+        "role": "Director of Quality",
+        "method": "agent_mediated",
+        "status": "cleared",
+        "cleared_utc": "2026-10-27",
+        "user_directed": true,
+        "reference": "qa_evidence_EPIC-02.md"
+      },
+      "merge_gate_record": {
+        "agent_review_comment": "https://github.com/sachiv1984/swing-trading-model/pull/2073#issuecomment-6437341632",
+        "method": "human_merge_after_agent_review",
+        "direction": "user, 2026-10-27: 'review the PR' (agent-mediated Director of Quality and Product Owner reviews, both Approved with Comments); user reported 'Epic 2 is now merged'",
+        "note": "No separate QA sign-off or PO acceptance comments were posted on the PR; the repository owner merged after the combined review comment, which is taken as the human QA and Product Owner acceptance.",
+        "head": "5163c560",
+        "ci": "43/43 checks green at 5163c560",
+        "merge": "merged 2026-10-27T08:45:05Z by the repository owner (8ebd879a)"
+      },
+      "merged_utc": "2026-10-27T08:45:05Z",
+      "merge_commit": "8ebd879a"
     },
     "EPIC-03": {
       "status": "not_started",
@@ -1168,10 +1187,10 @@
   "merge_gate": {
     "epics_merged": [
       "EPIC-01",
-      "EPIC-06"
+      "EPIC-06",
+      "EPIC-02"
     ],
     "epics_pending": [
-      "EPIC-02",
       "EPIC-03",
       "EPIC-05",
       "EPIC-04"
@@ -1186,7 +1205,8 @@
     "2026-10-17: EPIC-06 PR #2072 opened. Pre-PR checks: API baseline drift script exit 0, no foreign-EPIC commits in origin/main..HEAD, signer format matches the agent-mediated pattern.",
     "2026-10-17T15:43:26Z: EPIC-06 PR #2072 merged by the repository owner (merge commit 27430d29) right after the engine posted the user-directed QA sign-off and PO acceptance comments. The merge-gate record commit was redirected from the EPIC-06 branch to main: the §3.2.B step 7 merged-PR check fired (LL-v9.12-P3-02), so no commit landed on the merged branch. Orphaned post-merge commit check (LL-v6.8-P3-01): git log origin/main..origin/exec/.../EPIC-06 is empty. Step 3c sibling sync: no other EPIC branch exists yet; EPIC-02 (next in merge order) is cut from this main.",
     "2026-10-17: EPIC-02 branch cut from main 6b1b8bb4 (after EPIC-06 merge). Autonomous ST-09, ST-11, ST-12, ST-13, ST-14 done; ST-10 automated scope committed, manual-check half delegated (DEL-20261017-01). ST-06/ST-07/ST-08 rulings escalated (ESC-EXEC-20261017-02/-03/-04). The pre-commit OpenAPI drift hook scans the working tree, so an in-progress story's undocumented route blocked an unrelated story's commit once (ST-13); recovered with a fresh commit, no amend.",
-    "2026-10-17: ST-06/ST-08 rulings agent-mediated (§5.3, user-directed), ST-07 decided by the user in-session; all three reclassified autonomous and committed (87c63c23, 5c39e3f2). ST-06 and ST-08 share one commit because both touch openapi.yaml and api_changelog.md (CLAUDE.md §2 multi-ID format)."
+    "2026-10-17: ST-06/ST-08 rulings agent-mediated (§5.3, user-directed), ST-07 decided by the user in-session; all three reclassified autonomous and committed (87c63c23, 5c39e3f2). ST-06 and ST-08 share one commit because both touch openapi.yaml and api_changelog.md (CLAUDE.md §2 multi-ID format).",
+    "2026-10-27T08:45:05Z: EPIC-02 PR #2073 merged by the repository owner (merge commit 8ebd879a) after the agent-mediated Director of Quality and Product Owner review comment (both Approved with Comments, nothing blocking). Follow-ups filed on main: BLG-OPS-193, BLG-QA-229, BLG-BE-190, BLG-BE-191, BLG-FE-233, BLG-UX-06, BLG-FEAT-100. Branch fully contained in main (no orphaned post-merge commits). Merge record written on main per STEP 4 mid-session re-sync."
   ],
   "sealed": false,
   "sealed_utc": null
