@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-27 (session — 5 new item(s) added: BLG-BE-192, BLG-BE-193, BLG-BE-194, BLG-FE-234, BLG-SPEC-209; ST-33 data-provider risk assessment, EPIC-05 v9.13); prior — 2026-10-27 (session — 7 new item(s) added: BLG-TECH-25 to BLG-TECH-31; ST-34 dependency upgrade assessment, EPIC-05 v9.13); prior — 2026-10-27 (session — 3 new item(s) added: BLG-AI-20, BLG-AI-21, BLG-AI-22; PR #2074 review findings, EPIC-03 v9.13); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-27 (session — 6 new item(s) added: BLG-BE-192, BLG-BE-193, BLG-BE-194, BLG-FE-234, BLG-SPEC-209, BLG-OPS-194; ST-33 data-provider risk assessment, EPIC-05 v9.13); prior — 2026-10-27 (session — 7 new item(s) added: BLG-TECH-25 to BLG-TECH-31; ST-34 dependency upgrade assessment, EPIC-05 v9.13); prior — 2026-10-27 (session — 3 new item(s) added: BLG-AI-20, BLG-AI-21, BLG-AI-22; PR #2074 review findings, EPIC-03 v9.13); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -6257,7 +6257,7 @@ When `get_current_price()` returns nothing, the positions view falls back to the
 
 ---
 
-### BLG-SPEC-209 — Correct the external API dependency register for Alpaca news and the inactive Stooq and Twelve Data fetchers
+### BLG-SPEC-209 — Correct the external API dependency register and credential inventory for Alpaca news and the inactive Stooq and Twelve Data fetchers
 **Priority:** P3 (Low)
 **Type:** Spec Debt
 **Owner:** PMO Lead; Infrastructure & Operations Owner
@@ -6271,10 +6271,34 @@ When `get_current_price()` returns nothing, the positions view falls back to the
 **Scope**
 - Rewrite the News API entry for Alpaca news
 - Correct MIT-08 to say Stooq and Twelve Data are not active, and why
+- In `docs/ops/external_api_credential_inventory.md`, retire the `NEWS_API_KEY` (newsapi.org) entry and record the Alpaca entry's cost tier (free while `ALPACA_DATA_FEED` is `iex`)
 - Delete the two unused fetchers from `screener_data_service.py`, or record why they are kept
 
 **Acceptance Criteria**
-- The register matches the code for news and screener fallbacks
+- The register and the credential inventory match the code for news and screener fallbacks
 - The two fetchers are either removed with tests still passing, or their retention is documented
+
+---
+
+### BLG-OPS-194 — Make the System Status Yahoo Finance check detect an outage
+**Priority:** P2 (Medium)
+**Type:** Operations / Monitoring
+**Owner:** Infrastructure & Operations Owner
+**Source:** ST-33 (BLG-OPS-77), EPIC-05, cycle `2026-10-16__release-v9.13` — agent-mediated Infrastructure & Operations Owner review of `docs/operations/data_provider_risk_assessment.md` §2, §3 QW-6 — 2026-10-27
+**Effort:** XS (~1-2h)
+**Provisional-Target:** v9.14
+
+**Problem**
+The System Status Yahoo Finance check calls `get_live_fx_rate()` and reports healthy unless it raises (`health_service.py:310-320`). `get_live_fx_rate()` never raises; it returns the constant 1.27 on failure. The rolling `yahoo_finance` metrics are fed only by screener calls and reset on restart. A Yahoo outage therefore shows as healthy, while the regime fails open to risk-on and FX freezes.
+
+**Scope**
+- Have the FX fetch report whether it fell back to the constant, and mark the Yahoo Finance check unhealthy (or degraded) when it did
+- Do the same when the latest market-regime fetch defaulted a market to risk-on because its data was unavailable
+- Show the reason in the check's details
+
+**Acceptance Criteria**
+- With the Yahoo FX fetch mocked to fail, the health check reports Yahoo Finance unhealthy or degraded, not healthy (test)
+- With the fetch succeeding, it reports healthy with the live rate (test)
+- With the regime fetch mocked to fail, the check is not reported healthy (test)
 
 ---
