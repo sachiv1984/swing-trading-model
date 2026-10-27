@@ -5,7 +5,7 @@ Provides journal summarisation, daily briefing, and chat advisory via Anthropic.
 AI output is display-only — must NOT be used in any signal, scoring,
 or recommendation pipeline. SRB-v1.7 CONDITIONALLY COMPLIANT.
 
-Contract: docs/specs/api_contracts/ai_endpoints.md v1.26
+Contract: docs/specs/api_contracts/ai_endpoints.md v1.27
 
 Post-generation stop-time check (ST-04, BLG-AI-10, v9.12; AI Compliance &
 Governance Officer ruling, ESC-EXEC-20261013-01): when a briefing or chat
@@ -72,8 +72,9 @@ MODEL_BRIEFING = CLAUDE_SONNET_4_6
 # Briefing v1.3 (ST-02 + ST-03, BLG-AI-11/12, v9.12, one combined bump):
 # actions may name only tickers from the snapshot; the context labels
 # available cash and starting capital separately.
+# Chat v1.2 (ST-19, BLG-AI-14, v9.13): the chat context labels cash the same way.
 BRIEFING_PROMPT_VERSION = "v1.3"
-CHAT_PROMPT_VERSION = "v1.1"
+CHAT_PROMPT_VERSION = "v1.2"
 # Journal summary v1.0 (ST-06, BLG-OPS-183, v9.12): first recorded version of
 # the existing, unchanged prompt, now that its calls are logged to
 # claude_audit_log.
@@ -690,8 +691,9 @@ def ai_chat(question: str, context_opts: Optional[dict] = None) -> dict:
 
     context_lines = [
         f"Portfolio snapshot — {datetime.utcnow().strftime('%Y-%m-%d %H:%M UTC')}",
-        f"Cash: £{portfolio.get('cash', 0):,.0f} of £{portfolio.get('initial_cash', 0):,.0f} initial capital",
-        f"Open positions: {len(positions)}",
+        # ST-19 (BLG-AI-14, v9.13): "Cash: £X of £Y initial capital" read as
+        # a target cash level, as it did in the briefing; same labelling now.
+        _briefing_cash_line(portfolio, len(positions)),
         "",
     ]
 

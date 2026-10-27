@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical (Class 1)
 **Status:** Canonical
-**Version:** 1.26
-**Last Updated:** 2026-10-27 (ST-15, EPIC-03, v9.13, BLG-AI-17 — briefing ticker filter and stop-time attribution treat a UK `.L` ticker and its bare form as one instrument); prior — 2026-10-13 (ST-06, EPIC-01, v9.12, BLG-OPS-183 — `POST /ai/journal-summary` writes a `claude_audit_log` row per model call, so the daily cost alert really does cover every Claude feature; feature-tag taxonomy completed); prior — 2026-10-13 (ST-06, EPIC-01, v9.12, BLG-OPS-183 — `POST /ai/check-daily-cost` sums `claude_audit_log`, so every Claude feature counts toward the daily alert; scheduler named: `ai-daily-cost-check.yml`, every 6 hours); prior history retained — see prior entries in version control
+**Version:** 1.27
+**Last Updated:** 2026-10-27 (ST-19, EPIC-03, v9.13, BLG-AI-14 — `POST /ai/chat` context labels available cash and starting capital separately; `CHAT_PROMPT_VERSION` v1.2); prior — 2026-10-27 (ST-15, EPIC-03, v9.13, BLG-AI-17 — briefing ticker filter and stop-time attribution treat a UK `.L` ticker and its bare form as one instrument); prior — 2026-10-13 (ST-06, EPIC-01, v9.12, BLG-OPS-183 — `POST /ai/journal-summary` writes a `claude_audit_log` row per model call, so the daily cost alert really does cover every Claude feature; feature-tag taxonomy completed); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -291,14 +291,14 @@ Each call is independent — the backend loads fresh portfolio and signal state 
 
 ### Context injected into system prompt
 
-- Portfolio cash and open position count
+- Open position count, available cash and starting capital, each labelled; starting capital is omitted when it is 0 or missing (the same line as `POST /ai/daily-briefing`; ST-19, v9.13, BLG-AI-14 — previously "Cash: £X of £Y initial capital")
 - Per-position: ticker, market, current price, trailing stop with its last recalculation time (`stop_calculated_at`, or "not recalculated since entry" when NULL — ST-08, v9.11), risk-off flag, P&L
 - Latest top-5 momentum signals
 - Optional: focused ticker from `context.ticker`
 
 ### Post-generation stop-time check (ST-04, v9.12)
 
-The same code-authored check as `POST /ai/daily-briefing` check 2, applied to `response` (the note is appended after the model's text; `compliance_check_result` takes the same values; the sampling hook receives the raw output). The context's cash wording is unchanged here ("Cash: £X of £Y initial capital"). `CHAT_PROMPT_VERSION` stays v1.1.
+The same code-authored check as `POST /ai/daily-briefing` check 2, applied to `response` (the note is appended after the model's text; `compliance_check_result` takes the same values; the sampling hook receives the raw output). `CHAT_PROMPT_VERSION` was unchanged by this check; it is v1.2 from ST-19 (cash labelling).
 
 ### Rate limiting
 
@@ -886,6 +886,7 @@ Not a new endpoint — this is internal instrumentation, not part of this contra
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.27 | 2026-10-27 | ST-19 (EPIC-03, v9.13, BLG-AI-14): `POST /ai/chat` context no longer renders "Cash: £X of £Y initial capital"; it uses the briefing's labelled line (available cash; starting capital, omitted when 0 or missing). `CHAT_PROMPT_VERSION` v1.1 → v1.2, golden fixture updated. No request/response schema change; no `openapi.yaml` change. |
 | 1.26 | 2026-10-27 | ST-15 (EPIC-03, v9.13, BLG-AI-17): `POST /ai/daily-briefing` check 1 (actions limited to context tickers) and the stop-time check's ticker attribution (briefing and chat) compare tickers in normalised form — upper case, trailing `.L` removed — so a UK ticker matches with or without its suffix. No request/response schema change; no prompt change; no `openapi.yaml` change. |
 | 1.25 | 2026-10-13 | ST-06 (EPIC-01, v9.12, BLG-OPS-183), from the agent-mediated Director of Quality review: `POST /ai/journal-summary` wrote no `claude_audit_log` row, so v1.24's "covers every Claude-calling feature" was not yet true for it. Each journal-summary model call now writes one (cost, tokens, prompt hash, latency; failed calls marked `model_call_failed`). The feature-tag taxonomy gains `POST /ai/journal-summary` and the previously unlisted `POST /reports/monthly-pnl/narrative` (v9.11). No request/response change. |
 | 1.24 | 2026-10-13 | ST-06 (EPIC-01, v9.12, BLG-OPS-183): `POST /ai/check-daily-cost` sums today's `claude_audit_log.cost_usd` instead of `gemini_audit_log`, so all Claude spend counts toward the daily alert and plan/thesis calls count once. Scheduler named: new `.github/workflows/ai-daily-cost-check.yml` (every 6 hours); none existed. Idempotency note corrected to the BLG-OPS-172 per-day de-duplication shipped in v9.9. Response shape unchanged; `openapi.yaml` 3.28.1 description only. |

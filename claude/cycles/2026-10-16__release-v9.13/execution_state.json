@@ -501,37 +501,38 @@
       "qa_signed_off": false,
       "qa_evidence_log": "claude/cycles/2026-10-16__release-v9.13/qa_evidence_EPIC-03.md",
       "test_scenarios": [
-        "tests/test_briefing_uk_ticker_normalisation.py"
+        "tests/test_briefing_uk_ticker_normalisation.py",
+        "tests/test_chat_cash_context.py"
       ],
       "stories": {
         "ST-15": {
           "title": "Treat UK .L and bare tickers as the same instrument in the briefing ticker filter",
           "classification": "autonomous",
-          "status": "in_progress",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 2045,
           "branch": "exec/2026-10-16__release-v9.13/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "c4bdb4019806e56f8facd163540d8bc9c48a2f18",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-10-27T08:51:12Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/specs/api_contracts/ai_endpoints.md#POST /ai/daily-briefing",
             "tests/test_briefing_uk_ticker_normalisation.py"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "AC1: VOD kept when VOD.L held and the reverse (tests/test_briefing_uk_ticker_normalisation.py TestFilter + briefing end-to-end). AC2: stop-time attribution uses _normalise_ticker (TestStopTimeAttribution). The normalisation also case-folds an action own_ticker (ST-16 AC 3 code path; its tests land with ST-16). ai_endpoints.md v1.26. CI on c4bdb401: all 7 workflows success (CI Pytest 40476428850). No deviation."
         },
         "ST-16": {
           "title": "Attribute chat stop citations to the focused ticker and case-normalise action tickers",
-          "classification": "delegated_decision",
-          "status": "blocked_decision",
+          "classification": "autonomous",
+          "status": "not_started",
           "assigned_to": "AI Compliance & Governance Officer; Backend Engineering Patterns Owner",
           "github_issue": 2046,
           "branch": "exec/2026-10-16__release-v9.13/EPIC-03",
@@ -546,13 +547,19 @@
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
           "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "sign_off_record": {
+            "role": "AI Compliance & Governance Officer",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "signed_utc": "2026-10-27T08:54:27Z",
+            "notes": "Ruling (B) extend narrowly on ESC-EXEC-20261027-01, first pass Approved, agent-mediated (§5.3). Binding conditions in the escalation resolution. AC 4: Head of UX & Design (agent-mediated, same pass) answered Yes, styling filed as a separate backlog item."
+          },
+          "notes": "Reclassified delegated_decision -> autonomous after ESC-EXEC-20261027-01 resolved (B) extend narrowly."
         },
         "ST-17": {
           "title": "Check the briefing summary text for tickers outside the context",
-          "classification": "delegated_decision",
-          "status": "blocked_decision",
+          "classification": "autonomous",
+          "status": "not_started",
           "assigned_to": "AI Compliance & Governance Officer; Backend Engineering Patterns Owner",
           "github_issue": 2047,
           "branch": "exec/2026-10-16__release-v9.13/EPIC-03",
@@ -567,13 +574,19 @@
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
           "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "sign_off_record": {
+            "role": "AI Compliance & Governance Officer",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "signed_utc": "2026-10-27T08:54:27Z",
+            "notes": "Ruling (B) code-written caveat on ESC-EXEC-20261027-02, first pass Approved, agent-mediated (§5.3). Binding conditions in the escalation resolution."
+          },
+          "notes": "Reclassified delegated_decision -> autonomous after ESC-EXEC-20261027-02 resolved (B) code-written caveat."
         },
         "ST-18": {
           "title": "Add an output-language check to the journal summary",
-          "classification": "delegated_decision",
-          "status": "blocked_decision",
+          "classification": "autonomous",
+          "status": "not_started",
           "assigned_to": "AI Compliance & Governance Officer; Backend Engineering Patterns Owner",
           "github_issue": 2048,
           "branch": "exec/2026-10-16__release-v9.13/EPIC-03",
@@ -588,13 +601,19 @@
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
           "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "sign_off_record": {
+            "role": "AI Compliance & Governance Officer",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "signed_utc": "2026-10-27T08:54:27Z",
+            "notes": "Ruling (A) regenerate once then fallback on ESC-EXEC-20261027-03, first pass Approved, agent-mediated (§5.3). Binding conditions in the escalation resolution."
+          },
+          "notes": "Reclassified delegated_decision -> autonomous after ESC-EXEC-20261027-03 resolved (A) regenerate once then fallback."
         },
         "ST-19": {
           "title": "Label available cash and starting capital separately in the AI chat context",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "in_progress",
           "assigned_to": "engine",
           "github_issue": 2049,
           "branch": "exec/2026-10-16__release-v9.13/EPIC-03",
@@ -604,7 +623,10 @@
           "unblock_criteria": null,
           "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": [],
+          "spec_references": [
+            "docs/specs/api_contracts/ai_endpoints.md#POST /ai/chat",
+            "tests/test_chat_cash_context.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
@@ -1140,11 +1162,7 @@
       "merge_commit": "27430d29"
     }
   },
-  "blocked_items": [
-    "ST-16",
-    "ST-17",
-    "ST-18"
-  ],
+  "blocked_items": [],
   "delegated_items": [],
   "completed_items": [
     "ST-01",
@@ -1161,6 +1179,7 @@
     "ST-12",
     "ST-13",
     "ST-14",
+    "ST-15",
     "ST-35",
     "ST-36",
     "ST-37",
@@ -1194,18 +1213,21 @@
     },
     "ESC-EXEC-20261027-01": {
       "item": "ST-16",
-      "disposition": "Open",
-      "raised_utc": "2026-10-27T08:48:35Z"
+      "disposition": "Resolved",
+      "raised_utc": "2026-10-27T08:48:35Z",
+      "resolved_utc": "2026-10-27T08:54:27Z"
     },
     "ESC-EXEC-20261027-02": {
       "item": "ST-17",
-      "disposition": "Open",
-      "raised_utc": "2026-10-27T08:48:35Z"
+      "disposition": "Resolved",
+      "raised_utc": "2026-10-27T08:48:35Z",
+      "resolved_utc": "2026-10-27T08:54:27Z"
     },
     "ESC-EXEC-20261027-03": {
       "item": "ST-18",
-      "disposition": "Open",
-      "raised_utc": "2026-10-27T08:48:35Z"
+      "disposition": "Resolved",
+      "raised_utc": "2026-10-27T08:48:35Z",
+      "resolved_utc": "2026-10-27T08:54:27Z"
     }
   },
   "merge_gate": {
