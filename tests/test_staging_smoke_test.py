@@ -20,6 +20,16 @@ import urllib.error
 sys.path.insert(0, str(Path(__file__).parent.parent / "scripts"))
 
 import staging_smoke_test as smoke  # noqa: E402
+import pytest  # noqa: E402
+
+
+@pytest.fixture(autouse=True)
+def _host_check_passes():
+    """main() also runs the ST-29 host check (GET /health/detailed's
+    render_service_id); these tests cover the other checks, so it passes
+    here. tests/test_staging_deploy_both_services.py covers it."""
+    with patch("staging_smoke_test.check_host_is_staging_backend", return_value=""):
+        yield
 
 
 def _mock_response(status, body_dict):

@@ -1,8 +1,8 @@
 **Owner:** Infrastructure & Operations Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 1.3
-**Last Updated:** 2026-10-15 (ST-29, EPIC-04, v9.12, BLG-OPS-181 — §4: which service the hook deploys, and the 2026-10-15 finding that the secret held the frontend's hook); prior — 2026-10-07 (ST-18, EPIC-04, v9.10, BLG-OPS-171 — §7 stale-deploy check now compares staging against the latest staging-deploying commit, not main's tip); prior — 2026-09-29 (ST-17, EPIC-04, v9.8, BLG-OPS-169 — added §7, stale-staging detection via `staging-smoke-test.yml` + `deployed_commit_sha`); prior history retained — see prior entries in version control
+**Version:** 1.4
+**Last Updated:** 2026-10-27 (ST-29, EPIC-05, v9.13, BLG-OPS-189 — §4: two deploy hooks, one per staging service, each checked and waited on; smoke test confirms the `STAGING_API_URL` host); prior — 2026-10-15 (ST-29, EPIC-04, v9.12, BLG-OPS-181 — §4: which service the hook deploys, and the 2026-10-15 finding that the secret held the frontend's hook); prior — 2026-10-07 (ST-18, EPIC-04, v9.10, BLG-OPS-171 — §7 stale-deploy check now compares staging against the latest staging-deploying commit, not main's tip); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -56,18 +56,27 @@ This ensures governance-only commits (sprint artefacts, changelogs, audit record
 
 ## 4. Render Deploy Hook Setup
 
-1. Open the Render dashboard → staging service → **Settings** → **Deploy Hook**
+Staging has two Render services, and a deploy hook deploys exactly one. Each has its own secret (ST-29, BLG-OPS-189, v9.13):
+
+| Service | Render ID | Secret |
+|---|---|---|
+| `trading-assistant-api-staging` (backend) | `srv-d6rtdg94tr6s73ce2j6g` | `RENDER_STAGING_BACKEND_DEPLOY_HOOK` |
+| `trading-assistant-staging` (frontend) | `srv-d6rtdg94tr6s73ce2j60` | `RENDER_STAGING_FRONTEND_DEPLOY_HOOK` |
+
+For each service:
+
+1. Open the Render dashboard → that service → **Settings** → **Deploy Hook**
 2. Copy the deploy hook URL (format: `https://api.render.com/deploy/srv-xxxxx?key=yyyy`)
-3. Add to GitHub repository secrets as `RENDER_STAGING_DEPLOY_HOOK`:
+3. Add it to GitHub repository secrets under that service's secret name above:
    - Repo → **Settings** → **Secrets and variables** → **Actions** → **New repository secret**
 
-The workflow reads this secret at runtime. If the secret is absent, the job fails with an explicit error message.
+`RENDER_STAGING_DEPLOY_HOOK` is retired; delete it once both new secrets are set.
 
-**A deploy hook deploys one service, and only from that service's configured branch.** Staging has two services: `trading-assistant-api-staging` (backend, `srv-d6rtdg94tr6s73ce2j6g`) and `trading-assistant-staging` (frontend, `srv-d6rtdg94tr6s73ce2j60`). `wait_for_staging_deploy_live.py` waits on the **backend**, so `RENDER_STAGING_DEPLOY_HOOK` must be the backend's hook. A hook builds the latest commit on the service's Branch setting, not the commit that triggered the workflow, so both services must be on `main`. No Build Filters are set on staging (checked 2026-10-15), so a `workflow_dispatch` deploy of a non-code commit is expected to go live like any other once the hook targets the right service.
+**What `staging-deploy.yml` does with them.** For each service, `scripts/trigger_staging_deploy.py` calls the hook with `?ref=<the run's commit>` (so the service builds that commit, not whatever its Branch setting points at), reads the deploy ID from the hook's response and looks it up under the expected service (`GET /v1/services/{id}/deploys/{deployId}`, using `RENDER_PLATFORM_API_KEY`). A 404 there means the secret holds another service's hook, and the step fails with that message. `scripts/wait_for_staging_deploy_live.py --service <name> --deploy-id <id>` then follows that deploy until it is live on the run's commit, and fails at once if it ends as `build_failed`, `update_failed`, `pre_deploy_failed`, `canceled` or `deactivated`. A missing secret fails its trigger step with the setup instructions. `tests/test_staging_deploy_both_services.py` fails if the workflow calls only one hook, waits on a service it did not deploy, or still reads the retired secret.
 
-**Found 2026-10-15 (ST-29, BLG-OPS-181):** the secret held the frontend's hook, and the frontend's branch was `exec/2026-09-09__release-v9.3/EPIC-02`. Every run since 2026-09-03 deployed the frontend from that old branch and timed out waiting on the backend, which changed only by manual deploy (Render auto-deploy is off). The fix (two hooks, both waited on) is BLG-OPS-189. Until it ships, bring staging level with `main` by **Manual Deploy → Deploy latest commit** on each service.
+**The smoke test confirms the host behind `STAGING_API_URL`.** `scripts/staging_smoke_test.py` reads `GET /health/detailed`'s `render_service_id` (Render's `RENDER_SERVICE_ID`, `health_endpoints.md` v1.8) and fails with `WRONG STAGING HOST` unless it is `srv-d6rtdg94tr6s73ce2j6g`. A host that does not report the field (a deploy from before v9.13) is a warning, not a failure. This runs in both `staging-deploy.yml` and the scheduled `staging-smoke-test.yml`.
 
-**Also found 2026-10-15:** `STAGING_API_URL` pointed at a host other than the staging backend, which answered as `90099bec` after both staging services were live on `efdd9494`. The user reset the secret to the staging backend's URL; the smoke test then passed (run 38721722314). If the smoke test's deployed commit disagrees with the Render dashboard, check this secret first.
+**History.** Found 2026-10-15 (ST-29, v9.12, BLG-OPS-181): the single `RENDER_STAGING_DEPLOY_HOOK` held the frontend's hook, and the frontend's branch was `exec/2026-09-09__release-v9.3/EPIC-02`. Every run from 2026-09-03 deployed the frontend from that old branch and timed out waiting on the backend, which changed only by manual deploy (Render auto-deploy is off). Also found 2026-10-15: `STAGING_API_URL` pointed at a host other than the staging backend, which answered as `90099bec` after both staging services were live on `efdd9494`; the user reset the secret, and the smoke test then passed (run 38721722314). Both now fail loudly instead (above). No Build Filters are set on staging (checked 2026-10-15).
 
 ---
 
@@ -89,8 +98,8 @@ on:
 
 | Limitation | Notes |
 |------------|-------|
-| Deploy hook does not confirm deploy success | Render returns HTTP 200 on hook receipt, not on deploy completion. Monitor Render dashboard for deploy status. |
-| Staging-only AC deferred | Live deploy verification requires a configured Render environment with `RENDER_STAGING_DEPLOY_HOOK` set. Tracked in BLG-OPS-28. |
+| Deploy hook does not confirm deploy success | Render returns HTTP 200 on hook receipt, not on deploy completion. `wait_for_staging_deploy_live.py` follows each hook's deploy to `live` (§4). |
+| Staging-only AC deferred | Live deploy verification requires a configured Render environment with both `RENDER_STAGING_BACKEND_DEPLOY_HOOK` and `RENDER_STAGING_FRONTEND_DEPLOY_HOOK` set (§4; `RENDER_STAGING_DEPLOY_HOOK` until v9.13). Tracked in BLG-OPS-28, then BLG-OPS-189. |
 | Render auto-deploy may conflict | If Render's own GitHub integration auto-deploy is also enabled, deploys may double-trigger. Disable Render's native auto-deploy if using this hook approach. |
 
 ---

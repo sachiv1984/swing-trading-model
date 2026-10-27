@@ -6,20 +6,33 @@ name: Deploy to Staging (Render)
 # Documentation-only commits (docs/, claude/, *.md) do NOT trigger this workflow,
 # preserving free-tier build minutes (RISK-03 path-filter design, accepted 2026-05-24).
 #
+# ST-29 (BLG-OPS-189, EPIC-05, v9.13): staging has two Render services and a
+# deploy hook deploys one. The single RENDER_STAGING_DEPLOY_HOOK held the
+# frontend's hook while the wait step watched the backend, so every run from
+# 2026-09-03 timed out. Each service now has its own hook secret, trigger
+# step and wait step; scripts/trigger_staging_deploy.py checks the deploy ID
+# a hook returns belongs to the expected service, and the wait follows that
+# deploy. tests/test_staging_deploy_both_services.py fails if this file calls
+# only one hook or waits on a service it did not deploy.
+#
 # Prerequisites:
-#   - RENDER_STAGING_DEPLOY_HOOK must be set as a GitHub Actions repository secret
-#     (repo Settings → Secrets and variables → Actions → New repository secret)
-#   - Obtain the deploy hook URL from: Render dashboard → staging service → Settings → Deploy Hook
+#   - RENDER_STAGING_BACKEND_DEPLOY_HOOK and RENDER_STAGING_FRONTEND_DEPLOY_HOOK must be set
+#     as GitHub Actions repository secrets (repo Settings → Secrets and variables → Actions),
+#     each copied from Render dashboard → that service → Settings → Deploy Hook
+#     (backend: trading-assistant-api-staging, srv-d6rtdg94tr6s73ce2j6g;
+#      frontend: trading-assistant-staging, srv-d6rtdg94tr6s73ce2j60).
+#     RENDER_STAGING_DEPLOY_HOOK is retired.
 #   - STAGING_API_URL / STAGING_API_KEY must also be set (ST-13, BLG-OPS-25, EPIC-03, v9.0)
 #     for the post-deploy smoke test suite (scripts/staging_smoke_test.py) below.
 #   - RENDER_PLATFORM_API_KEY must also be set (already provisioned — same secret
 #     .github/workflows/staging-deploy-drift-check.yml uses) for the deploy-status
 #     poll (scripts/wait_for_staging_deploy_live.py) below.
 #
-# Build minute impact: ~1 min/trigger for the deploy-hook call itself, plus up to
-# ~8 min worst-case for the deploy-status poll (typically much less — polls every
-# 15s until the new commit is confirmed live) and the smoke test suite — see
-# docs/ops/staging_deploy_notes.md for the updated assessment.
+# Build minute impact: ~1 min/trigger for the two deploy-hook calls, plus up to
+# ~8 min worst-case per service for the deploy-status polls (run one after the
+# other; typically much less — each polls every 15s until its deploy is live)
+# and the smoke test suite — see docs/ops/staging_deploy_notes.md for the
+# updated assessment.
 
 on:
   push:
@@ -42,7 +55,7 @@ jobs:
   deploy-staging:
     name: Trigger Render staging re-deploy
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 20
 
     steps:
       - name: Checkout
@@ -53,48 +66,46 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Trigger Render deploy hook
-        run: |
-          if [[ -z "${RENDER_STAGING_DEPLOY_HOOK:-}" ]]; then
-            echo "ERROR: RENDER_STAGING_DEPLOY_HOOK secret is not set."
-            echo "Add it at: repo Settings → Secrets and variables → Actions"
-            exit 1
-          fi
-          HTTP_STATUS=$(curl -s -o /tmp/render_response.txt -w "%{http_code}" \
-            -X POST "$RENDER_STAGING_DEPLOY_HOOK")
-          echo "Render response body:"
-          cat /tmp/render_response.txt || true
-          echo ""
-          echo "HTTP status: $HTTP_STATUS"
-          if [[ "$HTTP_STATUS" != "200" ]] && [[ "$HTTP_STATUS" != "201" ]]; then
-            echo "❌ Deploy hook returned unexpected status: $HTTP_STATUS"
-            exit 1
-          fi
-          echo "✅ Staging deploy triggered successfully"
+      # Each hook is called with ?ref=<this commit>, and the deploy ID it
+      # returns must belong to the expected service (a mis-pasted hook fails
+      # here, not as a timeout further down).
+      - name: Trigger staging backend deploy
+        id: backend_hook
         env:
-          RENDER_STAGING_DEPLOY_HOOK: ${{ secrets.RENDER_STAGING_DEPLOY_HOOK }}
+          RENDER_STAGING_BACKEND_DEPLOY_HOOK: ${{ secrets.RENDER_STAGING_BACKEND_DEPLOY_HOOK }}
+          RENDER_PLATFORM_API_KEY: ${{ secrets.RENDER_PLATFORM_API_KEY }}
+        run: python3 scripts/trigger_staging_deploy.py trading-assistant-api-staging "$GITHUB_SHA"
 
-      # ST-13 (BLG-OPS-25, EPIC-03, v9.0). The deploy hook above only
-      # confirms Render *accepted* the trigger — not that the build
-      # succeeded or the new commit is actually live. This step (plus the
-      # smoke test after it) is the "staging ready" signal: both must
-      # pass for this job to go green, and nothing downstream should
-      # treat staging as ready if this job is red.
-      #
-      # Polls the same Render platform API endpoint
-      # scripts/check_staging_deploy_drift.py already uses, via
-      # scripts/wait_for_staging_deploy_live.py, until the staging
-      # backend's live deploy matches this push's own commit SHA — not a
-      # fixed sleep. A timeout here is a hard failure (job stops, smoke
-      # test does not run) rather than a soft proceed-anyway, since
-      # running the smoke test against an unconfirmed deploy risks it
-      # silently passing against the still-running *previous* deploy (a
-      # false "staging ready" signal) — exactly the failure class this
-      # story exists to prevent.
+      - name: Trigger staging frontend deploy
+        id: frontend_hook
+        env:
+          RENDER_STAGING_FRONTEND_DEPLOY_HOOK: ${{ secrets.RENDER_STAGING_FRONTEND_DEPLOY_HOOK }}
+          RENDER_PLATFORM_API_KEY: ${{ secrets.RENDER_PLATFORM_API_KEY }}
+        run: python3 scripts/trigger_staging_deploy.py trading-assistant-staging "$GITHUB_SHA"
+
+      # ST-13 (BLG-OPS-25, EPIC-03, v9.0). A hook's response only confirms
+      # Render *accepted* the trigger — not that the build succeeded or the
+      # new commit is actually live. These waits (plus the smoke test after
+      # them) are the "staging ready" signal: all must pass for this job to
+      # go green, and nothing downstream should treat staging as ready if
+      # this job is red. A timeout or a failed deploy is a hard failure, not
+      # a soft proceed-anyway: running the smoke test against an unconfirmed
+      # deploy risks it silently passing against the *previous* deploy.
       - name: Wait for staging backend deploy to go live
         env:
           RENDER_PLATFORM_API_KEY: ${{ secrets.RENDER_PLATFORM_API_KEY }}
-        run: python3 scripts/wait_for_staging_deploy_live.py "$GITHUB_SHA"
+        run: >-
+          python3 scripts/wait_for_staging_deploy_live.py "$GITHUB_SHA"
+          --service trading-assistant-api-staging
+          --deploy-id "${{ steps.backend_hook.outputs.deploy_id }}"
+
+      - name: Wait for staging frontend deploy to go live
+        env:
+          RENDER_PLATFORM_API_KEY: ${{ secrets.RENDER_PLATFORM_API_KEY }}
+        run: >-
+          python3 scripts/wait_for_staging_deploy_live.py "$GITHUB_SHA"
+          --service trading-assistant-staging
+          --deploy-id "${{ steps.frontend_hook.outputs.deploy_id }}"
 
       - name: Run staging smoke test suite
         env:

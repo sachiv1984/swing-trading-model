@@ -27,41 +27,103 @@ suite against an unconfirmed deploy risks it silently passing against
 the still-running *previous* deploy (a false "staging ready" signal),
 which is exactly the failure class this story exists to prevent.
 
+ST-29 (BLG-OPS-189, EPIC-05, v9.13): staging-deploy.yml now deploys both
+staging services and waits on each, so the service is an argument
+(--service, default the backend) and --deploy-id, the ID
+scripts/trigger_staging_deploy.py got back from that service's hook, makes
+the wait follow that exact deploy: it fails at once if the deploy ends in a
+failed or cancelled state instead of running out the timeout.
+
 Usage:
-    RENDER_PLATFORM_API_KEY=... python3 scripts/wait_for_staging_deploy_live.py <target_sha>
+    RENDER_PLATFORM_API_KEY=... python3 scripts/wait_for_staging_deploy_live.py <target_sha> \
+        [--service trading-assistant-api-staging|trading-assistant-staging] [--deploy-id dep-...]
 """
+import argparse
+import json
 import sys
 import time
 from pathlib import Path
+from urllib.error import HTTPError
+from urllib.request import Request, urlopen
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from check_staging_deploy_drift import get_latest_live_commit, get_render_api_key, STAGING_SERVICES  # noqa: E402
+from check_staging_deploy_drift import RENDER_API_BASE, get_latest_live_commit, get_render_api_key, STAGING_SERVICES  # noqa: E402
 
 POLL_INTERVAL_S = 15
 TIMEOUT_S = 480  # 8 minutes — generous for a Render free-tier build+deploy
 
-BACKEND_SERVICE_ID = STAGING_SERVICES["trading-assistant-api-staging"]
+BACKEND_SERVICE_NAME = "trading-assistant-api-staging"
+BACKEND_SERVICE_ID = STAGING_SERVICES[BACKEND_SERVICE_NAME]
+
+# Render deploy statuses after which the deploy will never go live.
+FAILED_STATUSES = {"build_failed", "update_failed", "pre_deploy_failed", "canceled", "deactivated"}
 
 
-def wait_for_live(target_sha: str, api_key: str, timeout_s: int = TIMEOUT_S, poll_interval_s: int = POLL_INTERVAL_S) -> bool:
+def get_deploy(service_id: str, deploy_id: str, api_key: str):
+    """Return (status, commit_sha) for one deploy of one service."""
+    req = Request(
+        f"{RENDER_API_BASE}/services/{service_id}/deploys/{deploy_id}",
+        headers={"Authorization": f"Bearer {api_key}", "Accept": "application/json"},
+    )
+    try:
+        with urlopen(req, timeout=15) as resp:
+            d = json.loads(resp.read())
+    except HTTPError as e:
+        raise RuntimeError(f"Render API error for deploy {deploy_id} on {service_id}: HTTP {e.code}") from e
+    d = d.get("deploy", d)
+    return d.get("status"), (d.get("commit") or {}).get("id")
+
+
+def wait_for_deploy(target_sha: str, api_key: str, service_id: str, deploy_id: str,
+                    timeout_s: int = TIMEOUT_S, poll_interval_s: int = POLL_INTERVAL_S) -> bool:
+    """Follow one deploy until it is live on target_sha (True), ends in a
+    failed state or goes live on another commit (False), or times out (False)."""
+    deadline = time.time() + timeout_s
+    last_status = None
+    while time.time() < deadline:
+        try:
+            status, commit_sha = get_deploy(service_id, deploy_id, api_key)
+        except RuntimeError as e:
+            print(f"  (Render API check failed, retrying: {e})")
+            time.sleep(poll_interval_s)
+            continue
+        last_status = status
+        if status == "live":
+            if commit_sha == target_sha:
+                print(f"Confirmed: {service_id} deploy {deploy_id} is live on {target_sha[:10]}.")
+                return True
+            print(f"::error::{service_id} deploy {deploy_id} went live on {str(commit_sha)[:10]}, not {target_sha[:10]}.")
+            return False
+        if status in FAILED_STATUSES:
+            print(f"::error::{service_id} deploy {deploy_id} ended as {status}; it will not go live.")
+            return False
+        print(f"  {service_id} deploy {deploy_id} is {status}, waiting for live on {target_sha[:10]}...")
+        time.sleep(poll_interval_s)
+    print(f"::error::Timed out after {timeout_s}s waiting for {service_id} deploy {deploy_id} "
+          f"(last status: {last_status or 'unknown'}).")
+    return False
+
+
+def wait_for_live(target_sha: str, api_key: str, timeout_s: int = TIMEOUT_S, poll_interval_s: int = POLL_INTERVAL_S,
+                  service_id: str = BACKEND_SERVICE_ID) -> bool:
     deadline = time.time() + timeout_s
     last_seen_sha = None
     while time.time() < deadline:
         try:
-            deployed_sha, _ = get_latest_live_commit(BACKEND_SERVICE_ID, api_key)
+            deployed_sha, _ = get_latest_live_commit(service_id, api_key)
         except RuntimeError as e:
             print(f"  (Render API check failed, retrying: {e})")
             time.sleep(poll_interval_s)
             continue
         last_seen_sha = deployed_sha
         if deployed_sha == target_sha:
-            print(f"Confirmed: staging backend's live deploy matches target commit {target_sha[:10]}.")
+            print(f"Confirmed: {service_id}'s live deploy matches target commit {target_sha[:10]}.")
             return True
-        print(f"  Not yet live: staging backend's live deploy is {deployed_sha[:10]}, waiting for {target_sha[:10]}...")
+        print(f"  Not yet live: {service_id}'s live deploy is {deployed_sha[:10]}, waiting for {target_sha[:10]}...")
         time.sleep(poll_interval_s)
 
     print(
-        f"::error::Timed out after {timeout_s}s waiting for staging backend to deploy "
+        f"::error::Timed out after {timeout_s}s waiting for {service_id} to deploy "
         f"{target_sha[:10]} (last seen live commit: "
         f"{last_seen_sha[:10] if last_seen_sha else 'unknown'}). Not running the smoke "
         f"test suite against an unconfirmed deploy — see module docstring for why a "
@@ -71,12 +133,22 @@ def wait_for_live(target_sha: str, api_key: str, timeout_s: int = TIMEOUT_S, pol
 
 
 def main() -> int:
-    if len(sys.argv) != 2:
-        print("Usage: wait_for_staging_deploy_live.py <target_sha>", file=sys.stderr)
+    parser = argparse.ArgumentParser(add_help=False)
+    parser.add_argument("target_sha")
+    parser.add_argument("--service", choices=sorted(STAGING_SERVICES), default=BACKEND_SERVICE_NAME)
+    parser.add_argument("--deploy-id", default="")
+    try:
+        args = parser.parse_args(sys.argv[1:])
+    except SystemExit:
+        print("Usage: wait_for_staging_deploy_live.py <target_sha> [--service NAME] [--deploy-id ID]", file=sys.stderr)
         return 2
-    target_sha = sys.argv[1]
     api_key = get_render_api_key()
-    return 0 if wait_for_live(target_sha, api_key) else 1
+    service_id = STAGING_SERVICES[args.service]
+    if args.deploy_id:
+        ok = wait_for_deploy(args.target_sha, api_key, service_id, args.deploy_id)
+    else:
+        ok = wait_for_live(args.target_sha, api_key, service_id=service_id)
+    return 0 if ok else 1
 
 
 if __name__ == "__main__":

@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Class 2
 **Status:** Canonical
-**Version:** 1.22.0
-**Last Updated:** 2026-10-27 (ST-28, EPIC-05, v9.13, BLG-OPS-187 — v9.13.0 entry: POST /ai/check-daily-cost returns 503 on a failed cost query); prior — 2026-10-17 (ST-08, EPIC-02, v9.13, BLG-API-07 — v9.13.0 entry: settings writes reject the four §11-fixed fields); prior — 2026-10-17 (ST-06, EPIC-02, v9.13, BLG-BE-180 — v9.13.0 entry: POST /portfolio/position rejects a fetched ATR that gives no stop); prior history retained — see prior entries in version control
+**Version:** 1.23.0
+**Last Updated:** 2026-10-27 (ST-29, EPIC-05, v9.13, BLG-OPS-189 — v9.13.0 entry: GET /health/detailed gains render_service_id); prior — 2026-10-27 (ST-28, EPIC-05, v9.13, BLG-OPS-187 — v9.13.0 entry: POST /ai/check-daily-cost returns 503 on a failed cost query); prior — 2026-10-17 (ST-08, EPIC-02, v9.13, BLG-API-07 — v9.13.0 entry: settings writes reject the four §11-fixed fields); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 # API Changelog
@@ -112,6 +112,15 @@ Rules:
 | Change | Details |
 |--------|---------|
 | Updated endpoint: POST /ai/check-daily-cost | Response gains `status: "ok"`. A failed cost query now returns `503` with `status: "error"`, `error: "cost_query_failed"` and no totals (was a 200 reporting $0 spend), so the scheduler's step fails and sends a Telegram message (BLG-OPS-187). |
+
+### health_endpoints.md — v1.8 (UPDATED)
+
+**EPIC:** EPIC-05
+**ST:** ST-29
+
+| Change | Details |
+|--------|---------|
+| Updated endpoint: GET /health/detailed | Response gains `render_service_id` (Render's `RENDER_SERVICE_ID`, `null` off Render), so the staging smoke test can confirm the host behind `STAGING_API_URL` is the staging backend (BLG-OPS-189). |
 
 ## v9.12.0 (2026-10-13 — Release v9.12)
 
