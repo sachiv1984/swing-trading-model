@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-27 (session — 4 new item(s) added: BLG-BE-191, BLG-FE-233, BLG-UX-06, BLG-FEAT-100; PR #2073 review findings, EPIC-02 v9.13); prior — 2026-10-27 (session — 2 new item(s) added: BLG-QA-229, BLG-BE-190; EPIC-02 v9.13 DoQ review findings); prior — 2026-10-27 (session — 1 new item(s) added: BLG-OPS-193; frontend build failure found during EPIC-02 v9.13 staging check); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-27 (session — 3 new item(s) added: BLG-AI-20, BLG-AI-21, BLG-AI-22; PR #2074 review findings, EPIC-03 v9.13); prior — 2026-10-27 (session — 1 new item(s) added: BLG-UX-07; ST-16 AC 4 Head of UX & Design answer, EPIC-03 v9.13); prior — 2026-10-27 (session — 4 new item(s) added: BLG-BE-191, BLG-FE-233, BLG-UX-06, BLG-FEAT-100; PR #2073 review findings, EPIC-02 v9.13); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -4532,6 +4532,74 @@ ST-05 widened `_INSTRUMENT_DIRECTIVE_RE` (`backend/services/monthly_pnl_narrativ
 
 ---
 
+### BLG-AI-20 — Journal summary: catch advisory phrasings the trading-change check misses
+**Priority:** P2 (Medium)
+**Type:** AI Compliance / Correctness
+**Owner:** AI Compliance & Governance Officer; Backend Engineering Patterns Owner
+**Source:** PR #2074 agent-mediated review (EPIC-03, cycle `2026-10-16__release-v9.13`), Director of Quality finding 1 — 2026-10-27
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.14
+
+**Problem**
+ST-18 (BLG-AI-15) fails a journal summary on `scan_prescriptive` or `_TRADING_CHANGE_RE` (subject, then a present-tense or modal word, then a change verb, per ruling `ESC-EXEC-20261027-03` (A)). Its ACs are met. But common advisory phrasings still pass both scans, so they would be shown to the user unchanged: "Consider tightening stops on volatile names.", "It may be worth revisiting position sizing.", "Stops could be tightened.", "Tighter stops could help.", "Reducing position size after losses would be prudent.", "A review of setups is warranted." and "Stop placement is something to revisit." (all checked against `journal_summary_language_failures()` at `c8fd54e7`; each returns `[]`). These are the §13 risk the check exists for.
+
+**Scope**
+- Ask the AI Compliance & Governance Officer to extend the ruling's pattern: imperative "consider/try" + change verb + subject; verb-first and passive forms ("tightening stops", "could be tightened"); "worth" / "would be prudent / wise / better" / "is warranted" / "something to revisit"
+- Implement in `_TRADING_CHANGE_RE` or a sibling pattern; keep the past-tense exclusions
+- Add the sentences above as positive cases and ST-18's descriptive cases as negatives; update `ai_s13_boundary_test_suite.md` (B-JS)
+
+**Acceptance Criteria**
+- Each sentence listed in Problem is reported as `trading_change` (or `prescriptive`)
+- All ST-18 positive and descriptive test cases keep their current results
+- The ruling extension is recorded before the code change
+
+---
+
+### BLG-AI-21 — Daily briefing: stop the ticker caveat firing on indicator and macro acronyms
+**Priority:** P2 (Medium)
+**Type:** AI Compliance / Correctness
+**Owner:** AI Compliance & Governance Officer; Backend Engineering Patterns Owner
+**Source:** PR #2074 agent-mediated review (EPIC-03, cycle `2026-10-16__release-v9.13`), Director of Quality finding 2 and Product Owner finding 1 — 2026-10-27
+**Effort:** XS (<1h plus tests)
+**Provisional-Target:** v9.14
+
+**Problem**
+ST-17 (BLG-AI-16) appends "(Note: <TOKEN> is not one of your open positions or today's top signals.)" for any upper-case token not held, not a signal, not in the context and not in `_NON_TICKER_WORDS`. That list has 23 words and lacks common market vocabulary, so ordinary summaries get a wrong, confusing caveat: "RSI is overbought on NVDA." → caveat for RSI; "MACD crossed; EPS beat." → MACD, EPS; "GDP and CPI data due." → GDP, CPI; "NB: no exits." → NB (checked against `_summary_ticker_caveat()` at `b0254cf3`). Each hit is also counted as `ticker_outside_context_appended`, which inflates the measure the ruling uses to judge the check. The ruling (`ESC-EXEC-20261027-02` (B), condition 2) names a minimum list ("at least"), so adding words stays within it.
+
+**Scope**
+- Add indicator, earnings and macro acronyms (e.g. RSI, MACD, EMA, SMA, VWAP, EPS, PE, IPO, CEO, CFO, GDP, CPI, PPI, PMI, FOMC, FED, ECB, BOE, NB, NYSE, LSE, NASDAQ) to `_NON_TICKER_WORDS`
+- Once a few weeks of briefings have run, review the logged `ticker check: ... action=caveat_appended` tokens and add any further non-tickers found (needs the user's permission for a live log/DB query)
+
+**Acceptance Criteria**
+- The four example summaries above get no caveat
+- `NEW_SIGNAL` and `TSLA` (ST-17 fixtures) are still caught
+- `test_non_ticker_words_ignored` covers every added word
+
+---
+
+### BLG-AI-22 — Chat stop-time note: do not attribute a sentence naming another ticker to the focus ticker
+**Priority:** P3 (Low)
+**Type:** AI Compliance / Correctness
+**Owner:** AI Compliance & Governance Officer; Backend Engineering Patterns Owner
+**Source:** PR #2074 agent-mediated review (EPIC-03, cycle `2026-10-16__release-v9.13`), Director of Quality finding 3 — 2026-10-27
+**Effort:** XS (<1h plus tests)
+**Provisional-Target:** v9.14
+
+**Problem**
+ST-16 (BLG-AI-18) attributes a chat sentence that cites a stop to the focused, held ticker when the sentence "names no held ticker" (ruling `ESC-EXEC-20261027-01` (B), condition 3). A sentence that names a ticker the user does not hold therefore still gets the focus ticker's note: with focus `MU`, "TSLA's stop was hit last week." becomes "TSLA's stop was hit last week. (MU stop last recalculated 2026-10-20 21:05 UTC)" (checked against `_append_missing_stop_times()` at `d1a71c13`). The note reads as if it were about TSLA, which is the misattribution the ruling's grounds (charter §7, explainability) set out to avoid.
+
+**Scope**
+- Ask the AI Compliance & Governance Officer to amend condition 3: attribute to the focus ticker only when the sentence names no ticker-like token other than the focus ticker (reuse ST-17's `_TICKER_TOKEN_RE` and `_NON_TICKER_WORDS`)
+- Such a sentence is left unattributed (`[STOP-TIME-MISSING]` path), as before ST-16
+- Add the example above as a test
+
+**Acceptance Criteria**
+- With focus `MU`, "TSLA's stop was hit last week." gets no MU note
+- All ST-16 tests (`tests/test_ai_stop_time_focus_attribution.py`) still pass
+- The ruling amendment is recorded before the code change
+
+---
+
 ### BLG-OPS-186 — Daily AI cost check: close the last-hours-of-day blind spot
 **Priority:** P3 (Low)
 **Type:** Operations / Monitoring
@@ -5905,6 +5973,29 @@ ST-06's "No valid stop" caption on Trade Entry explains why there is no stop but
 - No hard-coded ATR period in the message (a test patches the constant)
 - If adopted, the caption and messages contain no document or section references and state a next step; contract text matches the code exactly
 - The Strategy Rules & System Intent Owner confirms the reject behaviour is unchanged
+
+---
+
+### BLG-UX-07 — Mark code-written notes in AI briefing and chat answers as system-added
+**Priority:** P3 (Low) — provisional; set from the `[STOP-TIME-MISSING]` miss rate before planning
+**Type:** UX / AI Advisory Presentation
+**Owner:** Head of UX & Design; Frontend Specifications & UX Documentation Owner; API Contracts & Documentation Owner (response shape)
+**Source:** ST-16 AC 4 / EPIC-03, sprint execution `2026-10-16__release-v9.13` — Head of UX & Design answer (agent-mediated, §5.3) recorded in `ESC-EXEC-20261027-01` — 2026-10-27
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.14
+
+**Problem**
+Code appends deterministic notes to AI text: the stop-time note "(<TICKER> stop last recalculated …)" (ST-04, v9.12; chat focus ticker ST-16, v9.13) and, from ST-17 (v9.13), the briefing caveat for a ticker outside the context. They render exactly like model prose, so the reader cannot tell what the system added from what the model wrote. The Head of UX & Design answered that provenance needs visible "system-added" styling. Because `summary`, `actions[].description` and chat `response` are plain strings, styling needs a structured field or a delimiter, which changes the contract and `openapi.yaml`.
+
+**Scope**
+- Before planning: pull the `[STOP-TIME-MISSING]` miss rate (with the user's permission for the read-only DB query) and set priority from it
+- Choose how the notes are carried (separate field such as `system_notes`, or a delimiter) and record it in `ai_endpoints.md` and `openapi.yaml`
+- Style the notes as system-added in the Daily Briefing card and the AI Trade Advisor widget, covering both note kinds
+
+**Acceptance Criteria**
+- The miss rate and resulting priority are recorded before the item enters a sprint
+- Both note kinds render with a visible system-added treatment that passes AA contrast in both themes (Playwright, including an axe scan)
+- Model text is still never edited; the contract and `openapi.yaml` describe the new shape
 
 ---
 

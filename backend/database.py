@@ -2837,11 +2837,12 @@ def create_claude_audit_entry(
     latency_ms: int | None = None,
     prompt_hash: str | None = None,
     response_length: int | None = None,
-) -> None:
+) -> str | None:
     """Insert one row into claude_audit_log. Non-blocking on failure.
 
     A model call that failed is logged with compliance_check_result =
-    'model_call_failed' (ST-06, BLG-AI-08, v9.11)."""
+    'model_call_failed' (ST-06, BLG-AI-08, v9.11). Returns the new row's id
+    (ST-22, v9.13: a chat answer's `answer_id`), or None if the insert failed."""
     try:
         ensure_claude_audit_log_table()
         ensure_claude_audit_log_compliance_check_column()
@@ -2855,11 +2856,14 @@ def create_claude_audit_entry(
                         (endpoint, model_id, prompt_version, input_tokens, output_tokens, cost_usd,
                          compliance_check_result, latency_ms, prompt_hash, response_length)
                     VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                    RETURNING id
                     """,
                     (endpoint, model_id, prompt_version, input_tokens, output_tokens, cost_usd,
                      compliance_check_result, latency_ms, prompt_hash, response_length),
                 )
+                row = cur.fetchone()
             conn.commit()
+            return str(row["id"]) if row else None
     except Exception as e:
         # ST-16 (BLG-GOV-141, EPIC-04, v9.10): still non-blocking -- an audit
         # write must never fail the AI response -- but no longer silent. A
@@ -2867,6 +2871,7 @@ def create_claude_audit_entry(
         logger.warning(
             "claude_audit_log insert failed for %s (model %s): %s", endpoint, model_id, e
         )
+        return None
 
 
 # ---------------------------------------------------------------------------
@@ -3703,6 +3708,106 @@ def count_monthly_pnl_narrative_generations(date_from=None, date_to=None) -> Dic
         "ai": int(row["ai"]) if row else 0,
         "fallback": int(row["fallback"]) if row else 0,
     }
+
+
+# ---------------------------------------------------------------------------
+# chat_answer_ratings — useful / not-useful rating per AI chat answer
+# (ST-22, EPIC-03, v9.13, BLG-FE-208; data_model.md DS-35)
+# ---------------------------------------------------------------------------
+
+CHAT_ANSWER_RATINGS = ("useful", "not_useful")
+
+
+def ensure_chat_answer_ratings_table() -> None:
+    """DS-35 Up Migration, idempotent. One row per rated chat answer."""
+    ensure_claude_audit_log_table()
+    ensure_claude_audit_log_compliance_check_column()
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS chat_answer_ratings (
+                    id        UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                    answer_id UUID NOT NULL REFERENCES claude_audit_log(id),
+                    rating    VARCHAR(20) NOT NULL,
+                    rated_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+                    CONSTRAINT uq_chat_answer_ratings_answer UNIQUE (answer_id),
+                    CONSTRAINT ck_chat_answer_ratings_rating CHECK (rating IN ('useful', 'not_useful'))
+                )
+            """)
+        conn.commit()
+
+
+def create_chat_answer_rating(answer_id: str, rating: str) -> Optional[Dict]:
+    """Store the rating for one chat answer (a POST /ai/chat claude_audit_log
+    row that is not a failed call). A second rating is not stored: the
+    existing one is returned with created=False. Returns None when the answer
+    does not exist.
+
+    Returns {"answer_id", "rating", "rated_at", "created"}."""
+    ensure_chat_answer_ratings_table()
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                "SELECT 1 FROM claude_audit_log WHERE id = %s AND endpoint = 'POST /ai/chat' "
+                "AND compliance_check_result IS DISTINCT FROM 'model_call_failed'",
+                (answer_id,),
+            )
+            if cur.fetchone() is None:
+                return None
+            cur.execute(
+                "INSERT INTO chat_answer_ratings (answer_id, rating) VALUES (%s, %s) "
+                "ON CONFLICT (answer_id) DO NOTHING RETURNING answer_id, rating, rated_at",
+                (answer_id, rating),
+            )
+            row = cur.fetchone()
+            created = row is not None
+            if not created:
+                cur.execute(
+                    "SELECT answer_id, rating, rated_at FROM chat_answer_ratings WHERE answer_id = %s",
+                    (answer_id,),
+                )
+                row = cur.fetchone()
+        conn.commit()
+    return {
+        "answer_id": str(row["answer_id"]),
+        "rating": row["rating"],
+        "rated_at": row["rated_at"].isoformat() if hasattr(row["rated_at"], "isoformat") else row["rated_at"],
+        "created": created,
+    }
+
+
+def get_response_acceptance_rate(date_from=None, date_to=None) -> Dict:
+    """Response Acceptance Rate (metrics_definitions.md § AI Chat Engagement,
+    measure 3): chat answers rated useful / chat answers rated. Only
+    successful chat answers count. The window is on the answer's
+    generated_at; date_from inclusive, date_to exclusive, None means open.
+
+    Returns {"rated": int, "useful": int, "rate": float | None} (None when
+    nothing has been rated)."""
+    ensure_chat_answer_ratings_table()
+    ensure_claude_audit_log_compliance_check_column()
+    sql = (
+        "SELECT COUNT(*) AS rated, "
+        "COUNT(*) FILTER (WHERE r.rating = 'useful') AS useful "
+        "FROM chat_answer_ratings r "
+        "JOIN claude_audit_log a ON a.id = r.answer_id "
+        "WHERE a.endpoint = 'POST /ai/chat' "
+        "AND a.compliance_check_result IS DISTINCT FROM 'model_call_failed'"
+    )
+    params = []
+    if date_from is not None:
+        sql += " AND a.generated_at >= %s"
+        params.append(date_from)
+    if date_to is not None:
+        sql += " AND a.generated_at < %s"
+        params.append(date_to)
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(sql, tuple(params))
+            row = cur.fetchone()
+    rated = int(row["rated"]) if row else 0
+    useful = int(row["useful"]) if row else 0
+    return {"rated": rated, "useful": useful, "rate": (useful / rated) if rated else None}
 
 
 def count_claude_audit_entries_today(endpoint: str) -> int:

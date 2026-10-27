@@ -5,7 +5,7 @@ Provides journal summarisation, daily briefing, and chat advisory via Anthropic.
 AI output is display-only — must NOT be used in any signal, scoring,
 or recommendation pipeline. SRB-v1.7 CONDITIONALLY COMPLIANT.
 
-Contract: docs/specs/api_contracts/ai_endpoints.md v1.25
+Contract: docs/specs/api_contracts/ai_endpoints.md v1.31
 
 Post-generation stop-time check (ST-04, BLG-AI-10, v9.12; AI Compliance &
 Governance Officer ruling, ESC-EXEC-20261013-01): when a briefing or chat
@@ -15,6 +15,10 @@ that field. This is a deterministic, code-authored addition built only from
 the context the model was given: model text is never edited, reordered or
 removed, and the boundary-sample hook receives the raw model output.
 Every miss is logged and counted in claude_audit_log.compliance_check_result.
+
+Summary ticker check (ST-17, BLG-AI-16, v9.13; ruling ESC-EXEC-20261027-02):
+a ticker named in the briefing summary that is outside the context gets a
+code-written caveat appended the same way, logged and counted.
 """
 
 import hashlib
@@ -72,12 +76,15 @@ MODEL_BRIEFING = CLAUDE_SONNET_4_6
 # Briefing v1.3 (ST-02 + ST-03, BLG-AI-11/12, v9.12, one combined bump):
 # actions may name only tickers from the snapshot; the context labels
 # available cash and starting capital separately.
+# Chat v1.2 (ST-19, BLG-AI-14, v9.13): the chat context labels cash the same way.
 BRIEFING_PROMPT_VERSION = "v1.3"
-CHAT_PROMPT_VERSION = "v1.1"
+CHAT_PROMPT_VERSION = "v1.2"
 # Journal summary v1.0 (ST-06, BLG-OPS-183, v9.12): first recorded version of
 # the existing, unchanged prompt, now that its calls are logged to
 # claude_audit_log.
-JOURNAL_SUMMARY_PROMPT_VERSION = "v1.0"
+# Journal summary v1.1 (ST-18, BLG-AI-15, v9.13): the prompt says not to
+# suggest changing stops, position sizing or setups.
+JOURNAL_SUMMARY_PROMPT_VERSION = "v1.1"
 # Haiku 4.5 list pricing, the same rates as gemini_service.CLAUDE_COST_PER_*_TOKEN.
 _HAIKU_COST_PER_INPUT_TOKEN = 1.00 / 1_000_000
 _HAIKU_COST_PER_OUTPUT_TOKEN = 5.00 / 1_000_000
@@ -129,17 +136,31 @@ def _stop_recalculated_label(position: dict) -> str:
 
 
 
+def _normalise_ticker(ticker) -> Optional[str]:
+    """ST-15 (BLG-AI-17, v9.13): upper case with a trailing ".L" removed, so a
+    UK ticker matches with or without its suffix (as the trade-plan lookup in
+    database.py already does). None for a non-string or empty ticker."""
+    if not isinstance(ticker, str):
+        return None
+    t = ticker.strip().upper()
+    if t.endswith(".L"):
+        t = t[:-2]
+    return t or None
+
+
 def _filter_actions_to_context(actions, allowed_tickers: set) -> list:
     """ST-02 (BLG-AI-11, v9.12): keep only briefing actions whose ticker is a
     held position or one of the signals given to the model. The model once
     returned ENTER for the placeholder ticker NEW_SIGNAL. Dropped actions are
-    logged (ticker and type only)."""
+    logged (ticker and type only). Both sides are normalised (ST-15), so
+    `VOD` matches a held `VOD.L` and the reverse."""
     if not isinstance(actions, list):
         return []
+    allowed = {_normalise_ticker(t) for t in allowed_tickers} - {None}
     kept = []
     for action in actions:
         ticker = action.get("ticker") if isinstance(action, dict) else None
-        if isinstance(ticker, str) and ticker.strip().upper() in allowed_tickers:
+        if _normalise_ticker(ticker) in allowed:
             kept.append(action)
         else:
             logger.warning(
@@ -182,7 +203,12 @@ def _stop_time_date(position: dict) -> Optional[str]:
 
 
 def _ticker_in(ticker: str, sentence: str) -> bool:
-    return re.search(rf"(?<![A-Za-z0-9.]){re.escape(ticker)}(?![A-Za-z0-9])", sentence) is not None
+    """Whole-word match of the ticker's normalised form, with or without a
+    ".L" suffix (ST-15): a held `VOD.L` is cited by "VOD" and the reverse."""
+    bare = _normalise_ticker(ticker)
+    if not bare:
+        return False
+    return re.search(rf"(?<![A-Za-z0-9.]){re.escape(bare)}(?:\.L)?(?![A-Za-z0-9])", sentence) is not None
 
 
 def _stop_time_present(text: str, position: dict) -> bool:
@@ -197,37 +223,50 @@ def _stop_time_present(text: str, position: dict) -> bool:
 
 
 def _append_missing_stop_times(text, positions: list, endpoint: str, field: str,
-                               prompt_version: str, own_ticker: Optional[str] = None):
+                               prompt_version: str, own_ticker: Optional[str] = None,
+                               focus_ticker: Optional[str] = None):
     """Return (text, outcome) for one response field. outcome is None (no
     miss), "appended" or "unattributed". Per the ESC-EXEC-20261013-01 ruling:
     a sentence containing the word "stop" or "stops" cites a stop; it is attributed to every
     open-position ticker it names (whole word), plus `own_ticker` for an
-    action. A cited position whose stop_calculated_at date (or "not
+    action. Tickers are compared in normalised form (ST-15: upper case, ".L"
+    folded). For chat, `focus_ticker` (context.ticker) takes a stop sentence
+    that names no held ticker, if it is itself held (ST-16, BLG-AI-18; ruling
+    ESC-EXEC-20261027-01 (B)); a sentence naming a held ticker is attributed
+    only to the tickers it names. A cited position whose stop_calculated_at date (or "not
     recalculated since entry", when NULL) appears nowhere in the field gets
     its label appended after the model's text. Fails open."""
     if not isinstance(text, str) or not text:
         return text, None
     try:
-        by_ticker = {}
+        by_ticker, by_normalised = {}, {}
         for p in positions or []:
             t = p.get("ticker")
-            if isinstance(t, str) and t and t not in by_ticker:
+            n = _normalise_ticker(t)
+            if n and n not in by_normalised:
                 by_ticker[t] = p
-        missing, unattributed = [], False
+                by_normalised[n] = t
+        own = by_normalised.get(_normalise_ticker(own_ticker))
+        focus = by_normalised.get(_normalise_ticker(focus_ticker))
+        missing, via_focus, unattributed = [], set(), False
         for sentence in _SENTENCE_SPLIT_RE.split(text):
             if not _STOP_WORD_RE.search(sentence):
                 continue
             cited = [t for t in by_ticker if _ticker_in(t, sentence)]
-            if own_ticker in by_ticker and own_ticker not in cited:
-                cited.append(own_ticker)
+            if own and own not in cited:
+                cited.append(own)
+            if not cited and focus:
+                cited.append(focus)
+                if focus not in missing and not _stop_time_present(text, by_ticker[focus]):
+                    via_focus.add(focus)
             if not cited:
                 unattributed = True
             for t in cited:
                 if t not in missing and not _stop_time_present(text, by_ticker[t]):
                     missing.append(t)
         for t in missing:
-            logger.warning("stop-time check: endpoint=%s field=%s ticker=%s action=appended prompt_version=%s",
-                           endpoint, field, t, prompt_version)
+            logger.warning("stop-time check: endpoint=%s field=%s ticker=%s action=appended prompt_version=%s%s",
+                           endpoint, field, t, prompt_version, " attribution=focus" if t in via_focus else "")
         if unattributed:
             logger.warning("stop-time check: endpoint=%s field=%s ticker=unattributed action=unattributed_no_append "
                            "prompt_version=%s", endpoint, field, prompt_version)
@@ -270,6 +309,62 @@ def _check_briefing_stop_times(parsed: dict, positions: list):
                 action = {**action, "description": desc}
         actions.append(action)
     return summary, actions, _stop_time_check_result(outcomes)
+
+
+# ─── ST-17 (BLG-AI-16, v9.13): briefing summary tickers outside the context ─
+# AI Compliance & Governance Officer ruling ESC-EXEC-20261027-02 (B): a
+# ticker-like token in the raw summary that is not an open position or a
+# context signal (ST-15 normalised), does not appear in the context sent to
+# the model, and is not a known non-ticker word gets a code-written caveat
+# appended after the model's text (and after any stop-time notes). Logged and
+# counted; model text is never edited; fails open.
+_TICKER_TOKEN_RE = re.compile(r"(?<![A-Za-z0-9_.&$£])[A-Z][A-Z0-9_]{1,14}(?:\.[A-Z]{1,2})?(?![A-Za-z0-9_&])")
+_NON_TICKER_WORDS = frozenset({
+    "UK", "US", "USD", "GBP", "GBX", "EXIT", "ENTER", "MONITOR", "HOLD", "ATR", "MA", "ETF", "AI", "UTC",
+    "SPY", "FTSE", "RISK", "ON", "OFF", "STOP", "BREACH", "OK", "YTD",
+})
+
+
+def _word_in(token: str, text: str) -> bool:
+    return re.search(rf"(?<![A-Za-z0-9_.]){re.escape(token)}(?![A-Za-z0-9_])", text) is not None
+
+
+def _summary_ticker_caveat(summary, context_tickers, context: str):
+    """Return (caveat, outcome) for the raw briefing summary. caveat is the
+    text to append (or None); outcome is None (no hit), "appended" or "error"."""
+    if not isinstance(summary, str) or not summary:
+        return None, None
+    try:
+        known = {_normalise_ticker(t) for t in context_tickers} - {None}
+        unknown = []
+        for m in _TICKER_TOKEN_RE.finditer(summary):
+            token = m.group(0)
+            if (token in unknown or token in _NON_TICKER_WORDS or _normalise_ticker(token) in known
+                    or _word_in(token, context)):
+                continue
+            unknown.append(token)
+        if not unknown:
+            return None, None
+        for token in unknown:
+            logger.warning("ticker check: endpoint=POST /ai/daily-briefing field=summary ticker=%s "
+                           "action=caveat_appended prompt_version=%s", token, BRIEFING_PROMPT_VERSION)
+        if len(unknown) == 1:
+            return f"(Note: {unknown[0]} is not one of your open positions or today's top signals.)", "appended"
+        return f"(Note: {', '.join(unknown)} are not among your open positions or today's top signals.)", "appended"
+    except Exception:
+        logger.error("ticker check failed for the briefing summary; summary returned unchanged", exc_info=True)
+        return None, "error"
+
+
+def _with_ticker_result(stop_time_result: str, outcome: Optional[str]) -> str:
+    """Combine the stop-time result with the ST-17 ticker result (ruling condition 5)."""
+    if outcome == "appended":
+        if stop_time_result == "pass":
+            return "ticker_outside_context_appended"
+        return f"{stop_time_result}+ticker_outside_context_appended"
+    if outcome == "error":
+        return f"{stop_time_result}+ticker_check_error"
+    return stop_time_result
 
 
 def _validate_context_ticker(context_opts: Optional[dict]) -> None:
@@ -316,6 +411,40 @@ def _audit_journal_summary_call(create_claude_audit_entry, model: str, prompt_ha
         logger.warning("journal-summary audit row not written", exc_info=True)
 
 
+# ─── ST-18 (BLG-AI-15, v9.13): journal-summary output-language check ───────
+# AI Compliance & Governance Officer ruling ESC-EXEC-20261027-03 (A): a
+# summary fails on the debrief's prescriptive scan or on wording that
+# suggests changing stops, sizing or setups (subject, then a present-tense or
+# modal word, then a change verb, within one sentence; past tense such as
+# "needed" is descriptive and passes). Regenerate once, then return the
+# code-written fallback, as the debrief and monthly narrative do.
+_TRADING_CHANGE_RE = re.compile(
+    r"\b(?:stop[- ]loss(?:es)?|stop (?:placement|level|distance)s?|stops?"
+    r"|position siz(?:e|es|ing)|sizing|setups?)\b"
+    r"[^.!?\n]{0,40}?\b(?:needs?|should|ought|requires?|warrants?|may need|might need|could use)\b"
+    r"[^.!?\n]{0,25}?\b(?:adjust|chang|tighten|widen|loosen|revis|revisit|reconsider|rethink|review"
+    r"|modif|refin|mov|reduc|increas|cut|lower|rais)\w*",
+    re.IGNORECASE,
+)
+JOURNAL_SUMMARY_WITHHELD_MESSAGE = (
+    "The AI summary was withheld because it did not pass the advisory-language check. "
+    "Your journal notes are unchanged; please try again later."
+)
+
+
+def journal_summary_language_failures(text: Optional[str]) -> list:
+    """The failed categories for one summary ([] means it passes)."""
+    from services.debrief_service import scan_prescriptive
+    if not text:
+        return []
+    found = []
+    if scan_prescriptive(text):
+        found.append("prescriptive")
+    if _TRADING_CHANGE_RE.search(text):
+        found.append("trading_change")
+    return found
+
+
 def summarise_journal_notes(
     notes: list[str],
     model: Optional[str] = None,
@@ -355,7 +484,8 @@ def summarise_journal_notes(
         "You are reviewing a trader's journal entries. "
         "Summarise the key themes, patterns, and observations across these notes in 2–4 concise paragraphs. "
         "Focus on trading behaviour, decision-making patterns, and recurring themes. "
-        "Do not make investment recommendations.\n\n"
+        "Do not make investment recommendations. "
+        "Describe what the notes record; do not suggest changing stops, position sizing or setups.\n\n"
         f"Journal entries:\n{combined}"
     )
 
@@ -365,25 +495,37 @@ def summarise_journal_notes(
     # including a failed call (no cost). The audit write never fails the summary.
     from database import create_claude_audit_entry
     prompt_hash = _prompt_hash("", prompt)
-    t0 = time.time()
     try:
-        try:
-            response = _create_message(
-                api_key,
-                model=model,
-                max_tokens=512,
-                messages=[{"role": "user", "content": prompt}],
-            )
-        except Exception:
+        # ST-18: one audit row per model call, carrying that attempt's result.
+        for attempt in (1, 2):
+            t0 = time.time()
+            try:
+                response = _create_message(
+                    api_key,
+                    model=model,
+                    max_tokens=512,
+                    messages=[{"role": "user", "content": prompt}],
+                )
+            except Exception:
+                _audit_journal_summary_call(create_claude_audit_entry, model, prompt_hash, t0,
+                                            compliance_check_result="model_call_failed")
+                raise
+            summary_text = response.content[0].text if response.content else None
+            if summary_text:
+                sample_ai_output("journal-summary (POST /ai/journal-summary)", summary_text, model)
+            failures = journal_summary_language_failures(summary_text)
+            if not failures:
+                _audit_journal_summary_call(create_claude_audit_entry, model, prompt_hash, t0,
+                                            usage=response.usage, response_text=summary_text,
+                                            compliance_check_result="pass" if attempt == 1 else "pass_on_regenerate")
+                return {"summary": summary_text, "model": model, "message": None}
+            outcome = "fail_regenerate:" if attempt == 1 else "fail_fallback:"
             _audit_journal_summary_call(create_claude_audit_entry, model, prompt_hash, t0,
-                                        compliance_check_result="model_call_failed")
-            raise
-        summary_text = response.content[0].text if response.content else None
-        _audit_journal_summary_call(create_claude_audit_entry, model, prompt_hash, t0,
-                                    usage=response.usage, response_text=summary_text)
-        if summary_text:
-            sample_ai_output("journal-summary (POST /ai/journal-summary)", summary_text, model)
-        return {"summary": summary_text, "model": model, "message": None}
+                                        usage=response.usage, response_text=summary_text,
+                                        compliance_check_result=outcome + "+".join(failures))
+            logger.warning("journal summary failed the language check (attempt %d, categories=%s, prompt_version=%s)",
+                           attempt, "+".join(failures), JOURNAL_SUMMARY_PROMPT_VERSION)
+        return {"summary": None, "model": None, "message": JOURNAL_SUMMARY_WITHHELD_MESSAGE}
     except Exception as exc:
         logger.error("summarise_journal_notes failed: %s", exc, exc_info=True)
         return {
@@ -559,6 +701,12 @@ def generate_daily_briefing() -> dict:
                 logger.error("daily briefing ticker filter failed; actions returned unfiltered", exc_info=True)
             summary, actions, stop_time_result = _check_briefing_stop_times(
                 {"summary": parsed.get("summary", ""), "actions": actions}, positions)
+            caveat, ticker_outcome = _summary_ticker_caveat(
+                parsed.get("summary", ""),
+                [p.get("ticker") for p in positions] + [s.get("ticker") for s in top_signals], context)
+            if caveat:
+                summary = f"{summary} {caveat}"
+            stop_time_result = _with_ticker_result(stop_time_result, ticker_outcome)
 
         try:
             cost_usd = None
@@ -667,8 +815,9 @@ def ai_chat(question: str, context_opts: Optional[dict] = None) -> dict:
 
     context_lines = [
         f"Portfolio snapshot — {datetime.utcnow().strftime('%Y-%m-%d %H:%M UTC')}",
-        f"Cash: £{portfolio.get('cash', 0):,.0f} of £{portfolio.get('initial_cash', 0):,.0f} initial capital",
-        f"Open positions: {len(positions)}",
+        # ST-19 (BLG-AI-14, v9.13): "Cash: £X of £Y initial capital" read as
+        # a target cash level, as it did in the briefing; same labelling now.
+        _briefing_cash_line(portfolio, len(positions)),
         "",
     ]
 
@@ -741,13 +890,17 @@ def ai_chat(question: str, context_opts: Optional[dict] = None) -> dict:
         output_tokens = usage.output_tokens if usage else None
 
         checked, outcome = _append_missing_stop_times(content, positions, "POST /ai/chat", "response",
-                                                      CHAT_PROMPT_VERSION)
+                                                      CHAT_PROMPT_VERSION,
+                                                      focus_ticker=(context_opts or {}).get("ticker"))
 
+        answer_id = None
         try:
             cost_usd = None
             if input_tokens and output_tokens:
                 cost_usd = (input_tokens * 3.0 + output_tokens * 15.0) / 1_000_000
-            create_claude_audit_entry(
+            # ST-22 (BLG-FE-208, v9.13): the audit row's id is the answer_id a
+            # rating attaches to.
+            answer_id = create_claude_audit_entry(
                 endpoint="POST /ai/chat",
                 model_id=MODEL_BRIEFING,
                 prompt_version=CHAT_PROMPT_VERSION,
@@ -763,10 +916,33 @@ def ai_chat(question: str, context_opts: Optional[dict] = None) -> dict:
             pass
 
         # Raw model output, before any code-written addition (ST-04 Condition 2).
-        if content and content != "I was unable to generate a response.":
+        model_answered = bool(content) and content != "I was unable to generate a response."
+        if model_answered:
             sample_ai_output("chat (POST /ai/chat)", content, MODEL_BRIEFING)
-        return {"response": checked, "advisory": True, "model": MODEL_BRIEFING}
+        result = {"response": checked, "advisory": True, "model": MODEL_BRIEFING}
+        # Only a model answer with a stored audit row can be rated (fixed
+        # messages carry no answer_id; decision record §2.1).
+        if model_answered and isinstance(answer_id, str):
+            result["answer_id"] = answer_id
+        return result
     except Exception:
         # ST-03 (BLG-BE-151, v9.11): log the cause before returning the fallback.
         logger.error("ai_chat failed; returning fallback message", exc_info=True)
         return {"response": "Unable to get a response. Please try again.", "advisory": True}
+
+
+# ---------------------------------------------------------------------------
+# ST-22 — Chat answer rating (POST /ai/chat/{answer_id}/rating)
+# ---------------------------------------------------------------------------
+
+def rate_chat_answer(answer_id: str, rating: str) -> Optional[dict]:
+    """Store a useful / not-useful rating for one chat answer, once.
+
+    Returns None when the answer does not exist, else
+    {"answer_id", "rating", "rated_at", "created"}; created is False when the
+    answer was already rated (the stored rating is returned, not replaced).
+    The rating is a usefulness measure only: it is not an input to any
+    signal, score or recommendation (decision record §3)."""
+    from database import create_chat_answer_rating
+    return create_chat_answer_rating(answer_id, rating)
+

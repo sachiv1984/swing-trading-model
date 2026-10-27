@@ -2,8 +2,8 @@
 **Owner:** Infrastructure & Operations Owner
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Version:** 2.41
-**Date:** 2026-10-17
+**Version:** 2.42
+**Date:** 2026-10-27
 **Story:** ST-11 (BLG-OPS-05) — initial baseline; ST-06 (v2.5 EPIC-02) — outlier investigation; ST-01 (v2.7 EPIC-01) — Supavisor baseline re-run; ST-05 (v6.1 EPIC-02) — PATCH /trades/{id}/costs registration; ST-11 (v6.4 EPIC-03, BLG-OPS-82) — v6.3 endpoint registration; ST-04 (v6.5 EPIC-02, BLG-OPS-83) — v6.4 endpoint registration; ST-01 (v6.9 EPIC-01, BLG-FEAT-64) — GET /positions/{id}/compliance-recheck registration; ST-02 (v6.9 EPIC-02, BLG-FEAT-65) — GET /positions/{id}/gap-risk registration; ST-15 (v7.0 EPIC-03, BLG-FEAT-68) — PATCH /positions/{id}/mark-reviewed registration; ST-02 (v7.5 EPIC-02, BLG-FE-116) — GET/POST /price-alerts, DELETE /price-alerts/{id} registration; ST-03 (v7.5 EPIC-03, BLG-FE-117) — bulk actions toolbar endpoint registration; ST-04 (v7.5 EPIC-04, BLG-FE-118) — saved filters & daily P&L endpoint registration; ST-09 (v9.4 EPIC-03, BLG-OPS-151) — POST /ai/check-endpoint-anomalies registration; ST-09/ST-06 (v9.5 EPIC-02, BLG-OPS-156/BLG-OPS-153) — GET /positions/{id}, GET /ai/spend-trend-by-feature registration; ST-01b (v9.7 EPIC-01, BLG-FEAT-74) — POST /replay/run registration; ST-17 (v9.12 EPIC-03, BLG-BE-146) — GET /market/atr/{ticker} registration
 **Cycle:** 2026-03-31__release-v2.4 (baseline); 2026-04-05__release-v2.5 (ST-06 update); 2026-04-13__release-v2.7 (Supavisor re-run)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
@@ -2231,10 +2231,41 @@ Registered by: Sprint Execution Engine — 2026-10-17. Infrastructure & Operatio
 
 ---
 
+## 51. POST /ai/chat/{answer_id}/rating (ST-22, EPIC-03, v9.13, BLG-FE-208)
+
+**Date:** 2026-10-27
+**Story:** ST-22 (EPIC-03, v9.13, BLG-FE-208). Registered in the same commit that adds the path to `openapi.yaml`, as the API Performance Baseline Drift Detection CI gate requires.
+
+### 51.1 Endpoint Profile
+
+| Endpoint | Added in | Method | p50 (ms) | p95 (ms) | Flag |
+|----------|----------|--------|----------|----------|------|
+| POST /ai/chat/{id}/rating (`{id}` = `answer_id`) | v9.13 | Write — write-op exclusion (estimated) | ~250ms (est.) | ~500ms (est.) | Write-op exclusion |
+
+**Endpoint characteristics:**
+- One connection: an indexed primary-key lookup on `claude_audit_log`, then one `INSERT … ON CONFLICT DO NOTHING` into `chat_answer_ratings` (plus one indexed read of the stored row on a repeat rating). The idempotent `CREATE TABLE IF NOT EXISTS` runs first. No model call, no external I/O.
+- Called once per rated chat answer, by a click.
+- **Estimation methodology:** a successful call writes a real rating row, so it is a write-op exclusion under the §18.2/§20 policy (live timing would need a real answer to rate). The estimate follows §20's single-row Supavisor write. The endpoint test suite calls it with the zero UUID, which returns 404 and writes nothing.
+
+### 51.2 Sign-Off
+
+```
+ST-22 (v9.13 EPIC-03, BLG-FE-208) — Baseline Registration
+
+AC: api_performance_baseline.md has a row for POST /ai/chat/{answer_id}/rating. PASS (§51.1)
+Registered in the same commit as the openapi.yaml path, per the API Performance Baseline Drift Detection CI gate. PASS
+Write-op exclusion, estimated; no live timing run (it would write a rating).
+
+Registered by: Sprint Execution Engine — 2026-10-27. Infrastructure & Operations Owner review pending (next baseline re-run).
+```
+
+---
+
 ## 9. Document History
 
 | Version | Date | Author | Change |
 |---------|------|--------|--------|
+| 2.42 | 2026-10-27 | Sprint Execution Engine | ST-22 (v9.13 EPIC-03, BLG-FE-208): §51 added — POST /ai/chat/{answer_id}/rating registered as a write-op exclusion (estimated). Required by the API Performance Baseline Drift Detection CI gate after `openapi.yaml` gained the path in the same commit. |
 | 2.41 | 2026-10-17 | Sprint Execution Engine | ST-10 (v9.13 EPIC-02, BLG-SPEC-188): §50 added — GET /positions/stop-freshness registered pending live timing run. Required by the API Performance Baseline Drift Detection CI gate after `openapi.yaml` gained the path in the same commit. |
 | 2.40 | 2026-10-13 | Sprint Execution Engine | ST-17 (v9.12 EPIC-03, BLG-BE-146): §49 added — GET /market/atr/{ticker} registered pending live timing run. Required by the API Performance Baseline Drift Detection CI gate after `openapi.yaml` gained the path in the same commit. |
 | 2.39 | 2026-10-09 | Sprint Execution Engine (agent-mediated, Infrastructure & Operations Owner role — §5.3) | ST-25 (v9.11 EPIC-04, BLG-FEAT-59): §48 added — `GET` and `POST /reports/monthly-pnl/narrative` registered pending live timing run; the POST's generating path is flagged high-latency by design (one Claude Haiku 4.5 call, worst case two). Required by the API Performance Baseline Drift Detection CI gate after `openapi.yaml` gained the path in the same PR. Numbered 2.39 and §48 because EPIC-03's §47 holds 2.38. |

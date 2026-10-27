@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical (Class 1)
 **Status:** Canonical
-**Version:** 1.25
-**Last Updated:** 2026-10-13 (ST-06, EPIC-01, v9.12, BLG-OPS-183 — `POST /ai/journal-summary` writes a `claude_audit_log` row per model call, so the daily cost alert really does cover every Claude feature; feature-tag taxonomy completed); prior — 2026-10-13 (ST-06, EPIC-01, v9.12, BLG-OPS-183 — `POST /ai/check-daily-cost` sums `claude_audit_log`, so every Claude feature counts toward the daily alert; scheduler named: `ai-daily-cost-check.yml`, every 6 hours); prior — 2026-10-13 (ST-02/ST-03/ST-04, EPIC-01, v9.12, BLG-AI-11/12/10 — daily briefing drops actions naming a ticker outside the context and labels cash and starting capital separately (`BRIEFING_PROMPT_VERSION` v1.3); briefing and chat append a code-written stop recalculation time when a cited stop lacks one); prior history retained — see prior entries in version control
+**Version:** 1.31
+**Last Updated:** 2026-10-27 (ST-22, EPIC-03, v9.13, BLG-FE-208 — new `POST /ai/chat/{answer_id}/rating`; `POST /ai/chat` returns `answer_id` for a model answer); prior — 2026-10-27 (ST-18, EPIC-03, v9.13, BLG-AI-15 — `POST /ai/journal-summary` output-language check, regenerate once then a code-written fallback; `JOURNAL_SUMMARY_PROMPT_VERSION` v1.1); prior — 2026-10-27 (ST-17, EPIC-03, v9.13, BLG-AI-16 — briefing summary tickers outside the context get a code-written caveat, logged and counted); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -20,6 +20,7 @@ All AI output is **display-only** and must NOT be used as input to any signal, s
 - [POST /ai/journal-summary](#post-aijournal-summary)
 - [POST /ai/daily-briefing](#post-aidaily-briefing)
 - [POST /ai/chat](#post-aichat)
+- [POST /ai/chat/{answer_id}/rating](#post-aichatanswer_idrating)
 - [POST /ai/check-daily-cost](#post-aicheck-daily-cost)
 - [POST /ai/check-endpoint-anomalies](#post-aicheck-endpoint-anomalies)
 - [GET /ai/claude-audit-log](#get-aiclaude-audit-log)
@@ -101,6 +102,20 @@ When the external LLM API is unreachable or returns an error, the endpoint retur
 
 *(Heading corrected v9.11, ST-32, BLG-SPEC-175: it previously named a 503 status, but the endpoint returns HTTP 200 with this body. This is an informational response, not an error envelope.)*
 
+### Response — 200 OK when the summary fails the language check
+
+*(ST-18, v9.13, BLG-AI-15; AI Compliance & Governance Officer ruling `ESC-EXEC-20261027-03` (A).)* Every model output is checked before it is returned. It fails on the debrief's prescriptive scan (`scan_prescriptive`) or on wording that suggests changing stops, position sizing or setups: a subject (stop(s), stop-loss, stop placement/level/distance, position size/sizing, setup(s)), then within 40 characters a present-tense or modal word (needs, should, ought, requires, warrants, may/might need, could use), then within 25 characters a change verb (adjust, change, tighten, widen, loosen, revise, revisit, reconsider, rethink, review, modify, refine, move, reduce, increase, cut, lower, raise), in one sentence. Past tense ("needed", "reduced") is descriptive and passes. A failing output is regenerated once; if the second also fails, the endpoint returns HTTP 200 with:
+
+```json
+{
+  "summary": null,
+  "trade_count": 8,
+  "model": null,
+  "cached": false,
+  "message": "The AI summary was withheld because it did not pass the advisory-language check. Your journal notes are unchanged; please try again later."
+}
+```
+
 ### Error responses
 
 | Status | Condition |
@@ -115,7 +130,8 @@ When the external LLM API is unreachable or returns an error, the endpoint retur
 - Default model: `claude-haiku-4-5-20251001`. Override via `AI_MODEL` env var.
 - If LLM API is unreachable: return HTTP 200 with `summary: null` and informational `message`. Do not raise HTTP 500.
 - Endpoint is read-only: no trade data is modified.
-- **Claude audit row (ST-06, v9.12, BLG-OPS-183):** each model call writes one `claude_audit_log` row: `endpoint` `POST /ai/journal-summary`, the model ID, `prompt_version` `v1.0`, tokens, `cost_usd` (Haiku 4.5 at $1/M input and $5/M output tokens), `latency_ms`, `prompt_hash` (SHA-256 of an empty system prompt plus the prompt, first 16 hex characters) and `response_length`. A call that fails after retries writes a row with `compliance_check_result = 'model_call_failed'` and no cost. No summary text is stored, so the "must not be stored" rule above still holds. Before v9.12 the journal summary wrote only `ai_audit_log`, which has no cost column, so its spend was missing from the daily cost alert, `GET /ai/monthly-cost`, `GET /ai/monthly-cost-by-feature` and the endpoint anomaly check. An audit failure is logged and never affects the summary.
+- **Claude audit row (ST-06, v9.12, BLG-OPS-183):** each model call writes one `claude_audit_log` row: `endpoint` `POST /ai/journal-summary`, the model ID, `prompt_version` (`v1.1` from ST-18; `v1.0` before), tokens, `cost_usd` (Haiku 4.5 at $1/M input and $5/M output tokens), `latency_ms`, `prompt_hash` (SHA-256 of an empty system prompt plus the prompt, first 16 hex characters) and `response_length`. A call that fails after retries writes a row with `compliance_check_result = 'model_call_failed'` and no cost. No summary text is stored, so the "must not be stored" rule above still holds. Before v9.12 the journal summary wrote only `ai_audit_log`, which has no cost column, so its spend was missing from the daily cost alert, `GET /ai/monthly-cost`, `GET /ai/monthly-cost-by-feature` and the endpoint anomaly check. An audit failure is logged and never affects the summary.
+- **Language check result (ST-18, v9.13):** each row's `compliance_check_result` is `pass` (first output passed), `pass_on_regenerate` (second output passed), `fail_regenerate:<categories>` (first output failed; a second call follows) or `fail_fallback:<categories>` (second output failed; the fallback above is returned), with categories `prescriptive` and/or `trading_change` joined by `+`. `model_call_failed` is unchanged. Logs carry the categories only, never summary text. The boundary-sample hook receives each attempt's raw output. The prompt tells the model to describe what the notes record and not to suggest changing stops, position sizing or setups (`JOURNAL_SUMMARY_PROMPT_VERSION` v1.1).
 
 ---
 
@@ -181,12 +197,13 @@ No request body required.
 
 ### Post-generation checks (code-authored, deterministic)
 
-Applied to the parsed model output before it is returned. The boundary-sample hook (§AI Output Boundary-Language Sampling Hook) always receives the raw model output, before either check.
+Applied to the parsed model output before it is returned. The boundary-sample hook (§AI Output Boundary-Language Sampling Hook) always receives the raw model output, before any check.
 
-1. **Actions limited to context tickers (ST-02, v9.12, BLG-AI-11).** An action is returned only if its `ticker` (case-insensitive) is an open position or one of the top-5 signals in the context. Any other action, including one with no ticker or a placeholder such as `NEW_SIGNAL`, is dropped and logged as a warning (type and ticker only). The system prompt also tells the model that actions may only name snapshot tickers (`BRIEFING_PROMPT_VERSION` v1.3).
-2. **Stop recalculation time (ST-04, v9.12, BLG-AI-10; AI Compliance & Governance Officer ruling `ESC-EXEC-20261013-01`).** `summary` and each `actions[].description` are checked separately. A sentence containing "stop"/"stops" cites a stop, attributed to each open-position ticker it names (whole word) and, for an action, to the action's own `ticker`. If that position's `stop_calculated_at` date (`YYYY-MM-DD`), or "not recalculated since entry" when it is NULL, appears nowhere in the field, code appends `(<TICKER> stop last recalculated YYYY-MM-DD HH:MM UTC)` or `(<TICKER> stop not recalculated since entry)` after the model's text, once per ticker. Model text is never edited or removed. A stop citation with no attributable ticker is logged and nothing is appended. Each miss is logged as a warning (endpoint, field, ticker, action, prompt version; never response text). The check fails open: an error returns the model text unchanged.
+1. **Actions limited to context tickers (ST-02, v9.12, BLG-AI-11).** An action is returned only if its `ticker` is an open position or one of the top-5 signals in the context. Tickers are compared in normalised form: upper case, with a trailing `.L` removed, so `VOD` matches a held `VOD.L` and the reverse (ST-15, v9.13, BLG-AI-17). Any other action, including one with no ticker or a placeholder such as `NEW_SIGNAL`, is dropped and logged as a warning (type and ticker only). The system prompt also tells the model that actions may only name snapshot tickers (`BRIEFING_PROMPT_VERSION` v1.3).
+2. **Stop recalculation time (ST-04, v9.12, BLG-AI-10; AI Compliance & Governance Officer ruling `ESC-EXEC-20261013-01`).** `summary` and each `actions[].description` are checked separately. A sentence containing "stop"/"stops" cites a stop, attributed to each open-position ticker it names (whole word) and, for an action, to the action's own `ticker`. Attribution uses the same normalised form as check 1, so "VOD" in the text cites a held `VOD.L` (ST-15, v9.13); the note names the ticker as held. If that position's `stop_calculated_at` date (`YYYY-MM-DD`), or "not recalculated since entry" when it is NULL, appears nowhere in the field, code appends `(<TICKER> stop last recalculated YYYY-MM-DD HH:MM UTC)` or `(<TICKER> stop not recalculated since entry)` after the model's text, once per ticker. Model text is never edited or removed. A stop citation with no attributable ticker is logged and nothing is appended. Each miss is logged as a warning (endpoint, field, ticker, action, prompt version; never response text). The check fails open: an error returns the model text unchanged.
    - `claude_audit_log.compliance_check_result` for the call: `pass` (no miss), `stop_time_missing_appended`, `stop_time_missing_unattributed` (only unattributed misses), or `stop_time_check_error`. It is `NULL` when the model response could not be parsed (the fallback is returned, as before).
    - No response field is added; the response shape is unchanged.
+3. **Summary tickers outside the context (ST-17, v9.13, BLG-AI-16; AI Compliance & Governance Officer ruling `ESC-EXEC-20261027-02` (B)).** The raw model `summary` is scanned for ticker-like tokens (`[A-Z][A-Z0-9_]{1,14}`, optional `.X`/`.XX` suffix, whole word). A token is known if, normalised as in check 1, it is an open position or a context signal; or it appears as a whole word in the context sent to the model; or it is in the code's `_NON_TICKER_WORDS` list (UK, US, USD, GBP, GBX, EXIT, ENTER, MONITOR, HOLD, ATR, MA, ETF, AI, UTC, SPY, FTSE, RISK, ON, OFF, STOP, BREACH, OK, YTD). For any other token, code appends after the model text and any stop-time notes, once per token in order of first appearance: `(Note: <TICKER> is not one of your open positions or today's top signals.)`, or for several `(Note: <T1>, <T2> are not among your open positions or today's top signals.)`. Model text is never edited. Each hit is logged as a warning (endpoint, field, token, `action=caveat_appended`, prompt version; never response text). The check fails open. `compliance_check_result` keeps the stop-time value and adds the result: `ticker_outside_context_appended` when the stop-time value is `pass`; otherwise `<stop-time value>+ticker_outside_context_appended`; on a check error `<stop-time value>+ticker_check_error`. `actions` are still governed by check 1. `BRIEFING_PROMPT_VERSION` stays v1.3.
 
 ### Rate limiting
 
@@ -275,7 +292,8 @@ Content-Type: application/json
 {
   "response": "NVDA is currently closest to its trailing stop, sitting 2.8% above the stop level of £450.00.",
   "advisory": true,
-  "model": "claude-sonnet-4-6"
+  "model": "claude-sonnet-4-6",
+  "answer_id": "3f2b7c1e-9a4d-4e21-8c55-0d6f1a2b3c4d"
 }
 ```
 
@@ -284,6 +302,7 @@ Content-Type: application/json
 | `response` | string | AI-generated answer grounded in live portfolio state. |
 | `advisory` | boolean | Always `true`. |
 | `model` | string or null | Model identifier used. |
+| `answer_id` | string (UUID), optional | *(ST-22, v9.13, BLG-FE-208)* The `claude_audit_log` row id for this answer, used by `POST /ai/chat/{answer_id}/rating`. Present only for a model answer whose audit row was written; absent on fixed messages ("Unable to get a response…", "Unable to load portfolio data.", the not-configured message, "I was unable to generate a response."). |
 
 ### Stateless behaviour
 
@@ -291,14 +310,14 @@ Each call is independent — the backend loads fresh portfolio and signal state 
 
 ### Context injected into system prompt
 
-- Portfolio cash and open position count
+- Open position count, available cash and starting capital, each labelled; starting capital is omitted when it is 0 or missing (the same line as `POST /ai/daily-briefing`; ST-19, v9.13, BLG-AI-14 — previously "Cash: £X of £Y initial capital")
 - Per-position: ticker, market, current price, trailing stop with its last recalculation time (`stop_calculated_at`, or "not recalculated since entry" when NULL — ST-08, v9.11), risk-off flag, P&L
 - Latest top-5 momentum signals
 - Optional: focused ticker from `context.ticker`
 
 ### Post-generation stop-time check (ST-04, v9.12)
 
-The same code-authored check as `POST /ai/daily-briefing` check 2, applied to `response` (the note is appended after the model's text; `compliance_check_result` takes the same values; the sampling hook receives the raw output). The context's cash wording is unchanged here ("Cash: £X of £Y initial capital"). `CHAT_PROMPT_VERSION` stays v1.1.
+The same code-authored check as `POST /ai/daily-briefing` check 2, applied to `response` (the note is appended after the model's text; `compliance_check_result` takes the same values; the sampling hook receives the raw output). **Focus ticker (ST-16, v9.13, BLG-AI-18; AI Compliance & Governance Officer ruling `ESC-EXEC-20261027-01` (B)):** when `context.ticker` is set and, normalised, is an open position, a stop sentence that names no held ticker is attributed to it (so "Your stop is at £450" asked from a position gets that position's note); a sentence naming a held ticker is attributed only to the tickers it names, and a non-held focus ticker changes nothing. The warning line then ends `attribution=focus`. `CHAT_PROMPT_VERSION` was unchanged by this check; it is v1.2 from ST-19 (cash labelling).
 
 ### Rate limiting
 
@@ -343,6 +362,63 @@ Content-Type: application/json
 - No writes to any table. Conversation state is not persisted.
 - `advisory: true` always present.
 - Rate limit implementation: in-memory sliding-window (`backend/services/rate_limiter.py`). Limit applies per client IP. Single-process scope; sufficient for single-instance Render deployment.
+
+---
+
+## POST /ai/chat/{answer_id}/rating
+
+**Added:** v1.31 (ST-22, EPIC-03, v9.13, BLG-FE-208). Design source: `docs/design/2026-10-16__release-v9.13/chat-answer-rating/decision_record.md`. UI: `positions.md` §AI Trade Advisor Widget §Answer Rating. Storage: `data_model.md` DS-35 (`chat_answer_ratings`).
+
+Stores the user's useful / not-useful rating for one chat answer. One rating per answer: a second is rejected, never overwritten. The rating feeds the Response Acceptance Rate (`metrics_definitions.md` § AI Chat Engagement) and changes nothing else. It is not an input to any signal, score or recommendation (§13; decision record §3).
+
+### Request
+
+| Parameter | In | Type | Description |
+|-----------|----|------|-------------|
+| `answer_id` | path | UUID | The `answer_id` returned by `POST /ai/chat` |
+
+```json
+{ "rating": "useful" }
+```
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `rating` | string | Yes | `useful` or `not_useful` |
+
+### Response — 201 Created
+
+```json
+{
+  "status": "ok",
+  "data": { "answer_id": "3f2b7c1e-9a4d-4e21-8c55-0d6f1a2b3c4d", "rating": "useful", "rated_at": "2026-10-27T09:30:00+00:00" }
+}
+```
+
+### Response — 409 Conflict (already rated)
+
+The stored rating is returned so the UI can show it.
+
+```json
+{
+  "status": "error",
+  "message": "This answer has already been rated.",
+  "data": { "answer_id": "3f2b7c1e-9a4d-4e21-8c55-0d6f1a2b3c4d", "rating": "useful", "rated_at": "2026-10-27T09:30:00+00:00" }
+}
+```
+
+### Error responses
+
+| Status | Condition |
+|--------|-----------|
+| 404 | `{"status": "error", "message": "Chat answer not found."}`: no `claude_audit_log` row with this id for `POST /ai/chat`, or the row is a failed call (`model_call_failed`) |
+| 422 | `answer_id` is not a UUID, or `rating` is missing or not `useful` / `not_useful` |
+| 401 | Missing or invalid API key |
+
+### Implementation constraints
+
+- Router → `ai_service.rate_chat_answer()` → `database.create_chat_answer_rating()`. The insert uses `ON CONFLICT (answer_id) DO NOTHING`; when nothing is inserted, the stored row is returned with 409.
+- The table is created on first use by `database.ensure_chat_answer_ratings_table()` (DS-35 Up Migration, idempotent).
+- Registered in `backend/routers/test.py` with the zero UUID, which returns 404 and writes nothing.
 
 ---
 
@@ -886,6 +962,12 @@ Not a new endpoint — this is internal instrumentation, not part of this contra
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.31 | 2026-10-27 | ST-22 (EPIC-03, v9.13, BLG-FE-208): new `POST /ai/chat/{answer_id}/rating` — one useful / not-useful rating per chat answer, stored in `chat_answer_ratings` (DS-35); 201, 409 with the stored rating on a second attempt, 404 for an unknown or failed answer. `POST /ai/chat` returns an optional `answer_id` (the `claude_audit_log` row id) for model answers only. `openapi.yaml` 3.36.0. |
+| 1.30 | 2026-10-27 | ST-18 (EPIC-03, v9.13, BLG-AI-15; ruling `ESC-EXEC-20261027-03` (A)): `POST /ai/journal-summary` checks each output (prescriptive scan plus stop/sizing/setup-change wording); a failing output is regenerated once, then a 200 with `summary: null`, `model: null` and a withheld `message` is returned. `compliance_check_result` per call: `pass`, `pass_on_regenerate`, `fail_regenerate:<cats>`, `fail_fallback:<cats>`. Prompt tightened, `JOURNAL_SUMMARY_PROMPT_VERSION` v1.0 → v1.1. Response schema unchanged (fields already nullable); no `openapi.yaml` change. |
+| 1.29 | 2026-10-27 | ST-17 (EPIC-03, v9.13, BLG-AI-16; ruling `ESC-EXEC-20261027-02` (B)): `POST /ai/daily-briefing` post-generation check 3 — a ticker in the raw `summary` that is outside the context gets a code-written caveat appended; `compliance_check_result` gains `ticker_outside_context_appended` / `+ticker_outside_context_appended` / `+ticker_check_error`. No request/response schema change; no prompt change; no `openapi.yaml` change. |
+| 1.28 | 2026-10-27 | ST-16 (EPIC-03, v9.13, BLG-AI-18; ruling `ESC-EXEC-20261027-01` (B)): `POST /ai/chat` stop-time check passes `context.ticker` as a focus ticker — a stop sentence naming no held ticker is attributed to the focus ticker when it is an open position; warning line adds `attribution=focus`. Briefing action tickers are compared case- and `.L`-normalised (from ST-15). `compliance_check_result` values and prompts unchanged. No request/response schema change; no `openapi.yaml` change. |
+| 1.27 | 2026-10-27 | ST-19 (EPIC-03, v9.13, BLG-AI-14): `POST /ai/chat` context no longer renders "Cash: £X of £Y initial capital"; it uses the briefing's labelled line (available cash; starting capital, omitted when 0 or missing). `CHAT_PROMPT_VERSION` v1.1 → v1.2, golden fixture updated. No request/response schema change; no `openapi.yaml` change. |
+| 1.26 | 2026-10-27 | ST-15 (EPIC-03, v9.13, BLG-AI-17): `POST /ai/daily-briefing` check 1 (actions limited to context tickers) and the stop-time check's ticker attribution (briefing and chat) compare tickers in normalised form — upper case, trailing `.L` removed — so a UK ticker matches with or without its suffix. No request/response schema change; no prompt change; no `openapi.yaml` change. |
 | 1.25 | 2026-10-13 | ST-06 (EPIC-01, v9.12, BLG-OPS-183), from the agent-mediated Director of Quality review: `POST /ai/journal-summary` wrote no `claude_audit_log` row, so v1.24's "covers every Claude-calling feature" was not yet true for it. Each journal-summary model call now writes one (cost, tokens, prompt hash, latency; failed calls marked `model_call_failed`). The feature-tag taxonomy gains `POST /ai/journal-summary` and the previously unlisted `POST /reports/monthly-pnl/narrative` (v9.11). No request/response change. |
 | 1.24 | 2026-10-13 | ST-06 (EPIC-01, v9.12, BLG-OPS-183): `POST /ai/check-daily-cost` sums today's `claude_audit_log.cost_usd` instead of `gemini_audit_log`, so all Claude spend counts toward the daily alert and plan/thesis calls count once. Scheduler named: new `.github/workflows/ai-daily-cost-check.yml` (every 6 hours); none existed. Idempotency note corrected to the BLG-OPS-172 per-day de-duplication shipped in v9.9. Response shape unchanged; `openapi.yaml` 3.28.1 description only. |
 | 1.23 | 2026-10-13 | ST-02, ST-03, ST-04 (EPIC-01, v9.12; BLG-AI-11, BLG-AI-12, BLG-AI-10): `POST /ai/daily-briefing` returns only actions whose ticker is an open position or a context signal (others dropped and logged), and its context labels "available cash" and "starting capital" (omitted when 0); one combined `BRIEFING_PROMPT_VERSION` bump v1.2 → v1.3, golden fixture updated. Briefing and `POST /ai/chat` gain the post-generation stop-time check (AI Compliance & Governance Officer ruling `ESC-EXEC-20261013-01`): a cited stop without its recalculation time gets a code-written note appended, and every miss is logged and counted in `claude_audit_log.compliance_check_result`. No request/response schema change; no `openapi.yaml` change. |

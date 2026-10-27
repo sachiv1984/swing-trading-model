@@ -13,6 +13,10 @@
  *              debrief section reports no colour-contrast violations (ST-05, v9.11, BLG-FE-205)
  *   SC-DBF-07: A mocked 500 on POST shows the regenerate error and keeps the existing debrief (ST-05)
  *   SC-DBF-08: After a successful regenerate, the generated timestamp updates (ST-05)
+ *   SC-DBF-09: A 200 with no `data` keeps the previous debrief (Regenerate) or the empty state
+ *              (Generate) on screen (ST-20, v9.13, BLG-FE-211)
+ *   SC-DBF-10: axe scan of the debrief section in its error states (regenerate failure, generate
+ *              failure) reports no colour-contrast violations in either theme (ST-21, v9.13, BLG-FE-212)
  *
  * Infrastructure:
  * - Playwright page.route() network interception. No live backend required.
@@ -306,3 +310,94 @@ test('SC-DBF-08a: after a successful regenerate, the generated timestamp updates
   await expect(page.getByText(/your exit matched the plan on this trade/i)).toBeVisible();
   await expect(page.getByTestId('debrief-regenerate-error')).toHaveCount(0);
 });
+
+// ─── SC-DBF-09 — A 200 with no data leaves the card populated ─────────────
+// ST-20 (EPIC-03, v9.13, BLG-FE-211).
+
+test('SC-DBF-09a: Regenerate returning 200 with no data keeps the previous debrief visible', async ({ page }) => {
+  await mockExistingDebrief(page, { postStatus: 200, postBody: { status: 'ok' } });
+  await gotoAndExpand(page);
+  await expect(page.getByTestId('debrief-content')).toBeVisible({ timeout: 8000 });
+  const posted = page.waitForResponse((r) => r.url().includes(`/trades/${TRADE_ID}/debrief`) && r.request().method() === 'POST');
+  await page.getByTestId('regenerate-debrief-btn').click();
+  await posted;
+
+  await expect(page.getByTestId('regenerate-debrief-btn')).toHaveText('Regenerate', { timeout: 8000 });
+  await expect(page.getByTestId('debrief-content')).toBeVisible();
+  await expect(page.getByText(/your exit was 3 days earlier/i)).toBeVisible();
+  await expect(page.getByTestId('debrief-generated-at')).toBeVisible();
+  await expect(page.getByTestId('debrief-empty-state')).toHaveCount(0);
+});
+
+test('SC-DBF-09b: Generate returning 200 with no data keeps the empty state visible', async ({ page }) => {
+  await mockFallback(page);
+  await mockAnalytics(page);
+  await mockTrades(page);
+  await mockPlanVsRealityNotFound(page);
+  await page.route(new RegExp(`/trades/${TRADE_ID}/debrief`), (route) => {
+    if (route.request().method() === 'GET') {
+      return route.fulfill({ status: 404, contentType: 'application/json', body: JSON.stringify({ status: 'error', message: 'No debrief generated yet for this trade' }) });
+    }
+    return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok' }) });
+  });
+  await gotoAndExpand(page);
+  const posted = page.waitForResponse((r) => r.url().includes(`/trades/${TRADE_ID}/debrief`) && r.request().method() === 'POST');
+  await page.getByTestId('generate-debrief-btn').click();
+  await posted;
+
+  await expect(page.getByTestId('generate-debrief-btn')).toHaveText('Generate Debrief', { timeout: 8000 });
+  await expect(page.getByTestId('debrief-empty-state')).toBeVisible();
+  await expect(page.getByText(/no debrief generated yet/i)).toBeVisible();
+  await expect(page.getByTestId('debrief-content')).toHaveCount(0);
+});
+
+// ─── SC-DBF-10 — Error states pass colour contrast in both themes ─────────
+// ST-21 (EPIC-03, v9.13, BLG-FE-212). Tokens: trade_history.md v1.16
+// §Post-Trade Debrief §Light Theme (error text rose-700 light / rose-400 dark).
+
+const ERROR_COLOUR = { light: 'rgb(190, 18, 60)', dark: 'rgb(251, 113, 133)' };
+
+async function expectNoContrastViolations(page) {
+  // Let the row-expand animation settle before sampling colours.
+  await page.waitForTimeout(1000);
+  const results = await new AxeBuilder({ page })
+    .include('[data-testid="trade-debrief-section"]')
+    .withRules(['color-contrast'])
+    .analyze();
+  const contrast = results.violations.filter((v) => v.id === 'color-contrast');
+  expect(contrast, JSON.stringify(contrast.map((v) => v.nodes.map((n) => n.target)), null, 1)).toEqual([]);
+}
+
+for (const theme of ['dark', 'light']) {
+  test(`SC-DBF-10a: regenerate error state passes axe colour contrast (${theme})`, async ({ page }) => {
+    await page.addInitScript((t) => window.localStorage.setItem('theme', t), theme);
+    await mockExistingDebrief(page, { postStatus: 500 });
+    await gotoAndExpand(page);
+    await expect(page.getByTestId('debrief-content')).toBeVisible({ timeout: 8000 });
+    await page.getByTestId('regenerate-debrief-btn').click();
+    const error = page.getByTestId('debrief-regenerate-error');
+    await expect(error).toBeVisible({ timeout: 8000 });
+    await expect(error).toHaveCSS('color', ERROR_COLOUR[theme]);
+    await expectNoContrastViolations(page);
+  });
+
+  test(`SC-DBF-10b: generate error state passes axe colour contrast (${theme})`, async ({ page }) => {
+    await page.addInitScript((t) => window.localStorage.setItem('theme', t), theme);
+    await mockFallback(page);
+    await mockAnalytics(page);
+    await mockTrades(page);
+    await mockPlanVsRealityNotFound(page);
+    await page.route(new RegExp(`/trades/${TRADE_ID}/debrief`), (route) => {
+      if (route.request().method() === 'GET') {
+        return route.fulfill({ status: 404, contentType: 'application/json', body: JSON.stringify({ status: 'error', message: 'No debrief generated yet for this trade' }) });
+      }
+      return route.fulfill({ status: 500, contentType: 'application/json', body: JSON.stringify({ status: 'error', message: 'Internal Server Error' }) });
+    });
+    await gotoAndExpand(page);
+    await page.getByTestId('generate-debrief-btn').click();
+    const error = page.getByText(/could not generate a debrief right now/i);
+    await expect(error).toBeVisible({ timeout: 8000 });
+    await expect(error).toHaveCSS('color', ERROR_COLOUR[theme]);
+    await expectNoContrastViolations(page);
+  });
+}

@@ -183,7 +183,7 @@ class TestChat:
         assert result["response"] == f"{raw} {NVDA_NOTE}"
         assert result["response"].count(NVDA_NOTE) == 1
         assert _audit_result(db) == "stop_time_missing_appended"
-        assert any("endpoint=POST /ai/chat field=response ticker=NVDA action=appended prompt_version=v1.1"
+        assert any("endpoint=POST /ai/chat field=response ticker=NVDA action=appended prompt_version=v1.2"
                    in r.getMessage() for r in caplog.records)
         assert sample.call_args[0][1] == raw
 
@@ -203,8 +203,10 @@ class TestChat:
 
 
 def test_prompt_versions_unchanged_by_st04():
+    # ST-04 left chat at v1.1; ST-19 (BLG-AI-14, v9.13) bumped it to v1.2
+    # for the cash relabelling, not for this check.
     from services import ai_service
-    assert ai_service.CHAT_PROMPT_VERSION == "v1.1"
+    assert ai_service.CHAT_PROMPT_VERSION == "v1.2"
 
 
 # ─── Boundary-sample audit scores the check (AC 3) ────────────────────────

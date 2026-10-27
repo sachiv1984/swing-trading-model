@@ -17,7 +17,7 @@ Contract: docs/specs/api_contracts/ai_endpoints.md v1.7
 from fastapi import APIRouter, Query, Request
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
-from typing import Optional, List, Any
+from typing import Literal, Optional, List, Any
 from datetime import date
 from uuid import UUID
 from database import fetch_journal_notes
@@ -206,6 +206,12 @@ class ChatResponse(BaseModel):
     response: str
     advisory: bool
     model: Optional[str] = None
+    # ST-22 (BLG-FE-208, v9.13): present only for a model answer that can be rated.
+    answer_id: Optional[str] = None
+
+
+class ChatRatingRequest(BaseModel):
+    rating: Literal["useful", "not_useful"]
 
 
 @router.post("/chat", response_model=ChatResponse)
@@ -228,6 +234,29 @@ def ai_chat_endpoint(body: ChatRequest, request: Request):
         )
     from services.ai_service import ai_chat
     return ai_chat(question=body.question, context_opts=body.context)
+
+
+@router.post("/chat/{answer_id}/rating", status_code=201)
+def rate_chat_answer_endpoint(answer_id: UUID, body: ChatRatingRequest):
+    """
+    Rate one AI chat answer useful or not useful, once (ST-22, EPIC-03, v9.13,
+    BLG-FE-208). 201 with the stored rating; 409 with the existing rating if
+    the answer was already rated (not overwritten); 404 if no rateable chat
+    answer has that id. Feeds the Response Acceptance Rate
+    (metrics_definitions.md § AI Chat Engagement); changes nothing else.
+    Contract: docs/specs/api_contracts/ai_endpoints.md §POST /ai/chat/{answer_id}/rating
+    """
+    from services.ai_service import rate_chat_answer
+    result = rate_chat_answer(str(answer_id), body.rating)
+    if result is None:
+        return JSONResponse(status_code=404, content={"status": "error", "message": "Chat answer not found."})
+    data = {k: result[k] for k in ("answer_id", "rating", "rated_at")}
+    if not result["created"]:
+        return JSONResponse(
+            status_code=409,
+            content={"status": "error", "message": "This answer has already been rated.", "data": data},
+        )
+    return {"status": "ok", "data": data}
 
 
 @router.get("/claude-audit-log")

@@ -534,6 +534,10 @@ export const api = {
         method: 'POST',
         body: JSON.stringify({ question, ...(context ? { context } : {}) }),
       }),
+    // ST-22 (EPIC-03, v9.13, BLG-FE-208): one useful / not-useful rating per
+    // chat answer. A 409 throws with err.data.data holding the stored rating.
+    rateChatAnswer: async (answerId, rating) =>
+      doFetch(`/ai/chat/${answerId}/rating`, { method: 'POST', body: JSON.stringify({ rating }) }),
     // ST-07 (EPIC-07, v7.6, BLG-FEAT-77): Settings §6 AI Usage & Costs
     monthlyCost: async () => doFetch('/ai/monthly-cost'),
     // ST-06 (v7.8 EPIC-06, BLG-FEAT-82): AI spend trend chart
