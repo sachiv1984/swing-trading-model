@@ -45,7 +45,7 @@ class Test500PathsNoLongerLeakRawExceptionText:
 
     def test_post_settings_500_returns_generic_message(self):
         with patch("main.create_settings", side_effect=RuntimeError(_SENSITIVE_DETAIL)):
-            resp = CLIENT.post("/settings", json={"min_hold_days": 5})
+            resp = CLIENT.post("/settings", json={"theme": "dark"})  # not a §11-fixed field (ST-08 rejects those with 400)
         assert resp.status_code == 500
         body = resp.json()
         assert _SENSITIVE_DETAIL not in str(body)

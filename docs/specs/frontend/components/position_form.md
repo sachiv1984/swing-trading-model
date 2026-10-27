@@ -3,8 +3,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 1.10
-**Last Updated:** 2026-10-16 (v9.13 design gate — ST-06/BLG-BE-180: §Initial Stop never shows a stop at or below zero; Branch A reject / Branch B floor rows); prior — 2026-10-12 (v9.12 design gate — ST-17/BLG-BE-146: ATR preview drives the stop, risk and sizing before save; ST-18/BLG-FE-203: currency unit on the ATR label and an inline implausible-ATR error that disables submit); prior — 2026-10-06 (ST-07, EPIC-02, v9.10, BLG-FE-197 — §Initial Stop implemented in TradeEntry.js; Output no longer lists a submitted stop price; sizing empty-state copy and test references added); prior history retained — see prior entries in version control
+**Version:** 1.11
+**Last Updated:** 2026-10-17 (ST-06, EPIC-02, v9.13, BLG-BE-180 — §Initial Stop: Branch A (reject) ruled, Branch B row deleted; implemented in TradeEntry.js); prior — 2026-10-16 (v9.13 design gate — ST-06/BLG-BE-180: §Initial Stop never shows a stop at or below zero; Branch A reject / Branch B floor rows); prior — 2026-10-12 (v9.12 design gate — ST-17/BLG-BE-146: ATR preview drives the stop, risk and sizing before save; ST-18/BLG-FE-203: currency unit on the ATR label and an inline implausible-ATR error that disables submit); prior history retained — see prior entries in version control
 **Design Source (v1.10):** docs/design/2026-10-16__release-v9.13/initial-stop-at-or-below-zero/decision_record.md
 **Design Source (v1.9):** docs/design/2026-10-12__release-v9.12/trade-entry-atr-preview/decision_record.md
 **Design Source (v1.7):** docs/design/2026-10-06__release-v9.10/trade-entry-system-stop/decision_record.md
@@ -66,12 +66,11 @@ Users rely on this form to:
 | Entry + ATR present | `Entry − {mult}× ATR`, native currency, 2 dp, `text-rose-400` | "Entry − {mult}× ATR (§5). This is the stop that will be stored." |
 | Entry present, ATR blank, preview fetching (v1.9) | "Fetching ATR…" (muted) | — |
 | Entry present, ATR blank, preview ATR available (v1.9, ST-17) | `Entry − {mult}× ATR` using the fetched ATR, native currency, 2 dp, `text-rose-400` | "Entry − {mult}× ATR (§5), using the fetched 14-day ATR. The stop is recalculated at save and may differ slightly if prices update before then." |
-| Preview ATR available and `entry − {mult}× ATR ≤ 0` — **Branch A, reject** (v1.10, ST-06) | "No valid stop" (`text-rose-700 dark:text-rose-400`) | "{mult}× the fetched 14-day ATR ({ATR} {£\|$}) is at or above the entry price, so the stop would be at or below zero. §5 cannot set a stop for this entry." (`data-testid="initial-stop-invalid"`, `role="status"`). **Submit is disabled.** Risk shows "—"; the sizing widget shows its empty hint. |
-| Preview ATR available and `entry − {mult}× ATR ≤ 0` — **Branch B, floor** (v1.10, ST-06) | The floored stop, native currency, 2 dp, `text-rose-400` | "Entry − {mult}× ATR would be at or below zero, so the stop is set at the §5 floor: {floor rule text}." (`data-testid="initial-stop-floored"`). Risk and sizing use the floored stop. |
+| Preview ATR available and `entry − {mult}× ATR ≤ 0` (v1.10, ST-06; Branch A, reject — ruled v1.11) | "No valid stop" (`text-rose-700 dark:text-rose-400`) | "{mult}× the fetched 14-day ATR ({ATR} {£\|$}) is at or above the entry price, so the stop would be at or below zero. §5 cannot set a stop for this entry." (`data-testid="initial-stop-invalid"`, `role="status"`). **Submit is disabled.** Risk shows "—"; the sizing widget shows its empty hint. |
 | Entry present, ATR blank, preview `null` or failed | "Calculated on save" | "The system fetches the 14-day ATR for {TICKER} and sets the stop at Entry − {mult}× ATR." (no error banner) |
 | Entry blank | "—" | — |
 
-**At or below zero (v1.10, ST-06, BLG-BE-180; design source `docs/design/2026-10-16__release-v9.13/initial-stop-at-or-below-zero/decision_record.md`):** a stop at or below zero is never displayed. The Strategy Rules & System Intent Owner's ruling (recorded in `strategy_rules.md` §5) selects Branch A or Branch B above, and the unused row is deleted at implementation. `{floor rule text}` is the ruling's wording. The typed-ATR error (`atr-implausible-error`, §ATR) keeps precedence when the ATR field is filled. Under Branch A, a server 400 at save shows in the Error Banner.
+**At or below zero (v1.10, ST-06, BLG-BE-180; design source `docs/design/2026-10-16__release-v9.13/initial-stop-at-or-below-zero/decision_record.md`):** a stop at or below zero is never displayed. *(v1.11)* The Strategy Rules & System Intent Owner ruled **Branch A, reject** on 2026-10-17 (`ESC-EXEC-20261017-02`, agent-mediated, user-directed); Branch B (floor) is deleted. §5 gives no stop for such an entry, so `strategy_rules.md` is unchanged. `POST /portfolio/position` rejects a fetched ATR with `5 × ATR ≥ entry` with a 400, and that message shows in the Error Banner if the ATR moved between preview and save. The typed-ATR error (`atr-implausible-error`, §ATR) keeps precedence when the ATR field is filled; a typed ATR that would give a stop at or below zero shows the value as "—".
 
 - **Trade plan prefill:** a plan `stop_price` is not placed into any input. A muted note under this panel (`data-testid="plan-stop-reference"`): "Trade plan stop: {value}. Shown for reference; the stored stop follows the strategy formula."
 - **Risk (to stop)** summary row: computed from this system stop only. Shows "Calculated on save" when ATR is blank and no preview ATR is available (v1.9: the preview stop is used when shown).
@@ -288,7 +287,7 @@ All validation failures show inline error messages:
 - Tag format or tag count errors
 - Entry note exceeding character limit
 - Typed ATR implausible: `5 × ATR ≥ entry price` (v1.9, ST-18). See §ATR (14-day).
-- Fetched ATR puts the stop at or below zero, Branch A only (v1.10, ST-06). See §Initial Stop.
+- Fetched ATR puts the stop at or below zero (v1.10, ST-06; Branch A ruled v1.11). See §Initial Stop.
 - These two are the only validations that disable submit.
 
 ### Error Banner

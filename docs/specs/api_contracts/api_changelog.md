@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Class 2
 **Status:** Canonical
-**Version:** 1.17.0
-**Last Updated:** 2026-10-16 (ST-02, EPIC-01, v9.13, BLG-SPEC-186 — v9.13.0 entry: POST /positions/{position_id}/exit enforces the exit_reason list); prior — 2026-10-13 (ST-17, EPIC-03, v9.12, BLG-BE-146 — v9.12.0 entry: GET /market/atr/{ticker}); prior — 2026-10-09 (ST-25, EPIC-04, v9.11, BLG-FEAT-59 — v9.11.0 entry: GET and POST /reports/monthly-pnl/narrative); prior history retained — see prior entries in version control
+**Version:** 1.21.0
+**Last Updated:** 2026-10-17 (ST-08, EPIC-02, v9.13, BLG-API-07 — v9.13.0 entry: settings writes reject the four §11-fixed fields); prior — 2026-10-17 (ST-06, EPIC-02, v9.13, BLG-BE-180 — v9.13.0 entry: POST /portfolio/position rejects a fetched ATR that gives no stop); prior — 2026-10-17 (ST-10, EPIC-02, v9.13, BLG-SPEC-188 — v9.13.0 entry: new GET /positions/stop-freshness); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 # API Changelog
@@ -66,6 +66,43 @@ Rules:
 | Change | Details |
 |--------|---------|
 | Updated endpoint: GET /portfolio/red-flag-journal | Can now return `checklist_skipped` events, written when `POST /trade-plans` or `PUT /trade-plans/{id}` saves a non-empty, incomplete checklist; context `source`, `plan_id`, `unchecked_items`, `total_items` (BLG-BE-182). Response shape unchanged. |
+
+### reports_endpoints.md — v0.18 (UPDATED)
+
+**EPIC:** EPIC-02
+**ST:** ST-09
+
+| Change | Details |
+|--------|---------|
+| Updated endpoint: GET /reports/monthly-pnl | A failure to read or write `monthly_pnl_snapshots` no longer fails the request: it returns `200` with realised P&L for every month and none of the four restatement fields, and logs the failure with `exc_info` (BLG-BE-156). Success shape unchanged. |
+
+### position_endpoints.md — v2.17.0 (UPDATED)
+
+**EPIC:** EPIC-02
+**ST:** ST-10
+
+| Change | Details |
+|--------|---------|
+| New endpoint: GET /positions/stop-freshness | Median and maximum age of `stop_calculated_at` across open positions, with the oldest stop's ticker and the never-recalculated count, for System Status (BLG-SPEC-188). Read-only. |
+
+### portfolio_endpoints.md — v2.13.0 (UPDATED)
+
+**EPIC:** EPIC-02
+**ST:** ST-06
+
+| Change | Details |
+|--------|---------|
+| Updated endpoint: POST /portfolio/position | A fetched (or fallback) ATR where `5 × ATR ≥ entry_price` is rejected with `400` before anything is stored: `strategy_rules.md` §5 gives no stop for the entry (BLG-BE-180; Strategy Rules & System Intent Owner ruling (A)). |
+
+### settings_endpoints.md — v1.6.0 (UPDATED)
+
+**EPIC:** EPIC-02
+**ST:** ST-08
+
+| Change | Details |
+|--------|---------|
+| Updated endpoint: POST /settings | Behavioural change: a body that sets `min_hold_days`, `atr_period`, `atr_multiplier_initial` or `atr_multiplier_trailing` to a non-null value returns `400` naming `strategy_rules.md` §11; nothing is written (was stored and ignored). Absent or `null` is a no-op (BLG-API-07). |
+| Updated endpoint: PATCH /settings/{settings_id} | Same rule as `POST /settings`; a mixed body is rejected whole (BLG-API-07). |
 
 ## v9.12.0 (2026-10-13 — Release v9.12)
 

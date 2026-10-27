@@ -285,7 +285,14 @@ export default function TradeEntry() {
     // backend ignores any submitted stop, so no input may set it. Unknown
     // (null) until both entry price and ATR are present; the backend fetches
     // ATR on save when the field is blank.
-    const systemStop = price > 0 && atr > 0 ? price - (atr * INITIAL_ATR_MULTIPLIER) : null;
+    const rawStop = price > 0 && atr > 0 ? price - (atr * INITIAL_ATR_MULTIPLIER) : null;
+    // ST-06 (EPIC-02, v9.13, BLG-BE-180): a stop at or below zero is never shown.
+    // With the fetched ATR, §5 gives no stop for this entry (Strategy Rules &
+    // System Intent Owner ruling (A)): "No valid stop" and Submit disabled. With a
+    // typed ATR, the existing implausible-ATR error explains it, so the value is "—".
+    const stopAtOrBelowZero = rawStop != null && rawStop <= 0;
+    const stopInvalid = stopAtOrBelowZero && stopFromPreview;
+    const systemStop = stopAtOrBelowZero ? null : rawStop;
 
     // Risk is computed from the system stop only.
     const riskPerShare = systemStop != null ? price - systemStop : null;
@@ -301,6 +308,9 @@ export default function TradeEntry() {
       totalCost,
       systemStop,
       stopFromPreview,
+      stopInvalid,
+      stopAtOrBelowZero,
+      previewAtr: stopFromPreview ? atr : null,
       riskPerShare,
       totalRisk: totalRiskGBP,
       currencySymbol: formData.market === "UK" ? "£" : "$",
@@ -507,7 +517,16 @@ export default function TradeEntry() {
             </div>
             <div className="space-y-2" data-testid="system-initial-stop">
               <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Initial Stop (set by system)</p>
-              {costs.systemStop != null ? (
+              {costs.stopInvalid ? (
+                <>
+                  <p className="text-sm font-semibold text-rose-700 dark:text-rose-400" data-testid="system-initial-stop-value">No valid stop</p>
+                  <p data-testid="initial-stop-invalid" role="status" className="text-xs text-rose-700 dark:text-rose-400">
+                    {INITIAL_ATR_MULTIPLIER}× the fetched {ATR_PERIOD_DAYS}-day ATR ({formatCurrency(costs.previewAtr, { currency: currencyForMarket(formData.market) })}) is at or above the entry price, so the stop would be at or below zero. §5 cannot set a stop for this entry.
+                  </p>
+                </>
+              ) : costs.stopAtOrBelowZero ? (
+                <p className="text-sm font-semibold text-slate-300" data-testid="system-initial-stop-value">—</p>
+              ) : costs.systemStop != null ? (
                 <>
                   <p className="text-sm font-semibold text-rose-400" data-testid="system-initial-stop-value">
                     {formatCurrency(costs.systemStop, { currency: currencyForMarket(formData.market) })}
@@ -702,7 +721,7 @@ export default function TradeEntry() {
               <div className="flex justify-between text-sm">
                 <span className="text-slate-600 dark:text-slate-400">Risk (to stop)</span>
                 <span className="text-rose-400 font-medium" data-testid="risk-to-stop">
-                  {costs.totalRisk != null ? formatCurrency(costs.totalRisk) : "Calculated on save"}
+                  {costs.totalRisk != null ? formatCurrency(costs.totalRisk) : costs.stopAtOrBelowZero ? "—" : "Calculated on save"}
                 </span>
               </div>
             </div>
@@ -749,7 +768,7 @@ export default function TradeEntry() {
         </Link>
         <Button
           onClick={handleSubmit}
-          disabled={!isFormValid || showAtrError || createMutation.isPending}
+          disabled={!isFormValid || showAtrError || costs.stopInvalid || createMutation.isPending}
           className="bg-gradient-to-r from-cyan-500 to-violet-500 hover:from-cyan-400 hover:to-violet-400 text-white border-0 shadow-lg shadow-violet-500/25 disabled:opacity-50"
         >
           {createMutation.isPending ? (

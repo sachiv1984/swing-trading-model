@@ -176,9 +176,15 @@ def analyze_positions(portfolio, current_prices, current_atr, market_status):
             active_atr_mult = PARAMS['initial_atr_mult']
             stop_reason = f"At loss (wide {PARAMS['initial_atr_mult']}x ATR)"
         
-        # Calculate new stop (trailing - only moves up)
-        new_stop = current_price - (active_atr_mult * current_atr_val)
-        trailing_stop = max(current_stop, new_stop)
+        # Calculate new stop (trailing - only moves up).
+        # ST-07 (EPIC-02, v9.13, BLG-BE-161): strategy_rules.md §6.3 -- the stored
+        # stop is not recalculated or ratcheted during the grace period, matching
+        # the live paths (position_service, strategy_engine, replay_service).
+        if grace_period_active:
+            trailing_stop = current_stop
+        else:
+            new_stop = current_price - (active_atr_mult * current_atr_val)
+            trailing_stop = max(current_stop, new_stop)
         
         # Check exit conditions
         action = "HOLD"

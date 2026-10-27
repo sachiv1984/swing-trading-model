@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 2.16.1
-**Last Updated:** 2026-10-16 (ST-02, EPIC-01, v9.13, BLG-SPEC-186 — `POST /positions/{position_id}/exit` now enforces the allowed `exit_reason` list with a 400, as already documented; DS-34); prior — 2026-10-13 (ST-15, EPIC-02, v9.12, BLG-FE-202 — `GET /positions` gains `stop_frozen_reason` (DS-32); both recompute paths write it); prior — 2026-10-13 (ST-14, EPIC-02, v9.12, BLG-BE-148 — gap-risk window uses the NYSE session calendar on the US market date); prior history retained — see prior entries in version control
+**Version:** 2.17.0
+**Last Updated:** 2026-10-17 (ST-10, EPIC-02, v9.13, BLG-SPEC-188 — new `GET /positions/stop-freshness`, median and maximum stop age across open positions for System Status); prior — 2026-10-16 (ST-02, EPIC-01, v9.13, BLG-SPEC-186 — `POST /positions/{position_id}/exit` now enforces the allowed `exit_reason` list with a 400, as already documented; DS-34); prior — 2026-10-13 (ST-15, EPIC-02, v9.12, BLG-FE-202 — `GET /positions` gains `stop_frozen_reason` (DS-32); both recompute paths write it); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Overview
@@ -28,6 +28,7 @@ Global response envelopes, error shape, defaults, and multi-currency/stop rules 
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.17.0 | 2026-10-17 | ST-10 (BLG-SPEC-188, EPIC-02, v9.13): new `GET /positions/stop-freshness` — median and maximum age of `stop_calculated_at` across open positions, oldest stop's ticker and timestamp, and the never-recalculated count (`metrics_definitions.md` §Stop Freshness). Read-only. |
 | 2.16.1 | 2026-10-16 | ST-02 (BLG-SPEC-186, EPIC-01, v9.13): `POST /positions/{position_id}/exit` enforces the documented `exit_reason` list. An unlisted value (including an empty string or a legacy snake-case spelling) returns `400` before anything is written; omitted or `null` still means `Manual Exit`. The rule and the `400 Invalid exit_reason` error were already documented; the backend had accepted any string. Same list as `data_model.md` DS-34's CHECK constraints. |
 | 2.16.0 | 2026-10-13 | ST-15 (BLG-FE-202, EPIC-02, v9.12): `GET /positions` gains `stop_frozen_reason` (`"atr_unavailable"` \| `null`, DS-32). `GET /positions/analyze` writes it on a post-grace recompute (set without ATR, cleared with ATR). `POST /positions/nightly-stop-update`'s "ATR unavailable" skip now writes `stop_frozen_reason` only (no stop, ATR or timestamp), and a nightly recompute with ATR clears it. |
 | 2.15.0 | 2026-10-13 | ST-14 (BLG-BE-148, EPIC-02, v9.12): `GET /positions/{position_id}/gap-risk` — the window runs to the next **NYSE session** (weekends, NYSE full-closure holidays and dated one-off closures excluded; early closes count), measured from the **US market date**. `days_until` is computed from the earnings date. A Friday view before a Monday holiday now flags Tuesday earnings. No shape change. Strategy Rules & System Intent Owner ruling `ESC-EXEC-20261013-07` (v9.12 addendum to the §13 record). |
@@ -58,6 +59,7 @@ Global response envelopes, error shape, defaults, and multi-currency/stop rules 
 
 - [GET /positions](#get-positions)
 - [GET /positions/compliance](#get-positionscompliance)
+- [GET /positions/stop-freshness](#get-positionsstop-freshness)
 - [GET /positions/search/tags](#get-positionssearchtags)
 - [GET /positions/analyze](#get-positionsanalyze)
 - [POST /positions/{position_id}/exit](#post-positionsposition_idexit)
@@ -844,6 +846,64 @@ Errors use the standard error envelope from **conventions.md**.
 |-------------|-----------|
 | `404` | Portfolio not found |
 | `500` | Internal server error |
+
+---
+
+## GET /positions/stop-freshness
+
+**Added:** v2.17.0 (ST-10, EPIC-02, v9.13, BLG-SPEC-188)
+
+**Purpose**
+
+Report how recently open-position stops were recalculated (`strategy_rules.md` §7.1): the median and maximum age of `positions.stop_calculated_at` (DS-22) across open positions. Read by System Status's Stop Freshness panel (`system_status.md` v1.3). Definition: `metrics_definitions.md` §Stop Freshness.
+
+**Method & Path**
+
+- `GET /positions/stop-freshness`
+
+**Idempotency**
+
+- Safe to refresh. Read-only; reading the age changes no stop (§13 display only).
+
+### Request
+
+No parameters.
+
+### Response (200)
+
+Response uses the standard success envelope from **conventions.md**.
+
+#### `data` schema
+
+```json
+{
+  "as_of": "2026-10-17T09:00:00+00:00",
+  "open_positions": 5,
+  "recalculated_positions": 4,
+  "never_recalculated": 1,
+  "median_age_hours": 18.4,
+  "max_age_hours": 78.0,
+  "oldest_ticker": "AAPL",
+  "oldest_stop_calculated_at": "2026-10-14T03:00:00+00:00"
+}
+```
+
+#### Field notes
+
+- `as_of` is the server's UTC time when the ages were computed; every age is `as_of − stop_calculated_at`, in hours, rounded to 2 dp.
+- `recalculated_positions` counts open positions with a non-NULL `stop_calculated_at`. `never_recalculated` = `open_positions − recalculated_positions`.
+- Positions with a NULL `stop_calculated_at` are excluded from `median_age_hours` and `max_age_hours`.
+- `median_age_hours` is the median of the ages (the mean of the two middle ages for an even count).
+- `oldest_ticker` / `oldest_stop_calculated_at` identify the position behind `max_age_hours`.
+- With no open positions, or none recalculated, the four age fields are `null` and the counts are still returned.
+
+### Errors
+
+Errors use the standard error envelope from **conventions.md**.
+
+| Status | When |
+|--------|------|
+| `500` | The positions query failed. System Status shows "Stop freshness unavailable." |
 
 ---
 

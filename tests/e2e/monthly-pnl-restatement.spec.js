@@ -13,6 +13,8 @@
  *   SC-MPR-03  Detail row shows As reviewed / Now / Change with signed, toned values
  *   SC-MPR-04  Trade-count-only fallback line shows when restated = true and restated_diff_gbp = 0 — and only then
  *   SC-MPR-05  "Restatement check unavailable." shows only when the rows carry no snapshot fields
+ *   SC-MPR-05c The exact response the API returns when the snapshot store fails (ST-09, EPIC-02, v9.13,
+ *              BLG-BE-156) shows the table and "Restatement check unavailable."
  *   SC-MPR-06  Tax Year summary notice shows when restated_month_count >= 1 and links to the Monthly tab
  *   SC-MPR-07  Tax Year summary notice is absent when restated_month_count = 0
  *
@@ -193,6 +195,24 @@ test('SC-MPR-05b: rows without snapshot fields render normally, without markers,
 
   // P&L figures are never blocked.
   await expect(page.getByRole('row', { name: /May 2026/ })).toBeVisible({ timeout: 8000 });
+  await expect(page.getByTestId('monthly-restatement-unavailable')).toHaveText('Restatement check unavailable.');
+  await expect(page.getByTestId('monthly-restated-marker')).toHaveCount(0);
+});
+
+test('SC-MPR-05c: snapshot-store failure response shows the table and the unavailable line', async ({ page }) => {
+  // ST-09 (EPIC-02, v9.13, BLG-BE-156): the shape GET /reports/monthly-pnl now returns when
+  // monthly_pnl_snapshots cannot be read or written -- every month keeps its realised P&L, trade
+  // count and null_fee_trade_count, and none carries snapshotted/restated/snapshot_realised_pnl_gbp/
+  // restated_diff_gbp (backend: tests/test_monthly_pnl_snapshot_failure_endpoint.py).
+  await mockFallback(page);
+  await mockMonthlyPnl(page, [
+    { year: 2026, month: 6, realised_pnl_gbp: 30, trade_count: 1, null_fee_trade_count: 0 },
+    { year: 2026, month: 5, realised_pnl_gbp: 175, trade_count: 4, null_fee_trade_count: 0 },
+  ]);
+  await gotoMonthlyTab(page);
+
+  await expect(page.getByRole('row', { name: /June 2026/ })).toContainText('30.00', { timeout: 8000 });
+  await expect(page.getByRole('row', { name: /May 2026/ })).toContainText('175.00');
   await expect(page.getByTestId('monthly-restatement-unavailable')).toHaveText('Restatement check unavailable.');
   await expect(page.getByTestId('monthly-restated-marker')).toHaveCount(0);
 });

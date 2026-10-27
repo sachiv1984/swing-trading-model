@@ -209,6 +209,81 @@ class TestMonthlyPnlSnapshotting(unittest.TestCase):
             self.assertEqual(call.args[-1], shared_conn)
 
 
+# ─── get_monthly_pnl_report: snapshot store failure is non-blocking ───────
+
+SNAPSHOT_FIELDS = ("snapshotted", "restated", "snapshot_realised_pnl_gbp", "restated_diff_gbp")
+FAILURE_ROWS = [
+    {"year": 2026, "month": 7, "realised_pnl_gbp": 120.5, "trade_count": 2, "null_fee_trade_count": 0},
+    {"year": 2026, "month": 8, "realised_pnl_gbp": -40.25, "trade_count": 1, "null_fee_trade_count": 1},
+    {"year": 2026, "month": 9, "realised_pnl_gbp": 10.0, "trade_count": 1, "null_fee_trade_count": 0},
+]
+
+
+class TestMonthlyPnlSnapshotFailure(unittest.TestCase):
+    """ST-09 (EPIC-02, v9.13, BLG-BE-156): a failure to read or write
+    monthly_pnl_snapshots returns realised P&L for every month with none of the
+    four restatement fields (the reports.md "Restatement check unavailable."
+    signal), and logs the failure with exc_info."""
+
+    def _assert_unavailable_shape(self, report):
+        self.assertEqual(
+            [(m["year"], m["month"], m["realised_pnl_gbp"], m["trade_count"], m["null_fee_trade_count"])
+             for m in report["months"]],
+            [(2026, 7, 120.5, 2, 0), (2026, 8, -40.25, 1, 1), (2026, 9, 10.0, 1, 0)],
+        )
+        for month in report["months"]:
+            for field in SNAPSHOT_FIELDS:
+                self.assertNotIn(field, month)
+
+    @patch(PATCH_ENSURE_SNAPSHOTS_TABLE)
+    @patch(PATCH_GET_DB)
+    @patch(PATCH_GET_POSITIONS, return_value=[])
+    @patch(PATCH_INSERT_SNAPSHOT)
+    @patch(PATCH_GET_SNAPSHOT, side_effect=RuntimeError("snapshot read failed"))
+    @patch(PATCH_GET_MONTHLY_PNL, return_value=FAILURE_ROWS)
+    @patch(PATCH_GET_PORTFOLIO, return_value=MOCK_PORTFOLIO)
+    @patch("services.reports_service.datetime")
+    def test_snapshot_read_failure_returns_pnl_without_restatement_fields(self, mock_dt, *_):
+        mock_dt.now.return_value.date.return_value = date(2026, 9, 22)
+        with self.assertLogs("services.reports_service", level="ERROR") as logs:
+            report = get_monthly_pnl_report()
+        self._assert_unavailable_shape(report)
+        self.assertEqual(len(logs.records), 1)
+        self.assertIsNotNone(logs.records[0].exc_info)
+        self.assertIsInstance(logs.records[0].exc_info[1], RuntimeError)
+
+    @patch(PATCH_ENSURE_SNAPSHOTS_TABLE)
+    @patch(PATCH_GET_DB, side_effect=RuntimeError("connection refused"))
+    @patch(PATCH_GET_POSITIONS, return_value=[])
+    @patch(PATCH_INSERT_SNAPSHOT)
+    @patch(PATCH_GET_SNAPSHOT)
+    @patch(PATCH_GET_MONTHLY_PNL, return_value=FAILURE_ROWS)
+    @patch(PATCH_GET_PORTFOLIO, return_value=MOCK_PORTFOLIO)
+    @patch("services.reports_service.datetime")
+    def test_snapshot_connection_failure_returns_pnl_without_restatement_fields(self, mock_dt, *_):
+        mock_dt.now.return_value.date.return_value = date(2026, 9, 22)
+        with self.assertLogs("services.reports_service", level="ERROR") as logs:
+            report = get_monthly_pnl_report()
+        self._assert_unavailable_shape(report)
+        self.assertIsNotNone(logs.records[0].exc_info)
+
+    @patch(PATCH_ENSURE_SNAPSHOTS_TABLE)
+    @patch(PATCH_GET_DB)
+    @patch(PATCH_GET_POSITIONS, return_value=[])
+    @patch(PATCH_INSERT_SNAPSHOT, side_effect=RuntimeError("snapshot write failed"))
+    @patch(PATCH_GET_SNAPSHOT, return_value=None)
+    @patch(PATCH_GET_MONTHLY_PNL, return_value=FAILURE_ROWS)
+    @patch(PATCH_GET_PORTFOLIO, return_value=MOCK_PORTFOLIO)
+    @patch("services.reports_service.datetime")
+    def test_failure_on_a_later_month_strips_fields_from_every_month(self, mock_dt, *_):
+        """The first closed month's baseline write fails after nothing has been
+        merged; no month (closed or in-progress) may carry a partial set."""
+        mock_dt.now.return_value.date.return_value = date(2026, 9, 22)
+        with self.assertLogs("services.reports_service", level="ERROR"):
+            report = get_monthly_pnl_report()
+        self._assert_unavailable_shape(report)
+
+
 # ─── get_tax_year_report: restated_month_count / restated_months_notice ───
 
 class TestTaxYearRestatedMonthsNotice(unittest.TestCase):

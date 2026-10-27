@@ -14,6 +14,7 @@ so net_proceeds is the correct value.
 
 import csv
 import io
+import logging
 import os
 from contextlib import nullcontext
 from datetime import date, datetime, timezone, timedelta
@@ -39,6 +40,8 @@ from database import (
     ensure_monthly_pnl_snapshots_table,
 )
 from utils.formatting import decimal_to_float
+
+logger = logging.getLogger(__name__)
 
 
 def _clean_db_url_reports(url: str) -> str:
@@ -401,7 +404,10 @@ def get_monthly_pnl_report(year: Optional[int] = None) -> dict:
                     (year, month, realised_pnl_gbp, trade_count, null_fee_trade_count,
                     snapshotted, restated, snapshot_realised_pnl_gbp, restated_diff_gbp
                     -- ST-08, EPIC-02, v9.6, BLG-FR-05: the current, in-progress month
-                    always has snapshotted=False and no snapshot/diff fields populated),
+                    always has snapshotted=False and no snapshot/diff fields populated;
+                    ST-09, EPIC-02, v9.13, BLG-BE-156: if monthly_pnl_snapshots cannot be
+                    read or written, every month omits all four snapshot fields and the
+                    failure is logged with exc_info -- the report itself still succeeds),
           "estimated_unrealised_pnl": float | None — None when there is no portfolio yet,
           "unrealised_note": str,
         }
@@ -421,43 +427,58 @@ def get_monthly_pnl_report(year: Optional[int] = None) -> dict:
     today = datetime.now(timezone.utc).date()
     months = []
 
+    for r in rows:
+        months.append({
+            "year": int(r["year"]),
+            "month": int(r["month"]),
+            "realised_pnl_gbp": round(float(r["realised_pnl_gbp"]), 2),
+            "trade_count": int(r["trade_count"]),
+            # ST-07 (EPIC-02, v9.6, BLG-FR-04): flag closed trades missing a
+            # fee leg -- see get_monthly_pnl()'s docstring. 0 for legacy row
+            # shapes (e.g. cached fixtures/tests) that predate this field.
+            "null_fee_trade_count": int(r.get("null_fee_trade_count", 0) or 0),
+        })
+
     # ST-12 (EPIC-03, v9.7, BLG-BE-126): _snapshot_month previously opened its own
     # connection (via get_monthly_pnl_snapshot/insert_monthly_pnl_snapshot_if_absent,
     # each of which also separately ensured the table) for every closed month in the
     # response -- N closed months meant N+ new connections in one request. Open at
     # most one additional connection here (beyond get_monthly_pnl's own call above),
     # table-ensured once, and reuse it for every closed month.
+    #
+    # ST-09 (EPIC-02, v9.13, BLG-BE-156): a failure to read or write
+    # monthly_pnl_snapshots no longer fails the request. The snapshot fields are
+    # collected separately and merged only if every month succeeded; on failure
+    # every month is returned without them, which is the "Restatement check
+    # unavailable." signal reports.md §Monthly Restatement Marker defines.
     any_closed_month = any(
-        _is_closed_month(int(r["year"]), int(r["month"]), today) for r in rows
+        _is_closed_month(m["year"], m["month"], today) for m in months
     )
-    with (get_db() if any_closed_month else nullcontext(None)) as snapshot_conn:
-        if snapshot_conn is not None:
-            ensure_monthly_pnl_snapshots_table(snapshot_conn)
-        for r in rows:
-            year = int(r["year"])
-            month = int(r["month"])
-            realised_pnl_gbp = round(float(r["realised_pnl_gbp"]), 2)
-            trade_count = int(r["trade_count"])
-            row = {
-                "year": year,
-                "month": month,
-                "realised_pnl_gbp": realised_pnl_gbp,
-                "trade_count": trade_count,
-                # ST-07 (EPIC-02, v9.6, BLG-FR-04): flag closed trades missing a
-                # fee leg -- see get_monthly_pnl()'s docstring. 0 for legacy row
-                # shapes (e.g. cached fixtures/tests) that predate this field.
-                "null_fee_trade_count": int(r.get("null_fee_trade_count", 0) or 0),
-            }
-            if _is_closed_month(year, month, today):
-                row.update(_snapshot_month(portfolio_id, year, month, realised_pnl_gbp, trade_count, snapshot_conn))
-            else:
-                row.update({
-                    "snapshotted": False,
-                    "restated": False,
-                    "snapshot_realised_pnl_gbp": None,
-                    "restated_diff_gbp": None,
-                })
-            months.append(row)
+    try:
+        snapshot_fields = []
+        with (get_db() if any_closed_month else nullcontext(None)) as snapshot_conn:
+            if snapshot_conn is not None:
+                ensure_monthly_pnl_snapshots_table(snapshot_conn)
+            for m in months:
+                if _is_closed_month(m["year"], m["month"], today):
+                    snapshot_fields.append(_snapshot_month(
+                        portfolio_id, m["year"], m["month"], m["realised_pnl_gbp"], m["trade_count"], snapshot_conn
+                    ))
+                else:
+                    snapshot_fields.append({
+                        "snapshotted": False,
+                        "restated": False,
+                        "snapshot_realised_pnl_gbp": None,
+                        "restated_diff_gbp": None,
+                    })
+    except Exception:
+        logger.error(
+            "Monthly P&L snapshot check failed; returning realised P&L without restatement fields",
+            exc_info=True,
+        )
+    else:
+        for m, fields in zip(months, snapshot_fields):
+            m.update(fields)
     return {
         "months": months,
         "estimated_unrealised_pnl": get_estimated_unrealised_pnl(portfolio_id),

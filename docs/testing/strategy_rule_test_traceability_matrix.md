@@ -1,7 +1,7 @@
 **Owner:** Director of Quality; QA & Testing Owner
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Last Updated:** 2026-10-13 (ST-19, BLG-QA-206, EPIC-03, v9.12 — C4.1.7-01/02/03/05/06/07/08 moved to Asserted by `tests/e2e/position-sizing-widget-behaviours.spec.js`); prior — 2026-10-13 (ST-09, BLG-QA-205, EPIC-02, v9.12 — C4.1.5-01/02/03 and C4.1.6-01/02 moved to Asserted by `tests/test_sizing_fx_and_cash.py`); prior — 2026-10-09 (ST-16, BLG-BE-143, EPIC-03, v9.11 — C6.3-02 moved to Asserted by `TestInGraceStopParity` after the §6.3 in-grace ruling); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-17 (ST-13, BLG-QA-208, EPIC-02, v9.13 — C4-01 and C4.2.6 moved to Asserted by `tests/test_entry_required_fields.py` and `tests/e2e/trade-plan.spec.js` SC-TP-31); prior — 2026-10-13 (ST-19, BLG-QA-206, EPIC-03, v9.12 — C4.1.7-01/02/03/05/06/07/08 moved to Asserted by `tests/e2e/position-sizing-widget-behaviours.spec.js`); prior — 2026-10-13 (ST-09, BLG-QA-205, EPIC-02, v9.12 — C4.1.5-01/02/03 and C4.1.6-01/02 moved to Asserted by `tests/test_sizing_fx_and_cash.py`); prior history retained — see prior entries in version control
 **Source:** ST-11 (BLG-QA-185, EPIC-03, cycle `2026-09-30__release-v9.9`)
 
 ---
@@ -28,13 +28,13 @@
 
 | | Clauses | Share |
 |---|---:|---:|
-| Asserted | 46 | **93.9%** |
-| Partial | 2 | 4.1% |
-| None | 1 | 2.0% |
+| Asserted | 48 | **98.0%** |
+| Partial | 1 | 2.0% |
+| None | 0 | 0.0% |
 | **Total normative clauses** | **49** | |
-| Asserted or partial | 48 | 98.0% |
+| Asserted or partial | 49 | 100.0% |
 
-**% of clauses with an asserting test: 79.6% (39/49)** — 85.7% counting partial coverage. (Was 51.0% before ST-04, v9.10, 67.3% before ST-16, v9.11, which moved C6.3-02 to Asserted once §6.3's in-grace behaviour was ruled, and 69.4% before ST-09, v9.12, which asserted the five §4.1.5/§4.1.6 clauses.)
+**% of clauses with an asserting test: 98.0% (48/49)** — 100% counting partial coverage. (Was 93.9% before ST-13, v9.13, which asserted C4-01 and C4.2.6 (BLG-QA-208); 51.0% before ST-04, v9.10, 67.3% before ST-16, v9.11, which moved C6.3-02 to Asserted once §6.3's in-grace behaviour was ruled, and 69.4% before ST-09, v9.12, which asserted the five §4.1.5/§4.1.6 clauses.)
 
 Where coverage is strong: the backend sizing arithmetic (§4.1.1–§4.1.4), the pre-entry advisory checks (§4.2.1–§4.2.5), and the stop formulas and ratchet (§5, §7.2, §7.3). The last two are covered by golden tests, reconciliation tests and, since ST-12, property-based tests.
 
@@ -50,7 +50,7 @@ Follow-ups for every Partial/None clause are filed, grouped by area, as `BLG-QA-
 
 | ID | Clause | Status | Asserting test(s) | Follow-up |
 |----|--------|--------|-------------------|-----------|
-| C4-01 | Required at entry: ticker, entry date, entry price, shares, ATR | None | — no test asserts the required-field set of `POST /portfolio/position` | BLG-QA-208 |
+| C4-01 | Required at entry: ticker, entry date, entry price, shares, ATR | Asserted | `tests/test_entry_required_fields.py` (each of `ticker`, `market`, `entry_date`, `entry_price`, `shares` omitted → 422 before `add_position()`; the required set pinned to `AddPositionRequest`; an omitted `atr_value` is derived by the server); `tests/test_atr_provenance.py::TestEntryProvenance` (the stored position always has an ATR: user, fetched or fallback) | BLG-QA-208 (done, ST-13 v9.13) |
 | C4-02 | Fees applied automatically by market (UK / US) | Asserted | `tests/test_money_arithmetic_golden.py::TestFeeCalculationsAgreeElsewhere`; `tests/test_trade_service.py` | — |
 | C4-03 | Fractional shares supported | Asserted | `tests/test_golden_outputs.py::TestPositionSizingSpecFormulas` (fractional `suggested_shares`, e.g. PS02) | — |
 
@@ -90,7 +90,7 @@ Follow-ups for every Partial/None clause are filed, grouped by area, as `BLG-QA-
 | C4.2.3 | Earnings proximity: WARN within 0–5 calendar days; US tickers only | Asserted | `tests/test_pre_entry_validation.py::TestEarningsProximity` | — |
 | C4.2.4 | Cash constraint: FAIL if estimated cost > available cash | Asserted | `tests/test_pre_entry_validation.py::TestCashConstraint` | — |
 | C4.2.5 | Sizing validity: FAIL if stop distance ≤ 0 or either price ≤ 0; only when both supplied | Asserted | `tests/test_pre_entry_validation.py::TestSizingValidity` | — |
-| C4.2.6 | Advisory checks never prevent, gate or auto-reject plan submission | Partial | `tests/test_pre_entry_validation.py::TestAggregateStatus::test_response_always_200_on_fail` (API level only; no UI submission-not-blocked assertion) | BLG-QA-208 |
+| C4.2.6 | Advisory checks never prevent, gate or auto-reject plan submission | Asserted | `tests/test_pre_entry_validation.py::TestAggregateStatus::test_response_always_200_on_fail` (API); `tests/e2e/trade-plan.spec.js` SC-TP-31 (fail, warn): with the panel showing Fail or Warn, Save stays enabled and the plan is saved | BLG-QA-208 (done, ST-13 v9.13) |
 
 ### §5 Initial stop calculation
 
@@ -137,7 +137,7 @@ Follow-ups for every Partial/None clause are filed, grouped by area, as `BLG-QA-
 | BLG-QA-205 | Backend sizing: FX default/override/echo and §4.1.6 cash-constraint result. **Done** in ST-09, v9.12 | C4.1.5-01, C4.1.5-02, C4.1.5-03, C4.1.6-01, C4.1.6-02 |
 | BLG-QA-206 | Playwright coverage of §4.1.7 sizing-widget behaviours. **Done** in ST-19, v9.12 | C4.1.7-01, C4.1.7-02, C4.1.7-03, C4.1.7-05, C4.1.7-06, C4.1.7-07, C4.1.7-08 |
 | BLG-QA-207 | Live exit decision and grace-period behaviour (`should_exit_position`, stop persistence at entry). **Done** in ST-04, v9.10; C7.1-02 stays Partial for a behaviour reason, see its row | C5-02, C6.3-01, C6.3-02, C6.3-03, C7.1-02, C8-00, C8.1-01, C8.1-02, C8.2, C8.3 |
-| BLG-QA-208 | Entry required-field set and advisory panel non-blocking at the UI | C4-01, C4.2.6 |
+| BLG-QA-208 | Entry required-field set and advisory panel non-blocking at the UI. **Done** in ST-13, v9.13 | C4-01, C4.2.6 |
 
 ## Maintenance
 

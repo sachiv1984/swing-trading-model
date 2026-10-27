@@ -12,6 +12,9 @@
  *   SC-SS-07: Alerts/Notifications/Digest/price-alerts/saved-filters/changelog
  *             endpoints do NOT appear under "Other" (ST-18, EPIC-05, v7.10,
  *             BLG-FE-123 added the last 3)
+ *   SC-SS-09: Stop Freshness panel (ST-10, EPIC-02, v9.13, BLG-SPEC-188) — formatted figures from
+ *             GET /positions/stop-freshness, never-recalculated line only when m > 0, no-open-positions
+ *             and unavailable states, placement between Component Health Checks and Endpoint Tests
  *
  * Infrastructure:
  * - Playwright page.route() network interception. No live backend required.
@@ -177,8 +180,8 @@ test.describe('SC-SS-01 — Pre-run state', () => {
     await expect(page.getByRole('button', { name: /run tests/i })).toBeVisible({ timeout: 8000 });
   });
 
-  test('SC-SS-01b: Pre-run state shows "129 endpoints" placeholder', async ({ page }) => {
-    // Before running tests, the page shows: "Tests 129 endpoints"
+  test('SC-SS-01b: Pre-run state shows "130 endpoints" placeholder', async ({ page }) => {
+    // Before running tests, the page shows: "Tests 130 endpoints"
     // (totalTests || '115' → '115' before any test run). Baseline corrected v7.7
     // EPIC-11 ST-11 (BLG-QA-102): an AST-verified count of backend/routers/test.py's
     // test_cases list was 98, not the previously-recorded 103 — 5 entries had
@@ -235,7 +238,9 @@ test.describe('SC-SS-01 — Pre-run state', () => {
     // backend/routers/test.py at the EPIC-03 -> EPIC-04 merge (CLAUDE.md §8).
     // +1 (128 -> 129) from v9.12 EPIC-03 ST-17 (BLG-BE-146), which added
     // GET /market/atr/{ticker}. Re-derived by AST count of backend/routers/test.py.
-    await expect(page.getByText(/tests 129 endpoints/i)).toBeVisible({ timeout: 8000 });
+    // +1 (129 -> 130) from v9.13 EPIC-02 ST-10 (BLG-SPEC-188), which added
+    // GET /positions/stop-freshness.
+    await expect(page.getByText(/tests 130 endpoints/i)).toBeVisible({ timeout: 8000 });
   });
 
   test('SC-SS-01c: Pre-run state shows prompt to click Run Tests', async ({ page }) => {
@@ -433,3 +438,94 @@ test.describe('SC-SS-08 — Tailwind token registration (bg-primary / bg-input)'
     expect(checkedBg).not.toBe(uncheckedBg);
   });
 });
+
+// ---------------------------------------------------------------------------
+// SC-SS-09 — Stop Freshness panel (ST-10, EPIC-02, v9.13, BLG-SPEC-188)
+// Spec: docs/specs/frontend/pages/system_status.md v1.3 §Stop Freshness Panel.
+// Figures come from GET /positions/stop-freshness (backend: tests/test_stop_freshness_service.py).
+// ---------------------------------------------------------------------------
+
+const STOP_FRESHNESS = {
+  as_of: '2026-10-17T09:00:00+00:00',
+  open_positions: 5,
+  recalculated_positions: 4,
+  never_recalculated: 1,
+  median_age_hours: 18.43,
+  max_age_hours: 78.2,
+  oldest_ticker: 'AAPL',
+  oldest_stop_calculated_at: '2026-10-14T02:48:00+00:00',
+};
+
+async function mockStopFreshness(page, { status = 200, data = STOP_FRESHNESS } = {}) {
+  await page.route(`${API}/positions/stop-freshness`, (route) =>
+    route.fulfill({
+      status,
+      contentType: 'application/json',
+      body: JSON.stringify(status === 200 ? { status: 'ok', data } : { status: 'error', message: 'Internal server error' }),
+    })
+  );
+}
+
+test.describe('SC-SS-09 — Stop Freshness panel', () => {
+  test('SC-SS-09a: median, oldest (with ticker and exact timestamp), coverage and never-recalculated render as formatted', async ({ page }) => {
+    await mockBaseEndpoints(page);
+    await mockStopFreshness(page);
+    await page.goto('/#/SystemStatus');
+
+    const panel = page.getByTestId('stop-freshness-panel');
+    await expect(panel.getByRole('heading', { name: 'Stop Freshness' })).toBeVisible({ timeout: 8000 });
+    await expect(page.getByTestId('stop-freshness-median')).toHaveText('18.4 h');
+    await expect(page.getByTestId('stop-freshness-max')).toHaveText('3 d 6 h · AAPL');
+    await expect(page.getByTestId('stop-freshness-max')).toHaveAttribute('title', STOP_FRESHNESS.oldest_stop_calculated_at);
+    await expect(page.getByTestId('stop-freshness-coverage')).toHaveText('4 of 5 open positions');
+    await expect(page.getByTestId('stop-freshness-never')).toHaveText('1 never recalculated');
+    await expect(panel.getByText(/^As of /)).toBeVisible();
+  });
+
+  test('SC-SS-09b: never-recalculated line is absent when every open position has a stamp', async ({ page }) => {
+    await mockBaseEndpoints(page);
+    await mockStopFreshness(page, { data: { ...STOP_FRESHNESS, recalculated_positions: 5, never_recalculated: 0, max_age_hours: 47.96 } });
+    await page.goto('/#/SystemStatus');
+
+    await expect(page.getByTestId('stop-freshness-coverage')).toHaveText('5 of 5 open positions', { timeout: 8000 });
+    await expect(page.getByTestId('stop-freshness-max')).toHaveText('48.0 h · AAPL'); // below 48 h: hours, one decimal
+    await expect(page.getByTestId('stop-freshness-never')).toHaveCount(0);
+  });
+
+  test('SC-SS-09c: no open positions shows the muted empty line', async ({ page }) => {
+    await mockBaseEndpoints(page);
+    await mockStopFreshness(page, {
+      data: { ...STOP_FRESHNESS, open_positions: 0, recalculated_positions: 0, never_recalculated: 0,
+        median_age_hours: null, max_age_hours: null, oldest_ticker: null, oldest_stop_calculated_at: null },
+    });
+    await page.goto('/#/SystemStatus');
+
+    await expect(page.getByTestId('stop-freshness-panel').getByText('No open positions.')).toBeVisible({ timeout: 8000 });
+    await expect(page.getByTestId('stop-freshness-median')).toHaveCount(0);
+  });
+
+  test('SC-SS-09d: source failure shows "Stop freshness unavailable." and the rest of the page still renders', async ({ page }) => {
+    await mockBaseEndpoints(page);
+    await mockStopFreshness(page, { status: 500 });
+    await page.goto('/#/SystemStatus');
+
+    await expect(page.getByTestId('stop-freshness-unavailable')).toHaveText('Stop freshness unavailable.', { timeout: 8000 });
+    await expect(page.getByRole('heading', { name: 'Component Health Checks' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Endpoint Tests' })).toBeVisible();
+  });
+
+  test('SC-SS-09e: the panel sits after Component Health Checks and before Endpoint Tests', async ({ page }) => {
+    await mockBaseEndpoints(page);
+    await mockStopFreshness(page);
+    await page.goto('/#/SystemStatus');
+
+    const health = page.getByRole('heading', { name: 'Component Health Checks' });
+    const freshness = page.getByRole('heading', { name: 'Stop Freshness' });
+    const endpoints = page.getByRole('heading', { name: 'Endpoint Tests' });
+    await expect(freshness).toBeVisible({ timeout: 8000 });
+    const [h, f, e] = await Promise.all([health, freshness, endpoints].map((l) => l.boundingBox()));
+    expect(h.y).toBeLessThan(f.y);
+    expect(f.y).toBeLessThan(e.y);
+  });
+});
+

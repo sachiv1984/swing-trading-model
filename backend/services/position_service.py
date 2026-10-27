@@ -990,7 +990,20 @@ def add_position(
             atr_value = entry_price_native * 0.02
             atr_source = 'fallback'
             print(f"   ⚠️  Using default ATR (2% of entry): {atr_value:.2f}")
-    
+
+    # ST-06 (EPIC-02, v9.13, BLG-BE-180): a fetched (or, defensively, fallback)
+    # ATR whose stop multiple meets or exceeds the entry price gives no §5 stop.
+    # Rejected (400 via the endpoint's ValueError handler), the same rule as the
+    # typed-ATR guard above (Strategy Rules & System Intent Owner ruling (A),
+    # ESC-EXEC-20261017-02). The 2% fallback cannot trigger it (stop = 0.9 x entry).
+    if atr_source != 'user' and INITIAL_ATR_MULTIPLIER * atr_value >= entry_price_native:
+        raise ValueError(
+            f"The {atr_source} 14-day ATR ({atr_value:g}) is too large for this entry: "
+            f"{INITIAL_ATR_MULTIPLIER:g} × ATR is at or above the entry price ({entry_price_native:g}), "
+            f"so the stop would be at or below zero and strategy_rules.md §5 gives no stop. "
+            f"The position was not recorded."
+        )
+
     # Calculate initial stop
     initial_stop_native = calculate_initial_stop(entry_price_native, atr_value, multiplier=INITIAL_ATR_MULTIPLIER)
     

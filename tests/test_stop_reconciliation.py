@@ -19,6 +19,8 @@ import math
 import sys
 import unittest
 from pathlib import Path
+from datetime import datetime, timedelta
+from unittest.mock import patch
 
 # ---------------------------------------------------------------------------
 # Load golden vectors
@@ -254,3 +256,52 @@ class TestSyntheticDivergenceDetection(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
+
+
+# ---------------------------------------------------------------------------
+# ST-07 (EPIC-02, v9.13, BLG-BE-161): §6.3 -- no stop ratchet during grace
+# ---------------------------------------------------------------------------
+
+@unittest.skipUnless(POSITION_MANAGER_AVAILABLE, f"position_manager not importable: {PM_IMPORT_ERROR}")
+class TestPositionManagerGracePeriodStop(unittest.TestCase):
+    """position_manager.analyze_positions() leaves the stored stop unchanged
+    inside the 10-day grace period (strategy_rules.md §6.3), and trails it after."""
+
+    MARKET_STATUS = {"date": datetime(2026, 10, 17), "spy_risk_on": True, "ftse_risk_on": True}
+
+    def _analyze(self, holding_days, current_price=120.0, atr=2.0, current_stop=90.0):
+        import pandas as pd
+        entry_date = (datetime.now().date() - timedelta(days=holding_days)).isoformat()
+        portfolio = {"positions": {"AAPL": {
+            "entry_date": entry_date, "entry_price": 100.0, "shares": 10,
+            "initial_stop": 90.0, "current_stop": current_stop,
+        }}}
+        with patch("builtins.print"):
+            actions, updated, _, _ = pm.analyze_positions(
+                portfolio, {"AAPL": current_price}, pd.Series({"AAPL": atr}), self.MARKET_STATUS,
+            )
+        return actions[0], updated.get("AAPL")
+
+    def test_in_grace_stop_is_not_ratcheted(self):
+        # Outside grace this would trail to 120 - 5 x 2 = 110; in grace it must stay 90.
+        action, updated = self._analyze(holding_days=3)
+        self.assertTrue(action["grace_period"])
+        self.assertEqual(action["current_stop"], 90.0)
+        self.assertEqual(updated["current_stop"], 90.0)
+
+    def test_last_grace_day_is_still_frozen(self):
+        action, _ = self._analyze(holding_days=9)
+        self.assertTrue(action["grace_period"])
+        self.assertEqual(action["current_stop"], 90.0)
+
+    def test_post_grace_stop_trails(self):
+        # Day 10: grace over, profitable -> 120 - 2 x 2 = 116.
+        action, updated = self._analyze(holding_days=10)
+        self.assertFalse(action["grace_period"])
+        self.assertEqual(action["current_stop"], spec_updated_stop(90.0, spec_stop(120.0, 2.0, 2)))
+        self.assertEqual(updated["current_stop"], 116.0)
+
+    def test_in_grace_price_below_stop_does_not_exit(self):
+        action, _ = self._analyze(holding_days=3, current_price=85.0)
+        self.assertEqual(action["action"], "HOLD")
+        self.assertEqual(action["current_stop"], 90.0)

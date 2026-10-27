@@ -57,7 +57,12 @@ from config import ALLOWED_ORIGINS
 from utils.calculations import calculate_initial_stop
 from utils.formatting import decimal_to_float
 from utils.position_lifecycle_states import GRACE
-from strategy_parameters import INITIAL_ATR_MULTIPLIER
+from strategy_parameters import (
+    ATR_PERIOD_DAYS,
+    GRACE_PERIOD_DAYS,
+    INITIAL_ATR_MULTIPLIER,
+    PROFIT_ATR_MULTIPLIER,
+)
 from exit_reasons import EXIT_REASONS, INVALID_EXIT_REASON
 from pydantic import BaseModel
 from routers import validation, analytics, test, portfolio_size, trades_export, prospective_heat, alerts
@@ -535,9 +540,38 @@ def get_settings_endpoint():
         return JSONResponse(status_code=500, content={"status": "error", "message": "Internal server error"})
 
 
+# ST-08 (EPIC-02, v9.13, BLG-API-07): the four strategy parameters fixed by
+# strategy_rules.md §11. No stop path reads them from settings, so a write that
+# sets one is rejected rather than stored and silently ignored (API Contracts &
+# Documentation Owner ruling (A), ESC-EXEC-20261017-04). A field counts only if
+# the request sets it to a non-null value; absent or null is a no-op.
+FIXED_STRATEGY_SETTINGS_FIELDS = ("min_hold_days", "atr_period", "atr_multiplier_initial", "atr_multiplier_trailing")
+
+
+def _fixed_strategy_fields_rejection(request: SettingsRequest):
+    offending = [
+        f for f in FIXED_STRATEGY_SETTINGS_FIELDS
+        if f in request.model_fields_set and getattr(request, f) is not None
+    ]
+    if not offending:
+        return None
+    return JSONResponse(status_code=400, content={
+        "status": "error",
+        "message": (
+            f"{', '.join(offending)} cannot be set through the Settings API. These strategy "
+            f"parameters are fixed by strategy_rules.md §11 (grace period {GRACE_PERIOD_DAYS} days, "
+            f"ATR period {ATR_PERIOD_DAYS}, initial multiplier {INITIAL_ATR_MULTIPLIER:g}×, trailing "
+            f"multiplier {PROFIT_ATR_MULTIPLIER:g}×); changing them is a §12.3 strategy change."
+        ),
+    })
+
+
 @app.post("/settings")
 def create_settings_endpoint(request: SettingsRequest, x_request_source: Optional[str] = Header(None)):
     """Create new settings. X-Request-Source: settings_page tags the change-log rows (ST-26)."""
+    rejection = _fixed_strategy_fields_rejection(request)
+    if rejection is not None:
+        return rejection
     try:
         settings_data = request.dict()
         new_settings = create_settings(settings_data, request_source=_settings_request_source(x_request_source))
@@ -554,6 +588,9 @@ def create_settings_endpoint(request: SettingsRequest, x_request_source: Optiona
 @app.patch("/settings/{settings_id}")
 def update_settings_endpoint(settings_id: str, request: SettingsRequest, x_request_source: Optional[str] = Header(None)):
     """Update existing settings. X-Request-Source: settings_page tags the change-log rows (ST-26)."""
+    rejection = _fixed_strategy_fields_rejection(request)
+    if rejection is not None:
+        return rejection
     try:
         settings_data = {k: v for k, v in request.dict().items() if v is not None}
         updated_settings = update_settings(settings_id, settings_data, request_source=_settings_request_source(x_request_source))
@@ -1720,6 +1757,28 @@ def _calendar_days_since(entry):
         return max(0, (date.today() - entry_d).days)
     except (ValueError, TypeError, AttributeError):
         return None
+
+
+@app.get("/positions/stop-freshness")
+def get_stop_freshness_endpoint():
+    """
+    GET /positions/stop-freshness
+
+    Median and maximum age of stop_calculated_at across open positions, with the
+    oldest stop's ticker and the never-recalculated count (ST-10, EPIC-02, v9.13,
+    BLG-SPEC-188). Definition: metrics_definitions.md §Stop Freshness. Read by
+    System Status's Stop Freshness panel.
+
+    §13 display-only: reading the age changes no stop.
+    Spec: docs/specs/api_contracts/position_endpoints.md §GET /positions/stop-freshness
+    """
+    from services.stop_freshness_service import get_stop_freshness
+    try:
+        return {"status": "ok", "data": get_stop_freshness()}
+    except Exception:
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail="Internal server error")
 
 
 @app.get("/positions/grace-period-alerts")

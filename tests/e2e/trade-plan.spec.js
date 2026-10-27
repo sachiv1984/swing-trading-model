@@ -11,6 +11,8 @@
  *   SC-TP-07  No regression — Positions and Watchlist pages still render
  *   SC-TP-08  Edit mode: form pre-populated from GET /trade-plans/{id} (RQ v5 useEffect fix)
  *   SC-TP-29  Native form fields use the shared focus-visible:ring pattern (ST-04, EPIC-01, v8.2, BLG-FE-138)
+ *   SC-TP-31  A plan saves while the pre-entry panel shows Fail or Warn — advisory checks never block
+ *             submission (strategy_rules.md §4.2.6; ST-13, EPIC-02, v9.13, BLG-QA-208)
  *
  * Spec refs: GitHub Issue #311 (ST-03 AC), GitHub Issue #394 (ST-09 AC)
  * Infrastructure: Playwright page.route() network interception.
@@ -1038,3 +1040,67 @@ test('SC-TP-30: a double-click on Save sends one POST; a later Save updates the 
   expect(puts[0]).toContain(`/trade-plans/${TRADE_PLAN_SAVED.data.id}`);
   expect(posts).toBe(1);
 });
+
+// ---------------------------------------------------------------------------
+// SC-TP-31 — Advisory checks never block submission (ST-13, EPIC-02, v9.13, BLG-QA-208)
+// strategy_rules.md §4.2.6: pre-entry checks are advisory only -- they never prevent,
+// gate or auto-reject plan submission. The API half is
+// tests/test_pre_entry_validation.py::TestAggregateStatus::test_response_always_200_on_fail;
+// this is the form half (traceability matrix C4.2.6).
+// ---------------------------------------------------------------------------
+
+function preEntryPayload(advisoryStatus) {
+  const failing = advisoryStatus === 'fail';
+  return {
+    status: 'ok',
+    data: {
+      ticker: 'AAPL',
+      market: 'US',
+      quantity: 10,
+      advisory_status: advisoryStatus,
+      override_required: failing,
+      checks: [
+        { rule: 'regime_gate', status: failing ? 'fail' : 'pass', detail: failing ? 'US market is Risk-Off' : 'US market is Risk-On', severity: 'fail' },
+        { rule: 'cash_constraint', status: 'warn', detail: 'Cash within 5% of limit', severity: 'warn' },
+        { rule: 'sector_concentration', status: 'pass', detail: 'Sector within limits', severity: 'warn' },
+        { rule: 'earnings_proximity', status: 'pass', detail: 'Earnings 60 days away', severity: 'warn' },
+        { rule: 'sizing_validity', status: 'pass', detail: 'Position sizing valid', severity: 'warn' },
+      ],
+    },
+  };
+}
+
+for (const [advisoryStatus, badge] of [['fail', 'Fail'], ['warn', 'Warn']]) {
+  test(`SC-TP-31 (${advisoryStatus}): a plan saves while the pre-entry panel shows ${badge}`, async ({ page }) => {
+    let posts = 0;
+    await mockFallback(page);
+    await mockMarketStatus(page);
+    await mockByPosition(page, NO_PLAN_FOR_POSITION);
+    await page.route(`${API}/trade-plans`, (route) => {
+      if (route.request().method() === 'POST') {
+        posts += 1;
+        return route.fulfill({ status: 201, contentType: 'application/json', body: JSON.stringify(TRADE_PLAN_SAVED) });
+      }
+      return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok', data: [] }) });
+    });
+    await page.route(`${API}/portfolio/pre-entry-validation*`, (route) =>
+      route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(preEntryPayload(advisoryStatus)) })
+    );
+    await page.route(new RegExp(`${API}/news/AAPL`), (route) =>
+      route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok', data: [] }) })
+    );
+    await gotoTradePlan(page, { ticker: 'AAPL', market: 'US' });
+    await page.getByPlaceholder(/e\.g\. 50/i).fill('10');
+
+    const panel = page.getByTestId('pre-entry-checks-panel');
+    await expect(panel.getByText(badge, { exact: true })).toBeVisible({ timeout: 5000 });
+
+    const save = page.getByRole('button', { name: /save plan/i });
+    await expect(save).toBeEnabled();
+    await save.click();
+    await expect(page.locator('[class*="emerald"]').filter({ hasText: /saved successfully/i })).toBeVisible({ timeout: 8000 });
+    expect(posts).toBe(1);
+    // The panel's verdict is unchanged by the save -- it advised, it did not gate.
+    await expect(panel.getByText(badge, { exact: true })).toBeVisible();
+  });
+}
