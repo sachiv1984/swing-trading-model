@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-27 (session — 2 new item(s) added: BLG-AI-20, BLG-AI-21; PR #2074 review findings, EPIC-03 v9.13); prior — 2026-10-27 (session — 1 new item(s) added: BLG-UX-07; ST-16 AC 4 Head of UX & Design answer, EPIC-03 v9.13); prior — 2026-10-27 (session — 4 new item(s) added: BLG-BE-191, BLG-FE-233, BLG-UX-06, BLG-FEAT-100; PR #2073 review findings, EPIC-02 v9.13); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-27 (session — 3 new item(s) added: BLG-AI-20, BLG-AI-21, BLG-AI-22; PR #2074 review findings, EPIC-03 v9.13); prior — 2026-10-27 (session — 1 new item(s) added: BLG-UX-07; ST-16 AC 4 Head of UX & Design answer, EPIC-03 v9.13); prior — 2026-10-27 (session — 4 new item(s) added: BLG-BE-191, BLG-FE-233, BLG-UX-06, BLG-FEAT-100; PR #2073 review findings, EPIC-02 v9.13); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -4574,6 +4574,29 @@ ST-17 (BLG-AI-16) appends "(Note: <TOKEN> is not one of your open positions or t
 - The four example summaries above get no caveat
 - `NEW_SIGNAL` and `TSLA` (ST-17 fixtures) are still caught
 - `test_non_ticker_words_ignored` covers every added word
+
+---
+
+### BLG-AI-22 — Chat stop-time note: do not attribute a sentence naming another ticker to the focus ticker
+**Priority:** P3 (Low)
+**Type:** AI Compliance / Correctness
+**Owner:** AI Compliance & Governance Officer; Backend Engineering Patterns Owner
+**Source:** PR #2074 agent-mediated review (EPIC-03, cycle `2026-10-16__release-v9.13`), Director of Quality finding 3 — 2026-10-27
+**Effort:** XS (<1h plus tests)
+**Provisional-Target:** v9.14
+
+**Problem**
+ST-16 (BLG-AI-18) attributes a chat sentence that cites a stop to the focused, held ticker when the sentence "names no held ticker" (ruling `ESC-EXEC-20261027-01` (B), condition 3). A sentence that names a ticker the user does not hold therefore still gets the focus ticker's note: with focus `MU`, "TSLA's stop was hit last week." becomes "TSLA's stop was hit last week. (MU stop last recalculated 2026-10-20 21:05 UTC)" (checked against `_append_missing_stop_times()` at `d1a71c13`). The note reads as if it were about TSLA, which is the misattribution the ruling's grounds (charter §7, explainability) set out to avoid.
+
+**Scope**
+- Ask the AI Compliance & Governance Officer to amend condition 3: attribute to the focus ticker only when the sentence names no ticker-like token other than the focus ticker (reuse ST-17's `_TICKER_TOKEN_RE` and `_NON_TICKER_WORDS`)
+- Such a sentence is left unattributed (`[STOP-TIME-MISSING]` path), as before ST-16
+- Add the example above as a test
+
+**Acceptance Criteria**
+- With focus `MU`, "TSLA's stop was hit last week." gets no MU note
+- All ST-16 tests (`tests/test_ai_stop_time_focus_attribution.py`) still pass
+- The ruling amendment is recorded before the code change
 
 ---
 
