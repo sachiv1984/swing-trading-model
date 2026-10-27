@@ -130,7 +130,7 @@ def test_only_successful_chat_answers_can_be_rated(scratch_db, endpoint, result)
 
 
 def test_unknown_answer_is_none(scratch_db):
-    scratch_db.ensure_claude_audit_log_compliance_check_column()
+    # Fresh schema: the call creates claude_audit_log and chat_answer_ratings itself.
     assert scratch_db.create_chat_answer_rating(str(uuid.uuid4()), "useful") is None
 
 
