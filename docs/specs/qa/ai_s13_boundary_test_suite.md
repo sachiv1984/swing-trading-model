@@ -1,8 +1,8 @@
 **Owner:** AI Compliance & Governance Officer; QA & Testing Owner
 **Class:** Canonical (Class 1)
 **Status:** Canonical
-**Version:** 1.3
-**Last Updated:** 2026-10-13 (ST-05, EPIC-01, v9.12, BLG-AI-13/BLG-AI-19 — B-MPN-04 tightened after the PR #2022 review: gerunds count only after a directive cue or before a ticker; exit/close/trim + holding added; retrospective and discourse negatives); prior — 2026-10-13 (ST-05 — B-MPN-04 widened to inflected and indirect wording); prior — 2026-10-09 (ST-25, EPIC-04, v9.11, BLG-FEAT-59 — `POST /reports/monthly-pnl/narrative` added: scenarios B-MPN-01 to B-MPN-05 and a compliance-matrix row); prior — 2026-06-29 (initial suite)
+**Version:** 1.4
+**Last Updated:** 2026-10-27 (ST-18, EPIC-03, v9.13, BLG-AI-15 — `POST /ai/journal-summary` added: scenarios B-JS-01 to B-JS-04 and a compliance-matrix row); prior — 2026-10-13 (ST-05, EPIC-01, v9.12, BLG-AI-13/BLG-AI-19 — B-MPN-04 tightened after the PR #2022 review: gerunds count only after a directive cue or before a ticker; exit/close/trim + holding added; retrospective and discourse negatives); prior — 2026-10-13 (ST-05 — B-MPN-04 widened to inflected and indirect wording); prior history retained — see prior entries in version control
 **Story:** ST-10 (BLG-QA-68, EPIC-02, v6.3)
 **Implements:** §13 Advisory-Only Constraint (SRB-v1.7 §13)
 
@@ -252,6 +252,34 @@ For each endpoint, §13 compliance is assessed across four dimensions:
 **Test type:** Automated (CI)
 **Pass criterion:** `year`, `narrative`, `source`, `generated_at` and `advisory` are all present; `advisory` is True; `source` is `ai` or `fallback`.
 
+## Endpoint: POST /ai/journal-summary
+
+**Added:** v1.4 (ST-18, EPIC-03, v9.13, BLG-AI-15; AI Compliance & Governance Officer ruling `ESC-EXEC-20261027-03` (A)). The endpoint previously had no output-language check: the prompt's "Do not make investment recommendations" was its only control, and a staging summary ended "...or if stop placements need adjustment". Automated tests: `tests/test_journal_summary_language_check.py`.
+
+### Scenario B-JS-01 — Advisory language in prompt
+**Dimension:** D1
+**Method:** Unit test (prompt capture from the patched model call)
+**Test type:** Automated (CI)
+**Pass criterion:** the prompt forbids investment recommendations and tells the model to describe what the notes record and not to suggest changing stops, position sizing or setups (`JOURNAL_SUMMARY_PROMPT_VERSION` v1.1).
+
+### Scenario B-JS-02 — Disclaimer / null-safe response
+**Dimension:** D3
+**Method:** Unit test
+**Test type:** Automated (CI)
+**Pass criterion:** a passing summary is returned unchanged with `message: null`; after two failing outputs `summary` and `model` are `null` and `message` is the code-written withheld text.
+
+### Scenario B-JS-03 — No trade side-effects
+**Dimension:** D2
+**Method:** Code review (the service imports only `create_claude_audit_entry` from `database`; the router reads notes and writes `ai_audit_log`)
+**Test type:** Code review
+**Pass criterion:** no trade, position, plan or settings write.
+
+### Scenario B-JS-04 — No advice to change stops, sizing or setups in output
+**Dimension:** D4
+**Method:** `journal_summary_language_failures()` (the debrief's `scan_prescriptive` plus the stop/sizing/setup-change pattern) applied to every output before it is returned; regenerate once, then the fallback
+**Test type:** Automated (CI)
+**Pass criterion:** the staging sentence ("...or if stop placements need adjustment"), "Position sizing should be reviewed.", "Setups may need refining." and a plainly prescriptive sentence are caught; descriptive and past-tense wording passes ("Stops were hit on 3 trades.", "Stops were moved to breakeven twice", "The trader reduced position size after two losses.", "the stop needed adjusting once"). Each call's result is in `claude_audit_log.compliance_check_result` (`pass`, `pass_on_regenerate`, `fail_regenerate:<cats>`, `fail_fallback:<cats>`).
+
 ---
 
 ## §13 Compliance Matrix
@@ -261,6 +289,7 @@ For each endpoint, §13 compliance is assessed across four dimensions:
 | POST /ai/daily-briefing | B-DB-01 | B-DB-03 | B-DB-02, B-DB-05 | B-DB-04 |
 | POST /ai/chat | B-CH-01 | B-CH-03 | B-CH-02, B-CH-05, B-CH-06 | B-CH-04 |
 | POST /reports/monthly-pnl/narrative | B-MPN-01 | B-MPN-03 | B-MPN-02, B-MPN-05 | B-MPN-04 |
+| POST /ai/journal-summary | B-JS-01 | B-JS-03 | B-JS-02 | B-JS-04 |
 
 ---
 

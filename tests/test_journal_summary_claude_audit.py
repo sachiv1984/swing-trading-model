@@ -44,13 +44,13 @@ def test_successful_call_writes_one_costed_row(db):
     kw = db.create_claude_audit_entry.call_args.kwargs
     assert kw["endpoint"] == "POST /ai/journal-summary"
     assert kw["model_id"] == "claude-haiku-4-5-20251001"
-    assert kw["prompt_version"] == "v1.0"
+    assert kw["prompt_version"] == "v1.1"  # ST-18 (v9.13) tightened the prompt
     assert (kw["input_tokens"], kw["output_tokens"]) == (2000, 400)
     # Haiku 4.5: $1/M input, $5/M output -> 2000*1e-6 + 400*5e-6 = 0.004
     assert kw["cost_usd"] == pytest.approx(0.004)
     assert len(kw["prompt_hash"]) == 16
     assert kw["response_length"] == len("Patient entries; stops respected.")
-    assert kw["compliance_check_result"] is None
+    assert kw["compliance_check_result"] == "pass"  # ST-18 language check (v9.13)
 
 
 def test_failed_call_writes_model_call_failed_row(db):

@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical (Class 1)
 **Status:** Canonical
-**Version:** 1.29
-**Last Updated:** 2026-10-27 (ST-17, EPIC-03, v9.13, BLG-AI-16 — briefing summary tickers outside the context get a code-written caveat, logged and counted); prior — 2026-10-27 (ST-16, EPIC-03, v9.13, BLG-AI-18 — `POST /ai/chat` stop-time check attributes an unnamed stop citation to the held focus ticker); prior — 2026-10-27 (ST-19, EPIC-03, v9.13, BLG-AI-14 — `POST /ai/chat` context labels available cash and starting capital separately; `CHAT_PROMPT_VERSION` v1.2); prior history retained — see prior entries in version control
+**Version:** 1.30
+**Last Updated:** 2026-10-27 (ST-18, EPIC-03, v9.13, BLG-AI-15 — `POST /ai/journal-summary` output-language check, regenerate once then a code-written fallback; `JOURNAL_SUMMARY_PROMPT_VERSION` v1.1); prior — 2026-10-27 (ST-17, EPIC-03, v9.13, BLG-AI-16 — briefing summary tickers outside the context get a code-written caveat, logged and counted); prior — 2026-10-27 (ST-16, EPIC-03, v9.13, BLG-AI-18 — `POST /ai/chat` stop-time check attributes an unnamed stop citation to the held focus ticker); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -101,6 +101,20 @@ When the external LLM API is unreachable or returns an error, the endpoint retur
 
 *(Heading corrected v9.11, ST-32, BLG-SPEC-175: it previously named a 503 status, but the endpoint returns HTTP 200 with this body. This is an informational response, not an error envelope.)*
 
+### Response — 200 OK when the summary fails the language check
+
+*(ST-18, v9.13, BLG-AI-15; AI Compliance & Governance Officer ruling `ESC-EXEC-20261027-03` (A).)* Every model output is checked before it is returned. It fails on the debrief's prescriptive scan (`scan_prescriptive`) or on wording that suggests changing stops, position sizing or setups: a subject (stop(s), stop-loss, stop placement/level/distance, position size/sizing, setup(s)), then within 40 characters a present-tense or modal word (needs, should, ought, requires, warrants, may/might need, could use), then within 25 characters a change verb (adjust, change, tighten, widen, loosen, revise, revisit, reconsider, rethink, review, modify, refine, move, reduce, increase, cut, lower, raise), in one sentence. Past tense ("needed", "reduced") is descriptive and passes. A failing output is regenerated once; if the second also fails, the endpoint returns HTTP 200 with:
+
+```json
+{
+  "summary": null,
+  "trade_count": 8,
+  "model": null,
+  "cached": false,
+  "message": "The AI summary was withheld because it did not pass the advisory-language check. Your journal notes are unchanged; please try again later."
+}
+```
+
 ### Error responses
 
 | Status | Condition |
@@ -115,7 +129,8 @@ When the external LLM API is unreachable or returns an error, the endpoint retur
 - Default model: `claude-haiku-4-5-20251001`. Override via `AI_MODEL` env var.
 - If LLM API is unreachable: return HTTP 200 with `summary: null` and informational `message`. Do not raise HTTP 500.
 - Endpoint is read-only: no trade data is modified.
-- **Claude audit row (ST-06, v9.12, BLG-OPS-183):** each model call writes one `claude_audit_log` row: `endpoint` `POST /ai/journal-summary`, the model ID, `prompt_version` `v1.0`, tokens, `cost_usd` (Haiku 4.5 at $1/M input and $5/M output tokens), `latency_ms`, `prompt_hash` (SHA-256 of an empty system prompt plus the prompt, first 16 hex characters) and `response_length`. A call that fails after retries writes a row with `compliance_check_result = 'model_call_failed'` and no cost. No summary text is stored, so the "must not be stored" rule above still holds. Before v9.12 the journal summary wrote only `ai_audit_log`, which has no cost column, so its spend was missing from the daily cost alert, `GET /ai/monthly-cost`, `GET /ai/monthly-cost-by-feature` and the endpoint anomaly check. An audit failure is logged and never affects the summary.
+- **Claude audit row (ST-06, v9.12, BLG-OPS-183):** each model call writes one `claude_audit_log` row: `endpoint` `POST /ai/journal-summary`, the model ID, `prompt_version` (`v1.1` from ST-18; `v1.0` before), tokens, `cost_usd` (Haiku 4.5 at $1/M input and $5/M output tokens), `latency_ms`, `prompt_hash` (SHA-256 of an empty system prompt plus the prompt, first 16 hex characters) and `response_length`. A call that fails after retries writes a row with `compliance_check_result = 'model_call_failed'` and no cost. No summary text is stored, so the "must not be stored" rule above still holds. Before v9.12 the journal summary wrote only `ai_audit_log`, which has no cost column, so its spend was missing from the daily cost alert, `GET /ai/monthly-cost`, `GET /ai/monthly-cost-by-feature` and the endpoint anomaly check. An audit failure is logged and never affects the summary.
+- **Language check result (ST-18, v9.13):** each row's `compliance_check_result` is `pass` (first output passed), `pass_on_regenerate` (second output passed), `fail_regenerate:<categories>` (first output failed; a second call follows) or `fail_fallback:<categories>` (second output failed; the fallback above is returned), with categories `prescriptive` and/or `trading_change` joined by `+`. `model_call_failed` is unchanged. Logs carry the categories only, never summary text. The boundary-sample hook receives each attempt's raw output. The prompt tells the model to describe what the notes record and not to suggest changing stops, position sizing or setups (`JOURNAL_SUMMARY_PROMPT_VERSION` v1.1).
 
 ---
 
@@ -887,6 +902,7 @@ Not a new endpoint — this is internal instrumentation, not part of this contra
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.30 | 2026-10-27 | ST-18 (EPIC-03, v9.13, BLG-AI-15; ruling `ESC-EXEC-20261027-03` (A)): `POST /ai/journal-summary` checks each output (prescriptive scan plus stop/sizing/setup-change wording); a failing output is regenerated once, then a 200 with `summary: null`, `model: null` and a withheld `message` is returned. `compliance_check_result` per call: `pass`, `pass_on_regenerate`, `fail_regenerate:<cats>`, `fail_fallback:<cats>`. Prompt tightened, `JOURNAL_SUMMARY_PROMPT_VERSION` v1.0 → v1.1. Response schema unchanged (fields already nullable); no `openapi.yaml` change. |
 | 1.29 | 2026-10-27 | ST-17 (EPIC-03, v9.13, BLG-AI-16; ruling `ESC-EXEC-20261027-02` (B)): `POST /ai/daily-briefing` post-generation check 3 — a ticker in the raw `summary` that is outside the context gets a code-written caveat appended; `compliance_check_result` gains `ticker_outside_context_appended` / `+ticker_outside_context_appended` / `+ticker_check_error`. No request/response schema change; no prompt change; no `openapi.yaml` change. |
 | 1.28 | 2026-10-27 | ST-16 (EPIC-03, v9.13, BLG-AI-18; ruling `ESC-EXEC-20261027-01` (B)): `POST /ai/chat` stop-time check passes `context.ticker` as a focus ticker — a stop sentence naming no held ticker is attributed to the focus ticker when it is an open position; warning line adds `attribution=focus`. Briefing action tickers are compared case- and `.L`-normalised (from ST-15). `compliance_check_result` values and prompts unchanged. No request/response schema change; no `openapi.yaml` change. |
 | 1.27 | 2026-10-27 | ST-19 (EPIC-03, v9.13, BLG-AI-14): `POST /ai/chat` context no longer renders "Cash: £X of £Y initial capital"; it uses the briefing's labelled line (available cash; starting capital, omitted when 0 or missing). `CHAT_PROMPT_VERSION` v1.1 → v1.2, golden fixture updated. No request/response schema change; no `openapi.yaml` change. |

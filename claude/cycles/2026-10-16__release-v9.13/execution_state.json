@@ -504,7 +504,8 @@
         "tests/test_briefing_uk_ticker_normalisation.py",
         "tests/test_chat_cash_context.py",
         "tests/test_ai_stop_time_focus_attribution.py",
-        "tests/test_briefing_summary_ticker_check.py"
+        "tests/test_briefing_summary_ticker_check.py",
+        "tests/test_journal_summary_language_check.py"
       ],
       "stories": {
         "ST-15": {
@@ -564,24 +565,24 @@
         "ST-17": {
           "title": "Check the briefing summary text for tickers outside the context",
           "classification": "autonomous",
-          "status": "in_progress",
+          "status": "done",
           "assigned_to": "AI Compliance & Governance Officer; Backend Engineering Patterns Owner",
           "github_issue": 2047,
           "branch": "exec/2026-10-16__release-v9.13/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "b0254cf3d2b4118016ccf901253366c12cebb915",
           "delegation_record_id": null,
           "blocked_since_utc": "2026-10-27T08:48:35Z",
           "unblock_criteria": "AI Compliance & Governance Officer ruling recorded in ESC-EXEC-20261027-02's resolution.",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-10-27T08:59:15Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/specs/api_contracts/ai_endpoints.md#POST /ai/daily-briefing",
             "tests/test_briefing_summary_ticker_check.py"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": {
             "role": "AI Compliance & Governance Officer",
             "method": "agent_mediated",
@@ -589,12 +590,12 @@
             "signed_utc": "2026-10-27T08:54:27Z",
             "notes": "Ruling (B) code-written caveat on ESC-EXEC-20261027-02, first pass Approved, agent-mediated (§5.3). Binding conditions in the escalation resolution."
           },
-          "notes": "Reclassified delegated_decision -> autonomous after ESC-EXEC-20261027-02 resolved (B) code-written caveat."
+          "notes": "Reclassified delegated_decision -> autonomous after ESC-EXEC-20261027-02 resolved (B) code-written caveat. AC1: ruling recorded. AC2: NEW_SIGNAL/TSLA fixtures caught, caveat appended and tested (TestDetection, briefing end-to-end). AC3: context-only summary unchanged, result pass. AC4: compliance_check_result combines the stop-time value (+ticker_outside_context_appended / +ticker_check_error). ai_endpoints.md v1.29. CI on b0254cf3: CI Pytest 40477392075 success and 5 others success; ci_pending: 40477391830 (Playwright). No deviation."
         },
         "ST-18": {
           "title": "Add an output-language check to the journal summary",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "in_progress",
           "assigned_to": "AI Compliance & Governance Officer; Backend Engineering Patterns Owner",
           "github_issue": 2048,
           "branch": "exec/2026-10-16__release-v9.13/EPIC-03",
@@ -604,7 +605,11 @@
           "unblock_criteria": "AI Compliance & Governance Officer ruling recorded in ESC-EXEC-20261027-03's resolution.",
           "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": [],
+          "spec_references": [
+            "docs/specs/api_contracts/ai_endpoints.md#POST /ai/journal-summary",
+            "docs/specs/qa/ai_s13_boundary_test_suite.md#Endpoint: POST /ai/journal-summary",
+            "tests/test_journal_summary_language_check.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
@@ -1189,6 +1194,7 @@
     "ST-14",
     "ST-15",
     "ST-16",
+    "ST-17",
     "ST-19",
     "ST-35",
     "ST-36",

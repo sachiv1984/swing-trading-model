@@ -5,7 +5,7 @@ Provides journal summarisation, daily briefing, and chat advisory via Anthropic.
 AI output is display-only — must NOT be used in any signal, scoring,
 or recommendation pipeline. SRB-v1.7 CONDITIONALLY COMPLIANT.
 
-Contract: docs/specs/api_contracts/ai_endpoints.md v1.29
+Contract: docs/specs/api_contracts/ai_endpoints.md v1.30
 
 Post-generation stop-time check (ST-04, BLG-AI-10, v9.12; AI Compliance &
 Governance Officer ruling, ESC-EXEC-20261013-01): when a briefing or chat
@@ -82,7 +82,9 @@ CHAT_PROMPT_VERSION = "v1.2"
 # Journal summary v1.0 (ST-06, BLG-OPS-183, v9.12): first recorded version of
 # the existing, unchanged prompt, now that its calls are logged to
 # claude_audit_log.
-JOURNAL_SUMMARY_PROMPT_VERSION = "v1.0"
+# Journal summary v1.1 (ST-18, BLG-AI-15, v9.13): the prompt says not to
+# suggest changing stops, position sizing or setups.
+JOURNAL_SUMMARY_PROMPT_VERSION = "v1.1"
 # Haiku 4.5 list pricing, the same rates as gemini_service.CLAUDE_COST_PER_*_TOKEN.
 _HAIKU_COST_PER_INPUT_TOKEN = 1.00 / 1_000_000
 _HAIKU_COST_PER_OUTPUT_TOKEN = 5.00 / 1_000_000
@@ -409,6 +411,40 @@ def _audit_journal_summary_call(create_claude_audit_entry, model: str, prompt_ha
         logger.warning("journal-summary audit row not written", exc_info=True)
 
 
+# ─── ST-18 (BLG-AI-15, v9.13): journal-summary output-language check ───────
+# AI Compliance & Governance Officer ruling ESC-EXEC-20261027-03 (A): a
+# summary fails on the debrief's prescriptive scan or on wording that
+# suggests changing stops, sizing or setups (subject, then a present-tense or
+# modal word, then a change verb, within one sentence; past tense such as
+# "needed" is descriptive and passes). Regenerate once, then return the
+# code-written fallback, as the debrief and monthly narrative do.
+_TRADING_CHANGE_RE = re.compile(
+    r"\b(?:stop[- ]loss(?:es)?|stop (?:placement|level|distance)s?|stops?"
+    r"|position siz(?:e|es|ing)|sizing|setups?)\b"
+    r"[^.!?\n]{0,40}?\b(?:needs?|should|ought|requires?|warrants?|may need|might need|could use)\b"
+    r"[^.!?\n]{0,25}?\b(?:adjust|chang|tighten|widen|loosen|revis|revisit|reconsider|rethink|review"
+    r"|modif|refin|mov|reduc|increas|cut|lower|rais)\w*",
+    re.IGNORECASE,
+)
+JOURNAL_SUMMARY_WITHHELD_MESSAGE = (
+    "The AI summary was withheld because it did not pass the advisory-language check. "
+    "Your journal notes are unchanged; please try again later."
+)
+
+
+def journal_summary_language_failures(text: Optional[str]) -> list:
+    """The failed categories for one summary ([] means it passes)."""
+    from services.debrief_service import scan_prescriptive
+    if not text:
+        return []
+    found = []
+    if scan_prescriptive(text):
+        found.append("prescriptive")
+    if _TRADING_CHANGE_RE.search(text):
+        found.append("trading_change")
+    return found
+
+
 def summarise_journal_notes(
     notes: list[str],
     model: Optional[str] = None,
@@ -448,7 +484,8 @@ def summarise_journal_notes(
         "You are reviewing a trader's journal entries. "
         "Summarise the key themes, patterns, and observations across these notes in 2–4 concise paragraphs. "
         "Focus on trading behaviour, decision-making patterns, and recurring themes. "
-        "Do not make investment recommendations.\n\n"
+        "Do not make investment recommendations. "
+        "Describe what the notes record; do not suggest changing stops, position sizing or setups.\n\n"
         f"Journal entries:\n{combined}"
     )
 
@@ -458,25 +495,37 @@ def summarise_journal_notes(
     # including a failed call (no cost). The audit write never fails the summary.
     from database import create_claude_audit_entry
     prompt_hash = _prompt_hash("", prompt)
-    t0 = time.time()
     try:
-        try:
-            response = _create_message(
-                api_key,
-                model=model,
-                max_tokens=512,
-                messages=[{"role": "user", "content": prompt}],
-            )
-        except Exception:
+        # ST-18: one audit row per model call, carrying that attempt's result.
+        for attempt in (1, 2):
+            t0 = time.time()
+            try:
+                response = _create_message(
+                    api_key,
+                    model=model,
+                    max_tokens=512,
+                    messages=[{"role": "user", "content": prompt}],
+                )
+            except Exception:
+                _audit_journal_summary_call(create_claude_audit_entry, model, prompt_hash, t0,
+                                            compliance_check_result="model_call_failed")
+                raise
+            summary_text = response.content[0].text if response.content else None
+            if summary_text:
+                sample_ai_output("journal-summary (POST /ai/journal-summary)", summary_text, model)
+            failures = journal_summary_language_failures(summary_text)
+            if not failures:
+                _audit_journal_summary_call(create_claude_audit_entry, model, prompt_hash, t0,
+                                            usage=response.usage, response_text=summary_text,
+                                            compliance_check_result="pass" if attempt == 1 else "pass_on_regenerate")
+                return {"summary": summary_text, "model": model, "message": None}
+            outcome = "fail_regenerate:" if attempt == 1 else "fail_fallback:"
             _audit_journal_summary_call(create_claude_audit_entry, model, prompt_hash, t0,
-                                        compliance_check_result="model_call_failed")
-            raise
-        summary_text = response.content[0].text if response.content else None
-        _audit_journal_summary_call(create_claude_audit_entry, model, prompt_hash, t0,
-                                    usage=response.usage, response_text=summary_text)
-        if summary_text:
-            sample_ai_output("journal-summary (POST /ai/journal-summary)", summary_text, model)
-        return {"summary": summary_text, "model": model, "message": None}
+                                        usage=response.usage, response_text=summary_text,
+                                        compliance_check_result=outcome + "+".join(failures))
+            logger.warning("journal summary failed the language check (attempt %d, categories=%s, prompt_version=%s)",
+                           attempt, "+".join(failures), JOURNAL_SUMMARY_PROMPT_VERSION)
+        return {"summary": None, "model": None, "message": JOURNAL_SUMMARY_WITHHELD_MESSAGE}
     except Exception as exc:
         logger.error("summarise_journal_notes failed: %s", exc, exc_info=True)
         return {
