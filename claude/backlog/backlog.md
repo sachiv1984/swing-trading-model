@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-27 (session — 1 new item(s) added: BLG-UX-07; ST-16 AC 4 Head of UX & Design answer, EPIC-03 v9.13); prior — 2026-10-27 (session — 4 new item(s) added: BLG-BE-191, BLG-FE-233, BLG-UX-06, BLG-FEAT-100; PR #2073 review findings, EPIC-02 v9.13); prior — 2026-10-27 (session — 2 new item(s) added: BLG-QA-229, BLG-BE-190; EPIC-02 v9.13 DoQ review findings); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-27 (session — 2 new item(s) added: BLG-AI-20, BLG-AI-21; PR #2074 review findings, EPIC-03 v9.13); prior — 2026-10-27 (session — 1 new item(s) added: BLG-UX-07; ST-16 AC 4 Head of UX & Design answer, EPIC-03 v9.13); prior — 2026-10-27 (session — 4 new item(s) added: BLG-BE-191, BLG-FE-233, BLG-UX-06, BLG-FEAT-100; PR #2073 review findings, EPIC-02 v9.13); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -4529,6 +4529,51 @@ ST-05 widened `_INSTRUMENT_DIRECTIVE_RE` (`backend/services/monthly_pnl_narrativ
 - The listed retrospective and discourse sentences are not reported
 - All ST-05 positive cases are still reported
 - The representative output and the fallback still scan clean
+
+---
+
+### BLG-AI-20 — Journal summary: catch advisory phrasings the trading-change check misses
+**Priority:** P2 (Medium)
+**Type:** AI Compliance / Correctness
+**Owner:** AI Compliance & Governance Officer; Backend Engineering Patterns Owner
+**Source:** PR #2074 agent-mediated review (EPIC-03, cycle `2026-10-16__release-v9.13`), Director of Quality finding 1 — 2026-10-27
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.14
+
+**Problem**
+ST-18 (BLG-AI-15) fails a journal summary on `scan_prescriptive` or `_TRADING_CHANGE_RE` (subject, then a present-tense or modal word, then a change verb, per ruling `ESC-EXEC-20261027-03` (A)). Its ACs are met. But common advisory phrasings still pass both scans, so they would be shown to the user unchanged: "Consider tightening stops on volatile names.", "It may be worth revisiting position sizing.", "Stops could be tightened.", "Tighter stops could help.", "Reducing position size after losses would be prudent.", "A review of setups is warranted." and "Stop placement is something to revisit." (all checked against `journal_summary_language_failures()` at `c8fd54e7`; each returns `[]`). These are the §13 risk the check exists for.
+
+**Scope**
+- Ask the AI Compliance & Governance Officer to extend the ruling's pattern: imperative "consider/try" + change verb + subject; verb-first and passive forms ("tightening stops", "could be tightened"); "worth" / "would be prudent / wise / better" / "is warranted" / "something to revisit"
+- Implement in `_TRADING_CHANGE_RE` or a sibling pattern; keep the past-tense exclusions
+- Add the sentences above as positive cases and ST-18's descriptive cases as negatives; update `ai_s13_boundary_test_suite.md` (B-JS)
+
+**Acceptance Criteria**
+- Each sentence listed in Problem is reported as `trading_change` (or `prescriptive`)
+- All ST-18 positive and descriptive test cases keep their current results
+- The ruling extension is recorded before the code change
+
+---
+
+### BLG-AI-21 — Daily briefing: stop the ticker caveat firing on indicator and macro acronyms
+**Priority:** P2 (Medium)
+**Type:** AI Compliance / Correctness
+**Owner:** AI Compliance & Governance Officer; Backend Engineering Patterns Owner
+**Source:** PR #2074 agent-mediated review (EPIC-03, cycle `2026-10-16__release-v9.13`), Director of Quality finding 2 and Product Owner finding 1 — 2026-10-27
+**Effort:** XS (<1h plus tests)
+**Provisional-Target:** v9.14
+
+**Problem**
+ST-17 (BLG-AI-16) appends "(Note: <TOKEN> is not one of your open positions or today's top signals.)" for any upper-case token not held, not a signal, not in the context and not in `_NON_TICKER_WORDS`. That list has 23 words and lacks common market vocabulary, so ordinary summaries get a wrong, confusing caveat: "RSI is overbought on NVDA." → caveat for RSI; "MACD crossed; EPS beat." → MACD, EPS; "GDP and CPI data due." → GDP, CPI; "NB: no exits." → NB (checked against `_summary_ticker_caveat()` at `b0254cf3`). Each hit is also counted as `ticker_outside_context_appended`, which inflates the measure the ruling uses to judge the check. The ruling (`ESC-EXEC-20261027-02` (B), condition 2) names a minimum list ("at least"), so adding words stays within it.
+
+**Scope**
+- Add indicator, earnings and macro acronyms (e.g. RSI, MACD, EMA, SMA, VWAP, EPS, PE, IPO, CEO, CFO, GDP, CPI, PPI, PMI, FOMC, FED, ECB, BOE, NB, NYSE, LSE, NASDAQ) to `_NON_TICKER_WORDS`
+- Once a few weeks of briefings have run, review the logged `ticker check: ... action=caveat_appended` tokens and add any further non-tickers found (needs the user's permission for a live log/DB query)
+
+**Acceptance Criteria**
+- The four example summaries above get no caveat
+- `NEW_SIGNAL` and `TSLA` (ST-17 fixtures) are still caught
+- `test_non_ticker_words_ignored` covers every added word
 
 ---
 
