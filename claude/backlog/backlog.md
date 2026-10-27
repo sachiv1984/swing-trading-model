@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-27 (session — 3 new item(s) added: BLG-AI-20, BLG-AI-21, BLG-AI-22; PR #2074 review findings, EPIC-03 v9.13); prior — 2026-10-27 (session — 1 new item(s) added: BLG-UX-07; ST-16 AC 4 Head of UX & Design answer, EPIC-03 v9.13); prior — 2026-10-27 (session — 4 new item(s) added: BLG-BE-191, BLG-FE-233, BLG-UX-06, BLG-FEAT-100; PR #2073 review findings, EPIC-02 v9.13); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-27 (session — 7 new item(s) added: BLG-TECH-25 to BLG-TECH-31; ST-34 dependency upgrade assessment, EPIC-05 v9.13); prior — 2026-10-27 (session — 3 new item(s) added: BLG-AI-20, BLG-AI-21, BLG-AI-22; PR #2074 review findings, EPIC-03 v9.13); prior — 2026-10-27 (session — 1 new item(s) added: BLG-UX-07; ST-16 AC 4 Head of UX & Design answer, EPIC-03 v9.13); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -469,6 +469,156 @@ ST-46's conftest guard checks only *which module object* sits under `utils` / `u
 **Acceptance Criteria**
 - The guard fails a test that replaces an attribute on a real `utils.*` module without restoring it
 - Default and reverse-order full suites still pass
+
+---
+
+### BLG-TECH-25 — Upgrade the anthropic Python SDK from 0.105 to 2.x
+**Priority:** P3 (Low)
+**Type:** Tech Debt / Dependencies
+**Owner:** Head of Engineering; Backend Engineering Patterns Owner
+**Source:** ST-34 (BLG-TECH-23), EPIC-05, cycle `2026-10-16__release-v9.13` — `docs/security/dependency_major_upgrade_assessment_2026-10-27.md` §anthropic — 2026-10-27
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.14
+
+**Problem**
+The backend pins `anthropic==0.105.2`. The 0.x line no longer gets fixes and sends API version `2023-06-01`; 2.x sends `2026-10-21`. The assessment found nothing in the four AI services that breaks (no sampling parameters, dict-literal messages, `api_key` only), but 1.0 moved the SDK to `httpx2`, so two tests that build `RateLimitError` from `httpx` objects must change.
+
+**Scope**
+- Bump `anthropic` to the latest 2.x in `backend/requirements.txt`, and confirm it resolves on Python 3.11.0 (BLG-TECH-24)
+- Port `tests/test_upstream_call_helper.py` and `tests/test_gemini_claude_retry_backoff.py` to build errors from `httpx2`
+- Run one live call per AI feature on staging
+
+**Acceptance Criteria**
+- The backend installs and the full pytest suite passes on Python 3.11.0 with anthropic 2.x
+- `utils/upstream_call.py` still retries on the four anthropic error types (tests)
+- Each AI feature returns generated content on staging after the upgrade
+
+---
+
+### BLG-TECH-26 — Remove the unused SQLAlchemy dependency
+**Priority:** P3 (Low)
+**Type:** Tech Debt / Dependencies
+**Owner:** Head of Engineering; Backend Engineering Patterns Owner
+**Source:** ST-34 (BLG-TECH-23), EPIC-05, cycle `2026-10-16__release-v9.13` — `docs/security/dependency_major_upgrade_assessment_2026-10-27.md` §SQLAlchemy — 2026-10-27
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.14
+
+**Problem**
+`backend/requirements.txt` pins `sqlalchemy==2.0.52`, but no file in `backend/`, `scripts/` or `tests/` imports it; all database access uses `psycopg2`. It was added in `3579d2ff` (2026-02-16) and never used. Upgrading it to 2.1 would be wasted work; it adds install time and audit surface.
+
+**Scope**
+- Delete the `sqlalchemy` line from `backend/requirements.txt`
+
+**Acceptance Criteria**
+- `grep -ri sqlalchemy backend scripts tests` finds no import
+- The full pytest suite passes and the Render staging backend builds and starts without it
+
+---
+
+### BLG-TECH-27 — Upgrade reportlab from 4.2 to 5.x and test the tax-year PDF build
+**Priority:** P3 (Low)
+**Type:** Tech Debt / Dependencies
+**Owner:** Head of Engineering; Backend Engineering Patterns Owner
+**Source:** ST-34 (BLG-TECH-23), EPIC-05, cycle `2026-10-16__release-v9.13` — `docs/security/dependency_major_upgrade_assessment_2026-10-27.md` §reportlab — 2026-10-27
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.14
+
+**Problem**
+`reportlab==4.2.5` builds the tax-year PDF export (`services/reports_service.py::build_tax_year_pdf`). Releases 4.4.8 to 5.0.3 record several security fixes this pin misses. 5.0.4 starts changing the default base font, so the PDF can look different. No test builds a PDF today, so a break would only show in production.
+
+**Scope**
+- Add a pytest that builds a PDF from a fixed report and checks the bytes parse as a PDF with the expected page count
+- Bump `reportlab` to the latest 5.x, confirming it resolves on Python 3.11.0 (BLG-TECH-24)
+- Compare one exported tax-year PDF before and after
+
+**Acceptance Criteria**
+- The new PDF build test passes on 4.2.5 before the bump and on 5.x after it
+- An exported tax-year PDF from staging is checked for layout and fonts after the upgrade, with the result recorded
+
+---
+
+### BLG-TECH-28 — Upgrade uvicorn from 0.24 to 0.54
+**Priority:** P3 (Low)
+**Type:** Tech Debt / Dependencies
+**Owner:** Head of Engineering; Infrastructure & Operations Owner
+**Source:** ST-34 (BLG-TECH-23), EPIC-05, cycle `2026-10-16__release-v9.13` — `docs/security/dependency_major_upgrade_assessment_2026-10-27.md` §uvicorn — 2026-10-27
+**Effort:** XS (~0.25d)
+**Provisional-Target:** v9.14
+
+**Problem**
+The backend server is pinned to `uvicorn[standard]==0.24.0`, 30 minor releases behind on a pre-1.0 package. The assessment found no breaking change for this app: the Render start command uses only `--host` and `--port`, there are no WebSocket routes, and the `uvicorn`, `uvicorn.error` and `uvicorn.access` logger names that `main.py` configures are unchanged.
+
+**Scope**
+- Bump `uvicorn[standard]` to the latest release, confirming it resolves on Python 3.11.0 (BLG-TECH-24)
+
+**Acceptance Criteria**
+- The full pytest suite passes
+- The Render staging backend starts and its access log lines keep their current format
+
+---
+
+### BLG-TECH-29 — Upgrade framer-motion from 12 to 14 with a design check
+**Priority:** P3 (Low)
+**Type:** Tech Debt / Dependencies
+**Owner:** Head of Engineering; Head of UX & Design
+**Source:** ST-34 (BLG-TECH-23), EPIC-05, cycle `2026-10-16__release-v9.13` — `docs/security/dependency_major_upgrade_assessment_2026-10-27.md` §framer-motion — 2026-10-27
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.14
+
+**Problem**
+28 files use `motion` and `AnimatePresence` from `framer-motion` 12. The 13.0 and 14.0 breaking changes do not affect this usage, but fixes between 12.43 and 14.7 change `AnimatePresence` exit ordering, first-render values and springs. That can change how an animation looks without failing any test.
+
+**Scope**
+- Bump `framer-motion` to the latest 14.x and update the lockfile
+- Run the Playwright suite
+- Head of UX & Design checks the animated surfaces (modals, panels, page transitions) on staging
+
+**Acceptance Criteria**
+- All Playwright shards pass in CI
+- A recorded staging design check of the animated surfaces finds no unwanted change
+
+---
+
+### BLG-TECH-30 — Upgrade lucide-react from 0.563 to 1.x with a design check
+**Priority:** P3 (Low)
+**Type:** Tech Debt / Dependencies
+**Owner:** Head of Engineering; Head of UX & Design
+**Source:** ST-34 (BLG-TECH-23), EPIC-05, cycle `2026-10-16__release-v9.13` — `docs/security/dependency_major_upgrade_assessment_2026-10-27.md` §lucide-react — 2026-10-27
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.14
+
+**Problem**
+127 files import 105 icons from `lucide-react` 0.563. In 1.62.0 all 105 names are still exported (the 18 old names such as `AlertTriangle` and `Loader2` included), the `lucide-<name>` classes the Playwright specs select on remain, and `aria-hidden="true"` is now the default. What can change is icon artwork, which no test catches.
+
+**Scope**
+- Bump `lucide-react` to the latest 1.x and update the lockfile
+- Run the Playwright suite
+- Head of UX & Design checks the most-used icons on staging
+
+**Acceptance Criteria**
+- All Playwright shards pass in CI, including the four specs that select icons by class
+- A recorded staging design check finds no unwanted icon change
+
+---
+
+### BLG-TECH-31 — Replace moment with date-fns on System Status and remove moment
+**Priority:** P3 (Low)
+**Type:** Tech Debt / Dependencies
+**Owner:** Head of Engineering; Head of UX & Design
+**Source:** ST-34 (BLG-TECH-23), EPIC-05, cycle `2026-10-16__release-v9.13` — `docs/security/dependency_major_upgrade_assessment_2026-10-27.md` §moment — 2026-10-27
+**Effort:** XS (~0.25d)
+**Provisional-Target:** v9.14
+
+**Problem**
+`moment` is deprecated and is used in two places only, both in `src/pages/SystemStatus.js` (`format('HH:mm, D MMM YYYY')` and `fromNow()`). `date-fns` 4.4.0 is already a dependency used in 19 files. GHSA-4p3w-j4w9-5jqw (moment below 2.31.0, server-side only) does not affect this browser use, and the lockfile already has 2.31.0.
+
+**Scope**
+- Replace the two calls with `format(date, 'HH:mm, d MMM yyyy')` and `formatDistanceToNow(date, { addSuffix: true })`
+- Remove `moment` from `package.json` and the lockfile
+
+**Acceptance Criteria**
+- `moment` no longer appears in `src/` or `package.json`
+- A Playwright test checks the "As of" time format and the health-check relative time on System Status, and passes in CI
 
 ---
 
