@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-27 (session — 1 new item(s) added: BLG-OPS-193; frontend build failure found during EPIC-02 v9.13 staging check); prior — 2026-10-17 (session — 3 new item(s) added: BLG-SPEC-207, BLG-GOV-396, BLG-SPEC-208; PR #2072 review findings, EPIC-06 v9.13); prior — 2026-10-16 (session — 3 new item(s) added: BLG-OPS-192, BLG-FE-232, BLG-BE-189; PR #2071 review findings, EPIC-01 v9.13); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-27 (session — 2 new item(s) added: BLG-QA-229, BLG-BE-190; EPIC-02 v9.13 DoQ review findings); prior — 2026-10-27 (session — 1 new item(s) added: BLG-OPS-193; frontend build failure found during EPIC-02 v9.13 staging check); prior — 2026-10-17 (session — 3 new item(s) added: BLG-SPEC-207, BLG-GOV-396, BLG-SPEC-208; PR #2072 review findings, EPIC-06 v9.13); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -5789,5 +5789,50 @@ ST-37 (BLG-SPEC-184) added a default-mismatch class to `scripts/check_data_model
 - `deploy.yml` succeeds on `main` and production serves the new build
 - The Render staging frontend builds from `main` with no dashboard-only ESLint workaround, or the workaround is in `render.yaml`
 - A PR that removes `eslint-config-react-app` from the lockfile fails CI
+
+---
+
+### BLG-QA-229 — Repeat the Stop Freshness manual check with stamped positions
+**Priority:** P3 (Low)
+**Type:** QA / Staging Verification
+**Owner:** Infrastructure & Operations Owner; QA & Testing Owner
+**Source:** EPIC-02 agent-mediated DoQ review (Director of Quality role), ST-10, sprint execution `2026-10-16__release-v9.13` — 2026-10-27
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.14
+
+**Problem**
+ST-10's AC 2 asks for the System Status Stop Freshness value to match a recorded manual check. The 2026-10-27 staging check (`qa_evidence_EPIC-02.md`, `DEL-20261017-01`) matched only the empty state: both open staging positions (BARC, LGEN) had a NULL `stop_calculated_at`, so the median and maximum age and the oldest ticker were never compared with the database. The age calculation on real `TIMESTAMPTZ` values from the driver is unchecked on a deployed environment. Staging stamps come only from the on-load path after grace, because `nightly-stop-update.yml` calls `API_URL`, not `STAGING_API_URL`.
+
+**Scope**
+- Once at least one (ideally two or more) open staging position has a non-NULL `stop_calculated_at` (for example after loading Positions for a position past day 10), read the panel and run the read-only query in `metrics_definitions.md` §Stop Freshness → Manual check at about the same time
+- Record both in the QA evidence of the cycle that runs it
+
+**Acceptance Criteria**
+- The panel's median, oldest age and oldest ticker match the query's non-NULL `age_hours` median, maximum and ticker (allowing for the seconds between reads), with date and environment recorded
+- Any mismatch is filed as a defect
+
+---
+
+### BLG-BE-190 — US position sizing multiplies the stop distance by the GBP/USD rate instead of dividing
+**Priority:** P2 (Medium)
+**Type:** Backend Engineering / Strategy Correctness
+**Owner:** Strategy Rules & System Intent Owner; Backend Engineering Patterns Owner
+**Source:** EPIC-02 agent-mediated DoQ review (Director of Quality role), ST-14 strategy-values check, sprint execution `2026-10-16__release-v9.13` — 2026-10-27
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.14
+
+**Problem**
+The system's FX rate is GBP/USD, i.e. USD per GBP: `add_position()` stores `entry_price` in GBP as the native price divided by `fx_rate` (`data_model_positions_dictionary.md` `entry_price`, `fx_rate`), and `size_position()` itself converts costs to GBP by dividing (`sizing_service.py` estimated cost, sector price). But `size_position()` computes `raw_shares = risk_amount / (stop_distance * fx_rate_used)` (`backend/services/sizing_service.py` §4.1.3 block). A US stop distance of D dollars is D / fx pounds of risk per share, so the correct count is `RiskAmount × fx / D`; the code's suggestion risks `RiskAmount / fx²`, about 53–62% of the budget at fx 1.27–1.37. The ST-14 property oracle (`tests/test_strategy_invariants_property.py`, both the upper bound and the new lower bound) encodes the same inverted direction, so the tests pass on the wrong value. Pre-existing; not introduced by EPIC-02.
+
+**Scope**
+- Confirm the FX convention with the Strategy Rules & System Intent Owner against `strategy_rules.md` §4.1.2/§4.1.5, and state the US formula explicitly in §4.1.3 or §4.1.5 if it is ambiguous (RISK-02 route if `strategy_rules.md` changes)
+- Correct `size_position()` and the property-test oracle together, with a worked US example test (e.g. £100 risk, $10 stop distance, fx 1.27 → 12.7 shares)
+- Check every other US risk or sizing calculation (frontend Trade Entry risk display, heat impact, `MaxAffordableShares`) for the same inversion
+- Update `portfolio_endpoints.md` §POST /portfolio/size if its example shows the old value
+
+**Acceptance Criteria**
+- For a US position, `suggested_shares × StopDistance / fx` is within one 4dp floor step of `RiskAmount`
+- The property test asserts the corrected relationship and fails against the old formula
+- Any other inverted calculation found is fixed or filed
 
 ---
