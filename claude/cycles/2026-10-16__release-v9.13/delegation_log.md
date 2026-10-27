@@ -52,3 +52,35 @@ Last Updated: 2026-10-16
 - **Unblock criteria:** both environments' Verification output recorded in DS-35's Live Confirmation lines, with the date.
 - **Commit format required:** `[EPIC-03][ST-22] <description>` on `exec/2026-10-16__release-v9.13/EPIC-03` (or a `[GOVERNANCE]` commit on `main` if EPIC-03 has merged)
 - **Status:** Unblocked — 2026-10-27, unblocked in-session by the user (human, acting for the Data Model & Domain Schema Owner), in the same session as the delegation. (a) Sign-off: sign_off_cleared. DS-35 Up Migration and Verification run in the Supabase SQL editor on staging, then production. Both returned 4 columns (`id`, `answer_id`, `rating`, `rated_at`), all `is_nullable = NO`, and the 4 expected constraints (`chat_answer_ratings_answer_id_fkey`, `chat_answer_ratings_pkey`, `ck_chat_answer_ratings_rating`, `uq_chat_answer_ratings_answer`). Staging's first paste showed only the constraints result (the editor displays the last statement's output); the columns query was re-run on its own. Recorded in `data_model.md` DS-35 Live Confirmation. (b) Commit SHA: `2cc67cf2af01e559f1c905fb1449bf8675731df8` (production evidence commit; staging evidence `b18163f8`; engine implementation commit `0922a448066333ad7cf8c62bf0e742f1bb611bc2`, test-setup fix `278229a3`). ST-22 set to done in `execution_state.json` in the same commit as this entry.
+
+## DEL-20261027-02
+
+- **ST Item:** ST-28 — Make the daily AI cost alert fail loudly on query or workflow failure
+- **EPIC:** EPIC-05
+- **Classification:** delegated_backend (Human-Delegation for AC 2's real receipt — `sprint_backlog.md` ST-28 Staging-only ACs: "AC 2 (a failed `ai-daily-cost-check.yml` run sends a Telegram notification; real receipt)"; RISK-01)
+- **Assigned to:** Infrastructure & Operations Owner
+- **GitHub Issue:** #2058
+- **Branch:** exec/2026-10-16__release-v9.13/EPIC-05
+- **Delegated at:** 2026-10-27T12:49:59Z
+- **What is needed:** The engine has delivered AC 1 and the automated half of AC 2 at `a058fa60` (failed cost query → logged, 503 with `status: "error"`; `curl --fail-with-body`; a final `if: failure()` Telegram step; `tests/test_daily_cost_fails_loudly.py`). Remaining: one real failed run and its Telegram message. Suggested way to force a failure: temporarily set the `API_KEY` repository secret to an invalid value, dispatch **Actions → AI Daily Cost Check → Run workflow** on branch `exec/2026-10-16__release-v9.13/EPIC-05` (the endpoint answers 401, so `curl --fail-with-body` fails the step and the Telegram step runs), then restore `API_KEY` immediately. Production is only read (no alert is evaluated on a 401). Then confirm a Telegram message "AI daily cost check FAILED: …" arrived, and paste the run ID and the message time.
+- **Workflow viability (LL-v9.10-P3-01):** `ai-daily-cost-check.yml` last succeeded at run 40502770492 (schedule, 2026-10-27T12:18:49Z, `main`); all of its last 10 runs succeeded. `TELEGRAM_BOT_TOKEN`/`TELEGRAM_CHAT_ID` are already set (used by 9 other workflows, e.g. `staging-smoke-test.yml`).
+- **Spec reference:** `docs/specs/api_contracts/ai_endpoints.md#POST /ai/check-daily-cost`; `.github/workflows/ai-daily-cost-check.yml`
+- **Unblock criteria:** a failed `ai-daily-cost-check.yml` run ID and the user's confirmation that its Telegram message arrived, recorded in `qa_evidence_EPIC-05.md`.
+- **Commit format required:** `[EPIC-05][ST-28] <description>` on `exec/2026-10-16__release-v9.13/EPIC-05` (or a `[GOVERNANCE]` commit on `main` if EPIC-05 has merged)
+- **Status:** Pending
+
+## DEL-20261027-03
+
+- **ST Item:** ST-29 — Deploy both staging services from staging-deploy.yml and wait on each
+- **EPIC:** EPIC-05
+- **Classification:** delegated_backend (Human-Delegation — `sprint_backlog.md` ST-29 Staging-only ACs: "AC 1, live half only (the two secrets set from the Render dashboard). AC 2 (a live `staging-deploy.yml` run on `main` with both services on the run's commit). AC 4 (smoke test confirms the host behind `STAGING_API_URL`)"; RISK-01)
+- **Assigned to:** Infrastructure & Operations Owner
+- **GitHub Issue:** #2059
+- **Branch:** exec/2026-10-16__release-v9.13/EPIC-05
+- **Delegated at:** 2026-10-27T12:49:59Z
+- **What is needed:** The engine has delivered AC 3 and the code halves of AC 1 and AC 4 at `d81af9b0` (`scripts/trigger_staging_deploy.py`, per-service waits, `render_service_id` on `GET /health/detailed`, smoke-test host check, `tests/test_staging_deploy_both_services.py`, `staging_deploy_notes.md` §4, secrets map). Remaining: (1) in Render, copy **trading-assistant-api-staging → Settings → Deploy Hook** into a new repo secret `RENDER_STAGING_BACKEND_DEPLOY_HOOK`, and **trading-assistant-staging → Settings → Deploy Hook** into `RENDER_STAGING_FRONTEND_DEPLOY_HOOK`; (2) after EPIC-05 merges (the workflow runs from `main`), dispatch **Actions → Deploy to Staging (Render) → Run workflow** on `main` (or let the merge's push run it) and paste the run ID; it passes when all steps are green: both trigger steps report a deploy on the expected `srv-…`, both waits report live on the run's commit, and the smoke test prints "is the staging backend (srv-d6rtdg94tr6s73ce2j6g)"; (3) delete `RENDER_STAGING_DEPLOY_HOOK`.
+- **Workflow viability (LL-v9.10-P3-01):** `staging-deploy.yml` has no success in its last 10 runs (latest failure: run 40504434239, push, 2026-10-27T12:31:30Z). Cause known and is this story's subject: `RENDER_STAGING_DEPLOY_HOOK` holds the frontend's hook while the wait step watches the backend (BLG-OPS-181/BLG-OPS-189, `staging_deploy_notes.md` §4). The prerequisite fix is step (1) above, raised in this same delegation. `RENDER_PLATFORM_API_KEY`, `STAGING_API_URL` and `STAGING_API_KEY` are already set (used by `staging-deploy-drift-check.yml` and `staging-smoke-test.yml`).
+- **Spec reference:** `docs/ops/staging_deploy_notes.md#4. Render Deploy Hook Setup`; `docs/specs/api_contracts/health_endpoints.md#GET /health/detailed`; `.github/workflows/staging-deploy.yml`
+- **Unblock criteria:** both secrets set (user confirmation) and a green `staging-deploy.yml` run on `main` whose log shows both services live on its commit and the smoke-test host check passing, recorded in `qa_evidence_EPIC-05.md`.
+- **Commit format required:** `[EPIC-05][ST-29] <description>` on `exec/2026-10-16__release-v9.13/EPIC-05` (or a `[GOVERNANCE]` commit on `main` if EPIC-05 has merged)
+- **Status:** Pending
