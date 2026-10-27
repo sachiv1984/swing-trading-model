@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-27 (session — 7 new item(s) added: BLG-TECH-25 to BLG-TECH-31; ST-34 dependency upgrade assessment, EPIC-05 v9.13); prior — 2026-10-27 (session — 3 new item(s) added: BLG-AI-20, BLG-AI-21, BLG-AI-22; PR #2074 review findings, EPIC-03 v9.13); prior — 2026-10-27 (session — 1 new item(s) added: BLG-UX-07; ST-16 AC 4 Head of UX & Design answer, EPIC-03 v9.13); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-27 (session — 5 new item(s) added: BLG-BE-192, BLG-BE-193, BLG-BE-194, BLG-FE-234, BLG-SPEC-209; ST-33 data-provider risk assessment, EPIC-05 v9.13); prior — 2026-10-27 (session — 7 new item(s) added: BLG-TECH-25 to BLG-TECH-31; ST-34 dependency upgrade assessment, EPIC-05 v9.13); prior — 2026-10-27 (session — 3 new item(s) added: BLG-AI-20, BLG-AI-21, BLG-AI-22; PR #2074 review findings, EPIC-03 v9.13); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -6166,5 +6166,115 @@ Code appends deterministic notes to AI text: the stop-time note "(<TICKER> stop 
 **Acceptance Criteria**
 - A dated decision is recorded
 - If adopted: the definition is in `metrics_definitions.md` and the panel shows the status for a stale case, covered by Playwright; if rejected: the rationale is on the "Threshold: none" line
+
+---
+
+### BLG-BE-192 — Compute the SPY market regime from Alpaca bars when Yahoo Finance fails
+**Priority:** P2 (Medium)
+**Type:** Backend / Data Provider Resilience
+**Owner:** Infrastructure & Operations Owner; Backend Engineering Patterns Owner
+**Source:** ST-33 (BLG-OPS-77), EPIC-05, cycle `2026-10-16__release-v9.13` — `docs/operations/data_provider_risk_assessment.md` §3 QW-1 — 2026-10-27
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.14
+
+**Problem**
+`check_market_regime()` reads SPY and FTSE 200-day data only from Yahoo Finance. When Yahoo fails it defaults that market to risk-on, so during a Yahoo outage US entries are allowed and no US risk-off exit alert is raised, whatever the market is doing. Alpaca already supplies US daily bars and could compute the SPY figure.
+
+**Scope**
+- When the Yahoo SPY fetch fails, compute SPY price and 200-day MA from Alpaca daily bars (`get_ohlcv_bars("SPY", limit=210)`)
+- Record which source produced the regime result
+
+**Acceptance Criteria**
+- With Yahoo mocked to fail and Alpaca mocked to return bars, the SPY regime is computed from the Alpaca bars, not defaulted to risk-on (test)
+- With both failing, behaviour is unchanged until BLG-BE-193 rules otherwise (test)
+
+---
+
+### BLG-BE-193 — Show an unknown market regime instead of silently defaulting to risk-on
+**Priority:** P2 (Medium)
+**Type:** Backend / Data Provider Resilience
+**Owner:** Strategy Rules & System Intent Owner; Infrastructure & Operations Owner
+**Source:** ST-33 (BLG-OPS-77), EPIC-05, cycle `2026-10-16__release-v9.13` — `docs/operations/data_provider_risk_assessment.md` §2, §3 QW-2 — 2026-10-27
+**Effort:** S (~0.5d, plus a strategy ruling)
+**Provisional-Target:** v9.14
+
+**Problem**
+When SPY or FTSE regime data is unavailable, `check_market_regime()` sets that market to risk-on with price and MA 0, and nothing tells the user. Entry checks and the nightly risk-off job then act on a regime that was never measured. This is the most consequential single failure in the data-provider assessment.
+
+**Scope**
+- Strategy Rules & System Intent Owner rules what "regime unknown" means for entries and the risk-off job (block entries, keep the last known regime, or risk-on with a warning)
+- Return an explicit unknown state from `check_market_regime()` and apply the ruling
+- Show the unknown state wherever the regime is shown
+
+**Acceptance Criteria**
+- A dated ruling is recorded
+- With regime data mocked unavailable, the result is marked unknown and the ruled behaviour applies (tests)
+- The dashboard shows the regime as unknown in that case (Playwright)
+
+---
+
+### BLG-BE-194 — Use the last good GBP/USD rate, with its age, before the fixed 1.27 fallback
+**Priority:** P2 (Medium)
+**Type:** Backend / Data Provider Resilience
+**Owner:** Infrastructure & Operations Owner; Backend Engineering Patterns Owner
+**Source:** ST-33 (BLG-OPS-77), EPIC-05, cycle `2026-10-16__release-v9.13` — `docs/operations/data_provider_risk_assessment.md` §2, §3 QW-3 — 2026-10-27
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.14
+
+**Problem**
+`get_live_fx_rate()` gets GBP/USD only from Yahoo Finance. After the 5-minute cache expires it falls back to the constant `DEFAULT_FX_RATE = 1.27`, so a Yahoo outage silently values every US position, and sizes new ones, at a fixed rate that can be far from the market.
+
+**Scope**
+- Store the last successfully fetched rate and its timestamp
+- On fetch failure, use the stored rate before the constant
+- Expose the rate's source and age where FX-dependent figures are shown
+
+**Acceptance Criteria**
+- With Yahoo mocked to fail, the last stored rate is used, not 1.27 (test)
+- The constant is used only when no stored rate exists (test)
+- The rate's age is shown when it is older than one trading day
+
+---
+
+### BLG-FE-234 — Mark a position's price as stale when the live price fetch fails
+**Priority:** P3 (Low)
+**Type:** Frontend / Data Provider Resilience
+**Owner:** Infrastructure & Operations Owner; Head of UX & Design
+**Source:** ST-33 (BLG-OPS-77), EPIC-05, cycle `2026-10-16__release-v9.13` — `docs/operations/data_provider_risk_assessment.md` §2, §3 QW-4 — 2026-10-27
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.14
+
+**Problem**
+When `get_current_price()` returns nothing, the positions view falls back to the stored `current_price` or the entry price and shows it as if it were live. UK prices have no second source, so a Yahoo outage shows stale UK P&L and stop distances with no sign that they are stale.
+
+**Scope**
+- Return a flag from the positions response when the live price fetch failed and a stored price is used
+- Show a stale-price marker on that position
+
+**Acceptance Criteria**
+- With the price fetch mocked to fail, the response flags the stored price (test)
+- The positions view shows the stale marker for that position (Playwright)
+
+---
+
+### BLG-SPEC-209 — Correct the external API dependency register for Alpaca news and the inactive Stooq and Twelve Data fetchers
+**Priority:** P3 (Low)
+**Type:** Spec Debt
+**Owner:** PMO Lead; Infrastructure & Operations Owner
+**Source:** ST-33 (BLG-OPS-77), EPIC-05, cycle `2026-10-16__release-v9.13` — `docs/operations/data_provider_risk_assessment.md` §1, §3 QW-5 — 2026-10-27
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.14
+
+**Problem**
+`docs/ops/external_api_dependency_register.md` describes the news provider as newsapi.org, but news comes from Alpaca's news endpoint (`news_service.py`). Its MIT-08 says the screener falls back to Stooq and Twelve Data, but `fetch_ohlcv` never calls either fetcher. Anyone relying on the register during an incident would expect failover that does not exist.
+
+**Scope**
+- Rewrite the News API entry for Alpaca news
+- Correct MIT-08 to say Stooq and Twelve Data are not active, and why
+- Delete the two unused fetchers from `screener_data_service.py`, or record why they are kept
+
+**Acceptance Criteria**
+- The register matches the code for news and screener fallbacks
+- The two fetchers are either removed with tests still passing, or their retention is documented
 
 ---
