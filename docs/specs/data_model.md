@@ -3484,9 +3484,9 @@ Expect 4 rows, `id` through `rated_at`, none nullable; and 4 constraints: `chat_
 **Response Acceptance Rate:** implemented as `database.get_response_acceptance_rate(date_from, date_to)`; the query is in `metrics_definitions.md` § AI Chat Engagement, measure 3.
 
 **Sign-off:**
-- Data Model & Domain Schema Owner: new, self-contained table, reversible. One foreign key to `claude_audit_log(id)` (that table's rows are never deleted by the app). Created at runtime by an idempotent ensure-function. Live Confirmation pending (`DEL-20261027-01`).
+- Data Model & Domain Schema Owner: new, self-contained table, reversible. One foreign key to `claude_audit_log(id)` (that table's rows are never deleted by the app). Created at runtime by an idempotent ensure-function. Live Confirmation recorded below for staging and production, 2026-10-27 (`DEL-20261027-01`).
 - **Live Confirmation — staging:** confirmed 2026-10-27 by the user (Data Model & Domain Schema Owner), Supabase SQL editor. Columns: `id` uuid, `answer_id` uuid, `rating` character varying, `rated_at` timestamp with time zone, all `is_nullable = NO`. Constraints: `chat_answer_ratings_answer_id_fkey` `FOREIGN KEY (answer_id) REFERENCES claude_audit_log(id)`; `chat_answer_ratings_pkey` `PRIMARY KEY (id)`; `ck_chat_answer_ratings_rating` `CHECK (((rating)::text = ANY ((ARRAY['useful'::character varying, 'not_useful'::character varying])::text[])))`; `uq_chat_answer_ratings_answer` `UNIQUE (answer_id)`. Matches the expected output.
-- **Live Confirmation — production:** pending.
+- **Live Confirmation — production:** confirmed 2026-10-27 by the user (Data Model & Domain Schema Owner), Supabase SQL editor. Up Migration: "Success. No rows returned". Columns and constraints identical to staging: `id` uuid, `answer_id` uuid, `rating` character varying, `rated_at` timestamp with time zone, all `is_nullable = NO`; `chat_answer_ratings_answer_id_fkey`, `chat_answer_ratings_pkey`, `ck_chat_answer_ratings_rating` (`useful`, `not_useful`), `uq_chat_answer_ratings_answer`. Matches the expected output.
 
 ---
 
