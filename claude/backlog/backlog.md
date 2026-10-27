@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-27 (session — 6 new item(s) added: BLG-BE-192, BLG-BE-193, BLG-BE-194, BLG-FE-234, BLG-SPEC-209, BLG-OPS-194; ST-33 data-provider risk assessment, EPIC-05 v9.13); prior — 2026-10-27 (session — 7 new item(s) added: BLG-TECH-25 to BLG-TECH-31; ST-34 dependency upgrade assessment, EPIC-05 v9.13); prior — 2026-10-27 (session — 3 new item(s) added: BLG-AI-20, BLG-AI-21, BLG-AI-22; PR #2074 review findings, EPIC-03 v9.13); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-27 (session — 1 new item(s) added: BLG-OPS-195; ST-30 data pipeline cost baseline, EPIC-05 v9.13); prior — 2026-10-27 (session — 6 new item(s) added: BLG-BE-192, BLG-BE-193, BLG-BE-194, BLG-FE-234, BLG-SPEC-209, BLG-OPS-194; ST-33 data-provider risk assessment, EPIC-05 v9.13); prior — 2026-10-27 (session — 7 new item(s) added: BLG-TECH-25 to BLG-TECH-31; ST-34 dependency upgrade assessment, EPIC-05 v9.13); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -6300,5 +6300,27 @@ The System Status Yahoo Finance check calls `get_live_fx_rate()` and reports hea
 - With the Yahoo FX fetch mocked to fail, the health check reports Yahoo Finance unhealthy or degraded, not healthy (test)
 - With the fetch succeeding, it reports healthy with the live rate (test)
 - With the regime fetch mocked to fail, the check is not reported healthy (test)
+
+---
+
+### BLG-OPS-195 — Alert when weekly market-data call volume exceeds 2× the baseline
+**Priority:** P3 (Low)
+**Type:** Operations / Cost Monitoring
+**Owner:** Infrastructure & Operations Owner; FinOps & Resource Architect
+**Source:** ST-30 (BLG-OPS-18), EPIC-05, cycle `2026-10-16__release-v9.13` — `docs/ops/data_pipeline_cost_baseline.md` §5 — 2026-10-27
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.14
+**Depends on:** ST-30's weekly baseline recorded in `docs/ops/data_pipeline_cost_baseline.md` §4
+
+**Problem**
+`data_pipeline_cost_baseline.md` §5 defines an advisory when a source's weekly calls, failures or estimated cost exceed 2× baseline, but nothing checks it; the comparison is manual at the monthly cost review. A provider starting to throttle, or a feature that suddenly multiplies calls, can go unnoticed for weeks.
+
+**Scope**
+- A weekly scheduled workflow that calls `GET /ops/api-call-attribution?window=weekly`, compares each source's calls, failures and estimated cost with the recorded baseline, and sends a Telegram message naming the source and the top features when any exceeds 2×
+- Keep the baseline figures in one place the check reads, not copied into the workflow
+
+**Acceptance Criteria**
+- A test with a report over 2× baseline produces the advisory message, and one under it produces none
+- A failed report call fails the workflow loudly (as `ai-daily-cost-check.yml` does)
 
 ---
