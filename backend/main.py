@@ -42,7 +42,14 @@ from utils.correlation_id import (  # noqa: E402
 )
 install_correlation_id_log_record_factory()
 
+# ST-31 (EPIC-05, v9.13, BLG-OPS-19): tag every outbound market-data call
+# with the feature that triggered it (utils/api_attribution.py). Installed
+# before the services import requests or yfinance sessions are created.
+from utils import api_attribution  # noqa: E402
+api_attribution.install()
+
 from fastapi import FastAPI, HTTPException, Request, Header
+from starlette.concurrency import run_in_threadpool
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from typing import Optional, List
@@ -222,6 +229,30 @@ app.add_middleware(
 )
 
 
+def _route_feature(request: Request) -> str:
+    """"<METHOD> <route template>" for the route this request matched, so
+    /news/AAPL and /news/MSFT are one feature. The router sets
+    scope["route"] once it has matched, after this middleware runs."""
+    route = request.scope.get("route")
+    path = getattr(route, "path", None)
+    return f"{request.method} {path}" if path else f"{request.method} unmatched"
+
+
+@app.middleware("http")
+async def api_attribution_middleware(request: Request, call_next):
+    """ST-31 (EPIC-05, v9.13, BLG-OPS-19): attribute market-data calls made
+    while handling this request to its route, then write them in one batch.
+    Background tasks inherit the feature; calls they make after the response
+    is sent are written by the next flush (screener runs flush themselves)."""
+    token = api_attribution.set_feature(lambda: _route_feature(request))
+    try:
+        return await call_next(request)
+    finally:
+        api_attribution.reset_feature(token)
+        if api_attribution.pending_count():
+            await run_in_threadpool(api_attribution.flush)
+
+
 @app.middleware("http")
 async def api_key_middleware(request: Request, call_next):
     api_key = os.environ.get("API_KEY")
@@ -302,6 +333,7 @@ app.include_router(cost_monitoring_router.router)
 def on_startup():
     """Bootstrap tables after the ASGI app is ready (idempotent CREATE IF NOT EXISTS)."""
     import logging as _logging
+    api_attribution.set_feature("startup")
     _log = _logging.getLogger(__name__)
     try:
         ensure_alerts_tables()

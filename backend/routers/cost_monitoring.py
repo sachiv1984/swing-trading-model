@@ -4,6 +4,8 @@ Cost Monitoring Router
 GET  /ops/alpaca-call-report       — Alpaca API call count aggregate (daily/weekly).
 GET  /ops/research-session-report  — Research endpoint external-call count per
                                       session, with baseline + anomaly flagging.
+GET  /ops/api-call-attribution     — Market-data provider calls and estimated
+                                      cost by triggering feature (ST-31).
 POST /ops/purge-audit-logs         — Delete gemini_audit_log/claude_audit_log/
                                       api_call_log rows past their retention window.
 
@@ -22,6 +24,7 @@ Contract: docs/specs/api_contracts/ops_endpoints.md v1.2
 import logging
 
 from fastapi import APIRouter, Query
+from fastapi.responses import JSONResponse
 
 router = APIRouter(prefix="/ops", tags=["Cost Monitoring"])
 logger = logging.getLogger(__name__)
@@ -38,6 +41,24 @@ def alpaca_call_report(window: str = Query(default="daily", pattern="^(daily|wee
     """Alpaca API call count for the requested window (ST-11)."""
     from database import get_api_call_report
     return {"status": "ok", "data": get_api_call_report("alpaca", window)}
+
+
+@router.get("/api-call-attribution")
+def api_call_attribution(window: str = Query(default="weekly", pattern="^(daily|weekly)$")):
+    """Market-data provider calls and estimated cost per triggering feature,
+    with the top 3 contributors (ST-31, BLG-OPS-19). 503 if the query fails,
+    so a failure never reads as "no calls"."""
+    from database import get_api_call_attribution
+    from utils.api_attribution import PROVIDER_SERVICES, build_attribution_report
+    try:
+        rows = get_api_call_attribution(PROVIDER_SERVICES, window)
+    except Exception:
+        logger.error("API call attribution query failed", exc_info=True)
+        return JSONResponse(status_code=503, content={
+            "status": "error", "error": "attribution_query_failed",
+            "message": "The api_call_log attribution query failed; see server logs.",
+        })
+    return {"status": "ok", "data": build_attribution_report(rows, window)}
 
 
 @router.get("/research-session-report")

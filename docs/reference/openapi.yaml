@@ -2,7 +2,10 @@ openapi: 3.0.3
 
 info:
   title: Momentum Trading Assistant API
-  version: 3.38.0
+  version: 3.39.0
+  # v3.39.0 (2026-10-27, ST-31/ST-32, EPIC-05, v9.13): new GET /ops/api-call-attribution, market-data
+  # provider calls and estimated cost by triggering feature (BLG-OPS-19); GET /screener/history runs gain
+  # duration_seconds (BLG-OPS-23).
   # v3.38.0 (2026-10-27, ST-29, EPIC-05, v9.13): GET /health/detailed gains render_service_id (Render's
   # RENDER_SERVICE_ID) so the staging smoke test can confirm STAGING_API_URL's host (BLG-OPS-189). No new endpoint.
   # v3.37.0 (2026-10-27, ST-28, EPIC-05, v9.13): POST /ai/check-daily-cost returns status "ok" on
@@ -3935,6 +3938,72 @@ paths:
         "500":
           $ref: "#/components/responses/InternalError"
 
+  /ops/api-call-attribution:
+    get:
+      tags: [Cost Monitoring]
+      summary: Market-data provider calls and estimated cost by triggering feature
+      description: |
+        Calls to market-data providers (Alpaca data, news and paper; Yahoo
+        Finance; Twelve Data; Stooq), counted per HTTP request at the
+        transport layer and tagged with the route or job that triggered them,
+        grouped by feature and by provider, with the top 3 features by
+        estimated cost then call count. Read-only. 503 if the query fails.
+        Canonical contract: docs/specs/api_contracts/ops_endpoints.md v1.4 §GET /ops/api-call-attribution
+      parameters:
+        - in: query
+          name: window
+          schema:
+            type: string
+            enum: [daily, weekly]
+            default: weekly
+      responses:
+        "200":
+          description: Attribution report
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ApiOk"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          window: { type: string }
+                          total_calls: { type: integer }
+                          estimated_cost_usd: { type: number }
+                          unit_cost_usd:
+                            type: object
+                            additionalProperties: { type: number }
+                          by_feature:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                feature: { type: string, example: "POST /screener/run" }
+                                total_calls: { type: integer }
+                                failure_count: { type: integer }
+                                estimated_cost_usd: { type: number }
+                                by_service:
+                                  type: object
+                                  additionalProperties: { type: integer }
+                          by_service:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                service: { type: string, example: yahoo }
+                                total_calls: { type: integer }
+                                failure_count: { type: integer }
+                                estimated_cost_usd: { type: number }
+                          top_contributors:
+                            type: array
+                            items: { type: string }
+        "422":
+          description: Invalid window value
+        "503":
+          description: The attribution query failed
+
   /ops/research-session-report:
     get:
       tags: [Cost Monitoring]
@@ -5439,6 +5508,10 @@ paths:
                                 UK: { type: string, nullable: true }
                             degraded_run: { type: boolean }
                             failure_rate: { type: number }
+                            duration_seconds:
+                              type: number
+                              nullable: true
+                              description: Run duration from start to persistence, in seconds; null for runs before v9.13.
                       total: { type: integer }
                       limit: { type: integer }
                       offset: { type: integer }

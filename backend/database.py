@@ -2989,8 +2989,18 @@ def purge_ai_output_boundary_samples_older_than_90_days() -> int:
 # upstream sources). Reused by ST-12 (research endpoint session reporting).
 # ---------------------------------------------------------------------------
 
+_api_call_log_ready = False
+
+
 def ensure_api_call_log_table() -> None:
-    """Create api_call_log table if it does not exist (ST-11, BLG-OPS-17)."""
+    """Create api_call_log table if it does not exist (ST-11, BLG-OPS-17).
+
+    DS-36 (ST-31, v9.13): adds the nullable `feature` column, the trigger a
+    provider call is attributed to (utils/api_attribution.py). Runs once per
+    process; ALTER TABLE takes a lock even when the column exists."""
+    global _api_call_log_ready
+    if _api_call_log_ready:
+        return
     with get_db() as conn:
         with conn.cursor() as cur:
             cur.execute("""
@@ -3000,16 +3010,22 @@ def ensure_api_call_log_table() -> None:
                     endpoint    TEXT NOT NULL,
                     session_id  TEXT,
                     called_at   TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-                    success     BOOLEAN NOT NULL
+                    success     BOOLEAN NOT NULL,
+                    feature     TEXT
                 )
             """)
+            cur.execute("ALTER TABLE api_call_log ADD COLUMN IF NOT EXISTS feature TEXT")
             cur.execute(
                 "CREATE INDEX IF NOT EXISTS idx_acl_service_called_at ON api_call_log (service, called_at DESC)"
             )
             cur.execute(
                 "CREATE INDEX IF NOT EXISTS idx_acl_session_id ON api_call_log (session_id)"
             )
+            cur.execute(
+                "CREATE INDEX IF NOT EXISTS idx_acl_called_at_feature ON api_call_log (called_at DESC, feature)"
+            )
         conn.commit()
+    _api_call_log_ready = True
 
 
 def log_api_call(service: str, endpoint: str, session_id: str | None = None, success: bool = True) -> None:
@@ -3028,6 +3044,51 @@ def log_api_call(service: str, endpoint: str, session_id: str | None = None, suc
             conn.commit()
     except Exception:
         pass
+
+
+def log_api_calls(rows: list) -> None:
+    """Insert attributed provider calls in one statement (ST-31, DS-36).
+
+    rows: [(service, endpoint, feature, success, called_at)]. Raises on
+    failure; utils/api_attribution.flush() catches it and drops the batch."""
+    if not rows:
+        return
+    from psycopg2.extras import execute_values
+
+    ensure_api_call_log_table()
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            execute_values(
+                cur,
+                "INSERT INTO api_call_log (service, endpoint, feature, success, called_at) VALUES %s",
+                rows,
+            )
+        conn.commit()
+
+
+def get_api_call_attribution(services: tuple, window: str = "weekly") -> list:
+    """Per-(feature, service) call counts for `services` over `window`
+    ("daily" = today UTC, "weekly" = last 7 days). ST-31, DS-36.
+
+    Raises on a query failure: an empty report would read as "no calls"."""
+    since_clause = "CURRENT_DATE" if window == "daily" else "NOW() - INTERVAL '7 days'"
+    ensure_api_call_log_table()
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                f"""
+                SELECT
+                    COALESCE(feature, 'unattributed') AS feature,
+                    service,
+                    COUNT(*) AS total_calls,
+                    COUNT(*) FILTER (WHERE NOT success) AS failure_count
+                FROM api_call_log
+                WHERE service = ANY(%s) AND called_at >= {since_clause}
+                GROUP BY 1, 2
+                """,
+                (list(services),),
+            )
+            return [dict(r) for r in cur.fetchall()]
 
 
 def get_api_call_report(service: str, window: str = "daily") -> dict:

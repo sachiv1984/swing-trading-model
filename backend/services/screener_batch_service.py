@@ -7,6 +7,7 @@ runs the computation engine, and persists results.
 Run lifecycle: synchronous (runs in-process).
 Idempotency: rejects new run while one is in progress.
 """
+import contextvars
 import json
 import logging
 import os
@@ -23,6 +24,7 @@ from database import get_db
 from services.ticker_universe_service import get_all_tickers
 from services.screener_data_service import fetch_ohlcv
 from services.screener_engine import compute_screener_result
+from utils import api_attribution
 from utils.upstream_call import bounded_upstream_call, get_timeout
 
 YF_MAX_CONCURRENT = int(os.environ.get("YF_MAX_CONCURRENT", "5"))
@@ -64,7 +66,8 @@ def ensure_screener_results_table() -> None:
                     ADD COLUMN IF NOT EXISTS degraded_run BOOLEAN NOT NULL DEFAULT FALSE,
                     ADD COLUMN IF NOT EXISTS failure_rate NUMERIC,
                     ADD COLUMN IF NOT EXISTS tickers_requested INTEGER DEFAULT 0,
-                    ADD COLUMN IF NOT EXISTS failed_tickers JSONB DEFAULT '[]'
+                    ADD COLUMN IF NOT EXISTS failed_tickers JSONB DEFAULT '[]',
+                    ADD COLUMN IF NOT EXISTS duration_seconds NUMERIC
             """)
             cur.execute("""
                 CREATE INDEX IF NOT EXISTS idx_screener_runs_ts
@@ -167,7 +170,8 @@ def _persist_run(run_id: str, run_timestamp: str, tickers_evaluated: int,
                  tickers_passed: int, regime_us: str, regime_uk: str,
                  degraded_run: bool = False, failure_rate: Optional[float] = None,
                  tickers_requested: int = 0,
-                 failed_tickers: Optional[List[str]] = None) -> None:
+                 failed_tickers: Optional[List[str]] = None,
+                 duration_seconds: Optional[float] = None) -> None:
     import json as _json
     with get_db() as conn:
         with conn.cursor() as cur:
@@ -176,13 +180,14 @@ def _persist_run(run_id: str, run_timestamp: str, tickers_evaluated: int,
                 INSERT INTO screener_runs
                   (run_id, run_timestamp, tickers_evaluated, tickers_passed,
                    regime_us, regime_uk, degraded_run, failure_rate,
-                   tickers_requested, failed_tickers)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                   tickers_requested, failed_tickers, duration_seconds)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                 ON CONFLICT (run_id) DO NOTHING
                 """,
                 (run_id, run_timestamp, tickers_evaluated, tickers_passed,
                  regime_us, regime_uk, degraded_run, failure_rate,
-                 tickers_requested, _json.dumps(failed_tickers or [])),
+                 tickers_requested, _json.dumps(failed_tickers or []),
+                 duration_seconds),
             )
         conn.commit()
 
@@ -245,6 +250,9 @@ def run_screener(ticker_universe: Optional[List[str]] = None,
         if run_id is None:
             run_id = str(uuid.uuid4())
         run_timestamp = datetime.now(tz=timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+        # ST-32 (BLG-OPS-23): duration covers ticker load, regime and OHLCV
+        # fetches and scoring, up to persistence.
+        started = time.monotonic()
 
         # Resolve ticker list — keep full row dicts to preserve sector/industry
         if ticker_universe is None:
@@ -322,7 +330,10 @@ def run_screener(ticker_universe: Optional[List[str]] = None,
                 failed_ticker_list.append(row.get("ticker", "unknown"))
 
         with ThreadPoolExecutor(max_workers=YF_MAX_CONCURRENT) as executor:
-            futures = {executor.submit(_process_row_tracked, row): row for row in us_rows}
+            # Each worker runs in a copy of this context so its provider calls
+            # keep this run's attribution feature (ST-31, utils/api_attribution.py).
+            futures = {executor.submit(contextvars.copy_context().run, _process_row_tracked, row): row
+                       for row in us_rows}
             for future in as_completed(futures):
                 row = futures[future]
                 try:
@@ -344,10 +355,12 @@ def run_screener(ticker_universe: Optional[List[str]] = None,
 
         regime_us_status = us_regime.get("regime_status", "risk_off")
         regime_uk_status = uk_regime.get("regime_status", "risk_off")
+        duration_seconds = round(time.monotonic() - started, 1)
         _persist_run(run_id, run_timestamp, tickers_evaluated, len(results),
                      regime_us_status, regime_uk_status, degraded_run, failure_rate,
                      tickers_requested=total_tickers,
-                     failed_tickers=failed_ticker_list)
+                     failed_tickers=failed_ticker_list,
+                     duration_seconds=duration_seconds)
         _persist_results(results)
 
         return {
@@ -363,8 +376,10 @@ def run_screener(ticker_universe: Optional[List[str]] = None,
             "tickers_requested": total_tickers,
             "tickers_loaded": tickers_evaluated,
             "tickers_failed": failed_ticker_list,
+            "duration_seconds": duration_seconds,
         }
     finally:
+        api_attribution.flush()
         with _run_lock:
             _run_in_progress = False
 
@@ -533,7 +548,8 @@ def get_screener_run_history(limit: int = 50, offset: int = 0) -> Dict:
                 """
                 SELECT run_id::text AS run_id, run_timestamp,
                        tickers_requested, tickers_passed,
-                       regime_us, regime_uk, degraded_run, failure_rate
+                       regime_us, regime_uk, degraded_run, failure_rate,
+                       duration_seconds
                 FROM screener_runs
                 ORDER BY run_timestamp DESC
                 LIMIT %s OFFSET %s
@@ -558,6 +574,7 @@ def get_screener_run_history(limit: int = 50, offset: int = 0) -> Dict:
             },
             "degraded_run": bool(row.get("degraded_run", False)),
             "failure_rate": float(failure_rate_val) if failure_rate_val is not None else 0.0,
+            "duration_seconds": float(row["duration_seconds"]) if row.get("duration_seconds") is not None else None,
         })
 
     return {

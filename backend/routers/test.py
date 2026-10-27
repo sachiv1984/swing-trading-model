@@ -213,6 +213,7 @@ async def test_all_endpoints(request: Request):
         # Cost Monitoring (v9.3 / EPIC-03 ST-11/ST-12/ST-13/ST-14)
         {"name": "GET /ops/alpaca-call-report", "method": "GET", "url": f"{base_url}/ops/alpaca-call-report", "critical": False},
         {"name": "GET /ops/research-session-report", "method": "GET", "url": f"{base_url}/ops/research-session-report", "critical": False},
+        {"name": "GET /ops/api-call-attribution", "method": "GET", "url": f"{base_url}/ops/api-call-attribution", "critical": False},
         {"name": "GET /ai/monthly-cost-by-feature", "method": "GET", "url": f"{base_url}/ai/monthly-cost-by-feature", "critical": False},
         {"name": "POST /ops/purge-audit-logs", "method": "POST", "url": f"{base_url}/ops/purge-audit-logs", "critical": False},
 

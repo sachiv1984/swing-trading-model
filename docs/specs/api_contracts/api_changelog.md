@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Class 2
 **Status:** Canonical
-**Version:** 1.23.0
-**Last Updated:** 2026-10-27 (ST-29, EPIC-05, v9.13, BLG-OPS-189 — v9.13.0 entry: GET /health/detailed gains render_service_id); prior — 2026-10-27 (ST-28, EPIC-05, v9.13, BLG-OPS-187 — v9.13.0 entry: POST /ai/check-daily-cost returns 503 on a failed cost query); prior — 2026-10-17 (ST-08, EPIC-02, v9.13, BLG-API-07 — v9.13.0 entry: settings writes reject the four §11-fixed fields); prior history retained — see prior entries in version control
+**Version:** 1.24.0
+**Last Updated:** 2026-10-27 (ST-31/ST-32, EPIC-05, v9.13, BLG-OPS-19/BLG-OPS-23 — v9.13.0 entry: new GET /ops/api-call-attribution; GET /screener/history gains duration_seconds); prior — 2026-10-27 (ST-29, EPIC-05, v9.13, BLG-OPS-189 — v9.13.0 entry: GET /health/detailed gains render_service_id); prior — 2026-10-27 (ST-28, EPIC-05, v9.13, BLG-OPS-187 — v9.13.0 entry: POST /ai/check-daily-cost returns 503 on a failed cost query); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 # API Changelog
@@ -121,6 +121,24 @@ Rules:
 | Change | Details |
 |--------|---------|
 | Updated endpoint: GET /health/detailed | Response gains `render_service_id` (Render's `RENDER_SERVICE_ID`, `null` off Render), so the staging smoke test can confirm the host behind `STAGING_API_URL` is the staging backend (BLG-OPS-189). |
+
+### ops_endpoints.md — v1.4 (UPDATED)
+
+**EPIC:** EPIC-05
+**ST:** ST-31
+
+| Change | Details |
+|--------|---------|
+| New endpoint: GET /ops/api-call-attribution | Market-data provider calls over the last day or week, grouped by the route or job that triggered them and by provider, with an estimated cost (every unit cost is 0.0 today) and the top 3 features; 503 if the query fails (BLG-OPS-19). |
+
+### screener_api_contract.md — v1.6 (UPDATED)
+
+**EPIC:** EPIC-05
+**ST:** ST-32
+
+| Change | Details |
+|--------|---------|
+| Updated endpoint: GET /screener/history | Each run gains `duration_seconds`, the run's time from start to persistence; `null` for runs before v9.13 (BLG-OPS-23). |
 
 ## v9.12.0 (2026-10-13 — Release v9.12)
 
