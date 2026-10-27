@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-16T10:49:11Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-27T12:49:59Z",
+  "last_updated_utc": "2026-10-27T21:03:52Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-06",
@@ -889,16 +889,16 @@
         "ST-28": {
           "title": "Make the daily AI cost alert fail loudly on query or workflow failure",
           "classification": "delegated_backend",
-          "status": "blocked_backend",
+          "status": "done",
           "assigned_to": "Infrastructure & Operations Owner; FinOps & Resource Architect",
           "github_issue": 2058,
           "branch": "exec/2026-10-16__release-v9.13/EPIC-05",
-          "commit_sha": null,
+          "commit_sha": "1a303e0853568f0f6fd36d6df7d8e81f6d3e5ba0",
           "delegation_record_id": "DEL-20261027-02",
-          "blocked_since_utc": "2026-10-27T12:49:59Z",
-          "unblock_criteria": "A failed ai-daily-cost-check.yml run ID and confirmation its Telegram message arrived, recorded in qa_evidence_EPIC-05.md (DEL-20261027-02).",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-10-27T21:03:52Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/specs/api_contracts/ai_endpoints.md#POST /ai/check-daily-cost",
             ".github/workflows/ai-daily-cost-check.yml",
@@ -907,9 +907,15 @@
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
-          "last_completed_substep": "3.1.B.delegated",
-          "sign_off_record": null,
-          "notes": "Engine commit a058fa6001e9865f34c9da15218686dfc659823c (2026-10-27T12:41:04Z): AC1 (query failure raises; service logs with exc_info and returns status error; endpoint 503; curl --fail-with-body; missing secrets fail) and AC2 automated half (if: failure() Telegram step) - tests/test_daily_cost_fails_loudly.py. ai_endpoints.md v1.32, openapi 3.37.0, api_changelog 1.22.0. CI all green on a058fa60 (CI Pytest Suite 40505711397, Playwright 40505711118). AC2 real receipt delegated: DEL-20261027-02."
+          "last_completed_substep": "3.1.B.unblock",
+          "sign_off_record": {
+            "role": "Infrastructure & Operations Owner",
+            "method": "human",
+            "status": "cleared",
+            "signed_utc": "2026-10-27T21:03:52Z",
+            "notes": "User (human) forced a failed ai-daily-cost-check.yml run on the EPIC-05 branch (invalid API_KEY): run 40582931117, trigger step failed on 401, Telegram step succeeded, message received, 2026-10-27. DEL-20261027-02."
+          },
+          "notes": "Engine commit a058fa6001e9865f34c9da15218686dfc659823c (2026-10-27T12:41:04Z): AC1 (query failure raises; service logs with exc_info and returns status error; endpoint 503; curl --fail-with-body; missing secrets fail) and AC2 automated half (if: failure() Telegram step) - tests/test_daily_cost_fails_loudly.py. ai_endpoints.md v1.32, openapi 3.37.0, api_changelog 1.22.0. CI all green on a058fa60 (CI Pytest Suite 40505711397, Playwright 40505711118). AC2 real receipt delegated: DEL-20261027-02. Unblocked 2026-10-27: run 40582931117 (EPIC-05 branch, 5dd04ba5) failed on 401 and sent the Telegram message, receipt confirmed by the user. Evidence commit 1a303e08 (commit_sha); implementation commit a058fa60. Deviation check: none."
         },
         "ST-29": {
           "title": "Deploy both staging services from staging-deploy.yml and wait on each",
@@ -1235,7 +1241,6 @@
   },
   "blocked_items": [],
   "delegated_items": [
-    "ST-28",
     "ST-29"
   ],
   "completed_items": [
@@ -1261,6 +1266,7 @@
     "ST-20",
     "ST-21",
     "ST-22",
+    "ST-28",
     "ST-35",
     "ST-36",
     "ST-37",

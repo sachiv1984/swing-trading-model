@@ -67,7 +67,7 @@ Last Updated: 2026-10-16
 - **Spec reference:** `docs/specs/api_contracts/ai_endpoints.md#POST /ai/check-daily-cost`; `.github/workflows/ai-daily-cost-check.yml`
 - **Unblock criteria:** a failed `ai-daily-cost-check.yml` run ID and the user's confirmation that its Telegram message arrived, recorded in `qa_evidence_EPIC-05.md`.
 - **Commit format required:** `[EPIC-05][ST-28] <description>` on `exec/2026-10-16__release-v9.13/EPIC-05` (or a `[GOVERNANCE]` commit on `main` if EPIC-05 has merged)
-- **Status:** Pending
+- **Status:** Unblocked — 2026-10-27, unblocked in-session by the user (human, acting for the Infrastructure & Operations Owner), in the same session as the delegation. (a) Sign-off: sign_off_cleared. With `API_KEY` set to an invalid value, `ai-daily-cost-check.yml` run 40582931117 (workflow_dispatch, branch `exec/2026-10-16__release-v9.13/EPIC-05`, head `5dd04ba5`, 2026-10-27T20:59:47Z) failed its trigger step on a 401 and its "Send Telegram alert on failure" step succeeded; the user confirmed the Telegram message arrived. An earlier dispatch from `main` (run 40582391679) ran the old workflow without the Telegram step and is not evidence. Recorded in `qa_evidence_EPIC-05.md` §Failed-Run Alert Check — AI Daily Cost. (b) Commit SHA: `1a303e0853568f0f6fd36d6df7d8e81f6d3e5ba0` (evidence commit; engine implementation commit `a058fa6001e9865f34c9da15218686dfc659823c`). ST-28 set to done in `execution_state.json` in the same commit as this entry.
 
 ## DEL-20261027-03
 
