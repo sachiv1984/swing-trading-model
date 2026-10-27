@@ -404,6 +404,45 @@
       "resolved_utc": "2026-10-17T16:16:44Z",
       "resolved_by": "API Contracts & Documentation Owner (agent-mediated, §5.3, user-directed)",
       "resolution_summary": "(A) POST/PATCH settings return 400 naming strategy_rules.md §11 when the body sets a fixed strategy field to a non-null value. settings_endpoints.md v1.6.0. Applied by ST-08 at 5c39e3f2."
+    },
+    "ESC-EXEC-20261027-01": {
+      "cycle": "2026-10-16__release-v9.13",
+      "trigger_type": "Lifecycle",
+      "owning_authority": "AI Compliance & Governance Officer",
+      "raised_utc": "2026-10-27T08:48:35Z",
+      "sla_due_utc": "2026-10-28T08:48:35Z",
+      "blocks_execution": false,
+      "disposition": "Resolved",
+      "resolved_utc": "2026-10-27T08:54:27Z",
+      "resolved_by": "AI Compliance & Governance Officer (agent-mediated, §5.3)",
+      "summary": "ST-16/EPIC-03 - extend the stop-time ruling to chat: attribute a stop citation to the focused ticker (BLG-AI-18)",
+      "resolution_summary": "(B) extend narrowly: a stop sentence naming no held ticker is attributed to the held focus ticker. Applied by ST-16 at d1a71c13. AC 4 (Head of UX & Design): Yes, filed BLG-UX-07."
+    },
+    "ESC-EXEC-20261027-02": {
+      "cycle": "2026-10-16__release-v9.13",
+      "trigger_type": "Lifecycle",
+      "owning_authority": "AI Compliance & Governance Officer",
+      "raised_utc": "2026-10-27T08:48:35Z",
+      "sla_due_utc": "2026-10-28T08:48:35Z",
+      "blocks_execution": false,
+      "disposition": "Resolved",
+      "resolved_utc": "2026-10-27T08:54:27Z",
+      "resolved_by": "AI Compliance & Governance Officer (agent-mediated, §5.3)",
+      "summary": "ST-17/EPIC-03 - action for briefing summary tickers outside the context (BLG-AI-16)",
+      "resolution_summary": "(B) code-written caveat appended, logged and counted in compliance_check_result. Applied by ST-17 at b0254cf3."
+    },
+    "ESC-EXEC-20261027-03": {
+      "cycle": "2026-10-16__release-v9.13",
+      "trigger_type": "Lifecycle",
+      "owning_authority": "AI Compliance & Governance Officer",
+      "raised_utc": "2026-10-27T08:48:35Z",
+      "sla_due_utc": "2026-10-28T08:48:35Z",
+      "blocks_execution": false,
+      "disposition": "Resolved",
+      "resolved_utc": "2026-10-27T08:54:27Z",
+      "resolved_by": "AI Compliance & Governance Officer (agent-mediated, §5.3)",
+      "summary": "ST-18/EPIC-03 - journal-summary output-language check failure action (BLG-AI-15)",
+      "resolution_summary": "(A) regenerate once, then a code-written fallback; JOURNAL_SUMMARY_PROMPT_VERSION v1.1. Applied by ST-18 at c8fd54e7."
     }
   },
   "deferred_escalations": {
