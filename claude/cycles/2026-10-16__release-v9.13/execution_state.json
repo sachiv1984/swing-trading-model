@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-16T10:49:11Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-17T16:20:29Z",
+  "last_updated_utc": "2026-10-27T08:20:00Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-06",
@@ -251,7 +251,7 @@
             "signed_utc": "2026-10-17T16:16:44Z",
             "notes": "Ruling (A) reject on ESC-EXEC-20261017-02, first pass Approved, user-directed agent-mediated (§5.3). Quantitative claim evidenced inline: fallback stop = E - 5 x 0.02E = 0.90E > 0."
           },
-          "notes": "Reclassified delegated_decision -> autonomous after ESC-EXEC-20261017-02 resolved (A). AC1: ruling recorded; no strategy_rules.md change (§5 already gives no stop; RISK-02 authorisation unused). AC2: TestFetchedAtrRejected (boundary and above -> 400, nothing stored; fallback 0.9 x E stored). AC3: Playwright SC-TAP-06/07/08 (local CI-mode run 24 passed). ci_pending: 39048984770 (CI Pytest), 39048984810 (Playwright E2E) on 5c39e3f2. No deviation."
+          "notes": "Reclassified delegated_decision -> autonomous after ESC-EXEC-20261017-02 resolved (A). AC1: ruling recorded; no strategy_rules.md change (§5 already gives no stop; RISK-02 authorisation unused). AC2: TestFetchedAtrRejected (boundary and above -> 400, nothing stored; fallback 0.9 x E stored). AC3: Playwright SC-TAP-06/07/08 (local CI-mode run 24 passed). CI on 5c39e3f2: all 8 workflows success (CI Pytest 39048984770, Playwright E2E 39048984810). No deviation."
         },
         "ST-07": {
           "title": "Align the standalone position_manager.py with §6.3 (no stop ratchet during grace)",
@@ -312,7 +312,7 @@
             "signed_utc": "2026-10-17T16:16:44Z",
             "notes": "Ruling (A) 400 naming §11 on ESC-EXEC-20261017-04, first pass Approved, user-directed agent-mediated (§5.3). Caller survey cited file:line (Settings.js strips the fields)."
           },
-          "notes": "Reclassified delegated_decision -> autonomous after ESC-EXEC-20261017-04 resolved (A). AC1: choice recorded. AC2: tests/test_settings_fixed_strategy_fields_rejected.py (each field x POST/PATCH -> 400, nothing written; multi-field order; null no-op; Settings page body 200). AC3: settings_endpoints.md v1.6.0 and openapi.yaml 3.35.0 in the same commit. Settings page already omits the fields (no frontend change). ci_pending: 39048984770, 39048984810 on 5c39e3f2. No deviation."
+          "notes": "Reclassified delegated_decision -> autonomous after ESC-EXEC-20261017-04 resolved (A). AC1: choice recorded. AC2: tests/test_settings_fixed_strategy_fields_rejected.py (each field x POST/PATCH -> 400, nothing written; multi-field order; null no-op; Settings page body 200). AC3: settings_endpoints.md v1.6.0 and openapi.yaml 3.35.0 in the same commit. Settings page already omits the fields (no frontend change). CI on 5c39e3f2: all 8 workflows success (CI Pytest 39048984770, Playwright E2E 39048984810). No deviation."
         },
         "ST-09": {
           "title": "Keep the Monthly P&L report up when the snapshot store fails",
@@ -344,16 +344,16 @@
         "ST-10": {
           "title": "Define a stop-freshness metric and show it on System Status",
           "classification": "autonomous",
-          "status": "blocked_backend",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 2040,
           "branch": "exec/2026-10-16__release-v9.13/EPIC-02",
-          "commit_sha": "5c4b38e77ab512536f53f28891e3c5dc6d9586f4",
+          "commit_sha": "49055e805d5beee4efa8cdad38d492ec9c7644be",
           "delegation_record_id": "DEL-20261017-01",
-          "blocked_since_utc": "2026-10-17T16:06:04Z",
-          "unblock_criteria": "Panel values and the metrics_definitions.md §Stop Freshness manual-check query output from one deployed environment running 5c4b38e7+, recorded in qa_evidence_EPIC-02.md under ST-10 (DEL-20261017-01).",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-10-27T08:18:59Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/specs/metrics_definitions.md#Stop Freshness",
             "docs/specs/frontend/pages/system_status.md#Stop Freshness Panel (v1.3 — ST-10, BLG-SPEC-188)",
@@ -364,9 +364,15 @@
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": true,
-          "last_completed_substep": "3.1.A.commit",
-          "sign_off_record": null,
-          "notes": "AC1 and the automated half of AC2 delivered at 5c4b38e7: metric (metrics_definitions.md v1.32.0), GET /positions/stop-freshness with full registration chain (contract v2.17.0, openapi 3.33.0, test.py 129->130, SystemStatus.js fallback 130, SC-SS-01b), panel, pytest (9) and Playwright SC-SS-09a-e (local CI-mode run 27 passed; full pytest 2759 passed). Staging-only half of AC2 (manual check against a deployed environment) delegated as DEL-20261017-01; staging-deploy.yml has no success in its last 40 runs (EPIC-05 ST-29 / BLG-TECH-24). CI on 5c4b38e7: all 8 workflows success (CI Pytest 39047888217, Playwright E2E 39047888248). No deviation."
+          "last_completed_substep": "3.1.B.unblock",
+          "sign_off_record": {
+            "role": "Infrastructure & Operations Owner",
+            "method": "human",
+            "status": "cleared",
+            "signed_utc": "2026-10-27T08:18:59Z",
+            "notes": "User (human) deployed both staging services from the EPIC-02 branch at 826ee17a, read the Stop Freshness panel and ran the read-only manual-check query, 2026-10-27. Match: 2 open positions, both stop_calculated_at NULL. DEL-20261017-01."
+          },
+          "notes": "AC1 and the automated half of AC2 delivered at 5c4b38e7: metric (metrics_definitions.md v1.32.0), GET /positions/stop-freshness with full registration chain (contract v2.17.0, openapi 3.33.0, test.py 129->130, SystemStatus.js fallback 130, SC-SS-01b), panel, pytest (9) and Playwright SC-SS-09a-e (local CI-mode run 27 passed; full pytest 2759 passed). Staging-only half of AC2 (manual check against a deployed environment) delegated as DEL-20261017-01, unblocked 2026-10-27: staging (both services on this branch at 826ee17a) panel coverage 0 of 2, 2 never recalculated, median/oldest \"—\"; query returns BARC and LGEN with NULL stop_calculated_at. Match. Evidence commit 49055e80 (commit_sha); implementation commit 5c4b38e7. Frontend build needed DISABLE_ESLINT_PLUGIN=true on Render (BLG-OPS-193). CI on 5c4b38e7: all 8 workflows success (CI Pytest 39047888217, Playwright E2E 39047888248). No deviation."
         },
         "ST-11": {
           "title": "Correct metrics_definitions.md's claim about NULL positions.fees_paid",
@@ -1107,9 +1113,7 @@
     }
   },
   "blocked_items": [],
-  "delegated_items": [
-    "ST-10"
-  ],
+  "delegated_items": [],
   "completed_items": [
     "ST-01",
     "ST-02",
@@ -1120,6 +1124,7 @@
     "ST-07",
     "ST-08",
     "ST-09",
+    "ST-10",
     "ST-11",
     "ST-12",
     "ST-13",
