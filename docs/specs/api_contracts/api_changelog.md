@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Class 2
 **Status:** Canonical
-**Version:** 1.21.0
-**Last Updated:** 2026-10-17 (ST-08, EPIC-02, v9.13, BLG-API-07 — v9.13.0 entry: settings writes reject the four §11-fixed fields); prior — 2026-10-17 (ST-06, EPIC-02, v9.13, BLG-BE-180 — v9.13.0 entry: POST /portfolio/position rejects a fetched ATR that gives no stop); prior — 2026-10-17 (ST-10, EPIC-02, v9.13, BLG-SPEC-188 — v9.13.0 entry: new GET /positions/stop-freshness); prior history retained — see prior entries in version control
+**Version:** 1.22.0
+**Last Updated:** 2026-10-27 (ST-28, EPIC-05, v9.13, BLG-OPS-187 — v9.13.0 entry: POST /ai/check-daily-cost returns 503 on a failed cost query); prior — 2026-10-17 (ST-08, EPIC-02, v9.13, BLG-API-07 — v9.13.0 entry: settings writes reject the four §11-fixed fields); prior — 2026-10-17 (ST-06, EPIC-02, v9.13, BLG-BE-180 — v9.13.0 entry: POST /portfolio/position rejects a fetched ATR that gives no stop); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 # API Changelog
@@ -103,6 +103,15 @@ Rules:
 |--------|---------|
 | Updated endpoint: POST /settings | Behavioural change: a body that sets `min_hold_days`, `atr_period`, `atr_multiplier_initial` or `atr_multiplier_trailing` to a non-null value returns `400` naming `strategy_rules.md` §11; nothing is written (was stored and ignored). Absent or `null` is a no-op (BLG-API-07). |
 | Updated endpoint: PATCH /settings/{settings_id} | Same rule as `POST /settings`; a mixed body is rejected whole (BLG-API-07). |
+
+### ai_endpoints.md — v1.32 (UPDATED)
+
+**EPIC:** EPIC-05
+**ST:** ST-28
+
+| Change | Details |
+|--------|---------|
+| Updated endpoint: POST /ai/check-daily-cost | Response gains `status: "ok"`. A failed cost query now returns `503` with `status: "error"`, `error: "cost_query_failed"` and no totals (was a 200 reporting $0 spend), so the scheduler's step fails and sends a Telegram message (BLG-OPS-187). |
 
 ## v9.12.0 (2026-10-13 — Release v9.12)
 

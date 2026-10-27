@@ -2728,25 +2728,26 @@ def get_daily_ai_cost() -> dict:
     alert could not fire for them. Every Claude call writes claude_audit_log
     (plan/thesis write both tables), so summing claude_audit_log alone counts
     each call exactly once.
+
+    ST-28 (BLG-OPS-187, EPIC-05, v9.13): a query failure raises instead of
+    returning a $0 total, so the caller reports an error rather than "no
+    spend today".
     """
-    try:
-        ensure_claude_audit_log_table()
-        with get_db() as conn:
-            with conn.cursor() as cur:
-                cur.execute("""
-                    SELECT
-                        COALESCE(SUM(cost_usd), 0.0) AS total_cost,
-                        COUNT(*) AS request_count
-                    FROM claude_audit_log
-                    WHERE generated_at >= CURRENT_DATE
-                """)
-                row = cur.fetchone()
-                return {
-                    "total_cost_usd": float(row["total_cost"]),
-                    "request_count": int(row["request_count"])
-                }
-    except Exception:
-        return {"total_cost_usd": 0.0, "request_count": 0}
+    ensure_claude_audit_log_table()
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                SELECT
+                    COALESCE(SUM(cost_usd), 0.0) AS total_cost,
+                    COUNT(*) AS request_count
+                FROM claude_audit_log
+                WHERE generated_at >= CURRENT_DATE
+            """)
+            row = cur.fetchone()
+            return {
+                "total_cost_usd": float(row["total_cost"]),
+                "request_count": int(row["request_count"])
+            }
 
 
 # ---------------------------------------------------------------------------

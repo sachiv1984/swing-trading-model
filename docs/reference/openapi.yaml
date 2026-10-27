@@ -2,7 +2,9 @@ openapi: 3.0.3
 
 info:
   title: Momentum Trading Assistant API
-  version: 3.36.0
+  version: 3.37.0
+  # v3.37.0 (2026-10-27, ST-28, EPIC-05, v9.13): POST /ai/check-daily-cost returns status "ok" on
+  # success and 503 with status "error" when the cost query fails (was a $0 total; BLG-OPS-187). No new endpoint.
   # v3.36.0 (2026-10-27, ST-22, EPIC-03, v9.13): POST /ai/chat returns answer_id for a model answer; new
   # POST /ai/chat/{answer_id}/rating stores a useful / not-useful rating once per answer (BLG-FE-208).
   # v3.35.0 (2026-10-17, ST-08, EPIC-02, v9.13): POST /settings and PATCH /settings/{settings_id} return
@@ -3535,8 +3537,9 @@ paths:
         Checks today's Claude API spend (from claude_audit_log, every Claude-calling feature)
         against the configured AI_DAILY_COST_THRESHOLD (default $1.00/day). Sends a Telegram
         alert if exceeded, at most once per UTC day. Called every 6 hours by
-        .github/workflows/ai-daily-cost-check.yml.
-        Canonical contract: docs/specs/api_contracts/ai_endpoints.md v1.24 §POST /ai/check-daily-cost
+        .github/workflows/ai-daily-cost-check.yml, whose step fails (and sends a Telegram
+        message) on any non-2xx answer. A failed cost query returns 503, never a $0 total.
+        Canonical contract: docs/specs/api_contracts/ai_endpoints.md v1.32 §POST /ai/check-daily-cost
       responses:
         "200":
           description: Daily cost check result
@@ -3545,10 +3548,14 @@ paths:
               schema:
                 type: object
                 properties:
+                  status:
+                    type: string
+                    enum: [ok]
+                    description: Always "ok" on a 200 (v3.37.0, ST-28).
                   total_cost_usd:
                     type: number
                     format: float
-                    description: Sum of estimated_cost_usd in gemini_audit_log for today.
+                    description: Sum of cost_usd in claude_audit_log for today.
                   request_count:
                     type: integer
                     description: Number of Claude API requests logged today.
@@ -3566,6 +3573,17 @@ paths:
           $ref: "#/components/responses/Unauthorized"
         "500":
           $ref: "#/components/responses/InternalError"
+        "503":
+          description: The cost query failed; today's spend is unknown and no alert was evaluated (v3.37.0, ST-28)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, example: error }
+                  error: { type: string, example: cost_query_failed }
+                  message: { type: string }
+                  threshold_usd: { type: number, format: float }
 
   /ai/check-endpoint-anomalies:
     post:

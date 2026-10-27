@@ -11,6 +11,12 @@
 # one late daily run could land on the next day and miss a runaway. The
 # endpoint de-duplicates the alert per UTC day (BLG-OPS-172), so repeat
 # checks never send a second message.
+#
+# ST-28 (BLG-OPS-187, EPIC-05, v9.13): fail loudly. A failed cost query now
+# returns 503 (it used to report $0 spend), curl --fail-with-body fails the
+# step and prints the error body, and the last step sends a Telegram message
+# whenever any earlier step fails (missing secrets, unreachable API, 503).
+# GitHub's default failure email alone was easy to miss.
 name: AI Daily Cost Check
 
 on:
@@ -27,9 +33,30 @@ jobs:
           API_URL: ${{ secrets.API_URL }}
           API_KEY: ${{ secrets.API_KEY }}
         run: |
+          if [ -z "$API_URL" ] || [ -z "$API_KEY" ]; then
+            echo "::error::API_URL / API_KEY not configured as repo secrets; the daily cost check cannot run."
+            exit 1
+          fi
           echo "Triggering daily AI cost check at $(date -u)..."
-          curl -f --max-time 120 -X POST "${API_URL}/ai/check-daily-cost" \
+          curl --fail-with-body --max-time 120 -X POST "${API_URL}/ai/check-daily-cost" \
             -H "X-API-Key: ${API_KEY}" \
             -H "Content-Type: application/json"
           echo ""
           echo "Daily AI cost check trigger complete."
+
+      - name: Send Telegram alert on failure
+        if: failure()
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          RUN_URL="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+          MESSAGE="AI daily cost check FAILED: today's Claude API spend is unknown (query or workflow error). ${RUN_URL}"
+          echo "$MESSAGE"
+          if [ -n "$TELEGRAM_BOT_TOKEN" ] && [ -n "$TELEGRAM_CHAT_ID" ]; then
+            curl -sS --max-time 30 -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+              --data-urlencode "chat_id=${TELEGRAM_CHAT_ID}" \
+              --data-urlencode "text=${MESSAGE}"
+          else
+            echo "::warning::TELEGRAM_BOT_TOKEN/TELEGRAM_CHAT_ID not configured as repo secrets — alert not sent. Message would have been: ${MESSAGE}"
+          fi
