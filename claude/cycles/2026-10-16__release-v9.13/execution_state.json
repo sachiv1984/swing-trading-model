@@ -505,7 +505,8 @@
         "tests/test_chat_cash_context.py",
         "tests/test_ai_stop_time_focus_attribution.py",
         "tests/test_briefing_summary_ticker_check.py",
-        "tests/test_journal_summary_language_check.py"
+        "tests/test_journal_summary_language_check.py",
+        "tests/e2e/trade-debrief.spec.js"
       ],
       "stories": {
         "ST-15": {
@@ -595,16 +596,16 @@
         "ST-18": {
           "title": "Add an output-language check to the journal summary",
           "classification": "autonomous",
-          "status": "in_progress",
+          "status": "done",
           "assigned_to": "AI Compliance & Governance Officer; Backend Engineering Patterns Owner",
           "github_issue": 2048,
           "branch": "exec/2026-10-16__release-v9.13/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "c8fd54e759caf8547f04123338c5775421c15b59",
           "delegation_record_id": null,
           "blocked_since_utc": "2026-10-27T08:48:35Z",
           "unblock_criteria": "AI Compliance & Governance Officer ruling recorded in ESC-EXEC-20261027-03's resolution.",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-10-27T09:02:37Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/specs/api_contracts/ai_endpoints.md#POST /ai/journal-summary",
             "docs/specs/qa/ai_s13_boundary_test_suite.md#Endpoint: POST /ai/journal-summary",
@@ -612,8 +613,8 @@
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": {
             "role": "AI Compliance & Governance Officer",
             "method": "agent_mediated",
@@ -621,7 +622,7 @@
             "signed_utc": "2026-10-27T08:54:27Z",
             "notes": "Ruling (A) regenerate once then fallback on ESC-EXEC-20261027-03, first pass Approved, agent-mediated (§5.3). Binding conditions in the escalation resolution."
           },
-          "notes": "Reclassified delegated_decision -> autonomous after ESC-EXEC-20261027-03 resolved (A) regenerate once then fallback."
+          "notes": "Reclassified delegated_decision -> autonomous after ESC-EXEC-20261027-03 resolved (A) regenerate once then fallback. AC1: ruling recorded. AC2: staging sentence and a prescriptive one caught; regenerate and fallback applied and tested (tests/test_journal_summary_language_check.py; the ruling regex claims re-verified there, LL-v8.6-P3-01). AC3: descriptive summary passes unchanged. AC4: one compliance_check_result per call; ai_endpoints.md v1.30, ai_s13_boundary_test_suite.md v1.4 (B-JS-01..04); JOURNAL_SUMMARY_PROMPT_VERSION v1.0->v1.1. CI on c8fd54e7: all 7 workflows success (CI Pytest 40477816023, Playwright 40477816096). No deviation."
         },
         "ST-19": {
           "title": "Label available cash and starting capital separately in the AI chat context",
@@ -650,7 +651,7 @@
         "ST-20": {
           "title": "Keep the debrief card populated when Regenerate returns no data",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "in_progress",
           "assigned_to": "engine",
           "github_issue": 2050,
           "branch": "exec/2026-10-16__release-v9.13/EPIC-03",
@@ -660,7 +661,10 @@
           "unblock_criteria": null,
           "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": [],
+          "spec_references": [
+            "docs/specs/frontend/pages/trade_history.md#Post-Trade Debrief",
+            "tests/e2e/trade-debrief.spec.js"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
@@ -1195,6 +1199,7 @@
     "ST-15",
     "ST-16",
     "ST-17",
+    "ST-18",
     "ST-19",
     "ST-35",
     "ST-36",

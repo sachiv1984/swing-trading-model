@@ -20,6 +20,9 @@
  * the generated time is shown beside it, and a failed regenerate shows an
  * inline message while the previous debrief stays on screen. Design:
  * docs/design/2026-10-08__release-v9.11/debrief-regenerate-feedback/decision_record.md
+ *
+ * ST-20 (EPIC-03, v9.13, BLG-FE-211): a successful response with no `data`
+ * leaves the previous debrief (or the empty state) on screen.
  */
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -70,6 +73,13 @@ export default function TradeDebrief({ tradeId }) {
       return json.data;
     },
     onSuccess: (newDebrief) => {
+      // ST-20 (BLG-FE-211, v9.13): a 2xx with no `data` must not overwrite the
+      // cache with an empty debrief (a blank card). Refetch instead, so the
+      // previous debrief or the empty state stays on screen.
+      if (!newDebrief) {
+        queryClient.invalidateQueries({ queryKey: ["tradeDebrief", tradeId] });
+        return;
+      }
       setJustGenerated(true);
       // The POST response is the new debrief; show it (and its generated_at) directly.
       queryClient.setQueryData(["tradeDebrief", tradeId], { status: "found", data: newDebrief });

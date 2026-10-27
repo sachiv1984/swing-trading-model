@@ -13,6 +13,8 @@
  *              debrief section reports no colour-contrast violations (ST-05, v9.11, BLG-FE-205)
  *   SC-DBF-07: A mocked 500 on POST shows the regenerate error and keeps the existing debrief (ST-05)
  *   SC-DBF-08: After a successful regenerate, the generated timestamp updates (ST-05)
+ *   SC-DBF-09: A 200 with no `data` keeps the previous debrief (Regenerate) or the empty state
+ *              (Generate) on screen (ST-20, v9.13, BLG-FE-211)
  *
  * Infrastructure:
  * - Playwright page.route() network interception. No live backend required.
@@ -305,4 +307,44 @@ test('SC-DBF-08a: after a successful regenerate, the generated timestamp updates
   await expect(stamp).toHaveText('Generated just now', { timeout: 8000 });
   await expect(page.getByText(/your exit matched the plan on this trade/i)).toBeVisible();
   await expect(page.getByTestId('debrief-regenerate-error')).toHaveCount(0);
+});
+
+// ─── SC-DBF-09 — A 200 with no data leaves the card populated ─────────────
+// ST-20 (EPIC-03, v9.13, BLG-FE-211).
+
+test('SC-DBF-09a: Regenerate returning 200 with no data keeps the previous debrief visible', async ({ page }) => {
+  await mockExistingDebrief(page, { postStatus: 200, postBody: { status: 'ok' } });
+  await gotoAndExpand(page);
+  await expect(page.getByTestId('debrief-content')).toBeVisible({ timeout: 8000 });
+  const posted = page.waitForResponse((r) => r.url().includes(`/trades/${TRADE_ID}/debrief`) && r.request().method() === 'POST');
+  await page.getByTestId('regenerate-debrief-btn').click();
+  await posted;
+
+  await expect(page.getByTestId('regenerate-debrief-btn')).toHaveText('Regenerate', { timeout: 8000 });
+  await expect(page.getByTestId('debrief-content')).toBeVisible();
+  await expect(page.getByText(/your exit was 3 days earlier/i)).toBeVisible();
+  await expect(page.getByTestId('debrief-generated-at')).toBeVisible();
+  await expect(page.getByTestId('debrief-empty-state')).toHaveCount(0);
+});
+
+test('SC-DBF-09b: Generate returning 200 with no data keeps the empty state visible', async ({ page }) => {
+  await mockFallback(page);
+  await mockAnalytics(page);
+  await mockTrades(page);
+  await mockPlanVsRealityNotFound(page);
+  await page.route(new RegExp(`/trades/${TRADE_ID}/debrief`), (route) => {
+    if (route.request().method() === 'GET') {
+      return route.fulfill({ status: 404, contentType: 'application/json', body: JSON.stringify({ status: 'error', message: 'No debrief generated yet for this trade' }) });
+    }
+    return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok' }) });
+  });
+  await gotoAndExpand(page);
+  const posted = page.waitForResponse((r) => r.url().includes(`/trades/${TRADE_ID}/debrief`) && r.request().method() === 'POST');
+  await page.getByTestId('generate-debrief-btn').click();
+  await posted;
+
+  await expect(page.getByTestId('generate-debrief-btn')).toHaveText('Generate Debrief', { timeout: 8000 });
+  await expect(page.getByTestId('debrief-empty-state')).toBeVisible();
+  await expect(page.getByText(/no debrief generated yet/i)).toBeVisible();
+  await expect(page.getByTestId('debrief-content')).toHaveCount(0);
 });
