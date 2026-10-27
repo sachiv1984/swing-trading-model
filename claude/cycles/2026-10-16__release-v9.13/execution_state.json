@@ -494,10 +494,10 @@
       "merge_commit": "8ebd879a"
     },
     "EPIC-03": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-10-16__release-v9.13/EPIC-03",
       "pr_number": 2074,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-10-16__release-v9.13/qa_evidence_EPIC-03.md",
       "test_scenarios": [
@@ -734,7 +734,27 @@
           },
           "notes": "Engine-implemented: AC1 (rate once, persists: Playwright SC-CAR-01..05; pytest test_chat_answer_rating.py; real-Postgres test_chat_answer_rating_db.py runs in CI Phase B), AC2 documentation half (DS-35, data_model.md v2.64), AC3 (get_response_acceptance_rate, metrics_definitions.md v1.33.0, not-instrumented removed). Route chain in one commit: ai_endpoints.md v1.31 ## heading, openapi.yaml 3.36.0, routers/test.py (131), SystemStatus.js fallback 131, SC-SS-01b 131, api_performance_baseline.md §51. AC2 live half delegated: DEL-20261027-01. Engine commit 0922a448 (CI: Phase B test_unknown_answer_is_none failed on test setup, an ALTER on claude_audit_log before the scratch schema had it; fixed in a follow-up test-only commit). DS-35 Live Confirmation recorded 2026-10-27 for staging (b18163f8) and production (2cc67cf2); DEL-20261027-01 Unblocked, sign_off_cleared. AC 2 live half met."
         }
-      }
+      },
+      "sign_off_record": {
+        "role": "Director of Quality",
+        "method": "agent_mediated",
+        "status": "cleared",
+        "cleared_utc": "2026-10-27",
+        "user_directed": true,
+        "reference": "qa_evidence_EPIC-03.md"
+      },
+      "merge_gate_record": {
+        "qa_signoff_comment": "https://github.com/sachiv1984/swing-trading-model/pull/2074#issuecomment-6441927164",
+        "po_acceptance_comment": "https://github.com/sachiv1984/swing-trading-model/pull/2074#issuecomment-6441927681",
+        "agent_review_comment": "https://github.com/sachiv1984/swing-trading-model/pull/2074#issuecomment-6441581330",
+        "method": "agent_recorded_on_explicit_human_direction",
+        "direction": "user, 2026-10-27: 'give QA and PO sign off under my direction'",
+        "head": "1b60b328",
+        "ci": "43/43 checks green at 1b60b328",
+        "merge": "human - merged by sachiv1984 at 2026-10-27T12:31:28Z, merge commit 40d298f4"
+      },
+      "merged_utc": "2026-10-27T12:31:28Z",
+      "merge_commit": "40d298f4"
     },
     "EPIC-04": {
       "status": "not_started",
@@ -1278,10 +1298,10 @@
     "epics_merged": [
       "EPIC-01",
       "EPIC-06",
-      "EPIC-02"
+      "EPIC-02",
+      "EPIC-03"
     ],
     "epics_pending": [
-      "EPIC-03",
       "EPIC-04",
       "EPIC-05"
     ],
