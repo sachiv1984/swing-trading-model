@@ -85,3 +85,51 @@ Last Updated: 2026-10-16
 - **Commit format required:** `[EPIC-05][ST-29] <description>` on `exec/2026-10-16__release-v9.13/EPIC-05` (or a `[GOVERNANCE]` commit on `main` if EPIC-05 has merged)
 - **Progress:** 2026-10-27 — step (1) done. The user (human, acting for the Infrastructure & Operations Owner) set both secrets; `gh secret list` shows `RENDER_STAGING_BACKEND_DEPLOY_HOOK` (updated 2026-10-27T15:57:29Z) and `RENDER_STAGING_FRONTEND_DEPLOY_HOOK` (2026-10-27T15:58:13Z). The hooks have not been called yet; whether each holds its own service's hook is proven by the trigger steps' deploy-ID check on the first post-merge run. Engine-side CI on `d81af9b0` green (CI Pytest 40506739549, Playwright 40506739503). Steps (2) and (3) remain.
 - **Status:** Pending
+
+## DEL-20261027-04
+
+- **ST Item:** ST-31 — Attribute each external API call to the feature that triggered it
+- **EPIC:** EPIC-05
+- **Classification:** delegated_backend (Human-Delegation — `sprint_backlog.md` ST-31 Staging-only ACs: "AC 2 (the attribution report run on live data names the top 3 contributors)"; DS-36 Live Confirmation; RISK-01)
+- **Assigned to:** Infrastructure & Operations Owner; Data Model & Domain Schema Owner
+- **GitHub Issue:** #2061
+- **Branch:** exec/2026-10-16__release-v9.13/EPIC-05
+- **Delegated at:** 2026-10-27T21:38:28Z
+- **What is needed:** The engine delivered AC 1 and the computable report at `e31a6b56` (`backend/utils/api_attribution.py`, `GET /ops/api-call-attribution`, DS-36, `tests/test_api_call_attribution.py`). Remaining: (1) deploy the staging backend from `exec/2026-10-16__release-v9.13/EPIC-05` (Render branch switch, as for EPIC-02; `staging-deploy.yml` cannot deploy the backend until EPIC-05 merges); (2) DS-36 Live Confirmation on staging: the ensure-functions apply the Up Migration on first use, so after any screener run or provider call, run DS-36's Verification query (`data_model.md` §DS-36) in the Supabase SQL editor and paste the output (expect 2 column rows and 1 index row); (3) trigger a screener run on staging (Screener page → Run, or `POST /screener/run`), wait for it to finish, then call `GET /ops/api-call-attribution?window=daily` on staging and paste the JSON; (4) after EPIC-05 merges and production deploys, repeat (2) on production; (5) switch the staging backend back to `main`.
+- **Workflow viability (LL-v9.10-P3-01):** step (1) is a manual Render branch switch (used for EPIC-02 on 2026-10-27, DEL-20261017-01), not a workflow. `staging-deploy.yml` has no success in its last 10 runs; the cause is ST-29's hook fix, which only reaches `main` at merge.
+- **Spec reference:** `docs/specs/api_contracts/ops_endpoints.md#GET /ops/api-call-attribution`; `docs/specs/data_model.md#DS-36`; layers: utils, middleware (`main.py`), router (`cost_monitoring.py`), database (`log_api_calls`, `get_api_call_attribution`)
+- **Unblock criteria:** DS-36 Verification output from staging (and production after merge), and a staging attribution report naming its top contributors, recorded in `data_model.md` DS-36 Live Confirmation and `qa_evidence_EPIC-05.md`.
+- **Commit format required:** `[EPIC-05][ST-31] <description>` on `exec/2026-10-16__release-v9.13/EPIC-05` (or a `[GOVERNANCE]` commit on `main` if EPIC-05 has merged)
+- **Status:** Pending
+
+## DEL-20261027-05
+
+- **ST Item:** ST-32 — Benchmark the full screener run
+- **EPIC:** EPIC-05
+- **Classification:** delegated_backend (Human-Delegation — `sprint_backlog.md` ST-32 Staging-only ACs: "AC 1 (p50/p95 from a full-universe run on a deployed environment)"; RISK-01)
+- **Assigned to:** Infrastructure & Operations Owner
+- **GitHub Issue:** #2062
+- **Branch:** exec/2026-10-16__release-v9.13/EPIC-05
+- **Delegated at:** 2026-10-27T21:38:28Z
+- **What is needed:** The engine delivered the measurement and AC 2 at `e31a6b56`: each run stores `screener_runs.duration_seconds` (DS-36), `GET /screener/history` returns it, `scripts/screener_run_benchmark.py` computes p50/p95 and the 1.5× threshold, and `api_performance_baseline.md` §53 defines the method and threshold. Remaining: after EPIC-05 merges and production deploys, let the nightly `screener-refresh.yml` run for 10 weekdays (about two weeks), then run `API_URL=<production> API_KEY=<key> python3 scripts/screener_run_benchmark.py` and paste its JSON. Production nightly runs are used so no extra load is put on Yahoo Finance or Alpaca.
+- **Workflow viability (LL-v9.10-P3-01):** `screener-refresh.yml` last succeeded at run 40430303674 (schedule, 2026-10-27T01:03:49Z); all of its last 30 runs succeeded. The workflow only starts the run (202), so its own duration is not the run's.
+- **Spec reference:** `docs/ops/api_performance_baseline.md#53. Full Screener Run Benchmark (ST-32, EPIC-05, v9.13, BLG-OPS-23)`; `docs/specs/api_contracts/screener_api_contract.md#GET /screener/history`
+- **Unblock criteria:** the script's output over at least 10 qualifying production runs, recorded in `api_performance_baseline.md` §53.2.
+- **Commit format required:** `[GOVERNANCE] <description>` on `main` (post-merge)
+- **Status:** Pending
+
+## DEL-20261027-06
+
+- **ST Item:** ST-30 — Produce the combined data-pipeline cost baseline
+- **EPIC:** EPIC-05
+- **Classification:** delegated_backend (Human-Delegation — `sprint_backlog.md` ST-30 Staging-only ACs: "AC 1 (the weekly baseline uses live usage figures)"; RISK-01)
+- **Assigned to:** Infrastructure & Operations Owner
+- **GitHub Issue:** #2060
+- **Branch:** exec/2026-10-16__release-v9.13/EPIC-05
+- **Delegated at:** 2026-10-27T21:38:28Z
+- **What is needed:** The engine delivered `docs/ops/data_pipeline_cost_baseline.md` at `b48ebe75`: the combined weekly cost baseline is $0.00 (every source free), with the basis per source, and the >2× advisory threshold (AC 2). Remaining: 7 full days after EPIC-05 deploys to production, call `GET /ops/api-call-attribution?window=weekly` on production and paste the JSON, to fill §4's weekly call volumes per source.
+- **Workflow viability (LL-v9.10-P3-01):** not a workflow; a read-only API call with the production `API_KEY`.
+- **Spec reference:** `docs/ops/data_pipeline_cost_baseline.md#4. Weekly Baseline`
+- **Unblock criteria:** the production weekly report recorded in §4 with its date and top contributors.
+- **Commit format required:** `[GOVERNANCE] <description>` on `main` (post-merge)
+- **Status:** Pending

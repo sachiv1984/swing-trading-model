@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-16T10:49:11Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-27T21:21:14Z",
+  "last_updated_utc": "2026-10-27T21:38:28Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-06",
@@ -883,7 +883,9 @@
         "tests/test_daily_cost_fails_loudly.py",
         "tests/test_staging_deploy_both_services.py",
         "tests/test_staging_smoke_test.py",
-        "tests/test_wait_for_staging_deploy_live.py"
+        "tests/test_wait_for_staging_deploy_live.py",
+        "tests/test_api_call_attribution.py",
+        "tests/test_screener_run_duration.py"
       ],
       "stories": {
         "ST-28": {
@@ -946,65 +948,77 @@
         "ST-30": {
           "title": "Produce the combined data-pipeline cost baseline",
           "classification": "delegated_backend",
-          "status": "not_started",
+          "status": "blocked_backend",
           "assigned_to": "FinOps & Resource Architect; Infrastructure & Operations Owner",
           "github_issue": 2060,
           "branch": "exec/2026-10-16__release-v9.13/EPIC-05",
           "commit_sha": null,
-          "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
+          "delegation_record_id": "DEL-20261027-06",
+          "blocked_since_utc": "2026-10-27T21:38:28Z",
+          "unblock_criteria": "Production GET /ops/api-call-attribution?window=weekly output after 7 days, recorded in data_pipeline_cost_baseline.md §4 (DEL-20261027-06).",
           "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": [],
+          "spec_references": [
+            "docs/ops/data_pipeline_cost_baseline.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
-          "last_completed_substep": null,
+          "last_completed_substep": "3.1.B.delegated",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Engine commit b48ebe753b08d16e93c62fe18149024bd843af60 (2026-10-27T21:38:00Z): combined weekly cost baseline \\$0.00 (all sources free, basis per source), >2x advisory threshold on volume, cost and failures (AC 2 met), gate verified at Release Planning (AC 3). Follow-up BLG-OPS-195 (automated check). AC 1 weekly volumes delegated: DEL-20261027-06 (post-merge, 7 days of production data)."
         },
         "ST-31": {
           "title": "Attribute each external API call to the feature that triggered it",
           "classification": "delegated_backend",
-          "status": "not_started",
+          "status": "blocked_backend",
           "assigned_to": "FinOps & Resource Architect; Head of Engineering",
           "github_issue": 2061,
           "branch": "exec/2026-10-16__release-v9.13/EPIC-05",
           "commit_sha": null,
-          "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
+          "delegation_record_id": "DEL-20261027-04",
+          "blocked_since_utc": "2026-10-27T21:38:28Z",
+          "unblock_criteria": "DS-36 Verification output from staging (and production after merge) and a staging GET /ops/api-call-attribution report naming its top contributors, recorded in data_model.md DS-36 Live Confirmation and qa_evidence_EPIC-05.md (DEL-20261027-04).",
           "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": [],
+          "spec_references": [
+            "docs/specs/api_contracts/ops_endpoints.md#GET /ops/api-call-attribution",
+            "docs/specs/data_model.md#DS-36",
+            "backend/utils/api_attribution.py",
+            "tests/test_api_call_attribution.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
-          "last_completed_substep": null,
+          "last_completed_substep": "3.1.B.delegated",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Engine commit e31a6b56709bf80d51901340e535b9294de1f9f9 (2026-10-27T21:37:54Z, with ST-32): transport-level attribution (requests and curl_cffi Session.request wrapped), feature from the route template via middleware (resolved at call time from scope['route']), inherited by background tasks and screener worker threads (copy_context), batched writes to api_call_log; GET /ops/api-call-attribution (cost by feature and provider, top 3). DS-36, openapi 3.39.0, ops_endpoints v1.4, api_changelog 1.24.0, test.py, SystemStatus 132, SC-SS-01b, baseline §52. Full suite 2972 passed. Live halves delegated: DEL-20261027-04."
         },
         "ST-32": {
           "title": "Benchmark the full screener run",
           "classification": "delegated_backend",
-          "status": "not_started",
+          "status": "blocked_backend",
           "assigned_to": "Infrastructure & Operations Owner",
           "github_issue": 2062,
           "branch": "exec/2026-10-16__release-v9.13/EPIC-05",
           "commit_sha": null,
-          "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
+          "delegation_record_id": "DEL-20261027-05",
+          "blocked_since_utc": "2026-10-27T21:38:28Z",
+          "unblock_criteria": "scripts/screener_run_benchmark.py output over at least 10 qualifying production runs, recorded in api_performance_baseline.md §53.2 (DEL-20261027-05).",
           "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": [],
+          "spec_references": [
+            "docs/ops/api_performance_baseline.md#53. Full Screener Run Benchmark (ST-32, EPIC-05, v9.13, BLG-OPS-23)",
+            "docs/specs/api_contracts/screener_api_contract.md#GET /screener/history",
+            "scripts/screener_run_benchmark.py",
+            "tests/test_screener_run_duration.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
-          "last_completed_substep": null,
+          "last_completed_substep": "3.1.B.delegated",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Engine commit e31a6b56709bf80d51901340e535b9294de1f9f9 (with ST-31): screener_runs.duration_seconds recorded per run (DS-36), returned by GET /screener/history (contract v1.6); scripts/screener_run_benchmark.py (nearest-rank p50/p95 over non-degraded full-universe runs, 1.5x threshold); baseline §53 defines method and threshold (AC 2 met). AC 1 live measurement delegated: DEL-20261027-05 (post-merge, 10 nightly production runs)."
         },
         "ST-33": {
           "title": "Assess data-provider risk and failover options",
@@ -1253,7 +1267,10 @@
   },
   "blocked_items": [],
   "delegated_items": [
-    "ST-29"
+    "ST-29",
+    "ST-30",
+    "ST-31",
+    "ST-32"
   ],
   "completed_items": [
     "ST-01",
