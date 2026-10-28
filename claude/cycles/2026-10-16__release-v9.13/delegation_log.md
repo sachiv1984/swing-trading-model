@@ -101,7 +101,7 @@ Last Updated: 2026-10-16
 - **Unblock criteria:** DS-36 Verification output from staging (and production after merge), and a staging attribution report naming its top contributors, recorded in `data_model.md` DS-36 Live Confirmation and `qa_evidence_EPIC-05.md`.
 - **Commit format required:** `[EPIC-05][ST-31] <description>` on `exec/2026-10-16__release-v9.13/EPIC-05` (or a `[GOVERNANCE]` commit on `main` if EPIC-05 has merged)
 - **Progress:** 2026-10-28 — staging half done by the user (human, acting for both assigned owners). Staging backend switched to the EPIC-05 branch, one screener run, DS-36 Verification query: `screener_runs.duration_seconds` numeric YES, `api_call_log.feature` text YES, index `idx_acl_called_at_feature` (`f47335cb`). `GET /ops/api-call-attribution?window=daily`: 38 calls; `POST /screener/run` 23 (`alpaca_data` 5, `yahoo` 18), `GET /earnings/{ticker}` 15 (`yahoo`); no `unattributed` rows; `top_contributors` named (`a2553bf8`). Staging switched back to `main`.
-- **Status:** In Progress — carried to post-sprint. ST-31 marked done 2026-10-28 (both ACs met on staging). The production DS-36 Live Confirmation remains and is tracked in BLG-OPS-197 (v9.14).
+- **Status:** In Progress — carried to post-sprint. ST-31 marked done 2026-10-28 (Pass_with_deviation at the DoQ review: staging named 2 contributors). The production weekly report naming the top 3 and the production DS-36 Live Confirmation remain, tracked in BLG-OPS-197 (v9.14).
 
 ## DEL-20261027-05
 

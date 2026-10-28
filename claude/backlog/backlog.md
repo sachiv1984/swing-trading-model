@@ -6352,7 +6352,7 @@ ST-29 changed `staging-deploy.yml` to call one deploy hook per staging service a
 **Priority:** P3 (Low)
 **Type:** Operations / Cost Monitoring
 **Owner:** FinOps & Resource Architect; Infrastructure & Operations Owner
-**Source:** ST-30 (BLG-OPS-18) and ST-31 (BLG-OPS-19), EPIC-05, cycle `2026-10-16__release-v9.13` — post-merge remainder, `DEL-20261027-06` and the production half of `DEL-20261027-04` — 2026-10-28
+**Source:** ST-30 (BLG-OPS-18) AC 1 and ST-31 (BLG-OPS-19) AC 2, EPIC-05, cycle `2026-10-16__release-v9.13` — post-merge remainder, `DEL-20261027-06` and the production half of `DEL-20261027-04` — 2026-10-28
 **Effort:** XS (<1h)
 **Provisional-Target:** v9.14
 **Depends on:** EPIC-05 merged and deployed to production; 7 days of production data
@@ -6367,7 +6367,7 @@ ST-30 filed the combined weekly cost baseline ($0.00, every source free) and the
 
 **Acceptance Criteria**
 - DS-36 Live Confirmation for production is recorded: `api_call_log.feature` text YES, `screener_runs.duration_seconds` numeric YES, index `idx_acl_called_at_feature`
-- `data_pipeline_cost_baseline.md` §4 has weekly calls and failures for each source and combined, from one production weekly report, with its date and top contributors; the §6 volume sign-off line is ticked
+- `data_pipeline_cost_baseline.md` §4 has weekly calls and failures for each source and combined, from one production weekly report, with its date and `top_contributors` (3 features, or every feature with calls if fewer than 3 made any); the §6 volume sign-off line is ticked
 
 ---
 

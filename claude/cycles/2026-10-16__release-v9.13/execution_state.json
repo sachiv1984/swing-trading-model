@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-16T10:49:11Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-28T09:34:50Z",
+  "last_updated_utc": "2026-10-28T10:05:00Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-06",
@@ -877,7 +877,7 @@
       "branch": "exec/2026-10-16__release-v9.13/EPIC-05",
       "pr_number": null,
       "pr_status": "none",
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-10-16__release-v9.13/qa_evidence_EPIC-05.md",
       "test_scenarios": [
         "tests/test_daily_cost_fails_loudly.py",
@@ -989,7 +989,7 @@
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": "3.1.B.unblock",
           "sign_off_record": {
             "role": "Infrastructure & Operations Owner; Data Model & Domain Schema Owner",
@@ -998,7 +998,7 @@
             "signed_utc": "2026-10-28T09:34:50Z",
             "notes": "User (human) switched the staging backend to the EPIC-05 branch, ran a screener, ran the DS-36 Verification query and called GET /ops/api-call-attribution?window=daily on staging, 2026-10-28. Recorded in qa_evidence_EPIC-05.md and data_model.md DS-36. DEL-20261027-04 (staging half)."
           },
-          "notes": "Engine commit e31a6b56709bf80d51901340e535b9294de1f9f9 (2026-10-27T21:37:54Z, with ST-32): transport-level attribution (requests and curl_cffi Session.request wrapped), feature from the route template via middleware (resolved at call time from scope['route']), inherited by background tasks and screener worker threads (copy_context), batched writes to api_call_log; GET /ops/api-call-attribution (cost by feature and provider, top 3). DS-36, openapi 3.39.0, ops_endpoints v1.4, api_changelog 1.24.0, test.py, SystemStatus 132, SC-SS-01b, baseline §52. Full suite 2972 passed. Live halves delegated: DEL-20261027-04. 2026-10-28: staging half of DEL-20261027-04 done. Staging backend deployed from the EPIC-05 branch; after one screener run the DS-36 Verification query returned both columns and the index (f47335cb). GET /ops/api-call-attribution?window=daily on staging: 38 calls, POST /screener/run 23 (alpaca_data 5, yahoo 18), GET /earnings/{ticker} 15 (yahoo), no unattributed rows, top_contributors named (a2553bf8). AC 1 and AC 2 met. The production DS-36 Live Confirmation is a schema-hygiene step, not an AC; it is tracked with ST-30's remainder in BLG-OPS-197. Deviation check: none."
+          "notes": "Engine commit e31a6b56709bf80d51901340e535b9294de1f9f9 (2026-10-27T21:37:54Z, with ST-32): transport-level attribution (requests and curl_cffi Session.request wrapped), feature from the route template via middleware (resolved at call time from scope['route']), inherited by background tasks and screener worker threads (copy_context), batched writes to api_call_log; GET /ops/api-call-attribution (cost by feature and provider, top 3). DS-36, openapi 3.39.0, ops_endpoints v1.4, api_changelog 1.24.0, test.py, SystemStatus 132, SC-SS-01b, baseline §52. Full suite 2972 passed. Live halves delegated: DEL-20261027-04. 2026-10-28: staging half of DEL-20261027-04 done. Staging backend deployed from the EPIC-05 branch; after one screener run the DS-36 Verification query returned both columns and the index (f47335cb). GET /ops/api-call-attribution?window=daily on staging: 38 calls, POST /screener/run 23 (alpaca_data 5, yahoo 18), GET /earnings/{ticker} 15 (yahoo), no unattributed rows, top_contributors named (a2553bf8). AC 1 and AC 2 met. The production DS-36 Live Confirmation is a schema-hygiene step, not an AC; it is tracked with ST-30's remainder in BLG-OPS-197. Deviation check: none. Regraded Pass_with_deviation at the DoQ review (2026-10-28): AC 2 on live data names the top 3, staging named 2; production weekly report tracked in BLG-OPS-197."
         },
         "ST-32": {
           "title": "Benchmark the full screener run",
