@@ -372,7 +372,7 @@ export default function SystemStatus() {
           <Button
             onClick={() => refetchHealth()}
             disabled={healthLoading}
-            className="bg-slate-800 hover:bg-slate-700 border border-slate-700"
+            className="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white"
           >
             <RefreshCw className={cn("w-4 h-4 mr-2", healthLoading && "animate-spin")} />
             Refresh Health

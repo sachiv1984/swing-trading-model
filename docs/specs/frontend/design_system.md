@@ -3,9 +3,10 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 1.23
-**Last Updated:** 2026-10-13 (ST-23, EPIC-03, v9.12, BLG-FE-200 — new §Light-Theme Colour Tokens under §Theme & Colors: light mode is a supported theme; token pairs from the v9.12 light-theme decision record §3); prior — 2026-09-23 (ST-24, EPIC-06, v9.6, BLG-SPEC-144 — new §Canonical Chart Data Palette added under §Accessibility, cross-referenced from the existing chart contrast checklist); prior — 2026-09-21 (v9.6 design gate — ST-05/BLG-FE-181 empty-state next-action rule added to §Data States; ST-06/BLG-FE-182 new §Number and Currency Formatting in §Consistency Rules); prior history retained — see prior entries in version control
+**Version:** 1.24
+**Last Updated:** 2026-10-28 (ST-25, EPIC-04, v9.13, BLG-FE-221 — new §Coloured Button Fills under §Buttons: authored fill renders via tailwind-merge in cn(), white text, AA rest and hover shades); prior — 2026-10-13 (ST-23, EPIC-03, v9.12, BLG-FE-200 — new §Light-Theme Colour Tokens under §Theme & Colors: light mode is a supported theme; token pairs from the v9.12 light-theme decision record §3); prior — 2026-09-23 (ST-24, EPIC-06, v9.6, BLG-SPEC-144 — new §Canonical Chart Data Palette added under §Accessibility, cross-referenced from the existing chart contrast checklist); prior history retained — see prior entries in version control
 **Header remediation note (v6.7 ST-03, shared_standards.md §9):** this document previously had no lifecycle header. Header applied now (version stamped at 1.0, reflecting no prior tracked version history) rather than backfilling an assumed version — content itself is unchanged by this remediation.
+**v1.24 (ST-25, EPIC-04, v9.13, BLG-FE-221):** added **§Coloured Button Fills** under §Shared UI Components → Buttons. `cn()` now merges with `tailwind-merge`, so a `<Button>`'s authored colour fill wins over the variant's `bg-primary`; the rule fixes white text and AA rest/hover shades for each fill role. Design source: `docs/design/2026-10-16__release-v9.13/coloured-button-fills/decision_record.md` §2.
 **v1.23 (ST-23, EPIC-03, v9.12, BLG-FE-200):** added **§Light-Theme Colour Tokens** under §Theme & Colors. Light mode is a supported theme (Head of UX & Design with the Product Owner, 2026-10-12, resolving RISK-03). The light+dark pairs for card surfaces, nested rows, primary/strong/secondary text, P&L, warning and accent text, with measured contrast and four usage rules. Applied in-story to Reports (Monthly, Tax Year) and Notifications (Preferences, History). Design source: `docs/design/2026-10-12__release-v9.12/light-theme-support/decision_record.md` §3.
 **v1.22 (ST-24, EPIC-06, v9.6, BLG-SPEC-144):** added the **Canonical Chart Data Palette** subsection (§Accessibility, immediately after the v1.6 chart contrast checklist) — an 8-colour categorical palette (Okabe–Ito, 2008) documented with its source and CVD-type rationale, giving the existing checklist's "each series colour meets contrast" and "no two adjacent series rely on hue alone" rules a concrete default to check against, where none existed before. Cross-referenced from this document only (spec debt, `BLG-SPEC-144`) — no chart component adopts it in this story; adoption is a UI change requiring its own design-gate pass (noted as a follow-up, not filed as a new backlog item since the existing `BLG-SPEC-144` item itself already covers "spec + adoption is separate").
 **v1.21 (ST-05 + ST-06, EPIC-01, v9.6, BLG-FE-181 + BLG-FE-182):** (1) §Data States gains the **Next-action rule** — every user-facing empty state renders exactly one primary next-action link/button (`emptyAction`, or the enclosing `DashboardCard`'s `to` link), with a system-populated-only exclusion; the 20-site audit baseline lives in the design record. (2) §Consistency Rules gains **Number and Currency Formatting** — the canonical money/percentage/R-multiple/missing-value formats (typographic minus `−`, en-GB grouping, 2 dp money, signed P&L, `—` for missing) that the shared formatting helper implements; none existed in any spec before, so the story's "identical negative/decimal conventions" AC had nothing to be measured against. Design sources: `docs/design/2026-09-21__release-v9.6/empty-state-next-action/decision_record.md`, `docs/design/2026-09-21__release-v9.6/number-format-convention/decision_record.md`.
@@ -151,6 +152,24 @@ Buttons include:
 - Hover states  
 - Disabled states when validation fails  
 - Clear loading/error handling where relevant  
+
+#### Coloured Button Fills
+
+*Added v1.24 (ST-25, EPIC-04, v9.13, BLG-FE-221).*
+
+A `<Button>` given a colour fill through `className` (e.g. `bg-emerald-700`) renders **that fill with `text-white`**. `cn()` (`src/lib/utils.js`) resolves Tailwind conflicts with `tailwind-merge`, so the authored fill replaces the variant's `bg-primary` regardless of CSS order. Do not use `!bg-` to force a fill.
+
+Both the rest and the hover fill must meet **4.5:1** against white text (button labels are normal-size text). A coloured button never relies on the variant's `text-primary-foreground`, which is near-black in the dark theme.
+
+| Role | Rest | Hover |
+|------|------|-------|
+| Positive action | `bg-emerald-700` (5.48:1) | `hover:bg-emerald-800` (7.68:1) |
+| Destructive action | `bg-rose-600` (4.70:1) | `hover:bg-rose-700` (6.29:1) |
+| Destructive (red) | `bg-red-600` (4.83:1) | `hover:bg-red-700` (6.47:1) |
+| Caution action | `bg-amber-700` (5.02:1) | `hover:bg-amber-800` (7.09:1) |
+| Neutral solid | `bg-slate-800` (14.63:1) | `hover:bg-slate-700` (10.35:1) |
+
+Not allowed with white text: `emerald-600` (3.77:1), `rose-500` (3.67:1). Source: `docs/design/2026-10-16__release-v9.13/coloured-button-fills/decision_record.md` §2.
 
 ### Tables
 Used primarily for Positions and Trade History:

@@ -180,7 +180,7 @@ export default function MonitorModal({
               {selectedCount > 0 && (
                 <Button 
                   onClick={handleConfirm}
-                  className="bg-rose-600 hover:bg-rose-500 text-white"
+                  className="bg-rose-600 hover:bg-rose-700 text-white"
                 >
                   Exit Selected
                 </Button>

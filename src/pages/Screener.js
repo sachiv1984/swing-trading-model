@@ -330,7 +330,7 @@ function WatchlistPopover({ result, onClose, onAdded }) {
               size="sm"
               onClick={handleAdd}
               disabled={submitting}
-              className="bg-emerald-600 hover:bg-emerald-700 text-white h-7 px-3 text-xs"
+              className="bg-emerald-700 hover:bg-emerald-800 text-white h-7 px-3 text-xs"
             >
               {submitting ? <Loader2 className="w-3 h-3 animate-spin" /> : "Add to Watchlist"}
             </Button>
@@ -1062,7 +1062,7 @@ export default function Screener() {
         emptyHeading="No screener results yet"
         emptyBody="Run your first screen to find strategy-passing candidates."
         emptyAction={
-          <Button onClick={triggerScan} disabled={scanning} className="bg-emerald-600 hover:bg-emerald-700">
+          <Button onClick={triggerScan} disabled={scanning} className="bg-emerald-700 hover:bg-emerald-800 text-white">
             {scanning ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
             Run Screener
           </Button>

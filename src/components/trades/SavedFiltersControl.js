@@ -160,7 +160,7 @@ export default function SavedFiltersControl({ hasActiveFilters, currentFilterSta
               <Button
                 onClick={() => handleDelete(presets.find((p) => p.id === confirmingDeleteId))}
                 disabled={deleting}
-                className="bg-rose-600 hover:bg-rose-500 text-white border-0"
+                className="bg-rose-600 hover:bg-rose-700 text-white border-0"
               >
                 {deleting ? "Deleting…" : "Delete"}
               </Button>

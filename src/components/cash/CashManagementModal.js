@@ -118,9 +118,9 @@ export default function CashManagementModal({ open, onClose, portfolio, transact
               type="submit" 
               disabled={createTransaction.isPending || !amount}
               className={cn(
-                "w-full",
+                "w-full text-white",
                 type === "deposit" 
-                  ? "bg-emerald-600 hover:bg-emerald-700" 
+                  ? "bg-emerald-700 hover:bg-emerald-800" 
                   : "bg-rose-600 hover:bg-rose-700"
               )}
             >

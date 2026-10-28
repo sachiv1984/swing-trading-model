@@ -382,7 +382,7 @@ export default function TradePlans() {
               <Button
                 onClick={() => deleteMutation.mutate(deleteTarget.id)}
                 disabled={deleteMutation.isPending}
-                className="bg-rose-600 hover:bg-rose-500 text-white border-0"
+                className="bg-rose-600 hover:bg-rose-700 text-white border-0"
               >
                 {deleteMutation.isPending ? "Deleting…" : "Delete"}
               </Button>
