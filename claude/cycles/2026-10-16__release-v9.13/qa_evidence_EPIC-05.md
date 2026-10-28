@@ -1,7 +1,7 @@
 Owner: Director of Quality
 Class: Planning Document (Class 4)
 Status: Active
-Last Updated: 2026-10-28 (ST-31 staging schema check recorded, DEL-20261027-04); prior — 2026-10-27 (created; ST-28 failed-run Telegram receipt recorded, DEL-20261027-02)
+Last Updated: 2026-10-28 (ST-31 staging schema check and attribution report recorded, DEL-20261027-04); prior — 2026-10-27 (created; ST-28 failed-run Telegram receipt recorded, DEL-20261027-02)
 
 # QA Evidence — EPIC-05: Operations, Cost & Platform
 
@@ -47,4 +47,15 @@ Story: ST-31, `DEL-20261027-04` (staging half). Production half after merge.
 
 Index query: `idx_acl_called_at_feature` (1 row). Matches the expected output. The columns and index were created by the ensure-functions on first use; no manual migration was run.
 
-**Attribution report** (`GET /ops/api-call-attribution?window=daily`): pending.
+**Attribution report** (`GET /ops/api-call-attribution?window=daily`, staging, called by the user with curl):
+
+| Feature | Calls | Failures | By provider | Estimated cost |
+|---------|-------|----------|-------------|----------------|
+| `POST /screener/run` | 23 | 3 | `alpaca_data` 5, `yahoo` 18 | $0.00 |
+| `GET /earnings/{ticker}` | 15 | 1 | `yahoo` 15 | $0.00 |
+
+- **By provider:** `yahoo` 33 calls (4 failures), `alpaca_data` 5 (0 failures). Total 38, estimated cost $0.00.
+- **`top_contributors`:** `["POST /screener/run", "GET /earnings/{ticker}"]`.
+- **Result:** calls are tagged with the route that triggered them, including the screener run's background task and worker threads (`POST /screener/run`, not `unattributed`). No `unattributed` rows. Only 2 features made provider calls in the window, so the top 3 has 2 entries.
+
+**Staging half of `DEL-20261027-04`: complete.** Remaining: the DS-36 Verification query on production after merge.
