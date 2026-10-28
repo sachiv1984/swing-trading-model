@@ -1,8 +1,8 @@
 **Owner:** Infrastructure & Operations Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 1.4
-**Last Updated:** 2026-10-27 (ST-29, EPIC-05, v9.13, BLG-OPS-189 — §4: two deploy hooks, one per staging service, each checked and waited on; smoke test confirms the `STAGING_API_URL` host); prior — 2026-10-15 (ST-29, EPIC-04, v9.12, BLG-OPS-181 — §4: which service the hook deploys, and the 2026-10-15 finding that the secret held the frontend's hook); prior — 2026-10-07 (ST-18, EPIC-04, v9.10, BLG-OPS-171 — §7 stale-deploy check now compares staging against the latest staging-deploying commit, not main's tip); prior history retained — see prior entries in version control
+**Version:** 1.5
+**Last Updated:** 2026-10-28 (BLG-OPS-196 — §4: retired `RENDER_STAGING_DEPLOY_HOOK` deleted after the first green two-service run on `main`); prior — 2026-10-27 (ST-29, EPIC-05, v9.13, BLG-OPS-189 — §4: two deploy hooks, one per staging service, each checked and waited on; smoke test confirms the `STAGING_API_URL` host); prior — 2026-10-15 (ST-29, EPIC-04, v9.12, BLG-OPS-181 — §4: which service the hook deploys, and the 2026-10-15 finding that the secret held the frontend's hook); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -70,7 +70,7 @@ For each service:
 3. Add it to GitHub repository secrets under that service's secret name above:
    - Repo → **Settings** → **Secrets and variables** → **Actions** → **New repository secret**
 
-`RENDER_STAGING_DEPLOY_HOOK` is retired; delete it once both new secrets are set.
+`RENDER_STAGING_DEPLOY_HOOK` is retired and was deleted on 2026-10-28, after the first two-service run on `main` passed (run 40680643380, BLG-OPS-196).
 
 **What `staging-deploy.yml` does with them.** For each service, `scripts/trigger_staging_deploy.py` calls the hook with `?ref=<the run's commit>` (so the service builds that commit, not whatever its Branch setting points at), reads the deploy ID from the hook's response and looks it up under the expected service (`GET /v1/services/{id}/deploys/{deployId}`, using `RENDER_PLATFORM_API_KEY`). A 404 there means the secret holds another service's hook, and the step fails with that message. `scripts/wait_for_staging_deploy_live.py --service <name> --deploy-id <id>` then follows that deploy until it is live on the run's commit, and fails at once if it ends as `build_failed`, `update_failed`, `pre_deploy_failed`, `canceled` or `deactivated`. A missing secret fails its trigger step with the setup instructions. `tests/test_staging_deploy_both_services.py` fails if the workflow calls only one hook, waits on a service it did not deploy, or still reads the retired secret.
 

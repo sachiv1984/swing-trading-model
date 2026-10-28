@@ -1,7 +1,7 @@
 Owner: Director of Quality
 Class: Planning Document (Class 4)
 Status: Active
-Last Updated: 2026-10-28 (human DoQ confirmation and Product Owner acceptance recorded); prior — 2026-10-28 (DoQ sign-off, agent-mediated, Approved with conditions; ST-31 regraded Pass_with_deviation); prior — 2026-10-28 (EPIC consolidation block added); prior history retained — see prior entries in version control
+Last Updated: 2026-10-28 (post-merge staging deploy from main recorded; BLG-OPS-196 resolved); prior — 2026-10-28 (human DoQ confirmation and Product Owner acceptance recorded); prior — 2026-10-28 (DoQ sign-off, agent-mediated, Approved with conditions; ST-31 regraded Pass_with_deviation); prior history retained — see prior entries in version control
 
 # QA Evidence — EPIC-05: Operations, Cost & Platform
 
@@ -123,3 +123,14 @@ Index query: `idx_acl_called_at_feature` (1 row). Matches the expected output. T
 - **Result:** calls are tagged with the route that triggered them, including the screener run's background task and worker threads (`POST /screener/run`, not `unattributed`). No `unattributed` rows. Only 2 features made provider calls in the window, so the top 3 has 2 entries.
 
 **Staging half of `DEL-20261027-04`: complete.** Remaining: the DS-36 Verification query on production after merge.
+
+## Staging Deploy From Main — Both Services
+
+Post-merge check for ST-29 AC 2 and the live half of AC 4 (BLG-OPS-196, `DEL-20261027-03`), run after PR #2075 merged.
+
+- **Run:** `staging-deploy.yml` run 40680643380, push to `main`, merge commit `77758669069d984d730a08cd8ecda027b2a623be`, 2026-10-28T11:31:41Z. Conclusion: success, every step green.
+- **Trigger steps:** the backend hook started `dep-dbgtqhmi0phs738v3g20` on `srv-d6rtdg94tr6s73ce2j6g` (trading-assistant-api-staging), and the frontend hook started `dep-dbgtqhvlk1mc739fcdcg` on `srv-d6rtdg94tr6s73ce2j60` (trading-assistant-staging). Each deploy ID belongs to its expected service, so each secret holds its own service's hook.
+- **Wait steps:** both deploys confirmed live on `7775866906`.
+- **Smoke test:** "is the staging backend (srv-d6rtdg94tr6s73ce2j6g)" passed, and all 4 staging smoke checks passed.
+- **Old secret:** the user deleted `RENDER_STAGING_DEPLOY_HOOK` on 2026-10-28. `gh secret list` now shows only `RENDER_STAGING_BACKEND_DEPLOY_HOOK` and `RENDER_STAGING_FRONTEND_DEPLOY_HOOK` (plus `RENDER_PLATFORM_API_KEY`).
+- **Result:** ST-29 AC 2 and AC 4 are met. BLG-OPS-196 is resolved and `DEL-20261027-03` is closed. ST-29's grade stays Pass_with_deviation as signed off, because the check ran after merge.

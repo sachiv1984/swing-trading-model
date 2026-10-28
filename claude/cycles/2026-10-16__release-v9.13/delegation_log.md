@@ -1,7 +1,7 @@
 Owner: PMO Lead
 Class: Planning Document (Class 4)
 Status: Active
-Last Updated: 2026-10-16
+Last Updated: 2026-10-28
 
 # Delegation Log — 2026-10-16__release-v9.13
 
@@ -84,7 +84,7 @@ Last Updated: 2026-10-16
 - **Unblock criteria:** both secrets set (user confirmation) and a green `staging-deploy.yml` run on `main` whose log shows both services live on its commit and the smoke-test host check passing, recorded in `qa_evidence_EPIC-05.md`.
 - **Commit format required:** `[EPIC-05][ST-29] <description>` on `exec/2026-10-16__release-v9.13/EPIC-05` (or a `[GOVERNANCE]` commit on `main` if EPIC-05 has merged)
 - **Progress:** 2026-10-27 — step (1) done. The user (human, acting for the Infrastructure & Operations Owner) set both secrets; `gh secret list` shows `RENDER_STAGING_BACKEND_DEPLOY_HOOK` (updated 2026-10-27T15:57:29Z) and `RENDER_STAGING_FRONTEND_DEPLOY_HOOK` (2026-10-27T15:58:13Z). The hooks have not been called yet; whether each holds its own service's hook is proven by the trigger steps' deploy-ID check on the first post-merge run. Engine-side CI on `d81af9b0` green (CI Pytest 40506739549, Playwright 40506739503). Steps (2) and (3) remain.
-- **Status:** In Progress — carried to post-sprint. ST-29 marked done 2026-10-28 (Pass_with_deviation, user-approved): steps (2) and (3) can only run after EPIC-05 merges, because `main` still has the single-hook workflow. Tracked as BLG-OPS-196 (v9.14); close this entry when that item's run is recorded.
+- **Status:** Unblocked — 2026-10-28, after EPIC-05 merged (PR #2075). (a) Sign-off: sign_off_cleared. Step (2): `staging-deploy.yml` run 40680643380 on `main` (merge commit `77758669`) was green; both trigger steps' deploy IDs matched their services, both services were live on the run's commit, and the smoke-test host check passed. Step (3): the user (human, acting for the Infrastructure & Operations Owner) deleted `RENDER_STAGING_DEPLOY_HOOK`, confirmed absent from `gh secret list`. Recorded in `qa_evidence_EPIC-05.md` §Staging Deploy From Main — Both Services; BLG-OPS-196 resolved. (b) Commit SHA: this entry's `[GOVERNANCE]` evidence commit on `main` (engine implementation commit `d81af9b04ef5fee5ed782c0b57c9f8230656d586`).
 
 ## DEL-20261027-04
 

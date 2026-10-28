@@ -1,7 +1,7 @@
 **Owner:** Infrastructure & Operations Owner
 **Class:** Reference Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-10-27 (ST-29, EPIC-05, v9.13, BLG-OPS-189 — `RENDER_STAGING_DEPLOY_HOOK` replaced by `RENDER_STAGING_BACKEND_DEPLOY_HOOK` and `RENDER_STAGING_FRONTEND_DEPLOY_HOOK`; also `ai-daily-cost-check.yml` added to the Telegram rows for ST-28, BLG-OPS-187); prior — 2026-10-13 (ST-06, EPIC-01, v9.12, BLG-OPS-183 — ai-daily-cost-check.yml added to the API_URL and API_KEY rows); prior — 2026-10-08 (ST-18, EPIC-03, v9.11, BLG-OPS-179 — post-deploy-stop-health.yml added to the API_URL, API_KEY and Telegram rows); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-28 (BLG-OPS-196 — `RENDER_STAGING_DEPLOY_HOOK` deleted); prior — 2026-10-27 (ST-29, EPIC-05, v9.13, BLG-OPS-189 — `RENDER_STAGING_DEPLOY_HOOK` replaced by `RENDER_STAGING_BACKEND_DEPLOY_HOOK` and `RENDER_STAGING_FRONTEND_DEPLOY_HOOK`; also `ai-daily-cost-check.yml` added to the Telegram rows for ST-28, BLG-OPS-187); prior — 2026-10-13 (ST-06, EPIC-01, v9.12, BLG-OPS-183 — ai-daily-cost-check.yml added to the API_URL and API_KEY rows); prior history retained — see prior entries in version control
 
 ---
 
@@ -30,7 +30,7 @@ Every `secrets.*` reference across `.github/workflows/*.yml`, current as of this
 | `RENDER_PLATFORM_API_KEY` | `render-si05-log-query.yml`, `staging-deploy-drift-check.yml`, `staging-deploy.yml` | Render account (spans staging + production services) | Read-write — Render platform API access; `staging-deploy.yml` uses it to confirm each hook's deploy belongs to the expected service and to poll deploy status (read), but it is account-scoped, not deploy-scoped, so treat rotation as affecting all three consumers together |
 | `RENDER_STAGING_BACKEND_DEPLOY_HOOK` | `staging-deploy.yml` | Staging | Write — the staging backend's (`trading-assistant-api-staging`, `srv-d6rtdg94tr6s73ce2j6g`) deploy webhook URL; triggers a deploy of that service when POSTed to. The workflow checks the returned deploy belongs to that service (ST-29, BLG-OPS-189, v9.13) |
 | `RENDER_STAGING_FRONTEND_DEPLOY_HOOK` | `staging-deploy.yml` | Staging | Write — the staging frontend's (`trading-assistant-staging`, `srv-d6rtdg94tr6s73ce2j60`) deploy webhook URL; same check as the backend hook (ST-29, BLG-OPS-189, v9.13) |
-| `RENDER_STAGING_DEPLOY_HOOK` | *(none — retired v9.13)* | Staging | Retired by ST-29 (BLG-OPS-189): it held the frontend's hook while the workflow waited on the backend. Delete it once both per-service hooks are set (`docs/ops/staging_deploy_notes.md` §4) |
+| `RENDER_STAGING_DEPLOY_HOOK` | *(none — retired v9.13)* | Staging | Retired by ST-29 (BLG-OPS-189): it held the frontend's hook while the workflow waited on the backend. Deleted 2026-10-28 after the first two-service run on `main` passed (run 40680643380, BLG-OPS-196) |
 | `STAGING_API_KEY` | `api-key-cross-environment-check.yml`, `api-performance-baseline-measurement.yml`, `staging-deploy.yml`, `staging-smoke-test.yml` | Staging | Read-write — the staging `X-API-Key` |
 | `STAGING_API_URL` | `staging-deploy.yml`, `staging-smoke-test.yml` | Staging | N/A — config value (staging API base URL), not a credential |
 | `STAGING_DATABASE_URL` | `reset-and-seed-staging.yml`, `seed-preview.yml` (also consumed outside GitHub Actions by `scripts/reset_staging_db.sh`) | Staging | Read-write — both consuming workflows run destructive resets and seed inserts/updates against the staging schema |

@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-28 (session — 3 new item(s) added: BLG-TECH-32, BLG-BE-195, BLG-OPS-199; PR #2075 review findings, EPIC-05 v9.13); prior — 2026-10-28 (session — 3 new item(s) added: BLG-OPS-196, BLG-OPS-197, BLG-OPS-198; post-merge remainders of ST-29, ST-30/ST-31 and ST-32, EPIC-05 v9.13); prior — 2026-10-27 (session — 1 new item(s) added: BLG-OPS-195; ST-30 data pipeline cost baseline, EPIC-05 v9.13); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-28 (BLG-OPS-196 resolved: first two-service staging deploy on main green, old hook secret deleted); prior — 2026-10-28 (session — 3 new item(s) added: BLG-TECH-32, BLG-BE-195, BLG-OPS-199; PR #2075 review findings, EPIC-05 v9.13); prior — 2026-10-28 (session — 3 new item(s) added: BLG-OPS-196, BLG-OPS-197, BLG-OPS-198; post-merge remainders of ST-29, ST-30/ST-31 and ST-32, EPIC-05 v9.13); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -6389,6 +6389,8 @@ ST-29 changed `staging-deploy.yml` to call one deploy hook per staging service a
 **Acceptance Criteria**
 - A green `staging-deploy.yml` run on `main` shows both trigger steps' deploy IDs matching their services, both services live on the run's commit, and the smoke-test host check passing (`srv-d6rtdg94tr6s73ce2j6g`); its run ID is recorded in `qa_evidence_EPIC-05.md`
 - `RENDER_STAGING_DEPLOY_HOOK` no longer appears in `gh secret list`
+
+**Resolved (2026-10-28, after PR #2075 merged):** `staging-deploy.yml` run 40680643380 on `main` (merge commit `77758669`) passed every step. The backend deploy `dep-dbgtqhmi0phs738v3g20` ran on `srv-d6rtdg94tr6s73ce2j6g` and the frontend deploy `dep-dbgtqhvlk1mc739fcdcg` on `srv-d6rtdg94tr6s73ce2j60`, both live on the run's commit, and the smoke-test host check passed (4 of 4 checks). The user deleted `RENDER_STAGING_DEPLOY_HOOK`; `gh secret list` no longer shows it. Recorded in `qa_evidence_EPIC-05.md` §Staging Deploy From Main — Both Services. Archive at the next `groom backlog`.
 
 ---
 
