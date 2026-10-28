@@ -143,9 +143,15 @@ def check_daily_cost():
     threshold. Sends Telegram alert if threshold exceeded, at most once per day.
     Called every 6 hours by .github/workflows/ai-daily-cost-check.yml
     (ST-06, BLG-OPS-183, v9.12).
+
+    A failed cost query returns 503 with status "error" so the workflow's
+    curl -f step fails (ST-28, BLG-OPS-187, v9.13).
     """
     from services.gemini_service import check_and_alert_daily_cost
-    return check_and_alert_daily_cost(threshold_usd=AI_DAILY_COST_THRESHOLD)
+    result = check_and_alert_daily_cost(threshold_usd=AI_DAILY_COST_THRESHOLD)
+    if result.get("status") == "error":
+        return JSONResponse(status_code=503, content=result)
+    return result
 
 
 @router.post("/check-endpoint-anomalies")

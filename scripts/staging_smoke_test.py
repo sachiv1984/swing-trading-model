@@ -33,6 +33,12 @@ governance-only commit as a stale deploy. Staging running a descendant of
 the target (e.g. after a manual staging-deploy.yml dispatch) also counts as
 current.
 
+ST-29 (BLG-OPS-189, EPIC-05, v9.13): also confirms the host behind
+STAGING_API_URL is the staging backend service: GET /health/detailed's
+render_service_id must equal STAGING_BACKEND_SERVICE_ID. Until 2026-10-15
+the secret pointed at an unidentified host, which the commit check above
+could not tell apart from a stale deploy. See check_host_is_staging_backend().
+
 Exit code: 0 if all checks pass, 1 if any fails (same convention as
 scripts/check_api_performance_baseline_drift.py /
 scripts/check_deploy_path_filter_drift.py).
@@ -224,6 +230,34 @@ def check_deployed_commit(base_url: str, api_key: str, expected_sha: str) -> str
     return ""
 
 
+STAGING_BACKEND_SERVICE_ID = "srv-d6rtdg94tr6s73ce2j6g"
+
+
+def check_host_is_staging_backend(base_url: str, api_key: str) -> str:
+    """Confirm GET /health/detailed's render_service_id is the staging
+    backend's Render service ID. Returns a failure description, "" when it
+    matches, or a "known limit:" message when the host does not report the
+    field (a deploy from before v9.13), which the caller treats as a warning."""
+    try:
+        status, body = _request(f"{base_url}/health/detailed", api_key=api_key, timeout=30)
+    except (urllib.error.HTTPError, urllib.error.URLError, OSError, TimeoutError) as e:
+        return f"GET /health/detailed: could not check the host's Render service — request failed: {e}"
+    if status != 200:
+        return f"GET /health/detailed: could not check the host's Render service — expected HTTP 200, got {status}"
+    try:
+        service_id = json.loads(body).get("render_service_id")
+    except (json.JSONDecodeError, AttributeError):
+        return "GET /health/detailed: could not check the host's Render service — response is not a JSON object"
+    if not service_id:
+        return ("known limit: GET /health/detailed did not report render_service_id (null/missing) -- "
+                "cannot confirm STAGING_API_URL is the staging backend until it runs v9.13 or later")
+    if service_id != STAGING_BACKEND_SERVICE_ID:
+        return (f"WRONG STAGING HOST: STAGING_API_URL ({base_url}) is served by Render service "
+                f"{service_id!r}, not the staging backend {STAGING_BACKEND_SERVICE_ID!r} -- "
+                f"reset the STAGING_API_URL secret (docs/ops/staging_deploy_notes.md §4)")
+    return ""
+
+
 def main() -> int:
     base_url = os.environ.get("STAGING_API_URL", "").rstrip("/")
     api_key = os.environ.get("STAGING_API_KEY", "")
@@ -240,6 +274,14 @@ def main() -> int:
 
     print(f"Running {len(CHECKS)} smoke checks against {base_url} ...")
     failures = run_checks(base_url, api_key)
+
+    host_check_result = check_host_is_staging_backend(base_url, api_key)
+    if host_check_result.startswith("known limit:"):
+        print(f"::warning::{host_check_result}")
+    elif host_check_result:
+        failures.append(host_check_result)
+    else:
+        print(f"  ✓ {base_url} is the staging backend ({STAGING_BACKEND_SERVICE_ID})")
 
     if expected_commit_sha:
         main_tip = expected_commit_sha

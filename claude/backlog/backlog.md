@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-27 (session — 3 new item(s) added: BLG-AI-20, BLG-AI-21, BLG-AI-22; PR #2074 review findings, EPIC-03 v9.13); prior — 2026-10-27 (session — 1 new item(s) added: BLG-UX-07; ST-16 AC 4 Head of UX & Design answer, EPIC-03 v9.13); prior — 2026-10-27 (session — 4 new item(s) added: BLG-BE-191, BLG-FE-233, BLG-UX-06, BLG-FEAT-100; PR #2073 review findings, EPIC-02 v9.13); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-28 (session — 3 new item(s) added: BLG-TECH-32, BLG-BE-195, BLG-OPS-199; PR #2075 review findings, EPIC-05 v9.13); prior — 2026-10-28 (session — 3 new item(s) added: BLG-OPS-196, BLG-OPS-197, BLG-OPS-198; post-merge remainders of ST-29, ST-30/ST-31 and ST-32, EPIC-05 v9.13); prior — 2026-10-27 (session — 1 new item(s) added: BLG-OPS-195; ST-30 data pipeline cost baseline, EPIC-05 v9.13); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -469,6 +469,178 @@ ST-46's conftest guard checks only *which module object* sits under `utils` / `u
 **Acceptance Criteria**
 - The guard fails a test that replaces an attribute on a real `utils.*` module without restoring it
 - Default and reverse-order full suites still pass
+
+---
+
+### BLG-TECH-25 — Upgrade the anthropic Python SDK from 0.105 to 2.x
+**Priority:** P3 (Low)
+**Type:** Tech Debt / Dependencies
+**Owner:** Head of Engineering; Backend Engineering Patterns Owner
+**Source:** ST-34 (BLG-TECH-23), EPIC-05, cycle `2026-10-16__release-v9.13` — `docs/security/dependency_major_upgrade_assessment_2026-10-27.md` §anthropic — 2026-10-27
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.14
+
+**Problem**
+The backend pins `anthropic==0.105.2`. The 0.x line no longer gets fixes and sends API version `2023-06-01`; 2.x sends `2026-10-21`. The assessment found nothing in the four AI services that breaks (no sampling parameters, dict-literal messages, `api_key` only), but 1.0 moved the SDK to `httpx2`, so two tests that build `RateLimitError` from `httpx` objects must change.
+
+**Scope**
+- Bump `anthropic` to the latest 2.x in `backend/requirements.txt`, and confirm it resolves on Python 3.11.0 (BLG-TECH-24)
+- Port `tests/test_upstream_call_helper.py` and `tests/test_gemini_claude_retry_backoff.py` to build errors from `httpx2`
+- Run one live call per AI feature on staging
+
+**Acceptance Criteria**
+- The backend installs and the full pytest suite passes on Python 3.11.0 with anthropic 2.x
+- `utils/upstream_call.py` still retries on the four anthropic error types (tests)
+- Each AI feature returns generated content on staging after the upgrade
+
+---
+
+### BLG-TECH-26 — Remove the unused SQLAlchemy dependency
+**Priority:** P3 (Low)
+**Type:** Tech Debt / Dependencies
+**Owner:** Head of Engineering; Backend Engineering Patterns Owner
+**Source:** ST-34 (BLG-TECH-23), EPIC-05, cycle `2026-10-16__release-v9.13` — `docs/security/dependency_major_upgrade_assessment_2026-10-27.md` §SQLAlchemy — 2026-10-27
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.14
+
+**Problem**
+`backend/requirements.txt` pins `sqlalchemy==2.0.52`, but no file in `backend/`, `scripts/` or `tests/` imports it; all database access uses `psycopg2`. It was added in `3579d2ff` (2026-02-16) and never used. Upgrading it to 2.1 would be wasted work; it adds install time and audit surface.
+
+**Scope**
+- Delete the `sqlalchemy` line from `backend/requirements.txt`
+
+**Acceptance Criteria**
+- `grep -ri sqlalchemy backend scripts tests` finds no import
+- The full pytest suite passes and the Render staging backend builds and starts without it
+
+---
+
+### BLG-TECH-27 — Upgrade reportlab from 4.2 to 5.x and test the tax-year PDF build
+**Priority:** P3 (Low)
+**Type:** Tech Debt / Dependencies
+**Owner:** Head of Engineering; Backend Engineering Patterns Owner
+**Source:** ST-34 (BLG-TECH-23), EPIC-05, cycle `2026-10-16__release-v9.13` — `docs/security/dependency_major_upgrade_assessment_2026-10-27.md` §reportlab — 2026-10-27
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.14
+
+**Problem**
+`reportlab==4.2.5` builds the tax-year PDF export (`services/reports_service.py::build_tax_year_pdf`). Releases 4.4.8 to 5.0.3 record several security fixes this pin misses. 5.0.4 starts changing the default base font, so the PDF can look different. No test builds a PDF today, so a break would only show in production.
+
+**Scope**
+- Add a pytest that builds a PDF from a fixed report and checks the bytes parse as a PDF with the expected page count
+- Bump `reportlab` to the latest 5.x, confirming it resolves on Python 3.11.0 (BLG-TECH-24)
+- Compare one exported tax-year PDF before and after
+
+**Acceptance Criteria**
+- The new PDF build test passes on 4.2.5 before the bump and on 5.x after it
+- An exported tax-year PDF from staging is checked for layout and fonts after the upgrade, with the result recorded
+
+---
+
+### BLG-TECH-28 — Upgrade uvicorn from 0.24 to 0.54
+**Priority:** P3 (Low)
+**Type:** Tech Debt / Dependencies
+**Owner:** Head of Engineering; Infrastructure & Operations Owner
+**Source:** ST-34 (BLG-TECH-23), EPIC-05, cycle `2026-10-16__release-v9.13` — `docs/security/dependency_major_upgrade_assessment_2026-10-27.md` §uvicorn — 2026-10-27
+**Effort:** XS (~0.25d)
+**Provisional-Target:** v9.14
+
+**Problem**
+The backend server is pinned to `uvicorn[standard]==0.24.0`, 30 minor releases behind on a pre-1.0 package. The assessment found no breaking change for this app: the Render start command uses only `--host` and `--port`, there are no WebSocket routes, and the `uvicorn`, `uvicorn.error` and `uvicorn.access` logger names that `main.py` configures are unchanged.
+
+**Scope**
+- Bump `uvicorn[standard]` to the latest release, confirming it resolves on Python 3.11.0 (BLG-TECH-24)
+
+**Acceptance Criteria**
+- The full pytest suite passes
+- The Render staging backend starts and its access log lines keep their current format
+
+---
+
+### BLG-TECH-29 — Upgrade framer-motion from 12 to 14 with a design check
+**Priority:** P3 (Low)
+**Type:** Tech Debt / Dependencies
+**Owner:** Head of Engineering; Head of UX & Design
+**Source:** ST-34 (BLG-TECH-23), EPIC-05, cycle `2026-10-16__release-v9.13` — `docs/security/dependency_major_upgrade_assessment_2026-10-27.md` §framer-motion — 2026-10-27
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.14
+
+**Problem**
+28 files use `motion` and `AnimatePresence` from `framer-motion` 12. The 13.0 and 14.0 breaking changes do not affect this usage, but fixes between 12.43 and 14.7 change `AnimatePresence` exit ordering, first-render values and springs. That can change how an animation looks without failing any test.
+
+**Scope**
+- Bump `framer-motion` to the latest 14.x and update the lockfile
+- Run the Playwright suite
+- Head of UX & Design checks the animated surfaces (modals, panels, page transitions) on staging
+
+**Acceptance Criteria**
+- All Playwright shards pass in CI
+- A recorded staging design check of the animated surfaces finds no unwanted change
+
+---
+
+### BLG-TECH-30 — Upgrade lucide-react from 0.563 to 1.x with a design check
+**Priority:** P3 (Low)
+**Type:** Tech Debt / Dependencies
+**Owner:** Head of Engineering; Head of UX & Design
+**Source:** ST-34 (BLG-TECH-23), EPIC-05, cycle `2026-10-16__release-v9.13` — `docs/security/dependency_major_upgrade_assessment_2026-10-27.md` §lucide-react — 2026-10-27
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.14
+
+**Problem**
+127 files import 105 icons from `lucide-react` 0.563. In 1.62.0 all 105 names are still exported (the 18 old names such as `AlertTriangle` and `Loader2` included), the `lucide-<name>` classes the Playwright specs select on remain, and `aria-hidden="true"` is now the default. What can change is icon artwork, which no test catches.
+
+**Scope**
+- Bump `lucide-react` to the latest 1.x and update the lockfile
+- Run the Playwright suite
+- Head of UX & Design checks the most-used icons on staging
+
+**Acceptance Criteria**
+- All Playwright shards pass in CI, including the four specs that select icons by class
+- A recorded staging design check finds no unwanted icon change
+
+---
+
+### BLG-TECH-31 — Replace moment with date-fns on System Status and remove moment
+**Priority:** P3 (Low)
+**Type:** Tech Debt / Dependencies
+**Owner:** Head of Engineering; Head of UX & Design
+**Source:** ST-34 (BLG-TECH-23), EPIC-05, cycle `2026-10-16__release-v9.13` — `docs/security/dependency_major_upgrade_assessment_2026-10-27.md` §moment — 2026-10-27
+**Effort:** XS (~0.25d)
+**Provisional-Target:** v9.14
+
+**Problem**
+`moment` is deprecated and is used in two places only, both in `src/pages/SystemStatus.js` (`format('HH:mm, D MMM YYYY')` and `fromNow()`). `date-fns` 4.4.0 is already a dependency used in 19 files. GHSA-4p3w-j4w9-5jqw (moment below 2.31.0, server-side only) does not affect this browser use, and the lockfile already has 2.31.0.
+
+**Scope**
+- Replace the two calls with `format(date, 'HH:mm, d MMM yyyy')` and `formatDistanceToNow(date, { addSuffix: true })`
+- Remove `moment` from `package.json` and the lockfile
+
+**Acceptance Criteria**
+- `moment` no longer appears in `src/` or `package.json`
+- A Playwright test checks the "As of" time format and the health-check relative time on System Status, and passes in CI
+
+---
+
+### BLG-TECH-32 — Retire the per-call-site Alpaca call logging now that every Alpaca call is attributed
+**Priority:** P3 (Low)
+**Type:** Tech Debt / Observability
+**Owner:** Head of Engineering; FinOps & Resource Architect
+**Source:** PR #2075 review (EPIC-05, cycle `2026-10-16__release-v9.13`, ST-29/ST-31) — 2026-10-28
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.14
+
+**Problem**
+Since v9.13 every Alpaca bar call writes two `api_call_log` rows: `service = 'alpaca'` from `alpaca_service._log_alpaca_call()` (one database connection per call, `external_api_dependency_register.md` SFM-01) and `service = 'alpaca_data'` from the transport-level attribution (`utils/api_attribution.py`, batched). The reports keep them apart by service name, but the table grows twice as fast for Alpaca and any total over `api_call_log` double-counts.
+
+**Scope**
+- Point `GET /ops/alpaca-call-report` at the attributed rows (`alpaca_data`), keeping its response shape
+- Remove `_log_alpaca_call()` and its call sites
+- Update `ops_endpoints.md` and `api_changelog.md`; note the cut-over date so earlier `alpaca` rows stay readable
+
+**Acceptance Criteria**
+- One Alpaca bar call writes exactly one `api_call_log` row (test)
+- `GET /ops/alpaca-call-report` returns the same fields, counted from `alpaca_data` (test)
 
 ---
 
@@ -6016,5 +6188,274 @@ Code appends deterministic notes to AI text: the stop-time note "(<TICKER> stop 
 **Acceptance Criteria**
 - A dated decision is recorded
 - If adopted: the definition is in `metrics_definitions.md` and the panel shows the status for a stale case, covered by Playwright; if rejected: the rationale is on the "Threshold: none" line
+
+---
+
+### BLG-BE-192 — Compute the SPY market regime from Alpaca bars when Yahoo Finance fails
+**Priority:** P2 (Medium)
+**Type:** Backend / Data Provider Resilience
+**Owner:** Infrastructure & Operations Owner; Backend Engineering Patterns Owner
+**Source:** ST-33 (BLG-OPS-77), EPIC-05, cycle `2026-10-16__release-v9.13` — `docs/operations/data_provider_risk_assessment.md` §3 QW-1 — 2026-10-27
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.14
+
+**Problem**
+`check_market_regime()` reads SPY and FTSE 200-day data only from Yahoo Finance. When Yahoo fails it defaults that market to risk-on, so during a Yahoo outage US entries are allowed and no US risk-off exit alert is raised, whatever the market is doing. Alpaca already supplies US daily bars and could compute the SPY figure.
+
+**Scope**
+- When the Yahoo SPY fetch fails, compute SPY price and 200-day MA from Alpaca daily bars (`get_ohlcv_bars("SPY", limit=210)`)
+- Record which source produced the regime result
+
+**Acceptance Criteria**
+- With Yahoo mocked to fail and Alpaca mocked to return bars, the SPY regime is computed from the Alpaca bars, not defaulted to risk-on (test)
+- With both failing, behaviour is unchanged until BLG-BE-193 rules otherwise (test)
+
+---
+
+### BLG-BE-193 — Show an unknown market regime instead of silently defaulting to risk-on
+**Priority:** P2 (Medium)
+**Type:** Backend / Data Provider Resilience
+**Owner:** Strategy Rules & System Intent Owner; Infrastructure & Operations Owner
+**Source:** ST-33 (BLG-OPS-77), EPIC-05, cycle `2026-10-16__release-v9.13` — `docs/operations/data_provider_risk_assessment.md` §2, §3 QW-2 — 2026-10-27
+**Effort:** S (~0.5d, plus a strategy ruling)
+**Provisional-Target:** v9.14
+
+**Problem**
+When SPY or FTSE regime data is unavailable, `check_market_regime()` sets that market to risk-on with price and MA 0, and nothing tells the user. Entry checks and the nightly risk-off job then act on a regime that was never measured. This is the most consequential single failure in the data-provider assessment.
+
+**Scope**
+- Strategy Rules & System Intent Owner rules what "regime unknown" means for entries and the risk-off job (block entries, keep the last known regime, or risk-on with a warning)
+- Return an explicit unknown state from `check_market_regime()` and apply the ruling
+- Show the unknown state wherever the regime is shown
+
+**Acceptance Criteria**
+- A dated ruling is recorded
+- With regime data mocked unavailable, the result is marked unknown and the ruled behaviour applies (tests)
+- The dashboard shows the regime as unknown in that case (Playwright)
+
+---
+
+### BLG-BE-194 — Use the last good GBP/USD rate, with its age, before the fixed 1.27 fallback
+**Priority:** P2 (Medium)
+**Type:** Backend / Data Provider Resilience
+**Owner:** Infrastructure & Operations Owner; Backend Engineering Patterns Owner
+**Source:** ST-33 (BLG-OPS-77), EPIC-05, cycle `2026-10-16__release-v9.13` — `docs/operations/data_provider_risk_assessment.md` §2, §3 QW-3 — 2026-10-27
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.14
+
+**Problem**
+`get_live_fx_rate()` gets GBP/USD only from Yahoo Finance. After the 5-minute cache expires it falls back to the constant `DEFAULT_FX_RATE = 1.27`, so a Yahoo outage silently values every US position, and sizes new ones, at a fixed rate that can be far from the market.
+
+**Scope**
+- Store the last successfully fetched rate and its timestamp
+- On fetch failure, use the stored rate before the constant
+- Expose the rate's source and age where FX-dependent figures are shown
+
+**Acceptance Criteria**
+- With Yahoo mocked to fail, the last stored rate is used, not 1.27 (test)
+- The constant is used only when no stored rate exists (test)
+- The rate's age is shown when it is older than one trading day
+
+---
+
+### BLG-BE-195 — Write attributed provider calls off the response path and on shutdown
+**Priority:** P3 (Low)
+**Type:** Backend / Observability
+**Owner:** Head of Engineering; Backend Engineering Patterns Owner
+**Source:** PR #2075 review (EPIC-05, cycle `2026-10-16__release-v9.13`, ST-29/ST-31) — 2026-10-28
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.14
+
+**Problem**
+`api_attribution_middleware` (`backend/main.py`) awaits `api_attribution.flush()`, one database insert, before it returns the response of any request that made a provider call, so those requests wait for an extra database round trip. Calls a background task makes after the response is sent stay in the in-memory buffer until another request flushes it, and are lost if the process restarts or Render redeploys first, which under-counts the attribution report.
+
+**Scope**
+- Flush the buffer outside the response path (a background task or a short-interval flusher thread), not inline in the middleware
+- Flush the buffer in a shutdown handler
+
+**Acceptance Criteria**
+- A request that made provider calls returns without waiting for the insert (test)
+- Buffered rows are written on application shutdown (test)
+- The attribution report's counts are unchanged for a request-scoped call (existing tests pass)
+
+---
+
+### BLG-FE-234 — Mark a position's price as stale when the live price fetch fails
+**Priority:** P3 (Low)
+**Type:** Frontend / Data Provider Resilience
+**Owner:** Infrastructure & Operations Owner; Head of UX & Design
+**Source:** ST-33 (BLG-OPS-77), EPIC-05, cycle `2026-10-16__release-v9.13` — `docs/operations/data_provider_risk_assessment.md` §2, §3 QW-4 — 2026-10-27
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.14
+
+**Problem**
+When `get_current_price()` returns nothing, the positions view falls back to the stored `current_price` or the entry price and shows it as if it were live. UK prices have no second source, so a Yahoo outage shows stale UK P&L and stop distances with no sign that they are stale.
+
+**Scope**
+- Return a flag from the positions response when the live price fetch failed and a stored price is used
+- Show a stale-price marker on that position
+
+**Acceptance Criteria**
+- With the price fetch mocked to fail, the response flags the stored price (test)
+- The positions view shows the stale marker for that position (Playwright)
+
+---
+
+### BLG-SPEC-209 — Correct the external API dependency register and credential inventory for Alpaca news and the inactive Stooq and Twelve Data fetchers
+**Priority:** P3 (Low)
+**Type:** Spec Debt
+**Owner:** PMO Lead; Infrastructure & Operations Owner
+**Source:** ST-33 (BLG-OPS-77), EPIC-05, cycle `2026-10-16__release-v9.13` — `docs/operations/data_provider_risk_assessment.md` §1, §3 QW-5 — 2026-10-27
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.14
+
+**Problem**
+`docs/ops/external_api_dependency_register.md` describes the news provider as newsapi.org, but news comes from Alpaca's news endpoint (`news_service.py`). Its MIT-08 says the screener falls back to Stooq and Twelve Data, but `fetch_ohlcv` never calls either fetcher. Anyone relying on the register during an incident would expect failover that does not exist.
+
+**Scope**
+- Rewrite the News API entry for Alpaca news
+- Correct MIT-08 to say Stooq and Twelve Data are not active, and why
+- In `docs/ops/external_api_credential_inventory.md`, retire the `NEWS_API_KEY` (newsapi.org) entry and record the Alpaca entry's cost tier (free while `ALPACA_DATA_FEED` is `iex`)
+- Delete the two unused fetchers from `screener_data_service.py`, or record why they are kept
+
+**Acceptance Criteria**
+- The register and the credential inventory match the code for news and screener fallbacks
+- The two fetchers are either removed with tests still passing, or their retention is documented
+
+---
+
+### BLG-OPS-194 — Make the System Status Yahoo Finance check detect an outage
+**Priority:** P2 (Medium)
+**Type:** Operations / Monitoring
+**Owner:** Infrastructure & Operations Owner
+**Source:** ST-33 (BLG-OPS-77), EPIC-05, cycle `2026-10-16__release-v9.13` — agent-mediated Infrastructure & Operations Owner review of `docs/operations/data_provider_risk_assessment.md` §2, §3 QW-6 — 2026-10-27
+**Effort:** XS (~1-2h)
+**Provisional-Target:** v9.14
+
+**Problem**
+The System Status Yahoo Finance check calls `get_live_fx_rate()` and reports healthy unless it raises (`health_service.py:310-320`). `get_live_fx_rate()` never raises; it returns the constant 1.27 on failure. The rolling `yahoo_finance` metrics are fed only by screener calls and reset on restart. A Yahoo outage therefore shows as healthy, while the regime fails open to risk-on and FX freezes.
+
+**Scope**
+- Have the FX fetch report whether it fell back to the constant, and mark the Yahoo Finance check unhealthy (or degraded) when it did
+- Do the same when the latest market-regime fetch defaulted a market to risk-on because its data was unavailable
+- Show the reason in the check's details
+
+**Acceptance Criteria**
+- With the Yahoo FX fetch mocked to fail, the health check reports Yahoo Finance unhealthy or degraded, not healthy (test)
+- With the fetch succeeding, it reports healthy with the live rate (test)
+- With the regime fetch mocked to fail, the check is not reported healthy (test)
+
+---
+
+### BLG-OPS-195 — Alert when weekly market-data call volume exceeds 2× the baseline
+**Priority:** P3 (Low)
+**Type:** Operations / Cost Monitoring
+**Owner:** Infrastructure & Operations Owner; FinOps & Resource Architect
+**Source:** ST-30 (BLG-OPS-18), EPIC-05, cycle `2026-10-16__release-v9.13` — `docs/ops/data_pipeline_cost_baseline.md` §5 — 2026-10-27
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.14
+**Depends on:** ST-30's weekly baseline recorded in `docs/ops/data_pipeline_cost_baseline.md` §4
+
+**Problem**
+`data_pipeline_cost_baseline.md` §5 defines an advisory when a source's weekly calls, failures or estimated cost exceed 2× baseline, but nothing checks it; the comparison is manual at the monthly cost review. A provider starting to throttle, or a feature that suddenly multiplies calls, can go unnoticed for weeks.
+
+**Scope**
+- A weekly scheduled workflow that calls `GET /ops/api-call-attribution?window=weekly`, compares each source's calls, failures and estimated cost with the recorded baseline, and sends a Telegram message naming the source and the top features when any exceeds 2×
+- Keep the baseline figures in one place the check reads, not copied into the workflow
+
+**Acceptance Criteria**
+- A test with a report over 2× baseline produces the advisory message, and one under it produces none
+- A failed report call fails the workflow loudly (as `ai-daily-cost-check.yml` does)
+
+---
+
+### BLG-OPS-196 — Confirm both staging services deploy from main, then retire the old hook
+**Priority:** P2 (Medium)
+**Type:** Operations / Deployment
+**Owner:** Infrastructure & Operations Owner
+**Source:** ST-29 (BLG-OPS-189), EPIC-05, cycle `2026-10-16__release-v9.13` — post-merge remainder of AC 2 and AC 4, `DEL-20261027-03` — 2026-10-28
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.14
+**Depends on:** EPIC-05 merged to `main`
+
+**Problem**
+ST-29 changed `staging-deploy.yml` to call one deploy hook per staging service and wait on each, and both new hook secrets are set. Its AC 2 (a green run on `main` with both services live on the run's commit) and AC 4 (the smoke test confirms the host behind `STAGING_API_URL`) can only be checked by the first run on `main` after EPIC-05 merges, because `main` still has the old single-hook workflow. Until then, staging deploys from `main` keep timing out, and other stories' staging checks depend on them.
+
+**Scope**
+- After EPIC-05 merges, confirm the `staging-deploy.yml` run on `main` (or dispatch one)
+- Record the run in `qa_evidence_EPIC-05.md` and close `DEL-20261027-03`
+- Delete the retired `RENDER_STAGING_DEPLOY_HOOK` repository secret once that run is green
+
+**Acceptance Criteria**
+- A green `staging-deploy.yml` run on `main` shows both trigger steps' deploy IDs matching their services, both services live on the run's commit, and the smoke-test host check passing (`srv-d6rtdg94tr6s73ce2j6g`); its run ID is recorded in `qa_evidence_EPIC-05.md`
+- `RENDER_STAGING_DEPLOY_HOOK` no longer appears in `gh secret list`
+
+---
+
+### BLG-OPS-197 — Record the weekly market-data call-volume baseline from production
+**Priority:** P3 (Low)
+**Type:** Operations / Cost Monitoring
+**Owner:** FinOps & Resource Architect; Infrastructure & Operations Owner
+**Source:** ST-30 (BLG-OPS-18) AC 1 and ST-31 (BLG-OPS-19) AC 2, EPIC-05, cycle `2026-10-16__release-v9.13` — post-merge remainder, `DEL-20261027-06` and the production half of `DEL-20261027-04` — 2026-10-28
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.14
+**Depends on:** EPIC-05 merged and deployed to production; 7 days of production data
+
+**Problem**
+ST-30 filed the combined weekly cost baseline ($0.00, every source free) and the 2× advisory threshold, but the per-source weekly call volumes in `docs/ops/data_pipeline_cost_baseline.md` §4 are pending: they need a week of production attribution data, which only exists after EPIC-05 deploys. ST-31's DS-36 columns were confirmed on staging; their production Live Confirmation is also outstanding. Without the volume baseline, the 2× advisory (and BLG-OPS-195's automated check) has nothing to compare with.
+
+**Scope**
+- After the production deploy, run DS-36's Verification query on production and record it in `data_model.md` DS-36
+- 7 full days after deploy, call `GET /ops/api-call-attribution?window=weekly` on production and fill §4's calls and failures per source, with the date and `top_contributors`
+- Close `DEL-20261027-04` and `DEL-20261027-06`
+
+**Acceptance Criteria**
+- DS-36 Live Confirmation for production is recorded: `api_call_log.feature` text YES, `screener_runs.duration_seconds` numeric YES, index `idx_acl_called_at_feature`
+- `data_pipeline_cost_baseline.md` §4 has weekly calls and failures for each source and combined, from one production weekly report, with its date and `top_contributors` (3 features, or every feature with calls if fewer than 3 made any); the §6 volume sign-off line is ticked
+
+---
+
+### BLG-OPS-198 — Record the full screener run p50/p95 baseline from production
+**Priority:** P3 (Low)
+**Type:** Operations / Performance
+**Owner:** Infrastructure & Operations Owner
+**Source:** ST-32 (BLG-OPS-23), EPIC-05, cycle `2026-10-16__release-v9.13` — post-merge remainder of AC 1, `DEL-20261027-05` — 2026-10-28
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.14
+**Depends on:** EPIC-05 merged and deployed to production; at least 10 nightly production screener runs after deploy
+
+**Problem**
+ST-32 made each screener run record `duration_seconds` and added `scripts/screener_run_benchmark.py`, which computes p50/p95 over full-universe runs, and defined the >1.5× regression threshold in `docs/ops/api_performance_baseline.md` §53. The p50/p95 values themselves are pending: runs before v9.13 have no duration, so the baseline needs about 10 nightly production runs (two weeks of weekdays) after deploy. Until then the regression threshold has no baseline to multiply.
+
+**Scope**
+- After at least 10 nightly production runs, run `API_URL=<production> API_KEY=<key> python3 scripts/screener_run_benchmark.py`
+- Record its output (runs counted, min tickers, p50, p95, regression threshold, first and last run) in `api_performance_baseline.md` §53
+- Close `DEL-20261027-05`
+
+**Acceptance Criteria**
+- The script exits 0 (at least 10 qualifying runs) and its p50, p95 and 1.5× threshold in seconds are recorded in `api_performance_baseline.md` §53 with the run date range
+
+---
+
+### BLG-OPS-199 — Fail the staging smoke host check when the backend reports no Render service ID
+**Priority:** P3 (Low)
+**Type:** Operations / Deployment
+**Owner:** Infrastructure & Operations Owner
+**Source:** PR #2075 review (EPIC-05, cycle `2026-10-16__release-v9.13`, ST-29/ST-31) — 2026-10-28
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.14
+**Depends on:** BLG-OPS-196 (first green staging deploy on `main` showing the host check pass)
+
+**Problem**
+`scripts/staging_smoke_test.py` `check_host_is_staging_backend()` treats a missing `render_service_id` on `GET /health/detailed` as a warning, so deploys from before v9.13 do not fail the smoke test. Once staging runs v9.13, a missing value means `RENDER_SERVICE_ID` is not set or `STAGING_API_URL` points at another host, and the check would pass with only a warning, which is the silent wrong-host case ST-29 exists to catch. The script also repeats the staging backend's service ID as its own literal instead of reading `STAGING_SERVICES` in `check_staging_deploy_drift.py`.
+
+**Scope**
+- Make a missing `render_service_id` a failure, once BLG-OPS-196 has shown the field on staging
+- Read the expected service ID from `STAGING_SERVICES`
+- Update `tests/test_staging_smoke_test.py`
+
+**Acceptance Criteria**
+- A `/health/detailed` response without `render_service_id` fails the smoke test (test)
+- The expected service ID has one definition in the repo
 
 ---

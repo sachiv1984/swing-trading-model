@@ -26,6 +26,14 @@ from utils.pricing import get_live_fx_rate
 import subprocess
 
 
+def get_render_service_id() -> Optional[str]:
+    """The Render service this process runs as (ST-29, BLG-OPS-189, EPIC-05,
+    v9.13), from `RENDER_SERVICE_ID`, which Render sets for every service.
+    Lets the staging smoke test confirm the host behind STAGING_API_URL is
+    the staging backend. None off Render."""
+    return os.environ.get("RENDER_SERVICE_ID") or None
+
+
 def get_deployed_commit_sha() -> Optional[str]:
     """The commit SHA the running process was actually deployed from (ST-17,
     BLG-OPS-169, EPIC-04, v9.8) -- lets a post-merge check confirm staging is
@@ -352,6 +360,7 @@ def get_detailed_health() -> Dict:
         "timestamp": datetime.now().isoformat(),
         "version": "1.4.0",
         "deployed_commit_sha": get_deployed_commit_sha(),
+        "render_service_id": get_render_service_id(),
         "response_time_ms": response_time,
         "checks": checks
     }

@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical (Class 1)
 **Status:** Canonical
-**Version:** 1.31
-**Last Updated:** 2026-10-27 (ST-22, EPIC-03, v9.13, BLG-FE-208 — new `POST /ai/chat/{answer_id}/rating`; `POST /ai/chat` returns `answer_id` for a model answer); prior — 2026-10-27 (ST-18, EPIC-03, v9.13, BLG-AI-15 — `POST /ai/journal-summary` output-language check, regenerate once then a code-written fallback; `JOURNAL_SUMMARY_PROMPT_VERSION` v1.1); prior — 2026-10-27 (ST-17, EPIC-03, v9.13, BLG-AI-16 — briefing summary tickers outside the context get a code-written caveat, logged and counted); prior history retained — see prior entries in version control
+**Version:** 1.32
+**Last Updated:** 2026-10-27 (ST-28, EPIC-05, v9.13, BLG-OPS-187 — `POST /ai/check-daily-cost` returns `status`; a failed cost query is 503, not a $0 total; scheduler fails loudly with a Telegram message); prior — 2026-10-27 (ST-22, EPIC-03, v9.13, BLG-FE-208 — new `POST /ai/chat/{answer_id}/rating`; `POST /ai/chat` returns `answer_id` for a model answer); prior — 2026-10-27 (ST-18, EPIC-03, v9.13, BLG-AI-15 — `POST /ai/journal-summary` output-language check, regenerate once then a code-written fallback; `JOURNAL_SUMMARY_PROMPT_VERSION` v1.1); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -447,6 +447,7 @@ No request body required. Threshold is read from the `AI_DAILY_COST_THRESHOLD` e
 
 ```json
 {
+  "status": "ok",
   "total_cost_usd": 0.42,
   "request_count": 7,
   "threshold_usd": 1.00,
@@ -457,6 +458,7 @@ No request body required. Threshold is read from the `AI_DAILY_COST_THRESHOLD` e
 
 | Field | Type | Description |
 |-------|------|-------------|
+| `status` | string | Always `"ok"` on a 200 (ST-28, v9.13). |
 | `total_cost_usd` | float | Sum of `cost_usd` in `claude_audit_log` for today (`generated_at >= CURRENT_DATE`). Covers every Claude-calling feature. |
 | `request_count` | integer | Number of `claude_audit_log` rows logged today (each Claude call, including a failed call's row). |
 | `threshold_usd` | float | Configured daily cost threshold (from `AI_DAILY_COST_THRESHOLD` env var). |
@@ -470,6 +472,9 @@ When `TELEGRAM_BOT_TOKEN` or `TELEGRAM_CHAT_ID` is absent, no alert is sent even
 | Status | Condition |
 |--------|-----------|
 | 401 | Missing or invalid API key. |
+| 503 | The cost query failed (ST-28, v9.13, BLG-OPS-187). Body: `{"status": "error", "error": "cost_query_failed", "message": "...", "threshold_usd": 1.0}`. No totals are returned and no alert is evaluated. The failure is logged with its traceback. |
+
+**Failing loudly (ST-28, v9.13, BLG-OPS-187):** until v9.13 a cost-query error was swallowed and reported as `total_cost_usd: 0.0` with a 200, so a broken query looked like a quiet day and the scheduler's step passed. Now the query error reaches the service, which logs it and returns the 503 above. `ai-daily-cost-check.yml` calls the endpoint with `curl --fail-with-body`, so a 503 (or any non-2xx, an unreachable API or missing `API_URL`/`API_KEY` secrets) fails the step, and a final `if: failure()` step sends a Telegram message with the run link (`TELEGRAM_BOT_TOKEN`/`TELEGRAM_CHAT_ID`; a `::warning::` if they are not set).
 
 ### Implementation constraints
 

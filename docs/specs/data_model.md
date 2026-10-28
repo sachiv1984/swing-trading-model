@@ -3,8 +3,8 @@
 **Owner:** Data Model & Domain Schema Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.64
-**Last Updated:** 2026-10-27 (ST-22, EPIC-03, v9.13, BLG-FE-208 — DS-35 (v2.64): new `chat_answer_ratings` table, one useful / not-useful rating per AI chat answer); prior — 2026-10-16 (ST-02, EPIC-01, v9.13, BLG-SPEC-186 — DS-34 (v2.63): allowed `exit_reason` values mapped to `strategy_rules.md` §8, legacy spellings backfilled, CHECK constraints on `positions` and `trade_history`); prior — 2026-10-15 (ST-26, EPIC-04, v9.12, BLG-SEC-41 — DS-33 (v2.62): new `settings_change_log` table, settings-write audit trail; note under §6); prior history retained — see prior entries in version control
+**Version:** 2.65
+**Last Updated:** 2026-10-27 (ST-31/ST-32, EPIC-05, v9.13, BLG-OPS-19/BLG-OPS-23 — DS-36 (v2.65): `api_call_log.feature` and `screener_runs.duration_seconds`; both tables documented); prior — 2026-10-27 (ST-22, EPIC-03, v9.13, BLG-FE-208 — DS-35 (v2.64): new `chat_answer_ratings` table, one useful / not-useful rating per AI chat answer); prior — 2026-10-16 (ST-02, EPIC-01, v9.13, BLG-SPEC-186 — DS-34 (v2.63): allowed `exit_reason` values mapped to `strategy_rules.md` §8, legacy spellings backfilled, CHECK constraints on `positions` and `trade_history`); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 This document describes the complete database schema and data structures used in the **Position Manager Web App**.
@@ -3490,6 +3490,84 @@ Expect 4 rows, `id` through `rated_at`, none nullable; and 4 constraints: `chat_
 
 ---
 
+## DS-36 — Attribute provider calls in api_call_log, and time screener runs (v2.65, 2026-10-27)
+
+**Stories:** ST-31 (`BLG-OPS-19`) and ST-32 (`BLG-OPS-23`), EPIC-05, v9.13. Live Confirmation delegated to the Data Model & Domain Schema Owner (staging and production).
+
+**Rationale:** neither table appeared in this document before. Both are created and extended at runtime by `ensure_*` functions, so this entry records their full shape as well as the two new columns.
+- `api_call_log` (created v9.3, ST-11) counts external API calls. ST-31 tags every market-data provider call with the route or job that triggered it, so a cost-by-feature report can be computed (`GET /ops/api-call-attribution`, `utils/api_attribution.py`). The tag is a new nullable `feature` column; existing rows and the per-call-site writers (`service = 'alpaca'`, `'research'`) leave it `NULL`.
+- `screener_runs` (created v8.8) has one row per screener run but did not record how long the run took. ST-32 adds `duration_seconds`, so the full-run p50/p95 benchmark can be computed from run history (`GET /screener/history`).
+
+**Deploy order:** not a risk. `database.ensure_api_call_log_table()` and `screener_batch_service.ensure_screener_results_table()` run the Up Migration's statements (`ADD COLUMN IF NOT EXISTS`, `CREATE INDEX IF NOT EXISTS`) on first use, the same pattern as DS-35. Both columns are nullable with no default, so adding them rewrites no rows. Applying the migration ahead of deploy is optional.
+
+### Up Migration (v2.64 → v2.65)
+
+```sql
+ALTER TABLE api_call_log ADD COLUMN IF NOT EXISTS feature TEXT;
+CREATE INDEX IF NOT EXISTS idx_acl_called_at_feature ON api_call_log (called_at DESC, feature);
+ALTER TABLE screener_runs ADD COLUMN IF NOT EXISTS duration_seconds NUMERIC;
+```
+
+**`api_call_log` after this change:**
+
+| Column | Type | Nullable | Meaning |
+|--------|------|----------|---------|
+| `id` | UUID | NO | Primary key, `gen_random_uuid()` |
+| `service` | TEXT | NO | Who was called. Per-call-site rows: `alpaca` (`alpaca_service.get_ohlcv_bars`, one row per call), `research` (`routers/research.py`). Attribution rows (ST-31), one per HTTP request: `alpaca_data`, `alpaca_news`, `alpaca_paper`, `alpaca_trading`, `yahoo`, `twelve_data`, `stooq` |
+| `endpoint` | TEXT | NO | Provider path called, e.g. `/v8/finance/chart/AAPL` |
+| `session_id` | TEXT | YES | Research session UUID (`research` rows only) |
+| `called_at` | TIMESTAMPTZ | NO | When the call was made, default `NOW()` |
+| `success` | BOOLEAN | NO | `false` on an exception or an HTTP status of 400 or above |
+| `feature` | TEXT | YES | **New.** `"<METHOD> <route template>"` of the request that triggered the call (e.g. `POST /screener/run`), `startup`, or `unattributed`. `NULL` on per-call-site rows and on rows before v9.13 |
+
+Indexes: `idx_acl_service_called_at (service, called_at DESC)`, `idx_acl_session_id (session_id)`, and **new** `idx_acl_called_at_feature (called_at DESC, feature)` for the attribution report. Retention: rows older than 90 days are purged by `POST /ops/purge-audit-logs` (`docs/ops/ai_audit_log_retention_policy.md`).
+
+**`screener_runs` after this change:**
+
+| Column | Type | Nullable | Meaning |
+|--------|------|----------|---------|
+| `run_id` | UUID | NO | Primary key |
+| `run_timestamp` | TIMESTAMP | NO | Run start (UTC) |
+| `tickers_evaluated` | INTEGER | YES | Tickers with OHLCV data, default 0 |
+| `tickers_passed` | INTEGER | YES | Tickers that passed the screen, default 0 |
+| `regime_us`, `regime_uk` | VARCHAR(10) | YES | Regime status per market for the run |
+| `degraded_run` | BOOLEAN | NO | `true` when more than 20% of tickers had no OHLCV data, default `false` |
+| `failure_rate` | NUMERIC | YES | Fraction of tickers with no OHLCV data |
+| `tickers_requested` | INTEGER | YES | Tickers in the run's universe, default 0 |
+| `failed_tickers` | JSONB | YES | Tickers with no OHLCV data, default `'[]'` |
+| `duration_seconds` | NUMERIC | YES | **New.** Seconds from run start (ticker load) to persistence, to 0.1s. `NULL` for runs before v9.13 |
+
+Index: `idx_screener_runs_ts (run_timestamp DESC)`.
+
+### Down Migration (v2.65 → v2.64)
+
+```sql
+DROP INDEX IF EXISTS idx_acl_called_at_feature;
+ALTER TABLE api_call_log DROP COLUMN IF EXISTS feature;
+ALTER TABLE screener_runs DROP COLUMN IF EXISTS duration_seconds;
+```
+
+Only the attribution tags and run durations are lost. Deploy the previous backend first: this one writes both columns.
+
+### Verification
+
+```sql
+SELECT table_name, column_name, data_type, is_nullable
+FROM information_schema.columns
+WHERE (table_name = 'api_call_log' AND column_name = 'feature')
+   OR (table_name = 'screener_runs' AND column_name = 'duration_seconds');
+
+SELECT indexname FROM pg_indexes WHERE indexname = 'idx_acl_called_at_feature';
+```
+
+Expect 2 rows, `feature` text YES and `duration_seconds` numeric YES, and 1 index row.
+
+**Sign-off:**
+- Data Model & Domain Schema Owner: two nullable columns and one index on existing tables, reversible, created at runtime by idempotent ensure-functions. Live Confirmation recorded below for staging, 2026-10-28; production pending until after merge (`DEL-20261027-04`).
+- **Live Confirmation — staging:** confirmed 2026-10-28 by the user (Data Model & Domain Schema Owner), Supabase SQL editor, after a screener run on the staging backend deployed from `exec/2026-10-16__release-v9.13/EPIC-05` (the ensure-functions created the columns and index; no manual migration). Columns: `screener_runs.duration_seconds` numeric `is_nullable = YES`; `api_call_log.feature` text `is_nullable = YES`. Index: `idx_acl_called_at_feature`. Matches the expected output.
+
+---
+
 ## Drift Detector Triage (2026-10-13, v2.60)
 
 **Story:** ST-34 (EPIC-05, `2026-10-12__release-v9.12`), BLG-SPEC-178. Triage of the findings `scripts/check_data_model_drift.py` reported on its first run (ST-28, v9.9, 2026-10-01) beyond the 5 known divergence classes.
@@ -3524,6 +3602,6 @@ Expect 4 rows, `id` through `rated_at`, none nullable; and 4 constraints: `chat_
 
 ---
 
-**Document Version:** 2.64
+**Document Version:** 2.65
 **Maintained By:** Data Model & Domain Schema Owner
-**Last Review:** 2026-10-27 (ST-22, EPIC-03, v9.13, BLG-FE-208 — DS-35 (v2.64): new `chat_answer_ratings` table, one useful / not-useful rating per AI chat answer); prior — 2026-10-16 (ST-02, EPIC-01, v9.13, BLG-SPEC-186 — DS-34 (v2.63): allowed `exit_reason` values mapped to `strategy_rules.md` §8, legacy spellings backfilled, CHECK constraints on `positions` and `trade_history`); prior — 2026-10-15 (ST-26, EPIC-04, v9.12, BLG-SEC-41 — DS-33 (v2.62): new `settings_change_log` table, settings-write audit trail; note under §6); prior history retained — see prior entries in version control
+**Last Review:** 2026-10-27 (ST-31/ST-32, EPIC-05, v9.13, BLG-OPS-19/BLG-OPS-23 — DS-36 (v2.65): `api_call_log.feature` and `screener_runs.duration_seconds`; both tables documented); prior — 2026-10-27 (ST-22, EPIC-03, v9.13, BLG-FE-208 — DS-35 (v2.64): new `chat_answer_ratings` table, one useful / not-useful rating per AI chat answer); prior — 2026-10-16 (ST-02, EPIC-01, v9.13, BLG-SPEC-186 — DS-34 (v2.63): allowed `exit_reason` values mapped to `strategy_rules.md` §8, legacy spellings backfilled, CHECK constraints on `positions` and `trade_history`); prior history retained — see prior entries in version control

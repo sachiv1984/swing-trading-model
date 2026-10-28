@@ -2,7 +2,7 @@
 **Owner:** Infrastructure & Operations Owner
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Version:** 2.42
+**Version:** 2.43
 **Date:** 2026-10-27
 **Story:** ST-11 (BLG-OPS-05) — initial baseline; ST-06 (v2.5 EPIC-02) — outlier investigation; ST-01 (v2.7 EPIC-01) — Supavisor baseline re-run; ST-05 (v6.1 EPIC-02) — PATCH /trades/{id}/costs registration; ST-11 (v6.4 EPIC-03, BLG-OPS-82) — v6.3 endpoint registration; ST-04 (v6.5 EPIC-02, BLG-OPS-83) — v6.4 endpoint registration; ST-01 (v6.9 EPIC-01, BLG-FEAT-64) — GET /positions/{id}/compliance-recheck registration; ST-02 (v6.9 EPIC-02, BLG-FEAT-65) — GET /positions/{id}/gap-risk registration; ST-15 (v7.0 EPIC-03, BLG-FEAT-68) — PATCH /positions/{id}/mark-reviewed registration; ST-02 (v7.5 EPIC-02, BLG-FE-116) — GET/POST /price-alerts, DELETE /price-alerts/{id} registration; ST-03 (v7.5 EPIC-03, BLG-FE-117) — bulk actions toolbar endpoint registration; ST-04 (v7.5 EPIC-04, BLG-FE-118) — saved filters & daily P&L endpoint registration; ST-09 (v9.4 EPIC-03, BLG-OPS-151) — POST /ai/check-endpoint-anomalies registration; ST-09/ST-06 (v9.5 EPIC-02, BLG-OPS-156/BLG-OPS-153) — GET /positions/{id}, GET /ai/spend-trend-by-feature registration; ST-01b (v9.7 EPIC-01, BLG-FEAT-74) — POST /replay/run registration; ST-17 (v9.12 EPIC-03, BLG-BE-146) — GET /market/atr/{ticker} registration
 **Cycle:** 2026-03-31__release-v2.4 (baseline); 2026-04-05__release-v2.5 (ST-06 update); 2026-04-13__release-v2.7 (Supavisor re-run)
@@ -2261,10 +2261,79 @@ Registered by: Sprint Execution Engine — 2026-10-27. Infrastructure & Operatio
 
 ---
 
+## 52. GET /ops/api-call-attribution (ST-31, EPIC-05, v9.13, BLG-OPS-19)
+
+**Date:** 2026-10-27
+**Story:** ST-31 (EPIC-05, v9.13, BLG-OPS-19). Registered in the same commit that adds the path to `openapi.yaml`, as the API Performance Baseline Drift Detection CI gate requires.
+
+### 52.1 Endpoint Profile
+
+| Endpoint | Added in | Method | p50 (ms) | p95 (ms) | Flag |
+|----------|----------|--------|----------|----------|------|
+| GET /ops/api-call-attribution | v9.13 | Read — pending live timing run | 300–700ms (est.) | 600–1,500ms (est.) | Pending next baseline re-run |
+
+**Endpoint characteristics:**
+- One connection: a `GROUP BY feature, service` count over `api_call_log` for the last 7 days (or today), filtered by service and `called_at` (`idx_acl_service_called_at`, `idx_acl_called_at_feature`, DS-36). Grouping and ranking in memory. No external I/O, no write.
+- Cost grows with the week's call volume, which every screener run adds to (one row per provider HTTP request).
+- **Estimation methodology:** no live timing run is possible in this execution environment, consistent with §46–§51. The estimate follows `GET /ops/research-session-report`, a similar 7-day aggregate over the same table. A real staging timing run is required before this estimate is used for alerting thresholds.
+
+### 52.2 Sign-Off
+
+```
+ST-31 (v9.13 EPIC-05, BLG-OPS-19) — Baseline Registration
+
+AC: api_performance_baseline.md has a row for GET /ops/api-call-attribution. PASS (§52.1)
+Registered in the same commit as the openapi.yaml path, per the API Performance Baseline Drift Detection CI gate. PASS
+Estimation methodology documented; no live timing run in this execution environment.
+
+Registered by: Sprint Execution Engine — 2026-10-27. Infrastructure & Operations Owner review pending (next baseline re-run).
+```
+
+---
+
+## 53. Full Screener Run Benchmark (ST-32, EPIC-05, v9.13, BLG-OPS-23)
+
+**Date:** 2026-10-27
+**Story:** ST-32 (EPIC-05, v9.13, BLG-OPS-23). Extends this baseline, which covers single API requests, to the full screener batch run against the whole active ticker universe.
+
+### 53.1 What Is Measured
+
+- **Duration:** `screener_runs.duration_seconds` (DS-36), recorded by every run since v9.13: from run start (loading the active universe) through the SPY and FTSE regime fetches, every ticker's OHLCV fetch (UK sequential with 0.3s spacing, US on a thread pool) and scoring, up to persistence. Returned per run by `GET /screener/history`.
+- **Runs counted:** not degraded (at most 20% of tickers without data), with a duration, and covering at least 90% of the largest run's ticker count. A partial universe or a broken data source would otherwise skew the baseline.
+- **Statistic:** p50 and p95 by nearest rank over at least 10 qualifying runs, computed by `scripts/screener_run_benchmark.py` from a deployed environment's `GET /screener/history`.
+- **Environment:** production. The nightly `screener-refresh.yml` run (22:00 UTC weekdays) is the measured run, so no extra load is added to Yahoo Finance or Alpaca.
+
+### 53.2 Baseline
+
+| Measure | Value | Runs | Window |
+|---------|-------|------|--------|
+| p50 duration | Pending: needs 10 qualifying runs after deploy | — | — |
+| p95 duration | Pending | — | — |
+
+The figures are filled in from the script's output once 10 nightly runs have recorded a duration (about two weeks of weekdays after the deploy that ships DS-36).
+
+### 53.3 Regression Threshold
+
+A full run is a **regression** when its `duration_seconds` is more than **1.5 × the baseline p50** (`REGRESSION_MULTIPLIER` in `scripts/screener_run_benchmark.py`). A single regression is a signal to check the run's `failure_rate` and the provider health checks; three in a row, or a p50 over 10 runs above 1.5 × baseline, needs an investigation and a re-baseline once the cause is understood. A run over the threshold that is also `degraded_run` is a data-provider problem first (`docs/operations/data_provider_risk_assessment.md`), not a performance regression.
+
+### 53.4 Sign-Off
+
+```
+ST-32 (v9.13 EPIC-05, BLG-OPS-23) — Screener Run Benchmark
+
+AC: full-universe run p50/p95 measured and filed. PENDING — instrumentation shipped (DS-36, scripts/screener_run_benchmark.py); live measurement delegated.
+AC: regression threshold (>1.5x baseline duration) defined. PASS (§53.3)
+
+Registered by: Sprint Execution Engine — 2026-10-27. Infrastructure & Operations Owner measurement pending.
+```
+
+---
+
 ## 9. Document History
 
 | Version | Date | Author | Change |
 |---------|------|--------|--------|
+| 2.43 | 2026-10-27 | Sprint Execution Engine | ST-31 (v9.13 EPIC-05, BLG-OPS-19): §52 added — GET /ops/api-call-attribution registered pending live timing run. ST-32 (BLG-OPS-23): §53 added — full screener run benchmark method and the >1.5× regression threshold; p50/p95 pending live measurement. |
 | 2.42 | 2026-10-27 | Sprint Execution Engine | ST-22 (v9.13 EPIC-03, BLG-FE-208): §51 added — POST /ai/chat/{answer_id}/rating registered as a write-op exclusion (estimated). Required by the API Performance Baseline Drift Detection CI gate after `openapi.yaml` gained the path in the same commit. |
 | 2.41 | 2026-10-17 | Sprint Execution Engine | ST-10 (v9.13 EPIC-02, BLG-SPEC-188): §50 added — GET /positions/stop-freshness registered pending live timing run. Required by the API Performance Baseline Drift Detection CI gate after `openapi.yaml` gained the path in the same commit. |
 | 2.40 | 2026-10-13 | Sprint Execution Engine | ST-17 (v9.12 EPIC-03, BLG-BE-146): §49 added — GET /market/atr/{ticker} registered pending live timing run. Required by the API Performance Baseline Drift Detection CI gate after `openapi.yaml` gained the path in the same commit. |

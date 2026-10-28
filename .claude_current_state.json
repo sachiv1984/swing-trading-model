@@ -443,6 +443,19 @@
       "resolved_by": "AI Compliance & Governance Officer (agent-mediated, §5.3)",
       "summary": "ST-18/EPIC-03 - journal-summary output-language check failure action (BLG-AI-15)",
       "resolution_summary": "(A) regenerate once, then a code-written fallback; JOURNAL_SUMMARY_PROMPT_VERSION v1.1. Applied by ST-18 at c8fd54e7."
+    },
+    "ESC-EXEC-20261027-04": {
+      "cycle": "2026-10-16__release-v9.13",
+      "summary": "ST-33/EPIC-05 - accepted-risk sign-off on data_provider_risk_assessment.md by Infrastructure & Operations Owner and FinOps & Resource Architect",
+      "trigger_type": "Lifecycle",
+      "owning_authority": "Infrastructure & Operations Owner; FinOps & Resource Architect",
+      "raised_utc": "2026-10-27T21:17:56Z",
+      "sla_due_utc": "2026-10-28T21:17:56Z",
+      "blocks_execution": false,
+      "disposition": "Resolved",
+      "resolved_utc": "2026-10-27T21:21:14Z",
+      "resolved_by": "Infrastructure & Operations Owner; FinOps & Resource Architect (agent-mediated, §5.3; approved on retry 1)",
+      "resolution_summary": "Accepted-risk statement in docs/operations/data_provider_risk_assessment.md §4 accepted by both roles, agent-mediated, after first-pass findings (false-healthy Yahoo monitoring; missing cost basis) were applied. Sign-off recorded at afcd8906."
     }
   },
   "deferred_escalations": {

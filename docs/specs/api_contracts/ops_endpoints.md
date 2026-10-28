@@ -1,8 +1,8 @@
 **Owner:** Infrastructure & Operations Owner; API Contracts & Documentation Owner
 **Class:** Canonical (Class 1)
 **Status:** Canonical
-**Version:** 1.3
-**Last Updated:** 2026-09-29 (ST-20, EPIC-05, v9.8, BLG-API-04 — added an Idempotency subsection to POST /ops/purge-audit-logs); prior — 2026-09-16 (ST-07/ST-06, BLG-OPS-154/BLG-OPS-153 — purge-audit-logs extended to api_call_log, added possible_silent_failure signal); prior — 2026-09-10 (ST-13, BLG-OPS-94 — added POST /ops/purge-audit-logs).
+**Version:** 1.4
+**Last Updated:** 2026-10-27 (ST-31, EPIC-05, v9.13, BLG-OPS-19 — added GET /ops/api-call-attribution); prior — 2026-09-29 (ST-20, EPIC-05, v9.8, BLG-API-04 — added an Idempotency subsection to POST /ops/purge-audit-logs); prior — 2026-09-16 (ST-07/ST-06, BLG-OPS-154/BLG-OPS-153 — purge-audit-logs extended to api_call_log, added possible_silent_failure signal); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -19,6 +19,7 @@ All endpoints in this document are read-only aggregates over `api_call_log` (`ba
 
 - [GET /ops/alpaca-call-report](#get-opsalpaca-call-report)
 - [GET /ops/research-session-report](#get-opsresearch-session-report)
+- [GET /ops/api-call-attribution](#get-opsapi-call-attribution)
 - [POST /ops/purge-audit-logs](#post-opspurge-audit-logs)
 
 ---
@@ -134,6 +135,90 @@ No parameters.
 
 ---
 
+## GET /ops/api-call-attribution
+
+Returns calls to market-data providers over the requested window, grouped by the feature that triggered them and by provider, with an estimated cost and the top 3 features.
+
+Added for ST-31 (BLG-OPS-19, EPIC-05, v9.13).
+
+**How calls are counted.** `backend/utils/api_attribution.py` wraps `requests.Session.request` and curl_cffi's `Session.request` (yfinance's transport), so every HTTP request to a provider host is counted, whichever code made it. Each HTTP attempt is one call, so internal retries count. Calls are written to `api_call_log` (DS-36) in batches at the end of each request, at the end of each screener run, and every 100 calls. Hosts and service names:
+
+| Service | Host |
+|---------|------|
+| `alpaca_data` | `data.alpaca.markets` (bars and quotes) |
+| `alpaca_news` | `data.alpaca.markets`, paths under `/v1beta1/news` |
+| `alpaca_paper` | `paper-api.alpaca.markets` |
+| `alpaca_trading` | `api.alpaca.markets` |
+| `yahoo` | `query1.finance.yahoo.com`, `query2.finance.yahoo.com`, `finance.yahoo.com`, `fc.yahoo.com`, `guce.yahoo.com` |
+| `twelve_data` | `api.twelvedata.com` |
+| `stooq` | `stooq.com` |
+
+Other hosts (Anthropic, Telegram, Supabase, Render) are not counted here; Anthropic calls are already attributed per endpoint in `claude_audit_log`. These service names are separate from the `alpaca` rows behind `GET /ops/alpaca-call-report` and the `research` rows behind `GET /ops/research-session-report`, which are unchanged.
+
+**Feature.** For a call made while handling an API request, the feature is `"<METHOD> <route template>"`, e.g. `"POST /screener/run"` or `"GET /news/{ticker}"`. Background tasks keep the feature of the request that started them. Calls made at application startup are `"startup"`. Any other call is `"unattributed"`.
+
+**Cost.** `estimated_cost_usd` is call count × the provider's unit cost in `utils/api_attribution.UNIT_COST_USD`, returned as `unit_cost_usd`. Every provider is free at current usage (`docs/operations/data_provider_risk_assessment.md` §1), so every unit cost is 0.0 and features are ranked by call count.
+
+**§13 Status:** N/A — no AI output; a call-count aggregate.
+
+### Request
+
+```
+GET /ops/api-call-attribution?window=weekly
+```
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `window` | string | No | `weekly` (default, last 7 days) or `daily` (today UTC). Any other value returns 422 (FastAPI `pattern` validation). |
+
+### Response — 200 OK
+
+The figures below are illustrative, not measured.
+
+```json
+{
+  "status": "ok",
+  "data": {
+    "window": "weekly",
+    "total_calls": 5310,
+    "estimated_cost_usd": 0.0,
+    "unit_cost_usd": {"alpaca_data": 0.0, "alpaca_news": 0.0, "alpaca_paper": 0.0, "alpaca_trading": 0.0, "yahoo": 0.0, "twelve_data": 0.0, "stooq": 0.0},
+    "by_feature": [
+      {"feature": "POST /screener/run", "total_calls": 4820, "failure_count": 31, "estimated_cost_usd": 0.0, "by_service": {"alpaca_data": 2390, "yahoo": 2430}},
+      {"feature": "POST /positions/nightly-stop-update", "total_calls": 310, "failure_count": 0, "estimated_cost_usd": 0.0, "by_service": {"alpaca_data": 140, "yahoo": 170}},
+      {"feature": "GET /news/{ticker}", "total_calls": 180, "failure_count": 2, "estimated_cost_usd": 0.0, "by_service": {"alpaca_news": 180}}
+    ],
+    "by_service": [
+      {"service": "yahoo", "total_calls": 2600, "failure_count": 25, "estimated_cost_usd": 0.0},
+      {"service": "alpaca_data", "total_calls": 2530, "failure_count": 6, "estimated_cost_usd": 0.0},
+      {"service": "alpaca_news", "total_calls": 180, "failure_count": 2, "estimated_cost_usd": 0.0}
+    ],
+    "top_contributors": ["POST /screener/run", "POST /positions/nightly-stop-update", "GET /news/{ticker}"]
+  }
+}
+```
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `window` | string | Echoes the requested window. |
+| `total_calls` | integer | Provider calls in the window. |
+| `estimated_cost_usd` | number | Sum of `by_feature[].estimated_cost_usd`. |
+| `unit_cost_usd` | object | USD per call for each service. |
+| `by_feature` | array | One entry per feature, ranked by `estimated_cost_usd` descending, then `total_calls` descending, then name. `by_service` maps each service to that feature's calls. |
+| `by_service` | array | One entry per service, ranked by `total_calls` descending. |
+| `top_contributors` | array of string | The first 3 features of `by_feature` (fewer if fewer exist). |
+
+An empty window returns `total_calls: 0` and empty arrays.
+
+### Error responses
+
+| Status | Condition |
+|--------|-----------|
+| 422 | `window` is not `daily` or `weekly`. |
+| 503 | The `api_call_log` query failed: `{"status": "error", "error": "attribution_query_failed", "message": ...}`. A failure is never reported as zero calls. |
+
+---
+
 ## POST /ops/purge-audit-logs
 
 Deletes `gemini_audit_log` rows older than 90 days, `claude_audit_log` rows older than 730 days (24 months), and `api_call_log` rows older than 90 days — enforcing the retention windows documented in `docs/ops/ai_audit_log_retention_policy.md`.
@@ -196,6 +281,7 @@ No parameters, no request body.
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.4 | 2026-10-27 | ST-31 (EPIC-05, v9.13, BLG-OPS-19): Added `GET /ops/api-call-attribution` — market-data provider calls by triggering feature, with estimated cost and the top 3 contributors. `openapi.yaml` 3.39.0 updated in the same commit. |
 | 1.2 | 2026-09-16 | ST-07/ST-06 (EPIC-02, v9.5, BLG-OPS-154/BLG-OPS-153): `POST /ops/purge-audit-logs` now also purges `api_call_log` (>90 days) and returns a `possible_silent_failure` field flagging any table where 0 rows were deleted despite stale rows still being present. `openapi.yaml` updated in the same commit. Infrastructure & Operations Owner sign-off. |
 | 1.1 | 2026-09-10 | ST-13 (EPIC-03, v9.3, BLG-OPS-94): Added `POST /ops/purge-audit-logs` — deletes gemini_audit_log (>90 days) and claude_audit_log (>730 days) rows per the new retention policy (`docs/ops/ai_audit_log_retention_policy.md`). `openapi.yaml` updated in the same commit. Infrastructure & Operations Owner sign-off. |
 | 1.0 | 2026-09-10 | ST-11/ST-12 (EPIC-03, v9.3, BLG-OPS-17/BLG-OPS-20): Initial specification. Added `GET /ops/alpaca-call-report` and `GET /ops/research-session-report`. `openapi.yaml` updated in the same commit. Infrastructure & Operations Owner sign-off (per sprint_backlog.md AC). |

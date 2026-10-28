@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Class 2 Canonical Specification
 **Status:** Active
-**Version:** 1.5
-**Last Updated:** 2026-09-29 (ST-20, EPIC-05, v9.8, BLG-API-04 — added an Idempotency subsection to POST /screener/run); prior — 2026-09-09 (ST-01, BLG-BE-13, v9.3 — added GET /screener/history); prior — 2026-08-10 (ST-21, BLG-FEAT-29, v8.5 — added GET /screener/regime-distribution)
+**Version:** 1.6
+**Last Updated:** 2026-10-27 (ST-32, EPIC-05, v9.13, BLG-OPS-23 — GET /screener/history runs gain duration_seconds); prior — 2026-09-29 (ST-20, EPIC-05, v9.8, BLG-API-04 — added an Idempotency subsection to POST /screener/run); prior — 2026-09-09 (ST-01, BLG-BE-13, v9.3 — added GET /screener/history); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Schema reference:** docs/specs/screener_results_schema.md
 
@@ -194,7 +194,8 @@ Returns paginated screener run history (one row per completed run) — `run_id`,
         "pass_count": 12,
         "regime_distribution": { "US": "risk_on", "UK": "risk_off" },
         "degraded_run": false,
-        "failure_rate": 0.04
+        "failure_rate": 0.04,
+        "duration_seconds": 412.6
       }
     ],
     "total": 214,
@@ -213,6 +214,7 @@ Returns paginated screener run history (one row per completed run) — `run_id`,
 | `regime_distribution` | object | `{"US": <regime_status>, "UK": <regime_status>}` for this run — either value may be `null` if that market's regime failed to resolve |
 | `degraded_run` | boolean | `true` when >20% of tickers returned no OHLCV data during the run |
 | `failure_rate` | float | Fraction of tickers with no OHLCV data (0.0–1.0) |
+| `duration_seconds` | float \| null | Time from the start of the run (ticker load) to persistence: regime and OHLCV fetches plus scoring, to 0.1s. `null` for runs before v9.13, which did not record it. Added v1.6 (ST-32, BLG-OPS-23) for the full-run benchmark in `docs/ops/api_performance_baseline.md`. |
 
 **Ordering:** Runs are ordered by `run_timestamp` descending (most recent first).
 

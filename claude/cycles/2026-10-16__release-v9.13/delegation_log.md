@@ -52,3 +52,85 @@ Last Updated: 2026-10-16
 - **Unblock criteria:** both environments' Verification output recorded in DS-35's Live Confirmation lines, with the date.
 - **Commit format required:** `[EPIC-03][ST-22] <description>` on `exec/2026-10-16__release-v9.13/EPIC-03` (or a `[GOVERNANCE]` commit on `main` if EPIC-03 has merged)
 - **Status:** Unblocked — 2026-10-27, unblocked in-session by the user (human, acting for the Data Model & Domain Schema Owner), in the same session as the delegation. (a) Sign-off: sign_off_cleared. DS-35 Up Migration and Verification run in the Supabase SQL editor on staging, then production. Both returned 4 columns (`id`, `answer_id`, `rating`, `rated_at`), all `is_nullable = NO`, and the 4 expected constraints (`chat_answer_ratings_answer_id_fkey`, `chat_answer_ratings_pkey`, `ck_chat_answer_ratings_rating`, `uq_chat_answer_ratings_answer`). Staging's first paste showed only the constraints result (the editor displays the last statement's output); the columns query was re-run on its own. Recorded in `data_model.md` DS-35 Live Confirmation. (b) Commit SHA: `2cc67cf2af01e559f1c905fb1449bf8675731df8` (production evidence commit; staging evidence `b18163f8`; engine implementation commit `0922a448066333ad7cf8c62bf0e742f1bb611bc2`, test-setup fix `278229a3`). ST-22 set to done in `execution_state.json` in the same commit as this entry.
+
+## DEL-20261027-02
+
+- **ST Item:** ST-28 — Make the daily AI cost alert fail loudly on query or workflow failure
+- **EPIC:** EPIC-05
+- **Classification:** delegated_backend (Human-Delegation for AC 2's real receipt — `sprint_backlog.md` ST-28 Staging-only ACs: "AC 2 (a failed `ai-daily-cost-check.yml` run sends a Telegram notification; real receipt)"; RISK-01)
+- **Assigned to:** Infrastructure & Operations Owner
+- **GitHub Issue:** #2058
+- **Branch:** exec/2026-10-16__release-v9.13/EPIC-05
+- **Delegated at:** 2026-10-27T12:49:59Z
+- **What is needed:** The engine has delivered AC 1 and the automated half of AC 2 at `a058fa60` (failed cost query → logged, 503 with `status: "error"`; `curl --fail-with-body`; a final `if: failure()` Telegram step; `tests/test_daily_cost_fails_loudly.py`). Remaining: one real failed run and its Telegram message. Suggested way to force a failure: temporarily set the `API_KEY` repository secret to an invalid value, dispatch **Actions → AI Daily Cost Check → Run workflow** on branch `exec/2026-10-16__release-v9.13/EPIC-05` (the endpoint answers 401, so `curl --fail-with-body` fails the step and the Telegram step runs), then restore `API_KEY` immediately. Production is only read (no alert is evaluated on a 401). Then confirm a Telegram message "AI daily cost check FAILED: …" arrived, and paste the run ID and the message time.
+- **Workflow viability (LL-v9.10-P3-01):** `ai-daily-cost-check.yml` last succeeded at run 40502770492 (schedule, 2026-10-27T12:18:49Z, `main`); all of its last 10 runs succeeded. `TELEGRAM_BOT_TOKEN`/`TELEGRAM_CHAT_ID` are already set (used by 9 other workflows, e.g. `staging-smoke-test.yml`).
+- **Spec reference:** `docs/specs/api_contracts/ai_endpoints.md#POST /ai/check-daily-cost`; `.github/workflows/ai-daily-cost-check.yml`
+- **Unblock criteria:** a failed `ai-daily-cost-check.yml` run ID and the user's confirmation that its Telegram message arrived, recorded in `qa_evidence_EPIC-05.md`.
+- **Commit format required:** `[EPIC-05][ST-28] <description>` on `exec/2026-10-16__release-v9.13/EPIC-05` (or a `[GOVERNANCE]` commit on `main` if EPIC-05 has merged)
+- **Status:** Unblocked — 2026-10-27, unblocked in-session by the user (human, acting for the Infrastructure & Operations Owner), in the same session as the delegation. (a) Sign-off: sign_off_cleared. With `API_KEY` set to an invalid value, `ai-daily-cost-check.yml` run 40582931117 (workflow_dispatch, branch `exec/2026-10-16__release-v9.13/EPIC-05`, head `5dd04ba5`, 2026-10-27T20:59:47Z) failed its trigger step on a 401 and its "Send Telegram alert on failure" step succeeded; the user confirmed the Telegram message arrived. An earlier dispatch from `main` (run 40582391679) ran the old workflow without the Telegram step and is not evidence. Recorded in `qa_evidence_EPIC-05.md` §Failed-Run Alert Check — AI Daily Cost. (b) Commit SHA: `1a303e0853568f0f6fd36d6df7d8e81f6d3e5ba0` (evidence commit; engine implementation commit `a058fa6001e9865f34c9da15218686dfc659823c`). ST-28 set to done in `execution_state.json` in the same commit as this entry.
+
+## DEL-20261027-03
+
+- **ST Item:** ST-29 — Deploy both staging services from staging-deploy.yml and wait on each
+- **EPIC:** EPIC-05
+- **Classification:** delegated_backend (Human-Delegation — `sprint_backlog.md` ST-29 Staging-only ACs: "AC 1, live half only (the two secrets set from the Render dashboard). AC 2 (a live `staging-deploy.yml` run on `main` with both services on the run's commit). AC 4 (smoke test confirms the host behind `STAGING_API_URL`)"; RISK-01)
+- **Assigned to:** Infrastructure & Operations Owner
+- **GitHub Issue:** #2059
+- **Branch:** exec/2026-10-16__release-v9.13/EPIC-05
+- **Delegated at:** 2026-10-27T12:49:59Z
+- **What is needed:** The engine has delivered AC 3 and the code halves of AC 1 and AC 4 at `d81af9b0` (`scripts/trigger_staging_deploy.py`, per-service waits, `render_service_id` on `GET /health/detailed`, smoke-test host check, `tests/test_staging_deploy_both_services.py`, `staging_deploy_notes.md` §4, secrets map). Remaining: (1) in Render, copy **trading-assistant-api-staging → Settings → Deploy Hook** into a new repo secret `RENDER_STAGING_BACKEND_DEPLOY_HOOK`, and **trading-assistant-staging → Settings → Deploy Hook** into `RENDER_STAGING_FRONTEND_DEPLOY_HOOK`; (2) after EPIC-05 merges (the workflow runs from `main`), dispatch **Actions → Deploy to Staging (Render) → Run workflow** on `main` (or let the merge's push run it) and paste the run ID; it passes when all steps are green: both trigger steps report a deploy on the expected `srv-…`, both waits report live on the run's commit, and the smoke test prints "is the staging backend (srv-d6rtdg94tr6s73ce2j6g)"; (3) delete `RENDER_STAGING_DEPLOY_HOOK`.
+- **Workflow viability (LL-v9.10-P3-01):** `staging-deploy.yml` has no success in its last 10 runs (latest failure: run 40504434239, push, 2026-10-27T12:31:30Z). Cause known and is this story's subject: `RENDER_STAGING_DEPLOY_HOOK` holds the frontend's hook while the wait step watches the backend (BLG-OPS-181/BLG-OPS-189, `staging_deploy_notes.md` §4). The prerequisite fix is step (1) above, raised in this same delegation. `RENDER_PLATFORM_API_KEY`, `STAGING_API_URL` and `STAGING_API_KEY` are already set (used by `staging-deploy-drift-check.yml` and `staging-smoke-test.yml`).
+- **Spec reference:** `docs/ops/staging_deploy_notes.md#4. Render Deploy Hook Setup`; `docs/specs/api_contracts/health_endpoints.md#GET /health/detailed`; `.github/workflows/staging-deploy.yml`
+- **Unblock criteria:** both secrets set (user confirmation) and a green `staging-deploy.yml` run on `main` whose log shows both services live on its commit and the smoke-test host check passing, recorded in `qa_evidence_EPIC-05.md`.
+- **Commit format required:** `[EPIC-05][ST-29] <description>` on `exec/2026-10-16__release-v9.13/EPIC-05` (or a `[GOVERNANCE]` commit on `main` if EPIC-05 has merged)
+- **Progress:** 2026-10-27 — step (1) done. The user (human, acting for the Infrastructure & Operations Owner) set both secrets; `gh secret list` shows `RENDER_STAGING_BACKEND_DEPLOY_HOOK` (updated 2026-10-27T15:57:29Z) and `RENDER_STAGING_FRONTEND_DEPLOY_HOOK` (2026-10-27T15:58:13Z). The hooks have not been called yet; whether each holds its own service's hook is proven by the trigger steps' deploy-ID check on the first post-merge run. Engine-side CI on `d81af9b0` green (CI Pytest 40506739549, Playwright 40506739503). Steps (2) and (3) remain.
+- **Status:** In Progress — carried to post-sprint. ST-29 marked done 2026-10-28 (Pass_with_deviation, user-approved): steps (2) and (3) can only run after EPIC-05 merges, because `main` still has the single-hook workflow. Tracked as BLG-OPS-196 (v9.14); close this entry when that item's run is recorded.
+
+## DEL-20261027-04
+
+- **ST Item:** ST-31 — Attribute each external API call to the feature that triggered it
+- **EPIC:** EPIC-05
+- **Classification:** delegated_backend (Human-Delegation — `sprint_backlog.md` ST-31 Staging-only ACs: "AC 2 (the attribution report run on live data names the top 3 contributors)"; DS-36 Live Confirmation; RISK-01)
+- **Assigned to:** Infrastructure & Operations Owner; Data Model & Domain Schema Owner
+- **GitHub Issue:** #2061
+- **Branch:** exec/2026-10-16__release-v9.13/EPIC-05
+- **Delegated at:** 2026-10-27T21:38:28Z
+- **What is needed:** The engine delivered AC 1 and the computable report at `e31a6b56` (`backend/utils/api_attribution.py`, `GET /ops/api-call-attribution`, DS-36, `tests/test_api_call_attribution.py`). Remaining: (1) deploy the staging backend from `exec/2026-10-16__release-v9.13/EPIC-05` (Render branch switch, as for EPIC-02; `staging-deploy.yml` cannot deploy the backend until EPIC-05 merges); (2) DS-36 Live Confirmation on staging: the ensure-functions apply the Up Migration on first use, so after any screener run or provider call, run DS-36's Verification query (`data_model.md` §DS-36) in the Supabase SQL editor and paste the output (expect 2 column rows and 1 index row); (3) trigger a screener run on staging (Screener page → Run, or `POST /screener/run`), wait for it to finish, then call `GET /ops/api-call-attribution?window=daily` on staging and paste the JSON; (4) after EPIC-05 merges and production deploys, repeat (2) on production; (5) switch the staging backend back to `main`.
+- **Workflow viability (LL-v9.10-P3-01):** step (1) is a manual Render branch switch (used for EPIC-02 on 2026-10-27, DEL-20261017-01), not a workflow. `staging-deploy.yml` has no success in its last 10 runs; the cause is ST-29's hook fix, which only reaches `main` at merge.
+- **Spec reference:** `docs/specs/api_contracts/ops_endpoints.md#GET /ops/api-call-attribution`; `docs/specs/data_model.md#DS-36`; layers: utils, middleware (`main.py`), router (`cost_monitoring.py`), database (`log_api_calls`, `get_api_call_attribution`)
+- **Unblock criteria:** DS-36 Verification output from staging (and production after merge), and a staging attribution report naming its top contributors, recorded in `data_model.md` DS-36 Live Confirmation and `qa_evidence_EPIC-05.md`.
+- **Commit format required:** `[EPIC-05][ST-31] <description>` on `exec/2026-10-16__release-v9.13/EPIC-05` (or a `[GOVERNANCE]` commit on `main` if EPIC-05 has merged)
+- **Progress:** 2026-10-28 — staging half done by the user (human, acting for both assigned owners). Staging backend switched to the EPIC-05 branch, one screener run, DS-36 Verification query: `screener_runs.duration_seconds` numeric YES, `api_call_log.feature` text YES, index `idx_acl_called_at_feature` (`f47335cb`). `GET /ops/api-call-attribution?window=daily`: 38 calls; `POST /screener/run` 23 (`alpaca_data` 5, `yahoo` 18), `GET /earnings/{ticker}` 15 (`yahoo`); no `unattributed` rows; `top_contributors` named (`a2553bf8`). Staging switched back to `main`.
+- **Status:** In Progress — carried to post-sprint. ST-31 marked done 2026-10-28 (Pass_with_deviation at the DoQ review: staging named 2 contributors). The production weekly report naming the top 3 and the production DS-36 Live Confirmation remain, tracked in BLG-OPS-197 (v9.14).
+
+## DEL-20261027-05
+
+- **ST Item:** ST-32 — Benchmark the full screener run
+- **EPIC:** EPIC-05
+- **Classification:** delegated_backend (Human-Delegation — `sprint_backlog.md` ST-32 Staging-only ACs: "AC 1 (p50/p95 from a full-universe run on a deployed environment)"; RISK-01)
+- **Assigned to:** Infrastructure & Operations Owner
+- **GitHub Issue:** #2062
+- **Branch:** exec/2026-10-16__release-v9.13/EPIC-05
+- **Delegated at:** 2026-10-27T21:38:28Z
+- **What is needed:** The engine delivered the measurement and AC 2 at `e31a6b56`: each run stores `screener_runs.duration_seconds` (DS-36), `GET /screener/history` returns it, `scripts/screener_run_benchmark.py` computes p50/p95 and the 1.5× threshold, and `api_performance_baseline.md` §53 defines the method and threshold. Remaining: after EPIC-05 merges and production deploys, let the nightly `screener-refresh.yml` run for 10 weekdays (about two weeks), then run `API_URL=<production> API_KEY=<key> python3 scripts/screener_run_benchmark.py` and paste its JSON. Production nightly runs are used so no extra load is put on Yahoo Finance or Alpaca.
+- **Workflow viability (LL-v9.10-P3-01):** `screener-refresh.yml` last succeeded at run 40430303674 (schedule, 2026-10-27T01:03:49Z); all of its last 30 runs succeeded. The workflow only starts the run (202), so its own duration is not the run's.
+- **Spec reference:** `docs/ops/api_performance_baseline.md#53. Full Screener Run Benchmark (ST-32, EPIC-05, v9.13, BLG-OPS-23)`; `docs/specs/api_contracts/screener_api_contract.md#GET /screener/history`
+- **Unblock criteria:** the script's output over at least 10 qualifying production runs, recorded in `api_performance_baseline.md` §53.2.
+- **Commit format required:** `[GOVERNANCE] <description>` on `main` (post-merge)
+- **Status:** In Progress — carried to post-sprint. ST-32 marked done 2026-10-28 (Pass_with_deviation, user-approved): the p50/p95 need at least 10 nightly production runs after merge. Tracked as BLG-OPS-198 (v9.14).
+
+## DEL-20261027-06
+
+- **ST Item:** ST-30 — Produce the combined data-pipeline cost baseline
+- **EPIC:** EPIC-05
+- **Classification:** delegated_backend (Human-Delegation — `sprint_backlog.md` ST-30 Staging-only ACs: "AC 1 (the weekly baseline uses live usage figures)"; RISK-01)
+- **Assigned to:** Infrastructure & Operations Owner
+- **GitHub Issue:** #2060
+- **Branch:** exec/2026-10-16__release-v9.13/EPIC-05
+- **Delegated at:** 2026-10-27T21:38:28Z
+- **What is needed:** The engine delivered `docs/ops/data_pipeline_cost_baseline.md` at `b48ebe75`: the combined weekly cost baseline is $0.00 (every source free), with the basis per source, and the >2× advisory threshold (AC 2). Remaining: 7 full days after EPIC-05 deploys to production, call `GET /ops/api-call-attribution?window=weekly` on production and paste the JSON, to fill §4's weekly call volumes per source.
+- **Workflow viability (LL-v9.10-P3-01):** not a workflow; a read-only API call with the production `API_KEY`.
+- **Spec reference:** `docs/ops/data_pipeline_cost_baseline.md#4. Weekly Baseline`
+- **Unblock criteria:** the production weekly report recorded in §4 with its date and top contributors.
+- **Commit format required:** `[GOVERNANCE] <description>` on `main` (post-merge)
+- **Status:** In Progress — carried to post-sprint. ST-30 marked done 2026-10-28 (Pass_with_deviation, user-approved): the weekly volumes need 7 days of production data after merge. Tracked as BLG-OPS-197 (v9.14).

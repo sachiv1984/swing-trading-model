@@ -369,14 +369,29 @@ def check_and_alert_daily_cost(threshold_usd: float = 1.00) -> dict:
     second Telegram message -- the alert fingerprint is the date itself, so
     a new day always sends fresh regardless of whether yesterday's alert
     fired.
+
+    ST-28 (BLG-OPS-187, EPIC-05, v9.13): if the cost query fails, the failure
+    is logged and an error result (status "error", no totals) is returned, so
+    the router answers 503 and the scheduler's step fails. Before this the
+    query error was swallowed and reported as $0 spend.
     """
     from database import get_daily_ai_cost, ensure_scheduled_alert_dedup_table, get_last_alert_fingerprint, record_alert_fingerprint
     from config import TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID
+    import logging
     import urllib.request
     import urllib.parse
     from datetime import date
 
-    result = get_daily_ai_cost()
+    try:
+        result = get_daily_ai_cost()
+    except Exception:
+        logging.getLogger(__name__).error("Daily AI cost query failed", exc_info=True)
+        return {
+            "status": "error",
+            "error": "cost_query_failed",
+            "message": "Daily AI cost query failed; spend is unknown.",
+            "threshold_usd": threshold_usd,
+        }
     total = result["total_cost_usd"]
     count = result["request_count"]
     threshold_exceeded = total >= threshold_usd
@@ -388,6 +403,7 @@ def check_and_alert_daily_cost(threshold_usd: float = 1.00) -> dict:
         already_alerted_today = get_last_alert_fingerprint("daily_cost_alert") == today
         if already_alerted_today:
             return {
+                "status": "ok",
                 "total_cost_usd": total,
                 "request_count": count,
                 "threshold_usd": threshold_usd,
@@ -415,6 +431,7 @@ def check_and_alert_daily_cost(threshold_usd: float = 1.00) -> dict:
             pass
 
     return {
+        "status": "ok",
         "total_cost_usd": total,
         "request_count": count,
         "threshold_usd": threshold_usd,
