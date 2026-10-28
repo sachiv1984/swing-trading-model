@@ -131,7 +131,7 @@ export default function Replay() {
       <PageHeader title="Replay Mode" description="Replay your own past trades through today's strategy rules." />
 
       {/* Selector — decision_record.md §2.2: two mutually exclusive, tab-switched input modes */}
-      <div className="bg-slate-800/50 rounded-lg border border-slate-700/50 p-5 space-y-4">
+      <div className="bg-white dark:bg-slate-800/50 rounded-lg border border-slate-200 dark:border-slate-700/50 p-5 space-y-4">
         <div className="flex gap-1" data-testid="replay-mode-tabs">
           <button
             type="button"
@@ -140,7 +140,7 @@ export default function Replay() {
             className={`text-sm px-3 py-1.5 rounded-md border transition-colors ${
               mode === "date_range"
                 ? "border-slate-400 bg-slate-700 text-white"
-                : "border-slate-700 text-slate-600 dark:text-slate-400 hover:text-slate-300 hover:bg-slate-800"
+                : "border-slate-300 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
             }`}
           >
             Date Range
@@ -152,7 +152,7 @@ export default function Replay() {
             className={`text-sm px-3 py-1.5 rounded-md border transition-colors ${
               mode === "trade_set"
                 ? "border-slate-400 bg-slate-700 text-white"
-                : "border-slate-700 text-slate-600 dark:text-slate-400 hover:text-slate-300 hover:bg-slate-800"
+                : "border-slate-300 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
             }`}
           >
             Trade Set
@@ -169,7 +169,7 @@ export default function Replay() {
                 aria-label="Date from"
                 value={dateFrom}
                 onChange={(e) => setDateFrom(e.target.value)}
-                className="bg-slate-800/50 border-slate-700 text-white pl-10"
+                className="bg-slate-50 dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white pl-10"
               />
             </div>
             <div className="relative">
@@ -180,12 +180,12 @@ export default function Replay() {
                 aria-label="Date to"
                 value={dateTo}
                 onChange={(e) => setDateTo(e.target.value)}
-                className="bg-slate-800/50 border-slate-700 text-white pl-10"
+                className="bg-slate-50 dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white pl-10"
               />
             </div>
           </div>
         ) : (
-          <div data-testid="replay-trade-set-controls" className="max-h-80 overflow-y-auto rounded-lg border border-slate-700/50 divide-y divide-slate-700/30">
+          <div data-testid="replay-trade-set-controls" className="max-h-80 overflow-y-auto rounded-lg border border-slate-200 dark:border-slate-700/50 divide-y divide-slate-200 dark:divide-slate-700/30">
             {tradesLoading ? (
               <div className="p-4 text-sm text-slate-600 dark:text-slate-400">Loading your closed trades…</div>
             ) : closedTrades.length === 0 ? (
@@ -195,7 +195,7 @@ export default function Replay() {
                 <label
                   key={t.id}
                   htmlFor={`replay-trade-checkbox-${t.id}`}
-                  className="flex items-center gap-3 px-4 py-2.5 cursor-pointer hover:bg-slate-700/20"
+                  className="flex items-center gap-3 px-4 py-2.5 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700/20"
                 >
                   <Checkbox
                     id={`replay-trade-checkbox-${t.id}`}
@@ -203,7 +203,7 @@ export default function Replay() {
                     checked={selectedTradeIds.has(t.id)}
                     onCheckedChange={() => toggleTrade(t.id)}
                   />
-                  <span className="text-sm text-white font-medium">{t.ticker}</span>
+                  <span className="text-sm text-slate-900 dark:text-white font-medium">{t.ticker}</span>
                   <span className="text-xs text-slate-600 dark:text-slate-400">exited {t.exit_date}</span>
                 </label>
               ))
@@ -236,8 +236,8 @@ export default function Replay() {
       )}
 
       {runState === "failure" && (
-        <div data-testid="replay-failure-banner" className="rounded-xl border border-rose-500/30 bg-rose-500/10 p-6 text-center">
-          <p className="text-rose-300 text-sm">Couldn't run the replay. Try again.</p>
+        <div data-testid="replay-failure-banner" className="rounded-xl border border-rose-200 dark:border-rose-500/30 bg-rose-50 dark:bg-rose-500/10 p-6 text-center">
+          <p className="text-rose-700 dark:text-rose-300 text-sm">Couldn't run the replay. Try again.</p>
         </div>
       )}
 
@@ -260,27 +260,27 @@ export default function Replay() {
             <>
               {/* Summary row */}
               <div className="grid grid-cols-3 gap-4">
-                <div className="rounded-xl border border-slate-700/50 bg-slate-800/50 p-4">
+                <div className="rounded-xl border border-slate-200 dark:border-slate-700/50 bg-white dark:bg-slate-800/50 p-4">
                   <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Trades Replayed</p>
-                  <p data-testid="replay-summary-trade-count" className="text-xl font-bold text-white">
+                  <p data-testid="replay-summary-trade-count" className="text-xl font-bold text-slate-900 dark:text-white">
                     {result.summary.trade_count}
                   </p>
                 </div>
-                <div className="rounded-xl border border-slate-700/50 bg-slate-800/50 p-4">
+                <div className="rounded-xl border border-slate-200 dark:border-slate-700/50 bg-white dark:bg-slate-800/50 p-4">
                   <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Win Rate</p>
-                  <p data-testid="replay-summary-win-rate" className="text-xl font-bold text-white">
+                  <p data-testid="replay-summary-win-rate" className="text-xl font-bold text-slate-900 dark:text-white">
                     {formatPercent(result.summary.win_rate_pct)}
                   </p>
                 </div>
-                <div className="rounded-xl border border-slate-700/50 bg-slate-800/50 p-4">
+                <div className="rounded-xl border border-slate-200 dark:border-slate-700/50 bg-white dark:bg-slate-800/50 p-4">
                   <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Total Simulated P&L</p>
                   <p
                     data-testid="replay-summary-total-pnl"
                     className={`text-xl font-bold ${
                       result.summary.total_simulated_pnl_gbp > 0
-                        ? "text-emerald-400"
+                        ? "text-emerald-700 dark:text-emerald-400"
                         : result.summary.total_simulated_pnl_gbp < 0
-                        ? "text-rose-400"
+                        ? "text-rose-700 dark:text-rose-400"
                         : "text-slate-600 dark:text-slate-400"
                     }`}
                   >
@@ -304,10 +304,10 @@ export default function Replay() {
               </p>
 
               {/* Results table */}
-              <div className="bg-slate-800/50 rounded-lg border border-slate-700/50 overflow-hidden">
+              <div className="bg-white dark:bg-slate-800/50 rounded-lg border border-slate-200 dark:border-slate-700/50 overflow-hidden">
                 <table className="w-full text-sm" data-testid="replay-results-table">
                   <thead>
-                    <tr className="border-b border-slate-700/50">
+                    <tr className="border-b border-slate-200 dark:border-slate-700/50 bg-slate-50 dark:bg-transparent">
                       <th className="px-5 py-3 text-left text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider">Ticker</th>
                       <th className="px-5 py-3 text-left text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider">Entry Date</th>
                       <th className="px-5 py-3 text-left text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider">Simulated Exit Date</th>
@@ -315,20 +315,20 @@ export default function Replay() {
                       <th className="px-5 py-3 text-left text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider">Exit Reason</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-700/30">
+                  <tbody className="divide-y divide-slate-200 dark:divide-slate-700/30">
                     {trades.map((t) => (
-                      <tr key={t.trade_id} data-testid={`replay-result-row-${t.trade_id}`} className="hover:bg-slate-700/20 transition-colors">
-                        <td className="px-5 py-3 text-white font-medium">{t.ticker}</td>
-                        <td className="px-5 py-3 text-slate-300">{t.entry_date}</td>
-                        <td className="px-5 py-3 text-slate-300">{t.simulated_exit_date}</td>
+                      <tr key={t.trade_id} data-testid={`replay-result-row-${t.trade_id}`} className="hover:bg-slate-50 dark:hover:bg-slate-700/20 transition-colors">
+                        <td className="px-5 py-3 text-slate-900 dark:text-white font-medium">{t.ticker}</td>
+                        <td className="px-5 py-3 text-slate-800 dark:text-slate-300">{t.entry_date}</td>
+                        <td className="px-5 py-3 text-slate-800 dark:text-slate-300">{t.simulated_exit_date}</td>
                         <td
                           className={`px-5 py-3 text-right font-medium ${
                             t.simulated_pnl_gbp == null
                               ? "text-slate-600 dark:text-slate-400"
                               : t.simulated_pnl_gbp > 0
-                              ? "text-emerald-400"
+                              ? "text-emerald-700 dark:text-emerald-400"
                               : t.simulated_pnl_gbp < 0
-                              ? "text-rose-400"
+                              ? "text-rose-700 dark:text-rose-400"
                               : "text-slate-600 dark:text-slate-400"
                           }`}
                         >
@@ -357,7 +357,7 @@ function SkippedNotice({ skipped }) {
   }, {});
   const parts = Object.entries(byReason).map(([reason, count]) => `${count} ${SKIPPED_REASON_LABEL[reason] || reason}`);
   return (
-    <p data-testid="replay-skipped-notice" className="text-xs text-amber-600 dark:text-amber-400 flex items-start gap-1.5">
+    <p data-testid="replay-skipped-notice" className="text-xs text-amber-700 dark:text-amber-400 flex items-start gap-1.5">
       <AlertTriangle className="w-3.5 h-3.5 mt-0.5 shrink-0" aria-hidden="true" />
       {skipped.length === 1 ? "1 trade" : `${skipped.length} trades`} could not be replayed ({parts.join(", ")}).
     </p>

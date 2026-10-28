@@ -78,14 +78,13 @@ const KNOWN_VIOLATIONS = {
   // ST-37 (BLG-QA-196, EPIC-06, v9.11): Replay page, both selector modes and a populated
   // result, in both themes. The dark theme has no baseline entries (its one finding, the
   // Risk-Off badge's contrast, was fixed in the same story). The light-theme color-contrast
-  // findings are the same dark-only-classes gap as BLG-FE-200, filed for Replay as
-  // BLG-FE-209; remove these entries when it closes.
+  // entries were removed by ST-26 (BLG-FE-209, v9.13), which applied the light-theme tokens.
   'ReplayDateRange:dark': new Set([]),
   'ReplayTradeSet:dark': new Set([]),
   'ReplayResult:dark': new Set([]),
-  'ReplayDateRange:light': new Set(['color-contrast']), // BLG-FE-209
-  'ReplayTradeSet:light': new Set(['color-contrast']), // BLG-FE-209
-  'ReplayResult:light': new Set(['color-contrast']), // BLG-FE-209
+  'ReplayDateRange:light': new Set([]),
+  'ReplayTradeSet:light': new Set([]),
+  'ReplayResult:light': new Set([]),
   'ReportsTaxYear:light': new Set([]),
   'NotificationPreferences:light': new Set([]),
   'NotificationsHistory:light': new Set([]),
