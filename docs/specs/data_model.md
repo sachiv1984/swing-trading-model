@@ -3,7 +3,7 @@
 **Owner:** Data Model & Domain Schema Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.64
+**Version:** 2.65
 **Last Updated:** 2026-10-27 (ST-31/ST-32, EPIC-05, v9.13, BLG-OPS-19/BLG-OPS-23 — DS-36 (v2.65): `api_call_log.feature` and `screener_runs.duration_seconds`; both tables documented); prior — 2026-10-27 (ST-22, EPIC-03, v9.13, BLG-FE-208 — DS-35 (v2.64): new `chat_answer_ratings` table, one useful / not-useful rating per AI chat answer); prior — 2026-10-16 (ST-02, EPIC-01, v9.13, BLG-SPEC-186 — DS-34 (v2.63): allowed `exit_reason` values mapped to `strategy_rules.md` §8, legacy spellings backfilled, CHECK constraints on `positions` and `trade_history`); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
@@ -3563,7 +3563,8 @@ SELECT indexname FROM pg_indexes WHERE indexname = 'idx_acl_called_at_feature';
 Expect 2 rows, `feature` text YES and `duration_seconds` numeric YES, and 1 index row.
 
 **Sign-off:**
-- Data Model & Domain Schema Owner: two nullable columns and one index on existing tables, reversible, created at runtime by idempotent ensure-functions. Live Confirmation pending (delegated, staging and production).
+- Data Model & Domain Schema Owner: two nullable columns and one index on existing tables, reversible, created at runtime by idempotent ensure-functions. Live Confirmation recorded below for staging, 2026-10-28; production pending until after merge (`DEL-20261027-04`).
+- **Live Confirmation — staging:** confirmed 2026-10-28 by the user (Data Model & Domain Schema Owner), Supabase SQL editor, after a screener run on the staging backend deployed from `exec/2026-10-16__release-v9.13/EPIC-05` (the ensure-functions created the columns and index; no manual migration). Columns: `screener_runs.duration_seconds` numeric `is_nullable = YES`; `api_call_log.feature` text `is_nullable = YES`. Index: `idx_acl_called_at_feature`. Matches the expected output.
 
 ---
 

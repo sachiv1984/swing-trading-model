@@ -1,7 +1,7 @@
 Owner: Director of Quality
 Class: Planning Document (Class 4)
 Status: Active
-Last Updated: 2026-10-27 (created; ST-28 failed-run Telegram receipt recorded, DEL-20261027-02)
+Last Updated: 2026-10-28 (ST-31 staging schema check recorded, DEL-20261027-04); prior — 2026-10-27 (created; ST-28 failed-run Telegram receipt recorded, DEL-20261027-02)
 
 # QA Evidence — EPIC-05: Operations, Cost & Platform
 
@@ -29,3 +29,22 @@ Story: ST-28, AC 2 (real-receipt half), `DEL-20261027-02`. Method: the delegatio
 - **Telegram receipt:** confirmed by the user, 2026-10-27.
 - **Result:** AC 2 met. A failed run fails its step and sends a Telegram message.
 - **Note:** an earlier dispatch, run 40582391679 (20:55:56Z), ran from `main` at `6f70a976`. That version of the workflow has no Telegram step, so it is not evidence for this AC. The 401 path does not exercise the cost-query failure itself; that half of AC 1 (logged, 503, `status: "error"`) is covered by `tests/test_daily_cost_fails_loudly.py` (CI Pytest 40505711397 on `a058fa60`).
+
+## Provider Call Attribution — Staging Check
+
+Story: ST-31, `DEL-20261027-04` (staging half). Production half after merge.
+
+- **Date:** 2026-10-28
+- **Checked by:** the user (human, acting for the Data Model & Domain Schema Owner and the Infrastructure & Operations Owner).
+- **Environment:** staging backend switched to `exec/2026-10-16__release-v9.13/EPIC-05`, then one screener run to completion.
+
+**DS-36 Verification query** (Supabase SQL editor, staging):
+
+| table_name | column_name | data_type | is_nullable |
+|------------|-------------|-----------|-------------|
+| screener_runs | duration_seconds | numeric | YES |
+| api_call_log | feature | text | YES |
+
+Index query: `idx_acl_called_at_feature` (1 row). Matches the expected output. The columns and index were created by the ensure-functions on first use; no manual migration was run.
+
+**Attribution report** (`GET /ops/api-call-attribution?window=daily`): pending.
