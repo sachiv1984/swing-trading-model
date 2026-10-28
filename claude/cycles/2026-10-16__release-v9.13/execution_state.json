@@ -757,34 +757,40 @@
       "merge_commit": "40d298f4"
     },
     "EPIC-04": {
-      "status": "not_started",
-      "branch": null,
+      "status": "in_progress",
+      "branch": "exec/2026-10-16__release-v9.13/EPIC-04",
       "pr_number": null,
       "pr_status": "none",
       "qa_signed_off": false,
       "qa_evidence_log": "claude/cycles/2026-10-16__release-v9.13/qa_evidence_EPIC-04.md",
-      "test_scenarios": [],
+      "test_scenarios": [
+        "tests/test_check_frontend_api_calls.py"
+      ],
       "stories": {
         "ST-23": {
           "title": "CI check that every frontend API call exists in openapi.yaml",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 2053,
           "branch": "exec/2026-10-16__release-v9.13/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "6f1badc2dde202d89209eb3747a81e0ea3785f10",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-28T21:01:53Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "scripts/check_frontend_api_calls.py",
+            ".github/workflows/quality_gate.yml",
+            "tests/test_check_frontend_api_calls.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Case D (CI tooling): script is the de facto spec. AC1 job frontend_api_call_existence in quality_gate.yml; AC2 test_fails_on_call_to_nonexistent_route; AC3 test_real_src_tree_passes with BLG-FE-230 dated allow-list (2026-10-28). Deviation check: none. ci_pending: 40768476264 (CI Pytest Suite), 40768476205 (Playwright) at done-time; no backend/** touched."
         },
         "ST-24": {
           "title": "Fail Playwright on any 404/405 from the app's API and sweep state-changing actions",
@@ -1314,6 +1320,7 @@
     "ST-20",
     "ST-21",
     "ST-22",
+    "ST-23",
     "ST-28",
     "ST-29",
     "ST-30",
@@ -1397,7 +1404,8 @@
     "2026-10-27: EPIC-03 branch cut from main e8097f2d (after EPIC-02 merge). ST-16/ST-17/ST-18 rulings escalated at EPIC start (ESC-EXEC-20261027-01/-02/-03); agent-mediated sign-off attempted per §5.3.",
     "2026-10-27: EPIC-05 branch cut from main 6f70a976 (after EPIC-03 merge). ST-28 (a058fa60) and ST-29 (d81af9b0) engine-implemented; live halves delegated as DEL-20261027-02/-03 (both appended in one write, +2 entries, prior entries unchanged).",
     "2026-10-28: EPIC-05 all stories done. ST-29, ST-30 and ST-32 graded Pass_with_deviation: their remaining ACs need a live run on main or production data, so they can only be verified after merge. Remainders filed as BLG-OPS-196/197/198 (v9.14), user-approved. DEL-20261027-03/05/06 carried to post-sprint; DEL-20261027-04 staging half done, production half in BLG-OPS-197.",
-    "2026-10-28: run sprint resume sync (STEP 4, LL-v3.9-P3-1). PR #2075 (EPIC-05) merged 2026-10-28T11:31:37Z as 77758669; EPIC-05 pr_status/status set to merged. Orphaned post-merge commit check (LL-v6.8-P3-01): git log origin/main..origin/exec/2026-10-16__release-v9.13/EPIC-05 empty, nothing to reconcile."
+    "2026-10-28: run sprint resume sync (STEP 4, LL-v3.9-P3-1). PR #2075 (EPIC-05) merged 2026-10-28T11:31:37Z as 77758669; EPIC-05 pr_status/status set to merged. Orphaned post-merge commit check (LL-v6.8-P3-01): git log origin/main..origin/exec/2026-10-16__release-v9.13/EPIC-05 empty, nothing to reconcile.",
+    "2026-10-28: EPIC-04 branch cut from main a8ad6e87 (after EPIC-05 merge sync; all other EPICs merged, so the sprint_backlog merge order holds). commit-check skill lesson \"open PR after every push\" conflicts with execution_prompt.md §3.2.B BLG-GOV-18; governance prompt followed, PR opens at EPIC completion."
   ],
   "sealed": false,
   "sealed_utc": null
