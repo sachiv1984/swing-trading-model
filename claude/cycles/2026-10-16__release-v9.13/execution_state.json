@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-16T10:49:11Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-27T21:38:28Z",
+  "last_updated_utc": "2026-10-28T09:34:50Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-06",
@@ -873,7 +873,7 @@
       }
     },
     "EPIC-05": {
-      "status": "in_progress",
+      "status": "done",
       "branch": "exec/2026-10-16__release-v9.13/EPIC-05",
       "pr_number": null,
       "pr_status": "none",
@@ -922,16 +922,16 @@
         "ST-29": {
           "title": "Deploy both staging services from staging-deploy.yml and wait on each",
           "classification": "delegated_backend",
-          "status": "blocked_backend",
+          "status": "done",
           "assigned_to": "Infrastructure & Operations Owner",
           "github_issue": 2059,
           "branch": "exec/2026-10-16__release-v9.13/EPIC-05",
-          "commit_sha": null,
+          "commit_sha": "d81af9b04ef5fee5ed782c0b57c9f8230656d586",
           "delegation_record_id": "DEL-20261027-03",
-          "blocked_since_utc": "2026-10-27T12:49:59Z",
-          "unblock_criteria": "Both per-service hook secrets set and a green staging-deploy.yml run on main showing both services live on its commit and the smoke-test host check passing, recorded in qa_evidence_EPIC-05.md (DEL-20261027-03).",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-10-28T09:34:50Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/ops/staging_deploy_notes.md#4. Render Deploy Hook Setup",
             "docs/specs/api_contracts/health_endpoints.md#GET /health/detailed",
@@ -940,47 +940,47 @@
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": "3.1.B.delegated",
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.B.unblock",
           "sign_off_record": null,
-          "notes": "Engine commit d81af9b04ef5fee5ed782c0b57c9f8230656d586 (2026-10-27T12:48:45Z): AC1 code half (two hook secrets, trigger_staging_deploy.py with ?ref=sha and deploy-ID-belongs-to-service check), AC3 (check_workflow_wiring + tests/test_staging_deploy_both_services.py), AC4 code half (render_service_id on GET /health/detailed, smoke-test WRONG STAGING HOST check; staging_deploy_notes.md v1.4 §4, secrets ownership map). health_endpoints.md v1.8, openapi 3.38.0, api_changelog 1.23.0. Live halves delegated: DEL-20261027-03. 2026-10-27: both hook secrets set by the user (DEL step 1); post-merge run and retiring RENDER_STAGING_DEPLOY_HOOK remain."
+          "notes": "Engine commit d81af9b04ef5fee5ed782c0b57c9f8230656d586 (2026-10-27T12:48:45Z): AC1 code half (two hook secrets, trigger_staging_deploy.py with ?ref=sha and deploy-ID-belongs-to-service check), AC3 (check_workflow_wiring + tests/test_staging_deploy_both_services.py), AC4 code half (render_service_id on GET /health/detailed, smoke-test WRONG STAGING HOST check; staging_deploy_notes.md v1.4 §4, secrets ownership map). health_endpoints.md v1.8, openapi 3.38.0, api_changelog 1.23.0. Live halves delegated: DEL-20261027-03. 2026-10-27: both hook secrets set by the user (DEL step 1); post-merge run and retiring RENDER_STAGING_DEPLOY_HOOK remain. 2026-10-28: marked done, Pass_with_deviation. AC 2 and AC 4 (live run on main, smoke-test host check) can only run after merge, because main still has the single-hook workflow; remainder tracked as BLG-OPS-196 (P2, v9.14). DEL-20261027-03 carried to post-sprint."
         },
         "ST-30": {
           "title": "Produce the combined data-pipeline cost baseline",
           "classification": "delegated_backend",
-          "status": "blocked_backend",
+          "status": "done",
           "assigned_to": "FinOps & Resource Architect; Infrastructure & Operations Owner",
           "github_issue": 2060,
           "branch": "exec/2026-10-16__release-v9.13/EPIC-05",
-          "commit_sha": null,
+          "commit_sha": "b48ebe753b08d16e93c62fe18149024bd843af60",
           "delegation_record_id": "DEL-20261027-06",
-          "blocked_since_utc": "2026-10-27T21:38:28Z",
-          "unblock_criteria": "Production GET /ops/api-call-attribution?window=weekly output after 7 days, recorded in data_pipeline_cost_baseline.md §4 (DEL-20261027-06).",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-10-28T09:34:50Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/ops/data_pipeline_cost_baseline.md"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": "3.1.B.delegated",
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.B.unblock",
           "sign_off_record": null,
-          "notes": "Engine commit b48ebe753b08d16e93c62fe18149024bd843af60 (2026-10-27T21:38:00Z): combined weekly cost baseline $0.00 (all sources free, basis per source), >2x advisory threshold on volume, cost and failures (AC 2 met), gate verified at Release Planning (AC 3). Follow-up BLG-OPS-195 (automated check). AC 1 weekly volumes delegated: DEL-20261027-06 (post-merge, 7 days of production data)."
+          "notes": "Engine commit b48ebe753b08d16e93c62fe18149024bd843af60 (2026-10-27T21:38:00Z): combined weekly cost baseline $0.00 (all sources free, basis per source), >2x advisory threshold on volume, cost and failures (AC 2 met), gate verified at Release Planning (AC 3). Follow-up BLG-OPS-195 (automated check). AC 1 weekly volumes delegated: DEL-20261027-06 (post-merge, 7 days of production data). 2026-10-28: marked done, Pass_with_deviation. AC 1's cost baseline is filed; the weekly call-volume figures need 7 days of production data after merge; remainder tracked as BLG-OPS-197 (P3, v9.14). DEL-20261027-06 carried to post-sprint."
         },
         "ST-31": {
           "title": "Attribute each external API call to the feature that triggered it",
           "classification": "delegated_backend",
-          "status": "blocked_backend",
+          "status": "done",
           "assigned_to": "FinOps & Resource Architect; Head of Engineering",
           "github_issue": 2061,
           "branch": "exec/2026-10-16__release-v9.13/EPIC-05",
-          "commit_sha": null,
+          "commit_sha": "a2553bf8773ed9e869f2f7007b3bfea2ecb6f932",
           "delegation_record_id": "DEL-20261027-04",
-          "blocked_since_utc": "2026-10-27T21:38:28Z",
-          "unblock_criteria": "DS-36 Verification output from staging (and production after merge) and a staging GET /ops/api-call-attribution report naming its top contributors, recorded in data_model.md DS-36 Live Confirmation and qa_evidence_EPIC-05.md (DEL-20261027-04).",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-10-28T09:34:50Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/specs/api_contracts/ops_endpoints.md#GET /ops/api-call-attribution",
             "docs/specs/data_model.md#DS-36",
@@ -990,23 +990,29 @@
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
-          "last_completed_substep": "3.1.B.delegated",
-          "sign_off_record": null,
-          "notes": "Engine commit e31a6b56709bf80d51901340e535b9294de1f9f9 (2026-10-27T21:37:54Z, with ST-32): transport-level attribution (requests and curl_cffi Session.request wrapped), feature from the route template via middleware (resolved at call time from scope['route']), inherited by background tasks and screener worker threads (copy_context), batched writes to api_call_log; GET /ops/api-call-attribution (cost by feature and provider, top 3). DS-36, openapi 3.39.0, ops_endpoints v1.4, api_changelog 1.24.0, test.py, SystemStatus 132, SC-SS-01b, baseline §52. Full suite 2972 passed. Live halves delegated: DEL-20261027-04."
+          "last_completed_substep": "3.1.B.unblock",
+          "sign_off_record": {
+            "role": "Infrastructure & Operations Owner; Data Model & Domain Schema Owner",
+            "method": "human",
+            "status": "cleared",
+            "signed_utc": "2026-10-28T09:34:50Z",
+            "notes": "User (human) switched the staging backend to the EPIC-05 branch, ran a screener, ran the DS-36 Verification query and called GET /ops/api-call-attribution?window=daily on staging, 2026-10-28. Recorded in qa_evidence_EPIC-05.md and data_model.md DS-36. DEL-20261027-04 (staging half)."
+          },
+          "notes": "Engine commit e31a6b56709bf80d51901340e535b9294de1f9f9 (2026-10-27T21:37:54Z, with ST-32): transport-level attribution (requests and curl_cffi Session.request wrapped), feature from the route template via middleware (resolved at call time from scope['route']), inherited by background tasks and screener worker threads (copy_context), batched writes to api_call_log; GET /ops/api-call-attribution (cost by feature and provider, top 3). DS-36, openapi 3.39.0, ops_endpoints v1.4, api_changelog 1.24.0, test.py, SystemStatus 132, SC-SS-01b, baseline §52. Full suite 2972 passed. Live halves delegated: DEL-20261027-04. 2026-10-28: staging half of DEL-20261027-04 done. Staging backend deployed from the EPIC-05 branch; after one screener run the DS-36 Verification query returned both columns and the index (f47335cb). GET /ops/api-call-attribution?window=daily on staging: 38 calls, POST /screener/run 23 (alpaca_data 5, yahoo 18), GET /earnings/{ticker} 15 (yahoo), no unattributed rows, top_contributors named (a2553bf8). AC 1 and AC 2 met. The production DS-36 Live Confirmation is a schema-hygiene step, not an AC; it is tracked with ST-30's remainder in BLG-OPS-197. Deviation check: none."
         },
         "ST-32": {
           "title": "Benchmark the full screener run",
           "classification": "delegated_backend",
-          "status": "blocked_backend",
+          "status": "done",
           "assigned_to": "Infrastructure & Operations Owner",
           "github_issue": 2062,
           "branch": "exec/2026-10-16__release-v9.13/EPIC-05",
-          "commit_sha": null,
+          "commit_sha": "e31a6b56709bf80d51901340e535b9294de1f9f9",
           "delegation_record_id": "DEL-20261027-05",
-          "blocked_since_utc": "2026-10-27T21:38:28Z",
-          "unblock_criteria": "scripts/screener_run_benchmark.py output over at least 10 qualifying production runs, recorded in api_performance_baseline.md §53.2 (DEL-20261027-05).",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-10-28T09:34:50Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/ops/api_performance_baseline.md#53. Full Screener Run Benchmark (ST-32, EPIC-05, v9.13, BLG-OPS-23)",
             "docs/specs/api_contracts/screener_api_contract.md#GET /screener/history",
@@ -1015,10 +1021,10 @@
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": "3.1.B.delegated",
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.B.unblock",
           "sign_off_record": null,
-          "notes": "Engine commit e31a6b56709bf80d51901340e535b9294de1f9f9 (with ST-31): screener_runs.duration_seconds recorded per run (DS-36), returned by GET /screener/history (contract v1.6); scripts/screener_run_benchmark.py (nearest-rank p50/p95 over non-degraded full-universe runs, 1.5x threshold); baseline §53 defines method and threshold (AC 2 met). AC 1 live measurement delegated: DEL-20261027-05 (post-merge, 10 nightly production runs)."
+          "notes": "Engine commit e31a6b56709bf80d51901340e535b9294de1f9f9 (with ST-31): screener_runs.duration_seconds recorded per run (DS-36), returned by GET /screener/history (contract v1.6); scripts/screener_run_benchmark.py (nearest-rank p50/p95 over non-degraded full-universe runs, 1.5x threshold); baseline §53 defines method and threshold (AC 2 met). AC 1 live measurement delegated: DEL-20261027-05 (post-merge, 10 nightly production runs). 2026-10-28: marked done, Pass_with_deviation. AC 1's p50/p95 need at least 10 nightly production runs after merge (runs before v9.13 have no duration); remainder tracked as BLG-OPS-198 (P3, v9.14). DEL-20261027-05 carried to post-sprint."
         },
         "ST-33": {
           "title": "Assess data-provider risk and failover options",
@@ -1266,12 +1272,7 @@
     }
   },
   "blocked_items": [],
-  "delegated_items": [
-    "ST-29",
-    "ST-30",
-    "ST-31",
-    "ST-32"
-  ],
+  "delegated_items": [],
   "completed_items": [
     "ST-01",
     "ST-02",
@@ -1296,6 +1297,10 @@
     "ST-21",
     "ST-22",
     "ST-28",
+    "ST-29",
+    "ST-30",
+    "ST-31",
+    "ST-32",
     "ST-33",
     "ST-34",
     "ST-35",
@@ -1372,7 +1377,8 @@
     "2026-10-17: ST-06/ST-08 rulings agent-mediated (§5.3, user-directed), ST-07 decided by the user in-session; all three reclassified autonomous and committed (87c63c23, 5c39e3f2). ST-06 and ST-08 share one commit because both touch openapi.yaml and api_changelog.md (CLAUDE.md §2 multi-ID format).",
     "2026-10-27T08:45:05Z: EPIC-02 PR #2073 merged by the repository owner (merge commit 8ebd879a) after the agent-mediated Director of Quality and Product Owner review comment (both Approved with Comments, nothing blocking). Follow-ups filed on main: BLG-OPS-193, BLG-QA-229, BLG-BE-190, BLG-BE-191, BLG-FE-233, BLG-UX-06, BLG-FEAT-100. Branch fully contained in main (no orphaned post-merge commits). Merge record written on main per STEP 4 mid-session re-sync.",
     "2026-10-27: EPIC-03 branch cut from main e8097f2d (after EPIC-02 merge). ST-16/ST-17/ST-18 rulings escalated at EPIC start (ESC-EXEC-20261027-01/-02/-03); agent-mediated sign-off attempted per §5.3.",
-    "2026-10-27: EPIC-05 branch cut from main 6f70a976 (after EPIC-03 merge). ST-28 (a058fa60) and ST-29 (d81af9b0) engine-implemented; live halves delegated as DEL-20261027-02/-03 (both appended in one write, +2 entries, prior entries unchanged)."
+    "2026-10-27: EPIC-05 branch cut from main 6f70a976 (after EPIC-03 merge). ST-28 (a058fa60) and ST-29 (d81af9b0) engine-implemented; live halves delegated as DEL-20261027-02/-03 (both appended in one write, +2 entries, prior entries unchanged).",
+    "2026-10-28: EPIC-05 all stories done. ST-29, ST-30 and ST-32 graded Pass_with_deviation: their remaining ACs need a live run on main or production data, so they can only be verified after merge. Remainders filed as BLG-OPS-196/197/198 (v9.14), user-approved. DEL-20261027-03/05/06 carried to post-sprint; DEL-20261027-04 staging half done, production half in BLG-OPS-197."
   ],
   "sealed": false,
   "sealed_utc": null

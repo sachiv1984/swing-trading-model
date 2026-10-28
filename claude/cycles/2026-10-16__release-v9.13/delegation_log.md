@@ -84,7 +84,7 @@ Last Updated: 2026-10-16
 - **Unblock criteria:** both secrets set (user confirmation) and a green `staging-deploy.yml` run on `main` whose log shows both services live on its commit and the smoke-test host check passing, recorded in `qa_evidence_EPIC-05.md`.
 - **Commit format required:** `[EPIC-05][ST-29] <description>` on `exec/2026-10-16__release-v9.13/EPIC-05` (or a `[GOVERNANCE]` commit on `main` if EPIC-05 has merged)
 - **Progress:** 2026-10-27 — step (1) done. The user (human, acting for the Infrastructure & Operations Owner) set both secrets; `gh secret list` shows `RENDER_STAGING_BACKEND_DEPLOY_HOOK` (updated 2026-10-27T15:57:29Z) and `RENDER_STAGING_FRONTEND_DEPLOY_HOOK` (2026-10-27T15:58:13Z). The hooks have not been called yet; whether each holds its own service's hook is proven by the trigger steps' deploy-ID check on the first post-merge run. Engine-side CI on `d81af9b0` green (CI Pytest 40506739549, Playwright 40506739503). Steps (2) and (3) remain.
-- **Status:** Pending
+- **Status:** In Progress — carried to post-sprint. ST-29 marked done 2026-10-28 (Pass_with_deviation, user-approved): steps (2) and (3) can only run after EPIC-05 merges, because `main` still has the single-hook workflow. Tracked as BLG-OPS-196 (v9.14); close this entry when that item's run is recorded.
 
 ## DEL-20261027-04
 
@@ -100,7 +100,8 @@ Last Updated: 2026-10-16
 - **Spec reference:** `docs/specs/api_contracts/ops_endpoints.md#GET /ops/api-call-attribution`; `docs/specs/data_model.md#DS-36`; layers: utils, middleware (`main.py`), router (`cost_monitoring.py`), database (`log_api_calls`, `get_api_call_attribution`)
 - **Unblock criteria:** DS-36 Verification output from staging (and production after merge), and a staging attribution report naming its top contributors, recorded in `data_model.md` DS-36 Live Confirmation and `qa_evidence_EPIC-05.md`.
 - **Commit format required:** `[EPIC-05][ST-31] <description>` on `exec/2026-10-16__release-v9.13/EPIC-05` (or a `[GOVERNANCE]` commit on `main` if EPIC-05 has merged)
-- **Status:** Pending
+- **Progress:** 2026-10-28 — staging half done by the user (human, acting for both assigned owners). Staging backend switched to the EPIC-05 branch, one screener run, DS-36 Verification query: `screener_runs.duration_seconds` numeric YES, `api_call_log.feature` text YES, index `idx_acl_called_at_feature` (`f47335cb`). `GET /ops/api-call-attribution?window=daily`: 38 calls; `POST /screener/run` 23 (`alpaca_data` 5, `yahoo` 18), `GET /earnings/{ticker}` 15 (`yahoo`); no `unattributed` rows; `top_contributors` named (`a2553bf8`). Staging switched back to `main`.
+- **Status:** In Progress — carried to post-sprint. ST-31 marked done 2026-10-28 (both ACs met on staging). The production DS-36 Live Confirmation remains and is tracked in BLG-OPS-197 (v9.14).
 
 ## DEL-20261027-05
 
@@ -116,7 +117,7 @@ Last Updated: 2026-10-16
 - **Spec reference:** `docs/ops/api_performance_baseline.md#53. Full Screener Run Benchmark (ST-32, EPIC-05, v9.13, BLG-OPS-23)`; `docs/specs/api_contracts/screener_api_contract.md#GET /screener/history`
 - **Unblock criteria:** the script's output over at least 10 qualifying production runs, recorded in `api_performance_baseline.md` §53.2.
 - **Commit format required:** `[GOVERNANCE] <description>` on `main` (post-merge)
-- **Status:** Pending
+- **Status:** In Progress — carried to post-sprint. ST-32 marked done 2026-10-28 (Pass_with_deviation, user-approved): the p50/p95 need at least 10 nightly production runs after merge. Tracked as BLG-OPS-198 (v9.14).
 
 ## DEL-20261027-06
 
@@ -132,4 +133,4 @@ Last Updated: 2026-10-16
 - **Spec reference:** `docs/ops/data_pipeline_cost_baseline.md#4. Weekly Baseline`
 - **Unblock criteria:** the production weekly report recorded in §4 with its date and top contributors.
 - **Commit format required:** `[GOVERNANCE] <description>` on `main` (post-merge)
-- **Status:** Pending
+- **Status:** In Progress — carried to post-sprint. ST-30 marked done 2026-10-28 (Pass_with_deviation, user-approved): the weekly volumes need 7 days of production data after merge. Tracked as BLG-OPS-197 (v9.14).

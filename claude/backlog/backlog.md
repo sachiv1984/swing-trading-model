@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-27 (session — 1 new item(s) added: BLG-OPS-195; ST-30 data pipeline cost baseline, EPIC-05 v9.13); prior — 2026-10-27 (session — 6 new item(s) added: BLG-BE-192, BLG-BE-193, BLG-BE-194, BLG-FE-234, BLG-SPEC-209, BLG-OPS-194; ST-33 data-provider risk assessment, EPIC-05 v9.13); prior — 2026-10-27 (session — 7 new item(s) added: BLG-TECH-25 to BLG-TECH-31; ST-34 dependency upgrade assessment, EPIC-05 v9.13); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-28 (session — 3 new item(s) added: BLG-OPS-196, BLG-OPS-197, BLG-OPS-198; post-merge remainders of ST-29, ST-30/ST-31 and ST-32, EPIC-05 v9.13); prior — 2026-10-27 (session — 1 new item(s) added: BLG-OPS-195; ST-30 data pipeline cost baseline, EPIC-05 v9.13); prior — 2026-10-27 (session — 6 new item(s) added: BLG-BE-192, BLG-BE-193, BLG-BE-194, BLG-FE-234, BLG-SPEC-209, BLG-OPS-194; ST-33 data-provider risk assessment, EPIC-05 v9.13); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -6322,5 +6322,73 @@ The System Status Yahoo Finance check calls `get_live_fx_rate()` and reports hea
 **Acceptance Criteria**
 - A test with a report over 2× baseline produces the advisory message, and one under it produces none
 - A failed report call fails the workflow loudly (as `ai-daily-cost-check.yml` does)
+
+---
+
+### BLG-OPS-196 — Confirm both staging services deploy from main, then retire the old hook
+**Priority:** P2 (Medium)
+**Type:** Operations / Deployment
+**Owner:** Infrastructure & Operations Owner
+**Source:** ST-29 (BLG-OPS-189), EPIC-05, cycle `2026-10-16__release-v9.13` — post-merge remainder of AC 2 and AC 4, `DEL-20261027-03` — 2026-10-28
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.14
+**Depends on:** EPIC-05 merged to `main`
+
+**Problem**
+ST-29 changed `staging-deploy.yml` to call one deploy hook per staging service and wait on each, and both new hook secrets are set. Its AC 2 (a green run on `main` with both services live on the run's commit) and AC 4 (the smoke test confirms the host behind `STAGING_API_URL`) can only be checked by the first run on `main` after EPIC-05 merges, because `main` still has the old single-hook workflow. Until then, staging deploys from `main` keep timing out, and other stories' staging checks depend on them.
+
+**Scope**
+- After EPIC-05 merges, confirm the `staging-deploy.yml` run on `main` (or dispatch one)
+- Record the run in `qa_evidence_EPIC-05.md` and close `DEL-20261027-03`
+- Delete the retired `RENDER_STAGING_DEPLOY_HOOK` repository secret once that run is green
+
+**Acceptance Criteria**
+- A green `staging-deploy.yml` run on `main` shows both trigger steps' deploy IDs matching their services, both services live on the run's commit, and the smoke-test host check passing (`srv-d6rtdg94tr6s73ce2j6g`); its run ID is recorded in `qa_evidence_EPIC-05.md`
+- `RENDER_STAGING_DEPLOY_HOOK` no longer appears in `gh secret list`
+
+---
+
+### BLG-OPS-197 — Record the weekly market-data call-volume baseline from production
+**Priority:** P3 (Low)
+**Type:** Operations / Cost Monitoring
+**Owner:** FinOps & Resource Architect; Infrastructure & Operations Owner
+**Source:** ST-30 (BLG-OPS-18) and ST-31 (BLG-OPS-19), EPIC-05, cycle `2026-10-16__release-v9.13` — post-merge remainder, `DEL-20261027-06` and the production half of `DEL-20261027-04` — 2026-10-28
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.14
+**Depends on:** EPIC-05 merged and deployed to production; 7 days of production data
+
+**Problem**
+ST-30 filed the combined weekly cost baseline ($0.00, every source free) and the 2× advisory threshold, but the per-source weekly call volumes in `docs/ops/data_pipeline_cost_baseline.md` §4 are pending: they need a week of production attribution data, which only exists after EPIC-05 deploys. ST-31's DS-36 columns were confirmed on staging; their production Live Confirmation is also outstanding. Without the volume baseline, the 2× advisory (and BLG-OPS-195's automated check) has nothing to compare with.
+
+**Scope**
+- After the production deploy, run DS-36's Verification query on production and record it in `data_model.md` DS-36
+- 7 full days after deploy, call `GET /ops/api-call-attribution?window=weekly` on production and fill §4's calls and failures per source, with the date and `top_contributors`
+- Close `DEL-20261027-04` and `DEL-20261027-06`
+
+**Acceptance Criteria**
+- DS-36 Live Confirmation for production is recorded: `api_call_log.feature` text YES, `screener_runs.duration_seconds` numeric YES, index `idx_acl_called_at_feature`
+- `data_pipeline_cost_baseline.md` §4 has weekly calls and failures for each source and combined, from one production weekly report, with its date and top contributors; the §6 volume sign-off line is ticked
+
+---
+
+### BLG-OPS-198 — Record the full screener run p50/p95 baseline from production
+**Priority:** P3 (Low)
+**Type:** Operations / Performance
+**Owner:** Infrastructure & Operations Owner
+**Source:** ST-32 (BLG-OPS-23), EPIC-05, cycle `2026-10-16__release-v9.13` — post-merge remainder of AC 1, `DEL-20261027-05` — 2026-10-28
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.14
+**Depends on:** EPIC-05 merged and deployed to production; at least 10 nightly production screener runs after deploy
+
+**Problem**
+ST-32 made each screener run record `duration_seconds` and added `scripts/screener_run_benchmark.py`, which computes p50/p95 over full-universe runs, and defined the >1.5× regression threshold in `docs/ops/api_performance_baseline.md` §53. The p50/p95 values themselves are pending: runs before v9.13 have no duration, so the baseline needs about 10 nightly production runs (two weeks of weekdays) after deploy. Until then the regression threshold has no baseline to multiply.
+
+**Scope**
+- After at least 10 nightly production runs, run `API_URL=<production> API_KEY=<key> python3 scripts/screener_run_benchmark.py`
+- Record its output (runs counted, min tickers, p50, p95, regression threshold, first and last run) in `api_performance_baseline.md` §53
+- Close `DEL-20261027-05`
+
+**Acceptance Criteria**
+- The script exits 0 (at least 10 qualifying runs) and its p50, p95 and 1.5× threshold in seconds are recorded in `api_performance_baseline.md` §53 with the run date range
 
 ---
