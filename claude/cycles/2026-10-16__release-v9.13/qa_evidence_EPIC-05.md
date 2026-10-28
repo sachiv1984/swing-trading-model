@@ -58,6 +58,7 @@ Last Updated: 2026-10-28 (DoQ sign-off, agent-mediated, Approved with conditions
   - Frontend gate: the only frontend change is the `SystemStatus.js` fallback count (132). It is covered by Playwright SC-SS-01b, changed in the same commit (`e31a6b56`), with CI passing. No observable AC relies on code review alone.
   - Testing-gap consistency: every story whose remaining ACs need production data has its own backlog item. No testing-gap items were filed.
   - First pass: Approved with conditions. C1 regrade ST-31 to Pass_with_deviation (BLG-OPS-197); C2 tighten BLG-OPS-197's top-contributors AC and add ST-31 AC 2 to its Source; C3 complete this block and set `qa_signed_off`. All three applied in the commit that adds this block.
+  - Post-open CI fix (ST-29): after PR #2075 opened, Secret Scan (gitleaks) run 40666058273 failed on a false positive, the Render backend service ID in a `staging-deploy.yml` comment (`d81af9b0`, line 22). Its fingerprint was added to `.gitleaksignore` under the existing Render service ID suppression (`bf44f334`). Final state: secret scan run 40674726482 passed, and all 43 PR checks are green on head `bf44f334`.
   - The engine queried no live database. All live steps were done by the user. Human QA sign-off and Product Owner acceptance on the PR are still required before merge.
 
 ## Failed-Run Alert Check — AI Daily Cost
