@@ -286,3 +286,28 @@ jobs:
           print(f"No endpoint count drift detected. test_cases: "
                 f"{registry_count}, SystemStatus.js fallback: {fallback_count}.")
           EOF
+
+  frontend_api_call_existence:
+    name: Frontend API Call Existence Check (ST-23)
+    runs-on: ubuntu-latest
+
+    # [EPIC-04][ST-23] (BLG-QA-228) — Fails when any doFetch/apiFetch call
+    # in src/ targets a method + path that is not in
+    # docs/reference/openapi.yaml. Catches the class behind BLG-FE-226
+    # (PATCH /positions/{id}) and BLG-FE-230 (POST /signals) before merge.
+    # Allow-lists (external hosts, dead methods with a dated backlog item,
+    # non-literal call sites) live in the script itself.
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install PyYAML
+        run: pip install pyyaml -q
+
+      - name: Check frontend API calls against openapi.yaml
+        run: python3 scripts/check_frontend_api_calls.py
