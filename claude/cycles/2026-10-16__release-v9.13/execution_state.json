@@ -873,10 +873,10 @@
       }
     },
     "EPIC-05": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-10-16__release-v9.13/EPIC-05",
       "pr_number": 2075,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-10-16__release-v9.13/qa_evidence_EPIC-05.md",
       "test_scenarios": [
@@ -1376,11 +1376,11 @@
       "EPIC-01",
       "EPIC-06",
       "EPIC-02",
-      "EPIC-03"
+      "EPIC-03",
+      "EPIC-05"
     ],
     "epics_pending": [
-      "EPIC-04",
-      "EPIC-05"
+      "EPIC-04"
     ],
     "all_merged": false
   },
@@ -1396,7 +1396,8 @@
     "2026-10-27T08:45:05Z: EPIC-02 PR #2073 merged by the repository owner (merge commit 8ebd879a) after the agent-mediated Director of Quality and Product Owner review comment (both Approved with Comments, nothing blocking). Follow-ups filed on main: BLG-OPS-193, BLG-QA-229, BLG-BE-190, BLG-BE-191, BLG-FE-233, BLG-UX-06, BLG-FEAT-100. Branch fully contained in main (no orphaned post-merge commits). Merge record written on main per STEP 4 mid-session re-sync.",
     "2026-10-27: EPIC-03 branch cut from main e8097f2d (after EPIC-02 merge). ST-16/ST-17/ST-18 rulings escalated at EPIC start (ESC-EXEC-20261027-01/-02/-03); agent-mediated sign-off attempted per §5.3.",
     "2026-10-27: EPIC-05 branch cut from main 6f70a976 (after EPIC-03 merge). ST-28 (a058fa60) and ST-29 (d81af9b0) engine-implemented; live halves delegated as DEL-20261027-02/-03 (both appended in one write, +2 entries, prior entries unchanged).",
-    "2026-10-28: EPIC-05 all stories done. ST-29, ST-30 and ST-32 graded Pass_with_deviation: their remaining ACs need a live run on main or production data, so they can only be verified after merge. Remainders filed as BLG-OPS-196/197/198 (v9.14), user-approved. DEL-20261027-03/05/06 carried to post-sprint; DEL-20261027-04 staging half done, production half in BLG-OPS-197."
+    "2026-10-28: EPIC-05 all stories done. ST-29, ST-30 and ST-32 graded Pass_with_deviation: their remaining ACs need a live run on main or production data, so they can only be verified after merge. Remainders filed as BLG-OPS-196/197/198 (v9.14), user-approved. DEL-20261027-03/05/06 carried to post-sprint; DEL-20261027-04 staging half done, production half in BLG-OPS-197.",
+    "2026-10-28: run sprint resume sync (STEP 4, LL-v3.9-P3-1). PR #2075 (EPIC-05) merged 2026-10-28T11:31:37Z as 77758669; EPIC-05 pr_status/status set to merged. Orphaned post-merge commit check (LL-v6.8-P3-01): git log origin/main..origin/exec/2026-10-16__release-v9.13/EPIC-05 empty, nothing to reconcile."
   ],
   "sealed": false,
   "sealed_utc": null
