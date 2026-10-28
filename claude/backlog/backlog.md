@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-28 (session — 3 new item(s) added: BLG-OPS-196, BLG-OPS-197, BLG-OPS-198; post-merge remainders of ST-29, ST-30/ST-31 and ST-32, EPIC-05 v9.13); prior — 2026-10-27 (session — 1 new item(s) added: BLG-OPS-195; ST-30 data pipeline cost baseline, EPIC-05 v9.13); prior — 2026-10-27 (session — 6 new item(s) added: BLG-BE-192, BLG-BE-193, BLG-BE-194, BLG-FE-234, BLG-SPEC-209, BLG-OPS-194; ST-33 data-provider risk assessment, EPIC-05 v9.13); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-28 (session — 3 new item(s) added: BLG-TECH-32, BLG-BE-195, BLG-OPS-199; PR #2075 review findings, EPIC-05 v9.13); prior — 2026-10-28 (session — 3 new item(s) added: BLG-OPS-196, BLG-OPS-197, BLG-OPS-198; post-merge remainders of ST-29, ST-30/ST-31 and ST-32, EPIC-05 v9.13); prior — 2026-10-27 (session — 1 new item(s) added: BLG-OPS-195; ST-30 data pipeline cost baseline, EPIC-05 v9.13); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -619,6 +619,28 @@ The backend server is pinned to `uvicorn[standard]==0.24.0`, 30 minor releases b
 **Acceptance Criteria**
 - `moment` no longer appears in `src/` or `package.json`
 - A Playwright test checks the "As of" time format and the health-check relative time on System Status, and passes in CI
+
+---
+
+### BLG-TECH-32 — Retire the per-call-site Alpaca call logging now that every Alpaca call is attributed
+**Priority:** P3 (Low)
+**Type:** Tech Debt / Observability
+**Owner:** Head of Engineering; FinOps & Resource Architect
+**Source:** PR #2075 review (EPIC-05, cycle `2026-10-16__release-v9.13`, ST-29/ST-31) — 2026-10-28
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.14
+
+**Problem**
+Since v9.13 every Alpaca bar call writes two `api_call_log` rows: `service = 'alpaca'` from `alpaca_service._log_alpaca_call()` (one database connection per call, `external_api_dependency_register.md` SFM-01) and `service = 'alpaca_data'` from the transport-level attribution (`utils/api_attribution.py`, batched). The reports keep them apart by service name, but the table grows twice as fast for Alpaca and any total over `api_call_log` double-counts.
+
+**Scope**
+- Point `GET /ops/alpaca-call-report` at the attributed rows (`alpaca_data`), keeping its response shape
+- Remove `_log_alpaca_call()` and its call sites
+- Update `ops_endpoints.md` and `api_changelog.md`; note the cut-over date so earlier `alpaca` rows stay readable
+
+**Acceptance Criteria**
+- One Alpaca bar call writes exactly one `api_call_log` row (test)
+- `GET /ops/alpaca-call-report` returns the same fields, counted from `alpaca_data` (test)
 
 ---
 
@@ -6236,6 +6258,28 @@ When SPY or FTSE regime data is unavailable, `check_market_regime()` sets that m
 
 ---
 
+### BLG-BE-195 — Write attributed provider calls off the response path and on shutdown
+**Priority:** P3 (Low)
+**Type:** Backend / Observability
+**Owner:** Head of Engineering; Backend Engineering Patterns Owner
+**Source:** PR #2075 review (EPIC-05, cycle `2026-10-16__release-v9.13`, ST-29/ST-31) — 2026-10-28
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.14
+
+**Problem**
+`api_attribution_middleware` (`backend/main.py`) awaits `api_attribution.flush()`, one database insert, before it returns the response of any request that made a provider call, so those requests wait for an extra database round trip. Calls a background task makes after the response is sent stay in the in-memory buffer until another request flushes it, and are lost if the process restarts or Render redeploys first, which under-counts the attribution report.
+
+**Scope**
+- Flush the buffer outside the response path (a background task or a short-interval flusher thread), not inline in the middleware
+- Flush the buffer in a shutdown handler
+
+**Acceptance Criteria**
+- A request that made provider calls returns without waiting for the insert (test)
+- Buffered rows are written on application shutdown (test)
+- The attribution report's counts are unchanged for a request-scoped call (existing tests pass)
+
+---
+
 ### BLG-FE-234 — Mark a position's price as stale when the live price fetch fails
 **Priority:** P3 (Low)
 **Type:** Frontend / Data Provider Resilience
@@ -6390,5 +6434,28 @@ ST-32 made each screener run record `duration_seconds` and added `scripts/screen
 
 **Acceptance Criteria**
 - The script exits 0 (at least 10 qualifying runs) and its p50, p95 and 1.5× threshold in seconds are recorded in `api_performance_baseline.md` §53 with the run date range
+
+---
+
+### BLG-OPS-199 — Fail the staging smoke host check when the backend reports no Render service ID
+**Priority:** P3 (Low)
+**Type:** Operations / Deployment
+**Owner:** Infrastructure & Operations Owner
+**Source:** PR #2075 review (EPIC-05, cycle `2026-10-16__release-v9.13`, ST-29/ST-31) — 2026-10-28
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.14
+**Depends on:** BLG-OPS-196 (first green staging deploy on `main` showing the host check pass)
+
+**Problem**
+`scripts/staging_smoke_test.py` `check_host_is_staging_backend()` treats a missing `render_service_id` on `GET /health/detailed` as a warning, so deploys from before v9.13 do not fail the smoke test. Once staging runs v9.13, a missing value means `RENDER_SERVICE_ID` is not set or `STAGING_API_URL` points at another host, and the check would pass with only a warning, which is the silent wrong-host case ST-29 exists to catch. The script also repeats the staging backend's service ID as its own literal instead of reading `STAGING_SERVICES` in `check_staging_deploy_drift.py`.
+
+**Scope**
+- Make a missing `render_service_id` a failure, once BLG-OPS-196 has shown the field on staging
+- Read the expected service ID from `STAGING_SERVICES`
+- Update `tests/test_staging_smoke_test.py`
+
+**Acceptance Criteria**
+- A `/health/detailed` response without `render_service_id` fails the smoke test (test)
+- The expected service ID has one definition in the repo
 
 ---
