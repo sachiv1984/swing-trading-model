@@ -1,7 +1,7 @@
 Owner: Director of Quality
 Class: Planning Document (Class 4)
 Status: Active
-Last Updated: 2026-10-28 (DoQ sign-off, agent-mediated, Approved with conditions; ST-31 regraded Pass_with_deviation); prior — 2026-10-28 (EPIC consolidation block added); prior — 2026-10-28 (ST-31 staging schema check and attribution report recorded, DEL-20261027-04); prior history retained — see prior entries in version control
+Last Updated: 2026-10-28 (human DoQ confirmation and Product Owner acceptance recorded); prior — 2026-10-28 (DoQ sign-off, agent-mediated, Approved with conditions; ST-31 regraded Pass_with_deviation); prior — 2026-10-28 (EPIC consolidation block added); prior history retained — see prior entries in version control
 
 # QA Evidence — EPIC-05: Operations, Cost & Platform
 
@@ -60,6 +60,22 @@ Last Updated: 2026-10-28 (DoQ sign-off, agent-mediated, Approved with conditions
   - First pass: Approved with conditions. C1 regrade ST-31 to Pass_with_deviation (BLG-OPS-197); C2 tighten BLG-OPS-197's top-contributors AC and add ST-31 AC 2 to its Source; C3 complete this block and set `qa_signed_off`. All three applied in the commit that adds this block.
   - Post-open CI fix (ST-29): after PR #2075 opened, Secret Scan (gitleaks) run 40666058273 failed on a false positive, the Render backend service ID in a `staging-deploy.yml` comment (`d81af9b0`, line 22). Its fingerprint was added to `.gitleaksignore` under the existing Render service ID suppression (`bf44f334`). Final state: secret scan run 40674726482 passed, and all 43 PR checks are green on head `bf44f334`.
   - The engine queried no live database. All live steps were done by the user. Human QA sign-off and Product Owner acceptance on the PR are still required before merge.
+
+## Director of Quality Human Confirmation
+
+- **Confirmed by:** Director of Quality (human, in-session, 2026-10-28: "provice DOA and PO acceptance."). Recorded by the Sprint Execution Engine on the Director of Quality's behalf.
+- **Date:** 2026-10-28
+- **Verdict:** Accepted. Confirms the agent-mediated DoQ sign-off above, including the Pass_with_deviation grades for ST-29, ST-30, ST-31 and ST-32 (BLG-OPS-196, BLG-OPS-197, BLG-OPS-198), and the PR #2075 review findings filed as BLG-TECH-32, BLG-BE-195 and BLG-OPS-199.
+- **CI:** all 43 checks passed on the PR's head (`fedfb4cf`).
+- **PR comment:** https://github.com/sachiv1984/swing-trading-model/pull/2075#issuecomment-6467853786
+
+## Product Owner Acceptance
+
+- **Accepted by:** Product Owner (human, in-session, 2026-10-28: "provice DOA and PO acceptance."). Recorded by the Sprint Execution Engine on the Product Owner's behalf.
+- **Date:** 2026-10-28
+- **Verdict:** Accepted.
+- **Basis:** ST-28, ST-33 and ST-34 meet every acceptance criterion. ST-29 to ST-32 are accepted as Pass_with_deviation: their remaining checks need a run on `main` or production data, tracked by BLG-OPS-196, BLG-OPS-197 and BLG-OPS-198 (v9.14).
+- **Still required:** the human developer performs the merge. After merge, BLG-OPS-196 first.
 
 ## Failed-Run Alert Check — AI Daily Cost
 

@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-16T10:49:11Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-28T10:15:00Z",
+  "last_updated_utc": "2026-10-28T11:00:00Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-06",
@@ -1080,6 +1080,24 @@
           "sign_off_record": null,
           "notes": "Assessment at fd7d7788: all 8 packages with breaking changes for this codebase, effort and decision, checked against Python 3.11.0 and Node 22 (BLG-TECH-24). Approved: anthropic 0.105->2.x (BLG-TECH-25), remove unused SQLAlchemy (BLG-TECH-26), reportlab 5.x with a PDF build test (BLG-TECH-27), uvicorn 0.54 (BLG-TECH-28), framer-motion 14 with design check (BLG-TECH-29), lucide-react 1.x with design check (BLG-TECH-30; all 105 icon names still exported), moment -> date-fns (BLG-TECH-31). Held: eslint 10 (eslint-plugin-react 7.37.5 peer stops at eslint 9). tailwindcss 4 stays with BLG-TECH-21. Deviation check: none (assessment only; no code changed)."
         }
+      },
+      "sign_off_record": {
+        "role": "Director of Quality",
+        "method": "agent_mediated",
+        "status": "cleared",
+        "date": "2026-10-28",
+        "reference": "qa_evidence_EPIC-05.md",
+        "retries": 0,
+        "human_confirmation": {
+          "date": "2026-10-28",
+          "by": "Director of Quality (human, in-session)",
+          "pr_comment": "https://github.com/sachiv1984/swing-trading-model/pull/2075#issuecomment-6467853786"
+        }
+      },
+      "product_owner_acceptance": {
+        "date": "2026-10-28",
+        "by": "Product Owner (human, in-session)",
+        "pr_comment": "https://github.com/sachiv1984/swing-trading-model/pull/2075#issuecomment-6467853786"
       }
     },
     "EPIC-06": {
