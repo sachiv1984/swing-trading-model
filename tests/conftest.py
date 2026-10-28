@@ -113,6 +113,14 @@ def database_stub():
 # (a private copy, or a scoped swap that restores the stub). These two checks
 # turn any new unrestored swap into a failure attributed to the file or test
 # that caused it, instead of a confusing failure somewhere else.
+#
+# Not covered (ST-27, BLG-QA-211, v9.13): the guard checks sys.modules["database"]
+# only. Modules first imported inside a real_database_imports() block (main,
+# routers, services) stay cached for the session with their module-level
+# `from database import` names bound to the real module (modules already cached
+# stub-bound stay stub-bound), and a later file importing them gets that copy.
+# This is accepted and documented in tests/_real_database.py ("Known limit"),
+# with the rule that keeps tests independent of it: patch at the service level.
 # ---------------------------------------------------------------------------
 
 _LEAK_HINT = (
