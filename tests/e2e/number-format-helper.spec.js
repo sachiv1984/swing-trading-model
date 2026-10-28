@@ -20,7 +20,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const { test, expect } = require('@playwright/test');
+const { test, expect } = require('./fixtures/api-status-guard');
 
 const src = fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'lib', 'format.js'), 'utf8')
   .replace(/^export /gm, '');

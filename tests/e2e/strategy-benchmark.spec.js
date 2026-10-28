@@ -23,7 +23,7 @@
 
 'use strict';
 
-const { test, expect } = require('@playwright/test');
+const { test, expect } = require('./fixtures/api-status-guard');
 
 // v9.12 ST-24 (BLG-FE-210): axe color-contrast scoped to one badge.
 const AxeBuilder = require('@axe-core/playwright').default;

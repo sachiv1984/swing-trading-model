@@ -25,7 +25,7 @@
  * ROUTING NOTE: App uses HashRouter. ALL navigation must use page.goto('/#/…')
  */
 
-const { test, expect } = require("@playwright/test");
+const { test, expect } = require("./fixtures/api-status-guard");
 
 // US-market profitable position: entry $100, live $120, breakeven-floored
 // native stop $100.00. GBP-converted counterpart at fx_rate 1.30 is $76.92 —

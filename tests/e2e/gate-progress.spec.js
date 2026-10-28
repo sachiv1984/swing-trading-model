@@ -13,7 +13,7 @@
 
 'use strict';
 
-const { test, expect } = require('@playwright/test');
+const { test, expect } = require('./fixtures/api-status-guard');
 
 const API_BASE = 'http://localhost:8000';
 

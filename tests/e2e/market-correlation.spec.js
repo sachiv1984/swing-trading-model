@@ -38,7 +38,7 @@
 
 'use strict';
 
-const { test, expect } = require('@playwright/test');
+const { test, expect } = require('./fixtures/api-status-guard');
 const {
   CORRELATION_RESPONSE,
   CORRELATION_ERROR_RESPONSE,

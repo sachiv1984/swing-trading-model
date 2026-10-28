@@ -26,7 +26,13 @@
 
 'use strict';
 
-const { test, expect } = require('@playwright/test');
+const { test, expect, allowApiErrors } = require('./fixtures/api-status-guard');
+
+// ST-24 (BLG-QA-227): contract-documented 404s this file exercises on purpose.
+test.use(allowApiErrors(
+  // GET /trade-plans/{id}: 404 when the plan is not found (trade_plan_endpoints.md)
+  { status: 404, method: 'GET', path: /^\/trade-plans\/[^/]+$/ }
+));
 
 const API = 'http://localhost:8000';
 const SRC_ID = '11111111-1111-1111-1111-111111111111';

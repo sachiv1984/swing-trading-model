@@ -20,7 +20,7 @@
 
 'use strict';
 
-const { test, expect } = require('@playwright/test');
+const { test, expect } = require('./fixtures/api-status-guard');
 const AxeBuilder = require('@axe-core/playwright').default;
 
 const ANSWER_ID = '3f2b7c1e-9a4d-4e21-8c55-0d6f1a2b3c4d';

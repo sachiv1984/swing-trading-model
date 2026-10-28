@@ -35,7 +35,7 @@
 
 'use strict';
 
-const { test, expect } = require('@playwright/test');
+const { test, expect } = require('./fixtures/api-status-guard');
 
 // ---------------------------------------------------------------------------
 // Shared mocks — stub all API calls the app makes on mount so tests don't

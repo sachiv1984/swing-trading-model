@@ -42,7 +42,7 @@
 
 'use strict';
 
-const { test, expect } = require('@playwright/test');
+const { test, expect } = require('./fixtures/api-status-guard');
 const AxeBuilder = require('@axe-core/playwright').default;
 
 const API = 'http://localhost:8000';

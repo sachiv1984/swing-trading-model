@@ -19,7 +19,7 @@
 
 'use strict';
 
-const { test, expect } = require('@playwright/test');
+const { test, expect } = require('./fixtures/api-status-guard');
 const { TD_07 } = require('./mocks/portfolio-mock-data');
 
 const API = 'http://localhost:8000';

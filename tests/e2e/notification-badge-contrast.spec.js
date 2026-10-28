@@ -24,7 +24,7 @@
 
 'use strict';
 
-const { test, expect } = require('@playwright/test');
+const { test, expect } = require('./fixtures/api-status-guard');
 
 const RED_600_RGB = 'rgb(220, 38, 38)';
 const RED_500_RGB = 'rgb(239, 68, 68)';
