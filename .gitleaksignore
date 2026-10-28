@@ -15,3 +15,5 @@
 # which predate this scan's commit range. ST-07 (BLG-OPS-128, EPIC-02, v8.2).
 # Authority: Cybersecurity & Trust Lead
 0cc86d708c08c17881ee555f1f9645f172778ea6:scripts/check_staging_deploy_drift.py:generic-api-key:40
+# Same class: the backend service ID in staging-deploy.yml prerequisites comment. ST-29 (BLG-OPS-189, EPIC-05, v9.13).
+d81af9b04ef5fee5ed782c0b57c9f8230656d586:.github/workflows/staging-deploy.yml:generic-api-key:22
