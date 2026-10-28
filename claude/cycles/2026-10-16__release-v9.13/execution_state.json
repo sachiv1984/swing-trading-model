@@ -857,24 +857,33 @@
         },
         "ST-27": {
           "title": "Decide how real-database-bound modules may persist across pytest files",
-          "classification": "delegated_decision",
-          "status": "not_started",
+          "classification": "autonomous",
+          "status": "done",
           "assigned_to": "Director of Quality; QA & Testing Owner",
           "github_issue": 2057,
           "branch": "exec/2026-10-16__release-v9.13/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "a4dce1d9fb34a143bc036753ccb201c9f24a2d1c",
           "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "blocked_since_utc": "2026-10-28T21:05:55Z",
+          "unblock_criteria": "ESC-EXEC-20261028-01 resolved with a dated (A) or (B) choice by the Director of Quality",
+          "completed_utc": "2026-10-28T21:21:34Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "tests/_real_database.py",
+            "tests/conftest.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
+          "sign_off_record": {
+            "role": "Director of Quality",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "signed_utc": "2026-10-28T21:21:09Z",
+            "notes": "ESC-EXEC-20261028-01 option (A) accept and document. First pass Blocked on 2 factual errors (first importer; real/stub binding mix), corrected; retry 1 Approved (agent-mediated, §5.3). Quantitative claims evidenced inline in the resolution (probe: 22 real-bound / 17 stub-bound modules; 31 Category B files; 67 function-level imports), per LL-v8.6-P3-01."
+          },
+          "notes": "Reclassified delegated_decision -> autonomous on ESC-EXEC-20261028-01 resolution. AC met by the first branch: documented, reviewed decision in tests/_real_database.py (\"Known limit\") plus the conftest guard comment (\"Not covered\"). Documentation-creation (Case B): the edited files are the governing artefact. Deviation check: none. pytest --collect-only: 3022 collected, exit 0."
         }
       }
     },
@@ -1321,6 +1330,7 @@
     "ST-21",
     "ST-22",
     "ST-23",
+    "ST-27",
     "ST-28",
     "ST-29",
     "ST-30",
@@ -1376,6 +1386,12 @@
       "disposition": "Resolved",
       "raised_utc": "2026-10-27T08:48:35Z",
       "resolved_utc": "2026-10-27T08:54:27Z"
+    },
+    "ESC-EXEC-20261028-01": {
+      "item": "ST-27",
+      "disposition": "Resolved",
+      "raised_utc": "2026-10-28T21:05:55Z",
+      "resolved_utc": "2026-10-28T21:21:09Z"
     }
   },
   "merge_gate": {
