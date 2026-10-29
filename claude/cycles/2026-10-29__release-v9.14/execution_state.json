@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-29T14:51:40Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-29T15:41:16Z",
+  "last_updated_utc": "2026-10-29T16:02:11Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-02",
@@ -58,14 +58,15 @@
             "render.yaml",
             "package.json",
             "package-lock.json",
-            ".github/workflows/frontend-production-build.yml"
+            ".github/workflows/frontend-production-build.yml",
+            ".npmrc"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
           "last_completed_substep": "3.1.B.3",
           "sign_off_record": null,
-          "notes": "Autonomous half pushed in f5e48d78 (lockfile fix, CI production-build workflow). Local CI=false npm run build without DISABLE_ESLINT_PLUGIN compiles with warnings only (RISK-06 not triggered). AC 1 post-merge, tracked by BLG-OPS-200."
+          "notes": "Autonomous half pushed in f5e48d78 (lockfile fix, CI production-build workflow). Local CI=false npm run build without DISABLE_ESLINT_PLUGIN compiles with warnings only (RISK-06 not triggered). AC 1 post-merge, tracked by BLG-OPS-200. Staging branch deploy of ea20658a (user, 2026-10-29, DISABLE_ESLINT_PLUGIN removed from the Render dashboard) failed at install: Render's plain `npm install` hit ERESOLVE (eslint-config-react-app's eslint@^8 peer vs root eslint@^9). Fixed in 3fbfe5e3: repo .npmrc legacy-peer-deps=true (no dashboard-only setting), and Frontend Production Build now installs with plain `npm ci`, as Render does. Reproduced and verified in a scratch copy (exit 1 without .npmrc, success with it; lockfile unchanged)."
         },
         "ST-02": {
           "title": "Compute the SPY market regime from Alpaca bars when Yahoo Finance fails",
@@ -234,7 +235,7 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": "AC1: GET /positions returns price_is_stale; position_endpoints.md v2.19.0 + openapi 3.43.0 same commit. AC2: tests/test_positions_price_is_stale.py. AC3: SC-SPM-01a/01b table and grid, stale row only (local pass). ci_pending: Playwright 40903841391, CI Pytest 40903841319 (STEP 3.2.A must clear). Deviation check: none."
+          "notes": "AC1: GET /positions returns price_is_stale; position_endpoints.md v2.19.0 + openapi 3.43.0 same commit. AC2: tests/test_positions_price_is_stale.py. AC3: SC-SPM-01a/01b table and grid, stale row only (local pass). CI on d83893b3: Playwright E2E success, CI Pytest success, Frontend Production Build FAILURE (import/first in PositionRiskTable.js, ST-08's import placement); fixed in 8f05e704. ci_pending: 8f05e704 runs (STEP 3.2.A must clear). Deviation check: none."
         },
         "ST-08": {
           "title": "Make the stale-price explanation reachable on touch, keyboard and screen readers",
@@ -243,11 +244,11 @@
           "assigned_to": "engine",
           "github_issue": 2085,
           "branch": "exec/2026-10-29__release-v9.14/EPIC-01",
-          "commit_sha": "d83893b30c99853b6788191dc3d186fd104840dd",
+          "commit_sha": "8f05e704296697ab6fc3dd080839a8530356205e",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": "2026-10-29T15:39:45Z",
+          "completed_utc": "2026-10-29T16:01:56Z",
           "acceptance_verified": true,
           "spec_references": [
             "docs/design/2026-10-29__release-v9.14/stale-price-marker/decision_record.md",
@@ -260,7 +261,7 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": "AC1: axe on /risk with a stale row, no serious/critical (SC-SPM-03). AC2: keyboard reach + toHaveAccessibleDescription on /risk and Positions (SC-SPM-02a/02b); tap toggles tooltip. AC3: Positions marker uses the shared StaleMarker with the Positions copy. Card 2 link description (SC-SPM-04). ci_pending: Playwright 40903841391 (STEP 3.2.A must clear). Deviation check: none."
+          "notes": "AC1: axe on /risk with a stale row, no serious/critical (SC-SPM-03). AC2: keyboard reach + toHaveAccessibleDescription on /risk and Positions (SC-SPM-02a/02b); tap toggles tooltip. AC3: Positions marker uses the shared StaleMarker with the Positions copy. Card 2 link description (SC-SPM-04). CI on d83893b3: Frontend Production Build FAILURE (import/first in PositionRiskTable.js); fixed in 8f05e704 (import order only). ci_pending: 8f05e704 runs (STEP 3.2.A must clear). Deviation check: none."
         }
       }
     }
@@ -294,6 +295,7 @@
     "all_merged": false
   },
   "process_notes": [
-    "2026-10-29: ST-04+ST-05 and ST-07+ST-08 shipped as combined commits (07ea2a2d, d83893b3) with both story IDs, per CLAUDE.md §2. Backlog items filed: BLG-TECH-33 (flat-config react-hooks crash), BLG-OPS-203 (DS-37 live confirmation)."
+    "2026-10-29: ST-04+ST-05 and ST-07+ST-08 shipped as combined commits (07ea2a2d, d83893b3) with both story IDs, per CLAUDE.md §2. Backlog items filed: BLG-TECH-33 (flat-config react-hooks crash), BLG-OPS-203 (DS-37 live confirmation).",
+    "2026-10-29: ST-08's d83893b3 failed Frontend Production Build (import/first); engine chained build+commit without gating on the build result, so 3fbfe5e3 (.npmrc) was pushed before the failure was seen. Fixed in 8f05e704 and verified with a clean npm ci + build before commit."
   ]
 }
