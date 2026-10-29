@@ -22,7 +22,7 @@ import urllib.request
 import json
 
 from database import get_portfolio, get_settings, get_database_size_bytes
-from utils.pricing import get_live_fx_rate
+from utils.pricing import get_live_fx_rate, get_fx_rate_info, check_market_regime
 import subprocess
 
 
@@ -263,6 +263,48 @@ def get_basic_health() -> Dict:
     }
 
 
+def _yahoo_finance_check() -> Dict:
+    """
+    Yahoo Finance check for GET /health/detailed (ST-06, EPIC-01, v9.14,
+    BLG-OPS-194). It reads the same fallback signals the app uses, so an
+    outage is not reported healthy: the FX rate's source (ST-04/ST-05) and
+    which source measured each regime index (ST-02/ST-03). get_live_fx_rate()
+    never raises, so the previous "it returned a rate" test always passed.
+    healthy: live FX and both indices from Yahoo Finance. degraded: one of
+    the two failed. unhealthy: both failed.
+    """
+    fx = get_fx_rate_info(get_live_fx_rate())
+    regime = check_market_regime()
+    problems = []
+    fx_ok = fx["fx_rate_source"] == "live"
+    if fx["fx_rate_source"] == "last_known":
+        problems.append(f"GBP/USD fetch failed; using the last good rate {fx['fx_rate']:.4f} from {fx['fx_rate_as_of']}")
+    elif not fx_ok:
+        problems.append(f"GBP/USD fetch failed and no rate is stored; using the fixed fallback {fx['fx_rate']:.4f}")
+    regime_ok = True
+    for index, key in (("SPY", "spy_source"), ("FTSE", "ftse_source")):
+        source = regime.get(key)
+        if source == "yahoo_finance":
+            continue
+        regime_ok = False
+        if source:
+            problems.append(f"{index} regime data unavailable from Yahoo Finance; computed from {source}")
+        else:
+            problems.append(f"{index} regime data unavailable; regime unknown")
+    details = {
+        "gbp_usd_rate": fx["fx_rate"],
+        "fx_rate_source": fx["fx_rate_source"],
+        "fx_rate_as_of": fx["fx_rate_as_of"],
+        "spy_regime_source": regime.get("spy_source"),
+        "ftse_regime_source": regime.get("ftse_source"),
+        "accessible": fx_ok or regime_ok,
+    }
+    if problems:
+        details["reason"] = "; ".join(problems)
+    status = "healthy" if fx_ok and regime_ok else "degraded" if fx_ok or regime_ok else "unhealthy"
+    return {"status": status, "details": details}
+
+
 def get_detailed_health() -> Dict:
     """
     Comprehensive system status check
@@ -309,12 +351,7 @@ def get_detailed_health() -> Dict:
     
     # 2. Yahoo Finance check
     try:
-        fx_rate = get_live_fx_rate()
-        checks["yahooFinance"]["status"] = "healthy"
-        checks["yahooFinance"]["details"] = {
-            "gbp_usd_rate": fx_rate,
-            "accessible": True
-        }
+        checks["yahooFinance"] = _yahoo_finance_check()
     except Exception as e:
         checks["yahooFinance"]["status"] = "unhealthy"
         checks["yahooFinance"]["details"] = {"error": str(e)}

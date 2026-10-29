@@ -2,7 +2,9 @@ openapi: 3.0.3
 
 info:
   title: Momentum Trading Assistant API
-  version: 3.41.0
+  version: 3.42.0
+  # v3.42.0 (2026-10-29, ST-06, EPIC-01, v9.14): GET /health/detailed's yahooFinance check reports degraded or
+  # unhealthy with details.reason when the FX or regime fetch falls back (BLG-OPS-194). No new endpoint.
   # v3.41.0 (2026-10-29, ST-04/ST-05, EPIC-01, v9.14): GET /portfolio, GET /positions and GET /market/status
   # gain fx_rate_source (live / last_known / constant) and fx_rate_as_of (BLG-BE-194/BLG-BE-169). No new endpoint.
   # v3.40.0 (2026-10-29, ST-03, EPIC-01, v9.14): GET /market/status adds regime_status per index and
@@ -4639,6 +4641,11 @@ paths:
     get:
       tags: [Health]
       summary: Detailed health check
+      description: |
+        v9.14 ST-06 (BLG-OPS-194): checks.yahooFinance is healthy only when the GBP/USD rate is
+        live and both regime indices came from Yahoo Finance; degraded when one fell back,
+        unhealthy when both did, with details.reason naming each fallback.
+        Contract: docs/specs/api_contracts/health_endpoints.md v1.9
       responses:
         "200":
           $ref: "#/components/responses/OkHealthDetailed"

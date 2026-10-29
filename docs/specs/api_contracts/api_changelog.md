@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Class 2
 **Status:** Canonical
-**Version:** 1.26.0
-**Last Updated:** 2026-10-29 (ST-04/ST-05, EPIC-01, v9.14, BLG-BE-194/BLG-BE-169 — v9.14.0 entry: GET /portfolio, GET /positions and GET /market/status gain fx_rate_source and fx_rate_as_of); prior — 2026-10-29 (ST-03, EPIC-01, v9.14, BLG-BE-193 — v9.14.0 entry: GET /market/status and GET /market/regime report an unknown regime); prior — 2026-10-27 (ST-31/ST-32, EPIC-05, v9.13, BLG-OPS-19/BLG-OPS-23 — v9.13.0 entry: new GET /ops/api-call-attribution; GET /screener/history gains duration_seconds); prior history retained — see prior entries in version control
+**Version:** 1.27.0
+**Last Updated:** 2026-10-29 (ST-06, EPIC-01, v9.14, BLG-OPS-194 — v9.14.0 entry: GET /health/detailed's Yahoo Finance check reports fallbacks); prior — 2026-10-29 (ST-04/ST-05, EPIC-01, v9.14, BLG-BE-194/BLG-BE-169 — v9.14.0 entry: GET /portfolio, GET /positions and GET /market/status gain fx_rate_source and fx_rate_as_of); prior — 2026-10-29 (ST-03, EPIC-01, v9.14, BLG-BE-193 — v9.14.0 entry: GET /market/status and GET /market/regime report an unknown regime); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 # API Changelog
@@ -76,6 +76,15 @@ Rules:
 | Change | Details |
 |--------|---------|
 | Updated endpoint: GET /positions | Each position adds `fx_rate_source` and `fx_rate_as_of` describing `live_fx_rate` (BLG-BE-194/BLG-BE-169). |
+
+### health_endpoints.md — v1.9 (UPDATED)
+
+**EPIC:** EPIC-01
+**ST:** ST-06
+
+| Change | Details |
+|--------|---------|
+| Updated endpoint: GET /health/detailed | `checks.yahooFinance` is `degraded` or `unhealthy`, with `details.reason`, when the FX rate or a regime index fell back; it adds `fx_rate_source`, `fx_rate_as_of`, `spy_regime_source` and `ftse_regime_source` to `details` (BLG-OPS-194). |
 
 ## v9.13.0 (2026-10-16 — Release v9.13)
 
