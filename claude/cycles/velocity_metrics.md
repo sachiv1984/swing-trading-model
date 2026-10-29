@@ -3,7 +3,7 @@
 **Class:** Operational Record (Class 3)
 **Status:** Active
 **Version:** 1.4
-**Last Updated:** 2026-10-15 (post-ship closure 2026-10-12__release-v9.12 — v9.12 row added, rolling average window advanced to v9.7–v9.12); prior — 2026-10-12 (post-ship closure 2026-10-08__release-v9.11 — v9.11 row added, rolling average window advanced to v9.6–v9.11); prior — 2026-10-07 (post-ship closure 2026-10-06__release-v9.10 — v9.10 row added, rolling average window advanced to v9.5–v9.10); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-29 (post-ship closure 2026-10-16__release-v9.13 — v9.13 row added, rolling average window advanced to v9.8–v9.13); prior — 2026-10-15 (post-ship closure 2026-10-12__release-v9.12 — v9.12 row added, rolling average window advanced to v9.7–v9.12); prior — 2026-10-12 (post-ship closure 2026-10-08__release-v9.11 — v9.11 row added, rolling average window advanced to v9.6–v9.11); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Created by:** ST-13 (BLG-GOV-09, v2.4)
 ---
@@ -122,7 +122,9 @@
 
 | v9.12 | 48      | 48        | 1.00     | All 48 stories done across 6 EPICs (AI feature correctness & cost visibility, stop/sizing/position correctness build-and-ship, Trade Entry/Settings/accessibility build-and-ship, security/operations/platform, spec & data model hygiene, governance tooling & test integrity), sized to 27.95 days (top of capacity band, "use full capacity"); P1 `BLG-BE-162` (v9.11 verification acceptance condition) shipped as ST-01 with DS-31 live; schema changes DS-31–DS-33; 8 delegations all unblocked in-cycle; 9 escalations all resolved within SLA; 0 returned, 0 blocked; Verified_with_deviations (3 P3-default QA-evidence deviations: ST-06 closed post-merge, ST-28 → `BLG-TECH-24`, ST-34 → `BLG-QA-223`) |
 
-**Rolling 6-cycle average (v9.7–v9.12):** 1.00
+| v9.13 | 40      | 40        | 1.00     | All 40 stories done across 6 EPICs (exit flow/exit reasons/Red Flag Journal build-and-ship, stop/sizing/position data correctness, AI output safety/debrief/chat, API call integrity & UI rendering, operations/cost/platform, governance & spec tooling), sized to 28.00 days (top of capacity band, "use full capacity"); P1 `BLG-FE-226` (STEP 8.0 Correctness Fast-Track) shipped as ST-01 with all three roadmap-committed items (DL-086); schema changes DS-34–DS-36; 8 delegations (5 unblocked in-cycle, 3 carried post-sprint to `BLG-OPS-197`/`BLG-OPS-198`); 10 escalations all resolved within SLA; 0 returned, 0 blocked; Verified_with_deviations (1 accepted P2 found defect `BLG-BE-190`; 7 P3: ST-05 §8.4 → `BLG-BE-187` and six QA-evidence `Pass_with_deviation`); concurrent PVR reading 0.204 (🔴 Alert, 8th consecutive, improving; `2026-10-16__scheduled`) |
+
+**Rolling 6-cycle average (v9.8–v9.13):** 1.00
 
 ---
 

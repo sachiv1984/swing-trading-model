@@ -3,11 +3,80 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-10-15 (post-ship closure 2026-10-12__release-v9.12 — v9.12 entry added); prior — 2026-10-12 (post-ship closure 2026-10-08__release-v9.11 — v9.11 entry added); prior — 2026-10-07 (post-ship closure 2026-10-06__release-v9.10 — v9.10 entry added); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-29 (post-ship closure 2026-10-16__release-v9.13 — v9.13 entry added); prior — 2026-10-15 (post-ship closure 2026-10-12__release-v9.12 — v9.12 entry added); prior — 2026-10-12 (post-ship closure 2026-10-08__release-v9.11 — v9.11 entry added); prior history retained — see prior entries in version control
 
 > This document is a human-maintained record of what was shipped in each product version and when. It records delivery milestones and notable decisions. It is not an immutable system record — for point-in-time system status reports, see `docs/operations/status_reports/`.
 
 > **Authoring convention — `User Impact` column (added v8.8, ST-13, BLG-FE-161):** each `### Changes shipped` table row carries a `User Impact` cell in addition to `Description`. Write `User Impact` only for EPICs that changed something a user can see, click, or notice the effect of — one to two sentences, present tense (or implied second person), no ticket IDs, no implementation nouns (endpoint/table/component names). Leave it `—` for backend/infra/governance/test-coverage rows with no user-facing effect. `Description` is retained unchanged as the engineering record — it is not replaced. `GET /changelog/latest` sources the in-app "What's New" panel from `User Impact` only; rows with a blank/`—` cell are excluded from that feed entirely (`docs/specs/api_contracts/changelog_endpoints.md`).
+
+---
+
+## v9.13 — Monitor Exit Fix, Exit Reasons & API Call Integrity — 2026-10-29
+Cycle: 2026-10-16__release-v9.13
+Verified: Verified_with_deviations
+Verification report: claude/cycles/2026-10-16__release-v9.13/verification_report.md
+
+### Changes shipped
+| EPIC | Description | User Impact | Spec sections updated |
+|------|-------------|-------------|----------------------|
+| EPIC-01 | Exit Flow, Exit Reasons & Red Flag Journal — the Daily Position Monitor's exit confirmation opens ExitModal and records exits through `POST /positions/{id}/exit` instead of the non-existent `PATCH /positions/{id}` (BLG-FE-226, P1); six allowed `exit_reason` values, each mapped to one §8 condition, enforced by CHECK constraints on staging and production (DS-34); one shared exit-reason module for Trade History and Trade Reflections badges and labels; `checklist_skipped` events recorded in the Red Flag Journal, with filters that can never match removed; and a strategy determination for month-end rebalance exits, `strategy_rules.md` §8.4 (`ESC-EXEC-20261016-01`) | Confirming an exit from the Daily Position Monitor now records the exit properly, with the reason filled in for you, and shows an error instead of silently clearing if it fails. Exit reasons look the same everywhere, and the Red Flag Journal now records when you skip the checklist. | `docs/specs/frontend/pages/positions.md#Daily Position Monitor Exit Queue`; `docs/specs/data_model.md#Exit Reason Values`, `#DS-34`; `docs/specs/metrics_definitions.md#Exit Condition Category`; `docs/specs/api_contracts/position_endpoints.md#POST /positions/{position_id}/exit`; `docs/specs/frontend/pages/trade_history.md#Exit Reason Labels and Badges`; `docs/specs/frontend/pages/reflections.md#5.2 Exit Reason Badge`; `docs/specs/frontend/pages/red_flag_journal.md`; `docs/specs/api_contracts/red_flag_journal.md#GET /portfolio/red-flag-journal`; `claude/strategy/strategy_rules.md#8.4 Month-end rebalance exit`; `docs/specs/api_contracts/signal_endpoints.md#POST /signals/rebalance-exit` |
+| EPIC-02 | Stop, Sizing & Position Data Correctness — a fetched ATR that puts the initial stop at or below zero is rejected; the standalone `position_manager.py` no longer ratchets stops during grace (§6.3); the four fixed strategy-parameter fields are rejected on Settings writes with a 400 naming §11; the Monthly P&L report stays up when the snapshot store fails; a Stop Freshness metric on System Status (`GET /positions/stop-freshness`); `metrics_definitions.md`'s NULL `fees_paid` claim corrected; and the stored ATR multiplier, entry required fields and valid-input sizing lower bound asserted in tests | Positions can no longer be opened with a stop at or below zero, the Monthly P&L report stays available if its history store has a problem, and System Status shows how fresh your stops are. | `docs/specs/frontend/components/position_form.md#Initial Stop`; `docs/specs/api_contracts/portfolio_endpoints.md#POST /portfolio/position`; `claude/strategy/strategy_rules.md#6.3`; `docs/specs/api_contracts/settings_endpoints.md#POST /settings`, `#PATCH /settings/{settings_id}`; `docs/specs/api_contracts/reports_endpoints.md#GET /reports/monthly-pnl`; `docs/specs/metrics_definitions.md#Stop Freshness`, `#Fee-Netting Basis`; `docs/specs/frontend/pages/system_status.md#Stop Freshness Panel`; `docs/specs/api_contracts/position_endpoints.md#GET /positions/stop-freshness` |
+| EPIC-03 | AI Output Safety, Debrief & Chat — UK `.L` and bare tickers treated as one instrument in the briefing ticker filter; chat stop citations attributed to the focused ticker, with action tickers case-normalised; briefing summary text checked for tickers outside the context; an output-language check on the journal summary (regenerate once, then fallback); available cash and starting capital labelled separately in the chat context; the debrief card stays populated when Regenerate returns no data; the debrief error text passes light-theme contrast; and a useful / not-useful rating on each AI chat answer (DS-35) | Daily briefings recognise your UK holdings whichever way the ticker is written, and AI chat no longer mixes up available cash with starting capital. The trade debrief keeps its content if a regenerate comes back empty, its error text is easier to read in the light theme, and you can rate each AI chat answer as useful or not. | `docs/specs/api_contracts/ai_endpoints.md#POST /ai/daily-briefing`, `#POST /ai/chat`, `#POST /ai/journal-summary`, `#POST /ai/chat/{answer_id}/rating`; `docs/specs/qa/ai_s13_boundary_test_suite.md#Endpoint: POST /ai/journal-summary`; `docs/specs/frontend/pages/trade_history.md#Post-Trade Debrief`, `#Light Theme`; `docs/specs/frontend/pages/positions.md#Answer Rating`; `docs/specs/data_model.md#DS-35`; `docs/specs/metrics_definitions.md#3. Response Acceptance Rate` |
+| EPIC-04 | API Call Integrity & UI Rendering — a CI check (`scripts/check_frontend_api_calls.py` in `quality_gate.yml`) that every frontend API call exists in `openapi.yaml`; Playwright fails on any 404/405 from the app's API, with a state-changing action coverage inventory; coloured Buttons render their colour (`cn()` fixed at the root to `twMerge(clsx(...))`); the Replay page passes light-theme colour contrast; and a ruling on how real-database-bound test modules persist across pytest files (`ESC-EXEC-20261028-01`) | Coloured buttons across the app now show their intended colours, and the Replay page is easier to read in the light theme. | `docs/specs/frontend/design_system.md`; `docs/specs/frontend/pages/screener_results.md`; `docs/specs/frontend/components/cash_management_modal.md`; `docs/specs/frontend/pages/replay_mode.md`; `docs/testing/state_changing_action_coverage.md`; `docs/design/2026-10-16__release-v9.13/coloured-button-fills/decision_record.md` |
+| EPIC-05 | Operations, Cost & Platform — the daily AI cost alert fails loudly on a query or workflow failure instead of reporting $0; both staging services deploy from `staging-deploy.yml` and the workflow waits on each; the combined data-pipeline cost baseline; per-feature attribution of external API calls (`GET /ops/api-call-attribution`, DS-36); a full screener run benchmark; a data-provider risk and failover assessment; and an assessment of the major and breaking dependency upgrades from the October 2026 review | — | `docs/specs/api_contracts/ai_endpoints.md#POST /ai/check-daily-cost`; `docs/ops/staging_deploy_notes.md#4. Render Deploy Hook Setup`; `docs/specs/api_contracts/health_endpoints.md#GET /health/detailed`; `docs/ops/data_pipeline_cost_baseline.md`; `docs/specs/api_contracts/ops_endpoints.md#GET /ops/api-call-attribution`; `docs/specs/data_model.md#DS-36`; `docs/ops/api_performance_baseline.md#53. Full Screener Run Benchmark`; `docs/specs/api_contracts/screener_api_contract.md#GET /screener/history`; `docs/operations/data_provider_risk_assessment.md`; `docs/ops/external_api_dependency_register.md`; `docs/security/dependency_major_upgrade_assessment_2026-10-27.md` |
+| EPIC-06 | Governance & Spec Tooling — the gate scan treats `Gate criteria: None`/`N/A` as ungated and gains a known-false-positive allow-list; `check_data_model_drift.py` compares documented column defaults; `strategy_rules.md` §13.3 records the Gap Risk Flag's weekend-hold trigger as removed and §13.5's PO-05 roster row is corrected; and the v9.8–v9.10 compound Owner count in `role_share_history.md` is corrected | — | `scripts/scan_backlog_gate_conditions.py`; `scripts/check_data_model_drift.py`; `docs/specs/data_model.md`; `claude/strategy/strategy_rules.md#13.3`, `#13.5`; `claude/roadmap/role_share_history.md` |
+
+### Deviations accepted
+| Ref | Priority | Description | Accepted by |
+|-----|----------|-------------|-------------|
+| BLG-BE-190 (ST-14 found defect) | P2 | US position sizing multiplies the stop distance by the GBP/USD rate instead of dividing, diverging from `strategy_rules.md` §4.1.5. Pre-existing in `size_position()`; ST-14's new property-test oracle mirrors it. Fix targeted to v9.14 (code and oracle together) | PO + DoQ (2026-10-29, agent-mediated, §5.3) |
+
+7 minor deviations (P3) — see `verification_report.md §4`: the `strategy_rules.md` §8.4 known deviation for ST-05, where the live month-end check skips weekends but not exchange holidays (`BLG-BE-187`); and six QA-evidence `Pass_with_deviation` remainders, P3 by default per `verification_report.md §2.1` — ST-10 Stop Freshness manual check matched only the empty state (`BLG-QA-229`); ST-25 addendum colour states without evidence (`BLG-QA-232`); ST-29 post-merge staging deploy, closed 2026-10-28 with no remainder (`BLG-OPS-196`); ST-30 and ST-31 production-data remainders (`BLG-OPS-197`); ST-32 screener p50/p95 (`BLG-OPS-198`). No canonical-spec `DEV-*` records were filed.
+
+### Tech backlog items shipped
+- [ST-01] [U] Daily Position Monitor's exit confirmation opens the real exit flow through `POST /positions/{id}/exit` (BLG-FE-226)
+- [ST-02] [D] Allowed exit reasons defined, each mapped to one §8 exit condition, with CHECK constraints (BLG-SPEC-186)
+- [ST-03] [U] One shared exit-reason module so Trade Reflections badges and labels match stored values (BLG-FE-227)
+- [ST-04] [U] `checklist_skipped` events recorded in the Red Flag Journal; never-matching filters removed (BLG-BE-182)
+- [ST-05] [D] Strategy determination for month-end rebalance exits, `strategy_rules.md` §8.4 (BLG-GOV-391)
+- [ST-06] [U] A fetched ATR that puts the initial stop at or below zero is rejected (BLG-BE-180)
+- [ST-07] [D] Standalone `position_manager.py` aligned with §6.3, no stop ratchet during grace (BLG-BE-161)
+- [ST-08] [D] The four fixed strategy-parameter fields rejected on Settings writes (BLG-API-07)
+- [ST-09] [U] Monthly P&L report stays up when the snapshot store fails (BLG-BE-156)
+- [ST-10] [U] Stop Freshness metric defined and shown on System Status (BLG-SPEC-188)
+- [ST-11] [D] `metrics_definitions.md`'s claim about NULL `positions.fees_paid` corrected (BLG-SPEC-180)
+- [ST-12] [D] `get_settings()` mocked so the stored ATR multiplier is asserted exactly (BLG-QA-204)
+- [ST-13] [D] Entry required-field set and non-blocking advisory panel tested at their boundary (BLG-QA-208)
+- [ST-14] [D] Valid-input sizing property given a lower bound (BLG-QA-210)
+- [ST-15] [U] UK `.L` and bare tickers treated as one instrument in the briefing ticker filter (BLG-AI-17)
+- [ST-16] [D] Chat stop citations attributed to the focused ticker; action tickers case-normalised (BLG-AI-18)
+- [ST-17] [D] Briefing summary text checked for tickers outside the context (BLG-AI-16)
+- [ST-18] [D] Output-language check added to the journal summary (BLG-AI-15)
+- [ST-19] [U] Available cash and starting capital labelled separately in the AI chat context (BLG-AI-14)
+- [ST-20] [U] Debrief card stays populated when Regenerate returns no data (BLG-FE-211)
+- [ST-21] [U] Debrief error text given a light-theme colour that passes contrast (BLG-FE-212)
+- [ST-22] [U] Useful / not-useful rating on each AI chat answer (BLG-FE-208)
+- [ST-23] [D] CI check that every frontend API call exists in `openapi.yaml` (BLG-QA-228)
+- [ST-24] [D] Playwright fails on any 404/405 from the app's API; state-changing actions swept (BLG-QA-227)
+- [ST-25] [U] Coloured Buttons render their colour, `cn()` fixed at the root (BLG-FE-221)
+- [ST-26] [U] Replay page passes light-theme colour contrast (BLG-FE-209)
+- [ST-27] [D] Ruling on how real-database-bound modules persist across pytest files (BLG-QA-211)
+- [ST-28] [D] Daily AI cost alert fails loudly on query or workflow failure (BLG-OPS-187)
+- [ST-29] [D] Both staging services deploy from `staging-deploy.yml`, waiting on each (BLG-OPS-189)
+- [ST-30] [D] Combined data-pipeline cost baseline (BLG-OPS-18)
+- [ST-31] [D] Each external API call attributed to the feature that triggered it (BLG-OPS-19)
+- [ST-32] [D] Full screener run benchmarked (BLG-OPS-23)
+- [ST-33] [D] Data-provider risk and failover options assessed (BLG-OPS-77)
+- [ST-34] [D] Major and breaking dependency upgrades from the October 2026 review assessed (BLG-TECH-23)
+- [ST-35] [G] Gate scan treats `Gate criteria: None`/`N/A` as ungated (BLG-GOV-390)
+- [ST-36] [G] Known-false-positive allow-list for the gate scan (BLG-GOV-373)
+- [ST-37] [D] `check_data_model_drift.py` compares documented column defaults (BLG-SPEC-184)
+- [ST-38] [G] `strategy_rules.md` §13.3 updated now the Gap Risk Flag's weekend-hold trigger is gone (BLG-GOV-376)
+- [ST-39] [G] `strategy_rules.md` §13.5's PO-05 roster row corrected (BLG-GOV-377)
+- [ST-40] [G] v9.8–v9.10 compound Owner count corrected in `role_share_history.md` (BLG-GOV-387)
+
+Sign-off: Product Owner — 2026-10-29 (agent-mediated, §5.3)
+QA sign-off: Director of Quality — 2026-10-29 (agent-mediated, §5.3)
 
 ---
 

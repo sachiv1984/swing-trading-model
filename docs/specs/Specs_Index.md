@@ -4,7 +4,7 @@
 **Purpose:** Single map of canonical product truth
 **Audience:** Product, Engineering, Analytics, Strategy
 **Status:** Authoritative
-**Last Updated:** 2026-10-15 (post-ship closure 2026-10-12__release-v9.12 — §52 Test Coverage Gaps v9.12 section added, 2 gaps each already tracked by a backlog item, TSG sweep 10 Open checked / 3 resolved; see Changelog)
+**Last Updated:** 2026-10-29 (post-ship closure 2026-10-16__release-v9.13 — §53 Test Coverage Gaps v9.13 section added, 5 gaps each already tracked by a backlog item, TSG sweep 9 Open checked / 2 resolved; see Changelog)
 
 ---
 
@@ -1223,7 +1223,7 @@ Identified during delivery verification (`verification_report.md §6`): **4 test
 ### 49.1 TSG-v9.9-01 — EPIC-01: `test_position_atr_timestamp_persistence.py` does not mock `get_settings()`
 
 **Identified:** 2026-10-06 (delivery verification 2026-09-30__release-v9.9; first raised at PR #1884 review)
-**Status:** Open
+**Status:** RESOLVED — 2026-10-29 (cycle 2026-10-16__release-v9.13, ST-12, BLG-QA-204 COMPLETE; post-ship closure STEP 7.3 sweep)
 **Owner:** QA & Testing Owner
 **Gap:** `test_position_atr_timestamp_persistence.py` does not mock `get_settings()`, so its `active_atr_multiplier` assertions do not confirm production values. Qualifying reason: Core user journey: stop/ATR display on `GET /positions`.
 **Backlog item:** BLG-QA-204
@@ -1231,7 +1231,7 @@ Identified during delivery verification (`verification_report.md §6`): **4 test
 ### 49.2 TSG-v9.9-02 — EPIC-03: ST-12's valid-input sizing property checks only an upper bound
 
 **Identified:** 2026-10-06 (delivery verification 2026-09-30__release-v9.9; first raised at PR #1888 review)
-**Status:** Open
+**Status:** RESOLVED — 2026-10-29 (cycle 2026-10-16__release-v9.13, ST-14, BLG-QA-210 COMPLETE; post-ship closure STEP 7.3 sweep)
 **Owner:** QA & Testing Owner
 **Gap:** ST-12's valid-input sizing property checks only an upper bound. Qualifying reason: Spec section partly uncovered: `strategy_rules.md` §4.1.4.
 **Backlog item:** BLG-QA-210
@@ -1370,6 +1370,66 @@ Identified during delivery verification (`verification_report.md §6`): **2 test
 
 ---
 
+## 53. Test Coverage Gaps — v9.13 (2026-10-16__release-v9.13)
+
+Identified during delivery verification (`verification_report.md §6`): **5 test coverage weaknesses, each already tracked by a backlog item filed in-cycle, and 2 not-applicable rows**, so no new backlog items were needed. All 46 referenced `test_scenarios` files exist on disk and were confirmed run.
+
+| gap_id | EPIC | Description | Disposition |
+|--------|------|-------------|-------------|
+| TSG-v9.13-01 | EPIC-02 | Stop Freshness median/oldest ages not checked against a staging manual check with stamped positions | backlog_item_created — `BLG-QA-229` |
+| TSG-v9.13-02 | EPIC-04 | ST-25 addendum colour states (rose-700 hover ×7, deposit fill, Refresh Health text) have no assertions | backlog_item_created — `BLG-QA-232` |
+| TSG-v9.13-03 | EPIC-04 | 15 state-changing actions in the ST-24 inventory have no Playwright test | backlog_item_created — `BLG-QA-230` |
+| TSG-v9.13-04 | EPIC-04 | Positions Exit modal has no Playwright test | backlog_item_created — `BLG-QA-237` |
+| TSG-v9.13-05 | EPIC-02 | US sizing oracle mirrors the inverted FX direction, so the property test cannot catch it | backlog_item_created — `BLG-BE-190` |
+| TSG-v9.13-06 | EPIC-05 | ST-30, ST-33, ST-34 are assessments and baselines with no automated scenario | not_applicable — doc-only deliverables; manual acceptance review is the correct method (no register entry) |
+| TSG-v9.13-07 | EPIC-06 | ST-38–ST-40 are governance text corrections | not_applicable — doc-only; manual acceptance review is the correct method (no register entry) |
+
+### 53.1 TSG-v9.13-01 — EPIC-02: Stop Freshness ages never checked against stamped staging positions
+
+**Identified:** 2026-10-29 (delivery verification 2026-10-16__release-v9.13; first raised at the ST-10 staging check, DoQ review)
+**Status:** Open
+**Owner:** QA & Testing Owner
+**Gap:** The ST-10 staging manual check matched only the empty state, because both staging positions had never been recalculated, so the median and oldest stop ages were never compared with a read-only query. Qualifying reason: Spec section partly uncovered: `metrics_definitions.md#Stop Freshness`.
+**Backlog item:** BLG-QA-229
+
+### 53.2 TSG-v9.13-02 — EPIC-04: ST-25 addendum colour states have no assertions
+
+**Identified:** 2026-10-29 (delivery verification 2026-10-16__release-v9.13; first raised at the EPIC-04 DoQ review)
+**Status:** Open
+**Owner:** QA & Testing Owner
+**Gap:** The rose-700 hover on 7 Buttons, the Cash Management deposit fill and submit text, and the System Status Refresh Health text have no Playwright assertion or recorded staging check. Qualifying reason: Observable UI ACs without Playwright coverage (`design_system.md`).
+**Backlog item:** BLG-QA-232
+
+### 53.3 TSG-v9.13-03 — EPIC-04: 15 state-changing actions have no Playwright test
+
+**Identified:** 2026-10-29 (delivery verification 2026-10-16__release-v9.13; first raised at ST-24)
+**Status:** Open
+**Owner:** QA & Testing Owner
+**Gap:** ST-24's inventory (`docs/testing/state_changing_action_coverage.md`) lists 15 state-changing actions that no Playwright test triggers, so the 404/405 guard cannot catch a broken route behind them. Qualifying reason: Core user journeys partly uncovered.
+**Backlog item:** BLG-QA-230
+
+### 53.4 TSG-v9.13-04 — EPIC-04: Positions Exit modal has no Playwright test
+
+**Identified:** 2026-10-29 (delivery verification 2026-10-16__release-v9.13; first raised at PR #2076 review)
+**Status:** Open
+**Owner:** QA & Testing Owner
+**Gap:** The Positions page Exit modal, the main exit path, has no Playwright test. Qualifying reason: Core user journey (exit).
+**Backlog item:** BLG-QA-237
+
+### 53.5 TSG-v9.13-05 — EPIC-02: US sizing property-test oracle mirrors the FX inversion
+
+**Identified:** 2026-10-29 (delivery verification 2026-10-16__release-v9.13; first raised at the EPIC-02 DoQ strategy-values check)
+**Status:** Open
+**Owner:** QA & Testing Owner; Strategy Rules & System Intent Owner
+**Gap:** ST-14's valid-input sizing oracle computes US shares with the same inverted FX direction as `size_position()`, so the property test cannot detect the defect. Qualifying reason: Spec section incorrectly covered: `strategy_rules.md#4.1.5`. The fix scope corrects code and oracle together.
+**Backlog item:** BLG-BE-190
+
+**Endpoint coverage drift check (STEP 6 advisory):** PASSED, no drift (154 normalised `openapi.yaml` endpoints, 0 missing from `api_performance_baseline.md`). The three new routes this cycle (`GET /positions/stop-freshness`, `GET /ops/api-call-attribution`, `POST /ai/chat/{answer_id}/rating`) fall under existing prefixes. `/ops` routes already fell into `categorizeEndpoint()`'s `'Other'` group before this cycle.
+
+**TSG backlog reconciliation (§7.3 — full-document sweep):** Scanned all 38 pre-existing `### N.N TSG-*` entries for `**Status:** Open` before adding §53. 9 Open entries found (TSG-v9.9-01..02, TSG-v9.10-01..03, TSG-v9.11-02..03, TSG-v9.12-01..02). 2 resolved: TSG-v9.9-01 (`BLG-QA-204`, ST-12) and TSG-v9.9-02 (`BLG-QA-210`, ST-14), both COMPLETE this cycle. The other 7 remain Open; their backlog items are still open.
+
+---
+
 ## 12. Guiding Principle
 
 > Specs explain decisions.
@@ -1383,6 +1443,7 @@ Identified during delivery verification (`verification_report.md §6`): **2 test
 
 | Date | Change |
 |------|--------|
+| 2026-10-29 | Post-ship closure `2026-10-16__release-v9.13` — §53 Test Coverage Gaps (v9.13) added: 5 gaps (TSG-v9.13-01..05), each already tracked by a backlog item (`BLG-QA-229`, `BLG-QA-232`, `BLG-QA-230`, `BLG-QA-237`, `BLG-BE-190`), plus 2 not-applicable rows; endpoint coverage drift check PASSED, 0 gaps; full-document TSG sweep: 9 Open entries checked, 2 resolved (TSG-v9.9-01, TSG-v9.9-02); §6/§7: no items resolved by this delivery |
 | 2026-10-15 | Post-ship closure `2026-10-12__release-v9.12` — §52 Test Coverage Gaps (v9.12) added: 2 gaps (TSG-v9.12-01..02), each already tracked by a backlog item (`BLG-QA-221`, `BLG-QA-226`), plus 1 not-applicable row; endpoint coverage drift check PASSED, 0 gaps; full-document TSG sweep: 10 Open entries checked, 3 resolved (TSG-v9.9-03, TSG-v9.9-04, TSG-v9.11-01); §6/§7: no items resolved by this delivery |
 | 2026-10-12 | Post-ship closure `2026-10-08__release-v9.11` — §51 Test Coverage Gaps (v9.11) added: 3 gaps (TSG-v9.11-01..03), each already tracked by a backlog item (`BLG-BE-162`, `BLG-QA-220`, `BLG-QA-219`); endpoint coverage drift check PASSED, 0 gaps; full-document TSG sweep: 7 Open entries checked, 0 resolved; §6/§7: no items resolved by this delivery |
 | 2026-10-07 | Post-ship closure `2026-10-06__release-v9.10` — §50 Test Coverage Gaps (v9.10) added: 3 gaps (TSG-v9.10-01..03), each already tracked by a backlog item filed in-cycle during PR review (`BLG-QA-214`/`215`/`216`); endpoint coverage drift check PASSED, 0 gaps, no new routes; full-document TSG sweep: 4 Open entries checked (TSG-v9.9-01..04), 0 resolved; §6/§7: 0 open items, none resolved this cycle. |

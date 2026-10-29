@@ -1,13 +1,38 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-10-15 (post-ship closure 2026-10-12__release-v9.12, manage roadmap STEP 11 — "v9.12 — Committed items" Now-horizon section retired: BLG-BE-162 shipped v9.12); prior — 2026-10-12 (post-ship closure 2026-10-08__release-v9.11, manage roadmap STEP 11 — "v9.11 — Committed items" Now-horizon section retired: BLG-BE-152, BLG-BE-150, BLG-FE-206, BLG-BE-154 shipped v9.11); prior — 2026-10-07 (post-ship closure 2026-10-06__release-v9.10, manage roadmap STEP 11 — "v9.10 — Committed items" Now-horizon section retired: BLG-BE-138, BLG-FE-193, BLG-FE-198 shipped v9.10); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-29 (post-ship closure 2026-10-16__release-v9.13, manage roadmap STEP 11 — "v9.13 — Committed items" Now-horizon section retired: BLG-FE-226, BLG-FE-227 and BLG-BE-182 shipped v9.13); prior — 2026-10-15 (post-ship closure 2026-10-12__release-v9.12, manage roadmap STEP 11 — "v9.12 — Committed items" Now-horizon section retired: BLG-BE-162 shipped v9.12); prior — 2026-10-12 (post-ship closure 2026-10-08__release-v9.11, manage roadmap STEP 11 — "v9.11 — Committed items" Now-horizon section retired: BLG-BE-152, BLG-BE-150, BLG-FE-206, BLG-BE-154 shipped v9.11); prior history retained — see prior entries in version control
 
 # Roadmap Archive — Momentum Trading Assistant
 
 This document is the permanent record of completed and killed roadmap items retired from `claude/roadmap/current_roadmap.md`. Items are listed in retirement order, most recent first.
 
 Entries are append-only. Do not edit existing entries.
+
+---
+
+## v9.13 — Committed items (Now horizon)
+
+**Original roadmap location:** §3 Delivery Plan — Horizon: Now
+**Status at retirement:** ✅ Complete
+**Retired from active roadmap:** 2026-10-29
+**Shipped version:** v9.13
+**Cycle reference:** 2026-10-16__release-v9.13
+**Verification report:** claude/cycles/2026-10-16__release-v9.13/verification_report.md
+**Decision log reference:** DL-086 (roadmap rebalance `2026-10-16__scheduled` — committed `BLG-FE-226`, `BLG-FE-227` and `BLG-BE-182` to v9.13; not a kill/defer decision)
+**Retirement confirmed by:** Product Owner (acceptance recorded in `verification_report.md` §9, agent-mediated per §5.3)
+
+### Original Roadmap Entry
+
+### v9.13 — Committed items (roadmap rebalance `2026-10-16__scheduled`, DL-086) — ✅ Complete — Shipped 2026-10-29 — cycle: 2026-10-16__release-v9.13
+
+*Added by the rebalance, not by Release Planning: the release's full scope, capacity fit and story breakdown are set at `plan release v9.13`. These three items are committed to it.*
+
+| Item | Why it is here | Priority | Effort |
+|------|----------------|----------|--------|
+| `BLG-FE-226` — Daily Position Monitor "confirm exits" opens the real exit flow (it calls a route that does not exist) | STEP 8.0 Production Correctness Fast-Track: since 2026-01-24 every Monitor exit confirmation has failed with a 405 and no message, so the home page's exit shortcut does nothing when §8.1/§8.2 say to exit. Also counts toward the §7.1 sustained-failure pull-forward (build-and-ship U-item). | P1 | S (~1-1.5 days) |
+| `BLG-FE-227` — one shared exit-reason module; Trade Reflections badges and labels match stored values | §7.1 sustained-failure pull-forward (PO-committed build-and-ship U-item). Ungated. | P2 | S (~0.5-1 day) |
+| `BLG-BE-182` — record `checklist_skipped` events; Red Flag Journal stops offering filters that can never match | §7.1 sustained-failure pull-forward and STEP 2.4 Product Value Alert pull-forward (PO-committed build-and-ship U-item). Ungated. | P2 | S (~1-1.5 days) |
 
 ---
 

@@ -44,7 +44,7 @@ The goal is a compounding improvement: each mistake makes the next run of that s
 *(No lessons recorded yet)*
 
 ### commit-check
-| 2026-04-28 | commit-check | Pushed commits to remote branch without creating a PR — user had to ask each time. | After every `git push` on an exec branch, always create a PR immediately unless one is already open for that branch. Check with `gh pr list --head <branch>` before pushing and open one after if absent. |
+| 2026-04-28 | commit-check | Pushed commits to remote branch without creating a PR — user had to ask each time. | Open the PR at EPIC completion, once the DoQ sign-off `Date:` is set (`execution_prompt.md` §3.2.B, BLG-GOV-18), unless one is already open for that branch (`gh pr list --head <branch>`). Do not open it after every push. *(Corrected 2026-10-29, post-ship closure `2026-10-16__release-v9.13`, LL-v9.13-P3-02: the original "always create a PR immediately" wording conflicted with §3.2.B.)* |
 
 ### record-visual-qa
 *(No lessons recorded yet)*
