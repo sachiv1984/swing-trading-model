@@ -65,6 +65,7 @@ async function gotoRiskDashboard(page) {
 }
 
 test('SC-GPL-01: clicking a grace row opens Positions with that position highlighted', async ({ page }) => {
+  test.fixme(true, 'FLAKY-QUARANTINE: toBeInViewport on the highlighted card intermittently reads ratio 0 (CI run 40784100342, local main build) — tracked in BLG-QA-231');
   await stub(page);
   await gotoRiskDashboard(page);
 
