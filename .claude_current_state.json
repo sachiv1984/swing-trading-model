@@ -1,10 +1,10 @@
 {
   "active_cycle": "2026-10-29__release-v9.14",
   "cycle_name": "v9.14 — Production Deploy Restore, Market-Data Resilience & Sizing Fix",
-  "status": "Sprint_Planning_Complete",
-  "prior_status": "Design_Gate_Passed",
-  "engine": "Sprint Planning",
-  "last_updated_utc": "2026-10-29T14:41:43Z",
+  "status": "Executing",
+  "prior_status": "Sprint_Planning_Complete",
+  "engine": "Sprint Execution",
+  "last_updated_utc": "2026-10-29T14:55:56Z",
   "execution_state_path": "claude/cycles/2026-10-29__release-v9.14/execution_state.json",
   "backlog_slice_path": "claude/cycles/2026-10-29__release-v9.14/stage4_backlog_slice.md",
   "design_gate_required": true,
@@ -469,6 +469,16 @@
       "resolved_utc": "2026-10-28T21:21:09Z",
       "resolved_by": "Director of Quality (agent-mediated, §5.3)",
       "resolution_summary": "(A) accept and document; first pass Blocked on 2 factual errors (corrected), retry 1 Approved. Applied by ST-27 at a4dce1d9 (tests/_real_database.py 'Known limit', conftest leak-guard comment)."
+    },
+    "ESC-EXEC-20261029-01": {
+      "cycle": "2026-10-29__release-v9.14",
+      "summary": "ST-03/EPIC-01 - Strategy ruling on what an unknown market regime means for entries (§4.2.1) and the risk-off exit (§8.2)",
+      "trigger_type": "Strategy",
+      "owning_authority": "Strategy Rules & System Intent Owner",
+      "raised_utc": "2026-10-29T14:55:56Z",
+      "sla_due_utc": "2026-11-01T14:55:56Z",
+      "blocks_execution": false,
+      "disposition": "Open"
     }
   },
   "deferred_escalations": {
