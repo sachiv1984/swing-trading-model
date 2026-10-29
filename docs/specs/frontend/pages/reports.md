@@ -3,8 +3,9 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 0.25
-**Last Updated:** 2026-10-17 (ST-09, EPIC-02, v9.13, BLG-BE-156 — §Monthly Restatement Marker Failure: Known limitation removed; the API now returns P&L without the snapshot fields, so "Restatement check unavailable." is reachable); prior — 2026-10-15 (post-ship closure `2026-10-12__release-v9.12` §6 row 3 — DEV-REPORTS-ST06-01 backlog reference updated to BLG-SPEC-203; no requirement change); prior — 2026-10-12 (v9.12 design gate — ST-23/BLG-FE-200: new §Light Theme; restated marker to `text-amber-700`); prior history retained — see prior entries in version control
+**Version:** 0.26
+**Last Updated:** 2026-10-29 (v9.14 design gate — ST-24/BLG-FEAT-99: new §Exit Condition Breakdown; ST-26/BLG-FE-215: standard summary template pluralises the month counts); prior — 2026-10-17 (ST-09, EPIC-02, v9.13, BLG-BE-156 — §Monthly Restatement Marker Failure: Known limitation removed; the API now returns P&L without the snapshot fields, so "Restatement check unavailable." is reachable); prior — 2026-10-15 (post-ship closure `2026-10-12__release-v9.12` §6 row 3 — DEV-REPORTS-ST06-01 backlog reference updated to BLG-SPEC-203; no requirement change); prior history retained — see prior entries in version control
+**Design Source (v0.26 exit condition breakdown):** docs/design/2026-10-29__release-v9.14/monthly-pnl-exit-condition-breakdown/decision_record.md
 **Design Source (v0.21 AI summary):** docs/design/2026-10-08__release-v9.11/monthly-pnl-ai-narrative/decision_record.md
 **Design Source (v0.20 restated-notice year-scoped link):** docs/design/2026-09-28__release-v9.8/tax-year-restated-notice-year-scoped-link/decision_record.md
 **Design Source (v0.19 fees-not-recorded field-name correction):** docs/design/2026-09-23__release-v9.7/monthly-pnl-fees-surfacing/decision_record.md
@@ -405,9 +406,10 @@ An optional, on-request, AI-written plain-language summary of the months in the 
 
 **Standard summary template** (code-written; used when the AI text fails its checks twice):
 
-> "{Tax year}[ so far]: realised P&L of {total} across {trades} closed trades in {months} months. Highest month: {month year}, {value}. Lowest month: {month year}, {value}. {profitable} months ended above zero and {losing} below."
+> "{Tax year}[ so far]: realised P&L of {total} across {trades} closed trades in {months} months. Highest month: {month year}, {value}. Lowest month: {month year}, {value}. {profitable} month[s] ended above zero and {losing} below."
 
-- "so far" appears only for the in-progress tax year. Signed values use the canonical money format (`design_system.md` §Number and Currency Formatting) with a minus sign.
+- "so far" appears only for the in-progress tax year.
+- *(v0.26 — ST-26, BLG-FE-215)* Each count takes the singular noun when it is 1, as "closed trade[s]" and "month[s]" already do earlier in the sentence: "1 month ended above zero", "3 months ended above zero". The losing count has no noun of its own. Signed values use the canonical money format (`design_system.md` §Number and Currency Formatting) with a minus sign.
 - When any month has `null_fee_trade_count > 0`, the table notice's sentence is appended verbatim:
   - "1 closed trade has no fees recorded, so these figures may not reflect its costs."
   - "{N} closed trades have no fees recorded, so these figures may not reflect their costs."
@@ -420,6 +422,31 @@ An optional, on-request, AI-written plain-language summary of the months in the 
 The table's figures stay authoritative.
 
 **API:** `GET` and `POST /reports/monthly-pnl/narrative`. The response carries `year`, `narrative`, `source` (`"ai"` | `"fallback"`), `generated_at` and `advisory: true`. The contract (`reports_endpoints.md`) and `openapi.yaml` entry are added in the implementation commit.
+
+---
+
+### Exit Condition Breakdown (v0.26 — ST-24, BLG-FEAT-99)
+
+**Design source:** `docs/design/2026-10-29__release-v9.14/monthly-pnl-exit-condition-breakdown/decision_record.md`
+
+A card, "Realised P&L by exit condition" (`data-testid="monthly-exit-condition-card"`), after the AI summary card and before the Unrealised P&L Card. It follows the Tax Year Filter and renders only when the Monthly Financial Table has at least one row.
+
+| Column | Content |
+|--------|---------|
+| Month | Full month name and year |
+| Stop-loss (§8.1) | P&L, then a muted "{n} trade(s)" line |
+| Risk-off (§8.2) | Same |
+| Manual (§8.3) | Same |
+| Total | The month's `realised_pnl_gbp` and `trade_count` (the Monthly Financial Table's figures) |
+
+- One row per month, in the Monthly Financial Table's order. A footer row, "Tax year total", sums each column.
+- A category with no trades shows "—" and no trade line.
+- P&L tone and format as the Monthly Financial Table. Light+dark pairs from §Light Theme.
+- Categories are `metrics_definitions.md` §Exit Condition Category, computed on the backend (`by_exit_condition` per month on `GET /reports/monthly-pnl`). Each month's categories sum to its Total.
+- Caption: "Month-end rebalance exits (§8.4) are recorded as Manual Exit and counted under Manual until a separate exit reason exists." Removed when a §8.4 exit reason is added (BLG-SPEC-206).
+- **Unavailable** (field absent or failed): "Exit-condition breakdown unavailable." (`monthly-exit-condition-unavailable`). The Monthly Financial Table is unaffected.
+- **Narrow viewports:** horizontal scroll inside the card with a sticky Month column.
+- Exports, the AI summary's inputs and `monthly_pnl_snapshots` are unchanged.
 
 ---
 
@@ -585,6 +612,7 @@ A new **"Reconciliation"** tab (4th tab in the page's tab navigation, alongside 
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.26 | 2026-10-29 | v9.14 design gate. (ST-24, BLG-FEAT-99) new §Exit Condition Breakdown: per-month realised P&L and trade count by `strategy_rules.md` §8 exit condition, reconciling to the month's realised P&L. (ST-26, BLG-FE-215) §AI Summary standard summary template pluralises the profitable-month count ("1 month ended above zero"); wording only, FI-P3-02. Design source: `docs/design/2026-10-29__release-v9.14/monthly-pnl-exit-condition-breakdown/decision_record.md`. Head of UX & Design sign-off: 2026-10-29. Product Owner approved: 2026-10-29. Head of Specs Team confirmed. |
 | 0.25 | 2026-10-17 | §Monthly Restatement Marker, Failure: the Known limitation note is removed. `GET /reports/monthly-pnl` now returns P&L without the snapshot fields when `monthly_pnl_snapshots` fails (`reports_endpoints.md` v0.18), so "Restatement check unavailable." is reachable (Playwright SC-MPR-05c). No UI change. ST-09, EPIC-02, v9.13, BLG-BE-156. |
 | 0.24 | 2026-10-15 | Known Deviations: `DEV-REPORTS-ST06-01`'s backlog reference updated from the archived `BLG-SPEC-87` to its re-file, `BLG-SPEC-203` (deviation consolidation review 2026-10-07 Finding 1; post-ship closure `2026-10-12__release-v9.12` §6 row 3). The deviation is still open; no requirement change. Edited on user direction for the Frontend Specifications & UX Documentation Owner. |
 | 0.23 | 2026-10-12 | v9.12 design gate. (ST-23, BLG-FE-200) Light mode ruled a supported theme (resolves RISK-03). New §Light Theme: every colour uses a light+dark pair from the light-theme token set. The restated marker moves from `text-amber-600` (3.19:1 on white) to `text-amber-700 dark:text-amber-400`. Design source: `docs/design/2026-10-12__release-v9.12/light-theme-support/decision_record.md`. Head of UX & Design sign-off: 2026-10-12. Product Owner approved: 2026-10-12. Head of Specs Team confirmed. |

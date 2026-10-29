@@ -3,8 +3,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 1.3
-**Last Updated:** 2026-10-16 (v9.13 design gate — ST-10/BLG-SPEC-188: new §Stop Freshness Panel); prior — 2026-09-28 (v9.8 design gate — ST-04/BLG-FE-191: new §Endpoint Test Category Labels documenting the endpoint-test-grid categorisation scheme, including the new Replay category); prior — 2026-03-18 (initial spec)
+**Version:** 1.4
+**Last Updated:** 2026-10-29 (v9.14 design gate — ST-28/BLG-FE-217: `/reports` endpoints group under Analytics; the Replay row corrected to the shipped Analytics mapping); prior — 2026-10-16 (v9.13 design gate — ST-10/BLG-SPEC-188: new §Stop Freshness Panel); prior — 2026-09-28 (v9.8 design gate — ST-04/BLG-FE-191: new §Endpoint Test Category Labels documenting the endpoint-test-grid categorisation scheme, including the new Replay category); prior history retained — see prior entries in version control
 **Design Source (v1.3 stop freshness):** docs/design/2026-10-16__release-v9.13/stop-freshness-status/decision_record.md
 **Design Source (v1.2 endpoint category labels):** docs/design/2026-09-28__release-v9.8/system-status-replay-categorisation/decision_record.md
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
@@ -111,7 +111,7 @@ The endpoint test grid (`Tests {N} endpoints`, CLAUDE.md §2) groups each tested
 
 | Category | Match | Icon | Colour |
 |----------|-------|------|--------|
-| Analytics | `/analytics` | `BarChart3` | violet |
+| Analytics | `/analytics`, `/replay`, `/reports` *(v1.4 — ST-28, BLG-FE-217)* | `BarChart3` | violet |
 | Validation | `/validate` | `Shield` | emerald |
 | Alerts | `/alerts`, `/price-alerts` | `Bell` | rose |
 | Notifications | `/notifications` | `BellRing` | orange |
@@ -122,9 +122,10 @@ The endpoint test grid (`Tests {N} endpoints`, CLAUDE.md §2) groups each tested
 | Market Data | `/signals`, `/market` | `Globe` | indigo |
 | Configuration | `/settings` | `Settings` | purple |
 | AI | `/ai` | — | (no dedicated icon/colour entry; renders with `Other`'s styling under its own `"AI"` label — pre-existing gap, out of this story's scope) |
-| Replay | `/replay` | `RefreshCw` | pink |
 | Core | `/health`, exact `GET /`, `/changelog` | `Server` | blue |
 | Other | anything else | `HelpCircle` | slate |
+
+**v1.4 (ST-28, BLG-FE-217):** `/reports/*` endpoints group under **Analytics**, matching the app's navigation (`src/Layout.js`: Reports sits in the Analytics group) and the precedent `SystemStatus.js` set for `/replay`. The `/reports` case is checked with the other specific patterns, before Core. No `/reports/*` endpoint appears under Other. The v1.2 table's separate Replay row (`RefreshCw`, pink) is removed: the shipped code maps `/replay` to Analytics (`SystemStatus.js` `categorizeEndpoint()`, comment citing ST-04, v9.8), so the row described a category that was never rendered. Design source: no new record; the v9.8 nav-taxonomy precedent applies.
 
 This section records the current scheme as of v9.8; it does not attempt to reconcile the rest of this page's spec (written for an earlier, higher-level health-card view) with the shipped endpoint-test-grid feature.
 

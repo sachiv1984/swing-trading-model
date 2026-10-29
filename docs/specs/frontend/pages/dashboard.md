@@ -3,11 +3,12 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 3.9
-**Last Updated:** 2026-10-12 (v9.12 design gate — ST-24/BLG-FE-210: AI Daily Briefing MONITOR badge to amber-700); prior — 2026-10-08 (v9.11 design gate — ST-10/BLG-BE-154: Card 2 stale-price sub-line; ST-15/BLG-FE-204: Recent Activity treats a P&L that rounds to £0.00 as break-even); prior — 2026-10-06 (v9.10 design gate — ST-09/BLG-FE-199: conditional Exit Conditions Met row; ST-10/BLG-FE-194: Recent Activity neutral glyph); prior history retained — see prior entries in version control
+**Version:** 3.10
+**Last Updated:** 2026-10-29 (v9.14 design gate — ST-03/BLG-BE-193: Card 4 unknown regime; ST-04/ST-05: Card 2 FX source sub-line; ST-08/BLG-FE-214: Card 2 stale explanation as the link's description); prior — 2026-10-12 (v9.12 design gate — ST-24/BLG-FE-210: AI Daily Briefing MONITOR badge to amber-700); prior — 2026-10-08 (v9.11 design gate — ST-10/BLG-BE-154: Card 2 stale-price sub-line; ST-15/BLG-FE-204: Recent Activity treats a P&L that rounds to £0.00 as break-even); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Release:** v8.8
 **EPIC:** EPIC-03
+**Design Source (v3.10):** docs/design/2026-10-29__release-v9.14/market-regime-unknown/decision_record.md (ST-03), docs/design/2026-10-29__release-v9.14/fx-rate-source-indicator/decision_record.md (ST-04/ST-05), docs/design/2026-10-29__release-v9.14/stale-price-marker/decision_record.md (ST-08)
 **Design Source (v3.8):** docs/design/2026-10-08__release-v9.11/risk-price-integrity/decision_record.md (ST-10 stale-price sub-line); `design_system.md` §Consistency Rules → Number and Currency Formatting (v1.21) for ST-15 — pre-existing canonical rule, no new design artefact
 **Design Source (v3.6):** `design_system.md` §Consistency Rules → Number and Currency Formatting (v1.21) — pre-existing canonical rule ("zero renders unsigned in the neutral tone"); no new design artefact authored, applied to a second element (icon badge) within an already-conforming component (the card's own P&L value text already used the same three-way logic)
 **Design Source (v3.5):** docs/design/2026-09-14__release-v9.4/ai-advisory-disclosure-badge/decision_record.md (BLG-AI-05)
@@ -160,7 +161,8 @@ All 5 cards stack vertically in order: Open Positions → Portfolio Heat → In 
   - < 15%: green
   - 15–25%: amber
   - > 25%: red
-- **Stale-price sub-line (v3.8 — ST-10, BLG-BE-154):** when one or more open positions in `GET /portfolio` have `price_is_stale = true`, an extra line appears under the value: "⚠ {N} position price(s) stale", `text-xs text-amber-400`, `data-testid="dashboard-price-stale-notice"`. Tooltip: "Live price unavailable. Showing the last stored price converted at today's FX rate." It does not change the colour coding or the click target. The per-row markers are on `/risk` (`risk_dashboard.md` §6.6).
+- **Stale-price sub-line (v3.8 — ST-10, BLG-BE-154; revised v3.10 — ST-08, BLG-FE-214):** when one or more open positions in `GET /portfolio` have `price_is_stale = true`, an extra line appears under the value: "⚠ {N} position price(s) stale", `text-xs text-amber-700 dark:text-amber-400`, `data-testid="dashboard-price-stale-notice"`. The sub-line is not focusable, because the whole card is one link. Instead the card link's accessible description (`aria-describedby`, `sr-only`) is: "Live price unavailable, so the last stored price is shown. Value, P&L and heat use this price until a live price is fetched. Reload the page to try again." The `title` tooltip is removed. It does not change the colour coding or the click target. The per-row markers are on `/risk` (`risk_dashboard.md` §6.6). Design source: `docs/design/2026-10-29__release-v9.14/stale-price-marker/decision_record.md`.
+- **FX source sub-line (v3.10 — ST-04/ST-05, BLG-BE-194/BLG-BE-169):** when `GET /portfolio`'s `fx_rate_source` is not `live`, a line appears under the value, after the stale-price sub-line if both show. `text-xs text-amber-700 dark:text-amber-400`, `data-testid="dashboard-fx-source-notice"`. Text: "⚠ FX rate not live: GBP/USD {rate} from {age}" (`last_known`) or "⚠ FX rate unavailable: using fixed GBP/USD {rate}" (`constant`). Its explanation is added to the card link's accessible description. Nothing is shown for `live`. Copy, age format and description: `docs/design/2026-10-29__release-v9.14/fx-rate-source-indicator/decision_record.md` §2.2.
 - **Source:** `GET /portfolio`
 - **Click target:** navigates to `/risk`
 
@@ -178,8 +180,9 @@ All 5 cards stack vertically in order: Open Positions → Portfolio Heat → In 
 ### Card 4 — Signal Status
 
 - **Market regime per market:**
-  - SPY: RISK-ON ✓ or RISK-OFF ✗
-  - FTSE: RISK-ON ✓ or RISK-OFF ✗
+  - SPY: RISK-ON ✓, RISK-OFF ✗ or UNKNOWN ?
+  - FTSE: RISK-ON ✓, RISK-OFF ✗ or UNKNOWN ?
+- **Unknown regime (v3.10 — ST-03, BLG-BE-193):** when `GET /market/status` reports a market's `regime_status` as `unknown` (`is_risk_on: null`), the badge reads "UNKNOWN ?" in neutral slate (`bg-slate-200 text-slate-800 dark:bg-slate-500/20 dark:text-slate-300`), `data-testid="regime-unknown-{SPY|FTSE}"`. It never falls back to RISK-OFF or RISK-ON. The badge's accessible description and hover/focus tooltip: "{US|UK} market regime could not be measured: index data is unavailable." plus the sentence for the Strategy Rules & System Intent Owner's ruling. If the ruling keeps the last known regime, a muted second line reads "last known: {RISK-ON|RISK-OFF}". Branches: `docs/design/2026-10-29__release-v9.14/market-regime-unknown/decision_record.md` §2.3; the unused branches are deleted at implementation.
 - **Signals today:** count of signals generated today (“N new signals today”)
 - **Source:** `GET /market/status` (regime), `GET /signals` (today filter)
 - **Click target:** navigates to `/signals`
@@ -443,6 +446,7 @@ Cards are fully clickable (entire card surface is the click target). Visual affo
 
 | Version | Date | Change |
 |---------|------|--------|
+| 3.10 | 2026-10-29 | v9.14 design gate — (ST-03, EPIC-01, BLG-BE-193) §4 Card 4 gains a neutral UNKNOWN ? regime state with a ruling-dependent description. (ST-04/ST-05, EPIC-01, BLG-BE-194/BLG-BE-169) §4 Card 2 FX source sub-line when the FX rate is last-known or the fixed fallback. (ST-08, EPIC-01, BLG-FE-214) §4 Card 2 stale-price explanation moves from `title` to the card link's accessible description, with new copy and the light-theme amber pair. Design sources: `docs/design/2026-10-29__release-v9.14/market-regime-unknown/decision_record.md`, `.../fx-rate-source-indicator/decision_record.md`, `.../stale-price-marker/decision_record.md`. Head of UX & Design sign-off: 2026-10-29. Product Owner approved: 2026-10-29. Head of Specs Team confirmed. |
 | 3.9 | 2026-10-12 | v9.12 design gate — (ST-24, EPIC-03, BLG-FE-210) §5 AI Daily Briefing `MONITOR` action badge `#D97706` → `#B45309` (`bg-amber-700`): white text 3.19:1 → 5.02:1, WCAG AA. Same rule as `BLG-FE-165` (v9.1, §9 v3.4); no new decision record. Head of UX & Design sign-off: 2026-10-12. Product Owner approved: 2026-10-12. Head of Specs Team confirmed. |
 | 3.8 | 2026-10-08 | v9.11 design gate — (ST-10, EPIC-02, BLG-BE-154) §4 Card 2 stale-price sub-line from `price_is_stale`; design source `docs/design/2026-10-08__release-v9.11/risk-price-integrity/decision_record.md`. (ST-15, EPIC-02, BLG-FE-204) §4 Card 5 three-way glyph and colour test the P&L rounded to 2 dp, so a value that displays as £0.00 is break-even; pre-existing `design_system.md` v1.21 rule, no new decision record. Head of UX & Design sign-off: 2026-10-08. Product Owner approved: 2026-10-08. Head of Specs Team confirmed. |
 | 3.7 | 2026-10-06 | v9.10 design gate — (ST-09, EPIC-02, BLG-FE-199) §1A new conditional "Exit Conditions Met" full-width row above the five-card grid, sharing the `getExitCondition` predicate with the Positions exit dialog; each row links to `/#/Positions?exit={id}`. (ST-10, EPIC-02, BLG-FE-194) §4 Card 5 icon glyph made three-way (`Minus` for break-even). Head of UX & Design sign-off: 2026-10-06. Product Owner approved: 2026-10-06. Head of Specs Team confirmed. |

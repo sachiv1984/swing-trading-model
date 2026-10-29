@@ -1,7 +1,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-10-29 (Product Owner direction DL-087 — §1 Next planned release → v9.14, no items committed); prior — 2026-10-29 (post-ship closure 2026-10-16__release-v9.13, manage roadmap STEP 11 — §3 "v9.13 — Committed items" section retired to roadmap_archive.md (all three items shipped); its RA:v9.13 execution-notes block moved to §1 alongside the other release annotations); prior — 2026-10-29 (post-ship closure 2026-10-16__release-v9.13 — v9.13 marked ✅ Complete in §1 and §3; §1 headers updated (Current Version → v9.13, Next planned release → [TBD] — unscoped, `next_release` equals the release just shipped); §8 Release Summary row added); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-29 (Release Planning 2026-10-29__release-v9.14 STEP 5 — RA:v9.14 execution-notes annotation added under the §1 Next planned release line; no scope change); prior — 2026-10-29 (Product Owner direction DL-087 — §1 Next planned release → v9.14, no items committed); prior — 2026-10-29 (post-ship closure 2026-10-16__release-v9.13, manage roadmap STEP 11 — §3 "v9.13 — Committed items" section retired to roadmap_archive.md (all three items shipped); its RA:v9.13 execution-notes block moved to §1 alongside the other release annotations); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-16 (cycle 2026-10-16__scheduled — Standard tier, CPS=N/A (0 active initiatives, 18th consecutive cycle); STEP -1.5 cleared after 3 OVERDUE deferred patches were applied (Head of Specs Team, user-directed); full-roster intake IW-20261016-01 (32 ideas → 21 backlog items, 1 rejected); STEP 8.0 Correctness Fast-Track promoted BLG-FE-226 (P1); PVR 0.204 (8th consecutive Alert, improving); Skill-Silo 69.6% pooled (above ceiling, sustained-failure clause applies); STEP 8.1 Option (a), v9.13 section added; DL-086)
 
 > ⚠️ **Standing Notice:** This document records product intent and prioritisation thinking. All implementation detail (formulas, schemas, endpoint paths) is illustrative and indicative only. Before any feature moves to implementation, the relevant canonical specifications must be authored or updated by the appropriate domain owner. This document must not be cited as canonical intent.
@@ -12,6 +12,15 @@
 
 **v9.13** — Monitor Exit Fix, Exit Reasons & API Call Integrity — ✅ Complete — Shipped 2026-10-29 — cycle: 2026-10-16__release-v9.13
 **Next planned release:** v9.14 — Named (Product Owner direction, DL-087, 2026-10-29; no items committed; full scope set at `plan release v9.14`)
+
+<!-- roadmap-annotation-marker: RA:v9.14:2026-10-29__release-v9.14 -->
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-10-29__release-v9.14
+- Plan published: 2026-10-29
+- Cycle folder: claude/cycles/2026-10-29__release-v9.14/
+- Backlog slice: claude/cycles/2026-10-29__release-v9.14/stage4_backlog_slice.md
+- Status at annotation: Committed (54 stories, 7 EPICs, 28.00d; `BLG-OPS-193` seated as ST-01 at P1 — production deploy restore; no roadmap-committed items under DL-087; 3 deferred v9.13 lessons-learnt patches seated by Product Owner override). Annotated on the §1 line because v9.14 has no §3 section (STEP 5 no-section rule).
 
 <!-- roadmap-annotation-marker: RA:v9.13:2026-10-16__release-v9.13 -->
 

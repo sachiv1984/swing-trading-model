@@ -3,8 +3,9 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 0.6
-**Last Updated:** 2026-10-16 (ST-05, EPIC-01, v9.13, BLG-GOV-391 — §Rebalance Exit Interim Label retired: rebalance exits are `strategy_rules.md` §8.4 (v1.17)); prior — 2026-10-16 (v9.13 design gate — ST-05/BLG-GOV-391: new §Rebalance Exit Interim Label); prior — 2026-06-24
+**Version:** 0.7
+**Last Updated:** 2026-10-29 (v9.14 design gate — ST-03/ST-04/ST-05: new §Market Status Bar with the unknown regime state and the FX rate source); prior — 2026-10-16 (ST-05, EPIC-01, v9.13, BLG-GOV-391 — §Rebalance Exit Interim Label retired: rebalance exits are `strategy_rules.md` §8.4 (v1.17)); prior — 2026-10-16 (v9.13 design gate — ST-05/BLG-GOV-391: new §Rebalance Exit Interim Label); prior history retained — see prior entries in version control
+**Design Source (v0.7 market status bar):** docs/design/2026-10-29__release-v9.14/market-regime-unknown/decision_record.md, docs/design/2026-10-29__release-v9.14/fx-rate-source-indicator/decision_record.md
 **Design Source (v0.5 rebalance interim label):** docs/design/2026-10-16__release-v9.13/rebalance-exit-interim-label/decision_record.md
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Design Source (v0.2 date default):** docs/design/2026-05-09__release-v3.3/trade-plan-quick-wins/ux_spec.md §E
@@ -64,6 +65,34 @@ Three controls are displayed above the signals table in an inline row.
 - A loading indicator is shown while the fetch is in progress
 - The signals table updates in place when the response arrives
 - All controls remain interactive during fetch; a second change during an in-flight request cancels the prior debounce and issues a fresh request after the new debounce period
+
+---
+
+## Market Status Bar (v0.7 — ST-03, ST-04, ST-05)
+
+**Design sources:** `docs/design/2026-10-29__release-v9.14/market-regime-unknown/decision_record.md`, `docs/design/2026-10-29__release-v9.14/fx-rate-source-indicator/decision_record.md`
+
+Four tiles above the summary stats (`MarketStatusBar.js`), from `GET /market/status`: SPY (US), FTSE (UK), FX Rate and Available Cash. This section records the bar for the first time. Only the regime and FX tiles change in v0.7.
+
+**Regime tiles (SPY, FTSE):**
+
+| `regime_status` | Display |
+|-----------------|---------|
+| `risk_on` | `TrendingUp` + "Risk On", emerald. Line: "{price} vs MA200" |
+| `risk_off` | `TrendingDown` + "Risk Off", rose. Line: "{price} vs MA200" |
+| `unknown` *(ST-03, BLG-BE-193)* | `HelpCircle` + "Unknown", `text-slate-700 dark:text-slate-300`. Line: "Price unavailable". Accessible description and tooltip as `dashboard.md` §Card 4 |
+
+An unknown market never renders as Risk Off, and its price never renders as "$0.00".
+
+**FX Rate tile (ST-04/ST-05, BLG-BE-194/BLG-BE-169):** "1 GBP = ${rate} USD", then a source line (`data-testid="signals-fx-source"`):
+
+| `fx_rate_source` | Source line |
+|------------------|-------------|
+| `live` | "Live" (`text-slate-600 dark:text-slate-400`) |
+| `last_known` | "Not live: from {age}" (`text-amber-700 dark:text-amber-400`), with the decision record §2.2 description |
+| `constant` | "Fixed fallback" (`text-amber-700 dark:text-amber-400`), with the decision record §2.2 description |
+
+With no rate in the response, the tile shows "—". The page has no FX constant of its own.
 
 ---
 
@@ -162,6 +191,7 @@ The frontend must not calculate or derive signal scores, rankings, or fields. Al
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.7 | 2026-10-29 | v9.14 design gate — new §Market Status Bar. (ST-03, BLG-BE-193) regime tiles gain an Unknown state that never renders as Risk Off. (ST-04/ST-05, BLG-BE-194/BLG-BE-169) the FX Rate tile shows its source and age, and the page's own 1.3611 fallback is removed. Design sources: `docs/design/2026-10-29__release-v9.14/market-regime-unknown/decision_record.md`, `docs/design/2026-10-29__release-v9.14/fx-rate-source-indicator/decision_record.md`. Head of UX & Design sign-off: 2026-10-29. Product Owner approved: 2026-10-29. Head of Specs Team confirmed. |
 | 0.6 | 2026-10-16 | v9.13 sprint execution (ST-05, EPIC-01, BLG-GOV-391): §Rebalance Exit Interim Label retired before it shipped. The Strategy Rules & System Intent Owner ruled the rebalance exit into §8 as §8.4 (`strategy_rules.md` v1.17, `ESC-EXEC-20261016-01`), and the decision record §2.2 removes the label in the same change. "Month-End Exit" and "Rebalance Exit" badges unchanged. |
 | 0.5 | 2026-10-16 | v9.13 design gate — §Rebalance Exit Interim Label added (ST-05, BLG-GOV-391): "Outside §8 — informational" on `exit_rebalance` signals until the §8 determination is applied. Design source: `docs/design/2026-10-16__release-v9.13/rebalance-exit-interim-label/decision_record.md`. Head of UX & Design sign-off: 2026-10-16. Product Owner approved: 2026-10-16. Head of Specs Team confirmed. |
 | 0.4 | 2026-06-24 | v6.2 design gate — §Signal Type Badge Styling added (ST-03, BLG-FEAT-47): `exit_rebalance` signals rendered as "Rebalance Exit" teal badge (#0891B2); `stop_exit` signals rendered as "Stop Exit" red badge (#DC2626); visual distinction satisfies AC-05. Design source: rebalance-exit-signal-style/ux_spec.md. Approved: Product Owner 2026-06-24. |
