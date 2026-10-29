@@ -44,6 +44,7 @@ from strategy_version_registry import get_current_strategy_version
 from utils.pricing import (
     get_current_price,
     get_live_fx_rate,
+    get_fx_rate_info,
     check_market_regime,
     calculate_atr,
     market_regime_status,
@@ -139,6 +140,7 @@ def get_positions_with_prices() -> List[Dict]:
     
     # Get live FX rate for USD/GBP conversions
     live_fx_rate = get_live_fx_rate()
+    fx_info = get_fx_rate_info(live_fx_rate)
     
     print(f"\n📊 Fetching live prices for {len(positions)} position(s)")
     
@@ -316,6 +318,9 @@ def get_positions_with_prices() -> List[Dict]:
             "stop_frozen_reason": stop_frozen_reason,
             "fx_rate": pos.get('fx_rate', 1.0),
             "live_fx_rate": live_fx_rate,
+            # ST-05 (BLG-BE-169, v9.14): where live_fx_rate came from.
+            "fx_rate_source": fx_info["fx_rate_source"],
+            "fx_rate_as_of": fx_info["fx_rate_as_of"],
             "total_cost": round(pos.get('total_cost', 0), 2),
             "entry_note": pos.get('entry_note'),
             "exit_note": pos.get('exit_note'),

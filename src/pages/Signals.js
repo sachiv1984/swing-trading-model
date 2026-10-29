@@ -245,7 +245,11 @@ export default function SignalsPage() {
           status: regimeStatusOf(marketStatus.ftse),
           price: marketStatus.ftse?.price
         }}
-        fxRate={marketStatus?.fx_rate || 1.3611}
+        fx={marketStatus && {
+          rate: marketStatus.fx_rate,
+          source: marketStatus.fx_rate_source,
+          asOf: marketStatus.fx_rate_as_of
+        }}
         availableCash={availableCashBalance}
       />
 

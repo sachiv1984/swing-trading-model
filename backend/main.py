@@ -122,6 +122,7 @@ from database import (
 from utils.pricing import (
     get_current_price,
     get_live_fx_rate,
+    get_fx_rate_info,
     check_market_regime,
     calculate_atr,
     market_regime_status,
@@ -1453,8 +1454,9 @@ def get_market_status():
         market_regime = check_market_regime()
         record_market_status_check()
 
-        # Get live FX rate
+        # Get live FX rate, with its source (ST-04/ST-05)
         fx_rate = get_live_fx_rate()
+        fx_info = get_fx_rate_info(fx_rate)
         
         print(f"✓ Market status retrieved:")
         print(f"   SPY: {market_regime_status(market_regime, 'US')}")
@@ -1478,6 +1480,8 @@ def get_market_status():
                 "spy": _index("spy", "US"),
                 "ftse": _index("ftse", "UK"),
                 "fx_rate": round(fx_rate, 4),
+                "fx_rate_source": fx_info["fx_rate_source"],
+                "fx_rate_as_of": fx_info["fx_rate_as_of"],
                 "last_updated": datetime.now().isoformat()
             }
         }

@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Class 2
 **Status:** Canonical
-**Version:** 1.25.0
-**Last Updated:** 2026-10-29 (ST-03, EPIC-01, v9.14, BLG-BE-193 — v9.14.0 entry: GET /market/status and GET /market/regime report an unknown regime); prior — 2026-10-27 (ST-31/ST-32, EPIC-05, v9.13, BLG-OPS-19/BLG-OPS-23 — v9.13.0 entry: new GET /ops/api-call-attribution; GET /screener/history gains duration_seconds); prior — 2026-10-27 (ST-29, EPIC-05, v9.13, BLG-OPS-189 — v9.13.0 entry: GET /health/detailed gains render_service_id); prior history retained — see prior entries in version control
+**Version:** 1.26.0
+**Last Updated:** 2026-10-29 (ST-04/ST-05, EPIC-01, v9.14, BLG-BE-194/BLG-BE-169 — v9.14.0 entry: GET /portfolio, GET /positions and GET /market/status gain fx_rate_source and fx_rate_as_of); prior — 2026-10-29 (ST-03, EPIC-01, v9.14, BLG-BE-193 — v9.14.0 entry: GET /market/status and GET /market/regime report an unknown regime); prior — 2026-10-27 (ST-31/ST-32, EPIC-05, v9.13, BLG-OPS-19/BLG-OPS-23 — v9.13.0 entry: new GET /ops/api-call-attribution; GET /screener/history gains duration_seconds); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 # API Changelog
@@ -49,6 +49,33 @@ Rules:
 |--------|---------|
 | Updated endpoint: GET /market/status | Each index adds `regime_status` (`risk_on`, `risk_off` or `unknown`). When the index data is unavailable from every source, `price`, `ma200` and `is_risk_on` are `null` and `regime_status` is `unknown`, instead of a defaulted risk-on with price 0 (BLG-BE-193). |
 | Updated endpoint: GET /market/regime | `data[].status` adds `unknown` for an unmeasured market (BLG-BE-193). |
+
+### market_endpoints.md — v0.5 (UPDATED)
+
+**EPIC:** EPIC-01
+**ST:** ST-04, ST-05
+
+| Change | Details |
+|--------|---------|
+| Updated endpoint: GET /market/status | Adds `fx_rate_source` (`live` / `last_known` / `constant`) and `fx_rate_as_of`; on a fetch failure `fx_rate` is the last good rate before the 1.27 constant (BLG-BE-194/BLG-BE-169). |
+
+### portfolio_endpoints.md — v2.14.0 (UPDATED)
+
+**EPIC:** EPIC-01
+**ST:** ST-04, ST-05
+
+| Change | Details |
+|--------|---------|
+| Updated endpoint: GET /portfolio | Adds `fx_rate_source` and `fx_rate_as_of` describing `live_fx_rate`, which falls back to the last good rate before the 1.27 constant (BLG-BE-194/BLG-BE-169). |
+
+### position_endpoints.md — v2.18.0 (UPDATED)
+
+**EPIC:** EPIC-01
+**ST:** ST-04, ST-05
+
+| Change | Details |
+|--------|---------|
+| Updated endpoint: GET /positions | Each position adds `fx_rate_source` and `fx_rate_as_of` describing `live_fx_rate` (BLG-BE-194/BLG-BE-169). |
 
 ## v9.13.0 (2026-10-16 — Release v9.13)
 

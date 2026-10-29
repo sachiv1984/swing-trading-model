@@ -14,6 +14,7 @@ export default function DashboardCard({
   emptyBody,
   children,
   className,
+  descriptions = [],
 }) {
   const content = (
     <div className={cn(
@@ -46,8 +47,12 @@ export default function DashboardCard({
       )}
 
       {!isLoading && !error && !empty && children}
+      {descriptions.map(({ id, text }) => (
+        <span key={id} id={id} className="sr-only">{text}</span>
+      ))}
     </div>
   );
 
-  return to ? <Link to={to} className="block h-full">{content}</Link> : content;
+  const describedBy = descriptions.map(({ id }) => id).join(" ") || undefined;
+  return to ? <Link to={to} className="block h-full" aria-describedby={describedBy}>{content}</Link> : content;
 }

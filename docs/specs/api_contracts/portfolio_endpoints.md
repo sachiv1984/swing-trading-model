@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 2.13.0
-**Last Updated:** 2026-10-17 (ST-06, EPIC-02, v9.13, BLG-BE-180 — POST /portfolio/position rejects a fetched ATR where 5 × ATR ≥ entry_price with 400); prior — 2026-10-13 (ST-18, EPIC-03, v9.12, BLG-FE-203 — POST /portfolio/position rejects a typed atr_value where 5 × ATR ≥ entry_price with 400); prior — 2026-10-13 (ST-13, EPIC-02, v9.12, BLG-BE-149 — `display_status` basis stated: native P&L, matching `position_state`); prior history retained — see prior entries in version control
+**Version:** 2.14.0
+**Last Updated:** 2026-10-29 (ST-04/ST-05, EPIC-01, v9.14, BLG-BE-194/BLG-BE-169 — GET /portfolio gains fx_rate_source and fx_rate_as_of; live_fx_rate falls back to the last good rate before the 1.27 constant); prior — 2026-10-17 (ST-06, EPIC-02, v9.13, BLG-BE-180 — POST /portfolio/position rejects a fetched ATR where 5 × ATR ≥ entry_price with 400); prior — 2026-10-13 (ST-18, EPIC-03, v9.12, BLG-FE-203 — POST /portfolio/position rejects a typed atr_value where 5 × ATR ≥ entry_price with 400); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Overview
@@ -68,6 +68,8 @@ Response uses the standard success envelope from **conventions.md**.
   "initial_value": 14000.00,
   "net_deposits": 14000.00,
   "live_fx_rate": 1.3642,
+  "fx_rate_source": "live",
+  "fx_rate_as_of": "2026-02-17T10:29:41+00:00",
   "last_updated": "2026-02-17T10:30:00Z",
   "current_drawdown_percent": -8.20,
   "peak_portfolio_value": 16340.00,
@@ -115,6 +117,16 @@ Response uses the standard success envelope from **conventions.md**.
 - `peak_portfolio_value` is the all-time high of `portfolio_history.total_value` across all recorded snapshots (not period-scoped). Expressed in GBP. Defaults to `0.0` when no `portfolio_history` exists.
 - `portfolio_heat_percent` is total open-position risk (sum of `position_risks[].position_risk_gbp`) as a percentage of `total_value`. Rounded to 2 d.p. `0.0` when `total_value` is `0` or no open positions carry risk (no `initial_stop`). **Documentation backfill (ST-12, EPIC-03, v7.10, BLG-QA-128)** — this field has always been returned by `services/portfolio_service.py::get_portfolio_summary()` and is consumed by `src/pages/RiskDashboard.js`; it was simply never added to this contract's response schema until now, surfaced by a consumer-driven contract check.
 - `position_risks` is an array of `{ticker, position_risk_gbp}` — GBP risk (entry price minus stop, converted to GBP) per open position with a set `initial_stop`; positions without one are excluded. Same documentation-backfill note as `portfolio_heat_percent` above — consumed by `src/pages/RiskDashboard.js` for the risk-per-position breakdown.
+
+#### FX rate source (v2.14.0 — ST-04/ST-05, BLG-BE-194/BLG-BE-169)
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `live_fx_rate` | float | The GBP/USD rate used for every US conversion in this response |
+| `fx_rate_source` | string | `live` (fetched in the current 5-minute cache window); `last_known` (the fetch failed, so the last successfully fetched rate is used, stored in `fx_rate_last_good`, `data_model.md` DS-37); or `constant` (the fetch failed and no rate has ever been stored, so the fixed fallback 1.27 is used) |
+| `fx_rate_as_of` | ISO 8601 datetime \| null | When `live_fx_rate` was fetched. `null` for `constant` |
+
+Present on both the empty-portfolio and the populated response. Dashboard Card 2 and the Risk Dashboard show a notice for `last_known` and `constant` (`fx-rate-source-indicator` decision record, `dashboard.md` §4 Card 2, `risk_dashboard.md` §2a). The constant is never reported as `live`.
 
 #### Field notes (position summary object)
 
@@ -1141,3 +1153,4 @@ No parameters required.
 | Code | Condition |
 |------|-----------|
 | 500 | Database error (returns `{"status": "error", "error": "..."}`) |
+| 2.14.0 | 2026-10-29 | ST-04/ST-05 (EPIC-01, v9.14, BLG-BE-194/BLG-BE-169): `GET /portfolio` gains `fx_rate_source` (`live` / `last_known` / `constant`) and `fx_rate_as_of`. On an FX fetch failure `live_fx_rate` is the last good rate (`data_model.md` DS-37) before the 1.27 constant. |

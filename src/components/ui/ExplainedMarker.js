@@ -19,7 +19,7 @@ export default function ExplainedMarker({ label, description, testId, className,
         <TooltipTrigger asChild>
           <button
             type="button"
-            aria-label={label}
+            aria-label={label || undefined}
             aria-describedby={descriptionId}
             data-testid={testId}
             onPointerDown={keepOpenOnPress}

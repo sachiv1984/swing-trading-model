@@ -2,6 +2,7 @@ import { TrendingUp, TrendingDown, HelpCircle } from "lucide-react";
 import { formatCurrency } from "../../lib/format";
 import ExplainedMarker from "../ui/ExplainedMarker";
 import { REGIME_RISK_ON, REGIME_RISK_OFF, REGIME_UNKNOWN, unknownRegimeExplanation } from "../../lib/regime";
+import { FX_SOURCE_LIVE, formatFxRate, fxSourceNotice } from "../../lib/fxSource";
 
 function RegimeStatus({ status, region }) {
   if (status === REGIME_RISK_ON) {
@@ -56,7 +57,24 @@ function RegimeTile({ name, flag, region, index, currency }) {
   );
 }
 
-export default function MarketStatusBar({ spyStatus, ftseStatus, fxRate, availableCash }) {
+function FxSourceLine({ fx }) {
+  if (fx?.source === FX_SOURCE_LIVE) {
+    return <p className="text-xs text-slate-600 dark:text-slate-400 mt-1" data-testid="signals-fx-source">Live</p>;
+  }
+  const notice = fxSourceNotice(fx?.source, fx?.rate, fx?.asOf);
+  if (!notice) return null;
+  return (
+    <ExplainedMarker
+      description={notice.description}
+      testId="signals-fx-source"
+      className="text-xs text-amber-700 dark:text-amber-400 ring-amber-500 mt-1"
+    >
+      {notice.shortText}
+    </ExplainedMarker>
+  );
+}
+
+export default function MarketStatusBar({ spyStatus, ftseStatus, fx, availableCash }) {
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
       <RegimeTile name="SPY (US)" flag="🇺🇸" region="US" index={spyStatus} currency="USD" />
@@ -64,7 +82,10 @@ export default function MarketStatusBar({ spyStatus, ftseStatus, fxRate, availab
 
       <div className="p-4 rounded-xl bg-slate-800/50 border border-slate-700/50">
         <span className="text-sm text-slate-600 dark:text-slate-400 block mb-2">FX Rate</span>
-        <p className="text-lg font-bold text-white">1 GBP = ${fxRate.toFixed(4)} USD</p>
+        <p className="text-lg font-bold text-white" data-testid="signals-fx-rate">
+          {fx?.rate != null ? `1 GBP = $${formatFxRate(fx.rate)} USD` : "—"}
+        </p>
+        <FxSourceLine fx={fx} />
       </div>
 
       <div className="p-4 rounded-xl bg-gradient-to-br from-cyan-500/10 to-violet-500/10 border border-cyan-500/30">

@@ -81,6 +81,8 @@ def test_nightly_risk_off_job_leaves_unknown_market_flags_unchanged():
 def test_market_status_returns_unknown_with_null_values():
     with patch.object(main, "check_market_regime", return_value=SPY_UNKNOWN), \
          patch.object(main, "get_live_fx_rate", return_value=1.34), \
+         patch.object(main, "get_fx_rate_info", return_value={
+             "fx_rate": 1.34, "fx_rate_source": "live", "fx_rate_as_of": None}), \
          patch.object(main, "record_market_status_check"):
         resp = CLIENT.get("/market/status")
     assert resp.status_code == 200

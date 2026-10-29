@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 2.17.0
-**Last Updated:** 2026-10-17 (ST-10, EPIC-02, v9.13, BLG-SPEC-188 — new `GET /positions/stop-freshness`, median and maximum stop age across open positions for System Status); prior — 2026-10-16 (ST-02, EPIC-01, v9.13, BLG-SPEC-186 — `POST /positions/{position_id}/exit` now enforces the allowed `exit_reason` list with a 400, as already documented; DS-34); prior — 2026-10-13 (ST-15, EPIC-02, v9.12, BLG-FE-202 — `GET /positions` gains `stop_frozen_reason` (DS-32); both recompute paths write it); prior history retained — see prior entries in version control
+**Version:** 2.18.0
+**Last Updated:** 2026-10-29 (ST-04/ST-05, EPIC-01, v9.14, BLG-BE-194/BLG-BE-169 — GET /positions gains fx_rate_source and fx_rate_as_of per position); prior — 2026-10-17 (ST-10, EPIC-02, v9.13, BLG-SPEC-188 — new `GET /positions/stop-freshness`, median and maximum stop age across open positions for System Status); prior — 2026-10-16 (ST-02, EPIC-01, v9.13, BLG-SPEC-186 — `POST /positions/{position_id}/exit` now enforces the allowed `exit_reason` list with a 400, as already documented; DS-34); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Overview
@@ -28,6 +28,7 @@ Global response envelopes, error shape, defaults, and multi-currency/stop rules 
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.18.0 | 2026-10-29 | ST-04/ST-05 (BLG-BE-194/BLG-BE-169, EPIC-01, v9.14): `GET /positions` gains `fx_rate_source` (`live` / `last_known` / `constant`) and `fx_rate_as_of` on each position, describing `live_fx_rate`. On an FX fetch failure `live_fx_rate` is the last good rate (`data_model.md` DS-37) before the 1.27 constant. |
 | 2.17.0 | 2026-10-17 | ST-10 (BLG-SPEC-188, EPIC-02, v9.13): new `GET /positions/stop-freshness` — median and maximum age of `stop_calculated_at` across open positions, oldest stop's ticker and timestamp, and the never-recalculated count (`metrics_definitions.md` §Stop Freshness). Read-only. |
 | 2.16.1 | 2026-10-16 | ST-02 (BLG-SPEC-186, EPIC-01, v9.13): `POST /positions/{position_id}/exit` enforces the documented `exit_reason` list. An unlisted value (including an empty string or a legacy snake-case spelling) returns `400` before anything is written; omitted or `null` still means `Manual Exit`. The rule and the `400 Invalid exit_reason` error were already documented; the backend had accepted any string. Same list as `data_model.md` DS-34's CHECK constraints. |
 | 2.16.0 | 2026-10-13 | ST-15 (BLG-FE-202, EPIC-02, v9.12): `GET /positions` gains `stop_frozen_reason` (`"atr_unavailable"` \| `null`, DS-32). `GET /positions/analyze` writes it on a post-grace recompute (set without ATR, cleared with ATR). `POST /positions/nightly-stop-update`'s "ATR unavailable" skip now writes `stop_frozen_reason` only (no stop, ATR or timestamp), and a nightly recompute with ATR clears it. |
@@ -125,6 +126,8 @@ This endpoint does **not** use the standard `{ status, data }` response envelope
     "stop_frozen_reason": null,
     "fx_rate": 1.3642,
     "live_fx_rate": 1.3650,
+    "fx_rate_source": "live",
+    "fx_rate_as_of": "2026-10-01T09:14:02+00:00",
     "current_trailing_stop": 560.50,
     "current_trailing_stop_native": 765.08,
     "risk_off_exit": false,
@@ -156,7 +159,9 @@ This endpoint does **not** use the standard `{ status, data }` response envelope
 | `initial_stop` | The stop calculated at entry (`entry_price − (5 × ATR)`), in GBP. Informational; used to show how far the stop has trailed |
 | `display_status` | `"GRACE"` (days 0–9), `"PROFITABLE"` (day 10+, native P&L > 0), or `"LOSING"` (day 10+, native P&L ≤ 0). **Basis (v2.14.0, ST-13, BLG-BE-149):** native-currency P&L, `(current native price − native entry) × shares`, the same test `position_state` and the §7.2 stop multiplier use. FX movement therefore never changes it: a US position up in dollars but down in sterling is `"PROFITABLE"`. The native entry is `fill_price` for US positions (else `entry_price × fx_rate`, since `entry_price` is GBP) and `entry_price` for UK. |
 | `fx_rate` | The GBP/USD rate at time of entry (stored) |
-| `live_fx_rate` | The current GBP/USD rate (fetched live) |
+| `live_fx_rate` | The current GBP/USD rate (fetched live; on a fetch failure, the last good rate, else the 1.27 constant — see `fx_rate_source`) |
+| `fx_rate_source` | *(v2.18.0, ST-05, BLG-BE-169)* `live`, `last_known` (fetch failed; last successfully fetched rate, `data_model.md` DS-37) or `constant` (fetch failed and no rate ever stored). The same value on every position in the response |
+| `fx_rate_as_of` | *(v2.18.0)* ISO 8601 time `live_fx_rate` was fetched; `null` for `constant` |
 | `exit_note` | Always `null` for open positions. Present for schema consistency with closed trade records |
 | `exit_reason` | Always `null` for open positions. Present for schema consistency with closed trade records — populated on close |
 | `stop_reason` | Human-readable stop status string, e.g. `"Grace period ({holding_days}/10 days)"` during the grace window, `"Active"` otherwise |

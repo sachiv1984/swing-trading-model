@@ -1,6 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { base44, api } from "../api/base44Client";
-import { Loader2 } from "lucide-react";
+import { Loader2, AlertTriangle } from "lucide-react";
+import ExplainedMarker from "../components/ui/ExplainedMarker";
+import { fxSourceNotice } from "../lib/fxSource";
 import PageHeader from "../components/ui/PageHeader";
 import HeatGauge from "../components/risk/HeatGauge";
 import DrawdownSummary from "../components/risk/DrawdownSummary";
@@ -56,6 +58,7 @@ export default function RiskDashboard() {
   const positionError = usingEntityFallback ? null : portfolioError;
 
   const isLoading = loadingPortfolio || (usingEntityFallback && (loadingEntityPositions || loadingEntityPortfolio));
+  const fxNotice = fxSourceNotice(portfolioData?.fx_rate_source, portfolioData?.live_fx_rate, portfolioData?.fx_rate_as_of);
 
   return (
     <div className="space-y-6">
@@ -63,6 +66,17 @@ export default function RiskDashboard() {
         title="Risk Dashboard"
         description="Daily portfolio risk snapshot — review before making trading decisions."
       />
+
+      {fxNotice && (
+        <ExplainedMarker
+          description={fxNotice.description}
+          testId="risk-fx-source-notice"
+          className="text-xs text-amber-700 dark:text-amber-400 ring-amber-500"
+        >
+          <AlertTriangle className="w-3.5 h-3.5" aria-hidden="true" />
+          {fxNotice.text}
+        </ExplainedMarker>
+      )}
 
       {isLoading ? (
         <div className="flex items-center justify-center py-24">

@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Active
-**Version:** 0.4
-**Last Updated:** 2026-10-29 (ST-03, EPIC-01, v9.14, BLG-BE-193 — GET /market/status and GET /market/regime report an unmeasured market as `unknown` with null values, not a defaulted risk-on); prior — 2026-10-13 (ST-17, EPIC-03, v9.12, BLG-BE-146 — added GET /market/atr/{ticker}, the read-only 14-day ATR preview for Trade Entry); prior — 2026-10-08 (ST-19, EPIC-03, v9.11, BLG-BE-140 — added GET /market/regime, the read-only regime source for the Dashboard regime widgets); prior history retained — see prior entries in version control
+**Version:** 0.5
+**Last Updated:** 2026-10-29 (ST-04/ST-05, EPIC-01, v9.14, BLG-BE-194/BLG-BE-169 — GET /market/status gains fx_rate_source and fx_rate_as_of); prior — 2026-10-29 (ST-03, EPIC-01, v9.14, BLG-BE-193 — GET /market/status and GET /market/regime report an unmeasured market as `unknown` with null values, not a defaulted risk-on); prior — 2026-10-13 (ST-17, EPIC-03, v9.12, BLG-BE-146 — added GET /market/atr/{ticker}, the read-only 14-day ATR preview for Trade Entry); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -72,6 +72,8 @@ Response uses the standard success envelope from **conventions.md**.
     "regime_status": "unknown"
   },
   "fx_rate": 1.2847,
+  "fx_rate_source": "live",
+  "fx_rate_as_of": "2026-03-08T10:29:58.401+00:00",
   "last_updated": "2026-03-08T10:30:00.123456"
 }
 ```
@@ -88,7 +90,9 @@ Response uses the standard success envelope from **conventions.md**.
 | `ftse.ma200` | float \| null | FTSE 100 200-day moving average (GBP), rounded to 2 decimal places. `null` when `unknown` |
 | `ftse.is_risk_on` | boolean \| null | `true` if FTSE price > MA200 (risk-on signal for UK market), `false` if not, `null` when `unknown` |
 | `ftse.regime_status` | string | `risk_on`, `risk_off` or `unknown` (v0.4, ST-03) |
-| `fx_rate` | float | Live GBP/USD exchange rate, rounded to 4 decimal places |
+| `fx_rate` | float | GBP/USD exchange rate, rounded to 4 decimal places: live, or on a fetch failure the last good rate, else the 1.27 constant (v0.5) |
+| `fx_rate_source` | string | `live`, `last_known` or `constant` (v0.5, ST-04/ST-05; same meaning as `GET /portfolio`'s field, `portfolio_endpoints.md` §FX rate source). The Signals page FX tile shows it (`signals.md` §Market Status Bar) |
+| `fx_rate_as_of` | ISO 8601 datetime \| null | When `fx_rate` was fetched; `null` for `constant` (v0.5) |
 | `last_updated` | string (ISO 8601) | Timestamp of when this response was generated (UTC) |
 
 #### Regime semantics
@@ -255,3 +259,4 @@ Trade Entry never places the returned ATR into its ATR input, so `atr_source` at
 | 0.2 | 2026-10-08 | ST-19 (EPIC-03, v9.11, BLG-BE-140): Added `GET /market/regime`, a read-only regime source, so viewing the regime no longer runs the stop-writing `GET /positions/analyze`. |
 | 0.3 | 2026-10-13 | ST-17 (EPIC-03, v9.12, BLG-BE-146): Added `GET /market/atr/{ticker}`, the read-only 14-day ATR preview that lets Trade Entry show the stop, risk and size before save. |
 | 0.4 | 2026-10-29 | ST-03 (EPIC-01, v9.14, BLG-BE-193): `GET /market/status` adds `regime_status` per index, and `price`, `ma200` and `is_risk_on` are `null` when the regime is `unknown`; `GET /market/regime` adds the `unknown` status. Replaces the silent risk-on default. |
+| 0.5 | 2026-10-29 | ST-04/ST-05 (EPIC-01, v9.14, BLG-BE-194/BLG-BE-169): `GET /market/status` gains `fx_rate_source` and `fx_rate_as_of`; `fx_rate` falls back to the last good rate before the 1.27 constant. |

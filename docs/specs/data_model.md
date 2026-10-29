@@ -3,8 +3,8 @@
 **Owner:** Data Model & Domain Schema Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.65
-**Last Updated:** 2026-10-27 (ST-31/ST-32, EPIC-05, v9.13, BLG-OPS-19/BLG-OPS-23 — DS-36 (v2.65): `api_call_log.feature` and `screener_runs.duration_seconds`; both tables documented); prior — 2026-10-27 (ST-22, EPIC-03, v9.13, BLG-FE-208 — DS-35 (v2.64): new `chat_answer_ratings` table, one useful / not-useful rating per AI chat answer); prior — 2026-10-16 (ST-02, EPIC-01, v9.13, BLG-SPEC-186 — DS-34 (v2.63): allowed `exit_reason` values mapped to `strategy_rules.md` §8, legacy spellings backfilled, CHECK constraints on `positions` and `trade_history`); prior history retained — see prior entries in version control
+**Version:** 2.66
+**Last Updated:** 2026-10-29 (ST-04, EPIC-01, v9.14, BLG-BE-194 — DS-37 (v2.66): new `fx_rate_last_good` table, the last successfully fetched GBP/USD rate and its fetch time); prior — 2026-10-27 (ST-31/ST-32, EPIC-05, v9.13, BLG-OPS-19/BLG-OPS-23 — DS-36 (v2.65): `api_call_log.feature` and `screener_runs.duration_seconds`; both tables documented); prior — 2026-10-27 (ST-22, EPIC-03, v9.13, BLG-FE-208 — DS-35 (v2.64): new `chat_answer_ratings` table, one useful / not-useful rating per AI chat answer); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 This document describes the complete database schema and data structures used in the **Position Manager Web App**.
@@ -3568,6 +3568,57 @@ Expect 2 rows, `feature` text YES and `duration_seconds` numeric YES, and 1 inde
 
 ---
 
+## DS-37 — Add fx_rate_last_good (v2.66, 2026-10-29)
+
+**Story:** ST-04 (EPIC-01, v9.14) — `BLG-BE-194`; the source field it feeds is ST-05 (`BLG-BE-169`).
+
+**Rationale:** `utils.pricing.get_live_fx_rate()` fetches GBP/USD only from Yahoo Finance and, on failure, used the constant `DEFAULT_FX_RATE` (1.27), so an outage valued and sized every US position at a fixed rate. It now falls back to the last successfully fetched rate first. That rate has to outlive a process restart (Render restarts and spins down idle services), so it is stored here as well as in memory. One row per currency pair; each live fetch (at most one per 5-minute cache window) replaces it. `GET /portfolio`, `GET /positions` and `GET /market/status` report which rate was used (`fx_rate_source`: `live`, `last_known` or `constant`) and its `fetched_at` (`fx_rate_as_of`). Design source: `docs/design/2026-10-29__release-v9.14/fx-rate-source-indicator/decision_record.md`.
+
+**Deploy order:** not a risk. `database.ensure_fx_rate_last_good_table()` runs the Up Migration's `CREATE TABLE IF NOT EXISTS` on first use, the same pattern as `chat_answer_ratings` (DS-35). Reads and writes are fail-open: if the table cannot be read or written, the rate falls back to the in-memory copy and then the constant, and no request fails.
+
+### Up Migration (v2.65 → v2.66)
+
+```sql
+CREATE TABLE IF NOT EXISTS fx_rate_last_good (
+    pair       VARCHAR(10) PRIMARY KEY,
+    rate       NUMERIC(12, 6) NOT NULL,
+    fetched_at TIMESTAMPTZ NOT NULL,
+    CONSTRAINT ck_fx_rate_last_good_rate CHECK (rate > 0)
+);
+```
+
+| Column | Meaning |
+|--------|---------|
+| `pair` | Currency pair, `GBPUSD` (the only pair the app fetches) |
+| `rate` | The last successfully fetched rate (USD per GBP) |
+| `fetched_at` | When that rate was fetched (UTC) |
+
+### Down Migration (v2.66 → v2.65)
+
+```sql
+DROP TABLE IF EXISTS fx_rate_last_good;
+```
+
+Only the stored rate is lost. Until the next live fetch, a failed fetch falls back to the 1.27 constant, as before v2.66. No other table references this one.
+
+### Verification
+
+```sql
+SELECT column_name, data_type, is_nullable
+FROM information_schema.columns
+WHERE table_name = 'fx_rate_last_good'
+ORDER BY ordinal_position;
+
+SELECT pair, rate, fetched_at FROM fx_rate_last_good;
+```
+
+Expect 3 rows (`pair`, `rate`, `fetched_at`), none nullable, and, once the app has fetched a live rate, one `GBPUSD` row with a recent `fetched_at`.
+
+**Sign-off:**
+- Data Model & Domain Schema Owner: new, self-contained single-row-per-pair table, reversible, created at runtime by an idempotent ensure-function; no existing table touched, no backfill (no historical rate is stored anywhere to backfill from). Live Confirmation (the Verification query on staging and production after deploy) is tracked separately as a post-merge check.
+
+---
+
 ## Drift Detector Triage (2026-10-13, v2.60)
 
 **Story:** ST-34 (EPIC-05, `2026-10-12__release-v9.12`), BLG-SPEC-178. Triage of the findings `scripts/check_data_model_drift.py` reported on its first run (ST-28, v9.9, 2026-10-01) beyond the 5 known divergence classes.
@@ -3602,6 +3653,6 @@ Expect 2 rows, `feature` text YES and `duration_seconds` numeric YES, and 1 inde
 
 ---
 
-**Document Version:** 2.65
+**Document Version:** 2.66
 **Maintained By:** Data Model & Domain Schema Owner
-**Last Review:** 2026-10-27 (ST-31/ST-32, EPIC-05, v9.13, BLG-OPS-19/BLG-OPS-23 — DS-36 (v2.65): `api_call_log.feature` and `screener_runs.duration_seconds`; both tables documented); prior — 2026-10-27 (ST-22, EPIC-03, v9.13, BLG-FE-208 — DS-35 (v2.64): new `chat_answer_ratings` table, one useful / not-useful rating per AI chat answer); prior — 2026-10-16 (ST-02, EPIC-01, v9.13, BLG-SPEC-186 — DS-34 (v2.63): allowed `exit_reason` values mapped to `strategy_rules.md` §8, legacy spellings backfilled, CHECK constraints on `positions` and `trade_history`); prior history retained — see prior entries in version control
+**Last Review:** 2026-10-29 (ST-04, EPIC-01, v9.14, BLG-BE-194 — DS-37 (v2.66): new `fx_rate_last_good` table, the last successfully fetched GBP/USD rate and its fetch time); prior — 2026-10-27 (ST-31/ST-32, EPIC-05, v9.13, BLG-OPS-19/BLG-OPS-23 — DS-36 (v2.65): `api_call_log.feature` and `screener_runs.duration_seconds`; both tables documented); prior — 2026-10-27 (ST-22, EPIC-03, v9.13, BLG-FE-208 — DS-35 (v2.64): new `chat_answer_ratings` table, one useful / not-useful rating per AI chat answer); prior history retained — see prior entries in version control
