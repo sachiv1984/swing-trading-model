@@ -54,3 +54,45 @@ Items: 2
 |---|-------------|-------------|--------|
 | 1 | Four stories had ACs that only post-merge production data can meet, and all ended `Pass_with_deviation` with carried delegations | At sprint planning, mark such ACs `post-merge` with a named tracking item, so execution does not grade a planned remainder as a deviation (Friction Item 3) | Sprint Planning |
 | 2 | `deviations_filed` and the cycle's escalation map are not checked by the §9.2 script, and both were stale at close | Until Friction Item 4's patch lands, read `deviations_filed` back after every unblock path, and add each `ESC-EXEC-*` to `execution_state.json` in the same write that files it | All |
+
+## Phase 4
+
+**Phase:** Delivery Verification
+**Cycle:** 2026-10-16__release-v9.13
+**Section anchor:** `## Phase 4` (stable — cycle_id in field above, not in header)
+**Filed:** 2026-10-29
+**Reviewed by:** PMO Lead
+**Invocation context:** invoking_routine `delivery_verification_prompt.md` (STEP 8.5); cycle_id `2026-10-16__release-v9.13`; phase Phase 4; prior_cycle_id `2026-10-12__release-v9.12`.
+**Prior cycle checked:** 2026-10-12__release-v9.12 (`lessons_learnt_cycle.md` `## Phase 4`). It filed 1 friction item. It was re-checked by patch ID against `prompt_change_log.md` as of this run, and by reading the named target file directly (BLG-GOV-312, LL-v9.1-Closure-01):
+1. **`LL-v9.12-P4-01`, separate deviation and tracking-item priorities.** **Applied:** `execution_prompt.md` v3.86→v3.87 (2026-10-15, `prompt_change_log.md` line 36). The text is present in STEP 5.3's "Deviations filed this sprint" item ("Two priorities for `Pass_with_deviation` rows (LL-v9.12-P4-01)"). It worked live: this cycle's `sprint_close.md` shows both columns, and the ST-29/`BLG-OPS-196` P3/P2 straddle was visible without reading the backlog.
+
+| friction_item | phase | type | classification | action | owner | target_date |
+|---------------|-------|------|----------------|--------|-------|-------------|
+| STEP 2.1's found-defect severity rule (`LL-v9.11-P4-01`) is worded for `Pass_with_deviation` results only. ST-14 was graded `Pass with notes`, because its ACs were met as written, yet its note carried a found pre-existing P2 defect (`BLG-BE-190`, US sizing FX inversion), and ST-14's own new oracle mirrors it. Neither the prompt nor `sprint_close.md` (whose two-priority rule is also scoped to `Pass_with_deviation` rows) routed it to §7's P2 path. The engine had to stop and ask the user whether it was a P2 deviation. The user chose P2 with PO + DoQ acceptance. Blast radius: one story this cycle. Any found defect above P3 recorded under a `Pass with notes` grade can skip the §7 hard block unnoticed, through sprint close and into verification. Recovery cost: low (two prompt sections). | Phase 4 | Type C — Dependency Stall: A gate or pre-condition was invisible, ambiguous, or not enforced | defer | `delivery_verification_prompt.md` STEP 2.1 ("Found-defect severity"): apply the rule to any result whose `Comments` name a found pre-existing defect filed at P1/P2, including `Pass with notes`, not only `Pass_with_deviation`. Matching change to `execution_prompt.md` STEP 5.3 ("Deviations filed this sprint"): list such found defects in the deviation table with their filed priority. | Head of Specs Team | Post-ship closure `2026-10-16__release-v9.13` STEP 8 |
+
+**What worked well:**
+- All six QA evidence logs were signed and dated before invocation, and `sprint_close.md`'s readiness statement was all `Yes`. Every preflight gate passed on the first invocation, for the second cycle running.
+- Sprint close's path-existence check (`LL-v9.10-P4-01`) meant all 46 `test_scenarios` paths and every `spec_references` path resolved, so no correction was needed.
+- The cycle's own DoQ and PR reviews had already backlogged every test-coverage weakness this run found (`BLG-QA-229`, `-230`, `-232`, `-237`), so no new TSG item was needed.
+- The ST-05 §8.4 known deviation was written into `strategy_rules.md` during execution, so the Known Deviations sync found it present.
+
+**Recurrence Notes:**
+None against the prior cycle. The friction item is new relative to v9.12 Phase 4, and the single v9.12 Phase 4 row is dispositioned **Applied** above, so no prior-cycle row is left without a disposition (AUD-2026-10-08-004 row-completeness). The friction item extends `LL-v9.11-P4-01` (applied v3.15) to a result grade it did not cover. It is a scope gap in that patch, not a recurrence of an open action.
+
+Severity calls were not contested once made. The DoQ sign-off, `sprint_close.md` and this run agree on P3 for all six `Pass_with_deviation` results and on P3 for the ST-05 §8.4 deviation. The pre-seal gate (`LL-v2.4-DV-01`) held: §9 dates were filled only after the user chose agent-mediated DoQ and PO sign-off (2026-10-29). This is the 6th consecutive cycle (v9.8–v9.13) where verification sign-off was agent-mediated at the user's direction. Minor observation, not filed: `qa_evidence_EPIC-04.md` says "the five files above" while `test_scenarios` lists six. The sixth (`trade-debrief.spec.js`) is cited elsewhere in the same file and was run.
+
+### Phase 4 Recurrence Escalations
+
+None.
+
+### Phase 4 Escalations
+
+None. The friction item has a named file, section, owner and target.
+
+### Phase 4 Carry-Forward
+
+Items: 1
+
+| # | Observation | Implication | Engine |
+|---|-------------|-------------|--------|
+| 1 | A `Pass with notes` story carried a found P2 defect that neither STEP 2.1 nor sprint close routed to §7 | Until the patch lands, read every `Pass with notes` comment for a backlog item filed at P1/P2, and treat it under the found-defect severity rule | Delivery Verification; Sprint Execution |
