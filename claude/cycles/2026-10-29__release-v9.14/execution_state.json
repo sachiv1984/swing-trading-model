@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-29T14:51:40Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-29T16:02:11Z",
+  "last_updated_utc": "2026-10-29T16:06:07Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-02",
@@ -17,7 +17,7 @@
   ],
   "epics": {
     "EPIC-01": {
-      "status": "in_progress",
+      "status": "done",
       "branch": "exec/2026-10-29__release-v9.14/EPIC-01",
       "pr_number": null,
       "pr_status": "none",
@@ -44,16 +44,16 @@
         "ST-01": {
           "title": "Restore eslint-config-react-app so the frontend builds and deploys again",
           "classification": "delegated_backend",
-          "status": "blocked_backend",
+          "status": "done",
           "assigned_to": "engine (lockfile, CI build step); Infrastructure & Operations Owner (Render dashboard workaround)",
           "github_issue": 2078,
           "branch": "exec/2026-10-29__release-v9.14/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "3fbfe5e3c3818f2dc22b30cca2047b10e492efc3",
           "delegation_record_id": "DEL-20261029-01",
-          "blocked_since_utc": "2026-10-29T14:55:56Z",
+          "blocked_since_utc": null,
           "unblock_criteria": "Render dashboard: DISABLE_ESLINT_PLUGIN (or other ESLint workaround) on trading-assistant-staging reported and removed; a successful staging build from a main commit containing f5e48d78, recorded in qa_evidence_EPIC-01.md.",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-10-29T15:58:24Z",
+          "acceptance_verified": true,
           "spec_references": [
             "render.yaml",
             "package.json",
@@ -63,10 +63,16 @@
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": "3.1.B.3",
-          "sign_off_record": null,
-          "notes": "Autonomous half pushed in f5e48d78 (lockfile fix, CI production-build workflow). Local CI=false npm run build without DISABLE_ESLINT_PLUGIN compiles with warnings only (RISK-06 not triggered). AC 1 post-merge, tracked by BLG-OPS-200. Staging branch deploy of ea20658a (user, 2026-10-29, DISABLE_ESLINT_PLUGIN removed from the Render dashboard) failed at install: Render's plain `npm install` hit ERESOLVE (eslint-config-react-app's eslint@^8 peer vs root eslint@^9). Fixed in 3fbfe5e3: repo .npmrc legacy-peer-deps=true (no dashboard-only setting), and Frontend Production Build now installs with plain `npm ci`, as Render does. Reproduced and verified in a scratch copy (exit 1 without .npmrc, success with it; lockfile unchanged)."
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.B.unblocked",
+          "sign_off_record": {
+            "role": "Infrastructure & Operations Owner",
+            "status": "cleared",
+            "method": "human_in_session",
+            "date": "2026-10-29",
+            "reference": "DEL-20261029-01"
+          },
+          "notes": "Autonomous half pushed in f5e48d78 (lockfile fix, CI production-build workflow). Local CI=false npm run build without DISABLE_ESLINT_PLUGIN compiles with warnings only (RISK-06 not triggered). AC 1 post-merge, tracked by BLG-OPS-200. Staging branch deploy of ea20658a (user, 2026-10-29, DISABLE_ESLINT_PLUGIN removed from the Render dashboard) failed at install: Render's plain `npm install` hit ERESOLVE (eslint-config-react-app's eslint@^8 peer vs root eslint@^9). Fixed in 3fbfe5e3: repo .npmrc legacy-peer-deps=true (no dashboard-only setting), and Frontend Production Build now installs with plain `npm ci`, as Render does. Reproduced and verified in a scratch copy (exit 1 without .npmrc, success with it; lockfile unchanged). AC 2 met: staging redeploy of 4719c694 (branch deploy, no DISABLE_ESLINT_PLUGIN, no render.yaml workaround) built and went live 2026-10-29T16:04:44Z, warnings only. AC 3 met: Frontend Production Build fails on an unbuildable tree (it failed d83893b3/3fbfe5e3 on import/first) and passes on 8f05e704 (run 40907524862). AC 1 is seal-marked post-merge, tracked by BLG-OPS-200 (LL-v9.13-P3-03: graded on in-sprint ACs). Deviation check: none."
         },
         "ST-02": {
           "title": "Compute the SPY market regime from Alpaca bars when Yahoo Finance fails",
@@ -267,10 +273,9 @@
     }
   },
   "blocked_items": [],
-  "delegated_items": [
-    "ST-01"
-  ],
+  "delegated_items": [],
   "completed_items": [
+    "ST-01",
     "ST-02",
     "ST-03",
     "ST-04",
