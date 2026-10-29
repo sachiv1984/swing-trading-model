@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-29 (groom backlog GROOM-20261029-01, post-ship closure 2026-10-16__release-v9.13 STEP 12 — 41 items archived (40 v9.13 shipped, BLG-GOV-368 closed as met); spec-debt deep review run, marker advanced); prior — 2026-10-29 (post-ship closure 2026-10-16__release-v9.13 STEP 8 — 3 new item(s) added: BLG-QA-238, BLG-GOV-397, BLG-GOV-398; deferred lessons-learnt actions with sprint target v9.14); prior — 2026-10-29 (post-ship closure 2026-10-16__release-v9.13 STEP 3 — 40 shipped items marked ✅ COMPLETE (ST-01–ST-40, PRs #2071–#2076); 0 Phase 4 additions needed); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-29 (v9.13 closure §6 owner actions — BLG-OPS-196 ✅ COMPLETE banner added; 6 stale v9.13 Provisional-Target tags re-targeted to TBD: BLG-SPEC-195, BLG-AI-19, BLG-OPS-186, BLG-QA-221, BLG-BE-181, BLG-QA-226); prior — 2026-10-29 (groom backlog GROOM-20261029-01, post-ship closure 2026-10-16__release-v9.13 STEP 12 — 41 items archived (40 v9.13 shipped, BLG-GOV-368 closed as met); spec-debt deep review run, marker advanced); prior — 2026-10-29 (post-ship closure 2026-10-16__release-v9.13 STEP 8 — 3 new item(s) added: BLG-QA-238, BLG-GOV-397, BLG-GOV-398; deferred lessons-learnt actions with sprint target v9.14); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -4028,7 +4028,7 @@ Since BLG-BE-158 (v9.12) a signal's `total_cost` is GBP including entry fees, bu
 **Owner:** API Contracts & Documentation Owner; Backend Engineering Patterns Owner
 **Source:** Agent-mediated Director of Quality review (second pass) of EPIC-01, ST-06, cycle `2026-10-12__release-v9.12` — 2026-10-13
 **Effort:** XS (<1h)
-**Provisional-Target:** v9.13
+**Provisional-Target:** TBD (re-targeted from v9.13 by the PMO Lead 2026-10-29: v9.13 shipped without it; `ESC-CLOSE-20260923-01`, closure_record.md §6 row 5)
 
 **Problem**
 `ai_endpoints.md` §POST /ai/journal-summary says "Default model: `claude-haiku-4-5-20251001`. Override via `AI_MODEL` env var." No such override exists: `summarise_journal_notes()` uses `MODEL_VERSION = CLAUDE_HAIKU_4_5`, and the router never passes a model. ST-06 (v9.12) added `claude_audit_log` cost logging for the journal summary at Haiku 4.5 rates regardless of the `model` argument. That is correct today, but the costing would be wrong if an override were ever added.
@@ -4049,7 +4049,7 @@ Since BLG-BE-158 (v9.12) a signal's `total_cost` is GBP including entry fees, bu
 **Owner:** AI Compliance & Governance Officer; Backend Engineering Patterns Owner
 **Source:** PR #2022 agent-mediated review (EPIC-01, cycle `2026-10-12__release-v9.12`), Director of Quality finding 2 and Product Owner finding 5 — 2026-10-13
 **Effort:** S (~0.5d)
-**Provisional-Target:** v9.13
+**Provisional-Target:** TBD (re-targeted from v9.13 by the PMO Lead 2026-10-29: v9.13 shipped without it; `ESC-CLOSE-20260923-01`, closure_record.md §6 row 5)
 
 **Problem**
 ST-05 widened `_INSTRUMENT_DIRECTIVE_RE` (`backend/services/monthly_pnl_narrative_service.py`) to inflected forms. It now also flags descriptive prose that matched nothing before v9.12: "Selling the position early cost you £40.", "You were adding to the position in week 2.", "You were selling the position into strength." and "Adding to that, your win rate rose to 60%.". ("...fell short this month" was already a false positive.) A match forces regenerate-then-fallback, so users get the generic text and pay for a second call on legitimate narratives. BLG-AI-13's scope asked for no false positives on past-tense reporting, but ST-05's restated AC tested only the simple past. Meanwhile "exit/close/trim the position" still pass the scan.
@@ -4140,7 +4140,7 @@ ST-16 (BLG-AI-18) attributes a chat sentence that cites a stop to the focused, h
 **Owner:** Infrastructure & Operations Owner
 **Source:** PR #2022 agent-mediated review (EPIC-01, cycle `2026-10-12__release-v9.12`), Director of Quality finding 3 — 2026-10-13
 **Effort:** XS (<1h plus tests)
-**Provisional-Target:** v9.13
+**Provisional-Target:** TBD (re-targeted from v9.13 by the PMO Lead 2026-10-29: v9.13 shipped without it; `ESC-CLOSE-20260923-01`, closure_record.md §6 row 5)
 
 **Problem**
 `ai-daily-cost-check.yml` (ST-06) runs at 00:15, 06:15, 12:15 and 18:15 UTC, and `get_daily_ai_cost()` sums today's spend only (`generated_at >= CURRENT_DATE`). Spend after the last run of the day (later still if GitHub delays it) is never compared against that day's total, because the 00:15 run starts a new day, which leaves a blind spot of about 6 hours every day.
@@ -4182,7 +4182,7 @@ ST-16 (BLG-AI-18) attributes a chat sentence that cites a stop to the focused, h
 **Owner:** QA & Testing Owner; Backend Engineering Patterns Owner
 **Source:** PR #2022 agent-mediated review (EPIC-01, cycle `2026-10-12__release-v9.12`), Director of Quality finding 5 — 2026-10-13
 **Effort:** S (~0.5d)
-**Provisional-Target:** v9.13
+**Provisional-Target:** TBD (re-targeted from v9.13 by the PMO Lead 2026-10-29: v9.13 shipped without it; `ESC-CLOSE-20260923-01`, closure_record.md §6 row 5)
 
 **Problem**
 All the new SQL in EPIC-01 is verified only through mocks or a hand-written fake: the `ANY(%s::uuid[])` notes query, the `%s::uuid[]` audit insert, the history filter's `%s::uuid = ANY(trade_ids)`, the DS-31 `ALTER ... TYPE UUID[] USING NULL`, and `SUM(cost_usd) FROM claude_audit_log`. The ST-01 staging run exercised the notes query and the insert. The history filter's UUID path and the cost sum have no real-database evidence.
@@ -4538,7 +4538,7 @@ The PROFITABLE lifecycle tooltip in `src/pages/Positions.js` (~69) says "Advance
 **Owner:** Head of Engineering
 **Source:** PR #2027 review (Director of Quality, agent-mediated), ST-26/EPIC-04, cycle `2026-10-12__release-v9.12` — 2026-10-15
 **Effort:** XS (<1h)
-**Provisional-Target:** v9.13
+**Provisional-Target:** TBD (re-targeted from v9.13 by the PMO Lead 2026-10-29: v9.13 shipped without it; `ESC-CLOSE-20260923-01`, closure_record.md §6 row 5)
 
 **Problem**
 Since ST-26, `GET /settings` (`backend/main.py` `get_settings_endpoint`) calls `get_last_settings_change()` inside the endpoint's single `try`. Any failure of that read becomes a 500 for the whole settings read: the `settings_change_log` table missing in an environment, a permission error, or a bad row. Every page that loads settings then fails, not just the last-change line. The migration is applied on staging and production, so this is latent. It bites on any new or rebuilt environment, and on any future change to the table.
@@ -4559,7 +4559,7 @@ Since ST-26, `GET /settings` (`backend/main.py` `get_settings_endpoint`) calls `
 **Owner:** Director of Quality; Head of Engineering
 **Source:** PR #2027 review (Director of Quality, agent-mediated), ST-26/EPIC-04, cycle `2026-10-12__release-v9.12` — 2026-10-15
 **Effort:** S (~0.5d)
-**Provisional-Target:** v9.13
+**Provisional-Target:** TBD (re-targeted from v9.13 by the PMO Lead 2026-10-29: v9.13 shipped without it; `ESC-CLOSE-20260923-01`, closure_record.md §6 row 5)
 
 **Problem**
 `tests/test_settings_change_log.py` mocks the cursor. The SQL that ST-26 added in `backend/database.py` is never executed in CI: the `SELECT ... FOR UPDATE`, the `INSERT INTO settings_change_log`, and the `batch_id` subquery in `get_last_settings_change()`. `ci-tests.yml` Pytest Phase B starts a real `postgres:15` service, but no test creates the DS-33 schema in it. A typo or type mismatch in that SQL would first show up on staging or production as a failed settings save, because the log insert shares the save's transaction.
@@ -5485,6 +5485,7 @@ The System Status Yahoo Finance check calls `get_live_fx_rate()` and reports hea
 ---
 
 ### BLG-OPS-196 — Confirm both staging services deploy from main, then retire the old hook
+**✅ COMPLETE — 2026-10-28 — cycle `2026-10-16__release-v9.13` (ST-29 post-merge remainder, EPIC-05, `DEL-20261027-03`) — `staging-deploy.yml` run 40680643380 on merge commit 77758669; banner added 2026-10-29 by the Infrastructure & Operations Owner (agent-mediated, §5.3, user-directed; closure_record.md §6 row 4)**
 **Priority:** P2 (Medium)
 **Type:** Operations / Deployment
 **Owner:** Infrastructure & Operations Owner

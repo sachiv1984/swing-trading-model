@@ -4,7 +4,7 @@
   "status": "Closed",
   "prior_status": "Verified",
   "engine": "Delivery Verification",
-  "last_updated_utc": "2026-10-29T12:26:21Z",
+  "last_updated_utc": "2026-10-29T12:34:38Z",
   "execution_state_path": "claude/cycles/2026-10-16__release-v9.13/execution_state.json",
   "backlog_slice_path": "claude/cycles/2026-10-16__release-v9.13/stage4_backlog_slice.md",
   "design_gate_required": true,
@@ -38,7 +38,7 @@
   "sprint2_gate_confirmed_utc": "2026-08-18T00:00:00Z",
   "sprint2_close_utc": "2026-08-20T11:58:57Z",
   "verification_utc": "2026-10-29T10:57:01Z",
-  "last_sync_utc": "2026-10-29T12:26:21Z",
+  "last_sync_utc": "2026-10-29T12:34:05Z",
   "blocked_sla_breached": false,
   "last_deviation_consolidation_review_utc": "2026-10-29T12:26:21Z",
   "deviation_consolidation_review_cycle_count": 0,
@@ -49,7 +49,7 @@
   "last_audit_overall_score": 69,
   "last_audit_open_items": 0,
   "last_audit_cycle_count": 88,
-  "next_release": "v9.13",
+  "next_release": "v9.14",
   "prior_cycle": "2026-10-16__release-v9.13",
   "lifecycle_schema": "claude/system/lifecycle_schema.json",
   "schema_version": "1.0",
@@ -469,24 +469,6 @@
       "resolved_utc": "2026-10-28T21:21:09Z",
       "resolved_by": "Director of Quality (agent-mediated, §5.3)",
       "resolution_summary": "(A) accept and document; first pass Blocked on 2 factual errors (corrected), retry 1 Approved. Applied by ST-27 at a4dce1d9 (tests/_real_database.py 'Known limit', conftest leak-guard comment)."
-    },
-    "ESC-CLOSE-20261029-01": {
-      "summary": "STEP 5 — strategy_rules.md Known Deviations entries for BLG-BE-190 (missing) and ST-05 §8.4 (fields incomplete) are outside post-ship write scope",
-      "owner": "Strategy Rules & System Intent Owner",
-      "sla_due_utc": "2026-11-01T12:12:02Z",
-      "cycle": "2026-10-16__release-v9.13",
-      "blocks_execution": false,
-      "disposition": "Open",
-      "raised_utc": "2026-10-29T12:12:02Z"
-    },
-    "ESC-CLOSE-20261029-02": {
-      "summary": "Decision: standing named-file write rule for strategy_rules.md (Sprint Execution and Post-Ship Closure STEP 5) — v9.13 Release Planning FI-3",
-      "owner": "Head of Specs Team; Strategy Rules & System Intent Owner",
-      "sla_due_utc": "2026-11-01T12:19:42Z",
-      "cycle": "2026-10-16__release-v9.13",
-      "blocks_execution": false,
-      "disposition": "Open",
-      "raised_utc": "2026-10-29T12:19:42Z"
     }
   },
   "deferred_escalations": {

@@ -1,7 +1,7 @@
 Owner: PMO Lead
 Class: Operational Record (Class 3)
 Status: Active
-Last Updated: 2026-10-29
+Last Updated: 2026-10-29 (follow-up — §6 rows 1–5 resolved: ESC-CLOSE-20261029-01/-02 rulings, human sign-off confirmation, owner actions; row 6 open until plan release v9.14; next_release set to v9.14, DL-087)
 Cycle: 2026-10-16__release-v9.13
 
 ---
@@ -59,7 +59,9 @@ No formal `DEV-*` deviations were filed this sprint. All compliant: **No.** Two 
 - **`BLG-BE-190`** (P2, ST-14 found defect, accepted PO + DoQ 2026-10-29): no Known Deviations entry under §4.1.5. Its acceptance condition requires one. The proposed text is in `ESC-CLOSE-20261029-01`.
 - **ST-05 §8.4** (P3, `BLG-BE-187`): the entry has a description and canonical requirement but no Priority, Target resolution release, Owner or backlog ID. The proposed completion is in the same escalation.
 
-Why they were not edited: STEP 5's carve-out conflicts with §5, which lists `strategy_rules.md` as sealed, and with CLAUDE.md §2. An edit would also need a `DOCUMENTATION_ONLY_VERSIONS` code change. The user chose to escalate (2026-10-29).
+**Resolved 2026-10-29:** the owner applied both entries as `strategy_rules.md` v1.19 (`ESC-CLOSE-20261029-01`). Both entries are now compliant.
+
+Why they were not edited by this routine: STEP 5's carve-out conflicts with §5, which lists `strategy_rules.md` as sealed, and with CLAUDE.md §2. An edit would also need a `DOCUMENTATION_ONLY_VERSIONS` code change. The user chose to escalate (2026-10-29).
 
 For traceability, the six QA-evidence `Pass_with_deviation` results (ST-10, ST-25, ST-29–ST-32) are exempt from Known Deviations sync under the `ESC-CLOSE-20260930-03` scope (`verification_report.md` §4). Each has a tracking item; ST-29's is resolved with no remainder. Accepted P1/P2 deviations in the changelog: yes (`BLG-BE-190`). No spec was edited by this routine, so no document-owner field-addition notice is needed.
 
@@ -93,12 +95,12 @@ Full detail: `claude/cycles/2026-10-16__release-v9.13/lessons_learnt_closure.md`
 
 | # | Description | Owner | Deadline | Escalation path | Resolution |
 |---|-------------|-------|----------|-----------------|------------|
-| 1 | Add the `BLG-BE-190` Known Deviations entry under `strategy_rules.md` §4.1.5, and complete the §8.4 entry's Priority/Target/Owner/backlog fields (`BLG-BE-187`). This is a condition of the `BLG-BE-190` P2 acceptance. Proposed text is in the escalation. | Strategy Rules & System Intent Owner | 2026-11-01T12:12:02Z | `ESC-CLOSE-20261029-01` | |
-| 2 | Decide whether `strategy_rules.md` gets a standing named-file write rule for Sprint Execution and Post-Ship Closure STEP 5, or keeps per-cycle rulings. | Head of Specs Team; Strategy Rules & System Intent Owner | 2026-11-01T12:19:42Z | `ESC-CLOSE-20261029-02` | |
-| 3 | Verification DoQ sign-off and PO acceptance (including the `BLG-BE-190` P2 acceptance), and the eighth deviation consolidation review's DoQ sign-off, were agent-mediated (§5.3, user-directed) and are marked "Pending human confirmation". This is the 6th consecutive cycle (v9.8–v9.13). Confirm or amend. | Product Owner; Director of Quality | Before `plan release v9.14` | `verification_report.md` §9 | |
-| 4 | `BLG-OPS-196` is resolved in its body (2026-10-28) but has no `✅ COMPLETE` banner, so grooming could not archive it (Ambiguous — Confirm). Add the banner. | Infrastructure & Operations Owner | Next `groom backlog` | `backlog_health_20261029.md` | |
-| 5 | Six items still carry `Provisional-Target: v9.13` after v9.13 shipped without them (`BLG-SPEC-195`, `BLG-AI-19`, `BLG-OPS-186`, `BLG-QA-221`, `BLG-BE-181`, `BLG-QA-226`). Re-target to `TBD` or seat. | PMO Lead; item owners | Next Release Planning run | `backlog_health_20261029.md` | |
-| 6 | Three deferred lessons-learnt patches are tracked as backlog items with sprint target v9.14: `BLG-QA-238`, `BLG-GOV-397`, `BLG-GOV-398`. Seat them, or re-target with a reason. | Head of Specs Team; API Contracts & Documentation Owner; PMO Lead | v9.14 Release Planning | Backlog items | |
+| 1 | Add the `BLG-BE-190` Known Deviations entry under `strategy_rules.md` §4.1.5, and complete the §8.4 entry's Priority/Target/Owner/backlog fields (`BLG-BE-187`). This is a condition of the `BLG-BE-190` P2 acceptance. Proposed text is in the escalation. | Strategy Rules & System Intent Owner | 2026-11-01T12:12:02Z | `ESC-CLOSE-20261029-01` | ✅ Resolved 2026-10-29: Strategy Rules & System Intent Owner ruling, option (a). Applied as documentation-only `strategy_rules.md` v1.19, with `"1.19"` added to `DOCUMENTATION_ONLY_VERSIONS` (registry tests 15 passed). Acceptance condition met |
+| 2 | Decide whether `strategy_rules.md` gets a standing named-file write rule for Sprint Execution and Post-Ship Closure STEP 5, or keeps per-cycle rulings. | Head of Specs Team; Strategy Rules & System Intent Owner | 2026-11-01T12:19:42Z | `ESC-CLOSE-20261029-02` | ✅ Resolved 2026-10-29: Head of Specs Team ruling with the Strategy Rules & System Intent Owner, option (b). `execution_prompt.md` v3.89 §7 case (c); `sprint_planning_prompt.md` v3.24; `post_ship_closure.md` v2.42 STEP 5 owner route; `OPERATIONAL_GUIDE.md` v4.243 |
+| 3 | Verification DoQ sign-off and PO acceptance (including the `BLG-BE-190` P2 acceptance), and the eighth deviation consolidation review's DoQ sign-off, were agent-mediated (§5.3, user-directed) and are marked "Pending human confirmation". This is the 6th consecutive cycle (v9.8–v9.13). Confirm or amend. | Product Owner; Director of Quality | Before `plan release v9.14` | `verification_report.md` §9 | ✅ Resolved 2026-10-29: confirmed by the human Product Owner / Director of Quality (`docs/governance/human_signoff_confirmation_2026-10-29.md`) |
+| 4 | `BLG-OPS-196` is resolved in its body (2026-10-28) but has no `✅ COMPLETE` banner, so grooming could not archive it (Ambiguous — Confirm). Add the banner. | Infrastructure & Operations Owner | Next `groom backlog` | `backlog_health_20261029.md` | ✅ Resolved 2026-10-29: Infrastructure & Operations Owner added the ✅ COMPLETE banner; the next groom archives it |
+| 5 | Six items still carry `Provisional-Target: v9.13` after v9.13 shipped without them (`BLG-SPEC-195`, `BLG-AI-19`, `BLG-OPS-186`, `BLG-QA-221`, `BLG-BE-181`, `BLG-QA-226`). Re-target to `TBD` or seat. | PMO Lead; item owners | Next Release Planning run | `backlog_health_20261029.md` | ✅ Resolved 2026-10-29: PMO Lead re-targeted all six to `TBD` (`ESC-CLOSE-20260923-01`) |
+| 6 | Three deferred lessons-learnt patches are tracked as backlog items with sprint target v9.14: `BLG-QA-238`, `BLG-GOV-397`, `BLG-GOV-398`. Seat them, or re-target with a reason. | Head of Specs Team; API Contracts & Documentation Owner; PMO Lead | v9.14 Release Planning | Backlog items | Open: actionable at `plan release v9.14` (v9.14 named, DL-087) |
 
 ## §7 — Closure Confirmation
 
