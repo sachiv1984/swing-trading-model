@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-28 (BLG-OPS-196 resolved: first two-service staging deploy on main green, old hook secret deleted); prior — 2026-10-28 (session — 3 new item(s) added: BLG-TECH-32, BLG-BE-195, BLG-OPS-199; PR #2075 review findings, EPIC-05 v9.13); prior — 2026-10-28 (session — 3 new item(s) added: BLG-OPS-196, BLG-OPS-197, BLG-OPS-198; post-merge remainders of ST-29, ST-30/ST-31 and ST-32, EPIC-05 v9.13); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-29 (session — 2 new item(s) added: BLG-QA-230, BLG-FE-235; ST-24 state-changing action sweep, EPIC-04 v9.13); prior — 2026-10-28 (BLG-OPS-196 resolved: first two-service staging deploy on main green, old hook secret deleted); prior — 2026-10-28 (session — 3 new item(s) added: BLG-TECH-32, BLG-BE-195, BLG-OPS-199; PR #2075 review findings, EPIC-05 v9.13); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -6459,5 +6459,46 @@ ST-32 made each screener run record `duration_seconds` and added `scripts/screen
 **Acceptance Criteria**
 - A `/health/detailed` response without `render_service_id` fails the smoke test (test)
 - The expected service ID has one definition in the repo
+
+---
+
+### BLG-QA-230 — Add Playwright coverage for 15 uncovered state-changing actions
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** Director of Quality; QA & Testing Owner
+**Source:** ST-24 (EPIC-04, v9.13) state-changing action sweep — 2026-10-28
+**Effort:** M (~1-2 days)
+**Provisional-Target:** v9.14
+
+**Problem**
+The ST-24 sweep (`docs/testing/state_changing_action_coverage.md`) found 15 of 52 state-changing primary actions that no Playwright test sends, including the Positions-page Exit modal submit, the abandon-plan submit, reflection save, note and tag save, and single deletes. A wrong route or method on any of them would ship unseen, which is how `PATCH /positions/{id}` (BLG-FE-226) went unnoticed.
+
+**Scope**
+- A test per uncovered action (inventory rows 2, 6, 7, 8, 11, 16, 17, 19, 24, 26, 30, 34, 39, 46, 52) asserting method, path and body
+- Mock `/positions/{id}/mark-reviewed` in `position-review-cadence-nudge.spec.js` SC-RCN-06, whose PATCH is unanswered today
+
+**Acceptance Criteria**
+- Each listed action is Covered in the regenerated inventory
+- SC-RCN-06's PATCH receives a mocked response
+
+---
+
+### BLG-FE-235 — Remove five uncalled state-changing client methods
+**Priority:** P3 (Low)
+**Type:** Frontend / Code Hygiene
+**Owner:** Base44 Frontend Prompt Owner
+**Source:** ST-24 (EPIC-04, v9.13) state-changing action sweep — 2026-10-28
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.14
+
+**Problem**
+`base44Client.js` keeps `Signal.delete`, `Signal.generate`, `createSnapshot`, `trades.updateCosts` and the strategy benchmark `importData`, none with a caller. They are outside BLG-FE-230's scope, which covers only the methods whose route does not exist.
+
+**Scope**
+- Delete the five methods
+
+**Acceptance Criteria**
+- grep finds no definition or caller for any of them
+- Frontend and e2e suites pass
 
 ---
