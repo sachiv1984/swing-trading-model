@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-29 (v9.13 closure §6 owner actions — BLG-OPS-196 ✅ COMPLETE banner added; 6 stale v9.13 Provisional-Target tags re-targeted to TBD: BLG-SPEC-195, BLG-AI-19, BLG-OPS-186, BLG-QA-221, BLG-BE-181, BLG-QA-226); prior — 2026-10-29 (groom backlog GROOM-20261029-01, post-ship closure 2026-10-16__release-v9.13 STEP 12 — 41 items archived (40 v9.13 shipped, BLG-GOV-368 closed as met); spec-debt deep review run, marker advanced); prior — 2026-10-29 (post-ship closure 2026-10-16__release-v9.13 STEP 8 — 3 new item(s) added: BLG-QA-238, BLG-GOV-397, BLG-GOV-398; deferred lessons-learnt actions with sprint target v9.14); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-29 (Release Planning 2026-10-29__release-v9.14 §1.3a — BLG-FEAT-58 and BLG-BE-43 re-gated on the same PO-02 condition (false-positive date lapse); no other item edited); prior — 2026-10-29 (v9.13 closure §6 owner actions — BLG-OPS-196 ✅ COMPLETE banner added; 6 stale v9.13 Provisional-Target tags re-targeted to TBD: BLG-SPEC-195, BLG-AI-19, BLG-OPS-186, BLG-QA-221, BLG-BE-181, BLG-QA-226); prior — 2026-10-29 (groom backlog GROOM-20261029-01, post-ship closure 2026-10-16__release-v9.13 STEP 12 — 41 items archived (40 v9.13 shipped, BLG-GOV-368 closed as met); spec-debt deep review run, marker advanced); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -242,7 +242,8 @@ There is no systematic pre-process to evaluate the effect of a §11 strategy par
 **Source:** IDEA-data-model-20260626-02 (IW-20260626-01) — Promoted-Backlog, 3-cycle hard cap; rebalance 2026-07-02__scheduled
 **Effort:** M (~2–3 days)
 **Provisional-Target:** Unscheduled
-**Gate criteria:** Arc 4 PO-02 (Journal Pattern Recognition) data model established (~2026-10-20, 6+ months AI-summarised journal data).
+**Gate criteria:** Arc 4 PO-02 (Journal Pattern Recognition) data model established. PO-02 is itself preconditioned on 6+ months of AI-summarised journal data; it clears when PO-02's data model is recorded, which requires PO-02 to enter sprint planning (Later horizon, `current_roadmap.md` §5).
+**Gate note (2026-10-29):** (Release Planning `2026-10-29__release-v9.14`, §1.3a date-lapsed disposition, within the ESC-CLOSE-20261007-01 bounds) Re-gated (b) on the same condition. The embedded date (~2026-10-20) projected when PO-02's 6-month data precondition would be met; it was never this gate's clearance date, so the scan reported a false-positive lapse. The condition is not met: PO-02 has not entered sprint planning (0 active roadmap initiatives) and no PO-02 data model is recorded. No AC names the gate's date (AC 2 names the PO-02 data model and is unchanged).
 
 **Problem**
 No schema exists for user-authored free-text annotations on individual trades, distinct from the AI-summarised journal entry. Designing this ahead of PO-02's data model risks a schema that conflicts with or duplicates the eventual journal-pattern data structure.
@@ -2500,7 +2501,8 @@ Prompt revision frequency remains low; a formal changelog/versioning process is 
 **Source:** IDEA-data-model-20260702-01 (IW-20260702-01) — Backlog (gate-conditional), 3-cycle hard cap; rebalance 2026-07-06__scheduled
 **Effort:** S (~1 day)
 **Provisional-Target:** Unscheduled
-**Gate criteria:** Arc 4 PO-02 (Journal Pattern Recognition) design phase begins (gated to ~2026-10-20, 6+ months AI-summarised journal data).
+**Gate criteria:** Arc 4 PO-02 (Journal Pattern Recognition) design phase begins. PO-02 is itself preconditioned on 6+ months of AI-summarised journal data; it clears when PO-02 enters sprint planning (Later horizon, `current_roadmap.md` §5).
+**Gate note (2026-10-29):** (Release Planning `2026-10-29__release-v9.14`, §1.3a date-lapsed disposition, within the ESC-CLOSE-20261007-01 bounds) Re-gated (b) on the same condition. The embedded date (~2026-10-20) projected when PO-02's 6-month data precondition would be met; it was never this gate's clearance date, so the scan reported a false-positive lapse. The condition is not met: PO-02's design phase has not begun (0 active roadmap initiatives). The AC names the PO-02 design phase start, not the date, and is unchanged.
 
 **Problem**
 This audit would directly inform Arc 4 PO-02/PO-03 design, but running it ahead of that design phase risks auditing fields that later change.
