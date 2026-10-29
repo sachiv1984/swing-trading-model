@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-29 (Release Planning 2026-10-29__release-v9.14 §1.3a — BLG-FEAT-58 and BLG-BE-43 re-gated on the same PO-02 condition (false-positive date lapse); no other item edited); prior — 2026-10-29 (v9.13 closure §6 owner actions — BLG-OPS-196 ✅ COMPLETE banner added; 6 stale v9.13 Provisional-Target tags re-targeted to TBD: BLG-SPEC-195, BLG-AI-19, BLG-OPS-186, BLG-QA-221, BLG-BE-181, BLG-QA-226); prior — 2026-10-29 (groom backlog GROOM-20261029-01, post-ship closure 2026-10-16__release-v9.13 STEP 12 — 41 items archived (40 v9.13 shipped, BLG-GOV-368 closed as met); spec-debt deep review run, marker advanced); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-29 (Sprint Planning 2026-10-29__release-v9.14 STEP 6.2 — 6 new post-merge tracking item(s) added: BLG-OPS-200, BLG-GOV-399, BLG-OPS-201, BLG-OPS-202, BLG-SEC-44, BLG-GOV-400; no existing item edited); prior — 2026-10-29 (Release Planning 2026-10-29__release-v9.14 §1.3a — BLG-FEAT-58 and BLG-BE-43 re-gated on the same PO-02 condition (false-positive date lapse); no other item edited); prior — 2026-10-29 (v9.13 closure §6 owner actions — BLG-OPS-196 ✅ COMPLETE banner added; 6 stale v9.13 Provisional-Target tags re-targeted to TBD: BLG-SPEC-195, BLG-AI-19, BLG-OPS-186, BLG-QA-221, BLG-BE-181, BLG-QA-226); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -5830,5 +5830,133 @@ Release Planning must read the gate scan's "gating item shipped — verify" list
 **Acceptance Criteria**
 - The chosen prompt names the "gating item shipped" list and the write it permits
 - After the next run of that engine, no item whose whole gate condition is a shipped item is re-listed by the scan
+
+---
+
+### BLG-OPS-200 — Confirm the production GitHub Pages deploy succeeds after the ESLint config fix
+**Priority:** P3 (Low)
+**Type:** Operations / Deployment
+**Owner:** Infrastructure & Operations Owner
+**Source:** Sprint Planning `2026-10-29__release-v9.14` STEP 6.2 post-merge AC check (LL-v9.13-P3-03) — post-merge AC 1 of ST-01 (BLG-OPS-193), EPIC-01 — 2026-10-29
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.14
+**Depends on:** ST-01 (BLG-OPS-193) merged to `main`
+
+**Problem**
+ST-01 restores `eslint-config-react-app` so the frontend builds again. Only a `deploy.yml` run on `main` can show that production GitHub Pages receives a new build, so this AC cannot be met on the EPIC branch. Production has not received a frontend build since 2026-10-15.
+
+**Scope**
+- After ST-01 merges, check the `deploy.yml` run for the merge commit
+- Confirm production serves the new build (for example, the asset hash in the served `index.html` matches the run's build output)
+
+**Acceptance Criteria**
+- `deploy.yml` succeeds on `main` for a commit that includes ST-01, with the run ID recorded
+- Production serves that build, with the check and date recorded in the v9.14 QA evidence or delegation log
+
+---
+
+### BLG-GOV-399 — Review the first live quarterly AI output sample from production
+**Priority:** P3 (Low)
+**Type:** Governance / AI Compliance
+**Owner:** AI Compliance & Governance Officer; Infrastructure & Operations Owner
+**Source:** Sprint Planning `2026-10-29__release-v9.14` STEP 6.2 post-merge AC check (LL-v9.13-P3-03) — post-merge/production-data AC 1 of ST-23 (BLG-GOV-178), EPIC-03 — 2026-10-29
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v9.14
+**Depends on:** ST-15–ST-18 merged and deployed; a production read credential
+
+**Problem**
+ST-23's first AC reviews 10 production AI outputs drawn from the `BLG-AI-06` sampling hook. It needs production data and a production credential, which the governed environment lacks, so it can only be met with production access, possibly after merge.
+
+**Scope**
+- Draw 10 production AI outputs from `ai_output_sampling_service`
+- Check each against §13.2 and the §13.5 roster row for its feature (daily briefing + chat, Gemini thesis generation, post-trade debrief, monthly P&L narrative)
+
+**Acceptance Criteria**
+- A dated audit doc records the outcome for each of the 10 outputs, citing every §13 clause that names AI output
+- Each finding is filed as a backlog item
+
+---
+
+### BLG-OPS-201 — Populate the cost-by-feature-area report with a full month of production data
+**Priority:** P3 (Low)
+**Type:** Operations / Cost Monitoring
+**Owner:** FinOps & Resource Architect; Infrastructure & Operations Owner
+**Source:** Sprint Planning `2026-10-29__release-v9.14` STEP 6.2 post-merge AC check (LL-v9.13-P3-03) — production-data AC 2 of ST-39 (BLG-OPS-85), EPIC-06 — 2026-10-29
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.14
+**Depends on:** ST-39 (BLG-OPS-85) report merged; production read access
+
+**Problem**
+ST-39 produces a report in `docs/ops/` that partitions compute cost by feature area. Populating it for a complete month needs production `claude_audit_log` and API-call attribution data, which CI and the governed environment cannot reach.
+
+**Scope**
+- Run the report's method against at least one complete month of production data
+- Record the populated figures in the ST-39 report
+
+**Acceptance Criteria**
+- The ST-39 report is populated for at least one complete calendar month of production data, with the month and the data date stated
+
+---
+
+### BLG-OPS-202 — Confirm ci-usage-report.yml commits its report from a run on main
+**Priority:** P3 (Low)
+**Type:** Operations / CI
+**Owner:** Infrastructure & Operations Owner
+**Source:** Sprint Planning `2026-10-29__release-v9.14` STEP 6.2 post-merge AC check (LL-v9.13-P3-03) — post-merge AC 1 and AC 2 of ST-42 (BLG-OPS-188), EPIC-06 — 2026-10-29
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.14
+**Depends on:** ST-42 (BLG-OPS-188) merged to `main`
+
+**Problem**
+ST-42 fixes `ci-usage-report.yml`'s monthly commit, which failed on its only scheduled run. The workflow commits its report from the branch it runs on, so only a run on `main` (a `workflow_dispatch` with `year_month=2026-09`, or the next scheduled run) can show that the report reaches `docs/ops/ci_usage_reports/`.
+
+**Scope**
+- After ST-42 merges, dispatch `ci-usage-report.yml` on `main` with `year_month=2026-09`
+- Confirm the commit lands
+
+**Acceptance Criteria**
+- A `ci-usage-report.yml` run on `main` succeeds, with the run ID recorded
+- `docs/ops/ci_usage_reports/2026-09.md` exists on `main`
+
+---
+
+### BLG-SEC-44 — Record the staging and production CORS preflight checks after the allow-list change
+**Priority:** P3 (Low)
+**Type:** Security / Configuration
+**Owner:** Cybersecurity & Trust Lead; Infrastructure & Operations Owner
+**Source:** Sprint Planning `2026-10-29__release-v9.14` STEP 6.2 post-merge AC check (LL-v9.13-P3-03) — post-merge AC 2 of ST-43 (BLG-SEC-43), EPIC-06 — 2026-10-29
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.14
+**Depends on:** ST-43 (BLG-SEC-43) merged and deployed; the per-environment variable set on Render
+
+**Problem**
+ST-43 builds the CORS allow-list from a per-deployment environment variable. The preflight checks against the deployed staging and production services need the deployed code and the Render variable, so they cannot be met in CI.
+
+**Scope**
+- After deploy, send an `OPTIONS` preflight from the Pages origin and from `http://localhost:3000` to staging and to production
+
+**Acceptance Criteria**
+- Production rejects `http://localhost:3000` and accepts the Pages origin, with the commands, responses and date recorded
+- The staging result is recorded the same way
+
+---
+
+### BLG-GOV-400 — Confirm the gate scan no longer re-lists items whose gating item has shipped
+**Priority:** P3 (Low)
+**Type:** Governance Process
+**Owner:** Head of Specs Team; PMO Lead
+**Source:** Sprint Planning `2026-10-29__release-v9.14` STEP 6.2 post-merge AC check (LL-v9.13-P3-03) — post-merge AC 2 of ST-45 (BLG-GOV-398), EPIC-07 — 2026-10-29
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.15
+**Depends on:** ST-45 (BLG-GOV-398) merged; the next run of the engine ST-45 changes (`plan release` or `groom backlog`)
+
+**Problem**
+ST-45 gives the gate scan's "gating item shipped" findings a write-back path. Its second AC can only be checked on the next run of the chosen engine, after merge. `BLG-OPS-85` and `BLG-OPS-21`, the live cases, are themselves in v9.14 scope (ST-38, ST-39), so the check needs an item that is still open at that run.
+
+**Scope**
+- At the next run of the engine ST-45 changes, read the gate scan's "gating item shipped" list
+
+**Acceptance Criteria**
+- No item whose whole gate condition is a shipped item is re-listed, or each re-listed item is named with the reason the write-back did not apply
 
 ---
