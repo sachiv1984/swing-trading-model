@@ -915,7 +915,18 @@
         "notes": "EPIC-level DoQ, first pass Blocked (flaky SC-GPL-01 handling; addendum colour states without evidence), findings applied 09c64c09/5e4fa87a, retry 1 Approved. Human confirmation pending.",
         "cleared_utc": "2026-10-29",
         "user_directed": true,
-        "reference": "qa_evidence_EPIC-04.md"
+        "reference": "qa_evidence_EPIC-04.md",
+        "human_confirmation": {
+          "date": "2026-10-29",
+          "by": "Director of Quality (human, in-session)",
+          "pr_comment": "https://github.com/sachiv1984/swing-trading-model/pull/2076#issuecomment-6491469479"
+        }
+      },
+      "product_owner_acceptance": {
+        "date": "2026-10-29",
+        "by": "Product Owner (human, in-session)",
+        "verdict": "Accepted",
+        "pr_comment": "https://github.com/sachiv1984/swing-trading-model/pull/2076#issuecomment-6491469479"
       }
     },
     "EPIC-05": {
@@ -1457,7 +1468,8 @@
     "2026-10-28: run sprint resume sync (STEP 4, LL-v3.9-P3-1). PR #2075 (EPIC-05) merged 2026-10-28T11:31:37Z as 77758669; EPIC-05 pr_status/status set to merged. Orphaned post-merge commit check (LL-v6.8-P3-01): git log origin/main..origin/exec/2026-10-16__release-v9.13/EPIC-05 empty, nothing to reconcile.",
     "2026-10-28: EPIC-04 branch cut from main a8ad6e87 (after EPIC-05 merge sync; all other EPICs merged, so the sprint_backlog merge order holds). commit-check skill lesson \"open PR after every push\" conflicts with execution_prompt.md §3.2.B BLG-GOV-18; governance prompt followed, PR opens at EPIC completion.",
     "2026-10-29: EPIC-04 PR #2076 opened after the agent-mediated DoQ sign-off (b413f8e2; first pass Blocked, retry 1 Approved). Pre-PR checks passed: API baseline drift, frontend API call check, backlog integrity, no foreign-EPIC commits, branch level with main. User-directed: \"open the PR when CI is green\" (CI green on 5e4fa87a).",
-    "2026-10-29: PR #2076 agent-mediated Director of Quality and Product Owner review posted (issuecomment-6491400948), both Approved with Comments, labelled per OA-6; same engine as the implementer, disclosed. Findings filed at the user's direction as BLG-QA-234 (P3), BLG-QA-235 (P2), BLG-QA-236 (P3), BLG-QA-237 (P2) in 0ed4ef3c. Human DoQ sign-off and Product Owner acceptance still required."
+    "2026-10-29: PR #2076 agent-mediated Director of Quality and Product Owner review posted (issuecomment-6491400948), both Approved with Comments, labelled per OA-6; same engine as the implementer, disclosed. Findings filed at the user's direction as BLG-QA-234 (P3), BLG-QA-235 (P2), BLG-QA-236 (P3), BLG-QA-237 (P2) in 0ed4ef3c. Human DoQ sign-off and Product Owner acceptance still required.",
+    "2026-10-29: EPIC-04 human DoQ confirmation and Product Owner acceptance given in-session (\"give DOQ and PO acceptance\"), recorded in qa_evidence_EPIC-04.md and PR #2076 comment issuecomment-6491469479. Merge left to the human developer."
   ],
   "sealed": false,
   "sealed_utc": null

@@ -1,7 +1,7 @@
 Owner: Director of Quality
 Class: Planning Document (Class 4)
 Status: Active
-Last Updated: 2026-10-29 (agent-mediated DoQ sign-off, retry 1 Approved; frontend-gate wording corrected); prior — 2026-10-29 (agent-mediated DoQ first pass Blocked; findings applied: BLG-QA-231/232/233 filed, ST-25 graded Pass_with_deviation, trade-debrief spec added, spec count corrected); prior — 2026-10-29 (STEP 3.2.A consolidation block added; DoQ sign-off pending)
+Last Updated: 2026-10-29 (human DoQ confirmation and Product Owner acceptance recorded); prior — 2026-10-29 (agent-mediated DoQ sign-off, retry 1 Approved; frontend-gate wording corrected); prior — 2026-10-29 (agent-mediated DoQ first pass Blocked; findings applied: BLG-QA-231/232/233 filed, ST-25 graded Pass_with_deviation, trade-debrief spec added, spec count corrected); prior history retained — see prior entries in version control
 
 # QA Evidence — EPIC-04: API Call Integrity & UI Rendering
 
@@ -50,3 +50,20 @@ Last Updated: 2026-10-29 (agent-mediated DoQ sign-off, retry 1 Approved; fronten
   - `5e4fa87a`: Playwright E2E 40838849725, Pytest 40838849843, Smoke 40838849888
 
   ST-24's counts were reproduced with ST-23's extractor (58 call sites, 52 routes, 21 files). ST-25 is Pass_with_deviation: the addendum colour states have no Playwright evidence (BLG-QA-232). SC-GPL-01 is confirmed flaky and quarantined under BLG-QA-231. It is the first demonstrated flaky-test incident, which is BLG-QA-75's gate condition. The TradeDebrief text-colour change fixes a regression that ST-25's own diff exposed. SC-DBF-06a and SC-DBF-10b cover it, and BLG-QA-233 tracks direct colour assertions. Human Director of Quality confirmation is pending.
+
+## Director of Quality Human Confirmation
+
+- **Confirmed by:** Director of Quality (human, in-session, 2026-10-29: "give DOQ and PO acceptance"). Recorded by the Sprint Execution Engine on the Director of Quality's behalf.
+- **Date:** 2026-10-29
+- **Verdict:** Accepted. Confirms the agent-mediated DoQ sign-off above, including ST-25's Pass_with_deviation grade (BLG-QA-232), the SC-GPL-01 quarantine (BLG-QA-231), and the PR #2076 review findings filed as BLG-QA-234, BLG-QA-235, BLG-QA-236 and BLG-QA-237.
+- **CI:** every story commit green (runs in the Comments line above). On the PR head `7116a7c4` (governance files only), 32 checks had passed and 12 were in progress at confirmation.
+- **PR comment:** https://github.com/sachiv1984/swing-trading-model/pull/2076#issuecomment-6491469479
+
+## Product Owner Acceptance
+
+- **Accepted by:** Product Owner (human, in-session, 2026-10-29: "give DOQ and PO acceptance"). Recorded by the Sprint Execution Engine on the Product Owner's behalf.
+- **Date:** 2026-10-29
+- **Verdict:** Accepted.
+- **Basis:** ST-23, ST-24, ST-26 and ST-27 meet every acceptance criterion. ST-25 is accepted as Pass_with_deviation, with the addendum colour states tracked in BLG-QA-232 (v9.14). Follow-ups: BLG-QA-237 (P2, Exit modal coverage) and BLG-QA-235 (P2, staging check of the `cn()` layout changes).
+- **Still required:** the human developer performs the merge once CI on the head is green.
+
