@@ -1,7 +1,7 @@
 Owner: Director of Quality
 Class: Planning Document (Class 4)
 Status: Active
-Last Updated: 2026-10-29 (agent-mediated DoQ first pass Blocked; findings applied: BLG-QA-231/232/233 filed, ST-25 graded Pass_with_deviation, trade-debrief spec added, spec count corrected); prior — 2026-10-29 (STEP 3.2.A consolidation block added; DoQ sign-off pending)
+Last Updated: 2026-10-29 (agent-mediated DoQ sign-off, retry 1 Approved; frontend-gate wording corrected); prior — 2026-10-29 (agent-mediated DoQ first pass Blocked; findings applied: BLG-QA-231/232/233 filed, ST-25 graded Pass_with_deviation, trade-debrief spec added, spec count corrected); prior — 2026-10-29 (STEP 3.2.A consolidation block added; DoQ sign-off pending)
 
 # QA Evidence — EPIC-04: API Call Integrity & UI Rendering
 
@@ -25,7 +25,7 @@ Last Updated: 2026-10-29 (agent-mediated DoQ first pass Blocked; findings applie
 - ST-27 — Director of Quality: option (A) on `ESC-EXEC-20261028-01`, agent-mediated (§5.3), first pass Blocked (2 factual findings, applied), retry 1 Approved, 2026-10-28T21:21:09Z. Cleared.
 - ST-24 — the two backlog items were filed via `/backlog-add` with the user's approval of the drafts (2026-10-29).
 
-**Frontend testing gate (CLAUDE.md §2):** frontend files changed: `src/lib/utils.js`, `src/pages/Screener.js`, `TradePlan.js`, `TradePlans.js`, `SystemStatus.js`, `Replay.js`, and components `CashManagementModal.js`, `MonitorModal.js`, `CustomPriceAlertsSection.js`, `ExitModal.js`, `BulkActionToolbar.js`, `SavedFiltersControl.js`, `WatchlistDeleteConfirm.js`, `TradeDebrief.js`. Every observable AC has Playwright coverage. ST-25: SC-CBF-01..04 (colour, both themes). ST-26: the Replay light-theme axe scans. TradeDebrief consequence: SC-DBF-06a (light) and SC-DBF-10b (both themes); direct colour assertions tracked in BLG-QA-233. The rose-600 hover change (rose-500 → rose-700, seven sites), the Cash Management deposit fill and submit text, and System Status Refresh Health's text colour come from the ST-25 addendum, so they are AC content. These addendum colour states have no Playwright coverage; tracked in BLG-QA-232, filed before PR open. ST-24's sweep gaps are tracked as BLG-QA-230.
+**Frontend testing gate (CLAUDE.md §2):** frontend files changed: `src/lib/utils.js`, `src/pages/Screener.js`, `TradePlan.js`, `TradePlans.js`, `SystemStatus.js`, `Replay.js`, and components `CashManagementModal.js`, `MonitorModal.js`, `CustomPriceAlertsSection.js`, `ExitModal.js`, `BulkActionToolbar.js`, `SavedFiltersControl.js`, `WatchlistDeleteConfirm.js`, `TradeDebrief.js`. Every observable AC has Playwright coverage except the ST-25 addendum colour states listed below (BLG-QA-232). ST-25: SC-CBF-01..04 (colour, both themes). ST-26: the Replay light-theme axe scans. TradeDebrief consequence: SC-DBF-06a (light) and SC-DBF-10b (both themes); direct colour assertions tracked in BLG-QA-233. The rose-600 hover change (rose-500 → rose-700, seven sites), the Cash Management deposit fill and submit text, and System Status Refresh Health's text colour come from the ST-25 addendum, so they are AC content. These addendum colour states have no Playwright coverage; tracked in BLG-QA-232, filed before PR open. ST-24's sweep gaps are tracked as BLG-QA-230.
 
 **QA test coverage:**
 - Scenarios run: the five files above, and the full Playwright suite twice locally against production builds. The final run had 1,128 passed and 11 failed; all 11 passed on re-run at lower concurrency (timeouts and a toast overlap under 4 workers), and none is in a file this EPIC changed apart from the import line. Full pytest collection: 3022 collected.
@@ -34,11 +34,19 @@ Last Updated: 2026-10-29 (agent-mediated DoQ first pass Blocked; findings applie
 
 ## Standard Sign-Off Block
 
-- [ ] All acceptance criteria verified against canonical spec
-- [ ] No unresolved P0 or P1 deviations
-- [ ] Regression areas checked
-- [ ] For any frontend component making direct URL construction (not via api.* wrapper): confirm the URL-base variable is exposed on the imported object
-- [ ] Strategy values checked: N/A — no stop/grace/ATR/exit/sizing logic touched
-- Signed off by:
-- Date:
-- Comments:
+- [x] All acceptance criteria verified against canonical spec
+- [x] No unresolved P0 or P1 deviations
+- [x] Regression areas checked
+- [x] For any frontend component making direct URL construction (not via api.* wrapper): confirm the URL-base variable is exposed on the imported object
+- [x] Strategy values checked: N/A — no stop/grace/ATR/exit/sizing logic touched
+- Signed off by: Sprint Execution Engine (agent-mediated, Director of Quality role — §5.3)
+- Date: 2026-10-29
+- Comments: Agent-mediated EPIC-level DoQ review under `execution_prompt.md` §5.3, STEP 3.2.A. The first pass was Blocked on two findings, both applied (`09c64c09`, `5e4fa87a`); retry 1 Approved. Cited CI runs, checked with `gh run view` and all `success` on these SHAs:
+  - `6f1badc2`: Pytest 40768476264, Smoke 40768476205
+  - `388e31d9`: Playwright 40784070737, Smoke 40784070843, Pytest 40784070725
+  - `2f5cc56a`: Pytest 40784100269, Smoke 40784100196, Playwright 40784100342 (attempt 1 failed only on SC-GPL-01; attempt 2 succeeded)
+  - `5e8b6f04`: Playwright 40784107809, Smoke 40784107762, Pytest 40784107842
+  - `09c64c09`: all 7 workflows
+  - `5e4fa87a`: Playwright E2E 40838849725, Pytest 40838849843, Smoke 40838849888
+
+  ST-24's counts were reproduced with ST-23's extractor (58 call sites, 52 routes, 21 files). ST-25 is Pass_with_deviation: the addendum colour states have no Playwright evidence (BLG-QA-232). SC-GPL-01 is confirmed flaky and quarantined under BLG-QA-231. It is the first demonstrated flaky-test incident, which is BLG-QA-75's gate condition. The TradeDebrief text-colour change fixes a regression that ST-25's own diff exposed. SC-DBF-06a and SC-DBF-10b cover it, and BLG-QA-233 tracks direct colour assertions. Human Director of Quality confirmation is pending.

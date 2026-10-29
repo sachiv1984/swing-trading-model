@@ -761,7 +761,7 @@
       "branch": "exec/2026-10-16__release-v9.13/EPIC-04",
       "pr_number": null,
       "pr_status": "none",
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-10-16__release-v9.13/qa_evidence_EPIC-04.md",
       "test_scenarios": [
         "tests/test_check_frontend_api_calls.py",
@@ -906,6 +906,16 @@
           },
           "notes": "Reclassified delegated_decision -> autonomous on ESC-EXEC-20261028-01 resolution. AC met by the first branch: documented, reviewed decision in tests/_real_database.py (\"Known limit\") plus the conftest guard comment (\"Not covered\"). Documentation-creation (Case B): the edited files are the governing artefact. Deviation check: none. pytest --collect-only: 3022 collected, exit 0."
         }
+      },
+      "sign_off_record": {
+        "role": "Director of Quality",
+        "method": "agent_mediated",
+        "status": "cleared",
+        "signed_utc": "2026-10-29T08:02:01Z",
+        "notes": "EPIC-level DoQ, first pass Blocked (flaky SC-GPL-01 handling; addendum colour states without evidence), findings applied 09c64c09/5e4fa87a, retry 1 Approved. Human confirmation pending.",
+        "cleared_utc": "2026-10-29",
+        "user_directed": true,
+        "reference": "qa_evidence_EPIC-04.md"
       }
     },
     "EPIC-05": {
