@@ -4,7 +4,7 @@
   "status": "Executing",
   "prior_status": "Sprint_Planning_Complete",
   "engine": "Sprint Execution",
-  "last_updated_utc": "2026-10-29T14:55:56Z",
+  "last_updated_utc": "2026-10-29T15:00:25Z",
   "execution_state_path": "claude/cycles/2026-10-29__release-v9.14/execution_state.json",
   "backlog_slice_path": "claude/cycles/2026-10-29__release-v9.14/stage4_backlog_slice.md",
   "design_gate_required": true,
@@ -478,7 +478,10 @@
       "raised_utc": "2026-10-29T14:55:56Z",
       "sla_due_utc": "2026-11-01T14:55:56Z",
       "blocks_execution": false,
-      "disposition": "Open"
+      "disposition": "Resolved",
+      "resolved_utc": "2026-10-29T15:00:25Z",
+      "resolved_by": "Strategy Rules & System Intent Owner (the user, in-session)",
+      "resolution_summary": "Ruling (a) block entries: an unknown regime fails the §4.2.1 entry gate and never triggers the §8.2 risk-off exit. Applied by ST-03 (strategy_rules.md v1.20, 29d8c347)."
     }
   },
   "deferred_escalations": {
