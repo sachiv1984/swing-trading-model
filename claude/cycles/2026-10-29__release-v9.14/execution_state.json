@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-29T14:51:40Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-29T15:00:25Z",
+  "last_updated_utc": "2026-10-29T15:41:16Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-02",
@@ -23,7 +23,22 @@
       "pr_status": "none",
       "qa_signed_off": false,
       "qa_evidence_log": "claude/cycles/2026-10-29__release-v9.14/qa_evidence_EPIC-01.md",
-      "test_scenarios": [],
+      "test_scenarios": [
+        "tests/test_regime_alpaca_fallback.py",
+        "tests/test_regime_unknown.py",
+        "tests/test_regime_retry_backoff.py",
+        "tests/test_alerts_service.py",
+        "tests/test_strategy_version_registry.py",
+        "tests/test_fx_rate_source.py",
+        "tests/test_fx_source_portfolio_positions.py",
+        "tests/test_upstream_call_helper.py",
+        "tests/test_yahoo_health_check.py",
+        "tests/test_positions_price_is_stale.py",
+        "tests/e2e/market-regime-unknown.spec.js",
+        "tests/e2e/fx-rate-source.spec.js",
+        "tests/e2e/stale-price-marker.spec.js",
+        "tests/e2e/risk-price-integrity.spec.js"
+      ],
       "sign_off_record": null,
       "stories": {
         "ST-01": {
@@ -55,42 +70,56 @@
         "ST-02": {
           "title": "Compute the SPY market regime from Alpaca bars when Yahoo Finance fails",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 2079,
           "branch": "exec/2026-10-29__release-v9.14/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "2a3cf5d75b0b98d8a17f5aa018c4b1e1749633c0",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-29T15:02:21Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/strategy/strategy_rules.md#8.2 Market risk-off override",
+            "docs/specs/api_contracts/market_endpoints.md#GET /market/status",
+            "tests/test_regime_alpaca_fallback.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "AC1: SPY regime computed from Alpaca bars when Yahoo fails (test_spy_regime_computed_from_alpaca_bars_when_yahoo_fails). AC2: spy_source/ftse_source recorded. AC3: both-failing behaviour unchanged at this commit; superseded on the same branch by ST-03 (test renamed test_both_sources_failing_gives_an_unknown_regime). CI on 2a3cf5d7: CI Pytest 40897492906 success, all 7 workflows success. Deviation check: none."
         },
         "ST-03": {
           "title": "Show an unknown market regime instead of silently defaulting to risk-on",
           "classification": "autonomous",
-          "status": "in_progress",
+          "status": "done",
           "assigned_to": "Strategy Rules & System Intent Owner (ruling); engine (implementation)",
           "github_issue": 2080,
           "branch": "exec/2026-10-29__release-v9.14/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "29d8c34757806f954fcdab6fd14bfa91d0e075c3",
           "delegation_record_id": "ESC-EXEC-20261029-01",
           "blocked_since_utc": null,
           "unblock_criteria": "Dated Strategy Rules & System Intent Owner ruling (a) block entries / (b) keep last known regime / (c) risk-on with warning, recorded in ESC-EXEC-20261029-01.",
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-29T15:17:24Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/strategy/strategy_rules.md#4.2.1 Regime gate",
+            "claude/strategy/strategy_rules.md#8.2 Market risk-off override",
+            "docs/specs/api_contracts/market_endpoints.md#GET /market/status",
+            "docs/specs/api_contracts/market_endpoints.md#GET /market/regime",
+            "docs/design/2026-10-29__release-v9.14/market-regime-unknown/decision_record.md",
+            "docs/specs/frontend/pages/dashboard.md",
+            "docs/specs/frontend/pages/signals.md",
+            "tests/test_regime_unknown.py",
+            "tests/e2e/market-regime-unknown.spec.js"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": "3.1.D.unblocked",
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": {
             "role": "Strategy Rules & System Intent Owner",
             "status": "cleared",
@@ -99,112 +128,139 @@
             "reference": "ESC-EXEC-20261029-01",
             "notes": "Ruling (a) block entries; unknown regime never triggers §8.2 exit."
           },
-          "notes": ""
+          "notes": "AC1: ruling (a) block entries, ESC-EXEC-20261029-01, 2026-10-29. AC2: strategy_rules.md v1.20 (§4.2.1, §8.2) case (c) with Change Log row, STRATEGY_VERSION_REGISTRY 1.20, §15 re-run 0 actionable. AC3: tests/test_regime_unknown.py (unknown status, no risk-off exit, pre-entry gate fails, nightly job leaves flags, /market/status and /market/regime unknown) + alerts test. AC4 + addendum: Card 4, Signals bar, regime widget Playwright SC-MRU-01..03; local fallbacks default to unknown. Also: signal generation gives no entry signals for an unknown market (ruling (a)); Card 4 envelope unwrap fixed. CI on 29d8c347: Playwright E2E 40900048841 success, CI Pytest 40900048896 success, all 9 workflows success. Implementation note: dashboard.md/signals.md still describe all three ruling branches; the code implements (a) only (decision record says unused branches are deleted at implementation). Deviation check: none."
         },
         "ST-04": {
           "title": "Use the last good GBP/USD rate, with its age, before the fixed 1.27 fallback",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 2081,
           "branch": "exec/2026-10-29__release-v9.14/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "07ea2a2d15e842dbab817172c52b39e76925d6dd",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-29T15:29:31Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/data_model.md#DS-37 — Add fx_rate_last_good (v2.66, 2026-10-29)",
+            "docs/design/2026-10-29__release-v9.14/fx-rate-source-indicator/decision_record.md",
+            "tests/test_fx_rate_source.py",
+            "tests/e2e/fx-rate-source.spec.js"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "AC1: last stored rate used on Yahoo failure (test_failed_fetch_uses_the_last_good_rate_not_the_constant, test_stored_rate_survives_a_restart). AC2: constant only when none stored (test_constant_only_when_no_rate_was_ever_stored). AC3: age shown (SC-FXS-01 'from 2 days ago' on Card 2 and Risk Dashboard; shown at every age, a superset per decision record §2.1). Storage: fx_rate_last_good (DS-37), runtime ensure, fail-open; live confirmation filed as BLG-OPS-203. CI on 07ea2a2d: Playwright E2E 40902109597 success, CI Pytest 40902109378 success, all 9 workflows success. Deviation check: none."
         },
         "ST-05": {
           "title": "Flag an FX fallback instead of applying it silently",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 2082,
           "branch": "exec/2026-10-29__release-v9.14/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "07ea2a2d15e842dbab817172c52b39e76925d6dd",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-29T15:29:31Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/portfolio_endpoints.md#GET /portfolio",
+            "docs/specs/api_contracts/position_endpoints.md#GET /positions",
+            "docs/specs/api_contracts/market_endpoints.md#GET /market/status",
+            "docs/design/2026-10-29__release-v9.14/fx-rate-source-indicator/decision_record.md",
+            "tests/test_fx_source_portfolio_positions.py",
+            "tests/e2e/fx-rate-source.spec.js"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "AC1: GET /portfolio and GET /positions expose fx_rate_source/fx_rate_as_of (with live_fx_rate); contracts + openapi 3.41.0 in the same commit. AC2: fetch-failure tests set the source and never report the constant as live (test_constant_is_never_reported_live). AC3: Playwright SC-FXS-01..04 (Card 2, Risk Dashboard, Signals tile; 1.3611 removed). CI on 07ea2a2d: all 9 workflows success. Implementation note (intent check, no deviation): the decision record names the field fx_rate; both endpoints already return the rate as live_fx_rate, so the source fields describe it. Deviation check: none."
         },
         "ST-06": {
           "title": "Make the System Status Yahoo Finance check detect an outage",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 2083,
           "branch": "exec/2026-10-29__release-v9.14/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "9104b8c4bbcb715bfccdb9515bc1d4874b659037",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-29T15:31:47Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/health_endpoints.md#GET /health/detailed",
+            "docs/specs/frontend/pages/system_status.md",
+            "tests/test_yahoo_health_check.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "AC1: FX fallback -> degraded (test_fx_fetch_failure_is_not_healthy, constant). AC2: live -> healthy with the live rate. AC3: regime fetch failure -> not healthy. AC4: details.reason plain string; System Status renders details JSON unchanged. health_endpoints.md v1.9, openapi 3.42.0. CI on 9104b8c4: CI Pytest 40902501227 success, all 7 workflows success. Deviation check: none."
         },
         "ST-07": {
           "title": "Flag stale prices on GET /positions and the Positions page",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 2084,
           "branch": "exec/2026-10-29__release-v9.14/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "d83893b30c99853b6788191dc3d186fd104840dd",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-29T15:39:45Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/position_endpoints.md#GET /positions",
+            "docs/design/2026-10-29__release-v9.14/stale-price-marker/decision_record.md",
+            "docs/specs/frontend/pages/positions.md",
+            "tests/test_positions_price_is_stale.py",
+            "tests/e2e/stale-price-marker.spec.js"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "AC1: GET /positions returns price_is_stale; position_endpoints.md v2.19.0 + openapi 3.43.0 same commit. AC2: tests/test_positions_price_is_stale.py. AC3: SC-SPM-01a/01b table and grid, stale row only (local pass). ci_pending: Playwright 40903841391, CI Pytest 40903841319 (STEP 3.2.A must clear). Deviation check: none."
         },
         "ST-08": {
           "title": "Make the stale-price explanation reachable on touch, keyboard and screen readers",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 2085,
           "branch": "exec/2026-10-29__release-v9.14/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "d83893b30c99853b6788191dc3d186fd104840dd",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-29T15:39:45Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/design/2026-10-29__release-v9.14/stale-price-marker/decision_record.md",
+            "docs/specs/frontend/pages/risk_dashboard.md",
+            "docs/specs/frontend/pages/dashboard.md",
+            "tests/e2e/stale-price-marker.spec.js"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "AC1: axe on /risk with a stale row, no serious/critical (SC-SPM-03). AC2: keyboard reach + toHaveAccessibleDescription on /risk and Positions (SC-SPM-02a/02b); tap toggles tooltip. AC3: Positions marker uses the shared StaleMarker with the Positions copy. Card 2 link description (SC-SPM-04). ci_pending: Playwright 40903841391 (STEP 3.2.A must clear). Deviation check: none."
         }
       }
     }
@@ -213,7 +269,15 @@
   "delegated_items": [
     "ST-01"
   ],
-  "completed_items": [],
+  "completed_items": [
+    "ST-02",
+    "ST-03",
+    "ST-04",
+    "ST-05",
+    "ST-06",
+    "ST-07",
+    "ST-08"
+  ],
   "open_escalations": {
     "ESC-EXEC-20261029-01": {
       "item": "ST-03",
@@ -229,5 +293,7 @@
     ],
     "all_merged": false
   },
-  "process_notes": []
+  "process_notes": [
+    "2026-10-29: ST-04+ST-05 and ST-07+ST-08 shipped as combined commits (07ea2a2d, d83893b3) with both story IDs, per CLAUDE.md §2. Backlog items filed: BLG-TECH-33 (flat-config react-hooks crash), BLG-OPS-203 (DS-37 live confirmation)."
+  ]
 }
