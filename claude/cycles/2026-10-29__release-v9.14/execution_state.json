@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-29T14:51:40Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-29T16:06:07Z",
+  "last_updated_utc": "2026-10-29T17:52:26Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-02",
@@ -21,7 +21,7 @@
       "branch": "exec/2026-10-29__release-v9.14/EPIC-01",
       "pr_number": null,
       "pr_status": "none",
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-10-29__release-v9.14/qa_evidence_EPIC-01.md",
       "test_scenarios": [
         "tests/test_regime_alpaca_fallback.py",
@@ -37,9 +37,17 @@
         "tests/e2e/market-regime-unknown.spec.js",
         "tests/e2e/fx-rate-source.spec.js",
         "tests/e2e/stale-price-marker.spec.js",
-        "tests/e2e/risk-price-integrity.spec.js"
+        "tests/e2e/risk-price-integrity.spec.js",
+        "tests/e2e/sector-regime-exposure-trend.spec.js"
       ],
-      "sign_off_record": null,
+      "sign_off_record": {
+        "role": "Director of Quality",
+        "status": "cleared",
+        "method": "agent_mediated",
+        "date": "2026-10-29",
+        "reference": "qa_evidence_EPIC-01.md Standard Sign-Off Block",
+        "notes": "Second pass Approved; first pass Blocked (4 findings, fixed in b1e55731)."
+      },
       "stories": {
         "ST-01": {
           "title": "Restore eslint-config-react-app so the frontend builds and deploys again",
@@ -72,7 +80,7 @@
             "date": "2026-10-29",
             "reference": "DEL-20261029-01"
           },
-          "notes": "Autonomous half pushed in f5e48d78 (lockfile fix, CI production-build workflow). Local CI=false npm run build without DISABLE_ESLINT_PLUGIN compiles with warnings only (RISK-06 not triggered). AC 1 post-merge, tracked by BLG-OPS-200. Staging branch deploy of ea20658a (user, 2026-10-29, DISABLE_ESLINT_PLUGIN removed from the Render dashboard) failed at install: Render's plain `npm install` hit ERESOLVE (eslint-config-react-app's eslint@^8 peer vs root eslint@^9). Fixed in 3fbfe5e3: repo .npmrc legacy-peer-deps=true (no dashboard-only setting), and Frontend Production Build now installs with plain `npm ci`, as Render does. Reproduced and verified in a scratch copy (exit 1 without .npmrc, success with it; lockfile unchanged). AC 2 met: staging redeploy of 4719c694 (branch deploy, no DISABLE_ESLINT_PLUGIN, no render.yaml workaround) built and went live 2026-10-29T16:04:44Z, warnings only. AC 3 met: Frontend Production Build fails on an unbuildable tree (it failed d83893b3/3fbfe5e3 on import/first) and passes on 8f05e704 (run 40907524862). AC 1 is seal-marked post-merge, tracked by BLG-OPS-200 (LL-v9.13-P3-03: graded on in-sprint ACs). Deviation check: none."
+          "notes": "Autonomous half pushed in f5e48d78 (lockfile fix, CI production-build workflow). Local CI=false npm run build without DISABLE_ESLINT_PLUGIN compiles with warnings only (RISK-06 not triggered). AC 1 post-merge, tracked by BLG-OPS-200. Staging branch deploy of ea20658a (user, 2026-10-29, DISABLE_ESLINT_PLUGIN removed from the Render dashboard) failed at install: Render's plain `npm install` hit ERESOLVE (eslint-config-react-app's eslint@^8 peer vs root eslint@^9). Fixed in 3fbfe5e3: repo .npmrc legacy-peer-deps=true (no dashboard-only setting), and Frontend Production Build now installs with plain `npm ci`, as Render does. Reproduced and verified in a scratch copy (exit 1 without .npmrc, success with it; lockfile unchanged). AC 2 met: staging redeploy of 4719c694 (branch deploy, no DISABLE_ESLINT_PLUGIN, no render.yaml workaround) built and went live 2026-10-29T16:04:44Z, warnings only. AC 3 met: Frontend Production Build fails on an unbuildable tree (it failed d83893b3/3fbfe5e3 on import/first) and passes on 8f05e704 (run 40907524862). AC 1 is seal-marked post-merge, tracked by BLG-OPS-200 (LL-v9.13-P3-03: graded on in-sprint ACs). Deviation check: none. DoQ grade: Pass_with_deviation — AC 2 shown on the EPIC branch, not main; BLG-OPS-204."
         },
         "ST-02": {
           "title": "Compute the SPY market regime from Alpaca bars when Yahoo Finance fails",
@@ -121,7 +129,8 @@
             "docs/specs/frontend/pages/dashboard.md",
             "docs/specs/frontend/pages/signals.md",
             "tests/test_regime_unknown.py",
-            "tests/e2e/market-regime-unknown.spec.js"
+            "tests/e2e/market-regime-unknown.spec.js",
+            "tests/e2e/sector-regime-exposure-trend.spec.js"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
@@ -241,7 +250,7 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": "AC1: GET /positions returns price_is_stale; position_endpoints.md v2.19.0 + openapi 3.43.0 same commit. AC2: tests/test_positions_price_is_stale.py. AC3: SC-SPM-01a/01b table and grid, stale row only (local pass). CI on d83893b3: Playwright E2E success, CI Pytest success, Frontend Production Build FAILURE (import/first in PositionRiskTable.js, ST-08's import placement); fixed in 8f05e704. ci_pending: 8f05e704 runs (STEP 3.2.A must clear). Deviation check: none."
+          "notes": "AC1: GET /positions returns price_is_stale; position_endpoints.md v2.19.0 + openapi 3.43.0 same commit. AC2: tests/test_positions_price_is_stale.py. AC3: SC-SPM-01a/01b table and grid, stale row only (local pass). CI on d83893b3: Playwright E2E success, CI Pytest success, Frontend Production Build FAILURE (import/first in PositionRiskTable.js, ST-08's import placement); fixed in 8f05e704. CI cleared: 8f05e704 all 9 green (Playwright 40907524815); DoQ fixes b1e55731 all 9 green (Playwright 40924592679). Deviation check: none."
         },
         "ST-08": {
           "title": "Make the stale-price explanation reachable on touch, keyboard and screen readers",
@@ -267,7 +276,7 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": "AC1: axe on /risk with a stale row, no serious/critical (SC-SPM-03). AC2: keyboard reach + toHaveAccessibleDescription on /risk and Positions (SC-SPM-02a/02b); tap toggles tooltip. AC3: Positions marker uses the shared StaleMarker with the Positions copy. Card 2 link description (SC-SPM-04). CI on d83893b3: Frontend Production Build FAILURE (import/first in PositionRiskTable.js); fixed in 8f05e704 (import order only). ci_pending: 8f05e704 runs (STEP 3.2.A must clear). Deviation check: none."
+          "notes": "AC1: axe on /risk with a stale row, no serious/critical (SC-SPM-03). AC2: keyboard reach + toHaveAccessibleDescription on /risk and Positions (SC-SPM-02a/02b); tap toggles tooltip. AC3: Positions marker uses the shared StaleMarker with the Positions copy. Card 2 link description (SC-SPM-04). CI on d83893b3: Frontend Production Build FAILURE (import/first in PositionRiskTable.js); fixed in 8f05e704 (import order only). CI cleared: 8f05e704 all 9 green (Playwright 40907524815); DoQ fixes b1e55731 all 9 green (Playwright 40924592679). Deviation check: none. DoQ review fixes in b1e55731 (axe zero violations + /risk h2 headings, touch tap toggle fix)."
         }
       }
     }
@@ -301,6 +310,7 @@
   },
   "process_notes": [
     "2026-10-29: ST-04+ST-05 and ST-07+ST-08 shipped as combined commits (07ea2a2d, d83893b3) with both story IDs, per CLAUDE.md §2. Backlog items filed: BLG-TECH-33 (flat-config react-hooks crash), BLG-OPS-203 (DS-37 live confirmation).",
-    "2026-10-29: ST-08's d83893b3 failed Frontend Production Build (import/first); engine chained build+commit without gating on the build result, so 3fbfe5e3 (.npmrc) was pushed before the failure was seen. Fixed in 8f05e704 and verified with a clean npm ci + build before commit."
+    "2026-10-29: ST-08's d83893b3 failed Frontend Production Build (import/first); engine chained build+commit without gating on the build result, so 3fbfe5e3 (.npmrc) was pushed before the failure was seen. Fixed in 8f05e704 and verified with a clean npm ci + build before commit.",
+    "2026-10-29: agent-mediated DoQ review of EPIC-01 (§5.3, user-directed): first pass Blocked (4 blocking: ST-08 axe narrowed, ST-01 AC 2 branch not main, Card 4 link description, trend strip NULL as risk-off), fixed in b1e55731; second pass Approved. Filed BLG-OPS-204, BLG-SPEC-210, BLG-QA-239."
   ]
 }
