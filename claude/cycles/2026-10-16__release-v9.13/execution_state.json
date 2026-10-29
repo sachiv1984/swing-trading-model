@@ -4,7 +4,7 @@
   "backlog_slice_source": "claude/cycles/2026-10-16__release-v9.13/stage4_backlog_slice.md (read with claude/cycles/2026-10-16__release-v9.13/stage4_backlog_slice_addendum.md)",
   "invoked_utc": "2026-10-16T10:49:11Z",
   "mode": "standard",
-  "status": "Running",
+  "status": "Sealed",
   "last_updated_utc": "2026-10-28T11:00:00Z",
   "merge_order": [
     "EPIC-01",
@@ -20,6 +20,8 @@
       "branch": "exec/2026-10-16__release-v9.13/EPIC-01",
       "pr_number": 2071,
       "pr_status": "merged",
+      "merged_utc": "2026-10-17T15:08:21Z",
+      "merge_commit": "2bca2001",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-10-16__release-v9.13/qa_evidence_EPIC-01.md",
       "test_scenarios": [
@@ -198,15 +200,15 @@
         "head": "0d016b7a",
         "ci": "43/43 checks green at 0d016b7a",
         "merge": "human — merged by sachiv1984 at 2026-10-17T15:08:21Z, merge commit 2bca2001"
-      },
-      "merged_utc": "2026-10-17T15:08:21Z",
-      "merge_commit": "2bca2001"
+      }
     },
     "EPIC-02": {
       "status": "merged",
       "branch": "exec/2026-10-16__release-v9.13/EPIC-02",
       "pr_number": 2073,
       "pr_status": "merged",
+      "merged_utc": "2026-10-27T08:45:05Z",
+      "merge_commit": "8ebd879a",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-10-16__release-v9.13/qa_evidence_EPIC-02.md",
       "test_scenarios": [
@@ -228,7 +230,7 @@
         "ST-06": {
           "title": "Reject a fetched ATR that puts the initial stop at or below zero",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "Strategy Rules & System Intent Owner; Backend Engineering Patterns Owner",
           "github_issue": 2036,
           "branch": "exec/2026-10-16__release-v9.13/EPIC-02",
@@ -260,7 +262,7 @@
         "ST-07": {
           "title": "Align the standalone position_manager.py with §6.3 (no stop ratchet during grace)",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "Backend Engineering Patterns Owner; Strategy Rules & System Intent Owner",
           "github_issue": 2037,
           "branch": "exec/2026-10-16__release-v9.13/EPIC-02",
@@ -290,7 +292,7 @@
         "ST-08": {
           "title": "Reject or flag the four fixed strategy-parameter fields on Settings writes",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "API Contracts & Documentation Owner; Backend Engineering Patterns Owner",
           "github_issue": 2038,
           "branch": "exec/2026-10-16__release-v9.13/EPIC-02",
@@ -321,7 +323,7 @@
         "ST-09": {
           "title": "Keep the Monthly P&L report up when the snapshot store fails",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2039,
           "branch": "exec/2026-10-16__release-v9.13/EPIC-02",
@@ -348,7 +350,7 @@
         "ST-10": {
           "title": "Define a stop-freshness metric and show it on System Status",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2040,
           "branch": "exec/2026-10-16__release-v9.13/EPIC-02",
@@ -381,7 +383,7 @@
         "ST-11": {
           "title": "Correct metrics_definitions.md's claim about NULL positions.fees_paid",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2041,
           "branch": "exec/2026-10-16__release-v9.13/EPIC-02",
@@ -404,7 +406,7 @@
         "ST-12": {
           "title": "Mock get_settings() so the stored ATR multiplier is asserted exactly",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2042,
           "branch": "exec/2026-10-16__release-v9.13/EPIC-02",
@@ -427,7 +429,7 @@
         "ST-13": {
           "title": "Test the entry required-field set and the non-blocking advisory panel at their boundary",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2043,
           "branch": "exec/2026-10-16__release-v9.13/EPIC-02",
@@ -452,7 +454,7 @@
         "ST-14": {
           "title": "Give the valid-input sizing property a lower bound",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2044,
           "branch": "exec/2026-10-16__release-v9.13/EPIC-02",
@@ -489,15 +491,15 @@
         "head": "5163c560",
         "ci": "43/43 checks green at 5163c560",
         "merge": "merged 2026-10-27T08:45:05Z by the repository owner (8ebd879a)"
-      },
-      "merged_utc": "2026-10-27T08:45:05Z",
-      "merge_commit": "8ebd879a"
+      }
     },
     "EPIC-03": {
       "status": "merged",
       "branch": "exec/2026-10-16__release-v9.13/EPIC-03",
       "pr_number": 2074,
       "pr_status": "merged",
+      "merged_utc": "2026-10-27T12:31:28Z",
+      "merge_commit": "40d298f4",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-10-16__release-v9.13/qa_evidence_EPIC-03.md",
       "test_scenarios": [
@@ -515,7 +517,7 @@
         "ST-15": {
           "title": "Treat UK .L and bare tickers as the same instrument in the briefing ticker filter",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2045,
           "branch": "exec/2026-10-16__release-v9.13/EPIC-03",
@@ -539,7 +541,7 @@
         "ST-16": {
           "title": "Attribute chat stop citations to the focused ticker and case-normalise action tickers",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "AI Compliance & Governance Officer; Backend Engineering Patterns Owner",
           "github_issue": 2046,
           "branch": "exec/2026-10-16__release-v9.13/EPIC-03",
@@ -569,7 +571,7 @@
         "ST-17": {
           "title": "Check the briefing summary text for tickers outside the context",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "AI Compliance & Governance Officer; Backend Engineering Patterns Owner",
           "github_issue": 2047,
           "branch": "exec/2026-10-16__release-v9.13/EPIC-03",
@@ -599,7 +601,7 @@
         "ST-18": {
           "title": "Add an output-language check to the journal summary",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "AI Compliance & Governance Officer; Backend Engineering Patterns Owner",
           "github_issue": 2048,
           "branch": "exec/2026-10-16__release-v9.13/EPIC-03",
@@ -630,7 +632,7 @@
         "ST-19": {
           "title": "Label available cash and starting capital separately in the AI chat context",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2049,
           "branch": "exec/2026-10-16__release-v9.13/EPIC-03",
@@ -654,7 +656,7 @@
         "ST-20": {
           "title": "Keep the debrief card populated when Regenerate returns no data",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2050,
           "branch": "exec/2026-10-16__release-v9.13/EPIC-03",
@@ -678,7 +680,7 @@
         "ST-21": {
           "title": "Give the debrief error text a light-theme colour that passes contrast",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2051,
           "branch": "exec/2026-10-16__release-v9.13/EPIC-03",
@@ -702,7 +704,7 @@
         "ST-22": {
           "title": "Add a useful / not-useful rating to each AI chat answer",
           "classification": "delegated_backend",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "Head of Engineering; Data Model & Domain Schema Owner",
           "github_issue": 2052,
           "branch": "exec/2026-10-16__release-v9.13/EPIC-03",
@@ -752,15 +754,14 @@
         "head": "1b60b328",
         "ci": "43/43 checks green at 1b60b328",
         "merge": "human - merged by sachiv1984 at 2026-10-27T12:31:28Z, merge commit 40d298f4"
-      },
-      "merged_utc": "2026-10-27T12:31:28Z",
-      "merge_commit": "40d298f4"
+      }
     },
     "EPIC-04": {
       "status": "merged",
       "branch": "exec/2026-10-16__release-v9.13/EPIC-04",
       "pr_number": 2076,
       "pr_status": "merged",
+      "merged_utc": "2026-10-29T09:00:06Z",
       "merge_commit": "28d475fb",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-10-16__release-v9.13/qa_evidence_EPIC-04.md",
@@ -776,7 +777,7 @@
         "ST-23": {
           "title": "CI check that every frontend API call exists in openapi.yaml",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2053,
           "branch": "exec/2026-10-16__release-v9.13/EPIC-04",
@@ -801,7 +802,7 @@
         "ST-24": {
           "title": "Fail Playwright on any 404/405 from the app's API and sweep state-changing actions",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2054,
           "branch": "exec/2026-10-16__release-v9.13/EPIC-04",
@@ -827,7 +828,7 @@
         "ST-25": {
           "title": "Make coloured Buttons render their colour (fix cn() at the root)",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2055,
           "branch": "exec/2026-10-16__release-v9.13/EPIC-04",
@@ -856,7 +857,7 @@
         "ST-26": {
           "title": "Fix the Replay page's light-theme colour contrast",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2056,
           "branch": "exec/2026-10-16__release-v9.13/EPIC-04",
@@ -880,7 +881,7 @@
         "ST-27": {
           "title": "Decide how real-database-bound modules may persist across pytest files",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "Director of Quality; QA & Testing Owner",
           "github_issue": 2057,
           "branch": "exec/2026-10-16__release-v9.13/EPIC-04",
@@ -935,6 +936,8 @@
       "branch": "exec/2026-10-16__release-v9.13/EPIC-05",
       "pr_number": 2075,
       "pr_status": "merged",
+      "merged_utc": "2026-10-28T11:31:37Z",
+      "merge_commit": "77758669",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-10-16__release-v9.13/qa_evidence_EPIC-05.md",
       "test_scenarios": [
@@ -949,7 +952,7 @@
         "ST-28": {
           "title": "Make the daily AI cost alert fail loudly on query or workflow failure",
           "classification": "delegated_backend",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "Infrastructure & Operations Owner; FinOps & Resource Architect",
           "github_issue": 2058,
           "branch": "exec/2026-10-16__release-v9.13/EPIC-05",
@@ -966,7 +969,7 @@
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": "3.1.B.unblock",
           "sign_off_record": {
             "role": "Infrastructure & Operations Owner",
@@ -975,12 +978,12 @@
             "signed_utc": "2026-10-27T21:03:52Z",
             "notes": "User (human) forced a failed ai-daily-cost-check.yml run on the EPIC-05 branch (invalid API_KEY): run 40582931117, trigger step failed on 401, Telegram step succeeded, message received, 2026-10-27. DEL-20261027-02."
           },
-          "notes": "Engine commit a058fa6001e9865f34c9da15218686dfc659823c (2026-10-27T12:41:04Z): AC1 (query failure raises; service logs with exc_info and returns status error; endpoint 503; curl --fail-with-body; missing secrets fail) and AC2 automated half (if: failure() Telegram step) - tests/test_daily_cost_fails_loudly.py. ai_endpoints.md v1.32, openapi 3.37.0, api_changelog 1.22.0. CI all green on a058fa60 (CI Pytest Suite 40505711397, Playwright 40505711118). AC2 real receipt delegated: DEL-20261027-02. Unblocked 2026-10-27: run 40582931117 (EPIC-05 branch, 5dd04ba5) failed on 401 and sent the Telegram message, receipt confirmed by the user. Evidence commit 1a303e08 (commit_sha); implementation commit a058fa60. Deviation check: none."
+          "notes": "Engine commit a058fa6001e9865f34c9da15218686dfc659823c (2026-10-27T12:41:04Z): AC1 (query failure raises; service logs with exc_info and returns status error; endpoint 503; curl --fail-with-body; missing secrets fail) and AC2 automated half (if: failure() Telegram step) - tests/test_daily_cost_fails_loudly.py. ai_endpoints.md v1.32, openapi 3.37.0, api_changelog 1.22.0. CI all green on a058fa60 (CI Pytest Suite 40505711397, Playwright 40505711118). AC2 real receipt delegated: DEL-20261027-02. Unblocked 2026-10-27: run 40582931117 (EPIC-05 branch, 5dd04ba5) failed on 401 and sent the Telegram message, receipt confirmed by the user. Evidence commit 1a303e08 (commit_sha); implementation commit a058fa60. Deviation check: none. No spec deviation found — deviations_filed corrected at sprint close"
         },
         "ST-29": {
           "title": "Deploy both staging services from staging-deploy.yml and wait on each",
           "classification": "delegated_backend",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "Infrastructure & Operations Owner",
           "github_issue": 2059,
           "branch": "exec/2026-10-16__release-v9.13/EPIC-05",
@@ -1006,7 +1009,7 @@
         "ST-30": {
           "title": "Produce the combined data-pipeline cost baseline",
           "classification": "delegated_backend",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "FinOps & Resource Architect; Infrastructure & Operations Owner",
           "github_issue": 2060,
           "branch": "exec/2026-10-16__release-v9.13/EPIC-05",
@@ -1029,7 +1032,7 @@
         "ST-31": {
           "title": "Attribute each external API call to the feature that triggered it",
           "classification": "delegated_backend",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "FinOps & Resource Architect; Head of Engineering",
           "github_issue": 2061,
           "branch": "exec/2026-10-16__release-v9.13/EPIC-05",
@@ -1061,7 +1064,7 @@
         "ST-32": {
           "title": "Benchmark the full screener run",
           "classification": "delegated_backend",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "Infrastructure & Operations Owner",
           "github_issue": 2062,
           "branch": "exec/2026-10-16__release-v9.13/EPIC-05",
@@ -1087,7 +1090,7 @@
         "ST-33": {
           "title": "Assess data-provider risk and failover options",
           "classification": "delegated_decision",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "Infrastructure & Operations Owner; FinOps & Resource Architect",
           "github_issue": 2063,
           "branch": "exec/2026-10-16__release-v9.13/EPIC-05",
@@ -1117,7 +1120,7 @@
         "ST-34": {
           "title": "Assess the major and breaking dependency upgrades from the October 2026 review",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2064,
           "branch": "exec/2026-10-16__release-v9.13/EPIC-05",
@@ -1163,6 +1166,8 @@
       "branch": "exec/2026-10-16__release-v9.13/EPIC-06",
       "pr_number": 2072,
       "pr_status": "merged",
+      "merged_utc": "2026-10-17T15:43:26Z",
+      "merge_commit": "27430d29",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-10-16__release-v9.13/qa_evidence_EPIC-06.md",
       "test_scenarios": [
@@ -1175,7 +1180,7 @@
         "ST-35": {
           "title": "Treat Gate criteria: None/N/A as ungated in the gate scan",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2065,
           "branch": "exec/2026-10-16__release-v9.13/EPIC-06",
@@ -1199,7 +1204,7 @@
         "ST-36": {
           "title": "Known-false-positive allow-list for the gate scan",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2066,
           "branch": "exec/2026-10-16__release-v9.13/EPIC-06",
@@ -1223,7 +1228,7 @@
         "ST-37": {
           "title": "Compare documented column defaults in check_data_model_drift.py",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2067,
           "branch": "exec/2026-10-16__release-v9.13/EPIC-06",
@@ -1248,7 +1253,7 @@
         "ST-38": {
           "title": "Update strategy_rules.md §13.3 now the Gap Risk Flag's weekend-hold trigger is gone",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2068,
           "branch": "exec/2026-10-16__release-v9.13/EPIC-06",
@@ -1272,7 +1277,7 @@
         "ST-39": {
           "title": "Correct strategy_rules.md §13.5's PO-05 roster row",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2069,
           "branch": "exec/2026-10-16__release-v9.13/EPIC-06",
@@ -1296,7 +1301,7 @@
         "ST-40": {
           "title": "Correct the v9.8–v9.10 compound Owner count in role_share_history.md",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "PMO Lead",
           "github_issue": 2070,
           "branch": "exec/2026-10-16__release-v9.13/EPIC-06",
@@ -1342,9 +1347,7 @@
         "head": "d95723df",
         "ci": "33/33 checks green at d95723df",
         "merge": "merged 2026-10-17T15:43:26Z by the repository owner (27430d29)"
-      },
-      "merged_utc": "2026-10-17T15:43:26Z",
-      "merge_commit": "27430d29"
+      }
     }
   },
   "blocked_items": [],
@@ -1392,6 +1395,12 @@
     "ST-40"
   ],
   "open_escalations": {
+    "ESC-EXEC-20261016-01": {
+      "item": "ST-05",
+      "disposition": "Resolved",
+      "raised_utc": "2026-10-16T11:05:32Z",
+      "resolved_utc": "2026-10-16T12:16:18Z"
+    },
     "ESC-EXEC-20261017-01": {
       "item": "ST-40",
       "disposition": "Resolved",
@@ -1433,6 +1442,12 @@
       "raised_utc": "2026-10-27T08:48:35Z",
       "resolved_utc": "2026-10-27T08:54:27Z"
     },
+    "ESC-EXEC-20261027-04": {
+      "item": "ST-33",
+      "disposition": "Resolved",
+      "raised_utc": "2026-10-27T21:17:56Z",
+      "resolved_utc": "2026-10-27T21:21:14Z"
+    },
     "ESC-EXEC-20261028-01": {
       "item": "ST-27",
       "disposition": "Resolved",
@@ -1470,8 +1485,9 @@
     "2026-10-29: EPIC-04 PR #2076 opened after the agent-mediated DoQ sign-off (b413f8e2; first pass Blocked, retry 1 Approved). Pre-PR checks passed: API baseline drift, frontend API call check, backlog integrity, no foreign-EPIC commits, branch level with main. User-directed: \"open the PR when CI is green\" (CI green on 5e4fa87a).",
     "2026-10-29: PR #2076 agent-mediated Director of Quality and Product Owner review posted (issuecomment-6491400948), both Approved with Comments, labelled per OA-6; same engine as the implementer, disclosed. Findings filed at the user's direction as BLG-QA-234 (P3), BLG-QA-235 (P2), BLG-QA-236 (P3), BLG-QA-237 (P2) in 0ed4ef3c. Human DoQ sign-off and Product Owner acceptance still required.",
     "2026-10-29: EPIC-04 human DoQ confirmation and Product Owner acceptance given in-session (\"give DOQ and PO acceptance\"), recorded in qa_evidence_EPIC-04.md and PR #2076 comment issuecomment-6491469479. Merge left to the human developer.",
-    "2026-10-29: STEP 4 resume-sync — PR #2076 found merged (mergedAt 2026-10-29T09:00:06Z, merge commit 28d475fb) by the human developer; EPIC-04 pr_status/status set to merged and merge_gate recomputed on main. Orphaned post-merge commit check (git log origin/main..origin/exec/2026-10-16__release-v9.13/EPIC-04): none."
+    "2026-10-29: STEP 4 resume-sync — PR #2076 found merged (mergedAt 2026-10-29T09:00:06Z, merge commit 28d475fb) by the human developer; EPIC-04 pr_status/status set to merged and merge_gate recomputed on main. Orphaned post-merge commit check (git log origin/main..origin/exec/2026-10-16__release-v9.13/EPIC-04): none.",
+    "2026-10-29: STEP 5 sprint-close metadata corrections — merged_utc backfilled for EPIC-04 and EPIC-05 and merge_commit for EPIC-05 from gh pr view; 35 stories in EPIC-02..EPIC-06 moved done → merged to match EPIC-01 (v9.12 precedent); ESC-EXEC-20261016-01 (ST-05) and ESC-EXEC-20261027-04 (ST-33) added to this file's open_escalations map (both were already Resolved and mirrored in .claude_current_state.json); ST-28 deviations_filed corrected to true (its notes record 'Deviation check: none' and no deviation record exists)."
   ],
-  "sealed": false,
-  "sealed_utc": null
+  "sealed": true,
+  "sealed_utc": "2026-10-29T09:29:35Z"
 }
