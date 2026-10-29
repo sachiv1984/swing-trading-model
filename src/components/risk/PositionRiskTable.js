@@ -1,6 +1,7 @@
 import { cn } from "../../lib/utils";
 import { ArrowDown, AlertCircle } from "lucide-react";
 import { formatCurrency, formatPercent } from "../../lib/format";
+import StaleMarker, { STALE_EXPLANATION_RISK } from "../ui/StaleMarker";
 
 const STATUS_ORDER = { GRACE: 0, LOSING: 1, PROFITABLE: 2 };
 
@@ -9,8 +10,6 @@ const statusBadge = {
   LOSING:     "bg-rose-500/20 text-rose-400 border-rose-500/30",
   PROFITABLE: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30",
 };
-
-import StaleMarker, { STALE_EXPLANATION_RISK } from "../ui/StaleMarker";
 
 // ST-11 (EPIC-02, v9.11, BLG-FE-206): risk_dashboard.md §6.2a.
 const GRACE_STOP_TEXT = "Stops are not enforced during the 10-day grace period. See strategy rules §6.";
