@@ -580,8 +580,8 @@ def generate_daily_briefing() -> dict:
     if regime:
         regime_lines = [
             f"Market regime: {regime['label']}",
-            f"  SPY: {regime['spy_price']:.2f} vs MA200 {regime['spy_ma200']:.2f} → {'Risk-On' if regime['spy_risk_on'] else 'Risk-Off'}",
-            f"  FTSE: {regime['ftse_price']:.2f} vs MA200 {regime['ftse_ma200']:.2f} → {'Risk-On' if regime['ftse_risk_on'] else 'Risk-Off'}",
+            _regime_context_line("SPY", regime["spy_price"], regime["spy_ma200"], regime["spy_risk_on"]),
+            _regime_context_line("FTSE", regime["ftse_price"], regime["ftse_ma200"], regime["ftse_risk_on"]),
         ]
     else:
         regime_lines = ["Market regime: Unknown (data unavailable)"]
@@ -758,13 +758,22 @@ def _briefing_error(message: str, now: datetime) -> dict:
     }
 
 
+def _regime_context_line(name: str, price, ma200, risk_on) -> str:
+    if risk_on is None:
+        return f"  {name}: Unknown (index data unavailable)"
+    return f"  {name}: {price:.2f} vs MA200 {ma200:.2f} → {'Risk-On' if risk_on else 'Risk-Off'}"
+
+
 def _get_regime_data() -> Optional[dict]:
     try:
         from utils.pricing import check_market_regime
         r = check_market_regime()
-        spy_on = r.get("spy_risk_on", False)
-        ftse_on = r.get("ftse_risk_on", False)
-        if spy_on and ftse_on:
+        spy_on = r.get("spy_risk_on")
+        ftse_on = r.get("ftse_risk_on")
+        if spy_on is None or ftse_on is None:
+            unknown = [n for n, v in (("SPY", spy_on), ("FTSE", ftse_on)) if v is None]
+            label = f"Unknown ({' and '.join(unknown)} index data unavailable)"
+        elif spy_on and ftse_on:
             label = "Risk-On (SPY and FTSE both above MA200)"
         elif not spy_on and not ftse_on:
             label = "Risk-Off (both markets below MA200)"

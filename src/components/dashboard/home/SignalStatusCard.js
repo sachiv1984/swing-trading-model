@@ -1,16 +1,48 @@
+import { useId } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { api } from "../../../api/base44Client";
+import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "../../ui/tooltip";
+import { REGIME_RISK_ON, REGIME_UNKNOWN, regimeStatusOf, unknownRegimeExplanation } from "../../../lib/regime";
 import DashboardCard from "./DashboardCard";
 
+const REGION_BY_INDEX = { SPY: "US", FTSE: "UK" };
+const BADGE = "text-xs font-semibold px-2 py-0.5 rounded-full";
+
+function UnknownRegimeBadge({ market }) {
+  const descriptionId = useId();
+  const explanation = unknownRegimeExplanation(REGION_BY_INDEX[market]);
+  return (
+    <TooltipProvider delayDuration={200}>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <span
+            data-testid={`regime-unknown-${market}`}
+            aria-describedby={descriptionId}
+            className={`${BADGE} bg-slate-200 text-slate-800 dark:bg-slate-500/20 dark:text-slate-300`}
+          >
+            UNKNOWN ?
+          </span>
+        </TooltipTrigger>
+        <TooltipContent className="max-w-xs text-left">{explanation}</TooltipContent>
+      </Tooltip>
+      <span id={descriptionId} className="sr-only">{explanation}</span>
+    </TooltipProvider>
+  );
+}
+
 function RegimeRow({ market, status }) {
-  const isOn = status === "risk_on";
+  const isOn = status === REGIME_RISK_ON;
   return (
     <div className="flex items-center justify-between">
       <span className="text-sm text-slate-300">{market}</span>
-      <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${isOn ? "bg-emerald-500/20 text-emerald-400" : "bg-rose-500/20 text-rose-400"}`}>
-        {isOn ? "RISK-ON ✓" : "RISK-OFF ✗"}
-      </span>
+      {status === REGIME_UNKNOWN ? (
+        <UnknownRegimeBadge market={market} />
+      ) : (
+        <span className={`${BADGE} ${isOn ? "bg-emerald-500/20 text-emerald-400" : "bg-rose-500/20 text-rose-400"}`}>
+          {isOn ? "RISK-ON ✓" : "RISK-OFF ✗"}
+        </span>
+      )}
     </div>
   );
 }
@@ -34,11 +66,11 @@ export default function SignalStatusCard() {
   // Only show error state if both queries failed (individual card error per spec §5)
   const error = marketQuery.error && signalsQuery.error ? marketQuery.error : null;
 
-  // Normalise market status response: { spy: { is_risk_on }, ftse: { is_risk_on } }
-  const mktData = marketQuery.data;
+  // Normalise market status response: { spy: { regime_status, is_risk_on }, ftse: { ... } }
+  const mktData = marketQuery.data?.data ?? marketQuery.data;
   const regimes = mktData?.regimes ?? [
-    { market: "SPY", status: mktData?.spy?.is_risk_on ? "risk_on" : (mktData?.spy?.is_risk_on === false ? "risk_off" : "unknown") },
-    { market: "FTSE", status: mktData?.ftse?.is_risk_on ? "risk_on" : (mktData?.ftse?.is_risk_on === false ? "risk_off" : "unknown") },
+    { market: "SPY", status: regimeStatusOf(mktData?.spy) },
+    { market: "FTSE", status: regimeStatusOf(mktData?.ftse) },
   ];
 
   const signals = Array.isArray(signalsQuery.data) ? signalsQuery.data : [];

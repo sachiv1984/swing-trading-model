@@ -133,8 +133,10 @@ def _get_regime_label() -> str:
     try:
         from position_manager import check_market_regime
         r = check_market_regime()
-        spy_on = r.get("spy_risk_on", False)
-        ftse_on = r.get("ftse_risk_on", False)
+        spy_on = r.get("spy_risk_on")
+        ftse_on = r.get("ftse_risk_on")
+        if spy_on is None or ftse_on is None:
+            return None
         if spy_on and ftse_on:
             return "Bullish"
         elif not spy_on and not ftse_on:

@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Active
-**Version:** 0.3
-**Last Updated:** 2026-10-13 (ST-17, EPIC-03, v9.12, BLG-BE-146 — added GET /market/atr/{ticker}, the read-only 14-day ATR preview for Trade Entry); prior — 2026-10-08 (ST-19, EPIC-03, v9.11, BLG-BE-140 — added GET /market/regime, the read-only regime source for the Dashboard regime widgets); prior — 2026-03-08 (initial canonical specification)
+**Version:** 0.4
+**Last Updated:** 2026-10-29 (ST-03, EPIC-01, v9.14, BLG-BE-193 — GET /market/status and GET /market/regime report an unmeasured market as `unknown` with null values, not a defaulted risk-on); prior — 2026-10-13 (ST-17, EPIC-03, v9.12, BLG-BE-146 — added GET /market/atr/{ticker}, the read-only 14-day ATR preview for Trade Entry); prior — 2026-10-08 (ST-19, EPIC-03, v9.11, BLG-BE-140 — added GET /market/regime, the read-only regime source for the Dashboard regime widgets); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -62,12 +62,14 @@ Response uses the standard success envelope from **conventions.md**.
   "spy": {
     "price": 542.31,
     "ma200": 489.17,
-    "is_risk_on": true
+    "is_risk_on": true,
+    "regime_status": "risk_on"
   },
   "ftse": {
-    "price": 8143.22,
-    "ma200": 7891.45,
-    "is_risk_on": true
+    "price": null,
+    "ma200": null,
+    "is_risk_on": null,
+    "regime_status": "unknown"
   },
   "fx_rate": 1.2847,
   "last_updated": "2026-03-08T10:30:00.123456"
@@ -78,12 +80,14 @@ Response uses the standard success envelope from **conventions.md**.
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `spy.price` | float | Current SPY ETF price (USD), rounded to 2 decimal places |
-| `spy.ma200` | float | SPY 200-day moving average (USD), rounded to 2 decimal places |
-| `spy.is_risk_on` | boolean | `true` if SPY price > MA200 (risk-on signal for US market) |
-| `ftse.price` | float | Current FTSE 100 index price (GBP), rounded to 2 decimal places |
-| `ftse.ma200` | float | FTSE 100 200-day moving average (GBP), rounded to 2 decimal places |
-| `ftse.is_risk_on` | boolean | `true` if FTSE price > MA200 (risk-on signal for UK market) |
+| `spy.price` | float \| null | Current SPY ETF price (USD), rounded to 2 decimal places. `null` when the regime is `unknown` |
+| `spy.ma200` | float \| null | SPY 200-day moving average (USD), rounded to 2 decimal places. `null` when `unknown` |
+| `spy.is_risk_on` | boolean \| null | `true` if SPY price > MA200 (risk-on signal for US market), `false` if not, `null` when `unknown` |
+| `spy.regime_status` | string | `risk_on`, `risk_off` or `unknown` (v0.4, ST-03) |
+| `ftse.price` | float \| null | Current FTSE 100 index price (GBP), rounded to 2 decimal places. `null` when `unknown` |
+| `ftse.ma200` | float \| null | FTSE 100 200-day moving average (GBP), rounded to 2 decimal places. `null` when `unknown` |
+| `ftse.is_risk_on` | boolean \| null | `true` if FTSE price > MA200 (risk-on signal for UK market), `false` if not, `null` when `unknown` |
+| `ftse.regime_status` | string | `risk_on`, `risk_off` or `unknown` (v0.4, ST-03) |
 | `fx_rate` | float | Live GBP/USD exchange rate, rounded to 4 decimal places |
 | `last_updated` | string (ISO 8601) | Timestamp of when this response was generated (UTC) |
 
@@ -93,6 +97,7 @@ Response uses the standard success envelope from **conventions.md**.
 |-----------|-------------|---------------|
 | Price > MA200 | `true` | Risk-on: market is above long-term trend; strategy may hold or enter positions |
 | Price ≤ MA200 | `false` | Risk-off: market is below long-term trend; strategy recommends caution / exits |
+| Index data unavailable from every source | `null` (`regime_status: "unknown"`) | Unknown (v0.4, ST-03, BLG-BE-193): the regime was not measured. Under `strategy_rules.md` §4.2.1 and §8.2 (ruling of 2026-10-29), new entries in that market are blocked until it is measured, and an unknown regime never triggers the risk-off exit. SPY falls back to Alpaca daily bars before it is unknown (ST-02); FTSE has no second source |
 
 Regime classification is per `docs/claude/strategy/strategy_rules.md`. The MA period (200 days) is a strategy parameter.
 
@@ -156,10 +161,10 @@ No parameters.
 | Field | Type | Description |
 |-------|------|-------------|
 | `data[].market` | string | `US` (SPY) or `UK` (FTSE) |
-| `data[].status` | string | `risk_on` when the index is above its 200-day moving average, `risk_off` otherwise (`strategy_rules.md` market regime rule; the same classification as `GET /market/status`'s `is_risk_on`) |
+| `data[].status` | string | `risk_on` when the index is above its 200-day moving average, `risk_off` when it is not, `unknown` when the index data is unavailable (v0.4, ST-03; the same classification as `GET /market/status`'s `regime_status`) |
 | `as_of` | ISO 8601 datetime \| null | When the regime was computed (the cached result's timestamp) |
 
-If the index data is unavailable, `check_market_regime()` defaults to risk-on for that market, as it does for every other caller.
+If the index data is unavailable, the market's `status` is `unknown` (v0.4, ST-03, BLG-BE-193). Before v0.4 `check_market_regime()` defaulted it to risk-on.
 
 ### Errors
 
@@ -249,3 +254,4 @@ Trade Entry never places the returned ATR into its ATR input, so `atr_source` at
 | 0.1 | 2026-03-08 | Initial canonical specification. Endpoint existed in implementation since v1.7; spec authored per ST-16 (v1.9 Sprint 1, EPIC-06). |
 | 0.2 | 2026-10-08 | ST-19 (EPIC-03, v9.11, BLG-BE-140): Added `GET /market/regime`, a read-only regime source, so viewing the regime no longer runs the stop-writing `GET /positions/analyze`. |
 | 0.3 | 2026-10-13 | ST-17 (EPIC-03, v9.12, BLG-BE-146): Added `GET /market/atr/{ticker}`, the read-only 14-day ATR preview that lets Trade Entry show the stop, risk and size before save. |
+| 0.4 | 2026-10-29 | ST-03 (EPIC-01, v9.14, BLG-BE-193): `GET /market/status` adds `regime_status` per index, and `price`, `ma200` and `is_risk_on` are `null` when the regime is `unknown`; `GET /market/regime` adds the `unknown` status. Replaces the silent risk-on default. |

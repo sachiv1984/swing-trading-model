@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Class 2
 **Status:** Canonical
-**Version:** 1.24.0
-**Last Updated:** 2026-10-27 (ST-31/ST-32, EPIC-05, v9.13, BLG-OPS-19/BLG-OPS-23 — v9.13.0 entry: new GET /ops/api-call-attribution; GET /screener/history gains duration_seconds); prior — 2026-10-27 (ST-29, EPIC-05, v9.13, BLG-OPS-189 — v9.13.0 entry: GET /health/detailed gains render_service_id); prior — 2026-10-27 (ST-28, EPIC-05, v9.13, BLG-OPS-187 — v9.13.0 entry: POST /ai/check-daily-cost returns 503 on a failed cost query); prior history retained — see prior entries in version control
+**Version:** 1.25.0
+**Last Updated:** 2026-10-29 (ST-03, EPIC-01, v9.14, BLG-BE-193 — v9.14.0 entry: GET /market/status and GET /market/regime report an unknown regime); prior — 2026-10-27 (ST-31/ST-32, EPIC-05, v9.13, BLG-OPS-19/BLG-OPS-23 — v9.13.0 entry: new GET /ops/api-call-attribution; GET /screener/history gains duration_seconds); prior — 2026-10-27 (ST-29, EPIC-05, v9.13, BLG-OPS-189 — v9.13.0 entry: GET /health/detailed gains render_service_id); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 # API Changelog
@@ -37,6 +37,18 @@ Rules:
 **Sign-off:** Head of Specs Team — Approved. Formalising an already-consistently-used structure (rather than introducing a new one requiring migration) is the right scope for this story — the conformance check confirms there was nothing to migrate. Sprint Execution Engine (agent-mediated, Head of Specs Team role — §5.3), 2026-09-08.
 
 ---
+
+## v9.14.0 (2026-10-29 — Release v9.14)
+
+### market_endpoints.md — v0.4 (UPDATED)
+
+**EPIC:** EPIC-01
+**ST:** ST-03
+
+| Change | Details |
+|--------|---------|
+| Updated endpoint: GET /market/status | Each index adds `regime_status` (`risk_on`, `risk_off` or `unknown`). When the index data is unavailable from every source, `price`, `ma200` and `is_risk_on` are `null` and `regime_status` is `unknown`, instead of a defaulted risk-on with price 0 (BLG-BE-193). |
+| Updated endpoint: GET /market/regime | `data[].status` adds `unknown` for an unmeasured market (BLG-BE-193). |
 
 ## v9.13.0 (2026-10-16 — Release v9.13)
 

@@ -136,6 +136,10 @@ def _get_regime() -> Optional[dict]:
     try:
         from utils.pricing import check_market_regime
         r = check_market_regime()
+        # ST-03: null when either market's regime is unknown (contract:
+        # "Null if market data unavailable").
+        if r.get("spy_risk_on") is None or r.get("ftse_risk_on") is None:
+            return None
         return {
             "label": _regime_label(r.get("spy_risk_on", False), r.get("ftse_risk_on", False)),
             "spy_risk_on": r.get("spy_risk_on"),

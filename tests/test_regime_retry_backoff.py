@@ -14,6 +14,7 @@ fallback behaviour once attempts are exhausted.
 import requests
 
 import utils.pricing as pricing
+import services.alpaca_service as alpaca_service
 import services.screener_batch_service as screener_batch_service
 
 
@@ -74,9 +75,10 @@ def test_ma200_retries_on_connection_error_then_succeeds(monkeypatch):
     assert calls["n"] == 2  # one transient failure, then success — retry happened before result
 
 
-def test_check_market_regime_defaults_to_risk_on_after_persistent_failures(monkeypatch):
-    """End-to-end: check_market_regime() falls back exactly as before once retries
-    (ST-09's decorator, 3 attempts per index) are exhausted."""
+def test_check_market_regime_unknown_after_persistent_failures(monkeypatch):
+    """End-to-end: once retries (ST-09's decorator, 3 attempts per index) are
+    exhausted, the regime is unknown, not defaulted to risk-on (ST-03, v9.14,
+    BLG-BE-193). The SPY Alpaca fallback (ST-02) is stubbed to fail too."""
     # check_market_regime() now caches its result for 5 minutes (BLG-BE-25,
     # consolidated here BLG-BE-97 v8.8 ST-07) — clear any leftover cache
     # entry from an earlier test in this session before asserting a fresh
@@ -90,15 +92,17 @@ def test_check_market_regime_defaults_to_risk_on_after_persistent_failures(monke
         raise requests.exceptions.ConnectionError("still down")
 
     monkeypatch.setattr(pricing.requests, "get", fake_get)
+    monkeypatch.setattr(alpaca_service, "get_ohlcv_bars", lambda *a, **k: None)
     result = pricing.check_market_regime()
-    assert result["spy_risk_on"] is True  # unchanged fallback behaviour
-    assert result["ftse_risk_on"] is True
+    assert result["spy_risk_on"] is None
+    assert result["ftse_risk_on"] is None
+    assert result["spy_regime_status"] == "unknown"
     # 2 indices (SPY, FTSE) x 3 attempts each = 6 — retry attempts occurred before fallback
     assert calls["n"] == 6
 
 
 def test_ma200_no_chart_data_not_retried(monkeypatch):
-    # See cache-clear note in test_check_market_regime_defaults_to_risk_on_after_persistent_failures.
+    # See cache-clear note in test_check_market_regime_unknown_after_persistent_failures.
     pricing._market_regime_cache.clear()
     monkeypatch.setattr(pricing.time, "sleep", lambda *_: None)
     calls = {"n": 0}
@@ -108,8 +112,9 @@ def test_ma200_no_chart_data_not_retried(monkeypatch):
         return _FakeResponse({"chart": {"result": []}})  # well-formed, no usable data
 
     monkeypatch.setattr(pricing.requests, "get", fake_get)
+    monkeypatch.setattr(alpaca_service, "get_ohlcv_bars", lambda *a, **k: None)
     result = pricing.check_market_regime()
-    assert result["spy_risk_on"] is True  # falls back, unchanged behaviour
+    assert result["spy_risk_on"] is None  # unknown (ST-03)
     assert calls["n"] == 2  # 1 attempt per index (SPY, FTSE) — no retry on ValueError
 
 

@@ -316,9 +316,11 @@ export const base44 = {
         } catch (e) {
           console.error('Failed to get market regime', e);
         }
+        // ST-03 (BLG-BE-193, v9.14): a failed fetch is an unknown regime,
+        // never a defaulted risk-on.
         return [
-          { market: 'US', status: 'risk_on' },
-          { market: 'UK', status: 'risk_on' },
+          { market: 'US', status: 'unknown' },
+          { market: 'UK', status: 'unknown' },
         ];
       },
     },

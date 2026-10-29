@@ -464,7 +464,7 @@ export default function Dashboard() {
         return (
           <MarketRegimeCard
             market="US"
-            status={marketRegimes?.find(r => r.market === "US")?.status || "risk_on"}
+            status={marketRegimes?.find(r => r.market === "US")?.status || "unknown"}
             index="SPY"
           />
         );
@@ -472,7 +472,7 @@ export default function Dashboard() {
         return (
           <MarketRegimeCard
             market="UK"
-            status={marketRegimes?.find(r => r.market === "UK")?.status || "risk_on"}
+            status={marketRegimes?.find(r => r.market === "UK")?.status || "unknown"}
             index="FTSE 100"
           />
         );

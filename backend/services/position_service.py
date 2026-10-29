@@ -45,7 +45,10 @@ from utils.pricing import (
     get_current_price,
     get_live_fx_rate,
     check_market_regime,
-    calculate_atr
+    calculate_atr,
+    market_regime_status,
+    REGIME_RISK_OFF,
+    REGIME_UNKNOWN,
 )
 
 from utils.calculations import (
@@ -383,8 +386,8 @@ def analyze_positions() -> Dict:
     # Get market regime
     print("\n📊 Checking market regime...")
     market_regime = check_market_regime()
-    print(f"   SPY: {'🟢 Risk On' if market_regime['spy_risk_on'] else '🔴 Risk Off'}")
-    print(f"   FTSE: {'🟢 Risk On' if market_regime['ftse_risk_on'] else '🔴 Risk Off'}")
+    print(f"   SPY: {market_regime_status(market_regime, 'US')}")
+    print(f"   FTSE: {market_regime_status(market_regime, 'UK')}")
     
     # ST-01 (BLG-BE-138, v9.10, ruling (a)): stop multipliers come from the
     # fixed §11 source, never from the editable settings row.
@@ -786,6 +789,7 @@ def run_nightly_risk_off_alerts() -> Dict:
       - If SPY < MA200: set risk_off_exit=True for all open US positions
       - If FTSE < MA200: set risk_off_exit=True for all open UK positions
       - Clear (risk_off_exit=False) when the relevant index recovers above MA200
+      - Unknown regime (ST-03): that market's flags are left unchanged
 
     Market isolation: US risk-off does NOT affect UK positions and vice versa.
     """
@@ -799,11 +803,13 @@ def run_nightly_risk_off_alerts() -> Dict:
     positions = get_positions(portfolio_id, status='open')
     market_regime = check_market_regime()
 
-    spy_risk_on = market_regime.get('spy_risk_on', True)
-    ftse_risk_on = market_regime.get('ftse_risk_on', True)
+    spy_risk_on = market_regime.get('spy_risk_on')
+    ftse_risk_on = market_regime.get('ftse_risk_on')
+    us_status = market_regime_status(market_regime, 'US')
+    uk_status = market_regime_status(market_regime, 'UK')
 
-    us_risk_off = not spy_risk_on
-    uk_risk_off = not ftse_risk_on
+    us_risk_off = us_status == REGIME_RISK_OFF
+    uk_risk_off = uk_status == REGIME_RISK_OFF
 
     flagged_us = 0
     cleared_us = 0
@@ -814,6 +820,11 @@ def run_nightly_risk_off_alerts() -> Dict:
         pos = decimal_to_float(pos)
         position_id = str(pos['id'])
         market = pos['market']
+
+        # ST-03 ruling (a): an unknown regime never triggers the risk-off
+        # exit and does not clear one either — the flag is left as it was.
+        if (us_status if market == 'US' else uk_status) == REGIME_UNKNOWN:
+            continue
 
         if market == 'US':
             new_flag = us_risk_off
@@ -838,6 +849,8 @@ def run_nightly_risk_off_alerts() -> Dict:
         },
         "us_risk_off": us_risk_off,
         "uk_risk_off": uk_risk_off,
+        "us_regime_status": us_status,
+        "uk_regime_status": uk_status,
         "us_positions_flagged": flagged_us,
         "us_positions_cleared": cleared_us,
         "uk_positions_flagged": flagged_uk,

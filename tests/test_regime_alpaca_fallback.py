@@ -90,12 +90,15 @@ def test_ftse_has_no_alpaca_fallback(monkeypatch):
     assert result["ftse_source"] is None
 
 
-def test_both_sources_failing_keeps_the_existing_fallback(monkeypatch):
+def test_both_sources_failing_gives_an_unknown_regime(monkeypatch):
+    # ST-02 AC 3 kept the risk-on fallback until ST-03; ST-03 (same branch)
+    # replaces it with the unknown state.
     _yahoo_fails(monkeypatch)
     monkeypatch.setattr(alpaca_service, "get_ohlcv_bars", lambda *a, **k: None)
 
     result = pricing.check_market_regime()
 
     assert result["spy_source"] is None
-    assert result["spy_risk_on"] is True
-    assert result["spy_price"] == 0
+    assert result["spy_risk_on"] is None
+    assert result["spy_regime_status"] == "unknown"
+    assert result["spy_price"] is None

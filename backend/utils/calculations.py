@@ -414,7 +414,7 @@ def should_exit_position(
     current_price: float,
     stop_price: float,
     holding_days: int,
-    market_risk_on: bool,
+    market_risk_on: Optional[bool],
     grace_period_days: int = GRACE_PERIOD_DAYS
 ) -> Tuple[bool, Optional[str]]:
     """
@@ -424,7 +424,9 @@ def should_exit_position(
         current_price: Current price in native currency
         stop_price: Stop loss price in native currency
         holding_days: Days held
-        market_risk_on: True if market regime is risk-on
+        market_risk_on: True if market regime is risk-on, False if risk-off,
+            None if unknown (ST-03: an unknown regime never triggers the
+            §8.2 risk-off exit; the stop still applies)
         grace_period_days: Grace period before stops are active (default 10)
     
     Returns:
@@ -447,8 +449,9 @@ def should_exit_position(
         >>> should_exit_position(105, 100, 15, False)
         (True, 'Risk-Off Signal')
     """
-    # Check market regime first (overrides everything)
-    if not market_risk_on:
+    # Check market regime first (overrides everything). Only a measured
+    # risk-off counts; None (unknown) falls through to the stop check.
+    if market_risk_on is False:
         return True, "Risk-Off Signal"
     
     # Check grace period

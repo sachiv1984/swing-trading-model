@@ -123,7 +123,8 @@ from utils.pricing import (
     get_current_price,
     get_live_fx_rate,
     check_market_regime,
-    calculate_atr
+    calculate_atr,
+    market_regime_status,
 )
 
 from models import (
@@ -1384,8 +1385,8 @@ def get_market_regime():
         return {
             "status": "ok",
             "data": [
-                {"market": "US", "status": "risk_on" if regime["spy_risk_on"] else "risk_off"},
-                {"market": "UK", "status": "risk_on" if regime["ftse_risk_on"] else "risk_off"},
+                {"market": "US", "status": market_regime_status(regime, "US")},
+                {"market": "UK", "status": market_regime_status(regime, "UK")},
             ],
             "as_of": as_of.isoformat() if hasattr(as_of, "isoformat") else as_of,
         }
@@ -1456,23 +1457,26 @@ def get_market_status():
         fx_rate = get_live_fx_rate()
         
         print(f"✓ Market status retrieved:")
-        print(f"   SPY: {'🟢 Risk On' if market_regime['spy_risk_on'] else '🔴 Risk Off'}")
-        print(f"   FTSE: {'🟢 Risk On' if market_regime['ftse_risk_on'] else '🔴 Risk Off'}")
+        print(f"   SPY: {market_regime_status(market_regime, 'US')}")
+        print(f"   FTSE: {market_regime_status(market_regime, 'UK')}")
         print(f"   FX Rate: {fx_rate:.4f}\n")
-        
+
+        def _index(prefix: str, market: str) -> dict:
+            # ST-03: price, ma200 and is_risk_on are null when the regime is unknown.
+            price = market_regime[f"{prefix}_price"]
+            ma200 = market_regime[f"{prefix}_ma200"]
+            return {
+                "price": round(price, 2) if price is not None else None,
+                "ma200": round(ma200, 2) if ma200 is not None else None,
+                "is_risk_on": market_regime[f"{prefix}_risk_on"],
+                "regime_status": market_regime_status(market_regime, market),
+            }
+
         return {
             "status": "ok",
             "data": {
-                "spy": {
-                    "price": round(market_regime['spy_price'], 2),
-                    "ma200": round(market_regime['spy_ma200'], 2),
-                    "is_risk_on": market_regime['spy_risk_on']
-                },
-                "ftse": {
-                    "price": round(market_regime['ftse_price'], 2),
-                    "ma200": round(market_regime['ftse_ma200'], 2),
-                    "is_risk_on": market_regime['ftse_risk_on']
-                },
+                "spy": _index("spy", "US"),
+                "ftse": _index("ftse", "UK"),
                 "fx_rate": round(fx_rate, 4),
                 "last_updated": datetime.now().isoformat()
             }

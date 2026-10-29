@@ -263,6 +263,28 @@ def _alpaca_fetch_ma200_pair(ticker: str):
     return closes[-1], sum(window) / len(window)
 
 
+REGIME_RISK_ON = "risk_on"
+REGIME_RISK_OFF = "risk_off"
+REGIME_UNKNOWN = "unknown"
+
+
+def _regime_status(risk_on: Optional[bool]) -> str:
+    if risk_on is None:
+        return REGIME_UNKNOWN
+    return REGIME_RISK_ON if risk_on else REGIME_RISK_OFF
+
+
+def market_regime_status(regime: Dict, market: str) -> str:
+    """
+    "risk_on" | "risk_off" | "unknown" for one market ("US" or "UK") of a
+    check_market_regime() result (ST-03, BLG-BE-193). Callers use this rather
+    than truth-testing spy_risk_on / ftse_risk_on, which are None when the
+    regime is unknown: `not None` would read as risk-off.
+    """
+    key = "ftse_risk_on" if market.upper() == "UK" else "spy_risk_on"
+    return _regime_status(regime.get(key))
+
+
 _market_regime_cache: dict = {}
 _MARKET_REGIME_TTL_SECONDS = 300  # 5-minute shared cache (BLG-BE-25, v5.0 ST-07; consolidated here BLG-BE-97, v8.8 ST-07)
 
@@ -280,12 +302,10 @@ def check_market_regime() -> Dict[str, any]:
 
     Returns:
         Dictionary with:
-            - spy_risk_on: bool (SPY > 200-day MA)
-            - ftse_risk_on: bool (FTSE > 200-day MA)
-            - spy_price: float
-            - spy_ma200: float
-            - ftse_price: float
-            - ftse_ma200: float
+            - spy_risk_on: bool (SPY > 200-day MA), or None when unknown
+            - ftse_risk_on: bool (FTSE > 200-day MA), or None when unknown
+            - spy_regime_status / ftse_regime_status: "risk_on" | "risk_off" | "unknown"
+            - spy_price, spy_ma200, ftse_price, ftse_ma200: float, or None when unknown
             - spy_source: "yahoo_finance" | "alpaca" | None — which source
               produced the SPY reading (ST-02, BLG-BE-192); None if neither did
             - ftse_source: "yahoo_finance" | None
@@ -295,7 +315,9 @@ def check_market_regime() -> Dict[str, any]:
         - Results are cached for 5 minutes (BLG-BE-25) — a cache hit returns
           immediately with no network call.
         - SPY falls back to Alpaca daily bars when Yahoo Finance fails (ST-02)
-        - Defaults to risk-on if data unavailable
+        - A market no source could measure is "unknown" (ST-03): under the
+          strategy_rules.md §4.2.1 / §8.2 ruling it blocks new entries there
+          and never triggers the risk-off exit
         - Includes 300ms delay to avoid rate limiting
         - Retries transient network failures before falling back (ST-09, ~3 attempts)
         - Used to determine if positions should be exited
@@ -341,30 +363,30 @@ def check_market_regime() -> Dict[str, any]:
         ftse_price, ftse_ma200 = get_ma200("^FTSE")
         ftse_source = "yahoo_finance" if ftse_price is not None and ftse_ma200 is not None else None
         
-        # Default to risk-on if we can't fetch data
+        # Unknown when no source measured the index (ST-03, BLG-BE-193;
+        # strategy_rules.md §4.2.1 / §8.2 ruling (a), ESC-EXEC-20261029-01):
+        # risk_on, price and MA are None, never a defaulted risk-on reading.
         if spy_price is None or spy_ma200 is None:
-            print("⚠️  Could not fetch SPY data, defaulting to risk-on")
-            spy_risk_on = True
-            spy_price = 0
-            spy_ma200 = 0
+            print("⚠️  Could not fetch SPY data — US regime unknown")
+            spy_risk_on, spy_price, spy_ma200 = None, None, None
         else:
             spy_risk_on = spy_price > spy_ma200
-        
+
         if ftse_price is None or ftse_ma200 is None:
-            print("⚠️  Could not fetch FTSE data, defaulting to risk-on")
-            ftse_risk_on = True
-            ftse_price = 0
-            ftse_ma200 = 0
+            print("⚠️  Could not fetch FTSE data — UK regime unknown")
+            ftse_risk_on, ftse_price, ftse_ma200 = None, None, None
         else:
             ftse_risk_on = ftse_price > ftse_ma200
-        
+
         result = {
             'spy_risk_on': spy_risk_on,
             'ftse_risk_on': ftse_risk_on,
-            'spy_price': spy_price or 0,
-            'spy_ma200': spy_ma200 or 0,
-            'ftse_price': ftse_price or 0,
-            'ftse_ma200': ftse_ma200 or 0,
+            'spy_regime_status': _regime_status(spy_risk_on),
+            'ftse_regime_status': _regime_status(ftse_risk_on),
+            'spy_price': spy_price,
+            'spy_ma200': spy_ma200,
+            'ftse_price': ftse_price,
+            'ftse_ma200': ftse_ma200,
             'spy_source': spy_source,
             'ftse_source': ftse_source,
             'date': now
@@ -379,12 +401,14 @@ def check_market_regime() -> Dict[str, any]:
         # should retry fresh on the next call rather than pin a synthetic
         # result for the full TTL window.
         return {
-            'spy_risk_on': True,
-            'ftse_risk_on': True,
-            'spy_price': 0,
-            'spy_ma200': 0,
-            'ftse_price': 0,
-            'ftse_ma200': 0,
+            'spy_risk_on': None,
+            'ftse_risk_on': None,
+            'spy_regime_status': REGIME_UNKNOWN,
+            'ftse_regime_status': REGIME_UNKNOWN,
+            'spy_price': None,
+            'spy_ma200': None,
+            'ftse_price': None,
+            'ftse_ma200': None,
             'spy_source': None,
             'ftse_source': None,
             'date': now
