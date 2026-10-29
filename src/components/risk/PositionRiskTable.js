@@ -52,7 +52,7 @@ export default function PositionRiskTable({ positions = [], error }) {
           <div className="p-2 rounded-lg bg-gradient-to-br from-violet-500/30 to-fuchsia-500/30">
             <ArrowDown className="w-5 h-5 text-violet-400" />
           </div>
-          <h3 className="text-sm font-medium text-slate-300">Position Risk</h3>
+          <h2 className="text-sm font-medium text-slate-300">Position Risk</h2>
         </div>
         <div className="p-6 flex items-center gap-3 rounded-b-2xl bg-rose-900/10 border-t border-rose-500/20">
           <AlertCircle className="w-4 h-4 text-rose-400 flex-shrink-0" />
@@ -76,7 +76,7 @@ export default function PositionRiskTable({ positions = [], error }) {
         <div className="p-2 rounded-lg bg-gradient-to-br from-violet-500/30 to-fuchsia-500/30">
           <ArrowDown className="w-5 h-5 text-violet-400" />
         </div>
-        <h3 className="text-sm font-medium text-slate-300">Position Risk</h3>
+        <h2 className="text-sm font-medium text-slate-300">Position Risk</h2>
         <span className="ml-auto text-xs text-slate-600 dark:text-slate-400">{sorted.length} open</span>
       </div>
       <div className="overflow-x-auto">

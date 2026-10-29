@@ -62,6 +62,7 @@ test('SC-MRU-01: Card 4 shows SPY as UNKNOWN with the ruling as its accessible d
   await expect(badge).toBeVisible({ timeout: 15000 });
   await expect(badge).toHaveText('UNKNOWN ?');
   await expect(badge).toHaveAccessibleDescription(US_EXPLANATION);
+  await expect(page.getByRole('link').filter({ has: badge })).toHaveAccessibleDescription(US_EXPLANATION);
   await expect(page.getByText('RISK-ON ✓')).toHaveCount(1);
   await expect(page.getByText('RISK-OFF ✗')).toHaveCount(0);
 });

@@ -21,7 +21,7 @@ export default function GracePeriodPanel({ positions = [], error }) {
         <div className="p-2 rounded-lg bg-gradient-to-br from-amber-500/30 to-orange-500/30">
           <ShieldAlert className="w-5 h-5 text-amber-400" />
         </div>
-        <h3 className="text-sm font-medium text-slate-300">Grace Period Positions</h3>
+        <h2 className="text-sm font-medium text-slate-300">Grace Period Positions</h2>
         {!error && gracePosts.length > 0 && (
           <span className="ml-auto text-xs px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30">
             {gracePosts.length} position{gracePosts.length > 1 ? "s" : ""} in grace period

@@ -38,7 +38,7 @@ export default function SectorHeatMap() {
   if (isLoading) {
     return (
       <div className="bg-slate-900 rounded-xl p-4 border border-slate-800">
-        <h3 className="text-sm font-medium text-slate-300 mb-3">Sector Concentration</h3>
+        <h2 className="text-sm font-medium text-slate-300 mb-3">Sector Concentration</h2>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
           {[1, 2, 3, 4].map((i) => (
             <div key={i} className="h-20 rounded-lg bg-slate-800 animate-pulse" />
@@ -58,7 +58,7 @@ export default function SectorHeatMap() {
   if (sectors.length === 0) {
     return (
       <div className="bg-slate-900 rounded-xl p-4 border border-slate-800">
-        <h3 className="text-sm font-medium text-slate-300 mb-2">Sector Concentration</h3>
+        <h2 className="text-sm font-medium text-slate-300 mb-2">Sector Concentration</h2>
         <p className="text-sm text-slate-600 dark:text-slate-400">No open positions.</p>
       </div>
     );
@@ -67,7 +67,7 @@ export default function SectorHeatMap() {
   return (
     <div className="bg-slate-900 rounded-xl p-4 border border-slate-800">
       <div className="flex items-center justify-between mb-3">
-        <h3 className="text-sm font-medium text-slate-300">Sector Concentration</h3>
+        <h2 className="text-sm font-medium text-slate-300">Sector Concentration</h2>
         {concentrationAlert && (
           <span className="text-xs font-medium text-amber-400 bg-amber-400/10 border border-amber-400/30 rounded px-2 py-0.5">
             Concentration Alert

@@ -248,11 +248,19 @@ def get_fx_rate_info(rate: Optional[float] = None) -> Dict:
     """
     if rate is None:
         rate = get_live_fx_rate()
-    source = _fx_state["source"] if _fx_state["rate"] == rate else FX_SOURCE_LIVE
-    as_of = _fx_state["as_of"]
+    if _fx_state["rate"] == rate and _fx_state["source"]:
+        source, as_of = _fx_state["source"], _fx_state["as_of"]
+    elif rate == DEFAULT_FX_RATE:
+        # The shared state moved on (another request fetched since) or was
+        # never set: fail closed rather than report a fallback as live.
+        source, as_of = FX_SOURCE_CONSTANT, None
+    elif _fx_cache["rate"] == rate:
+        source, as_of = FX_SOURCE_LIVE, _fx_state["as_of"] if _fx_state["rate"] == rate else None
+    else:
+        source, as_of = FX_SOURCE_LAST_KNOWN, _fx_last_good["as_of"] if _fx_last_good["rate"] == rate else None
     return {
         "fx_rate": rate,
-        "fx_rate_source": source or FX_SOURCE_LIVE,
+        "fx_rate_source": source,
         "fx_rate_as_of": as_of.isoformat() if hasattr(as_of, "isoformat") else as_of,
     }
 

@@ -125,3 +125,28 @@ def test_market_status_carries_the_fx_source():
     assert data["fx_rate"] == 1.3301
     assert data["fx_rate_source"] == "last_known"
     assert data["fx_rate_as_of"] == FETCHED_AT.isoformat()
+
+
+def test_mismatched_constant_fails_closed(monkeypatch):
+    # Another request moved the shared state to a live rate after this one got the constant.
+    monkeypatch.setitem(pricing._fx_state, "rate", 1.3412)
+    monkeypatch.setitem(pricing._fx_state, "source", "live")
+    monkeypatch.setitem(pricing._fx_cache, "rate", 1.3412)
+
+    info = pricing.get_fx_rate_info(pricing.DEFAULT_FX_RATE)
+
+    assert info["fx_rate_source"] == "constant"
+    assert info["fx_rate_as_of"] is None
+
+
+def test_mismatched_last_known_rate_is_not_reported_live(monkeypatch):
+    monkeypatch.setitem(pricing._fx_state, "rate", 1.3412)
+    monkeypatch.setitem(pricing._fx_state, "source", "live")
+    monkeypatch.setitem(pricing._fx_cache, "rate", 1.3412)
+    monkeypatch.setitem(pricing._fx_last_good, "rate", 1.3301)
+    monkeypatch.setitem(pricing._fx_last_good, "as_of", FETCHED_AT)
+
+    info = pricing.get_fx_rate_info(1.3301)
+
+    assert info["fx_rate_source"] == "last_known"
+    assert info["fx_rate_as_of"] == FETCHED_AT.isoformat()

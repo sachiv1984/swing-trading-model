@@ -96,3 +96,9 @@ def test_market_regime_returns_unknown():
         resp = CLIENT.get("/market/regime")
     assert resp.status_code == 200
     assert resp.json()["data"] == [{"market": "US", "status": "unknown"}, {"market": "UK", "status": "risk_on"}]
+
+
+def test_legacy_cli_does_not_read_unknown_as_risk_off():
+    import position_manager
+    assert position_manager.is_risk_on("MU", SPY_UNKNOWN) is True
+    assert position_manager.is_risk_on("MU", {"spy_risk_on": False}) is False

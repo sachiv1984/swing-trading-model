@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-29 (Sprint Execution 2026-10-29__release-v9.14 EPIC-01 — 2 new item(s) added: BLG-TECH-33, BLG-OPS-203; no existing item edited); prior — 2026-10-29 (Sprint Planning 2026-10-29__release-v9.14 STEP 6.2 — 6 new post-merge tracking item(s) added: BLG-OPS-200, BLG-GOV-399, BLG-OPS-201, BLG-OPS-202, BLG-SEC-44, BLG-GOV-400; no existing item edited); prior — 2026-10-29 (Release Planning 2026-10-29__release-v9.14 §1.3a — BLG-FEAT-58 and BLG-BE-43 re-gated on the same PO-02 condition (false-positive date lapse); no other item edited); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-29 (Sprint Execution 2026-10-29__release-v9.14 EPIC-01 DoQ review — 3 new item(s) added: BLG-OPS-204, BLG-SPEC-210, BLG-QA-239; no existing item edited); prior — 2026-10-29 (Sprint Execution 2026-10-29__release-v9.14 EPIC-01 — 2 new item(s) added: BLG-TECH-33, BLG-OPS-203; no existing item edited); prior — 2026-10-29 (Sprint Planning 2026-10-29__release-v9.14 STEP 6.2 — 6 new post-merge tracking item(s) added: BLG-OPS-200, BLG-GOV-399, BLG-OPS-201, BLG-OPS-202, BLG-SEC-44, BLG-GOV-400; no existing item edited); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -6002,3 +6002,63 @@ DS-37 (`data_model.md` v2.66) adds the `fx_rate_last_good` table, created at run
 - Each environment shows 3 columns (`pair`, `rate`, `fetched_at`), none nullable, and one `GBPUSD` row with a recent `fetched_at`, recorded with the date
 
 ---
+
+### BLG-OPS-204 — Point Render staging back at main and confirm its build from main
+**Priority:** P2 (Medium)
+**Type:** Operations / Deployment
+**Owner:** Infrastructure & Operations Owner
+**Source:** Sprint execution `2026-10-29__release-v9.14`, ST-01 (BLG-OPS-193), EPIC-01 — agent-mediated DoQ review finding 2 — 2026-10-29
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.14
+**Depends on:** EPIC-01 of `2026-10-29__release-v9.14` merged to `main`
+
+**Problem**
+ST-01 AC 2 asks for the Render staging frontend to build from `main` with no dashboard-only ESLint workaround. Before merge it could only be shown on the EPIC branch: the user pointed `trading-assistant-staging` at `exec/2026-10-29__release-v9.14/EPIC-01`, removed `DISABLE_ESLINT_PLUGIN`, and the build of `4719c694` succeeded (`DEL-20261029-01`). Staging still points at the branch, so it will go stale unless it is pointed back at `main`. BLG-OPS-200 covers only `deploy.yml` and GitHub Pages.
+
+**Scope**
+- After EPIC-01 merges, set the `trading-assistant-staging` branch back to `main` in the Render dashboard
+- Confirm the first staging build from `main` succeeds with no `DISABLE_ESLINT_PLUGIN` (the repo `.npmrc` supplies `legacy-peer-deps`)
+
+**Acceptance Criteria**
+- Staging's branch is `main`, recorded with date
+- The staging build of a `main` commit containing `3fbfe5e3` succeeds, with its "Compiled" line and commit recorded in the v9.14 QA evidence for EPIC-01
+
+---
+
+### BLG-SPEC-210 — Document the unknown-regime response shapes on three endpoints, and drop the unruled branches from two page specs
+**Priority:** P3 (Low)
+**Type:** Spec Debt
+**Owner:** API Contracts & Documentation Owner; Frontend Specifications & UX Documentation Owner
+**Source:** Sprint execution `2026-10-29__release-v9.14`, ST-03 (BLG-BE-193), EPIC-01 — agent-mediated DoQ review findings 6 and 9 — 2026-10-29
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.15
+
+**Problem**
+ST-03 made an unmeasured market regime `unknown` (`strategy_rules.md` v1.20). Three responses changed shape without contract updates: `POST /positions/risk-off-alerts` now returns `us_regime_status`/`uk_regime_status` and nullable `spy_risk_on`/`ftse_risk_on`, and leaves an unknown market's flags unchanged; `GET /positions/analyze`'s `market_regime` now carries `*_regime_status`, `spy_source`/`ftse_source` and null prices; the signals generate response's `market_regime.spy_risk_on`/`ftse_risk_on` can be null. Separately, `dashboard.md` v3.10 §Card 4 and `signals.md` v0.7 §Market Status Bar still describe all three ruling branches; the ruling was (a), and the decision record says the unused branches are deleted at implementation.
+
+**Scope**
+- Update `position_endpoints.md` (§POST /positions/risk-off-alerts, §GET /positions/analyze), `signal_endpoints.md` (generate response) and `openapi.yaml` for the nullable/added fields
+- Remove branches (b) and (c) from `dashboard.md` §Card 4 and `signals.md` §Market Status Bar, keeping the ruling (a) sentence
+
+**Acceptance Criteria**
+- Each of the three contracts documents the unknown case, with `openapi.yaml` matching
+- Neither page spec mentions "last known" or "risk-on with a warning" as a live behaviour
+
+---
+
+### BLG-QA-239 — Test that live signal generation gives no entry signals for an unknown market
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** QA & Testing Owner
+**Source:** Sprint execution `2026-10-29__release-v9.14`, ST-03 (BLG-BE-193), EPIC-01 — agent-mediated DoQ review finding 8 — 2026-10-29
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.15
+
+**Problem**
+ST-03 changed `signal_service.generate_momentum_signals` so a market whose index data is unavailable is unknown (None) and gets no entry signals, as `strategy_rules.md` v1.20 §4.2.1 requires. Before, both indices were assumed risk-on when either was missing. The behaviour has no unit test; only the shared helpers and the pre-entry gate are covered.
+
+**Scope**
+- Add a test with SPY data unavailable and FTSE data available: no US signals, UK signals unaffected, and `market_regime.spy_risk_on` is None in the response
+
+**Acceptance Criteria**
+- The test fails if an unknown market is treated as risk-on again

@@ -1,16 +1,22 @@
-import { useId, useState } from "react";
+import { useId, useRef, useState } from "react";
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "./tooltip";
 import { cn } from "../../lib/utils";
 
 export default function ExplainedMarker({ label, description, testId, className, children }) {
   const descriptionId = useId();
   const [open, setOpen] = useState(false);
+  const openAtPress = useRef(null);
 
-  const keepOpenOnPress = (event) => event.preventDefault();
+  const rememberOpenOnPress = (event) => {
+    openAtPress.current = open;
+    event.preventDefault();
+  };
   const toggle = (event) => {
     event.preventDefault();
     event.stopPropagation();
-    setOpen((wasOpen) => !wasOpen);
+    const wasOpen = openAtPress.current ?? open;
+    openAtPress.current = null;
+    setOpen(!wasOpen);
   };
 
   return (
@@ -22,7 +28,7 @@ export default function ExplainedMarker({ label, description, testId, className,
             aria-label={label || undefined}
             aria-describedby={descriptionId}
             data-testid={testId}
-            onPointerDown={keepOpenOnPress}
+            onPointerDown={rememberOpenOnPress}
             onClick={toggle}
             className={cn(
               "inline-flex items-center gap-1 rounded focus-visible:outline-none focus-visible:ring-2",

@@ -73,11 +73,18 @@ export default function SignalStatusCard() {
     { market: "FTSE", status: regimeStatusOf(mktData?.ftse) },
   ];
 
+  const usDescriptionId = useId();
+  const ukDescriptionId = useId();
+  const descriptionIds = { SPY: usDescriptionId, FTSE: ukDescriptionId };
+  const descriptions = regimes
+    .filter((r) => r.status === REGIME_UNKNOWN && descriptionIds[r.market])
+    .map((r) => ({ id: descriptionIds[r.market], text: unknownRegimeExplanation(REGION_BY_INDEX[r.market]) }));
+
   const signals = Array.isArray(signalsQuery.data) ? signalsQuery.data : [];
   const todaySignals = signals.filter(s => s.signal_date === today || s.created_date?.startsWith(today));
 
   return (
-    <DashboardCard title="Signal Status" to="/Signals" isLoading={isLoading} error={error}>
+    <DashboardCard title="Signal Status" to="/Signals" isLoading={isLoading} error={error} descriptions={descriptions}>
       <div className="space-y-2 mb-3">
         {regimes.map(r => <RegimeRow key={r.market} market={r.market} status={r.status} />)}
       </div>

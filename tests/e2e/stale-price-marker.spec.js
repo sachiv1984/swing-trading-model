@@ -6,7 +6,7 @@
  *   SC-SPM-01: the Positions table and grid show price-stale-marker on the stale row only (ST-07 AC 3)
  *   SC-SPM-02: on /risk and on Positions the marker is reachable by Tab, its accessible description is the
  *              decision record §2.3 text for that surface, and focus or a tap opens the tooltip (ST-08 AC 2, AC 3)
- *   SC-SPM-03: axe finds no serious or critical violation on /risk with a stale row (ST-08 AC 1)
+ *   SC-SPM-03: axe finds no violation on /risk with a stale row (ST-08 AC 1)
  *   SC-SPM-04: Dashboard Card 2's link carries the /risk explanation as its accessible description
  *
  * Infrastructure: Playwright page.route() network interception. No live backend required.
@@ -78,6 +78,9 @@ test('SC-SPM-01b: the Positions grid marks the stale card only', async ({ page }
   await gotoPositions(page, 'Grid');
   await expect(page.getByText('WDC').first()).toBeVisible({ timeout: 15000 });
   await expect(page.getByTestId('price-stale-marker')).toHaveCount(1);
+  const card = (ticker) => page.locator('div').filter({ hasText: ticker }).filter({ has: page.getByText('Current', { exact: true }) }).last();
+  await expect(card('MU').getByTestId('price-stale-marker')).toHaveCount(1);
+  await expect(card('WDC').getByTestId('price-stale-marker')).toHaveCount(0);
 });
 
 test('SC-SPM-02a: the /risk marker is reachable by Tab and described', async ({ page }) => {
@@ -97,24 +100,29 @@ test('SC-SPM-02a: the /risk marker is reachable by Tab and described', async ({ 
   await expect(page.getByRole('tooltip')).toHaveCount(0);
 });
 
-test('SC-SPM-02b: the Positions marker uses the Positions text and opens on tap', async ({ page }) => {
-  await mockAll(page);
-  await gotoPositions(page, 'Table');
-  const marker = page.getByRole('row').filter({ hasText: 'MU' }).getByTestId('price-stale-marker');
-  await expect(marker).toBeVisible({ timeout: 15000 });
-  await expect(marker).toHaveAccessibleDescription(POSITIONS_TEXT);
-  await marker.click();
-  await expect(page.getByRole('tooltip')).toContainText('Value and P&L use this price');
+test.describe('touch', () => {
+  test.use({ hasTouch: true });
+
+  test('SC-SPM-02b: the Positions marker uses the Positions text and a tap toggles it', async ({ page }) => {
+    await mockAll(page);
+    await gotoPositions(page, 'Table');
+    const marker = page.getByRole('row').filter({ hasText: 'MU' }).getByTestId('price-stale-marker');
+    await expect(marker).toBeVisible({ timeout: 15000 });
+    await expect(marker).toHaveAccessibleDescription(POSITIONS_TEXT);
+    await marker.tap();
+    await expect(page.getByRole('tooltip')).toContainText('Value and P&L use this price');
+    await marker.tap();
+    await expect(page.getByRole('tooltip')).toHaveCount(0);
+  });
 });
 
-test('SC-SPM-03: axe finds no serious or critical violation on /risk with a stale row', async ({ page }) => {
+test('SC-SPM-03: axe finds no violation on /risk with a stale row', async ({ page }) => {
   await mockAll(page);
   await page.goto('/#/RiskDashboard');
   await expect(page.getByTestId('price-stale-marker')).toBeVisible({ timeout: 15000 });
   await page.waitForTimeout(1000);
   const results = await new AxeBuilder({ page }).analyze();
-  const serious = results.violations.filter((v) => v.impact === 'serious' || v.impact === 'critical');
-  expect(serious.map((v) => `${v.id}: ${v.nodes.map((n) => n.target.join(' ')).join(', ')}`)).toEqual([]);
+  expect(results.violations.map((v) => `${v.impact} ${v.id}: ${v.nodes.map((n) => n.target.join(' ')).join(', ')}`)).toEqual([]);
 });
 
 test('SC-SPM-04: Dashboard Card 2 link carries the /risk explanation', async ({ page }) => {

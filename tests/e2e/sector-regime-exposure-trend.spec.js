@@ -126,3 +126,20 @@ test('SC-SRT-03: error state renders on failed fetch, sibling Sector Concentrati
   await expect(page.getByText(/unable to load exposure trend/i)).toBeVisible({ timeout: 10000 });
   await expect(page.getByText('Sector Concentration')).toBeVisible();
 });
+
+test('SC-SRT-04: a week with no measured regime renders as unknown, not risk-off (ST-03, v9.14)', async ({ page }) => {
+  await mockCommonRiskDashboardRoutes(page);
+  const response = JSON.parse(JSON.stringify(SUFFICIENT_HISTORY_RESPONSE));
+  response.data.weeks[1].regime_uk = null;
+  await page.route(`${API_BASE}/portfolio/sector-regime-trend*`, (route) => {
+    route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(response) });
+  });
+
+  await navigateToRiskDashboard(page);
+
+  const uk = page.getByTestId('regime-row-regime_uk');
+  await expect(uk).toBeVisible({ timeout: 10000 });
+  await expect(uk.getByLabel('UK regime unknown (index data unavailable) for week of 2026-06-08')).toHaveCount(1);
+  await expect(uk.getByLabel('UK regime risk-off for week of 2026-06-01')).toHaveCount(1);
+  await expect(uk.getByLabel(/risk-off for week of 2026-06-08/)).toHaveCount(0);
+});
