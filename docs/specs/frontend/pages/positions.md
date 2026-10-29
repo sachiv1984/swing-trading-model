@@ -3,8 +3,9 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.20
-**Last Updated:** 2026-10-16 (v9.13 design gate — ST-01/BLG-FE-226: new §Daily Position Monitor Exit Queue; ST-22/BLG-FE-208: §AI Trade Advisor Widget gains §Answer Rating); prior — 2026-10-13 (ST-14, EPIC-02, v9.12, BLG-BE-148 — §Gap Risk Badge: next trading session is the next NYSE session on the US market date); prior — 2026-10-13 (ST-10, EPIC-02, v9.12, BLG-BE-159 — §Trail Stop Action: Branch B ruled, read-only "View Trail"; Branch A deleted); prior history retained — see prior entries in version control
+**Version:** 2.21
+**Last Updated:** 2026-10-29 (v9.14 design gate — ST-07/ST-08: new §Stale Price Marker; ST-11/BLG-FE-231: Monitor suggestions follow the grace period; ST-14/BLG-SPEC-192: Last Reviewed suppression covers ended grace); prior — 2026-10-16 (v9.13 design gate — ST-01/BLG-FE-226: new §Daily Position Monitor Exit Queue; ST-22/BLG-FE-208: §AI Trade Advisor Widget gains §Answer Rating); prior — 2026-10-13 (ST-14, EPIC-02, v9.12, BLG-BE-148 — §Gap Risk Badge: next trading session is the next NYSE session on the US market date); prior history retained — see prior entries in version control
+**Design Source (v9.14 additions):** docs/design/2026-10-29__release-v9.14/stale-price-marker/decision_record.md, docs/design/2026-10-29__release-v9.14/monitor-grace-aware-suggestions/decision_record.md, docs/design/2026-10-29__release-v9.14/last-reviewed-ended-grace/decision_record.md
 **Design Source (v9.13 additions):** docs/design/2026-10-16__release-v9.13/monitor-exit-queue/decision_record.md, docs/design/2026-10-16__release-v9.13/chat-answer-rating/decision_record.md
 **Design Source (v9.11 additions):** docs/design/2026-10-08__release-v9.11/grace-alert-calendar-days/decision_record.md
 **Design Source (v9.10 additions):** docs/design/2026-10-06__release-v9.10/stop-cell-provenance/decision_record.md, docs/design/2026-10-06__release-v9.10/exit-condition-surfacing/decision_record.md, docs/design/2026-10-06__release-v9.10/lifecycle-badge-grace-calendar-days/decision_record.md, docs/design/2026-10-06__release-v9.10/gap-risk-trigger-label-alignment/decision_record.md
@@ -27,6 +28,7 @@
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.21 | 2026-10-29 | v9.14 design gate. (ST-07/ST-08, BLG-BE-168/BLG-FE-214) new §Stale Price Marker on the Table and Grid views, the shared focusable `StaleMarker` from `risk_dashboard.md` §6.6. (ST-11, BLG-FE-231) new §Monitor Suggestions under §Daily Position Monitor Exit Queue: suggestions come from `getExitCondition()`, so an in-grace breach is not suggested; the "Stop price hit" note names the trailing stop and grace. (ST-14, BLG-SPEC-192) §Last Reviewed Column suppression covers stored GRACE with null `grace_days_remaining` and `holding_days ≥ 10`. Design sources: `docs/design/2026-10-29__release-v9.14/stale-price-marker/decision_record.md`, `.../monitor-grace-aware-suggestions/decision_record.md`, `.../last-reviewed-ended-grace/decision_record.md`. Head of UX & Design sign-off: 2026-10-29. Product Owner approved: 2026-10-29. Head of Specs Team confirmed. |
 | 2.20 | 2026-10-16 | v9.13 design gate. (ST-01, BLG-FE-226) New §Daily Position Monitor Exit Queue: the Monitor's exits run one `ExitModal` per selected position through `POST /positions/{id}/exit`, with Monitor-sourced pre-selection, a queue indicator and a failure state that keeps the queue. (ST-22, BLG-FE-208) §AI Trade Advisor Widget gains §Answer Rating. Design sources: `docs/design/2026-10-16__release-v9.13/monitor-exit-queue/decision_record.md`, `docs/design/2026-10-16__release-v9.13/chat-answer-rating/decision_record.md`. Head of UX & Design sign-off: 2026-10-16. Product Owner approved: 2026-10-16. Head of Specs Team confirmed. |
 | 2.19 | 2026-10-13 | v9.12 sprint execution (ST-14, EPIC-02, BLG-BE-148): §Gap Risk Badge and §Gap Risk Reason Labels — "next trading day" is the next NYSE session on the US market date (Revised Ruling 3, `ESC-EXEC-20261013-07`). Label text unchanged. |
 | 2.18 | 2026-10-13 | v9.12 sprint execution (ST-10, EPIC-02, BLG-BE-159): §Trail Stop Action — the Strategy Rules & System Intent Owner ruled Branch B (ESC-EXEC-20261013-06: no manual stop change). Branch A ("Raise stop to …", `PATCH /positions/{id}/stop`) and the conditional note are deleted. The button is "View Trail", and the modal is read-only with the no-raise note. |
@@ -95,7 +97,7 @@ Displays each open position as a row with:
 - Ticker
 - Market flag (US / UK)
 - Entry price (native currency)
-- Current price (native currency)
+- Current price (native currency) *(followed by the stale marker when `price_is_stale` is true — v2.21, see §Stale Price Marker)*
 - Initial Stop *(renamed from "Stop"; shows £0.00 / $0.00 during grace period)*
 - Trail Stop *(v6.2 — ST-02; see §Trailing Stop Column)*
 - Shares (supports fractional values)
@@ -199,7 +201,7 @@ Display a dash (`—`) or leave the cell visually empty. Do not display `"Day 0 
 Cards show a summarized snapshot of each position including:
 
 - Ticker & market
-- Entry vs current price
+- Entry vs current price *(stale marker after the current price when `price_is_stale` is true — v2.21)*
 - P&L
 - Stop level
 - Days held
@@ -630,12 +632,37 @@ The Daily Position Monitor (Dashboard → Quick Actions → Run Monitor, `Monito
 
 | Monitor suggestion | Pre-selected Exit Reason | Note (`exit-reason-preselect-note`) |
 |--------------------|--------------------------|-------------------------------------|
-| "Stop price hit" | "Stop Loss Hit" | "Pre-selected from the Daily Position Monitor: the price is at or below the stop." |
+| "Stop price hit" | "Stop Loss Hit" | "Pre-selected from the Daily Position Monitor: the price is at or below the trailing stop and the grace period has ended." *(v2.21 — ST-11)* |
 | "Market risk off" | "Risk-Off Signal" | "Pre-selected from the Daily Position Monitor: the {US\|UK} market is in a risk-off regime." |
 
 **Failure** (network error or non-2xx): `ExitModal` stays open with every entered value and the queue intact. An inline error appears at the top of the body: `AlertTriangle` + "Could not record the exit for {TICKER}. Nothing was changed for this position.", plus the response `detail` on a second line if present. `role="alert"`, `data-testid="exit-error"`, `text-rose-700 dark:text-rose-400` on `bg-rose-50 dark:bg-rose-500/10`, `border-rose-200 dark:border-rose-500/30`. The confirm button re-enables for a retry. While a submit is in flight it reads "Exiting…" and is disabled.
 
 **§13:** each exit is confirmed by the user, one position at a time. Nothing is submitted automatically.
+
+### Monitor Suggestions (v2.21 — ST-11, BLG-FE-231)
+
+**Design source:** `docs/design/2026-10-29__release-v9.14/monitor-grace-aware-suggestions/decision_record.md`
+
+The Monitor derives each row from the shared predicate `getExitCondition()` (`src/lib/exitCondition.js`), the same one the Positions exit dialog and the Dashboard "Exit Conditions Met" row use. It no longer compares `current_price` with `stop_price` or reads the regime itself.
+
+| `getExitCondition` result | Status | Reason line |
+|---------------------------|--------|-------------|
+| `riskOff` | exit | "Market risk off" |
+| `stopBreach` (post-grace, at or below the trailing stop), not `riskOff` | exit | "Stop price hit" |
+| At or below the trailing stop, but in grace | hold | "In grace: stop not enforced" |
+| Neither | hold | "Position OK" |
+
+Risk-off takes precedence when both apply. An in-grace position is never suggested for a stop exit (`strategy_rules.md` §8.1).
+
+---
+
+## Stale Price Marker (v2.21 — ST-07/ST-08, BLG-BE-168/BLG-FE-214)
+
+**Design source:** `docs/design/2026-10-29__release-v9.14/stale-price-marker/decision_record.md`
+
+When a position's `price_is_stale` (`GET /positions`) is `true`, the shared `StaleMarker` follows the current price: in the Table view's Current price cell, and in the Grid view card's entry-vs-current line. It is the `risk_dashboard.md` §6.6 marker (`Clock` + "stale", `text-xs text-amber-700 dark:text-amber-400`, a focusable button with a hover/focus/tap tooltip, `data-testid="price-stale-marker"`). Nothing is shown when the field is false, null or absent.
+
+Explanation (accessible description and tooltip): "Live price unavailable, so the last stored price is shown. Value and P&L use this price until a live price is fetched. Reload the page to try again." Prices here are native, so the text does not mention heat or a GBP conversion.
 
 ---
 
@@ -677,7 +704,7 @@ If the position is not in the list (closed, unknown, or filtered out), the param
 
 **Mark Reviewed action:** Small inline checkmark icon-button next to the text (not a full Actions-column button). Click → `PATCH /positions/{id}/mark-reviewed` (sets `last_reviewed_at = now()` server-side) → text resets to "Reviewed 0d ago", flagged state clears immediately (optimistic update). No confirmation modal.
 
-**Suppression rule (AC-04):** The flagged/amber state does not fire when the position is already surfaced by the Grace Period Alert Zone (`position_state = 'GRACE'` AND `grace_days_remaining ≤ 2` — the same predicate as the Alert Zone trigger, v2.15 ST-14) or the Drawdown Review Prompt (position included in the portfolio-level drawdown banner's position count). The "Last Reviewed" text still renders in both cases (informational); only the amber/flagged styling is suppressed. `days_since_review` continues counting underneath — if the position later exits GRACE/drawdown scope while still stale, the flag can fire on the next refresh.
+**Suppression rule (AC-04):** The flagged/amber state does not fire when the position is already surfaced by the Grace Period Alert Zone (`position_state = 'GRACE'` AND either `grace_days_remaining ≤ 2`, or `grace_days_remaining` is null and `holding_days ≥ 10` — the Alert Zone trigger including its "Grace period has ended" case; *v2.21 — ST-14, BLG-SPEC-192: the null case was missing, because `GET /positions` returns null from day 10 while the alert endpoint returns 0. One shared helper serves the table and grid. Design source: `docs/design/2026-10-29__release-v9.14/last-reviewed-ended-grace/decision_record.md`*) or the Drawdown Review Prompt (position included in the portfolio-level drawdown banner's position count). The "Last Reviewed" text still renders in both cases (informational); only the amber/flagged styling is suppressed. `days_since_review` continues counting underneath — if the position later exits GRACE/drawdown scope while still stale, the flag can fire on the next refresh.
 
 **§13 constraint:** Display-only. No automated action beyond timestamp update on explicit user click.
 

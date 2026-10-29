@@ -66,9 +66,11 @@
     "cross_stage_integrity": "pass",
     "decisions_validated": "not_applicable",
     "design_gate_required": true,
-    "design_gate_status": "not_started"
+    "design_gate_status": "Passed"
   },
-  "design_gate_status": "not_started",
+  "design_gate_status": "Passed",
+  "design_gate_completed_utc": "2026-10-29T13:11:54Z",
+  "design_gate_record": "claude/cycles/2026-10-29__release-v9.14/design_gate.md",
   "amended_backlog_slice_path": "",
   "artifacts": {
     "backlog_lock": "released",

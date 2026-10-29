@@ -1,9 +1,10 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Active
-**Version:** 0.1.13
-**Last Updated:** 2026-10-12 (v9.12 design gate — ST-22/BLG-FE-207: §5.2 Grace Period panel rows link to Positions; shipped text aligned to the spec; row layout described); prior — 2026-10-08 (v9.11 design gate — ST-10/ST-11/ST-13: §6 Position Risk table stale-price marker, GBP entry prices, grace stops shown as not enforced, stop distance from the API); prior — 2026-07-27; prior history retained — see prior entries in version control
+**Version:** 0.1.14
+**Last Updated:** 2026-10-29 (v9.14 design gate — ST-04/ST-05: new §2a FX Rate Source Notice; ST-08/BLG-FE-214: §6.6 stale marker focusable with an accessible description); prior — 2026-10-12 (v9.12 design gate — ST-22/BLG-FE-207: §5.2 Grace Period panel rows link to Positions; shipped text aligned to the spec; row layout described); prior — 2026-10-08 (v9.11 design gate — ST-10/ST-11/ST-13: §6 Position Risk table stale-price marker, GBP entry prices, grace stops shown as not enforced, stop distance from the API); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
+**Design Source (v0.1.14):** docs/design/2026-10-29__release-v9.14/fx-rate-source-indicator/decision_record.md, docs/design/2026-10-29__release-v9.14/stale-price-marker/decision_record.md
 **Design Source (v0.1.12):** docs/design/2026-10-08__release-v9.11/risk-price-integrity/decision_record.md
 **Design Source (v0.1.11 correction):** §8b.1 data-dependency premise corrected at implementation — see Metrics Definitions & Analytics Owner amendment recorded in `execution_state.json` for ST-02, EPIC-02, v7.9.
 **Design Source (v0.1.10):** docs/design/2026-07-27__release-v7.9/sector-regime-exposure-trend/ux_spec.md
@@ -41,6 +42,19 @@ Two-column top row (Portfolio Heat Gauge + Drawdown Summary, approximately equal
 Single-column layout on narrow viewports (below standard breakpoint).
 
 Data refresh: on page load only. No polling. No auto-refresh.
+
+---
+
+## 2a. FX Rate Source Notice (v0.1.14 — ST-04/ST-05, BLG-BE-194/BLG-BE-169)
+
+**Design source:** `docs/design/2026-10-29__release-v9.14/fx-rate-source-indicator/decision_record.md`
+
+When `GET /portfolio`'s `fx_rate_source` is not `live`, one line appears directly under the page heading, above the top row. It covers every FX-dependent figure on the page.
+
+- `AlertTriangle` icon (`w-3.5 h-3.5`, `aria-hidden`) and text in `text-xs text-amber-700 dark:text-amber-400`, `data-testid="risk-fx-source-notice"`.
+- Text: "⚠ FX rate not live: GBP/USD {rate} from {age}" (`last_known`) or "⚠ FX rate unavailable: using fixed GBP/USD {rate}" (`constant`).
+- The line is focusable and carries the decision record §2.2 explanation as its accessible description and hover/focus/tap tooltip (the §6.6 marker pattern).
+- Nothing is shown for `live`.
 
 ---
 
@@ -212,10 +226,16 @@ Secondary within group: ascending by `stop_distance_pct` (tightest/smallest dist
 | Loading | Skeleton rows |
 | Error | "Unable to load position data" |
 
-### 6.6 Stale Price Marker (v0.1.12 — ST-10)
+### 6.6 Stale Price Marker (v0.1.12 — ST-10; revised v0.1.14 — ST-08, BLG-FE-214)
 
-When a position's `price_is_stale` is `true` (the live price fetch failed and `GET /portfolio` returned the last stored native price converted at the live FX rate), the Current (GBP) cell shows the price followed by a `Clock` icon (lucide, `w-3.5 h-3.5`) and the word "stale", both `text-amber-400` / `text-xs`. `data-testid="price-stale-marker"`. Tooltip and `aria-label`: "Live price unavailable. Showing the last stored price converted at today's FX rate." Nothing is shown when the field is false, null or absent.
+**Design source (v0.1.14):** `docs/design/2026-10-29__release-v9.14/stale-price-marker/decision_record.md`
 
+When a position's `price_is_stale` is `true` (the live price fetch failed and `GET /portfolio` returned the last stored native price, converted to GBP), the Current (GBP) cell shows the price followed by the shared `StaleMarker`: a `Clock` icon (lucide, `w-3.5 h-3.5`, `aria-hidden`) and the word "stale", `text-xs text-amber-700 dark:text-amber-400`. `data-testid="price-stale-marker"`. Nothing is shown when the field is false, null or absent.
+
+- **Element:** a `<button type="button">` with a visible focus ring. Accessible name "Price stale". No `title` and no `aria-label`.
+- **Explanation**, as the accessible description (`aria-describedby` to an `sr-only` element) and as the tooltip opened by hover, keyboard focus or tap: "Live price unavailable, so the last stored price is shown. Value, P&L and heat use this price until a live price is fetched. Reload the page to try again."
+- Escape or a tap elsewhere closes the tooltip. Activating the marker does nothing else.
+- **Acceptance:** axe passes on `/risk` with a stale row, and the marker's accessible description matches the text above (Playwright `toHaveAccessibleDescription`).
 ---
 
 ## 8a. Component: Sector Concentration Heat Map
@@ -437,6 +457,7 @@ The following deviations were identified at v1.8 sprint execution and accepted f
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.1.14 | 2026-10-29 | v9.14 design gate. (ST-04/ST-05, BLG-BE-194/BLG-BE-169) new §2a FX Rate Source Notice under the heading when the FX rate is last-known or the fixed fallback. (ST-08, BLG-FE-214) §6.6 marker becomes a focusable button with the explanation as its accessible description and a hover/focus/tap tooltip, new copy with a next step, and the light-theme amber pair. Design sources: `docs/design/2026-10-29__release-v9.14/fx-rate-source-indicator/decision_record.md`, `docs/design/2026-10-29__release-v9.14/stale-price-marker/decision_record.md`. Head of UX & Design sign-off: 2026-10-29. Product Owner approved: 2026-10-29. Head of Specs Team confirmed. |
 | 0.1.13 | 2026-10-12 | v9.12 design gate. (ST-22, BLG-FE-207) §5.2: each grace row links to `/#/Positions?position={id}`; the heading, badge and `dd MMM yyyy` date format are aligned to this spec (the Product Owner kept the spec wording); the list-of-rows layout is described in place of "Table". Design source: `docs/design/2026-10-12__release-v9.12/grace-panel-position-link/decision_record.md`. Head of UX & Design sign-off: 2026-10-12. Product Owner approved: 2026-10-12. Head of Specs Team confirmed. |
 | 0.1.12 | 2026-10-08 | v9.11 design gate. (ST-10, BLG-BE-154) new §6.6 Stale Price Marker driven by `price_is_stale`. (ST-11, BLG-FE-206) §6.2 Entry Price in GBP for every market, money headers state "(GBP)", new §6.2a grace-period stops shown as "Not enforced (grace)" with no distance colour, §6.4 GRACE group sorted by `grace_days_remaining`. (ST-13, BLG-BE-155) Stop Dist % taken from the API's native-currency `stop_distance_pct`. Design source: `docs/design/2026-10-08__release-v9.11/risk-price-integrity/decision_record.md`. Head of UX & Design sign-off: 2026-10-08. Product Owner approved: 2026-10-08. Head of Specs Team confirmed. |
 | 0.1.11 | 2026-07-27 | ST-02 (BLG-FEAT-67, EPIC-02, v7.9) implementation: corrected §8b.1's data-dependency premise (Metrics Definitions & Analytics Owner amendment, agent-mediated) — no historical sector/regime data ever existed to aggregate; `sector_regime_history` is a new table, populated going forward only, no retroactive backfill. `insufficient_history: true` is the expected day-one state, not a fallback. Contract: `portfolio_endpoints.md` v2.5.0. |
