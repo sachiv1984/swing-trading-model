@@ -9,6 +9,13 @@ name: Frontend Production Build
 # failed deploy.yml's Build step with
 # `[eslint] Failed to load config "react-app" to extend from.`
 # A PR that removes eslint-config-react-app from the lockfile fails here.
+#
+# Dependencies install with a plain `npm ci`, as Render's static site runs a
+# plain `npm install`: the repo .npmrc (legacy-peer-deps=true) supplies the
+# flag every other workflow passes on the command line. Without it,
+# eslint-config-react-app's `eslint@^8` peer conflicts with the root
+# `eslint@^9` and Render's install fails with ERESOLVE (staging build of
+# ea20658a, 2026-10-29).
 
 on:
   workflow_dispatch: {}
@@ -16,6 +23,7 @@ on:
     paths:
       - 'package.json'
       - 'package-lock.json'
+      - '.npmrc'
       - 'src/**'
       - 'public/**'
       - '.env.production'
@@ -29,6 +37,7 @@ on:
     paths:
       - 'package.json'
       - 'package-lock.json'
+      - '.npmrc'
       - 'src/**'
       - 'public/**'
       - '.env.production'
@@ -52,8 +61,8 @@ jobs:
           node-version: '22'
           cache: 'npm'
 
-      - name: Install dependencies
-        run: npm ci --legacy-peer-deps
+      - name: Install dependencies (no flag, as Render installs)
+        run: npm ci
 
       - name: Confirm DISABLE_ESLINT_PLUGIN is unset
         run: |
