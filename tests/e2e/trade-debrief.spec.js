@@ -28,7 +28,15 @@
 
 'use strict';
 
-const { test, expect } = require('@playwright/test');
+const { test, expect, allowApiErrors } = require('./fixtures/api-status-guard');
+
+// ST-24 (BLG-QA-227): contract-documented 404s this file exercises on purpose.
+test.use(allowApiErrors(
+  // GET /trades/{trade_id}/plan-vs-reality: 404 when no plan is linked (trade_endpoints.md)
+  { status: 404, method: 'GET', path: /^\/trades\/[^/]+\/plan-vs-reality$/ },
+  // GET /trades/{trade_id}/debrief: 404 when no debrief is generated yet (trade_endpoints.md)
+  { status: 404, method: 'GET', path: /^\/trades\/[^/]+\/debrief$/ }
+));
 const AxeBuilder = require('@axe-core/playwright').default;
 
 const API = 'http://localhost:8000';

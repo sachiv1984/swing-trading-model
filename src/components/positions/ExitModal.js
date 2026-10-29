@@ -547,7 +547,7 @@ export default function ExitModal({ position, open, onClose, onConfirm, preselec
           </Button>
           <Button
             onClick={handleConfirm}
-            className="bg-rose-600 hover:bg-rose-500 text-white"
+            className="bg-rose-600 hover:bg-rose-700 text-white"
             disabled={!canSubmit}
           >
             {submitting ? "Exiting…" : "Confirm Exit"}

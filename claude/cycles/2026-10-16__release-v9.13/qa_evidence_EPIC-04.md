@@ -1,0 +1,69 @@
+Owner: Director of Quality
+Class: Planning Document (Class 4)
+Status: Active
+Last Updated: 2026-10-29 (human DoQ confirmation and Product Owner acceptance recorded); prior — 2026-10-29 (agent-mediated DoQ sign-off, retry 1 Approved; frontend-gate wording corrected); prior — 2026-10-29 (agent-mediated DoQ first pass Blocked; findings applied: BLG-QA-231/232/233 filed, ST-25 graded Pass_with_deviation, trade-debrief spec added, spec count corrected); prior history retained — see prior entries in version control
+
+# QA Evidence — EPIC-04: API Call Integrity & UI Rendering
+
+**EPIC:** EPIC-04 — API Call Integrity & UI Rendering
+**Cycle:** 2026-10-16__release-v9.13
+**Branch:** `exec/2026-10-16__release-v9.13/EPIC-04`
+**Sprint goal:** Make the Daily Position Monitor's exit confirmation record real exits through `POST /positions/{id}/exit` (BLG-FE-226, P1), give exit reasons one allowed list mapped to §8, and make CI fail on any frontend call to a route that does not exist. Also ship v9.13's stop and sizing correctness, AI output safety, operations and governance items.
+**Test scenarios used:** `tests/test_check_frontend_api_calls.py`, `tests/e2e/api-status-guard.spec.js`, `tests/test_e2e_api_status_guard_applied.py`, `tests/e2e/coloured-button-fills.spec.js`, `tests/e2e/accessibility-axe-scan.spec.js`, `tests/e2e/trade-debrief.spec.js`
+
+## Consolidation Block
+
+| ST Item | Spec Reference | What was built | Acceptance criteria | Result | Deviations |
+|---------|----------------|----------------|---------------------|--------|------------|
+| ST-23 | `scripts/check_frontend_api_calls.py` (Case D, de facto spec); `.github/workflows/quality_gate.yml` | Script extracting every `doFetch`/`apiFetch` call in `src/` (173 sites), resolving method and path and checking each against `openapi.yaml`, with allow-lists for external hosts, non-literal call sites (route still checked) and dead methods. New quality-gate job "Frontend API Call Existence Check (ST-23)". Commit `6f1badc2`. | AC1 the script runs in the quality gate — met: job `frontend_api_call_existence`. AC2 fails on a call to a non-existent route (test) — met: `test_fails_on_call_to_nonexistent_route` (`PATCH /positions/{id}`), plus wrong-method and unresolved-argument tests. AC3 passes on `main` after ST-01, with dead methods on a dated allow-list naming BLG-FE-230 — met: `test_real_src_tree_passes`; `POST /signals`, `POST /auth/callback` and the Base44 public-settings route allow-listed "BLG-FE-230 (allow-listed 2026-10-28)", and a test enforces that format. 17 tests. CI all success on `6f1badc2` (Pytest 40768476264, Critical-Path Smoke 40768476205). | Pass | None |
+| ST-24 | `tests/e2e/fixtures/api-status-guard.js`; `docs/testing/state_changing_action_coverage.md` v1.0 | An automatic fixture that fails a test on any 404/405 from the API origin, with an `allowApiErrors(...)` allow-list for intentional probes. All 139 specs import from it, enforced by `tests/test_e2e_api_status_guard_applied.py`. A coverage inventory of state-changing actions, produced from an instrumented full Playwright run. Commits `388e31d9`, `06e1bece`. | AC1 shared fixture fails on any 404/405 from the app's API, allow-list for probes, applied suite-wide, fails on a deliberate 405 — met: SC-ASG-01 (deliberate 405, `test.fail()`; verified that without `test.fail()` it fails with the guard's message), SC-ASG-02..05, and the static guard test. AC2 the list of state-changing primary actions is in `docs/testing/` with coverage status; every action is covered or has a dated backlog item — met: 52 actions, 37 covered, 15 under BLG-QA-230 (2026-10-28); five uncalled methods filed as BLG-FE-235. AC3 exposed defects filed, not fixed — met: the first guarded run failed 20 tests in 5 specs, every 404 was contract-documented, so none is a defect; each is allow-listed with its contract named. CI on `388e31d9` all success (Playwright E2E 40784070737, Critical-Path Smoke 40784070843, Pytest 40784070725). | Pass | None — follow-ups BLG-QA-230, BLG-FE-235 |
+| ST-25 | `coloured-button-fills/decision_record.md` §2; `design_system.md` v1.24 §Buttons → Coloured Button Fills; `screener_results.md` v1.10; `cash_management_modal.md` v1.3 | `cn()` = `twMerge(clsx(...))` (tailwind-merge 2.6.0). Fills per decision record §2.2 and the addendum: Screener and deposit emerald-700/800 with white text; seven rose-600 hovers moved to rose-700; `text-white` on Cash Management submit and System Status Refresh Health; Abandon Plan without `!`. New design-system rule. Commit `2f5cc56a`. | AC1 `cn()` gains tailwind-merge; v9.12's `!bg-` workaround removed — met: `grep -rn '!bg-' src/` is empty. AC2 every coloured `<Button>` renders its colour, asserted for the listed sites — met: SC-CBF-01..04 in both themes: Screener "Add to Watchlist" and "Run Screener" emerald-700 `rgb(4, 120, 87)`, Trade Plans delete confirm rose-600 `rgb(225, 29, 72)`, Abandon Plan amber-700 `rgb(180, 83, 9)`, white text and a scoped axe colour-contrast pass for each. Consequence (RISK-05), disclosed in the commit: the Post-Trade Debrief Generate and Regenerate buttons now use `text-slate-800 dark:text-slate-300`. With twMerge the Trade History expanded row narrows, which brings these buttons on screen, and axe then caught their existing slate-300-on-white text (1.48:1). On `main`, axe skips them only because they sit off-screen (x=1520; verified against a build of `origin/main`). CI on `2f5cc56a`: Pytest 40784100269 success, Critical-Path Smoke 40784100196 success, Playwright E2E 40784100342 success after a re-run of shard 3/8. Attempt 1 failed only `grace-panel-position-link.spec.js` SC-GPL-01 (`toBeInViewport`, a file this EPIC changed only by the import line), on both tries. It passed on the re-run, on `5e8b6f04` (same ST-25 code, Playwright E2E 40784107809), and in isolation locally. It also failed once locally on a build of unchanged `main`, so it is confirmed flaky and unrelated to this diff (Flaky-Test Disposition step 2). Quarantined with the `FLAKY-QUARANTINE:` tag (user-approved, 2026-10-29), tracked in BLG-QA-231 and listed in `flaky_test_quarantine_process.md` v1.2. BLG-QA-231's Problem text predates the quarantine and still says it is not quarantined. This is the first demonstrated flaky-test incident, BLG-QA-75's gate condition. | Pass_with_deviation | BLG-QA-232 (no Playwright/staging evidence for the rose-700 hover ×7, Cash Management deposit fill and submit text, System Status Refresh Health text) |
+| ST-26 | `replay_mode.md` v0.4 §Light Theme | Replay page light-theme token pairs: cards, inputs and table header, headings and figures, body text, P&L, skipped notice amber-700, failure banner. Dark values unchanged. Commit `5e8b6f04`. | AC1 the light-theme Replay axe scans (Date Range, Trade Set, populated result) pass — met: `accessibility-axe-scan.spec.js` Replay light scans. AC2 the three `Replay*:light` entries are removed from `KNOWN_VIOLATIONS` in the same commit — met. CI all success on `5e8b6f04` (Playwright E2E 40784107809, Critical-Path Smoke 40784107762, Pytest 40784107842). | Pass | None |
+| ST-27 | `tests/_real_database.py` ("Known limit"); `tests/conftest.py` leak-guard comment ("Not covered") | Reviewed decision (A) accept and document: real-bound modules outlive the importing file, the session holds a real/stub mix decided by collection order, why eviction is not done, and the patch-at-the-service-level rule. Commit `a4dce1d9`. | AC: either a documented, reviewed decision in `tests/_real_database.py` (with the conftest guard's docstring stating what it does not cover), or no real-bound module survives past the importing file — met by the first branch: `ESC-EXEC-20261028-01`, Director of Quality agent-mediated (§5.3). The first pass was Blocked on two factual errors, which were corrected; retry 1 Approved. Quantitative claims evidenced inline: probe of 22 real-bound / 17 stub-bound modules, 31 Category B files, 67 function-level imports. `pytest --collect-only`: 3022 collected. | Pass | None |
+
+**Story-level authority sign-offs (BLG-GOV-14):**
+- ST-27 — Director of Quality: option (A) on `ESC-EXEC-20261028-01`, agent-mediated (§5.3), first pass Blocked (2 factual findings, applied), retry 1 Approved, 2026-10-28T21:21:09Z. Cleared.
+- ST-24 — the two backlog items were filed via `/backlog-add` with the user's approval of the drafts (2026-10-29).
+
+**Frontend testing gate (CLAUDE.md §2):** frontend files changed: `src/lib/utils.js`, `src/pages/Screener.js`, `TradePlan.js`, `TradePlans.js`, `SystemStatus.js`, `Replay.js`, and components `CashManagementModal.js`, `MonitorModal.js`, `CustomPriceAlertsSection.js`, `ExitModal.js`, `BulkActionToolbar.js`, `SavedFiltersControl.js`, `WatchlistDeleteConfirm.js`, `TradeDebrief.js`. Every observable AC has Playwright coverage except the ST-25 addendum colour states listed below (BLG-QA-232). ST-25: SC-CBF-01..04 (colour, both themes). ST-26: the Replay light-theme axe scans. TradeDebrief consequence: SC-DBF-06a (light) and SC-DBF-10b (both themes); direct colour assertions tracked in BLG-QA-233. The rose-600 hover change (rose-500 → rose-700, seven sites), the Cash Management deposit fill and submit text, and System Status Refresh Health's text colour come from the ST-25 addendum, so they are AC content. These addendum colour states have no Playwright coverage; tracked in BLG-QA-232, filed before PR open. ST-24's sweep gaps are tracked as BLG-QA-230.
+
+**QA test coverage:**
+- Scenarios run: the five files above, and the full Playwright suite twice locally against production builds. The final run had 1,128 passed and 11 failed; all 11 passed on re-run at lower concurrency (timeouts and a toast overlap under 4 workers), and none is in a file this EPIC changed apart from the import line. Full pytest collection: 3022 collected.
+- Regression areas checked: every Playwright spec (guard applied suite-wide); Screener, Cash Management, Trade Plan and Trade Plans buttons; destructive confirm dialogs; Replay page in both themes; the Post-Trade Debrief section in both themes; the quality-gate workflow YAML; the pytest database stub and leak guard.
+- Known deviations: None found — all five stories' deviation checks completed with nothing to file. ST-25 is graded Pass_with_deviation for missing test evidence (BLG-QA-232), not a spec deviation. Follow-ups filed: BLG-QA-230, BLG-FE-235, BLG-QA-231 (flaky SC-GPL-01), BLG-QA-232, BLG-QA-233.
+
+## Standard Sign-Off Block
+
+- [x] All acceptance criteria verified against canonical spec
+- [x] No unresolved P0 or P1 deviations
+- [x] Regression areas checked
+- [x] For any frontend component making direct URL construction (not via api.* wrapper): confirm the URL-base variable is exposed on the imported object
+- [x] Strategy values checked: N/A — no stop/grace/ATR/exit/sizing logic touched
+- Signed off by: Sprint Execution Engine (agent-mediated, Director of Quality role — §5.3)
+- Date: 2026-10-29
+- Comments: Agent-mediated EPIC-level DoQ review under `execution_prompt.md` §5.3, STEP 3.2.A. The first pass was Blocked on two findings, both applied (`09c64c09`, `5e4fa87a`); retry 1 Approved. Cited CI runs, checked with `gh run view` and all `success` on these SHAs:
+  - `6f1badc2`: Pytest 40768476264, Smoke 40768476205
+  - `388e31d9`: Playwright 40784070737, Smoke 40784070843, Pytest 40784070725
+  - `2f5cc56a`: Pytest 40784100269, Smoke 40784100196, Playwright 40784100342 (attempt 1 failed only on SC-GPL-01; attempt 2 succeeded)
+  - `5e8b6f04`: Playwright 40784107809, Smoke 40784107762, Pytest 40784107842
+  - `09c64c09`: all 7 workflows
+  - `5e4fa87a`: Playwright E2E 40838849725, Pytest 40838849843, Smoke 40838849888
+
+  ST-24's counts were reproduced with ST-23's extractor (58 call sites, 52 routes, 21 files). ST-25 is Pass_with_deviation: the addendum colour states have no Playwright evidence (BLG-QA-232). SC-GPL-01 is confirmed flaky and quarantined under BLG-QA-231. It is the first demonstrated flaky-test incident, which is BLG-QA-75's gate condition. The TradeDebrief text-colour change fixes a regression that ST-25's own diff exposed. SC-DBF-06a and SC-DBF-10b cover it, and BLG-QA-233 tracks direct colour assertions. Human Director of Quality confirmation is pending.
+
+## Director of Quality Human Confirmation
+
+- **Confirmed by:** Director of Quality (human, in-session, 2026-10-29: "give DOQ and PO acceptance"). Recorded by the Sprint Execution Engine on the Director of Quality's behalf.
+- **Date:** 2026-10-29
+- **Verdict:** Accepted. Confirms the agent-mediated DoQ sign-off above, including ST-25's Pass_with_deviation grade (BLG-QA-232), the SC-GPL-01 quarantine (BLG-QA-231), and the PR #2076 review findings filed as BLG-QA-234, BLG-QA-235, BLG-QA-236 and BLG-QA-237.
+- **CI:** every story commit green (runs in the Comments line above). On the PR head `7116a7c4` (governance files only), 32 checks had passed and 12 were in progress at confirmation.
+- **PR comment:** https://github.com/sachiv1984/swing-trading-model/pull/2076#issuecomment-6491469479
+
+## Product Owner Acceptance
+
+- **Accepted by:** Product Owner (human, in-session, 2026-10-29: "give DOQ and PO acceptance"). Recorded by the Sprint Execution Engine on the Product Owner's behalf.
+- **Date:** 2026-10-29
+- **Verdict:** Accepted.
+- **Basis:** ST-23, ST-24, ST-26 and ST-27 meet every acceptance criterion. ST-25 is accepted as Pass_with_deviation, with the addendum colour states tracked in BLG-QA-232 (v9.14). Follow-ups: BLG-QA-237 (P2, Exit modal coverage) and BLG-QA-235 (P2, staging check of the `cn()` layout changes).
+- **Still required:** the human developer performs the merge once CI on the head is green.
+

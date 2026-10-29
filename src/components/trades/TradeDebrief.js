@@ -127,7 +127,7 @@ export default function TradeDebrief({ tradeId }) {
               data-testid="generate-debrief-btn"
               disabled={generateMutation.isPending}
               onClick={() => generateMutation.mutate()}
-              className="text-xs"
+              className="text-xs text-slate-800 dark:text-slate-300"
             >
               {generateMutation.isPending ? "Generating…" : "Generate Debrief"}
             </Button>
@@ -171,7 +171,7 @@ export default function TradeDebrief({ tradeId }) {
                   data-testid="regenerate-debrief-btn"
                   disabled={generateMutation.isPending || isFetching}
                   onClick={() => generateMutation.mutate()}
-                  className="text-xs"
+                  className="text-xs text-slate-800 dark:text-slate-300"
                 >
                   {generateMutation.isPending ? "Regenerating…" : "Regenerate"}
                 </Button>

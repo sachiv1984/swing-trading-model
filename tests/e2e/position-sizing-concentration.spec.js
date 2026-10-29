@@ -21,7 +21,7 @@
 
 'use strict';
 
-const { test, expect } = require('@playwright/test');
+const { test, expect } = require('./fixtures/api-status-guard');
 const { SMOKE_SETTINGS, SMOKE_POSITIONS, SMOKE_PORTFOLIO } = require('./mocks/smoke-mock-data');
 
 async function mockCommon(page) {

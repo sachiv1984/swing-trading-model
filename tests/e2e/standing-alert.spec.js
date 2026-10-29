@@ -27,7 +27,7 @@
 
 'use strict';
 
-const { test, expect } = require('@playwright/test');
+const { test, expect } = require('./fixtures/api-status-guard');
 
 async function gotoHarness(page) {
   await page.goto('/#/__test/standing-alert');

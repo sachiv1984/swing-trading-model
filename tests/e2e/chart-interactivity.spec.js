@@ -35,7 +35,7 @@
 
 'use strict';
 
-const { test, expect } = require('@playwright/test');
+const { test, expect } = require('./fixtures/api-status-guard');
 const {
   ALL_TRADES,
   JAN_2026_EXPECTED,

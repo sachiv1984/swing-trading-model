@@ -18,7 +18,7 @@
 
 'use strict';
 
-const { test, expect } = require('@playwright/test');
+const { test, expect } = require('./fixtures/api-status-guard');
 const AxeBuilder = require('@axe-core/playwright').default;
 const { TD_PREFS_ALL_ON, TD_ALERT_RULES } = require('./mocks/notifications-mock-data');
 

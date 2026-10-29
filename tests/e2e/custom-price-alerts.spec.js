@@ -19,7 +19,7 @@
 
 'use strict';
 
-const { test, expect } = require('@playwright/test');
+const { test, expect } = require('./fixtures/api-status-guard');
 // Shared OpenAPI-derived mock fixture library — ST-05 (EPIC-05, v7.6, BLG-QA-114).
 // Working example per that item's Quality AC: consumes the shared factories
 // instead of hand-rolled inline JSON for the /price-alerts fixtures below.

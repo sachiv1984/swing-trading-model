@@ -33,7 +33,7 @@
 
 'use strict';
 
-const { test, expect } = require('@playwright/test');
+const { test, expect } = require('./fixtures/api-status-guard');
 const { TD_NOTIF_EMPTY, TD_PREFS_ALL_ON, TD_ALERT_RULES } = require('./mocks/notifications-mock-data');
 
 const API = 'http://localhost:8000';

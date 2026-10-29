@@ -219,7 +219,7 @@ export default function BulkActionToolbar({
               <Button
                 onClick={() => handleDestructiveConfirm(confirmingAction)}
                 disabled={submittingKey === confirmingAction.key}
-                className="bg-rose-600 hover:bg-rose-500 text-white border-0"
+                className="bg-rose-600 hover:bg-rose-700 text-white border-0"
               >
                 {submittingKey === confirmingAction.key ? "Working…" : confirmingAction.label}
               </Button>

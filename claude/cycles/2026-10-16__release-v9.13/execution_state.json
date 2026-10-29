@@ -757,119 +757,176 @@
       "merge_commit": "40d298f4"
     },
     "EPIC-04": {
-      "status": "not_started",
-      "branch": null,
-      "pr_number": null,
-      "pr_status": "none",
-      "qa_signed_off": false,
+      "status": "done",
+      "branch": "exec/2026-10-16__release-v9.13/EPIC-04",
+      "pr_number": 2076,
+      "pr_status": "open",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-10-16__release-v9.13/qa_evidence_EPIC-04.md",
-      "test_scenarios": [],
+      "test_scenarios": [
+        "tests/test_check_frontend_api_calls.py",
+        "tests/e2e/api-status-guard.spec.js",
+        "tests/test_e2e_api_status_guard_applied.py",
+        "tests/e2e/coloured-button-fills.spec.js",
+        "tests/e2e/accessibility-axe-scan.spec.js",
+        "tests/e2e/trade-debrief.spec.js"
+      ],
       "stories": {
         "ST-23": {
           "title": "CI check that every frontend API call exists in openapi.yaml",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 2053,
           "branch": "exec/2026-10-16__release-v9.13/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "6f1badc2dde202d89209eb3747a81e0ea3785f10",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-28T21:01:53Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "scripts/check_frontend_api_calls.py",
+            ".github/workflows/quality_gate.yml",
+            "tests/test_check_frontend_api_calls.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Case D (CI tooling): script is the de facto spec. AC1 job frontend_api_call_existence in quality_gate.yml; AC2 test_fails_on_call_to_nonexistent_route; AC3 test_real_src_tree_passes with BLG-FE-230 dated allow-list (2026-10-28). Deviation check: none. CI all success on 6f1badc2: CI Pytest Suite 40768476264, Critical-Path Smoke (Playwright) 40768476205 (ci_pending cleared 2026-10-29)."
         },
         "ST-24": {
           "title": "Fail Playwright on any 404/405 from the app's API and sweep state-changing actions",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 2054,
           "branch": "exec/2026-10-16__release-v9.13/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "06e1beceaebb385bbf78dc26473f623a0afd1379",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-29T07:40:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "tests/e2e/fixtures/api-status-guard.js",
+            "tests/e2e/api-status-guard.spec.js",
+            "tests/test_e2e_api_status_guard_applied.py",
+            "docs/testing/state_changing_action_coverage.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Two commits: 388e31d9 (guard fixture, 138 specs rewritten, SC-ASG-01..05, 5 contract-documented 404 allow-lists) and 06e1bece (coverage document, BLG-QA-230 and BLG-FE-235 filed via /backlog-add, user-approved). AC1 SC-ASG-01 (deliberate 405 fails, test.fail) plus the static guard test; AC2 52 actions, 37 covered, 15 under BLG-QA-230 dated 2026-10-28; AC3 no defects exposed (all 404s contract-documented). CI on 388e31d9 all success: Playwright E2E 40784070737, Critical-Path Smoke 40784070843, Pytest 40784070725. 06e1bece CI all success (Pytest, Critical-Path Smoke; docs and backlog only). Deviation check: none."
         },
         "ST-25": {
           "title": "Make coloured Buttons render their colour (fix cn() at the root)",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 2055,
           "branch": "exec/2026-10-16__release-v9.13/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "2f5cc56a25c2f16d30440a35d2021bd133b8e60c",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-28T22:59:35Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/design/2026-10-16__release-v9.13/coloured-button-fills/decision_record.md",
+            "docs/specs/frontend/design_system.md",
+            "docs/specs/frontend/pages/screener_results.md",
+            "docs/specs/frontend/components/cash_management_modal.md",
+            "src/lib/utils.js",
+            "tests/e2e/coloured-button-fills.spec.js",
+            "tests/e2e/trade-debrief.spec.js"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "cn() = twMerge(clsx()); tailwind-merge 2.6.0. AC1 grep \"!bg-\" src/ empty; AC2 SC-CBF-01..04 both themes (toHaveCSS + scoped axe). Consequence disclosed in commit: TradeDebrief Generate/Regenerate given text-slate-800 dark:text-slate-300 (latent light-theme 1.48:1 contrast; axe skipped it on main because it sat off-screen at x=1520). Playwright E2E 40784100342 success after rerun of shard 3/8 (attempt 1 failed SC-GPL-01 toBeInViewport twice; intermittent, also failed locally on a main-equivalent build; ci_pending cleared 2026-10-29). The next commit 5e8b6f04 carries the same ST-25 code and its Playwright E2E 40784107809 succeeded. Pytest 40784100269 success, Critical-Path Smoke 40784100196 success. Deviation check: none. DoQ first pass (agent-mediated): addendum colour states without Playwright evidence tracked in BLG-QA-232 (graded Pass_with_deviation); SC-GPL-01 confirmed flaky, quarantined (FLAKY-QUARANTINE, user-approved 2026-10-29) and tracked in BLG-QA-231; direct debrief button colour assertions BLG-QA-233."
         },
         "ST-26": {
           "title": "Fix the Replay page's light-theme colour contrast",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 2056,
           "branch": "exec/2026-10-16__release-v9.13/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "5e8b6f0463652c0e6832ccb19d1104af66266061",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-28T22:59:39Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/pages/replay_mode.md",
+            "tests/e2e/accessibility-axe-scan.spec.js"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "replay_mode.md v0.4 §Light Theme pairs applied to Replay.js. AC1 light-theme Replay axe scans pass; AC2 three Replay*:light KNOWN_VIOLATIONS entries removed in the same commit. CI all success: Playwright E2E 40784107809, Critical-Path Smoke 40784107762, Pytest 40784107842. Deviation check: none."
         },
         "ST-27": {
           "title": "Decide how real-database-bound modules may persist across pytest files",
-          "classification": "delegated_decision",
-          "status": "not_started",
+          "classification": "autonomous",
+          "status": "done",
           "assigned_to": "Director of Quality; QA & Testing Owner",
           "github_issue": 2057,
           "branch": "exec/2026-10-16__release-v9.13/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "a4dce1d9fb34a143bc036753ccb201c9f24a2d1c",
           "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "blocked_since_utc": "2026-10-28T21:05:55Z",
+          "unblock_criteria": "ESC-EXEC-20261028-01 resolved with a dated (A) or (B) choice by the Director of Quality",
+          "completed_utc": "2026-10-28T21:21:34Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "tests/_real_database.py",
+            "tests/conftest.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
+          "sign_off_record": {
+            "role": "Director of Quality",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "signed_utc": "2026-10-28T21:21:09Z",
+            "notes": "ESC-EXEC-20261028-01 option (A) accept and document. First pass Blocked on 2 factual errors (first importer; real/stub binding mix), corrected; retry 1 Approved (agent-mediated, §5.3). Quantitative claims evidenced inline in the resolution (probe: 22 real-bound / 17 stub-bound modules; 31 Category B files; 67 function-level imports), per LL-v8.6-P3-01."
+          },
+          "notes": "Reclassified delegated_decision -> autonomous on ESC-EXEC-20261028-01 resolution. AC met by the first branch: documented, reviewed decision in tests/_real_database.py (\"Known limit\") plus the conftest guard comment (\"Not covered\"). Documentation-creation (Case B): the edited files are the governing artefact. Deviation check: none. pytest --collect-only: 3022 collected, exit 0."
         }
+      },
+      "sign_off_record": {
+        "role": "Director of Quality",
+        "method": "agent_mediated",
+        "status": "cleared",
+        "signed_utc": "2026-10-29T08:02:01Z",
+        "notes": "EPIC-level DoQ, first pass Blocked (flaky SC-GPL-01 handling; addendum colour states without evidence), findings applied 09c64c09/5e4fa87a, retry 1 Approved. Human confirmation pending.",
+        "cleared_utc": "2026-10-29",
+        "user_directed": true,
+        "reference": "qa_evidence_EPIC-04.md",
+        "human_confirmation": {
+          "date": "2026-10-29",
+          "by": "Director of Quality (human, in-session)",
+          "pr_comment": "https://github.com/sachiv1984/swing-trading-model/pull/2076#issuecomment-6491469479"
+        }
+      },
+      "product_owner_acceptance": {
+        "date": "2026-10-29",
+        "by": "Product Owner (human, in-session)",
+        "verdict": "Accepted",
+        "pr_comment": "https://github.com/sachiv1984/swing-trading-model/pull/2076#issuecomment-6491469479"
       }
     },
     "EPIC-05": {
@@ -1314,6 +1371,11 @@
     "ST-20",
     "ST-21",
     "ST-22",
+    "ST-23",
+    "ST-24",
+    "ST-25",
+    "ST-26",
+    "ST-27",
     "ST-28",
     "ST-29",
     "ST-30",
@@ -1369,6 +1431,12 @@
       "disposition": "Resolved",
       "raised_utc": "2026-10-27T08:48:35Z",
       "resolved_utc": "2026-10-27T08:54:27Z"
+    },
+    "ESC-EXEC-20261028-01": {
+      "item": "ST-27",
+      "disposition": "Resolved",
+      "raised_utc": "2026-10-28T21:05:55Z",
+      "resolved_utc": "2026-10-28T21:21:09Z"
     }
   },
   "merge_gate": {
@@ -1397,7 +1465,11 @@
     "2026-10-27: EPIC-03 branch cut from main e8097f2d (after EPIC-02 merge). ST-16/ST-17/ST-18 rulings escalated at EPIC start (ESC-EXEC-20261027-01/-02/-03); agent-mediated sign-off attempted per §5.3.",
     "2026-10-27: EPIC-05 branch cut from main 6f70a976 (after EPIC-03 merge). ST-28 (a058fa60) and ST-29 (d81af9b0) engine-implemented; live halves delegated as DEL-20261027-02/-03 (both appended in one write, +2 entries, prior entries unchanged).",
     "2026-10-28: EPIC-05 all stories done. ST-29, ST-30 and ST-32 graded Pass_with_deviation: their remaining ACs need a live run on main or production data, so they can only be verified after merge. Remainders filed as BLG-OPS-196/197/198 (v9.14), user-approved. DEL-20261027-03/05/06 carried to post-sprint; DEL-20261027-04 staging half done, production half in BLG-OPS-197.",
-    "2026-10-28: run sprint resume sync (STEP 4, LL-v3.9-P3-1). PR #2075 (EPIC-05) merged 2026-10-28T11:31:37Z as 77758669; EPIC-05 pr_status/status set to merged. Orphaned post-merge commit check (LL-v6.8-P3-01): git log origin/main..origin/exec/2026-10-16__release-v9.13/EPIC-05 empty, nothing to reconcile."
+    "2026-10-28: run sprint resume sync (STEP 4, LL-v3.9-P3-1). PR #2075 (EPIC-05) merged 2026-10-28T11:31:37Z as 77758669; EPIC-05 pr_status/status set to merged. Orphaned post-merge commit check (LL-v6.8-P3-01): git log origin/main..origin/exec/2026-10-16__release-v9.13/EPIC-05 empty, nothing to reconcile.",
+    "2026-10-28: EPIC-04 branch cut from main a8ad6e87 (after EPIC-05 merge sync; all other EPICs merged, so the sprint_backlog merge order holds). commit-check skill lesson \"open PR after every push\" conflicts with execution_prompt.md §3.2.B BLG-GOV-18; governance prompt followed, PR opens at EPIC completion.",
+    "2026-10-29: EPIC-04 PR #2076 opened after the agent-mediated DoQ sign-off (b413f8e2; first pass Blocked, retry 1 Approved). Pre-PR checks passed: API baseline drift, frontend API call check, backlog integrity, no foreign-EPIC commits, branch level with main. User-directed: \"open the PR when CI is green\" (CI green on 5e4fa87a).",
+    "2026-10-29: PR #2076 agent-mediated Director of Quality and Product Owner review posted (issuecomment-6491400948), both Approved with Comments, labelled per OA-6; same engine as the implementer, disclosed. Findings filed at the user's direction as BLG-QA-234 (P3), BLG-QA-235 (P2), BLG-QA-236 (P3), BLG-QA-237 (P2) in 0ed4ef3c. Human DoQ sign-off and Product Owner acceptance still required.",
+    "2026-10-29: EPIC-04 human DoQ confirmation and Product Owner acceptance given in-session (\"give DOQ and PO acceptance\"), recorded in qa_evidence_EPIC-04.md and PR #2076 comment issuecomment-6491469479. Merge left to the human developer."
   ],
   "sealed": false,
   "sealed_utc": null

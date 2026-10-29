@@ -22,7 +22,13 @@
 
 'use strict';
 
-const { test, expect } = require('@playwright/test');
+const { test, expect, allowApiErrors } = require('./fixtures/api-status-guard');
+
+// ST-24 (BLG-QA-227): contract-documented 404s this file exercises on purpose.
+test.use(allowApiErrors(
+  // GET /trades/{trade_id}/reflection: 404 when no reflection is saved (trade_endpoints.md)
+  { status: 404, method: 'GET', path: /^\/trades\/[^/]+\/reflection$/ }
+));
 
 const API = 'http://localhost:8000';
 const TRADE_ID = '33333333-3333-3333-3333-333333333333';

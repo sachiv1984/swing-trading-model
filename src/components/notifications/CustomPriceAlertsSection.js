@@ -225,7 +225,7 @@ function DeleteConfirmRow({ alert, onDeleted, onCancel }) {
         <Button
           onClick={handleDelete}
           disabled={deleting}
-          className="bg-rose-600 hover:bg-rose-500 text-white border-0 h-8 text-xs"
+          className="bg-rose-600 hover:bg-rose-700 text-white border-0 h-8 text-xs"
         >
           {deleting ? "Deleting…" : "Delete"}
         </Button>

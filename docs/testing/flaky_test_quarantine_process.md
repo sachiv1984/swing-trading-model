@@ -1,8 +1,8 @@
 **Owner:** Director of Quality
 **Class:** Class 2
 **Status:** Canonical
-**Version:** 1.1
-**Last Updated:** 2026-09-24 (ST-15, EPIC-04, v9.7, BLG-QA-174 — added a Related section cross-referencing the new declaration-time skip/only lint check and its exception mechanism)
+**Version:** 1.2
+**Last Updated:** 2026-10-29 (EPIC-04, v9.13 — first quarantine recorded: SC-GPL-01, tracked in BLG-QA-231); prior — 2026-09-24 (ST-15, EPIC-04, v9.7, BLG-QA-174 — added a Related section cross-referencing the new declaration-time skip/only lint check and its exception mechanism)
 **Sprint Item:** ST-10 (BLG-QA-117, EPIC-10, v7.8)
 
 ---
@@ -59,6 +59,12 @@ Quarantined tests are not a permanent state. At each `groom backlog` pass (`clau
 None. A repo-wide scan for existing `test.skip(` usage (`tests/e2e/visual-snapshots.spec.js`, `tests/e2e/keyboard-shortcuts.spec.js`) found only deterministic, environment-conditional skips (missing precondition elements) — not flakiness — so none qualify for migration to this new mechanism. This process is defined and ready for the next flaky test that is identified; per the story's own AC ("applied to any currently-known flaky test, if one exists at implementation time"), there is none to apply it to today.
 
 ---
+
+### Quarantined
+
+| Test | Quarantined | Evidence | Tracking |
+|------|-------------|----------|----------|
+| `tests/e2e/grace-panel-position-link.spec.js` SC-GPL-01 (`toBeInViewport` on the highlighted card) | 2026-10-29 (EPIC-04, v9.13) | Failed on both tries of Playwright E2E run 40784100342 attempt 1 (`2f5cc56a`, shard 3/8) and once in a local full run on a build of unchanged `main`; passed on re-run, on `5e8b6f04` with the same code, and in isolation. The first demonstrated flaky-test incident, which is `BLG-QA-75`'s gate condition. | BLG-QA-231 |
 
 ## Related: Skip/Only Lint (ST-15, BLG-QA-174, EPIC-04, v9.7)
 

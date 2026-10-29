@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-28 (BLG-OPS-196 resolved: first two-service staging deploy on main green, old hook secret deleted); prior — 2026-10-28 (session — 3 new item(s) added: BLG-TECH-32, BLG-BE-195, BLG-OPS-199; PR #2075 review findings, EPIC-05 v9.13); prior — 2026-10-28 (session — 3 new item(s) added: BLG-OPS-196, BLG-OPS-197, BLG-OPS-198; post-merge remainders of ST-29, ST-30/ST-31 and ST-32, EPIC-05 v9.13); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-29 (session — 4 new item(s) added: BLG-QA-234, BLG-QA-235, BLG-QA-236, BLG-QA-237; PR #2076 review findings, EPIC-04 v9.13); prior — 2026-10-29 (session — 3 new item(s) added: BLG-QA-231, BLG-QA-232, BLG-QA-233; EPIC-04 v9.13 DoQ review follow-ups); prior — 2026-10-29 (session — 2 new item(s) added: BLG-QA-230, BLG-FE-235; ST-24 state-changing action sweep, EPIC-04 v9.13); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -6459,5 +6459,190 @@ ST-32 made each screener run record `duration_seconds` and added `scripts/screen
 **Acceptance Criteria**
 - A `/health/detailed` response without `render_service_id` fails the smoke test (test)
 - The expected service ID has one definition in the repo
+
+---
+
+### BLG-QA-230 — Add Playwright coverage for 15 uncovered state-changing actions
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** Director of Quality; QA & Testing Owner
+**Source:** ST-24 (EPIC-04, v9.13) state-changing action sweep — 2026-10-28
+**Effort:** M (~1-2 days)
+**Provisional-Target:** v9.14
+
+**Problem**
+The ST-24 sweep (`docs/testing/state_changing_action_coverage.md`) found 15 of 52 state-changing primary actions that no Playwright test sends, including the Positions-page Exit modal submit, the abandon-plan submit, reflection save, note and tag save, and single deletes. A wrong route or method on any of them would ship unseen, which is how `PATCH /positions/{id}` (BLG-FE-226) went unnoticed.
+
+**Scope**
+- A test per uncovered action (inventory rows 2, 6, 7, 8, 11, 16, 17, 19, 24, 26, 30, 34, 39, 46, 52) asserting method, path and body
+- Mock `/positions/{id}/mark-reviewed` in `position-review-cadence-nudge.spec.js` SC-RCN-06, whose PATCH is unanswered today
+
+**Acceptance Criteria**
+- Each listed action is Covered in the regenerated inventory
+- SC-RCN-06's PATCH receives a mocked response
+
+---
+
+### BLG-FE-235 — Remove five uncalled state-changing client methods
+**Priority:** P3 (Low)
+**Type:** Frontend / Code Hygiene
+**Owner:** Base44 Frontend Prompt Owner
+**Source:** ST-24 (EPIC-04, v9.13) state-changing action sweep — 2026-10-28
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.14
+
+**Problem**
+`base44Client.js` keeps `Signal.delete`, `Signal.generate`, `createSnapshot`, `trades.updateCosts` and the strategy benchmark `importData`, none with a caller. They are outside BLG-FE-230's scope, which covers only the methods whose route does not exist.
+
+**Scope**
+- Delete the five methods
+
+**Acceptance Criteria**
+- grep finds no definition or caller for any of them
+- Frontend and e2e suites pass
+
+---
+
+### BLG-QA-231 — Fix the intermittent viewport check in the grace-panel deep-link test
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** Director of Quality; QA & Testing Owner
+**Source:** EPIC-04 (v9.13) CI run 40784100342 and local full runs — 2026-10-29
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v9.14
+
+**Problem**
+`tests/e2e/grace-panel-position-link.spec.js` SC-GPL-01 fails intermittently on `expect(card).toBeInViewport()` ("viewport ratio 0"). It failed on both tries of attempt 1 in Playwright E2E run 40784100342 (shard 3/8, `2f5cc56a`), then passed on the re-run and on `5e8b6f04` with the same code. It also failed once locally on a build of unchanged `main`. It is the first demonstrated flaky test under `docs/testing/flaky_test_quarantine_process.md`, which is BLG-QA-75's gate condition. It has not been quarantined.
+
+**Scope**
+- Find why the highlighted card is sometimes not scrolled into view (scroll timing vs. layout settling after the Positions list renders) and fix the test or the scroll
+- Decide quarantine per the Flaky-Test Disposition Addendum if the fix is not immediate, and record the incident against BLG-QA-75's gate
+
+**Acceptance Criteria**
+- SC-GPL-01 passes in 20 consecutive local runs under `--repeat-each=20 --workers=4`
+- The quarantine process doc's Currently-Known Flaky Tests section reflects the outcome
+
+---
+
+### BLG-QA-232 — Assert the ST-25 colour changes that have no Playwright coverage
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** Director of Quality; QA & Testing Owner
+**Source:** EPIC-04 (v9.13) agent-mediated DoQ review of ST-25, frontend testing gate (CLAUDE.md §2) — 2026-10-29
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v9.14
+
+**Problem**
+ST-25 changed colours that no Playwright test or staging run checks: the destructive-button hover from rose-500 to rose-700 on seven confirm buttons (decision record §2.2), the Cash Management deposit fill (emerald-700) and `text-white` on its submit button, and `text-white` on System Status "Refresh Health". AC 2's listed sites are asserted in `coloured-button-fills.spec.js`; these addendum states are not.
+
+**Scope**
+- Extend `tests/e2e/coloured-button-fills.spec.js`: hover each of the seven rose-600 confirm buttons and assert `rgb(190, 18, 60)`; assert the deposit and withdraw submit fills and white text; assert Refresh Health's white text in dark theme
+- Scoped axe colour-contrast on each, both themes
+
+**Acceptance Criteria**
+- Each listed state has a passing Playwright assertion in CI
+- No `color-contrast` violation on those buttons in either theme
+
+---
+
+### BLG-QA-233 — Assert the Post-Trade Debrief button text colour directly
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** Director of Quality; QA & Testing Owner
+**Source:** EPIC-04 (v9.13) ST-25 consequence fix in `TradeDebrief.js` (`2f5cc56a`) — 2026-10-29
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.14
+
+**Problem**
+ST-25 gave the Post-Trade Debrief Generate and Regenerate buttons `text-slate-800 dark:text-slate-300`, fixing a 1.48:1 light-theme contrast failure that axe had missed while the buttons sat off-screen. Today only the section's axe scans (SC-DBF-06a, SC-DBF-10b) cover it, and they depend on the buttons being on screen at 1280px. A layout change that pushes them off-screen again would hide a regression.
+
+**Scope**
+- Add `toHaveCSS('color', …)` assertions for both buttons in `tests/e2e/trade-debrief.spec.js`, in both themes
+
+**Acceptance Criteria**
+- Generate and Regenerate assert slate-800 (`rgb(30, 41, 59)`) in light and slate-300 (`rgb(203, 213, 225)`) in dark, passing in CI
+
+---
+
+### BLG-QA-234 — Stop the frontend route check passing a literal path through a parameter route
+**Priority:** P3 (Low)
+**Type:** QA / Contract Tooling
+**Owner:** Director of Quality; API Contracts & Documentation Owner
+**Source:** PR #2076 (EPIC-04, v9.13) agent-mediated Director of Quality / Product Owner review — 2026-10-29
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.14
+
+**Problem**
+`scripts/check_frontend_api_calls.py` (ST-23) matches a call against openapi paths with each `{param}` treated as "any segment". A literal call with a mistyped segment therefore passes when a parameter route has the same shape: `GET /positions/complainse` passes via `GET /positions/{position_id}`, and `DELETE /trade-plans/bluk` via `DELETE /trade-plans/{id}`. No current call depends on this; it is a latent false negative in the check meant to catch exactly this class of mistake.
+
+**Scope**
+- A call whose resolved path has no `{param}` must match a literal openapi path, or be listed in an allow-list with its reason (e.g. a hard-coded parameter value)
+- A test for each case
+
+**Acceptance Criteria**
+- `GET /positions/complainse` and `DELETE /trade-plans/bluk` fail the check (test)
+- The check still passes on the real `src/` tree
+
+---
+
+### BLG-QA-235 — Staging visual check of the layout changed by tailwind-merge in cn()
+**Priority:** P2 (Medium)
+**Type:** QA / Visual Verification
+**Owner:** Director of Quality; Head of UX & Design
+**Source:** PR #2076 (EPIC-04, v9.13) agent-mediated Director of Quality / Product Owner review — 2026-10-29
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v9.14
+
+**Problem**
+ST-25 made `cn()` run `tailwind-merge`, so every component's caller-supplied classes now win class conflicts across the whole app, not only Button fills. This changed layout outside ST-25's listed sites: for example the Trade History expanded row narrowed, which moved the Post-Trade Debrief buttons on screen. Those changes have no acceptance criterion, no Playwright assertion and no staging run; the full Playwright suite and visual snapshots passing is the only evidence (CLAUDE.md §2 requires Playwright or a recorded staging run for layout changes).
+
+**Scope**
+- Human staging pass, both themes, of the pages whose components merge classes through `cn()` (Positions grid and table, Trade History expanded row, Dashboard, Trade Plans, Screener, Settings, dialogs and sheets), comparing against the pre-merge production build
+- File any unintended change found as its own item
+
+**Acceptance Criteria**
+- Staging run date and pages checked recorded in `qa_evidence_EPIC-04.md` or the next cycle's QA evidence
+- Each unintended layout change found is fixed or has a backlog item
+
+---
+
+### BLG-QA-236 — Keep the state-changing action inventory in step with the code
+**Priority:** P3 (Low)
+**Type:** QA / Contract Tooling
+**Owner:** Director of Quality; QA & Testing Owner
+**Source:** PR #2076 (EPIC-04, v9.13) agent-mediated Director of Quality / Product Owner review — 2026-10-29
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v9.14
+
+**Problem**
+`docs/testing/state_changing_action_coverage.md` (ST-24) is a point-in-time snapshot. A new POST/PUT/PATCH/DELETE call added to `src/` does not appear in it, so ST-24's "every action is covered or has a dated backlog item" stops being true the first time a feature ships without anyone updating the document.
+
+**Scope**
+- A CI check comparing the state-changing call sites from `check_frontend_api_calls.py`'s extractor with the inventory's call-site column, failing on a call site missing from the document
+
+**Acceptance Criteria**
+- Adding an unlisted state-changing call fails the check (test)
+- The check passes on the current tree and document
+
+---
+
+### BLG-QA-237 — Cover the Positions-page Exit modal submit in Playwright
+**Priority:** P2 (Medium)
+**Type:** QA / Test Automation
+**Owner:** Director of Quality; QA & Testing Owner
+**Source:** PR #2076 (EPIC-04, v9.13) agent-mediated Director of Quality / Product Owner review — 2026-10-29
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v9.14
+
+**Problem**
+The Positions-page Exit modal is the main way a user closes a position, and no Playwright test submits it (inventory row 2). v9.13's anchor defect (BLG-FE-226) was an exit flow sending a request to a route that does not exist; only the Daily Position Monitor's exit path is covered today. This row is part of BLG-QA-230 (P3); it is split out here at P2 because of its weight, so `groom backlog` should drop row 2 from BLG-QA-230's scope.
+
+**Scope**
+- Playwright test that opens the Exit modal from Positions, submits, and asserts `POST /positions/{id}/exit` with the expected body, the success state and the position leaving the open list
+- Error path: a failed exit keeps the modal open with the error shown
+
+**Acceptance Criteria**
+- The inventory's row 2 reads Covered with the new scenario IDs
+- Both scenarios pass in CI under the API status guard
 
 ---

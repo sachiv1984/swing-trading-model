@@ -31,7 +31,7 @@
 
 'use strict';
 
-const { test, expect } = require('@playwright/test');
+const { test, expect } = require('./fixtures/api-status-guard');
 
 const SLATE_400_RGB = 'rgb(148, 163, 184)';
 const SLATE_500_RGB = 'rgb(100, 116, 139)';

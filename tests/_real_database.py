@@ -27,6 +27,37 @@ Inside the block sys.modules["database"] is a real module. On exit, whatever
 was there before (conftest's stub) is put back, so the next file collected
 still sees the stub. Modules imported inside the block keep their own
 references to the real module, so the tests in that file behave as before.
+
+Known limit: real-bound modules outlive the importing file (decision recorded
+by ST-27, BLG-QA-211, EPIC-04, v9.13; ESC-EXEC-20261028-01).
+Only sys.modules["database"] is restored on exit. Every other module first
+imported inside a real_database_imports() block -- main, the routers, and the
+services they import -- stays in sys.modules for the rest of the session,
+holding the real module through its module-level `from database import X`
+names (or `import database`, as routers/strategy_benchmark.py does). A later
+file that imports one of those modules gets that cached, real-bound copy, not a
+fresh stub-bound one. Modules already imported earlier with the stub are not
+re-imported inside the block, so they stay stub-bound: the session holds a mix,
+decided by collection order (in a full run today the first block run at
+collection is in
+tests/test_api_call_attribution.py, which sorts before
+tests/test_api_contracts.py; any new file sorting earlier changes it). A
+function-level `from database import X` looks the name up at call time and
+gets the stub.
+This is accepted, not fixed, because:
+- Evicting them would make a later patch("services.x.name") re-import a fresh
+  services.x, so the patch would land on a module object that main's routers
+  do not call.
+- Making every Category B file share one session-scoped app (so nothing is
+  imported per file) would touch about 30 files and their patch() targets.
+To stay independent of collection order, a test that calls into a service or
+router must patch the names that module uses, at the module level
+(patch("services.x.get_y") or patch.object(module, "get_y")). For a
+function-level `from database import`, patch("database.get_y"), which hits
+conftest's stub at call time. A test must never
+assume conftest's stub sits behind a service's database calls: in a full run
+it may be the real module. conftest.py's leak guard checks only
+sys.modules["database"] itself and does not detect this case.
 """
 import importlib
 import importlib.util

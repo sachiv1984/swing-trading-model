@@ -25,7 +25,7 @@
 
 'use strict';
 
-const { test, expect } = require('@playwright/test');
+const { test, expect } = require('./fixtures/api-status-guard');
 const { ALL_TRADES, ANALYTICS_SETTINGS } = require('./mocks/analytics-mock-data');
 
 const API_BASE = 'http://localhost:8000';

@@ -1298,9 +1298,9 @@ export default function TradePlan() {
             <Button
               disabled={!abandonReasonValid || abandonMutation.isPending}
               onClick={() => abandonMutation.mutate({ id: editId, reason: abandonReason.trim() })}
-              // ST-24 (BLG-FE-210, v9.12): `!` so the amber-700 fill beats Button's
-              // default bg-primary, which cn() (clsx, no tailwind-merge) does not drop.
-              className="!bg-amber-700 hover:!bg-amber-800 text-white border-0"
+              // ST-25 (BLG-FE-221, v9.13): cn() merges with tailwind-merge, so the
+              // amber-700 fill replaces Button's default bg-primary without `!`.
+              className="bg-amber-700 hover:bg-amber-800 text-white border-0"
             >
               {abandonMutation.isPending ? "Abandoning…" : "Abandon Plan"}
             </Button>

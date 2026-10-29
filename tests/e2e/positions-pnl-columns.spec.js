@@ -24,7 +24,7 @@
  * ROUTING NOTE: App uses HashRouter. ALL navigation must use page.goto('/#/…')
  */
 
-const { test, expect } = require("@playwright/test");
+const { test, expect } = require("./fixtures/api-status-guard");
 
 const SEED_POSITIONS = [
   {

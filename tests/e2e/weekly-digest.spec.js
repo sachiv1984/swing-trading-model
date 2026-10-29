@@ -3,7 +3,7 @@
  *
  * Scenarios: SC-DIG-01 through SC-DIG-05
  */
-import { test, expect } from "@playwright/test";
+import { test, expect } from "./fixtures/api-status-guard";
 
 const DIGEST_URL = "/digest/weekly";
 const SEED = {
