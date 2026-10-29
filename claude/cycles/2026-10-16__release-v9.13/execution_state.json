@@ -768,7 +768,8 @@
         "tests/e2e/api-status-guard.spec.js",
         "tests/test_e2e_api_status_guard_applied.py",
         "tests/e2e/coloured-button-fills.spec.js",
-        "tests/e2e/accessibility-axe-scan.spec.js"
+        "tests/e2e/accessibility-axe-scan.spec.js",
+        "tests/e2e/trade-debrief.spec.js"
       ],
       "stories": {
         "ST-23": {
@@ -794,7 +795,7 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": "Case D (CI tooling): script is the de facto spec. AC1 job frontend_api_call_existence in quality_gate.yml; AC2 test_fails_on_call_to_nonexistent_route; AC3 test_real_src_tree_passes with BLG-FE-230 dated allow-list (2026-10-28). Deviation check: none. ci_pending: 40768476264 (CI Pytest Suite), 40768476205 (Playwright) at done-time; no backend/** touched."
+          "notes": "Case D (CI tooling): script is the de facto spec. AC1 job frontend_api_call_existence in quality_gate.yml; AC2 test_fails_on_call_to_nonexistent_route; AC3 test_real_src_tree_passes with BLG-FE-230 dated allow-list (2026-10-28). Deviation check: none. CI all success on 6f1badc2: CI Pytest Suite 40768476264, Critical-Path Smoke (Playwright) 40768476205 (ci_pending cleared 2026-10-29)."
         },
         "ST-24": {
           "title": "Fail Playwright on any 404/405 from the app's API and sweep state-changing actions",
@@ -820,7 +821,7 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": "Two commits: 388e31d9 (guard fixture, 138 specs rewritten, SC-ASG-01..05, 5 contract-documented 404 allow-lists) and 06e1bece (coverage document, BLG-QA-230 and BLG-FE-235 filed via /backlog-add, user-approved). AC1 SC-ASG-01 (deliberate 405 fails, test.fail) plus the static guard test; AC2 52 actions, 37 covered, 15 under BLG-QA-230 dated 2026-10-28; AC3 no defects exposed (all 404s contract-documented). CI on 388e31d9 all success: Playwright E2E 40784070737, Critical-Path Smoke 40784070843, Pytest 40784070725. ci_pending: 06e1bece runs (docs and backlog only; no backend or e2e change). Deviation check: none."
+          "notes": "Two commits: 388e31d9 (guard fixture, 138 specs rewritten, SC-ASG-01..05, 5 contract-documented 404 allow-lists) and 06e1bece (coverage document, BLG-QA-230 and BLG-FE-235 filed via /backlog-add, user-approved). AC1 SC-ASG-01 (deliberate 405 fails, test.fail) plus the static guard test; AC2 52 actions, 37 covered, 15 under BLG-QA-230 dated 2026-10-28; AC3 no defects exposed (all 404s contract-documented). CI on 388e31d9 all success: Playwright E2E 40784070737, Critical-Path Smoke 40784070843, Pytest 40784070725. 06e1bece CI all success (Pytest, Critical-Path Smoke; docs and backlog only). Deviation check: none."
         },
         "ST-25": {
           "title": "Make coloured Buttons render their colour (fix cn() at the root)",
@@ -841,14 +842,15 @@
             "docs/specs/frontend/pages/screener_results.md",
             "docs/specs/frontend/components/cash_management_modal.md",
             "src/lib/utils.js",
-            "tests/e2e/coloured-button-fills.spec.js"
+            "tests/e2e/coloured-button-fills.spec.js",
+            "tests/e2e/trade-debrief.spec.js"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": "cn() = twMerge(clsx()); tailwind-merge 2.6.0. AC1 grep \"!bg-\" src/ empty; AC2 SC-CBF-01..04 both themes (toHaveCSS + scoped axe). Consequence disclosed in commit: TradeDebrief Generate/Regenerate given text-slate-800 dark:text-slate-300 (latent light-theme 1.48:1 contrast; axe skipped it on main because it sat off-screen at x=1520). ci_pending: 40784100342 (Playwright E2E shard 3/8 failed SC-GPL-01 toBeInViewport on both attempts; rerun requested). The next commit 5e8b6f04 carries the same ST-25 code and its Playwright E2E 40784107809 succeeded. Pytest 40784100269 success, Critical-Path Smoke 40784100196 success. Deviation check: none."
+          "notes": "cn() = twMerge(clsx()); tailwind-merge 2.6.0. AC1 grep \"!bg-\" src/ empty; AC2 SC-CBF-01..04 both themes (toHaveCSS + scoped axe). Consequence disclosed in commit: TradeDebrief Generate/Regenerate given text-slate-800 dark:text-slate-300 (latent light-theme 1.48:1 contrast; axe skipped it on main because it sat off-screen at x=1520). Playwright E2E 40784100342 success after rerun of shard 3/8 (attempt 1 failed SC-GPL-01 toBeInViewport twice; intermittent, also failed locally on a main-equivalent build; ci_pending cleared 2026-10-29). The next commit 5e8b6f04 carries the same ST-25 code and its Playwright E2E 40784107809 succeeded. Pytest 40784100269 success, Critical-Path Smoke 40784100196 success. Deviation check: none. DoQ first pass (agent-mediated): addendum colour states without Playwright evidence tracked in BLG-QA-232 (graded Pass_with_deviation); SC-GPL-01 flaky tracked in BLG-QA-231, not quarantined by user decision 2026-10-29; direct debrief button colour assertions BLG-QA-233."
         },
         "ST-26": {
           "title": "Fix the Replay page's light-theme colour contrast",
