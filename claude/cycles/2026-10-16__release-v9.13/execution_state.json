@@ -759,8 +759,8 @@
     "EPIC-04": {
       "status": "done",
       "branch": "exec/2026-10-16__release-v9.13/EPIC-04",
-      "pr_number": null,
-      "pr_status": "none",
+      "pr_number": 2076,
+      "pr_status": "open",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-10-16__release-v9.13/qa_evidence_EPIC-04.md",
       "test_scenarios": [
@@ -1455,7 +1455,8 @@
     "2026-10-27: EPIC-05 branch cut from main 6f70a976 (after EPIC-03 merge). ST-28 (a058fa60) and ST-29 (d81af9b0) engine-implemented; live halves delegated as DEL-20261027-02/-03 (both appended in one write, +2 entries, prior entries unchanged).",
     "2026-10-28: EPIC-05 all stories done. ST-29, ST-30 and ST-32 graded Pass_with_deviation: their remaining ACs need a live run on main or production data, so they can only be verified after merge. Remainders filed as BLG-OPS-196/197/198 (v9.14), user-approved. DEL-20261027-03/05/06 carried to post-sprint; DEL-20261027-04 staging half done, production half in BLG-OPS-197.",
     "2026-10-28: run sprint resume sync (STEP 4, LL-v3.9-P3-1). PR #2075 (EPIC-05) merged 2026-10-28T11:31:37Z as 77758669; EPIC-05 pr_status/status set to merged. Orphaned post-merge commit check (LL-v6.8-P3-01): git log origin/main..origin/exec/2026-10-16__release-v9.13/EPIC-05 empty, nothing to reconcile.",
-    "2026-10-28: EPIC-04 branch cut from main a8ad6e87 (after EPIC-05 merge sync; all other EPICs merged, so the sprint_backlog merge order holds). commit-check skill lesson \"open PR after every push\" conflicts with execution_prompt.md §3.2.B BLG-GOV-18; governance prompt followed, PR opens at EPIC completion."
+    "2026-10-28: EPIC-04 branch cut from main a8ad6e87 (after EPIC-05 merge sync; all other EPICs merged, so the sprint_backlog merge order holds). commit-check skill lesson \"open PR after every push\" conflicts with execution_prompt.md §3.2.B BLG-GOV-18; governance prompt followed, PR opens at EPIC completion.",
+    "2026-10-29: EPIC-04 PR #2076 opened after the agent-mediated DoQ sign-off (b413f8e2; first pass Blocked, retry 1 Approved). Pre-PR checks passed: API baseline drift, frontend API call check, backlog integrity, no foreign-EPIC commits, branch level with main. User-directed: \"open the PR when CI is green\" (CI green on 5e4fa87a)."
   ],
   "sealed": false,
   "sealed_utc": null
