@@ -757,10 +757,11 @@
       "merge_commit": "40d298f4"
     },
     "EPIC-04": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-10-16__release-v9.13/EPIC-04",
       "pr_number": 2076,
-      "pr_status": "open",
+      "pr_status": "merged",
+      "merge_commit": "28d475fb",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-10-16__release-v9.13/qa_evidence_EPIC-04.md",
       "test_scenarios": [
@@ -1445,12 +1446,11 @@
       "EPIC-06",
       "EPIC-02",
       "EPIC-03",
-      "EPIC-05"
-    ],
-    "epics_pending": [
+      "EPIC-05",
       "EPIC-04"
     ],
-    "all_merged": false
+    "epics_pending": [],
+    "all_merged": true
   },
   "process_notes": [
     "2026-10-16: agent-mediated DoQ review of EPIC-01 (§5.3, user-directed) — first pass Blocked on ST-05's in-grace stop precedence; fixed in 2841b3a9 (RX-10). Non-blocking findings: ST-01 cancel-during-submit fixed in 68200248 (SC-MEQ-04); stale 'three exit conditions' wording fixed in 2841b3a9; evidence wording updated (FI-P3-02 for ST-03's modal half; ST-05 graded Pass with notes; ST-04 per-save note).",
@@ -1469,7 +1469,8 @@
     "2026-10-28: EPIC-04 branch cut from main a8ad6e87 (after EPIC-05 merge sync; all other EPICs merged, so the sprint_backlog merge order holds). commit-check skill lesson \"open PR after every push\" conflicts with execution_prompt.md §3.2.B BLG-GOV-18; governance prompt followed, PR opens at EPIC completion.",
     "2026-10-29: EPIC-04 PR #2076 opened after the agent-mediated DoQ sign-off (b413f8e2; first pass Blocked, retry 1 Approved). Pre-PR checks passed: API baseline drift, frontend API call check, backlog integrity, no foreign-EPIC commits, branch level with main. User-directed: \"open the PR when CI is green\" (CI green on 5e4fa87a).",
     "2026-10-29: PR #2076 agent-mediated Director of Quality and Product Owner review posted (issuecomment-6491400948), both Approved with Comments, labelled per OA-6; same engine as the implementer, disclosed. Findings filed at the user's direction as BLG-QA-234 (P3), BLG-QA-235 (P2), BLG-QA-236 (P3), BLG-QA-237 (P2) in 0ed4ef3c. Human DoQ sign-off and Product Owner acceptance still required.",
-    "2026-10-29: EPIC-04 human DoQ confirmation and Product Owner acceptance given in-session (\"give DOQ and PO acceptance\"), recorded in qa_evidence_EPIC-04.md and PR #2076 comment issuecomment-6491469479. Merge left to the human developer."
+    "2026-10-29: EPIC-04 human DoQ confirmation and Product Owner acceptance given in-session (\"give DOQ and PO acceptance\"), recorded in qa_evidence_EPIC-04.md and PR #2076 comment issuecomment-6491469479. Merge left to the human developer.",
+    "2026-10-29: STEP 4 resume-sync — PR #2076 found merged (mergedAt 2026-10-29T09:00:06Z, merge commit 28d475fb) by the human developer; EPIC-04 pr_status/status set to merged and merge_gate recomputed on main. Orphaned post-merge commit check (git log origin/main..origin/exec/2026-10-16__release-v9.13/EPIC-04): none."
   ],
   "sealed": false,
   "sealed_utc": null
