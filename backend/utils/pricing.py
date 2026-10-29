@@ -15,7 +15,7 @@ import time
 import logging
 import requests
 import pandas as pd
-from datetime import datetime
+from datetime import datetime, date, timedelta
 from typing import Optional, Dict
 
 from utils.upstream_call import bounded_upstream_call, get_timeout
@@ -239,6 +239,30 @@ def _yahoo_fetch_ma200_pair(ticker: str):
     return current, ma200
 
 
+# ~280 trading days, enough for a 200-day MA with holiday gaps (ST-02, v9.14).
+_REGIME_HISTORY_CALENDAR_DAYS = 400
+_REGIME_HISTORY_BAR_LIMIT = 300
+
+
+def _alpaca_fetch_ma200_pair(ticker: str):
+    """
+    Current price (latest daily close) and 200-day MA for a US ticker from
+    Alpaca daily bars (ST-02, EPIC-01, v9.14, BLG-BE-192). The regime's
+    fallback when Yahoo Finance fails, so a Yahoo outage no longer leaves the
+    US regime unmeasured. Same MA rule as _yahoo_fetch_ma200_pair: the last
+    200 closes, or all available closes when fewer. Returns (None, None) when
+    Alpaca has no bars.
+    """
+    from services.alpaca_service import get_ohlcv_bars
+    start = (date.today() - timedelta(days=_REGIME_HISTORY_CALENDAR_DAYS)).isoformat()
+    bars = get_ohlcv_bars(ticker, limit=_REGIME_HISTORY_BAR_LIMIT, start=start)
+    closes = [float(b["c"]) for b in (bars or []) if b.get("c") is not None]
+    if not closes:
+        return None, None
+    window = closes[-200:]
+    return closes[-1], sum(window) / len(window)
+
+
 _market_regime_cache: dict = {}
 _MARKET_REGIME_TTL_SECONDS = 300  # 5-minute shared cache (BLG-BE-25, v5.0 ST-07; consolidated here BLG-BE-97, v8.8 ST-07)
 
@@ -262,11 +286,15 @@ def check_market_regime() -> Dict[str, any]:
             - spy_ma200: float
             - ftse_price: float
             - ftse_ma200: float
+            - spy_source: "yahoo_finance" | "alpaca" | None — which source
+              produced the SPY reading (ST-02, BLG-BE-192); None if neither did
+            - ftse_source: "yahoo_finance" | None
             - date: datetime (as-of time this result was computed)
 
     Notes:
         - Results are cached for 5 minutes (BLG-BE-25) — a cache hit returns
           immediately with no network call.
+        - SPY falls back to Alpaca daily bars when Yahoo Finance fails (ST-02)
         - Defaults to risk-on if data unavailable
         - Includes 300ms delay to avoid rate limiting
         - Retries transient network failures before falling back (ST-09, ~3 attempts)
@@ -291,11 +319,27 @@ def check_market_regime() -> Dict[str, any]:
                 print(f"Error getting MA200 for {ticker}: {e}")
                 return None, None
 
-        # Get SPY data
-        spy_price, spy_ma200 = get_ma200("SPY")
-        
-        # Get FTSE data
+        def get_us_ma200(ticker: str):
+            """Yahoo Finance first, then Alpaca bars (ST-02, BLG-BE-192). Returns (price, ma200, source)."""
+            price, ma200 = get_ma200(ticker)
+            if price is not None and ma200 is not None:
+                return price, ma200, "yahoo_finance"
+            try:
+                price, ma200 = _alpaca_fetch_ma200_pair(ticker)
+            except Exception as e:
+                logger.warning("Alpaca regime fallback failed for %s: %s", ticker, e)
+                price, ma200 = None, None
+            if price is not None and ma200 is not None:
+                logger.warning("Yahoo Finance regime data unavailable for %s — computed from Alpaca bars", ticker)
+                return price, ma200, "alpaca"
+            return None, None, None
+
+        # Get SPY data (Yahoo Finance, Alpaca fallback)
+        spy_price, spy_ma200, spy_source = get_us_ma200("SPY")
+
+        # Get FTSE data (Yahoo Finance only — Alpaca has no UK index data)
         ftse_price, ftse_ma200 = get_ma200("^FTSE")
+        ftse_source = "yahoo_finance" if ftse_price is not None and ftse_ma200 is not None else None
         
         # Default to risk-on if we can't fetch data
         if spy_price is None or spy_ma200 is None:
@@ -321,6 +365,8 @@ def check_market_regime() -> Dict[str, any]:
             'spy_ma200': spy_ma200 or 0,
             'ftse_price': ftse_price or 0,
             'ftse_ma200': ftse_ma200 or 0,
+            'spy_source': spy_source,
+            'ftse_source': ftse_source,
             'date': now
         }
         _market_regime_cache["result"] = result
@@ -339,6 +385,8 @@ def check_market_regime() -> Dict[str, any]:
             'spy_ma200': 0,
             'ftse_price': 0,
             'ftse_ma200': 0,
+            'spy_source': None,
+            'ftse_source': None,
             'date': now
         }
 
