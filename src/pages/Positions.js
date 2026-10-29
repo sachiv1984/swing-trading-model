@@ -52,6 +52,7 @@ import PaperAccountPanel from "../components/positions/PaperAccountPanel";
 import AiChatWidget from "../components/AiChatWidget";
 import { toast } from "sonner";
 import { GRACE_PERIOD_DAYS, ATR_PERIOD_DAYS, PROFIT_ATR_MULTIPLIER } from "../constants/strategy";
+import StaleMarker, { STALE_EXPLANATION_POSITIONS } from "../components/ui/StaleMarker";
 
 const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:8000";
 
@@ -1008,6 +1009,7 @@ export default function Positions() {
 
                   <TableCell className="text-slate-300">
                     {formatCurrency(displayCurrentPrice || null, { currency })}
+                    {position.price_is_stale === true && <StaleMarker explanation={STALE_EXPLANATION_POSITIONS} />}
                   </TableCell>
 
                   {/* ST-01 (BLG-FEAT-46): two-line stop cell — initial stop / trailing stop + breach badge */}

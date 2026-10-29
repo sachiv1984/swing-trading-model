@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Class 2
 **Status:** Canonical
-**Version:** 1.27.0
-**Last Updated:** 2026-10-29 (ST-06, EPIC-01, v9.14, BLG-OPS-194 — v9.14.0 entry: GET /health/detailed's Yahoo Finance check reports fallbacks); prior — 2026-10-29 (ST-04/ST-05, EPIC-01, v9.14, BLG-BE-194/BLG-BE-169 — v9.14.0 entry: GET /portfolio, GET /positions and GET /market/status gain fx_rate_source and fx_rate_as_of); prior — 2026-10-29 (ST-03, EPIC-01, v9.14, BLG-BE-193 — v9.14.0 entry: GET /market/status and GET /market/regime report an unknown regime); prior history retained — see prior entries in version control
+**Version:** 1.28.0
+**Last Updated:** 2026-10-29 (ST-07, EPIC-01, v9.14, BLG-BE-168 — v9.14.0 entry: GET /positions gains price_is_stale); prior — 2026-10-29 (ST-06, EPIC-01, v9.14, BLG-OPS-194 — v9.14.0 entry: GET /health/detailed's Yahoo Finance check reports fallbacks); prior — 2026-10-29 (ST-04/ST-05, EPIC-01, v9.14, BLG-BE-194/BLG-BE-169 — v9.14.0 entry: GET /portfolio, GET /positions and GET /market/status gain fx_rate_source and fx_rate_as_of); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 # API Changelog
@@ -76,6 +76,15 @@ Rules:
 | Change | Details |
 |--------|---------|
 | Updated endpoint: GET /positions | Each position adds `fx_rate_source` and `fx_rate_as_of` describing `live_fx_rate` (BLG-BE-194/BLG-BE-169). |
+
+### position_endpoints.md — v2.19.0 (UPDATED)
+
+**EPIC:** EPIC-01
+**ST:** ST-07
+
+| Change | Details |
+|--------|---------|
+| Updated endpoint: GET /positions | Each position adds `price_is_stale`: `true` when the live price fetch failed and the stored price is used, as on `GET /portfolio` (BLG-BE-168). |
 
 ### health_endpoints.md — v1.9 (UPDATED)
 

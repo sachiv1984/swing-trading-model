@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 2.18.0
-**Last Updated:** 2026-10-29 (ST-04/ST-05, EPIC-01, v9.14, BLG-BE-194/BLG-BE-169 — GET /positions gains fx_rate_source and fx_rate_as_of per position); prior — 2026-10-17 (ST-10, EPIC-02, v9.13, BLG-SPEC-188 — new `GET /positions/stop-freshness`, median and maximum stop age across open positions for System Status); prior — 2026-10-16 (ST-02, EPIC-01, v9.13, BLG-SPEC-186 — `POST /positions/{position_id}/exit` now enforces the allowed `exit_reason` list with a 400, as already documented; DS-34); prior history retained — see prior entries in version control
+**Version:** 2.19.0
+**Last Updated:** 2026-10-29 (ST-07, EPIC-01, v9.14, BLG-BE-168 — GET /positions gains price_is_stale per position); prior — 2026-10-29 (ST-04/ST-05, EPIC-01, v9.14, BLG-BE-194/BLG-BE-169 — GET /positions gains fx_rate_source and fx_rate_as_of per position); prior — 2026-10-17 (ST-10, EPIC-02, v9.13, BLG-SPEC-188 — new `GET /positions/stop-freshness`, median and maximum stop age across open positions for System Status); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Overview
@@ -28,6 +28,7 @@ Global response envelopes, error shape, defaults, and multi-currency/stop rules 
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.19.0 | 2026-10-29 | ST-07 (BLG-BE-168, EPIC-01, v9.14): `GET /positions` gains `price_is_stale` on each position, the same flag `GET /portfolio` has returned since v9.11. The Positions page shows the stale marker for it. |
 | 2.18.0 | 2026-10-29 | ST-04/ST-05 (BLG-BE-194/BLG-BE-169, EPIC-01, v9.14): `GET /positions` gains `fx_rate_source` (`live` / `last_known` / `constant`) and `fx_rate_as_of` on each position, describing `live_fx_rate`. On an FX fetch failure `live_fx_rate` is the last good rate (`data_model.md` DS-37) before the 1.27 constant. |
 | 2.17.0 | 2026-10-17 | ST-10 (BLG-SPEC-188, EPIC-02, v9.13): new `GET /positions/stop-freshness` — median and maximum age of `stop_calculated_at` across open positions, oldest stop's ticker and timestamp, and the never-recalculated count (`metrics_definitions.md` §Stop Freshness). Read-only. |
 | 2.16.1 | 2026-10-16 | ST-02 (BLG-SPEC-186, EPIC-01, v9.13): `POST /positions/{position_id}/exit` enforces the documented `exit_reason` list. An unlisted value (including an empty string or a legacy snake-case spelling) returns `400` before anything is written; omitted or `null` still means `Manual Exit`. The rule and the `400 Invalid exit_reason` error were already documented; the backend had accepted any string. Same list as `data_model.md` DS-34's CHECK constraints. |
@@ -126,6 +127,7 @@ This endpoint does **not** use the standard `{ status, data }` response envelope
     "stop_frozen_reason": null,
     "fx_rate": 1.3642,
     "live_fx_rate": 1.3650,
+    "price_is_stale": false,
     "fx_rate_source": "live",
     "fx_rate_as_of": "2026-10-01T09:14:02+00:00",
     "current_trailing_stop": 560.50,
@@ -154,6 +156,7 @@ This endpoint does **not** use the standard `{ status, data }` response envelope
 |-------|-------|
 | `current_price` | GBP — used for portfolio calculations |
 | `current_price_native` | USD or GBP — used for display (what the trader sees in their broker) |
+| `price_is_stale` | *(v2.19.0, ST-07, BLG-BE-168)* `true` when the live price fetch failed and `current_price_native` is the last stored price (`positions.current_price`, or the entry price when none is stored); `current_price`, `pnl` and `pnl_percent` are derived from it. `false` when a live price was used. Same meaning as `GET /portfolio`'s field. The Positions page table and grid show the stale marker for it (`positions.md` §Stale Price Marker) |
 | `stop_price` | Current trailing stop in GBP. `0.0` during grace period |
 | `stop_price_native` | Current trailing stop in native currency. `0.0` during grace period |
 | `initial_stop` | The stop calculated at entry (`entry_price − (5 × ATR)`), in GBP. Informational; used to show how far the stop has trailed |

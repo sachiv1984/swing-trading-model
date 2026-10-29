@@ -2,7 +2,9 @@ openapi: 3.0.3
 
 info:
   title: Momentum Trading Assistant API
-  version: 3.42.0
+  version: 3.43.0
+  # v3.43.0 (2026-10-29, ST-07, EPIC-01, v9.14): GET /positions gains price_is_stale per position
+  # (BLG-BE-168). No new endpoint.
   # v3.42.0 (2026-10-29, ST-06, EPIC-01, v9.14): GET /health/detailed's yahooFinance check reports degraded or
   # unhealthy with details.reason when the FX or regime fetch falls back (BLG-OPS-194). No new endpoint.
   # v3.41.0 (2026-10-29, ST-04/ST-05, EPIC-01, v9.14): GET /portfolio, GET /positions and GET /market/status
@@ -6985,7 +6987,8 @@ components:
         price_is_stale:
           type: boolean
           description: >
-            GET /portfolio only (v9.11 ST-10, BLG-BE-154). True when the live price fetch failed and
+            GET /portfolio (v9.11 ST-10, BLG-BE-154); GET /positions carries the same flag (v9.14 ST-07,
+            BLG-BE-168). True when the live price fetch failed and
             current_price is the last stored native price converted at live_fx_rate (no FX estimate).
         stop_distance_pct:
           type: number
@@ -7032,6 +7035,9 @@ components:
               description: v9.12 ST-15 (BLG-FE-202) — atr_unavailable when the last post-grace recompute (on-load or nightly) kept the stop because no ATR was available; null otherwise. Cleared by the next recompute with an ATR. Never set during grace. DS-32.
             fx_rate: { type: number }
             live_fx_rate: { type: number }
+            price_is_stale:
+              type: boolean
+              description: v9.14 ST-07 (BLG-BE-168) — true when the live price fetch failed and the stored price is used.
             fx_rate_source:
               $ref: "#/components/schemas/FxRateSource"
             fx_rate_as_of:

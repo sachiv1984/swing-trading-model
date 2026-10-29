@@ -1,5 +1,5 @@
 import { cn } from "../../lib/utils";
-import { ArrowDown, AlertCircle, Clock } from "lucide-react";
+import { ArrowDown, AlertCircle } from "lucide-react";
 import { formatCurrency, formatPercent } from "../../lib/format";
 
 const STATUS_ORDER = { GRACE: 0, LOSING: 1, PROFITABLE: 2 };
@@ -10,22 +10,7 @@ const statusBadge = {
   PROFITABLE: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30",
 };
 
-// ST-10 (EPIC-02, v9.11, BLG-BE-154): risk_dashboard.md §6.6.
-const STALE_TEXT = "Live price unavailable. Showing the last stored price converted at today's FX rate.";
-
-function StaleMarker() {
-  return (
-    <span
-      className="inline-flex items-center gap-1 ml-1.5 align-middle"
-      data-testid="price-stale-marker"
-      title={STALE_TEXT}
-      aria-label={STALE_TEXT}
-    >
-      <Clock className="w-3.5 h-3.5 text-amber-400" aria-hidden="true" />
-      <span className="text-xs text-amber-400">stale</span>
-    </span>
-  );
-}
+import StaleMarker, { STALE_EXPLANATION_RISK } from "../ui/StaleMarker";
 
 // ST-11 (EPIC-02, v9.11, BLG-FE-206): risk_dashboard.md §6.2a.
 const GRACE_STOP_TEXT = "Stops are not enforced during the 10-day grace period. See strategy rules §6.";
@@ -132,7 +117,7 @@ export default function PositionRiskTable({ positions = [], error }) {
                   </td>
                   <td className="px-4 py-3 text-slate-300 tabular-nums">
                     {pos.current_price != null ? formatCurrency(pos.current_price) : "—"}
-                    {pos.price_is_stale === true && <StaleMarker />}
+                    {pos.price_is_stale === true && <StaleMarker explanation={STALE_EXPLANATION_RISK} />}
                   </td>
                   <td className="px-4 py-3 text-slate-300 tabular-nums">
                     {inGrace ? <NotEnforced /> : pos.current_stop ? formatCurrency(pos.current_stop) : "—"}

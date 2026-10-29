@@ -153,6 +153,9 @@ def get_positions_with_prices() -> List[Dict]:
         print(f"   Fetching {pos['ticker']}...")
         live_price = get_current_price(pos['ticker'])
         
+        # ST-07 (BLG-BE-168, v9.14): true when the live fetch failed and the
+        # stored price is shown, the same flag GET /portfolio returns.
+        price_is_stale = not live_price
         if live_price:
             # Fix UK stocks: Yahoo returns pence
             if pos['market'] == 'UK' and live_price > 1000:
@@ -298,6 +301,7 @@ def get_positions_with_prices() -> List[Dict]:
             "shares": pos['shares'],
             "current_price": round(current_price_gbp, 2),
             "current_price_native": round(current_price_native, 2),
+            "price_is_stale": price_is_stale,
             "stop_price": round(stop_price_gbp, 2),
             "stop_price_native": round(stop_price_native, 2),
             "pnl": round(pnl_gbp, 2),

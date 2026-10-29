@@ -6,6 +6,7 @@ import { api } from "../../../api/base44Client";
 import DashboardCard from "./DashboardCard";
 import { formatPercent } from "../../../lib/format";
 import { fxSourceNotice } from "../../../lib/fxSource";
+import { STALE_EXPLANATION_RISK } from "../../ui/StaleMarker";
 
 function heatColor(pct) {
   if (pct == null) return "text-white";
@@ -27,7 +28,11 @@ export default function PortfolioHeatCard() {
   const staleCount = (portfolio?.positions ?? []).filter((p) => p?.price_is_stale === true).length;
   const fxNotice = fxSourceNotice(portfolio?.fx_rate_source, portfolio?.live_fx_rate, portfolio?.fx_rate_as_of);
   const fxDescriptionId = useId();
-  const descriptions = fxNotice ? [{ id: fxDescriptionId, text: fxNotice.description }] : [];
+  const staleDescriptionId = useId();
+  const descriptions = [
+    staleCount > 0 && { id: staleDescriptionId, text: STALE_EXPLANATION_RISK },
+    fxNotice && { id: fxDescriptionId, text: fxNotice.description },
+  ].filter(Boolean);
 
   return (
     <DashboardCard
@@ -48,11 +53,7 @@ export default function PortfolioHeatCard() {
         {heat != null && (heat < 15 ? "Heat within safe range" : heat <= 25 ? "Heat elevated — monitor closely" : "Heat critical — review positions")}
       </p>
       {staleCount > 0 && (
-        <p
-          className="text-xs text-amber-400 mt-1"
-          data-testid="dashboard-price-stale-notice"
-          title="Live price unavailable. Showing the last stored price converted at today's FX rate."
-        >
+        <p className="text-xs text-amber-700 dark:text-amber-400 mt-1" data-testid="dashboard-price-stale-notice">
           ⚠ {staleCount} position price{staleCount === 1 ? "" : "s"} stale
         </p>
       )}
