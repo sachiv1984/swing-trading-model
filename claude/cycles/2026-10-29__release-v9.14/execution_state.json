@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-29T14:51:40Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-29T14:51:40Z",
+  "last_updated_utc": "2026-10-29T14:55:56Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-02",
@@ -29,23 +29,28 @@
         "ST-01": {
           "title": "Restore eslint-config-react-app so the frontend builds and deploys again",
           "classification": "delegated_backend",
-          "status": "not_started",
+          "status": "blocked_backend",
           "assigned_to": "engine (lockfile, CI build step); Infrastructure & Operations Owner (Render dashboard workaround)",
           "github_issue": 2078,
           "branch": "exec/2026-10-29__release-v9.14/EPIC-01",
           "commit_sha": null,
-          "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
+          "delegation_record_id": "DEL-20261029-01",
+          "blocked_since_utc": "2026-10-29T14:55:56Z",
+          "unblock_criteria": "Render dashboard: DISABLE_ESLINT_PLUGIN (or other ESLint workaround) on trading-assistant-staging reported and removed; a successful staging build from a main commit containing f5e48d78, recorded in qa_evidence_EPIC-01.md.",
           "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": [],
+          "spec_references": [
+            "render.yaml",
+            "package.json",
+            "package-lock.json",
+            ".github/workflows/frontend-production-build.yml"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
-          "last_completed_substep": null,
+          "last_completed_substep": "3.1.B.3",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Autonomous half pushed in f5e48d78 (lockfile fix, CI production-build workflow). Local CI=false npm run build without DISABLE_ESLINT_PLUGIN compiles with warnings only (RISK-06 not triggered). AC 1 post-merge, tracked by BLG-OPS-200."
         },
         "ST-02": {
           "title": "Compute the SPY market regime from Alpaca bars when Yahoo Finance fails",
@@ -71,21 +76,21 @@
         "ST-03": {
           "title": "Show an unknown market regime instead of silently defaulting to risk-on",
           "classification": "delegated_decision",
-          "status": "not_started",
+          "status": "blocked_decision",
           "assigned_to": "Strategy Rules & System Intent Owner (ruling); engine (implementation)",
           "github_issue": 2080,
           "branch": "exec/2026-10-29__release-v9.14/EPIC-01",
           "commit_sha": null,
-          "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
+          "delegation_record_id": "ESC-EXEC-20261029-01",
+          "blocked_since_utc": "2026-10-29T14:55:56Z",
+          "unblock_criteria": "Dated Strategy Rules & System Intent Owner ruling (a) block entries / (b) keep last known regime / (c) risk-on with warning, recorded in ESC-EXEC-20261029-01.",
           "completed_utc": null,
           "acceptance_verified": false,
           "spec_references": [],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
-          "last_completed_substep": null,
+          "last_completed_substep": "3.1.D.2",
           "sign_off_record": null,
           "notes": ""
         },
@@ -197,10 +202,20 @@
       }
     }
   },
-  "blocked_items": [],
-  "delegated_items": [],
+  "blocked_items": [
+    "ST-03"
+  ],
+  "delegated_items": [
+    "ST-01"
+  ],
   "completed_items": [],
-  "open_escalations": {},
+  "open_escalations": {
+    "ESC-EXEC-20261029-01": {
+      "item": "ST-03",
+      "disposition": "Open",
+      "raised_utc": "2026-10-29T14:55:56Z"
+    }
+  },
   "merge_gate": {
     "epics_merged": [],
     "epics_pending": [
