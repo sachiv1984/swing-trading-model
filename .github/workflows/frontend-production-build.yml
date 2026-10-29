@@ -1,0 +1,66 @@
+name: Frontend Production Build
+
+# ST-01 (BLG-OPS-193, EPIC-01, v9.14): runs the same production build as
+# deploy.yml and the Render staging static site (`CI=false npm run build`),
+# with ESLint enabled. Playwright sets DISABLE_ESLINT_PLUGIN=true
+# (playwright.config.js), so before this workflow no PR check ran the real
+# build, and 2909e67e's lockfile regeneration dropped the hoisted
+# eslint-config-react-app without failing anything. Every main push then
+# failed deploy.yml's Build step with
+# `[eslint] Failed to load config "react-app" to extend from.`
+# A PR that removes eslint-config-react-app from the lockfile fails here.
+
+on:
+  workflow_dispatch: {}
+  pull_request:
+    paths:
+      - 'package.json'
+      - 'package-lock.json'
+      - 'src/**'
+      - 'public/**'
+      - '.env.production'
+      - 'tailwind.config.js'
+      - 'postcss.config.js'
+      - '.github/workflows/frontend-production-build.yml'
+  push:
+    branches:
+      - main
+      - 'exec/**'
+    paths:
+      - 'package.json'
+      - 'package-lock.json'
+      - 'src/**'
+      - 'public/**'
+      - '.env.production'
+      - 'tailwind.config.js'
+      - 'postcss.config.js'
+      - '.github/workflows/frontend-production-build.yml'
+
+jobs:
+  production-build:
+    name: Production build with ESLint enabled
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
+
+      - name: Confirm DISABLE_ESLINT_PLUGIN is unset
+        run: |
+          if [ -n "${DISABLE_ESLINT_PLUGIN:-}" ]; then
+            echo "::error::DISABLE_ESLINT_PLUGIN is set (${DISABLE_ESLINT_PLUGIN}); this job must run the build with ESLint enabled."
+            exit 1
+          fi
+
+      - name: Build (same command as deploy.yml and render.yaml)
+        run: CI=false npm run build
