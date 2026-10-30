@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-29T14:51:40Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-30T09:31:38Z",
+  "last_updated_utc": "2026-10-30T09:54:26Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-02",
@@ -446,123 +446,155 @@
       "merge_commit": "0e3960cc"
     },
     "EPIC-06": {
-      "status": "in_progress",
+      "status": "done",
       "branch": "exec/2026-10-29__release-v9.14/EPIC-06",
       "pr_number": null,
       "pr_status": null,
       "qa_signed_off": false,
       "qa_evidence_log": "claude/cycles/2026-10-29__release-v9.14/qa_evidence_EPIC-06.md",
-      "test_scenarios": [],
+      "test_scenarios": [
+        "tests/test_daily_cost_day_boundary.py",
+        "tests/test_daily_cost_alert.py",
+        "tests/test_daily_cost_counts_claude_calls.py",
+        "tests/test_cors_allow_list.py",
+        "tests/test_ci_usage_report_workflow.py",
+        "tests/test_cost_by_feature_area.py"
+      ],
       "stories": {
         "ST-38": {
           "title": "Arc 2 compute cost review",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "github_issue": 2115,
           "branch": "exec/2026-10-29__release-v9.14/EPIC-06",
           "spec_references": [
+            "docs/ops/arc2_compute_cost_review.md",
             "docs/ops/data_pipeline_cost_baseline.md"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "acceptance_verified": false,
-          "commit_sha": null,
-          "completed_utc": null,
-          "last_completed_substep": null,
-          "blocked_since_utc": null
+          "deviations_filed": true,
+          "acceptance_verified": true,
+          "commit_sha": "6b728a18a63e6a324cb1733f1e42afd898440ae0",
+          "completed_utc": "2026-10-30T09:52:59Z",
+          "last_completed_substep": "3.1.A.10a",
+          "blocked_since_utc": null,
+          "notes": "AC 1: docs/ops/arc2_compute_cost_review.md compares screener batch, research endpoints and AI plan features; states no Arc 1 baseline exists and uses data_pipeline_cost_baseline.md (v9.13). AC 2: top 3 drivers named (Render dyno, nightly screener batch, Claude plan/thesis calls); recommendations filed BLG-OPS-207/208/209. AC 3: gate verified at Release Planning (run_manifest.md). Committed with ST-40 in 6b728a18 (shared backlog filing); pushed with c01e9805, so CI ran on c01e9805 (no run on 6b728a18 itself). Deviation check: none. CI on c01e9805: 7/7 success (CI Pytest Suite 41036659127, Critical-Path Smoke 41036659076)."
         },
         "ST-39": {
           "title": "Compute cost trending by feature area",
           "classification": "delegated_backend",
-          "status": "not_started",
+          "status": "done",
           "github_issue": 2116,
           "branch": "exec/2026-10-29__release-v9.14/EPIC-06",
-          "spec_references": [],
+          "spec_references": [
+            "docs/ops/cost_by_feature_area.md",
+            "scripts/cost_by_feature_area.py",
+            "tests/test_cost_by_feature_area.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "acceptance_verified": false,
-          "commit_sha": null,
-          "completed_utc": null,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "acceptance_verified": true,
+          "commit_sha": "c01e9805b7252f7d19f9c367fa963c65486696d0",
+          "completed_utc": "2026-10-30T09:53:00Z",
+          "last_completed_substep": "3.1.A.10a",
           "blocked_since_utc": null,
           "assigned_to": "engine (report method and structure); FinOps & Resource Architect (production cost data, Human-Delegation RISK-01)",
-          "unblock_criteria": "AC 2 seal-marked post-merge, tracked by BLG-OPS-201: report populated for one complete month of production data."
+          "unblock_criteria": "AC 2 seal-marked post-merge, tracked by BLG-OPS-201: report populated for one complete month of production data.",
+          "notes": "AC 1: docs/ops/cost_by_feature_area.md partitions cost into AI endpoints / screener / core CRUD (+ unattributed) from claude_audit_log and api_call_log, and states the Render dyno allocation (work-unit share) and its limits; scripts/cost_by_feature_area.py generates the table read-only; tests/test_cost_by_feature_area.py (21 tests). AC 2 seal-marked post-merge, tracked by BLG-OPS-201, DEL-20261030-02 carried. Deviation check: none. DEL-20261030-02 status: carried to post-merge. CI on c01e9805: 7/7 success (CI Pytest Suite 41036659127, Critical-Path Smoke 41036659076).",
+          "delegation_record_id": "DEL-20261030-02"
         },
         "ST-40": {
           "title": "CI pipeline runtime audit",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "github_issue": 2117,
           "branch": "exec/2026-10-29__release-v9.14/EPIC-06",
-          "spec_references": [],
+          "spec_references": [
+            "docs/ops/ci_runtime_audit_2026-10-30.md",
+            "docs/ops/ci_pipeline_baseline.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "acceptance_verified": false,
-          "commit_sha": null,
-          "completed_utc": null,
-          "last_completed_substep": null,
-          "blocked_since_utc": null
+          "deviations_filed": true,
+          "acceptance_verified": true,
+          "commit_sha": "6b728a18a63e6a324cb1733f1e42afd898440ae0",
+          "completed_utc": "2026-10-30T09:52:59Z",
+          "last_completed_substep": "3.1.A.10a",
+          "blocked_since_utc": null,
+          "notes": "AC 1: docs/ops/ci_runtime_audit_2026-10-30.md profiles by workflow and by test file from 3 main runs per suite (Playwright 41033319578/41024971878/40846221756; pytest 41033462963/41033319696/41030631640); pytest per-file from the timestamped -v log (CI has no --durations), cross-checked by a local --durations run (3068 passed, 30 skipped); slowest 10 contributors in §5. AC 2: candidates filed BLG-OPS-206, BLG-QA-241, BLG-QA-242. Committed with ST-38 in 6b728a18; CI ran on c01e9805. Deviation check: none. CI on c01e9805: 7/7 success (CI Pytest Suite 41036659127, Critical-Path Smoke 41036659076)."
         },
         "ST-41": {
           "title": "Daily AI cost check covers the last hours of the day",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "github_issue": 2118,
           "branch": "exec/2026-10-29__release-v9.14/EPIC-06",
           "spec_references": [
-            "docs/specs/api_contracts/ai_endpoints.md#POST /ai/check-daily-cost"
+            "docs/specs/api_contracts/ai_endpoints.md#POST /ai/check-daily-cost",
+            "docs/reference/openapi.yaml",
+            "tests/test_daily_cost_day_boundary.py",
+            "tests/test_daily_cost_alert.py",
+            "tests/test_daily_cost_counts_claude_calls.py"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "acceptance_verified": false,
-          "commit_sha": null,
-          "completed_utc": null,
-          "last_completed_substep": null,
-          "blocked_since_utc": null
+          "deviations_filed": true,
+          "acceptance_verified": true,
+          "commit_sha": "9cd9669295f20ea1c80a6ecdcb0d70222ffb9842",
+          "completed_utc": "2026-10-30T09:36:02Z",
+          "last_completed_substep": "3.1.A.10a",
+          "blocked_since_utc": null,
+          "notes": "AC 1: check_and_alert_daily_cost() sums the previous UTC day, then today, via get_daily_ai_cost(day) bounded [day, day+1) UTC; each day over threshold alerts once (fingerprint = latest alerted day, days checked oldest first). ai_endpoints.md v1.33 updated (+ openapi 3.44.0, api_changelog). AC 2: tests/test_daily_cost_day_boundary.py runs the real query bounds against an in-memory audit log with rows either side of midnight. CI on 9cd96692: 7/7 success incl. CI Pytest Suite 41034627295 and Critical-Path Smoke 41034627318. Real-Postgres day-boundary sum stays with BLG-QA-221 (already filed). Deviation check: none."
         },
         "ST-42": {
           "title": "Make ci-usage-report.yml's monthly commit succeed",
           "classification": "delegated_backend",
-          "status": "not_started",
+          "status": "done",
           "github_issue": 2119,
           "branch": "exec/2026-10-29__release-v9.14/EPIC-06",
           "spec_references": [
-            ".github/workflows/ci-usage-report.yml"
+            ".github/workflows/ci-usage-report.yml",
+            "tests/test_ci_usage_report_workflow.py",
+            "docs/ops/scheduled_workflows_inventory.md"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "acceptance_verified": false,
-          "commit_sha": null,
-          "completed_utc": null,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "acceptance_verified": true,
+          "commit_sha": "c7e45c1701c91a5ba1bc9d7a99947f4688aaa27c",
+          "completed_utc": "2026-10-30T09:41:12Z",
+          "last_completed_substep": "3.1.A.10a",
           "blocked_since_utc": null,
           "assigned_to": "engine (workflow fix); Infrastructure & Operations Owner (workflow_dispatch run on main, possible branch-rule bypass, RISK-01)",
-          "unblock_criteria": "ACs 1 and 2 seal-marked post-merge, tracked by BLG-OPS-202: a run on main succeeds and docs/ops/ci_usage_reports/2026-09.md exists."
+          "unblock_criteria": "ACs 1 and 2 seal-marked post-merge, tracked by BLG-OPS-202: a run on main succeeds and docs/ops/ci_usage_reports/2026-09.md exists.",
+          "notes": "Cause confirmed from main's branch protection (GitHub API, 2026-10-30): PR + 1 approval + 5 required checks; a GITHUB_TOKEN push cannot bypass it. Fix: report committed to ci-usage-report/<YYYY-MM>, uploaded as a 90-day artifact, and a [GOVERNANCE] PR attempted (Actions may not create PRs here, so a refused gh pr create warns with the compare link and the run stays green). year_month passed via env and validated. tests/test_ci_usage_report_workflow.py pins it. CI on c7e45c17: 7/7 success (CI Pytest Suite 41035242078). ACs 1-2 seal-marked post-merge, tracked by BLG-OPS-202, DEL-20261030-03 carried. Destination is the PR to main (the AC's 'or the agreed destination'); a human merges it. Deviation check: none. DEL-20261030-03 status: carried to post-merge.",
+          "delegation_record_id": "DEL-20261030-03"
         },
         "ST-43": {
           "title": "Per-environment CORS allow-list",
           "classification": "delegated_backend",
-          "status": "not_started",
+          "status": "done",
           "github_issue": 2120,
           "branch": "exec/2026-10-29__release-v9.14/EPIC-06",
           "spec_references": [
-            "backend/config.py"
+            "docs/infrastructure/cors_allow_list.md",
+            "backend/config.py",
+            "tests/test_cors_allow_list.py"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "acceptance_verified": false,
-          "commit_sha": null,
-          "completed_utc": null,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "acceptance_verified": true,
+          "commit_sha": "4eb1e6cb41e5e46e11abf1213689be22a770c304",
+          "completed_utc": "2026-10-30T09:38:49Z",
+          "last_completed_substep": "3.1.A.10a",
           "blocked_since_utc": null,
           "assigned_to": "engine (code and test); Infrastructure & Operations Owner (Render per-environment variable, Human-Delegation RISK-01)",
-          "unblock_criteria": "AC 2 seal-marked post-merge, tracked by BLG-SEC-44: staging and production preflight checks recorded on the deployed services."
+          "unblock_criteria": "AC 2 seal-marked post-merge, tracked by BLG-SEC-44: staging and production preflight checks recorded on the deployed services.",
+          "notes": "AC 1: backend/config.py resolves ALLOWED_ORIGINS per deployment (CORS_ALLOWED_ORIGINS > DEPLOY_ENV > Render RENDER/RENDER_SERVICE_NAME inference > development); defaults documented in docs/infrastructure/cors_allow_list.md. tests/test_cors_allow_list.py: production preflight from localhost:3000 -> 400, Pages -> 200 with credentials. render.yaml sets DEPLOY_ENV=staging. CI on 4eb1e6cb: 7/7 success (CI Pytest Suite 41034953589). AC 2 seal-marked post-merge, tracked by BLG-SEC-44, DEL-20261030-01 carried (LL-v9.13-P3-03). Deviation check: none. DEL-20261030-01 status: carried to post-merge.",
+          "delegation_record_id": "DEL-20261030-01"
         }
       }
     }
@@ -580,10 +612,16 @@
     "ST-08",
     "ST-09",
     "ST-10",
-    "ST-12",
     "ST-11",
+    "ST-12",
     "ST-13",
-    "ST-14"
+    "ST-14",
+    "ST-38",
+    "ST-39",
+    "ST-40",
+    "ST-41",
+    "ST-42",
+    "ST-43"
   ],
   "open_escalations": {
     "ESC-EXEC-20261029-01": {
@@ -620,6 +658,7 @@
     "2026-10-30: PR #2131 (EPIC-01) merged by the human developer at 2026-10-30T08:13:03Z (merge commit 48eab523), after the user-given DoQ QA sign-off and PO acceptance recorded on the PR. Orphaned post-merge commit check: none. Step 3c sibling sync: no other EPIC branch exists yet. Filed during PR review: BLG-BE-196, BLG-BE-197.",
     "2026-10-30: EPIC-02 ST-09 ruling given in-session (ESC-EXEC-20261030-01). ST-12's code fix was pre-met on main (v9.12 cc7774e9); test only. ST-09 api_changelog follow-up c4fbd403. Local Playwright: a stale `serve -s build` from the prior session served build/ on :3000; build/ was rebuilt with the E2E env before local runs (CI unaffected). Filed BLG-BE-198.",
     "2026-10-30: PR #2132 (EPIC-02) merged by the human developer at 2026-10-30T09:25:25Z (merge commit 0e3960cc), after the user-given DoQ QA sign-off and PO acceptance recorded on the PR (head 87800633, 45/45 checks). Orphaned post-merge commit check: none. Step 3c sibling sync: no other EPIC branch exists yet. Filed during PR review: BLG-BE-199, BLG-FE-236.",
-    "2026-10-30: merge_gate.epics_pending lists the unmerged EPICs from merge_order (EPIC-06, EPIC-03, EPIC-04, EPIC-07, EPIC-05) with all_merged false. EPICs here are initialised one at a time, and scripts/check_execution_state_consistency.py derives epics_pending from initialised EPICs only, so it expects [] and all_merged true, which would trigger STEP 5 Sprint Close early. The checker's finding on this field is overridden deliberately (EPIC-01's persisted state was flagged the same way). Filed BLG-QA-240."
+    "2026-10-30: merge_gate.epics_pending lists the unmerged EPICs from merge_order (EPIC-06, EPIC-03, EPIC-04, EPIC-07, EPIC-05) with all_merged false. EPICs here are initialised one at a time, and scripts/check_execution_state_consistency.py derives epics_pending from initialised EPICs only, so it expects [] and all_merged true, which would trigger STEP 5 Sprint Close early. The checker's finding on this field is overridden deliberately (EPIC-01's persisted state was flagged the same way). Filed BLG-QA-240.",
+    "2026-10-30: EPIC-06 initialised at STEP 0 (branch exec/2026-10-29__release-v9.14/EPIC-06 cut from main 0e3960cc..df2eae33). ST-39/ST-42/ST-43 are delegated_backend with seal-marked post-merge ACs only (BLG-OPS-201/202, BLG-SEC-44); their in-sprint work is engine-completed and they are done on in-sprint ACs (LL-v9.13-P3-03), DEL-20261030-01/02/03 carried. Delegation log: DEL-20261030-02 and -03 were appended in one write (+2, prior text unchanged), a §7.1 per-append count deviation, disclosed here. Story issues #2115-#2120 still open after push (governance_sync did not close them on the exec branch); re-checked before the PR."
   ]
 }
