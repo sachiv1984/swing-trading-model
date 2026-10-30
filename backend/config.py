@@ -4,17 +4,62 @@ Application Configuration
 Constants and configuration values for the Trading Assistant API.
 """
 
+import os
+
 # API Metadata
 API_TITLE = "Trading Assistant API"
 API_VERSION = "1.2.0"
 
 # CORS Origins
-ALLOWED_ORIGINS = [
-    "https://sachiv1984.github.io",
-    "https://trading-assistant-api-c0f9.onrender.com",
-    "https://trading-assistant-staging.onrender.com",  # Staging frontend (render.yaml)
-    "http://localhost:3000"
-]
+# ST-43 (BLG-SEC-43, EPIC-06, v9.14): one list used to serve every environment,
+# so production accepted credentialed requests from http://localhost:3000 and
+# the staging frontend. The list is now chosen per deployment; defaults and
+# precedence are documented in docs/infrastructure/cors_allow_list.md.
+PAGES_ORIGIN = "https://sachiv1984.github.io"
+CORS_DEFAULT_ORIGINS = {
+    "production": [
+        PAGES_ORIGIN,
+        "https://trading-assistant-api-c0f9.onrender.com",
+    ],
+    "staging": [
+        "https://trading-assistant-staging.onrender.com",  # Staging frontend (render.yaml)
+        "http://localhost:3000",
+    ],
+    "development": [
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+    ],
+}
+
+
+def resolve_deploy_env(env=None) -> str:
+    """production | staging | development. DEPLOY_ENV wins; otherwise a Render
+    service (RENDER is set) is staging when its RENDER_SERVICE_NAME ends in
+    "-staging" and production when it does not; off Render it is development."""
+    env = os.environ if env is None else env
+    explicit = (env.get("DEPLOY_ENV") or "").strip().lower()
+    if explicit:
+        if explicit not in CORS_DEFAULT_ORIGINS:
+            raise ValueError(
+                f"DEPLOY_ENV={explicit!r}; expected one of {sorted(CORS_DEFAULT_ORIGINS)}"
+            )
+        return explicit
+    if env.get("RENDER"):
+        return "staging" if env.get("RENDER_SERVICE_NAME", "").endswith("-staging") else "production"
+    return "development"
+
+
+def resolve_allowed_origins(env=None) -> list:
+    """CORS_ALLOWED_ORIGINS (comma-separated) if set, else the defaults for
+    resolve_deploy_env()."""
+    env = os.environ if env is None else env
+    override = env.get("CORS_ALLOWED_ORIGINS", "")
+    origins = [o.strip().rstrip("/") for o in override.split(",") if o.strip()]
+    return origins or list(CORS_DEFAULT_ORIGINS[resolve_deploy_env(env)])
+
+
+DEPLOY_ENV = resolve_deploy_env()
+ALLOWED_ORIGINS = resolve_allowed_origins()
 
 # Default Fee Rates
 DEFAULT_UK_COMMISSION = 9.95  # GBP

@@ -1,7 +1,7 @@
 **Owner:** Infrastructure & Operations Owner
 **Class:** Reference Document (Class 3)
 **Status:** Active
-**Last Updated:** 2026-09-29 (ST-18, BLG-OPS-170, EPIC-04, v9.8 — §8 gains a pre-approved query-pattern allow-list for governed-session gate re-checks); prior — 2026-09-22 (ST-15, BLG-OPS-163, EPIC-04, v9.6 — §8 cross-references `docs/ops/github_actions_secrets_ownership_map.md`); prior — 2026-09-18 (ST-14, BLG-OPS-162, EPIC-02, v9.5 — added §8, read-only staging DB role for sprint-execution sessions); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-10-30 (ST-43, BLG-SEC-43, EPIC-06, v9.14 — §5 and the service-name notes point at the per-environment CORS allow-list); prior — 2026-09-29 (ST-18, BLG-OPS-170, EPIC-04, v9.8 — §8 gains a pre-approved query-pattern allow-list for governed-session gate re-checks); prior — 2026-09-22 (ST-15, BLG-OPS-163, EPIC-04, v9.6 — §8 cross-references `docs/ops/github_actions_secrets_ownership_map.md`); prior history retained — see prior entries in version control.
 **Cycle:** 2026-03-15__release-v1.10 (ST-01); 2026-09-15__release-v9.5 (ST-14)
 
 ---
@@ -21,7 +21,7 @@
 **Rationale:** Same platform as production (no new vendors). React app uses `HashRouter` so no path-routing config needed on Render Static Site. Free tier sufficient for staging load.
 
 **Note on service names:** Render service names are globally unique. If `trading-assistant-api-staging` or `trading-assistant-staging` are taken, choose alternative names and update:
-- `backend/config.py` `ALLOWED_ORIGINS` (line with staging frontend URL)
+- `backend/config.py` `CORS_DEFAULT_ORIGINS["staging"]` (the staging frontend URL), or set `CORS_ALLOWED_ORIGINS` on the staging API (see `docs/infrastructure/cors_allow_list.md`)
 - `render.yaml` service names and `fromService` reference
 
 ---
@@ -114,7 +114,7 @@ The `render.yaml` file in the repo root defines both staging services. Use the R
    - `trading-assistant-staging` (Static Site)
 4. Review and click **Apply** (do NOT set `DATABASE_URL` yet — do it in the next section)
 
-> **If service names are taken:** Rename to e.g. `trading-assistant-api-stg` and `trading-assistant-stg`. Update `backend/config.py` `ALLOWED_ORIGINS` to match the new frontend URL, and update `render.yaml` accordingly before deploying.
+> **If service names are taken:** Rename to e.g. `trading-assistant-api-stg` and `trading-assistant-stg`. Update the staging frontend URL in `backend/config.py` `CORS_DEFAULT_ORIGINS["staging"]` (or set `CORS_ALLOWED_ORIGINS` on the staging API), and update `render.yaml` accordingly before deploying.
 
 ### 2.2 Confirm auto-deploy settings
 
@@ -171,14 +171,14 @@ Confirm staging and production are fully isolated:
 
 ## Section 5 — CORS: Update if Service Names Changed
 
-If you used different Render service names than those in `render.yaml`:
+The CORS allow-list is chosen per environment (ST-43, v9.14, BLG-SEC-43); defaults and precedence are in `docs/infrastructure/cors_allow_list.md`. `render.yaml` sets `DEPLOY_ENV=staging` on the staging API, which allows the staging frontend and `http://localhost:3000`.
 
-1. Open `backend/config.py`
-2. Replace `https://trading-assistant-staging.onrender.com` with the actual staging frontend URL
-3. Commit: `[EPIC-01][ST-01] Update CORS for actual staging frontend URL`
-4. Push to `exec/2026-03-15__release-v1.10/EPIC-01`
+If you used different Render service names than those in `render.yaml`, either:
 
-If the service names match as planned, this step is already done (CORS was updated in the ST-01 commit).
+1. set `CORS_ALLOWED_ORIGINS` on the staging API in the Render dashboard to the actual staging frontend URL (comma-separated if more than one), or
+2. replace `https://trading-assistant-staging.onrender.com` in `backend/config.py` `CORS_DEFAULT_ORIGINS["staging"]` and commit it through the normal EPIC branch flow.
+
+A staging API whose name does not end in `-staging` and has no `DEPLOY_ENV` resolves to `production` and rejects the staging frontend, so keep `DEPLOY_ENV=staging` set.
 
 ---
 
