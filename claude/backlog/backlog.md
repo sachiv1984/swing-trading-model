@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-30 (PR #2132 review, EPIC-02 of 2026-10-29__release-v9.14 — 2 new items added: BLG-BE-199, BLG-FE-236; no existing item edited); prior — 2026-10-30 (sprint execution, EPIC-02 ST-13 of 2026-10-29__release-v9.14 — 1 new item added: BLG-BE-198; no existing item edited); prior — 2026-10-30 (post-merge, EPIC-01 of 2026-10-29__release-v9.14 — 1 new item added: BLG-OPS-205; no existing item edited); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-30 (post-merge, EPIC-02 of 2026-10-29__release-v9.14 — 1 new item added: BLG-QA-240; no existing item edited); prior — 2026-10-30 (PR #2132 review, EPIC-02 of 2026-10-29__release-v9.14 — 2 new items added: BLG-BE-199, BLG-FE-236; no existing item edited); prior — 2026-10-30 (sprint execution, EPIC-02 ST-13 of 2026-10-29__release-v9.14 — 1 new item added: BLG-BE-198; no existing item edited); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -6191,5 +6191,26 @@ Since ST-11 (v9.14), an in-grace position priced at or below its trailing stop i
 **Acceptance Criteria**
 - With only an in-grace breach listed, the footer no longer reads "All positions healthy" (Playwright)
 - With no breach at all, the footer is unchanged
+
+---
+
+### BLG-QA-240 — Make the execution-state consistency check count EPICs not yet initialised as pending
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation (governance tooling)
+**Owner:** Director of Quality; Head of Specs Team
+**Source:** EPIC-02 merge-gate persist, sprint execution `2026-10-29__release-v9.14` — 2026-10-30
+**Effort:** XS (<1h plus test)
+**Provisional-Target:** v9.15
+
+**Problem**
+`scripts/check_execution_state_consistency.py` derives `merge_gate.epics_pending` from the EPICs present in `execution_state.json`'s `epics` object, and requires `all_merged` to be true exactly when that list is empty. In v9.14 each EPIC is added to `epics` when its own execution starts, so after EPIC-01 and EPIC-02 merged the script demanded `epics_pending: []` and `all_merged: true` while five EPICs were still unstarted. Following it would make the next `run sprint` treat the sprint as fully merged and run STEP 5 Sprint Close early. Both persisted merge states (EPIC-01 `eee3e2f9`, EPIC-02) fail the check, so the §9.2 read-back cannot pass at the moment it matters most.
+
+**Scope**
+- Derive the expected pending set from the sprint's full EPIC list (`merge_order`, or `sprint_backlog_index.json`), not only from initialised EPICs
+- Add a test with a partially initialised state (two merged, five not yet initialised)
+
+**Acceptance Criteria**
+- The check passes for `epics_merged` = EPIC-01, EPIC-02, `epics_pending` = the other five, `all_merged: false`
+- It fails when `epics_pending` is empty while `merge_order` lists an unmerged EPIC
 
 ---

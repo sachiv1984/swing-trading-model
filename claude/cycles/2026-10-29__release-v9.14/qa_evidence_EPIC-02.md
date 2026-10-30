@@ -38,3 +38,10 @@ Last Updated: 2026-10-30
 - Signed off by: Sprint Execution Engine (agent-mediated, Director of Quality role — §5.3)
 - Date: 2026-10-30
 - Comments: Agent-mediated Director of Quality review, user-directed 2026-10-30. First pass Approved, 4 non-blocking findings: (1) `metrics_definitions.md` lacked a 1.33.1 Version History row — added; (2) CI run 41030029516 shown as pending — now recorded as success (all 8 shards, head `f62bda83`); (3) ST-10 row did not trace the invalid-`exit_reason` 400 to a test — names `test_exit_reason_values.py`; (4) SC-MGS-01's IN_GRACE fixture uses `stop_price: 0`, so on the old code it fails on the hold-reason text rather than `data-suggestion` — observation, no change (realistic in-grace data). The reviewer recomputed every quantitative claim inline: worked example 100 × 1.27 / 10 = 12.7; old formula 100 / (10 × 1.27) = 7.874; contract examples 125 × 1.3642 / 70 = 2.43607 → 2.4360, fees $3.11 / 1.3642 = £2.28, cost $2,073.71 / 1.3642 = £1,520.09, max affordable 1,364.2 / 851.275 = 1.60254 → 1.6025; golden PS-04 25, PS-05 84.6666; ST-12 $100 / 1.30 = £76.92. Re-ran the 6 named pytest suites (72 passed) and the mutmut pilot (30 passed). All CI on story SHAs green. Story-level authority: ST-09 Strategy Rules & System Intent Owner ruling `ESC-EXEC-20261030-01` (cleared). This does not satisfy the merge gate's human QA sign-off or Product Owner acceptance.
+
+## Merge Gate Confirmations
+
+- **Director of Quality QA sign-off:** given by the human repository owner, acting as Director of Quality, in session on 2026-10-30, and recorded on PR #2132 (head `87800633`, 45 of 45 checks passed). Accepts this evidence, ST-09 to ST-14 all Pass; BLG-BE-198, BLG-BE-199 and BLG-FE-236 accepted as non-blocking follow-ups.
+- **Product Owner acceptance:** given by the human repository owner, acting as Product Owner, in session on 2026-10-30, and recorded on PR #2132. Accepts ST-09 to ST-14 against `stage4_backlog_slice.md`, including the FX² rise in US suggested share counts. No post-merge items.
+- **Merged:** PR #2132 by the human developer, 2026-10-30T09:25:25Z, merge commit `0e3960cc`.
+
