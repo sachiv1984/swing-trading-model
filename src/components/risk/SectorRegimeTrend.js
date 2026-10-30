@@ -45,19 +45,33 @@ function SectorTrendTooltip({ active, payload, label }) {
   );
 }
 
+const REGIME_SEGMENT = {
+  on: { tone: "bg-emerald-500/70", text: "risk-on" },
+  off: { tone: "bg-amber-500/70", text: "risk-off" },
+  unknown: { tone: "bg-slate-400/60", text: "unknown (index data unavailable)" },
+};
+
+function regimeSegment(value) {
+  if (value == null) return REGIME_SEGMENT.unknown;
+  return value ? REGIME_SEGMENT.on : REGIME_SEGMENT.off;
+}
+
 function RegimeRow({ label, weeks, field }) {
   return (
     <div className="flex items-center gap-2" data-testid={`regime-row-${field}`}>
       <span className="text-xs text-slate-600 dark:text-slate-400 w-8 shrink-0">{label}</span>
       <div className="flex gap-0.5 flex-1">
-        {weeks.map((w) => (
-          <div
-            key={w.week_start}
-            className={`h-4 flex-1 rounded-sm ${w[field] ? "bg-emerald-500/70" : "bg-amber-500/70"}`}
-            title={`${w.week_start}: ${label} ${w[field] ? "risk-on" : "risk-off"}`}
-            aria-label={`${label} regime ${w[field] ? "risk-on" : "risk-off"} for week of ${w.week_start}`}
-          />
-        ))}
+        {weeks.map((w) => {
+          const segment = regimeSegment(w[field]);
+          return (
+            <div
+              key={w.week_start}
+              className={`h-4 flex-1 rounded-sm ${segment.tone}`}
+              title={`${w.week_start}: ${label} ${segment.text}`}
+              aria-label={`${label} regime ${segment.text} for week of ${w.week_start}`}
+            />
+          );
+        })}
       </div>
     </div>
   );
@@ -75,7 +89,7 @@ function RegimeTrendStrip({ weeks }) {
 function CardShell({ children }) {
   return (
     <div className="bg-slate-900 rounded-xl p-4 border border-slate-800">
-      <h3 className="text-sm font-medium text-slate-300 mb-3">Sector &amp; Regime Exposure Trend</h3>
+      <h2 className="text-sm font-medium text-slate-300 mb-3">Sector &amp; Regime Exposure Trend</h2>
       {children}
     </div>
   );

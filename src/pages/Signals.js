@@ -12,6 +12,7 @@ import { toast } from "sonner";
 import { cn } from "../lib/utils";
 import { formatCurrency, formatPercent } from "../lib/format";
 import AiChatWidget from "../components/AiChatWidget";
+import { regimeStatusOf } from "../lib/regime";
 
 const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:8000";
 
@@ -95,11 +96,6 @@ export default function SignalsPage() {
       return result.data;
     },
     refetchInterval: 300000, // Refresh every 5 minutes
-    initialData: {
-      spy: { price: 0, ma200: 0, is_risk_on: false },
-      ftse: { price: 0, ma200: 0, is_risk_on: false },
-      fx_rate: 1.3611
-    }
   });
 
   const dismissMutation = useMutation({
@@ -241,15 +237,19 @@ export default function SignalsPage() {
 
       {/* Use live market status */}
       <MarketStatusBar
-        spyStatus={{
-          isRiskOn: marketStatus?.spy?.is_risk_on,
-          price: marketStatus?.spy?.price || 0
+        spyStatus={marketStatus && {
+          status: regimeStatusOf(marketStatus.spy),
+          price: marketStatus.spy?.price
         }}
-        ftseStatus={{
-          isRiskOn: marketStatus?.ftse?.is_risk_on,
-          price: marketStatus?.ftse?.price || 0
+        ftseStatus={marketStatus && {
+          status: regimeStatusOf(marketStatus.ftse),
+          price: marketStatus.ftse?.price
         }}
-        fxRate={marketStatus?.fx_rate || 1.3611}
+        fx={marketStatus && {
+          rate: marketStatus.fx_rate,
+          source: marketStatus.fx_rate_source,
+          asOf: marketStatus.fx_rate_as_of
+        }}
         availableCash={availableCashBalance}
       />
 

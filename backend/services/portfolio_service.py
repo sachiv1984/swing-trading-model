@@ -23,7 +23,7 @@ from database import (
     create_sector_regime_snapshot,
 )
 
-from utils.pricing import get_current_price, get_live_fx_rate, check_market_regime
+from utils.pricing import get_current_price, get_live_fx_rate, get_fx_rate_info, check_market_regime
 from services.grace_service import compute_grace_days_remaining
 from strategy_parameters import GRACE_PERIOD_DAYS
 from utils.calculations import live_holding_days
@@ -46,6 +46,8 @@ def get_portfolio_summary() -> Dict:
             - net_deposits: Total deposits - withdrawals
             - last_updated: Last update timestamp
             - live_fx_rate: Current GBP/USD rate
+            - fx_rate_source: "live" | "last_known" | "constant" (ST-05)
+            - fx_rate_as_of: ISO-8601 fetch time of the rate, None for "constant"
             - positions: List of position summaries
     
     Raises:
@@ -68,6 +70,7 @@ def get_portfolio_summary() -> Dict:
 
         if not positions:
             live_fx_rate = get_live_fx_rate()
+            fx_info = get_fx_rate_info(live_fx_rate)
             cash_summary = get_total_deposits_withdrawals(portfolio_id, conn=conn)
             net_cash_flow = cash_summary['net_cash_flow']
             drawdown_fields = get_drawdown_fields(
@@ -85,6 +88,8 @@ def get_portfolio_summary() -> Dict:
                 "net_deposits": net_cash_flow,
                 "last_updated": str(portfolio['last_updated']),
                 "live_fx_rate": live_fx_rate,
+                "fx_rate_source": fx_info["fx_rate_source"],
+                "fx_rate_as_of": fx_info["fx_rate_as_of"],
                 "current_drawdown_percent": drawdown_fields["current_drawdown_percent"],
                 "peak_portfolio_value": drawdown_fields["peak_portfolio_value"],
                 "portfolio_heat_percent": 0.0,
@@ -92,8 +97,9 @@ def get_portfolio_summary() -> Dict:
                 "positions": [],
             }
 
-        # Get live FX rate
+        # Get live FX rate, with its source (ST-04/ST-05)
         live_fx_rate = get_live_fx_rate()
+        fx_info = get_fx_rate_info(live_fx_rate)
         print(f"\n📊 /portfolio endpoint - fetching live prices for Dashboard")
 
         positions_list = []
@@ -284,6 +290,8 @@ def get_portfolio_summary() -> Dict:
             "net_deposits": net_cash_flow,
             "last_updated": str(portfolio['last_updated']),
             "live_fx_rate": live_fx_rate,
+            "fx_rate_source": fx_info["fx_rate_source"],
+            "fx_rate_as_of": fx_info["fx_rate_as_of"],
             "current_drawdown_percent": drawdown_fields["current_drawdown_percent"],
             "peak_portfolio_value": drawdown_fields["peak_portfolio_value"],
             "portfolio_heat_percent": portfolio_heat_percent,

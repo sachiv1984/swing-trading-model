@@ -67,9 +67,9 @@ test.describe('SC-RPI-01 — Stale price marker (ST-10, BLG-BE-154)', () => {
     await expect(markers).toHaveCount(1);
     const row = page.locator('tr', { hasText: 'MU' });
     await expect(row.getByTestId('price-stale-marker')).toBeVisible();
-    await expect(row.getByTestId('price-stale-marker')).toHaveAttribute(
-      'aria-label', "Live price unavailable. Showing the last stored price converted at today's FX rate."
-    );
+    // ST-08 (v9.14): the marker is a described button (stale-price-marker decision record §2.2);
+    // tests/e2e/stale-price-marker.spec.js covers its description and keyboard reach.
+    await expect(row.getByRole('button', { name: 'Price stale' })).toBeVisible();
     await expect(page.locator('tr', { hasText: 'WDC' }).getByTestId('price-stale-marker')).toHaveCount(0);
   });
 

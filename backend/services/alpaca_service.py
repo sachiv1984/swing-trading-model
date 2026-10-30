@@ -58,9 +58,12 @@ def _credentials_configured() -> bool:
     return bool(ALPACA_API_KEY and ALPACA_API_SECRET)
 
 
-def get_ohlcv_bars(symbol: str, limit: int = 30, timeframe: str = "1Day") -> Optional[List[Dict]]:
+def get_ohlcv_bars(symbol: str, limit: int = 30, timeframe: str = "1Day", start: Optional[str] = None) -> Optional[List[Dict]]:
     """
     Fetch OHLCV bars for a US ticker from Alpaca Data API v2.
+
+    `start` (RFC 3339 date or timestamp) is optional; pass it when more than
+    the most recent bars are needed (ST-02, v9.14: the 200-day regime MA).
 
     Returns a list of bar dicts with keys: t (timestamp), o, h, l, c, v.
     Returns None on any failure (caller must invoke fallback).
@@ -79,6 +82,8 @@ def get_ohlcv_bars(symbol: str, limit: int = 30, timeframe: str = "1Day") -> Opt
 
     url = ALPACA_BASE_URL + _BARS_PATH.format(symbol=symbol)
     params = {"timeframe": timeframe, "limit": limit, "feed": ALPACA_DATA_FEED}
+    if start:
+        params["start"] = start
     headers = _alpaca_headers()
 
     max_attempts = 5

@@ -335,6 +335,13 @@ class TestMarketRegimeChangeTrigger(unittest.TestCase):
         result = self._run_check(True, True)  # recovery
         self.assertIsNone(result)
 
+    def test_unknown_regime_does_not_fire_or_move_the_baseline(self):
+        """ST-03 (v9.14): an unknown regime (None) is not a risk-off transition."""
+        self._run_check(True, True)
+        self.assertIsNone(self._run_check(None, True))
+        self.assertTrue(_last_known_regime["test-portfolio"])
+        self.assertIsNotNone(self._run_check(False, True))
+
     def test_market_api_failure_returns_none(self):
         """If check_market_regime() raises, no notification is returned."""
         with patch.object(alerts_service, "check_market_regime", side_effect=Exception("API down")):

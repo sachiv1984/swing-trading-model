@@ -15,6 +15,7 @@ import { TradePlanStatusBadge, isStartTradeEligible } from "./TradePlans";
 import { StandingAlert } from "../components/ui/StandingAlert";
 import { toast } from "sonner";
 import { format } from "date-fns";
+import { regimeStatusOf } from "../lib/regime";
 
 const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:8000";
 
@@ -396,7 +397,7 @@ export default function TradePlan() {
     if (healthData?.regime_status) return healthData.regime_status;
     const isUK = (form.market || "US").toUpperCase() === "UK";
     const indicator = isUK ? healthData?.data?.ftse : healthData?.data?.spy;
-    if (indicator != null) return indicator.is_risk_on ? "risk_on" : "risk_off";
+    if (indicator != null) return regimeStatusOf(indicator);
     return "";
   })();
 

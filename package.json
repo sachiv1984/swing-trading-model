@@ -36,6 +36,7 @@
     "@playwright/test": "^1.63.0",
     "autoprefixer": "^10.6.1",
     "eslint": "^9.39.5",
+    "eslint-config-react-app": "^7.0.1",
     "eslint-plugin-better-max-params": "^1.0.0",
     "eslint-plugin-no-comments": "^1.2.1",
     "eslint-plugin-playwright": "^2.12.1",

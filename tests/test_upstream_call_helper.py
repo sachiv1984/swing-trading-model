@@ -157,6 +157,10 @@ class TestGetLiveFxRateRetry:
         import utils.pricing as pricing
         pricing._fx_cache["rate"] = None
         pricing._fx_cache["expires_at"] = 0.0
+        # ST-04 (v9.14): a failed fetch now uses the last good rate first,
+        # so clear the in-memory copy a previous test may have left behind.
+        pricing._fx_last_good["rate"] = None
+        pricing._fx_last_good["as_of"] = None
 
     def _chart_response(self, rate: float):
         resp = MagicMock()

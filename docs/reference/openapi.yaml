@@ -2,7 +2,16 @@ openapi: 3.0.3
 
 info:
   title: Momentum Trading Assistant API
-  version: 3.39.0
+  version: 3.43.0
+  # v3.43.0 (2026-10-29, ST-07, EPIC-01, v9.14): GET /positions gains price_is_stale per position
+  # (BLG-BE-168). No new endpoint.
+  # v3.42.0 (2026-10-29, ST-06, EPIC-01, v9.14): GET /health/detailed's yahooFinance check reports degraded or
+  # unhealthy with details.reason when the FX or regime fetch falls back (BLG-OPS-194). No new endpoint.
+  # v3.41.0 (2026-10-29, ST-04/ST-05, EPIC-01, v9.14): GET /portfolio, GET /positions and GET /market/status
+  # gain fx_rate_source (live / last_known / constant) and fx_rate_as_of (BLG-BE-194/BLG-BE-169). No new endpoint.
+  # v3.40.0 (2026-10-29, ST-03, EPIC-01, v9.14): GET /market/status adds regime_status per index and
+  # returns null price/ma200/is_risk_on for an unknown regime; GET /market/regime adds status "unknown"
+  # (BLG-BE-193). No new endpoint.
   # v3.39.0 (2026-10-27, ST-31/ST-32, EPIC-05, v9.13): new GET /ops/api-call-attribution, market-data
   # provider calls and estimated cost by triggering feature (BLG-OPS-19); GET /screener/history runs gain
   # duration_seconds (BLG-OPS-23).
@@ -4417,7 +4426,9 @@ paths:
       summary: Get market regime status
       description: |
         Returns current market regime (SPY and FTSE vs 200-day MA) and live GBP/USD FX rate.
-        Canonical contract: docs/specs/api_contracts/market_endpoints.md v0.1
+        v9.14 ST-03 (BLG-BE-193): an index whose data is unavailable is regime_status "unknown"
+        with null price, ma200 and is_risk_on. v9.14 ST-04/ST-05: fx_rate_source and fx_rate_as_of.
+        Canonical contract: docs/specs/api_contracts/market_endpoints.md v0.5
       responses:
         "200":
           $ref: "#/components/responses/OkMarketStatus"
@@ -4431,7 +4442,8 @@ paths:
       description: |
         v9.11 ST-19 (BLG-BE-140). US/UK risk-on/risk-off for display, from the cached
         check_market_regime() result. No position analysis, no writes, no FX call.
-        Canonical contract: docs/specs/api_contracts/market_endpoints.md v0.2
+        v9.14 ST-03 (BLG-BE-193): status "unknown" when the index data is unavailable.
+        Canonical contract: docs/specs/api_contracts/market_endpoints.md v0.4
       responses:
         "200":
           description: Market regime retrieved
@@ -4447,7 +4459,7 @@ paths:
                       type: object
                       properties:
                         market: { type: string, enum: [US, UK] }
-                        status: { type: string, enum: [risk_on, risk_off] }
+                        status: { type: string, enum: [risk_on, risk_off, unknown] }
                   as_of: { type: string, format: date-time, nullable: true }
         "500":
           $ref: "#/components/responses/InternalError"
@@ -4631,6 +4643,11 @@ paths:
     get:
       tags: [Health]
       summary: Detailed health check
+      description: |
+        v9.14 ST-06 (BLG-OPS-194): checks.yahooFinance is healthy only when the GBP/USD rate is
+        live and both regime indices came from Yahoo Finance; degraded when one fell back,
+        unhealthy when both did, with details.reason naming each fallback.
+        Contract: docs/specs/api_contracts/health_endpoints.md v1.9
       responses:
         "200":
           $ref: "#/components/responses/OkHealthDetailed"
@@ -6907,6 +6924,13 @@ components:
         initial_value: { type: number }
         net_deposits: { type: number }
         live_fx_rate: { type: number }
+        fx_rate_source:
+          $ref: "#/components/schemas/FxRateSource"
+        fx_rate_as_of:
+          type: string
+          format: date-time
+          nullable: true
+          description: v9.14 ST-05 (BLG-BE-169) — when live_fx_rate was fetched; null for constant.
         last_updated: { type: string, format: date-time }
         current_drawdown_percent:
           type: number
@@ -6963,7 +6987,8 @@ components:
         price_is_stale:
           type: boolean
           description: >
-            GET /portfolio only (v9.11 ST-10, BLG-BE-154). True when the live price fetch failed and
+            GET /portfolio (v9.11 ST-10, BLG-BE-154); GET /positions carries the same flag (v9.14 ST-07,
+            BLG-BE-168). True when the live price fetch failed and
             current_price is the last stored native price converted at live_fx_rate (no FX estimate).
         stop_distance_pct:
           type: number
@@ -7010,6 +7035,16 @@ components:
               description: v9.12 ST-15 (BLG-FE-202) — atr_unavailable when the last post-grace recompute (on-load or nightly) kept the stop because no ATR was available; null otherwise. Cleared by the next recompute with an ATR. Never set during grace. DS-32.
             fx_rate: { type: number }
             live_fx_rate: { type: number }
+            price_is_stale:
+              type: boolean
+              description: v9.14 ST-07 (BLG-BE-168) — true when the live price fetch failed and the stored price is used.
+            fx_rate_source:
+              $ref: "#/components/schemas/FxRateSource"
+            fx_rate_as_of:
+              type: string
+              format: date-time
+              nullable: true
+              description: v9.14 ST-05 (BLG-BE-169) — when live_fx_rate was fetched; null for constant.
             entry_note: { type: string, nullable: true }
             exit_note: { type: string, nullable: true }
             tags:
@@ -7515,23 +7550,41 @@ components:
         see docs/specs/api_contracts/position_endpoints.md for that response shape.
       properties:
         spy:
-          type: object
-          properties:
-            price: { type: number }
-            ma200: { type: number }
-            is_risk_on: { type: boolean }
+          $ref: "#/components/schemas/MarketIndexRegime"
         ftse:
-          type: object
-          properties:
-            price: { type: number }
-            ma200: { type: number }
-            is_risk_on: { type: boolean }
+          $ref: "#/components/schemas/MarketIndexRegime"
         fx_rate:
           type: number
-          description: Live GBP/USD FX rate.
+          description: GBP/USD FX rate (live, else last good, else the 1.27 constant — see fx_rate_source).
+        fx_rate_source:
+          $ref: "#/components/schemas/FxRateSource"
+        fx_rate_as_of:
+          type: string
+          format: date-time
+          nullable: true
+          description: v9.14 ST-05 (BLG-BE-169) — when fx_rate was fetched; null for constant.
         last_updated:
           type: string
           format: date-time
+
+    FxRateSource:
+      type: string
+      enum: [live, last_known, constant]
+      description: |
+        v9.14 ST-04/ST-05 (BLG-BE-194/BLG-BE-169). live = fetched in the current cache window;
+        last_known = fetch failed, last successfully fetched rate used (data_model.md DS-37);
+        constant = fetch failed and no rate ever stored, fixed 1.27 fallback used.
+
+    MarketIndexRegime:
+      type: object
+      description: |
+        One index's regime (v9.14 ST-03, BLG-BE-193). price, ma200 and is_risk_on are null
+        when regime_status is "unknown" (index data unavailable from every source).
+      properties:
+        price: { type: number, nullable: true }
+        ma200: { type: number, nullable: true }
+        is_risk_on: { type: boolean, nullable: true }
+        regime_status: { type: string, enum: [risk_on, risk_off, unknown] }
 
     OperationalHealthResponse:
       type: object

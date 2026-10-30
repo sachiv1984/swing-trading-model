@@ -30,7 +30,7 @@ export default function DrawdownSummary({ drawdownPercent, peakValue, error }) {
         <div className="p-2 rounded-lg bg-gradient-to-br from-rose-500/30 to-orange-500/30">
           <TrendingDown className="w-5 h-5 text-rose-400" />
         </div>
-        <h3 className="text-sm font-medium text-slate-300">Drawdown Summary</h3>
+        <h2 className="text-sm font-medium text-slate-300">Drawdown Summary</h2>
       </div>
 
       <div className="grid grid-cols-2 gap-4">

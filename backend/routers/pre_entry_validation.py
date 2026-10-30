@@ -24,13 +24,25 @@ def _check_regime(market: str) -> dict:
     """Regime gate per strategy_rules.md §4.2.1 and §8.2."""
     try:
         from position_manager import check_market_regime
+        from utils.pricing import market_regime_status, REGIME_UNKNOWN
         regime = check_market_regime()
         if market.upper() == "UK":
-            risk_on = bool(regime.get("ftse_risk_on", False))
             label = "FTSE 100"
         else:
-            risk_on = bool(regime.get("spy_risk_on", False))
             label = "SPY"
+        # ST-03 ruling (a), strategy_rules.md §4.2.1: an unknown regime fails
+        # the gate — entries are blocked until the market is measured.
+        if market_regime_status(regime, market) == REGIME_UNKNOWN:
+            return {
+                "rule": "regime_gate",
+                "status": "fail",
+                "detail": (
+                    f"{market.upper()} market regime could not be measured: {label} index data is unavailable. "
+                    "New entries in this market are blocked until it is measured."
+                ),
+                "severity": "fail",
+            }
+        risk_on = market_regime_status(regime, market) == "risk_on"
         direction = "above" if risk_on else "below"
         regime_label = "Risk-On" if risk_on else "Risk-Off"
         return {

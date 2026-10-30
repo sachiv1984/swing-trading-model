@@ -101,10 +101,11 @@ from utils.pricing import check_market_regime, _market_regime_cache  # noqa: F40
 
 
 def is_risk_on(ticker, market_status):
-    """Check if specific ticker's market is risk-on"""
-    if ticker.endswith(".L"):
-        return market_status['ftse_risk_on']
-    return market_status['spy_risk_on']
+    """Check if specific ticker's market is risk-on. An unknown regime (None,
+    ST-03, strategy_rules.md §8.2 v1.20) is not risk-off, so it never triggers
+    the regime exit here."""
+    key = 'ftse_risk_on' if ticker.endswith(".L") else 'spy_risk_on'
+    return market_status[key] is not False
 
 # =====================================================================
 # POSITION ANALYSIS
@@ -250,10 +251,13 @@ def print_position_summary(actions, portfolio, total_value, total_pnl, market_st
     print(f"  Total P&L: £{total_pnl:,.2f} ({total_pnl/20000*100:+.1f}%)")
     
     print(f"\nMarket Status ({market_status['date'].strftime('%Y-%m-%d')}):")
-    print(f"  SPY: {'🟢 RISK ON' if market_status['spy_risk_on'] else '🔴 RISK OFF'} "
-          f"({market_status['spy_price']:.2f} vs MA200 {market_status['spy_ma200']:.2f})")
-    print(f"  FTSE: {'🟢 RISK ON' if market_status['ftse_risk_on'] else '🔴 RISK OFF'} "
-          f"({market_status['ftse_price']:.2f} vs MA200 {market_status['ftse_ma200']:.2f})")
+    for name, prefix in (("SPY", "spy"), ("FTSE", "ftse")):
+        risk_on = market_status[f'{prefix}_risk_on']
+        if risk_on is None:
+            print(f"  {name}: ⚪ UNKNOWN (index data unavailable)")
+        else:
+            print(f"  {name}: {'🟢 RISK ON' if risk_on else '🔴 RISK OFF'} "
+                  f"({market_status[f'{prefix}_price']:.2f} vs MA200 {market_status[f'{prefix}_ma200']:.2f})")
     
     print("\n" + "=" * 70)
     print("📍 POSITION DETAILS")

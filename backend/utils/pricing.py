@@ -15,7 +15,7 @@ import time
 import logging
 import requests
 import pandas as pd
-from datetime import datetime
+from datetime import datetime, date, timedelta, timezone
 from typing import Optional, Dict
 
 from utils.upstream_call import bounded_upstream_call, get_timeout
@@ -29,6 +29,16 @@ DEFAULT_FX_RATE = 1.27
 # and drawdown-status high latency: BLG-OPS-62).
 _fx_cache: Dict = {"rate": None, "expires_at": 0.0}
 _FX_CACHE_TTL_SECONDS = 300
+
+# Where the rate get_live_fx_rate() last returned came from (ST-04/ST-05,
+# BLG-BE-194/BLG-BE-169): "live" (fetched in the current cache window),
+# "last_known" (fetch failed; the last good rate, stored with its fetch time)
+# or "constant" (fetch failed and no rate was ever stored).
+FX_SOURCE_LIVE = "live"
+FX_SOURCE_LAST_KNOWN = "last_known"
+FX_SOURCE_CONSTANT = "constant"
+_fx_state: Dict = {"rate": None, "source": None, "as_of": None}
+_fx_last_good: Dict = {"rate": None, "as_of": None}
 
 
 def _is_us_ticker(ticker: str) -> bool:
@@ -135,18 +145,71 @@ def _yahoo_fetch_fx_rate() -> Dict:
     return response.json()
 
 
-def get_live_fx_rate() -> float:  # noqa: C901
+def _parse_fx_rate(data: Dict) -> Optional[float]:
+    """GBP/USD from a Yahoo chart payload: meta.regularMarketPrice, else the latest close."""
+    if not ("chart" in data and "result" in data["chart"] and len(data["chart"]["result"]) > 0):
+        return None
+    result = data["chart"]["result"][0]
+    if "meta" in result and "regularMarketPrice" in result["meta"]:
+        fx_rate = float(result["meta"]["regularMarketPrice"])
+        if fx_rate > 0:
+            return fx_rate
+    if "indicators" in result and "quote" in result["indicators"]:
+        quotes = result["indicators"]["quote"]
+        if len(quotes) > 0 and "close" in quotes[0]:
+            closes = [c for c in quotes[0]["close"] if c is not None]
+            if closes and float(closes[-1]) > 0:
+                return float(closes[-1])
+    return None
+
+
+def _store_last_good_fx_rate(rate: float, as_of: datetime) -> None:
+    _fx_last_good["rate"] = rate
+    _fx_last_good["as_of"] = as_of
+    try:
+        from database import upsert_last_good_fx_rate
+        upsert_last_good_fx_rate("GBPUSD", rate, as_of)
+    except Exception as exc:
+        logger.warning("Could not store the last good FX rate: %s", exc)
+
+
+def _load_last_good_fx_rate() -> Optional[Dict]:
+    """The last good rate: this process's copy, else the stored row (survives restarts)."""
+    if _fx_last_good["rate"] is not None:
+        return dict(_fx_last_good)
+    try:
+        from database import get_last_good_fx_rate
+        row = get_last_good_fx_rate("GBPUSD")
+    except Exception as exc:
+        logger.warning("Could not read the last good FX rate: %s", exc)
+        return None
+    if not isinstance(row, dict) or not isinstance(row.get("rate"), (int, float)) or row["rate"] <= 0:
+        return None
+    _fx_last_good["rate"] = float(row["rate"])
+    _fx_last_good["as_of"] = row["fetched_at"]
+    return dict(_fx_last_good)
+
+
+def _set_fx_state(rate: float, source: str, as_of: Optional[datetime]) -> float:
+    _fx_state["rate"] = rate
+    _fx_state["source"] = source
+    _fx_state["as_of"] = as_of
+    return rate
+
+
+def get_live_fx_rate() -> float:
     """
-    Fetch live GBP/USD exchange rate from Yahoo Finance
+    GBP/USD exchange rate, live from Yahoo Finance where possible.
 
     Returns:
-        GBP/USD rate as float (e.g., 1.3684)
-        Falls back to 1.27 if fetch fails
+        GBP/USD rate as float (e.g., 1.3684). On fetch failure: the last good
+        rate (ST-04, BLG-BE-194), and DEFAULT_FX_RATE only when no rate has
+        ever been stored. get_fx_rate_info() says which one was returned.
 
     Notes:
-        - Cached for 5 minutes (BLG-OPS-62 fix); falls back to DEFAULT_FX_RATE on error
+        - Cached for 5 minutes (BLG-OPS-62 fix)
         - Fetch is retried on transient network failure (ST-13, BLG-BE-122)
-          before falling back to DEFAULT_FX_RATE — see _yahoo_fetch_fx_rate
+          before falling back — see _yahoo_fetch_fx_rate
         - Used for converting USD positions to GBP
     """
     now = time.monotonic()
@@ -154,39 +217,52 @@ def get_live_fx_rate() -> float:  # noqa: C901
         return _fx_cache["rate"]
 
     try:
-        data = _yahoo_fetch_fx_rate()
-
-        if "chart" in data and "result" in data["chart"] and len(data["chart"]["result"]) > 0:
-            result = data["chart"]["result"][0]
-            
-            # Try meta.regularMarketPrice first
-            if "meta" in result and "regularMarketPrice" in result["meta"]:
-                fx_rate = float(result["meta"]["regularMarketPrice"])
-                if fx_rate > 0:
-                    print(f"✓ Live FX rate (GBP/USD): {fx_rate:.4f}")
-                    _fx_cache["rate"] = fx_rate
-                    _fx_cache["expires_at"] = time.monotonic() + _FX_CACHE_TTL_SECONDS
-                    return fx_rate
-
-            # Try latest close price
-            if "indicators" in result and "quote" in result["indicators"]:
-                quotes = result["indicators"]["quote"]
-                if len(quotes) > 0 and "close" in quotes[0]:
-                    closes = [c for c in quotes[0]["close"] if c is not None]
-                    if closes:
-                        fx_rate = float(closes[-1])
-                        if fx_rate > 0:
-                            print(f"✓ Live FX rate (GBP/USD): {fx_rate:.4f}")
-                            _fx_cache["rate"] = fx_rate
-                            _fx_cache["expires_at"] = time.monotonic() + _FX_CACHE_TTL_SECONDS
-                            return fx_rate
-        
-        print(f"⚠️  Could not fetch live FX rate, using default {DEFAULT_FX_RATE}")
-        return DEFAULT_FX_RATE
-        
+        fx_rate = _parse_fx_rate(_yahoo_fetch_fx_rate())
     except Exception as e:
-        print(f"⚠️  FX rate fetch error: {e}, using default {DEFAULT_FX_RATE}")
-        return DEFAULT_FX_RATE
+        print(f"⚠️  FX rate fetch error: {e}")
+        fx_rate = None
+
+    if fx_rate is not None:
+        print(f"✓ Live FX rate (GBP/USD): {fx_rate:.4f}")
+        fetched_at = datetime.now(timezone.utc)
+        _fx_cache["rate"] = fx_rate
+        _fx_cache["expires_at"] = time.monotonic() + _FX_CACHE_TTL_SECONDS
+        _store_last_good_fx_rate(fx_rate, fetched_at)
+        return _set_fx_state(fx_rate, FX_SOURCE_LIVE, fetched_at)
+
+    last_good = _load_last_good_fx_rate()
+    if last_good is not None:
+        print(f"⚠️  Could not fetch live FX rate, using the last good rate {last_good['rate']:.4f} from {last_good['as_of']}")
+        return _set_fx_state(last_good["rate"], FX_SOURCE_LAST_KNOWN, last_good["as_of"])
+
+    print(f"⚠️  Could not fetch live FX rate and none is stored, using default {DEFAULT_FX_RATE}")
+    return _set_fx_state(DEFAULT_FX_RATE, FX_SOURCE_CONSTANT, None)
+
+
+def get_fx_rate_info(rate: Optional[float] = None) -> Dict:
+    """
+    {"fx_rate", "fx_rate_source", "fx_rate_as_of"} for `rate`, a value
+    get_live_fx_rate() returned (fetched now when omitted) (ST-05,
+    BLG-BE-169). fx_rate_as_of is the ISO-8601 time the rate was fetched, or
+    None for the constant.
+    """
+    if rate is None:
+        rate = get_live_fx_rate()
+    if _fx_state["rate"] == rate and _fx_state["source"]:
+        source, as_of = _fx_state["source"], _fx_state["as_of"]
+    elif rate == DEFAULT_FX_RATE:
+        # The shared state moved on (another request fetched since) or was
+        # never set: fail closed rather than report a fallback as live.
+        source, as_of = FX_SOURCE_CONSTANT, None
+    elif _fx_cache["rate"] == rate:
+        source, as_of = FX_SOURCE_LIVE, _fx_state["as_of"] if _fx_state["rate"] == rate else None
+    else:
+        source, as_of = FX_SOURCE_LAST_KNOWN, _fx_last_good["as_of"] if _fx_last_good["rate"] == rate else None
+    return {
+        "fx_rate": rate,
+        "fx_rate_source": source,
+        "fx_rate_as_of": as_of.isoformat() if hasattr(as_of, "isoformat") else as_of,
+    }
 
 
 @bounded_upstream_call(
@@ -239,6 +315,52 @@ def _yahoo_fetch_ma200_pair(ticker: str):
     return current, ma200
 
 
+# ~280 trading days, enough for a 200-day MA with holiday gaps (ST-02, v9.14).
+_REGIME_HISTORY_CALENDAR_DAYS = 400
+_REGIME_HISTORY_BAR_LIMIT = 300
+
+
+def _alpaca_fetch_ma200_pair(ticker: str):
+    """
+    Current price (latest daily close) and 200-day MA for a US ticker from
+    Alpaca daily bars (ST-02, EPIC-01, v9.14, BLG-BE-192). The regime's
+    fallback when Yahoo Finance fails, so a Yahoo outage no longer leaves the
+    US regime unmeasured. Same MA rule as _yahoo_fetch_ma200_pair: the last
+    200 closes, or all available closes when fewer. Returns (None, None) when
+    Alpaca has no bars.
+    """
+    from services.alpaca_service import get_ohlcv_bars
+    start = (date.today() - timedelta(days=_REGIME_HISTORY_CALENDAR_DAYS)).isoformat()
+    bars = get_ohlcv_bars(ticker, limit=_REGIME_HISTORY_BAR_LIMIT, start=start)
+    closes = [float(b["c"]) for b in (bars or []) if b.get("c") is not None]
+    if not closes:
+        return None, None
+    window = closes[-200:]
+    return closes[-1], sum(window) / len(window)
+
+
+REGIME_RISK_ON = "risk_on"
+REGIME_RISK_OFF = "risk_off"
+REGIME_UNKNOWN = "unknown"
+
+
+def _regime_status(risk_on: Optional[bool]) -> str:
+    if risk_on is None:
+        return REGIME_UNKNOWN
+    return REGIME_RISK_ON if risk_on else REGIME_RISK_OFF
+
+
+def market_regime_status(regime: Dict, market: str) -> str:
+    """
+    "risk_on" | "risk_off" | "unknown" for one market ("US" or "UK") of a
+    check_market_regime() result (ST-03, BLG-BE-193). Callers use this rather
+    than truth-testing spy_risk_on / ftse_risk_on, which are None when the
+    regime is unknown: `not None` would read as risk-off.
+    """
+    key = "ftse_risk_on" if market.upper() == "UK" else "spy_risk_on"
+    return _regime_status(regime.get(key))
+
+
 _market_regime_cache: dict = {}
 _MARKET_REGIME_TTL_SECONDS = 300  # 5-minute shared cache (BLG-BE-25, v5.0 ST-07; consolidated here BLG-BE-97, v8.8 ST-07)
 
@@ -256,18 +378,22 @@ def check_market_regime() -> Dict[str, any]:
 
     Returns:
         Dictionary with:
-            - spy_risk_on: bool (SPY > 200-day MA)
-            - ftse_risk_on: bool (FTSE > 200-day MA)
-            - spy_price: float
-            - spy_ma200: float
-            - ftse_price: float
-            - ftse_ma200: float
+            - spy_risk_on: bool (SPY > 200-day MA), or None when unknown
+            - ftse_risk_on: bool (FTSE > 200-day MA), or None when unknown
+            - spy_regime_status / ftse_regime_status: "risk_on" | "risk_off" | "unknown"
+            - spy_price, spy_ma200, ftse_price, ftse_ma200: float, or None when unknown
+            - spy_source: "yahoo_finance" | "alpaca" | None — which source
+              produced the SPY reading (ST-02, BLG-BE-192); None if neither did
+            - ftse_source: "yahoo_finance" | None
             - date: datetime (as-of time this result was computed)
 
     Notes:
         - Results are cached for 5 minutes (BLG-BE-25) — a cache hit returns
           immediately with no network call.
-        - Defaults to risk-on if data unavailable
+        - SPY falls back to Alpaca daily bars when Yahoo Finance fails (ST-02)
+        - A market no source could measure is "unknown" (ST-03): under the
+          strategy_rules.md §4.2.1 / §8.2 ruling it blocks new entries there
+          and never triggers the risk-off exit
         - Includes 300ms delay to avoid rate limiting
         - Retries transient network failures before falling back (ST-09, ~3 attempts)
         - Used to determine if positions should be exited
@@ -291,36 +417,54 @@ def check_market_regime() -> Dict[str, any]:
                 print(f"Error getting MA200 for {ticker}: {e}")
                 return None, None
 
-        # Get SPY data
-        spy_price, spy_ma200 = get_ma200("SPY")
-        
-        # Get FTSE data
+        def get_us_ma200(ticker: str):
+            """Yahoo Finance first, then Alpaca bars (ST-02, BLG-BE-192). Returns (price, ma200, source)."""
+            price, ma200 = get_ma200(ticker)
+            if price is not None and ma200 is not None:
+                return price, ma200, "yahoo_finance"
+            try:
+                price, ma200 = _alpaca_fetch_ma200_pair(ticker)
+            except Exception as e:
+                logger.warning("Alpaca regime fallback failed for %s: %s", ticker, e)
+                price, ma200 = None, None
+            if price is not None and ma200 is not None:
+                logger.warning("Yahoo Finance regime data unavailable for %s — computed from Alpaca bars", ticker)
+                return price, ma200, "alpaca"
+            return None, None, None
+
+        # Get SPY data (Yahoo Finance, Alpaca fallback)
+        spy_price, spy_ma200, spy_source = get_us_ma200("SPY")
+
+        # Get FTSE data (Yahoo Finance only — Alpaca has no UK index data)
         ftse_price, ftse_ma200 = get_ma200("^FTSE")
+        ftse_source = "yahoo_finance" if ftse_price is not None and ftse_ma200 is not None else None
         
-        # Default to risk-on if we can't fetch data
+        # Unknown when no source measured the index (ST-03, BLG-BE-193;
+        # strategy_rules.md §4.2.1 / §8.2 ruling (a), ESC-EXEC-20261029-01):
+        # risk_on, price and MA are None, never a defaulted risk-on reading.
         if spy_price is None or spy_ma200 is None:
-            print("⚠️  Could not fetch SPY data, defaulting to risk-on")
-            spy_risk_on = True
-            spy_price = 0
-            spy_ma200 = 0
+            print("⚠️  Could not fetch SPY data — US regime unknown")
+            spy_risk_on, spy_price, spy_ma200 = None, None, None
         else:
             spy_risk_on = spy_price > spy_ma200
-        
+
         if ftse_price is None or ftse_ma200 is None:
-            print("⚠️  Could not fetch FTSE data, defaulting to risk-on")
-            ftse_risk_on = True
-            ftse_price = 0
-            ftse_ma200 = 0
+            print("⚠️  Could not fetch FTSE data — UK regime unknown")
+            ftse_risk_on, ftse_price, ftse_ma200 = None, None, None
         else:
             ftse_risk_on = ftse_price > ftse_ma200
-        
+
         result = {
             'spy_risk_on': spy_risk_on,
             'ftse_risk_on': ftse_risk_on,
-            'spy_price': spy_price or 0,
-            'spy_ma200': spy_ma200 or 0,
-            'ftse_price': ftse_price or 0,
-            'ftse_ma200': ftse_ma200 or 0,
+            'spy_regime_status': _regime_status(spy_risk_on),
+            'ftse_regime_status': _regime_status(ftse_risk_on),
+            'spy_price': spy_price,
+            'spy_ma200': spy_ma200,
+            'ftse_price': ftse_price,
+            'ftse_ma200': ftse_ma200,
+            'spy_source': spy_source,
+            'ftse_source': ftse_source,
             'date': now
         }
         _market_regime_cache["result"] = result
@@ -333,12 +477,16 @@ def check_market_regime() -> Dict[str, any]:
         # should retry fresh on the next call rather than pin a synthetic
         # result for the full TTL window.
         return {
-            'spy_risk_on': True,
-            'ftse_risk_on': True,
-            'spy_price': 0,
-            'spy_ma200': 0,
-            'ftse_price': 0,
-            'ftse_ma200': 0,
+            'spy_risk_on': None,
+            'ftse_risk_on': None,
+            'spy_regime_status': REGIME_UNKNOWN,
+            'ftse_regime_status': REGIME_UNKNOWN,
+            'spy_price': None,
+            'spy_ma200': None,
+            'ftse_price': None,
+            'ftse_ma200': None,
+            'spy_source': None,
+            'ftse_source': None,
             'date': now
         }
 

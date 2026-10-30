@@ -3780,6 +3780,52 @@ def count_monthly_pnl_narrative_generations(date_from=None, date_to=None) -> Dic
 CHAT_ANSWER_RATINGS = ("useful", "not_useful")
 
 
+def ensure_fx_rate_last_good_table() -> None:
+    """DS-37 Up Migration, idempotent. One row per currency pair: the last
+    successfully fetched rate and when it was fetched (ST-04, BLG-BE-194)."""
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS fx_rate_last_good (
+                    pair       VARCHAR(10) PRIMARY KEY,
+                    rate       NUMERIC(12, 6) NOT NULL,
+                    fetched_at TIMESTAMPTZ NOT NULL,
+                    CONSTRAINT ck_fx_rate_last_good_rate CHECK (rate > 0)
+                )
+            """)
+        conn.commit()
+
+
+def upsert_last_good_fx_rate(pair: str, rate: float, fetched_at) -> None:
+    """Store the latest successfully fetched rate for `pair`, replacing the previous one."""
+    ensure_fx_rate_last_good_table()
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                INSERT INTO fx_rate_last_good (pair, rate, fetched_at)
+                VALUES (%s, %s, %s)
+                ON CONFLICT (pair) DO UPDATE SET
+                    rate = EXCLUDED.rate,
+                    fetched_at = EXCLUDED.fetched_at
+            """, (pair, rate, fetched_at))
+        conn.commit()
+
+
+def get_last_good_fx_rate(pair: str) -> Optional[Dict]:
+    """{"rate", "fetched_at"} for `pair`, or None if no rate has been stored."""
+    ensure_fx_rate_last_good_table()
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                "SELECT rate, fetched_at FROM fx_rate_last_good WHERE pair = %s",
+                (pair,),
+            )
+            row = cur.fetchone()
+    if not row:
+        return None
+    return {"rate": float(row["rate"]), "fetched_at": row["fetched_at"]}
+
+
 def ensure_chat_answer_ratings_table() -> None:
     """DS-35 Up Migration, idempotent. One row per rated chat answer."""
     ensure_claude_audit_log_table()

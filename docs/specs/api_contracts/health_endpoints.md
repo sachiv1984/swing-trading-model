@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 1.8
-**Last Updated:** 2026-10-27 (ST-29, EPIC-05, v9.13, BLG-OPS-189 — added `render_service_id` to `GET /health/detailed`); prior — 2026-09-29 (ST-17, EPIC-04, v9.8 — added `deployed_commit_sha` to `GET /health/detailed`)
+**Version:** 1.9
+**Last Updated:** 2026-10-29 (ST-06, EPIC-01, v9.14, BLG-OPS-194 — `GET /health/detailed`'s Yahoo Finance check reports `degraded`/`unhealthy` with a `reason` when the FX or regime fetch falls back); prior — 2026-10-27 (ST-29, EPIC-05, v9.13, BLG-OPS-189 — added `render_service_id` to `GET /health/detailed`); prior — 2026-09-29 (ST-17, EPIC-04, v9.8 — added `deployed_commit_sha` to `GET /health/detailed`); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Overview
@@ -148,10 +148,14 @@ No parameters.
         "portfolio_exists": true
       }
     },
-    "yahoo_finance": {
+    "yahooFinance": {
       "status": "healthy",
       "details": {
         "gbp_usd_rate": 1.3642,
+        "fx_rate_source": "live",
+        "fx_rate_as_of": "2026-02-17T10:29:41+00:00",
+        "spy_regime_source": "yahoo_finance",
+        "ftse_regime_source": "yahoo_finance",
         "accessible": true
       }
     },
@@ -179,6 +183,7 @@ No parameters.
 - `deployed_commit_sha`: full commit SHA the running process was deployed from (ST-17, BLG-OPS-169, EPIC-04, v9.8) — read from Render's `RENDER_GIT_COMMIT` environment variable (set automatically for every Render service, no configuration needed), falling back to a local `git rev-parse HEAD` for environments with no Render env var. `null` if neither source is determinable (e.g. a minimal container with no `.git` directory and not running on Render) — a `null` value means "not determinable in this environment", not "not deployed". Unlike `version` (a manually-maintained semver string), this field is derived at request time and always reflects the exact commit the process booted from — this is what `.github/workflows/staging-smoke-test.yml`'s stale-deploy check compares against the merged commit on `main` (see `docs/ops/staging_deploy_notes.md` §7).
 - `render_service_id`: the Render service the process runs as (ST-29, BLG-OPS-189, EPIC-05, v9.13), from Render's `RENDER_SERVICE_ID` environment variable (set automatically for every Render service). `null` off Render. The staging smoke test (`scripts/staging_smoke_test.py`) checks it equals the staging backend's ID, `srv-d6rtdg94tr6s73ce2j6g`, so a `STAGING_API_URL` pointing at another host fails loudly (`docs/ops/staging_deploy_notes.md` §4).
 - `checks` key names and `details` structures are implementation-specific but stable within a version.
+- `checks.yahooFinance` *(v1.9 — ST-06, BLG-OPS-194)*: reads the app's own fallback signals rather than only checking that a rate came back (the FX fetch never raises; it falls back). `healthy` when the GBP/USD rate is live (`fx_rate_source: "live"`, `portfolio_endpoints.md` §FX rate source) and both regime indices were measured from Yahoo Finance (`spy_regime_source`/`ftse_regime_source` = `yahoo_finance`). `degraded` when one of the two fell back: the FX rate is `last_known` or `constant`, or an index came from Alpaca (SPY only) or is unknown (`market_endpoints.md` v0.4). `unhealthy` when both did. Any non-healthy result carries `details.reason`, a plain string naming each fallback, for example `"GBP/USD fetch failed; using the last good rate 1.3301 from 2026-10-27T15:30:00+00:00; FTSE regime data unavailable; regime unknown"`. System Status shows `details` when the check is expanded. FX and regime results are each cached for 5 minutes, so the check reflects the latest cache window.
 - Internal error details must not expose secrets or credentials.
 
 ### Notes
@@ -550,6 +555,7 @@ None — all known deviations resolved as of v1.1 (BLG-SPEC-D14, 2026-03-25).
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.9 | 2026-10-29 | ST-06 (BLG-OPS-194, EPIC-01, v9.14): `GET /health/detailed`'s `checks.yahooFinance` reads the FX source and the regime sources and reports `degraded` or `unhealthy`, with a `details.reason`, when Yahoo Finance fails; previously it reported `healthy` whenever the fallback FX rate came back. Also corrected: the example's check key is `yahooFinance` (as returned), not `yahoo_finance`. Authority: Infrastructure & Operations Owner. |
 | 1.8 | 2026-10-27 | ST-29 (BLG-OPS-189, EPIC-05, v9.13): Added `render_service_id` to `GET /health/detailed` — lets the staging smoke test confirm the host behind `STAGING_API_URL` is the staging backend service. Authority: Infrastructure & Operations Owner. |
 | 1.7 | 2026-09-29 | ST-17 (BLG-OPS-169, EPIC-04, v9.8): Added `deployed_commit_sha` to `GET /health/detailed` — lets `staging-smoke-test.yml` detect a merge to `main` that should have redeployed staging but did not. Authority: Infrastructure & Operations Owner. |
 | 1.6 | 2026-08-18 | ST-18 (BLG-SPEC-130, EPIC-05, v8.9): `GET /health/scheduler`'s architecture note and response example only documented 3 of the 6 live jobs `_NIGHTLY_JOB_NAMES`/`get_scheduler_health()` actually track — added `custom_price_alerts`, `screener_refresh`, and `risk_off_alerts` to both, matching `backend/services/health_service.py` exactly. Authority: API Contracts & Documentation Owner. |

@@ -155,31 +155,36 @@ def generate_momentum_signals(
     spy_benchmark_momentum = None
     ftse_benchmark_momentum = None
 
-    if spy_data is None or ftse_data is None:
-        print("⚠️  Market data unavailable, assuming risk-on\n")
-        spy_risk_on = True
-        ftse_risk_on = True
+    # ST-03 ruling (a), strategy_rules.md §4.2.1: a market whose index data is
+    # unavailable is unknown (None), not assumed risk-on, so it gets no entry
+    # signals until it is measured.
+    spy_risk_on = None
+    ftse_risk_on = None
+    if spy_data is None:
+        print("⚠️  SPY data unavailable — US regime unknown, no US entry signals")
     else:
         spy_close = spy_data['close']
-        ftse_close = ftse_data['close']
-
         spy_ma200 = spy_close.rolling(ma_period).mean()
-        ftse_ma200 = ftse_close.rolling(ma_period).mean()
-
-        spy_risk_on = spy_close.iloc[-1] > spy_ma200.iloc[-1]
-        ftse_risk_on = ftse_close.iloc[-1] > ftse_ma200.iloc[-1]
+        spy_risk_on = bool(spy_close.iloc[-1] > spy_ma200.iloc[-1])
 
         # Benchmark momentum over same lookback_days (for relative_strength_pct)
         spy_mom_series = spy_close.pct_change(lookback_days)
         if len(spy_mom_series) > 0 and not pd.isna(spy_mom_series.iloc[-1]):
             spy_benchmark_momentum = spy_mom_series.iloc[-1]
 
+    if ftse_data is None:
+        print("⚠️  FTSE data unavailable — UK regime unknown, no UK entry signals")
+    else:
+        ftse_close = ftse_data['close']
+        ftse_ma200 = ftse_close.rolling(ma_period).mean()
+        ftse_risk_on = bool(ftse_close.iloc[-1] > ftse_ma200.iloc[-1])
+
         ftse_mom_series = ftse_close.pct_change(lookback_days)
         if len(ftse_mom_series) > 0 and not pd.isna(ftse_mom_series.iloc[-1]):
             ftse_benchmark_momentum = ftse_mom_series.iloc[-1]
     
-    print(f"SPY: {'🟢 Risk On' if spy_risk_on else '🔴 Risk Off'}")
-    print(f"FTSE: {'🟢 Risk On' if ftse_risk_on else '🔴 Risk Off'}\n")
+    print(f"SPY: {'Unknown' if spy_risk_on is None else ('🟢 Risk On' if spy_risk_on else '🔴 Risk Off')}")
+    print(f"FTSE: {'Unknown' if ftse_risk_on is None else ('🟢 Risk On' if ftse_risk_on else '🔴 Risk Off')}\n")
     
     # Calculate momentum
     print("Calculating momentum...")
@@ -233,6 +238,7 @@ def generate_momentum_signals(
         is_uk = ticker.endswith('.L')
         market_risk_on = ftse_risk_on if is_uk else spy_risk_on
         
+        # Risk-off or unknown (None): no entry signal (§4.2.1, ST-03 ruling (a)).
         if not market_risk_on:
             continue
         

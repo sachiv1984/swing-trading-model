@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-29 (Sprint Planning 2026-10-29__release-v9.14 STEP 6.2 — 6 new post-merge tracking item(s) added: BLG-OPS-200, BLG-GOV-399, BLG-OPS-201, BLG-OPS-202, BLG-SEC-44, BLG-GOV-400; no existing item edited); prior — 2026-10-29 (Release Planning 2026-10-29__release-v9.14 §1.3a — BLG-FEAT-58 and BLG-BE-43 re-gated on the same PO-02 condition (false-positive date lapse); no other item edited); prior — 2026-10-29 (v9.13 closure §6 owner actions — BLG-OPS-196 ✅ COMPLETE banner added; 6 stale v9.13 Provisional-Target tags re-targeted to TBD: BLG-SPEC-195, BLG-AI-19, BLG-OPS-186, BLG-QA-221, BLG-BE-181, BLG-QA-226); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-30 (PR #2131 agent-mediated DoQ/PO review — 2 new item(s) added: BLG-BE-196, BLG-BE-197; no existing item edited); prior — 2026-10-29 (Sprint Execution 2026-10-29__release-v9.14 EPIC-01 DoQ review — 3 new item(s) added: BLG-OPS-204, BLG-SPEC-210, BLG-QA-239; no existing item edited); prior — 2026-10-29 (Sprint Execution 2026-10-29__release-v9.14 EPIC-01 — 2 new item(s) added: BLG-TECH-33, BLG-OPS-203; no existing item edited); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -584,6 +584,27 @@ Since v9.13 every Alpaca bar call writes two `api_call_log` rows: `service = 'al
 **Acceptance Criteria**
 - One Alpaca bar call writes exactly one `api_call_log` row (test)
 - `GET /ops/alpaca-call-report` returns the same fields, counted from `alpaca_data` (test)
+
+---
+
+### BLG-TECH-33 — Make the ESLint 9 flat config load an ESLint-9-compatible react-hooks plugin
+**Priority:** P3 (Low)
+**Type:** Platform / Tooling
+**Owner:** Head of Engineering
+**Source:** Sprint execution `2026-10-29__release-v9.14`, ST-01 (BLG-OPS-193), EPIC-01 — 2026-10-29
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.15
+
+**Problem**
+`eslint.config.mjs` (ESLint 9 flat config, the lint path for files Claude writes) imports `eslint-plugin-react-hooks`. Before ST-01 there was no top-level install, so the flat config could not load at all. ST-01's lockfile fix hoists `eslint-config-react-app`'s dependency `eslint-plugin-react-hooks@4.6.2`, which is not ESLint-9 compatible: `npx eslint src/pages/TradePlan.js` fails with `TypeError: context.getSource is not a function` in `react-hooks/exhaustive-deps`. No CI workflow runs the flat config, so nothing fails, but the lint path is broken.
+
+**Scope**
+- Add an ESLint-9-compatible `eslint-plugin-react-hooks` (v5 or later) as an explicit devDependency, and check `react-scripts`' build still resolves its own v4 through `eslint-config-react-app`
+- Or remove the react-hooks rules from the flat config, with Product Owner sign-off (protected file)
+
+**Acceptance Criteria**
+- `npx eslint src/pages/TradePlan.js` runs without a crash
+- `CI=false npm run build` (the Frontend Production Build workflow) still passes
 
 ---
 
@@ -5960,3 +5981,126 @@ ST-45 gives the gate scan's "gating item shipped" findings a write-back path. It
 - No item whose whole gate condition is a shipped item is re-listed, or each re-listed item is named with the reason the write-back did not apply
 
 ---
+
+### BLG-OPS-203 — Live-confirm DS-37 fx_rate_last_good on staging and production
+**Priority:** P3 (Low)
+**Type:** Operations / Data Verification
+**Owner:** Data Model & Domain Schema Owner; Infrastructure & Operations Owner
+**Source:** Sprint execution `2026-10-29__release-v9.14`, ST-04 (BLG-BE-194), EPIC-01 — 2026-10-29
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.15
+**Depends on:** EPIC-01 of `2026-10-29__release-v9.14` merged and deployed
+
+**Problem**
+DS-37 (`data_model.md` v2.66) adds the `fx_rate_last_good` table, created at runtime by `ensure_fx_rate_last_good_table()`. Like DS-35, its Verification query has to be run on each environment and recorded as Live Confirmation; the engine has no authorisation to query the live databases.
+
+**Scope**
+- After deploy, run DS-37's Verification query on staging, then production (read-only, with the user's permission)
+- Record the output in DS-37's sign-off as Live Confirmation
+
+**Acceptance Criteria**
+- Each environment shows 3 columns (`pair`, `rate`, `fetched_at`), none nullable, and one `GBPUSD` row with a recent `fetched_at`, recorded with the date
+
+---
+
+### BLG-OPS-204 — Point Render staging back at main and confirm its build from main
+**Priority:** P2 (Medium)
+**Type:** Operations / Deployment
+**Owner:** Infrastructure & Operations Owner
+**Source:** Sprint execution `2026-10-29__release-v9.14`, ST-01 (BLG-OPS-193), EPIC-01 — agent-mediated DoQ review finding 2 — 2026-10-29
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.14
+**Depends on:** EPIC-01 of `2026-10-29__release-v9.14` merged to `main`
+
+**Problem**
+ST-01 AC 2 asks for the Render staging frontend to build from `main` with no dashboard-only ESLint workaround. Before merge it could only be shown on the EPIC branch: the user pointed `trading-assistant-staging` at `exec/2026-10-29__release-v9.14/EPIC-01`, removed `DISABLE_ESLINT_PLUGIN`, and the build of `4719c694` succeeded (`DEL-20261029-01`). Staging still points at the branch, so it will go stale unless it is pointed back at `main`. BLG-OPS-200 covers only `deploy.yml` and GitHub Pages.
+
+**Scope**
+- After EPIC-01 merges, set the `trading-assistant-staging` branch back to `main` in the Render dashboard
+- Confirm the first staging build from `main` succeeds with no `DISABLE_ESLINT_PLUGIN` (the repo `.npmrc` supplies `legacy-peer-deps`)
+
+**Acceptance Criteria**
+- Staging's branch is `main`, recorded with date
+- The staging build of a `main` commit containing `3fbfe5e3` succeeds, with its "Compiled" line and commit recorded in the v9.14 QA evidence for EPIC-01
+
+---
+
+### BLG-SPEC-210 — Document the unknown-regime response shapes on three endpoints, and drop the unruled branches from two page specs
+**Priority:** P3 (Low)
+**Type:** Spec Debt
+**Owner:** API Contracts & Documentation Owner; Frontend Specifications & UX Documentation Owner
+**Source:** Sprint execution `2026-10-29__release-v9.14`, ST-03 (BLG-BE-193), EPIC-01 — agent-mediated DoQ review findings 6 and 9 — 2026-10-29
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.15
+
+**Problem**
+ST-03 made an unmeasured market regime `unknown` (`strategy_rules.md` v1.20). Three responses changed shape without contract updates: `POST /positions/risk-off-alerts` now returns `us_regime_status`/`uk_regime_status` and nullable `spy_risk_on`/`ftse_risk_on`, and leaves an unknown market's flags unchanged; `GET /positions/analyze`'s `market_regime` now carries `*_regime_status`, `spy_source`/`ftse_source` and null prices; the signals generate response's `market_regime.spy_risk_on`/`ftse_risk_on` can be null. Separately, `dashboard.md` v3.10 §Card 4 and `signals.md` v0.7 §Market Status Bar still describe all three ruling branches; the ruling was (a), and the decision record says the unused branches are deleted at implementation.
+
+**Scope**
+- Update `position_endpoints.md` (§POST /positions/risk-off-alerts, §GET /positions/analyze), `signal_endpoints.md` (generate response) and `openapi.yaml` for the nullable/added fields
+- Remove branches (b) and (c) from `dashboard.md` §Card 4 and `signals.md` §Market Status Bar, keeping the ruling (a) sentence
+
+**Acceptance Criteria**
+- Each of the three contracts documents the unknown case, with `openapi.yaml` matching
+- Neither page spec mentions "last known" or "risk-on with a warning" as a live behaviour
+
+---
+
+### BLG-QA-239 — Test that live signal generation gives no entry signals for an unknown market
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** QA & Testing Owner
+**Source:** Sprint execution `2026-10-29__release-v9.14`, ST-03 (BLG-BE-193), EPIC-01 — agent-mediated DoQ review finding 8 — 2026-10-29
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.15
+
+**Problem**
+ST-03 changed `signal_service.generate_momentum_signals` so a market whose index data is unavailable is unknown (None) and gets no entry signals, as `strategy_rules.md` v1.20 §4.2.1 requires. Before, both indices were assumed risk-on when either was missing. The behaviour has no unit test; only the shared helpers and the pre-entry gate are covered.
+
+**Scope**
+- Add a test with SPY data unavailable and FTSE data available: no US signals, UK signals unaffected, and `market_regime.spy_risk_on` is None in the response
+
+**Acceptance Criteria**
+- The test fails if an unknown market is treated as risk-on again
+
+---
+
+### BLG-BE-196 — Decide how Regime Adherence counts a trade plan saved while the regime was unknown
+**Priority:** P3 (Low)
+**Type:** Backend Engineering
+**Owner:** Strategy Rules & System Intent Owner; Backend Engineering Patterns Owner
+**Source:** PR #2131 (EPIC-01, `2026-10-29__release-v9.14`) agent-mediated DoQ/PO review, ST-03 (BLG-BE-193) — 2026-10-30
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.15
+
+**Problem**
+ST-03 makes an unmeasured regime `unknown`. The Trade Plan page fills `regime_context_at_entry` from `GET /market/status` (`src/pages/TradePlan.js` `regimeFromHealth`), so a plan saved during an outage now stores `"unknown"`; before ST-03 it stored the defaulted `"risk_on"`. `behavioural_drift_service.py` counts only `risk_on`, `neutral`, null and `""` as valid, so each such plan counts as a Regime Adherence violation. `si02_drift_score.md` §3.4 counts an undeterminable regime (`neutral`) as not a violation, and does not mention `unknown`.
+
+**Scope**
+- Get a ruling: whether `unknown` counts like `neutral` (not a violation) or as a violation, given that `strategy_rules.md` v1.20 §4.2.1 blocks entries while the regime is unknown
+- Apply it in `behavioural_drift_service.py` and `si02_drift_score.md` §3.4 (regime classification list), with a unit test
+
+**Acceptance Criteria**
+- `si02_drift_score.md` §3.4 names `unknown` and says how it is counted
+- A unit test with one `regime_context_at_entry = "unknown"` trade gives the ruled Regime Adherence result
+
+---
+
+### BLG-BE-197 — Fire the risk-off regime alert for a measured market while the other market is unknown
+**Priority:** P3 (Low)
+**Type:** Backend Engineering
+**Owner:** Backend Engineering Patterns Owner; Strategy Rules & System Intent Owner
+**Source:** PR #2131 (EPIC-01, `2026-10-29__release-v9.14`) agent-mediated DoQ/PO review, ST-03 (BLG-BE-193) — 2026-10-30
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.15
+
+**Problem**
+`alerts_service._check_regime_change` combines both markets ("SPY and/or FTSE 100 is now below its 200-day moving average"). ST-03 returns early when either market is unknown, so the baseline is not moved. While FTSE is unknown, a measured SPY move to risk-off raises no `market_regime_change` alert; it fires only once FTSE is measured again. The nightly risk-off job still flags the US positions, so exits are not affected. Only the alert is delayed.
+
+**Scope**
+- Compare the markets that were measured: alert when a measured market moves from risk-on to risk-off, and leave an unknown market's baseline unchanged
+- Add a test: FTSE unknown, SPY risk-on then risk-off, so the alert fires
+
+**Acceptance Criteria**
+- With one market unknown, a measured risk-on to risk-off move in the other market raises the alert on that call
+- An unknown reading on its own still raises no alert and does not move that market's baseline (the existing ST-03 test still passes)

@@ -57,6 +57,10 @@ STRATEGY_VERSION_REGISTRY = [
     # Behavioural (live rebalance signals gain §8.1/§8.2 precedence, a
     # status-independent ranking and a same-day-run precondition), so registered.
     {"version": "1.17", "effective_date": date(2026, 10, 16)},
+    # ST-03 (BLG-BE-193, EPIC-01, v9.14): §4.2.1/§8.2 unknown regime. Behavioural
+    # (an unmeasured market fails the entry gate and gets no entry signals, and
+    # never triggers the risk-off exit), so registered.
+    {"version": "1.20", "effective_date": date(2026, 10, 29)},
 ]
 
 # Change Log versions classified as documentation-only under the 2026-10-06

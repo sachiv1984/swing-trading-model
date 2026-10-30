@@ -1,6 +1,7 @@
 import { cn } from "../../lib/utils";
-import { ArrowDown, AlertCircle, Clock } from "lucide-react";
+import { ArrowDown, AlertCircle } from "lucide-react";
 import { formatCurrency, formatPercent } from "../../lib/format";
+import StaleMarker, { STALE_EXPLANATION_RISK } from "../ui/StaleMarker";
 
 const STATUS_ORDER = { GRACE: 0, LOSING: 1, PROFITABLE: 2 };
 
@@ -9,23 +10,6 @@ const statusBadge = {
   LOSING:     "bg-rose-500/20 text-rose-400 border-rose-500/30",
   PROFITABLE: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30",
 };
-
-// ST-10 (EPIC-02, v9.11, BLG-BE-154): risk_dashboard.md §6.6.
-const STALE_TEXT = "Live price unavailable. Showing the last stored price converted at today's FX rate.";
-
-function StaleMarker() {
-  return (
-    <span
-      className="inline-flex items-center gap-1 ml-1.5 align-middle"
-      data-testid="price-stale-marker"
-      title={STALE_TEXT}
-      aria-label={STALE_TEXT}
-    >
-      <Clock className="w-3.5 h-3.5 text-amber-400" aria-hidden="true" />
-      <span className="text-xs text-amber-400">stale</span>
-    </span>
-  );
-}
 
 // ST-11 (EPIC-02, v9.11, BLG-FE-206): risk_dashboard.md §6.2a.
 const GRACE_STOP_TEXT = "Stops are not enforced during the 10-day grace period. See strategy rules §6.";
@@ -68,7 +52,7 @@ export default function PositionRiskTable({ positions = [], error }) {
           <div className="p-2 rounded-lg bg-gradient-to-br from-violet-500/30 to-fuchsia-500/30">
             <ArrowDown className="w-5 h-5 text-violet-400" />
           </div>
-          <h3 className="text-sm font-medium text-slate-300">Position Risk</h3>
+          <h2 className="text-sm font-medium text-slate-300">Position Risk</h2>
         </div>
         <div className="p-6 flex items-center gap-3 rounded-b-2xl bg-rose-900/10 border-t border-rose-500/20">
           <AlertCircle className="w-4 h-4 text-rose-400 flex-shrink-0" />
@@ -92,7 +76,7 @@ export default function PositionRiskTable({ positions = [], error }) {
         <div className="p-2 rounded-lg bg-gradient-to-br from-violet-500/30 to-fuchsia-500/30">
           <ArrowDown className="w-5 h-5 text-violet-400" />
         </div>
-        <h3 className="text-sm font-medium text-slate-300">Position Risk</h3>
+        <h2 className="text-sm font-medium text-slate-300">Position Risk</h2>
         <span className="ml-auto text-xs text-slate-600 dark:text-slate-400">{sorted.length} open</span>
       </div>
       <div className="overflow-x-auto">
@@ -132,7 +116,7 @@ export default function PositionRiskTable({ positions = [], error }) {
                   </td>
                   <td className="px-4 py-3 text-slate-300 tabular-nums">
                     {pos.current_price != null ? formatCurrency(pos.current_price) : "—"}
-                    {pos.price_is_stale === true && <StaleMarker />}
+                    {pos.price_is_stale === true && <StaleMarker explanation={STALE_EXPLANATION_RISK} />}
                   </td>
                   <td className="px-4 py-3 text-slate-300 tabular-nums">
                     {inGrace ? <NotEnforced /> : pos.current_stop ? formatCurrency(pos.current_stop) : "—"}

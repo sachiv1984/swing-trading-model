@@ -934,6 +934,12 @@ def _check_regime_change(portfolio_id: str) -> Optional[Dict]:
         logger.warning("Could not fetch market regime for change detection: %s", e)
         return None
 
+    # ST-03: an unknown regime is not a transition to risk-off. Skip without
+    # moving the baseline, so the next measured reading is compared with the
+    # last measured one.
+    if regime.get("spy_risk_on") is None or regime.get("ftse_risk_on") is None:
+        return None
+
     currently_risk_on = bool(regime.get("spy_risk_on")) and bool(regime.get("ftse_risk_on"))
     prev_risk_on = _last_known_regime.get(portfolio_id)
     _last_known_regime[portfolio_id] = currently_risk_on

@@ -44,8 +44,12 @@ from strategy_version_registry import get_current_strategy_version
 from utils.pricing import (
     get_current_price,
     get_live_fx_rate,
+    get_fx_rate_info,
     check_market_regime,
-    calculate_atr
+    calculate_atr,
+    market_regime_status,
+    REGIME_RISK_OFF,
+    REGIME_UNKNOWN,
 )
 
 from utils.calculations import (
@@ -136,6 +140,7 @@ def get_positions_with_prices() -> List[Dict]:
     
     # Get live FX rate for USD/GBP conversions
     live_fx_rate = get_live_fx_rate()
+    fx_info = get_fx_rate_info(live_fx_rate)
     
     print(f"\n📊 Fetching live prices for {len(positions)} position(s)")
     
@@ -148,6 +153,9 @@ def get_positions_with_prices() -> List[Dict]:
         print(f"   Fetching {pos['ticker']}...")
         live_price = get_current_price(pos['ticker'])
         
+        # ST-07 (BLG-BE-168, v9.14): true when the live fetch failed and the
+        # stored price is shown, the same flag GET /portfolio returns.
+        price_is_stale = not live_price
         if live_price:
             # Fix UK stocks: Yahoo returns pence
             if pos['market'] == 'UK' and live_price > 1000:
@@ -293,6 +301,7 @@ def get_positions_with_prices() -> List[Dict]:
             "shares": pos['shares'],
             "current_price": round(current_price_gbp, 2),
             "current_price_native": round(current_price_native, 2),
+            "price_is_stale": price_is_stale,
             "stop_price": round(stop_price_gbp, 2),
             "stop_price_native": round(stop_price_native, 2),
             "pnl": round(pnl_gbp, 2),
@@ -313,6 +322,9 @@ def get_positions_with_prices() -> List[Dict]:
             "stop_frozen_reason": stop_frozen_reason,
             "fx_rate": pos.get('fx_rate', 1.0),
             "live_fx_rate": live_fx_rate,
+            # ST-05 (BLG-BE-169, v9.14): where live_fx_rate came from.
+            "fx_rate_source": fx_info["fx_rate_source"],
+            "fx_rate_as_of": fx_info["fx_rate_as_of"],
             "total_cost": round(pos.get('total_cost', 0), 2),
             "entry_note": pos.get('entry_note'),
             "exit_note": pos.get('exit_note'),
@@ -383,8 +395,8 @@ def analyze_positions() -> Dict:
     # Get market regime
     print("\n📊 Checking market regime...")
     market_regime = check_market_regime()
-    print(f"   SPY: {'🟢 Risk On' if market_regime['spy_risk_on'] else '🔴 Risk Off'}")
-    print(f"   FTSE: {'🟢 Risk On' if market_regime['ftse_risk_on'] else '🔴 Risk Off'}")
+    print(f"   SPY: {market_regime_status(market_regime, 'US')}")
+    print(f"   FTSE: {market_regime_status(market_regime, 'UK')}")
     
     # ST-01 (BLG-BE-138, v9.10, ruling (a)): stop multipliers come from the
     # fixed §11 source, never from the editable settings row.
@@ -786,6 +798,7 @@ def run_nightly_risk_off_alerts() -> Dict:
       - If SPY < MA200: set risk_off_exit=True for all open US positions
       - If FTSE < MA200: set risk_off_exit=True for all open UK positions
       - Clear (risk_off_exit=False) when the relevant index recovers above MA200
+      - Unknown regime (ST-03): that market's flags are left unchanged
 
     Market isolation: US risk-off does NOT affect UK positions and vice versa.
     """
@@ -799,11 +812,13 @@ def run_nightly_risk_off_alerts() -> Dict:
     positions = get_positions(portfolio_id, status='open')
     market_regime = check_market_regime()
 
-    spy_risk_on = market_regime.get('spy_risk_on', True)
-    ftse_risk_on = market_regime.get('ftse_risk_on', True)
+    spy_risk_on = market_regime.get('spy_risk_on')
+    ftse_risk_on = market_regime.get('ftse_risk_on')
+    us_status = market_regime_status(market_regime, 'US')
+    uk_status = market_regime_status(market_regime, 'UK')
 
-    us_risk_off = not spy_risk_on
-    uk_risk_off = not ftse_risk_on
+    us_risk_off = us_status == REGIME_RISK_OFF
+    uk_risk_off = uk_status == REGIME_RISK_OFF
 
     flagged_us = 0
     cleared_us = 0
@@ -814,6 +829,11 @@ def run_nightly_risk_off_alerts() -> Dict:
         pos = decimal_to_float(pos)
         position_id = str(pos['id'])
         market = pos['market']
+
+        # ST-03 ruling (a): an unknown regime never triggers the risk-off
+        # exit and does not clear one either — the flag is left as it was.
+        if (us_status if market == 'US' else uk_status) == REGIME_UNKNOWN:
+            continue
 
         if market == 'US':
             new_flag = us_risk_off
@@ -838,6 +858,8 @@ def run_nightly_risk_off_alerts() -> Dict:
         },
         "us_risk_off": us_risk_off,
         "uk_risk_off": uk_risk_off,
+        "us_regime_status": us_status,
+        "uk_regime_status": uk_status,
         "us_positions_flagged": flagged_us,
         "us_positions_cleared": cleared_us,
         "uk_positions_flagged": flagged_uk,

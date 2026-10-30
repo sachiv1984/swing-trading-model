@@ -12,6 +12,7 @@ import { toast } from "sonner";
 import TrailingStopExplainerIcon from "./TrailingStopExplainerIcon";
 import { StopProvenanceLine, StopDetailsTrigger } from "./StopProvenance";
 import { formatCurrency, formatPercent, currencyForMarket } from "../../lib/format";
+import StaleMarker, { STALE_EXPLANATION_POSITIONS } from "../ui/StaleMarker";
 
 const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:8000";
 
@@ -232,6 +233,7 @@ export default function PositionCard({ position, onEdit, onExit, onRecheck, draw
           <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Current</p>
           <p className="text-sm font-semibold text-white">
             {formatCurrency(displayCurrentPrice || null, { currency })}
+            {position.price_is_stale === true && <StaleMarker explanation={STALE_EXPLANATION_POSITIONS} />}
           </p>
         </div>
         {/* ST-03 (BLG-FE-97): Trail Stop tile — Initial Stop subtext + trailing stop value + breach icon */}
