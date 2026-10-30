@@ -80,7 +80,7 @@
             "date": "2026-10-29",
             "reference": "DEL-20261029-01"
           },
-          "notes": "Autonomous half pushed in f5e48d78 (lockfile fix, CI production-build workflow). Local CI=false npm run build without DISABLE_ESLINT_PLUGIN compiles with warnings only (RISK-06 not triggered). AC 1 post-merge, tracked by BLG-OPS-200. Staging branch deploy of ea20658a (user, 2026-10-29, DISABLE_ESLINT_PLUGIN removed from the Render dashboard) failed at install: Render's plain `npm install` hit ERESOLVE (eslint-config-react-app's eslint@^8 peer vs root eslint@^9). Fixed in 3fbfe5e3: repo .npmrc legacy-peer-deps=true (no dashboard-only setting), and Frontend Production Build now installs with plain `npm ci`, as Render does. Reproduced and verified in a scratch copy (exit 1 without .npmrc, success with it; lockfile unchanged). AC 2 met: staging redeploy of 4719c694 (branch deploy, no DISABLE_ESLINT_PLUGIN, no render.yaml workaround) built and went live 2026-10-29T16:04:44Z, warnings only. AC 3 met: Frontend Production Build fails on an unbuildable tree (it failed d83893b3/3fbfe5e3 on import/first) and passes on 8f05e704 (run 40907524862). AC 1 is seal-marked post-merge, tracked by BLG-OPS-200 (LL-v9.13-P3-03: graded on in-sprint ACs). Deviation check: none. DoQ grade: Pass_with_deviation \u2014 AC 2 shown on the EPIC branch, not main; BLG-OPS-204."
+          "notes": "Autonomous half pushed in f5e48d78 (lockfile fix, CI production-build workflow). Local CI=false npm run build without DISABLE_ESLINT_PLUGIN compiles with warnings only (RISK-06 not triggered). AC 1 post-merge, tracked by BLG-OPS-200. Staging branch deploy of ea20658a (user, 2026-10-29, DISABLE_ESLINT_PLUGIN removed from the Render dashboard) failed at install: Render's plain `npm install` hit ERESOLVE (eslint-config-react-app's eslint@^8 peer vs root eslint@^9). Fixed in 3fbfe5e3: repo .npmrc legacy-peer-deps=true (no dashboard-only setting), and Frontend Production Build now installs with plain `npm ci`, as Render does. Reproduced and verified in a scratch copy (exit 1 without .npmrc, success with it; lockfile unchanged). AC 2 met: staging redeploy of 4719c694 (branch deploy, no DISABLE_ESLINT_PLUGIN, no render.yaml workaround) built and went live 2026-10-29T16:04:44Z, warnings only. AC 3 met: Frontend Production Build fails on an unbuildable tree (it failed d83893b3/3fbfe5e3 on import/first) and passes on 8f05e704 (run 40907524862). AC 1 is seal-marked post-merge, tracked by BLG-OPS-200 (LL-v9.13-P3-03: graded on in-sprint ACs). Deviation check: none. DoQ grade: Pass_with_deviation — AC 2 shown on the EPIC branch, not main; BLG-OPS-204."
         },
         "ST-02": {
           "title": "Compute the SPY market regime from Alpaca bars when Yahoo Finance fails",
@@ -142,9 +142,9 @@
             "method": "human_in_session",
             "date": "2026-10-29",
             "reference": "ESC-EXEC-20261029-01",
-            "notes": "Ruling (a) block entries; unknown regime never triggers \u00a78.2 exit."
+            "notes": "Ruling (a) block entries; unknown regime never triggers §8.2 exit."
           },
-          "notes": "AC1: ruling (a) block entries, ESC-EXEC-20261029-01, 2026-10-29. AC2: strategy_rules.md v1.20 (\u00a74.2.1, \u00a78.2) case (c) with Change Log row, STRATEGY_VERSION_REGISTRY 1.20, \u00a715 re-run 0 actionable. AC3: tests/test_regime_unknown.py (unknown status, no risk-off exit, pre-entry gate fails, nightly job leaves flags, /market/status and /market/regime unknown) + alerts test. AC4 + addendum: Card 4, Signals bar, regime widget Playwright SC-MRU-01..03; local fallbacks default to unknown. Also: signal generation gives no entry signals for an unknown market (ruling (a)); Card 4 envelope unwrap fixed. CI on 29d8c347: Playwright E2E 40900048841 success, CI Pytest 40900048896 success, all 9 workflows success. Implementation note: dashboard.md/signals.md still describe all three ruling branches; the code implements (a) only (decision record says unused branches are deleted at implementation). Deviation check: none."
+          "notes": "AC1: ruling (a) block entries, ESC-EXEC-20261029-01, 2026-10-29. AC2: strategy_rules.md v1.20 (§4.2.1, §8.2) case (c) with Change Log row, STRATEGY_VERSION_REGISTRY 1.20, §15 re-run 0 actionable. AC3: tests/test_regime_unknown.py (unknown status, no risk-off exit, pre-entry gate fails, nightly job leaves flags, /market/status and /market/regime unknown) + alerts test. AC4 + addendum: Card 4, Signals bar, regime widget Playwright SC-MRU-01..03; local fallbacks default to unknown. Also: signal generation gives no entry signals for an unknown market (ruling (a)); Card 4 envelope unwrap fixed. CI on 29d8c347: Playwright E2E 40900048841 success, CI Pytest 40900048896 success, all 9 workflows success. Implementation note: dashboard.md/signals.md still describe all three ruling branches; the code implements (a) only (decision record says unused branches are deleted at implementation). Deviation check: none."
         },
         "ST-04": {
           "title": "Use the last good GBP/USD rate, with its age, before the fixed 1.27 fallback",
@@ -160,7 +160,7 @@
           "completed_utc": "2026-10-29T15:29:31Z",
           "acceptance_verified": true,
           "spec_references": [
-            "docs/specs/data_model.md#DS-37 \u2014 Add fx_rate_last_good (v2.66, 2026-10-29)",
+            "docs/specs/data_model.md#DS-37 — Add fx_rate_last_good (v2.66, 2026-10-29)",
             "docs/design/2026-10-29__release-v9.14/fx-rate-source-indicator/decision_record.md",
             "tests/test_fx_rate_source.py",
             "tests/e2e/fx-rate-source.spec.js"
@@ -170,7 +170,7 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": "AC1: last stored rate used on Yahoo failure (test_failed_fetch_uses_the_last_good_rate_not_the_constant, test_stored_rate_survives_a_restart). AC2: constant only when none stored (test_constant_only_when_no_rate_was_ever_stored). AC3: age shown (SC-FXS-01 'from 2 days ago' on Card 2 and Risk Dashboard; shown at every age, a superset per decision record \u00a72.1). Storage: fx_rate_last_good (DS-37), runtime ensure, fail-open; live confirmation filed as BLG-OPS-203. CI on 07ea2a2d: Playwright E2E 40902109597 success, CI Pytest 40902109378 success, all 9 workflows success. Deviation check: none."
+          "notes": "AC1: last stored rate used on Yahoo failure (test_failed_fetch_uses_the_last_good_rate_not_the_constant, test_stored_rate_survives_a_restart). AC2: constant only when none stored (test_constant_only_when_no_rate_was_ever_stored). AC3: age shown (SC-FXS-01 'from 2 days ago' on Card 2 and Risk Dashboard; shown at every age, a superset per decision record §2.1). Storage: fx_rate_last_good (DS-37), runtime ensure, fail-open; live confirmation filed as BLG-OPS-203. CI on 07ea2a2d: Playwright E2E 40902109597 success, CI Pytest 40902109378 success, all 9 workflows success. Deviation check: none."
         },
         "ST-05": {
           "title": "Flag an FX fallback instead of applying it silently",
@@ -309,9 +309,9 @@
     "all_merged": false
   },
   "process_notes": [
-    "2026-10-29: ST-04+ST-05 and ST-07+ST-08 shipped as combined commits (07ea2a2d, d83893b3) with both story IDs, per CLAUDE.md \u00a72. Backlog items filed: BLG-TECH-33 (flat-config react-hooks crash), BLG-OPS-203 (DS-37 live confirmation).",
+    "2026-10-29: ST-04+ST-05 and ST-07+ST-08 shipped as combined commits (07ea2a2d, d83893b3) with both story IDs, per CLAUDE.md §2. Backlog items filed: BLG-TECH-33 (flat-config react-hooks crash), BLG-OPS-203 (DS-37 live confirmation).",
     "2026-10-29: ST-08's d83893b3 failed Frontend Production Build (import/first); engine chained build+commit without gating on the build result, so 3fbfe5e3 (.npmrc) was pushed before the failure was seen. Fixed in 8f05e704 and verified with a clean npm ci + build before commit.",
-    "2026-10-29: agent-mediated DoQ review of EPIC-01 (\u00a75.3, user-directed): first pass Blocked (4 blocking: ST-08 axe narrowed, ST-01 AC 2 branch not main, Card 4 link description, trend strip NULL as risk-off), fixed in b1e55731; second pass Approved. Filed BLG-OPS-204, BLG-SPEC-210, BLG-QA-239.",
+    "2026-10-29: agent-mediated DoQ review of EPIC-01 (§5.3, user-directed): first pass Blocked (4 blocking: ST-08 axe narrowed, ST-01 AC 2 branch not main, Card 4 link description, trend strip NULL as risk-off), fixed in b1e55731; second pass Approved. Filed BLG-OPS-204, BLG-SPEC-210, BLG-QA-239.",
     "2026-10-30: PR #2131 (EPIC-01) merged by the human developer at 2026-10-30T08:13:03Z (merge commit 48eab523), after the user-given DoQ QA sign-off and PO acceptance recorded on the PR. Orphaned post-merge commit check: none. Step 3c sibling sync: no other EPIC branch exists yet. Filed during PR review: BLG-BE-196, BLG-BE-197."
   ]
 }
