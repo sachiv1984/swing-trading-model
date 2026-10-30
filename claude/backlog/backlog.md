@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-30 (sprint execution, EPIC-02 ST-13 of 2026-10-29__release-v9.14 — 1 new item added: BLG-BE-198; no existing item edited); prior — 2026-10-30 (post-merge, EPIC-01 of 2026-10-29__release-v9.14 — 1 new item added: BLG-OPS-205; no existing item edited); prior — 2026-10-30 (post-merge, EPIC-01 of 2026-10-29__release-v9.14 — BLG-OPS-200 resolved, BLG-OPS-204 resolution note updated with the staging deploy log; no new item added); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-30 (PR #2132 review, EPIC-02 of 2026-10-29__release-v9.14 — 2 new items added: BLG-BE-199, BLG-FE-236; no existing item edited); prior — 2026-10-30 (sprint execution, EPIC-02 ST-13 of 2026-10-29__release-v9.14 — 1 new item added: BLG-BE-198; no existing item edited); prior — 2026-10-30 (post-merge, EPIC-01 of 2026-10-29__release-v9.14 — 1 new item added: BLG-OPS-205; no existing item edited); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -6149,5 +6149,47 @@ ST-03 makes an unmeasured regime `unknown`. The Trade Plan page fills `regime_co
 **Acceptance Criteria**
 - A pytest exits a US position whose `fill_price` is None and asserts the `trade_history` row's `entry_price` is `entry_price × fx_rate` (native), with no error
 - No `get('fill_price', ...)` default-argument read remains in `backend/`
+
+---
+
+### BLG-BE-199 — Reject a non-positive FX override in POST /portfolio/size
+**Priority:** P3 (Low)
+**Type:** Backend Engineering / Correctness
+**Owner:** Backend Engineering Patterns Owner; Strategy Rules & System Intent Owner
+**Source:** PR #2132 agent-mediated Director of Quality review (EPIC-02, cycle `2026-10-29__release-v9.14`) — 2026-10-30
+**Effort:** XS (<1h plus test)
+**Provisional-Target:** v9.15
+
+**Problem**
+`size_position()` accepts any `fx_rate` override for a US position. `fx_rate: 0` raises `ZeroDivisionError` (HTTP 500), and a negative rate returns `valid: true` with negative `suggested_shares` (e.g. −12.7 for £100 risk, $10 stop, FX −1.27). Both are pre-existing (the pre-v9.14 formula failed the same way), but `strategy_rules.md` §4.1.4's validity rules do not cover the FX rate, and the property test only samples FX in 0.5–2.0, so nothing catches it.
+
+**Scope**
+- Return an invalid result with a deterministic reason code (e.g. `INVALID_FX_RATE`) when a US `fx_rate` override is ≤ 0, before any calculation
+- Add the reason code to `portfolio_endpoints.md` §POST /portfolio/size and, if the Strategy Rules & System Intent Owner agrees, to §4.1.4
+
+**Acceptance Criteria**
+- `fx_rate` 0 and a negative `fx_rate` for a US position each return `valid: false` with the new reason code, never a 500 or negative shares (pytest)
+- UK requests ignore `fx_rate` as today
+
+---
+
+### BLG-FE-236 — Daily Position Monitor footer says "All positions healthy" while an in-grace position is below its stop
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Frontend Specifications & UX Documentation Owner; Head of UX & Design
+**Source:** PR #2132 agent-mediated Product Owner review (EPIC-02 ST-11, cycle `2026-10-29__release-v9.14`) — 2026-10-30
+**Effort:** XS (<1h plus test)
+**Provisional-Target:** v9.15
+
+**Problem**
+Since ST-11 (v9.14), an in-grace position priced at or below its trailing stop is a hold with the reason "In grace: stop not enforced". When no exit is suggested, `MonitorModal`'s footer reads "All positions healthy" even while such a row is listed, so the footer and the row disagree. `monitor-grace-aware-suggestions/decision_record.md` did not cover the footer.
+
+**Scope**
+- Decide the footer wording when one or more in-grace breaches are listed and nothing is suggested (e.g. "No exits suggested · 1 in grace below its stop"), via a design note
+- Implement it and update `positions.md` §Monitor Suggestions
+
+**Acceptance Criteria**
+- With only an in-grace breach listed, the footer no longer reads "All positions healthy" (Playwright)
+- With no breach at all, the footer is unchanged
 
 ---
