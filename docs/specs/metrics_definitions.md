@@ -2,8 +2,8 @@
 **Owner:** Metrics Definitions & Analytics Canonical Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 1.33.0
-**Last Updated:** 2026-10-27 (ST-22, EPIC-03, v9.13, BLG-FE-208 — §AI Chat Engagement Response Acceptance Rate instrumented: stored ratings, its query, `null` when none); prior — 2026-10-17 (ST-10, EPIC-02, v9.13, BLG-SPEC-188 — new §Stop Freshness: median and maximum age of `stop_calculated_at` across open positions, NULLs excluded and counted); prior — 2026-10-17 (ST-11, EPIC-02, v9.13, BLG-SPEC-180 — Fee-Netting Basis no longer cites a NULL `positions.fees_paid` as a cause of a NULL `trade_history` fee leg; names legacy and manually inserted rows, cross-references DS-23); prior history retained — see prior entries in version control
+**Version:** 1.33.1
+**Last Updated:** 2026-10-30 (ST-13, EPIC-02, v9.14, BLG-SPEC-190 — §Position Risk Data Sources: the native entry is `positions.fill_price`; `positions.entry_price` is GBP); prior — 2026-10-27 (ST-22, EPIC-03, v9.13, BLG-FE-208 — §AI Chat Engagement Response Acceptance Rate instrumented: stored ratings, its query, `null` when none); prior — 2026-10-17 (ST-10, EPIC-02, v9.13, BLG-SPEC-188 — new §Stop Freshness: median and maximum age of `stop_calculated_at` across open positions, NULLs excluded and counted); prior history retained — see prior entries in version control
 **Review Cycle:** Monthly
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
@@ -683,7 +683,7 @@ where:
 - Position Risk is a point-in-time metric: it uses the entry stop, not a trailing stop.
 
 ### Data Sources
-- `positions.entry_price` — native currency
+- `positions.fill_price` — the native entry price (`positions.entry_price` is GBP for every market; for a US row with a NULL `fill_price` the native entry is `entry_price × fx_rate`, `data_model.md` §2 v2.60). *(Corrected v1.33.1, ST-13, BLG-SPEC-190: this line said `positions.entry_price` was native currency.)*
 - `positions.initial_stop` — native currency (the stop set at entry; the old `positions.stop_price` column was dropped by DS-24)
 - `positions.shares`
 - `positions.fx_rate` — GBP/USD rate at entry (1.0 for GBP positions)

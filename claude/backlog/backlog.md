@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-30 (post-merge, EPIC-01 of 2026-10-29__release-v9.14 — 1 new item added: BLG-OPS-205; no existing item edited); prior — 2026-10-30 (post-merge, EPIC-01 of 2026-10-29__release-v9.14 — BLG-OPS-200 resolved, BLG-OPS-204 resolution note updated with the staging deploy log; no new item added); prior — 2026-10-30 (post-merge, EPIC-01 of 2026-10-29__release-v9.14 — BLG-OPS-203 and BLG-OPS-204 resolved; no new item added); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-30 (sprint execution, EPIC-02 ST-13 of 2026-10-29__release-v9.14 — 1 new item added: BLG-BE-198; no existing item edited); prior — 2026-10-30 (post-merge, EPIC-01 of 2026-10-29__release-v9.14 — 1 new item added: BLG-OPS-205; no existing item edited); prior — 2026-10-30 (post-merge, EPIC-01 of 2026-10-29__release-v9.14 — BLG-OPS-200 resolved, BLG-OPS-204 resolution note updated with the staging deploy log; no new item added); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -6131,3 +6131,23 @@ ST-03 makes an unmeasured regime `unknown`. The Trade Plan page fills `regime_co
 **Acceptance Criteria**
 - No seed script inserts a `market = 'UK'` ticker without `.L`
 - After a staging reseed or correction, `GET /positions` on staging returns `price_is_stale: false` for both UK positions while Yahoo Finance is reachable
+
+### BLG-BE-198 — Store the native entry in trade_history for a US exit whose fill_price is NULL
+**Priority:** P3 (Low)
+**Type:** Backend Engineering / Correctness
+**Owner:** Backend Engineering Patterns Owner
+**Source:** ST-13 / EPIC-02, sprint execution `2026-10-29__release-v9.14` (found while checking spec descriptions of `entry_price`) — 2026-10-30
+**Effort:** XS (<1h plus test)
+**Provisional-Target:** v9.15
+
+**Problem**
+`exit_position()` (`backend/services/position_service.py`, ~line 1269) sets the `trade_history.entry_price` it writes from `position.get('fill_price', position['entry_price'])` for US positions. When the `fill_price` column exists but is NULL, `.get` returns None, so the exit passes None for `trade_history.entry_price`, which `data_model.md` §3 documents as `NOT NULL`. Exiting such a position would fail at the insert. It is the same pattern as `BLG-BE-167` in `GET /portfolio` (fixed in v9.12, `cc7774e9`; test added v9.14 ST-12). Realised P&L does not read this value, so only the stored entry is affected.
+
+**Scope**
+- Use `fill_price or entry_price × fx_rate` for the US native entry in `exit_position()`, as `portfolio_service.py` and the lifecycle readers do
+
+**Acceptance Criteria**
+- A pytest exits a US position whose `fill_price` is None and asserts the `trade_history` row's `entry_price` is `entry_price × fx_rate` (native), with no error
+- No `get('fill_price', ...)` default-argument read remains in `backend/`
+
+---
