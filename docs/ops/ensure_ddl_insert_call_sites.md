@@ -1,7 +1,7 @@
 **Owner:** Backend Engineering Patterns Owner
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Last Updated:** 2026-10-30 (ST-21, EPIC-03, v9.14, BLG-BE-166 — first listing; 34 call sites: 28 fixed, 3 already once per process, 3 filed)
+**Last Updated:** 2026-10-30 (ST-21, EPIC-03, v9.14, BLG-BE-166 — first listing; 35 call sites: 29 fixed, 3 already once per process, 3 filed; the DoQ review added the backtest import site and made the lock re-entrant)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 # ensure_* DDL Before Writes: Call-Site Listing
@@ -10,13 +10,13 @@
 
 Many write paths call an `ensure_*` function before they write. These functions run `CREATE TABLE ... IF NOT EXISTS` or `ALTER TABLE ... ADD COLUMN IF NOT EXISTS`. Each call opens a connection, and each `ALTER TABLE` takes an ACCESS EXCLUSIVE lock even when it changes nothing. `create_claude_audit_entry()` ran four of them before every AI call's audit row (BLG-BE-166).
 
-ST-21 adds `database.ensure_once`, a decorator that records a function's first successful run in the process and skips later calls. A failed run is not recorded, so the next call tries again. Startup (`main.py` `on_startup`) goes through the same wrapper, so a startup run also covers the first write. `database.reset_ensure_once()` clears the record for tests.
+ST-21 adds `database.ensure_once`, a decorator that records a function's first successful run in the process and skips later calls. A failed run is not recorded, so the next call tries again. The lock is re-entrant, because a decorated function may call another (`ensure_chat_answer_ratings_table` ensures `claude_audit_log` first). Startup (`main.py` `on_startup`) goes through the same wrapper, so a startup run also covers the first write. `database.reset_ensure_once()` clears the record for tests.
 
 **Trade-off:** if a table is dropped while the process runs (for example a staging reset), the decorated function will not recreate it until the process restarts. Writes to that table then fail as they would for any missing table; audit writes stay non-blocking.
 
 ## How the listing was produced
 
-An AST scan of `backend/` (excluding `.venv`) for every function, other than an `ensure_*` function itself and `on_startup`, that calls an `ensure_*` function and also writes (an `INSERT` in its source, or a `create_`/`insert_`/`log_`/`record_`/`upsert_`/`save_`/`add_` call). It found **34 call sites** (one per calling function and `ensure_*` function pair) in 28 functions. Rows below group sites that share an `ensure_*` function or a caller. `get_monthly_pnl_report` is a read path, but it calls the same `ensure_*` as a write path, so it is listed.
+An AST scan of `backend/` (excluding `.venv`) for every function, other than an `ensure_*` function itself and `on_startup`, that calls an `ensure_*` function and also writes (an `INSERT` in its source, or a `create_`/`insert_`/`log_`/`record_`/`upsert_`/`save_`/`add_` call). It found **35 call sites** (one per calling function and `ensure_*` function pair) in 29 functions. Rows below group sites that share an `ensure_*` function or a caller. `get_monthly_pnl_report` is a read path, but it calls the same `ensure_*` as a write path, so it is listed.
 
 ## Call sites
 
@@ -48,10 +48,11 @@ An AST scan of `backend/` (excluding `.venv`) for every function, other than an 
 | 24 | `services/gemini_service.check_and_alert_daily_cost`, `_alert` | `ensure_scheduled_alert_dedup_table` | Fixed (`ensure_once`) |
 | 25 | `services/position_service.exit_position` | `ensure_planned_entry_price_column` | Fixed (`ensure_once`) |
 | 26 | `utils/idempotency.replay_or_create` | `ensure_idempotency_keys_table` | Fixed (`ensure_once`) |
+| 26a | `routers/strategy_benchmark` (import and its other three handlers) | `ensure_backtest_tables` | Fixed (`ensure_once`; found by the agent-mediated DoQ review's re-scan) |
 | 27 | `database.insert_monthly_pnl_snapshot_if_absent`, `services/reports_service.get_monthly_pnl_report` | `ensure_monthly_pnl_snapshots_table(conn)` | Filed (BLG-BE-200): runs in the caller's connection and transaction, so recording success when the function returns could record a DDL that later rolls back |
 | 28 | `services/alerts_service.evaluate_alerts` | `ensure_alerts_tables` (defined in `alerts_service`, not `database`) | Filed (BLG-BE-200): a scheduled job, not a per-request path; `ensure_once` lives in `database`, which tests replace with a stub at import |
 
-**Count:** 34 call sites. 28 fixed by `ensure_once` (rows 1–6, 9–20, 22–26); 3 already ran once per process (rows 7, 8, 21); 3 filed as BLG-BE-200 (row 27's two sites and row 28).
+**Count:** 35 call sites. 29 fixed by `ensure_once` (rows 1–6, 9–20, 22–26a); 3 already ran once per process (rows 7, 8, 21); 3 filed as BLG-BE-200 (row 27's two sites and row 28).
 
 ## Verification
 

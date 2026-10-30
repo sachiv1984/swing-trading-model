@@ -25,11 +25,13 @@ logger = logging.getLogger(__name__)
 # takes an ACCESS EXCLUSIVE lock even when it changes nothing; the insert
 # paths below ran theirs on every write. A decorated function records its
 # first successful run and skips later calls. A failed run is not recorded,
-# so the next call tries again. on_startup's calls go through the same
+# so the next call tries again. The lock is re-entrant because one decorated
+# function can call another (ensure_chat_answer_ratings_table ensures
+# claude_audit_log first). on_startup's calls go through the same
 # wrapper, so a startup run also covers the first insert.
 # ---------------------------------------------------------------------------
 _ENSURED_ONCE: set = set()
-_ENSURED_ONCE_LOCK = threading.Lock()
+_ENSURED_ONCE_LOCK = threading.RLock()  # re-entrant: a decorated ensure may call another
 
 
 def ensure_once(fn):
@@ -4818,6 +4820,7 @@ def update_positions_risk_off_exit(position_id: str, risk_off_exit: bool) -> Non
 # ST-11 (BLG-FEAT-53) — Strategy Benchmark: backtest vs live comparison
 # ============================================================================
 
+@ensure_once
 def ensure_backtest_tables():
     """Create backtest_trades and backtest_yearly_performance tables (idempotent).
 

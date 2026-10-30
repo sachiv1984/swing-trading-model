@@ -12,6 +12,7 @@ sys.modules["database"]).
 import importlib.util
 import os
 import sys
+import threading
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -95,3 +96,16 @@ def test_reset_makes_the_next_call_run_again():
         database.reset_ensure_once()
         database.ensure_gemini_audit_log_table()
     assert len(executed) > n
+
+
+def test_nested_decorated_ensure_does_not_deadlock():
+    # DoQ review finding 1: ensure_chat_answer_ratings_table (decorated)
+    # calls the decorated claude_audit_log ensures. With a non-reentrant
+    # lock the inner call waited on the outer and the thread hung.
+    conn, executed = _fake_db()
+    with patch.object(database, "get_db", return_value=conn):
+        t = threading.Thread(target=database.ensure_chat_answer_ratings_table, daemon=True)
+        t.start()
+        t.join(5)
+    assert not t.is_alive(), "ensure_chat_answer_ratings_table deadlocked"
+    assert any("claude_audit_log" in s for s in _ddl(executed))
