@@ -2,8 +2,8 @@
 **Owner:** Metrics Definitions & Analytics Canonical Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 1.33.0
-**Last Updated:** 2026-10-27 (ST-22, EPIC-03, v9.13, BLG-FE-208 — §AI Chat Engagement Response Acceptance Rate instrumented: stored ratings, its query, `null` when none); prior — 2026-10-17 (ST-10, EPIC-02, v9.13, BLG-SPEC-188 — new §Stop Freshness: median and maximum age of `stop_calculated_at` across open positions, NULLs excluded and counted); prior — 2026-10-17 (ST-11, EPIC-02, v9.13, BLG-SPEC-180 — Fee-Netting Basis no longer cites a NULL `positions.fees_paid` as a cause of a NULL `trade_history` fee leg; names legacy and manually inserted rows, cross-references DS-23); prior history retained — see prior entries in version control
+**Version:** 1.33.1
+**Last Updated:** 2026-10-30 (ST-13, EPIC-02, v9.14, BLG-SPEC-190 — §Position Risk Data Sources: the native entry is `positions.fill_price`; `positions.entry_price` is GBP); prior — 2026-10-27 (ST-22, EPIC-03, v9.13, BLG-FE-208 — §AI Chat Engagement Response Acceptance Rate instrumented: stored ratings, its query, `null` when none); prior — 2026-10-17 (ST-10, EPIC-02, v9.13, BLG-SPEC-188 — new §Stop Freshness: median and maximum age of `stop_calculated_at` across open positions, NULLs excluded and counted); prior history retained — see prior entries in version control
 **Review Cycle:** Monthly
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
@@ -683,7 +683,7 @@ where:
 - Position Risk is a point-in-time metric: it uses the entry stop, not a trailing stop.
 
 ### Data Sources
-- `positions.entry_price` — native currency
+- `positions.fill_price` — the native entry price (`positions.entry_price` is GBP for every market; for a US row with a NULL `fill_price` the native entry is `entry_price × fx_rate`, `data_model.md` §2 v2.60). *(Corrected v1.33.1, ST-13, BLG-SPEC-190: this line said `positions.entry_price` was native currency.)*
 - `positions.initial_stop` — native currency (the stop set at entry; the old `positions.stop_price` column was dropped by DS-24)
 - `positions.shares`
 - `positions.fx_rate` — GBP/USD rate at entry (1.0 for GBP positions)
@@ -1488,6 +1488,7 @@ Validation is performed by `POST /validate/calculations` comparing computed metr
 ## Appendix D — Change Log
 | Date | Version | Change | Author |
 |---|---|---|---|
+| 2026-10-30 | 1.33.1 | ST-13 (EPIC-02, v9.14, BLG-SPEC-190): §Position Risk Data Sources — the native entry is `positions.fill_price`; `positions.entry_price` is GBP for every market (was "native currency"). Documentation only. |
 | 2026-10-27 | 1.33.0 | ST-22 (EPIC-03, v9.13, BLG-FE-208): §AI Chat Engagement measure 3 (Response Acceptance Rate) is instrumented — ratings stored in `chat_answer_ratings` (DS-35) against the answer's `claude_audit_log` row; the query is documented and implemented as `database.get_response_acceptance_rate()`; `null` when nothing is rated. "Not instrumented" status removed. |
 | 2026-10-17 | 1.32.0 | ST-10 (EPIC-02, v9.13, BLG-SPEC-188): new §Stop Freshness — median and maximum age of `positions.stop_calculated_at` across open positions, with formula, source (DS-22), NULL exclusion (counted as never recalculated) and a manual-check query. No threshold. Served by `GET /positions/stop-freshness`; shown on System Status. | Metrics Definitions & Analytics Owner |
 | 2026-10-17 | 1.31.0 | ST-11 (EPIC-02, v9.13, BLG-SPEC-180): Fee-Netting Basis — removed the claim that a NULL `positions.fees_paid` can cause a NULL `trade_history` fee leg (the column is `NOT NULL` since DS-23 and `exit_position()` raises on NULL); the reachable sources are legacy and manually inserted `trade_history` rows. No change to `null_fee_trade_count`'s contract or computation. | Metrics Definitions & Analytics Owner |

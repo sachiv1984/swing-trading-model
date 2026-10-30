@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Class 2
 **Status:** Canonical
-**Version:** 1.28.0
-**Last Updated:** 2026-10-29 (ST-07, EPIC-01, v9.14, BLG-BE-168 — v9.14.0 entry: GET /positions gains price_is_stale); prior — 2026-10-29 (ST-06, EPIC-01, v9.14, BLG-OPS-194 — v9.14.0 entry: GET /health/detailed's Yahoo Finance check reports fallbacks); prior — 2026-10-29 (ST-04/ST-05, EPIC-01, v9.14, BLG-BE-194/BLG-BE-169 — v9.14.0 entry: GET /portfolio, GET /positions and GET /market/status gain fx_rate_source and fx_rate_as_of); prior history retained — see prior entries in version control
+**Version:** 1.28.2
+**Last Updated:** 2026-10-30 (ST-10, EPIC-02, v9.14, BLG-BE-188 — v9.14.0 entry: POST /positions/{position_id}/exit returns its documented 404 and 400); prior — 2026-10-30 (ST-09, EPIC-02, v9.14, BLG-BE-190 — v9.14.0 entry: POST /portfolio/size divides the US stop distance by FX); prior — 2026-10-29 (ST-07, EPIC-01, v9.14, BLG-BE-168 — v9.14.0 entry: GET /positions gains price_is_stale); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 # API Changelog
@@ -94,6 +94,24 @@ Rules:
 | Change | Details |
 |--------|---------|
 | Updated endpoint: GET /health/detailed | `checks.yahooFinance` is `degraded` or `unhealthy`, with `details.reason`, when the FX rate or a regime index fell back; it adds `fx_rate_source`, `fx_rate_as_of`, `spy_regime_source` and `ftse_regime_source` to `details` (BLG-OPS-194). |
+
+### portfolio_endpoints.md — v2.14.1 (UPDATED)
+
+**EPIC:** EPIC-02
+**ST:** ST-09
+
+| Change | Details |
+|--------|---------|
+| Updated endpoint: POST /portfolio/size | For a US position `suggested_shares` is `RiskAmount × fx_rate_used / StopDistance` (`strategy_rules.md` v1.21 §4.1.3). It was `RiskAmount / (StopDistance × fx_rate_used)`, so US suggestions rise by a factor of FX². The examples are recomputed. No shape change (BLG-BE-190). |
+
+### position_endpoints.md — v2.19.1 (UPDATED)
+
+**EPIC:** EPIC-02
+**ST:** ST-10
+
+| Change | Details |
+|--------|---------|
+| Updated endpoint: POST /positions/{position_id}/exit | Each service validation error returns its documented status with a `detail` string: `404` for a missing position or portfolio, `400` for a closed position, a non-positive price, negative or excess shares, or a US exit without `exit_fx_rate`. They were all `500` before (BLG-BE-188). |
 
 ## v9.13.0 (2026-10-16 — Release v9.13)
 

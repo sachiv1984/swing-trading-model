@@ -679,21 +679,31 @@ def get_portfolio_endpoint():
         traceback.print_exc()
         return JSONResponse(status_code=500, content={"status": "error", "message": "Internal server error"})
 
+# ST-10 (BLG-BE-188, v9.14): exit_position's ValueErrors that mean the
+# position cannot be found; every other ValueError is a 400 validation error
+# (position_endpoints.md §POST /positions/{position_id}/exit Errors).
+EXIT_NOT_FOUND_ERRORS = {"Position not found", "Portfolio not found"}
+
+
 @app.post("/positions/{position_id}/exit")
 def exit_position_endpoint(position_id: str, request: ExitPositionRequest):
     # ST-02 (BLG-SPEC-186, v9.13): only the allowed values (DS-34 CHECK
     # constraint) are stored; anything else is a 400, as the contract says.
     if request.exit_reason is not None and request.exit_reason not in EXIT_REASONS:
         raise HTTPException(status_code=400, detail=INVALID_EXIT_REASON)
-    result = exit_position(
-        position_id=position_id,
-        exit_price=request.exit_price,
-        shares=request.shares,
-        exit_date=request.exit_date,
-        exit_reason=request.exit_reason,
-        exit_fx_rate=request.exit_fx_rate,
-        exit_note=request.exit_note
-    )
+    try:
+        result = exit_position(
+            position_id=position_id,
+            exit_price=request.exit_price,
+            shares=request.shares,
+            exit_date=request.exit_date,
+            exit_reason=request.exit_reason,
+            exit_fx_rate=request.exit_fx_rate,
+            exit_note=request.exit_note
+        )
+    except ValueError as e:
+        status_code = 404 if str(e) in EXIT_NOT_FOUND_ERRORS else 400
+        raise HTTPException(status_code=status_code, detail=str(e))
     if result.get("market") == "US" and not result.get("is_partial_exit"):
         try:
             from services.alpaca_paper_sync_service import sync_close_paper_position

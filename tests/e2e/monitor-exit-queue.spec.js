@@ -39,7 +39,7 @@ function makePosition(overrides = {}) {
 const STOP_HIT = makePosition();
 const UK_RISK_OFF = makePosition({
   id: 'pos-ro', ticker: 'RISK.L', market: 'UK', current_price: 120, current_price_native: 120,
-  stop_price: 90, fx_rate: 1, live_fx_rate: 1,
+  stop_price: 90, fx_rate: 1, live_fx_rate: 1, risk_off_exit: true,
 });
 
 /**
@@ -103,7 +103,7 @@ test.describe('Daily Position Monitor exit queue (ST-01)', () => {
     await expect(page.getByRole('heading', { name: 'Daily Position Monitor' })).toHaveCount(0);
     await expect(page.getByTestId('exit-reason-select')).toContainText('Stop Loss Hit');
     await expect(page.getByTestId('exit-reason-preselect-note')).toHaveText(
-      'Pre-selected from the Daily Position Monitor: the price is at or below the stop.'
+      'Pre-selected from the Daily Position Monitor: the price is at or below the trailing stop and the grace period has ended.'
     );
     await expect(page.getByTestId('exit-queue-progress')).toHaveCount(0);
 

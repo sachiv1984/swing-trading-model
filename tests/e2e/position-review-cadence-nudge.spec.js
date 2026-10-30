@@ -12,6 +12,9 @@
  *   SC-RCN-05  Table View — flag suppressed when portfolio drawdown threshold is breached (AC-04)
  *   SC-RCN-06  Table View — clicking "Mark Reviewed" fires PATCH /positions/{id}/mark-reviewed
  *   SC-RCN-07  Grid View — Last Reviewed row shown in card footer with the same text/flag logic
+ *   SC-RCN-09  Table and Grid — flag suppressed for stored GRACE with grace_days_remaining null and
+ *              holding_days >= 10, the ended-grace case the Alert Zone shows (v9.14 ST-14, BLG-SPEC-192)
+ *   SC-RCN-10  Table and Grid — the same position with position_state LOSING is flagged (v9.14 ST-14)
  *
  * Infrastructure: Playwright page.route() network interception. No live backend.
  * ROUTING NOTE: App uses HashRouter — navigate via page.goto('/#/Positions'). Grid View
@@ -246,4 +249,57 @@ test('SC-RCN-08: Grid View non-flagged "Not yet reviewed" state resolves the can
   await expect(text).not.toHaveClass(/text-amber-600/);
   await expect(text).toHaveClass(/text-slate-600/);
   await expect(text).toHaveClass(/dark:text-slate-400/);
+});
+
+// v9.14 ST-14 (BLG-SPEC-192): docs/design/2026-10-29__release-v9.14/last-reviewed-ended-grace/decision_record.md §6.
+function endedGracePosition(overrides = {}) {
+  const twentyDaysAgo = new Date();
+  twentyDaysAgo.setDate(twentyDaysAgo.getDate() - 20);
+  return makePosition({
+    last_reviewed_at: twentyDaysAgo.toISOString(),
+    lifecycle_state: 'GRACE',
+    position_state: 'GRACE',
+    grace_days_remaining: null,
+    holding_days: 11,
+    days_in_state: 11,
+    ...overrides,
+  });
+}
+
+async function lastReviewedTexts(page, pos) {
+  await gotoPositionsTable(page, [pos]);
+  const tableText = page.locator('[data-testid="last-reviewed-cell"]').locator('span');
+  await expect(tableText).toContainText('Reviewed 20d ago');
+  return tableText;
+}
+
+async function gridLastReviewedText(page, pos) {
+  await stubPositionsPage(page, [pos]);
+  await page.goto('/#/Positions');
+  await page.waitForSelector(`text=${pos.ticker}`, { timeout: 8000 });
+  // The view choice persists, so switch back from the table view used first.
+  await page.locator('[aria-label="Grid view"]').click();
+  const gridText = page.locator('[data-testid="last-reviewed-row"]').locator('span').filter({ hasText: 'Reviewed 20d ago' });
+  await expect(gridText).toBeVisible({ timeout: 5000 });
+  return gridText;
+}
+
+test('SC-RCN-09: stored GRACE with grace ended (grace_days_remaining null, holding_days 11) is not flagged, table and grid', async ({ page }) => {
+  const pos = endedGracePosition();
+  const tableText = await lastReviewedTexts(page, pos);
+  await expect(tableText).not.toHaveClass(/text-amber-600/);
+  await expect(tableText).toHaveClass(/text-slate-600/);
+
+  const gridText = await gridLastReviewedText(page, pos);
+  await expect(gridText).not.toHaveClass(/text-amber-600/);
+  await expect(gridText).toHaveClass(/text-slate-600/);
+});
+
+test('SC-RCN-10: the same position with position_state LOSING is flagged, table and grid', async ({ page }) => {
+  const pos = endedGracePosition({ lifecycle_state: 'LOSING', position_state: 'LOSING' });
+  const tableText = await lastReviewedTexts(page, pos);
+  await expect(tableText).toHaveClass(/text-amber-600/);
+
+  const gridText = await gridLastReviewedText(page, pos);
+  await expect(gridText).toHaveClass(/text-amber-600/);
 });

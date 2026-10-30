@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-29T14:51:40Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-29T17:53:05Z",
+  "last_updated_utc": "2026-10-30T09:20:00Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-02",
@@ -279,6 +279,169 @@
           "notes": "AC1: axe on /risk with a stale row, no serious/critical (SC-SPM-03). AC2: keyboard reach + toHaveAccessibleDescription on /risk and Positions (SC-SPM-02a/02b); tap toggles tooltip. AC3: Positions marker uses the shared StaleMarker with the Positions copy. Card 2 link description (SC-SPM-04). CI on d83893b3: Frontend Production Build FAILURE (import/first in PositionRiskTable.js); fixed in 8f05e704 (import order only). CI cleared: 8f05e704 all 9 green (Playwright 40907524815); DoQ fixes b1e55731 all 9 green (Playwright 40924592679). Deviation check: none. DoQ review fixes in b1e55731 (axe zero violations + /risk h2 headings, touch tap toggle fix)."
         }
       }
+    },
+    "EPIC-02": {
+      "status": "done",
+      "branch": "exec/2026-10-29__release-v9.14/EPIC-02",
+      "pr_number": 2132,
+      "pr_status": "open",
+      "qa_signed_off": true,
+      "qa_evidence_log": "claude/cycles/2026-10-29__release-v9.14/qa_evidence_EPIC-02.md",
+      "test_scenarios": [
+        "tests/test_sizing_fx_and_cash.py",
+        "tests/test_strategy_invariants_property.py",
+        "tests/test_golden_outputs.py",
+        "tests/test_strategy_version_registry.py",
+        "tests/test_exit_position_errors.py",
+        "tests/test_portfolio_null_fill_price_pnl.py",
+        "tests/e2e/monitor-grace-aware-suggestions.spec.js",
+        "tests/e2e/monitor-exit-queue.spec.js",
+        "tests/e2e/position-review-cadence-nudge.spec.js"
+      ],
+      "stories": {
+        "ST-09": {
+          "title": "US position sizing divides the stop distance by the GBP/USD rate",
+          "classification": "autonomous",
+          "status": "done",
+          "github_issue": 2086,
+          "branch": "exec/2026-10-29__release-v9.14/EPIC-02",
+          "spec_references": [
+            "claude/strategy/strategy_rules.md#4.1.3 Share calculation (canonical)",
+            "claude/strategy/strategy_rules.md#4.1.5 Currency and FX handling (canonical)",
+            "docs/specs/api_contracts/portfolio_endpoints.md#POST /portfolio/size",
+            "tests/test_sizing_fx_and_cash.py",
+            "tests/test_strategy_invariants_property.py",
+            "tests/test_golden_outputs.py"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "acceptance_verified": true,
+          "commit_sha": "bde256859c69fa30ddde33d4f12f194bc03fb5af",
+          "completed_utc": "2026-10-30T08:36:13Z",
+          "last_completed_substep": "3.1.A.10a",
+          "blocked_since_utc": null,
+          "delegation_record_id": "ESC-EXEC-20261030-01",
+          "assigned_to": "Strategy Rules & System Intent Owner (ruling); engine (implementation)",
+          "unblock_criteria": "Dated Strategy Rules & System Intent Owner confirmation of the US sizing FX convention (RawShares = RiskAmount x FX / StopDistance, FX = USD per GBP 1) against strategy_rules.md 4.1.2/4.1.5, recorded in ESC-EXEC-20261030-01.",
+          "sign_off_record": {
+            "role": "Strategy Rules & System Intent Owner",
+            "status": "cleared",
+            "method": "human_in_session",
+            "date": "2026-10-30",
+            "reference": "ESC-EXEC-20261030-01",
+            "notes": "FX is USD per GBP 1; RawShares = RiskAmount x FX / StopDistance; state the US formula in 4.1.3."
+          },
+          "notes": "AC1: ruling ESC-EXEC-20261030-01, 2026-10-30 (FX USD per GBP 1; RawShares = RiskAmount x FX / StopDistance; 4.1.3 states it). AC2: tests/test_sizing_fx_and_cash.py worked example (GBP 100, $10, 1.27 -> 12.7). AC3: property oracle corrected; test_old_inverted_fx_formula_falsifies_the_property shows the old 7.874 fails it; golden PS-04/PS-05 corrected. AC4: strategy_rules.md v1.21 (4.1.3 US formula, 4.1.5 Known Deviation resolved), Change Log row, STRATEGY_VERSION_REGISTRY 1.21, 15 re-run 0 actionable. AC5: no other inverted calculation (Trade Entry risk display, What-If, heat, estimated cost, MaxAffordableShares all divide); portfolio_endpoints.md 2.14.1 examples recomputed; trade_plan.md 1.20 quoted formula fixed; mutmut pilot US cases fixed; api_changelog follow-up c4fbd403. CI on bde25685: all 7 workflows success (CI Pytest 41027565430, Playwright smoke 41027565404). Deviation check: none (closes the v1.19 Known Deviation)."
+        },
+        "ST-10": {
+          "title": "POST /positions/{id}/exit returns its documented 404 and 400, not 500",
+          "classification": "autonomous",
+          "status": "done",
+          "github_issue": 2087,
+          "branch": "exec/2026-10-29__release-v9.14/EPIC-02",
+          "spec_references": [
+            "docs/specs/api_contracts/position_endpoints.md#POST /positions/{position_id}/exit",
+            "tests/test_exit_position_errors.py"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "acceptance_verified": true,
+          "commit_sha": "41c797337e6efed7f3bcb2ab838bf86ba0195f16",
+          "completed_utc": "2026-10-30T08:38:26Z",
+          "last_completed_substep": "3.1.A.10a",
+          "notes": "AC1: exit_position_endpoint maps Position/Portfolio not found -> 404, other ValueErrors -> 400, detail = message. AC2: tests/test_exit_position_errors.py, one test per case (8), all fail against the old endpoint. position_endpoints.md 2.19.1 Errors table; api_changelog 1.28.2. CI on 41c79733: all 7 workflows success (CI Pytest 41027810330, Playwright smoke 41027810332). Deviation check: none."
+        },
+        "ST-11": {
+          "title": "Daily Position Monitor stops suggesting \"Stop Loss Hit\" during the grace period",
+          "classification": "autonomous",
+          "status": "done",
+          "github_issue": 2088,
+          "branch": "exec/2026-10-29__release-v9.14/EPIC-02",
+          "spec_references": [
+            "docs/specs/frontend/pages/positions.md#Monitor Suggestions",
+            "docs/design/2026-10-29__release-v9.14/monitor-grace-aware-suggestions/decision_record.md",
+            "tests/e2e/monitor-grace-aware-suggestions.spec.js",
+            "tests/e2e/monitor-exit-queue.spec.js"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "acceptance_verified": true,
+          "commit_sha": "3118e0b7051eabc0c60b4832c337fcf163aeeba6",
+          "completed_utc": "2026-10-30T08:51:19Z",
+          "last_completed_substep": "3.1.A.10a",
+          "notes": "AC1: MonitorModal derives rows from getExitCondition(); risk-off from risk_off_exit (marketRegimes prop removed); GET /positions already carries grace_period, current_trailing_stop, risk_off_exit. AC2: SC-MGS-01 (in-grace breach hold, 'In grace: stop not enforced'). AC3: SC-MGS-02 (post-grace 'Stop price hit', risk-off and both 'Market risk off'), SC-MGS-03 (regime alone suggests nothing). monitor-exit-queue.spec.js fixture/note updated. Cross-spec selector check: no stale selectors. CI on 3118e0b7: all 9 workflows success (Playwright E2E 41029266343, Frontend Production Build 41029266361). Deviation check: none."
+        },
+        "ST-12": {
+          "title": "GET /portfolio P&L handles a US position whose fill_price is NULL",
+          "classification": "autonomous",
+          "status": "done",
+          "github_issue": 2089,
+          "branch": "exec/2026-10-29__release-v9.14/EPIC-02",
+          "spec_references": [
+            "tests/test_portfolio_null_fill_price_pnl.py"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "acceptance_verified": true,
+          "commit_sha": "262a0376e8a63c44802eea24802cf15024dd1261",
+          "completed_utc": "2026-10-30T08:39:18Z",
+          "last_completed_substep": "3.1.A.10a",
+          "notes": "Code fix pre-met on main: v9.12 ST-13 (BLG-BE-149, cc7774e9) changed the P&L block to fill_price or entry_price x fx_rate. AC: tests/test_portfolio_null_fill_price_pnl.py (US row, fill_price None, live price -> pnl and pnl_pct from entry_price); fails with the original TypeError against the old line. CI on 262a0376: all 7 workflows success (CI Pytest 41027905652). Deviation check: none."
+        },
+        "ST-13": {
+          "title": "Positions data dictionary states that entry_price is stored in GBP",
+          "classification": "autonomous",
+          "status": "done",
+          "github_issue": 2090,
+          "branch": "exec/2026-10-29__release-v9.14/EPIC-02",
+          "spec_references": [
+            "docs/specs/data_model_positions_dictionary.md#3.3 Entry Fields",
+            "docs/specs/data_model.md#2 positions",
+            "docs/specs/metrics_definitions.md#Position Risk"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "acceptance_verified": true,
+          "commit_sha": "57bccb1d1095ed30edac2c5d84d7866e0db8342a",
+          "completed_utc": "2026-10-30T09:00:12Z",
+          "last_completed_substep": "3.1.A.10a",
+          "delivery_note": "docs/specs/data_model_positions_dictionary.md v0.6; docs/specs/metrics_definitions.md v1.33.1",
+          "notes": "AC1: dictionary v0.6 adds user_fill_price; entry_price/fill_price/user_fill_price/total_cost/pnl agree with add_position() and data_model.md 2 (most corrected in v0.4, BLG-SPEC-183). AC2: metrics_definitions.md 1.33.1 Position Risk Data Sources corrected; repo search finds no other spec calling positions.entry_price native. Filed BLG-BE-198 (exit_position NULL fill_price -> trade_history.entry_price None). Deviation check: none."
+        },
+        "ST-14": {
+          "title": "Review-cadence grace suppression and the grace alert agree once grace has ended",
+          "classification": "autonomous",
+          "status": "done",
+          "github_issue": 2091,
+          "branch": "exec/2026-10-29__release-v9.14/EPIC-02",
+          "spec_references": [
+            "docs/specs/frontend/pages/positions.md#Last Reviewed Column",
+            "docs/design/2026-10-29__release-v9.14/last-reviewed-ended-grace/decision_record.md",
+            "tests/e2e/position-review-cadence-nudge.spec.js"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "acceptance_verified": true,
+          "commit_sha": "f62bda83b7ef346ef1a1b883fec736994be336cd",
+          "completed_utc": "2026-10-30T08:58:14Z",
+          "last_completed_substep": "3.1.A.10a",
+          "notes": "AC1 option (a): shared src/lib/reviewCadence.js suppresses the flag for stored GRACE with grace_days_remaining <= 2 or null with holding_days >= 10; used by Positions.js and PositionCard.js. AC2: SC-RCN-09 (table and grid, no amber; fails on old predicate) and SC-RCN-10 (LOSING flagged). CI on f62bda83: Playwright E2E 41030029516 success, CI Pytest 41030029440 success, all workflows success. Deviation check: none."
+        }
+      },
+      "sign_off_record": {
+        "role": "Director of Quality",
+        "status": "cleared",
+        "method": "agent_mediated",
+        "date": "2026-10-30",
+        "reference": "qa_evidence_EPIC-02.md Standard Sign-Off Block",
+        "notes": "First pass Approved, 4 non-blocking findings (3 fixed, 1 observation)."
+      }
     }
   },
   "blocked_items": [],
@@ -291,7 +454,13 @@
     "ST-05",
     "ST-06",
     "ST-07",
-    "ST-08"
+    "ST-08",
+    "ST-09",
+    "ST-10",
+    "ST-12",
+    "ST-11",
+    "ST-13",
+    "ST-14"
   ],
   "open_escalations": {
     "ESC-EXEC-20261029-01": {
@@ -299,19 +468,28 @@
       "disposition": "Resolved",
       "raised_utc": "2026-10-29T14:55:56Z",
       "resolved_utc": "2026-10-29T15:00:25Z"
+    },
+    "ESC-EXEC-20261030-01": {
+      "item": "ST-09",
+      "disposition": "Resolved",
+      "raised_utc": "2026-10-30T08:26:37Z",
+      "resolved_utc": "2026-10-30T08:29:17Z"
     }
   },
   "merge_gate": {
     "epics_merged": [
       "EPIC-01"
     ],
-    "epics_pending": [],
+    "epics_pending": [
+      "EPIC-02"
+    ],
     "all_merged": false
   },
   "process_notes": [
     "2026-10-29: ST-04+ST-05 and ST-07+ST-08 shipped as combined commits (07ea2a2d, d83893b3) with both story IDs, per CLAUDE.md §2. Backlog items filed: BLG-TECH-33 (flat-config react-hooks crash), BLG-OPS-203 (DS-37 live confirmation).",
     "2026-10-29: ST-08's d83893b3 failed Frontend Production Build (import/first); engine chained build+commit without gating on the build result, so 3fbfe5e3 (.npmrc) was pushed before the failure was seen. Fixed in 8f05e704 and verified with a clean npm ci + build before commit.",
     "2026-10-29: agent-mediated DoQ review of EPIC-01 (§5.3, user-directed): first pass Blocked (4 blocking: ST-08 axe narrowed, ST-01 AC 2 branch not main, Card 4 link description, trend strip NULL as risk-off), fixed in b1e55731; second pass Approved. Filed BLG-OPS-204, BLG-SPEC-210, BLG-QA-239.",
-    "2026-10-30: PR #2131 (EPIC-01) merged by the human developer at 2026-10-30T08:13:03Z (merge commit 48eab523), after the user-given DoQ QA sign-off and PO acceptance recorded on the PR. Orphaned post-merge commit check: none. Step 3c sibling sync: no other EPIC branch exists yet. Filed during PR review: BLG-BE-196, BLG-BE-197."
+    "2026-10-30: PR #2131 (EPIC-01) merged by the human developer at 2026-10-30T08:13:03Z (merge commit 48eab523), after the user-given DoQ QA sign-off and PO acceptance recorded on the PR. Orphaned post-merge commit check: none. Step 3c sibling sync: no other EPIC branch exists yet. Filed during PR review: BLG-BE-196, BLG-BE-197.",
+    "2026-10-30: EPIC-02 ST-09 ruling given in-session (ESC-EXEC-20261030-01). ST-12's code fix was pre-met on main (v9.12 cc7774e9); test only. ST-09 api_changelog follow-up c4fbd403. Local Playwright: a stale `serve -s build` from the prior session served build/ on :3000; build/ was rebuilt with the E2E env before local runs (CI unaffected). Filed BLG-BE-198."
   ]
 }

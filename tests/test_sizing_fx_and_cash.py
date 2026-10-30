@@ -9,6 +9,8 @@ Traceability matrix rows (docs/testing/strategy_rule_test_traceability_matrix.md
     C4.1.6-01  EstimatedCost > AvailableCash -> cash_sufficient: false
     C4.1.6-02  The insufficient-cash result includes max_affordable_shares
 
+ST-09 (BLG-BE-190, EPIC-02, v9.14) adds the §4.1.3 US worked example.
+
 Before this file the only backend tests of these paths were in
 backend/mutmut_pilot_tests/, which no CI workflow runs.
 
@@ -44,14 +46,32 @@ def _size(market="UK", fx_rate=None, cash=50000.0, entry_price=100.0, stop_price
     return result, live
 
 
+class TestUsShareCalculation:
+    def test_worked_example_divides_stop_distance_by_fx(self):
+        """ST-09 (BLG-BE-190, v9.14): §4.1.3 US formula RawShares = RiskAmount x FX /
+        StopDistance. £100 risk (0.5% of £20,000), $10 stop distance, FX 1.27 -> 12.7."""
+        with ExitStack() as stack:
+            stack.enter_context(patch.object(sizing_service, "get_portfolio", return_value={"id": "p-1", "cash": 50000.0}))
+            stack.enter_context(patch.object(sizing_service, "get_latest_snapshot", return_value=SNAPSHOT))
+            stack.enter_context(patch.object(sizing_service, "get_settings", return_value=[SETTINGS]))
+            stack.enter_context(patch.object(sizing_service, "calculate_prospective_heat", return_value={"valid": False}))
+            result = sizing_service.size_position(
+                entry_price=100.0, stop_price=90.0, risk_percent=0.5, market="US", fx_rate=1.27,
+            )
+        assert result["risk_amount"] == 100.0
+        assert result["suggested_shares"] == 12.7
+        risk_gbp = result["suggested_shares"] * result["stop_distance"] / result["fx_rate_used"]
+        assert 0 <= result["risk_amount"] - risk_gbp < 0.0001 * result["stop_distance"] / 1.27 + 1e-9
+
+
 class TestFxHandling:
     def test_us_without_override_uses_live_rate(self):
         """C4.1.5-02: no fx_rate supplied for a US position -> get_live_fx_rate() is used."""
         result, live = _size(market="US")
         live.assert_called_once()
         assert result["valid"] is True
-        # £200 / ($10 × 1.25) = 16 shares, so the live rate drove the share count
-        assert result["suggested_shares"] == 16.0
+        # £200 × 1.25 / $10 = 25 shares, so the live rate drove the share count
+        assert result["suggested_shares"] == 25.0
 
     def test_us_live_rate_is_echoed(self):
         """C4.1.5-03: the live rate used is returned as fx_rate_used."""
@@ -63,8 +83,8 @@ class TestFxHandling:
         result, live = _size(market="US", fx_rate=1.30)
         live.assert_not_called()
         assert result["fx_rate_used"] == 1.30
-        # £200 / ($10 × 1.30) = 15.38461… floored to 4 dp
-        assert result["suggested_shares"] == 15.3846
+        # £200 × 1.30 / $10 = 26 shares
+        assert result["suggested_shares"] == 26.0
 
     def test_uk_fx_rate_used_is_one(self):
         """C4.1.5-03: a UK position reports fx_rate_used 1.0 and never reads the live rate."""

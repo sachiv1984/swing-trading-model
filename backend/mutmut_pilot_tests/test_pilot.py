@@ -300,14 +300,14 @@ class TestSizePositionUSMarket:
     def test_us_with_explicit_fx_rate(self):
         self._configure()
         result = size_position(entry_price=100.0, stop_price=95.0, risk_percent=1.0, market="US", fx_rate=1.25)
-        # risk 100 GBP / (5 USD x 1.25) = 16 shares
+        # risk 100 GBP x 1.25 / 5 USD = 25 shares (ST-09, BLG-BE-190: FX is USD per GBP 1)
         assert result["valid"] is True
         assert result["fx_rate_used"] == 1.25
-        assert result["suggested_shares"] == 16.0
+        assert result["suggested_shares"] == 25.0
         assert result["risk_amount"] == 100.0
-        # gross 1,600 USD; fx fee round_half_up(1600 x 0.0015) = 2.40 USD; commission 0
-        assert result["estimated_fees"] == 1.92          # 2.40 / 1.25
-        assert result["estimated_cost"] == 1281.92       # (1600 + 2.40) / 1.25
+        # gross 2,500 USD; fx fee round_half_up(2500 x 0.0015) = 3.75 USD; commission 0
+        assert result["estimated_fees"] == 3.0           # 3.75 / 1.25
+        assert result["estimated_cost"] == 2003.0        # (2500 + 3.75) / 1.25
         assert result["cash_sufficient"] is True
 
     def test_us_uses_live_fx_when_no_override(self):
@@ -316,7 +316,7 @@ class TestSizePositionUSMarket:
             result = size_position(entry_price=100.0, stop_price=95.0, risk_percent=1.0, market="US")
         live.assert_called_once()
         assert result["fx_rate_used"] == 1.6
-        assert result["suggested_shares"] == 12.5         # 100 / (5 x 1.6)
+        assert result["suggested_shares"] == 32.0         # 100 x 1.6 / 5
 
     def test_uk_never_reads_live_fx(self):
         self._configure()
@@ -327,9 +327,9 @@ class TestSizePositionUSMarket:
     def test_us_custom_fee_settings(self):
         self._configure(settings={"us_commission": 2.0, "fx_fee_rate": 0.01})
         result = size_position(entry_price=100.0, stop_price=95.0, risk_percent=1.0, market="US", fx_rate=1.25)
-        # fees: commission 2 + 1% of 1,600 = 18 USD -> 14.40 GBP
-        assert result["estimated_fees"] == 14.4
-        assert result["estimated_cost"] == 1294.4         # (1600 + 18) / 1.25
+        # fees: commission 2 + 1% of 2,500 = 27 USD -> 21.60 GBP
+        assert result["estimated_fees"] == 21.6
+        assert result["estimated_cost"] == 2021.6         # (2500 + 27) / 1.25
 
     def test_us_cash_insufficient_max_affordable_uses_fx_and_fx_fee(self):
         self._configure(cash=100.0)

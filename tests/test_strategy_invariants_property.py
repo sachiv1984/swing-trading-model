@@ -174,13 +174,15 @@ def _assert_valid_conservative_size(result, entry_price, stop_price, risk_percen
     assert round(shares, 4) == shares, f"shares {shares} has more than 4dp"
     fx_used = fx_rate if market == "US" else 1.0
     risk_amount = portfolio_value * risk_percent / 100
-    risked = shares * (entry_price - stop_price) * fx_used
+    # ST-09 (EPIC-02, v9.14, BLG-BE-190): FX is USD per £1, so the GBP risk of a
+    # native stop distance is StopDistance / FX (§4.1.3, §4.1.5).
+    risked = shares * (entry_price - stop_price) / fx_used
     assert risked <= risk_amount * (1 + 1e-9), f"risks {risked} > RiskAmount {risk_amount}"
     # ST-14 (EPIC-02, v9.13, BLG-QA-210): lower bound. shares is within one 4dp
-    # floor step of RiskAmount / (StopDistance x FX) -- the §4.1.3 result before the
+    # floor step of RiskAmount x FX / StopDistance -- the §4.1.3 result before the
     # ST-04 concentration adjustment, which ticker=None disables. A zeroed or
     # halved suggested_shares falls below it.
-    raw_shares = risk_amount / ((entry_price - stop_price) * fx_used)
+    raw_shares = risk_amount * fx_used / (entry_price - stop_price)
     assert raw_shares - shares < 0.0001 + 1e-9 * max(1.0, raw_shares), (
         f"shares {shares} is more than one 4dp floor step below {raw_shares}"
     )
@@ -213,13 +215,25 @@ _REAL_FLOOR_4DP = sizing_service._floor_4dp
 def test_zeroed_or_halved_suggested_shares_falsifies_the_property(mutation, market, fx_rate):
     """ST-14 (BLG-QA-210): the property must reject a sizing regression that
     returns too few shares, not only too many. 100 / 90 / 1% of 10,000 gives
-    RawShares 10 (UK) or ~7.874 (US), far above one floor step."""
+    RawShares 10 (UK) or 12.7 (US), far above one floor step."""
     args = (100.0, 90.0, 1.0, 10_000.0, market, fx_rate)
     _assert_valid_conservative_size(_size_valid_input(*args), *args)  # unmutated passes
     with patch.object(sizing_service, "_floor_4dp", side_effect=mutation):
         mutated = _size_valid_input(*args)
     with pytest.raises(AssertionError, match="floor step below"):
         _assert_valid_conservative_size(mutated, *args)
+
+
+def test_old_inverted_fx_formula_falsifies_the_property():
+    """ST-09 (BLG-BE-190): the property rejects the old US formula. 1% of 10,000
+    is £100; a $10 stop at FX 1.27 gives 12.7 shares, but the old formula gave
+    7.874, well over one floor step below."""
+    args = (100.0, 90.0, 1.0, 10_000.0, "US", 1.27)
+    _assert_valid_conservative_size(_size_valid_input(*args), *args)  # fixed formula passes
+    old = {"valid": True, "suggested_shares": _REAL_FLOOR_4DP(100.0 / (10.0 * 1.27))}
+    assert old["suggested_shares"] == 7.874
+    with pytest.raises(AssertionError, match="floor step below"):
+        _assert_valid_conservative_size(old, *args)
 
 
 @PROPERTY_SETTINGS

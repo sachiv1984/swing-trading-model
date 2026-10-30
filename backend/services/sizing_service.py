@@ -324,8 +324,11 @@ def size_position(
 
     # ------------------------------------------------------------------
     # §4.1.3 Share calculation — floor to 4dp (conservative)
+    # ST-09 (BLG-BE-190, v9.14): fx_rate_used is USD per £1, so the USD stop
+    # distance converts to GBP as stop_distance / fx_rate_used (§4.1.5).
     # ------------------------------------------------------------------
-    raw_shares = risk_amount / (stop_distance * fx_rate_used)
+    stop_distance_gbp = stop_distance / fx_rate_used
+    raw_shares = risk_amount / stop_distance_gbp
     suggested_shares = _floor_4dp(raw_shares)
 
     # ------------------------------------------------------------------
