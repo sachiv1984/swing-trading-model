@@ -44,8 +44,17 @@ def test_a_pr_to_main_is_opened_with_a_governance_title():
 def test_a_refused_pr_does_not_fail_the_run_and_prints_the_compare_link():
     steps, _ = _steps()
     commit = steps["Commit report to its branch and open a PR"]["run"]
-    assert 'if PR_URL="$(gh pr create' in commit
+    assert 'if PR_URL="$(gh pr create' in commit and '2>pr_error.txt' in commit
     assert "::warning::" in commit and "${COMPARE}" in commit
+    # Only GitHub's "not permitted" refusal takes the warning path.
+    assert 'grep -qi "not permitted to create or approve pull requests" pr_error.txt' in commit
+
+
+def test_any_other_pr_failure_fails_the_run():
+    steps, _ = _steps()
+    commit = steps["Commit report to its branch and open a PR"]["run"]
+    tail = commit.split('grep -qi "not permitted', 1)[1]
+    assert "else" in tail and "::error::gh pr create failed" in tail and "exit 1" in tail
     assert 'COMPARE="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/compare/main...${BRANCH}"' in commit
 
 

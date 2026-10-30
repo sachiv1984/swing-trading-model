@@ -77,7 +77,7 @@ class _FrozenDatetime(datetime):
         return NOW if tz else NOW.replace(tzinfo=None)
 
 
-def _run_check(rows, last_fingerprint=None):
+def _run_check(rows, last_fingerprint=None, fail_first_send=False):
     """Run check_and_alert_daily_cost() at NOW against the real query and
     an in-memory audit log. Returns (result, alert messages, fingerprints)."""
     import database as stub
@@ -96,7 +96,12 @@ def _run_check(rows, last_fingerprint=None):
         recorded.append((key, fp))
         state["fp"] = fp
 
+    calls = {"n": 0}
+
     def urlopen(url, timeout=None):
+        calls["n"] += 1
+        if fail_first_send and calls["n"] == 1:
+            raise OSError("telegram unreachable")
         sent.append(parse_qs(urlparse(url).query)["text"][0])
         return MagicMock()
 
@@ -164,6 +169,17 @@ class TestDayBoundary:
         # checked (oldest first) before today was alerted.
         _, sent, _, _ = _run_check(ROWS, last_fingerprint=TODAY.isoformat())
         assert sent == []
+
+    def test_a_failed_previous_day_send_is_retried_not_superseded_by_today(self):
+        # Both days are over the threshold and yesterday's message fails to
+        # send. Today is not alerted on this run, so the fingerprint does not
+        # move past yesterday; the next run sends yesterday, then today.
+        rows = ROWS + [(_utc(TODAY, 0, 10), 1.00)]
+        result, sent, recorded, _ = _run_check(rows, fail_first_send=True)
+        assert sent == [] and recorded == []
+        assert result["previous_day"]["alert_sent"] is False and result["alert_sent"] is False
+        result, sent, recorded, _ = _run_check(rows)
+        assert [m.split("\n")[1] for m in sent] == [f"Date: {YESTERDAY}", f"Date: {TODAY}"]
 
     def test_under_threshold_on_both_days_sends_nothing(self):
         rows = [(_utc(YESTERDAY, 23, 0), 0.40), (_utc(TODAY, 0, 5), 0.10)]

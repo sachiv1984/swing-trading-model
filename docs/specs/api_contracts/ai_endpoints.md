@@ -491,7 +491,7 @@ When `TELEGRAM_BOT_TOKEN` or `TELEGRAM_CHAT_ID` is absent, no alert is sent even
 - Daily spend is sourced from `claude_audit_log` only (ST-06, v9.12, BLG-OPS-183). Until v9.12 it read `gemini_audit_log`, which only plan and thesis generation write, so briefing, chat, journal summary, debrief and the monthly P&L narrative never counted. Plan and thesis generation write both tables, so `gemini_audit_log` is deliberately not added: each call is counted once.
 - Threshold configurable via `AI_DAILY_COST_THRESHOLD` env var; default `1.00` USD.
 - Telegram alert format includes: date (the day the spend belongs to, which is the previous day for an alert sent after midnight), daily spend, request count, threshold.
-- If the previous day's alert fails to send (network error) and today's alert then sends, the previous day is not retried: the stored fingerprint has moved on to today (ST-41, v9.14).
+- If the previous day's alert is due but fails to send (network error), today's alert is not sent on that call either, so the stored fingerprint stays before the previous day and the next call retries both, oldest first (ST-41, v9.14).
 - If Telegram delivery fails (network error), `alert_sent: false`; endpoint still returns 200.
 - No write operations: audit log is read-only for this endpoint.
 

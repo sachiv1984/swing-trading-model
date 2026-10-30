@@ -405,9 +405,10 @@ def check_and_alert_daily_cost(threshold_usd: float = 1.00) -> dict:
             "threshold_usd": threshold_usd,
         }
 
-    def _alert(day: str, total: float, count: int) -> bool:
+    def _alert(day: str, total: float, count: int):
         """Send the threshold alert for one UTC day, unless that day (or a
-        later one) was already alerted. Returns whether a message was sent."""
+        later one) was already alerted. Returns True if a message was sent,
+        False if none was due, and None if one was due but failed to send."""
         if total < threshold_usd or not (TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID):
             return False
         ensure_scheduled_alert_dedup_table()
@@ -430,18 +431,21 @@ def check_and_alert_daily_cost(threshold_usd: float = 1.00) -> dict:
         try:
             urllib.request.urlopen(url, timeout=get_timeout("telegram"))
         except Exception:
-            return False
+            return None
         record_alert_fingerprint("daily_cost_alert", day)
         return True
 
     prev_total = previous["total_cost_usd"]
     prev_count = previous["request_count"]
-    prev_alert_sent = _alert(yesterday, prev_total, prev_count)
+    prev_alert = _alert(yesterday, prev_total, prev_count)
 
     total = result["total_cost_usd"]
     count = result["request_count"]
     threshold_exceeded = total >= threshold_usd
-    alert_sent = _alert(today, total, count)
+    # If yesterday's alert was due but failed to send, do not alert (and so
+    # record) today on this run: today's fingerprint would mark yesterday as
+    # alerted and it would never be retried. The next run retries both.
+    alert_sent = False if prev_alert is None else bool(_alert(today, total, count))
 
     return {
         "status": "ok",
@@ -455,6 +459,6 @@ def check_and_alert_daily_cost(threshold_usd: float = 1.00) -> dict:
             "total_cost_usd": prev_total,
             "request_count": prev_count,
             "threshold_exceeded": prev_total >= threshold_usd,
-            "alert_sent": prev_alert_sent,
+            "alert_sent": bool(prev_alert),
         },
     }
