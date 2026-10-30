@@ -374,16 +374,28 @@ def check_and_alert_daily_cost(threshold_usd: float = 1.00) -> dict:
     is logged and an error result (status "error", no totals) is returned, so
     the router answers 503 and the scheduler's step fails. Before this the
     query error was swallowed and reported as $0 spend.
+
+    ST-41 (BLG-OPS-186, EPIC-06, v9.14): every call also checks the previous
+    UTC day's final total against the threshold, before today's. Spend after
+    the day's last scheduled run (18:15 UTC, often later) used to be counted
+    by no check, because the next run starts a new day. Days are checked
+    oldest first and the stored fingerprint is the latest alerted day, so a
+    day counts as already alerted when the fingerprint is that day or later.
     """
     from database import get_daily_ai_cost, ensure_scheduled_alert_dedup_table, get_last_alert_fingerprint, record_alert_fingerprint
     from config import TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID
     import logging
     import urllib.request
     import urllib.parse
-    from datetime import date
+    from datetime import datetime, timedelta, timezone
+
+    today_date = datetime.now(timezone.utc).date()
+    today = today_date.isoformat()
+    yesterday = (today_date - timedelta(days=1)).isoformat()
 
     try:
-        result = get_daily_ai_cost()
+        previous = get_daily_ai_cost(yesterday)
+        result = get_daily_ai_cost(today)
     except Exception:
         logging.getLogger(__name__).error("Daily AI cost query failed", exc_info=True)
         return {
@@ -392,27 +404,20 @@ def check_and_alert_daily_cost(threshold_usd: float = 1.00) -> dict:
             "message": "Daily AI cost query failed; spend is unknown.",
             "threshold_usd": threshold_usd,
         }
-    total = result["total_cost_usd"]
-    count = result["request_count"]
-    threshold_exceeded = total >= threshold_usd
 
-    alert_sent = False
-    today = date.today().isoformat()
-    if threshold_exceeded and TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID:
+    def _alert(day: str, total: float, count: int):
+        """Send the threshold alert for one UTC day, unless that day (or a
+        later one) was already alerted. Returns True if a message was sent,
+        False if none was due, and None if one was due but failed to send."""
+        if total < threshold_usd or not (TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID):
+            return False
         ensure_scheduled_alert_dedup_table()
-        already_alerted_today = get_last_alert_fingerprint("daily_cost_alert") == today
-        if already_alerted_today:
-            return {
-                "status": "ok",
-                "total_cost_usd": total,
-                "request_count": count,
-                "threshold_usd": threshold_usd,
-                "threshold_exceeded": threshold_exceeded,
-                "alert_sent": False,
-            }
+        last_alerted = get_last_alert_fingerprint("daily_cost_alert")
+        if isinstance(last_alerted, str) and last_alerted >= day:
+            return False
         msg = (
             f"⚠️ Claude API daily cost threshold exceeded\n"
-            f"Date: {today}\n"
+            f"Date: {day}\n"
             f"Daily spend: ${total:.4f} USD\n"
             f"Requests: {count}\n"
             f"Threshold: ${threshold_usd:.2f} USD"
@@ -425,10 +430,22 @@ def check_and_alert_daily_cost(threshold_usd: float = 1.00) -> dict:
         url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage?{params}"
         try:
             urllib.request.urlopen(url, timeout=get_timeout("telegram"))
-            alert_sent = True
-            record_alert_fingerprint("daily_cost_alert", today)
         except Exception:
-            pass
+            return None
+        record_alert_fingerprint("daily_cost_alert", day)
+        return True
+
+    prev_total = previous["total_cost_usd"]
+    prev_count = previous["request_count"]
+    prev_alert = _alert(yesterday, prev_total, prev_count)
+
+    total = result["total_cost_usd"]
+    count = result["request_count"]
+    threshold_exceeded = total >= threshold_usd
+    # If yesterday's alert was due but failed to send, do not alert (and so
+    # record) today on this run: today's fingerprint would mark yesterday as
+    # alerted and it would never be retried. The next run retries both.
+    alert_sent = False if prev_alert is None else bool(_alert(today, total, count))
 
     return {
         "status": "ok",
@@ -437,4 +454,11 @@ def check_and_alert_daily_cost(threshold_usd: float = 1.00) -> dict:
         "threshold_usd": threshold_usd,
         "threshold_exceeded": threshold_exceeded,
         "alert_sent": alert_sent,
+        "previous_day": {
+            "date": yesterday,
+            "total_cost_usd": prev_total,
+            "request_count": prev_count,
+            "threshold_exceeded": prev_total >= threshold_usd,
+            "alert_sent": bool(prev_alert),
+        },
     }

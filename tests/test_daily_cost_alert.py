@@ -1,5 +1,6 @@
 """Unit tests for daily Claude API cost threshold alert logic (ST-09, BLG-OPS-34)."""
 import pytest
+from datetime import datetime, timezone
 from unittest.mock import patch, MagicMock
 
 
@@ -56,11 +57,10 @@ def test_second_call_same_day_does_not_resend(monkeypatch):
     """ST-07 (BLG-OPS-172, EPIC-02, v9.9): a second call on the same UTC day,
     with the threshold still exceeded and an alert already sent today, does
     not send a second Telegram message."""
-    from datetime import date
     from services.gemini_service import check_and_alert_daily_cost
     import database
 
-    today = date.today().isoformat()
+    today = datetime.now(timezone.utc).date().isoformat()
     monkeypatch.setattr(database, "get_last_alert_fingerprint", lambda key: today)
     recorded = []
     monkeypatch.setattr(database, "record_alert_fingerprint", lambda key, fp: recorded.append((key, fp)))
@@ -80,7 +80,10 @@ def test_second_call_same_day_does_not_resend(monkeypatch):
 
 def test_new_day_resends_even_though_still_exceeded(monkeypatch):
     """A new UTC day's fingerprint differs from yesterday's stored one, so
-    the alert sends fresh regardless of yesterday's alert."""
+    the alert sends fresh regardless of yesterday's alert.
+
+    ST-41 (BLG-OPS-186, EPIC-06, v9.14): the check also reads the previous
+    day, so only today's spend is over the threshold here."""
     from services.gemini_service import check_and_alert_daily_cost
     import database
 
@@ -89,7 +92,10 @@ def test_new_day_resends_even_though_still_exceeded(monkeypatch):
     monkeypatch.setattr(database, "record_alert_fingerprint", lambda key, fp: recorded.append((key, fp)))
     monkeypatch.setattr(database, "ensure_scheduled_alert_dedup_table", lambda: None)
 
-    with patch("database.get_daily_ai_cost", return_value={"total_cost_usd": 1.50, "request_count": 12}):
+    today = datetime.now(timezone.utc).date().isoformat()
+    spend = lambda day=None: ({"total_cost_usd": 1.50, "request_count": 12} if day == today
+                              else {"total_cost_usd": 0.10, "request_count": 1})
+    with patch("database.get_daily_ai_cost", side_effect=spend):
         with patch("config.TELEGRAM_BOT_TOKEN", "test_token"):
             with patch("config.TELEGRAM_CHAT_ID", "123"):
                 with patch("urllib.request.urlopen") as mock_urlopen:
@@ -98,8 +104,7 @@ def test_new_day_resends_even_though_still_exceeded(monkeypatch):
 
     assert result["alert_sent"] is True
     assert mock_urlopen.called
-    assert len(recorded) == 1
-    assert recorded[0][0] == "daily_cost_alert"
+    assert recorded == [("daily_cost_alert", today)]
 
 
 def test_custom_threshold():

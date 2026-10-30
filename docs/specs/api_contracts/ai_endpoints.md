@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical (Class 1)
 **Status:** Canonical
-**Version:** 1.32
-**Last Updated:** 2026-10-27 (ST-28, EPIC-05, v9.13, BLG-OPS-187 — `POST /ai/check-daily-cost` returns `status`; a failed cost query is 503, not a $0 total; scheduler fails loudly with a Telegram message); prior — 2026-10-27 (ST-22, EPIC-03, v9.13, BLG-FE-208 — new `POST /ai/chat/{answer_id}/rating`; `POST /ai/chat` returns `answer_id` for a model answer); prior — 2026-10-27 (ST-18, EPIC-03, v9.13, BLG-AI-15 — `POST /ai/journal-summary` output-language check, regenerate once then a code-written fallback; `JOURNAL_SUMMARY_PROMPT_VERSION` v1.1); prior history retained — see prior entries in version control
+**Version:** 1.33
+**Last Updated:** 2026-10-30 (ST-41, EPIC-06, v9.14, BLG-OPS-186 — `POST /ai/check-daily-cost` also checks the previous UTC day's final total, so spend after the day's last run is compared with its own day's threshold; response gains `previous_day`); prior — 2026-10-27 (ST-28, EPIC-05, v9.13, BLG-OPS-187 — `POST /ai/check-daily-cost` returns `status`; a failed cost query is 503, not a $0 total; scheduler fails loudly with a Telegram message); prior — 2026-10-27 (ST-22, EPIC-03, v9.13, BLG-FE-208 — new `POST /ai/chat/{answer_id}/rating`; `POST /ai/chat` returns `answer_id` for a model answer); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -424,7 +424,9 @@ The stored rating is returned so the UI can show it.
 
 ## POST /ai/check-daily-cost
 
-Checks today's Claude API spend against the configured daily cost threshold. If the threshold is exceeded, sends a Telegram alert (at most once per UTC day).
+Checks the previous UTC day's final Claude API spend, then today's, against the configured daily cost threshold. For each day over the threshold, sends a Telegram alert naming that day (at most once per UTC day).
+
+**Day boundary (ST-41, v9.14, BLG-OPS-186):** until v9.14 the check summed today's spend only. The last scheduled run of a day is 18:15 UTC (often later), and the next run starts a new day, so spend after that run was never compared with its own day's threshold, a blind spot of about 6 hours a day. Every call now also sums the previous UTC day, whose total is final once midnight has passed, and alerts for it if it is over the threshold and has not already been alerted. A day's alert can therefore arrive after midnight, at the first run of the next day.
 
 **Scheduler (ST-06, v9.12, BLG-OPS-183):** `.github/workflows/ai-daily-cost-check.yml`, GitHub Actions, cron `15 */6 * * *` (every 6 hours) plus `workflow_dispatch`, using the `API_URL`/`API_KEY` repository secrets (the same pattern as `ai-endpoint-anomaly-check.yml`; Render cron needs a paid tier). Before v9.12 no scheduler called this endpoint, and none runs outside this repository (confirmed by the Infrastructure & Operations Owner, 2026-10-13, `DEL-20261013-02`). Every 6 hours rather than daily because scheduled runs start hours late and the total is per calendar day; the per-day de-duplication means repeat checks send no second alert. **Last successful run:** run 38374258055 (workflow_dispatch, 2026-10-13T09:09:07Z, head 90099bec, conclusion success), endpoint response `{"total_cost_usd":0.0,"request_count":0,"threshold_usd":1.0,"threshold_exceeded":false,"alert_sent":false}`. At that time production (deployed at `90099bec`) had no `claude_audit_log` rows for the day; the first, a journal summary costing $0.001628, was written at 09:12:10 (`DEL-20261013-02`).
 
@@ -432,7 +434,7 @@ Checks today's Claude API spend against the configured daily cost threshold. If 
 
 **Idempotency**
 
-- Read-only against `claude_audit_log`; the audit log itself is not written by this endpoint. The alert is de-duplicated per UTC day (BLG-OPS-172, v9.9): a repeated call on a day an alert was already sent returns `alert_sent: false` and sends nothing; the only write is that day's alert fingerprint.
+- Read-only against `claude_audit_log`; the audit log itself is not written by this endpoint. The alert is de-duplicated per UTC day (BLG-OPS-172, v9.9): a repeated call on a day an alert was already sent returns `alert_sent: false` and sends nothing; the only write is that day's alert fingerprint. The fingerprint (`scheduled_alert_dedup`, key `daily_cost_alert`) holds the latest alerted day. Days are checked oldest first, so a day counts as already alerted when the stored day is that day or later (ST-41, v9.14).
 
 ### Request
 
@@ -452,18 +454,26 @@ No request body required. Threshold is read from the `AI_DAILY_COST_THRESHOLD` e
   "request_count": 7,
   "threshold_usd": 1.00,
   "threshold_exceeded": false,
-  "alert_sent": false
+  "alert_sent": false,
+  "previous_day": {
+    "date": "2026-10-29",
+    "total_cost_usd": 1.20,
+    "request_count": 31,
+    "threshold_exceeded": true,
+    "alert_sent": true
+  }
 }
 ```
 
 | Field | Type | Description |
 |-------|------|-------------|
 | `status` | string | Always `"ok"` on a 200 (ST-28, v9.13). |
-| `total_cost_usd` | float | Sum of `cost_usd` in `claude_audit_log` for today (`generated_at >= CURRENT_DATE`). Covers every Claude-calling feature. |
+| `total_cost_usd` | float | Sum of `cost_usd` in `claude_audit_log` for today, the current UTC day (`generated_at` from 00:00 UTC today up to 00:00 UTC tomorrow). Covers every Claude-calling feature. |
 | `request_count` | integer | Number of `claude_audit_log` rows logged today (each Claude call, including a failed call's row). |
 | `threshold_usd` | float | Configured daily cost threshold (from `AI_DAILY_COST_THRESHOLD` env var). |
 | `threshold_exceeded` | boolean | `true` when `total_cost_usd >= threshold_usd`. |
 | `alert_sent` | boolean | `true` when threshold exceeded AND Telegram credentials (`TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`) are configured and alert delivery succeeded. |
+| `previous_day` | object | The previous UTC day's final total, checked before today's (ST-41, v9.14). Fields: `date` (ISO date), `total_cost_usd`, `request_count`, `threshold_exceeded` and `alert_sent`, with the same meanings as the top-level fields for that day. `alert_sent` is `false` when that day was already alerted. |
 
 When `TELEGRAM_BOT_TOKEN` or `TELEGRAM_CHAT_ID` is absent, no alert is sent even if the threshold is exceeded (`alert_sent: false`).
 
@@ -472,7 +482,7 @@ When `TELEGRAM_BOT_TOKEN` or `TELEGRAM_CHAT_ID` is absent, no alert is sent even
 | Status | Condition |
 |--------|-----------|
 | 401 | Missing or invalid API key. |
-| 503 | The cost query failed (ST-28, v9.13, BLG-OPS-187). Body: `{"status": "error", "error": "cost_query_failed", "message": "...", "threshold_usd": 1.0}`. No totals are returned and no alert is evaluated. The failure is logged with its traceback. |
+| 503 | The cost query failed, for today or the previous day (ST-28, v9.13, BLG-OPS-187). Body: `{"status": "error", "error": "cost_query_failed", "message": "...", "threshold_usd": 1.0}`. No totals are returned and no alert is evaluated. The failure is logged with its traceback. |
 
 **Failing loudly (ST-28, v9.13, BLG-OPS-187):** until v9.13 a cost-query error was swallowed and reported as `total_cost_usd: 0.0` with a 200, so a broken query looked like a quiet day and the scheduler's step passed. Now the query error reaches the service, which logs it and returns the 503 above. `ai-daily-cost-check.yml` calls the endpoint with `curl --fail-with-body`, so a 503 (or any non-2xx, an unreachable API or missing `API_URL`/`API_KEY` secrets) fails the step, and a final `if: failure()` step sends a Telegram message with the run link (`TELEGRAM_BOT_TOKEN`/`TELEGRAM_CHAT_ID`; a `::warning::` if they are not set).
 
@@ -480,7 +490,8 @@ When `TELEGRAM_BOT_TOKEN` or `TELEGRAM_CHAT_ID` is absent, no alert is sent even
 
 - Daily spend is sourced from `claude_audit_log` only (ST-06, v9.12, BLG-OPS-183). Until v9.12 it read `gemini_audit_log`, which only plan and thesis generation write, so briefing, chat, journal summary, debrief and the monthly P&L narrative never counted. Plan and thesis generation write both tables, so `gemini_audit_log` is deliberately not added: each call is counted once.
 - Threshold configurable via `AI_DAILY_COST_THRESHOLD` env var; default `1.00` USD.
-- Telegram alert format includes: date, daily spend, request count, threshold.
+- Telegram alert format includes: date (the day the spend belongs to, which is the previous day for an alert sent after midnight), daily spend, request count, threshold.
+- If the previous day's alert is due but fails to send (network error), today's alert is not sent on that call either, so the stored fingerprint stays before the previous day and the next call retries both, oldest first (ST-41, v9.14).
 - If Telegram delivery fails (network error), `alert_sent: false`; endpoint still returns 200.
 - No write operations: audit log is read-only for this endpoint.
 

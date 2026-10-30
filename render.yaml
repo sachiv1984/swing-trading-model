@@ -9,7 +9,8 @@
 #
 # NOTE: Render service names must be globally unique. If 'trading-assistant-api-staging'
 # or 'trading-assistant-staging' are taken, choose alternative names and update:
-#   - backend/config.py ALLOWED_ORIGINS (replace the staging frontend URL)
+#   - backend/config.py CORS_DEFAULT_ORIGINS["staging"] (replace the staging frontend URL),
+#     or set CORS_ALLOWED_ORIGINS on the staging API (docs/infrastructure/cors_allow_list.md)
 #   - This file (update both service names and the REACT_APP_API_URL value)
 
 services:
@@ -33,6 +34,8 @@ services:
         sync: false          # Human must set — your Telegram chat ID (from getUpdates)
       - key: PYTHON_VERSION
         value: "3.11.0"
+      - key: DEPLOY_ENV
+        value: staging       # CORS allow-list (ST-43, BLG-SEC-43): docs/infrastructure/cors_allow_list.md
 
   # ──────────────────────────────────────────────────────────
   # Alert Evaluation Cron — NOT defined here (Render cron requires paid tier).

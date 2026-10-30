@@ -27,7 +27,7 @@ with real_database_imports():
 
 class _FakeAuditDb:
     """Two audit tables; answers get_daily_ai_cost()'s SUM/COUNT query for
-    whichever table it names, counting today's rows only."""
+    whichever table it names, counting the queried UTC day's rows only."""
 
     COST_COLUMN = {"claude_audit_log": "cost_usd", "gemini_audit_log": "estimated_cost_usd"}
 
@@ -46,8 +46,8 @@ class _FakeAuditDb:
         def execute(sql, params=None):
             table = next(t for t in db.tables if f"FROM {t}" in sql)
             db.queried.append(table)
-            today = datetime.now(timezone.utc).date()
-            rows = [r for r in db.tables[table] if r["generated_at"].date() >= today]
+            day = params[0] if params else datetime.now(timezone.utc).date().isoformat()
+            rows = [r for r in db.tables[table] if r["generated_at"].date().isoformat() == day]
             cur.fetchone.return_value = {
                 "total_cost": sum(r[db.COST_COLUMN[table]] or 0 for r in rows),
                 "request_count": len(rows),
@@ -61,10 +61,10 @@ class _FakeAuditDb:
         return conn
 
 
-def _daily_cost(db):
+def _daily_cost(db, day=None):
     with patch.object(real_database, "get_db", side_effect=db.get_db), \
          patch.object(real_database, "ensure_claude_audit_log_table"):
-        return real_database.get_daily_ai_cost()
+        return real_database.get_daily_ai_cost(day)
 
 
 def test_claude_audit_log_row_is_counted_in_the_daily_total():
@@ -107,7 +107,7 @@ def test_alert_fires_when_claude_spend_passes_the_threshold(monkeypatch):
 
     from services.gemini_service import check_and_alert_daily_cost
     stub = sys.modules["database"]
-    monkeypatch.setattr(stub, "get_daily_ai_cost", lambda: _daily_cost(db))
+    monkeypatch.setattr(stub, "get_daily_ai_cost", lambda day=None: _daily_cost(db, day))
     monkeypatch.setattr(stub, "ensure_scheduled_alert_dedup_table", lambda: None)
     monkeypatch.setattr(stub, "get_last_alert_fingerprint", lambda key: None)
     monkeypatch.setattr(stub, "record_alert_fingerprint", lambda key, fp: None)

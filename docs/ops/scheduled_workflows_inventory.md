@@ -1,8 +1,8 @@
 **Owner:** Infrastructure & Operations Owner
 **Class:** Reference Document (Class 4)
 **Status:** Active
-**Version:** 1.0
-**Last Updated:** 2026-10-15 (ST-32, BLG-GOV-371, EPIC-04, v9.12 — initial version)
+**Version:** 1.1
+**Last Updated:** 2026-10-30 (ST-42, BLG-OPS-188, EPIC-06, v9.14 — `ci-usage-report.yml` row: the report goes to a branch and a PR, not a push to `main`); prior — 2026-10-15 (ST-32, BLG-GOV-371, EPIC-04, v9.12 — initial version)
 **Co-owner:** FinOps & Resource Architect (minutes/month column)
 
 ---
@@ -27,7 +27,7 @@ All times are UTC. **Writes** names the database tables a run changes (through t
 | `api-key-cross-environment-check.yml` | Cybersecurity & Trust Lead | `0 6 * * *` | None (read-only); Telegram | 30 | 0.76 | 22.8 |
 | `audit-cadence-reminder.yml` | PMO Lead | `17 6 * * *` | GitHub issue (open/update/close); no database | 30 | 0.23 | 6.9 |
 | `backtest.yml` | Infrastructure & Operations Owner | `0 1 * * *` | `backtest_trades`, `backtest_yearly_performance`, `backtest_open_positions`, `backtest_import_history` (via `POST /strategy/benchmark/import`; `production_strategy.py` only reads `ticker_universe`); Telegram | 30 | 2.85 | 85.5 |
-| `ci-usage-report.yml` | FinOps & Resource Architect | `0 6 1 * *` (monthly) | Commits `docs/ops/ci_usage_reports/<YYYY-MM>.md` to the repo; no database | 1 | 1.88 | 1.9 |
+| `ci-usage-report.yml` | FinOps & Resource Architect | `0 6 1 * *` (monthly) | Commits `docs/ops/ci_usage_reports/<YYYY-MM>.md` to branch `ci-usage-report/<YYYY-MM>`, uploads it as an artifact and opens a `[GOVERNANCE]` PR to `main` (ST-42, v9.14); no database | 1 | 1.88 | 1.9 |
 | `csv-export-content-regression-check.yml` | Director of Quality | `0 6 1 1,4,7,10 *` (quarterly) | None (read-only); Telegram | 1 | 0.33 | 0.3 |
 | `daily-snapshot.yml` | Infrastructure & Operations Owner | `0 16 * * 1-5` | `positions` (stops, via `GET /positions/analyze`); `portfolio_history`, `sector_regime_history` (`POST /portfolio/snapshot`); `signals` (`POST /signals/generate`); deletes from `api_call_log`, `claude_audit_log`, `gemini_audit_log` (`POST /ops/purge-audit-logs`); `api_call_log` | 22 | 5.37 | 118.1 |
 | `dependency-vuln-rescan.yml` | Cybersecurity & Trust Lead | `0 7 1 * *` (monthly) | GitHub issue; no database | 1 | 0.86 | 0.9 |
@@ -65,4 +65,4 @@ All times are UTC. **Writes** names the database tables a run changes (through t
 
 - **Two jobs write stops.** `daily-snapshot.yml` calls `GET /positions/analyze`, which recomputes and stores stops at 16:00 UTC; `nightly-stop-update.yml` recomputes them at 22:30 UTC. Both reach the same `positions` stop columns. This is the overlap BLG-GOV-371 named; this inventory records it and does not change it.
 - **Missed weekday runs.** `nightly-stop-update.yml` and `rebalance-exit.yml` each ran 18 times against 22 weekdays, while `risk-off-alerts.yml` and `screener-refresh.yml` in the same 22:00–22:45 slot ran 22 times. `nightly-stop-update-staleness-check.yml` exists to catch a missed stop run. The cause is not investigated here.
-- **CI usage report not produced.** `ci-usage-report.yml`'s only scheduled run (2026-10-01, run 36861580190) failed at its "Commit report" step, so `docs/ops/ci_usage_reports/` holds only the hand-committed `2026-08.md`. Filed as BLG-OPS-188.
+- **CI usage report not produced.** `ci-usage-report.yml`'s only scheduled run (2026-10-01, run 36861580190) failed at its "Commit report" step, so `docs/ops/ci_usage_reports/` holds only the hand-committed `2026-08.md`. Filed as BLG-OPS-188. Cause: the step pushed straight to `main`, whose branch protection requires a pull request with an approving review. Fixed in ST-42 (v9.14): the report goes to its own branch and a PR. The confirming run on `main` is tracked by BLG-OPS-202.
