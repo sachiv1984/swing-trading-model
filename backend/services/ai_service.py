@@ -450,6 +450,33 @@ _TRADING_CHANGE_RE = re.compile(
     r"|modif|refin|mov|reduc|increas|cut|lower|rais)\w*",
     re.IGNORECASE,
 )
+# ST-15 (BLG-AI-20, v9.14): ruling ESC-EXEC-20261030-02 extends (A) to
+# advisory phrasings with no "needs/should" cue. Same subjects and change
+# verbs; reported as trading_change; past tense still passes.
+_TC_SUBJECT = (r"(?:stop[- ]loss(?:es)?|stop (?:placement|level|distance)s?|stops?"
+               r"|position siz(?:e|es|ing)|sizing|setups?)")
+_TC_VERB = (r"(?:adjust|chang|tighten|widen|loosen|revis|reconsider|rethink|review"
+            r"|modif|refin|mov|reduc|increas|cut|lower|rais)\w*")
+_TC_GERUND = (r"(?:adjust|chang|tighten|widen|loosen|revis|reconsider|rethink|review"
+              r"|modif|refin|mov|reduc|increas|cut|lower|rais)\w*ing")
+_TC_GAP = r"[^.!?\n]{0,%d}?"
+_ADVISORY_CHANGE_RES = [re.compile(p, re.IGNORECASE) for p in (
+    # (1) "Consider tightening stops ..."
+    rf"\b(?:consider|try)\b{_TC_GAP % 25}\b{_TC_VERB}{_TC_GAP % 40}\b{_TC_SUBJECT}\b",
+    # (2) "It may be worth revisiting position sizing." / "Stops are worth revisiting."
+    rf"\bworth\b{_TC_GAP % 15}\b{_TC_VERB}{_TC_GAP % 40}\b{_TC_SUBJECT}\b",
+    rf"\b{_TC_SUBJECT}\b{_TC_GAP % 40}\bworth\b{_TC_GAP % 15}\b{_TC_VERB}",
+    # (3) "Stops could be tightened."
+    rf"\b{_TC_SUBJECT}\b{_TC_GAP % 40}\b(?:could|should|might|may|would|can|must)\s+(?:\w+\s+)?be\s+{_TC_VERB}",
+    # (4) "Tighter stops could help." / "Reducing position size ... would be prudent." /
+    #     "A review of setups is warranted."
+    rf"(?:\b{_TC_GERUND}|\b(?:review|revision|rethink|reassessment|reconsideration)\s+of"
+    rf"|\b(?:tighter|wider|smaller|larger|lower|higher))\b{_TC_GAP % 30}\b{_TC_SUBJECT}\b{_TC_GAP % 40}"
+    rf"\b(?:(?:would|could|might|may)\s+(?:be\s+(?:prudent|wise|better|sensible|helpful|advisable)|help)"
+    rf"|(?:is|are)\s+(?:warranted|needed|advisable|recommended))\b",
+    # (5) "Stop placement is something to revisit."
+    rf"\b{_TC_SUBJECT}\b{_TC_GAP % 40}\b(?:is|are)\s+(?:something|one thing|an area)\s+to\s+{_TC_VERB}",
+)]
 JOURNAL_SUMMARY_WITHHELD_MESSAGE = (
     "The AI summary was withheld because it did not pass the advisory-language check. "
     "Your journal notes are unchanged; please try again later."
@@ -464,7 +491,7 @@ def journal_summary_language_failures(text: Optional[str]) -> list:
     found = []
     if scan_prescriptive(text):
         found.append("prescriptive")
-    if _TRADING_CHANGE_RE.search(text):
+    if _TRADING_CHANGE_RE.search(text) or any(r.search(text) for r in _ADVISORY_CHANGE_RES):
         found.append("trading_change")
     return found
 
