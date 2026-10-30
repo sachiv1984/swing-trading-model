@@ -459,7 +459,7 @@ _TC_VERB = (r"(?:adjust|chang|tighten|widen|loosen|revis|reconsider|rethink|revi
             r"|modif|refin|mov|reduc|increas|cut|lower|rais)\w*")
 _TC_GERUND = (r"(?:adjust|chang|tighten|widen|loosen|revis|reconsider|rethink|review"
               r"|modif|refin|mov|reduc|increas|cut|lower|rais)\w*ing")
-_TC_GAP = r"[^.!?\n]{0,%d}?"
+_TC_GAP = r"[^.!?;\n]{0,%d}?"  # DoQ review: a gap never crosses ";"
 _ADVISORY_CHANGE_RES = [re.compile(p, re.IGNORECASE) for p in (
     # (1) "Consider tightening stops ..."
     rf"\b(?:consider|try)\b{_TC_GAP % 25}\b{_TC_VERB}{_TC_GAP % 40}\b{_TC_SUBJECT}\b",
@@ -467,7 +467,7 @@ _ADVISORY_CHANGE_RES = [re.compile(p, re.IGNORECASE) for p in (
     rf"\bworth\b{_TC_GAP % 15}\b{_TC_VERB}{_TC_GAP % 40}\b{_TC_SUBJECT}\b",
     rf"\b{_TC_SUBJECT}\b{_TC_GAP % 40}\bworth\b{_TC_GAP % 15}\b{_TC_VERB}",
     # (3) "Stops could be tightened."
-    rf"\b{_TC_SUBJECT}\b{_TC_GAP % 40}\b(?:could|should|might|may|would|can|must)\s+(?:\w+\s+)?be\s+{_TC_VERB}",
+    rf"\b{_TC_SUBJECT}\b{_TC_GAP % 40}\b(?:could|should|might|may|would|can|must)\s+(?!not\b|never\b)(?:\w+\s+)?be\s+{_TC_VERB}",
     # (4) "Tighter stops could help." / "Reducing position size ... would be prudent." /
     #     "A review of setups is warranted."
     rf"(?:\b{_TC_GERUND}|\b(?:review|revision|rethink|reassessment|reconsideration)\s+of"

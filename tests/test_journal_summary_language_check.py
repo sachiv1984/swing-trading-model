@@ -79,6 +79,9 @@ def test_plainly_prescriptive_caught():
     "Reviewing setups each weekend was part of the routine.",
     "A review of setups was done in April.",
     "Position size was reduced after losses, which the notes call prudent.",
+    # DoQ review finding 3: negation and a gap across ";".
+    "Stops could not be moved during the gap.",
+    "Higher stops were set in March; that may help explain the smaller losses.",
 ])
 def test_descriptive_wording_passes(text):
     assert journal_summary_language_failures(text) == []
