@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical (Class 1)
 **Status:** Canonical
-**Version:** 1.35
-**Last Updated:** 2026-10-30 (ST-20, EPIC-03, v9.14, BLG-BE-165 — stop recalculation times in briefing and chat are converted to UTC before formatting; a naive value is treated as UTC); prior — 2026-10-30 (ST-16, EPIC-03, v9.14, BLG-AI-21 — the daily briefing's `_NON_TICKER_WORDS` adds 22 indicator, earnings, macro and exchange acronyms, so they no longer get the outside-context caveat); prior — 2026-10-30 (ST-41, EPIC-06, v9.14, BLG-OPS-186 — `POST /ai/check-daily-cost` also checks the previous UTC day's final total, so spend after the day's last run is compared with its own day's threshold; response gains `previous_day`); prior history retained — see prior entries in version control
+**Version:** 1.36
+**Last Updated:** 2026-10-30 (ST-17, EPIC-03, v9.14, BLG-AI-22 — a chat stop sentence naming any other ticker-like token is no longer attributed to the focus ticker; ruling `ESC-EXEC-20261030-03`); prior — 2026-10-30 (ST-20, EPIC-03, v9.14, BLG-BE-165 — stop recalculation times in briefing and chat are converted to UTC before formatting; a naive value is treated as UTC); prior — 2026-10-30 (ST-16, EPIC-03, v9.14, BLG-AI-21 — the daily briefing's `_NON_TICKER_WORDS` adds 22 indicator, earnings, macro and exchange acronyms, so they no longer get the outside-context caveat); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -317,7 +317,7 @@ Each call is independent — the backend loads fresh portfolio and signal state 
 
 ### Post-generation stop-time check (ST-04, v9.12)
 
-The same code-authored check as `POST /ai/daily-briefing` check 2, applied to `response` (the note is appended after the model's text; `compliance_check_result` takes the same values; the sampling hook receives the raw output). **Focus ticker (ST-16, v9.13, BLG-AI-18; AI Compliance & Governance Officer ruling `ESC-EXEC-20261027-01` (B)):** when `context.ticker` is set and, normalised, is an open position, a stop sentence that names no held ticker is attributed to it (so "Your stop is at £450" asked from a position gets that position's note); a sentence naming a held ticker is attributed only to the tickers it names, and a non-held focus ticker changes nothing. The warning line then ends `attribution=focus`. `CHAT_PROMPT_VERSION` was unchanged by this check; it is v1.2 from ST-19 (cash labelling).
+The same code-authored check as `POST /ai/daily-briefing` check 2, applied to `response` (the note is appended after the model's text; `compliance_check_result` takes the same values; the sampling hook receives the raw output). **Focus ticker (ST-16, v9.13, BLG-AI-18; AI Compliance & Governance Officer ruling `ESC-EXEC-20261027-01` (B)):** when `context.ticker` is set and, normalised, is an open position, a stop sentence that names no held ticker is attributed to it (so "Your stop is at £450" asked from a position gets that position's note); a sentence naming a held ticker is attributed only to the tickers it names, and a non-held focus ticker changes nothing. A sentence naming any other ticker-like token (as in daily briefing check 3: a token match not in `_NON_TICKER_WORDS`, compared normalised) is not attributed to the focus ticker and stays unattributed, so with focus `MU`, "TSLA's stop was hit last week." gets no MU note (ST-17, v9.14, BLG-AI-22; condition 3 as amended by ruling `ESC-EXEC-20261030-03`). The warning line then ends `attribution=focus`. `CHAT_PROMPT_VERSION` was unchanged by this check; it is v1.2 from ST-19 (cash labelling).
 
 ### Rate limiting
 
@@ -978,6 +978,7 @@ Not a new endpoint — this is internal instrumentation, not part of this contra
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.36 | 2026-10-30 | ST-17 (EPIC-03, v9.14, BLG-AI-22; ruling `ESC-EXEC-20261030-03`, amending `ESC-EXEC-20261027-01` (B) condition 3): `POST /ai/chat` attributes a stop sentence to the held focus ticker only when it names no ticker-like token other than the focus ticker; otherwise it stays unattributed (`stop_time_missing_unattributed`). No prompt change. |
 | 1.35 | 2026-10-30 | ST-20 (EPIC-03, v9.14, BLG-BE-165): `POST /ai/daily-briefing` and `POST /ai/chat` convert `stop_calculated_at` to UTC before formatting the "stop last recalculated … UTC" label and the date the stop-time check compares; a naive value is treated as UTC. Previously the value was printed in the database session timezone with a literal "UTC". No prompt version change. |
 | 1.34 | 2026-10-30 | ST-16 (EPIC-03, v9.14, BLG-AI-21): `POST /ai/daily-briefing` check 3 — `_NON_TICKER_WORDS` adds RSI, MACD, EMA, SMA, VWAP, EPS, PE, IPO, CEO, CFO, GDP, CPI, PPI, PMI, FOMC, FED, ECB, BOE, NB, NYSE, LSE and NASDAQ (ruling `ESC-EXEC-20261027-02` (B) condition 2 names a minimum list). No response-shape or prompt change. |
 | 1.31 | 2026-10-27 | ST-22 (EPIC-03, v9.13, BLG-FE-208): new `POST /ai/chat/{answer_id}/rating` — one useful / not-useful rating per chat answer, stored in `chat_answer_ratings` (DS-35); 201, 409 with the stored rating on a second attempt, 404 for an unknown or failed answer. `POST /ai/chat` returns an optional `answer_id` (the `claude_audit_log` row id) for model answers only. `openapi.yaml` 3.36.0. |

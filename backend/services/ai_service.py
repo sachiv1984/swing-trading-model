@@ -242,7 +242,9 @@ def _append_missing_stop_times(text, positions: list, endpoint: str, field: str,
     folded). For chat, `focus_ticker` (context.ticker) takes a stop sentence
     that names no held ticker, if it is itself held (ST-16, BLG-AI-18; ruling
     ESC-EXEC-20261027-01 (B)); a sentence naming a held ticker is attributed
-    only to the tickers it names. A cited position whose stop_calculated_at date (or "not
+    only to the tickers it names. A sentence naming any other ticker-like
+    token is not given to the focus ticker (ST-17, BLG-AI-22, v9.14;
+    condition 3 as amended by ESC-EXEC-20261030-03). A cited position whose stop_calculated_at date (or "not
     recalculated since entry", when NULL) appears nowhere in the field gets
     its label appended after the model's text. Fails open."""
     if not isinstance(text, str) or not text:
@@ -264,7 +266,7 @@ def _append_missing_stop_times(text, positions: list, endpoint: str, field: str,
             cited = [t for t in by_ticker if _ticker_in(t, sentence)]
             if own and own not in cited:
                 cited.append(own)
-            if not cited and focus:
+            if not cited and focus and not _names_other_ticker(sentence, focus):
                 cited.append(focus)
                 if focus not in missing and not _stop_time_present(text, by_ticker[focus]):
                     via_focus.add(focus)
@@ -336,6 +338,15 @@ _NON_TICKER_WORDS = frozenset({
     "RSI", "MACD", "EMA", "SMA", "VWAP", "EPS", "PE", "IPO", "CEO", "CFO",
     "GDP", "CPI", "PPI", "PMI", "FOMC", "FED", "ECB", "BOE", "NB", "NYSE", "LSE", "NASDAQ",
 })
+
+
+def _names_other_ticker(sentence: str, focus: str) -> bool:
+    """ST-17 (BLG-AI-22, v9.14; ruling ESC-EXEC-20261030-03): whether the
+    sentence names a ticker-like token, not a known non-ticker word, other
+    than the focus ticker (normalised as ST-15)."""
+    focus_n = _normalise_ticker(focus)
+    return any(m.group(0) not in _NON_TICKER_WORDS and _normalise_ticker(m.group(0)) != focus_n
+               for m in _TICKER_TOKEN_RE.finditer(sentence))
 
 
 def _word_in(token: str, text: str) -> bool:
