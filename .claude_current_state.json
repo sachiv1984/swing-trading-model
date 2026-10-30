@@ -482,6 +482,19 @@
       "resolved_utc": "2026-10-29T15:00:25Z",
       "resolved_by": "Strategy Rules & System Intent Owner (the user, in-session)",
       "resolution_summary": "Ruling (a) block entries: an unknown regime fails the §4.2.1 entry gate and never triggers the §8.2 risk-off exit. Applied by ST-03 (strategy_rules.md v1.20, 29d8c347)."
+    },
+    "ESC-EXEC-20261030-01": {
+      "cycle": "2026-10-29__release-v9.14",
+      "summary": "ST-09/EPIC-02 - Strategy Rules & System Intent Owner confirmation of the US sizing FX convention (BLG-BE-190)",
+      "trigger_type": "Strategy",
+      "owning_authority": "Strategy Rules & System Intent Owner",
+      "raised_utc": "2026-10-30T08:26:37Z",
+      "sla_due_utc": "2026-11-02T08:26:37Z",
+      "blocks_execution": false,
+      "disposition": "Resolved",
+      "resolved_utc": "2026-10-30T08:29:17Z",
+      "resolved_by": "Strategy Rules & System Intent Owner (ruling given in-session by the user acting in that role)",
+      "resolution_summary": "FX is USD per GBP 1; a USD stop distance converts to GBP as StopDistance / FX, so RawShares = RiskAmount x FX / StopDistance; strategy_rules.md 4.1.3 states the US formula. Applied by ST-09 (bde25685) as strategy_rules.md v1.21 with STRATEGY_VERSION_REGISTRY 1.21."
     }
   },
   "deferred_escalations": {
