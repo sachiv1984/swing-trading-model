@@ -112,6 +112,9 @@ class TestClaudeAuditLogComplianceCheckColumnRollback:
             assert not _column_exists(conn, "claude_audit_log", "compliance_check_result")
 
             # Re-apply (forward again, post-rollback)
+            # ST-21 (BLG-BE-166, v9.14): ensure_* runs once per process; forget
+            # the first run so the re-apply after the DROP really runs.
+            database.reset_ensure_once()
             database.ensure_claude_audit_log_compliance_check_column()
             assert _column_exists(conn, "claude_audit_log", "compliance_check_result")
         finally:
@@ -148,6 +151,9 @@ class TestTradeDebriefsTableRollback:
             assert not _table_exists(conn, "trade_debriefs")
 
             # Re-apply
+            # ST-21 (BLG-BE-166, v9.14): ensure_* runs once per process; forget
+            # the first run so the re-apply after the DROP really runs.
+            database.reset_ensure_once()
             database.ensure_trade_debriefs_table()
             assert _table_exists(conn, "trade_debriefs")
         finally:
@@ -172,6 +178,9 @@ class TestBacktestRuleRunTablesRollback:
             assert not _table_exists(conn, "backtest_rule_runs")
 
             # Re-apply
+            # ST-21 (BLG-BE-166, v9.14): ensure_* runs once per process; forget
+            # the first run so the re-apply after the DROP really runs.
+            database.reset_ensure_once()
             database.ensure_backtest_rule_run_tables()
             assert _table_exists(conn, "backtest_rule_runs")
         finally:
@@ -197,6 +206,9 @@ class TestTriggeredByPriceAlertIdColumnRollback:
             assert not _column_exists(conn, "trade_plans", "triggered_by_price_alert_id")
 
             # Re-apply
+            # ST-21 (BLG-BE-166, v9.14): ensure_* runs once per process; forget
+            # the first run so the re-apply after the DROP really runs.
+            database.reset_ensure_once()
             database.ensure_triggered_by_price_alert_id_column()
             assert _column_exists(conn, "trade_plans", "triggered_by_price_alert_id")
         finally:

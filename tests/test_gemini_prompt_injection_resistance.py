@@ -168,18 +168,24 @@ class TestPromptConstructionDoesNotCrashOrEscapeItsField:
                 f"payload {name!r}: payload leaked into the trusted system message"
             )
 
-    def test_setup_thesis_signal_summary_field_injection_payloads(self, monkeypatch):
-        """signal_data fields feed _build_signal_summary() -> Signal data: field."""
+    def test_full_plan_signal_summary_field_injection_payloads(self, monkeypatch):
+        """signal_data fields feed _build_signal_summary() -> Signal data: field.
+        (Ran against generate_setup_thesis() until its retirement, ST-22,
+        BLG-BE-163, v9.14; generate_full_plan() builds the same field.)"""
         monkeypatch.setattr(gemini_service, "ANTHROPIC_API_KEY", "test-key")
         for name in INJECTION_PAYLOADS:
             payload = _payload(name)
-            mock_client, get_captured = _mock_client_capturing_prompt("a thesis")
+            mock_client, get_captured = _mock_client_capturing_prompt(
+                '{"regime_context_at_entry": "x", "setup_thesis": "x", '
+                '"entry_rationale": "x", "confirmation_criteria": "x", '
+                '"early_exit_conditions": "x", "r_target": 2.0}'
+            )
             with patch.object(anthropic, "Anthropic", return_value=mock_client):
-                result = gemini_service.generate_setup_thesis(
+                result = gemini_service.generate_full_plan(
                     ticker="AAPL", market="US", signal_data={"signal_type": payload}
                 )
 
-            assert result["available"] is True, f"payload {name!r} broke generate_setup_thesis(): {result}"
+            assert result["available"] is True, f"payload {name!r} broke generate_full_plan(): {result}"
             kwargs = get_captured()
             user_prompt = kwargs["messages"][0]["content"]
             assert f"type={payload}" in user_prompt, (
@@ -259,18 +265,6 @@ class TestOutputHandlingDoesNotAddSanitizationGap:
             result = gemini_service.generate_full_plan(ticker="AAPL", market="US")
 
         assert result["fields"]["setup_thesis"] == malicious_thesis  # passed through, unsanitized — by design at this layer
-
-    def test_malicious_model_output_passed_through_verbatim_setup_thesis(self, monkeypatch):
-        monkeypatch.setattr(gemini_service, "ANTHROPIC_API_KEY", "test-key")
-        malicious_thesis = "'; DROP TABLE trade_plans; --"
-        mock_client, _ = _mock_client_capturing_prompt(malicious_thesis)
-        with patch.object(anthropic, "Anthropic", return_value=mock_client):
-            result = gemini_service.generate_setup_thesis(ticker="AAPL", market="US")
-
-        assert result["thesis"] == malicious_thesis  # passed through, unsanitized -- caller (create_trade_plan/
-        # update_trade_plan) writes it via parameterised queries (confirmed
-        # elsewhere in this codebase's convention), so this specific string
-        # is inert as SQL; not re-verified here, out of this test's scope.
 
 
 class TestNonJsonModelOutputHandledGracefully:

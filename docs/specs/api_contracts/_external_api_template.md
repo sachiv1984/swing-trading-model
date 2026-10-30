@@ -2,7 +2,7 @@
 **Class:** Canonical Specification (Class 2)
 **Status:** Active
 **Version:** 1.0
-**Last Updated:** 2026-05-30
+**Last Updated:** 2026-10-30 (ST-22, EPIC-03, v9.14, BLG-BE-163 — legacy `gemini_thesis_generation.md` entry notes the file's deletion); prior — 2026-05-30; prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -14,7 +14,7 @@ This template defines the required sections and minimum content for all external
 **Current integrations using this template:**
 - `alpaca_integration_contract.md` — Alpaca Markets Data API v2 (conformance: partial; see §AC-03 advisory below)
 - `ai_thesis_generation.md` — Anthropic Claude API (conformance: partial; see §AC-03 advisory below)
-- `gemini_thesis_generation.md` — Legacy (superseded by ai_thesis_generation.md v2.1.0)
+- `gemini_thesis_generation.md` — Legacy (superseded by ai_thesis_generation.md v2.1.0; deleted in v9.14, ST-22, BLG-BE-163, after its content was merged into ai_thesis_generation.md)
 
 **Gate:** ≥2 external API integrations confirmed at time of authoring (Alpaca, Yahoo Finance, Anthropic = 3 integrations).
 

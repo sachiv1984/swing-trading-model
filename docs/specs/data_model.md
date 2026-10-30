@@ -4,7 +4,7 @@
 **Class:** Class 1
 **Status:** Canonical
 **Version:** 2.66
-**Last Updated:** 2026-10-29 (ST-04, EPIC-01, v9.14, BLG-BE-194 — DS-37 (v2.66): new `fx_rate_last_good` table, the last successfully fetched GBP/USD rate and its fetch time); prior — 2026-10-27 (ST-31/ST-32, EPIC-05, v9.13, BLG-OPS-19/BLG-OPS-23 — DS-36 (v2.65): `api_call_log.feature` and `screener_runs.duration_seconds`; both tables documented); prior — 2026-10-27 (ST-22, EPIC-03, v9.13, BLG-FE-208 — DS-35 (v2.64): new `chat_answer_ratings` table, one useful / not-useful rating per AI chat answer); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-30 (ST-22, EPIC-03, v9.14, BLG-BE-163 — `gemini_audit_log` populating-function reference cites `ai_thesis_generation.md`; `generate-thesis` retired; no schema change); prior — 2026-10-29 (ST-04, EPIC-01, v9.14, BLG-BE-194 — DS-37 (v2.66): new `fx_rate_last_good` table, the last successfully fetched GBP/USD rate and its fetch time); prior — 2026-10-27 (ST-31/ST-32, EPIC-05, v9.13, BLG-OPS-19/BLG-OPS-23 — DS-36 (v2.65): `api_call_log.feature` and `screener_runs.duration_seconds`; both tables documented); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 This document describes the complete database schema and data structures used in the **Position Manager Web App**.
@@ -1949,7 +1949,7 @@ CREATE INDEX IF NOT EXISTS idx_gal_plan_id ON gemini_audit_log (plan_id);
 
 **Purpose:** AI Compliance & Governance Officer audit trail — every AI-generated thesis/summary logs its model version, prompt version, and content hashes here, independent of where the generated text itself is stored.
 
-**Populating function:** `backend/database.py::ensure_gemini_audit_log_table()` (idempotent DDL) + `create_gemini_audit_entry()`, called from the thesis-generation pipeline (`docs/specs/api_contracts/gemini_thesis_generation.md`).
+**Populating function:** `backend/database.py::ensure_gemini_audit_log_table()` (idempotent DDL) + `create_gemini_audit_entry()`, called from the thesis-generation pipeline (`docs/specs/api_contracts/ai_thesis_generation.md`; `gemini_thesis_generation.md` was merged into it and deleted in v9.14, ST-22, BLG-BE-163, which also retired `generate-thesis`, so only `POST /trade-plans/generate-plan` writes new rows).
 
 ---
 

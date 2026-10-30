@@ -3,7 +3,7 @@ Regression tests for retry/backoff on the Claude ("Gemini") thesis-generation
 call site (ST-10, EPIC-04, v8.7, BLG-BE-89).
 
 Prior to this story, `services.gemini_service._call_claude()` — the single
-call site both `generate_full_plan()` and `generate_setup_thesis()` route
+call site `generate_full_plan()` (and, until v9.14, `generate_setup_thesis()`) route
 through — made a single, unretried Anthropic API call. It now wraps that
 call in the same shared `retry_with_backoff` decorator used by the other
 BLG-BE-57 pattern call sites (see `tests/test_regime_retry_backoff.py`,
@@ -139,17 +139,16 @@ class TestCallClaudeRetryBackoff:
         assert mock_client.messages.create.call_count == 1  # no retry attempted
 
 
-def test_generate_setup_thesis_surfaces_graceful_error_after_retries_exhausted(monkeypatch):
-    """End-to-end: generate_setup_thesis() already catches _call_claude()'s
-    final raised exception and returns {"available": False, "error": ...}
-    (unchanged pre-existing behaviour) -- confirms the retry decorator
-    doesn't break that graceful-degradation contract once attempts are
-    exhausted."""
+def test_generate_full_plan_surfaces_graceful_error_after_retries_exhausted(monkeypatch):
+    """End-to-end: generate_full_plan() catches _call_claude()'s final raised
+    exception and returns {"available": False, "error": ...} once attempts
+    are exhausted. (Ran against generate_setup_thesis() until its
+    retirement, ST-22, BLG-BE-163, v9.14.)"""
     monkeypatch.setattr(gemini_service, "ANTHROPIC_API_KEY", "test-key")
     mock_client = _mock_anthropic_client([_server_error(), _server_error(), _server_error()])
     with patch.object(anthropic, "Anthropic", return_value=mock_client), \
          patch("utils.retry.time.sleep", lambda *_: None):
-        result = gemini_service.generate_setup_thesis(ticker="AAPL", market="US")
+        result = gemini_service.generate_full_plan(ticker="AAPL", market="US")
     assert result["available"] is False
     assert "Claude API error" in result["error"]
     assert mock_client.messages.create.call_count == 3

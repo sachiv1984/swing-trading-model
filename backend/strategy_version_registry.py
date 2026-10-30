@@ -84,6 +84,7 @@ DOCUMENTATION_ONLY_VERSIONS = frozenset({
     "1.16",  # §13.5 roster row (ST-25 monthly P&L narrative)
     "1.18",  # §13.3/§13.5 text aligned with v9.10 (weekend-hold removed; PO-05 not on IT-06)
     "1.19",  # Known Deviations entries: §4.1.5 US sizing FX inversion (BLG-BE-190), §8.4 fields completed
+    "1.22",  # §13.5 roster row cites ai_thesis_generation.md; generate-thesis retired (ST-22, BLG-BE-163)
 })
 
 

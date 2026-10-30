@@ -9,7 +9,7 @@ with the model call mocked: the prompt the model receives contains the
 time next to the stop, and the instruction.
 """
 import sys
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -70,6 +70,29 @@ def test_iso_string_timestamp_is_formatted():
     from services.ai_service import _stop_recalculated_label
     assert _stop_recalculated_label({"stop_calculated_at": "2026-10-07T21:05:00Z"}) == \
         "stop last recalculated 2026-10-07 21:05 UTC"
+
+
+@pytest.mark.parametrize("ts", [
+    datetime(2026, 10, 12, 9, 0, tzinfo=timezone(timedelta(hours=1))),
+    "2026-10-12T09:00:00+01:00",
+])
+def test_non_utc_aware_timestamp_is_converted_to_utc(ts):
+    # ST-20 (BLG-BE-165, EPIC-03, v9.14): 09:00+01:00 is 08:00 UTC.
+    from services.ai_service import _stop_recalculated_label
+    assert _stop_recalculated_label({"stop_calculated_at": ts}) == "stop last recalculated 2026-10-12 08:00 UTC"
+
+
+@pytest.mark.parametrize("ts", [datetime(2026, 10, 12, 9, 0), "2026-10-12T09:00:00"])
+def test_naive_timestamp_is_treated_as_utc(ts):
+    from services.ai_service import _stop_recalculated_label
+    assert _stop_recalculated_label({"stop_calculated_at": ts}) == "stop last recalculated 2026-10-12 09:00 UTC"
+
+
+def test_stop_time_date_uses_the_utc_date():
+    # 00:30+01:00 on the 13th is 23:30 UTC on the 12th, the date the label quotes.
+    from services.ai_service import _stop_time_date
+    ts = datetime(2026, 10, 13, 0, 30, tzinfo=timezone(timedelta(hours=1)))
+    assert _stop_time_date({"stop_calculated_at": ts}) == "2026-10-12"
 
 
 def test_prompt_versions_bumped_for_st08():

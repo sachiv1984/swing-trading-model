@@ -281,6 +281,38 @@ class TestGenerateTradeDebriefSequencing:
         # Exactly one regeneration -- _call_claude invoked exactly twice, not more.
         assert mock_get_trade.call_count == 1
 
+    @patch("services.debrief_service.create_claude_audit_entry")
+    @patch("services.debrief_service.create_trade_debrief")
+    @patch("services.debrief_service.get_red_flag_events", return_value={"items": []})
+    @patch("services.debrief_service.get_trade_plans_by_position", return_value=[])
+    @patch("services.debrief_service.get_trade_by_id")
+    @patch("services.debrief_service.ANTHROPIC_API_KEY", "fake-key")
+    def test_fail_then_raise_writes_one_model_call_failed_row(
+        self, mock_get_trade, mock_get_plans, mock_red_flags, mock_create_debrief, mock_audit
+    ):
+        # ST-19 (BLG-BE-164, EPIC-03, v9.14): attempt 1 fails compliance and
+        # the regeneration raises. One audit row, marked model_call_failed,
+        # carrying attempt 1's tokens and cost; no second compliance_check_result=None row.
+        mock_get_trade.return_value = dict(self._TRADE)
+        mock_create_debrief.side_effect = lambda t, p, d: dict(d, generated_at=None)
+        responses = iter([("You should hold winners longer.", MagicMock(input_tokens=50, output_tokens=20))])
+
+        def call(*a, **k):
+            try:
+                return next(responses)
+            except StopIteration:
+                raise RuntimeError("down")
+
+        with patch("services.debrief_service._call_claude", side_effect=call):
+            result = generate_trade_debrief("trade-1")
+
+        assert result["generation_status"] == "ai_unavailable"
+        assert mock_audit.call_count == 1
+        row = mock_audit.call_args.kwargs
+        assert row["compliance_check_result"] == "model_call_failed"
+        assert (row["input_tokens"], row["output_tokens"]) == (50, 20)
+        assert row["cost_usd"] == round(50 * 1.00 / 1_000_000 + 20 * 5.00 / 1_000_000, 8)
+
     @patch("services.debrief_service.create_trade_debrief")
     @patch("services.debrief_service.get_trade_plans_by_position", return_value=[])
     @patch("services.debrief_service.get_trade_by_id")

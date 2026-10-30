@@ -424,6 +424,19 @@ def _journal_context_for_trade(trade: dict) -> str:
     return " ".join(parts) if parts else "None"
 
 
+def _usage_fields(usage) -> dict:
+    """input_tokens, output_tokens and cost_usd for an audit row; {} when
+    there is no usage (no model call returned)."""
+    if usage is None:
+        return {}
+    prompt_tokens = getattr(usage, "input_tokens", None)
+    completion_tokens = getattr(usage, "output_tokens", None)
+    cost_usd = None
+    if prompt_tokens is not None and completion_tokens is not None:
+        cost_usd = round(prompt_tokens * 1.00 / 1_000_000 + completion_tokens * 5.00 / 1_000_000, 8)
+    return {"input_tokens": prompt_tokens, "output_tokens": completion_tokens, "cost_usd": cost_usd}
+
+
 def generate_trade_debrief(trade_id: str) -> dict:
     """
     Generate (or regenerate) the AI post-trade debrief for a closed trade.
@@ -541,6 +554,9 @@ def generate_trade_debrief(trade_id: str) -> dict:
             generation_status = "ai_unavailable"
             omitted_reason = f"generation_error: {str(exc)[:120]}"
             # ST-06 (BLG-AI-08, v9.11): a failed model call is auditable too.
+            # ST-19 (BLG-BE-164, v9.14): if attempt 1 failed compliance, this
+            # is the request's only row; it carries attempt 1's tokens and
+            # cost, and the usage block below is skipped.
             create_claude_audit_entry(
                 endpoint=_ENDPOINT,
                 model_id=MODEL_VERSION,
@@ -548,7 +564,9 @@ def generate_trade_debrief(trade_id: str) -> dict:
                 compliance_check_result="model_call_failed",
                 latency_ms=int((time.time() - t0) * 1000),
                 prompt_hash=hashlib.sha256(f"{_FOCUS_AREA_SYSTEM}\n{user_prompt}".encode()).hexdigest()[:16],
+                **_usage_fields(usage_for_audit),
             )
+            usage_for_audit = None
             break
 
         usage_for_audit = usage
@@ -574,18 +592,11 @@ def generate_trade_debrief(trade_id: str) -> dict:
             compliance_check_result = f"fail_fallback:{omitted_reason}"
 
     if usage_for_audit is not None:
-        prompt_tokens = getattr(usage_for_audit, "input_tokens", None)
-        completion_tokens = getattr(usage_for_audit, "output_tokens", None)
-        cost_usd = None
-        if prompt_tokens is not None and completion_tokens is not None:
-            cost_usd = round(prompt_tokens * 1.00 / 1_000_000 + completion_tokens * 5.00 / 1_000_000, 8)
         create_claude_audit_entry(
             endpoint=_ENDPOINT,
             model_id=MODEL_VERSION,
             prompt_version=PROMPT_VERSION,
-            input_tokens=prompt_tokens,
-            output_tokens=completion_tokens,
-            cost_usd=cost_usd,
+            **_usage_fields(usage_for_audit),
             compliance_check_result=compliance_check_result,
             # ST-13 (BLG-BE-128, v9.7): includes retry backoff sleep time by design -- see
             # ai_endpoints.md Implementation constraints.
