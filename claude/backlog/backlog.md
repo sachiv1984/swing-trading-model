@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-29 (Sprint Execution 2026-10-29__release-v9.14 EPIC-01 DoQ review — 3 new item(s) added: BLG-OPS-204, BLG-SPEC-210, BLG-QA-239; no existing item edited); prior — 2026-10-29 (Sprint Execution 2026-10-29__release-v9.14 EPIC-01 — 2 new item(s) added: BLG-TECH-33, BLG-OPS-203; no existing item edited); prior — 2026-10-29 (Sprint Planning 2026-10-29__release-v9.14 STEP 6.2 — 6 new post-merge tracking item(s) added: BLG-OPS-200, BLG-GOV-399, BLG-OPS-201, BLG-OPS-202, BLG-SEC-44, BLG-GOV-400; no existing item edited); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-30 (PR #2131 agent-mediated DoQ/PO review — 2 new item(s) added: BLG-BE-196, BLG-BE-197; no existing item edited); prior — 2026-10-29 (Sprint Execution 2026-10-29__release-v9.14 EPIC-01 DoQ review — 3 new item(s) added: BLG-OPS-204, BLG-SPEC-210, BLG-QA-239; no existing item edited); prior — 2026-10-29 (Sprint Execution 2026-10-29__release-v9.14 EPIC-01 — 2 new item(s) added: BLG-TECH-33, BLG-OPS-203; no existing item edited); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -6062,3 +6062,45 @@ ST-03 changed `signal_service.generate_momentum_signals` so a market whose index
 
 **Acceptance Criteria**
 - The test fails if an unknown market is treated as risk-on again
+
+---
+
+### BLG-BE-196 — Decide how Regime Adherence counts a trade plan saved while the regime was unknown
+**Priority:** P3 (Low)
+**Type:** Backend Engineering
+**Owner:** Strategy Rules & System Intent Owner; Backend Engineering Patterns Owner
+**Source:** PR #2131 (EPIC-01, `2026-10-29__release-v9.14`) agent-mediated DoQ/PO review, ST-03 (BLG-BE-193) — 2026-10-30
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.15
+
+**Problem**
+ST-03 makes an unmeasured regime `unknown`. The Trade Plan page fills `regime_context_at_entry` from `GET /market/status` (`src/pages/TradePlan.js` `regimeFromHealth`), so a plan saved during an outage now stores `"unknown"`; before ST-03 it stored the defaulted `"risk_on"`. `behavioural_drift_service.py` counts only `risk_on`, `neutral`, null and `""` as valid, so each such plan counts as a Regime Adherence violation. `si02_drift_score.md` §3.4 counts an undeterminable regime (`neutral`) as not a violation, and does not mention `unknown`.
+
+**Scope**
+- Get a ruling: whether `unknown` counts like `neutral` (not a violation) or as a violation, given that `strategy_rules.md` v1.20 §4.2.1 blocks entries while the regime is unknown
+- Apply it in `behavioural_drift_service.py` and `si02_drift_score.md` §3.4 (regime classification list), with a unit test
+
+**Acceptance Criteria**
+- `si02_drift_score.md` §3.4 names `unknown` and says how it is counted
+- A unit test with one `regime_context_at_entry = "unknown"` trade gives the ruled Regime Adherence result
+
+---
+
+### BLG-BE-197 — Fire the risk-off regime alert for a measured market while the other market is unknown
+**Priority:** P3 (Low)
+**Type:** Backend Engineering
+**Owner:** Backend Engineering Patterns Owner; Strategy Rules & System Intent Owner
+**Source:** PR #2131 (EPIC-01, `2026-10-29__release-v9.14`) agent-mediated DoQ/PO review, ST-03 (BLG-BE-193) — 2026-10-30
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.15
+
+**Problem**
+`alerts_service._check_regime_change` combines both markets ("SPY and/or FTSE 100 is now below its 200-day moving average"). ST-03 returns early when either market is unknown, so the baseline is not moved. While FTSE is unknown, a measured SPY move to risk-off raises no `market_regime_change` alert; it fires only once FTSE is measured again. The nightly risk-off job still flags the US positions, so exits are not affected. Only the alert is delayed.
+
+**Scope**
+- Compare the markets that were measured: alert when a measured market moves from risk-on to risk-off, and leave an unknown market's baseline unchanged
+- Add a test: FTSE unknown, SPY risk-on then risk-off, so the alert fires
+
+**Acceptance Criteria**
+- With one market unknown, a measured risk-on to risk-off move in the other market raises the alert on that call
+- An unknown reading on its own still raises no alert and does not move that market's baseline (the existing ST-03 test still passes)
