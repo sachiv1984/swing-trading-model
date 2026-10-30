@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 2.19.0
-**Last Updated:** 2026-10-29 (ST-07, EPIC-01, v9.14, BLG-BE-168 — GET /positions gains price_is_stale per position); prior — 2026-10-29 (ST-04/ST-05, EPIC-01, v9.14, BLG-BE-194/BLG-BE-169 — GET /positions gains fx_rate_source and fx_rate_as_of per position); prior — 2026-10-17 (ST-10, EPIC-02, v9.13, BLG-SPEC-188 — new `GET /positions/stop-freshness`, median and maximum stop age across open positions for System Status); prior history retained — see prior entries in version control
+**Version:** 2.19.1
+**Last Updated:** 2026-10-30 (ST-10, EPIC-02, v9.14, BLG-BE-188 — POST /positions/{position_id}/exit returns its documented 404 and 400 with a `detail` string; Errors table lists each one); prior — 2026-10-29 (ST-07, EPIC-01, v9.14, BLG-BE-168 — GET /positions gains price_is_stale per position); prior — 2026-10-29 (ST-04/ST-05, EPIC-01, v9.14, BLG-BE-194/BLG-BE-169 — GET /positions gains fx_rate_source and fx_rate_as_of per position); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Overview
@@ -28,6 +28,7 @@ Global response envelopes, error shape, defaults, and multi-currency/stop rules 
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.19.1 | 2026-10-30 | ST-10 (BLG-BE-188, EPIC-02, v9.14): `POST /positions/{position_id}/exit` maps each `ValueError` from `exit_position` to its status: `404` for a missing position or portfolio, `400` for the rest, each with the service's message as `detail`. They were all `500` before. The Errors section is now a table of every status, `detail` and condition, adding the closed-position, non-positive price and negative shares cases. Behaviour fix; no shape change for success responses. |
 | 2.19.0 | 2026-10-29 | ST-07 (BLG-BE-168, EPIC-01, v9.14): `GET /positions` gains `price_is_stale` on each position, the same flag `GET /portfolio` has returned since v9.11. The Positions page shows the stale marker for it. |
 | 2.18.0 | 2026-10-29 | ST-04/ST-05 (BLG-BE-194/BLG-BE-169, EPIC-01, v9.14): `GET /positions` gains `fx_rate_source` (`live` / `last_known` / `constant`) and `fx_rate_as_of` on each position, describing `live_fx_rate`. On an FX fetch failure `live_fx_rate` is the last good rate (`data_model.md` DS-37) before the 1.27 constant. |
 | 2.17.0 | 2026-10-17 | ST-10 (BLG-SPEC-188, EPIC-02, v9.13): new `GET /positions/stop-freshness` — median and maximum age of `stop_calculated_at` across open positions, oldest stop's ticker and timestamp, and the never-recalculated count (`metrics_definitions.md` §Stop Freshness). Read-only. |
@@ -510,12 +511,18 @@ Response uses the standard success envelope from **conventions.md**.
 
 ### Errors
 
-Errors use the standard error envelope from **conventions.md**.
+Errors use the standard error envelope from **conventions.md**. Each carries a `detail` string (v2.19.1, ST-10, BLG-BE-188; before this every service validation error returned `500`):
 
-- `400` Missing `exit_fx_rate` for US stock
-- `400` Shares exceed position size
-- `400` Invalid `exit_reason`
-- `404` Position not found
+| Status | `detail` | Condition |
+|--------|----------|-----------|
+| `404` | `Position not found` | No position with this `position_id` |
+| `404` | `Portfolio not found` | No portfolio exists |
+| `400` | `Position already closed` | The position's status is `closed` |
+| `400` | `Exit price must be greater than 0` | `exit_price` ≤ 0 |
+| `400` | `Shares to exit must be greater than 0` | `shares` < 0 (omitted or `0` exits all shares) |
+| `400` | `Insufficient shares. Position has <n> shares, exit requested <m>` | `shares` exceeds the position size |
+| `400` | `FX rate is required for US stock exits. Please provide the GBP/USD rate from your broker statement.` | US position without a positive `exit_fx_rate` |
+| `400` | `exit_reason must be one of: …` | Invalid `exit_reason` (see Validation rules) |
 
 ---
 
