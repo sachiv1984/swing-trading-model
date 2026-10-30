@@ -32,6 +32,10 @@ Last Updated: 2026-10-30
 
 **Post-merge items (carried, `sprint_close.md` "Items Delegated and outstanding"):** ST-39 AC 2 → BLG-OPS-201 (DEL-20261030-02); ST-42 ACs 1–2 → BLG-OPS-202 (DEL-20261030-03); ST-43 AC 2 → BLG-SEC-44 (DEL-20261030-01).
 
+**Post-merge confirmations (2026-10-30, after PR #2133 merged at 11:50:13Z, merge commit `5e7351af`):** these close ST-43's post-merge AC. The grades and sign-off below are unchanged.
+- ST-43 AC 2 (BLG-SEC-44): the user confirmed `5e7351af` is live on production and the Pages frontend loads data. The engine sent preflights from `http://localhost:3000`, the Pages origin and the staging frontend to both APIs, at 15:18:02–15:19:50Z (production `DEPLOY_ENV` not set, resolved by Render inference) and at 15:29:12Z (after the user set `DEPLOY_ENV=production`; staging already had `DEPLOY_ENV=staging`). Production: localhost `400`, Pages `200` with allow-origin `https://sachiv1984.github.io`, staging frontend `400`. Staging: localhost `200`, Pages `400`, staging frontend `200`, each `200` with its own origin echoed. Same in both runs. Commands and full table are in `docs/infrastructure/cors_allow_list.md` under Deployed checks.
+- Cybersecurity & Trust Lead confirmation of the staging defaults (finding 7 above): agent-mediated (§5.3), accepted by the user on 2026-10-30. Keep as designed. Both APIs return `401` without `X-API-Key`. Follow-up filed: BLG-SEC-45 (drop the unused `allow_credentials=True`).
+
 ## Standard Sign-Off Block
 
 - [x] All acceptance criteria verified against canonical spec

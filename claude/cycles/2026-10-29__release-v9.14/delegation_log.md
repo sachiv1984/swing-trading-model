@@ -1,7 +1,7 @@
 Owner: PMO Lead
 Class: Planning Document (Class 4)
 Status: Active
-Last Updated: 2026-10-29
+Last Updated: 2026-10-30
 
 # Delegation Log — 2026-10-29__release-v9.14
 
@@ -35,7 +35,7 @@ Last Updated: 2026-10-29
 - **Spec reference:** `docs/infrastructure/cors_allow_list.md`; `stage4_backlog_slice.md#ST-43` AC 2
 - **Unblock criteria:** Seal-marked post-merge AC 2, tracked by BLG-SEC-44: production rejects `http://localhost:3000` (400) and accepts the Pages origin; the staging result recorded the same way, with commands, responses and date.
 - **Commit format required:** `[GOVERNANCE] <description>` on `main` (EPIC-06 will have merged), or `[EPIC-06][ST-43] <description>` on `exec/2026-10-29__release-v9.14/EPIC-06` if before merge
-- **Status:** Pending — carried to post-merge (BLG-SEC-44). The story is graded on its in-sprint AC (LL-v9.13-P3-03).
+- **Status:** Unblocked — 2026-10-30, after PR #2133 merged (`5e7351af`). The user (human, acting for the Infrastructure & Operations Owner) confirmed `5e7351af` live on production and set `DEPLOY_ENV=production` in the Render dashboard; `DEPLOY_ENV=staging` was already on the staging API. The engine ran the preflights at 15:18–15:19Z and 15:29Z: production rejects `http://localhost:3000` (400) and accepts the Pages origin (200); staging accepts localhost and its own frontend and rejects the Pages origin. Recorded in `cors_allow_list.md` §Deployed checks and `qa_evidence_EPIC-06.md`. (a) Sign-off: sign_off_cleared; staging defaults confirmed by an agent-mediated Cybersecurity & Trust Lead review (§5.3), accepted by the user. (b) Commit SHA: `4eb1e6cb` (ST-43). BLG-SEC-44 resolved.
 
 ## DEL-20261030-02
 

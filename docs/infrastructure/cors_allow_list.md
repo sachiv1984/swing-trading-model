@@ -1,7 +1,7 @@
 **Owner:** Cybersecurity & Trust Lead; Infrastructure & Operations Owner
 **Class:** Reference Document (Class 3)
 **Status:** Active
-**Last Updated:** 2026-10-30 (ST-43, BLG-SEC-43, EPIC-06, v9.14 — created: per-environment CORS allow-list, defaults and precedence)
+**Last Updated:** 2026-10-30 (BLG-SEC-44 — deployed staging and production preflight checks recorded; staging defaults confirmed); prior — 2026-10-30 (ST-43, BLG-SEC-43, EPIC-06, v9.14 — created: per-environment CORS allow-list, defaults and precedence); prior history retained — see prior entries in version control
 **Cycle:** 2026-10-29__release-v9.14 (ST-43)
 
 ---
@@ -51,3 +51,27 @@ curl -s -D - -o /dev/null -X OPTIONS "$API_URL/positions" \
 ```
 
 `OPTIONS` requests are exempt from the API key check (`backend/main.py` `api_key_middleware`), so these need no key. `tests/test_cors_allow_list.py` checks the production result in CI. The checks on the deployed staging and production services are recorded under BLG-SEC-44.
+
+## Deployed checks
+
+Recorded for BLG-SEC-44 after PR #2133 merged (merge commit `5e7351af`, live on production per the user). Each cell is one `OPTIONS /positions` preflight with `Access-Control-Request-Method: GET`, sent with the loop below, showing the status code and the `access-control-allow-origin` header.
+
+```bash
+for API_URL in https://trading-assistant-api-c0f9.onrender.com https://trading-assistant-api-staging.onrender.com; do
+  for ORIGIN in http://localhost:3000 https://sachiv1984.github.io https://trading-assistant-staging.onrender.com; do
+    curl -s -m 90 -D - -o /dev/null -X OPTIONS "$API_URL/positions" \
+      -H "Origin: $ORIGIN" -H 'Access-Control-Request-Method: GET'
+  done
+done
+```
+
+| Run (2026-10-30, UTC) | Production `DEPLOY_ENV` | API | `http://localhost:3000` | `https://sachiv1984.github.io` | `https://trading-assistant-staging.onrender.com` |
+|---|---|---|---|---|---|
+| 15:18:02–15:19:50Z | not set (Render inference) | Production (`trading-assistant-api-c0f9`) | `400`, no allow-origin | `200`, allow-origin `https://sachiv1984.github.io` | `400`, no allow-origin |
+| 15:18:02–15:19:50Z | — | Staging (`trading-assistant-api-staging`, `DEPLOY_ENV=staging`) | `200`, allow-origin `http://localhost:3000` (retried: the first request timed out while the service woke) | `400`, no allow-origin | `200`, allow-origin `https://trading-assistant-staging.onrender.com` |
+| 15:29:12Z | `production` (set by the user in the Render dashboard) | Production | `400`, no allow-origin | `200`, allow-origin `https://sachiv1984.github.io` | `400`, no allow-origin |
+| 15:29:12Z | — | Staging | `200`, allow-origin `http://localhost:3000` | `400`, no allow-origin | `200`, allow-origin `https://trading-assistant-staging.onrender.com` |
+
+Every result matches the default lists above, both before and after `DEPLOY_ENV=production` was set. The production API answering after the change shows it started with the new value. The same session sent `GET /zz-auth-probe-nonexistent` with no `X-API-Key` to both APIs: both returned `401`, so the API key, not CORS, is the access control on both.
+
+**Staging defaults confirmed (2026-10-30):** agent-mediated review on behalf of the Cybersecurity & Trust Lead (`execution_prompt.md` §5.3), accepted by the user. Staging keeps credentialed `http://localhost:3000` and the staging frontend, and rejects the Pages origin. CORS only limits which browser pages can read responses. Both APIs enforce `X-API-Key`, and staging holds only staging data. Rejecting the Pages origin stops the production frontend from being pointed at staging. Follow-up: `allow_credentials=True` in `backend/main.py` is not needed, because the frontend authenticates with a header and sends no cookies (BLG-SEC-45).

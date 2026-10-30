@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-30 (PR #2133 review, EPIC-06 of 2026-10-29__release-v9.14 — 2 new items added: BLG-OPS-210, BLG-QA-243; no existing item edited); prior — 2026-10-30 (sprint execution, EPIC-06 ST-38/ST-40 of 2026-10-29__release-v9.14 — 6 new items added: BLG-OPS-206, BLG-QA-241, BLG-QA-242, BLG-OPS-207, BLG-OPS-208, BLG-OPS-209; no existing item edited); prior — 2026-10-30 (post-merge, EPIC-02 of 2026-10-29__release-v9.14 — 1 new item added: BLG-QA-240; no existing item edited); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-30 (post-merge, EPIC-06 of 2026-10-29__release-v9.14 — BLG-SEC-44 resolved; 1 new item added: BLG-SEC-45); prior — 2026-10-30 (PR #2133 review, EPIC-06 of 2026-10-29__release-v9.14 — 2 new items added: BLG-OPS-210, BLG-QA-243; no existing item edited); prior — 2026-10-30 (sprint execution, EPIC-06 ST-38/ST-40 of 2026-10-29__release-v9.14 — 6 new items added: BLG-OPS-206, BLG-QA-241, BLG-QA-242, BLG-OPS-207, BLG-OPS-208, BLG-OPS-209; no existing item edited); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -5962,6 +5962,8 @@ ST-43 builds the CORS allow-list from a per-deployment environment variable. The
 - Production rejects `http://localhost:3000` and accepts the Pages origin, with the commands, responses and date recorded
 - The staging result is recorded the same way
 
+**Resolved (2026-10-30, after PR #2133 merged):** the user set `DEPLOY_ENV=production` on the production API; staging already had `DEPLOY_ENV=staging`. Preflights at 15:18–15:19Z and 15:29Z: production rejects `http://localhost:3000` (400) and accepts the Pages origin (200); staging accepts localhost and its own frontend and rejects the Pages origin. Commands, results and the agent-mediated Cybersecurity & Trust Lead confirmation of the staging defaults are in `docs/infrastructure/cors_allow_list.md` §Deployed checks and `qa_evidence_EPIC-06.md`.
+
 ---
 
 ### BLG-GOV-400 — Confirm the gate scan no longer re-lists items whose gating item has shipped
@@ -6378,5 +6380,27 @@ ST-40's AC names pytest `--durations` as the per-test timing source, but no CI w
 **Acceptance Criteria**
 - A CI Pytest Suite run on `main` prints the slowest 25 tests with their setup, call and teardown times
 - `ci_pipeline_baseline.md` says where to read per-test timing
+
+---
+
+### BLG-SEC-45 — Drop the unused allow_credentials flag from the API's CORS middleware
+**Priority:** P3 (Low)
+**Type:** Security / Configuration
+**Owner:** Cybersecurity & Trust Lead; Backend Engineering Patterns Owner
+**Source:** BLG-SEC-44 agent-mediated Cybersecurity & Trust Lead review of the staging CORS defaults (ST-43, EPIC-06, cycle `2026-10-29__release-v9.14`) — 2026-10-30
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`backend/main.py` configures `CORSMiddleware` with `allow_credentials=True`, which lets allowed origins send cookies and HTTP authentication with cross-origin requests. The frontend authenticates with an `X-API-Key` header (`src/api/base44Client.js`) and never sends cookies or uses `credentials: 'include'`, so the flag grants a capability nothing uses. Removing it narrows what an allowed origin can do if a cookie-based mechanism is ever added without a security review.
+
+**Scope**
+- Set `allow_credentials=False` (or remove it) in `backend/main.py`
+- Update `tests/test_cors_allow_list.py`, which currently asserts the credentials header, and `docs/infrastructure/cors_allow_list.md`
+- Confirm the Pages frontend still loads data after deploy
+
+**Acceptance Criteria**
+- A preflight from the Pages origin to production returns `200` with `access-control-allow-origin` and no `access-control-allow-credentials: true`, recorded with the date
+- The Pages frontend loads data after the change, confirmed with the date
 
 ---
