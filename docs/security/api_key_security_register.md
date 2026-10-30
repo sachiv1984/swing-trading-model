@@ -1,8 +1,8 @@
 **Owner:** Cybersecurity & Trust Lead
 **Class:** Operational Policy (Class 2)
 **Status:** Active
-**Version:** 1.8
-**Last Updated:** 2026-09-14 (ST-27, EPIC-05, v9.3, DEL-20260910-01 — entry #4 updated: News API Key rotation drill completed, Last rotation date set); prior — 2026-08-10 (ST-02, BLG-OPS-134, v8.5 — entry #6 updated: STAGING_API_KEY secret confirmed added, cross-environment check confirmed genuinely running via live log, false-positive alert bug hardened); prior history retained — see prior entries in version control
+**Version:** 1.9
+**Last Updated:** 2026-10-30 (ST-22, EPIC-03, v9.14, BLG-BE-163 — Anthropic key entry: purpose and rotation step 3 verify with `POST /trade-plans/generate-plan`; `generate-thesis` retired); prior — 2026-09-14 (ST-27, EPIC-05, v9.3, DEL-20260910-01 — entry #4 updated: News API Key rotation drill completed, Last rotation date set); prior — 2026-08-10 (ST-02, BLG-OPS-134, v8.5 — entry #6 updated: STAGING_API_KEY secret confirmed added, cross-environment check confirmed genuinely running via live log, false-positive alert bug hardened); prior history retained — see prior entries in version control
 **Cycle:** 2026-09-09__release-v9.3 (ST-27 — DEL-20260910-01: entry #4 updated)
 
 ---
@@ -61,11 +61,11 @@ For rotation procedures, see: `docs/ops/api_key_rotation_policy.md`
 |-------|-------|
 | Key name | Anthropic API Key |
 | Env var | `ANTHROPIC_API_KEY` |
-| Purpose | AI thesis generation for trade plans (`POST /trade-plans/{plan_id}/generate-thesis`); calls `claude-haiku-4-5` via Anthropic SDK |
+| Purpose | AI trade-plan generation (`POST /trade-plans/generate-plan`; `generate-thesis` retired v9.14) and the other Claude-backed features; calls `claude-haiku-4-5` via Anthropic SDK |
 | Scope | Full Anthropic API access (platform does not support key-level scope restriction — see `docs/security/anthropic_api_key_scope_review.md`) |
 | Storage location | Render environment variables (production and staging services) |
 | Rotation cadence | Annual minimum (12 months) |
-| Rotation procedure | 1. Generate a new key in Anthropic Console → Settings → API Keys. 2. Update `ANTHROPIC_API_KEY` in the Render staging service's Environment tab → save (triggers redeploy). 3. Verify on staging: `POST /trade-plans/{plan_id}/generate-thesis` returns 200 with the new key. 4. Repeat Steps 2–3 for the Render production service. 5. Revoke the old key in Anthropic Console only after production verification succeeds. 6. Update `Last rotation date` below and commit `[GOVERNANCE] Anthropic API key rotated YYYY-MM-DD`. Emergency rotation (suspected compromise): follow the Emergency Rotation Triggers table in `docs/ops/api_key_rotation_policy.md` — revoke first, within 1 hour of detection. General policy and background: `docs/ops/api_key_rotation_policy.md §Anthropic API Key`. (Runbook added ST-04, BLG-SEC-17, EPIC-01, v8.3 — this key is also referred to as the "Gemini API key" in older backlog items; `gemini_service.py`'s filename is legacy-only, see Notes below — there is no separate Gemini credential in this codebase.) |
+| Rotation procedure | 1. Generate a new key in Anthropic Console → Settings → API Keys. 2. Update `ANTHROPIC_API_KEY` in the Render staging service's Environment tab → save (triggers redeploy). 3. Verify on staging: `POST /trade-plans/generate-plan` (body `{"ticker": "AAPL"}`) returns 200 with `data.available: true` under the new key (`POST /trade-plans/{plan_id}/generate-thesis` was retired in v9.14, ST-22). 4. Repeat Steps 2–3 for the Render production service. 5. Revoke the old key in Anthropic Console only after production verification succeeds. 6. Update `Last rotation date` below and commit `[GOVERNANCE] Anthropic API key rotated YYYY-MM-DD`. Emergency rotation (suspected compromise): follow the Emergency Rotation Triggers table in `docs/ops/api_key_rotation_policy.md` — revoke first, within 1 hour of detection. General policy and background: `docs/ops/api_key_rotation_policy.md §Anthropic API Key`. (Runbook added ST-04, BLG-SEC-17, EPIC-01, v8.3 — this key is also referred to as the "Gemini API key" in older backlog items; `gemini_service.py`'s filename is legacy-only, see Notes below — there is no separate Gemini credential in this codebase.) |
 | Last rotation date | Unknown (first register entry — v4.3, 2026-05-29) |
 | Next rotation due | 2026-08-25 (90 days from first inventory entry in external_api_credential_inventory.md) |
 | Notes | Configured on both production and staging (added to staging 2026-05-29 for QA verification — ST-06). Frontend feature flag uses `REACT_APP_ANTHROPIC_API_KEY=true` (build-time env var, set in Render frontend service). Legacy service file `backend/services/gemini_service.py` uses this key (filename retained for backward compatibility). Cost audit logging active via `claude_audit_log` table. Monthly threshold alert: $5.00 (`docs/ops/gemini_cost_tracking.md`). |
