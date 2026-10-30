@@ -319,9 +319,13 @@ def _check_briefing_stop_times(parsed: dict, positions: list):
 # appended after the model's text (and after any stop-time notes). Logged and
 # counted; model text is never edited; fails open.
 _TICKER_TOKEN_RE = re.compile(r"(?<![A-Za-z0-9_.&$£])[A-Z][A-Z0-9_]{1,14}(?:\.[A-Z]{1,2})?(?![A-Za-z0-9_&])")
+# ST-16 (BLG-AI-21, v9.14): indicator, earnings, macro and exchange
+# acronyms added; the ruling's list is a minimum ("at least").
 _NON_TICKER_WORDS = frozenset({
     "UK", "US", "USD", "GBP", "GBX", "EXIT", "ENTER", "MONITOR", "HOLD", "ATR", "MA", "ETF", "AI", "UTC",
     "SPY", "FTSE", "RISK", "ON", "OFF", "STOP", "BREACH", "OK", "YTD",
+    "RSI", "MACD", "EMA", "SMA", "VWAP", "EPS", "PE", "IPO", "CEO", "CFO",
+    "GDP", "CPI", "PPI", "PMI", "FOMC", "FED", "ECB", "BOE", "NB", "NYSE", "LSE", "NASDAQ",
 })
 
 
