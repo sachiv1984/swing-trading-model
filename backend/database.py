@@ -2,6 +2,7 @@ import os
 import re
 import logging
 import threading
+import functools
 import psycopg2
 from psycopg2.extras import RealDictCursor
 from contextlib import contextmanager
@@ -16,6 +17,38 @@ from urllib.parse import urlparse, urlencode, urlunparse, parse_qs
 from utils.upstream_call import get_timeout
 
 logger = logging.getLogger(__name__)
+
+
+# ---------------------------------------------------------------------------
+# ST-21 (BLG-BE-166, EPIC-03, v9.14): run an insert path's ensure_* DDL once
+# per process. Each ALTER/CREATE ... IF NOT EXISTS opens a connection and
+# takes an ACCESS EXCLUSIVE lock even when it changes nothing; the insert
+# paths below ran theirs on every write. A decorated function records its
+# first successful run and skips later calls. A failed run is not recorded,
+# so the next call tries again. on_startup's calls go through the same
+# wrapper, so a startup run also covers the first insert.
+# ---------------------------------------------------------------------------
+_ENSURED_ONCE: set = set()
+_ENSURED_ONCE_LOCK = threading.Lock()
+
+
+def ensure_once(fn):
+    @functools.wraps(fn)
+    def wrapper(*args, **kwargs):
+        if fn.__name__ in _ENSURED_ONCE:
+            return None
+        with _ENSURED_ONCE_LOCK:
+            if fn.__name__ in _ENSURED_ONCE:
+                return None
+            result = fn(*args, **kwargs)
+            _ENSURED_ONCE.add(fn.__name__)
+            return result
+    return wrapper
+
+
+def reset_ensure_once() -> None:
+    """Forget every recorded ensure_* run (tests; not called in production)."""
+    _ENSURED_ONCE.clear()
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 
@@ -997,6 +1030,7 @@ def get_latest_snapshot(portfolio_id: str) -> Optional[Dict]:
 # entry for this table and the Metrics Definitions & Analytics Owner's
 # scope decision recorded in execution_state.json for this story.
 
+@ensure_once
 def ensure_sector_regime_history_table() -> None:
     """Create sector_regime_history table if it does not yet exist (idempotent)."""
     with get_db() as conn:
@@ -2065,6 +2099,7 @@ def ensure_setup_type_column():
         conn.commit()
 
 
+@ensure_once
 def ensure_triggered_by_price_alert_id_column():
     """Add triggered_by_price_alert_id UUID to trade_plans table (idempotent).
 
@@ -2282,6 +2317,7 @@ def ensure_trade_history_fill_price_column():
         conn.commit()
 
 
+@ensure_once
 def ensure_planned_entry_price_column():
     """Add planned_entry_price to trade_history (idempotent).
 
@@ -2422,6 +2458,7 @@ _VALID_EVENT_TYPES = frozenset({
 })
 
 
+@ensure_once
 def ensure_red_flag_events_table() -> None:
     with get_db() as conn:
         with conn.cursor() as cur:
@@ -2470,6 +2507,7 @@ def ensure_red_flag_events_severity_column() -> None:
         conn.commit()
 
 
+@ensure_once
 def ensure_pre_entry_validation_log_table() -> None:
     """Create pre_entry_validation_log table for ST-01 arc5-compliance metrics."""
     with get_db() as conn:
@@ -2516,6 +2554,7 @@ def log_pre_entry_validation_results(
         pass  # fire-and-forget — never block the validation response
 
 
+@ensure_once
 def ensure_trailing_stop_recommendation_log_table() -> None:
     """Create trailing_stop_recommendation_log table (ST-07, BLG-BE-50, v7.0).
 
@@ -2638,6 +2677,7 @@ def get_red_flag_events(
     return {"total": total, "page": page, "page_size": page_size, "items": items}
 
 
+@ensure_once
 def ensure_gemini_audit_log_table() -> None:
     """Create gemini_audit_log table for ST-07 AI compliance audit trail."""
     with get_db() as conn:
@@ -2763,6 +2803,7 @@ def get_daily_ai_cost(day: Optional[str] = None) -> dict:
 # claude_audit_log — immutable audit trail for Claude API calls
 # ---------------------------------------------------------------------------
 
+@ensure_once
 def ensure_claude_audit_log_table() -> None:
     """Create claude_audit_log table if it does not exist."""
     with get_db() as conn:
@@ -2782,6 +2823,7 @@ def ensure_claude_audit_log_table() -> None:
         conn.commit()
 
 
+@ensure_once
 def ensure_claude_audit_log_compliance_check_column() -> None:
     """Add compliance_check_result to claude_audit_log (idempotent).
 
@@ -2800,6 +2842,7 @@ def ensure_claude_audit_log_compliance_check_column() -> None:
         conn.commit()
 
 
+@ensure_once
 def ensure_claude_audit_log_latency_column() -> None:
     """Add latency_ms to claude_audit_log (idempotent). ST-13 (BLG-OPS-161,
     EPIC-02, v9.5): claude_audit_log previously carried no latency column,
@@ -2816,6 +2859,7 @@ def ensure_claude_audit_log_latency_column() -> None:
         conn.commit()
 
 
+@ensure_once
 def ensure_claude_audit_log_prompt_hash_columns() -> None:
     """Add prompt_hash and response_length to claude_audit_log (idempotent).
     ST-06 (BLG-AI-08, EPIC-01, v9.11, DS-27): AI governance policy requires a
@@ -2906,6 +2950,7 @@ def create_claude_audit_entry(
 # writer) vs. its callers (which decide whether to call it at all).
 # ---------------------------------------------------------------------------
 
+@ensure_once
 def ensure_ai_output_boundary_samples_table() -> None:
     """Create ai_output_boundary_samples table if it does not exist (ST-23)."""
     with get_db() as conn:
@@ -3574,6 +3619,7 @@ def query_claude_audit_log(
 # immutably logged to claude_audit_log per §13 review Condition 5/9).
 # ---------------------------------------------------------------------------
 
+@ensure_once
 def ensure_trade_debriefs_table() -> None:
     """Create trade_debriefs table if it does not exist (idempotent).
 
@@ -3662,6 +3708,7 @@ def get_trade_debrief_by_trade_id(trade_history_id: str) -> Optional[Dict]:
 # the narrative never enters the financial record).
 # ---------------------------------------------------------------------------
 
+@ensure_once
 def ensure_monthly_pnl_narratives_table() -> None:
     """Create monthly_pnl_narratives if it does not exist (idempotent).
 
@@ -3789,6 +3836,7 @@ def count_monthly_pnl_narrative_generations(date_from=None, date_to=None) -> Dic
 CHAT_ANSWER_RATINGS = ("useful", "not_useful")
 
 
+@ensure_once
 def ensure_fx_rate_last_good_table() -> None:
     """DS-37 Up Migration, idempotent. One row per currency pair: the last
     successfully fetched rate and when it was fetched (ST-04, BLG-BE-194)."""
@@ -3835,6 +3883,7 @@ def get_last_good_fx_rate(pair: str) -> Optional[Dict]:
     return {"rate": float(row["rate"]), "fetched_at": row["fetched_at"]}
 
 
+@ensure_once
 def ensure_chat_answer_ratings_table() -> None:
     """DS-35 Up Migration, idempotent. One row per rated chat answer."""
     ensure_claude_audit_log_table()
@@ -3962,6 +4011,7 @@ def count_claude_audit_entries_today(endpoint: str) -> int:
 # claude_audit_log above, which also carries no user/actor field).
 # ---------------------------------------------------------------------------
 
+@ensure_once
 def ensure_position_audit_log_table() -> None:
     """Create position_audit_log table if it does not exist."""
     with get_db() as conn:
@@ -4025,6 +4075,7 @@ def create_position_audit_log_entry(
 # product), same fail-open non-blocking write convention.
 # ---------------------------------------------------------------------------
 
+@ensure_once
 def ensure_position_state_history_table() -> None:
     """Create position_state_history table if it does not exist."""
     with get_db() as conn:
@@ -4082,6 +4133,7 @@ def create_position_state_history_entry(
 # (single-user product), same fail-open non-blocking write convention.
 # ---------------------------------------------------------------------------
 
+@ensure_once
 def ensure_trade_plan_audit_log_table() -> None:
     """Create trade_plan_audit_log table if it does not exist."""
     with get_db() as conn:
@@ -4202,6 +4254,7 @@ def get_claude_spend_between(start_date: str, end_date: str | None = None) -> fl
 # DS-07 — SI-02 SCHEMA ADDITIONS (v4.6 ST-01)
 # ============================================================================
 
+@ensure_once
 def ensure_si02_trade_plans_columns():
     """Add 5 SI-02 nullable columns + P1 index to trade_plans (idempotent).
 
@@ -4237,6 +4290,7 @@ def ensure_si02_trade_plans_columns():
         conn.commit()
 
 
+@ensure_once
 def ensure_strategy_version_at_entry_columns():
     """Add strategy_version_at_entry VARCHAR(10) to trade_plans and positions (idempotent).
 
@@ -5218,6 +5272,7 @@ def get_actual_stats_for_benchmark(
 # IDEMPOTENCY KEYS (ST-03, EPIC-01, v7.10, BLG-BE-76)
 # ============================================================================
 
+@ensure_once
 def ensure_idempotency_keys_table() -> None:
     """Create idempotency_keys table if it does not exist (idempotent).
 
@@ -5291,6 +5346,7 @@ def create_idempotency_record(portfolio_id: str, endpoint: str, idempotency_key:
 # generated in-app, on demand, per candidate parameter set.
 # ---------------------------------------------------------------------------
 
+@ensure_once
 def ensure_backtest_rule_run_tables():
     """Create backtest_rule_runs table (idempotent)."""
     with get_db() as conn:
@@ -6181,6 +6237,7 @@ def get_arc5_composite_for_range(start_date, end_date, conn=None) -> float:
 # of "what would this alert say," with no client involvement at all.
 # ---------------------------------------------------------------------------
 
+@ensure_once
 def ensure_scheduled_alert_dedup_table() -> None:
     """Create scheduled_alert_dedup table if it does not exist (idempotent)."""
     with get_db() as conn:
