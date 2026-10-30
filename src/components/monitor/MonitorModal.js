@@ -5,12 +5,12 @@ import { CheckCircle2, XCircle, Loader2, AlertTriangle } from "lucide-react";
 import StatusBadge from "../ui/StatusBadge";
 import { cn } from "../../lib/utils";
 import { formatCurrency, currencyForMarket } from "../../lib/format";
+import { getExitCondition } from "../../lib/exitCondition";
 
 export default function MonitorModal({ 
   open, 
   onClose, 
   positions, 
-  marketRegimes, 
   isLoading,
   onConfirmExits,
   restoreSelection = null
@@ -23,14 +23,18 @@ export default function MonitorModal({
     if (open && restoreSelection) setSelectedExits(restoreSelection);
   }, [open, restoreSelection]);
 
+  // ST-11 (BLG-FE-231, v9.14): suggestions follow the shared §8 predicate, so
+  // risk-off (the position's risk_off_exit flag) takes precedence and a stop is
+  // suggested only after grace (positions.md §Monitor Suggestions).
   const getPositionStatus = (position) => {
-    const regime = marketRegimes?.find(r => r.market === position.market);
-    const isMarketRiskOff = regime?.status === "risk_off";
-    const isStopHit = position.current_price && position.stop_price && 
-                      position.current_price <= position.stop_price;
-    
-    if (isStopHit) return { status: "exit", reason: "Stop price hit" };
-    if (isMarketRiskOff) return { status: "exit", reason: "Market risk off" };
+    const { riskOff, stopBreach } = getExitCondition(position);
+    if (riskOff) return { status: "exit", reason: "Market risk off" };
+    if (stopBreach) return { status: "exit", reason: "Stop price hit" };
+    const stop = Number(position.current_trailing_stop);
+    const price = Number(position.current_price);
+    if (position.grace_period === true && stop > 0 && price > 0 && price <= stop) {
+      return { status: "hold", reason: "In grace: stop not enforced" };
+    }
     return { status: "hold", reason: "Position OK" };
   };
 
@@ -89,6 +93,9 @@ export default function MonitorModal({
                 return (
                   <div
                     key={position.id}
+                    data-testid="monitor-row"
+                    data-ticker={position.ticker}
+                    data-suggestion={status}
                     onClick={() => isExitSuggested && toggleExit(position.id)}
                     className={cn(
                       "p-4 rounded-xl border transition-all",

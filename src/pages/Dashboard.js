@@ -42,7 +42,7 @@ function monitorPreselect(position, reason) {
   if (reason === "Stop price hit") {
     return {
       reason: EXIT_REASON_STOP,
-      note: "Pre-selected from the Daily Position Monitor: the price is at or below the stop.",
+      note: "Pre-selected from the Daily Position Monitor: the price is at or below the trailing stop and the grace period has ended.",
     };
   }
   if (reason === "Market risk off") {
@@ -659,7 +659,6 @@ export default function Dashboard() {
           setMonitorRestoreSelection(null);
         }}
         positions={openPositions}
-        marketRegimes={marketRegimes}
         isLoading={loadingPositions}
         onConfirmExits={handleExitPositions}
         restoreSelection={monitorRestoreSelection}
