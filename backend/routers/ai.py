@@ -139,10 +139,11 @@ def journal_summary_history(
 @router.post("/check-daily-cost")
 def check_daily_cost():
     """
-    Check today's Claude API spend (claude_audit_log) against the configured
-    threshold. Sends Telegram alert if threshold exceeded, at most once per day.
-    Called every 6 hours by .github/workflows/ai-daily-cost-check.yml
-    (ST-06, BLG-OPS-183, v9.12).
+    Check the previous UTC day's final Claude API spend, then today's
+    (claude_audit_log), against the configured threshold. Sends a Telegram
+    alert for each day over it, at most once per day (previous day: ST-41,
+    BLG-OPS-186, v9.14). Called every 6 hours by
+    .github/workflows/ai-daily-cost-check.yml (ST-06, BLG-OPS-183, v9.12).
 
     A failed cost query returns 503 with status "error" so the workflow's
     curl -f step fails (ST-28, BLG-OPS-187, v9.13).

@@ -2719,8 +2719,14 @@ def purge_gemini_audit_log_older_than_90_days() -> int:
         return 0
 
 
-def get_daily_ai_cost() -> dict:
-    """Return today's Claude API spend total from claude_audit_log.
+def get_daily_ai_cost(day: Optional[str] = None) -> dict:
+    """Return one UTC day's Claude API spend total from claude_audit_log.
+
+    ST-41 (BLG-OPS-186, EPIC-06, v9.14): `day` is an ISO date (YYYY-MM-DD)
+    and the sum covers that UTC day only, [day 00:00 UTC, next day 00:00 UTC).
+    None means today (UTC). The daily check passes yesterday too, so spend
+    after the day's last scheduled run is still compared with its own day's
+    threshold.
 
     ST-06 (BLG-OPS-183, EPIC-01, v9.12): this read gemini_audit_log, which only
     plan and thesis generation write, so briefing, chat, journal summary,
@@ -2733,6 +2739,8 @@ def get_daily_ai_cost() -> dict:
     returning a $0 total, so the caller reports an error rather than "no
     spend today".
     """
+    if day is None:
+        day = datetime.now(timezone.utc).date().isoformat()
     ensure_claude_audit_log_table()
     with get_db() as conn:
         with conn.cursor() as cur:
@@ -2741,8 +2749,9 @@ def get_daily_ai_cost() -> dict:
                     COALESCE(SUM(cost_usd), 0.0) AS total_cost,
                     COUNT(*) AS request_count
                 FROM claude_audit_log
-                WHERE generated_at >= CURRENT_DATE
-            """)
+                WHERE generated_at >= (%s::date)::timestamp AT TIME ZONE 'UTC'
+                  AND generated_at < ((%s::date) + 1)::timestamp AT TIME ZONE 'UTC'
+            """, (day, day))
             row = cur.fetchone()
             return {
                 "total_cost_usd": float(row["total_cost"]),

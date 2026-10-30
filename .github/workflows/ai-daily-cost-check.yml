@@ -17,6 +17,10 @@
 # step and prints the error body, and the last step sends a Telegram message
 # whenever any earlier step fails (missing secrets, unreachable API, 503).
 # GitHub's default failure email alone was easy to miss.
+#
+# ST-41 (BLG-OPS-186, EPIC-06, v9.14): each run also checks the previous UTC
+# day's final total, so spend after 18:15 (the day's last run) is still
+# compared with its own day's threshold, at the next day's first run.
 name: AI Daily Cost Check
 
 on:

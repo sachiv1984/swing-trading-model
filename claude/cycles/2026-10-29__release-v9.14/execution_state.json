@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-29T14:51:40Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-30T09:27:00Z",
+  "last_updated_utc": "2026-10-30T09:31:38Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-02",
@@ -444,6 +444,127 @@
       },
       "merged_utc": "2026-10-30T09:25:25Z",
       "merge_commit": "0e3960cc"
+    },
+    "EPIC-06": {
+      "status": "in_progress",
+      "branch": "exec/2026-10-29__release-v9.14/EPIC-06",
+      "pr_number": null,
+      "pr_status": null,
+      "qa_signed_off": false,
+      "qa_evidence_log": "claude/cycles/2026-10-29__release-v9.14/qa_evidence_EPIC-06.md",
+      "test_scenarios": [],
+      "stories": {
+        "ST-38": {
+          "title": "Arc 2 compute cost review",
+          "classification": "autonomous",
+          "status": "not_started",
+          "github_issue": 2115,
+          "branch": "exec/2026-10-29__release-v9.14/EPIC-06",
+          "spec_references": [
+            "docs/ops/data_pipeline_cost_baseline.md"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": false,
+          "acceptance_verified": false,
+          "commit_sha": null,
+          "completed_utc": null,
+          "last_completed_substep": null,
+          "blocked_since_utc": null
+        },
+        "ST-39": {
+          "title": "Compute cost trending by feature area",
+          "classification": "delegated_backend",
+          "status": "not_started",
+          "github_issue": 2116,
+          "branch": "exec/2026-10-29__release-v9.14/EPIC-06",
+          "spec_references": [],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": false,
+          "acceptance_verified": false,
+          "commit_sha": null,
+          "completed_utc": null,
+          "last_completed_substep": null,
+          "blocked_since_utc": null,
+          "assigned_to": "engine (report method and structure); FinOps & Resource Architect (production cost data, Human-Delegation RISK-01)",
+          "unblock_criteria": "AC 2 seal-marked post-merge, tracked by BLG-OPS-201: report populated for one complete month of production data."
+        },
+        "ST-40": {
+          "title": "CI pipeline runtime audit",
+          "classification": "autonomous",
+          "status": "not_started",
+          "github_issue": 2117,
+          "branch": "exec/2026-10-29__release-v9.14/EPIC-06",
+          "spec_references": [],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": false,
+          "acceptance_verified": false,
+          "commit_sha": null,
+          "completed_utc": null,
+          "last_completed_substep": null,
+          "blocked_since_utc": null
+        },
+        "ST-41": {
+          "title": "Daily AI cost check covers the last hours of the day",
+          "classification": "autonomous",
+          "status": "not_started",
+          "github_issue": 2118,
+          "branch": "exec/2026-10-29__release-v9.14/EPIC-06",
+          "spec_references": [
+            "docs/specs/api_contracts/ai_endpoints.md#POST /ai/check-daily-cost"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": false,
+          "acceptance_verified": false,
+          "commit_sha": null,
+          "completed_utc": null,
+          "last_completed_substep": null,
+          "blocked_since_utc": null
+        },
+        "ST-42": {
+          "title": "Make ci-usage-report.yml's monthly commit succeed",
+          "classification": "delegated_backend",
+          "status": "not_started",
+          "github_issue": 2119,
+          "branch": "exec/2026-10-29__release-v9.14/EPIC-06",
+          "spec_references": [
+            ".github/workflows/ci-usage-report.yml"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": false,
+          "acceptance_verified": false,
+          "commit_sha": null,
+          "completed_utc": null,
+          "last_completed_substep": null,
+          "blocked_since_utc": null,
+          "assigned_to": "engine (workflow fix); Infrastructure & Operations Owner (workflow_dispatch run on main, possible branch-rule bypass, RISK-01)",
+          "unblock_criteria": "ACs 1 and 2 seal-marked post-merge, tracked by BLG-OPS-202: a run on main succeeds and docs/ops/ci_usage_reports/2026-09.md exists."
+        },
+        "ST-43": {
+          "title": "Per-environment CORS allow-list",
+          "classification": "delegated_backend",
+          "status": "not_started",
+          "github_issue": 2120,
+          "branch": "exec/2026-10-29__release-v9.14/EPIC-06",
+          "spec_references": [
+            "backend/config.py"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": false,
+          "acceptance_verified": false,
+          "commit_sha": null,
+          "completed_utc": null,
+          "last_completed_substep": null,
+          "blocked_since_utc": null,
+          "assigned_to": "engine (code and test); Infrastructure & Operations Owner (Render per-environment variable, Human-Delegation RISK-01)",
+          "unblock_criteria": "AC 2 seal-marked post-merge, tracked by BLG-SEC-44: staging and production preflight checks recorded on the deployed services."
+        }
+      }
     }
   },
   "blocked_items": [],

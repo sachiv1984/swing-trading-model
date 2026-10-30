@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Class 2
 **Status:** Canonical
-**Version:** 1.28.2
-**Last Updated:** 2026-10-30 (ST-10, EPIC-02, v9.14, BLG-BE-188 — v9.14.0 entry: POST /positions/{position_id}/exit returns its documented 404 and 400); prior — 2026-10-30 (ST-09, EPIC-02, v9.14, BLG-BE-190 — v9.14.0 entry: POST /portfolio/size divides the US stop distance by FX); prior — 2026-10-29 (ST-07, EPIC-01, v9.14, BLG-BE-168 — v9.14.0 entry: GET /positions gains price_is_stale); prior history retained — see prior entries in version control
+**Version:** 1.28.3
+**Last Updated:** 2026-10-30 (ST-41, EPIC-06, v9.14, BLG-OPS-186 — v9.14.0 entry: POST /ai/check-daily-cost also checks the previous UTC day); prior — 2026-10-30 (ST-10, EPIC-02, v9.14, BLG-BE-188 — v9.14.0 entry: POST /positions/{position_id}/exit returns its documented 404 and 400); prior — 2026-10-30 (ST-09, EPIC-02, v9.14, BLG-BE-190 — v9.14.0 entry: POST /portfolio/size divides the US stop distance by FX); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 # API Changelog
@@ -112,6 +112,15 @@ Rules:
 | Change | Details |
 |--------|---------|
 | Updated endpoint: POST /positions/{position_id}/exit | Each service validation error returns its documented status with a `detail` string: `404` for a missing position or portfolio, `400` for a closed position, a non-positive price, negative or excess shares, or a US exit without `exit_fx_rate`. They were all `500` before (BLG-BE-188). |
+
+### ai_endpoints.md — v1.33 (UPDATED)
+
+**EPIC:** EPIC-06
+**ST:** ST-41
+
+| Change | Details |
+|--------|---------|
+| Updated endpoint: POST /ai/check-daily-cost | Also checks the previous UTC day's final total against the threshold, before today's, so spend after the day's last scheduled run alerts for its own day. The 200 response gains `previous_day` (BLG-OPS-186). |
 
 ## v9.13.0 (2026-10-16 — Release v9.13)
 
