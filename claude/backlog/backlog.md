@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-30 (Sprint Execution, EPIC-03 of 2026-10-29__release-v9.14 — 2 new item(s) added: BLG-BE-200, BLG-AI-23); prior — 2026-10-30 (post-merge, EPIC-06 of 2026-10-29__release-v9.14 — BLG-OPS-202 resolved; no new item added); prior — 2026-10-30 (post-merge, EPIC-06 of 2026-10-29__release-v9.14 — BLG-SEC-44 resolved; 1 new item added: BLG-SEC-45); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-30 (Sprint Execution, EPIC-03 of 2026-10-29__release-v9.14, DoQ review — 2 new item(s) added: BLG-AI-24, BLG-SPEC-211); prior — 2026-10-30 (Sprint Execution, EPIC-03 of 2026-10-29__release-v9.14 — 2 new item(s) added: BLG-BE-200, BLG-AI-23); prior — 2026-10-30 (post-merge, EPIC-06 of 2026-10-29__release-v9.14 — BLG-OPS-202 resolved; no new item added); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -4179,6 +4179,28 @@ ST-16 added 22 indicator, earnings, macro and exchange acronyms to `_NON_TICKER_
 
 ---
 
+### BLG-AI-24 — Journal summary advisory check: remaining false positives and misses
+**Priority:** P3 (Low)
+**Type:** AI Compliance / Correctness
+**Owner:** AI Compliance & Governance Officer; Backend Engineering Patterns Owner
+**Source:** Agent-mediated Director of Quality review of EPIC-03 (cycle `2026-10-29__release-v9.14`, ST-15 / BLG-AI-20), finding 3 — 2026-10-30
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+ST-15 added five advisory forms (ruling `ESC-EXEC-20261030-02`) to `journal_summary_language_failures()`. The DoQ review's probe found descriptive false positives: "Stops can be moved only upward under the system." (a statement of the system's own rule, via the passive form's "can") and reported speech ("The trader wrote that a review of setups is warranted."). Negation and gaps crossing ";" were fixed in-sprint (`9322b502`). It also found advisory sentences that still pass: "Consider a tighter stop.", "Perhaps revisit stop placement.", "It could help to tighten stops.", "Think about tightening stops.", "Your sizing is worth a second look." and "Stops would benefit from tightening.". A false positive fails safe (one regeneration, then the fallback) but costs a call and hides a legitimate summary.
+
+**Scope**
+- Ask the AI Compliance & Governance Officer whether to drop "can" from the passive form, exclude reported speech, and add the missed forms (each is a change to the ruling's forms)
+- Implement the ruled forms; add the sentences above as positive or negative cases; update `ai_s13_boundary_test_suite.md` B-JS-04
+
+**Acceptance Criteria**
+- The ruling is recorded before the code change
+- Each sentence above has the result the ruling assigns it, in a test
+- Every ST-15 and v9.13 ST-18 case keeps its result
+
+---
+
 ### BLG-OPS-186 — Daily AI cost check: close the last-hours-of-day blind spot
 **Priority:** P3 (Low)
 **Type:** Operations / Monitoring
@@ -6075,6 +6097,28 @@ ST-03 made an unmeasured market regime `unknown` (`strategy_rules.md` v1.20). Th
 **Acceptance Criteria**
 - Each of the three contracts documents the unknown case, with `openapi.yaml` matching
 - Neither page spec mentions "last known" or "risk-on with a warning" as a live behaviour
+
+---
+
+### BLG-SPEC-211 — Remove the retired generate-thesis endpoint from live documents
+**Priority:** P3 (Low)
+**Type:** Spec Debt
+**Owner:** API Contracts & Documentation Owner; AI Compliance & Governance Officer; Metrics Definitions & Analytics Canonical Owner
+**Source:** Agent-mediated Director of Quality review of EPIC-03 (cycle `2026-10-29__release-v9.14`, ST-22 / BLG-BE-163), finding 4 — 2026-10-30
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+ST-22 retired `POST /trade-plans/{plan_id}/generate-thesis` (404 since v9.14) and fixed the code, OpenAPI, contracts and the key-rotation runbook. Several live documents still describe it as current. `docs/specs/metrics_definitions.md` (~L1057–1067) defines the thesis adoption rate's denominator on this endpoint, so the metric now stops changing. `docs/specs/api_contracts/ai_endpoints.md` (~L502) and `backend/services/ai_endpoint_anomaly_service.py` (~L35) still say "6 AI-invoking endpoints". `docs/governance/ai_feature_touchpoint_register.md` (~L24), `docs/governance/ai_model_version_pinning_policy.md` (~L39) and `docs/ops/external_api_credential_inventory.md` (~L59) still list it as live.
+
+**Scope**
+- Redefine the thesis adoption rate on `POST /trade-plans/generate-plan` (or retire it), as a metrics decision
+- Update the anomaly check's endpoint list and its contract text to the 5 live AI endpoints; keep historical audit rows readable
+- Mark the endpoint retired in the three registers
+
+**Acceptance Criteria**
+- `grep -rn "generate-thesis"` over `docs/specs`, `docs/governance`, `docs/ops` (excluding dated audit, decision and changelog records) and `backend/` finds only historical references
+- The thesis adoption rate has a live denominator or is marked retired
 
 ---
 

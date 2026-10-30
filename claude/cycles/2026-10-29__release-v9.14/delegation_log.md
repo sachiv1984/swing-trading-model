@@ -68,3 +68,19 @@ Last Updated: 2026-10-30
 - **Unblock criteria:** Seal-marked post-merge ACs 1 and 2, tracked by BLG-OPS-202: a run on `main` succeeds (run ID recorded) and `docs/ops/ci_usage_reports/2026-09.md` exists on `main`.
 - **Commit format required:** the bot's `[GOVERNANCE] Add monthly CI usage report 2026-09` PR, then a `[GOVERNANCE]` record on `main`
 - **Status:** Unblocked — 2026-10-30, after PR #2133 merged (`5e7351af`). `ci-usage-report.yml` run 41082206367 (workflow_dispatch on `main` by the user, `year_month=2026-09`, 2026-10-30T15:36:04Z) succeeded. It committed the report to `ci-usage-report/2026-09` (`2919a2e5`) and warned, as expected, that Actions may not open pull requests. The engine opened PR #2134 from the user's account; all 22 checks passed; the user merged it at 15:50:47Z (merge commit `cc52d408`). `docs/ops/ci_usage_reports/2026-09.md` is on `main`. (a) Sign-off: sign_off_cleared. (b) Commit SHA: `c7e45c17` (ST-42). BLG-OPS-202 resolved. Opening the monthly PR by hand remains until BLG-OPS-210 is decided.
+
+## DEL-20261030-04
+
+- **ST Item:** ST-23 — First live quarterly AI output sample against the §13 boundary
+- **EPIC:** EPIC-03
+- **Classification:** delegated_backend (production data read, Human-Delegation — `sprint_backlog.md` ST-23 Notes, RISK-01; LL-v8.0-P3-01 infra/ops pattern)
+- **Assigned to:** AI Compliance & Governance Officer (with the Infrastructure & Operations Owner)
+- **GitHub Issue:** #2100
+- **Branch:** exec/2026-10-29__release-v9.14/EPIC-03
+- **Delegated at:** 2026-10-30T15:55:23Z
+- **What is needed:** The sandbox `DATABASE_URL` is the staging database, so the engine cannot draw production samples. (1) In the Render dashboard, report whether `AI_OUTPUT_SAMPLING_ENABLED` (and `AI_OUTPUT_SAMPLING_RATE`) are set on the production API; if not, set them, since `ai_output_boundary_samples` only fills while sampling is on. (2) Once at least 10 rows exist, export 10 production rows from `ai_output_boundary_samples` (feature, model_version, created_at, output text), spread across the four §13.5 features where available (daily briefing + chat, Gemini thesis generation, post-trade debrief, monthly P&L narrative), or grant the engine a one-off read-only production query. The engine then runs `scripts/run_ai_output_boundary_sample_audit.py` over them, checks each against §13.2 and its §13.5 roster row, writes the dated audit doc, files each finding, and re-acknowledges `ESC-EXEC-20260910-01`.
+- **Workflow viability (LL-v9.10-P3-01):** Not a workflow dispatch. Render dashboard read and a production database read; no GitHub Actions run is involved.
+- **Spec reference:** `backend/services/ai_output_sampling_service.py`; `scripts/run_ai_output_boundary_sample_audit.py`; `claude/strategy/strategy_rules.md` §13.2, §13.5; `stage4_backlog_slice.md#ST-23`
+- **Unblock criteria:** Seal-marked post-merge AC 1, tracked by BLG-GOV-399: 10 production AI outputs supplied (or a read granted) and reviewed in a dated audit doc. ACs 2 and 3 follow from it. If no sample is available by EPIC-03 sign-off, AC 3 re-defers `ESC-EXEC-20260910-01` with that reason and the story is graded on its in-sprint ACs (LL-v9.13-P3-03).
+- **Commit format required:** `[EPIC-03][ST-23] <description>` on `exec/2026-10-29__release-v9.14/EPIC-03`, or `[GOVERNANCE] <description>` on `main` if EPIC-03 has merged
+- **Status:** Pending — carried to post-merge (BLG-GOV-399). The AI Compliance & Governance Officer (the user, in session, 2026-10-30) chose to carry the sample post-merge and re-deferred `ESC-EXEC-20260910-01` (addendum `109728bf`). The story is graded on its in-sprint ACs (LL-v9.13-P3-03).
