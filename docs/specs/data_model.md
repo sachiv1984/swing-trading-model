@@ -3615,7 +3615,9 @@ SELECT pair, rate, fetched_at FROM fx_rate_last_good;
 Expect 3 rows (`pair`, `rate`, `fetched_at`), none nullable, and, once the app has fetched a live rate, one `GBPUSD` row with a recent `fetched_at`.
 
 **Sign-off:**
-- Data Model & Domain Schema Owner: new, self-contained single-row-per-pair table, reversible, created at runtime by an idempotent ensure-function; no existing table touched, no backfill (no historical rate is stored anywhere to backfill from). Live Confirmation (the Verification query on staging and production after deploy) is tracked separately as a post-merge check.
+- Data Model & Domain Schema Owner: new, self-contained single-row-per-pair table, reversible, created at runtime by an idempotent ensure-function; no existing table touched, no backfill (no historical rate is stored anywhere to backfill from). Live Confirmation recorded below for staging and production, 2026-10-30 (`BLG-OPS-203`).
+- **Live Confirmation — staging:** confirmed 2026-10-30 by the execution session, read-only (`default_transaction_read_only = on`), with the user's permission, after EPIC-01 deployed (merge commit `48eab523`). Columns: `pair` character varying, `rate` numeric, `fetched_at` timestamp with time zone, all `is_nullable = NO`. One row: `GBPUSD`, `1.341000`, `fetched_at` 2026-10-30 08:16:33+00 (about 2 minutes before the query).
+- **Live Confirmation — production:** confirmed 2026-10-30 by the user (acting for the Data Model & Domain Schema Owner), Supabase SQL editor. Columns identical to staging, all `is_nullable = NO`. One row: `GBPUSD`, `1.341000`, `fetched_at` 2026-10-30 08:15:42+00.
 
 ---
 

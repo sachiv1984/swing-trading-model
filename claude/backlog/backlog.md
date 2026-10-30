@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-30 (PR #2131 agent-mediated DoQ/PO review — 2 new item(s) added: BLG-BE-196, BLG-BE-197; no existing item edited); prior — 2026-10-29 (Sprint Execution 2026-10-29__release-v9.14 EPIC-01 DoQ review — 3 new item(s) added: BLG-OPS-204, BLG-SPEC-210, BLG-QA-239; no existing item edited); prior — 2026-10-29 (Sprint Execution 2026-10-29__release-v9.14 EPIC-01 — 2 new item(s) added: BLG-TECH-33, BLG-OPS-203; no existing item edited); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-30 (post-merge, EPIC-01 of 2026-10-29__release-v9.14 — BLG-OPS-203 and BLG-OPS-204 resolved; no new item added); prior — 2026-10-30 (PR #2131 agent-mediated DoQ/PO review — 2 new item(s) added: BLG-BE-196, BLG-BE-197; no existing item edited); prior — 2026-10-29 (Sprint Execution 2026-10-29__release-v9.14 EPIC-01 DoQ review — 3 new item(s) added: BLG-OPS-204, BLG-SPEC-210, BLG-QA-239; no existing item edited); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -6001,6 +6001,8 @@ DS-37 (`data_model.md` v2.66) adds the `fx_rate_last_good` table, created at run
 **Acceptance Criteria**
 - Each environment shows 3 columns (`pair`, `rate`, `fetched_at`), none nullable, and one `GBPUSD` row with a recent `fetched_at`, recorded with the date
 
+**Resolved (2026-10-30, after PR #2131 merged):** DS-37's Verification query was run on staging (by the execution session, read-only, with the user's permission) and on production (by the user, Supabase SQL editor). Both show `pair`, `rate` and `fetched_at`, none nullable, and one `GBPUSD` row at `1.341000`, fetched 2026-10-30 08:16:33+00 (staging) and 08:15:42+00 (production). Recorded as DS-37's Live Confirmation in `data_model.md`.
+
 ---
 
 ### BLG-OPS-204 — Point Render staging back at main and confirm its build from main
@@ -6022,6 +6024,8 @@ ST-01 AC 2 asks for the Render staging frontend to build from `main` with no das
 **Acceptance Criteria**
 - Staging's branch is `main`, recorded with date
 - The staging build of a `main` commit containing `3fbfe5e3` succeeds, with its "Compiled" line and commit recorded in the v9.14 QA evidence for EPIC-01
+
+**Resolved (2026-10-30, after PR #2131 merged):** the user confirmed on 2026-10-30 that `trading-assistant-staging` is pointed back at `main` and builds from it. The staging build's commit and "Compiled" line were not supplied, so they are not recorded in `qa_evidence_EPIC-01.md`.
 
 ---
 
