@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-30 (post-merge, EPIC-01 of 2026-10-29__release-v9.14 — BLG-OPS-200 resolved, BLG-OPS-204 resolution note updated with the staging deploy log; no new item added); prior — 2026-10-30 (post-merge, EPIC-01 of 2026-10-29__release-v9.14 — BLG-OPS-203 and BLG-OPS-204 resolved; no new item added); prior — 2026-10-30 (PR #2131 agent-mediated DoQ/PO review — 2 new item(s) added: BLG-BE-196, BLG-BE-197; no existing item edited); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-30 (post-merge, EPIC-01 of 2026-10-29__release-v9.14 — 1 new item added: BLG-OPS-205; no existing item edited); prior — 2026-10-30 (post-merge, EPIC-01 of 2026-10-29__release-v9.14 — BLG-OPS-200 resolved, BLG-OPS-204 resolution note updated with the staging deploy log; no new item added); prior — 2026-10-30 (post-merge, EPIC-01 of 2026-10-29__release-v9.14 — BLG-OPS-203 and BLG-OPS-204 resolved; no new item added); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -6110,3 +6110,24 @@ ST-03 makes an unmeasured regime `unknown`. The Trade Plan page fills `regime_co
 **Acceptance Criteria**
 - With one market unknown, a measured risk-on to risk-off move in the other market raises the alert on that call
 - An unknown reading on its own still raises no alert and does not move that market's baseline (the existing ST-03 test still passes)
+
+---
+
+### BLG-OPS-205 — Seed staging's UK positions with the .L suffix so they get live prices
+**Priority:** P3 (Low)
+**Type:** Operations / Staging Data
+**Owner:** Infrastructure & Operations Owner; QA & Testing Owner
+**Source:** Staging backend log after PR #2131 (EPIC-01, `2026-10-29__release-v9.14`) merged, supplied by the user — 2026-10-30
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.15
+
+**Problem**
+`scripts/seeds/seed_portfolio_trades.sql` inserts the two open staging positions as `LGEN` and `BARC` with `market = 'UK'`, without the `.L` suffix. The app adds the suffix when it creates a UK position (`position_service.py`, `if market == 'UK' and not ticker.endswith('.L')`). Pricing routes on the suffix (`utils/pricing._is_us_ticker`), so it treats the seeded tickers as US. Alpaca returns 0 bars, Yahoo has no price for the bare symbol, and every staging request shows both positions as stale (log 2026-10-30T08:16:39Z–08:16:52Z). Staging therefore never exercises a live UK price.
+
+**Scope**
+- Change the seed to `LGEN.L` and `BARC.L` (and any other UK ticker the seed scripts insert without the suffix)
+- Correct the two existing staging rows, with the user's permission (staging write)
+
+**Acceptance Criteria**
+- No seed script inserts a `market = 'UK'` ticker without `.L`
+- After a staging reseed or correction, `GET /positions` on staging returns `price_is_stale: false` for both UK positions while Yahoo Finance is reachable
