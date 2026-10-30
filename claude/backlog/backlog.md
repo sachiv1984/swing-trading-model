@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-30 (sprint execution, EPIC-06 ST-38/ST-40 of 2026-10-29__release-v9.14 — 6 new items added: BLG-OPS-206, BLG-QA-241, BLG-QA-242, BLG-OPS-207, BLG-OPS-208, BLG-OPS-209; no existing item edited); prior — 2026-10-30 (post-merge, EPIC-02 of 2026-10-29__release-v9.14 — 1 new item added: BLG-QA-240; no existing item edited); prior — 2026-10-30 (PR #2132 review, EPIC-02 of 2026-10-29__release-v9.14 — 2 new items added: BLG-BE-199, BLG-FE-236; no existing item edited); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-30 (PR #2133 review, EPIC-06 of 2026-10-29__release-v9.14 — 2 new items added: BLG-OPS-210, BLG-QA-243; no existing item edited); prior — 2026-10-30 (sprint execution, EPIC-06 ST-38/ST-40 of 2026-10-29__release-v9.14 — 6 new items added: BLG-OPS-206, BLG-QA-241, BLG-QA-242, BLG-OPS-207, BLG-OPS-208, BLG-OPS-209; no existing item edited); prior — 2026-10-30 (post-merge, EPIC-02 of 2026-10-29__release-v9.14 — 1 new item added: BLG-QA-240; no existing item edited); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -6334,5 +6334,49 @@ The nightly screener batch (`POST /screener/run`) is the largest single compute 
 
 **Acceptance Criteria**
 - Each `POST /screener/run` records its server-side duration and ticker count, and a test covers the recording
+
+---
+
+### BLG-OPS-210 — Choose an automated path for the monthly CI usage report's pull request
+**Priority:** P3 (Low)
+**Type:** Operations / CI
+**Owner:** Infrastructure & Operations Owner; Cybersecurity & Trust Lead
+**Source:** PR #2133 review (EPIC-06, cycle `2026-10-29__release-v9.14`), ST-42 (BLG-OPS-188) — 2026-10-30
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+**Depends on:** BLG-OPS-202 (first run on `main` confirmed)
+
+**Problem**
+After ST-42, `ci-usage-report.yml` commits each month's report to `ci-usage-report/<YYYY-MM>` and tries to open a PR to `main`. This repository does not let GitHub Actions create pull requests (`can_approve_pull_request_reviews: false`), so every month the run only prints a compare link. Even when a PR is opened with `GITHUB_TOKEN`, its required checks do not start until a person closes and reopens it. So each monthly report still needs three manual steps before it reaches `main`, and a missed month goes unnoticed.
+
+**Scope**
+- Decide between: allowing Actions to create PRs (repository setting), a GitHub App or fine-grained token with only `contents` and `pull-requests` on this repository, or keeping the manual step and adding a reminder when a report branch has no PR
+- Record the decision and its security review in `docs/ops/scheduled_workflows_inventory.md`
+- Apply the chosen path to `ci-usage-report.yml` and record the next scheduled run's result
+
+**Acceptance Criteria**
+- The decision and the Cybersecurity & Trust Lead's review of the token or setting are recorded
+- The next scheduled `ci-usage-report.yml` run opens a PR whose required checks start without a manual close and reopen, or the manual path is documented with a reminder that fires when a report branch has no open PR
+
+---
+
+### BLG-QA-243 — Add pytest --durations output to the CI Pytest Suite
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** Director of Quality; Infrastructure & Operations Owner
+**Source:** PR #2133 review (EPIC-06, cycle `2026-10-29__release-v9.14`), ST-40 (CI runtime audit) — 2026-10-30
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+ST-40's AC names pytest `--durations` as the per-test timing source, but no CI workflow runs pytest with `--durations`. The audit (`docs/ops/ci_runtime_audit_2026-10-30.md` §4) therefore estimated per-file time from the gaps between consecutive `-v` result lines. Those gaps put fixture setup and teardown time on the next test, and the audit cross-checked them with one local `--durations` run. The next audit, and any check that BLG-QA-242 saved time, should be able to read the slowest tests straight from CI logs.
+
+**Scope**
+- Add `--durations=25` (or similar) to the CI Pytest Suite's pytest invocations
+- Note the change in `docs/ops/ci_pipeline_baseline.md`
+
+**Acceptance Criteria**
+- A CI Pytest Suite run on `main` prints the slowest 25 tests with their setup, call and teardown times
+- `ci_pipeline_baseline.md` says where to read per-test timing
 
 ---
