@@ -285,7 +285,7 @@
       "branch": "exec/2026-10-29__release-v9.14/EPIC-02",
       "pr_number": null,
       "pr_status": null,
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-10-29__release-v9.14/qa_evidence_EPIC-02.md",
       "test_scenarios": [
         "tests/test_sizing_fx_and_cash.py",
@@ -431,8 +431,16 @@
           "commit_sha": "f62bda83b7ef346ef1a1b883fec736994be336cd",
           "completed_utc": "2026-10-30T08:58:14Z",
           "last_completed_substep": "3.1.A.10a",
-          "notes": "AC1 option (a): shared src/lib/reviewCadence.js suppresses the flag for stored GRACE with grace_days_remaining <= 2 or null with holding_days >= 10; used by Positions.js and PositionCard.js. AC2: SC-RCN-09 (table and grid, no amber; fails on old predicate) and SC-RCN-10 (LOSING flagged). ci_pending: Playwright E2E 41030029516, CI Pytest 41030029440. Deviation check: none."
+          "notes": "AC1 option (a): shared src/lib/reviewCadence.js suppresses the flag for stored GRACE with grace_days_remaining <= 2 or null with holding_days >= 10; used by Positions.js and PositionCard.js. AC2: SC-RCN-09 (table and grid, no amber; fails on old predicate) and SC-RCN-10 (LOSING flagged). CI on f62bda83: Playwright E2E 41030029516 success, CI Pytest 41030029440 success, all workflows success. Deviation check: none."
         }
+      },
+      "sign_off_record": {
+        "role": "Director of Quality",
+        "status": "cleared",
+        "method": "agent_mediated",
+        "date": "2026-10-30",
+        "reference": "qa_evidence_EPIC-02.md Standard Sign-Off Block",
+        "notes": "First pass Approved, 4 non-blocking findings (3 fixed, 1 observation)."
       }
     }
   },
