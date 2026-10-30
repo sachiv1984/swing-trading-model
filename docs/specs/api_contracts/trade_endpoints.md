@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 2.6.1
-**Last Updated:** 2026-10-08 (ST-09, EPIC-01, v9.11, BLG-BE-142 — model IDs pinned in backend/ai_models.py; examples show the pinned Haiku 4.5 snapshot claude-haiku-4-5-20251001); prior — 2026-10-08 (ST-01, EPIC-01, v9.11, BLG-BE-152 — debrief `summary_text` states R achieved vs target and the stop at exit; focus-area prompt receives code-derived figures; `prompt_version` v1.1); prior — 2026-09-29 (ST-21, EPIC-05, v9.8, BLG-API-05 — added a 401 error example to GET /trades); prior history retained — see prior entries in version control
+**Version:** 2.6.2
+**Last Updated:** 2026-10-30 (ST-19, EPIC-03, v9.14, BLG-BE-164 — a debrief whose first output fails compliance and whose regeneration raises writes one `model_call_failed` audit row, not two); prior — 2026-10-08 (ST-09, EPIC-01, v9.11, BLG-BE-142 — model IDs pinned in backend/ai_models.py; examples show the pinned Haiku 4.5 snapshot claude-haiku-4-5-20251001); prior — 2026-10-08 (ST-01, EPIC-01, v9.11, BLG-BE-152 — debrief `summary_text` states R achieved vs target and the stop at exit; focus-area prompt receives code-derived figures; `prompt_version` v1.1); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Overview
@@ -478,7 +478,7 @@ Always returns 200 with a debrief — the deterministic `summary_text` is never 
 
 - Idempotent by storage effect — regeneration overwrites the prior debrief row rather than appending (see above), so repeated calls never accumulate duplicate records. `focus_area_text` itself is not byte-identical across calls (fresh LLM generation each time), but this is expected regeneration behaviour, not a double-submit defect.
 
-**§13 Condition 9 (output-side enforcement):** before `focus_area_text` is returned or persisted, the generated text is scanned for prescriptive phrasing (Condition 1) and every numeric token in it is cross-checked against the deterministic source values passed into the prompt (Condition 2). On a failure, generation is retried once; a second failure on the regenerated text is terminal for this call — the debrief is returned with `focus_area_text: null` and `generation_status: "fallback_no_focus_area"`, never with non-compliant text. Every generation call's compliance-check outcome is logged to `claude_audit_log` (Condition 5/9), independent of the debrief response itself.
+**§13 Condition 9 (output-side enforcement):** before `focus_area_text` is returned or persisted, the generated text is scanned for prescriptive phrasing (Condition 1) and every numeric token in it is cross-checked against the deterministic source values passed into the prompt (Condition 2). On a failure, generation is retried once; a second failure on the regenerated text is terminal for this call — the debrief is returned with `focus_area_text: null` and `generation_status: "fallback_no_focus_area"`, never with non-compliant text. Every generation call's compliance-check outcome is logged to `claude_audit_log` (Condition 5/9), independent of the debrief response itself. Each request writes exactly one `claude_audit_log` row: if the regeneration raises after a failed first attempt, that row is `model_call_failed` and carries the first attempt's tokens and cost (ST-19, v9.14, BLG-BE-164; previously a second row with `compliance_check_result` null was also written).
 
 ### Path parameters
 
@@ -503,6 +503,7 @@ Same shape as `GET /trades/{trade_id}/debrief` above.
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.6.2 | 2026-10-30 | ST-19 (EPIC-03, v9.14, BLG-BE-164): `POST /trades/{trade_id}/debrief` writes exactly one `claude_audit_log` row per request. A first output that fails compliance followed by a regeneration that raises now writes a single `model_call_failed` row with the first attempt's tokens and cost, instead of that row plus a second row with `compliance_check_result` null. No response change. |
 | 2.6.1 | 2026-10-08 | ST-09 (EPIC-01, v9.11, BLG-BE-142): Debrief `model_version` example shows the pinned snapshot `claude-haiku-4-5-20251001` (`backend/ai_models.py`). |
 | 2.6.0 | 2026-10-08 | ST-01 (EPIC-01, v9.11, BLG-BE-152): Debrief `summary_text` states R achieved vs target and the stop at exit in plain language; focus-area prompt receives code-derived figures; `prompt_version` v1.1. |
 | 2.5.1 | 2026-08-21 | ST-03 (EPIC-01, v9.0, BLG-BE-108): Clarified "linked journal entries" sourcing for GET/POST /trades/{trade_id}/debrief — draws on both `entry_note`/`exit_note` and Red Flag Journal events, per Product Owner decision resolving `ESC-EXEC-20260821-01`. No request/response schema change — `backend/services/debrief_service.py::_journal_context_for_trade` internal implementation only. |
