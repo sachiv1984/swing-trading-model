@@ -22,12 +22,6 @@
       "prompt_version": "v3.0",
       "sha256": "d2a13f9ef993e24067e0dffe1fd548bbbdef6356b5b1312be66fb99adffb0145"
     },
-    "generate-thesis system (POST /trade-plans/generate-thesis)": {
-      "file": "backend/services/gemini_service.py",
-      "constant": "_THESIS_SYSTEM",
-      "prompt_version": "v3.0",
-      "sha256": "697d0f10653d287b74e790fd13f4aaf34a5ff24c11b956ca5bb1946ab8b18cb1"
-    },
     "debrief focus_area system (POST /trades/{id}/debrief)": {
       "file": "backend/services/debrief_service.py",
       "constant": "_FOCUS_AREA_SYSTEM",

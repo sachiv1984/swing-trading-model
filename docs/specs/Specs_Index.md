@@ -4,7 +4,7 @@
 **Purpose:** Single map of canonical product truth
 **Audience:** Product, Engineering, Analytics, Strategy
 **Status:** Authoritative
-**Last Updated:** 2026-10-29 (post-ship closure 2026-10-16__release-v9.13 — §53 Test Coverage Gaps v9.13 section added, 5 gaps each already tracked by a backlog item, TSG sweep 9 Open checked / 2 resolved; see Changelog)
+**Last Updated:** 2026-10-30 (ST-22, EPIC-03, v9.14, BLG-BE-163 — `gemini_thesis_generation.md` row removed; the file was merged into `ai_thesis_generation.md` and deleted); prior — 2026-10-29 (post-ship closure 2026-10-16__release-v9.13 — §53 Test Coverage Gaps v9.13 section added, 5 gaps each already tracked by a backlog item, TSG sweep 9 Open checked / 2 resolved; see Changelog); prior history retained — see prior entries in version control
 
 ---
 
@@ -399,7 +399,6 @@ Populated by the ST-49 freshness-check remediation (`scripts/check_specs_index_f
 | `docs/specs/api_contracts/behavioural_error_taxonomy_stub.md` | Behavioural Error Taxonomy — Arc 4 PO-03 (Pre-Authoring Stub) | Head of Specs Team | Not applicable — pre-authoring stub, no canonical contract yet |
 | `docs/specs/api_contracts/cash_endpoints.md` | cash_endpoints.md | API Contracts & Documentation Owner | Canonical Specification (Class 1) |
 | `docs/specs/api_contracts/changelog_endpoints.md` | changelog_endpoints.md | API Contracts & Documentation Owner | Canonical Specification (Class 1) |
-| `docs/specs/api_contracts/gemini_thesis_generation.md` | AI Thesis Generation API Contract | API Contracts & Documentation Owner | Canonical Specification (Class 1) |
 | `docs/specs/api_contracts/grace_period_alert_endpoint.md` | Grace Period Alert Endpoint Contract | — | — |
 | `docs/specs/api_contracts/journal_pattern_recognition_stub.md` | Journal Pattern Recognition — Arc 4 PO-02 (Pre-Authoring Stub) | Head of Specs Team | Not applicable — pre-authoring stub, no canonical contract yet |
 | `docs/specs/api_contracts/pre_entry_validation.md` | pre_entry_validation.md | API Contracts & Documentation Owner | Canonical Specification (Class 1) |

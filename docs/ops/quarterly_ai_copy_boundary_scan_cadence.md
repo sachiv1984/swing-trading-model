@@ -1,8 +1,8 @@
 **Owner:** AI Compliance & Governance Officer
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Version:** 1.0
-**Last Updated:** 2026-09-15 (ST-21, EPIC-05, v9.4, BLG-AI-04: initial version)
+**Version:** 1.1
+**Last Updated:** 2026-10-30 (ST-22, EPIC-03, v9.14, BLG-BE-163 — surface 5 cites the surviving contract `docs/specs/api_contracts/ai_thesis_generation.md`; `gemini_thesis_generation.md` deleted); prior — 2026-09-15 (ST-21, EPIC-05, v9.4, BLG-AI-04: initial version); prior history retained — see prior entries in version control
 
 ---
 
@@ -32,7 +32,7 @@ Every feature where model-generated text reaches the user, per the current AI-en
 | 2 | Daily briefing (summary + per-item actions) | `POST /ai/daily-briefing` | `docs/specs/api_contracts/ai_endpoints.md` |
 | 3 | AI chat | `POST /ai/chat` | `docs/specs/api_contracts/ai_endpoints.md` |
 | 4 | Post-trade debrief (`summary_text`, `focus_area_text`) | `POST /trades/{id}/debrief` | `docs/specs/api_contracts/trade_endpoints.md` |
-| 5 | Trade-plan generation (`setup_thesis`, `entry_rationale`, `early_exit_conditions`) | `POST /trade-plans/generate-plan` | `docs/specs/ai_thesis_generation.md`, `docs/specs/gemini_thesis_generation.md` |
+| 5 | Trade-plan generation (`setup_thesis`, `entry_rationale`, `early_exit_conditions`) | `POST /trade-plans/generate-plan` | `docs/specs/api_contracts/ai_thesis_generation.md` (the only thesis-generation contract since v9.14; `gemini_thesis_generation.md` was merged into it and deleted, ST-22, BLG-BE-163) |
 
 **Out of scope:** static UI copy that merely *describes* AI features (button labels, disclosure badges — e.g. the `AdvisoryBadge` component, `design_system.md`) — that copy is human-authored and reviewed under the normal frontend spec/design-gate process, not this scan. In scope here is only text the model itself generates at request time.
 
