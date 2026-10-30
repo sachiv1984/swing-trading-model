@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-29T14:51:40Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-30T10:07:46Z",
+  "last_updated_utc": "2026-10-30T10:08:33Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-02",
@@ -448,8 +448,8 @@
     "EPIC-06": {
       "status": "done",
       "branch": "exec/2026-10-29__release-v9.14/EPIC-06",
-      "pr_number": null,
-      "pr_status": null,
+      "pr_number": 2133,
+      "pr_status": "open",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-10-29__release-v9.14/qa_evidence_EPIC-06.md",
       "test_scenarios": [
@@ -667,6 +667,7 @@
     "2026-10-30: EPIC-02 ST-09 ruling given in-session (ESC-EXEC-20261030-01). ST-12's code fix was pre-met on main (v9.12 cc7774e9); test only. ST-09 api_changelog follow-up c4fbd403. Local Playwright: a stale `serve -s build` from the prior session served build/ on :3000; build/ was rebuilt with the E2E env before local runs (CI unaffected). Filed BLG-BE-198.",
     "2026-10-30: PR #2132 (EPIC-02) merged by the human developer at 2026-10-30T09:25:25Z (merge commit 0e3960cc), after the user-given DoQ QA sign-off and PO acceptance recorded on the PR (head 87800633, 45/45 checks). Orphaned post-merge commit check: none. Step 3c sibling sync: no other EPIC branch exists yet. Filed during PR review: BLG-BE-199, BLG-FE-236.",
     "2026-10-30: merge_gate.epics_pending lists the unmerged EPICs from merge_order (EPIC-06, EPIC-03, EPIC-04, EPIC-07, EPIC-05) with all_merged false. EPICs here are initialised one at a time, and scripts/check_execution_state_consistency.py derives epics_pending from initialised EPICs only, so it expects [] and all_merged true, which would trigger STEP 5 Sprint Close early. The checker's finding on this field is overridden deliberately (EPIC-01's persisted state was flagged the same way). Filed BLG-QA-240.",
-    "2026-10-30: EPIC-06 initialised at STEP 0 (branch exec/2026-10-29__release-v9.14/EPIC-06 cut from main 0e3960cc..df2eae33). ST-39/ST-42/ST-43 are delegated_backend with seal-marked post-merge ACs only (BLG-OPS-201/202, BLG-SEC-44); their in-sprint work is engine-completed and they are done on in-sprint ACs (LL-v9.13-P3-03), DEL-20261030-01/02/03 carried. Delegation log: DEL-20261030-02 and -03 were appended in one write (+2, prior text unchanged), a §7.1 per-append count deviation, disclosed here. Story issues #2115-#2120 still open after push (governance_sync did not close them on the exec branch); re-checked before the PR."
+    "2026-10-30: EPIC-06 initialised at STEP 0 (branch exec/2026-10-29__release-v9.14/EPIC-06 cut from main 0e3960cc..df2eae33). ST-39/ST-42/ST-43 are delegated_backend with seal-marked post-merge ACs only (BLG-OPS-201/202, BLG-SEC-44); their in-sprint work is engine-completed and they are done on in-sprint ACs (LL-v9.13-P3-03), DEL-20261030-01/02/03 carried. Delegation log: DEL-20261030-02 and -03 were appended in one write (+2, prior text unchanged), a §7.1 per-append count deviation, disclosed here. Story issues #2115-#2120 still open after push (governance_sync did not close them on the exec branch); re-checked before the PR.",
+    "2026-10-30: EPIC-06 PR #2133 opened (head after 33af33c7 + sign-off commit). Pre-PR gates: API performance baseline drift PASSED; no foreign-EPIC commits in origin/main..HEAD; qa_evidence committed; signer format agent-mediated §5.3. Story issues #2115-#2120 closed by governance_sync after the later pushes."
   ]
 }
