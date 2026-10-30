@@ -50,8 +50,9 @@ def spec_risk_amount(portfolio_value: float, risk_percent: float) -> float:
 
 
 def spec_raw_shares(risk_amount: float, stop_distance: float, fx_rate: float) -> float:
-    """§4.1.3: RawShares = RiskAmount / (StopDistance × fx_rate)"""
-    return risk_amount / (stop_distance * fx_rate)
+    """§4.1.3: RawShares = RiskAmount × fx_rate / StopDistance (fx_rate is USD per £1;
+    1.0 for UK). ST-09 (BLG-BE-190, v9.14) corrected the inverted US formula."""
+    return risk_amount * fx_rate / stop_distance
 
 
 def spec_suggested_shares(raw_shares: float) -> float:

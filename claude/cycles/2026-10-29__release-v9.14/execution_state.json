@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-29T14:51:40Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-29T17:53:05Z",
+  "last_updated_utc": "2026-10-30T08:26:37Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-02",
@@ -279,6 +279,126 @@
           "notes": "AC1: axe on /risk with a stale row, no serious/critical (SC-SPM-03). AC2: keyboard reach + toHaveAccessibleDescription on /risk and Positions (SC-SPM-02a/02b); tap toggles tooltip. AC3: Positions marker uses the shared StaleMarker with the Positions copy. Card 2 link description (SC-SPM-04). CI on d83893b3: Frontend Production Build FAILURE (import/first in PositionRiskTable.js); fixed in 8f05e704 (import order only). CI cleared: 8f05e704 all 9 green (Playwright 40907524815); DoQ fixes b1e55731 all 9 green (Playwright 40924592679). Deviation check: none. DoQ review fixes in b1e55731 (axe zero violations + /risk h2 headings, touch tap toggle fix)."
         }
       }
+    },
+    "EPIC-02": {
+      "status": "in_progress",
+      "branch": "exec/2026-10-29__release-v9.14/EPIC-02",
+      "pr_number": null,
+      "pr_status": null,
+      "qa_signed_off": false,
+      "qa_evidence_log": null,
+      "test_scenarios": [],
+      "stories": {
+        "ST-09": {
+          "title": "US position sizing divides the stop distance by the GBP/USD rate",
+          "classification": "autonomous",
+          "status": "in_progress",
+          "github_issue": 2086,
+          "branch": "exec/2026-10-29__release-v9.14/EPIC-02",
+          "spec_references": [
+            "claude/strategy/strategy_rules.md#4.1.3 Share calculation (canonical)",
+            "claude/strategy/strategy_rules.md#4.1.5 Currency and FX handling (canonical)",
+            "docs/specs/api_contracts/portfolio_endpoints.md#POST /portfolio/size",
+            "tests/test_sizing_fx_and_cash.py",
+            "tests/test_strategy_invariants_property.py",
+            "tests/test_golden_outputs.py"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": false,
+          "acceptance_verified": false,
+          "commit_sha": null,
+          "completed_utc": null,
+          "last_completed_substep": "3.1.D.unblocked",
+          "blocked_since_utc": null,
+          "delegation_record_id": "ESC-EXEC-20261030-01",
+          "assigned_to": "Strategy Rules & System Intent Owner (ruling); engine (implementation)",
+          "unblock_criteria": "Dated Strategy Rules & System Intent Owner confirmation of the US sizing FX convention (RawShares = RiskAmount x FX / StopDistance, FX = USD per GBP 1) against strategy_rules.md 4.1.2/4.1.5, recorded in ESC-EXEC-20261030-01.",
+          "sign_off_record": {
+            "role": "Strategy Rules & System Intent Owner",
+            "status": "cleared",
+            "method": "human_in_session",
+            "date": "2026-10-30",
+            "reference": "ESC-EXEC-20261030-01",
+            "notes": "FX is USD per GBP 1; RawShares = RiskAmount x FX / StopDistance; state the US formula in 4.1.3."
+          }
+        },
+        "ST-10": {
+          "title": "POST /positions/{id}/exit returns its documented 404 and 400, not 500",
+          "classification": "autonomous",
+          "status": "not_started",
+          "github_issue": 2087,
+          "branch": "exec/2026-10-29__release-v9.14/EPIC-02",
+          "spec_references": [],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": false,
+          "acceptance_verified": false,
+          "commit_sha": null,
+          "completed_utc": null,
+          "last_completed_substep": null
+        },
+        "ST-11": {
+          "title": "Daily Position Monitor stops suggesting \"Stop Loss Hit\" during the grace period",
+          "classification": "autonomous",
+          "status": "not_started",
+          "github_issue": 2088,
+          "branch": "exec/2026-10-29__release-v9.14/EPIC-02",
+          "spec_references": [],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": false,
+          "acceptance_verified": false,
+          "commit_sha": null,
+          "completed_utc": null,
+          "last_completed_substep": null
+        },
+        "ST-12": {
+          "title": "GET /portfolio P&L handles a US position whose fill_price is NULL",
+          "classification": "autonomous",
+          "status": "not_started",
+          "github_issue": 2089,
+          "branch": "exec/2026-10-29__release-v9.14/EPIC-02",
+          "spec_references": [],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": false,
+          "acceptance_verified": false,
+          "commit_sha": null,
+          "completed_utc": null,
+          "last_completed_substep": null
+        },
+        "ST-13": {
+          "title": "Positions data dictionary states that entry_price is stored in GBP",
+          "classification": "autonomous",
+          "status": "not_started",
+          "github_issue": 2090,
+          "branch": "exec/2026-10-29__release-v9.14/EPIC-02",
+          "spec_references": [],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": false,
+          "acceptance_verified": false,
+          "commit_sha": null,
+          "completed_utc": null,
+          "last_completed_substep": null
+        },
+        "ST-14": {
+          "title": "Review-cadence grace suppression and the grace alert agree once grace has ended",
+          "classification": "autonomous",
+          "status": "not_started",
+          "github_issue": 2091,
+          "branch": "exec/2026-10-29__release-v9.14/EPIC-02",
+          "spec_references": [],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": false,
+          "acceptance_verified": false,
+          "commit_sha": null,
+          "completed_utc": null,
+          "last_completed_substep": null
+        }
+      }
     }
   },
   "blocked_items": [],
@@ -299,13 +419,21 @@
       "disposition": "Resolved",
       "raised_utc": "2026-10-29T14:55:56Z",
       "resolved_utc": "2026-10-29T15:00:25Z"
+    },
+    "ESC-EXEC-20261030-01": {
+      "item": "ST-09",
+      "disposition": "Resolved",
+      "raised_utc": "2026-10-30T08:26:37Z",
+      "resolved_utc": "2026-10-30T08:29:17Z"
     }
   },
   "merge_gate": {
     "epics_merged": [
       "EPIC-01"
     ],
-    "epics_pending": [],
+    "epics_pending": [
+      "EPIC-02"
+    ],
     "all_merged": false
   },
   "process_notes": [

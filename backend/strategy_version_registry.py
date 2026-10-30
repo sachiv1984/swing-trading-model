@@ -61,6 +61,10 @@ STRATEGY_VERSION_REGISTRY = [
     # (an unmeasured market fails the entry gate and gets no entry signals, and
     # never triggers the risk-off exit), so registered.
     {"version": "1.20", "effective_date": date(2026, 10, 29)},
+    # ST-09 (BLG-BE-190, EPIC-02, v9.14): §4.1.3 US share formula divides the
+    # stop distance by FX. Behavioural (US suggested shares rise by FX²), so
+    # registered.
+    {"version": "1.21", "effective_date": date(2026, 10, 30)},
 ]
 
 # Change Log versions classified as documentation-only under the 2026-10-06

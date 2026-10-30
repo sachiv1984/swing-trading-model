@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 2.14.0
-**Last Updated:** 2026-10-29 (ST-04/ST-05, EPIC-01, v9.14, BLG-BE-194/BLG-BE-169 — GET /portfolio gains fx_rate_source and fx_rate_as_of; live_fx_rate falls back to the last good rate before the 1.27 constant); prior — 2026-10-17 (ST-06, EPIC-02, v9.13, BLG-BE-180 — POST /portfolio/position rejects a fetched ATR where 5 × ATR ≥ entry_price with 400); prior — 2026-10-13 (ST-18, EPIC-03, v9.12, BLG-FE-203 — POST /portfolio/position rejects a typed atr_value where 5 × ATR ≥ entry_price with 400); prior history retained — see prior entries in version control
+**Version:** 2.14.1
+**Last Updated:** 2026-10-30 (ST-09, EPIC-02, v9.14, BLG-BE-190 — POST /portfolio/size examples recomputed with the corrected US formula `RiskAmount × FX / StopDistance`); prior — 2026-10-29 (ST-04/ST-05, EPIC-01, v9.14, BLG-BE-194/BLG-BE-169 — GET /portfolio gains fx_rate_source and fx_rate_as_of; live_fx_rate falls back to the last good rate before the 1.27 constant); prior — 2026-10-17 (ST-06, EPIC-02, v9.13, BLG-BE-180 — POST /portfolio/position rejects a fetched ATR where 5 × ATR ≥ entry_price with 400); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Overview
@@ -326,17 +326,17 @@ Response uses the standard success envelope from **conventions.md**.
   "status": "ok",
   "data": {
     "valid": true,
-    "suggested_shares": 17.8571,
+    "suggested_shares": 2.4360,
     "risk_amount": 125.00,
     "stop_distance": 70.00,
-    "estimated_cost": 15178.57,
-    "estimated_fees": 0.00,
+    "estimated_cost": 1520.09,
+    "estimated_fees": 2.28,
     "fx_rate_used": 1.3642,
     "cash_sufficient": true,
     "available_cash": 20000.00,
     "concentration_adjusted": false,
     "concentration_reason": null,
-    "heat_impact_percent": 0.80
+    "heat_impact_percent": 1.00
   }
 }
 ```
@@ -348,17 +348,17 @@ Response uses the standard success envelope from **conventions.md**.
   "status": "ok",
   "data": {
     "valid": true,
-    "suggested_shares": 8.9286,
+    "suggested_shares": 1.2180,
     "risk_amount": 125.00,
     "stop_distance": 70.00,
-    "estimated_cost": 7589.29,
-    "estimated_fees": 0.00,
+    "estimated_cost": 760.04,
+    "estimated_fees": 1.14,
     "fx_rate_used": 1.3642,
     "cash_sufficient": true,
     "available_cash": 20000.00,
     "concentration_adjusted": true,
     "concentration_reason": "Reduced 50% — 2 open positions already in Technology (25.0% of portfolio value).",
-    "heat_impact_percent": 0.40
+    "heat_impact_percent": 0.50
   }
 }
 ```
@@ -370,18 +370,18 @@ Response uses the standard success envelope from **conventions.md**.
   "status": "ok",
   "data": {
     "valid": true,
-    "suggested_shares": 17.8571,
+    "suggested_shares": 2.4360,
     "risk_amount": 125.00,
     "stop_distance": 70.00,
-    "estimated_cost": 15178.57,
-    "estimated_fees": 0.00,
+    "estimated_cost": 1520.09,
+    "estimated_fees": 2.28,
     "fx_rate_used": 1.3642,
     "cash_sufficient": false,
-    "available_cash": 8000.00,
-    "max_affordable_shares": 9.3750,
+    "available_cash": 1000.00,
+    "max_affordable_shares": 1.6025,
     "concentration_adjusted": false,
     "concentration_reason": null,
-    "heat_impact_percent": 0.80
+    "heat_impact_percent": 1.00
   }
 }
 ```
@@ -679,6 +679,8 @@ Errors use the standard error envelope from **conventions.md**.
 | 2.11.1 | 2026-10-13 | ST-13 (EPIC-02, v9.12, BLG-BE-149): `display_status` basis stated (native P&L, the same test as `position_state`). The code now reads `pnl_native`, and a US row with a NULL `fill_price` takes its native entry as `entry_price × fx_rate`. The sign is unchanged where `fill_price` is set. No shape change. |
 | 2.12.0 | 2026-10-13 | ST-18 (EPIC-03, v9.12, BLG-FE-203): `POST /portfolio/position` rejects a typed `atr_value` where `5 × atr_value ≥ entry_price` with `400` (the stop would be at or below zero). Matches Trade Entry's inline implausible-ATR error (`position_form.md` v1.9). No shape change. |
 | 2.13.0 | 2026-10-17 | ST-06 (EPIC-02, v9.13, BLG-BE-180): `POST /portfolio/position` rejects a fetched (or fallback) ATR where `5 × ATR ≥ entry_price` with `400` — §5 gives no stop for the entry, nothing is stored. Strategy Rules & System Intent Owner ruling (A), ESC-EXEC-20261017-02. |
+| 2.14.0 | 2026-10-29 | ST-04/ST-05 (EPIC-01, v9.14, BLG-BE-194/BLG-BE-169): `GET /portfolio` gains `fx_rate_source` (`live` / `last_known` / `constant`) and `fx_rate_as_of`. On an FX fetch failure `live_fx_rate` is the last good rate (`data_model.md` DS-37) before the 1.27 constant. |
+| 2.14.1 | 2026-10-30 | ST-09 (EPIC-02, v9.14, BLG-BE-190): `POST /portfolio/size` examples recomputed. `strategy_rules.md` v1.21 §4.1.3 states the US share formula `RiskAmount × FX / StopDistance` (FX is USD per £1); the old examples' 17.8571 shares matched no formula. The three examples now show 2.4360 shares (1.2180 after the 50% concentration reduction, and `max_affordable_shares` 1.6025 against £1,000 cash), with fees and heat impact computed by `size_position()`. No shape change. |
 
 ---
 
@@ -1153,4 +1155,3 @@ No parameters required.
 | Code | Condition |
 |------|-----------|
 | 500 | Database error (returns `{"status": "error", "error": "..."}`) |
-| 2.14.0 | 2026-10-29 | ST-04/ST-05 (EPIC-01, v9.14, BLG-BE-194/BLG-BE-169): `GET /portfolio` gains `fx_rate_source` (`live` / `last_known` / `constant`) and `fx_rate_as_of`. On an FX fetch failure `live_fx_rate` is the last good rate (`data_model.md` DS-37) before the 1.27 constant. |
