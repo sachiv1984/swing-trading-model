@@ -28,7 +28,7 @@ import json
 import re
 import time
 import anthropic
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional
 
 from fastapi import HTTPException
@@ -120,6 +120,15 @@ def _audit_failed_model_call(create_claude_audit_entry, endpoint: str, prompt_ve
         logger.warning("failed-call audit row not written for %s", endpoint, exc_info=True)
 
 
+def _as_utc(ts: datetime) -> datetime:
+    """ST-20 (BLG-BE-165, v9.14): stop_calculated_at is TIMESTAMPTZ and
+    psycopg returns it in the session's timezone. Convert an aware value to
+    UTC; treat a naive value as UTC."""
+    if ts.tzinfo is None:
+        return ts.replace(tzinfo=timezone.utc)
+    return ts.astimezone(timezone.utc)
+
+
 def _stop_recalculated_label(position: dict) -> str:
     """ST-08 (BLG-BE-141, v9.11): when the quoted stop was last recalculated
     (`positions.stop_calculated_at`, DS-22). NULL means the stop has not
@@ -132,7 +141,7 @@ def _stop_recalculated_label(position: dict) -> str:
             ts = datetime.fromisoformat(ts.replace("Z", "+00:00"))
         except ValueError:
             return f"stop last recalculated {ts}"
-    return f"stop last recalculated {ts.strftime('%Y-%m-%d %H:%M')} UTC"
+    return f"stop last recalculated {_as_utc(ts).strftime('%Y-%m-%d %H:%M')} UTC"
 
 
 
@@ -199,7 +208,7 @@ def _stop_time_date(position: dict) -> Optional[str]:
             ts = datetime.fromisoformat(ts.replace("Z", "+00:00"))
         except ValueError:
             return None
-    return ts.strftime("%Y-%m-%d")
+    return _as_utc(ts).strftime("%Y-%m-%d")
 
 
 def _ticker_in(ticker: str, sentence: str) -> bool:
