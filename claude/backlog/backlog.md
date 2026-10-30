@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-30 (post-merge, EPIC-02 of 2026-10-29__release-v9.14 — 1 new item added: BLG-QA-240; no existing item edited); prior — 2026-10-30 (PR #2132 review, EPIC-02 of 2026-10-29__release-v9.14 — 2 new items added: BLG-BE-199, BLG-FE-236; no existing item edited); prior — 2026-10-30 (sprint execution, EPIC-02 ST-13 of 2026-10-29__release-v9.14 — 1 new item added: BLG-BE-198; no existing item edited); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-30 (sprint execution, EPIC-06 ST-38/ST-40 of 2026-10-29__release-v9.14 — 6 new items added: BLG-OPS-206, BLG-QA-241, BLG-QA-242, BLG-OPS-207, BLG-OPS-208, BLG-OPS-209; no existing item edited); prior — 2026-10-30 (post-merge, EPIC-02 of 2026-10-29__release-v9.14 — 1 new item added: BLG-QA-240; no existing item edited); prior — 2026-10-30 (PR #2132 review, EPIC-02 of 2026-10-29__release-v9.14 — 2 new items added: BLG-BE-199, BLG-FE-236; no existing item edited); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -6212,5 +6212,127 @@ Since ST-11 (v9.14), an in-grace position priced at or below its trailing stop i
 **Acceptance Criteria**
 - The check passes for `epics_merged` = EPIC-01, EPIC-02, `epics_pending` = the other five, `all_merged: false`
 - It fails when `epics_pending` is empty while `merge_order` lists an unmerged EPIC
+
+---
+
+### BLG-OPS-206 — Build the E2E React bundle once per Playwright run and share it with the shards
+**Priority:** P3 (Low)
+**Type:** Operations / CI
+**Owner:** Infrastructure & Operations Owner; Head of Engineering
+**Source:** ST-40 (BLG-OPS-105), EPIC-06, cycle `2026-10-29__release-v9.14` — CI runtime audit `docs/ops/ci_runtime_audit_2026-10-30.md` §5 candidate 1 — 2026-10-30
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+Each of `playwright.yml`'s 8 E2E shards runs `CI=false PUBLIC_URL=/ npm run build` through `playwright.config.js`'s `webServer` before its first test. That build took about 45s per shard on 3 recent `main` runs, about 360 runner-seconds per run, and it sits on the critical path of every shard. The bundle is identical across shards.
+
+**Scope**
+- Add one build job that produces the E2E bundle (same `REACT_APP_*` env as `webServer.env`) and uploads it as an artifact
+- Have each shard download it and run only `npx serve -s build -l 3000`; keep the local `npm start` path unchanged
+
+**Acceptance Criteria**
+- The 8 shards no longer run `npm run build`, and the E2E suite still passes in CI
+- The before and after Playwright E2E wall time and runner time are recorded in `docs/ops/ci_runtime_audit_2026-10-30.md` or `ci_pipeline_baseline.md`
+
+---
+
+### BLG-QA-241 — Rebalance the Playwright shards: shard 1 sets the E2E critical path
+**Priority:** P3 (Low)
+**Type:** QA / Test Infrastructure
+**Owner:** QA & Testing Owner; Head of Engineering
+**Source:** ST-40 (BLG-OPS-105), EPIC-06, cycle `2026-10-29__release-v9.14` — CI runtime audit `docs/ops/ci_runtime_audit_2026-10-30.md` §5 candidate 2 — 2026-10-30
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+Playwright shards by file, and shard 1 holds `accessibility-axe-scan.spec.js` (73s), `chart-interactivity.spec.js` (60s) and `arc5-compliance-section.spec.js` (45s). Its summed test time was 385s against 202–338s for the other shards, and its test phase was 131s against a 68–90s mean elsewhere. Shard 1 (224s job) is therefore the critical path of the 235s E2E workflow.
+
+**Scope**
+- Split the two largest shard-1 specs (for example the axe scan's light and dark describe blocks into separate files), or turn on `fullyParallel` if the suite tolerates it
+- Re-measure per-shard test time on 3 `main` runs
+
+**Acceptance Criteria**
+- The slowest shard's test phase is within 20% of the mean shard test phase on 3 `main` runs, recorded with run IDs
+- No spec's scenarios are lost (the scenario count before and after is the same)
+
+---
+
+### BLG-QA-242 — Stub the backoff sleep in the retry tests instead of sleeping for real
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** QA & Testing Owner; Backend Engineering Patterns Owner
+**Source:** ST-40 (BLG-OPS-105), EPIC-06, cycle `2026-10-29__release-v9.14` — CI runtime audit `docs/ops/ci_runtime_audit_2026-10-30.md` §5 candidate 3 — 2026-10-30
+**Effort:** XS (<0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+Pytest Phase B's test phase was 79–89s on 3 recent `main` runs, and about 35s of it is real retry backoff: `test_gemini_claude_retry_backoff.py` (12.0s), `test_upstream_call_helper.py` (7.6s), `test_regime_retry_backoff.py` (6.5s), `test_alpaca_paper_sync_close_positions_backoff.py` (4.0s), `test_alpaca_paper_sync_idempotent_retry.py` (2.5s) and `test_retry_backoff.py` (2.0s). Single tests take exactly 1.5s or 3.0s, the configured backoff.
+
+**Scope**
+- Patch the sleep used by `bounded_upstream_call` and the other backoff helpers in these files (or a shared fixture), keeping assertions on the number of attempts and the delays requested
+
+**Acceptance Criteria**
+- The six files' summed Phase B time falls below 5s on a CI run, with the run ID recorded
+- Each test still asserts the attempt count, and at least one asserts the requested backoff delays
+
+---
+
+### BLG-OPS-207 — Record the production Render invoice each month in the hosting cost trend
+**Priority:** P3 (Low)
+**Type:** Operations / FinOps
+**Owner:** FinOps & Resource Architect; Infrastructure & Operations Owner
+**Source:** ST-38 (BLG-OPS-21), EPIC-06, cycle `2026-10-29__release-v9.14` — Arc 2 compute cost review `docs/ops/arc2_compute_cost_review.md` §6 recommendation 1 — 2026-10-30
+**Effort:** XS (<1h per month)
+**Provisional-Target:** TBD
+
+**Problem**
+The production Render dyno is the only recurring paid line Arc 2 compute runs on, but no dollar figure for it exists in the repository: production is dashboard-managed, and `render_hosting_cost_trend_dashboard_2026-08-21.md` uses an endpoint-count proxy. ST-39's cost-by-feature-area report allocates this charge, so it needs the real figure.
+
+**Scope**
+- Each month, read the Render invoice and append the month, plan and amount to `render_hosting_cost_trend_dashboard_2026-08-21.md` §3
+- Pass the same amount as `--render-monthly-usd` when running `scripts/cost_by_feature_area.py`
+
+**Acceptance Criteria**
+- At least 2 consecutive months of invoiced Render amounts are recorded, each with its date read
+
+---
+
+### BLG-OPS-208 — Re-run the production database storage snapshot quarterly
+**Priority:** P3 (Low)
+**Type:** Operations / Capacity
+**Owner:** Infrastructure & Operations Owner
+**Source:** ST-38 (BLG-OPS-21), EPIC-06, cycle `2026-10-29__release-v9.14` — Arc 2 compute cost review `docs/ops/arc2_compute_cost_review.md` §6 recommendation 2 — 2026-10-30
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+Production runs on Supabase's Free plan (confirmed 2026-07-31), so storage growth, not dollars, is the database's limit. The only size reading is 16 MB on 2026-08-08 (`cloud_infra_spend_by_epic.md`). Since then `api_call_log` records every market-data call (v9.13) and the Arc 2 to Arc 5 tables have grown, with no second reading.
+
+**Scope**
+- Add a quarterly `schedule` to `db-storage-size-snapshot.yml` (it is `workflow_dispatch` only), or a calendar reminder, and run it now
+- Append each reading, with the largest tables, to `cloud_infra_spend_by_epic.md`
+
+**Acceptance Criteria**
+- A second production size reading is recorded with its run ID, and the next quarterly run is scheduled
+
+---
+
+### BLG-OPS-209 — Log the nightly screener run's server-side duration
+**Priority:** P3 (Low)
+**Type:** Operations / Monitoring
+**Owner:** Infrastructure & Operations Owner; Backend Engineering Patterns Owner
+**Source:** ST-38 (BLG-OPS-21), EPIC-06, cycle `2026-10-29__release-v9.14` — Arc 2 compute cost review `docs/ops/arc2_compute_cost_review.md` §6 recommendation 3 — 2026-10-30
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+The nightly screener batch (`POST /screener/run`) is the largest single compute job on the shared Starter dyno, but its only measured duration is the `screener-refresh.yml` workflow's wall time (37s mean, 80s max over 30 runs), which includes runner start-up and caps at the 120s `curl --max-time`. Without a server-side duration and ticker count per run, dyno headroom cannot be tracked as the ticker universe grows.
+
+**Scope**
+- Record each run's start, end, ticker count and market-data call count (for example in the screener run's result row or a structured log line)
+- Add the median and maximum to the cost review when re-run
+
+**Acceptance Criteria**
+- Each `POST /screener/run` records its server-side duration and ticker count, and a test covers the recording
 
 ---
