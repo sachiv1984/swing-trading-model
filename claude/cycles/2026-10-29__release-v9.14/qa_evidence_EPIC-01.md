@@ -36,6 +36,11 @@ Last Updated: 2026-10-29
 
 **Follow-ups filed (out of scope):** BLG-TECH-33 (ESLint 9 flat config crashes on the hoisted react-hooks v4), BLG-OPS-203 (DS-37 live confirmation), BLG-OPS-204 (staging back on `main`), BLG-SPEC-210 (contract and page-spec updates for the unknown state), BLG-QA-239 (signal generation unknown-market test).
 
+**Post-merge confirmations (2026-10-30, after PR #2131 merged at 08:13:03Z, merge commit `48eab523`):** these close ST-01's post-merge items. The grades and sign-off below are unchanged.
+- ST-01 AC 1 (BLG-OPS-200): `deploy.yml` run 41024971887 on `48eab523` succeeded (`build-and-deploy`: success). Production check, by the execution session: https://sachiv1984.github.io/swing-trading-model/ serves `static/js/main.c884033b.js`, which contains EPIC-01 strings ("FX rate not live", "Price stale", `regime-unknown-`).
+- ST-01 AC 2 (BLG-OPS-204): the user pointed `trading-assistant-staging` back at `main` and supplied the deploy log. The build finished 2026-10-30T08:14:29Z with ESLint warnings only (react-hooks/exhaustive-deps, no-unused-vars and similar), "The build folder is ready to be deployed.", then "Your site is live" at 08:14:30Z. `DISABLE_ESLINT_PLUGIN` is no longer set. The log excerpt does not show the commit or the "Compiled with warnings" line. From the timing it is a `main` commit at or after `48eab523`, and every such commit contains `3fbfe5e3`.
+- DS-37 Live Confirmation (BLG-OPS-203): staging and production, recorded in `data_model.md` (commit `6967c8e8`).
+
 **Agent-mediated DoQ review, first pass (2026-10-29): Blocked** — 4 blocking findings (ST-08 axe narrowed; ST-01 AC 2 on the branch not `main`; Card 4 description not on the focusable link; trend strip showing NULL as risk-off) and 6 non-blocking. All addressed in `b1e55731` or graded/filed as above.
 
 **Agent-mediated DoQ review, second pass (2026-10-29): Approved** — all four blockers verified fixed, CI on `b1e55731` all 9 green; four wording fixes applied to this file before signing.

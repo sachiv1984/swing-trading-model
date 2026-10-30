@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-30 (post-merge, EPIC-01 of 2026-10-29__release-v9.14 — BLG-OPS-203 and BLG-OPS-204 resolved; no new item added); prior — 2026-10-30 (PR #2131 agent-mediated DoQ/PO review — 2 new item(s) added: BLG-BE-196, BLG-BE-197; no existing item edited); prior — 2026-10-29 (Sprint Execution 2026-10-29__release-v9.14 EPIC-01 DoQ review — 3 new item(s) added: BLG-OPS-204, BLG-SPEC-210, BLG-QA-239; no existing item edited); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-30 (post-merge, EPIC-01 of 2026-10-29__release-v9.14 — BLG-OPS-200 resolved, BLG-OPS-204 resolution note updated with the staging deploy log; no new item added); prior — 2026-10-30 (post-merge, EPIC-01 of 2026-10-29__release-v9.14 — BLG-OPS-203 and BLG-OPS-204 resolved; no new item added); prior — 2026-10-30 (PR #2131 agent-mediated DoQ/PO review — 2 new item(s) added: BLG-BE-196, BLG-BE-197; no existing item edited); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -5874,6 +5874,8 @@ ST-01 restores `eslint-config-react-app` so the frontend builds again. Only a `d
 - `deploy.yml` succeeds on `main` for a commit that includes ST-01, with the run ID recorded
 - Production serves that build, with the check and date recorded in the v9.14 QA evidence or delegation log
 
+**Resolved (2026-10-30, after PR #2131 merged):** `deploy.yml` run 41024971887 on merge commit `48eab523` succeeded. GitHub Pages serves `main.c884033b.js`, which contains EPIC-01 strings. Recorded in `qa_evidence_EPIC-01.md` under Post-merge confirmations.
+
 ---
 
 ### BLG-GOV-399 — Review the first live quarterly AI output sample from production
@@ -6025,7 +6027,7 @@ ST-01 AC 2 asks for the Render staging frontend to build from `main` with no das
 - Staging's branch is `main`, recorded with date
 - The staging build of a `main` commit containing `3fbfe5e3` succeeds, with its "Compiled" line and commit recorded in the v9.14 QA evidence for EPIC-01
 
-**Resolved (2026-10-30, after PR #2131 merged):** the user confirmed on 2026-10-30 that `trading-assistant-staging` is pointed back at `main` and builds from it. The staging build's commit and "Compiled" line were not supplied, so they are not recorded in `qa_evidence_EPIC-01.md`.
+**Resolved (2026-10-30, after PR #2131 merged):** the user confirmed on 2026-10-30 that `trading-assistant-staging` is pointed back at `main` and builds from it. The user then supplied the staging deploy log: the build finished 08:14:29Z with ESLint warnings only, and the site went live. It is recorded in `qa_evidence_EPIC-01.md` under Post-merge confirmations. The excerpt does not show the commit or the "Compiled" line; by timing it is a `main` commit at or after `48eab523`.
 
 ---
 
