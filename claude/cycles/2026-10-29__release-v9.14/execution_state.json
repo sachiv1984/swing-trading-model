@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-29T14:51:40Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-30T09:54:26Z",
+  "last_updated_utc": "2026-10-30T10:07:46Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-02",
@@ -450,7 +450,7 @@
       "branch": "exec/2026-10-29__release-v9.14/EPIC-06",
       "pr_number": null,
       "pr_status": null,
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-10-29__release-v9.14/qa_evidence_EPIC-06.md",
       "test_scenarios": [
         "tests/test_daily_cost_day_boundary.py",
@@ -479,7 +479,7 @@
           "completed_utc": "2026-10-30T09:52:59Z",
           "last_completed_substep": "3.1.A.10a",
           "blocked_since_utc": null,
-          "notes": "AC 1: docs/ops/arc2_compute_cost_review.md compares screener batch, research endpoints and AI plan features; states no Arc 1 baseline exists and uses data_pipeline_cost_baseline.md (v9.13). AC 2: top 3 drivers named (Render dyno, nightly screener batch, Claude plan/thesis calls); recommendations filed BLG-OPS-207/208/209. AC 3: gate verified at Release Planning (run_manifest.md). Committed with ST-40 in 6b728a18 (shared backlog filing); pushed with c01e9805, so CI ran on c01e9805 (no run on 6b728a18 itself). Deviation check: none. CI on c01e9805: 7/7 success (CI Pytest Suite 41036659127, Critical-Path Smoke 41036659076)."
+          "notes": "AC 1: docs/ops/arc2_compute_cost_review.md compares screener batch, research endpoints and AI plan features; states no Arc 1 baseline exists and uses data_pipeline_cost_baseline.md (v9.13). AC 2: top 3 drivers named (Render dyno, nightly screener batch, Claude plan/thesis calls); recommendations filed BLG-OPS-207/208/209. AC 3: gate verified at Release Planning (run_manifest.md). Committed with ST-40 in 6b728a18 (shared backlog filing); pushed with c01e9805, so CI ran on c01e9805 (no run on 6b728a18 itself). Deviation check: none. CI on c01e9805: 7/7 success (CI Pytest Suite 41036659127, Critical-Path Smoke 41036659076). DoQ finding 5 fixed in 33af33c7 (screener figures cite command, window, n=30, median 54.5s)."
         },
         "ST-39": {
           "title": "Compute cost trending by feature area",
@@ -546,7 +546,7 @@
           "completed_utc": "2026-10-30T09:36:02Z",
           "last_completed_substep": "3.1.A.10a",
           "blocked_since_utc": null,
-          "notes": "AC 1: check_and_alert_daily_cost() sums the previous UTC day, then today, via get_daily_ai_cost(day) bounded [day, day+1) UTC; each day over threshold alerts once (fingerprint = latest alerted day, days checked oldest first). ai_endpoints.md v1.33 updated (+ openapi 3.44.0, api_changelog). AC 2: tests/test_daily_cost_day_boundary.py runs the real query bounds against an in-memory audit log with rows either side of midnight. CI on 9cd96692: 7/7 success incl. CI Pytest Suite 41034627295 and Critical-Path Smoke 41034627318. Real-Postgres day-boundary sum stays with BLG-QA-221 (already filed). Deviation check: none."
+          "notes": "AC 1: check_and_alert_daily_cost() sums the previous UTC day, then today, via get_daily_ai_cost(day) bounded [day, day+1) UTC; each day over threshold alerts once (fingerprint = latest alerted day, days checked oldest first). ai_endpoints.md v1.33 updated (+ openapi 3.44.0, api_changelog). AC 2: tests/test_daily_cost_day_boundary.py runs the real query bounds against an in-memory audit log with rows either side of midnight. CI on 9cd96692: 7/7 success incl. CI Pytest Suite 41034627295 and Critical-Path Smoke 41034627318. Real-Postgres day-boundary sum stays with BLG-QA-221 (already filed). Deviation check: none. DoQ finding 1 fixed in 33af33c7 (a failed previous-day send is retried, not superseded by today); CI 7/7 success (CI Pytest Suite 41038005539)."
         },
         "ST-42": {
           "title": "Make ci-usage-report.yml's monthly commit succeed",
@@ -569,7 +569,7 @@
           "blocked_since_utc": null,
           "assigned_to": "engine (workflow fix); Infrastructure & Operations Owner (workflow_dispatch run on main, possible branch-rule bypass, RISK-01)",
           "unblock_criteria": "ACs 1 and 2 seal-marked post-merge, tracked by BLG-OPS-202: a run on main succeeds and docs/ops/ci_usage_reports/2026-09.md exists.",
-          "notes": "Cause confirmed from main's branch protection (GitHub API, 2026-10-30): PR + 1 approval + 5 required checks; a GITHUB_TOKEN push cannot bypass it. Fix: report committed to ci-usage-report/<YYYY-MM>, uploaded as a 90-day artifact, and a [GOVERNANCE] PR attempted (Actions may not create PRs here, so a refused gh pr create warns with the compare link and the run stays green). year_month passed via env and validated. tests/test_ci_usage_report_workflow.py pins it. CI on c7e45c17: 7/7 success (CI Pytest Suite 41035242078). ACs 1-2 seal-marked post-merge, tracked by BLG-OPS-202, DEL-20261030-03 carried. Destination is the PR to main (the AC's 'or the agreed destination'); a human merges it. Deviation check: none. DEL-20261030-03 status: carried to post-merge.",
+          "notes": "Cause confirmed from main's branch protection (GitHub API, 2026-10-30): PR + 1 approval + 5 required checks; a GITHUB_TOKEN push cannot bypass it. Fix: report committed to ci-usage-report/<YYYY-MM>, uploaded as a 90-day artifact, and a [GOVERNANCE] PR attempted (Actions may not create PRs here, so a refused gh pr create warns with the compare link and the run stays green). year_month passed via env and validated. tests/test_ci_usage_report_workflow.py pins it. CI on c7e45c17: 7/7 success (CI Pytest Suite 41035242078). ACs 1-2 seal-marked post-merge, tracked by BLG-OPS-202, DEL-20261030-03 carried. Destination is the PR to main (the AC's 'or the agreed destination'); a human merges it. Deviation check: none. DEL-20261030-03 status: carried to post-merge. DoQ finding 2 fixed in 33af33c7 (only GitHub's 'not permitted' refusal warns; any other gh pr create failure exits 1).",
           "delegation_record_id": "DEL-20261030-03"
         },
         "ST-43": {
@@ -596,6 +596,14 @@
           "notes": "AC 1: backend/config.py resolves ALLOWED_ORIGINS per deployment (CORS_ALLOWED_ORIGINS > DEPLOY_ENV > Render RENDER/RENDER_SERVICE_NAME inference > development); defaults documented in docs/infrastructure/cors_allow_list.md. tests/test_cors_allow_list.py: production preflight from localhost:3000 -> 400, Pages -> 200 with credentials. render.yaml sets DEPLOY_ENV=staging. CI on 4eb1e6cb: 7/7 success (CI Pytest Suite 41034953589). AC 2 seal-marked post-merge, tracked by BLG-SEC-44, DEL-20261030-01 carried (LL-v9.13-P3-03). Deviation check: none. DEL-20261030-01 status: carried to post-merge.",
           "delegation_record_id": "DEL-20261030-01"
         }
+      },
+      "sign_off_record": {
+        "role": "Director of Quality",
+        "status": "cleared",
+        "method": "agent_mediated",
+        "date": "2026-10-30",
+        "reference": "qa_evidence_EPIC-06.md Standard Sign-Off Block",
+        "notes": "First pass Approved; 7 non-blocking findings, 1/2/4/5 fixed (33af33c7), 3/6/7 dispositioned."
       }
     }
   },
