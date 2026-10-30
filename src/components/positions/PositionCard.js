@@ -6,6 +6,7 @@ import { Button } from "../ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
 import { cn } from "../../lib/utils";
 import { differenceInDays } from "date-fns";
+import { getReviewCadenceState } from "../../lib/reviewCadence";
 import { useGapRisk } from "../../hooks/useGapRisk";
 import { apiFetch } from "../../api/base44Client";
 import { toast } from "sonner";
@@ -81,33 +82,8 @@ function PositionCardAlertsRow({ position }) {
   );
 }
 
-// ST-15 (v7.0, BLG-FEAT-68) — Position review cadence nudge.
-// Same computation/suppression rule as Positions.js's Table View — duplicated
-// per this codebase's existing card-vs-page convention (e.g. GAP_RISK_REASON_LABELS
-// above), not factored into a shared module.
-const REVIEW_STALE_THRESHOLD_DAYS = 14;
-// ST-14 (BLG-BE-147, v9.11): same predicate as the Grace Period Alert trigger.
-const GRACE_SUPPRESSION_DAYS_REMAINING = 2;
-
-function getReviewCadenceState(position, drawdownActive) {
-  const lastReviewedAt = position.last_reviewed_at;
-  const referenceDate = lastReviewedAt ? new Date(lastReviewedAt) : new Date(position.entry_date);
-  const daysSinceReview = differenceInDays(new Date(), referenceDate);
-
-  const state = position.lifecycle_state || position.position_state;
-  const isGraceSuppressed = state === "GRACE" && position.grace_days_remaining != null
-    && position.grace_days_remaining <= GRACE_SUPPRESSION_DAYS_REMAINING;
-  const suppressed = isGraceSuppressed || drawdownActive;
-
-  const flagged = !suppressed && daysSinceReview >= REVIEW_STALE_THRESHOLD_DAYS;
-  const label = lastReviewedAt ? `Reviewed ${daysSinceReview}d ago` : "Not yet reviewed";
-  const ariaLabel = flagged
-    ? `Position not reviewed in ${daysSinceReview} days — consider reviewing`
-    : `Last reviewed ${daysSinceReview} days ago`;
-
-  return { label, flagged, ariaLabel };
-}
-
+// ST-15 (v7.0, BLG-FEAT-68) — Position review cadence nudge. The flag rule is
+// shared with Positions.js's Table View (src/lib/reviewCadence.js, ST-14, v9.14).
 function useMarkReviewedMutation() {
   const queryClient = useQueryClient();
   return useMutation({
