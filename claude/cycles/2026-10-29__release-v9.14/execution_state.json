@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-29T14:51:40Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-30T17:40:00Z",
+  "last_updated_utc": "2026-10-30T18:30:00Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-02",
@@ -613,7 +613,7 @@
       "branch": "exec/2026-10-29__release-v9.14/EPIC-03",
       "pr_number": null,
       "pr_status": null,
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-10-29__release-v9.14/qa_evidence_EPIC-03.md",
       "test_scenarios": [
         "tests/test_journal_summary_language_check.py",
@@ -647,7 +647,7 @@
           "completed_utc": "2026-10-30T16:54:52Z",
           "last_completed_substep": "3.1.A.10a",
           "blocked_since_utc": "2026-10-30T15:55:23Z",
-          "notes": "Reclassified delegated_decision -> autonomous: ESC-EXEC-20261030-02 resolved 2026-10-30T16:49:32Z (user acting as AI Compliance & Governance Officer, approved as proposed). AC1: ruling ESC-EXEC-20261030-02 recorded (16:49:32Z) before the code change (1494d483, 16:54:52Z); answers §13.1/§13.2. AC2: all 7 Problem sentences report trading_change (test_advisory_phrasings_caught). AC3: every v9.13 ST-18 positive/descriptive case unchanged, 6 past-tense negatives added; B-JS-04 updated (ai_s13_boundary_test_suite.md v1.5). Deviation check: none. ci_pending: CI on head ee90f722. DoQ review finding 3 fixed in 9322b502: passive form rejects not/never; gaps never cross ';'. Remaining precision/recall cases filed (see qa_evidence).",
+          "notes": "Reclassified delegated_decision -> autonomous: ESC-EXEC-20261030-02 resolved 2026-10-30T16:49:32Z (user acting as AI Compliance & Governance Officer, approved as proposed). AC1: ruling ESC-EXEC-20261030-02 recorded (16:49:32Z) before the code change (1494d483, 16:54:52Z); answers §13.1/§13.2. AC2: all 7 Problem sentences report trading_change (test_advisory_phrasings_caught). AC3: every v9.13 ST-18 positive/descriptive case unchanged, 6 past-tense negatives added; B-JS-04 updated (ai_s13_boundary_test_suite.md v1.5). Deviation check: none. CI on final head ddd86327: CI Pytest Suite 41129196316 success (Phase A+B), Critical-Path Smoke 41129196452 success; Playwright E2E 41095484032 success on ed3b9d8c (path-filtered after). DoQ review finding 3 fixed in 9322b502: passive form rejects not/never; gaps never cross ';'. Remaining precision/recall cases filed (see qa_evidence).",
           "escalation_id": "ESC-EXEC-20261030-02",
           "unblock_criteria": "AI Compliance & Governance Officer ruling recorded in ESC-EXEC-20261030-02 resolution"
         },
@@ -669,7 +669,7 @@
           "completed_utc": "2026-10-30T15:57:15Z",
           "last_completed_substep": "3.1.A.10a",
           "blocked_since_utc": null,
-          "notes": "AC1: 4 Problem summaries get no caveat (test_indicator_and_macro_acronyms_get_no_caveat). AC2: NEW_SIGNAL and TSLA still caught (existing tests). AC3: test_non_ticker_words_ignored parametrised over sorted(_NON_TICKER_WORDS), covering all 22 added words. AC4: live-log review not granted in-sprint, filed as BLG-AI-23 (verified in backlog.md). Deviation check: none. ci_pending: CI on head ee90f722."
+          "notes": "AC1: 4 Problem summaries get no caveat (test_indicator_and_macro_acronyms_get_no_caveat). AC2: NEW_SIGNAL and TSLA still caught (existing tests). AC3: test_non_ticker_words_ignored parametrised over sorted(_NON_TICKER_WORDS), covering all 22 added words. AC4: live-log review not granted in-sprint, filed as BLG-AI-23 (verified in backlog.md). Deviation check: none. CI on final head ddd86327: CI Pytest Suite 41129196316 success (Phase A+B), Critical-Path Smoke 41129196452 success; Playwright E2E 41095484032 success on ed3b9d8c (path-filtered after)."
         },
         "ST-17": {
           "title": "Chat stop-time note is not attributed to the focus ticker when a sentence names another ticker",
@@ -689,7 +689,7 @@
           "completed_utc": "2026-10-30T16:53:40Z",
           "last_completed_substep": "3.1.A.10a",
           "blocked_since_utc": "2026-10-30T15:55:23Z",
-          "notes": "Reclassified delegated_decision -> autonomous: ESC-EXEC-20261030-03 resolved 2026-10-30T16:49:32Z (user acting as AI Compliance & Governance Officer, approved as proposed). AC1: ruling ESC-EXEC-20261030-03 recorded (16:49:32Z) before the code change (3e953501, 16:53:40Z); answers §13.2 and the §13.5 BLG-FEAT-50/51 roster row. AC2: with focus MU, \"TSLA's stop was hit last week.\" gets no MU note (test_sentence_naming_a_ticker_not_held_not_given_to_focus). AC3: all v9.13 ST-16 tests pass. Landed after ST-16 and ST-20. Deviation check: none. ci_pending: CI on head ee90f722.",
+          "notes": "Reclassified delegated_decision -> autonomous: ESC-EXEC-20261030-03 resolved 2026-10-30T16:49:32Z (user acting as AI Compliance & Governance Officer, approved as proposed). AC1: ruling ESC-EXEC-20261030-03 recorded (16:49:32Z) before the code change (3e953501, 16:53:40Z); answers §13.2 and the §13.5 BLG-FEAT-50/51 roster row. AC2: with focus MU, \"TSLA's stop was hit last week.\" gets no MU note (test_sentence_naming_a_ticker_not_held_not_given_to_focus). AC3: all v9.13 ST-16 tests pass. Landed after ST-16 and ST-20. Deviation check: none. CI on final head ddd86327: CI Pytest Suite 41129196316 success (Phase A+B), Critical-Path Smoke 41129196452 success; Playwright E2E 41095484032 success on ed3b9d8c (path-filtered after).",
           "escalation_id": "ESC-EXEC-20261030-03",
           "unblock_criteria": "AI Compliance & Governance Officer ruling recorded in ESC-EXEC-20261030-03 resolution"
         },
@@ -731,7 +731,7 @@
           "completed_utc": "2026-10-30T15:59:05Z",
           "last_completed_substep": "3.1.A.10a",
           "blocked_since_utc": null,
-          "notes": "AC1: fail-then-raise writes one model_call_failed row carrying attempt 1's tokens and cost (test_fail_then_raise_writes_one_model_call_failed_row; fails without the fix). AC2: existing debrief audit tests pass. trade_endpoints.md v2.6.2. Deviation check: none. ci_pending: CI on head ee90f722."
+          "notes": "AC1: fail-then-raise writes one model_call_failed row carrying attempt 1's tokens and cost (test_fail_then_raise_writes_one_model_call_failed_row; fails without the fix). AC2: existing debrief audit tests pass. trade_endpoints.md v2.6.2. Deviation check: none. CI on final head ddd86327: CI Pytest Suite 41129196316 success (Phase A+B), Critical-Path Smoke 41129196452 success; Playwright E2E 41095484032 success on ed3b9d8c (path-filtered after)."
         },
         "ST-20": {
           "title": "Stop recalculation times in briefing and chat are converted to UTC",
@@ -751,7 +751,7 @@
           "completed_utc": "2026-10-30T15:57:51Z",
           "last_completed_substep": "3.1.A.10a",
           "blocked_since_utc": null,
-          "notes": "AC1: 2026-10-12 09:00+01:00 -> 2026-10-12 08:00 UTC; naive treated as UTC (datetime and ISO string, tests). The stop-time check's date uses the same UTC conversion. AC2: v9.11 ST-08 tests pass. Deviation check: none. ci_pending: CI on head ee90f722."
+          "notes": "AC1: 2026-10-12 09:00+01:00 -> 2026-10-12 08:00 UTC; naive treated as UTC (datetime and ISO string, tests). The stop-time check's date uses the same UTC conversion. AC2: v9.11 ST-08 tests pass. Deviation check: none. CI on final head ddd86327: CI Pytest Suite 41129196316 success (Phase A+B), Critical-Path Smoke 41129196452 success; Playwright E2E 41095484032 success on ed3b9d8c (path-filtered after)."
         },
         "ST-21": {
           "title": "Run the claude_audit_log column checks once per process",
@@ -771,7 +771,7 @@
           "completed_utc": "2026-10-30T16:52:58Z",
           "last_completed_substep": "3.1.A.10a",
           "blocked_since_utc": null,
-          "notes": "AC1: second insert runs no DDL (test_second_insert_in_the_same_process_runs_no_ddl). AC2: first insert adds missing columns (test_first_insert_adds_missing_columns). AC3: docs/ops/ensure_ddl_insert_call_sites.md lists 35 call sites: 29 fixed by database.ensure_once, 3 already once per process, 3 filed as BLG-BE-200 (verified in backlog.md). Full suite 3127 passed locally. Deviation check: none. ci_pending: CI on head ee90f722. DoQ review (agent-mediated, first pass Blocked) finding 1 fixed in ff803197: lock made re-entrant (nested decorated ensure deadlocked), test_nested_decorated_ensure_does_not_deadlock added; finding 2: strategy_benchmark -> ensure_backtest_tables added and decorated (35 sites)."
+          "notes": "AC1: second insert runs no DDL (test_second_insert_in_the_same_process_runs_no_ddl). AC2: first insert adds missing columns (test_first_insert_adds_missing_columns). AC3: docs/ops/ensure_ddl_insert_call_sites.md lists 35 call sites: 29 fixed by database.ensure_once, 3 already once per process, 3 filed as BLG-BE-200 (verified in backlog.md). Full suite 3127 passed locally. Deviation check: none. CI on final head ddd86327: CI Pytest Suite 41129196316 success (Phase A+B), Critical-Path Smoke 41129196452 success; Playwright E2E 41095484032 success on ed3b9d8c (path-filtered after). DoQ review (agent-mediated, first pass Blocked) finding 1 fixed in ff803197: lock made re-entrant (nested decorated ensure deadlocked), test_nested_decorated_ensure_does_not_deadlock added; finding 2: strategy_benchmark -> ensure_backtest_tables added and decorated (35 sites). DoQ second pass: rollback-verification tests reset the registry before re-apply (ddd86327); CI Phase B run 41100377593 failure resolved by run 41129196316."
         },
         "ST-22": {
           "title": "Retire the unused POST /trade-plans/{plan_id}/generate-thesis endpoint",
@@ -795,7 +795,7 @@
           "completed_utc": "2026-10-30T17:03:36Z",
           "last_completed_substep": "3.1.A.10a",
           "blocked_since_utc": null,
-          "notes": "AC1: route removed, 404 asserted (test_retired_generate_thesis_route_returns_404); OpenAPI 3-way drift 153/153/153. AC2: routers/test.py entry removed (AST 132->131), SystemStatus.js fallback 131 and SC-SS-01b 131 in the same commit. AC3: trade-plan.spec.js (Improve with AI, Generate thesis template) unchanged; Playwright CI result pending. AC4: ai_thesis_generation.md v2.2.0 is the one thesis contract (generate-plan); gemini_thesis_generation.md deleted; api_changelog.md v9.14.0. AC5: strategy_rules.md v1.22 §13.5 row (case (c), owner confirmation 2026-10-29), DOCUMENTATION_ONLY_VERSIONS 1.22, registry test passes, §15 re-run 0 actionable. Removal under conventions.md §14.1 (no active consumer), sunset tracker §3a. Deviation check: none. ci_pending: CI on head ee90f722. DoQ review finding 4: rotation runbook fixed in ee90f722; remaining live-doc references filed (see qa_evidence)."
+          "notes": "AC1: route removed, 404 asserted (test_retired_generate_thesis_route_returns_404); OpenAPI 3-way drift 153/153/153. AC2: routers/test.py entry removed (AST 132->131), SystemStatus.js fallback 131 and SC-SS-01b 131 in the same commit. AC3: trade-plan.spec.js (Improve with AI, Generate thesis template) unchanged; Playwright CI result pending. AC4: ai_thesis_generation.md v2.2.0 is the one thesis contract (generate-plan); gemini_thesis_generation.md deleted; api_changelog.md v9.14.0. AC5: strategy_rules.md v1.22 §13.5 row (case (c), owner confirmation 2026-10-29), DOCUMENTATION_ONLY_VERSIONS 1.22, registry test passes, §15 re-run 0 actionable. Removal under conventions.md §14.1 (no active consumer), sunset tracker §3a. Deviation check: none. CI on final head ddd86327: CI Pytest Suite 41129196316 success (Phase A+B), Critical-Path Smoke 41129196452 success; Playwright E2E 41095484032 success on ed3b9d8c (path-filtered after). DoQ review finding 4: rotation runbook fixed in ee90f722; remaining live-doc references filed (see qa_evidence)."
         },
         "ST-23": {
           "title": "First live quarterly AI output sample against the §13 boundary",
@@ -821,6 +821,14 @@
           "assigned_to": "AI Compliance & Governance Officer (with the Infrastructure & Operations Owner)",
           "unblock_criteria": "AC 1 seal-marked post-merge, tracked by BLG-GOV-399: 10 production AI outputs supplied or a read granted (DEL-20261030-04)."
         }
+      },
+      "sign_off_record": {
+        "role": "Director of Quality",
+        "method": "agent_mediated",
+        "status": "cleared",
+        "passes": 3,
+        "date": "2026-10-30",
+        "evidence": "claude/cycles/2026-10-29__release-v9.14/qa_evidence_EPIC-03.md"
       }
     }
   },
