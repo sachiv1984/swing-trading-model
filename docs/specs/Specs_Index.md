@@ -4,7 +4,7 @@
 **Purpose:** Single map of canonical product truth
 **Audience:** Product, Engineering, Analytics, Strategy
 **Status:** Authoritative
-**Last Updated:** 2026-10-30 (ST-22, EPIC-03, v9.14, BLG-BE-163 — `gemini_thesis_generation.md` row removed; the file was merged into `ai_thesis_generation.md` and deleted); prior — 2026-10-29 (post-ship closure 2026-10-16__release-v9.13 — §53 Test Coverage Gaps v9.13 section added, 5 gaps each already tracked by a backlog item, TSG sweep 9 Open checked / 2 resolved; see Changelog); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-02 (ST-46, EPIC-07, v9.14, BLG-SPEC-77 — `frontend/patterns/gate_status_indicator.md` registered); prior — 2026-10-30 (ST-22, EPIC-03, v9.14, BLG-BE-163 — `gemini_thesis_generation.md` row removed; the file was merged into `ai_thesis_generation.md` and deleted); prior — 2026-10-29 (post-ship closure 2026-10-16__release-v9.13 — §53 Test Coverage Gaps v9.13 section added, 5 gaps each already tracked by a backlog item, TSG sweep 9 Open checked / 2 resolved; see Changelog); prior history retained — see prior entries in version control
 
 ---
 
@@ -449,6 +449,7 @@ Populated by the ST-49 freshness-check remediation (`scripts/check_specs_index_f
 |------|-------|-------|-------|
 | `docs/specs/frontend/patterns/api_dependencies.md` | api_dependencies.md | Frontend Specifications & UX Documentation Owner | Class 2 |
 | `docs/specs/frontend/patterns/error_handling.md` | error_handling.md | Frontend Specifications & UX Documentation Owner | Class 2 |
+| `docs/specs/frontend/patterns/gate_status_indicator.md` | Frontend Pattern — Gate Status Indicator | Frontend Specifications & UX Documentation Owner | Supporting Document (Class 2) |
 | `docs/specs/frontend/patterns/loading_states.md` | Frontend Pattern — Loading State Standardisation | Frontend Specifications & UX Documentation Owner | Supporting Document (Class 2) |
 
 **Frontend — Reviews & Supporting**
@@ -1442,6 +1443,7 @@ Identified during delivery verification (`verification_report.md §6`): **5 test
 
 | Date | Change |
 |------|--------|
+| 2026-11-02 | ST-46 (EPIC-07, v9.14, BLG-SPEC-77) — `docs/specs/frontend/patterns/gate_status_indicator.md` registered under Frontend — Patterns. |
 | 2026-10-29 | Post-ship closure `2026-10-16__release-v9.13` — §53 Test Coverage Gaps (v9.13) added: 5 gaps (TSG-v9.13-01..05), each already tracked by a backlog item (`BLG-QA-229`, `BLG-QA-232`, `BLG-QA-230`, `BLG-QA-237`, `BLG-BE-190`), plus 2 not-applicable rows; endpoint coverage drift check PASSED, 0 gaps; full-document TSG sweep: 9 Open entries checked, 2 resolved (TSG-v9.9-01, TSG-v9.9-02); §6/§7: no items resolved by this delivery |
 | 2026-10-15 | Post-ship closure `2026-10-12__release-v9.12` — §52 Test Coverage Gaps (v9.12) added: 2 gaps (TSG-v9.12-01..02), each already tracked by a backlog item (`BLG-QA-221`, `BLG-QA-226`), plus 1 not-applicable row; endpoint coverage drift check PASSED, 0 gaps; full-document TSG sweep: 10 Open entries checked, 3 resolved (TSG-v9.9-03, TSG-v9.9-04, TSG-v9.11-01); §6/§7: no items resolved by this delivery |
 | 2026-10-12 | Post-ship closure `2026-10-08__release-v9.11` — §51 Test Coverage Gaps (v9.11) added: 3 gaps (TSG-v9.11-01..03), each already tracked by a backlog item (`BLG-BE-162`, `BLG-QA-220`, `BLG-QA-219`); endpoint coverage drift check PASSED, 0 gaps; full-document TSG sweep: 7 Open entries checked, 0 resolved; §6/§7: no items resolved by this delivery |

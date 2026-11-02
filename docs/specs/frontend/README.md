@@ -74,6 +74,7 @@ Each file is focused, readable in isolation, and avoids unnecessary implementati
 ### UX Patterns
 - ./patterns/error_handling.md
 - ./patterns/api_dependencies.md
+- ./patterns/gate_status_indicator.md
 
 ---
 

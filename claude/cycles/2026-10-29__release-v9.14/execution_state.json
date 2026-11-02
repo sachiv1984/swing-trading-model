@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-29T14:51:40Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-02T10:51:30Z",
+  "last_updated_utc": "2026-11-02T10:51:55Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-02",
@@ -992,16 +992,20 @@
         "ST-45": {
           "title": "Give the gate scan's \"gating item shipped\" findings a write-back path",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "github_issue": 2122,
           "branch": "exec/2026-10-29__release-v9.14/EPIC-07",
-          "spec_references": [],
+          "spec_references": [
+            "claude/system/release_planning_prompt.md#1.3a Gate-Detection Procedure (Mandatory, Scripted)"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "acceptance_verified": false,
-          "commit_sha": null,
-          "notes": "Raised as delegated_decision: ESC-EXEC-20261102-01 at 2026-11-02T10:47:50Z (blocked_decision); Head of Specs Team choice (a) given in-session 2026-11-02T10:51:11Z; reclassified autonomous."
+          "deviations_filed": true,
+          "acceptance_verified": true,
+          "commit_sha": "a2168d7fefbaac2e07da38d83f3a72320e0c1dd5",
+          "notes": "Raised as delegated_decision: ESC-EXEC-20261102-01 at 2026-11-02T10:47:50Z (blocked_decision); Head of Specs Team choice (a) given in-session 2026-11-02T10:51:11Z; reclassified autonomous. AC 1 met: release_planning_prompt.md §1.3a names the gating-item-shipped list and the gate-field clearance it permits; §7 write scope extended; CLAUDE.md §6 checklist complete (v2.66, OG v4.245). AC 2 post-merge (BLG-GOV-400), per seal. Deviation check: none.",
+          "completed_utc": "2026-11-02T10:51:40Z",
+          "last_completed_substep": "3.1.A.10a"
         },
         "ST-46": {
           "title": "Document the gate-status indicator as a reusable component pattern",
@@ -1147,7 +1151,8 @@
     "ST-41",
     "ST-42",
     "ST-43",
-    "ST-44"
+    "ST-44",
+    "ST-45"
   ],
   "open_escalations": {
     "ESC-EXEC-20261029-01": {

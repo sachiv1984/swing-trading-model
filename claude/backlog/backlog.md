@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-02 (Sprint Execution, EPIC-07 of 2026-10-29__release-v9.14 — 1 new item(s) added: BLG-GOV-401); prior — 2026-11-02 (Sprint Execution, EPIC-04 of 2026-10-29__release-v9.14 — 3 new item(s) added: BLG-BE-201, BLG-FE-237, BLG-BE-202); prior — 2026-10-30 (PR #2135 agent-mediated review, EPIC-03 of 2026-10-29__release-v9.14 — 2 new item(s) added: BLG-AI-25, BLG-AI-26); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-02 (Sprint Execution, EPIC-07 of 2026-10-29__release-v9.14 — 2 new item(s) added: BLG-GOV-401, BLG-FE-238); prior — 2026-11-02 (Sprint Execution, EPIC-04 of 2026-10-29__release-v9.14 — 3 new item(s) added: BLG-BE-201, BLG-FE-237, BLG-BE-202); prior — 2026-10-30 (PR #2135 agent-mediated review, EPIC-03 of 2026-10-29__release-v9.14 — 2 new item(s) added: BLG-AI-25, BLG-AI-26); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -6624,5 +6624,26 @@ ST-24's `get_monthly_pnl_by_exit_reason()` (`backend/database.py`) opens its own
 - The script exits 0 on a consistent mid-cycle state whose later EPICs are listed in `merge_order` but not yet initialised
 - It still fails, naming the field, when an initialised unmerged EPIC is missing from `epics_pending`
 - A unit test covers the uninitialised-EPIC case
+
+---
+
+### BLG-FE-238 — Add `aria-expanded` and `aria-controls` to the SI-02 Gate Status toggle
+**Priority:** P3 (Low)
+**Type:** Frontend / UX (Accessibility)
+**Owner:** Frontend Specifications & UX Documentation Owner; Head of UX & Design
+**Source:** Sprint Execution `2026-10-29__release-v9.14`, EPIC-07 / ST-46 (out-of-scope finding while documenting the gate-status indicator pattern) — 2026-11-02
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.15
+
+**Problem**
+The collapse toggle of `SI02GateStatusSection` (`src/pages/Reports.js`) is a `<button>` but sets neither `aria-expanded` nor `aria-controls`, so a screen reader user is not told whether the section is open. `docs/specs/frontend/patterns/gate_status_indicator.md` (ST-46) now requires both for any gate status indicator and names this component as its reference implementation, so the reference does not meet its own pattern.
+
+**Scope**
+- Set `aria-expanded={!collapsed}` on the toggle and `aria-controls` pointing at an `id` on the section body
+- Extend `tests/e2e/reports-si02-gate-status.spec.js` SC-SI02-01 to assert `aria-expanded` before and after the click
+
+**Acceptance Criteria**
+- The toggle reports `aria-expanded="false"` collapsed and `"true"` expanded, and `aria-controls` names the body element's `id` (Playwright)
+- `gate_status_indicator.md` §Accessibility item 2 drops its "reference does not set either yet" note
 
 ---
