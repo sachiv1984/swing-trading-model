@@ -521,6 +521,19 @@
       "resolved_utc": "2026-10-30T16:49:32Z",
       "resolved_by": "AI Compliance & Governance Officer (ruling given in-session by the user acting in that role)",
       "resolution_summary": "Approved as proposed; recorded in claude/cycles/2026-10-29__release-v9.14/execution_escalations.md. ST-17 reclassified autonomous."
+    },
+    "ESC-EXEC-20261102-01": {
+      "cycle": "2026-10-29__release-v9.14",
+      "summary": "ST-45/EPIC-07 - Head of Specs Team choice: where the gate scan's 'gating item shipped' write-back lives (BLG-GOV-398)",
+      "trigger_type": "Lifecycle",
+      "owning_authority": "Head of Specs Team",
+      "raised_utc": "2026-11-02T10:47:50Z",
+      "sla_due_utc": "2026-11-03T10:47:50Z",
+      "blocks_execution": false,
+      "disposition": "Resolved",
+      "resolved_utc": "2026-11-02T10:51:11Z",
+      "resolved_by": "Head of Specs Team (choice given in-session by the user acting in that role)",
+      "resolution_summary": "Option (a): release_planning_prompt.md §1.3a carve-out extended; recorded in claude/cycles/2026-10-29__release-v9.14/execution_escalations.md. ST-45 reclassified autonomous."
     }
   },
   "deferred_escalations": {
