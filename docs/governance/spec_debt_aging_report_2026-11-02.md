@@ -13,7 +13,7 @@
 
 ## How to read this
 
-The script ages each open `BLG-SPEC-*` item by the number of release cycles, on or after its filing date, in which no story was seated from it: the `release_planning_prompt.md` §1.1 measure. Per-item ready-pool membership is not recorded, so a gated item's count includes cycles in which it was not in the ready pool. Such items are marked `Gated: yes` and are never flagged ⚠. The current cycle (v9.14) counts as a cycle. Items it seated show 0 with `Last seated: v9.14`. They stay open in `backlog.md` until `groom backlog` archives them.
+The script ages each open `BLG-SPEC-*` item by the number of release cycles, on or after its filing date, in which no story was seated from it: the `release_planning_prompt.md` §1.1 measure. Per-item ready-pool membership is not recorded, so a gated item's count includes cycles in which it was not in the ready pool. Such items are marked `Gated: yes` and are never flagged ⚠. A cycle whose start date equals the filing date counts, so an item filed during that cycle's own execution may be overstated by one (for example `BLG-SPEC-194`, filed 2026-10-12, counts v9.12). The current cycle (v9.14) counts as a cycle. Items it seated show 0 with `Last seated: v9.14`. They stay open in `backlog.md` until `groom backlog` archives them.
 
 Wiring this report into a governance prompt is not part of ST-54. It is filed as `BLG-GOV-403`.
 

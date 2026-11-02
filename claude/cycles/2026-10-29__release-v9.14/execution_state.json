@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-29T14:51:40Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-02T11:02:50Z",
+  "last_updated_utc": "2026-11-02T11:11:00Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-02",
@@ -961,13 +961,18 @@
       "merge_commit": "4fee64d5"
     },
     "EPIC-07": {
-      "status": "in_progress",
+      "status": "done",
       "branch": "exec/2026-10-29__release-v9.14/EPIC-07",
       "pr_number": null,
       "pr_status": null,
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-10-29__release-v9.14/qa_evidence_EPIC-07.md",
-      "test_scenarios": [],
+      "test_scenarios": [
+        "tests/test_check_execution_state_consistency.py",
+        "tests/test_compute_effort_weighted_pvr.py",
+        "tests/test_trade_plan_status_enum_parity.py",
+        "tests/test_report_spec_debt_aging.py"
+      ],
       "stories": {
         "ST-44": {
           "title": "check_execution_state_consistency.py checks deviations_filed and the escalation map",
@@ -1062,7 +1067,7 @@
           "commit_sha": "d4463c8cd388f51b4402ff51be13f928270c78a9",
           "completed_utc": "2026-11-02T10:56:38Z",
           "last_completed_substep": "3.1.A.10a",
-          "notes": "AC met: table and parse_effort_weight() weight the same values (parity test, 29 pass); Appendix F names roadmap_prompt.md STEP 2.4 (v9.32), D-split and U-pool stay proposal-only; Appendix D row 1.34.0. Two backfilled readings corrected (0.021->0.024, 0.093->0.104). Deviation check: none. Out-of-scope finding filed: BLG-GOV-402."
+          "notes": "AC met: table and parse_effort_weight() weight the same values (parity test, 29 pass); Appendix F names roadmap_prompt.md STEP 2.4 (v9.32), D-split and U-pool stay proposal-only; Appendix D row 1.34.0. Two backfilled readings corrected (0.021->0.024, 0.093->0.104). Deviation check: none. Out-of-scope finding filed: BLG-GOV-402. DoQ finding 1 applied post-sign-off-review: unitless leading number no longer read as effort (+2 tests, readings unchanged)."
         },
         "ST-49": {
           "title": "Trade plan contract lists the 7 DS-21 statuses",
@@ -1142,16 +1147,31 @@
         "ST-54": {
           "title": "Spec debt aging report",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "github_issue": 2130,
           "branch": "exec/2026-10-29__release-v9.14/EPIC-07",
-          "spec_references": [],
+          "spec_references": [
+            "scripts/report_spec_debt_aging.py",
+            "tests/test_report_spec_debt_aging.py",
+            "docs/governance/spec_debt_aging_report_2026-11-02.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "acceptance_verified": false,
-          "commit_sha": null
+          "deviations_filed": true,
+          "acceptance_verified": true,
+          "commit_sha": "d3488e766653972c9e62a1b7305993ae650a93f0",
+          "completed_utc": "2026-11-02T11:04:18Z",
+          "last_completed_substep": "3.1.A.10a",
+          "notes": "AC met: script lists open BLG-SPEC items by cycles without a story (§1.1 measure) with tests (5 pass); one run recorded in docs/governance/spec_debt_aging_report_2026-11-02.md; prompt wiring filed separately as BLG-GOV-403. Deviation check: none. Graded Pass_with_deviation at DoQ: ready-pool measure estimated (cycles since filing; same-day boundary +1), tracked by BLG-GOV-403."
         }
+      },
+      "sign_off_record": {
+        "role": "Director of Quality",
+        "method": "agent_mediated",
+        "status": "cleared",
+        "passes": 1,
+        "date": "2026-11-02",
+        "evidence": "claude/cycles/2026-10-29__release-v9.14/qa_evidence_EPIC-07.md"
       }
     }
   },
@@ -1200,7 +1220,8 @@
     "ST-49",
     "ST-50",
     "ST-52",
-    "ST-53"
+    "ST-53",
+    "ST-54"
   ],
   "open_escalations": {
     "ESC-EXEC-20261029-01": {

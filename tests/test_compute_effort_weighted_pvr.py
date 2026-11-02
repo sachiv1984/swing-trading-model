@@ -41,6 +41,8 @@ _spec.loader.exec_module(pvr)
     # Parenthetical that does not start with a quantity -> band midpoint
     ("M (Product Owner-confirmed scope, 2026-08-14 — see below)", 1.75),
     ("XS (confirmation only, once DB access is available)", 0.4),
+    ("M (2026-08-14 PO-confirmed)", 1.75),
+    ("S (3 sub-items)", 0.75),
     # Band alone
     ("XS", 0.4), ("S", 0.75), ("M", 1.75), ("L", 3.5), ("VL", 3.5), ("VH", 12.0),
 ])

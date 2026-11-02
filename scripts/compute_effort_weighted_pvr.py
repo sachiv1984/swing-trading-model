@@ -53,6 +53,7 @@ BAND_MIDPOINT = {
     "XS": 0.4, "S": 0.75, "M": 1.75, "L": 3.5, "VL": 3.5, "VH": 12.0,
 }
 # "~0.5-1 day", "<1h", "~15min", "2d" at the start of a band's parenthetical.
+# A quantity counts only with a day/hour/minute unit or a leading "<".
 LEADING_QUANTITY = re.compile(
     r"^\s*(<)?\s*~?\s*(\d+(?:\.\d+)?)(?:\s*[–-]\s*(\d+(?:\.\d+)?))?\s*"
     r"(d|days?|h|hrs?|hours?|mins?|minutes?)?\b",
@@ -103,6 +104,9 @@ def parse_effort_weight(effort_text: str):
         if not q:
             return BAND_MIDPOINT[band]
         lt, lo, hi, unit = q.group(1), float(q.group(2)), q.group(3), (q.group(4) or "").lower()
+        if not lt and not unit:
+            # A unitless leading number is a date or a count, not an effort.
+            return BAND_MIDPOINT[band]
         if lt or unit.startswith(("h", "m")):
             return 0.15  # sub-day, hour-scale
         return (lo + float(hi)) / 2 if hi else lo

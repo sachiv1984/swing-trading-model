@@ -6745,6 +6745,7 @@ ST-48 fixed `scripts/compute_effort_weighted_pvr.py`'s parse of band parenthetic
 
 **Scope**
 - Choose where the report runs: `release_planning_prompt.md` §1.1 (replace the by-hand count) or a standing `groom backlog` step, or both
+- Close the two estimation gaps ST-54 disclosed: per-item ready-pool membership is not recorded, so the script counts every release cycle on or after filing (gated items flagged); and a cycle starting on the filing date is counted, which can overstate by one. Either record ready-pool membership per item at Release Planning §1.4c, or keep the estimate and state it in the prompt
 - Apply the choice with the CLAUDE.md §6 checklist
 
 **Acceptance Criteria**
