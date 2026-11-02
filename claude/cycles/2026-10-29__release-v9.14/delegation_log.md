@@ -1,7 +1,7 @@
 Owner: PMO Lead
 Class: Planning Document (Class 4)
 Status: Active
-Last Updated: 2026-10-30
+Last Updated: 2026-11-02
 
 # Delegation Log — 2026-10-29__release-v9.14
 
@@ -84,3 +84,19 @@ Last Updated: 2026-10-30
 - **Unblock criteria:** Seal-marked post-merge AC 1, tracked by BLG-GOV-399: 10 production AI outputs supplied (or a read granted) and reviewed in a dated audit doc. ACs 2 and 3 follow from it. If no sample is available by EPIC-03 sign-off, AC 3 re-defers `ESC-EXEC-20260910-01` with that reason and the story is graded on its in-sprint ACs (LL-v9.13-P3-03).
 - **Commit format required:** `[EPIC-03][ST-23] <description>` on `exec/2026-10-29__release-v9.14/EPIC-03`, or `[GOVERNANCE] <description>` on `main` if EPIC-03 has merged
 - **Status:** Pending — carried to post-merge (BLG-GOV-399). The AI Compliance & Governance Officer (the user, in session, 2026-10-30) chose to carry the sample post-merge and re-deferred `ESC-EXEC-20260910-01` (addendum `109728bf`). The story is graded on its in-sprint ACs (LL-v9.13-P3-03).
+
+## DEL-20261102-01
+
+- **ST Item:** ST-30 — Staging visual check of the layout changed by tailwind-merge in cn()
+- **EPIC:** EPIC-05
+- **Classification:** delegated_qa (human staging pass in both themes, Human-Delegation — `sprint_backlog.md` ST-30 Notes, RISK-01)
+- **Assigned to:** Director of Quality or Head of UX & Design
+- **GitHub Issue:** #2107
+- **Branch:** exec/2026-10-29__release-v9.14/EPIC-05
+- **Delegated at:** 2026-11-02T11:51:28Z
+- **What is needed:** v9.13 ST-25 (`2f5cc56a`) made `cn()` in `src/lib/utils.js` run `tailwind-merge`, so a caller's classes now win every Tailwind class conflict app-wide, not only Button fills. At least one unplanned change is known: the Trade History expanded row narrowed and moved the Post-Trade Debrief buttons. (1) Confirm which commit `https://trading-assistant-staging.onrender.com` is serving (it was pointed at the EPIC-01 branch on 2026-10-29); it must be a `main` commit at or after `42bec3ce`. (2) In both light and dark themes, check these pages: Positions (grid and table), Trade History with a row expanded, Dashboard, Trade Plans, Screener, Settings, and at least one dialog and one sheet (for example the Exit modal and the Position detail sheet). (3) Compare each against the pre-change layout. Production no longer serves it, because deploys resumed from `main` on 2026-11-02, so use a local build of `2f5cc56a~1` (`git checkout 2f5cc56a~1 && npm ci && npm start`), or ask the engine for before/after screenshots of the same pages from both builds. (4) For each difference, say whether it is intended. Report the date, the pages and themes checked, and each unintended change with a screenshot or short description.
+- **Workflow viability (LL-v9.10-P3-01):** Not a workflow dispatch; a human browser pass on staging. Staging deploys from Render, not GitHub Actions. `deploy.yml` (production Pages) last succeeded at run 41438837862 (2026-11-02T11:41:49Z).
+- **Spec reference:** `src/lib/utils.js` (`cn()`); `stage4_backlog_slice.md#ST-30`
+- **Unblock criteria:** AC 1: the staging run date and the pages checked are recorded in `qa_evidence_EPIC-05.md` under ST-30. AC 2: each unintended layout change found is fixed on this branch or has a backlog item filed.
+- **Commit format required:** `[EPIC-05][ST-30] <description>` on `exec/2026-10-29__release-v9.14/EPIC-05` (the engine records the results), or `[GOVERNANCE] <description>` on `main` if EPIC-05 has merged
+- **Status:** Pending

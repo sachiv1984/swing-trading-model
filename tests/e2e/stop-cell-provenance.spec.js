@@ -17,6 +17,8 @@
  *   SC-SCP-08  Table View — stop_frozen_reason post-grace shows the indicator in place of the provenance line, plus the tooltip row
  *   SC-SCP-09  Grid View — the same indicator in the Stop tile
  *   SC-SCP-10  During grace no indicator shows, even with stop_frozen_reason set
+ * ST-34 (BLG-QA-215, EPIC-05, v9.14) — UTC-to-local conversion of stop_calculated_at
+ *   SC-SCP-11  Europe/London browser: a 21:15+00:00 timestamp shows as 22:15 BST in the tooltip
  *
  * Infrastructure: Playwright page.route() network interception. No live backend.
  * ROUTING NOTE: App uses HashRouter — navigate via page.goto('/#/Positions'). Grid View
@@ -246,4 +248,18 @@ test('SC-SCP-10: no frozen-stop indicator during grace', async ({ page }) => {
   const row = rowFor(page, 'MSFT');
   await expect(row.getByTestId('stop-provenance')).toBeVisible();
   await expect(row.getByTestId('stop-frozen-indicator')).toHaveCount(0);
+});
+
+// SC-SCP-01 to SC-SCP-10 use offset-less timestamps, which pass in any timezone.
+// The API returns stop_calculated_at as an offset ISO string (TIMESTAMPTZ), so this
+// case pins a non-UTC browser timezone and checks the conversion a UK user sees in BST.
+test.describe('browser timezone Europe/London', () => {
+  test.use({ timezoneId: 'Europe/London' });
+
+  test('SC-SCP-11: a UTC stop_calculated_at shows in BST local time in the tooltip', async ({ page }) => {
+    await gotoPositionsTable(page, [makePosition({ ...PROFITABLE, stop_calculated_at: '2026-10-05T21:15:00+00:00' })]);
+
+    const tip = await openStopDetails(page, 'AAPL');
+    await expect(tip).toContainText('Last recalculated 5 Oct 2026, 22:15 — nightly update');
+  });
 });
