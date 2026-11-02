@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 0.18
-**Last Updated:** 2026-10-17 (ST-09, EPIC-02, v9.13, BLG-BE-156 — `GET /reports/monthly-pnl` returns 200 with realised P&L and no restatement fields when `monthly_pnl_snapshots` fails); prior — 2026-10-12 (EPIC-04 merged to main, PR #1972, carried into EPIC-05 by the main merge — 0.17 (ST-25 narrative endpoints) and 0.16 (ST-29) both kept; version 0.17 is the highest); prior — 2026-10-09 (ST-25, EPIC-04, v9.11, BLG-FEAT-59 — new `GET` and `POST /reports/monthly-pnl/narrative`); prior history retained — see prior entries in version control
+**Version:** 0.19
+**Last Updated:** 2026-11-02 (ST-24, EPIC-04, v9.14, BLG-FEAT-99 — `GET /reports/monthly-pnl` adds `by_exit_condition` per month); prior — 2026-10-17 (ST-09, EPIC-02, v9.13, BLG-BE-156 — `GET /reports/monthly-pnl` returns 200 with realised P&L and no restatement fields when `monthly_pnl_snapshots` fails); prior — 2026-10-12 (EPIC-04 merged to main, PR #1972, carried into EPIC-05 by the main merge — 0.17 (ST-25 narrative endpoints) and 0.16 (ST-29) both kept; version 0.17 is the highest); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Overview
@@ -436,7 +436,11 @@ Array of monthly summary objects, sorted descending by year then month. Only mon
 ```json
 [
   { "year": 2026, "month": 4, "realised_pnl_gbp": 340.50, "trade_count": 3, "null_fee_trade_count": 0,
-    "snapshotted": false, "restated": false, "snapshot_realised_pnl_gbp": null, "restated_diff_gbp": null },
+    "snapshotted": false, "restated": false, "snapshot_realised_pnl_gbp": null, "restated_diff_gbp": null,
+    "by_exit_condition": {
+      "stop_loss": { "realised_pnl_gbp": -60.00, "trade_count": 1 },
+      "risk_off": { "realised_pnl_gbp": 0.00, "trade_count": 0 },
+      "manual": { "realised_pnl_gbp": 400.50, "trade_count": 2 } } },
   { "year": 2026, "month": 3, "realised_pnl_gbp": -120.00, "trade_count": 1, "null_fee_trade_count": 1,
     "snapshotted": true, "restated": false, "snapshot_realised_pnl_gbp": -120.00, "restated_diff_gbp": 0.0 },
   { "year": 2025, "month": 12, "realised_pnl_gbp": 875.25, "trade_count": 5, "null_fee_trade_count": 0,
@@ -444,7 +448,7 @@ Array of monthly summary objects, sorted descending by year then month. Only mon
 ]
 ```
 
-(This example assumes April 2026 is the current calendar month — only the two prior months are snapshotted.)
+(This example assumes April 2026 is the current calendar month — only the two prior months are snapshotted. `by_exit_condition` is shown on the first month only for brevity; every month carries it.)
 
 #### Field definitions
 
@@ -459,10 +463,13 @@ Array of monthly summary objects, sorted descending by year then month. Only mon
 | `restated` | boolean | *(v0.13 — ST-08)* `true` if this month is snapshotted and its live-computed `realised_pnl_gbp`/`trade_count` now disagree with the stored baseline. Always `false` when `snapshotted` is `false`. |
 | `snapshot_realised_pnl_gbp` | float \| null | *(v0.13 — ST-08)* The stored baseline figure for this month. `null` when `snapshotted` is `false`. |
 | `restated_diff_gbp` | float \| null | *(v0.13 — ST-08)* `realised_pnl_gbp − snapshot_realised_pnl_gbp` when `restated` is `true`; `0.0` when snapshotted but not restated; `null` when `snapshotted` is `false`. |
+| `by_exit_condition` | object | *(v0.19 — ST-24, BLG-FEAT-99)* This month's realised P&L and trade count by `strategy_rules.md` §8 exit condition, per `metrics_definitions.md` §Exit Condition Category (computed in `backend/services/reports_service.py` from `backend/exit_reasons.py`; a `NULL` `exit_reason` counts as `manual`). Keys: `stop_loss` (§8.1), `risk_off` (§8.2), `manual` (§8.3); every key is always present. Each value is `{ "realised_pnl_gbp": float, "trade_count": integer }`, with `0.0`/`0` for a category with no trades. Same `trade_history.pnl` basis as `realised_pnl_gbp` (net of recorded fees): the three `realised_pnl_gbp` values sum to the month's `realised_pnl_gbp` and the three `trade_count` values to its `trade_count`. See "Exit-condition breakdown failure" below for when it is absent. |
 
 **Restatement fields: what the response does not carry (v0.16 — ST-29, BLG-SPEC-170):**
 - **No snapshot date.** The response carries no date for `snapshot_realised_pnl_gbp`; the snapshot is the month-end baseline of that month. `reports.md` §Monthly Restatement Marker shows "As reviewed" undated to match.
 - **No partial-failure field; snapshot failure is non-blocking.** *(v0.18 — ST-09, BLG-BE-156)* When `monthly_pnl_snapshots` is read and written successfully, the four restatement fields are present on every month. When reading or writing it fails (connection, table-ensure, read or baseline insert), the request still returns `200` with `year`, `month`, `realised_pnl_gbp`, `trade_count` and `null_fee_trade_count` for every month, and **none** of the four restatement fields on **any** month (never a partial set). The failure is logged server-side with its traceback (`exc_info`). A client should treat a response in which no month carries a boolean `restated` as "restatement check unavailable"; that is the signal `reports.md` defines. Other failures (e.g. the realised P&L query itself) still return the standard `500` envelope.
+
+**Exit-condition breakdown failure (v0.19 — ST-24, BLG-FEAT-99):** `by_exit_condition` is present on every month or on none. If its query fails, a stored `exit_reason` has no category, or any month's categories do not sum to that month's `realised_pnl_gbp` and `trade_count` (for example a trade closed between the two reads), the request still returns `200` with every other field and no month carries `by_exit_condition`. The failure is logged server-side with `exc_info`. A client should treat a response in which no month carries `by_exit_condition` as "breakdown unavailable" (`reports.md` §Exit Condition Breakdown). The CSV export and `monthly_pnl_snapshots` are unchanged.
 
 **Scope:** By default, returns data for the current calendar year and the prior calendar year only (24 months maximum). When `year` is given, returns data for that UK tax year instead (12 months maximum). Empty array if no closed trades exist in scope.
 
@@ -826,6 +833,7 @@ GET /reports/reconciliation?year=2025
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.19 | 2026-11-02 | ST-24 (EPIC-04, v9.14, BLG-FEAT-99): `GET /reports/monthly-pnl` adds `by_exit_condition` per month (realised P&L and trade count by §8 exit condition: `stop_loss`, `risk_off`, `manual`), summing to the month's figures; omitted from every month when the breakdown fails or does not reconcile. JSON only. Agrees with `reports.md` v0.26. |
 | 0.18 | 2026-10-17 | ST-09 (EPIC-02, v9.13, BLG-BE-156): `GET /reports/monthly-pnl` no longer fails when `monthly_pnl_snapshots` cannot be read or written. It returns `200` with realised P&L for every month and none of the four restatement fields, and logs the failure with `exc_info`. Response shape on success unchanged. Agrees with `reports.md` v0.25. |
 | 0.17 | 2026-10-09 | ST-25 (EPIC-04, v9.11, BLG-FEAT-59): Added `## GET /reports/monthly-pnl/narrative` and `## POST /reports/monthly-pnl/narrative` — the AI-assisted Monthly P&L summary: stored per tax year and input hash, daily cap of 40 model calls (429), fail-closed 503, output checks with a code-written fallback, `advisory: true`. §13 CONDITIONAL (`decisions--2026-10-08__release-v9.11--ST-25-monthly-pnl-narrative-section13-review.md`). Numbered 0.17 because EPIC-05's ST-29 holds 0.16. |
 | 0.16 | 2026-10-08 | ST-29 (EPIC-05, v9.11, BLG-SPEC-170): Stated what `GET /reports/monthly-pnl`'s restatement fields do not carry — no snapshot date, no partial-failure field — and the client-side "unavailable" signal, agreeing with `reports.md` v0.22. Documentation only. |

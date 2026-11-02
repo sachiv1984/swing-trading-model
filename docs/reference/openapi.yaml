@@ -2,7 +2,9 @@ openapi: 3.0.3
 
 info:
   title: Momentum Trading Assistant API
-  version: 3.45.0
+  version: 3.46.0
+  # v3.46.0 (2026-11-02, ST-24, EPIC-04, v9.14): GET /reports/monthly-pnl month objects gain
+  # by_exit_condition (stop_loss / risk_off / manual realised P&L and trade count; BLG-FEAT-99). No new endpoint.
   # v3.45.0 (2026-10-30, ST-22, EPIC-03, v9.14): POST /trade-plans/{plan_id}/generate-thesis removed
   # (retired, BLG-BE-163). 153 paths.
   # v3.44.0 (2026-10-30, ST-41, EPIC-06, v9.14): POST /ai/check-daily-cost also checks the previous
@@ -923,7 +925,8 @@ paths:
         Pass format=csv to receive a CSV file download instead of JSON (ST-05, v7.8).
         Each month object also includes null_fee_trade_count (ST-07, v9.6) — an
         audit signal, not part of the CSV export.
-        Canonical contract: docs/specs/api_contracts/reports_endpoints.md v0.14. ST-03 (v4.7), ST-14 (v7.0), ST-05 (v7.8), ST-07 (v9.6), ST-03 (v9.8).
+        Each month object also includes by_exit_condition (ST-24, v9.14).
+        Canonical contract: docs/specs/api_contracts/reports_endpoints.md v0.19. ST-03 (v4.7), ST-14 (v7.0), ST-05 (v7.8), ST-07 (v9.6), ST-03 (v9.8), ST-24 (v9.14).
       parameters:
         - in: query
           name: year
@@ -1007,6 +1010,23 @@ paths:
                             snapshot_realised_pnl_gbp when restated; 0.0 when
                             snapshotted but not restated; null when
                             snapshotted is false.
+                        by_exit_condition:
+                          type: object
+                          description: >
+                            v9.14 ST-24 (BLG-FEAT-99) — realised P&L and trade
+                            count by strategy_rules.md §8 exit condition
+                            (metrics_definitions.md §Exit Condition Category).
+                            The three categories sum to the month's
+                            realised_pnl_gbp and trade_count. Omitted from every
+                            month when the breakdown fails or does not reconcile.
+                          required: [stop_loss, risk_off, manual]
+                          properties:
+                            stop_loss:
+                              $ref: '#/components/schemas/ExitConditionPnl'
+                            risk_off:
+                              $ref: '#/components/schemas/ExitConditionPnl'
+                            manual:
+                              $ref: '#/components/schemas/ExitConditionPnl'
                   estimated_unrealised_pnl:
                     type: number
                     nullable: true
@@ -6463,6 +6483,16 @@ paths:
 
 components:
   schemas:
+    ExitConditionPnl:
+      type: object
+      description: ST-24 (v9.14) — one §8 exit condition's share of a month's realised P&L.
+      properties:
+        realised_pnl_gbp:
+          type: number
+          example: -60.00
+        trade_count:
+          type: integer
+          example: 1
     ChatAnswerRatingEnvelope:
       type: object
       description: ST-22 (v9.13) — a stored chat answer rating.

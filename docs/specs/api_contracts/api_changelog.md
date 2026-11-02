@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Class 2
 **Status:** Canonical
-**Version:** 1.28.4
-**Last Updated:** 2026-10-30 (ST-15/16/17/19/20/22, EPIC-03, v9.14 — v9.14.0 entries: ai_endpoints.md v1.34–v1.37, trade_endpoints.md v2.6.2, POST /trade-plans/{plan_id}/generate-thesis removed); prior — 2026-10-30 (ST-41, EPIC-06, v9.14, BLG-OPS-186 — v9.14.0 entry: POST /ai/check-daily-cost also checks the previous UTC day); prior — 2026-10-30 (ST-10, EPIC-02, v9.14, BLG-BE-188 — v9.14.0 entry: POST /positions/{position_id}/exit returns its documented 404 and 400); prior history retained — see prior entries in version control
+**Version:** 1.28.5
+**Last Updated:** 2026-11-02 (ST-24, EPIC-04, v9.14, BLG-FEAT-99 — v9.14.0 entry: GET /reports/monthly-pnl gains by_exit_condition per month); prior — 2026-10-30 (ST-15/16/17/19/20/22, EPIC-03, v9.14 — v9.14.0 entries: ai_endpoints.md v1.34–v1.37, trade_endpoints.md v2.6.2, POST /trade-plans/{plan_id}/generate-thesis removed); prior — 2026-10-30 (ST-41, EPIC-06, v9.14, BLG-OPS-186 — v9.14.0 entry: POST /ai/check-daily-cost also checks the previous UTC day); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 # API Changelog
@@ -151,6 +151,15 @@ Rules:
 |--------|---------|
 | Removed endpoint: POST /trade-plans/{plan_id}/generate-thesis | Retired; the path now returns 404. Removed directly under `conventions.md` §14.1: no active consumer since "Improve with AI" moved to `POST /trade-plans/generate-plan` on 2026-05-25 (`f91a718a`); recorded in `deprecated_endpoint_sunset_tracker.md` §3a. `generate_setup_thesis()`, its prompt, its rate limit and its endpoint-test entry are removed; `openapi.yaml` v3.45.0 (BLG-BE-163). |
 | Contract consolidation | `gemini_thesis_generation.md` (superseded since v4.2) is merged into `ai_thesis_generation.md` and deleted; `ai_thesis_generation.md` is the only thesis-generation contract and documents `POST /trade-plans/generate-plan`. |
+
+### reports_endpoints.md — v0.19 (UPDATED)
+
+**EPIC:** EPIC-04
+**ST:** ST-24
+
+| Change | Details |
+|--------|---------|
+| Updated endpoint: GET /reports/monthly-pnl | Each month adds `by_exit_condition`: realised P&L and trade count for each `strategy_rules.md` §8 exit condition (`stop_loss`, `risk_off`, `manual`; `metrics_definitions.md` §Exit Condition Category), summing to the month's `realised_pnl_gbp` and `trade_count`. Omitted from every month when the breakdown fails or does not reconcile; the request still returns `200`. JSON only, CSV unchanged; `openapi.yaml` v3.46.0 (BLG-FEAT-99). |
 
 ## v9.13.0 (2026-10-16 — Release v9.13)
 
