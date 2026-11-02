@@ -6,8 +6,11 @@ import { formatCurrency } from "../../../lib/format";
 // ST-15 (EPIC-02, v9.11, BLG-FE-204): the glyph, badge and text colour test the
 // P&L as displayed (rounded to 2 dp), so 0.004 -> "£0.00" is break-even, not a
 // winner (dashboard.md §4 Card 5; design_system.md v1.21 zero rule).
+// ST-25 (EPIC-04, v9.14, BLG-FE-213): rounds with toFixed(2), as formatCurrency
+// does, so the glyph agrees with the text at a half-penny. Math.round rounded
+// −0.005 to −0 (neutral) while the text showed "−£0.01".
 function displayedPnl(trade) {
-  return Math.round((Number(trade.pnl) || 0) * 100) / 100;
+  return Number((Number(trade.pnl) || 0).toFixed(2));
 }
 
 export default function RecentTradesWidget({ positions }) {

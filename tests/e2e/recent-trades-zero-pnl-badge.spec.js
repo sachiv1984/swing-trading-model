@@ -15,6 +15,8 @@
  *              (ST-10, BLG-FE-194, EPIC-02, cycle 2026-10-06__release-v9.10)
  *   SC-RTB-06  pnl 0.004 (displays as £0.00) -> neutral glyph and colour; pnl 0.01 -> up arrow
  *              (ST-15, BLG-FE-204, EPIC-02, cycle 2026-10-08__release-v9.11)
+ *   SC-RTB-07  pnl −0.005 (displays as −£0.01) -> down glyph and rose colour, agreeing with the text
+ *              (ST-25, BLG-FE-213, EPIC-04, cycle 2026-10-29__release-v9.14)
  *
  * Infrastructure: Playwright page.route() network interception. No live backend required.
  *
@@ -40,6 +42,7 @@ const CLOSED_TRADES = [
 const ROUNDING_TRADES = [
   { id: 'rt-tiny', ticker: 'TINY', market: 'US', status: 'closed', exit_date: '2026-09-26', pnl: 0.004, shares: 2 },
   { id: 'rt-cent', ticker: 'CENT', market: 'US', status: 'closed', exit_date: '2026-09-25', pnl: 0.01, shares: 2 },
+  { id: 'rt-halfp', ticker: 'HALF', market: 'US', status: 'closed', exit_date: '2026-09-24', pnl: -0.005, shares: 2 },
 ];
 
 async function mockFallback(page) {
@@ -116,5 +119,18 @@ test.describe('Recent Trades icon badge colour', () => {
     const cent = page.getByTestId('recent-trade-badge-rt-cent');
     await expect(cent.getByTestId('recent-trade-glyph-up')).toBeVisible();
     await expect(cent).toHaveClass(/bg-emerald-500\/20/);
+  });
+
+  test('SC-RTB-07: a half-penny loss that displays as −£0.01 gets the down glyph and rose colour (ST-25)', async ({ page }) => {
+    await gotoDashboardWithTrades(page, ROUNDING_TRADES);
+    const badge = page.getByTestId('recent-trade-badge-rt-halfp');
+    await expect(badge.getByTestId('recent-trade-glyph-down')).toBeVisible({ timeout: 8000 });
+    await expect(badge.getByTestId('recent-trade-glyph-neutral')).toHaveCount(0);
+    await expect(badge).toHaveClass(/bg-rose-500\/20/);
+    await expect(badge).toHaveClass(/text-rose-400/);
+    // The adjacent amount reads "−£0.01" in the same rose tone.
+    const amount = page.getByText('\u2212£0.01', { exact: true });
+    await expect(amount).toBeVisible();
+    await expect(amount).toHaveClass(/text-rose-400/);
   });
 });
