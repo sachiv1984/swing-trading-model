@@ -27,11 +27,19 @@ Last Updated: 2026-11-02
 - **Story:** ST-30 (BLG-QA-235) · **Delegation:** DEL-20261102-01 (Director of Quality or Head of UX & Design)
 - **Spec references:** `src/lib/utils.js` (`cn()`); `stage4_backlog_slice.md#ST-30`
 - **What is needed:** a human staging pass in light and dark themes of Positions (grid and table), Trade History with a row expanded, Dashboard, Trade Plans, Screener, Settings, and at least one dialog and one sheet. Compare each page with the pre-change build (`2f5cc56a~1`). Production now serves the post-change build, because deploys resumed from `main` on 2026-11-02.
-- **Staging run date:** _(to be recorded)_
-- **Pages and themes checked:** _(to be recorded)_
-- **Unintended changes found → fix or backlog item:** _(to be recorded)_
-- **QA findings (Director of Quality):** _(open)_
-- **Disposition:** _(open: Pass / Pass with notes / Fail)_
+- **Staging run date:** 2026-11-02. The Product Owner reviewed staging in a browser and accepted the findings below. The before/after comparison (DEL-20261102-01 step 3) used engine screenshots from local builds of `2f5cc56a~1` (`388e31d9`) and `d11e6446`, whose app code is `main` `42bec3ce`: same mocked API data, Chromium 1280×900, both themes.
+- **Staging commit check (DEL step 1):** the staging bundle (`static/js/main.2f34524f.js`, fetched 2026-11-02) contains `3a3b9868`'s change (EPIC-04 ST-28, `/reports` → Analytics) and the ST-25 emerald fills. `3a3b9868` is the last commit touching `src/` before `42bec3ce`, and `git diff 3a3b9868 42bec3ce -- src/ public/ package.json tailwind.config.js` is empty, so staging serves the same frontend as the "after" build.
+- **Pages and themes checked:** Dashboard, Positions (grid and table), Exit Position dialog, Trade History (row expanded), Trade Plans, Screener, Settings, and the mobile slide-in menu at 390px as the sheet. The app renders no `Sheet` component (`ui/sheet.js` is never imported). All pages were checked in light and dark: 18 pairs, each pixel-diffed, style-diffed per element, and run through axe `color-contrast` in both builds.
+- **Differences found and dispositions** (Head of UX & Design, agent-mediated at the Product Owner's instruction, 2026-11-02; finding 1 decided by the Product Owner):
+  1. Light theme, Trade History "No saved filters" text contrast 4.32:1 → 1.45:1 (dark-only `bg-slate-800/50` fill now applied). **Unintended → BLG-FE-242** (Product Owner decision: backlog, not an in-sprint fix).
+  2. Positions table trailing stop value slate-300 → rose-400, both themes. **Intended.** The cell always authored `text-rose-400`; `design_system` §1.3 assigns rose-400 to stop values, and the grid card already shows it. Table and grid now agree. The orange BREACH pill stays distinct (v6.2 trailing-stop ux_spec §3).
+  3. Form fields take their `bg-slate-800/50` fill (Exit dialog, Trade History filters). **Intended in dark**, which matches `design_system` §1.1 (input field `bg-slate-800`). The light-theme rendering is the dark-only-token class and is covered by BLG-FE-242. It is not a blocker, because it removes 4 existing light-theme contrast failures and adds only finding 1.
+  4. Trade Plans icon buttons 36 → 28px, Clone/Start Trade 32 → 28px tall, rows ~8px shorter, Start Trade emerald border; Positions table icon buttons 36 → 32px. **Intended.** These are the sizes and border the callers authored. 28px exceeds the WCAG 2.2 SC 2.5.8 24px minimum target size. Tables collapse to cards on mobile (`design_system` §Responsive Behavior), so touch use doesn't land on these buttons.
+  5. Trade History cell side padding 24 → 8px; the table fits at 1280px (1362 → 986px) with no horizontal scroll; light-theme headers slate-600 → slate-300 on the dark table. **Intended / acceptable.** Already disclosed in `2f5cc56a` (RISK-05). All 14 `trade_history.md` columns are visible without scrolling. 8px is tighter than the living reference's compact `px-3`, which is noted, not filed.
+  - Unchanged: Dashboard, Screener, Settings, mobile menu (pixel-identical in both themes); Positions grid (only the view toggle's 12px unused padding, visible in hover state).
+  - Pre-existing, equal in both builds, not caused by this change: light-theme dark tables and dialogs, and about 39 axe contrast failures each on light Dashboard and Screener.
+- **QA findings (Director of Quality):** see the Sign-Off Block.
+- **Disposition:** Pass. AC 1 is met: the date and the pages checked are recorded above. AC 2 is met: the one unintended change is backlogged as BLG-FE-242 (Product Owner decision).
 
 ### Pre-commit OpenAPI contract check reads staged content
 
@@ -93,7 +101,7 @@ Last Updated: 2026-11-02
 | ST Item | Spec Reference | What was built | Acceptance criteria | Result | Deviations |
 |---------|----------------|----------------|---------------------|--------|------------|
 | ST-29 | `positions-exit-modal.spec.js`; inventory row 2 | SC-PEM-01..02 Exit modal submit and failure | Covers AC 1, AC 2 | Pending DoQ | None (BLG-FE-241 incidental finding) |
-| ST-30 | `src/lib/utils.js` `cn()` | Human staging pass, both themes (DEL-20261102-01) | Covers AC 1, AC 2 | Awaiting QA | — |
+| ST-30 | `src/lib/utils.js` `cn()` | Staging visual check, both themes, 9 screens; Product Owner browser review 2026-11-02 (DEL-20261102-01) | Covers AC 1, AC 2 | Pending DoQ | None (BLG-FE-242: unintended light-theme contrast change, backlogged per AC 2) |
 | ST-31 | `check_local_openapi_contract_completeness.py` | `--staged` hook mode | Covers AC 1, AC 2, AC 3 | Pending DoQ | None |
 | ST-32 | `tests/conftest.py` AST scan | `import database` form covered; coverage test | Covers AC 1, AC 2, AC 3 | Pending DoQ | None |
 | ST-33 | `test_alerts_service.py`; §11 | Grace-warning behaviour test, mutation-checked | Covers AC 1 | Pending DoQ | None |

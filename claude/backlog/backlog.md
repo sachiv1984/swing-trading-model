@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-02 (Sprint Execution, EPIC-05 of 2026-10-29__release-v9.14 — 1 new item(s) added: BLG-FE-241); prior — 2026-11-02 (Sprint Execution, EPIC-07 of 2026-10-29__release-v9.14 — 8 new item(s) added: BLG-GOV-401, BLG-FE-238, BLG-GOV-402, BLG-FE-239, BLG-FE-240, BLG-SPEC-212, BLG-GOV-403, BLG-SPEC-213); prior — 2026-11-02 (Sprint Execution, EPIC-04 of 2026-10-29__release-v9.14 — 3 new item(s) added: BLG-BE-201, BLG-FE-237, BLG-BE-202); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-02 (Sprint Execution, EPIC-05 of 2026-10-29__release-v9.14 — 1 new item(s) added: BLG-FE-242); prior — 2026-11-02 (Sprint Execution, EPIC-05 of 2026-10-29__release-v9.14 — 1 new item(s) added: BLG-FE-241); prior — 2026-11-02 (Sprint Execution, EPIC-07 of 2026-10-29__release-v9.14 — 8 new item(s) added: BLG-GOV-401, BLG-FE-238, BLG-GOV-402, BLG-FE-239, BLG-FE-240, BLG-SPEC-212, BLG-GOV-403, BLG-SPEC-213); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -6796,5 +6796,28 @@ ST-48 made `metrics_definitions.md` Appendix F and `scripts/compute_effort_weigh
 - On the Positions page, a failed exit keeps the modal open with the `exit-error` block showing the API `detail`, and no `window.alert` appears
 - Confirm Exit reads "Exiting…" and is disabled while the request is in flight
 - SC-PEM-02 asserts both and passes in CI
+
+---
+
+### BLG-FE-242 — Give the Trade History filter fields and Exit dialog fields a light-theme fill
+**Priority:** P3 (Low)
+**Type:** Frontend / UX (light-theme contrast)
+**Owner:** Frontend Specifications & UX Owner
+**Source:** Sprint Execution, ST-30 / EPIC-05 of `2026-10-29__release-v9.14` (staging visual check of the tailwind-merge `cn()` change, before/after screenshots of `2f5cc56a~1` and `42bec3ce`); Product Owner chose to backlog rather than fix in-sprint — 2026-11-02
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+Since `cn()` runs `tailwind-merge` (v9.13 ST-25, `2f5cc56a`), a caller's `bg-slate-800/50` now beats the input and select default `bg-transparent`. The Trade History saved-filter picker, the Trade History filter selects and date inputs, and the Exit Position dialog fields all set this fill with no light-theme pair, so the light theme renders a dark fill. On the saved-filter picker the placeholder text "No saved filters" (`#737373`) measures 1.45:1 against that fill, down from 4.32:1 before the change (axe `color-contrast`, light theme). This is the dark-only-token defect class `design_system.md` warns about (BLG-FE-87/88/95).
+
+**Scope**
+- Replace the bare `bg-slate-800/50` on these fields with an explicit light+dark pair from `design_system.md` §Light-Theme Colour Tokens, with a light-theme text colour that meets 4.5:1 on it
+- Sites: the saved-filter picker in `src/components/trades/SavedFiltersControl.js`; the Trade History filter selects and date inputs; the Exit Position dialog inputs, Exit Reason select and note field
+- Add a light-theme axe `color-contrast` check of Trade History to `tests/e2e/accessibility-axe-scan.spec.js` that covers the saved-filter picker
+
+**Acceptance Criteria**
+- In the light theme, "No saved filters" and every Trade History filter field meet 4.5:1 text contrast (axe `color-contrast` passes for those elements)
+- The dark theme is unchanged: the fields keep the `bg-slate-800/50` fill
+- The new light-theme Trade History scan passes in CI
 
 ---
