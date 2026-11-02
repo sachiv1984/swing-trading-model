@@ -1,8 +1,8 @@
 **Owner:** Director of Quality
 **Class:** Class 2
 **Status:** Active
-**Version:** 1.0
-**Last Updated:** 2026-10-28 (ST-24, EPIC-04, v9.13, BLG-QA-227 — first inventory of state-changing primary actions with Playwright coverage status)
+**Version:** 1.1
+**Last Updated:** 2026-11-02 (ST-29, EPIC-05, v9.14, BLG-QA-237 — row 2, the Positions-page Exit modal, now Covered by `positions-exit-modal.spec.js`); prior — 2026-10-28 (ST-24, EPIC-04, v9.13, BLG-QA-227 — first inventory of state-changing primary actions with Playwright coverage status)
 **Sprint Item:** ST-24 (BLG-QA-227, EPIC-04, v9.13)
 
 ---
@@ -30,7 +30,7 @@ None. The first full run with the guard failed 20 tests in 5 specs. Every 404 wa
 | # | Action (UI) | Request | Call site | Status | Evidence / tracking |
 |---|-------------|---------|-----------|--------|---------------------|
 | 1 | Exit selected positions (Daily Position Monitor) | `POST /positions/{id}/exit` | `pages/Dashboard.js` → `base44Client.js:291` | Covered | `monitor-exit-queue.spec.js` SC-MEQ-01..04 |
-| 2 | Confirm exit (Positions page Exit modal) | `POST /positions/{id}/exit` | `pages/Positions.js` → `base44Client.js:291` | Not covered | BLG-QA-230 (2026-10-28) |
+| 2 | Confirm exit (Positions page Exit modal) | `POST /positions/{id}/exit` | `pages/Positions.js` → `base44Client.js:291` | Covered | `positions-exit-modal.spec.js` SC-PEM-01..02 (ST-29, BLG-QA-237, 2026-11-02) |
 | 3 | Add position (Trade Entry) | `POST /portfolio/position` | `base44Client.js:400` | Covered | `smoke-critical-paths.spec.js`, `trade-entry-system-stop.spec.js` |
 | 4 | Calculate position size | `POST /portfolio/size` | `base44Client.js:411` | Covered | `position-sizing-widget-behaviours.spec.js`, `smoke-critical-paths.spec.js` |
 | 5 | Mark reviewed (Positions table view) | `PATCH /positions/{id}/mark-reviewed` | `pages/Positions.js:606` | Covered | `position-review-cadence-nudge.spec.js` SC-RCN-06 |
@@ -82,7 +82,7 @@ None. The first full run with the guard failed 20 tests in 5 specs. Every 404 wa
 | 51 | Test all endpoints (System Status) | `POST /test/endpoints` | `pages/SystemStatus.js:210` | Covered | `system-status.spec.js` |
 | 52 | Run calculation validation (System Status) | `POST /validate/calculations` | `pages/SystemStatus.js:238` | Not covered | BLG-QA-230 (2026-10-28) |
 
-**Totals:** 52 primary actions; 37 covered; 15 not covered, all tracked in BLG-QA-230 (dated 2026-10-28).
+**Totals:** 52 primary actions; 38 covered; 14 not covered, all tracked in BLG-QA-230 (dated 2026-10-28). Row 2 moved to Covered on 2026-11-02 (ST-29, BLG-QA-237).
 
 ## Client Methods With No Caller
 

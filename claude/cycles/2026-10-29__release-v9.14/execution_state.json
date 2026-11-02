@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-29T14:51:40Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-02T11:41:45Z",
+  "last_updated_utc": "2026-11-02T14:47:53Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-02",
@@ -1175,6 +1175,215 @@
       },
       "merged_utc": "2026-11-02T11:40:58Z",
       "merge_commit": "84100ce7"
+    },
+    "EPIC-05": {
+      "status": "done",
+      "branch": "exec/2026-10-29__release-v9.14/EPIC-05",
+      "pr_number": 2139,
+      "pr_status": "open",
+      "qa_signed_off": true,
+      "qa_evidence_log": "claude/cycles/2026-10-29__release-v9.14/qa_evidence_EPIC-05.md",
+      "test_scenarios": [
+        "tests/test_check_local_openapi_contract_completeness.py",
+        "tests/test_conftest_database_stub_scan.py",
+        "tests/test_alerts_service.py",
+        "tests/test_backend_services_sys_path_guard.py",
+        "tests/e2e/positions-exit-modal.spec.js",
+        "tests/e2e/stop-cell-provenance.spec.js",
+        "tests/e2e/accessibility-axe-scan.spec.js",
+        "tests/e2e/epic02-v62-ai-briefing-chat.spec.js"
+      ],
+      "stories": {
+        "ST-29": {
+          "title": "Cover the Positions-page Exit modal submit in Playwright",
+          "classification": "autonomous",
+          "status": "done",
+          "github_issue": 2106,
+          "branch": "exec/2026-10-29__release-v9.14/EPIC-05",
+          "spec_references": [
+            "tests/e2e/positions-exit-modal.spec.js",
+            "docs/testing/state_changing_action_coverage.md",
+            "docs/specs/api_contracts/position_endpoints.md#POST /positions/{position_id}/exit"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "acceptance_verified": true,
+          "commit_sha": "f32b8c23117c28cf3b1e28f1a58f9c6f2f1bde8c",
+          "last_completed_substep": "3.1.A.10a",
+          "completed_utc": "2026-11-02T12:02:57Z",
+          "notes": "AC met: inventory row 2 reads Covered with SC-PEM-01..02; both pass in CI under the API status guard (Playwright E2E 41441543880, all 8 workflows success on f32b8c23). SC-PEM-02 asserts the window.alert error text, because the Positions page does not use the modal inline exit-error (handleExit does not return the mutation promise); filed BLG-FE-241 (P3, out of scope for a test-only story). Deviation check: the inline-error inconsistency is a UI behaviour gap with no spec requirement on the Positions page, recorded as BLG-FE-241, not a spec deviation."
+        },
+        "ST-30": {
+          "title": "Staging visual check of the layout changed by tailwind-merge in cn()",
+          "classification": "delegated_qa",
+          "status": "done",
+          "github_issue": 2107,
+          "branch": "exec/2026-10-29__release-v9.14/EPIC-05",
+          "spec_references": [
+            "src/lib/utils.js"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "acceptance_verified": true,
+          "commit_sha": "19183cec989d5f2f8af223e9eda93b762f972326",
+          "last_completed_substep": "3.1.C.unblock",
+          "blocked_since_utc": null,
+          "delegation_record_id": "DEL-20261102-01",
+          "unblock_criteria": "Human staging pass in both themes recorded in qa_evidence_EPIC-05.md (date, pages); each unintended layout change fixed or backlogged",
+          "unblocked_at_utc": "2026-11-02T14:30:00Z",
+          "sign_off_record": {
+            "status": "cleared",
+            "method": "human_product_owner_staging_review_plus_agent_mediated_head_of_ux",
+            "role": "Product Owner (browser review) + Head of UX & Design (agent-mediated, §5.3)",
+            "date": "2026-11-02"
+          },
+          "notes": "Staging visual check recorded in qa_evidence_EPIC-05.md. One unintended change backlogged as BLG-FE-242. CI on 19183cec: all 7 workflows success (CI Pytest 41456160029).",
+          "completed_utc": "2026-11-02T14:30:00Z"
+        },
+        "ST-31": {
+          "title": "Pre-commit OpenAPI contract check reads staged content",
+          "classification": "autonomous",
+          "status": "done",
+          "github_issue": 2108,
+          "branch": "exec/2026-10-29__release-v9.14/EPIC-05",
+          "spec_references": [
+            "scripts/check_local_openapi_contract_completeness.py",
+            ".githooks/pre-commit",
+            "tests/test_check_local_openapi_contract_completeness.py"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "acceptance_verified": true,
+          "commit_sha": "f1474aa406ba51ea1b381c681a085abbeeb3b083",
+          "last_completed_substep": "3.1.A.10a",
+          "completed_utc": "2026-11-02T11:45:32Z",
+          "notes": "AC met: --staged mode exports the index (git checkout-index) and runs both checks there; hook passes --staged. Tests cover unstaged undocumented route ignored, staged undocumented route fails (also when the working tree is reverted), manual run still checks the working tree; 13/13 pass. The ST-31 commit itself ran the hook in --staged mode. CI 4d: all 7 workflows success on f1474aa4 (CI Pytest 41439331990). Deviation check: none (no prior spec beyond the script docstring, updated)."
+        },
+        "ST-32": {
+          "title": "Confirm the conftest.py AST scan still covers every backend module",
+          "classification": "autonomous",
+          "status": "done",
+          "github_issue": 2109,
+          "branch": "exec/2026-10-29__release-v9.14/EPIC-05",
+          "spec_references": [
+            "tests/conftest.py",
+            "tests/test_conftest_database_stub_scan.py"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "acceptance_verified": true,
+          "commit_sha": "b1d36bb51288e0dfdf1d341bdc10b8fbe748b480",
+          "last_completed_substep": "3.1.A.10a",
+          "completed_utc": "2026-11-02T11:50:44Z",
+          "notes": "AC met: scan already reached every subpackage (routers, services, utils, mutmut_pilot_tests, backend/*.py); gap was the import-database form (strategy_benchmark.py, 6 names), now covered. New test compares with an independent regex scan of git-tracked backend files; all 4 tests fail on the old scan. Confirmation + date in the scan docstring. Full suite 3216 passed, 30 skipped. CI 4d: all 7 workflows success on b1d36bb5 (CI Pytest 41439987293). Deviation check: none."
+        },
+        "ST-33": {
+          "title": "Behaviour test: the grace warning ignores settings.min_hold_days",
+          "classification": "autonomous",
+          "status": "done",
+          "github_issue": 2110,
+          "branch": "exec/2026-10-29__release-v9.14/EPIC-05",
+          "spec_references": [
+            "tests/test_alerts_service.py",
+            "claude/strategy/strategy_rules.md#11. Current production parameters"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "acceptance_verified": true,
+          "commit_sha": "2b1fee78f9a37dd5f6c25d8ac15a1f48a7ce60b3",
+          "last_completed_substep": "3.1.A.10a",
+          "completed_utc": "2026-11-02T11:59:17Z",
+          "notes": "AC met: TestGraceWarningIgnoresSettingsMinHoldDays runs evaluate_alerts with settings min_hold_days=5 (via get_settings() and the cursor); warns on days 8-9 only, not 3-4. Mutation-checked: restoring the pre-v9.10 settings read fails both tests. 38/38 in file. CI 4d: all 7 workflows success on 2b1fee78 (CI Pytest 41441059601). Deviation check: none."
+        },
+        "ST-34": {
+          "title": "Assert the stop-details tooltip time under a non-UTC browser timezone",
+          "classification": "autonomous",
+          "status": "done",
+          "github_issue": 2111,
+          "branch": "exec/2026-10-29__release-v9.14/EPIC-05",
+          "spec_references": [
+            "tests/e2e/stop-cell-provenance.spec.js",
+            "docs/specs/frontend/pages/positions.md#Stop Provenance Line and Per-Row Stop Details"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "acceptance_verified": true,
+          "commit_sha": "458362fa2cd3cddf1efc3b6ed90c8e26a4063bb5",
+          "last_completed_substep": "3.1.A.10a",
+          "completed_utc": "2026-11-02T11:53:03Z",
+          "notes": "AC met: SC-SCP-11 (test.use timezoneId Europe/London) asserts \"Last recalculated 5 Oct 2026, 22:15 — nightly update\" for 2026-10-05T21:15:00+00:00; 11/11 pass locally. CI 4c/4d: all 8 workflows success on 458362fa (Playwright E2E 41440281517, CI Pytest 41440281818). Deviation check: none."
+        },
+        "ST-35": {
+          "title": "Assert the applied theme in every Reports/Notifications axe scan",
+          "classification": "autonomous",
+          "status": "done",
+          "github_issue": 2112,
+          "branch": "exec/2026-10-29__release-v9.14/EPIC-05",
+          "spec_references": [
+            "tests/e2e/accessibility-axe-scan.spec.js"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "acceptance_verified": true,
+          "commit_sha": "9314f01cffda768f2d7abebad7cb62a31fd7935f",
+          "last_completed_substep": "3.1.A.10a",
+          "completed_utc": "2026-11-02T11:55:00Z",
+          "notes": "AC met: expectThemeApplied(page, theme) runs before runAxeScan in all 8 Reports/Notifications tests (4 per theme); Replay block reuses the helper. 14/14 pass locally. CI 4c/4d: all 8 workflows success on 9314f01c (Playwright E2E 41440528040, CI Pytest 41440528086). Deviation check: none."
+        },
+        "ST-36": {
+          "title": "Stop test files adding backend/services/ to sys.path",
+          "classification": "autonomous",
+          "status": "done",
+          "github_issue": 2113,
+          "branch": "exec/2026-10-29__release-v9.14/EPIC-05",
+          "spec_references": [
+            "tests/conftest.py",
+            "tests/test_plan_vs_reality.py",
+            "tests/test_backend_services_sys_path_guard.py"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "acceptance_verified": true,
+          "commit_sha": "025c0265f3359722f13d37c585edf7e688dcc486",
+          "last_completed_substep": "3.1.A.10a",
+          "completed_utc": "2026-11-02T12:09:11Z",
+          "notes": "AC met: test_plan_vs_reality.py (last offender; item counted nine, the rest had already moved) loads the service via spec_from_file_location; conftest collect-report hook + autouse fixture fail any file/test that puts backend/services on sys.path (old file fails collection under the guard). Full suite 3224 passed, 30 skipped. CI 4d: all 7 workflows success on 025c0265 (CI Pytest 41442365106). Deviation check: none."
+        },
+        "ST-37": {
+          "title": "Stop the ⌘K hint toast intercepting the chat submit click in SC-AC-03",
+          "classification": "autonomous",
+          "status": "done",
+          "github_issue": 2114,
+          "branch": "exec/2026-10-29__release-v9.14/EPIC-05",
+          "spec_references": [
+            "tests/e2e/epic02-v62-ai-briefing-chat.spec.js"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "acceptance_verified": true,
+          "commit_sha": "f982225a88448952acd44faf98811f18afe25aea",
+          "last_completed_substep": "3.1.A.10a",
+          "completed_utc": "2026-11-02T11:57:41Z",
+          "notes": "AC met: describe-level beforeEach sets command-palette-tooltip-seen via addInitScript for all 6 chat scenarios; SC-AC-03 asserts the hint never shows. SC-AC-03 --repeat-each=10: 10/10 pass locally (pre-fix run also 10/10 here, so the flake did not reproduce in this sandbox; the fix removes the timing exposure the item describes). No test.fixme. CI 4c/4d: all 8 workflows success on f982225a (Playwright E2E 41440862985, CI Pytest 41440862916). Deviation check: none."
+        }
+      },
+      "sign_off_record": {
+        "status": "cleared",
+        "method": "agent_mediated",
+        "role": "Director of Quality",
+        "signed_off_by": "Sprint Execution Engine (agent-mediated, Director of Quality role — §5.3)",
+        "date": "2026-11-02",
+        "outcome": "Approved, 4 wording findings applied in the sign-off commit"
+      }
     }
   },
   "blocked_items": [],
@@ -1208,6 +1417,15 @@
     "ST-26",
     "ST-27",
     "ST-28",
+    "ST-29",
+    "ST-30",
+    "ST-31",
+    "ST-32",
+    "ST-33",
+    "ST-34",
+    "ST-35",
+    "ST-36",
+    "ST-37",
     "ST-38",
     "ST-39",
     "ST-40",
@@ -1291,6 +1509,8 @@
     "2026-11-02: EPIC-07 PR #2138 opened (head d64bde0c). Pre-PR gates: API performance baseline drift PASSED; no foreign-EPIC commits in origin/main..HEAD (main 1 ahead: cd6fb2c3, the ESC-EXEC-20261102-01 mirror); qa_evidence committed; signer format agent-mediated §5.3. Agent-mediated DoQ review Approved in 1 pass; 4 P3 findings applied in d64bde0c. Merge gate awaits human Director of Quality sign-off and Product Owner acceptance.",
     "2026-11-02: PR #2138 agent-mediated DoQ + PO review posted (comment 6575775268; both Approved with Comments, head 2a15f4a2). Filed from the review: BLG-SPEC-213 (latent hour-scale PVR weighting). Human DoQ sign-off and PO acceptance still required.",
     "2026-11-02: PR #2138 merge-gate confirmations given by the human repository owner in session, acting as Director of Quality (QA sign-off) and Product Owner (acceptance, incl. ST-54 Pass_with_deviation / BLG-GOV-403), head 568f089c, 33/33 checks. Recorded in qa_evidence_EPIC-07.md § Merge Gate Confirmations and on the PR. Not merged; merge is the human developer's action.",
-    "2026-11-02: PR #2138 (EPIC-07) merged by the human developer at 2026-11-02T11:40:58Z (merge commit 84100ce7; head 8903bb3a), after the user-given DoQ QA sign-off and PO acceptance (comment 6575981600; 33/33 checks). Orphaned post-merge commit check: none (origin/main..EPIC-07 empty). Step 3c sibling sync: no-op, no EPIC-05 branch exists yet."
+    "2026-11-02: PR #2138 (EPIC-07) merged by the human developer at 2026-11-02T11:40:58Z (merge commit 84100ce7; head 8903bb3a), after the user-given DoQ QA sign-off and PO acceptance (comment 6575981600; 33/33 checks). Orphaned post-merge commit check: none (origin/main..EPIC-07 empty). Step 3c sibling sync: no-op, no EPIC-05 branch exists yet.",
+    "2026-11-02: EPIC-05 initialised at STEP 0 (branch exec/2026-10-29__release-v9.14/EPIC-05 cut from main 42bec3ce, after EPIC-07 merged, so EPIC-05 merges last over the final tree as planned). Issues #2106-#2114 existed from sync gh. ST-30 delegated_qa (human staging pass in both themes, RISK-01); the other 8 autonomous. Pushed-commit reconciliation: no [ST-29]..[ST-37] commits since invoked_utc. test_scenarios: the 3 existing specs ST-34/35/37 edit.",
+    "2026-11-02: EPIC-05 autonomous stories ST-29, ST-31..ST-37 done and pushed (f1474aa4..025c0265), each with all CI workflows green on its own SHA. ST-30 blocked_qa on DEL-20261102-01 (human staging pass in both themes). qa_evidence_EPIC-05.md created with the ST-30 section open; DoQ sign-off and the PR wait for ST-30. Out-of-scope finding filed: BLG-FE-241 (Positions-page exit failure shown by window.alert, not the modal inline error)."
   ]
 }

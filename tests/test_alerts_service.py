@@ -568,6 +568,73 @@ class TestEvaluateAlerts(unittest.TestCase):
         self.assertTrue(prefs.get("grace_period_warning"))
 
 
+class TestGraceWarningIgnoresSettingsMinHoldDays(unittest.TestCase):
+    """
+    ST-33 (BLG-QA-214, EPIC-05, v9.14): behaviour test for v9.10 ST-01 (BLG-BE-138,
+    ruling (a)). The grace warning uses the fixed GRACE_PERIOD_DAYS (10), never the
+    editable settings row's min_hold_days. With min_hold_days = 5 in the settings row,
+    the warning must fire on days 8-9 of the 10-day window, not days 3-4.
+
+    The settings row is offered both through get_settings() (how alerts_service read
+    it before v9.10) and through the cursor for any SELECT on settings, so reading
+    min_hold_days again by either route makes this test fail.
+    """
+
+    SETTINGS_ROW = {"min_hold_days": 5}
+    _make_cursor = TestEvaluateAlerts._make_cursor
+
+    def _grace_warning_days(self, holding_days_list):
+        positions = [_position(ticker=f"D{d}", holding_days=d) for d in holding_days_list]
+        warned = []
+
+        def record_notification(cur, portfolio_id, alert_type, title, message, context):
+            if alert_type == "grace_period_warning":
+                warned.append(context["holding_days"])
+            return "notif-id"
+
+        with patch.object(alerts_service, "get_db") as mock_db, \
+             patch.object(alerts_service, "get_settings", return_value=[self.SETTINGS_ROW]), \
+             patch.object(alerts_service, "ensure_alerts_tables"), \
+             patch.object(alerts_service, "_notif_exists_today_for_ticker", return_value=False), \
+             patch.object(alerts_service, "_insert_evaluation"), \
+             patch.object(alerts_service, "_insert_notification", side_effect=record_notification):
+            mock_conn = MagicMock()
+            mock_db.return_value.__enter__.return_value = mock_conn
+            cur = self._make_cursor(
+                rules=[_rule("grace_period_warning")],
+                positions=positions,
+                prefs=[{"alert_type": t, "email_enabled": False} for t in ALERT_TYPES],
+                daily_exists=False,
+                stale_notifs=[],
+                settings_row=self.SETTINGS_ROW,
+            )
+            mock_conn.cursor.return_value.__enter__.return_value = cur
+            evaluate_alerts("portfolio-1", lambda nid: None)
+        return sorted(warned)
+
+    def test_warning_fires_on_days_8_and_9_not_3_and_4(self):
+        self.assertEqual(self._grace_warning_days([3, 4, 7, 8, 9, 10]), [8, 9])
+
+    def test_warning_message_names_the_10_day_period(self):
+        positions = [_position(ticker="AAPL", holding_days=8)]
+        messages = []
+        with patch.object(alerts_service, "get_db") as mock_db, \
+             patch.object(alerts_service, "get_settings", return_value=[self.SETTINGS_ROW]), \
+             patch.object(alerts_service, "ensure_alerts_tables"), \
+             patch.object(alerts_service, "_notif_exists_today_for_ticker", return_value=False), \
+             patch.object(alerts_service, "_insert_evaluation"), \
+             patch.object(alerts_service, "_insert_notification",
+                          side_effect=lambda cur, pid, t, title, message, ctx: messages.append(message)):
+            mock_conn = MagicMock()
+            mock_db.return_value.__enter__.return_value = mock_conn
+            mock_conn.cursor.return_value.__enter__.return_value = self._make_cursor(
+                rules=[_rule("grace_period_warning")], positions=positions,
+                prefs=[], daily_exists=False, stale_notifs=[], settings_row=self.SETTINGS_ROW,
+            )
+            evaluate_alerts("portfolio-1", lambda nid: None)
+        self.assertEqual(messages, ["AAPL has 2 day(s) remaining in the 10-day grace period (day 8 of 10)."])
+
+
 # ---------------------------------------------------------------------------
 # 7. Validation
 # ---------------------------------------------------------------------------

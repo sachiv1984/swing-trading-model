@@ -30,11 +30,10 @@ def _make_db_stub():
     return stub
 
 
-import os
-import importlib
+import importlib.util
+from pathlib import Path
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "backend"))
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "backend", "services"))
+sys.path.insert(0, str(Path(__file__).parent.parent / "backend"))
 
 from tests._scoped_utils_stubs import scoped_stub_modules, stub_utils_package  # noqa: E402
 
@@ -51,9 +50,15 @@ _stubs = {"utils": _utils_stub, "utils.formatting": _fmt_stub}
 if "database" not in sys.modules:
     _stubs["database"] = _make_db_stub()
 
-# Import the module directly, bypassing services/__init__.py
+# Load the module from its file, bypassing services/__init__.py. ST-36
+# (BLG-QA-218, EPIC-05, v9.14): this used to put backend/services/ on
+# sys.path for the whole run, which let bare service imports resolve in tests
+# that fail in production (BLG-BE-150). tests/conftest.py now rejects that.
+_PVR_PATH = Path(__file__).parent.parent / "backend" / "services" / "plan_vs_reality_service.py"
 with scoped_stub_modules(_stubs, fresh=("plan_vs_reality_service",)):
-    _pvr = importlib.import_module("plan_vs_reality_service")
+    _spec = importlib.util.spec_from_file_location("plan_vs_reality_service", _PVR_PATH)
+    _pvr = importlib.util.module_from_spec(_spec)
+    _spec.loader.exec_module(_pvr)
 _compute_entry_delta_pct = _pvr._compute_entry_delta_pct
 compute_plan_vs_reality = _pvr.compute_plan_vs_reality
 

@@ -297,6 +297,17 @@ async function mockSt19Routes(page) {
   );
 }
 
+// Confirm the theme actually applied before scanning, so a light run is not a second
+// dark run. ST-35 (BLG-QA-216, EPIC-05, v9.14) moved this from the Reports Monthly test
+// into every Reports/Notifications and Replay scan.
+async function expectThemeApplied(page, theme) {
+  if (theme === 'dark') {
+    await expect(page.locator('html')).toHaveClass(/\bdark\b/);
+  } else {
+    await expect(page.locator('html')).not.toHaveClass(/\bdark\b/);
+  }
+}
+
 for (const theme of ['dark', 'light']) {
   test.describe(`Reports and Notifications axe scan — ${theme} theme (ST-19)`, () => {
     test.beforeEach(async ({ page }) => {
@@ -312,12 +323,7 @@ for (const theme of ['dark', 'light']) {
       await expect(marker).toBeVisible({ timeout: 10000 });
       await marker.click();
       await expect(page.getByTestId('monthly-restatement-detail')).toBeVisible();
-      // Confirm the theme actually applied, so a light run is not a second dark run.
-      if (theme === 'dark') {
-        await expect(page.locator('html')).toHaveClass(/\bdark\b/);
-      } else {
-        await expect(page.locator('html')).not.toHaveClass(/\bdark\b/);
-      }
+      await expectThemeApplied(page, theme);
       await runAxeScan(page, `ReportsMonthly:${theme}`);
     });
 
@@ -325,12 +331,14 @@ for (const theme of ['dark', 'light']) {
       await page.goto('/#/Reports');
       await page.getByRole('button', { name: /tax year p&l/i }).click();
       await expect(page.getByTestId('taxyear-restated-notice')).toBeVisible({ timeout: 10000 });
+      await expectThemeApplied(page, theme);
       await runAxeScan(page, `ReportsTaxYear:${theme}`);
     });
 
     test(`Notification preferences (${theme})`, async ({ page }) => {
       await page.goto('/#/notifications/preferences');
       await expect(page.getByText('Stop Loss Approach').first()).toBeVisible({ timeout: 10000 });
+      await expectThemeApplied(page, theme);
       await runAxeScan(page, `NotificationPreferences:${theme}`);
     });
 
@@ -338,6 +346,7 @@ for (const theme of ['dark', 'light']) {
       await page.goto('/#/notifications/history');
       await page.waitForLoadState('networkidle');
       await expect(page.getByText('AAPL').first()).toBeVisible({ timeout: 10000 });
+      await expectThemeApplied(page, theme);
       await runAxeScan(page, `NotificationsHistory:${theme}`);
     });
   });
@@ -394,11 +403,7 @@ for (const theme of ['dark', 'light']) {
       await mockReplayRoutes(page);
       await page.goto('/#/Replay');
       await expect(page.getByRole('heading', { name: 'Replay Mode' })).toBeVisible({ timeout: 10000 });
-      if (theme === 'dark') {
-        await expect(page.locator('html')).toHaveClass(/\bdark\b/);
-      } else {
-        await expect(page.locator('html')).not.toHaveClass(/\bdark\b/);
-      }
+      await expectThemeApplied(page, theme);
     });
 
     test(`Replay — Date Range mode (${theme})`, async ({ page }) => {
