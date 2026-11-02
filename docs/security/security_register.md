@@ -1,8 +1,8 @@
 **Owner:** Cybersecurity & Trust Lead
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Version:** 1.3
-**Last Updated:** 2026-10-06 (Remediation 002 added — npm rescan triage, issue #1885); prior — 2026-06-08
+**Version:** 1.4
+**Last Updated:** 2026-11-02 (Remediation 003 added — npm rescan triage, issue #2136); prior — 2026-10-06 (Remediation 002 added — npm rescan triage, issue #1885); prior — 2026-06-08
 **Cycle:** 2026-06-08__release-v5.2 (ST-10/ST-11 — BLG-GOV-98/BLG-GOV-99)
 
 ---
@@ -315,3 +315,32 @@ Build, `serve`, full backend suite and full Playwright E2E verified on PR #1893.
 
 **Cybersecurity & Trust Lead sign-off:** Sprint Execution Engine (agent-mediated, Cybersecurity & Trust Lead role), 2026-10-06
 
+---
+
+### Remediation 003 — npm Rescan HIGH Remediation (issue #2136)
+
+**Date:** 2026-11-02
+**Cycle:** Out-of-cycle `[GOVERNANCE]` hotfix (`2026-10-29__release-v9.14` Verified, post-ship closure not yet run)
+**Conducted by:** Sprint Execution Engine, acting for the Cybersecurity & Trust Lead
+**Action:** Triage of `dependency-vuln-rescan.yml` findings (`shared_standards.md` §20, Tier 3)
+
+---
+
+#### Remediation Steps
+
+1. **Initial state:** 65 vulnerabilities (0 critical, 8 high, 44 moderate, 13 low) — 3 packages with 15 advisory IDs not in `docs/security/dependency_vuln_baseline.json`
+2. **Step 1 — `npm audit fix --legacy-peer-deps`:** lockfile-only, non-breaking; fixed `body-parser` (1.20.9), `follow-redirects` (1.16.2) and `node-forge` (1.4.2), the last also clearing `GHSA-86w9-cpqp-85rv` from the October accept-risk list
+3. **Step 2 — baseline:** removed `GHSA-86w9-cpqp-85rv` and `GHSA-vfj7-8cjw-p6xm` (the latter no longer reported by `npm audit`); no new IDs added. Recorded in `docs/security/npm_audit_rescan_triage_2026-11-02.md`
+
+---
+
+#### Result
+
+| Check | Before | After |
+|-------|--------|-------|
+| Critical vulnerabilities | 0 | **0** |
+| HIGH vulnerabilities | 8 | 5 (4 accept-risk toolchain packages, plus `@svgr/plugin-svgo` inheriting from `svgo`) |
+| New-vs-baseline findings (rescan script) | 3 | **0** |
+| Production runtime impact | None | None |
+
+**Cybersecurity & Trust Lead sign-off:** Pending
