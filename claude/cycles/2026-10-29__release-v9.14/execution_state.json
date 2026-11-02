@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-29T14:51:40Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-02T12:12:34Z",
+  "last_updated_utc": "2026-11-02T14:41:59Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-02",
@@ -1187,6 +1187,7 @@
         "tests/test_check_local_openapi_contract_completeness.py",
         "tests/test_conftest_database_stub_scan.py",
         "tests/test_alerts_service.py",
+        "tests/test_backend_services_sys_path_guard.py",
         "tests/e2e/positions-exit-modal.spec.js",
         "tests/e2e/stop-cell-provenance.spec.js",
         "tests/e2e/accessibility-axe-scan.spec.js",
@@ -1216,7 +1217,7 @@
         "ST-30": {
           "title": "Staging visual check of the layout changed by tailwind-merge in cn()",
           "classification": "delegated_qa",
-          "status": "blocked_qa",
+          "status": "done",
           "github_issue": 2107,
           "branch": "exec/2026-10-29__release-v9.14/EPIC-05",
           "spec_references": [
@@ -1224,13 +1225,22 @@
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "acceptance_verified": false,
-          "commit_sha": null,
-          "last_completed_substep": "3.1.C.4",
-          "blocked_since_utc": "2026-11-02T11:51:28Z",
+          "deviations_filed": true,
+          "acceptance_verified": true,
+          "commit_sha": "19183cec989d5f2f8af223e9eda93b762f972326",
+          "last_completed_substep": "3.1.C.unblock",
+          "blocked_since_utc": null,
           "delegation_record_id": "DEL-20261102-01",
-          "unblock_criteria": "Human staging pass in both themes recorded in qa_evidence_EPIC-05.md (date, pages); each unintended layout change fixed or backlogged"
+          "unblock_criteria": "Human staging pass in both themes recorded in qa_evidence_EPIC-05.md (date, pages); each unintended layout change fixed or backlogged",
+          "unblocked_at_utc": "2026-11-02T14:30:00Z",
+          "sign_off_record": {
+            "status": "cleared",
+            "method": "human_product_owner_staging_review_plus_agent_mediated_head_of_ux",
+            "role": "Product Owner (browser review) + Head of UX & Design (agent-mediated, §5.3)",
+            "date": "2026-11-02"
+          },
+          "notes": "Staging visual check recorded in qa_evidence_EPIC-05.md. One unintended change backlogged as BLG-FE-242. CI on 19183cec: all 7 workflows success (CI Pytest 41456160029).",
+          "completed_utc": "2026-11-02T14:30:00Z"
         },
         "ST-31": {
           "title": "Pre-commit OpenAPI contract check reads staged content",
@@ -1369,9 +1379,7 @@
     }
   },
   "blocked_items": [],
-  "delegated_items": [
-    "ST-30"
-  ],
+  "delegated_items": [],
   "completed_items": [
     "ST-01",
     "ST-02",
@@ -1402,6 +1410,7 @@
     "ST-27",
     "ST-28",
     "ST-29",
+    "ST-30",
     "ST-31",
     "ST-32",
     "ST-33",
