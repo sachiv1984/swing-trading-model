@@ -74,7 +74,20 @@ _DB_STUB_SCAN_EXCLUDE_DIRS = {".venv", "venv", "site-packages", "node_modules", 
 
 def _discover_database_stub_functions(backend_dir: Path) -> list:
     """AST-scan backend/ for `from database import (...)` and return the
-    sorted union of imported names, excluding vendored/virtualenv paths."""
+    sorted union of imported names, excluding vendored/virtualenv paths.
+
+    Also covers the `import database` form: in a module that binds the name
+    `database` that way, every `database.<name>` attribute access counts as
+    an imported name.
+
+    Coverage confirmed 2026-11-02 (ST-32, BLG-QA-93, EPIC-05, v9.14) against
+    every backend/ subpackage with a database import (routers, services,
+    utils, mutmut_pilot_tests, plus backend/*.py). rglob already reached
+    every subpackage. The gap was the `import database` form:
+    routers/strategy_benchmark.py's 6 `database.<fn>` names were missing
+    from the stub. tests/test_conftest_database_stub_scan.py asserts this
+    coverage against an independent text scan of the tracked backend files.
+    """
     names = set()
     for py_file in backend_dir.rglob("*.py"):
         if any(part in _DB_STUB_SCAN_EXCLUDE_DIRS for part in py_file.parts):
@@ -83,10 +96,23 @@ def _discover_database_stub_functions(backend_dir: Path) -> list:
             tree = ast.parse(py_file.read_text(), filename=str(py_file))
         except SyntaxError:
             continue
+        imports_module = False
         for node in ast.walk(tree):
             if isinstance(node, ast.ImportFrom) and node.module == "database":
                 for alias in node.names:
                     names.add(alias.name)
+            elif isinstance(node, ast.Import):
+                imports_module = imports_module or any(
+                    alias.name == "database" and alias.asname is None for alias in node.names
+                )
+        if imports_module:
+            for node in ast.walk(tree):
+                if (
+                    isinstance(node, ast.Attribute)
+                    and isinstance(node.value, ast.Name)
+                    and node.value.id == "database"
+                ):
+                    names.add(node.attr)
     return sorted(names)
 
 
