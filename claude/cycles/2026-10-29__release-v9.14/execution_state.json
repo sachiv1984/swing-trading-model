@@ -963,8 +963,8 @@
     "EPIC-07": {
       "status": "done",
       "branch": "exec/2026-10-29__release-v9.14/EPIC-07",
-      "pr_number": null,
-      "pr_status": null,
+      "pr_number": 2138,
+      "pr_status": "open",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-10-29__release-v9.14/qa_evidence_EPIC-07.md",
       "test_scenarios": [
@@ -1285,6 +1285,7 @@
     "2026-11-02: EPIC-04 PR #2137 opened (head af64b689). Pre-PR gates: API performance baseline drift PASSED; no foreign-EPIC commits in origin/main..HEAD (0 behind main); qa_evidence committed; signer format agent-mediated §5.3. Agent-mediated DoQ review Approved in 1 pass; findings 1-4 applied (tests hardened aa93eb49), finding 5 accepted as cosmetic. Merge gate awaits human Director of Quality sign-off and Product Owner acceptance.",
     "2026-11-02: PR #2137 (EPIC-04) merged by the human developer at 2026-11-02T10:43:04Z (merge commit 4fee64d5; head 97493a1d, which includes BLG-BE-202 from the PR review). The agent-mediated DoQ + PO review comment (6575072791, both Approved with Comments) was posted before the merge; human QA sign-off and PO acceptance were given by the merging developer. Orphaned post-merge commit check: none (origin/main..EPIC-04 empty). Step 3c sibling sync: no-op, no EPIC-07 or EPIC-05 branch exists yet.",
     "2026-11-02: EPIC-07 initialised at STEP 0 (branch exec/2026-10-29__release-v9.14/EPIC-07 cut from main 0f7ba5e6, after EPIC-04 merged, so ST-48 rebases on ST-24 by construction). Issues #2121-#2130 existed from sync gh (ST-51 deferred at planning, no issue). ST-45 delegated_decision (Head of Specs Team option choice, RISK-05); the other 9 autonomous. test_scenarios: none pre-existing.",
-    "2026-11-02: Carry-forward for this cycle's post-ship closure (ST-53 AC 2, BLG-GOV-189): link docs/governance/governance_overhead_audit_2026-11-02.md as an input to the next run roadmap (no claude/roadmap/* write in-sprint, per sprint_backlog.md ST-53 Notes)."
+    "2026-11-02: Carry-forward for this cycle's post-ship closure (ST-53 AC 2, BLG-GOV-189): link docs/governance/governance_overhead_audit_2026-11-02.md as an input to the next run roadmap (no claude/roadmap/* write in-sprint, per sprint_backlog.md ST-53 Notes).",
+    "2026-11-02: EPIC-07 PR #2138 opened (head d64bde0c). Pre-PR gates: API performance baseline drift PASSED; no foreign-EPIC commits in origin/main..HEAD (main 1 ahead: cd6fb2c3, the ESC-EXEC-20261102-01 mirror); qa_evidence committed; signer format agent-mediated §5.3. Agent-mediated DoQ review Approved in 1 pass; 4 P3 findings applied in d64bde0c. Merge gate awaits human Director of Quality sign-off and Product Owner acceptance."
   ]
 }
