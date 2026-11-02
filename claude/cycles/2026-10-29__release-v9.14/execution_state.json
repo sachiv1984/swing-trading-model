@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-29T14:51:40Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-02T11:57:41Z",
+  "last_updated_utc": "2026-11-02T11:59:17Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-02",
@@ -1333,7 +1333,7 @@
         "ST-37": {
           "title": "Stop the ⌘K hint toast intercepting the chat submit click in SC-AC-03",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "github_issue": 2114,
           "branch": "exec/2026-10-29__release-v9.14/EPIC-05",
           "spec_references": [
@@ -1341,10 +1341,12 @@
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "acceptance_verified": false,
-          "commit_sha": null,
-          "last_completed_substep": null
+          "deviations_filed": true,
+          "acceptance_verified": true,
+          "commit_sha": "f982225a88448952acd44faf98811f18afe25aea",
+          "last_completed_substep": "3.1.A.10a",
+          "completed_utc": "2026-11-02T11:57:41Z",
+          "notes": "AC met: describe-level beforeEach sets command-palette-tooltip-seen via addInitScript for all 6 chat scenarios; SC-AC-03 asserts the hint never shows. SC-AC-03 --repeat-each=10: 10/10 pass locally (pre-fix run also 10/10 here, so the flake did not reproduce in this sandbox; the fix removes the timing exposure the item describes). No test.fixme. ci_pending: Playwright E2E run for f982225a, recorded at STEP 3.2.A. Deviation check: none."
         }
       }
     }
@@ -1386,6 +1388,7 @@
     "ST-32",
     "ST-34",
     "ST-35",
+    "ST-37",
     "ST-38",
     "ST-39",
     "ST-40",
