@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-02 (Sprint Execution, EPIC-07 of 2026-10-29__release-v9.14 — 8 new item(s) added: BLG-GOV-401, BLG-FE-238, BLG-GOV-402, BLG-FE-239, BLG-FE-240, BLG-SPEC-212, BLG-GOV-403, BLG-SPEC-213); prior — 2026-11-02 (Sprint Execution, EPIC-04 of 2026-10-29__release-v9.14 — 3 new item(s) added: BLG-BE-201, BLG-FE-237, BLG-BE-202); prior — 2026-10-30 (PR #2135 agent-mediated review, EPIC-03 of 2026-10-29__release-v9.14 — 2 new item(s) added: BLG-AI-25, BLG-AI-26); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-02 (Sprint Execution, EPIC-05 of 2026-10-29__release-v9.14 — 1 new item(s) added: BLG-FE-241); prior — 2026-11-02 (Sprint Execution, EPIC-07 of 2026-10-29__release-v9.14 — 8 new item(s) added: BLG-GOV-401, BLG-FE-238, BLG-GOV-402, BLG-FE-239, BLG-FE-240, BLG-SPEC-212, BLG-GOV-403, BLG-SPEC-213); prior — 2026-11-02 (Sprint Execution, EPIC-04 of 2026-10-29__release-v9.14 — 3 new item(s) added: BLG-BE-201, BLG-FE-237, BLG-BE-202); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -6774,5 +6774,27 @@ ST-48 made `metrics_definitions.md` Appendix F and `scripts/compute_effort_weigh
 - `M (~10 hrs)` weighs 1.25 days and `XS (<1h)` still weighs 0.15 (tests)
 - Appendix F's table and the script still weight exactly the same values (parity test passes)
 - The five backfilled readings are unchanged on re-run
+
+---
+
+### BLG-FE-241 — Show a failed Positions-page exit inside the Exit modal, as the Monitor queue does
+**Priority:** P3 (Low)
+**Type:** Frontend / UX (error handling)
+**Owner:** Frontend Specifications & UX Owner
+**Source:** Sprint Execution, ST-29 / EPIC-05 of `2026-10-29__release-v9.14` (writing the Positions-page Exit modal Playwright coverage, `tests/e2e/positions-exit-modal.spec.js`) — 2026-11-02
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`src/pages/Positions.js`'s `handleExit` calls `exitMutation.mutate()` and returns nothing. So ExitModal's promise path (v9.13 ST-01) never runs on the Positions page. That path shows "Exiting…" while the request is in flight, and on failure an inline `role="alert"` `exit-error` block ("Could not record the exit for {ticker}. Nothing was changed for this position." plus the API `detail`). Instead, a failed exit on the Positions page shows `window.alert("Failed to exit position: <detail>")`; the modal does stay open. The Daily Position Monitor path uses the inline error, so the two surfaces report the same failure differently. Because the Positions modal has no in-flight state, a second click on Confirm Exit can also send a second exit request.
+
+**Scope**
+- Return `exitMutation.mutateAsync(exitData)` from `handleExit` and drop the `onError` alert for this path, so the modal shows the inline error and the in-flight state
+- Update `tests/e2e/positions-exit-modal.spec.js` SC-PEM-02 to assert the `exit-error` block instead of the alert
+
+**Acceptance Criteria**
+- On the Positions page, a failed exit keeps the modal open with the `exit-error` block showing the API `detail`, and no `window.alert` appears
+- Confirm Exit reads "Exiting…" and is disabled while the request is in flight
+- SC-PEM-02 asserts both and passes in CI
 
 ---
