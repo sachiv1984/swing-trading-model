@@ -288,6 +288,15 @@ test.describe('ST-07 — AI Daily Briefing Card', () => {
 // ---------------------------------------------------------------------------
 
 test.describe('ST-09 — AI Chat Widget', () => {
+  // ST-37 (BLG-QA-219, EPIC-05, v9.14): Layout.js shows a first-visit "Press ⌘K"
+  // sonner toast 1.2s after mount, over the chat widget's buttons. A click that
+  // lands while it is showing times out with "intercepts pointer events", so
+  // SC-AC-03 was flaky locally. Mark the hint as seen before the app loads, as a
+  // returning user would have it; the app is unchanged.
+  test.beforeEach(async ({ page }) => {
+    await page.addInitScript(() => window.localStorage.setItem('command-palette-tooltip-seen', 'true'));
+  });
+
   test('SC-AC-01: Chat widget "Ask Advisor" button is visible on the Positions page', async ({ page }) => {
     await stubPositionsRoutes(page);
     await page.goto('/#/Positions');
@@ -328,6 +337,8 @@ test.describe('ST-09 — AI Chat Widget', () => {
 
     // Response displayed
     await expect(page.getByText('You currently have 0 open positions.')).toBeVisible({ timeout: 8000 });
+    // The ⌘K hint stayed suppressed for the whole interaction (ST-37).
+    await expect(page.getByText(/Press ⌘K/)).toHaveCount(0);
   });
 
   test('SC-AC-04: Loading indicator shown while POST /ai/chat is in-flight', async ({ page }) => {

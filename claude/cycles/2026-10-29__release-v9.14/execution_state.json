@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-29T14:51:40Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-02T11:55:00Z",
+  "last_updated_utc": "2026-11-02T11:57:41Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-02",
@@ -1299,7 +1299,7 @@
         "ST-35": {
           "title": "Assert the applied theme in every Reports/Notifications axe scan",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "github_issue": 2112,
           "branch": "exec/2026-10-29__release-v9.14/EPIC-05",
           "spec_references": [
@@ -1307,10 +1307,12 @@
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "acceptance_verified": false,
-          "commit_sha": null,
-          "last_completed_substep": null
+          "deviations_filed": true,
+          "acceptance_verified": true,
+          "commit_sha": "9314f01cffda768f2d7abebad7cb62a31fd7935f",
+          "last_completed_substep": "3.1.A.10a",
+          "completed_utc": "2026-11-02T11:55:00Z",
+          "notes": "AC met: expectThemeApplied(page, theme) runs before runAxeScan in all 8 Reports/Notifications tests (4 per theme); Replay block reuses the helper. 14/14 pass locally. ci_pending: Playwright E2E run for 9314f01c, recorded at STEP 3.2.A. Deviation check: none."
         },
         "ST-36": {
           "title": "Stop test files adding backend/services/ to sys.path",
@@ -1383,6 +1385,7 @@
     "ST-31",
     "ST-32",
     "ST-34",
+    "ST-35",
     "ST-38",
     "ST-39",
     "ST-40",
