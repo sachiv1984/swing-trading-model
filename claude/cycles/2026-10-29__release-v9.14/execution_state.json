@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-29T14:51:40Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-02T14:41:59Z",
+  "last_updated_utc": "2026-11-02T14:47:20Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-02",
@@ -1177,11 +1177,11 @@
       "merge_commit": "84100ce7"
     },
     "EPIC-05": {
-      "status": "in_progress",
+      "status": "done",
       "branch": "exec/2026-10-29__release-v9.14/EPIC-05",
       "pr_number": null,
       "pr_status": null,
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-10-29__release-v9.14/qa_evidence_EPIC-05.md",
       "test_scenarios": [
         "tests/test_check_local_openapi_contract_completeness.py",
@@ -1375,6 +1375,14 @@
           "completed_utc": "2026-11-02T11:57:41Z",
           "notes": "AC met: describe-level beforeEach sets command-palette-tooltip-seen via addInitScript for all 6 chat scenarios; SC-AC-03 asserts the hint never shows. SC-AC-03 --repeat-each=10: 10/10 pass locally (pre-fix run also 10/10 here, so the flake did not reproduce in this sandbox; the fix removes the timing exposure the item describes). No test.fixme. CI 4c/4d: all 8 workflows success on f982225a (Playwright E2E 41440862985, CI Pytest 41440862916). Deviation check: none."
         }
+      },
+      "sign_off_record": {
+        "status": "cleared",
+        "method": "agent_mediated",
+        "role": "Director of Quality",
+        "signed_off_by": "Sprint Execution Engine (agent-mediated, Director of Quality role — §5.3)",
+        "date": "2026-11-02",
+        "outcome": "Approved, 4 wording findings applied in the sign-off commit"
       }
     }
   },

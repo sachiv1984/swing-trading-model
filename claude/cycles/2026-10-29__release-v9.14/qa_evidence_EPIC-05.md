@@ -27,7 +27,7 @@ Last Updated: 2026-11-02
 - **Story:** ST-30 (BLG-QA-235) · **Delegation:** DEL-20261102-01 (Director of Quality or Head of UX & Design)
 - **Spec references:** `src/lib/utils.js` (`cn()`); `stage4_backlog_slice.md#ST-30`
 - **What is needed:** a human staging pass in light and dark themes of Positions (grid and table), Trade History with a row expanded, Dashboard, Trade Plans, Screener, Settings, and at least one dialog and one sheet. Compare each page with the pre-change build (`2f5cc56a~1`). Production now serves the post-change build, because deploys resumed from `main` on 2026-11-02.
-- **Staging run date:** 2026-11-02. The Product Owner reviewed staging in a browser and accepted the findings below. The before/after comparison (DEL-20261102-01 step 3) used engine screenshots from local builds of `2f5cc56a~1` (`388e31d9`) and `d11e6446`, whose app code is `main` `42bec3ce`: same mocked API data, Chromium 1280×900, both themes.
+- **Staging run date:** 2026-11-02. The Product Owner reviewed staging in a browser and accepted the findings below; they did not record which pages or themes they viewed. The both-theme, page-by-page coverage below is the engine comparison. The human part of DEL-20261102-01's "staging pass in both themes" is therefore met as a browser review plus acceptance of that comparison, not as a recorded page-by-page human pass in both themes. AC 1 (date and pages recorded) is met. The before/after comparison (DEL-20261102-01 step 3) used engine screenshots from local builds of `2f5cc56a~1` (`388e31d9`) and `d11e6446`, whose app code is `main` `42bec3ce`: same mocked API data, Chromium 1280×900, both themes.
 - **Staging commit check (DEL step 1):** the staging bundle (`static/js/main.2f34524f.js`, fetched 2026-11-02) contains `3a3b9868`'s change (EPIC-04 ST-28, `/reports` → Analytics) and the ST-25 emerald fills. `3a3b9868` is the last commit touching `src/` before `42bec3ce`, and `git diff 3a3b9868 42bec3ce -- src/ public/ package.json tailwind.config.js` is empty, so staging serves the same frontend as the "after" build.
 - **Pages and themes checked:** Dashboard, Positions (grid and table), Exit Position dialog, Trade History (row expanded), Trade Plans, Screener, Settings, and the mobile slide-in menu at 390px as the sheet. The app renders no `Sheet` component (`ui/sheet.js` is never imported). All pages were checked in light and dark: 18 pairs, each pixel-diffed, style-diffed per element, and run through axe `color-contrast` in both builds.
 - **Differences found and dispositions** (Head of UX & Design, agent-mediated at the Product Owner's instruction, 2026-11-02; finding 1 decided by the Product Owner):
@@ -35,7 +35,7 @@ Last Updated: 2026-11-02
   2. Positions table trailing stop value slate-300 → rose-400, both themes. **Intended.** The cell always authored `text-rose-400`; `design_system` §1.3 assigns rose-400 to stop values, and the grid card already shows it. Table and grid now agree. The orange BREACH pill stays distinct (v6.2 trailing-stop ux_spec §3).
   3. Form fields take their `bg-slate-800/50` fill (Exit dialog, Trade History filters). **Intended in dark**, which matches `design_system` §1.1 (input field `bg-slate-800`). The light-theme rendering is the dark-only-token class and is covered by BLG-FE-242. It is not a blocker, because it removes 4 existing light-theme contrast failures and adds only finding 1.
   4. Trade Plans icon buttons 36 → 28px, Clone/Start Trade 32 → 28px tall, rows ~8px shorter, Start Trade emerald border; Positions table icon buttons 36 → 32px. **Intended.** These are the sizes and border the callers authored. 28px exceeds the WCAG 2.2 SC 2.5.8 24px minimum target size. Tables collapse to cards on mobile (`design_system` §Responsive Behavior), so touch use doesn't land on these buttons.
-  5. Trade History cell side padding 24 → 8px; the table fits at 1280px (1362 → 986px) with no horizontal scroll; light-theme headers slate-600 → slate-300 on the dark table. **Intended / acceptable.** Already disclosed in `2f5cc56a` (RISK-05). All 14 `trade_history.md` columns are visible without scrolling. 8px is tighter than the living reference's compact `px-3`, which is noted, not filed.
+  5. Trade History cell side padding 24 → 8px; the table fits at 1280px (1362 → 986px) with no horizontal scroll; light-theme headers slate-600 → slate-300 on the dark table. **Intended / acceptable.** Already disclosed in `2f5cc56a` (RISK-05). All 14 `trade_history.md` columns are visible without scrolling. 8px is tighter than the living reference's compact `px-3`, which is noted, not filed. The Post-Trade Debrief Generate/Regenerate buttons, which the delegation named as a known unplanned change, now sit on screen at 1280px (x=1145, was x=1520 off-screen). Their light-theme text colour was already fixed in `2f5cc56a` (`text-slate-800 dark:text-slate-300`, SC-DBF-06a), and the after screenshot shows Regenerate readable on the white debrief card. **Intended.**
   - Unchanged: Dashboard, Screener, Settings, mobile menu (pixel-identical in both themes); Positions grid (only the view toggle's 12px unused padding, visible in hover state).
   - Pre-existing, equal in both builds, not caused by this change: light-theme dark tables and dialogs, and about 39 axe contrast failures each on light Dashboard and Screener.
 - **QA findings (Director of Quality):** see the Sign-Off Block.
@@ -83,6 +83,7 @@ Last Updated: 2026-11-02
 - **What was built:** `test_plan_vs_reality.py`, the last offender, now loads the service by file path. The conftest guard fails collection of any file that leaves `backend/services/` on `sys.path`, and fails any test that adds it at run time. Subprocess probe tests exercise both paths, and a static AST backstop covers `tests/`.
 - **AC 1:** met. The old `test_plan_vs_reality.py` fails collection under the guard.
 - **AC 2:** met. Full suite: 3224 passed, 30 skipped. All 7 CI workflows succeeded on `025c0265` (CI Pytest 41442365106).
+- **Issue closure:** #2113 was closed by hand at 2026-11-02T12:13:01Z. Governance Sync on `025c0265` logged "Skipping close for ST-36 — execution_state status is not done/merged", because ST-36's `done` status landed in the later governance commit `d11e6446`. #2107 (ST-30) was closed by hand for the same reason (`done` landed in `c1e8eeb2`).
 
 ### ⌘K hint toast in SC-AC-03
 
@@ -100,30 +101,30 @@ Last Updated: 2026-11-02
 
 | ST Item | Spec Reference | What was built | Acceptance criteria | Result | Deviations |
 |---------|----------------|----------------|---------------------|--------|------------|
-| ST-29 | `positions-exit-modal.spec.js`; inventory row 2 | SC-PEM-01..02 Exit modal submit and failure | Covers AC 1, AC 2 | Pending DoQ | None (BLG-FE-241 incidental finding) |
-| ST-30 | `src/lib/utils.js` `cn()` | Staging visual check, both themes, 9 screens; Product Owner browser review 2026-11-02 (DEL-20261102-01) | Covers AC 1, AC 2 | Pending DoQ | None (BLG-FE-242: unintended light-theme contrast change, backlogged per AC 2) |
-| ST-31 | `check_local_openapi_contract_completeness.py` | `--staged` hook mode | Covers AC 1, AC 2, AC 3 | Pending DoQ | None |
-| ST-32 | `tests/conftest.py` AST scan | `import database` form covered; coverage test | Covers AC 1, AC 2, AC 3 | Pending DoQ | None |
-| ST-33 | `test_alerts_service.py`; §11 | Grace-warning behaviour test, mutation-checked | Covers AC 1 | Pending DoQ | None |
-| ST-34 | `stop-cell-provenance.spec.js` | SC-SCP-11 Europe/London | Covers AC 1 | Pending DoQ | None |
-| ST-35 | `accessibility-axe-scan.spec.js` | Theme asserted before all 8 scans | Covers AC 1 | Pending DoQ | None |
-| ST-36 | `tests/conftest.py` sys.path guard | File-path load; collection and run-time guard | Covers AC 1, AC 2 | Pending DoQ | None |
-| ST-37 | `epic02-v62-ai-briefing-chat.spec.js` | ⌘K hint suppressed in chat scenarios | Covers AC 1, AC 2 | Pending DoQ | None |
+| ST-29 | `positions-exit-modal.spec.js`; inventory row 2 | SC-PEM-01..02 Exit modal submit and failure | Covers AC 1, AC 2 | Pass | None (BLG-FE-241 incidental finding) |
+| ST-30 | `src/lib/utils.js` `cn()` | Staging visual check, both themes, 9 screens; Product Owner browser review 2026-11-02 (DEL-20261102-01) | Covers AC 1, AC 2 | Pass | None (BLG-FE-242: unintended light-theme contrast change, backlogged per AC 2) |
+| ST-31 | `check_local_openapi_contract_completeness.py` | `--staged` hook mode | Covers AC 1, AC 2, AC 3 | Pass | None |
+| ST-32 | `tests/conftest.py` AST scan | `import database` form covered; coverage test | Covers AC 1, AC 2, AC 3 | Pass | None |
+| ST-33 | `test_alerts_service.py`; §11 | Grace-warning behaviour test, mutation-checked | Covers AC 1 | Pass | None |
+| ST-34 | `stop-cell-provenance.spec.js` | SC-SCP-11 Europe/London | Covers AC 1 | Pass | None |
+| ST-35 | `accessibility-axe-scan.spec.js` | Theme asserted before all 8 scans | Covers AC 1 | Pass | None |
+| ST-36 | `tests/conftest.py` sys.path guard | File-path load; collection and run-time guard | Covers AC 1, AC 2 | Pass | None |
+| ST-37 | `epic02-v62-ai-briefing-chat.spec.js` | ⌘K hint suppressed in chat scenarios | Covers AC 1, AC 2 | Pass | None |
 
 **QA test coverage:**
 - Scenarios run: the files listed under "Test scenarios used"; CI run IDs per story above.
 - Regression areas checked: Positions page (Exit modal, stop tooltip), Reports/Notifications/Replay accessibility, AI chat widget, alerts evaluation, backend test-harness isolation (conftest database stub, sys.path), pre-commit hook.
-- Known deviations: None found. All stories' deviation checks completed with nothing to file. BLG-FE-241 is an incidental finding (no spec requirement on the Positions page), not a deviation.
+- Known deviations: None found. All stories' deviation checks completed with nothing to file. BLG-FE-241 is an incidental finding (no spec requirement on the Positions page), not a deviation. BLG-FE-242 (P3) tracks the one unintended light-theme contrast change found by ST-30, backlogged per its AC 2.
 
 ## Sign-Off Block
 
-_To be completed after ST-30's staging pass is recorded. EPIC-05 includes a human staging check (ST-30), so the autonomous-class block (BLG-GOV-19) does not apply: Criterion 1 is not met._
+EPIC-05 includes a human staging check (ST-30), so the autonomous-class block (BLG-GOV-19) does not apply: Criterion 1 is not met.
 
-- [ ] All acceptance criteria verified against canonical spec
-- [ ] No unresolved P0 or P1 deviations
-- [ ] Regression areas checked
-- [ ] For any frontend component making direct URL construction (not via api.* wrapper): confirm the URL-base variable is exposed on the imported object
-- [ ] **Strategy values checked:** ST-33: §6 grace length and §11 `GRACE_PERIOD_DAYS` (10; warning on days 8–9). ST-29: exit body only, no exit-rule values asserted. ST-34: display of `stop_calculated_at` only, no stop values. Other stories touch no stop/grace/ATR/exit/sizing logic.
-- Signed off by:
-- Date:
-- Comments:
+- [x] All acceptance criteria verified against canonical spec
+- [x] No unresolved P0 or P1 deviations
+- [x] Regression areas checked
+- [x] For any frontend component making direct URL construction (not via api.* wrapper): confirm the URL-base variable is exposed on the imported object. N/A: no EPIC-05 commit touches `src/`.
+- [x] **Strategy values checked:** ST-33: §6 grace length and §11 `GRACE_PERIOD_DAYS` (10; warning on days 8–9). ST-29: exit body only, no exit-rule values asserted. ST-34: display of `stop_calculated_at` only, no stop values. Other stories touch no stop/grace/ATR/exit/sizing logic.
+- Signed off by: Sprint Execution Engine (agent-mediated, Director of Quality role — §5.3)
+- Date: 2026-11-02
+- Comments: All 9 ST ACs verified against the diffs and the sealed slice. CI is green on every story SHA, and the Playwright shard logs of run 41441543880 show SC-PEM-01/02, SC-SCP-11 and SC-AC-03 passing. Stub-DB pytest on the EPIC's backend test files passed 79/79 in the review; the full suite at `025c0265` is 3224 passed, 30 skipped. ST-30 staging run 2026-11-02 (Product Owner browser review, with engine before/after diffs of 9 screens in both themes) found one unintended light-theme contrast change, backlogged as BLG-FE-242 (P3). There are no P0/P1 deviations. Disclosed limits: SC-PEM-02 asserts the window.alert path (BLG-FE-241), ST-37's flake didn't reproduce before the fix, the Product Owner's staging review didn't record pages or themes, and #2113 and #2107 were closed by hand.
