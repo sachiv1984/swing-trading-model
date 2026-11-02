@@ -346,12 +346,15 @@ def build_fallback_text(inputs: dict) -> str:
     so_far = " so far" if inputs["tax_year_in_progress"] else ""
     trade_word = "closed trade" if r["total_trades"] == 1 else "closed trades"
     month_word = "month" if r["month_count"] == 1 else "months"
+    # ST-26 (EPIC-04, v9.14, BLG-FE-215): the profitable count takes its own
+    # singular noun; the losing count has none (reports.md v0.26 §AI Summary).
+    profitable_word = "month" if r["profitable_months"] == 1 else "months"
     text = (
         f"{inputs['tax_year']}{so_far}: realised P&L of {_money(r['total_realised_pnl_gbp'])} "
         f"across {r['total_trades']} {trade_word} in {r['month_count']} {month_word}. "
         f"Highest month: {r['best_month']}, {_money(r['best_month_pnl_gbp'])}. "
         f"Lowest month: {r['worst_month']}, {_money(r['worst_month_pnl_gbp'])}. "
-        f"{r['profitable_months']} months ended above zero and {r['losing_months']} below."
+        f"{r['profitable_months']} {profitable_word} ended above zero and {r['losing_months']} below."
     )
     n = r["trades_without_fees"]
     if n == 1:
