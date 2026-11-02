@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-02 (Sprint Execution, EPIC-07 of 2026-10-29__release-v9.14 — 2 new item(s) added: BLG-GOV-401, BLG-FE-238); prior — 2026-11-02 (Sprint Execution, EPIC-04 of 2026-10-29__release-v9.14 — 3 new item(s) added: BLG-BE-201, BLG-FE-237, BLG-BE-202); prior — 2026-10-30 (PR #2135 agent-mediated review, EPIC-03 of 2026-10-29__release-v9.14 — 2 new item(s) added: BLG-AI-25, BLG-AI-26); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-02 (Sprint Execution, EPIC-07 of 2026-10-29__release-v9.14 — 3 new item(s) added: BLG-GOV-401, BLG-FE-238, BLG-GOV-402); prior — 2026-11-02 (Sprint Execution, EPIC-04 of 2026-10-29__release-v9.14 — 3 new item(s) added: BLG-BE-201, BLG-FE-237, BLG-BE-202); prior — 2026-10-30 (PR #2135 agent-mediated review, EPIC-03 of 2026-10-29__release-v9.14 — 2 new item(s) added: BLG-AI-25, BLG-AI-26); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -6645,5 +6645,25 @@ The collapse toggle of `SI02GateStatusSection` (`src/pages/Reports.js`) is a `<b
 **Acceptance Criteria**
 - The toggle reports `aria-expanded="false"` collapsed and `"true"` expanded, and `aria-controls` names the body element's `id` (Playwright)
 - `gate_status_indicator.md` §Accessibility item 2 drops its "reference does not set either yet" note
+
+---
+
+### BLG-GOV-402 — Footnote the corrected v9.1–v9.5 and v9.3–v9.7 effort-weighted readings in `product_value_ratio_history.md`
+**Priority:** P3 (Low)
+**Type:** Governance Process / Metrics record
+**Owner:** Head of Specs Team; Metrics Definitions & Analytics Owner
+**Source:** Sprint Execution `2026-10-29__release-v9.14`, EPIC-07 / ST-48 (out-of-scope finding: the corrected readings live in a `claude/roadmap/*` file the story's AC does not name) — 2026-11-02
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.15
+
+**Problem**
+ST-48 fixed `scripts/compute_effort_weighted_pvr.py`'s parse of band parentheticals: it read any number in the note, so `XS (~15min)` (v9.5) weighed 15 days and `M (~2 days, 3 small sub-items)` weighed 2.5. The two backfilled readings these stories fall in were wrong: v9.1–v9.5 is 0.024, not 0.021, and v9.3–v9.7 is 0.104, not 0.093. `metrics_definitions.md` Appendix F now carries the corrected values, but `claude/roadmap/product_value_ratio_history.md` rows `2026-09-19__scheduled` and `2026-09-28__scheduled` still record 0.021 and 0.093. That file is append-only, so the rows must not be rewritten, but Appendix F's own rule (2) asks for known staleness to be footnoted rather than left silent.
+
+**Scope**
+- At the next `run roadmap` (STEP 2.4), add a dated footnote beneath the History table naming both rows, the old and corrected effort-weighted readings, and ST-48 as the cause. Do not edit the rows themselves
+
+**Acceptance Criteria**
+- `product_value_ratio_history.md` has a footnote stating 0.021 → 0.024 (v9.1–v9.5) and 0.093 → 0.104 (v9.3–v9.7), citing ST-48 / `BLG-SPEC-191`
+- The two History rows are unchanged
 
 ---

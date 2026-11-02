@@ -2,8 +2,8 @@
 **Owner:** Metrics Definitions & Analytics Canonical Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 1.33.2
-**Last Updated:** 2026-11-02 (ST-24, EPIC-04, v9.14, BLG-FEAT-99 — §Exit Condition Category: `GET /reports/monthly-pnl`'s `by_exit_condition` named as a consumer); prior — 2026-10-30 (ST-13, EPIC-02, v9.14, BLG-SPEC-190 — §Position Risk Data Sources: the native entry is `positions.fill_price`; `positions.entry_price` is GBP); prior — 2026-10-27 (ST-22, EPIC-03, v9.13, BLG-FE-208 — §AI Chat Engagement Response Acceptance Rate instrumented: stored ratings, its query, `null` when none); prior history retained — see prior entries in version control
+**Version:** 1.34.0
+**Last Updated:** 2026-11-02 (ST-48, EPIC-07, v9.14, BLG-SPEC-191 — Appendix F effort normalisation table and `compute_effort_weighted_pvr.py` weight the same effort values; v9.1–v9.5 and v9.3–v9.7 effort-weighted readings corrected; effort-weighted sub-metric's status names `roadmap_prompt.md` STEP 2.4 (v9.32)); prior — 2026-11-02 (ST-24, EPIC-04, v9.14, BLG-FEAT-99 — §Exit Condition Category: `GET /reports/monthly-pnl`'s `by_exit_condition` named as a consumer); prior — 2026-10-30 (ST-13, EPIC-02, v9.14, BLG-SPEC-190 — §Position Risk Data Sources: the native entry is `positions.fill_price`; `positions.entry_price` is GBP); prior history retained — see prior entries in version control
 **Review Cycle:** Monthly
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
@@ -1489,6 +1489,7 @@ Validation is performed by `POST /validate/calculations` comparing computed metr
 ## Appendix D — Change Log
 | Date | Version | Change | Author |
 |---|---|---|---|
+| 2026-11-02 | 1.34.0 | ST-48 (EPIC-07, v9.14, BLG-SPEC-191): Appendix F effort normalisation table rewritten so it and `scripts/compute_effort_weighted_pvr.py` weight exactly the same values (hour/minute-scale and `<` → 0.15; only a leading quantity in a band's parenthetical is read; `VS` and band ranges unweighted), with a parity test. Correcting the script's parenthetical parse changes two backfilled readings: v9.1–v9.5 0.021 → 0.024 and v9.3–v9.7 0.093 → 0.104 (`XS (~15min)` had weighed 15 days). Status names `roadmap_prompt.md` STEP 2.4 (v9.32) as where the effort-weighted reading is recorded; the D-split and U-pool indicator stay proposal-only. | Metrics Definitions & Analytics Owner |
 | 2026-11-02 | 1.33.2 | ST-24 (EPIC-04, v9.14, BLG-FEAT-99): §Exit Condition Category Data Sources names `GET /reports/monthly-pnl`'s `by_exit_condition` (and the Reports Monthly tab card) as a consumer of the category. No definition change. | Metrics Definitions & Analytics Owner |
 | 2026-10-30 | 1.33.1 | ST-13 (EPIC-02, v9.14, BLG-SPEC-190): §Position Risk Data Sources — the native entry is `positions.fill_price`; `positions.entry_price` is GBP for every market (was "native currency"). Documentation only. |
 | 2026-10-27 | 1.33.0 | ST-22 (EPIC-03, v9.13, BLG-FE-208): §AI Chat Engagement measure 3 (Response Acceptance Rate) is instrumented — ratings stored in `chat_answer_ratings` (DS-35) against the answer's `claude_audit_log` row; the query is documented and implemented as `database.get_response_acceptance_rate()`; `null` when nothing is rated. "Not instrumented" status removed. |
@@ -1670,7 +1671,9 @@ When any required input field is unavailable from the API (e.g. null `override_r
 
 **Status: definitions and backfill only.** Per `BLG-GOV-339`'s own scope note, any change to `roadmap_prompt.md` STEP 2.4/§7.1's live tagging or computation logic — the D-split re-tagging convention and wiring the leading indicator into the rebalance routine itself — is **proposal-only** pending Head of Specs Team + Product Owner sign-off and the CLAUDE.md §6 checklist. Nothing in `roadmap_prompt.md` is changed by this story. The three sub-metrics below are fully defined and, where the AC calls for it, backfilled; live computation is deferred to that future sign-off.
 
-**Authoritative computation (once adopted):** `claude/system/roadmap_prompt.md` STEP 2.4 / §7.1 (not yet wired — see Status above); backfilled readings recorded here pending `BLG-GOV-353`'s resolution of a canonical `claude/roadmap/` write-scope carve-out for extending `product_value_ratio_history.md` directly (same underlying write-scope constraint already raised for ST-33's role-share history and ST-32's runway forecast — see `ESC-EXEC-20260930-02`).
+**Status update (ST-48, v9.14, BLG-SPEC-191):** sub-metric 1, effort-weighted PVR, is now live: `roadmap_prompt.md` STEP 2.4 (v9.32, ST-34/`BLG-GOV-355`) records it at every rebalance in `product_value_ratio_history.md`'s `Effort-weighted Ratio` column, using the normalisation table below. Sub-metrics 2 (the `D` split) and 3 (the leading U-pool indicator) remain **proposal-only**, as stated above.
+
+**Authoritative computation:** effort-weighted PVR (sub-metric 1) — `claude/system/roadmap_prompt.md` STEP 2.4 (v9.32), recorded in `claude/roadmap/product_value_ratio_history.md`, weights per the table below, as computed by `scripts/compute_effort_weighted_pvr.py`. Sub-metrics 2 and 3 — `roadmap_prompt.md` STEP 2.4 / §7.1 once adopted (not yet wired, proposal-only; see Status above). backfilled readings recorded here pending `BLG-GOV-353`'s resolution of a canonical `claude/roadmap/` write-scope carve-out for extending `product_value_ratio_history.md` directly (same underlying write-scope constraint already raised for ST-33's role-share history and ST-32's runway forecast — see `ESC-EXEC-20260930-02`).
 
 **1. Effort-weighted PVR.**
 
@@ -1681,8 +1684,14 @@ When any required input field is unavailable from the API (e.g. null `override_r
 | Direct numeric with unit | `8.00d`, `4.0 days` | The number itself |
 | Numeric with band annotation | `0.5 (XS)`, `4.0 (L)`, `9.0 (S+S+S+M+M+M+S)` | The number itself (the parenthetical is descriptive only; a `+`-joined band string marks a consolidated multi-story batch counted once under its own `ST-xx`) |
 | Bare numeric, no unit | `0.1`, `0.75`, `0.5` | The number itself (unit-less entries are always days in this field, confirmed by cross-checking against adjacent dated entries) |
-| Band with a range annotation, no leading number | `S (~0.5-1d)`, `M (~1-2d)` | Midpoint of the stated range |
+| Band with a day range at the start of its parenthetical | `S (~0.5-1d)`, `M (~1–2 days)`, `S (~0.5–1d, pending root cause)` | Midpoint of the stated range |
+| Band with a single day quantity at the start of its parenthetical | `S (~0.5d)`, `S (~1 day)`, `M (~2 days, 3 small sub-items)` | That quantity |
+| Band with an hour- or minute-scale quantity, or `<`, at the start of its parenthetical | `XS (<1h)`, `XS (<1 hour)`, `XS (~0.5 hr)`, `S (~4 hrs)`, `XS (~15min)` | 0.15 (sub-day, hour-scale) |
+| Band whose parenthetical does not start with a quantity | `M (Product Owner-confirmed scope, 2026-08-14 — see below)`, `XS (confirmation only, …)` | The fixed band midpoint (next row). Numbers later in the note (dates, counts) are never read as effort |
 | Band alone, no annotation | `S`, `M` | A fixed band midpoint: XS=0.4, S=0.75, M=1.75, L/VL=3.5, VH=12.0 (used only when no cycle-specific range is stated) |
+| Anything else | `S–M (~1–2d)` (a band range), `VS` (no defined band) | Not weighted. The story is excluded from the weighted sum and reported as a missing effort lookup in the Coverage column |
+
+**Table–script parity (ST-48, BLG-SPEC-191):** `scripts/compute_effort_weighted_pvr.py` `parse_effort_weight()` implements exactly the rows above, in order, and `tests/test_compute_effort_weighted_pvr.py` pins one example per row. A change to either must change both. Before v9.14 the script also matched a `VS` band with no midpoint, and read any number in a band's parenthetical, so `XS (~15min)` weighed 15 days and a dated note could weigh 1,017; the two affected readings below are corrected.
 
 **Cross-validation method:** for each window, the same `**Source:**`-tag parse used by `roadmap_prompt.md` STEP 2.4 (via `docs/product/changelog.md`'s `### Tech backlog items shipped` list) was independently re-run and checked against `product_value_ratio_history.md`'s already-recorded U/G/D/P/Total counts for that window before trusting the effort-weighted figure — see `scripts/compute_effort_weighted_pvr.py`.
 
@@ -1693,10 +1702,10 @@ When any required input field is unavailable from the API (e.g. null `override_r
 | v7.5–v7.9 | 0.380 (reconstructed; matches the 0.38 recorded at `2026-07-28__scheduled`, no breakdown was on file to cross-validate against directly) | **0.457** | 40.25 | 88.00 | 48/50 stories (96.0%) |
 | v8.1–v8.5 | 0.110 | **0.115** | 14.95 | 129.60 | 127/127 (100%) |
 | v8.9–v9.3 | 0.092 | **0.109** | 14.25 | 130.45 | 172/174 (98.9%) |
-| v9.1–v9.5 | 0.046 | **0.021** | 3.25 | 151.80 | 195/195 (100%) |
-| v9.3–v9.7 | 0.089 | **0.093** | 13.05 | 141.00 | 158/158 (100%) |
+| v9.1–v9.5 | 0.046 | **0.024** *(corrected v9.14 ST-48; was 0.021 / 151.80 total-days)* | 3.25 | 136.45 | 195/195 (100%) |
+| v9.3–v9.7 | 0.089 | **0.104** *(corrected v9.14 ST-48; was 0.093 / 141.00 total-days)* | 13.05 | 125.65 | 158/158 (100%) |
 
-**Reading notes:** effort-weighting moves the ratio in both directions depending on whether that window's U-items ran larger or smaller than its G/D/P items — it is not a uniform correction. `v9.1–v9.5` is the sharpest divergence: story-count PVR (0.046) already reads Alert, but effort-weighted PVR (0.021) is worse still, meaning that window's 9 U-stories were disproportionately small (3.25 effort-days of 151.80 total) relative to the debt they were credited against — story-count alone *understates* how thin real user-value delivery was that window. `v8.9–v9.3` moves the other way (0.092 → 0.109, still Alert-tier either way) — that window's U-items ran somewhat larger than average. The `v7.5–v7.9`/`v8.9–v9.3` rows have 2 stories each with no matching `sprint_backlog.md` `#### ST-xx` header in their cycle (excluded from the weighted sum, not assigned a fabricated weight) — both at ≥96% coverage, a small and disclosed gap, not a silent one.
+**Reading notes:** effort-weighting moves the ratio in both directions depending on whether that window's U-items ran larger or smaller than its G/D/P items — it is not a uniform correction. `v9.1–v9.5` is the sharpest divergence: story-count PVR (0.046) already reads Alert, but effort-weighted PVR (0.024, corrected from 0.021 at v9.14) is worse still, meaning that window's 9 U-stories were disproportionately small (3.25 effort-days of 136.45 total) relative to the debt they were credited against — story-count alone *understates* how thin real user-value delivery was that window. `v8.9–v9.3` moves the other way (0.092 → 0.109, still Alert-tier either way) — that window's U-items ran somewhat larger than average. The `v7.5–v7.9`/`v8.9–v9.3` rows have 2 stories each with no matching `sprint_backlog.md` `#### ST-xx` header in their cycle (excluded from the weighted sum, not assigned a fabricated weight) — both at ≥96% coverage, a small and disclosed gap, not a silent one.
 
 **2. User-protective vs. hygiene split of `D`.**
 

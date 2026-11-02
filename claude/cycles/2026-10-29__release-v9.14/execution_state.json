@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-29T14:51:40Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-02T10:53:44Z",
+  "last_updated_utc": "2026-11-02T10:54:29Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-02",
@@ -1028,15 +1028,21 @@
         "ST-47": {
           "title": "risk_dashboard.md names only fields GET /portfolio returns",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "github_issue": 2124,
           "branch": "exec/2026-10-29__release-v9.14/EPIC-07",
-          "spec_references": [],
+          "spec_references": [
+            "docs/specs/frontend/pages/risk_dashboard.md#5.1 Data",
+            "docs/specs/frontend/pages/risk_dashboard.md#6.1 Data"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "acceptance_verified": false,
-          "commit_sha": null
+          "deviations_filed": true,
+          "acceptance_verified": true,
+          "commit_sha": "763ff20310624c6eec29de707bd64a0516670148",
+          "completed_utc": "2026-11-02T10:54:21Z",
+          "last_completed_substep": "3.1.A.10a",
+          "notes": "AC met: §5.1 names grace_period, §6.1 names display_status as the badge source; every §5.1/§6.1 field verified in portfolio_service.py's GET /portfolio row. Deviation check: none (spec now matches shipped components)."
         },
         "ST-48": {
           "title": "Align Appendix F's effort-weighted PVR table and status with the script",
@@ -1158,7 +1164,8 @@
     "ST-43",
     "ST-44",
     "ST-45",
-    "ST-46"
+    "ST-46",
+    "ST-47"
   ],
   "open_escalations": {
     "ESC-EXEC-20261029-01": {
