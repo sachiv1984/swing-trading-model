@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-29T14:51:40Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-02T12:02:57Z",
+  "last_updated_utc": "2026-11-02T12:09:11Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-02",
@@ -1196,18 +1196,22 @@
         "ST-29": {
           "title": "Cover the Positions-page Exit modal submit in Playwright",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "github_issue": 2106,
           "branch": "exec/2026-10-29__release-v9.14/EPIC-05",
           "spec_references": [
-            "docs/testing/state_changing_action_coverage.md"
+            "tests/e2e/positions-exit-modal.spec.js",
+            "docs/testing/state_changing_action_coverage.md",
+            "docs/specs/api_contracts/position_endpoints.md#POST /positions/{position_id}/exit"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "acceptance_verified": false,
-          "commit_sha": null,
-          "last_completed_substep": null
+          "deviations_filed": true,
+          "acceptance_verified": true,
+          "commit_sha": "f32b8c23117c28cf3b1e28f1a58f9c6f2f1bde8c",
+          "last_completed_substep": "3.1.A.10a",
+          "completed_utc": "2026-11-02T12:02:57Z",
+          "notes": "AC met: inventory row 2 reads Covered with SC-PEM-01..02; both pass in CI under the API status guard (Playwright E2E 41441543880, all 8 workflows success on f32b8c23). SC-PEM-02 asserts the window.alert error text, because the Positions page does not use the modal inline exit-error (handleExit does not return the mutation promise); filed BLG-FE-241 (P3, out of scope for a test-only story). Deviation check: the inline-error inconsistency is a UI behaviour gap with no spec requirement on the Positions page, recorded as BLG-FE-241, not a spec deviation."
         },
         "ST-30": {
           "title": "Staging visual check of the layout changed by tailwind-merge in cn()",
@@ -1393,6 +1397,7 @@
     "ST-26",
     "ST-27",
     "ST-28",
+    "ST-29",
     "ST-31",
     "ST-32",
     "ST-33",

@@ -156,14 +156,57 @@ _LEAK_HINT = (
 )
 
 
+# ---------------------------------------------------------------------------
+# backend/services/ sys.path guard (ST-36, BLG-QA-218, EPIC-05, v9.14)
+#
+# The app runs with backend/ on sys.path, never backend/services/. A test file
+# that adds backend/services/ (to load a service by bare name without running
+# services/__init__.py) leaves it there for the whole pytest process, so code
+# under test can resolve a bare `from x_service import ...` that raises
+# ModuleNotFoundError in production. That is how BLG-BE-150 passed CI. Load
+# such a module by file path (importlib.util.spec_from_file_location) or as
+# services.<name> instead. The collect-report hook below fails the file that
+# added the entry; the fixture after it fails a test that adds it at run time.
+# Both remove the entry so later files are unaffected.
+# ---------------------------------------------------------------------------
+
+_BACKEND_SERVICES_DIR = (Path(__file__).parent.parent / "backend" / "services").resolve()
+_SERVICES_PATH_HINT = (
+    "added backend/services/ to sys.path -- load the module with "
+    "importlib.util.spec_from_file_location or import it as services.<name> (ST-36, BLG-QA-218)"
+)
+
+
+def backend_services_path_entries(entries=None) -> list:
+    """sys.path entries (or the given entries) that resolve to backend/services/."""
+    found = []
+    for entry in sys.path if entries is None else entries:
+        try:
+            if Path(entry or ".").resolve() == _BACKEND_SERVICES_DIR:
+                found.append(entry)
+        except (OSError, RuntimeError, TypeError, ValueError):
+            continue
+    return found
+
+
+def _remove_backend_services_path_entries(entries) -> None:
+    for entry in entries:
+        while entry in sys.path:
+            sys.path.remove(entry)
+
+
 @pytest.hookimpl(hookwrapper=True)
 def pytest_make_collect_report(collector):
-    # One hook for both leak guards: a second module-level function with this
+    # One hook for every leak guard: a second module-level function with this
     # name would silently replace this one (PR #2023 review, ST-46).
     outcome = yield
     if not isinstance(collector, pytest.Module):
         return
     problems = []
+    services_entries = backend_services_path_entries()
+    if services_entries:
+        _remove_backend_services_path_entries(services_entries)
+        problems.append(_SERVICES_PATH_HINT)
     if sys.modules.get("database") is not _database_stub:
         sys.modules["database"] = _database_stub
         problems.append(_LEAK_HINT)
@@ -175,6 +218,15 @@ def pytest_make_collect_report(collector):
         report = outcome.get_result()
         report.outcome = "failed"
         report.longrepr = f"{collector.nodeid}: importing this test file " + "; and ".join(problems)
+
+
+@pytest.fixture(autouse=True)
+def _backend_services_not_on_sys_path(request):
+    yield
+    services_entries = backend_services_path_entries()
+    if services_entries:
+        _remove_backend_services_path_entries(services_entries)
+        pytest.fail(f"{request.node.nodeid} {_SERVICES_PATH_HINT}", pytrace=False)
 
 
 @pytest.fixture(autouse=True)

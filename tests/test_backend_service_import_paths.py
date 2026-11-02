@@ -3,9 +3,11 @@ Static guard: backend code must import service modules as `services.<name>`.
 
 The app runs with backend/ (not backend/services/) on sys.path, so a bare
 `from ai_output_sampling_service import ...` raises ModuleNotFoundError in
-production. Several test files put backend/services/ on sys.path to load
-modules directly, and that entry persists for the whole pytest run, so a
-runtime import test cannot catch this. Scanning the source can.
+production. Test files used to put backend/services/ on sys.path to load
+modules directly, and that entry persisted for the whole pytest run, so a
+runtime import test could not catch this. Scanning the source can. Since
+ST-36 (BLG-QA-218, v9.14), tests/conftest.py also rejects any test that adds
+backend/services/ to sys.path.
 
 Regression for the post-trade debrief failure ("No module named
 'ai_output_sampling_service'", 2026-10-07).
