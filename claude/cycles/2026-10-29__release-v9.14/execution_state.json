@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-29T14:51:40Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-02T09:50:00Z",
+  "last_updated_utc": "2026-11-02T10:50:00Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-02",
@@ -832,6 +832,131 @@
       },
       "merged_utc": "2026-11-02T09:44:57Z",
       "merge_commit": "f8803184"
+    },
+    "EPIC-04": {
+      "status": "done",
+      "branch": "exec/2026-10-29__release-v9.14/EPIC-04",
+      "pr_number": 2137,
+      "pr_status": "open",
+      "qa_signed_off": true,
+      "qa_evidence_log": "claude/cycles/2026-10-29__release-v9.14/qa_evidence_EPIC-04.md",
+      "test_scenarios": [
+        "tests/test_monthly_pnl_exit_condition_breakdown.py",
+        "tests/test_monthly_pnl_narrative.py",
+        "tests/e2e/monthly-pnl-exit-condition-breakdown.spec.js",
+        "tests/e2e/recent-trades-zero-pnl-badge.spec.js",
+        "tests/e2e/monthly-pnl-narrative.spec.js",
+        "tests/e2e/system-status.spec.js"
+      ],
+      "stories": {
+        "ST-24": {
+          "title": "Monthly P&L breakdown by §8 exit condition",
+          "classification": "autonomous",
+          "status": "done",
+          "github_issue": 2101,
+          "branch": "exec/2026-10-29__release-v9.14/EPIC-04",
+          "spec_references": [
+            "docs/design/2026-10-29__release-v9.14/monthly-pnl-exit-condition-breakdown/decision_record.md",
+            "docs/specs/frontend/pages/reports.md#Exit Condition Breakdown (v0.26 — ST-24, BLG-FEAT-99)",
+            "docs/specs/api_contracts/reports_endpoints.md#GET /reports/monthly-pnl",
+            "docs/specs/metrics_definitions.md#Exit Condition Category",
+            "tests/test_monthly_pnl_exit_condition_breakdown.py",
+            "tests/e2e/monthly-pnl-exit-condition-breakdown.spec.js"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "acceptance_verified": true,
+          "commit_sha": "17f68085f8b5d07681c47d06bf2978440d866259",
+          "completed_utc": "2026-11-02T10:04:07Z",
+          "last_completed_substep": "3.1.A.10a",
+          "notes": "AC 1-3 met. by_exit_condition on GET /reports/monthly-pnl (reports_endpoints.md v0.19, openapi 3.46.0, api_changelog 1.28.5, metrics_definitions 1.33.2). Decision record's added checks covered: unavailable state SC-MEC-03, light-theme axe SC-MEC-06. CI 4c/4d: all 9 workflows success on 17f68085 (Playwright 41425758035, CI Pytest 41425758108). Deviation check: none. Tests hardened after DoQ review in aa93eb49 (SC-MEC-02 zero tone, SC-MEC-07 overflow; test-only, commit_sha kept as the implementing commit): 8/8 workflows success (Playwright 41428894635, Pytest 41428894625). Incidental finding filed: BLG-FE-237 (pre-existing 375px overflow on Reports)."
+        },
+        "ST-25": {
+          "title": "Recent Trades glyph and amount agree at a half-penny loss",
+          "classification": "autonomous",
+          "status": "done",
+          "github_issue": 2102,
+          "branch": "exec/2026-10-29__release-v9.14/EPIC-04",
+          "spec_references": [
+            "docs/specs/frontend/pages/dashboard.md#Card 5 — Recent Activity",
+            "tests/e2e/recent-trades-zero-pnl-badge.spec.js"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "acceptance_verified": true,
+          "commit_sha": "708f20915e84ebda32f3cd8d837d5468f357f526",
+          "completed_utc": "2026-11-02T10:20:16Z",
+          "last_completed_substep": "3.1.A.10a",
+          "notes": "AC met: SC-RTB-07 (−0.005 down glyph, rose); SC-RTB-06 passes. CI 4c/4d: all 9 workflows success on 3a3b9868 (Playwright 41428001974, CI Pytest 41428002081). Deviation check: none."
+        },
+        "ST-26": {
+          "title": "Pluralise the month counts in the monthly P&L summary fallback",
+          "classification": "autonomous",
+          "status": "done",
+          "github_issue": 2103,
+          "branch": "exec/2026-10-29__release-v9.14/EPIC-04",
+          "spec_references": [
+            "docs/specs/frontend/pages/reports.md#AI Summary (Monthly P&L Narrative)",
+            "tests/test_monthly_pnl_narrative.py"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "acceptance_verified": true,
+          "commit_sha": "bfc2e04a02f4cc46ca450fe7ac699ad8321e863b",
+          "completed_utc": "2026-11-02T10:20:16Z",
+          "last_completed_substep": "3.1.A.10a",
+          "notes": "AC 1 met (test_one_profitable_month_is_singular); AC 2 met (reports.md v0.26 template matches code). FI-P3-02 wording-only. Out-of-scope finding filed: BLG-BE-201 (fallback uses ASCII hyphen, not U+2212). CI 4c/4d: all 9 workflows success on 3a3b9868 (Playwright 41428001974, CI Pytest 41428002081). Deviation check: none for ST-26's ACs."
+        },
+        "ST-27": {
+          "title": "Keep a generated monthly P&L summary visible after switching tax year and back",
+          "classification": "autonomous",
+          "status": "done",
+          "github_issue": 2104,
+          "branch": "exec/2026-10-29__release-v9.14/EPIC-04",
+          "spec_references": [
+            "docs/specs/frontend/pages/reports.md#AI Summary (Monthly P&L Narrative)",
+            "tests/e2e/monthly-pnl-narrative.spec.js"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "acceptance_verified": true,
+          "commit_sha": "3a2f5817de54758f3a2ca11ca1551670797a8a01",
+          "completed_utc": "2026-11-02T10:20:17Z",
+          "last_completed_substep": "3.1.A.10a",
+          "notes": "AC 1-2 met: SC-MPN-10 (no empty-state render on return, one POST); confirmed failing against a build without the fix. CI 4c/4d: all 9 workflows success on 3a3b9868 (Playwright 41428001974, CI Pytest 41428002081). Deviation check: none."
+        },
+        "ST-28": {
+          "title": "Group /reports endpoints on the System Status page",
+          "classification": "autonomous",
+          "status": "done",
+          "github_issue": 2105,
+          "branch": "exec/2026-10-29__release-v9.14/EPIC-04",
+          "spec_references": [
+            "docs/specs/frontend/pages/system_status.md#Endpoint Test Category Labels (v1.2 — ST-04, EPIC-01, v9.8, BLG-FE-191)",
+            "tests/e2e/system-status.spec.js"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "acceptance_verified": true,
+          "commit_sha": "3a3b98683e48565edd26159bb62a611b7c6886ff",
+          "completed_utc": "2026-11-02T10:20:17Z",
+          "last_completed_substep": "3.1.A.10a",
+          "notes": "AC 1 met (SC-SS-10). AC 2 (Playwright passes in CI) met: CI 4c/4d: all 9 workflows success on 3a3b9868 (Playwright 41428001974, CI Pytest 41428002081). No route added, fallback count/SC-SS-01b unchanged. Deviation check: none."
+        }
+      },
+      "sign_off_record": {
+        "role": "Director of Quality",
+        "method": "agent_mediated",
+        "status": "cleared",
+        "passes": 1,
+        "date": "2026-11-02",
+        "evidence": "claude/cycles/2026-10-29__release-v9.14/qa_evidence_EPIC-04.md"
+      }
     }
   },
   "blocked_items": [],
@@ -860,6 +985,11 @@
     "ST-21",
     "ST-22",
     "ST-23",
+    "ST-24",
+    "ST-25",
+    "ST-26",
+    "ST-27",
+    "ST-28",
     "ST-38",
     "ST-39",
     "ST-40",
@@ -918,6 +1048,8 @@
     "2026-10-30: EPIC-06 initialised at STEP 0 (branch exec/2026-10-29__release-v9.14/EPIC-06 cut from main 0e3960cc..df2eae33). ST-39/ST-42/ST-43 are delegated_backend with seal-marked post-merge ACs only (BLG-OPS-201/202, BLG-SEC-44); their in-sprint work is engine-completed and they are done on in-sprint ACs (LL-v9.13-P3-03), DEL-20261030-01/02/03 carried. Delegation log: DEL-20261030-02 and -03 were appended in one write (+2, prior text unchanged), a §7.1 per-append count deviation, disclosed here. Story issues #2115-#2120 still open after push (governance_sync did not close them on the exec branch); re-checked before the PR.",
     "2026-10-30: EPIC-06 PR #2133 opened (head after 33af33c7 + sign-off commit). Pre-PR gates: API performance baseline drift PASSED; no foreign-EPIC commits in origin/main..HEAD; qa_evidence committed; signer format agent-mediated §5.3. Story issues #2115-#2120 closed by governance_sync after the later pushes.",
     "2026-10-30: PR #2133 (EPIC-06) merged by the human developer at 2026-10-30T11:50:13Z (merge commit 5e7351af), after the user-given DoQ QA sign-off and PO acceptance (head 88f9bd99, 33/33 checks). The merge-gate comment was posted after the merge and said 'not merged'; a correction comment followed. Orphaned post-merge commit check: none (origin/main..EPIC-06 empty). Step 3c sibling sync: no pending EPIC branch exists yet. Filed during PR review: BLG-OPS-210, BLG-QA-243. Post-merge: BLG-SEC-44 resolved (cdf00db1, filed BLG-SEC-45; staging defaults confirmed by an agent-mediated Cybersecurity & Trust Lead review), BLG-OPS-202 resolved (1ed19a04, PR #2134). BLG-OPS-201 (ST-39 AC 2) stays delegated until October is complete. merge_gate.epics_pending kept from merge_order, as for EPIC-01/EPIC-02 (BLG-QA-240).",
-    "2026-11-02: PR #2135 (EPIC-03) merged by the human developer at 2026-11-02T09:44:57Z (merge commit f8803184), after the user-given DoQ QA sign-off and PO acceptance (comment 6573953968; head 0888b833, 45/45 checks). Orphaned post-merge commit check: none (origin/main..EPIC-03 empty). Step 3c sibling sync: no pending EPIC branch exists yet (EPIC-04/07/05 not started). Filed during PR review: BLG-AI-25, BLG-AI-26. Post-merge: DEL-20261030-04 / BLG-GOV-399 (ST-23 AC1 production sample) stays carried; EPIC-04 ST-28 must start from the SystemStatus count of 131. merge_gate.epics_pending kept from merge_order (BLG-QA-240)."
+    "2026-11-02: PR #2135 (EPIC-03) merged by the human developer at 2026-11-02T09:44:57Z (merge commit f8803184), after the user-given DoQ QA sign-off and PO acceptance (comment 6573953968; head 0888b833, 45/45 checks). Orphaned post-merge commit check: none (origin/main..EPIC-03 empty). Step 3c sibling sync: no pending EPIC branch exists yet (EPIC-04/07/05 not started). Filed during PR review: BLG-AI-25, BLG-AI-26. Post-merge: DEL-20261030-04 / BLG-GOV-399 (ST-23 AC1 production sample) stays carried; EPIC-04 ST-28 must start from the SystemStatus count of 131. merge_gate.epics_pending kept from merge_order (BLG-QA-240).",
+    "2026-11-02: EPIC-04 initialised at STEP 0 (branch exec/2026-10-29__release-v9.14/EPIC-04 cut from main dd62b443, after EPIC-03 merged, so ST-28 rebases on ST-22 by construction). Issues #2101-#2105 existed from sync gh. All 5 stories autonomous. Out-of-scope finding filed: BLG-BE-201 (ST-26).",
+    "2026-11-02: EPIC-04 PR #2137 opened (head af64b689). Pre-PR gates: API performance baseline drift PASSED; no foreign-EPIC commits in origin/main..HEAD (0 behind main); qa_evidence committed; signer format agent-mediated §5.3. Agent-mediated DoQ review Approved in 1 pass; findings 1-4 applied (tests hardened aa93eb49), finding 5 accepted as cosmetic. Merge gate awaits human Director of Quality sign-off and Product Owner acceptance."
   ]
 }

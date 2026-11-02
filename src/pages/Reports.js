@@ -31,6 +31,7 @@ import PortfolioGrowthChart from "../components/reports/PortfolioGrowthChart";
 import TradeBreakdown from "../components/reports/TradeBreakdown";
 import ExportModal from "../components/reports/ExportModal";
 import MonthlyNarrativeCard from "../components/reports/MonthlyNarrativeCard";
+import ExitConditionBreakdownCard from "../components/reports/ExitConditionBreakdownCard";
 import { motion } from "framer-motion";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -965,6 +966,10 @@ function MonthlyPnlTable({ initialYear }) {
       {/* ST-25 (BLG-FEAT-59, EPIC-04, v9.11): optional, on-request AI summary — a separate card
           below the table so it cannot be read as part of the record (reports.md §AI Summary). */}
       {rows.length > 0 && <MonthlyNarrativeCard year={selectedYear} />}
+
+      {/* ST-24 (BLG-FEAT-99, EPIC-04, v9.14): realised P&L by §8 exit condition, after the AI
+          summary and before the Unrealised P&L Card (reports.md §Exit Condition Breakdown). */}
+      {rows.length > 0 && <ExitConditionBreakdownCard rows={rows} />}
 
       {/* ST-14 (BLG-FEAT-70, v7.0): Unrealised P&L Card — reuses the Tax Year tab's approved pattern verbatim */}
       {estimatedUnrealisedPnl != null && (

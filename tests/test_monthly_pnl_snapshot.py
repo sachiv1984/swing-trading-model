@@ -225,6 +225,16 @@ class TestMonthlyPnlSnapshotFailure(unittest.TestCase):
     four restatement fields (the reports.md "Restatement check unavailable."
     signal), and logs the failure with exc_info."""
 
+    def setUp(self):
+        # ST-24 (EPIC-04, v9.14): the exit-condition breakdown query reconciles
+        # here, so the snapshot failure is the only error logged.
+        patcher = patch(
+            "services.reports_service.get_monthly_pnl_by_exit_reason",
+            return_value=[dict(r, exit_reason="Manual Exit") for r in FAILURE_ROWS],
+        )
+        patcher.start()
+        self.addCleanup(patcher.stop)
+
     def _assert_unavailable_shape(self, report):
         self.assertEqual(
             [(m["year"], m["month"], m["realised_pnl_gbp"], m["trade_count"], m["null_fee_trade_count"])

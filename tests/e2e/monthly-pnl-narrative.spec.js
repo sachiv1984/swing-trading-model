@@ -17,6 +17,8 @@
  *   SC-MPN-07  A 500 shows the error and keeps the previous text; a 429 shows the API message
  *   SC-MPN-08  No card when the month list is empty
  *   SC-MPN-09  axe: no serious/critical violations in the card, populated and in the error state, both themes
+ *   SC-MPN-10  After Generate, switching tax year and back shows the generated summary at once, with no
+ *              empty-state render in between and no extra POST (ST-27, BLG-FE-216, EPIC-04, v9.14)
  *
  * Infrastructure: page.route() interception, no live backend. HashRouter: go to /#/Reports, then
  * click the "Monthly P&L" tab. The page selects the current UK tax year by default.
@@ -188,6 +190,68 @@ test('SC-MPN-05: a tax-year change fetches that year; a late response for the ol
   await page.waitForTimeout(500);
   await expect(page.getByTestId('monthly-narrative-text')).toHaveCount(0);
   await expect(page.getByTestId('monthly-narrative-generate')).toHaveText('Generate summary');
+});
+
+test('SC-MPN-10: a generated summary survives a tax-year round trip with no empty state and no extra POST (ST-27)', async ({ page }) => {
+  await mockBase(page);
+  const OTHER_TEXT = 'A stored summary for the prior tax year.';
+  let generated = false;
+  const posts = await mockNarrative(page, {
+    // The current year has nothing stored until Generate; the prior year has a stored summary,
+    // so the empty-state copy never legitimately appears once Generate has run.
+    getData: (y) => (y === YEAR ? (generated ? narrative() : emptyNarrative(y)) : narrative({ year: y, narrative: OTHER_TEXT })),
+    post: (route, body) => {
+      generated = true;
+      route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok', data: narrative({ year: body.year }) }) });
+    },
+  });
+  // After Generate, a slow background refetch makes any render that waits on the GET observable.
+  let slowGets = false;
+  await page.route(NARRATIVE, async (route) => {
+    if (slowGets && route.request().method() === 'GET') await new Promise((r) => setTimeout(r, 1500));
+    return route.fallback();
+  });
+  const initialGet = page.waitForResponse((r) => NARRATIVE.test(r.url()) && r.request().method() === 'GET');
+  await gotoMonthlyTab(page);
+  await initialGet; // the cached GET result for this year is the not-generated one
+  await expect(page.getByTestId('monthly-narrative-generate')).toHaveText('Generate summary', { timeout: 8000 });
+
+  await page.getByTestId('monthly-narrative-generate').click();
+  await expect(page.getByTestId('monthly-narrative-text')).toHaveText(TEXT);
+  expect(posts).toHaveLength(1);
+  slowGets = true;
+
+  // Record any render of the not-generated body or the generating skeleton.
+  await page.evaluate(() => {
+    window.__emptyStateSeen = false;
+    const check = () => {
+      const card = document.querySelector('[data-testid="monthly-narrative-card"]');
+      if (card && (card.textContent.includes('Get a short written summary of these months.')
+        || card.querySelector('[data-testid="monthly-narrative-skeleton"]'))) {
+        window.__emptyStateSeen = true;
+      }
+    };
+    new MutationObserver(check).observe(document.body, { childList: true, subtree: true, characterData: true });
+  });
+
+  const priorLabel = `${YEAR - 1}/${String(YEAR).slice(2)}`;
+  await page.getByTestId('monthly-tax-year-filter').click();
+  await page.getByRole('option', { name: priorLabel }).click();
+  await expect(page.getByTestId('monthly-narrative-text')).toHaveText(OTHER_TEXT, { timeout: 8000 });
+  // The prior year's own first load may show its empty state while its GET is in flight; the AC is
+  // about the way back, so only renders from here on count.
+  await page.evaluate(() => { window.__emptyStateSeen = false; });
+
+  await page.getByTestId('monthly-tax-year-filter').click();
+  await page.getByRole('option', { name: LABEL }).click();
+  // Shown at once: well inside the 1.5 s the background GET takes.
+  await expect(page.getByTestId('monthly-narrative-text')).toHaveText(TEXT, { timeout: 1000 });
+  await expect(page.getByTestId('monthly-narrative-generate')).toHaveText('Regenerate');
+  await page.waitForTimeout(2000); // let the background refetch land
+  await expect(page.getByTestId('monthly-narrative-text')).toHaveText(TEXT);
+
+  expect(await page.evaluate(() => window.__emptyStateSeen)).toBe(false);
+  expect(posts).toHaveLength(1);
 });
 
 test('SC-MPN-06: a fallback summary shows the fallback note', async ({ page }) => {

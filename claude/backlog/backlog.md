@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-30 (PR #2135 agent-mediated review, EPIC-03 of 2026-10-29__release-v9.14 — 2 new item(s) added: BLG-AI-25, BLG-AI-26); prior — 2026-10-30 (Sprint Execution, EPIC-03 of 2026-10-29__release-v9.14, DoQ review — 2 new item(s) added: BLG-AI-24, BLG-SPEC-211); prior — 2026-10-30 (Sprint Execution, EPIC-03 of 2026-10-29__release-v9.14 — 2 new item(s) added: BLG-BE-200, BLG-AI-23); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-02 (Sprint Execution, EPIC-04 of 2026-10-29__release-v9.14 — 3 new item(s) added: BLG-BE-201, BLG-FE-237, BLG-BE-202); prior — 2026-10-30 (PR #2135 agent-mediated review, EPIC-03 of 2026-10-29__release-v9.14 — 2 new item(s) added: BLG-AI-25, BLG-AI-26); prior — 2026-10-30 (Sprint Execution, EPIC-03 of 2026-10-29__release-v9.14, DoQ review — 2 new item(s) added: BLG-AI-24, BLG-SPEC-211); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -6536,5 +6536,71 @@ ST-40's AC names pytest `--durations` as the per-test timing source, but no CI w
 **Acceptance Criteria**
 - A preflight from the Pages origin to production returns `200` with `access-control-allow-origin` and no `access-control-allow-credentials: true`, recorded with the date
 - The Pages frontend loads data after the change, confirmed with the date
+
+---
+
+### BLG-BE-201 — Use the typographic minus in the monthly P&L summary fallback
+**Priority:** P3 (Low)
+**Type:** Backend / Copy
+**Owner:** Financial Reporting & Records Owner; Frontend Specifications & UX Documentation Owner
+**Source:** Sprint Execution, ST-26 (EPIC-04, cycle `2026-10-29__release-v9.14`), found while checking the §AI Summary template wording against the code — 2026-11-02
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.15
+
+**Problem**
+The Monthly P&L summary's code-written fallback (`backend/services/monthly_pnl_narrative_service.py` `_money()`) writes a negative amount with an ASCII hyphen ("-£120.40"). `reports.md` §AI Summary's standard summary template and the v9.11 decision record say signed values use the canonical money format, which `design_system.md` §Number and Currency Formatting defines with the typographic minus U+2212 before the symbol ("−£120.40"). The fallback therefore disagrees with every other money figure on the page.
+
+**Scope**
+- Make `_money()` write U+2212 for negative values
+- Confirm the §13 Condition 3 value check (`source_values` / `signed_money_values` and the parser that reads numbers from the text) still accepts the fallback, and accepts U+2212 in model output
+- Update the expected template in `tests/test_monthly_pnl_narrative.py`
+
+**Acceptance Criteria**
+- The fallback for a month with a loss reads "−£120.40" (U+2212), asserted in `tests/test_monthly_pnl_narrative.py`
+- The fallback text still passes the value check and the language scan (test)
+
+---
+
+### BLG-FE-237 — Stop the Reports tab bar and Monthly table overflowing at phone width
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** Sprint Execution, ST-24 (EPIC-04, cycle `2026-10-29__release-v9.14`), found while hardening SC-MEC-07 at a 375px viewport after the agent-mediated DoQ review — 2026-11-02
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.15
+
+**Problem**
+At a 375px viewport the Reports page scrolls sideways: `document.documentElement.scrollWidth` is 393 with no Monthly rows at all, because the tab bar's last button (`reports-tab-reconciliation`) ends at x=393. On the Monthly tab, the Monthly Realised P&L table also extends to x=426 inside a card with `overflow-hidden`, so the Avg P&L/Trade column is clipped rather than scrollable. Neither is caused by v9.14's exit-condition card, which scrolls inside itself.
+
+**Scope**
+- Let the Reports tab bar wrap or scroll inside itself at narrow widths
+- Give the Monthly Realised P&L table the same `overflow-x-auto` treatment as the exit-condition card (sticky Month column optional)
+- Add a 375px Playwright check
+
+**Acceptance Criteria**
+- At 375px on the Monthly tab, `document.documentElement.scrollWidth` ≤ 375 (Playwright)
+- At 375px the Avg P&L/Trade column can be scrolled into view inside its card (Playwright)
+
+---
+
+### BLG-BE-202 — Reuse one connection for the monthly P&L exit-condition breakdown
+**Priority:** P3 (Low)
+**Type:** Backend engineering
+**Owner:** Head of Engineering
+**Source:** PR #2137 agent-mediated review (EPIC-04, cycle `2026-10-29__release-v9.14`), Director of Quality finding: ST-24 — 2026-11-02
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.15
+
+**Problem**
+ST-24's `get_monthly_pnl_by_exit_reason()` (`backend/database.py`) opens its own `get_db()` connection, and `get_db()` is a fresh `psycopg2.connect` with no pool. A `GET /reports/monthly-pnl` request now opens three connections (month rows, snapshot check, breakdown), where ST-12 (v9.7, BLG-BE-126) bounded it at two. The ST-12 test (`tests/test_monthly_pnl_snapshot.py`, `get_db_mock.assert_called_once()`) did not catch this, because it patches only `reports_service.get_db` and the new query connects inside the stubbed `database` module. The rolling-window SQL clause is also now written out in three functions (`get_monthly_pnl`, `get_monthly_pnl_by_tax_year`'s sibling, and the new query), so the reconciliation guarantee depends on keeping them byte-identical by hand.
+
+**Scope**
+- Give `get_monthly_pnl_by_exit_reason()` an optional `conn` (as `get_monthly_pnl_snapshot()` has) and run it on a connection the report already holds
+- Share the window clause between the month-row and breakdown queries so they cannot drift
+- Extend the connection-count test to count connections opened by every database call in the request, not only `reports_service.get_db`
+
+**Acceptance Criteria**
+- A `GET /reports/monthly-pnl` request with closed months opens at most two connections in total (test)
+- The month-row and breakdown queries take their window clause from one definition (code review), and `tests/test_monthly_pnl_exit_condition_breakdown.py` still passes
 
 ---

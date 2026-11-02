@@ -127,6 +127,9 @@ export default function SystemStatus() {
     // here, so it silently fell into 'Other'. Grouped under 'Analytics' to match the app's own
     // nav taxonomy (src/Layout.js NAV_GROUPS — Replay lives in the Analytics group, not Trading).
     if (endpointName.includes('/replay')) return 'Analytics';
+    // ST-28 (EPIC-04, v9.14, BLG-FE-217): /reports/* fell into 'Other'. Analytics, as Reports
+    // sits in the Analytics nav group (system_status.md v1.4 §Endpoint Test Category Labels).
+    if (endpointName.includes('/reports')) return 'Analytics';
     if (endpointName.includes('/validate')) return 'Validation';
     if (endpointName.includes('/alerts') || endpointName.includes('/price-alerts')) return 'Alerts';
     if (endpointName.includes('/notifications')) return 'Notifications';

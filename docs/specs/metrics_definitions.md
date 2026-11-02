@@ -2,8 +2,8 @@
 **Owner:** Metrics Definitions & Analytics Canonical Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 1.33.1
-**Last Updated:** 2026-10-30 (ST-13, EPIC-02, v9.14, BLG-SPEC-190 — §Position Risk Data Sources: the native entry is `positions.fill_price`; `positions.entry_price` is GBP); prior — 2026-10-27 (ST-22, EPIC-03, v9.13, BLG-FE-208 — §AI Chat Engagement Response Acceptance Rate instrumented: stored ratings, its query, `null` when none); prior — 2026-10-17 (ST-10, EPIC-02, v9.13, BLG-SPEC-188 — new §Stop Freshness: median and maximum age of `stop_calculated_at` across open positions, NULLs excluded and counted); prior history retained — see prior entries in version control
+**Version:** 1.33.2
+**Last Updated:** 2026-11-02 (ST-24, EPIC-04, v9.14, BLG-FEAT-99 — §Exit Condition Category: `GET /reports/monthly-pnl`'s `by_exit_condition` named as a consumer); prior — 2026-10-30 (ST-13, EPIC-02, v9.14, BLG-SPEC-190 — §Position Risk Data Sources: the native entry is `positions.fill_price`; `positions.entry_price` is GBP); prior — 2026-10-27 (ST-22, EPIC-03, v9.13, BLG-FE-208 — §AI Chat Engagement Response Acceptance Rate instrumented: stored ratings, its query, `null` when none); prior history retained — see prior entries in version control
 **Review Cycle:** Monthly
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
@@ -841,6 +841,7 @@ exit_condition(trade) = CATEGORY[trade.exit_reason ?? "Manual Exit"]
 ### Data Sources
 - `trade_history.exit_reason`: allowed values and their category per `data_model.md` §3 Exit Reason Values. DS-34's CHECK constraint rejects any other value, so the mapping is total.
 - Code copies: `backend/exit_reasons.py` (`EXIT_REASONS`) and `src/constants/exitReasons.js`. `tests/test_exit_reason_values.py` checks that the backend copy matches `data_model.md`.
+- Consumer (v1.33.2; ST-24, BLG-FEAT-99): `GET /reports/monthly-pnl` returns each month's realised P&L and trade count by this category as `by_exit_condition` (`stop_loss` = §8.1, `risk_off` = §8.2, `manual` = §8.3), computed in `backend/services/reports_service.py` from `backend/exit_reasons.py` on the same `trade_history.pnl` basis as the month's realised P&L, so the three categories sum to it. The Reports Monthly tab's "Realised P&L by exit condition" card displays it (`reports.md` §Exit Condition Breakdown).
 
 ### Failure Behaviour
 - No unmapped value can be stored after DS-34, so there is no "unknown" category. A legacy snake-case spelling read from a source DS-34 did not cover (for example an export made before the backfill) resolves through the alias table in `data_model.md` DS-34.
@@ -1488,6 +1489,7 @@ Validation is performed by `POST /validate/calculations` comparing computed metr
 ## Appendix D — Change Log
 | Date | Version | Change | Author |
 |---|---|---|---|
+| 2026-11-02 | 1.33.2 | ST-24 (EPIC-04, v9.14, BLG-FEAT-99): §Exit Condition Category Data Sources names `GET /reports/monthly-pnl`'s `by_exit_condition` (and the Reports Monthly tab card) as a consumer of the category. No definition change. | Metrics Definitions & Analytics Owner |
 | 2026-10-30 | 1.33.1 | ST-13 (EPIC-02, v9.14, BLG-SPEC-190): §Position Risk Data Sources — the native entry is `positions.fill_price`; `positions.entry_price` is GBP for every market (was "native currency"). Documentation only. |
 | 2026-10-27 | 1.33.0 | ST-22 (EPIC-03, v9.13, BLG-FE-208): §AI Chat Engagement measure 3 (Response Acceptance Rate) is instrumented — ratings stored in `chat_answer_ratings` (DS-35) against the answer's `claude_audit_log` row; the query is documented and implemented as `database.get_response_acceptance_rate()`; `null` when nothing is rated. "Not instrumented" status removed. |
 | 2026-10-17 | 1.32.0 | ST-10 (EPIC-02, v9.13, BLG-SPEC-188): new §Stop Freshness — median and maximum age of `positions.stop_calculated_at` across open positions, with formula, source (DS-22), NULL exclusion (counted as never recalculated) and a manual-check query. No threshold. Served by `GET /positions/stop-freshness`; shown on System Status. | Metrics Definitions & Analytics Owner |

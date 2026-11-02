@@ -12,6 +12,8 @@
  *   SC-SS-07: Alerts/Notifications/Digest/price-alerts/saved-filters/changelog
  *             endpoints do NOT appear under "Other" (ST-18, EPIC-05, v7.10,
  *             BLG-FE-123 added the last 3)
+ *   SC-SS-10: every /reports/* endpoint (the six in backend/routers/test.py) groups under Analytics,
+ *             never "Other" (ST-28, EPIC-04, v9.14, BLG-FE-217; system_status.md v1.4)
  *   SC-SS-09: Stop Freshness panel (ST-10, EPIC-02, v9.13, BLG-SPEC-188) — formatted figures from
  *             GET /positions/stop-freshness, never-recalculated line only when m > 0, no-open-positions
  *             and unavailable states, placement between Component Health Checks and Endpoint Tests
@@ -381,6 +383,46 @@ test.describe('Post-run state — SC-SS-03 through SC-SS-07', () => {
     await expect(analyticsBtn).toBeVisible({ timeout: 8000 });
     await expect(page.getByText('POST /replay/run')).toBeVisible({ timeout: 8000 });
   });
+});
+
+// ---------------------------------------------------------------------------
+// SC-SS-10 — /reports endpoints group under Analytics (ST-28, EPIC-04, v9.14, BLG-FE-217)
+// Own payload, so the shared TEST_RESULTS_RESPONSE counts asserted above are unchanged.
+// ---------------------------------------------------------------------------
+
+const REPORTS_ENDPOINTS = [
+  'GET /reports/monthly-pnl',
+  'GET /reports/monthly-pnl/narrative',
+  'POST /reports/monthly-pnl/narrative',
+  'GET /reports/daily-pnl',
+  'GET /reports/tax-year',
+  'GET /reports/reconciliation',
+];
+
+test('SC-SS-10: every /reports endpoint appears under Analytics and none under Other', async ({ page }) => {
+  const results = [
+    { endpoint: 'GET /health/detailed', status: 'pass', status_code: 200, response_time_ms: 4.8 },
+    { endpoint: 'GET /analytics/metrics', status: 'pass', status_code: 200, response_time_ms: 12.3 },
+    { endpoint: 'POST /replay/run', status: 'pass', status_code: 200, response_time_ms: 15.0 },
+    ...REPORTS_ENDPOINTS.map((endpoint) => ({ endpoint, status: 'pass', status_code: 200, response_time_ms: 9.0 })),
+  ];
+  await mockFallback(page);
+  await mockHealth(page);
+  await mockTestEndpoints(page, {
+    summary: { total: results.length, passed: results.length, failed: 0, errors: 0, success_rate: 100.0 },
+    results,
+  });
+  await page.goto('/#/SystemStatus');
+  await page.getByRole('button', { name: /run tests/i }).click();
+
+  // Analytics holds /analytics, /replay and the six /reports endpoints: 8/8.
+  const analyticsBtn = page.getByRole('button', { name: /^analytics.*8\/8/i });
+  await expect(analyticsBtn).toBeVisible({ timeout: 8000 });
+  const analyticsGroup = page.locator('div.rounded-xl').filter({ has: analyticsBtn });
+  for (const endpoint of REPORTS_ENDPOINTS) {
+    await expect(analyticsGroup.getByText(endpoint, { exact: true })).toBeVisible();
+  }
+  await expect(page.getByRole('button', { name: /^other/i })).toHaveCount(0);
 });
 
 // ---------------------------------------------------------------------------

@@ -207,6 +207,18 @@ class TestFallback:
         assert text.startswith("2025/26 so far:")
         assert text.endswith("6 closed trades have no fees recorded, so these figures may not reflect their costs.")
 
+    def test_one_profitable_month_is_singular(self):
+        # ST-26 (EPIC-04, v9.14, BLG-FE-215): "1 month ended above zero".
+        rows = [m for m in MONTHS if m["month"] != 4]  # May up, June down
+        text = build_fallback_text(build_inputs(YEAR, rows, today=TODAY))
+        assert "1 month ended above zero and 1 below." in text
+        assert "1 months" not in text
+
+    def test_zero_profitable_months_is_plural(self):
+        rows = [m for m in MONTHS if m["month"] == 6]
+        text = build_fallback_text(build_inputs(YEAR, rows, today=TODAY))
+        assert "0 months ended above zero and 1 below." in text
+
     def test_fallback_itself_passes_the_language_scan(self):
         assert scan_language(build_fallback_text(INPUTS)) == []
 

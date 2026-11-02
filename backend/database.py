@@ -455,6 +455,42 @@ def get_monthly_pnl_by_tax_year(portfolio_id: str, tax_year_start, tax_year_end)
             return cur.fetchall()
 
 
+def get_monthly_pnl_by_exit_reason(portfolio_id: str, tax_year_start=None, tax_year_end=None) -> List[Dict]:
+    """Realised P&L and trade count per calendar month and stored exit_reason
+    (ST-24, EPIC-04, v9.14, BLG-FEAT-99).
+
+    Same rows as get_monthly_pnl_by_tax_year when both bounds are given, else
+    the same rows as get_monthly_pnl's rolling window, so each month's groups
+    sum to that month's realised_pnl_gbp and trade_count. exit_reason is
+    returned raw (NULL included); reports_service maps it to its §8 category.
+
+    Used by GET /reports/monthly-pnl's by_exit_condition.
+    Spec: docs/specs/api_contracts/reports_endpoints.md §GET /reports/monthly-pnl
+    """
+    if tax_year_start is not None and tax_year_end is not None:
+        window_sql = "AND exit_date BETWEEN %s AND %s"
+        params = (portfolio_id, tax_year_start, tax_year_end)
+    else:
+        window_sql = "AND exit_date >= date_trunc('year', (NOW() AT TIME ZONE 'UTC')::date - INTERVAL '1 year')"
+        params = (portfolio_id,)
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                f"""SELECT
+                   EXTRACT(YEAR FROM exit_date)::int AS year,
+                   EXTRACT(MONTH FROM exit_date)::int AS month,
+                   exit_reason,
+                   COALESCE(SUM(pnl), 0)::float AS realised_pnl_gbp,
+                   COUNT(*)::int AS trade_count
+                   FROM trade_history
+                   WHERE portfolio_id = %s
+                   {window_sql}
+                   GROUP BY year, month, exit_reason""",
+                params
+            )
+            return cur.fetchall()
+
+
 def get_daily_pnl(portfolio_id: str, year: int, month: int) -> List[Dict]:
     """Aggregate realised P&L by calendar day for a single given month (ST-04, BLG-FE-118, v7.5).
 

@@ -33,11 +33,20 @@ from database import (
     get_trade_history_pnl_sum_by_tax_year,
     get_monthly_pnl,
     get_monthly_pnl_by_tax_year,
+    get_monthly_pnl_by_exit_reason,
     get_daily_pnl,
     get_monthly_pnl_snapshot,
     insert_monthly_pnl_snapshot_if_absent,
     get_monthly_pnl_snapshots_in_range,
     ensure_monthly_pnl_snapshots_table,
+)
+from exit_reasons import (
+    DEFAULT_EXIT_REASON,
+    EXIT_REASONS,
+    LEGACY_ALIASES,
+    SECTION_8_MANUAL,
+    SECTION_8_RISK_OFF,
+    SECTION_8_STOP_LOSS,
 )
 from utils.formatting import decimal_to_float
 
@@ -384,6 +393,63 @@ def _snapshot_month(portfolio_id: str, year: int, month: int, realised_pnl_gbp: 
     }
 
 
+# ST-24 (EPIC-04, v9.14, BLG-FEAT-99): by_exit_condition keys, one per
+# metrics_definitions.md §Exit Condition Category.
+EXIT_CONDITION_KEYS = {
+    SECTION_8_STOP_LOSS: "stop_loss",
+    SECTION_8_RISK_OFF: "risk_off",
+    SECTION_8_MANUAL: "manual",
+}
+
+
+def _exit_condition_key(exit_reason: Optional[str]) -> str:
+    """Map a stored exit_reason to its by_exit_condition key. NULL reads as
+    Manual Exit; a legacy snake-case spelling resolves through LEGACY_ALIASES.
+    Raises KeyError for any other value (DS-34 makes that unreachable)."""
+    reason = exit_reason or DEFAULT_EXIT_REASON
+    reason = LEGACY_ALIASES.get(reason, reason)
+    return EXIT_CONDITION_KEYS[EXIT_REASONS[reason]]
+
+
+def _exit_condition_breakdowns(portfolio_id: str, months: list, tax_year_start=None, tax_year_end=None) -> list:
+    """Return one by_exit_condition dict per entry of `months`, in order.
+
+    Each is {stop_loss|risk_off|manual: {realised_pnl_gbp, trade_count}}.
+    Raises ValueError if any month's categories do not sum to its
+    realised_pnl_gbp and trade_count (e.g. a trade closed between the two
+    queries), so the caller omits the breakdown rather than show a total
+    that disagrees with the Monthly Financial Table.
+    """
+    totals = {}
+    for r in get_monthly_pnl_by_exit_reason(portfolio_id, tax_year_start, tax_year_end):
+        month_totals = totals.setdefault((int(r["year"]), int(r["month"])), {
+            key: {"realised_pnl_gbp": 0.0, "trade_count": 0} for key in EXIT_CONDITION_KEYS.values()
+        })
+        bucket = month_totals[_exit_condition_key(r["exit_reason"])]
+        bucket["realised_pnl_gbp"] += float(r["realised_pnl_gbp"])
+        bucket["trade_count"] += int(r["trade_count"])
+
+    breakdowns = []
+    for m in months:
+        month_totals = totals.get((m["year"], m["month"]), {})
+        breakdown = {
+            key: {
+                "realised_pnl_gbp": round(month_totals.get(key, {}).get("realised_pnl_gbp", 0.0), 2),
+                "trade_count": month_totals.get(key, {}).get("trade_count", 0),
+            }
+            for key in EXIT_CONDITION_KEYS.values()
+        }
+        pnl_sum = sum(c["realised_pnl_gbp"] for c in breakdown.values())
+        count_sum = sum(c["trade_count"] for c in breakdown.values())
+        if abs(pnl_sum - m["realised_pnl_gbp"]) >= 0.005 or count_sum != m["trade_count"]:
+            raise ValueError(
+                f"exit-condition breakdown for {m['year']}-{m['month']:02d} does not reconcile "
+                f"({pnl_sum:.2f}/{count_sum} vs {m['realised_pnl_gbp']:.2f}/{m['trade_count']})"
+            )
+        breakdowns.append(breakdown)
+    return breakdowns
+
+
 def get_monthly_pnl_report(year: Optional[int] = None) -> dict:
     """
     Return month-by-month realised P&L, plus a current-snapshot estimated
@@ -407,7 +473,9 @@ def get_monthly_pnl_report(year: Optional[int] = None) -> dict:
                     always has snapshotted=False and no snapshot/diff fields populated;
                     ST-09, EPIC-02, v9.13, BLG-BE-156: if monthly_pnl_snapshots cannot be
                     read or written, every month omits all four snapshot fields and the
-                    failure is logged with exc_info -- the report itself still succeeds),
+                    failure is logged with exc_info -- the report itself still succeeds;
+                    ST-24, EPIC-04, v9.14, BLG-FEAT-99: by_exit_condition per month, omitted
+                    from every month if the breakdown fails or does not reconcile),
           "estimated_unrealised_pnl": float | None — None when there is no portfolio yet,
           "unrealised_note": str,
         }
@@ -416,6 +484,7 @@ def get_monthly_pnl_report(year: Optional[int] = None) -> dict:
     if not portfolio:
         return {"months": [], "estimated_unrealised_pnl": None, "unrealised_note": UNREALISED_NOTE}
     portfolio_id = str(portfolio['id'])
+    tax_year_start = tax_year_end = None
     if year is not None:
         tax_year_start = date(year, 4, 6)
         if tax_year_start > date.today():
@@ -479,6 +548,22 @@ def get_monthly_pnl_report(year: Optional[int] = None) -> dict:
     else:
         for m, fields in zip(months, snapshot_fields):
             m.update(fields)
+
+    # ST-24 (EPIC-04, v9.14, BLG-FEAT-99): per-month realised P&L by §8 exit
+    # condition. Like the snapshot fields above, a failure is non-blocking:
+    # every month omits by_exit_condition, which is the "Exit-condition
+    # breakdown unavailable." signal reports.md §Exit Condition Breakdown defines.
+    if months:
+        try:
+            breakdowns = _exit_condition_breakdowns(portfolio_id, months, tax_year_start, tax_year_end)
+        except Exception:
+            logger.error(
+                "Monthly P&L exit-condition breakdown failed; returning realised P&L without by_exit_condition",
+                exc_info=True,
+            )
+        else:
+            for m, breakdown in zip(months, breakdowns):
+                m["by_exit_condition"] = breakdown
     return {
         "months": months,
         "estimated_unrealised_pnl": get_estimated_unrealised_pnl(portfolio_id),
