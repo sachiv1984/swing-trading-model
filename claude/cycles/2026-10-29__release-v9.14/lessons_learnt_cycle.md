@@ -55,3 +55,36 @@ Items: 3
 | 1 | Three P2 pre-existing defects were found this cycle: `BLG-FE-239` and `BLG-FE-240` (win rate, ST-50) and `BLG-FE-243` (UTC date prefill, PR #2139 review). The Product Owner recommended the first two for v9.15 | Weigh all three for the v9.15 slice, and record a reason if any is left out | Release Planning |
 | 2 | ST-53 produced `docs/governance/governance_overhead_audit_2026-11-02.md` as an input to the next roadmap rebalance (AC 2). Per ST-53's Notes, nothing was written to `claude/roadmap/*` in-sprint | Link the audit as an input at the next `run roadmap` | Roadmap |
 | 3 | Three post-merge remainders stay open at close. `BLG-OPS-201` needs a complete production month (November 2026, so after 2026-12-01). `BLG-GOV-399` needs a production read of AI outputs. `BLG-GOV-400` needs the next Release Planning gate scan | Check them at the next delivery verification and Release Planning, and do not re-grade ST-23, ST-39 or ST-45 for them | All |
+
+---
+
+## Phase 4
+
+**Phase:** Delivery Verification
+**Cycle:** 2026-10-29__release-v9.14
+**Section anchor:** `## Phase 4` (stable — cycle_id in field above, not in header)
+**Filed:** 2026-11-02
+**Reviewed by:** PMO Lead
+**Invocation context:** invoking_routine `delivery_verification_prompt.md` (STEP 8.5); cycle_id `2026-10-29__release-v9.14`; phase Phase 4; prior_cycle_id `2026-10-16__release-v9.13`.
+**Prior cycle checked:** 2026-10-16__release-v9.13 (`lessons_learnt_cycle.md` `## Phase 4`). It filed 1 friction item. It was re-checked by patch ID against `prompt_change_log.md` as of this run, and by reading the named target file directly (BLG-GOV-312, LL-v9.1-Closure-01):
+1. **`LL-v9.13-P4-01`, found-defect severity under any grade.** **Applied:** `delivery_verification_prompt.md` v3.15→v3.16 and `execution_prompt.md` v3.87→v3.88 (2026-10-29, `prompt_change_log.md` lines 33–34). The text is present in STEP 2.1 ("Any grade, including `Pass with notes` (LL-v9.13-P4-01, ...)"). It worked live: sprint close listed three P2 found defects under `Pass` grades (ST-50, ST-29) in the deviation table, and this run routed them to §7 without having to ask whether they counted.
+
+| friction_item | phase | type | classification | action | owner | target_date |
+|---------------|-------|------|----------------|--------|-------|-------------|
+| Sprint planning's outstanding action "Initialise ST-51 as `deferred_at_planning` in `execution_state.json` (STEP 5.2 traceability)" was not done, so the sealed record has no ST-51 entry, and STEP 1 found an in-scope slice item with no record. Sprint close's item-count check (53 declared vs 53 recorded) excluded ST-51 on both sides, so it passed without noticing. Blast radius: one story, with its disposition fully documented elsewhere. A future `deferred_at_planning` item with a less clear paper trail would leave a real traceability hole | Phase 4 | Type A — Governance Drift: A documented rule or header requirement was ignored or missed | defer | Extend `scripts/check_execution_state_consistency.py` (run at sprint close, §9.2) to compare every ST ID in the authoritative backlog slice against `execution_state.json` and fail on any slice item with no record, including `deferred_at_planning`. Or make `execution_prompt.md` STEP 5.1's item-count check count slice items, not declared sprint stories. File as a backlog item at post-ship closure | Head of Specs Team | 2026-10-29__release-v9.14 post-ship closure |
+
+**What worked well:**
+- All seven QA evidence logs were signed and dated before invocation, and `sprint_close.md`'s readiness statement was all `Yes`. Every preflight gate passed on the first invocation, for the third cycle running.
+- `LL-v9.13-P4-01` worked as intended. Sprint close's two-priority deviation table already listed the three P2 found defects under `Pass` grades, so the §7 question was put to the user once, with all three together, and answered in one step. In v9.13, by contrast, the engine had to stop and work out whether a `Pass with notes` found defect counted.
+- Every human merge-gate confirmation was written into the QA evidence before this run, so §3 did not have to reconstruct any from PR comments.
+- Seal-marked post-merge ACs (`LL-v9.13-P3-03`) meant six stories' production-only ACs were checked under §5 as planned remainders. None showed up as a deviation or needed a severity call.
+- All 58 `test_scenarios` references resolved and were named in the QA evidence, and the cycle's own reviews had already backlogged every test-coverage weakness this run found.
+
+**Recurrence Notes:**
+None against the prior cycle. The single v9.13 Phase 4 row is dispositioned **Applied** above, so no prior-cycle row is left without a disposition (AUD-2026-10-08-004 row-completeness). The friction item is new.
+
+Severity calls were not contested. The DoQ sign-offs, `sprint_close.md` and this run agree on P3 for both `Pass_with_deviation` results and on P2 for the three found defects. The three P2 acceptances were a human decision by the user, acting as Product Owner and Director of Quality (2026-11-02). The pre-seal gate (`LL-v2.4-DV-01`) held: §9 dates were filled only after that decision. Minor observation, not filed: the §7 acceptance condition retargeting `BLG-FE-243` from TBD to v9.15 cannot be applied by this engine, whose `backlog.md` scope is append-only. It is routed to the next grooming, as the v9.13 conditions were.
+
+### Phase 4 Recurrence Escalations
+
+None.
