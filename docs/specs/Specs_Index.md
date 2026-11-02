@@ -4,7 +4,7 @@
 **Purpose:** Single map of canonical product truth
 **Audience:** Product, Engineering, Analytics, Strategy
 **Status:** Authoritative
-**Last Updated:** 2026-10-30 (ST-22, EPIC-03, v9.14, BLG-BE-163 — `gemini_thesis_generation.md` row removed; the file was merged into `ai_thesis_generation.md` and deleted); prior — 2026-10-29 (post-ship closure 2026-10-16__release-v9.13 — §53 Test Coverage Gaps v9.13 section added, 5 gaps each already tracked by a backlog item, TSG sweep 9 Open checked / 2 resolved; see Changelog); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-02 (ST-50, EPIC-07, v9.14, BLG-GOV-184 — `metrics/win_rate_surface_consistency_2026-11-02.md` registered); prior — 2026-11-02 (ST-46, EPIC-07, v9.14, BLG-SPEC-77 — `frontend/patterns/gate_status_indicator.md` registered); prior — 2026-10-30 (ST-22, EPIC-03, v9.14, BLG-BE-163 — `gemini_thesis_generation.md` row removed; the file was merged into `ai_thesis_generation.md` and deleted); prior history retained — see prior entries in version control
 
 ---
 
@@ -449,6 +449,7 @@ Populated by the ST-49 freshness-check remediation (`scripts/check_specs_index_f
 |------|-------|-------|-------|
 | `docs/specs/frontend/patterns/api_dependencies.md` | api_dependencies.md | Frontend Specifications & UX Documentation Owner | Class 2 |
 | `docs/specs/frontend/patterns/error_handling.md` | error_handling.md | Frontend Specifications & UX Documentation Owner | Class 2 |
+| `docs/specs/frontend/patterns/gate_status_indicator.md` | Frontend Pattern — Gate Status Indicator | Frontend Specifications & UX Documentation Owner | Supporting Document (Class 2) |
 | `docs/specs/frontend/patterns/loading_states.md` | Frontend Pattern — Loading State Standardisation | Frontend Specifications & UX Documentation Owner | Supporting Document (Class 2) |
 
 **Frontend — Reviews & Supporting**
@@ -893,6 +894,7 @@ No TSG backlog items required.
 
 **New SI-02 pre-planning spec documents filed this cycle:**
 - `docs/specs/metrics/si02_drift_score.md` — SI-02 drift detection score metric definition (ST-07): 4 drift metrics, 90-day rolling window, green/amber/red threshold bands, SI-05 integration points. Owner: Metrics Definitions & Analytics Canonical Owner + Head of Specs Team. Pre-planning specification for SI-02 implementation sprint.
+- `docs/specs/metrics/win_rate_surface_consistency_2026-11-02.md` — Win rate surface consistency check (ST-50, BLG-GOV-184, v9.14): 13 computing surfaces checked against `metrics_definitions.md` §Win Rate; 3 discrepancies filed (`BLG-FE-239`, `BLG-FE-240`, `BLG-SPEC-212`)
 - `docs/specs/data_model/si02_data_schema.md` — SI-02 data schema pre-definition (ST-08): 5 new trade_plans columns (signal_id, risk_percent_used, portfolio_value_at_entry, pre_entry_validation_snapshot, effective_settings_snapshot), 3 indexes, DS-07 migration script. Owner: Data Model & Domain Schema Owner + Head of Specs Team. Pre-planning specification for SI-02 implementation sprint.
 - `docs/product/decisions/decisions--2026-05-30__release-v4.5--SI-02-section13-review.md` — SI-02 §13 formal boundary review decision record (ST-06): PASS determination; 9 binding conditions documented. Class 3 Operational Record (permanent). Owner: Strategy Rules & System Intent Owner.
 
@@ -1442,6 +1444,8 @@ Identified during delivery verification (`verification_report.md §6`): **5 test
 
 | Date | Change |
 |------|--------|
+| 2026-11-02 | ST-50 (EPIC-07, v9.14, BLG-GOV-184) — `docs/specs/metrics/win_rate_surface_consistency_2026-11-02.md` registered under metrics. |
+| 2026-11-02 | ST-46 (EPIC-07, v9.14, BLG-SPEC-77) — `docs/specs/frontend/patterns/gate_status_indicator.md` registered under Frontend — Patterns. |
 | 2026-10-29 | Post-ship closure `2026-10-16__release-v9.13` — §53 Test Coverage Gaps (v9.13) added: 5 gaps (TSG-v9.13-01..05), each already tracked by a backlog item (`BLG-QA-229`, `BLG-QA-232`, `BLG-QA-230`, `BLG-QA-237`, `BLG-BE-190`), plus 2 not-applicable rows; endpoint coverage drift check PASSED, 0 gaps; full-document TSG sweep: 9 Open entries checked, 2 resolved (TSG-v9.9-01, TSG-v9.9-02); §6/§7: no items resolved by this delivery |
 | 2026-10-15 | Post-ship closure `2026-10-12__release-v9.12` — §52 Test Coverage Gaps (v9.12) added: 2 gaps (TSG-v9.12-01..02), each already tracked by a backlog item (`BLG-QA-221`, `BLG-QA-226`), plus 1 not-applicable row; endpoint coverage drift check PASSED, 0 gaps; full-document TSG sweep: 10 Open entries checked, 3 resolved (TSG-v9.9-03, TSG-v9.9-04, TSG-v9.11-01); §6/§7: no items resolved by this delivery |
 | 2026-10-12 | Post-ship closure `2026-10-08__release-v9.11` — §51 Test Coverage Gaps (v9.11) added: 3 gaps (TSG-v9.11-01..03), each already tracked by a backlog item (`BLG-BE-162`, `BLG-QA-220`, `BLG-QA-219`); endpoint coverage drift check PASSED, 0 gaps; full-document TSG sweep: 7 Open entries checked, 0 resolved; §6/§7: no items resolved by this delivery |

@@ -1,8 +1,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Active
-**Version:** 0.1.14
-**Last Updated:** 2026-10-29 (v9.14 design gate — ST-04/ST-05: new §2a FX Rate Source Notice; ST-08/BLG-FE-214: §6.6 stale marker focusable with an accessible description); prior — 2026-10-12 (v9.12 design gate — ST-22/BLG-FE-207: §5.2 Grace Period panel rows link to Positions; shipped text aligned to the spec; row layout described); prior — 2026-10-08 (v9.11 design gate — ST-10/ST-11/ST-13: §6 Position Risk table stale-price marker, GBP entry prices, grace stops shown as not enforced, stop distance from the API); prior history retained — see prior entries in version control
+**Version:** 0.1.15
+**Last Updated:** 2026-11-02 (ST-47, EPIC-07, v9.14, BLG-SPEC-189 — §5.1 and §6.1 name only fields `GET /portfolio` returns: `grace_period`, `display_status`); prior — 2026-10-29 (v9.14 design gate — ST-04/ST-05: new §2a FX Rate Source Notice; ST-08/BLG-FE-214: §6.6 stale marker focusable with an accessible description); prior — 2026-10-12 (v9.12 design gate — ST-22/BLG-FE-207: §5.2 Grace Period panel rows link to Positions; shipped text aligned to the spec; row layout described); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Design Source (v0.1.14):** docs/design/2026-10-29__release-v9.14/fx-rate-source-indicator/decision_record.md, docs/design/2026-10-29__release-v9.14/stale-price-marker/decision_record.md
 **Design Source (v0.1.12):** docs/design/2026-10-08__release-v9.11/risk-price-integrity/decision_record.md
@@ -133,8 +133,8 @@ Colour applies to: gauge fill, threshold label badge, card left-border accent.
 
 ### 5.1 Data
 
-- **Source:** `GET /portfolio` → positions where `status = "GRACE"`
-- **Fields:** `ticker`, `entry_date`, `grace_days_remaining`, `holding_days`
+- **Source:** `GET /portfolio` → positions where `grace_period` is `true` *(v0.1.15 — ST-47, BLG-SPEC-189: `GET /portfolio` returns `status: "open"` for every position, so no position has `status = "GRACE"`; the grace state is the `grace_period` boolean, which `GracePeriodPanel.js` filters on. `display_status = "GRACE"` marks the same positions)*
+- **Fields:** `ticker`, `entry_date`, `grace_period`, `grace_days_remaining`, `holding_days`
 
 ### 5.2 Display
 
@@ -180,7 +180,8 @@ Ascending by `grace_days_remaining` (most urgent / fewest days remaining first).
 
 ### 6.1 Data
 
-- **Source:** `GET /portfolio` → all open positions
+- **Source:** `GET /portfolio` → all open positions (`status = "open"`, which every returned position has)
+- **State source (v0.1.15 — ST-47, BLG-SPEC-189):** the State badge (§6.3), the grace-stop treatment (§6.2a) and the sort order (§6.4) read `display_status` (`GRACE`, `LOSING` or `PROFITABLE`). `status` is always `"open"` and never drives the badge
 - **Fields:** `ticker`, `status`, `display_status`, `entry_price`, `current_price`, `current_stop`, `holding_days`, `pnl_pct`, `price_is_stale` *(v0.1.12 — ST-10)*, `stop_distance_pct` *(v0.1.12 — ST-13)*, `grace_days_remaining`
 
 ### 6.2 Display
@@ -191,7 +192,7 @@ Ascending by `grace_days_remaining` (most urgent / fewest days remaining first).
 | Column | Source | Format |
 |--------|--------|--------|
 | Ticker | `ticker` | Uppercase string |
-| State | `status` | Badge — see §6.3 |
+| State | `display_status` | Badge — see §6.3 |
 | Entry (GBP) | `entry_price` | GBP, 2 decimal places, for every market. A US row shows "£" and the GBP value `GET /portfolio` returns, never the native-currency symbol *(v0.1.12 — ST-11)* |
 | Current (GBP) | `current_price` | GBP, 2 decimal places. Followed by the stale marker when `price_is_stale` is true (§6.6) |
 | Stop (GBP) | `current_stop` | GBP, 2 decimal places. GRACE rows: "Not enforced (grace)" (§6.2a) |
@@ -206,7 +207,7 @@ Stops are not enforced during the 10-day grace period (`strategy_rules.md` §6).
 
 ### 6.3 State Badges
 
-| Status value | Badge label | Badge colour |
+| `display_status` value | Badge label | Badge colour |
 |-------------|-------------|--------------|
 | GRACE | GRACE | Blue |
 | LOSING | LOSING | Red |
@@ -457,6 +458,7 @@ The following deviations were identified at v1.8 sprint execution and accepted f
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.1.15 | 2026-11-02 | ST-47 (EPIC-07, v9.14, BLG-SPEC-189): §5.1 grace panel source is `grace_period = true`, not `status = "GRACE"` (a value `GET /portfolio` never returns); §6.1 states that `display_status` drives the State badge, with §6.2 State column and §6.3 header renamed to match. Wording only: matches the shipped `GracePeriodPanel.js` and `PositionRiskTable.js`, no behaviour change. Head of Specs Team confirmed. |
 | 0.1.14 | 2026-10-29 | v9.14 design gate. (ST-04/ST-05, BLG-BE-194/BLG-BE-169) new §2a FX Rate Source Notice under the heading when the FX rate is last-known or the fixed fallback. (ST-08, BLG-FE-214) §6.6 marker becomes a focusable button with the explanation as its accessible description and a hover/focus/tap tooltip, new copy with a next step, and the light-theme amber pair. Design sources: `docs/design/2026-10-29__release-v9.14/fx-rate-source-indicator/decision_record.md`, `docs/design/2026-10-29__release-v9.14/stale-price-marker/decision_record.md`. Head of UX & Design sign-off: 2026-10-29. Product Owner approved: 2026-10-29. Head of Specs Team confirmed. |
 | 0.1.13 | 2026-10-12 | v9.12 design gate. (ST-22, BLG-FE-207) §5.2: each grace row links to `/#/Positions?position={id}`; the heading, badge and `dd MMM yyyy` date format are aligned to this spec (the Product Owner kept the spec wording); the list-of-rows layout is described in place of "Table". Design source: `docs/design/2026-10-12__release-v9.12/grace-panel-position-link/decision_record.md`. Head of UX & Design sign-off: 2026-10-12. Product Owner approved: 2026-10-12. Head of Specs Team confirmed. |
 | 0.1.12 | 2026-10-08 | v9.11 design gate. (ST-10, BLG-BE-154) new §6.6 Stale Price Marker driven by `price_is_stale`. (ST-11, BLG-FE-206) §6.2 Entry Price in GBP for every market, money headers state "(GBP)", new §6.2a grace-period stops shown as "Not enforced (grace)" with no distance colour, §6.4 GRACE group sorted by `grace_days_remaining`. (ST-13, BLG-BE-155) Stop Dist % taken from the API's native-currency `stop_distance_pct`. Design source: `docs/design/2026-10-08__release-v9.11/risk-price-integrity/decision_record.md`. Head of UX & Design sign-off: 2026-10-08. Product Owner approved: 2026-10-08. Head of Specs Team confirmed. |

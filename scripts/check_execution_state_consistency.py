@@ -17,22 +17,27 @@ the ESC-CLOSE-20260930-02 ruling exists to remove. This script checks:
 plus the per-record rules §9.2 names alongside them:
   - a story with status done/merged has commit_sha and completed_utc set
   - an EPIC with qa_signed_off true has status done/merged (§9.2 item 5)
+  - a story with status done/merged has deviations_filed true (§3.1.A step 10a)
+  - every `## ESC-EXEC-*` heading in the sibling execution_escalations.md has a
+    key in open_escalations (ST-44, BLG-GOV-397, EPIC-07, v9.14)
 
 Usage: python3 scripts/check_execution_state_consistency.py <execution_state.json>
 Exit 0 = consistent; 1 = mismatches (one per line, naming the field); 2 = usage/IO error.
 """
 import json
+import re
 import sys
 from pathlib import Path
 
 DONE = {"done", "merged"}
+ESC_HEADING = re.compile(r"^## (ESC-EXEC-\d{8}-\d+)\b", re.MULTILINE)
 
 
 def _ids(values):
     return sorted(set(values or []), key=lambda s: (len(s), s))
 
 
-def check_state(state: dict) -> list:
+def check_state(state: dict, escalations_md: str = None) -> list:
     epics = state.get("epics", {})
     stories = {sid: rec for epic in epics.values() for sid, rec in epic.get("stories", {}).items()}
     problems = []
@@ -63,9 +68,17 @@ def check_state(state: dict) -> list:
         for field in ("commit_sha", "completed_utc"):
             if not stories[sid].get(field):
                 problems.append(f"{sid}.{field}: empty on a story with status {stories[sid]['status']}")
+        if stories[sid].get("deviations_filed") is not True:
+            problems.append(f"{sid}.deviations_filed: is {stories[sid].get('deviations_filed')!r} on a story "
+                            f"with status {stories[sid]['status']} (expected true)")
     for eid, epic in sorted(epics.items()):
         if epic.get("qa_signed_off") is True and epic.get("status") not in DONE:
             problems.append(f"{eid}.status: is {epic.get('status')!r} but qa_signed_off is true (expected done/merged)")
+    if escalations_md is not None:
+        keys = set(state.get("open_escalations") or {})
+        for esc_id in _ids(ESC_HEADING.findall(escalations_md)):
+            if esc_id not in keys:
+                problems.append(f"open_escalations.{esc_id}: heading in execution_escalations.md has no key")
     return problems
 
 
@@ -80,7 +93,9 @@ def main(argv=None) -> int:
     except (OSError, ValueError) as exc:
         print(f"error: cannot read {path}: {exc}", file=sys.stderr)
         return 2
-    problems = check_state(state)
+    esc_path = path.parent / "execution_escalations.md"
+    escalations_md = esc_path.read_text(encoding="utf-8") if esc_path.exists() else None
+    problems = check_state(state, escalations_md)
     for p in problems:
         print(p)
     if problems:

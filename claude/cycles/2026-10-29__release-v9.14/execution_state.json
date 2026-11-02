@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-29T14:51:40Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-02T10:55:00Z",
+  "last_updated_utc": "2026-11-02T11:11:00Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-02",
@@ -959,6 +959,220 @@
       },
       "merged_utc": "2026-11-02T10:43:04Z",
       "merge_commit": "4fee64d5"
+    },
+    "EPIC-07": {
+      "status": "done",
+      "branch": "exec/2026-10-29__release-v9.14/EPIC-07",
+      "pr_number": 2138,
+      "pr_status": "open",
+      "qa_signed_off": true,
+      "qa_evidence_log": "claude/cycles/2026-10-29__release-v9.14/qa_evidence_EPIC-07.md",
+      "test_scenarios": [
+        "tests/test_check_execution_state_consistency.py",
+        "tests/test_compute_effort_weighted_pvr.py",
+        "tests/test_trade_plan_status_enum_parity.py",
+        "tests/test_report_spec_debt_aging.py"
+      ],
+      "stories": {
+        "ST-44": {
+          "title": "check_execution_state_consistency.py checks deviations_filed and the escalation map",
+          "classification": "autonomous",
+          "status": "done",
+          "github_issue": 2121,
+          "branch": "exec/2026-10-29__release-v9.14/EPIC-07",
+          "spec_references": [
+            "scripts/check_execution_state_consistency.py",
+            "tests/test_check_execution_state_consistency.py",
+            "claude/system/execution_prompt.md#9.2 State Update Rule (Hard Requirement)"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "acceptance_verified": true,
+          "commit_sha": "d6a4892d0720735565700c593b9a2d2f2ebf976b",
+          "completed_utc": "2026-11-02T10:47:29Z",
+          "last_completed_substep": "3.1.A.10a",
+          "notes": "AC met: script fails naming the story (deviations_filed) and the ID (ESC-EXEC heading without open_escalations key); 8 new tests, 19/19 pass; §9.2 names both checks; CLAUDE.md §6 checklist complete (execution_prompt v3.90, OG v4.244). CI 4c/4d: all 7 workflows success on d6a4892d (CI Pytest 41431620628, Playwright 41431620444). Deviation check: none. Out-of-scope finding filed: BLG-GOV-401."
+        },
+        "ST-45": {
+          "title": "Give the gate scan's \"gating item shipped\" findings a write-back path",
+          "classification": "autonomous",
+          "status": "done",
+          "github_issue": 2122,
+          "branch": "exec/2026-10-29__release-v9.14/EPIC-07",
+          "spec_references": [
+            "claude/system/release_planning_prompt.md#1.3a Gate-Detection Procedure (Mandatory, Scripted)"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "acceptance_verified": true,
+          "commit_sha": "a2168d7fefbaac2e07da38d83f3a72320e0c1dd5",
+          "notes": "Raised as delegated_decision: ESC-EXEC-20261102-01 at 2026-11-02T10:47:50Z (blocked_decision); Head of Specs Team choice (a) given in-session 2026-11-02T10:51:11Z; reclassified autonomous. AC 1 met: release_planning_prompt.md §1.3a names the gating-item-shipped list and the gate-field clearance it permits; §7 write scope extended; CLAUDE.md §6 checklist complete (v2.66, OG v4.245). AC 2 post-merge (BLG-GOV-400), per seal. Deviation check: none.",
+          "completed_utc": "2026-11-02T10:51:40Z",
+          "last_completed_substep": "3.1.A.10a"
+        },
+        "ST-46": {
+          "title": "Document the gate-status indicator as a reusable component pattern",
+          "classification": "autonomous",
+          "status": "done",
+          "github_issue": 2123,
+          "branch": "exec/2026-10-29__release-v9.14/EPIC-07",
+          "spec_references": [
+            "docs/specs/frontend/patterns/gate_status_indicator.md"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "acceptance_verified": true,
+          "commit_sha": "719b204d3a1eac7e67a5d3110b5fc74607a04be8",
+          "completed_utc": "2026-11-02T10:53:35Z",
+          "last_completed_substep": "3.1.A.10a",
+          "notes": "AC met: pattern doc covers states, copy rules, props, accessibility with SI-02 (BLG-FEAT-71) as reference; owner review recorded in-doc (agent-mediated §5.3, Approved). Docs-only, no src change. Deviation check: none. Out-of-scope finding filed: BLG-FE-238."
+        },
+        "ST-47": {
+          "title": "risk_dashboard.md names only fields GET /portfolio returns",
+          "classification": "autonomous",
+          "status": "done",
+          "github_issue": 2124,
+          "branch": "exec/2026-10-29__release-v9.14/EPIC-07",
+          "spec_references": [
+            "docs/specs/frontend/pages/risk_dashboard.md#5.1 Data",
+            "docs/specs/frontend/pages/risk_dashboard.md#6.1 Data"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "acceptance_verified": true,
+          "commit_sha": "763ff20310624c6eec29de707bd64a0516670148",
+          "completed_utc": "2026-11-02T10:54:21Z",
+          "last_completed_substep": "3.1.A.10a",
+          "notes": "AC met: §5.1 names grace_period, §6.1 names display_status as the badge source; every §5.1/§6.1 field verified in portfolio_service.py's GET /portfolio row. Deviation check: none (spec now matches shipped components)."
+        },
+        "ST-48": {
+          "title": "Align Appendix F's effort-weighted PVR table and status with the script",
+          "classification": "autonomous",
+          "status": "done",
+          "github_issue": 2125,
+          "branch": "exec/2026-10-29__release-v9.14/EPIC-07",
+          "spec_references": [
+            "docs/specs/metrics_definitions.md#Appendix F — Governance Metrics (Cross-Reference Only)",
+            "scripts/compute_effort_weighted_pvr.py",
+            "tests/test_compute_effort_weighted_pvr.py"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "acceptance_verified": true,
+          "commit_sha": "d4463c8cd388f51b4402ff51be13f928270c78a9",
+          "completed_utc": "2026-11-02T10:56:38Z",
+          "last_completed_substep": "3.1.A.10a",
+          "notes": "AC met: table and parse_effort_weight() weight the same values (parity test, 29 pass); Appendix F names roadmap_prompt.md STEP 2.4 (v9.32), D-split and U-pool stay proposal-only; Appendix D row 1.34.0. Two backfilled readings corrected (0.021->0.024, 0.093->0.104). Deviation check: none. Out-of-scope finding filed: BLG-GOV-402. DoQ finding 1 applied post-sign-off-review: unitless leading number no longer read as effort (+2 tests, readings unchanged)."
+        },
+        "ST-49": {
+          "title": "Trade plan contract lists the 7 DS-21 statuses",
+          "classification": "autonomous",
+          "status": "done",
+          "github_issue": 2126,
+          "branch": "exec/2026-10-29__release-v9.14/EPIC-07",
+          "spec_references": [
+            "docs/specs/api_contracts/trade_plan_endpoints.md#POST /trade-plans",
+            "docs/specs/api_contracts/trade_plan_endpoints.md#GET /trade-plans",
+            "docs/specs/security/trade_plan_data_sensitivity.md",
+            "tests/test_trade_plan_status_enum_parity.py"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "acceptance_verified": true,
+          "commit_sha": "a6dec3d5379762f2bdeb96b731dc5a83cc4c5a8b",
+          "completed_utc": "2026-11-02T10:57:31Z",
+          "last_completed_substep": "3.1.A.10a",
+          "notes": "AC met: both specs list the 7 DS-21 statuses (parity test extended, 3 pass); remaining 3/4-value grep hits are historical (DS-04 entry, DS-21 migration notes, v4.6 audit). Deviation check: none."
+        },
+        "ST-50": {
+          "title": "Confirm \"win rate\" is computed the same way on every surface",
+          "classification": "autonomous",
+          "status": "done",
+          "github_issue": 2127,
+          "branch": "exec/2026-10-29__release-v9.14/EPIC-07",
+          "spec_references": [
+            "docs/specs/metrics/win_rate_surface_consistency_2026-11-02.md"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "acceptance_verified": true,
+          "commit_sha": "e3329bdd7483fd4bbac876f11840804906d44109",
+          "completed_utc": "2026-11-02T11:00:10Z",
+          "last_completed_substep": "3.1.A.10a",
+          "notes": "AC met: every win-rate surface (dashboard, P&L report, drift analytics, journal, +9 found by grep) checked against §Win Rate and recorded; 3 discrepancies filed as correctness/spec items (BLG-FE-239, BLG-FE-240, BLG-SPEC-212), not fixed. Deviation check: none."
+        },
+        "ST-52": {
+          "title": "§13 boundary worked examples",
+          "classification": "autonomous",
+          "status": "done",
+          "github_issue": 2128,
+          "branch": "exec/2026-10-29__release-v9.14/EPIC-07",
+          "spec_references": [
+            "docs/product/decisions/section13_boundary_examples.md"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "acceptance_verified": true,
+          "commit_sha": "08a2a290ff3108befa05f44998de8c528090c075",
+          "completed_utc": "2026-11-02T11:01:03Z",
+          "last_completed_substep": "3.1.A.10a",
+          "notes": "AC met: companion doc gives 2 inside + 2 outside examples for each of §13.1-§13.6 incl. §13.3 gap-risk carve-out; Strategy Rules & System Intent Owner review recorded per clause (agent-mediated §5.3, Approved). No strategy_rules.md write. Deviation check: none."
+        },
+        "ST-53": {
+          "title": "Governance overhead audit",
+          "classification": "autonomous",
+          "status": "done",
+          "github_issue": 2129,
+          "branch": "exec/2026-10-29__release-v9.14/EPIC-07",
+          "spec_references": [
+            "docs/governance/governance_overhead_audit_2026-11-02.md"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "acceptance_verified": true,
+          "commit_sha": "e854aa6b98eb63a3971350c2be0081f2bbd0d7cf",
+          "completed_utc": "2026-11-02T11:02:41Z",
+          "last_completed_substep": "3.1.A.10a",
+          "notes": "AC 1 met: retrospective estimate over v9.4-v9.13 in docs/governance/, method stated (execution_state, sprint_backlog effort, stage4 sources, commit split, prompt_change_log). AC 2: carry-forward to next run roadmap recorded in process_notes for closure. Deviation check: none."
+        },
+        "ST-54": {
+          "title": "Spec debt aging report",
+          "classification": "autonomous",
+          "status": "done",
+          "github_issue": 2130,
+          "branch": "exec/2026-10-29__release-v9.14/EPIC-07",
+          "spec_references": [
+            "scripts/report_spec_debt_aging.py",
+            "tests/test_report_spec_debt_aging.py",
+            "docs/governance/spec_debt_aging_report_2026-11-02.md"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "acceptance_verified": true,
+          "commit_sha": "d3488e766653972c9e62a1b7305993ae650a93f0",
+          "completed_utc": "2026-11-02T11:04:18Z",
+          "last_completed_substep": "3.1.A.10a",
+          "notes": "AC met: script lists open BLG-SPEC items by cycles without a story (§1.1 measure) with tests (5 pass); one run recorded in docs/governance/spec_debt_aging_report_2026-11-02.md; prompt wiring filed separately as BLG-GOV-403. Deviation check: none. Graded Pass_with_deviation at DoQ: ready-pool measure estimated (cycles since filing; same-day boundary +1), tracked by BLG-GOV-403."
+        }
+      },
+      "sign_off_record": {
+        "role": "Director of Quality",
+        "method": "agent_mediated",
+        "status": "cleared",
+        "passes": 1,
+        "date": "2026-11-02",
+        "evidence": "claude/cycles/2026-10-29__release-v9.14/qa_evidence_EPIC-07.md"
+      }
     }
   },
   "blocked_items": [],
@@ -997,7 +1211,17 @@
     "ST-40",
     "ST-41",
     "ST-42",
-    "ST-43"
+    "ST-43",
+    "ST-44",
+    "ST-45",
+    "ST-46",
+    "ST-47",
+    "ST-48",
+    "ST-49",
+    "ST-50",
+    "ST-52",
+    "ST-53",
+    "ST-54"
   ],
   "open_escalations": {
     "ESC-EXEC-20261029-01": {
@@ -1023,6 +1247,12 @@
       "disposition": "Resolved",
       "raised_utc": "2026-10-30T15:55:23Z",
       "resolved_utc": "2026-10-30T16:49:32Z"
+    },
+    "ESC-EXEC-20261102-01": {
+      "item": "ST-45",
+      "disposition": "Resolved",
+      "raised_utc": "2026-11-02T10:47:50Z",
+      "resolved_utc": "2026-11-02T10:51:11Z"
     }
   },
   "merge_gate": {
@@ -1053,6 +1283,11 @@
     "2026-11-02: PR #2135 (EPIC-03) merged by the human developer at 2026-11-02T09:44:57Z (merge commit f8803184), after the user-given DoQ QA sign-off and PO acceptance (comment 6573953968; head 0888b833, 45/45 checks). Orphaned post-merge commit check: none (origin/main..EPIC-03 empty). Step 3c sibling sync: no pending EPIC branch exists yet (EPIC-04/07/05 not started). Filed during PR review: BLG-AI-25, BLG-AI-26. Post-merge: DEL-20261030-04 / BLG-GOV-399 (ST-23 AC1 production sample) stays carried; EPIC-04 ST-28 must start from the SystemStatus count of 131. merge_gate.epics_pending kept from merge_order (BLG-QA-240).",
     "2026-11-02: EPIC-04 initialised at STEP 0 (branch exec/2026-10-29__release-v9.14/EPIC-04 cut from main dd62b443, after EPIC-03 merged, so ST-28 rebases on ST-22 by construction). Issues #2101-#2105 existed from sync gh. All 5 stories autonomous. Out-of-scope finding filed: BLG-BE-201 (ST-26).",
     "2026-11-02: EPIC-04 PR #2137 opened (head af64b689). Pre-PR gates: API performance baseline drift PASSED; no foreign-EPIC commits in origin/main..HEAD (0 behind main); qa_evidence committed; signer format agent-mediated §5.3. Agent-mediated DoQ review Approved in 1 pass; findings 1-4 applied (tests hardened aa93eb49), finding 5 accepted as cosmetic. Merge gate awaits human Director of Quality sign-off and Product Owner acceptance.",
-    "2026-11-02: PR #2137 (EPIC-04) merged by the human developer at 2026-11-02T10:43:04Z (merge commit 4fee64d5; head 97493a1d, which includes BLG-BE-202 from the PR review). The agent-mediated DoQ + PO review comment (6575072791, both Approved with Comments) was posted before the merge; human QA sign-off and PO acceptance were given by the merging developer. Orphaned post-merge commit check: none (origin/main..EPIC-04 empty). Step 3c sibling sync: no-op, no EPIC-07 or EPIC-05 branch exists yet."
+    "2026-11-02: PR #2137 (EPIC-04) merged by the human developer at 2026-11-02T10:43:04Z (merge commit 4fee64d5; head 97493a1d, which includes BLG-BE-202 from the PR review). The agent-mediated DoQ + PO review comment (6575072791, both Approved with Comments) was posted before the merge; human QA sign-off and PO acceptance were given by the merging developer. Orphaned post-merge commit check: none (origin/main..EPIC-04 empty). Step 3c sibling sync: no-op, no EPIC-07 or EPIC-05 branch exists yet.",
+    "2026-11-02: EPIC-07 initialised at STEP 0 (branch exec/2026-10-29__release-v9.14/EPIC-07 cut from main 0f7ba5e6, after EPIC-04 merged, so ST-48 rebases on ST-24 by construction). Issues #2121-#2130 existed from sync gh (ST-51 deferred at planning, no issue). ST-45 delegated_decision (Head of Specs Team option choice, RISK-05); the other 9 autonomous. test_scenarios: none pre-existing.",
+    "2026-11-02: Carry-forward for this cycle's post-ship closure (ST-53 AC 2, BLG-GOV-189): link docs/governance/governance_overhead_audit_2026-11-02.md as an input to the next run roadmap (no claude/roadmap/* write in-sprint, per sprint_backlog.md ST-53 Notes).",
+    "2026-11-02: EPIC-07 PR #2138 opened (head d64bde0c). Pre-PR gates: API performance baseline drift PASSED; no foreign-EPIC commits in origin/main..HEAD (main 1 ahead: cd6fb2c3, the ESC-EXEC-20261102-01 mirror); qa_evidence committed; signer format agent-mediated §5.3. Agent-mediated DoQ review Approved in 1 pass; 4 P3 findings applied in d64bde0c. Merge gate awaits human Director of Quality sign-off and Product Owner acceptance.",
+    "2026-11-02: PR #2138 agent-mediated DoQ + PO review posted (comment 6575775268; both Approved with Comments, head 2a15f4a2). Filed from the review: BLG-SPEC-213 (latent hour-scale PVR weighting). Human DoQ sign-off and PO acceptance still required.",
+    "2026-11-02: PR #2138 merge-gate confirmations given by the human repository owner in session, acting as Director of Quality (QA sign-off) and Product Owner (acceptance, incl. ST-54 Pass_with_deviation / BLG-GOV-403), head 568f089c, 33/33 checks. Recorded in qa_evidence_EPIC-07.md § Merge Gate Confirmations and on the PR. Not merged; merge is the human developer's action."
   ]
 }

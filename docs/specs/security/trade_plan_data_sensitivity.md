@@ -1,8 +1,8 @@
 **Owner:** Cybersecurity & Trust Lead
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 1.0
-**Last Updated:** 2026-05-10
+**Version:** 1.1
+**Last Updated:** 2026-11-02 (ST-49, EPIC-07, v9.14, BLG-SPEC-193 — `status` row lists the 7 DS-21 statuses); prior — 2026-05-10 (created, ST-12, EPIC-03, v3.3, BLG-SEC-06)
 **Story:** ST-12 (EPIC-03, v3.3) — BLG-SEC-06
 **Sign-off:** Cybersecurity & Trust Lead: Accepted — 2026-05-10 (agent-mediated, v3.3 design gate)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
@@ -26,7 +26,7 @@ Fields that are safe to expose in any authenticated API response, search results
 | `id` | Public | UUID — no information leakage |
 | `ticker` | Public | Ticker symbol is public market data |
 | `market` | Public | `US`/`UK` market designation — non-sensitive |
-| `status` | Public | Plan status (`draft`, `active`, `closed`, `abandoned`) — display metadata only |
+| `status` | Public | Plan status, one of the 7 DS-21 statuses (`draft`, `research_pending`, `research_complete`, `entry_conditions_set`, `active`, `closed`, `abandoned`; `data_model.md` §DS-21) — display metadata only. Classification unchanged |
 | `created_at` | Public | Creation timestamp — metadata |
 | `updated_at` | Public | Update timestamp — metadata |
 

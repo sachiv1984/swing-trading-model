@@ -52,6 +52,13 @@ RECORDED = {
 BAND_MIDPOINT = {
     "XS": 0.4, "S": 0.75, "M": 1.75, "L": 3.5, "VL": 3.5, "VH": 12.0,
 }
+# "~0.5-1 day", "<1h", "~15min", "2d" at the start of a band's parenthetical.
+# A quantity counts only with a day/hour/minute unit or a leading "<".
+LEADING_QUANTITY = re.compile(
+    r"^\s*(<)?\s*~?\s*(\d+(?:\.\d+)?)(?:\s*[–-]\s*(\d+(?:\.\d+)?))?\s*"
+    r"(d|days?|h|hrs?|hours?|mins?|minutes?)?\b",
+    re.IGNORECASE,
+)
 
 
 def parse_changelog_tags(version: str):
@@ -85,22 +92,28 @@ def parse_effort_weight(effort_text: str):
     m3 = re.match(r"^(\d+(?:\.\d+)?)\s*$", effort_text)
     if m3:
         return float(m3.group(1))
-    # Band with parenthetical range: "S (~0.5-1d)" / "M (~1-2d)" / "XS (<1h)"
-    band_m = re.match(r"^(XS|VS|S|M|L|VL|VH)\b\s*\(([^)]*)\)", effort_text)
+    # Band with a parenthetical (Appendix F table, rows 4-6; ST-48, BLG-SPEC-191):
+    # only a quantity at the *start* of the parenthetical is read, so dates or
+    # counts later in the note ("M (PO-confirmed, 2026-08-14)", "M (~2 days, 3
+    # sub-items)") are never taken as effort. A range gives its midpoint; an
+    # hour- or minute-unit quantity, or "<", is sub-day and weighs 0.15.
+    band_m = re.match(r"^(XS|S|M|L|VL|VH)\b\s*\(([^)]*)\)", effort_text)
     if band_m:
         band, paren = band_m.group(1), band_m.group(2)
-        nums = re.findall(r"(\d+(?:\.\d+)?)", paren)
-        if len(nums) >= 2:
-            return (float(nums[0]) + float(nums[1])) / 2
-        if len(nums) == 1:
-            if "<" in paren or "h)" in paren or paren.strip().endswith("h"):
-                return 0.15  # sub-day, hour-scale
-            return float(nums[0])
-        return BAND_MIDPOINT.get(band)
+        q = LEADING_QUANTITY.match(paren)
+        if not q:
+            return BAND_MIDPOINT[band]
+        lt, lo, hi, unit = q.group(1), float(q.group(2)), q.group(3), (q.group(4) or "").lower()
+        if not lt and not unit:
+            # A unitless leading number is a date or a count, not an effort.
+            return BAND_MIDPOINT[band]
+        if lt or unit.startswith(("h", "m")):
+            return 0.15  # sub-day, hour-scale
+        return (lo + float(hi)) / 2 if hi else lo
     # Bare band, no parenthetical
-    band_m2 = re.match(r"^(XS|VS|S|M|L|VL|VH)\b\s*$", effort_text)
+    band_m2 = re.match(r"^(XS|S|M|L|VL|VH)\b\s*$", effort_text)
     if band_m2:
-        return BAND_MIDPOINT.get(band_m2.group(1))
+        return BAND_MIDPOINT[band_m2.group(1)]
     return None
 
 

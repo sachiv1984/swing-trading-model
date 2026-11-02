@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-02 (Sprint Execution, EPIC-04 of 2026-10-29__release-v9.14 — 3 new item(s) added: BLG-BE-201, BLG-FE-237, BLG-BE-202); prior — 2026-10-30 (PR #2135 agent-mediated review, EPIC-03 of 2026-10-29__release-v9.14 — 2 new item(s) added: BLG-AI-25, BLG-AI-26); prior — 2026-10-30 (Sprint Execution, EPIC-03 of 2026-10-29__release-v9.14, DoQ review — 2 new item(s) added: BLG-AI-24, BLG-SPEC-211); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-02 (Sprint Execution, EPIC-07 of 2026-10-29__release-v9.14 — 8 new item(s) added: BLG-GOV-401, BLG-FE-238, BLG-GOV-402, BLG-FE-239, BLG-FE-240, BLG-SPEC-212, BLG-GOV-403, BLG-SPEC-213); prior — 2026-11-02 (Sprint Execution, EPIC-04 of 2026-10-29__release-v9.14 — 3 new item(s) added: BLG-BE-201, BLG-FE-237, BLG-BE-202); prior — 2026-10-30 (PR #2135 agent-mediated review, EPIC-03 of 2026-10-29__release-v9.14 — 2 new item(s) added: BLG-AI-25, BLG-AI-26); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -6602,5 +6602,177 @@ ST-24's `get_monthly_pnl_by_exit_reason()` (`backend/database.py`) opens its own
 **Acceptance Criteria**
 - A `GET /reports/monthly-pnl` request with closed months opens at most two connections in total (test)
 - The month-row and breakdown queries take their window clause from one definition (code review), and `tests/test_monthly_pnl_exit_condition_breakdown.py` still passes
+
+---
+
+### BLG-GOV-401 — Count not-yet-initialised EPICs as pending in `check_execution_state_consistency.py`
+**Priority:** P3 (Low)
+**Type:** Governance Process / Tooling
+**Owner:** Head of Specs Team; Head of Engineering
+**Source:** Sprint Execution `2026-10-29__release-v9.14`, EPIC-07 STEP 0 / ST-44 (out-of-scope finding while editing the script) — 2026-11-02
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.15
+
+**Problem**
+`scripts/check_execution_state_consistency.py` derives the expected `merge_gate.epics_pending` only from EPICs that already have an `epics.<EPIC-xx>` record. EPICs are initialised lazily at their own STEP 0, so mid-cycle any EPIC still listed in `merge_order`/`epics_pending` but not yet started is reported as unexpected, and the §9.2 read-back exits non-zero on a correct file. At v9.14 EPIC-07 STEP 0 it reported `merge_gate.epics_pending: expected ['EPIC-07'], found ['EPIC-05', 'EPIC-07']` (and `expected []` before EPIC-07 was initialised). A read-back that always fails mid-cycle trains readers to ignore it.
+
+**Scope**
+- Treat an EPIC named in `merge_order` (or already in `epics_pending`) that has no `epics.<EPIC-xx>` record as pending
+- Add a test for a state with an uninitialised EPIC in `merge_order`
+
+**Acceptance Criteria**
+- The script exits 0 on a consistent mid-cycle state whose later EPICs are listed in `merge_order` but not yet initialised
+- It still fails, naming the field, when an initialised unmerged EPIC is missing from `epics_pending`
+- A unit test covers the uninitialised-EPIC case
+
+---
+
+### BLG-FE-238 — Add `aria-expanded` and `aria-controls` to the SI-02 Gate Status toggle
+**Priority:** P3 (Low)
+**Type:** Frontend / UX (Accessibility)
+**Owner:** Frontend Specifications & UX Documentation Owner; Head of UX & Design
+**Source:** Sprint Execution `2026-10-29__release-v9.14`, EPIC-07 / ST-46 (out-of-scope finding while documenting the gate-status indicator pattern) — 2026-11-02
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.15
+
+**Problem**
+The collapse toggle of `SI02GateStatusSection` (`src/pages/Reports.js`) is a `<button>` but sets neither `aria-expanded` nor `aria-controls`, so a screen reader user is not told whether the section is open. `docs/specs/frontend/patterns/gate_status_indicator.md` (ST-46) now requires both for any gate status indicator and names this component as its reference implementation, so the reference does not meet its own pattern.
+
+**Scope**
+- Set `aria-expanded={!collapsed}` on the toggle and `aria-controls` pointing at an `id` on the section body
+- Extend `tests/e2e/reports-si02-gate-status.spec.js` SC-SI02-01 to assert `aria-expanded` before and after the click
+
+**Acceptance Criteria**
+- The toggle reports `aria-expanded="false"` collapsed and `"true"` expanded, and `aria-controls` names the body element's `id` (Playwright)
+- `gate_status_indicator.md` §Accessibility item 2 drops its "reference does not set either yet" note
+
+---
+
+### BLG-GOV-402 — Footnote the corrected v9.1–v9.5 and v9.3–v9.7 effort-weighted readings in `product_value_ratio_history.md`
+**Priority:** P3 (Low)
+**Type:** Governance Process / Metrics record
+**Owner:** Head of Specs Team; Metrics Definitions & Analytics Owner
+**Source:** Sprint Execution `2026-10-29__release-v9.14`, EPIC-07 / ST-48 (out-of-scope finding: the corrected readings live in a `claude/roadmap/*` file the story's AC does not name) — 2026-11-02
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.15
+
+**Problem**
+ST-48 fixed `scripts/compute_effort_weighted_pvr.py`'s parse of band parentheticals: it read any number in the note, so `XS (~15min)` (v9.5) weighed 15 days and `M (~2 days, 3 small sub-items)` weighed 2.5. The two backfilled readings these stories fall in were wrong: v9.1–v9.5 is 0.024, not 0.021, and v9.3–v9.7 is 0.104, not 0.093. `metrics_definitions.md` Appendix F now carries the corrected values, but `claude/roadmap/product_value_ratio_history.md` rows `2026-09-19__scheduled` and `2026-09-28__scheduled` still record 0.021 and 0.093. That file is append-only, so the rows must not be rewritten, but Appendix F's own rule (2) asks for known staleness to be footnoted rather than left silent.
+
+**Scope**
+- At the next `run roadmap` (STEP 2.4), add a dated footnote beneath the History table naming both rows, the old and corrected effort-weighted readings, and ST-48 as the cause. Do not edit the rows themselves
+
+**Acceptance Criteria**
+- `product_value_ratio_history.md` has a footnote stating 0.021 → 0.024 (v9.1–v9.5) and 0.093 → 0.104 (v9.3–v9.7), citing ST-48 / `BLG-SPEC-191`
+- The two History rows are unchanged
+
+---
+
+### BLG-FE-239 — Trade History counts a break-even trade as a win
+**Priority:** P2 (Medium)
+**Type:** Frontend / Correctness
+**Owner:** Metrics Definitions & Analytics Canonical Owner; Frontend Specifications & UX Documentation Owner
+**Source:** Sprint Execution `2026-10-29__release-v9.14`, EPIC-07 / ST-50 (win rate surface consistency check, `docs/specs/metrics/win_rate_surface_consistency_2026-11-02.md`) — 2026-11-02
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.15
+
+**Problem**
+`src/pages/TradeHistory.js` computes its summary win rate with `winningTrades = filteredTrades.filter((t) => t.pnl >= 0)`. `metrics_definitions.md` §Win Rate counts a win only when `pnl > 0`, and every other surface (analytics, P&L report, Performance Analytics) follows it. When the filtered set contains a trade with `pnl = 0`, the Trade History win rate is higher than the one the same trades show elsewhere, and the zero is averaged into Avg Win.
+
+**Scope**
+- Change the win test to `t.pnl > 0`, matching §Win Rate, and decide (with the owner) whether `pnl = 0` belongs in Avg Loss or neither
+- Add a Playwright case with one break-even trade asserting the summary win rate
+
+**Acceptance Criteria**
+- With trades of P&L +10, 0 and −10, the Trade History summary shows a 33.3% win rate (Playwright)
+- The page's win test matches `metrics_definitions.md` §Win Rate
+
+---
+
+### BLG-FE-240 — Dashboard win-rate widgets are fed from open positions only
+**Priority:** P2 (Medium)
+**Type:** Frontend / Correctness
+**Owner:** Metrics Definitions & Analytics Canonical Owner; Frontend Specifications & UX Documentation Owner
+**Source:** Sprint Execution `2026-10-29__release-v9.14`, EPIC-07 / ST-50 (win rate surface consistency check, `docs/specs/metrics/win_rate_surface_consistency_2026-11-02.md`) — 2026-11-02
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v9.15
+
+**Problem**
+`src/pages/Dashboard.js` builds `closedPositions` by filtering `GET /positions` for `status = "closed"`, but that endpoint returns open positions only, so the list is always empty. The `win_rate` widget (`WinRateWidget`) therefore always shows 0%, and the `win_rate_chart` widget is rendered as `<WinRateChart trades={closedPositions} />` although `WinRateChart.js` reads `winRate`, `wins` and `losses` props, so it renders from undefined values. Both are user-selectable dashboard widgets.
+
+**Scope**
+- Feed both widgets from closed trades (e.g. the `GET /trades` summary `win_rate`, or `trade_history` rows), computed per `metrics_definitions.md` §Win Rate
+- Pass `WinRateChart` the props it reads
+- Playwright coverage of both widgets with closed trades present
+
+**Acceptance Criteria**
+- With closed trades of P&L +10 and −10, both widgets show 50% (Playwright)
+- Neither widget reads `GET /positions` for closed trades
+
+---
+
+### BLG-SPEC-212 — Strategy version comparison contract defines `win_rate` by R, the code by P&L
+**Priority:** P3 (Low)
+**Type:** Spec Debt
+**Owner:** API Contracts & Documentation Owner; Metrics Definitions & Analytics Canonical Owner
+**Source:** Sprint Execution `2026-10-29__release-v9.14`, EPIC-07 / ST-50 (win rate surface consistency check, `docs/specs/metrics/win_rate_surface_consistency_2026-11-02.md`) — 2026-11-02
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.15
+
+**Problem**
+`GET /analytics/strategy-version-comparison`'s contract (`docs/specs/api_contracts/analytics_endpoints.md`) defines `win_rate` as the "proportion of trades that closed positive (R > 0)". The code (`backend/database.py`, the version-window `_fetch`) counts `pnl > 0` over all closed trades, including those with no determinable R, which matches `metrics_definitions.md` §Win Rate. The field is also a 0.0–1.0 proportion, unlike the canonical percentage, which the contract states but `metrics_definitions.md` does not mention.
+
+**Scope**
+- Correct the contract's `win_rate` definition to `pnl > 0` over all closed trades in the window, citing §Win Rate, and keep the 0.0–1.0 scale note
+- Add a one-line note to `metrics_definitions.md` §Win Rate naming this endpoint's proportion scale
+
+**Acceptance Criteria**
+- The contract's `win_rate` definition matches the code and §Win Rate
+- §Win Rate names the endpoint's 0.0–1.0 scale
+
+---
+
+### BLG-GOV-403 — Wire the spec debt aging report into Release Planning §1.1 or `groom backlog`
+**Priority:** P3 (Low)
+**Type:** Governance Process
+**Owner:** Head of Specs Team
+**Source:** Sprint Execution `2026-10-29__release-v9.14`, EPIC-07 / ST-54 (`BLG-GOV-191` scope split: "wiring it into a governance prompt is filed separately") — 2026-11-02
+**Effort:** XS (~0.25 day)
+**Provisional-Target:** v9.15
+
+**Problem**
+`scripts/report_spec_debt_aging.py` (ST-54) lists open `BLG-SPEC-*` items by release cycles without a story, the measure `release_planning_prompt.md` §1.1 warns on. No prompt runs it, so §1.1 is still applied by hand and only to items already in the release's slice. The first recorded run (`docs/governance/spec_debt_aging_report_2026-11-02.md`) found 13 ungated items at or over the threshold.
+
+**Scope**
+- Choose where the report runs: `release_planning_prompt.md` §1.1 (replace the by-hand count) or a standing `groom backlog` step, or both
+- Close the two estimation gaps ST-54 disclosed: per-item ready-pool membership is not recorded, so the script counts every release cycle on or after filing (gated items flagged); and a cycle starting on the filing date is counted, which can overstate by one. Either record ready-pool membership per item at Release Planning §1.4c, or keep the estimate and state it in the prompt
+- Apply the choice with the CLAUDE.md §6 checklist
+
+**Acceptance Criteria**
+- The chosen prompt names `scripts/report_spec_debt_aging.py` and what to do with its ⚠ rows
+- The next run of that engine records the report's ⚠ count in its manifest
+
+---
+
+### BLG-SPEC-213 — Effort-weighted PVR weighs every hour-scale estimate at 0.15 days, including `M (~10 hrs)`
+**Priority:** P3 (Low)
+**Type:** Spec Debt (metric definition)
+**Owner:** Metrics Definitions & Analytics Canonical Owner
+**Source:** PR #2138 agent-mediated review (Director of Quality), EPIC-07 / ST-48 of `2026-10-29__release-v9.14` — 2026-11-02
+**Effort:** XS (<1h)
+**Provisional-Target:** Unscheduled (latent; see Problem)
+
+**Problem**
+ST-48 made `metrics_definitions.md` Appendix F and `scripts/compute_effort_weighted_pvr.py` agree that a band whose parenthetical starts with an hour- or minute-scale quantity weighs 0.15 days, whatever the number. That is right for `XS (<1h)` but not for larger hour estimates: `S (~3 hrs)` (9 uses), `S (~4 hrs)` (12), `S (~5 hrs)` (6) and `M (~10 hrs)` (6) would all weigh 0.15, although 10 hours is more than a day. Every such value is in a v2.1–v6.8 sprint backlog, outside the five backfilled windows and any rolling window STEP 2.4 now reads (recent cycles state effort as numeric days), so no recorded or upcoming reading is affected. The defect is latent: it matters only if a window over those cycles is computed, or if hour-scale estimates return. A minute value written `~30m` is also not recognised (only `min`/`mins`/`minutes`), so it takes the band midpoint.
+
+**Scope**
+- Change the hour-scale row to convert hours to days (e.g. hours ÷ 8, minimum 0.15) and accept `m` as minutes; update the script and table together
+- Update `tests/test_compute_effort_weighted_pvr.py` with `M (~10 hrs)`, `S (~4 hrs)` and `XS (~30m)` cases
+- Appendix D changelog row
+
+**Acceptance Criteria**
+- `M (~10 hrs)` weighs 1.25 days and `XS (<1h)` still weighs 0.15 (tests)
+- Appendix F's table and the script still weight exactly the same values (parity test passes)
+- The five backfilled readings are unchanged on re-run
 
 ---
