@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-02 (Sprint Execution, EPIC-04 of 2026-10-29__release-v9.14 — 2 new item(s) added: BLG-BE-201, BLG-FE-237); prior — 2026-10-30 (PR #2135 agent-mediated review, EPIC-03 of 2026-10-29__release-v9.14 — 2 new item(s) added: BLG-AI-25, BLG-AI-26); prior — 2026-10-30 (Sprint Execution, EPIC-03 of 2026-10-29__release-v9.14, DoQ review — 2 new item(s) added: BLG-AI-24, BLG-SPEC-211); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-02 (Sprint Execution, EPIC-04 of 2026-10-29__release-v9.14 — 3 new item(s) added: BLG-BE-201, BLG-FE-237, BLG-BE-202); prior — 2026-10-30 (PR #2135 agent-mediated review, EPIC-03 of 2026-10-29__release-v9.14 — 2 new item(s) added: BLG-AI-25, BLG-AI-26); prior — 2026-10-30 (Sprint Execution, EPIC-03 of 2026-10-29__release-v9.14, DoQ review — 2 new item(s) added: BLG-AI-24, BLG-SPEC-211); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -6580,5 +6580,27 @@ At a 375px viewport the Reports page scrolls sideways: `document.documentElement
 **Acceptance Criteria**
 - At 375px on the Monthly tab, `document.documentElement.scrollWidth` ≤ 375 (Playwright)
 - At 375px the Avg P&L/Trade column can be scrolled into view inside its card (Playwright)
+
+---
+
+### BLG-BE-202 — Reuse one connection for the monthly P&L exit-condition breakdown
+**Priority:** P3 (Low)
+**Type:** Backend engineering
+**Owner:** Head of Engineering
+**Source:** PR #2137 agent-mediated review (EPIC-04, cycle `2026-10-29__release-v9.14`), Director of Quality finding: ST-24 — 2026-11-02
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.15
+
+**Problem**
+ST-24's `get_monthly_pnl_by_exit_reason()` (`backend/database.py`) opens its own `get_db()` connection, and `get_db()` is a fresh `psycopg2.connect` with no pool. A `GET /reports/monthly-pnl` request now opens three connections (month rows, snapshot check, breakdown), where ST-12 (v9.7, BLG-BE-126) bounded it at two. The ST-12 test (`tests/test_monthly_pnl_snapshot.py`, `get_db_mock.assert_called_once()`) did not catch this, because it patches only `reports_service.get_db` and the new query connects inside the stubbed `database` module. The rolling-window SQL clause is also now written out in three functions (`get_monthly_pnl`, `get_monthly_pnl_by_tax_year`'s sibling, and the new query), so the reconciliation guarantee depends on keeping them byte-identical by hand.
+
+**Scope**
+- Give `get_monthly_pnl_by_exit_reason()` an optional `conn` (as `get_monthly_pnl_snapshot()` has) and run it on a connection the report already holds
+- Share the window clause between the month-row and breakdown queries so they cannot drift
+- Extend the connection-count test to count connections opened by every database call in the request, not only `reports_service.get_db`
+
+**Acceptance Criteria**
+- A `GET /reports/monthly-pnl` request with closed months opens at most two connections in total (test)
+- The month-row and breakdown queries take their window clause from one definition (code review), and `tests/test_monthly_pnl_exit_condition_breakdown.py` still passes
 
 ---
