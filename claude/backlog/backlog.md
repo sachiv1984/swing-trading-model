@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-02 (Sprint Execution, EPIC-05 of 2026-10-29__release-v9.14 — 1 new item(s) added: BLG-FE-242); prior — 2026-11-02 (Sprint Execution, EPIC-05 of 2026-10-29__release-v9.14 — 1 new item(s) added: BLG-FE-241); prior — 2026-11-02 (Sprint Execution, EPIC-07 of 2026-10-29__release-v9.14 — 8 new item(s) added: BLG-GOV-401, BLG-FE-238, BLG-GOV-402, BLG-FE-239, BLG-FE-240, BLG-SPEC-212, BLG-GOV-403, BLG-SPEC-213); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-02 (PR #2139 review, EPIC-05 of 2026-10-29__release-v9.14 — 1 new item(s) added: BLG-FE-243); prior — 2026-11-02 (Sprint Execution, EPIC-05 of 2026-10-29__release-v9.14 — 1 new item(s) added: BLG-FE-242); prior — 2026-11-02 (Sprint Execution, EPIC-05 of 2026-10-29__release-v9.14 — 1 new item(s) added: BLG-FE-241); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -6819,5 +6819,28 @@ Since `cn()` runs `tailwind-merge` (v9.13 ST-25, `2f5cc56a`), a caller's `bg-sla
 - In the light theme, "No saved filters" and every Trade History filter field meet 4.5:1 text contrast (axe `color-contrast` passes for those elements)
 - The dark theme is unchanged: the fields keep the `bg-slate-800/50` fill
 - The new light-theme Trade History scan passes in CI
+
+---
+
+### BLG-FE-243 — Default trade, exit and cash dates to the user's local date, not the UTC date
+**Priority:** P2 (Medium)
+**Type:** Frontend / UX (date handling)
+**Owner:** Frontend Specifications & UX Owner
+**Source:** PR #2139 review (EPIC-05 of `2026-10-29__release-v9.14`, reviewing ST-29's `positions-exit-modal.spec.js`, which asserts the same UTC expression the app uses) — 2026-11-02
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+The Exit Position dialog (`src/components/positions/ExitModal.js:31,56`), Trade Entry (`src/pages/TradeEntry.js:41`) and Cash Management (`src/components/cash/CashManagementModal.js:57`) prefill their date with `new Date().toISOString().split("T")[0]`. That is the UTC date, not the user's local date. For a UK user between 00:00 and 01:00 BST, every one of these forms prefills yesterday's date. An exit or entry saved without correcting it lands on the wrong day: holding days and grace-period day counts are off by one, and an exit just after midnight on 6 April falls in the previous UK tax year.
+
+**Scope**
+- Add one shared helper that returns today's date as `YYYY-MM-DD` in the browser's local timezone, and use it for the four prefill sites above
+- Check the other `toISOString().split` date uses (`Dashboard.js` peak date, `ExportModal.js`, `PortfolioGrowthChart.js`, `RedFlagsCard.js`, `base44Client.js`, `SystemStatus.js`) and switch any that mean "today for the user"
+- Update `tests/e2e/positions-exit-modal.spec.js` SC-PEM-01, which asserts the UTC expression, to assert the local date. Add a Playwright case under `timezoneId: 'Europe/London'` with the clock set to 00:30 BST that checks the Exit, Trade Entry and Cash Management date fields prefill the local date
+
+**Acceptance Criteria**
+- At 00:30 BST under Europe/London, the Exit dialog, Trade Entry and Cash Management date fields prefill the local date, not the previous day
+- The new Playwright case passes in CI
+- No user-facing "today" date in `src/` comes from `toISOString().split("T")[0]`
 
 ---
