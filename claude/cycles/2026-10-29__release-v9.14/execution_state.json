@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-29T14:51:40Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-02T10:45:00Z",
+  "last_updated_utc": "2026-11-02T10:50:00Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-02",
@@ -836,8 +836,8 @@
     "EPIC-04": {
       "status": "done",
       "branch": "exec/2026-10-29__release-v9.14/EPIC-04",
-      "pr_number": null,
-      "pr_status": null,
+      "pr_number": 2137,
+      "pr_status": "open",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-10-29__release-v9.14/qa_evidence_EPIC-04.md",
       "test_scenarios": [
@@ -1049,6 +1049,7 @@
     "2026-10-30: EPIC-06 PR #2133 opened (head after 33af33c7 + sign-off commit). Pre-PR gates: API performance baseline drift PASSED; no foreign-EPIC commits in origin/main..HEAD; qa_evidence committed; signer format agent-mediated §5.3. Story issues #2115-#2120 closed by governance_sync after the later pushes.",
     "2026-10-30: PR #2133 (EPIC-06) merged by the human developer at 2026-10-30T11:50:13Z (merge commit 5e7351af), after the user-given DoQ QA sign-off and PO acceptance (head 88f9bd99, 33/33 checks). The merge-gate comment was posted after the merge and said 'not merged'; a correction comment followed. Orphaned post-merge commit check: none (origin/main..EPIC-06 empty). Step 3c sibling sync: no pending EPIC branch exists yet. Filed during PR review: BLG-OPS-210, BLG-QA-243. Post-merge: BLG-SEC-44 resolved (cdf00db1, filed BLG-SEC-45; staging defaults confirmed by an agent-mediated Cybersecurity & Trust Lead review), BLG-OPS-202 resolved (1ed19a04, PR #2134). BLG-OPS-201 (ST-39 AC 2) stays delegated until October is complete. merge_gate.epics_pending kept from merge_order, as for EPIC-01/EPIC-02 (BLG-QA-240).",
     "2026-11-02: PR #2135 (EPIC-03) merged by the human developer at 2026-11-02T09:44:57Z (merge commit f8803184), after the user-given DoQ QA sign-off and PO acceptance (comment 6573953968; head 0888b833, 45/45 checks). Orphaned post-merge commit check: none (origin/main..EPIC-03 empty). Step 3c sibling sync: no pending EPIC branch exists yet (EPIC-04/07/05 not started). Filed during PR review: BLG-AI-25, BLG-AI-26. Post-merge: DEL-20261030-04 / BLG-GOV-399 (ST-23 AC1 production sample) stays carried; EPIC-04 ST-28 must start from the SystemStatus count of 131. merge_gate.epics_pending kept from merge_order (BLG-QA-240).",
-    "2026-11-02: EPIC-04 initialised at STEP 0 (branch exec/2026-10-29__release-v9.14/EPIC-04 cut from main dd62b443, after EPIC-03 merged, so ST-28 rebases on ST-22 by construction). Issues #2101-#2105 existed from sync gh. All 5 stories autonomous. Out-of-scope finding filed: BLG-BE-201 (ST-26)."
+    "2026-11-02: EPIC-04 initialised at STEP 0 (branch exec/2026-10-29__release-v9.14/EPIC-04 cut from main dd62b443, after EPIC-03 merged, so ST-28 rebases on ST-22 by construction). Issues #2101-#2105 existed from sync gh. All 5 stories autonomous. Out-of-scope finding filed: BLG-BE-201 (ST-26).",
+    "2026-11-02: EPIC-04 PR #2137 opened (head af64b689). Pre-PR gates: API performance baseline drift PASSED; no foreign-EPIC commits in origin/main..HEAD (0 behind main); qa_evidence committed; signer format agent-mediated §5.3. Agent-mediated DoQ review Approved in 1 pass; findings 1-4 applied (tests hardened aa93eb49), finding 5 accepted as cosmetic. Merge gate awaits human Director of Quality sign-off and Product Owner acceptance."
   ]
 }
