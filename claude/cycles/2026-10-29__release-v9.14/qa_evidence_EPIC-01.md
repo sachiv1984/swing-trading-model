@@ -1,7 +1,7 @@
 Owner: Director of Quality
 Class: Planning Document (Class 4)
 Status: Active
-Last Updated: 2026-10-29
+Last Updated: 2026-11-02
 
 # QA Evidence — EPIC-01: Production Deploy & Market-Data Resilience
 
@@ -58,3 +58,10 @@ Last Updated: 2026-10-29
 - Signed off by: Sprint Execution Engine (agent-mediated, Director of Quality role — §5.3)
 - Date: 2026-10-29
 - Comments: Agent-mediated DoQ review (§5.3) at the user's direction, approved on the second pass. First pass Blocked on 4 findings (ST-08 axe narrowed to serious/critical; ST-01 AC 2 shown on the branch, not `main`; Card 4's unknown explanation not on the focusable link; Risk Dashboard trend strip rendering NULL as risk-off), all fixed in `b1e55731` or regraded with BLG-OPS-204; 6 non-blocking findings fixed or filed (BLG-SPEC-210, BLG-QA-239). All slice and addendum ACs for ST-01..ST-08 traced to code and tests; reviewer ran the cited pytest files plus the golden-output and stop-reconciliation suites, 176 passed (stub DB). Post-open CI-fix restatement: ST-08 `d83893b3` → `8f05e704` (Frontend Production Build 40907524862 success); ST-03/ST-05/ST-08 review fixes `b1e55731` — final CI all 9 workflows green, Playwright E2E 40924592679 (8 shards, 0 failed), Frontend Production Build 40924592863, CI Pytest 40924592880, headSha b1e5573166a51806fb0673ec5149aa15c7aa4279. The advisory pixel visual-regression job (continue-on-error) failed 8/10 at both `8f05e704` and `b1e55731`, unchanged by this EPIC. Story-level authority sign-offs (ST-01 Infrastructure & Operations Owner, in-session; ST-03 Strategy Rules & System Intent Owner, in-session) are cleared. QA sign-off comment on the PR and Product Owner acceptance remain human merge-gate actions.
+
+## Merge Gate Confirmations
+
+- **Director of Quality QA sign-off:** given by the human repository owner, acting as Director of Quality, in session on 2026-10-30, and recorded on PR #2131 before the merge (comment 6518181308; head `5b67f90c`). It accepts this evidence (ST-02 to ST-08 Pass, ST-01 Pass_with_deviation, BLG-OPS-204) and the agent-mediated review's comments as non-blocking. Follow-ups: BLG-BE-196, BLG-BE-197, BLG-QA-239, BLG-SPEC-210.
+- **Product Owner acceptance:** given by the human repository owner, acting as Product Owner, in session on 2026-10-30, and recorded on PR #2131 (same comment). It accepts ST-01 to ST-08 against `stage4_backlog_slice.md`. The post-merge items were BLG-OPS-200, BLG-OPS-204 and BLG-OPS-203, all resolved 2026-10-30 (above).
+- **Merged:** PR #2131 by the human developer, 2026-10-30T08:13:03Z, merge commit `48eab523`.
+- **Reaffirmed:** by the human repository owner in session on 2026-11-02, at sprint close (PR #2131 comment 6581103202). No change.

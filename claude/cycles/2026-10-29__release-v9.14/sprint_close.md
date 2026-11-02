@@ -142,6 +142,14 @@ All seven sign-off `Date:` fields are non-blank, and `qa_signed_off: true` is se
 
 This close does not backfill confirmations that were never written down. The gap is Phase 3 Friction Item 2.
 
+**Addendum (2026-11-02, after sprint close).** The human repository owner, acting as Director of Quality and Product Owner, gave QA sign-off and Product Owner acceptance on all seven PRs in session. The record is now:
+- **PR #2137 (EPIC-04) and PR #2139 (EPIC-05):** first written human confirmations, posted after the merge and labelled as given after the merge (comments 6581095434 and 6581095942).
+- **The other five PRs:** a reaffirmation of the original human confirmation (#2131 6581103202, #2132 6581103697, #2133 6581104513, #2135 6581105242, #2138 6581105807).
+- **QA evidence:** `qa_evidence_EPIC-01.md`, `-03.md`, `-04.md` and `-05.md` now have a `## Merge Gate Confirmations` section, so all seven EPICs record the confirmations in the cycle folder.
+- **Sealed record:** `execution_state.json` is sealed and was not changed.
+
+For EPIC-04 and EPIC-05, the confirmations still came after the merge. The Phase 3 escalation, whether a merge alone satisfies the gate, remains for the Head of Specs Team and Product Owner as a rule for future cycles.
+
 ## Process Notes
 
 Rolled up from `execution_state.json.process_notes` (24 entries, 2026-10-29 to 2026-11-02):

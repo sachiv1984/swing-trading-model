@@ -1,7 +1,7 @@
 Owner: Director of Quality
 Class: Planning Document (Class 4)
 Status: Active
-Last Updated: 2026-10-30
+Last Updated: 2026-11-02
 
 # QA Evidence — EPIC-03 — AI Output Safety & Audit Hygiene
 
@@ -48,3 +48,10 @@ Last Updated: 2026-10-30
 - Signed off by: Sprint Execution Engine (agent-mediated, Director of Quality role — §5.3)
 - Date: 2026-10-30
 - Comments: Agent-mediated Director of Quality review (§5.3), three passes. **Pass 1, Blocked.** Finding 1 (blocking): `ensure_once`'s non-reentrant lock deadlocked a nested decorated ensure; reproduced in a thread with `join(5)`. Non-blocking findings: 2, the ST-21 listing missed a 35th site (the reviewer's own AST re-scan found 33 pairs plus the 2 hand-added rows); 3, ST-15 false positives and misses (7 of 16 descriptive probes flagged); 4, live docs still naming `generate-thesis`; 5, ST-23 AC2 wording. Fixed in `ff803197`, `9322b502` and `ee90f722`; remaining items filed as BLG-AI-24 and BLG-SPEC-211. **Pass 2, Blocked.** Findings 1–5 confirmed fixed (deadlock reproduction now `ok`; 7/7 ST-15 sentences still match; backlog integrity OK). New blocker: CI Pytest Phase B run 41100377593 failed 4 `test_rollback_then_reapply` cases; fixed in `ddd86327`. **Pass 3, Approved.** The reviewer verified with `gh run view` that runs 41129196316 (CI Pytest, Phase A+B) and 41129196452 (Critical-Path Smoke) succeeded on `ddd86327`, with no other failing or running workflows. Post-open CI-fix restatement (LL-v8.5-P4-01): final green run 41129196316 on head `ddd86327`. Playwright E2E 41095484032 succeeded on `ed3b9d8c` (SC-SS-01b, `trade-plan.spec.js`); it is path-filtered and was not re-triggered by the later commits, none of which touch `src/`. Story-level authority sign-offs (BLG-GOV-14), all cleared: AI Compliance & Governance Officer rulings `ESC-EXEC-20261030-02` and `-03` and the `ESC-EXEC-20260910-01` re-deferral, each given by the user in session on 2026-10-30; the Strategy Rules & System Intent Owner's §13.5 case (c) confirmation at seal on 2026-10-29. Grades: ST-15, ST-18 and ST-22 `Pass with notes`; the rest `Pass`. ST-23's AC1 is seal-marked post-merge (BLG-GOV-399, DEL-20261030-04). This agent-mediated review does not satisfy the always-human merge-gate QA sign-off or Product Owner acceptance.
+
+## Merge Gate Confirmations
+
+- **Director of Quality QA sign-off:** given by the human repository owner, acting as Director of Quality, in session on 2026-11-02, and recorded on PR #2135 before the merge (comment 6573953968; head `0888b833`). It accepts this evidence (ST-15, ST-18 and ST-22 Pass with notes; the others Pass) and the agent-mediated review's callouts as follow-ups. Follow-ups: BLG-AI-23, BLG-AI-24, BLG-AI-25, BLG-AI-26, BLG-SPEC-211, BLG-BE-200.
+- **Product Owner acceptance:** given by the human repository owner, acting as Product Owner, in session on 2026-11-02, and recorded on PR #2135 (same comment). It accepts ST-15 to ST-23 against their in-sprint ACs. ST-23 AC 1 stays a seal-marked post-merge item (BLG-GOV-399, DEL-20261030-04).
+- **Merged:** PR #2135 by the human developer, 2026-11-02T09:44:57Z, merge commit `f8803184`.
+- **Reaffirmed:** by the human repository owner in session on 2026-11-02, at sprint close (PR #2135 comment 6581105242). No change.
