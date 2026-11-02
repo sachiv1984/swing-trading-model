@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-02 (Sprint Execution, EPIC-07 of 2026-10-29__release-v9.14 — 7 new item(s) added: BLG-GOV-401, BLG-FE-238, BLG-GOV-402, BLG-FE-239, BLG-FE-240, BLG-SPEC-212, BLG-GOV-403); prior — 2026-11-02 (Sprint Execution, EPIC-04 of 2026-10-29__release-v9.14 — 3 new item(s) added: BLG-BE-201, BLG-FE-237, BLG-BE-202); prior — 2026-10-30 (PR #2135 agent-mediated review, EPIC-03 of 2026-10-29__release-v9.14 — 2 new item(s) added: BLG-AI-25, BLG-AI-26); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-02 (Sprint Execution, EPIC-07 of 2026-10-29__release-v9.14 — 8 new item(s) added: BLG-GOV-401, BLG-FE-238, BLG-GOV-402, BLG-FE-239, BLG-FE-240, BLG-SPEC-212, BLG-GOV-403, BLG-SPEC-213); prior — 2026-11-02 (Sprint Execution, EPIC-04 of 2026-10-29__release-v9.14 — 3 new item(s) added: BLG-BE-201, BLG-FE-237, BLG-BE-202); prior — 2026-10-30 (PR #2135 agent-mediated review, EPIC-03 of 2026-10-29__release-v9.14 — 2 new item(s) added: BLG-AI-25, BLG-AI-26); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -6751,5 +6751,28 @@ ST-48 fixed `scripts/compute_effort_weighted_pvr.py`'s parse of band parenthetic
 **Acceptance Criteria**
 - The chosen prompt names `scripts/report_spec_debt_aging.py` and what to do with its ⚠ rows
 - The next run of that engine records the report's ⚠ count in its manifest
+
+---
+
+### BLG-SPEC-213 — Effort-weighted PVR weighs every hour-scale estimate at 0.15 days, including `M (~10 hrs)`
+**Priority:** P3 (Low)
+**Type:** Spec Debt (metric definition)
+**Owner:** Metrics Definitions & Analytics Canonical Owner
+**Source:** PR #2138 agent-mediated review (Director of Quality), EPIC-07 / ST-48 of `2026-10-29__release-v9.14` — 2026-11-02
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.15 (before the next `run roadmap` that reads a window past v9.7)
+
+**Problem**
+ST-48 made `metrics_definitions.md` Appendix F and `scripts/compute_effort_weighted_pvr.py` agree that a band whose parenthetical starts with an hour- or minute-scale quantity weighs 0.15 days, whatever the number. That is right for `XS (<1h)` but not for the larger hour estimates in sprint backlogs after v9.7: `S (~3 hrs)` (9 uses), `S (~4 hrs)` (12), `S (~5 hrs)` (6) and `M (~10 hrs)` (6) all weigh 0.15, although 10 hours is more than a day. None falls in the five backfilled windows (v7.5–v9.7), so the recorded readings are unaffected, but the next `roadmap_prompt.md` STEP 2.4 effort-weighted reading over v9.8+ will understate those stories. A minute value written `~30m` is also not recognised (only `min`/`mins`/`minutes`), so it takes the band midpoint.
+
+**Scope**
+- Change the hour-scale row to convert hours to days (e.g. hours ÷ 8, minimum 0.15) and accept `m` as minutes; update the script and table together
+- Update `tests/test_compute_effort_weighted_pvr.py` with `M (~10 hrs)`, `S (~4 hrs)` and `XS (~30m)` cases
+- Appendix D changelog row
+
+**Acceptance Criteria**
+- `M (~10 hrs)` weighs 1.25 days and `XS (<1h)` still weighs 0.15 (tests)
+- Appendix F's table and the script still weight exactly the same values (parity test passes)
+- The five backfilled readings are unchanged on re-run
 
 ---
