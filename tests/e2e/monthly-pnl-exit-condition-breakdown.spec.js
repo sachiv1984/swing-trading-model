@@ -9,13 +9,15 @@
  * Coverage:
  *   SC-MEC-01  The card renders the three §8 category columns and a Total equal to each month's realised P&L,
  *              and the footer totals equal the sum of the months, in dark and light themes (AC 3)
- *   SC-MEC-02  A category with no trades shows "—" with no trade line; trade lines pluralise
+ *   SC-MEC-02  A category with no trades shows "—" with no trade line; trade lines pluralise; a category
+ *              with trades at exactly £0.00 shows the figure in the neutral tone
  *   SC-MEC-03  With by_exit_condition absent, "Exit-condition breakdown unavailable." shows and the
  *              Monthly table still renders
  *   SC-MEC-04  No card when the tax year has no closed trades
  *   SC-MEC-05  Placement: after the AI summary card, before the Unrealised P&L Card
  *   SC-MEC-06  axe: no color-contrast entry and no serious/critical violation in the card, both themes
- *   SC-MEC-07  Narrow viewport: the table scrolls inside the card and the page does not scroll sideways
+ *   SC-MEC-07  Narrow viewport: the table overflows its own scroller, the card stays within the viewport,
+ *              and the Month column is sticky
  *
  * Infrastructure: Playwright page.route() network interception. No live backend.
  * ROUTING NOTE: App uses HashRouter — navigate via page.goto('/#/Reports'), then click the Monthly tab.
@@ -44,6 +46,13 @@ const SEPTEMBER = {
   year: 2026, month: 9, realised_pnl_gbp: -40, trade_count: 1, null_fee_trade_count: 0,
   snapshotted: true, restated: false, snapshot_realised_pnl_gbp: -40, restated_diff_gbp: 0,
   by_exit_condition: { stop_loss: cat(-40, 1), risk_off: cat(0, 0), manual: cat(0, 0) },
+};
+
+// August: one manual exit at exactly break-even, so its P&L renders in the neutral tone.
+const AUGUST = {
+  year: 2026, month: 8, realised_pnl_gbp: 0, trade_count: 1, null_fee_trade_count: 0,
+  snapshotted: true, restated: false, snapshot_realised_pnl_gbp: 0, restated_diff_gbp: 0,
+  by_exit_condition: { stop_loss: cat(0, 0), risk_off: cat(0, 0), manual: cat(0, 1) },
 };
 
 const withoutBreakdown = (m) => {
@@ -133,8 +142,8 @@ for (const theme of ['dark', 'light']) {
   });
 }
 
-test('SC-MEC-02: a category with no trades shows "—" with no trade line; trade lines pluralise', async ({ page }) => {
-  await mockApi(page, [OCTOBER, SEPTEMBER]);
+test('SC-MEC-02: a category with no trades shows "—" with no trade line; trade lines pluralise; zero is neutral', async ({ page }) => {
+  await mockApi(page, [OCTOBER, SEPTEMBER, AUGUST]);
   await gotoMonthlyTab(page);
 
   const september = page.getByTestId('monthly-exit-condition-row').nth(1);
@@ -144,6 +153,14 @@ test('SC-MEC-02: a category with no trades shows "—" with no trade line; trade
   await expect(september.getByTestId('monthly-exit-condition-risk_off-trades')).toHaveCount(0);
   await expect(september.getByTestId('monthly-exit-condition-stop_loss-trades')).toHaveText('1 trade');
   await expect(page.getByTestId('monthly-exit-condition-row').nth(0).getByTestId('monthly-exit-condition-manual-trades')).toHaveText('2 trades');
+
+  // A category with trades and exactly £0.00 shows the figure (not "—") in the neutral tone.
+  const august = page.getByTestId('monthly-exit-condition-row').nth(2);
+  const zero = august.getByTestId('monthly-exit-condition-manual-pnl');
+  await expect(zero).toHaveText('£0.00');
+  await expect(august.getByTestId('monthly-exit-condition-manual-trades')).toHaveText('1 trade');
+  await expect(zero).toHaveClass(/text-slate-600/);
+  await expect(zero).not.toHaveClass(/emerald|rose/);
 });
 
 test('SC-MEC-03: by_exit_condition absent shows the unavailable state and the Monthly table still renders', async ({ page }) => {
@@ -203,9 +220,16 @@ test('SC-MEC-07: at phone width the table scrolls inside the card and the page d
 
   const scroller = page.getByTestId('monthly-exit-condition-table').locator('xpath=..');
   await expect(scroller).toHaveCSS('overflow-x', 'auto');
-  const card = page.getByTestId('monthly-exit-condition-card');
-  const cardBox = await card.boundingBox();
-  expect(cardBox.x + cardBox.width).toBeLessThanOrEqual(375 + 1);
+  // The table is wider than its scroller (it scrolls inside the card), and the card itself stays
+  // within the viewport. The page-level scrollWidth is not asserted: at 375px the Reports tab bar
+  // already overflows with no card on the page (BLG-FE-237), which ST-24 does not change.
+  const widths = await page.evaluate(() => {
+    const table = document.querySelector('[data-testid="monthly-exit-condition-table"]');
+    const card = document.querySelector('[data-testid="monthly-exit-condition-card"]');
+    return { table: table.scrollWidth, scroller: table.parentElement.clientWidth, cardRight: card.getBoundingClientRect().right };
+  });
+  expect(widths.table).toBeGreaterThan(widths.scroller);
+  expect(widths.cardRight).toBeLessThanOrEqual(375);
   // The Month column is sticky.
   await expect(page.getByTestId('monthly-exit-condition-row').first().locator('td').first()).toHaveCSS('position', 'sticky');
 });
