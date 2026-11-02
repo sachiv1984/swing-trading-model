@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-29T14:51:40Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-02T11:53:03Z",
+  "last_updated_utc": "2026-11-02T11:55:00Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-02",
@@ -1280,18 +1280,21 @@
         "ST-34": {
           "title": "Assert the stop-details tooltip time under a non-UTC browser timezone",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "github_issue": 2111,
           "branch": "exec/2026-10-29__release-v9.14/EPIC-05",
           "spec_references": [
-            "tests/e2e/stop-cell-provenance.spec.js"
+            "tests/e2e/stop-cell-provenance.spec.js",
+            "docs/specs/frontend/pages/positions.md#Stop Provenance Line and Per-Row Stop Details"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "acceptance_verified": false,
-          "commit_sha": null,
-          "last_completed_substep": null
+          "deviations_filed": true,
+          "acceptance_verified": true,
+          "commit_sha": "458362fa2cd3cddf1efc3b6ed90c8e26a4063bb5",
+          "last_completed_substep": "3.1.A.10a",
+          "completed_utc": "2026-11-02T11:53:03Z",
+          "notes": "AC met: SC-SCP-11 (test.use timezoneId Europe/London) asserts \"Last recalculated 5 Oct 2026, 22:15 — nightly update\" for 2026-10-05T21:15:00+00:00; 11/11 pass locally. ci_pending: 41440281517 (Playwright E2E), 41440281818 (CI Pytest); other workflows success on 458362fa. Deviation check: none."
         },
         "ST-35": {
           "title": "Assert the applied theme in every Reports/Notifications axe scan",
@@ -1379,6 +1382,7 @@
     "ST-28",
     "ST-31",
     "ST-32",
+    "ST-34",
     "ST-38",
     "ST-39",
     "ST-40",
