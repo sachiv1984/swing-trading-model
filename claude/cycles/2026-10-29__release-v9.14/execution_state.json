@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-29T14:51:40Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-02T10:54:29Z",
+  "last_updated_utc": "2026-11-02T10:56:47Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-02",
@@ -1047,15 +1047,22 @@
         "ST-48": {
           "title": "Align Appendix F's effort-weighted PVR table and status with the script",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "github_issue": 2125,
           "branch": "exec/2026-10-29__release-v9.14/EPIC-07",
-          "spec_references": [],
+          "spec_references": [
+            "docs/specs/metrics_definitions.md#Appendix F — Governance Metrics (Cross-Reference Only)",
+            "scripts/compute_effort_weighted_pvr.py",
+            "tests/test_compute_effort_weighted_pvr.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "acceptance_verified": false,
-          "commit_sha": null
+          "deviations_filed": true,
+          "acceptance_verified": true,
+          "commit_sha": "d4463c8cd388f51b4402ff51be13f928270c78a9",
+          "completed_utc": "2026-11-02T10:56:38Z",
+          "last_completed_substep": "3.1.A.10a",
+          "notes": "AC met: table and parse_effort_weight() weight the same values (parity test, 29 pass); Appendix F names roadmap_prompt.md STEP 2.4 (v9.32), D-split and U-pool stay proposal-only; Appendix D row 1.34.0. Two backfilled readings corrected (0.021->0.024, 0.093->0.104). Deviation check: none. Out-of-scope finding filed: BLG-GOV-402."
         },
         "ST-49": {
           "title": "Trade plan contract lists the 7 DS-21 statuses",
@@ -1165,7 +1172,8 @@
     "ST-44",
     "ST-45",
     "ST-46",
-    "ST-47"
+    "ST-47",
+    "ST-48"
   ],
   "open_escalations": {
     "ESC-EXEC-20261029-01": {

@@ -2,6 +2,10 @@
 ST-31 (BLG-SPEC-177, EPIC-05, v9.11) — every TradePlan status enum in
 openapi.yaml matches the live trade_plans_status_check constraint documented
 in data_model.md DS-21 (7 values).
+
+ST-49 (BLG-SPEC-193, EPIC-07, v9.14) — trade_plan_endpoints.md's POST body
+`status` row and GET `status` filter row, and trade_plan_data_sensitivity.md's
+`status` row, list the same 7 values.
 """
 import re
 from pathlib import Path
@@ -43,3 +47,20 @@ def test_every_trade_plan_status_enum_matches_ds21():
     assert len(enums) >= 4
     for enum in enums:
         assert sorted(enum) == sorted(_ds21_values())
+
+
+def _row_values(path, row_prefix):
+    line = next(l for l in path.read_text().splitlines() if l.startswith(row_prefix))
+    return re.findall(r"`([a-z_]+)`", line)
+
+
+def test_trade_plan_contract_and_sensitivity_rows_match_ds21():
+    specs = ROOT / "docs" / "specs"
+    rows = [
+        (specs / "api_contracts" / "trade_plan_endpoints.md", "| status | string | No |"),
+        (specs / "api_contracts" / "trade_plan_endpoints.md", "| status | string | (all) |"),
+        (specs / "security" / "trade_plan_data_sensitivity.md", "| `status` | Public |"),
+    ]
+    for path, prefix in rows:
+        values = [v for v in _row_values(path, prefix) if v in _ds21_values()]
+        assert sorted(set(values)) == sorted(_ds21_values()), (path.name, prefix, values)

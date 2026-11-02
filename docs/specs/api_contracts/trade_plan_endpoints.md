@@ -1,8 +1,8 @@
 **Owner:** Head of Specs Team
 **Class:** Specification (Class 2)
 **Status:** Active
-**Version:** 0.21
-**Last Updated:** 2026-10-30 (ST-22, EPIC-03, v9.14, BLG-BE-163 — POST /trade-plans/{plan_id}/generate-thesis section removed; the endpoint is retired); prior — 2026-10-13 (ST-33, EPIC-05, v9.12, BLG-SPEC-176 — DELETE /trade-plans/{id} response marked as a named exception to conventions.md §12, §12.1); prior — 2026-10-08 (ST-22, EPIC-03, v9.11, BLG-API-06 — POST /trade-plans double-submit disposition: client-side submit guard; 0.18 is EPIC-01's ST-09); prior history retained — see prior entries in version control
+**Version:** 0.22
+**Last Updated:** 2026-11-02 (ST-49, EPIC-07, v9.14, BLG-SPEC-193 — `POST /trade-plans` `status` field and `GET /trade-plans` `status` filter list the 7 DS-21 statuses); prior — 2026-10-30 (ST-22, EPIC-03, v9.14, BLG-BE-163 — POST /trade-plans/{plan_id}/generate-thesis section removed; the endpoint is retired); prior — 2026-10-13 (ST-33, EPIC-05, v9.12, BLG-SPEC-176 — DELETE /trade-plans/{id} response marked as a named exception to conventions.md §12, §12.1); prior history retained — see prior entries in version control
 **Cycle:** 2026-04-29__release-v3.1 (ST-01); 2026-05-22__release-v4.0 (ST-12); 2026-07-08__release-v6.8 (ST-05); 2026-07-17__release-v7.5 (ST-03); 2026-07-21__release-v7.7 (ST-07); 2026-08-12__release-v8.7 (ST-01/ST-03); 2026-08-14__release-v8.8 (ST-09); 2026-08-18__release-v8.9 (ST-13); 2026-08-21__release-v9.0 (ST-07); 2026-10-12__release-v9.12 (ST-33)
 
 ---
@@ -69,7 +69,7 @@ Create a new trade plan.
 | confirmation_criteria | string | No | Entry confirmation criteria |
 | checklist_completed | boolean | No | Default: false |
 | checklist_items | array | No | `[{item: string, checked: boolean}]` |
-| status | string | No | `draft` \| `active` \| `closed` — default: `draft` |
+| status | string | No | One of the 7 DS-21 statuses (`data_model.md` §DS-21): `draft` \| `research_pending` \| `research_complete` \| `entry_conditions_set` \| `active` \| `closed` \| `abandoned` — default: `draft` |
 | pre_entry_override_acknowledged | boolean | No | Whether user acknowledged pre-entry advisory warnings. Default: false. |
 | trade_tags | array of string | No | *(v0.6 — ST-05)* Data-independent tag field on `trade_plans`. Lowercase, alphanumeric+hyphen, max 20 chars per tag, max 10 tags. Invalid entries silently dropped server-side. Default: `[]`. Canonical taxonomy reference (added ST-20, EPIC-04, v9.3, BLG-SPEC-76): `docs/specs/trade_tagging_taxonomy.md` — free-text tagging, not a closed enum; this row's rules are that document's format-rule table, restated here for local convenience. |
 | thesis_model_version | string | No | *(v0.9 — ST-12, BLG-BE-70)* AI compliance/audit provenance field. Frontend-passed and persisted without validation — set only when `setup_thesis`/`entry_rationale`/etc. were saved as-received from a prior `POST /trade-plans/generate-plan` or `POST /trade-plans/{id}/generate-thesis` response (see that response's `model_version` field), not user-edited before save. Null when the plan's narrative fields were typed manually. Nullable. No backfill of existing rows. |
@@ -120,7 +120,7 @@ List all trade plans for the portfolio, optionally filtered by status.
 
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
-| status | string | (all) | Filter by `draft`, `active`, or `closed` |
+| status | string | (all) | Filter by one of the 7 DS-21 statuses (`data_model.md` §DS-21): `draft` \| `research_pending` \| `research_complete` \| `entry_conditions_set` \| `active` \| `closed` \| `abandoned` |
 
 ### Response (200 OK)
 
@@ -498,6 +498,7 @@ score = clamp(round(win_rate × 0.6 + max(average_pnl_pct, 0) × 0.4), 0, 100)
 
 | Version | Date | Summary |
 |---------|------|---------|
+| 0.22 | 2026-11-02 | ST-49 (EPIC-07, v9.14, BLG-SPEC-193): `POST /trade-plans` `status` body field and `GET /trade-plans` `status` filter list the 7 DS-21 statuses, matching `openapi.yaml` (corrected at v9.11 ST-31) and `data_model.md` §DS-21. Was the 3-value v3.1 set. Documentation only; `tests/test_trade_plan_status_enum_parity.py` now checks both rows. |
 | 0.21 | 2026-10-30 | ST-22 (EPIC-03, v9.14, BLG-BE-163): `POST /trade-plans/{plan_id}/generate-thesis` section removed; the endpoint is retired (404). `generate-plan` is documented here and in `ai_thesis_generation.md`. |
 | 0.20 | 2026-10-13 | ST-33 (EPIC-05, v9.12, BLG-SPEC-176): `DELETE /trade-plans/{id}`'s `{status, message}` body recorded as a named exception to `conventions.md` §12 (§12.1). Live route already matches; no behaviour change. |
 | 0.19 | 2026-10-08 | ST-22 (EPIC-03, v9.11, BLG-API-06): `POST /trade-plans` double-submit disposition recorded — client-side submit guard on the Trade Plan page; no server change. |
