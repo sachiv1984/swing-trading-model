@@ -6760,10 +6760,10 @@ ST-48 fixed `scripts/compute_effort_weighted_pvr.py`'s parse of band parenthetic
 **Owner:** Metrics Definitions & Analytics Canonical Owner
 **Source:** PR #2138 agent-mediated review (Director of Quality), EPIC-07 / ST-48 of `2026-10-29__release-v9.14` — 2026-11-02
 **Effort:** XS (<1h)
-**Provisional-Target:** v9.15 (before the next `run roadmap` that reads a window past v9.7)
+**Provisional-Target:** Unscheduled (latent; see Problem)
 
 **Problem**
-ST-48 made `metrics_definitions.md` Appendix F and `scripts/compute_effort_weighted_pvr.py` agree that a band whose parenthetical starts with an hour- or minute-scale quantity weighs 0.15 days, whatever the number. That is right for `XS (<1h)` but not for the larger hour estimates in sprint backlogs after v9.7: `S (~3 hrs)` (9 uses), `S (~4 hrs)` (12), `S (~5 hrs)` (6) and `M (~10 hrs)` (6) all weigh 0.15, although 10 hours is more than a day. None falls in the five backfilled windows (v7.5–v9.7), so the recorded readings are unaffected, but the next `roadmap_prompt.md` STEP 2.4 effort-weighted reading over v9.8+ will understate those stories. A minute value written `~30m` is also not recognised (only `min`/`mins`/`minutes`), so it takes the band midpoint.
+ST-48 made `metrics_definitions.md` Appendix F and `scripts/compute_effort_weighted_pvr.py` agree that a band whose parenthetical starts with an hour- or minute-scale quantity weighs 0.15 days, whatever the number. That is right for `XS (<1h)` but not for larger hour estimates: `S (~3 hrs)` (9 uses), `S (~4 hrs)` (12), `S (~5 hrs)` (6) and `M (~10 hrs)` (6) would all weigh 0.15, although 10 hours is more than a day. Every such value is in a v2.1–v6.8 sprint backlog, outside the five backfilled windows and any rolling window STEP 2.4 now reads (recent cycles state effort as numeric days), so no recorded or upcoming reading is affected. The defect is latent: it matters only if a window over those cycles is computed, or if hour-scale estimates return. A minute value written `~30m` is also not recognised (only `min`/`mins`/`minutes`), so it takes the band midpoint.
 
 **Scope**
 - Change the hour-scale row to convert hours to days (e.g. hours ÷ 8, minimum 0.15) and accept `m` as minutes; update the script and table together
