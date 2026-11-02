@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-02 (Sprint Execution, EPIC-07 of 2026-10-29__release-v9.14 — 3 new item(s) added: BLG-GOV-401, BLG-FE-238, BLG-GOV-402); prior — 2026-11-02 (Sprint Execution, EPIC-04 of 2026-10-29__release-v9.14 — 3 new item(s) added: BLG-BE-201, BLG-FE-237, BLG-BE-202); prior — 2026-10-30 (PR #2135 agent-mediated review, EPIC-03 of 2026-10-29__release-v9.14 — 2 new item(s) added: BLG-AI-25, BLG-AI-26); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-02 (Sprint Execution, EPIC-07 of 2026-10-29__release-v9.14 — 6 new item(s) added: BLG-GOV-401, BLG-FE-238, BLG-GOV-402, BLG-FE-239, BLG-FE-240, BLG-SPEC-212); prior — 2026-11-02 (Sprint Execution, EPIC-04 of 2026-10-29__release-v9.14 — 3 new item(s) added: BLG-BE-201, BLG-FE-237, BLG-BE-202); prior — 2026-10-30 (PR #2135 agent-mediated review, EPIC-03 of 2026-10-29__release-v9.14 — 2 new item(s) added: BLG-AI-25, BLG-AI-26); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -6665,5 +6665,69 @@ ST-48 fixed `scripts/compute_effort_weighted_pvr.py`'s parse of band parenthetic
 **Acceptance Criteria**
 - `product_value_ratio_history.md` has a footnote stating 0.021 → 0.024 (v9.1–v9.5) and 0.093 → 0.104 (v9.3–v9.7), citing ST-48 / `BLG-SPEC-191`
 - The two History rows are unchanged
+
+---
+
+### BLG-FE-239 — Trade History counts a break-even trade as a win
+**Priority:** P2 (Medium)
+**Type:** Frontend / Correctness
+**Owner:** Metrics Definitions & Analytics Canonical Owner; Frontend Specifications & UX Documentation Owner
+**Source:** Sprint Execution `2026-10-29__release-v9.14`, EPIC-07 / ST-50 (win rate surface consistency check, `docs/specs/metrics/win_rate_surface_consistency_2026-11-02.md`) — 2026-11-02
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.15
+
+**Problem**
+`src/pages/TradeHistory.js` computes its summary win rate with `winningTrades = filteredTrades.filter((t) => t.pnl >= 0)`. `metrics_definitions.md` §Win Rate counts a win only when `pnl > 0`, and every other surface (analytics, P&L report, Performance Analytics) follows it. When the filtered set contains a trade with `pnl = 0`, the Trade History win rate is higher than the one the same trades show elsewhere, and the zero is averaged into Avg Win.
+
+**Scope**
+- Change the win test to `t.pnl > 0`, matching §Win Rate, and decide (with the owner) whether `pnl = 0` belongs in Avg Loss or neither
+- Add a Playwright case with one break-even trade asserting the summary win rate
+
+**Acceptance Criteria**
+- With trades of P&L +10, 0 and −10, the Trade History summary shows a 33.3% win rate (Playwright)
+- The page's win test matches `metrics_definitions.md` §Win Rate
+
+---
+
+### BLG-FE-240 — Dashboard win-rate widgets are fed from open positions only
+**Priority:** P2 (Medium)
+**Type:** Frontend / Correctness
+**Owner:** Metrics Definitions & Analytics Canonical Owner; Frontend Specifications & UX Documentation Owner
+**Source:** Sprint Execution `2026-10-29__release-v9.14`, EPIC-07 / ST-50 (win rate surface consistency check, `docs/specs/metrics/win_rate_surface_consistency_2026-11-02.md`) — 2026-11-02
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v9.15
+
+**Problem**
+`src/pages/Dashboard.js` builds `closedPositions` by filtering `GET /positions` for `status = "closed"`, but that endpoint returns open positions only, so the list is always empty. The `win_rate` widget (`WinRateWidget`) therefore always shows 0%, and the `win_rate_chart` widget is rendered as `<WinRateChart trades={closedPositions} />` although `WinRateChart.js` reads `winRate`, `wins` and `losses` props, so it renders from undefined values. Both are user-selectable dashboard widgets.
+
+**Scope**
+- Feed both widgets from closed trades (e.g. the `GET /trades` summary `win_rate`, or `trade_history` rows), computed per `metrics_definitions.md` §Win Rate
+- Pass `WinRateChart` the props it reads
+- Playwright coverage of both widgets with closed trades present
+
+**Acceptance Criteria**
+- With closed trades of P&L +10 and −10, both widgets show 50% (Playwright)
+- Neither widget reads `GET /positions` for closed trades
+
+---
+
+### BLG-SPEC-212 — Strategy version comparison contract defines `win_rate` by R, the code by P&L
+**Priority:** P3 (Low)
+**Type:** Spec Debt
+**Owner:** API Contracts & Documentation Owner; Metrics Definitions & Analytics Canonical Owner
+**Source:** Sprint Execution `2026-10-29__release-v9.14`, EPIC-07 / ST-50 (win rate surface consistency check, `docs/specs/metrics/win_rate_surface_consistency_2026-11-02.md`) — 2026-11-02
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.15
+
+**Problem**
+`GET /analytics/strategy-version-comparison`'s contract (`docs/specs/api_contracts/analytics_endpoints.md`) defines `win_rate` as the "proportion of trades that closed positive (R > 0)". The code (`backend/database.py`, the version-window `_fetch`) counts `pnl > 0` over all closed trades, including those with no determinable R, which matches `metrics_definitions.md` §Win Rate. The field is also a 0.0–1.0 proportion, unlike the canonical percentage, which the contract states but `metrics_definitions.md` does not mention.
+
+**Scope**
+- Correct the contract's `win_rate` definition to `pnl > 0` over all closed trades in the window, citing §Win Rate, and keep the 0.0–1.0 scale note
+- Add a one-line note to `metrics_definitions.md` §Win Rate naming this endpoint's proportion scale
+
+**Acceptance Criteria**
+- The contract's `win_rate` definition matches the code and §Win Rate
+- §Win Rate names the endpoint's 0.0–1.0 scale
 
 ---

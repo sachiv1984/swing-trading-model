@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-29T14:51:40Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-02T10:56:47Z",
+  "last_updated_utc": "2026-11-02T10:57:39Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-02",
@@ -1067,15 +1067,23 @@
         "ST-49": {
           "title": "Trade plan contract lists the 7 DS-21 statuses",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "github_issue": 2126,
           "branch": "exec/2026-10-29__release-v9.14/EPIC-07",
-          "spec_references": [],
+          "spec_references": [
+            "docs/specs/api_contracts/trade_plan_endpoints.md#POST /trade-plans",
+            "docs/specs/api_contracts/trade_plan_endpoints.md#GET /trade-plans",
+            "docs/specs/security/trade_plan_data_sensitivity.md",
+            "tests/test_trade_plan_status_enum_parity.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "acceptance_verified": false,
-          "commit_sha": null
+          "deviations_filed": true,
+          "acceptance_verified": true,
+          "commit_sha": "a6dec3d5379762f2bdeb96b731dc5a83cc4c5a8b",
+          "completed_utc": "2026-11-02T10:57:31Z",
+          "last_completed_substep": "3.1.A.10a",
+          "notes": "AC met: both specs list the 7 DS-21 statuses (parity test extended, 3 pass); remaining 3/4-value grep hits are historical (DS-04 entry, DS-21 migration notes, v4.6 audit). Deviation check: none."
         },
         "ST-50": {
           "title": "Confirm \"win rate\" is computed the same way on every surface",
@@ -1173,7 +1181,8 @@
     "ST-45",
     "ST-46",
     "ST-47",
-    "ST-48"
+    "ST-48",
+    "ST-49"
   ],
   "open_escalations": {
     "ESC-EXEC-20261029-01": {
