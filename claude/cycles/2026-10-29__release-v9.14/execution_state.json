@@ -4,8 +4,8 @@
   "backlog_slice_source": "claude/cycles/2026-10-29__release-v9.14/stage4_backlog_slice.md (read with claude/cycles/2026-10-29__release-v9.14/stage4_backlog_slice_addendum.md)",
   "invoked_utc": "2026-10-29T14:51:40Z",
   "mode": "standard",
-  "status": "Running",
-  "last_updated_utc": "2026-11-02T15:12:38Z",
+  "status": "Sealed",
+  "last_updated_utc": "2026-11-02T15:21:25Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-02",
@@ -52,7 +52,7 @@
         "ST-01": {
           "title": "Restore eslint-config-react-app so the frontend builds and deploys again",
           "classification": "delegated_backend",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine (lockfile, CI build step); Infrastructure & Operations Owner (Render dashboard workaround)",
           "github_issue": 2078,
           "branch": "exec/2026-10-29__release-v9.14/EPIC-01",
@@ -85,7 +85,7 @@
         "ST-02": {
           "title": "Compute the SPY market regime from Alpaca bars when Yahoo Finance fails",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2079,
           "branch": "exec/2026-10-29__release-v9.14/EPIC-01",
@@ -110,7 +110,7 @@
         "ST-03": {
           "title": "Show an unknown market regime instead of silently defaulting to risk-on",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "Strategy Rules & System Intent Owner (ruling); engine (implementation)",
           "github_issue": 2080,
           "branch": "exec/2026-10-29__release-v9.14/EPIC-01",
@@ -149,7 +149,7 @@
         "ST-04": {
           "title": "Use the last good GBP/USD rate, with its age, before the fixed 1.27 fallback",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2081,
           "branch": "exec/2026-10-29__release-v9.14/EPIC-01",
@@ -175,7 +175,7 @@
         "ST-05": {
           "title": "Flag an FX fallback instead of applying it silently",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2082,
           "branch": "exec/2026-10-29__release-v9.14/EPIC-01",
@@ -203,7 +203,7 @@
         "ST-06": {
           "title": "Make the System Status Yahoo Finance check detect an outage",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2083,
           "branch": "exec/2026-10-29__release-v9.14/EPIC-01",
@@ -228,7 +228,7 @@
         "ST-07": {
           "title": "Flag stale prices on GET /positions and the Positions page",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2084,
           "branch": "exec/2026-10-29__release-v9.14/EPIC-01",
@@ -255,7 +255,7 @@
         "ST-08": {
           "title": "Make the stale-price explanation reachable on touch, keyboard and screen readers",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2085,
           "branch": "exec/2026-10-29__release-v9.14/EPIC-01",
@@ -278,7 +278,9 @@
           "sign_off_record": null,
           "notes": "AC1: axe on /risk with a stale row, no serious/critical (SC-SPM-03). AC2: keyboard reach + toHaveAccessibleDescription on /risk and Positions (SC-SPM-02a/02b); tap toggles tooltip. AC3: Positions marker uses the shared StaleMarker with the Positions copy. Card 2 link description (SC-SPM-04). CI on d83893b3: Frontend Production Build FAILURE (import/first in PositionRiskTable.js); fixed in 8f05e704 (import order only). CI cleared: 8f05e704 all 9 green (Playwright 40907524815); DoQ fixes b1e55731 all 9 green (Playwright 40924592679). Deviation check: none. DoQ review fixes in b1e55731 (axe zero violations + /risk h2 headings, touch tap toggle fix)."
         }
-      }
+      },
+      "merged_utc": "2026-10-30T08:13:03Z",
+      "merge_commit": "48eab523"
     },
     "EPIC-02": {
       "status": "merged",
@@ -302,7 +304,7 @@
         "ST-09": {
           "title": "US position sizing divides the stop distance by the GBP/USD rate",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "github_issue": 2086,
           "branch": "exec/2026-10-29__release-v9.14/EPIC-02",
           "spec_references": [
@@ -337,7 +339,7 @@
         "ST-10": {
           "title": "POST /positions/{id}/exit returns its documented 404 and 400, not 500",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "github_issue": 2087,
           "branch": "exec/2026-10-29__release-v9.14/EPIC-02",
           "spec_references": [
@@ -356,7 +358,7 @@
         "ST-11": {
           "title": "Daily Position Monitor stops suggesting \"Stop Loss Hit\" during the grace period",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "github_issue": 2088,
           "branch": "exec/2026-10-29__release-v9.14/EPIC-02",
           "spec_references": [
@@ -377,7 +379,7 @@
         "ST-12": {
           "title": "GET /portfolio P&L handles a US position whose fill_price is NULL",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "github_issue": 2089,
           "branch": "exec/2026-10-29__release-v9.14/EPIC-02",
           "spec_references": [
@@ -395,7 +397,7 @@
         "ST-13": {
           "title": "Positions data dictionary states that entry_price is stored in GBP",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "github_issue": 2090,
           "branch": "exec/2026-10-29__release-v9.14/EPIC-02",
           "spec_references": [
@@ -416,7 +418,7 @@
         "ST-14": {
           "title": "Review-cadence grace suppression and the grace alert agree once grace has ended",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "github_issue": 2091,
           "branch": "exec/2026-10-29__release-v9.14/EPIC-02",
           "spec_references": [
@@ -464,7 +466,7 @@
         "ST-38": {
           "title": "Arc 2 compute cost review",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "github_issue": 2115,
           "branch": "exec/2026-10-29__release-v9.14/EPIC-06",
           "spec_references": [
@@ -484,7 +486,7 @@
         "ST-39": {
           "title": "Compute cost trending by feature area",
           "classification": "delegated_backend",
-          "status": "done",
+          "status": "merged",
           "github_issue": 2116,
           "branch": "exec/2026-10-29__release-v9.14/EPIC-06",
           "spec_references": [
@@ -508,7 +510,7 @@
         "ST-40": {
           "title": "CI pipeline runtime audit",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "github_issue": 2117,
           "branch": "exec/2026-10-29__release-v9.14/EPIC-06",
           "spec_references": [
@@ -528,7 +530,7 @@
         "ST-41": {
           "title": "Daily AI cost check covers the last hours of the day",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "github_issue": 2118,
           "branch": "exec/2026-10-29__release-v9.14/EPIC-06",
           "spec_references": [
@@ -551,7 +553,7 @@
         "ST-42": {
           "title": "Make ci-usage-report.yml's monthly commit succeed",
           "classification": "delegated_backend",
-          "status": "done",
+          "status": "merged",
           "github_issue": 2119,
           "branch": "exec/2026-10-29__release-v9.14/EPIC-06",
           "spec_references": [
@@ -575,7 +577,7 @@
         "ST-43": {
           "title": "Per-environment CORS allow-list",
           "classification": "delegated_backend",
-          "status": "done",
+          "status": "merged",
           "github_issue": 2120,
           "branch": "exec/2026-10-29__release-v9.14/EPIC-06",
           "spec_references": [
@@ -631,7 +633,7 @@
         "ST-15": {
           "title": "Journal summary catches advisory phrasings the trading-change check misses",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "github_issue": 2092,
           "branch": "exec/2026-10-29__release-v9.14/EPIC-03",
           "spec_references": [
@@ -654,7 +656,7 @@
         "ST-16": {
           "title": "Daily briefing ticker caveat ignores indicator and macro acronyms",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "github_issue": 2093,
           "branch": "exec/2026-10-29__release-v9.14/EPIC-03",
           "spec_references": [
@@ -674,7 +676,7 @@
         "ST-17": {
           "title": "Chat stop-time note is not attributed to the focus ticker when a sentence names another ticker",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "github_issue": 2094,
           "branch": "exec/2026-10-29__release-v9.14/EPIC-03",
           "spec_references": [
@@ -696,7 +698,7 @@
         "ST-18": {
           "title": "Monthly P&L narrative scan stops flagging retrospective and discourse wording",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "github_issue": 2095,
           "branch": "exec/2026-10-29__release-v9.14/EPIC-03",
           "spec_references": [
@@ -716,7 +718,7 @@
         "ST-19": {
           "title": "A debrief that fails compliance then errors writes one audit row",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "github_issue": 2096,
           "branch": "exec/2026-10-29__release-v9.14/EPIC-03",
           "spec_references": [
@@ -736,7 +738,7 @@
         "ST-20": {
           "title": "Stop recalculation times in briefing and chat are converted to UTC",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "github_issue": 2097,
           "branch": "exec/2026-10-29__release-v9.14/EPIC-03",
           "spec_references": [
@@ -756,7 +758,7 @@
         "ST-21": {
           "title": "Run the claude_audit_log column checks once per process",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "github_issue": 2098,
           "branch": "exec/2026-10-29__release-v9.14/EPIC-03",
           "spec_references": [
@@ -776,7 +778,7 @@
         "ST-22": {
           "title": "Retire the unused POST /trade-plans/{plan_id}/generate-thesis endpoint",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "github_issue": 2099,
           "branch": "exec/2026-10-29__release-v9.14/EPIC-03",
           "spec_references": [
@@ -800,7 +802,7 @@
         "ST-23": {
           "title": "First live quarterly AI output sample against the §13 boundary",
           "classification": "delegated_backend",
-          "status": "done",
+          "status": "merged",
           "github_issue": 2100,
           "branch": "exec/2026-10-29__release-v9.14/EPIC-03",
           "spec_references": [
@@ -852,7 +854,7 @@
         "ST-24": {
           "title": "Monthly P&L breakdown by §8 exit condition",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "github_issue": 2101,
           "branch": "exec/2026-10-29__release-v9.14/EPIC-04",
           "spec_references": [
@@ -875,7 +877,7 @@
         "ST-25": {
           "title": "Recent Trades glyph and amount agree at a half-penny loss",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "github_issue": 2102,
           "branch": "exec/2026-10-29__release-v9.14/EPIC-04",
           "spec_references": [
@@ -894,7 +896,7 @@
         "ST-26": {
           "title": "Pluralise the month counts in the monthly P&L summary fallback",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "github_issue": 2103,
           "branch": "exec/2026-10-29__release-v9.14/EPIC-04",
           "spec_references": [
@@ -913,7 +915,7 @@
         "ST-27": {
           "title": "Keep a generated monthly P&L summary visible after switching tax year and back",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "github_issue": 2104,
           "branch": "exec/2026-10-29__release-v9.14/EPIC-04",
           "spec_references": [
@@ -932,7 +934,7 @@
         "ST-28": {
           "title": "Group /reports endpoints on the System Status page",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "github_issue": 2105,
           "branch": "exec/2026-10-29__release-v9.14/EPIC-04",
           "spec_references": [
@@ -977,7 +979,7 @@
         "ST-44": {
           "title": "check_execution_state_consistency.py checks deviations_filed and the escalation map",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "github_issue": 2121,
           "branch": "exec/2026-10-29__release-v9.14/EPIC-07",
           "spec_references": [
@@ -997,7 +999,7 @@
         "ST-45": {
           "title": "Give the gate scan's \"gating item shipped\" findings a write-back path",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "github_issue": 2122,
           "branch": "exec/2026-10-29__release-v9.14/EPIC-07",
           "spec_references": [
@@ -1015,7 +1017,7 @@
         "ST-46": {
           "title": "Document the gate-status indicator as a reusable component pattern",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "github_issue": 2123,
           "branch": "exec/2026-10-29__release-v9.14/EPIC-07",
           "spec_references": [
@@ -1033,7 +1035,7 @@
         "ST-47": {
           "title": "risk_dashboard.md names only fields GET /portfolio returns",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "github_issue": 2124,
           "branch": "exec/2026-10-29__release-v9.14/EPIC-07",
           "spec_references": [
@@ -1052,7 +1054,7 @@
         "ST-48": {
           "title": "Align Appendix F's effort-weighted PVR table and status with the script",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "github_issue": 2125,
           "branch": "exec/2026-10-29__release-v9.14/EPIC-07",
           "spec_references": [
@@ -1072,7 +1074,7 @@
         "ST-49": {
           "title": "Trade plan contract lists the 7 DS-21 statuses",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "github_issue": 2126,
           "branch": "exec/2026-10-29__release-v9.14/EPIC-07",
           "spec_references": [
@@ -1093,7 +1095,7 @@
         "ST-50": {
           "title": "Confirm \"win rate\" is computed the same way on every surface",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "github_issue": 2127,
           "branch": "exec/2026-10-29__release-v9.14/EPIC-07",
           "spec_references": [
@@ -1111,7 +1113,7 @@
         "ST-52": {
           "title": "§13 boundary worked examples",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "github_issue": 2128,
           "branch": "exec/2026-10-29__release-v9.14/EPIC-07",
           "spec_references": [
@@ -1129,7 +1131,7 @@
         "ST-53": {
           "title": "Governance overhead audit",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "github_issue": 2129,
           "branch": "exec/2026-10-29__release-v9.14/EPIC-07",
           "spec_references": [
@@ -1147,7 +1149,7 @@
         "ST-54": {
           "title": "Spec debt aging report",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "github_issue": 2130,
           "branch": "exec/2026-10-29__release-v9.14/EPIC-07",
           "spec_references": [
@@ -1197,7 +1199,7 @@
         "ST-29": {
           "title": "Cover the Positions-page Exit modal submit in Playwright",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "github_issue": 2106,
           "branch": "exec/2026-10-29__release-v9.14/EPIC-05",
           "spec_references": [
@@ -1217,7 +1219,7 @@
         "ST-30": {
           "title": "Staging visual check of the layout changed by tailwind-merge in cn()",
           "classification": "delegated_qa",
-          "status": "done",
+          "status": "merged",
           "github_issue": 2107,
           "branch": "exec/2026-10-29__release-v9.14/EPIC-05",
           "spec_references": [
@@ -1245,7 +1247,7 @@
         "ST-31": {
           "title": "Pre-commit OpenAPI contract check reads staged content",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "github_issue": 2108,
           "branch": "exec/2026-10-29__release-v9.14/EPIC-05",
           "spec_references": [
@@ -1265,7 +1267,7 @@
         "ST-32": {
           "title": "Confirm the conftest.py AST scan still covers every backend module",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "github_issue": 2109,
           "branch": "exec/2026-10-29__release-v9.14/EPIC-05",
           "spec_references": [
@@ -1284,7 +1286,7 @@
         "ST-33": {
           "title": "Behaviour test: the grace warning ignores settings.min_hold_days",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "github_issue": 2110,
           "branch": "exec/2026-10-29__release-v9.14/EPIC-05",
           "spec_references": [
@@ -1303,7 +1305,7 @@
         "ST-34": {
           "title": "Assert the stop-details tooltip time under a non-UTC browser timezone",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "github_issue": 2111,
           "branch": "exec/2026-10-29__release-v9.14/EPIC-05",
           "spec_references": [
@@ -1322,7 +1324,7 @@
         "ST-35": {
           "title": "Assert the applied theme in every Reports/Notifications axe scan",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "github_issue": 2112,
           "branch": "exec/2026-10-29__release-v9.14/EPIC-05",
           "spec_references": [
@@ -1340,7 +1342,7 @@
         "ST-36": {
           "title": "Stop test files adding backend/services/ to sys.path",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "github_issue": 2113,
           "branch": "exec/2026-10-29__release-v9.14/EPIC-05",
           "spec_references": [
@@ -1360,7 +1362,7 @@
         "ST-37": {
           "title": "Stop the ⌘K hint toast intercepting the chat submit click in SC-AC-03",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "github_issue": 2114,
           "branch": "exec/2026-10-29__release-v9.14/EPIC-05",
           "spec_references": [
@@ -1513,6 +1515,9 @@
     "2026-11-02: PR #2138 (EPIC-07) merged by the human developer at 2026-11-02T11:40:58Z (merge commit 84100ce7; head 8903bb3a), after the user-given DoQ QA sign-off and PO acceptance (comment 6575981600; 33/33 checks). Orphaned post-merge commit check: none (origin/main..EPIC-07 empty). Step 3c sibling sync: no-op, no EPIC-05 branch exists yet.",
     "2026-11-02: EPIC-05 initialised at STEP 0 (branch exec/2026-10-29__release-v9.14/EPIC-05 cut from main 42bec3ce, after EPIC-07 merged, so EPIC-05 merges last over the final tree as planned). Issues #2106-#2114 existed from sync gh. ST-30 delegated_qa (human staging pass in both themes, RISK-01); the other 8 autonomous. Pushed-commit reconciliation: no [ST-29]..[ST-37] commits since invoked_utc. test_scenarios: the 3 existing specs ST-34/35/37 edit.",
     "2026-11-02: EPIC-05 autonomous stories ST-29, ST-31..ST-37 done and pushed (f1474aa4..025c0265), each with all CI workflows green on its own SHA. ST-30 blocked_qa on DEL-20261102-01 (human staging pass in both themes). qa_evidence_EPIC-05.md created with the ST-30 section open; DoQ sign-off and the PR wait for ST-30. Out-of-scope finding filed: BLG-FE-241 (Positions-page exit failure shown by window.alert, not the modal inline error).",
-    "2026-11-02: PR #2139 (EPIC-05) merged by the human developer at 2026-11-02T15:06:08Z (merge commit 0fd6a669; head 92933853, 43/43 checks). The only review on the PR is the agent-mediated Director of Quality + Product Owner comment (6580448267, both Approved with Comments), which does not itself satisfy the always-human merge-gate rows; no separate human QA sign-off or PO acceptance comment was recorded before the merge, so the human developer's merge is the record of those confirmations. Orphaned post-merge commit check: none (origin/main..EPIC-05 empty). Step 3c sibling sync: no-op, no EPIC pending. merge_gate.all_merged = true; STEP 5 runs on the next `run sprint`."
-  ]
+    "2026-11-02: PR #2139 (EPIC-05) merged by the human developer at 2026-11-02T15:06:08Z (merge commit 0fd6a669; head 92933853, 43/43 checks). The only review on the PR is the agent-mediated Director of Quality + Product Owner comment (6580448267, both Approved with Comments), which does not itself satisfy the always-human merge-gate rows; no separate human QA sign-off or PO acceptance comment was recorded before the merge, so the human developer's merge is the record of those confirmations. Orphaned post-merge commit check: none (origin/main..EPIC-05 empty). Step 3c sibling sync: no-op, no EPIC pending. merge_gate.all_merged = true; STEP 5 runs on the next `run sprint`.",
+    "2026-11-02: STEP 5 sprint close. Metadata corrections: EPIC-01 merged_utc (2026-10-30T08:13:03Z) and merge_commit (48eab523) backfilled from gh pr view 2131; the 53 stories moved from done to merged now every EPIC PR is merged (v9.12/v9.13 precedent). Delegation log: DEL-20261030-02 (ST-39, BLG-OPS-201) and DEL-20261030-04 (ST-23, BLG-GOV-399) recorded as 'In Progress — carried to post-sprint' (STEP 5.0). STEP 5.0A: all 7 PRs MERGED on GitHub, pr_status already correct. STEP 5.1: 53/53 stories acceptance_verified and deviations_filed true; every spec_references path resolves; 53 declared ('Scope confirmed: 53 stories across 7 EPICs', ST-51 deferred at planning) = 53 in execution_state.json; all 7 sign-off Date fields non-blank; no unpushed EPIC-branch commits; check_execution_state_consistency.py exits 0. Merge-gate record gap: qa_evidence_EPIC-01/03/04/05.md have no Merge Gate Confirmations section (EPIC-01/03 confirmations are on the PRs; EPIC-04/05 rest on the human merge), see sprint_close.md and Phase 3 lessons learnt. Duplicate backlog items noted for grooming: BLG-QA-240 and BLG-GOV-401 describe the same checker change."
+  ],
+  "sealed": true,
+  "sealed_utc": "2026-11-02T15:21:25Z"
 }

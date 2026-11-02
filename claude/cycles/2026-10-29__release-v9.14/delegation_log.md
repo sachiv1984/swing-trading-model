@@ -51,7 +51,7 @@ Last Updated: 2026-11-02
 - **Spec reference:** `docs/ops/cost_by_feature_area.md` §5–§6; `stage4_backlog_slice.md#ST-39` AC 2
 - **Unblock criteria:** Seal-marked post-merge AC 2, tracked by BLG-OPS-201: the report populated for at least one complete month of production data, with the month and the data date stated.
 - **Commit format required:** `[GOVERNANCE] <description>` on `main` (EPIC-06 will have merged)
-- **Status:** Pending — carried to post-merge (BLG-OPS-201). The story is graded on its in-sprint AC (LL-v9.13-P3-03).
+- **Status:** In Progress — carried to post-sprint (sprint close 2026-11-02). ST-39 marked done 2026-10-30 (`c01e9805`), graded on its in-sprint AC (LL-v9.13-P3-03). The first complete production month of the cost-by-feature-area report remains, tracked by BLG-OPS-201.
 
 ## DEL-20261030-03
 
@@ -83,7 +83,7 @@ Last Updated: 2026-11-02
 - **Spec reference:** `backend/services/ai_output_sampling_service.py`; `scripts/run_ai_output_boundary_sample_audit.py`; `claude/strategy/strategy_rules.md` §13.2, §13.5; `stage4_backlog_slice.md#ST-23`
 - **Unblock criteria:** Seal-marked post-merge AC 1, tracked by BLG-GOV-399: 10 production AI outputs supplied (or a read granted) and reviewed in a dated audit doc. ACs 2 and 3 follow from it. If no sample is available by EPIC-03 sign-off, AC 3 re-defers `ESC-EXEC-20260910-01` with that reason and the story is graded on its in-sprint ACs (LL-v9.13-P3-03).
 - **Commit format required:** `[EPIC-03][ST-23] <description>` on `exec/2026-10-29__release-v9.14/EPIC-03`, or `[GOVERNANCE] <description>` on `main` if EPIC-03 has merged
-- **Status:** Pending — carried to post-merge (BLG-GOV-399). The AI Compliance & Governance Officer (the user, in session, 2026-10-30) chose to carry the sample post-merge and re-deferred `ESC-EXEC-20260910-01` (addendum `109728bf`). The story is graded on its in-sprint ACs (LL-v9.13-P3-03).
+- **Status:** In Progress — carried to post-sprint (sprint close 2026-11-02). ST-23 marked done (`109728bf`), graded on its in-sprint ACs (LL-v9.13-P3-03); the production sample remains, tracked by BLG-GOV-399. Earlier note: carried to post-merge (BLG-GOV-399). The AI Compliance & Governance Officer (the user, in session, 2026-10-30) chose to carry the sample post-merge and re-deferred `ESC-EXEC-20260910-01` (addendum `109728bf`). The story is graded on its in-sprint ACs (LL-v9.13-P3-03).
 
 ## DEL-20261102-01
 
