@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-02 (Sprint Execution, EPIC-04 of 2026-10-29__release-v9.14 — 3 new item(s) added: BLG-BE-201, BLG-FE-237, BLG-BE-202); prior — 2026-10-30 (PR #2135 agent-mediated review, EPIC-03 of 2026-10-29__release-v9.14 — 2 new item(s) added: BLG-AI-25, BLG-AI-26); prior — 2026-10-30 (Sprint Execution, EPIC-03 of 2026-10-29__release-v9.14, DoQ review — 2 new item(s) added: BLG-AI-24, BLG-SPEC-211); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-02 (Sprint Execution, EPIC-07 of 2026-10-29__release-v9.14 — 1 new item(s) added: BLG-GOV-401); prior — 2026-11-02 (Sprint Execution, EPIC-04 of 2026-10-29__release-v9.14 — 3 new item(s) added: BLG-BE-201, BLG-FE-237, BLG-BE-202); prior — 2026-10-30 (PR #2135 agent-mediated review, EPIC-03 of 2026-10-29__release-v9.14 — 2 new item(s) added: BLG-AI-25, BLG-AI-26); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -6602,5 +6602,27 @@ ST-24's `get_monthly_pnl_by_exit_reason()` (`backend/database.py`) opens its own
 **Acceptance Criteria**
 - A `GET /reports/monthly-pnl` request with closed months opens at most two connections in total (test)
 - The month-row and breakdown queries take their window clause from one definition (code review), and `tests/test_monthly_pnl_exit_condition_breakdown.py` still passes
+
+---
+
+### BLG-GOV-401 — Count not-yet-initialised EPICs as pending in `check_execution_state_consistency.py`
+**Priority:** P3 (Low)
+**Type:** Governance Process / Tooling
+**Owner:** Head of Specs Team; Head of Engineering
+**Source:** Sprint Execution `2026-10-29__release-v9.14`, EPIC-07 STEP 0 / ST-44 (out-of-scope finding while editing the script) — 2026-11-02
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.15
+
+**Problem**
+`scripts/check_execution_state_consistency.py` derives the expected `merge_gate.epics_pending` only from EPICs that already have an `epics.<EPIC-xx>` record. EPICs are initialised lazily at their own STEP 0, so mid-cycle any EPIC still listed in `merge_order`/`epics_pending` but not yet started is reported as unexpected, and the §9.2 read-back exits non-zero on a correct file. At v9.14 EPIC-07 STEP 0 it reported `merge_gate.epics_pending: expected ['EPIC-07'], found ['EPIC-05', 'EPIC-07']` (and `expected []` before EPIC-07 was initialised). A read-back that always fails mid-cycle trains readers to ignore it.
+
+**Scope**
+- Treat an EPIC named in `merge_order` (or already in `epics_pending`) that has no `epics.<EPIC-xx>` record as pending
+- Add a test for a state with an uninitialised EPIC in `merge_order`
+
+**Acceptance Criteria**
+- The script exits 0 on a consistent mid-cycle state whose later EPICs are listed in `merge_order` but not yet initialised
+- It still fails, naming the field, when an initialised unmerged EPIC is missing from `epics_pending`
+- A unit test covers the uninitialised-EPIC case
 
 ---

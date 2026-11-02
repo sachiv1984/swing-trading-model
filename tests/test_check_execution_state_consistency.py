@@ -2,6 +2,10 @@
 ST-41 (BLG-GOV-363, EPIC-06, v9.12) — scripts/check_execution_state_consistency.py
 passes on a consistent execution_state.json and fails, naming the field, for
 each of execution_prompt.md §9.2's four equality breaks.
+
+ST-44 (BLG-GOV-397, EPIC-07, v9.14) adds two checks: a done/merged story must
+have deviations_filed true, and every `## ESC-EXEC-*` heading in the sibling
+execution_escalations.md must have a key in open_escalations.
 """
 import copy
 import importlib.util
@@ -19,13 +23,14 @@ CONSISTENT = {
     "completed_items": ["ST-01", "ST-02"],
     "blocked_items": ["ST-03"],
     "delegated_items": ["ST-04"],
+    "open_escalations": {"ESC-EXEC-20261013-01": {"item": "ST-03", "disposition": "Open"}},
     "merge_gate": {"epics_merged": ["EPIC-01"], "epics_pending": ["EPIC-02"], "all_merged": False},
     "epics": {
         "EPIC-01": {"status": "merged", "pr_status": "merged", "qa_signed_off": True, "stories": {
-            "ST-01": {"status": "merged", "commit_sha": "a1", "completed_utc": "2026-10-13T00:00:00Z"},
+            "ST-01": {"status": "merged", "commit_sha": "a1", "completed_utc": "2026-10-13T00:00:00Z", "deviations_filed": True},
         }},
         "EPIC-02": {"status": "in_progress", "pr_status": "none", "qa_signed_off": False, "stories": {
-            "ST-02": {"status": "done", "commit_sha": "b2", "completed_utc": "2026-10-13T01:00:00Z"},
+            "ST-02": {"status": "done", "commit_sha": "b2", "completed_utc": "2026-10-13T01:00:00Z", "deviations_filed": True},
             "ST-03": {"status": "blocked_decision", "commit_sha": None, "completed_utc": None},
             "ST-04": {"status": "blocked_backend", "commit_sha": None, "completed_utc": None},
             "ST-05": {"status": "not_started", "commit_sha": None, "completed_utc": None},
@@ -47,7 +52,7 @@ def test_consistent_state_passes():
 @pytest.mark.parametrize("mutate, field", [
     # equality 1: completed_items vs done/merged stories
     (lambda s: s["completed_items"].remove("ST-02"), "completed_items"),
-    (lambda s: s["epics"]["EPIC-02"]["stories"]["ST-05"].update(status="done", commit_sha="c", completed_utc="t"), "completed_items"),
+    (lambda s: s["epics"]["EPIC-02"]["stories"]["ST-05"].update(status="done", commit_sha="c", completed_utc="t", deviations_filed=True), "completed_items"),
     # equality 2: blocked_items ∪ delegated_items vs blocked_* stories
     (lambda s: s["delegated_items"].clear(), "blocked_items/delegated_items"),
     (lambda s: s["blocked_items"].append("ST-05"), "blocked_items/delegated_items"),
@@ -84,3 +89,50 @@ def test_cli_exit_codes(tmp_path, capsys):
     assert ckstate.main([str(bad)]) == 1
     assert "merge_gate.all_merged" in capsys.readouterr().out
     assert ckstate.main([]) == 2
+
+
+ESCALATIONS_MD = """# Execution Escalations
+
+## ESC-EXEC-20261013-01
+
+- **ST/EPIC item:** ST-03 / EPIC-02
+"""
+
+
+def test_consistent_state_with_escalations_passes():
+    assert ckstate.check_state(CONSISTENT, ESCALATIONS_MD) == []
+
+
+@pytest.mark.parametrize("status", ["done", "merged"])
+def test_done_story_with_deviations_filed_false_fails_naming_the_story(status):
+    problems = _break(lambda s: s["epics"]["EPIC-02"]["stories"]["ST-02"].update(status=status, deviations_filed=False))
+    assert f"ST-02.deviations_filed: is False on a story with status {status} (expected true)" in problems
+
+
+def test_done_story_without_deviations_filed_fails():
+    problems = _break(lambda s: s["epics"]["EPIC-02"]["stories"]["ST-02"].pop("deviations_filed"))
+    assert any(p.startswith("ST-02.deviations_filed:") for p in problems), problems
+
+
+def test_not_started_story_with_deviations_filed_false_passes():
+    assert _break(lambda s: s["epics"]["EPIC-02"]["stories"]["ST-05"].update(deviations_filed=False)) == []
+
+
+def test_escalation_heading_without_open_escalations_key_fails_naming_the_id():
+    md = ESCALATIONS_MD + "\n## ESC-EXEC-20261014-02\n\n- **ST/EPIC item:** ST-04 / EPIC-02\n"
+    problems = ckstate.check_state(CONSISTENT, md)
+    assert problems == ["open_escalations.ESC-EXEC-20261014-02: heading in execution_escalations.md has no key"]
+
+
+def test_escalation_check_ignores_non_heading_mentions():
+    md = ESCALATIONS_MD + "\nSee ESC-EXEC-20261099-09 and ### ESC-EXEC-20261099-08 in prose.\n"
+    assert ckstate.check_state(CONSISTENT, md) == []
+
+
+def test_cli_reads_sibling_escalations_file(tmp_path, capsys):
+    (tmp_path / "execution_state.json").write_text(json.dumps(CONSISTENT))
+    (tmp_path / "execution_escalations.md").write_text(ESCALATIONS_MD)
+    assert ckstate.main([str(tmp_path / "execution_state.json")]) == 0
+    (tmp_path / "execution_escalations.md").write_text(ESCALATIONS_MD + "\n## ESC-EXEC-20261014-02\n")
+    assert ckstate.main([str(tmp_path / "execution_state.json")]) == 1
+    assert "open_escalations.ESC-EXEC-20261014-02" in capsys.readouterr().out
