@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-29T14:51:40Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-02T10:57:39Z",
+  "last_updated_utc": "2026-11-02T11:00:19Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-02",
@@ -1088,15 +1088,20 @@
         "ST-50": {
           "title": "Confirm \"win rate\" is computed the same way on every surface",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "github_issue": 2127,
           "branch": "exec/2026-10-29__release-v9.14/EPIC-07",
-          "spec_references": [],
+          "spec_references": [
+            "docs/specs/metrics/win_rate_surface_consistency_2026-11-02.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "acceptance_verified": false,
-          "commit_sha": null
+          "deviations_filed": true,
+          "acceptance_verified": true,
+          "commit_sha": "e3329bdd7483fd4bbac876f11840804906d44109",
+          "completed_utc": "2026-11-02T11:00:10Z",
+          "last_completed_substep": "3.1.A.10a",
+          "notes": "AC met: every win-rate surface (dashboard, P&L report, drift analytics, journal, +9 found by grep) checked against §Win Rate and recorded; 3 discrepancies filed as correctness/spec items (BLG-FE-239, BLG-FE-240, BLG-SPEC-212), not fixed. Deviation check: none."
         },
         "ST-52": {
           "title": "§13 boundary worked examples",
@@ -1182,7 +1187,8 @@
     "ST-46",
     "ST-47",
     "ST-48",
-    "ST-49"
+    "ST-49",
+    "ST-50"
   ],
   "open_escalations": {
     "ESC-EXEC-20261029-01": {
