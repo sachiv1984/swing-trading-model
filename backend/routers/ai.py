@@ -311,7 +311,7 @@ def get_monthly_cost_by_feature():
     """
     Return the current calendar month's Claude API spend, broken down by
     feature (the claude_audit_log `endpoint` tag — e.g. "POST /ai/daily-briefing",
-    "POST /ai/chat", "POST /trade-plans/{plan_id}/generate-thesis").
+    "POST /ai/chat", "POST /trade-plans/generate-plan").
 
     Read-only, no side effects. Extends GET /ai/monthly-cost (single total)
     with a per-feature breakdown.

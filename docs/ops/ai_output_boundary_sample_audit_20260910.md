@@ -1,7 +1,7 @@
 **Owner:** AI Compliance & Governance Officer
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Last Updated:** 2026-09-14 (AI Compliance & Governance Officer addendum — `ESC-EXEC-20260910-01` disposition set to Deferred, remediation filed as `BLG-AI-06`); prior — 2026-09-10 (initial dry-run sample, escalation filed)
+**Last Updated:** 2026-10-30 (ST-23, EPIC-03, v9.14, BLG-GOV-178 — addendum: `ESC-EXEC-20260910-01` re-acknowledged, its `BLG-AI-06` trigger met; re-deferred pending the production read in `DEL-20261030-04` / `BLG-GOV-399`); prior — 2026-09-14 (AI Compliance & Governance Officer addendum — `ESC-EXEC-20260910-01` disposition set to Deferred, remediation filed as `BLG-AI-06`); prior — 2026-09-10 (initial dry-run sample, escalation filed); prior history retained — see prior entries in version control
 **Source:** ST-22 (BLG-GOV-178, EPIC-05, v9.3 sprint execution)
 
 ---
@@ -72,3 +72,11 @@ Per this sprint's `delegated_decision` classification of ST-22 (§13.2 boundary-
 **State recorded:** `.claude_current_state.json` — `ESC-EXEC-20260910-01` moved from `open_escalations` to `deferred_escalations` with `disposition: Deferred` and the fields above. `claude/backlog/backlog.md` — `BLG-GOV-178` cross-reference updated; `BLG-AI-06` filed.
 
 **This is not a claim that the underlying compliance question is settled** — only that, absent fabrication or a prohibited Accepted-Risk disposition, Deferred-with-a-named-remediation is the honest and correctly-authorised disposition available today.
+
+## Addendum — Re-Acknowledgement at v9.14 (2026-10-30)
+
+**Source:** ST-23 (BLG-GOV-178, EPIC-03, cycle `2026-10-29__release-v9.14`), AC 3.
+
+`ESC-EXEC-20260910-01`'s deferred trigger ("`BLG-AI-06` ships") has been met: the generation-time sampling hook (`backend/services/ai_output_sampling_service.py`) shipped in v9.4. The AI Compliance & Governance Officer (the user, acting in that role, in session on 2026-10-30) re-acknowledged it and **re-deferred** it with this reason: the live sample needs a production database read that the execution environment does not have (its `DATABASE_URL` is the staging database). The read is delegated to the AI Compliance & Governance Officer with the Infrastructure & Operations Owner as `DEL-20261030-04`. The 10-output review (ST-23 AC 1, seal-marked post-merge) is tracked by `BLG-GOV-399`.
+
+**New trigger:** `DEL-20261030-04` delivers 10 production rows from `ai_output_boundary_samples`, or grants a read. The live sample is then run with `scripts/run_ai_output_boundary_sample_audit.py` and recorded in a new dated audit doc; each finding is filed as a backlog item, and `ESC-EXEC-20260910-01` is resolved there.

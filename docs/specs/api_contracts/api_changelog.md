@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Class 2
 **Status:** Canonical
-**Version:** 1.28.3
-**Last Updated:** 2026-10-30 (ST-41, EPIC-06, v9.14, BLG-OPS-186 — v9.14.0 entry: POST /ai/check-daily-cost also checks the previous UTC day); prior — 2026-10-30 (ST-10, EPIC-02, v9.14, BLG-BE-188 — v9.14.0 entry: POST /positions/{position_id}/exit returns its documented 404 and 400); prior — 2026-10-30 (ST-09, EPIC-02, v9.14, BLG-BE-190 — v9.14.0 entry: POST /portfolio/size divides the US stop distance by FX); prior history retained — see prior entries in version control
+**Version:** 1.28.4
+**Last Updated:** 2026-10-30 (ST-15/16/17/19/20/22, EPIC-03, v9.14 — v9.14.0 entries: ai_endpoints.md v1.34–v1.37, trade_endpoints.md v2.6.2, POST /trade-plans/{plan_id}/generate-thesis removed); prior — 2026-10-30 (ST-41, EPIC-06, v9.14, BLG-OPS-186 — v9.14.0 entry: POST /ai/check-daily-cost also checks the previous UTC day); prior — 2026-10-30 (ST-10, EPIC-02, v9.14, BLG-BE-188 — v9.14.0 entry: POST /positions/{position_id}/exit returns its documented 404 and 400); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 # API Changelog
@@ -121,6 +121,36 @@ Rules:
 | Change | Details |
 |--------|---------|
 | Updated endpoint: POST /ai/check-daily-cost | Also checks the previous UTC day's final total against the threshold, before today's, so spend after the day's last scheduled run alerts for its own day. The 200 response gains `previous_day` (BLG-OPS-186). |
+
+### ai_endpoints.md — v1.34–v1.37 (UPDATED)
+
+**EPIC:** EPIC-03
+**ST:** ST-15, ST-16, ST-17, ST-20
+
+| Change | Details |
+|--------|---------|
+| Updated endpoint: POST /ai/daily-briefing | Check 3 ignores 22 more indicator, earnings, macro and exchange acronyms (RSI, MACD, EPS, GDP, CPI, NB, …), which no longer get the outside-context caveat (ST-16, BLG-AI-21). Stop recalculation times are converted to UTC before formatting; a naive value is treated as UTC (ST-20, BLG-BE-165). |
+| Updated endpoint: POST /ai/chat | A stop sentence naming any other ticker-like token is not attributed to the focus ticker and stays unattributed (ST-17, BLG-AI-22; ruling `ESC-EXEC-20261030-03`). Stop times converted to UTC as above (ST-20). |
+| Updated endpoint: POST /ai/journal-summary | The language check also fails five advisory phrasing forms as `trading_change` (ST-15, BLG-AI-20; ruling `ESC-EXEC-20261030-02`). No response-shape change. |
+
+### trade_endpoints.md — v2.6.2 (UPDATED)
+
+**EPIC:** EPIC-03
+**ST:** ST-19
+
+| Change | Details |
+|--------|---------|
+| Updated endpoint: POST /trades/{trade_id}/debrief | Writes exactly one `claude_audit_log` row per request: a failed first output followed by a regeneration that raises now writes one `model_call_failed` row with the first attempt's tokens and cost, not two rows (BLG-BE-164). No response change. |
+
+### ai_thesis_generation.md — v2.2.0 (UPDATED); gemini_thesis_generation.md (DELETED); trade_plan_endpoints.md — v0.21 (UPDATED)
+
+**EPIC:** EPIC-03
+**ST:** ST-22
+
+| Change | Details |
+|--------|---------|
+| Removed endpoint: POST /trade-plans/{plan_id}/generate-thesis | Retired; the path now returns 404. Removed directly under `conventions.md` §14.1: no active consumer since "Improve with AI" moved to `POST /trade-plans/generate-plan` on 2026-05-25 (`f91a718a`); recorded in `deprecated_endpoint_sunset_tracker.md` §3a. `generate_setup_thesis()`, its prompt, its rate limit and its endpoint-test entry are removed; `openapi.yaml` v3.45.0 (BLG-BE-163). |
+| Contract consolidation | `gemini_thesis_generation.md` (superseded since v4.2) is merged into `ai_thesis_generation.md` and deleted; `ai_thesis_generation.md` is the only thesis-generation contract and documents `POST /trade-plans/generate-plan`. |
 
 ## v9.13.0 (2026-10-16 — Release v9.13)
 

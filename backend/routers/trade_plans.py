@@ -658,7 +658,6 @@ class GeneratePlanRequest(BaseModel):
 
 
 _GENERATE_PLAN_LIMIT = 10  # ST-08 (EPIC-08, v7.8, BLG-SEC-21) — calls Claude directly, was previously unlimited
-_GENERATE_THESIS_LIMIT = 10  # ST-08 (EPIC-08, v7.8, BLG-SEC-21) — calls Claude directly, was previously unlimited
 
 
 @router.post("/generate-plan")
@@ -698,51 +697,3 @@ def generate_plan(body: GeneratePlanRequest, http_request: Request):
     except Exception as e:
         return JSONResponse(status_code=500, content={"status": "error", "message": str(e)})
 
-
-@router.post("/{plan_id}/generate-thesis")
-def generate_thesis(plan_id: str, http_request: Request):
-    """POST /trade-plans/{plan_id}/generate-thesis — generate thesis via Claude Haiku.
-
-    Returns generated thesis when ANTHROPIC_API_KEY is set.
-    Returns graceful error payload (HTTP 200) when key is absent or API call fails.
-    Audit trail and cost tracking logged in ST-07/ST-08.
-
-    Rate limit: 10 requests/minute/IP (ST-08, EPIC-08, v7.8, BLG-SEC-21) —
-    calls Claude directly via services.gemini_service; was previously unlimited.
-    """
-    client_ip = http_request.client.host if http_request.client else "unknown"
-    allowed, retry_after = _ai_limiter.is_allowed(
-        f"generate-thesis:{client_ip}", limit=_GENERATE_THESIS_LIMIT
-    )
-    if not allowed:
-        return JSONResponse(
-            status_code=429,
-            content={"status": "error", "message": "Rate limit exceeded. Try again later."},
-            headers={"Retry-After": str(retry_after)},
-        )
-    try:
-        from services.gemini_service import generate_setup_thesis
-        ensure_trade_plans_table()
-        portfolio_id = _get_portfolio_id()
-        plan = get_trade_plan_by_id(plan_id, portfolio_id)
-        if not plan:
-            raise HTTPException(status_code=404, detail="Trade plan not found")
-
-        result = generate_setup_thesis(
-            ticker=plan.get("ticker", ""),
-            market=plan.get("market", "US"),
-            setup_type=plan.get("setup_type"),
-            plan_data={
-                "entry_rationale": plan.get("entry_rationale"),
-                "confirmation_criteria": plan.get("confirmation_criteria"),
-            },
-            plan_id=plan_id,
-        )
-        return {"status": "ok", "data": result}
-    except HTTPException as e:
-        return JSONResponse(
-            status_code=e.status_code,
-            content={"status": "error", "message": e.detail if isinstance(e.detail, str) else str(e.detail)},
-        )
-    except Exception as e:
-        return JSONResponse(status_code=500, content={"status": "error", "message": str(e)})

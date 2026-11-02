@@ -40,6 +40,21 @@ def test_trading_change_wording_caught(text):
     assert "trading_change" in journal_summary_language_failures(text)
 
 
+@pytest.mark.parametrize("text", [
+    "Consider tightening stops on volatile names.",
+    "It may be worth revisiting position sizing.",
+    "Stops could be tightened.",
+    "Tighter stops could help.",
+    "Reducing position size after losses would be prudent.",
+    "A review of setups is warranted.",
+    "Stop placement is something to revisit.",
+])
+def test_advisory_phrasings_caught(text):
+    # ST-15 (BLG-AI-20, EPIC-03, v9.14; ruling ESC-EXEC-20261030-02): the
+    # seven sentences in BLG-AI-20's Problem, each [] at c8fd54e7.
+    assert "trading_change" in journal_summary_language_failures(text)
+
+
 def test_staging_sentence_missed_by_prescriptive_scan_alone():
     from services.debrief_service import scan_prescriptive
     assert not scan_prescriptive(STAGING)
@@ -57,6 +72,16 @@ def test_plainly_prescriptive_caught():
     "Notes say the stop needed adjusting once, in March.",
     "Setups were mostly breakouts; sizing was consistent.",
     "A stop was hit. Review of the notes shows patience.",
+    # ST-15 (v9.14): past-tense and descriptive forms of the new phrasings.
+    "Stops were tightened after the loss.",
+    "Tightening stops in March helped.",
+    "The trader considered tightening stops but kept them.",
+    "Reviewing setups each weekend was part of the routine.",
+    "A review of setups was done in April.",
+    "Position size was reduced after losses, which the notes call prudent.",
+    # DoQ review finding 3: negation and a gap across ";".
+    "Stops could not be moved during the gap.",
+    "Higher stops were set in March; that may help explain the smaller losses.",
 ])
 def test_descriptive_wording_passes(text):
     assert journal_summary_language_failures(text) == []

@@ -57,6 +57,27 @@ class TestFocusAttribution:
             assert _check(text, focus="NVDA") == (f"{text} {VOD_NOTE}", "appended")
         assert not any("attribution=focus" in r.getMessage() for r in caplog.records)
 
+    def test_sentence_naming_a_ticker_not_held_not_given_to_focus(self, caplog):
+        # ST-17 (BLG-AI-22, EPIC-03, v9.14; ruling ESC-EXEC-20261030-03): with
+        # focus MU (held), a sentence about TSLA (not held) gets no MU note.
+        positions = _POSITIONS + [{"ticker": "MU", "market": "US", "current_price": 100.0,
+                                   "current_stop": 95.0, "pnl": 1.0, "risk_off_exit": False,
+                                   "stop_calculated_at": datetime(2026, 10, 20, 21, 5, tzinfo=timezone.utc)}]
+        text = "TSLA's stop was hit last week."
+        with caplog.at_level(logging.WARNING):
+            out, outcome = _append_missing_stop_times(text, positions, "POST /ai/chat", "response", "v1.2",
+                                                      focus_ticker="MU")
+        assert (out, outcome) == (text, "unattributed")
+        assert "MU stop" not in out
+        assert "attribution=focus" not in caplog.text
+
+    def test_non_ticker_words_do_not_block_focus(self):
+        out, outcome = _check("Your stop is above the MA and ATR stays OK.", focus="NVDA")
+        assert (out, outcome) == (f"Your stop is above the MA and ATR stays OK. {NVDA_NOTE}", "appended")
+
+    def test_focus_named_by_itself_still_attributed(self):
+        assert _check("NVDA: stop at £450.", focus="NVDA")[1] == "appended"
+
     def test_focus_suffix_folded(self):
         text = "Your stop has not moved."
         assert _check(text, focus="VOD") == (f"{text} {VOD_NOTE}", "appended")

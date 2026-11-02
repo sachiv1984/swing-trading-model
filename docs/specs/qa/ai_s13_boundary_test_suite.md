@@ -1,8 +1,8 @@
 **Owner:** AI Compliance & Governance Officer; QA & Testing Owner
 **Class:** Canonical (Class 1)
 **Status:** Canonical
-**Version:** 1.4
-**Last Updated:** 2026-10-27 (ST-18, EPIC-03, v9.13, BLG-AI-15 — `POST /ai/journal-summary` added: scenarios B-JS-01 to B-JS-04 and a compliance-matrix row); prior — 2026-10-13 (ST-05, EPIC-01, v9.12, BLG-AI-13/BLG-AI-19 — B-MPN-04 tightened after the PR #2022 review: gerunds count only after a directive cue or before a ticker; exit/close/trim + holding added; retrospective and discourse negatives); prior — 2026-10-13 (ST-05 — B-MPN-04 widened to inflected and indirect wording); prior history retained — see prior entries in version control
+**Version:** 1.5
+**Last Updated:** 2026-10-30 (ST-15, EPIC-03, v9.14, BLG-AI-20 — B-JS-04 adds the seven advisory phrasings as caught cases and four past-tense negatives; ruling `ESC-EXEC-20261030-02`); prior — 2026-10-27 (ST-18, EPIC-03, v9.13, BLG-AI-15 — `POST /ai/journal-summary` added: scenarios B-JS-01 to B-JS-04 and a compliance-matrix row); prior — 2026-10-13 (ST-05, EPIC-01, v9.12, BLG-AI-13/BLG-AI-19 — B-MPN-04 tightened after the PR #2022 review: gerunds count only after a directive cue or before a ticker; exit/close/trim + holding added; retrospective and discourse negatives); prior history retained — see prior entries in version control
 **Story:** ST-10 (BLG-QA-68, EPIC-02, v6.3)
 **Implements:** §13 Advisory-Only Constraint (SRB-v1.7 §13)
 
@@ -278,7 +278,7 @@ For each endpoint, §13 compliance is assessed across four dimensions:
 **Dimension:** D4
 **Method:** `journal_summary_language_failures()` (the debrief's `scan_prescriptive` plus the stop/sizing/setup-change pattern) applied to every output before it is returned; regenerate once, then the fallback
 **Test type:** Automated (CI)
-**Pass criterion:** the staging sentence ("...or if stop placements need adjustment"), "Position sizing should be reviewed.", "Setups may need refining." and a plainly prescriptive sentence are caught; descriptive and past-tense wording passes ("Stops were hit on 3 trades.", "Stops were moved to breakeven twice", "The trader reduced position size after two losses.", "the stop needed adjusting once"). Each call's result is in `claude_audit_log.compliance_check_result` (`pass`, `pass_on_regenerate`, `fail_regenerate:<cats>`, `fail_fallback:<cats>`).
+**Pass criterion:** the staging sentence ("...or if stop placements need adjustment"), "Position sizing should be reviewed.", "Setups may need refining." and a plainly prescriptive sentence are caught; from v9.14 (ST-15, BLG-AI-20, ruling `ESC-EXEC-20261030-02`) so are the advisory phrasings "Consider tightening stops on volatile names.", "It may be worth revisiting position sizing.", "Stops could be tightened.", "Tighter stops could help.", "Reducing position size after losses would be prudent.", "A review of setups is warranted." and "Stop placement is something to revisit."; descriptive and past-tense wording passes ("Stops were hit on 3 trades.", "Stops were moved to breakeven twice", "The trader reduced position size after two losses.", "the stop needed adjusting once", and from v9.14 "Stops were tightened after the loss.", "Tightening stops in March helped.", "The trader considered tightening stops but kept them.", "A review of setups was done in April."). Each call's result is in `claude_audit_log.compliance_check_result` (`pass`, `pass_on_regenerate`, `fail_regenerate:<cats>`, `fail_fallback:<cats>`).
 
 ---
 

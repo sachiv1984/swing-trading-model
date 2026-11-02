@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Version:** 1.1
-**Last Updated:** 2026-09-14 (ST-04, EPIC-01, v9.4, BLG-API-03 — re-ran the deprecated-endpoint scan, 0 matches, re-confirmed §3 has no outstanding removal follow-up; no schema change); prior — 2026-09-08 (ST-43, EPIC-05, v9.2, BLG-SPEC-119 — tracker created)
+**Version:** 1.2
+**Last Updated:** 2026-10-30 (ST-22, EPIC-03, v9.14, BLG-BE-163 — §3a records the direct removal of POST /trade-plans/{plan_id}/generate-thesis under conventions.md §14.1, no active consumer); prior — 2026-09-14 (ST-04, EPIC-01, v9.4, BLG-API-03 — re-ran the deprecated-endpoint scan, 0 matches, re-confirmed §3 has no outstanding removal follow-up; no schema change); prior — 2026-09-08 (ST-43, EPIC-05, v9.2, BLG-SPEC-119 — tracker created); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -36,6 +36,14 @@ These predate the `conventions.md` §14 deprecation-window policy (added v8.3, 2
 
 No endpoint in either row above remains live under its old shape — both are fully resolved, listed for audit-trail completeness only.
 
+## 3a. Removed Directly Under §14.1 (No Active Consumer)
+
+| Endpoint | Removed | Why no notice window | Replacement | Reference |
+|----------|---------|----------------------|-------------|-----------|
+| `POST /trade-plans/{plan_id}/generate-thesis` | 2026-10-30 (v9.14); now 404 | `conventions.md` §14.1: no active consumer. No frontend code has called it since "Improve with AI" moved to `generate-plan` on 2026-05-25 (`f91a718a`); `src/` has no reference to the path (checked 2026-10-30), and no external-integration contract documents it. | `POST /trade-plans/generate-plan` (`ai_thesis_generation.md` v2.2.0); the TradePlan "Generate thesis" button is a no-model template | ST-22, EPIC-03, v9.14, BLG-BE-163; `api_changelog.md` v9.14.0 |
+
+The §3 row's contract file `gemini_thesis_generation.md` was deleted in the same change; it had been superseded by `ai_thesis_generation.md` since v4.2.
+
 ## 4. Process Reference
 
 See `conventions.md` §14 for the full deprecation-window policy (30-day minimum for internally-consumed endpoints, 90-day minimum for externally-consumed ones, sign-off requirements for exceptions). This tracker does not restate that policy — it is the live register §14.4 points to.
@@ -50,4 +58,5 @@ See `conventions.md` §14 for the full deprecation-window policy (30-day minimum
 
 | Date | Version | Summary |
 |---|---|---|
+| 2026-10-30 | 1.2 | ST-22 (EPIC-03, v9.14, BLG-BE-163): §3a added — `POST /trade-plans/{plan_id}/generate-thesis` removed directly under `conventions.md` §14.1 (no active consumer since 2026-05-25); `gemini_thesis_generation.md` deleted. |
 | 2026-09-08 | 1.0 | Tracker created (ST-43, EPIC-05, v9.2, BLG-SPEC-119). |

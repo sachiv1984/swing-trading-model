@@ -1,12 +1,13 @@
 """
 Rate-limit remediation tests — ST-08 (EPIC-08, v7.8, BLG-SEC-21).
 
-Covers the 4 endpoints newly gated by an app-level rate limit as part of
+Covered 4 endpoints newly gated by an app-level rate limit as part of
 this cycle's rate-limiting audit remediation:
   - GET  /health                          (public_limiter, 60/min/IP)
   - POST /ai/journal-summary               (_ai_limiter, 10/min/IP)
   - POST /trade-plans/generate-plan        (_ai_limiter, 10/min/IP)
-  - POST /trade-plans/{plan_id}/generate-thesis (_ai_limiter, 10/min/IP)
+(the fourth, POST /trade-plans/{plan_id}/generate-thesis, was retired in
+v9.14, ST-22, BLG-BE-163; its test now asserts the route returns 404)
 
 Each test drives the limiter to its configured ceiling and confirms the
 next request receives HTTP 429 with a Retry-After header. Business-logic
@@ -87,18 +88,11 @@ def test_generate_plan_rate_limit_returns_429_after_10_requests():
         _reset(key)
 
 
-def test_generate_thesis_rate_limit_returns_429_after_10_requests():
-    key = f"generate-thesis:{_TEST_IP}"
-    _reset(key)
-    try:
-        for _ in range(trade_plans_router._GENERATE_THESIS_LIMIT):
-            resp = CLIENT.post("/trade-plans/some-plan-id/generate-thesis")
-            assert resp.status_code != 429
-        resp = CLIENT.post("/trade-plans/some-plan-id/generate-thesis")
-        assert resp.status_code == 429
-        assert "Retry-After" in resp.headers
-    finally:
-        _reset(key)
+def test_retired_generate_thesis_route_returns_404():
+    # ST-22 (BLG-BE-163, EPIC-03, v9.14): the route and its rate limit are retired.
+    assert not hasattr(trade_plans_router, "_GENERATE_THESIS_LIMIT")
+    resp = CLIENT.post("/trade-plans/some-plan-id/generate-thesis")
+    assert resp.status_code == 404
 
 
 def test_ai_and_public_limiters_are_distinct_instances():

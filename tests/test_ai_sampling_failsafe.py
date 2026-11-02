@@ -124,15 +124,6 @@ class TestEachAiEndpointUnchangedBySamplingFailure:
         assert ok["available"] is True and ok["fields"] == fields
         assert ok == imp == hook
 
-    def test_generate_thesis(self):
-        from services import gemini_service
-        with patch.object(gemini_service, "ANTHROPIC_API_KEY", "k"), \
-             patch.object(gemini_service, "_call_claude", return_value=("A thesis.", MagicMock())), \
-             patch.object(gemini_service, "_log_audit"):
-            ok, imp, hook = _run_three_ways(lambda: gemini_service.generate_setup_thesis("AAPL"))
-        assert ok["thesis"] == "A thesis."
-        assert ok == imp == hook
-
     def test_post_trade_debrief(self):
         from services import debrief_service
         trade = {"id": "t1", "portfolio_id": "pf", "position_id": None, "ticker": "AAPL",

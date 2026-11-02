@@ -59,6 +59,16 @@ class TestDetection:
     def test_non_ticker_words_ignored(self, word):
         assert _summary_ticker_caveat(f"The {word} line is noted.", [], "") == (None, None)
 
+    @pytest.mark.parametrize("summary", [
+        "RSI is overbought on NVDA.",
+        "MACD crossed; EPS beat.",
+        "GDP and CPI data due.",
+        "NB: no exits.",
+    ])
+    def test_indicator_and_macro_acronyms_get_no_caveat(self, summary):
+        # ST-16 (BLG-AI-21, v9.14): the four summaries from the item's Problem.
+        assert _summary_ticker_caveat(summary, _TICKERS, _CONTEXT) == (None, None)
+
     def test_mixed_case_and_single_letters_not_tokens(self):
         assert _summary_ticker_caveat("I hold A position; P&L is up and Risk-On holds.", [], "") == (None, None)
 

@@ -18,7 +18,7 @@ Changing a model is a deliberate edit to this file.
 """
 
 # Post-trade debrief focus area, AI journal summary, trade-plan generation
-# (generate-plan, generate-thesis).
+# (generate-plan; generate-thesis was retired in v9.14, ST-22).
 CLAUDE_HAIKU_4_5 = "claude-haiku-4-5-20251001"
 
 # Daily briefing and chat.

@@ -28,7 +28,7 @@ import json
 import re
 import time
 import anthropic
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional
 
 from fastapi import HTTPException
@@ -120,6 +120,15 @@ def _audit_failed_model_call(create_claude_audit_entry, endpoint: str, prompt_ve
         logger.warning("failed-call audit row not written for %s", endpoint, exc_info=True)
 
 
+def _as_utc(ts: datetime) -> datetime:
+    """ST-20 (BLG-BE-165, v9.14): stop_calculated_at is TIMESTAMPTZ and
+    psycopg returns it in the session's timezone. Convert an aware value to
+    UTC; treat a naive value as UTC."""
+    if ts.tzinfo is None:
+        return ts.replace(tzinfo=timezone.utc)
+    return ts.astimezone(timezone.utc)
+
+
 def _stop_recalculated_label(position: dict) -> str:
     """ST-08 (BLG-BE-141, v9.11): when the quoted stop was last recalculated
     (`positions.stop_calculated_at`, DS-22). NULL means the stop has not
@@ -132,7 +141,7 @@ def _stop_recalculated_label(position: dict) -> str:
             ts = datetime.fromisoformat(ts.replace("Z", "+00:00"))
         except ValueError:
             return f"stop last recalculated {ts}"
-    return f"stop last recalculated {ts.strftime('%Y-%m-%d %H:%M')} UTC"
+    return f"stop last recalculated {_as_utc(ts).strftime('%Y-%m-%d %H:%M')} UTC"
 
 
 
@@ -199,7 +208,7 @@ def _stop_time_date(position: dict) -> Optional[str]:
             ts = datetime.fromisoformat(ts.replace("Z", "+00:00"))
         except ValueError:
             return None
-    return ts.strftime("%Y-%m-%d")
+    return _as_utc(ts).strftime("%Y-%m-%d")
 
 
 def _ticker_in(ticker: str, sentence: str) -> bool:
@@ -233,7 +242,9 @@ def _append_missing_stop_times(text, positions: list, endpoint: str, field: str,
     folded). For chat, `focus_ticker` (context.ticker) takes a stop sentence
     that names no held ticker, if it is itself held (ST-16, BLG-AI-18; ruling
     ESC-EXEC-20261027-01 (B)); a sentence naming a held ticker is attributed
-    only to the tickers it names. A cited position whose stop_calculated_at date (or "not
+    only to the tickers it names. A sentence naming any other ticker-like
+    token is not given to the focus ticker (ST-17, BLG-AI-22, v9.14;
+    condition 3 as amended by ESC-EXEC-20261030-03). A cited position whose stop_calculated_at date (or "not
     recalculated since entry", when NULL) appears nowhere in the field gets
     its label appended after the model's text. Fails open."""
     if not isinstance(text, str) or not text:
@@ -255,7 +266,7 @@ def _append_missing_stop_times(text, positions: list, endpoint: str, field: str,
             cited = [t for t in by_ticker if _ticker_in(t, sentence)]
             if own and own not in cited:
                 cited.append(own)
-            if not cited and focus:
+            if not cited and focus and not _names_other_ticker(sentence, focus):
                 cited.append(focus)
                 if focus not in missing and not _stop_time_present(text, by_ticker[focus]):
                     via_focus.add(focus)
@@ -319,10 +330,23 @@ def _check_briefing_stop_times(parsed: dict, positions: list):
 # appended after the model's text (and after any stop-time notes). Logged and
 # counted; model text is never edited; fails open.
 _TICKER_TOKEN_RE = re.compile(r"(?<![A-Za-z0-9_.&$£])[A-Z][A-Z0-9_]{1,14}(?:\.[A-Z]{1,2})?(?![A-Za-z0-9_&])")
+# ST-16 (BLG-AI-21, v9.14): indicator, earnings, macro and exchange
+# acronyms added; the ruling's list is a minimum ("at least").
 _NON_TICKER_WORDS = frozenset({
     "UK", "US", "USD", "GBP", "GBX", "EXIT", "ENTER", "MONITOR", "HOLD", "ATR", "MA", "ETF", "AI", "UTC",
     "SPY", "FTSE", "RISK", "ON", "OFF", "STOP", "BREACH", "OK", "YTD",
+    "RSI", "MACD", "EMA", "SMA", "VWAP", "EPS", "PE", "IPO", "CEO", "CFO",
+    "GDP", "CPI", "PPI", "PMI", "FOMC", "FED", "ECB", "BOE", "NB", "NYSE", "LSE", "NASDAQ",
 })
+
+
+def _names_other_ticker(sentence: str, focus: str) -> bool:
+    """ST-17 (BLG-AI-22, v9.14; ruling ESC-EXEC-20261030-03): whether the
+    sentence names a ticker-like token, not a known non-ticker word, other
+    than the focus ticker (normalised as ST-15)."""
+    focus_n = _normalise_ticker(focus)
+    return any(m.group(0) not in _NON_TICKER_WORDS and _normalise_ticker(m.group(0)) != focus_n
+               for m in _TICKER_TOKEN_RE.finditer(sentence))
 
 
 def _word_in(token: str, text: str) -> bool:
@@ -426,6 +450,33 @@ _TRADING_CHANGE_RE = re.compile(
     r"|modif|refin|mov|reduc|increas|cut|lower|rais)\w*",
     re.IGNORECASE,
 )
+# ST-15 (BLG-AI-20, v9.14): ruling ESC-EXEC-20261030-02 extends (A) to
+# advisory phrasings with no "needs/should" cue. Same subjects and change
+# verbs; reported as trading_change; past tense still passes.
+_TC_SUBJECT = (r"(?:stop[- ]loss(?:es)?|stop (?:placement|level|distance)s?|stops?"
+               r"|position siz(?:e|es|ing)|sizing|setups?)")
+_TC_VERB = (r"(?:adjust|chang|tighten|widen|loosen|revis|reconsider|rethink|review"
+            r"|modif|refin|mov|reduc|increas|cut|lower|rais)\w*")
+_TC_GERUND = (r"(?:adjust|chang|tighten|widen|loosen|revis|reconsider|rethink|review"
+              r"|modif|refin|mov|reduc|increas|cut|lower|rais)\w*ing")
+_TC_GAP = r"[^.!?;\n]{0,%d}?"  # DoQ review: a gap never crosses ";"
+_ADVISORY_CHANGE_RES = [re.compile(p, re.IGNORECASE) for p in (
+    # (1) "Consider tightening stops ..."
+    rf"\b(?:consider|try)\b{_TC_GAP % 25}\b{_TC_VERB}{_TC_GAP % 40}\b{_TC_SUBJECT}\b",
+    # (2) "It may be worth revisiting position sizing." / "Stops are worth revisiting."
+    rf"\bworth\b{_TC_GAP % 15}\b{_TC_VERB}{_TC_GAP % 40}\b{_TC_SUBJECT}\b",
+    rf"\b{_TC_SUBJECT}\b{_TC_GAP % 40}\bworth\b{_TC_GAP % 15}\b{_TC_VERB}",
+    # (3) "Stops could be tightened."
+    rf"\b{_TC_SUBJECT}\b{_TC_GAP % 40}\b(?:could|should|might|may|would|can|must)\s+(?!not\b|never\b)(?:\w+\s+)?be\s+{_TC_VERB}",
+    # (4) "Tighter stops could help." / "Reducing position size ... would be prudent." /
+    #     "A review of setups is warranted."
+    rf"(?:\b{_TC_GERUND}|\b(?:review|revision|rethink|reassessment|reconsideration)\s+of"
+    rf"|\b(?:tighter|wider|smaller|larger|lower|higher))\b{_TC_GAP % 30}\b{_TC_SUBJECT}\b{_TC_GAP % 40}"
+    rf"\b(?:(?:would|could|might|may)\s+(?:be\s+(?:prudent|wise|better|sensible|helpful|advisable)|help)"
+    rf"|(?:is|are)\s+(?:warranted|needed|advisable|recommended))\b",
+    # (5) "Stop placement is something to revisit."
+    rf"\b{_TC_SUBJECT}\b{_TC_GAP % 40}\b(?:is|are)\s+(?:something|one thing|an area)\s+to\s+{_TC_VERB}",
+)]
 JOURNAL_SUMMARY_WITHHELD_MESSAGE = (
     "The AI summary was withheld because it did not pass the advisory-language check. "
     "Your journal notes are unchanged; please try again later."
@@ -440,7 +491,7 @@ def journal_summary_language_failures(text: Optional[str]) -> list:
     found = []
     if scan_prescriptive(text):
         found.append("prescriptive")
-    if _TRADING_CHANGE_RE.search(text):
+    if _TRADING_CHANGE_RE.search(text) or any(r.search(text) for r in _ADVISORY_CHANGE_RES):
         found.append("trading_change")
     return found
 

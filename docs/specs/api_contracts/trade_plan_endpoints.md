@@ -1,8 +1,8 @@
 **Owner:** Head of Specs Team
 **Class:** Specification (Class 2)
 **Status:** Active
-**Version:** 0.20
-**Last Updated:** 2026-10-13 (ST-33, EPIC-05, v9.12, BLG-SPEC-176 — DELETE /trade-plans/{id} response marked as a named exception to conventions.md §12, §12.1); prior — 2026-10-08 (ST-22, EPIC-03, v9.11, BLG-API-06 — POST /trade-plans double-submit disposition: client-side submit guard; 0.18 is EPIC-01's ST-09); prior — 2026-09-29 (ST-20, EPIC-05, v9.8, BLG-API-04 — added Idempotency subsections to all 8 mutating endpoints in this file; flagged undefined double-submit duplicate-plan-creation behaviour on POST /trade-plans as BLG-API-06); prior history retained — see prior entries in version control
+**Version:** 0.21
+**Last Updated:** 2026-10-30 (ST-22, EPIC-03, v9.14, BLG-BE-163 — POST /trade-plans/{plan_id}/generate-thesis section removed; the endpoint is retired); prior — 2026-10-13 (ST-33, EPIC-05, v9.12, BLG-SPEC-176 — DELETE /trade-plans/{id} response marked as a named exception to conventions.md §12, §12.1); prior — 2026-10-08 (ST-22, EPIC-03, v9.11, BLG-API-06 — POST /trade-plans double-submit disposition: client-side submit guard; 0.18 is EPIC-01's ST-09); prior history retained — see prior entries in version control
 **Cycle:** 2026-04-29__release-v3.1 (ST-01); 2026-05-22__release-v4.0 (ST-12); 2026-07-08__release-v6.8 (ST-05); 2026-07-17__release-v7.5 (ST-03); 2026-07-21__release-v7.7 (ST-07); 2026-08-12__release-v8.7 (ST-01/ST-03); 2026-08-14__release-v8.8 (ST-09); 2026-08-18__release-v8.9 (ST-13); 2026-08-21__release-v9.0 (ST-07); 2026-10-12__release-v9.12 (ST-33)
 
 ---
@@ -229,60 +229,6 @@ Retrieve the trade plan(s) linked to a specific position.
   "data": [ /* array of trade plan objects, typically 0 or 1 */ ]
 }
 ```
-
-## POST /trade-plans/{plan_id}/generate-thesis
-
-Generate a setup thesis for an existing trade plan using Claude Haiku 4.5.
-
-Returns a generated thesis when `ANTHROPIC_API_KEY` is configured. Returns a graceful error payload (HTTP 200 with `available: false`) when the key is absent or the API call fails.
-
-**Authentication:** Standard API key authentication.
-
-**Idempotency**
-
-- Read-only against `trade_plans` — this endpoint returns a suggested thesis for the client to optionally save via `PUT /trade-plans/{id}`; it does not itself persist anything. Safe to repeat, though the generated text is not byte-identical across calls (fresh LLM generation each time).
-
-### Path Parameters
-
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| plan_id | UUID | Trade plan ID |
-
-### Response (HTTP 200 — key configured, generation successful)
-
-```json
-{
-  "status": "ok",
-  "data": {
-    "thesis": "Strong momentum breakout above 52-week high with volume confirmation...",
-    "model_version": "claude-haiku-4-5-20251001",
-    "prompt_version": "v3.0",
-    "input_hash": "a3f2c1d4e5b6...",
-    "output_hash": "9f8e7d6c5b4a...",
-    "available": true
-  }
-}
-```
-
-### Response (HTTP 200 — key absent or API error)
-
-```json
-{
-  "status": "ok",
-  "data": {
-    "available": false,
-    "error": "ANTHROPIC_API_KEY not configured"
-  }
-}
-```
-
-### Error Responses
-
-| HTTP status | Description |
-|------------|-------------|
-| 404 | Trade plan not found |
-
----
 
 ## POST /trade-plans/generate-plan
 
@@ -552,6 +498,7 @@ score = clamp(round(win_rate × 0.6 + max(average_pnl_pct, 0) × 0.4), 0, 100)
 
 | Version | Date | Summary |
 |---------|------|---------|
+| 0.21 | 2026-10-30 | ST-22 (EPIC-03, v9.14, BLG-BE-163): `POST /trade-plans/{plan_id}/generate-thesis` section removed; the endpoint is retired (404). `generate-plan` is documented here and in `ai_thesis_generation.md`. |
 | 0.20 | 2026-10-13 | ST-33 (EPIC-05, v9.12, BLG-SPEC-176): `DELETE /trade-plans/{id}`'s `{status, message}` body recorded as a named exception to `conventions.md` §12 (§12.1). Live route already matches; no behaviour change. |
 | 0.19 | 2026-10-08 | ST-22 (EPIC-03, v9.11, BLG-API-06): `POST /trade-plans` double-submit disposition recorded — client-side submit guard on the Trade Plan page; no server change. |
 | 0.18 | 2026-10-08 | ST-09 (EPIC-01, v9.11, BLG-BE-142): `model_version` examples show the pinned snapshot `claude-haiku-4-5-20251001`. |
