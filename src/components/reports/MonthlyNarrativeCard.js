@@ -12,7 +12,7 @@
  * Condition 7).
  */
 import { useEffect, useRef, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { formatDistanceToNow } from "date-fns";
 import { X } from "lucide-react";
 import { base44, apiFetch } from "../../api/base44Client";
@@ -55,6 +55,7 @@ export default function MonthlyNarrativeCard({ year }) {
   const [pending, setPending] = useState(false);
   const [error, setError] = useState(null);
   const yearRef = useRef(year);
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     yearRef.current = year;
@@ -102,6 +103,11 @@ export default function MonthlyNarrativeCard({ year }) {
         return;
       }
       setGenerated(data);
+      // ST-27 (EPIC-04, v9.14, BLG-FE-216): keep the generated summary as this
+      // year's stored one, so switching tax year and back shows it at once
+      // (reports.md §AI Summary, Behaviour → Load) with no empty-state render
+      // and no extra POST. `generated` alone is lost when the card remounts.
+      queryClient.setQueryData(["monthlyPnlNarrative", requestedYear], { status: "ok", data });
     } catch {
       if (yearRef.current === requestedYear) setError(FAILURE_MESSAGE);
     } finally {
