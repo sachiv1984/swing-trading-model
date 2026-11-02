@@ -2,7 +2,7 @@
 **Class:** Planning Document (Class 4)
 **Status:** Active
 **Version:** 1.4
-**Last Updated:** 2026-11-02 (Remediation 003 added — npm rescan triage, issue #2136); prior — 2026-10-06 (Remediation 002 added — npm rescan triage, issue #1885); prior — 2026-06-08
+**Last Updated:** 2026-11-02 (Remediation 003 added and signed off — npm rescan triage, issue #2136); prior — 2026-10-06 (Remediation 002 added — npm rescan triage, issue #1885); prior — 2026-06-08
 **Cycle:** 2026-06-08__release-v5.2 (ST-10/ST-11 — BLG-GOV-98/BLG-GOV-99)
 
 ---
@@ -343,4 +343,4 @@ Build, `serve`, full backend suite and full Playwright E2E verified on PR #1893.
 | New-vs-baseline findings (rescan script) | 3 | **0** |
 | Production runtime impact | None | None |
 
-**Cybersecurity & Trust Lead sign-off:** Pending
+**Cybersecurity & Trust Lead sign-off:** Approved with conditions — Sprint Execution Engine (agent-mediated, Cybersecurity & Trust Lead role), 2026-11-02; conditions and evidence in `docs/security/npm_audit_rescan_triage_2026-11-02.md` §6

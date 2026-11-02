@@ -1,7 +1,7 @@
 **Owner:** Cybersecurity & Trust Lead
 **Class:** Operational Record (Class 3)
-**Status:** Draft
-**Last Updated:** 2026-11-02 (triage record created, Cybersecurity & Trust Lead sign-off pending)
+**Status:** Active
+**Last Updated:** 2026-11-02 (Cybersecurity & Trust Lead sign-off recorded); prior — 2026-11-02 (triage record created)
 **Source:** GitHub issue #2136 (`dependency-vuln-rescan.yml`, 2026-11-01 scheduled run) — `[GOVERNANCE]` hotfix, out-of-cycle (`2026-10-29__release-v9.14` Verified, post-ship closure not yet run)
 
 # Monthly Rescan npm audit Findings — Triage (November 2026)
@@ -49,14 +49,31 @@ Verified: `npm ci --legacy-peer-deps` succeeds; `CI=false PUBLIC_URL=/ npm run b
 
 ## 5. Escalation Condition Check
 
-The October sign-off's condition (3) asks for a prioritisation concern to be raised with the Head of Engineering if a third consecutive rescan triage is dominated by `react-scripts`-pinned findings without BLG-TECH-21 scheduled. All 3 new packages in this triage were fixable without the migration, so this record's proposed reading is that the condition is not met. BLG-TECH-21's Provisional-Target remains v10.0. The Cybersecurity & Trust Lead confirms or overrides this reading at sign-off.
+The October sign-off's condition (3) asks for a prioritisation concern to be raised with the Head of Engineering if a third consecutive rescan triage is dominated by `react-scripts`-pinned findings without BLG-TECH-21 scheduled. All 3 new packages in this triage were fixable without the migration, so the condition is not met. BLG-TECH-21's Provisional-Target remains v10.0. Confirmed at sign-off (§6).
 
 ## 6. Sign-off
 
 - [x] All 3 newly-reported packages individually assessed
 - [x] 3 fixed by a lockfile bump, verified via install, build and serve
 - [x] Rescan analysis script reports `new_finding_count=0` post-fix
-- [ ] Full PR CI passes, including Playwright E2E
-- [ ] Escalation condition reading in §5 confirmed
-- Signed off by: **Pending — Cybersecurity & Trust Lead**
-- Date: Pending
+- [x] Full PR CI passes, including Playwright E2E (PR #2140, 33/33 checks at `37f8944a`)
+- [x] Escalation condition reading in §5 confirmed
+- Signed off by: Cybersecurity & Trust Lead — **Approved with conditions** (agent-mediated, acting in role at Product Owner's request)
+- Date: 2026-11-02
+
+**Independence.** The same agent session prepared this triage and performed this review. The checks below were re-run from a fresh checkout of the PR head rather than carried over from the triage, but this is not a review by a separate person. The Product Owner's acceptance of the PR remains a separate gate.
+
+**Sign-off review.** The triage's own verification (install, build, serve) never executes the three fixed packages, because they run only under the dev server. The review therefore tested that path directly and re-verified the remaining claims from PR head `37f8944a`:
+
+- **Lockfile change is exactly as described.** The diff touches 8 packages, version, `resolved` and `integrity` only. Every `resolved` URL is on `registry.npmjs.org`, and every `integrity` value matches the registry. `npm audit signatures` verified 1,493 registry signatures and 137 attestations.
+- **Rescan result reproduced with both tools.** A real `pip-audit` (same flags as the workflow, 0 findings) and a fresh `npm audit` through `scripts/check_dependency_vuln_rescan.py` gave `new_finding_count=0`, `pip_audit_status=ok`, `npm_audit_status=ok`.
+- **Fixed packages work where they execute.** `npm start` compiled and served the app over HTTP. With `HTTPS=true`, it generated a self-signed certificate through `selfsigned` and `node-forge` 1.4.2 and served over TLS.
+- **No changed package ships to the browser.** A source-map inspection of the production bundle found none of the 8 changed packages, and none of `postcss`, `svgo`, `webpack-dev-server`, `webpack-dev-middleware`, `selfsigned` or `express`. The same inspection found 1,154 `node_modules` sources, so the check is able to detect bundled dependencies. The lockfile shows these packages as non-dev only because `react-scripts` sits under `dependencies`.
+- **No deployed path runs them.** `render.yaml` and `deploy.yml` publish the static build and do not run the dev server.
+- **Baseline accounting holds.** All 15 remaining IDs still appear in `npm audit`, so no stale entry remains. `postcss` accept-risk traces to the August review at package level, and its IDs are not listed there individually. The vulnerable `postcss` copy is the 7.0.39 instance nested under `resolve-url-loader`, which runs only at build time on repo-controlled input.
+
+**Escalation ruling.** Condition (3) of the October sign-off is not met, because it addresses findings that cannot be fixed without the migration and all 15 new IDs here were fixed by a lockfile bump. This is a narrow outcome: all 5 remaining HIGH findings are `react-scripts`-pinned, and BLG-TECH-21 still has only a provisional target. Scheduling remains the Head of Engineering's and Product Owner's decision.
+
+**Residual risk accepted** is unchanged in kind from the October record: confined to a developer's machine while `npm start` is running. That record's guidance stands (avoid untrusted sites while it runs; use `HOST=localhost npm start` on untrusted networks).
+
+**Conditions of acceptance:** (1) after merge, run `dependency-vuln-rescan.yml` by `workflow_dispatch` and confirm it finishes green without filing an issue; if it reports new findings, they are triaged rather than added to the baseline; (2) review-by 2027-02-16 stands for the remaining accept-risk findings, and this approval does not extend it; (3) a new rescan finding that can be fixed only through BLG-TECH-21 before that date triggers the escalation to the Head of Engineering.
