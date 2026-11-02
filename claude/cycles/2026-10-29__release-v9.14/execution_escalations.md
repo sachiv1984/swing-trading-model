@@ -1,7 +1,7 @@
 Owner: PMO Lead
 Class: Planning Document (Class 4)
 Status: Active
-Last Updated: 2026-10-30
+Last Updated: 2026-11-02
 
 # Execution Escalations — 2026-10-29__release-v9.14
 
@@ -72,3 +72,20 @@ Last Updated: 2026-10-30
 - **Blocks execution:** No
 - **Disposition:** Resolved
 - **Resolution summary (2026-10-30T16:49:32Z):** AI Compliance & Governance Officer ruling, given in-session by the user acting in that role, dated 2026-10-30: **Approved as proposed** — `ESC-EXEC-20261027-01` (B) condition 3 amended: a chat stop sentence is attributed to the held focus ticker only when it names no ticker-like token (`_TICKER_TOKEN_RE` match not in `_NON_TICKER_WORDS`, compared in ST-15 normalised form) other than the focus ticker; otherwise it is left unattributed (`stop_time_missing_unattributed`). §13.2: the system does not present a code-written note as being about a position the sentence is not about. §13.5 "BLG-FEAT-50/51 (AI Advisory Layer — daily briefing + chat)": the amendment narrows a code-written note, adds no AI authority and stays within that clearance. Conditions 1, 2 and 4–7 unchanged. ST-17 reclassified `autonomous`.
+
+## ESC-EXEC-20261102-01
+
+- **Raised at:** 2026-11-02T10:47:50Z
+- **Routine:** Sprint Execution
+- **Cycle ID:** 2026-10-29__release-v9.14
+- **Step:** STEP 3.1.D (EPIC-07 execution loop, first sub-step of ST-45 per `sprint_backlog.md` ST-45 Notes, RISK-05)
+- **ST/EPIC item:** ST-45 / EPIC-07 (BLG-GOV-398)
+- **Trigger type:** Lifecycle
+- **Blocking statement:** `scripts/scan_backlog_gate_conditions.py` reports a "gating item shipped — verify" list (ST-40, v9.12). `release_planning_prompt.md` §1.3a lets Release Planning treat such an item as ungated for one run, but its gate-field edit bounds cover only the date-lapsed list, and it routes stale gate text on this list to "the next `groom backlog` run", which has no matching step. The stale gate text therefore stays, and every later scan lists the item again. ST-45 needs the Head of Specs Team to choose where the write-back lives: **(a)** extend §1.3a's gate-field carve-out to clear a gate whose whole condition is a cited shipped item, under the same evidence bound as the date-lapsed rule's option (a) (bounds 1–6: scope, fields, cited evidence, AC restatement, disclosure in `run_manifest.md`); or **(b)** add the list as a standing step in `backlog_management_prompt.md` (`groom backlog`).
+- **Engine recommendation (non-binding):** (a). The edit lands in the same pass that reads the list, before the ready pool is fixed. `ESC-CLOSE-20261007-01` rejected deferring the date-lapsed edits to `groom backlog` for that reason, and `groom backlog` runs less often than Release Planning, so under (b) an item could be re-listed for several cycles.
+- **Owning authority:** Head of Specs Team
+- **Unblock criteria:** a dated choice, (a) or (b), recorded in this escalation's resolution. The engine then applies it with the CLAUDE.md §6 checklist (checking §8 step 2a against ST-44's `OPERATIONAL_GUIDE.md` bump). AC 2 is `post-merge` and tracked by `BLG-GOV-400`.
+- **SLA due-by:** 2026-11-03T10:47:50Z (24h — Lifecycle)
+- **Blocks execution:** No
+- **Disposition:** Resolved
+- **Resolution summary (2026-11-02T10:51:11Z):** Head of Specs Team choice, given in-session by the user acting in that role, dated 2026-11-02: **(a)** — extend `release_planning_prompt.md` §1.3a's gate-field carve-out to clear, in the same pass, a gate whose whole condition is met by cited shipped items, under the date-lapsed rule's bounds. Applied by ST-45 (`release_planning_prompt.md` v2.65→v2.66, §1.3a and §7 write scope) with the CLAUDE.md §6 checklist. ST-45 reclassified `autonomous`; AC 2 stays `post-merge` (`BLG-GOV-400`).

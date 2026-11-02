@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-29T14:51:40Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-02T10:45:19Z",
+  "last_updated_utc": "2026-11-02T10:51:30Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-02",
@@ -972,19 +972,26 @@
         "ST-44": {
           "title": "check_execution_state_consistency.py checks deviations_filed and the escalation map",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "github_issue": 2121,
           "branch": "exec/2026-10-29__release-v9.14/EPIC-07",
-          "spec_references": [],
+          "spec_references": [
+            "scripts/check_execution_state_consistency.py",
+            "tests/test_check_execution_state_consistency.py",
+            "claude/system/execution_prompt.md#9.2 State Update Rule (Hard Requirement)"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "acceptance_verified": false,
-          "commit_sha": null
+          "deviations_filed": true,
+          "acceptance_verified": true,
+          "commit_sha": "d6a4892d0720735565700c593b9a2d2f2ebf976b",
+          "completed_utc": "2026-11-02T10:47:29Z",
+          "last_completed_substep": "3.1.A.10a",
+          "notes": "AC met: script fails naming the story (deviations_filed) and the ID (ESC-EXEC heading without open_escalations key); 8 new tests, 19/19 pass; §9.2 names both checks; CLAUDE.md §6 checklist complete (execution_prompt v3.90, OG v4.244). CI 4c/4d: all 7 workflows success on d6a4892d (CI Pytest 41431620628, Playwright 41431620444). Deviation check: none. Out-of-scope finding filed: BLG-GOV-401."
         },
         "ST-45": {
           "title": "Give the gate scan's \"gating item shipped\" findings a write-back path",
-          "classification": "delegated_decision",
+          "classification": "autonomous",
           "status": "not_started",
           "github_issue": 2122,
           "branch": "exec/2026-10-29__release-v9.14/EPIC-07",
@@ -993,7 +1000,8 @@
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
           "acceptance_verified": false,
-          "commit_sha": null
+          "commit_sha": null,
+          "notes": "Raised as delegated_decision: ESC-EXEC-20261102-01 at 2026-11-02T10:47:50Z (blocked_decision); Head of Specs Team choice (a) given in-session 2026-11-02T10:51:11Z; reclassified autonomous."
         },
         "ST-46": {
           "title": "Document the gate-status indicator as a reusable component pattern",
@@ -1138,7 +1146,8 @@
     "ST-40",
     "ST-41",
     "ST-42",
-    "ST-43"
+    "ST-43",
+    "ST-44"
   ],
   "open_escalations": {
     "ESC-EXEC-20261029-01": {
@@ -1164,6 +1173,12 @@
       "disposition": "Resolved",
       "raised_utc": "2026-10-30T15:55:23Z",
       "resolved_utc": "2026-10-30T16:49:32Z"
+    },
+    "ESC-EXEC-20261102-01": {
+      "item": "ST-45",
+      "disposition": "Resolved",
+      "raised_utc": "2026-11-02T10:47:50Z",
+      "resolved_utc": "2026-11-02T10:51:11Z"
     }
   },
   "merge_gate": {
