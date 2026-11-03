@@ -1,8 +1,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 1.20
-**Last Updated:** 2026-10-30 (ST-09, EPIC-02, v9.14, BLG-BE-190 — §5d.2's reproducibility note quotes the corrected US sizing formula `risk_amount × fx_rate_used / stop_distance`); prior — 2026-10-15 (post-ship closure `2026-10-12__release-v9.12` §6 row 5 — Known Deviations: DEV-v3.4-01 marked resolved in v3.5); prior — 2026-10-12 (v9.12 design gate — ST-24/BLG-FE-210: `research_pending` badge and Abandon Plan button to amber-700); prior history retained — see prior entries in version control
+**Version:** 1.21
+**Last Updated:** 2026-11-03 (v9.15 design gate — ST-03/BLG-FE-246: §5d.2 FX input label aligned with every FX input); prior — 2026-10-30 (ST-09, EPIC-02, v9.14, BLG-BE-190 — §5d.2's reproducibility note quotes the corrected US sizing formula `risk_amount × fx_rate_used / stop_distance`); prior — 2026-10-15 (post-ship closure `2026-10-12__release-v9.12` §6 row 5 — Known Deviations: DEV-v3.4-01 marked resolved in v3.5); prior history retained — see prior entries in version control
 **Design Source (v1.16 setup_type copy fix):** docs/design/2026-09-23__release-v9.7/trade-plan-clone-setup-type/decision_record.md
 **Design Source (v1.15 clone as new plan):** docs/design/2026-09-21__release-v9.6/trade-plan-clone/decision_record.md
 **Design Source (v1.15 stale plan marker):** docs/design/2026-09-21__release-v9.6/trade-plan-stale-marker/decision_record.md
@@ -293,7 +293,7 @@ Panel is hidden entirely (no placeholder) until **Stop Level** (§5.1, `planned_
 | Stop Level | Existing §5.1 field | Yes (unchanged) |
 | Planned Entry Price | New, panel-local numeric input | **No** — never included in the `POST /trade-plans` / `PUT /trade-plans/{id}` payload |
 | Risk % | Defaults from settings (same `defaultRiskPercent` source as `PositionSizingWidget`, §10.7); user-adjustable within the panel, session-local | No |
-| FX Rate (USD/GBP) | New, panel-local numeric input, **US-market plans only** (hidden for UK) — same label/step convention as `TradeEntry.js`'s own "FX Rate (USD/GBP)" field (ST-10, BLG-FE-164, v9.0). Empty by default (placeholder "Live rate") — when empty, `POST /portfolio/size` uses the live rate; when set, overrides it. See §5d.3 reproducibility note. | No |
+| FX rate — USD per £1 (GBP/USD) | New, panel-local numeric input, **US-market plans only** (hidden for UK) — same label/step convention as Trade Entry's FX field (ST-10, BLG-FE-164, v9.0). **v1.21 (ST-03, BLG-FE-246):** label "FX rate — USD per £1 (GBP/USD)" with the hint "How many US dollars £1 buys.", as every FX input (`position_form.md` §FX Rate); replaces "FX Rate (USD/GBP)". Empty by default (placeholder "Live rate") — when empty, `POST /portfolio/size` uses the live rate; when set, overrides it. See §5d.3 reproducibility note. | No |
 
 ### 5d.3 Calculation and Output
 
@@ -669,6 +669,7 @@ User-initiated batch of the same manual mutations already available one plan at 
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.21 | 2026-11-03 | v9.15 design gate — (ST-03, EPIC-01, BLG-FE-246) §5d.2 FX input label "FX rate — USD per £1 (GBP/USD)" with hint, as every FX input; replaces "FX Rate (USD/GBP)". Design source: `docs/design/2026-11-03__release-v9.15/trade-entry-fx-rate/decision_record.md`. |
 | 1.20 | 2026-10-30 | ST-09 (EPIC-02, v9.14, BLG-BE-190): the reproducibility note's server-side formula now reads `raw_shares = risk_amount × fx_rate_used / stop_distance`, matching `strategy_rules.md` v1.21 §4.1.3. It quoted the inverted formula the code used before. Wording only. |
 | 1.19 | 2026-10-15 | Known Deviations: `DEV-v3.4-01`'s Target resolution corrected from "v3.5" to "Resolved — v3.5". Its tracking item `BLG-SPEC-31` was COMPLETE in v3.5 (ST-09, 2026-05-15), but the row was never updated (deviation consolidation review 2026-10-07 Finding 3; post-ship closure `2026-10-12__release-v9.12` §6 row 5). No requirement change. Edited on user direction for the Frontend Specifications & UX Documentation Owner. |
 | 1.18 | 2026-10-12 | v9.12 design gate — (ST-24, EPIC-03, BLG-FE-210) §9 `research_pending` badge `#D97706` → `#B45309`; the "Abandon Plan" button becomes `bg-amber-700 hover:bg-amber-800` (was `bg-amber-600 hover:bg-amber-500`). White text 3.19:1 → 5.02:1. Same rule as `BLG-FE-165`; no new decision record. Head of UX & Design sign-off: 2026-10-12. Product Owner approved: 2026-10-12. Head of Specs Team confirmed. |

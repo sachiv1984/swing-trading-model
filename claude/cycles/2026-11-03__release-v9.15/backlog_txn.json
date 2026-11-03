@@ -1,0 +1,11 @@
+{
+  "cycle_id": "2026-11-03__release-v9.15",
+  "release": "v9.15",
+  "txn_id": "BLTX-20261103-01",
+  "state": "committed",
+  "prepared_utc": "2026-11-03T15:15:18Z",
+  "marker": "RP:v9.15:2026-11-03__release-v9.15",
+  "target_file": "claude/backlog/backlog.md",
+  "committed_utc": "2026-11-03T15:15:18Z",
+  "notes": "Idempotency search: marker RP:v9.15:2026-11-03__release-v9.15 not present in claude/backlog/backlog.md (0 matches). Release slice written to claude/cycles/2026-11-03__release-v9.15/stage4_backlog_slice.md, which carries the marker (v9.8-v9.14 practice). No global reprioritisation. The only backlog.md edits this run are the \u00a71.3a date-lapsed gate clearance on BLG-OPS-48 and the Last Updated header, made under the lock acquired at 2026-11-03T15:11:29Z (\u00a71.3a v2.64)."
+}

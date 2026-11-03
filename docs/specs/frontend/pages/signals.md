@@ -3,8 +3,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 0.7
-**Last Updated:** 2026-10-29 (v9.14 design gate — ST-03/ST-04/ST-05: new §Market Status Bar with the unknown regime state and the FX rate source); prior — 2026-10-16 (ST-05, EPIC-01, v9.13, BLG-GOV-391 — §Rebalance Exit Interim Label retired: rebalance exits are `strategy_rules.md` §8.4 (v1.17)); prior — 2026-10-16 (v9.13 design gate — ST-05/BLG-GOV-391: new §Rebalance Exit Interim Label); prior history retained — see prior entries in version control
+**Version:** 0.8
+**Last Updated:** 2026-11-03 (v9.15 design gate — ST-07/BLG-FE-219: new §Signal Card Cost and Sizing Reason); prior — 2026-10-29 (v9.14 design gate — ST-03/ST-04/ST-05: new §Market Status Bar with the unknown regime state and the FX rate source); prior — 2026-10-16 (ST-05, EPIC-01, v9.13, BLG-GOV-391 — §Rebalance Exit Interim Label retired: rebalance exits are `strategy_rules.md` §8.4 (v1.17)); prior history retained — see prior entries in version control
 **Design Source (v0.7 market status bar):** docs/design/2026-10-29__release-v9.14/market-regime-unknown/decision_record.md, docs/design/2026-10-29__release-v9.14/fx-rate-source-indicator/decision_record.md
 **Design Source (v0.5 rebalance interim label):** docs/design/2026-10-16__release-v9.13/rebalance-exit-interim-label/decision_record.md
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
@@ -167,6 +167,20 @@ Behaviour unchanged from prior implementation.
 
 ---
 
+## Signal Card Cost and Sizing Reason (v0.8 — ST-07, BLG-FE-219)
+
+**Design source:** `docs/design/2026-11-03__release-v9.15/signal-card-cost-and-sizing-reason/decision_record.md`
+
+| Element | Text |
+|---------|------|
+| Cost label (`SignalCard.js`) | "Total cost (incl. fees)" — `total_cost` is GBP including entry fees (BLG-BE-158, v9.12). Replaces "Allocation Cost". |
+| Zero-ATR reason, per signal (backend `reason`) | "No size suggested: this ticker's 14-day ATR (its average daily price range) isn't available." Replaces "Inv-vol sizing: ATR unavailable for this signal". |
+| Zero-ATR reason, whole list (backend `reason`) | "No size suggested: no ticker in this list has a 14-day ATR available." Replaces "Inv-vol sizing: no valid ATR values". |
+
+The reason line keeps its position, ⚠ prefix and style, and shows the backend string as-is. The other `reason` strings are unchanged. Playwright asserts the per-signal reason line for a zero-ATR signal.
+
+---
+
 ## Empty State
 
 When `GET /signals` returns an empty array for the selected date: display the message:
@@ -191,6 +205,7 @@ The frontend must not calculate or derive signal scores, rankings, or fields. Al
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.8 | 2026-11-03 | v9.15 design gate — new §Signal Card Cost and Sizing Reason (ST-07, BLG-FE-219): cost label "Total cost (incl. fees)"; the two zero-ATR `reason` strings in plain English. Design source: `docs/design/2026-11-03__release-v9.15/signal-card-cost-and-sizing-reason/decision_record.md`. Head of UX & Design + Product Owner approved. |
 | 0.7 | 2026-10-29 | v9.14 design gate — new §Market Status Bar. (ST-03, BLG-BE-193) regime tiles gain an Unknown state that never renders as Risk Off. (ST-04/ST-05, BLG-BE-194/BLG-BE-169) the FX Rate tile shows its source and age, and the page's own 1.3611 fallback is removed. Design sources: `docs/design/2026-10-29__release-v9.14/market-regime-unknown/decision_record.md`, `docs/design/2026-10-29__release-v9.14/fx-rate-source-indicator/decision_record.md`. Head of UX & Design sign-off: 2026-10-29. Product Owner approved: 2026-10-29. Head of Specs Team confirmed. |
 | 0.6 | 2026-10-16 | v9.13 sprint execution (ST-05, EPIC-01, BLG-GOV-391): §Rebalance Exit Interim Label retired before it shipped. The Strategy Rules & System Intent Owner ruled the rebalance exit into §8 as §8.4 (`strategy_rules.md` v1.17, `ESC-EXEC-20261016-01`), and the decision record §2.2 removes the label in the same change. "Month-End Exit" and "Rebalance Exit" badges unchanged. |
 | 0.5 | 2026-10-16 | v9.13 design gate — §Rebalance Exit Interim Label added (ST-05, BLG-GOV-391): "Outside §8 — informational" on `exit_rebalance` signals until the §8 determination is applied. Design source: `docs/design/2026-10-16__release-v9.13/rebalance-exit-interim-label/decision_record.md`. Head of UX & Design sign-off: 2026-10-16. Product Owner approved: 2026-10-16. Head of Specs Team confirmed. |

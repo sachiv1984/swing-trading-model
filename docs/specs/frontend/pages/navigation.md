@@ -1,12 +1,13 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 1.7
-**Last Updated:** 2026-09-28 (ST-06, EPIC-01, v9.8, BLG-SPEC-159 — §Keyboard Shortcuts gains a canonical inventory of every keyboard-handling site across the app, not just Layout.js's global shortcuts, plus a conflict analysis); prior — 2026-08-12 (ST-22, EPIC-06, v8.6, BLG-GOV-294 — added §Known Deviations, filed retroactive DEV-NAV-ST06-01 for the v8.5 dark-mode/Radix-portal Layout.js fix; renumbered 1.5→1.6 at cross-EPIC merge-conflict resolution, since EPIC-03/ST-09's independent v1.5 bump for a different change merged to main first — per CLAUDE.md §8.2a); prior — 2026-08-11 (ST-09, EPIC-03, v8.6, BLG-FE-154 — corrected §Group Structure table, which had drifted from the live `NAV_GROUPS` array in `src/Layout.js`)
+**Version:** 1.8
+**Last Updated:** 2026-11-03 (v9.15 design gate — ST-12/ST-13/ST-14: §Legacy Dashboard Route, §Browser Tab Title, §Sidebar Footer and Height); prior — 2026-09-28 (ST-06, EPIC-01, v9.8, BLG-SPEC-159 — §Keyboard Shortcuts gains a canonical inventory of every keyboard-handling site across the app, not just Layout.js's global shortcuts, plus a conflict analysis); prior — 2026-08-12 (ST-22, EPIC-06, v8.6, BLG-GOV-294 — added §Known Deviations, filed retroactive DEV-NAV-ST06-01 for the v8.5 dark-mode/Radix-portal Layout.js fix; renumbered 1.5→1.6 at cross-EPIC merge-conflict resolution, since EPIC-03/ST-09's independent v1.5 bump for a different change merged to main first — per CLAUDE.md §8.2a); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Design Source:** docs/design/2026-03-24__release-v2.3/sidebar-nav-groups/ux_spec.md
 **Design Source (v1.3 command palette):** docs/design/2026-07-17__release-v7.5/command-palette/ux_spec.md
 **Design Source (v1.4 nav dedup):** docs/design/2026-07-21__release-v7.7/nav-notification-digest-consolidation/ux_spec.md
+**Design Source (v1.8 tab title, legacy route, sidebar footer):** docs/design/2026-11-03__release-v9.15/site-structure-phase1/decision_record.md
 **Confirmed by:** Head of Specs Team — 2026-03-24
 **Release:** v2.3 — ST-13 (BLG-UX-01)
 
@@ -60,6 +61,31 @@ When the **System** group is collapsed and unacknowledged alerts exist:
 
 - On narrow screens (< breakpoint): sidebar remains collapsible (hamburger or slide-in); group collapse state preserved within the session
 - No change to existing mobile nav behaviour beyond the group structure
+
+## Sidebar Footer and Height (v1.8 — ST-14, BLG-FE-266)
+
+- **Version label:** the footer shows `v{X.Y}`, the latest release from the same source as the Dashboard What's New panel (`api.changelog.latest()`, `dashboard.md` §6A). While loading, or when the source has no version, no version text is shown. No hard-coded version (the former "v1.0.0" is removed).
+- **Height:** the desktop sidebar's background spans the full page height at every scroll position and page length.
+
+## Legacy Dashboard Route (v1.8 — ST-12, BLG-FE-247)
+
+The pre-v7.3 widget dashboard (`src/pages/Dashboard.js`, route `/Dashboard`) is removed with its palette label and the components only it uses. `/#/Dashboard` redirects to `/` (the Dashboard home, `DashboardHome`) as a replace navigation, so Back does not return to the redirect. The command palette lists one "Dashboard" entry.
+
+## Browser Tab Title (v1.8 — ST-13, BLG-FE-249)
+
+| Page | `document.title` |
+|------|------------------|
+| Any routed page | `{page label} · Position Manager` |
+| Research page | `{TICKER} · Research · Position Manager` |
+| Other detail views (trade plan, replayed trade) | `{page label} · Position Manager` |
+| Unknown route | `Page not found · Position Manager` |
+
+- The separator is a middle dot with a space on each side.
+- Set once by `Layout.js` on route change from the same label source the sidebar, page heading and command palette use (ST-11's single source). Until ST-11 lands, the current page heading label. No page sets `document.title` itself.
+- `public/index.html` keeps "Position Manager" as the pre-render title.
+- Playwright checks three pages, one of them a Research page.
+
+**Navigation v2 (ST-08, BLG-SPEC-214)** revises this document to v2.0 in the same sprint and keeps these three sections. The §Group Structure table above predates it and has drifted (it omits Replay and lists "Trade Reflection" where the sidebar shows "Reflections"). v2.0 replaces it.
 
 ---
 
@@ -175,6 +201,7 @@ First-session-only dismissible tooltip on the nav-bar search affordance. No moda
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.8 | 2026-11-03 | `2026-11-03__release-v9.15` design gate. New §Sidebar Footer and Height (ST-14, BLG-FE-266: real release version, none when absent; full-height background), §Legacy Dashboard Route (ST-12, BLG-FE-247: `/Dashboard` removed, redirects to `/`, one palette entry) and §Browser Tab Title (ST-13, BLG-FE-249: `{page label} · Position Manager`, Research adds the ticker). Notes the §Group Structure drift that ST-08's v2.0 replaces. Design source: `docs/design/2026-11-03__release-v9.15/site-structure-phase1/decision_record.md`. Head of UX & Design + Product Owner approved. Head of Specs Team confirmed. |
 | 1.7 | 2026-09-28 | ST-06 (EPIC-01, v9.8, BLG-SPEC-159): §Keyboard Shortcuts gains "Canonical Inventory — All Keyboard-Handling Sites", listing the global shortcuts (already documented) alongside the page-local `onKeyDown` handlers in `TradeEntry.js`, `TradePlan.js`, `RedFlagJournal.js` and `TickerUniverse.js` that had no single documented home. Conflict analysis performed: none found (global handlers are input-focus-suppressed by construction; page-local handlers are scoped to one element each). Documentation-only; no implementation change. |
 | 1.6 | 2026-08-12 | ST-22 (EPIC-06, v8.6, BLG-GOV-294): added §Known Deviations, filed retroactive `DEV-NAV-ST06-01` for the v8.5 EPIC-03/ST-06 dark-mode/Radix-portal `Layout.js` fix (commit `41619410`) — documentation only, no behavioural change. **Renumbered 1.5→1.6 at cross-EPIC merge-conflict resolution** (this row originally landed on this branch as v1.5, as flagged pre-emptively in this row's own text at authoring time — see prior row): EPIC-03's ST-09 independently bumped this file to v1.5 for a different change (§Group Structure count correction) and merged to `main` first (PR #1359), so per `CLAUDE.md` §8.2a this branch's bump renumbers to the next free version rather than conflating the two changes under one version number. |
 | 1.5 | 2026-08-11 | ST-09 (EPIC-03, v8.6, BLG-FE-154): corrected §Group Structure table against live `NAV_GROUPS` (`src/Layout.js`) — Trading gained Trade Entry; Analytics gained Strategy Benchmark and Reports; Tools gained Screener and Ticker Universe. Documentation-only correction, no behavioural change. Head of Specs Team confirmed (Sprint Execution Engine, agent-mediated). |

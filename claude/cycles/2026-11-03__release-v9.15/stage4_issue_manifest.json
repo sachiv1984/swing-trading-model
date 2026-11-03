@@ -1,0 +1,677 @@
+[
+ {
+  "cycle": "2026-11-03__release-v9.15",
+  "epic": "EPIC-01",
+  "story_id": "ST-01",
+  "s2_id": "S2-01",
+  "source": "BLG-FE-244",
+  "title": "Show the pre-entry checks on every route into Trade Entry, not only from a Trade Plan",
+  "priority": "P1",
+  "effort": "M (~2-3 days)",
+  "labels": [
+   "sprint",
+   "EPIC-01",
+   "cycle:2026-11-03__release-v9.15"
+  ]
+ },
+ {
+  "cycle": "2026-11-03__release-v9.15",
+  "epic": "EPIC-01",
+  "story_id": "ST-02",
+  "s2_id": "S2-02",
+  "source": "BLG-FE-245",
+  "title": "Pre-fill Trade Entry's FX rate from the live rate, not a fixed 1.27",
+  "priority": "P1",
+  "effort": "S (~0.5-1 day)",
+  "labels": [
+   "sprint",
+   "EPIC-01",
+   "cycle:2026-11-03__release-v9.15"
+  ]
+ },
+ {
+  "cycle": "2026-11-03__release-v9.15",
+  "epic": "EPIC-01",
+  "story_id": "ST-03",
+  "s2_id": "S2-03",
+  "source": "BLG-FE-246",
+  "title": "Label the FX rate the same way on entry and exit",
+  "priority": "P2",
+  "effort": "S (~0.5 day; held at 0.5d, count named: about 8 FX label sites in `src/` (grep, 2026-11-03))",
+  "labels": [
+   "sprint",
+   "EPIC-01",
+   "cycle:2026-11-03__release-v9.15"
+  ]
+ },
+ {
+  "cycle": "2026-11-03__release-v9.15",
+  "epic": "EPIC-01",
+  "story_id": "ST-04",
+  "s2_id": "S2-04",
+  "source": "BLG-FE-243",
+  "title": "Default trade, exit and cash dates to the user's local date, not the UTC date",
+  "priority": "P2",
+  "effort": "S (~0.5d; held at 0.5d, count named: 15 `toISOString()` date sites in 10 files under `src/` (grep, 2026-11-03), a mechanical swap to one local-date helper)",
+  "labels": [
+   "sprint",
+   "EPIC-01",
+   "cycle:2026-11-03__release-v9.15"
+  ]
+ },
+ {
+  "cycle": "2026-11-03__release-v9.15",
+  "epic": "EPIC-01",
+  "story_id": "ST-05",
+  "s2_id": "S2-05",
+  "source": "BLG-FE-222",
+  "title": "Normalise the Trade Entry ticker the same way for the ATR preview and for save",
+  "priority": "P3",
+  "effort": "XS (<1h plus tests)",
+  "labels": [
+   "sprint",
+   "EPIC-01",
+   "cycle:2026-11-03__release-v9.15"
+  ]
+ },
+ {
+  "cycle": "2026-11-03__release-v9.15",
+  "epic": "EPIC-01",
+  "story_id": "ST-06",
+  "s2_id": "S2-06",
+  "source": "BLG-BE-173",
+  "title": "Trail Stop modal's ATR trail value uses a hardcoded 2.0 multiplier and no breakeven floor",
+  "priority": "P3",
+  "effort": "S (~0.5d)",
+  "labels": [
+   "sprint",
+   "EPIC-01",
+   "cycle:2026-11-03__release-v9.15"
+  ]
+ },
+ {
+  "cycle": "2026-11-03__release-v9.15",
+  "epic": "EPIC-01",
+  "story_id": "ST-07",
+  "s2_id": "S2-07",
+  "source": "BLG-FE-219",
+  "title": "Label signal cost as including fees, and make the zero-ATR sizing reason plain English",
+  "priority": "P3",
+  "effort": "XS (<0.5d)",
+  "labels": [
+   "sprint",
+   "EPIC-01",
+   "cycle:2026-11-03__release-v9.15"
+  ]
+ },
+ {
+  "cycle": "2026-11-03__release-v9.15",
+  "epic": "EPIC-02",
+  "story_id": "ST-08",
+  "s2_id": "S2-08",
+  "source": "BLG-SPEC-214",
+  "title": "Navigation spec v2: job-based areas, plus a UI-label section in the glossary",
+  "priority": "P2",
+  "effort": "M (~2 days)",
+  "labels": [
+   "sprint",
+   "EPIC-02",
+   "cycle:2026-11-03__release-v9.15"
+  ]
+ },
+ {
+  "cycle": "2026-11-03__release-v9.15",
+  "epic": "EPIC-02",
+  "story_id": "ST-09",
+  "s2_id": "S2-09",
+  "source": "BLG-SPEC-215",
+  "title": "Dashboard spec: a prioritised \"Today\" action list",
+  "priority": "P2",
+  "effort": "M (~2 days)",
+  "labels": [
+   "sprint",
+   "EPIC-02",
+   "cycle:2026-11-03__release-v9.15"
+  ]
+ },
+ {
+  "cycle": "2026-11-03__release-v9.15",
+  "epic": "EPIC-02",
+  "story_id": "ST-10",
+  "s2_id": "S2-10",
+  "source": "BLG-SPEC-216",
+  "title": "Spec for one Journal area combining reflections, red flags and position notes",
+  "priority": "P3",
+  "effort": "M (~2 days)",
+  "labels": [
+   "sprint",
+   "EPIC-02",
+   "cycle:2026-11-03__release-v9.15"
+  ]
+ },
+ {
+  "cycle": "2026-11-03__release-v9.15",
+  "epic": "EPIC-02",
+  "story_id": "ST-11",
+  "s2_id": "S2-11",
+  "source": "BLG-FE-248",
+  "title": "Use one name per page and action across sidebar, page headings and command palette",
+  "priority": "P2",
+  "effort": "S (~1 day)",
+  "labels": [
+   "sprint",
+   "EPIC-02",
+   "cycle:2026-11-03__release-v9.15"
+  ]
+ },
+ {
+  "cycle": "2026-11-03__release-v9.15",
+  "epic": "EPIC-02",
+  "story_id": "ST-12",
+  "s2_id": "S2-12",
+  "source": "BLG-FE-247",
+  "title": "Remove the legacy widget Dashboard route and its duplicate command-palette entry",
+  "priority": "P3",
+  "effort": "S (~0.5 day)",
+  "labels": [
+   "sprint",
+   "EPIC-02",
+   "cycle:2026-11-03__release-v9.15"
+  ]
+ },
+ {
+  "cycle": "2026-11-03__release-v9.15",
+  "epic": "EPIC-02",
+  "story_id": "ST-13",
+  "s2_id": "S2-13",
+  "source": "BLG-FE-249",
+  "title": "Set a browser-tab title for each page",
+  "priority": "P3",
+  "effort": "S (~0.5 day)",
+  "labels": [
+   "sprint",
+   "EPIC-02",
+   "cycle:2026-11-03__release-v9.15"
+  ]
+ },
+ {
+  "cycle": "2026-11-03__release-v9.15",
+  "epic": "EPIC-02",
+  "story_id": "ST-14",
+  "s2_id": "S2-14",
+  "source": "BLG-FE-266",
+  "title": "Fix three small chrome defects: version label, What's New heading, sidebar height",
+  "priority": "P3",
+  "effort": "S (~0.5 day)",
+  "labels": [
+   "sprint",
+   "EPIC-02",
+   "cycle:2026-11-03__release-v9.15"
+  ]
+ },
+ {
+  "cycle": "2026-11-03__release-v9.15",
+  "epic": "EPIC-03",
+  "story_id": "ST-15",
+  "s2_id": "S2-15",
+  "source": "BLG-FE-239",
+  "title": "Trade History counts a break-even trade as a win",
+  "priority": "P2",
+  "effort": "XS (<1h)",
+  "labels": [
+   "sprint",
+   "EPIC-03",
+   "cycle:2026-11-03__release-v9.15"
+  ]
+ },
+ {
+  "cycle": "2026-11-03__release-v9.15",
+  "epic": "EPIC-03",
+  "story_id": "ST-16",
+  "s2_id": "S2-16",
+  "source": "BLG-FE-240",
+  "title": "Dashboard win-rate widgets are fed from open positions only",
+  "priority": "P2",
+  "effort": "S (~0.5 day)",
+  "labels": [
+   "sprint",
+   "EPIC-03",
+   "cycle:2026-11-03__release-v9.15"
+  ]
+ },
+ {
+  "cycle": "2026-11-03__release-v9.15",
+  "epic": "EPIC-03",
+  "story_id": "ST-17",
+  "s2_id": "S2-17",
+  "source": "BLG-FE-218",
+  "title": "Align the View Trail modal wording with the read-only ruling",
+  "priority": "P3",
+  "effort": "XS (<0.5d)",
+  "labels": [
+   "sprint",
+   "EPIC-03",
+   "cycle:2026-11-03__release-v9.15"
+  ]
+ },
+ {
+  "cycle": "2026-11-03__release-v9.15",
+  "epic": "EPIC-03",
+  "story_id": "ST-18",
+  "s2_id": "S2-18",
+  "source": "BLG-FE-220",
+  "title": "Fix the Strategy Benchmark Rebalance badge's contrast and settle tinted vs filled exit-reason badges",
+  "priority": "P3",
+  "effort": "XS (<1h plus test updates)",
+  "labels": [
+   "sprint",
+   "EPIC-03",
+   "cycle:2026-11-03__release-v9.15"
+  ]
+ },
+ {
+  "cycle": "2026-11-03__release-v9.15",
+  "epic": "EPIC-03",
+  "story_id": "ST-19",
+  "s2_id": "S2-19",
+  "source": "BLG-BE-170",
+  "title": "Price-alert duplicate fallback returns 500 when the threshold has more than 4 decimal places",
+  "priority": "P3",
+  "effort": "XS (<1h plus test)",
+  "labels": [
+   "sprint",
+   "EPIC-03",
+   "cycle:2026-11-03__release-v9.15"
+  ]
+ },
+ {
+  "cycle": "2026-11-03__release-v9.15",
+  "epic": "EPIC-03",
+  "story_id": "ST-20",
+  "s2_id": "S2-20",
+  "source": "BLG-BE-171",
+  "title": "Use the deploy date, not the ruling date, as strategy v1.15's effective date",
+  "priority": "P3",
+  "effort": "XS (<1h)",
+  "labels": [
+   "sprint",
+   "EPIC-03",
+   "cycle:2026-11-03__release-v9.15"
+  ]
+ },
+ {
+  "cycle": "2026-11-03__release-v9.15",
+  "epic": "EPIC-03",
+  "story_id": "ST-21",
+  "s2_id": "S2-21",
+  "source": "BLG-BE-172",
+  "title": "Show the code-written fallback when the monthly P&L summary's regeneration call fails",
+  "priority": "P3",
+  "effort": "XS (<1h)",
+  "labels": [
+   "sprint",
+   "EPIC-03",
+   "cycle:2026-11-03__release-v9.15"
+  ]
+ },
+ {
+  "cycle": "2026-11-03__release-v9.15",
+  "epic": "EPIC-03",
+  "story_id": "ST-22",
+  "s2_id": "S2-22",
+  "source": "BLG-BE-174",
+  "title": "Gap-risk weekend statistic: pick it by the exchange calendar and count ordinary weekends",
+  "priority": "P3",
+  "effort": "S (~0.5d)",
+  "labels": [
+   "sprint",
+   "EPIC-03",
+   "cycle:2026-11-03__release-v9.15"
+  ]
+ },
+ {
+  "cycle": "2026-11-03__release-v9.15",
+  "epic": "EPIC-03",
+  "story_id": "ST-23",
+  "s2_id": "S2-23",
+  "source": "BLG-SPEC-198",
+  "title": "Open-position pnl: code uses the live FX rate and does not deduct fees; the dictionary says entry-time FX, fees deducted",
+  "priority": "P3",
+  "effort": "S (~0.5d)",
+  "labels": [
+   "sprint",
+   "EPIC-03",
+   "cycle:2026-11-03__release-v9.15"
+  ]
+ },
+ {
+  "cycle": "2026-11-03__release-v9.15",
+  "epic": "EPIC-04",
+  "story_id": "ST-24",
+  "s2_id": "S2-24",
+  "source": "BLG-AI-23",
+  "title": "Review logged briefing ticker-caveat tokens for further non-tickers",
+  "priority": "P3",
+  "effort": "XS (<1h plus tests)",
+  "labels": [
+   "sprint",
+   "EPIC-04",
+   "cycle:2026-11-03__release-v9.15"
+  ]
+ },
+ {
+  "cycle": "2026-11-03__release-v9.15",
+  "epic": "EPIC-04",
+  "story_id": "ST-25",
+  "s2_id": "S2-25",
+  "source": "BLG-AI-24",
+  "title": "Journal summary advisory check: remaining false positives and misses",
+  "priority": "P3",
+  "effort": "S (~0.5d)",
+  "labels": [
+   "sprint",
+   "EPIC-04",
+   "cycle:2026-11-03__release-v9.15"
+  ]
+ },
+ {
+  "cycle": "2026-11-03__release-v9.15",
+  "epic": "EPIC-04",
+  "story_id": "ST-26",
+  "s2_id": "S2-26",
+  "source": "BLG-AI-25",
+  "title": "Chat stop-time focus rule: ignore common upper-case non-ticker words",
+  "priority": "P3",
+  "effort": "XS (<1h plus tests)",
+  "labels": [
+   "sprint",
+   "EPIC-04",
+   "cycle:2026-11-03__release-v9.15"
+  ]
+ },
+ {
+  "cycle": "2026-11-03__release-v9.15",
+  "epic": "EPIC-04",
+  "story_id": "ST-27",
+  "s2_id": "S2-27",
+  "source": "BLG-AI-26",
+  "title": "Journal summary advisory check: do not flag \"could/may help explain\"",
+  "priority": "P3",
+  "effort": "XS (<1h plus tests)",
+  "labels": [
+   "sprint",
+   "EPIC-04",
+   "cycle:2026-11-03__release-v9.15"
+  ]
+ },
+ {
+  "cycle": "2026-11-03__release-v9.15",
+  "epic": "EPIC-04",
+  "story_id": "ST-28",
+  "s2_id": "S2-28",
+  "source": "BLG-GOV-194",
+  "title": "§13 boundary language clarity pass — AI journal summarisation",
+  "priority": "P3",
+  "effort": "S (~0.5-2 days)",
+  "labels": [
+   "sprint",
+   "EPIC-04",
+   "cycle:2026-11-03__release-v9.15"
+  ]
+ },
+ {
+  "cycle": "2026-11-03__release-v9.15",
+  "epic": "EPIC-05",
+  "story_id": "ST-29",
+  "s2_id": "S2-29",
+  "source": "BLG-OPS-48",
+  "title": "ANTHROPIC_API_KEY 6-month scope audit",
+  "priority": "P2",
+  "effort": "S (~0.5 day)",
+  "labels": [
+   "sprint",
+   "EPIC-05",
+   "cycle:2026-11-03__release-v9.15"
+  ]
+ },
+ {
+  "cycle": "2026-11-03__release-v9.15",
+  "epic": "EPIC-05",
+  "story_id": "ST-30",
+  "s2_id": "S2-30",
+  "source": "BLG-OPS-190",
+  "title": "Rebalance-exit generation should check that today's screener run completed",
+  "priority": "P3",
+  "effort": "S (~0.5 day)",
+  "labels": [
+   "sprint",
+   "EPIC-05",
+   "cycle:2026-11-03__release-v9.15"
+  ]
+ },
+ {
+  "cycle": "2026-11-03__release-v9.15",
+  "epic": "EPIC-05",
+  "story_id": "ST-31",
+  "s2_id": "S2-31",
+  "source": "BLG-OPS-191",
+  "title": "Skip the five code-test workflows on governance-only and docs-only pushes",
+  "priority": "P3",
+  "effort": "S (~0.5 day)",
+  "labels": [
+   "sprint",
+   "EPIC-05",
+   "cycle:2026-11-03__release-v9.15"
+  ]
+ },
+ {
+  "cycle": "2026-11-03__release-v9.15",
+  "epic": "EPIC-05",
+  "story_id": "ST-32",
+  "s2_id": "S2-32",
+  "source": "BLG-OPS-192",
+  "title": "Tell \"no qualifying tickers\" apart from \"momentum run missing\" in the month-end rebalance job",
+  "priority": "P3",
+  "effort": "S (~0.5 day)",
+  "labels": [
+   "sprint",
+   "EPIC-05",
+   "cycle:2026-11-03__release-v9.15"
+  ]
+ },
+ {
+  "cycle": "2026-11-03__release-v9.15",
+  "epic": "EPIC-05",
+  "story_id": "ST-33",
+  "s2_id": "S2-33",
+  "source": "BLG-OPS-197",
+  "title": "Record the weekly market-data call-volume baseline from production",
+  "priority": "P3",
+  "effort": "XS (<1h)",
+  "labels": [
+   "sprint",
+   "EPIC-05",
+   "cycle:2026-11-03__release-v9.15"
+  ]
+ },
+ {
+  "cycle": "2026-11-03__release-v9.15",
+  "epic": "EPIC-06",
+  "story_id": "ST-34",
+  "s2_id": "S2-34",
+  "source": "BLG-SPEC-194",
+  "title": "Clear the 8 pre-existing success-example drifts so check_contract_example_freshness.py exits 0",
+  "priority": "P4",
+  "effort": "S (~0.5d)",
+  "labels": [
+   "sprint",
+   "EPIC-06",
+   "cycle:2026-11-03__release-v9.15"
+  ]
+ },
+ {
+  "cycle": "2026-11-03__release-v9.15",
+  "epic": "EPIC-06",
+  "story_id": "ST-35",
+  "s2_id": "S2-35",
+  "source": "BLG-SPEC-196",
+  "title": "Re-apply NOT NULL on positions.portfolio_id and positions.total_cost",
+  "priority": "P3",
+  "effort": "S (~0.5d; pre-check, migration and live confirmation in two environments; calibrated to 1.0d — live migration on staging and production (v9.14 precedent))",
+  "labels": [
+   "sprint",
+   "EPIC-06",
+   "cycle:2026-11-03__release-v9.15"
+  ]
+ },
+ {
+  "cycle": "2026-11-03__release-v9.15",
+  "epic": "EPIC-06",
+  "story_id": "ST-36",
+  "s2_id": "S2-36",
+  "source": "BLG-SPEC-197",
+  "title": "Apply DS-17's open-position unique index to staging",
+  "priority": "P3",
+  "effort": "XS (<1h; calibrated to 0.5d — staging migration (v9.14 precedent))",
+  "labels": [
+   "sprint",
+   "EPIC-06",
+   "cycle:2026-11-03__release-v9.15"
+  ]
+ },
+ {
+  "cycle": "2026-11-03__release-v9.15",
+  "epic": "EPIC-07",
+  "story_id": "ST-37",
+  "s2_id": "S2-37",
+  "source": "BLG-GOV-404",
+  "title": "Gate scan treats a shipped roadmap feature ID (PT-xx, SI-xx, PO-xx) as a met gate",
+  "priority": "P3",
+  "effort": "S (~0.5d)",
+  "labels": [
+   "sprint",
+   "EPIC-07",
+   "cycle:2026-11-03__release-v9.15"
+  ]
+ },
+ {
+  "cycle": "2026-11-03__release-v9.15",
+  "epic": "EPIC-07",
+  "story_id": "ST-38",
+  "s2_id": "S2-38",
+  "source": "BLG-QA-240",
+  "title": "Make the execution-state consistency check count EPICs not yet initialised as pending",
+  "priority": "P3",
+  "effort": "XS (<1h plus test)",
+  "labels": [
+   "sprint",
+   "EPIC-07",
+   "cycle:2026-11-03__release-v9.15"
+  ]
+ },
+ {
+  "cycle": "2026-11-03__release-v9.15",
+  "epic": "EPIC-07",
+  "story_id": "ST-39",
+  "s2_id": "S2-39",
+  "source": "BLG-QA-220",
+  "title": "Behavioural tests for live holding days in the compliance and AI briefing readers",
+  "priority": "P3",
+  "effort": "XS (<1h)",
+  "labels": [
+   "sprint",
+   "EPIC-07",
+   "cycle:2026-11-03__release-v9.15"
+  ]
+ },
+ {
+  "cycle": "2026-11-03__release-v9.15",
+  "epic": "EPIC-07",
+  "story_id": "ST-40",
+  "s2_id": "S2-40",
+  "source": "BLG-QA-221",
+  "title": "Real-Postgres tests for the ai_audit_log UUID[] path and the claude_audit_log daily cost sum",
+  "priority": "P3",
+  "effort": "S (~0.5d)",
+  "labels": [
+   "sprint",
+   "EPIC-07",
+   "cycle:2026-11-03__release-v9.15"
+  ]
+ },
+ {
+  "cycle": "2026-11-03__release-v9.15",
+  "epic": "EPIC-07",
+  "story_id": "ST-41",
+  "s2_id": "S2-41",
+  "source": "BLG-QA-222",
+  "title": "Extend the utils.* leak guard to attributes patched on the real utils modules",
+  "priority": "P3",
+  "effort": "S (~0.5d)",
+  "labels": [
+   "sprint",
+   "EPIC-07",
+   "cycle:2026-11-03__release-v9.15"
+  ]
+ },
+ {
+  "cycle": "2026-11-03__release-v9.15",
+  "epic": "EPIC-07",
+  "story_id": "ST-42",
+  "s2_id": "S2-42",
+  "source": "BLG-QA-224",
+  "title": "Make SC-TS-* Playwright scenario IDs unique across tests/e2e",
+  "priority": "P3",
+  "effort": "XS (<0.5d)",
+  "labels": [
+   "sprint",
+   "EPIC-07",
+   "cycle:2026-11-03__release-v9.15"
+  ]
+ },
+ {
+  "cycle": "2026-11-03__release-v9.15",
+  "epic": "EPIC-07",
+  "story_id": "ST-43",
+  "s2_id": "S2-43",
+  "source": "BLG-GOV-193",
+  "title": "Escalation SLA breach dry-run test",
+  "priority": "P3",
+  "effort": "S (~0.5-2 days)",
+  "labels": [
+   "sprint",
+   "EPIC-07",
+   "cycle:2026-11-03__release-v9.15"
+  ]
+ },
+ {
+  "cycle": "2026-11-03__release-v9.15",
+  "epic": "EPIC-07",
+  "story_id": "ST-44",
+  "s2_id": "S2-44",
+  "source": "BLG-GOV-195",
+  "title": "Strategic exclusions review cadence",
+  "priority": "P3",
+  "effort": "S (~0.5-2 days)",
+  "labels": [
+   "sprint",
+   "EPIC-07",
+   "cycle:2026-11-03__release-v9.15"
+  ]
+ },
+ {
+  "cycle": "2026-11-03__release-v9.15",
+  "epic": "EPIC-07",
+  "story_id": "ST-45",
+  "s2_id": "S2-45",
+  "source": "BLG-GOV-196",
+  "title": "Sunset review for Priority 3 — Deferred initiatives",
+  "priority": "P3",
+  "effort": "S (~0.5-2 days)",
+  "labels": [
+   "sprint",
+   "EPIC-07",
+   "cycle:2026-11-03__release-v9.15"
+  ]
+ }
+]

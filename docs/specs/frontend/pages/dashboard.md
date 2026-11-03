@@ -3,8 +3,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 3.10
-**Last Updated:** 2026-10-29 (v9.14 design gate — ST-03/BLG-BE-193: Card 4 unknown regime; ST-04/ST-05: Card 2 FX source sub-line; ST-08/BLG-FE-214: Card 2 stale explanation as the link's description); prior — 2026-10-12 (v9.12 design gate — ST-24/BLG-FE-210: AI Daily Briefing MONITOR badge to amber-700); prior — 2026-10-08 (v9.11 design gate — ST-10/BLG-BE-154: Card 2 stale-price sub-line; ST-15/BLG-FE-204: Recent Activity treats a P&L that rounds to £0.00 as break-even); prior history retained — see prior entries in version control
+**Version:** 3.11
+**Last Updated:** 2026-11-03 (v9.15 design gate — ST-14/BLG-FE-266: §6A header has no version suffix when the version is absent); prior — 2026-10-29 (v9.14 design gate — ST-03/BLG-BE-193: Card 4 unknown regime; ST-04/ST-05: Card 2 FX source sub-line; ST-08/BLG-FE-214: Card 2 stale explanation as the link's description); prior — 2026-10-12 (v9.12 design gate — ST-24/BLG-FE-210: AI Daily Briefing MONITOR badge to amber-700); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Release:** v8.8
 **EPIC:** EPIC-03
@@ -396,7 +396,7 @@ A compact full-width strip placed below the 5 session-summary cards. Does not re
 
 A full-width secondary-tier card placed below the §6 Gate Progress Indicator strip. Shows the most recent release's `### Changes shipped` entries, parsed server-side from `docs/product/changelog.md`'s most recent `## vX.Y` block — not a hardcoded copy, so it requires no manual wiring on future releases.
 
-**Header:** `Sparkles` icon (muted) + **"What's New — v{X.Y}"** (version from the changelog's most recent heading).
+**Header:** `Sparkles` icon (muted) + **"What's New — v{X.Y}"** (version from the changelog's most recent heading). **v3.11 (ST-14, BLG-FE-266):** when the payload has no version, the header is **"What's New"** with no suffix — never "What's New — undefined". The sidebar footer shows the same version (`navigation.md` §Sidebar Footer and Height). Design source: `docs/design/2026-11-03__release-v9.15/site-structure-phase1/decision_record.md` §3.4.
 
 **Body (v3.3 — ST-13, BLG-FE-161):** bullet list of the `User Impact` column (not `Description`) from the most recent `### Changes shipped` table, max 8 bullets shown with a non-interactive "+N more" trailer if the table has more rows. `Description` is the engineering record and is never shown here. Rows with an empty/`—` `User Impact` cell are excluded from the parsed feed entirely — an EPIC with no user-facing change does not produce a bullet. `User Impact` copy is curated, present-tense, second-person, one to two sentences, written for what a user can see/click/notice — never raw implementation nouns (endpoint, table, or component names) or ticket IDs. Authoring convention applies at `changelog.md` authoring time (post-ship closure), not at render time — component rendering itself (bullet list, cap, trailer) is unchanged from v3.2. Design source: `docs/design/2026-08-14__release-v8.8/whats-new-user-benefit-copy/decision_record.md`.
 
@@ -446,6 +446,7 @@ Cards are fully clickable (entire card surface is the click target). Visual affo
 
 | Version | Date | Change |
 |---------|------|--------|
+| 3.11 | 2026-11-03 | v9.15 design gate — (ST-14, EPIC-02, BLG-FE-266) §6A What's New header drops the version suffix when the payload has no version; the sidebar footer shows the same version (`navigation.md` v1.8). Design source: `docs/design/2026-11-03__release-v9.15/site-structure-phase1/decision_record.md`. Head of UX & Design + Product Owner approved. Head of Specs Team confirmed. |
 | 3.10 | 2026-10-29 | v9.14 design gate — (ST-03, EPIC-01, BLG-BE-193) §4 Card 4 gains a neutral UNKNOWN ? regime state with a ruling-dependent description. (ST-04/ST-05, EPIC-01, BLG-BE-194/BLG-BE-169) §4 Card 2 FX source sub-line when the FX rate is last-known or the fixed fallback. (ST-08, EPIC-01, BLG-FE-214) §4 Card 2 stale-price explanation moves from `title` to the card link's accessible description, with new copy and the light-theme amber pair. Design sources: `docs/design/2026-10-29__release-v9.14/market-regime-unknown/decision_record.md`, `.../fx-rate-source-indicator/decision_record.md`, `.../stale-price-marker/decision_record.md`. Head of UX & Design sign-off: 2026-10-29. Product Owner approved: 2026-10-29. Head of Specs Team confirmed. |
 | 3.9 | 2026-10-12 | v9.12 design gate — (ST-24, EPIC-03, BLG-FE-210) §5 AI Daily Briefing `MONITOR` action badge `#D97706` → `#B45309` (`bg-amber-700`): white text 3.19:1 → 5.02:1, WCAG AA. Same rule as `BLG-FE-165` (v9.1, §9 v3.4); no new decision record. Head of UX & Design sign-off: 2026-10-12. Product Owner approved: 2026-10-12. Head of Specs Team confirmed. |
 | 3.8 | 2026-10-08 | v9.11 design gate — (ST-10, EPIC-02, BLG-BE-154) §4 Card 2 stale-price sub-line from `price_is_stale`; design source `docs/design/2026-10-08__release-v9.11/risk-price-integrity/decision_record.md`. (ST-15, EPIC-02, BLG-FE-204) §4 Card 5 three-way glyph and colour test the P&L rounded to 2 dp, so a value that displays as £0.00 is break-even; pre-existing `design_system.md` v1.21 rule, no new decision record. Head of UX & Design sign-off: 2026-10-08. Product Owner approved: 2026-10-08. Head of Specs Team confirmed. |
