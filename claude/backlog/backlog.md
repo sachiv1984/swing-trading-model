@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-03 (owner actions, closure_record.md `2026-10-29__release-v9.14` §6 row 7 — ✅ COMPLETE banners added to BLG-OPS-200/202/204, BLG-SEC-44, BLG-GOV-374/361, BLG-FE-195; BLG-GOV-401 killed as a duplicate of BLG-QA-240); prior — 2026-11-03 (groom backlog GROOM-20261103-01, post-ship closure 2026-10-29__release-v9.14 STEP 12 — 56 items archived (52 v9.14 shipped, BLG-OPS-196, and BLG-GOV-142/BLG-GOV-360/BLG-SPEC-199 from the Release Planning archive list)); prior — 2026-11-03 (post-ship closure 2026-10-29__release-v9.14 STEP 8 — 1 new item(s) added: BLG-GOV-404; deferred lessons-learnt action with sprint target v9.15); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-03 (PMO Lead retarget, closure_record.md `2026-10-29__release-v9.14` §6 row 5 — 35 items' Provisional-Target set to v9.15 (29 from v9.14, 5 from v9.12 with PO re-deferral notes, BLG-FE-243 from TBD)); prior — 2026-11-03 (owner actions, closure_record.md `2026-10-29__release-v9.14` §6 row 7 — ✅ COMPLETE banners added to BLG-OPS-200/202/204, BLG-SEC-44, BLG-GOV-374/361, BLG-FE-195; BLG-GOV-401 killed as a duplicate of BLG-QA-240); prior — 2026-11-03 (groom backlog GROOM-20261103-01, post-ship closure 2026-10-29__release-v9.14 STEP 12 — 56 items archived (52 v9.14 shipped, BLG-OPS-196, and BLG-GOV-142/BLG-GOV-360/BLG-SPEC-199 from the Release Planning archive list)); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -402,7 +402,7 @@ ST-46's conftest guard checks only *which module object* sits under `utils` / `u
 **Owner:** Head of Engineering; Backend Engineering Patterns Owner
 **Source:** ST-34 (BLG-TECH-23), EPIC-05, cycle `2026-10-16__release-v9.13` — `docs/security/dependency_major_upgrade_assessment_2026-10-27.md` §anthropic — 2026-10-27
 **Effort:** S (~0.5d)
-**Provisional-Target:** v9.14
+**Provisional-Target:** v9.15 (retargeted 2026-11-03 from v9.14, PMO Lead with the item owners, user-directed; post-ship closure `2026-10-29__release-v9.14` §6 row 5)
 
 **Problem**
 The backend pins `anthropic==0.105.2`. The 0.x line no longer gets fixes and sends API version `2023-06-01`; 2.x sends `2026-10-21`. The assessment found nothing in the four AI services that breaks (no sampling parameters, dict-literal messages, `api_key` only), but 1.0 moved the SDK to `httpx2`, so two tests that build `RateLimitError` from `httpx` objects must change.
@@ -425,7 +425,7 @@ The backend pins `anthropic==0.105.2`. The 0.x line no longer gets fixes and sen
 **Owner:** Head of Engineering; Backend Engineering Patterns Owner
 **Source:** ST-34 (BLG-TECH-23), EPIC-05, cycle `2026-10-16__release-v9.13` — `docs/security/dependency_major_upgrade_assessment_2026-10-27.md` §SQLAlchemy — 2026-10-27
 **Effort:** XS (<1h)
-**Provisional-Target:** v9.14
+**Provisional-Target:** v9.15 (retargeted 2026-11-03 from v9.14, PMO Lead with the item owners, user-directed; post-ship closure `2026-10-29__release-v9.14` §6 row 5)
 
 **Problem**
 `backend/requirements.txt` pins `sqlalchemy==2.0.52`, but no file in `backend/`, `scripts/` or `tests/` imports it; all database access uses `psycopg2`. It was added in `3579d2ff` (2026-02-16) and never used. Upgrading it to 2.1 would be wasted work; it adds install time and audit surface.
@@ -445,7 +445,7 @@ The backend pins `anthropic==0.105.2`. The 0.x line no longer gets fixes and sen
 **Owner:** Head of Engineering; Backend Engineering Patterns Owner
 **Source:** ST-34 (BLG-TECH-23), EPIC-05, cycle `2026-10-16__release-v9.13` — `docs/security/dependency_major_upgrade_assessment_2026-10-27.md` §reportlab — 2026-10-27
 **Effort:** S (~0.5d)
-**Provisional-Target:** v9.14
+**Provisional-Target:** v9.15 (retargeted 2026-11-03 from v9.14, PMO Lead with the item owners, user-directed; post-ship closure `2026-10-29__release-v9.14` §6 row 5)
 
 **Problem**
 `reportlab==4.2.5` builds the tax-year PDF export (`services/reports_service.py::build_tax_year_pdf`). Releases 4.4.8 to 5.0.3 record several security fixes this pin misses. 5.0.4 starts changing the default base font, so the PDF can look different. No test builds a PDF today, so a break would only show in production.
@@ -467,7 +467,7 @@ The backend pins `anthropic==0.105.2`. The 0.x line no longer gets fixes and sen
 **Owner:** Head of Engineering; Infrastructure & Operations Owner
 **Source:** ST-34 (BLG-TECH-23), EPIC-05, cycle `2026-10-16__release-v9.13` — `docs/security/dependency_major_upgrade_assessment_2026-10-27.md` §uvicorn — 2026-10-27
 **Effort:** XS (~0.25d)
-**Provisional-Target:** v9.14
+**Provisional-Target:** v9.15 (retargeted 2026-11-03 from v9.14, PMO Lead with the item owners, user-directed; post-ship closure `2026-10-29__release-v9.14` §6 row 5)
 
 **Problem**
 The backend server is pinned to `uvicorn[standard]==0.24.0`, 30 minor releases behind on a pre-1.0 package. The assessment found no breaking change for this app: the Render start command uses only `--host` and `--port`, there are no WebSocket routes, and the `uvicorn`, `uvicorn.error` and `uvicorn.access` logger names that `main.py` configures are unchanged.
@@ -487,7 +487,7 @@ The backend server is pinned to `uvicorn[standard]==0.24.0`, 30 minor releases b
 **Owner:** Head of Engineering; Head of UX & Design
 **Source:** ST-34 (BLG-TECH-23), EPIC-05, cycle `2026-10-16__release-v9.13` — `docs/security/dependency_major_upgrade_assessment_2026-10-27.md` §framer-motion — 2026-10-27
 **Effort:** S (~0.5d)
-**Provisional-Target:** v9.14
+**Provisional-Target:** v9.15 (retargeted 2026-11-03 from v9.14, PMO Lead with the item owners, user-directed; post-ship closure `2026-10-29__release-v9.14` §6 row 5)
 
 **Problem**
 28 files use `motion` and `AnimatePresence` from `framer-motion` 12. The 13.0 and 14.0 breaking changes do not affect this usage, but fixes between 12.43 and 14.7 change `AnimatePresence` exit ordering, first-render values and springs. That can change how an animation looks without failing any test.
@@ -509,7 +509,7 @@ The backend server is pinned to `uvicorn[standard]==0.24.0`, 30 minor releases b
 **Owner:** Head of Engineering; Head of UX & Design
 **Source:** ST-34 (BLG-TECH-23), EPIC-05, cycle `2026-10-16__release-v9.13` — `docs/security/dependency_major_upgrade_assessment_2026-10-27.md` §lucide-react — 2026-10-27
 **Effort:** S (~0.5d)
-**Provisional-Target:** v9.14
+**Provisional-Target:** v9.15 (retargeted 2026-11-03 from v9.14, PMO Lead with the item owners, user-directed; post-ship closure `2026-10-29__release-v9.14` §6 row 5)
 
 **Problem**
 127 files import 105 icons from `lucide-react` 0.563. In 1.62.0 all 105 names are still exported (the 18 old names such as `AlertTriangle` and `Loader2` included), the `lucide-<name>` classes the Playwright specs select on remain, and `aria-hidden="true"` is now the default. What can change is icon artwork, which no test catches.
@@ -531,7 +531,7 @@ The backend server is pinned to `uvicorn[standard]==0.24.0`, 30 minor releases b
 **Owner:** Head of Engineering; Head of UX & Design
 **Source:** ST-34 (BLG-TECH-23), EPIC-05, cycle `2026-10-16__release-v9.13` — `docs/security/dependency_major_upgrade_assessment_2026-10-27.md` §moment — 2026-10-27
 **Effort:** XS (~0.25d)
-**Provisional-Target:** v9.14
+**Provisional-Target:** v9.15 (retargeted 2026-11-03 from v9.14, PMO Lead with the item owners, user-directed; post-ship closure `2026-10-29__release-v9.14` §6 row 5)
 
 **Problem**
 `moment` is deprecated and is used in two places only, both in `src/pages/SystemStatus.js` (`format('HH:mm, D MMM YYYY')` and `fromNow()`). `date-fns` 4.4.0 is already a dependency used in 19 files. GHSA-4p3w-j4w9-5jqw (moment below 2.31.0, server-side only) does not affect this browser use, and the lockfile already has 2.31.0.
@@ -552,7 +552,7 @@ The backend server is pinned to `uvicorn[standard]==0.24.0`, 30 minor releases b
 **Owner:** Head of Engineering; FinOps & Resource Architect
 **Source:** PR #2075 review (EPIC-05, cycle `2026-10-16__release-v9.13`, ST-29/ST-31) — 2026-10-28
 **Effort:** S (~0.5d)
-**Provisional-Target:** v9.14
+**Provisional-Target:** v9.15 (retargeted 2026-11-03 from v9.14, PMO Lead with the item owners, user-directed; post-ship closure `2026-10-29__release-v9.14` §6 row 5)
 
 **Problem**
 Since v9.13 every Alpaca bar call writes two `api_call_log` rows: `service = 'alpaca'` from `alpaca_service._log_alpaca_call()` (one database connection per call, `external_api_dependency_register.md` SFM-01) and `service = 'alpaca_data'` from the transport-level attribution (`utils/api_attribution.py`, batched). The reports keep them apart by service name, but the table grows twice as fast for Alpaca and any total over `api_call_log` double-counts.
@@ -2905,7 +2905,8 @@ STEP 7.3 was recorded as 'not re-measured — no plan release since v9.5' at the
 **Owner:** QA & Testing Owner
 **Source:** PR #1969 agent-mediated Director of Quality review (EPIC-02, cycle `2026-10-08__release-v9.11`) — 2026-10-12
 **Effort:** XS (<1h)
-**Provisional-Target:** v9.12
+**Provisional-Target:** v9.15 (retargeted 2026-11-03 from v9.12, PMO Lead with the item owners, user-directed; post-ship closure `2026-10-29__release-v9.14` §6 row 5)
+> PO re-deferral 2026-11-03: missed v9.12, v9.13 and v9.14; re-deferred to v9.15 on the user's direction (resets the STEP 3.5 deferral count).
 
 **Problem**
 ST-12 moved the compliance and AI-briefing readers to `live_holding_days()`, but they are guarded only by a source-scan test (`test_other_readers_no_longer_read_the_stored_column`); only the portfolio and alerts paths have behavioural tests.
@@ -3063,7 +3064,8 @@ The 2026-10-05 review found 31 AI calls in 102 days, and the Product Owner chose
 **Owner:** Metrics Definitions & Analytics Owner
 **Source:** ST-34 (BLG-GOV-355), EPIC-06, cycle 2026-10-08__release-v9.11 — Head of Specs Team / Product Owner review of ESC-EXEC-20261008-03 — 2026-10-09
 **Effort:** S (~0.5d)
-**Provisional-Target:** v9.12
+**Provisional-Target:** v9.15 (retargeted 2026-11-03 from v9.12, PMO Lead with the item owners, user-directed; post-ship closure `2026-10-29__release-v9.14` §6 row 5)
+> PO re-deferral 2026-11-03: missed v9.12, v9.13 and v9.14; re-deferred to v9.15 on the user's direction (resets the STEP 3.5 deferral count).
 
 **Problem**
 `scripts/compute_effort_weighted_pvr.py` hard-codes its `VERSION_TO_FOLDER` and `WINDOWS` maps, which stop at v9.7. `roadmap_prompt.md` v9.32 STEP 2.4 now records the effort-weighted PVR at every rebalance, but `scripts/` is outside the roadmap engine's §4 write scope, so the script can only be used for windows already in its maps and every new rebalance falls back to the by-hand method.
@@ -3085,7 +3087,8 @@ The 2026-10-05 review found 31 AI calls in 102 days, and the Product Owner chose
 **Owner:** Backend Engineering Patterns Owner; Data Model & Domain Schema Owner
 **Source:** PR #1970 agent-mediated review (EPIC-03, cycle `2026-10-08__release-v9.11`), Director of Quality finding 2: ST-20 (DS-28) — 2026-10-12
 **Effort:** XS (<1h plus test)
-**Provisional-Target:** v9.12
+**Provisional-Target:** v9.15 (retargeted 2026-11-03 from v9.12, PMO Lead with the item owners, user-directed; post-ship closure `2026-10-29__release-v9.14` §6 row 5)
+> PO re-deferral 2026-11-03: missed v9.12, v9.13 and v9.14; re-deferred to v9.15 on the user's direction (resets the STEP 3.5 deferral count).
 
 **Problem**
 `price_alerts.threshold_price` is `NUMERIC(10,4)`, so a threshold such as 100.12345 is stored as 100.1235. `create_price_alert()` compares `threshold_price = %s` with the unrounded float, both in the ST-09 dedup SELECT and in ST-20's unique-violation fallback SELECT. On a second submit of the same >4-dp threshold, the dedup SELECT misses, the INSERT hits `idx_price_alerts_active_unique`, the fallback SELECT also misses, and `_price_alert_row(None)` raises, so the request returns 500. Before DS-28 the same input created a silent duplicate. `CreatePriceAlertRequest.threshold_price` is an unconstrained `float`.
@@ -3106,7 +3109,8 @@ The 2026-10-05 review found 31 AI calls in 102 days, and the Product Owner chose
 **Owner:** Strategy Rules & System Intent Owner; Financial Reporting & Records Owner
 **Source:** PR #1970 agent-mediated review (EPIC-03, cycle `2026-10-08__release-v9.11`), Director of Quality finding 3: ST-16 — 2026-10-12
 **Effort:** XS (<1h)
-**Provisional-Target:** v9.12
+**Provisional-Target:** v9.15 (retargeted 2026-11-03 from v9.12, PMO Lead with the item owners, user-directed; post-ship closure `2026-10-29__release-v9.14` §6 row 5)
+> PO re-deferral 2026-11-03: missed v9.12, v9.13 and v9.14; re-deferred to v9.15 on the user's direction (resets the STEP 3.5 deferral count).
 
 **Problem**
 `strategy_version_registry.py` registers v1.15 (the §6.3 in-grace stop freeze) with `effective_date` 2026-10-09, the ruling date from the `strategy_rules.md` Change Log. The behaviour reaches production only when PR #1970 deploys. SI-04 attributes trades to a version by `entry_date` window, so positions entered between 9 October and the deploy fall in the v1.15 cohort. Those positions are stamped `strategy_version_at_entry = "1.4"` by the code running at the time, and the old nightly job ratcheted their stops during grace. The two attribution methods disagree for that window, and the v1.15 cohort contains trades produced by v1.4 rules.
@@ -3128,7 +3132,8 @@ The 2026-10-05 review found 31 AI calls in 102 days, and the Product Owner chose
 **Owner:** Head of Engineering; Financial Reporting & Records Owner
 **Source:** PR #1972 agent-mediated review (EPIC-04, cycle `2026-10-08__release-v9.11`), Product Owner finding: ST-25 — 2026-10-12
 **Effort:** XS (<1h)
-**Provisional-Target:** v9.12
+**Provisional-Target:** v9.15 (retargeted 2026-11-03 from v9.12, PMO Lead with the item owners, user-directed; post-ship closure `2026-10-29__release-v9.14` §6 row 5)
+> PO re-deferral 2026-11-03: missed v9.12, v9.13 and v9.14; re-deferred to v9.15 on the user's direction (resets the STEP 3.5 deferral count).
 
 **Problem**
 In `generate_narrative` (`backend/services/monthly_pnl_narrative_service.py`), if the first model attempt fails the §13 output checks and the regeneration call then raises, the endpoint returns 503 and stores nothing. A failed check on both attempts falls back to the code-written summary, but this path does not, although it has the same figures. The user gets an error in place of a usable, compliant summary. This matches the contract's 503 row (`reports_endpoints.md`), so it is an improvement, not a deviation.
@@ -4334,7 +4339,7 @@ ST-37 (BLG-SPEC-184) added a default-mismatch class to `scripts/check_data_model
 **Owner:** Infrastructure & Operations Owner; QA & Testing Owner
 **Source:** EPIC-02 agent-mediated DoQ review (Director of Quality role), ST-10, sprint execution `2026-10-16__release-v9.13` — 2026-10-27
 **Effort:** XS (<1h)
-**Provisional-Target:** v9.14
+**Provisional-Target:** v9.15 (retargeted 2026-11-03 from v9.14, PMO Lead with the item owners, user-directed; post-ship closure `2026-10-29__release-v9.14` §6 row 5)
 
 **Problem**
 ST-10's AC 2 asks for the System Status Stop Freshness value to match a recorded manual check. The 2026-10-27 staging check (`qa_evidence_EPIC-02.md`, `DEL-20261017-01`) matched only the empty state: both open staging positions (BARC, LGEN) had a NULL `stop_calculated_at`, so the median and maximum age and the oldest ticker were never compared with the database. The age calculation on real `TIMESTAMPTZ` values from the driver is unchecked on a deployed environment. Staging stamps come only from the on-load path after grace, because `nightly-stop-update.yml` calls `API_URL`, not `STAGING_API_URL`.
@@ -4355,7 +4360,7 @@ ST-10's AC 2 asks for the System Status Stop Freshness value to match a recorded
 **Owner:** Backend Engineering Lead; Strategy Rules & System Intent Owner (§13 check)
 **Source:** PR #2073 agent-mediated review (Director of Quality role), ST-09 / EPIC-02, sprint execution `2026-10-16__release-v9.13` — 2026-10-27
 **Effort:** S (~0.5d)
-**Provisional-Target:** v9.14
+**Provisional-Target:** v9.15 (retargeted 2026-11-03 from v9.14, PMO Lead with the item owners, user-directed; post-ship closure `2026-10-29__release-v9.14` §6 row 5)
 
 **Problem**
 Since v9.13 ST-09, `get_monthly_pnl_report` leaves out all four restatement fields when the `monthly_pnl_snapshots` store fails, instead of failing the request. `monthly_pnl_narrative_service.build_inputs` sets `"restated": bool(r.get("restated"))`, so a missing field becomes `False`. During a snapshot outage, `POST /reports/monthly-pnl/narrative` therefore spends a model call, counts against the daily cap, and stores a narrative whose inputs say no month was restated when the status is unknown. Before ST-09 that path failed with the request.
@@ -4378,7 +4383,7 @@ Since v9.13 ST-09, `get_monthly_pnl_report` leaves out all four restatement fiel
 **Owner:** Frontend Engineering Lead; Frontend Specifications & UX Documentation Owner
 **Source:** PR #2073 agent-mediated reviews (Director of Quality and Product Owner roles), ST-10 / EPIC-02, sprint execution `2026-10-16__release-v9.13` — 2026-10-27
 **Effort:** S (~0.5d)
-**Provisional-Target:** v9.14
+**Provisional-Target:** v9.15 (retargeted 2026-11-03 from v9.14, PMO Lead with the item owners, user-directed; post-ship closure `2026-10-29__release-v9.14` §6 row 5)
 
 **Problem**
 `formatStopAge` (`src/pages/SystemStatus.js`) picks the branch before rounding, so ages from 47.95 h to just under 48 h show "48.0 h" while 48.0 h shows "2 d 0 h"; SC-SS-09b pins "48.0 h" under a "below 48 h" comment. A negative age from small clock skew would show "-0.1 h". The panel's own query is not tied to the page's Refresh button (which refetches health only) or auto-refresh, so its figures and "As of" time go stale until remount. "Stop freshness unavailable." has no retry, and "N never recalculated" does not say when stops get stamped.
@@ -4402,7 +4407,7 @@ Since v9.13 ST-09, `get_monthly_pnl_report` leaves out all four restatement fiel
 **Owner:** Head of UX & Design; Frontend Specifications & UX Documentation Owner; API Contracts & Documentation Owner (400 wording)
 **Source:** PR #2073 agent-mediated reviews (Product Owner and Director of Quality roles), ST-06 and ST-08 / EPIC-02, sprint execution `2026-10-16__release-v9.13` — 2026-10-27
 **Effort:** S (~0.5d)
-**Provisional-Target:** v9.14
+**Provisional-Target:** v9.15 (retargeted 2026-11-03 from v9.14, PMO Lead with the item owners, user-directed; post-ship closure `2026-10-29__release-v9.14` §6 row 5)
 
 **Problem**
 ST-06's "No valid stop" caption on Trade Entry explains why there is no stop but cites "§5" and gives no next step (for example, that the instrument is too volatile for the strategy). When the fetched ATR is rejected at save, the trader sees the backend 400 only in a toast that disappears, and it cites "strategy_rules.md §5"; the ST-08 settings 400 similarly cites §11/§12.3, with precedent at `main.py` and `pre_entry_validation.py`. The fetched-ATR 400 in `position_service.add_position` also hard-codes "14-day" instead of `ATR_PERIOD_DAYS`, unlike the caption and the settings 400. The current wording was set by `ESC-EXEC-20261017-02` condition 2, so a change needs a recorded decision.
@@ -4426,7 +4431,7 @@ ST-06's "No valid stop" caption on Trade Entry explains why there is no stop but
 **Owner:** Head of UX & Design; Frontend Specifications & UX Documentation Owner; API Contracts & Documentation Owner (response shape)
 **Source:** ST-16 AC 4 / EPIC-03, sprint execution `2026-10-16__release-v9.13` — Head of UX & Design answer (agent-mediated, §5.3) recorded in `ESC-EXEC-20261027-01` — 2026-10-27
 **Effort:** S (~0.5d)
-**Provisional-Target:** v9.14
+**Provisional-Target:** v9.15 (retargeted 2026-11-03 from v9.14, PMO Lead with the item owners, user-directed; post-ship closure `2026-10-29__release-v9.14` §6 row 5)
 
 **Problem**
 Code appends deterministic notes to AI text: the stop-time note "(<TICKER> stop last recalculated …)" (ST-04, v9.12; chat focus ticker ST-16, v9.13) and, from ST-17 (v9.13), the briefing caveat for a ticker outside the context. They render exactly like model prose, so the reader cannot tell what the system added from what the model wrote. The Head of UX & Design answered that provenance needs visible "system-added" styling. Because `summary`, `actions[].description` and chat `response` are plain strings, styling needs a structured field or a delimiter, which changes the contract and `openapi.yaml`.
@@ -4469,7 +4474,7 @@ Code appends deterministic notes to AI text: the stop-time note "(<TICKER> stop 
 **Owner:** Head of Engineering; Backend Engineering Patterns Owner
 **Source:** PR #2075 review (EPIC-05, cycle `2026-10-16__release-v9.13`, ST-29/ST-31) — 2026-10-28
 **Effort:** S (~0.5d)
-**Provisional-Target:** v9.14
+**Provisional-Target:** v9.15 (retargeted 2026-11-03 from v9.14, PMO Lead with the item owners, user-directed; post-ship closure `2026-10-29__release-v9.14` §6 row 5)
 
 **Problem**
 `api_attribution_middleware` (`backend/main.py`) awaits `api_attribution.flush()`, one database insert, before it returns the response of any request that made a provider call, so those requests wait for an extra database round trip. Calls a background task makes after the response is sent stay in the in-memory buffer until another request flushes it, and are lost if the process restarts or Render redeploys first, which under-counts the attribution report.
@@ -4491,7 +4496,7 @@ Code appends deterministic notes to AI text: the stop-time note "(<TICKER> stop 
 **Owner:** Infrastructure & Operations Owner; Head of UX & Design
 **Source:** ST-33 (BLG-OPS-77), EPIC-05, cycle `2026-10-16__release-v9.13` — `docs/operations/data_provider_risk_assessment.md` §2, §3 QW-4 — 2026-10-27
 **Effort:** S (~0.5d)
-**Provisional-Target:** v9.14
+**Provisional-Target:** v9.15 (retargeted 2026-11-03 from v9.14, PMO Lead with the item owners, user-directed; post-ship closure `2026-10-29__release-v9.14` §6 row 5)
 
 **Problem**
 When `get_current_price()` returns nothing, the positions view falls back to the stored `current_price` or the entry price and shows it as if it were live. UK prices have no second source, so a Yahoo outage shows stale UK P&L and stop distances with no sign that they are stale.
@@ -4512,7 +4517,7 @@ When `get_current_price()` returns nothing, the positions view falls back to the
 **Owner:** PMO Lead; Infrastructure & Operations Owner
 **Source:** ST-33 (BLG-OPS-77), EPIC-05, cycle `2026-10-16__release-v9.13` — `docs/operations/data_provider_risk_assessment.md` §1, §3 QW-5 — 2026-10-27
 **Effort:** XS (<1h)
-**Provisional-Target:** v9.14
+**Provisional-Target:** v9.15 (retargeted 2026-11-03 from v9.14, PMO Lead with the item owners, user-directed; post-ship closure `2026-10-29__release-v9.14` §6 row 5)
 
 **Problem**
 `docs/ops/external_api_dependency_register.md` describes the news provider as newsapi.org, but news comes from Alpaca's news endpoint (`news_service.py`). Its MIT-08 says the screener falls back to Stooq and Twelve Data, but `fetch_ohlcv` never calls either fetcher. Anyone relying on the register during an incident would expect failover that does not exist.
@@ -4535,7 +4540,7 @@ When `get_current_price()` returns nothing, the positions view falls back to the
 **Owner:** Infrastructure & Operations Owner; FinOps & Resource Architect
 **Source:** ST-30 (BLG-OPS-18), EPIC-05, cycle `2026-10-16__release-v9.13` — `docs/ops/data_pipeline_cost_baseline.md` §5 — 2026-10-27
 **Effort:** S (~0.5d)
-**Provisional-Target:** v9.14
+**Provisional-Target:** v9.15 (retargeted 2026-11-03 from v9.14, PMO Lead with the item owners, user-directed; post-ship closure `2026-10-29__release-v9.14` §6 row 5)
 **Depends on:** ST-30's weekly baseline recorded in `docs/ops/data_pipeline_cost_baseline.md` §4
 
 **Problem**
@@ -4557,7 +4562,7 @@ When `get_current_price()` returns nothing, the positions view falls back to the
 **Owner:** FinOps & Resource Architect; Infrastructure & Operations Owner
 **Source:** ST-30 (BLG-OPS-18) AC 1 and ST-31 (BLG-OPS-19) AC 2, EPIC-05, cycle `2026-10-16__release-v9.13` — post-merge remainder, `DEL-20261027-06` and the production half of `DEL-20261027-04` — 2026-10-28
 **Effort:** XS (<1h)
-**Provisional-Target:** v9.14
+**Provisional-Target:** v9.15 (retargeted 2026-11-03 from v9.14, PMO Lead with the item owners, user-directed; post-ship closure `2026-10-29__release-v9.14` §6 row 5)
 **Depends on:** EPIC-05 merged and deployed to production; 7 days of production data
 
 **Problem**
@@ -4580,7 +4585,7 @@ ST-30 filed the combined weekly cost baseline ($0.00, every source free) and the
 **Owner:** Infrastructure & Operations Owner
 **Source:** ST-32 (BLG-OPS-23), EPIC-05, cycle `2026-10-16__release-v9.13` — post-merge remainder of AC 1, `DEL-20261027-05` — 2026-10-28
 **Effort:** XS (<1h)
-**Provisional-Target:** v9.14
+**Provisional-Target:** v9.15 (retargeted 2026-11-03 from v9.14, PMO Lead with the item owners, user-directed; post-ship closure `2026-10-29__release-v9.14` §6 row 5)
 **Depends on:** EPIC-05 merged and deployed to production; at least 10 nightly production screener runs after deploy
 
 **Problem**
@@ -4602,7 +4607,7 @@ ST-32 made each screener run record `duration_seconds` and added `scripts/screen
 **Owner:** Infrastructure & Operations Owner
 **Source:** PR #2075 review (EPIC-05, cycle `2026-10-16__release-v9.13`, ST-29/ST-31) — 2026-10-28
 **Effort:** XS (<1h)
-**Provisional-Target:** v9.14
+**Provisional-Target:** v9.15 (retargeted 2026-11-03 from v9.14, PMO Lead with the item owners, user-directed; post-ship closure `2026-10-29__release-v9.14` §6 row 5)
 **Depends on:** BLG-OPS-196 (first green staging deploy on `main` showing the host check pass)
 
 **Problem**
@@ -4625,7 +4630,7 @@ ST-32 made each screener run record `duration_seconds` and added `scripts/screen
 **Owner:** Director of Quality; QA & Testing Owner
 **Source:** ST-24 (EPIC-04, v9.13) state-changing action sweep — 2026-10-28
 **Effort:** M (~1-2 days)
-**Provisional-Target:** v9.14
+**Provisional-Target:** v9.15 (retargeted 2026-11-03 from v9.14, PMO Lead with the item owners, user-directed; post-ship closure `2026-10-29__release-v9.14` §6 row 5)
 
 **Problem**
 The ST-24 sweep (`docs/testing/state_changing_action_coverage.md`) found 15 of 52 state-changing primary actions that no Playwright test sends, including the Positions-page Exit modal submit, the abandon-plan submit, reflection save, note and tag save, and single deletes. A wrong route or method on any of them would ship unseen, which is how `PATCH /positions/{id}` (BLG-FE-226) went unnoticed.
@@ -4646,7 +4651,7 @@ The ST-24 sweep (`docs/testing/state_changing_action_coverage.md`) found 15 of 5
 **Owner:** Base44 Frontend Prompt Owner
 **Source:** ST-24 (EPIC-04, v9.13) state-changing action sweep — 2026-10-28
 **Effort:** XS (<1h)
-**Provisional-Target:** v9.14
+**Provisional-Target:** v9.15 (retargeted 2026-11-03 from v9.14, PMO Lead with the item owners, user-directed; post-ship closure `2026-10-29__release-v9.14` §6 row 5)
 
 **Problem**
 `base44Client.js` keeps `Signal.delete`, `Signal.generate`, `createSnapshot`, `trades.updateCosts` and the strategy benchmark `importData`, none with a caller. They are outside BLG-FE-230's scope, which covers only the methods whose route does not exist.
@@ -4666,7 +4671,7 @@ The ST-24 sweep (`docs/testing/state_changing_action_coverage.md`) found 15 of 5
 **Owner:** Director of Quality; QA & Testing Owner
 **Source:** EPIC-04 (v9.13) CI run 40784100342 and local full runs — 2026-10-29
 **Effort:** S (~0.5 day)
-**Provisional-Target:** v9.14
+**Provisional-Target:** v9.15 (retargeted 2026-11-03 from v9.14, PMO Lead with the item owners, user-directed; post-ship closure `2026-10-29__release-v9.14` §6 row 5)
 
 **Problem**
 `tests/e2e/grace-panel-position-link.spec.js` SC-GPL-01 fails intermittently on `expect(card).toBeInViewport()` ("viewport ratio 0"). It failed on both tries of attempt 1 in Playwright E2E run 40784100342 (shard 3/8, `2f5cc56a`), then passed on the re-run and on `5e8b6f04` with the same code. It also failed once locally on a build of unchanged `main`. It is the first demonstrated flaky test under `docs/testing/flaky_test_quarantine_process.md`, which is BLG-QA-75's gate condition. It has not been quarantined.
@@ -4687,7 +4692,7 @@ The ST-24 sweep (`docs/testing/state_changing_action_coverage.md`) found 15 of 5
 **Owner:** Director of Quality; QA & Testing Owner
 **Source:** EPIC-04 (v9.13) agent-mediated DoQ review of ST-25, frontend testing gate (CLAUDE.md §2) — 2026-10-29
 **Effort:** S (~0.5 day)
-**Provisional-Target:** v9.14
+**Provisional-Target:** v9.15 (retargeted 2026-11-03 from v9.14, PMO Lead with the item owners, user-directed; post-ship closure `2026-10-29__release-v9.14` §6 row 5)
 
 **Problem**
 ST-25 changed colours that no Playwright test or staging run checks: the destructive-button hover from rose-500 to rose-700 on seven confirm buttons (decision record §2.2), the Cash Management deposit fill (emerald-700) and `text-white` on its submit button, and `text-white` on System Status "Refresh Health". AC 2's listed sites are asserted in `coloured-button-fills.spec.js`; these addendum states are not.
@@ -4708,7 +4713,7 @@ ST-25 changed colours that no Playwright test or staging run checks: the destruc
 **Owner:** Director of Quality; QA & Testing Owner
 **Source:** EPIC-04 (v9.13) ST-25 consequence fix in `TradeDebrief.js` (`2f5cc56a`) — 2026-10-29
 **Effort:** XS (<1h)
-**Provisional-Target:** v9.14
+**Provisional-Target:** v9.15 (retargeted 2026-11-03 from v9.14, PMO Lead with the item owners, user-directed; post-ship closure `2026-10-29__release-v9.14` §6 row 5)
 
 **Problem**
 ST-25 gave the Post-Trade Debrief Generate and Regenerate buttons `text-slate-800 dark:text-slate-300`, fixing a 1.48:1 light-theme contrast failure that axe had missed while the buttons sat off-screen. Today only the section's axe scans (SC-DBF-06a, SC-DBF-10b) cover it, and they depend on the buttons being on screen at 1280px. A layout change that pushes them off-screen again would hide a regression.
@@ -4727,7 +4732,7 @@ ST-25 gave the Post-Trade Debrief Generate and Regenerate buttons `text-slate-80
 **Owner:** Director of Quality; API Contracts & Documentation Owner
 **Source:** PR #2076 (EPIC-04, v9.13) agent-mediated Director of Quality / Product Owner review — 2026-10-29
 **Effort:** XS (<1h)
-**Provisional-Target:** v9.14
+**Provisional-Target:** v9.15 (retargeted 2026-11-03 from v9.14, PMO Lead with the item owners, user-directed; post-ship closure `2026-10-29__release-v9.14` §6 row 5)
 
 **Problem**
 `scripts/check_frontend_api_calls.py` (ST-23) matches a call against openapi paths with each `{param}` treated as "any segment". A literal call with a mistyped segment therefore passes when a parameter route has the same shape: `GET /positions/complainse` passes via `GET /positions/{position_id}`, and `DELETE /trade-plans/bluk` via `DELETE /trade-plans/{id}`. No current call depends on this; it is a latent false negative in the check meant to catch exactly this class of mistake.
@@ -4748,7 +4753,7 @@ ST-25 gave the Post-Trade Debrief Generate and Regenerate buttons `text-slate-80
 **Owner:** Director of Quality; QA & Testing Owner
 **Source:** PR #2076 (EPIC-04, v9.13) agent-mediated Director of Quality / Product Owner review — 2026-10-29
 **Effort:** S (~0.5 day)
-**Provisional-Target:** v9.14
+**Provisional-Target:** v9.15 (retargeted 2026-11-03 from v9.14, PMO Lead with the item owners, user-directed; post-ship closure `2026-10-29__release-v9.14` §6 row 5)
 
 **Problem**
 `docs/testing/state_changing_action_coverage.md` (ST-24) is a point-in-time snapshot. A new POST/PUT/PATCH/DELETE call added to `src/` does not appear in it, so ST-24's "every action is covered or has a dated backlog item" stops being true the first time a feature ships without anyone updating the document.
@@ -4793,7 +4798,7 @@ ST-01 restores `eslint-config-react-app` so the frontend builds again. Only a `d
 **Owner:** AI Compliance & Governance Officer; Infrastructure & Operations Owner
 **Source:** Sprint Planning `2026-10-29__release-v9.14` STEP 6.2 post-merge AC check (LL-v9.13-P3-03) — post-merge/production-data AC 1 of ST-23 (BLG-GOV-178), EPIC-03 — 2026-10-29
 **Effort:** S (~0.5 day)
-**Provisional-Target:** v9.14
+**Provisional-Target:** v9.15 (retargeted 2026-11-03 from v9.14, PMO Lead with the item owners, user-directed; post-ship closure `2026-10-29__release-v9.14` §6 row 5)
 **Depends on:** ST-15–ST-18 merged and deployed; a production read credential
 
 **Problem**
@@ -4815,7 +4820,7 @@ ST-23's first AC reviews 10 production AI outputs drawn from the `BLG-AI-06` sam
 **Owner:** FinOps & Resource Architect; Infrastructure & Operations Owner
 **Source:** Sprint Planning `2026-10-29__release-v9.14` STEP 6.2 post-merge AC check (LL-v9.13-P3-03) — production-data AC 2 of ST-39 (BLG-OPS-85), EPIC-06 — 2026-10-29
 **Effort:** XS (<1h)
-**Provisional-Target:** v9.14
+**Provisional-Target:** v9.15 (retargeted 2026-11-03 from v9.14, PMO Lead with the item owners, user-directed; post-ship closure `2026-10-29__release-v9.14` §6 row 5)
 **Depends on:** ST-39 (BLG-OPS-85) report merged; production read access
 
 **Problem**
@@ -5502,6 +5507,7 @@ ST-48 fixed `scripts/compute_effort_weighted_pvr.py`'s parse of band parenthetic
 **Source:** Sprint Execution `2026-10-29__release-v9.14`, EPIC-07 / ST-50 (win rate surface consistency check, `docs/specs/metrics/win_rate_surface_consistency_2026-11-02.md`) — 2026-11-02
 **Effort:** XS (<1h)
 **Provisional-Target:** v9.15
+**Owner ruling (2026-11-03, Metrics Definitions & Analytics Owner):** a `pnl = 0` trade belongs in neither Avg Win nor Avg Loss, nor in the W or L count (§Win Rate, §Risk/Reward Ratio; `metrics_definitions.md` v1.34.2 Appendix E Backlog Item 3). This answers the Scope's first bullet.
 
 **Problem**
 `src/pages/TradeHistory.js` computes its summary win rate with `winningTrades = filteredTrades.filter((t) => t.pnl >= 0)`. `metrics_definitions.md` §Win Rate counts a win only when `pnl > 0`, and every other surface (analytics, P&L report, Performance Analytics) follows it. When the filtered set contains a trade with `pnl = 0`, the Trade History win rate is higher than the one the same trades show elsewhere, and the zero is averaged into Avg Win.
@@ -5655,7 +5661,7 @@ Since `cn()` runs `tailwind-merge` (v9.13 ST-25, `2f5cc56a`), a caller's `bg-sla
 **Owner:** Frontend Specifications & UX Owner
 **Source:** PR #2139 review (EPIC-05 of `2026-10-29__release-v9.14`, reviewing ST-29's `positions-exit-modal.spec.js`, which asserts the same UTC expression the app uses) — 2026-11-02
 **Effort:** S (~0.5d)
-**Provisional-Target:** TBD
+**Provisional-Target:** v9.15 (retargeted 2026-11-03 from TBD, PMO Lead with the item owners, user-directed; post-ship closure `2026-10-29__release-v9.14` §6 row 5)
 
 **Problem**
 The Exit Position dialog (`src/components/positions/ExitModal.js:31,56`), Trade Entry (`src/pages/TradeEntry.js:41`) and Cash Management (`src/components/cash/CashManagementModal.js:57`) prefill their date with `new Date().toISOString().split("T")[0]`. That is the UTC date, not the user's local date. For a UK user between 00:00 and 01:00 BST, every one of these forms prefills yesterday's date. An exit or entry saved without correcting it lands on the wrong day: holding days and grace-period day counts are off by one, and an exit just after midnight on 6 April falls in the previous UK tax year.

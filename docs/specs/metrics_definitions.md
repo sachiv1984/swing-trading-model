@@ -2,8 +2,8 @@
 **Owner:** Metrics Definitions & Analytics Canonical Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 1.34.1
-**Last Updated:** 2026-11-03 (post-ship closure 2026-10-29__release-v9.14 STEP 5 — Appendix E Known Deviations entries added for the accepted P2 win-rate defects BLG-FE-239 and BLG-FE-240; no definition change); prior — 2026-11-02 (ST-48, EPIC-07, v9.14, BLG-SPEC-191 — Appendix F effort normalisation table and `compute_effort_weighted_pvr.py` weight the same effort values; v9.1–v9.5 and v9.3–v9.7 effort-weighted readings corrected; effort-weighted sub-metric's status names `roadmap_prompt.md` STEP 2.4 (v9.32)); prior — 2026-11-02 (ST-24, EPIC-04, v9.14, BLG-FEAT-99 — §Exit Condition Category: `GET /reports/monthly-pnl`'s `by_exit_condition` named as a consumer); prior history retained — see prior entries in version control
+**Version:** 1.34.2
+**Last Updated:** 2026-11-03 (Metrics Definitions & Analytics Owner review of Appendix E Backlog Items 3 and 4 — both confirmed accurate; break-even trades belong in neither Avg Win nor Avg Loss per §Risk/Reward Ratio; no definition change); prior — 2026-11-03 (post-ship closure 2026-10-29__release-v9.14 STEP 5 — Appendix E Known Deviations entries added for the accepted P2 win-rate defects BLG-FE-239 and BLG-FE-240; no definition change); prior — 2026-11-02 (ST-48, EPIC-07, v9.14, BLG-SPEC-191 — Appendix F effort normalisation table and `compute_effort_weighted_pvr.py` weight the same effort values; v9.1–v9.5 and v9.3–v9.7 effort-weighted readings corrected; effort-weighted sub-metric's status names `roadmap_prompt.md` STEP 2.4 (v9.32)); prior history retained — see prior entries in version control
 **Review Cycle:** Monthly
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
@@ -1489,6 +1489,7 @@ Validation is performed by `POST /validate/calculations` comparing computed metr
 ## Appendix D — Change Log
 | Date | Version | Change | Author |
 |---|---|---|---|
+| 2026-11-03 | 1.34.2 | Owner review of Appendix E Backlog Items 3 (`BLG-FE-239`) and 4 (`BLG-FE-240`), added by post-ship closure `2026-10-29__release-v9.14`: both confirmed accurate against the code; Item 3 records that a `pnl = 0` trade is in neither Avg Win nor Avg Loss (§Risk/Reward Ratio). Documentation only; no definition change. | Metrics Definitions & Analytics Owner |
 | 2026-11-03 | 1.34.1 | Post-ship closure `2026-10-29__release-v9.14` STEP 5: Appendix E Backlog Items 3 and 4 added — Known Deviations for the two accepted P2 win-rate defects found by ST-50 (`BLG-FE-239` Trade History counts `pnl = 0` as a win; `BLG-FE-240` Dashboard win-rate widgets read open positions only), both targeted to v9.15. No definition change. | Post-Ship Closure Engine (PMO Lead) |
 | 2026-11-02 | 1.34.0 | ST-48 (EPIC-07, v9.14, BLG-SPEC-191): Appendix F effort normalisation table rewritten so it and `scripts/compute_effort_weighted_pvr.py` weight exactly the same values (hour/minute-scale and `<` → 0.15; only a leading quantity in a band's parenthetical is read; `VS` and band ranges unweighted), with a parity test. Correcting the script's parenthetical parse changes two backfilled readings: v9.1–v9.5 0.021 → 0.024 and v9.3–v9.7 0.093 → 0.104 (`XS (~15min)` had weighed 15 days). Status names `roadmap_prompt.md` STEP 2.4 (v9.32) as where the effort-weighted reading is recorded; the D-split and U-pool indicator stay proposal-only. | Metrics Definitions & Analytics Owner |
 | 2026-11-02 | 1.33.2 | ST-24 (EPIC-04, v9.14, BLG-FEAT-99): §Exit Condition Category Data Sources names `GET /reports/monthly-pnl`'s `by_exit_condition` (and the Reports Monthly tab card) as a consumer of the category. No definition change. | Metrics Definitions & Analytics Owner |
@@ -1565,6 +1566,8 @@ Validation is performed by `POST /validate/calculations` comparing computed metr
 
 **Backlog reference:** `BLG-FE-239`
 
+**Owner review (Metrics Definitions & Analytics Owner, 2026-11-03, agent-mediated per §5.3, user-directed):** Entry confirmed accurate against `src/pages/TradeHistory.js` (`winningTrades = filteredTrades.filter((t) => t.pnl >= 0)`, lines 160–166, feeding the win rate, the `W / L` subtitle and Avg Win). The fix's open scope question — where a `pnl = 0` trade belongs — is already answered canonically: §Win Rate counts it in `total_trades` but not as a win, and §Risk/Reward Ratio defines `avg_win = mean(pnl where pnl > 0)` and `avg_loss = mean(pnl where pnl < 0)`, so a break-even trade is in **neither** average and in neither the W nor the L count. No definition change is needed; the fix is implementation-only. (§Consecutive Losing Streak's `pnl <= 0` is a separate, deliberate convention and is not affected.)
+
 **Accepted by:** Product Owner + Director of Quality, 2026-11-02 (`verification_report.md` §4, cycle `2026-10-29__release-v9.14`), on condition it stays P2 and targeted to v9.15. Entry added by Post-Ship Closure STEP 5 (routed from Delivery Verification).
 
 ---
@@ -1583,6 +1586,8 @@ Validation is performed by `POST /validate/calculations` comparing computed metr
 **Owner:** Metrics Definitions & Analytics Canonical Owner; Frontend Specifications & UX Documentation Owner
 
 **Backlog reference:** `BLG-FE-240`
+
+**Owner review (Metrics Definitions & Analytics Owner, 2026-11-03, agent-mediated per §5.3, user-directed):** Entry confirmed accurate. `src/pages/Dashboard.js` line 154 filters `allPositions` for `status === "closed"`, but `GET /positions` returns open positions only (`position_endpoints.md` §GET /positions; `database.get_positions` callers pass `status='open'`), so the list is always empty. Line 462 renders `<WinRateChart trades={closedPositions} />` while `WinRateChart.js` reads `winRate`, `wins` and `losses`. Both widgets must take closed trades (`trade_history`, or the `GET /trades` summary `win_rate`) and compute per §Win Rate, with break-even trades treated as in Backlog Item 3. No definition change is needed; the fix is implementation-only.
 
 **Accepted by:** Product Owner + Director of Quality, 2026-11-02 (`verification_report.md` §4, cycle `2026-10-29__release-v9.14`), on condition it stays P2 and targeted to v9.15. Entry added by Post-Ship Closure STEP 5 (routed from Delivery Verification).
 
