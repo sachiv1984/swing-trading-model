@@ -24,30 +24,30 @@ MAX_IMPROVEMENTS = 20
 AUDIT_VERSION = "6"
 
 # Prior audit tracking — the audit itself produces updated values at end (see §9 CONFIG UPDATE)
-PRIOR_AUDIT_ID = "AUD-2026-10-08"
-PRIOR_AUDIT_OPEN_ITEMS = []
-  # All 7 improvements filed at AUD-2026-10-08 were applied post-publication, same session, on explicit
-  # user direction ("Apply the 7 fixes") as agent-mediated Head of Specs Team rulings (003: PMO Lead).
-  # 001 post_ship_closure.md v2.39; 002 shared_standards.md v3.38 §11 size budget + this file's Stage 5
-  # formula; 003 .github/workflows/escalation-sla-reminder.yml; 004 lessons_learnt_prompt.md v1.16;
-  # 005 OPERATIONAL_GUIDE.md v4.228 §13/§14; 006 shared_standards.md §13 rows; 007 prompt_change_log.md
-  # v1.1 + this file's Phase 1 load. Follow-ons: BLG-GOV-379/380/381 (prompt splits). Execution
-  # Reliability (73) and Governance Integrity (46) were re-based this run, so their trend vs. the prior
-  # 53/100 is not comparable. See claude/cycles/2026-10-08__release-v9.11/audit_report_AUD-2026-10-08.md
-  # §5 post-publication note.
+PRIOR_AUDIT_ID = "AUD-2026-11-03"
+PRIOR_AUDIT_OPEN_ITEMS = [
+    "AUD-2026-11-03-001", "AUD-2026-11-03-002", "AUD-2026-11-03-003",
+    "AUD-2026-11-03-004", "AUD-2026-11-03-005", "AUD-2026-11-03-006",
+    "AUD-2026-11-03-007",
+]
+  # None applied at filing: each touches a governance prompt, hook or CI workflow and needs owner
+  # sign-off. Window was 4 cycle-records (v9.11-v9.14), not 3: the v9.11 post-ship closure overwrote
+  # last_audit_cycle_count 87->88 (AUD-2026-11-03-002). Friction Load (18) counts the newly typed
+  # closure items over a 4-cycle window; its like-for-like basis is 35, so its trend vs 42 is not
+  # comparable. See claude/cycles/2026-10-29__release-v9.14/audit_report_AUD-2026-11-03.md.
 
 # Health Scorecard baseline — updated by audit output each run for trend tracking
 PRIOR_SCORES = {
-    "token_efficiency":      84,
-    "governance_integrity":  46,
-    "execution_reliability": 73,
-    "friction_load":         42,
-    "document_hygiene":      100,
+    "token_efficiency":      80,
+    "governance_integrity":  62,
+    "execution_reliability": 72,
+    "friction_load":         18,
+    "document_hygiene":      96,
 }
 
 # Completed cycle count — increment after each post-ship closure
 # Used to determine B4 history sufficiency (need ≥3 cycles for hard gate compliance)
-COMPLETED_CYCLES = 87  # current completed_cycle_count at AUD-2026-10-08
+COMPLETED_CYCLES = 91  # current completed_cycle_count at AUD-2026-11-03
 
 # -------------------------
 # MISSING FILE RULE
