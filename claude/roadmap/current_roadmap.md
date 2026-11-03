@@ -1,7 +1,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-11-03 (roadmap rebalance `2026-11-03__scheduled`, DL-088 — §1 Next planned release → v9.15; §3 gains "v9.15 — Site Structure & Usability, Phase 1" with 10 committed items and the programme plan); prior — 2026-11-03 (post-ship closure 2026-10-29__release-v9.14, manage roadmap STEP 11 — 0 items retired (v9.14 had no §3 section); 1 RA: pointer pruned (RA:v9.10-committed-items, 4 shipped releases older)); prior — 2026-11-03 (post-ship closure 2026-10-29__release-v9.14 STEP 2 — §1 Current Version → v9.14 ✅ Complete, Next planned release → [TBD]; RA:v9.14 closure status added; §8 Release Summary row added); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-03 (Release Planning `2026-11-03__release-v9.15` STEP 5 — RA:v9.15 execution notes added under §3 "v9.15 — Site Structure & Usability, Phase 1"; no scope change); prior — 2026-11-03 (roadmap rebalance `2026-11-03__scheduled`, DL-088 — §1 Next planned release → v9.15; §3 gains "v9.15 — Site Structure & Usability, Phase 1" with 10 committed items and the programme plan); prior — 2026-11-03 (post-ship closure 2026-10-29__release-v9.14, manage roadmap STEP 11 — 0 items retired (v9.14 had no §3 section); 1 RA: pointer pruned (RA:v9.10-committed-items, 4 shipped releases older)); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-11-03 (cycle 2026-11-03__scheduled — Standard tier, CPS=N/A (0 active initiatives, 19th consecutive cycle); STEP -1.5 cleared after 1 OVERDUE deferred patch was applied (Head of Specs Team, user acting in role); reduced-roster intake IW-20261103-01 (11 ideas from the Head of UX & Design website review → 27 backlog items); STEP 8.0 Correctness Fast-Track promoted BLG-FE-244 and BLG-FE-245 (P1); PVR 0.307 (Advisory, 1st reading out of Alert); Skill-Silo 68.1% pooled (above ceiling, sustained-failure clause applies); STEP 8.1 Option (a), v9.15 section added; DL-088)
 
 > ⚠️ **Standing Notice:** This document records product intent and prioritisation thinking. All implementation detail (formulas, schemas, endpoint paths) is illustrative and indicative only. Before any feature moves to implementation, the relevant canonical specifications must be authored or updated by the appropriate domain owner. This document must not be cited as canonical intent.
@@ -533,6 +533,15 @@ Committed ≈ 11.5-13 days of the ~24–28-day band. The rest of v9.15 is set by
 | Close-out — first-principles UX re-review | v9.18 | `BLG-UX-08` (gated on every other programme item; Head of UX & Design confirms or revises the 2026-11-03 verdict against its baseline metrics) |
 
 `BLG-FE-54` (Arc 5 unified pre-entry gateway) keeps its Arc 5 gate; `BLG-FE-244` and `BLG-FE-255` deliver the ungated slices now (PO decision, DL-088). `BLG-FE-224`/`BLG-FE-242` are superseded by `BLG-FE-265` on completion unless shipped earlier.
+
+<!-- roadmap-annotation-marker: RA:v9.15:2026-11-03__release-v9.15 -->
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-11-03__release-v9.15
+- Plan published: 2026-11-03
+- Cycle folder: claude/cycles/2026-11-03__release-v9.15/
+- Backlog slice: claude/cycles/2026-11-03__release-v9.15/stage4_backlog_slice.md
+- Status at annotation: Committed (47 stories, 7 EPICs, 27.90d; all 10 DL-088 committed items seated, `BLG-FE-244`/`BLG-FE-245` (P1) as ST-01/ST-02; Phase 2/3 items held to their provisional releases by Product Owner override)
 
 *Now horizon was empty from 2026-07-27 until the v9.10 section below was added on 2026-10-06 (post-ship closure `2026-07-24__release-v7.8`, `manage roadmap` STEP 11) — `BLG-FEAT-73`/`BLG-FEAT-74` removed per Product Owner perennial-return disposition (Option (b), `decisions--2026-07-24__release-v7.8.md`); no carry-forward re-add. Both remain open, un-scheduled items in `claude/backlog/backlog.md` and may return to a future Now-horizon section once their respective gates clear.*
 
