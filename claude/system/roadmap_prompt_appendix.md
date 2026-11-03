@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.1
-**Last Updated:** 2026-10-16 (Head of Specs Team action-now patch, user-directed, roadmap rebalance `2026-10-16__scheduled` STEP -1.5 — Part B gains "Core wording moved at v9.35 (verbatim)", holding the v9.34 core paragraphs shortened in `roadmap_prompt.md` v9.35); prior — 2026-10-01 (ST-21, EPIC-04, v9.9, BLG-GOV-343 — created as part of splitting `roadmap_prompt.md` into a core + this appendix so the core fits a single read)
+**Version:** 1.2
+**Last Updated:** 2026-11-03 (BLG-GOV-393, Head of Specs Team, user-directed — Part A STEP 11.2: every deferred patch files a tracking backlog item); prior — 2026-10-16 (Head of Specs Team action-now patch, user-directed, roadmap rebalance `2026-10-16__scheduled` STEP -1.5 — Part B gains "Core wording moved at v9.35 (verbatim)", holding the v9.34 core paragraphs shortened in `roadmap_prompt.md` v9.35); prior — 2026-10-01 (ST-21, EPIC-04, v9.9, BLG-GOV-343 — created as part of splitting `roadmap_prompt.md` into a core + this appendix so the core fits a single read)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -103,7 +103,7 @@ Terminal block (machine-readable, at end of file):
 
 Every process patch classified as:
 - **Action-now:** Head of Specs Team explicit confirmation required → apply patch → version bump → update `Last Updated` → record in `prompt_change_log.md`.
-- **Defer:** must name exact file path, exact section, exact one-sentence change, named owner (role), target date. Vague defers → escalations. **Target date must be a cycle_id or an absolute date — not a bare release version alone** (a release can ship before or after any given rebalance independent of cycle cadence). If a release version is the natural reference, also record a concrete date estimate alongside it (e.g., "v6.3 (target ships ~2026-06-28, revisit by 2026-07-01__scheduled)") so STEP -1.5's stale-release-target check has a deterministic fallback.
+- **Defer:** must name exact file path, exact section, exact one-sentence change, named owner (role), target date. Vague defers → escalations. **Every deferred patch also files a tracking backlog item** (BLG-GOV-393): same owner and change, `Provisional-Target` = the next unplanned release, Effort with a day range; cite its ID in the patch's Target field and the Outstanding deferred patches row, so Release Planning can seat it (core STEP -1.5 "Seated patch"). **Target date must be a cycle_id or an absolute date — not a bare release version alone** (a release can ship before or after any given rebalance independent of cycle cadence). If a release version is the natural reference, also record a concrete date estimate alongside it (e.g., "v6.3 (target ships ~2026-06-28, revisit by 2026-07-01__scheduled)") so STEP -1.5's stale-release-target check has a deterministic fallback.
 
 #### 11.3 Prompt Change Log (Append-Only)
 

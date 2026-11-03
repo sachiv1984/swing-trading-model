@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 9.36
-**Last Updated:** 2026-11-03 (AUD-2026-11-03-006 — STEP 2.4 product-value-ratio history append skips when a row for this cycle_id is already present (resumed run)); prior — 2026-10-16 (Head of Specs Team action-now patches, user-directed, roadmap rebalance `2026-10-16__scheduled` STEP -1.5, clearing 3 OVERDUE deferred patches — STEP 7.3 reads `claude/roadmap/ready_pool_history.md` (BLG-GOV-374); §7.1 defines "worsened or remained unresolved" (ESC-RB-20261008-01); rationale moved to appendix Part B so the core fits under 24k tokens); prior — 2026-10-13 (ST-43, EPIC-06, v9.12, BLG-GOV-364 — STEP -1.6 standalone pre-run exception bounded by idea_intake_prompt.md §4.1 (reduced-roster windows)); prior history retained — see prior entries in version control
+**Version:** 9.37
+**Last Updated:** 2026-11-03 (BLG-GOV-393, Head of Specs Team, user-directed — STEP -1.5: a deferred patch whose tracking backlog item is seated counts as carried, not OVERDUE); prior — 2026-11-03 (AUD-2026-11-03-006 — STEP 2.4 product-value-ratio history append skips when a row for this cycle_id is already present (resumed run)); prior — 2026-10-16 (Head of Specs Team action-now patches, user-directed, roadmap rebalance `2026-10-16__scheduled` STEP -1.5, clearing 3 OVERDUE deferred patches — STEP 7.3 reads `claude/roadmap/ready_pool_history.md` (BLG-GOV-374); §7.1 defines "worsened or remained unresolved" (ESC-RB-20261008-01); rationale moved to appendix Part B so the core fits under 24k tokens); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -153,6 +153,7 @@ Any unresolved action with no carry-forward path → halt.
 **Prompt patch confirmation:** Load deferred patches from prior `lessons_learnt.md`. For each:
 - Present in target file → record "applied" in run manifest.
 - Absent and **second consecutive cycle** carrying this patch → classify OVERDUE; escalate to Head of Specs Team immediately. Run may not proceed past -1.5 with any OVERDUE patch.
+- **Seated patch (BLG-GOV-393):** a patch whose tracking backlog item (filed per appendix STEP 11.2) is seated — listed in the `sprint_backlog.md` of a cycle not yet Closed, or committed in a Now-horizon release section of `current_roadmap.md` — counts as carried, not OVERDUE, at any carry count. Record the item ID. An unseated patch follows the rule above.
 - **Out-of-scope OVERDUE resolution (v8.7):** if an OVERDUE patch's target is outside §4 but a named authority holds a standing write privilege for it (e.g. `shared_standards.md` §17), "outside scope" is not a valid carry-forward reason. The escalation instructs applying the patch under that authority this session.
 - **Condition-gated defer exemption (v8.8):** a deferred patch whose Target is a recurrence condition (not a cycle_id or date) is exempt from the OVERDUE rule. After 6 or more consecutive carries without the condition recurring, raise a non-blocking **Stale Condition-Gated Defer** advisory to Head of Specs Team (rewrite as action-now, or retire).
 - **Stale release target check:** If a deferred patch's target event is a named release (`plan release vX.Y`), verify whether that release has already shipped by checking the release summary table in `current_roadmap.md`. If shipped → classify the patch as OVERDUE immediately; do not wait for the second-consecutive-cycle rule to fire. Record outcome in run manifest.

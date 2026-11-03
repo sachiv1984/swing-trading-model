@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Class:** Operational Record (Class 3)
-**Status:** Active
+**Status:** Complete
 **Last Updated:** 2026-11-03
 
 ---
@@ -40,3 +40,9 @@
 - **Blocks execution:** No
 - **Disposition:** Open
 - **Resolution summary:** —
+
+## ESC-RB-20261103-02 — Resolution (appended; entry above unchanged)
+
+- **Disposition:** Resolved
+- **Resolved at:** 2026-11-03T14:29:50Z
+- **Resolution summary:** The user directed "apply the 5 patches needed". Head of Specs Team (agent-mediated, user-directed) applied all five deferred patches action-now on this branch: `BLG-GOV-393` (`roadmap_prompt.md` v9.37 STEP -1.5 seated-patch rule; `roadmap_prompt_appendix.md` v1.2 STEP 11.2 tracking item), `BLG-GOV-392` and `BLG-GOV-405` (`shared_standards.md` v3.41 §2, §11), `BLG-GOV-406` (`roadmap_management_prompt.md` v1.7 STEP 5.2), `BLG-GOV-407` (`idea_intake_prompt.md` v2.13 STEP 0), with the CLAUDE.md §6 checklist (`OPERATIONAL_GUIDE.md` v4.250, 6 `prompt_change_log.md` rows, companion changelogs). No deferred patch remains outstanding from this cycle; the next rebalance's STEP -1.5 should find all five applied.
