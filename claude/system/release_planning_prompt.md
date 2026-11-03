@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.68
-**Last Updated:** 2026-11-03 (AUD-2026-11-03-006 — §1.4c ready-pool history append skips when a row for this release is already present (resumed run)); prior — 2026-11-03 (`ESC-CLOSE-20261103-02` ruling, option (a) — §1.4c step 1a seats deferred lessons-learnt patch items targeted at this release after P1/P2, as a narrow exception to `ESC-CLOSE-20260923-01`); prior — 2026-11-02 (ST-45, BLG-GOV-398, EPIC-07, v9.14, `ESC-EXEC-20261102-01` Head of Specs Team choice (a) — §1.3a gate-field carve-out extends to the "gating item shipped — verify" list: a gate whose whole condition is a cited shipped item is cleared in place; §7 write scope names it); prior history retained — see prior entries in version control
+**Version:** 2.69
+**Last Updated:** 2026-11-03 (BLG-GOV-395, Head of Specs Team, user-directed — STEP 7 intermediate sync writes `execution_state_path` with `active_cycle`); prior — 2026-11-03 (AUD-2026-11-03-006 — §1.4c ready-pool history append skips when a row for this release is already present (resumed run)); prior — 2026-11-03 (`ESC-CLOSE-20261103-02` ruling, option (a) — §1.4c step 1a seats deferred lessons-learnt patch items targeted at this release after P1/P2, as a narrow exception to `ESC-CLOSE-20260923-01`); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -1116,9 +1116,10 @@ Before writing `cycle_summary.md`, update `.claude_current_state.json` to reflec
 active_cycle: <cycle_id>
 status: <current macro-state>       # e.g. Validated — NOT Published
 backlog_slice_path: claude/cycles/<cycle_id>/stage4_backlog_slice.md
+execution_state_path: claude/cycles/<cycle_id>/execution_state.json   # BLG-GOV-395, v2.69 — written with active_cycle; the file itself is created at Sprint Execution. Left stale, tests/test_state_execution_path_consistency.py fails the release-plan PR
 design_gate_required: true|false          # LP-01 fix, v2.41 — carried from state.json attributes.design_gate_required (set at STEP 4.1); written here, atomically with active_cycle, not at STEP 4.1
 design_gate_status: "not_started"|"not_required"   # LP-01 fix, v2.41 — "not_started" if design_gate_required=true and not yet run, else "not_required"
-sprint_sealed: false          # ST-23 fix, v2.49, BLG-GOV-288 — reset here, atomically with active_cycle switching to the new cycle_id, same pattern as design_gate_status above. sprint_sealed is owned and set true only by sprint_planning_prompt.md's own seal for THIS cycle — nothing else may ever write true here. Without this reset, the field carries a stale true from the prior cycle's seal into the new cycle's pre-planning window (observed live at the 2026-08-07__release-v8.4 design gate: root sprint_sealed read true, carried from v8.3, while the v8.4 cycle-level state.json correctly had no sprint_sealed key at all).
+sprint_sealed: false          # ST-23 fix, v2.49, BLG-GOV-288 — reset here, atomically with active_cycle switching to the new cycle_id, same pattern as design_gate_status above. sprint_sealed is owned and set true only by sprint_planning_prompt.md's own seal for THIS cycle — nothing else may ever write true here. Without this reset, the field carries a stale true from the prior cycle's seal into the new cycle's pre-planning window. History: changelog v2.49.
 last_sync_utc: <ISO-8601 UTC now>
 ```
 

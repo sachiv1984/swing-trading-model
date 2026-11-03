@@ -13,6 +13,7 @@ This file records all changes to governance prompts (Class 6 documents) and rela
 
 | Date | Prompt | Version | Change | Authority |
 |------|--------|---------|--------|-----------|
+| 2026-11-03 | `claude/system/release_planning_prompt.md` | v2.68→v2.69 | `BLG-GOV-395`: STEP 7 intermediate sync writes `execution_state_path` with `active_cycle`; `state_field_owners.json` owner set to this prompt. Size: `BLG-GOV-405` headroom applied — `sprint_sealed` comment history moved to `release_planning_changelog.md`; baseline not raised; split tracked by `BLG-GOV-383`. | Head of Specs Team (user-directed in session, 2026-11-03) |
 | 2026-11-03 | `claude/system/roadmap_prompt.md` | v9.36→v9.37 | `BLG-GOV-393`: STEP -1.5 "Seated patch" — a deferred patch whose tracking backlog item is seated (open cycle's `sprint_backlog.md` or a Now-horizon release section) counts as carried, not OVERDUE. | Head of Specs Team (user-directed in session, 2026-11-03) |
 | 2026-11-03 | `claude/system/roadmap_prompt_appendix.md` | v1.1→v1.2 | `BLG-GOV-393`: Part A STEP 11.2 — every deferred patch files a tracking backlog item and cites its ID. | Head of Specs Team (user-directed in session, 2026-11-03) |
 | 2026-11-03 | `claude/system/shared_standards.md` | v3.40→v3.41 | `BLG-GOV-392`: §2 step 3 halt-state rule for engines that may not write `status`. `BLG-GOV-405`: §11 size-budget headroom rule; applied here — two history passages moved to `shared_standards_changelog.md` (95,910 → 95,804 bytes; baseline not raised). | Head of Specs Team (user-directed in session, 2026-11-03) |

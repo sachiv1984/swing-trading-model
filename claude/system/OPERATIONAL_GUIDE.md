@@ -4,8 +4,8 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.250
-**Last Updated:** 2026-11-03 (BLG-GOV-392/393/405/406/407, Head of Specs Team, user-directed — roadmap_prompt.md v9.37, appendix v1.2, shared_standards.md v3.41, roadmap_management_prompt.md v1.7, idea_intake_prompt.md v2.13); prior — 2026-11-03 (roadmap rebalance `2026-11-03__scheduled` STEP -1.5, `ESC-RB-20261103-01` — post_ship_closure.md v2.43→v2.44, Next-step line in the Advisory Summary Block); prior — 2026-11-03 (lifecycle audit AUD-2026-11-03 — post_ship_closure.md v2.43, shared_standards.md v3.40, lessons_learnt_prompt.md v1.17, release_planning_prompt.md v2.68, roadmap_prompt.md v9.36; §13 gains 5 artefact rows); prior history retained — see prior entries in version control
+**Version:** 4.251
+**Last Updated:** 2026-11-03 (BLG-GOV-395, Head of Specs Team, user-directed — release_planning_prompt.md v2.69, STEP 7 sync writes `execution_state_path`); prior — 2026-11-03 (BLG-GOV-392/393/405/406/407, Head of Specs Team, user-directed — roadmap_prompt.md v9.37, appendix v1.2, shared_standards.md v3.41, roadmap_management_prompt.md v1.7, idea_intake_prompt.md v2.13); prior — 2026-11-03 (roadmap rebalance `2026-11-03__scheduled` STEP -1.5, `ESC-RB-20261103-01` — post_ship_closure.md v2.43→v2.44, Next-step line in the Advisory Summary Block); prior history retained — see prior entries in version control
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -622,7 +622,7 @@ If the gate is bypassed (Sprint Planning run without a passing design gate), thi
 
 ## 6B. Phase 1B — Release Planning
 
-**Source prompt:** `claude/system/release_planning_prompt.md` (v2.68)
+**Source prompt:** `claude/system/release_planning_prompt.md` (v2.69)
 **Purpose:** Translate an already-approved roadmap release into an execution-ready plan: sequencing, dependencies, acceptance gates, backlog slice, optional GitHub issues.
 
 > **This routine does NOT rebalance the roadmap.** It may not add, replace, defer, or kill initiatives. Those remain reserved for Phase 1.
@@ -1382,7 +1382,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 4.250 |
+| Version | 4.251 |
 | Last Updated | 2026-11-03 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.13 |
@@ -1398,7 +1398,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Shared Publish Gate | `claude/system/shared/publish_gate.md` v1.1 |
 | Roadmap Engine Source | `claude/system/roadmap_prompt.md` v9.37 (+ `roadmap_prompt_appendix.md`) |
 | Roadmap Engine Appendix | `claude/system/roadmap_prompt_appendix.md` v1.2 |
-| Release Engine Source | `claude/system/release_planning_prompt.md` v2.68 |
+| Release Engine Source | `claude/system/release_planning_prompt.md` v2.69 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.24 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.9 |
 | Execution Engine Source | `claude/system/execution_prompt.md` v3.92 |
@@ -1523,6 +1523,7 @@ Living references introduced in v3.2: `component_inventory.md`, `design_system.m
 **Header-drift prevention (added v4.85, roadmap rebalance 2026-07-08__scheduled, Friction Item — 4th recurrence of this exact pattern per the 4.79/4.80/4.81 entries below):** Before bumping the top `**Version:**`/`**Last Updated:**` header fields, read the highest version number already present in this table's top row — do not increment from the header field alone, since it has drifted below the table's actual latest entry on at least 4 prior occasions.
 
 | Version | Date | Change Summary |
+| 4.251 | 2026-11-03 | **`BLG-GOV-395` applied, Head of Specs Team, user-directed ("BLG-GOV-395 - fix now") — 1 source prompt bumped.** `release_planning_prompt.md` v2.68→v2.69: STEP 7's intermediate sync writes `execution_state_path` atomically with `active_cycle`; `state_field_owners.json` names Release Planning as owner. §6B source-prompt line and §14 row updated. |
 | 4.250 | 2026-11-03 | **Five deferred-patch backlog items applied (`BLG-GOV-392`, `393`, `405`, `406`, `407`), Head of Specs Team, user-directed ("apply the 5 patches needed") — 5 source prompts bumped.** `roadmap_prompt.md` v9.36→v9.37 (STEP -1.5 seated patches) + `roadmap_prompt_appendix.md` v1.1→v1.2 (STEP 11.2 tracking item); `shared_standards.md` v3.40→v3.41 (§2 halt-state rule; §11 headroom rule; 2 history passages moved to changelog); `roadmap_management_prompt.md` v1.6→v1.7 (STEP 5.2 programme-plan carry-forward); `idea_intake_prompt.md` v2.12→v2.13 (STEP 0 roster excludes templates). §5, §6 and §6M source lines and §14 rows updated. |
 | 4.249 | 2026-11-03 | **Roadmap rebalance `2026-11-03__scheduled` STEP -1.5, `ESC-RB-20261103-01` (Head of Specs Team ruling, user acting in role) — 1 source prompt bumped.** `post_ship_closure.md` v2.43→v2.44: Advisory Summary Block gains a Next-step line (`run roadmap` first when Next planned release is `[TBD]`). §10 source-prompt line and §14 row updated. |
 | 4.248 | 2026-11-03 | **Lifecycle audit `AUD-2026-11-03`, Head of Specs Team ruling (agent-mediated, user-directed: "Apply the 7 fixes") — 5 source prompts bumped, 5 §13 rows added.** `post_ship_closure.md` v2.42→v2.43 (AUD-2026-11-03-002: STEP 10 never writes `last_audit_cycle_count`). `shared_standards.md` v3.39→v3.40 (AUD-2026-11-03-003: §11 size budget enforced by `scripts/check_prompt_size_budget.py` / `prompt-size-budget.yml`). `lessons_learnt_prompt.md` v1.16→v1.17 (AUD-2026-11-03-004: §3.7 scope-gap recurrence). `release_planning_prompt.md` v2.67→v2.68 and `roadmap_prompt.md` v9.35→v9.36 (AUD-2026-11-03-006: history-row appends skip on a resumed run). AUD-2026-11-03-005: §13 gains Ready-Pool History, Backlog Slice Addendum, Ideas Register Archive, Window Summaries Archive and Technical Debt Registry rows. §6, §6B and §10 source-prompt lines and §14 rows updated; §14 self-row 4.248. |
