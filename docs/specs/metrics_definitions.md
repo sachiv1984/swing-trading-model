@@ -2,8 +2,8 @@
 **Owner:** Metrics Definitions & Analytics Canonical Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 1.34.0
-**Last Updated:** 2026-11-02 (ST-48, EPIC-07, v9.14, BLG-SPEC-191 — Appendix F effort normalisation table and `compute_effort_weighted_pvr.py` weight the same effort values; v9.1–v9.5 and v9.3–v9.7 effort-weighted readings corrected; effort-weighted sub-metric's status names `roadmap_prompt.md` STEP 2.4 (v9.32)); prior — 2026-11-02 (ST-24, EPIC-04, v9.14, BLG-FEAT-99 — §Exit Condition Category: `GET /reports/monthly-pnl`'s `by_exit_condition` named as a consumer); prior — 2026-10-30 (ST-13, EPIC-02, v9.14, BLG-SPEC-190 — §Position Risk Data Sources: the native entry is `positions.fill_price`; `positions.entry_price` is GBP); prior history retained — see prior entries in version control
+**Version:** 1.34.1
+**Last Updated:** 2026-11-03 (post-ship closure 2026-10-29__release-v9.14 STEP 5 — Appendix E Known Deviations entries added for the accepted P2 win-rate defects BLG-FE-239 and BLG-FE-240; no definition change); prior — 2026-11-02 (ST-48, EPIC-07, v9.14, BLG-SPEC-191 — Appendix F effort normalisation table and `compute_effort_weighted_pvr.py` weight the same effort values; v9.1–v9.5 and v9.3–v9.7 effort-weighted readings corrected; effort-weighted sub-metric's status names `roadmap_prompt.md` STEP 2.4 (v9.32)); prior — 2026-11-02 (ST-24, EPIC-04, v9.14, BLG-FEAT-99 — §Exit Condition Category: `GET /reports/monthly-pnl`'s `by_exit_condition` named as a consumer); prior history retained — see prior entries in version control
 **Review Cycle:** Monthly
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
@@ -1489,6 +1489,7 @@ Validation is performed by `POST /validate/calculations` comparing computed metr
 ## Appendix D — Change Log
 | Date | Version | Change | Author |
 |---|---|---|---|
+| 2026-11-03 | 1.34.1 | Post-ship closure `2026-10-29__release-v9.14` STEP 5: Appendix E Backlog Items 3 and 4 added — Known Deviations for the two accepted P2 win-rate defects found by ST-50 (`BLG-FE-239` Trade History counts `pnl = 0` as a win; `BLG-FE-240` Dashboard win-rate widgets read open positions only), both targeted to v9.15. No definition change. | Post-Ship Closure Engine (PMO Lead) |
 | 2026-11-02 | 1.34.0 | ST-48 (EPIC-07, v9.14, BLG-SPEC-191): Appendix F effort normalisation table rewritten so it and `scripts/compute_effort_weighted_pvr.py` weight exactly the same values (hour/minute-scale and `<` → 0.15; only a leading quantity in a band's parenthetical is read; `VS` and band ranges unweighted), with a parity test. Correcting the script's parenthetical parse changes two backfilled readings: v9.1–v9.5 0.021 → 0.024 and v9.3–v9.7 0.093 → 0.104 (`XS (~15min)` had weighed 15 days). Status names `roadmap_prompt.md` STEP 2.4 (v9.32) as where the effort-weighted reading is recorded; the D-split and U-pool indicator stay proposal-only. | Metrics Definitions & Analytics Owner |
 | 2026-11-02 | 1.33.2 | ST-24 (EPIC-04, v9.14, BLG-FEAT-99): §Exit Condition Category Data Sources names `GET /reports/monthly-pnl`'s `by_exit_condition` (and the Reports Monthly tab card) as a consumer of the category. No definition change. | Metrics Definitions & Analytics Owner |
 | 2026-10-30 | 1.33.1 | ST-13 (EPIC-02, v9.14, BLG-SPEC-190): §Position Risk Data Sources — the native entry is `positions.fill_price`; `positions.entry_price` is GBP for every market (was "native currency"). Documentation only. |
@@ -1546,6 +1547,44 @@ Validation is performed by `POST /validate/calculations` comparing computed metr
 **Canonical requirement:** Use `trade_history.total_cost` (GBP) as the cost basis.
 
 **Resolution:** `_calculate_advanced_metrics()` updated to use `Mean(trade.total_cost)` (GBP) as cost basis (commit ref: AP-07, 2026-02-20). `validation_data.py` expected value updated from 0.17 → 0.22 to reflect corrected basis. `capital_efficiency` validation block added to `routers/validation.py` (was previously absent). Validation confirmed: `POST /validate/calculations` 13/13 pass at 2026-02-21T00:24:41Z. Canonical Owner sign-off granted 2026-02-21.
+
+---
+
+### Backlog Item 3 — Trade History counts a break-even trade as a win
+**Status: Open — Known Deviation (accepted P2, 2026-11-02)**
+
+**Description:** `src/pages/TradeHistory.js` computes its summary win rate with `t.pnl >= 0`, so a trade with `pnl = 0` counts as a win and is averaged into Avg Win. The same trades show a lower win rate on every other surface. Pre-existing; found by the ST-50 win rate surface consistency check (`docs/specs/metrics/win_rate_surface_consistency_2026-11-02.md`, cycle `2026-10-29__release-v9.14`).
+
+**Canonical requirement:** §Win Rate — `win_rate = (count(pnl > 0) / total_trades) × 100`. A break-even trade is not a win.
+
+**Priority:** P2
+
+**Target resolution release:** v9.15
+
+**Owner:** Metrics Definitions & Analytics Canonical Owner; Frontend Specifications & UX Documentation Owner
+
+**Backlog reference:** `BLG-FE-239`
+
+**Accepted by:** Product Owner + Director of Quality, 2026-11-02 (`verification_report.md` §4, cycle `2026-10-29__release-v9.14`), on condition it stays P2 and targeted to v9.15. Entry added by Post-Ship Closure STEP 5 (routed from Delivery Verification).
+
+---
+
+### Backlog Item 4 — Dashboard win-rate widgets are fed from open positions only
+**Status: Open — Known Deviation (accepted P2, 2026-11-02)**
+
+**Description:** `src/pages/Dashboard.js` builds its closed-trade list by filtering `GET /positions` for `status = "closed"`, but that endpoint returns open positions only. The `win_rate` widget therefore always shows 0%, and the `win_rate_chart` widget renders from undefined `winRate`/`wins`/`losses` props. Pre-existing; found by the ST-50 win rate surface consistency check (`docs/specs/metrics/win_rate_surface_consistency_2026-11-02.md`, cycle `2026-10-29__release-v9.14`).
+
+**Canonical requirement:** §Win Rate — computed over closed trades, `win_rate = (count(pnl > 0) / total_trades) × 100`.
+
+**Priority:** P2
+
+**Target resolution release:** v9.15
+
+**Owner:** Metrics Definitions & Analytics Canonical Owner; Frontend Specifications & UX Documentation Owner
+
+**Backlog reference:** `BLG-FE-240`
+
+**Accepted by:** Product Owner + Director of Quality, 2026-11-02 (`verification_report.md` §4, cycle `2026-10-29__release-v9.14`), on condition it stays P2 and targeted to v9.15. Entry added by Post-Ship Closure STEP 5 (routed from Delivery Verification).
 
 ---
 

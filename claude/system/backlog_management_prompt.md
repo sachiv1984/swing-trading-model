@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.18
-**Last Updated:** 2026-09-19 (post-ship closure `2026-09-15__release-v9.5` follow-up, Head of Specs Team direct action — STEP 1.5 Type 4 now also matches idea-intake `## Idea Intake <window> — Promoted-Backlog Disposition` staging sections; STEP 6.2 gains a section-heading-preservation check); prior — 2026-09-09 (post-ship closure 2026-09-07__release-v9.2 outstanding-actions resolution, Head of Specs Team direct action — §1.2 gains a Gate-Inheritance Field-Completeness Scan, LL-v9.2-Closure-01, closing the BLG-FEAT-92 4-cycle manual-reconciliation friction item); prior — 2026-09-08 (ST-33, EPIC-04, v9.2, BLG-GOV-272 — new §3.1 Recurring Spec-Debt Deep Review Cadence, every 3rd invocation, tracked via a backlog.md header marker); prior history retained — see prior entries in version control.
+**Version:** 1.19
+**Last Updated:** 2026-11-03 (post-ship closure `2026-10-29__release-v9.14` STEP 8, immediate lessons-learnt action LL-v9.14-Release-04 — STEP 0 loads the latest Release Planning `run_manifest.md`'s archive-at-groom list; STEP 1 classifies each listed item explicitly); prior — 2026-09-19 (post-ship closure `2026-09-15__release-v9.5` follow-up, Head of Specs Team direct action — STEP 1.5 Type 4 now also matches idea-intake `## Idea Intake <window> — Promoted-Backlog Disposition` staging sections; STEP 6.2 gains a section-heading-preservation check); prior — 2026-09-09 (post-ship closure 2026-09-07__release-v9.2 outstanding-actions resolution, Head of Specs Team direct action — §1.2 gains a Gate-Inheritance Field-Completeness Scan, LL-v9.2-Closure-01, closing the BLG-FEAT-92 4-cycle manual-reconciliation friction item); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -153,6 +153,9 @@ Load `claude/backlog/backlog.md` in full.
 Load `claude/roadmap/current_roadmap.md` for alignment checking.
 Load `claude/roadmap/decision_log.md` for kill/deferral references.
 Load `docs/product/changelog.md` if present (to cross-check completed items).
+Load the most recent Release Planning `claude/cycles/<cycle_id>/run_manifest.md` (latest `cycle_id` by date that has one) and collect every backlog item ID it names for archiving at `groom backlog` (its "Already-resolved banners" and "archive at the next groom" lines).
+
+**Release Planning archive list (LL-v9.14-Release-04, applied v9.14 post-ship closure):** In STEP 1, classify each item on that list explicitly; do not let it fall through to Active — Keep. If its body carries a `✅ COMPLETE` or resolved banner anywhere (not only on the heading line or first body line), classify it Complete — Archive. Otherwise classify it Ambiguous — Confirm and state in the health report why it was not archived. Record the list and each outcome in the health report. Found at `2026-10-29__release-v9.14` Release Planning: `BLG-GOV-142` and `BLG-GOV-360` (5th carry), `BLG-FE-195` (3rd), `BLG-GOV-374` (2nd) and `BLG-GOV-361` were flagged for archiving again after `GROOM-20261029-01` ran the same day and left them.
 
 ---
 

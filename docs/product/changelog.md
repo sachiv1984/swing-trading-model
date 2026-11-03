@@ -3,11 +3,98 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-10-29 (post-ship closure 2026-10-16__release-v9.13 — v9.13 entry added); prior — 2026-10-15 (post-ship closure 2026-10-12__release-v9.12 — v9.12 entry added); prior — 2026-10-12 (post-ship closure 2026-10-08__release-v9.11 — v9.11 entry added); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-03 (post-ship closure 2026-10-29__release-v9.14 — v9.14 entry added); prior — 2026-10-29 (post-ship closure 2026-10-16__release-v9.13 — v9.13 entry added); prior — 2026-10-15 (post-ship closure 2026-10-12__release-v9.12 — v9.12 entry added); prior history retained — see prior entries in version control
 
 > This document is a human-maintained record of what was shipped in each product version and when. It records delivery milestones and notable decisions. It is not an immutable system record — for point-in-time system status reports, see `docs/operations/status_reports/`.
 
 > **Authoring convention — `User Impact` column (added v8.8, ST-13, BLG-FE-161):** each `### Changes shipped` table row carries a `User Impact` cell in addition to `Description`. Write `User Impact` only for EPICs that changed something a user can see, click, or notice the effect of — one to two sentences, present tense (or implied second person), no ticket IDs, no implementation nouns (endpoint/table/component names). Leave it `—` for backend/infra/governance/test-coverage rows with no user-facing effect. `Description` is retained unchanged as the engineering record — it is not replaced. `GET /changelog/latest` sources the in-app "What's New" panel from `User Impact` only; rows with a blank/`—` cell are excluded from that feed entirely (`docs/specs/api_contracts/changelog_endpoints.md`).
+
+---
+
+## v9.14 — Production Deploy Restore, Market-Data Resilience & Sizing Fix — 2026-11-03
+Cycle: 2026-10-29__release-v9.14
+Verified: Verified_with_deviations
+Verification report: claude/cycles/2026-10-29__release-v9.14/verification_report.md
+
+### Changes shipped
+| EPIC | Description | User Impact | Spec sections updated |
+|------|-------------|-------------|----------------------|
+| EPIC-01 | Production Deploy & Market-Data Resilience — `eslint-config-react-app` restored to the lockfile with a repo `.npmrc`, so the frontend builds on Render and deploys to GitHub Pages again, and a Frontend Production Build CI workflow fails any PR that breaks the real build (BLG-OPS-193, P1); the SPY regime falls back to Alpaca bars when Yahoo Finance fails; with no working source the regime is `unknown` on every surface and entries are blocked (`strategy_rules.md` §4.2.1, `ESC-EXEC-20261029-01`); FX uses the last good GBP/USD rate with its age before the fixed 1.27 constant (DS-37), and `fx_rate_source`/`fx_rate_as_of` flag every fallback on `GET /portfolio`, `GET /positions` and `GET /market/status`; the System Status Yahoo Finance check detects an outage; and stale prices are flagged on `GET /positions`, the Positions page and the Risk Dashboard, with an explanation reachable by touch, keyboard and screen reader | New frontend releases reach the live site again. When market data is unavailable, the app shows the market regime as unknown and holds off new entries instead of assuming risk-on, tells you when the exchange rate is a fallback and how old it is, and marks prices that are out of date. System Status now shows when Yahoo Finance is down. | `render.yaml`; `.github/workflows/frontend-production-build.yml`; `claude/strategy/strategy_rules.md#4.2.1 Regime gate`, `#8.2 Market risk-off override`; `docs/specs/api_contracts/market_endpoints.md#GET /market/status`, `#GET /market/regime`; `docs/specs/data_model.md#DS-37`; `docs/specs/api_contracts/portfolio_endpoints.md#GET /portfolio`; `docs/specs/api_contracts/position_endpoints.md#GET /positions`; `docs/specs/api_contracts/health_endpoints.md#GET /health/detailed`; `docs/specs/frontend/pages/system_status.md`; `docs/specs/frontend/pages/positions.md`; `docs/specs/frontend/pages/risk_dashboard.md`; `docs/specs/frontend/pages/dashboard.md`; `docs/specs/frontend/pages/signals.md` |
+| EPIC-02 | Sizing, Exit & Position Correctness — US position sizing divides the stop distance by the GBP/USD rate, closing the `strategy_rules.md` v1.19 Known Deviation (BLG-BE-190, `ESC-EXEC-20261030-01`); `POST /positions/{id}/exit` returns its documented 404 and 400 instead of 500; the Daily Position Monitor stops suggesting "Stop Loss Hit" during the grace period; `GET /portfolio` P&L handles a US position whose `fill_price` is NULL; the positions data dictionary states `entry_price` is stored in GBP; and review-cadence grace suppression agrees with the grace alert once grace has ended | US position sizes are now calculated correctly for the exchange rate. Exiting a position that no longer exists, or with bad input, shows a clear error, and the Daily Position Monitor no longer suggests a stop-loss exit while a position is still in its grace period. | `claude/strategy/strategy_rules.md#4.1.3 Share calculation (canonical)`, `#4.1.5 Currency and FX handling (canonical)`; `docs/specs/api_contracts/portfolio_endpoints.md#POST /portfolio/size`; `docs/specs/api_contracts/position_endpoints.md#POST /positions/{position_id}/exit`; `docs/specs/frontend/pages/positions.md#Monitor Suggestions`, `#Last Reviewed Column`; `docs/specs/data_model_positions_dictionary.md#3.3 Entry Fields`; `docs/specs/metrics_definitions.md#Position Risk` |
+| EPIC-03 | AI Output Safety & Audit Hygiene — the journal summary language check catches advisory phrasings the trading-change check missed; the daily briefing ticker caveat ignores indicator and macro acronyms; the chat stop-time note is not attributed to the focus ticker when a sentence names another ticker; the monthly P&L narrative scan stops flagging retrospective and discourse wording; a debrief that fails compliance then errors writes one audit row; stop recalculation times in briefing and chat are converted to UTC; the `claude_audit_log` column checks run once per process; the unused `POST /trade-plans/{plan_id}/generate-thesis` endpoint is retired; and the first live quarterly AI output sample's in-sprint ACs are met (production read carried, BLG-GOV-399) | Daily briefings no longer warn about indicator or macro abbreviations as if they were unknown tickers, and stop recalculation times in briefings and chat are shown consistently. | `docs/specs/api_contracts/ai_endpoints.md#POST /ai/journal-summary`, `#POST /ai/daily-briefing`, `#POST /ai/chat`; `docs/specs/qa/ai_s13_boundary_test_suite.md#Scenario B-JS-04`, `#Scenario B-MPN-04`; `docs/specs/api_contracts/trade_endpoints.md#POST /trades/{trade_id}/debrief`; `docs/ops/ensure_ddl_insert_call_sites.md`; `docs/specs/api_contracts/ai_thesis_generation.md`; `claude/strategy/strategy_rules.md#13.5`; `docs/ops/ai_output_boundary_sample_audit_20260910.md` |
+| EPIC-04 | Reports, Dashboard & System Status UI — a Monthly P&L breakdown by §8 exit condition; the Recent Trades glyph and amount agree at a half-penny loss; the monthly P&L summary fallback pluralises its month counts; a generated monthly P&L summary stays visible after switching tax year and back; and `/reports` endpoints are grouped on the System Status page | The Monthly P&L report now breaks results down by why each trade was exited, and a generated summary stays on screen when you switch tax year and back. Recent Trades shows the right glyph for very small losses. | `docs/specs/frontend/pages/reports.md#Exit Condition Breakdown`, `#AI Summary (Monthly P&L Narrative)`; `docs/specs/api_contracts/reports_endpoints.md#GET /reports/monthly-pnl`; `docs/specs/metrics_definitions.md#Exit Condition Category`; `docs/specs/frontend/pages/dashboard.md#Card 5 — Recent Activity`; `docs/specs/frontend/pages/system_status.md#Endpoint Test Category Labels` |
+| EPIC-05 | Test Coverage & Test Tooling — Playwright covers the Positions-page Exit modal submit; a staging visual check of the layout changed by `tailwind-merge` in `cn()`; the pre-commit OpenAPI contract check reads staged content; the `conftest.py` AST scan is confirmed to cover every backend module; a behaviour test that the grace warning ignores `settings.min_hold_days`; the stop-details tooltip time asserted under a non-UTC browser timezone; every Reports/Notifications axe scan asserts the applied theme; a guard that stops test files adding `backend/services/` to `sys.path`; and the ⌘K hint toast no longer intercepts SC-AC-03's chat submit | — | `tests/e2e/positions-exit-modal.spec.js`; `docs/testing/state_changing_action_coverage.md`; `src/lib/utils.js`; `scripts/check_local_openapi_contract_completeness.py`; `tests/conftest.py`; `claude/strategy/strategy_rules.md#11. Current production parameters`; `docs/specs/frontend/pages/positions.md#Stop Provenance Line and Per-Row Stop Details`; `tests/e2e/accessibility-axe-scan.spec.js`; `tests/e2e/epic02-v62-ai-briefing-chat.spec.js` |
+| EPIC-06 | Operations, Cost & Security — the Arc 2 compute cost review; a cost-by-feature-area method and read-only generator (the full-month run is carried, BLG-OPS-201); a CI pipeline runtime audit; the daily AI cost check covers the last hours of the day; `ci-usage-report.yml` delivers its monthly report via a PR to `main` instead of a refused direct push; and a per-environment CORS allow-list (`DEPLOY_ENV`) | — | `docs/ops/arc2_compute_cost_review.md`; `docs/ops/cost_by_feature_area.md`; `docs/ops/ci_runtime_audit_2026-10-30.md`; `docs/specs/api_contracts/ai_endpoints.md#POST /ai/check-daily-cost`; `.github/workflows/ci-usage-report.yml`; `docs/infrastructure/cors_allow_list.md`; `backend/config.py` |
+| EPIC-07 | Specs & Governance — `check_execution_state_consistency.py` checks `deviations_filed` and the escalation map; the gate scan's "gating item shipped" findings get a write-back path (`release_planning_prompt.md` §1.3a); the gate-status indicator documented as a reusable pattern; `risk_dashboard.md` names only fields `GET /portfolio` returns; Appendix F's effort-weighted PVR table aligned with the script; the trade plan contract lists the 7 DS-21 statuses; a win-rate surface consistency record; §13 boundary worked examples; a governance overhead audit; and a spec debt aging report | — | `scripts/check_execution_state_consistency.py`; `claude/system/execution_prompt.md#9.2`; `claude/system/release_planning_prompt.md#1.3a Gate-Detection Procedure (Mandatory, Scripted)`; `docs/specs/frontend/patterns/gate_status_indicator.md`; `docs/specs/frontend/pages/risk_dashboard.md#5.1 Data`, `#6.1 Data`; `docs/specs/metrics_definitions.md#Appendix F — Governance Metrics (Cross-Reference Only)`; `docs/specs/api_contracts/trade_plan_endpoints.md`; `docs/specs/metrics/win_rate_surface_consistency_2026-11-02.md`; `docs/product/decisions/section13_boundary_examples.md`; `docs/governance/governance_overhead_audit_2026-11-02.md`; `docs/governance/spec_debt_aging_report_2026-11-02.md` |
+
+### Deviations accepted
+| Ref | Priority | Description | Accepted by |
+|-----|----------|-------------|-------------|
+| BLG-FE-239 (ST-50 found defect) | P2 | Trade History counts a break-even trade (`pnl = 0`) as a win, diverging from `metrics_definitions.md` §Win Rate. Pre-existing. Stays P2, targeted to v9.15 | PO + DoQ (2026-11-02, human repository owner in session) |
+| BLG-FE-240 (ST-50 found defect) | P2 | The Dashboard win-rate widgets filter `GET /positions` (open positions only) for closed rows, so they show 0% or render from undefined values, diverging from `metrics_definitions.md` §Win Rate. Pre-existing. Stays P2, targeted to v9.15 | PO + DoQ (2026-11-02, human repository owner in session) |
+| BLG-FE-243 (ST-29 found defect, PR #2139 review) | P2 | Exit, Trade Entry and Cash Management prefill today's date as the UTC date, not the user's local date (wrong 00:00–01:00 BST). Pre-existing. Stays P2; retarget TBD → v9.15 routed to grooming | PO + DoQ (2026-11-02, human repository owner in session) |
+
+2 minor deviations (P3) — see `verification_report.md §4`: ST-01 AC 2 shown with a staging build of the EPIC branch, closed 2026-10-30 with no remainder (`BLG-OPS-204`); ST-54's ready-pool measure is estimated and its prompt wiring is split out (`BLG-GOV-403`). No canonical-spec `DEV-*` records were filed.
+
+### Tech backlog items shipped
+- [ST-01] [D] Frontend builds and deploys again: `eslint-config-react-app` restored, Frontend Production Build CI workflow (BLG-OPS-193)
+- [ST-02] [D] SPY market regime computed from Alpaca bars when Yahoo Finance fails (BLG-BE-192)
+- [ST-03] [U] Unknown market regime shown on every regime surface, with entries blocked, instead of a silent risk-on default (BLG-BE-193)
+- [ST-04] [U] Last good GBP/USD rate used, with its age, before the fixed 1.27 fallback (BLG-BE-194)
+- [ST-05] [U] FX fallback flagged on portfolio, positions and the Signals FX tile instead of applied silently (BLG-BE-169)
+- [ST-06] [U] System Status Yahoo Finance check detects an outage (BLG-OPS-194)
+- [ST-07] [U] Stale prices flagged on `GET /positions` and the Positions page (BLG-BE-168)
+- [ST-08] [U] Stale-price explanation reachable on touch, keyboard and screen readers (BLG-FE-214)
+- [ST-09] [U] US position sizing divides the stop distance by the GBP/USD rate (BLG-BE-190)
+- [ST-10] [D] `POST /positions/{id}/exit` returns its documented 404 and 400, not 500 (BLG-BE-188)
+- [ST-11] [U] Daily Position Monitor stops suggesting "Stop Loss Hit" during the grace period (BLG-FE-231)
+- [ST-12] [D] `GET /portfolio` P&L handles a US position whose `fill_price` is NULL (BLG-BE-167)
+- [ST-13] [D] Positions data dictionary states that `entry_price` is stored in GBP (BLG-SPEC-190)
+- [ST-14] [U] Review-cadence grace suppression and the grace alert agree once grace has ended (BLG-SPEC-192)
+- [ST-15] [D] Journal summary catches advisory phrasings the trading-change check misses (BLG-AI-20)
+- [ST-16] [U] Daily briefing ticker caveat ignores indicator and macro acronyms (BLG-AI-21)
+- [ST-17] [D] Chat stop-time note not attributed to the focus ticker when a sentence names another ticker (BLG-AI-22)
+- [ST-18] [D] Monthly P&L narrative scan stops flagging retrospective and discourse wording (BLG-AI-19)
+- [ST-19] [D] A debrief that fails compliance then errors writes one audit row (BLG-BE-164)
+- [ST-20] [U] Stop recalculation times in briefing and chat converted to UTC (BLG-BE-165)
+- [ST-21] [D] `claude_audit_log` column checks run once per process (BLG-BE-166)
+- [ST-22] [D] Unused `POST /trade-plans/{plan_id}/generate-thesis` endpoint retired (BLG-BE-163)
+- [ST-23] [G] First live quarterly AI output sample against the §13 boundary — in-sprint ACs; production sample carried (BLG-GOV-178)
+- [ST-24] [U] Monthly P&L breakdown by §8 exit condition (BLG-FEAT-99)
+- [ST-25] [U] Recent Trades glyph and amount agree at a half-penny loss (BLG-FE-213)
+- [ST-26] [U] Month counts pluralised in the monthly P&L summary fallback (BLG-FE-215)
+- [ST-27] [U] Generated monthly P&L summary stays visible after switching tax year and back (BLG-FE-216)
+- [ST-28] [U] `/reports` endpoints grouped on the System Status page (BLG-FE-217)
+- [ST-29] [D] Playwright covers the Positions-page Exit modal submit (BLG-QA-237)
+- [ST-30] [D] Staging visual check of the layout changed by `tailwind-merge` in `cn()` (BLG-QA-235)
+- [ST-31] [D] Pre-commit OpenAPI contract check reads staged content (BLG-QA-238)
+- [ST-32] [D] `conftest.py` AST scan confirmed to cover every backend module (BLG-QA-93)
+- [ST-33] [D] Behaviour test: the grace warning ignores `settings.min_hold_days` (BLG-QA-214)
+- [ST-34] [D] Stop-details tooltip time asserted under a non-UTC browser timezone (BLG-QA-215)
+- [ST-35] [D] Applied theme asserted in every Reports/Notifications axe scan (BLG-QA-216)
+- [ST-36] [D] Test files stopped from adding `backend/services/` to `sys.path` (BLG-QA-218)
+- [ST-37] [D] ⌘K hint toast no longer intercepts the chat submit click in SC-AC-03 (BLG-QA-219)
+- [ST-38] [D] Arc 2 compute cost review (BLG-OPS-21)
+- [ST-39] [D] Compute cost trending by feature area — method and generator; full-month run carried (BLG-OPS-85)
+- [ST-40] [D] CI pipeline runtime audit (BLG-OPS-105)
+- [ST-41] [D] Daily AI cost check covers the last hours of the day (BLG-OPS-186)
+- [ST-42] [D] `ci-usage-report.yml`'s monthly report delivered via a PR to `main` (BLG-OPS-188)
+- [ST-43] [D] Per-environment CORS allow-list (BLG-SEC-43)
+- [ST-44] [G] `check_execution_state_consistency.py` checks `deviations_filed` and the escalation map (BLG-GOV-397)
+- [ST-45] [G] Write-back path for the gate scan's "gating item shipped" findings (BLG-GOV-398)
+- [ST-46] [D] Gate-status indicator documented as a reusable component pattern (BLG-SPEC-77)
+- [ST-47] [D] `risk_dashboard.md` names only fields `GET /portfolio` returns (BLG-SPEC-189)
+- [ST-48] [D] Appendix F's effort-weighted PVR table and status aligned with the script (BLG-SPEC-191)
+- [ST-49] [D] Trade plan contract lists the 7 DS-21 statuses (BLG-SPEC-193)
+- [ST-50] [D] "Win rate" checked for consistency on every surface; two discrepancies filed (BLG-GOV-184)
+- [ST-52] [G] §13 boundary worked examples (BLG-GOV-186)
+- [ST-53] [G] Governance overhead audit (BLG-GOV-189)
+- [ST-54] [G] Spec debt aging report (BLG-GOV-191)
+
+ST-51 (BLG-GOV-185, changelog section in `metrics_definitions.md`) was deferred at Sprint Planning as already met; it is not counted as shipped.
+
+Sign-off: Product Owner — 2026-11-02 (agent-mediated, §5.3; P2 acceptances given by the human repository owner in session)
+QA sign-off: Director of Quality — 2026-11-02 (agent-mediated, §5.3; P2 acceptances given by the human repository owner in session)
 
 ---
 

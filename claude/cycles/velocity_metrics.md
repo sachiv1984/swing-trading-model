@@ -3,7 +3,7 @@
 **Class:** Operational Record (Class 3)
 **Status:** Active
 **Version:** 1.4
-**Last Updated:** 2026-10-29 (post-ship closure 2026-10-16__release-v9.13 — v9.13 row added, rolling average window advanced to v9.8–v9.13); prior — 2026-10-15 (post-ship closure 2026-10-12__release-v9.12 — v9.12 row added, rolling average window advanced to v9.7–v9.12); prior — 2026-10-12 (post-ship closure 2026-10-08__release-v9.11 — v9.11 row added, rolling average window advanced to v9.6–v9.11); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-03 (post-ship closure 2026-10-29__release-v9.14 — v9.14 row added, rolling average window advanced to v9.9–v9.14); prior — 2026-10-29 (post-ship closure 2026-10-16__release-v9.13 — v9.13 row added, rolling average window advanced to v9.8–v9.13); prior — 2026-10-15 (post-ship closure 2026-10-12__release-v9.12 — v9.12 row added, rolling average window advanced to v9.7–v9.12); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Created by:** ST-13 (BLG-GOV-09, v2.4)
 ---
@@ -124,7 +124,9 @@
 
 | v9.13 | 40      | 40        | 1.00     | All 40 stories done across 6 EPICs (exit flow/exit reasons/Red Flag Journal build-and-ship, stop/sizing/position data correctness, AI output safety/debrief/chat, API call integrity & UI rendering, operations/cost/platform, governance & spec tooling), sized to 28.00 days (top of capacity band, "use full capacity"); P1 `BLG-FE-226` (STEP 8.0 Correctness Fast-Track) shipped as ST-01 with all three roadmap-committed items (DL-086); schema changes DS-34–DS-36; 8 delegations (5 unblocked in-cycle, 3 carried post-sprint to `BLG-OPS-197`/`BLG-OPS-198`); 10 escalations all resolved within SLA; 0 returned, 0 blocked; Verified_with_deviations (1 accepted P2 found defect `BLG-BE-190`; 7 P3: ST-05 §8.4 → `BLG-BE-187` and six QA-evidence `Pass_with_deviation`); concurrent PVR reading 0.204 (🔴 Alert, 8th consecutive, improving; `2026-10-16__scheduled`) |
 
-**Rolling 6-cycle average (v9.8–v9.13):** 1.00
+| v9.14 | 53      | 53        | 1.00     | All 53 stories done across 7 EPICs (production deploy & market-data resilience build-and-ship, sizing/exit/position correctness, AI output safety & audit hygiene, reports/dashboard/System Status UI build-and-ship, test coverage & tooling, operations/cost/security, specs & governance), sized to 28.00 days (top of capacity band, "use full capacity"); ST-51 deferred at planning as already met (not counted); P1 `BLG-OPS-193` shipped as ST-01 (production deploy restored); no roadmap-committed items (DL-087); schema change DS-37; 6 delegations (4 unblocked in-cycle, 2 carried post-sprint to `BLG-OPS-201`/`BLG-GOV-399`); 5 escalations all resolved within SLA; 0 returned, 0 blocked; Verified_with_deviations (3 accepted P2 found defects `BLG-FE-239`, `BLG-FE-240`, `BLG-FE-243`; 2 P3 `Pass_with_deviation`: ST-01 → `BLG-OPS-204` resolved, ST-54 → `BLG-GOV-403`) |
+
+**Rolling 6-cycle average (v9.9–v9.14):** 1.00
 
 ---
 

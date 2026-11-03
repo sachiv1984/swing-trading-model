@@ -1,9 +1,11 @@
 Owner: Product Owner
 Class: Planning Document (Class 4)
-Status: Active
+Status: Superseded
 Release: v9.14
 Cycle: 2026-10-29__release-v9.14
-Last Updated: 2026-10-29
+Last Updated: 2026-11-03
+
+Superseded by: v9.14 ship — 2026-11-03 — see docs/product/changelog.md#v9.14, cycle 2026-10-29__release-v9.14
 
 ## Planning Decisions — v9.14
 
