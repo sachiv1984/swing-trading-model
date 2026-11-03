@@ -1,8 +1,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 0.8
-**Last Updated:** 2026-10-12 (v9.12 design gate — ST-24/BLG-FE-210: Trade Log Risk-Off exit-reason badge recorded as filled `bg-amber-700 text-white`); prior — 2026-08-18 (ST-07, EPIC-02, v8.9, BLG-FEAT-89 — implementation-time resolution: §7.6's deferred candidate-input mechanism resolved to a structured parameter form; Empty/Error state text updated to match); prior — 2026-08-17 (v8.9 design gate — added §7.6 Backtest Rule Change tab); prior history retained — see prior entries in version control
+**Version:** 0.9
+**Last Updated:** 2026-11-03 (v9.15 design gate — ST-18/BLG-FE-220: §7.3 exit-reason badges filled, Rebalance teal-700); prior — 2026-10-12 (v9.12 design gate — ST-24/BLG-FE-210: Trade Log Risk-Off exit-reason badge recorded as filled `bg-amber-700 text-white`); prior — 2026-08-18 (ST-07, EPIC-02, v8.9, BLG-FEAT-89 — implementation-time resolution: §7.6's deferred candidate-input mechanism resolved to a structured parameter form; Empty/Error state text updated to match); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Release:** v7.7
 **EPIC:** EPIC-01
@@ -233,10 +233,12 @@ Consistent with existing badge language on Positions/Signals pages:
 
 | Reason | Label | Style |
 |--------|-------|-------|
-| Stop | **Stop** | Red — `bg-rose-500/20 text-rose-400 border-rose-500/30` |
+| Stop | **Stop** | Red, filled — `bg-red-600 text-white` (4.83:1) |
 | Risk-Off | **Risk-Off** | Amber, filled — `bg-amber-700 text-white` (v0.8, ST-24, BLG-FE-210: the shipped badge was filled `bg-amber-600 text-white`, 3.19:1, below WCAG AA, and differed from the tinted style this row previously listed. The row now records the shipped filled style, at 5.02:1.) |
-| Rebalance | **Rebalance** | Teal — `bg-teal-500/20 text-teal-400 border-teal-500/30` |
-| Other | Uppercased | Slate default |
+| Rebalance | **Rebalance** | Teal, filled — `bg-teal-700 text-white` (5.47:1; v0.9, ST-18 — was the shipped `bg-teal-600`, 3.74:1) |
+| Other (unmapped) | The raw reason, or "—" | No badge — plain `text-xs text-slate-600 dark:text-slate-400` (the shipped fallback) |
+
+**v0.9 (ST-18, BLG-FE-220) — filled badges ruled.** Every exit-reason badge is a solid fill with white text, as shipped and as on the Signals page. One token pair serves both themes. Each passes WCAG AA (4.5:1). The former tinted Stop/Rebalance rows and the "Uppercased, Slate default" row never matched the shipped page. Design source: `docs/design/2026-11-03__release-v9.15/exit-reason-badges/decision_record.md`.
 
 ### 7.4 Side-by-Side Mode Layout
 
@@ -372,6 +374,7 @@ All endpoints must be documented in `docs/reference/openapi.yaml` and `docs/spec
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.9 | 2026-11-03 | v9.15 design gate — (ST-18, EPIC-03, BLG-FE-220) §7.3 Exit Reason Badges: filled with white text ruled for every reason, matching the shipped page. Stop `bg-red-600`, Rebalance `bg-teal-600` → `bg-teal-700` (3.74:1 → 5.47:1); the unmapped-reason row records the shipped plain-text fallback. Design source: `docs/design/2026-11-03__release-v9.15/exit-reason-badges/decision_record.md`. Head of UX & Design + Product Owner approved. |
 | 0.8 | 2026-10-12 | v9.12 design gate — (ST-24, EPIC-03, BLG-FE-210) §7 Trade Log Risk-Off exit-reason badge: the row now records the shipped filled style, moved from `bg-amber-600` (3.19:1) to `bg-amber-700 text-white` (5.02:1). The other exit-reason rows still list a tinted style that differs from the shipped filled badges; that drift is noted in the design gate record and not changed here. Head of UX & Design sign-off: 2026-10-12. Product Owner approved: 2026-10-12. Head of Specs Team confirmed. |
 | 0.7 | 2026-08-18 | ST-07 (EPIC-02, v8.9, BLG-FEAT-89) implementation-time resolution: §7.6's candidate-input mechanism resolved to a structured parameter form (not raw diff text — no safe deterministic parse path from `strategy_rules.md` prose). Empty-state text adapted (`"Set parameter overrides..."` vs. the design source's `"Paste a candidate rule change..."`, which assumed the other input option). Error state's "Retry" clarified as re-clicking the same Run Backtest button, not a separate affordance. §9 API Endpoints gained the 3 new endpoints. Authority: Frontend Specifications & UX Documentation Owner. |
 | 0.6 | 2026-08-17 | v8.9 design gate — ST-07 (EPIC-02, BLG-FEAT-89): added §7.6 Backtest Rule Change tab — third sub-nav tab alongside Benchmark/Version Comparison; candidate rule input, results panel (win rate/R-multiple distribution/drawdown vs. live rule set), persisted Run History for audit. §2 Sub-navigation updated to three-tab bar. Design source: in-app-backtesting-engine/ux_spec.md. Approved: Product Owner 2026-08-17. Design gate: 2026-08-17__release-v8.9. Head of Specs Team confirmed. |
