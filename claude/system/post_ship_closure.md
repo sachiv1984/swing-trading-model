@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.43
-**Last Updated:** 2026-11-03 (AUD-2026-11-03-002 — STEP 10 never writes `last_audit_cycle_count`; `run audit` is its only writer); prior — 2026-10-29 (`ESC-CLOSE-20261029-02` ruling, option (b) — §5 and STEP 5: a `strategy_rules.md` Known Deviations entry is routed to its owner by an `ESC-CLOSE-*` escalation with proposed text, not edited by this routine); prior — 2026-10-15 (post-ship closure `2026-10-12__release-v9.12` STEP 8, immediate lessons-learnt action LL-v9.12-Release-01 — STEP 8: a deferred action needing a prompt change is applied now or tracked by a backlog item with a sprint target, never a "before `plan release`" deadline); prior history retained — see prior entries in version control
+**Version:** 2.44
+**Last Updated:** 2026-11-03 (`ESC-RB-20261103-01` — Next-step line: `run roadmap` first when next release is `[TBD]`); prior — 2026-11-03 (AUD-2026-11-03-002 — STEP 10 never writes `last_audit_cycle_count`; `run audit` is its only writer); prior — 2026-10-29 (`ESC-CLOSE-20261029-02` ruling, option (b) — §5 and STEP 5: a `strategy_rules.md` Known Deviations entry is routed to its owner by an `ESC-CLOSE-*` escalation with proposed text, not edited by this routine); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 **Process Reference:** None — the former process document `docs/team_skills/pmo/processess/post-ship_closure.md` was retired 2026-03-13 (commit `11db3666`, deleted with its whole `processess/` directory); this prompt is the sole authority for the Post-Ship Closure Engine.
@@ -775,6 +775,8 @@ If git operations are unavailable: output the exact files to stage and the commi
 ## Advisory Summary Block
 
 After STEP 13, output a consolidated advisory block using `── Advisory Summary ──────────────────────────────────` / `[list or "None."]` / `──────────────────────────────────────────────────────` format. Sources: STEP 0 (audit/rebalance cadence), STEP 6 (endpoint drift), STEP 12.5 (pipeline health), any other non-blocking flags. If none: output "Advisory Summary: None."
+
+**Next step:** end with `Next step: <command>`; if §1 "Next planned release" is `[TBD]`: `run roadmap --reason "scheduled"`, not `plan release` (§-1.2; Option (b) is 1-use).
 
 ---
 
