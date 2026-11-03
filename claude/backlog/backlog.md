@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-03 (Release Planning `2026-11-03__release-v9.15`, §1.3a — `BLG-OPS-48` date-lapsed gate cleared (a): `BLG-OPS-36` shipped v4.2 and the 2026-11-01 date has passed); prior — 2026-11-03 (Head of Specs Team, user-directed — `BLG-GOV-392`, `393`, `405`, `406`, `407` bannered ✅ COMPLETE: five deferred prompt patches applied, OPERATIONAL_GUIDE.md v4.250); prior — 2026-11-03 (roadmap rebalance `2026-11-03__scheduled`, DL-088 — 27 items filed for the Site Structure & Usability programme from `IW-20261103-01` (`BLG-FE-244`–`266`, `BLG-SPEC-214`–`216`, `BLG-UX-08`) and 3 lessons-learnt deferred-patch items (`BLG-GOV-405`–`407`)); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-03 (Sprint Planning `2026-11-03__release-v9.15` — 5 new items added: BLG-OPS-211, BLG-SPEC-217, BLG-GOV-408 (STEP 6.2 post-merge trackers for ST-31, ST-35, ST-45), BLG-FE-267, BLG-FE-268 (design gate observations)); prior — 2026-11-03 (Release Planning `2026-11-03__release-v9.15`, §1.3a — `BLG-OPS-48` date-lapsed gate cleared (a): `BLG-OPS-36` shipped v4.2 and the 2026-11-01 date has passed); prior — 2026-11-03 (Head of Specs Team, user-directed — `BLG-GOV-392`, `393`, `405`, `406`, `407` bannered ✅ COMPLETE: five deferred prompt patches applied, OPERATIONAL_GUIDE.md v4.250); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -6323,3 +6323,112 @@ The v9.15 Now section in `current_roadmap.md` carries the Site Structure & Usabi
 
 **Acceptance Criteria**
 - STEP 0 states the exclusion; a re-extraction gives §4's 22 roles
+
+---
+
+### BLG-OPS-211 — Confirm on main that governance-only PRs skip the five code-test suites
+**Priority:** P3 (Low)
+**Type:** Operations / CI
+**Owner:** Infrastructure & Operations Owner; FinOps & Resource Architect
+**Source:** Sprint Planning `2026-11-03__release-v9.15` STEP 6.2: post-merge tracker for ST-31 (`BLG-OPS-191`) AC 1, user-authorised — 2026-11-03
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.16
+**Depends on:** `BLG-OPS-191` (v9.15 ST-31) merged to `main`
+
+**Problem**
+ST-31 adds `paths-ignore: ['claude/**', 'docs/**']` and pass-through jobs to the five code-test workflows. Its AC 1 says a governance-only PR completes with every required check reported and none of the five suites run. That can only be seen on a real governance-only or docs-only PR opened against `main` after EPIC-05 merges, so it is outside the sprint.
+
+**Scope**
+- On the first governance-only or docs-only PR to `main` after ST-31 merges, read the PR's checks
+- Record the PR number, the required checks reported and the suites skipped in ST-31's QA evidence or `docs/ops/`
+
+**Acceptance Criteria**
+- One governance-only PR on `main` shows every required check reported (pass-through) and none of the five code-test suites run, with its PR number recorded
+- If a required check is missing or a suite still runs, a defect item is filed
+
+---
+
+### BLG-SPEC-217 — Record the production NOT NULL confirmation for positions.portfolio_id and total_cost
+**Priority:** P3 (Low)
+**Type:** Spec Debt / Data Model
+**Owner:** Data Model & Domain Schema Owner
+**Source:** Sprint Planning `2026-11-03__release-v9.15` STEP 6.2: post-merge tracker for ST-35 (`BLG-SPEC-196`) AC 1 (production half), user-authorised — 2026-11-03
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.16
+**Depends on:** `BLG-SPEC-196` (v9.15 ST-35) migration merged and deployed
+
+**Problem**
+ST-35 re-applies NOT NULL on `positions.portfolio_id` and `positions.total_cost`. Its AC 1 needs `information_schema.columns` to report `is_nullable = NO` in production as well as staging. The production check can only run after deploy, and only the user can run it, so it falls after the sprint.
+
+**Scope**
+- After the production migration, the user runs `SELECT column_name, is_nullable FROM information_schema.columns WHERE table_name = 'positions' AND column_name IN ('portfolio_id', 'total_cost');` on production
+- Record the output, with its date, in the DS-xx Live Confirmation in `docs/specs/data_model.md`
+
+**Acceptance Criteria**
+- The DS-xx Live Confirmation shows production `is_nullable = NO` for both columns, dated
+- Both Fields rows carry no "nullable" note for either environment
+
+---
+
+### BLG-GOV-408 — Feed the v9.15 strategic-exclusions and deferred-initiatives decisions into the next roadmap rebalance
+**Priority:** P3 (Low)
+**Type:** Governance / roadmap process
+**Owner:** Product Owner; PMO Lead
+**Source:** Sprint Planning `2026-11-03__release-v9.15` STEP 6.2: post-merge tracker for ST-45 (`BLG-GOV-196`) AC 2, plus ST-44's (`BLG-GOV-195`) §2 follow-up, user-authorised — 2026-11-03
+**Effort:** XS (<1h)
+**Provisional-Target:** next `run roadmap` after v9.15
+**Depends on:** `BLG-GOV-195` and `BLG-GOV-196` (v9.15 ST-44, ST-45) decision records filed
+
+**Problem**
+ST-44 and ST-45 file dated decision records re-confirming or flagging the four product-scope exclusions (`current_roadmap.md` §2) and the seven Priority 3 deferred initiatives (`initiative_register.md`). Both leave any change to those files to the next `run roadmap`. The decision records must be linked as that run's input, which happens after the sprint.
+
+**Scope**
+- At the next `run roadmap`, cite both decision records as inputs in its run record
+- Apply any flagged exclusion or initiative change there, or record why none is needed
+
+**Acceptance Criteria**
+- The next roadmap rebalance's run record links both decision records
+- Every item flagged in either record has a recorded disposition in that run
+
+---
+
+### BLG-FE-267 — Make the Signals "Rebalance Exit" badge meet WCAG AA contrast
+**Priority:** P3 (Low)
+**Type:** Frontend / UX (accessibility)
+**Owner:** Frontend Specifications & UX Documentation Owner; Head of UX & Design
+**Source:** Design gate `2026-11-03__release-v9.15` (`design_gate.md` § Observations for filing), filed at Sprint Planning, user-authorised — 2026-11-03
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.16
+
+**Problem**
+`signals.md` §Signal Type Badge Styling specifies `#0891B2` (cyan-600) with white text for the "Rebalance Exit" badge. That pair measures 3.68:1, below WCAG AA's 4.5:1 for 11px text. The shipped badge has not been checked against it.
+
+**Scope**
+- Measure the shipped Rebalance Exit badge in `src/`
+- Move it to a passing token (measured first) and update `signals.md` §Signal Type Badge Styling
+- Add a scoped axe color-contrast check on the Signals page badge in both themes
+
+**Acceptance Criteria**
+- The Rebalance Exit badge passes a scoped axe color-contrast scan in both themes (Playwright)
+- `signals.md` names the shipped colour
+
+---
+
+### BLG-FE-268 — Fix or remove the sidebar footer's dead "Docs" link
+**Priority:** P4 (Very Low)
+**Type:** Frontend / UX
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** Design gate `2026-11-03__release-v9.15` (`design_gate.md` § Observations for filing), filed at Sprint Planning, user-authorised — 2026-11-03
+**Effort:** XS (<1h plus test)
+**Provisional-Target:** v9.16
+
+**Problem**
+The sidebar footer's "Docs" link in `src/Layout.js` (next to the version label v9.15 ST-14 changes) has `href="#"` and goes nowhere. A link that does nothing looks broken.
+
+**Scope**
+- Point the link at the real documentation, or remove it
+- Record the decision in `navigation.md` §Sidebar Footer and Height
+
+**Acceptance Criteria**
+- No `href="#"` remains on the sidebar footer link (or the link is gone), and a Playwright check asserts its target or absence
+- `navigation.md` matches the shipped footer
