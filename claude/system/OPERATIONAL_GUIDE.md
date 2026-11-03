@@ -4,8 +4,8 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.246
-**Last Updated:** 2026-11-03 (post-ship closure 2026-10-29__release-v9.14 STEP 8 — execution_prompt.md v3.90→v3.91, backlog_management_prompt.md v1.18→v1.19); prior — 2026-11-02 (ST-45, BLG-GOV-398 — release_planning_prompt.md v2.65→v2.66); prior — 2026-11-02 (ST-44, BLG-GOV-397 — execution_prompt.md v3.89→v3.90); prior history retained — see prior entries in version control
+**Version:** 4.247
+**Last Updated:** 2026-11-03 (`ESC-CLOSE-20261103-01`/`-02` rulings — execution_prompt.md v3.91→v3.92, release_planning_prompt.md v2.66→v2.67); prior — 2026-11-03 (post-ship closure 2026-10-29__release-v9.14 STEP 8 — execution_prompt.md v3.90→v3.91, backlog_management_prompt.md v1.18→v1.19); prior — 2026-11-02 (ST-45, BLG-GOV-398 — release_planning_prompt.md v2.65→v2.66); prior history retained — see prior entries in version control
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -622,7 +622,7 @@ If the gate is bypassed (Sprint Planning run without a passing design gate), thi
 
 ## 6B. Phase 1B — Release Planning
 
-**Source prompt:** `claude/system/release_planning_prompt.md` (v2.66)
+**Source prompt:** `claude/system/release_planning_prompt.md` (v2.67)
 **Purpose:** Translate an already-approved roadmap release into an execution-ready plan: sequencing, dependencies, acceptance gates, backlog slice, optional GitHub issues.
 
 > **This routine does NOT rebalance the roadmap.** It may not add, replace, defer, or kill initiatives. Those remain reserved for Phase 1.
@@ -888,7 +888,7 @@ curl https://trading-assistant-frontend.onrender.com/api/healthz
 
 ## 8. Phase 3 — Sprint Execution & Close
 
-**Source prompt:** `claude/system/execution_prompt.md` (v3.91)
+**Source prompt:** `claude/system/execution_prompt.md` (v3.92)
 
 ### 8.1 Invocation
 
@@ -1377,7 +1377,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 4.246 |
+| Version | 4.247 |
 | Last Updated | 2026-11-03 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.12 |
@@ -1393,10 +1393,10 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Shared Publish Gate | `claude/system/shared/publish_gate.md` v1.1 |
 | Roadmap Engine Source | `claude/system/roadmap_prompt.md` v9.35 (+ `roadmap_prompt_appendix.md`) |
 | Roadmap Engine Appendix | `claude/system/roadmap_prompt_appendix.md` v1.1 |
-| Release Engine Source | `claude/system/release_planning_prompt.md` v2.66 |
+| Release Engine Source | `claude/system/release_planning_prompt.md` v2.67 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.24 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.9 |
-| Execution Engine Source | `claude/system/execution_prompt.md` v3.91 |
+| Execution Engine Source | `claude/system/execution_prompt.md` v3.92 |
 | QA Evidence Template | `claude/system/templates/qa_evidence_template.md` v1.18 |
 | Verification Engine Source | `claude/system/delivery_verification_prompt.md` v3.16 |
 | Ideas Housekeeping Engine | `claude/system/ideas_housekeeping_prompt.md` v1.2 |
@@ -1518,6 +1518,7 @@ Living references introduced in v3.2: `component_inventory.md`, `design_system.m
 **Header-drift prevention (added v4.85, roadmap rebalance 2026-07-08__scheduled, Friction Item — 4th recurrence of this exact pattern per the 4.79/4.80/4.81 entries below):** Before bumping the top `**Version:**`/`**Last Updated:**` header fields, read the highest version number already present in this table's top row — do not increment from the header field alone, since it has drifted below the table's actual latest entry on at least 4 prior occasions.
 
 | Version | Date | Change Summary |
+| 4.247 | 2026-11-03 | **`ESC-CLOSE-20261103-01` and `-02` rulings (Head of Specs Team with the Product Owner, agent-mediated per §5.3, user-directed) — 2 source prompts bumped.** `execution_prompt.md` v3.91→v3.92: STEP 4 confirmation by merge for the human holding the DoQ and PO roles (option (a)). `release_planning_prompt.md` v2.66→v2.67: §1.4c step 1a seats deferred lessons-learnt patch items after P1/P2 (option (a)). §6B and §8 source-prompt lines and §14 Release Engine Source and Execution Engine Source rows updated; §14 self-row Version → 4.247. |
 | 4.246 | 2026-11-03 | **Post-ship closure `2026-10-29__release-v9.14` STEP 8 — 2 source prompts bumped (immediate lessons-learnt actions).** `execution_prompt.md` v3.90→v3.91: §3.1.A step 2a local production build before a frontend commit (LL-v9.14-P3-03); STEP 4/STEP 5.1 `## Merge Gate Confirmations` section (LL-v9.14-P3-02); STEP 5.1 slice-item record check (LL-v9.14-P4-01). `backlog_management_prompt.md` v1.18→v1.19: STEP 0/STEP 1 read and classify the latest Release Planning archive-at-groom list (LL-v9.14-Release-04). §8 and §6M source-prompt lines and §14 Execution Engine Source and Backlog Management Engine rows updated; §14 self-row Version/Last Updated → 4.246/2026-11-03. |
 | 4.245 | 2026-11-02 | **Sprint execution `2026-10-29__release-v9.14` EPIC-07/ST-45 (BLG-GOV-398, `ESC-EXEC-20261102-01` choice (a)) — release_planning_prompt.md v2.65→v2.66.** §1.3a clears a gating-item-shipped gate in place when the whole condition is met by cited shipped items; §7 write scope extended. §6B source-prompt line and §14 Release Engine Source row updated. |
 | 4.244 | 2026-11-02 | **Sprint execution `2026-10-29__release-v9.14` EPIC-07/ST-44 (BLG-GOV-397) — execution_prompt.md v3.89→v3.90.** §9.2 mechanical read-back also checks `deviations_filed` on `done`/`merged` stories and the `ESC-EXEC-*` → `open_escalations` mapping. §8 source-prompt line and §14 Execution Engine Source row updated. |

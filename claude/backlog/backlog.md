@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-03 (groom backlog GROOM-20261103-01, post-ship closure 2026-10-29__release-v9.14 STEP 12 — 56 items archived (52 v9.14 shipped, BLG-OPS-196, and BLG-GOV-142/BLG-GOV-360/BLG-SPEC-199 from the Release Planning archive list)); prior — 2026-11-03 (post-ship closure 2026-10-29__release-v9.14 STEP 8 — 1 new item(s) added: BLG-GOV-404; deferred lessons-learnt action with sprint target v9.15); prior — 2026-11-03 (post-ship closure 2026-10-29__release-v9.14 STEP 3 — 52 shipped items marked ✅ COMPLETE (ST-01–ST-54 less ST-23/BLG-GOV-178, split-achievability carve-out, and ST-51, deferred at planning; PRs #2131–#2139); 0 Phase 4 additions needed); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-03 (owner actions, closure_record.md `2026-10-29__release-v9.14` §6 row 7 — ✅ COMPLETE banners added to BLG-OPS-200/202/204, BLG-SEC-44, BLG-GOV-374/361, BLG-FE-195; BLG-GOV-401 killed as a duplicate of BLG-QA-240); prior — 2026-11-03 (groom backlog GROOM-20261103-01, post-ship closure 2026-10-29__release-v9.14 STEP 12 — 56 items archived (52 v9.14 shipped, BLG-OPS-196, and BLG-GOV-142/BLG-GOV-360/BLG-SPEC-199 from the Release Planning archive list)); prior — 2026-11-03 (post-ship closure 2026-10-29__release-v9.14 STEP 8 — 1 new item(s) added: BLG-GOV-404; deferred lessons-learnt action with sprint target v9.15); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -2831,6 +2831,7 @@ The read-only credential available to sprint-execution sessions is for **staging
 ---
 
 ### BLG-GOV-361 — BLG-SPEC-65 still carries a stale sixth copy of the AI adoption window gate text
+**✅ COMPLETE — 2026-10-08 — Release Planning `2026-10-08__release-v9.11` §1.3a — `BLG-SPEC-65`'s gate now carries an explicit disposition (adoption-window limb met, 2026-10-08 gate note); no backlog item restates the AI adoption window gate or cites 2026-07-25; banner added 2026-11-03 by the Head of Specs Team with the Data Model & Domain Schema Owner (agent-mediated per §5.3, user-directed 2026-11-03; closure_record.md `2026-10-29__release-v9.14` §6 row 7)**
 **Priority:** P4 (Backlog)
 **Type:** Governance Process
 **Owner:** Head of Specs Team; Data Model & Domain Schema Owner
@@ -2852,6 +2853,7 @@ ST-24 replaced the restated AI adoption window gate text on its 5 named items (B
 ---
 
 ### BLG-FE-195 — Settings › Strategy Parameters: §11 defaults, §7.2-correct helper text, governed-parameter treatment
+**✅ COMPLETE — 2026-10-15 (v9.12 ship) — met by sibling items, cycles `2026-10-06__release-v9.10` (`BLG-BE-138`/ST-01, ruling (a): fixed §11 values shown read-only) and `2026-10-12__release-v9.12` (`BLG-FE-201`/ST-20, §5–§7.2 helper text) — Playwright `tests/e2e/settings-strategy-parameters-fixed.spec.js` SC-SPF-01/02/06; constants parity `tests/test_strategy_parameter_parity.py`; banner added 2026-11-03 by the Base44 Frontend Prompt Owner with the Head of UX & Design and QA Lead (agent-mediated per §5.3, user-directed 2026-11-03; closure_record.md `2026-10-29__release-v9.14` §6 row 7)**
 **Priority:** P2 (High)
 **Type:** Frontend / Strategy Conformance (build-and-ship)
 **Owner:** Base44 Frontend Prompt Owner; Head of UX & Design; QA Lead
@@ -2876,6 +2878,7 @@ ST-24 replaced the restated AI adoption window gate text on its 5 named items (B
 ---
 
 ### BLG-GOV-374 — Structured ready-pool history written by Release Planning, read by roadmap STEP 7.3
+**✅ COMPLETE — 2026-10-16 — roadmap rebalance `2026-10-16__scheduled` STEP -1.5 action-now patches — `claude/roadmap/ready_pool_history.md` (backfilled v9.3 onward), `roadmap_prompt.md` v9.35 STEP 7.3 reads it, `release_planning_prompt.md` v2.65 §1.4c appends to it; the appendix now leaves Appendix F to its owner (AC 2); banner added 2026-11-03 by the PMO Lead with the Head of Specs Team (agent-mediated per §5.3, user-directed 2026-11-03; closure_record.md `2026-10-29__release-v9.14` §6 row 7)**
 **Priority:** P3 (Low)
 **Type:** Governance Process / Capacity Monitoring
 **Owner:** PMO Lead; Head of Specs Team
@@ -4760,6 +4763,7 @@ ST-25 gave the Post-Trade Debrief Generate and Regenerate buttons `text-slate-80
 ---
 
 ### BLG-OPS-200 — Confirm the production GitHub Pages deploy succeeds after the ESLint config fix
+**✅ COMPLETE — 2026-10-30 — cycle `2026-10-29__release-v9.14` (ST-01 post-merge AC 1, EPIC-01) — `deploy.yml` run 41024971887 on merge commit 48eab523; banner added 2026-11-03 by the Infrastructure & Operations Owner (agent-mediated per §5.3, user-directed 2026-11-03; closure_record.md `2026-10-29__release-v9.14` §6 row 7)**
 **Priority:** P3 (Low)
 **Type:** Operations / Deployment
 **Owner:** Infrastructure & Operations Owner
@@ -4827,6 +4831,7 @@ ST-39 produces a report in `docs/ops/` that partitions compute cost by feature a
 ---
 
 ### BLG-OPS-202 — Confirm ci-usage-report.yml commits its report from a run on main
+**✅ COMPLETE — 2026-10-30 — cycle `2026-10-29__release-v9.14` (ST-42 post-merge ACs, EPIC-06) — `ci-usage-report.yml` run 41082206367 on `main`, report merged via PR #2134; banner added 2026-11-03 by the Infrastructure & Operations Owner (agent-mediated per §5.3, user-directed 2026-11-03; closure_record.md `2026-10-29__release-v9.14` §6 row 7)**
 **Priority:** P3 (Low)
 **Type:** Operations / CI
 **Owner:** Infrastructure & Operations Owner
@@ -4851,6 +4856,7 @@ ST-42 fixes `ci-usage-report.yml`'s monthly commit, which failed on its only sch
 ---
 
 ### BLG-SEC-44 — Record the staging and production CORS preflight checks after the allow-list change
+**✅ COMPLETE — 2026-10-30 — cycle `2026-10-29__release-v9.14` (ST-43 post-merge AC 2, EPIC-06, `DEL-20261030-01`) — staging and production CORS preflights recorded; banner added 2026-11-03 by the Cybersecurity & Trust Lead with the Infrastructure & Operations Owner (agent-mediated per §5.3, user-directed 2026-11-03; closure_record.md `2026-10-29__release-v9.14` §6 row 7)**
 **Priority:** P3 (Low)
 **Type:** Security / Configuration
 **Owner:** Cybersecurity & Trust Lead; Infrastructure & Operations Owner
@@ -4917,6 +4923,7 @@ DS-37 (`data_model.md` v2.66) adds the `fx_rate_last_good` table, created at run
 ---
 
 ### BLG-OPS-204 — Point Render staging back at main and confirm its build from main
+**✅ COMPLETE — 2026-10-30 — cycle `2026-10-29__release-v9.14` (ST-01 AC 2 evidence gap, EPIC-01) — Render staging pointed back at `main` and built from it; banner added 2026-11-03 by the Infrastructure & Operations Owner (agent-mediated per §5.3, user-directed 2026-11-03; closure_record.md `2026-10-29__release-v9.14` §6 row 7)**
 **Priority:** P2 (Medium)
 **Type:** Operations / Deployment
 **Owner:** Infrastructure & Operations Owner
@@ -5155,6 +5162,7 @@ Since ST-11 (v9.14), an in-grace position priced at or below its trailing stop i
 **Source:** EPIC-02 merge-gate persist, sprint execution `2026-10-29__release-v9.14` — 2026-10-30
 **Effort:** XS (<1h plus test)
 **Provisional-Target:** v9.15
+**Folded in (2026-11-03):** `BLG-GOV-401` (same defect, filed at ST-44) is killed as a duplicate of this item; its scope is covered here.
 
 **Problem**
 `scripts/check_execution_state_consistency.py` derives `merge_gate.epics_pending` from the EPICs present in `execution_state.json`'s `epics` object, and requires `all_merged` to be true exactly when that list is empty. In v9.14 each EPIC is added to `epics` when its own execution starts, so after EPIC-01 and EPIC-02 merged the script demanded `epics_pending: []` and `all_merged: true` while five EPICs were still unstarted. Following it would make the next `run sprint` treat the sprint as fully merged and run STEP 5 Sprint Close early. Both persisted merge states (EPIC-01 `eee3e2f9`, EPIC-02) fail the check, so the §9.2 read-back cannot pass at the moment it matters most.
@@ -5424,6 +5432,7 @@ ST-24's `get_monthly_pnl_by_exit_reason()` (`backend/database.py`) opens its own
 ---
 
 ### BLG-GOV-401 — Count not-yet-initialised EPICs as pending in `check_execution_state_consistency.py`
+**❌ Killed — 2026-11-03 — superseded by `BLG-QA-240` (duplicate: the same `check_execution_state_consistency.py` `merge_gate` defect, filed 2026-10-30 as `BLG-QA-240` and again 2026-11-02 at ST-44; `verification_report.md` §5 and `lessons_learnt_cycle.md` Phase 3 FI-1 direct the fold) — decision: Product Owner with the Head of Specs Team (agent-mediated per §5.3, user-directed 2026-11-03)**
 **Priority:** P3 (Low)
 **Type:** Governance Process / Tooling
 **Owner:** Head of Specs Team; Head of Engineering

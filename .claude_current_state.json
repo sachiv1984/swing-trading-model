@@ -4,7 +4,7 @@
   "status": "Closed",
   "prior_status": "Verified",
   "engine": "Post-Ship Closure",
-  "last_updated_utc": "2026-11-03T08:19:00Z",
+  "last_updated_utc": "2026-11-03T08:48:01Z",
   "execution_state_path": "claude/cycles/2026-10-29__release-v9.14/execution_state.json",
   "backlog_slice_path": "claude/cycles/2026-10-29__release-v9.14/stage4_backlog_slice.md",
   "design_gate_required": true,
@@ -534,24 +534,6 @@
       "resolved_utc": "2026-11-02T10:51:11Z",
       "resolved_by": "Head of Specs Team (choice given in-session by the user acting in that role)",
       "resolution_summary": "Option (a): release_planning_prompt.md §1.3a carve-out extended; recorded in claude/cycles/2026-10-29__release-v9.14/execution_escalations.md. ST-45 reclassified autonomous."
-    },
-    "ESC-CLOSE-20261103-01": {
-      "summary": "Does a human merge with no separately recorded DoQ QA sign-off / PO acceptance satisfy the always-human merge-gate rows? (PR #2137, #2139)",
-      "owner": "Head of Specs Team; Product Owner",
-      "sla_due_utc": "2026-11-06T08:13:47Z",
-      "cycle": "2026-10-29__release-v9.14",
-      "raised_utc": "2026-11-03T08:13:47Z",
-      "blocks_execution": false,
-      "disposition": "Open"
-    },
-    "ESC-CLOSE-20261103-02": {
-      "summary": "Add a release_planning §1.4c tier for deferred lessons-learnt patch items, narrowing PO ruling ESC-CLOSE-20260923-01?",
-      "owner": "Head of Specs Team; Product Owner",
-      "sla_due_utc": "2026-11-06T08:13:47Z",
-      "cycle": "2026-10-29__release-v9.14",
-      "raised_utc": "2026-11-03T08:13:47Z",
-      "blocks_execution": false,
-      "disposition": "Open"
     }
   },
   "deferred_escalations": {
