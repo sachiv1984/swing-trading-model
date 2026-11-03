@@ -1,8 +1,8 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-11-03 (post-ship closure 2026-10-29__release-v9.14, manage roadmap STEP 11 — 0 items retired (v9.14 had no §3 section); 1 RA: pointer pruned (RA:v9.10-committed-items, 4 shipped releases older)); prior — 2026-11-03 (post-ship closure 2026-10-29__release-v9.14 STEP 2 — §1 Current Version → v9.14 ✅ Complete, Next planned release → [TBD]; RA:v9.14 closure status added; §8 Release Summary row added); prior — 2026-10-29 (Release Planning 2026-10-29__release-v9.14 STEP 5 — RA:v9.14 execution-notes annotation added under the §1 Next planned release line; no scope change); prior history retained — see prior entries in version control
-**Last rebalance:** 2026-10-16 (cycle 2026-10-16__scheduled — Standard tier, CPS=N/A (0 active initiatives, 18th consecutive cycle); STEP -1.5 cleared after 3 OVERDUE deferred patches were applied (Head of Specs Team, user-directed); full-roster intake IW-20261016-01 (32 ideas → 21 backlog items, 1 rejected); STEP 8.0 Correctness Fast-Track promoted BLG-FE-226 (P1); PVR 0.204 (8th consecutive Alert, improving); Skill-Silo 69.6% pooled (above ceiling, sustained-failure clause applies); STEP 8.1 Option (a), v9.13 section added; DL-086)
+**Last Updated:** 2026-11-03 (roadmap rebalance `2026-11-03__scheduled`, DL-088 — §1 Next planned release → v9.15; §3 gains "v9.15 — Site Structure & Usability, Phase 1" with 10 committed items and the programme plan); prior — 2026-11-03 (post-ship closure 2026-10-29__release-v9.14, manage roadmap STEP 11 — 0 items retired (v9.14 had no §3 section); 1 RA: pointer pruned (RA:v9.10-committed-items, 4 shipped releases older)); prior — 2026-11-03 (post-ship closure 2026-10-29__release-v9.14 STEP 2 — §1 Current Version → v9.14 ✅ Complete, Next planned release → [TBD]; RA:v9.14 closure status added; §8 Release Summary row added); prior history retained — see prior entries in version control
+**Last rebalance:** 2026-11-03 (cycle 2026-11-03__scheduled — Standard tier, CPS=N/A (0 active initiatives, 19th consecutive cycle); STEP -1.5 cleared after 1 OVERDUE deferred patch was applied (Head of Specs Team, user acting in role); reduced-roster intake IW-20261103-01 (11 ideas from the Head of UX & Design website review → 27 backlog items); STEP 8.0 Correctness Fast-Track promoted BLG-FE-244 and BLG-FE-245 (P1); PVR 0.307 (Advisory, 1st reading out of Alert); Skill-Silo 68.1% pooled (above ceiling, sustained-failure clause applies); STEP 8.1 Option (a), v9.15 section added; DL-088)
 
 > ⚠️ **Standing Notice:** This document records product intent and prioritisation thinking. All implementation detail (formulas, schemas, endpoint paths) is illustrative and indicative only. Before any feature moves to implementation, the relevant canonical specifications must be authored or updated by the appropriate domain owner. This document must not be cited as canonical intent.
 
@@ -11,7 +11,7 @@
 ## 1. Current Version
 
 **v9.14** — Production Deploy Restore, Market-Data Resilience & Sizing Fix — ✅ Complete — Shipped 2026-11-03 — cycle: 2026-10-29__release-v9.14
-**Next planned release:** [TBD]
+**Next planned release:** v9.15 — Site Structure & Usability, Phase 1 (Now horizon section added by roadmap rebalance `2026-11-03__scheduled`, DL-088; scope set at `plan release v9.15`)
 
 <!-- roadmap-annotation-marker: RA:v9.14:2026-10-29__release-v9.14 -->
 
@@ -501,6 +501,38 @@ Today you find stocks through external research and add them to the watchlist ma
 -----
 
 ## 3. Delivery Plan — Horizon: Now
+
+### v9.15 — Site Structure & Usability, Phase 1 (roadmap rebalance `2026-11-03__scheduled`, DL-088)
+
+*Added by the rebalance, not by Release Planning: the release's full scope, capacity fit and story breakdown are set at `plan release v9.15`. The items below are committed to it.*
+
+**Release focus:** this release opens the **Site Structure & Usability programme**, from the Head of UX & Design website review of 2026-11-03 (first-principles target vs the current site; IA verdict "modify substantially, don't redesign": keep the domain model, URLs and page content; regroup navigation by the trader's jobs, remove duplicate surfaces, fix vocabulary and onward links; redesign only the home page and the entry flow). Phase 1 closes the strategy-integrity and sizing gaps first, fixes the vocabulary, and writes the specs Phase 2 builds from.
+
+| Item | Why it is here | Priority | Effort |
+|------|----------------|----------|--------|
+| `BLG-FE-244` — pre-entry checks on every route into Trade Entry | STEP 8.0 Correctness Fast-Track: three entry routes skip the §4.2 checks (incl. §4.2.1 unknown regime). Strategy Rules & System Intent Owner confirmed §4.2 covers unplanned entries; display-only. | P1 | M (~2-3 days) |
+| `BLG-FE-245` — Trade Entry FX pre-fill from the live rate, not 1.27 | STEP 8.0 Correctness Fast-Track: US sizing scales with FX² since `BLG-BE-190` (§4.1.3 v1.21); the fixed default distorts suggested size. | P1 | S (~0.5-1 day) |
+| `BLG-FE-246` — one FX label on entry and exit | The same rate is labelled USD/GBP on entry and GBP/USD on exit. | P2 | S (~0.5 day) |
+| `BLG-SPEC-214` — navigation spec v2 + glossary UI labels | Spec for Phase 2's sidebar, wayfinding and naming. | P2 | M (~2 days) |
+| `BLG-FE-248` — one name per page and action | Seven pages carry different names across sidebar, heading and palette. Depends on `BLG-SPEC-214`. | P2 | S (~1 day) |
+| `BLG-SPEC-215` — Dashboard "Today" action-list spec | Spec for Phase 2's home page redesign. | P2 | M (~2 days) |
+| `BLG-SPEC-216` — single Journal area spec | Spec for Phase 3's journal merge (§13 confirmation inside). | P3 | M (~2 days) |
+| `BLG-FE-247` — remove the legacy Dashboard route and duplicate palette entry | Quick win. | P3 | S (~0.5 day) |
+| `BLG-FE-249` — browser-tab title per page | Quick win. | P3 | S (~0.5 day) |
+| `BLG-FE-266` — version label, What's New heading, sidebar height | Quick win. | P3 | S (~0.5 day) |
+
+Committed ≈ 11.5-13 days of the ~24–28-day band. The rest of v9.15 is set by `plan release v9.15` (closure carry-forward: weigh `BLG-FE-239`, `BLG-FE-240`, `BLG-FE-243`).
+
+**Programme plan (provisional — later phases are not committed by this section; each is seated by its own `plan release`, and a rebalance may revise it):**
+
+| Phase | Provisional release | Items |
+|-------|--------------------|-------|
+| 1 — Integrity, vocabulary, specs | v9.15 (this section) | as above |
+| 2 — Navigation, home page, entry flow, colour tokens | v9.16 | `BLG-FE-250`, `251`, `252`, `253`, `254`, `255`, `256`, `264` (≈15.5 days) |
+| 3 — Consolidation, Positions redesign, token sweep | v9.17 | `BLG-FE-257`, `258`, `259`, `260`, `261`, `262`, `263`, `265` (≈20.5 days) |
+| Close-out — first-principles UX re-review | v9.18 | `BLG-UX-08` (gated on every other programme item; Head of UX & Design confirms or revises the 2026-11-03 verdict against its baseline metrics) |
+
+`BLG-FE-54` (Arc 5 unified pre-entry gateway) keeps its Arc 5 gate; `BLG-FE-244` and `BLG-FE-255` deliver the ungated slices now (PO decision, DL-088). `BLG-FE-224`/`BLG-FE-242` are superseded by `BLG-FE-265` on completion unless shipped earlier.
 
 *Now horizon was empty from 2026-07-27 until the v9.10 section below was added on 2026-10-06 (post-ship closure `2026-07-24__release-v7.8`, `manage roadmap` STEP 11) — `BLG-FEAT-73`/`BLG-FEAT-74` removed per Product Owner perennial-return disposition (Option (b), `decisions--2026-07-24__release-v7.8.md`); no carry-forward re-add. Both remain open, un-scheduled items in `claude/backlog/backlog.md` and may return to a future Now-horizon section once their respective gates clear.*
 

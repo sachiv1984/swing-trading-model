@@ -9,10 +9,9 @@
     "Head of UX & Design",
     "Frontend Specifications & UX Documentation Owner"
   ],
-  "reduced_roster_reason": "Rebalance focused on the Head of UX & Design website review (2026-11-03): first-principles target vs current site, IA verdict 'modify substantially', 26-item fix list. Authorised in-session by the Product Owner (the user), 2026-11-03. Preceding window IW-20261016-01 was full roster (\u00a74.1 condition 3 met).",
+  "reduced_roster_reason": "Rebalance focused on the Head of UX & Design website review (2026-11-03): first-principles target vs current site, IA verdict 'modify substantially', 26-item fix list. Authorised in-session by the Product Owner (the user), 2026-11-03. Preceding window IW-20261016-01 was full roster (§4.1 condition 3 met).",
   "invoked_by": "roadmap_prompt.md STEP -1.6 (2026-11-03__scheduled)",
   "eligible_agents": [
-    "<Role Name \u2014 exact string used elsewhere to refer to this role, e.g. in sign-off blocks and delegation records>",
     "AI Compliance & Governance Officer",
     "API Contracts & Documentation Owner",
     "Backend Engineering Patterns Owner",
@@ -59,7 +58,6 @@
   ],
   "agents_not_submitted": [],
   "agents_not_opened_reduced_roster": [
-    "<Role Name \u2014 exact string used elsewhere to refer to this role, e.g. in sign-off blocks and delegation records>",
     "AI Compliance & Governance Officer",
     "API Contracts & Documentation Owner",
     "Backend Engineering Patterns Owner",

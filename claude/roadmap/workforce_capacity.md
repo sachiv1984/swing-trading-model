@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-11-03 (lifecycle audit AUD-2026-11-03-007 — canonical table gains the `XS (<1h)` worked example (v9.8 deferred patch) and a dormant `VH` placeholder (v9.7 deferred patch)); prior — 2026-10-16 (rebalance `2026-10-16__scheduled` — new "Rebalance 2026-10-16__scheduled" section: Skill-Silo 69.6% pooled, above ceiling, sustained-failure clause applied (BLG-FE-226/BLG-FE-227/BLG-BE-182); §7.2 max 8.0%; §7.3 gap 26.70 d from ready_pool_history.md; PVR 0.204); prior — 2026-10-08 (rebalance 2026-10-08__scheduled — new "Rebalance 2026-10-08__scheduled" section: Skill-Silo 87.4% pooled, improved but above ceiling, §7.1 pull-forward applied (BLG-FE-206 + BLG-BE-154 → v9.11); §7.3 gap grew 1 release (33.80 d), runway N/A); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-03 (rebalance `2026-11-03__scheduled` — STEP 7 section appended: Skill-Silo 68.1%, v9.15 capacity outlook ≈11.5-13 days committed); prior — 2026-11-03 (lifecycle audit AUD-2026-11-03-007 — canonical table gains the `XS (<1h)` worked example (v9.8 deferred patch) and a dormant `VH` placeholder (v9.7 deferred patch)); prior — 2026-10-16 (rebalance `2026-10-16__scheduled` — new "Rebalance 2026-10-16__scheduled" section: Skill-Silo 69.6% pooled, above ceiling, sustained-failure clause applied (BLG-FE-226/BLG-FE-227/BLG-BE-182); §7.2 max 8.0%; §7.3 gap 26.70 d from ready_pool_history.md; PVR 0.204); prior history retained — see prior entries in version control
 
 > ⚠️ Standing Notice: This document records workforce planning estimates. All effort figures are indicative. Canonical project records take precedence.
 
@@ -868,3 +868,20 @@ Both approved candidates (`BLG-FEAT-52` ungated/descoped, new `BLG-FEAT-71`) are
 **Sprint capacity:** not re-evaluated; held at ~24–28 working-day-equivalent units.
 
 **Workforce constraints:** none new.
+
+
+## Rebalance 2026-11-03__scheduled
+
+**Skill-Silo Alert (STEP 7.1):** window v9.12–v9.14 (U/G/D/P proxy; `scripts/compute_rebalance_diagnostics.py`, `method: pooled`). **Pooled: 96/141 = 68.1%** (v9.12 32/48, v9.13 and v9.14 per changelog tags). Improved from 70.2% (v9.11–v9.13) and 69.6% at `2026-10-16__scheduled`, still above the 40% ceiling. Under the v9.35 definition every above-ceiling reading is "unresolved", so the **sustained-failure clause applies (≥2 build-and-ship U-items at the next release)** — met by `BLG-FE-244` and `BLG-FE-245` (both P1, STEP 8.0) plus `BLG-FE-246`, `247`, `248`, `249`, `266` in the v9.15 section. Candidate gate verification: none has a `**Gate criteria:**` line. Live-status cross-check: all are active, filed this run. Cross-role pairing note read; advisory only.
+
+**Cross-Role Workload Balance (STEP 7.2):** `role_share_history.md`, after appending the v9.13 and v9.14 rows (neither had been added, because no rebalance ran between them). Window v9.12–v9.14, 141 stories: AI Compliance & Governance Officer; Backend Engineering Patterns Owner (compound bucket) highest at **13 (9.2%)**. Below the 40% ceiling — no advisory. Forward look: the Site Structure & Usability programme concentrates v9.15–v9.17 on Head of Engineering, Head of UX & Design and Frontend Specifications & UX Documentation Owner; expect this check to rise for those roles.
+
+**Ready-Pool Capacity Gap Trend (STEP 7.3):** `claude/roadmap/ready_pool_history.md` newest row v9.14 (present; no fallback needed): 156-item / 81.55-day pool against the 28-day ceiling, gap **53.55 days**. Series v9.12 26.70 → v9.13 36.65 → v9.14 53.55: increased for 2 consecutive releases (v9.11→v9.12 decreased), so below the 3-release review trigger — advisory only. Runway: N/A — pool growing (rolling Δ leftover +6.33). This run adds 27 items (≈49 days); the gap will widen further at v9.15 unless the PO raises the band or sub-tiers P3 at a later rebalance.
+
+**Product Value Ratio (STEP 2.4):** 0.307 Advisory (window v9.10–v9.14, U=63/G=25/D=115/P=2/205) — first Advisory-tier reading after 8 consecutive Alert readings. Effort-weighted 0.376 (diagnostic). Sustained-Advisory clause not yet applicable (1 consecutive Advisory reading).
+
+**v9.15 capacity outlook:** committed: `BLG-FE-244` (M ~2-3 d), `BLG-FE-245` (S ~0.5-1 d), `BLG-FE-246` (S ~0.5 d), `BLG-FE-247` (S ~0.5 d), `BLG-FE-248` (S ~1 d), `BLG-FE-249` (S ~0.5 d), `BLG-FE-266` (S ~0.5 d), `BLG-SPEC-214`, `215`, `216` (M ~2 d each) ≈ 11.5-13 days of the ~24–28-day band. Release Planning fills the rest (closure carry-forward: `BLG-FE-239`, `BLG-FE-240`, `BLG-FE-243`). Provisional programme load: v9.16 ≈15.5 days, v9.17 ≈20.5 days, v9.18 ≈1 day.
+
+**Sprint capacity:** not re-evaluated; held at ~24–28 working-day-equivalent units.
+
+**Workforce constraints:** none new. Design and spec skills (Head of UX & Design, Frontend Specifications & UX Documentation Owner) are on the critical path for Phase 1's three specs; Phase 2 build cannot start before `BLG-SPEC-214`/`215` are approved.

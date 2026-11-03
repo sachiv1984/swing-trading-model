@@ -6,7 +6,7 @@
 
 # Idea Intake Summary — IW-20261103-01
 
-**Reduced-roster disclosure (§4.1):** participating roles 2 of 23 eligible — Head of UX & Design, Frontend Specifications & UX Documentation Owner. Reason: this rebalance is focused on the Head of UX & Design website review held in session on 2026-11-03 (first-principles target vs current site, IA verdict "modify substantially", 26-item fix list), which the user asked to be written to the roadmap as its focus. Authorised by the Product Owner (the user, in session), 2026-11-03. Preceding window: `IW-20261016-01` — full roster. Roster rule (§2.1 step 2a): both participating roles are user-facing.
+**Reduced-roster disclosure (§4.1):** participating roles 2 of 22 eligible — Head of UX & Design, Frontend Specifications & UX Documentation Owner. Reason: this rebalance is focused on the Head of UX & Design website review held in session on 2026-11-03 (first-principles target vs current site, IA verdict "modify substantially", 26-item fix list), which the user asked to be written to the roadmap as its focus. Authorised by the Product Owner (the user, in session), 2026-11-03. Preceding window: `IW-20261016-01` — full roster. Roster rule (§2.1 step 2a): both participating roles are user-facing.
 
 ## Window Status: Closed
 
@@ -37,7 +37,7 @@ Invoked inline as STEP -1.6 of `run roadmap --reason "scheduled"` (`2026-11-03__
 
 ## Agents Without Minimum Submissions
 
-None — both participating roles met the minimum. The other 21 roles were not opened (reduced roster); per §4.1 that is not a §2.3 shortfall.
+None — both participating roles met the minimum. The other 20 roles were not opened (reduced roster); per §4.1 that is not a §2.3 shortfall.
 
 ## Ideas Available for Roadmap STEP 4
 
@@ -64,3 +64,5 @@ None.
 Build-and-ship candidates (§2.1 step 2a): 10 — `IDEA-head-of-ux-20261103-01` to `-06` (Head of UX & Design), `IDEA-frontend-specs-20261103-01` to `-04` (Frontend Specifications & UX Documentation Owner). User-facing roles with none: None. `IDEA-head-of-ux-20261103-07` is review-shaped by design (the user's requested post-programme re-review).
 
 The 11 ideas cover the review's 26 proposed backlog items: ideas 01 (item 1), 02 (12–13), 03 (4–11), 04 (14–15 and the `BLG-FE-54` re-scope), 05 (16–19), 06 (20–23), 07 (the re-review); frontend-specs 01 (3, 7), 02 (2), 03 (24–25), 04 (26).
+
+Correction (same run, before the rebalance commit): `ideas_window.json` `eligible_agents` first listed 23 entries because the STEP 0 extraction read `claude/agents/_role_charter_template.md`'s placeholder `**Role:**` line. Corrected to the 22 roles in §4; the intake commit `61dbc2f5` carried the uncorrected list. Recorded as a friction item in `claude/cycles/2026-11-03__scheduled/lessons_learnt.md`.
