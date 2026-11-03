@@ -3,8 +3,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 1.1
-**Last Updated:** 2026-03-18
+**Version:** 1.2
+**Last Updated:** 2026-11-03 (v9.15 design gate — ST-03/BLG-FE-246: FX input label "FX rate — USD per £1 (GBP/USD)" with hint); prior — 2026-03-18; prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Purpose & Usage Context
@@ -56,6 +56,7 @@ Dropdown options include:
 - Pre‑populated with current FX rate  
 - Editable  
 - Format: 1.XXXX  
+- **Label and hint (v1.2, ST-03, BLG-FE-246):** label "FX rate — USD per £1 (GBP/USD)"; hint under the field, linked by `aria-describedby`: "How many US dollars £1 buys." Same as every FX input (`position_form.md` §FX Rate). Replaces "FX Rate (GBP/USD)". Design source: `docs/design/2026-11-03__release-v9.15/trade-entry-fx-rate/decision_record.md`.  
 
 ### Exit Note (optional)
 - Text area  

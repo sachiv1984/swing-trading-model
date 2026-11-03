@@ -3,8 +3,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.21
-**Last Updated:** 2026-10-29 (v9.14 design gate — ST-07/ST-08: new §Stale Price Marker; ST-11/BLG-FE-231: Monitor suggestions follow the grace period; ST-14/BLG-SPEC-192: Last Reviewed suppression covers ended grace); prior — 2026-10-16 (v9.13 design gate — ST-01/BLG-FE-226: new §Daily Position Monitor Exit Queue; ST-22/BLG-FE-208: §AI Trade Advisor Widget gains §Answer Rating); prior — 2026-10-13 (ST-14, EPIC-02, v9.12, BLG-BE-148 — §Gap Risk Badge: next trading session is the next NYSE session on the US market date); prior history retained — see prior entries in version control
+**Version:** 2.22
+**Last Updated:** 2026-11-03 (v9.15 design gate — ST-06/BLG-BE-173: Trail Stop footnote states the §7.2 profit formula with the breakeven floor; ST-17/BLG-FE-218: View Trail heading, row label and tooltip wording); prior — 2026-10-29 (v9.14 design gate — ST-07/ST-08: new §Stale Price Marker; ST-11/BLG-FE-231: Monitor suggestions follow the grace period; ST-14/BLG-SPEC-192: Last Reviewed suppression covers ended grace); prior — 2026-10-16 (v9.13 design gate — ST-01/BLG-FE-226: new §Daily Position Monitor Exit Queue; ST-22/BLG-FE-208: §AI Trade Advisor Widget gains §Answer Rating); prior history retained — see prior entries in version control
 **Design Source (v9.14 additions):** docs/design/2026-10-29__release-v9.14/stale-price-marker/decision_record.md, docs/design/2026-10-29__release-v9.14/monitor-grace-aware-suggestions/decision_record.md, docs/design/2026-10-29__release-v9.14/last-reviewed-ended-grace/decision_record.md
 **Design Source (v9.13 additions):** docs/design/2026-10-16__release-v9.13/monitor-exit-queue/decision_record.md, docs/design/2026-10-16__release-v9.13/chat-answer-rating/decision_record.md
 **Design Source (v9.11 additions):** docs/design/2026-10-08__release-v9.11/grace-alert-calendar-days/decision_record.md
@@ -28,6 +28,7 @@
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.22 | 2026-11-03 | v9.15 design gate. (ST-06, BLG-BE-173) §Trail Stop Action footnote states the §7.2 profit formula with the breakeven floor and no literal multiplier; `atr_trail_stop` uses `calculate_trailing_stop`. (ST-17, BLG-FE-218) modal heading "View Trail — {TICKER}", row "Difference vs current stop", disabled tooltip no longer asks the user to add a stop. Design source: `docs/design/2026-11-03__release-v9.15/trail-stop-modal-wording/decision_record.md`. Head of UX & Design + Product Owner approved. Head of Specs Team confirmed. |
 | 2.21 | 2026-10-29 | v9.14 design gate. (ST-07/ST-08, BLG-BE-168/BLG-FE-214) new §Stale Price Marker on the Table and Grid views, the shared focusable `StaleMarker` from `risk_dashboard.md` §6.6. (ST-11, BLG-FE-231) new §Monitor Suggestions under §Daily Position Monitor Exit Queue: suggestions come from `getExitCondition()`, so an in-grace breach is not suggested; the "Stop price hit" note names the trailing stop and grace. (ST-14, BLG-SPEC-192) §Last Reviewed Column suppression covers stored GRACE with null `grace_days_remaining` and `holding_days ≥ 10`. Design sources: `docs/design/2026-10-29__release-v9.14/stale-price-marker/decision_record.md`, `.../monitor-grace-aware-suggestions/decision_record.md`, `.../last-reviewed-ended-grace/decision_record.md`. Head of UX & Design sign-off: 2026-10-29. Product Owner approved: 2026-10-29. Head of Specs Team confirmed. |
 | 2.20 | 2026-10-16 | v9.13 design gate. (ST-01, BLG-FE-226) New §Daily Position Monitor Exit Queue: the Monitor's exits run one `ExitModal` per selected position through `POST /positions/{id}/exit`, with Monitor-sourced pre-selection, a queue indicator and a failure state that keeps the queue. (ST-22, BLG-FE-208) §AI Trade Advisor Widget gains §Answer Rating. Design sources: `docs/design/2026-10-16__release-v9.13/monitor-exit-queue/decision_record.md`, `docs/design/2026-10-16__release-v9.13/chat-answer-rating/decision_record.md`. Head of UX & Design sign-off: 2026-10-16. Product Owner approved: 2026-10-16. Head of Specs Team confirmed. |
 | 2.19 | 2026-10-13 | v9.12 sprint execution (ST-14, EPIC-02, BLG-BE-148): §Gap Risk Badge and §Gap Risk Reason Labels — "next trading day" is the next NYSE session on the US market date (Revised Ruling 3, `ESC-EXEC-20261013-07`). Label text unchanged. |
@@ -299,7 +300,7 @@ Two distinct empty states:
 
 ## Trail Stop Action (v3.3 — ST-07 IT-03; revised v2.16 — ST-10, BLG-BE-159)
 
-**Design source:** docs/design/2026-05-09__release-v3.3/stop-management-workflow/ux_spec.md; **v2.16:** `docs/design/2026-10-12__release-v9.12/trail-stop-action/decision_record.md`
+**Design source:** docs/design/2026-05-09__release-v3.3/stop-management-workflow/ux_spec.md; **v2.16:** `docs/design/2026-10-12__release-v9.12/trail-stop-action/decision_record.md`; **v2.22:** `docs/design/2026-11-03__release-v9.15/trail-stop-modal-wording/decision_record.md`
 
 > **v2.18 — ruled: read-only (ST-10, BLG-BE-159).** Before v2.16 this section said the confirm button "calls `PUT /positions/{id}`", and the shipped code called `PATCH /positions/{id}`. Neither route existed, so every apply failed. The Strategy Rules & System Intent Owner ruled on 2026-10-13 (ESC-EXEC-20261013-06) that a user may not set or raise a stop manually: under the §7.3 ratchet a manual raise becomes a permanent, user-chosen floor, which §13.2 excludes, and the modal's formula is not the §7.2 live formula (§12.3). The modal is a read-only comparison. No stop-write route exists.
 
@@ -309,14 +310,14 @@ Two distinct empty states:
 - Label (title and accessible name of the icon button): **"View Trail"**
 - Style: secondary (outlined)
 - **Shown** for positions where `position_state` is `PROFITABLE` or `EXIT ZONE`
-- **Disabled** (with tooltip "No current stop set. Add a stop to use trail management.") when `current_stop` is null
+- **Disabled** (with tooltip "No stop is recorded for this position yet, so there is no trail to compare." — v2.22, ST-17; was "No current stop set. Add a stop to use trail management.", which implied a manual action the read-only ruling excludes) when `current_stop` is null
 - **Hidden** for GRACE, LOSING, UNKNOWN states
 
 ### Trail Stop Modal
 
 Opened by clicking the enabled button. Data source: `GET /positions/{id}/stop-trail`.
 
-**Modal header:** "Trail Stop — {TICKER}"
+**Modal header:** "View Trail — {TICKER}" (v2.22, ST-17; was "Trail Stop — {TICKER}")
 
 **Data rows:**
 
@@ -324,10 +325,10 @@ Opened by clicking the enabled button. Data source: `GET /positions/{id}/stop-tr
 |-------|--------|--------|
 | Current Stop | `current_stop` | Native currency, 2dp |
 | ATR Trail Stop | `atr_trail_stop` | Native currency, 2dp |
-| Raise by (display only; not an action) | `trail_difference` | "+£X.XX" (positive) or "−£X.XX" (negative, `text-amber-700 dark:text-amber-400`) |
+| Difference vs current stop (v2.22, ST-17; was "Raise by") | `trail_difference` | "+£X.XX" (positive) or "−£X.XX" (negative, `text-amber-700 dark:text-amber-400`) |
 | Trail in R | `trail_r_terms` | "+X.XR" |
 
-**Footnote (static):** "ATR trail stop = current price − (ATR × 2.0). ATR period: 14 days. Multiplier per strategy rules."
+**Footnote (static, v2.22, ST-06, BLG-BE-173):** "ATR trail stop = current price − (profit multiplier × 14-day ATR), never below your entry price. This is the strategy's profitable-position stop (§7.2)." No literal multiplier. The former footnote stated a fixed "ATR × 2.0" with no breakeven floor. `atr_trail_stop` is the value `calculate_trailing_stop` produces from the same inputs, floor included, so when the floor binds the row shows the entry price.
 
 **Behaviour:**
 - No label or control may propose a lower stop. The former "Lower stop to {value}" and "Update stop to {value}" labels are removed (§7.3).

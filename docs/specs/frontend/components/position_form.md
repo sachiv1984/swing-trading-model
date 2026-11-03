@@ -3,8 +3,9 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 1.11
-**Last Updated:** 2026-10-17 (ST-06, EPIC-02, v9.13, BLG-BE-180 — §Initial Stop: Branch A (reject) ruled, Branch B row deleted; implemented in TradeEntry.js); prior — 2026-10-16 (v9.13 design gate — ST-06/BLG-BE-180: §Initial Stop never shows a stop at or below zero; Branch A reject / Branch B floor rows); prior — 2026-10-12 (v9.12 design gate — ST-17/BLG-BE-146: ATR preview drives the stop, risk and sizing before save; ST-18/BLG-FE-203: currency unit on the ATR label and an inline implausible-ATR error that disables submit); prior history retained — see prior entries in version control
+**Version:** 1.12
+**Last Updated:** 2026-11-03 (v9.15 design gate — ST-01/BLG-FE-244: new §Pre-Entry Checks on every Trade Entry route, acknowledgement branch pending ruling; ST-02/BLG-FE-245: FX pre-fill from the live rate with a source line; ST-03/BLG-FE-246: one FX label); prior — 2026-10-17 (ST-06, EPIC-02, v9.13, BLG-BE-180 — §Initial Stop: Branch A (reject) ruled, Branch B row deleted; implemented in TradeEntry.js); prior — 2026-10-16 (v9.13 design gate — ST-06/BLG-BE-180: §Initial Stop never shows a stop at or below zero; Branch A reject / Branch B floor rows); prior history retained — see prior entries in version control
+**Design Source (v1.12):** docs/design/2026-11-03__release-v9.15/trade-entry-pre-entry-checks/decision_record.md, docs/design/2026-11-03__release-v9.15/trade-entry-fx-rate/decision_record.md
 **Design Source (v1.10):** docs/design/2026-10-16__release-v9.13/initial-stop-at-or-below-zero/decision_record.md
 **Design Source (v1.9):** docs/design/2026-10-12__release-v9.12/trade-entry-atr-preview/decision_record.md
 **Design Source (v1.7):** docs/design/2026-10-06__release-v9.10/trade-entry-system-stop/decision_record.md
@@ -48,6 +49,19 @@ Users rely on this form to:
 - Auto‑fetched but editable
 - Format: 1.XXXX
 - Max 6 decimal places
+- **Label and hint (v1.12, ST-03, BLG-FE-246):** label "FX rate — USD per £1 (GBP/USD)". Hint under the field, linked by `aria-describedby` (`text-xs text-slate-600 dark:text-slate-400`): "How many US dollars £1 buys." Every FX input in the app uses this label and hint (`exit_modal.md` §FX Rate, `trade_plan.md` §5d.2). Replaces "FX Rate (USD/GBP)", which had the pair the wrong way round.
+- **Pre-fill (v1.12, ST-02, BLG-FE-245):** from `GET /market/status`'s `fx_rate` (4 dp) when the market becomes US, unless the user has already typed a value, which is never overwritten. While the rate loads, the field is empty with placeholder "Fetching live rate…". No client-side constant is pre-filled (the former fixed `1.27` is removed). If the request fails, the field stays empty and the existing "FX rate missing for US trades" validation applies.
+- **Source line (v1.12, ST-02):** under the hint, `data-testid="trade-entry-fx-source"`, from `fx_rate_source` and `fx_rate_as_of`:
+
+  | State | Text | Style |
+  |-------|------|-------|
+  | `live` | "Live rate, {age}" | `text-xs text-slate-600 dark:text-slate-400` |
+  | `last_known` | "Not live: last rate from {age}" | `text-xs text-amber-700 dark:text-amber-400` |
+  | `constant` | "Fallback rate: no live rate is available" | `text-xs text-amber-700 dark:text-amber-400` |
+  | Value edited by the user | "Entered by you (live rate {rate})", or "(no live rate)" when the source is `constant` | `text-xs text-slate-600 dark:text-slate-400` |
+  | Request failed | "No rate available: enter the rate" | `text-xs text-amber-700 dark:text-amber-400` |
+
+  `{age}`: "{m} min ago" under 1 h, "{h} h ago" under 48 h, then "{d} days ago" (v9.14 FX source indicator rule). Design source: `docs/design/2026-11-03__release-v9.15/trade-entry-fx-rate/decision_record.md`.
 
 ### ATR (14-day) (v1.7 — ST-07; v1.9 — ST-17/ST-18)
 - Number input. Label "ATR (14-day)", placeholder "Fetched automatically if blank". Replaces "ATR Value (Optional)" / "For stop suggestion".
@@ -116,7 +130,8 @@ Fields render in this sequence:
 7. Shares
 8. Entry Note
 9. Tags
-10. Submit / Cancel
+10. Pre-Entry Checks panel (v1.12, ST-01), then the Trade Plan Linkage Advisory
+11. Submit / Cancel
 
 The widget's placement directly above Shares is intentional — it makes the relationship between the suggestion and the target field visually immediate.
 
@@ -236,6 +251,45 @@ If the API call fails (network error, 500): the widget shows `—` in all output
 
 ---
 
+## Pre-Entry Checks (v1.12, ST-01, EPIC-01, v9.15, BLG-FE-244)
+
+**Design source:** `docs/design/2026-11-03__release-v9.15/trade-entry-pre-entry-checks/decision_record.md`
+
+The `strategy_rules.md` §4.2 pre-entry checks, shown on Trade Entry for every route in (sidebar, Positions "New Position", `n`), using the Trade Plan form's existing panel (`trade_plan.md`, `PreEntryValidationPanel`) as a shared component and the existing `GET /portfolio/pre-entry-validation`. No new check logic.
+
+**When it shows:**
+
+| Entry state | Panel |
+|-------------|-------|
+| No plan linked | Shown |
+| Plan linked, and the plan has a stored `pre_entry_validation_snapshot` | Not shown. In its place, a muted line (`data-testid="pre-entry-checks-on-plan"`): "Pre-entry checks were run on the linked plan." |
+| Plan linked, no stored snapshot | Shown |
+
+The panel appears at most once. Linking or unlinking a plan switches rows without losing form state.
+
+**Placement:** after Tags, directly above the Trade Plan Linkage Advisory and Submit (§Form Field Order item 10).
+
+**Inputs:** ticker, market, Shares (`quantity`), Entry Price and the system Initial Stop (as `stop_price`). Before Shares has a value, the panel header shows "Enter shares to run the pre-entry checks." (`data-testid="pre-entry-checks-waiting"`, `text-xs text-slate-600 dark:text-slate-400`).
+
+**Content and states:** as the Trade Plan panel: rule labels, ✓/⚠/✗/— icons, the advisory badge, collapse toggle, `data-testid`s `pre-entry-checks-panel`, `pre-entry-panel-toggle`, `pre-entry-issue-count`, `override-acknowledgement-checkbox`, and "Validation unavailable — proceed with manual checks" on error. An unknown regime FAILs (`strategy_rules.md` §4.2.1 v1.20) and shows ✗, never a pass.
+
+**Acknowledgement — ruling pending (ST-01 first sub-step).** The checkbox "I acknowledge the advisory warnings" shows when any check is WARN or FAIL. The Strategy Rules & System Intent Owner rules between the two branches below against `strategy_rules.md` §4.2.6, and the story deletes the branch not taken:
+
+| Branch | Submit while a WARN/FAIL is unacknowledged |
+|--------|--------------------------------------------|
+| A — acknowledge to proceed | Disabled. Helper line under Submit (`data-testid="pre-entry-ack-required"`, `text-xs text-amber-700 dark:text-amber-400`): "Tick the acknowledgement in Pre-Entry Checks to save." Submit's `aria-describedby` points to it. |
+| B — advisory only | Enabled, as on the Trade Plan form. |
+
+An endpoint failure never disables Submit under either branch.
+
+**Override recording:** saving with the box ticked sends `pre_entry_override_acknowledged: true` on `POST /portfolio/position`. The backend writes one `red_flag_events` row (`event_type: "pre_entry_override"`, `context.source: "trade_entry"`), so the Red Flag Journal and the SI-05 digest count it like a plan-path override. A failed event write does not fail the save.
+
+**§13 compliance:** existing deterministic §4.2 rules shown on one more route (SI-01 §13 review; §13.4 on-demand re-application). Branch A's acknowledgement is held for the ruling above.
+
+**Test coverage required:** Playwright for each route, the FAIL and unknown-regime cases (with the ruled Submit behaviour), and the plan-linked cases (decision record §6).
+
+---
+
 ## Trade Plan Linkage Advisory (v1.4, ST-28, EPIC-06, v9.4, BLG-FEAT-95)
 
 A non-blocking inline advisory banner, shown above the submit button, when no `trade_plan_id` is associated with the in-progress entry.
@@ -288,7 +342,7 @@ All validation failures show inline error messages:
 - Entry note exceeding character limit
 - Typed ATR implausible: `5 × ATR ≥ entry price` (v1.9, ST-18). See §ATR (14-day).
 - Fetched ATR puts the stop at or below zero (v1.10, ST-06; Branch A ruled v1.11). See §Initial Stop.
-- These two are the only validations that disable submit.
+- These two are the only validations that disable submit. If the ST-01 ruling takes Branch A (§Pre-Entry Checks), an unacknowledged WARN/FAIL also disables it. That is an acknowledgement, not a validation error.
 
 ### Error Banner
 Shown when the API request to create a position fails.
