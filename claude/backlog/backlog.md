@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-03 (PMO Lead retarget, closure_record.md `2026-10-29__release-v9.14` §6 row 5 — 35 items' Provisional-Target set to v9.15 (29 from v9.14, 5 from v9.12 with PO re-deferral notes, BLG-FE-243 from TBD)); prior — 2026-11-03 (owner actions, closure_record.md `2026-10-29__release-v9.14` §6 row 7 — ✅ COMPLETE banners added to BLG-OPS-200/202/204, BLG-SEC-44, BLG-GOV-374/361, BLG-FE-195; BLG-GOV-401 killed as a duplicate of BLG-QA-240); prior — 2026-11-03 (groom backlog GROOM-20261103-01, post-ship closure 2026-10-29__release-v9.14 STEP 12 — 56 items archived (52 v9.14 shipped, BLG-OPS-196, and BLG-GOV-142/BLG-GOV-360/BLG-SPEC-199 from the Release Planning archive list)); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-03 (Head of Specs Team, user-directed — `BLG-GOV-392`, `393`, `405`, `406`, `407` bannered ✅ COMPLETE: five deferred prompt patches applied, OPERATIONAL_GUIDE.md v4.250); prior — 2026-11-03 (roadmap rebalance `2026-11-03__scheduled`, DL-088 — 27 items filed for the Site Structure & Usability programme from `IW-20261103-01` (`BLG-FE-244`–`266`, `BLG-SPEC-214`–`216`, `BLG-UX-08`) and 3 lessons-learnt deferred-patch items (`BLG-GOV-405`–`407`)); prior — 2026-11-03 (PMO Lead retarget, closure_record.md `2026-10-29__release-v9.14` §6 row 5 — 35 items' Provisional-Target set to v9.15 (29 from v9.14, 5 from v9.12 with PO re-deferral notes, BLG-FE-243 from TBD)); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -4086,6 +4086,7 @@ Pre-entry override events are written at plan creation with a null `position_id`
 ---
 
 ### BLG-GOV-392 — Reconcile shared_standards §2's "write Blocked before halting" with engines that may not write status
+**✅ COMPLETE — 2026-11-03 — Head of Specs Team action-now patch, user-directed ("apply the 5 patches needed"), outside a sprint — `shared_standards.md` v3.41 §2 step 3; §6 checklist complete (OPERATIONAL_GUIDE.md v4.250) — branch `governance/2026-11-03-roadmap-scheduled`, PR #2141**
 **Priority:** P3 (Low)
 **Type:** Governance Process
 **Owner:** Head of Specs Team
@@ -4100,11 +4101,12 @@ Pre-entry override events are written at plan creation with a null `position_id`
 - State in §2 how non-cycle engines record a halt (own artefact or a `last_halt` key), with the §6 checklist
 
 **Acceptance Criteria**
-- [ ] §2 and each engine's state-write rule agree
+- [x] §2 and each engine's state-write rule agree
 
 ---
 
 ### BLG-GOV-393 — File a backlog item for every deferred roadmap prompt patch so a sprint can seat it
+**✅ COMPLETE — 2026-11-03 — Head of Specs Team action-now patch, user-directed ("apply the 5 patches needed"), outside a sprint — `roadmap_prompt.md` v9.37 STEP -1.5 + `roadmap_prompt_appendix.md` v1.2 STEP 11.2; §6 checklist complete (OPERATIONAL_GUIDE.md v4.250) — branch `governance/2026-11-03-roadmap-scheduled`, PR #2141**
 **Priority:** P3 (Low)
 **Type:** Governance Process
 **Owner:** PMO Lead; Head of Specs Team
@@ -4119,7 +4121,7 @@ Three patches deferred on 2026-10-06 (target 2026-10-20) went OVERDUE by carry c
 - `roadmap_prompt.md` STEP 11.2: a deferred patch also files a backlog item; STEP -1.5: a patch whose item is seated in the current release counts as carried
 
 **Acceptance Criteria**
-- [ ] Both prompt changes applied with the §6 checklist
+- [x] Both prompt changes applied with the §6 checklist
 
 ---
 
@@ -5700,3 +5702,624 @@ The Exit Position dialog (`src/components/positions/ExitModal.js:31,56`), Trade 
 - The six items named above appear in the scan output on the live backlog
 
 ---
+
+---
+
+<!-- UX programme "Site Structure & Usability" — filed by roadmap rebalance 2026-11-03__scheduled (DL-088) from IW-20261103-01. Phase 1 = v9.15 (Now), Phase 2 = v9.16, Phase 3 = v9.17, close-out re-review = v9.18. -->
+
+### BLG-FE-244 — Show the pre-entry checks on every route into Trade Entry, not only from a Trade Plan
+**Priority:** P1 (High)
+**Type:** Frontend / UX (strategy integrity) [U]
+**Owner:** Head of Engineering; Frontend Specifications & UX Documentation Owner
+**Source:** IDEA-head-of-ux-20261103-01 (IW-20261103-01), roadmap rebalance `2026-11-03__scheduled`, DL-088 — STEP 8.0 Correctness Fast-Track. Strategy Rules & System Intent Owner confirmation (in session, 2026-11-03): §4.2 applies to every manual entry, planned or not; display-only.
+**Effort:** M (~2-3 days)
+**Provisional-Target:** v9.15
+**Related:** `BLG-FE-54` (gated Arc 5 gateway exploration — keeps its gate; this item delivers the unchecked-path slice now)
+
+**Problem**
+The §4.2 pre-entry advisory checks (regime gate incl. §4.2.1 unknown regime, sector concentration, earnings proximity, cash, sizing validity) run only on `src/pages/TradePlan.js` (Pre-Entry Checks panel, `EntryChecklist`, acknowledgement box). The sidebar "Trade Entry" link, the Positions "New Position" button and the `n` shortcut (Positions and Trade History, `src/Layout.js` global key handler) open `src/pages/TradeEntry.js`, which runs none of them. An entry in a risk-off or unknown-regime market can be recorded without the gate being shown.
+
+**Scope**
+- When Trade Entry is opened without a linked Trade Plan that already passed its checks, show the same pre-entry check panel and acknowledge-to-proceed step the plan uses, reusing the existing validation endpoint and components
+- Plan-linked entries keep their current flow
+- Record overrides from this path the same way the plan path does, so the Red Flag Journal and SI-05 digest count them
+- No new check logic and no automatic blocking beyond what §4.2 already defines
+
+**Acceptance Criteria**
+- From each of the three routes (sidebar, "New Position", `n`), Trade Entry shows the pre-entry check results before save
+- With a risk-off or unknown regime for the selected market, the regime check shows its FAIL/unknown state and save requires the acknowledgement
+- A plan-linked entry does not show the panel twice
+- Playwright coverage for each of the above passes in CI
+
+---
+
+### BLG-FE-245 — Pre-fill Trade Entry's FX rate from the live rate, not a fixed 1.27
+**Priority:** P1 (High)
+**Type:** Frontend / correctness (sizing) [U]
+**Owner:** Head of Engineering; Frontend Specifications & UX Documentation Owner
+**Source:** IDEA-frontend-specs-20261103-02 (IW-20261103-01), roadmap rebalance `2026-11-03__scheduled`, DL-088 — STEP 8.0 Correctness Fast-Track
+**Effort:** S (~0.5-1 day)
+**Provisional-Target:** v9.15
+
+**Problem**
+`src/pages/TradeEntry.js:45` and `:213` pre-fill the FX field with `"1.27"` for US trades. The Exit dialog already uses `position.live_fx_rate` (`ExitModal.js:54`), and the backend serves the live or last-good rate with source and age (`BLG-BE-194`). Since `BLG-BE-190` (§4.1.3 v1.21) US share counts scale with FX², so an untouched default distorts the suggested size (about 13% at FX 1.35) and the recorded GBP cost.
+
+**Scope**
+- Pre-fill from the live (or last-good) rate the backend already serves; show its source and age next to the field; keep it editable
+- Fall back to the backend's flagged fallback only when no rate is available, and say so
+
+**Acceptance Criteria**
+- With a mocked live rate of 1.35, a new US entry pre-fills 1.35 with its source and age shown
+- With no rate available, the field shows the fallback and a visible "fallback rate" note
+- No `"1.27"` literal remains in `TradeEntry.js`
+- Playwright coverage passes in CI
+
+---
+
+### BLG-FE-246 — Label the FX rate the same way on entry and exit
+**Priority:** P2 (Medium)
+**Type:** Frontend / UX (terminology, correctness risk) [U]
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** IDEA-frontend-specs-20261103-01 (IW-20261103-01), roadmap rebalance `2026-11-03__scheduled`, DL-088
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v9.15
+
+**Problem**
+The same quantity (USD per £1, §4.1.3 v1.21) is labelled "FX Rate (USD/GBP)" on Trade Entry (`TradeEntry.js:475`) and "FX Rate (GBP/USD)" on the Exit dialog (`ExitModal.js:380`). A label that flips direction invites an inverted input.
+
+**Scope**
+- One label on every FX input: "FX rate — USD per £1 (GBP/USD)", with a one-line hint
+- Grep `src/` for other FX input labels and align them
+
+**Acceptance Criteria**
+- Every FX input label in `src/` uses the same wording
+- Code review of the static label text is sufficient (wording-only AC, FI-P3-02)
+
+---
+
+### BLG-FE-247 — Remove the legacy widget Dashboard route and its duplicate command-palette entry
+**Priority:** P3 (Low)
+**Type:** Frontend / navigation clean-up [U]
+**Owner:** Head of Engineering
+**Source:** IDEA-head-of-ux-20261103-03 (IW-20261103-01), roadmap rebalance `2026-11-03__scheduled`, DL-088
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v9.15
+
+**Problem**
+`src/pages/Dashboard.js` (the pre-v7.3 widget dashboard) is still routed at `/Dashboard`, and `src/components/CommandPalette.js` `PAGE_LABELS` lists both `DashboardHome` and `Dashboard` as "Dashboard", so the palette shows two identical entries. Open items reference it (`BLG-FE-240`).
+
+**Scope**
+- Confirm no live surface links to `/Dashboard` and that `BLG-FE-240`'s fix belongs on `DashboardHome` instead (update that item's scope note if so)
+- Remove the route, the page and its palette label; redirect `/Dashboard` to `/`
+- Remove components used only by the legacy page
+
+**Acceptance Criteria**
+- The command palette shows exactly one "Dashboard" entry
+- `/#/Dashboard` lands on the Dashboard home page
+- CI passes with the legacy page's specs removed or retargeted
+
+---
+
+### BLG-FE-248 — Use one name per page and action across sidebar, page headings and command palette
+**Priority:** P2 (Medium)
+**Type:** Frontend / UX (terminology) [U]
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** IDEA-frontend-specs-20261103-01 (IW-20261103-01), roadmap rebalance `2026-11-03__scheduled`, DL-088
+**Effort:** S (~1 day)
+**Provisional-Target:** v9.15
+**Depends on:** `BLG-SPEC-214` (UI-label section of `docs/reference/glossary.md`)
+
+**Problem**
+Seven pages carry different names in the sidebar, the page heading and the command palette (e.g. Analytics / "Performance Analytics" / "Performance Analytics Report"; Trade Entry / "Enter New Position" / "New Position" button / "New trade" shortcut; Reflections / "Trade Reflections" / "Trade Reflection"; Signals / "Monthly Signals"; Replay / "Replay Mode"; Notifications / "Alert History"). "Trade" and "position" name the same act.
+
+**Scope**
+- Apply the glossary's canonical labels to `NAV_GROUPS` (`Layout.js`), every `PageHeader` title, `CommandPalette.js` `PAGE_LABELS`, primary buttons and the shortcut legend
+- Add Replay and Notifications to the palette labels
+
+**Acceptance Criteria**
+- For every page, sidebar label = page heading = palette label (or the glossary records the deliberate difference)
+- Existing nav/palette Playwright specs updated and passing
+
+---
+
+### BLG-FE-249 — Set a browser-tab title for each page
+**Priority:** P3 (Low)
+**Type:** Frontend / wayfinding [U]
+**Owner:** Head of Engineering
+**Source:** IDEA-head-of-ux-20261103-03 (IW-20261103-01), roadmap rebalance `2026-11-03__scheduled`, DL-088
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v9.15
+
+**Problem**
+No page sets `document.title`; every tab reads "Position Manager" (`public/index.html`), so several open tabs cannot be told apart.
+
+**Scope**
+- Set `<page label> · Position Manager` from the layout using the glossary label; Research pages include the ticker
+
+**Acceptance Criteria**
+- Each routed page sets a distinct title; a Playwright check covers three pages
+
+---
+
+### BLG-SPEC-214 — Navigation spec v2: job-based areas, plus a UI-label section in the glossary
+**Priority:** P2 (Medium)
+**Type:** Spec / UX design
+**Owner:** Frontend Specifications & UX Documentation Owner; Head of UX & Design
+**Source:** IDEA-head-of-ux-20261103-03, IDEA-frontend-specs-20261103-01 (IW-20261103-01), roadmap rebalance `2026-11-03__scheduled`, DL-088
+**Effort:** M (~2 days)
+**Provisional-Target:** v9.15
+
+**Problem**
+`docs/specs/frontend/pages/navigation.md` v1.7 groups 18 entries by feature type (Trading, Analytics, Tools, System), collapses 3 groups by default, and omits Trade Plans and Research. The v8.5 exploration (`claude/cycles/2026-08-08__release-v8.5/st15_nav_bar_redesign_exploration.md`) kept the sidebar pattern on real-estate grounds but did not assess grouping, labels or discoverability. `docs/reference/glossary.md` has no UI-label section.
+
+**Scope**
+- Revise `navigation.md`: about five job-based areas (Today · Portfolio · Find trades · Review · Settings), item placement for all 25 pages, default-expanded groups, Trade Plans and Research surfaced, legacy Dashboard removed, parent links for detail pages, onward-link rule for every page, browser-tab title rule
+- Add a UI-label section to `glossary.md`: one canonical label per page and primary action, and "trade" vs "position" usage
+- Keep the collapsible-sidebar pattern (per the v8.5 recommendation)
+
+**Acceptance Criteria**
+- `navigation.md` revised (version bumped) and `glossary.md` gains the UI-label section, both reviewed by the Head of UX & Design
+- Every page in `src/pages/` has a placement and a canonical label
+
+---
+
+### BLG-SPEC-215 — Dashboard spec: a prioritised "Today" action list
+**Priority:** P2 (Medium)
+**Type:** Spec / UX design
+**Owner:** Frontend Specifications & UX Documentation Owner; Head of UX & Design
+**Source:** IDEA-head-of-ux-20261103-02 (IW-20261103-01), roadmap rebalance `2026-11-03__scheduled`, DL-088
+**Effort:** M (~2 days)
+**Provisional-Target:** v9.15
+
+**Problem**
+`docs/specs/frontend/pages/dashboard.md` v3.10 specifies 13 blocks of near-equal weight; the regime sits in row 4 (Signal Status) and a quiet day shows 11 empty-state boxes. The page reports status rather than the decisions due.
+
+**Scope**
+- Revise `dashboard.md` (Class 1, Head of Specs Team approval): a "Today" list first — regime per market, then exits and stop changes due, then qualifying entries — each item linking to its action (reusing `/Positions?exit=<id>` and similar deep links); a single-line quiet-day state; status cards, What's New and gate progress below
+- Define ordering, empty, loading and error states, and which existing cards move or merge
+
+**Acceptance Criteria**
+- `dashboard.md` revised and approved; every observable behaviour has a testable AC for `BLG-FE-254`
+
+---
+
+### BLG-SPEC-216 — Spec for one Journal area combining reflections, red flags and position notes
+**Priority:** P3 (Low)
+**Type:** Spec / UX design
+**Owner:** Frontend Specifications & UX Documentation Owner; Head of UX & Design
+**Source:** IDEA-head-of-ux-20261103-05 (IW-20261103-01), roadmap rebalance `2026-11-03__scheduled`, DL-088
+**Effort:** M (~2 days)
+**Provisional-Target:** v9.15
+
+**Problem**
+Journaling is split across Trade Reflections (`TradeReflection.js`), the Red Flag Journal (`RedFlagJournal.js`) and the Journal view inside Positions (which retitles the page "Trade Journal"). None links to the others.
+
+**Scope**
+- Specify one Journal area: sections or filters for reflections, red flags and position notes; routes and redirects for the old pages; what happens to the Positions journal view
+- Strategy Rules & System Intent Owner confirms the merge moves no §13 boundary for AI-summarised journal surfaces (PO-02 roster rows)
+
+**Acceptance Criteria**
+- Spec filed and approved; §13 confirmation recorded; ACs ready for `BLG-FE-258`
+
+---
+
+### BLG-FE-250 — Build the job-based sidebar and surface Trade Plans and Research
+**Priority:** P2 (Medium)
+**Type:** Frontend / navigation [U]
+**Owner:** Head of Engineering; Head of UX & Design
+**Source:** IDEA-head-of-ux-20261103-03 (IW-20261103-01), roadmap rebalance `2026-11-03__scheduled`, DL-088
+**Effort:** M (~2-3 days)
+**Provisional-Target:** v9.16
+**Depends on:** `BLG-SPEC-214`
+
+**Problem**
+`NAV_GROUPS` in `src/Layout.js` holds 18 entries in 4 type-based groups, 3 collapsed by default; Trade Plans has no sidebar entry and is reachable only through the command palette.
+
+**Scope**
+- Implement `navigation.md` v2's areas, placement and default-expanded groups on desktop and the mobile drawer
+- Add Trade Plans and Research entry points
+
+**Acceptance Criteria**
+- Sidebar matches `navigation.md` v2 on desktop and mobile
+- Trade Plans is reachable from the sidebar in one click
+- `alert-nav-badge.spec.js`, `command-palette.spec.js`, `keyboard-shortcuts.spec.js` updated and passing
+
+---
+
+### BLG-FE-251 — Add a parent link on detail pages
+**Priority:** P3 (Low)
+**Type:** Frontend / wayfinding [U]
+**Owner:** Head of Engineering
+**Source:** IDEA-head-of-ux-20261103-03 (IW-20261103-01), roadmap rebalance `2026-11-03__scheduled`, DL-088
+**Effort:** S (~1 day)
+**Provisional-Target:** v9.16
+**Depends on:** `BLG-SPEC-214`
+
+**Problem**
+Trade Plan, Research (`/research/:ticker`), Notification Preferences and Notification History have no link back to their parent page; the user relies on the browser's back button.
+
+**Scope**
+- A parent link (or breadcrumb) on each detail page per `navigation.md` v2
+
+**Acceptance Criteria**
+- Each listed page shows a parent link that navigates correctly; Playwright coverage passes
+
+---
+
+### BLG-FE-252 — Give each dead-end page an onward next-step link
+**Priority:** P3 (Low)
+**Type:** Frontend / wayfinding [U]
+**Owner:** Head of Engineering; Head of UX & Design
+**Source:** IDEA-head-of-ux-20261103-03 (IW-20261103-01), roadmap rebalance `2026-11-03__scheduled`, DL-088
+**Effort:** M (~2 days)
+**Provisional-Target:** v9.16
+**Depends on:** `BLG-SPEC-214`
+
+**Problem**
+Eight pages have no link to any other page: Reports, Red Flag Journal, Trade Reflections, Replay, Strategy Benchmark, Ticker Universe, System Status, Notification History (inter-page link scan, 2026-11-03).
+
+**Scope**
+- Add the onward link(s) `navigation.md` v2 assigns to each (e.g. Red Flag Journal → the flagged trade; Reports → Performance detail; Ticker Universe → Screener)
+
+**Acceptance Criteria**
+- A re-run of the inter-page link scan finds 0 dead-end pages; each new link has Playwright coverage
+
+---
+
+### BLG-FE-253 — Anchor the digest's Risk Dashboard link to the right section
+**Priority:** P3 (Low)
+**Type:** Frontend / wayfinding [U]
+**Owner:** Head of Engineering
+**Source:** IDEA-head-of-ux-20261103-03 (IW-20261103-01), roadmap rebalance `2026-11-03__scheduled`, DL-088; `docs/ux/si05_user_journey_map.md` F-04
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v9.16
+
+**Problem**
+The SI-05 digest's Risk Dashboard link lands at the top of `RiskDashboard.js`; for "Top rule breach" the user must find the pre-entry validation section by hand (journey map F-04, unfiled until now).
+
+**Scope**
+- Support a section query (e.g. `?section=pre-entry-validation`) that scrolls to the section; use it in the digest's deep link
+
+**Acceptance Criteria**
+- Opening the section link scrolls the named section into view; Playwright coverage passes; digest link updated
+
+---
+
+### BLG-FE-254 — Build the "Today" action list on the Dashboard
+**Priority:** P2 (Medium)
+**Type:** Frontend / UX [U]
+**Owner:** Head of Engineering; Head of UX & Design
+**Source:** IDEA-head-of-ux-20261103-02 (IW-20261103-01), roadmap rebalance `2026-11-03__scheduled`, DL-088
+**Effort:** L (~3-4 days)
+**Provisional-Target:** v9.16
+**Depends on:** `BLG-SPEC-215`
+
+**Problem**
+See `BLG-SPEC-215`: `DashboardHome.js` shows 13 equal-weight blocks, the regime in row 4 and 11 empty-state boxes on a quiet day.
+
+**Scope**
+- Implement `dashboard.md`'s revised "Today" list, ordering, quiet-day state and the moved/merged cards
+
+**Acceptance Criteria**
+- Every observable AC in the revised `dashboard.md` has Playwright coverage that passes, in light and dark themes
+
+---
+
+### BLG-FE-255 — Add "Plan this" to Signals and Screener rows
+**Priority:** P2 (Medium)
+**Type:** Frontend / UX (entry journey) [U]
+**Owner:** Head of Engineering; Head of UX & Design
+**Source:** IDEA-head-of-ux-20261103-04 (IW-20261103-01), roadmap rebalance `2026-11-03__scheduled`, DL-088
+**Effort:** M (~2-3 days)
+**Provisional-Target:** v9.16
+**Related:** `BLG-FE-54` (keeps its Arc 5 gate)
+
+**Problem**
+From a signal to an entered, checked trade takes 5 pages (Signals → Add to Watchlist → Watchlist → Research → Trade Plan → Trade Entry). Signals rows offer only "Add to Watchlist"; Screener rows offer Research or watchlist only (`Screener.js:525–532`).
+
+**Scope**
+- A "Plan this" action on Signals and Screener rows that opens Trade Plan pre-filled with ticker, market, price and signal context (`SignalContextPanel` already exists)
+
+**Acceptance Criteria**
+- From a Signals row and a Screener row, "Plan this" opens a pre-filled Trade Plan in one click; Playwright coverage passes
+
+---
+
+### BLG-FE-256 — On Trade Plan, show the suggested size before asking for shares
+**Priority:** P2 (Medium)
+**Type:** Frontend / UX (sizing) [U]
+**Owner:** Head of Engineering; Frontend Specifications & UX Documentation Owner
+**Source:** IDEA-head-of-ux-20261103-04 (IW-20261103-01), roadmap rebalance `2026-11-03__scheduled`, DL-088
+**Effort:** S (~1 day)
+**Provisional-Target:** v9.16
+
+**Problem**
+`TradePlan.js` asks for "Planned Shares (for pre-entry checks)" (line 976) before showing the §4.1 suggested size (`WhatIfSizingPreview`, line 1215), so the user types a number the system could suggest.
+
+**Scope**
+- Show the §4.1 suggested size above the shares field and pre-fill the field from it once entry and stop are known; keep it editable
+
+**Acceptance Criteria**
+- With entry and stop entered, the shares field pre-fills with the §4.1 suggestion; Playwright coverage passes
+
+---
+
+### BLG-FE-264 — Semantic colour tokens for the base, card and table shells
+**Priority:** P2 (Medium)
+**Type:** Frontend / design system [U]
+**Owner:** Frontend Specifications & UX Documentation Owner; Head of Engineering
+**Source:** IDEA-frontend-specs-20261103-03 (IW-20261103-01), roadmap rebalance `2026-11-03__scheduled`, DL-088
+**Effort:** M (~2-3 days)
+**Provisional-Target:** v9.16
+
+**Problem**
+`src/index.css` sets `body` to `bg-slate-950 text-white` in both themes; `DashboardCard.js:21` and `ui/DataTable.js` use dark-only fills. Light baselines show an invisible Positions empty-state heading, illegible RISK-ON badges and a black gate strip. `src/` has 376 bare `text-white` and 331 bare `bg-slate-800/900` classes, fixed one element at a time (`BLG-FE-87/88/95/200/224/242`).
+
+**Scope**
+- Define semantic tokens (surface, surface-raised, text, text-muted, border, positive, negative, warning) for light and dark in `tailwind.config.js`/`index.css`
+- Convert the body base, `DashboardCard`, `DataTable` and `PageHeader` shells to them; update `design_system.md`
+
+**Acceptance Criteria**
+- axe `color-contrast` passes in the light theme on Dashboard, Positions (empty and populated), Trade Plan and Settings
+- Visual baselines regenerated for both themes
+
+---
+
+### BLG-FE-257 — Show grace period in one place, linked from the others
+**Priority:** P3 (Low)
+**Type:** Frontend / UX (consolidation) [U]
+**Owner:** Frontend Specifications & UX Documentation Owner; Head of Engineering
+**Source:** IDEA-head-of-ux-20261103-05 (IW-20261103-01), roadmap rebalance `2026-11-03__scheduled`, DL-088
+**Effort:** M (~2 days)
+**Provisional-Target:** v9.17
+
+**Problem**
+Grace period appears in 4 places (Dashboard "In Grace Today", Dashboard "Positions to Watch", Positions `GracePeriodAlertZone`, Risk Dashboard `GracePeriodPanel`); surfaces have disagreed before (`BLG-BE-183`).
+
+**Scope**
+- One grace view on Positions; the Dashboard and Risk Dashboard show a count and link to it; short spec note in the affected page specs
+
+**Acceptance Criteria**
+- Grace detail renders in one component on one page; the other surfaces link to it; Playwright coverage passes
+
+---
+
+### BLG-FE-258 — Build the single Journal area
+**Priority:** P3 (Low)
+**Type:** Frontend / UX (consolidation) [U]
+**Owner:** Head of Engineering; Head of UX & Design
+**Source:** IDEA-head-of-ux-20261103-05 (IW-20261103-01), roadmap rebalance `2026-11-03__scheduled`, DL-088
+**Effort:** L (~3-4 days)
+**Provisional-Target:** v9.17
+**Depends on:** `BLG-SPEC-216`
+
+**Problem**
+See `BLG-SPEC-216`: three journaling surfaces with no links between them.
+
+**Scope**
+- Implement the Journal spec, redirects from the old routes and the Positions journal view change
+
+**Acceptance Criteria**
+- Every observable AC in the Journal spec has Playwright coverage that passes; old routes redirect
+
+---
+
+### BLG-FE-259 — Merge Reports and Performance Analytics into one Performance page
+**Priority:** P3 (Low)
+**Type:** Frontend / UX (consolidation) [U]
+**Owner:** Frontend Specifications & UX Documentation Owner; Head of Engineering
+**Source:** IDEA-head-of-ux-20261103-05 (IW-20261103-01), roadmap rebalance `2026-11-03__scheduled`, DL-088
+**Effort:** L (~3-4 days)
+**Provisional-Target:** v9.17
+**Related:** `BLG-FE-237` (Reports tab bar overflow at phone width)
+
+**Problem**
+Win rate, profit factor and total P&L appear on both `Reports.js` (1,287 lines) and `PerformanceAnalytics.js`; neither links to the other.
+
+**Scope**
+- A short spec for one Performance page (sections: summary, monthly/tax-year reports, analytics, compliance), then the build with redirects; Metrics Definitions & Analytics Owner confirms each KPI keeps its canonical definition
+
+**Acceptance Criteria**
+- One Performance page; old routes redirect; each KPI appears once; Playwright coverage passes
+
+---
+
+### BLG-FE-260 — Decision-first Positions table
+**Priority:** P2 (Medium)
+**Type:** Frontend / UX [U]
+**Owner:** Head of Engineering; Head of UX & Design
+**Source:** IDEA-head-of-ux-20261103-06 (IW-20261103-01), roadmap rebalance `2026-11-03__scheduled`, DL-088
+**Effort:** M (~2-3 days)
+**Provisional-Target:** v9.17
+
+**Problem**
+The Positions table (`Positions.js`) has 14 equal-weight columns; stop proximity and fired exit conditions (§7, §8) are split across Stop, State and Alerts.
+
+**Scope**
+- Sort by urgency (exit fired → stop breached → near stop → rest); lead with ticker, distance to stop (R and %), action needed; remaining columns in an expandable row; positions page spec updated
+
+**Acceptance Criteria**
+- Default view shows about 6 columns in urgency order; expanding a row shows the rest; Playwright coverage passes
+
+---
+
+### BLG-FE-261 — Card layout for Positions on narrow screens
+**Priority:** P3 (Low)
+**Type:** Frontend / responsive [U]
+**Owner:** Head of Engineering
+**Source:** IDEA-head-of-ux-20261103-06 (IW-20261103-01), roadmap rebalance `2026-11-03__scheduled`, DL-088
+**Effort:** M (~2 days)
+**Provisional-Target:** v9.17
+
+**Problem**
+Below the `md` breakpoint the Positions table scrolls sideways (`DataTable` `overflow-x-auto`); the SI-05 digest sends the user into the app from a phone.
+
+**Scope**
+- A card layout below `md` with the same urgency order and leading fields as `BLG-FE-260`
+
+**Acceptance Criteria**
+- At 390px width, Positions shows cards with no horizontal page scroll; Playwright coverage passes
+
+---
+
+### BLG-FE-262 — Combine the four banners above the Positions table into one summary strip
+**Priority:** P3 (Low)
+**Type:** Frontend / UX [U]
+**Owner:** Head of Engineering; Head of UX & Design
+**Source:** IDEA-head-of-ux-20261103-06 (IW-20261103-01), roadmap rebalance `2026-11-03__scheduled`, DL-088
+**Effort:** S (~1 day)
+**Provisional-Target:** v9.17
+
+**Problem**
+`MetricsStalenessIndicator`, `DrawdownReviewPrompt`, `ConcentrationLimitsWarning` and `GracePeriodAlertZone` stack between the Positions header and the table.
+
+**Scope**
+- One summary strip listing the active warnings, each expandable to its current content
+
+**Acceptance Criteria**
+- With all four conditions active, one strip shows four entries and each expands; Playwright coverage passes
+
+---
+
+### BLG-FE-263 — Use tabs or sections on the long single-scroll pages
+**Priority:** P3 (Low)
+**Type:** Frontend / UX (progressive disclosure) [U]
+**Owner:** Head of Engineering; Head of UX & Design
+**Source:** IDEA-head-of-ux-20261103-05 (IW-20261103-01), roadmap rebalance `2026-11-03__scheduled`, DL-088
+**Effort:** M (~2-3 days)
+**Provisional-Target:** v9.17
+
+**Problem**
+Trade Plan (1,313 lines) and Strategy Benchmark (1,149) are long single scrolls with no tabs or section navigation; Reports is handled by `BLG-FE-259`.
+
+**Scope**
+- Section tabs or an in-page section index on Trade Plan and Strategy Benchmark, keeping the current content
+
+**Acceptance Criteria**
+- Each page shows its sections as tabs or an index; each section is reachable in one click; Playwright coverage passes
+
+---
+
+### BLG-FE-265 — Move the remaining pages onto the semantic colour tokens
+**Priority:** P3 (Low)
+**Type:** Frontend / design system [U]
+**Owner:** Frontend Specifications & UX Documentation Owner; Head of Engineering
+**Source:** IDEA-frontend-specs-20261103-03 (IW-20261103-01), roadmap rebalance `2026-11-03__scheduled`, DL-088
+**Effort:** L (~3-4 days)
+**Provisional-Target:** v9.17
+**Depends on:** `BLG-FE-264`
+**Supersedes on completion:** `BLG-FE-224`, `BLG-FE-242` (close them when this ships, if not shipped earlier)
+
+**Problem**
+After `BLG-FE-264` converts the shells, page-level code still carries bare dark-only classes (376 `text-white`, 331 `bg-slate-800/900` at filing).
+
+**Scope**
+- Replace page-level dark-only colour classes with the tokens; remove redundant `dark:` pairs; update `design_system.md`
+
+**Acceptance Criteria**
+- axe `color-contrast` passes in the light theme on every routed page; no bare `text-white` remains outside coloured fills
+
+---
+
+### BLG-FE-266 — Fix three small chrome defects: version label, What's New heading, sidebar height
+**Priority:** P3 (Low)
+**Type:** Frontend / polish [U]
+**Owner:** Head of Engineering
+**Source:** IDEA-frontend-specs-20261103-04 (IW-20261103-01), roadmap rebalance `2026-11-03__scheduled`, DL-088
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v9.15
+
+**Problem**
+The sidebar footer shows a hard-coded `v1.0.0` (`Layout.js:814`) while the product is at v9.14; `WhatsNewCard.js:41` renders "What's New — undefined" when the changelog payload has no `version`; the desktop sidebar background stops part-way down long pages.
+
+**Scope**
+- Show the real release version; omit the version suffix when absent; make the sidebar background full height
+
+**Acceptance Criteria**
+- Footer shows the current release; no "undefined" in the What's New heading; sidebar background spans the page; Playwright coverage passes
+
+---
+
+### BLG-UX-08 — First-principles UX re-review when the Site Structure & Usability programme completes
+**Priority:** P2 (Medium)
+**Type:** UX review (programme close-out)
+**Owner:** Head of UX & Design
+**Source:** IDEA-head-of-ux-20261103-07 (IW-20261103-01), roadmap rebalance `2026-11-03__scheduled`, DL-088. User request, 2026-11-03: "Once the last change is done I want you to review the site again and confirm that nothing has changed your view."
+**Effort:** S (~1 day)
+**Provisional-Target:** v9.18
+**Gate criteria:** Every other Site Structure & Usability programme item is ✅ COMPLETE or explicitly closed: `BLG-FE-244` to `BLG-FE-266` and `BLG-SPEC-214` to `BLG-SPEC-216`.
+
+**Problem**
+The 2026-11-03 review set a first-principles target and an IA verdict ("modify substantially, don't redesign") with a top 5. Nothing would otherwise trigger a check that the shipped changes reached that target, or that the verdict still holds.
+
+**Scope**
+- Repeat the review with the same method: label audit (sidebar vs heading vs palette), inter-page link scan, page-section order, the four journey walkthroughs (daily review, exit, signal → entry, weekly review) with step and input counts, light and dark screenshots (staging if available)
+- Compare each metric with the 2026-11-03 baseline: unchecked entry routes 3, sidebar entries 18 / 4 groups, undiscoverable pages 2, dead-end pages 8, signal → entry pages 5, Positions default columns 14, grace surfaces 4, journal surfaces 3, mismatched page names 7, tab titles 0
+- State whether the IA verdict and the top 5 still stand; file any new finding as a backlog item
+
+**Acceptance Criteria**
+- A review document in `docs/ux/` records before/after values for every baseline metric and an explicit confirm-or-revise statement on the verdict
+- Every new finding is filed (or the document says none was found)
+
+---
+
+### BLG-GOV-405 — Size-budget headroom rule for action-now prompt patches
+**✅ COMPLETE — 2026-11-03 — Head of Specs Team action-now patch, user-directed ("apply the 5 patches needed"), outside a sprint — `shared_standards.md` v3.41 §11; §6 checklist complete (OPERATIONAL_GUIDE.md v4.250) — branch `governance/2026-11-03-roadmap-scheduled`, PR #2141**
+**Priority:** P3 (Low)
+**Type:** Governance / prompt process [G]
+**Owner:** Head of Specs Team
+**Source:** Roadmap rebalance `2026-11-03__scheduled` lessons learnt, Friction Item 2 (deferred patch); scope gap of AUD-2026-11-03-003
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.15
+
+**Problem**
+`scripts/check_prompt_size_budget.py` blocks any prompt over its baseline. The STEP -1.5 action-now patch to `post_ship_closure.md` (31 bytes of headroom) had to be cut four times to fit; `shared_standards.md` §11 gives no rule for small action-now patches to a prompt at its baseline.
+
+**Scope**
+- `shared_standards.md` §11: an action-now patch to a prompt at or within 1 KB of its baseline moves an equal amount of existing rationale to the prompt's companion changelog or appendix in the same commit; raising the baseline needs a Head of Specs Team reason in the `prompt_change_log.md` row
+- CLAUDE.md §6 checklist for the file
+
+**Acceptance Criteria**
+- §11 states the rule; `check_prompt_size_budget.py` passes
+
+---
+
+### BLG-GOV-406 — Carry an unfinished programme plan forward when its Now section retires
+**✅ COMPLETE — 2026-11-03 — Head of Specs Team action-now patch, user-directed ("apply the 5 patches needed"), outside a sprint — `roadmap_management_prompt.md` v1.7 STEP 5.2; §6 checklist complete (OPERATIONAL_GUIDE.md v4.250) — branch `governance/2026-11-03-roadmap-scheduled`, PR #2141**
+**Priority:** P2 (Medium)
+**Type:** Governance / prompt process [G]
+**Owner:** Head of Specs Team
+**Source:** Roadmap rebalance `2026-11-03__scheduled` lessons learnt, Friction Item 3 (deferred patch)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v9.15
+
+**Problem**
+The v9.15 Now section in `current_roadmap.md` carries the Site Structure & Usability programme plan for v9.16–v9.18. `roadmap_management_prompt.md` STEP 5 retires a Now section wholesale when its items ship, so at v9.15 post-ship closure the plan would be archived and the programme would survive only in backlog `Provisional-Target` fields.
+
+**Scope**
+- `roadmap_management_prompt.md` STEP 5: when a retired Now section contains a "Programme plan" table with unshipped phases, move the table (minus shipped rows) into a `### Programme plan — <name>` subsection under `## 3. Delivery Plan — Horizon: Now`, retired only when its last phase ships
+- CLAUDE.md §6 checklist for the file
+
+**Acceptance Criteria**
+- The rule is in `roadmap_management_prompt.md`; applied at v9.15 post-ship closure, the programme plan stays on the roadmap with Phases 2–4
+
+---
+
+### BLG-GOV-407 — Exclude template agent files from the idea-intake roster
+**✅ COMPLETE — 2026-11-03 — Head of Specs Team action-now patch, user-directed ("apply the 5 patches needed"), outside a sprint — `idea_intake_prompt.md` v2.13 STEP 0; §6 checklist complete (OPERATIONAL_GUIDE.md v4.250) — branch `governance/2026-11-03-roadmap-scheduled`, PR #2141**
+**Priority:** P3 (Low)
+**Type:** Governance / prompt process [G]
+**Owner:** Head of Specs Team
+**Source:** Roadmap rebalance `2026-11-03__scheduled` lessons learnt, Friction Item 4 (deferred patch)
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.15
+
+**Problem**
+`idea_intake_prompt.md` STEP 0 populates `eligible_agents` from every `**Role:**` line in `claude/agents/*.md`, which includes the placeholder in `claude/agents/_role_charter_template.md` (23 entries instead of §4's 22) — `IW-20261103-01` shipped that wrong list in its intake commit.
+
+**Scope**
+- STEP 0: exclude files whose name starts with `_` and the Facilitator; check the result against §4's list
+- CLAUDE.md §6 checklist for the file
+
+**Acceptance Criteria**
+- STEP 0 states the exclusion; a re-extraction gives §4's 22 roles

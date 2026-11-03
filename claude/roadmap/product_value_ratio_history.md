@@ -2,7 +2,7 @@
 **Class:** Operational Record (Class 3)
 **Status:** Active
 **Version:** 1.2
-**Last Updated:** 2026-10-16 (roadmap rebalance `2026-10-16__scheduled` STEP 2.4 — appended row for DL-086 (0.204, effort-weighted 0.361); refreshed sparkline); prior — 2026-10-09 (ST-34, EPIC-06, v9.11, BLG-GOV-355 — column note: STEP 2.4 now appends both readings; Tier is derived from the story-count Ratio only); prior — 2026-10-08 (ST-34, EPIC-06, v9.11, BLG-GOV-355 — History table gains the effort-weighted ratio, backfilled for the 5 windows computed in metrics_definitions.md Appendix F); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-03 (roadmap rebalance `2026-11-03__scheduled` STEP 2.4 — row appended (0.307 Advisory, effort-weighted 0.376), sparkline refreshed); prior — 2026-10-16 (roadmap rebalance `2026-10-16__scheduled` STEP 2.4 — appended row for DL-086 (0.204, effort-weighted 0.361); refreshed sparkline); prior — 2026-10-09 (ST-34, EPIC-06, v9.11, BLG-GOV-355 — column note: STEP 2.4 now appends both readings; Tier is derived from the story-count Ratio only); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Created by:** ST-22 (BLG-FEAT-72, EPIC-06, v8.5)
 
@@ -19,7 +19,7 @@ This file is the structured, durable record going forward: one row per rebalance
 ## Sparkline (all readings, chronological, ▁=0.046 min · █=0.42 max recorded)
 
 ```
-▇▇▇▆▆▅▄▄▆▆▅▇██▇▂▂▁▂▂▂▃▄
+▇▇▇▆▆▅▄▄▆▆▅▇██▇▂▂▁▂▂▂▃▄▆
 ```
 
 ## History
@@ -49,6 +49,7 @@ This file is the structured, durable record going forward: one row per rebalance
 | 2026-10-06__scheduled | 2026-10-06 | 0.096 | — | 🔴 Alert (6th consecutive Alert-tier reading, flat) | 17 | 43 | 114 | 3 | 177 | v9.5-v9.9 | DL-083 |
 | 2026-10-08__scheduled | 2026-10-08 | 0.161 | — | 🔴 Alert (7th consecutive Alert-tier reading, improving) | 25 | 36 | 94 | 0 | 155 | v9.6-v9.10 | DL-084 |
 | 2026-10-16__scheduled | 2026-10-16 | 0.204 | 0.361 | 🔴 Alert (8th consecutive Alert-tier reading, improving) | 38 | 33 | 113 | 2 | 186 | v9.8-v9.12 | DL-086 |
+| 2026-11-03__scheduled | 2026-11-03 | 0.307 | 0.376 | Advisory (1st Advisory-tier reading, after 8 consecutive Alert-tier readings) | 63 | 25 | 115 | 2 | 205 | v9.10-v9.14 | DL-088 |
 
 **Effort-weighted Ratio column (ST-34, BLG-GOV-355, v9.11):** effort-days of U stories ÷ effort-days of U+G+D+P stories over the same window, defined in `docs/specs/metrics_definitions.md` Appendix F (PVR Measurement Package, `BLG-GOV-339`). The 5 readings shown are the backfill computed and cross-validated there (`scripts/compute_effort_weighted_pvr.py`), placed on the rows whose `Window` they cover; v7.5–v7.9 has no breakdown on its row but its story-count reading reconstructs to the recorded 0.38. "—" means not computed for that row. From `roadmap_prompt.md` v9.32 (STEP 2.4, `BLG-GOV-339` sign-off recorded 2026-10-09, `ESC-EXEC-20261008-03`), each rebalance appends both readings; coverage and any excluded stories are recorded in that rebalance's `run_manifest.md`. The 2026-09-30, 2026-10-06 and 2026-10-08 rows were not computed and stay "—". The Tier column is derived from the story-count Ratio column only; the effort-weighted reading is diagnostic and carries no tier.
 

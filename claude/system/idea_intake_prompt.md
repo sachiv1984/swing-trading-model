@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.12
-**Last Updated:** 2026-10-13 (ST-43, EPIC-06, v9.12, BLG-GOV-364 — new §4.1 Reduced-Roster Windows: PO authorisation, roster rule, no-two-consecutive cap, disclosure; §2.1 step 2a, §10 and STEP 0 aligned); prior — 2026-10-08 (ST-33, EPIC-06, v9.11, BLG-GOV-375 — canonical Owner role names: write-time check scripts/check_sprint_backlog_owners.py); prior — 2026-10-05 (ESC-CLOSE-20260930-01 Product Owner ruling, agent-mediated and confirmed by the human Product Owner 2026-10-05 — §2.1 step 2a build-and-ship candidate requirement and reduced-roster rule; STEP 4 Notes tally line); prior history retained — see prior entries in version control
+**Version:** 2.13
+**Last Updated:** 2026-11-03 (BLG-GOV-407, Head of Specs Team, user-directed — STEP 0: `eligible_agents` skips template agent files and the Facilitator and is checked against §4); prior — 2026-10-13 (ST-43, EPIC-06, v9.12, BLG-GOV-364 — new §4.1 Reduced-Roster Windows: PO authorisation, roster rule, no-two-consecutive cap, disclosure; §2.1 step 2a, §10 and STEP 0 aligned); prior — 2026-10-08 (ST-33, EPIC-06, v9.11, BLG-GOV-375 — canonical Owner role names: write-time check scripts/check_sprint_backlog_owners.py); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -257,7 +257,7 @@ Create or update `claude/ideas/ideas_window.json`:
 }
 ```
 
-Populate `eligible_agents` by reading all agent files in `claude/agents/` and extracting the role names.
+Populate `eligible_agents` by reading the agent files in `claude/agents/` and extracting the role names. Skip files whose name starts with `_` (templates, e.g. `_role_charter_template.md`) and the Facilitator (§4), then check the result matches §4's list; a mismatch is reported in the window summary (BLG-GOV-407).
 
 For a reduced-roster window (§4.1), also record `roster: "reduced"`, `participating_agents: [...]` and `reduced_roster_reason`. Otherwise record `roster: "full"`.
 

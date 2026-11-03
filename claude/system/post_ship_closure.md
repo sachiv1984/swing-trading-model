@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.42
-**Last Updated:** 2026-10-29 (`ESC-CLOSE-20261029-02` ruling, option (b) — §5 and STEP 5: a `strategy_rules.md` Known Deviations entry is routed to its owner by an `ESC-CLOSE-*` escalation with proposed text, not edited by this routine); prior — 2026-10-15 (post-ship closure `2026-10-12__release-v9.12` STEP 8, immediate lessons-learnt action LL-v9.12-Release-01 — STEP 8: a deferred action needing a prompt change is applied now or tracked by a backlog item with a sprint target, never a "before `plan release`" deadline); prior — 2026-10-12 (post-ship closure `2026-10-08__release-v9.11` STEP 8, closure-phase finding LL-v9.11-Closure-01 — STEP 0 Audit Cadence Check modulo condition no longer fires when `last_audit_cycle_count` equals `completed_cycle_count`); prior history retained — see prior entries in version control
+**Version:** 2.44
+**Last Updated:** 2026-11-03 (`ESC-RB-20261103-01` — Next-step line: `run roadmap` first when next release is `[TBD]`); prior — 2026-11-03 (AUD-2026-11-03-002 — STEP 10 never writes `last_audit_cycle_count`; `run audit` is its only writer); prior — 2026-10-29 (`ESC-CLOSE-20261029-02` ruling, option (b) — §5 and STEP 5: a `strategy_rules.md` Known Deviations entry is routed to its owner by an `ESC-CLOSE-*` escalation with proposed text, not edited by this routine); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 **Process Reference:** None — the former process document `docs/team_skills/pmo/processess/post-ship_closure.md` was retired 2026-03-13 (commit `11db3666`, deleted with its whole `processess/` directory); this prompt is the sole authority for the Post-Ship Closure Engine.
@@ -671,7 +671,6 @@ Update `.claude_current_state.json`:
   "closure_status": "Closed | Closed_with_actions",
   "post_ship_complete": true,
   "completed_cycle_count": "<prior value + 1>",
-  "last_audit_cycle_count": "<see rule below — set if audit ran this cycle, else omit>",
   "prior_cycle": "<cycle_id>",
   "last_post_ship_cycle": "<cycle_id>",
   "last_post_ship_utc": "<now>",
@@ -685,7 +684,7 @@ Update `.claude_current_state.json`:
 
 **`completed_cycle_count` rule:** Read the current value from `.claude_current_state.json`. If absent, treat as `0`. Write the value incremented by 1. This counter tracks the total number of fully closed cycles for meta-review cadence tracking (Phase 1 STEP 11 triggers meta-review every third completed cycle).
 
-**`last_audit_cycle_count` rule (BLG-GOV-82):** After writing `completed_cycle_count`, check whether `run audit` was completed during this cycle (indicator: `last_audit_utc` is later than the cycle's sprint_start date, or `last_audit_id` references an audit from this cycle). If an audit ran this cycle: write `last_audit_cycle_count = new_completed_cycle_count` (the incremented value just written). If no audit ran this cycle: leave the existing `last_audit_cycle_count` value unchanged. This field is used by STEP 0 Audit Cadence Check to detect cycles where the modulo advisory was suppressed or skipped.
+**`last_audit_cycle_count` rule (BLG-GOV-82, superseded by AUD-2026-11-03-002):** Do not write `last_audit_cycle_count`, whether or not an audit ran this cycle. `run audit` is its only writer (`claude/schemas/state_field_owners.json`; `claude/audit.py` §9 SLA) and sets it to the `completed_cycle_count` the audit covered. Overwriting it here with the incremented count credits the closing cycle as audited when it was outside the audit's window (AUD-2026-11-03-002: the v9.11 closure moved it 87→88, which suppressed the v9.13 cadence reminder).
 
 **Amendment field reset rule (LL-v7.6-P4-01):** Check `active_amendment` in `.claude_current_state.json`. If non-empty, determine the cycle_id the amendment originated in (the cycle segment of `amended_backlog_slice_path`, e.g. `claude/cycles/<origin_cycle_id>/amendments/...`). If that origin cycle is not the cycle currently being closed by this run, read that origin cycle's own `closure_state.json` (or its `closure_record.md`, if present) to confirm it already reached `Closed` or `Closed_with_actions`. If confirmed closed: clear `amended_backlog_slice_path`, `amendment_sealed_utc`, `active_amendment`, and `amendment_status` to empty string/null in this same STEP 10 write. If the origin cycle is not yet closed, or cannot be confirmed closed, leave the fields unchanged and note the deferral in the closure record §6 Outstanding Actions. This prevents a stale cross-cycle amendment pointer from requiring manual dismissal at a later cycle's STEP 0 backlog-slice resolution (as happened at `2026-07-20__release-v7.6` delivery verification, where `amended_backlog_slice_path` still pointed to the already-closed `2026-07-17__release-v7.4`/`AMD-20260717-01`).
 
@@ -776,6 +775,8 @@ If git operations are unavailable: output the exact files to stage and the commi
 ## Advisory Summary Block
 
 After STEP 13, output a consolidated advisory block using `── Advisory Summary ──────────────────────────────────` / `[list or "None."]` / `──────────────────────────────────────────────────────` format. Sources: STEP 0 (audit/rebalance cadence), STEP 6 (endpoint drift), STEP 12.5 (pipeline health), any other non-blocking flags. If none: output "Advisory Summary: None."
+
+**Next step:** end with `Next step: <command>`; if §1 "Next planned release" is `[TBD]`: `run roadmap --reason "scheduled"`, not `plan release` (§-1.2; Option (b) is 1-use).
 
 ---
 

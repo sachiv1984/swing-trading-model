@@ -24,30 +24,33 @@ MAX_IMPROVEMENTS = 20
 AUDIT_VERSION = "6"
 
 # Prior audit tracking — the audit itself produces updated values at end (see §9 CONFIG UPDATE)
-PRIOR_AUDIT_ID = "AUD-2026-10-08"
+PRIOR_AUDIT_ID = "AUD-2026-11-03"
 PRIOR_AUDIT_OPEN_ITEMS = []
-  # All 7 improvements filed at AUD-2026-10-08 were applied post-publication, same session, on explicit
-  # user direction ("Apply the 7 fixes") as agent-mediated Head of Specs Team rulings (003: PMO Lead).
-  # 001 post_ship_closure.md v2.39; 002 shared_standards.md v3.38 §11 size budget + this file's Stage 5
-  # formula; 003 .github/workflows/escalation-sla-reminder.yml; 004 lessons_learnt_prompt.md v1.16;
-  # 005 OPERATIONAL_GUIDE.md v4.228 §13/§14; 006 shared_standards.md §13 rows; 007 prompt_change_log.md
-  # v1.1 + this file's Phase 1 load. Follow-ons: BLG-GOV-379/380/381 (prompt splits). Execution
-  # Reliability (73) and Governance Integrity (46) were re-based this run, so their trend vs. the prior
-  # 53/100 is not comparable. See claude/cycles/2026-10-08__release-v9.11/audit_report_AUD-2026-10-08.md
-  # §5 post-publication note.
+  # All 7 improvements filed at AUD-2026-11-03 were applied post-publication, same session, on explicit
+  # user direction ("Apply the 7 fixes") as agent-mediated Head of Specs Team rulings. 001 the
+  # SessionStart hook injects header fields + unresolved escalations only; 002 post_ship_closure.md
+  # v2.43 never writes last_audit_cycle_count; 003 scripts/check_prompt_size_budget.py +
+  # prompt-size-budget.yml + shared_standards.md v3.40 §11; 004 lessons_learnt_prompt.md v1.17 §3.7;
+  # 005 OPERATIONAL_GUIDE.md v4.248 §13; 006 release_planning_prompt.md v2.68 + roadmap_prompt.md v9.36;
+  # 007 workforce_capacity.md worked example/VH placeholder + this file's §5 halt-format refs.
+  # Friction Load (18) is not like-for-like with the prior 42 (4-cycle window, newly typed closure
+  # items; like-for-like 35). Next audit: verify 002 (no closure moved last_audit_cycle_count) and 003
+  # (no over-cap prompt grew without a baseline edit). See
+  # claude/cycles/2026-10-29__release-v9.14/audit_report_AUD-2026-11-03.md §5 post-publication note.
+
 
 # Health Scorecard baseline — updated by audit output each run for trend tracking
 PRIOR_SCORES = {
-    "token_efficiency":      84,
-    "governance_integrity":  46,
-    "execution_reliability": 73,
-    "friction_load":         42,
-    "document_hygiene":      100,
+    "token_efficiency":      80,
+    "governance_integrity":  62,
+    "execution_reliability": 72,
+    "friction_load":         18,
+    "document_hygiene":      96,
 }
 
 # Completed cycle count — increment after each post-ship closure
 # Used to determine B4 history sufficiency (need ≥3 cycles for hard gate compliance)
-COMPLETED_CYCLES = 87  # current completed_cycle_count at AUD-2026-10-08
+COMPLETED_CYCLES = 91  # current completed_cycle_count at AUD-2026-11-03
 
 # -------------------------
 # MISSING FILE RULE
@@ -452,7 +455,7 @@ STAGE_CHECKLIST = [
         "stage": "Stage 7 — Prompt Architecture & Compression",
         "load": [
             "claude/system/roadmap_prompt.md",           # full — structure analysis
-            "claude/system/shared_standards.md",         # §10 halt format, §13, §14, §15
+            "claude/system/shared_standards.md",         # §5 halt format, §13, §14, §15
             "claude/system/lessons_learnt_prompt.md",    # §1 invocation rule
         ],
         "check": (
@@ -462,7 +465,7 @@ STAGE_CHECKLIST = [
             "\n"
             "EXTRACTION TABLE:\n"
             "| Category | Confirmed instances (cite file+step) | Canonical home | Saving if extracted |\n"
-            "| Halt format blocks | N (CONFIRMED/ESTIMATED) | shared_standards §10 | ~lines×8×N |\n"
+            "| Halt format blocks | N (CONFIRMED/ESTIMATED) | shared_standards §5 | ~lines×8×N |\n"
             "| Invariant lists | N (CONFIRMED/ESTIMATED) | system/invariants.md | ~lines×8×N |\n"
             "| JSON schemas | N (CONFIRMED/ESTIMATED) | shared_standards §16 | ~lines×8×N |\n"
             "| Role verify blocks | N (CONFIRMED/ESTIMATED) | shared module | ~lines×8×N |\n"
@@ -527,7 +530,7 @@ STAGE_CHECKLIST = [
             "TABLE — SST checks:\n"
             "| Check | Result | Duplicate count | Token cost of duplicates | Evidence |\n"
             "| SST1 — Invariant lists: unique canonical source? | PASS/FAIL | N copies | ~tokens | files |\n"
-            "| SST2 — Halt format: all engines reference §10 only? | PASS/FAIL | N inline | ~tokens | files |\n"
+            "| SST2 — Halt format: all engines reference §5 only? | PASS/FAIL | N inline | ~tokens | files |\n"
             "| SST3 — JSON schemas in shared_standards §16? | PASS/FAIL | N inline | ~tokens | files |\n"
             "| SST4 — workforce_capacity.md has single declared write owner | PASS/FAIL | — | — | file+section |\n"
             "| SST5 — scored_initiatives uses cycle-scoped naming | PASS/FAIL | — | — | file |\n"

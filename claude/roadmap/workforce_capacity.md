@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-10-16 (rebalance `2026-10-16__scheduled` — new "Rebalance 2026-10-16__scheduled" section: Skill-Silo 69.6% pooled, above ceiling, sustained-failure clause applied (BLG-FE-226/BLG-FE-227/BLG-BE-182); §7.2 max 8.0%; §7.3 gap 26.70 d from ready_pool_history.md; PVR 0.204); prior — 2026-10-08 (rebalance 2026-10-08__scheduled — new "Rebalance 2026-10-08__scheduled" section: Skill-Silo 87.4% pooled, improved but above ceiling, §7.1 pull-forward applied (BLG-FE-206 + BLG-BE-154 → v9.11); §7.3 gap grew 1 release (33.80 d), runway N/A); prior — 2026-10-06 (rebalance 2026-10-06__scheduled — new "Rebalance 2026-10-06__scheduled" section: Skill-Silo 91.2% pooled, worsened, §7.1 sustained-failure pull-forward applied (BLG-FE-193 + BLG-FE-198 → v9.10); §7.3 re-measured, gap narrowing, runway ≈1 cycle); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-03 (rebalance `2026-11-03__scheduled` — STEP 7 section appended: Skill-Silo 68.1%, v9.15 capacity outlook ≈11.5-13 days committed); prior — 2026-11-03 (lifecycle audit AUD-2026-11-03-007 — canonical table gains the `XS (<1h)` worked example (v9.8 deferred patch) and a dormant `VH` placeholder (v9.7 deferred patch)); prior — 2026-10-16 (rebalance `2026-10-16__scheduled` — new "Rebalance 2026-10-16__scheduled" section: Skill-Silo 69.6% pooled, above ceiling, sustained-failure clause applied (BLG-FE-226/BLG-FE-227/BLG-BE-182); §7.2 max 8.0%; §7.3 gap 26.70 d from ready_pool_history.md; PVR 0.204); prior history retained — see prior entries in version control
 
 > ⚠️ Standing Notice: This document records workforce planning estimates. All effort figures are indicative. Canonical project records take precedence.
 
@@ -56,6 +56,8 @@ Release Planning and Sprint Planning have each independently inferred day-equiva
 These midpoints reflect the values already in de facto use across recent `sprint_capacity.md` templates (backed out from those cycles' own total-days-vs-item-count arithmetic) rather than a fresh estimate — this table formalises existing practice, it does not change it. Individual items may still cite their own more specific day range in their `**Effort:**` field where known (e.g. "M (~2d)" vs. "M (~2.5d)"); the canonical midpoint above is the fallback used only when a cycle-level total-days estimate is needed and an item's own field gives just the bare letter or a range without a clear single-point estimate.
 
 **Precedence rule (added 2026-09-23, LL-v9.6-P-Closure-01):** When computing a cycle's total-days figure, an item's own explicit day range/midpoint (where its `**Effort:**` field states one, e.g. "M (~2d)") always takes precedence over this table's band-letter-only canonical midpoint (e.g. the generic "M" → 2.5d). The canonical midpoint applies only to items whose `**Effort:**` field gives the bare band letter with no more specific figure. This resolves the non-reproducibility Friction Item 3 (`lessons_learnt.md`, `2026-09-21__release-v9.6` Release Planning) found: v9.5's published 27.99d total matched neither a band-letter-only reading (26.60d) nor an explicit-range-midpoint reading (28.35d) of its own slice, because no single rule said which wins.
+
+*Worked example (AUD-2026-11-03-007, v9.8 deferred patch):* an item with `**Effort:** XS (<1h)` states an hour figure, not a day range, so the precedence rule's "explicit day range" branch does not apply and the table midpoint (0.15d) is used. Record it as `XS → 0.15d (table; hour qualifier)`. *`VH` (dormant, v9.7 deferred patch):* no `VH` band row exists yet. Add one when a second `VH` item is scored in `scored_initiatives.md`, using the two items' own stated ranges.
 
 **Maintenance:** If a future cycle's actual effort-vs-estimate retrospective (see `docs/governance/effort_band_accuracy_retrospective_*.md` where filed) finds these midpoints systematically miscalibrated, update this table directly — it is a lightweight reference table, not a governance prompt, and does not require the `CLAUDE.md §6` version-bump checklist. Record any revision in this document's own `**Last Updated:**` header.
 
@@ -866,3 +868,20 @@ Both approved candidates (`BLG-FEAT-52` ungated/descoped, new `BLG-FEAT-71`) are
 **Sprint capacity:** not re-evaluated; held at ~24–28 working-day-equivalent units.
 
 **Workforce constraints:** none new.
+
+
+## Rebalance 2026-11-03__scheduled
+
+**Skill-Silo Alert (STEP 7.1):** window v9.12–v9.14 (U/G/D/P proxy; `scripts/compute_rebalance_diagnostics.py`, `method: pooled`). **Pooled: 96/141 = 68.1%** (v9.12 32/48, v9.13 and v9.14 per changelog tags). Improved from 70.2% (v9.11–v9.13) and 69.6% at `2026-10-16__scheduled`, still above the 40% ceiling. Under the v9.35 definition every above-ceiling reading is "unresolved", so the **sustained-failure clause applies (≥2 build-and-ship U-items at the next release)** — met by `BLG-FE-244` and `BLG-FE-245` (both P1, STEP 8.0) plus `BLG-FE-246`, `247`, `248`, `249`, `266` in the v9.15 section. Candidate gate verification: none has a `**Gate criteria:**` line. Live-status cross-check: all are active, filed this run. Cross-role pairing note read; advisory only.
+
+**Cross-Role Workload Balance (STEP 7.2):** `role_share_history.md`, after appending the v9.13 and v9.14 rows (neither had been added, because no rebalance ran between them). Window v9.12–v9.14, 141 stories: AI Compliance & Governance Officer; Backend Engineering Patterns Owner (compound bucket) highest at **13 (9.2%)**. Below the 40% ceiling — no advisory. Forward look: the Site Structure & Usability programme concentrates v9.15–v9.17 on Head of Engineering, Head of UX & Design and Frontend Specifications & UX Documentation Owner; expect this check to rise for those roles.
+
+**Ready-Pool Capacity Gap Trend (STEP 7.3):** `claude/roadmap/ready_pool_history.md` newest row v9.14 (present; no fallback needed): 156-item / 81.55-day pool against the 28-day ceiling, gap **53.55 days**. Series v9.12 26.70 → v9.13 36.65 → v9.14 53.55: increased for 2 consecutive releases (v9.11→v9.12 decreased), so below the 3-release review trigger — advisory only. Runway: N/A — pool growing (rolling Δ leftover +6.33). This run adds 27 items (≈49 days); the gap will widen further at v9.15 unless the PO raises the band or sub-tiers P3 at a later rebalance.
+
+**Product Value Ratio (STEP 2.4):** 0.307 Advisory (window v9.10–v9.14, U=63/G=25/D=115/P=2/205) — first Advisory-tier reading after 8 consecutive Alert readings. Effort-weighted 0.376 (diagnostic). Sustained-Advisory clause not yet applicable (1 consecutive Advisory reading).
+
+**v9.15 capacity outlook:** committed: `BLG-FE-244` (M ~2-3 d), `BLG-FE-245` (S ~0.5-1 d), `BLG-FE-246` (S ~0.5 d), `BLG-FE-247` (S ~0.5 d), `BLG-FE-248` (S ~1 d), `BLG-FE-249` (S ~0.5 d), `BLG-FE-266` (S ~0.5 d), `BLG-SPEC-214`, `215`, `216` (M ~2 d each) ≈ 11.5-13 days of the ~24–28-day band. Release Planning fills the rest (closure carry-forward: `BLG-FE-239`, `BLG-FE-240`, `BLG-FE-243`). Provisional programme load: v9.16 ≈15.5 days, v9.17 ≈20.5 days, v9.18 ≈1 day.
+
+**Sprint capacity:** not re-evaluated; held at ~24–28 working-day-equivalent units.
+
+**Workforce constraints:** none new. Design and spec skills (Head of UX & Design, Frontend Specifications & UX Documentation Owner) are on the critical path for Phase 1's three specs; Phase 2 build cannot start before `BLG-SPEC-214`/`215` are approved.
