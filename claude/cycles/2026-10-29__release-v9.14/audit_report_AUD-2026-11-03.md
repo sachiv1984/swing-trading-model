@@ -1,7 +1,7 @@
 Owner: Head of Specs Team
 Class: Governance Artefact (Class 3)
 Status: Active
-Last Updated: 2026-11-03 (initial filing)
+Last Updated: 2026-11-03 (post-publication note — all 7 improvements applied same session); prior — 2026-11-03 (initial filing); prior history retained — see prior entries in version control
 Cycle: 2026-10-29__release-v9.14 (most recent closed cycle at time of run — governance-wide audit, not cycle-scoped)
 
 # Claude Lifecycle Audit — AUD-2026-11-03
@@ -518,6 +518,8 @@ The size problem is accumulated rationale and history text inside STEP bodies, n
 ```
 
 ### 5b. Individual improvements (AUD-ID order, weight desc)
+
+> **Post-publication note (2026-11-03, same session):** all 7 improvements were applied on explicit user direction ("Apply the 7 fixes") as agent-mediated Head of Specs Team rulings, with the patches as drafted below. Two adjustments: 002 replaces the whole BLG-GOV-82 paragraph (heading kept, marked superseded) rather than only its middle sentences; 003 seeds `scripts/prompt_size_baseline.json` after this session's own bumps, so those bumps are the accepted starting point. 007's `XS (<1h)` worked-example rule (hour figure → table midpoint) is taken as drafted. Follow-ons left to their owners: pruning resolved escalations from the state file (001, PMO Lead) and seating `BLG-GOV-379` in v9.15 (003, Product Owner).
 
 ### AUD-2026-11-03-001
 **Title:** Session-start hook injects a 47 KB state file that is 81% resolved escalations
