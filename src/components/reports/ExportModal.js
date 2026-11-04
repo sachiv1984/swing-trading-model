@@ -5,6 +5,7 @@ import { FileSpreadsheet, FileText, Download, Loader2, Check } from "lucide-reac
 import { motion } from "framer-motion";
 import { formatCurrency, formatPercent } from "../../lib/format";
 import { exitReasonLabel } from "../../constants/exitReasons";
+import { todayLocal } from "../../lib/localDate";
 
 // Exports use the full label from the shared module (legacy spellings resolve).
 const formatExitReason = exitReasonLabel;
@@ -45,7 +46,7 @@ export default function ExportModal({ open, onClose, positions, metrics, period,
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
-    link.download = `trade_history_${new Date().toISOString().split('T')[0]}.csv`;
+    link.download = `trade_history_${todayLocal()}.csv`;
     link.click();
 
     setTimeout(() => {

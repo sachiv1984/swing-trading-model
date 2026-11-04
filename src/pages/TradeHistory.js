@@ -15,6 +15,7 @@ import CalendarView from "../components/trades/CalendarView";
 import TradeReflectionModal from "../components/trades/TradeReflectionModal";
 import { formatCurrency, formatPercent } from "../lib/format";
 import { motion } from "framer-motion";
+import { localDateString } from "../lib/localDate";
 
 // ST-04 (BLG-FE-118, EPIC-04, v7.5): ephemeral, device-local active-filter
 // persistence — reuses the BLG-FE-40 versioned-localStorage-envelope pattern
@@ -554,7 +555,7 @@ export default function TradeHistory() {
             <CalendarView
               hasAnyClosedTrades={trades.length > 0}
               onDaySelect={(date) => {
-                const dateStr = date.toISOString().slice(0, 10);
+                const dateStr = localDateString(date);
                 setFilters({ ...filters, dateFrom: dateStr, dateTo: dateStr });
                 setView("table");
               }}

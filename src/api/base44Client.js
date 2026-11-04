@@ -1,3 +1,4 @@
+import { todayLocal } from "../lib/localDate";
 // src/api/base44Client.js
 
 // ---------- Config ----------
@@ -271,7 +272,7 @@ export const base44 = {
         const body = {
           shares,
           exit_price: exitPrice,
-          exit_date: requestData.exit_date || new Date().toISOString().split('T')[0],
+          exit_date: requestData.exit_date || todayLocal(),
           exit_reason: requestData.exit_reason || 'Manual Exit',
         };
 

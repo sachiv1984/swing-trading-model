@@ -32,6 +32,7 @@ import {
 import { cn } from "../lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import moment from "moment";
+import { todayLocal } from "../lib/localDate";
 
 // ST-10 (EPIC-02, v9.13, BLG-SPEC-188): hours with one decimal below 48 h, else
 // days and hours (system_status.md v1.3 §Stop Freshness Panel).
@@ -305,7 +306,7 @@ export default function SystemStatus() {
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `validation-${new Date().toISOString().split('T')[0]}.csv`;
+    a.download = `validation-${todayLocal()}.csv`;
     a.click();
     window.URL.revokeObjectURL(url);
   };

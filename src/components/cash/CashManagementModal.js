@@ -10,6 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { PlusCircle, MinusCircle, Loader2 } from "lucide-react";
 import { cn } from "../../lib/utils";
 import { formatCurrency } from "../../lib/format";
+import { todayLocal } from "../../lib/localDate";
 
 export default function CashManagementModal({ open, onClose, portfolio, transactions }) {
   const [type, setType] = useState("deposit");
@@ -54,7 +55,7 @@ export default function CashManagementModal({ open, onClose, portfolio, transact
       type,
       amount: parseFloat(amount),
       note,
-      date: new Date().toISOString().split("T")[0]
+      date: todayLocal()
     });
   };
 

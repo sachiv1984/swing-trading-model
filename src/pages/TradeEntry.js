@@ -23,6 +23,7 @@ import SetupThesisDigestPanel from '../components/trades/SetupThesisDigestPanel'
 import PreEntryValidationPanel from '../components/trades/PreEntryValidationPanel';
 import { isStartTradeEligible, STATUS_CONFIG } from "./TradePlans";
 import { FX_SOURCE_LAST_KNOWN, FX_SOURCE_CONSTANT, formatFxAge, formatFxRate } from "../lib/fxSource";
+import { todayLocal } from "../lib/localDate";
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:8000";
 
@@ -40,7 +41,7 @@ export default function TradeEntry() {
   const [formData, setFormData] = useState({
     ticker: (planPrefill?.ticker || prefill?.ticker || "").trim().toUpperCase(),
     market: prefillMarket,
-    entry_date: new Date().toISOString().split("T")[0],
+    entry_date: todayLocal(),
     shares: planPrefill?.quantity != null ? String(planPrefill.quantity) : "",
     entry_price: planPrefill?.entry_price != null ? String(planPrefill.entry_price) : (prefill?.entry_price || ""),
     fill_price: "",
