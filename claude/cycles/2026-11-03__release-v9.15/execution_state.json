@@ -121,7 +121,7 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.push",
           "sign_off_record": null,
-          "notes": "Wording-only (FI-P3-02): code review of the static label text in TradeEntry.js, ExitModal.js, WhatIfSizingPreview.js. AC 1 met: grep of src/ finds 3 FX rate inputs, all relabelled; no other FX input exists. Deviation check: none. ci_pending: runs on branch head cbaaecd2 (pushed with ST-03/04/06/07 together).",
+          "notes": "Wording-only (FI-P3-02): code review of the static label text in TradeEntry.js, ExitModal.js, WhatIfSizingPreview.js. AC 1 met: grep of src/ finds 3 FX rate inputs, all relabelled; no other FX input exists. Deviation check: none. CI on cbaaecd2 (branch head containing this commit): all 9 workflows success — Playwright E2E 41823051969, CI Pytest 41823051939, Frontend Production Build 41823051875, Critical-Path Smoke 41823051908.",
           "_planned_spec_references": [
             "docs/specs/frontend/components/position_form.md",
             "docs/specs/frontend/components/exit_modal.md"
@@ -150,7 +150,7 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.push",
           "sign_off_record": null,
-          "notes": "Design Pre-Approved; no governing spec section beyond BLG-FE-243 (Case C: the new test file and helper are the traceable artefacts). AC 1-2: SC-LDP-01..03 pass locally under Europe/London at 00:30 BST. AC 3: no user-facing today from toISOString().split; PortfolioGrowthChart keeps it (walks stored period dates). Also fixed Trade History calendar day filter (same class). Deviation check: none. ci_pending: runs on branch head cbaaecd2 (pushed with ST-03/04/06/07 together).",
+          "notes": "Design Pre-Approved; no governing spec section beyond BLG-FE-243 (Case C: the new test file and helper are the traceable artefacts). AC 1-2: SC-LDP-01..03 pass locally under Europe/London at 00:30 BST. AC 3: no user-facing today from toISOString().split; PortfolioGrowthChart keeps it (walks stored period dates). Also fixed Trade History calendar day filter (same class). Deviation check: none. CI on cbaaecd2 (branch head containing this commit): all 9 workflows success — Playwright E2E 41823051969, CI Pytest 41823051939, Frontend Production Build 41823051875, Critical-Path Smoke 41823051908.",
           "_planned_spec_references": []
         },
         "ST-05": {
@@ -203,7 +203,7 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.push",
           "sign_off_record": null,
-          "notes": "AC 1-2 met (tests/test_stop_trail_value.py). Implementation note (intent check, not a deviation): the value is calculate_trailing_stop's §7.2 candidate with current_stop = -inf (no ratchet), so trail_difference stays signed; the AC's equality holds whenever the stored stop is below the candidate, and the design intent (formula + floor) is met in all cases. Contract is stop_trail_endpoint.md v1.1.0; the slice named position_endpoints.md, which does not document this endpoint. ci_pending: runs on branch head cbaaecd2 (pushed with ST-03/04/06/07 together).",
+          "notes": "AC 1-2 met (tests/test_stop_trail_value.py). Implementation note (intent check, not a deviation): the value is calculate_trailing_stop's §7.2 candidate with current_stop = -inf (no ratchet), so trail_difference stays signed; the AC's equality holds whenever the stored stop is below the candidate, and the design intent (formula + floor) is met in all cases. Contract is stop_trail_endpoint.md v1.1.0; the slice named position_endpoints.md, which does not document this endpoint. CI on cbaaecd2 (branch head containing this commit): all 9 workflows success — Playwright E2E 41823051969, CI Pytest 41823051939, Frontend Production Build 41823051875, Critical-Path Smoke 41823051908.",
           "_planned_spec_references": [
             "docs/specs/frontend/pages/positions.md",
             "docs/specs/api_contracts/position_endpoints.md"
@@ -233,7 +233,7 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.push",
           "sign_off_record": null,
-          "notes": "AC met: label changed; SC-SIG-ZA-01/02 pass locally. Deviation check: none. ci_pending: runs on branch head cbaaecd2 (pushed with ST-03/04/06/07 together).",
+          "notes": "AC met: label changed; SC-SIG-ZA-01/02 pass locally. Deviation check: none. CI on cbaaecd2 (branch head containing this commit): all 9 workflows success — Playwright E2E 41823051969, CI Pytest 41823051939, Frontend Production Build 41823051875, Critical-Path Smoke 41823051908.",
           "_planned_spec_references": [
             "docs/design/2026-11-03__release-v9.15/signal-card-cost-and-sizing-reason/decision_record.md",
             "docs/specs/api_contracts/signal_endpoints.md"
