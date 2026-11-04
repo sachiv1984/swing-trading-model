@@ -27,6 +27,7 @@ import PageHeader from "../components/ui/PageHeader";
 import PositionCard from "../components/positions/PositionCard";
 import PositionModal from "../components/positions/PositionModal";
 import ExitModal from "../components/positions/ExitModal";
+import DailyMonitor from "../components/monitor/DailyMonitor";
 import JournalView from "../components/positions/JournalView";
 import TradeReflectionModal from "../components/trades/TradeReflectionModal";
 import { formatCurrency, formatPercent, formatR, currencyForMarket } from "../lib/format";
@@ -846,6 +847,10 @@ export default function Positions() {
                 <BookOpen className="w-4 h-4" />
               </Button>
             </div>
+
+            {/* ST-12 (BLG-FE-247, v9.15): Daily Position Monitor entry point,
+                moved here from the removed legacy Dashboard (ESC-EXEC-20261104-05 (a)). */}
+            <DailyMonitor positions={openPositions} isLoading={isLoading} />
 
             <Link to={createPageUrl("TradeEntry")}>
               <Button className="bg-gradient-to-r from-cyan-500 to-violet-500 hover:from-cyan-400 hover:to-violet-400 text-white border-0 shadow-lg shadow-violet-500/25">

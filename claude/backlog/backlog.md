@@ -5544,6 +5544,8 @@ ST-48 fixed `scripts/compute_effort_weighted_pvr.py`'s parse of band parenthetic
 - With closed trades of P&L +10 and −10, both widgets show 50% (Playwright)
 - Neither widget reads `GET /positions` for closed trades
 
+**Notes:** 2026-11-04 (ST-12, EPIC-02, v9.15): the defect leaves with the page. ST-12 removed `src/pages/Dashboard.js` with `WinRateWidget` and `WinRateChart`, which it alone rendered; the Dashboard home renders no win-rate widget, so no surface carries this defect. ST-16 was deferred at planning as superseded by ST-12 (`sprint_backlog.md` Items Deferred This Sprint).
+
 ---
 
 ### BLG-SPEC-212 — Strategy version comparison contract defines `win_rate` by R, the code by P&L

@@ -6,7 +6,7 @@
   "invoked_utc": "2026-11-04T10:55:44Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-04T20:55:49Z",
+  "last_updated_utc": "2026-11-04T21:07:20Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-03",
@@ -248,6 +248,222 @@
         "date": "2026-11-04",
         "reference": "qa_evidence_EPIC-01.md Standard Sign-Off Block",
         "notes": "Second pass Approved; first pass Blocked (2 blocking findings: ST-02 fixed in 41e0949e, ST-06 ruled ESC-EXEC-20261104-02; 5 non-blocking fixed or filed as BLG-FE-269/270)."
+      }
+    },
+    "EPIC-02": {
+      "status": "in_progress",
+      "branch": "exec/2026-11-03__release-v9.15/EPIC-02",
+      "pr_number": null,
+      "pr_status": null,
+      "qa_signed_off": false,
+      "qa_evidence_log": "claude/cycles/2026-11-03__release-v9.15/qa_evidence_EPIC-02.md",
+      "test_scenarios": [
+        "tests/e2e/command-palette.spec.js",
+        "tests/e2e/sidebar-nav-groups.spec.js",
+        "tests/e2e/whats-new-panel.spec.js"
+      ],
+      "stories": {
+        "ST-08": {
+          "title": "Navigation spec v2: job-based areas, plus a UI-label section in the glossary",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 2152,
+          "branch": "exec/2026-11-03__release-v9.15/EPIC-02",
+          "commit_sha": "32b84b68ff9dd5ae79bef675f91a9e1d478b3d02",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-11-04T21:07:20Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/pages/navigation.md",
+            "docs/reference/glossary.md",
+            "docs/design/2026-11-03__release-v9.15/site-structure-phase1/decision_record.md"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.push",
+          "sign_off_record": {
+            "status": "cleared",
+            "method": "agent_mediated",
+            "role": "Head of UX & Design",
+            "date": "2026-11-04",
+            "result": "Approved",
+            "findings": "First pass Blocked (4 blocking: sidebar counts 20->21 and detail pages 4->3; Trade History onward link is a dead end; Notification Preferences area contradicted its parent; glossary Research palette 'No' contradicted the new /Research landing) plus 4 non-blocking. All applied; retry 1 Approved with evidence (awk count of placement rows = 25 matching ls src/pages; Sidebar Yes = 21). Remaining non-blocking: DEV-NAV-ST06-01 heading vs CLAUDE.md heading rule (backlog item to file)."
+          },
+          "notes": "delegated_decision per sealed sprint_backlog.md: the decision is the in-sprint spec approval (Head of UX & Design; ST-09 also Head of Specs Team, Class 1; ST-10 also the Strategy Rules & System Intent Owner's §13 confirmation). Engine drafts the spec, then requests agent-mediated sign-off per §5.3 (design-gate precedent: decision_record.md §7). Surfaced to the user only if still Blocked after 2 retries. Decision (spec approval) cleared by §5.3 agent-mediated Head of UX & Design review, retry 1 Approved; reclassified delegated_decision -> autonomous. Case B: the spec artefacts are the spec_references. Deviation check: none (documentation deliverable; code gap is planned build work in BLG-FE-250/251/252, recorded in navigation.md §Implementation Status). Docs-only commit: no src/** change, no Playwright spec.",
+          "_planned_spec_references": [
+            "docs/design/2026-11-03__release-v9.15/site-structure-phase1/decision_record.md",
+            "docs/specs/frontend/pages/navigation.md",
+            "docs/reference/glossary.md"
+          ],
+          "delivery_note": "docs/specs/frontend/pages/navigation.md v2.0; docs/reference/glossary.md v1.3 §UI Labels"
+        },
+        "ST-09": {
+          "title": "Dashboard spec: a prioritised \"Today\" action list",
+          "classification": "delegated_decision",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 2153,
+          "branch": "exec/2026-11-03__release-v9.15/EPIC-02",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "delegated_decision per sealed sprint_backlog.md: the decision is the in-sprint spec approval (Head of UX & Design; ST-09 also Head of Specs Team, Class 1; ST-10 also the Strategy Rules & System Intent Owner's §13 confirmation). Engine drafts the spec, then requests agent-mediated sign-off per §5.3 (design-gate precedent: decision_record.md §7). Surfaced to the user only if still Blocked after 2 retries.",
+          "_planned_spec_references": [
+            "docs/design/2026-11-03__release-v9.15/site-structure-phase1/decision_record.md",
+            "docs/specs/frontend/pages/dashboard.md"
+          ]
+        },
+        "ST-10": {
+          "title": "Spec for one Journal area combining reflections, red flags and position notes",
+          "classification": "delegated_decision",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 2154,
+          "branch": "exec/2026-11-03__release-v9.15/EPIC-02",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "delegated_decision per sealed sprint_backlog.md: the decision is the in-sprint spec approval (Head of UX & Design; ST-09 also Head of Specs Team, Class 1; ST-10 also the Strategy Rules & System Intent Owner's §13 confirmation). Engine drafts the spec, then requests agent-mediated sign-off per §5.3 (design-gate precedent: decision_record.md §7). Surfaced to the user only if still Blocked after 2 retries.",
+          "_planned_spec_references": [
+            "docs/design/2026-11-03__release-v9.15/site-structure-phase1/decision_record.md"
+          ]
+        },
+        "ST-11": {
+          "title": "Use one name per page and action across sidebar, page headings and command palette",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 2155,
+          "branch": "exec/2026-11-03__release-v9.15/EPIC-02",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "docs/design/2026-11-03__release-v9.15/site-structure-phase1/decision_record.md",
+            "docs/reference/glossary.md"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "Starts only after ST-08 is approved (RISK-02); after ST-12 on CommandPalette.js.",
+          "_planned_spec_references": [
+            "docs/design/2026-11-03__release-v9.15/site-structure-phase1/decision_record.md",
+            "docs/reference/glossary.md"
+          ]
+        },
+        "ST-12": {
+          "title": "Remove the legacy widget Dashboard route and its duplicate command-palette entry",
+          "classification": "autonomous",
+          "status": "in_progress",
+          "assigned_to": "engine",
+          "github_issue": 2156,
+          "branch": "exec/2026-11-03__release-v9.15/EPIC-02",
+          "commit_sha": null,
+          "delegation_record_id": "ESC-EXEC-20261104-05",
+          "blocked_since_utc": null,
+          "unblock_criteria": "Dated Product Owner ruling naming option (a)/(b)/(c)/(d) in ESC-EXEC-20261104-05; under (a)/(b) Head of UX & Design confirms placement.",
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "docs/design/2026-11-03__release-v9.15/site-structure-phase1/decision_record.md",
+            "docs/specs/frontend/pages/navigation.md"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "Reclassified autonomous -> delegated_decision at 2026-11-04T21:03:58Z: MonitorModal (Daily Position Monitor) is reachable only from the legacy Dashboard QuickActions widget (positions.md §Daily Position Monitor Exit Queue entry point). See ESC-EXEC-20261104-05. Resolved 2026-11-04T21:04:56Z: Product Owner option (a), Daily Monitor moves to the Positions header; reclassified delegated_decision -> autonomous. Head of UX & Design placement confirmation pending (§5.3).",
+          "_planned_spec_references": [
+            "docs/design/2026-11-03__release-v9.15/site-structure-phase1/decision_record.md",
+            "docs/specs/frontend/pages/navigation.md"
+          ]
+        },
+        "ST-13": {
+          "title": "Set a browser-tab title for each page",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 2157,
+          "branch": "exec/2026-11-03__release-v9.15/EPIC-02",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "docs/design/2026-11-03__release-v9.15/site-structure-phase1/decision_record.md",
+            "docs/specs/frontend/pages/navigation.md"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": null,
+          "_planned_spec_references": [
+            "docs/design/2026-11-03__release-v9.15/site-structure-phase1/decision_record.md",
+            "docs/specs/frontend/pages/navigation.md"
+          ]
+        },
+        "ST-14": {
+          "title": "Fix three small chrome defects: version label, What's New heading, sidebar height",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 2158,
+          "branch": "exec/2026-11-03__release-v9.15/EPIC-02",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "docs/design/2026-11-03__release-v9.15/site-structure-phase1/decision_record.md",
+            "docs/specs/frontend/pages/navigation.md",
+            "docs/specs/frontend/pages/dashboard.md"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": null,
+          "_planned_spec_references": [
+            "docs/design/2026-11-03__release-v9.15/site-structure-phase1/decision_record.md",
+            "docs/specs/frontend/pages/navigation.md",
+            "docs/specs/frontend/pages/dashboard.md"
+          ]
+        }
       }
     },
     "EPIC-03": {
@@ -515,6 +731,7 @@
     "ST-05",
     "ST-06",
     "ST-07",
+    "ST-08",
     "ST-15",
     "ST-17",
     "ST-18",
@@ -576,6 +793,19 @@
       "resolved_utc": "2026-11-04T19:29:15Z",
       "resolved_by": "Data Model & Domain Schema Owner (the user, in session)",
       "resolution_summary": "Spec follows code: open-position pnl is native P&L at the live FX rate, not net of fees. Dictionary aligned; basis difference from realised P&L filed as a follow-up."
+    },
+    "ESC-EXEC-20261104-05": {
+      "cycle": "2026-11-03__release-v9.15",
+      "summary": "ST-12/EPIC-02 — removing the legacy Dashboard would delete the Daily Position Monitor (its only entry point); Product Owner to choose: move to Positions (a), to Dashboard home (b), defer ST-12 (c), or remove (d)",
+      "trigger_type": "Scope",
+      "owning_authority": "Product Owner",
+      "raised_utc": "2026-11-04T21:03:58Z",
+      "sla_due_utc": "2026-11-05T21:03:58Z",
+      "blocks_execution": false,
+      "disposition": "Resolved",
+      "resolved_utc": "2026-11-04T21:04:56Z",
+      "resolved_by": "Product Owner (the user, in session)",
+      "resolution_summary": "Option (a): Daily Monitor button on the Positions header; MonitorModal, exit queue and pre-select carried over; 7 monitor scenarios retargeted to /#/Positions; positions.md entry point updated. Head of UX & Design confirms placement (agent-mediated)."
     }
   },
   "merge_gate": {
@@ -583,8 +813,10 @@
       "EPIC-01",
       "EPIC-03"
     ],
-    "epics_pending": [],
-    "all_merged": true
+    "epics_pending": [
+      "EPIC-02"
+    ],
+    "all_merged": false
   },
   "process_notes": [
     "2026-11-04: run sprint --epic EPIC-01. Initialised EPIC-01 only (execution_state.json owner per sprint_backlog.md Merge Order); other EPIC branches append their own sections. merge_gate.epics_pending lists initialised EPICs only (ST-38 tracks counting uninitialised EPICs).",

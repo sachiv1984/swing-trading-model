@@ -19,7 +19,6 @@ import { Briefcase, Eye, FileText } from "lucide-react";
 // docs/specs/blg_fe_115_pre_implementation_readiness_pass.md AC-01.
 const PAGE_LABELS = {
   DashboardHome: "Dashboard",
-  Dashboard: "Dashboard",
   Positions: "Positions",
   Reports: "Reports",
   Settings: "Settings",

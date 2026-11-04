@@ -54,8 +54,9 @@ async function stubDashboard(page, positions, regimes = []) {
 }
 
 async function openMonitor(page) {
-  // The "Daily Monitor" quick action is a plain onClick <div>: click its heading.
-  await page.getByRole('heading', { name: 'Daily Monitor' }).click();
+  // v9.15 ST-12: the Monitor opens from the Positions header button (the legacy
+  // Dashboard and its Quick Actions widget were removed; ESC-EXEC-20261104-05 (a)).
+  await page.getByTestId('daily-monitor-button').click();
   await expect(page.getByRole('heading', { name: 'Daily Position Monitor' })).toBeVisible({ timeout: 10000 });
 }
 
@@ -66,7 +67,7 @@ function row(page, ticker) {
 test.describe('Daily Position Monitor grace-aware suggestions (ST-11)', () => {
   test('SC-MGS-01: an in-grace breach is not suggested and says why', async ({ page }) => {
     await stubDashboard(page, [IN_GRACE_BREACH]);
-    await page.goto('/#/Dashboard');
+    await page.goto('/#/Positions');
     await openMonitor(page);
 
     const grace = row(page, 'GRACE');
@@ -82,7 +83,7 @@ test.describe('Daily Position Monitor grace-aware suggestions (ST-11)', () => {
 
   test('SC-MGS-02: post-grace breach and risk-off are suggested; risk-off wins when both apply', async ({ page }) => {
     await stubDashboard(page, [POST_GRACE_BREACH, RISK_OFF, BOTH, HEALTHY]);
-    await page.goto('/#/Dashboard');
+    await page.goto('/#/Positions');
     await openMonitor(page);
 
     await expect(row(page, 'STOP')).toHaveAttribute('data-suggestion', 'exit');
@@ -104,7 +105,7 @@ test.describe('Daily Position Monitor grace-aware suggestions (ST-11)', () => {
 
   test('SC-MGS-03: a risk-off regime alone, without risk_off_exit, suggests nothing', async ({ page }) => {
     await stubDashboard(page, [HEALTHY], [{ market: 'US', status: 'risk_off' }]);
-    await page.goto('/#/Dashboard');
+    await page.goto('/#/Positions');
     await openMonitor(page);
 
     await expect(row(page, 'OK')).toHaveAttribute('data-suggestion', 'hold');

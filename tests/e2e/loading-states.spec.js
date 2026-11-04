@@ -17,7 +17,7 @@
  *   SC-LS-09  Notifications (Alerts) — empty state when no notifications
  *   SC-LS-10  Analytics — spinner shown while loading
  *   SC-LS-11  Analytics — error state on API failure
- *   SC-LS-12  Dashboard (Portfolio) — spinner shown while loading
+ *   SC-LS-12  (legacy Dashboard spinner) v9.15 ST-12 (BLG-FE-247): removed with the page
  *
  * Spec refs:
  *   docs/specs/frontend/patterns/loading_states.md v1.0
@@ -275,21 +275,6 @@ test('SC-LS-11: Analytics — error state shown on API failure', async ({ page }
   await expect(page.getByText('Something went wrong')).toBeVisible({ timeout: 5000 });
   await expect(page.getByRole('button', { name: 'Try again' })).toBeVisible();
   await expect(page.getByText(/500|Internal server error/i)).toHaveCount(0);
-});
-
-// ---------------------------------------------------------------------------
-// SC-LS-12 — Dashboard (Portfolio): spinner shown while loading
-// ---------------------------------------------------------------------------
-
-test('SC-LS-12: Dashboard — spinner visible while portfolio API is pending', async ({ page }) => {
-  await mockDelayed(page, `${API}/portfolio`, PORTFOLIO_OK, 1500);
-  await mockPositionsEntity(page, EMPTY_POSITIONS_ARRAY);
-  await stubDashboardSidecalls(page);
-
-  await page.goto('/#/Dashboard');
-
-  await expect(page.locator('[class*="animate-spin"]').first()).toBeVisible({ timeout: 3000 });
-  await expect(page.locator('[class*="animate-spin"]').first()).toHaveCount(0, { timeout: 8000 });
 });
 
 // ---------------------------------------------------------------------------

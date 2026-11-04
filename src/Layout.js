@@ -153,7 +153,7 @@ export default function Layout({ children, currentPageName }) {
   // subtree -- so every dark: variant and every CSS custom property that
   // differs between :root and .dark (src/index.css) has always resolved to
   // its LIGHT value inside every Dialog-based component app-wide (14+
-  // consumers: CommandPalette, ExportModal, WatchlistModal, WidgetLibrary,
+  // consumers: CommandPalette, ExportModal, WatchlistModal,
   // etc. — ST-16, EPIC-03, v8.8: PositionEntryModal removed as dead code,
   // dropped from this example list), regardless of the user's actual theme
   // setting. Syncing the class onto documentElement (an ancestor of every

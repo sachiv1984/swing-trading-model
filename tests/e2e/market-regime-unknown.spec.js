@@ -6,7 +6,7 @@
  *   SC-MRU-01: Dashboard Card 4 shows UNKNOWN ? for an unmeasured SPY (never RISK-OFF), with the
  *              ruling explanation as the badge's accessible description; FTSE stays RISK-ON ✓
  *   SC-MRU-02: the Signals market status bar shows "Unknown" and "Price unavailable" for the same mock
- *   SC-MRU-03: the customisable Dashboard regime widget shows Unknown, not Risk Off, for an unknown market
+ *   SC-MRU-03: (customisable Dashboard regime widget) v9.15 ST-12 (BLG-FE-247): removed with the legacy page
  *
  * Infrastructure: Playwright page.route() network interception. No live backend required.
  * ROUTING NOTE: App uses HashRouter — navigate via page.goto('/#/…').
@@ -78,15 +78,4 @@ test('SC-MRU-02: the Signals bar shows Unknown and "Price unavailable" for SPY',
   await expect(tile.getByText('$0.00')).toHaveCount(0);
   await expect(page.getByTestId('signals-regime-unknown-US')).toHaveAccessibleDescription(US_EXPLANATION);
   await expect(page.getByTestId('signals-regime-UK').getByText('Risk On')).toBeVisible();
-});
-
-test('SC-MRU-03: the Dashboard US regime widget shows Unknown, not Risk Off', async ({ page }) => {
-  await mockApi(page);
-  await page.goto('/#/Dashboard');
-  const pill = page.getByTestId('regime-widget-unknown-US');
-  await expect(pill).toBeVisible({ timeout: 15000 });
-  await expect(pill).toHaveText('Unknown');
-  await expect(pill).toHaveAccessibleDescription(US_EXPLANATION);
-  await pill.focus();
-  await expect(page.getByRole('tooltip')).toContainText('could not be measured');
 });
