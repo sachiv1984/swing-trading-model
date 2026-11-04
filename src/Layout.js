@@ -37,6 +37,7 @@ import { formatCurrency } from "./lib/format";
 import { apiFetch, api } from "./api/base44Client";
 import CommandPalette, { OPEN_COMMAND_PALETTE_EVENT } from "./components/CommandPalette";
 import { PAGE_LABELS, documentTitle } from "./lib/pageLabels";
+import { formatReleaseVersion } from "./lib/releaseVersion";
 import CashManagementModal from "./components/cash/CashManagementModal";
 import { toast } from "sonner";
 
@@ -146,6 +147,16 @@ export default function Layout({ children, currentPageName }) {
   const [theme, setTheme] = useState(() => localStorage.getItem("theme") || "dark");
   const location = useLocation();
   const navigate = useNavigate();
+
+  // ST-14 (BLG-FE-266, v9.15): the footer version comes from the same source
+  // as the Dashboard What's New panel (api.changelog.latest(); same query key,
+  // so the two share one cached request). No text while loading or when absent.
+  const { data: latestRelease } = useQuery({
+    queryKey: ["home-whats-new"],
+    queryFn: () => api.changelog.latest(),
+    retry: 1,
+  });
+  const footerVersion = formatReleaseVersion(latestRelease?.version);
 
   // ST-13 (BLG-FE-249, v9.15): one browser-tab title per page, set here on
   // every route change from the shared label source (navigation.md §Browser Tab Title).
@@ -821,7 +832,7 @@ export default function Layout({ children, currentPageName }) {
               isDark ? "text-slate-400" : "text-slate-600"
             )}
           >
-            <span>v1.0.0</span>
+            <span data-testid="sidebar-footer-version">{footerVersion || ""}</span>
             <a
               href="#"
               className="flex items-center gap-1 hover:text-slate-400 transition-colors"
