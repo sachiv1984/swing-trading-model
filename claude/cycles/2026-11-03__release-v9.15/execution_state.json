@@ -62,7 +62,7 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.push",
           "sign_off_record": null,
-          "notes": "Reclassified delegated_decision -> autonomous on ESC-EXEC-20261104-01 resolution (Branch A, 2026-11-04). Branch A implemented; strategy_rules.md v1.23 (case (c)), registry 1.23. AC 1-3 met (SC-TEPC-01..10 local pass); AC 4 (CI) met — see CI line below. Deviation check: none — implementation matches position_form.md v1.13 and the decision record (panel placed directly above the Trade Plan Linkage Advisory, after the Estimated Cost card, per §Placement). CI on a4914ce9 (branch head containing this commit): all 9 workflows success — Playwright E2E 41820859317, CI Pytest 41820859397, Frontend Production Build 41820859400, Critical-Path Smoke 41820859404.",
+          "notes": "Reclassified delegated_decision -> autonomous on ESC-EXEC-20261104-01 resolution (Branch A, 2026-11-04). Branch A implemented; strategy_rules.md v1.23 (case (c)), registry 1.23. AC 1-3 met (SC-TEPC-01..10 local pass); AC 4 (CI) met — see CI line below. Deviation check: none — implementation matches position_form.md v1.13 and the decision record (panel placed directly above the Trade Plan Linkage Advisory, after the Estimated Cost card, per §Placement). CI on a4914ce9 (branch head containing this commit): all 9 workflows success — Playwright E2E 41820859317, CI Pytest 41820859397, Frontend Production Build 41820859400, Critical-Path Smoke 41820859404. DoQ review findings 3-4 (comment cites v1.23; position_form.md cross-reference to portfolio_endpoints.md) fixed in 41e0949e. Acknowledgement-reset/auto-expand follow-up: BLG-FE-269.",
           "_planned_spec_references": [
             "docs/design/2026-11-03__release-v9.15/trade-entry-pre-entry-checks/decision_record.md",
             "docs/specs/frontend/components/position_form.md"
@@ -75,11 +75,11 @@
           "assigned_to": "engine",
           "github_issue": 2146,
           "branch": "exec/2026-11-03__release-v9.15/EPIC-01",
-          "commit_sha": "a4914ce942a019e318c29b5a5a7423ef96c067bd",
+          "commit_sha": "41e0949ed47856f60705de6ad5e814382f532569",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": "2026-11-04T11:26:14Z",
+          "completed_utc": "2026-11-04T14:51:53Z",
           "acceptance_verified": true,
           "spec_references": [
             "docs/design/2026-11-03__release-v9.15/trade-entry-fx-rate/decision_record.md",
@@ -91,7 +91,7 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.push",
           "sign_off_record": null,
-          "notes": "AC 1-3 met (SC-TEFX-01..06 local pass); AC 4 CI met — see CI line below. Implementation note (not a deviation, intent check LL-v3.4-P3-03): position_form.md says an empty US rate is covered by an 'FX rate missing for US trades' validation, which TradeEntry.js never had; the empty field is sent as null and the server uses its live rate, so save is not blocked. Observed local flake (pre-existing class): v7.2 SC-STP-06 failed once when the Layout ⌘K tip toast covered Create Position on the now-taller page; passed 3/3 on repeat. CI on a4914ce9 (branch head containing this commit): all 9 workflows success — Playwright E2E 41820859317, CI Pytest 41820859397, Frontend Production Build 41820859400, Critical-Path Smoke 41820859404.",
+          "notes": "AC 1-4 met. Pre-fill, source line and label in a4914ce9 (CI green: Playwright 41820859317). The \"FX rate missing for US trades\" save validation required by position_form.md §FX Rate/§Validation Errors and decision record §2.3 was missing (agent-mediated DoQ review finding 1); added in 41e0949e with SC-TEFX-07, and SC-STP-05 now enters a rate for its US plan. CI on 41e0949e: all 9 workflows success — Playwright E2E 41851843108, CI Pytest 41851843049, Frontend Production Build 41851843299, Critical-Path Smoke 41851842714.",
           "_planned_spec_references": [
             "docs/design/2026-11-03__release-v9.15/trade-entry-fx-rate/decision_record.md",
             "docs/specs/frontend/components/position_form.md"
@@ -203,7 +203,7 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.push",
           "sign_off_record": null,
-          "notes": "AC 1-2 met (tests/test_stop_trail_value.py). Implementation note (intent check, not a deviation): the value is calculate_trailing_stop's §7.2 candidate with current_stop = -inf (no ratchet), so trail_difference stays signed; the AC's equality holds whenever the stored stop is below the candidate, and the design intent (formula + floor) is met in all cases. Contract is stop_trail_endpoint.md v1.1.0; the slice named position_endpoints.md, which does not document this endpoint. CI on cbaaecd2 (branch head containing this commit): all 9 workflows success — Playwright E2E 41823051969, CI Pytest 41823051939, Frontend Production Build 41823051875, Critical-Path Smoke 41823051908.",
+          "notes": "AC 1-2 met (tests/test_stop_trail_value.py). The value is calculate_trailing_stop's §7.2 candidate with current_stop = -inf (no ratchet), so trail_difference stays signed; ruled intended by the Strategy Rules & System Intent Owner, ESC-EXEC-20261104-02 (2026-11-04), raised by the agent-mediated DoQ review finding 2. Contract is stop_trail_endpoint.md v1.1.0; the slice named position_endpoints.md, which does not document this endpoint. Footnote at-loss wording follow-up: BLG-FE-270. CI on cbaaecd2: all 9 workflows success — Playwright E2E 41823051969, CI Pytest 41823051939, Frontend Production Build 41823051875, Critical-Path Smoke 41823051908.",
           "_planned_spec_references": [
             "docs/specs/frontend/pages/positions.md",
             "docs/specs/api_contracts/position_endpoints.md"
@@ -233,7 +233,7 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.push",
           "sign_off_record": null,
-          "notes": "AC met: label changed; SC-SIG-ZA-01/02 pass locally. Deviation check: none. CI on cbaaecd2 (branch head containing this commit): all 9 workflows success — Playwright E2E 41823051969, CI Pytest 41823051939, Frontend Production Build 41823051875, Critical-Path Smoke 41823051908.",
+          "notes": "AC met: label changed; SC-SIG-ZA-01/02 pass locally. Deviation check: none. CI on cbaaecd2 (branch head containing this commit): all 9 workflows success — Playwright E2E 41823051969, CI Pytest 41823051939, Frontend Production Build 41823051875, Critical-Path Smoke 41823051908. Backend assertions for both zero-ATR reason strings added in tests/test_signal_sizing.py (41e0949e, DoQ review finding 7).",
           "_planned_spec_references": [
             "docs/design/2026-11-03__release-v9.15/signal-card-cost-and-sizing-reason/decision_record.md",
             "docs/specs/api_contracts/signal_endpoints.md"
@@ -274,6 +274,19 @@
       "resolved_utc": "2026-11-04T11:00:36Z",
       "resolved_by": "Strategy Rules & System Intent Owner (the user, in session)",
       "resolution_summary": "Branch A (acknowledge to proceed). Submit disabled until a WARN/FAIL is acknowledged; a user-passable acknowledgement is not a hard submission gate under §4.2.6. Case (c) strategy_rules.md write in ST-01's commit."
+    },
+    "ESC-EXEC-20261104-02": {
+      "cycle": "2026-11-03__release-v9.15",
+      "summary": "ST-06/EPIC-01 — whether the Trail Stop modal's atr_trail_stop is the un-ratcheted §7.2 candidate (AC 1 'equals calculate_trailing_stop from the same inputs')",
+      "trigger_type": "Strategy",
+      "owning_authority": "Strategy Rules & System Intent Owner",
+      "raised_utc": "2026-11-04T14:51:24Z",
+      "sla_due_utc": "2026-11-07T14:51:24Z",
+      "blocks_execution": false,
+      "disposition": "Resolved",
+      "resolved_utc": "2026-11-04T14:51:24Z",
+      "resolved_by": "Strategy Rules & System Intent Owner (the user, in session)",
+      "resolution_summary": "Un-ratcheted §7.2 candidate is intended (multipliers + breakeven floor, not raised to the stored stop); trail_difference stays signed. AC 1 met under this reading; no code change, no backlog remainder, no strategy_rules.md change."
     }
   },
   "merge_gate": {

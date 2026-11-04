@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-03 (Sprint Planning `2026-11-03__release-v9.15` — 5 new items added: BLG-OPS-211, BLG-SPEC-217, BLG-GOV-408 (STEP 6.2 post-merge trackers for ST-31, ST-35, ST-45), BLG-FE-267, BLG-FE-268 (design gate observations)); prior — 2026-11-03 (Release Planning `2026-11-03__release-v9.15`, §1.3a — `BLG-OPS-48` date-lapsed gate cleared (a): `BLG-OPS-36` shipped v4.2 and the 2026-11-01 date has passed); prior — 2026-11-03 (Head of Specs Team, user-directed — `BLG-GOV-392`, `393`, `405`, `406`, `407` bannered ✅ COMPLETE: five deferred prompt patches applied, OPERATIONAL_GUIDE.md v4.250); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-04 (Sprint Execution `2026-11-03__release-v9.15` EPIC-01, agent-mediated Director of Quality review — 2 new items added: BLG-FE-269, BLG-FE-270); prior — 2026-11-03 (Sprint Planning `2026-11-03__release-v9.15` — 5 new items added: BLG-OPS-211, BLG-SPEC-217, BLG-GOV-408 (STEP 6.2 post-merge trackers for ST-31, ST-35, ST-45), BLG-FE-267, BLG-FE-268 (design gate observations)); prior — 2026-11-03 (Release Planning `2026-11-03__release-v9.15`, §1.3a — `BLG-OPS-48` date-lapsed gate cleared (a): `BLG-OPS-36` shipped v4.2 and the 2026-11-01 date has passed); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -6432,3 +6432,50 @@ The sidebar footer's "Docs" link in `src/Layout.js` (next to the version label v
 **Acceptance Criteria**
 - No `href="#"` remains on the sidebar footer link (or the link is gone), and a Playwright check asserts its target or absence
 - `navigation.md` matches the shipped footer
+
+---
+
+### BLG-FE-269 — Reset the pre-entry acknowledgement when the checks change
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** Agent-mediated Director of Quality review of `2026-11-03__release-v9.15` EPIC-01 (ST-01), non-blocking observation, user-authorised — 2026-11-04
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.16
+
+**Problem**
+In the shared `src/components/trades/PreEntryValidationPanel.js` (Trade Entry and Trade Plan), the acknowledgement tick survives edits to ticker, market, shares or entry price. A new WARN/FAIL that appears after the box was ticked is therefore accepted without a fresh acknowledgement. When the panel is collapsed the checkbox is hidden, while Trade Entry's helper line still says "Tick the acknowledgement in Pre-Entry Checks to save."
+
+**Scope**
+- Clear the acknowledgement whenever the set of WARN/FAIL check results changes
+- Expand the panel automatically while an acknowledgement is required
+- Update `position_form.md` §Pre-Entry Checks and `trade_plan.md` to match
+
+**Acceptance Criteria**
+- Changing an input so the WARN/FAIL set changes clears the tick and re-disables Submit (Playwright, Trade Entry and Trade Plan)
+- While an acknowledgement is required, the checkbox is visible without the user expanding the panel (Playwright)
+- Both specs describe the reset and auto-expand behaviour
+
+---
+
+### BLG-FE-270 — Make the Trail Stop footnote cover positions at a loss
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Head of UX & Design
+**Source:** Agent-mediated Director of Quality review of `2026-11-03__release-v9.15` EPIC-01 (ST-06), non-blocking observation, user-authorised — 2026-11-04
+**Effort:** XS (<1h plus test)
+**Provisional-Target:** v9.16
+
+**Problem**
+The Trail Stop modal footnote in `src/pages/Positions.js` describes only the profit-multiplier formula ("current price − (profit multiplier × 14-day ATR), never below your entry price"). Since v9.15 ST-06, `GET /positions/{id}/stop-trail` uses the initial multiplier for a position at a loss, so the footnote is wrong for those positions. Candidate to fold into v9.15 ST-17, which rewrites this modal.
+
+**Scope**
+- Reword the footnote to cover both the profitable and the at-loss case, with no literal multiplier
+- Update `positions.md` §Trail Stop Action
+
+**Acceptance Criteria**
+- The footnote is correct for both a profitable and an at-loss position (code review of wording, FI-P3-02)
+- No literal multiplier appears in the footnote
+- `positions.md` §Trail Stop Action matches the shipped wording
+
+---
