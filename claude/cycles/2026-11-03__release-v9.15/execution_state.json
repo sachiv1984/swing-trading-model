@@ -18,10 +18,10 @@
   ],
   "epics": {
     "EPIC-01": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-11-03__release-v9.15/EPIC-01",
       "pr_number": 2189,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-11-03__release-v9.15/qa_evidence_EPIC-01.md",
       "test_scenarios": [
@@ -40,7 +40,7 @@
         "ST-01": {
           "title": "Show the pre-entry checks on every route into Trade Entry, not only from a Trade Plan",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2145,
           "branch": "exec/2026-11-03__release-v9.15/EPIC-01",
@@ -72,7 +72,7 @@
         "ST-02": {
           "title": "Pre-fill Trade Entry's FX rate from the live rate, not a fixed 1.27",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2146,
           "branch": "exec/2026-11-03__release-v9.15/EPIC-01",
@@ -101,7 +101,7 @@
         "ST-03": {
           "title": "Label the FX rate the same way on entry and exit",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2147,
           "branch": "exec/2026-11-03__release-v9.15/EPIC-01",
@@ -131,7 +131,7 @@
         "ST-04": {
           "title": "Default trade, exit and cash dates to the user's local date, not the UTC date",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2148,
           "branch": "exec/2026-11-03__release-v9.15/EPIC-01",
@@ -157,7 +157,7 @@
         "ST-05": {
           "title": "Normalise the Trade Entry ticker the same way for the ATR preview and for save",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2149,
           "branch": "exec/2026-11-03__release-v9.15/EPIC-01",
@@ -183,7 +183,7 @@
         "ST-06": {
           "title": "Trail Stop modal's ATR trail value uses a hardcoded 2.0 multiplier and no breakeven floor",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2150,
           "branch": "exec/2026-11-03__release-v9.15/EPIC-01",
@@ -213,7 +213,7 @@
         "ST-07": {
           "title": "Label signal cost as including fees, and make the zero-ATR sizing reason plain English",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2151,
           "branch": "exec/2026-11-03__release-v9.15/EPIC-01",
@@ -299,14 +299,15 @@
     }
   },
   "merge_gate": {
-    "epics_merged": [],
-    "epics_pending": [
+    "epics_merged": [
       "EPIC-01"
     ],
-    "all_merged": false
+    "epics_pending": [],
+    "all_merged": true
   },
   "process_notes": [
-    "2026-11-04: run sprint --epic EPIC-01. Initialised EPIC-01 only (execution_state.json owner per sprint_backlog.md Merge Order); other EPIC branches append their own sections. merge_gate.epics_pending lists initialised EPICs only (ST-38 tracks counting uninitialised EPICs)."
+    "2026-11-04: run sprint --epic EPIC-01. Initialised EPIC-01 only (execution_state.json owner per sprint_backlog.md Merge Order); other EPIC branches append their own sections. merge_gate.epics_pending lists initialised EPICs only (ST-38 tracks counting uninitialised EPICs).",
+    "2026-11-04: EPIC-01 merged (PR #2189, merge commit 46307e1d, 2026-11-04T19:24:41Z, by the human repository owner). merge_gate.all_merged reads true only because EPIC-01 is the sole initialised EPIC (see the note above; ST-38). EPIC-02..EPIC-07 are not started — the next run sprint must not treat all_merged as sprint completion and must not enter STEP 5 (Sprint Close) until every EPIC in sprint_backlog.md's Merge Order is initialised and merged."
   ],
   "sealed": false,
   "sealed_utc": null
