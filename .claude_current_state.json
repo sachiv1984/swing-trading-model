@@ -4,7 +4,7 @@
   "status": "Executing",
   "prior_status": "Sprint_Planning_Complete",
   "engine": "Sprint Execution",
-  "last_updated_utc": "2026-11-04T11:00:36Z",
+  "last_updated_utc": "2026-11-04T19:29:15Z",
   "execution_state_path": "claude/cycles/2026-11-03__release-v9.15/execution_state.json",
   "backlog_slice_path": "claude/cycles/2026-11-03__release-v9.15/stage4_backlog_slice.md",
   "design_gate_required": true,
@@ -560,6 +560,32 @@
       "resolved_utc": "2026-11-04T14:51:24Z",
       "resolved_by": "Strategy Rules & System Intent Owner (the user, in session)",
       "resolution_summary": "Un-ratcheted §7.2 candidate is intended (multipliers + breakeven floor, not raised to the stored stop); trail_difference stays signed. AC 1 met under this reading; no code change, no backlog remainder, no strategy_rules.md change."
+    },
+    "ESC-EXEC-20261104-03": {
+      "cycle": "2026-11-03__release-v9.15",
+      "summary": "ST-20/EPIC-03 — behavioural strategy version effective date: ruling date vs production deploy date (v1.15 window vs strategy_version_at_entry stamps)",
+      "trigger_type": "Strategy",
+      "owning_authority": "Strategy Rules & System Intent Owner",
+      "raised_utc": "2026-11-04T19:29:15Z",
+      "sla_due_utc": "2026-11-07T19:29:15Z",
+      "blocks_execution": false,
+      "disposition": "Resolved",
+      "resolved_utc": "2026-11-04T19:29:15Z",
+      "resolved_by": "Strategy Rules & System Intent Owner (the user, in session)",
+      "resolution_summary": "Deploy date: a behavioural version's effective date is the date its code reaches production. v1.15 moves to 12 October 2026 (case (c)); v1.17/v1.20 lags filed as a follow-up."
+    },
+    "ESC-EXEC-20261104-04": {
+      "cycle": "2026-11-03__release-v9.15",
+      "summary": "ST-23/EPIC-03 — canonical open-position pnl basis (live vs entry-time FX, fee deduction)",
+      "trigger_type": "Lifecycle",
+      "owning_authority": "Data Model & Domain Schema Owner",
+      "raised_utc": "2026-11-04T19:29:15Z",
+      "sla_due_utc": "2026-11-05T19:29:15Z",
+      "blocks_execution": false,
+      "disposition": "Resolved",
+      "resolved_utc": "2026-11-04T19:29:15Z",
+      "resolved_by": "Data Model & Domain Schema Owner (the user, in session)",
+      "resolution_summary": "Spec follows code: open-position pnl is native P&L at the live FX rate, not net of fees. Dictionary aligned; basis difference from realised P&L filed as a follow-up."
     }
   },
   "deferred_escalations": {
