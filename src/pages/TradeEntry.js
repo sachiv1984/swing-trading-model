@@ -20,7 +20,10 @@ import PositionSizingWidget from '../components/trades/PositionSizingWidget';
 import { INPUT_DEBOUNCE_MS } from "../hooks/usePositionSizingFetch";
 import { format } from "date-fns";
 import SetupThesisDigestPanel from '../components/trades/SetupThesisDigestPanel';
+import PreEntryValidationPanel from '../components/trades/PreEntryValidationPanel';
 import { isStartTradeEligible, STATUS_CONFIG } from "./TradePlans";
+import { FX_SOURCE_LAST_KNOWN, FX_SOURCE_CONSTANT, formatFxAge, formatFxRate } from "../lib/fxSource";
+import { todayLocal } from "../lib/localDate";
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:8000";
 
@@ -36,17 +39,43 @@ export default function TradeEntry() {
   const prefillMarket = planPrefill?.market || prefill?.market || "UK";
 
   const [formData, setFormData] = useState({
-    ticker: planPrefill?.ticker || prefill?.ticker || "",
+    ticker: (planPrefill?.ticker || prefill?.ticker || "").trim().toUpperCase(),
     market: prefillMarket,
-    entry_date: new Date().toISOString().split("T")[0],
+    entry_date: todayLocal(),
     shares: planPrefill?.quantity != null ? String(planPrefill.quantity) : "",
     entry_price: planPrefill?.entry_price != null ? String(planPrefill.entry_price) : (prefill?.entry_price || ""),
     fill_price: "",
-    fx_rate: prefillMarket === "US" ? "1.27" : "1",
+    // ST-02 (BLG-FE-245, v9.15): US starts empty and is pre-filled from the
+    // live rate below; no client-side constant is pre-filled.
+    fx_rate: prefillMarket === "US" ? "" : "1",
     atr_value: "",
     entry_note: "",
     tags: [],
   });
+
+  // ST-02 (BLG-FE-245, EPIC-01, v9.15): pre-fill the US FX rate from
+  // GET /market/status (position_form.md v1.12 §FX Rate). A value the user
+  // has typed is never overwritten.
+  const [fxTyped, setFxTyped] = useState(false);
+  const [fxSubmitAttempted, setFxSubmitAttempted] = useState(false);
+  const { data: marketStatus, isLoading: fxLoading, isError: fxError } = useQuery({
+    queryKey: ["marketStatus"],
+    queryFn: async () => {
+      const response = await apiFetch(`${API_BASE_URL}/market/status`);
+      if (!response.ok) throw new Error(`market/status ${response.status}`);
+      const result = await response.json();
+      return result.data;
+    },
+    enabled: formData.market === "US",
+    retry: false,
+  });
+  const liveFxRate = typeof marketStatus?.fx_rate === "number" && marketStatus.fx_rate > 0 ? marketStatus.fx_rate : null;
+
+  useEffect(() => {
+    if (formData.market !== "US" || fxTyped || liveFxRate == null) return;
+    const filled = formatFxRate(liveFxRate);
+    setFormData((prev) => (prev.market === "US" && prev.fx_rate !== filled ? { ...prev, fx_rate: filled } : prev));
+  }, [formData.market, fxTyped, liveFxRate]);
 
   // AC-03: manually-entered trades (no plan origin) can still optionally link
   // an existing, not-yet-started trade plan. Locked to planPrefill.id when
@@ -84,7 +113,10 @@ export default function TradeEntry() {
   // the ATR itself at save. A typed ATR always takes precedence.
   // status: idle | loading | ready | none
   const [atrPreview, setAtrPreview] = useState({ status: "idle" });
-  const previewTicker = formData.ticker.trim();
+  // ST-05 (BLG-FE-222, v9.15): one normalised ticker (trim, upper-case) for
+  // the ATR preview, the pre-entry checks and the submit.
+  const normalizedTicker = formData.ticker.trim().toUpperCase();
+  const previewTicker = normalizedTicker;
   const atrBlank = String(formData.atr_value).trim() === "";
 
   useEffect(() => {
@@ -122,6 +154,17 @@ export default function TradeEntry() {
     INITIAL_ATR_MULTIPLIER * parseFloat(formData.atr_value) >= parseFloat(formData.entry_price);
   const showAtrError = atrTouched && atrImplausible;
   const marketKnown = previewTicker !== "";
+
+  // ST-01 (BLG-FE-244, EPIC-01, v9.15): the §4.2 pre-entry checks on every
+  // route into Trade Entry (position_form.md v1.13 §Pre-Entry Checks). Hidden
+  // only when a linked plan already ran them (stored snapshot), so the panel
+  // shows at most once. Branch A (ESC-EXEC-20261104-01, strategy_rules.md
+  // §4.2.6 v1.23): an unacknowledged WARN/FAIL disables Submit.
+  const [preEntryAck, setPreEntryAck] = useState(false);
+  const [preEntryNeedsAck, setPreEntryNeedsAck] = useState(false);
+  const planRanChecks = !!linkedPlanId && linkedPlan?.pre_entry_validation_snapshot != null;
+  const showPreEntryChecks = !planRanChecks;
+  const preEntryAckRequired = showPreEntryChecks && preEntryNeedsAck && !preEntryAck;
 
   const [tagInput, setTagInput] = useState("");
   const [showTagSuggestions, setShowTagSuggestions] = useState(false);
@@ -204,15 +247,45 @@ export default function TradeEntry() {
     return "US";
   };
 
+  // Switching market resets FX: UK uses 1; US waits for the live pre-fill
+  // (ST-02) unless the user has typed a US rate.
+  const withMarket = (prev, market) => {
+    if (market === prev.market) return prev;
+    if (market === "US") return { ...prev, market, fx_rate: "" };
+    return { ...prev, market, fx_rate: "1" };
+  };
+
+  const handleMarketChange = (market) => {
+    if (market !== formData.market) setFxTyped(false);
+    setFormData((prev) => withMarket(prev, market));
+  };
+
   const handleTickerChange = (value) => {
     const market = detectMarket(value.toUpperCase());
-    setFormData((prev) => ({
-      ...prev,
-      ticker: value.toUpperCase(),
-      market,
-      fx_rate: market === "US" ? "1.27" : "1",
-    }));
+    if (market !== formData.market) setFxTyped(false);
+    setFormData((prev) => ({ ...withMarket(prev, market), ticker: value.toUpperCase() }));
   };
+
+  const handleFxChange = (value) => {
+    setFxTyped(true);
+    handleChange("fx_rate", value);
+  };
+
+  // ST-02: the line under the FX field naming where the value came from.
+  const fxSourceLine = (() => {
+    if (formData.market !== "US") return null;
+    const source = marketStatus?.fx_rate_source;
+    if (fxTyped) {
+      const live = liveFxRate != null && source !== FX_SOURCE_CONSTANT ? `live rate ${formatFxRate(liveFxRate)}` : "no live rate";
+      return { text: `Entered by you (${live})`, warn: false };
+    }
+    if (fxLoading) return null;
+    if (fxError || liveFxRate == null) return { text: "No rate available: enter the rate", warn: true };
+    const asOf = marketStatus?.fx_rate_as_of;
+    if (source === FX_SOURCE_CONSTANT) return { text: "Fallback rate: no live rate is available", warn: true };
+    if (source === FX_SOURCE_LAST_KNOWN) return { text: asOf ? `Not live: last rate from ${formatFxAge(asOf)}` : "Not live: last rate", warn: true };
+    return { text: asOf ? `Live rate, ${formatFxAge(asOf)}` : "Live rate", warn: false };
+  })();
 
   const defaultTags = ["momentum", "breakout", "pullback", "news-driven", "high-conviction"];
   const allAvailableTags = [...new Set([...existingTags, ...defaultTags])];
@@ -319,9 +392,18 @@ export default function TradeEntry() {
 
   const costs = estimateCosts();
   const isFormValid = formData.ticker && formData.shares && formData.entry_price;
+  // ST-02 (position_form.md §FX Rate, §Validation Errors): a US entry needs an
+  // FX rate. With no live rate the field stays empty and save is refused with
+  // an inline error, so no unseen server-side rate is stored.
+  const fxMissing = formData.market === "US" && !(parseFloat(formData.fx_rate) > 0);
+  const showFxMissing = fxSubmitAttempted && fxMissing;
 
   const handleSubmit = () => {
-    if (!isFormValid) return;
+    if (!isFormValid || preEntryAckRequired) return;
+    if (fxMissing) {
+      setFxSubmitAttempted(true);
+      return;
+    }
     if (atrImplausible) {
       setAtrTouched(true);
       return;
@@ -331,7 +413,7 @@ export default function TradeEntry() {
     // via POST /portfolio/position. No stop is sent: the backend sets the
     // initial stop from entry and ATR (ST-07, BLG-FE-197).
     createMutation.mutate({
-      ticker: formData.ticker,
+      ticker: normalizedTicker,
       market: formData.market,
       entry_date: formData.entry_date,
       shares: parseFloat(formData.shares),
@@ -344,6 +426,7 @@ export default function TradeEntry() {
       entry_note: formData.entry_note || null,
       tags: formData.tags.length > 0 ? formData.tags : null,
       trade_plan_id: linkedPlanId || null,
+      pre_entry_override_acknowledged: showPreEntryChecks && preEntryNeedsAck && preEntryAck ? true : undefined,
     });
   };
 
@@ -419,7 +502,7 @@ export default function TradeEntry() {
               <Label className="text-slate-600 dark:text-slate-400">Market</Label>
               <Select
                 value={formData.market}
-                onValueChange={(value) => handleChange("market", value)}
+                onValueChange={handleMarketChange}
               >
                 <SelectTrigger className="bg-slate-800/50 border-slate-700 text-white">
                   <SelectValue />
@@ -472,14 +555,35 @@ export default function TradeEntry() {
           {/* FX Rate (US only) */}
           {formData.market === "US" && (
             <div className="space-y-2">
-              <Label className="text-slate-600 dark:text-slate-400">FX Rate (USD/GBP)</Label>
+              {/* ST-03 (BLG-FE-246, v9.15): one FX label and hint on every FX input */}
+              <Label htmlFor="trade-entry-fx-rate" className="text-slate-600 dark:text-slate-400">FX rate — USD per £1 (GBP/USD)</Label>
               <Input
                 type="number"
                 step="0.0001"
                 value={formData.fx_rate}
-                onChange={(e) => handleChange("fx_rate", e.target.value)}
+                onChange={(e) => handleFxChange(e.target.value)}
+                placeholder={fxLoading && !fxTyped ? "Fetching live rate…" : undefined}
+                id="trade-entry-fx-rate"
+                aria-invalid={showFxMissing ? "true" : undefined}
+                aria-describedby={["trade-entry-fx-hint", fxSourceLine && "trade-entry-fx-source", showFxMissing && "trade-entry-fx-missing"].filter(Boolean).join(" ")}
+                data-testid="trade-entry-fx-input"
                 className="bg-slate-800/50 border-slate-700 text-white"
               />
+              <p id="trade-entry-fx-hint" data-testid="fx-rate-hint" className="text-xs text-slate-600 dark:text-slate-400">How many US dollars £1 buys.</p>
+              {fxSourceLine && (
+                <p
+                  id="trade-entry-fx-source"
+                  data-testid="trade-entry-fx-source"
+                  className={fxSourceLine.warn ? "text-xs text-amber-700 dark:text-amber-400" : "text-xs text-slate-600 dark:text-slate-400"}
+                >
+                  {fxSourceLine.text}
+                </p>
+              )}
+              {showFxMissing && (
+                <p id="trade-entry-fx-missing" data-testid="trade-entry-fx-missing" className="text-xs text-rose-700 dark:text-rose-400">
+                  FX rate missing for US trades. Enter the rate to save.
+                </p>
+              )}
             </div>
           )}
 
@@ -729,6 +833,25 @@ export default function TradeEntry() {
         </motion.div>
       )}
 
+      {/* Pre-Entry Checks (ST-01, BLG-FE-244, v9.15) — position_form.md §Pre-Entry Checks */}
+      {showPreEntryChecks ? (
+        <PreEntryValidationPanel
+          ticker={normalizedTicker}
+          market={formData.market}
+          quantity={formData.shares}
+          entryPrice={formData.entry_price}
+          stopPrice={costs.systemStop}
+          overrideAcknowledged={preEntryAck}
+          onOverrideChange={setPreEntryAck}
+          onWarningsChange={setPreEntryNeedsAck}
+          showWaiting
+        />
+      ) : (
+        <p data-testid="pre-entry-checks-on-plan" className="text-xs text-slate-600 dark:text-slate-400">
+          Pre-entry checks were run on the linked plan.
+        </p>
+      )}
+
       {/* Trade Plan Linkage Advisory (ST-28, EPIC-06, v9.4, BLG-FEAT-95) —
           non-blocking, condition-driven, no dismiss control per
           position_form.md §Trade Plan Linkage Advisory. Surfaces an
@@ -760,6 +883,7 @@ export default function TradeEntry() {
       )}
 
       {/* Submit */}
+      <div className="flex flex-col items-end gap-1">
       <div className="flex justify-end gap-3">
         <Link to={createPageUrl("Positions")}>
           <Button variant="ghost" className="text-slate-600 dark:text-slate-400 hover:text-white hover:bg-slate-800">
@@ -768,7 +892,8 @@ export default function TradeEntry() {
         </Link>
         <Button
           onClick={handleSubmit}
-          disabled={!isFormValid || showAtrError || costs.stopInvalid || createMutation.isPending}
+          disabled={!isFormValid || showAtrError || costs.stopInvalid || preEntryAckRequired || createMutation.isPending}
+          aria-describedby={preEntryAckRequired ? "pre-entry-ack-required" : undefined}
           className="bg-gradient-to-r from-cyan-500 to-violet-500 hover:from-cyan-400 hover:to-violet-400 text-white border-0 shadow-lg shadow-violet-500/25 disabled:opacity-50"
         >
           {createMutation.isPending ? (
@@ -783,6 +908,12 @@ export default function TradeEntry() {
             </>
           )}
         </Button>
+      </div>
+      {preEntryAckRequired && (
+        <p id="pre-entry-ack-required" data-testid="pre-entry-ack-required" className="text-xs text-amber-700 dark:text-amber-400">
+          Tick the acknowledgement in Pre-Entry Checks to save.
+        </p>
+      )}
       </div>
     </div>
   );

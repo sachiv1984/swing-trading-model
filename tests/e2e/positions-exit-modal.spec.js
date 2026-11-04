@@ -53,6 +53,12 @@ const POSITION = {
   last_reviewed_at: new Date().toISOString(),
 };
 
+// The browser and this test run in the same timezone here, so the local date matches.
+function localToday() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+
 const json = (body, status = 200) => ({ status, contentType: 'application/json', body: JSON.stringify(body) });
 
 // state.open is the list GET /positions returns; a successful exit empties it.
@@ -112,7 +118,8 @@ test('SC-PEM-01: Confirm Exit posts the exit, closes the modal and removes the p
     shares: 10,
     exit_price: 160,
     exit_fx_rate: 1.25,
-    exit_date: new Date().toISOString().split('T')[0],
+    // ST-04 (BLG-FE-243, v9.15): the exit date defaults to the user's local date.
+    exit_date: localToday(),
   });
   expect(typeof body.exit_reason).toBe('string');
   expect(body.exit_reason.length).toBeGreaterThan(0);

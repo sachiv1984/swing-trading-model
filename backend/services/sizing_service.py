@@ -33,6 +33,11 @@ from services.concentration_service import (
 )
 from services.portfolio_service import calculate_prospective_heat
 
+# ST-07 (BLG-FE-219, EPIC-01, v9.15): zero-ATR sizing reasons, shown as-is on the
+# signal card (signals.md v0.8, signal_endpoints.md v1.10).
+ZERO_ATR_REASON_SIGNAL = "No size suggested: this ticker's 14-day ATR (its average daily price range) isn't available."
+ZERO_ATR_REASON_LIST = "No size suggested: no ticker in this list has a 14-day ATR available."
+
 logger = logging.getLogger(__name__)
 
 
@@ -482,7 +487,8 @@ def size_batch_inv_vol(signals: list, available_cash: float, fx_rate: float = 1.
             sig['allocation_gbp'] = 0
             sig['total_cost'] = 0
             sig['inv_vol_weight'] = 0
-            sig['reason'] = 'Inv-vol sizing: no valid ATR values'
+            # ST-07 (BLG-FE-219, v9.15): plain-English zero-ATR reason (signals.md v0.8)
+            sig['reason'] = ZERO_ATR_REASON_LIST
         return signals
 
     raw_weights = [v / total_inv_atr for v in inv_atrs]
@@ -507,7 +513,7 @@ def size_batch_inv_vol(signals: list, available_cash: float, fx_rate: float = 1.
             sig['allocation_gbp'] = 0
             sig['total_cost'] = 0
             sig['inv_vol_weight'] = 0
-            sig['reason'] = 'Inv-vol sizing: ATR unavailable for this signal'
+            sig['reason'] = ZERO_ATR_REASON_SIGNAL
             continue
 
         allocation_gbp = available_cash * weight

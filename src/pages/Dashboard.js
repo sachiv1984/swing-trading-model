@@ -35,6 +35,7 @@ import WinRateChart from "../components/charts/WinRateChart";
 import MarketRegimeCard from "../components/dashboard/MarketRegimeCard";
 import QuickActions from "../components/dashboard/QuickActions";
 import RecentTradesWidget from "../components/dashboard/widgets/RecentTradesWidget";
+import { todayLocal } from "../lib/localDate";
 
 // Monitor suggestion → ExitModal pre-selection
 // (positions.md §Daily Position Monitor Exit Queue).
@@ -260,9 +261,9 @@ export default function Dashboard() {
           // If current equity is peak, use today's date
           let peakDate;
           if (Math.abs(currentEquity - historicalPeak) < 0.01) {
-            peakDate = new Date().toISOString().split('T')[0];
+            peakDate = todayLocal();
           } else {
-            peakDate = peakSnapshot?.snapshot_date || new Date().toISOString().split('T')[0];
+            peakDate = peakSnapshot?.snapshot_date || todayLocal();
           }
           
           // ✅ Step 3: Calculate max historical drawdown
@@ -386,7 +387,7 @@ export default function Dashboard() {
         return {
           currentEquity,
           peakEquity: estimatedPeak,
-          peakDate: new Date().toISOString().split('T')[0],
+          peakDate: todayLocal(),
           maxHistoricalDrawdown: maxDD,
           dataSource: 'estimated',
           dataPoints: closedPositions.length
@@ -398,7 +399,7 @@ export default function Dashboard() {
         return {
           currentEquity: currentEquity || 0,
           peakEquity: currentEquity || 0,
-          peakDate: new Date().toISOString().split('T')[0],
+          peakDate: todayLocal(),
           maxHistoricalDrawdown: 0,
           dataSource: 'default',
           dataPoints: 0

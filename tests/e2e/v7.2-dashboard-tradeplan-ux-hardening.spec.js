@@ -156,6 +156,8 @@ test.describe('Start Trade from Plan', () => {
     // Shares has no plan-derived default and is required for form validity —
     // its placeholder ("0") is unique among the page's number inputs.
     await page.getByPlaceholder('0', { exact: true }).fill('10');
+    // US plan and no live rate mocked: a US save needs an FX rate (v9.15 ST-02).
+    await page.getByTestId('trade-entry-fx-input').fill('1.3');
     await page.getByRole('button', { name: /create position/i }).click();
 
     await expect.poll(() => capturedBody).not.toBeNull();

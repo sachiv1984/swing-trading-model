@@ -1,0 +1,313 @@
+{
+  "cycle_id": "2026-11-03__release-v9.15",
+  "sprint_goal": "Make every route into Trade Entry show the §4.2 pre-entry checks and pre-fill the live FX rate (BLG-FE-244, BLG-FE-245, P1). Deliver Site Structure & Usability Phase 1: navigation v2/glossary, Dashboard \"Today\" and Journal area specs approved, one name per page, legacy Dashboard route removed, per-page tab titles. Ship v9.15's metric-correctness, AI-check, operations, data-model and governance items alongside.",
+  "backlog_slice_source": "claude/cycles/2026-11-03__release-v9.15/stage4_backlog_slice.md",
+  "backlog_slice_addendum": "claude/cycles/2026-11-03__release-v9.15/stage4_backlog_slice_addendum.md",
+  "invoked_utc": "2026-11-04T10:55:44Z",
+  "mode": "standard",
+  "status": "Running",
+  "last_updated_utc": "2026-11-04T11:42:01Z",
+  "merge_order": [
+    "EPIC-01",
+    "EPIC-03",
+    "EPIC-02",
+    "EPIC-04",
+    "EPIC-06",
+    "EPIC-07",
+    "EPIC-05"
+  ],
+  "epics": {
+    "EPIC-01": {
+      "status": "done",
+      "branch": "exec/2026-11-03__release-v9.15/EPIC-01",
+      "pr_number": 2189,
+      "pr_status": "open",
+      "qa_signed_off": true,
+      "qa_evidence_log": "claude/cycles/2026-11-03__release-v9.15/qa_evidence_EPIC-01.md",
+      "test_scenarios": [
+        "tests/test_trade_entry_pre_entry_override.py",
+        "tests/test_market_atr_preview_endpoint.py",
+        "tests/test_strategy_version_registry.py",
+        "tests/e2e/trade-entry-pre-entry-checks.spec.js",
+        "tests/e2e/trade-entry-fx-rate.spec.js",
+        "tests/test_stop_trail_value.py",
+        "tests/e2e/local-date-prefill.spec.js",
+        "tests/e2e/positions-exit-modal.spec.js",
+        "tests/e2e/signal-card.spec.js",
+        "tests/test_signal_sizing.py"
+      ],
+      "stories": {
+        "ST-01": {
+          "title": "Show the pre-entry checks on every route into Trade Entry, not only from a Trade Plan",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 2145,
+          "branch": "exec/2026-11-03__release-v9.15/EPIC-01",
+          "commit_sha": "e0a786675644e0dcf6cbff2355ab89ebb3180ce3",
+          "delegation_record_id": "ESC-EXEC-20261104-01",
+          "blocked_since_utc": null,
+          "unblock_criteria": "Dated Strategy Rules & System Intent Owner ruling, Branch A or Branch B, recorded in ESC-EXEC-20261104-01's resolution.",
+          "completed_utc": "2026-11-04T11:17:07Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/design/2026-11-03__release-v9.15/trade-entry-pre-entry-checks/decision_record.md",
+            "docs/specs/frontend/components/position_form.md",
+            "docs/specs/api_contracts/portfolio_endpoints.md",
+            "claude/strategy/strategy_rules.md",
+            "tests/e2e/trade-entry-pre-entry-checks.spec.js",
+            "tests/test_trade_entry_pre_entry_override.py"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.push",
+          "sign_off_record": null,
+          "notes": "Reclassified delegated_decision -> autonomous on ESC-EXEC-20261104-01 resolution (Branch A, 2026-11-04). Branch A implemented; strategy_rules.md v1.23 (case (c)), registry 1.23. AC 1-3 met (SC-TEPC-01..10 local pass); AC 4 (CI) met — see CI line below. Deviation check: none — implementation matches position_form.md v1.13 and the decision record (panel placed directly above the Trade Plan Linkage Advisory, after the Estimated Cost card, per §Placement). CI on a4914ce9 (branch head containing this commit): all 9 workflows success — Playwright E2E 41820859317, CI Pytest 41820859397, Frontend Production Build 41820859400, Critical-Path Smoke 41820859404. DoQ review findings 3-4 (comment cites v1.23; position_form.md cross-reference to portfolio_endpoints.md) fixed in 41e0949e. Acknowledgement-reset/auto-expand follow-up: BLG-FE-269.",
+          "_planned_spec_references": [
+            "docs/design/2026-11-03__release-v9.15/trade-entry-pre-entry-checks/decision_record.md",
+            "docs/specs/frontend/components/position_form.md"
+          ]
+        },
+        "ST-02": {
+          "title": "Pre-fill Trade Entry's FX rate from the live rate, not a fixed 1.27",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 2146,
+          "branch": "exec/2026-11-03__release-v9.15/EPIC-01",
+          "commit_sha": "41e0949ed47856f60705de6ad5e814382f532569",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-11-04T14:51:53Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/design/2026-11-03__release-v9.15/trade-entry-fx-rate/decision_record.md",
+            "docs/specs/frontend/components/position_form.md",
+            "tests/e2e/trade-entry-fx-rate.spec.js"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.push",
+          "sign_off_record": null,
+          "notes": "AC 1-4 met. Pre-fill, source line and label in a4914ce9 (CI green: Playwright 41820859317). The \"FX rate missing for US trades\" save validation required by position_form.md §FX Rate/§Validation Errors and decision record §2.3 was missing (agent-mediated DoQ review finding 1); added in 41e0949e with SC-TEFX-07, and SC-STP-05 now enters a rate for its US plan. CI on 41e0949e: all 9 workflows success — Playwright E2E 41851843108, CI Pytest 41851843049, Frontend Production Build 41851843299, Critical-Path Smoke 41851842714.",
+          "_planned_spec_references": [
+            "docs/design/2026-11-03__release-v9.15/trade-entry-fx-rate/decision_record.md",
+            "docs/specs/frontend/components/position_form.md"
+          ]
+        },
+        "ST-03": {
+          "title": "Label the FX rate the same way on entry and exit",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 2147,
+          "branch": "exec/2026-11-03__release-v9.15/EPIC-01",
+          "commit_sha": "4c7b10eefc77c4c4449b908daa4fc121465d078e",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-11-04T11:29:19Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/components/position_form.md",
+            "docs/specs/frontend/components/exit_modal.md",
+            "docs/specs/frontend/pages/trade_plan.md",
+            "docs/design/2026-11-03__release-v9.15/trade-entry-fx-rate/decision_record.md"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.push",
+          "sign_off_record": null,
+          "notes": "Wording-only (FI-P3-02): code review of the static label text in TradeEntry.js, ExitModal.js, WhatIfSizingPreview.js. AC 1 met: grep of src/ finds 3 FX rate inputs, all relabelled; no other FX input exists. Deviation check: none. CI on cbaaecd2 (branch head containing this commit): all 9 workflows success — Playwright E2E 41823051969, CI Pytest 41823051939, Frontend Production Build 41823051875, Critical-Path Smoke 41823051908.",
+          "_planned_spec_references": [
+            "docs/specs/frontend/components/position_form.md",
+            "docs/specs/frontend/components/exit_modal.md"
+          ]
+        },
+        "ST-04": {
+          "title": "Default trade, exit and cash dates to the user's local date, not the UTC date",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 2148,
+          "branch": "exec/2026-11-03__release-v9.15/EPIC-01",
+          "commit_sha": "98314abf4b8c2b6f9058bf0237a66827e1b45401",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-11-04T11:34:54Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "src/lib/localDate.js",
+            "tests/e2e/local-date-prefill.spec.js",
+            "tests/e2e/positions-exit-modal.spec.js"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.push",
+          "sign_off_record": null,
+          "notes": "Design Pre-Approved; no governing spec section beyond BLG-FE-243 (Case C: the new test file and helper are the traceable artefacts). AC 1-2: SC-LDP-01..03 pass locally under Europe/London at 00:30 BST. AC 3: no user-facing today from toISOString().split; PortfolioGrowthChart keeps it (walks stored period dates). Also fixed Trade History calendar day filter (same class). Deviation check: none. CI on cbaaecd2 (branch head containing this commit): all 9 workflows success — Playwright E2E 41823051969, CI Pytest 41823051939, Frontend Production Build 41823051875, Critical-Path Smoke 41823051908.",
+          "_planned_spec_references": []
+        },
+        "ST-05": {
+          "title": "Normalise the Trade Entry ticker the same way for the ATR preview and for save",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 2149,
+          "branch": "exec/2026-11-03__release-v9.15/EPIC-01",
+          "commit_sha": "e0a786675644e0dcf6cbff2355ab89ebb3180ce3",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-11-04T11:17:07Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/portfolio_endpoints.md",
+            "docs/specs/frontend/pages/positions.md",
+            "tests/test_market_atr_preview_endpoint.py"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.push",
+          "sign_off_record": null,
+          "notes": "Committed with ST-01 ([EPIC-01][ST-01][ST-05]). Ticker trimmed/upper-cased in AddPositionRequest validator, add_position(), and TradeEntry (preview, checks, submit). AC 1: 4 untrimmed/lower-case cases in test_market_atr_preview_endpoint.py pass. AC 2: ?exit= and ?position= share isOpenPosition (status === 'open'). Deviation check: none. CI on a4914ce9 (branch head containing this commit): all 9 workflows success — Playwright E2E 41820859317, CI Pytest 41820859397, Frontend Production Build 41820859400, Critical-Path Smoke 41820859404.",
+          "_planned_spec_references": []
+        },
+        "ST-06": {
+          "title": "Trail Stop modal's ATR trail value uses a hardcoded 2.0 multiplier and no breakeven floor",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 2150,
+          "branch": "exec/2026-11-03__release-v9.15/EPIC-01",
+          "commit_sha": "5906bfa7733a673068a1c18da82178f25796d1e7",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-11-04T11:38:44Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/pages/positions.md",
+            "docs/specs/api_contracts/stop_trail_endpoint.md",
+            "docs/design/2026-11-03__release-v9.15/trail-stop-modal-wording/decision_record.md",
+            "tests/test_stop_trail_value.py"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.push",
+          "sign_off_record": null,
+          "notes": "AC 1-2 met (tests/test_stop_trail_value.py). The value is calculate_trailing_stop's §7.2 candidate with current_stop = -inf (no ratchet), so trail_difference stays signed; ruled intended by the Strategy Rules & System Intent Owner, ESC-EXEC-20261104-02 (2026-11-04), raised by the agent-mediated DoQ review finding 2. Contract is stop_trail_endpoint.md v1.1.0; the slice named position_endpoints.md, which does not document this endpoint. Footnote at-loss wording follow-up: BLG-FE-270. CI on cbaaecd2: all 9 workflows success — Playwright E2E 41823051969, CI Pytest 41823051939, Frontend Production Build 41823051875, Critical-Path Smoke 41823051908.",
+          "_planned_spec_references": [
+            "docs/specs/frontend/pages/positions.md",
+            "docs/specs/api_contracts/position_endpoints.md"
+          ]
+        },
+        "ST-07": {
+          "title": "Label signal cost as including fees, and make the zero-ATR sizing reason plain English",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 2151,
+          "branch": "exec/2026-11-03__release-v9.15/EPIC-01",
+          "commit_sha": "cbaaecd2d15ac03008230e59e9d3664dbd258bb6",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-11-04T11:42:01Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/pages/signals.md",
+            "docs/specs/api_contracts/signal_endpoints.md",
+            "docs/design/2026-11-03__release-v9.15/signal-card-cost-and-sizing-reason/decision_record.md",
+            "tests/e2e/signal-card.spec.js"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.push",
+          "sign_off_record": null,
+          "notes": "AC met: label changed; SC-SIG-ZA-01/02 pass locally. Deviation check: none. CI on cbaaecd2 (branch head containing this commit): all 9 workflows success — Playwright E2E 41823051969, CI Pytest 41823051939, Frontend Production Build 41823051875, Critical-Path Smoke 41823051908. Backend assertions for both zero-ATR reason strings added in tests/test_signal_sizing.py (41e0949e, DoQ review finding 7).",
+          "_planned_spec_references": [
+            "docs/design/2026-11-03__release-v9.15/signal-card-cost-and-sizing-reason/decision_record.md",
+            "docs/specs/api_contracts/signal_endpoints.md"
+          ]
+        }
+      },
+      "sign_off_record": {
+        "role": "Director of Quality",
+        "status": "cleared",
+        "method": "agent_mediated",
+        "date": "2026-11-04",
+        "reference": "qa_evidence_EPIC-01.md Standard Sign-Off Block",
+        "notes": "Second pass Approved; first pass Blocked (2 blocking findings: ST-02 fixed in 41e0949e, ST-06 ruled ESC-EXEC-20261104-02; 5 non-blocking fixed or filed as BLG-FE-269/270)."
+      }
+    }
+  },
+  "deferred_at_planning": {
+    "ST-16": {
+      "epic": "EPIC-03",
+      "source": "BLG-FE-240",
+      "status": "deferred_at_planning",
+      "reason": "Superseded by ST-12: both win-rate widgets exist only on legacy Dashboard.js, which ST-12 deletes. Product Owner, 2026-11-03 (sprint_backlog.md Items Deferred This Sprint)."
+    }
+  },
+  "blocked_items": [],
+  "delegated_items": [],
+  "completed_items": [
+    "ST-01",
+    "ST-02",
+    "ST-03",
+    "ST-04",
+    "ST-05",
+    "ST-06",
+    "ST-07"
+  ],
+  "open_escalations": {
+    "ESC-EXEC-20261104-01": {
+      "cycle": "2026-11-03__release-v9.15",
+      "summary": "ST-01/EPIC-01 — Branch A (acknowledge to proceed) vs Branch B (advisory only) ruling against strategy_rules.md §4.2.6/§4.2.1",
+      "trigger_type": "Strategy",
+      "owning_authority": "Strategy Rules & System Intent Owner",
+      "raised_utc": "2026-11-04T10:56:15Z",
+      "sla_due_utc": "2026-11-07T10:56:15Z",
+      "blocks_execution": false,
+      "disposition": "Resolved",
+      "resolved_utc": "2026-11-04T11:00:36Z",
+      "resolved_by": "Strategy Rules & System Intent Owner (the user, in session)",
+      "resolution_summary": "Branch A (acknowledge to proceed). Submit disabled until a WARN/FAIL is acknowledged; a user-passable acknowledgement is not a hard submission gate under §4.2.6. Case (c) strategy_rules.md write in ST-01's commit."
+    },
+    "ESC-EXEC-20261104-02": {
+      "cycle": "2026-11-03__release-v9.15",
+      "summary": "ST-06/EPIC-01 — whether the Trail Stop modal's atr_trail_stop is the un-ratcheted §7.2 candidate (AC 1 'equals calculate_trailing_stop from the same inputs')",
+      "trigger_type": "Strategy",
+      "owning_authority": "Strategy Rules & System Intent Owner",
+      "raised_utc": "2026-11-04T14:51:24Z",
+      "sla_due_utc": "2026-11-07T14:51:24Z",
+      "blocks_execution": false,
+      "disposition": "Resolved",
+      "resolved_utc": "2026-11-04T14:51:24Z",
+      "resolved_by": "Strategy Rules & System Intent Owner (the user, in session)",
+      "resolution_summary": "Un-ratcheted §7.2 candidate is intended (multipliers + breakeven floor, not raised to the stored stop); trail_difference stays signed. AC 1 met under this reading; no code change, no backlog remainder, no strategy_rules.md change."
+    }
+  },
+  "merge_gate": {
+    "epics_merged": [],
+    "epics_pending": [
+      "EPIC-01"
+    ],
+    "all_merged": false
+  },
+  "process_notes": [
+    "2026-11-04: run sprint --epic EPIC-01. Initialised EPIC-01 only (execution_state.json owner per sprint_backlog.md Merge Order); other EPIC branches append their own sections. merge_gate.epics_pending lists initialised EPICs only (ST-38 tracks counting uninitialised EPICs)."
+  ],
+  "sealed": false,
+  "sealed_utc": null
+}

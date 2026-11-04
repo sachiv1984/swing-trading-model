@@ -52,7 +52,7 @@ import StrategyCompliancePanel from "../components/positions/StrategyComplianceP
 import PaperAccountPanel from "../components/positions/PaperAccountPanel";
 import AiChatWidget from "../components/AiChatWidget";
 import { toast } from "sonner";
-import { GRACE_PERIOD_DAYS, ATR_PERIOD_DAYS, PROFIT_ATR_MULTIPLIER } from "../constants/strategy";
+import { GRACE_PERIOD_DAYS, ATR_PERIOD_DAYS } from "../constants/strategy";
 import StaleMarker, { STALE_EXPLANATION_POSITIONS } from "../components/ui/StaleMarker";
 
 const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:8000";
@@ -295,7 +295,8 @@ function TrailStopModal({ position, onClose }) {
         {!isLoading && !isError && trailData && (
           <div className="space-y-2">
             <p className="text-xs text-slate-600 dark:text-slate-400">
-              ATR trail stop = current price − (ATR × {PROFIT_ATR_MULTIPLIER.toFixed(1)}). ATR period: {ATR_PERIOD_DAYS} days. Multiplier per strategy rules.
+              {/* ST-06 (BLG-BE-173, v9.15): no literal multiplier; the value is the §7.2 stop with the breakeven floor */}
+              ATR trail stop = current price − (profit multiplier × {ATR_PERIOD_DAYS}-day ATR), never below your entry price. This is the strategy's profitable-position stop (§7.2).
             </p>
             {noRaise && (
               <p data-testid="trail-stop-no-raise-note" className="text-xs text-slate-600 dark:text-slate-400">
@@ -613,6 +614,10 @@ function LastReviewedCell({ position, drawdownActive }) {
   );
 }
 
+// ST-05 (BLG-FE-222, v9.15): the ?exit= and ?position= deep links use the
+// same open-position test.
+const isOpenPosition = (p) => p.status === "open";
+
 export default function Positions() {
   const [viewMode, setViewMode] = useState("grid");
   const [editingPosition, setEditingPosition] = useState(null);
@@ -648,11 +653,11 @@ export default function Positions() {
   });
 
   // ST-08 (BLG-FE-198, v9.10): /#/Positions?exit={id} opens the exit dialog for
-  // that open position, then drops the parameter. Unknown or closed ids are ignored.
+  // that open position, then drops the parameter. Unknown or not-open ids are ignored.
   useEffect(() => {
     const exitId = new URLSearchParams(location.search).get("exit");
     if (!exitId || !Array.isArray(positions)) return;
-    const target = positions.find((p) => String(p.id) === exitId && p.status !== "closed");
+    const target = positions.find((p) => String(p.id) === exitId && isOpenPosition(p));
     if (target) setExitingPosition(target);
     navigate(location.pathname, { replace: true });
   }, [location.search, location.pathname, positions, navigate]);
@@ -665,7 +670,7 @@ export default function Positions() {
   useEffect(() => {
     const positionId = new URLSearchParams(location.search).get("position");
     if (!positionId || !Array.isArray(positions)) return;
-    const target = positions.find((p) => String(p.id) === positionId && p.status === "open");
+    const target = positions.find((p) => String(p.id) === positionId && isOpenPosition(p));
     if (target) setHighlightedPositionId(String(target.id));
     navigate(location.pathname, { replace: true });
   }, [location.search, location.pathname, positions, navigate]);

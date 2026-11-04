@@ -909,12 +909,19 @@ def add_position(
     Raises:
         ValueError: If portfolio not found, invalid market, or insufficient funds
     """
+    # ST-05 (BLG-FE-222, EPIC-01, v9.15): normalise the ticker once (trim,
+    # upper-case), as GET /market/atr/{ticker} does, so the previewed stop
+    # equals the saved initial_stop for untrimmed or lower-case input.
+    ticker = (ticker or "").strip().upper()
+    if not ticker:
+        raise ValueError("ticker is required")
+
     portfolio = get_portfolio()
     if not portfolio:
         raise ValueError("Portfolio not found")
-    
+
     portfolio_id = str(portfolio['id'])
-    
+
     print(f"\n📝 Adding new position: {ticker}")
     
     # Validate market

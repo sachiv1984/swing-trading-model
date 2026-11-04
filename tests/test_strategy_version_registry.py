@@ -110,9 +110,17 @@ def test_resolve_version_window_returns_none_for_unknown_version():
 
 
 def test_resolve_version_window_open_ended_for_latest_version():
+    start, end = resolve_version_window("1.23")
+    assert start == date(2026, 11, 4)
+    assert end is None
+
+
+def test_resolve_version_window_1_21_closed_by_1_23():
+    # ST-01 (v9.15): 1.21's window ends where 1.23 starts (1.22 is
+    # documentation-only and not registered).
     start, end = resolve_version_window("1.21")
     assert start == date(2026, 10, 30)
-    assert end is None
+    assert end == date(2026, 11, 4)
 
 
 def test_resolve_version_window_1_20_closed_by_1_21():

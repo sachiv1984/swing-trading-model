@@ -2,11 +2,12 @@ import { useQuery } from "@tanstack/react-query";
 import { ShieldCheck } from "lucide-react";
 import { api } from "../../../../api/base44Client";
 import DashboardCard from "../DashboardCard";
+import { localDateString } from "../../../../lib/localDate";
 
 function sevenDaysAgo() {
   const d = new Date();
   d.setDate(d.getDate() - 7);
-  return d.toISOString().split("T")[0];
+  return localDateString(d);
 }
 
 export default function RedFlagsCard() {

@@ -65,6 +65,10 @@ STRATEGY_VERSION_REGISTRY = [
     # stop distance by FX. Behavioural (US suggested shares rise by FX²), so
     # registered.
     {"version": "1.21", "effective_date": date(2026, 10, 30)},
+    # ST-01 (BLG-FE-244, EPIC-01, v9.15): §4.2.6/§4.2.1 acknowledge-to-proceed.
+    # Behavioural (Trade Entry keeps Save disabled until a WARN/FAIL pre-entry
+    # check is acknowledged on every route in), so registered.
+    {"version": "1.23", "effective_date": date(2026, 11, 4)},
 ]
 
 # Change Log versions classified as documentation-only under the 2026-10-06
