@@ -22,6 +22,7 @@ import { format } from "date-fns";
 import SetupThesisDigestPanel from '../components/trades/SetupThesisDigestPanel';
 import PreEntryValidationPanel from '../components/trades/PreEntryValidationPanel';
 import { isStartTradeEligible, STATUS_CONFIG } from "./TradePlans";
+import { FX_SOURCE_LAST_KNOWN, FX_SOURCE_CONSTANT, formatFxAge, formatFxRate } from "../lib/fxSource";
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:8000";
 
@@ -43,11 +44,36 @@ export default function TradeEntry() {
     shares: planPrefill?.quantity != null ? String(planPrefill.quantity) : "",
     entry_price: planPrefill?.entry_price != null ? String(planPrefill.entry_price) : (prefill?.entry_price || ""),
     fill_price: "",
-    fx_rate: prefillMarket === "US" ? "1.27" : "1",
+    // ST-02 (BLG-FE-245, v9.15): US starts empty and is pre-filled from the
+    // live rate below; no client-side constant is pre-filled.
+    fx_rate: prefillMarket === "US" ? "" : "1",
     atr_value: "",
     entry_note: "",
     tags: [],
   });
+
+  // ST-02 (BLG-FE-245, EPIC-01, v9.15): pre-fill the US FX rate from
+  // GET /market/status (position_form.md v1.12 §FX Rate). A value the user
+  // has typed is never overwritten.
+  const [fxTyped, setFxTyped] = useState(false);
+  const { data: marketStatus, isLoading: fxLoading, isError: fxError } = useQuery({
+    queryKey: ["marketStatus"],
+    queryFn: async () => {
+      const response = await apiFetch(`${API_BASE_URL}/market/status`);
+      if (!response.ok) throw new Error(`market/status ${response.status}`);
+      const result = await response.json();
+      return result.data;
+    },
+    enabled: formData.market === "US",
+    retry: false,
+  });
+  const liveFxRate = typeof marketStatus?.fx_rate === "number" && marketStatus.fx_rate > 0 ? marketStatus.fx_rate : null;
+
+  useEffect(() => {
+    if (formData.market !== "US" || fxTyped || liveFxRate == null) return;
+    const filled = formatFxRate(liveFxRate);
+    setFormData((prev) => (prev.market === "US" && prev.fx_rate !== filled ? { ...prev, fx_rate: filled } : prev));
+  }, [formData.market, fxTyped, liveFxRate]);
 
   // AC-03: manually-entered trades (no plan origin) can still optionally link
   // an existing, not-yet-started trade plan. Locked to planPrefill.id when
@@ -219,15 +245,45 @@ export default function TradeEntry() {
     return "US";
   };
 
+  // Switching market resets FX: UK uses 1; US waits for the live pre-fill
+  // (ST-02) unless the user has typed a US rate.
+  const withMarket = (prev, market) => {
+    if (market === prev.market) return prev;
+    if (market === "US") return { ...prev, market, fx_rate: "" };
+    return { ...prev, market, fx_rate: "1" };
+  };
+
+  const handleMarketChange = (market) => {
+    if (market !== formData.market) setFxTyped(false);
+    setFormData((prev) => withMarket(prev, market));
+  };
+
   const handleTickerChange = (value) => {
     const market = detectMarket(value.toUpperCase());
-    setFormData((prev) => ({
-      ...prev,
-      ticker: value.toUpperCase(),
-      market,
-      fx_rate: market === "US" ? "1.27" : "1",
-    }));
+    if (market !== formData.market) setFxTyped(false);
+    setFormData((prev) => ({ ...withMarket(prev, market), ticker: value.toUpperCase() }));
   };
+
+  const handleFxChange = (value) => {
+    setFxTyped(true);
+    handleChange("fx_rate", value);
+  };
+
+  // ST-02: the line under the FX field naming where the value came from.
+  const fxSourceLine = (() => {
+    if (formData.market !== "US") return null;
+    const source = marketStatus?.fx_rate_source;
+    if (fxTyped) {
+      const live = liveFxRate != null && source !== FX_SOURCE_CONSTANT ? `live rate ${formatFxRate(liveFxRate)}` : "no live rate";
+      return { text: `Entered by you (${live})`, warn: false };
+    }
+    if (fxLoading) return null;
+    if (fxError || liveFxRate == null) return { text: "No rate available: enter the rate", warn: true };
+    const asOf = marketStatus?.fx_rate_as_of;
+    if (source === FX_SOURCE_CONSTANT) return { text: "Fallback rate: no live rate is available", warn: true };
+    if (source === FX_SOURCE_LAST_KNOWN) return { text: asOf ? `Not live: last rate from ${formatFxAge(asOf)}` : "Not live: last rate", warn: true };
+    return { text: asOf ? `Live rate, ${formatFxAge(asOf)}` : "Live rate", warn: false };
+  })();
 
   const defaultTags = ["momentum", "breakout", "pullback", "news-driven", "high-conviction"];
   const allAvailableTags = [...new Set([...existingTags, ...defaultTags])];
@@ -353,7 +409,8 @@ export default function TradeEntry() {
       entry_price: parseFloat(formData.entry_price),
       fill_price: formData.fill_price ? parseFloat(formData.fill_price) : undefined,
       current_price: parseFloat(formData.entry_price),
-      fx_rate: parseFloat(formData.fx_rate),
+      // An empty US rate is sent as null; the server then uses the live rate.
+      fx_rate: parseFloat(formData.fx_rate) > 0 ? parseFloat(formData.fx_rate) : null,
       atr_value: parseFloat(formData.atr_value) || null,
       status: "open",
       entry_note: formData.entry_note || null,
@@ -435,7 +492,7 @@ export default function TradeEntry() {
               <Label className="text-slate-600 dark:text-slate-400">Market</Label>
               <Select
                 value={formData.market}
-                onValueChange={(value) => handleChange("market", value)}
+                onValueChange={handleMarketChange}
               >
                 <SelectTrigger className="bg-slate-800/50 border-slate-700 text-white">
                   <SelectValue />
@@ -493,9 +550,21 @@ export default function TradeEntry() {
                 type="number"
                 step="0.0001"
                 value={formData.fx_rate}
-                onChange={(e) => handleChange("fx_rate", e.target.value)}
+                onChange={(e) => handleFxChange(e.target.value)}
+                placeholder={fxLoading && !fxTyped ? "Fetching live rate…" : undefined}
+                aria-describedby={fxSourceLine ? "trade-entry-fx-source" : undefined}
+                data-testid="trade-entry-fx-input"
                 className="bg-slate-800/50 border-slate-700 text-white"
               />
+              {fxSourceLine && (
+                <p
+                  id="trade-entry-fx-source"
+                  data-testid="trade-entry-fx-source"
+                  className={fxSourceLine.warn ? "text-xs text-amber-700 dark:text-amber-400" : "text-xs text-slate-600 dark:text-slate-400"}
+                >
+                  {fxSourceLine.text}
+                </p>
+              )}
             </div>
           )}
 
