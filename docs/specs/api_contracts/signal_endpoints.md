@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 1.9
-**Last Updated:** 2026-10-16 (ST-05, EPIC-01, v9.13, BLG-GOV-391 — `POST /signals/rebalance-exit` implements `strategy_rules.md` §8.4: status-independent ranking, §8.1/§8.2 precedence, 503 when today's momentum signal run is missing); prior — 2026-10-13 (ST-07/ST-08, EPIC-02, v9.12, BLG-BE-157/158 — `total_cost` stated in GBP with entry fees; zero-ATR signals get no allocation); prior — 2026-09-29 (ST-21, EPIC-05, v9.8, BLG-API-05 — added a 401 error example to GET /signals); prior history retained — see prior entries in version control
+**Version:** 1.10
+**Last Updated:** 2026-11-04 (ST-07, EPIC-01, v9.15, BLG-FE-219 — zero-ATR `reason` strings reworded in plain English); prior — 2026-10-16 (ST-05, EPIC-01, v9.13, BLG-GOV-391 — `POST /signals/rebalance-exit` implements `strategy_rules.md` §8.4: status-independent ranking, §8.1/§8.2 precedence, 503 when today's momentum signal run is missing); prior — 2026-10-13 (ST-07/ST-08, EPIC-02, v9.12, BLG-BE-157/158 — `total_cost` stated in GBP with entry fees; zero-ATR signals get no allocation); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Overview
@@ -118,7 +118,7 @@ Response uses the standard success envelope from **conventions.md**.
 | `price_vs_50d_ma` | **Supplementary (ST-09, display-only).** `(current_native_price − 50d_MA) / 50d_MA × 100`. Positive = above MA, negative = below MA. Does **not** affect `rank`. `null` if insufficient history. |
 | `total_cost` | **GBP**, for both markets: the estimated cost of `suggested_shares` including estimated entry fees (`sizing_service.size_batch_inv_vol()`). UK: `suggested_shares × current_price + stamp duty + commission`. US: `(suggested_shares × current_price + commission + FX fee) / fx_rate`, the US fees being computed on the USD gross and converted at the generation-time `fx_rate`. `0` when `suggested_shares` is 0. (v1.8, BLG-BE-158: before v1.8 the fees were read from a non-existent key and were always 0, and a US value was left in USD.) |
 | `inv_vol_weight` | The signal's normalised inverse-volatility weight. A signal with zero or missing ATR is excluded from the 5%–20% clamp and renormalisation: it gets `inv_vol_weight` 0, `suggested_shares` 0 and a `reason`, and the other signals' weights sum to 1.0 (v1.8, BLG-BE-157). |
-| `reason` | Human-readable sizing note. Set when sizing produces `suggested_shares = 0` (e.g. invalid initial stop, or `sizing_service.size_position()` returns `valid: false`). `null` when sizing completes normally. |
+| `reason` | Human-readable sizing note. Set when sizing produces `suggested_shares = 0` (e.g. invalid initial stop, or `sizing_service.size_position()` returns `valid: false`). `null` when sizing completes normally. Zero-ATR strings (v1.10, ST-07, BLG-FE-219): `"No size suggested: this ticker's 14-day ATR (its average daily price range) isn't available."` when this signal has no ATR, and `"No size suggested: no ticker in this list has a 14-day ATR available."` when no signal in the batch has one. They replace `"Inv-vol sizing: ATR unavailable for this signal"` and `"Inv-vol sizing: no valid ATR values"`. The frontend shows `reason` as-is. |
 
 ### Validation rules & constraints
 
@@ -374,6 +374,7 @@ Errors use the standard error envelope from **conventions.md**.
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.10 | 2026-11-04 | ST-07 (EPIC-01, v9.15, BLG-FE-219): the two zero-ATR `reason` strings are reworded in plain English (`signals.md` v0.8; design record `signal-card-cost-and-sizing-reason`). No shape change. API Contracts & Documentation Owner. |
 | 1.9 | 2026-10-16 | ST-05 (EPIC-01, v9.13, BLG-GOV-391; absorbs BLG-OPS-190): `POST /signals/rebalance-exit` implements `strategy_rules.md` §8.4 (v1.17). The ranking is every ticker today's momentum signal run wrote, whatever its status; `risk_off_exit` positions are skipped (§8.2 governs), as are positions at their stop (§8.1); with no run recorded today it creates nothing and returns 503 (`screener_run_missing: true`). Strategy Rules & System Intent Owner ruling `ESC-EXEC-20261016-01`. |
 | 1.8 | 2026-10-13 | ST-07/ST-08 (EPIC-02, v9.12; BLG-BE-157, BLG-BE-158): `total_cost` field note added: GBP for both markets, including estimated entry fees (UK stamp duty and commission; US commission and FX fee converted at `fx_rate`). `inv_vol_weight` field note added: zero/missing-ATR signals get weight 0, 0 shares and a reason. `allocation_gbp` description corrected (excludes fees). API Contracts & Documentation Owner. |
 | 1.5 | 2026-06-19 | ST-01 (BLG-BE-36, v6.0): Replace cash-allocation sizing model with risk-based `sizing_service.size_position()` per `strategy_rules.md §4.1`. `suggested_shares` now reflects `portfolio_value × risk_percent / stop_distance` — independent of concurrent signal count. `allocation_gbp` is now estimated_cost from the canonical sizing calculator. `reason` field updated: no longer describes cap-overshoot; now set when sizing produces 0 shares (invalid stop, or sizing invalid). `allocation_insufficient` status is legacy — no longer generated. `volatility` field description corrected (not used for sizing). API Contracts & Documentation Owner. |

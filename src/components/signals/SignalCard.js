@@ -145,7 +145,7 @@ export default function SignalCard({ signal, onAddToWatchlist, onDismiss, isAddi
                 <p className="text-xl font-bold text-white">{formatShares(signal.suggested_shares)}</p>
               </div>
               <div>
-                <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Allocation Cost</p>
+                <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Total cost (incl. fees)</p>
                 <p className="text-xl font-bold text-white">{formatCurrency(signal.total_cost)}</p>
               </div>
             </div>

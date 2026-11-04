@@ -388,4 +388,4 @@ class TestSizeBatchInvVol:
     def test_no_valid_atr_sizes_nothing(self):
         out = sizing_service.size_batch_inv_vol([_signal(0, 10), _signal(None, 10)], 1000)
         assert all(s["suggested_shares"] == 0 and s["inv_vol_weight"] == 0 for s in out)
-        assert out[0]["reason"] == "Inv-vol sizing: no valid ATR values"
+        assert out[0]["reason"] == "No size suggested: no ticker in this list has a 14-day ATR available."

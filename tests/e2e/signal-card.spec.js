@@ -542,3 +542,44 @@ test.describe('SC-SIG-AI-03 — Distinct from active signals', () => {
     await expect(page.getByText('Cannot Size')).toHaveCount(1);
   });
 });
+
+// =============================================================================
+// SC-SIG-ZA — Cost label and zero-ATR sizing reason (ST-07, BLG-FE-219, EPIC-01, v9.15)
+// =============================================================================
+//   SC-SIG-ZA-01: a new signal's cost is labelled "Total cost (incl. fees)"
+//   SC-SIG-ZA-02: a zero-ATR signal shows the plain-English reason line
+// Design source: docs/design/2026-11-03__release-v9.15/signal-card-cost-and-sizing-reason/decision_record.md
+
+const ZA_ZERO_ATR_REASON = "No size suggested: this ticker's 14-day ATR (its average daily price range) isn't available.";
+
+const ZA_ZERO_ATR_SIGNAL = {
+  ...AI_ACTIVE_SIGNAL,
+  id: 'sig-za-1',
+  ticker: 'ZATR',
+  suggested_shares: 0,
+  total_cost: 0,
+  inv_vol_weight: 0,
+  reason: ZA_ZERO_ATR_REASON,
+};
+
+test.describe('SC-SIG-ZA — Cost label and zero-ATR reason', () => {
+  test.beforeEach(async ({ page }) => {
+    await aiMockFallback(page);
+    await aiMockCashSummary(page);
+    await aiMockPositions(page);
+  });
+
+  test('SC-SIG-ZA-01: a new signal labels its cost "Total cost (incl. fees)"', async ({ page }) => {
+    await aiMockSignals(page, [AI_ACTIVE_SIGNAL]);
+    await aiNavigateToSignals(page);
+    await expect(page.getByText('Total cost (incl. fees)')).toBeVisible({ timeout: 8000 });
+    await expect(page.getByText('Allocation Cost')).toHaveCount(0);
+  });
+
+  test('SC-SIG-ZA-02: a zero-ATR signal shows the plain-English reason line', async ({ page }) => {
+    await aiMockSignals(page, [ZA_ZERO_ATR_SIGNAL]);
+    await aiNavigateToSignals(page);
+    await expect(page.getByText(`⚠ ${ZA_ZERO_ATR_REASON}`)).toBeVisible({ timeout: 8000 });
+    await expect(page.getByText(/Inv-vol sizing/)).toHaveCount(0);
+  });
+});
