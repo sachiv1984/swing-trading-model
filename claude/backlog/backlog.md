@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-04 (Sprint Execution `2026-11-03__release-v9.15` EPIC-03 — 2 new items added: BLG-BE-203, BLG-SPEC-218); prior — 2026-11-04 (PR #2189 agent-mediated Director of Quality / Product Owner review — 2 new items added: BLG-FE-271, BLG-QA-244); prior — 2026-11-04 (Sprint Execution `2026-11-03__release-v9.15` EPIC-01, agent-mediated Director of Quality review — 2 new items added: BLG-FE-269, BLG-FE-270); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-04 (Sprint Execution `2026-11-03__release-v9.15` EPIC-03 ST-23 — 1 new item added: BLG-SPEC-219); prior — 2026-11-04 (Sprint Execution `2026-11-03__release-v9.15` EPIC-03 — 2 new items added: BLG-BE-203, BLG-SPEC-218); prior — 2026-11-04 (PR #2189 agent-mediated Director of Quality / Product Owner review — 2 new items added: BLG-FE-271, BLG-QA-244); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -6566,5 +6566,26 @@ After ST-23, open-position `pnl` is documented as it is computed: native P&L con
 **Acceptance Criteria**
 - The decision is recorded with its rationale by the Data Model & Domain Schema Owner
 - Either the two bases agree in code and spec, or the dictionary states why they differ
+
+---
+
+### BLG-SPEC-219 — positions.pnl_pct is the native price change, not pnl / total_cost as the dictionary says
+**Priority:** P3 (Low)
+**Type:** Spec Debt / Data Model
+**Owner:** Data Model & Domain Schema Owner; Metrics Definitions & Analytics Owner
+**Source:** ST-23/EPIC-03, cycle `2026-11-03__release-v9.15` — found while aligning §5.2 `pnl` with the code; outside ST-23's AC — 2026-11-04
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`data_model_positions_dictionary.md` §5.3 and the `pnl_pct` row define `pnl_pct = pnl / total_cost × 100`. The live value from `calculate_position_pnl()` (`backend/utils/calculations.py`), returned by `GET /positions` and stored by the on-load and nightly update, is `(current_price − native_entry) / native_entry × 100`: the native price change, ignoring fees and FX. For a US position the two differ by the fee drag and the currency move, so a reader of the dictionary cannot reproduce the displayed percentage.
+
+**Scope**
+- Data Model & Domain Schema Owner decides which is canonical
+- Align the losing side; a code change that alters the displayed percentage needs a design pass
+
+**Acceptance Criteria**
+- §5.3 and the `pnl_pct` row state the same formula as the code that produces the displayed figure, or a code change brings the code to the spec
+- The decision is recorded with its rationale
 
 ---
