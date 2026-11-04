@@ -161,3 +161,17 @@ def test_st26_count_matches_the_python_rule(scratch_db):
     for e, r in cases:
         _audit_row(get_db, e, r, at)
     assert database.count_monthly_pnl_narrative_generations()["generations"] == expected == 3
+
+
+def test_st21_failed_regeneration_call_counts_once(scratch_db):
+    """ST-21 (BLG-BE-172, v9.15): a request whose first attempt failed its checks
+    and whose regeneration call raised writes fail_regenerate:... then
+    fail_fallback:model_call_failed; count_monthly_pnl_narrative_generations
+    counts it exactly once, as a fallback."""
+    database, get_db = scratch_db
+    database.ensure_claude_audit_log_table()
+    database.ensure_claude_audit_log_compliance_check_column()
+    at = datetime(2026, 11, 4, tzinfo=timezone.utc)
+    _audit_row(get_db, ENDPOINT, "fail_regenerate:prescriptive_language", at)
+    _audit_row(get_db, ENDPOINT, "fail_fallback:model_call_failed", at)
+    assert database.count_monthly_pnl_narrative_generations() == {"generations": 1, "ai": 0, "fallback": 1}

@@ -316,6 +316,29 @@ class TestGenerateFlow:
         assert flow["audit"].call_args.kwargs["compliance_check_result"] == "model_call_failed"
         flow["upsert"].assert_not_called()
 
+    def test_regeneration_call_failure_after_failed_checks_shows_the_fallback(self, flow):
+        """ST-21 (BLG-BE-172, v9.15): attempt 1 fails its checks, attempt 2's model
+        call raises -> the code-written fallback is stored and returned, with a
+        terminal audit row, instead of a 503."""
+        calls = iter([("You should trade less. £300.25", _usage()), RuntimeError("timeout")])
+
+        def call(*a, **k):
+            r = next(calls)
+            if isinstance(r, Exception):
+                raise r
+            return r
+
+        with patch.object(svc, "_call_claude", side_effect=call) as model:
+            out = generate_narrative(YEAR)
+        assert model.call_count == 2
+        assert out["source"] == "fallback" and out["narrative"] == build_fallback_text(INPUTS)
+        stored = flow["upsert"].call_args.args[2]
+        assert stored["source"] == "fallback" and stored["compliance_check_result"] == "fail_fallback:model_call_failed"
+        results = [c.kwargs["compliance_check_result"] for c in flow["audit"].call_args_list]
+        assert results[0].startswith("fail_regenerate:")
+        assert results[1] == "fail_fallback:model_call_failed"
+        assert len(results) == 2  # one audit row per model call (the cap counts calls)
+
     def test_audit_row_carries_condition_8_fields(self, flow):
         """Condition 8: every model call's audit row carries the prompt version,
         tokens, cost, check result, prompt hash and response length."""
@@ -501,6 +524,7 @@ class TestUsageCountRule:
     @pytest.mark.parametrize("result,counted", [
         ("pass", True), ("pass_on_regenerate", True), ("fail_fallback:numeric_cross_check_failed", True),
         ("fail_regenerate:prescriptive_language", False), ("model_call_failed", False), (None, False),
+        ("fail_fallback:model_call_failed", True),  # ST-21: regeneration call failed
     ])
     def test_is_generation_row(self, result, counted):
         assert svc.is_generation_row(ENDPOINT, result) is counted
@@ -520,6 +544,21 @@ class TestUsageCountRule:
             generate_narrative(YEAR)
         rows = [c.kwargs for c in flow["audit"].call_args_list]
         assert len(rows) == len(responses)  # every model call is audited
+        assert sum(svc.is_generation_row(r["endpoint"], r["compliance_check_result"]) for r in rows) == 1
+
+    def test_failed_regeneration_call_is_counted_exactly_once(self, flow):
+        """ST-21 AC 2: attempt 1 fails its checks, attempt 2's call raises -> one counted row."""
+        calls = iter([("You should trade less. £300.25", _usage()), RuntimeError("x")])
+
+        def call(*a, **k):
+            r = next(calls)
+            if isinstance(r, Exception):
+                raise r
+            return r
+
+        with patch.object(svc, "_call_claude", side_effect=call):
+            generate_narrative(YEAR)
+        rows = [c.kwargs for c in flow["audit"].call_args_list]
         assert sum(svc.is_generation_row(r["endpoint"], r["compliance_check_result"]) for r in rows) == 1
 
     def test_a_failed_model_call_writes_no_counted_row(self, flow):

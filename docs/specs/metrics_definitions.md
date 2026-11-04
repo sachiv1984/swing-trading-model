@@ -2,8 +2,8 @@
 **Owner:** Metrics Definitions & Analytics Canonical Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 1.34.3
-**Last Updated:** 2026-11-04 (ST-15, EPIC-03, v9.15, BLG-FE-239 — Appendix E Backlog Item 3 resolved: Trade History counts a win as pnl > 0; no definition change); prior — 2026-11-03 (Metrics Definitions & Analytics Owner review of Appendix E Backlog Items 3 and 4 — both confirmed accurate; break-even trades belong in neither Avg Win nor Avg Loss per §Risk/Reward Ratio; no definition change); prior — 2026-11-03 (post-ship closure 2026-10-29__release-v9.14 STEP 5 — Appendix E Known Deviations entries added for the accepted P2 win-rate defects BLG-FE-239 and BLG-FE-240; no definition change); prior history retained — see prior entries in version control
+**Version:** 1.34.4
+**Last Updated:** 2026-11-04 (ST-21, EPIC-03, v9.15, BLG-BE-172 — AI Monthly P&L Narrative Usage: a failed regeneration call is one fallback generation, fail_fallback:model_call_failed; query unchanged); prior — 2026-11-04 (ST-15, EPIC-03, v9.15, BLG-FE-239 — Appendix E Backlog Item 3 resolved: Trade History counts a win as pnl > 0; no definition change); prior — 2026-11-03 (Metrics Definitions & Analytics Owner review of Appendix E Backlog Items 3 and 4 — both confirmed accurate; break-even trades belong in neither Avg Win nor Avg Loss per §Risk/Reward Ratio; no definition change); prior history retained — see prior entries in version control
 **Review Cycle:** Monthly
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
@@ -1330,6 +1330,8 @@ A **generation** is one completed request that wrote a new summary: a `POST /rep
 - a request refused by the rate limit or the daily cap (429), or that failed (503);
 - the first, failed attempt inside a request that then regenerated (that request is one generation, not two).
 
+A request whose first attempt failed its checks and whose regeneration call then raised **is** a generation: it stores the code-written fallback, and the failed call's audit row carries the terminal result `fail_fallback:model_call_failed`, which the `fail\_fallback:%` pattern below counts once as a fallback (v1.34.4, ST-21, `BLG-BE-172`). A first call that raises writes `model_call_failed` and stores nothing, so it is not a generation. The terminal-result set is unchanged.
+
 Each generation ends with exactly one `claude_audit_log` row carrying a terminal check result. A model-call count (every audit row) over-counts by the regenerations and failed calls, and so is not this measure. That matters for the cost cap (`ai_endpoint_security_checklist.md`, ST-25), which counts calls, not generations.
 
 ### Data Source and Query
@@ -1489,6 +1491,7 @@ Validation is performed by `POST /validate/calculations` comparing computed metr
 ## Appendix D — Change Log
 | Date | Version | Change | Author |
 |---|---|---|---|
+| 2026-11-04 | 1.34.4 | ST-21 (EPIC-03, v9.15, `BLG-BE-172`): § AI Monthly P&L Narrative Usage — a failed regeneration call stores the fallback and ends with `fail_fallback:model_call_failed`, counted once as a fallback generation. The terminal-result set and the query are unchanged. | Metrics Definitions & Analytics Owner |
 | 2026-11-04 | 1.34.3 | ST-15 (EPIC-03, v9.15, `BLG-FE-239`): Appendix E Backlog Item 3 resolved. Trade History now counts a win as `pnl > 0`, per §Win Rate. Implementation fix only; no definition change. | Metrics Definitions & Analytics Owner |
 | 2026-11-03 | 1.34.2 | Owner review of Appendix E Backlog Items 3 (`BLG-FE-239`) and 4 (`BLG-FE-240`), added by post-ship closure `2026-10-29__release-v9.14`: both confirmed accurate against the code; Item 3 records that a `pnl = 0` trade is in neither Avg Win nor Avg Loss (§Risk/Reward Ratio). Documentation only; no definition change. | Metrics Definitions & Analytics Owner |
 | 2026-11-03 | 1.34.1 | Post-ship closure `2026-10-29__release-v9.14` STEP 5: Appendix E Backlog Items 3 and 4 added — Known Deviations for the two accepted P2 win-rate defects found by ST-50 (`BLG-FE-239` Trade History counts `pnl = 0` as a win; `BLG-FE-240` Dashboard win-rate widgets read open positions only), both targeted to v9.15. No definition change. | Post-Ship Closure Engine (PMO Lead) |

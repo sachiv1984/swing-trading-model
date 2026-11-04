@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 0.19
-**Last Updated:** 2026-11-02 (ST-24, EPIC-04, v9.14, BLG-FEAT-99 — `GET /reports/monthly-pnl` adds `by_exit_condition` per month); prior — 2026-10-17 (ST-09, EPIC-02, v9.13, BLG-BE-156 — `GET /reports/monthly-pnl` returns 200 with realised P&L and no restatement fields when `monthly_pnl_snapshots` fails); prior — 2026-10-12 (EPIC-04 merged to main, PR #1972, carried into EPIC-05 by the main merge — 0.17 (ST-25 narrative endpoints) and 0.16 (ST-29) both kept; version 0.17 is the highest); prior history retained — see prior entries in version control
+**Version:** 0.20
+**Last Updated:** 2026-11-04 (ST-21, EPIC-03, v9.15, BLG-BE-172 — POST /reports/monthly-pnl/narrative returns the code-written fallback when the regeneration call fails; 503 only for a first-call failure); prior — 2026-11-02 (ST-24, EPIC-04, v9.14, BLG-FEAT-99 — `GET /reports/monthly-pnl` adds `by_exit_condition` per month); prior — 2026-10-17 (ST-09, EPIC-02, v9.13, BLG-BE-156 — `GET /reports/monthly-pnl` returns 200 with realised P&L and no restatement fields when `monthly_pnl_snapshots` fails); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Overview
@@ -669,8 +669,8 @@ Returns the stored summary for the tax year's current figures, or generates one.
 1. **Inputs (§13 Condition 2):** only the selected tax year's monthly figures from `GET /reports/monthly-pnl?year=` (`year`, `month`, `realised_pnl_gbp`, `trade_count`, `null_fee_trade_count`, `restated`, `restated_diff_gbp`), range figures computed in code (total, trades, month count, best and worst month, profitable and losing month counts, trades without fees), the tax-year label and the net-of-fees basis. They are sent as a JSON data block in the user message; the system prompt is static.
 2. **Stored summary:** if one exists for the current figures and `regenerate` is `false`, it is returned. No model call, no cap check.
 3. **Daily cap:** 40 model calls per UTC day, counted from `claude_audit_log` rows for `POST /reports/monthly-pnl/narrative`. At the cap: `429`, no model call. If the count cannot be read: `503` (fails closed).
-4. **Output checks (§13 Conditions 3 and 4):** every number must be one of the given figures (0–2 dp, sign-agnostic value check); signed money figures must be described in the right direction; no prescriptive, forward-looking or tax-advice wording. On a failure the model is called once more and re-checked; a second failure stores and returns the code-written summary (`source: "fallback"`). One regeneration covers every failure type.
-5. **Audit (§13 Condition 8):** every model call writes a `claude_audit_log` row with the check result (`pass`, `pass_on_regenerate`, `fail_regenerate:<reasons>`, `fail_fallback:<reasons>`, `model_call_failed`).
+4. **Output checks (§13 Conditions 3 and 4):** every number must be one of the given figures (0–2 dp, sign-agnostic value check); signed money figures must be described in the right direction; no prescriptive, forward-looking or tax-advice wording. On a failure the model is called once more and re-checked; a second failure stores and returns the code-written summary (`source: "fallback"`). One regeneration covers every failure type. If the regeneration call itself fails (the model raises after attempt 1 failed its checks), the code-written summary is also stored and returned (`source: "fallback"`), and that call's audit row is `fail_fallback:model_call_failed` (v0.20, ST-21, BLG-BE-172). The daily cap and audit rules still apply.
+5. **Audit (§13 Condition 8):** every model call writes a `claude_audit_log` row with the check result (`pass`, `pass_on_regenerate`, `fail_regenerate:<reasons>`, `fail_fallback:<reasons>`, `model_call_failed`). `model_call_failed` is written only when the first call fails; a failed regeneration call writes `fail_fallback:model_call_failed`, the request's terminal row (v0.20).
 6. **Never part of the financial record (§13 Condition 5):** the summary is not included in any export (Monthly CSV, Tax Year CSV, Tax Year PDF), never written to `monthly_pnl_snapshots`, and never used to compute, alter or annotate any figure.
 
 ### Response (200)
@@ -684,7 +684,7 @@ Same shape as `GET /reports/monthly-pnl/narrative`, with `narrative`, `source` a
 | `400` | `year` not a four-digit integer, or the tax year has not started |
 | `404` | No closed trades in this tax year (`"No closed trades in this tax year."`) |
 | `429` | Rate limit exceeded (10 requests/minute/IP; `"Rate limit exceeded. Try again later."`), or the daily cap is reached (`"Daily limit for AI summaries reached. Try again tomorrow."`, `Retry-After` = seconds until 00:00 UTC). The body carries no narrative. `Retry-After` is always set. |
-| `503` | `"AI summary is unavailable right now."` — no API key, the model call failed, or the daily cap could not be checked. Nothing is stored. |
+| `503` | `"AI summary is unavailable right now."` — no API key, the first model call failed (no checked output exists yet), or the daily cap could not be checked. Nothing is stored. A failed regeneration call returns `200` with the code-written summary instead (v0.20). |
 | `500` | Internal server error |
 
 Error bodies use the standard envelope: `{"status": "error", "message": "..."}`.
@@ -833,6 +833,7 @@ GET /reports/reconciliation?year=2025
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.20 | 2026-11-04 | ST-21 (EPIC-03, v9.15, BLG-BE-172): `POST /reports/monthly-pnl/narrative` — when attempt 1 fails its checks and the regeneration call raises, the code-written summary is stored and returned (`200`, `source: "fallback"`) with the terminal audit result `fail_fallback:model_call_failed`, instead of `503`. A model failure on attempt 1 still returns `503`. The 503 row and the audit result list say so. No shape change; `openapi.yaml` 3.47.2 updates the descriptions. |
 | 0.19 | 2026-11-02 | ST-24 (EPIC-04, v9.14, BLG-FEAT-99): `GET /reports/monthly-pnl` adds `by_exit_condition` per month (realised P&L and trade count by §8 exit condition: `stop_loss`, `risk_off`, `manual`), summing to the month's figures; omitted from every month when the breakdown fails or does not reconcile. JSON only. Agrees with `reports.md` v0.26. |
 | 0.18 | 2026-10-17 | ST-09 (EPIC-02, v9.13, BLG-BE-156): `GET /reports/monthly-pnl` no longer fails when `monthly_pnl_snapshots` cannot be read or written. It returns `200` with realised P&L for every month and none of the four restatement fields, and logs the failure with `exc_info`. Response shape on success unchanged. Agrees with `reports.md` v0.25. |
 | 0.17 | 2026-10-09 | ST-25 (EPIC-04, v9.11, BLG-FEAT-59): Added `## GET /reports/monthly-pnl/narrative` and `## POST /reports/monthly-pnl/narrative` — the AI-assisted Monthly P&L summary: stored per tax year and input hash, daily cap of 40 model calls (429), fail-closed 503, output checks with a code-written fallback, `advisory: true`. §13 CONDITIONAL (`decisions--2026-10-08__release-v9.11--ST-25-monthly-pnl-narrative-section13-review.md`). Numbered 0.17 because EPIC-05's ST-29 holds 0.16. |
