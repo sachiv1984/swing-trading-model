@@ -123,6 +123,12 @@ class TestPreviewStopMatchesSavedStop:
         ("AAPL", "US", 187.43, 3.1372),
         ("VOD", "UK", 72.18, 1.0449),
         ("LGEN.L", "UK", 250.0, 4.0),
+        # ST-05 (BLG-FE-222, EPIC-01, v9.15): untrimmed and lower-case input
+        # is normalised (trim, upper-case) the same way on both paths.
+        ("  aapl ", "US", 187.43, 3.1372),
+        ("vod", "UK", 72.18, 1.0449),
+        (" lgen.l", "UK", 250.0, 4.0),
+        ("Vod.L ", "UK", 72.18, 1.0449),
     ])
     def test_preview_stop_equals_saved_initial_stop(self, ticker, market, entry_price, atr):
         preview, preview_atr_call = _preview(ticker, market, atr)

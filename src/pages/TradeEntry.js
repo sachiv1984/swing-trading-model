@@ -20,6 +20,7 @@ import PositionSizingWidget from '../components/trades/PositionSizingWidget';
 import { INPUT_DEBOUNCE_MS } from "../hooks/usePositionSizingFetch";
 import { format } from "date-fns";
 import SetupThesisDigestPanel from '../components/trades/SetupThesisDigestPanel';
+import PreEntryValidationPanel from '../components/trades/PreEntryValidationPanel';
 import { isStartTradeEligible, STATUS_CONFIG } from "./TradePlans";
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:8000";
@@ -36,7 +37,7 @@ export default function TradeEntry() {
   const prefillMarket = planPrefill?.market || prefill?.market || "UK";
 
   const [formData, setFormData] = useState({
-    ticker: planPrefill?.ticker || prefill?.ticker || "",
+    ticker: (planPrefill?.ticker || prefill?.ticker || "").trim().toUpperCase(),
     market: prefillMarket,
     entry_date: new Date().toISOString().split("T")[0],
     shares: planPrefill?.quantity != null ? String(planPrefill.quantity) : "",
@@ -84,7 +85,10 @@ export default function TradeEntry() {
   // the ATR itself at save. A typed ATR always takes precedence.
   // status: idle | loading | ready | none
   const [atrPreview, setAtrPreview] = useState({ status: "idle" });
-  const previewTicker = formData.ticker.trim();
+  // ST-05 (BLG-FE-222, v9.15): one normalised ticker (trim, upper-case) for
+  // the ATR preview, the pre-entry checks and the submit.
+  const normalizedTicker = formData.ticker.trim().toUpperCase();
+  const previewTicker = normalizedTicker;
   const atrBlank = String(formData.atr_value).trim() === "";
 
   useEffect(() => {
@@ -122,6 +126,17 @@ export default function TradeEntry() {
     INITIAL_ATR_MULTIPLIER * parseFloat(formData.atr_value) >= parseFloat(formData.entry_price);
   const showAtrError = atrTouched && atrImplausible;
   const marketKnown = previewTicker !== "";
+
+  // ST-01 (BLG-FE-244, EPIC-01, v9.15): the §4.2 pre-entry checks on every
+  // route into Trade Entry (position_form.md v1.13 §Pre-Entry Checks). Hidden
+  // only when a linked plan already ran them (stored snapshot), so the panel
+  // shows at most once. Branch A (ESC-EXEC-20261104-01, strategy_rules.md
+  // §4.2.6 v1.21): an unacknowledged WARN/FAIL disables Submit.
+  const [preEntryAck, setPreEntryAck] = useState(false);
+  const [preEntryNeedsAck, setPreEntryNeedsAck] = useState(false);
+  const planRanChecks = !!linkedPlanId && linkedPlan?.pre_entry_validation_snapshot != null;
+  const showPreEntryChecks = !planRanChecks;
+  const preEntryAckRequired = showPreEntryChecks && preEntryNeedsAck && !preEntryAck;
 
   const [tagInput, setTagInput] = useState("");
   const [showTagSuggestions, setShowTagSuggestions] = useState(false);
@@ -321,7 +336,7 @@ export default function TradeEntry() {
   const isFormValid = formData.ticker && formData.shares && formData.entry_price;
 
   const handleSubmit = () => {
-    if (!isFormValid) return;
+    if (!isFormValid || preEntryAckRequired) return;
     if (atrImplausible) {
       setAtrTouched(true);
       return;
@@ -331,7 +346,7 @@ export default function TradeEntry() {
     // via POST /portfolio/position. No stop is sent: the backend sets the
     // initial stop from entry and ATR (ST-07, BLG-FE-197).
     createMutation.mutate({
-      ticker: formData.ticker,
+      ticker: normalizedTicker,
       market: formData.market,
       entry_date: formData.entry_date,
       shares: parseFloat(formData.shares),
@@ -344,6 +359,7 @@ export default function TradeEntry() {
       entry_note: formData.entry_note || null,
       tags: formData.tags.length > 0 ? formData.tags : null,
       trade_plan_id: linkedPlanId || null,
+      pre_entry_override_acknowledged: showPreEntryChecks && preEntryNeedsAck && preEntryAck ? true : undefined,
     });
   };
 
@@ -729,6 +745,25 @@ export default function TradeEntry() {
         </motion.div>
       )}
 
+      {/* Pre-Entry Checks (ST-01, BLG-FE-244, v9.15) — position_form.md §Pre-Entry Checks */}
+      {showPreEntryChecks ? (
+        <PreEntryValidationPanel
+          ticker={normalizedTicker}
+          market={formData.market}
+          quantity={formData.shares}
+          entryPrice={formData.entry_price}
+          stopPrice={costs.systemStop}
+          overrideAcknowledged={preEntryAck}
+          onOverrideChange={setPreEntryAck}
+          onWarningsChange={setPreEntryNeedsAck}
+          showWaiting
+        />
+      ) : (
+        <p data-testid="pre-entry-checks-on-plan" className="text-xs text-slate-600 dark:text-slate-400">
+          Pre-entry checks were run on the linked plan.
+        </p>
+      )}
+
       {/* Trade Plan Linkage Advisory (ST-28, EPIC-06, v9.4, BLG-FEAT-95) —
           non-blocking, condition-driven, no dismiss control per
           position_form.md §Trade Plan Linkage Advisory. Surfaces an
@@ -760,6 +795,7 @@ export default function TradeEntry() {
       )}
 
       {/* Submit */}
+      <div className="flex flex-col items-end gap-1">
       <div className="flex justify-end gap-3">
         <Link to={createPageUrl("Positions")}>
           <Button variant="ghost" className="text-slate-600 dark:text-slate-400 hover:text-white hover:bg-slate-800">
@@ -768,7 +804,8 @@ export default function TradeEntry() {
         </Link>
         <Button
           onClick={handleSubmit}
-          disabled={!isFormValid || showAtrError || costs.stopInvalid || createMutation.isPending}
+          disabled={!isFormValid || showAtrError || costs.stopInvalid || preEntryAckRequired || createMutation.isPending}
+          aria-describedby={preEntryAckRequired ? "pre-entry-ack-required" : undefined}
           className="bg-gradient-to-r from-cyan-500 to-violet-500 hover:from-cyan-400 hover:to-violet-400 text-white border-0 shadow-lg shadow-violet-500/25 disabled:opacity-50"
         >
           {createMutation.isPending ? (
@@ -783,6 +820,12 @@ export default function TradeEntry() {
             </>
           )}
         </Button>
+      </div>
+      {preEntryAckRequired && (
+        <p id="pre-entry-ack-required" data-testid="pre-entry-ack-required" className="text-xs text-amber-700 dark:text-amber-400">
+          Tick the acknowledgement in Pre-Entry Checks to save.
+        </p>
+      )}
       </div>
     </div>
   );

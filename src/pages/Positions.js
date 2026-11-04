@@ -613,6 +613,10 @@ function LastReviewedCell({ position, drawdownActive }) {
   );
 }
 
+// ST-05 (BLG-FE-222, v9.15): the ?exit= and ?position= deep links use the
+// same open-position test.
+const isOpenPosition = (p) => p.status === "open";
+
 export default function Positions() {
   const [viewMode, setViewMode] = useState("grid");
   const [editingPosition, setEditingPosition] = useState(null);
@@ -648,11 +652,11 @@ export default function Positions() {
   });
 
   // ST-08 (BLG-FE-198, v9.10): /#/Positions?exit={id} opens the exit dialog for
-  // that open position, then drops the parameter. Unknown or closed ids are ignored.
+  // that open position, then drops the parameter. Unknown or not-open ids are ignored.
   useEffect(() => {
     const exitId = new URLSearchParams(location.search).get("exit");
     if (!exitId || !Array.isArray(positions)) return;
-    const target = positions.find((p) => String(p.id) === exitId && p.status !== "closed");
+    const target = positions.find((p) => String(p.id) === exitId && isOpenPosition(p));
     if (target) setExitingPosition(target);
     navigate(location.pathname, { replace: true });
   }, [location.search, location.pathname, positions, navigate]);
@@ -665,7 +669,7 @@ export default function Positions() {
   useEffect(() => {
     const positionId = new URLSearchParams(location.search).get("position");
     if (!positionId || !Array.isArray(positions)) return;
-    const target = positions.find((p) => String(p.id) === positionId && p.status === "open");
+    const target = positions.find((p) => String(p.id) === positionId && isOpenPosition(p));
     if (target) setHighlightedPositionId(String(target.id));
     navigate(location.pathname, { replace: true });
   }, [location.search, location.pathname, positions, navigate]);

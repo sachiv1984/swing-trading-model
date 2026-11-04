@@ -2,7 +2,9 @@ openapi: 3.0.3
 
 info:
   title: Momentum Trading Assistant API
-  version: 3.46.0
+  version: 3.47.0
+  # v3.47.0 (2026-11-04, ST-01/ST-05, EPIC-01, v9.15): POST /portfolio/position gains optional
+  # pre_entry_override_acknowledged (BLG-FE-244); request ticker trimmed and upper-cased (BLG-FE-222). No new endpoint.
   # v3.46.0 (2026-11-02, ST-24, EPIC-04, v9.14): GET /reports/monthly-pnl month objects gain
   # by_exit_condition (stop_loss / risk_off / manual realised P&L and trade count; BLG-FEAT-99). No new endpoint.
   # v3.45.0 (2026-10-30, ST-22, EPIC-03, v9.14): POST /trade-plans/{plan_id}/generate-thesis removed
@@ -7108,6 +7110,10 @@ components:
             pattern: "^[a-z0-9-]+$"
         trade_plan_id: { type: string, format: uuid, nullable: true }
         idempotency_key: { type: string, maxLength: 200, nullable: true }
+        pre_entry_override_acknowledged:
+          type: boolean
+          nullable: true
+          description: ST-01 (BLG-FE-244, v9.15) — true when the user ticked the pre-entry acknowledgement on Trade Entry. Writes one pre_entry_override red-flag event (context.source trade_entry). A failed event write never fails the save.
 
     AddPositionResponse:
       type: object

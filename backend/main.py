@@ -722,6 +722,20 @@ STOP_PRICE_NOT_ACCEPTED = (
 )
 
 
+def _write_trade_entry_override_event(ticker, position_id=None) -> None:
+    try:
+        from database import create_red_flag_event, ensure_red_flag_events_table
+        ensure_red_flag_events_table()
+        create_red_flag_event(
+            event_type="pre_entry_override",
+            ticker=ticker,
+            position_id=str(position_id) if position_id else None,
+            context={"source": "trade_entry", "override_acknowledged": True},
+        )
+    except Exception:
+        pass
+
+
 @app.post("/portfolio/position")
 def add_position_endpoint(request: AddPositionRequest):
     """Add a new position to the portfolio"""
@@ -742,6 +756,14 @@ def add_position_endpoint(request: AddPositionRequest):
                 tags=request.tags,
                 trade_plan_id=request.trade_plan_id
             )
+
+            # ST-01 (BLG-FE-244, EPIC-01, v9.15): an entry saved with the
+            # pre-entry acknowledgement ticked writes one pre_entry_override
+            # event, as the Trade Plan path does (source "trade_entry"), so the
+            # Red Flag Journal and the SI-05 digest count it. A failed event
+            # write never fails the save.
+            if request.pre_entry_override_acknowledged:
+                _write_trade_entry_override_event(result.get("ticker") or request.ticker, result.get("position_id"))
 
             if request.market == "US":
                 try:

@@ -3,8 +3,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 1.12
-**Last Updated:** 2026-11-03 (v9.15 design gate — ST-01/BLG-FE-244: new §Pre-Entry Checks on every Trade Entry route, acknowledgement branch pending ruling; ST-02/BLG-FE-245: FX pre-fill from the live rate with a source line; ST-03/BLG-FE-246: one FX label); prior — 2026-10-17 (ST-06, EPIC-02, v9.13, BLG-BE-180 — §Initial Stop: Branch A (reject) ruled, Branch B row deleted; implemented in TradeEntry.js); prior — 2026-10-16 (v9.13 design gate — ST-06/BLG-BE-180: §Initial Stop never shows a stop at or below zero; Branch A reject / Branch B floor rows); prior history retained — see prior entries in version control
+**Version:** 1.13
+**Last Updated:** 2026-11-04 (ST-01, EPIC-01, v9.15, BLG-FE-244 — §Pre-Entry Checks: Branch A (acknowledge to proceed) ruled, Branch B row deleted; implemented in TradeEntry.js); prior — 2026-11-03 (v9.15 design gate — ST-01/BLG-FE-244: new §Pre-Entry Checks on every Trade Entry route, acknowledgement branch pending ruling; ST-02/BLG-FE-245: FX pre-fill from the live rate with a source line; ST-03/BLG-FE-246: one FX label); prior — 2026-10-17 (ST-06, EPIC-02, v9.13, BLG-BE-180 — §Initial Stop: Branch A (reject) ruled, Branch B row deleted; implemented in TradeEntry.js); prior history retained — see prior entries in version control
 **Design Source (v1.12):** docs/design/2026-11-03__release-v9.15/trade-entry-pre-entry-checks/decision_record.md, docs/design/2026-11-03__release-v9.15/trade-entry-fx-rate/decision_record.md
 **Design Source (v1.10):** docs/design/2026-10-16__release-v9.13/initial-stop-at-or-below-zero/decision_record.md
 **Design Source (v1.9):** docs/design/2026-10-12__release-v9.12/trade-entry-atr-preview/decision_record.md
@@ -273,18 +273,15 @@ The panel appears at most once. Linking or unlinking a plan switches rows withou
 
 **Content and states:** as the Trade Plan panel: rule labels, ✓/⚠/✗/— icons, the advisory badge, collapse toggle, `data-testid`s `pre-entry-checks-panel`, `pre-entry-panel-toggle`, `pre-entry-issue-count`, `override-acknowledgement-checkbox`, and "Validation unavailable — proceed with manual checks" on error. An unknown regime FAILs (`strategy_rules.md` §4.2.1 v1.20) and shows ✗, never a pass.
 
-**Acknowledgement — ruling pending (ST-01 first sub-step).** The checkbox "I acknowledge the advisory warnings" shows when any check is WARN or FAIL. The Strategy Rules & System Intent Owner rules between the two branches below against `strategy_rules.md` §4.2.6, and the story deletes the branch not taken:
+**Acknowledgement — acknowledge to proceed (v1.13; Branch A ruled 2026-11-04, `ESC-EXEC-20261104-01`, `strategy_rules.md` §4.2.6 and §4.2.1 v1.23).** The checkbox "I acknowledge the advisory warnings" shows when any check is WARN or FAIL. While a WARN/FAIL is unacknowledged, **Submit is disabled**, and a helper line shows under Submit (`data-testid="pre-entry-ack-required"`, `text-xs text-amber-700 dark:text-amber-400`): "Tick the acknowledgement in Pre-Entry Checks to save." Submit's `aria-describedby` points to it. Under §4.2.6 v1.23 a one-click, user-passable acknowledgement is not a hard submission gate. The Branch B (advisory only) row is deleted. The Trade Plan form keeps its advisory-only checkbox.
 
-| Branch | Submit while a WARN/FAIL is unacknowledged |
-|--------|--------------------------------------------|
-| A — acknowledge to proceed | Disabled. Helper line under Submit (`data-testid="pre-entry-ack-required"`, `text-xs text-amber-700 dark:text-amber-400`): "Tick the acknowledgement in Pre-Entry Checks to save." Submit's `aria-describedby` points to it. |
-| B — advisory only | Enabled, as on the Trade Plan form. |
-
-An endpoint failure never disables Submit under either branch.
+An endpoint failure, or a check still loading, never disables Submit.
 
 **Override recording:** saving with the box ticked sends `pre_entry_override_acknowledged: true` on `POST /portfolio/position`. The backend writes one `red_flag_events` row (`event_type: "pre_entry_override"`, `context.source: "trade_entry"`), so the Red Flag Journal and the SI-05 digest count it like a plan-path override. A failed event write does not fail the save.
 
-**§13 compliance:** existing deterministic §4.2 rules shown on one more route (SI-01 §13 review; §13.4 on-demand re-application). Branch A's acknowledgement is held for the ruling above.
+**§13 compliance:** existing deterministic §4.2 rules shown on one more route (SI-01 §13 review; §13.4 on-demand re-application). The acknowledgement is not a new hard gate (`strategy_rules.md` §4.2.6 v1.23), so no new §13 review is needed.
+
+**Implemented (v1.13, ST-01):** `src/pages/TradeEntry.js`, using the shared `src/components/trades/PreEntryValidationPanel.js` (also used by `src/pages/TradePlan.js`). Backend: `POST /portfolio/position` `pre_entry_override_acknowledged` (`position_endpoints.md`); test `tests/test_trade_entry_pre_entry_override.py`. Playwright: `tests/e2e/trade-entry-pre-entry-checks.spec.js`.
 
 **Test coverage required:** Playwright for each route, the FAIL and unknown-regime cases (with the ruled Submit behaviour), and the plan-linked cases (decision record §6).
 
@@ -342,7 +339,7 @@ All validation failures show inline error messages:
 - Entry note exceeding character limit
 - Typed ATR implausible: `5 × ATR ≥ entry price` (v1.9, ST-18). See §ATR (14-day).
 - Fetched ATR puts the stop at or below zero (v1.10, ST-06; Branch A ruled v1.11). See §Initial Stop.
-- These two are the only validations that disable submit. If the ST-01 ruling takes Branch A (§Pre-Entry Checks), an unacknowledged WARN/FAIL also disables it. That is an acknowledgement, not a validation error.
+- These two are the only validations that disable submit. An unacknowledged WARN/FAIL pre-entry check also disables it (§Pre-Entry Checks, v1.13). That is an acknowledgement, not a validation error.
 
 ### Error Banner
 Shown when the API request to create a position fails.

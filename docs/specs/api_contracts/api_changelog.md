@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Class 2
 **Status:** Canonical
-**Version:** 1.28.5
-**Last Updated:** 2026-11-02 (ST-24, EPIC-04, v9.14, BLG-FEAT-99 — v9.14.0 entry: GET /reports/monthly-pnl gains by_exit_condition per month); prior — 2026-10-30 (ST-15/16/17/19/20/22, EPIC-03, v9.14 — v9.14.0 entries: ai_endpoints.md v1.34–v1.37, trade_endpoints.md v2.6.2, POST /trade-plans/{plan_id}/generate-thesis removed); prior — 2026-10-30 (ST-41, EPIC-06, v9.14, BLG-OPS-186 — v9.14.0 entry: POST /ai/check-daily-cost also checks the previous UTC day); prior history retained — see prior entries in version control
+**Version:** 1.29.0
+**Last Updated:** 2026-11-04 (ST-01/ST-05, EPIC-01, v9.15, BLG-FE-244/BLG-FE-222 — v9.15.0 entry: POST /portfolio/position gains pre_entry_override_acknowledged; ticker normalised); prior — 2026-11-02 (ST-24, EPIC-04, v9.14, BLG-FEAT-99 — v9.14.0 entry: GET /reports/monthly-pnl gains by_exit_condition per month); prior — 2026-10-30 (ST-15/16/17/19/20/22, EPIC-03, v9.14 — v9.14.0 entries: ai_endpoints.md v1.34–v1.37, trade_endpoints.md v2.6.2, POST /trade-plans/{plan_id}/generate-thesis removed); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 # API Changelog
@@ -37,6 +37,18 @@ Rules:
 **Sign-off:** Head of Specs Team — Approved. Formalising an already-consistently-used structure (rather than introducing a new one requiring migration) is the right scope for this story — the conformance check confirms there was nothing to migrate. Sprint Execution Engine (agent-mediated, Head of Specs Team role — §5.3), 2026-09-08.
 
 ---
+
+## v9.15.0 (2026-11-03 — Release v9.15)
+
+### portfolio_endpoints.md — v2.15.0 (UPDATED)
+
+**EPIC:** EPIC-01
+**ST:** ST-01, ST-05
+
+| Change | Details |
+|--------|---------|
+| Updated endpoint: POST /portfolio/position | Optional `pre_entry_override_acknowledged` boolean. When `true`, one `pre_entry_override` red-flag event is written with `context.source: "trade_entry"`, as the Trade Plan path does, so the Red Flag Journal and the SI-05 digest count Trade Entry overrides (BLG-FE-244). A failed event write never fails the save. |
+| Updated endpoint: POST /portfolio/position | The request `ticker` is trimmed and upper-cased before use, as `GET /market/atr/{ticker}` does, so the previewed stop equals the stored `initial_stop` (BLG-FE-222). |
 
 ## v9.14.0 (2026-10-29 — Release v9.14)
 
