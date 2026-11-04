@@ -12,6 +12,7 @@
  *   SC-TEFX-04  A last-known rate says "Not live: last rate from {age}"
  *   SC-TEFX-05  A value typed before the rate arrives is never overwritten; the line says "Entered by you"
  *   SC-TEFX-06  Switching to UK hides the field and sends fx_rate 1
+ *   SC-TEFX-07  With no rate, save is refused with "FX rate missing for US trades"
  *
  * Infrastructure: Playwright page.route() network interception. No live backend.
  * ROUTING NOTE: App uses HashRouter — navigate via page.goto('/#/TradeEntry').
@@ -125,4 +126,32 @@ test('SC-TEFX-06: switching to a UK ticker hides the FX field and saves fx_rate 
   await page.getByRole('button', { name: /create position/i }).click();
   await expect.poll(() => body).not.toBeNull();
   expect(body.fx_rate).toBe(1);
+});
+
+test('SC-TEFX-07: with no rate, saving a US entry is refused with "FX rate missing for US trades"', async ({ page }) => {
+  let posted = 0;
+  let body = null;
+  // The Layout "⌘K" tip toast can cover Create Position on this taller page.
+  await page.addInitScript(() => window.localStorage.setItem('command-palette-tooltip-seen', 'true'));
+  await mockFallback(page);
+  await mockMarketStatus(page, { fail: true });
+  await page.route(`${API}/portfolio/position`, (route) => {
+    posted += 1;
+    body = route.request().postDataJSON();
+    route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok', data: { ticker: body.ticker, initial_stop: 90, position_id: 'p-fx7', trade_plan_linked: false } }) });
+  });
+  await gotoAndEnterUsTicker(page);
+  await expect(fxSource(page)).toHaveText('No rate available: enter the rate', { timeout: 10000 });
+  await page.getByPlaceholder('0.00').first().fill('100');
+  await page.getByPlaceholder('Fetched automatically if blank').fill('2');
+  await page.getByPlaceholder('0', { exact: true }).fill('10');
+  await page.getByRole('button', { name: /create position/i }).click();
+  await expect(page.getByTestId('trade-entry-fx-missing')).toHaveText('FX rate missing for US trades. Enter the rate to save.');
+  await expect(fxInput(page)).toHaveAttribute('aria-invalid', 'true');
+  expect(posted).toBe(0);
+  await fxInput(page).fill('1.3');
+  await expect(page.getByTestId('trade-entry-fx-missing')).toHaveCount(0);
+  await page.getByRole('button', { name: /create position/i }).click();
+  await expect.poll(() => body).not.toBeNull();
+  expect(body.fx_rate).toBe(1.3);
 });

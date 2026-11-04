@@ -281,7 +281,7 @@ An endpoint failure, or a check still loading, never disables Submit.
 
 **§13 compliance:** existing deterministic §4.2 rules shown on one more route (SI-01 §13 review; §13.4 on-demand re-application). The acknowledgement is not a new hard gate (`strategy_rules.md` §4.2.6 v1.23), so no new §13 review is needed.
 
-**Implemented (v1.13, ST-01):** `src/pages/TradeEntry.js`, using the shared `src/components/trades/PreEntryValidationPanel.js` (also used by `src/pages/TradePlan.js`). Backend: `POST /portfolio/position` `pre_entry_override_acknowledged` (`position_endpoints.md`); test `tests/test_trade_entry_pre_entry_override.py`. Playwright: `tests/e2e/trade-entry-pre-entry-checks.spec.js`.
+**Implemented (v1.13, ST-01):** `src/pages/TradeEntry.js`, using the shared `src/components/trades/PreEntryValidationPanel.js` (also used by `src/pages/TradePlan.js`). Backend: `POST /portfolio/position` `pre_entry_override_acknowledged` (`portfolio_endpoints.md` v2.15.0); test `tests/test_trade_entry_pre_entry_override.py`. Playwright: `tests/e2e/trade-entry-pre-entry-checks.spec.js`.
 
 **Test coverage required:** Playwright for each route, the FAIL and unknown-regime cases (with the ruled Submit behaviour), and the plan-linked cases (decision record §6).
 

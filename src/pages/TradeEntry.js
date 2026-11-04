@@ -57,6 +57,7 @@ export default function TradeEntry() {
   // GET /market/status (position_form.md v1.12 §FX Rate). A value the user
   // has typed is never overwritten.
   const [fxTyped, setFxTyped] = useState(false);
+  const [fxSubmitAttempted, setFxSubmitAttempted] = useState(false);
   const { data: marketStatus, isLoading: fxLoading, isError: fxError } = useQuery({
     queryKey: ["marketStatus"],
     queryFn: async () => {
@@ -158,7 +159,7 @@ export default function TradeEntry() {
   // route into Trade Entry (position_form.md v1.13 §Pre-Entry Checks). Hidden
   // only when a linked plan already ran them (stored snapshot), so the panel
   // shows at most once. Branch A (ESC-EXEC-20261104-01, strategy_rules.md
-  // §4.2.6 v1.21): an unacknowledged WARN/FAIL disables Submit.
+  // §4.2.6 v1.23): an unacknowledged WARN/FAIL disables Submit.
   const [preEntryAck, setPreEntryAck] = useState(false);
   const [preEntryNeedsAck, setPreEntryNeedsAck] = useState(false);
   const planRanChecks = !!linkedPlanId && linkedPlan?.pre_entry_validation_snapshot != null;
@@ -391,9 +392,18 @@ export default function TradeEntry() {
 
   const costs = estimateCosts();
   const isFormValid = formData.ticker && formData.shares && formData.entry_price;
+  // ST-02 (position_form.md §FX Rate, §Validation Errors): a US entry needs an
+  // FX rate. With no live rate the field stays empty and save is refused with
+  // an inline error, so no unseen server-side rate is stored.
+  const fxMissing = formData.market === "US" && !(parseFloat(formData.fx_rate) > 0);
+  const showFxMissing = fxSubmitAttempted && fxMissing;
 
   const handleSubmit = () => {
     if (!isFormValid || preEntryAckRequired) return;
+    if (fxMissing) {
+      setFxSubmitAttempted(true);
+      return;
+    }
     if (atrImplausible) {
       setAtrTouched(true);
       return;
@@ -410,8 +420,7 @@ export default function TradeEntry() {
       entry_price: parseFloat(formData.entry_price),
       fill_price: formData.fill_price ? parseFloat(formData.fill_price) : undefined,
       current_price: parseFloat(formData.entry_price),
-      // An empty US rate is sent as null; the server then uses the live rate.
-      fx_rate: parseFloat(formData.fx_rate) > 0 ? parseFloat(formData.fx_rate) : null,
+      fx_rate: parseFloat(formData.fx_rate),
       atr_value: parseFloat(formData.atr_value) || null,
       status: "open",
       entry_note: formData.entry_note || null,
@@ -555,7 +564,8 @@ export default function TradeEntry() {
                 onChange={(e) => handleFxChange(e.target.value)}
                 placeholder={fxLoading && !fxTyped ? "Fetching live rate…" : undefined}
                 id="trade-entry-fx-rate"
-                aria-describedby={fxSourceLine ? "trade-entry-fx-hint trade-entry-fx-source" : "trade-entry-fx-hint"}
+                aria-invalid={showFxMissing ? "true" : undefined}
+                aria-describedby={["trade-entry-fx-hint", fxSourceLine && "trade-entry-fx-source", showFxMissing && "trade-entry-fx-missing"].filter(Boolean).join(" ")}
                 data-testid="trade-entry-fx-input"
                 className="bg-slate-800/50 border-slate-700 text-white"
               />
@@ -567,6 +577,11 @@ export default function TradeEntry() {
                   className={fxSourceLine.warn ? "text-xs text-amber-700 dark:text-amber-400" : "text-xs text-slate-600 dark:text-slate-400"}
                 >
                   {fxSourceLine.text}
+                </p>
+              )}
+              {showFxMissing && (
+                <p id="trade-entry-fx-missing" data-testid="trade-entry-fx-missing" className="text-xs text-rose-700 dark:text-rose-400">
+                  FX rate missing for US trades. Enter the rate to save.
                 </p>
               )}
             </div>
