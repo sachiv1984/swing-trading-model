@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-04 (PR #2189 agent-mediated Director of Quality / Product Owner review — 2 new items added: BLG-FE-271, BLG-QA-244); prior — 2026-11-04 (Sprint Execution `2026-11-03__release-v9.15` EPIC-01, agent-mediated Director of Quality review — 2 new items added: BLG-FE-269, BLG-FE-270); prior — 2026-11-03 (Sprint Planning `2026-11-03__release-v9.15` — 5 new items added: BLG-OPS-211, BLG-SPEC-217, BLG-GOV-408 (STEP 6.2 post-merge trackers for ST-31, ST-35, ST-45), BLG-FE-267, BLG-FE-268 (design gate observations)); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-04 (Sprint Execution `2026-11-03__release-v9.15` EPIC-03 — 2 new items added: BLG-BE-203, BLG-SPEC-218); prior — 2026-11-04 (PR #2189 agent-mediated Director of Quality / Product Owner review — 2 new items added: BLG-FE-271, BLG-QA-244); prior — 2026-11-04 (Sprint Execution `2026-11-03__release-v9.15` EPIC-01, agent-mediated Director of Quality review — 2 new items added: BLG-FE-269, BLG-FE-270); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -6522,5 +6522,49 @@ The Layout "Press ⌘K…" tip toast appears 1.2 s after load and can intercept 
 **Acceptance Criteria**
 - No spec outside the command-palette tests sets `command-palette-tooltip-seen` itself
 - The tip-toast tests still pass, and the full Playwright suite is green in CI
+
+---
+
+### BLG-BE-203 — Move strategy v1.17 and v1.20 effective dates to their deploy dates
+**Priority:** P3 (Low)
+**Type:** Backend Engineering / Strategy Records
+**Owner:** Strategy Rules & System Intent Owner; Financial Reporting & Records Owner
+**Source:** ST-20/EPIC-03, cycle `2026-11-03__release-v9.15` — out-of-scope finding under the deploy-date rule (`ESC-EXEC-20261104-03`); the seal's case (c) authorisation covered Change Log row 1.15 only — 2026-11-04
+**Effort:** XS (<1h, plus a production read)
+**Provisional-Target:** v9.16
+
+**Problem**
+ST-20 ruled that a behavioural strategy version takes effect on the date its code reaches production, and moved v1.15 to its deploy date (12 October 2026). v1.17 (Change Log 16 October 2026, PR #2071 merged 17 October) and v1.20 (29 October 2026, PR #2131 merged 30 October) have the same one-day lag. Their registry windows open a day before `strategy_version_at_entry` changes, so a trade entered on 16 or 29 October is stamped with the previous version but attributed to the new one. No trade list has been checked against production, because the execution environment has only the staging database.
+
+**Scope**
+- Move v1.17's and v1.20's `STRATEGY_VERSION_REGISTRY` `effective_date` and their `strategy_rules.md` Change Log Dates to the deploy dates (needs a sealed case (c) named-file authorisation with the Strategy Rules & System Intent Owner's confirmation)
+- List production positions/trades entered 9–11 October, 16 October and 29 October 2026 with their `strategy_version_at_entry`, and confirm attribution
+- Extend `tests/test_strategy_version_registry.py`'s window/stamp agreement test to those dates
+
+**Acceptance Criteria**
+- v1.17's and v1.20's windows open on their deploy dates, and the registry test passes
+- The production listing is recorded, with every listed trade's stamp matching its window (or the exceptions named, such as a trade entered on a deploy day before the deploy finished)
+
+---
+
+### BLG-SPEC-218 — Open-position unrealised pnl uses a different basis from realised pnl
+**Priority:** P3 (Low)
+**Type:** Spec Debt / Data Model
+**Owner:** Data Model & Domain Schema Owner; Metrics Definitions & Analytics Owner
+**Source:** ST-23/EPIC-03, cycle `2026-11-03__release-v9.15` — Data Model & Domain Schema Owner ruling `ESC-EXEC-20261104-04` (spec follows code), basis difference recorded as a follow-up — 2026-11-04
+**Effort:** S (~0.5d, plus a design pass if the code changes)
+**Provisional-Target:** TBD
+
+**Problem**
+After ST-23, open-position `pnl` is documented as it is computed: native P&L converted at the live GBP/USD rate, not net of `fees_paid`. Realised P&L on a closed trade is `exit_proceeds_gbp − total_cost_gbp`, which is fee-netted and includes currency movement on the principal since entry. A US position closed at today's price and rate would therefore book a realised P&L that differs from the unrealised figure shown a moment before, by the entry fees plus the FX movement on its cost.
+
+**Scope**
+- Decide whether open-position `pnl` should move to the realised basis (`current value in GBP at the live rate − total_cost`)
+- If yes: change `calculate_position_pnl()` and its callers (`get_positions_with_prices()`, `portfolio_service.py`, the nightly stored `pnl`), with a design pass, because displayed P&L changes on Positions, Dashboard and Portfolio
+- If no: record the decision and the reason in `data_model_positions_dictionary.md` §5.2 and `metrics_definitions.md` §Realized / Unrealized P&L Split
+
+**Acceptance Criteria**
+- The decision is recorded with its rationale by the Data Model & Domain Schema Owner
+- Either the two bases agree in code and spec, or the dictionary states why they differ
 
 ---
