@@ -6,7 +6,7 @@
   "invoked_utc": "2026-11-04T10:55:44Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-04T21:32:02Z",
+  "last_updated_utc": "2026-11-04T21:51:20Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-03",
@@ -264,7 +264,8 @@
         "tests/e2e/legacy-dashboard-redirect.spec.js",
         "tests/e2e/monitor-exit-queue.spec.js",
         "tests/e2e/monitor-grace-aware-suggestions.spec.js",
-        "tests/e2e/dialog-classname-override-fixes.spec.js"
+        "tests/e2e/dialog-classname-override-fixes.spec.js",
+        "tests/e2e/page-labels-single-source.spec.js"
       ],
       "stories": {
         "ST-08": {
@@ -357,26 +358,29 @@
         "ST-11": {
           "title": "Use one name per page and action across sidebar, page headings and command palette",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 2155,
           "branch": "exec/2026-11-03__release-v9.15/EPIC-02",
-          "commit_sha": null,
+          "commit_sha": "de1343a011ca7727fedfd2fd3937c2bc897f9351",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-11-04T21:51:20Z",
+          "acceptance_verified": true,
           "spec_references": [
+            "docs/reference/glossary.md",
+            "docs/specs/frontend/pages/navigation.md",
             "docs/design/2026-11-03__release-v9.15/site-structure-phase1/decision_record.md",
-            "docs/reference/glossary.md"
+            "src/lib/pageLabels.js",
+            "tests/e2e/page-labels-single-source.spec.js"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.push",
           "sign_off_record": null,
-          "notes": "Starts only after ST-08 is approved (RISK-02); after ST-12 on CommandPalette.js.",
+          "notes": "Starts only after ST-08 is approved (RISK-02); after ST-12 on CommandPalette.js. Done after ST-08 approval and ST-12 commit. AC 1: pageLabels.js is the single source for sidebar, heading and palette; SC-PL-01 checks sidebar = h1 for all 19 sidebar pages, SC-PL-02 palette labels (21 pages, incl. new Replay and Notifications); deliberate differences per glossary. AC 2: nav/palette specs updated (sidebar-nav-groups, command-palette, legacy-dashboard-redirect) and passing locally (77/77 + 39/39 axe/chart + 21/21 SC-PL). Deviation check: none. Commit also carries ST-12 review follow-ups. Visual-regression baselines (advisory job) will show sidebar label diffs. ci_pending: see CI on de1343a0.",
           "_planned_spec_references": [
             "docs/design/2026-11-03__release-v9.15/site-structure-phase1/decision_record.md",
             "docs/reference/glossary.md"
@@ -413,7 +417,7 @@
             "result": "Approved (both, first pass)",
             "findings": "Behaviour-identical port verified by whitespace-insensitive diff of Dashboard.js@c8523403^ vs DailyMonitor.js (only rename/prop-name lines differ); data feed equivalent (Position.list ignores order arg; same open filter). Non-blocking: phone-width header wrap; design_system.md §Buttons lists Daily Monitor as primary; glossary lacks Daily Monitor action row; positions.md Key Components list; stale Dashboard.js comments; border/popover token coverage lost with SC-TOK-04/SC-MTC-05/06."
           },
-          "notes": "Reclassified autonomous -> delegated_decision at 2026-11-04T21:03:58Z: MonitorModal (Daily Position Monitor) is reachable only from the legacy Dashboard QuickActions widget (positions.md §Daily Position Monitor Exit Queue entry point). See ESC-EXEC-20261104-05. Resolved 2026-11-04T21:04:56Z: Product Owner option (a), Daily Monitor moves to the Positions header; reclassified delegated_decision -> autonomous. Head of UX & Design placement confirmation pending (§5.3). AC 1 (one palette Dashboard entry) SC-LDR-03; AC 2 (/#/Dashboard -> home) SC-LDR-01/02; AC 3 (specs removed or retargeted) done, CI below. Local Playwright (test-env build): affected specs 54/54 pass after the exit-queue stub fix. Deviation check: none (implementation matches navigation.md §Legacy Dashboard Route and the ruled positions.md v2.24). CI on c8523403: 8 workflows success (Critical-Path Smoke 41916984586, CI Pytest 41916984473, Frontend Production Build 41916984670); ci_pending: 41916984537 (Playwright E2E Acceptance Tests).",
+          "notes": "Reclassified autonomous -> delegated_decision at 2026-11-04T21:03:58Z: MonitorModal (Daily Position Monitor) is reachable only from the legacy Dashboard QuickActions widget (positions.md §Daily Position Monitor Exit Queue entry point). See ESC-EXEC-20261104-05. Resolved 2026-11-04T21:04:56Z: Product Owner option (a), Daily Monitor moves to the Positions header; reclassified delegated_decision -> autonomous. Head of UX & Design placement confirmation pending (§5.3). AC 1 (one palette Dashboard entry) SC-LDR-03; AC 2 (/#/Dashboard -> home) SC-LDR-01/02; AC 3 (specs removed or retargeted) done, CI below. Local Playwright (test-env build): affected specs 54/54 pass after the exit-queue stub fix. Deviation check: none (implementation matches navigation.md §Legacy Dashboard Route and the ruled positions.md v2.24). CI on c8523403: 8 workflows success (Critical-Path Smoke 41916984586, CI Pytest 41916984473, Frontend Production Build 41916984670); ci_pending: 41916984537 (Playwright E2E Acceptance Tests). Review follow-ups (phone-width wrap SC-LDR-05, glossary Daily Monitor row, positions.md Key Components) landed in de1343a0.",
           "_planned_spec_references": [
             "docs/design/2026-11-03__release-v9.15/site-structure-phase1/decision_record.md",
             "docs/specs/frontend/pages/navigation.md"
@@ -745,6 +749,7 @@
     "ST-06",
     "ST-07",
     "ST-08",
+    "ST-11",
     "ST-12",
     "ST-15",
     "ST-17",

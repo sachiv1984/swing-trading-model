@@ -36,7 +36,7 @@ import { cn } from "./lib/utils";
 import { formatCurrency } from "./lib/format";
 import { apiFetch, api } from "./api/base44Client";
 import CommandPalette, { OPEN_COMMAND_PALETTE_EVENT } from "./components/CommandPalette";
-import { PAGE_LABELS } from "./lib/pageLabels";
+import { PAGE_LABELS, documentTitle } from "./lib/pageLabels";
 import CashManagementModal from "./components/cash/CashManagementModal";
 import { toast } from "sonner";
 
@@ -146,6 +146,12 @@ export default function Layout({ children, currentPageName }) {
   const [theme, setTheme] = useState(() => localStorage.getItem("theme") || "dark");
   const location = useLocation();
   const navigate = useNavigate();
+
+  // ST-13 (BLG-FE-249, v9.15): one browser-tab title per page, set here on
+  // every route change from the shared label source (navigation.md §Browser Tab Title).
+  useEffect(() => {
+    document.title = documentTitle(currentPageName, location.pathname);
+  }, [currentPageName, location.pathname]);
 
   // ST-06 (BLG-FE-145, EPIC-03, v8.5) follow-up, found live via that story's
   // own new Playwright tests failing in real CI: tailwind.config.js's

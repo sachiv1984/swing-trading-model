@@ -65,3 +65,37 @@ export const PALETTE_PAGE_KEYS = [
 export function pageLabel(key) {
   return PAGE_LABELS[key];
 }
+
+// Browser-tab title (navigation.md §Browser Tab Title; ST-13, BLG-FE-249, v9.15):
+// "{page label} · Position Manager", Research pages "{TICKER} · Research ·
+// Position Manager", unknown routes "Page not found · Position Manager".
+// Other detail views (a trade plan, a replayed trade) use the page label alone,
+// so no per-record data is fetched. Set once by Layout.js on route change;
+// PageNotFound (rendered outside Layout) sets the not-found title. No page sets
+// document.title itself.
+export const APP_TITLE = "Position Manager";
+export const TITLE_SEPARATOR = " · ";
+export const NOT_FOUND_TITLE = `Page not found${TITLE_SEPARATOR}${APP_TITLE}`;
+
+// Some routes render under another page's Layout key (App.js): the pathname
+// tells them apart.
+function pageKeyForPath(pageName, pathname) {
+  const path = (pathname || "").toLowerCase();
+  if (path === "/notifications/history") return "NotificationsHistory";
+  if (path === "/notifications/preferences" || path === "/notificationpreferences") return "NotificationPreferences";
+  return pageName;
+}
+
+export function documentTitle(pageName, pathname) {
+  const key = pageKeyForPath(pageName, pathname);
+  if (key === "Research") {
+    const match = /^\/research\/([^/]+)/i.exec(pathname || "");
+    if (match) {
+      // Same ticker form as the Research heading (UK ".L" suffix dropped).
+      const ticker = decodeURIComponent(match[1]).toUpperCase().replace(/\.L$/, "");
+      return [ticker, PAGE_LABELS.Research, APP_TITLE].join(TITLE_SEPARATOR);
+    }
+  }
+  const label = PAGE_LABELS[key];
+  return label ? `${label}${TITLE_SEPARATOR}${APP_TITLE}` : NOT_FOUND_TITLE;
+}
