@@ -545,17 +545,20 @@ export default function TradeEntry() {
           {/* FX Rate (US only) */}
           {formData.market === "US" && (
             <div className="space-y-2">
-              <Label className="text-slate-600 dark:text-slate-400">FX Rate (USD/GBP)</Label>
+              {/* ST-03 (BLG-FE-246, v9.15): one FX label and hint on every FX input */}
+              <Label htmlFor="trade-entry-fx-rate" className="text-slate-600 dark:text-slate-400">FX rate — USD per £1 (GBP/USD)</Label>
               <Input
                 type="number"
                 step="0.0001"
                 value={formData.fx_rate}
                 onChange={(e) => handleFxChange(e.target.value)}
                 placeholder={fxLoading && !fxTyped ? "Fetching live rate…" : undefined}
-                aria-describedby={fxSourceLine ? "trade-entry-fx-source" : undefined}
+                id="trade-entry-fx-rate"
+                aria-describedby={fxSourceLine ? "trade-entry-fx-hint trade-entry-fx-source" : "trade-entry-fx-hint"}
                 data-testid="trade-entry-fx-input"
                 className="bg-slate-800/50 border-slate-700 text-white"
               />
+              <p id="trade-entry-fx-hint" data-testid="fx-rate-hint" className="text-xs text-slate-600 dark:text-slate-400">How many US dollars £1 buys.</p>
               {fxSourceLine && (
                 <p
                   id="trade-entry-fx-source"

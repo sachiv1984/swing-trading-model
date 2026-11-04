@@ -377,8 +377,11 @@ export default function ExitModal({ position, open, onClose, onConfirm, preselec
                   </div>
                   {position.market === "US" ? (
                     <div className="space-y-1">
-                      <Label className="text-xs text-slate-600 dark:text-slate-400">FX Rate (GBP/USD)</Label>
+                      {/* ST-03 (BLG-FE-246, v9.15): one FX label and hint on every FX input */}
+                      <Label htmlFor="exit-fx-rate" className="text-xs text-slate-600 dark:text-slate-400">FX rate — USD per £1 (GBP/USD)</Label>
                       <Input
+                        id="exit-fx-rate"
+                        aria-describedby="exit-fx-rate-hint"
                         type="number"
                         step="0.0001"
                         min="0.0001"
@@ -391,6 +394,7 @@ export default function ExitModal({ position, open, onClose, onConfirm, preselec
                         }
                         className="bg-slate-800/50 border-slate-700 text-white h-9"
                       />
+                      <p id="exit-fx-rate-hint" data-testid="fx-rate-hint" className="text-xs text-slate-600 dark:text-slate-400">How many US dollars £1 buys.</p>
                     </div>
                   ) : null}
                 </div>

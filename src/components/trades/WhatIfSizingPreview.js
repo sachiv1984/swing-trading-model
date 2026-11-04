@@ -34,7 +34,7 @@ export default function WhatIfSizingPreview({ ticker, market, stopLevel, fxRate,
   // whatever the live FX rate happens to be at preview time, which can
   // differ from the rate in effect later at actual order entry
   // (TradeEntry.js) even for the identical entry price — same UI
-  // convention (label, step) as TradeEntry.js's own "FX Rate (USD/GBP)" field.
+  // convention (label, step) as TradeEntry.js's own FX field.
   const [fxRateOverride, setFxRateOverride] = useState(fxRate ? String(fxRate) : "");
   const parsedEntry = plannedEntryPrice === "" ? null : parseFloat(plannedEntryPrice);
   const parsedStop = stopLevel === "" || stopLevel == null ? null : parseFloat(stopLevel);
@@ -161,8 +161,11 @@ export default function WhatIfSizingPreview({ ticker, market, stopLevel, fxRate,
             </div>
             {market === "US" && (
               <div className="space-y-1.5">
-                <Label className="text-slate-600 dark:text-slate-400 text-xs">FX Rate (USD/GBP)</Label>
+                {/* ST-03 (BLG-FE-246, v9.15): one FX label and hint on every FX input */}
+                <Label htmlFor="what-if-fx-rate" className="text-slate-600 dark:text-slate-400 text-xs">FX rate — USD per £1 (GBP/USD)</Label>
                 <Input
+                  id="what-if-fx-rate"
+                  aria-describedby="what-if-fx-rate-hint"
                   type="number"
                   step="0.0001"
                   data-testid="what-if-fx-rate-input"
@@ -171,6 +174,7 @@ export default function WhatIfSizingPreview({ ticker, market, stopLevel, fxRate,
                   placeholder="Live rate"
                   className="bg-slate-900/60 border-slate-700 text-white h-9 text-sm"
                 />
+                <p id="what-if-fx-rate-hint" data-testid="fx-rate-hint" className="text-xs text-slate-600 dark:text-slate-400">How many US dollars £1 buys.</p>
               </div>
             )}
           </div>
