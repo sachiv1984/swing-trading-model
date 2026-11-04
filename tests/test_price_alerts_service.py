@@ -264,6 +264,11 @@ class TestCreatePriceAlertThresholdRounding(unittest.TestCase):
                 create_price_alert("portfolio-1", {"ticker": "AAPL", "condition": "above", "threshold_price": 100.12345})
             row_fn.assert_not_called()
 
+    def test_non_finite_threshold_is_rejected_with_value_error(self):
+        for bad in (float("nan"), float("inf")):
+            with self.assertRaises(ValueError):
+                create_price_alert("portfolio-1", {"ticker": "AAPL", "condition": "above", "threshold_price": bad})
+
     def test_threshold_that_rounds_to_zero_is_rejected(self):
         with self.assertRaises(ValueError):
             create_price_alert("portfolio-1", {"ticker": "AAPL", "condition": "above", "threshold_price": 0.00004})

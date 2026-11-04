@@ -401,6 +401,7 @@ def test_earnings_timestamp_at_2100_et_maps_to_that_et_date():
     assert out["next_earnings_date"] == "2026-10-28"
 
 
-def test_et_date_treats_a_naive_datetime_as_utc():
+def test_et_date_converts_aware_and_keeps_a_naive_datetime_date():
     from services import earnings_service
-    assert earnings_service._et_date(datetime(2026, 12, 3, 2, 0)) == date(2026, 12, 2)  # 21:00 EST
+    assert earnings_service._et_date(datetime(2026, 12, 3, 2, 0, tzinfo=timezone.utc)) == date(2026, 12, 2)  # 21:00 EST
+    assert earnings_service._et_date(datetime(2026, 12, 3, 0, 0)) == date(2026, 12, 3)  # bare date at midnight

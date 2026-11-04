@@ -6,7 +6,7 @@
   "invoked_utc": "2026-11-04T10:55:44Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-04T19:58:58Z",
+  "last_updated_utc": "2026-11-04T20:10:10Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-03",
@@ -401,7 +401,7 @@
             "reference": "ESC-EXEC-20261104-03",
             "notes": "Ruling given in-session by the user acting in the role: deploy date."
           },
-          "notes": "Sealed as delegated_decision; reclassified autonomous on ESC-EXEC-20261104-03 resolution (deploy date, 2026-11-04, raised and ruled in the same in-session exchange). AC 1 met: effective-date rule in the registry docstring (test asserts it). AC 2 met by test: windows equal the stamps for 9-15 Oct (pre-#1970 registry last entry 1.4, post 1.15, verified with git show). Gap-trade listing needs a production read (not available): carried in BLG-BE-203 with the v1.17/v1.20 lags. Case (c) write: row 1.15 Date + doc-only 1.24 row, §15 re-run 0 actionable. Deviation check: none. CI on 1c133336: 7/7 success (CI Pytest 41901190691)."
+          "notes": "Sealed as delegated_decision; reclassified autonomous on ESC-EXEC-20261104-03 resolution (deploy date, 2026-11-04, raised and ruled in the same in-session exchange). AC 1 met: effective-date rule in the registry docstring (test asserts it). AC 2 met by test: windows equal the stamps for 9-15 Oct (pre-#1970 registry last entry 1.4, post 1.15, verified with git show). Gap-trade listing needs a production read (not available): carried in BLG-BE-203 with the v1.17/v1.20 lags. Case (c) write: row 1.15 Date + doc-only 1.24 row, §15 re-run 0 actionable. Deviation check: none. CI on 1c133336: 7/7 success (CI Pytest 41901190691). DoQ pass 1 finding 1: graded Pass_with_deviation — AC 2 met for v1.15 only; 16 Oct (v1.17) and 29 Oct (v1.20) mismatches and the production listing carried in BLG-BE-203."
         },
         "ST-21": {
           "title": "Show the code-written fallback when the monthly P&L summary's regeneration call fails",

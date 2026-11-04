@@ -16,9 +16,13 @@ from zoneinfo import ZoneInfo
 
 
 def _et_date(dt: datetime) -> date:
-    """The America/New_York date of a datetime; a naive value is taken as UTC (ST-22, BLG-BE-174)."""
+    """The America/New_York date of an aware datetime (ST-22, BLG-BE-174).
+
+    A naive value carries no zone and is usually a bare date at midnight, so its
+    own date is kept, as before ST-22. Epoch timestamps are made UTC-aware first.
+    """
     if dt.tzinfo is None:
-        dt = dt.replace(tzinfo=timezone.utc)
+        return dt.date()
     return dt.astimezone(ZoneInfo(US_MARKET_TZ)).date()
 
 
@@ -47,7 +51,7 @@ def get_earnings(ticker: str, market: str = "US") -> Dict[str, Any]:
 
         # ST-22 (BLG-BE-174, v9.15): a timestamp is converted to its
         # America/New_York date, so a 21:00 ET (after-close) release is that ET
-        # day, not the next UTC day. A naive datetime is taken as UTC.
+        # day, not the next UTC day. A naive datetime keeps its own date.
         if isinstance(earnings_date, (int, float)):
             earnings_date = _et_date(datetime.fromtimestamp(earnings_date, timezone.utc))
         elif isinstance(earnings_date, datetime):

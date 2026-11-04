@@ -425,7 +425,7 @@ Create a custom price alert.
 
 - `ticker` must match `^[A-Z0-9.]{1,10}$` (case-insensitive on input, uppercased before storage)
 - `condition` must be `above` or `below`
-- `threshold_price` must be `> 0`, both as submitted and after rounding to 4 dp (a value such as `0.00004` that rounds to `0` returns `400`)
+- `threshold_price` must be `> 0`, both as submitted and after rounding to 4 dp (a value such as `0.00004` that rounds to `0`, or a non-finite value, returns `400`)
 - The portfolio must have fewer than 50 active (`active = true`) price alerts — this cap bounds both abuse and the nightly evaluation job's runtime (readiness pass AC-03/AC-04)
 
 #### Response (200)

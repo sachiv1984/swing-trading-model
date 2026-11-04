@@ -8,6 +8,7 @@
  *   SC-THWR-01  Trades of P&L +10, 0 and −10 show a 33.3% win rate (AC 1)
  *   SC-THWR-02  The break-even trade counts in Total Trades but not as W or L (1W / 1L)
  *   SC-THWR-03  Avg Winner and Avg Loser exclude the break-even trade (+£10.00 / −£10.00)
+ *   SC-THWR-04  The Winners filter shows the +10 trade only; Losers shows the −10 trade only
  *
  * Infrastructure: Playwright page.route() network interception. No live backend required.
  * ROUTING NOTE: App uses HashRouter. Navigate via page.goto('/#/TradeHistory').
@@ -106,5 +107,18 @@ test.describe('Trade History win rate with a break-even trade (ST-15)', () => {
     await expect(statsCard(page, 'Avg Loser')).toContainText('10.00');
     // Under the old pnl >= 0 test Avg Winner was (10 + 0) / 2 = £5.00.
     await expect(statsCard(page, 'Avg Winner')).not.toContainText('5.00');
+  });
+
+  test('SC-THWR-04: Winners and Losers filters leave the break-even trade out', async ({ page }) => {
+    const pick = async (label) => {
+      await page.getByRole('combobox').filter({ hasText: /All Results|Winners|Losers/ }).click();
+      await page.getByRole('option', { name: label, exact: true }).click();
+    };
+    await pick('Winners');
+    await expect(statsCard(page, 'Total Trades')).toContainText('1W / 0L');
+    await expect(page.getByText('BBB')).toHaveCount(0);
+    await pick('Losers');
+    await expect(statsCard(page, 'Total Trades')).toContainText('0W / 1L');
+    await expect(page.getByText('BBB')).toHaveCount(0);
   });
 });

@@ -389,7 +389,10 @@ def get_price_alerts(portfolio_id: str) -> List[Dict]:
 
 def _round_threshold(value) -> Decimal:
     """Round a threshold to NUMERIC(10,4)'s 4 dp, half away from zero (ST-19, BLG-BE-170)."""
-    return Decimal(str(value)).quantize(Decimal("0.0001"), rounding=ROUND_HALF_UP)
+    d = Decimal(str(value))
+    if not d.is_finite():
+        return d  # NaN/Infinity cannot be quantized; the caller rejects it (400)
+    return d.quantize(Decimal("0.0001"), rounding=ROUND_HALF_UP)
 
 
 def create_price_alert(portfolio_id: str, data: Dict) -> Dict:
@@ -414,7 +417,7 @@ def create_price_alert(portfolio_id: str, data: Dict) -> Dict:
     # threshold never matched its own stored row, and the unique-violation
     # fallback found nothing.
     threshold_price = _round_threshold(threshold_price)
-    if threshold_price <= 0:
+    if not threshold_price.is_finite() or threshold_price <= 0:
         raise ValueError("threshold_price must be a positive number")
 
     with get_db() as conn:
