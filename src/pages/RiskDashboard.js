@@ -4,6 +4,7 @@ import { Loader2, AlertTriangle } from "lucide-react";
 import ExplainedMarker from "../components/ui/ExplainedMarker";
 import { fxSourceNotice } from "../lib/fxSource";
 import PageHeader from "../components/ui/PageHeader";
+import { PAGE_LABELS } from "../lib/pageLabels";
 import HeatGauge from "../components/risk/HeatGauge";
 import DrawdownSummary from "../components/risk/DrawdownSummary";
 import GracePeriodPanel from "../components/risk/GracePeriodPanel";
@@ -63,7 +64,7 @@ export default function RiskDashboard() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Risk Dashboard"
+        title={PAGE_LABELS.RiskDashboard}
         description="Daily portfolio risk snapshot — review before making trading decisions."
       />
 

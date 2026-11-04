@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Eye } from "lucide-react";
 import PageHeader from "../components/ui/PageHeader";
+import { PAGE_LABELS } from "../lib/pageLabels";
 import WatchlistModal from "../components/watchlist/WatchlistModal";
 import WatchlistTable from "../components/watchlist/WatchlistTable";
 import AddTickerButton from "../components/watchlist/AddTickerButton";
@@ -60,7 +61,7 @@ export default function Watchlist() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Watchlist"
+        title={PAGE_LABELS.Watchlist}
         description="Monitor tickers for entry opportunities."
         actions={
           <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center gap-2">

@@ -776,6 +776,7 @@ Each POST /ai/chat is stateless (no session state persisted to backend; the v2.2
 - Positions table
 - Journal cards (see `journal_components.md` — Expandable Journal Card)
 - Exit Position Modal
+- Daily Monitor button (`DailyMonitor.js`, page header) → Daily Position Monitor (`MonitorModal.js`) and its exit queue (v2.24)
 - Position Detail Modal (journal editor)
 - Tag pills (see `journal_components.md` — Tag List)
 - Tag editor with autocomplete (see `journal_components.md` — Tag Editor)

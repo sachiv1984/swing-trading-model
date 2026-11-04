@@ -12,6 +12,7 @@ import { Label } from "../components/ui/label";
 import { Textarea } from "../components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
 import PageHeader from "../components/ui/PageHeader";
+import { PAGE_LABELS } from "../lib/pageLabels";
 import { ArrowLeft, Calculator, Loader2, CheckCircle2, X, Rocket, Info } from "lucide-react";
 import { Link } from "react-router-dom";
 import { cn } from "../lib/utils";
@@ -433,7 +434,7 @@ export default function TradeEntry() {
   return (
     <div className="space-y-6 max-w-2xl mx-auto">
       <PageHeader
-        title="Enter New Position"
+        title={PAGE_LABELS.TradeEntry}
         description="Add a new trade to your portfolio"
         actions={
           <Link to={createPageUrl("Positions")}>

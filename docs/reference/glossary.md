@@ -328,8 +328,9 @@ Buttons are in Title Case. The keyboard-shortcut legend uses sentence case with 
 | Close all or part of a position | Exit (opens the exit modal); Confirm Exit (modal submit) | Position card button; Positions table icon button (accessible name `Exit {TICKER}`); Exit modal | — |
 | Start a trade plan | New Trade Plan | Trade Plans header and empty state | — |
 | Save a trade plan | Save Plan (new) / Update Plan (existing) | Trade Plan submit | — |
-| Add a ticker to the watchlist | Add to Watchlist | Screener, Watchlist; shortcut `w` legend ("Add to watchlist") | — |
+| Add a ticker to the watchlist | Add to Watchlist | Screener; watchlist modal submit; shortcut `w` legend ("Add to watchlist") | On the Watchlist page itself the header button reads "Add Ticker": the page name already says where the ticker goes. |
 | Run the screener | Run Screener | Screener | — |
+| Open the Daily Position Monitor | Daily Monitor | Positions header button | The modal title is "Daily Position Monitor". |
 | Reload page data | Refresh | Shortcut `r` legend; refresh buttons | — |
 
 ### "Trade" or "position"

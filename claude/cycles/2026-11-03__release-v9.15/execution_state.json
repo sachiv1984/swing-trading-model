@@ -6,7 +6,7 @@
   "invoked_utc": "2026-11-04T10:55:44Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-04T21:07:20Z",
+  "last_updated_utc": "2026-11-04T21:32:02Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-03",
@@ -260,7 +260,11 @@
       "test_scenarios": [
         "tests/e2e/command-palette.spec.js",
         "tests/e2e/sidebar-nav-groups.spec.js",
-        "tests/e2e/whats-new-panel.spec.js"
+        "tests/e2e/whats-new-panel.spec.js",
+        "tests/e2e/legacy-dashboard-redirect.spec.js",
+        "tests/e2e/monitor-exit-queue.spec.js",
+        "tests/e2e/monitor-grace-aware-suggestions.spec.js",
+        "tests/e2e/dialog-classname-override-fixes.spec.js"
       ],
       "stories": {
         "ST-08": {
@@ -293,7 +297,7 @@
             "result": "Approved",
             "findings": "First pass Blocked (4 blocking: sidebar counts 20->21 and detail pages 4->3; Trade History onward link is a dead end; Notification Preferences area contradicted its parent; glossary Research palette 'No' contradicted the new /Research landing) plus 4 non-blocking. All applied; retry 1 Approved with evidence (awk count of placement rows = 25 matching ls src/pages; Sidebar Yes = 21). Remaining non-blocking: DEV-NAV-ST06-01 heading vs CLAUDE.md heading rule (backlog item to file)."
           },
-          "notes": "delegated_decision per sealed sprint_backlog.md: the decision is the in-sprint spec approval (Head of UX & Design; ST-09 also Head of Specs Team, Class 1; ST-10 also the Strategy Rules & System Intent Owner's §13 confirmation). Engine drafts the spec, then requests agent-mediated sign-off per §5.3 (design-gate precedent: decision_record.md §7). Surfaced to the user only if still Blocked after 2 retries. Decision (spec approval) cleared by §5.3 agent-mediated Head of UX & Design review, retry 1 Approved; reclassified delegated_decision -> autonomous. Case B: the spec artefacts are the spec_references. Deviation check: none (documentation deliverable; code gap is planned build work in BLG-FE-250/251/252, recorded in navigation.md §Implementation Status). Docs-only commit: no src/** change, no Playwright spec.",
+          "notes": "delegated_decision per sealed sprint_backlog.md: the decision is the in-sprint spec approval (Head of UX & Design; ST-09 also Head of Specs Team, Class 1; ST-10 also the Strategy Rules & System Intent Owner's §13 confirmation). Engine drafts the spec, then requests agent-mediated sign-off per §5.3 (design-gate precedent: decision_record.md §7). Surfaced to the user only if still Blocked after 2 retries. Decision (spec approval) cleared by §5.3 agent-mediated Head of UX & Design review, retry 1 Approved; reclassified delegated_decision -> autonomous. Case B: the spec artefacts are the spec_references. Deviation check: none (documentation deliverable; code gap is planned build work in BLG-FE-250/251/252, recorded in navigation.md §Implementation Status). Docs-only commit: no src/** change, no Playwright spec. CI on 32b84b68: all 7 workflows success (Critical-Path Smoke 41913079766, CI Pytest 41913079669). Issue #2152 closed by governance_sync.",
           "_planned_spec_references": [
             "docs/design/2026-11-03__release-v9.15/site-structure-phase1/decision_record.md",
             "docs/specs/frontend/pages/navigation.md",
@@ -381,26 +385,35 @@
         "ST-12": {
           "title": "Remove the legacy widget Dashboard route and its duplicate command-palette entry",
           "classification": "autonomous",
-          "status": "in_progress",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 2156,
           "branch": "exec/2026-11-03__release-v9.15/EPIC-02",
-          "commit_sha": null,
+          "commit_sha": "c8523403220c8f6759e93cbe69f843fe2200e6e2",
           "delegation_record_id": "ESC-EXEC-20261104-05",
           "blocked_since_utc": null,
           "unblock_criteria": "Dated Product Owner ruling naming option (a)/(b)/(c)/(d) in ESC-EXEC-20261104-05; under (a)/(b) Head of UX & Design confirms placement.",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-11-04T21:32:02Z",
+          "acceptance_verified": true,
           "spec_references": [
+            "docs/specs/frontend/pages/navigation.md",
+            "docs/specs/frontend/pages/positions.md",
             "docs/design/2026-11-03__release-v9.15/site-structure-phase1/decision_record.md",
-            "docs/specs/frontend/pages/navigation.md"
+            "tests/e2e/legacy-dashboard-redirect.spec.js"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "Reclassified autonomous -> delegated_decision at 2026-11-04T21:03:58Z: MonitorModal (Daily Position Monitor) is reachable only from the legacy Dashboard QuickActions widget (positions.md §Daily Position Monitor Exit Queue entry point). See ESC-EXEC-20261104-05. Resolved 2026-11-04T21:04:56Z: Product Owner option (a), Daily Monitor moves to the Positions header; reclassified delegated_decision -> autonomous. Head of UX & Design placement confirmation pending (§5.3).",
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.push",
+          "sign_off_record": {
+            "status": "cleared",
+            "method": "agent_mediated",
+            "role": "Head of UX & Design (placement, per ESC-EXEC-20261104-05) + Head of Specs Team (positions.md Class 1 v2.24)",
+            "date": "2026-11-04",
+            "result": "Approved (both, first pass)",
+            "findings": "Behaviour-identical port verified by whitespace-insensitive diff of Dashboard.js@c8523403^ vs DailyMonitor.js (only rename/prop-name lines differ); data feed equivalent (Position.list ignores order arg; same open filter). Non-blocking: phone-width header wrap; design_system.md §Buttons lists Daily Monitor as primary; glossary lacks Daily Monitor action row; positions.md Key Components list; stale Dashboard.js comments; border/popover token coverage lost with SC-TOK-04/SC-MTC-05/06."
+          },
+          "notes": "Reclassified autonomous -> delegated_decision at 2026-11-04T21:03:58Z: MonitorModal (Daily Position Monitor) is reachable only from the legacy Dashboard QuickActions widget (positions.md §Daily Position Monitor Exit Queue entry point). See ESC-EXEC-20261104-05. Resolved 2026-11-04T21:04:56Z: Product Owner option (a), Daily Monitor moves to the Positions header; reclassified delegated_decision -> autonomous. Head of UX & Design placement confirmation pending (§5.3). AC 1 (one palette Dashboard entry) SC-LDR-03; AC 2 (/#/Dashboard -> home) SC-LDR-01/02; AC 3 (specs removed or retargeted) done, CI below. Local Playwright (test-env build): affected specs 54/54 pass after the exit-queue stub fix. Deviation check: none (implementation matches navigation.md §Legacy Dashboard Route and the ruled positions.md v2.24). CI on c8523403: 8 workflows success (Critical-Path Smoke 41916984586, CI Pytest 41916984473, Frontend Production Build 41916984670); ci_pending: 41916984537 (Playwright E2E Acceptance Tests).",
           "_planned_spec_references": [
             "docs/design/2026-11-03__release-v9.15/site-structure-phase1/decision_record.md",
             "docs/specs/frontend/pages/navigation.md"
@@ -732,6 +745,7 @@
     "ST-06",
     "ST-07",
     "ST-08",
+    "ST-12",
     "ST-15",
     "ST-17",
     "ST-18",

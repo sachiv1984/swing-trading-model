@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { apiFetch } from "../api/base44Client";
 import { Button } from "../components/ui/button";
 import PageHeader from "../components/ui/PageHeader";
+import { PAGE_LABELS } from "../lib/pageLabels";
 import DataState from "../components/ui/DataState";
 import { Checkbox } from "../components/ui/checkbox";
 import BulkActionToolbar from "../components/shared/BulkActionToolbar";
@@ -141,7 +142,7 @@ export default function TradePlans() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Trade Plans"
+        title={PAGE_LABELS.TradePlans}
         description={`${plans.length} plan${plans.length !== 1 ? "s" : ""}`}
         actions={
           <Button

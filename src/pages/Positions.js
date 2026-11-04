@@ -24,6 +24,7 @@ import {
 import DataState from "../components/ui/DataState";
 import { Button } from "../components/ui/button";
 import PageHeader from "../components/ui/PageHeader";
+import { PAGE_LABELS } from "../lib/pageLabels";
 import PositionCard from "../components/positions/PositionCard";
 import PositionModal from "../components/positions/PositionModal";
 import ExitModal from "../components/positions/ExitModal";
@@ -791,7 +792,7 @@ export default function Positions() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title={viewMode === "journal" ? "Trade Journal" : "Open Positions"}
+        title={viewMode === "journal" ? "Trade Journal" : PAGE_LABELS.Positions}
         description={
           viewMode === "journal"
             ? `${allPositions.length} total entries`
@@ -800,7 +801,9 @@ export default function Positions() {
               }`
         }
         actions={
-          <div className="flex items-center gap-3">
+          // ST-12 follow-up (v9.15): wraps at phone width now that the header
+          // also carries the Daily Monitor button.
+          <div className="flex flex-wrap items-center justify-end gap-3">
             <div className="flex items-center rounded-xl bg-slate-800/50 border border-slate-700/50 p-1">
               <Button
                 aria-label="Grid view"

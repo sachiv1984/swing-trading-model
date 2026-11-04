@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { api } from "../api/base44Client";
 import { formatCurrency, formatPercent } from "../lib/format";
 import PageHeader from "../components/ui/PageHeader";
+import { PAGE_LABELS } from "../lib/pageLabels";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
 import { Download, BarChart2 } from "lucide-react";
 import DataState from "../components/ui/DataState";
@@ -366,7 +367,7 @@ export default function PerformanceAnalytics() {
     return (
       <div>
         <PageHeader
-          title="Performance Analytics"
+          title={PAGE_LABELS.PerformanceAnalytics}
           description="Deep dive into your trading performance and strategy effectiveness"
         />
         <DataState
@@ -566,7 +567,7 @@ export default function PerformanceAnalytics() {
     return (
       <div>
         <PageHeader
-          title="Performance Analytics"
+          title={PAGE_LABELS.PerformanceAnalytics}
           description="Deep dive into your trading performance and strategy effectiveness"
           actions={
             /* ST-12 (BLG-FE-94, EPIC-04, v8.5): flex-col sm:flex-row --
@@ -608,7 +609,7 @@ export default function PerformanceAnalytics() {
           emptyIcon={<BarChart2 className="w-10 h-10 text-slate-600" />}
           emptyHeading="Not enough trades"
           emptyBody={`Need at least ${settingsData.min_trades_for_analytics} closed trades to show analytics. You currently have ${filteredTrades.length} trade${filteredTrades.length !== 1 ? 's' : ''} in the selected period.`}
-          emptyAction={<EmptyStateAction variant="button" to="/TradeEntry">Log a trade</EmptyStateAction>}
+          emptyAction={<EmptyStateAction variant="button" to="/TradeEntry">Enter Your First Position</EmptyStateAction>}
           className="min-h-[400px]"
         />
       </div>
@@ -618,7 +619,7 @@ export default function PerformanceAnalytics() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Performance Analytics"
+        title={PAGE_LABELS.PerformanceAnalytics}
         description="Deep dive into your trading performance and strategy effectiveness"
         actions={
           /* ST-12 (BLG-FE-94, EPIC-04, v8.5): flex-col sm:flex-row -- see

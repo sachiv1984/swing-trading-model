@@ -46,7 +46,7 @@ async function mockFallback(page) {
   );
 }
 
-/** The positions queries (base44.entities.Position.list/filter; Positions.js since v9.15) (base44.entities.Position.list/filter) hit GET
+/** The positions queries (base44.entities.Position.list/filter; on Positions.js since v9.15) hit GET
  *  /positions, which returns a raw array (not the {status,data} wrapper) — registered
  *  after mockFallback so this more specific route takes precedence for that URL. */
 async function mockDashboardPositions(page) {

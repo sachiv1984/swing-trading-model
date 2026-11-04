@@ -23,6 +23,7 @@ import {
 import { Button } from "../components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
 import PageHeader from "../components/ui/PageHeader";
+import { PAGE_LABELS } from "../lib/pageLabels";
 import { StandingAlert } from "../components/ui/StandingAlert";
 import { formatCurrency, formatPercent } from "../lib/format";
 import StatsCard from "../components/ui/StatsCard";
@@ -1141,7 +1142,7 @@ export default function Reports() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Reports"
+        title={PAGE_LABELS.Reports}
         description="Performance analysis and export tools"
         actions={
           activeTab === "performance" ? (

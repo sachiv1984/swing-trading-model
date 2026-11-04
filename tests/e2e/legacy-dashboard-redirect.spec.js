@@ -9,6 +9,7 @@
  *   SC-LDR-03  a palette search for "Dashboard" lists exactly one "Dashboard" page entry — AC 1
  *   SC-LDR-04  the Daily Position Monitor opens from the Positions header
  *              (Product Owner ruling ESC-EXEC-20261104-05 (a))
+ *   SC-LDR-05  at 375px the Positions header actions (Daily Monitor, New Position) stay in the viewport
  *
  * Infrastructure: page.route() network interception — no live backend required.
  * ROUTING NOTE: App uses HashRouter — navigate via page.goto('/#/PageKey').
@@ -66,4 +67,15 @@ test('SC-LDR-04: the Daily Position Monitor opens from the Positions header', as
   await page.goto('/#/Positions');
   await page.getByTestId('daily-monitor-button').click();
   await expect(page.getByRole('heading', { name: 'Daily Position Monitor' })).toBeVisible({ timeout: 10000 });
+});
+
+test('SC-LDR-05: at phone width the Positions header actions stay inside the viewport', async ({ page }) => {
+  await page.setViewportSize({ width: 375, height: 800 });
+  await page.goto('/#/Positions');
+  for (const locator of [page.getByTestId('daily-monitor-button'), page.getByRole('button', { name: 'New Position' })]) {
+    await expect(locator).toBeVisible({ timeout: 10000 });
+    const box = await locator.boundingBox();
+    expect(box.x).toBeGreaterThanOrEqual(0);
+    expect(box.x + box.width).toBeLessThanOrEqual(375);
+  }
 });

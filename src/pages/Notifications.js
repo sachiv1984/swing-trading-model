@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Bell } from "lucide-react";
 import PageHeader from "../components/ui/PageHeader";
+import { PAGE_LABELS } from "../lib/pageLabels";
 import NotificationTabBar from "../components/notifications/NotificationTabBar";
 import NotificationRow from "../components/notifications/NotificationRow";
 import { useToast } from "../components/ui/use-toast";
@@ -127,7 +128,7 @@ export default function Notifications() {
     <div className="space-y-6">
       <div className="flex items-start justify-between gap-4">
         <PageHeader
-          title="Notifications"
+          title={PAGE_LABELS.notifications}
           description="Recent alerts and system events."
         />
         {hasUnread && !loading && !loadError && (
