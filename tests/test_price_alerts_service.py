@@ -210,6 +210,65 @@ class TestCreatePriceAlertDeduplication(unittest.TestCase):
             self.assertIn("active = TRUE", dedup_call.args[0])
 
 
+class TestCreatePriceAlertThresholdRounding(unittest.TestCase):
+    """ST-19 (BLG-BE-170, EPIC-03, v9.15): threshold_price is NUMERIC(10,4), so it
+    is rounded to 4 dp before both SELECTs and the INSERT, and the unique-violation
+    fallback never passes None to _price_alert_row."""
+
+    ROW = {"id": "pa-1", "ticker": "AAPL", "condition": "above", "threshold_price": Decimal("100.1235"),
+           "active": True, "triggered_at": None, "created_at": "2026-11-04T10:00:00Z",
+           "updated_at": "2026-11-04T10:00:00Z"}
+
+    def _cursor(self, mock_db, fetchone):
+        mock_conn = MagicMock()
+        mock_db.return_value.__enter__.return_value = mock_conn
+        cur = MagicMock()
+        cur.fetchone.side_effect = fetchone
+        mock_conn.cursor.return_value.__enter__.return_value = cur
+        return cur
+
+    def _threshold_params(self, cur):
+        return [c.args[1][3] for c in cur.execute.call_args_list
+                if "threshold_price" in c.args[0] and len(c.args) > 1 and len(c.args[1]) == 4]
+
+    def test_five_dp_threshold_is_rounded_before_selects_and_insert(self):
+        with patch.object(alerts_service, "get_db") as mock_db:
+            cur = self._cursor(mock_db, [None, {"cnt": 0}, dict(self.ROW)])
+            create_price_alert("portfolio-1", {"ticker": "AAPL", "condition": "above", "threshold_price": 100.12345})
+            params = self._threshold_params(cur)
+            self.assertEqual(len(params), 2)  # de-dup SELECT and INSERT
+            self.assertTrue(all(p == Decimal("100.1235") for p in params), params)
+
+    def test_second_five_dp_submit_matches_the_stored_row(self):
+        """The de-dup SELECT receives the stored 4 dp value, so a repeat submit finds it."""
+        with patch.object(alerts_service, "get_db") as mock_db:
+            cur = self._cursor(mock_db, [dict(self.ROW)])
+            result = create_price_alert("portfolio-1", {"ticker": "AAPL", "condition": "above", "threshold_price": "100.12345"})
+            self.assertEqual(result["id"], "pa-1")
+            self.assertEqual(self._threshold_params(cur), [Decimal("100.1235")])
+            self.assertFalse([c for c in cur.execute.call_args_list if "INSERT INTO price_alerts" in c.args[0]])
+
+    def test_fallback_select_finding_no_row_raises_instead_of_serialising_none(self):
+        violation = alerts_service.psycopg2.IntegrityError("duplicate key")
+        with patch.object(alerts_service, "get_db") as mock_db, \
+             patch.object(alerts_service.psycopg2.IntegrityError, "pgcode", "23505", create=True), \
+             patch.object(alerts_service, "_price_alert_row", wraps=alerts_service._price_alert_row) as row_fn:
+            cur = self._cursor(mock_db, [None, {"cnt": 0}, None])
+
+            def execute(sql, params=None):
+                if "INSERT INTO price_alerts" in sql:
+                    raise violation
+            cur.execute.side_effect = execute
+
+            with self.assertRaises(RuntimeError):
+                create_price_alert("portfolio-1", {"ticker": "AAPL", "condition": "above", "threshold_price": 100.12345})
+            row_fn.assert_not_called()
+
+    def test_threshold_that_rounds_to_zero_is_rejected(self):
+        with self.assertRaises(ValueError):
+            create_price_alert("portfolio-1", {"ticker": "AAPL", "condition": "above", "threshold_price": 0.00004})
+
+
 # ---------------------------------------------------------------------------
 # 2. delete_price_alert
 # ---------------------------------------------------------------------------

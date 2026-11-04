@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 0.13
-**Last Updated:** 2026-10-01 (ST-09, EPIC-02, v9.9, BLG-OPS-174 — POST /price-alerts's Idempotency subsection updated: a double-submit of the same active (ticker, condition, threshold_price) now returns the existing alert instead of the previously-undefined duplicate-creation behaviour); prior — 2026-09-29 (ST-21, EPIC-05, v9.8, BLG-API-05 — added error examples to GET /alerts/rules (500) and GET /notifications (400)); prior — 2026-09-29 (ST-20, EPIC-05, v9.8, BLG-API-04 — added an Idempotency subsection to the 6 remaining mutating endpoints in this file; flagged undefined double-submit duplicate-alert-creation behaviour on POST /price-alerts as BLG-OPS-174); prior history retained — see prior entries in version control.
+**Version:** 0.14
+**Last Updated:** 2026-11-04 (ST-19, EPIC-03, v9.15, BLG-BE-170 — POST /price-alerts rounds threshold_price to 4 dp before de-dup, insert and fallback; Idempotency note now names DS-28's unique index); prior — 2026-10-01 (ST-09, EPIC-02, v9.9, BLG-OPS-174 — POST /price-alerts's Idempotency subsection updated: a double-submit of the same active (ticker, condition, threshold_price) now returns the existing alert instead of the previously-undefined duplicate-creation behaviour); prior — 2026-09-29 (ST-21, EPIC-05, v9.8, BLG-API-05 — added error examples to GET /alerts/rules (500) and GET /notifications (400)); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **ADR Reference:** `docs/adr/ADR-003-notification-delivery-architecture.md` — FastAPI BackgroundTasks delivery architecture
 **Design Gate:** `claude/cycles/2026-03-18__release-v2.1/` — EPIC-02
@@ -402,7 +402,8 @@ Create a custom price alert.
 
 **Idempotency**
 
-- De-duplicated (ST-09, BLG-OPS-174, EPIC-02, v9.9): if an **active** alert already exists for this portfolio with the same `(ticker, condition, threshold_price)`, that existing alert is returned (same 200 shape, same `id`) instead of creating a second one. A past (inactive/triggered) alert with the same values does not block a new one. Not protected by a DB-level unique constraint — a true concurrent double-submit race is not fully closed, only the common sequential double-submit case.
+- De-duplicated (ST-09, BLG-OPS-174, EPIC-02, v9.9): if an **active** alert already exists for this portfolio with the same `(ticker, condition, threshold_price)`, that existing alert is returned (same 200 shape, same `id`) instead of creating a second one. A past (inactive/triggered) alert with the same values does not block a new one. A concurrent double-submit is absorbed by the partial unique index `idx_price_alerts_active_unique` (`data_model.md` DS-28, ST-20, v9.11): the losing request returns the winner's alert. *(v0.14: this sentence said no DB-level constraint existed, which was stale from v9.11.)*
+- `threshold_price` is compared and stored at 4 decimal places (`NUMERIC(10,4)`), rounded half away from zero, so submitting `100.12345` twice returns the same alert with `threshold_price` `100.1235` (ST-19, BLG-BE-170, EPIC-03, v9.15). Before v0.14, a threshold with 5+ decimal places never matched its stored row: the second submit returned `500`.
 
 #### Request Body
 
@@ -418,13 +419,13 @@ Create a custom price alert.
 |-------|------|----------|-------------|
 | `ticker` | string | Yes | 1–10 alphanumeric characters (uppercased server-side); same validation as the Watchlist "Add Ticker" field |
 | `condition` | string | Yes | Must be `above` or `below` |
-| `threshold_price` | float | Yes | Must be `> 0` |
+| `threshold_price` | float | Yes | Must be `> 0`; rounded to 4 dp before storage and comparison (v0.14) |
 
 #### Validation rules
 
 - `ticker` must match `^[A-Z0-9.]{1,10}$` (case-insensitive on input, uppercased before storage)
 - `condition` must be `above` or `below`
-- `threshold_price` must be `> 0`
+- `threshold_price` must be `> 0`, both as submitted and after rounding to 4 dp (a value such as `0.00004` that rounds to `0` returns `400`)
 - The portfolio must have fewer than 50 active (`active = true`) price alerts — this cap bounds both abuse and the nightly evaluation job's runtime (readiness pass AC-03/AC-04)
 
 #### Response (200)
@@ -453,7 +454,7 @@ Create a custom price alert.
 | `400` | `condition` missing or not one of `above`/`below` |
 | `400` | `threshold_price` missing or not `> 0` |
 | `400` | Active-alert cap (50) exceeded — message: `"You've reached the maximum number of active price alerts."` |
-| `500` | Internal server error |
+| `500` | Internal server error, including the rare case where the insert conflicts with an active alert that is gone by the time it is read back (`"Price alert conflicted with an active alert that could not be read back; retry the request."`; v0.14) |
 
 ---
 
@@ -1008,6 +1009,7 @@ Delivery tracking columns on `notifications` (`delivered`, `delivery_attempted_a
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.14 | 2026-11-04 | ST-19 (v9.15, EPIC-03, BLG-BE-170): `POST /price-alerts` rounds `threshold_price` to 4 dp (half away from zero) before the de-dup SELECT, the insert and the unique-violation fallback SELECT, so a 5+ dp threshold resubmit returns the existing alert instead of `500`. If the fallback still finds no row, a clear error is raised rather than serialising `None`. Also corrected the Idempotency note, which still said no DB-level unique constraint existed (DS-28 added one at v9.11). No request or response shape change, so no `openapi.yaml` change. |
 | 0.10 | 2026-09-24 | ST-10 (v9.7, EPIC-03, BLG-BE-124): Generic alert re-delivery (`POST /alerts/evaluate`) now also requires `read = false`, in addition to the existing `delivered = false` and `delivery_attempts < 3` — a notification the operator has already read in the feed is never re-enqueued for delivery just because its earlier delivery attempt failed. Unread, undelivered notifications are still retried up to 3 times (unchanged). No new endpoint. |
 | 0.9 | 2026-09-24 | ST-09 (v9.7, EPIC-03, BLG-BE-123): Documented that `reflection_reminder` evaluation is portfolio-scoped, so a `trade_history` row with a `NULL` `portfolio_id` is permanently excluded from reflection reminders (expected behaviour, not a gap). Documented the `_evaluate_reflection_reminders` rollback-consistency fix: on a mid-loop failure the step's `SAVEPOINT` rollback now leaves `notifications_created`/`delivery_tasks_enqueued` reset to `0` (previously left at pre-failure partial counts), and delivery scheduling (`enqueue_delivery`) is deferred until after the `SAVEPOINT` releases so nothing is scheduled for a row that is subsequently rolled back. No new endpoint. |
 | 0.8 | 2026-09-21 | ST-04 (v9.6, EPIC-01, BLG-FEAT-98): Added the `reflection_reminder` alert type — a preference type with no rule (not accepted by `POST /alerts/rules`), evaluated as an additional step of `POST /alerts/evaluate` (48 h after a closed trade with no saved reflection; at most one per trade, ever; feed row always created, delivery only when the preference is enabled, default off). `GET/PATCH /notifications/preferences` now cover five types and backfill the new row for already-seeded portfolios. `POST /alerts/evaluate` response gains `reflection_reminders`. `GET /notifications` `alert_type` gains `reflection_reminder` (`context` = `{trade_id, ticker, exit_date}`). No new endpoint. Opportunistic in-file fix: backfilled the missing v0.7 row below. |

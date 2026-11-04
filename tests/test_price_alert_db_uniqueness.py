@@ -162,3 +162,64 @@ def test_a_triggered_alert_does_not_block_a_new_active_one(schema):
         cur.execute("INSERT INTO price_alerts (portfolio_id, ticker, condition, threshold_price) VALUES (%s, 'MSFT', 'below', 300)", (portfolio,))
     conn.commit()
     conn.close()
+
+
+def test_five_dp_threshold_resubmit_returns_the_existing_alert(schema):
+    """ST-19 (BLG-BE-170, EPIC-03, v9.15): the same 5+ dp threshold submitted twice
+    returns the existing alert both times, with exactly one active row. Before the
+    fix the second submit's de-dup SELECT compared 100.12345 with the stored
+    100.1235, missed, hit the unique index, and its fallback SELECT missed again,
+    passing None to _price_alert_row (500)."""
+    from services import alerts_service
+
+    portfolio = str(uuid.uuid4())
+    payload = {"ticker": "AAPL", "condition": "above", "threshold_price": 100.12345}
+    with patch.object(alerts_service, "get_db", _service_get_db(schema)):
+        first = alerts_service.create_price_alert(portfolio, dict(payload))
+        second = alerts_service.create_price_alert(portfolio, dict(payload))
+    assert first["id"] == second["id"]
+    assert first["threshold_price"] == 100.1235
+    check = _connect()
+    with check.cursor() as cur:
+        cur.execute(f"SELECT COUNT(*) AS n FROM {schema}.price_alerts WHERE active = TRUE")
+        assert cur.fetchone()["n"] == 1
+    check.close()
+
+
+def test_five_dp_concurrent_double_submit_returns_the_existing_alert(schema):
+    """ST-19: the unique-violation fallback path with a 5+ dp threshold. A holds
+    100.1235 uncommitted; B submits 100.12345, blocks on the index, then reads A's row."""
+    from services import alerts_service
+
+    portfolio = str(uuid.uuid4())
+    a = _connect()
+    with a.cursor() as cur:
+        cur.execute(f"SET search_path TO {schema}")
+        cur.execute(
+            "INSERT INTO price_alerts (portfolio_id, ticker, condition, threshold_price) VALUES (%s, 'AAPL', 'above', 100.1235) RETURNING id",
+            (portfolio,),
+        )
+        a_id = str(cur.fetchone()["id"])
+
+    result = {}
+
+    def submit_b():
+        with patch.object(alerts_service, "get_db", _service_get_db(schema)):
+            result["b"] = alerts_service.create_price_alert(
+                portfolio, {"ticker": "AAPL", "condition": "above", "threshold_price": 100.12345}
+            )
+
+    b = threading.Thread(target=submit_b)
+    b.start()
+    time.sleep(1.0)
+    assert b.is_alive(), "B should be waiting on A's uncommitted row"
+    a.commit()
+    b.join(timeout=10)
+    a.close()
+
+    assert str(result["b"]["id"]) == a_id
+    check = _connect()
+    with check.cursor() as cur:
+        cur.execute(f"SELECT COUNT(*) AS n FROM {schema}.price_alerts WHERE active = TRUE")
+        assert cur.fetchone()["n"] == 1
+    check.close()

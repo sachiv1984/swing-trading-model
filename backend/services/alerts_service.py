@@ -24,6 +24,7 @@ import psycopg2
 import logging
 import re
 from datetime import datetime, timezone
+from decimal import Decimal, ROUND_HALF_UP
 from typing import Dict, List, Optional
 from uuid import uuid4
 
@@ -386,6 +387,11 @@ def get_price_alerts(portfolio_id: str) -> List[Dict]:
             return [_price_alert_row(r) for r in cur.fetchall()]
 
 
+def _round_threshold(value) -> Decimal:
+    """Round a threshold to NUMERIC(10,4)'s 4 dp, half away from zero (ST-19, BLG-BE-170)."""
+    return Decimal(str(value)).quantize(Decimal("0.0001"), rounding=ROUND_HALF_UP)
+
+
 def create_price_alert(portfolio_id: str, data: Dict) -> Dict:
     """
     Create a price alert. Raises ValueError (-> 400) on invalid input or when the
@@ -401,6 +407,15 @@ def create_price_alert(portfolio_id: str, data: Dict) -> Dict:
         raise ValueError("condition must be 'above' or 'below'")
     if threshold_price is None or float(threshold_price) <= 0:
         raise ValueError("threshold_price must be a positive number")
+    # ST-19 (BLG-BE-170, EPIC-03, v9.15): price_alerts.threshold_price is
+    # NUMERIC(10,4). Round to 4 dp before both SELECTs and the INSERT, half away
+    # from zero like Postgres's own numeric rounding, so the de-dup and fallback
+    # SELECTs compare against the value actually stored. Unrounded, a 5+ dp
+    # threshold never matched its own stored row, and the unique-violation
+    # fallback found nothing.
+    threshold_price = _round_threshold(threshold_price)
+    if threshold_price <= 0:
+        raise ValueError("threshold_price must be a positive number")
 
     with get_db() as conn:
         with conn.cursor() as cur:
@@ -412,7 +427,7 @@ def create_price_alert(portfolio_id: str, data: Dict) -> Dict:
                 """SELECT * FROM price_alerts
                    WHERE portfolio_id = %s AND ticker = %s AND condition = %s
                      AND threshold_price = %s AND active = TRUE""",
-                (portfolio_id, ticker, condition, float(threshold_price)),
+                (portfolio_id, ticker, condition, threshold_price),
             )
             existing = cur.fetchone()
             if existing:
@@ -437,7 +452,7 @@ def create_price_alert(portfolio_id: str, data: Dict) -> Dict:
                     INSERT INTO price_alerts (portfolio_id, ticker, condition, threshold_price)
                     VALUES (%s, %s, %s, %s)
                     RETURNING *
-                """, (portfolio_id, ticker, condition, float(threshold_price)))
+                """, (portfolio_id, ticker, condition, threshold_price))
                 created = cur.fetchone()
             except psycopg2.IntegrityError as exc:
                 if getattr(exc, "pgcode", None) != "23505":  # unique_violation only
@@ -447,9 +462,18 @@ def create_price_alert(portfolio_id: str, data: Dict) -> Dict:
                     """SELECT * FROM price_alerts
                        WHERE portfolio_id = %s AND ticker = %s AND condition = %s
                          AND threshold_price = %s AND active = TRUE""",
-                    (portfolio_id, ticker, condition, float(threshold_price)),
+                    (portfolio_id, ticker, condition, threshold_price),
                 )
-                return _price_alert_row(cur.fetchone())
+                winner = cur.fetchone()
+                if winner is None:
+                    # ST-19 (BLG-BE-170): never pass None to _price_alert_row. The
+                    # conflicting active alert was deactivated or deleted before it
+                    # could be read back; the client can safely retry.
+                    raise RuntimeError(
+                        "Price alert conflicted with an active alert that could not "
+                        "be read back; retry the request."
+                    )
+                return _price_alert_row(winner)
             cur.execute("RELEASE SAVEPOINT price_alert_insert")
             return _price_alert_row(created)
 
