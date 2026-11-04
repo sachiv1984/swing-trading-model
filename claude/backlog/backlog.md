@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-04 (Sprint Execution `2026-11-03__release-v9.15` EPIC-01, agent-mediated Director of Quality review — 2 new items added: BLG-FE-269, BLG-FE-270); prior — 2026-11-03 (Sprint Planning `2026-11-03__release-v9.15` — 5 new items added: BLG-OPS-211, BLG-SPEC-217, BLG-GOV-408 (STEP 6.2 post-merge trackers for ST-31, ST-35, ST-45), BLG-FE-267, BLG-FE-268 (design gate observations)); prior — 2026-11-03 (Release Planning `2026-11-03__release-v9.15`, §1.3a — `BLG-OPS-48` date-lapsed gate cleared (a): `BLG-OPS-36` shipped v4.2 and the 2026-11-01 date has passed); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-04 (PR #2189 agent-mediated Director of Quality / Product Owner review — 2 new items added: BLG-FE-271, BLG-QA-244); prior — 2026-11-04 (Sprint Execution `2026-11-03__release-v9.15` EPIC-01, agent-mediated Director of Quality review — 2 new items added: BLG-FE-269, BLG-FE-270); prior — 2026-11-03 (Sprint Planning `2026-11-03__release-v9.15` — 5 new items added: BLG-OPS-211, BLG-SPEC-217, BLG-GOV-408 (STEP 6.2 post-merge trackers for ST-31, ST-35, ST-45), BLG-FE-267, BLG-FE-268 (design gate observations)); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -6477,5 +6477,50 @@ The Trail Stop modal footnote in `src/pages/Positions.js` describes only the pro
 - The footnote is correct for both a profitable and an at-loss position (code review of wording, FI-P3-02)
 - No literal multiplier appears in the footnote
 - `positions.md` §Trail Stop Action matches the shipped wording
+
+---
+
+### BLG-FE-271 — Require the acknowledgement on plan-linked Trade Entry when the plan's checks were WARN/FAIL
+**Priority:** P2 (Medium)
+**Type:** Frontend / UX
+**Owner:** Frontend Specifications & UX Documentation Owner; Strategy Rules & System Intent Owner
+**Source:** Agent-mediated Product Owner review of PR #2189 (`2026-11-03__release-v9.15` EPIC-01, ST-01), user-authorised — 2026-11-04
+**Effort:** S (~0.5-1d)
+**Provisional-Target:** v9.16
+
+**Problem**
+Trade Entry hides the pre-entry panel when the linked plan has a stored `pre_entry_validation_snapshot`, per the locked `trade-entry-pre-entry-checks/decision_record.md` (AC 3, "not shown twice"). The Trade Plan form's acknowledgement is advisory only (`strategy_rules.md` §4.2.6 v1.23). A plan saved over a risk-off or unknown-regime FAIL can therefore become a position with no acknowledgement and no `pre_entry_override` event. That reads against §4.2.1 v1.23 ("an entry is blocked by requiring the user to acknowledge the FAIL before it can be saved"). The snapshot can also be days old, so it may not reflect today's regime.
+
+**Scope**
+- Get a Strategy Rules & System Intent Owner ruling on whether §4.2.1 v1.23 applies to the plan-linked route
+- If it does: when the snapshot holds a WARN/FAIL with no recorded acknowledgement, or is older than a set age, show the panel on Trade Entry (re-run the checks) instead of the on-plan line, with the same Branch A gating and override event
+- Update `position_form.md` §Pre-Entry Checks and the design record
+
+**Acceptance Criteria**
+- A dated ruling is recorded
+- If the ruling applies the rule: a plan-linked entry whose snapshot has an unacknowledged WARN/FAIL (or is stale) shows the panel once and disables Submit until it is acknowledged, and a plan whose checks all passed still shows only the on-plan line (Playwright)
+- Saving after the acknowledgement writes one `pre_entry_override` event (`source: trade_entry`) (backend test)
+
+---
+
+### BLG-QA-244 — Suppress the ⌘K tip toast in Playwright by default
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** Director of Quality
+**Source:** Agent-mediated Director of Quality review of PR #2189 (`2026-11-03__release-v9.15` EPIC-01), user-authorised — 2026-11-04
+**Effort:** XS (<1h plus test)
+**Provisional-Target:** v9.16
+
+**Problem**
+The Layout "Press ⌘K…" tip toast appears 1.2 s after load and can intercept clicks on lower buttons. During EPIC-01 it caused a one-off SC-STP-06 failure and a repeatable SC-TEFX-07 failure on the now-taller Trade Entry page. Specs suppress it one at a time with `addInitScript` (`command-palette-tooltip-seen`), so each new spec rediscovers the flake.
+
+**Scope**
+- Set `command-palette-tooltip-seen` in the shared `tests/e2e/fixtures/api-status-guard` fixture (or a base fixture) for every test
+- Let the command-palette specs that test the tip opt back in
+- Remove the per-spec `addInitScript` copies
+
+**Acceptance Criteria**
+- No spec outside the command-palette tests sets `command-palette-tooltip-seen` itself
+- The tip-toast tests still pass, and the full Playwright suite is green in CI
 
 ---
