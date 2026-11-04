@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-04 (Sprint Execution `2026-11-03__release-v9.15` EPIC-03 ST-23 — 1 new item added: BLG-SPEC-219); prior — 2026-11-04 (Sprint Execution `2026-11-03__release-v9.15` EPIC-03 — 2 new items added: BLG-BE-203, BLG-SPEC-218); prior — 2026-11-04 (PR #2189 agent-mediated Director of Quality / Product Owner review — 2 new items added: BLG-FE-271, BLG-QA-244); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-04 (PR #2190 agent-mediated Director of Quality / Product Owner review — 3 new items added: BLG-BE-204, BLG-QA-245, BLG-FE-272); prior — 2026-11-04 (Sprint Execution `2026-11-03__release-v9.15` EPIC-03 ST-23 — 1 new item added: BLG-SPEC-219); prior — 2026-11-04 (Sprint Execution `2026-11-03__release-v9.15` EPIC-03 — 2 new items added: BLG-BE-203, BLG-SPEC-218); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -6587,5 +6587,69 @@ After ST-23, open-position `pnl` is documented as it is computed: native P&L con
 **Acceptance Criteria**
 - §5.3 and the `pnl_pct` row state the same formula as the code that produces the displayed figure, or a code change brings the code to the spec
 - The decision is recorded with its rationale
+
+---
+
+### BLG-BE-204 — Compute days_until_earnings on the US market date, not the server date
+**Priority:** P2 (Medium)
+**Type:** Backend Engineering / Strategy Rules
+**Owner:** Head of Engineering; Strategy Rules & System Intent Owner
+**Source:** PR #2190 agent-mediated Director of Quality review (EPIC-03, cycle `2026-11-03__release-v9.15`), finding on ST-22's shared `earnings_service` change — 2026-11-04
+**Effort:** XS (<1h plus tests)
+**Provisional-Target:** v9.15 (fix in PR #2190 before merge, recommended); otherwise v9.16
+
+**Problem**
+ST-22 (`ee3460ee`) dates an `earningsTimestamp` on its America/New_York date, but `get_earnings()` still computes `days_until_earnings` against the server's `date.today()` (UTC on Render). The two bases now differ for a release in the ET evening. Example: a 21:00 EST release on 5 November, viewed at 00:30 UTC on 6 November (19:30 ET, before the release), gives `days_until_earnings = -1`. Before ST-22 it was `0`. `_check_earnings_proximity()` (`backend/routers/pre_entry_validation.py`, `strategy_rules.md` §4.2.3) then returns PASS ("Next earnings 2026-11-05 (-1 days) — outside 5-day proximity window") instead of WARN. A strategy check goes quiet in that window. The gap-risk flag is unaffected, because it computes its own days on the US market date.
+
+**Scope**
+- In `get_earnings()`, compute `days_until_earnings` from `us_market_date()` (`services/us_market_calendar.py`) instead of `date.today()`, so the date and the day count share one basis
+- Unit test: the 00:30 UTC / 19:30 ET case above gives `0` and the §4.2.3 check WARNs
+- `earnings_endpoints.md`: state that `next_earnings_date` is the America/New_York date and `days_until_earnings` is counted from the US market date (also covers the Positions earnings column and the morning Earnings Alert card)
+
+**Acceptance Criteria**
+- For a release on ET day D, `days_until_earnings` is `0` at every moment of ET day D, whatever the UTC date
+- `_check_earnings_proximity()` WARNs at 00:30 UTC for a 21:00 ET release the same ET evening (test)
+- `earnings_endpoints.md` states both bases
+
+---
+
+### BLG-QA-245 — Cover the Strategy Benchmark unmapped exit-reason fallback in the Trade Log contrast scan
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** QA & Testing Owner; Frontend Specifications & UX Documentation Owner
+**Source:** PR #2190 agent-mediated Director of Quality review (EPIC-03 ST-18, cycle `2026-11-03__release-v9.15`), DoQ pass 1 finding 5 — 2026-11-04
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+ST-18's SC-SB-08a/b axe scans cover the four mapped exit-reason badges on the Strategy Benchmark Trade Log. The unmapped-reason fallback (`text-xs text-slate-600 dark:text-slate-400`) has the same `benchmark-exit-reason` test ID, but no mocked trade has an unmapped reason, so the fallback is never scanned. `strategy_benchmark.md` §7.3 lists it as one of the exit-reason treatments.
+
+**Scope**
+- Add a seeded trade with an unmapped `exit_reason` (e.g. `'Manual Exit'`) to `tests/e2e/strategy-benchmark.spec.js`, updating the SC-SB-04b/c row and badge counts it changes
+- Assert the fallback renders and include it in SC-SB-08a/b
+
+**Acceptance Criteria**
+- SC-SB-08a/b scan five exit-reason elements, including the fallback, with no color-contrast violation in either theme
+
+---
+
+### BLG-FE-272 — Decide whether a failed Regenerate should keep the existing AI monthly summary
+**Priority:** P3 (Low)
+**Type:** Frontend / UX (product decision)
+**Owner:** Product Owner; Financial Reporting & Records Owner; Head of UX & Design
+**Source:** PR #2190 agent-mediated Product Owner review (EPIC-03 ST-21, cycle `2026-11-03__release-v9.15`) — 2026-11-04
+**Effort:** XS (decision) to S (if behaviour changes)
+**Provisional-Target:** TBD
+
+**Problem**
+When the user presses Regenerate on a stored AI monthly P&L summary and the new attempts fail their checks, the stored AI text is replaced by the code-written fallback. ST-21 extends this to a failed regeneration call. Before ST-21, a failed model call returned 503 and `reports.md` §AI Summary's "Failed" state kept the previous text. Both behaviours meet their ACs, but a user who asks for a refresh can lose a checked AI summary to a transient model error or a stricter re-check, with no way back except another Regenerate.
+
+**Scope**
+- Product Owner decides whether a `regenerate=true` request that ends in the fallback should keep the previously stored checked AI summary (returning it with a notice) or replace it as today
+- If keep: change `generate_narrative()` and `reports.md` §AI Summary with a design pass; update tests
+
+**Acceptance Criteria**
+- The decision is recorded with its rationale in `reports.md` §AI Summary
+- Code and tests match the decision
 
 ---
