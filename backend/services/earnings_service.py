@@ -8,8 +8,18 @@ Data freshness: Yahoo Finance earnings dates are generally reliable 2-4 weeks ou
 Dates further in the future may shift. Null returned if date unavailable.
 """
 import yfinance as yf
-from datetime import date, datetime
+from datetime import date, datetime, timezone
 from typing import Optional, Dict, Any
+
+from services.us_market_calendar import US_MARKET_TZ
+from zoneinfo import ZoneInfo
+
+
+def _et_date(dt: datetime) -> date:
+    """The America/New_York date of a datetime; a naive value is taken as UTC (ST-22, BLG-BE-174)."""
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=timezone.utc)
+    return dt.astimezone(ZoneInfo(US_MARKET_TZ)).date()
 
 
 def _yf_ticker_symbol(ticker: str, market: str) -> str:
@@ -35,10 +45,13 @@ def get_earnings(ticker: str, market: str = "US") -> Dict[str, Any]:
         if isinstance(earnings_date, list):
             earnings_date = earnings_date[0] if earnings_date else None
 
+        # ST-22 (BLG-BE-174, v9.15): a timestamp is converted to its
+        # America/New_York date, so a 21:00 ET (after-close) release is that ET
+        # day, not the next UTC day. A naive datetime is taken as UTC.
         if isinstance(earnings_date, (int, float)):
-            earnings_date = datetime.utcfromtimestamp(earnings_date).date()
+            earnings_date = _et_date(datetime.fromtimestamp(earnings_date, timezone.utc))
         elif isinstance(earnings_date, datetime):
-            earnings_date = earnings_date.date()
+            earnings_date = _et_date(earnings_date)
 
         if earnings_date is None:
             cal = getattr(t, "calendar", None)

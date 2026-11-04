@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 2.19.1
-**Last Updated:** 2026-10-30 (ST-10, EPIC-02, v9.14, BLG-BE-188 — POST /positions/{position_id}/exit returns its documented 404 and 400 with a `detail` string; Errors table lists each one); prior — 2026-10-29 (ST-07, EPIC-01, v9.14, BLG-BE-168 — GET /positions gains price_is_stale per position); prior — 2026-10-29 (ST-04/ST-05, EPIC-01, v9.14, BLG-BE-194/BLG-BE-169 — GET /positions gains fx_rate_source and fx_rate_as_of per position); prior history retained — see prior entries in version control
+**Version:** 2.19.2
+**Last Updated:** 2026-11-04 (ST-22, EPIC-03, v9.15, BLG-BE-174 — gap-risk avg_gap_pct weekend set and statistic selection follow the NYSE session calendar; earnings timestamps dated in America/New_York); prior — 2026-10-30 (ST-10, EPIC-02, v9.14, BLG-BE-188 — POST /positions/{position_id}/exit returns its documented 404 and 400 with a `detail` string; Errors table lists each one); prior — 2026-10-29 (ST-07, EPIC-01, v9.14, BLG-BE-168 — GET /positions gains price_is_stale per position); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Overview
@@ -28,6 +28,7 @@ Global response envelopes, error shape, defaults, and multi-currency/stop rules 
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.19.2 | 2026-11-04 | ST-22 (BLG-BE-174, EPIC-03, v9.15): `GET /positions/{position_id}/gap-risk` — `avg_gap_pct`'s weekend set is every consecutive-session pair with a non-session day between them, by the ST-14 NYSE calendar (ordinary Friday-to-Monday gaps were in the overnight set), and the weekend statistic is used when the next session follows a non-session day (so a Thursday view before Good Friday uses it). The earnings date from a yfinance `earningsTimestamp` is its America/New_York date (a 21:00 ET release was dated the next UTC day). The statistic stays a retrospective mean of historical absolute gaps (§13 Binding Condition 4 unchanged), so no §13 addendum. No shape change. |
 | 2.19.1 | 2026-10-30 | ST-10 (BLG-BE-188, EPIC-02, v9.14): `POST /positions/{position_id}/exit` maps each `ValueError` from `exit_position` to its status: `404` for a missing position or portfolio, `400` for the rest, each with the service's message as `detail`. They were all `500` before. The Errors section is now a table of every status, `detail` and condition, adding the closed-position, non-positive price and negative shares cases. Behaviour fix; no shape change for success responses. |
 | 2.19.0 | 2026-10-29 | ST-07 (BLG-BE-168, EPIC-01, v9.14): `GET /positions` gains `price_is_stale` on each position, the same flag `GET /portfolio` has returned since v9.11. The Positions page shows the stale marker for it. |
 | 2.18.0 | 2026-10-29 | ST-04/ST-05 (BLG-BE-194/BLG-BE-169, EPIC-01, v9.14): `GET /positions` gains `fx_rate_source` (`live` / `last_known` / `constant`) and `fx_rate_as_of` on each position, describing `live_fx_rate`. On an FX fetch failure `live_fx_rate` is the last good rate (`data_model.md` DS-37) before the 1.27 constant. |
@@ -1139,7 +1140,7 @@ Response uses the standard success envelope from **conventions.md**.
 |-------|-------|
 | `flagged` | `boolean`. `true` when the position is a US position and its next earnings date falls after the US market date and on or before the next NYSE session. Always `false` for a UK position. (v9.10 ST-13/ST-14; v9.12 ST-14) |
 | `reasons` | Array: `["earnings"]` when `flagged = true`, empty otherwise. (`weekend_hold` was removed in v9.10 ST-14, BLG-BE-136.) |
-| `avg_gap_pct` | `float \| null`. Historical average gap magnitude for the ticker: the weekend gap (Friday close to Monday open) when viewed Friday to Sunday, the overnight gap otherwise. `null` when `insufficient_history = true`. |
+| `avg_gap_pct` | `float \| null`. Historical average gap magnitude for the ticker: the weekend gap (consecutive sessions with one or more non-session days between them: Friday close to Monday open, and any holiday or closure) when the next NYSE session follows a non-session day (a Friday to Sunday view, or a Thursday view before Good Friday), the overnight gap otherwise. Sessions are the ST-14 NYSE calendar (`backend/services/us_market_calendar.py`). `null` when `insufficient_history = true`. *(v2.19.2, ST-22, BLG-BE-174: previously a gap counted as a weekend gap only when more than 3 calendar days apart, which left every ordinary Friday-to-Monday gap in the overnight set, and the statistic was picked by weekday alone.)* |
 | `event_count` | `integer`. Number of historical gap events used to compute `avg_gap_pct`. |
 | `insufficient_history` | `boolean`. `true` when fewer than the backend-defined minimum event count (currently 10) is available. The flag is still shown when `true` — insufficient history does not suppress the flag, only the numeric average. |
 

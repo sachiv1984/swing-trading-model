@@ -331,3 +331,76 @@ def test_module_docstrings_cite_v912_addendum():
     from services import gap_risk_service
     assert "v9.12 addendum" in gap_risk_service.__doc__
     assert "ESC-EXEC-20261013-07" in cal.__doc__
+
+
+# ─── ST-22 (BLG-BE-174, EPIC-03, v9.15) ─────────────────────────────────────
+# Multi-day gaps by the ST-14 calendar; statistic picked by whether the next
+# session follows a non-session day; earnings timestamps on the ET date.
+
+def _stats_for(dates, weekend):
+    import pandas as pd
+    from services import gap_risk_service
+
+    idx = pd.DatetimeIndex(pd.to_datetime(dates))
+    n = len(idx)
+    # Close 100 every day; each open 1% above the previous close -> 1.0% gaps.
+    hist = pd.DataFrame({"Open": [101.0] * n, "Close": [100.0] * n}, index=idx)
+    mock_ticker = MagicMock()
+    mock_ticker.history.return_value = hist
+    with patch("services.gap_risk_service.yf.Ticker", return_value=mock_ticker), \
+         patch("services.gap_risk_service.MIN_HISTORICAL_EVENTS", 1):
+        return gap_risk_service._compute_gap_stats("AAPL", "US", weekend=weekend)
+
+
+def test_friday_to_monday_gap_is_counted_in_the_weekend_set():
+    # Fri 2026-10-09 -> Mon 2026-10-12 is 3 calendar days; the old "> 3" test
+    # counted it as overnight. Thu -> Fri is the one overnight pair.
+    dates = ["2026-10-08", "2026-10-09", "2026-10-12"]
+    assert _stats_for(dates, weekend=True)["event_count"] == 1
+    assert _stats_for(dates, weekend=False)["event_count"] == 1  # Thu -> Fri only
+
+
+def test_holiday_gap_is_in_the_weekend_set():
+    # Wed 2026-11-25 -> Fri 2026-11-27 spans Thanksgiving (Thu 26th, NYSE closed).
+    assert gap_risk_service_spans(date(2026, 11, 25), date(2026, 11, 27)) is True
+    assert gap_risk_service_spans(date(2026, 11, 24), date(2026, 11, 25)) is False
+
+
+def gap_risk_service_spans(a, b):
+    from services import gap_risk_service
+    return gap_risk_service._spans_non_session_day(a, b, "US")
+
+
+def test_thursday_before_good_friday_uses_the_weekend_statistic():
+    thursday = date(2026, 4, 2)  # Good Friday 2026-04-03; next session Monday 6th
+    result, _, m_stats = _run(4, thursday)
+    assert result["flagged"] is True
+    m_stats.assert_called_once_with("AAPL", "US", weekend=True)
+
+
+def test_ordinary_thursday_uses_the_overnight_statistic():
+    result, _, m_stats = _run(1, THURSDAY)
+    assert result["flagged"] is True
+    m_stats.assert_called_once_with("AAPL", "US", weekend=False)
+
+
+def test_sunday_view_uses_the_weekend_statistic():
+    _, _, m_stats = _run(1, SUNDAY)
+    m_stats.assert_called_once_with("AAPL", "US", weekend=True)
+
+
+def test_earnings_timestamp_at_2100_et_maps_to_that_et_date():
+    from services import earnings_service
+
+    # 2026-10-28 21:00 EDT (UTC-4) = 2026-10-29 01:00 UTC.
+    ts = datetime(2026, 10, 29, 1, 0, tzinfo=timezone.utc).timestamp()
+    mock_ticker = MagicMock()
+    mock_ticker.info = {"earningsTimestamp": ts}
+    with patch("services.earnings_service.yf.Ticker", return_value=mock_ticker):
+        out = earnings_service.get_earnings("AAPL", "US")
+    assert out["next_earnings_date"] == "2026-10-28"
+
+
+def test_et_date_treats_a_naive_datetime_as_utc():
+    from services import earnings_service
+    assert earnings_service._et_date(datetime(2026, 12, 3, 2, 0)) == date(2026, 12, 2)  # 21:00 EST
