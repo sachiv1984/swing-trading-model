@@ -62,7 +62,7 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.push",
           "sign_off_record": null,
-          "notes": "Reclassified delegated_decision -> autonomous on ESC-EXEC-20261104-01 resolution (Branch A, 2026-11-04). Branch A implemented; strategy_rules.md v1.23 (case (c)), registry 1.23. AC 1-3 met (SC-TEPC-01..10 local pass); AC 4 (CI) pending. Deviation check: none — implementation matches position_form.md v1.13 and the decision record (panel placed directly above the Trade Plan Linkage Advisory, after the Estimated Cost card, per §Placement). CI on a4914ce9 (branch head containing this commit): all 9 workflows success — Playwright E2E 41820859317, CI Pytest 41820859397, Frontend Production Build 41820859400, Critical-Path Smoke 41820859404.",
+          "notes": "Reclassified delegated_decision -> autonomous on ESC-EXEC-20261104-01 resolution (Branch A, 2026-11-04). Branch A implemented; strategy_rules.md v1.23 (case (c)), registry 1.23. AC 1-3 met (SC-TEPC-01..10 local pass); AC 4 (CI) met — see CI line below. Deviation check: none — implementation matches position_form.md v1.13 and the decision record (panel placed directly above the Trade Plan Linkage Advisory, after the Estimated Cost card, per §Placement). CI on a4914ce9 (branch head containing this commit): all 9 workflows success — Playwright E2E 41820859317, CI Pytest 41820859397, Frontend Production Build 41820859400, Critical-Path Smoke 41820859404.",
           "_planned_spec_references": [
             "docs/design/2026-11-03__release-v9.15/trade-entry-pre-entry-checks/decision_record.md",
             "docs/specs/frontend/components/position_form.md"
@@ -91,7 +91,7 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.push",
           "sign_off_record": null,
-          "notes": "AC 1-3 met (SC-TEFX-01..06 local pass); AC 4 CI pending. Implementation note (not a deviation, intent check LL-v3.4-P3-03): position_form.md says an empty US rate is covered by an 'FX rate missing for US trades' validation, which TradeEntry.js never had; the empty field is sent as null and the server uses its live rate, so save is not blocked. Observed local flake (pre-existing class): v7.2 SC-STP-06 failed once when the Layout ⌘K tip toast covered Create Position on the now-taller page; passed 3/3 on repeat. CI on a4914ce9 (branch head containing this commit): all 9 workflows success — Playwright E2E 41820859317, CI Pytest 41820859397, Frontend Production Build 41820859400, Critical-Path Smoke 41820859404.",
+          "notes": "AC 1-3 met (SC-TEFX-01..06 local pass); AC 4 CI met — see CI line below. Implementation note (not a deviation, intent check LL-v3.4-P3-03): position_form.md says an empty US rate is covered by an 'FX rate missing for US trades' validation, which TradeEntry.js never had; the empty field is sent as null and the server uses its live rate, so save is not blocked. Observed local flake (pre-existing class): v7.2 SC-STP-06 failed once when the Layout ⌘K tip toast covered Create Position on the now-taller page; passed 3/3 on repeat. CI on a4914ce9 (branch head containing this commit): all 9 workflows success — Playwright E2E 41820859317, CI Pytest 41820859397, Frontend Production Build 41820859400, Critical-Path Smoke 41820859404.",
           "_planned_spec_references": [
             "docs/design/2026-11-03__release-v9.15/trade-entry-fx-rate/decision_record.md",
             "docs/specs/frontend/components/position_form.md"
