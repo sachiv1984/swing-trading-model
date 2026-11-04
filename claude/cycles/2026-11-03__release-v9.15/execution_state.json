@@ -6,7 +6,7 @@
   "invoked_utc": "2026-11-04T10:55:44Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-04T20:33:35Z",
+  "last_updated_utc": "2026-11-04T20:55:49Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-03",
@@ -251,10 +251,10 @@
       }
     },
     "EPIC-03": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-11-03__release-v9.15/EPIC-03",
       "pr_number": 2190,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-11-03__release-v9.15/qa_evidence_EPIC-03.md",
       "test_scenarios": [
@@ -280,7 +280,7 @@
         "ST-15": {
           "title": "Trade History counts a break-even trade as a win",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2159,
           "branch": "exec/2026-11-03__release-v9.15/EPIC-03",
@@ -305,7 +305,7 @@
         "ST-17": {
           "title": "Align the View Trail modal wording with the read-only ruling",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2160,
           "branch": "exec/2026-11-03__release-v9.15/EPIC-03",
@@ -330,7 +330,7 @@
         "ST-18": {
           "title": "Fix the Strategy Benchmark Rebalance badge's contrast and settle tinted vs filled exit-reason badges",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2161,
           "branch": "exec/2026-11-03__release-v9.15/EPIC-03",
@@ -355,7 +355,7 @@
         "ST-19": {
           "title": "Price-alert duplicate fallback returns 500 when the threshold has more than 4 decimal places",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2162,
           "branch": "exec/2026-11-03__release-v9.15/EPIC-03",
@@ -381,7 +381,7 @@
         "ST-20": {
           "title": "Use the deploy date, not the ruling date, as strategy v1.15's effective date",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2163,
           "branch": "exec/2026-11-03__release-v9.15/EPIC-03",
@@ -413,7 +413,7 @@
         "ST-21": {
           "title": "Show the code-written fallback when the monthly P&L summary's regeneration call fails",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2164,
           "branch": "exec/2026-11-03__release-v9.15/EPIC-03",
@@ -440,7 +440,7 @@
         "ST-22": {
           "title": "Gap-risk weekend statistic: pick it by the exchange calendar and count ordinary weekends",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2165,
           "branch": "exec/2026-11-03__release-v9.15/EPIC-03",
@@ -466,7 +466,7 @@
         "ST-23": {
           "title": "Open-position pnl: code uses the live FX rate and does not deduct fees; the dictionary says entry-time FX, fees deducted",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2166,
           "branch": "exec/2026-11-03__release-v9.15/EPIC-03",
@@ -580,18 +580,18 @@
   },
   "merge_gate": {
     "epics_merged": [
-      "EPIC-01"
-    ],
-    "epics_pending": [
+      "EPIC-01",
       "EPIC-03"
     ],
-    "all_merged": false
+    "epics_pending": [],
+    "all_merged": true
   },
   "process_notes": [
     "2026-11-04: run sprint --epic EPIC-01. Initialised EPIC-01 only (execution_state.json owner per sprint_backlog.md Merge Order); other EPIC branches append their own sections. merge_gate.epics_pending lists initialised EPICs only (ST-38 tracks counting uninitialised EPICs).",
     "2026-11-04: EPIC-01 merged (PR #2189, merge commit 46307e1d, 2026-11-04T19:24:41Z, by the human repository owner). merge_gate.all_merged reads true only because EPIC-01 is the sole initialised EPIC (see the note above; ST-38). EPIC-02..EPIC-07 are not started — the next run sprint must not treat all_merged as sprint completion and must not enter STEP 5 (Sprint Close) until every EPIC in sprint_backlog.md's Merge Order is initialised and merged.",
     "2026-11-04: run sprint --epic EPIC-03. Initialised EPIC-03 (8 stories; ST-16 already recorded deferred_at_planning). ST-20 and ST-23 sealed as delegated_decision; both rulings raised and given in-session (ESC-EXEC-20261104-03/-04) and both reclassified autonomous before work started. Branch cut from main at 1c5b9366 (after the EPIC-01 merge).",
-    "2026-11-04: EPIC-03 agent-mediated DoQ (§5.3): pass 1 Blocked (2 blocking), fixes f56d4717, pass 2 Approved. ST-20 graded Pass_with_deviation (BLG-BE-203). Follow-ups filed: BLG-BE-203, BLG-SPEC-218, BLG-SPEC-219."
+    "2026-11-04: EPIC-03 agent-mediated DoQ (§5.3): pass 1 Blocked (2 blocking), fixes f56d4717, pass 2 Approved. ST-20 graded Pass_with_deviation (BLG-BE-203). Follow-ups filed: BLG-BE-203, BLG-SPEC-218, BLG-SPEC-219.",
+    "2026-11-04: EPIC-03 merged (PR #2190, merge commit 9df0cc9a, 2026-11-04T20:55:49Z, by the human repository owner). Orphaned post-merge commit check: none (git log origin/main..origin/exec/.../EPIC-03 empty). No pending sibling EPIC branches, so STEP 4 step 3c had nothing to sync. merge_gate.all_merged reads true only because EPIC-01 and EPIC-03 are the sole initialised EPICs; EPIC-02, -04, -05, -06, -07 are not started. The next run sprint must not treat this as sprint completion or enter STEP 5 until every EPIC in the Merge Order is initialised and merged."
   ],
   "sealed": false,
   "sealed_utc": null
