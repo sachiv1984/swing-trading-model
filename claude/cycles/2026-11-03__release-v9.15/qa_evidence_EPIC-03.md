@@ -47,11 +47,11 @@ Every observable AC has Playwright coverage: ST-15 (SC-THWR-01..03), ST-17 headi
 
 ## Standard Sign-Off Block
 
-- [ ] All acceptance criteria verified against canonical spec
-- [ ] No unresolved P0 or P1 deviations
-- [ ] Regression areas checked
-- [ ] For any frontend component making direct URL construction (not via api.* wrapper): confirm the URL-base variable is exposed on the imported object
-- [ ] **Strategy values checked:** ST-17 — §7.2/§7.3 (wording only; no value or formula changed); ST-20 — §12.3 version attribution (no rule or parameter changed); ST-22 — §4.2.3/§13.3 gap-risk event (no stop/exit value); ST-23 — §10 Position Risk native entry (formula unchanged). ST-15, ST-18, ST-19, ST-21: N/A.
-- Signed off by:
-- Date:
-- Comments:
+- [x] All acceptance criteria verified against canonical spec
+- [x] No unresolved P0 or P1 deviations
+- [x] Regression areas checked
+- [x] For any frontend component making direct URL construction (not via api.* wrapper): confirm the URL-base variable is exposed on the imported object — N/A, no new direct URL construction in EPIC-03
+- [x] **Strategy values checked:** ST-17 — §7.2/§7.3 (wording only; no value or formula changed); ST-20 — §12.3 version attribution (no rule or parameter changed); ST-22 — §4.2.3/§13.3 gap-risk event (no stop/exit value); ST-23 — §10 Position Risk native entry (formula unchanged). ST-15, ST-18, ST-19, ST-21: N/A.
+- Signed off by: Sprint Execution Engine (agent-mediated, Director of Quality role — §5.3)
+- Date: 2026-11-04
+- Comments: Agent-mediated DoQ review (§5.3) during `run sprint --epic epic03`, 2026-11-04. Pass 1 Blocked on two findings: ST-20 was graded Pass though AC 2 was only partly met (now `Pass_with_deviation`, `BLG-BE-203`), and `api_changelog.md` lacked the three EPIC-03 contract subsections (added, 1.29.2). Five non-blocking findings: NaN/infinite thresholds returned 500 (fixed, 400), naive datetimes were taken as UTC (fixed), the Winners/Losers filter had no Playwright case (SC-THWR-04 added), and the unscanned fallback badge and the ST-20 commit's extra files are recorded above. All fixes are in `f56d4717`. Pass 2 Approved. Evidence from the reviewer: new ST-19, ST-21 and ST-22 tests fail against the `origin/main` service code; contrast was recomputed (teal-700 5.47:1, teal-600 3.74:1, red-600 4.83:1); 200 passed / 10 skipped across the six EPIC-03 backend files; the Phase B log shows the five new real-Postgres tests PASSED (run 41901552081, 3277 passed). Final CI on head `f56d4717`: all 8 triggered workflows success (Playwright E2E 41904039446, CI Pytest 41904039479, Critical-Path Smoke 41904039334). Pass 2 noted a collection error in a broader local `-k` run in `tests/test_add_position_stop_handling.py`, which is not touched by EPIC-03 and passes alone (18 passed) and in CI. This agent-mediated block does not satisfy the always-human merge gate: the human Director of Quality QA sign-off and Product Owner acceptance remain required.
