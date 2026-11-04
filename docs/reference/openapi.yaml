@@ -2,7 +2,9 @@ openapi: 3.0.3
 
 info:
   title: Momentum Trading Assistant API
-  version: 3.47.0
+  version: 3.47.1
+  # v3.47.1 (2026-11-04, ST-06, EPIC-01, v9.15): GET /positions/{position_id}/stop-trail description —
+  # atr_trail_stop uses the §7.2 stop with the §11 multipliers and breakeven floor (BLG-BE-173). No shape change.
   # v3.47.0 (2026-11-04, ST-01/ST-05, EPIC-01, v9.15): POST /portfolio/position gains optional
   # pre_entry_override_acknowledged (BLG-FE-244); request ticker trimmed and upper-cased (BLG-FE-222). No new endpoint.
   # v3.46.0 (2026-11-02, ST-24, EPIC-04, v9.14): GET /reports/monthly-pnl month objects gain
@@ -2549,7 +2551,8 @@ paths:
       summary: ATR trail stop recommendation
       description: >
         Returns ATR-based trail stop calculation for a single open position.
-        trail_multiplier defaults to 2.0.
+        atr_trail_stop is the strategy_rules.md §7.2 stop from calculate_trailing_stop with the
+        §11 multipliers and the breakeven floor (ST-06, BLG-BE-173, v9.15); no fixed multiplier.
         §13 display-only — recommendation is informational; human must confirm any stop change.
         Spec: docs/specs/api_contracts/stop_trail_endpoint.md
       parameters:

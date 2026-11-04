@@ -52,7 +52,7 @@ import StrategyCompliancePanel from "../components/positions/StrategyComplianceP
 import PaperAccountPanel from "../components/positions/PaperAccountPanel";
 import AiChatWidget from "../components/AiChatWidget";
 import { toast } from "sonner";
-import { GRACE_PERIOD_DAYS, ATR_PERIOD_DAYS, PROFIT_ATR_MULTIPLIER } from "../constants/strategy";
+import { GRACE_PERIOD_DAYS, ATR_PERIOD_DAYS } from "../constants/strategy";
 import StaleMarker, { STALE_EXPLANATION_POSITIONS } from "../components/ui/StaleMarker";
 
 const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:8000";
@@ -295,7 +295,8 @@ function TrailStopModal({ position, onClose }) {
         {!isLoading && !isError && trailData && (
           <div className="space-y-2">
             <p className="text-xs text-slate-600 dark:text-slate-400">
-              ATR trail stop = current price − (ATR × {PROFIT_ATR_MULTIPLIER.toFixed(1)}). ATR period: {ATR_PERIOD_DAYS} days. Multiplier per strategy rules.
+              {/* ST-06 (BLG-BE-173, v9.15): no literal multiplier; the value is the §7.2 stop with the breakeven floor */}
+              ATR trail stop = current price − (profit multiplier × {ATR_PERIOD_DAYS}-day ATR), never below your entry price. This is the strategy's profitable-position stop (§7.2).
             </p>
             {noRaise && (
               <p data-testid="trail-stop-no-raise-note" className="text-xs text-slate-600 dark:text-slate-400">

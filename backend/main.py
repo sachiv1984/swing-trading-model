@@ -2151,7 +2151,11 @@ def get_stop_trail_endpoint(position_id: str):
 
     Response fields:
       - current_stop: current stop price from position record (null if not set)
-      - atr_trail_stop: current_price - (ATR × 2.0)
+      - atr_trail_stop: the §7.2 stop calculate_trailing_stop() gives for the
+        live price and stored ATR, with the §11 multipliers (profit multiplier
+        when price > entry, never below entry; initial multiplier otherwise).
+        Not ratcheted against current_stop, so trail_difference stays signed
+        (ST-06, BLG-BE-173, v9.15).
       - trail_difference: atr_trail_stop - current_stop (null if current_stop null)
       - trail_r_terms: trail_difference expressed as R-multiples (null if R unavailable)
       - recommendation: display string "Raise stop to {atr_trail_stop}" (§13 display-only)
@@ -2199,8 +2203,22 @@ def get_stop_trail_endpoint(position_id: str):
         if atr <= 0:
             raise HTTPException(status_code=422, detail="ATR not available for this position")
 
-        trail_multiplier = 2.0
-        atr_trail_stop = round(current_price - (atr * trail_multiplier), 4)
+        # ST-06 (BLG-BE-173, EPIC-01, v9.15): the same §7.2 formula and §11
+        # multipliers as the live recompute (calculate_trailing_stop with
+        # stop_multiplier_settings()), breakeven floor included. No literal
+        # multiplier. The candidate is not ratcheted against current_stop
+        # (-inf), so trail_difference compares it with the stored stop.
+        from strategy_parameters import stop_multiplier_settings
+        entry_price = float(row.get("entry_price") or 0)
+        atr_trail_stop, _reason, _mult = calculate_trailing_stop(
+            current_price=current_price,
+            atr=atr,
+            is_profitable=current_price > entry_price,
+            current_stop=float("-inf"),
+            entry_price=entry_price,
+            settings=stop_multiplier_settings(),
+        )
+        atr_trail_stop = round(atr_trail_stop, 4)
 
         current_stop = row.get("current_stop")
         if current_stop is not None:
@@ -2212,7 +2230,6 @@ def get_stop_trail_endpoint(position_id: str):
 
         # Express trail_difference in R-multiples if R is available
         trail_r_terms = None
-        entry_price = float(row.get("entry_price") or 0)
         initial_stop = row.get("initial_stop")
         if initial_stop is not None and entry_price > 0 and trail_difference is not None:
             r_value = entry_price - float(initial_stop)
