@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Class 2
 **Status:** Canonical
-**Version:** 1.29.1
-**Last Updated:** 2026-11-04 (ST-06, EPIC-01, v9.15, BLG-BE-173 — v9.15.0 entry: GET /positions/{position_id}/stop-trail uses the §7.2 stop with the breakeven floor); prior — 2026-11-04 (ST-01/ST-05, EPIC-01, v9.15, BLG-FE-244/BLG-FE-222 — v9.15.0 entry: POST /portfolio/position gains pre_entry_override_acknowledged; ticker normalised); prior — 2026-11-02 (ST-24, EPIC-04, v9.14, BLG-FEAT-99 — v9.14.0 entry: GET /reports/monthly-pnl gains by_exit_condition per month); prior history retained — see prior entries in version control
+**Version:** 1.29.3
+**Last Updated:** 2026-11-04 (ST-22, EPIC-03, v9.15, BLG-BE-204 — v9.15.0 entry adds earnings_endpoints.md v0.2); prior — 2026-11-04 (ST-19/ST-21/ST-22, EPIC-03, v9.15 — v9.15.0 entry adds alerts_endpoints.md v0.14, reports_endpoints.md v0.20 and position_endpoints.md v2.19.2); prior — 2026-11-04 (ST-06, EPIC-01, v9.15, BLG-BE-173 — v9.15.0 entry: GET /positions/{position_id}/stop-trail uses the §7.2 stop with the breakeven floor); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 # API Changelog
@@ -58,6 +58,42 @@ Rules:
 | Change | Details |
 |--------|---------|
 | Updated endpoint: GET /positions/{position_id}/stop-trail | `atr_trail_stop` is the `strategy_rules.md` §7.2 stop from `calculate_trailing_stop` with the §11 multipliers and the breakeven floor, instead of `current_price − ATR × 2.0` (BLG-BE-173). It is not ratcheted against `current_stop`, so `trail_difference` stays signed. Response shape unchanged. |
+
+### alerts_endpoints.md — v0.14 (UPDATED)
+
+**EPIC:** EPIC-03
+**ST:** ST-19
+
+| Change | Details |
+|--------|---------|
+| Updated endpoint: POST /price-alerts | `threshold_price` is rounded to 4 dp (half away from zero, matching `NUMERIC(10,4)`) before the de-dup SELECT, the insert and the unique-violation fallback, so a 5+ dp resubmit returns the existing alert (200) instead of 500. A value that rounds to 0, or is not finite, returns 400. A fallback that finds no row returns a clear 500 message (BLG-BE-170). |
+
+### reports_endpoints.md — v0.20 (UPDATED)
+
+**EPIC:** EPIC-03
+**ST:** ST-21
+
+| Change | Details |
+|--------|---------|
+| Updated endpoint: POST /reports/monthly-pnl/narrative | When attempt 1 fails its output checks and the regeneration call raises, the code-written summary is stored and returned (`200`, `source: "fallback"`) with audit result `fail_fallback:model_call_failed`, instead of `503`. A first-call failure still returns `503`. No shape change; `openapi.yaml` 3.47.2 descriptions only (BLG-BE-172). |
+
+### earnings_endpoints.md — v0.2 (UPDATED)
+
+**EPIC:** EPIC-03
+**ST:** ST-22
+
+| Change | Details |
+|--------|---------|
+| Updated endpoint: GET /earnings/{ticker} | `next_earnings_date` from a timestamp is the America/New_York date; `days_until_earnings` counts from the US market date instead of the server date (BLG-BE-174, BLG-BE-204). No shape change. |
+
+### position_endpoints.md — v2.19.2 (UPDATED)
+
+**EPIC:** EPIC-03
+**ST:** ST-22
+
+| Change | Details |
+|--------|---------|
+| Updated endpoint: GET /positions/{position_id}/gap-risk | `avg_gap_pct`'s weekend set is every consecutive-session pair with a non-session day between them (NYSE calendar), including ordinary Friday-to-Monday gaps; the weekend statistic is used when the next session follows a non-session day; earnings timestamps are dated in America/New_York. No shape change (BLG-BE-174). |
 
 ## v9.14.0 (2026-10-29 — Release v9.14)
 

@@ -6,7 +6,7 @@
   "invoked_utc": "2026-11-04T10:55:44Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-04T11:42:01Z",
+  "last_updated_utc": "2026-11-04T20:33:35Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-03",
@@ -249,6 +249,252 @@
         "reference": "qa_evidence_EPIC-01.md Standard Sign-Off Block",
         "notes": "Second pass Approved; first pass Blocked (2 blocking findings: ST-02 fixed in 41e0949e, ST-06 ruled ESC-EXEC-20261104-02; 5 non-blocking fixed or filed as BLG-FE-269/270)."
       }
+    },
+    "EPIC-03": {
+      "status": "done",
+      "branch": "exec/2026-11-03__release-v9.15/EPIC-03",
+      "pr_number": 2190,
+      "pr_status": "open",
+      "qa_signed_off": true,
+      "qa_evidence_log": "claude/cycles/2026-11-03__release-v9.15/qa_evidence_EPIC-03.md",
+      "test_scenarios": [
+        "tests/e2e/trade-history-win-rate.spec.js",
+        "tests/e2e/epic01-v34-lifecycle.spec.js",
+        "tests/e2e/strategy-benchmark.spec.js",
+        "tests/test_price_alerts_service.py",
+        "tests/test_price_alert_db_uniqueness.py",
+        "tests/test_strategy_version_registry.py",
+        "tests/test_monthly_pnl_narrative.py",
+        "tests/test_monthly_pnl_narrative_db.py",
+        "tests/test_gap_risk.py"
+      ],
+      "sign_off_record": {
+        "role": "Director of Quality",
+        "method": "agent_mediated",
+        "status": "cleared",
+        "date": "2026-11-04",
+        "reference": "qa_evidence_EPIC-03.md Standard Sign-Off Block",
+        "notes": "Pass 2 Approved; pass 1 Blocked (2 blocking: ST-20 regraded Pass_with_deviation/BLG-BE-203, api_changelog subsections added; 5 non-blocking fixed or recorded in f56d4717)."
+      },
+      "stories": {
+        "ST-15": {
+          "title": "Trade History counts a break-even trade as a win",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 2159,
+          "branch": "exec/2026-11-03__release-v9.15/EPIC-03",
+          "commit_sha": "b478ebd16ae6a3214cb224a34fbb9f74119af475",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-11-04T19:40:44Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/metrics_definitions.md#Win Rate",
+            "docs/specs/frontend/pages/trade_history.md#Summary Stats",
+            "tests/e2e/trade-history-win-rate.spec.js"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.push",
+          "sign_off_record": null,
+          "notes": "AC 1 met: SC-THWR-01 (33.3%) local pass; AC 2 met: win test pnl > 0 in summary and Win filter. Break-even treatment per metrics_definitions.md Appendix E Item 3 owner review (neither average). Deviation check: none; resolves pre-existing Appendix E Item 3 (fields updated same commit, 1.34.3). CI on b478ebd1: 9/9 workflows success (Playwright E2E 41899262258, CI Pytest 41899262347)."
+        },
+        "ST-17": {
+          "title": "Align the View Trail modal wording with the read-only ruling",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 2160,
+          "branch": "exec/2026-11-03__release-v9.15/EPIC-03",
+          "commit_sha": "3888f5a33334d7f5248f254f2972bb9e8b299485",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-11-04T19:44:22Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/pages/positions.md#Trail Stop Action",
+            "docs/design/2026-11-03__release-v9.15/trail-stop-modal-wording/decision_record.md",
+            "tests/e2e/epic01-v34-lifecycle.spec.js"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.push",
+          "sign_off_record": null,
+          "notes": "AC met: the three texts match positions.md v2.22 (written at the design gate, so no further spec bump) and Positions.js; Playwright SC-TS-02 (heading) and SC-TS-04 (label) assert the new text, 16/16 local pass. Tooltip is wording-only (FI-P3-02, code review). Deviation check: none. CI on 3888f5a3: 9/9 success (Playwright E2E 41899847581)."
+        },
+        "ST-18": {
+          "title": "Fix the Strategy Benchmark Rebalance badge's contrast and settle tinted vs filled exit-reason badges",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 2161,
+          "branch": "exec/2026-11-03__release-v9.15/EPIC-03",
+          "commit_sha": "a2e9f875c402a92ca8fe9b7cdbcc68599eb18731",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-11-04T19:47:54Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/pages/strategy_benchmark.md#7.3 Exit Reason Badges",
+            "docs/design/2026-11-03__release-v9.15/exit-reason-badges/decision_record.md",
+            "tests/e2e/strategy-benchmark.spec.js"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.push",
+          "sign_off_record": null,
+          "notes": "AC 1 met: SC-SB-08a/b axe color-contrast over all 4 Trade Log exit-reason badges, dark and light (theme asserted), local pass 20/20. AC 2 met: strategy_benchmark.md v0.9 §7.3 (design gate) matches shipped filled badges. Unmapped-reason fallback has no seeded row (secondary-text token, unchanged). Deviation check: none. CI on a2e9f875: 9/9 success (Playwright E2E 41900423409)."
+        },
+        "ST-19": {
+          "title": "Price-alert duplicate fallback returns 500 when the threshold has more than 4 decimal places",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 2162,
+          "branch": "exec/2026-11-03__release-v9.15/EPIC-03",
+          "commit_sha": "8443628cae97163e96ea7824674198695c019377",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-11-04T19:50:03Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/alerts_endpoints.md#POST /price-alerts",
+            "docs/specs/data_model.md#DS-28",
+            "tests/test_price_alerts_service.py",
+            "tests/test_price_alert_db_uniqueness.py"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.push",
+          "sign_off_record": null,
+          "notes": "AC 1: 5 dp resubmit returns the existing alert with one active row; mocked unit tests pass locally, real-Postgres DS-28 tests (sequential + concurrent) run in CI Phase B only (staging-only DATABASE_URL locally). AC 2 met: fallback raises RuntimeError on no row; no _price_alert_row(None) path (unit test asserts not called). Deviation check: none. CI on 8443628c: 7/7 success (CI Pytest 41900766689, Phase B real-Postgres ST-19 tests PASSED)."
+        },
+        "ST-20": {
+          "title": "Use the deploy date, not the ruling date, as strategy v1.15's effective date",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 2163,
+          "branch": "exec/2026-11-03__release-v9.15/EPIC-03",
+          "commit_sha": "1c133336a4130d69b68dd5cd0b4be4bfefd74893",
+          "delegation_record_id": "ESC-EXEC-20261104-03",
+          "blocked_since_utc": null,
+          "unblock_criteria": "Dated Strategy Rules & System Intent Owner ruling on behavioural effective dates recorded in ESC-EXEC-20261104-03.",
+          "completed_utc": "2026-11-04T19:52:42Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "backend/strategy_version_registry.py",
+            "claude/strategy/strategy_rules.md#Change log",
+            "tests/test_strategy_version_registry.py"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.push",
+          "sign_off_record": {
+            "role": "Strategy Rules & System Intent Owner",
+            "method": "human",
+            "status": "cleared",
+            "date": "2026-11-04",
+            "reference": "ESC-EXEC-20261104-03",
+            "notes": "Ruling given in-session by the user acting in the role: deploy date."
+          },
+          "notes": "Sealed as delegated_decision; reclassified autonomous on ESC-EXEC-20261104-03 resolution (deploy date, 2026-11-04, raised and ruled in the same in-session exchange). AC 1 met: effective-date rule in the registry docstring (test asserts it). AC 2 met by test: windows equal the stamps for 9-15 Oct (pre-#1970 registry last entry 1.4, post 1.15, verified with git show). Gap-trade listing needs a production read (not available): carried in BLG-BE-203 with the v1.17/v1.20 lags. Case (c) write: row 1.15 Date + doc-only 1.24 row, §15 re-run 0 actionable. Deviation check: none. CI on 1c133336: 7/7 success (CI Pytest 41901190691). DoQ pass 1 finding 1: graded Pass_with_deviation — AC 2 met for v1.15 only; 16 Oct (v1.17) and 29 Oct (v1.20) mismatches and the production listing carried in BLG-BE-203."
+        },
+        "ST-21": {
+          "title": "Show the code-written fallback when the monthly P&L summary's regeneration call fails",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 2164,
+          "branch": "exec/2026-11-03__release-v9.15/EPIC-03",
+          "commit_sha": "e39f22e7582c196599ad297ecafa1e349c06edc3",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-11-04T19:54:59Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/reports_endpoints.md#POST /reports/monthly-pnl/narrative",
+            "docs/specs/metrics_definitions.md#AI Monthly P&L Narrative Usage",
+            "docs/specs/frontend/pages/reports.md#AI Summary",
+            "tests/test_monthly_pnl_narrative.py",
+            "tests/test_monthly_pnl_narrative_db.py"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.push",
+          "sign_off_record": null,
+          "notes": "AC 1 met: unit test (attempt 1 fails checks, attempt 2 raises) -> source fallback and a stored row. AC 2 met: counted exactly once (unit via is_generation_row; real-Postgres count test in CI Phase B). 503 kept for attempt-1 model failure. Deviation check: none. CI on e39f22e7: 7/7 success (CI Pytest 41901552081, Phase B test_st21 PASSED)."
+        },
+        "ST-22": {
+          "title": "Gap-risk weekend statistic: pick it by the exchange calendar and count ordinary weekends",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 2165,
+          "branch": "exec/2026-11-03__release-v9.15/EPIC-03",
+          "commit_sha": "ee3460ee22b5c5e7ccb0a11d0a06bfdc611748cc",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-11-04T19:57:08Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/position_endpoints.md#GET /positions/{position_id}/gap-risk",
+            "docs/specs/api_contracts/earnings_endpoints.md#GET /earnings/{ticker}",
+            "docs/product/decisions/decisions--2026-09-30__release-v9.9--gap-risk-flag-section13-review.md",
+            "tests/test_gap_risk.py"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.push",
+          "sign_off_record": null,
+          "notes": "AC 1-3 met by unit tests (Fri->Mon weekend set; Thursday before Good Friday weekend statistic; 21:00 ET earningsTimestamp -> ET date), 46 earnings/gap tests pass locally. Statistic definition unchanged (contract already said Friday close to Monday open; code brought to it), so no §13 Binding Condition 4 addendum per sprint_backlog.md ST-22 Notes; flagged for the Strategy Rules & System Intent Owner at DoQ. Deviation check: none. CI on ee3460ee: 7/7 success (CI Pytest 41901894429). PR #2190 review DQ-1 fixed in-PR: get_earnings() days_until_earnings counts from us_market_date() (BLG-BE-204 scope), so the §4.2.3 pre-entry earnings check no longer passes at -1 days on an ET-evening release; earnings_endpoints.md v0.2; tests added."
+        },
+        "ST-23": {
+          "title": "Open-position pnl: code uses the live FX rate and does not deduct fees; the dictionary says entry-time FX, fees deducted",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 2166,
+          "branch": "exec/2026-11-03__release-v9.15/EPIC-03",
+          "commit_sha": "607995a6ec0da2182baaeae3a75e089ddc8d05d6",
+          "delegation_record_id": "ESC-EXEC-20261104-04",
+          "blocked_since_utc": null,
+          "unblock_criteria": "Dated Data Model & Domain Schema Owner ruling on the open-position pnl basis recorded in ESC-EXEC-20261104-04.",
+          "completed_utc": "2026-11-04T19:58:43Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/data_model_positions_dictionary.md#5.2 pnl (GBP)",
+            "docs/specs/metrics_definitions.md#Position Risk"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.push",
+          "sign_off_record": {
+            "role": "Data Model & Domain Schema Owner",
+            "method": "human",
+            "status": "cleared",
+            "date": "2026-11-04",
+            "reference": "ESC-EXEC-20261104-04",
+            "notes": "Ruling given in-session by the user acting in the role: spec follows code."
+          },
+          "notes": "Sealed as delegated_decision; reclassified autonomous on ESC-EXEC-20261104-04 resolution (spec follows code, 2026-11-04, raised and ruled in the same in-session exchange). AC 1 met: Position Risk names fill_price (US) / entry_price (UK), version 1.35.0. AC 2 met: §5.2 and pnl row state live FX, not net of fees, matching calculate_position_pnl. AC 3 met: decision + rationale in §5.2 and ESC-EXEC-20261104-04. Doc-only; follow-ups BLG-SPEC-218, BLG-SPEC-219. Deviation check: none; pre-existing BLG-SPEC-198 divergence closed in the same commit (no Known Deviations section existed). CI on 607995a6: 7/7 success (CI Pytest 41902140158)."
+        }
+      }
     }
   },
   "deferred_at_planning": {
@@ -268,7 +514,15 @@
     "ST-04",
     "ST-05",
     "ST-06",
-    "ST-07"
+    "ST-07",
+    "ST-15",
+    "ST-17",
+    "ST-18",
+    "ST-19",
+    "ST-20",
+    "ST-21",
+    "ST-22",
+    "ST-23"
   ],
   "open_escalations": {
     "ESC-EXEC-20261104-01": {
@@ -296,18 +550,48 @@
       "resolved_utc": "2026-11-04T14:51:24Z",
       "resolved_by": "Strategy Rules & System Intent Owner (the user, in session)",
       "resolution_summary": "Un-ratcheted §7.2 candidate is intended (multipliers + breakeven floor, not raised to the stored stop); trail_difference stays signed. AC 1 met under this reading; no code change, no backlog remainder, no strategy_rules.md change."
+    },
+    "ESC-EXEC-20261104-03": {
+      "cycle": "2026-11-03__release-v9.15",
+      "summary": "ST-20/EPIC-03 — behavioural strategy version effective date: ruling date vs production deploy date (v1.15 window vs strategy_version_at_entry stamps)",
+      "trigger_type": "Strategy",
+      "owning_authority": "Strategy Rules & System Intent Owner",
+      "raised_utc": "2026-11-04T19:29:15Z",
+      "sla_due_utc": "2026-11-07T19:29:15Z",
+      "blocks_execution": false,
+      "disposition": "Resolved",
+      "resolved_utc": "2026-11-04T19:29:15Z",
+      "resolved_by": "Strategy Rules & System Intent Owner (the user, in session)",
+      "resolution_summary": "Deploy date: a behavioural version's effective date is the date its code reaches production. v1.15 moves to 12 October 2026 (case (c)); v1.17/v1.20 lags filed as a follow-up."
+    },
+    "ESC-EXEC-20261104-04": {
+      "cycle": "2026-11-03__release-v9.15",
+      "summary": "ST-23/EPIC-03 — canonical open-position pnl basis (live vs entry-time FX, fee deduction)",
+      "trigger_type": "Lifecycle",
+      "owning_authority": "Data Model & Domain Schema Owner",
+      "raised_utc": "2026-11-04T19:29:15Z",
+      "sla_due_utc": "2026-11-05T19:29:15Z",
+      "blocks_execution": false,
+      "disposition": "Resolved",
+      "resolved_utc": "2026-11-04T19:29:15Z",
+      "resolved_by": "Data Model & Domain Schema Owner (the user, in session)",
+      "resolution_summary": "Spec follows code: open-position pnl is native P&L at the live FX rate, not net of fees. Dictionary aligned; basis difference from realised P&L filed as a follow-up."
     }
   },
   "merge_gate": {
     "epics_merged": [
       "EPIC-01"
     ],
-    "epics_pending": [],
-    "all_merged": true
+    "epics_pending": [
+      "EPIC-03"
+    ],
+    "all_merged": false
   },
   "process_notes": [
     "2026-11-04: run sprint --epic EPIC-01. Initialised EPIC-01 only (execution_state.json owner per sprint_backlog.md Merge Order); other EPIC branches append their own sections. merge_gate.epics_pending lists initialised EPICs only (ST-38 tracks counting uninitialised EPICs).",
-    "2026-11-04: EPIC-01 merged (PR #2189, merge commit 46307e1d, 2026-11-04T19:24:41Z, by the human repository owner). merge_gate.all_merged reads true only because EPIC-01 is the sole initialised EPIC (see the note above; ST-38). EPIC-02..EPIC-07 are not started — the next run sprint must not treat all_merged as sprint completion and must not enter STEP 5 (Sprint Close) until every EPIC in sprint_backlog.md's Merge Order is initialised and merged."
+    "2026-11-04: EPIC-01 merged (PR #2189, merge commit 46307e1d, 2026-11-04T19:24:41Z, by the human repository owner). merge_gate.all_merged reads true only because EPIC-01 is the sole initialised EPIC (see the note above; ST-38). EPIC-02..EPIC-07 are not started — the next run sprint must not treat all_merged as sprint completion and must not enter STEP 5 (Sprint Close) until every EPIC in sprint_backlog.md's Merge Order is initialised and merged.",
+    "2026-11-04: run sprint --epic EPIC-03. Initialised EPIC-03 (8 stories; ST-16 already recorded deferred_at_planning). ST-20 and ST-23 sealed as delegated_decision; both rulings raised and given in-session (ESC-EXEC-20261104-03/-04) and both reclassified autonomous before work started. Branch cut from main at 1c5b9366 (after the EPIC-01 merge).",
+    "2026-11-04: EPIC-03 agent-mediated DoQ (§5.3): pass 1 Blocked (2 blocking), fixes f56d4717, pass 2 Approved. ST-20 graded Pass_with_deviation (BLG-BE-203). Follow-ups filed: BLG-BE-203, BLG-SPEC-218, BLG-SPEC-219."
   ],
   "sealed": false,
   "sealed_utc": null

@@ -14,7 +14,9 @@
  * interaction with no Year dependency (SC-SB-06), and the API-error state
  * (SC-SB-07). See docs/design/2026-07-02__release-v6.4/open-positions-panel/ux_spec.md.
  *
- * Covers: SC-SB-01, SC-SB-02, SC-SB-03, SC-SB-04, SC-SB-05, SC-SB-06, SC-SB-07
+ * Covers: SC-SB-01, SC-SB-02, SC-SB-03, SC-SB-04, SC-SB-05, SC-SB-06, SC-SB-07,
+ * SC-SB-08 (v9.15 ST-18, BLG-FE-220: Trade Log exit-reason badges pass axe
+ * color-contrast in both themes, strategy_benchmark.md v0.9 §7.3)
  *
  * Component: src/pages/StrategyBenchmark.js
  * ROUTING NOTE: App uses HashRouter. Navigate via page.goto('/#/StrategyBenchmark')
@@ -279,7 +281,8 @@ test.describe('SC-SB-04 — Panel 3 toggle modes and exit reason badges', () => 
     // v9.12 ST-24 (BLG-FE-210): white on amber-700 (5.02:1), not amber-600 (3.19:1).
     await expect(table.getByText('Risk-Off', { exact: true })).toHaveClass(/bg-amber-700/);
     await expectNoContrastViolation(page, '[data-testid="benchmark-trade-table"] .bg-amber-700');
-    await expect(table.getByText('Rebalance', { exact: true })).toHaveClass(/bg-teal-600/);
+    // v9.15 ST-18 (BLG-FE-220): white on teal-700 (5.47:1), not teal-600 (3.74:1).
+    await expect(table.getByText('Rebalance', { exact: true })).toHaveClass(/bg-teal-700/);
 
     // Actual-only trade (AAPL) must not be visible in backtest-only mode.
     await expect(table.getByText('AAPL')).not.toBeVisible();
@@ -306,6 +309,34 @@ test.describe('SC-SB-04 — Panel 3 toggle modes and exit reason badges', () => 
     await expect(table.getByText('BT', { exact: true })).toHaveCount(3);
     await expect(table.getByText('Live', { exact: true })).toHaveCount(1);
   });
+});
+
+// ---------------------------------------------------------------------------
+// SC-SB-08 — Trade Log exit-reason badges pass axe color-contrast in both
+// themes (v9.15 ST-18, BLG-FE-220; exit-reason-badges/decision_record.md §6).
+// Side-by-side mode shows every backtest and live row. Each scan first
+// asserts the theme actually applied (v9.14 ST-35 lesson).
+// ---------------------------------------------------------------------------
+
+test.describe('SC-SB-08 — Trade Log exit-reason badge contrast', () => {
+  for (const theme of ['dark', 'light']) {
+    test(`SC-SB-08${theme === 'dark' ? 'a' : 'b'}: every exit-reason badge passes color-contrast (${theme} theme)`, async ({ page }) => {
+      await page.addInitScript((t) => window.localStorage.setItem('theme', t), theme);
+      await mockBaseEndpoints(page);
+      await page.goto('/#/StrategyBenchmark');
+      await expect(page.getByTestId('benchmark-panel-3')).toBeVisible({ timeout: 10000 });
+      await page.getByTestId('benchmark-mode-side-by-side').click();
+
+      const html = page.locator('html');
+      if (theme === 'dark') await expect(html).toHaveClass(/(^|\s)dark(\s|$)/);
+      else await expect(html).not.toHaveClass(/(^|\s)dark(\s|$)/);
+
+      const badges = page.getByTestId('benchmark-trade-table').getByTestId('benchmark-exit-reason');
+      // 3 backtest rows (Stop, Risk-Off, Rebalance) + 1 live row (trailing_stop -> Stop).
+      await expect(badges).toHaveCount(4);
+      await expectNoContrastViolation(page, '[data-testid="benchmark-trade-table"] [data-testid="benchmark-exit-reason"]');
+    });
+  }
 });
 
 // ---------------------------------------------------------------------------

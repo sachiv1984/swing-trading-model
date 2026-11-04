@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-04 (PR #2189 agent-mediated Director of Quality / Product Owner review — 2 new items added: BLG-FE-271, BLG-QA-244); prior — 2026-11-04 (Sprint Execution `2026-11-03__release-v9.15` EPIC-01, agent-mediated Director of Quality review — 2 new items added: BLG-FE-269, BLG-FE-270); prior — 2026-11-03 (Sprint Planning `2026-11-03__release-v9.15` — 5 new items added: BLG-OPS-211, BLG-SPEC-217, BLG-GOV-408 (STEP 6.2 post-merge trackers for ST-31, ST-35, ST-45), BLG-FE-267, BLG-FE-268 (design gate observations)); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-04 (PR #2190 agent-mediated Director of Quality / Product Owner review — 3 new items added: BLG-BE-204, BLG-QA-245, BLG-FE-272); prior — 2026-11-04 (Sprint Execution `2026-11-03__release-v9.15` EPIC-03 ST-23 — 1 new item added: BLG-SPEC-219); prior — 2026-11-04 (Sprint Execution `2026-11-03__release-v9.15` EPIC-03 — 2 new items added: BLG-BE-203, BLG-SPEC-218); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -6522,5 +6522,134 @@ The Layout "Press ⌘K…" tip toast appears 1.2 s after load and can intercept 
 **Acceptance Criteria**
 - No spec outside the command-palette tests sets `command-palette-tooltip-seen` itself
 - The tip-toast tests still pass, and the full Playwright suite is green in CI
+
+---
+
+### BLG-BE-203 — Move strategy v1.17 and v1.20 effective dates to their deploy dates
+**Priority:** P3 (Low)
+**Type:** Backend Engineering / Strategy Records
+**Owner:** Strategy Rules & System Intent Owner; Financial Reporting & Records Owner
+**Source:** ST-20/EPIC-03, cycle `2026-11-03__release-v9.15` — out-of-scope finding under the deploy-date rule (`ESC-EXEC-20261104-03`); the seal's case (c) authorisation covered Change Log row 1.15 only — 2026-11-04
+**Effort:** XS (<1h, plus a production read)
+**Provisional-Target:** v9.16
+
+**Problem**
+ST-20 ruled that a behavioural strategy version takes effect on the date its code reaches production, and moved v1.15 to its deploy date (12 October 2026). v1.17 (Change Log 16 October 2026, PR #2071 merged 17 October) and v1.20 (29 October 2026, PR #2131 merged 30 October) have the same one-day lag. Their registry windows open a day before `strategy_version_at_entry` changes, so a trade entered on 16 or 29 October is stamped with the previous version but attributed to the new one. No trade list has been checked against production, because the execution environment has only the staging database.
+
+**Scope**
+- Move v1.17's and v1.20's `STRATEGY_VERSION_REGISTRY` `effective_date` and their `strategy_rules.md` Change Log Dates to the deploy dates (needs a sealed case (c) named-file authorisation with the Strategy Rules & System Intent Owner's confirmation)
+- List production positions/trades entered 9–11 October, 16 October and 29 October 2026 with their `strategy_version_at_entry`, and confirm attribution
+- Extend `tests/test_strategy_version_registry.py`'s window/stamp agreement test to those dates
+
+**Acceptance Criteria**
+- v1.17's and v1.20's windows open on their deploy dates, and the registry test passes
+- The production listing is recorded, with every listed trade's stamp matching its window (or the exceptions named, such as a trade entered on a deploy day before the deploy finished)
+
+---
+
+### BLG-SPEC-218 — Open-position unrealised pnl uses a different basis from realised pnl
+**Priority:** P3 (Low)
+**Type:** Spec Debt / Data Model
+**Owner:** Data Model & Domain Schema Owner; Metrics Definitions & Analytics Owner
+**Source:** ST-23/EPIC-03, cycle `2026-11-03__release-v9.15` — Data Model & Domain Schema Owner ruling `ESC-EXEC-20261104-04` (spec follows code), basis difference recorded as a follow-up — 2026-11-04
+**Effort:** S (~0.5d, plus a design pass if the code changes)
+**Provisional-Target:** TBD
+
+**Problem**
+After ST-23, open-position `pnl` is documented as it is computed: native P&L converted at the live GBP/USD rate, not net of `fees_paid`. Realised P&L on a closed trade is `exit_proceeds_gbp − total_cost_gbp`, which is fee-netted and includes currency movement on the principal since entry. A US position closed at today's price and rate would therefore book a realised P&L that differs from the unrealised figure shown a moment before, by the entry fees plus the FX movement on its cost.
+
+**Scope**
+- Decide whether open-position `pnl` should move to the realised basis (`current value in GBP at the live rate − total_cost`)
+- If yes: change `calculate_position_pnl()` and its callers (`get_positions_with_prices()`, `portfolio_service.py`, the nightly stored `pnl`), with a design pass, because displayed P&L changes on Positions, Dashboard and Portfolio
+- If no: record the decision and the reason in `data_model_positions_dictionary.md` §5.2 and `metrics_definitions.md` §Realized / Unrealized P&L Split
+
+**Acceptance Criteria**
+- The decision is recorded with its rationale by the Data Model & Domain Schema Owner
+- Either the two bases agree in code and spec, or the dictionary states why they differ
+
+---
+
+### BLG-SPEC-219 — positions.pnl_pct is the native price change, not pnl / total_cost as the dictionary says
+**Priority:** P3 (Low)
+**Type:** Spec Debt / Data Model
+**Owner:** Data Model & Domain Schema Owner; Metrics Definitions & Analytics Owner
+**Source:** ST-23/EPIC-03, cycle `2026-11-03__release-v9.15` — found while aligning §5.2 `pnl` with the code; outside ST-23's AC — 2026-11-04
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`data_model_positions_dictionary.md` §5.3 and the `pnl_pct` row define `pnl_pct = pnl / total_cost × 100`. The live value from `calculate_position_pnl()` (`backend/utils/calculations.py`), returned by `GET /positions` and stored by the on-load and nightly update, is `(current_price − native_entry) / native_entry × 100`: the native price change, ignoring fees and FX. For a US position the two differ by the fee drag and the currency move, so a reader of the dictionary cannot reproduce the displayed percentage.
+
+**Scope**
+- Data Model & Domain Schema Owner decides which is canonical
+- Align the losing side; a code change that alters the displayed percentage needs a design pass
+
+**Acceptance Criteria**
+- §5.3 and the `pnl_pct` row state the same formula as the code that produces the displayed figure, or a code change brings the code to the spec
+- The decision is recorded with its rationale
+
+---
+
+### BLG-BE-204 — Compute days_until_earnings on the US market date, not the server date
+**Priority:** P2 (Medium)
+**Type:** Backend Engineering / Strategy Rules
+**Owner:** Head of Engineering; Strategy Rules & System Intent Owner
+**Source:** PR #2190 agent-mediated Director of Quality review (EPIC-03, cycle `2026-11-03__release-v9.15`), finding on ST-22's shared `earnings_service` change — 2026-11-04
+**Effort:** XS (<1h plus tests)
+**Provisional-Target:** v9.15 (fix in PR #2190 before merge, recommended); otherwise v9.16
+
+**Problem**
+ST-22 (`ee3460ee`) dates an `earningsTimestamp` on its America/New_York date, but `get_earnings()` still computes `days_until_earnings` against the server's `date.today()` (UTC on Render). The two bases now differ for a release in the ET evening. Example: a 21:00 EST release on 5 November, viewed at 00:30 UTC on 6 November (19:30 ET, before the release), gives `days_until_earnings = -1`. Before ST-22 it was `0`. `_check_earnings_proximity()` (`backend/routers/pre_entry_validation.py`, `strategy_rules.md` §4.2.3) then returns PASS ("Next earnings 2026-11-05 (-1 days) — outside 5-day proximity window") instead of WARN. A strategy check goes quiet in that window. The gap-risk flag is unaffected, because it computes its own days on the US market date.
+
+**Scope**
+- In `get_earnings()`, compute `days_until_earnings` from `us_market_date()` (`services/us_market_calendar.py`) instead of `date.today()`, so the date and the day count share one basis
+- Unit test: the 00:30 UTC / 19:30 ET case above gives `0` and the §4.2.3 check WARNs
+- `earnings_endpoints.md`: state that `next_earnings_date` is the America/New_York date and `days_until_earnings` is counted from the US market date (also covers the Positions earnings column and the morning Earnings Alert card)
+
+**Acceptance Criteria**
+- For a release on ET day D, `days_until_earnings` is `0` at every moment of ET day D, whatever the UTC date
+- `_check_earnings_proximity()` WARNs at 00:30 UTC for a 21:00 ET release the same ET evening (test)
+- `earnings_endpoints.md` states both bases
+
+---
+
+### BLG-QA-245 — Cover the Strategy Benchmark unmapped exit-reason fallback in the Trade Log contrast scan
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** QA & Testing Owner; Frontend Specifications & UX Documentation Owner
+**Source:** PR #2190 agent-mediated Director of Quality review (EPIC-03 ST-18, cycle `2026-11-03__release-v9.15`), DoQ pass 1 finding 5 — 2026-11-04
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+ST-18's SC-SB-08a/b axe scans cover the four mapped exit-reason badges on the Strategy Benchmark Trade Log. The unmapped-reason fallback (`text-xs text-slate-600 dark:text-slate-400`) has the same `benchmark-exit-reason` test ID, but no mocked trade has an unmapped reason, so the fallback is never scanned. `strategy_benchmark.md` §7.3 lists it as one of the exit-reason treatments.
+
+**Scope**
+- Add a seeded trade with an unmapped `exit_reason` (e.g. `'Manual Exit'`) to `tests/e2e/strategy-benchmark.spec.js`, updating the SC-SB-04b/c row and badge counts it changes
+- Assert the fallback renders and include it in SC-SB-08a/b
+
+**Acceptance Criteria**
+- SC-SB-08a/b scan five exit-reason elements, including the fallback, with no color-contrast violation in either theme
+
+---
+
+### BLG-FE-272 — Decide whether a failed Regenerate should keep the existing AI monthly summary
+**Priority:** P3 (Low)
+**Type:** Frontend / UX (product decision)
+**Owner:** Product Owner; Financial Reporting & Records Owner; Head of UX & Design
+**Source:** PR #2190 agent-mediated Product Owner review (EPIC-03 ST-21, cycle `2026-11-03__release-v9.15`) — 2026-11-04
+**Effort:** XS (decision) to S (if behaviour changes)
+**Provisional-Target:** TBD
+
+**Problem**
+When the user presses Regenerate on a stored AI monthly P&L summary and the new attempts fail their checks, the stored AI text is replaced by the code-written fallback. ST-21 extends this to a failed regeneration call. Before ST-21, a failed model call returned 503 and `reports.md` §AI Summary's "Failed" state kept the previous text. Both behaviours meet their ACs, but a user who asks for a refresh can lose a checked AI summary to a transient model error or a stricter re-check, with no way back except another Regenerate.
+
+**Scope**
+- Product Owner decides whether a `regenerate=true` request that ends in the fallback should keep the previously stored checked AI summary (returning it with a notice) or replace it as today
+- If keep: change `generate_narrative()` and `reports.md` §AI Summary with a design pass; update tests
+
+**Acceptance Criteria**
+- The decision is recorded with its rationale in `reports.md` §AI Summary
+- Code and tests match the decision
 
 ---

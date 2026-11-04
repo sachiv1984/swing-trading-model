@@ -252,7 +252,8 @@ function TrailStopModal({ position, onClose }) {
       <div className="w-full max-w-md rounded-2xl bg-slate-900 border border-slate-700 p-6 space-y-4 mx-4">
         <div className="flex items-center justify-between">
           <div>
-            <h2 id="trail-stop-modal-title" className="text-lg font-semibold text-white">Trail Stop — {position?.ticker}</h2>
+            {/* ST-17 (BLG-FE-218, v9.15): read-only wording per positions.md v2.22 §Trail Stop Action */}
+            <h2 id="trail-stop-modal-title" className="text-lg font-semibold text-white">View Trail — {position?.ticker}</h2>
             <p className="text-xs text-slate-600 dark:text-slate-400">ATR-based stop trail calculation</p>
           </div>
           <button onClick={onClose} aria-label="Close" className="text-slate-600 dark:text-slate-400 hover:text-white"><X className="w-5 h-5" /></button>
@@ -282,7 +283,7 @@ function TrailStopModal({ position, onClose }) {
             </div>
             {trailDiff != null && (
               <div className="flex justify-between">
-                <dt className="text-slate-600 dark:text-slate-400">Raise by</dt>
+                <dt className="text-slate-600 dark:text-slate-400">Difference vs current stop</dt>
                 <dd className={cn("font-medium", isNegativeDiff ? "text-amber-700 dark:text-amber-400" : "text-emerald-400")}>
                   {formatCurrency(trailDiff, { currency: modalCurrency, signed: true })}
                   {trailR != null && <span className="text-slate-600 dark:text-slate-400 ml-1">({formatR(trailR)})</span>}
@@ -1109,7 +1110,7 @@ export default function Positions() {
                         <Button
                           variant="ghost"
                           size="icon"
-                          title={(!position.current_stop && !position.stop_price) ? "No current stop set. Add a stop to use trail management." : "View Trail"}
+                          title={(!position.current_stop && !position.stop_price) ? "No stop is recorded for this position yet, so there is no trail to compare." : "View Trail"}
                           aria-label="View Trail"
                           disabled={!position.current_stop && !position.stop_price}
                           className="h-8 w-8 text-violet-400 hover:text-violet-300 hover:bg-violet-500/10 disabled:opacity-40"

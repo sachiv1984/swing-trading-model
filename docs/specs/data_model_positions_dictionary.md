@@ -1,8 +1,8 @@
 **Owner:** Data Model Domain & Schema Owner
 **Class:** Class 1 Canonical Specification
 **Status:** Active
-**Version:** 0.6
-**Last Updated:** 2026-10-30 (ST-13, EPIC-02, v9.14, BLG-SPEC-190 — `user_fill_price` row added; every price field and the `total_cost`/`pnl` derivations checked against `add_position()` and `data_model.md` §2); prior — 2026-10-13 (BLG-SPEC-199, PR #2024 review, EPIC-05, v9.12 — Nullable for holding_days, pnl, pnl_pct, status, created_at and updated_at set to YES, and a risk_off_exit row added, matching data_model.md v2.60; exit_note marked as not live; coverage note added); prior — 2026-10-13 (ST-38, EPIC-05, v9.12, BLG-SPEC-183 — `entry_price` is GBP, `fill_price` the native entry, `user_fill_price` the broker fill; US `total_cost` and the `pnl` derivations use `fill_price`; `fx_rate` 1.0 for UK. Doc fix per the Data Model & Domain Schema Owner ruling, `ESC-EXEC-20261013-05`); prior history retained — see prior entries in version control
+**Version:** 0.7
+**Last Updated:** 2026-11-04 (ST-23, EPIC-03, v9.15, BLG-SPEC-198 — §5.2 and the pnl row state the live basis: live GBP/USD rate, not net of fees_paid; decision and difference from realised P&L recorded. Data Model & Domain Schema Owner ruling ESC-EXEC-20261104-04); prior — 2026-10-30 (ST-13, EPIC-02, v9.14, BLG-SPEC-190 — `user_fill_price` row added; every price field and the `total_cost`/`pnl` derivations checked against `add_position()` and `data_model.md` §2); prior — 2026-10-13 (BLG-SPEC-199, PR #2024 review, EPIC-05, v9.12 — Nullable for holding_days, pnl, pnl_pct, status, created_at and updated_at set to YES, and a risk_off_exit row added, matching data_model.md v2.60; exit_note marked as not live; coverage note added); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -80,7 +80,7 @@ The `positions` table serves **both open and closed positions** within a single 
 |-------|----------|----------|-------------|
 | `current_price` | DECIMAL(10,4) | YES | Most recently recorded price in native currency. Updated by the daily price refresh process. NULL before first price update or after position closure. |
 | `holding_days` | INTEGER | YES | Calendar days held, measured from `entry_date` to the current date (open positions) or `exit_date` (closed positions). Updated daily for open positions. Default `0`. Nullable `YES` from v0.5: the column has a `DEFAULT` but no `NOT NULL`, matching `data_model.md` v2.60 and the live schema. |
-| `pnl` | DECIMAL(12,2) | YES | P&L in GBP. **Unrealised** for open positions; **realised** for closed positions. The native entry is `fill_price` for US and `entry_price` for UK (§5.2). Derivation (open): `(current_price − native_entry) × shares × fx_rate_factor − fees_paid`, where `fx_rate_factor = 1/fx_rate` for US positions and `1` for UK positions. Derivation (closed): `(exit_price − native_entry) × shares × fx_rate_factor − fees_paid`. Always GBP-denominated. Default `0`. The live computation differs on the FX rate and fee deduction: BLG-SPEC-198. Nullable `YES` from v0.5: the column has a `DEFAULT` but no `NOT NULL`, matching `data_model.md` v2.60 and the live schema. |
+| `pnl` | DECIMAL(12,2) | YES | **Unrealised** P&L in GBP for an open position: `(current_price − native_entry) × shares ÷ live GBP/USD rate` for US, `(current_price − entry_price) × shares` for UK, **not net of `fees_paid`** (§5.2). The native entry is `fill_price` for US and `entry_price` for UK. Written by the on-load and nightly stop update; `GET /positions` computes the same figure live. Not rewritten at exit: a closed trade's realised P&L is `trade_history.pnl` (§5.2). Default `0`. *(v0.7, ST-23, BLG-SPEC-198: this row said entry-time `fx_rate` and `− fees_paid`; Data Model & Domain Schema Owner ruling `ESC-EXEC-20261104-04`, spec follows code.)* Nullable `YES` from v0.5: the column has a `DEFAULT` but no `NOT NULL`, matching `data_model.md` v2.60 and the live schema. |
 | `pnl_pct` | DECIMAL(10,2) | YES | P&L as a percentage of `total_cost`. Formula: `pnl / total_cost × 100`. Also returned as `pnl_percent` by the API layer (alias). Default `0`. Nullable `YES` from v0.5: the column has a `DEFAULT` but no `NOT NULL`, matching `data_model.md` v2.60 and the live schema. |
 
 ---
@@ -144,15 +144,17 @@ Worked US example: `fill_price` $100, 10 shares, $1.50 FX fee, `fx_rate` 1.25. `
 ### 5.2 `pnl` (GBP)
 
 ```
-Open position (UK):   pnl = (current_price − entry_price) × shares − fees_paid
-Open position (US):   pnl = (current_price − fill_price) × shares / fx_rate − fees_paid
-Closed position (UK): pnl = (exit_price − entry_price) × shares − fees_paid
-Closed position (US): pnl = (exit_price − fill_price) × shares / fx_rate − fees_paid
+Open position (UK):   pnl = (current_price − entry_price) × shares
+Open position (US):   pnl = (current_price − fill_price) × shares / live_fx_rate
 ```
 
-For US positions the native entry is `fill_price`; `entry_price` is GBP and must not be subtracted from a native price (v0.4). The live computation (`portfolio_service.py`) uses the live FX rate and does not deduct `fees_paid`; that divergence is tracked as BLG-SPEC-198.
+**Basis (v0.7, ST-23, BLG-SPEC-198; Data Model & Domain Schema Owner ruling `ESC-EXEC-20261104-04`, 2026-11-04 — spec follows code):** open-position `pnl` is the native price move converted at the **live** GBP/USD rate (USD per £1) and is **not net of `fees_paid`**. This is what `calculate_position_pnl()` (`backend/utils/calculations.py`) returns to `get_positions_with_prices()` (`GET /positions`, and the stored column via the on-load and nightly update) and `portfolio_service.py`, so it is the figure every page displays. For US positions the native entry is `fill_price`; a row with a NULL `fill_price` uses `entry_price × fx_rate`. `entry_price` is GBP and must not be subtracted from a native price (v0.4).
 
-The `fx_rate` used in `pnl` derivation is the **entry-time rate** stored in the `positions` row, not a live rate. For open US positions, if `fx_rate` is NULL, implementations should use the current spot rate and note this as estimated.
+**Rationale:** the dictionary (entry-time rate, fees deducted) described a figure no surface displays. Changing the code instead would change displayed P&L on Positions, Dashboard and Portfolio, which needs a design pass. Documenting the live figure makes it reproducible from this dictionary.
+
+**Difference from realised P&L:** a closed trade's realised P&L is `trade_history.pnl = net_proceeds_gbp − total_cost`, written once by `exit_position()` (`metrics_definitions.md` §Realized / Unrealized P&L Split). It is net of entry and exit fees, and its cost leg is at the entry-time rate and its proceeds leg at the exit rate, so it includes currency movement on the principal. Unrealised `pnl` converts only the price move, at today's rate, gross of fees. The two can therefore differ for the same position at the moment of exit. Whether to align them is tracked as `BLG-SPEC-218`.
+
+**Closed positions:** `positions.pnl` is not rewritten when a position closes; it keeps the last unrealised value. Use `trade_history.pnl` for realised P&L.
 
 ### 5.3 `pnl_pct`
 
@@ -210,4 +212,5 @@ Closed trades are attributed to the UK tax year containing their `exit_date`. Th
 | 0.3 | 2026-10-05 | `fees_paid` row: notes that fees are reduced proportionally on partial exit, matching `data_model.md` (PR #1892 agent-mediated Director of Quality review). |
 | 0.4 | 2026-10-13 | ST-38 (EPIC-05, v9.12, BLG-SPEC-183; also covers BLG-SPEC-190's scope): `entry_price` documented as GBP for every market, matching what `add_position()` writes; `fill_price` is the native entry and `user_fill_price` the broker fill; `fx_rate` 1.0 for UK; `fill_currency` always set; US `total_cost` (§5.1, with a worked example) and the `pnl` derivations (§5.2) use `fill_price`; §6 currency table corrected. Doc fix, Data Model & Domain Schema Owner ruling (agent-mediated, §5.3), `ESC-EXEC-20261013-05`. |
 | 0.5 | 2026-10-13 | BLG-SPEC-199 (PR #2024 agent-mediated Director of Quality review, EPIC-05, v9.12): `holding_days`, `pnl`, `pnl_pct`, `status`, `created_at` and `updated_at` Nullable `NO` → `YES` (each has a `DEFAULT` but no `NOT NULL`), matching `data_model.md` v2.60. Added a `risk_off_exit` row (`NOT NULL DEFAULT FALSE`). `exit_note` marked as not a live column (BLG-SPEC-149). Coverage note lists the 11 newer columns documented only in `data_model.md` §2. |
+| 0.7 | 2026-11-04 | ST-23 (EPIC-03, v9.15, BLG-SPEC-198): §5.2 and the `pnl` row state the live computation: open-position `pnl` is the native price move at the live GBP/USD rate, not net of `fees_paid`. The closed-position formulas are replaced by a pointer to `trade_history.pnl`, because `positions.pnl` is not rewritten at exit. The decision, its rationale and the difference from realised P&L are recorded in §5.2. Data Model & Domain Schema Owner ruling `ESC-EXEC-20261104-04` (spec follows code), given in-session by the user acting in that role, 2026-11-04. Follow-ups: `BLG-SPEC-218` (basis alignment), `BLG-SPEC-219` (§5.3 `pnl_pct`). |
 | 0.6 | 2026-10-30 | ST-13 (EPIC-02, v9.14, BLG-SPEC-190): `user_fill_price` row added to §3.3 (native broker fill, the request's optional `fill_price`, stored unchanged by `add_position()`; slippage only). Checked every price field (`entry_price`, `fill_price`, `user_fill_price`) and the `total_cost` and `pnl` derivations against `add_position()` and `data_model.md` §2: they agree. Coverage note now lists 10 columns not yet in this dictionary. `metrics_definitions.md` §Position Risk Data Sources no longer calls `positions.entry_price` native currency (v1.33.1). |

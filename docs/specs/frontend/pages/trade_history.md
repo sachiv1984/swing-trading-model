@@ -3,8 +3,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 1.16
-**Last Updated:** 2026-10-16 (v9.13 design gate — ST-03/BLG-FE-227: new §Exit Reason Labels and Badges; ST-21/BLG-FE-212: §Post-Trade Debrief error text and card surface get light-theme tokens); prior — 2026-10-08 (v9.11 design gate — ST-05/BLG-FE-205: §Post-Trade Debrief Regenerate button made recognisable, generated time shown, regenerate failure message); prior — 2026-09-28 (ST-05, EPIC-01, v9.8, BLG-SPEC-158 — §Responsive Behavior corrected to match `TradeHistoryTable.js`); prior history retained — see prior entries in version control
+**Version:** 1.17
+**Last Updated:** 2026-11-04 (ST-15, EPIC-03, v9.15, BLG-FE-239 — §Summary Stats and §Filters state the pnl > 0 win test; break-even trades are neither wins nor losses); prior — 2026-10-16 (v9.13 design gate — ST-03/BLG-FE-227: new §Exit Reason Labels and Badges; ST-21/BLG-FE-212: §Post-Trade Debrief error text and card surface get light-theme tokens); prior — 2026-10-08 (v9.11 design gate — ST-05/BLG-FE-205: §Post-Trade Debrief Regenerate button made recognisable, generated time shown, regenerate failure message); prior history retained — see prior entries in version control
 **Design Source (v1.16):** docs/design/2026-10-16__release-v9.13/exit-reason-badges/decision_record.md; light-theme tokens per docs/design/2026-10-12__release-v9.12/light-theme-support/decision_record.md §3
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Design Source (v1.15 Debrief Regenerate):** docs/design/2026-10-08__release-v9.11/debrief-regenerate-feedback/decision_record.md
@@ -32,7 +32,7 @@ Users should be able to:
 ### Summary Stats
 A row of key metrics:
 - Total trades
-- Win rate (%)
+- Win rate (%): `count(pnl > 0) / total_trades × 100`, per `metrics_definitions.md` §Win Rate. A break-even (`pnl = 0`) trade counts in Total trades but is neither a win nor a loss: it is left out of the Total Trades `W / L` subtitle, Average winner and Average loser (v1.17, ST-15, `BLG-FE-239`).
 - Total P&L (GBP)
 - Average winner
 - Average loser
@@ -85,7 +85,7 @@ A flexible filtering system allowing users to narrow down the list of trades.
 
 **Available filters:**
 - Date range  
-- Win / Loss  
+- Win / Loss: Win shows `pnl > 0`, Loss shows `pnl < 0`; a break-even trade appears under neither (v1.17)  
 - Market (US / UK)  
 - Exit reason  
 - Tag filter (multi‑select)  
@@ -596,6 +596,7 @@ Documentation-only requirements baseline for this table-based page — no implem
 
 | Version | Date | Change |
 | --- | --- | --- |
+| 1.17 | 2026-11-04 | ST-15 (EPIC-03, v9.15, `BLG-FE-239`): §Summary Stats and §Filters state the win test, `pnl > 0` per `metrics_definitions.md` §Win Rate. A break-even trade is in Total trades but in neither the W/L counts, the averages nor the Win/Loss filters. Implementation-only fix to match the canonical metric; Design Pre-Approved (`sprint_backlog.md` ST-15). |
 | 1.16 | 2026-10-16 | v9.13 design gate. (ST-03, BLG-FE-227) New §Exit Reason Labels and Badges: one shared module, six stored values, legacy aliases, light/dark badge tokens. (ST-21, BLG-FE-212) §Post-Trade Debrief: error text `text-rose-700 dark:text-rose-400`, and a new §Light Theme token table for the section. Design sources: `docs/design/2026-10-16__release-v9.13/exit-reason-badges/decision_record.md`; light-theme tokens per `docs/design/2026-10-12__release-v9.12/light-theme-support/decision_record.md` §3. Head of UX & Design sign-off: 2026-10-16. Product Owner approved: 2026-10-16. Head of Specs Team confirmed. |
 | 1.15 | 2026-10-08 | v9.11 design gate (ST-05, EPIC-01, BLG-FE-205): §Post-Trade Debrief — Regenerate uses the `outline` variant; "Generated {relative time}" label from `generated_at`; regenerate failure keeps the existing debrief and shows an inline error. Design source: `docs/design/2026-10-08__release-v9.11/debrief-regenerate-feedback/decision_record.md`. Head of UX & Design sign-off: 2026-10-08. Product Owner approved: 2026-10-08. Head of Specs Team confirmed. |
 | 1.14 | 2026-09-28 | ST-05 (BLG-SPEC-158, EPIC-01, v9.8): §Responsive Behavior corrected to match `TradeHistoryTable.js`'s actual implementation — the table scrolls horizontally (no card collapse, no column-hiding); journal expansion is an in-table expanded row, not a card panel. Documentation-only; no implementation change. |
