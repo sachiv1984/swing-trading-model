@@ -18,11 +18,11 @@
   ],
   "epics": {
     "EPIC-01": {
-      "status": "in_progress",
+      "status": "done",
       "branch": "exec/2026-11-03__release-v9.15/EPIC-01",
       "pr_number": null,
       "pr_status": "none",
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-11-03__release-v9.15/qa_evidence_EPIC-01.md",
       "test_scenarios": [
         "tests/test_trade_entry_pre_entry_override.py",
@@ -33,7 +33,8 @@
         "tests/test_stop_trail_value.py",
         "tests/e2e/local-date-prefill.spec.js",
         "tests/e2e/positions-exit-modal.spec.js",
-        "tests/e2e/signal-card.spec.js"
+        "tests/e2e/signal-card.spec.js",
+        "tests/test_signal_sizing.py"
       ],
       "stories": {
         "ST-01": {
@@ -239,6 +240,14 @@
             "docs/specs/api_contracts/signal_endpoints.md"
           ]
         }
+      },
+      "sign_off_record": {
+        "role": "Director of Quality",
+        "status": "cleared",
+        "method": "agent_mediated",
+        "date": "2026-11-04",
+        "reference": "qa_evidence_EPIC-01.md Standard Sign-Off Block",
+        "notes": "Second pass Approved; first pass Blocked (2 blocking findings: ST-02 fixed in 41e0949e, ST-06 ruled ESC-EXEC-20261104-02; 5 non-blocking fixed or filed as BLG-FE-269/270)."
       }
     }
   },

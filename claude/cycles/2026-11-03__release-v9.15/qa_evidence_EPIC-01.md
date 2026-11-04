@@ -9,7 +9,7 @@ Last Updated: 2026-11-04
 **Cycle:** 2026-11-03__release-v9.15
 **Branch:** `exec/2026-11-03__release-v9.15/EPIC-01`
 **Sprint goal:** Make every route into Trade Entry show the §4.2 pre-entry checks and pre-fill the live FX rate (BLG-FE-244, BLG-FE-245, P1). Deliver Site Structure & Usability Phase 1: navigation v2/glossary, Dashboard "Today" and Journal area specs approved, one name per page, legacy Dashboard route removed, per-page tab titles. Ship v9.15's metric-correctness, AI-check, operations, data-model and governance items alongside.
-**Test scenarios used:** `tests/test_trade_entry_pre_entry_override.py`, `tests/test_market_atr_preview_endpoint.py`, `tests/test_strategy_version_registry.py`, `tests/test_stop_trail_value.py`, `tests/e2e/trade-entry-pre-entry-checks.spec.js`, `tests/e2e/trade-entry-fx-rate.spec.js`, `tests/e2e/local-date-prefill.spec.js`, `tests/e2e/positions-exit-modal.spec.js`, `tests/e2e/signal-card.spec.js`
+**Test scenarios used:** `tests/test_trade_entry_pre_entry_override.py`, `tests/test_market_atr_preview_endpoint.py`, `tests/test_strategy_version_registry.py`, `tests/test_stop_trail_value.py`, `tests/e2e/trade-entry-pre-entry-checks.spec.js`, `tests/e2e/trade-entry-fx-rate.spec.js`, `tests/e2e/local-date-prefill.spec.js`, `tests/e2e/positions-exit-modal.spec.js`, `tests/e2e/signal-card.spec.js`, `tests/test_signal_sizing.py`
 
 ## Story-Level Authority Records
 
@@ -43,11 +43,11 @@ Every observable AC has Playwright coverage (ST-01, ST-02, ST-04, ST-07). ST-03 
 
 ## Standard Sign-Off Block
 
-- [ ] All acceptance criteria verified against canonical spec
-- [ ] No unresolved P0 or P1 deviations
-- [ ] Regression areas checked
-- [ ] For any frontend component making direct URL construction (not via api.* wrapper): confirm the URL-base variable is exposed on the imported object
-- [ ] **Strategy values checked:** ST-01 — §4.2.1 regime gate, §4.2.6 non-blocking principle (v1.23); ST-02 — §4.1.3/§4.1.5 FX as USD per £1 for US sizing; ST-05 — §5 initial stop (`entry − 5 × ATR`) preview equals save; ST-06 — §7.2 profitable stop with breakeven floor, §11 `PROFIT_ATR_MULTIPLIER`/`INITIAL_ATR_MULTIPLIER`; ST-07 — §4.1 inverse-volatility sizing reason only (no value changed).
-- Signed off by:
-- Date:
-- Comments:
+- [x] All acceptance criteria verified against canonical spec
+- [x] No unresolved P0 or P1 deviations
+- [x] Regression areas checked
+- [x] For any frontend component making direct URL construction (not via api.* wrapper): confirm the URL-base variable is exposed on the imported object — N/A, no new direct URL construction (Trade Entry's `/market/status` query uses `apiFetch`)
+- [x] **Strategy values checked:** ST-01 — §4.2.1 regime gate, §4.2.6 non-blocking principle (v1.23); ST-02 — §4.1.3/§4.1.5 FX as USD per £1 for US sizing; ST-05 — §5 initial stop (`entry − 5 × ATR`) preview equals save; ST-06 — §7.2 profitable stop with breakeven floor, §11 `PROFIT_ATR_MULTIPLIER`/`INITIAL_ATR_MULTIPLIER` (un-ratcheted candidate per `ESC-EXEC-20261104-02`); ST-07 — §4.1 inverse-volatility sizing reason only (no value changed).
+- Signed off by: Sprint Execution Engine (agent-mediated, Director of Quality role — §5.3)
+- Date: 2026-11-04
+- Comments: Agent-mediated DoQ review (§5.3), user-directed in session 2026-11-04. Pass 1 Blocked on two findings: ST-02 was missing the US FX save validation, and ST-06's ratchet semantics were unruled. Five non-blocking findings were also raised. Pass 2 Approved. Every ST-01..ST-07 acceptance criterion was verified against the sealed slice, the locked design records and the code. The reviewer re-ran the backend suites locally (pass 1: 65 + 30 + 125 passed; pass 2: 52 passed across `test_signal_sizing.py`, `test_stop_trail_value.py`, `test_trade_entry_pre_entry_override.py`, `test_market_atr_preview_endpoint.py`, `test_strategy_version_registry.py`). ST-02's validation was added in `41e0949e` with SC-TEFX-07; all 9 CI workflows succeeded on `41e0949e` (Playwright E2E 41851843108, CI Pytest 41851843049, Frontend Production Build 41851843299, Critical-Path Smoke 41851842714). ST-06's un-ratcheted value was ruled intended (`ESC-EXEC-20261104-02`, no remainder). The `strategy_rules.md` v1.23 case (c) write and its registry entry were verified. Non-blocking follow-ups: BLG-FE-269 and BLG-FE-270. Pass 2 also noted that during the brief live-rate load, clicking Submit shows "FX rate missing…". That follows `position_form.md` §Validation Errors and needs no change. This is not the human QA sign-off or Product Owner acceptance; the merge gate stays human.
