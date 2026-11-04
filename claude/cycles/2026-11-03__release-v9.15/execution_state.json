@@ -6,7 +6,7 @@
   "invoked_utc": "2026-11-04T10:55:44Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-04T20:10:10Z",
+  "last_updated_utc": "2026-11-04T20:33:35Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-03",
@@ -452,6 +452,7 @@
           "acceptance_verified": true,
           "spec_references": [
             "docs/specs/api_contracts/position_endpoints.md#GET /positions/{position_id}/gap-risk",
+            "docs/specs/api_contracts/earnings_endpoints.md#GET /earnings/{ticker}",
             "docs/product/decisions/decisions--2026-09-30__release-v9.9--gap-risk-flag-section13-review.md",
             "tests/test_gap_risk.py"
           ],
@@ -460,7 +461,7 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.push",
           "sign_off_record": null,
-          "notes": "AC 1-3 met by unit tests (Fri->Mon weekend set; Thursday before Good Friday weekend statistic; 21:00 ET earningsTimestamp -> ET date), 46 earnings/gap tests pass locally. Statistic definition unchanged (contract already said Friday close to Monday open; code brought to it), so no §13 Binding Condition 4 addendum per sprint_backlog.md ST-22 Notes; flagged for the Strategy Rules & System Intent Owner at DoQ. Deviation check: none. CI on ee3460ee: 7/7 success (CI Pytest 41901894429)."
+          "notes": "AC 1-3 met by unit tests (Fri->Mon weekend set; Thursday before Good Friday weekend statistic; 21:00 ET earningsTimestamp -> ET date), 46 earnings/gap tests pass locally. Statistic definition unchanged (contract already said Friday close to Monday open; code brought to it), so no §13 Binding Condition 4 addendum per sprint_backlog.md ST-22 Notes; flagged for the Strategy Rules & System Intent Owner at DoQ. Deviation check: none. CI on ee3460ee: 7/7 success (CI Pytest 41901894429). PR #2190 review DQ-1 fixed in-PR: get_earnings() days_until_earnings counts from us_market_date() (BLG-BE-204 scope), so the §4.2.3 pre-entry earnings check no longer passes at -1 days on an ET-evening release; earnings_endpoints.md v0.2; tests added."
         },
         "ST-23": {
           "title": "Open-position pnl: code uses the live FX rate and does not deduct fees; the dictionary says entry-time FX, fees deducted",

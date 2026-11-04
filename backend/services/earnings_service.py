@@ -11,7 +11,7 @@ import yfinance as yf
 from datetime import date, datetime, timezone
 from typing import Optional, Dict, Any
 
-from services.us_market_calendar import US_MARKET_TZ
+from services.us_market_calendar import US_MARKET_TZ, us_market_date
 from zoneinfo import ZoneInfo
 
 
@@ -74,7 +74,11 @@ def get_earnings(ticker: str, market: str = "US") -> Dict[str, Any]:
                 "data_source": "yahoo_finance",
             }
 
-        today = date.today()
+        # BLG-BE-204 (PR #2190 review, ST-22 follow-through): count from the US
+        # market date, the same basis as next_earnings_date. With the server's
+        # UTC date, a 21:00 ET release viewed at 00:30 UTC (19:30 ET, before it)
+        # gave -1 days, and the §4.2.3 pre-entry check passed instead of warning.
+        today = us_market_date()
         days_until = (earnings_date - today).days
         fiscal_quarter = info.get("earningsQuarterlyGrowth") and None  # not reliable from info
         try:

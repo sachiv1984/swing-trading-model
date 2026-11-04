@@ -405,3 +405,33 @@ def test_et_date_converts_aware_and_keeps_a_naive_datetime_date():
     from services import earnings_service
     assert earnings_service._et_date(datetime(2026, 12, 3, 2, 0, tzinfo=timezone.utc)) == date(2026, 12, 2)  # 21:00 EST
     assert earnings_service._et_date(datetime(2026, 12, 3, 0, 0)) == date(2026, 12, 3)  # bare date at midnight
+
+
+def test_days_until_earnings_counts_from_the_us_market_date():
+    """BLG-BE-204 (PR #2190 DoQ review): a 21:00 EST release on 5 Nov, viewed at
+    00:30 UTC on 6 Nov (19:30 ET, before it), is 0 days away, not -1."""
+    from services import earnings_service
+
+    ts = datetime(2026, 11, 6, 2, 0, tzinfo=timezone.utc).timestamp()  # 21:00 EST, 5 Nov
+    mock_ticker = MagicMock()
+    mock_ticker.info = {"earningsTimestamp": ts}
+    with patch("services.earnings_service.yf.Ticker", return_value=mock_ticker), \
+         patch("services.earnings_service.us_market_date", return_value=date(2026, 11, 5)):
+        out = earnings_service.get_earnings("AAPL", "US")
+    assert out["next_earnings_date"] == "2026-11-05"
+    assert out["days_until_earnings"] == 0
+
+
+def test_us_market_date_at_0030_utc_is_the_previous_et_day():
+    # The basis get_earnings() now uses: 00:30 UTC on 6 Nov is 19:30 EST on 5 Nov.
+    assert cal.us_market_date(datetime(2026, 11, 6, 0, 30, tzinfo=timezone.utc)) == date(2026, 11, 5)
+
+
+def test_pre_entry_earnings_check_warns_on_the_evening_of_the_release():
+    """§4.2.3: the same case through _check_earnings_proximity() is WARN, not PASS."""
+    from routers import pre_entry_validation
+
+    earnings = {"next_earnings_date": "2026-11-05", "days_until_earnings": 0}
+    with patch("services.earnings_service.get_earnings", return_value=earnings):
+        result = pre_entry_validation._check_earnings_proximity("AAPL", "US")
+    assert result["status"] == "warn"

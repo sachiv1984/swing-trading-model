@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Class 2
 **Status:** Canonical
-**Version:** 1.29.2
-**Last Updated:** 2026-11-04 (ST-19/ST-21/ST-22, EPIC-03, v9.15 — v9.15.0 entry adds alerts_endpoints.md v0.14, reports_endpoints.md v0.20 and position_endpoints.md v2.19.2); prior — 2026-11-04 (ST-06, EPIC-01, v9.15, BLG-BE-173 — v9.15.0 entry: GET /positions/{position_id}/stop-trail uses the §7.2 stop with the breakeven floor); prior — 2026-11-04 (ST-01/ST-05, EPIC-01, v9.15, BLG-FE-244/BLG-FE-222 — v9.15.0 entry: POST /portfolio/position gains pre_entry_override_acknowledged; ticker normalised); prior history retained — see prior entries in version control
+**Version:** 1.29.3
+**Last Updated:** 2026-11-04 (ST-22, EPIC-03, v9.15, BLG-BE-204 — v9.15.0 entry adds earnings_endpoints.md v0.2); prior — 2026-11-04 (ST-19/ST-21/ST-22, EPIC-03, v9.15 — v9.15.0 entry adds alerts_endpoints.md v0.14, reports_endpoints.md v0.20 and position_endpoints.md v2.19.2); prior — 2026-11-04 (ST-06, EPIC-01, v9.15, BLG-BE-173 — v9.15.0 entry: GET /positions/{position_id}/stop-trail uses the §7.2 stop with the breakeven floor); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 # API Changelog
@@ -76,6 +76,15 @@ Rules:
 | Change | Details |
 |--------|---------|
 | Updated endpoint: POST /reports/monthly-pnl/narrative | When attempt 1 fails its output checks and the regeneration call raises, the code-written summary is stored and returned (`200`, `source: "fallback"`) with audit result `fail_fallback:model_call_failed`, instead of `503`. A first-call failure still returns `503`. No shape change; `openapi.yaml` 3.47.2 descriptions only (BLG-BE-172). |
+
+### earnings_endpoints.md — v0.2 (UPDATED)
+
+**EPIC:** EPIC-03
+**ST:** ST-22
+
+| Change | Details |
+|--------|---------|
+| Updated endpoint: GET /earnings/{ticker} | `next_earnings_date` from a timestamp is the America/New_York date; `days_until_earnings` counts from the US market date instead of the server date (BLG-BE-174, BLG-BE-204). No shape change. |
 
 ### position_endpoints.md — v2.19.2 (UPDATED)
 
