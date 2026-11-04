@@ -16,10 +16,10 @@
  *
  * ST-03 (IT-03) — Trail Stop modal
  *   SC-TS-01  Trail Stop button visible for PROFITABLE position
- *   SC-TS-02  Trail Stop modal shows trail calculation data
+ *   SC-TS-02  View Trail modal shows its heading and trail calculation data (heading per ST-17, v9.15)
  *   SC-TS-03  Trail Stop button absent for GRACE/LOSING/UNKNOWN states
  * ST-10 (BLG-BE-159, EPIC-02, v9.12) — read-only "View Trail" modal (ruling ESC-EXEC-20261013-06)
- *   SC-TS-04  Positive difference: no apply control, read-only note, no stop-write request
+ *   SC-TS-04  Positive difference: no apply control, read-only note, no stop-write request; row label "Difference vs current stop" (ST-17, v9.15)
  *   SC-TS-05  Negative difference: no-raise note, no "Lower stop" label
  *   SC-TS-06  Close button and Escape dismiss the modal
  *   SC-TS-07  Zero difference (trail_difference = 0): no-raise note shown (spec: <= 0)
@@ -243,7 +243,7 @@ test.describe('ST-03 — Trail Stop modal', () => {
     await expect(trailBtn).toBeVisible({ timeout: 5000 });
   });
 
-  test('SC-TS-02: Trail Stop modal shows trail calculation data', async ({ page }) => {
+  test('SC-TS-02: View Trail modal shows its heading and trail calculation data', async ({ page }) => {
     await stubCommon(page);
     await setupPositions(page, [makePosition({ lifecycle_state: 'PROFITABLE', days_in_state: 10, current_stop: 760 })]);
     await page.route(`${API}/positions/pos-001/stop-trail`, (r) =>
@@ -253,7 +253,9 @@ test.describe('ST-03 — Trail Stop modal', () => {
     await expect(page.getByText('NVDA')).toBeVisible({ timeout: 8000 });
     await page.locator('[title="View Trail"]').click();
     await expect(page.getByRole('dialog')).toBeVisible({ timeout: 5000 });
-    await expect(page.getByText(/trail stop — NVDA/i)).toBeVisible();
+    // ST-17 (BLG-FE-218, v9.15): heading reads "View Trail — {TICKER}" (positions.md v2.22).
+    await expect(page.getByRole('heading', { name: 'View Trail — NVDA' })).toBeVisible();
+    await expect(page.getByText(/trail stop — NVDA/i)).toHaveCount(0);
     // The ATR trail stop value appears in the dd element (not the button)
     await expect(page.locator('dd').filter({ hasText: '$810.50' })).toBeVisible({ timeout: 5000 });
   });
@@ -293,7 +295,9 @@ test.describe('ST-03 — Trail Stop modal', () => {
     );
     await expect(dialog.getByTestId('trail-stop-no-raise-note')).toHaveCount(0);
     await expect(dialog.getByRole('button', { name: /raise stop|update stop|lower stop/i })).toHaveCount(0);
-    await expect(dialog.getByText('Raise by')).toBeVisible();
+    // ST-17 (BLG-FE-218, v9.15): the row is "Difference vs current stop", not "Raise by".
+    await expect(dialog.getByText('Difference vs current stop', { exact: true })).toBeVisible();
+    await expect(dialog.getByText('Raise by')).toHaveCount(0);
     await dialog.getByRole('button', { name: 'Close', exact: true }).last().click();
     await expect(dialog).not.toBeVisible();
     expect(writes).toEqual([]);
