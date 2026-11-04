@@ -25,8 +25,9 @@ const EXIT_REASON_BADGE = {
   trailing_stop:    { label: 'Stop',      cls: 'bg-red-600 text-white' },
   'Risk-Off':       { label: 'Risk-Off',  cls: 'bg-amber-700 text-white' },
   risk_off:         { label: 'Risk-Off',  cls: 'bg-amber-700 text-white' },
-  Rebalance:        { label: 'Rebalance', cls: 'bg-teal-600 text-white' },
-  exit_rebalance:   { label: 'Rebalance', cls: 'bg-teal-600 text-white' },
+  // ST-18 (BLG-FE-220, v9.15): teal-700, white text 5.47:1 (teal-600 was 3.74:1, below AA).
+  Rebalance:        { label: 'Rebalance', cls: 'bg-teal-700 text-white' },
+  exit_rebalance:   { label: 'Rebalance', cls: 'bg-teal-700 text-white' },
 };
 
 const TOGGLE_MODES = ['backtest', 'actual', 'side-by-side'];
@@ -106,9 +107,9 @@ function MarketBadge({ market }) {
 
 function ExitBadge({ reason }) {
   const config = EXIT_REASON_BADGE[reason] || null;
-  if (!config) return <span className="text-xs text-slate-600 dark:text-slate-400">{reason || '—'}</span>;
+  if (!config) return <span data-testid="benchmark-exit-reason" className="text-xs text-slate-600 dark:text-slate-400">{reason || '—'}</span>;
   return (
-    <span className={`text-xs font-bold px-1.5 py-0.5 rounded ${config.cls}`}>
+    <span data-testid="benchmark-exit-reason" className={`text-xs font-bold px-1.5 py-0.5 rounded ${config.cls}`}>
       {config.label}
     </span>
   );
