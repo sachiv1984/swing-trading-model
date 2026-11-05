@@ -92,7 +92,16 @@ export function documentTitle(pageName, pathname) {
     const match = /^\/research\/([^/]+)/i.exec(pathname || "");
     if (match) {
       // Same ticker form as the Research heading (UK ".L" suffix dropped).
-      const ticker = decodeURIComponent(match[1]).toUpperCase().replace(/\.L$/, "");
+      // BLG-FE-273: a malformed percent-escape makes decodeURIComponent throw,
+      // which would crash Layout's title effect and blank the app. Fall back to
+      // the raw path segment instead.
+      let segment = match[1];
+      try {
+        segment = decodeURIComponent(segment);
+      } catch {
+        // keep the raw segment
+      }
+      const ticker = segment.toUpperCase().replace(/\.L$/, "");
       return [ticker, PAGE_LABELS.Research, APP_TITLE].join(TITLE_SEPARATOR);
     }
   }

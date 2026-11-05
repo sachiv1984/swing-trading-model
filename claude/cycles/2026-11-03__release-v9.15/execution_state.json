@@ -6,7 +6,7 @@
   "invoked_utc": "2026-11-04T10:55:44Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-05T08:10:00Z",
+  "last_updated_utc": "2026-11-05T09:00:00Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-03",
@@ -471,7 +471,7 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.push",
           "sign_off_record": null,
-          "notes": "AC: each routed page sets a distinct title (SC-BTT-04) and Playwright covers three pages incl. Research (SC-BTT-01..03), plus detail route (SC-BTT-05) and unknown route (SC-BTT-06); 6/6 local pass on the test-env build. Uses ST-11 glossary labels (ST-08 approved). Deviation check: none. Implementation note (intent match, not a deviation): PageNotFound renders outside Layout, so it sets the not-found title itself; navigation.md's \"No page sets document.title itself\" targets routed pages. CI on b7fefee0: all 9 workflows success (Playwright E2E Acceptance Tests 41921017624 success; ci_pending cleared).",
+          "notes": "AC: each routed page sets a distinct title (SC-BTT-04) and Playwright covers three pages incl. Research (SC-BTT-01..03), plus detail route (SC-BTT-05) and unknown route (SC-BTT-06); 6/6 local pass on the test-env build. Uses ST-11 glossary labels (ST-08 approved). Deviation check: none. Implementation note (intent match, not a deviation): PageNotFound renders outside Layout, so it sets the not-found title itself; navigation.md's \"No page sets document.title itself\" targets routed pages. CI on b7fefee0: all 9 workflows success (Playwright E2E Acceptance Tests 41921017624 success; ci_pending cleared). Post-review fix (PR #2191, BLG-FE-273): guarded decodeURIComponent in documentTitle(); SC-BTT-07 added; local 7/7.",
           "_planned_spec_references": [
             "docs/design/2026-11-03__release-v9.15/site-structure-phase1/decision_record.md",
             "docs/specs/frontend/pages/navigation.md"

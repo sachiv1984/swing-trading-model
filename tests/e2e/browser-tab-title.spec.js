@@ -10,6 +10,7 @@
  *   SC-BTT-04  Navigating between pages updates the title, and each routed page's title is distinct
  *   SC-BTT-05  A detail route under another page's Layout key gets its own label (Notification History)
  *   SC-BTT-06  An unknown route: "Page not found · Position Manager"
+ *   SC-BTT-07  A malformed Research URL does not crash the app (BLG-FE-273, PR #2191 review)
  *
  * Infrastructure: page.route() network interception — no live backend required.
  * ROUTING NOTE: App uses HashRouter — navigate via page.goto('/#/PageKey').
@@ -70,4 +71,13 @@ test('SC-BTT-05: Notification History has its own title', async ({ page }) => {
 test('SC-BTT-06: an unknown route sets "Page not found · Position Manager"', async ({ page }) => {
   await page.goto('/#/NoSuchPage');
   await expect(page).toHaveTitle('Page not found · Position Manager', { timeout: 10000 });
+});
+
+test('SC-BTT-07: a malformed Research URL renders the page instead of crashing (BLG-FE-273)', async ({ page }) => {
+  const pageErrors = [];
+  page.on('pageerror', (e) => pageErrors.push(e.message));
+  await page.goto('/#/research/%E0%A4%A');
+  await expect(page).toHaveTitle(/ · Research · Position Manager$/, { timeout: 10000 });
+  await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+  expect(pageErrors.filter((m) => /URI malformed/i.test(m))).toEqual([]);
 });
