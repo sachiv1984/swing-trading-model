@@ -625,6 +625,26 @@
       "resolved_utc": "2026-11-05T08:50:24Z",
       "resolved_by": "Strategy Rules & System Intent Owner (the user, in session)",
       "resolution_summary": "Outcome (1), clarify: one §13.2 sentence (AI-written text describing the user's data must not suggest changing stops, sizing, setups or other strategy parameters) and a §13.5 roster row for the journal summary; documentation-only v1.25, case (c)."
+    },
+    "ESC-EXEC-20261105-03": {
+      "cycle": "2026-11-03__release-v9.15",
+      "summary": "ST-44/EPIC-07 — re-confirm or flag the four current_roadmap.md §2 product-scope exclusions and set a re-confirmation cadence",
+      "trigger_type": "Strategy",
+      "owning_authority": "Strategy Rules & System Intent Owner (with the Product Owner)",
+      "raised_utc": "2026-11-05T13:56:47Z",
+      "sla_due_utc": "2026-11-08T13:56:47Z",
+      "blocks_execution": false,
+      "disposition": "Open"
+    },
+    "ESC-EXEC-20261105-04": {
+      "cycle": "2026-11-03__release-v9.15",
+      "summary": "ST-45/EPIC-07 — re-confirm or flag each of the seven initiative_register.md Priority 3 — Deferred initiatives",
+      "trigger_type": "Scope",
+      "owning_authority": "Product Owner",
+      "raised_utc": "2026-11-05T13:56:47Z",
+      "sla_due_utc": "2026-11-06T13:56:47Z",
+      "blocks_execution": false,
+      "disposition": "Open"
     }
   },
   "deferred_escalations": {
