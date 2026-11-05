@@ -53,4 +53,6 @@ Last Updated: 2026-11-05
 - **Spec reference:** `docs/specs/data_model.md#DS-17`; `stage4_backlog_slice.md#ST-36`
 - **Unblock criteria:** DS-17 Verification output from staging listing `idx_positions_open_ticker_entry_date_unique` with DS-17's definition, supplied in session.
 - **Commit format required:** `[EPIC-06][ST-36] <description>` on `exec/2026-11-03__release-v9.15/EPIC-06`
-- **Status:** Pending
+- **Sign-off:** sign_off_cleared — staging migration ran without abort and pg_indexes output supplied by the user in session 2026-11-05; matches DS-17.
+- **Commit SHA:** dfee397be4f255352436538845afe5780b428b45
+- **Status:** Unblocked (2026-11-05T10:20:33Z) — Unblocked in-session — staging DS-17 Up Migration and Verification output, supplied by the user (Data Model & Domain Schema Owner), same session as delegation.

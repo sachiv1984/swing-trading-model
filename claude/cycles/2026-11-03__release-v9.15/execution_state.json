@@ -6,7 +6,7 @@
   "invoked_utc": "2026-11-04T10:55:44Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-05T10:05:00Z",
+  "last_updated_utc": "2026-11-05T10:50:00Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-03",
@@ -920,11 +920,11 @@
       }
     },
     "EPIC-06": {
-      "status": "in_progress",
+      "status": "done",
       "branch": "exec/2026-11-03__release-v9.15/EPIC-06",
       "pr_number": null,
       "pr_status": "none",
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-11-03__release-v9.15/qa_evidence_EPIC-06.md",
       "test_scenarios": [
         "tests/test_check_contract_example_freshness.py",
@@ -956,7 +956,7 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": "AC 1: check_contract_example_freshness.py exits 0 on the branch (137 examples, 0 drift; 8 OPEN SCHEMA informational). AC 2: corrections recorded in openapi.yaml 3.47.3 info comment, health_endpoints.md v1.10 Changelog, api_changelog.md v1.29.4. 7/8 were checker false positives under additionalProperties: true nodes (checker fixed, tests added); tax-year and /test/endpoints were real openapi.yaml errors. Deviation check: none, docs now match backend. Scope bullet 2 (quality_gate.yml wiring) considered, not done; follow-up. CI on ff08b950: all 7 workflows success (CI Pytest Suite 42004971230)."
+          "notes": "AC 1: check_contract_example_freshness.py exits 0 on the branch (137 examples, 0 drift; 8 OPEN SCHEMA informational). AC 2: corrections recorded in openapi.yaml 3.47.3 info comment, health_endpoints.md v1.10 Changelog, api_changelog.md v1.29.4. 7/8 were checker false positives under additionalProperties: true nodes (checker fixed, tests added); tax-year and /test/endpoints were real openapi.yaml errors. Deviation check: none, docs now match backend. Scope bullet 2 (quality_gate.yml wiring) considered, not done; follow-up. CI on ff08b950: all 7 workflows success (CI Pytest Suite 42004971230). DoQ pass 1 fix in 1de20439 (CI success)."
         },
         "ST-35": {
           "title": "Re-apply NOT NULL on positions.portfolio_id and positions.total_cost",
@@ -984,26 +984,34 @@
         "ST-36": {
           "title": "Apply DS-17's open-position unique index to staging",
           "classification": "delegated_backend",
-          "status": "blocked_backend",
+          "status": "done",
           "assigned_to": "Data Model & Domain Schema Owner (Human-Delegation: the user)",
           "github_issue": 2179,
           "branch": "exec/2026-11-03__release-v9.15/EPIC-06",
-          "commit_sha": null,
+          "commit_sha": "dfee397be4f255352436538845afe5780b428b45",
           "delegation_record_id": "DEL-20261105-03",
           "blocked_since_utc": "2026-11-05T09:46:33Z",
           "unblock_criteria": "User permission for DS-17's staging duplicate pre-check and Up Migration; staging pg_indexes output recorded in DS-17.",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-11-05T10:20:33Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/specs/data_model.md#DS-17"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": "3.1.B.3",
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.B.unblock",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Unblocked in-session (DEL-20261105-03). AC 1: user ran DS-17 Up Migration on staging 2026-11-05 (no abort); pg_indexes lists idx_positions_open_ticker_entry_date_unique with DS-17's definition. AC 2: DS-17 records the staging confirmation beside production. Read-only drift run no longer lists the index. Scope decision: reset workflow unchanged (TRUNCATE keeps indexes). Deviation check: none."
         }
+      },
+      "sign_off_record": {
+        "role": "Director of Quality",
+        "method": "agent_mediated",
+        "status": "cleared",
+        "date": "2026-11-05",
+        "reference": "qa_evidence_EPIC-06.md Standard Sign-Off Block",
+        "notes": "Pass 2 Approved; pass 1 Blocked (open-data root prefix hid stray keys beside data) fixed in 1de20439. Follow-up BLG-SPEC-222."
       }
     }
   },
@@ -1015,12 +1023,8 @@
       "reason": "Superseded by ST-12: both win-rate widgets exist only on legacy Dashboard.js, which ST-12 deletes. Product Owner, 2026-11-03 (sprint_backlog.md Items Deferred This Sprint)."
     }
   },
-  "blocked_items": [
-    "ST-36"
-  ],
-  "delegated_items": [
-    "ST-36"
-  ],
+  "blocked_items": [],
+  "delegated_items": [],
   "completed_items": [
     "ST-01",
     "ST-02",
@@ -1050,7 +1054,8 @@
     "ST-27",
     "ST-28",
     "ST-34",
-    "ST-35"
+    "ST-35",
+    "ST-36"
   ],
   "open_escalations": {
     "ESC-EXEC-20261104-01": {
