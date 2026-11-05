@@ -337,6 +337,10 @@ _NON_TICKER_WORDS = frozenset({
     "SPY", "FTSE", "RISK", "ON", "OFF", "STOP", "BREACH", "OK", "YTD",
     "RSI", "MACD", "EMA", "SMA", "VWAP", "EPS", "PE", "IPO", "CEO", "CFO",
     "GDP", "CPI", "PPI", "PMI", "FOMC", "FED", "ECB", "BOE", "NB", "NYSE", "LSE", "NASDAQ",
+    # ST-26 (BLG-AI-25, v9.15): time, chat and abbreviation words seen in chat
+    # replies, which the ST-17 focus rule shares; still within the minimum list.
+    "AM", "PM", "EOD", "EOW", "EOM", "IMO", "IMHO", "FYI", "NOTE", "TBD", "ASAP",
+    "Q1", "Q2", "Q3", "Q4", "FY", "YOY", "VIX", "GMT", "BST",
 })
 
 
