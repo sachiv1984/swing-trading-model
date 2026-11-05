@@ -599,6 +599,26 @@
       "resolved_utc": "2026-11-04T21:04:56Z",
       "resolved_by": "Product Owner (the user, in session)",
       "resolution_summary": "Option (a): Daily Monitor button on the Positions header; MonitorModal, exit queue and pre-select carried over; 7 monitor scenarios retargeted to /#/Positions; positions.md entry point updated. Head of UX & Design confirms placement (agent-mediated)."
+    },
+    "ESC-EXEC-20261105-01": {
+      "cycle": "2026-11-03__release-v9.15",
+      "summary": "ST-25/ST-27 EPIC-04 — journal-summary advisory check amendment (A″): drop \"can\", pass reported speech, exclude \"help explain\", add six missed advisory forms",
+      "trigger_type": "Strategy",
+      "owning_authority": "AI Compliance & Governance Officer",
+      "raised_utc": "2026-11-05T08:26:16Z",
+      "sla_due_utc": "2026-11-08T08:26:16Z",
+      "blocks_execution": false,
+      "disposition": "Open"
+    },
+    "ESC-EXEC-20261105-02": {
+      "cycle": "2026-11-03__release-v9.15",
+      "summary": "ST-28/EPIC-04 — dated §13 re-read against the AI journal summary: clarify §13.2 + §13.5 roster row, or confirm unambiguous",
+      "trigger_type": "Strategy",
+      "owning_authority": "Strategy Rules & System Intent Owner",
+      "raised_utc": "2026-11-05T08:26:16Z",
+      "sla_due_utc": "2026-11-08T08:26:16Z",
+      "blocks_execution": false,
+      "disposition": "Open"
     }
   },
   "deferred_escalations": {
