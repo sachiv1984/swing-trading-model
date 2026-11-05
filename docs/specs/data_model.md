@@ -4,7 +4,7 @@
 **Class:** Class 1
 **Status:** Canonical
 **Version:** 2.67
-**Last Updated:** 2026-11-05 (ST-35, EPIC-06, v9.15, BLG-SPEC-196 — DS-38 (v2.67): `NOT NULL` re-applied to `positions.portfolio_id` and `positions.total_cost`, applied on staging; production post-merge, BLG-SPEC-217); prior — 2026-10-30 (ST-22, EPIC-03, v9.14, BLG-BE-163 — `gemini_audit_log` populating-function reference cites `ai_thesis_generation.md`; `generate-thesis` retired; no schema change); prior — 2026-10-29 (ST-04, EPIC-01, v9.14, BLG-BE-194 — DS-37 (v2.66): new `fx_rate_last_good` table, the last successfully fetched GBP/USD rate and its fetch time); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-05 (ST-35/ST-36, EPIC-06, v9.15, BLG-SPEC-196/BLG-SPEC-197 — DS-38 (v2.67): `NOT NULL` re-applied to `positions.portfolio_id` and `positions.total_cost`; DS-17 staging Live Confirmation recorded, applied on staging; production post-merge, BLG-SPEC-217); prior — 2026-10-30 (ST-22, EPIC-03, v9.14, BLG-BE-163 — `gemini_audit_log` populating-function reference cites `ai_thesis_generation.md`; `generate-thesis` retired; no schema change); prior — 2026-10-29 (ST-04, EPIC-01, v9.14, BLG-BE-194 — DS-37 (v2.66): new `fx_rate_last_good` table, the last successfully fetched GBP/USD rate and its fetch time); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 This document describes the complete database schema and data structures used in the **Position Manager Web App**.
@@ -2317,6 +2317,21 @@ Partial index (`WHERE status = 'open'`) rather than a table-wide constraint — 
 
 This matches the migration's own definition exactly. **DS-17 is confirmed live in production as of 2026-09-23.**
 
+**Live Confirmation — staging (ST-36, EPIC-06, v9.15, BLG-SPEC-197, 2026-11-05):** the Up Migration above (pre-check `DO` block included) was run against **staging** by the user (human, with live write access, acting for the Data Model & Domain Schema Owner) in the Supabase SQL editor. It completed without raising `DS-17 migration aborted`, so staging had 0 open-position duplicate groups. The Verification query then returned:
+
+```json
+[
+  {
+    "indexname": "idx_positions_open_ticker_entry_date_unique",
+    "indexdef": "CREATE UNIQUE INDEX idx_positions_open_ticker_entry_date_unique ON public.positions USING btree (portfolio_id, ticker, entry_date) WHERE ((status)::text = 'open'::text)"
+  }
+]
+```
+
+This is identical to the production result above. **DS-17 is confirmed live on staging and production as of 2026-11-05.** A read-only `scripts/check_data_model_drift.py` run on staging the same day (execution session, with the user's permission) no longer lists the index as missing. `DEL-20261105-03` unblocked in-session.
+
+**Staging rebuilds (ST-36 scope decision):** `reset-and-seed-staging.yml`'s migrate step is not changed. Its reset step (`scripts/reset_staging_db.sql`) uses `TRUNCATE ... CASCADE`, which keeps indexes, so the index survives every reset. No workflow drops and recreates `positions` on staging. If one is added later, it must apply DS-17 too.
+
 ### Up Migration (v2.32 → v2.33)
 
 ```sql
@@ -3694,9 +3709,9 @@ Expect 2 rows, both `is_nullable = NO`.
 
 | # | Finding | Disposition | Action |
 |---|---------|-------------|--------|
-| 1 | DS-17's `idx_positions_open_ticker_entry_date_unique` absent on staging | **Needs live action, staging only.** Absent on staging, because the staging reset workflow clears data but has never applied DS-17. **Present on production** (2026-10-13): `CREATE UNIQUE INDEX idx_positions_open_ticker_entry_date_unique ON public.positions USING btree (portfolio_id, ticker, entry_date) WHERE ((status)::text = 'open'::text)`, matching DS-17. | Apply to staging: BLG-SPEC-197. Production needs no action. |
+| 1 | DS-17's `idx_positions_open_ticker_entry_date_unique` absent on staging | **Needs live action, staging only.** Absent on staging, because the staging reset workflow clears data but has never applied DS-17. **Present on production** (2026-10-13): `CREATE UNIQUE INDEX idx_positions_open_ticker_entry_date_unique ON public.positions USING btree (portfolio_id, ticker, entry_date) WHERE ((status)::text = 'open'::text)`, matching DS-17. | Apply to staging: BLG-SPEC-197. Production needs no action. **Applied to staging 2026-11-05 (ST-36, v9.15); see DS-17 Live Confirmation.** |
 | 2 | 3 undocumented `positions` columns: `last_reviewed_at`, `risk_off_exit`, `strategy_version_at_entry` | **Documentation fix — already applied (v2.55).** All three have Fields rows. They are not orphans: each has a live writer (`PATCH /positions/{id}/mark-reviewed`; the nightly risk-off job via `update_positions_risk_off_exit()`; `get_current_strategy_version()` at entry). Staging counts on 2026-10-13 (2 rows): `last_reviewed_at` 0 non-null, `risk_off_exit` 2, `strategy_version_at_entry` 0. With only 2 rows, these counts cannot show a column is always NULL; the live writers are what rule out dropping them. | None for the columns. `risk_off_exit`'s Fields row said nullable; live is `NOT NULL DEFAULT FALSE` (`ensure_risk_off_exit_column()`), corrected in v2.60. |
-| 3 | 8 `positions` nullable mismatches (Fields table NO, live YES) | **Split.** `portfolio_id` and `total_cost` have `NOT NULL` in the `CREATE TABLE` but are nullable live: **needs live action**. `created_at`, `holding_days`, `pnl`, `pnl_pct`, `status` and `updated_at` have only a `DEFAULT` in the `CREATE TABLE` and are nullable live: the Fields table was wrong, so **documentation fix**. (BLG-SPEC-178 listed `status` with the explicit-`NOT NULL` group; the `CREATE TABLE` has `DEFAULT 'open'` and a CHECK, but no `NOT NULL`.) | `portfolio_id`, `total_cost`: BLG-SPEC-196 (pre-check, migration). The other 6 Fields rows corrected to YES in v2.60. Whether to add `NOT NULL` to `status`/`created_at` is a separate hardening choice, noted in BLG-SPEC-196. |
+| 3 | 8 `positions` nullable mismatches (Fields table NO, live YES) | **Split.** `portfolio_id` and `total_cost` have `NOT NULL` in the `CREATE TABLE` but are nullable live: **needs live action**. `created_at`, `holding_days`, `pnl`, `pnl_pct`, `status` and `updated_at` have only a `DEFAULT` in the `CREATE TABLE` and are nullable live: the Fields table was wrong, so **documentation fix**. (BLG-SPEC-178 listed `status` with the explicit-`NOT NULL` group; the `CREATE TABLE` has `DEFAULT 'open'` and a CHECK, but no `NOT NULL`.) | `portfolio_id`, `total_cost`: BLG-SPEC-196 (pre-check, migration). **Applied to staging 2026-11-05 as DS-38 (ST-35, v9.15); production post-merge, BLG-SPEC-217.** The other 6 Fields rows corrected to YES in v2.60. Whether to add `NOT NULL` to `status`/`created_at` is a separate hardening choice, noted in BLG-SPEC-196. |
 | 4 | `notifications.updated_at` documented but not live | **Documentation fix.** `alerts_service.py`'s `CREATE TABLE notifications` has never created it and no code writes it. `GET /notifications` (`alerts_endpoints.md`) does not return it. | Removed from §9's `CREATE TABLE` and Fields table in v2.60. The v1.8 → v1.9 migration block is left as historical text. |
 | 5 | 10 documented index names and 1 CHECK constraint name not found live | Checked one by one below. | See below. |
 
@@ -3722,4 +3737,4 @@ Expect 2 rows, both `is_nullable = NO`.
 
 **Document Version:** 2.67
 **Maintained By:** Data Model & Domain Schema Owner
-**Last Review:** 2026-11-05 (ST-35, EPIC-06, v9.15, BLG-SPEC-196 — DS-38 (v2.67): `NOT NULL` re-applied to `positions.portfolio_id` and `positions.total_cost`); prior — 2026-10-29 (ST-04, EPIC-01, v9.14, BLG-BE-194 — DS-37 (v2.66): new `fx_rate_last_good` table, the last successfully fetched GBP/USD rate and its fetch time); prior — 2026-10-27 (ST-31/ST-32, EPIC-05, v9.13, BLG-OPS-19/BLG-OPS-23 — DS-36 (v2.65): `api_call_log.feature` and `screener_runs.duration_seconds`; both tables documented); prior history retained — see prior entries in version control
+**Last Review:** 2026-11-05 (ST-35/ST-36, EPIC-06, v9.15, BLG-SPEC-196/BLG-SPEC-197 — DS-38 (v2.67): `NOT NULL` re-applied to `positions.portfolio_id` and `positions.total_cost`; DS-17 staging Live Confirmation recorded); prior — 2026-10-29 (ST-04, EPIC-01, v9.14, BLG-BE-194 — DS-37 (v2.66): new `fx_rate_last_good` table, the last successfully fetched GBP/USD rate and its fetch time); prior — 2026-10-27 (ST-31/ST-32, EPIC-05, v9.13, BLG-OPS-19/BLG-OPS-23 — DS-36 (v2.65): `api_call_log.feature` and `screener_runs.duration_seconds`; both tables documented); prior history retained — see prior entries in version control
