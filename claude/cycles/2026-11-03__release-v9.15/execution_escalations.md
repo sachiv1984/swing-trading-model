@@ -138,7 +138,8 @@ Last Updated: 2026-11-04
 - **Unblock criteria:** a dated ruling per exclusion (re-confirm or flag, with reason) and a cadence, recorded in this escalation's resolution. The engine then writes `docs/product/decisions/strategic-exclusions-reconfirmation--2026-11-05.md`.
 - **SLA due-by:** 2026-11-08T13:56:47Z (72h — Strategy)
 - **Blocks execution:** No
-- **Disposition:** Open
+- **Disposition:** Resolved
+- **Resolution summary (2026-11-05T14:38:30Z):** Strategy Rules & System Intent Owner with the Product Owner, ruling given in-session by the user acting in both roles, dated 2026-11-05: engine recommendation accepted as drafted. All four product-scope exclusions re-confirmed with the reasons above; re-confirm every 10 completed cycles (next at completed_cycle_count 101), recorded in the decision only (no governance prompt change); `current_roadmap.md` §2 unchanged. Record: `docs/product/decisions/decisions--2026-11-03__release-v9.15--ST-44-strategic-exclusions-reconfirmation.md`.
 
 ## ESC-EXEC-20261105-04
 
@@ -154,4 +155,5 @@ Last Updated: 2026-11-04
 - **Unblock criteria:** a dated ruling per initiative (re-confirm or flag, with reason) recorded in this escalation's resolution. The engine then writes `docs/product/decisions/priority3-deferred-sunset-review--2026-11-05.md`.
 - **SLA due-by:** 2026-11-06T13:56:47Z (24h — lifecycle/scope)
 - **Blocks execution:** No
-- **Disposition:** Open
+- **Disposition:** Resolved
+- **Resolution summary (2026-11-05T14:38:30Z):** Product Owner ruling, given in-session by the user, dated 2026-11-05: engine recommendation accepted as drafted. Re-confirmed deferred: Multi-Portfolio Support, Mobile App, BLG-TECH-05 Prometheus. Flagged for the next `run roadmap`: Position Correlation Analysis, Backtesting Module, Full Compliance Scoring, Customisable Dashboard Layout. `initiative_register.md` unchanged; AC 2 carry-forward tracked by BLG-GOV-408. Record: `docs/product/decisions/decisions--2026-11-03__release-v9.15--ST-45-priority3-deferred-sunset-review.md`.
