@@ -608,7 +608,10 @@
       "raised_utc": "2026-11-05T08:26:16Z",
       "sla_due_utc": "2026-11-08T08:26:16Z",
       "blocks_execution": false,
-      "disposition": "Open"
+      "disposition": "Resolved",
+      "resolved_utc": "2026-11-05T08:50:24Z",
+      "resolved_by": "AI Compliance & Governance Officer (the user, in session)",
+      "resolution_summary": "(A″) approved as proposed: \"can\" dropped from form (3); past-tense reported speech passes; \"help explain/account for/show\" excluded from form (4); five new advisory forms fail as trading_change. Prompt, version, result values and fallback unchanged."
     },
     "ESC-EXEC-20261105-02": {
       "cycle": "2026-11-03__release-v9.15",
@@ -618,7 +621,10 @@
       "raised_utc": "2026-11-05T08:26:16Z",
       "sla_due_utc": "2026-11-08T08:26:16Z",
       "blocks_execution": false,
-      "disposition": "Open"
+      "disposition": "Resolved",
+      "resolved_utc": "2026-11-05T08:50:24Z",
+      "resolved_by": "Strategy Rules & System Intent Owner (the user, in session)",
+      "resolution_summary": "Outcome (1), clarify: one §13.2 sentence (AI-written text describing the user's data must not suggest changing stops, sizing, setups or other strategy parameters) and a §13.5 roster row for the journal summary; documentation-only v1.25, case (c)."
     }
   },
   "deferred_escalations": {
