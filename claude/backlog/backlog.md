@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-05 (Sprint Execution `2026-11-03__release-v9.15` EPIC-07 — 2 new items added: BLG-BE-206, BLG-QA-250); prior — 2026-11-05 (Sprint Execution `2026-11-03__release-v9.15` EPIC-06 — 5 new items added: BLG-SPEC-221, BLG-QA-247, BLG-SPEC-222, BLG-QA-248, BLG-QA-249); prior — 2026-11-05 (Sprint Execution `2026-11-03__release-v9.15` EPIC-04 and PR #2192 review — 7 new items added: BLG-AI-27 to BLG-AI-33); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-05 (Sprint Execution `2026-11-03__release-v9.15` EPIC-07 — 4 new items added: BLG-BE-206, BLG-QA-250, BLG-GOV-410, BLG-GOV-411); prior — 2026-11-05 (Sprint Execution `2026-11-03__release-v9.15` EPIC-06 — 5 new items added: BLG-SPEC-221, BLG-QA-247, BLG-SPEC-222, BLG-QA-248, BLG-QA-249); prior — 2026-11-05 (Sprint Execution `2026-11-03__release-v9.15` EPIC-04 and PR #2192 review — 7 new items added: BLG-AI-27 to BLG-AI-33); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -6899,6 +6899,48 @@ CLAUDE.md §2 says task, story and ticket IDs must never appear in document head
 
 **Acceptance Criteria**
 - One written rule covers `DEV-*` headings, and CLAUDE.md §2 and `shared_standards.md` agree with it
+
+---
+
+### BLG-GOV-410 — Settle whether a non-blocking escalation open 72h halts under the SLA Breach Rule
+**Priority:** P3 (Low)
+**Type:** Governance Process
+**Owner:** Head of Specs Team; PMO Lead
+**Source:** ST-43 (BLG-GOV-193), EPIC-07, sprint execution `2026-11-03__release-v9.15` — defect found by the escalation SLA-breach dry run (`docs/ops/escalation_sla_breach_dry_run_2026-11-05.md`) — 2026-11-05
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.16
+
+**Problem**
+`shared_standards.md` §4 (SLA Breach Rule) and §16.4 say any escalation open 72 hours or more without resolution writes `BLOCKED_SLA_BREACH`, sets `blocked_sla_breached` and halts, "regardless of escalation trigger type". §16.4.1 says §16.4 applies "once an escalation's own disposition requires it to block execution" and that a `blocks_execution: false` escalation "correctly never triggers that halt". In the dry run, the synthetic non-blocking escalation `ESC-EXEC-DRYRUN-02` (80h old) meets §4/§16.4's predicate and so halts, while §16.4.1 says it must not. An engine reading both cannot tell which applies.
+
+**Scope**
+- Decide whether `blocks_execution: false` exempts an escalation from the §4/§16.4 halt, and state it once in §4, §16.4 and §16.4.1 (CLAUDE.md §6 checklist)
+- Re-run `scripts/escalation_sla_dry_run.py` and record the result
+
+**Acceptance Criteria**
+- §4, §16.4 and §16.4.1 give the same answer for a non-blocking escalation open 72h or more
+- The dry run's expected result for `ESC-EXEC-DRYRUN-02` matches that answer
+
+---
+
+### BLG-GOV-411 — Use one disposition set across the three escalation SLA checks
+**Priority:** P3 (Low)
+**Type:** Governance Process / Tooling
+**Owner:** PMO Lead; Head of Specs Team
+**Source:** ST-43 (BLG-GOV-193), EPIC-07, sprint execution `2026-11-03__release-v9.15` — defect found by the escalation SLA-breach dry run (`docs/ops/escalation_sla_breach_dry_run_2026-11-05.md`) — 2026-11-05
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.16
+
+**Problem**
+The three checks that read `open_escalations` count different dispositions as breached. `execution_prompt.md` STEP -1.2A and `release_planning_prompt.md` STEP -1.6 (`SLA_BREACH_CARRIED`) count only `disposition: Open`. `.github/workflows/escalation-sla-reminder.yml` counts everything except `Resolved`, `Closed` and `Withdrawn`, so a `Deferred` or `Accepted Risk` record left in `open_escalations` raises a daily reminder issue that neither engine reports. In the dry run the workflow's issue listed the `Deferred` control `ESC-EXEC-DRYRUN-03`; neither engine check did. `shared_standards.md` §4's "without resolution" names no set at all.
+
+**Scope**
+- Define the breached disposition set once (in `shared_standards.md` §4) and use it in STEP -1.2A, STEP -1.6 and the workflow
+- Say whether a `Deferred` record belongs in `open_escalations` or only in `deferred_escalations`
+
+**Acceptance Criteria**
+- The workflow and both prompt checks name the same disposition set
+- `scripts/escalation_sla_dry_run.py` reports the same IDs for the workflow and the two prompt checks
 
 ---
 
