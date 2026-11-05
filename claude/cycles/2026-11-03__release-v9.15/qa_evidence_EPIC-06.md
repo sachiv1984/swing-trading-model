@@ -58,3 +58,15 @@ Last Updated: 2026-11-05
   - Story-level authority: Data Model & Domain Schema Owner (the user) ran the staging DDL for ST-35/ST-36 in session (`DEL-20261105-02`, `DEL-20261105-03`, both unblocked in-session).
   - CI on the story commits: `ff08b950` 7/7 success (CI Pytest 42004971230); `e5a7f45f`, `dfee397b` and `1de20439` all workflows success. Later `[GOVERNANCE]` commits' CI is to be confirmed on the PR head before merge.
   - This agent-mediated sign-off does not satisfy the always-human merge-gate rows (QA sign-off and PO acceptance).
+
+## Merge Gate Confirmations
+
+- **Director of Quality QA sign-off:**
+  - Given by the human repository owner, acting as Director of Quality, in session on 2026-11-05 at about 12:48Z ("give DOQ and PO approval"), before the merge.
+  - It accepts this evidence: ST-34 Pass with notes (`BLG-SPEC-222`), ST-35 Pass (production half post-merge, `BLG-SPEC-217`), ST-36 Pass.
+  - That includes the agent-mediated sign-off block above (pass 2 Approved) and the agent-mediated PR #2193 review (comment 6655878279, both roles ⚠️ Approved with Comments, no blocking findings; follow-ups `BLG-QA-248`, `BLG-QA-249`).
+  - At head `dce12815`, all 33 PR checks were green.
+- **Product Owner acceptance:**
+  - Given by the human repository owner, acting as Product Owner, in session at the same time.
+  - It accepts ST-34 to ST-36 against `stage4_backlog_slice.md`, with ST-35's production confirmation carried post-merge under `BLG-SPEC-217`.
+- **Merge:** pending — to be performed by the human repository owner. The merge commit is recorded on `main` once it exists.
