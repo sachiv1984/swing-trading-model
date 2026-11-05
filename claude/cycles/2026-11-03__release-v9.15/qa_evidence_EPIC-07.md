@@ -63,3 +63,15 @@ Last Updated: 2026-11-05
   - CI on the story commits: every workflow `success` on all 10 story SHAs. This includes CI Pytest Suite each time, and Playwright E2E Acceptance Tests 42039638466 on `b0826ad3`. CI on the `[GOVERNANCE]` commits and the PR head is to be confirmed before merge.
   - PR #2194 review (agent-mediated, 2026-11-05), DoQ finding 1 fixed on the branch: `BLG-QA-251` — ST-37's live-backlog test now asserts only the six items still gated on PT-04, and skips once none is, so §1.3a clearing a gate in place no longer fails CI. Checked: all six gated → pass; one cleared in place → pass; all cleared → skip; feature-ID detection broken → fail. The CI run on the fix commit is to be confirmed before merge.
   - This agent-mediated sign-off does not satisfy the always-human merge-gate rows (QA sign-off and PO acceptance).
+
+## Merge Gate Confirmations
+
+- **Director of Quality QA sign-off:**
+  - Given by the human repository owner, acting as Director of Quality, in session on 2026-11-05 at about 17:40Z ("give DOQ and PO acceptance and i will merge"), before the merge.
+  - It accepts this evidence: ST-37, ST-38, ST-39, ST-41, ST-43 and ST-44 Pass; ST-40 Pass with notes (`BLG-BE-206`); ST-42 Pass_with_deviation (`BLG-QA-250`); ST-45 Pass (AC 2 post-merge, `BLG-GOV-408`).
+  - That includes the agent-mediated sign-off block above (pass 1 Approved) and the agent-mediated PR #2194 review (comment 6661202526, both roles ⚠️ Approved with Comments). Its DoQ finding 1 (`BLG-QA-251`) was fixed in `31d5ffe2` (comment 6662233846). Its other follow-up is `BLG-GOV-412`.
+  - At head `31d5ffe2`, the CI Pytest Suite passed and every required check was green; only the advisory pixel-level visual baseline was still pending.
+- **Product Owner acceptance:**
+  - Given by the human repository owner, acting as Product Owner, in session at the same time.
+  - It accepts ST-37 to ST-45 against `stage4_backlog_slice.md`, with ST-42's AC narrowing (accepted in session earlier on 2026-11-05) and ST-45 AC 2 carried post-merge under `BLG-GOV-408`.
+- **Merge:** to be performed by the human repository owner. The merge commit is recorded on `main` at the next `run sprint` resume-sync. QA sign-off and PO acceptance were given explicitly in session before the merge (above), not inferred from it.
