@@ -6,7 +6,7 @@
   "invoked_utc": "2026-11-04T10:55:44Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-05T14:38:30Z",
+  "last_updated_utc": "2026-11-05T17:54:06Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-03",
@@ -1015,10 +1015,10 @@
       }
     },
     "EPIC-07": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-11-03__release-v9.15/EPIC-07",
       "pr_number": 2194,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-11-03__release-v9.15/qa_evidence_EPIC-07.md",
       "test_scenarios": [
@@ -1042,7 +1042,7 @@
         "ST-37": {
           "title": "Gate scan treats a shipped roadmap feature ID (PT-xx, SI-xx, PO-xx) as a met gate",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2180,
           "branch": "exec/2026-11-03__release-v9.15/EPIC-07",
@@ -1067,7 +1067,7 @@
         "ST-38": {
           "title": "Make the execution-state consistency check count EPICs not yet initialised as pending",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2181,
           "branch": "exec/2026-11-03__release-v9.15/EPIC-07",
@@ -1091,7 +1091,7 @@
         "ST-39": {
           "title": "Behavioural tests for live holding days in the compliance and AI briefing readers",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2182,
           "branch": "exec/2026-11-03__release-v9.15/EPIC-07",
@@ -1114,7 +1114,7 @@
         "ST-40": {
           "title": "Real-Postgres tests for the ai_audit_log UUID[] path and the claude_audit_log daily cost sum",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2183,
           "branch": "exec/2026-11-03__release-v9.15/EPIC-07",
@@ -1138,7 +1138,7 @@
         "ST-41": {
           "title": "Extend the utils.* leak guard to attributes patched on the real utils modules",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2184,
           "branch": "exec/2026-11-03__release-v9.15/EPIC-07",
@@ -1162,7 +1162,7 @@
         "ST-42": {
           "title": "Make SC-TS-* Playwright scenario IDs unique across tests/e2e",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2185,
           "branch": "exec/2026-11-03__release-v9.15/EPIC-07",
@@ -1187,7 +1187,7 @@
         "ST-43": {
           "title": "Escalation SLA breach dry-run test",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2186,
           "branch": "exec/2026-11-03__release-v9.15/EPIC-07",
@@ -1212,7 +1212,7 @@
         "ST-44": {
           "title": "Strategic exclusions review cadence",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "Strategy Rules & System Intent Owner; Product Owner",
           "github_issue": 2187,
           "branch": "exec/2026-11-03__release-v9.15/EPIC-07",
@@ -1242,7 +1242,7 @@
         "ST-45": {
           "title": "Sunset review for Priority 3 — Deferred initiatives",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "Product Owner",
           "github_issue": 2188,
           "branch": "exec/2026-11-03__release-v9.15/EPIC-07",
@@ -1448,10 +1448,10 @@
       "EPIC-03",
       "EPIC-02",
       "EPIC-04",
-      "EPIC-06"
+      "EPIC-06",
+      "EPIC-07"
     ],
     "epics_pending": [
-      "EPIC-07",
       "EPIC-05"
     ],
     "all_merged": false
@@ -1467,7 +1467,8 @@
     "2026-11-05: EPIC-04 agent-mediated DoQ (§5.3) pass 1 Blocked (2 blocking): fixes ec0ada79 (ST-25) and 3ce6e3bd (ST-28). Follow-ups filed: BLG-AI-28, BLG-AI-29, BLG-AI-30.",
     "2026-11-05 EPIC-04 merge-gate sync (user reported, STEP 4): PR #2192 merged 2026-11-05T09:34:02Z by sachiv1984, merge commit ba053acf, head 4cad4aba. Human DoQ QA sign-off and PO acceptance given in session at 2026-11-05T09:34Z (immediately after the merge), and confirmed by merge under ESC-CLOSE-20261103-01. Orphaned post-merge commit check: git log origin/main..origin/exec/2026-11-03__release-v9.15/EPIC-04 empty. STEP 4 step 3c: no pending sibling EPIC branches exist (EPIC-05/06/07 not initialised). merge_gate.all_merged reads true only because EPIC-05/06/07 are not yet initialised; STEP 5 must not run until every Merge Order EPIC is initialised and merged.",
     "2026-11-05 EPIC-06 (PR #2193, merge 54c2895a): orphaned post-merge commit check — git log origin/main..origin/exec/2026-11-03__release-v9.15/EPIC-06 empty, nothing to reconcile. STEP 4 3c sibling sync N/A: EPIC-07 and EPIC-05 branches not yet created. Merge-gate confirmations recorded on the branch (59156fd9) before the merge; post-merge records on main.",
-    "2026-11-05T13:10:38Z EPIC-07 STEP 0: initialised 9 stories (ST-37..ST-45; ST-44/ST-45 delegated_decision per sprint_backlog.md), issues #2180-#2188 found (sync gh ran at seal), branch created from main 244b5809. merge_gate.epics_pending set to [EPIC-07]; EPIC-05 still uninitialised, so all_merged is false only via EPIC-07 until ST-38 makes the check derive pending from merge_order."
+    "2026-11-05T13:10:38Z EPIC-07 STEP 0: initialised 9 stories (ST-37..ST-45; ST-44/ST-45 delegated_decision per sprint_backlog.md), issues #2180-#2188 found (sync gh ran at seal), branch created from main 244b5809. merge_gate.epics_pending set to [EPIC-07]; EPIC-05 still uninitialised, so all_merged is false only via EPIC-07 until ST-38 makes the check derive pending from merge_order.",
+    "2026-11-05 EPIC-07 merge-gate sync (user reported, STEP 4): PR #2194 merged 2026-11-05T17:54:06Z by sachiv1984, merge commit 89157ca5, head 20030e41. Human DoQ QA sign-off and PO acceptance given in session before the merge (qa_evidence_EPIC-07.md Merge Gate Confirmations, b44abb64). Orphaned post-merge commit check: git log origin/main..origin/exec/2026-11-03__release-v9.15/EPIC-07 empty. STEP 4 step 3c: no pending sibling branch exists (EPIC-05 not yet initialised). merge_gate.epics_pending = [EPIC-05]; all_merged false (ST-38 check now counts it)."
   ],
   "sealed": false,
   "sealed_utc": null

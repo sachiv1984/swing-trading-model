@@ -74,4 +74,4 @@ Last Updated: 2026-11-05
 - **Product Owner acceptance:**
   - Given by the human repository owner, acting as Product Owner, in session at the same time.
   - It accepts ST-37 to ST-45 against `stage4_backlog_slice.md`, with ST-42's AC narrowing (accepted in session earlier on 2026-11-05) and ST-45 AC 2 carried post-merge under `BLG-GOV-408`.
-- **Merge:** to be performed by the human repository owner. The merge commit is recorded on `main` at the next `run sprint` resume-sync. QA sign-off and PO acceptance were given explicitly in session before the merge (above), not inferred from it.
+- **Merge:** performed by the human repository owner (Director of Quality and Product Owner) at 2026-11-05T17:54:06Z, merge commit `89157ca5954696361533896f94faa937b819e43b` (head `20030e41`). QA sign-off and PO acceptance were given explicitly in session before the merge (above), not inferred from it.
