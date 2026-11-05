@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-05 (Sprint Execution `2026-11-03__release-v9.15` EPIC-04 and PR #2192 review — 7 new items added: BLG-AI-27 to BLG-AI-33); prior — 2026-11-05 (PR #2191 agent-mediated Director of Quality / Product Owner review — 2 new items added: BLG-FE-273, BLG-FE-274); prior — 2026-11-05 (Sprint Execution `2026-11-03__release-v9.15` EPIC-02 — 4 new items added: BLG-BE-205, BLG-GOV-409, BLG-SPEC-220, BLG-QA-246); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-05 (Sprint Execution `2026-11-03__release-v9.15` EPIC-06 — 2 new items added: BLG-SPEC-221, BLG-QA-247); prior — 2026-11-05 (Sprint Execution `2026-11-03__release-v9.15` EPIC-04 and PR #2192 review — 7 new items added: BLG-AI-27 to BLG-AI-33); prior — 2026-11-05 (PR #2191 agent-mediated Director of Quality / Product Owner review — 2 new items added: BLG-FE-273, BLG-FE-274); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -6957,5 +6957,47 @@ ST-12 removed the legacy widget Dashboard and the components only it rendered, a
 
 **Acceptance Criteria**
 - A dated Product Owner decision is recorded on this item, with follow-up items filed if the views return
+
+---
+
+### BLG-SPEC-221 — Bring Specs_Index.md back in line with check_specs_index_freshness.py
+**Priority:** P3 (Low)
+**Type:** Spec Debt
+**Owner:** Head of Specs Team
+**Source:** Sprint Execution 2026-11-03__release-v9.15, EPIC-06/ST-34 (found running the related spec checks) — 2026-11-05
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.16
+
+**Problem**
+`python3 scripts/check_specs_index_freshness.py` exits 1 on `main`. `docs/specs/frontend/pages/journal.md` (added in v9.15) is not listed in `Specs_Index.md`, and `Specs_Index.md` refers to `qa_evidence_EPIC-xx.md`, which matches no real file. While the check fails, new index drift is harder to spot.
+
+**Scope**
+- Add `journal.md` to `Specs_Index.md` under Frontend pages
+- Fix or remove the `qa_evidence_EPIC-xx.md` reference (it is a placeholder, not a spec file)
+
+**Acceptance Criteria**
+- `python3 scripts/check_specs_index_freshness.py` exits 0 on `main`
+- Head of Specs Team reviews the two edits, as the script's own output asks
+
+---
+
+### BLG-QA-247 — Stop check_data_model_drift.py reporting a prose "CREATE INDEX IF NOT EXISTS" as an index named IF
+**Priority:** P4 (Low)
+**Type:** QA / Test Automation
+**Owner:** Data Model & Domain Schema Owner; QA & Testing Owner
+**Source:** Sprint Execution 2026-11-03__release-v9.15, EPIC-06/ST-35–ST-36 (read-only staging drift runs) — 2026-11-05
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.16
+
+**Problem**
+Every live run reports a missing index named `IF`. `INDEX_RE` (`scripts/check_data_model_drift.py:54`) makes `IF NOT EXISTS\s+` optional, so the prose in `data_model.md` DS-36 ("…`CREATE INDEX IF NOT EXISTS`) on first use…") loses the trailing whitespace match and captures `IF` as the index name. The false positive sits beside real findings and teaches readers to ignore the list.
+
+**Scope**
+- Make `INDEX_RE` skip `IF` as a name, e.g. `(?:IF\s+NOT\s+EXISTS\s+)?(?!IF\b)(\w+)`
+- Add a `tests/test_check_data_model_drift.py` case for the backtick-terminated prose form
+
+**Acceptance Criteria**
+- `parse_index_names()` on `data_model.md` no longer returns `IF`
+- The new test passes; existing drift tests still pass
 
 ---
