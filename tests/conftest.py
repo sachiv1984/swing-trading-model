@@ -195,6 +195,30 @@ def _remove_backend_services_path_entries(entries) -> None:
             sys.path.remove(entry)
 
 
+# ---------------------------------------------------------------------------
+# --docs-coupled-only (ST-31, EPIC-05, v9.15, BLG-OPS-191): governance-only and
+# docs-only CI runs collect only the test files that may read claude/ or docs/.
+# Selection rule: tests/docs_coupled.py.
+# ---------------------------------------------------------------------------
+
+def pytest_addoption(parser):
+    parser.addoption(
+        "--docs-coupled-only",
+        action="store_true",
+        default=False,
+        help="Collect only test files that may read claude/ or docs/ (tests/docs_coupled.py).",
+    )
+
+
+def pytest_ignore_collect(collection_path, config):
+    if not config.getoption("--docs-coupled-only", default=False):
+        return None
+    if collection_path.suffix != ".py" or not collection_path.name.startswith("test_"):
+        return None
+    from tests.docs_coupled import is_docs_coupled
+    return None if is_docs_coupled(collection_path) else True
+
+
 @pytest.hookimpl(hookwrapper=True)
 def pytest_make_collect_report(collector):
     # One hook for every leak guard: a second module-level function with this

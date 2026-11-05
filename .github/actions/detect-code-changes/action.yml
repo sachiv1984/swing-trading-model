@@ -1,0 +1,49 @@
+# ST-31 (EPIC-05, v9.15, BLG-OPS-191; Product Owner ruling ESC-EXEC-20261105-05).
+# Decides whether a push or pull request changes anything outside claude/ and
+# docs/. The five code-test workflows (ci-tests, smoke-tests, service-coverage,
+# golden-outputs, integration-tests) run a `changes` job with this action and
+# skip their suites when `code` is "false". A skipped job reports success, so
+# required checks still report (the backlog_archive.md:2167 constraint that
+# rules out a workflow-level paths-ignore).
+#
+# Fails safe: any error reading the file list, a new branch, or a compare
+# truncated at the API's 300-file limit gives code=true (run everything).
+# Callers must checkout scripts/ci_code_changes.py before using this action.
+name: Detect code changes
+description: Output code=false when every changed file is under claude/ or docs/
+outputs:
+  code:
+    description: '"true" if the code-test suites must run, "false" for a governance-only or docs-only change'
+    value: ${{ steps.detect.outputs.code }}
+runs:
+  using: composite
+  steps:
+    - id: detect
+      shell: bash
+      env:
+        GH_TOKEN: ${{ github.token }}
+        REPO: ${{ github.repository }}
+        EVENT: ${{ github.event_name }}
+        PR_NUMBER: ${{ github.event.pull_request.number }}
+        BEFORE: ${{ github.event.before }}
+        AFTER: ${{ github.sha }}
+      run: |
+        set -uo pipefail
+        files=""
+        ok=0
+        if [ "$EVENT" = "pull_request" ] && [ -n "$PR_NUMBER" ]; then
+          files=$(gh api --paginate "repos/$REPO/pulls/$PR_NUMBER/files" --jq '.[].filename') && ok=1
+        elif [ "$EVENT" = "push" ] && [ -n "$BEFORE" ] && [ "$BEFORE" != "0000000000000000000000000000000000000000" ]; then
+          count=$(gh api "repos/$REPO/compare/$BEFORE...$AFTER" --jq '.files | length') \
+            && [ "$count" -lt 300 ] \
+            && files=$(gh api "repos/$REPO/compare/$BEFORE...$AFTER" --jq '.files[].filename') && ok=1
+        fi
+        if [ "$ok" -ne 1 ]; then
+          echo "::notice::Changed-file list unavailable for this $EVENT event; running the code-test suites."
+          code=true
+        else
+          code=$(printf '%s\n' "$files" | python3 scripts/ci_code_changes.py) || code=true
+        fi
+        echo "Changed files:"; printf '%s\n' "$files" | head -50
+        echo "code=$code"
+        echo "code=$code" >> "$GITHUB_OUTPUT"
