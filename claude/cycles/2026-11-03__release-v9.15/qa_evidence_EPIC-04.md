@@ -60,16 +60,29 @@ Last Updated: 2026-11-05
 
 - Scenarios run: `DATABASE_URL=<stub> backend/.venv/bin/python3 -m pytest tests/ -k "journal or ai_ or briefing or chat or debrief"` → 450 passed, 10 skipped. `tests/ -k strategy` → 149 passed. CI per commit: see Comments.
 - Regression areas checked: briefing ticker caveat (check 3, which shares `_NON_TICKER_WORDS`), chat and briefing stop-time attribution, journal-summary regenerate/fallback and audit rows, the monthly P&L narrative and debrief scans (unchanged), and the strategy version registry.
-- Known deviations: none found in the deviation checks for ST-25 to ST-28. ST-24 is graded Pass_with_deviation and tracked by `BLG-AI-27`. Follow-ups from the reviews: `BLG-AI-28` (non-ticker words that are real tickers), `BLG-AI-29` (no briefing/chat check for §13.2), `BLG-AI-30` (form (6) false positives, exemption gaps).
+- Known deviations: none found in the deviation checks for ST-25 to ST-28. ST-24 is graded Pass_with_deviation and tracked by `BLG-AI-27`. Follow-ups from the reviews: `BLG-AI-28` (non-ticker words that are real tickers), `BLG-AI-29` (no briefing/chat check for §13.2), `BLG-AI-30` (form (6) false positives, exemption gaps). Form (6) takes "lower" only after "perhaps/maybe", so "Lower your stops." passes. This is disclosed in `ai_endpoints.md` 1.39 but was not part of ruling (A″) (iv), and it is for the AI Compliance & Governance Officer to rule on alongside `BLG-AI-30` (DoQ pass 2, finding 4).
 - Frontend testing gate: N/A. No story changes `src/**`; all ACs are backend or documentation.
 
 ## Standard Sign-Off Block
 
-- [ ] All acceptance criteria verified against canonical spec
-- [ ] No unresolved P0 or P1 deviations
-- [ ] Regression areas checked
+- [x] All acceptance criteria verified against canonical spec
+- [x] No unresolved P0 or P1 deviations
+- [x] Regression areas checked
 - [x] For any frontend component making direct URL construction (not via api.* wrapper): confirm the URL-base variable is exposed on the imported object. N/A, no frontend change.
 - [x] **Strategy values checked:** N/A. No stop/grace/ATR/exit/sizing logic touched. ST-26 changes only which sentences are attributed to the stop-time note, not any stop value; ST-28 is a §13 text change.
-- Signed off by:
-- Date:
+- Signed off by: Sprint Execution Engine (agent-mediated, Director of Quality role — §5.3)
+- Date: 2026-11-05
 - Comments:
+  - Pass 1: Blocked (2 blocking; fixed in `ec0ada79` and `3ce6e3bd`). Pass 2: Approved.
+  - Story grades: ST-25, ST-26, ST-27 and ST-28 Pass; ST-24 Pass_with_deviation (`BLG-AI-27`).
+  - Story-level authority sign-offs, all cleared:
+    - AI Compliance & Governance Officer: rulings on ST-25/ST-27 (`ESC-EXEC-20261105-01`, by the user in session) and the ST-26 ruling-scope confirmation (agent-mediated, Approved).
+    - Strategy Rules & System Intent Owner: ruling on ST-28 (`ESC-EXEC-20261105-02`, by the user in session).
+  - CI on the story commits:
+    - `b937a396`: 7/7 success.
+    - `e6ba8e52`: 7/7 success.
+    - `122619e9`: CI Pytest 41998367420 success.
+    - `aad0d041`: CI Pytest 41998451082 success.
+    - Fix commits `ec0ada79`, `3ce6e3bd` and `aaad9444` were pushed after these runs. Their CI is to be confirmed on the PR head before merge.
+  - Pass 2 cosmetic note: §13.2's citation is followed by a stray full stop. It is left for the next `strategy_rules.md` write.
+  - This agent-mediated sign-off does not satisfy the always-human merge-gate rows (QA sign-off and PO acceptance).
