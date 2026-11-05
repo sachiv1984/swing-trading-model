@@ -49,7 +49,7 @@ Last Updated: 2026-06-25
 |----|-------------|--------|
 | AC-01 | Each open position displays `current_trailing_stop` alongside `initial_stop` | Pass — Positions.js Stop column: two-line cell, Init: £X.XX + trailing stop value @ e49d5a8b |
 | AC-02 | Breach badge/alert shown when `current_price ≤ current_trailing_stop` | Pass — rose AlertTriangle badge rendered when `trailBreached` (current_price ≤ trailStop) |
-| AC-03 | Breach badge visually distinct from other status indicators (colour/icon) | Pass — SC-TS-04: CSS assertion `text-rose-200 bg-rose-800` (not amber); risk-off badge asserted separately as `text-amber-300 bg-amber-900` @ 534b137f |
+| AC-03 | Breach badge visually distinct from other status indicators (colour/icon) | Pass — SC-TSC-04 (SC-TS-04 before ST-42, v9.15): CSS assertion `text-rose-200 bg-rose-800` (not amber); risk-off badge asserted separately as `text-amber-300 bg-amber-900` @ 534b137f |
 | AC-04 | No breach badge when position is within stop bounds | Pass — badge only when `trailStop > 0 && currentPriceGbp > 0 && currentPriceGbp <= trailStop` |
 
 **Notes:** Design spec: `docs/design/2026-06-24__release-v6.2/trailing-stop-display/ux_spec.md`. Layout advisory: if >~15 columns cause scroll, Initial Stop + Trail Stop may be combined into a two-line cell (implementation-level decision, no spec amendment). Playwright must cover AC-01, AC-02, AC-04. AC-03 requires human staging sign-off with date recorded here before PR opens.
@@ -139,7 +139,7 @@ Last Updated: 2026-06-25
 - Known deviations: ST-04 test file rewritten (old BLG-BE-36 risk-based tests replaced with ST-04 inv-vol tests).
 
 **Staging-only ACs — all resolved via Playwright CSS class assertions (no human staging sign-off required):**
-- ST-02/AC-03: `text-rose-200 bg-rose-800` asserted on breach badge; `text-amber-300 bg-amber-900` asserted on risk-off badge — demonstrates visual distinction (SC-TS-04)
+- ST-02/AC-03: `text-rose-200 bg-rose-800` asserted on breach badge; `text-amber-300 bg-amber-900` asserted on risk-off badge — demonstrates visual distinction (SC-TSC-04 (SC-TS-04 before ST-42, v9.15))
 - ST-03/AC-05: `text-amber-400` asserted on exit_rebalance badge; not-`text-cyan-400` assertion confirms distinct from "New Signal" (SC-RB-02). SignalCard.js updated to add exit_rebalance statusConfig entry.
 - ST-05/AC-02: `text-amber-300 bg-amber-900` on risk-off vs `text-rose-200 bg-rose-800` on breach — CSS distinct (SC-RO-02)
 

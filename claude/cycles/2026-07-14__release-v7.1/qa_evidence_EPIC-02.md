@@ -18,7 +18,7 @@ Last Updated: 2026-07-14
 
 **QA test coverage:**
 - Scenarios run: `tests/e2e/epic01-v62-stops-alerts.spec.js` (16/16 pass), `tests/e2e/epic01-v70-grid-badge-parity.spec.js` (9/9 pass, incl. `SC-GVP-09` confirming Table View breach indicator unchanged), `tests/e2e/gap-risk-flag.spec.js` (8/8 pass, confirms RISK OFF/GAP RISK stacking unaffected) — 33/33 passing, 0 failures
-- Regression areas checked: Table View Alerts column (breach badge unaffected — SC-TS-04 still asserts orange, not amber, and now also asserts distinct from risk-off blue); Grid View unaffected (built correctly in v7.0, this story only touched Table View); combined GAP RISK/RISK OFF stacking (still amber vs blue, hue separation now genuinely holds for both views per AC-04)
+- Regression areas checked: Table View Alerts column (breach badge unaffected — SC-TSC-04 (SC-TS-04 before ST-42, v9.15) still asserts orange, not amber, and now also asserts distinct from risk-off blue); Grid View unaffected (built correctly in v7.0, this story only touched Table View); combined GAP RISK/RISK OFF stacking (still amber vs blue, hue separation now genuinely holds for both views per AC-04)
 - Known deviations filed: None — this story **closes** `DEV-EPIC01-ST05-01` (pre-existing since v6.2), does not file a new one
 
 ---

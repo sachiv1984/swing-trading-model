@@ -3,12 +3,14 @@
  *
  * Coverage (ST-01 through ST-05, BLG-FEAT-46/47/49):
  *
- *   SC-TS-01  Trailing stop value shown in Stop column (ST-02/AC-01)
- *   SC-TS-02  "Init: £X.XX" label present in Stop column (ST-02/AC-01)
- *   SC-TS-03  Breach badge present when current_price ≤ current_trailing_stop (ST-02/AC-02)
- *   SC-TS-04  Breach badge has rose styling — distinct from risk-off blue (ST-02/AC-03)
- *   SC-TS-05  No breach badge when current_price > current_trailing_stop (ST-02/AC-04)
- *   SC-TS-06  No breach badge when current_trailing_stop is zero (ST-02/AC-04)
+ *   (IDs were SC-TS-*, shared with epic01-v34-lifecycle.spec.js; renamed SC-TSC-*
+ *   by ST-42, BLG-QA-224, v9.15.)
+ *   SC-TSC-01  Trailing stop value shown in Stop column (ST-02/AC-01)
+ *   SC-TSC-02  "Init: £X.XX" label present in Stop column (ST-02/AC-01)
+ *   SC-TSC-03  Breach badge present when current_price ≤ current_trailing_stop (ST-02/AC-02)
+ *   SC-TSC-04  Breach badge has rose styling — distinct from risk-off blue (ST-02/AC-03)
+ *   SC-TSC-05  No breach badge when current_price > current_trailing_stop (ST-02/AC-04)
+ *   SC-TSC-06  No breach badge when current_trailing_stop is zero (ST-02/AC-04)
  *
  *   SC-RO-01  "RISK OFF" badge present when risk_off_exit=true (ST-05/AC-02)
  *   SC-RO-02  Risk-off badge uses spec colour #1E40AF — distinct from breach rose (ST-03/BLG-FE-107, v7.1)
@@ -17,7 +19,7 @@
  *   SC-RO-05  UK position risk_off_exit=true shows badge (ST-05/AC-04)
  *   SC-RO-06  US position risk_off_exit=false — no badge (ST-05/AC-04 isolation)
  *
- *   SC-TS-RO-01  Both badges simultaneously on same row (ST-02 + ST-05)
+ *   SC-TSC-RO-01  Both badges simultaneously on same row (ST-02 + ST-05)
  *
  *   SC-RB-01  exit_rebalance signal shows "Month-End Exit" label (ST-03/AC-05)
  *   SC-RB-02  exit_rebalance badge has amber styling — distinct from new-signal cyan (ST-03/AC-05)
@@ -167,7 +169,7 @@ async function stubSignalsPage(page, signals, positions = []) {
 // ST-02 — Trailing stop display (Positions table)
 // ---------------------------------------------------------------------------
 
-test('SC-TS-01: Trailing stop value shown in Stop column', async ({ page }) => {
+test('SC-TSC-01: Trailing stop value shown in Stop column', async ({ page }) => {
   const pos = makePosition({ current_trailing_stop: 115.00, current_price: 118.00, market: 'UK' });
   await gotoPositionsTable(page, [pos]);
 
@@ -175,7 +177,7 @@ test('SC-TS-01: Trailing stop value shown in Stop column', async ({ page }) => {
   await expect(page.locator('text=£115.00').first()).toBeVisible({ timeout: 5000 });
 });
 
-test('SC-TS-02: "Init:" label present in Stop column', async ({ page }) => {
+test('SC-TSC-02: "Init:" label present in Stop column', async ({ page }) => {
   const pos = makePosition({ initial_stop: 130.00, current_trailing_stop: 115.00 });
   await gotoPositionsTable(page, [pos]);
 
@@ -183,7 +185,7 @@ test('SC-TS-02: "Init:" label present in Stop column', async ({ page }) => {
   await expect(page.locator('text=/Init:.*130/').first()).toBeVisible({ timeout: 5000 });
 });
 
-test('SC-TS-03: Breach badge present when current_price ≤ current_trailing_stop', async ({ page }) => {
+test('SC-TSC-03: Breach badge present when current_price ≤ current_trailing_stop', async ({ page }) => {
   // GBP price 120 ≤ trailing stop 125 → BREACH
   const pos = makePosition({ current_price: 120.00, current_trailing_stop: 125.00 });
   await gotoPositionsTable(page, [pos]);
@@ -193,7 +195,7 @@ test('SC-TS-03: Breach badge present when current_price ≤ current_trailing_sto
   await expect(badge).toContainText('BREACH');
 });
 
-test('SC-TS-04: Breach badge has spec orange styling — distinct from risk-off blue and GAP RISK amber (ST-09, BLG-FE-96)', async ({ page }) => {
+test('SC-TSC-04: Breach badge has spec orange styling — distinct from risk-off blue and GAP RISK amber (ST-09, BLG-FE-96)', async ({ page }) => {
   const pos = makePosition({ current_price: 120.00, current_trailing_stop: 125.00 });
   await gotoPositionsTable(page, [pos]);
 
@@ -207,7 +209,7 @@ test('SC-TS-04: Breach badge has spec orange styling — distinct from risk-off 
   await expect(badge).not.toHaveClass(/bg-amber/);
 });
 
-test('SC-TS-05: No breach badge when current_price > current_trailing_stop', async ({ page }) => {
+test('SC-TSC-05: No breach badge when current_price > current_trailing_stop', async ({ page }) => {
   // Price 135 > trailing stop 115 → no breach
   const pos = makePosition({ current_price: 135.00, current_trailing_stop: 115.00 });
   await gotoPositionsTable(page, [pos]);
@@ -216,7 +218,7 @@ test('SC-TS-05: No breach badge when current_price > current_trailing_stop', asy
   await expect(badge).not.toBeVisible({ timeout: 5000 });
 });
 
-test('SC-TS-06: No breach badge when current_trailing_stop is zero', async ({ page }) => {
+test('SC-TSC-06: No breach badge when current_trailing_stop is zero', async ({ page }) => {
   // Guard: trailStop > 0 required before breach logic fires
   const pos = makePosition({ current_price: 120.00, current_trailing_stop: 0 });
   await gotoPositionsTable(page, [pos]);
@@ -299,7 +301,7 @@ test('SC-RO-06: US position with risk_off_exit=false has no badge (market isolat
 // ST-02 + ST-05 — Both badges on same row
 // ---------------------------------------------------------------------------
 
-test('SC-TS-RO-01: Breach and risk-off badges both present when both conditions met', async ({ page }) => {
+test('SC-TSC-RO-01: Breach and risk-off badges both present when both conditions met', async ({ page }) => {
   const pos = makePosition({
     current_price: 110.00,
     current_trailing_stop: 120.00,   // breach: 110 ≤ 120

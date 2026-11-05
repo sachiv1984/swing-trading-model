@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-05 (Sprint Execution `2026-11-03__release-v9.15` EPIC-07 — 1 new item added: BLG-BE-206); prior — 2026-11-05 (Sprint Execution `2026-11-03__release-v9.15` EPIC-06 — 5 new items added: BLG-SPEC-221, BLG-QA-247, BLG-SPEC-222, BLG-QA-248, BLG-QA-249); prior — 2026-11-05 (Sprint Execution `2026-11-03__release-v9.15` EPIC-04 and PR #2192 review — 7 new items added: BLG-AI-27 to BLG-AI-33); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-05 (Sprint Execution `2026-11-03__release-v9.15` EPIC-07 — 2 new items added: BLG-BE-206, BLG-QA-250); prior — 2026-11-05 (Sprint Execution `2026-11-03__release-v9.15` EPIC-06 — 5 new items added: BLG-SPEC-221, BLG-QA-247, BLG-SPEC-222, BLG-QA-248, BLG-QA-249); prior — 2026-11-05 (Sprint Execution `2026-11-03__release-v9.15` EPIC-04 and PR #2192 review — 7 new items added: BLG-AI-27 to BLG-AI-33); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -7084,5 +7084,26 @@ DS-38 makes `positions.portfolio_id` and `total_cost` NOT NULL on staging (produ
 **Acceptance Criteria**
 - The test fails on a fixture insert that omits `portfolio_id` or `total_cost`, and passes on the current seeds
 - `tests/test_fees_paid_not_null_invariant.py` (or the sibling) passes in CI
+
+---
+
+### BLG-QA-250 — Make the remaining duplicated Playwright scenario IDs unique (SC-CSV, SC-GP, SC-LS, SC-MRU, SC-TP)
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** QA & Testing Owner
+**Source:** ST-42 (BLG-QA-224), EPIC-07, sprint execution `2026-11-03__release-v9.15` — out-of-scope finding: the new uniqueness check found 19 cross-file duplicates besides SC-TS — 2026-11-05
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.16
+
+**Problem**
+ST-42 made SC-TS-* unique and added `scripts/check_e2e_scenario_id_uniqueness.py` (run by `tests/test_check_e2e_scenario_id_uniqueness.py`). The check found five more ID families used for different scenarios in two files each: SC-CSV-01..05 (`screener-watchlist-csv-export` / `tax-year-csv-export`), SC-GP-01..04 and SC-LS-01..04 (`epic01-v34-lifecycle` / `gate-progress`, `loading-states`), SC-MRU-01..02 (`market-regime-unknown` / `monthly-pnl-realized-unrealized`), SC-TP-01..04 (`theme-persistence` / `trade-plan`). They sit in the script's shrink-only `KNOWN_DUPLICATES` list, so evidence citing them stays ambiguous. About 190 citations across `docs/` and `claude/cycles/` need tracing to the file each one means.
+
+**Scope**
+- For each family, give one file a distinct prefix and update the citations in `docs/` and `claude/cycles/` that refer to it (not sealed artefacts)
+- Remove each fixed family from `KNOWN_DUPLICATES`
+
+**Acceptance Criteria**
+- `KNOWN_DUPLICATES` is empty and `python3 scripts/check_e2e_scenario_id_uniqueness.py` exits 0
+- Every changed citation names the renamed ID
 
 ---
