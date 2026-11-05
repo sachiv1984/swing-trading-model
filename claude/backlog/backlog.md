@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-05 (Sprint Execution `2026-11-03__release-v9.15` EPIC-04 — 4 new items added: BLG-AI-27, BLG-AI-28, BLG-AI-29, BLG-AI-30); prior — 2026-11-05 (PR #2191 agent-mediated Director of Quality / Product Owner review — 2 new items added: BLG-FE-273, BLG-FE-274); prior — 2026-11-05 (Sprint Execution `2026-11-03__release-v9.15` EPIC-02 — 4 new items added: BLG-BE-205, BLG-GOV-409, BLG-SPEC-220, BLG-QA-246); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-05 (Sprint Execution `2026-11-03__release-v9.15` EPIC-04 and PR #2192 review — 7 new items added: BLG-AI-27 to BLG-AI-33); prior — 2026-11-05 (PR #2191 agent-mediated Director of Quality / Product Owner review — 2 new items added: BLG-FE-273, BLG-FE-274); prior — 2026-11-05 (Sprint Execution `2026-11-03__release-v9.15` EPIC-02 — 4 new items added: BLG-BE-205, BLG-GOV-409, BLG-SPEC-220, BLG-QA-246); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -3555,6 +3555,96 @@ Form (6) of ruling (A″) treats a sentence-initial change verb as an imperative
 - The ruling is recorded before the code change
 - Each sentence above gets the result the ruling assigns, in a test
 - Every ST-15, v9.13 ST-18 and v9.15 ST-25/ST-27 case keeps its result
+
+---
+
+### BLG-AI-31 — Journal summary check: past-tense "cut" and abbreviation or line-break sentence ends
+**Priority:** P3 (Low)
+**Type:** AI Compliance / Correctness
+**Owner:** AI Compliance & Governance Officer; Backend Engineering Patterns Owner
+**Source:** Agent-mediated PR #2192 review (EPIC-04, cycle `2026-11-03__release-v9.15`, ST-25 / `BLG-AI-24`), Director of Quality findings 1–2 and Product Owner finding 1 — 2026-11-05
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+**Depends on:** BLG-AI-30 (same form (6); one ruling can cover both)
+
+**Problem**
+Form (6) of ruling (A″) reads a sentence-initial change verb as an imperative, and "cut" is spelled the same in the past tense. These descriptive sentences now fail as `trading_change`, where they passed on `main` before v9.15:
+- "Cut position size after the March drawdown, per the notes."
+- "Cut size on setups twice in April."
+
+`ai_endpoints.md` 1.39 says past tense passes, which is not true for "cut".
+
+The sentence-boundary sets (`_TC_GAP`, the form (6) lookbehind, `_SENTENCE_END_RE`) also treat the "." in abbreviations such as "e.g." and any hard line break as a sentence end. This causes errors both ways:
+- Descriptive text wrongly fails: "Exits varied, e.g. cut size on two setups after the March losses."
+- Advisory text wrongly passes: "Stops, e.g. on breakouts, could be tightened." and "Consider tightening\nstops."
+- The reported-speech exemption stops at a line break: "The trader noted that\nstops could be tightened." fails.
+
+False positives fail safe, but they hide legitimate summaries, which is the opposite of BLG-AI-24's aim.
+
+**Scope**
+- Ask the AI Compliance & Governance Officer how form (6) treats verbs whose past tense matches the imperative, and whether abbreviations and single line breaks end a sentence
+- Implement the ruling and correct the contract's past-tense statement
+
+**Acceptance Criteria**
+- The ruling is recorded before the code change
+- Each sentence above gets the ruled result, in a test
+- Every ST-15, v9.13 ST-18 and v9.15 ST-25/ST-27 case keeps its result
+
+---
+
+### BLG-AI-32 — Journal summary check: advisory phrasings outside the ruled forms, and attribution after the clause
+**Priority:** P3 (Low)
+**Type:** AI Compliance / Correctness
+**Owner:** AI Compliance & Governance Officer; Backend Engineering Patterns Owner
+**Source:** Agent-mediated PR #2192 review (EPIC-04, cycle `2026-11-03__release-v9.15`, ST-25 / `BLG-AI-24`), Director of Quality findings 3–4 and Product Owner findings 2–3 — 2026-11-05
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+The forms in rulings (A), (A′) and (A″) are a list of known phrasings, not a complete set. The v1.25 §13.2 sentence is broader than what the check enforces. These advisory sentences return `[]` both on `main` and on the branch:
+- Second-person and option-style advice: "You may want to tighten your stops.", "It would be wise to revisit position sizing.", "You might reduce position size on breakout setups.", "I'd suggest reviewing setups.", "One option is to widen stops.", "Going forward, use smaller position sizes.", "Maybe use a tighter stop.", "A tighter stop might be worth considering."
+- Close variants of the A″ forms: "It could help tighten stops.", "Moving forward, review stop placement weekly.", "Note: review position sizing."
+- A purpose clause after a dropped "can": "Stops can be tightened to limit losses."
+
+The reported-speech exemption also misses attribution placed after the clause. Both of these fail:
+- "Stops placed below the 20-day low would benefit from tightening, the trader wrote."
+- `You wrote: "stops could be tightened".`
+
+**Scope**
+- Ask the AI Compliance & Governance Officer to rule on each sentence above, and on recording that the regex forms are not a complete set (residual risk)
+- Implement the ruled forms, and state the residual risk in `ai_endpoints.md` and B-JS-04
+
+**Acceptance Criteria**
+- The ruling is recorded before the code change
+- Each sentence above gets the ruled result, in a test
+- Every ST-15, v9.13 ST-18 and v9.15 ST-25/ST-27 case keeps its result
+
+---
+
+### BLG-AI-33 — Make the reported-speech check linear and close its test gaps
+**Priority:** P3 (Low)
+**Type:** AI Compliance / Correctness
+**Owner:** Backend Engineering Patterns Owner; QA & Testing Owner
+**Source:** Agent-mediated PR #2192 review (EPIC-04, cycle `2026-11-03__release-v9.15`, ST-25 / `BLG-AI-24`), Director of Quality findings 5–6 — 2026-11-05
+**Effort:** XS (<1h plus tests)
+**Provisional-Target:** TBD
+
+**Problem**
+`_in_reported_speech()` (`backend/services/ai_service.py`) rescans the text from position 0 for every regex match, so cost grows quadratically. The review measured 5.2 s on 98 KB of reported matches and 13.4 s on a 192 KB single sentence. This is not reachable today, because the summary is capped at `max_tokens=512` (about 2–3 KB), but the cost appears if the cap rises or the check is reused. Several A″ paths also have no test:
+- the "maybe" prefix
+- the "•" and "1)" bullets
+- the of/in/to guard, apart from "Review of"
+- "help to show/account for"
+- a multi-paragraph summary with newline boundaries
+
+**Scope**
+- Find the last sentence end before the match in one pass (e.g. `max(text.rfind(c, 0, start) for c in ...)`) instead of `finditer` from 0
+- Add tests for the untested paths above
+
+**Acceptance Criteria**
+- 100 KB of reported matches is checked in under 0.5 s, in a test
+- Each untested path above has a test with the ruled (A″) result
+- All existing journal-summary tests pass
 
 ---
 
