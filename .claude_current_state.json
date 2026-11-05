@@ -586,6 +586,19 @@
       "resolved_utc": "2026-11-04T19:29:15Z",
       "resolved_by": "Data Model & Domain Schema Owner (the user, in session)",
       "resolution_summary": "Spec follows code: open-position pnl is native P&L at the live FX rate, not net of fees. Dictionary aligned; basis difference from realised P&L filed as a follow-up."
+    },
+    "ESC-EXEC-20261104-05": {
+      "cycle": "2026-11-03__release-v9.15",
+      "summary": "ST-12/EPIC-02 — removing the legacy Dashboard would delete the Daily Position Monitor (its only entry point); Product Owner to choose: move to Positions (a), to Dashboard home (b), defer ST-12 (c), or remove (d)",
+      "trigger_type": "Scope",
+      "owning_authority": "Product Owner",
+      "raised_utc": "2026-11-04T21:03:58Z",
+      "sla_due_utc": "2026-11-05T21:03:58Z",
+      "blocks_execution": false,
+      "disposition": "Resolved",
+      "resolved_utc": "2026-11-04T21:04:56Z",
+      "resolved_by": "Product Owner (the user, in session)",
+      "resolution_summary": "Option (a): Daily Monitor button on the Positions header; MonitorModal, exit queue and pre-select carried over; 7 monitor scenarios retargeted to /#/Positions; positions.md entry point updated. Head of UX & Design confirms placement (agent-mediated)."
     }
   },
   "deferred_escalations": {
