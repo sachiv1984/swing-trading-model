@@ -6,7 +6,7 @@
   "invoked_utc": "2026-11-04T10:55:44Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-05T08:50:24Z",
+  "last_updated_utc": "2026-11-05T08:59:00Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-03",
@@ -781,85 +781,40 @@
         "ST-24": {
           "title": "Review logged briefing ticker-caveat tokens for further non-tickers",
           "classification": "delegated_backend",
-          "status": "blocked_backend",
+          "status": "done",
           "assigned_to": "AI Compliance & Governance Officer",
           "github_issue": 2167,
           "branch": "exec/2026-11-03__release-v9.15/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "aad0d041867addddc9f9439c4f6bea4cee9a9fd0",
           "delegation_record_id": "DEL-20261105-01",
           "blocked_since_utc": "2026-11-05T08:26:16Z",
           "unblock_criteria": "Token list with counts from production briefing ticker-check warning lines since 2026-10-30 (or \"no lines logged\"), supplied by the AI Compliance & Governance Officer.",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-11-05T08:57:18Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/specs/api_contracts/ai_endpoints.md#POST /ai/daily-briefing",
             "tests/test_briefing_summary_ticker_check.py"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.push",
           "sign_off_record": null,
-          "notes": "AI Compliance & Governance Officer (the user, in session, 2026-11-05T08:50:24Z): production caveat-token list not available in-sprint; carry post-merge with a tracking backlog item filed before the PR opens; grade ST-24 Pass_with_deviation."
+          "notes": "Pass_with_deviation: neither AC met in-sprint. The production token list (DEL-20261105-01) is not available; the AI Compliance & Governance Officer (the user, in session, 2026-11-05T08:50:24Z) chose to carry it post-merge. Tracked by BLG-AI-27, filed before the PR opens (aad0d041). ST-26 removed the common time/chat words from caveating meanwhile. ci_pending: 41998451082 (CI Pytest)."
         },
         "ST-25": {
           "title": "Journal summary advisory check: remaining false positives and misses",
           "classification": "autonomous",
-          "status": "in_progress",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 2168,
           "branch": "exec/2026-11-03__release-v9.15/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "e6ba8e528e2fa8f9a2dd28366b376908587c8d70",
           "delegation_record_id": "ESC-EXEC-20261105-01",
           "blocked_since_utc": null,
           "unblock_criteria": "Dated AI Compliance & Governance Officer ruling on amendment (A″) recorded in ESC-EXEC-20261105-01.",
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
-          "spec_reference_not_applicable": false,
-          "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "Reclassified delegated_decision -> autonomous on ESC-EXEC-20261105-01 resolution (AI Compliance & Governance Officer, the user, in session, 2026-11-05T08:50:24Z)."
-        },
-        "ST-26": {
-          "title": "Chat stop-time focus rule: ignore common upper-case non-ticker words",
-          "classification": "autonomous",
-          "status": "not_started",
-          "assigned_to": "engine",
-          "github_issue": 2169,
-          "branch": "exec/2026-11-03__release-v9.15/EPIC-04",
-          "commit_sha": null,
-          "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [
-            "docs/specs/api_contracts/ai_endpoints.md#POST /ai/chat",
-            "tests/test_ai_stop_time_focus_attribution.py"
-          ],
-          "spec_reference_not_applicable": false,
-          "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": null
-        },
-        "ST-27": {
-          "title": "Journal summary advisory check: do not flag \"could/may help explain\"",
-          "classification": "autonomous",
-          "status": "not_started",
-          "assigned_to": "engine",
-          "github_issue": 2170,
-          "branch": "exec/2026-11-03__release-v9.15/EPIC-04",
-          "commit_sha": null,
-          "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-11-05T08:53:35Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/specs/api_contracts/ai_endpoints.md#POST /ai/journal-summary",
             "docs/specs/qa/ai_s13_boundary_test_suite.md#Scenario B-JS-04 — No advice to change stops, sizing or setups in output",
@@ -867,31 +822,86 @@
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.push",
           "sign_off_record": null,
-          "notes": "Depends on ST-25 ruling (one AI Compliance & Governance Officer ruling covers both, sprint_backlog.md ST-27 Notes)."
+          "notes": "Reclassified delegated_decision -> autonomous on ESC-EXEC-20261105-01 resolution (A″, 2026-11-05T08:50:24Z). AC 1 met: ruling recorded in 02becfc8 before the code commit. AC 2 met: each BLG-AI-24 sentence has its ruled result (test_missed_advisory_forms_caught, test_a_double_prime_descriptive_wording_passes). AC 3 met: every ST-15 and v9.13 ST-18 case unchanged in the same file. B-JS-04 updated (suite 1.6); ai_endpoints.md 1.39. Deviation check: none. CI on e6ba8e52: 7/7 success (CI Pytest 41997977740)."
+        },
+        "ST-26": {
+          "title": "Chat stop-time focus rule: ignore common upper-case non-ticker words",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 2169,
+          "branch": "exec/2026-11-03__release-v9.15/EPIC-04",
+          "commit_sha": "b937a396045cf63279f2e034261e7c76f32d4d31",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-11-05T08:27:16Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/ai_endpoints.md#POST /ai/chat",
+            "tests/test_ai_stop_time_focus_attribution.py"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.push",
+          "sign_off_record": null,
+          "notes": "AC 1 met: the five BLG-AI-25 sentences with focus MU held get the MU note (test_time_and_chat_words_do_not_block_focus). AC 2 met: TSLA sentence still gets no MU note; all ST-16/ST-17 tests pass. Added to the shared _NON_TICKER_WORDS (within ESC-EXEC-20261027-02 (B) condition 2, a minimum list); ai_endpoints.md 1.38. Deviation check: none. CI on b937a396: 7/7 success (CI Pytest 41994587033)."
+        },
+        "ST-27": {
+          "title": "Journal summary advisory check: do not flag \"could/may help explain\"",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 2170,
+          "branch": "exec/2026-11-03__release-v9.15/EPIC-04",
+          "commit_sha": "e6ba8e528e2fa8f9a2dd28366b376908587c8d70",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-11-05T08:53:35Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/ai_endpoints.md#POST /ai/journal-summary",
+            "docs/specs/qa/ai_s13_boundary_test_suite.md#Scenario B-JS-04 — No advice to change stops, sizing or setups in output",
+            "tests/test_journal_summary_language_check.py"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.push",
+          "sign_off_record": null,
+          "notes": "Implemented under ESC-EXEC-20261105-01 (A″) (iii), same commit as ST-25. AC 1 met: both BLG-AI-26 sentences return []. AC 2 met: \"Tighter stops could help.\" and the other six BLG-AI-20 sentences still caught (test_advisory_phrasings_caught). Deviation check: none. CI on e6ba8e52: 7/7 success."
         },
         "ST-28": {
           "title": "§13 boundary language clarity pass — AI journal summarisation",
           "classification": "autonomous",
-          "status": "in_progress",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 2171,
           "branch": "exec/2026-11-03__release-v9.15/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "122619e902eebe26e8bf61f26eac37e4b28ac0a2",
           "delegation_record_id": "ESC-EXEC-20261105-02",
           "blocked_since_utc": null,
           "unblock_criteria": "Dated Strategy Rules & System Intent Owner outcome (1), (2) or (3) recorded in ESC-EXEC-20261105-02.",
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-11-05T08:56:39Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/product/decisions/decisions--2026-11-03__release-v9.15--ST-28-journal-summary-section13-reread.md",
+            "claude/strategy/strategy_rules.md#13.2 This system is not",
+            "claude/strategy/strategy_rules.md#13.5 Semi-Annual Boundary Re-Attestation Cadence (ST-23, BLG-GOV-204, EPIC-05, v8.3)",
+            "tests/test_strategy_version_registry.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.push",
           "sign_off_record": null,
-          "notes": "Reclassified delegated_decision -> autonomous on ESC-EXEC-20261105-02 resolution (Strategy Rules & System Intent Owner, the user, in session, 2026-11-05T08:50:24Z)."
+          "notes": "Reclassified delegated_decision -> autonomous on ESC-EXEC-20261105-02 resolution (outcome 1, 2026-11-05T08:50:24Z). AC 1 met: dated re-read in docs/product/decisions/decisions--2026-11-03__release-v9.15--ST-28-journal-summary-section13-reread.md. AC 2 met: each cited clause answered (§13.1, §13.2; §13.3/§13.4/§13.6 do not name the subject); roster answer: belongs on §13.5. AC 3 met: clarified §13.2 text + §13.5 roster row under case (c), strategy_rules.md 1.25 with §16 Change Log row, DOCUMENTATION_ONLY_VERSIONS 1.25, registry test passing, §15 re-run 0 actionable. Deviation check: none. ci_pending: 41998367420 (CI Pytest).",
+          "delivery_note": "docs/product/decisions/decisions--2026-11-03__release-v9.15--ST-28-journal-summary-section13-reread.md"
         }
       }
     }
@@ -905,9 +915,7 @@
     }
   },
   "blocked_items": [],
-  "delegated_items": [
-    "ST-24"
-  ],
+  "delegated_items": [],
   "completed_items": [
     "ST-01",
     "ST-02",
@@ -930,7 +938,12 @@
     "ST-20",
     "ST-21",
     "ST-22",
-    "ST-23"
+    "ST-23",
+    "ST-24",
+    "ST-25",
+    "ST-26",
+    "ST-27",
+    "ST-28"
   ],
   "open_escalations": {
     "ESC-EXEC-20261104-01": {
