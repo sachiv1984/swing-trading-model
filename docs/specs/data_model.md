@@ -3,8 +3,8 @@
 **Owner:** Data Model & Domain Schema Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.66
-**Last Updated:** 2026-10-30 (ST-22, EPIC-03, v9.14, BLG-BE-163 — `gemini_audit_log` populating-function reference cites `ai_thesis_generation.md`; `generate-thesis` retired; no schema change); prior — 2026-10-29 (ST-04, EPIC-01, v9.14, BLG-BE-194 — DS-37 (v2.66): new `fx_rate_last_good` table, the last successfully fetched GBP/USD rate and its fetch time); prior — 2026-10-27 (ST-31/ST-32, EPIC-05, v9.13, BLG-OPS-19/BLG-OPS-23 — DS-36 (v2.65): `api_call_log.feature` and `screener_runs.duration_seconds`; both tables documented); prior history retained — see prior entries in version control
+**Version:** 2.67
+**Last Updated:** 2026-11-05 (ST-35, EPIC-06, v9.15, BLG-SPEC-196 — DS-38 (v2.67): `NOT NULL` re-applied to `positions.portfolio_id` and `positions.total_cost`, applied on staging; production post-merge, BLG-SPEC-217); prior — 2026-10-30 (ST-22, EPIC-03, v9.14, BLG-BE-163 — `gemini_audit_log` populating-function reference cites `ai_thesis_generation.md`; `generate-thesis` retired; no schema change); prior — 2026-10-29 (ST-04, EPIC-01, v9.14, BLG-BE-194 — DS-37 (v2.66): new `fx_rate_last_good` table, the last successfully fetched GBP/USD rate and its fetch time); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 This document describes the complete database schema and data structures used in the **Position Manager Web App**.
@@ -110,7 +110,7 @@ CREATE INDEX idx_positions_tags ON positions USING GIN(tags);
 | Field | Type | Nullable | Provenance | Description |
 |-------|------|----------|------------|-------------|
 | id | UUID | NO | system-stamped | Primary key |
-| portfolio_id | UUID | NO | system-stamped | FK to portfolios. *(Documented `NOT NULL`, but nullable on live staging as of 2026-10-13; re-applying it is tracked as BLG-SPEC-196. See §Drift Detector Triage.)* |
+| portfolio_id | UUID | NO | system-stamped | FK to portfolios. *(`NOT NULL` re-applied on staging 2026-11-05, DS-38; production confirmation post-merge, BLG-SPEC-217.)* |
 | ticker | VARCHAR(20) | NO | user-entered | Stock symbol (e.g., "PLTR", "FRES.L") |
 | market | VARCHAR(5) | NO | user-entered | "US" or "UK" |
 | entry_date | DATE | NO | user-entered | Position entry date |
@@ -119,7 +119,7 @@ CREATE INDEX idx_positions_tags ON positions USING GIN(tags);
 | fill_currency | VARCHAR(3) | YES | derived | `"GBP"` or `"USD"`, set from `market` |
 | fx_rate | DECIMAL(10,6) | YES | user-entered | GBP/USD rate at entry. User-entered when supplied; otherwise the system stores the live rate at entry (1.0 for UK) — **user-entered or system-stamped**, see note |
 | shares | DECIMAL(10,4) | NO | user-entered | Number of shares (fractional allowed); user-entered at entry, reduced by the system on a partial exit |
-| total_cost | DECIMAL(12,2) | NO | derived | Total cost including fees in GBP. *(Documented `NOT NULL`, but nullable on live staging as of 2026-10-13; re-applying it is tracked as BLG-SPEC-196.)* |
+| total_cost | DECIMAL(12,2) | NO | derived | Total cost including fees in GBP. *(`NOT NULL` re-applied on staging 2026-11-05, DS-38; production confirmation post-merge, BLG-SPEC-217.)* |
 | fees_paid | DECIMAL(10,2) | NO | derived | Total entry fees in GBP (commission + stamp duty for UK, FX fee + commission for US), reduced proportionally on partial exit. Every write path supplies a value. **`NOT NULL`, no default** — re-applied live on staging and production 2026-10-05 (DS-23). An insert that omits it fails rather than recording an unknown fee as £0 (see note below). |
 | fee_type | VARCHAR(20) | YES | derived | Fee calculation method (`stamp_duty` for UK, `fx_fee` for US), set from `market` |
 | initial_stop | DECIMAL(10,4) | YES | derived | Stop price at entry, native currency: entry − 5 × ATR (`strategy_rules.md` §5/§11). Always computed; the `stop_price` the add-position request accepts is not used *(see note, v2.55)* |
@@ -3621,6 +3621,71 @@ Expect 3 rows (`pair`, `rate`, `fetched_at`), none nullable, and, once the app h
 
 ---
 
+## DS-38 — Re-apply NOT NULL on positions.portfolio_id and positions.total_cost (v2.67, 2026-11-05)
+
+**Story:** ST-35 (EPIC-06, v9.15) — `BLG-SPEC-196` (from §Drift Detector Triage row 3). Delegation `DEL-20261105-02`.
+
+**Rationale:** both columns are `NOT NULL` in the §2 `CREATE TABLE` and the Fields table, but `information_schema` reported them nullable on live staging at 2026-10-13. The intent was never changed: every position belongs to a portfolio, and `total_cost` is the GBP cost basis that P&L, exits and the tax-year report read. This re-applies the documented constraint, following DS-23.
+
+**Backward compatibility:** no application change required. `database.create_position()` always passes `portfolio_id` and `total_cost`, and every seed that inserts into `positions` (`scripts/seeds/seed_portfolio_trades.sql`, `backend/test_data/seed_chart_test_data.sql`) names both columns (checked 2026-11-05).
+
+**RISK (no live DB write access in this execution environment):** the sandbox `DATABASE_URL` is `readonly_staging`. The Up Migration is run by the Data Model & Domain Schema Owner directly, staging first, production after the EPIC-06 merge (production confirmation is post-merge, tracked by `BLG-SPEC-217`).
+
+### Pre-check (must return 0 / 0 in each environment before applying)
+
+```sql
+SELECT COUNT(*) FILTER (WHERE portfolio_id IS NULL) AS null_portfolio_id_rows,
+       COUNT(*) FILTER (WHERE total_cost IS NULL)   AS null_total_cost_rows
+FROM positions;
+```
+
+If either count is non-zero, **do not apply** in that environment and do not backfill a guessed value. List the rows (`SELECT id, ticker, status, entry_date, portfolio_id, total_cost FROM positions WHERE portfolio_id IS NULL OR total_cost IS NULL;`) and record their origin and a per-row backfill decision here first. Even if the pre-check is skipped, `SET NOT NULL` fails atomically and changes nothing when a NULL row exists.
+
+### Up Migration (v2.66 → v2.67)
+
+```sql
+BEGIN;
+ALTER TABLE positions ALTER COLUMN portfolio_id SET NOT NULL;
+ALTER TABLE positions ALTER COLUMN total_cost SET NOT NULL;
+COMMIT;
+```
+
+Validates every row under an `ACCESS EXCLUSIVE` lock; `positions` is small, so this is near-instant. No data is rewritten.
+
+### Down Migration (v2.67 → v2.66)
+
+```sql
+BEGIN;
+ALTER TABLE positions ALTER COLUMN portfolio_id DROP NOT NULL;
+ALTER TABLE positions ALTER COLUMN total_cost DROP NOT NULL;
+COMMIT;
+```
+
+### Verification
+
+```sql
+SELECT column_name, is_nullable
+FROM information_schema.columns
+WHERE table_name = 'positions' AND column_name IN ('portfolio_id', 'total_cost')
+ORDER BY column_name;
+```
+
+Expect 2 rows, both `is_nullable = NO`.
+
+**Live Confirmation:**
+
+| Environment | Pre-check (null_portfolio_id_rows / null_total_cost_rows) | Before | After |
+|---|---|---|---|
+| Staging | 0 / 0 | `portfolio_id` `is_nullable = YES`, `total_cost` `is_nullable = YES` | `portfolio_id` `is_nullable = NO`, `total_cost` `is_nullable = NO` |
+| Production | _post-merge, `BLG-SPEC-217`_ | | |
+
+**Sign-off:**
+- **Live Confirmation — staging, applied 2026-11-05:** pre-check, Verification (before), Up Migration and Verification (after) run by the user (human, with live write access, acting for the Data Model & Domain Schema Owner) in the Supabase SQL editor; outputs pasted into the session and recorded above. `DEL-20261105-02` unblocked in-session for staging.
+- **Drift check (staging, 2026-11-05):** `scripts/check_data_model_drift.py docs/specs/data_model.md`, run by the execution session read-only (`default_transaction_read_only = on`) with the user's permission, exit 0, reports no nullable mismatch on any table, so neither column is flagged. Its remaining index and CHECK findings are the ones in §Drift Detector Triage (DS-17's index on staging is ST-36).
+- **Production:** after the EPIC-06 merge and deploy, run the same four steps and record them in the table above (`BLG-SPEC-217`).
+
+---
+
 ## Drift Detector Triage (2026-10-13, v2.60)
 
 **Story:** ST-34 (EPIC-05, `2026-10-12__release-v9.12`), BLG-SPEC-178. Triage of the findings `scripts/check_data_model_drift.py` reported on its first run (ST-28, v9.9, 2026-10-01) beyond the 5 known divergence classes.
@@ -3655,6 +3720,6 @@ Expect 3 rows (`pair`, `rate`, `fetched_at`), none nullable, and, once the app h
 
 ---
 
-**Document Version:** 2.66
+**Document Version:** 2.67
 **Maintained By:** Data Model & Domain Schema Owner
-**Last Review:** 2026-10-29 (ST-04, EPIC-01, v9.14, BLG-BE-194 — DS-37 (v2.66): new `fx_rate_last_good` table, the last successfully fetched GBP/USD rate and its fetch time); prior — 2026-10-27 (ST-31/ST-32, EPIC-05, v9.13, BLG-OPS-19/BLG-OPS-23 — DS-36 (v2.65): `api_call_log.feature` and `screener_runs.duration_seconds`; both tables documented); prior — 2026-10-27 (ST-22, EPIC-03, v9.13, BLG-FE-208 — DS-35 (v2.64): new `chat_answer_ratings` table, one useful / not-useful rating per AI chat answer); prior history retained — see prior entries in version control
+**Last Review:** 2026-11-05 (ST-35, EPIC-06, v9.15, BLG-SPEC-196 — DS-38 (v2.67): `NOT NULL` re-applied to `positions.portfolio_id` and `positions.total_cost`); prior — 2026-10-29 (ST-04, EPIC-01, v9.14, BLG-BE-194 — DS-37 (v2.66): new `fx_rate_last_good` table, the last successfully fetched GBP/USD rate and its fetch time); prior — 2026-10-27 (ST-31/ST-32, EPIC-05, v9.13, BLG-OPS-19/BLG-OPS-23 — DS-36 (v2.65): `api_call_log.feature` and `screener_runs.duration_seconds`; both tables documented); prior history retained — see prior entries in version control
