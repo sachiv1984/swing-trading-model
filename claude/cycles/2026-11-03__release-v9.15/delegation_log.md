@@ -19,4 +19,4 @@ Last Updated: 2026-11-05
 - **Spec reference:** `docs/specs/api_contracts/ai_endpoints.md#POST /ai/daily-briefing` (check 3); `stage4_backlog_slice.md#ST-24`
 - **Unblock criteria:** the token list with counts (or "no lines logged") supplied in session or in this record.
 - **Commit format required:** `[EPIC-04][ST-24] <description>` on `exec/2026-11-03__release-v9.15/EPIC-04`
-- **Status:** Pending
+- **Status:** In Progress — carried to post-merge (2026-11-05T08:50:24Z). The AI Compliance & Governance Officer (the user, in session) said the production token list is not available in-sprint and chose to carry it post-merge. Tracked by `BLG-AI-27`, filed before the PR opens. ST-24 is graded Pass_with_deviation.

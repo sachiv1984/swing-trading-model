@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-05 (PR #2191 agent-mediated Director of Quality / Product Owner review — 2 new items added: BLG-FE-273, BLG-FE-274); prior — 2026-11-05 (Sprint Execution `2026-11-03__release-v9.15` EPIC-02 — 4 new items added: BLG-BE-205, BLG-GOV-409, BLG-SPEC-220, BLG-QA-246); prior — 2026-11-04 (PR #2190 agent-mediated Director of Quality / Product Owner review — 3 new items added: BLG-BE-204, BLG-QA-245, BLG-FE-272); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-05 (Sprint Execution `2026-11-03__release-v9.15` EPIC-04 — 1 new item added: BLG-AI-27); prior — 2026-11-05 (PR #2191 agent-mediated Director of Quality / Product Owner review — 2 new items added: BLG-FE-273, BLG-FE-274); prior — 2026-11-05 (Sprint Execution `2026-11-03__release-v9.15` EPIC-02 — 4 new items added: BLG-BE-205, BLG-GOV-409, BLG-SPEC-220, BLG-QA-246); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -3464,6 +3464,28 @@ ST-15's form (4) treats "could/may/might/would help" after a subject as advisory
 **Acceptance Criteria**
 - Both sentences above return `[]`
 - "Tighter stops could help." and the other six BLG-AI-20 sentences are still caught
+
+---
+
+### BLG-AI-27 — Read production briefing ticker-caveat tokens and add any non-tickers (carried from ST-24)
+**Priority:** P3 (Low)
+**Type:** AI Compliance / Correctness
+**Owner:** AI Compliance & Governance Officer; Backend Engineering Patterns Owner
+**Source:** ST-24 (EPIC-04, cycle `2026-11-03__release-v9.15`, `BLG-AI-23`; `DEL-20261105-01`). The production log read was not available in-sprint, and the AI Compliance & Governance Officer chose to carry it post-merge — 2026-11-05
+**Effort:** XS (<1h plus tests)
+**Provisional-Target:** TBD
+
+**Problem**
+ST-24's acceptance criteria need the tokens the daily-briefing ticker check has caveated since 2026-10-30. They are on the production Render log lines `ticker check: endpoint=POST /ai/daily-briefing field=summary ticker=<TOKEN> action=caveat_appended`. The sandbox `DATABASE_URL` is staging and the engine has no production log access, so the review could not run in-sprint. ST-26 (v9.15) added AM, PM, EOD, EOW, EOM, IMO, IMHO, FYI, NOTE, TBD, ASAP, Q1–Q4, FY, YOY, VIX, GMT and BST to `_NON_TICKER_WORDS`, so those tokens no longer fire. Any other non-ticker word still gets the caveat and inflates the `ticker_outside_context_appended` count.
+
+**Scope**
+- The user supplies the token list with counts since 2026-10-30, or grants a one-off read
+- Classify each token as ticker or non-ticker
+- Add the non-tickers to `_NON_TICKER_WORDS` (ruling `ESC-EXEC-20261027-02` (B) condition 2 is a minimum list) and to the `ai_endpoints.md` check 3 list
+
+**Acceptance Criteria**
+- The token list with counts is recorded
+- Each non-ticker found is added and covered by `test_non_ticker_words_ignored`, or the review records that none was found
 
 ---
 
