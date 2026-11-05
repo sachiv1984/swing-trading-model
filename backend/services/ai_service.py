@@ -464,23 +464,67 @@ _TC_VERB = (r"(?:adjust|chang|tighten|widen|loosen|revis|reconsider|rethink|revi
 _TC_GERUND = (r"(?:adjust|chang|tighten|widen|loosen|revis|reconsider|rethink|review"
               r"|modif|refin|mov|reduc|increas|cut|lower|rais)\w*ing")
 _TC_GAP = r"[^.!?;\n]{0,%d}?"  # DoQ review: a gap never crosses ";"
+# ST-25/ST-27 (BLG-AI-24, BLG-AI-26, v9.15): ruling ESC-EXEC-20261105-01
+# (A″) — "can" dropped from (3); "help explain/account for/show" excluded
+# from (4); past-tense reported speech passes (see _in_reported_speech);
+# forms (1b), (6)-(9) added for the missed advisory sentences.
+_TC_COMPARATIVE = r"(?:tighter|wider|smaller|larger|lower|higher)"
+_TC_IMPERATIVE = (r"(?:adjust|change|tighten|widen|loosen|revise|revisit|reconsider|rethink|review"
+                  r"|modify|refine|move|reduce|increase|cut|raise)")
 _ADVISORY_CHANGE_RES = [re.compile(p, re.IGNORECASE) for p in (
-    # (1) "Consider tightening stops ..."
-    rf"\b(?:consider|try)\b{_TC_GAP % 25}\b{_TC_VERB}{_TC_GAP % 40}\b{_TC_SUBJECT}\b",
+    # (1) "Consider tightening stops ..." / "Think about tightening stops."
+    rf"\b(?:consider|try|think about)\b{_TC_GAP % 25}\b{_TC_VERB}{_TC_GAP % 40}\b{_TC_SUBJECT}\b",
+    # (1b) "Consider a tighter stop."
+    rf"\b(?:consider|try|think about)\b{_TC_GAP % 15}\b{_TC_COMPARATIVE}\b{_TC_GAP % 15}\b{_TC_SUBJECT}\b",
     # (2) "It may be worth revisiting position sizing." / "Stops are worth revisiting."
     rf"\bworth\b{_TC_GAP % 15}\b{_TC_VERB}{_TC_GAP % 40}\b{_TC_SUBJECT}\b",
     rf"\b{_TC_SUBJECT}\b{_TC_GAP % 40}\bworth\b{_TC_GAP % 15}\b{_TC_VERB}",
-    # (3) "Stops could be tightened."
-    rf"\b{_TC_SUBJECT}\b{_TC_GAP % 40}\b(?:could|should|might|may|would|can|must)\s+(?!not\b|never\b)(?:\w+\s+)?be\s+{_TC_VERB}",
+    # (3) "Stops could be tightened." ("can" dropped, A″ (i))
+    rf"\b{_TC_SUBJECT}\b{_TC_GAP % 40}\b(?:could|should|might|may|would|must)\s+(?!not\b|never\b)(?:\w+\s+)?be\s+{_TC_VERB}",
     # (4) "Tighter stops could help." / "Reducing position size ... would be prudent." /
-    #     "A review of setups is warranted."
+    #     "A review of setups is warranted." — not "could help explain" (A″ (iii))
     rf"(?:\b{_TC_GERUND}|\b(?:review|revision|rethink|reassessment|reconsideration)\s+of"
-    rf"|\b(?:tighter|wider|smaller|larger|lower|higher))\b{_TC_GAP % 30}\b{_TC_SUBJECT}\b{_TC_GAP % 40}"
-    rf"\b(?:(?:would|could|might|may)\s+(?:be\s+(?:prudent|wise|better|sensible|helpful|advisable)|help)"
+    rf"|\b{_TC_COMPARATIVE})\b{_TC_GAP % 30}\b{_TC_SUBJECT}\b{_TC_GAP % 40}"
+    rf"\b(?:(?:would|could|might|may)\s+(?:be\s+(?:prudent|wise|better|sensible|helpful|advisable)"
+    rf"|help(?!\s+(?:to\s+)?(?:explain|account\s+for|show)\b))"
     rf"|(?:is|are)\s+(?:warranted|needed|advisable|recommended))\b",
     # (5) "Stop placement is something to revisit."
     rf"\b{_TC_SUBJECT}\b{_TC_GAP % 40}\b(?:is|are)\s+(?:something|one thing|an area)\s+to\s+{_TC_VERB}",
+    # (6) "Perhaps revisit stop placement." — imperative at the start of a sentence
+    rf"(?:^|[.!?;\n])\s*(?:(?:perhaps|maybe),?\s+(?:{_TC_IMPERATIVE}|lower)|{_TC_IMPERATIVE})\b"
+    rf"(?!\s+(?:of|in|to)\b){_TC_GAP % 40}\b{_TC_SUBJECT}\b",
+    # (7) "It could help to tighten stops."
+    rf"\b(?:could|may|might|would)\s+help\s+to\s+{_TC_VERB}{_TC_GAP % 40}\b{_TC_SUBJECT}\b",
+    # (8) "Your sizing is worth a second look."
+    rf"\b{_TC_SUBJECT}\b{_TC_GAP % 40}\b(?:is|are|(?:may|might|could|would)\s+be)\s+worth\s+"
+    rf"(?:a|another)\s+(?:second\s+|closer\s+|fresh\s+)?look\b",
+    # (9) "Stops would benefit from tightening."
+    rf"\b{_TC_SUBJECT}\b{_TC_GAP % 40}\b(?:would|could|might|may)\s+benefit\s+from\s+{_TC_GERUND}",
 )]
+# A″ (ii): a match inside the trader's or the notes' own past-tense words,
+# reported as such ("The trader wrote that a review of setups is warranted."),
+# is descriptive and passes.
+_REPORTED_SPEECH_RE = re.compile(
+    r"\b(?:wrote|noted|recorded|said|mentioned|commented|felt|thought|believed|concluded)\s+that\b",
+    re.IGNORECASE)
+_SENTENCE_END_RE = re.compile(r"[.!?\n]")
+
+
+def _in_reported_speech(text: str, start: int) -> bool:
+    """Whether the match starting at `start` follows a past-tense reporting
+    clause in the same sentence."""
+    ends = [m.end() for m in _SENTENCE_END_RE.finditer(text, 0, start)]
+    return _REPORTED_SPEECH_RE.search(text, ends[-1] if ends else 0, start) is not None
+
+
+def _trading_change_found(text: str) -> bool:
+    for pattern in (_TRADING_CHANGE_RE, *_ADVISORY_CHANGE_RES):
+        for m in pattern.finditer(text):
+            if not _in_reported_speech(text, m.start()):
+                return True
+    return False
+
+
 JOURNAL_SUMMARY_WITHHELD_MESSAGE = (
     "The AI summary was withheld because it did not pass the advisory-language check. "
     "Your journal notes are unchanged; please try again later."
@@ -495,7 +539,7 @@ def journal_summary_language_failures(text: Optional[str]) -> list:
     found = []
     if scan_prescriptive(text):
         found.append("prescriptive")
-    if _TRADING_CHANGE_RE.search(text) or any(r.search(text) for r in _ADVISORY_CHANGE_RES):
+    if _trading_change_found(text):
         found.append("trading_change")
     return found
 
