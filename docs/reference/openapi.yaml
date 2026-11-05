@@ -2,7 +2,10 @@ openapi: 3.0.3
 
 info:
   title: Momentum Trading Assistant API
-  version: 3.47.2
+  version: 3.47.3
+  # v3.47.3 (2026-11-05, ST-34, EPIC-06, v9.15, BLG-SPEC-194): documentation corrected to the live responses, no backend change —
+  # GET /reports/tax-year declares data.generated_at, and estimated_unrealised_pnl/unrealised_note move under data.summary (where
+  # reports_service.py returns them); POST /test/endpoints' OkEndpointTest drops the data envelope the handler never returned.
   # v3.47.2 (2026-11-04, ST-21, EPIC-03, v9.15): POST /reports/monthly-pnl/narrative description and 503 row —
   # a failed regeneration call (after attempt 1 failed its checks) returns the code-written fallback (200), not 503 (BLG-BE-172). No shape change.
   # v3.47.1 (2026-11-04, ST-06, EPIC-01, v9.15): GET /positions/{position_id}/stop-trail description —
@@ -873,12 +876,26 @@ paths:
                       tax_year_end:
                         type: string
                         format: date
+                      generated_at:
+                        type: string
+                        format: date-time
+                        description: UTC timestamp at which the report was generated.
                       summary:
                         type: object
                         description: |
                           Intentionally broad to avoid drift. Canonical nested field definitions live in:
                           docs/specs/api_contracts/reports_endpoints.md
                         additionalProperties: true
+                        properties:
+                          estimated_unrealised_pnl:
+                            type: number
+                            nullable: true
+                            description: v7.0 ST-14 (BLG-FEAT-70) — sum of pnl across currently open positions, computed on-read at request time (not stored). Same field/computation as GET /reports/monthly-pnl's value.
+                            example: 340.50
+                          unrealised_note:
+                            type: string
+                            description: v7.0 ST-14 (BLG-FEAT-70) — static disclaimer text, same value as GET /reports/monthly-pnl's unrealised_note.
+                            example: "Reflects current open positions at time of report generation, not positions open during the specified tax year. Indicative only — not a tax liability."
                       trades:
                         type: array
                         items:
@@ -887,14 +904,6 @@ paths:
                             Intentionally broad to avoid drift. Canonical nested field definitions live in:
                             docs/specs/api_contracts/reports_endpoints.md
                           additionalProperties: true
-                      estimated_unrealised_pnl:
-                        type: number
-                        description: v7.0 ST-14 (BLG-FEAT-70) — sum of pnl across currently open positions, computed on-read at request time (not stored). Same field/computation as GET /reports/monthly-pnl's value.
-                        example: 340.50
-                      unrealised_note:
-                        type: string
-                        description: v7.0 ST-14 (BLG-FEAT-70) — static disclaimer text, same value as GET /reports/monthly-pnl's unrealised_note.
-                        example: "Reflects current open positions at time of report generation, not positions open during the specified tax year. Indicative only — not a tax liability."
             application/pdf:
               schema:
                 type: string
@@ -7755,9 +7764,25 @@ components:
     EndpointTestResponse:
       type: object
       description: |
-        Intentionally broad to avoid drift. Canonical nested field definitions live in:
+        Top-level response body of POST /test/endpoints (no `data` envelope).
+        Nested field definitions live in:
         docs/specs/api_contracts/health_endpoints.md (POST /test/endpoints)
-      additionalProperties: true
+      required: [status, summary, results, timestamp]
+      properties:
+        status:
+          type: string
+          enum: [ok]
+        summary:
+          type: object
+          additionalProperties: true
+        results:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+        timestamp:
+          type: string
+          format: date-time
 
     TradePlan:
       type: object
@@ -8205,16 +8230,15 @@ components:
                     $ref: "#/components/schemas/HealthDetailedResponse"
 
     OkEndpointTest:
-      description: Endpoint test results
+      description: |
+        Endpoint test results. Not wrapped in the standard `data` envelope: the
+        summary, results and timestamp sit beside `status` at the top level
+        (backend/routers/test.py; health endpoints are exempt from the envelope,
+        conventions.md §13.3).
       content:
         application/json:
           schema:
-            allOf:
-              - $ref: "#/components/schemas/ApiOk"
-              - type: object
-                properties:
-                  data:
-                    $ref: "#/components/schemas/EndpointTestResponse"
+            $ref: "#/components/schemas/EndpointTestResponse"
 
 security:
   - ApiKey: []
