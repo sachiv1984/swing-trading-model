@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-05 (Sprint Execution `2026-11-03__release-v9.15` EPIC-07 — 4 new items added: BLG-BE-206, BLG-QA-250, BLG-GOV-410, BLG-GOV-411); prior — 2026-11-05 (Sprint Execution `2026-11-03__release-v9.15` EPIC-06 — 5 new items added: BLG-SPEC-221, BLG-QA-247, BLG-SPEC-222, BLG-QA-248, BLG-QA-249); prior — 2026-11-05 (Sprint Execution `2026-11-03__release-v9.15` EPIC-04 and PR #2192 review — 7 new items added: BLG-AI-27 to BLG-AI-33); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-05 (Sprint Execution `2026-11-03__release-v9.15` EPIC-07 — 6 new items added: BLG-BE-206, BLG-QA-250, BLG-GOV-410, BLG-GOV-411, BLG-QA-251, BLG-GOV-412); prior — 2026-11-05 (Sprint Execution `2026-11-03__release-v9.15` EPIC-06 — 5 new items added: BLG-SPEC-221, BLG-QA-247, BLG-SPEC-222, BLG-QA-248, BLG-QA-249); prior — 2026-11-05 (Sprint Execution `2026-11-03__release-v9.15` EPIC-04 and PR #2192 review — 7 new items added: BLG-AI-27 to BLG-AI-33); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -6944,6 +6944,27 @@ The three checks that read `open_escalations` count different dispositions as br
 
 ---
 
+### BLG-GOV-412 — Give the 10-cycle product-scope exclusions re-confirmation a trigger
+**Priority:** P3 (Low)
+**Type:** Governance Process
+**Owner:** Strategy Rules & System Intent Owner; PMO Lead
+**Source:** PR #2194 agent-mediated review (EPIC-07, cycle `2026-11-03__release-v9.15`), Product Owner finding 1 (ST-44) — 2026-11-05
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.16
+
+**Problem**
+ST-44's decision record (`docs/product/decisions/decisions--2026-11-03__release-v9.15--ST-44-strategic-exclusions-reconfirmation.md`) sets a re-confirmation of the four `current_roadmap.md` §2 product-scope exclusions every 10 completed cycles, next due at `completed_cycle_count` 101. The cadence is recorded only in that decision. No engine, audit check or workflow reads it, so it relies on someone remembering, which is the failure `BLG-GOV-195` was filed for (exclusions never re-confirmed since first recorded).
+
+**Scope**
+- Add a check, for example in `run audit` or the roadmap rebalance preflight, that flags the re-confirmation as due when `completed_cycle_count` reaches the recorded next-due value (CLAUDE.md §6 if a governance prompt changes)
+- Record where the next-due value lives so the check can read it
+
+**Acceptance Criteria**
+- At `completed_cycle_count` 101 (or a test fixture standing in for it) the check reports the re-confirmation as due
+- Before then, it reports nothing
+
+---
+
 ### BLG-SPEC-220 — List "Daily Monitor" as a secondary button in design_system.md
 **Priority:** P3 (Low)
 **Type:** Spec Debt
@@ -7147,5 +7168,26 @@ ST-42 made SC-TS-* unique and added `scripts/check_e2e_scenario_id_uniqueness.py
 **Acceptance Criteria**
 - `KNOWN_DUPLICATES` is empty and `python3 scripts/check_e2e_scenario_id_uniqueness.py` exits 0
 - Every changed citation names the renamed ID
+
+---
+
+### BLG-QA-251 — Stop the live PT-04 gate-scan test failing once Release Planning clears those gates
+**Priority:** P2 (Medium)
+**Type:** QA / Test Automation
+**Owner:** QA & Testing Owner; Head of Specs Team
+**Source:** PR #2194 agent-mediated review (EPIC-07, cycle `2026-11-03__release-v9.15`), Director of Quality finding 1 (ST-37) — 2026-11-05
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.15 (PR #2194) or v9.16
+
+**Problem**
+`tests/test_scan_backlog_gate_conditions_gating_item_shipped.py::test_live_backlog_lists_the_six_pt04_gated_items` (ST-37, BLG-GOV-404) skips only when one of the six items (`BLG-FE-39`, `BLG-QA-21`/`-22`/`-23`, `BLG-GOV-26`, `BLG-FEAT-26`) leaves the active backlog. ST-37 exists so that `release_planning_prompt.md` §1.3a clears those gates *in place*: it removes the `**Gate criteria:**` field and leaves the item in `backlog.md`. The item is then no longer gated, the scan no longer lists it, and the test fails. Reproduced in review by replacing `BLG-FE-39`'s gate line with a cleared note: "1 failed". The first Release Planning run that applies ST-37 as intended would turn CI Pytest red on its own PR.
+
+**Scope**
+- Skip (or drop) the live assertion for any of the six items whose gate no longer names PT-04, keeping the assertion for those still gated
+- Keep the fixture-based tests as the permanent AC 1/AC 2 coverage
+
+**Acceptance Criteria**
+- With one of the six items' gate cleared in place, the test passes (pytest)
+- With all six still gated on PT-04, the test still asserts all six are listed
 
 ---
