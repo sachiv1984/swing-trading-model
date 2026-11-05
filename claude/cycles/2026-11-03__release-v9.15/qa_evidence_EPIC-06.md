@@ -69,4 +69,5 @@ Last Updated: 2026-11-05
 - **Product Owner acceptance:**
   - Given by the human repository owner, acting as Product Owner, in session at the same time.
   - It accepts ST-34 to ST-36 against `stage4_backlog_slice.md`, with ST-35's production confirmation carried post-merge under `BLG-SPEC-217`.
-- **Merge:** pending — to be performed by the human repository owner. The merge commit is recorded on `main` once it exists.
+- **Merge:** performed by the human repository owner (Director of Quality and Product Owner) at 2026-11-05T12:57:11Z, merge commit `54c2895a45afcaae7edd92df8e187c1ec3b9d5fb`. QA sign-off and PO acceptance were given explicitly in session before the merge (above), not inferred from it.
+- **Post-merge (ST-35 AC 1, production half):** DS-38 applied on production by the user 2026-11-05 after the merge — pre-check 0 / 0, before `YES`/`YES`, after `NO`/`NO`. Recorded in `data_model.md` DS-38 Live Confirmation on `main`; meets `BLG-SPEC-217`'s AC.

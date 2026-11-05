@@ -37,7 +37,7 @@ Last Updated: 2026-11-05
 - **Commit format required:** `[EPIC-06][ST-35] <description>` on `exec/2026-11-03__release-v9.15/EPIC-06`
 - **Sign-off:** sign_off_cleared — staging outputs supplied by the user in session 2026-11-05 (pre-check 0 / 0; before YES/YES; after NO/NO); drift check clean on both columns.
 - **Commit SHA:** e5a7f45f379336954c07205a668f5a9e5c6a78d4
-- **Status:** Unblocked (2026-11-05T10:03:34Z) — Unblocked in-session — staging pre-check, migration and verification outputs, supplied by the user (Data Model & Domain Schema Owner), same session as delegation. Production half carried post-merge as planned at seal, tracked by BLG-SPEC-217.
+- **Status:** Unblocked (2026-11-05T10:03:34Z) — Unblocked in-session — staging pre-check, migration and verification outputs, supplied by the user (Data Model & Domain Schema Owner), same session as delegation. Production half carried post-merge as planned at seal, tracked by BLG-SPEC-217. Production half completed 2026-11-05 after the PR #2193 merge (user-run in session: pre-check 0/0, YES/YES → NO/NO); recorded in DS-38 on `main`.
 
 ## DEL-20261105-03
 
