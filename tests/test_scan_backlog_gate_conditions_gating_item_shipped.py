@@ -149,14 +149,22 @@ def test_cli_reads_roadmap_argument(tmp_path):
 
 def test_live_backlog_lists_the_six_pt04_gated_items():
     """AC 3: the six items named in BLG-GOV-404's Problem appear on the live
-    backlog. Skips once any has been cleared and archived."""
+    backlog while their gate still names PT-04.
+
+    release_planning_prompt.md §1.3a clears such a gate in place (the Gate
+    field goes, the item stays), and an item may later be archived. Either
+    way it drops out of this check, rather than failing CI on the very edit
+    ST-37 enables (BLG-QA-251). The fixture tests above stay as the permanent
+    AC 1 / AC 2 coverage."""
+    import pytest
     six = {"BLG-FE-39", "BLG-QA-21", "BLG-QA-22", "BLG-QA-23", "BLG-GOV-26", "BLG-FEAT-26"}
     backlog = (ROOT / "claude" / "backlog" / "backlog.md").read_text()
-    if not all(f"### {i} —" in backlog for i in six):
-        import pytest
-        pytest.skip("one of the six PT-04-gated items has left the active backlog")
     items = sbgc.parse_items(backlog)
     results = [sbgc.classify_item(i, t, b, AS_OF) for i, t, b in items]
+    still_gated = {r["id"] for r in results
+                   if r["id"] in six and r["gated"] and "PT-04" in r["gate_condition"]}
+    if not still_gated:
+        pytest.skip("none of the six items is still gated on PT-04 (cleared in place or archived)")
     features = sbgc.shipped_feature_ids((ROOT / p).read_text() for p in sbgc.ROADMAP_PATHS)
     listed = {r["id"] for r, _ in sbgc.gating_item_shipped(results, items, features)}
-    assert six <= listed
+    assert still_gated <= listed, sorted(still_gated - listed)
