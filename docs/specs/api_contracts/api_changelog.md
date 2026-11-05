@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Class 2
 **Status:** Canonical
-**Version:** 1.29.3
-**Last Updated:** 2026-11-04 (ST-22, EPIC-03, v9.15, BLG-BE-204 — v9.15.0 entry adds earnings_endpoints.md v0.2); prior — 2026-11-04 (ST-19/ST-21/ST-22, EPIC-03, v9.15 — v9.15.0 entry adds alerts_endpoints.md v0.14, reports_endpoints.md v0.20 and position_endpoints.md v2.19.2); prior — 2026-11-04 (ST-06, EPIC-01, v9.15, BLG-BE-173 — v9.15.0 entry: GET /positions/{position_id}/stop-trail uses the §7.2 stop with the breakeven floor); prior history retained — see prior entries in version control
+**Version:** 1.29.4
+**Last Updated:** 2026-11-05 (ST-34, EPIC-06, v9.15, BLG-SPEC-194 — v9.15.0 entry adds health_endpoints.md v1.10 and the openapi.yaml 3.47.3 tax-year correction); prior — 2026-11-04 (ST-22, EPIC-03, v9.15, BLG-BE-204 — v9.15.0 entry adds earnings_endpoints.md v0.2); prior — 2026-11-04 (ST-19/ST-21/ST-22, EPIC-03, v9.15 — v9.15.0 entry adds alerts_endpoints.md v0.14, reports_endpoints.md v0.20 and position_endpoints.md v2.19.2); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 # API Changelog
@@ -94,6 +94,24 @@ Rules:
 | Change | Details |
 |--------|---------|
 | Updated endpoint: GET /positions/{position_id}/gap-risk | `avg_gap_pct`'s weekend set is every consecutive-session pair with a non-session day between them (NYSE calendar), including ordinary Friday-to-Monday gaps; the weekend statistic is used when the next session follows a non-session day; earnings timestamps are dated in America/New_York. No shape change (BLG-BE-174). |
+
+### health_endpoints.md — v1.10 (UPDATED)
+
+**EPIC:** EPIC-06
+**ST:** ST-34
+
+| Change | Details |
+|--------|---------|
+| Updated endpoint: POST /test/endpoints | Documentation only. The example shows the top-level `status` the handler returns, and `openapi.yaml` 3.47.3's `OkEndpointTest` drops the `data` envelope it had declared: `summary`, `results` and `timestamp` sit beside `status` (BLG-SPEC-194). No backend change. |
+
+### openapi.yaml — v3.47.3 (reports_endpoints.md unchanged)
+
+**EPIC:** EPIC-06
+**ST:** ST-34
+
+| Change | Details |
+|--------|---------|
+| Updated endpoint: GET /reports/tax-year | Documentation only. `openapi.yaml` now declares `data.generated_at` and places `estimated_unrealised_pnl`/`unrealised_note` under `data.summary`, matching `reports_service.py` and `reports_endpoints.md` (BLG-SPEC-194). No backend or contract change. |
 
 ## v9.14.0 (2026-10-29 — Release v9.14)
 

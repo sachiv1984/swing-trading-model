@@ -39,6 +39,13 @@ reported separately as SKIPPED, not counted as pass or fail (this SKIPPED
 category applies only to the openapi.yaml success-schema check, not the
 error-envelope check, which has no schema to skip against).
 
+**Open schemas (ST-34, BLG-SPEC-194, EPIC-06, v9.15):** an example key nested
+under an openapi.yaml node with `additionalProperties: true` is accepted, not
+reported as drift: that node defers its field list to the contract. Such
+examples are listed under OPEN SCHEMA (informational, exit code unaffected).
+A key beside an open node, where openapi.yaml does declare the fields, is
+still checked.
+
 **Scheduled cadence (ST-44 AC):** run manually before any `docs/reference/openapi.yaml`
 version bump that touches an endpoint with a contract example (part of the
 pre-PR checklist in `commit-check` for API-contract-touching commits), and
@@ -128,6 +135,49 @@ def schema_top_keys(schema, root, depth=3):
     return keys
 
 
+def schema_open_prefixes(schema, root, depth=3, prefix=""):
+    """Dotted paths (same notation as `schema_top_keys`) of every object-like
+    node that declares `additionalProperties: true`.
+
+    openapi.yaml marks many response payloads "Intentionally broad to avoid
+    drift. Canonical nested field definitions live in: <contract file>" and
+    gives them `additionalProperties: true` with few or no `properties`. Such
+    a node names the contract as the source of truth for its fields, so an
+    example key nested under it cannot drift from openapi.yaml. Before this
+    (ST-34, BLG-SPEC-194, EPIC-06, v9.15) every key under an open node was
+    reported as POSSIBLE DRIFT, which was 7 of the 8 standing findings.
+
+    The root node's own prefix is the empty string ''."""
+    schema = resolve_ref(schema, root)
+    out = set()
+    if not isinstance(schema, dict):
+        return out
+    if _is_object_like(schema) and schema.get("additionalProperties") is True:
+        out.add(prefix)
+    for combinator in ("allOf", "oneOf", "anyOf"):
+        for sub in schema.get(combinator, []):
+            out |= schema_open_prefixes(sub, root, depth, prefix)
+    if depth <= 1:
+        return out
+    for name, sub in schema.get("properties", {}).items():
+        full = f"{prefix}.{name}" if prefix else name
+        sub_r = resolve_ref(sub, root)
+        if _is_object_like(sub_r):
+            out |= schema_open_prefixes(sub_r, root, depth - 1, full)
+        if isinstance(sub_r, dict) and sub_r.get("type") == "array":
+            out |= schema_open_prefixes(sub_r.get("items", {}), root, depth - 1, f"{full}[]")
+    return out
+
+
+def covered_by_open_prefix(key, prefixes):
+    """True if `key` sits strictly beneath one of `prefixes` (see
+    `schema_open_prefixes`). The root prefix '' covers every key."""
+    for p in prefixes:
+        if p == "" or key.startswith(p + ".") or key.startswith(p + "[]."):
+            return True
+    return False
+
+
 def json_flatten_keys(obj, prefix="", depth=3):
     keys = set()
     if depth <= 0 or not isinstance(obj, dict):
@@ -142,7 +192,8 @@ def json_flatten_keys(obj, prefix="", depth=3):
     return keys
 
 
-def response_schema_for(root, method, path):
+def response_schema_node_for(root, method, path):
+    """The unresolved 2xx application/json schema node for method+path, or None."""
     paths = root.get("paths", {})
     op = None
     # Direct match, then template-parameter match (e.g. /trade-plans/{id}).
@@ -165,8 +216,13 @@ def response_schema_for(root, method, path):
             resp = resolve_ref(responses[code], root)
             content = resp.get("content", {}).get("application/json", {})
             if "schema" in content:
-                return schema_top_keys(content["schema"], root)
+                return content["schema"]
     return None
+
+
+def response_schema_for(root, method, path):
+    node = response_schema_node_for(root, method, path)
+    return None if node is None else schema_top_keys(node, root)
 
 
 ERROR_MARKER_RE = re.compile(
@@ -334,11 +390,13 @@ def main():
     skipped = []
     envelope_violations = []  # (file, method, path, code, reasons)
     error_examples_checked = 0
+    open_accepted = []  # (file, method, path, n_keys) -- ST-34
 
     for md_file in sorted(CONTRACTS_DIR.glob("*.md")):
         text = md_file.read_text(errors="replace")
         for method, path, example in find_examples(text):
-            schema_keys = response_schema_for(root, method, path)
+            schema_node = response_schema_node_for(root, method, path)
+            schema_keys = None if schema_node is None else schema_top_keys(schema_node, root)
             if schema_keys is None:
                 skipped.append((md_file.name, method, path, "no matching openapi.yaml operation/schema"))
                 continue
@@ -351,6 +409,22 @@ def main():
             unwrapped = {k[len("data."):] for k in schema_keys if k.startswith("data.")}
             comparable = schema_keys | unwrapped
             extra = {k for k in example_keys if k not in comparable and k.split(".")[0] not in comparable}
+            # ST-34 (BLG-SPEC-194): keys nested under an `additionalProperties:
+            # true` node are not drift (see `schema_open_prefixes`). Unwrap
+            # `data.`-rooted prefixes the same way as the keys above, so an
+            # open `data` payload covers the bare example keys.
+            open_prefixes = schema_open_prefixes(schema_node, root)
+            open_prefixes |= {p[len("data."):] for p in open_prefixes if p.startswith("data.")}
+            # An open `data` payload covers every key only when the example
+            # shows the unwrapped `data` contents. A wrapped example (one with
+            # its own `data` key) is matched against the envelope, so a stray
+            # key beside `data` is still drift.
+            if "data" in open_prefixes and not ("data" in example):
+                open_prefixes.add("")
+            accepted = {k for k in extra if covered_by_open_prefix(k, open_prefixes)}
+            if accepted:
+                open_accepted.append((md_file.name, method, path, len(accepted)))
+            extra -= accepted
             checked += 1
             if extra:
                 stale.append((md_file.name, method, path, sorted(extra)))
@@ -376,6 +450,12 @@ def main():
         print(f"ERROR ENVELOPE DRIFT ({len(envelope_violations)}) — error example(s) diverge from the canonical `{{\"status\": \"error\", \"message\": \"...\"}}` envelope:")
         for fname, method, path, code, reasons in envelope_violations:
             print(f"  - {fname}: {method} {path} ({code}) -> {'; '.join(reasons)}")
+        print()
+
+    if open_accepted:
+        print(f"OPEN SCHEMA ({len(open_accepted)}) — example keys accepted under an `additionalProperties: true` node (the contract is canonical for these fields):")
+        for fname, method, path, n in open_accepted:
+            print(f"  - {fname}: {method} {path} ({n} key(s))")
         print()
 
     if skipped:

@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 1.9
-**Last Updated:** 2026-10-29 (ST-06, EPIC-01, v9.14, BLG-OPS-194 — `GET /health/detailed`'s Yahoo Finance check reports `degraded`/`unhealthy` with a `reason` when the FX or regime fetch falls back); prior — 2026-10-27 (ST-29, EPIC-05, v9.13, BLG-OPS-189 — added `render_service_id` to `GET /health/detailed`); prior — 2026-09-29 (ST-17, EPIC-04, v9.8 — added `deployed_commit_sha` to `GET /health/detailed`); prior history retained — see prior entries in version control
+**Version:** 1.10
+**Last Updated:** 2026-11-05 (ST-34, EPIC-06, v9.15, BLG-SPEC-194 — `POST /test/endpoints` example gains the top-level `status` the handler returns, and states that the response has no `data` envelope); prior — 2026-10-29 (ST-06, EPIC-01, v9.14, BLG-OPS-194 — `GET /health/detailed`'s Yahoo Finance check reports `degraded`/`unhealthy` with a `reason` when the FX or regime fetch falls back); prior — 2026-10-27 (ST-29, EPIC-05, v9.13, BLG-OPS-189 — added `render_service_id` to `GET /health/detailed`); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Overview
@@ -300,8 +300,11 @@ No request body.
 
 ### Response (200)
 
+Not wrapped in the standard `data` envelope: `summary`, `results` and `timestamp` sit beside `status` at the top level (health endpoints are exempt, `conventions.md` §13.3).
+
 ```json
 {
+  "status": "ok",
   "timestamp": "2026-02-17T10:30:00Z",
   "summary": {
     "total": 17,
@@ -555,6 +558,7 @@ None — all known deviations resolved as of v1.1 (BLG-SPEC-D14, 2026-03-25).
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.10 | 2026-11-05 | ST-34 (BLG-SPEC-194, EPIC-06, v9.15): `POST /test/endpoints` example now shows the top-level `"status": "ok"` that `backend/routers/test.py` returns, with a note that the response has no `data` envelope. `openapi.yaml` v3.47.3 corrects `OkEndpointTest` to the same flat shape (it had declared a `data` wrapper the handler never returned). Found by `scripts/check_contract_example_freshness.py`. Authority: API Contracts & Documentation Owner. |
 | 1.9 | 2026-10-29 | ST-06 (BLG-OPS-194, EPIC-01, v9.14): `GET /health/detailed`'s `checks.yahooFinance` reads the FX source and the regime sources and reports `degraded` or `unhealthy`, with a `details.reason`, when Yahoo Finance fails; previously it reported `healthy` whenever the fallback FX rate came back. Also corrected: the example's check key is `yahooFinance` (as returned), not `yahoo_finance`. Authority: Infrastructure & Operations Owner. |
 | 1.8 | 2026-10-27 | ST-29 (BLG-OPS-189, EPIC-05, v9.13): Added `render_service_id` to `GET /health/detailed` — lets the staging smoke test confirm the host behind `STAGING_API_URL` is the staging backend service. Authority: Infrastructure & Operations Owner. |
 | 1.7 | 2026-09-29 | ST-17 (BLG-OPS-169, EPIC-04, v9.8): Added `deployed_commit_sha` to `GET /health/detailed` — lets `staging-smoke-test.yml` detect a merge to `main` that should have redeployed staging but did not. Authority: Infrastructure & Operations Owner. |
