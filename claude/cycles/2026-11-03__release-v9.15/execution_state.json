@@ -6,7 +6,7 @@
   "invoked_utc": "2026-11-04T10:55:44Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-05T09:40:00Z",
+  "last_updated_utc": "2026-11-05T09:34:04Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-03",
@@ -765,10 +765,10 @@
       }
     },
     "EPIC-04": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-11-03__release-v9.15/EPIC-04",
       "pr_number": 2192,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-11-03__release-v9.15/qa_evidence_EPIC-04.md",
       "test_scenarios": [
@@ -788,7 +788,7 @@
         "ST-24": {
           "title": "Review logged briefing ticker-caveat tokens for further non-tickers",
           "classification": "delegated_backend",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "AI Compliance & Governance Officer",
           "github_issue": 2167,
           "branch": "exec/2026-11-03__release-v9.15/EPIC-04",
@@ -812,7 +812,7 @@
         "ST-25": {
           "title": "Journal summary advisory check: remaining false positives and misses",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2168,
           "branch": "exec/2026-11-03__release-v9.15/EPIC-04",
@@ -837,7 +837,7 @@
         "ST-26": {
           "title": "Chat stop-time focus rule: ignore common upper-case non-ticker words",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2169,
           "branch": "exec/2026-11-03__release-v9.15/EPIC-04",
@@ -868,7 +868,7 @@
         "ST-27": {
           "title": "Journal summary advisory check: do not flag \"could/may help explain\"",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2170,
           "branch": "exec/2026-11-03__release-v9.15/EPIC-04",
@@ -893,7 +893,7 @@
         "ST-28": {
           "title": "§13 boundary language clarity pass — AI journal summarisation",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2171,
           "branch": "exec/2026-11-03__release-v9.15/EPIC-04",
@@ -1056,12 +1056,11 @@
     "epics_merged": [
       "EPIC-01",
       "EPIC-03",
-      "EPIC-02"
-    ],
-    "epics_pending": [
+      "EPIC-02",
       "EPIC-04"
     ],
-    "all_merged": false
+    "epics_pending": [],
+    "all_merged": true
   },
   "process_notes": [
     "2026-11-04: run sprint --epic EPIC-01. Initialised EPIC-01 only (execution_state.json owner per sprint_backlog.md Merge Order); other EPIC branches append their own sections. merge_gate.epics_pending lists initialised EPICs only (ST-38 tracks counting uninitialised EPICs).",
@@ -1071,7 +1070,8 @@
     "2026-11-04: EPIC-03 merged (PR #2190, merge commit 9df0cc9a, 2026-11-04T20:55:49Z, by the human repository owner). Orphaned post-merge commit check: none (git log origin/main..origin/exec/.../EPIC-03 empty). No pending sibling EPIC branches, so STEP 4 step 3c had nothing to sync. merge_gate.all_merged reads true only because EPIC-01 and EPIC-03 are the sole initialised EPICs; EPIC-02, -04, -05, -06, -07 are not started. The next run sprint must not treat this as sprint completion or enter STEP 5 until every EPIC in the Merge Order is initialised and merged.",
     "2026-11-05 EPIC-02 merge-gate resume-sync (AUD-2026-08-21-010, user reported merge): PR #2191 merged 2026-11-05T08:21:26Z by sachiv1984, merge commit b668350b. Orphaned post-merge commit check (LL-v6.8-P3-01): git log origin/main..origin/exec/2026-11-03__release-v9.15/EPIC-02 empty, nothing to reconcile. Final PR-head CI (349a90d2): 22/22 workflows success (Playwright E2E 41992745484, CI Pytest 41992745916, Quality & Governance Gate 41992745867). merge_gate.all_merged reads true because only initialised EPICs are counted; EPIC-04/05/06/07 are not yet initialised (tracked by ST-38, EPIC-07).",
     "2026-11-05: EPIC-04 initialised (STEP 0) on exec/2026-11-03__release-v9.15/EPIC-04 cut from main 7a749bcf. Classifications per sprint_backlog.md: ST-24 delegated_backend (production log read, Human-Delegation), ST-25 and ST-28 delegated_decision, ST-26 and ST-27 autonomous (ST-27 waits on the ST-25 ruling). GitHub issues #2167-#2171 found (sync gh ran at seal).",
-    "2026-11-05: EPIC-04 agent-mediated DoQ (§5.3) pass 1 Blocked (2 blocking): fixes ec0ada79 (ST-25) and 3ce6e3bd (ST-28). Follow-ups filed: BLG-AI-28, BLG-AI-29, BLG-AI-30."
+    "2026-11-05: EPIC-04 agent-mediated DoQ (§5.3) pass 1 Blocked (2 blocking): fixes ec0ada79 (ST-25) and 3ce6e3bd (ST-28). Follow-ups filed: BLG-AI-28, BLG-AI-29, BLG-AI-30.",
+    "2026-11-05 EPIC-04 merge-gate sync (user reported, STEP 4): PR #2192 merged 2026-11-05T09:34:02Z by sachiv1984, merge commit ba053acf, head 4cad4aba. Human DoQ QA sign-off and PO acceptance given in session at 2026-11-05T09:34Z (immediately after the merge), and confirmed by merge under ESC-CLOSE-20261103-01. Orphaned post-merge commit check: git log origin/main..origin/exec/2026-11-03__release-v9.15/EPIC-04 empty. STEP 4 step 3c: no pending sibling EPIC branches exist (EPIC-05/06/07 not initialised). merge_gate.all_merged reads true only because EPIC-05/06/07 are not yet initialised; STEP 5 must not run until every Merge Order EPIC is initialised and merged."
   ],
   "sealed": false,
   "sealed_utc": null

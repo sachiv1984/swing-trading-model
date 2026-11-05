@@ -86,3 +86,19 @@ Last Updated: 2026-11-05
     - Fix commits `ec0ada79`, `3ce6e3bd` and `aaad9444` were pushed after these runs. Their CI is to be confirmed on the PR head before merge.
   - Pass 2 cosmetic note: §13.2's citation is followed by a stray full stop. It is left for the next `strategy_rules.md` write.
   - This agent-mediated sign-off does not satisfy the always-human merge-gate rows (QA sign-off and PO acceptance).
+
+## Merge Gate Confirmations
+
+- **Director of Quality QA sign-off:**
+  - Given by the human repository owner, acting as Director of Quality, in session on 2026-11-05 at about 09:34Z ("provide DOQ and PO acceptance"). This was seconds after the merge below.
+  - It accepts this evidence: ST-25, ST-26, ST-27 and ST-28 Pass, and ST-24 `Pass_with_deviation` (`BLG-AI-27`).
+  - That includes the agent-mediated sign-off block above (pass 2 Approved) and the agent-mediated PR #2192 review (comment 6654306660, both roles ⚠️ Approved with Comments, no blocking findings).
+  - At head `4cad4aba`, 19 workflow runs had succeeded, none had failed, and 1 had no conclusion yet. The PR's 34 checks were all green at `373e6ff3`.
+- **Product Owner acceptance:**
+  - Given by the human repository owner, acting as Product Owner, in session at the same time.
+  - It accepts ST-24 to ST-28 against `stage4_backlog_slice.md`, including rulings `ESC-EXEC-20261105-01` (A″) and `ESC-EXEC-20261105-02` (outcome 1).
+  - It accepts ST-24's carry-forward under `BLG-AI-27`.
+  - Follow-ups: BLG-AI-28, BLG-AI-29, BLG-AI-30, BLG-AI-31, BLG-AI-32, BLG-AI-33.
+- **Merged:** PR #2192 by the human repository owner (`sachiv1984`), 2026-11-05T09:34:02Z, merge commit `ba053acf`.
+  - The merger holds both roles, so the merge is also a confirmation under `ESC-CLOSE-20261103-01`.
+  - QA sign-off and PO acceptance: confirmed by merge — the human repository owner, 2026-11-05T09:34:02Z, merge commit `ba053acf`.
