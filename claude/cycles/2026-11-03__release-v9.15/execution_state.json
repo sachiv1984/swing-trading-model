@@ -6,7 +6,7 @@
   "invoked_utc": "2026-11-04T10:55:44Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-05T09:46:33Z",
+  "last_updated_utc": "2026-11-05T10:05:00Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-03",
@@ -956,30 +956,30 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": "AC 1: check_contract_example_freshness.py exits 0 on the branch (137 examples, 0 drift; 8 OPEN SCHEMA informational). AC 2: corrections recorded in openapi.yaml 3.47.3 info comment, health_endpoints.md v1.10 Changelog, api_changelog.md v1.29.4. 7/8 were checker false positives under additionalProperties: true nodes (checker fixed, tests added); tax-year and /test/endpoints were real openapi.yaml errors. Deviation check: none, docs now match backend. Scope bullet 2 (quality_gate.yml wiring) considered, not done; follow-up. ci_pending: CI Pytest Suite 42004971230 (plus 6 other runs) on ff08b950."
+          "notes": "AC 1: check_contract_example_freshness.py exits 0 on the branch (137 examples, 0 drift; 8 OPEN SCHEMA informational). AC 2: corrections recorded in openapi.yaml 3.47.3 info comment, health_endpoints.md v1.10 Changelog, api_changelog.md v1.29.4. 7/8 were checker false positives under additionalProperties: true nodes (checker fixed, tests added); tax-year and /test/endpoints were real openapi.yaml errors. Deviation check: none, docs now match backend. Scope bullet 2 (quality_gate.yml wiring) considered, not done; follow-up. CI on ff08b950: all 7 workflows success (CI Pytest Suite 42004971230)."
         },
         "ST-35": {
           "title": "Re-apply NOT NULL on positions.portfolio_id and positions.total_cost",
           "classification": "delegated_backend",
-          "status": "blocked_backend",
+          "status": "done",
           "assigned_to": "Data Model & Domain Schema Owner (Human-Delegation: the user)",
           "github_issue": 2178,
           "branch": "exec/2026-11-03__release-v9.15/EPIC-06",
-          "commit_sha": null,
+          "commit_sha": "e5a7f45f379336954c07205a668f5a9e5c6a78d4",
           "delegation_record_id": "DEL-20261105-02",
           "blocked_since_utc": "2026-11-05T09:46:22Z",
           "unblock_criteria": "User permission for the read-only staging pre-check and the staging NOT NULL migration; staging information_schema output recorded in the DS-xx Live Confirmation. Production half post-merge (BLG-SPEC-217).",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-11-05T10:03:34Z",
+          "acceptance_verified": true,
           "spec_references": [
-            "docs/specs/data_model.md"
+            "docs/specs/data_model.md#DS-38"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": "3.1.B.3",
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.B.unblock",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Unblocked in-session (DEL-20261105-02). Staging, run by the user 2026-11-05: pre-check 0/0, before is_nullable YES/YES, after NO/NO, recorded in DS-38 Live Confirmation. AC 2: check_data_model_drift.py read-only staging run, exit 0, no nullable mismatch. AC 1 production half post-merge, seal-marked, tracked by BLG-SPEC-217. Deviation check: none. Docs-only commit (data_model.md); no backend/** change, so 4d pytest gate not triggered."
         },
         "ST-36": {
           "title": "Apply DS-17's open-position unique index to staging",
@@ -1016,11 +1016,9 @@
     }
   },
   "blocked_items": [
-    "ST-35",
     "ST-36"
   ],
   "delegated_items": [
-    "ST-35",
     "ST-36"
   ],
   "completed_items": [
@@ -1051,7 +1049,8 @@
     "ST-26",
     "ST-27",
     "ST-28",
-    "ST-34"
+    "ST-34",
+    "ST-35"
   ],
   "open_escalations": {
     "ESC-EXEC-20261104-01": {

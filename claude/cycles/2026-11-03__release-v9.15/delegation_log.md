@@ -35,7 +35,9 @@ Last Updated: 2026-11-05
 - **Spec reference:** `docs/specs/data_model.md#DS-38` (drafted in-sprint); `stage4_backlog_slice.md#ST-35`
 - **Unblock criteria:** staging pre-check, Up Migration and Verification outputs supplied in session (`is_nullable = NO` for both columns), or the NULL row list for a backfill decision.
 - **Commit format required:** `[EPIC-06][ST-35] <description>` on `exec/2026-11-03__release-v9.15/EPIC-06`
-- **Status:** Pending
+- **Sign-off:** sign_off_cleared — staging outputs supplied by the user in session 2026-11-05 (pre-check 0 / 0; before YES/YES; after NO/NO); drift check clean on both columns.
+- **Commit SHA:** e5a7f45f379336954c07205a668f5a9e5c6a78d4
+- **Status:** Unblocked (2026-11-05T10:03:34Z) — Unblocked in-session — staging pre-check, migration and verification outputs, supplied by the user (Data Model & Domain Schema Owner), same session as delegation. Production half carried post-merge as planned at seal, tracked by BLG-SPEC-217.
 
 ## DEL-20261105-03
 
