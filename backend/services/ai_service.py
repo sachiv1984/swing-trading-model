@@ -491,7 +491,11 @@ _ADVISORY_CHANGE_RES = [re.compile(p, re.IGNORECASE) for p in (
     # (5) "Stop placement is something to revisit."
     rf"\b{_TC_SUBJECT}\b{_TC_GAP % 40}\b(?:is|are)\s+(?:something|one thing|an area)\s+to\s+{_TC_VERB}",
     # (6) "Perhaps revisit stop placement." — imperative at the start of a sentence
-    rf"(?:^|[.!?;\n])\s*(?:(?:perhaps|maybe),?\s+(?:{_TC_IMPERATIVE}|lower)|{_TC_IMPERATIVE})\b"
+    # The match starts after the boundary (lookbehind), so the reported-speech
+    # test never treats the previous sentence as this one (DoQ review).
+    # "lower" only after perhaps/maybe: "Lower stops led to ..." is descriptive.
+    rf"(?:^|(?<=[.!?;\n]))\s*(?:(?:[-*\u2022]|\d+[.)])\s+)?"
+    rf"(?:(?:perhaps|maybe),?\s+(?:{_TC_IMPERATIVE}|lower)|{_TC_IMPERATIVE})\b"
     rf"(?!\s+(?:of|in|to)\b){_TC_GAP % 40}\b{_TC_SUBJECT}\b",
     # (7) "It could help to tighten stops."
     rf"\b(?:could|may|might|would)\s+help\s+to\s+{_TC_VERB}{_TC_GAP % 40}\b{_TC_SUBJECT}\b",
@@ -507,7 +511,7 @@ _ADVISORY_CHANGE_RES = [re.compile(p, re.IGNORECASE) for p in (
 _REPORTED_SPEECH_RE = re.compile(
     r"\b(?:wrote|noted|recorded|said|mentioned|commented|felt|thought|believed|concluded)\s+that\b",
     re.IGNORECASE)
-_SENTENCE_END_RE = re.compile(r"[.!?\n]")
+_SENTENCE_END_RE = re.compile(r"[.!?;\n]")  # ";" ends a clause, as in _TC_GAP
 
 
 def _in_reported_speech(text: str, start: int) -> bool:

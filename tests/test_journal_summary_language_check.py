@@ -127,6 +127,21 @@ def test_reported_speech_does_not_cover_the_next_sentence():
     assert journal_summary_language_failures(text) == ["trading_change"]
 
 
+@pytest.mark.parametrize("text", [
+    # DoQ review (EPIC-04) finding 1: form (6) in the next sentence or clause.
+    "The trader wrote that entries were fine. Tighten stops.",
+    "The trader wrote that entries were fine. Perhaps revisit stop placement.",
+    "The trader noted that losses were small. Revisit position sizing.",
+    "The trader wrote that entries were fine; consider a tighter stop.",
+    "The trader wrote that entries were fine; tighten stops.",
+    # Bullet-led imperatives.
+    "- Tighten stops on open positions.",
+    "1. Revisit stop placement.",
+])
+def test_reported_speech_stops_at_the_sentence_or_clause(text):
+    assert journal_summary_language_failures(text) == ["trading_change"]
+
+
 def test_reported_speech_present_tense_still_caught():
     # A″ (ii) covers past-tense reporting only.
     assert journal_summary_language_failures("The notes suggest that stops should be tightened.") \
