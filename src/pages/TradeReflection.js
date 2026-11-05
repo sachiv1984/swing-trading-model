@@ -5,6 +5,7 @@ import { Loader2, BookOpen, Search, TrendingUp, TrendingDown, Calendar } from "l
 import { cn } from "../lib/utils";
 import { format } from "date-fns";
 import PageHeader from "../components/ui/PageHeader";
+import { PAGE_LABELS } from "../lib/pageLabels";
 import { Input } from "../components/ui/input";
 import TradeReflectionModal from "../components/trades/TradeReflectionModal";
 import { formatCurrency, formatR } from "../lib/format";
@@ -26,7 +27,7 @@ export default function TradeReflection() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Trade Reflections"
+        title={PAGE_LABELS.TradeReflection}
         description="Review and revisit your structured post-trade reflections."
       />
 

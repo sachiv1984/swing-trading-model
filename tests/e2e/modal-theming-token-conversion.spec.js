@@ -25,10 +25,7 @@
  *              --background token (unchanged)
  *   SC-MTC-04  ExportModal — light theme: background resolves to the light
  *              --background token, not slate-900 (fixed)
- *   SC-MTC-05  WidgetLibrary — dark theme: background resolves to the dark
- *              --popover token (unchanged)
- *   SC-MTC-06  WidgetLibrary — light theme: background resolves to the
- *              light --popover token, not slate-900 (fixed)
+ *   SC-MTC-05/06  (WidgetLibrary) v9.15 ST-12 (BLG-FE-247): removed with the legacy widget Dashboard and WidgetLibrary.js.
  *
  * Infrastructure: Playwright page.route() network interception. No live backend.
  * ROUTING NOTE: App uses HashRouter — navigate via page.goto('/#/PageKey').
@@ -123,30 +120,3 @@ test.describe('ExportModal theming (SC-MTC-03/04)', () => {
   });
 });
 
-test.describe('WidgetLibrary theming (SC-MTC-05/06)', () => {
-  async function openWidgetLibrary(page) {
-    await page.goto('/#/Dashboard');
-    await page.getByRole('button', { name: /customize/i }).click();
-    await page.getByRole('button', { name: /add widget/i }).click();
-    await expect(page.getByRole('heading', { name: 'Widget Library' })).toBeVisible({ timeout: 10000 });
-  }
-
-  test('SC-MTC-05: dark theme background unchanged from pre-fix visual', async ({ page }) => {
-    await setTheme(page, 'dark');
-    await mockFallback(page);
-    await mockDashboardPositions(page);
-    await openWidgetLibrary(page);
-    const bg = await dialogBackgroundColor(page);
-    expect(bg).not.toBe('rgba(0, 0, 0, 0)');
-    expect(bg).not.toBe('transparent');
-  });
-
-  test('SC-MTC-06: light theme background is not the hardcoded dark slate-900 value', async ({ page }) => {
-    await setTheme(page, 'light');
-    await mockFallback(page);
-    await mockDashboardPositions(page);
-    await openWidgetLibrary(page);
-    const bg = await dialogBackgroundColor(page);
-    expect(bg).not.toContain(SLATE_900_RGB);
-  });
-});

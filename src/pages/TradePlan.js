@@ -5,6 +5,7 @@ import { apiFetch } from "../api/base44Client";
 import { Button } from "../components/ui/button";
 import { Dialog, DialogContent, DialogTitle } from "../components/ui/dialog";
 import PageHeader from "../components/ui/PageHeader";
+import { PAGE_LABELS } from "../lib/pageLabels";
 import DataState from "../components/ui/DataState";
 import EntryChecklist, { DEFAULT_CHECKLIST_ITEMS } from "../components/trades/EntryChecklist";
 import SignalContextPanel, { buildSignalPrePopulation } from "../components/trades/SignalContextPanel";
@@ -595,7 +596,7 @@ export default function TradePlan() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Trade Plan"
+        title={PAGE_LABELS.TradePlan}
         description={
           <div className="flex items-center gap-2 flex-wrap">
             <span>{form.ticker ? `${form.ticker} — ${form.market}` : "Document your pre-trade reasoning"}</span>

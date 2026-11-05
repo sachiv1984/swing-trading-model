@@ -33,6 +33,7 @@ import { cn } from "../lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import moment from "moment";
 import { todayLocal } from "../lib/localDate";
+import { PAGE_LABELS } from "../lib/pageLabels";
 
 // ST-10 (EPIC-02, v9.13, BLG-SPEC-188): hours with one decimal below 48 h, else
 // days and hours (system_status.md v1.3 §Stop Freshness Panel).
@@ -358,7 +359,7 @@ export default function SystemStatus() {
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold bg-gradient-to-r from-cyan-400 to-violet-400 bg-clip-text text-transparent">
-            System Status
+            {PAGE_LABELS.SystemStatus}
           </h1>
           <p className="text-slate-600 dark:text-slate-400 mt-1">Monitor system health and validate calculations</p>
         </div>

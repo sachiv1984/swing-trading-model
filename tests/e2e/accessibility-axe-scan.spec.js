@@ -402,7 +402,7 @@ for (const theme of ['dark', 'light']) {
       await mockRoutes(page);
       await mockReplayRoutes(page);
       await page.goto('/#/Replay');
-      await expect(page.getByRole('heading', { name: 'Replay Mode' })).toBeVisible({ timeout: 10000 });
+      await expect(page.getByRole('heading', { name: 'Replay', exact: true })).toBeVisible({ timeout: 10000 });
       await expectThemeApplied(page, theme);
     });
 

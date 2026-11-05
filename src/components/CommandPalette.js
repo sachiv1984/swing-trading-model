@@ -11,34 +11,13 @@ import {
 } from "./ui/command";
 import { createPageUrl } from "../utils";
 import { apiFetch, API_BASE_URL, api } from "../api/base44Client";
-import { PAGES } from "../pages.config";
+import { PAGE_LABELS, PALETTE_PAGE_KEYS } from "../lib/pageLabels";
 import { Briefcase, Eye, FileText } from "lucide-react";
 
-// ST-01 (EPIC-01, BLG-FE-115): human-readable labels for page keys —
-// page keys like "TradeHistory" are not directly presentable per
-// docs/specs/blg_fe_115_pre_implementation_readiness_pass.md AC-01.
-const PAGE_LABELS = {
-  DashboardHome: "Dashboard",
-  Dashboard: "Dashboard",
-  Positions: "Positions",
-  Reports: "Reports",
-  Settings: "Settings",
-  Signals: "Signals",
-  TradeEntry: "Trade Entry",
-  TradeHistory: "Trade History",
-  SystemStatus: "System Status",
-  PerformanceAnalytics: "Analytics",
-  RiskDashboard: "Risk Dashboard",
-  TradeReflection: "Trade Reflection",
-  Watchlist: "Watchlist",
-  WeeklyDigest: "Weekly Digest",
-  Screener: "Screener",
-  TradePlan: "Trade Plan",
-  TradePlans: "Trade Plans",
-  TickerUniverse: "Ticker Universe",
-  RedFlagJournal: "Red Flag Journal",
-  StrategyBenchmark: "Strategy Benchmark",
-};
+// Page labels come from the single label source (ST-11, BLG-FE-248, v9.15;
+// docs/reference/glossary.md §UI Labels). PALETTE_PAGE_KEYS lists the pages
+// that have a palette entry, including routes App.js declares by hand
+// (Notifications), which PAGES does not contain.
 
 // Recent/frequent pages shown when the input is empty (top-level nav items) —
 // per ux_spec.md §2.3 "Empty input state".
@@ -118,15 +97,15 @@ export default function CommandPalette() {
   });
 
   const pageEntries = useMemo(
-    () => Object.keys(PAGES).map((key) => ({ key, label: PAGE_LABELS[key] || key })),
+    () => PALETTE_PAGE_KEYS.map((key) => ({ key, label: PAGE_LABELS[key] })),
     []
   );
 
   const frequentPageEntries = useMemo(
     () =>
-      FREQUENT_PAGE_KEYS.filter((key) => PAGES[key]).map((key) => ({
+      FREQUENT_PAGE_KEYS.filter((key) => PALETTE_PAGE_KEYS.includes(key)).map((key) => ({
         key,
-        label: PAGE_LABELS[key] || key,
+        label: PAGE_LABELS[key],
       })),
     []
   );

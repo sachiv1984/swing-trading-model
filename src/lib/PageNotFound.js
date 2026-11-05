@@ -1,4 +1,6 @@
+import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
+import { NOT_FOUND_TITLE } from './pageLabels';
 import { base44 } from '../api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 
@@ -6,6 +8,12 @@ import { useQuery } from '@tanstack/react-query';
 export default function PageNotFound({}) {
     const location = useLocation();
     const pageName = location.pathname.substring(1);
+
+    // ST-13 (BLG-FE-249, v9.15): PageNotFound renders outside Layout, so it sets
+    // the not-found tab title itself (navigation.md §Browser Tab Title).
+    useEffect(() => {
+        document.title = NOT_FOUND_TITLE;
+    }, []);
 
     const { data: authData, isFetched } = useQuery({
         queryKey: ['user'],

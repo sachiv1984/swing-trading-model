@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { Button } from "../components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
 import PageHeader from "../components/ui/PageHeader";
+import { PAGE_LABELS } from "../lib/pageLabels";
 import SignalCard from "../components/signals/SignalCard";
 import MarketStatusBar from "../components/signals/MarketStatusBar";
 import { Zap, RefreshCw, Filter, TrendingUp, DollarSign, Target } from "lucide-react";
@@ -210,7 +211,7 @@ export default function SignalsPage() {
   return (
     <div>
       <PageHeader
-        title="Monthly Signals"
+        title={PAGE_LABELS.Signals}
         description={
           <div>
             <div>Signals for {currentMonth}</div>

@@ -293,7 +293,7 @@ test('SC-SNV-08: All nav items present in correct groups; routes resolve', async
   // v1.4 (ST-02, EPIC-02, v7.7): "Alerts" removed as a duplicate of "Notifications";
   // "Weekly Digest" moved from Analytics to System, adjacent to Notifications.
   const groups = {
-    Trading:   ['Positions', 'Trade Entry', 'Trade History', 'Reflections'],
+    Trading:   ['Positions', 'Trade Entry', 'Trade History', 'Trade Reflections'],
     Analytics: ['Analytics', 'Risk Dashboard', 'Signals'],
     Tools:     ['Screener', 'Watchlist'],
     System:    ['Settings', 'System Status', 'Weekly Digest', 'Notifications'],

@@ -121,7 +121,7 @@ test('SC-REP-01: "Replay" nav item is present and navigates to the Replay page',
   await page.getByRole('link', { name: 'Replay' }).click();
 
   await expect(page).toHaveURL(/#\/Replay/);
-  await expect(page.getByRole('heading', { name: 'Replay Mode' })).toBeVisible({ timeout: 10000 });
+  await expect(page.getByRole('heading', { name: 'Replay', exact: true })).toBeVisible({ timeout: 10000 });
 });
 
 // ---------------------------------------------------------------------------

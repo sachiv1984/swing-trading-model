@@ -6,6 +6,7 @@ import { api } from '../api/base44Client';
 import { BarChart2, RefreshCw, Upload, ChevronDown, ChevronUp, Play, Loader2 } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import PageHeader from '../components/ui/PageHeader';
+import { PAGE_LABELS } from '../lib/pageLabels';
 import { formatCurrency, formatPercent, formatR } from '../lib/format';
 
 // ---------------------------------------------------------------------------
@@ -966,7 +967,7 @@ export default function StrategyBenchmark() {
         <BarChart2 className="w-5 h-5 text-slate-400 mt-1.5 shrink-0" data-testid="benchmark-header-icon" />
         <div className="flex-1">
           <PageHeader
-            title="Strategy Benchmark"
+            title={PAGE_LABELS.StrategyBenchmark}
             description="Compare live trading vs backtest"
             actions={
               <button

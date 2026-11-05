@@ -65,22 +65,8 @@ def _max_delay(expr: str, index_bound: int = None) -> float:
     raise AssertionError(f"unbounded or unrecognised delay expression: {expr!r}")
 
 
-class TestRecentTradesWidget:
-    FILE = "components/dashboard/widgets/RecentTradesWidget.js"
-
-    def test_stagger_transition_has_explicit_duration_0_3(self):
-        source = _read(self.FILE)
-        match = re.search(r"transition=\{\{\s*delay:\s*idx \* 0\.05,\s*duration:\s*0\.3\s*\}\}", source)
-        assert match, "RecentTradesWidget.js: expected `{ delay: idx * 0.05, duration: 0.3 }` transition not found"
-
-    def test_max_combined_time_to_full_opacity_within_ceiling(self):
-        source = _read(self.FILE)
-        bound = re.search(r"\.slice\(0,\s*(\d+)\)", source)
-        assert bound, "expected the trades list to be capped by .slice(0, N)"
-        transitions = [t for t in _transitions(source) if "idx" in t[0]]
-        assert transitions, "stagger transition not found"
-        for expr, duration in transitions:
-            assert _max_delay(expr, int(bound.group(1))) + duration <= CEILING_SECONDS
+# TestRecentTradesWidget removed v9.15 (ST-12, BLG-FE-247, EPIC-02): RecentTradesWidget.js
+# was deleted with the legacy widget Dashboard it was rendered on.
 
 
 class TestReportsTaxYearReport:

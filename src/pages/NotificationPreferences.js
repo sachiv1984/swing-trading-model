@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import PageHeader from "../components/ui/PageHeader";
+import { PAGE_LABELS } from "../lib/pageLabels";
 import NotificationTabBar from "../components/notifications/NotificationTabBar";
 import PreferenceRow from "../components/notifications/PreferenceRow";
 import AlertThresholdsSection from "../components/notifications/AlertThresholdsSection";
@@ -110,7 +111,7 @@ export default function NotificationPreferences() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Notification Preferences"
+        title={PAGE_LABELS.NotificationPreferences}
         description="Configure which alerts you receive by email, and set custom thresholds."
       />
 

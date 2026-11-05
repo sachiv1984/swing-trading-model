@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { Sparkles } from "lucide-react";
 import { api } from "../../../api/base44Client";
+import { formatReleaseVersion } from "../../../lib/releaseVersion";
 import DataState from "../../ui/DataState";
 
 const MAX_BULLETS = 8;
@@ -38,7 +39,8 @@ export default function WhatsNewCard() {
       <div className="flex items-center gap-2 mb-4">
         <Sparkles className="w-4 h-4 text-slate-500" />
         <h2 className="text-sm font-semibold text-white">
-          {entry ? `What's New — ${entry.version}` : "What's New"}
+          {/* ST-14 (BLG-FE-266, v9.15): no suffix when the version is absent (dashboard.md §6A). */}
+          {formatReleaseVersion(entry?.version) ? `What's New — ${formatReleaseVersion(entry.version)}` : "What's New"}
         </h2>
       </div>
 

@@ -26,13 +26,13 @@
  *                  "destructive"` (cva-driven class, not a literal
  *                  className override; e.g. Reports.js PDF/CSV download
  *                  failure toasts)
- *   - popover:     LIVE, unoverridden — WidgetLibrary.js DialogContent
+ *   - popover:     (v9.15: WidgetLibrary.js removed by ST-12) WidgetLibrary.js DialogContent
  *                  (`bg-popover border-border`, not overridden). Already
  *                  covered by SC-MTC-05/06 in
  *                  modal-theming-token-conversion.spec.js (ST-06, EPIC-01,
  *                  this same v8.7 cycle) — no new test added here, cited
  *                  as existing coverage.
- *   - border:      LIVE, unoverridden — same WidgetLibrary.js DialogContent
+ *   - border:      (v9.15: WidgetLibrary.js removed by ST-12) same WidgetLibrary.js DialogContent
  *                  as popover (`border-border` literal class, not the bare
  *                  `border` utility). New coverage added here (SC-TOK-04).
  *   - card:        NOT LIVE. `Card` (ui/card.js) is never imported by any
@@ -70,8 +70,8 @@
  *              token (differs from the item's unfocused background)
  *   SC-TOK-03  destructive — Reports.js PDF download failure toast:
  *              background/border resolve to the --destructive token
- *   SC-TOK-04  border  — WidgetLibrary popover dialog: border colour
- *              resolves to the --border token (non-transparent)
+ *   SC-TOK-04  (WidgetLibrary border) v9.15 ST-12 (BLG-FE-247): removed
+ *              with the legacy widget Dashboard and WidgetLibrary.js.
  *   SC-TOK-05  secondary — TickerUniverse.js "Clear filters" badge:
  *              background/text colour resolve to the --secondary /
  *              --secondary-foreground tokens (non-transparent)
@@ -206,28 +206,6 @@ test.describe('SC-TOK-03 — destructive token (Reports.js download-failure toas
     await expect(toast).toBeVisible({ timeout: 8000 });
     const bg = await toast.evaluate((el) => window.getComputedStyle(el).backgroundColor);
     expect(TRANSPARENT_VALUES).not.toContain(bg);
-  });
-});
-
-test.describe('SC-TOK-04 — border token (WidgetLibrary popover dialog)', () => {
-  async function mockDashboardPositions(page) {
-    await page.route(`${API}/positions`, (route) =>
-      route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify([]) })
-    );
-  }
-
-  test('SC-TOK-04: dialog border colour is a real, non-transparent colour', async ({ page }) => {
-    await mockFallback(page);
-    await mockDashboardPositions(page);
-    await page.goto('/#/Dashboard');
-    await page.getByRole('button', { name: /customize/i }).click();
-    await page.getByRole('button', { name: /add widget/i }).click();
-
-    const dialog = page.getByRole('dialog');
-    await expect(dialog).toBeVisible({ timeout: 10000 });
-    const borderColor = await dialog.evaluate((el) => window.getComputedStyle(el).borderColor);
-    expect(borderColor).toBeTruthy();
-    expect(TRANSPARENT_VALUES).not.toContain(borderColor);
   });
 });
 

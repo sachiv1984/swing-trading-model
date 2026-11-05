@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { cn } from "../lib/utils";
 import PageHeader from "../components/ui/PageHeader";
+import { PAGE_LABELS } from "../lib/pageLabels";
 import NotificationTabBar from "../components/notifications/NotificationTabBar";
 import { Button } from "../components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
@@ -192,7 +193,7 @@ export default function NotificationsHistory() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Alert History"
+        title={PAGE_LABELS.NotificationsHistory}
         description="A log of every alert rule evaluation by the system."
       />
 

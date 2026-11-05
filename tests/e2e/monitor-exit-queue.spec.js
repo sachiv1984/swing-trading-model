@@ -43,7 +43,7 @@ const UK_RISK_OFF = makePosition({
 });
 
 /**
- * Stubs the Dashboard. `state.open` is the open-position list GET /positions returns;
+ * Stubs the Positions page (the Dashboard before v9.15). `state.open` is the open-position list GET /positions returns;
  * a successful exit removes the position from it, as the backend would.
  * Returns the list of position-route requests seen ("METHOD path").
  */
@@ -71,14 +71,21 @@ async function stubDashboard(page, state, { exitStatus = 200, regimes = [], exit
       state.open = state.open.filter((p) => p.id !== exit[1]);
       return r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok', data: { position_id: exit[1] } }) });
     }
+    // v9.15 ST-12: the Positions page also reads other /positions/* GET routes
+    // (grace-period alerts, gap risk); answer them empty. Any other method
+    // (e.g. PATCH /positions/{id}) still gets 405.
+    if (req.method() === 'GET') {
+      return r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok', data: [] }) });
+    }
     return r.fulfill({ status: 405, contentType: 'application/json', body: JSON.stringify({ detail: 'Method Not Allowed' }) });
   });
   return calls;
 }
 
 async function openMonitor(page) {
-  // The "Daily Monitor" quick action is a plain onClick <div>: click its heading.
-  await page.getByRole('heading', { name: 'Daily Monitor' }).click();
+  // v9.15 ST-12: the Monitor opens from the Positions header button (the legacy
+  // Dashboard and its Quick Actions widget were removed; ESC-EXEC-20261104-05 (a)).
+  await page.getByTestId('daily-monitor-button').click();
   await expect(page.getByRole('heading', { name: 'Daily Position Monitor' })).toBeVisible({ timeout: 10000 });
 }
 
@@ -92,7 +99,7 @@ test.describe('Daily Position Monitor exit queue (ST-01)', () => {
   test('SC-MEQ-01: a suggested stop exit records POST /positions/{id}/exit and leaves the open list', async ({ page }) => {
     const state = { open: [STOP_HIT] };
     const calls = await stubDashboard(page, state);
-    await page.goto('/#/Dashboard');
+    await page.goto('/#/Positions');
     await openMonitor(page);
     await expect(page.getByRole('dialog')).toContainText('Stop price hit');
 
@@ -125,7 +132,7 @@ test.describe('Daily Position Monitor exit queue (ST-01)', () => {
   test('SC-MEQ-02: a failed exit shows the error, keeps the values, and Cancel returns to the Monitor', async ({ page }) => {
     const state = { open: [STOP_HIT] };
     await stubDashboard(page, state, { exitStatus: 500 });
-    await page.goto('/#/Dashboard');
+    await page.goto('/#/Positions');
     await openMonitor(page);
     await selectAndConfirm(page, ['STOP']);
 
@@ -153,7 +160,7 @@ test.describe('Daily Position Monitor exit queue (ST-01)', () => {
     await stubDashboard(page, state, {
       regimes: [{ market: 'UK', status: 'risk_off' }, { market: 'US', status: 'risk_on' }],
     });
-    await page.goto('/#/Dashboard');
+    await page.goto('/#/Positions');
     await openMonitor(page);
     await expect(page.getByRole('dialog')).toContainText('Market risk off');
     await selectAndConfirm(page, ['STOP', 'RISK.L']);
@@ -185,7 +192,7 @@ test.describe('Daily Position Monitor exit queue (ST-01)', () => {
       exitGate,
       regimes: [{ market: 'UK', status: 'risk_off' }, { market: 'US', status: 'risk_on' }],
     });
-    await page.goto('/#/Dashboard');
+    await page.goto('/#/Positions');
     await openMonitor(page);
     await selectAndConfirm(page, ['STOP', 'RISK.L']);
 

@@ -7,6 +7,7 @@ import RecentActivityCard from "../components/dashboard/home/RecentActivityCard"
 import MorningBriefing from "../components/dashboard/home/MorningBriefing";
 import GateProgressStrip from "../components/dashboard/home/GateProgressStrip";
 import AiDailyBriefing from "../components/dashboard/home/AiDailyBriefing";
+import { PAGE_LABELS } from "../lib/pageLabels";
 import WhatsNewCard from "../components/dashboard/home/WhatsNewCard";
 
 const DASHBOARD_QUERY_KEYS = [
@@ -35,7 +36,7 @@ export default function DashboardHome() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">Dashboard</h1>
+        <h1 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">{PAGE_LABELS.DashboardHome}</h1>
         <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">Session summary — live data</p>
       </div>
 

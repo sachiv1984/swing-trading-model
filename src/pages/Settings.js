@@ -7,6 +7,7 @@ import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
 import PageHeader from "../components/ui/PageHeader";
+import { PAGE_LABELS } from "../lib/pageLabels";
 import { Save, Loader2, CheckCircle2, Sliders, CreditCard, Palette, TrendingUp, ShieldAlert, DollarSign } from "lucide-react";
 import { api } from "../api/base44Client";
 import { toast } from "sonner";
@@ -163,7 +164,7 @@ export default function Settings() {
   return (
     <div className="space-y-6 max-w-2xl mx-auto">
       <PageHeader
-        title="Settings"
+        title={PAGE_LABELS.Settings}
         description="Configure your strategy parameters and preferences"
         actions={
           <div className="flex flex-wrap items-center justify-end gap-3 w-full sm:w-auto">

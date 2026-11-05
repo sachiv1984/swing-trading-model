@@ -72,3 +72,20 @@ Last Updated: 2026-11-04
 - **Blocks execution:** No
 - **Disposition:** Resolved
 - **Resolution summary (2026-11-04T19:29:15Z):** Data Model & Domain Schema Owner ruling, given in-session by the user acting in that role, dated 2026-11-04: **the spec follows the code.** Open-position `pnl` is native P&L converted at the live GBP/USD rate (US) and is not net of `fees_paid`. Rationale: it is the figure every surface displays today, and changing it would change displayed P&L on several pages, which needs a design pass and more than the 0.5d budget. The difference from the realised (closed-trade) basis, which is fee-netted and includes currency movement on the principal, is recorded in the dictionary and filed as a follow-up backlog item. ST-23 reclassified `autonomous`.
+
+## ESC-EXEC-20261104-05
+
+- **Raised at:** 2026-11-04T21:03:58Z
+- **Routine:** Sprint Execution
+- **Cycle ID:** 2026-11-03__release-v9.15
+- **Step:** STEP 3.1.A → 3.1.D (EPIC-02 execution loop, found while mapping ST-12's "components used only by the legacy page")
+- **ST/EPIC item:** ST-12 / EPIC-02 (BLG-FE-247)
+- **Trigger type:** Scope
+- **Blocking statement:** ST-12 removes `src/pages/Dashboard.js` and "components used only by the legacy page" (slice Scope bullet 3; `site-structure-phase1/decision_record.md` §3.3). `MonitorModal.js` (the Daily Position Monitor, with the v9.13 exit queue and v9.14 grace-aware suggestions) is opened only from that page's Quick Actions widget (`QuickActions.js` "Daily Monitor"), and `positions.md` §Daily Position Monitor Exit Queue names "Dashboard → Quick Actions → Run Monitor" as its entry point. No other page opens it. Applied literally, ST-12 deletes a live feature and 7 Playwright scenarios (`monitor-exit-queue.spec.js` SC-MEQ-01..04, `monitor-grace-aware-suggestions.spec.js` SC-MGS-01..03). Neither the design brief nor the slice addendum mentions the Monitor. Moving its entry point to another page is new UI that the engine may not add on its own authority (§5.2: no scope extension).
+- **Engine recommendation (non-binding):** (a) move the Monitor's entry point to a "Daily Monitor" button in the Positions page header, carrying over `MonitorModal`, the exit queue and the pre-select logic unchanged, retarget the 7 monitor scenarios to `/#/Positions`, and update `positions.md` §Daily Position Monitor's entry-point line in the same commit. Positions is where exits are recorded, `positions.md` already owns the Monitor spec, and the Dashboard home is about to be redesigned by ST-09/`BLG-FE-254`. Other options: (b) the same move onto the Dashboard home; (c) defer ST-12 to v9.16 and keep the legacy page this sprint; (d) remove the Monitor with the page (not recommended: feature loss).
+- **Owning authority:** Product Owner (scope), with the Head of UX & Design on placement
+- **Unblock criteria:** a dated Product Owner ruling naming option (a), (b), (c) or (d), recorded here and in ST-12's QA evidence. Under (a) or (b), the Head of UX & Design confirms the placement (agent-mediated per §5.3 permitted).
+- **SLA due-by:** 2026-11-05T21:03:58Z (24h — lifecycle/scope)
+- **Blocks execution:** No
+- **Disposition:** Resolved
+- **Resolution summary (2026-11-04T21:04:56Z):** Product Owner ruling, given in-session by the user acting in that role, dated 2026-11-04: **option (a), move the Monitor to Positions.** ST-12 adds a "Daily Monitor" button to the Positions page header that opens `MonitorModal` with the exit queue and pre-select logic unchanged, retargets the 7 monitor scenarios (`monitor-exit-queue.spec.js`, `monitor-grace-aware-suggestions.spec.js`) to `/#/Positions`, and updates `positions.md` §Daily Position Monitor's entry-point line in the same commit (Known Deviation standard does not apply: the spec is updated to the ruled placement). The Head of UX & Design confirms the placement (agent-mediated, §5.3) in ST-12's QA evidence. ST-12 reclassified `autonomous`.

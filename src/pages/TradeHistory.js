@@ -8,6 +8,7 @@ import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
 import { cn } from "../lib/utils";
 import PageHeader from "../components/ui/PageHeader";
+import { PAGE_LABELS } from "../lib/pageLabels";
 import StatsCard from "../components/ui/StatsCard";
 import TradeHistoryTable from "../components/trades/TradeHistoryTable";
 import SavedFiltersControl from "../components/trades/SavedFiltersControl";
@@ -246,7 +247,7 @@ export default function TradeHistory() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Trade History"
+        title={PAGE_LABELS.TradeHistory}
         description="Review your closed positions and performance"
         actions={
           /* BLG-FEAT-07: CSV Export button in page header area (F-28).
