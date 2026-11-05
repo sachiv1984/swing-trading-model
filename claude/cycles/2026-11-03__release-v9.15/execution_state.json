@@ -6,7 +6,7 @@
   "invoked_utc": "2026-11-04T10:55:44Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-05T09:39:56Z",
+  "last_updated_utc": "2026-11-05T09:46:33Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-03",
@@ -934,37 +934,40 @@
         "ST-34": {
           "title": "Clear the 8 pre-existing success-example drifts so check_contract_example_freshness.py exits 0",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 2177,
           "branch": "exec/2026-11-03__release-v9.15/EPIC-06",
-          "commit_sha": null,
+          "commit_sha": "ff08b950deb8f855addfc56eff5935ad1e6f6346",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-11-05T09:45:10Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/reference/openapi.yaml",
-            "scripts/check_contract_example_freshness.py"
+            "docs/specs/api_contracts/health_endpoints.md",
+            "docs/specs/api_contracts/reports_endpoints.md",
+            "scripts/check_contract_example_freshness.py",
+            "tests/test_check_contract_example_freshness.py"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "AC 1: check_contract_example_freshness.py exits 0 on the branch (137 examples, 0 drift; 8 OPEN SCHEMA informational). AC 2: corrections recorded in openapi.yaml 3.47.3 info comment, health_endpoints.md v1.10 Changelog, api_changelog.md v1.29.4. 7/8 were checker false positives under additionalProperties: true nodes (checker fixed, tests added); tax-year and /test/endpoints were real openapi.yaml errors. Deviation check: none, docs now match backend. Scope bullet 2 (quality_gate.yml wiring) considered, not done; follow-up. ci_pending: CI Pytest Suite 42004971230 (plus 6 other runs) on ff08b950."
         },
         "ST-35": {
           "title": "Re-apply NOT NULL on positions.portfolio_id and positions.total_cost",
           "classification": "delegated_backend",
-          "status": "not_started",
+          "status": "blocked_backend",
           "assigned_to": "Data Model & Domain Schema Owner (Human-Delegation: the user)",
           "github_issue": 2178,
           "branch": "exec/2026-11-03__release-v9.15/EPIC-06",
           "commit_sha": null,
-          "delegation_record_id": null,
-          "blocked_since_utc": null,
+          "delegation_record_id": "DEL-20261105-02",
+          "blocked_since_utc": "2026-11-05T09:46:22Z",
           "unblock_criteria": "User permission for the read-only staging pre-check and the staging NOT NULL migration; staging information_schema output recorded in the DS-xx Live Confirmation. Production half post-merge (BLG-SPEC-217).",
           "completed_utc": null,
           "acceptance_verified": false,
@@ -974,20 +977,20 @@
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
-          "last_completed_substep": null,
+          "last_completed_substep": "3.1.B.3",
           "sign_off_record": null,
           "notes": ""
         },
         "ST-36": {
           "title": "Apply DS-17's open-position unique index to staging",
           "classification": "delegated_backend",
-          "status": "not_started",
+          "status": "blocked_backend",
           "assigned_to": "Data Model & Domain Schema Owner (Human-Delegation: the user)",
           "github_issue": 2179,
           "branch": "exec/2026-11-03__release-v9.15/EPIC-06",
           "commit_sha": null,
-          "delegation_record_id": null,
-          "blocked_since_utc": null,
+          "delegation_record_id": "DEL-20261105-03",
+          "blocked_since_utc": "2026-11-05T09:46:33Z",
           "unblock_criteria": "User permission for DS-17's staging duplicate pre-check and Up Migration; staging pg_indexes output recorded in DS-17.",
           "completed_utc": null,
           "acceptance_verified": false,
@@ -997,7 +1000,7 @@
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
-          "last_completed_substep": null,
+          "last_completed_substep": "3.1.B.3",
           "sign_off_record": null,
           "notes": ""
         }
@@ -1012,8 +1015,14 @@
       "reason": "Superseded by ST-12: both win-rate widgets exist only on legacy Dashboard.js, which ST-12 deletes. Product Owner, 2026-11-03 (sprint_backlog.md Items Deferred This Sprint)."
     }
   },
-  "blocked_items": [],
-  "delegated_items": [],
+  "blocked_items": [
+    "ST-35",
+    "ST-36"
+  ],
+  "delegated_items": [
+    "ST-35",
+    "ST-36"
+  ],
   "completed_items": [
     "ST-01",
     "ST-02",
@@ -1041,7 +1050,8 @@
     "ST-25",
     "ST-26",
     "ST-27",
-    "ST-28"
+    "ST-28",
+    "ST-34"
   ],
   "open_escalations": {
     "ESC-EXEC-20261104-01": {

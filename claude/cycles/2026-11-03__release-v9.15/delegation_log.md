@@ -20,3 +20,35 @@ Last Updated: 2026-11-05
 - **Unblock criteria:** the token list with counts (or "no lines logged") supplied in session or in this record.
 - **Commit format required:** `[EPIC-04][ST-24] <description>` on `exec/2026-11-03__release-v9.15/EPIC-04`
 - **Status:** In Progress — carried to post-merge (2026-11-05T08:50:24Z). The AI Compliance & Governance Officer (the user, in session) said the production token list is not available in-sprint and chose to carry it post-merge. Tracked by `BLG-AI-27`, filed before the PR opens. ST-24 is graded Pass_with_deviation.
+
+## DEL-20261105-02
+
+- **ST Item:** ST-35 — Re-apply NOT NULL on positions.portfolio_id and positions.total_cost
+- **EPIC:** EPIC-06
+- **Classification:** delegated_backend (staging and production DDL, Human-Delegation — `sprint_backlog.md` ST-35 Notes, RISK-01; LL-v8.0-P3-01 infra/ops pattern)
+- **Assigned to:** Data Model & Domain Schema Owner (the user, live write access)
+- **GitHub Issue:** #2178
+- **Branch:** exec/2026-11-03__release-v9.15/EPIC-06
+- **Delegated at:** 2026-11-05T09:46:22Z
+- **What is needed:** The sandbox credential is `readonly_staging` and the engine has no production access. On **staging**: run the DS-38 pre-check (`portfolio_id IS NULL` / `total_cost IS NULL` counts) and, only if both are 0, the Up Migration and the Verification query; paste all three outputs. If a count is non-zero, paste the row IDs (id, ticker, status, entry_date) instead and do not migrate. Production: same three steps after the EPIC-06 PR merges (post-merge, tracked by BLG-SPEC-217).
+- **Workflow viability (LL-v9.10-P3-01):** Not a workflow dispatch. Direct SQL by the user; no GitHub Actions run is involved.
+- **Spec reference:** `docs/specs/data_model.md#DS-38` (drafted in-sprint); `stage4_backlog_slice.md#ST-35`
+- **Unblock criteria:** staging pre-check, Up Migration and Verification outputs supplied in session (`is_nullable = NO` for both columns), or the NULL row list for a backfill decision.
+- **Commit format required:** `[EPIC-06][ST-35] <description>` on `exec/2026-11-03__release-v9.15/EPIC-06`
+- **Status:** Pending
+
+## DEL-20261105-03
+
+- **ST Item:** ST-36 — Apply DS-17's open-position unique index to staging
+- **EPIC:** EPIC-06
+- **Classification:** delegated_backend (staging DDL, Human-Delegation — `sprint_backlog.md` ST-36 Notes, RISK-01; LL-v8.0-P3-01 infra/ops pattern)
+- **Assigned to:** Data Model & Domain Schema Owner (the user, live write access)
+- **GitHub Issue:** #2179
+- **Branch:** exec/2026-11-03__release-v9.15/EPIC-06
+- **Delegated at:** 2026-11-05T09:46:33Z
+- **What is needed:** On **staging**: run DS-17's Up Migration (its `DO` block is the duplicate pre-check and aborts with the offending groups listed if any exist), then DS-17's Verification query; paste both outputs. If the migration aborts, paste the abort message instead.
+- **Workflow viability (LL-v9.10-P3-01):** Not a workflow dispatch. Direct SQL by the user; no GitHub Actions run is involved.
+- **Spec reference:** `docs/specs/data_model.md#DS-17`; `stage4_backlog_slice.md#ST-36`
+- **Unblock criteria:** DS-17 Verification output from staging listing `idx_positions_open_ticker_entry_date_unique` with DS-17's definition, supplied in session.
+- **Commit format required:** `[EPIC-06][ST-36] <description>` on `exec/2026-11-03__release-v9.15/EPIC-06`
+- **Status:** Pending
