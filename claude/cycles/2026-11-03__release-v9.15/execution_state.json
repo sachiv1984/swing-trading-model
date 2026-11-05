@@ -1360,7 +1360,8 @@
       "EPIC-06"
     ],
     "epics_pending": [
-      "EPIC-07"
+      "EPIC-07",
+      "EPIC-05"
     ],
     "all_merged": false
   },
