@@ -642,3 +642,18 @@ class TestMainOpenSchema:
         assert "POSSIBLE DRIFT (1)" in out
         assert "generated_at" in out
         assert "summary.total" not in out.split("POSSIBLE DRIFT")[1].split("\n")[1]
+
+    def test_wrapped_example_with_extra_key_beside_open_data_flags_drift(self, tmp_path, monkeypatch, capsys):
+        # DoQ review finding (ST-34): an open `data` payload must not hide a
+        # stray top-level key beside `data` in a wrapped example.
+        rc = self._run(tmp_path, monkeypatch, self._openapi({"type": "object", "additionalProperties": True}),
+                       '{"status": "ok", "data": {"anything": 1}, "warnings": ["x"]}')
+        assert rc == 1
+        out = capsys.readouterr().out
+        assert "POSSIBLE DRIFT (1)" in out
+        assert "warnings" in out
+
+    def test_wrapped_example_under_open_data_passes(self, tmp_path, monkeypatch, capsys):
+        rc = self._run(tmp_path, monkeypatch, self._openapi({"type": "object", "additionalProperties": True}),
+                       '{"status": "ok", "data": {"anything": {"nested": 1}}}')
+        assert rc == 0

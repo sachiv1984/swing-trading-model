@@ -415,7 +415,11 @@ def main():
             # open `data` payload covers the bare example keys.
             open_prefixes = schema_open_prefixes(schema_node, root)
             open_prefixes |= {p[len("data."):] for p in open_prefixes if p.startswith("data.")}
-            if "data" in open_prefixes:
+            # An open `data` payload covers every key only when the example
+            # shows the unwrapped `data` contents. A wrapped example (one with
+            # its own `data` key) is matched against the envelope, so a stray
+            # key beside `data` is still drift.
+            if "data" in open_prefixes and not ("data" in example):
                 open_prefixes.add("")
             accepted = {k for k in extra if covered_by_open_prefix(k, open_prefixes)}
             if accepted:
