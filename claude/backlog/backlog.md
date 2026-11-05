@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-05 (Sprint Execution `2026-11-03__release-v9.15` EPIC-06 — 2 new items added: BLG-SPEC-221, BLG-QA-247); prior — 2026-11-05 (Sprint Execution `2026-11-03__release-v9.15` EPIC-04 and PR #2192 review — 7 new items added: BLG-AI-27 to BLG-AI-33); prior — 2026-11-05 (PR #2191 agent-mediated Director of Quality / Product Owner review — 2 new items added: BLG-FE-273, BLG-FE-274); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-05 (Sprint Execution `2026-11-03__release-v9.15` EPIC-06 — 3 new items added: BLG-SPEC-221, BLG-QA-247, BLG-SPEC-222); prior — 2026-11-05 (Sprint Execution `2026-11-03__release-v9.15` EPIC-04 and PR #2192 review — 7 new items added: BLG-AI-27 to BLG-AI-33); prior — 2026-11-05 (PR #2191 agent-mediated Director of Quality / Product Owner review — 2 new items added: BLG-FE-273, BLG-FE-274); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -6999,5 +6999,26 @@ Every live run reports a missing index named `IF`. `INDEX_RE` (`scripts/check_da
 **Acceptance Criteria**
 - `parse_index_names()` on `data_model.md` no longer returns `IF`
 - The new test passes; existing drift tests still pass
+
+---
+
+### BLG-SPEC-222 — Decide whether to gate PRs on check_contract_example_freshness.py
+**Priority:** P4 (Low)
+**Type:** Spec Debt
+**Owner:** API Contracts & Documentation Owner
+**Source:** Sprint Execution 2026-11-03__release-v9.15, EPIC-06/ST-34 Scope bullet 2 (BLG-SPEC-194), DoQ review — 2026-11-05
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.16
+
+**Problem**
+ST-34 brought `scripts/check_contract_example_freshness.py` to exit 0 and fixed its open-schema false positives, but did not add it to `quality_gate.yml`, so that the gate could not block sibling EPICs' PRs mid-sprint. Without a gate, new example drift is only caught by a manual run or at audit.
+
+**Scope**
+- Decide whether to add the checker as a `quality_gate.yml` job, now that its false-positive rate is near zero
+- If yes, add the job and note it in the script's "Scheduled cadence" docstring
+
+**Acceptance Criteria**
+- A dated decision by the API Contracts & Documentation Owner is recorded on this item
+- If gated: a PR with an example key missing from `openapi.yaml` fails the new job
 
 ---
