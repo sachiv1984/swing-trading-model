@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-05 (Sprint Execution `2026-11-03__release-v9.15` EPIC-06 — 3 new items added: BLG-SPEC-221, BLG-QA-247, BLG-SPEC-222); prior — 2026-11-05 (Sprint Execution `2026-11-03__release-v9.15` EPIC-04 and PR #2192 review — 7 new items added: BLG-AI-27 to BLG-AI-33); prior — 2026-11-05 (PR #2191 agent-mediated Director of Quality / Product Owner review — 2 new items added: BLG-FE-273, BLG-FE-274); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-05 (Sprint Execution `2026-11-03__release-v9.15` EPIC-06 — 5 new items added: BLG-SPEC-221, BLG-QA-247, BLG-SPEC-222, BLG-QA-248, BLG-QA-249); prior — 2026-11-05 (Sprint Execution `2026-11-03__release-v9.15` EPIC-04 and PR #2192 review — 7 new items added: BLG-AI-27 to BLG-AI-33); prior — 2026-11-05 (PR #2191 agent-mediated Director of Quality / Product Owner review — 2 new items added: BLG-FE-273, BLG-FE-274); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -7020,5 +7020,48 @@ ST-34 brought `scripts/check_contract_example_freshness.py` to exit 0 and fixed 
 **Acceptance Criteria**
 - A dated decision by the API Contracts & Documentation Owner is recorded on this item
 - If gated: a PR with an example key missing from `openapi.yaml` fails the new job
+
+---
+
+### BLG-QA-248 — Check nested example keys under declared objects in check_contract_example_freshness.py
+**Priority:** P4 (Low)
+**Type:** QA / Test Automation
+**Owner:** API Contracts & Documentation Owner; QA & Testing Owner
+**Source:** PR #2193 agent-mediated Director of Quality review (EPIC-06/ST-34, v9.15) — 2026-11-05
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.16
+
+**Problem**
+In `main()`, a key counts as covered when its first dotted segment is a known schema key (`k.split(".")[0] not in comparable`). So `{"summary": {"total": 1, "bogus": 2}}` passes against a schema whose `summary` declares only `total`: nested keys under a declared, closed object are never checked. This was there before ST-34. Since ST-34 made the open-schema rule explicit, this blanket leniency is no longer needed for open nodes, but it still hides drift under closed ones.
+
+**Scope**
+- Replace the first-segment shortcut with a check against the full dotted key set, keeping the ST-34 open-prefix rule for `additionalProperties: true` nodes
+- Triage any drift this newly surfaces on the real contracts (fix, or record the side that is right)
+- Add a test for a stray nested key under a closed object
+
+**Acceptance Criteria**
+- A stray nested key under a closed object is reported as POSSIBLE DRIFT (test)
+- `python3 scripts/check_contract_example_freshness.py` exits 0 on `main`, with each newly surfaced drift corrected and recorded in the changed contract's changelog
+
+---
+
+### BLG-QA-249 — Guard positions.portfolio_id and total_cost NOT NULL in the seed/insert invariant test
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** Data Model & Domain Schema Owner; QA & Testing Owner
+**Source:** PR #2193 agent-mediated Director of Quality review (EPIC-06/ST-35, DS-38, v9.15) — 2026-11-05
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.16
+
+**Problem**
+DS-38 makes `positions.portfolio_id` and `total_cost` NOT NULL on staging (production post-merge, BLG-SPEC-217). DS-23 shipped `tests/test_fees_paid_not_null_invariant.py` so that no seed or `INSERT INTO positions` can omit `fees_paid`, but nothing guards the two new NOT NULL columns. A future seed that omits either would pass CI and fail only when run against staging or production.
+
+**Scope**
+- Extend the invariant test (or add a sibling) so every `INSERT INTO positions` in `backend/**/*.sql`, `scripts/**/*.sql` and `database.create_position()` names `portfolio_id` and `total_cost`
+- Keep the existing `fees_paid` checks unchanged
+
+**Acceptance Criteria**
+- The test fails on a fixture insert that omits `portfolio_id` or `total_cost`, and passes on the current seeds
+- `tests/test_fees_paid_not_null_invariant.py` (or the sibling) passes in CI
 
 ---
