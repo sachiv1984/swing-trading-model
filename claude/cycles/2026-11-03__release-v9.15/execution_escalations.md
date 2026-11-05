@@ -104,7 +104,8 @@ Last Updated: 2026-11-04
 - **Unblock criteria:** a dated ruling recorded in this escalation's resolution, answering §13.1 and §13.2, before the code change (ST-25 AC 1). The engine then implements it, adds each BLG-AI-24 and BLG-AI-26 sentence as a test with the ruled result, keeps every ST-15 (v9.14) and v9.13 ST-18 case's result, and updates `ai_s13_boundary_test_suite.md` B-JS-04.
 - **SLA due-by:** 2026-11-08T08:26:16Z (72h — Strategy)
 - **Blocks execution:** No
-- **Disposition:** Open
+- **Disposition:** Resolved
+- **Resolution summary (2026-11-05T08:50:24Z):** AI Compliance & Governance Officer ruling, given in-session by the user acting in that role, dated 2026-11-05: **(A″) approved as proposed**, amending (A) `ESC-EXEC-20261027-03` and (A′) `ESC-EXEC-20261030-02`. §13.1: the journal summary stays a description of what the notes record; no AI authority is added. §13.2: a statement of what the system permits ("can be moved"), the trader's own past-tense words reported as such, and "could/may help explain/account for/show" are descriptive and pass; the six missed sentences suggest changing stops or sizing, which is the advisory risk §13.2 excludes, so the new forms fail as `trading_change`. Parts: (i) "can" dropped from form (3); (ii) past-tense reported speech of the notes or trader passes; (iii) "help" + explanatory verb excluded from form (4) (ST-27, BLG-AI-26); (iv) new forms — "think about" and comparative + subject in form (1), sentence-initial imperative change verb (optionally after "perhaps/maybe"), "could/may/might/would help to" + change verb, subject … "worth a (second/another) look", subject … modal + "benefit from" + change gerund. Past tense passes; `compliance_check_result` values, fallback, prompt and `JOURNAL_SUMMARY_PROMPT_VERSION` unchanged. ST-25 reclassified `autonomous`; ST-27 proceeds under this ruling.
 
 ## ESC-EXEC-20261105-02
 
@@ -120,4 +121,5 @@ Last Updated: 2026-11-04
 - **Unblock criteria:** a dated outcome (1), (2) or (3) recorded in this escalation's resolution. The engine then writes the decision record under `docs/product/decisions/` answering each clause it cites, and under (1) applies the case (c) write with its §16 Change Log row, registry entry and §15 re-run in one commit.
 - **SLA due-by:** 2026-11-08T08:26:16Z (72h — Strategy)
 - **Blocks execution:** No
-- **Disposition:** Open
+- **Disposition:** Resolved
+- **Resolution summary (2026-11-05T08:50:24Z):** Strategy Rules & System Intent Owner ruling, given in-session by the user acting in that role, dated 2026-11-05: **outcome (1), clarify.** The re-read finds §13.1 and §13.2 hold for the journal summary but that §13's text does not state the exclusion three rulings have inferred, so the boundary language is not explicit enough. ST-28 applies the case (c) write confirmed at seal (2026-11-03): one §13.2 sentence stating that AI-written text describing the user's data must not suggest changing stops, position sizing, setups or other strategy parameters, and a §13.5 roster row for the journal summary citing the new decision record; documentation-only version 1.25 with its §16 Change Log row, `DOCUMENTATION_ONLY_VERSIONS` entry and §15 re-run. ST-28 reclassified `autonomous`.

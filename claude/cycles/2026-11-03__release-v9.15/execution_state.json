@@ -6,7 +6,7 @@
   "invoked_utc": "2026-11-04T10:55:44Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-05T08:26:16Z",
+  "last_updated_utc": "2026-11-05T08:50:24Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-03",
@@ -800,18 +800,18 @@
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": null
+          "notes": "AI Compliance & Governance Officer (the user, in session, 2026-11-05T08:50:24Z): production caveat-token list not available in-sprint; carry post-merge with a tracking backlog item filed before the PR opens; grade ST-24 Pass_with_deviation."
         },
         "ST-25": {
           "title": "Journal summary advisory check: remaining false positives and misses",
-          "classification": "delegated_decision",
-          "status": "blocked_decision",
-          "assigned_to": "AI Compliance & Governance Officer",
+          "classification": "autonomous",
+          "status": "in_progress",
+          "assigned_to": "engine",
           "github_issue": 2168,
           "branch": "exec/2026-11-03__release-v9.15/EPIC-04",
           "commit_sha": null,
           "delegation_record_id": "ESC-EXEC-20261105-01",
-          "blocked_since_utc": "2026-11-05T08:26:16Z",
+          "blocked_since_utc": null,
           "unblock_criteria": "Dated AI Compliance & Governance Officer ruling on amendment (A″) recorded in ESC-EXEC-20261105-01.",
           "completed_utc": null,
           "acceptance_verified": false,
@@ -821,7 +821,7 @@
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": null
+          "notes": "Reclassified delegated_decision -> autonomous on ESC-EXEC-20261105-01 resolution (AI Compliance & Governance Officer, the user, in session, 2026-11-05T08:50:24Z)."
         },
         "ST-26": {
           "title": "Chat stop-time focus rule: ignore common upper-case non-ticker words",
@@ -874,14 +874,14 @@
         },
         "ST-28": {
           "title": "§13 boundary language clarity pass — AI journal summarisation",
-          "classification": "delegated_decision",
-          "status": "blocked_decision",
-          "assigned_to": "Strategy Rules & System Intent Owner",
+          "classification": "autonomous",
+          "status": "in_progress",
+          "assigned_to": "engine",
           "github_issue": 2171,
           "branch": "exec/2026-11-03__release-v9.15/EPIC-04",
           "commit_sha": null,
           "delegation_record_id": "ESC-EXEC-20261105-02",
-          "blocked_since_utc": "2026-11-05T08:26:16Z",
+          "blocked_since_utc": null,
           "unblock_criteria": "Dated Strategy Rules & System Intent Owner outcome (1), (2) or (3) recorded in ESC-EXEC-20261105-02.",
           "completed_utc": null,
           "acceptance_verified": false,
@@ -891,7 +891,7 @@
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": null
+          "notes": "Reclassified delegated_decision -> autonomous on ESC-EXEC-20261105-02 resolution (Strategy Rules & System Intent Owner, the user, in session, 2026-11-05T08:50:24Z)."
         }
       }
     }
@@ -904,10 +904,7 @@
       "reason": "Superseded by ST-12: both win-rate widgets exist only on legacy Dashboard.js, which ST-12 deletes. Product Owner, 2026-11-03 (sprint_backlog.md Items Deferred This Sprint)."
     }
   },
-  "blocked_items": [
-    "ST-25",
-    "ST-28"
-  ],
+  "blocked_items": [],
   "delegated_items": [
     "ST-24"
   ],
@@ -1009,7 +1006,10 @@
       "raised_utc": "2026-11-05T08:26:16Z",
       "sla_due_utc": "2026-11-08T08:26:16Z",
       "blocks_execution": false,
-      "disposition": "Open"
+      "disposition": "Resolved",
+      "resolved_utc": "2026-11-05T08:50:24Z",
+      "resolved_by": "AI Compliance & Governance Officer (the user, in session)",
+      "resolution_summary": "(A″) approved as proposed: \"can\" dropped from form (3); past-tense reported speech passes; \"help explain/account for/show\" excluded from form (4); five new advisory forms fail as trading_change. Prompt, version, result values and fallback unchanged."
     },
     "ESC-EXEC-20261105-02": {
       "cycle": "2026-11-03__release-v9.15",
@@ -1019,7 +1019,10 @@
       "raised_utc": "2026-11-05T08:26:16Z",
       "sla_due_utc": "2026-11-08T08:26:16Z",
       "blocks_execution": false,
-      "disposition": "Open"
+      "disposition": "Resolved",
+      "resolved_utc": "2026-11-05T08:50:24Z",
+      "resolved_by": "Strategy Rules & System Intent Owner (the user, in session)",
+      "resolution_summary": "Outcome (1), clarify: one §13.2 sentence (AI-written text describing the user's data must not suggest changing stops, sizing, setups or other strategy parameters) and a §13.5 roster row for the journal summary; documentation-only v1.25, case (c)."
     }
   },
   "merge_gate": {
