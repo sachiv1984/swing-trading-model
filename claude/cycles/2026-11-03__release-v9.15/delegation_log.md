@@ -56,3 +56,19 @@ Last Updated: 2026-11-05
 - **Sign-off:** sign_off_cleared — staging migration ran without abort and pg_indexes output supplied by the user in session 2026-11-05; matches DS-17.
 - **Commit SHA:** dfee397be4f255352436538845afe5780b428b45
 - **Status:** Unblocked (2026-11-05T10:20:33Z) — Unblocked in-session — staging DS-17 Up Migration and Verification output, supplied by the user (Data Model & Domain Schema Owner), same session as delegation.
+
+## DEL-20261105-04
+
+- **ST Item:** ST-29 — ANTHROPIC_API_KEY 6-month scope audit
+- **EPIC:** EPIC-05
+- **Classification:** delegated_backend (Anthropic console and secret-store reads, Human-Delegation — `sprint_backlog.md` ST-29 Notes, RISK-01; LL-v8.0-P3-01 infra/ops pattern)
+- **Assigned to:** Cybersecurity & Trust Lead (the user, Anthropic console access)
+- **GitHub Issue:** #2172
+- **Branch:** exec/2026-11-03__release-v9.15/EPIC-05
+- **Delegated at:** 2026-11-05T18:00:13Z
+- **What is needed:** From the Anthropic console: (1) the list of active API keys in the workspace, with each key's creation date and last-used date (names only, never values); (2) whether the key in Render's production and staging `ANTHROPIC_API_KEY` was created on or after 2026-08-25 (the BLG-OPS-38 annual rotation due date in `docs/ops/api_key_rotation_policy.md`); (3) whether the GitHub Actions secret `REACT_APP_ANTHROPIC_API_KEY` (set 2026-05-25, injected into the public GitHub Pages build by `deploy.yml`) holds a live Anthropic key.
+- **Workflow viability (LL-v9.10-P3-01):** Not a workflow dispatch. Console reads by the user; no GitHub Actions run is involved.
+- **Spec reference:** `docs/security/anthropic_api_key_scope_review.md`; `docs/ops/api_key_rotation_policy.md`; `stage4_backlog_slice.md#ST-29`
+- **Unblock criteria:** answers to (1)–(3) supplied in session, or a statement that console access is not available in-sprint (then AC 1's console half and AC 2 carry post-merge under a tracking item filed before the PR opens).
+- **Commit format required:** `[EPIC-05][ST-29] <description>` on `exec/2026-11-03__release-v9.15/EPIC-05`
+- **Status:** Pending

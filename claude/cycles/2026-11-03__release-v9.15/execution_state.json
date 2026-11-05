@@ -6,7 +6,7 @@
   "invoked_utc": "2026-11-04T10:55:44Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-05T17:54:06Z",
+  "last_updated_utc": "2026-11-05T18:01:44Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-03",
@@ -1270,6 +1270,135 @@
           "notes": "ESC-EXEC-20261105-04 resolved in session 2026-11-05 (Product Owner, the user): engine recommendation accepted. AC 1: dated record rules all seven (3 re-confirmed, 4 flagged with reasons). AC 2 is post-merge per seal (link as the next run roadmap's input), tracked by BLG-GOV-408; initiative_register.md unchanged. Reclassified delegated_decision -> autonomous on resolution. Deviation check: none (Case B)."
         }
       }
+    },
+    "EPIC-05": {
+      "status": "in_progress",
+      "branch": "exec/2026-11-03__release-v9.15/EPIC-05",
+      "pr_number": null,
+      "pr_status": null,
+      "qa_signed_off": false,
+      "qa_evidence_log": "claude/cycles/2026-11-03__release-v9.15/qa_evidence_EPIC-05.md",
+      "test_scenarios": [],
+      "sign_off_record": null,
+      "stories": {
+        "ST-29": {
+          "title": "ANTHROPIC_API_KEY 6-month scope audit",
+          "classification": "delegated_backend",
+          "status": "blocked_backend",
+          "assigned_to": "Cybersecurity & Trust Lead; Infrastructure & Operations Owner",
+          "github_issue": 2172,
+          "branch": "exec/2026-11-03__release-v9.15/EPIC-05",
+          "commit_sha": null,
+          "delegation_record_id": "DEL-20261105-04",
+          "blocked_since_utc": "2026-11-05T18:00:19Z",
+          "unblock_criteria": "Console answers (active keys with created/last-used dates; production/staging key created on or after 2026-08-25; whether REACT_APP_ANTHROPIC_API_KEY holds a live key) supplied in session, or console access declared unavailable in-sprint.",
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "docs/security/anthropic_api_key_scope_review.md",
+            "docs/governance/ai_feature_touchpoint_register.md"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "Human-Delegation for console reads (AC 1 key permissions, AC 2 rotation); endpoint-register cross-check autonomous."
+        },
+        "ST-30": {
+          "title": "Rebalance-exit generation should check that today's screener run completed",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "Infrastructure & Operations Owner",
+          "github_issue": 2173,
+          "branch": "exec/2026-11-03__release-v9.15/EPIC-05",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "docs/specs/api_contracts/signal_endpoints.md"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": null
+        },
+        "ST-31": {
+          "title": "Skip the five code-test workflows on governance-only and docs-only pushes",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "FinOps & Resource Architect; Infrastructure & Operations Owner",
+          "github_issue": 2174,
+          "branch": "exec/2026-11-03__release-v9.15/EPIC-05",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            ".github/workflows/ci-tests.yml"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "AC 1 post-merge (first governance-only PR on main), tracked by BLG-OPS-211."
+        },
+        "ST-32": {
+          "title": "Tell \"no qualifying tickers\" apart from \"momentum run missing\" in the month-end rebalance job",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "Infrastructure & Operations Owner; Strategy Rules & System Intent Owner",
+          "github_issue": 2175,
+          "branch": "exec/2026-11-03__release-v9.15/EPIC-05",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "docs/specs/api_contracts/signal_endpoints.md"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": null
+        },
+        "ST-33": {
+          "title": "Record the weekly market-data call-volume baseline from production",
+          "classification": "delegated_backend",
+          "status": "returned_to_backlog",
+          "assigned_to": "FinOps & Resource Architect; Infrastructure & Operations Owner",
+          "github_issue": 2176,
+          "branch": "exec/2026-11-03__release-v9.15/EPIC-05",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "docs/specs/data_model.md#DS-36",
+            "docs/ops/data_pipeline_cost_baseline.md"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "Conditional (release_planning §1.4b), gate 2026-11-09: 7 full days of production data after the 2026-11-02 deploy, plus production read access. Not promotable at EPIC-05 STEP 0 (2026-11-05). Returned to backlog in flight 2026-11-05T18:01:44Z (AUD-2026-05-27-003): Product Owner (the user, in session, 2026-11-05) authorised the return; the §1.4b gate (2026-11-09) cannot clear before EPIC-05 merges. Expected path per sprint_backlog.md ST-33 Notes, not a deviation. BLG-OPS-197 stays open; no delegation record was raised."
+        }
+      }
     }
   },
   "deferred_at_planning": {
@@ -1281,7 +1410,9 @@
     }
   },
   "blocked_items": [],
-  "delegated_items": [],
+  "delegated_items": [
+    "ST-29"
+  ],
   "completed_items": [
     "ST-01",
     "ST-02",
@@ -1440,6 +1571,19 @@
       "resolved_utc": "2026-11-05T14:38:30Z",
       "resolved_by": "Product Owner (the user, in session)",
       "resolution_summary": "Engine recommendation accepted as drafted; decision record docs/product/decisions/decisions--2026-11-03__release-v9.15--ST-45-priority3-deferred-sunset-review.md"
+    },
+    "ESC-EXEC-20261105-05": {
+      "cycle": "2026-11-03__release-v9.15",
+      "summary": "ST-31/EPIC-05 — governance-only pushes: skip all five code suites (literal AC) or keep CI Pytest's ~22 docs-coupled tests running",
+      "trigger_type": "Scope",
+      "owning_authority": "Product Owner (with the FinOps & Resource Architect)",
+      "raised_utc": "2026-11-05T18:01:33Z",
+      "sla_due_utc": "2026-11-06T18:01:33Z",
+      "blocks_execution": false,
+      "disposition": "Resolved",
+      "resolved_utc": "2026-11-05T18:01:33Z",
+      "resolved_by": "Product Owner (the user, in session)",
+      "resolution_summary": "Engine recommendation accepted: on claude/**- or docs/**-only pushes CI Pytest Phase A runs only the docs-coupled subset; the other four suites skip via job-level skips so required checks report. No backlog remainder."
     }
   },
   "merge_gate": {
@@ -1468,7 +1612,9 @@
     "2026-11-05 EPIC-04 merge-gate sync (user reported, STEP 4): PR #2192 merged 2026-11-05T09:34:02Z by sachiv1984, merge commit ba053acf, head 4cad4aba. Human DoQ QA sign-off and PO acceptance given in session at 2026-11-05T09:34Z (immediately after the merge), and confirmed by merge under ESC-CLOSE-20261103-01. Orphaned post-merge commit check: git log origin/main..origin/exec/2026-11-03__release-v9.15/EPIC-04 empty. STEP 4 step 3c: no pending sibling EPIC branches exist (EPIC-05/06/07 not initialised). merge_gate.all_merged reads true only because EPIC-05/06/07 are not yet initialised; STEP 5 must not run until every Merge Order EPIC is initialised and merged.",
     "2026-11-05 EPIC-06 (PR #2193, merge 54c2895a): orphaned post-merge commit check — git log origin/main..origin/exec/2026-11-03__release-v9.15/EPIC-06 empty, nothing to reconcile. STEP 4 3c sibling sync N/A: EPIC-07 and EPIC-05 branches not yet created. Merge-gate confirmations recorded on the branch (59156fd9) before the merge; post-merge records on main.",
     "2026-11-05T13:10:38Z EPIC-07 STEP 0: initialised 9 stories (ST-37..ST-45; ST-44/ST-45 delegated_decision per sprint_backlog.md), issues #2180-#2188 found (sync gh ran at seal), branch created from main 244b5809. merge_gate.epics_pending set to [EPIC-07]; EPIC-05 still uninitialised, so all_merged is false only via EPIC-07 until ST-38 makes the check derive pending from merge_order.",
-    "2026-11-05 EPIC-07 merge-gate sync (user reported, STEP 4): PR #2194 merged 2026-11-05T17:54:06Z by sachiv1984, merge commit 89157ca5, head 20030e41. Human DoQ QA sign-off and PO acceptance given in session before the merge (qa_evidence_EPIC-07.md Merge Gate Confirmations, b44abb64). Orphaned post-merge commit check: git log origin/main..origin/exec/2026-11-03__release-v9.15/EPIC-07 empty. STEP 4 step 3c: no pending sibling branch exists (EPIC-05 not yet initialised). merge_gate.epics_pending = [EPIC-05]; all_merged false (ST-38 check now counts it)."
+    "2026-11-05 EPIC-07 merge-gate sync (user reported, STEP 4): PR #2194 merged 2026-11-05T17:54:06Z by sachiv1984, merge commit 89157ca5, head 20030e41. Human DoQ QA sign-off and PO acceptance given in session before the merge (qa_evidence_EPIC-07.md Merge Gate Confirmations, b44abb64). Orphaned post-merge commit check: git log origin/main..origin/exec/2026-11-03__release-v9.15/EPIC-07 empty. STEP 4 step 3c: no pending sibling branch exists (EPIC-05 not yet initialised). merge_gate.epics_pending = [EPIC-05]; all_merged false (ST-38 check now counts it).",
+    "2026-11-05T17:59:56Z EPIC-05 STEP 0: initialised 5 stories (ST-29..ST-33). ST-29 delegated_backend (Anthropic console, Human-Delegation; endpoint-register cross-check autonomous), ST-30/31/32 autonomous, ST-33 delegated_backend and conditional (gate 2026-11-09, not cleared at init). Issues #2172-#2176 found (sync gh ran at seal). Branch cut from main 9021e2ef.",
+    "2026-11-05T18:01:44Z ST-33 returned_to_backlog in flight (PO-authorised, conditional gate 2026-11-09 not cleared). ESC-EXEC-20261105-05 (ST-31 scope) raised and resolved in session."
   ],
   "sealed": false,
   "sealed_utc": null
