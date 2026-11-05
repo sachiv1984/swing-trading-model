@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-05 (Sprint Execution `2026-11-03__release-v9.15` EPIC-06 — 5 new items added: BLG-SPEC-221, BLG-QA-247, BLG-SPEC-222, BLG-QA-248, BLG-QA-249); prior — 2026-11-05 (Sprint Execution `2026-11-03__release-v9.15` EPIC-04 and PR #2192 review — 7 new items added: BLG-AI-27 to BLG-AI-33); prior — 2026-11-05 (PR #2191 agent-mediated Director of Quality / Product Owner review — 2 new items added: BLG-FE-273, BLG-FE-274); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-05 (Sprint Execution `2026-11-03__release-v9.15` EPIC-07 — 6 new items added: BLG-BE-206, BLG-QA-250, BLG-GOV-410, BLG-GOV-411, BLG-QA-251, BLG-GOV-412); prior — 2026-11-05 (Sprint Execution `2026-11-03__release-v9.15` EPIC-06 — 5 new items added: BLG-SPEC-221, BLG-QA-247, BLG-SPEC-222, BLG-QA-248, BLG-QA-249); prior — 2026-11-05 (Sprint Execution `2026-11-03__release-v9.15` EPIC-04 and PR #2192 review — 7 new items added: BLG-AI-27 to BLG-AI-33); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -6861,6 +6861,27 @@ When the user presses Regenerate on a stored AI monthly P&L summary and the new 
 
 ---
 
+### BLG-BE-206 — Return journal-summary history trade_ids as an array of UUID strings
+**Priority:** P3 (Low)
+**Type:** Backend Engineering / API contract conformance
+**Owner:** Head of Engineering; Backend Engineering Patterns Owner
+**Source:** ST-40 (BLG-QA-221), EPIC-07, sprint execution `2026-11-03__release-v9.15` — out-of-scope finding from the new real-Postgres test `tests/test_ai_audit_uuid_and_cost_postgres.py` — 2026-11-05
+**Effort:** XS (<1h plus test)
+**Provisional-Target:** v9.16
+
+**Problem**
+`GET /ai/journal-summary/history` returns each record's `trade_ids` as the Postgres array text `"{uuid,uuid}"`, not the array of UUID strings `ai_endpoints.md` documents (`records[].trade_ids`: array of string (UUID) or null). Since DS-31 the column is `UUID[]`, and psycopg2 has no adapter registered for `uuid[]` (the backend never calls `psycopg2.extras.register_uuid`), so `query_audit_log()` passes the unparsed string through. No frontend page calls the endpoint today, so the impact is limited to API consumers and audits reading the history.
+
+**Scope**
+- Return `trade_ids` as a list of UUID strings (or null) from `query_audit_log()`, for example by selecting `trade_ids::text[]` or registering the UUID array adapter
+- Add a real-Postgres (Phase B) assertion on the returned shape to `tests/test_ai_audit_uuid_and_cost_postgres.py`
+
+**Acceptance Criteria**
+- `query_audit_log()` returns `trade_ids` as a list of UUID strings for a trade-ID run and null for a date-range run (Phase B pytest)
+- The `GET /ai/journal-summary/history` response matches `ai_endpoints.md`'s documented shape
+
+---
+
 ### BLG-GOV-409 — Settle the clash between the no-IDs-in-headings rule and DEV-xxx deviation headings
 **Priority:** P3 (Low)
 **Type:** Governance Process
@@ -6878,6 +6899,69 @@ CLAUDE.md §2 says task, story and ticket IDs must never appear in document head
 
 **Acceptance Criteria**
 - One written rule covers `DEV-*` headings, and CLAUDE.md §2 and `shared_standards.md` agree with it
+
+---
+
+### BLG-GOV-410 — Settle whether a non-blocking escalation open 72h halts under the SLA Breach Rule
+**Priority:** P3 (Low)
+**Type:** Governance Process
+**Owner:** Head of Specs Team; PMO Lead
+**Source:** ST-43 (BLG-GOV-193), EPIC-07, sprint execution `2026-11-03__release-v9.15` — defect found by the escalation SLA-breach dry run (`docs/ops/escalation_sla_breach_dry_run_2026-11-05.md`) — 2026-11-05
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.16
+
+**Problem**
+`shared_standards.md` §4 (SLA Breach Rule) and §16.4 say any escalation open 72 hours or more without resolution writes `BLOCKED_SLA_BREACH`, sets `blocked_sla_breached` and halts, "regardless of escalation trigger type". §16.4.1 says §16.4 applies "once an escalation's own disposition requires it to block execution" and that a `blocks_execution: false` escalation "correctly never triggers that halt". In the dry run, the synthetic non-blocking escalation `ESC-EXEC-DRYRUN-02` (80h old) meets §4/§16.4's predicate and so halts, while §16.4.1 says it must not. An engine reading both cannot tell which applies.
+
+**Scope**
+- Decide whether `blocks_execution: false` exempts an escalation from the §4/§16.4 halt, and state it once in §4, §16.4 and §16.4.1 (CLAUDE.md §6 checklist)
+- Re-run `scripts/escalation_sla_dry_run.py` and record the result
+
+**Acceptance Criteria**
+- §4, §16.4 and §16.4.1 give the same answer for a non-blocking escalation open 72h or more
+- The dry run's expected result for `ESC-EXEC-DRYRUN-02` matches that answer
+
+---
+
+### BLG-GOV-411 — Use one disposition set across the three escalation SLA checks
+**Priority:** P3 (Low)
+**Type:** Governance Process / Tooling
+**Owner:** PMO Lead; Head of Specs Team
+**Source:** ST-43 (BLG-GOV-193), EPIC-07, sprint execution `2026-11-03__release-v9.15` — defect found by the escalation SLA-breach dry run (`docs/ops/escalation_sla_breach_dry_run_2026-11-05.md`) — 2026-11-05
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.16
+
+**Problem**
+The three checks that read `open_escalations` count different dispositions as breached. `execution_prompt.md` STEP -1.2A and `release_planning_prompt.md` STEP -1.6 (`SLA_BREACH_CARRIED`) count only `disposition: Open`. `.github/workflows/escalation-sla-reminder.yml` counts everything except `Resolved`, `Closed` and `Withdrawn`, so a `Deferred` or `Accepted Risk` record left in `open_escalations` raises a daily reminder issue that neither engine reports. In the dry run the workflow's issue listed the `Deferred` control `ESC-EXEC-DRYRUN-03`; neither engine check did. `shared_standards.md` §4's "without resolution" names no set at all.
+
+**Scope**
+- Define the breached disposition set once (in `shared_standards.md` §4) and use it in STEP -1.2A, STEP -1.6 and the workflow
+- Say whether a `Deferred` record belongs in `open_escalations` or only in `deferred_escalations`
+
+**Acceptance Criteria**
+- The workflow and both prompt checks name the same disposition set
+- `scripts/escalation_sla_dry_run.py` reports the same IDs for the workflow and the two prompt checks
+
+---
+
+### BLG-GOV-412 — Give the 10-cycle product-scope exclusions re-confirmation a trigger
+**Priority:** P3 (Low)
+**Type:** Governance Process
+**Owner:** Strategy Rules & System Intent Owner; PMO Lead
+**Source:** PR #2194 agent-mediated review (EPIC-07, cycle `2026-11-03__release-v9.15`), Product Owner finding 1 (ST-44) — 2026-11-05
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.16
+
+**Problem**
+ST-44's decision record (`docs/product/decisions/decisions--2026-11-03__release-v9.15--ST-44-strategic-exclusions-reconfirmation.md`) sets a re-confirmation of the four `current_roadmap.md` §2 product-scope exclusions every 10 completed cycles, next due at `completed_cycle_count` 101. The cadence is recorded only in that decision. No engine, audit check or workflow reads it, so it relies on someone remembering, which is the failure `BLG-GOV-195` was filed for (exclusions never re-confirmed since first recorded).
+
+**Scope**
+- Add a check, for example in `run audit` or the roadmap rebalance preflight, that flags the re-confirmation as due when `completed_cycle_count` reaches the recorded next-due value (CLAUDE.md §6 if a governance prompt changes)
+- Record where the next-due value lives so the check can read it
+
+**Acceptance Criteria**
+- At `completed_cycle_count` 101 (or a test fixture standing in for it) the check reports the re-confirmation as due
+- Before then, it reports nothing
 
 ---
 
@@ -7063,5 +7147,47 @@ DS-38 makes `positions.portfolio_id` and `total_cost` NOT NULL on staging (produ
 **Acceptance Criteria**
 - The test fails on a fixture insert that omits `portfolio_id` or `total_cost`, and passes on the current seeds
 - `tests/test_fees_paid_not_null_invariant.py` (or the sibling) passes in CI
+
+---
+
+### BLG-QA-250 — Make the remaining duplicated Playwright scenario IDs unique (SC-CSV, SC-GP, SC-LS, SC-MRU, SC-TP)
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** QA & Testing Owner
+**Source:** ST-42 (BLG-QA-224), EPIC-07, sprint execution `2026-11-03__release-v9.15` — out-of-scope finding: the new uniqueness check found 19 cross-file duplicates besides SC-TS — 2026-11-05
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.16
+
+**Problem**
+ST-42 made SC-TS-* unique and added `scripts/check_e2e_scenario_id_uniqueness.py` (run by `tests/test_check_e2e_scenario_id_uniqueness.py`). The check found five more ID families used for different scenarios in two files each: SC-CSV-01..05 (`screener-watchlist-csv-export` / `tax-year-csv-export`), SC-GP-01..04 and SC-LS-01..04 (`epic01-v34-lifecycle` / `gate-progress`, `loading-states`), SC-MRU-01..02 (`market-regime-unknown` / `monthly-pnl-realized-unrealized`), SC-TP-01..04 (`theme-persistence` / `trade-plan`). They sit in the script's shrink-only `KNOWN_DUPLICATES` list, so evidence citing them stays ambiguous. About 190 citations across `docs/` and `claude/cycles/` need tracing to the file each one means.
+
+**Scope**
+- For each family, give one file a distinct prefix and update the citations in `docs/` and `claude/cycles/` that refer to it (not sealed artefacts)
+- Remove each fixed family from `KNOWN_DUPLICATES`
+
+**Acceptance Criteria**
+- `KNOWN_DUPLICATES` is empty and `python3 scripts/check_e2e_scenario_id_uniqueness.py` exits 0
+- Every changed citation names the renamed ID
+
+---
+
+### BLG-QA-251 — Stop the live PT-04 gate-scan test failing once Release Planning clears those gates
+**Priority:** P2 (Medium)
+**Type:** QA / Test Automation
+**Owner:** QA & Testing Owner; Head of Specs Team
+**Source:** PR #2194 agent-mediated review (EPIC-07, cycle `2026-11-03__release-v9.15`), Director of Quality finding 1 (ST-37) — 2026-11-05
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.15 (PR #2194) or v9.16
+
+**Problem**
+`tests/test_scan_backlog_gate_conditions_gating_item_shipped.py::test_live_backlog_lists_the_six_pt04_gated_items` (ST-37, BLG-GOV-404) skips only when one of the six items (`BLG-FE-39`, `BLG-QA-21`/`-22`/`-23`, `BLG-GOV-26`, `BLG-FEAT-26`) leaves the active backlog. ST-37 exists so that `release_planning_prompt.md` §1.3a clears those gates *in place*: it removes the `**Gate criteria:**` field and leaves the item in `backlog.md`. The item is then no longer gated, the scan no longer lists it, and the test fails. Reproduced in review by replacing `BLG-FE-39`'s gate line with a cleared note: "1 failed". The first Release Planning run that applies ST-37 as intended would turn CI Pytest red on its own PR.
+
+**Scope**
+- Skip (or drop) the live assertion for any of the six items whose gate no longer names PT-04, keeping the assertion for those still gated
+- Keep the fixture-based tests as the permanent AC 1/AC 2 coverage
+
+**Acceptance Criteria**
+- With one of the six items' gate cleared in place, the test passes (pytest)
+- With all six still gated on PT-04, the test still asserts all six are listed
 
 ---

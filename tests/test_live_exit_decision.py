@@ -22,13 +22,15 @@ Partial because no CI test called the live code path:
   - C7.1-02: analyze_positions() recomputes the stop on load, and the nightly
     job freshly recomputes ATR.
 
-Some other test modules replace attributes of sys.modules["utils.calculations"]
-with MagicMocks and do not restore them. To stay hermetic regardless of suite
-order, the real calculations module is loaded from its file under a private
-name, and position_service's bindings are patched back to the real functions
-where a test depends on them.
+These tests run the real utils.calculations functions. conftest's utils.*
+attribute leak guard (ST-41, BLG-QA-222, v9.15) fails any test that leaves a
+utils.calculations attribute replaced, so the private-copy load this file used
+to need is gone; _use_real_calcs now asserts that position_service's bindings
+are the real functions from backend/utils/calculations.py instead of patching
+them back. (They may come from an earlier import of that file than
+`real_calcs`, if another file re-imported the module, so the check is on the
+function's source file, not object identity.)
 """
-import importlib.util
 import sys
 from datetime import date, timedelta
 from pathlib import Path
@@ -39,12 +41,7 @@ import pytest
 BACKEND = Path(__file__).parent.parent / "backend"
 sys.path.insert(0, str(BACKEND))
 
-_spec = importlib.util.spec_from_file_location(
-    "_real_calculations_st04", BACKEND / "utils" / "calculations.py"
-)
-real_calcs = importlib.util.module_from_spec(_spec)
-_spec.loader.exec_module(real_calcs)
-
+import utils.calculations as real_calcs  # noqa: E402
 import services.position_service as position_service  # noqa: E402
 
 should_exit_position = real_calcs.should_exit_position
@@ -173,7 +170,9 @@ class _Patcher:
 
     def _use_real_calcs(self, *names):
         for name in names:
-            self._patch(name, new=getattr(real_calcs, name))
+            bound = getattr(position_service, name)
+            assert getattr(getattr(bound, "__code__", None), "co_filename", None) == \
+                real_calcs.calculate_trailing_stop.__code__.co_filename, (name, bound)
 
 
 class TestEntryPersistsInitialStop(_Patcher):

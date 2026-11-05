@@ -81,6 +81,18 @@ condition. An item whose gate names at least one still-active item is not
 listed. Consumed by `release_planning_prompt.md` §1.3a alongside the
 date-lapsed list.
 
+Shipped roadmap feature IDs (ST-37, EPIC-07, v9.15, BLG-GOV-404): a gate
+can also name a roadmap feature ID (`PT-xx`, `SI-xx`, `PO-xx`) rather than a
+backlog item. `BLG-FE-39`, `BLG-QA-21`/`-22`/`-23`, `BLG-GOV-26` and
+`BLG-FEAT-26` sat gated on "PT-04 shipped" for 18 releases after PT-04
+shipped at v6.1, because only `BLG-*` IDs were read. A feature ID counts as
+shipped when a Markdown table row in `claude/roadmap/current_roadmap.md` or
+`roadmap_archive.md` has that ID as one whole cell and also reads `✅
+Shipped` or `✅ ... Complete`. Prose lines are ignored, since they mention
+many IDs at once. A gate is listed under "gating item shipped — verify" when
+every `BLG-*` ID it names has shipped and every feature ID it names has
+shipped; one still-open reference of either kind keeps it off the list.
+
 Explicitly-ungated values (ST-35, EPIC-06, v9.13, BLG-GOV-390): a gate
 field whose whole value is `None`, `N/A`, `-` or `—` (case-insensitive,
 trimmed, optional trailing period) says the item has no gate. The field
@@ -119,6 +131,7 @@ import sys
 from pathlib import Path
 
 BACKLOG_PATH = Path("claude/backlog/backlog.md")
+ROADMAP_PATHS = (Path("claude/roadmap/current_roadmap.md"), Path("claude/roadmap/roadmap_archive.md"))
 EMBEDDED_DATE_RE = re.compile(r"~?(\d{4}-\d{2}-\d{2})")
 
 # ST-23 (BLG-GOV-347, EPIC-04, v9.9): a date immediately preceded by one of
@@ -162,6 +175,9 @@ EMBEDDED_GATE_SIGNAL_RE = re.compile(
 # convention the original v9.6 sibling check looked for.
 GATE_BLG_REF_RE = re.compile(r"\bBLG-[A-Z]+-\d+\b")
 COMPLETE_BANNER = "✅ COMPLETE"
+# ST-37 (BLG-GOV-404): roadmap feature IDs a gate may name.
+GATE_FEATURE_REF_RE = re.compile(r"\b(?:PT|SI|PO)-\d+\b")
+ROADMAP_SHIPPED_RE = re.compile(r"✅\s*(?:Shipped|[^|]*?\bComplete)", re.IGNORECASE)
 
 ALREADY_RESOLVED_RE = re.compile(
     r"\*\*(Resolutions?|Resolved)\s*\(.*?\):\*\*",
@@ -346,17 +362,36 @@ def known_non_gate_dates(results, as_of, allow_list=KNOWN_NON_GATE_DATES):
     return rows
 
 
-def gating_item_shipped(results, items):
+def shipped_feature_ids(roadmap_texts):
+    """ST-37 (BLG-GOV-404): feature IDs (PT/SI/PO-xx) that a roadmap table
+    row marks ✅ Shipped or ✅ ... Complete, with the ID as a whole cell."""
+    shipped = set()
+    for text in roadmap_texts:
+        for line in text.split("\n"):
+            if not line.lstrip().startswith("|") or not ROADMAP_SHIPPED_RE.search(line):
+                continue
+            for cell in line.split("|"):
+                if GATE_FEATURE_REF_RE.fullmatch(cell.strip()):
+                    shipped.add(cell.strip())
+    return shipped
+
+
+def gating_item_shipped(results, items, shipped_features=frozenset()):
     """ST-40 (BLG-GOV-386): return [(result, shipped_ids)] for gated items
     whose gate names at least one BLG-* ID and all of those IDs are archived
-    (absent from the active backlog) or bannered ✅ COMPLETE."""
+    (absent from the active backlog) or bannered ✅ COMPLETE.
+
+    ST-37 (BLG-GOV-404): feature IDs (PT/SI/PO-xx) named in the gate count
+    too; each must be in shipped_features (see shipped_feature_ids)."""
     active_open = {item_id for item_id, title, body in items if COMPLETE_BANNER not in body}
     shipped = []
     for r in results:
         if not r["gated"]:
             continue
-        refs = sorted(set(GATE_BLG_REF_RE.findall(r["gate_condition"])) - {r["id"]})
-        if refs and not any(ref in active_open for ref in refs):
+        blg_refs = set(GATE_BLG_REF_RE.findall(r["gate_condition"])) - {r["id"]}
+        feature_refs = set(GATE_FEATURE_REF_RE.findall(r["gate_condition"]))
+        refs = sorted(blg_refs | feature_refs)
+        if refs and not any(ref in active_open for ref in blg_refs) and feature_refs <= set(shipped_features):
             shipped.append((r, refs))
     return shipped
 
@@ -366,6 +401,9 @@ def main():
     parser.add_argument("--json", action="store_true", help="emit JSON instead of a text report")
     parser.add_argument("--as-of", default=None, help="ISO date to evaluate lapsed gates against (default: today)")
     parser.add_argument("--backlog", default=str(BACKLOG_PATH), help="backlog file to scan (default: claude/backlog/backlog.md)")
+    parser.add_argument("--roadmap", action="append", default=None,
+                        help="roadmap file read for shipped feature IDs; repeatable "
+                             "(default: claude/roadmap/current_roadmap.md and roadmap_archive.md)")
     args = parser.parse_args()
     backlog_path = Path(args.backlog)
 
@@ -384,7 +422,9 @@ def main():
     date_lapsed = [r for r in gated if r["date_lapsed"]]
     already_resolved = [r for r in results if r["already_resolved"]]
     explicitly_ungated = [r for r in results if r["explicitly_ungated"] and not r["gated"]]
-    shipped = gating_item_shipped(results, items)
+    roadmap_paths = [Path(p) for p in args.roadmap] if args.roadmap else list(ROADMAP_PATHS)
+    shipped_features = shipped_feature_ids(p.read_text() for p in roadmap_paths if p.exists())
+    shipped = gating_item_shipped(results, items, shipped_features)
     non_gate_dates = known_non_gate_dates(results, as_of)
 
     if args.json:
@@ -426,9 +466,9 @@ def main():
             print(f"  {e['id']} — {e['date'] or 'all dates'} — {e['reason']} (review by {e['review_by']}){flags}")
 
     if shipped:
-        print(f"\n{len(shipped)} item(s) whose gate names only shipped backlog items (gating item shipped — verify; re-read the gate, do not auto-clear):")
+        print(f"\n{len(shipped)} item(s) whose gate names only shipped backlog items or roadmap features (gating item shipped — verify; re-read the gate, do not auto-clear):")
         for r, refs in shipped:
-            print(f"  {r['id']} — gating item(s) {', '.join(refs)} archived or ✅ COMPLETE — {r['gate_condition']}")
+            print(f"  {r['id']} — gating item(s) {', '.join(refs)} archived, ✅ COMPLETE or roadmap ✅ Shipped — {r['gate_condition']}")
 
     if explicitly_ungated:
         print(f"\n{len(explicitly_ungated)} explicitly ungated item(s) (gate field reads None/N/A — informational, not gated):")
