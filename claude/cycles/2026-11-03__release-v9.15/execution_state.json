@@ -6,7 +6,7 @@
   "invoked_utc": "2026-11-04T10:55:44Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-05T08:21:26Z",
+  "last_updated_utc": "2026-11-05T08:26:16Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-03",
@@ -763,6 +763,137 @@
           "notes": "Sealed as delegated_decision; reclassified autonomous on ESC-EXEC-20261104-04 resolution (spec follows code, 2026-11-04, raised and ruled in the same in-session exchange). AC 1 met: Position Risk names fill_price (US) / entry_price (UK), version 1.35.0. AC 2 met: §5.2 and pnl row state live FX, not net of fees, matching calculate_position_pnl. AC 3 met: decision + rationale in §5.2 and ESC-EXEC-20261104-04. Doc-only; follow-ups BLG-SPEC-218, BLG-SPEC-219. Deviation check: none; pre-existing BLG-SPEC-198 divergence closed in the same commit (no Known Deviations section existed). CI on 607995a6: 7/7 success (CI Pytest 41902140158)."
         }
       }
+    },
+    "EPIC-04": {
+      "status": "in_progress",
+      "branch": "exec/2026-11-03__release-v9.15/EPIC-04",
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": false,
+      "qa_evidence_log": "claude/cycles/2026-11-03__release-v9.15/qa_evidence_EPIC-04.md",
+      "test_scenarios": [
+        "tests/test_briefing_summary_ticker_check.py",
+        "tests/test_ai_stop_time_focus_attribution.py",
+        "tests/test_journal_summary_language_check.py"
+      ],
+      "sign_off_record": null,
+      "stories": {
+        "ST-24": {
+          "title": "Review logged briefing ticker-caveat tokens for further non-tickers",
+          "classification": "delegated_backend",
+          "status": "blocked_backend",
+          "assigned_to": "AI Compliance & Governance Officer",
+          "github_issue": 2167,
+          "branch": "exec/2026-11-03__release-v9.15/EPIC-04",
+          "commit_sha": null,
+          "delegation_record_id": "DEL-20261105-01",
+          "blocked_since_utc": "2026-11-05T08:26:16Z",
+          "unblock_criteria": "Token list with counts from production briefing ticker-check warning lines since 2026-10-30 (or \"no lines logged\"), supplied by the AI Compliance & Governance Officer.",
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "docs/specs/api_contracts/ai_endpoints.md#POST /ai/daily-briefing",
+            "tests/test_briefing_summary_ticker_check.py"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": null
+        },
+        "ST-25": {
+          "title": "Journal summary advisory check: remaining false positives and misses",
+          "classification": "delegated_decision",
+          "status": "blocked_decision",
+          "assigned_to": "AI Compliance & Governance Officer",
+          "github_issue": 2168,
+          "branch": "exec/2026-11-03__release-v9.15/EPIC-04",
+          "commit_sha": null,
+          "delegation_record_id": "ESC-EXEC-20261105-01",
+          "blocked_since_utc": "2026-11-05T08:26:16Z",
+          "unblock_criteria": "Dated AI Compliance & Governance Officer ruling on amendment (A″) recorded in ESC-EXEC-20261105-01.",
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": null
+        },
+        "ST-26": {
+          "title": "Chat stop-time focus rule: ignore common upper-case non-ticker words",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 2169,
+          "branch": "exec/2026-11-03__release-v9.15/EPIC-04",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "docs/specs/api_contracts/ai_endpoints.md#POST /ai/chat",
+            "tests/test_ai_stop_time_focus_attribution.py"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": null
+        },
+        "ST-27": {
+          "title": "Journal summary advisory check: do not flag \"could/may help explain\"",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 2170,
+          "branch": "exec/2026-11-03__release-v9.15/EPIC-04",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "docs/specs/api_contracts/ai_endpoints.md#POST /ai/journal-summary",
+            "docs/specs/qa/ai_s13_boundary_test_suite.md#Scenario B-JS-04 — No advice to change stops, sizing or setups in output",
+            "tests/test_journal_summary_language_check.py"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "Depends on ST-25 ruling (one AI Compliance & Governance Officer ruling covers both, sprint_backlog.md ST-27 Notes)."
+        },
+        "ST-28": {
+          "title": "§13 boundary language clarity pass — AI journal summarisation",
+          "classification": "delegated_decision",
+          "status": "blocked_decision",
+          "assigned_to": "Strategy Rules & System Intent Owner",
+          "github_issue": 2171,
+          "branch": "exec/2026-11-03__release-v9.15/EPIC-04",
+          "commit_sha": null,
+          "delegation_record_id": "ESC-EXEC-20261105-02",
+          "blocked_since_utc": "2026-11-05T08:26:16Z",
+          "unblock_criteria": "Dated Strategy Rules & System Intent Owner outcome (1), (2) or (3) recorded in ESC-EXEC-20261105-02.",
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": null
+        }
+      }
     }
   },
   "deferred_at_planning": {
@@ -773,8 +904,13 @@
       "reason": "Superseded by ST-12: both win-rate widgets exist only on legacy Dashboard.js, which ST-12 deletes. Product Owner, 2026-11-03 (sprint_backlog.md Items Deferred This Sprint)."
     }
   },
-  "blocked_items": [],
-  "delegated_items": [],
+  "blocked_items": [
+    "ST-25",
+    "ST-28"
+  ],
+  "delegated_items": [
+    "ST-24"
+  ],
   "completed_items": [
     "ST-01",
     "ST-02",
@@ -864,6 +1000,26 @@
       "resolved_utc": "2026-11-04T21:04:56Z",
       "resolved_by": "Product Owner (the user, in session)",
       "resolution_summary": "Option (a): Daily Monitor button on the Positions header; MonitorModal, exit queue and pre-select carried over; 7 monitor scenarios retargeted to /#/Positions; positions.md entry point updated. Head of UX & Design confirms placement (agent-mediated)."
+    },
+    "ESC-EXEC-20261105-01": {
+      "cycle": "2026-11-03__release-v9.15",
+      "summary": "ST-25/ST-27 EPIC-04 — journal-summary advisory check amendment (A″): drop \"can\", pass reported speech, exclude \"help explain\", add six missed advisory forms",
+      "trigger_type": "Strategy",
+      "owning_authority": "AI Compliance & Governance Officer",
+      "raised_utc": "2026-11-05T08:26:16Z",
+      "sla_due_utc": "2026-11-08T08:26:16Z",
+      "blocks_execution": false,
+      "disposition": "Open"
+    },
+    "ESC-EXEC-20261105-02": {
+      "cycle": "2026-11-03__release-v9.15",
+      "summary": "ST-28/EPIC-04 — dated §13 re-read against the AI journal summary: clarify §13.2 + §13.5 roster row, or confirm unambiguous",
+      "trigger_type": "Strategy",
+      "owning_authority": "Strategy Rules & System Intent Owner",
+      "raised_utc": "2026-11-05T08:26:16Z",
+      "sla_due_utc": "2026-11-08T08:26:16Z",
+      "blocks_execution": false,
+      "disposition": "Open"
     }
   },
   "merge_gate": {
@@ -872,8 +1028,10 @@
       "EPIC-03",
       "EPIC-02"
     ],
-    "epics_pending": [],
-    "all_merged": true
+    "epics_pending": [
+      "EPIC-04"
+    ],
+    "all_merged": false
   },
   "process_notes": [
     "2026-11-04: run sprint --epic EPIC-01. Initialised EPIC-01 only (execution_state.json owner per sprint_backlog.md Merge Order); other EPIC branches append their own sections. merge_gate.epics_pending lists initialised EPICs only (ST-38 tracks counting uninitialised EPICs).",
@@ -881,7 +1039,8 @@
     "2026-11-04: run sprint --epic EPIC-03. Initialised EPIC-03 (8 stories; ST-16 already recorded deferred_at_planning). ST-20 and ST-23 sealed as delegated_decision; both rulings raised and given in-session (ESC-EXEC-20261104-03/-04) and both reclassified autonomous before work started. Branch cut from main at 1c5b9366 (after the EPIC-01 merge).",
     "2026-11-04: EPIC-03 agent-mediated DoQ (§5.3): pass 1 Blocked (2 blocking), fixes f56d4717, pass 2 Approved. ST-20 graded Pass_with_deviation (BLG-BE-203). Follow-ups filed: BLG-BE-203, BLG-SPEC-218, BLG-SPEC-219.",
     "2026-11-04: EPIC-03 merged (PR #2190, merge commit 9df0cc9a, 2026-11-04T20:55:49Z, by the human repository owner). Orphaned post-merge commit check: none (git log origin/main..origin/exec/.../EPIC-03 empty). No pending sibling EPIC branches, so STEP 4 step 3c had nothing to sync. merge_gate.all_merged reads true only because EPIC-01 and EPIC-03 are the sole initialised EPICs; EPIC-02, -04, -05, -06, -07 are not started. The next run sprint must not treat this as sprint completion or enter STEP 5 until every EPIC in the Merge Order is initialised and merged.",
-    "2026-11-05 EPIC-02 merge-gate resume-sync (AUD-2026-08-21-010, user reported merge): PR #2191 merged 2026-11-05T08:21:26Z by sachiv1984, merge commit b668350b. Orphaned post-merge commit check (LL-v6.8-P3-01): git log origin/main..origin/exec/2026-11-03__release-v9.15/EPIC-02 empty, nothing to reconcile. Final PR-head CI (349a90d2): 22/22 workflows success (Playwright E2E 41992745484, CI Pytest 41992745916, Quality & Governance Gate 41992745867). merge_gate.all_merged reads true because only initialised EPICs are counted; EPIC-04/05/06/07 are not yet initialised (tracked by ST-38, EPIC-07)."
+    "2026-11-05 EPIC-02 merge-gate resume-sync (AUD-2026-08-21-010, user reported merge): PR #2191 merged 2026-11-05T08:21:26Z by sachiv1984, merge commit b668350b. Orphaned post-merge commit check (LL-v6.8-P3-01): git log origin/main..origin/exec/2026-11-03__release-v9.15/EPIC-02 empty, nothing to reconcile. Final PR-head CI (349a90d2): 22/22 workflows success (Playwright E2E 41992745484, CI Pytest 41992745916, Quality & Governance Gate 41992745867). merge_gate.all_merged reads true because only initialised EPICs are counted; EPIC-04/05/06/07 are not yet initialised (tracked by ST-38, EPIC-07).",
+    "2026-11-05: EPIC-04 initialised (STEP 0) on exec/2026-11-03__release-v9.15/EPIC-04 cut from main 7a749bcf. Classifications per sprint_backlog.md: ST-24 delegated_backend (production log read, Human-Delegation), ST-25 and ST-28 delegated_decision, ST-26 and ST-27 autonomous (ST-27 waits on the ST-25 ruling). GitHub issues #2167-#2171 found (sync gh ran at seal)."
   ],
   "sealed": false,
   "sealed_utc": null

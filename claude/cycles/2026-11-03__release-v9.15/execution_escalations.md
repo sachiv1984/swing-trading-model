@@ -89,3 +89,35 @@ Last Updated: 2026-11-04
 - **Blocks execution:** No
 - **Disposition:** Resolved
 - **Resolution summary (2026-11-04T21:04:56Z):** Product Owner ruling, given in-session by the user acting in that role, dated 2026-11-04: **option (a), move the Monitor to Positions.** ST-12 adds a "Daily Monitor" button to the Positions page header that opens `MonitorModal` with the exit queue and pre-select logic unchanged, retargets the 7 monitor scenarios (`monitor-exit-queue.spec.js`, `monitor-grace-aware-suggestions.spec.js`) to `/#/Positions`, and updates `positions.md` §Daily Position Monitor's entry-point line in the same commit (Known Deviation standard does not apply: the spec is updated to the ruled placement). The Head of UX & Design confirms the placement (agent-mediated, §5.3) in ST-12's QA evidence. ST-12 reclassified `autonomous`.
+
+## ESC-EXEC-20261105-01
+
+- **Raised at:** 2026-11-05T08:26:16Z
+- **Routine:** Sprint Execution
+- **Cycle ID:** 2026-11-03__release-v9.15
+- **Step:** STEP 3.1.D (EPIC-04 execution loop, first sub-step of ST-25 per `sprint_backlog.md` ST-25 Notes; covers ST-27 per its Notes)
+- **ST/EPIC item:** ST-25 / EPIC-04 (BLG-AI-24); ST-27 / EPIC-04 (BLG-AI-26)
+- **Trigger type:** Strategy
+- **Blocking statement:** `journal_summary_language_failures()` applies ruling `ESC-EXEC-20261027-03` (A) and its extension (A′) `ESC-EXEC-20261030-02`. Checked on this branch (cut from `7a749bcf`): two descriptive sentences fail as `trading_change` — "Stops can be moved only upward under the system." (form (3)'s "can") and "The trader wrote that a review of setups is warranted." (reported speech, form (4)); two more fail through form (4)'s "could/may help" — "Moving stops to breakeven after a 2R gain could help explain the lower drawdown." and "Smaller position size in May may help explain why losses were lower." (BLG-AI-26). Six advisory sentences pass: "Consider a tighter stop.", "Perhaps revisit stop placement.", "It could help to tighten stops.", "Think about tightening stops.", "Your sizing is worth a second look." and "Stops would benefit from tightening." Each change alters the ruling's forms, so it is a §13 determination answering §13.1 and §13.2. Proposed amendment (A″): **(i)** drop "can" from form (3)'s modals (a statement of what the system permits is descriptive); **(ii)** a match inside past-tense reported speech of the notes or trader ("wrote/noted/recorded/said/mentioned/commented/felt/thought/believed/concluded that …") passes; **(iii)** form (4)'s "could/may/might/would help" does not match when "help" is followed by an explanatory verb (explain, account for, show) — ST-27; **(iv)** new advisory forms, same subject and change-verb lists, reported as `trading_change`: form (1) also takes "think about" and a comparative + subject ("Consider a tighter stop."); a sentence-initial imperative change verb, optionally after "perhaps/maybe", before the subject ("Perhaps revisit stop placement."); "could/may/might/would help to" + change verb + subject; subject … "worth a (second/another) look"; subject … "would/could/might/may benefit from" + change gerund. Past tense still passes; `compliance_check_result` values, fallback, prompt and `JOURNAL_SUMMARY_PROMPT_VERSION` unchanged.
+- **Engine recommendation (non-binding):** approve (A″) as proposed.
+- **Owning authority:** AI Compliance & Governance Officer
+- **Unblock criteria:** a dated ruling recorded in this escalation's resolution, answering §13.1 and §13.2, before the code change (ST-25 AC 1). The engine then implements it, adds each BLG-AI-24 and BLG-AI-26 sentence as a test with the ruled result, keeps every ST-15 (v9.14) and v9.13 ST-18 case's result, and updates `ai_s13_boundary_test_suite.md` B-JS-04.
+- **SLA due-by:** 2026-11-08T08:26:16Z (72h — Strategy)
+- **Blocks execution:** No
+- **Disposition:** Open
+
+## ESC-EXEC-20261105-02
+
+- **Raised at:** 2026-11-05T08:26:16Z
+- **Routine:** Sprint Execution
+- **Cycle ID:** 2026-11-03__release-v9.15
+- **Step:** STEP 3.1.D (EPIC-04 execution loop, first sub-step of ST-28 per `sprint_backlog.md` ST-28 Notes, RISK-03)
+- **ST/EPIC item:** ST-28 / EPIC-04 (BLG-GOV-194)
+- **Trigger type:** Strategy
+- **Blocking statement:** ST-28 needs the Strategy Rules & System Intent Owner's dated re-read of `strategy_rules.md` §13 (v1.24) against the AI journal summary (`POST /ai/journal-summary`, BLG-AI-20, v9.14 ST-15), recorded in `docs/product/decisions/`. Engine reading for the owner to confirm or correct: no §13 clause names the journal summary. §13.1 ("deterministic decision-support engine", "human-in-the-loop") holds: the summary is a read-only description of the user's own notes, writes nothing but audit rows, and makes no decision. §13.2 ("not … a discretionary or adaptive rule system", "not … an AI-driven prediction system") holds: it predicts nothing, and the output check withholds wording that suggests changing stops, sizing or setups. But §13's text says nothing about AI-written narrative advising a change to the strategy's parameters. Three rulings (`ESC-EXEC-20261027-03`, `ESC-EXEC-20261030-02`, and `ESC-EXEC-20261105-01` now open) have each had to infer that exclusion from §13.2's "discretionary or adaptive rule system". The journal summary is not on §13.5's re-attestation roster, which lists the briefing/chat, debrief and monthly narrative. Outcomes: **(1) clarify** — a case (c) write (authorised at seal, confirmed 2026-11-03): one §13.2 sentence stating that AI-written text describing the user's data (briefing, chat, debrief, monthly narrative, journal summary) must not suggest changing stops, position sizing, setups or other strategy parameters, plus a §13.5 roster row for the journal summary citing the new decision record; documentation-only version 1.25 in `DOCUMENTATION_ONLY_VERSIONS`; **(2) confirmed unambiguous**, journal summary added to §13.5 by a follow-up backlog item (the seal authorises a roster row only with a clarification); **(3) confirmed unambiguous**, not added to the roster.
+- **Engine recommendation (non-binding):** outcome (1). Three rulings inferring the same exclusion is the evidence that the language is not explicit, and the roster gap leaves the summary out of the 2027-02-06 re-attestation.
+- **Owning authority:** Strategy Rules & System Intent Owner
+- **Unblock criteria:** a dated outcome (1), (2) or (3) recorded in this escalation's resolution. The engine then writes the decision record under `docs/product/decisions/` answering each clause it cites, and under (1) applies the case (c) write with its §16 Change Log row, registry entry and §15 re-run in one commit.
+- **SLA due-by:** 2026-11-08T08:26:16Z (72h — Strategy)
+- **Blocks execution:** No
+- **Disposition:** Open
