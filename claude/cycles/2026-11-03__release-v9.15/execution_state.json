@@ -6,7 +6,7 @@
   "invoked_utc": "2026-11-04T10:55:44Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-05T18:01:44Z",
+  "last_updated_utc": "2026-11-05T18:21:46Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-03",
@@ -1278,7 +1278,12 @@
       "pr_status": null,
       "qa_signed_off": false,
       "qa_evidence_log": "claude/cycles/2026-11-03__release-v9.15/qa_evidence_EPIC-05.md",
-      "test_scenarios": [],
+      "test_scenarios": [
+        "tests/test_nightly_computations.py",
+        "tests/test_momentum_signal_run_marker.py",
+        "tests/test_rebalance_exit_signal_numpy_regression.py",
+        "tests/test_ci_code_changes.py"
+      ],
       "sign_off_record": null,
       "stories": {
         "ST-29": {
@@ -1308,71 +1313,79 @@
         "ST-30": {
           "title": "Rebalance-exit generation should check that today's screener run completed",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "Infrastructure & Operations Owner",
           "github_issue": 2173,
           "branch": "exec/2026-11-03__release-v9.15/EPIC-05",
-          "commit_sha": null,
+          "commit_sha": "e0329f64acd94fdd5db2f04bb6da330083d3d11c",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-11-05T18:21:17Z",
+          "acceptance_verified": true,
           "spec_references": [
-            "docs/specs/api_contracts/signal_endpoints.md"
+            "docs/specs/api_contracts/signal_endpoints.md#POST /signals/rebalance-exit",
+            "docs/specs/data_model.md#DS-39",
+            "tests/test_nightly_computations.py",
+            "tests/test_momentum_signal_run_marker.py"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": null
+          "notes": "AC met: no completed run today (no DS-39 marker) -> no signals, 503, rebalance_exit error (RX-08, RX-09). Interpretation: 'screener run' = the momentum signal run feeding the ranking (matches v9.13 ST-05). Deviation check: none (contract v1.11 updated in the same commit). Follow-up BLG-OPS-212 (DS-39 Live Confirmation, post-deploy; not an ST-30 AC). ci_pending: pushed with 898003a9; CI on branch head 898003a9."
         },
         "ST-31": {
           "title": "Skip the five code-test workflows on governance-only and docs-only pushes",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "FinOps & Resource Architect; Infrastructure & Operations Owner",
           "github_issue": 2174,
           "branch": "exec/2026-11-03__release-v9.15/EPIC-05",
-          "commit_sha": null,
+          "commit_sha": "898003a9ffa3a4ce31de16fbbd0b756b2312de32",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-11-05T18:21:26Z",
+          "acceptance_verified": true,
           "spec_references": [
-            ".github/workflows/ci-tests.yml"
+            ".github/actions/detect-code-changes/action.yml",
+            ".github/workflows/ci-tests.yml",
+            "tests/test_ci_code_changes.py"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": "AC 1 post-merge (first governance-only PR on main), tracked by BLG-OPS-211."
+          "notes": "Implemented per Product Owner ruling ESC-EXEC-20261105-05: four suites skip on claude/**/docs/**-only changes; CI Pytest Phase A runs the docs-coupled subset. AC 2 checked on the EPIC-05 PR (code PR runs all suites). AC 1 post-merge, tracked by BLG-OPS-211 (seal-marked). Deviation check: none (ruling leaves no remainder). ci_pending: 898003a9."
         },
         "ST-32": {
           "title": "Tell \"no qualifying tickers\" apart from \"momentum run missing\" in the month-end rebalance job",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "Infrastructure & Operations Owner; Strategy Rules & System Intent Owner",
           "github_issue": 2175,
           "branch": "exec/2026-11-03__release-v9.15/EPIC-05",
-          "commit_sha": null,
+          "commit_sha": "e0329f64acd94fdd5db2f04bb6da330083d3d11c",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-11-05T18:21:17Z",
+          "acceptance_verified": true,
           "spec_references": [
-            "docs/specs/api_contracts/signal_endpoints.md"
+            "docs/specs/api_contracts/signal_endpoints.md#POST /signals/rebalance-exit",
+            "docs/specs/data_model.md#DS-39",
+            "tests/test_nightly_computations.py",
+            "tests/test_momentum_signal_run_marker.py"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": null
+          "notes": "AC met: zero-qualifier completed run -> signals for non-risk-off, post-8.1 positions, no 503 (RX-11, RX-12); missing run -> 503 (RX-08). Marker writes covered by tests/test_momentum_signal_run_marker.py. Deviation check: none. ci_pending: CI on branch head 898003a9."
         },
         "ST-33": {
           "title": "Record the weekly market-data call-volume baseline from production",
@@ -1441,6 +1454,9 @@
     "ST-26",
     "ST-27",
     "ST-28",
+    "ST-30",
+    "ST-31",
+    "ST-32",
     "ST-34",
     "ST-35",
     "ST-36",
