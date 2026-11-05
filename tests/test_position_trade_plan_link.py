@@ -58,23 +58,16 @@ class TestAddPositionTradePlanAutoLink:
         return p.start()
 
     def _install_common_mocks(self):
-        # NOTE: calculate_us_entry_fees / calculate_uk_entry_fees / calculate_initial_stop
-        # are explicitly mocked here (not left to the real utils.calculations
-        # implementation) because some other test modules in this suite globally
-        # stub sys.modules["utils.calculations"] attributes without restoring them
-        # (pre-existing test-isolation gap, unrelated to BLG-BE-46) — depending on
-        # suite run order, position_service's module-level bindings for these names
-        # may already be MagicMocks by the time this test runs. Mocking them here
-        # makes this test hermetic regardless of execution order.
+        # The real fee and initial-stop functions run: conftest's utils.*
+        # attribute leak guard (ST-41, BLG-QA-222, v9.15) fails any test that
+        # leaves a utils.calculations attribute replaced, so position_service's
+        # bindings are the real functions in any suite order.
         self._patch("get_portfolio", return_value=_portfolio())
         self._patch("get_settings", return_value=_settings())
         self._patch("create_position", return_value={"id": "new-position-id"})
         self._patch("update_portfolio_cash")
         self._patch("calculate_atr", return_value=1.0)
         self._patch("get_live_fx_rate", return_value=1.27)
-        self._patch("calculate_us_entry_fees", return_value={"commission": 0, "stamp_duty": 0, "fx_fee": 1.5, "total": 1.5})
-        self._patch("calculate_uk_entry_fees", return_value={"commission": 9.95, "stamp_duty": 5.0, "total": 14.95})
-        self._patch("calculate_initial_stop", return_value=90.0)
 
     def test_links_matching_unlinked_draft_plan(self):
         self._install_common_mocks()
@@ -166,9 +159,6 @@ class TestAddPositionExplicitTradePlanLink:
         self._patch("update_portfolio_cash")
         self._patch("calculate_atr", return_value=1.0)
         self._patch("get_live_fx_rate", return_value=1.27)
-        self._patch("calculate_us_entry_fees", return_value={"commission": 0, "stamp_duty": 0, "fx_fee": 1.5, "total": 1.5})
-        self._patch("calculate_uk_entry_fees", return_value={"commission": 9.95, "stamp_duty": 5.0, "total": 14.95})
-        self._patch("calculate_initial_stop", return_value=90.0)
 
     def test_explicit_plan_id_links_that_exact_plan_not_ticker_match(self):
         self._install_common_mocks()
