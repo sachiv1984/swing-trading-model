@@ -70,7 +70,7 @@ Last Updated: 2026-11-05
   - Given by the human repository owner, acting as Director of Quality, in session on 2026-11-05 at about 17:40Z ("give DOQ and PO acceptance and i will merge"), before the merge.
   - It accepts this evidence: ST-37, ST-38, ST-39, ST-41, ST-43 and ST-44 Pass; ST-40 Pass with notes (`BLG-BE-206`); ST-42 Pass_with_deviation (`BLG-QA-250`); ST-45 Pass (AC 2 post-merge, `BLG-GOV-408`).
   - That includes the agent-mediated sign-off block above (pass 1 Approved) and the agent-mediated PR #2194 review (comment 6661202526, both roles ⚠️ Approved with Comments). Its DoQ finding 1 (`BLG-QA-251`) was fixed in `31d5ffe2` (comment 6662233846). Its other follow-up is `BLG-GOV-412`.
-  - At head `31d5ffe2`, the CI Pytest Suite passed and every required check was green; only the advisory pixel-level visual baseline was still pending.
+  - At head `31d5ffe2`, all 44 PR checks were green, including the CI Pytest Suite (runs 42055742106 and 42055755064).
 - **Product Owner acceptance:**
   - Given by the human repository owner, acting as Product Owner, in session at the same time.
   - It accepts ST-37 to ST-45 against `stage4_backlog_slice.md`, with ST-42's AC narrowing (accepted in session earlier on 2026-11-05) and ST-45 AC 2 carried post-merge under `BLG-GOV-408`.
