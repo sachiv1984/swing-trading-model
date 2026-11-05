@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-05 (Sprint Execution `2026-11-03__release-v9.15` EPIC-02 — 4 new items added: BLG-BE-205, BLG-GOV-409, BLG-SPEC-220, BLG-QA-246); prior — 2026-11-04 (PR #2190 agent-mediated Director of Quality / Product Owner review — 3 new items added: BLG-BE-204, BLG-QA-245, BLG-FE-272); prior — 2026-11-04 (Sprint Execution `2026-11-03__release-v9.15` EPIC-03 ST-23 — 1 new item added: BLG-SPEC-219); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-05 (PR #2191 agent-mediated Director of Quality / Product Owner review — 2 new items added: BLG-FE-273, BLG-FE-274); prior — 2026-11-05 (Sprint Execution `2026-11-03__release-v9.15` EPIC-02 — 4 new items added: BLG-BE-205, BLG-GOV-409, BLG-SPEC-220, BLG-QA-246); prior — 2026-11-04 (PR #2190 agent-mediated Director of Quality / Product Owner review — 3 new items added: BLG-BE-204, BLG-QA-245, BLG-FE-272); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -6735,5 +6735,46 @@ SC-TOK-04 (`shadcn-token-remaining-families.spec.js`) and SC-MTC-05/06 (`modal-t
 
 **Acceptance Criteria**
 - A Playwright scenario asserts the dialog's border and background resolve to the `--border` and `--popover` tokens (non-transparent) in both themes, and passes in CI
+
+---
+
+### BLG-FE-273 — Stop a malformed Research URL from blanking the app (tab-title decode)
+**Priority:** P2 (Medium)
+**Type:** Frontend / Correctness
+**Owner:** Head of Engineering
+**Source:** PR #2191 agent-mediated Director of Quality review (EPIC-02, v9.15, ST-13) — 2026-11-05
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.15
+
+**Problem**
+`documentTitle()` in `src/lib/pageLabels.js` calls `decodeURIComponent` on the `/research/:ticker` segment with no guard. A malformed percent-escape (e.g. `/#/research/%E0%A4%A`) throws `URIError: URI malformed` inside `Layout.js`'s title effect, and the whole app renders blank (reproduced in Playwright against the PR build). On `main` the same URL renders, because react-router decodes params safely, so this is a regression introduced by ST-13.
+
+**Scope**
+- Wrap the decode in try/catch and fall back to the raw segment (or the plain Research title)
+- Playwright scenario for a malformed Research URL
+
+**Acceptance Criteria**
+- `/#/research/%E0%A4%A` renders the Research page with no page error, and the tab title falls back without throwing (Playwright)
+- Existing SC-BTT-01..06 still pass
+
+---
+
+### BLG-FE-274 — Decide whether the portfolio value and allocation charts removed with the legacy Dashboard should return
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Product Owner; Head of UX & Design
+**Source:** PR #2191 agent-mediated Product Owner review (EPIC-02, v9.15, ST-12) — 2026-11-05
+**Effort:** S (~0.5 day, decision; any build is separate)
+**Provisional-Target:** v9.16
+
+**Problem**
+ST-12 removed the legacy widget Dashboard and the components only it rendered, as scoped. Two of those widgets have no equivalent elsewhere: the portfolio value chart (`PortfolioChart`, from `GET /portfolio/history`) and the allocation chart (`AllocationChart`). Analytics has a drawdown chart (`UnderwaterChart`) but no equity curve or allocation view. The legacy page had no sidebar entry, so use was likely low, but the views are now unavailable.
+
+**Scope**
+- Decide whether an equity-curve and/or allocation view is needed, and where (Analytics, Risk Dashboard, or the Dashboard status cards per `dashboard.md` v4.0)
+- If yes, file the design and build items; fold into the BLG-UX-08 first-principles re-review if timing fits
+
+**Acceptance Criteria**
+- A dated Product Owner decision is recorded on this item, with follow-up items filed if the views return
 
 ---
