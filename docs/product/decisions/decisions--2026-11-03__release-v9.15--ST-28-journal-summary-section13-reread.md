@@ -1,7 +1,7 @@
 Owner: Strategy Rules & System Intent Owner
 Class: Operational Record (Class 3)
 Status: Active
-Last Updated: 2026-11-05 (initial re-read, ESC-EXEC-20261105-02)
+Last Updated: 2026-11-05 (initial re-read, ESC-EXEC-20261105-02; corrected after the agent-mediated Director of Quality review: §13.2 is one sentence, and the briefing/chat check gap is stated)
 Cycle: 2026-11-03__release-v9.15
 Story: ST-28 (EPIC-04, BLG-GOV-194)
 Escalation ref: ESC-EXEC-20261105-02
@@ -46,7 +46,7 @@ No §13 clause names the journal summary, AI-written narrative or journal notes.
 
 ## 3. Is the Boundary Language Unambiguous?
 
-**No. It holds, but it is not stated.** §13.2 excludes a "discretionary or adaptive rule system". It does not say that AI-written text describing the user's own data must not suggest changing the strategy's parameters. Three separate rulings had to infer that exclusion from §13.2 (`ESC-EXEC-20261027-03`, `ESC-EXEC-20261030-02`, `ESC-EXEC-20261105-01`). The output checks on the daily briefing, chat, post-trade debrief and monthly P&L narrative also rest on readings of §13.2 rather than on its text. A boundary that every new check must re-derive is not explicit enough to be a boundary.
+**No. It holds, but it is not stated.** §13.2 excludes a "discretionary or adaptive rule system". It does not say that AI-written text describing the user's own data must not suggest changing the strategy's parameters. Three separate rulings had to infer that exclusion from §13.2 (`ESC-EXEC-20261027-03`, `ESC-EXEC-20261030-02`, `ESC-EXEC-20261105-01`). The other AI narrative features have no stated basis for this either. The post-trade debrief and monthly P&L narrative run `scan_prescriptive`. The daily briefing and chat have no check against advice to change stops, sizing or setups: they check only tickers and stop times. A boundary that every new check must re-derive is not explicit enough to be a boundary.
 
 ## 4. §13.5 Re-Attestation Roster
 
@@ -56,9 +56,9 @@ The journal summary is an AI feature that shipped under a §13 determination: th
 
 **Clarified.** This is the Strategy Rules & System Intent Owner's ruling on `ESC-EXEC-20261105-02`, outcome (1), given in session by the user acting in that role on 2026-11-05. `strategy_rules.md` v1.25 makes the change. It is a case (c) named-file write, confirmed at the Sprint Planning seal on 2026-11-03, and it is documentation only.
 
-1. §13.2 gains one sentence: AI-written text that describes the user's data (daily briefing, chat, post-trade debrief, monthly P&L narrative, journal summary) must not suggest changing stops, position sizing, setups or any other strategy parameter, because that would make the system a discretionary or adaptive rule system by another route. Each such feature enforces this with its own output check, and a new form needs a ruling under this clause.
+1. §13.2 gains one sentence: AI-written text that describes the user's data (daily briefing, chat, post-trade debrief, monthly P&L narrative, journal summary) must not suggest changing stops, position sizing, setups or any other strategy parameter, because that would make the system a discretionary or adaptive rule system by another route. The sentence sets the boundary. It does not claim that every named feature already enforces it in code. The daily briefing and chat have no such output check today; `BLG-AI-29` tracks that gap.
 2. §13.5 gains a roster row: "AI journal summary (`POST /ai/journal-summary`)", citing this record, cleared v9.13 and clarified v9.15.
 
-No rule, parameter or live behaviour changes. The sentence states the reading the existing checks already apply, so backtests and live trades stay comparable (§12.3).
+No rule, parameter or live behaviour changes, so backtests and live trades stay comparable (§12.3).
 
 **Sign-off:** Strategy Rules & System Intent Owner, 2026-11-05. The ruling was given in session by the user acting in that role (ESC-EXEC-20261105-02). This record was drafted by the Sprint Execution Engine.
