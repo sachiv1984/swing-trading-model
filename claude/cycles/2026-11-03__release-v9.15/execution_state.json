@@ -6,7 +6,7 @@
   "invoked_utc": "2026-11-04T10:55:44Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-05T13:10:38Z",
+  "last_updated_utc": "2026-11-05T13:56:47Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-03",
@@ -1021,167 +1021,198 @@
       "pr_status": "none",
       "qa_signed_off": false,
       "qa_evidence_log": "claude/cycles/2026-11-03__release-v9.15/qa_evidence_EPIC-07.md",
-      "test_scenarios": [],
+      "test_scenarios": [
+        "tests/test_check_execution_state_consistency.py",
+        "tests/test_scan_backlog_gate_conditions_gating_item_shipped.py",
+        "tests/test_live_holding_days_readers.py",
+        "tests/test_ai_audit_uuid_and_cost_postgres.py",
+        "tests/test_utils_attribute_leak_guard.py",
+        "tests/test_check_e2e_scenario_id_uniqueness.py",
+        "tests/test_escalation_sla_dry_run.py"
+      ],
       "sign_off_record": null,
       "stories": {
         "ST-37": {
           "title": "Gate scan treats a shipped roadmap feature ID (PT-xx, SI-xx, PO-xx) as a met gate",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 2180,
           "branch": "exec/2026-11-03__release-v9.15/EPIC-07",
-          "commit_sha": null,
+          "commit_sha": "ba28ae596854fdb822764cb05a5e8dafc67557e9",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-11-05T13:13:57Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "scripts/scan_backlog_gate_conditions.py",
+            "tests/test_scan_backlog_gate_conditions_gating_item_shipped.py",
+            "claude/system/release_planning_prompt.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": null
+          "notes": "AC 1/2: tests (shipped PT-04 gate listed; unshipped SI-02 and prose-only PO-02 not). AC 3: live scan lists all six (BLG-FE-39, BLG-QA-21/22/23, BLG-GOV-26, BLG-FEAT-26), also asserted by test_live_backlog_lists_the_six_pt04_gated_items. Commits 62384f41 (change; release_planning_prompt.md v2.69, OPERATIONAL_GUIDE.md v4.251, CLAUDE.md §6 checklist, governance-drift in sync) and ba28ae59 (wording shortened: prompt size budget failed on 62384f41 because the check was chained with the commit). Deviation check: none. CI on both SHAs: all 7 workflows success (CI Pytest Suite included)."
         },
         "ST-38": {
           "title": "Make the execution-state consistency check count EPICs not yet initialised as pending",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 2181,
           "branch": "exec/2026-11-03__release-v9.15/EPIC-07",
-          "commit_sha": null,
+          "commit_sha": "7eaf45167eeb177feb5e8f1aa7960828e64ebbf5",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-11-05T13:11:22Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "scripts/check_execution_state_consistency.py",
+            "tests/test_check_execution_state_consistency.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": null
+          "notes": "AC 1: partial state (EPIC-01/02 merged, five uninitialised, all_merged false) passes. AC 2: empty epics_pending with merge_order listing unmerged EPICs fails. Pending set = epics ∪ merge_order ∪ sibling sprint_backlog_index.json. Live file corrected in the same commit (epics_pending adds EPIC-05). Deviation check: none. CI: all 7 workflows success."
         },
         "ST-39": {
           "title": "Behavioural tests for live holding days in the compliance and AI briefing readers",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 2182,
           "branch": "exec/2026-11-03__release-v9.15/EPIC-07",
-          "commit_sha": null,
+          "commit_sha": "3133b9b2f381af37b843c4191629ff4b7584b179",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-11-05T13:15:03Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "tests/test_live_holding_days_readers.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": null
+          "notes": "AC met: stored holding_days 9, entry_date 10 days ago -> compliance assesses the stop (stop_age_days 10) and the briefing context shows a plain [STOP BREACH] with no grace note. Mutation check: reverting either reader to the stored column fails its test. Case C spec reference. Deviation check: none. CI: all 7 workflows success."
         },
         "ST-40": {
           "title": "Real-Postgres tests for the ai_audit_log UUID[] path and the claude_audit_log daily cost sum",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 2183,
           "branch": "exec/2026-11-03__release-v9.15/EPIC-07",
-          "commit_sha": null,
+          "commit_sha": "7bb6e2d6ae0a8df752f44a4cfd9514be0d51bb49",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-11-05T13:19:04Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "tests/test_ai_audit_uuid_and_cost_postgres.py",
+            "docs/specs/data_model.md#DS-31"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": null
+          "notes": "AC met: 5 Phase B tests PASSED in CI (CI Pytest Suite run 42034711531, Phase B job), skipped in Phase A. Fail-if-wrong shown locally by mutation on a throwaway Postgres 18 (insert ::uuid[] dropped, filter ::text, DS-31 ALTER skipped, gemini_audit_log table, AT TIME ZONE dropped: each fails). Out-of-scope defect filed: BLG-BE-206 (history endpoint returns trade_ids as '{...}' text). Deviation check: none against DS-31 / ai_endpoints for the paths tested; BLG-BE-206 is a contract-shape defect in a path the AC does not cover, filed as backlog. CI: all 7 workflows success."
         },
         "ST-41": {
           "title": "Extend the utils.* leak guard to attributes patched on the real utils modules",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 2184,
           "branch": "exec/2026-11-03__release-v9.15/EPIC-07",
-          "commit_sha": null,
+          "commit_sha": "27c36319c30bd9f081f331b3fb34695a723ea99c",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-11-05T13:50:03Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "tests/conftest.py",
+            "tests/test_utils_attribute_leak_guard.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": null
+          "notes": "AC 1: tests/test_utils_attribute_leak_guard.py (a test leaving utils.calculations.calculate_trailing_stop replaced errors; an import-time patch().start() fails the file; monkeypatch passes). AC 2: full suite with backend/.venv, stub DATABASE_URL: default 3341 passed / 38 skipped; reversed file order 3341 passed / 38 skipped. Scope bullet 2: private-copy workarounds removed from test_live_exit_decision.py and test_position_trade_plan_link.py. Deviation check: none. CI: all 7 workflows success."
         },
         "ST-42": {
           "title": "Make SC-TS-* Playwright scenario IDs unique across tests/e2e",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 2185,
           "branch": "exec/2026-11-03__release-v9.15/EPIC-07",
-          "commit_sha": null,
+          "commit_sha": "b0826ad3457fbdf20d4c447df6e4c0e1faaf8b1c",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-11-05T13:52:20Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "scripts/check_e2e_scenario_id_uniqueness.py",
+            "tests/test_check_e2e_scenario_id_uniqueness.py",
+            "tests/e2e/epic01-v62-stops-alerts.spec.js"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": null
+          "notes": "SC-TS-* unique: epic01-v62-stops-alerts.spec.js renamed to SC-TSC-*; 4 citations updated (v6.2 qa_evidence x2, v6.2 verification_report, v7.1 qa_evidence); sealed v6.2 execution_state.json not edited. Check script + test run in CI Pytest. AC narrowed: the AC reads 'no scenario ID is used in more than one file'; 19 pre-existing duplicates outside SC-TS (SC-CSV, SC-GP, SC-LS, SC-MRU, SC-TP) are held in a shrink-only KNOWN_DUPLICATES list, tracked by BLG-QA-250 — Product Owner asked whether to accept or widen. Deviation check: none (no spec). ci_pending: Playwright E2E Acceptance Tests and CI Pytest Suite in progress at record time."
         },
         "ST-43": {
           "title": "Escalation SLA breach dry-run test",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 2186,
           "branch": "exec/2026-11-03__release-v9.15/EPIC-07",
-          "commit_sha": null,
+          "commit_sha": "6446bb3cf993913fb799af486e7efcad1d645cf4",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-11-05T13:55:29Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "scripts/escalation_sla_dry_run.py",
+            "tests/test_escalation_sla_dry_run.py",
+            "docs/ops/escalation_sla_breach_dry_run_2026-11-05.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": null
+          "notes": "AC 1: dry run on a temp scratch copy (live state byte-identical): BLOCKED_SLA_BREACH (§4/§16.4) and SLA_BREACH_CARRIED (release_planning_prompt.md STEP -1.6) both fire for a synthetic Open escalation 8h past a 72h SLA; reminder workflow Python opens/comments the issue. AC 2: dated record docs/ops/escalation_sla_breach_dry_run_2026-11-05.md; defects filed BLG-GOV-410, BLG-GOV-411. Deviation check: none. ci_pending: all workflows in progress at record time."
         },
         "ST-44": {
           "title": "Strategic exclusions review cadence",
           "classification": "delegated_decision",
-          "status": "not_started",
+          "status": "blocked_decision",
           "assigned_to": "Strategy Rules & System Intent Owner; Product Owner",
           "github_issue": 2187,
           "branch": "exec/2026-11-03__release-v9.15/EPIC-07",
           "commit_sha": null,
           "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
+          "blocked_since_utc": "2026-11-05T13:56:47Z",
+          "unblock_criteria": "ESC-EXEC-20261105-03 resolved with a dated ruling per item; then the engine writes the decision record under docs/product/decisions/",
           "completed_utc": null,
           "acceptance_verified": false,
           "spec_references": [],
@@ -1190,19 +1221,19 @@
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": null
+          "notes": "Escalated ESC-EXEC-20261105-03 (STEP 3.1.D); SLA due 2026-11-08T13:56:47Z."
         },
         "ST-45": {
           "title": "Sunset review for Priority 3 — Deferred initiatives",
           "classification": "delegated_decision",
-          "status": "not_started",
+          "status": "blocked_decision",
           "assigned_to": "Product Owner",
           "github_issue": 2188,
           "branch": "exec/2026-11-03__release-v9.15/EPIC-07",
           "commit_sha": null,
           "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
+          "blocked_since_utc": "2026-11-05T13:56:47Z",
+          "unblock_criteria": "ESC-EXEC-20261105-04 resolved with a dated ruling per item; then the engine writes the decision record under docs/product/decisions/",
           "completed_utc": null,
           "acceptance_verified": false,
           "spec_references": [],
@@ -1211,7 +1242,7 @@
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": null
+          "notes": "Escalated ESC-EXEC-20261105-04 (STEP 3.1.D); SLA due 2026-11-06T13:56:47Z."
         }
       }
     }
@@ -1224,7 +1255,10 @@
       "reason": "Superseded by ST-12: both win-rate widgets exist only on legacy Dashboard.js, which ST-12 deletes. Product Owner, 2026-11-03 (sprint_backlog.md Items Deferred This Sprint)."
     }
   },
-  "blocked_items": [],
+  "blocked_items": [
+    "ST-44",
+    "ST-45"
+  ],
   "delegated_items": [],
   "completed_items": [
     "ST-01",
@@ -1256,7 +1290,14 @@
     "ST-28",
     "ST-34",
     "ST-35",
-    "ST-36"
+    "ST-36",
+    "ST-37",
+    "ST-38",
+    "ST-39",
+    "ST-40",
+    "ST-41",
+    "ST-42",
+    "ST-43"
   ],
   "open_escalations": {
     "ESC-EXEC-20261104-01": {
@@ -1349,6 +1390,26 @@
       "resolved_utc": "2026-11-05T08:50:24Z",
       "resolved_by": "Strategy Rules & System Intent Owner (the user, in session)",
       "resolution_summary": "Outcome (1), clarify: one §13.2 sentence (AI-written text describing the user's data must not suggest changing stops, sizing, setups or other strategy parameters) and a §13.5 roster row for the journal summary; documentation-only v1.25, case (c)."
+    },
+    "ESC-EXEC-20261105-03": {
+      "cycle": "2026-11-03__release-v9.15",
+      "summary": "ST-44/EPIC-07 — re-confirm or flag the four current_roadmap.md §2 product-scope exclusions and set a re-confirmation cadence",
+      "trigger_type": "Strategy",
+      "owning_authority": "Strategy Rules & System Intent Owner (with the Product Owner)",
+      "raised_utc": "2026-11-05T13:56:47Z",
+      "sla_due_utc": "2026-11-08T13:56:47Z",
+      "blocks_execution": false,
+      "disposition": "Open"
+    },
+    "ESC-EXEC-20261105-04": {
+      "cycle": "2026-11-03__release-v9.15",
+      "summary": "ST-45/EPIC-07 — re-confirm or flag each of the seven initiative_register.md Priority 3 — Deferred initiatives",
+      "trigger_type": "Scope",
+      "owning_authority": "Product Owner",
+      "raised_utc": "2026-11-05T13:56:47Z",
+      "sla_due_utc": "2026-11-06T13:56:47Z",
+      "blocks_execution": false,
+      "disposition": "Open"
     }
   },
   "merge_gate": {

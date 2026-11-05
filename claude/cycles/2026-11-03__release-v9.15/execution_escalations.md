@@ -123,3 +123,35 @@ Last Updated: 2026-11-04
 - **Blocks execution:** No
 - **Disposition:** Resolved
 - **Resolution summary (2026-11-05T08:50:24Z):** Strategy Rules & System Intent Owner ruling, given in-session by the user acting in that role, dated 2026-11-05: **outcome (1), clarify.** The re-read finds §13.1 and §13.2 hold for the journal summary but that §13's text does not state the exclusion three rulings have inferred, so the boundary language is not explicit enough. ST-28 applies the case (c) write confirmed at seal (2026-11-03): one §13.2 sentence stating that AI-written text describing the user's data must not suggest changing stops, position sizing, setups or other strategy parameters, and a §13.5 roster row for the journal summary citing the new decision record; documentation-only version 1.25 with its §16 Change Log row, `DOCUMENTATION_ONLY_VERSIONS` entry and §15 re-run. ST-28 reclassified `autonomous`.
+
+## ESC-EXEC-20261105-03
+
+- **Raised at:** 2026-11-05T13:56:47Z
+- **Routine:** Sprint Execution
+- **Cycle ID:** 2026-11-03__release-v9.15
+- **Step:** STEP 3.1.D (EPIC-07 execution loop)
+- **ST/EPIC item:** ST-44 / EPIC-07 (BLG-GOV-195)
+- **Trigger type:** Strategy
+- **Blocking statement:** ST-44 needs a dated decision by the Strategy Rules & System Intent Owner with the Product Owner that re-confirms or flags each of the four product-scope exclusions in `current_roadmap.md` §2 (broker API integration (execution), real-time streaming prices, social/community features, options and futures support), with a reason for each, and sets a re-confirmation cadence. The engine cannot make this scope determination.
+- **Engine recommendation (non-binding):** re-confirm all four. Broker execution would cross §13's "not an automated trading bot" boundary in practice, and IT-06's Alpaca mirror is read-only paper trading. Real-time streaming adds cost and noise to a daily/swing ATR strategy whose signals and stops recalculate on close. Social features contradict the single-user scope in §2 "This system is". Options and futures fall outside the equities momentum strategy `strategy_rules.md` defines. Cadence: re-confirm every 10 completed cycles (next due at completed_cycle_count 101), recorded in the decision only, so no governance prompt change. `current_roadmap.md` §2 unchanged.
+- **Owning authority:** Strategy Rules & System Intent Owner (with the Product Owner)
+- **Unblock criteria:** a dated ruling per exclusion (re-confirm or flag, with reason) and a cadence, recorded in this escalation's resolution. The engine then writes `docs/product/decisions/strategic-exclusions-reconfirmation--2026-11-05.md`.
+- **SLA due-by:** 2026-11-08T13:56:47Z (72h — Strategy)
+- **Blocks execution:** No
+- **Disposition:** Open
+
+## ESC-EXEC-20261105-04
+
+- **Raised at:** 2026-11-05T13:56:47Z
+- **Routine:** Sprint Execution
+- **Cycle ID:** 2026-11-03__release-v9.15
+- **Step:** STEP 3.1.D (EPIC-07 execution loop)
+- **ST/EPIC item:** ST-45 / EPIC-07 (BLG-GOV-196)
+- **Trigger type:** Scope
+- **Blocking statement:** ST-45 needs a dated Product Owner decision that re-confirms each of the seven Priority 3 — Deferred initiatives in `initiative_register.md` as deliberately deferred, or flags it for review, with a reason for each. The engine cannot make this scope determination.
+- **Engine recommendation (non-binding):** re-confirm Multi-Portfolio Support, Mobile App and BLG-TECH-05 Prometheus (single-user scale and a web-only product are unchanged; no operational need has arisen). Flag four for review at the next `run roadmap`: Position Correlation Analysis (partly overlapped by Market Correlation Analysis, shipped v2.7); Backtesting Module (overlaps PO-05 Lightweight Replay Mode on the roadmap); Full Compliance Scoring (the Arc 5 composite compliance score shipped v4.1, so the item may be done or need redefining); Customisable Dashboard Layout (the Site Structure & Usability programme is redesigning the Dashboard, the right point to decide). `initiative_register.md` unchanged; the decision record is the next `run roadmap`'s input (AC 2 post-merge, BLG-GOV-408).
+- **Owning authority:** Product Owner
+- **Unblock criteria:** a dated ruling per initiative (re-confirm or flag, with reason) recorded in this escalation's resolution. The engine then writes `docs/product/decisions/priority3-deferred-sunset-review--2026-11-05.md`.
+- **SLA due-by:** 2026-11-06T13:56:47Z (24h — lifecycle/scope)
+- **Blocks execution:** No
+- **Disposition:** Open
