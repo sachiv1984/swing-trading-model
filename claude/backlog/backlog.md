@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-05 (Sprint Execution `2026-11-03__release-v9.15` EPIC-04 — 1 new item added: BLG-AI-27); prior — 2026-11-05 (PR #2191 agent-mediated Director of Quality / Product Owner review — 2 new items added: BLG-FE-273, BLG-FE-274); prior — 2026-11-05 (Sprint Execution `2026-11-03__release-v9.15` EPIC-02 — 4 new items added: BLG-BE-205, BLG-GOV-409, BLG-SPEC-220, BLG-QA-246); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-05 (Sprint Execution `2026-11-03__release-v9.15` EPIC-04 — 4 new items added: BLG-AI-27, BLG-AI-28, BLG-AI-29, BLG-AI-30); prior — 2026-11-05 (PR #2191 agent-mediated Director of Quality / Product Owner review — 2 new items added: BLG-FE-273, BLG-FE-274); prior — 2026-11-05 (Sprint Execution `2026-11-03__release-v9.15` EPIC-02 — 4 new items added: BLG-BE-205, BLG-GOV-409, BLG-SPEC-220, BLG-QA-246); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -3486,6 +3486,75 @@ ST-24's acceptance criteria need the tokens the daily-briefing ticker check has 
 **Acceptance Criteria**
 - The token list with counts is recorded
 - Each non-ticker found is added and covered by `test_non_ticker_words_ignored`, or the review records that none was found
+
+---
+
+### BLG-AI-28 — Handle `_NON_TICKER_WORDS` entries that are also real tickers deliberately
+**Priority:** P3 (Low)
+**Type:** AI Compliance / Correctness
+**Owner:** AI Compliance & Governance Officer; Backend Engineering Patterns Owner
+**Source:** Agent-mediated AI Compliance & Governance Officer review of ST-26 (EPIC-04, cycle `2026-11-03__release-v9.15`, `BLG-AI-25`), finding 2 — 2026-11-05
+**Effort:** XS (<1h plus tests)
+**Provisional-Target:** TBD
+
+**Problem**
+`_NON_TICKER_WORDS` contains words that are also listed tickers. MA (Mastercard) and ON (ON Semiconductor) were already on the list, and PM (Philip Morris, in `backend/tickers_full_list.csv`) was added by ST-26. AM, IMO, NOTE and BST are listed symbols outside the scan universe. A held one is still cited, because `_ticker_in` runs first. A non-held one is no longer caveated in the briefing summary. In chat, "PM's stop was hit last week." with focus `MU` held and PM not held now gets the MU note, which is the misattribution ruling `ESC-EXEC-20261030-03` exists to prevent. The case is unlikely and fails soft, because a note is added and model text is never edited. But neither ruling nor the contract says the collision was decided.
+
+**Scope**
+- Ask the AI Compliance & Governance Officer how to treat collisions: for example, AM/PM count as non-tickers only after a time digit, or a word that is in the scan universe goes to the focus rule's "other ticker" path
+- Implement the ruling for PM, MA and ON (and any other universe collision), with tests
+- State the collision handling in `ai_endpoints.md` check 3 and in the chat focus paragraph
+
+**Acceptance Criteria**
+- The ruling is recorded before the code change
+- With focus `MU` held and PM not held, "PM's stop was hit last week." gets the result the ruling assigns, in a test; "Your stop was hit at 3 PM." still gets the MU note
+- All ST-16, ST-17 and ST-26 tests pass
+
+---
+
+### BLG-AI-29 — Daily briefing and chat: check output against §13.2's AI-text sentence
+**Priority:** P3 (Low)
+**Type:** AI Compliance / Correctness
+**Owner:** AI Compliance & Governance Officer; Backend Engineering Patterns Owner
+**Source:** Agent-mediated Director of Quality review of EPIC-04 (cycle `2026-11-03__release-v9.15`, ST-28 / `BLG-GOV-194`), finding 2 — 2026-11-05
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+`strategy_rules.md` v1.25 §13.2 states that AI-written text describing the user's data, including the daily briefing and chat, must not suggest changing stops, position sizing, setups or any other strategy parameter. The journal summary (`journal_summary_language_failures`), debrief and monthly P&L narrative (`scan_prescriptive`) have output checks. `POST /ai/daily-briefing` and `POST /ai/chat` check only tickers and stop times, and the briefing system prompt asks for "recommended actions" without forbidding advice to change stops or sizing. So nothing enforces the sentence for those two features.
+
+**Scope**
+- Ask the AI Compliance & Governance Officer which check forms apply to the briefing and chat (briefing actions such as EXIT/HOLD are deterministic outputs, not parameter changes), and how a failure is handled (note, regenerate or fallback)
+- Implement the ruled check and log its result in `claude_audit_log.compliance_check_result`
+- Add B-DB/B-CH scenarios to `ai_s13_boundary_test_suite.md`
+
+**Acceptance Criteria**
+- The ruling is recorded before the code change
+- A briefing or chat output suggesting tightening stops gets the ruled handling, in a test; a deterministic EXIT/HOLD action does not
+- Every existing briefing and chat test passes
+
+---
+
+### BLG-AI-30 — Journal summary check: form (6) noun false positives and reported-speech gaps
+**Priority:** P3 (Low)
+**Type:** AI Compliance / Correctness
+**Owner:** AI Compliance & Governance Officer; Backend Engineering Patterns Owner
+**Source:** Agent-mediated Director of Quality review of EPIC-04 (cycle `2026-11-03__release-v9.15`, ST-25 / `BLG-AI-24`), findings 4 and 5 — 2026-11-05
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+**Depends on:** BLG-AI-24 (ruling `ESC-EXEC-20261105-01` (A″))
+
+**Problem**
+Form (6) of ruling (A″) treats a sentence-initial change verb as an imperative. It therefore also fails descriptive sentences that start with a noun spelled the same way, such as "Review notes mention stop placement several times.", "Change was made to stops in April." and "Increase from 1% risk lifted position size.". These fail safe (regeneration, then the fallback), but they hide legitimate summaries. The past-tense reported-speech exemption (A″ (ii)) does not check who is speaking: "Overall, the review concluded that position sizing should be reduced." passes. It also covers the rest of the sentence: "The trader noted that losses were small, so consider tightening stops." passes.
+
+**Scope**
+- Ask the AI Compliance & Governance Officer whether to narrow form (6) (e.g. require a determiner or object after the verb) and to limit (ii) to the trader or notes as speaker and to the reported clause only
+- Implement the ruled forms; add the sentences above as cases
+
+**Acceptance Criteria**
+- The ruling is recorded before the code change
+- Each sentence above gets the result the ruling assigns, in a test
+- Every ST-15, v9.13 ST-18 and v9.15 ST-25/ST-27 case keeps its result
 
 ---
 

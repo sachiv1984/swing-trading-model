@@ -6,7 +6,7 @@
   "invoked_utc": "2026-11-04T10:55:44Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-05T08:59:00Z",
+  "last_updated_utc": "2026-11-05T09:20:00Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-03",
@@ -800,7 +800,7 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.push",
           "sign_off_record": null,
-          "notes": "Pass_with_deviation: neither AC met in-sprint. The production token list (DEL-20261105-01) is not available; the AI Compliance & Governance Officer (the user, in session, 2026-11-05T08:50:24Z) chose to carry it post-merge. Tracked by BLG-AI-27, filed before the PR opens (aad0d041). ST-26 removed the common time/chat words from caveating meanwhile. ci_pending: 41998451082 (CI Pytest)."
+          "notes": "Pass_with_deviation: neither AC met in-sprint. The production token list (DEL-20261105-01) is not available; the AI Compliance & Governance Officer (the user, in session, 2026-11-05T08:50:24Z) chose to carry it post-merge. Tracked by BLG-AI-27, filed before the PR opens (aad0d041). ST-26 removed the common time/chat words from caveating meanwhile. CI on aad0d041: CI Pytest 41998451082 success. acceptance_verified=true records the AC check as completed and graded (Pass_with_deviation), not met: neither AC was met in-sprint; both carried to BLG-AI-27 (DoQ review finding 7)."
         },
         "ST-25": {
           "title": "Journal summary advisory check: remaining false positives and misses",
@@ -825,7 +825,7 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.push",
           "sign_off_record": null,
-          "notes": "Reclassified delegated_decision -> autonomous on ESC-EXEC-20261105-01 resolution (A″, 2026-11-05T08:50:24Z). AC 1 met: ruling recorded in 02becfc8 before the code commit. AC 2 met: each BLG-AI-24 sentence has its ruled result (test_missed_advisory_forms_caught, test_a_double_prime_descriptive_wording_passes). AC 3 met: every ST-15 and v9.13 ST-18 case unchanged in the same file. B-JS-04 updated (suite 1.6); ai_endpoints.md 1.39. Deviation check: none. CI on e6ba8e52: 7/7 success (CI Pytest 41997977740)."
+          "notes": "Reclassified delegated_decision -> autonomous on ESC-EXEC-20261105-01 resolution (A″, 2026-11-05T08:50:24Z). AC 1 met: ruling recorded in 02becfc8 before the code commit. AC 2 met: each BLG-AI-24 sentence has its ruled result (test_missed_advisory_forms_caught, test_a_double_prime_descriptive_wording_passes). AC 3 met: every ST-15 and v9.13 ST-18 case unchanged in the same file. B-JS-04 updated (suite 1.6); ai_endpoints.md 1.39. Deviation check: none. CI on e6ba8e52: 7/7 success (CI Pytest 41997977740). DoQ review pass 1 finding 1 fixed in ec0ada79 (exemption bounded by sentence/clause; form (6) lookbehind; bullets)."
         },
         "ST-26": {
           "title": "Chat stop-time focus rule: ignore common upper-case non-ticker words",
@@ -848,8 +848,15 @@
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.push",
-          "sign_off_record": null,
-          "notes": "AC 1 met: the five BLG-AI-25 sentences with focus MU held get the MU note (test_time_and_chat_words_do_not_block_focus). AC 2 met: TSLA sentence still gets no MU note; all ST-16/ST-17 tests pass. Added to the shared _NON_TICKER_WORDS (within ESC-EXEC-20261027-02 (B) condition 2, a minimum list); ai_endpoints.md 1.38. Deviation check: none. CI on b937a396: 7/7 success (CI Pytest 41994587033)."
+          "sign_off_record": {
+            "role": "AI Compliance & Governance Officer",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "date": "2026-11-05",
+            "reference": "qa_evidence_EPIC-04.md ST-26 Ruling-Scope Confirmation",
+            "notes": "Approved; 5 non-blocking findings; BLG-AI-28 filed."
+          },
+          "notes": "AC 1 met: the five BLG-AI-25 sentences with focus MU held get the MU note (test_time_and_chat_words_do_not_block_focus). AC 2 met: TSLA sentence still gets no MU note; all ST-16/ST-17 tests pass. Added to the shared _NON_TICKER_WORDS (within ESC-EXEC-20261027-02 (B) condition 2, a minimum list); ai_endpoints.md 1.38. Deviation check: none. CI on b937a396: 7/7 success (CI Pytest 41994587033). AI Compliance & Governance Officer ruling-scope confirmation (agent-mediated, §5.3): Approved 2026-11-05; real-ticker collision residual risk BLG-AI-28."
         },
         "ST-27": {
           "title": "Journal summary advisory check: do not flag \"could/may help explain\"",
@@ -900,7 +907,7 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.push",
           "sign_off_record": null,
-          "notes": "Reclassified delegated_decision -> autonomous on ESC-EXEC-20261105-02 resolution (outcome 1, 2026-11-05T08:50:24Z). AC 1 met: dated re-read in docs/product/decisions/decisions--2026-11-03__release-v9.15--ST-28-journal-summary-section13-reread.md. AC 2 met: each cited clause answered (§13.1, §13.2; §13.3/§13.4/§13.6 do not name the subject); roster answer: belongs on §13.5. AC 3 met: clarified §13.2 text + §13.5 roster row under case (c), strategy_rules.md 1.25 with §16 Change Log row, DOCUMENTATION_ONLY_VERSIONS 1.25, registry test passing, §15 re-run 0 actionable. Deviation check: none. ci_pending: 41998367420 (CI Pytest).",
+          "notes": "Reclassified delegated_decision -> autonomous on ESC-EXEC-20261105-02 resolution (outcome 1, 2026-11-05T08:50:24Z). AC 1 met: dated re-read in docs/product/decisions/decisions--2026-11-03__release-v9.15--ST-28-journal-summary-section13-reread.md. AC 2 met: each cited clause answered (§13.1, §13.2; §13.3/§13.4/§13.6 do not name the subject); roster answer: belongs on §13.5. AC 3 met: clarified §13.2 text + §13.5 roster row under case (c), strategy_rules.md 1.25 with §16 Change Log row, DOCUMENTATION_ONLY_VERSIONS 1.25, registry test passing, §15 re-run 0 actionable. Deviation check: none. CI on 122619e9: CI Pytest 41998367420 success. DoQ review pass 1 finding 2 fixed in 3ce6e3bd (§13.2 cut to the single ruled sentence; gap BLG-AI-29).",
           "delivery_note": "docs/product/decisions/decisions--2026-11-03__release-v9.15--ST-28-journal-summary-section13-reread.md"
         }
       }
@@ -1056,7 +1063,8 @@
     "2026-11-04: EPIC-03 agent-mediated DoQ (§5.3): pass 1 Blocked (2 blocking), fixes f56d4717, pass 2 Approved. ST-20 graded Pass_with_deviation (BLG-BE-203). Follow-ups filed: BLG-BE-203, BLG-SPEC-218, BLG-SPEC-219.",
     "2026-11-04: EPIC-03 merged (PR #2190, merge commit 9df0cc9a, 2026-11-04T20:55:49Z, by the human repository owner). Orphaned post-merge commit check: none (git log origin/main..origin/exec/.../EPIC-03 empty). No pending sibling EPIC branches, so STEP 4 step 3c had nothing to sync. merge_gate.all_merged reads true only because EPIC-01 and EPIC-03 are the sole initialised EPICs; EPIC-02, -04, -05, -06, -07 are not started. The next run sprint must not treat this as sprint completion or enter STEP 5 until every EPIC in the Merge Order is initialised and merged.",
     "2026-11-05 EPIC-02 merge-gate resume-sync (AUD-2026-08-21-010, user reported merge): PR #2191 merged 2026-11-05T08:21:26Z by sachiv1984, merge commit b668350b. Orphaned post-merge commit check (LL-v6.8-P3-01): git log origin/main..origin/exec/2026-11-03__release-v9.15/EPIC-02 empty, nothing to reconcile. Final PR-head CI (349a90d2): 22/22 workflows success (Playwright E2E 41992745484, CI Pytest 41992745916, Quality & Governance Gate 41992745867). merge_gate.all_merged reads true because only initialised EPICs are counted; EPIC-04/05/06/07 are not yet initialised (tracked by ST-38, EPIC-07).",
-    "2026-11-05: EPIC-04 initialised (STEP 0) on exec/2026-11-03__release-v9.15/EPIC-04 cut from main 7a749bcf. Classifications per sprint_backlog.md: ST-24 delegated_backend (production log read, Human-Delegation), ST-25 and ST-28 delegated_decision, ST-26 and ST-27 autonomous (ST-27 waits on the ST-25 ruling). GitHub issues #2167-#2171 found (sync gh ran at seal)."
+    "2026-11-05: EPIC-04 initialised (STEP 0) on exec/2026-11-03__release-v9.15/EPIC-04 cut from main 7a749bcf. Classifications per sprint_backlog.md: ST-24 delegated_backend (production log read, Human-Delegation), ST-25 and ST-28 delegated_decision, ST-26 and ST-27 autonomous (ST-27 waits on the ST-25 ruling). GitHub issues #2167-#2171 found (sync gh ran at seal).",
+    "2026-11-05: EPIC-04 agent-mediated DoQ (§5.3) pass 1 Blocked (2 blocking): fixes ec0ada79 (ST-25) and 3ce6e3bd (ST-28). Follow-ups filed: BLG-AI-28, BLG-AI-29, BLG-AI-30."
   ],
   "sealed": false,
   "sealed_utc": null
