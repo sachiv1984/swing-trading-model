@@ -6,7 +6,7 @@
   "invoked_utc": "2026-11-04T10:55:44Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-04T21:51:20Z",
+  "last_updated_utc": "2026-11-04T22:07:46Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-03",
@@ -265,7 +265,9 @@
         "tests/e2e/monitor-exit-queue.spec.js",
         "tests/e2e/monitor-grace-aware-suggestions.spec.js",
         "tests/e2e/dialog-classname-override-fixes.spec.js",
-        "tests/e2e/page-labels-single-source.spec.js"
+        "tests/e2e/page-labels-single-source.spec.js",
+        "tests/e2e/browser-tab-title.spec.js",
+        "tests/e2e/sidebar-chrome.spec.js"
       ],
       "stories": {
         "ST-08": {
@@ -380,7 +382,7 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.push",
           "sign_off_record": null,
-          "notes": "Starts only after ST-08 is approved (RISK-02); after ST-12 on CommandPalette.js. Done after ST-08 approval and ST-12 commit. AC 1: pageLabels.js is the single source for sidebar, heading and palette; SC-PL-01 checks sidebar = h1 for all 19 sidebar pages, SC-PL-02 palette labels (21 pages, incl. new Replay and Notifications); deliberate differences per glossary. AC 2: nav/palette specs updated (sidebar-nav-groups, command-palette, legacy-dashboard-redirect) and passing locally (77/77 + 39/39 axe/chart + 21/21 SC-PL). Deviation check: none. Commit also carries ST-12 review follow-ups. Visual-regression baselines (advisory job) will show sidebar label diffs. ci_pending: see CI on de1343a0.",
+          "notes": "Starts only after ST-08 is approved (RISK-02); after ST-12 on CommandPalette.js. Done after ST-08 approval and ST-12 commit. AC 1: pageLabels.js is the single source for sidebar, heading and palette; SC-PL-01 checks sidebar = h1 for all 19 sidebar pages, SC-PL-02 palette labels (21 pages, incl. new Replay and Notifications); deliberate differences per glossary. AC 2: nav/palette specs updated (sidebar-nav-groups, command-palette, legacy-dashboard-redirect) and passing locally (77/77 + 39/39 axe/chart + 21/21 SC-PL). Deviation check: none. Commit also carries ST-12 review follow-ups. Visual-regression baselines (advisory job) will show sidebar label diffs. CI on de1343a0: Playwright E2E 41919951561, Critical-Path Smoke 41919951349, CI Pytest 41919951118, Frontend Production Build 41919951309 all success.",
           "_planned_spec_references": [
             "docs/design/2026-11-03__release-v9.15/site-structure-phase1/decision_record.md",
             "docs/reference/glossary.md"
@@ -417,7 +419,7 @@
             "result": "Approved (both, first pass)",
             "findings": "Behaviour-identical port verified by whitespace-insensitive diff of Dashboard.js@c8523403^ vs DailyMonitor.js (only rename/prop-name lines differ); data feed equivalent (Position.list ignores order arg; same open filter). Non-blocking: phone-width header wrap; design_system.md §Buttons lists Daily Monitor as primary; glossary lacks Daily Monitor action row; positions.md Key Components list; stale Dashboard.js comments; border/popover token coverage lost with SC-TOK-04/SC-MTC-05/06."
           },
-          "notes": "Reclassified autonomous -> delegated_decision at 2026-11-04T21:03:58Z: MonitorModal (Daily Position Monitor) is reachable only from the legacy Dashboard QuickActions widget (positions.md §Daily Position Monitor Exit Queue entry point). See ESC-EXEC-20261104-05. Resolved 2026-11-04T21:04:56Z: Product Owner option (a), Daily Monitor moves to the Positions header; reclassified delegated_decision -> autonomous. Head of UX & Design placement confirmation pending (§5.3). AC 1 (one palette Dashboard entry) SC-LDR-03; AC 2 (/#/Dashboard -> home) SC-LDR-01/02; AC 3 (specs removed or retargeted) done, CI below. Local Playwright (test-env build): affected specs 54/54 pass after the exit-queue stub fix. Deviation check: none (implementation matches navigation.md §Legacy Dashboard Route and the ruled positions.md v2.24). CI on c8523403: 8 workflows success (Critical-Path Smoke 41916984586, CI Pytest 41916984473, Frontend Production Build 41916984670); ci_pending: 41916984537 (Playwright E2E Acceptance Tests). Review follow-ups (phone-width wrap SC-LDR-05, glossary Daily Monitor row, positions.md Key Components) landed in de1343a0.",
+          "notes": "Reclassified autonomous -> delegated_decision at 2026-11-04T21:03:58Z: MonitorModal (Daily Position Monitor) is reachable only from the legacy Dashboard QuickActions widget (positions.md §Daily Position Monitor Exit Queue entry point). See ESC-EXEC-20261104-05. Resolved 2026-11-04T21:04:56Z: Product Owner option (a), Daily Monitor moves to the Positions header; reclassified delegated_decision -> autonomous. Head of UX & Design placement confirmation pending (§5.3). AC 1 (one palette Dashboard entry) SC-LDR-03; AC 2 (/#/Dashboard -> home) SC-LDR-01/02; AC 3 (specs removed or retargeted) done, CI below. Local Playwright (test-env build): affected specs 54/54 pass after the exit-queue stub fix. Deviation check: none (implementation matches navigation.md §Legacy Dashboard Route and the ruled positions.md v2.24). CI on c8523403: 8 workflows success (Critical-Path Smoke 41916984586, CI Pytest 41916984473, Frontend Production Build 41916984670); Playwright E2E Acceptance Tests 41916984537 success (ci_pending cleared). Review follow-ups (phone-width wrap SC-LDR-05, glossary Daily Monitor row, positions.md Key Components) landed in de1343a0.",
           "_planned_spec_references": [
             "docs/design/2026-11-03__release-v9.15/site-structure-phase1/decision_record.md",
             "docs/specs/frontend/pages/navigation.md"
@@ -426,26 +428,28 @@
         "ST-13": {
           "title": "Set a browser-tab title for each page",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 2157,
           "branch": "exec/2026-11-03__release-v9.15/EPIC-02",
-          "commit_sha": null,
+          "commit_sha": "b7fefee0529f3d630d81b748a4cb107c1d7ce401",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-11-04T21:58:22Z",
+          "acceptance_verified": true,
           "spec_references": [
+            "docs/specs/frontend/pages/navigation.md",
             "docs/design/2026-11-03__release-v9.15/site-structure-phase1/decision_record.md",
-            "docs/specs/frontend/pages/navigation.md"
+            "src/lib/pageLabels.js",
+            "tests/e2e/browser-tab-title.spec.js"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.push",
           "sign_off_record": null,
-          "notes": null,
+          "notes": "AC: each routed page sets a distinct title (SC-BTT-04) and Playwright covers three pages incl. Research (SC-BTT-01..03), plus detail route (SC-BTT-05) and unknown route (SC-BTT-06); 6/6 local pass on the test-env build. Uses ST-11 glossary labels (ST-08 approved). Deviation check: none. Implementation note (intent match, not a deviation): PageNotFound renders outside Layout, so it sets the not-found title itself; navigation.md's \"No page sets document.title itself\" targets routed pages. ci_pending: see CI on b7fefee0.",
           "_planned_spec_references": [
             "docs/design/2026-11-03__release-v9.15/site-structure-phase1/decision_record.md",
             "docs/specs/frontend/pages/navigation.md"
@@ -454,27 +458,28 @@
         "ST-14": {
           "title": "Fix three small chrome defects: version label, What's New heading, sidebar height",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 2158,
           "branch": "exec/2026-11-03__release-v9.15/EPIC-02",
-          "commit_sha": null,
+          "commit_sha": "9de8cd20a34c96cb805dceac51d19b33d59ab0fe",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-11-04T22:07:46Z",
+          "acceptance_verified": true,
           "spec_references": [
-            "docs/design/2026-11-03__release-v9.15/site-structure-phase1/decision_record.md",
             "docs/specs/frontend/pages/navigation.md",
-            "docs/specs/frontend/pages/dashboard.md"
+            "docs/specs/frontend/pages/dashboard.md",
+            "docs/design/2026-11-03__release-v9.15/site-structure-phase1/decision_record.md",
+            "tests/e2e/sidebar-chrome.spec.js"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.push",
           "sign_off_record": null,
-          "notes": null,
+          "notes": "AC: footer shows current release (SC-CHR-01/02); no \"undefined\" in the What's New heading (SC-CHR-03/04); sidebar background spans the page (SC-CHR-05); 25/25 local incl. whats-new-panel and sidebar-nav-groups. Implementation note: the sidebar-height defect did not reproduce in Chromium (fixed aside spans the viewport at top and bottom of an 1820px page); no CSS change made. SC-CHR-05 checks the navigation.md wording (\"every scroll position and page length\") rather than decision_record §6's \"bounding box vs document height\", which does not apply to a fixed sidebar (intent match). Deviation check: none. ci_pending: see CI on 9de8cd20.",
           "_planned_spec_references": [
             "docs/design/2026-11-03__release-v9.15/site-structure-phase1/decision_record.md",
             "docs/specs/frontend/pages/navigation.md",
@@ -751,6 +756,8 @@
     "ST-08",
     "ST-11",
     "ST-12",
+    "ST-13",
+    "ST-14",
     "ST-15",
     "ST-17",
     "ST-18",

@@ -3,11 +3,12 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 3.11
-**Last Updated:** 2026-11-03 (v9.15 design gate — ST-14/BLG-FE-266: §6A header has no version suffix when the version is absent); prior — 2026-10-29 (v9.14 design gate — ST-03/BLG-BE-193: Card 4 unknown regime; ST-04/ST-05: Card 2 FX source sub-line; ST-08/BLG-FE-214: Card 2 stale explanation as the link's description); prior — 2026-10-12 (v9.12 design gate — ST-24/BLG-FE-210: AI Daily Briefing MONITOR badge to amber-700); prior history retained — see prior entries in version control
+**Version:** 4.0
+**Last Updated:** 2026-11-04 (ST-09, EPIC-02, v9.15, BLG-SPEC-215 — new §1B Today list: market regime, exits due, grace ends today, stops moved, new signals, first on the page (Product Owner ruling on "stop changes due"); Card 4 and the Exit Conditions Met row merge into it; testable ACs TL-01..TL-29); prior — 2026-11-03 (v9.15 design gate — ST-14/BLG-FE-266: §6A header has no version suffix when the version is absent); prior — 2026-10-29 (v9.14 design gate — ST-03/BLG-BE-193: Card 4 unknown regime; ST-04/ST-05: Card 2 FX source sub-line; ST-08/BLG-FE-214: Card 2 stale explanation as the link's description); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Release:** v8.8
 **EPIC:** EPIC-03
+**Design Source (v4.0):** docs/design/2026-11-03__release-v9.15/site-structure-phase1/decision_record.md §2.2 (ST-09)
 **Design Source (v3.10):** docs/design/2026-10-29__release-v9.14/market-regime-unknown/decision_record.md (ST-03), docs/design/2026-10-29__release-v9.14/fx-rate-source-indicator/decision_record.md (ST-04/ST-05), docs/design/2026-10-29__release-v9.14/stale-price-marker/decision_record.md (ST-08)
 **Design Source (v3.8):** docs/design/2026-10-08__release-v9.11/risk-price-integrity/decision_record.md (ST-10 stale-price sub-line); `design_system.md` §Consistency Rules → Number and Currency Formatting (v1.21) for ST-15 — pre-existing canonical rule, no new design artefact
 **Design Source (v3.6):** `design_system.md` §Consistency Rules → Number and Currency Formatting (v1.21) — pre-existing canonical rule ("zero renders unsigned in the neutral tone"); no new design artefact authored, applied to a second element (icon badge) within an already-conforming component (the card's own P&L value text already used the same three-way logic)
@@ -31,11 +32,14 @@
 
 ## 1. Purpose & User Goals
 
-The Dashboard Homepage is the primary entry point for daily use. It provides an at-a-glance session summary across five key data categories, enabling the user to understand their current position, risk, and market status in a single view.
+The Dashboard Homepage is the primary entry point for daily use. It provides an at-a-glance session summary across five key data categories (v4.0: led by the Today list, §1B, with Card 4 merged into it), enabling the user to understand their current position, risk, and market status in a single view.
 
 **Route:** `/` (root / home)
 
+**v4.0:** the page leads with the Today list (§1B): the decisions due today, in a fixed order, each linking to where the user acts. The status summary follows below it.
+
 Users should immediately see:
+- What needs attention today: the market regime, exits due, grace periods ending, stops moved and new signals (§1B)
 - How many positions are open and in what states
 - Current portfolio heat level (risk exposure)
 - How many positions are in grace period and when the next expires
@@ -44,11 +48,116 @@ Users should immediately see:
 
 ---
 
+## 1B. Today List
+
+*Added v4.0 (ST-09, EPIC-02, v9.15, BLG-SPEC-215). Design brief: `docs/design/2026-11-03__release-v9.15/site-structure-phase1/decision_record.md` §2.2. Built by `BLG-FE-254` (v9.16); until then `DashboardHome.js` keeps the v3.11 layout, which is planned work, not a deviation.*
+
+The first thing on the page, directly under the page title: what needs the user's attention today, in a fixed order, each item linking to the place where the user acts on it. Nothing on the list executes anything.
+
+### Groups and order
+
+The list has five groups, always in this order. Within a group, the item order is fixed by the rule in the table. The rules are mechanical (strategy reason, alphabet, screener order); none ranks or scores an item.
+
+| Order | Group | Data source | Item | Item order | Link |
+|-------|-------|-------------|------|------------|------|
+| 1 | **Market regime** | `GET /market/status` (as Card 4 today) | One row per market: "US (SPY)" and "UK (FTSE)", with the regime badge RISK-ON ✓, RISK-OFF ✗ or UNKNOWN ? (the v3.10 unknown state, its accessible description and tooltip unchanged) | US, then UK | Row links to `/Signals` |
+| 2 | **Exits due** | `GET /positions`, filtered by the shared `getExitCondition` predicate (`positions.md` §Exit Dialog Pre-Selection and Deep Link): a post-grace stop breach or `risk_off_exit` | Ticker · reason pill ("RISK OFF" `#1E40AF` or "STOP REACHED" `#EA580C`, existing pills) · "Review exit" link | Risk-off first, then stop reached (the predicate's own precedence); A–Z by ticker within each | "Review exit" → `/Positions?exit={position_id}`, `aria-label="Review exit for {TICKER}"` |
+| 3 | **Grace ends today** | `GET /positions`: open positions in grace with `grace_days_remaining = 1` (Day 10 of 10, `positions.md` §Grace Period Alert Zone day convention) | Ticker · "Grace ends today — the trailing stop applies from the next session" | A–Z by ticker | Row links to `/Positions?position={position_id}` |
+| 4 | **Stops moved** | `GET /positions` field `stop_last_moved_date` and `previous_stop` (new, read-only; see Data dependency) | Ticker · "Stop moved from {previous} to {current}" in the position's native currency | A–Z by ticker | Row links to `/Positions?position={position_id}` |
+| 5 | **New signals** | `GET /signals`, today's rows by the same filter Card 4 uses today: `signal_date` equals the user's local date, or `created_date` starts with it (`SignalStatusCard.js`). Every status counts, as in Card 4's count | Ticker · market · "Research" link | The order the screener produced them (`signal_date DESC, rank ASC`, the API's order). The rank number is not shown | "Research" → `/research/{ticker}`, `aria-label="Research {TICKER}"` |
+
+- **Caps:** groups 2–5 show at most 5 items. Overflow shows a "+N more" link: Exits due, Grace ends today and Stops moved → `/Positions`; New signals → `/Signals`.
+- **Exits due sub-line:** under the Exits due group header, the v9.10 muted sub-line stays: "These positions meet a strategy exit condition (§8). Nothing is exited automatically."
+- **Links are router-relative:** routes in this section omit the HashRouter `/#` prefix (`/Positions?exit={id}` is `/#/Positions?exit={id}` in the address bar), as in §8.
+- **Group headers:** the group name and its count, e.g. "Exits due · 2". A group with no items is not shown, except Market regime, which always shows.
+- **"Stop changes due" in the brief (clarification, Product Owner ruling 2026-11-04):** the app has no manual stop change (`positions.md` §Trail Stop Action, ruling `ESC-EXEC-20261013-06`), so the brief's "stop changes due" is met by two display-only groups: **Grace ends today** (a stop starts being enforced at the next session; existing data) and **Stops moved** (stops the nightly job raised; needs `BLG-BE-205`). Neither offers a stop action.
+- **Stops moved, why it is here:** stops are moved only by the nightly trailing-stop job (`strategy_rules.md` §7.1, per the clarification above). The group shows which stops the job moved since the last run; it offers no stop action.
+- **Data dependency (Stops moved):** `GET /positions` does not record when a stop last moved (`compliance_service.py` notes the missing column). The group needs a read-only `stop_last_moved_date` and `previous_stop` per open position, written by the nightly job, tracked as `BLG-BE-205`. Until those fields exist, the Stops moved group is not rendered and its ACs (TL-09, TL-10) are not testable; the other groups ship without it.
+
+### Quiet day
+
+When groups 2–5 are all empty, the list collapses to one line under its title:
+
+"Nothing due today · US {RISK-ON ✓ | RISK-OFF ✗ | UNKNOWN ?} · UK {…}"
+
+The regime badges keep their colours and the unknown badge keeps its accessible description. No empty-state box, icon or illustration.
+
+### States
+
+| State | Rendering |
+|-------|-----------|
+| Loading | Each group shows one single-line skeleton row until its own source resolves; groups whose source has resolved render at once. No spinner. Before any source resolves, that is one skeleton row per group. |
+| Ready | Groups per the table above, or the quiet-day line |
+| One source fails | That group shows one muted line, "Couldn't load {group name}." with a "Retry" text button that refetches that source only. Other groups render normally. A failed `GET /positions` affects Exits due, Grace ends today and Stops moved; a failed `GET /signals` affects New signals; a failed `GET /market/status` shows the Market regime group's error line. The quiet-day line is never shown while any source has failed. |
+| All sources fail | One line, "Today's list is unavailable." with "Retry" (refetches all three) |
+
+### Container and placement
+
+- Full-width `DashboardCard` styling, title "Due today" (`text-sm font-semibold`), `data-testid="today-list"`. The title is not "Today", because that is the name of the navigation area the Dashboard sits in (`glossary.md` §UI Labels). Each group `data-testid="today-group-{regime|exits|grace|stops|signals}"`; each item row `data-testid="today-item-{group}-{ticker or market}"`; the quiet line `data-testid="today-quiet"`.
+- Placed directly below the page title and above everything else (§3 Layout).
+- On mobile the groups stack in the same order, full width.
+
+### What moves or merges
+
+| Today | v3.11 home | Change |
+|-------|------------|--------|
+| Market regime | Card 4 Signal Status regime rows | Moves here. Card 4 is removed (its signal count becomes the New signals group count). |
+| Exits due | §1A Exit Conditions Met row | Moves here, with the same predicate, pills, link, aria-label and sub-line. The row is removed from the Morning Briefing. **Deliberate change:** rows are ordered risk-off first, then A–Z (the shipped row keeps API order). |
+| Grace ends today | Card 3 In Grace Today shows a count and the next expiry date | New group. Card 3 stays as the grace summary. |
+| New signals | Card 4 "N new signals today" | Becomes this group. |
+| Stops moved | — (Recent Activity's "Stop updated" entry reads a field the API does not send) | New. Recent Activity drops its dead "Stop updated" branch when `BLG-BE-205` ships, so stop moves appear in one place. |
+
+The five Morning Briefing cards, the AI Daily Briefing, Cards 1, 2, 3 and 5, Gate Progress and What's New are unchanged and sit below the list (§3).
+
+### Strategy constraints (§13)
+
+- Display-only: every item is a link to a page; no item executes, confirms or pre-fills an action.
+- New signals lists signals the screener already produced, in the screener's order. The list adds no ranking, score, highlight or "do this" wording (brief §2.2 constraint), so no separate §13 confirmation is needed. Changing that needs its own §13 confirmation first.
+- Exits due reuses the v9.10 Exit Conditions Met copy, already checked. The Grace ends today and Stops moved copy is new, display-only, and covered by TL-20. All list copy must pass `scripts/check_ui_copy_forbidden_phrases.py`.
+
+### Testable acceptance criteria
+
+*For `BLG-FE-254`. Every observable behaviour in this section has a row.*
+
+| ID | Behaviour | Test |
+|----|-----------|------|
+| TL-01 | The Today list is the first element after the page title | Playwright: `today-list` precedes every other card in DOM order |
+| TL-02 | Groups render in the order regime, exits, grace, stops, signals | Playwright with all five populated (stops after `BLG-BE-205`) |
+| TL-03 | Market regime always shows US then UK, with RISK-ON/RISK-OFF/UNKNOWN badges; UNKNOWN keeps its accessible description | Playwright with a mocked unknown SPY |
+| TL-04 | A regime row links to `/Signals` | Playwright click |
+| TL-05 | Exits due lists exactly the positions the `getExitCondition` predicate selects (in-grace breaches excluded) | Playwright: one post-grace breach, one in-grace breach, one risk-off, one healthy → 2 rows |
+| TL-06 | Exits due order: risk-off before stop reached, A–Z within each | Playwright with two of each |
+| TL-07 | "Review exit" goes to `/Positions?exit={id}` and opens that position's exit dialog; accessible name "Review exit for {TICKER}" | Playwright |
+| TL-08 | More than 5 exits: 5 rows and "+N more" → `/Positions` | Playwright with 7 |
+| TL-09 | Stops moved lists positions whose `stop_last_moved_date` is the latest nightly run date, "Stop moved from {previous} to {current}" in native currency | Playwright (after `BLG-BE-205`) |
+| TL-10 | A Stops moved row links to `/Positions?position={id}` | Playwright (after `BLG-BE-205`) |
+| TL-11 | New signals lists today's signals in API order with no rank or score text | Playwright: three signals in a given order render in that order; no digit-only rank cell |
+| TL-12 | "Research" links to `/research/{ticker}` | Playwright |
+| TL-13 | An empty group (other than regime) is not rendered | Playwright with no signals → no `today-group-signals` |
+| TL-14 | Quiet day: no exits, grace endings, stops or signals → only `today-quiet`, reading exactly "Nothing due today · US {badge} · UK {badge}" with both regime badges | Playwright |
+| TL-15 | Loading: each group shows one skeleton row until its source resolves; resolved groups render while others still load; no spinner | Playwright with one delayed response |
+| TL-16 | A failed source shows "Couldn't load {group}." with Retry; other groups render; Retry refetches only that source | Playwright: `GET /signals` 500 |
+| TL-17 | All sources failing shows "Today's list is unavailable." with Retry | Playwright: all three 500 |
+| TL-18 | Card 4 and the Morning Briefing Exit Conditions Met row are gone | Playwright: no `exit-conditions-card`, and no element with the text "Signal Status" |
+| TL-19 | Nothing in the list is a button that changes data; every item control is a link | Playwright: no `button` inside `today-list` except Retry |
+| TL-20 | List copy passes the forbidden-phrases check | `scripts/check_ui_copy_forbidden_phrases.py` in CI |
+| TL-21 | Each group header shows the group name and its count, e.g. "Exits due · 2" | Playwright |
+| TL-22 | Exits due shows the sub-line "These positions meet a strategy exit condition (§8). Nothing is exited automatically." | Playwright |
+| TL-23 | Grace ends today lists exactly the open positions in grace with `grace_days_remaining = 1`, A–Z, each linking to `/Positions?position={id}` | Playwright: remaining 1, 2 and null → 1 row |
+| TL-24 | More than 5 items in Grace ends today, Stops moved or New signals: 5 rows and "+N more" (→ `/Positions`, `/Positions`, `/Signals`) | Playwright with 7 in each (stops after `BLG-BE-205`) |
+| TL-25 | The quiet-day line is not shown while any source has failed | Playwright: `GET /signals` 500, no exits or grace endings → error line, no `today-quiet` |
+| TL-26 | A failed `GET /positions` shows error lines for Exits due, Grace ends today and Stops moved; a failed `GET /market/status` shows the regime error line | Playwright |
+| TL-27 | Mobile (375px): groups stack full width in the same order | Playwright at 375px |
+| TL-28 | With Card 4 removed, Recent Activity spans the full width of its row (§3) | Playwright: Recent Activity card width equals the row width at 1440px |
+| TL-29 | New signals uses Card 4's date filter (local `signal_date`, or `created_date` starting with it) and counts every status | Playwright with one signal of each status dated today and one dated yesterday |
+
+---
+
 ## 1A. Morning Briefing Section
 
 **Design source:** `docs/design/2026-06-19__release-v6.0/morning-briefing/ux_spec.md`
 
-A new section at the top of `DashboardHome.js`, placed **above** the existing five session-summary cards. It provides start-of-day intelligence across five focused cards. The section is always visible and not collapsible.
+A new section at the top of `DashboardHome.js`, placed **above** the existing five session-summary cards. (v4.0: it sits below the Today list, §1B and §3.) It provides start-of-day intelligence across five focused cards. The section is always visible and not collapsible.
 
 ### Section Container & Header (v7.2 — ST-06)
 
@@ -69,6 +178,8 @@ Design source: `docs/design/2026-07-15__release-v7.2/dashboard-briefing-hierarch
 **Mobile (≤ 768px):** Cards stack vertically in the order listed above.
 
 ### Exit Conditions Met Row (v9.10 — ST-09, BLG-FE-199)
+
+**v4.0:** moves into the Today list as its Exits due group (§1B) when `BLG-FE-254` ships; it is then removed from the Morning Briefing. Until then it stays as specified below.
 
 **Design source:** `docs/design/2026-10-06__release-v9.10/exit-condition-surfacing/decision_record.md`
 
@@ -111,6 +222,7 @@ Design source: `docs/design/2026-07-15__release-v7.2/dashboard-briefing-hierarch
 | In Grace Today | `GET /portfolio` or `GET /positions` | `grace_days_remaining`, earliest expiry |
 | Signal Status | `GET /market/status`, `GET /signals` | regime per market, signals today |
 | Recent Activity | `GET /trades` or activity endpoint | last 3–5 trade events |
+| Today list (v4.0, §1B) | `GET /market/status`, `GET /positions`, `GET /signals` | regime per market; `getExitCondition` inputs; `stop_last_moved_date`/`previous_stop` (`BLG-BE-205`); today's signals in API order; `grace_days_remaining` for Grace ends today |
 
 A composite endpoint (`GET /dashboard/summary`) may be introduced to reduce page-load request count. This is an engineering decision to be confirmed at pre-alignment. If introduced, it must be documented in `docs/specs/api_contracts/` and added to `docs/reference/openapi.yaml`. Composite endpoint must only aggregate — no new server-side computations.
 
@@ -122,6 +234,10 @@ A composite endpoint (`GET /dashboard/summary`) may be introduced to reduce page
 
 ## 3. Layout
 
+### Page order (v4.0)
+
+From the top: page title → **Today list (§1B)** → briefing panel (Morning Briefing §1A, AI Daily Briefing §5) → status cards (§4) → Gate Progress (§6) → What's New (§6A). Until `BLG-FE-254` ships, the v3.11 order (no Today list; Card 4 present) applies.
+
 ### Desktop (>768px)
 
 ```
@@ -129,12 +245,14 @@ Row 1: [ Open Positions ] [ Portfolio Heat ] [ In Grace Today ]
 Row 2: [ Signal Status                    ] [ Recent Activity              ]
 ```
 
+**v4.0:** Card 4 (Signal Status) is removed (§1B What moves or merges), so Row 2 holds Recent Activity alone at full width.
+
 - Row 1: three equal-width cards
 - Row 2: two wider cards (Signal Status slightly wider; layout implementation choice within this constraint)
 
 ### Mobile (<768px)
 
-All 5 cards stack vertically in order: Open Positions → Portfolio Heat → In Grace Today → Signal Status → Recent Activity.
+All 5 cards stack vertically in order: Open Positions → Portfolio Heat → In Grace Today → Signal Status → Recent Activity. (v4.0: Signal Status is removed, so four cards stack; the Today list stacks above them, §1B.)
 
 ### Page Title (v7.0 — ST-08)
 
@@ -178,6 +296,8 @@ All 5 cards stack vertically in order: Open Positions → Portfolio Heat → In 
 ---
 
 ### Card 4 — Signal Status
+
+**v4.0:** removed when `BLG-FE-254` ships. Its regime rows become the Today list's Market regime group and its signal count the New signals group count (§1B). The specification below stands until then.
 
 - **Market regime per market:**
   - SPY: RISK-ON ✓, RISK-OFF ✗ or UNKNOWN ?
@@ -224,7 +344,7 @@ Applied with `compact` to the following cards' own content (inside `DashboardCar
 
 No CTA on any of the three — the existing whole-card click-through (§8 Navigation Targets) already provides the next step; a second CTA would compete with it.
 
-**Explicitly out of scope** (not missing data, so no empty state applies): Portfolio Heat (0% is a meaningful value, not absence of data), Signal Status (0 signals today is a valid count). Morning Briefing's five sub-cards and the AI Daily Briefing Card's existing "No briefing yet" state already have appropriately-scaled empty copy for their contexts and are unchanged by this story.
+**Explicitly out of scope** (not missing data, so no empty state applies; v4.0: Signal Status leaves with Card 4, §1B): Portfolio Heat (0% is a meaningful value, not absence of data), Signal Status (0 signals today is a valid count). Morning Briefing's five sub-cards and the AI Daily Briefing Card's existing "No briefing yet" state already have appropriately-scaled empty copy for their contexts and are unchanged by this story.
 
 ---
 
@@ -419,12 +539,12 @@ A full-width secondary-tier card placed below the §6 Gate Progress Indicator st
 
 | State | Behaviour |
 |-------|-----------|
-| Page loading | Skeleton cards for all 5 (loading animation) |
-| All loaded | All 5 cards render with live data |
+| Page loading | Skeleton cards for all 5 (4 from v4.0, Card 4 removed) (loading animation); the Today list has its own states (§1B) |
+| All loaded | All 5 cards (4 from v4.0) render with live data |
 | Individual card error | Card shows error indicator (“Unable to load”); other cards render normally |
 | All endpoints failed | Full page error with “Retry” button |
 
-Individual card failure must not break other cards. Each card fetches its data independently (or receives it from a composite endpoint that returns partial results). The §6A What's New Panel fetches independently and its failure does not affect any other section (per its own Error state above).
+Individual card failure must not break other cards, and a Today list source failure affects only its own group (§1B). Each card fetches its data independently (or receives it from a composite endpoint that returns partial results). The §6A What's New Panel fetches independently and its failure does not affect any other section (per its own Error state above).
 
 ---
 
@@ -437,6 +557,7 @@ Individual card failure must not break other cards. Each card fetches its data i
 | In Grace Today | `/risk` |
 | Signal Status | `/signals` |
 | Recent Activity | `/trades` |
+| Today list items (v4.0) | Per item: `/Signals`, `/Positions?exit={id}`, `/Positions?position={id}`, `/research/{ticker}`; "+N more" → `/Positions` or `/Signals` (§1B) |
 
 Cards are fully clickable (entire card surface is the click target). Visual affordance: subtle hover state (border highlight or shadow lift). The §6A What's New Panel is not clickable (display-only, no navigation target).
 
@@ -446,6 +567,7 @@ Cards are fully clickable (entire card surface is the click target). Visual affo
 
 | Version | Date | Change |
 |---------|------|--------|
+| 4.0 | 2026-11-04 | ST-09 (EPIC-02, v9.15, BLG-SPEC-215) against the `site-structure-phase1` §2.2 brief. New §1B Today list ("Due today"), first on the page: Market regime (US, UK; unknown state kept), Exits due (the `getExitCondition` predicate, risk-off first, v9.10 sub-line kept), Grace ends today (`grace_days_remaining = 1`), Stops moved (needs `BLG-BE-205`'s read-only `stop_last_moved_date`/`previous_stop`; not rendered until then), New signals (screener order, no rank shown, "Research" link). Fixed group order, caps of 5 with "+N more", a one-line quiet-day state, loading/per-source error/all-failed states, and testable ACs TL-01..TL-29 for `BLG-FE-254`. The brief's "stop changes due" is met by the Grace ends today and Stops moved groups (Product Owner ruling 2026-11-04). Card 4 and the §1A Exit Conditions Met row merge into the list; §3 page order, §7 and §8 updated. §13: display-only, no new ranking, score or "do this" wording. Built by `BLG-FE-254` (v9.16); v3.11 layout stands until then. Head of UX & Design and Head of Specs Team review: see the v9.15 `qa_evidence_EPIC-02.md` ST-09 entry. |
 | 3.11 | 2026-11-03 | v9.15 design gate — (ST-14, EPIC-02, BLG-FE-266) §6A What's New header drops the version suffix when the payload has no version; the sidebar footer shows the same version (`navigation.md` v1.8). Design source: `docs/design/2026-11-03__release-v9.15/site-structure-phase1/decision_record.md`. Head of UX & Design + Product Owner approved. Head of Specs Team confirmed. |
 | 3.10 | 2026-10-29 | v9.14 design gate — (ST-03, EPIC-01, BLG-BE-193) §4 Card 4 gains a neutral UNKNOWN ? regime state with a ruling-dependent description. (ST-04/ST-05, EPIC-01, BLG-BE-194/BLG-BE-169) §4 Card 2 FX source sub-line when the FX rate is last-known or the fixed fallback. (ST-08, EPIC-01, BLG-FE-214) §4 Card 2 stale-price explanation moves from `title` to the card link's accessible description, with new copy and the light-theme amber pair. Design sources: `docs/design/2026-10-29__release-v9.14/market-regime-unknown/decision_record.md`, `.../fx-rate-source-indicator/decision_record.md`, `.../stale-price-marker/decision_record.md`. Head of UX & Design sign-off: 2026-10-29. Product Owner approved: 2026-10-29. Head of Specs Team confirmed. |
 | 3.9 | 2026-10-12 | v9.12 design gate — (ST-24, EPIC-03, BLG-FE-210) §5 AI Daily Briefing `MONITOR` action badge `#D97706` → `#B45309` (`bg-amber-700`): white text 3.19:1 → 5.02:1, WCAG AA. Same rule as `BLG-FE-165` (v9.1, §9 v3.4); no new decision record. Head of UX & Design sign-off: 2026-10-12. Product Owner approved: 2026-10-12. Head of Specs Team confirmed. |

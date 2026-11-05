@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-04 (PR #2190 agent-mediated Director of Quality / Product Owner review — 3 new items added: BLG-BE-204, BLG-QA-245, BLG-FE-272); prior — 2026-11-04 (Sprint Execution `2026-11-03__release-v9.15` EPIC-03 ST-23 — 1 new item added: BLG-SPEC-219); prior — 2026-11-04 (Sprint Execution `2026-11-03__release-v9.15` EPIC-03 — 2 new items added: BLG-BE-203, BLG-SPEC-218); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-05 (Sprint Execution `2026-11-03__release-v9.15` EPIC-02 — 4 new items added: BLG-BE-205, BLG-GOV-409, BLG-SPEC-220, BLG-QA-246); prior — 2026-11-04 (PR #2190 agent-mediated Director of Quality / Product Owner review — 3 new items added: BLG-BE-204, BLG-QA-245, BLG-FE-272); prior — 2026-11-04 (Sprint Execution `2026-11-03__release-v9.15` EPIC-03 ST-23 — 1 new item added: BLG-SPEC-219); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -6653,5 +6653,87 @@ When the user presses Regenerate on a stored AI monthly P&L summary and the new 
 **Acceptance Criteria**
 - The decision is recorded with its rationale in `reports.md` §AI Summary
 - Code and tests match the decision
+
+---
+
+### BLG-BE-205 — Record when the nightly job last moved each position's stop
+**Priority:** P3 (Low)
+**Type:** Backend / data model
+**Owner:** Backend Engineering Patterns Owner; Data Model & Domain Schema Owner
+**Source:** Sprint Execution `2026-11-03__release-v9.15`, EPIC-02 / ST-09 (`dashboard.md` v4.0 §1B Today list, "Stops moved" group; Product Owner ruling 2026-11-04 to keep both stop groups) — 2026-11-04
+**Effort:** M (~1 day)
+**Provisional-Target:** v9.16
+
+**Problem**
+`GET /positions` does not record when a position's stop last moved: `compliance_service.py` notes the positions table has no `stop_updated_at` column, and `stop_calculated_at` is stamped on every nightly run whether or not the stop moved. The Dashboard Today list's "Stops moved" group (`dashboard.md` §1B) needs it, and its ACs TL-09/TL-10 cannot be tested until it exists. `RecentActivityCard.js` also reads a `stop_updated_date` that the API never sends, so its "Stop updated" entry is dead code.
+
+**Scope**
+- Migration: `stop_last_moved_date` and `previous_stop` on positions (`data_model.md`)
+- `run_nightly_trailing_stop_update()` writes both only when the stop actually moves (the §7.3 ratchet raises it)
+- Return both fields read-only on `GET /positions`; update `position_endpoints.md` and `docs/reference/openapi.yaml`
+- Remove `RecentActivityCard.js`'s dead `stop_updated_date` branch
+
+**Acceptance Criteria**
+- After a nightly run that raises a stop, the position's `stop_last_moved_date` is that run's date and `previous_stop` is the stop before the move (pytest)
+- A run that leaves the stop unchanged leaves both fields unchanged (pytest)
+- Contract and OpenAPI document the fields; drift checks pass
+
+---
+
+### BLG-GOV-409 — Settle the clash between the no-IDs-in-headings rule and DEV-xxx deviation headings
+**Priority:** P3 (Low)
+**Type:** Governance Process
+**Owner:** Head of Specs Team
+**Source:** Sprint Execution `2026-11-03__release-v9.15`, EPIC-02 / ST-08 (agent-mediated Head of UX & Design review, non-blocking finding) — 2026-11-04
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.16
+
+**Problem**
+CLAUDE.md §2 says task, story and ticket IDs must never appear in document headings. Known Deviations sections use `### DEV-xxx — <title>` headings (e.g. `navigation.md` `### DEV-NAV-ST06-01`), and engines have kept them under that convention. The two rules contradict each other, so each story touching a spec decides case by case.
+
+**Scope**
+- Rule whether deviation-record headings are exempt or must move the ID into the body
+- Record the ruling in `shared_standards.md` (and CLAUDE.md §2 if the rule text changes)
+
+**Acceptance Criteria**
+- One written rule covers `DEV-*` headings, and CLAUDE.md §2 and `shared_standards.md` agree with it
+
+---
+
+### BLG-SPEC-220 — List "Daily Monitor" as a secondary button in design_system.md
+**Priority:** P3 (Low)
+**Type:** Spec Debt
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** Sprint Execution `2026-11-03__release-v9.15`, EPIC-02 / ST-12 (agent-mediated Head of UX & Design review, non-blocking finding) — 2026-11-04
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.16
+
+**Problem**
+`design_system.md` §Buttons lists "Daily Monitor" under Primary actions, from when it was a Dashboard Quick Actions tile. Since ST-12 (v9.15) it is an outline (secondary) button in the Positions header next to the primary "New Position", so the spec no longer matches the UI.
+
+**Scope**
+- Move "Daily Monitor" to the secondary actions list in `design_system.md` §Buttons, citing `positions.md` v2.24
+
+**Acceptance Criteria**
+- `design_system.md` §Buttons lists "Daily Monitor" as a secondary action and no longer as primary
+
+---
+
+### BLG-QA-246 — Retarget the removed popover and border token tests to a live dialog
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** QA & Testing Owner
+**Source:** Sprint Execution `2026-11-03__release-v9.15`, EPIC-02 / ST-12 (agent-mediated Head of Specs Team review, non-blocking finding) — 2026-11-04
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.16
+
+**Problem**
+SC-TOK-04 (`shadcn-token-remaining-families.spec.js`) and SC-MTC-05/06 (`modal-theming-token-conversion.spec.js`) tested the `border` and `popover` token families through `WidgetLibrary.js`, which ST-12 deleted with the legacy Dashboard. No live dialog consumer of `bg-popover` / `border-border` is under test now, although `ExportModal.js` and `WatchlistModal.js` still use them.
+
+**Scope**
+- Re-add the border and popover token checks against `ExportModal.js` or `WatchlistModal.js`, light and dark
+
+**Acceptance Criteria**
+- A Playwright scenario asserts the dialog's border and background resolve to the `--border` and `--popover` tokens (non-transparent) in both themes, and passes in CI
 
 ---
