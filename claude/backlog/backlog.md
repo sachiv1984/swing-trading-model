@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-05 (Sprint Execution `2026-11-03__release-v9.15` EPIC-06 — 5 new items added: BLG-SPEC-221, BLG-QA-247, BLG-SPEC-222, BLG-QA-248, BLG-QA-249); prior — 2026-11-05 (Sprint Execution `2026-11-03__release-v9.15` EPIC-04 and PR #2192 review — 7 new items added: BLG-AI-27 to BLG-AI-33); prior — 2026-11-05 (PR #2191 agent-mediated Director of Quality / Product Owner review — 2 new items added: BLG-FE-273, BLG-FE-274); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-05 (Sprint Execution `2026-11-03__release-v9.15` EPIC-07 — 1 new item added: BLG-BE-206); prior — 2026-11-05 (Sprint Execution `2026-11-03__release-v9.15` EPIC-06 — 5 new items added: BLG-SPEC-221, BLG-QA-247, BLG-SPEC-222, BLG-QA-248, BLG-QA-249); prior — 2026-11-05 (Sprint Execution `2026-11-03__release-v9.15` EPIC-04 and PR #2192 review — 7 new items added: BLG-AI-27 to BLG-AI-33); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -6858,6 +6858,27 @@ When the user presses Regenerate on a stored AI monthly P&L summary and the new 
 - After a nightly run that raises a stop, the position's `stop_last_moved_date` is that run's date and `previous_stop` is the stop before the move (pytest)
 - A run that leaves the stop unchanged leaves both fields unchanged (pytest)
 - Contract and OpenAPI document the fields; drift checks pass
+
+---
+
+### BLG-BE-206 — Return journal-summary history trade_ids as an array of UUID strings
+**Priority:** P3 (Low)
+**Type:** Backend Engineering / API contract conformance
+**Owner:** Head of Engineering; Backend Engineering Patterns Owner
+**Source:** ST-40 (BLG-QA-221), EPIC-07, sprint execution `2026-11-03__release-v9.15` — out-of-scope finding from the new real-Postgres test `tests/test_ai_audit_uuid_and_cost_postgres.py` — 2026-11-05
+**Effort:** XS (<1h plus test)
+**Provisional-Target:** v9.16
+
+**Problem**
+`GET /ai/journal-summary/history` returns each record's `trade_ids` as the Postgres array text `"{uuid,uuid}"`, not the array of UUID strings `ai_endpoints.md` documents (`records[].trade_ids`: array of string (UUID) or null). Since DS-31 the column is `UUID[]`, and psycopg2 has no adapter registered for `uuid[]` (the backend never calls `psycopg2.extras.register_uuid`), so `query_audit_log()` passes the unparsed string through. No frontend page calls the endpoint today, so the impact is limited to API consumers and audits reading the history.
+
+**Scope**
+- Return `trade_ids` as a list of UUID strings (or null) from `query_audit_log()`, for example by selecting `trade_ids::text[]` or registering the UUID array adapter
+- Add a real-Postgres (Phase B) assertion on the returned shape to `tests/test_ai_audit_uuid_and_cost_postgres.py`
+
+**Acceptance Criteria**
+- `query_audit_log()` returns `trade_ids` as a list of UUID strings for a trade-ID run and null for a date-range run (Phase B pytest)
+- The `GET /ai/journal-summary/history` response matches `ai_endpoints.md`'s documented shape
 
 ---
 
