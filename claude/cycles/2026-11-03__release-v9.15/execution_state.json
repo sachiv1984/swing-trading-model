@@ -6,7 +6,7 @@
   "invoked_utc": "2026-11-04T10:55:44Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-05T09:00:00Z",
+  "last_updated_utc": "2026-11-05T08:21:26Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-03",
@@ -251,10 +251,10 @@
       }
     },
     "EPIC-02": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-11-03__release-v9.15/EPIC-02",
       "pr_number": 2191,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-11-03__release-v9.15/qa_evidence_EPIC-02.md",
       "test_scenarios": [
@@ -273,7 +273,7 @@
         "ST-08": {
           "title": "Navigation spec v2: job-based areas, plus a UI-label section in the glossary",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2152,
           "branch": "exec/2026-11-03__release-v9.15/EPIC-02",
@@ -311,7 +311,7 @@
         "ST-09": {
           "title": "Dashboard spec: a prioritised \"Today\" action list",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2153,
           "branch": "exec/2026-11-03__release-v9.15/EPIC-02",
@@ -347,7 +347,7 @@
         "ST-10": {
           "title": "Spec for one Journal area combining reflections, red flags and position notes",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2154,
           "branch": "exec/2026-11-03__release-v9.15/EPIC-02",
@@ -382,7 +382,7 @@
         "ST-11": {
           "title": "Use one name per page and action across sidebar, page headings and command palette",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2155,
           "branch": "exec/2026-11-03__release-v9.15/EPIC-02",
@@ -413,7 +413,7 @@
         "ST-12": {
           "title": "Remove the legacy widget Dashboard route and its duplicate command-palette entry",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2156,
           "branch": "exec/2026-11-03__release-v9.15/EPIC-02",
@@ -450,7 +450,7 @@
         "ST-13": {
           "title": "Set a browser-tab title for each page",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2157,
           "branch": "exec/2026-11-03__release-v9.15/EPIC-02",
@@ -480,7 +480,7 @@
         "ST-14": {
           "title": "Fix three small chrome defects: version label, What's New heading, sidebar height",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2158,
           "branch": "exec/2026-11-03__release-v9.15/EPIC-02",
@@ -869,19 +869,19 @@
   "merge_gate": {
     "epics_merged": [
       "EPIC-01",
-      "EPIC-03"
-    ],
-    "epics_pending": [
+      "EPIC-03",
       "EPIC-02"
     ],
-    "all_merged": false
+    "epics_pending": [],
+    "all_merged": true
   },
   "process_notes": [
     "2026-11-04: run sprint --epic EPIC-01. Initialised EPIC-01 only (execution_state.json owner per sprint_backlog.md Merge Order); other EPIC branches append their own sections. merge_gate.epics_pending lists initialised EPICs only (ST-38 tracks counting uninitialised EPICs).",
     "2026-11-04: EPIC-01 merged (PR #2189, merge commit 46307e1d, 2026-11-04T19:24:41Z, by the human repository owner). merge_gate.all_merged reads true only because EPIC-01 is the sole initialised EPIC (see the note above; ST-38). EPIC-02..EPIC-07 are not started — the next run sprint must not treat all_merged as sprint completion and must not enter STEP 5 (Sprint Close) until every EPIC in sprint_backlog.md's Merge Order is initialised and merged.",
     "2026-11-04: run sprint --epic EPIC-03. Initialised EPIC-03 (8 stories; ST-16 already recorded deferred_at_planning). ST-20 and ST-23 sealed as delegated_decision; both rulings raised and given in-session (ESC-EXEC-20261104-03/-04) and both reclassified autonomous before work started. Branch cut from main at 1c5b9366 (after the EPIC-01 merge).",
     "2026-11-04: EPIC-03 agent-mediated DoQ (§5.3): pass 1 Blocked (2 blocking), fixes f56d4717, pass 2 Approved. ST-20 graded Pass_with_deviation (BLG-BE-203). Follow-ups filed: BLG-BE-203, BLG-SPEC-218, BLG-SPEC-219.",
-    "2026-11-04: EPIC-03 merged (PR #2190, merge commit 9df0cc9a, 2026-11-04T20:55:49Z, by the human repository owner). Orphaned post-merge commit check: none (git log origin/main..origin/exec/.../EPIC-03 empty). No pending sibling EPIC branches, so STEP 4 step 3c had nothing to sync. merge_gate.all_merged reads true only because EPIC-01 and EPIC-03 are the sole initialised EPICs; EPIC-02, -04, -05, -06, -07 are not started. The next run sprint must not treat this as sprint completion or enter STEP 5 until every EPIC in the Merge Order is initialised and merged."
+    "2026-11-04: EPIC-03 merged (PR #2190, merge commit 9df0cc9a, 2026-11-04T20:55:49Z, by the human repository owner). Orphaned post-merge commit check: none (git log origin/main..origin/exec/.../EPIC-03 empty). No pending sibling EPIC branches, so STEP 4 step 3c had nothing to sync. merge_gate.all_merged reads true only because EPIC-01 and EPIC-03 are the sole initialised EPICs; EPIC-02, -04, -05, -06, -07 are not started. The next run sprint must not treat this as sprint completion or enter STEP 5 until every EPIC in the Merge Order is initialised and merged.",
+    "2026-11-05 EPIC-02 merge-gate resume-sync (AUD-2026-08-21-010, user reported merge): PR #2191 merged 2026-11-05T08:21:26Z by sachiv1984, merge commit b668350b. Orphaned post-merge commit check (LL-v6.8-P3-01): git log origin/main..origin/exec/2026-11-03__release-v9.15/EPIC-02 empty, nothing to reconcile. Final PR-head CI (349a90d2): 22/22 workflows success (Playwright E2E 41992745484, CI Pytest 41992745916, Quality & Governance Gate 41992745867). merge_gate.all_merged reads true because only initialised EPICs are counted; EPIC-04/05/06/07 are not yet initialised (tracked by ST-38, EPIC-07)."
   ],
   "sealed": false,
   "sealed_utc": null
