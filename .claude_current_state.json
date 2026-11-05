@@ -634,7 +634,10 @@
       "raised_utc": "2026-11-05T13:56:47Z",
       "sla_due_utc": "2026-11-08T13:56:47Z",
       "blocks_execution": false,
-      "disposition": "Open"
+      "disposition": "Resolved",
+      "resolved_utc": "2026-11-05T14:38:30Z",
+      "resolved_by": "Strategy Rules & System Intent Owner with the Product Owner (the user, in session)",
+      "resolution_summary": "Engine recommendation accepted as drafted; decision record docs/product/decisions/decisions--2026-11-03__release-v9.15--ST-44-strategic-exclusions-reconfirmation.md (EPIC-07 branch)."
     },
     "ESC-EXEC-20261105-04": {
       "cycle": "2026-11-03__release-v9.15",
@@ -644,7 +647,10 @@
       "raised_utc": "2026-11-05T13:56:47Z",
       "sla_due_utc": "2026-11-06T13:56:47Z",
       "blocks_execution": false,
-      "disposition": "Open"
+      "disposition": "Resolved",
+      "resolved_utc": "2026-11-05T14:38:30Z",
+      "resolved_by": "Product Owner (the user, in session)",
+      "resolution_summary": "Engine recommendation accepted as drafted; decision record docs/product/decisions/decisions--2026-11-03__release-v9.15--ST-45-priority3-deferred-sunset-review.md (EPIC-07 branch)."
     }
   },
   "deferred_escalations": {
