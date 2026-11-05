@@ -3,8 +3,8 @@
 **Owner:** Data Model & Domain Schema Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.67
-**Last Updated:** 2026-11-05 (BLG-SPEC-217, EPIC-06 post-merge, v9.15 — DS-38 production Live Confirmation recorded; Fields rows and Drift Triage row 3 updated); prior — 2026-11-05 (ST-35/ST-36, EPIC-06, v9.15, BLG-SPEC-196/BLG-SPEC-197 — DS-38 (v2.67): `NOT NULL` re-applied to `positions.portfolio_id` and `positions.total_cost`; DS-17 staging Live Confirmation recorded, applied on staging; production post-merge, BLG-SPEC-217); prior — 2026-10-30 (ST-22, EPIC-03, v9.14, BLG-BE-163 — `gemini_audit_log` populating-function reference cites `ai_thesis_generation.md`; `generate-thesis` retired; no schema change); prior history retained — see prior entries in version control
+**Version:** 2.68
+**Last Updated:** 2026-11-05 (ST-30/ST-32, EPIC-05, v9.15, BLG-OPS-190/BLG-OPS-192 — DS-39 (v2.68): new `momentum_signal_runs` table, one completion marker per momentum signal run, read by the month-end rebalance job); prior — 2026-11-05 (BLG-SPEC-217, EPIC-06 post-merge, v9.15 — DS-38 production Live Confirmation recorded; Fields rows and Drift Triage row 3 updated); prior — 2026-11-05 (ST-35/ST-36, EPIC-06, v9.15, BLG-SPEC-196/BLG-SPEC-197 — DS-38 (v2.67): `NOT NULL` re-applied to `positions.portfolio_id` and `positions.total_cost`; DS-17 staging Live Confirmation recorded, applied on staging; production post-merge, BLG-SPEC-217); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 This document describes the complete database schema and data structures used in the **Position Manager Web App**.
@@ -3701,6 +3701,71 @@ Expect 2 rows, both `is_nullable = NO`.
 
 ---
 
+## DS-39 — Add momentum_signal_runs (v2.68, 2026-11-05)
+
+**Story:** ST-30 and ST-32 (EPIC-05, v9.15) — `BLG-OPS-190`, `BLG-OPS-192`.
+
+**Rationale:** the month-end rebalance job (`POST /signals/rebalance-exit`, `strategy_rules.md` §8.4) ranks open positions against today's momentum signal run. Until v2.68 it read that ranking from the signal rows dated today, because `generate_momentum_signals` stored no record that a run had finished. Two cases could not be told apart. A run that found no qualifying tickers wrote no rows, so the job returned a false 503 and made none of the §8.4 recommendations the empty ranking implies (`BLG-OPS-192`). A run that failed part way could leave some rows, so the job ranked on an incomplete run without warning (`BLG-OPS-190`). Each completed run now writes one row here, after its signals are saved, listing the tickers it ranked (possibly none). The rebalance job reads the latest row for today: none means the run is missing (503, unchanged); an empty list is an empty ranking.
+
+**Deploy order:** not a risk. `database.ensure_momentum_signal_runs_table()` runs the Up Migration's `CREATE TABLE IF NOT EXISTS` on first use, the same pattern as `fx_rate_last_good` (DS-37). The first momentum run after deploy writes the first row. A month-end that falls between deploy and that run returns 503 (no marker yet), the same as a missing run before v2.68. The marker write is fail-safe: if it fails, the error is logged and the run still returns; the rebalance job then reports the run as missing (a false alert, never a ranking built from an incomplete run).
+
+### Up Migration (v2.67 → v2.68)
+
+```sql
+CREATE TABLE IF NOT EXISTS momentum_signal_runs (
+    id             SERIAL PRIMARY KEY,
+    portfolio_id   UUID NOT NULL,
+    run_date       DATE NOT NULL,
+    completed_at   TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    tickers_ranked JSONB NOT NULL DEFAULT '[]',
+    ranked_count   INTEGER NOT NULL DEFAULT 0,
+    CONSTRAINT ck_momentum_signal_runs_count CHECK (ranked_count >= 0)
+);
+
+CREATE INDEX IF NOT EXISTS idx_momentum_signal_runs_portfolio_date
+ON momentum_signal_runs (portfolio_id, run_date DESC, completed_at DESC);
+```
+
+| Column | Meaning |
+|--------|---------|
+| `id` | Row key |
+| `portfolio_id` | The portfolio the run generated signals for (`portfolios.id`; no foreign key constraint) |
+| `run_date` | The run's `signal_date`, the date its signals are stamped with |
+| `completed_at` | When the run finished saving its signals (UTC) |
+| `tickers_ranked` | JSON array of the tickers the run ranked, the tickers of the signals it saved. `[]` when none qualified |
+| `ranked_count` | Length of `tickers_ranked` |
+
+One row per completed run; a day with two runs (for example a manual `POST /signals/generate` after the scheduled one) has two rows, and the latest `completed_at` wins. Rows are not pruned: one or two rows per weekday is well under 1,000 a year.
+
+### Down Migration (v2.68 → v2.67)
+
+```sql
+DROP TABLE IF EXISTS momentum_signal_runs;
+```
+
+The rebalance job then has no ranking source and returns 503 on every month-end until the code is rolled back to v2.67's signal-row ranking. Roll back the code first. No other table references this one.
+
+### Verification
+
+```sql
+SELECT column_name, data_type, is_nullable
+FROM information_schema.columns
+WHERE table_name = 'momentum_signal_runs'
+ORDER BY ordinal_position;
+
+SELECT indexname FROM pg_indexes WHERE tablename = 'momentum_signal_runs';
+
+SELECT run_date, completed_at, ranked_count, tickers_ranked
+FROM momentum_signal_runs ORDER BY completed_at DESC LIMIT 3;
+```
+
+Expect 6 columns, none nullable; `idx_momentum_signal_runs_portfolio_date` and the primary-key index; and, after the first weekday `daily-snapshot.yml` run following deploy, one row for that day whose `tickers_ranked` matches the tickers of that day's signals.
+
+**Sign-off:**
+- Data Model & Domain Schema Owner: new, self-contained append-only table, reversible, created at runtime by an idempotent ensure-function; no existing table touched, no backfill (no earlier run completion is recorded anywhere to backfill from). Live Confirmation on staging and production is post-merge (the table is created on first use after deploy), tracked by `BLG-OPS-212`.
+
+---
+
 ## Drift Detector Triage (2026-10-13, v2.60)
 
 **Story:** ST-34 (EPIC-05, `2026-10-12__release-v9.12`), BLG-SPEC-178. Triage of the findings `scripts/check_data_model_drift.py` reported on its first run (ST-28, v9.9, 2026-10-01) beyond the 5 known divergence classes.
@@ -3735,6 +3800,6 @@ Expect 2 rows, both `is_nullable = NO`.
 
 ---
 
-**Document Version:** 2.67
+**Document Version:** 2.68
 **Maintained By:** Data Model & Domain Schema Owner
-**Last Review:** 2026-11-05 (BLG-SPEC-217, EPIC-06 post-merge, v9.15 — DS-38 production Live Confirmation recorded; Fields rows and Drift Triage row 3 updated); prior — 2026-11-05 (ST-35/ST-36, EPIC-06, v9.15, BLG-SPEC-196/BLG-SPEC-197 — DS-38 (v2.67): `NOT NULL` re-applied to `positions.portfolio_id` and `positions.total_cost`; DS-17 staging Live Confirmation recorded); prior — 2026-10-29 (ST-04, EPIC-01, v9.14, BLG-BE-194 — DS-37 (v2.66): new `fx_rate_last_good` table, the last successfully fetched GBP/USD rate and its fetch time); prior history retained — see prior entries in version control
+**Last Review:** 2026-11-05 (ST-30/ST-32, EPIC-05, v9.15, BLG-OPS-190/BLG-OPS-192 — DS-39 (v2.68): new `momentum_signal_runs` table, one completion marker per momentum signal run); prior — 2026-11-05 (BLG-SPEC-217, EPIC-06 post-merge, v9.15 — DS-38 production Live Confirmation recorded; Fields rows and Drift Triage row 3 updated); prior — 2026-11-05 (ST-35/ST-36, EPIC-06, v9.15, BLG-SPEC-196/BLG-SPEC-197 — DS-38 (v2.67): `NOT NULL` re-applied to `positions.portfolio_id` and `positions.total_cost`; DS-17 staging Live Confirmation recorded); prior history retained — see prior entries in version control

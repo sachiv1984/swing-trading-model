@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-05 (Sprint Execution `2026-11-03__release-v9.15` EPIC-07 — 6 new items added: BLG-BE-206, BLG-QA-250, BLG-GOV-410, BLG-GOV-411, BLG-QA-251, BLG-GOV-412); prior — 2026-11-05 (Sprint Execution `2026-11-03__release-v9.15` EPIC-06 — 5 new items added: BLG-SPEC-221, BLG-QA-247, BLG-SPEC-222, BLG-QA-248, BLG-QA-249); prior — 2026-11-05 (Sprint Execution `2026-11-03__release-v9.15` EPIC-04 and PR #2192 review — 7 new items added: BLG-AI-27 to BLG-AI-33); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-05 (Sprint Execution `2026-11-03__release-v9.15` EPIC-05 — 1 new item added: BLG-OPS-212); prior — 2026-11-05 (Sprint Execution `2026-11-03__release-v9.15` EPIC-07 — 6 new items added: BLG-BE-206, BLG-QA-250, BLG-GOV-410, BLG-GOV-411, BLG-QA-251, BLG-GOV-412); prior — 2026-11-05 (Sprint Execution `2026-11-03__release-v9.15` EPIC-06 — 5 new items added: BLG-SPEC-221, BLG-QA-247, BLG-SPEC-222, BLG-QA-248, BLG-QA-249); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -7189,5 +7189,25 @@ ST-42 made SC-TS-* unique and added `scripts/check_e2e_scenario_id_uniqueness.py
 **Acceptance Criteria**
 - With one of the six items' gate cleared in place, the test passes (pytest)
 - With all six still gated on PT-04, the test still asserts all six are listed
+
+---
+
+### BLG-OPS-212 — Record DS-39 momentum_signal_runs Live Confirmation on staging and production
+**Priority:** P3 (Low)
+**Type:** Operations / Data Model
+**Owner:** Data Model & Domain Schema Owner; Infrastructure & Operations Owner
+**Source:** Sprint execution `2026-11-03__release-v9.15`, ST-30/ST-32 (EPIC-05) — 2026-11-05
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.16
+
+**Problem**
+DS-39 (`data_model.md` v2.68) adds `momentum_signal_runs`, the completion marker each momentum signal run writes and the month-end rebalance job reads. The table is created on first use after deploy, so its Live Confirmation cannot be recorded before the EPIC-05 merge and deploy.
+
+**Scope**
+- After the EPIC-05 deploy and the next weekday `daily-snapshot.yml` run, run DS-39's Verification queries on staging and production
+- Record both outputs under DS-39's Sign-off
+
+**Acceptance Criteria**
+- DS-39 records, for staging and production: 6 columns, none nullable; `idx_momentum_signal_runs_portfolio_date` present; one row for a weekday after deploy whose `tickers_ranked` matches that day's signals
 
 ---

@@ -26,6 +26,8 @@ from database import (
     download_ticker_data,
     compute_atr_simple,
     create_rebalance_exit_signal,
+    record_momentum_signal_run,
+    get_momentum_signal_run,
 )
 from services.ticker_universe_service import get_all_tickers
 
@@ -337,6 +339,7 @@ def generate_momentum_signals(
     
     if not signals:
         print("⚠️  No qualifying signals found\n")
+        _record_run_completed(portfolio_id, signal_date_str, [])
         return {
             "signals_generated": 0,
             "new_signals": 0,
@@ -380,6 +383,7 @@ def generate_momentum_signals(
         create_signal(portfolio_id, decimal_to_float(signal_data))
     
     print(f"✓ Saved {len(signals_sorted)} signals\n")
+    _record_run_completed(portfolio_id, signal_date_str, [s['ticker'] for s in signals_sorted])
     print("="*70 + "\n")
     
     return {
@@ -395,6 +399,20 @@ def generate_momentum_signals(
         },
         "signals": [decimal_to_float(s) for s in signals_sorted]
     }
+
+
+def _record_run_completed(portfolio_id: str, signal_date_str: str, tickers: List[str]) -> None:
+    """Write the momentum run's completion marker (DS-39, ST-30/ST-32, BLG-OPS-190/192).
+
+    Written only after the run has saved its signals, so a run that fails part
+    way leaves no marker. A failed write is logged, not raised: the signals are
+    already saved, and the month-end job then reports the run as missing
+    (a false alert, never a ranking built from an incomplete run).
+    """
+    try:
+        record_momentum_signal_run(portfolio_id, signal_date_str, tickers)
+    except Exception as exc:
+        print(f"⚠️  Could not record momentum run completion for {signal_date_str}: {exc}")
 
 
 def _is_last_trading_day_of_month(check_date: datetime) -> bool:
@@ -447,12 +465,13 @@ def generate_rebalance_exit_signals() -> Dict:
 
     Logic:
       1. If today is not the last trading day of the month, return early.
-      2. Read today's momentum ranking: every ticker the momentum signal run
-         (generate_momentum_signals) wrote for today, whatever its status
-         since, so dismissing or entering a signal cannot change it.
-         If that run has not written anything today, create no signals and
-         return screener_run_missing=True; the endpoint reports it as a
-         failure (BLG-OPS-190).
+      2. Read today's momentum ranking from the completion marker the
+         momentum signal run (generate_momentum_signals) writes once it has
+         saved its signals (DS-39): the tickers it ranked, so dismissing or
+         entering a signal since cannot change it. If no run completed today,
+         create no signals and return screener_run_missing=True; the endpoint
+         reports it as a failure (BLG-OPS-190). A completed run that ranked no
+         tickers is an empty ranking, not a missing run (BLG-OPS-192).
       3. For each open position NOT in the ranking:
          - Skip if §8.2 applies (risk_off_exit set): the risk-off exit governs.
          - Skip if §8.1 applies: price at or below the trailing stop, after
@@ -478,28 +497,25 @@ def generate_rebalance_exit_signals() -> Dict:
     live_fx_rate = get_live_fx_rate()
     signal_date_str = today.strftime('%Y-%m-%d')
 
-    # Today's momentum ranking (§8.4). Status is ignored: a dismissed,
-    # entered or expired signal is still part of the day's ranking. Only
-    # exit_rebalance rows (this job's own output) are not ranking rows.
-    all_signals = db_get_signals(portfolio_id, status=None)
-    ranking_rows = [
-        s for s in (all_signals or [])
-        if str(s.get('signal_date') or '')[:10] == signal_date_str
-        and s.get('status') != 'exit_rebalance'
-        and s.get('signal_type') != 'exit_rebalance'
-    ]
-    if not ranking_rows:
+    # Today's momentum ranking (§8.4), from the completion marker the momentum
+    # signal run writes once it has saved its signals (DS-39, ST-30/ST-32,
+    # BLG-OPS-190/BLG-OPS-192). No marker today means the run is missing or did
+    # not finish: create nothing and report it (the endpoint returns 503). A
+    # marker with no tickers is a completed run in which nothing qualified:
+    # the ranking is empty and every eligible position gets a §8.4 signal.
+    run = get_momentum_signal_run(portfolio_id, signal_date_str)
+    if run is None:
         return {
             "run_date": signal_date_str,
             "is_last_trading_day": True,
             "screener_run_missing": True,
             "signals_created": 0,
             "message": (
-                f"No momentum signal run recorded for {signal_date_str}: no month-end "
+                f"No completed momentum signal run recorded for {signal_date_str}: no month-end "
                 "rebalance exit signals created (strategy_rules.md §8.4)"
             ),
         }
-    top5_tickers = {s['ticker'] for s in ranking_rows}
+    top5_tickers = set(run["tickers_ranked"])
 
     # Get current open positions
     positions = get_positions(portfolio_id, status='open')

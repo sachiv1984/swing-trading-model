@@ -131,9 +131,10 @@ def test_generate_rebalance_exit_signals_end_to_end_with_numpy_position_data():
     # exercises the actual production write path rather than whatever this
     # session's cached services.signal_service module happens to have bound it to.
     with patch.object(signal_service, "get_portfolio", return_value={"id": "portfolio-001"}), \
-         patch.object(signal_service, "db_get_signals", return_value=[
-             {"ticker": "AAPL", "signal_date": "2026-06-30", "status": "new"},
-         ]), \
+         patch.object(signal_service, "get_momentum_signal_run", return_value={
+             "run_date": "2026-06-30", "completed_at": None,
+             "tickers_ranked": ["AAPL"], "ranked_count": 1,
+         }), \
          patch.object(signal_service, "get_positions", return_value=[
              {
                  "ticker": "TSLA",  # NOT in top-5 ("AAPL")

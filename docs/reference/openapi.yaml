@@ -2,7 +2,10 @@ openapi: 3.0.3
 
 info:
   title: Momentum Trading Assistant API
-  version: 3.47.3
+  version: 3.47.4
+  # v3.47.4 (2026-11-05, ST-30/ST-32, EPIC-05, v9.15, BLG-OPS-190/BLG-OPS-192): POST /signals/rebalance-exit description and 503 row —
+  # the ranking is the momentum run's completion marker (data_model.md DS-39); a completed run that ranked nothing is an empty
+  # ranking (200), not a missing run (503). No shape change.
   # v3.47.3 (2026-11-05, ST-34, EPIC-06, v9.15, BLG-SPEC-194): documentation corrected to the live responses, no backend change —
   # GET /reports/tax-year declares data.generated_at, and estimated_unrealised_pnl/unrealised_note move under data.summary (where
   # reports_service.py returns them); POST /test/endpoints' OkEndpointTest drops the data envelope the handler never returned.
@@ -2007,12 +2010,14 @@ paths:
       summary: Generate exit_rebalance signals on last trading day of month (ST-03 v6.2 BLG-FEAT-47)
       description: |
         Month-end rebalance (strategy_rules.md §8.4): on the last trading day, generates
-        exit_rebalance signals for open positions not in today's momentum ranking (every
-        ticker today's momentum signal run wrote, whatever its status).
+        exit_rebalance signals for open positions not in today's momentum ranking (the tickers
+        today's completed momentum signal run ranked, read from its DS-39 completion marker;
+        signal statuses since do not change it).
         No-op if today is not the last trading day.
         Skips positions with risk_off_exit (§8.2 governs) and positions at their trailing stop (§8.1).
         Returns 503 with screener_run_missing=true, creating nothing, when no momentum signal
-        run is recorded for today.
+        run completed today. A completed run that ranked no tickers is an empty ranking (200),
+        not a missing run (v3.47.4, ST-30/ST-32).
       responses:
         "200":
           description: Rebalance exit signal summary
@@ -2029,7 +2034,7 @@ paths:
                       is_last_trading_day: { type: boolean }
                       signals_created: { type: integer }
         "503":
-          description: Last trading day, but no momentum signal run recorded today; no signals created (v3.32.0, ST-05)
+          description: Last trading day, but no momentum signal run completed today; no signals created (v3.32.0, ST-05; v3.47.4, ST-30/ST-32)
           content:
             application/json:
               schema:

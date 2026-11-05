@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 1.10
-**Last Updated:** 2026-11-04 (ST-07, EPIC-01, v9.15, BLG-FE-219 — zero-ATR `reason` strings reworded in plain English); prior — 2026-10-16 (ST-05, EPIC-01, v9.13, BLG-GOV-391 — `POST /signals/rebalance-exit` implements `strategy_rules.md` §8.4: status-independent ranking, §8.1/§8.2 precedence, 503 when today's momentum signal run is missing); prior — 2026-10-13 (ST-07/ST-08, EPIC-02, v9.12, BLG-BE-157/158 — `total_cost` stated in GBP with entry fees; zero-ATR signals get no allocation); prior history retained — see prior entries in version control
+**Version:** 1.11
+**Last Updated:** 2026-11-05 (ST-30/ST-32, EPIC-05, v9.15, BLG-OPS-190/BLG-OPS-192 — `POST /signals/rebalance-exit` ranks from the momentum run's completion marker (`data_model.md` DS-39): no completed run today → 503 as before; a completed run that ranked nothing → an empty ranking and 200); prior — 2026-11-04 (ST-07, EPIC-01, v9.15, BLG-FE-219 — zero-ATR `reason` strings reworded in plain English); prior — 2026-10-16 (ST-05, EPIC-01, v9.13, BLG-GOV-391 — `POST /signals/rebalance-exit` implements `strategy_rules.md` §8.4: status-independent ranking, §8.1/§8.2 precedence, 503 when today's momentum signal run is missing); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Overview
@@ -141,10 +141,10 @@ Generates `exit_rebalance` signals on the last trading day of each calendar mont
 
 - `POST /signals/rebalance-exit`
 
-**Logic** (implements `strategy_rules.md` §8.4, v1.17; updated v1.9, ST-05, BLG-GOV-391):
+**Logic** (implements `strategy_rules.md` §8.4, v1.17; updated v1.9, ST-05, BLG-GOV-391; v1.11, ST-30/ST-32):
 1. If today is not the last trading day of the month (weekend-aware; exchange holidays are not modelled), returns immediately with `is_last_trading_day: false` and no records created.
-2. Reads today's momentum ranking: every ticker that today's momentum signal run (`POST /signals/generate`) wrote, **whatever its status since** (`new`, `already_held`, `entered`, `dismissed`, `expired`). Dismissing a signal does not change the ranking. `exit_rebalance` rows are not ranking rows.
-3. If that run wrote nothing for today, creates no signals and returns **503** with `screener_run_missing: true` (see Errors). The job is recorded as an error in `GET /health/scheduler`, and `rebalance-exit.yml`'s `curl -f` step fails, which is the alert (BLG-OPS-190).
+2. Reads today's momentum ranking from the completion marker that today's momentum signal run (`POST /signals/generate`) writes once it has saved its signals (`data_model.md` DS-39): the tickers that run ranked. The signal rows' statuses since (`entered`, `dismissed`, `expired` and so on) do not change the ranking. If several runs completed today, the latest is used.
+3. If no momentum signal run completed today (no marker; this includes a run that failed part way), creates no signals and returns **503** with `screener_run_missing: true` (see Errors). The job is recorded as an error in `GET /health/scheduler`, and `rebalance-exit.yml`'s `curl -f` step fails, which is the alert (BLG-OPS-190). A completed run that ranked no tickers (none passed the trend and regime filters) is an empty ranking, not a missing run: every open position is then outside the ranking, and the job returns 200 (BLG-OPS-192).
 4. For each open position NOT in the ranking, creates an `exit_rebalance` signal, except:
    - a position with `risk_off_exit = true`: §8.2 governs it;
    - a position whose `current_price ≤ current_stop`: §8.1 governs it.
@@ -185,7 +185,7 @@ Errors use the standard error envelope from **conventions.md**.
 | Status | Condition |
 |--------|-----------|
 | 404 | Portfolio not found |
-| 503 | Last trading day of the month, but no momentum signal run recorded today. No signals created. Body: `{"status": "error", "message": "No momentum signal run recorded for <date>: ...", "data": {"run_date", "is_last_trading_day": true, "screener_run_missing": true, "signals_created": 0, "message"}}` (v1.9) |
+| 503 | Last trading day of the month, but no momentum signal run completed today (no DS-39 marker). No signals created. A completed run that ranked no tickers is not this error (v1.11). Body: `{"status": "error", "message": "No completed momentum signal run recorded for <date>: ...", "data": {"run_date", "is_last_trading_day": true, "screener_run_missing": true, "signals_created": 0, "message"}}` (v1.9) |
 | 500 | Unexpected error |
 
 ---
@@ -374,6 +374,7 @@ Errors use the standard error envelope from **conventions.md**.
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.11 | 2026-11-05 | ST-30/ST-32 (EPIC-05, v9.15, BLG-OPS-190/BLG-OPS-192): `POST /signals/rebalance-exit` reads today's ranking from the momentum run's completion marker (`data_model.md` DS-39) instead of today's signal rows. No marker today (missing or unfinished run) → 503, as before; the message now reads "No completed momentum signal run recorded for <date>". A completed run that ranked nothing → an empty ranking, §8.4 signals for eligible positions, and 200 (previously a false 503). No shape change. API Contracts & Documentation Owner. |
 | 1.10 | 2026-11-04 | ST-07 (EPIC-01, v9.15, BLG-FE-219): the two zero-ATR `reason` strings are reworded in plain English (`signals.md` v0.8; design record `signal-card-cost-and-sizing-reason`). No shape change. API Contracts & Documentation Owner. |
 | 1.9 | 2026-10-16 | ST-05 (EPIC-01, v9.13, BLG-GOV-391; absorbs BLG-OPS-190): `POST /signals/rebalance-exit` implements `strategy_rules.md` §8.4 (v1.17). The ranking is every ticker today's momentum signal run wrote, whatever its status; `risk_off_exit` positions are skipped (§8.2 governs), as are positions at their stop (§8.1); with no run recorded today it creates nothing and returns 503 (`screener_run_missing: true`). Strategy Rules & System Intent Owner ruling `ESC-EXEC-20261016-01`. |
 | 1.8 | 2026-10-13 | ST-07/ST-08 (EPIC-02, v9.12; BLG-BE-157, BLG-BE-158): `total_cost` field note added: GBP for both markets, including estimated entry fees (UK stamp duty and commission; US commission and FX fee converted at `fx_rate`). `inv_vol_weight` field note added: zero/missing-ATR signals get weight 0, 0 shares and a reason. `allocation_gbp` description corrected (excludes fees). API Contracts & Documentation Owner. |

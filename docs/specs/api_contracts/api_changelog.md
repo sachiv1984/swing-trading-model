@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Class 2
 **Status:** Canonical
-**Version:** 1.29.4
-**Last Updated:** 2026-11-05 (ST-34, EPIC-06, v9.15, BLG-SPEC-194 — v9.15.0 entry adds health_endpoints.md v1.10 and the openapi.yaml 3.47.3 tax-year correction); prior — 2026-11-04 (ST-22, EPIC-03, v9.15, BLG-BE-204 — v9.15.0 entry adds earnings_endpoints.md v0.2); prior — 2026-11-04 (ST-19/ST-21/ST-22, EPIC-03, v9.15 — v9.15.0 entry adds alerts_endpoints.md v0.14, reports_endpoints.md v0.20 and position_endpoints.md v2.19.2); prior history retained — see prior entries in version control
+**Version:** 1.29.5
+**Last Updated:** 2026-11-05 (ST-30/ST-32, EPIC-05, v9.15, BLG-OPS-190/BLG-OPS-192 — v9.15.0 entry adds signal_endpoints.md v1.11 and openapi.yaml 3.47.4); prior — 2026-11-05 (ST-34, EPIC-06, v9.15, BLG-SPEC-194 — v9.15.0 entry adds health_endpoints.md v1.10 and the openapi.yaml 3.47.3 tax-year correction); prior — 2026-11-04 (ST-22, EPIC-03, v9.15, BLG-BE-204 — v9.15.0 entry adds earnings_endpoints.md v0.2); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 # API Changelog
@@ -112,6 +112,15 @@ Rules:
 | Change | Details |
 |--------|---------|
 | Updated endpoint: GET /reports/tax-year | Documentation only. `openapi.yaml` now declares `data.generated_at` and places `estimated_unrealised_pnl`/`unrealised_note` under `data.summary`, matching `reports_service.py` and `reports_endpoints.md` (BLG-SPEC-194). No backend or contract change. |
+
+### signal_endpoints.md — v1.11 (UPDATED)
+
+**EPIC:** EPIC-05
+**ST:** ST-30, ST-32
+
+| Change | Details |
+|--------|---------|
+| Updated endpoint: POST /signals/rebalance-exit | Today's ranking is read from the momentum run's completion marker (`data_model.md` DS-39) instead of today's signal rows. No completed run today, including one that failed part way, still returns `503` with `screener_run_missing: true` (BLG-OPS-190). A completed run that ranked no tickers is now an empty ranking with `200` and §8.4 signals for eligible positions, instead of a false `503` (BLG-OPS-192). No shape change; `openapi.yaml` 3.47.4 descriptions only. |
 
 ## v9.14.0 (2026-10-29 — Release v9.14)
 
