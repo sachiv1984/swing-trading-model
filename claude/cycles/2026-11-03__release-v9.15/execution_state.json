@@ -6,7 +6,7 @@
   "invoked_utc": "2026-11-04T10:55:44Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-04T22:07:46Z",
+  "last_updated_utc": "2026-11-05T07:48:25Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-03",
@@ -310,28 +310,39 @@
         },
         "ST-09": {
           "title": "Dashboard spec: a prioritised \"Today\" action list",
-          "classification": "delegated_decision",
-          "status": "not_started",
+          "classification": "autonomous",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 2153,
           "branch": "exec/2026-11-03__release-v9.15/EPIC-02",
-          "commit_sha": null,
+          "commit_sha": "b901ce9199abee4bb07edd384ee20c8abda7d517",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-11-05T07:48:25Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/pages/dashboard.md",
+            "docs/design/2026-11-03__release-v9.15/site-structure-phase1/decision_record.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "delegated_decision per sealed sprint_backlog.md: the decision is the in-sprint spec approval (Head of UX & Design; ST-09 also Head of Specs Team, Class 1; ST-10 also the Strategy Rules & System Intent Owner's §13 confirmation). Engine drafts the spec, then requests agent-mediated sign-off per §5.3 (design-gate precedent: decision_record.md §7). Surfaced to the user only if still Blocked after 2 retries.",
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.push",
+          "sign_off_record": {
+            "status": "cleared",
+            "method": "agent_mediated",
+            "role": "Head of UX & Design + Head of Specs Team (Class 1)",
+            "date": "2026-11-05",
+            "result": "Approved (both) on retry 1",
+            "findings": "First pass Blocked: (UX) 'stop changes due' rested on an unfiled backend item and the reinterpretation was not raised; v9.10 Exits due sub-line dropped. (Specs) ticket ID in AC heading; BLG-BE-205 not filed; AC table missing rows for header counts, other caps, quiet text, failure-suppression, positions/market error lines, mobile, Recent Activity width; TL-18 had no selector. Fixed: Product Owner ruling (in session) for both Grace ends today and Stops moved groups; BLG-BE-205 filed; sub-line kept (TL-22); TL-21..TL-29 added. Retry 1 Approved with evidence (backlog integrity OK; grace_days_remaining = max(0, 10 - holding_days), grace_service.py:25). Non-blocking applied pre-commit: grace copy 'trailing stop applies', merged duplicate bullet, new-copy note, Last Updated."
+          },
+          "notes": "delegated_decision per sealed sprint_backlog.md: the decision is the in-sprint spec approval (Head of UX & Design; ST-09 also Head of Specs Team, Class 1; ST-10 also the Strategy Rules & System Intent Owner's §13 confirmation). Engine drafts the spec, then requests agent-mediated sign-off per §5.3 (design-gate precedent: decision_record.md §7). Surfaced to the user only if still Blocked after 2 retries. Decision (spec approval) cleared by §5.3 agent-mediated Head of UX & Design + Head of Specs Team review, retry 1 Approved; Product Owner ruling 2026-11-04 (in session) on \"stop changes due\" (both groups). Reclassified delegated_decision -> autonomous. Case B: spec artefact is the spec_reference. Deviation check: none (documentation deliverable; build is BLG-FE-254, v9.16). Docs-only commit.",
           "_planned_spec_references": [
             "docs/design/2026-11-03__release-v9.15/site-structure-phase1/decision_record.md",
             "docs/specs/frontend/pages/dashboard.md"
-          ]
+          ],
+          "delivery_note": "docs/specs/frontend/pages/dashboard.md v4.0 §1B Today list"
         },
         "ST-10": {
           "title": "Spec for one Journal area combining reflections, red flags and position notes",
@@ -449,7 +460,7 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.push",
           "sign_off_record": null,
-          "notes": "AC: each routed page sets a distinct title (SC-BTT-04) and Playwright covers three pages incl. Research (SC-BTT-01..03), plus detail route (SC-BTT-05) and unknown route (SC-BTT-06); 6/6 local pass on the test-env build. Uses ST-11 glossary labels (ST-08 approved). Deviation check: none. Implementation note (intent match, not a deviation): PageNotFound renders outside Layout, so it sets the not-found title itself; navigation.md's \"No page sets document.title itself\" targets routed pages. ci_pending: see CI on b7fefee0.",
+          "notes": "AC: each routed page sets a distinct title (SC-BTT-04) and Playwright covers three pages incl. Research (SC-BTT-01..03), plus detail route (SC-BTT-05) and unknown route (SC-BTT-06); 6/6 local pass on the test-env build. Uses ST-11 glossary labels (ST-08 approved). Deviation check: none. Implementation note (intent match, not a deviation): PageNotFound renders outside Layout, so it sets the not-found title itself; navigation.md's \"No page sets document.title itself\" targets routed pages. CI on b7fefee0: all 9 workflows success (Playwright E2E Acceptance Tests success; ci_pending cleared).",
           "_planned_spec_references": [
             "docs/design/2026-11-03__release-v9.15/site-structure-phase1/decision_record.md",
             "docs/specs/frontend/pages/navigation.md"
@@ -479,7 +490,7 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.push",
           "sign_off_record": null,
-          "notes": "AC: footer shows current release (SC-CHR-01/02); no \"undefined\" in the What's New heading (SC-CHR-03/04); sidebar background spans the page (SC-CHR-05); 25/25 local incl. whats-new-panel and sidebar-nav-groups. Implementation note: the sidebar-height defect did not reproduce in Chromium (fixed aside spans the viewport at top and bottom of an 1820px page); no CSS change made. SC-CHR-05 checks the navigation.md wording (\"every scroll position and page length\") rather than decision_record §6's \"bounding box vs document height\", which does not apply to a fixed sidebar (intent match). Deviation check: none. ci_pending: see CI on 9de8cd20.",
+          "notes": "AC: footer shows current release (SC-CHR-01/02); no \"undefined\" in the What's New heading (SC-CHR-03/04); sidebar background spans the page (SC-CHR-05); 25/25 local incl. whats-new-panel and sidebar-nav-groups. Implementation note: the sidebar-height defect did not reproduce in Chromium (fixed aside spans the viewport at top and bottom of an 1820px page); no CSS change made. SC-CHR-05 checks the navigation.md wording (\"every scroll position and page length\") rather than decision_record §6's \"bounding box vs document height\", which does not apply to a fixed sidebar (intent match). Deviation check: none. CI on 9de8cd20: all 9 workflows success (Playwright E2E Acceptance Tests success; ci_pending cleared).",
           "_planned_spec_references": [
             "docs/design/2026-11-03__release-v9.15/site-structure-phase1/decision_record.md",
             "docs/specs/frontend/pages/navigation.md",
@@ -754,6 +765,7 @@
     "ST-06",
     "ST-07",
     "ST-08",
+    "ST-09",
     "ST-11",
     "ST-12",
     "ST-13",
