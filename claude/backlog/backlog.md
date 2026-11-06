@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-06 (`ESC-CLOSE-20261106-01` ruling — BLG-FE-271 Notes line: §4.2.1 applies, strategy_rules.md v1.26 Known deviation); prior — 2026-11-06 (post-ship closure `2026-11-03__release-v9.15` STEP 8 — 1 new item added: BLG-GOV-413; deferred lessons-learnt patch, target v9.16); prior — 2026-11-06 (post-ship closure `2026-11-03__release-v9.15` STEP 3 — 45 items bannered ✅ COMPLETE: 41 shipped ST source items, the 3 in-sprint-resolved found defects BLG-BE-204/BLG-FE-273/BLG-QA-251, and BLG-FE-240 (ST-16, superseded by ST-12, v2.45 STEP 3.1); split-achievability carve-out leaves BLG-AI-23 (ST-24) and BLG-OPS-48 (ST-29) open); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-06 (Release Planning `2026-11-06__release-v9.16` §1.3a — gating-item-shipped gates cleared in place (a) on BLG-FE-39, BLG-QA-21, BLG-QA-22, BLG-QA-23, BLG-GOV-26: PT-04 shipped v6.1, Arc 2 complete); prior — 2026-11-06 (`ESC-CLOSE-20261106-01` ruling — BLG-FE-271 Notes line: §4.2.1 applies, strategy_rules.md v1.26 Known deviation); prior — 2026-11-06 (post-ship closure `2026-11-03__release-v9.15` STEP 8 — 1 new item added: BLG-GOV-413; deferred lessons-learnt patch, target v9.16); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -580,7 +580,7 @@ Since v9.13 every Alpaca bar call writes two `api_call_log` rows: `service = 'al
 **Effort:** M (~1–2 days)
 **Provisional-Target:** Unscheduled
 
-**Gate criteria:** PT-04 (Setup Quality Score) shipped.
+**Gate note (2026-11-06):** (Release Planning `2026-11-06__release-v9.16`, §1.3a "gating item shipped — verify" disposition (a), in-place clearance per ST-45/`ESC-EXEC-20261102-01`, within the `ESC-CLOSE-20261007-01` bounds) Gate cleared. The removed gate read "PT-04 (Setup Quality Score) shipped.". Its whole condition is met: PT-04 (Setup Quality Score) shipped in v6.1 (2026-06-23; `current_roadmap.md` Arc 2 table, ✅ Shipped). AC 3 ("Gate condition verified by Product Owner before sprint planning") names the gate; it is not edited, and is restated in the v9.16 slice.
 
 **Problem**
 No end-to-end user journey map exists covering the full Arc 2 flow: Screener → Watchlist → Research View → Trade Plan → Execution. As Arc 2 ships its final features, a journey map would surface UX gaps, confirm feature sequencing, and establish the baseline for Arc 3 UX planning. Requires PT-04 to be shipped so the full flow is complete before mapping.
@@ -1105,7 +1105,7 @@ PO-04 (Reflection ↔ Outcome Correlation) requires journal entries with quantif
 **Effort:** M (~2 days)
 **Provisional-Target:** Unscheduled
 
-**Gate criteria:** PT-04 (Setup Quality Score) shipped — Arc 2 feature set complete.
+**Gate note (2026-11-06):** (Release Planning `2026-11-06__release-v9.16`, §1.3a "gating item shipped — verify" disposition (a), in-place clearance per ST-45/`ESC-EXEC-20261102-01`, within the `ESC-CLOSE-20261007-01` bounds) Gate cleared. The removed gate read "PT-04 (Setup Quality Score) shipped — Arc 2 feature set complete.". Its whole condition is met: PT-04 (Setup Quality Score) shipped in v6.1 (2026-06-23; `current_roadmap.md` Arc 2 table, ✅ Shipped), and Arc 2 is complete (`current_roadmap.md` "Arc 2 ✅ Fully Complete (v3.1–v6.1): All five features PT-01 through PT-05 shipped"). AC 3 ("Gate condition verified by QA Lead and Product Owner before sprint planning") names the gate; it is not edited, and is restated in the v9.16 slice.
 
 **Problem**
 No consolidated end-to-end QA protocol covers the full Arc 2 feature set (Screener, Research View, Trade Plan, Setup Quality Score). Individual EPICs have per-story DoQ sign-offs, but there is no arc-level protocol that exercises the full workflow from screener discovery to closed trade with a quality score. Such a protocol is most valuable once Arc 2 is complete.
@@ -1130,7 +1130,7 @@ No consolidated end-to-end QA protocol covers the full Arc 2 feature set (Screen
 **Effort:** S (~1 day)
 **Provisional-Target:** Unscheduled
 
-**Gate criteria:** PT-04 (Setup Quality Score) shipped — Arc 2 feature set complete.
+**Gate note (2026-11-06):** (Release Planning `2026-11-06__release-v9.16`, §1.3a "gating item shipped — verify" disposition (a), in-place clearance per ST-45/`ESC-EXEC-20261102-01`, within the `ESC-CLOSE-20261007-01` bounds) Gate cleared. The removed gate read "PT-04 (Setup Quality Score) shipped — Arc 2 feature set complete.". Its whole condition is met: PT-04 (Setup Quality Score) shipped in v6.1 (2026-06-23; `current_roadmap.md` Arc 2 table, ✅ Shipped), and Arc 2 is complete (`current_roadmap.md` "Arc 2 ✅ Fully Complete (v3.1–v6.1): All five features PT-01 through PT-05 shipped"). AC 3 ("Gate condition verified before sprint planning") names the gate; it is not edited, and is restated in the v9.16 slice.
 
 **Problem**
 DoQ standards (shared_standards.md §DoQ) were established in Arc 1 and have evolved incrementally. Arc 2 introduced new feature types (research views, AI-assisted UX, trade plans) that may expose gaps in the existing DoQ rubric. A targeted review of DoQ standards against Arc 2 artefacts will ensure the standards remain fit for Arc 3 and beyond.
@@ -1155,7 +1155,7 @@ DoQ standards (shared_standards.md §DoQ) were established in Arc 1 and have evo
 **Effort:** M (~2 days)
 **Provisional-Target:** Unscheduled
 
-**Gate criteria:** PT-04 (Setup Quality Score) shipped.
+**Gate note (2026-11-06):** (Release Planning `2026-11-06__release-v9.16`, §1.3a "gating item shipped — verify" disposition (a), in-place clearance per ST-45/`ESC-EXEC-20261102-01`, within the `ESC-CLOSE-20261007-01` bounds) Gate cleared. The removed gate read "PT-04 (Setup Quality Score) shipped.". Its whole condition is met: PT-04 (Setup Quality Score) shipped in v6.1 (2026-06-23; `current_roadmap.md` Arc 2 table, ✅ Shipped). AC 2 ("Gate condition verified by QA Lead and Product Owner before sprint planning") names the gate; it is not edited, and is restated in the v9.16 slice.
 
 **Problem**
 No Playwright test covers the full trade plan lifecycle: create → edit → link to position → close → view in plan-vs-reality. Individual story tests cover creation and display, but lifecycle continuity (plan survives position link, quality score visible at creation, plan-vs-reality renders post-close) is not tested end-to-end. PT-04 must be shipped to make the quality-score step part of the lifecycle.
@@ -1469,7 +1469,7 @@ BLG-SPEC-46 (Arc 4 API surface area) is a gate-conditional spec planning item th
 **Effort:** S (~1 day)
 **Provisional-Target:** Unscheduled
 
-**Gate criteria:** PT-04 (Setup Quality Score) shipped — Arc 2 velocity history complete.
+**Gate note (2026-11-06):** (Release Planning `2026-11-06__release-v9.16`, §1.3a "gating item shipped — verify" disposition (a), in-place clearance per ST-45/`ESC-EXEC-20261102-01`, within the `ESC-CLOSE-20261007-01` bounds) Gate cleared. The removed gate read "PT-04 (Setup Quality Score) shipped — Arc 2 velocity history complete.". Its whole condition is met: PT-04 (Setup Quality Score) shipped in v6.1 (2026-06-23; `current_roadmap.md` Arc 2 table, ✅ Shipped), and Arc 2 is complete (`current_roadmap.md` "Arc 2 ✅ Fully Complete (v3.1–v6.1): All five features PT-01 through PT-05 shipped"). AC 3 ("Gate condition verified by PMO Lead before sprint planning") names the gate; it is not edited, and is restated in the v9.16 slice.
 
 **Problem**
 No arc-level velocity tracking exists. Cycle velocity is tracked per-cycle (cycle_velocity in run_manifest.md), but no aggregate view shows velocity trends across an entire arc. Once Arc 2 is complete (PT-04 shipped), an Arc 2 velocity retrospective would establish baseline expectations for Arc 3 planning.

@@ -1,0 +1,11 @@
+{
+  "cycle_id": "2026-11-06__release-v9.16",
+  "release": "v9.16",
+  "txn_id": "BLTX-20261106-01",
+  "state": "committed",
+  "prepared_utc": "2026-11-06T17:14:29Z",
+  "marker": "RP:v9.16:2026-11-06__release-v9.16",
+  "target_file": "claude/backlog/backlog.md",
+  "committed_utc": "2026-11-06T17:14:29Z",
+  "notes": "Idempotency search: marker RP:v9.16:2026-11-06__release-v9.16 not present in claude/backlog/backlog.md (0 matches). Release slice written to claude/cycles/2026-11-06__release-v9.16/stage4_backlog_slice.md, which carries the marker (v9.8-v9.15 practice). No global reprioritisation. The only backlog.md edits this run are the \u00a71.3a gating-item-shipped gate clearances (a) on BLG-FE-39, BLG-QA-21, BLG-QA-22, BLG-QA-23 and BLG-GOV-26 and the Last Updated header, made under the lock acquired at 2026-11-06T17:08:48Z (\u00a71.3a v2.64)."
+}
