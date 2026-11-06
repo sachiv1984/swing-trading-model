@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-05 (Sprint Execution `2026-11-03__release-v9.15` EPIC-05 — 4 new items added: BLG-OPS-212, BLG-SPEC-223, BLG-OPS-213, BLG-OPS-214); prior — 2026-11-05 (Sprint Execution `2026-11-03__release-v9.15` EPIC-07 — 6 new items added: BLG-BE-206, BLG-QA-250, BLG-GOV-410, BLG-GOV-411, BLG-QA-251, BLG-GOV-412); prior — 2026-11-05 (Sprint Execution `2026-11-03__release-v9.15` EPIC-06 — 5 new items added: BLG-SPEC-221, BLG-QA-247, BLG-SPEC-222, BLG-QA-248, BLG-QA-249); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-06 (Sprint Execution `2026-11-03__release-v9.15` EPIC-05, PR #2195 review — 3 new items added: BLG-BE-207, BLG-QA-252, BLG-QA-253); prior — 2026-11-05 (Sprint Execution `2026-11-03__release-v9.15` EPIC-05 — 4 new items added: BLG-OPS-212, BLG-SPEC-223, BLG-OPS-213, BLG-OPS-214); prior — 2026-11-05 (Sprint Execution `2026-11-03__release-v9.15` EPIC-07 — 6 new items added: BLG-BE-206, BLG-QA-250, BLG-GOV-410, BLG-GOV-411, BLG-QA-251, BLG-GOV-412); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -7279,5 +7279,68 @@ The Anthropic workspace has one API key, created 2026-05-25 and never rotated (c
 - The console lists one active key, created on the rotation date; the 2026-05-25 key is revoked
 - An AI endpoint succeeds on staging and production with the new key
 - The inventory's `Last rotated` field and the schedule's next-due date are filled in
+
+---
+
+### BLG-BE-207 — Keep a non-default momentum run from replacing the month-end §8.4 ranking
+**Priority:** P3 (Low)
+**Type:** Backend Engineering / Strategy Correctness
+**Owner:** Backend Engineering Patterns Owner; Strategy Rules & System Intent Owner
+**Source:** Agent-mediated PR #2195 review (EPIC-05, cycle `2026-11-03__release-v9.15`, ST-30/ST-32) — 2026-11-06
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.16
+
+**Problem**
+`POST /signals/rebalance-exit` ranks from the latest `momentum_signal_runs` marker for today (DS-39). `POST /signals/generate` takes `top_n` and `lookback_days` query parameters, and the marker does not record them. A run with non-default parameters (for example `top_n=10`) made after the scheduled run on a month-end becomes the latest marker, so the §8.4 ranking is no longer "the top 5 tickers by 252-day momentum" (`strategy_rules.md` §8.4). Before v9.15 the union of today's signal rows had the same exposure; the frontend's `generate()` call uses the defaults, so this needs a direct API call to trigger.
+
+**Scope**
+- Record `top_n` and `lookback_days` on each marker (DS-39 column addition), or write a marker only for runs with the §11 production parameters
+- Rebalance-exit ranks from the latest marker whose parameters match §8.4/§11
+
+**Acceptance Criteria**
+- pytest: a default run followed by a `top_n=10` run on the same day → rebalance ranks on the default run's tickers
+- pytest: only a non-default run today → treated as no completed run (503)
+
+---
+
+### BLG-QA-252 — Unit-test the detect-code-changes action's fail-safe paths
+**Priority:** P3 (Low)
+**Type:** QA / CI Tooling
+**Owner:** QA & Testing Owner; Infrastructure & Operations Owner
+**Source:** Agent-mediated PR #2195 review (EPIC-05, cycle `2026-11-03__release-v9.15`, ST-31) — 2026-11-06
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.16
+
+**Problem**
+`.github/actions/detect-code-changes/action.yml` decides whether the five code-test suites run. The push path (`898003a9`, `cef1df61`) and the pull-request path (PR #2195, run 42200322369) have run live. Its fail-safe branches have not: a new branch (`before` all zeros), a compare truncated at 300 files, and a failed `gh api` call. `tests/test_ci_code_changes.py` only checks that the action's text contains those branches. A regression in the bash (for example a broken `&&` chain) could make a failure skip the suites.
+
+**Scope**
+- Move the file-list logic from the composite action into a script that takes the event fields as arguments and a command for `gh api`
+- Test each branch with a stubbed `gh`: PR, push, new branch, 300-file compare, API failure
+
+**Acceptance Criteria**
+- pytest covers all five branches; every failure branch yields `code=true`
+- The five workflows' behaviour is unchanged (live push and PR runs still report `code=true`/`false` as before)
+
+---
+
+### BLG-QA-253 — Select tests that reach runtime readers of docs/ in the docs-coupled subset
+**Priority:** P3 (Low)
+**Type:** QA / CI Tooling
+**Owner:** QA & Testing Owner
+**Source:** Agent-mediated Director of Quality review, EPIC-05 pass 1, finding 6, and PR #2195 review (cycle `2026-11-03__release-v9.15`, ST-31) — 2026-11-06
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.16
+
+**Problem**
+On a governance-only or docs-only change, CI Pytest Phase A runs only test files that `tests/docs_coupled.py` selects by a static text match. `backend/services/changelog_service.py`, `changelog_digest_service.py` and `ai_spend_trend_service.py` read `docs/product/changelog.md` at runtime. A test reaching them only through `TestClient`, without naming the path, would not be selected, so a docs-only change that breaks them would pass Phase A. No such test exists today (72 of 261 files selected, no reader missed).
+
+**Scope**
+- Extend the selection to test files that import, or call endpoints served by, backend modules that read `claude/` or `docs/` (derived by a scan of `backend/`, as the conftest database-stub scan does)
+- Or list those modules in `tests/docs_coupled.py` with a test that fails when a new backend reader of `docs/` appears unlisted
+
+**Acceptance Criteria**
+- A test that reaches `changelog_service` only through `TestClient` is selected by `--docs-coupled-only`
+- A new backend module reading a `docs/` path without being covered fails a test
 
 ---

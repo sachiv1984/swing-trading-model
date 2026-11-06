@@ -6,7 +6,7 @@
   "invoked_utc": "2026-11-04T10:55:44Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-06T10:07:41Z",
+  "last_updated_utc": "2026-11-06T10:08:15Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-03",
@@ -1274,8 +1274,8 @@
     "EPIC-05": {
       "status": "done",
       "branch": "exec/2026-11-03__release-v9.15/EPIC-05",
-      "pr_number": null,
-      "pr_status": null,
+      "pr_number": 2195,
+      "pr_status": "open",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-11-03__release-v9.15/qa_evidence_EPIC-05.md",
       "test_scenarios": [
@@ -1373,7 +1373,7 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": "Implemented per Product Owner ruling ESC-EXEC-20261105-05: four suites skip on claude/**/docs/**-only changes; CI Pytest Phase A runs the docs-coupled subset. Pass_with_deviation: AC 1 narrowed by ruling ESC-EXEC-20261105-05 (no remainder). AC 2 shown by the push runs on 898003a9; PR-event run IDs to be added when the PR opens. AC 1 post-merge, tracked by BLG-OPS-211 (seal-marked). Deviation check: none (ruling leaves no remainder). CI on branch head 898003a9 (covers e0329f64): CI Pytest 42083447473, Smoke 42083447471, Service Coverage 42083447599, Golden 42083447457, Integration 42083447464 all success. Live branch check on claude/-only push cef1df61: the four suites and Phase B skipped (reported success), Phase A ran the docs-coupled subset and passed. AC 2 shown on 898003a9 (all five suites ran)."
+          "notes": "Implemented per Product Owner ruling ESC-EXEC-20261105-05: four suites skip on claude/**/docs/**-only changes; CI Pytest Phase A runs the docs-coupled subset. Pass_with_deviation: AC 1 narrowed by ruling ESC-EXEC-20261105-05 (no remainder). AC 2 shown by the push runs on 898003a9; On PR #2195 (pull_request, head e3462c17) detector code=true and all five suites ran and passed (CI Pytest 42200322369, Smoke 42200322249, Service Coverage 42200322552, Golden 42200322304, Integration 42200322232). AC 1 post-merge, tracked by BLG-OPS-211 (seal-marked). Deviation check: none (ruling leaves no remainder). CI on branch head 898003a9 (covers e0329f64): CI Pytest 42083447473, Smoke 42083447471, Service Coverage 42083447599, Golden 42083447457, Integration 42083447464 all success. Live branch check on claude/-only push cef1df61: the four suites and Phase B skipped (reported success), Phase A ran the docs-coupled subset and passed. AC 2 shown on 898003a9 (all five suites ran)."
         },
         "ST-32": {
           "title": "Tell \"no qualifying tickers\" apart from \"momentum run missing\" in the month-end rebalance job",
