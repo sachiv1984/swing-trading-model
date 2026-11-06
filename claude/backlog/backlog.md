@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-06 (Sprint Execution `2026-11-03__release-v9.15` EPIC-05, PR #2195 review — 3 new items added: BLG-BE-207, BLG-QA-252, BLG-QA-253); prior — 2026-11-05 (Sprint Execution `2026-11-03__release-v9.15` EPIC-05 — 4 new items added: BLG-OPS-212, BLG-SPEC-223, BLG-OPS-213, BLG-OPS-214); prior — 2026-11-05 (Sprint Execution `2026-11-03__release-v9.15` EPIC-07 — 6 new items added: BLG-BE-206, BLG-QA-250, BLG-GOV-410, BLG-GOV-411, BLG-QA-251, BLG-GOV-412); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-06 (Head of Specs Team, user-directed — `BLG-GOV-395` bannered ✅ COMPLETE: `release_planning_prompt.md` v2.70 STEP 7 writes `execution_state_path`, OPERATIONAL_GUIDE.md v4.252; renumbered from v2.69/v4.251 at merge with main); prior — 2026-11-06 (Sprint Execution `2026-11-03__release-v9.15` EPIC-05, PR #2195 review — 3 new items added: BLG-BE-207, BLG-QA-252, BLG-QA-253); prior — 2026-11-05 (Sprint Execution `2026-11-03__release-v9.15` EPIC-05 — 4 new items added: BLG-OPS-212, BLG-SPEC-223, BLG-OPS-213, BLG-OPS-214); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -4326,6 +4326,7 @@ Three patches deferred on 2026-10-06 (target 2026-10-20) went OVERDUE by carry c
 ---
 
 ### BLG-GOV-395 — Make Release Planning's STEP 7 sync write execution_state_path with active_cycle
+**✅ COMPLETE — 2026-11-03 — Head of Specs Team action-now patch, user-directed ("BLG-GOV-395 - fix now"), outside a sprint — `release_planning_prompt.md` v2.70 STEP 7 + `state_field_owners.json`; §6 checklist complete (OPERATIONAL_GUIDE.md v4.252; renumbered from v2.69/v4.251 at merge, CLAUDE.md §8 step 2a) — branch `governance/2026-11-03-blg-gov-395`. Third AC (next release-plan PR passes with no follow-up commit) is confirmed at the v9.16 release plan.**
 **Priority:** P3 (Low)
 **Type:** Governance Process
 **Owner:** Head of Specs Team
