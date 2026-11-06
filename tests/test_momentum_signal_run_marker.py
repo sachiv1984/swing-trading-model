@@ -65,6 +65,28 @@ def _run(prices_by_ticker, index_frame):
     return result, record, create
 
 
+def _run_with(prices_by_ticker, record):
+    """Like _run, but leaves create_signal and record_momentum_signal_run as the
+    caller patched them."""
+    def download(ticker, start, end):
+        if ticker in ("SPY", "^FTSE"):
+            return _frame(100, 0.1)
+        return prices_by_ticker.get(ticker)
+
+    with patch.object(signal_service, "get_portfolio", return_value={"id": "portfolio-001", "cash": 10000}), \
+         patch.object(signal_service, "get_positions", return_value=[]), \
+         patch.object(signal_service, "get_settings", return_value=[]), \
+         patch.object(signal_service, "get_all_tickers",
+                      return_value=[{"ticker": t} for t in prices_by_ticker]), \
+         patch.object(signal_service, "download_ticker_data", side_effect=download), \
+         patch.object(signal_service, "get_live_fx_rate", return_value=1.27), \
+         patch.object(signal_service, "compute_atr_simple",
+                      side_effect=lambda close, period: close.diff().abs().rolling(period).mean()), \
+         patch("services.signal_service.datetime") as mock_dt:
+        mock_dt.now.return_value = RUN_DAY
+        return signal_service.generate_momentum_signals()
+
+
 def test_zero_qualifier_run_records_an_empty_marker():
     """Every ticker is below its 200-day MA, so none qualifies: the run still
     completes and records a marker with no tickers (BLG-OPS-192)."""
@@ -103,6 +125,28 @@ def test_failed_run_records_no_marker():
          patch.object(signal_service, "record_momentum_signal_run", record), \
          pytest.raises(ValueError):
         signal_service.generate_momentum_signals()
+    record.assert_not_called()
+
+
+def test_run_that_fails_while_saving_signals_records_no_marker():
+    """create_signal raises on the second signal: the run stops part way through
+    saving and writes no marker, so the month-end job will not rank on the
+    partial set of rows it left (BLG-OPS-190; DoQ review, EPIC-05)."""
+    rising = {"AAA": _frame(100, 0.5), "BBB": _frame(100, 0.3)}
+    calls = {"n": 0}
+
+    def flaky_create(portfolio_id, data):
+        calls["n"] += 1
+        if calls["n"] == 2:
+            raise RuntimeError("db write failed")
+        return data
+
+    record = MagicMock()
+    with patch.object(signal_service, "create_signal", side_effect=flaky_create), \
+         patch.object(signal_service, "record_momentum_signal_run", record), \
+         pytest.raises(RuntimeError):
+        _run_with(rising, record)
+    assert calls["n"] == 2
     record.assert_not_called()
 
 
