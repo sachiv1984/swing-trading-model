@@ -6,7 +6,7 @@
   "invoked_utc": "2026-11-04T10:55:44Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-06T10:08:15Z",
+  "last_updated_utc": "2026-11-06T13:30:00Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-03",
@@ -1272,10 +1272,10 @@
       }
     },
     "EPIC-05": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-11-03__release-v9.15/EPIC-05",
       "pr_number": 2195,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-11-03__release-v9.15/qa_evidence_EPIC-05.md",
       "test_scenarios": [
@@ -1296,7 +1296,7 @@
         "ST-29": {
           "title": "ANTHROPIC_API_KEY 6-month scope audit",
           "classification": "delegated_backend",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "Cybersecurity & Trust Lead; Infrastructure & Operations Owner",
           "github_issue": 2172,
           "branch": "exec/2026-11-03__release-v9.15/EPIC-05",
@@ -1327,7 +1327,7 @@
         "ST-30": {
           "title": "Rebalance-exit generation should check that today's screener run completed",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "Infrastructure & Operations Owner",
           "github_issue": 2173,
           "branch": "exec/2026-11-03__release-v9.15/EPIC-05",
@@ -1353,7 +1353,7 @@
         "ST-31": {
           "title": "Skip the five code-test workflows on governance-only and docs-only pushes",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "FinOps & Resource Architect; Infrastructure & Operations Owner",
           "github_issue": 2174,
           "branch": "exec/2026-11-03__release-v9.15/EPIC-05",
@@ -1378,7 +1378,7 @@
         "ST-32": {
           "title": "Tell \"no qualifying tickers\" apart from \"momentum run missing\" in the month-end rebalance job",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "Infrastructure & Operations Owner; Strategy Rules & System Intent Owner",
           "github_issue": 2175,
           "branch": "exec/2026-11-03__release-v9.15/EPIC-05",
@@ -1622,12 +1622,11 @@
       "EPIC-02",
       "EPIC-04",
       "EPIC-06",
-      "EPIC-07"
-    ],
-    "epics_pending": [
+      "EPIC-07",
       "EPIC-05"
     ],
-    "all_merged": false
+    "epics_pending": [],
+    "all_merged": true
   },
   "process_notes": [
     "2026-11-04: run sprint --epic EPIC-01. Initialised EPIC-01 only (execution_state.json owner per sprint_backlog.md Merge Order); other EPIC branches append their own sections. merge_gate.epics_pending lists initialised EPICs only (ST-38 tracks counting uninitialised EPICs).",
@@ -1643,7 +1642,8 @@
     "2026-11-05T13:10:38Z EPIC-07 STEP 0: initialised 9 stories (ST-37..ST-45; ST-44/ST-45 delegated_decision per sprint_backlog.md), issues #2180-#2188 found (sync gh ran at seal), branch created from main 244b5809. merge_gate.epics_pending set to [EPIC-07]; EPIC-05 still uninitialised, so all_merged is false only via EPIC-07 until ST-38 makes the check derive pending from merge_order.",
     "2026-11-05 EPIC-07 merge-gate sync (user reported, STEP 4): PR #2194 merged 2026-11-05T17:54:06Z by sachiv1984, merge commit 89157ca5, head 20030e41. Human DoQ QA sign-off and PO acceptance given in session before the merge (qa_evidence_EPIC-07.md Merge Gate Confirmations, b44abb64). Orphaned post-merge commit check: git log origin/main..origin/exec/2026-11-03__release-v9.15/EPIC-07 empty. STEP 4 step 3c: no pending sibling branch exists (EPIC-05 not yet initialised). merge_gate.epics_pending = [EPIC-05]; all_merged false (ST-38 check now counts it).",
     "2026-11-05T17:59:56Z EPIC-05 STEP 0: initialised 5 stories (ST-29..ST-33). ST-29 delegated_backend (Anthropic console, Human-Delegation; endpoint-register cross-check autonomous), ST-30/31/32 autonomous, ST-33 delegated_backend and conditional (gate 2026-11-09, not cleared at init). Issues #2172-#2176 found (sync gh ran at seal). Branch cut from main 9021e2ef.",
-    "2026-11-05T18:01:44Z ST-33 returned_to_backlog in flight (PO-authorised, conditional gate 2026-11-09 not cleared). ESC-EXEC-20261105-05 (ST-31 scope) raised and resolved in session."
+    "2026-11-05T18:01:44Z ST-33 returned_to_backlog in flight (PO-authorised, conditional gate 2026-11-09 not cleared). ESC-EXEC-20261105-05 (ST-31 scope) raised and resolved in session.",
+    "2026-11-06: run sprint resume. PR #2195 (EPIC-05) found merged by the human DoQ/PO at 2026-11-06T13:13:42Z, merge commit 0e0bac2a; merge-gate resume-sync set EPIC-05 merged and ST-29..ST-32 merged; merge_gate.all_merged = true. QA sign-off and PO acceptance given by the human in PR #2195 comment at 13:13:02Z, before the merge; recorded in qa_evidence_EPIC-05.md Merge Gate Confirmations. Orphaned post-merge commit check (LL-v6.8-P3-01): git log origin/main..origin/exec/<cycle>/EPIC-0{1..7} returned 0 commits for all seven branches; nothing to reconcile."
   ],
   "sealed": false,
   "sealed_utc": null

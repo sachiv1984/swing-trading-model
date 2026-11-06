@@ -66,4 +66,10 @@ Last Updated: 2026-11-06
 
 ## Merge Gate Confirmations
 
-*(Written when the merge is recorded.)*
+- **Director of Quality QA sign-off:**
+  - Given by the human repository owner, acting as Director of Quality, on 2026-11-06 at 13:13:02Z, before the merge. Recorded as PR #2195 comment "Director of Quality QA sign-off and Product Owner acceptance — EPIC-05", posted from their account at their explicit direction.
+  - It accepts this evidence log, including the agent-mediated sign-off (pass 1 Blocked, findings applied, pass 2 Approved), ST-29 to ST-32 `done` with ACs verified, ST-33 returned to the backlog, the ST-29 P1/P2 carry-forward, and green CI.
+  - At head `09dc851f`, every PR check was `SUCCESS` or path-skipped (the five code suites also ran and passed).
+- **Product Owner acceptance:**
+  - Given by the same human, acting as Product Owner, in the same comment. EPIC-05 (Operations, security and market-data monitoring) accepted as delivered within the confirmed v9.15 sprint goal.
+- **Merge:** performed by the human repository owner (Director of Quality and Product Owner) at 2026-11-06T13:13:42Z, merge commit `0e0bac2a197130d69fd97b72d58fa2d359527682` (head `09dc851f`). QA sign-off and PO acceptance were given explicitly before the merge (above), not inferred from it.
