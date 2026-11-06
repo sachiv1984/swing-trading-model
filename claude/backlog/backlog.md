@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-06 (Head of Specs Team, user-directed — `BLG-GOV-395` bannered ✅ COMPLETE: `release_planning_prompt.md` v2.70 STEP 7 writes `execution_state_path`, OPERATIONAL_GUIDE.md v4.252; renumbered from v2.69/v4.251 at merge with main); prior — 2026-11-06 (Sprint Execution `2026-11-03__release-v9.15` EPIC-05, PR #2195 review — 3 new items added: BLG-BE-207, BLG-QA-252, BLG-QA-253); prior — 2026-11-05 (Sprint Execution `2026-11-03__release-v9.15` EPIC-05 — 4 new items added: BLG-OPS-212, BLG-SPEC-223, BLG-OPS-213, BLG-OPS-214); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-06 (Sprint Execution `2026-11-03__release-v9.15` sprint close STEP 5.2 — BLG-OPS-197 notes ST-33's return to the backlog); prior — 2026-11-06 (Head of Specs Team, user-directed — `BLG-GOV-395` bannered ✅ COMPLETE: `release_planning_prompt.md` v2.70 STEP 7 writes `execution_state_path`, OPERATIONAL_GUIDE.md v4.252; renumbered from v2.69/v4.251 at merge with main); prior — 2026-11-06 (Sprint Execution `2026-11-03__release-v9.15` EPIC-05, PR #2195 review — 3 new items added: BLG-BE-207, BLG-QA-252, BLG-QA-253); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -4748,6 +4748,7 @@ When `get_current_price()` returns nothing, the positions view falls back to the
 **Effort:** XS (<1h)
 **Provisional-Target:** v9.15 (retargeted 2026-11-03 from v9.14, PMO Lead with the item owners, user-directed; post-ship closure `2026-10-29__release-v9.14` §6 row 5)
 **Depends on:** EPIC-05 merged and deployed to production; 7 days of production data
+**Sprint return:** returned to backlog from `2026-11-03__release-v9.15` as ST-33 (EPIC-05), 2026-11-05: its conditional gate (7 days of production data after the 2026-11-02 deploy, from 2026-11-09) could not clear before EPIC-05 merged. Product Owner authorised; expected path, not a deviation.
 
 **Problem**
 ST-30 filed the combined weekly cost baseline ($0.00, every source free) and the 2× advisory threshold, but the per-source weekly call volumes in `docs/ops/data_pipeline_cost_baseline.md` §4 are pending: they need a week of production attribution data, which only exists after EPIC-05 deploys. ST-31's DS-36 columns were confirmed on staging; their production Live Confirmation is also outstanding. Without the volume baseline, the 2× advisory (and BLG-OPS-195's automated check) has nothing to compare with.
