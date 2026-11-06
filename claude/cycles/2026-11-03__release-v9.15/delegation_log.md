@@ -72,5 +72,5 @@ Last Updated: 2026-11-05
 - **Unblock criteria:** answers to (1)–(3) supplied in session, or a statement that console access is not available in-sprint (then AC 1's console half and AC 2 carry post-merge under a tracking item filed before the PR opens).
 - **Commit format required:** `[EPIC-05][ST-29] <description>` on `exec/2026-11-03__release-v9.15/EPIC-05`
 - **Sign-off:** sign_off_cleared — console read supplied by the user (Cybersecurity & Trust Lead) in session 2026-11-06: one key, created 2026-05-25, last used 2026-10-14; no other key; Render match inferred from the single key.
-- **Commit SHA:** (ST-29 commit, recorded in execution_state.json)
+- **Commit SHA:** 5e83a975561137759bc9c4e4e4a3468fd096106b
 - **Status:** Unblocked (2026-11-06) — Unblocked in-session — Anthropic console key list (names and dates only), supplied by the user (Cybersecurity & Trust Lead), next session day. AC 2 (rotation) not met: rotation overdue since 2026-08-25, carried by BLG-OPS-214.

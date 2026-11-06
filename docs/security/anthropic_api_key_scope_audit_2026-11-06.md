@@ -48,7 +48,7 @@ Six live endpoints reach an Anthropic client. All six are shipped, user-triggere
 - `scripts/`: none.
 - **GitHub Actions: a second copy.** `.github/workflows/deploy.yml` passes the secret `REACT_APP_ANTHROPIC_API_KEY` into the public GitHub Pages build. Create React App inlines every `REACT_APP_*` value into the client bundle. `src/pages/TradePlan.js:122` uses it only as a boolean (`HAS_AI`), and the minifier folds that expression, so the published bundle contains no key (match count 0). The frontend makes no Anthropic call. Any future code that reads the value would publish it. The secret was set on 2026-05-25, the same day the only console key was created (finding 2), so it very likely holds the live key. Tracked by **`BLG-OPS-213`**.
 
-**AC 1 result:** met for the application: the key is used only by the six live AI endpoints, each named above. The register needs updating to match (`BLG-SPEC-223`), and the GitHub Pages secret is a second, unnecessary copy of the key (`BLG-OPS-213`).
+**AC 1 result:** not met as worded. The application uses the key only for the six live AI endpoints named above, all shipped features. But one of them is missing from the register (`BLG-SPEC-223`), and the GitHub Pages secret is a second, unnecessary copy of the key (`BLG-OPS-213`).
 
 ### 2. Keys and rotation
 
@@ -85,7 +85,7 @@ Console read, 2026-11-06:
 ## Sign-off
 
 - **Console evidence:** supplied by the Cybersecurity & Trust Lead (the user, in session), 2026-11-06, `DEL-20261105-04`.
-- **Review:** Sprint Execution Engine (agent-mediated, Cybersecurity & Trust Lead role — §5.3), 2026-11-06. AC 1 met (register drift tracked), AC 2 not met (tracked), AC 3 met by this record.
+- **Review:** Sprint Execution Engine (agent-mediated, Cybersecurity & Trust Lead role — §5.3), 2026-11-06. AC 1 not met as worded (`BLG-SPEC-223`, `BLG-OPS-213`), AC 2 not met (`BLG-OPS-214`), AC 3 met by this record.
 
 ---
 
