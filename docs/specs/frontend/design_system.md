@@ -3,9 +3,10 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 1.24
-**Last Updated:** 2026-10-28 (ST-25, EPIC-04, v9.13, BLG-FE-221 — new §Coloured Button Fills under §Buttons: authored fill renders via tailwind-merge in cn(), white text, AA rest and hover shades); prior — 2026-10-13 (ST-23, EPIC-03, v9.12, BLG-FE-200 — new §Light-Theme Colour Tokens under §Theme & Colors: light mode is a supported theme; token pairs from the v9.12 light-theme decision record §3); prior — 2026-09-23 (ST-24, EPIC-06, v9.6, BLG-SPEC-144 — new §Canonical Chart Data Palette added under §Accessibility, cross-referenced from the existing chart contrast checklist); prior history retained — see prior entries in version control
+**Version:** 1.25
+**Last Updated:** 2026-11-06 (v9.16 design gate — ST-09/ST-10, BLG-FE-264/223: new §Semantic Colour Tokens and §Input Text Colours under §Theme & Colors); prior — 2026-10-28 (ST-25, EPIC-04, v9.13, BLG-FE-221 — new §Coloured Button Fills under §Buttons: authored fill renders via tailwind-merge in cn(), white text, AA rest and hover shades); prior — 2026-10-13 (ST-23, EPIC-03, v9.12, BLG-FE-200 — new §Light-Theme Colour Tokens under §Theme & Colors: light mode is a supported theme; token pairs from the v9.12 light-theme decision record §3); prior history retained — see prior entries in version control
 **Header remediation note (v6.7 ST-03, shared_standards.md §9):** this document previously had no lifecycle header. Header applied now (version stamped at 1.0, reflecting no prior tracked version history) rather than backfilling an assumed version — content itself is unchanged by this remediation.
+**v1.25 (v9.16 design gate, ST-09/ST-10, BLG-FE-264/BLG-FE-223):** added **§Semantic Colour Tokens** and **§Input Text Colours** under §Theme & Colors. There are eight `app-*` tokens built from the v1.23 measured pairs, with no new colours, and the placeholder and typed-text pair for inputs. The code is built by ST-09 and ST-10 (design source `docs/design/2026-11-06__release-v9.16/semantic-colour-tokens/decision_record.md`).
 **v1.24 (ST-25, EPIC-04, v9.13, BLG-FE-221):** added **§Coloured Button Fills** under §Shared UI Components → Buttons. `cn()` now merges with `tailwind-merge`, so a `<Button>`'s authored colour fill wins over the variant's `bg-primary`; the rule fixes white text and AA rest/hover shades for each fill role. Design source: `docs/design/2026-10-16__release-v9.13/coloured-button-fills/decision_record.md` §2.
 **v1.23 (ST-23, EPIC-03, v9.12, BLG-FE-200):** added **§Light-Theme Colour Tokens** under §Theme & Colors. Light mode is a supported theme (Head of UX & Design with the Product Owner, 2026-10-12, resolving RISK-03). The light+dark pairs for card surfaces, nested rows, primary/strong/secondary text, P&L, warning and accent text, with measured contrast and four usage rules. Applied in-story to Reports (Monthly, Tax Year) and Notifications (Preferences, History). Design source: `docs/design/2026-10-12__release-v9.12/light-theme-support/decision_record.md` §3.
 **v1.22 (ST-24, EPIC-06, v9.6, BLG-SPEC-144):** added the **Canonical Chart Data Palette** subsection (§Accessibility, immediately after the v1.6 chart contrast checklist) — an 8-colour categorical palette (Okabe–Ito, 2008) documented with its source and CVD-type rationale, giving the existing checklist's "each series colour meets contrast" and "no two adjacent series rely on hue alone" rules a concrete default to check against, where none existed before. Cross-referenced from this document only (spec debt, `BLG-SPEC-144`) — no chart component adopts it in this story; adoption is a UI change requiring its own design-gate pass (noted as a follow-up, not filed as a new backlog item since the existing `BLG-SPEC-144` item itself already covers "spec + adoption is separate").
@@ -87,6 +88,46 @@ Light mode is a supported theme (Head of UX & Design with the Product Owner, 202
 4. Filled badges with white text keep a fixed, theme-independent background, for example `bg-amber-700` (5.02:1).
 
 Skeleton placeholders keep their own pair, `bg-slate-300/60 dark:bg-slate-700/60` (§Data States). Verified by the light-theme axe scans of Reports (Monthly, Tax Year) and Notifications (Preferences, History) in `tests/e2e/accessibility-axe-scan.spec.js`, which pass with no `color-contrast` baseline entry.
+
+### Semantic Colour Tokens
+
+*Added v1.25 (v9.16 design gate; ST-09, BLG-FE-264).*
+
+**Design source:** `docs/design/2026-11-06__release-v9.16/semantic-colour-tokens/decision_record.md`
+
+This is a spec ahead of the code: ST-09 (v9.16) builds it.
+
+These are single-class tokens for the eight shell roles. Each maps to a pair already measured in §Light-Theme Colour Tokens, so no new colours are introduced. They are defined as CSS custom properties on `:root` and `.dark` in `src/index.css`, and exposed in `tailwind.config.js` under an `app` namespace. The namespace keeps them apart from shadcn's `--background`, `--card` and `--border`.
+
+| Token | Role | Light | Dark |
+|-------|------|-------|------|
+| `app-surface` | Page base (`body`) | slate-100 `#f1f5f9` | slate-950 `#020617` |
+| `app-raised` | Card and table shell | white `#ffffff` | `rgb(30 41 59 / 0.5)` (slate-800/50) |
+| `app-fg` | Primary text and typed input text | slate-900 `#0f172a` | white `#ffffff` |
+| `app-muted` | Secondary and label text | slate-600 `#475569` | slate-400 `#94a3b8` |
+| `app-line` | Borders and dividers | slate-200 `#e2e8f0` | `rgb(51 65 85 / 0.5)` (slate-700/50) |
+| `app-positive` | Positive P&L and status | emerald-700 `#047857` | emerald-400 `#34d399` |
+| `app-negative` | Negative P&L and status | rose-700 `#be123c` | rose-400 `#fb7185` |
+| `app-warning` | Warning and information text | amber-700 `#b45309` | amber-400 `#fbbf24` |
+
+**Rules:**
+1. Use as `bg-app-surface`, `bg-app-raised`, `text-app-fg`, `text-app-muted`, `border-app-line`, `text-app-positive`, `text-app-negative` and `text-app-warning`. A token class themes itself, so it takes no `dark:` partner.
+2. Opacity modifiers (`bg-app-raised/70`) are not supported. A surface that needs a different alpha keeps an explicit `light dark:dark` pair.
+3. Rule 2 of §Light-Theme Colour Tokens still applies: `app-positive` and `app-warning` pass only on white, slate-50 and slate-100.
+4. Filled badges keep their fixed fills (rule 4 above) and are not tokenised.
+5. **Converted in ST-09:** `body` (`bg-app-surface text-app-fg`), `DashboardCard` (`bg-app-raised border-app-line`; title `app-fg`, sub-label `app-muted`), `DataTable` (container `bg-app-raised border-app-line`; header cells `app-muted`, body cells `app-fg`, dividers `app-line`) and `PageHeader` (title `app-fg`, subtitle `app-muted`). Content inside these shells moves to tokens in Phase 3 (`BLG-FE-265`). Until then, existing explicit pairs remain valid. New code uses the tokens for these eight roles.
+
+### Input Text Colours
+
+*Added v1.25 (v9.16 design gate; ST-10, BLG-FE-223).*
+
+**Design source:** `docs/design/2026-11-06__release-v9.16/semantic-colour-tokens/decision_record.md` §2.3
+
+Every text, number and search input, and every textarea:
+
+- **Placeholder:** `placeholder:text-slate-600 dark:placeholder:text-slate-400`
+- **Typed text:** `text-app-fg`. Until ST-09 merges, use `text-slate-900 dark:text-white`.
+- **Defect pattern:** a bare `dark:text-*` written next to a `placeholder:` class colours the typed text, not the placeholder. `grep -rnE 'placeholder:text-[a-z]+-[0-9]+ +dark:text-' src/` must return nothing.
 
 ---
 

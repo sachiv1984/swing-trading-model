@@ -2,7 +2,7 @@
 **Class:** Operational Record (Class 3)
 **Status:** Active
 **Version:** 1.0
-**Last Updated:** 2026-11-03 (Release Planning `2026-11-03__release-v9.15` §1.4c — v9.15 row appended); prior — 2026-10-29 (Release Planning `2026-10-29__release-v9.14` §1.4c — v9.14 row appended); prior — 2026-10-16 (Release Planning `2026-10-16__release-v9.13` §1.4c — v9.13 row appended); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-06 (Release Planning `2026-11-06__release-v9.16` §1.4c — v9.16 row appended); prior — 2026-11-03 (Release Planning `2026-11-03__release-v9.15` §1.4c — v9.15 row appended); prior — 2026-10-29 (Release Planning `2026-10-29__release-v9.14` §1.4c — v9.14 row appended); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -37,5 +37,6 @@ This file holds one row per release for the ready (ungated) backlog pool at Rele
 | v9.13 | `2026-10-16__release-v9.13` | 124 / 64.65 | 40 / 28.00 | 84 / 36.65 | 28 | 36.65 | +9.90 | +0.80 | N/A — pool growing | run_manifest.md `**Result:**` (calibrated; first run with the gating-item-shipped check, which added 5 items / 5.50d) |
 | v9.14 | `2026-10-29__release-v9.14` | 156 / 81.55 | 54 / 28.00 | 102 / 53.55 | 28 | 53.55 | +16.90 | +6.33 | N/A — pool growing | run_manifest.md `**Result:**` (calibrated; first run counting the 17 explicitly-ungated items, 18.50d; selected includes a 3-item / 0.90d Product Owner override) |
 | v9.15 | `2026-11-03__release-v9.15` | 148 / 75.55 | 45 / 28.00 | 103 / 47.55 | 28 | 47.55 | −6.00 | +6.93 | N/A — pool growing | run_manifest.md `**Result:**` (calibrated; excludes the 10 Site Structure & Usability Phase 2/3 items, 20.00d, held to v9.16/v9.17 by Product Owner override, and 7 items whose dependency is unshipped) |
+| v9.16 | `2026-11-06__release-v9.16` | 159 / 84.70 | 30 / 27.95 | 129 / 56.75 | 28 | 56.70 | +9.20 | +6.70 | N/A — pool growing | run_manifest.md `**Result:**` (calibrated; first run of §1.4c step 0, which holds the 8 Phase 3 programme items, 20.50d, outside the pool; selected includes a 3-item / 3.50d Product Owner override seating the rest of Phase 2) |
 
 **Backfill note:** the v9.8–v9.12 Δ, Rolling Δ and Runway values were computed when this file was created, from the recorded figures only, using the Appendix F method with no look-ahead. The v9.3–v9.7 values match Appendix F's backfill table.
