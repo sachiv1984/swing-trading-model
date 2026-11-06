@@ -157,3 +157,20 @@ Last Updated: 2026-11-04
 - **Blocks execution:** No
 - **Disposition:** Resolved
 - **Resolution summary (2026-11-05T14:38:30Z):** Product Owner ruling, given in-session by the user, dated 2026-11-05: engine recommendation accepted as drafted. Re-confirmed deferred: Multi-Portfolio Support, Mobile App, BLG-TECH-05 Prometheus. Flagged for the next `run roadmap`: Position Correlation Analysis, Backtesting Module, Full Compliance Scoring, Customisable Dashboard Layout. `initiative_register.md` unchanged; AC 2 carry-forward tracked by BLG-GOV-408. Record: `docs/product/decisions/decisions--2026-11-03__release-v9.15--ST-45-priority3-deferred-sunset-review.md`.
+
+## ESC-EXEC-20261105-05
+
+- **Raised at:** 2026-11-05T18:01:33Z
+- **Routine:** Sprint Execution
+- **Cycle ID:** 2026-11-03__release-v9.15
+- **Step:** STEP 3.1.A (EPIC-05 execution loop)
+- **ST/EPIC item:** ST-31 / EPIC-05 (BLG-OPS-191)
+- **Trigger type:** Scope
+- **Blocking statement:** ST-31 AC 1 asks that a governance-only PR complete "without running the five suites". About 22 modules in the CI Pytest suite read live `claude/` or `docs/` files (for example `tests/test_strategy_version_registry.py` against `strategy_rules.md`, the backlog gate-scan tests, `tests/test_exit_reason_values.py`). Skipping CI Pytest wholesale on a docs-only push would stop those checks running exactly when the files they check change. Whether to accept that loss is a scope decision the engine cannot make.
+- **Engine recommendation (non-binding):** on a `claude/**`/`docs/**`-only push, CI Pytest Phase A runs only the docs-coupled tests (selected by a pytest marker); the other four suites skip fully, with job-level skips so required checks still report.
+- **Owning authority:** Product Owner (with the FinOps & Resource Architect)
+- **Unblock criteria:** a ruling choosing between the recommendation, skipping all five suites (literal AC), or skipping four and leaving CI Pytest unchanged.
+- **SLA due-by:** 2026-11-06T18:01:33Z (24h — lifecycle/scope)
+- **Blocks execution:** No
+- **Disposition:** Resolved
+- **Resolution summary (2026-11-05T18:01:33Z):** Product Owner ruling, given in session by the user, dated 2026-11-05: engine recommendation accepted. On a governance-only or docs-only push, CI Pytest Phase A runs the docs-coupled subset; Critical-Path Smoke, Service Layer Coverage, Golden Output and Portfolio Integration skip. AC 1 is read as "four suites skipped, CI Pytest narrowed to its docs-coupled tests"; no backlog remainder.

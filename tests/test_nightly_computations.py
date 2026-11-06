@@ -189,15 +189,25 @@ def _rebind_service_db(database_stub):
     orig = (
         _ss.get_portfolio, _ss.get_positions, _ss.db_get_signals,
         _ss.create_rebalance_exit_signal, _sz.get_settings,
+        _ss.get_momentum_signal_run, _ss.record_momentum_signal_run,
     )
     _ss.get_portfolio = database_stub.get_portfolio
     _ss.get_positions = database_stub.get_positions
     _ss.db_get_signals = database_stub.get_signals
     _ss.create_rebalance_exit_signal = database_stub.create_rebalance_exit_signal
     _sz.get_settings = database_stub.get_settings
+    _ss.get_momentum_signal_run = database_stub.get_momentum_signal_run
+    _ss.record_momentum_signal_run = database_stub.record_momentum_signal_run
     yield
     _ss.get_portfolio, _ss.get_positions, _ss.db_get_signals, \
-        _ss.create_rebalance_exit_signal, _sz.get_settings = orig
+        _ss.create_rebalance_exit_signal, _sz.get_settings, \
+        _ss.get_momentum_signal_run, _ss.record_momentum_signal_run = orig
+
+
+def _marker(tickers, run_date="2026-06-30"):
+    """A completed momentum run's DS-39 marker, as get_momentum_signal_run returns it."""
+    return {"run_date": run_date, "completed_at": None,
+            "tickers_ranked": list(tickers), "ranked_count": len(tickers)}
 
 
 def test_RX01_non_rebalance_day_no_signals():
@@ -242,10 +252,7 @@ def test_RX02_position_not_in_top5_gets_signal(database_stub):
     rebalance_day = datetime(2026, 6, 30)
 
     database_stub.get_portfolio.return_value = {"id": "portfolio-001"}
-    database_stub.get_signals.return_value = [
-        {"ticker": "AAPL", "signal_date": "2026-06-30", "status": "new"},
-        {"ticker": "MSFT", "signal_date": "2026-06-30", "status": "new"},
-    ]
+    database_stub.get_momentum_signal_run.return_value = _marker(["AAPL", "MSFT"])
     database_stub.get_positions.return_value = [
         {
             "ticker": "TSLA",  # NOT in top-5
@@ -273,9 +280,7 @@ def test_RX03_position_in_top5_no_signal(database_stub):
     rebalance_day = datetime(2026, 6, 30)
 
     database_stub.get_portfolio.return_value = {"id": "portfolio-001"}
-    database_stub.get_signals.return_value = [
-        {"ticker": "AAPL", "signal_date": "2026-06-30", "status": "new"},
-    ]
+    database_stub.get_momentum_signal_run.return_value = _marker(["AAPL"])
     database_stub.get_positions.return_value = [
         {
             "ticker": "AAPL",  # IS in top-5
@@ -302,9 +307,7 @@ def test_RX04_position_at_stop_no_signal(database_stub):
     rebalance_day = datetime(2026, 6, 30)
 
     database_stub.get_portfolio.return_value = {"id": "portfolio-001"}
-    database_stub.get_signals.return_value = [
-        {"ticker": "GOOGL", "signal_date": "2026-06-30", "status": "new"},
-    ]
+    database_stub.get_momentum_signal_run.return_value = _marker(["GOOGL"])
     database_stub.get_positions.return_value = [
         {
             "ticker": "TSLA",
@@ -330,9 +333,7 @@ def test_RX05_mixed_portfolio_one_exit_one_retain(database_stub):
     rebalance_day = datetime(2026, 6, 30)
 
     database_stub.get_portfolio.return_value = {"id": "portfolio-001"}
-    database_stub.get_signals.return_value = [
-        {"ticker": "AAPL", "signal_date": "2026-06-30", "status": "new"},
-    ]
+    database_stub.get_momentum_signal_run.return_value = _marker(["AAPL"])
     database_stub.get_positions.return_value = [
         {"ticker": "AAPL", "market": "US", "current_price": 200.0, "current_stop": 180.0},  # top-5
         {"ticker": "TSLA", "market": "US", "current_price": 250.0, "current_stop": 200.0},  # not top-5
@@ -353,9 +354,12 @@ def test_RX05_mixed_portfolio_one_exit_one_retain(database_stub):
     assert call_args.kwargs.get("ticker") == "TSLA"
 
 
-def _run_rebalance(database_stub, signals, positions, day=datetime(2026, 6, 30)):
+def _run_rebalance(database_stub, ranked, positions, day=datetime(2026, 6, 30)):
+    """Run the month-end job with `ranked` as today's completed run's tickers,
+    or None for no completed run today."""
     database_stub.get_portfolio.return_value = {"id": "portfolio-001"}
-    database_stub.get_signals.return_value = signals
+    database_stub.get_momentum_signal_run.reset_mock()
+    database_stub.get_momentum_signal_run.return_value = None if ranked is None else _marker(ranked)
     database_stub.get_positions.return_value = positions
     database_stub.create_rebalance_exit_signal.reset_mock()
     database_stub.create_rebalance_exit_signal.side_effect = lambda **kw: {"id": f"sig-{kw['ticker']}", **kw}
@@ -369,22 +373,26 @@ def _run_rebalance(database_stub, signals, positions, day=datetime(2026, 6, 30))
 
 
 def test_RX06_ranking_ignores_signal_status(database_stub):
-    """RX-06 (ST-05, §8.4, v9.13): a dismissed, entered or expired signal is still
-    part of the day's ranking, so dismissing a signal cannot trigger an exit."""
-    statuses = ["dismissed", "entered", "expired", "already_held", "new"]
+    """RX-06 (ST-05, §8.4, v9.13; DS-39, v9.15): the ranking is the completed run's
+    marker, not the signal rows, so dismissing, entering or expiring a signal
+    cannot change it or trigger an exit."""
     tickers = ["AAPL", "MSFT", "NVDA", "AMZN", "META"]
-    signals = [{"ticker": t, "signal_date": "2026-06-30", "status": st} for t, st in zip(tickers, statuses)]
+    database_stub.get_signals.reset_mock()
+    database_stub.get_signals.return_value = [
+        {"ticker": t, "signal_date": "2026-06-30", "status": "dismissed"} for t in tickers
+    ]
     positions = [{"ticker": t, "market": "US", "current_price": 100.0, "current_stop": 80.0} for t in tickers]
-    result = _run_rebalance(database_stub, signals, positions)
+    result = _run_rebalance(database_stub, tickers, positions)
     assert result["signals_created"] == 0
     assert set(result["top5_tickers"]) == set(tickers)
     database_stub.create_rebalance_exit_signal.assert_not_called()
+    database_stub.get_momentum_signal_run.assert_called_once_with("portfolio-001", "2026-06-30")
 
 
 def test_RX07_risk_off_position_is_left_to_section_8_2(database_stub):
     """RX-07 (ST-05, §8.4 precedence): a position whose market is risk-off gets no
     rebalance signal; §8.2 governs it."""
-    signals = [{"ticker": "AAPL", "signal_date": "2026-06-30", "status": "new"}]
+    signals = ["AAPL"]
     positions = [
         {"ticker": "VOD.L", "market": "UK", "current_price": 70.0, "current_stop": 60.0, "risk_off_exit": True},
         {"ticker": "TSLA", "market": "US", "current_price": 250.0, "current_stop": 200.0, "risk_off_exit": False},
@@ -399,7 +407,7 @@ def test_RX10_in_grace_position_at_its_stop_still_gets_a_rebalance_signal(databa
     in-grace position at or below its stop that is out of the ranking still gets a
     §8.4 signal, as in the backtest (holding_days < min_hold_days skips the stop).
     The same position after grace is left to §8.1."""
-    signals = [{"ticker": "AAPL", "signal_date": "2026-06-30", "status": "new"}]
+    signals = ["AAPL"]
     positions = [
         # Day 4 of grace (entered 2026-06-26), price below the initial stop.
         {"ticker": "GRCE", "market": "US", "current_price": 90.0, "current_stop": 95.0, "entry_date": "2026-06-26"},
@@ -415,18 +423,57 @@ def test_RX10_in_grace_position_at_its_stop_still_gets_a_rebalance_signal(databa
 
 
 def test_RX08_no_run_today_creates_nothing_and_flags_it(database_stub):
-    """RX-08 (ST-05 / BLG-OPS-190): on a month-end with no momentum signal run for
-    today, only older rows exist, so no signal is created and the result says so."""
-    signals = [
-        {"ticker": "AAPL", "signal_date": "2026-06-29", "status": "new"},
-        {"ticker": "TSLA", "signal_date": "2026-06-30", "status": "exit_rebalance"},
+    """RX-08 (ST-30 / BLG-OPS-190, v9.15): on a month-end with no completed momentum
+    signal run today (no DS-39 marker), no signal is created and the result says
+    so, even if signal rows dated today exist (a run that saved some rows and
+    then failed leaves no marker)."""
+    database_stub.get_signals.return_value = [
+        {"ticker": "AAPL", "signal_date": "2026-06-30", "status": "new"},
     ]
     positions = [{"ticker": "TSLA", "market": "US", "current_price": 250.0, "current_stop": 200.0}]
-    result = _run_rebalance(database_stub, signals, positions)
+    result = _run_rebalance(database_stub, None, positions)
     assert result["screener_run_missing"] is True
     assert result["signals_created"] == 0
-    assert "No momentum signal run recorded for 2026-06-30" in result["message"]
+    assert "No completed momentum signal run recorded for 2026-06-30" in result["message"]
     database_stub.create_rebalance_exit_signal.assert_not_called()
+
+
+def test_RX11_zero_qualifier_completed_run_is_an_empty_ranking(database_stub):
+    """RX-11 (ST-32 / BLG-OPS-192, v9.15): a completed run that ranked no tickers is
+    an empty ranking, not a missing run. Every position is then out of the ranking,
+    so each non-risk-off position that §8.1 does not govern gets a §8.4 signal:
+    the plain position, and the in-grace one below its stop (§8.1 inactive in grace).
+    The risk-off position (§8.2) and the post-grace one at its stop (§8.1) do not."""
+    positions = [
+        {"ticker": "PLAIN", "market": "US", "current_price": 250.0, "current_stop": 200.0},
+        {"ticker": "VOD.L", "market": "UK", "current_price": 70.0, "current_stop": 60.0, "risk_off_exit": True},
+        {"ticker": "STOP", "market": "US", "current_price": 90.0, "current_stop": 95.0, "entry_date": "2026-06-01"},
+        {"ticker": "GRCE", "market": "US", "current_price": 90.0, "current_stop": 95.0, "entry_date": "2026-06-26"},
+    ]
+    result = _run_rebalance(database_stub, [], positions)
+    assert "screener_run_missing" not in result
+    assert result["top5_tickers"] == []
+    tickers = sorted(c.kwargs["ticker"] for c in database_stub.create_rebalance_exit_signal.call_args_list)
+    assert tickers == ["GRCE", "PLAIN"]
+    assert result["signals_created"] == 2
+
+
+def test_RX12_endpoint_returns_200_for_a_zero_qualifier_run(database_stub):
+    """RX-12 (ST-32 / BLG-OPS-192, v9.15): POST /signals/rebalance-exit returns 200,
+    not 503, for a completed run that ranked no tickers, and records the job ok."""
+    positions = [{"ticker": "PLAIN", "market": "US", "current_price": 250.0, "current_stop": 200.0}]
+    result = _run_rebalance(database_stub, [], positions)
+    from tests._real_database import real_database_imports
+    with real_database_imports():
+        from fastapi.testclient import TestClient
+        import main
+    client = TestClient(main.app, raise_server_exceptions=False)
+    with patch.object(main, "generate_rebalance_exit_signals", return_value=result), \
+         patch.object(main, "record_nightly_job") as record:
+        response = client.post("/signals/rebalance-exit")
+    assert response.status_code == 200
+    assert response.json()["data"]["signals_created"] == 1
+    assert record.call_args_list[0].args[:2] == ("rebalance_exit", "ok")
 
 
 def test_RX09_endpoint_returns_503_when_the_run_is_missing():
