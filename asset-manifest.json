@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/swing-trading-model/static/css/main.20a178fd.css",
+    "main.js": "/swing-trading-model/static/js/main.5d5f9105.js",
+    "index.html": "/swing-trading-model/index.html",
+    "main.20a178fd.css.map": "/swing-trading-model/static/css/main.20a178fd.css.map",
+    "main.5d5f9105.js.map": "/swing-trading-model/static/js/main.5d5f9105.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.20a178fd.css",
+    "static/js/main.5d5f9105.js"
+  ]
+}
