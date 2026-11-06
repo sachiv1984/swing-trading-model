@@ -3,8 +3,9 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 1.13
-**Last Updated:** 2026-11-04 (ST-01, EPIC-01, v9.15, BLG-FE-244 — §Pre-Entry Checks: Branch A (acknowledge to proceed) ruled, Branch B row deleted; implemented in TradeEntry.js); prior — 2026-11-03 (v9.15 design gate — ST-01/BLG-FE-244: new §Pre-Entry Checks on every Trade Entry route, acknowledgement branch pending ruling; ST-02/BLG-FE-245: FX pre-fill from the live rate with a source line; ST-03/BLG-FE-246: one FX label); prior — 2026-10-17 (ST-06, EPIC-02, v9.13, BLG-BE-180 — §Initial Stop: Branch A (reject) ruled, Branch B row deleted; implemented in TradeEntry.js); prior history retained — see prior entries in version control
+**Version:** 1.14
+**Last Updated:** 2026-11-06 (v9.16 design gate — ST-05/BLG-FE-271: §Pre-Entry Checks plan-linked rows re-run the checks when the plan's snapshot is over 24 hours old or holds an unacknowledged WARN/FAIL); prior — 2026-11-04 (ST-01, EPIC-01, v9.15, BLG-FE-244 — §Pre-Entry Checks: Branch A (acknowledge to proceed) ruled, Branch B row deleted; implemented in TradeEntry.js); prior — 2026-11-03 (v9.15 design gate — ST-01/BLG-FE-244: new §Pre-Entry Checks on every Trade Entry route, acknowledgement branch pending ruling; ST-02/BLG-FE-245: FX pre-fill from the live rate with a source line; ST-03/BLG-FE-246: one FX label); prior history retained — see prior entries in version control
+**Design Source (v1.14):** docs/design/2026-11-06__release-v9.16/plan-linked-pre-entry-checks/decision_record.md
 **Design Source (v1.12):** docs/design/2026-11-03__release-v9.15/trade-entry-pre-entry-checks/decision_record.md, docs/design/2026-11-03__release-v9.15/trade-entry-fx-rate/decision_record.md
 **Design Source (v1.10):** docs/design/2026-10-16__release-v9.13/initial-stop-at-or-below-zero/decision_record.md
 **Design Source (v1.9):** docs/design/2026-10-12__release-v9.12/trade-entry-atr-preview/decision_record.md
@@ -259,13 +260,20 @@ The `strategy_rules.md` §4.2 pre-entry checks, shown on Trade Entry for every r
 
 **When it shows:**
 
+**v1.14 (v9.16 design gate, ST-05, BLG-FE-271; `ESC-CLOSE-20261106-01` option (a)):** the plan-linked rows below replace v1.13's single "stored snapshot → not shown" row. Design source: `docs/design/2026-11-06__release-v9.16/plan-linked-pre-entry-checks/decision_record.md`. The snapshot's shape and the plan form's write are in `pages/trade_plan.md` §5e.
+
 | Entry state | Panel |
 |-------------|-------|
 | No plan linked | Shown |
-| Plan linked, and the plan has a stored `pre_entry_validation_snapshot` | Not shown. In its place, a muted line (`data-testid="pre-entry-checks-on-plan"`): "Pre-entry checks were run on the linked plan." |
-| Plan linked, no stored snapshot | Shown |
+| Plan linked, no stored snapshot (or no `captured_at`) | Shown |
+| Plan linked, snapshot **stale**: `captured_at` more than 24 hours before the plan was linked | Shown, with reason line "The linked plan's checks are more than a day old, so they have been run again." |
+| Plan linked, fresh snapshot, `advisory_status: pass` | Not shown. In its place, a muted line (`data-testid="pre-entry-checks-on-plan"`): "Pre-entry checks were run on the linked plan." |
+| Plan linked, fresh snapshot, `warn`/`fail`, plan `pre_entry_override_acknowledged: true` | Not shown. On-plan line: "Pre-entry checks were run on the linked plan, and their warnings were acknowledged there." |
+| Plan linked, fresh snapshot, `warn`/`fail`, plan acknowledgement not `true` | Shown, with reason line "The linked plan's checks had warnings that were not acknowledged." |
 
-The panel appears at most once. Linking or unlinking a plan switches rows without losing form state.
+"Linked" means linked by prefill or by "Link to trade plan". The 24-hour age was set by the Product Owner on 2026-11-06. The reason line sits above the panel header (`data-testid="pre-entry-rerun-reason"`, `text-xs text-slate-600 dark:text-slate-400`) and shows only when the plan is why the panel is shown. A panel shown for a plan works exactly as on the no-plan route: checks run on Trade Entry's own inputs, and the acknowledgement rules below apply in full.
+
+The panel appears at most once, and never together with the on-plan line. Linking or unlinking a plan switches rows without losing form state.
 
 **Placement:** after Tags, directly above the Trade Plan Linkage Advisory and Submit (§Form Field Order item 10).
 
@@ -283,7 +291,7 @@ An endpoint failure, or a check still loading, never disables Submit.
 
 **Implemented (v1.13, ST-01):** `src/pages/TradeEntry.js`, using the shared `src/components/trades/PreEntryValidationPanel.js` (also used by `src/pages/TradePlan.js`). Backend: `POST /portfolio/position` `pre_entry_override_acknowledged` (`portfolio_endpoints.md` v2.15.0); test `tests/test_trade_entry_pre_entry_override.py`. Playwright: `tests/e2e/trade-entry-pre-entry-checks.spec.js`.
 
-**Test coverage required:** Playwright for each route, the FAIL and unknown-regime cases (with the ruled Submit behaviour), and the plan-linked cases (decision record §6).
+**Test coverage required:** Playwright for each route, the FAIL and unknown-regime cases (with the ruled Submit behaviour), and the plan-linked cases (v9.15 decision record §6; v9.16 `plan-linked-pre-entry-checks` decision record §6).
 
 ---
 

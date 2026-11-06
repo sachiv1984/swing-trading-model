@@ -66,9 +66,9 @@
     "cross_stage_integrity": "pass",
     "decisions_validated": "not_applicable",
     "design_gate_required": true,
-    "design_gate_status": "not_started"
+    "design_gate_status": "Passed"
   },
-  "design_gate_status": "not_started",
+  "design_gate_status": "Passed",
   "amended_backlog_slice_path": "",
   "artifacts": {
     "backlog_lock": "released",
@@ -92,5 +92,7 @@
     "issue_import": "not_applicable",
     "run_manifest": "present"
   },
-  "sprint_planning_pre_condition": "design_gate_status == Passed"
+  "sprint_planning_pre_condition": "design_gate_status == Passed",
+  "design_gate_completed_utc": "2026-11-06T17:43:15Z",
+  "design_gate_record": "claude/cycles/2026-11-06__release-v9.16/design_gate.md"
 }
