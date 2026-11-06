@@ -36,6 +36,8 @@ import { cn } from "./lib/utils";
 import { formatCurrency } from "./lib/format";
 import { apiFetch, api } from "./api/base44Client";
 import CommandPalette, { OPEN_COMMAND_PALETTE_EVENT } from "./components/CommandPalette";
+import { PAGE_LABELS, documentTitle } from "./lib/pageLabels";
+import { formatReleaseVersion } from "./lib/releaseVersion";
 import CashManagementModal from "./components/cash/CashManagementModal";
 import { toast } from "sonner";
 
@@ -45,13 +47,16 @@ const NOTIFICATIONS_PAGES = ["notifications", "NotificationPreferences"];
 
 // Keyboard shortcuts: keys available on each page (ST-11)
 const PAGE_SHORTCUTS = {
-  Positions:     [{ key: "n", label: "New trade" }, { key: "r", label: "Refresh" }],
-  TradeHistory:  [{ key: "n", label: "New trade" }, { key: "r", label: "Refresh" }],
+  Positions:     [{ key: "n", label: "New position" }, { key: "r", label: "Refresh" }],
+  TradeHistory:  [{ key: "n", label: "New position" }, { key: "r", label: "Refresh" }],
   Screener:      [{ key: "w", label: "Add to watchlist" }, { key: "r", label: "Refresh" }],
   Watchlist:     [{ key: "w", label: "Add to watchlist" }, { key: "r", label: "Refresh" }],
 };
 const DEFAULT_SHORTCUTS = [{ key: "r", label: "Refresh" }];
 
+// Nav item labels come from src/lib/pageLabels.js (ST-11, BLG-FE-248, v9.15;
+// glossary.md §UI Labels). Groups are still v1.x until BLG-FE-250 builds
+// navigation.md v2.0's areas.
 // Nav group structure — per navigation.md v1.4 (ST-02, EPIC-02, v7.7, BLG-FE-114)
 // v1.4: "Alerts" (formerly Tools group) removed — duplicate destination of
 // "Notifications" (System group), which is now the sole nav path and inherits
@@ -62,42 +67,42 @@ const NAV_GROUPS = [
     label: "Trading",
     key: "trading",
     items: [
-      { name: "Positions",     icon: Briefcase,   page: "Positions" },
-      { name: "Trade Entry",   icon: PlusCircle,  page: "TradeEntry" },
-      { name: "Trade History", icon: History,     page: "TradeHistory" },
-      { name: "Reflections",   icon: FileBarChart, page: "TradeReflection" },
-      { name: "Red Flag Journal", icon: Flag, page: "RedFlagJournal" },
+      { name: PAGE_LABELS.Positions,     icon: Briefcase,   page: "Positions" },
+      { name: PAGE_LABELS.TradeEntry,   icon: PlusCircle,  page: "TradeEntry" },
+      { name: PAGE_LABELS.TradeHistory, icon: History,     page: "TradeHistory" },
+      { name: PAGE_LABELS.TradeReflection,   icon: FileBarChart, page: "TradeReflection" },
+      { name: PAGE_LABELS.RedFlagJournal, icon: Flag, page: "RedFlagJournal" },
     ],
   },
   {
     label: "Analytics",
     key: "analytics",
     items: [
-      { name: "Analytics",           icon: TrendingUp,   page: "PerformanceAnalytics" },
-      { name: "Strategy Benchmark",  icon: BarChart2,    page: "StrategyBenchmark" },
-      { name: "Replay",              icon: RotateCcw,    page: "Replay" },
-      { name: "Risk Dashboard",      icon: ShieldAlert,  page: "RiskDashboard" },
-      { name: "Signals",             icon: Zap,          page: "Signals" },
-      { name: "Reports",             icon: FileBarChart,  page: "Reports" },
+      { name: PAGE_LABELS.PerformanceAnalytics,           icon: TrendingUp,   page: "PerformanceAnalytics" },
+      { name: PAGE_LABELS.StrategyBenchmark,  icon: BarChart2,    page: "StrategyBenchmark" },
+      { name: PAGE_LABELS.Replay,              icon: RotateCcw,    page: "Replay" },
+      { name: PAGE_LABELS.RiskDashboard,      icon: ShieldAlert,  page: "RiskDashboard" },
+      { name: PAGE_LABELS.Signals,             icon: Zap,          page: "Signals" },
+      { name: PAGE_LABELS.Reports,             icon: FileBarChart,  page: "Reports" },
     ],
   },
   {
     label: "Tools",
     key: "tools",
     items: [
-      { name: "Screener",         icon: ScanSearch, page: "Screener" },
-      { name: "Watchlist",        icon: Eye,        page: "Watchlist" },
-      { name: "Ticker Universe",  icon: Globe,      page: "TickerUniverse" },
+      { name: PAGE_LABELS.Screener,         icon: ScanSearch, page: "Screener" },
+      { name: PAGE_LABELS.Watchlist,        icon: Eye,        page: "Watchlist" },
+      { name: PAGE_LABELS.TickerUniverse,  icon: Globe,      page: "TickerUniverse" },
     ],
   },
   {
     label: "System",
     key: "system",
     items: [
-      { name: "Settings",      icon: Settings,  page: "Settings" },
-      { name: "System Status", icon: Activity,  page: "SystemStatus" },
-      { name: "Weekly Digest", icon: CalendarDays, page: "WeeklyDigest" },
-      { name: "Notifications", icon: Bell,      page: "notifications", alertBadge: true },
+      { name: PAGE_LABELS.Settings,      icon: Settings,  page: "Settings" },
+      { name: PAGE_LABELS.SystemStatus, icon: Activity,  page: "SystemStatus" },
+      { name: PAGE_LABELS.WeeklyDigest, icon: CalendarDays, page: "WeeklyDigest" },
+      { name: PAGE_LABELS.notifications, icon: Bell,      page: "notifications", alertBadge: true },
     ],
   },
 ];
@@ -143,6 +148,22 @@ export default function Layout({ children, currentPageName }) {
   const location = useLocation();
   const navigate = useNavigate();
 
+  // ST-14 (BLG-FE-266, v9.15): the footer version comes from the same source
+  // as the Dashboard What's New panel (api.changelog.latest(); same query key,
+  // so the two share one cached request). No text while loading or when absent.
+  const { data: latestRelease } = useQuery({
+    queryKey: ["home-whats-new"],
+    queryFn: () => api.changelog.latest(),
+    retry: 1,
+  });
+  const footerVersion = formatReleaseVersion(latestRelease?.version);
+
+  // ST-13 (BLG-FE-249, v9.15): one browser-tab title per page, set here on
+  // every route change from the shared label source (navigation.md §Browser Tab Title).
+  useEffect(() => {
+    document.title = documentTitle(currentPageName, location.pathname);
+  }, [currentPageName, location.pathname]);
+
   // ST-06 (BLG-FE-145, EPIC-03, v8.5) follow-up, found live via that story's
   // own new Playwright tests failing in real CI: tailwind.config.js's
   // darkMode: ["class"] requires an ANCESTOR element carrying the literal
@@ -153,7 +174,7 @@ export default function Layout({ children, currentPageName }) {
   // subtree -- so every dark: variant and every CSS custom property that
   // differs between :root and .dark (src/index.css) has always resolved to
   // its LIGHT value inside every Dialog-based component app-wide (14+
-  // consumers: CommandPalette, ExportModal, WatchlistModal, WidgetLibrary,
+  // consumers: CommandPalette, ExportModal, WatchlistModal,
   // etc. — ST-16, EPIC-03, v8.8: PositionEntryModal removed as dead code,
   // dropped from this example list), regardless of the user's actual theme
   // setting. Syncing the class onto documentElement (an ancestor of every
@@ -627,7 +648,7 @@ export default function Layout({ children, currentPageName }) {
                   )}
                 >
                   <LayoutDashboard className="w-4 h-4 shrink-0" />
-                  Dashboard
+                  {PAGE_LABELS.DashboardHome}
                 </Link>
                 {renderNavGroups(() => setSidebarOpen(false))}
               </nav>
@@ -731,7 +752,7 @@ export default function Layout({ children, currentPageName }) {
             )}
           >
             <LayoutDashboard className="w-4 h-4 shrink-0" />
-            Dashboard
+            {PAGE_LABELS.DashboardHome}
           </Link>
 
           {/* Collapsible groups */}
@@ -811,7 +832,7 @@ export default function Layout({ children, currentPageName }) {
               isDark ? "text-slate-400" : "text-slate-600"
             )}
           >
-            <span>v1.0.0</span>
+            <span data-testid="sidebar-footer-version">{footerVersion || ""}</span>
             <a
               href="#"
               className="flex items-center gap-1 hover:text-slate-400 transition-colors"

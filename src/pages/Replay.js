@@ -23,6 +23,7 @@ import { Input } from "../components/ui/input";
 import { Checkbox } from "../components/ui/checkbox";
 import { StandingAlert } from "../components/ui/StandingAlert";
 import PageHeader from "../components/ui/PageHeader";
+import { PAGE_LABELS } from "../lib/pageLabels";
 import { formatCurrency, formatPercent } from "../lib/format";
 
 const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:8000";
@@ -128,7 +129,7 @@ export default function Replay() {
 
   return (
     <div className="p-6 max-w-6xl mx-auto space-y-6">
-      <PageHeader title="Replay Mode" description="Replay your own past trades through today's strategy rules." />
+      <PageHeader title={PAGE_LABELS.Replay} description="Replay your own past trades through today's strategy rules." />
 
       {/* Selector — decision_record.md §2.2: two mutually exclusive, tab-switched input modes */}
       <div className="bg-white dark:bg-slate-800/50 rounded-lg border border-slate-200 dark:border-slate-700/50 p-5 space-y-4">

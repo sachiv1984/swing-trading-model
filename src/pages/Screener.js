@@ -7,6 +7,7 @@ import EmptyStateAction from "../components/ui/EmptyStateAction";
 import { buildCsv, csvFilename, downloadCsv } from "../utils/csvExport";
 import { Button } from "../components/ui/button";
 import PageHeader from "../components/ui/PageHeader";
+import { PAGE_LABELS } from "../lib/pageLabels";
 import DataState from "../components/ui/DataState";
 import { Skeleton } from "../components/ui/skeleton";
 import { cn } from "../lib/utils";
@@ -920,7 +921,7 @@ export default function Screener() {
   return (
     <div>
       <PageHeader
-        title="Screener"
+        title={PAGE_LABELS.Screener}
         description="Strategy-filtered ticker candidates ranked by momentum signal"
         actions={
           <div className="flex items-center gap-3">

@@ -8,6 +8,7 @@ import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
 import { cn } from "../lib/utils";
 import PageHeader from "../components/ui/PageHeader";
+import { PAGE_LABELS } from "../lib/pageLabels";
 import StatsCard from "../components/ui/StatsCard";
 import TradeHistoryTable from "../components/trades/TradeHistoryTable";
 import SavedFiltersControl from "../components/trades/SavedFiltersControl";
@@ -15,6 +16,7 @@ import CalendarView from "../components/trades/CalendarView";
 import TradeReflectionModal from "../components/trades/TradeReflectionModal";
 import { formatCurrency, formatPercent } from "../lib/format";
 import { motion } from "framer-motion";
+import { localDateString } from "../lib/localDate";
 
 // ST-04 (BLG-FE-118, EPIC-04, v7.5): ephemeral, device-local active-filter
 // persistence — reuses the BLG-FE-40 versioned-localStorage-envelope pattern
@@ -145,7 +147,9 @@ export default function TradeHistory() {
   // ── Filter logic ─────────────────────────────────────────────────────────────
   const filteredTrades = trades.filter((trade) => {
     if (filters.market !== "all" && trade.market?.toUpperCase() !== filters.market) return false;
-    if (filters.result === "win" && trade.pnl < 0) return false;
+    // ST-15 (BLG-FE-239, v9.15): a win is pnl > 0 (metrics_definitions.md §Win Rate),
+    // so a break-even trade is neither a win nor a loss.
+    if (filters.result === "win" && !(trade.pnl > 0)) return false;
     if (filters.result === "loss" && trade.pnl >= 0) return false;
     if (filters.dateFrom && trade.exit_date < filters.dateFrom) return false;
     if (filters.dateTo && trade.exit_date > filters.dateTo) return false;
@@ -157,7 +161,9 @@ export default function TradeHistory() {
 
   // ── Summary stats ─────────────────────────────────────────────────────────
   const totalPnL = filteredTrades.reduce((sum, t) => sum + (t.pnl || 0), 0);
-  const winningTrades = filteredTrades.filter((t) => t.pnl >= 0);
+  // ST-15 (BLG-FE-239, v9.15): §Win Rate counts pnl > 0 as a win; a pnl = 0 trade is
+  // in total_trades but in neither Avg Win nor Avg Loss (§Risk/Reward Ratio).
+  const winningTrades = filteredTrades.filter((t) => t.pnl > 0);
   const losingTrades = filteredTrades.filter((t) => t.pnl < 0);
   const winRate =
     filteredTrades.length > 0 ? (winningTrades.length / filteredTrades.length) * 100 : 0;
@@ -241,7 +247,7 @@ export default function TradeHistory() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Trade History"
+        title={PAGE_LABELS.TradeHistory}
         description="Review your closed positions and performance"
         actions={
           /* BLG-FEAT-07: CSV Export button in page header area (F-28).
@@ -554,7 +560,7 @@ export default function TradeHistory() {
             <CalendarView
               hasAnyClosedTrades={trades.length > 0}
               onDaySelect={(date) => {
-                const dateStr = date.toISOString().slice(0, 10);
+                const dateStr = localDateString(date);
                 setFilters({ ...filters, dateFrom: dateStr, dateTo: dateStr });
                 setView("table");
               }}

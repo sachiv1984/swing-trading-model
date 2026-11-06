@@ -12,6 +12,7 @@ import { useQuery } from "@tanstack/react-query";
 import { base44 } from "../../api/base44Client";
 import { cn } from "../../lib/utils";
 import { formatCurrency, formatPercent, currencyForMarket } from "../../lib/format";
+import { todayLocal } from "../../lib/localDate";
 
 // Optional props (v9.13 ST-01, positions.md §Daily Position Monitor Exit Queue):
 //   preselect — { reason, note }: explicit Exit Reason pre-selection that
@@ -28,7 +29,7 @@ export default function ExitModal({ position, open, onClose, onConfirm, preselec
     exit_price: "",
     exit_reason: EXIT_REASON_MANUAL,
     exit_fx_rate: 1,
-    exit_date: new Date().toISOString().split("T")[0],
+    exit_date: todayLocal(),
     exit_note: "" // ✅ NEW: Exit note field
   });
   const [preselectedReason, setPreselectedReason] = useState(null);
@@ -53,7 +54,7 @@ export default function ExitModal({ position, open, onClose, onConfirm, preselec
         position.market === "US"
           ? position.live_fx_rate ?? position.fx_rate ?? 1.27
           : 1,
-      exit_date: new Date().toISOString().split("T")[0],
+      exit_date: todayLocal(),
       exit_note: "" // ✅ NEW: Reset exit note
     });
     // preselect is read only when the position changes (a new open).
@@ -377,8 +378,11 @@ export default function ExitModal({ position, open, onClose, onConfirm, preselec
                   </div>
                   {position.market === "US" ? (
                     <div className="space-y-1">
-                      <Label className="text-xs text-slate-600 dark:text-slate-400">FX Rate (GBP/USD)</Label>
+                      {/* ST-03 (BLG-FE-246, v9.15): one FX label and hint on every FX input */}
+                      <Label htmlFor="exit-fx-rate" className="text-xs text-slate-600 dark:text-slate-400">FX rate — USD per £1 (GBP/USD)</Label>
                       <Input
+                        id="exit-fx-rate"
+                        aria-describedby="exit-fx-rate-hint"
                         type="number"
                         step="0.0001"
                         min="0.0001"
@@ -391,6 +395,7 @@ export default function ExitModal({ position, open, onClose, onConfirm, preselec
                         }
                         className="bg-slate-800/50 border-slate-700 text-white h-9"
                       />
+                      <p id="exit-fx-rate-hint" data-testid="fx-rate-hint" className="text-xs text-slate-600 dark:text-slate-400">How many US dollars £1 buys.</p>
                     </div>
                   ) : null}
                 </div>

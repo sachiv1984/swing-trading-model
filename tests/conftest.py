@@ -195,6 +195,30 @@ def _remove_backend_services_path_entries(entries) -> None:
             sys.path.remove(entry)
 
 
+# ---------------------------------------------------------------------------
+# --docs-coupled-only (ST-31, EPIC-05, v9.15, BLG-OPS-191): governance-only and
+# docs-only CI runs collect only the test files that may read claude/ or docs/.
+# Selection rule: tests/docs_coupled.py.
+# ---------------------------------------------------------------------------
+
+def pytest_addoption(parser):
+    parser.addoption(
+        "--docs-coupled-only",
+        action="store_true",
+        default=False,
+        help="Collect only test files that may read claude/ or docs/ (tests/docs_coupled.py).",
+    )
+
+
+def pytest_ignore_collect(collection_path, config):
+    if not config.getoption("--docs-coupled-only", default=False):
+        return None
+    if collection_path.suffix != ".py" or not collection_path.name.startswith("test_"):
+        return None
+    from tests.docs_coupled import is_docs_coupled
+    return None if is_docs_coupled(collection_path) else True
+
+
 @pytest.hookimpl(hookwrapper=True)
 def pytest_make_collect_report(collector):
     # One hook for every leak guard: a second module-level function with this
@@ -214,6 +238,9 @@ def pytest_make_collect_report(collector):
     if leaked:
         _evict(leaked)
         problems.append(f"{_UTILS_LEAK_HINT}: {leaked}")
+    replaced = replaced_utils_attributes()
+    if replaced:
+        problems.append(f"{_UTILS_ATTR_HINT}: {replaced}")
     if problems:
         report = outcome.get_result()
         report.outcome = "failed"
@@ -283,6 +310,91 @@ def _utils_stubs_not_leaked(request):
     if leaked:
         _evict(leaked)
         pytest.fail(f"{request.node.nodeid} {_UTILS_LEAK_HINT}: {leaked}", pytrace=False)
+
+
+# ---------------------------------------------------------------------------
+# utils.* attribute leak guard (ST-41, BLG-QA-222, EPIC-07, v9.15)
+#
+# The guard above checks which module object sits under utils / utils.*. A
+# test that instead replaces an attribute on the real module
+# (`sys.modules["utils.calculations"].calculate_atr = MagicMock()`, or a
+# patch(...).start() never stopped) and does not restore it leaks just as
+# badly, and every later importer binds the replacement. Each real
+# backend/utils module object's public callables are snapshotted when first
+# seen (all of backend/utils is imported at conftest load, so normally at
+# session start); after every test file is collected and every test runs, any
+# snapshotted name that now holds a different object fails that file or test
+# and is put back. A module re-imported as a new object is snapshotted too,
+# and the older object stays checked, since modules imported earlier still
+# call it.
+# Restore with patch()/patch.object() as a context manager or decorator, or
+# the monkeypatch fixture -- all of which undo before this check runs.
+# ---------------------------------------------------------------------------
+
+_UTILS_ATTR_HINT = (
+    "replaced a public callable on a real utils module without restoring it -- use "
+    "patch()/patch.object() as a context manager or decorator, or monkeypatch "
+    "(ST-41, BLG-QA-222)"
+)
+# id(module) -> (name, module object, {attr: original}). Every real utils
+# module object ever seen is kept: a file may evict and re-import a utils
+# module, and services imported earlier still call the older object.
+_UTILS_ATTR_SNAPSHOTS: dict = {}
+
+
+def _public_callables(module) -> dict:
+    return {name: value for name, value in list(vars(module).items())
+            if not name.startswith("_") and callable(value) and not isinstance(value, type(sys))}
+
+
+def snapshot_real_utils_attributes() -> None:
+    """Record public callables of every real utils module object in
+    sys.modules not yet snapshotted."""
+    for name, module in list(sys.modules.items()):
+        if (name == "utils" or name.startswith("utils.")) and module is not None \
+                and _is_real_utils_module(module) and id(module) not in _UTILS_ATTR_SNAPSHOTS:
+            _UTILS_ATTR_SNAPSHOTS[id(module)] = (name, module, _public_callables(module))
+
+
+def replaced_utils_attributes(restore: bool = True) -> list:
+    """`module.attr` names whose object differs from the snapshot, on any real
+    utils module object seen so far; restored when `restore` is true. Then
+    snapshots any newly seen module objects."""
+    replaced = set()
+    for name, module, originals in list(_UTILS_ATTR_SNAPSHOTS.values()):
+        current = vars(module)
+        for attr, original in originals.items():
+            if current.get(attr, _MISSING) is not original:
+                replaced.add(f"{name}.{attr}")
+                if restore:
+                    setattr(module, attr, original)
+    snapshot_real_utils_attributes()
+    return sorted(replaced)
+
+
+_MISSING = object()
+
+
+def _import_all_real_utils() -> None:
+    import importlib
+    import pkgutil
+    for info in pkgutil.iter_modules([str(_UTILS_DIR)]):
+        try:
+            importlib.import_module(f"utils.{info.name}")
+        except Exception:  # an import-time failure surfaces in the tests that use it
+            pass
+
+
+_import_all_real_utils()
+snapshot_real_utils_attributes()
+
+
+@pytest.fixture(autouse=True)
+def _utils_attributes_not_leaked(request):
+    yield
+    replaced = replaced_utils_attributes()
+    if replaced:
+        pytest.fail(f"{request.node.nodeid} {_UTILS_ATTR_HINT}: {replaced}", pytrace=False)
 
 
 # Import mock harness fixtures (BLG-QA-08 / ST-09)

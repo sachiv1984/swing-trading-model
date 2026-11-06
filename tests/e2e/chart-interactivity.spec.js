@@ -78,7 +78,7 @@ async function setupAnalytics(page) {
   // HashRouter — must use hash-based path
   await page.goto('/#/PerformanceAnalytics');
   await expect(
-    page.locator('h1, [class*="text-2xl"], [class*="text-3xl"]').filter({ hasText: 'Performance Analytics' })
+    page.locator('h1, [class*="text-2xl"], [class*="text-3xl"]').filter({ hasText: /^Analytics$/ })
   ).toBeVisible({ timeout: 20000 });
   await expect(page.locator('[class*="animate-spin"]')).toHaveCount(0, { timeout: 15000 });
 
@@ -557,7 +557,7 @@ test.describe('SC-CHART-IX-06 — Cross-Chart Data Integrity', () => {
 
     await page.goto('/#/PerformanceAnalytics');
     await expect(
-      page.locator('h1, [class*="text-2xl"], [class*="text-3xl"]').filter({ hasText: 'Performance Analytics' })
+      page.locator('h1, [class*="text-2xl"], [class*="text-3xl"]').filter({ hasText: /^Analytics$/ })
     ).toBeVisible({ timeout: 20000 });
     await expect(page.locator('[class*="animate-spin"]')).toHaveCount(0, { timeout: 15000 });
 

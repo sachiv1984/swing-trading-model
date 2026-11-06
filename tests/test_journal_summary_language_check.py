@@ -87,6 +87,67 @@ def test_descriptive_wording_passes(text):
     assert journal_summary_language_failures(text) == []
 
 
+@pytest.mark.parametrize("text", [
+    "Consider a tighter stop.",
+    "Perhaps revisit stop placement.",
+    "It could help to tighten stops.",
+    "Think about tightening stops.",
+    "Your sizing is worth a second look.",
+    "Stops would benefit from tightening.",
+])
+def test_missed_advisory_forms_caught(text):
+    # ST-25 (BLG-AI-24, EPIC-04, v9.15; ruling ESC-EXEC-20261105-01 (A″) (iv)):
+    # the six advisory sentences in BLG-AI-24's Problem, each [] at 7a749bcf.
+    assert journal_summary_language_failures(text) == ["trading_change"]
+
+
+@pytest.mark.parametrize("text", [
+    # ST-25 (A″ (i)): a statement of what the system permits.
+    "Stops can be moved only upward under the system.",
+    # ST-25 (A″ (ii)): the trader's own past-tense words, reported as such.
+    "The trader wrote that a review of setups is warranted.",
+    # ST-27 (BLG-AI-26, A″ (iii)): "help" + an explanatory verb.
+    "Moving stops to breakeven after a 2R gain could help explain the lower drawdown.",
+    "Smaller position size in May may help explain why losses were lower.",
+    "Tighter stops may help account for the smaller losses.",
+    # Past-tense and descriptive forms of the A″ (iv) phrasings.
+    "The trader thought about tightening stops but kept them.",
+    "Sizing was worth a second look in April, the notes say.",
+    "Stops benefited from tightening in March.",
+    "Lower stops led to fewer exits.",
+    "Review of setups in April found no change.",
+])
+def test_a_double_prime_descriptive_wording_passes(text):
+    # Each was ["trading_change"] or is a near-miss guard for a new form.
+    assert journal_summary_language_failures(text) == []
+
+
+def test_reported_speech_does_not_cover_the_next_sentence():
+    text = "The trader wrote that stops were fine. Consider a tighter stop."
+    assert journal_summary_language_failures(text) == ["trading_change"]
+
+
+@pytest.mark.parametrize("text", [
+    # DoQ review (EPIC-04) finding 1: form (6) in the next sentence or clause.
+    "The trader wrote that entries were fine. Tighten stops.",
+    "The trader wrote that entries were fine. Perhaps revisit stop placement.",
+    "The trader noted that losses were small. Revisit position sizing.",
+    "The trader wrote that entries were fine; consider a tighter stop.",
+    "The trader wrote that entries were fine; tighten stops.",
+    # Bullet-led imperatives.
+    "- Tighten stops on open positions.",
+    "1. Revisit stop placement.",
+])
+def test_reported_speech_stops_at_the_sentence_or_clause(text):
+    assert journal_summary_language_failures(text) == ["trading_change"]
+
+
+def test_reported_speech_present_tense_still_caught():
+    # A″ (ii) covers past-tense reporting only.
+    assert journal_summary_language_failures("The notes suggest that stops should be tightened.") \
+        == ["trading_change"]
+
+
 @pytest.fixture
 def db(database_stub):
     sys.modules["database"] = database_stub

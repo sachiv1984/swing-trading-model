@@ -6,6 +6,10 @@ each of execution_prompt.md §9.2's four equality breaks.
 ST-44 (BLG-GOV-397, EPIC-07, v9.14) adds two checks: a done/merged story must
 have deviations_filed true, and every `## ESC-EXEC-*` heading in the sibling
 execution_escalations.md must have a key in open_escalations.
+
+ST-38 (BLG-QA-240, EPIC-07, v9.15): the expected epics_pending set is the
+sprint's full EPIC list (initialised epics ∪ merge_order ∪ the sibling
+sprint_backlog_index.json), so an EPIC not yet initialised counts as pending.
 """
 import copy
 import importlib.util
@@ -136,3 +140,48 @@ def test_cli_reads_sibling_escalations_file(tmp_path, capsys):
     (tmp_path / "execution_escalations.md").write_text(ESCALATIONS_MD + "\n## ESC-EXEC-20261014-02\n")
     assert ckstate.main([str(tmp_path / "execution_state.json")]) == 1
     assert "open_escalations.ESC-EXEC-20261014-02" in capsys.readouterr().out
+
+
+SEVEN = ["EPIC-01", "EPIC-02", "EPIC-03", "EPIC-04", "EPIC-05", "EPIC-06", "EPIC-07"]
+
+
+def _partial(pending, all_merged):
+    """Two EPICs merged and initialised; five listed in merge_order only."""
+    return {
+        "merge_order": SEVEN,
+        "completed_items": ["ST-01", "ST-02"],
+        "blocked_items": [], "delegated_items": [],
+        "merge_gate": {"epics_merged": ["EPIC-01", "EPIC-02"], "epics_pending": pending, "all_merged": all_merged},
+        "epics": {
+            "EPIC-01": {"status": "merged", "pr_status": "merged", "qa_signed_off": True, "stories": {
+                "ST-01": {"status": "merged", "commit_sha": "a1", "completed_utc": "t", "deviations_filed": True}}},
+            "EPIC-02": {"status": "merged", "pr_status": "merged", "qa_signed_off": True, "stories": {
+                "ST-02": {"status": "merged", "commit_sha": "b2", "completed_utc": "t", "deviations_filed": True}}},
+        },
+    }
+
+
+def test_partially_initialised_sprint_passes_with_uninitialised_epics_pending():
+    assert ckstate.check_state(_partial(SEVEN[2:], False)) == []
+
+
+def test_empty_pending_fails_when_merge_order_lists_an_unmerged_epic():
+    problems = ckstate.check_state(_partial([], True))
+    assert any(p.startswith("merge_gate.epics_pending:") and "EPIC-05" in p for p in problems), problems
+
+
+def test_index_epics_count_as_pending_without_merge_order():
+    state = _partial(SEVEN[2:], False)
+    del state["merge_order"]
+    assert any(p.startswith("merge_gate.epics_pending:") for p in ckstate.check_state(state))
+    assert ckstate.check_state(state, index_epics=SEVEN) == []
+
+
+def test_cli_reads_sibling_sprint_backlog_index(tmp_path, capsys):
+    state = _partial(SEVEN[2:], False)
+    del state["merge_order"]
+    (tmp_path / "execution_state.json").write_text(json.dumps(state))
+    assert ckstate.main([str(tmp_path / "execution_state.json")]) == 1
+    capsys.readouterr()
+    (tmp_path / "sprint_backlog_index.json").write_text(json.dumps({"epics": {e: {} for e in SEVEN}}))
+    assert ckstate.main([str(tmp_path / "execution_state.json")]) == 0

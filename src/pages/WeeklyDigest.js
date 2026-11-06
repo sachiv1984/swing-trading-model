@@ -12,6 +12,7 @@ import { CalendarDays, RefreshCw, Printer } from "lucide-react";
 import { apiFetch } from "../api/base44Client";
 import { createPageUrl } from "../utils";
 import PageHeader from "../components/ui/PageHeader";
+import { PAGE_LABELS } from "../lib/pageLabels";
 import DataState from "../components/ui/DataState";
 import { Button } from "../components/ui/button";
 import { formatCurrency, formatPercent } from "../lib/format";
@@ -78,7 +79,7 @@ export default function WeeklyDigest() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Weekly Digest"
+        title={PAGE_LABELS.WeeklyDigest}
         description="7-day trading summary"
         actions={
           <div className="flex items-center gap-2">

@@ -32,6 +32,22 @@ stays registered. Its window is zero-width (1.2 superseded it the same
 day), so removing it would change no attribution. It is not listed in
 DOCUMENTATION_ONLY_VERSIONS.
 
+Effective-date rule (Strategy Rules & System Intent Owner ruling, 2026-11-04,
+ST-20/BLG-BE-171, v9.15, ESC-EXEC-20261104-03): a **behavioural** version's
+effective date is the date its code reaches production -- the day its PR
+merges to `main`, which deploys -- not the date the ruling was made.
+get_current_strategy_version() stamps `strategy_version_at_entry` from the
+registry in the code that is live, so the stamp changes on the deploy date;
+a window that opened on the earlier ruling date would put trades stamped
+with the previous version into the new version's cohort. The Change Log row
+for a behavioural version carries the same date (enforced by
+tests/test_strategy_version_registry.py). The rule is date-granular: a trade
+entered on the deploy date before the deploy finished carries the previous
+stamp. Documentation-only versions are unaffected (not registered).
+Applied to 1.15 (ruled 9 October 2026, PR #1970 merged 12 October 2026).
+1.17 and 1.20 reached `main` a day after their Change Log dates and are
+tracked separately (BLG-BE-203).
+
 Attribution rule (Strategy Rules & System Intent Owner decision, 2026-07-23,
 v7.7 ST-01 sprint execution): each version's window is
 [effective_date, next_version's effective_date) in Change Log order. Two
@@ -52,7 +68,9 @@ STRATEGY_VERSION_REGISTRY = [
     {"version": "1.4", "effective_date": date(2026, 5, 20)},
     # ST-16 (BLG-BE-143, EPIC-03, v9.11): §6.3 in-grace stop freeze. Behavioural
     # (the nightly job no longer ratchets in-grace positions), so registered.
-    {"version": "1.15", "effective_date": date(2026, 10, 9)},
+    # ST-20 (BLG-BE-171, v9.15): the deploy date (PR #1970, e07d2a04, merged
+    # 2026-10-12), not the 9 October ruling date, per the effective-date rule.
+    {"version": "1.15", "effective_date": date(2026, 10, 12)},
     # ST-05 (BLG-GOV-391, EPIC-01, v9.13): §8.4 month-end rebalance exit.
     # Behavioural (live rebalance signals gain §8.1/§8.2 precedence, a
     # status-independent ranking and a same-day-run precondition), so registered.
@@ -65,6 +83,10 @@ STRATEGY_VERSION_REGISTRY = [
     # stop distance by FX. Behavioural (US suggested shares rise by FX²), so
     # registered.
     {"version": "1.21", "effective_date": date(2026, 10, 30)},
+    # ST-01 (BLG-FE-244, EPIC-01, v9.15): §4.2.6/§4.2.1 acknowledge-to-proceed.
+    # Behavioural (Trade Entry keeps Save disabled until a WARN/FAIL pre-entry
+    # check is acknowledged on every route in), so registered.
+    {"version": "1.23", "effective_date": date(2026, 11, 4)},
 ]
 
 # Change Log versions classified as documentation-only under the 2026-10-06
@@ -85,6 +107,8 @@ DOCUMENTATION_ONLY_VERSIONS = frozenset({
     "1.18",  # §13.3/§13.5 text aligned with v9.10 (weekend-hold removed; PO-05 not on IT-06)
     "1.19",  # Known Deviations entries: §4.1.5 US sizing FX inversion (BLG-BE-190), §8.4 fields completed
     "1.22",  # §13.5 roster row cites ai_thesis_generation.md; generate-thesis retired (ST-22, BLG-BE-163)
+    "1.24",  # Change Log row 1.15 dated to its deploy date; effective-date rule (ST-20, BLG-BE-171)
+    "1.25",  # §13.2 AI-text clarification; §13.5 roster row (journal summary) (ST-28, BLG-GOV-194)
 })
 
 

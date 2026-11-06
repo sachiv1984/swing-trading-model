@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { apiFetch } from "../api/base44Client";
 import { Button } from "../components/ui/button";
 import PageHeader from "../components/ui/PageHeader";
+import { PAGE_LABELS } from "../lib/pageLabels";
 import EntryChecklist from "../components/trades/EntryChecklist";
 import SetupQualityScorePanel from "../components/trades/SetupQualityScorePanel";
 import { ArrowLeft, TrendingUp, TrendingDown } from "lucide-react";
@@ -127,7 +128,7 @@ export default function Research() {
     return (
       <div className="space-y-6">
         <PageHeader
-          title={ticker || "Research"}
+          title={ticker ? `${stripUkSuffix(ticker)} — ${PAGE_LABELS.Research}` : PAGE_LABELS.Research}
           description="Pre-trade research"
           actions={
             <Button
@@ -181,7 +182,7 @@ export default function Research() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title={ticker ? `${stripUkSuffix(ticker)} — Research` : "Research"}
+        title={ticker ? `${stripUkSuffix(ticker)} — ${PAGE_LABELS.Research}` : PAGE_LABELS.Research}
         description={
           researchLoading
             ? "Loading…"

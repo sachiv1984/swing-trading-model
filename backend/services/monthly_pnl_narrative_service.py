@@ -71,12 +71,16 @@ MONTH_NAMES = [
 # ─── Usage count (ST-26, EPIC-04, v9.11, BLG-SPEC-174) ──────────────────────
 # A generation is one completed request that produced a new stored summary.
 # Each one ends with exactly one audit row carrying a terminal result; an
-# intermediate "fail_regenerate:" row, a "model_call_failed" row (no summary
-# stored) and a stored-text return (no model call, no row) are not
-# generations. database.count_monthly_pnl_narrative_generations() applies the
+# intermediate "fail_regenerate:" row, a "model_call_failed" row (first call
+# failed, no summary stored) and a stored-text return (no model call, no row)
+# are not generations. A regeneration call that fails after a failed first
+# attempt ends with "fail_fallback:model_call_failed" and is one (ST-21). database.count_monthly_pnl_narrative_generations() applies the
 # same rule in SQL; metrics_definitions.md § AI Monthly P&L Narrative Usage.
 TERMINAL_RESULTS = ("pass", "pass_on_regenerate")
 TERMINAL_FALLBACK_PREFIX = "fail_fallback:"
+# ST-21 (BLG-BE-172, v9.15): the regeneration call itself failed, so the
+# terminal row is "fail_fallback:model_call_failed" (still a generation).
+MODEL_CALL_FAILED = "model_call_failed"
 
 
 def is_generation_row(endpoint: str, compliance_check_result: Optional[str]) -> bool:
@@ -500,8 +504,17 @@ def generate_narrative(year: int, regenerate: bool = False) -> dict:
         try:
             text, usage = _call_claude(_SYSTEM, user_prompt)
         except Exception as exc:
-            _audit(None, "model_call_failed", int((time.time() - t0) * 1000), prompt_text, None)
-            raise NarrativeUnavailable(f"model call failed: {str(exc)[:120]}") from exc
+            if attempt == 1:
+                # No checked output exists yet: nothing to show, fail closed (503).
+                _audit(None, "model_call_failed", int((time.time() - t0) * 1000), prompt_text, None)
+                raise NarrativeUnavailable(f"model call failed: {str(exc)[:120]}") from exc
+            # ST-21 (BLG-BE-172, EPIC-03, v9.15): attempt 1 failed its checks and the
+            # regeneration call raised. Show the code-written fallback, as when the
+            # regenerated text fails its checks. This call's single audit row carries
+            # the terminal result, so the request is one generation and one call.
+            compliance = TERMINAL_FALLBACK_PREFIX + MODEL_CALL_FAILED
+            _audit(None, compliance, int((time.time() - t0) * 1000), prompt_text, None)
+            break
 
         failures = check_output(text, year, inputs)
         if not failures:

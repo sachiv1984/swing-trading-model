@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-03 (Head of Specs Team, user-directed — `BLG-GOV-395` bannered ✅ COMPLETE: `release_planning_prompt.md` v2.69 STEP 7 writes `execution_state_path`, OPERATIONAL_GUIDE.md v4.251); prior — 2026-11-03 (Release Planning `2026-11-03__release-v9.15`, §1.3a — `BLG-OPS-48` date-lapsed gate cleared (a): `BLG-OPS-36` shipped v4.2 and the 2026-11-01 date has passed); prior — 2026-11-03 (Head of Specs Team, user-directed — `BLG-GOV-392`, `393`, `405`, `406`, `407` bannered ✅ COMPLETE: five deferred prompt patches applied, OPERATIONAL_GUIDE.md v4.250); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-06 (Head of Specs Team, user-directed — `BLG-GOV-395` bannered ✅ COMPLETE: `release_planning_prompt.md` v2.70 STEP 7 writes `execution_state_path`, OPERATIONAL_GUIDE.md v4.252; renumbered from v2.69/v4.251 at merge with main); prior — 2026-11-06 (Sprint Execution `2026-11-03__release-v9.15` EPIC-05, PR #2195 review — 3 new items added: BLG-BE-207, BLG-QA-252, BLG-QA-253); prior — 2026-11-05 (Sprint Execution `2026-11-03__release-v9.15` EPIC-05 — 4 new items added: BLG-OPS-212, BLG-SPEC-223, BLG-OPS-213, BLG-OPS-214); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -3467,6 +3467,187 @@ ST-15's form (4) treats "could/may/might/would help" after a subject as advisory
 
 ---
 
+### BLG-AI-27 — Read production briefing ticker-caveat tokens and add any non-tickers (carried from ST-24)
+**Priority:** P3 (Low)
+**Type:** AI Compliance / Correctness
+**Owner:** AI Compliance & Governance Officer; Backend Engineering Patterns Owner
+**Source:** ST-24 (EPIC-04, cycle `2026-11-03__release-v9.15`, `BLG-AI-23`; `DEL-20261105-01`). The production log read was not available in-sprint, and the AI Compliance & Governance Officer chose to carry it post-merge — 2026-11-05
+**Effort:** XS (<1h plus tests)
+**Provisional-Target:** TBD
+
+**Problem**
+ST-24's acceptance criteria need the tokens the daily-briefing ticker check has caveated since 2026-10-30. They are on the production Render log lines `ticker check: endpoint=POST /ai/daily-briefing field=summary ticker=<TOKEN> action=caveat_appended`. The sandbox `DATABASE_URL` is staging and the engine has no production log access, so the review could not run in-sprint. ST-26 (v9.15) added AM, PM, EOD, EOW, EOM, IMO, IMHO, FYI, NOTE, TBD, ASAP, Q1–Q4, FY, YOY, VIX, GMT and BST to `_NON_TICKER_WORDS`, so those tokens no longer fire. Any other non-ticker word still gets the caveat and inflates the `ticker_outside_context_appended` count.
+
+**Scope**
+- The user supplies the token list with counts since 2026-10-30, or grants a one-off read
+- Classify each token as ticker or non-ticker
+- Add the non-tickers to `_NON_TICKER_WORDS` (ruling `ESC-EXEC-20261027-02` (B) condition 2 is a minimum list) and to the `ai_endpoints.md` check 3 list
+
+**Acceptance Criteria**
+- The token list with counts is recorded
+- Each non-ticker found is added and covered by `test_non_ticker_words_ignored`, or the review records that none was found
+
+---
+
+### BLG-AI-28 — Handle `_NON_TICKER_WORDS` entries that are also real tickers deliberately
+**Priority:** P3 (Low)
+**Type:** AI Compliance / Correctness
+**Owner:** AI Compliance & Governance Officer; Backend Engineering Patterns Owner
+**Source:** Agent-mediated AI Compliance & Governance Officer review of ST-26 (EPIC-04, cycle `2026-11-03__release-v9.15`, `BLG-AI-25`), finding 2 — 2026-11-05
+**Effort:** XS (<1h plus tests)
+**Provisional-Target:** TBD
+
+**Problem**
+`_NON_TICKER_WORDS` contains words that are also listed tickers. MA (Mastercard) and ON (ON Semiconductor) were already on the list, and PM (Philip Morris, in `backend/tickers_full_list.csv`) was added by ST-26. AM, IMO, NOTE and BST are listed symbols outside the scan universe. A held one is still cited, because `_ticker_in` runs first. A non-held one is no longer caveated in the briefing summary. In chat, "PM's stop was hit last week." with focus `MU` held and PM not held now gets the MU note, which is the misattribution ruling `ESC-EXEC-20261030-03` exists to prevent. The case is unlikely and fails soft, because a note is added and model text is never edited. But neither ruling nor the contract says the collision was decided.
+
+**Scope**
+- Ask the AI Compliance & Governance Officer how to treat collisions: for example, AM/PM count as non-tickers only after a time digit, or a word that is in the scan universe goes to the focus rule's "other ticker" path
+- Implement the ruling for PM, MA and ON (and any other universe collision), with tests
+- State the collision handling in `ai_endpoints.md` check 3 and in the chat focus paragraph
+
+**Acceptance Criteria**
+- The ruling is recorded before the code change
+- With focus `MU` held and PM not held, "PM's stop was hit last week." gets the result the ruling assigns, in a test; "Your stop was hit at 3 PM." still gets the MU note
+- All ST-16, ST-17 and ST-26 tests pass
+
+---
+
+### BLG-AI-29 — Daily briefing and chat: check output against §13.2's AI-text sentence
+**Priority:** P3 (Low)
+**Type:** AI Compliance / Correctness
+**Owner:** AI Compliance & Governance Officer; Backend Engineering Patterns Owner
+**Source:** Agent-mediated Director of Quality review of EPIC-04 (cycle `2026-11-03__release-v9.15`, ST-28 / `BLG-GOV-194`), finding 2 — 2026-11-05
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+`strategy_rules.md` v1.25 §13.2 states that AI-written text describing the user's data, including the daily briefing and chat, must not suggest changing stops, position sizing, setups or any other strategy parameter. The journal summary (`journal_summary_language_failures`), debrief and monthly P&L narrative (`scan_prescriptive`) have output checks. `POST /ai/daily-briefing` and `POST /ai/chat` check only tickers and stop times, and the briefing system prompt asks for "recommended actions" without forbidding advice to change stops or sizing. So nothing enforces the sentence for those two features.
+
+**Scope**
+- Ask the AI Compliance & Governance Officer which check forms apply to the briefing and chat (briefing actions such as EXIT/HOLD are deterministic outputs, not parameter changes), and how a failure is handled (note, regenerate or fallback)
+- Implement the ruled check and log its result in `claude_audit_log.compliance_check_result`
+- Add B-DB/B-CH scenarios to `ai_s13_boundary_test_suite.md`
+
+**Acceptance Criteria**
+- The ruling is recorded before the code change
+- A briefing or chat output suggesting tightening stops gets the ruled handling, in a test; a deterministic EXIT/HOLD action does not
+- Every existing briefing and chat test passes
+
+---
+
+### BLG-AI-30 — Journal summary check: form (6) noun false positives and reported-speech gaps
+**Priority:** P3 (Low)
+**Type:** AI Compliance / Correctness
+**Owner:** AI Compliance & Governance Officer; Backend Engineering Patterns Owner
+**Source:** Agent-mediated Director of Quality review of EPIC-04 (cycle `2026-11-03__release-v9.15`, ST-25 / `BLG-AI-24`), findings 4 and 5 — 2026-11-05
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+**Depends on:** BLG-AI-24 (ruling `ESC-EXEC-20261105-01` (A″))
+
+**Problem**
+Form (6) of ruling (A″) treats a sentence-initial change verb as an imperative. It therefore also fails descriptive sentences that start with a noun spelled the same way, such as "Review notes mention stop placement several times.", "Change was made to stops in April." and "Increase from 1% risk lifted position size.". These fail safe (regeneration, then the fallback), but they hide legitimate summaries. The past-tense reported-speech exemption (A″ (ii)) does not check who is speaking: "Overall, the review concluded that position sizing should be reduced." passes. It also covers the rest of the sentence: "The trader noted that losses were small, so consider tightening stops." passes.
+
+**Scope**
+- Ask the AI Compliance & Governance Officer whether to narrow form (6) (e.g. require a determiner or object after the verb) and to limit (ii) to the trader or notes as speaker and to the reported clause only
+- Implement the ruled forms; add the sentences above as cases
+
+**Acceptance Criteria**
+- The ruling is recorded before the code change
+- Each sentence above gets the result the ruling assigns, in a test
+- Every ST-15, v9.13 ST-18 and v9.15 ST-25/ST-27 case keeps its result
+
+---
+
+### BLG-AI-31 — Journal summary check: past-tense "cut" and abbreviation or line-break sentence ends
+**Priority:** P3 (Low)
+**Type:** AI Compliance / Correctness
+**Owner:** AI Compliance & Governance Officer; Backend Engineering Patterns Owner
+**Source:** Agent-mediated PR #2192 review (EPIC-04, cycle `2026-11-03__release-v9.15`, ST-25 / `BLG-AI-24`), Director of Quality findings 1–2 and Product Owner finding 1 — 2026-11-05
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+**Depends on:** BLG-AI-30 (same form (6); one ruling can cover both)
+
+**Problem**
+Form (6) of ruling (A″) reads a sentence-initial change verb as an imperative, and "cut" is spelled the same in the past tense. These descriptive sentences now fail as `trading_change`, where they passed on `main` before v9.15:
+- "Cut position size after the March drawdown, per the notes."
+- "Cut size on setups twice in April."
+
+`ai_endpoints.md` 1.39 says past tense passes, which is not true for "cut".
+
+The sentence-boundary sets (`_TC_GAP`, the form (6) lookbehind, `_SENTENCE_END_RE`) also treat the "." in abbreviations such as "e.g." and any hard line break as a sentence end. This causes errors both ways:
+- Descriptive text wrongly fails: "Exits varied, e.g. cut size on two setups after the March losses."
+- Advisory text wrongly passes: "Stops, e.g. on breakouts, could be tightened." and "Consider tightening\nstops."
+- The reported-speech exemption stops at a line break: "The trader noted that\nstops could be tightened." fails.
+
+False positives fail safe, but they hide legitimate summaries, which is the opposite of BLG-AI-24's aim.
+
+**Scope**
+- Ask the AI Compliance & Governance Officer how form (6) treats verbs whose past tense matches the imperative, and whether abbreviations and single line breaks end a sentence
+- Implement the ruling and correct the contract's past-tense statement
+
+**Acceptance Criteria**
+- The ruling is recorded before the code change
+- Each sentence above gets the ruled result, in a test
+- Every ST-15, v9.13 ST-18 and v9.15 ST-25/ST-27 case keeps its result
+
+---
+
+### BLG-AI-32 — Journal summary check: advisory phrasings outside the ruled forms, and attribution after the clause
+**Priority:** P3 (Low)
+**Type:** AI Compliance / Correctness
+**Owner:** AI Compliance & Governance Officer; Backend Engineering Patterns Owner
+**Source:** Agent-mediated PR #2192 review (EPIC-04, cycle `2026-11-03__release-v9.15`, ST-25 / `BLG-AI-24`), Director of Quality findings 3–4 and Product Owner findings 2–3 — 2026-11-05
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+The forms in rulings (A), (A′) and (A″) are a list of known phrasings, not a complete set. The v1.25 §13.2 sentence is broader than what the check enforces. These advisory sentences return `[]` both on `main` and on the branch:
+- Second-person and option-style advice: "You may want to tighten your stops.", "It would be wise to revisit position sizing.", "You might reduce position size on breakout setups.", "I'd suggest reviewing setups.", "One option is to widen stops.", "Going forward, use smaller position sizes.", "Maybe use a tighter stop.", "A tighter stop might be worth considering."
+- Close variants of the A″ forms: "It could help tighten stops.", "Moving forward, review stop placement weekly.", "Note: review position sizing."
+- A purpose clause after a dropped "can": "Stops can be tightened to limit losses."
+
+The reported-speech exemption also misses attribution placed after the clause. Both of these fail:
+- "Stops placed below the 20-day low would benefit from tightening, the trader wrote."
+- `You wrote: "stops could be tightened".`
+
+**Scope**
+- Ask the AI Compliance & Governance Officer to rule on each sentence above, and on recording that the regex forms are not a complete set (residual risk)
+- Implement the ruled forms, and state the residual risk in `ai_endpoints.md` and B-JS-04
+
+**Acceptance Criteria**
+- The ruling is recorded before the code change
+- Each sentence above gets the ruled result, in a test
+- Every ST-15, v9.13 ST-18 and v9.15 ST-25/ST-27 case keeps its result
+
+---
+
+### BLG-AI-33 — Make the reported-speech check linear and close its test gaps
+**Priority:** P3 (Low)
+**Type:** AI Compliance / Correctness
+**Owner:** Backend Engineering Patterns Owner; QA & Testing Owner
+**Source:** Agent-mediated PR #2192 review (EPIC-04, cycle `2026-11-03__release-v9.15`, ST-25 / `BLG-AI-24`), Director of Quality findings 5–6 — 2026-11-05
+**Effort:** XS (<1h plus tests)
+**Provisional-Target:** TBD
+
+**Problem**
+`_in_reported_speech()` (`backend/services/ai_service.py`) rescans the text from position 0 for every regex match, so cost grows quadratically. The review measured 5.2 s on 98 KB of reported matches and 13.4 s on a 192 KB single sentence. This is not reachable today, because the summary is capped at `max_tokens=512` (about 2–3 KB), but the cost appears if the cap rises or the check is reused. Several A″ paths also have no test:
+- the "maybe" prefix
+- the "•" and "1)" bullets
+- the of/in/to guard, apart from "Review of"
+- "help to show/account for"
+- a multi-paragraph summary with newline boundaries
+
+**Scope**
+- Find the last sentence end before the match in one pass (e.g. `max(text.rfind(c, 0, start) for c in ...)`) instead of `finditer` from 0
+- Add tests for the untested paths above
+
+**Acceptance Criteria**
+- 100 KB of reported matches is checked in under 0.5 s, in a test
+- Each untested path above has a test with the ruled (A″) result
+- All existing journal-summary tests pass
+
+---
+
 ### BLG-QA-221 — Real-Postgres tests for the ai_audit_log UUID[] path and the claude_audit_log daily cost sum
 **Priority:** P3 (Low)
 **Type:** QA / Test Automation
@@ -4145,7 +4326,7 @@ Three patches deferred on 2026-10-06 (target 2026-10-20) went OVERDUE by carry c
 ---
 
 ### BLG-GOV-395 — Make Release Planning's STEP 7 sync write execution_state_path with active_cycle
-**✅ COMPLETE — 2026-11-03 — Head of Specs Team action-now patch, user-directed ("BLG-GOV-395 - fix now"), outside a sprint — `release_planning_prompt.md` v2.69 STEP 7 + `state_field_owners.json`; §6 checklist complete (OPERATIONAL_GUIDE.md v4.251) — branch `governance/2026-11-03-blg-gov-395`. Third AC (next release-plan PR passes with no follow-up commit) is confirmed at the v9.16 release plan.**
+**✅ COMPLETE — 2026-11-03 — Head of Specs Team action-now patch, user-directed ("BLG-GOV-395 - fix now"), outside a sprint — `release_planning_prompt.md` v2.70 STEP 7 + `state_field_owners.json`; §6 checklist complete (OPERATIONAL_GUIDE.md v4.252; renumbered from v2.69/v4.251 at merge, CLAUDE.md §8 step 2a) — branch `governance/2026-11-03-blg-gov-395`. Third AC (next release-plan PR passes with no follow-up commit) is confirmed at the v9.16 release plan.**
 **Priority:** P3 (Low)
 **Type:** Governance Process
 **Owner:** Head of Specs Team
@@ -5545,6 +5726,8 @@ ST-48 fixed `scripts/compute_effort_weighted_pvr.py`'s parse of band parenthetic
 - With closed trades of P&L +10 and −10, both widgets show 50% (Playwright)
 - Neither widget reads `GET /positions` for closed trades
 
+**Notes:** 2026-11-04 (ST-12, EPIC-02, v9.15): the defect leaves with the page. ST-12 removed `src/pages/Dashboard.js` with `WinRateWidget` and `WinRateChart`, which it alone rendered; the Dashboard home renders no win-rate widget, so no surface carries this defect. ST-16 was deferred at planning as superseded by ST-12 (`sprint_backlog.md` Items Deferred This Sprint).
+
 ---
 
 ### BLG-SPEC-212 — Strategy version comparison contract defines `win_rate` by R, the code by P&L
@@ -6324,3 +6507,841 @@ The v9.15 Now section in `current_roadmap.md` carries the Site Structure & Usabi
 
 **Acceptance Criteria**
 - STEP 0 states the exclusion; a re-extraction gives §4's 22 roles
+
+---
+
+### BLG-OPS-211 — Confirm on main that governance-only PRs skip the five code-test suites
+**Priority:** P3 (Low)
+**Type:** Operations / CI
+**Owner:** Infrastructure & Operations Owner; FinOps & Resource Architect
+**Source:** Sprint Planning `2026-11-03__release-v9.15` STEP 6.2: post-merge tracker for ST-31 (`BLG-OPS-191`) AC 1, user-authorised — 2026-11-03
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.16
+**Depends on:** `BLG-OPS-191` (v9.15 ST-31) merged to `main`
+
+**Problem**
+ST-31 adds `paths-ignore: ['claude/**', 'docs/**']` and pass-through jobs to the five code-test workflows. Its AC 1 says a governance-only PR completes with every required check reported and none of the five suites run. That can only be seen on a real governance-only or docs-only PR opened against `main` after EPIC-05 merges, so it is outside the sprint.
+
+**Scope**
+- On the first governance-only or docs-only PR to `main` after ST-31 merges, read the PR's checks
+- Record the PR number, the required checks reported and the suites skipped in ST-31's QA evidence or `docs/ops/`
+
+**Acceptance Criteria**
+- One governance-only PR on `main` shows every required check reported (pass-through) and none of the five code-test suites run, with its PR number recorded
+- If a required check is missing or a suite still runs, a defect item is filed
+
+---
+
+### BLG-SPEC-217 — Record the production NOT NULL confirmation for positions.portfolio_id and total_cost
+**Priority:** P3 (Low)
+**Type:** Spec Debt / Data Model
+**Owner:** Data Model & Domain Schema Owner
+**Source:** Sprint Planning `2026-11-03__release-v9.15` STEP 6.2: post-merge tracker for ST-35 (`BLG-SPEC-196`) AC 1 (production half), user-authorised — 2026-11-03
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.16
+**Depends on:** `BLG-SPEC-196` (v9.15 ST-35) migration merged and deployed
+
+**Problem**
+ST-35 re-applies NOT NULL on `positions.portfolio_id` and `positions.total_cost`. Its AC 1 needs `information_schema.columns` to report `is_nullable = NO` in production as well as staging. The production check can only run after deploy, and only the user can run it, so it falls after the sprint.
+
+**Scope**
+- After the production migration, the user runs `SELECT column_name, is_nullable FROM information_schema.columns WHERE table_name = 'positions' AND column_name IN ('portfolio_id', 'total_cost');` on production
+- Record the output, with its date, in the DS-xx Live Confirmation in `docs/specs/data_model.md`
+
+**Acceptance Criteria**
+- The DS-xx Live Confirmation shows production `is_nullable = NO` for both columns, dated
+- Both Fields rows carry no "nullable" note for either environment
+
+---
+
+### BLG-GOV-408 — Feed the v9.15 strategic-exclusions and deferred-initiatives decisions into the next roadmap rebalance
+**Priority:** P3 (Low)
+**Type:** Governance / roadmap process
+**Owner:** Product Owner; PMO Lead
+**Source:** Sprint Planning `2026-11-03__release-v9.15` STEP 6.2: post-merge tracker for ST-45 (`BLG-GOV-196`) AC 2, plus ST-44's (`BLG-GOV-195`) §2 follow-up, user-authorised — 2026-11-03
+**Effort:** XS (<1h)
+**Provisional-Target:** next `run roadmap` after v9.15
+**Depends on:** `BLG-GOV-195` and `BLG-GOV-196` (v9.15 ST-44, ST-45) decision records filed
+
+**Problem**
+ST-44 and ST-45 file dated decision records re-confirming or flagging the four product-scope exclusions (`current_roadmap.md` §2) and the seven Priority 3 deferred initiatives (`initiative_register.md`). Both leave any change to those files to the next `run roadmap`. The decision records must be linked as that run's input, which happens after the sprint.
+
+**Scope**
+- At the next `run roadmap`, cite both decision records as inputs in its run record
+- Apply any flagged exclusion or initiative change there, or record why none is needed
+
+**Acceptance Criteria**
+- The next roadmap rebalance's run record links both decision records
+- Every item flagged in either record has a recorded disposition in that run
+
+---
+
+### BLG-FE-267 — Make the Signals "Rebalance Exit" badge meet WCAG AA contrast
+**Priority:** P3 (Low)
+**Type:** Frontend / UX (accessibility)
+**Owner:** Frontend Specifications & UX Documentation Owner; Head of UX & Design
+**Source:** Design gate `2026-11-03__release-v9.15` (`design_gate.md` § Observations for filing), filed at Sprint Planning, user-authorised — 2026-11-03
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.16
+
+**Problem**
+`signals.md` §Signal Type Badge Styling specifies `#0891B2` (cyan-600) with white text for the "Rebalance Exit" badge. That pair measures 3.68:1, below WCAG AA's 4.5:1 for 11px text. The shipped badge has not been checked against it.
+
+**Scope**
+- Measure the shipped Rebalance Exit badge in `src/`
+- Move it to a passing token (measured first) and update `signals.md` §Signal Type Badge Styling
+- Add a scoped axe color-contrast check on the Signals page badge in both themes
+
+**Acceptance Criteria**
+- The Rebalance Exit badge passes a scoped axe color-contrast scan in both themes (Playwright)
+- `signals.md` names the shipped colour
+
+---
+
+### BLG-FE-268 — Fix or remove the sidebar footer's dead "Docs" link
+**Priority:** P4 (Very Low)
+**Type:** Frontend / UX
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** Design gate `2026-11-03__release-v9.15` (`design_gate.md` § Observations for filing), filed at Sprint Planning, user-authorised — 2026-11-03
+**Effort:** XS (<1h plus test)
+**Provisional-Target:** v9.16
+
+**Problem**
+The sidebar footer's "Docs" link in `src/Layout.js` (next to the version label v9.15 ST-14 changes) has `href="#"` and goes nowhere. A link that does nothing looks broken.
+
+**Scope**
+- Point the link at the real documentation, or remove it
+- Record the decision in `navigation.md` §Sidebar Footer and Height
+
+**Acceptance Criteria**
+- No `href="#"` remains on the sidebar footer link (or the link is gone), and a Playwright check asserts its target or absence
+- `navigation.md` matches the shipped footer
+
+---
+
+### BLG-FE-269 — Reset the pre-entry acknowledgement when the checks change
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** Agent-mediated Director of Quality review of `2026-11-03__release-v9.15` EPIC-01 (ST-01), non-blocking observation, user-authorised — 2026-11-04
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.16
+
+**Problem**
+In the shared `src/components/trades/PreEntryValidationPanel.js` (Trade Entry and Trade Plan), the acknowledgement tick survives edits to ticker, market, shares or entry price. A new WARN/FAIL that appears after the box was ticked is therefore accepted without a fresh acknowledgement. When the panel is collapsed the checkbox is hidden, while Trade Entry's helper line still says "Tick the acknowledgement in Pre-Entry Checks to save."
+
+**Scope**
+- Clear the acknowledgement whenever the set of WARN/FAIL check results changes
+- Expand the panel automatically while an acknowledgement is required
+- Update `position_form.md` §Pre-Entry Checks and `trade_plan.md` to match
+
+**Acceptance Criteria**
+- Changing an input so the WARN/FAIL set changes clears the tick and re-disables Submit (Playwright, Trade Entry and Trade Plan)
+- While an acknowledgement is required, the checkbox is visible without the user expanding the panel (Playwright)
+- Both specs describe the reset and auto-expand behaviour
+
+---
+
+### BLG-FE-270 — Make the Trail Stop footnote cover positions at a loss
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Head of UX & Design
+**Source:** Agent-mediated Director of Quality review of `2026-11-03__release-v9.15` EPIC-01 (ST-06), non-blocking observation, user-authorised — 2026-11-04
+**Effort:** XS (<1h plus test)
+**Provisional-Target:** v9.16
+
+**Problem**
+The Trail Stop modal footnote in `src/pages/Positions.js` describes only the profit-multiplier formula ("current price − (profit multiplier × 14-day ATR), never below your entry price"). Since v9.15 ST-06, `GET /positions/{id}/stop-trail` uses the initial multiplier for a position at a loss, so the footnote is wrong for those positions. Candidate to fold into v9.15 ST-17, which rewrites this modal.
+
+**Scope**
+- Reword the footnote to cover both the profitable and the at-loss case, with no literal multiplier
+- Update `positions.md` §Trail Stop Action
+
+**Acceptance Criteria**
+- The footnote is correct for both a profitable and an at-loss position (code review of wording, FI-P3-02)
+- No literal multiplier appears in the footnote
+- `positions.md` §Trail Stop Action matches the shipped wording
+
+---
+
+### BLG-FE-271 — Require the acknowledgement on plan-linked Trade Entry when the plan's checks were WARN/FAIL
+**Priority:** P2 (Medium)
+**Type:** Frontend / UX
+**Owner:** Frontend Specifications & UX Documentation Owner; Strategy Rules & System Intent Owner
+**Source:** Agent-mediated Product Owner review of PR #2189 (`2026-11-03__release-v9.15` EPIC-01, ST-01), user-authorised — 2026-11-04
+**Effort:** S (~0.5-1d)
+**Provisional-Target:** v9.16
+
+**Problem**
+Trade Entry hides the pre-entry panel when the linked plan has a stored `pre_entry_validation_snapshot`, per the locked `trade-entry-pre-entry-checks/decision_record.md` (AC 3, "not shown twice"). The Trade Plan form's acknowledgement is advisory only (`strategy_rules.md` §4.2.6 v1.23). A plan saved over a risk-off or unknown-regime FAIL can therefore become a position with no acknowledgement and no `pre_entry_override` event. That reads against §4.2.1 v1.23 ("an entry is blocked by requiring the user to acknowledge the FAIL before it can be saved"). The snapshot can also be days old, so it may not reflect today's regime.
+
+**Scope**
+- Get a Strategy Rules & System Intent Owner ruling on whether §4.2.1 v1.23 applies to the plan-linked route
+- If it does: when the snapshot holds a WARN/FAIL with no recorded acknowledgement, or is older than a set age, show the panel on Trade Entry (re-run the checks) instead of the on-plan line, with the same Branch A gating and override event
+- Update `position_form.md` §Pre-Entry Checks and the design record
+
+**Acceptance Criteria**
+- A dated ruling is recorded
+- If the ruling applies the rule: a plan-linked entry whose snapshot has an unacknowledged WARN/FAIL (or is stale) shows the panel once and disables Submit until it is acknowledged, and a plan whose checks all passed still shows only the on-plan line (Playwright)
+- Saving after the acknowledgement writes one `pre_entry_override` event (`source: trade_entry`) (backend test)
+
+---
+
+### BLG-QA-244 — Suppress the ⌘K tip toast in Playwright by default
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** Director of Quality
+**Source:** Agent-mediated Director of Quality review of PR #2189 (`2026-11-03__release-v9.15` EPIC-01), user-authorised — 2026-11-04
+**Effort:** XS (<1h plus test)
+**Provisional-Target:** v9.16
+
+**Problem**
+The Layout "Press ⌘K…" tip toast appears 1.2 s after load and can intercept clicks on lower buttons. During EPIC-01 it caused a one-off SC-STP-06 failure and a repeatable SC-TEFX-07 failure on the now-taller Trade Entry page. Specs suppress it one at a time with `addInitScript` (`command-palette-tooltip-seen`), so each new spec rediscovers the flake.
+
+**Scope**
+- Set `command-palette-tooltip-seen` in the shared `tests/e2e/fixtures/api-status-guard` fixture (or a base fixture) for every test
+- Let the command-palette specs that test the tip opt back in
+- Remove the per-spec `addInitScript` copies
+
+**Acceptance Criteria**
+- No spec outside the command-palette tests sets `command-palette-tooltip-seen` itself
+- The tip-toast tests still pass, and the full Playwright suite is green in CI
+
+---
+
+### BLG-BE-203 — Move strategy v1.17 and v1.20 effective dates to their deploy dates
+**Priority:** P3 (Low)
+**Type:** Backend Engineering / Strategy Records
+**Owner:** Strategy Rules & System Intent Owner; Financial Reporting & Records Owner
+**Source:** ST-20/EPIC-03, cycle `2026-11-03__release-v9.15` — out-of-scope finding under the deploy-date rule (`ESC-EXEC-20261104-03`); the seal's case (c) authorisation covered Change Log row 1.15 only — 2026-11-04
+**Effort:** XS (<1h, plus a production read)
+**Provisional-Target:** v9.16
+
+**Problem**
+ST-20 ruled that a behavioural strategy version takes effect on the date its code reaches production, and moved v1.15 to its deploy date (12 October 2026). v1.17 (Change Log 16 October 2026, PR #2071 merged 17 October) and v1.20 (29 October 2026, PR #2131 merged 30 October) have the same one-day lag. Their registry windows open a day before `strategy_version_at_entry` changes, so a trade entered on 16 or 29 October is stamped with the previous version but attributed to the new one. No trade list has been checked against production, because the execution environment has only the staging database.
+
+**Scope**
+- Move v1.17's and v1.20's `STRATEGY_VERSION_REGISTRY` `effective_date` and their `strategy_rules.md` Change Log Dates to the deploy dates (needs a sealed case (c) named-file authorisation with the Strategy Rules & System Intent Owner's confirmation)
+- List production positions/trades entered 9–11 October, 16 October and 29 October 2026 with their `strategy_version_at_entry`, and confirm attribution
+- Extend `tests/test_strategy_version_registry.py`'s window/stamp agreement test to those dates
+
+**Acceptance Criteria**
+- v1.17's and v1.20's windows open on their deploy dates, and the registry test passes
+- The production listing is recorded, with every listed trade's stamp matching its window (or the exceptions named, such as a trade entered on a deploy day before the deploy finished)
+
+---
+
+### BLG-SPEC-218 — Open-position unrealised pnl uses a different basis from realised pnl
+**Priority:** P3 (Low)
+**Type:** Spec Debt / Data Model
+**Owner:** Data Model & Domain Schema Owner; Metrics Definitions & Analytics Owner
+**Source:** ST-23/EPIC-03, cycle `2026-11-03__release-v9.15` — Data Model & Domain Schema Owner ruling `ESC-EXEC-20261104-04` (spec follows code), basis difference recorded as a follow-up — 2026-11-04
+**Effort:** S (~0.5d, plus a design pass if the code changes)
+**Provisional-Target:** TBD
+
+**Problem**
+After ST-23, open-position `pnl` is documented as it is computed: native P&L converted at the live GBP/USD rate, not net of `fees_paid`. Realised P&L on a closed trade is `exit_proceeds_gbp − total_cost_gbp`, which is fee-netted and includes currency movement on the principal since entry. A US position closed at today's price and rate would therefore book a realised P&L that differs from the unrealised figure shown a moment before, by the entry fees plus the FX movement on its cost.
+
+**Scope**
+- Decide whether open-position `pnl` should move to the realised basis (`current value in GBP at the live rate − total_cost`)
+- If yes: change `calculate_position_pnl()` and its callers (`get_positions_with_prices()`, `portfolio_service.py`, the nightly stored `pnl`), with a design pass, because displayed P&L changes on Positions, Dashboard and Portfolio
+- If no: record the decision and the reason in `data_model_positions_dictionary.md` §5.2 and `metrics_definitions.md` §Realized / Unrealized P&L Split
+
+**Acceptance Criteria**
+- The decision is recorded with its rationale by the Data Model & Domain Schema Owner
+- Either the two bases agree in code and spec, or the dictionary states why they differ
+
+---
+
+### BLG-SPEC-219 — positions.pnl_pct is the native price change, not pnl / total_cost as the dictionary says
+**Priority:** P3 (Low)
+**Type:** Spec Debt / Data Model
+**Owner:** Data Model & Domain Schema Owner; Metrics Definitions & Analytics Owner
+**Source:** ST-23/EPIC-03, cycle `2026-11-03__release-v9.15` — found while aligning §5.2 `pnl` with the code; outside ST-23's AC — 2026-11-04
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`data_model_positions_dictionary.md` §5.3 and the `pnl_pct` row define `pnl_pct = pnl / total_cost × 100`. The live value from `calculate_position_pnl()` (`backend/utils/calculations.py`), returned by `GET /positions` and stored by the on-load and nightly update, is `(current_price − native_entry) / native_entry × 100`: the native price change, ignoring fees and FX. For a US position the two differ by the fee drag and the currency move, so a reader of the dictionary cannot reproduce the displayed percentage.
+
+**Scope**
+- Data Model & Domain Schema Owner decides which is canonical
+- Align the losing side; a code change that alters the displayed percentage needs a design pass
+
+**Acceptance Criteria**
+- §5.3 and the `pnl_pct` row state the same formula as the code that produces the displayed figure, or a code change brings the code to the spec
+- The decision is recorded with its rationale
+
+---
+
+### BLG-BE-204 — Compute days_until_earnings on the US market date, not the server date
+**Priority:** P2 (Medium)
+**Type:** Backend Engineering / Strategy Rules
+**Owner:** Head of Engineering; Strategy Rules & System Intent Owner
+**Source:** PR #2190 agent-mediated Director of Quality review (EPIC-03, cycle `2026-11-03__release-v9.15`), finding on ST-22's shared `earnings_service` change — 2026-11-04
+**Effort:** XS (<1h plus tests)
+**Provisional-Target:** v9.15 (fix in PR #2190 before merge, recommended); otherwise v9.16
+
+**Problem**
+ST-22 (`ee3460ee`) dates an `earningsTimestamp` on its America/New_York date, but `get_earnings()` still computes `days_until_earnings` against the server's `date.today()` (UTC on Render). The two bases now differ for a release in the ET evening. Example: a 21:00 EST release on 5 November, viewed at 00:30 UTC on 6 November (19:30 ET, before the release), gives `days_until_earnings = -1`. Before ST-22 it was `0`. `_check_earnings_proximity()` (`backend/routers/pre_entry_validation.py`, `strategy_rules.md` §4.2.3) then returns PASS ("Next earnings 2026-11-05 (-1 days) — outside 5-day proximity window") instead of WARN. A strategy check goes quiet in that window. The gap-risk flag is unaffected, because it computes its own days on the US market date.
+
+**Scope**
+- In `get_earnings()`, compute `days_until_earnings` from `us_market_date()` (`services/us_market_calendar.py`) instead of `date.today()`, so the date and the day count share one basis
+- Unit test: the 00:30 UTC / 19:30 ET case above gives `0` and the §4.2.3 check WARNs
+- `earnings_endpoints.md`: state that `next_earnings_date` is the America/New_York date and `days_until_earnings` is counted from the US market date (also covers the Positions earnings column and the morning Earnings Alert card)
+
+**Acceptance Criteria**
+- For a release on ET day D, `days_until_earnings` is `0` at every moment of ET day D, whatever the UTC date
+- `_check_earnings_proximity()` WARNs at 00:30 UTC for a 21:00 ET release the same ET evening (test)
+- `earnings_endpoints.md` states both bases
+
+---
+
+### BLG-QA-245 — Cover the Strategy Benchmark unmapped exit-reason fallback in the Trade Log contrast scan
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** QA & Testing Owner; Frontend Specifications & UX Documentation Owner
+**Source:** PR #2190 agent-mediated Director of Quality review (EPIC-03 ST-18, cycle `2026-11-03__release-v9.15`), DoQ pass 1 finding 5 — 2026-11-04
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+ST-18's SC-SB-08a/b axe scans cover the four mapped exit-reason badges on the Strategy Benchmark Trade Log. The unmapped-reason fallback (`text-xs text-slate-600 dark:text-slate-400`) has the same `benchmark-exit-reason` test ID, but no mocked trade has an unmapped reason, so the fallback is never scanned. `strategy_benchmark.md` §7.3 lists it as one of the exit-reason treatments.
+
+**Scope**
+- Add a seeded trade with an unmapped `exit_reason` (e.g. `'Manual Exit'`) to `tests/e2e/strategy-benchmark.spec.js`, updating the SC-SB-04b/c row and badge counts it changes
+- Assert the fallback renders and include it in SC-SB-08a/b
+
+**Acceptance Criteria**
+- SC-SB-08a/b scan five exit-reason elements, including the fallback, with no color-contrast violation in either theme
+
+---
+
+### BLG-FE-272 — Decide whether a failed Regenerate should keep the existing AI monthly summary
+**Priority:** P3 (Low)
+**Type:** Frontend / UX (product decision)
+**Owner:** Product Owner; Financial Reporting & Records Owner; Head of UX & Design
+**Source:** PR #2190 agent-mediated Product Owner review (EPIC-03 ST-21, cycle `2026-11-03__release-v9.15`) — 2026-11-04
+**Effort:** XS (decision) to S (if behaviour changes)
+**Provisional-Target:** TBD
+
+**Problem**
+When the user presses Regenerate on a stored AI monthly P&L summary and the new attempts fail their checks, the stored AI text is replaced by the code-written fallback. ST-21 extends this to a failed regeneration call. Before ST-21, a failed model call returned 503 and `reports.md` §AI Summary's "Failed" state kept the previous text. Both behaviours meet their ACs, but a user who asks for a refresh can lose a checked AI summary to a transient model error or a stricter re-check, with no way back except another Regenerate.
+
+**Scope**
+- Product Owner decides whether a `regenerate=true` request that ends in the fallback should keep the previously stored checked AI summary (returning it with a notice) or replace it as today
+- If keep: change `generate_narrative()` and `reports.md` §AI Summary with a design pass; update tests
+
+**Acceptance Criteria**
+- The decision is recorded with its rationale in `reports.md` §AI Summary
+- Code and tests match the decision
+
+---
+
+### BLG-BE-205 — Record when the nightly job last moved each position's stop
+**Priority:** P3 (Low)
+**Type:** Backend / data model
+**Owner:** Backend Engineering Patterns Owner; Data Model & Domain Schema Owner
+**Source:** Sprint Execution `2026-11-03__release-v9.15`, EPIC-02 / ST-09 (`dashboard.md` v4.0 §1B Today list, "Stops moved" group; Product Owner ruling 2026-11-04 to keep both stop groups) — 2026-11-04
+**Effort:** M (~1 day)
+**Provisional-Target:** v9.16
+
+**Problem**
+`GET /positions` does not record when a position's stop last moved: `compliance_service.py` notes the positions table has no `stop_updated_at` column, and `stop_calculated_at` is stamped on every nightly run whether or not the stop moved. The Dashboard Today list's "Stops moved" group (`dashboard.md` §1B) needs it, and its ACs TL-09/TL-10 cannot be tested until it exists. `RecentActivityCard.js` also reads a `stop_updated_date` that the API never sends, so its "Stop updated" entry is dead code.
+
+**Scope**
+- Migration: `stop_last_moved_date` and `previous_stop` on positions (`data_model.md`)
+- `run_nightly_trailing_stop_update()` writes both only when the stop actually moves (the §7.3 ratchet raises it)
+- Return both fields read-only on `GET /positions`; update `position_endpoints.md` and `docs/reference/openapi.yaml`
+- Remove `RecentActivityCard.js`'s dead `stop_updated_date` branch
+
+**Acceptance Criteria**
+- After a nightly run that raises a stop, the position's `stop_last_moved_date` is that run's date and `previous_stop` is the stop before the move (pytest)
+- A run that leaves the stop unchanged leaves both fields unchanged (pytest)
+- Contract and OpenAPI document the fields; drift checks pass
+
+---
+
+### BLG-BE-206 — Return journal-summary history trade_ids as an array of UUID strings
+**Priority:** P3 (Low)
+**Type:** Backend Engineering / API contract conformance
+**Owner:** Head of Engineering; Backend Engineering Patterns Owner
+**Source:** ST-40 (BLG-QA-221), EPIC-07, sprint execution `2026-11-03__release-v9.15` — out-of-scope finding from the new real-Postgres test `tests/test_ai_audit_uuid_and_cost_postgres.py` — 2026-11-05
+**Effort:** XS (<1h plus test)
+**Provisional-Target:** v9.16
+
+**Problem**
+`GET /ai/journal-summary/history` returns each record's `trade_ids` as the Postgres array text `"{uuid,uuid}"`, not the array of UUID strings `ai_endpoints.md` documents (`records[].trade_ids`: array of string (UUID) or null). Since DS-31 the column is `UUID[]`, and psycopg2 has no adapter registered for `uuid[]` (the backend never calls `psycopg2.extras.register_uuid`), so `query_audit_log()` passes the unparsed string through. No frontend page calls the endpoint today, so the impact is limited to API consumers and audits reading the history.
+
+**Scope**
+- Return `trade_ids` as a list of UUID strings (or null) from `query_audit_log()`, for example by selecting `trade_ids::text[]` or registering the UUID array adapter
+- Add a real-Postgres (Phase B) assertion on the returned shape to `tests/test_ai_audit_uuid_and_cost_postgres.py`
+
+**Acceptance Criteria**
+- `query_audit_log()` returns `trade_ids` as a list of UUID strings for a trade-ID run and null for a date-range run (Phase B pytest)
+- The `GET /ai/journal-summary/history` response matches `ai_endpoints.md`'s documented shape
+
+---
+
+### BLG-GOV-409 — Settle the clash between the no-IDs-in-headings rule and DEV-xxx deviation headings
+**Priority:** P3 (Low)
+**Type:** Governance Process
+**Owner:** Head of Specs Team
+**Source:** Sprint Execution `2026-11-03__release-v9.15`, EPIC-02 / ST-08 (agent-mediated Head of UX & Design review, non-blocking finding) — 2026-11-04
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.16
+
+**Problem**
+CLAUDE.md §2 says task, story and ticket IDs must never appear in document headings. Known Deviations sections use `### DEV-xxx — <title>` headings (e.g. `navigation.md` `### DEV-NAV-ST06-01`), and engines have kept them under that convention. The two rules contradict each other, so each story touching a spec decides case by case.
+
+**Scope**
+- Rule whether deviation-record headings are exempt or must move the ID into the body
+- Record the ruling in `shared_standards.md` (and CLAUDE.md §2 if the rule text changes)
+
+**Acceptance Criteria**
+- One written rule covers `DEV-*` headings, and CLAUDE.md §2 and `shared_standards.md` agree with it
+
+---
+
+### BLG-GOV-410 — Settle whether a non-blocking escalation open 72h halts under the SLA Breach Rule
+**Priority:** P3 (Low)
+**Type:** Governance Process
+**Owner:** Head of Specs Team; PMO Lead
+**Source:** ST-43 (BLG-GOV-193), EPIC-07, sprint execution `2026-11-03__release-v9.15` — defect found by the escalation SLA-breach dry run (`docs/ops/escalation_sla_breach_dry_run_2026-11-05.md`) — 2026-11-05
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.16
+
+**Problem**
+`shared_standards.md` §4 (SLA Breach Rule) and §16.4 say any escalation open 72 hours or more without resolution writes `BLOCKED_SLA_BREACH`, sets `blocked_sla_breached` and halts, "regardless of escalation trigger type". §16.4.1 says §16.4 applies "once an escalation's own disposition requires it to block execution" and that a `blocks_execution: false` escalation "correctly never triggers that halt". In the dry run, the synthetic non-blocking escalation `ESC-EXEC-DRYRUN-02` (80h old) meets §4/§16.4's predicate and so halts, while §16.4.1 says it must not. An engine reading both cannot tell which applies.
+
+**Scope**
+- Decide whether `blocks_execution: false` exempts an escalation from the §4/§16.4 halt, and state it once in §4, §16.4 and §16.4.1 (CLAUDE.md §6 checklist)
+- Re-run `scripts/escalation_sla_dry_run.py` and record the result
+
+**Acceptance Criteria**
+- §4, §16.4 and §16.4.1 give the same answer for a non-blocking escalation open 72h or more
+- The dry run's expected result for `ESC-EXEC-DRYRUN-02` matches that answer
+
+---
+
+### BLG-GOV-411 — Use one disposition set across the three escalation SLA checks
+**Priority:** P3 (Low)
+**Type:** Governance Process / Tooling
+**Owner:** PMO Lead; Head of Specs Team
+**Source:** ST-43 (BLG-GOV-193), EPIC-07, sprint execution `2026-11-03__release-v9.15` — defect found by the escalation SLA-breach dry run (`docs/ops/escalation_sla_breach_dry_run_2026-11-05.md`) — 2026-11-05
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.16
+
+**Problem**
+The three checks that read `open_escalations` count different dispositions as breached. `execution_prompt.md` STEP -1.2A and `release_planning_prompt.md` STEP -1.6 (`SLA_BREACH_CARRIED`) count only `disposition: Open`. `.github/workflows/escalation-sla-reminder.yml` counts everything except `Resolved`, `Closed` and `Withdrawn`, so a `Deferred` or `Accepted Risk` record left in `open_escalations` raises a daily reminder issue that neither engine reports. In the dry run the workflow's issue listed the `Deferred` control `ESC-EXEC-DRYRUN-03`; neither engine check did. `shared_standards.md` §4's "without resolution" names no set at all.
+
+**Scope**
+- Define the breached disposition set once (in `shared_standards.md` §4) and use it in STEP -1.2A, STEP -1.6 and the workflow
+- Say whether a `Deferred` record belongs in `open_escalations` or only in `deferred_escalations`
+
+**Acceptance Criteria**
+- The workflow and both prompt checks name the same disposition set
+- `scripts/escalation_sla_dry_run.py` reports the same IDs for the workflow and the two prompt checks
+
+---
+
+### BLG-GOV-412 — Give the 10-cycle product-scope exclusions re-confirmation a trigger
+**Priority:** P3 (Low)
+**Type:** Governance Process
+**Owner:** Strategy Rules & System Intent Owner; PMO Lead
+**Source:** PR #2194 agent-mediated review (EPIC-07, cycle `2026-11-03__release-v9.15`), Product Owner finding 1 (ST-44) — 2026-11-05
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.16
+
+**Problem**
+ST-44's decision record (`docs/product/decisions/decisions--2026-11-03__release-v9.15--ST-44-strategic-exclusions-reconfirmation.md`) sets a re-confirmation of the four `current_roadmap.md` §2 product-scope exclusions every 10 completed cycles, next due at `completed_cycle_count` 101. The cadence is recorded only in that decision. No engine, audit check or workflow reads it, so it relies on someone remembering, which is the failure `BLG-GOV-195` was filed for (exclusions never re-confirmed since first recorded).
+
+**Scope**
+- Add a check, for example in `run audit` or the roadmap rebalance preflight, that flags the re-confirmation as due when `completed_cycle_count` reaches the recorded next-due value (CLAUDE.md §6 if a governance prompt changes)
+- Record where the next-due value lives so the check can read it
+
+**Acceptance Criteria**
+- At `completed_cycle_count` 101 (or a test fixture standing in for it) the check reports the re-confirmation as due
+- Before then, it reports nothing
+
+---
+
+### BLG-SPEC-220 — List "Daily Monitor" as a secondary button in design_system.md
+**Priority:** P3 (Low)
+**Type:** Spec Debt
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** Sprint Execution `2026-11-03__release-v9.15`, EPIC-02 / ST-12 (agent-mediated Head of UX & Design review, non-blocking finding) — 2026-11-04
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.16
+
+**Problem**
+`design_system.md` §Buttons lists "Daily Monitor" under Primary actions, from when it was a Dashboard Quick Actions tile. Since ST-12 (v9.15) it is an outline (secondary) button in the Positions header next to the primary "New Position", so the spec no longer matches the UI.
+
+**Scope**
+- Move "Daily Monitor" to the secondary actions list in `design_system.md` §Buttons, citing `positions.md` v2.24
+
+**Acceptance Criteria**
+- `design_system.md` §Buttons lists "Daily Monitor" as a secondary action and no longer as primary
+
+---
+
+### BLG-QA-246 — Retarget the removed popover and border token tests to a live dialog
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** QA & Testing Owner
+**Source:** Sprint Execution `2026-11-03__release-v9.15`, EPIC-02 / ST-12 (agent-mediated Head of Specs Team review, non-blocking finding) — 2026-11-04
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.16
+
+**Problem**
+SC-TOK-04 (`shadcn-token-remaining-families.spec.js`) and SC-MTC-05/06 (`modal-theming-token-conversion.spec.js`) tested the `border` and `popover` token families through `WidgetLibrary.js`, which ST-12 deleted with the legacy Dashboard. No live dialog consumer of `bg-popover` / `border-border` is under test now, although `ExportModal.js` and `WatchlistModal.js` still use them.
+
+**Scope**
+- Re-add the border and popover token checks against `ExportModal.js` or `WatchlistModal.js`, light and dark
+
+**Acceptance Criteria**
+- A Playwright scenario asserts the dialog's border and background resolve to the `--border` and `--popover` tokens (non-transparent) in both themes, and passes in CI
+
+---
+
+### BLG-FE-273 — Stop a malformed Research URL from blanking the app (tab-title decode)
+**Priority:** P2 (Medium)
+**Type:** Frontend / Correctness
+**Owner:** Head of Engineering
+**Source:** PR #2191 agent-mediated Director of Quality review (EPIC-02, v9.15, ST-13) — 2026-11-05
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.15
+
+**Problem**
+`documentTitle()` in `src/lib/pageLabels.js` calls `decodeURIComponent` on the `/research/:ticker` segment with no guard. A malformed percent-escape (e.g. `/#/research/%E0%A4%A`) throws `URIError: URI malformed` inside `Layout.js`'s title effect, and the whole app renders blank (reproduced in Playwright against the PR build). On `main` the same URL renders, because react-router decodes params safely, so this is a regression introduced by ST-13.
+
+**Scope**
+- Wrap the decode in try/catch and fall back to the raw segment (or the plain Research title)
+- Playwright scenario for a malformed Research URL
+
+**Acceptance Criteria**
+- `/#/research/%E0%A4%A` renders the Research page with no page error, and the tab title falls back without throwing (Playwright)
+- Existing SC-BTT-01..06 still pass
+
+---
+
+### BLG-FE-274 — Decide whether the portfolio value and allocation charts removed with the legacy Dashboard should return
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Product Owner; Head of UX & Design
+**Source:** PR #2191 agent-mediated Product Owner review (EPIC-02, v9.15, ST-12) — 2026-11-05
+**Effort:** S (~0.5 day, decision; any build is separate)
+**Provisional-Target:** v9.16
+
+**Problem**
+ST-12 removed the legacy widget Dashboard and the components only it rendered, as scoped. Two of those widgets have no equivalent elsewhere: the portfolio value chart (`PortfolioChart`, from `GET /portfolio/history`) and the allocation chart (`AllocationChart`). Analytics has a drawdown chart (`UnderwaterChart`) but no equity curve or allocation view. The legacy page had no sidebar entry, so use was likely low, but the views are now unavailable.
+
+**Scope**
+- Decide whether an equity-curve and/or allocation view is needed, and where (Analytics, Risk Dashboard, or the Dashboard status cards per `dashboard.md` v4.0)
+- If yes, file the design and build items; fold into the BLG-UX-08 first-principles re-review if timing fits
+
+**Acceptance Criteria**
+- A dated Product Owner decision is recorded on this item, with follow-up items filed if the views return
+
+---
+
+### BLG-SPEC-221 — Bring Specs_Index.md back in line with check_specs_index_freshness.py
+**Priority:** P3 (Low)
+**Type:** Spec Debt
+**Owner:** Head of Specs Team
+**Source:** Sprint Execution 2026-11-03__release-v9.15, EPIC-06/ST-34 (found running the related spec checks) — 2026-11-05
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.16
+
+**Problem**
+`python3 scripts/check_specs_index_freshness.py` exits 1 on `main`. `docs/specs/frontend/pages/journal.md` (added in v9.15) is not listed in `Specs_Index.md`, and `Specs_Index.md` refers to `qa_evidence_EPIC-xx.md`, which matches no real file. While the check fails, new index drift is harder to spot.
+
+**Scope**
+- Add `journal.md` to `Specs_Index.md` under Frontend pages
+- Fix or remove the `qa_evidence_EPIC-xx.md` reference (it is a placeholder, not a spec file)
+
+**Acceptance Criteria**
+- `python3 scripts/check_specs_index_freshness.py` exits 0 on `main`
+- Head of Specs Team reviews the two edits, as the script's own output asks
+
+---
+
+### BLG-QA-247 — Stop check_data_model_drift.py reporting a prose "CREATE INDEX IF NOT EXISTS" as an index named IF
+**Priority:** P4 (Low)
+**Type:** QA / Test Automation
+**Owner:** Data Model & Domain Schema Owner; QA & Testing Owner
+**Source:** Sprint Execution 2026-11-03__release-v9.15, EPIC-06/ST-35–ST-36 (read-only staging drift runs) — 2026-11-05
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.16
+
+**Problem**
+Every live run reports a missing index named `IF`. `INDEX_RE` (`scripts/check_data_model_drift.py:54`) makes `IF NOT EXISTS\s+` optional, so the prose in `data_model.md` DS-36 ("…`CREATE INDEX IF NOT EXISTS`) on first use…") loses the trailing whitespace match and captures `IF` as the index name. The false positive sits beside real findings and teaches readers to ignore the list.
+
+**Scope**
+- Make `INDEX_RE` skip `IF` as a name, e.g. `(?:IF\s+NOT\s+EXISTS\s+)?(?!IF\b)(\w+)`
+- Add a `tests/test_check_data_model_drift.py` case for the backtick-terminated prose form
+
+**Acceptance Criteria**
+- `parse_index_names()` on `data_model.md` no longer returns `IF`
+- The new test passes; existing drift tests still pass
+
+---
+
+### BLG-SPEC-222 — Decide whether to gate PRs on check_contract_example_freshness.py
+**Priority:** P4 (Low)
+**Type:** Spec Debt
+**Owner:** API Contracts & Documentation Owner
+**Source:** Sprint Execution 2026-11-03__release-v9.15, EPIC-06/ST-34 Scope bullet 2 (BLG-SPEC-194), DoQ review — 2026-11-05
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.16
+
+**Problem**
+ST-34 brought `scripts/check_contract_example_freshness.py` to exit 0 and fixed its open-schema false positives, but did not add it to `quality_gate.yml`, so that the gate could not block sibling EPICs' PRs mid-sprint. Without a gate, new example drift is only caught by a manual run or at audit.
+
+**Scope**
+- Decide whether to add the checker as a `quality_gate.yml` job, now that its false-positive rate is near zero
+- If yes, add the job and note it in the script's "Scheduled cadence" docstring
+
+**Acceptance Criteria**
+- A dated decision by the API Contracts & Documentation Owner is recorded on this item
+- If gated: a PR with an example key missing from `openapi.yaml` fails the new job
+
+---
+
+### BLG-QA-248 — Check nested example keys under declared objects in check_contract_example_freshness.py
+**Priority:** P4 (Low)
+**Type:** QA / Test Automation
+**Owner:** API Contracts & Documentation Owner; QA & Testing Owner
+**Source:** PR #2193 agent-mediated Director of Quality review (EPIC-06/ST-34, v9.15) — 2026-11-05
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.16
+
+**Problem**
+In `main()`, a key counts as covered when its first dotted segment is a known schema key (`k.split(".")[0] not in comparable`). So `{"summary": {"total": 1, "bogus": 2}}` passes against a schema whose `summary` declares only `total`: nested keys under a declared, closed object are never checked. This was there before ST-34. Since ST-34 made the open-schema rule explicit, this blanket leniency is no longer needed for open nodes, but it still hides drift under closed ones.
+
+**Scope**
+- Replace the first-segment shortcut with a check against the full dotted key set, keeping the ST-34 open-prefix rule for `additionalProperties: true` nodes
+- Triage any drift this newly surfaces on the real contracts (fix, or record the side that is right)
+- Add a test for a stray nested key under a closed object
+
+**Acceptance Criteria**
+- A stray nested key under a closed object is reported as POSSIBLE DRIFT (test)
+- `python3 scripts/check_contract_example_freshness.py` exits 0 on `main`, with each newly surfaced drift corrected and recorded in the changed contract's changelog
+
+---
+
+### BLG-QA-249 — Guard positions.portfolio_id and total_cost NOT NULL in the seed/insert invariant test
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** Data Model & Domain Schema Owner; QA & Testing Owner
+**Source:** PR #2193 agent-mediated Director of Quality review (EPIC-06/ST-35, DS-38, v9.15) — 2026-11-05
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.16
+
+**Problem**
+DS-38 makes `positions.portfolio_id` and `total_cost` NOT NULL on staging (production post-merge, BLG-SPEC-217). DS-23 shipped `tests/test_fees_paid_not_null_invariant.py` so that no seed or `INSERT INTO positions` can omit `fees_paid`, but nothing guards the two new NOT NULL columns. A future seed that omits either would pass CI and fail only when run against staging or production.
+
+**Scope**
+- Extend the invariant test (or add a sibling) so every `INSERT INTO positions` in `backend/**/*.sql`, `scripts/**/*.sql` and `database.create_position()` names `portfolio_id` and `total_cost`
+- Keep the existing `fees_paid` checks unchanged
+
+**Acceptance Criteria**
+- The test fails on a fixture insert that omits `portfolio_id` or `total_cost`, and passes on the current seeds
+- `tests/test_fees_paid_not_null_invariant.py` (or the sibling) passes in CI
+
+---
+
+### BLG-QA-250 — Make the remaining duplicated Playwright scenario IDs unique (SC-CSV, SC-GP, SC-LS, SC-MRU, SC-TP)
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** QA & Testing Owner
+**Source:** ST-42 (BLG-QA-224), EPIC-07, sprint execution `2026-11-03__release-v9.15` — out-of-scope finding: the new uniqueness check found 19 cross-file duplicates besides SC-TS — 2026-11-05
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.16
+
+**Problem**
+ST-42 made SC-TS-* unique and added `scripts/check_e2e_scenario_id_uniqueness.py` (run by `tests/test_check_e2e_scenario_id_uniqueness.py`). The check found five more ID families used for different scenarios in two files each: SC-CSV-01..05 (`screener-watchlist-csv-export` / `tax-year-csv-export`), SC-GP-01..04 and SC-LS-01..04 (`epic01-v34-lifecycle` / `gate-progress`, `loading-states`), SC-MRU-01..02 (`market-regime-unknown` / `monthly-pnl-realized-unrealized`), SC-TP-01..04 (`theme-persistence` / `trade-plan`). They sit in the script's shrink-only `KNOWN_DUPLICATES` list, so evidence citing them stays ambiguous. About 190 citations across `docs/` and `claude/cycles/` need tracing to the file each one means.
+
+**Scope**
+- For each family, give one file a distinct prefix and update the citations in `docs/` and `claude/cycles/` that refer to it (not sealed artefacts)
+- Remove each fixed family from `KNOWN_DUPLICATES`
+
+**Acceptance Criteria**
+- `KNOWN_DUPLICATES` is empty and `python3 scripts/check_e2e_scenario_id_uniqueness.py` exits 0
+- Every changed citation names the renamed ID
+
+---
+
+### BLG-QA-251 — Stop the live PT-04 gate-scan test failing once Release Planning clears those gates
+**Priority:** P2 (Medium)
+**Type:** QA / Test Automation
+**Owner:** QA & Testing Owner; Head of Specs Team
+**Source:** PR #2194 agent-mediated review (EPIC-07, cycle `2026-11-03__release-v9.15`), Director of Quality finding 1 (ST-37) — 2026-11-05
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.15 (PR #2194) or v9.16
+
+**Problem**
+`tests/test_scan_backlog_gate_conditions_gating_item_shipped.py::test_live_backlog_lists_the_six_pt04_gated_items` (ST-37, BLG-GOV-404) skips only when one of the six items (`BLG-FE-39`, `BLG-QA-21`/`-22`/`-23`, `BLG-GOV-26`, `BLG-FEAT-26`) leaves the active backlog. ST-37 exists so that `release_planning_prompt.md` §1.3a clears those gates *in place*: it removes the `**Gate criteria:**` field and leaves the item in `backlog.md`. The item is then no longer gated, the scan no longer lists it, and the test fails. Reproduced in review by replacing `BLG-FE-39`'s gate line with a cleared note: "1 failed". The first Release Planning run that applies ST-37 as intended would turn CI Pytest red on its own PR.
+
+**Scope**
+- Skip (or drop) the live assertion for any of the six items whose gate no longer names PT-04, keeping the assertion for those still gated
+- Keep the fixture-based tests as the permanent AC 1/AC 2 coverage
+
+**Acceptance Criteria**
+- With one of the six items' gate cleared in place, the test passes (pytest)
+- With all six still gated on PT-04, the test still asserts all six are listed
+
+---
+
+### BLG-OPS-212 — Record DS-39 momentum_signal_runs Live Confirmation on staging and production
+**Priority:** P3 (Low)
+**Type:** Operations / Data Model
+**Owner:** Data Model & Domain Schema Owner; Infrastructure & Operations Owner
+**Source:** Sprint execution `2026-11-03__release-v9.15`, ST-30/ST-32 (EPIC-05) — 2026-11-05
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.16
+
+**Problem**
+DS-39 (`data_model.md` v2.68) adds `momentum_signal_runs`, the completion marker each momentum signal run writes and the month-end rebalance job reads. The table is created on first use after deploy, so its Live Confirmation cannot be recorded before the EPIC-05 merge and deploy.
+
+**Scope**
+- After the EPIC-05 deploy and the next weekday `daily-snapshot.yml` run, run DS-39's Verification queries on staging and production
+- Record both outputs under DS-39's Sign-off
+
+**Acceptance Criteria**
+- DS-39 records, for staging and production: 6 columns, none nullable; `idx_momentum_signal_runs_portfolio_date` present; one row for a weekday after deploy whose `tickers_ranked` matches that day's signals
+
+---
+
+### BLG-SPEC-223 — Add POST /reports/monthly-pnl/narrative to the AI feature touchpoint register and the anomaly check's endpoint list
+**Priority:** P3 (Low)
+**Type:** Spec Debt
+**Owner:** AI Compliance & Governance Officer; API Contracts & Documentation Owner
+**Source:** Sprint execution `2026-11-03__release-v9.15`, ST-29 (EPIC-05) ANTHROPIC_API_KEY scope audit — 2026-11-05
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.16
+
+**Problem**
+A code audit of every `anthropic.Anthropic` call site finds six live endpoints using `ANTHROPIC_API_KEY`: `POST /ai/journal-summary`, `POST /ai/daily-briefing`, `POST /ai/chat`, `POST /trade-plans/generate-plan`, `POST /trades/{trade_id}/debrief` and `POST /reports/monthly-pnl/narrative` (v9.11, `monthly_pnl_narrative_service.py`). `docs/governance/ai_feature_touchpoint_register.md` (v1.0), `backend/services/ai_endpoint_anomaly_service.py`'s endpoint list and `docs/ops/external_api_credential_inventory.md`'s Anthropic Purpose row all omit the narrative endpoint. BLG-SPEC-211, which removes the retired `generate-thesis` endpoint from the same documents and counts 5 live endpoints, misses it too.
+
+**Scope**
+- Add a row for `POST /reports/monthly-pnl/narrative` to the touchpoint register, with its §13 classification and audit table
+- Add it to the anomaly service's endpoint list and its contract text
+- Correct the credential inventory's Purpose row to list the six live endpoints
+
+**Acceptance Criteria**
+- The register, the anomaly check list and the credential inventory each name the same six live AI endpoints
+- Every `anthropic.Anthropic` call site in `backend/` maps to a listed endpoint
+
+---
+
+### BLG-OPS-213 — Stop injecting REACT_APP_ANTHROPIC_API_KEY into the public GitHub Pages build
+**Priority:** P2 (Medium)
+**Type:** Operations / Security
+**Owner:** Cybersecurity & Trust Lead; Infrastructure & Operations Owner
+**Source:** Sprint execution `2026-11-03__release-v9.15`, ST-29 (EPIC-05) ANTHROPIC_API_KEY scope audit — 2026-11-05
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.16
+
+**Problem**
+`.github/workflows/deploy.yml` passes the GitHub Actions secret `REACT_APP_ANTHROPIC_API_KEY` (set 2026-05-25) into `npm run build` for the public GitHub Pages site, and Create React App inlines every `REACT_APP_*` value into the client bundle. `src/pages/TradePlan.js:122` reads it only as a boolean (`HAS_AI = !!process.env.REACT_APP_ANTHROPIC_API_KEY`), and the published bundle (`gh-pages` `c329390a`, 2026-11-05) contains no key, because the minifier folds the expression. Any future code that reads the value would publish the key. The frontend makes no Anthropic call; AI runs only in the backend.
+
+**Scope**
+- Replace `HAS_AI` with a non-secret flag, or remove it if AI is always available through the backend
+- Remove `REACT_APP_ANTHROPIC_API_KEY` from `deploy.yml` and delete the GitHub secret
+- If the secret held a live key, revoke it in the Anthropic console
+
+**Acceptance Criteria**
+- `grep -rn REACT_APP_ANTHROPIC .github src` finds nothing
+- `gh secret list` no longer lists `REACT_APP_ANTHROPIC_API_KEY`
+- Any key the secret held shows as revoked in the Anthropic console
+- The Trade Plan AI controls behave as before (Playwright or a recorded staging check)
+
+---
+
+### BLG-OPS-214 — Rotate the Anthropic API key (overdue since 2026-08-25) and revoke the old key
+**Priority:** P1 (High)
+**Type:** Operations / Security
+**Owner:** Cybersecurity & Trust Lead; Infrastructure & Operations Owner
+**Source:** Sprint execution `2026-11-03__release-v9.15`, ST-29 (EPIC-05) ANTHROPIC_API_KEY scope audit, AC 2 not met — 2026-11-06
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.16
+
+**Problem**
+The Anthropic workspace has one API key, created 2026-05-25 and never rotated (console read, 2026-11-06, `docs/security/anthropic_api_key_scope_audit_2026-11-06.md`). `docs/ops/api_key_rotation_policy.md` set its first rotation due on 2026-08-25, so it is about ten weeks overdue. The GitHub secret `REACT_APP_ANTHROPIC_API_KEY`, set the same day, very likely holds the same key (BLG-OPS-213).
+
+**Scope**
+- Create a new key in the Anthropic console; set it as `ANTHROPIC_API_KEY` on Render staging, check one AI endpoint, then production
+- Revoke the old key in the console
+- Delete the `REACT_APP_ANTHROPIC_API_KEY` GitHub secret (or replace it with a non-secret flag, per BLG-OPS-213)
+- Record the rotation date in `docs/ops/external_api_credential_inventory.md` (`Last rotated`) and `docs/ops/api_key_rotation_and_audit_schedule.md`
+
+**Acceptance Criteria**
+- The console lists one active key, created on the rotation date; the 2026-05-25 key is revoked
+- An AI endpoint succeeds on staging and production with the new key
+- The inventory's `Last rotated` field and the schedule's next-due date are filled in
+
+---
+
+### BLG-BE-207 — Keep a non-default momentum run from replacing the month-end §8.4 ranking
+**Priority:** P3 (Low)
+**Type:** Backend Engineering / Strategy Correctness
+**Owner:** Backend Engineering Patterns Owner; Strategy Rules & System Intent Owner
+**Source:** Agent-mediated PR #2195 review (EPIC-05, cycle `2026-11-03__release-v9.15`, ST-30/ST-32) — 2026-11-06
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.16
+
+**Problem**
+`POST /signals/rebalance-exit` ranks from the latest `momentum_signal_runs` marker for today (DS-39). `POST /signals/generate` takes `top_n` and `lookback_days` query parameters, and the marker does not record them. A run with non-default parameters (for example `top_n=10`) made after the scheduled run on a month-end becomes the latest marker, so the §8.4 ranking is no longer "the top 5 tickers by 252-day momentum" (`strategy_rules.md` §8.4). Before v9.15 the union of today's signal rows had the same exposure; the frontend's `generate()` call uses the defaults, so this needs a direct API call to trigger.
+
+**Scope**
+- Record `top_n` and `lookback_days` on each marker (DS-39 column addition), or write a marker only for runs with the §11 production parameters
+- Rebalance-exit ranks from the latest marker whose parameters match §8.4/§11
+
+**Acceptance Criteria**
+- pytest: a default run followed by a `top_n=10` run on the same day → rebalance ranks on the default run's tickers
+- pytest: only a non-default run today → treated as no completed run (503)
+
+---
+
+### BLG-QA-252 — Unit-test the detect-code-changes action's fail-safe paths
+**Priority:** P3 (Low)
+**Type:** QA / CI Tooling
+**Owner:** QA & Testing Owner; Infrastructure & Operations Owner
+**Source:** Agent-mediated PR #2195 review (EPIC-05, cycle `2026-11-03__release-v9.15`, ST-31) — 2026-11-06
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.16
+
+**Problem**
+`.github/actions/detect-code-changes/action.yml` decides whether the five code-test suites run. The push path (`898003a9`, `cef1df61`) and the pull-request path (PR #2195, run 42200322369) have run live. Its fail-safe branches have not: a new branch (`before` all zeros), a compare truncated at 300 files, and a failed `gh api` call. `tests/test_ci_code_changes.py` only checks that the action's text contains those branches. A regression in the bash (for example a broken `&&` chain) could make a failure skip the suites.
+
+**Scope**
+- Move the file-list logic from the composite action into a script that takes the event fields as arguments and a command for `gh api`
+- Test each branch with a stubbed `gh`: PR, push, new branch, 300-file compare, API failure
+
+**Acceptance Criteria**
+- pytest covers all five branches; every failure branch yields `code=true`
+- The five workflows' behaviour is unchanged (live push and PR runs still report `code=true`/`false` as before)
+
+---
+
+### BLG-QA-253 — Select tests that reach runtime readers of docs/ in the docs-coupled subset
+**Priority:** P3 (Low)
+**Type:** QA / CI Tooling
+**Owner:** QA & Testing Owner
+**Source:** Agent-mediated Director of Quality review, EPIC-05 pass 1, finding 6, and PR #2195 review (cycle `2026-11-03__release-v9.15`, ST-31) — 2026-11-06
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.16
+
+**Problem**
+On a governance-only or docs-only change, CI Pytest Phase A runs only test files that `tests/docs_coupled.py` selects by a static text match. `backend/services/changelog_service.py`, `changelog_digest_service.py` and `ai_spend_trend_service.py` read `docs/product/changelog.md` at runtime. A test reaching them only through `TestClient`, without naming the path, would not be selected, so a docs-only change that breaks them would pass Phase A. No such test exists today (72 of 261 files selected, no reader missed).
+
+**Scope**
+- Extend the selection to test files that import, or call endpoints served by, backend modules that read `claude/` or `docs/` (derived by a scan of `backend/`, as the conftest database-stub scan does)
+- Or list those modules in `tests/docs_coupled.py` with a test that fails when a new backend reader of `docs/` appears unlisted
+
+**Acceptance Criteria**
+- A test that reaches `changelog_service` only through `TestClient` is selected by `--docs-coupled-only`
+- A new backend module reading a `docs/` path without being covered fails a test
+
+---

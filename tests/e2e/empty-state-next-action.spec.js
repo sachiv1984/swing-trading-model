@@ -38,7 +38,7 @@ const AUDIT = [
   { file: 'pages/TradePlans.js', heading: 'No trade plans yet', kind: 'page', action: 'New Trade Plan', existing: true },
   { file: 'pages/Notifications.js', heading: 'No notifications yet', kind: 'page', action: 'Review alert settings' },
   { file: 'pages/Screener.js', heading: 'No regime history yet', kind: 'page', action: 'Run the screener' },
-  { file: 'pages/PerformanceAnalytics.js', heading: 'Not enough trades', kind: 'page', action: 'Log a trade' },
+  { file: 'pages/PerformanceAnalytics.js', heading: 'Not enough trades', kind: 'page', action: 'Enter Your First Position' },
   { file: 'components/trades/CalendarView.js', heading: 'No closed trades yet', kind: 'page', action: 'View open positions' },
   { file: 'components/analytics/TradePlanCompletionRateSection.js', heading: 'No trade plans created yet', kind: 'page', action: 'Create a trade plan' },
   { file: 'components/dashboard/home/PortfolioHeatCard.js', heading: 'No portfolio heat data', kind: 'card', to: '/RiskDashboard', title: 'Portfolio Heat' },
@@ -171,13 +171,13 @@ async function mockTrades(page, n) {
     route.fulfill(json({ status: 'ok', data: { total_trades: n, win_rate: 50, total_pnl: 0, trades: trades(n) } })));
 }
 
-test('SC-ESN-04: Performance Analytics "Not enough trades" offers "Log a trade" -> Trade Entry', async ({ page }) => {
+test('SC-ESN-04: Performance Analytics "Not enough trades" offers "Enter Your First Position" -> Trade Entry', async ({ page }) => {
   await base(page);
   await mockTrades(page, 2);
   await page.goto('/#/PerformanceAnalytics');
   const acts = actions(page, 'Not enough trades');
   await expect(acts).toHaveCount(1, { timeout: 10000 });
-  await expect(acts).toHaveText('Log a trade');
+  await expect(acts).toHaveText('Enter Your First Position');
   await expect(acts).toHaveAttribute('href', '#/TradeEntry');
 });
 

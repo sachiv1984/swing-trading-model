@@ -37,13 +37,15 @@ Spec: docs/specs/api_contracts/position_endpoints.md#GET /positions/{position_id
       docs/design/2026-07-10__release-v6.9/gap-risk-flag/ux_spec.md
       docs/specs/frontend/pages/positions.md#Gap Risk Badge
 """
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from typing import Dict, Optional
 
 import yfinance as yf
 
 from services.earnings_service import get_earnings, _yf_ticker_symbol
-from services.us_market_calendar import days_to_next_nyse_session, us_market_date
+from services.us_market_calendar import (
+    days_to_next_nyse_session, is_nyse_session, next_nyse_session, us_market_date,
+)
 
 # Minimum historical gap events required before a numeric average is shown.
 # Backend-defined constant (N in ux_spec.md §4) — frontend renders whatever the
@@ -78,14 +80,42 @@ def _earnings_before_next_session(days_until: Optional[int], today: date) -> boo
     return 1 <= days_until <= _days_to_next_trading_day(today)
 
 
+def _spans_non_session_day(prev_day: date, cur_day: date, market: str) -> bool:
+    """True when a non-session day lies between two consecutive bars (ST-22, BLG-BE-174).
+
+    US bars use the NYSE calendar (ST-14), so Friday -> Monday, a holiday and a
+    one-off closure all count. Other markets fall back to "more than one calendar
+    day apart". The previous `> 3` days test missed every ordinary weekend
+    (Friday -> Monday is 3 days), so those were counted as overnight gaps.
+    """
+    if market == "US":
+        d = prev_day + timedelta(days=1)
+        while d < cur_day:
+            if not is_nyse_session(d):
+                return True
+            d += timedelta(days=1)
+        return False
+    return (cur_day - prev_day).days > 1
+
+
+def _next_session_follows_non_session_day(today: date) -> bool:
+    """Whether the gap ahead is a weekend/multi-day gap (ST-22, BLG-BE-174).
+
+    True when the day before the next NYSE session is not a session: Friday to
+    Sunday views, and a Thursday view before Good Friday. Uses the ST-14 calendar.
+    """
+    return not is_nyse_session(next_nyse_session(today) - timedelta(days=1))
+
+
 def _compute_gap_stats(ticker: str, market: str, weekend: bool) -> Dict:
     """
     Historical average overnight or weekend gap magnitude for a ticker.
 
-    overnight gap: |open[t] - close[t-1]| / close[t-1] for each trading-day pair
-                   that is NOT a weekend gap.
-    weekend gap:   |open[Monday] - close[Friday]| / close[Friday] (or after any
-                   multi-day market closure > 3 days, e.g. holiday weekends).
+    overnight gap: |open[t] - close[t-1]| / close[t-1] for consecutive bars with
+                   no non-session day between them.
+    weekend gap:   the same, for consecutive bars with one or more non-session
+                   days between them: Friday -> Monday, and any holiday or
+                   closure (ST-22, BLG-BE-174, v9.15: the ST-14 NYSE calendar).
 
     Returns {"avg_gap_pct": float|None, "event_count": int, "insufficient_history": bool}
     """
@@ -103,7 +133,7 @@ def _compute_gap_stats(ticker: str, market: str, weekend: bool) -> Dict:
         for i in range(1, len(hist)):
             prev_date = idx[i - 1]
             cur_date = idx[i]
-            is_weekend_gap = (cur_date - prev_date).days > 3
+            is_weekend_gap = _spans_non_session_day(prev_date.date(), cur_date.date(), market)
 
             if weekend and not is_weekend_gap:
                 continue
@@ -162,9 +192,10 @@ def get_gap_risk(ticker: str, market: str, today: Optional[date] = None,
             "insufficient_history": False,
         }
 
-    # From Friday to Sunday the gap ahead is the Friday-close to Monday-open
-    # weekend gap, so show the weekend statistic then.
-    stats = _compute_gap_stats(ticker, market, weekend=today.weekday() >= 4)
+    # ST-22 (BLG-BE-174, v9.15): the weekend statistic when the next session
+    # follows a non-session day (Friday to Sunday, or a Thursday before Good
+    # Friday), by the ST-14 calendar; the overnight statistic otherwise.
+    stats = _compute_gap_stats(ticker, market, weekend=_next_session_follows_non_session_day(today))
 
     return {
         "flagged": True,

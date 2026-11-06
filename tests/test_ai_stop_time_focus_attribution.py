@@ -26,7 +26,10 @@ _POSITIONS = [
     {"ticker": "VOD.L", "market": "UK", "current_price": 70.0, "current_stop": 66.0,
      "pnl": 5.0, "risk_off_exit": False, "stop_calculated_at": None},
 ]
+_MU = {"ticker": "MU", "market": "US", "current_price": 100.0, "current_stop": 95.0, "pnl": 1.0,
+       "risk_off_exit": False, "stop_calculated_at": datetime(2026, 10, 20, 21, 5, tzinfo=timezone.utc)}
 NVDA_NOTE = "(NVDA stop last recalculated 2026-10-12 21:05 UTC)"
+MU_NOTE = "(MU stop last recalculated 2026-10-20 21:05 UTC)"
 VOD_NOTE = "(VOD.L stop not recalculated since entry)"
 
 
@@ -74,6 +77,21 @@ class TestFocusAttribution:
     def test_non_ticker_words_do_not_block_focus(self):
         out, outcome = _check("Your stop is above the MA and ATR stays OK.", focus="NVDA")
         assert (out, outcome) == (f"Your stop is above the MA and ATR stays OK. {NVDA_NOTE}", "appended")
+
+    @pytest.mark.parametrize("text", [
+        "Your stop was hit at 3 PM.",
+        "Your stop moved up EOD.",
+        "Your stop is fine, IMO.",
+        "Your stop held after Q3 earnings.",
+        "The stop is near the VIX spike level.",
+    ])
+    def test_time_and_chat_words_do_not_block_focus(self, text):
+        # ST-26 (BLG-AI-25, EPIC-04, v9.15): the five sentences in BLG-AI-25's
+        # Problem, with focus MU held, get the MU note (v9.13 behaviour).
+        positions = _POSITIONS + [_MU]
+        out, outcome = _append_missing_stop_times(text, positions, "POST /ai/chat", "response", "v1.2",
+                                                  focus_ticker="MU")
+        assert (out, outcome) == (f"{text} {MU_NOTE}", "appended")
 
     def test_focus_named_by_itself_still_attributed(self):
         assert _check("NVDA: stop at £450.", focus="NVDA")[1] == "appended"

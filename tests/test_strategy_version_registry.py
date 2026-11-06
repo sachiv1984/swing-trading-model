@@ -110,9 +110,17 @@ def test_resolve_version_window_returns_none_for_unknown_version():
 
 
 def test_resolve_version_window_open_ended_for_latest_version():
+    start, end = resolve_version_window("1.23")
+    assert start == date(2026, 11, 4)
+    assert end is None
+
+
+def test_resolve_version_window_1_21_closed_by_1_23():
+    # ST-01 (v9.15): 1.21's window ends where 1.23 starts (1.22 is
+    # documentation-only and not registered).
     start, end = resolve_version_window("1.21")
     assert start == date(2026, 10, 30)
-    assert end is None
+    assert end == date(2026, 11, 4)
 
 
 def test_resolve_version_window_1_20_closed_by_1_21():
@@ -130,17 +138,49 @@ def test_resolve_version_window_1_17_closed_by_1_20():
 
 
 def test_resolve_version_window_1_15_closed_by_1_17():
-    # ST-05 (v9.13): 1.15's window now ends where 1.17 starts (1.16 is documentation-only).
+    # ST-05 (v9.13): 1.15's window ends where 1.17 starts (1.16 is documentation-only).
+    # ST-20 (v9.15): it opens on 1.15's deploy date, 12 October 2026.
     start, end = resolve_version_window("1.15")
-    assert start == date(2026, 10, 9)
+    assert start == date(2026, 10, 12)
     assert end == date(2026, 10, 16)
 
 
 def test_resolve_version_window_1_4_closed_by_1_15():
-    # ST-16 (v9.11): 1.4's window, open-ended until then, now ends where 1.15 starts.
+    # ST-16 (v9.11): 1.4's window, open-ended until then, ends where 1.15 starts.
+    # ST-20 (v9.15): that is 1.15's deploy date, 12 October 2026.
     start, end = resolve_version_window("1.4")
     assert start == date(2026, 5, 20)
-    assert end == date(2026, 10, 9)
+    assert end == date(2026, 10, 12)
+
+
+def _window_version(day):
+    """The registered version whose [start, end) window contains `day`."""
+    for entry in STRATEGY_VERSION_REGISTRY:
+        start, end = resolve_version_window(entry["version"])
+        if start <= day and (end is None or day < end):
+            return entry["version"]
+    return None
+
+
+def test_v1_15_window_agrees_with_the_stamps_written_from_9_october():
+    """ST-20 (BLG-BE-171, v9.15) AC 2. strategy_version_at_entry is stamped by
+    get_current_strategy_version(), the last registry entry in the live code.
+    Before PR #1970 merged (e07d2a04, 2026-10-12) that entry was "1.4"; from the
+    merge it was "1.15" (checked with `git show e07d2a04^1:` and `git show
+    e07d2a04:` of this module). Under the effective-date rule the windows give
+    the same version as the stamp for every entry date from 9 October 2026,
+    up to 1.17's deploy on 17 October (BLG-BE-203 tracks 1.17 and 1.20)."""
+    stamped = {date(2026, 10, d): ("1.4" if d < 12 else "1.15") for d in range(9, 16)}
+    for day, stamp in stamped.items():
+        assert _window_version(day) == stamp, day
+
+
+def test_behavioural_effective_date_rule_is_in_the_registry_docstring():
+    # ST-20 AC 1: the rule for behavioural effective dates is written down.
+    import strategy_version_registry
+    doc = strategy_version_registry.__doc__
+    assert "Effective-date rule" in doc
+    assert "date its code reaches production" in doc
 
 
 def test_resolve_version_window_bounded_for_middle_version():

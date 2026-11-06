@@ -559,3 +559,101 @@ class TestMainIntegration:
         monkeypatch.setattr(freshness, "CONTRACTS_DIR", tmp_path / "does_not_exist")
         monkeypatch.setattr(freshness, "OPENAPI_FILE", tmp_path / "also_missing.yaml")
         assert freshness.main() == 1
+
+
+class TestSchemaOpenPrefixes:
+    """ST-34 (BLG-SPEC-194, EPIC-06, v9.15): `additionalProperties: true`
+    nodes mark the contract as canonical for their nested fields."""
+
+    def test_root_open_object_yields_empty_prefix(self):
+        schema = {"type": "object", "additionalProperties": True}
+        assert freshness.schema_open_prefixes(schema, {}) == {""}
+
+    def test_closed_object_yields_nothing(self):
+        schema = {"type": "object", "properties": {"a": {"type": "string"}}}
+        assert freshness.schema_open_prefixes(schema, {}) == set()
+
+    def test_additional_properties_schema_dict_is_not_open(self):
+        # Only the literal `true` opens a node; a typed additionalProperties
+        # schema still constrains values and is left to the key check.
+        schema = {"type": "object", "additionalProperties": {"type": "string"}}
+        assert freshness.schema_open_prefixes(schema, {}) == set()
+
+    def test_nested_open_property_and_array_items(self):
+        schema = {
+            "type": "object",
+            "properties": {
+                "summary": {"type": "object", "additionalProperties": True},
+                "trades": {"type": "array", "items": {"type": "object", "additionalProperties": True}},
+            },
+        }
+        assert freshness.schema_open_prefixes(schema, {}) == {"summary", "trades[]"}
+
+    def test_resolves_ref_through_allof_envelope(self):
+        root = {"components": {"schemas": {
+            "ApiOk": {"type": "object", "properties": {"status": {}, "data": {"type": "object"}}},
+            "Broad": {"type": "object", "additionalProperties": True},
+        }}}
+        schema = {"allOf": [
+            {"$ref": "#/components/schemas/ApiOk"},
+            {"type": "object", "properties": {"data": {"$ref": "#/components/schemas/Broad"}}},
+        ]}
+        assert freshness.schema_open_prefixes(schema, root) == {"data"}
+
+    def test_covered_by_open_prefix(self):
+        assert freshness.covered_by_open_prefix("summary.total", {"summary"})
+        assert freshness.covered_by_open_prefix("trades[].id", {"trades[]"})
+        assert freshness.covered_by_open_prefix("anything", {""})
+        assert not freshness.covered_by_open_prefix("summary", {"summary"})
+        assert not freshness.covered_by_open_prefix("summarytotal", {"summary"})
+
+
+class TestMainOpenSchema:
+    _write_repo = TestMainIntegration._write_repo
+
+    def _openapi(self, data_schema):
+        return {"paths": {"/x": {"get": {"responses": {"200": {"content": {"application/json": {"schema": {
+            "type": "object", "properties": {"status": {}, "data": data_schema},
+        }}}}}}}}}
+
+    def _run(self, tmp_path, monkeypatch, openapi_dict, example):
+        contract_text = "## GET /x\n\n### Response — 200 OK\n\n```json\n" + example + "\n```\n"
+        contracts_dir, openapi_file = self._write_repo(tmp_path, openapi_dict, {"x_endpoints.md": contract_text})
+        monkeypatch.setattr(freshness, "CONTRACTS_DIR", contracts_dir)
+        monkeypatch.setattr(freshness, "OPENAPI_FILE", openapi_file)
+        return freshness.main()
+
+    def test_unwrapped_example_under_open_data_passes(self, tmp_path, monkeypatch, capsys):
+        rc = self._run(tmp_path, monkeypatch, self._openapi({"type": "object", "additionalProperties": True}),
+                       '{"actions": [{"ticker": "AAPL"}], "summary": {"total": 1}}')
+        assert rc == 0
+        out = capsys.readouterr().out
+        assert "OPEN SCHEMA (1)" in out
+        assert "POSSIBLE DRIFT" not in out
+
+    def test_key_beside_open_node_still_flags_drift(self, tmp_path, monkeypatch, capsys):
+        data = {"type": "object", "properties": {
+            "summary": {"type": "object", "additionalProperties": True},
+        }}
+        rc = self._run(tmp_path, monkeypatch, self._openapi(data),
+                       '{"summary": {"total": 1}, "generated_at": "2026-11-05T00:00:00Z"}')
+        assert rc == 1
+        out = capsys.readouterr().out
+        assert "POSSIBLE DRIFT (1)" in out
+        assert "generated_at" in out
+        assert "summary.total" not in out.split("POSSIBLE DRIFT")[1].split("\n")[1]
+
+    def test_wrapped_example_with_extra_key_beside_open_data_flags_drift(self, tmp_path, monkeypatch, capsys):
+        # DoQ review finding (ST-34): an open `data` payload must not hide a
+        # stray top-level key beside `data` in a wrapped example.
+        rc = self._run(tmp_path, monkeypatch, self._openapi({"type": "object", "additionalProperties": True}),
+                       '{"status": "ok", "data": {"anything": 1}, "warnings": ["x"]}')
+        assert rc == 1
+        out = capsys.readouterr().out
+        assert "POSSIBLE DRIFT (1)" in out
+        assert "warnings" in out
+
+    def test_wrapped_example_under_open_data_passes(self, tmp_path, monkeypatch, capsys):
+        rc = self._run(tmp_path, monkeypatch, self._openapi({"type": "object", "additionalProperties": True}),
+                       '{"status": "ok", "data": {"anything": {"nested": 1}}}')
+        assert rc == 0

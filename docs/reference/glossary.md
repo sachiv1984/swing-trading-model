@@ -1,8 +1,8 @@
 **Owner:** Head of Specs Team
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 1.2
-**Last Updated:** 2026-09-07 (ST-41, EPIC-05, v9.1, BLG-SPEC-126 — 5 terms added: Compliance Score, Concentration, Drift Score, R-Target, Setup Thesis; each cross-referenced to its authoritative spec)
+**Version:** 1.3
+**Last Updated:** 2026-11-04 (ST-08, EPIC-02, v9.15, BLG-SPEC-214 — new §UI Labels: one canonical label per page and primary action, deliberate differences recorded, "trade" vs "position" rule); prior — 2026-09-07 (ST-41, EPIC-05, v9.1, BLG-SPEC-126 — 5 terms added: Compliance Score, Concentration, Drift Score, R-Target, Setup Thesis; each cross-referenced to its authoritative spec); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -277,6 +277,73 @@ See the Validation System documentation where applicable.
 
 ---
 
-## Consolidation Notes (ST-41, EPIC-05, v9.1, BLG-SPEC-126)
+## UI Labels
+
+*Added v1.3 (ST-08, EPIC-02, v9.15, BLG-SPEC-214). Placement and areas: `docs/specs/frontend/pages/navigation.md` v2.0 §Page Placement.*
+
+This section is the single source for what each page and primary action is called in the UI. The sidebar entry, the page heading (`PageHeader` title or `<h1>`), the command-palette label and the browser-tab title all use the canonical label. Where one of them deliberately differs, the **Deliberate difference** column says so and why. Any difference not recorded there is a defect.
+
+### Page labels
+
+Page labels are in Title Case. The browser-tab title is `{Canonical label} · Position Manager` (`navigation.md` §Browser Tab Title).
+
+| Page key | Canonical label | Area | Sidebar | Heading | Palette | Deliberate difference |
+|----------|-----------------|------|---------|---------|---------|-----------------------|
+| `DashboardHome` | Dashboard | Today | Yes | Yes | Yes | The area is called "Today". The page keeps the label "Dashboard". |
+| `notifications` (`Notifications.js`) | Notifications | Today | Yes | Yes | Yes | — |
+| `NotificationsHistory` | Notification History | Today | No (detail) | Yes | No | Detail page: no sidebar or palette entry. The current heading "Alert History" changes to the canonical label. |
+| `Positions` | Positions | Portfolio | Yes | Yes | Yes | The journal view's heading "Trade Journal" stays until the Journal area (`BLG-SPEC-216`, `BLG-FE-258`) replaces that view. |
+| `TradeEntry` | Trade Entry | Portfolio | Yes | Yes | Yes | — |
+| `RiskDashboard` | Risk Dashboard | Portfolio | Yes | Yes | Yes | — |
+| `Signals` | Signals | Find trades | Yes | Yes | Yes | — |
+| `Screener` | Screener | Find trades | Yes | Yes | Yes | — |
+| `Watchlist` | Watchlist | Find trades | Yes | Yes | Yes | — |
+| `Research` | Research | Find trades | Yes | Yes | Yes | The sidebar and palette entries open the `/Research` landing (`navigation.md` §Page Placement). With a ticker, the heading is `{TICKER} — Research` and the tab title is `{TICKER} · Research · Position Manager`. |
+| `TradePlans` | Trade Plans | Find trades | Yes | Yes | Yes | — |
+| `TradePlan` | Trade Plan | Find trades | No (detail) | Yes | Yes | Detail page: no sidebar entry. Its parent is Trade Plans. |
+| `TickerUniverse` | Ticker Universe | Find trades | Yes | Yes | Yes | — |
+| `TradeHistory` | Trade History | Review | Yes | Yes | Yes | — |
+| `PerformanceAnalytics` | Analytics | Review | Yes | Yes | Yes | — |
+| `Reports` | Reports | Review | Yes | Yes | Yes | — |
+| `StrategyBenchmark` | Strategy Benchmark | Review | Yes | Yes | Yes | — |
+| `Replay` | Replay | Review | Yes | Yes | Yes | — |
+| `TradeReflection` | Trade Reflections | Review | Yes | Yes | Yes | — |
+| `RedFlagJournal` | Red Flag Journal | Review | Yes | Yes | Yes | — |
+| `WeeklyDigest` | Weekly Digest | Review | Yes | Yes | Yes | — |
+| `Settings` | Settings | Settings | Yes | Yes | Yes | — |
+| `NotificationPreferences` | Notification Preferences | Today | No (detail) | Yes | No | Detail page: no sidebar or palette entry. Its parent is Notifications; Settings links to it. |
+| `SystemStatus` | System Status | Settings | Yes | Yes | Yes | — |
+| `Dashboard` (legacy) | — | — | — | — | — | Removed (ST-12). `/Dashboard` redirects to `/`. |
+
+**Labels that change from the v9.14 UI** (ST-11 applies them): sidebar "Reflections" → "Trade Reflections"; headings "Open Positions" → "Positions", "Enter New Position" → "Trade Entry", "Performance Analytics" → "Analytics", "Monthly Signals" → "Signals", "Replay Mode" → "Replay", "Alert History" → "Notification History"; palette "Trade Reflection" → "Trade Reflections". ST-11 also adds palette entries for Replay and Notifications; the Research palette entry follows once `BLG-FE-250` builds the `/Research` landing.
+
+### Primary action labels
+
+Buttons are in Title Case. The keyboard-shortcut legend uses sentence case with the same words.
+
+| Action | Canonical label | Where | Notes |
+|--------|-----------------|-------|-------|
+| Open Trade Entry | New Position | Positions header button; shortcut `n` legend ("New position") | Empty-state variant: "Enter First Position" (Positions) and "Enter Your First Position" (Analytics; replaces "Log a trade"). |
+| Save a new position | Create Position | Trade Entry submit | — |
+| Close all or part of a position | Exit (opens the exit modal); Confirm Exit (modal submit) | Position card button; Positions table icon button (accessible name `Exit {TICKER}`); Exit modal | — |
+| Start a trade plan | New Trade Plan | Trade Plans header and empty state | — |
+| Save a trade plan | Save Plan (new) / Update Plan (existing) | Trade Plan submit | — |
+| Add a ticker to the watchlist | Add to Watchlist | Screener; watchlist modal submit; shortcut `w` legend ("Add to watchlist") | On the Watchlist page itself the header button reads "Add Ticker": the page name already says where the ticker goes. |
+| Run the screener | Run Screener | Screener | — |
+| Open the Daily Position Monitor | Daily Monitor | Positions header button | The modal title is "Daily Position Monitor". |
+| Reload page data | Refresh | Shortcut `r` legend; refresh buttons | — |
+
+### "Trade" or "position"
+
+- **Position** is what the user holds, or held: something with an entry, a stop and, while open, a live P&L. Use it for anything about a holding: Positions, New Position, Create Position, open position, position size.
+- **Trade** is the act of buying or selling, the plan for it, and the closed record of it. Use it for Trade Entry, Trade Plan(s), Trade History, Trade Reflections and "closed trade" (see **Trade** and **Closed Trade** above).
+- Entering a trade opens a position, and exiting a position closes the trade. A sentence may use both words when it refers to both. Do not use one in place of the other: a button that opens a holding says "position", not "trade".
+- The shortcut legend's "New trade" (`n`) becomes "New position" under this rule (ST-11).
+
+---
+
+## Consolidation Notes
+
+*Added ST-41, EPIC-05, v9.1, BLG-SPEC-126.*
 
 This glossary predates most of this system's shipped features (v1.1, 2026-03-08) — a large span of terminology introduced since then had never been reviewed against it. This pass added the 3 terms the backlog item's own problem statement explicitly named as inconsistently-defined (**Drift Score**, **Compliance Score** — genuinely missing; **Grace Period** was already present, confirmed) plus 2 more heavily-used, genuinely-missing terms found while cross-referencing this cycle's own spec work (**R-Target**, **Setup Thesis**, **Concentration**). This is not an exhaustive audit of every term shipped since v1.1 — that would be a substantially larger effort than this `M`-sized story budgets for. No inconsistency was found between the 5 added terms' usage across specs (each cross-references a single, unambiguous canonical source); this pass's scope was closing genuine terminology *gaps*, not resolving *conflicts* (none were found this pass).

@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 2.14.1
-**Last Updated:** 2026-10-30 (ST-09, EPIC-02, v9.14, BLG-BE-190 — POST /portfolio/size examples recomputed with the corrected US formula `RiskAmount × FX / StopDistance`); prior — 2026-10-29 (ST-04/ST-05, EPIC-01, v9.14, BLG-BE-194/BLG-BE-169 — GET /portfolio gains fx_rate_source and fx_rate_as_of; live_fx_rate falls back to the last good rate before the 1.27 constant); prior — 2026-10-17 (ST-06, EPIC-02, v9.13, BLG-BE-180 — POST /portfolio/position rejects a fetched ATR where 5 × ATR ≥ entry_price with 400); prior history retained — see prior entries in version control
+**Version:** 2.15.0
+**Last Updated:** 2026-11-04 (ST-01/ST-05, EPIC-01, v9.15, BLG-FE-244/BLG-FE-222 — POST /portfolio/position gains optional `pre_entry_override_acknowledged`; request ticker trimmed and upper-cased); prior — 2026-10-30 (ST-09, EPIC-02, v9.14, BLG-BE-190 — POST /portfolio/size examples recomputed with the corrected US formula `RiskAmount × FX / StopDistance`); prior — 2026-10-29 (ST-04/ST-05, EPIC-01, v9.14, BLG-BE-194/BLG-BE-169 — GET /portfolio gains fx_rate_source and fx_rate_as_of; live_fx_rate falls back to the last good rate before the 1.27 constant); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Overview
@@ -213,6 +213,7 @@ Create a new position based on user-entered broker execution details. Supports f
 - `entry_note` (string, max 500; empty string treated as `null`)
 - `tags` (array; max 10; each max 20 characters; lowercase, numbers, hyphens only)
 - `trade_plan_id` (string, UUID; ST-01 v7.3 — explicit link from the "Start Trade from Plan" action. When provided, this exact trade plan is linked (`position_id` set, `status` set to `active`) in place of the ticker/market best-effort auto-link (BLG-BE-46). Silently ignored if the plan does not exist, belongs to another portfolio, or is already linked to a position — position creation is never blocked by a link failure.)
+- `pre_entry_override_acknowledged` (boolean; ST-01, EPIC-01, v9.15, BLG-FE-244). `true` when the user ticked the pre-entry acknowledgement on Trade Entry (`position_form.md` §Pre-Entry Checks). The server then writes one `red_flag_events` row with `event_type: "pre_entry_override"`, the saved `ticker` and `position_id`, and `context: {"source": "trade_entry", "override_acknowledged": true}`, the same event the Trade Plan path writes (`source: "trade_plan"`). A failed event write never fails the save. Omitted, `null` or `false` writes nothing. It does not change the response.
 
 ### Response (200)
 
@@ -245,7 +246,7 @@ Response uses the standard success envelope from **conventions.md**.
 
 ### Validation rules & constraints
 
-- `ticker` must be a valid format; max 20 characters.
+- `ticker` must be a valid format; max 20 characters. It is trimmed and upper-cased before use (ST-05, BLG-FE-222, v9.15), the same normalisation as `GET /market/atr/{ticker}`, so the previewed stop equals the stored `initial_stop`.
 - `entry_date` must be a valid date and must not be in the future.
 - `shares` must be greater than 0.
 - `entry_price` must be greater than 0.
@@ -681,6 +682,7 @@ Errors use the standard error envelope from **conventions.md**.
 | 2.13.0 | 2026-10-17 | ST-06 (EPIC-02, v9.13, BLG-BE-180): `POST /portfolio/position` rejects a fetched (or fallback) ATR where `5 × ATR ≥ entry_price` with `400` — §5 gives no stop for the entry, nothing is stored. Strategy Rules & System Intent Owner ruling (A), ESC-EXEC-20261017-02. |
 | 2.14.0 | 2026-10-29 | ST-04/ST-05 (EPIC-01, v9.14, BLG-BE-194/BLG-BE-169): `GET /portfolio` gains `fx_rate_source` (`live` / `last_known` / `constant`) and `fx_rate_as_of`. On an FX fetch failure `live_fx_rate` is the last good rate (`data_model.md` DS-37) before the 1.27 constant. |
 | 2.14.1 | 2026-10-30 | ST-09 (EPIC-02, v9.14, BLG-BE-190): `POST /portfolio/size` examples recomputed. `strategy_rules.md` v1.21 §4.1.3 states the US share formula `RiskAmount × FX / StopDistance` (FX is USD per £1); the old examples' 17.8571 shares matched no formula. The three examples now show 2.4360 shares (1.2180 after the 50% concentration reduction, and `max_affordable_shares` 1.6025 against £1,000 cash), with fees and heat impact computed by `size_position()`. No shape change. |
+| 2.15.0 | 2026-11-04 | ST-01/ST-05 (EPIC-01, v9.15, BLG-FE-244/BLG-FE-222): `POST /portfolio/position` gains the optional `pre_entry_override_acknowledged` boolean. When `true`, one `pre_entry_override` red-flag event is written with `context.source: "trade_entry"`. The request `ticker` is trimmed and upper-cased before use. Response unchanged. |
 
 ---
 

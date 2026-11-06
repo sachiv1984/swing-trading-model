@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Class 2
 **Status:** Canonical
-**Version:** 1.28.5
-**Last Updated:** 2026-11-02 (ST-24, EPIC-04, v9.14, BLG-FEAT-99 — v9.14.0 entry: GET /reports/monthly-pnl gains by_exit_condition per month); prior — 2026-10-30 (ST-15/16/17/19/20/22, EPIC-03, v9.14 — v9.14.0 entries: ai_endpoints.md v1.34–v1.37, trade_endpoints.md v2.6.2, POST /trade-plans/{plan_id}/generate-thesis removed); prior — 2026-10-30 (ST-41, EPIC-06, v9.14, BLG-OPS-186 — v9.14.0 entry: POST /ai/check-daily-cost also checks the previous UTC day); prior history retained — see prior entries in version control
+**Version:** 1.29.5
+**Last Updated:** 2026-11-05 (ST-30/ST-32, EPIC-05, v9.15, BLG-OPS-190/BLG-OPS-192 — v9.15.0 entry adds signal_endpoints.md v1.11 and openapi.yaml 3.47.4); prior — 2026-11-05 (ST-34, EPIC-06, v9.15, BLG-SPEC-194 — v9.15.0 entry adds health_endpoints.md v1.10 and the openapi.yaml 3.47.3 tax-year correction); prior — 2026-11-04 (ST-22, EPIC-03, v9.15, BLG-BE-204 — v9.15.0 entry adds earnings_endpoints.md v0.2); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 # API Changelog
@@ -37,6 +37,90 @@ Rules:
 **Sign-off:** Head of Specs Team — Approved. Formalising an already-consistently-used structure (rather than introducing a new one requiring migration) is the right scope for this story — the conformance check confirms there was nothing to migrate. Sprint Execution Engine (agent-mediated, Head of Specs Team role — §5.3), 2026-09-08.
 
 ---
+
+## v9.15.0 (2026-11-03 — Release v9.15)
+
+### portfolio_endpoints.md — v2.15.0 (UPDATED)
+
+**EPIC:** EPIC-01
+**ST:** ST-01, ST-05
+
+| Change | Details |
+|--------|---------|
+| Updated endpoint: POST /portfolio/position | Optional `pre_entry_override_acknowledged` boolean. When `true`, one `pre_entry_override` red-flag event is written with `context.source: "trade_entry"`, as the Trade Plan path does, so the Red Flag Journal and the SI-05 digest count Trade Entry overrides (BLG-FE-244). A failed event write never fails the save. |
+| Updated endpoint: POST /portfolio/position | The request `ticker` is trimmed and upper-cased before use, as `GET /market/atr/{ticker}` does, so the previewed stop equals the stored `initial_stop` (BLG-FE-222). |
+
+### stop_trail_endpoint.md — v1.1.0 (UPDATED)
+
+**EPIC:** EPIC-01
+**ST:** ST-06
+
+| Change | Details |
+|--------|---------|
+| Updated endpoint: GET /positions/{position_id}/stop-trail | `atr_trail_stop` is the `strategy_rules.md` §7.2 stop from `calculate_trailing_stop` with the §11 multipliers and the breakeven floor, instead of `current_price − ATR × 2.0` (BLG-BE-173). It is not ratcheted against `current_stop`, so `trail_difference` stays signed. Response shape unchanged. |
+
+### alerts_endpoints.md — v0.14 (UPDATED)
+
+**EPIC:** EPIC-03
+**ST:** ST-19
+
+| Change | Details |
+|--------|---------|
+| Updated endpoint: POST /price-alerts | `threshold_price` is rounded to 4 dp (half away from zero, matching `NUMERIC(10,4)`) before the de-dup SELECT, the insert and the unique-violation fallback, so a 5+ dp resubmit returns the existing alert (200) instead of 500. A value that rounds to 0, or is not finite, returns 400. A fallback that finds no row returns a clear 500 message (BLG-BE-170). |
+
+### reports_endpoints.md — v0.20 (UPDATED)
+
+**EPIC:** EPIC-03
+**ST:** ST-21
+
+| Change | Details |
+|--------|---------|
+| Updated endpoint: POST /reports/monthly-pnl/narrative | When attempt 1 fails its output checks and the regeneration call raises, the code-written summary is stored and returned (`200`, `source: "fallback"`) with audit result `fail_fallback:model_call_failed`, instead of `503`. A first-call failure still returns `503`. No shape change; `openapi.yaml` 3.47.2 descriptions only (BLG-BE-172). |
+
+### earnings_endpoints.md — v0.2 (UPDATED)
+
+**EPIC:** EPIC-03
+**ST:** ST-22
+
+| Change | Details |
+|--------|---------|
+| Updated endpoint: GET /earnings/{ticker} | `next_earnings_date` from a timestamp is the America/New_York date; `days_until_earnings` counts from the US market date instead of the server date (BLG-BE-174, BLG-BE-204). No shape change. |
+
+### position_endpoints.md — v2.19.2 (UPDATED)
+
+**EPIC:** EPIC-03
+**ST:** ST-22
+
+| Change | Details |
+|--------|---------|
+| Updated endpoint: GET /positions/{position_id}/gap-risk | `avg_gap_pct`'s weekend set is every consecutive-session pair with a non-session day between them (NYSE calendar), including ordinary Friday-to-Monday gaps; the weekend statistic is used when the next session follows a non-session day; earnings timestamps are dated in America/New_York. No shape change (BLG-BE-174). |
+
+### health_endpoints.md — v1.10 (UPDATED)
+
+**EPIC:** EPIC-06
+**ST:** ST-34
+
+| Change | Details |
+|--------|---------|
+| Updated endpoint: POST /test/endpoints | Documentation only. The example shows the top-level `status` the handler returns, and `openapi.yaml` 3.47.3's `OkEndpointTest` drops the `data` envelope it had declared: `summary`, `results` and `timestamp` sit beside `status` (BLG-SPEC-194). No backend change. |
+
+### openapi.yaml — v3.47.3 (reports_endpoints.md unchanged)
+
+**EPIC:** EPIC-06
+**ST:** ST-34
+
+| Change | Details |
+|--------|---------|
+| Updated endpoint: GET /reports/tax-year | Documentation only. `openapi.yaml` now declares `data.generated_at` and places `estimated_unrealised_pnl`/`unrealised_note` under `data.summary`, matching `reports_service.py` and `reports_endpoints.md` (BLG-SPEC-194). No backend or contract change. |
+
+### signal_endpoints.md — v1.11 (UPDATED)
+
+**EPIC:** EPIC-05
+**ST:** ST-30, ST-32
+
+| Change | Details |
+|--------|---------|
+| Updated endpoint: POST /signals/rebalance-exit | Today's ranking is read from the momentum run's completion marker (`data_model.md` DS-39) instead of today's signal rows. No completed run today, including one that failed part way, still returns `503` with `screener_run_missing: true` (BLG-OPS-190). A completed run that ranked no tickers is now an empty ranking with `200` and §8.4 signals for eligible positions, instead of a false `503` (BLG-OPS-192). No shape change; `openapi.yaml` 3.47.4 descriptions only. |
 
 ## v9.14.0 (2026-10-29 — Release v9.14)
 

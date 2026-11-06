@@ -14,10 +14,7 @@
  * Coverage — each scenario asserts the actual computed style of the property
  * that was previously silently losing to the base component:
  *
- *   SC-DCO-01  WidgetLibrary DialogContent: max-width and display are the
- *              override's values (max-w-2xl / flex), not the base's (max-w-lg / grid)
- *   SC-DCO-02  WidgetLibrary DialogTitle: font-weight is the override's value
- *              (bold/700), not the base's (semibold/600)
+ *   SC-DCO-01/02  (WidgetLibrary) v9.15 ST-12 (BLG-FE-247): removed with the legacy widget Dashboard and WidgetLibrary.js.
  *   SC-DCO-03  MonitorModal DialogContent: max-width and display are the
  *              override's values (max-w-2xl / flex), not the base's (max-w-lg / grid)
  *   SC-DCO-04  ExportModal DialogTitle: font-weight is the override's value
@@ -49,7 +46,7 @@ async function mockFallback(page) {
   );
 }
 
-/** Dashboard.js's positions queries (base44.entities.Position.list/filter) hit GET
+/** The positions queries (base44.entities.Position.list/filter; on Positions.js since v9.15) hit GET
  *  /positions, which returns a raw array (not the {status,data} wrapper) — registered
  *  after mockFallback so this more specific route takes precedence for that URL. */
 async function mockDashboardPositions(page) {
@@ -69,40 +66,16 @@ async function dialogComputedStyle(page, properties) {
 }
 
 // ---------------------------------------------------------------------------
-// SC-DCO-01/02 — WidgetLibrary (Dashboard)
-// ---------------------------------------------------------------------------
-
-test('SC-DCO-01/02: WidgetLibrary DialogContent honours max-w-2xl/flex, DialogTitle honours font-bold', async ({ page }) => {
-  await mockFallback(page);
-  await mockDashboardPositions(page);
-  await page.goto('/#/Dashboard');
-
-  await page.getByRole('button', { name: /customize/i }).click();
-  await page.getByRole('button', { name: /add widget/i }).click();
-
-  await expect(page.getByRole('heading', { name: 'Widget Library' })).toBeVisible({ timeout: 10000 });
-
-  const { maxWidth, display } = await dialogComputedStyle(page, ['maxWidth', 'display']);
-  expect(maxWidth).toBe('672px'); // max-w-2xl = 42rem
-  expect(display).toBe('flex');
-
-  const title = page.getByRole('heading', { name: 'Widget Library' });
-  const fontWeight = await title.evaluate((el) => window.getComputedStyle(el).fontWeight);
-  expect(fontWeight).toBe('700'); // font-bold
-});
-
-// ---------------------------------------------------------------------------
-// SC-DCO-03 — MonitorModal (Dashboard)
+// SC-DCO-03 — MonitorModal (Positions header, v9.15)
 // ---------------------------------------------------------------------------
 
 test('SC-DCO-03: MonitorModal DialogContent honours max-w-2xl/flex', async ({ page }) => {
   await mockFallback(page);
   await mockDashboardPositions(page);
-  await page.goto('/#/Dashboard');
+  await page.goto('/#/Positions');
 
-  // The "Daily Monitor" quick action is a plain onClick <div>, not a <button> —
-  // click via its heading text instead of a button role.
-  await page.getByRole('heading', { name: 'Daily Monitor' }).click();
+  // v9.15 ST-12: the Monitor opens from the Positions header button.
+  await page.getByTestId('daily-monitor-button').click();
 
   await expect(page.getByRole('heading', { name: 'Daily Position Monitor' })).toBeVisible({ timeout: 10000 });
 

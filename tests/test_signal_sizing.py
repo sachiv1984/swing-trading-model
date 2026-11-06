@@ -184,6 +184,21 @@ class TestBatchSizingZeroAtrAndFees(unittest.TestCase):
         self.assertEqual(result[0]["inv_vol_weight"], 0)
         self.assertAlmostEqual(result[1]["inv_vol_weight"], 1.0, places=6)
 
+    def test_zero_atr_reason_wording_v915(self):
+        """v9.15 ST-07 (BLG-FE-219, signal_endpoints.md v1.10): the zero-ATR reasons are plain English."""
+        import services.sizing_service as _sz
+        mixed = self._call([self._uk(1.0), self._uk(0.0)], available_cash=10_000.0)
+        self.assertEqual(
+            mixed[1]["reason"],
+            "No size suggested: this ticker's 14-day ATR (its average daily price range) isn't available.",
+        )
+        self.assertEqual(mixed[1]["reason"], _sz.ZERO_ATR_REASON_SIGNAL)
+        self.assertIsNone(mixed[0].get("reason"))
+        all_zero = self._call([self._uk(0.0), self._uk(0.0)], available_cash=10_000.0)
+        for sig in all_zero:
+            self.assertEqual(sig["reason"], "No size suggested: no ticker in this list has a 14-day ATR available.")
+            self.assertEqual(sig["reason"], _sz.ZERO_ATR_REASON_LIST)
+
     def test_uk_total_cost_includes_stamp_duty_and_commission(self):
         """ST-08 AC 1 (UK): 100 shares at £100 → £10,000 + £50 stamp duty + £9.95 commission."""
         result = self._call([self._uk(5.0)], available_cash=10_000.0)

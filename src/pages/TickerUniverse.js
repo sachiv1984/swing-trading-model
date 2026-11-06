@@ -4,6 +4,7 @@ import { apiFetch } from "../api/base44Client";
 import { Button } from "../components/ui/button";
 import { Badge } from "../components/ui/badge";
 import PageHeader from "../components/ui/PageHeader";
+import { PAGE_LABELS } from "../lib/pageLabels";
 import DataState from "../components/ui/DataState";
 import { cn } from "../lib/utils";
 import { Plus, Trash2, ToggleLeft, ToggleRight, Loader2, X } from "lucide-react";
@@ -296,7 +297,7 @@ export default function TickerUniverse() {
   return (
     <div className="p-4 md:p-6 max-w-5xl mx-auto">
       <PageHeader
-        title="Ticker Universe"
+        title={PAGE_LABELS.TickerUniverse}
         description={`${tickers.filter((t) => t.active).length} active tickers`}
         actions={
           <Button size="sm" onClick={() => setShowForm((v) => !v)} data-testid="add-ticker-btn">

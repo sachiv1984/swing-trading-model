@@ -6,6 +6,7 @@ import { api } from '../api/base44Client';
 import { BarChart2, RefreshCw, Upload, ChevronDown, ChevronUp, Play, Loader2 } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import PageHeader from '../components/ui/PageHeader';
+import { PAGE_LABELS } from '../lib/pageLabels';
 import { formatCurrency, formatPercent, formatR } from '../lib/format';
 
 // ---------------------------------------------------------------------------
@@ -25,8 +26,9 @@ const EXIT_REASON_BADGE = {
   trailing_stop:    { label: 'Stop',      cls: 'bg-red-600 text-white' },
   'Risk-Off':       { label: 'Risk-Off',  cls: 'bg-amber-700 text-white' },
   risk_off:         { label: 'Risk-Off',  cls: 'bg-amber-700 text-white' },
-  Rebalance:        { label: 'Rebalance', cls: 'bg-teal-600 text-white' },
-  exit_rebalance:   { label: 'Rebalance', cls: 'bg-teal-600 text-white' },
+  // ST-18 (BLG-FE-220, v9.15): teal-700, white text 5.47:1 (teal-600 was 3.74:1, below AA).
+  Rebalance:        { label: 'Rebalance', cls: 'bg-teal-700 text-white' },
+  exit_rebalance:   { label: 'Rebalance', cls: 'bg-teal-700 text-white' },
 };
 
 const TOGGLE_MODES = ['backtest', 'actual', 'side-by-side'];
@@ -106,9 +108,9 @@ function MarketBadge({ market }) {
 
 function ExitBadge({ reason }) {
   const config = EXIT_REASON_BADGE[reason] || null;
-  if (!config) return <span className="text-xs text-slate-600 dark:text-slate-400">{reason || '—'}</span>;
+  if (!config) return <span data-testid="benchmark-exit-reason" className="text-xs text-slate-600 dark:text-slate-400">{reason || '—'}</span>;
   return (
-    <span className={`text-xs font-bold px-1.5 py-0.5 rounded ${config.cls}`}>
+    <span data-testid="benchmark-exit-reason" className={`text-xs font-bold px-1.5 py-0.5 rounded ${config.cls}`}>
       {config.label}
     </span>
   );
@@ -965,7 +967,7 @@ export default function StrategyBenchmark() {
         <BarChart2 className="w-5 h-5 text-slate-400 mt-1.5 shrink-0" data-testid="benchmark-header-icon" />
         <div className="flex-1">
           <PageHeader
-            title="Strategy Benchmark"
+            title={PAGE_LABELS.StrategyBenchmark}
             description="Compare live trading vs backtest"
             actions={
               <button

@@ -24,9 +24,11 @@ import {
 import DataState from "../components/ui/DataState";
 import { Button } from "../components/ui/button";
 import PageHeader from "../components/ui/PageHeader";
+import { PAGE_LABELS } from "../lib/pageLabels";
 import PositionCard from "../components/positions/PositionCard";
 import PositionModal from "../components/positions/PositionModal";
 import ExitModal from "../components/positions/ExitModal";
+import DailyMonitor from "../components/monitor/DailyMonitor";
 import JournalView from "../components/positions/JournalView";
 import TradeReflectionModal from "../components/trades/TradeReflectionModal";
 import { formatCurrency, formatPercent, formatR, currencyForMarket } from "../lib/format";
@@ -52,7 +54,7 @@ import StrategyCompliancePanel from "../components/positions/StrategyComplianceP
 import PaperAccountPanel from "../components/positions/PaperAccountPanel";
 import AiChatWidget from "../components/AiChatWidget";
 import { toast } from "sonner";
-import { GRACE_PERIOD_DAYS, ATR_PERIOD_DAYS, PROFIT_ATR_MULTIPLIER } from "../constants/strategy";
+import { GRACE_PERIOD_DAYS, ATR_PERIOD_DAYS } from "../constants/strategy";
 import StaleMarker, { STALE_EXPLANATION_POSITIONS } from "../components/ui/StaleMarker";
 
 const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:8000";
@@ -252,7 +254,8 @@ function TrailStopModal({ position, onClose }) {
       <div className="w-full max-w-md rounded-2xl bg-slate-900 border border-slate-700 p-6 space-y-4 mx-4">
         <div className="flex items-center justify-between">
           <div>
-            <h2 id="trail-stop-modal-title" className="text-lg font-semibold text-white">Trail Stop — {position?.ticker}</h2>
+            {/* ST-17 (BLG-FE-218, v9.15): read-only wording per positions.md v2.22 §Trail Stop Action */}
+            <h2 id="trail-stop-modal-title" className="text-lg font-semibold text-white">View Trail — {position?.ticker}</h2>
             <p className="text-xs text-slate-600 dark:text-slate-400">ATR-based stop trail calculation</p>
           </div>
           <button onClick={onClose} aria-label="Close" className="text-slate-600 dark:text-slate-400 hover:text-white"><X className="w-5 h-5" /></button>
@@ -282,7 +285,7 @@ function TrailStopModal({ position, onClose }) {
             </div>
             {trailDiff != null && (
               <div className="flex justify-between">
-                <dt className="text-slate-600 dark:text-slate-400">Raise by</dt>
+                <dt className="text-slate-600 dark:text-slate-400">Difference vs current stop</dt>
                 <dd className={cn("font-medium", isNegativeDiff ? "text-amber-700 dark:text-amber-400" : "text-emerald-400")}>
                   {formatCurrency(trailDiff, { currency: modalCurrency, signed: true })}
                   {trailR != null && <span className="text-slate-600 dark:text-slate-400 ml-1">({formatR(trailR)})</span>}
@@ -295,7 +298,8 @@ function TrailStopModal({ position, onClose }) {
         {!isLoading && !isError && trailData && (
           <div className="space-y-2">
             <p className="text-xs text-slate-600 dark:text-slate-400">
-              ATR trail stop = current price − (ATR × {PROFIT_ATR_MULTIPLIER.toFixed(1)}). ATR period: {ATR_PERIOD_DAYS} days. Multiplier per strategy rules.
+              {/* ST-06 (BLG-BE-173, v9.15): no literal multiplier; the value is the §7.2 stop with the breakeven floor */}
+              ATR trail stop = current price − (profit multiplier × {ATR_PERIOD_DAYS}-day ATR), never below your entry price. This is the strategy's profitable-position stop (§7.2).
             </p>
             {noRaise && (
               <p data-testid="trail-stop-no-raise-note" className="text-xs text-slate-600 dark:text-slate-400">
@@ -613,6 +617,10 @@ function LastReviewedCell({ position, drawdownActive }) {
   );
 }
 
+// ST-05 (BLG-FE-222, v9.15): the ?exit= and ?position= deep links use the
+// same open-position test.
+const isOpenPosition = (p) => p.status === "open";
+
 export default function Positions() {
   const [viewMode, setViewMode] = useState("grid");
   const [editingPosition, setEditingPosition] = useState(null);
@@ -648,11 +656,11 @@ export default function Positions() {
   });
 
   // ST-08 (BLG-FE-198, v9.10): /#/Positions?exit={id} opens the exit dialog for
-  // that open position, then drops the parameter. Unknown or closed ids are ignored.
+  // that open position, then drops the parameter. Unknown or not-open ids are ignored.
   useEffect(() => {
     const exitId = new URLSearchParams(location.search).get("exit");
     if (!exitId || !Array.isArray(positions)) return;
-    const target = positions.find((p) => String(p.id) === exitId && p.status !== "closed");
+    const target = positions.find((p) => String(p.id) === exitId && isOpenPosition(p));
     if (target) setExitingPosition(target);
     navigate(location.pathname, { replace: true });
   }, [location.search, location.pathname, positions, navigate]);
@@ -665,7 +673,7 @@ export default function Positions() {
   useEffect(() => {
     const positionId = new URLSearchParams(location.search).get("position");
     if (!positionId || !Array.isArray(positions)) return;
-    const target = positions.find((p) => String(p.id) === positionId && p.status === "open");
+    const target = positions.find((p) => String(p.id) === positionId && isOpenPosition(p));
     if (target) setHighlightedPositionId(String(target.id));
     navigate(location.pathname, { replace: true });
   }, [location.search, location.pathname, positions, navigate]);
@@ -784,7 +792,7 @@ export default function Positions() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title={viewMode === "journal" ? "Trade Journal" : "Open Positions"}
+        title={viewMode === "journal" ? "Trade Journal" : PAGE_LABELS.Positions}
         description={
           viewMode === "journal"
             ? `${allPositions.length} total entries`
@@ -793,7 +801,9 @@ export default function Positions() {
               }`
         }
         actions={
-          <div className="flex items-center gap-3">
+          // ST-12 follow-up (v9.15): wraps at phone width now that the header
+          // also carries the Daily Monitor button.
+          <div className="flex flex-wrap items-center justify-end gap-3">
             <div className="flex items-center rounded-xl bg-slate-800/50 border border-slate-700/50 p-1">
               <Button
                 aria-label="Grid view"
@@ -840,6 +850,10 @@ export default function Positions() {
                 <BookOpen className="w-4 h-4" />
               </Button>
             </div>
+
+            {/* ST-12 (BLG-FE-247, v9.15): Daily Position Monitor entry point,
+                moved here from the removed legacy Dashboard (ESC-EXEC-20261104-05 (a)). */}
+            <DailyMonitor positions={openPositions} isLoading={isLoading} />
 
             <Link to={createPageUrl("TradeEntry")}>
               <Button className="bg-gradient-to-r from-cyan-500 to-violet-500 hover:from-cyan-400 hover:to-violet-400 text-white border-0 shadow-lg shadow-violet-500/25">
@@ -1104,7 +1118,7 @@ export default function Positions() {
                         <Button
                           variant="ghost"
                           size="icon"
-                          title={(!position.current_stop && !position.stop_price) ? "No current stop set. Add a stop to use trail management." : "View Trail"}
+                          title={(!position.current_stop && !position.stop_price) ? "No stop is recorded for this position yet, so there is no trail to compare." : "View Trail"}
                           aria-label="View Trail"
                           disabled={!position.current_stop && !position.stop_price}
                           className="h-8 w-8 text-violet-400 hover:text-violet-300 hover:bg-violet-500/10 disabled:opacity-40"

@@ -8,8 +8,22 @@ Data freshness: Yahoo Finance earnings dates are generally reliable 2-4 weeks ou
 Dates further in the future may shift. Null returned if date unavailable.
 """
 import yfinance as yf
-from datetime import date, datetime
+from datetime import date, datetime, timezone
 from typing import Optional, Dict, Any
+
+from services.us_market_calendar import US_MARKET_TZ, us_market_date
+from zoneinfo import ZoneInfo
+
+
+def _et_date(dt: datetime) -> date:
+    """The America/New_York date of an aware datetime (ST-22, BLG-BE-174).
+
+    A naive value carries no zone and is usually a bare date at midnight, so its
+    own date is kept, as before ST-22. Epoch timestamps are made UTC-aware first.
+    """
+    if dt.tzinfo is None:
+        return dt.date()
+    return dt.astimezone(ZoneInfo(US_MARKET_TZ)).date()
 
 
 def _yf_ticker_symbol(ticker: str, market: str) -> str:
@@ -35,10 +49,13 @@ def get_earnings(ticker: str, market: str = "US") -> Dict[str, Any]:
         if isinstance(earnings_date, list):
             earnings_date = earnings_date[0] if earnings_date else None
 
+        # ST-22 (BLG-BE-174, v9.15): a timestamp is converted to its
+        # America/New_York date, so a 21:00 ET (after-close) release is that ET
+        # day, not the next UTC day. A naive datetime keeps its own date.
         if isinstance(earnings_date, (int, float)):
-            earnings_date = datetime.utcfromtimestamp(earnings_date).date()
+            earnings_date = _et_date(datetime.fromtimestamp(earnings_date, timezone.utc))
         elif isinstance(earnings_date, datetime):
-            earnings_date = earnings_date.date()
+            earnings_date = _et_date(earnings_date)
 
         if earnings_date is None:
             cal = getattr(t, "calendar", None)
@@ -57,7 +74,11 @@ def get_earnings(ticker: str, market: str = "US") -> Dict[str, Any]:
                 "data_source": "yahoo_finance",
             }
 
-        today = date.today()
+        # BLG-BE-204 (PR #2190 review, ST-22 follow-through): count from the US
+        # market date, the same basis as next_earnings_date. With the server's
+        # UTC date, a 21:00 ET release viewed at 00:30 UTC (19:30 ET, before it)
+        # gave -1 days, and the §4.2.3 pre-entry check passed instead of warning.
+        today = us_market_date()
         days_until = (earnings_date - today).days
         fiscal_quarter = info.get("earningsQuarterlyGrowth") and None  # not reliable from info
         try:

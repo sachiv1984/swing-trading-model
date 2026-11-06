@@ -3921,6 +3921,78 @@ def get_last_good_fx_rate(pair: str) -> Optional[Dict]:
     return {"rate": float(row["rate"]), "fetched_at": row["fetched_at"]}
 
 
+# ---------------------------------------------------------------------------
+# momentum_signal_runs — completion marker for each momentum signal run
+# (ST-30/ST-32, EPIC-05, v9.15, BLG-OPS-190/BLG-OPS-192; data_model.md DS-39)
+# ---------------------------------------------------------------------------
+
+@ensure_once
+def ensure_momentum_signal_runs_table() -> None:
+    """DS-39 Up Migration, idempotent. One row per completed momentum signal
+    run: its date, completion time and the tickers it ranked (possibly none)."""
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS momentum_signal_runs (
+                    id             SERIAL PRIMARY KEY,
+                    portfolio_id   UUID NOT NULL,
+                    run_date       DATE NOT NULL,
+                    completed_at   TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+                    tickers_ranked JSONB NOT NULL DEFAULT '[]',
+                    ranked_count   INTEGER NOT NULL DEFAULT 0,
+                    CONSTRAINT ck_momentum_signal_runs_count CHECK (ranked_count >= 0)
+                )
+            """)
+            cur.execute("""
+                CREATE INDEX IF NOT EXISTS idx_momentum_signal_runs_portfolio_date
+                ON momentum_signal_runs (portfolio_id, run_date DESC, completed_at DESC)
+            """)
+        conn.commit()
+
+
+def record_momentum_signal_run(portfolio_id: str, run_date: str, tickers_ranked: List[str]) -> None:
+    """Record that a momentum signal run for `run_date` completed, with the
+    tickers it ranked. An empty list is a completed run that found none."""
+    import json as _json
+    ensure_momentum_signal_runs_table()
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                INSERT INTO momentum_signal_runs
+                    (portfolio_id, run_date, tickers_ranked, ranked_count)
+                VALUES (%s, %s, %s, %s)
+            """, (portfolio_id, run_date, _json.dumps(list(tickers_ranked)), len(tickers_ranked)))
+        conn.commit()
+
+
+def get_momentum_signal_run(portfolio_id: str, run_date: str) -> Optional[Dict]:
+    """The latest completed momentum signal run for `run_date`, as
+    {"run_date", "completed_at", "tickers_ranked", "ranked_count"}, or None."""
+    ensure_momentum_signal_runs_table()
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                SELECT run_date, completed_at, tickers_ranked, ranked_count
+                FROM momentum_signal_runs
+                WHERE portfolio_id = %s AND run_date = %s
+                ORDER BY completed_at DESC
+                LIMIT 1
+            """, (portfolio_id, run_date))
+            row = cur.fetchone()
+    if not row:
+        return None
+    tickers = row["tickers_ranked"]
+    if isinstance(tickers, str):
+        import json as _json
+        tickers = _json.loads(tickers)
+    return {
+        "run_date": str(row["run_date"])[:10],
+        "completed_at": row["completed_at"],
+        "tickers_ranked": list(tickers or []),
+        "ranked_count": int(row["ranked_count"]),
+    }
+
+
 @ensure_once
 def ensure_chat_answer_ratings_table() -> None:
     """DS-35 Up Migration, idempotent. One row per rated chat answer."""

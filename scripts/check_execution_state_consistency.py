@@ -11,7 +11,11 @@ the ESC-CLOSE-20260930-02 ruling exists to remove. This script checks:
   1. completed_items   == the set of stories with status done/merged
   2. blocked_items ∪ delegated_items == the set of stories with a blocked_* status
   3. merge_gate.epics_merged == EPICs with pr_status merged, and
-     merge_gate.epics_pending == the remaining EPICs
+     merge_gate.epics_pending == the remaining EPICs of the sprint. The
+     sprint's EPIC list is the union of the initialised `epics` records,
+     `merge_order`, and the sibling sprint_backlog_index.json's `epics` when
+     present, so an EPIC not yet initialised at its own STEP 0 still counts
+     as pending (ST-38, BLG-QA-240, EPIC-07, v9.15)
   4. merge_gate.all_merged is true exactly when epics_pending is empty
 
 plus the per-record rules §9.2 names alongside them:
@@ -37,7 +41,7 @@ def _ids(values):
     return sorted(set(values or []), key=lambda s: (len(s), s))
 
 
-def check_state(state: dict, escalations_md: str = None) -> list:
+def check_state(state: dict, escalations_md: str = None, index_epics=None) -> list:
     epics = state.get("epics", {})
     stories = {sid: rec for epic in epics.values() for sid, rec in epic.get("stories", {}).items()}
     problems = []
@@ -57,7 +61,8 @@ def check_state(state: dict, escalations_md: str = None) -> list:
     merged = {eid for eid, epic in epics.items() if epic.get("pr_status") == "merged"}
     if set(gate.get("epics_merged") or []) != merged:
         problems.append(f"merge_gate.epics_merged: expected {_ids(merged)}, found {_ids(gate.get('epics_merged'))}")
-    pending = set(epics) - merged
+    sprint_epics = set(epics) | set(state.get("merge_order") or []) | set(index_epics or [])
+    pending = sprint_epics - merged
     if set(gate.get("epics_pending") or []) != pending:
         problems.append(f"merge_gate.epics_pending: expected {_ids(pending)}, found {_ids(gate.get('epics_pending'))}")
     if bool(gate.get("all_merged")) != (not gate.get("epics_pending")):
@@ -95,7 +100,15 @@ def main(argv=None) -> int:
         return 2
     esc_path = path.parent / "execution_escalations.md"
     escalations_md = esc_path.read_text(encoding="utf-8") if esc_path.exists() else None
-    problems = check_state(state, escalations_md)
+    index_path = path.parent / "sprint_backlog_index.json"
+    index_epics = None
+    if index_path.exists():
+        try:
+            index_epics = list((json.loads(index_path.read_text(encoding="utf-8")).get("epics") or {}))
+        except (OSError, ValueError, AttributeError) as exc:
+            print(f"error: cannot read {index_path}: {exc}", file=sys.stderr)
+            return 2
+    problems = check_state(state, escalations_md, index_epics)
     for p in problems:
         print(p)
     if problems:

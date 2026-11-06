@@ -39,8 +39,34 @@ on:
       - develop
 
 jobs:
+  changes:
+    # ST-31 (EPIC-05, v9.15, BLG-OPS-191): governance-only and docs-only pushes
+    # skip this workflow's suite. See .github/actions/detect-code-changes.
+    name: Detect code changes (ST-31)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      code: ${{ steps.detect.outputs.code }}
+    steps:
+      - name: Checkout the detector only
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            .github/actions/detect-code-changes
+            scripts/ci_code_changes.py
+          sparse-checkout-cone-mode: false
+      - id: detect
+        uses: ./.github/actions/detect-code-changes
+
   pytest-phase-a:
     name: Pytest Phase A (clean tests — no DB required)
+    needs: changes
+    # Always runs (a required check). On a governance-only or docs-only change it
+    # runs only the docs-coupled tests instead of its module list (ST-31, ruling
+    # ESC-EXEC-20261105-05); if detection failed or could not tell, the full list.
+    if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
 
     env:
@@ -77,7 +103,13 @@ jobs:
       - name: Add backend/.venv to PATH
         run: echo "$GITHUB_WORKSPACE/backend/.venv/bin" >> "$GITHUB_PATH"
 
+      - name: Run docs-coupled tests (governance-only or docs-only change, ST-31)
+        if: needs.changes.outputs.code == 'false'
+        run: |
+          python -m pytest tests/ --docs-coupled-only -v --tb=short
+
       - name: Run Phase A clean tests
+        if: needs.changes.outputs.code != 'false'
         run: |
           python -m pytest \
             tests/test_stop_reconciliation.py \
@@ -101,11 +133,16 @@ jobs:
             -v --tb=short
 
       - name: Run mock harness smoke tests (BLG-QA-08)
+        if: needs.changes.outputs.code != 'false'
         run: |
           python -m pytest tests/test_api_mock_harness.py -v --tb=short
 
   pytest-phase-b:
     name: Pytest Phase B (integration — real Postgres service)
+    needs: changes
+    # Skipped (reported as success) only when detection says "false"; runs if
+    # detection failed or could not tell (ST-31).
+    if: ${{ !cancelled() && needs.changes.outputs.code != 'false' }}
     runs-on: ubuntu-latest
 
     services:

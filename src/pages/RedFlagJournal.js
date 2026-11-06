@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect } from "react";
 import { apiFetch } from "../api/base44Client";
 import { Button } from "../components/ui/button";
 import PageHeader from "../components/ui/PageHeader";
+import { PAGE_LABELS } from "../lib/pageLabels";
 import { Skeleton } from "../components/ui/skeleton";
 import { cn } from "../lib/utils";
 import {
@@ -298,7 +299,7 @@ export default function RedFlagJournal() {
 
   return (
     <div className="p-6 max-w-4xl mx-auto space-y-6">
-      <PageHeader title="Red Flag Journal" />
+      <PageHeader title={PAGE_LABELS.RedFlagJournal} />
 
       {/* Filter controls */}
       <div

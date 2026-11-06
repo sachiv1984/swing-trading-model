@@ -117,7 +117,7 @@ async function setupAnalytics(page) {
   );
   await page.goto('/#/PerformanceAnalytics');
   await expect(
-    page.locator('h1, [class*="text-2xl"], [class*="text-3xl"]').filter({ hasText: 'Performance Analytics' })
+    page.locator('h1, [class*="text-2xl"], [class*="text-3xl"]').filter({ hasText: /^Analytics$/ })
   ).toBeVisible({ timeout: 20000 });
   await expect(page.locator('[class*="animate-spin"]')).toHaveCount(0, { timeout: 15000 });
 
