@@ -4,7 +4,7 @@
   "status": "Closed",
   "prior_status": "Verified",
   "engine": "Post-Ship Closure",
-  "last_updated_utc": "2026-11-06T16:31:03Z",
+  "last_updated_utc": "2026-11-06T16:51:48Z",
   "execution_state_path": "claude/cycles/2026-11-03__release-v9.15/execution_state.json",
   "backlog_slice_path": "claude/cycles/2026-11-03__release-v9.15/stage4_backlog_slice.md",
   "design_gate_required": true,
@@ -38,7 +38,7 @@
   "sprint2_gate_confirmed_utc": "2026-08-18T00:00:00Z",
   "sprint2_close_utc": "2026-08-20T11:58:57Z",
   "verification_utc": "2026-11-06T14:30:00Z",
-  "last_sync_utc": "2026-11-06T16:31:03Z",
+  "last_sync_utc": "2026-11-06T16:51:48Z",
   "blocked_sla_breached": false,
   "last_deviation_consolidation_review_utc": "2026-10-29T12:26:21Z",
   "deviation_consolidation_review_cycle_count": 2,
@@ -49,7 +49,7 @@
   "last_audit_overall_score": 66,
   "last_audit_open_items": 0,
   "last_audit_cycle_count": 91,
-  "next_release": "v9.15",
+  "next_release": "v9.16",
   "prior_cycle": "2026-11-03__release-v9.15",
   "lifecycle_schema": "claude/system/lifecycle_schema.json",
   "schema_version": "1.0",
@@ -664,24 +664,6 @@
       "resolved_utc": "2026-11-05T18:01:33Z",
       "resolved_by": "Product Owner (the user, in session)",
       "resolution_summary": "Engine recommendation accepted: on claude/**- or docs/**-only pushes CI Pytest Phase A runs only the docs-coupled subset; the other four suites skip via job-level skips so required checks report. No backlog remainder."
-    },
-    "ESC-CLOSE-20261106-01": {
-      "summary": "BLG-FE-271 — does strategy_rules.md §4.2.1 v1.23 cover the plan-linked Trade Entry route? If so apply the proposed Known Deviations entry (documentation-only version)",
-      "owner": "Strategy Rules & System Intent Owner",
-      "sla_due_utc": "2026-11-09T16:18:41Z",
-      "cycle": "2026-11-03__release-v9.15",
-      "raised_utc": "2026-11-06T16:18:41Z",
-      "blocks_execution": false,
-      "disposition": "Open"
-    },
-    "ESC-CLOSE-20261106-02": {
-      "summary": "LL-v9.15-Release-01 — how a DL-recorded phased roadmap programme binds release_planning_prompt.md §1.4c selection (gate later phases / standing override / both)",
-      "owner": "Head of Specs Team; Product Owner",
-      "sla_due_utc": "2026-11-09T16:18:41Z",
-      "cycle": "2026-11-03__release-v9.15",
-      "raised_utc": "2026-11-06T16:18:41Z",
-      "blocks_execution": false,
-      "disposition": "Open"
     }
   },
   "deferred_escalations": {
@@ -756,5 +738,6 @@
     "release_plan_path": "claude/cycles/2026-10-29__release-v9.14/release_plan.md",
     "cycle_id": "2026-10-29__release-v9.14",
     "published_utc": "2026-10-29T12:55:12Z"
-  }
+  },
+  "_next_release_note": "Set 2026-11-06 by explicit Product Owner direction (user, in session) after post-ship closure 2026-11-03__release-v9.15. Owner per state_field_owners.json is release_planning_prompt.md STEP 9, which re-stamps it from --version at `plan release v9.16`."
 }

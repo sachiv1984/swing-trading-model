@@ -4,8 +4,8 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.253
-**Last Updated:** 2026-11-06 (post-ship closure `2026-11-03__release-v9.15` STEP 8 — execution_prompt.md v3.93, release_planning_prompt.md v2.71, delivery_verification_prompt.md v3.17, post_ship_closure.md v2.45); prior — 2026-11-06 (BLG-GOV-395, Head of Specs Team, user-directed — release_planning_prompt.md v2.70, STEP 7 sync writes `execution_state_path`; renumbered from v4.251 at merge with ST-37); prior — 2026-11-05 (ST-37, BLG-GOV-404, EPIC-07, v9.15 — release_planning_prompt.md v2.69); prior history retained — see prior entries in version control
+**Version:** 4.254
+**Last Updated:** 2026-11-06 (`ESC-CLOSE-20261106-02` ruling — release_planning_prompt.md v2.72, §1.4c step 0 programme-phase hold); prior — 2026-11-06 (post-ship closure `2026-11-03__release-v9.15` STEP 8 — execution_prompt.md v3.93, release_planning_prompt.md v2.71, delivery_verification_prompt.md v3.17, post_ship_closure.md v2.45); prior — 2026-11-06 (BLG-GOV-395, Head of Specs Team, user-directed — release_planning_prompt.md v2.70, STEP 7 sync writes `execution_state_path`; renumbered from v4.251 at merge with ST-37); prior history retained — see prior entries in version control
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -622,7 +622,7 @@ If the gate is bypassed (Sprint Planning run without a passing design gate), thi
 
 ## 6B. Phase 1B — Release Planning
 
-**Source prompt:** `claude/system/release_planning_prompt.md` (v2.71)
+**Source prompt:** `claude/system/release_planning_prompt.md` (v2.72)
 **Purpose:** Translate an already-approved roadmap release into an execution-ready plan: sequencing, dependencies, acceptance gates, backlog slice, optional GitHub issues.
 
 > **This routine does NOT rebalance the roadmap.** It may not add, replace, defer, or kill initiatives. Those remain reserved for Phase 1.
@@ -1382,7 +1382,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 4.253 |
+| Version | 4.254 |
 | Last Updated | 2026-11-06 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.13 |
@@ -1398,7 +1398,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Shared Publish Gate | `claude/system/shared/publish_gate.md` v1.1 |
 | Roadmap Engine Source | `claude/system/roadmap_prompt.md` v9.37 (+ `roadmap_prompt_appendix.md`) |
 | Roadmap Engine Appendix | `claude/system/roadmap_prompt_appendix.md` v1.2 |
-| Release Engine Source | `claude/system/release_planning_prompt.md` v2.71 |
+| Release Engine Source | `claude/system/release_planning_prompt.md` v2.72 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.24 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.9 |
 | Execution Engine Source | `claude/system/execution_prompt.md` v3.93 |
@@ -1523,6 +1523,7 @@ Living references introduced in v3.2: `component_inventory.md`, `design_system.m
 **Header-drift prevention (added v4.85, roadmap rebalance 2026-07-08__scheduled, Friction Item — 4th recurrence of this exact pattern per the 4.79/4.80/4.81 entries below):** Before bumping the top `**Version:**`/`**Last Updated:**` header fields, read the highest version number already present in this table's top row — do not increment from the header field alone, since it has drifted below the table's actual latest entry on at least 4 prior occasions.
 
 | Version | Date | Change Summary |
+| 4.254 | 2026-11-06 | **`ESC-CLOSE-20261106-02` ruling, option (b) (Head of Specs Team with the Product Owner, agent-mediated per §5.3, user-directed) — 1 source prompt bumped.** `release_planning_prompt.md` v2.71→v2.72: §1.4c step 0 programme-phase hold. Later-phase P2/P3 items of a §3 `### Programme plan` subsection are held until their phase's release unless a dated PO reason is recorded. §6B source-prompt line and §14 Release Engine Source row updated; §14 self-row and header 4.253→4.254. |
 | 4.253 | 2026-11-06 | **Post-ship closure `2026-11-03__release-v9.15` STEP 8 — 4 source prompts bumped (immediate lessons-learnt actions).** `execution_prompt.md` v3.92→v3.93: §3.2.A/§7 same-branch fix banner (LL-v9.15-P3-01); STEP 5.2 in-flight return note timing (LL-v9.15-P3-02); STEP 5.1 PO + DoQ acceptance record for P1/P2 found defects (LL-v9.15-P4-02). `release_planning_prompt.md` v2.70→v2.71: STEP 4 calibration reads Scope or AC text (LL-v9.15-Release-03). `delivery_verification_prompt.md` v3.16→v3.17: STEP 1 accepts `deferred_at_planning` (LL-v9.15-P4-01). `post_ship_closure.md` v2.44→v2.45: STEP 3.1 banners a planning-deferred item already met or superseded (LL-v9.15-Release-02). §6B, §8, §9 and §10 source-prompt lines and §14 rows updated; §14 self-row and header 4.252→4.253. |
 | 4.252 | 2026-11-06 | **`BLG-GOV-395` applied, Head of Specs Team, user-directed ("BLG-GOV-395 - fix now") — 1 source prompt bumped.** `release_planning_prompt.md` v2.69→v2.70: STEP 7's intermediate sync writes `execution_state_path` atomically with `active_cycle`; `state_field_owners.json` names Release Planning as owner. §6B source-prompt line and §14 row updated. Authored 2026-11-03 as 4.251 / v2.69; renumbered at merge (CLAUDE.md §8 step 2a) because ST-37 shipped a different change under both numbers. |
 | 4.251 | 2026-11-05 | **Sprint execution `2026-11-03__release-v9.15` EPIC-07/ST-37 (BLG-GOV-404) — release_planning_prompt.md v2.68→v2.69.** §1.3a's "gating item shipped — verify" list and in-place clearing also cover gates on roadmap feature IDs (PT-xx, SI-xx, PO-xx) marked shipped in the roadmap. §6B source-prompt line and §14 Release Engine Source row updated; §14 self-row and header 4.250→4.251. |

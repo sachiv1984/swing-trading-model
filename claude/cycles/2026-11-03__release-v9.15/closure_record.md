@@ -1,7 +1,7 @@
 Owner: PMO Lead
 Class: Operational Record (Class 3)
 Status: Active
-Last Updated: 2026-11-06 (created)
+Last Updated: 2026-11-06 (follow-up — §6 rows 1 and 2 resolved: ESC-CLOSE-20261106-01/-02 rulings; Next planned release named v9.16 by the Product Owner); prior — 2026-11-06 (created)
 Cycle: 2026-11-03__release-v9.15
 
 ---
@@ -89,14 +89,15 @@ Full detail: `claude/cycles/2026-11-03__release-v9.15/lessons_learnt_closure.md`
 
 | # | Description | Owner | Deadline | Escalation path | Resolution |
 |---|-------------|-------|----------|-----------------|------------|
-| 1 | Rule whether `strategy_rules.md` §4.2.1 v1.23 covers the plan-linked Trade Entry route. If it does, apply the proposed Known Deviations entry as a documentation-only version. Options are in the escalation. | Strategy Rules & System Intent Owner | 2026-11-09T16:18:41Z | `ESC-CLOSE-20261106-01` | *(open)* |
-| 2 | Rule how a DL-recorded phased programme binds §1.4c selection: (a) gate later-phase items, (b) a standing override, or (c) both. | Head of Specs Team; Product Owner | 2026-11-09T16:18:41Z | `ESC-CLOSE-20261106-02` | *(open)* |
+| 1 | Rule whether `strategy_rules.md` §4.2.1 v1.23 covers the plan-linked Trade Entry route. If it does, apply the proposed Known Deviations entry as a documentation-only version. Options are in the escalation. | Strategy Rules & System Intent Owner | 2026-11-09T16:18:41Z | `ESC-CLOSE-20261106-01` | ✅ Resolved 2026-11-06 (Strategy Rules & System Intent Owner, agent-mediated, user-directed): option (a), §4.2.1 applies. Known deviation added as documentation-only `strategy_rules.md` v1.26; `BLG-FE-271` fix proceeds at v9.16 |
+| 2 | Rule how a DL-recorded phased programme binds §1.4c selection: (a) gate later-phase items, (b) a standing override, or (c) both. | Head of Specs Team; Product Owner | 2026-11-09T16:18:41Z | `ESC-CLOSE-20261106-02` | ✅ Resolved 2026-11-06 (Head of Specs Team with the Product Owner, agent-mediated, user-directed): option (b). `release_planning_prompt.md` v2.72 §1.4c step 0 programme-phase hold |
 | 3 | **Split-achievability disposition:** `BLG-AI-23` (ST-24) is not marked COMPLETE. Outstanding scope: the production caveat-token list and the additions it drives (both ACs). Tracked by `BLG-AI-27` (`DEL-20261105-01`). | AI Compliance & Governance Officer | Next `groom backlog` after `BLG-GOV-413` | `BLG-AI-27`; `BLG-GOV-413` | *(open)* |
 | 4 | **Split-achievability disposition:** `BLG-OPS-48` (ST-29) is not marked COMPLETE. Outstanding scope: the key rotation (AC 2, `BLG-OPS-214`, P1), the Pages-build key copy (`BLG-OPS-213`, P2) and the touchpoint-register drift (AC 1, `BLG-SPEC-223`). | Cybersecurity & Trust Lead; Infrastructure & Operations Owner | v9.16 (`BLG-OPS-214`) | `BLG-OPS-214`, `BLG-OPS-213`, `BLG-SPEC-223`; `BLG-GOV-413` | *(open)* |
 | 5 | Add ACs and an estimate to, or kill, the legacy `Gate criteria: None` items `BLG-GOV-192`, `197`, `198`, `199`, `200`, `201` (`LL-v9.15-Release-02b`). | PMO Lead; item owners | Before any is seated again | `backlog_health_20261106.md` | *(open)* |
 | 6 | Retarget stale tags: `BLG-AI-27` (`TBD`), `BLG-OPS-197` and `BLG-GOV-399` (still v9.15), and the other 43 v9.15-tagged unseated items listed in `backlog_health_20261106.md`. | PMO Lead; item owners | Next Release Planning run | `backlog_health_20261106.md` | *(open)* |
 | 7 | Link `docs/governance/governance_overhead_audit_2026-11-02.md` (v9.14 ST-53 AC 2; carried from v9.14 §6 row 8) and the ST-45 sunset review (`BLG-GOV-408`) as inputs at the next `run roadmap`. | PMO Lead | Next `run roadmap` | `lessons_learnt_closure.md` Carry-Forward 3 | *(open)* |
 | 8 | Telegram changelog digest not delivered (credentials absent in this environment). Send the v9.15 digest from an environment with `TELEGRAM_BOT_TOKEN`/`TELEGRAM_CHAT_ID` if the team wants it. | Infrastructure & Operations Owner | Optional | — | *(open, non-blocking)* |
+| 9 | **Next planned release named v9.16** (Site Structure & Usability, Phase 2) by the Product Owner, user-directed, 2026-11-06. `current_roadmap.md` §1 updated; `.claude_current_state.json.next_release` = `v9.16`. That field is owned by Release Planning STEP 9, which re-stamps it at `plan release v9.16`; the out-of-owner write is recorded in `_next_release_note`. | Product Owner | — | — | ✅ Done 2026-11-06 |
 
 ## §7 — Closure Confirmation
 
@@ -105,6 +106,6 @@ Post-ship closure complete — 2026-11-03__release-v9.15 — 2026-11-06
 Release: v9.15 — Site Structure & Usability, Phase 1
 Verification status: Verified_with_deviations
 Lessons learnt applied: 6 immediate | 3 deferred | 1 escalated
-Outstanding actions carried forward: 8 (see §6)
+Outstanding actions carried forward: 9 in §6 (rows 1, 2 and 9 since resolved)
 Next cycle may now open.
 ```

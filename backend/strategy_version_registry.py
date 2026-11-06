@@ -109,6 +109,7 @@ DOCUMENTATION_ONLY_VERSIONS = frozenset({
     "1.22",  # §13.5 roster row cites ai_thesis_generation.md; generate-thesis retired (ST-22, BLG-BE-163)
     "1.24",  # Change Log row 1.15 dated to its deploy date; effective-date rule (ST-20, BLG-BE-171)
     "1.25",  # §13.2 AI-text clarification; §13.5 roster row (journal summary) (ST-28, BLG-GOV-194)
+    "1.26",  # §4.2.1 Known deviation: plan-linked Trade Entry skips the acknowledgement (ESC-CLOSE-20261106-01, BLG-FE-271)
 })
 
 

@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-06 (post-ship closure `2026-11-03__release-v9.15` STEP 8 — 1 new item added: BLG-GOV-413; deferred lessons-learnt patch, target v9.16); prior — 2026-11-06 (post-ship closure `2026-11-03__release-v9.15` STEP 3 — 45 items bannered ✅ COMPLETE: 41 shipped ST source items, the 3 in-sprint-resolved found defects BLG-BE-204/BLG-FE-273/BLG-QA-251, and BLG-FE-240 (ST-16, superseded by ST-12, v2.45 STEP 3.1); split-achievability carve-out leaves BLG-AI-23 (ST-24) and BLG-OPS-48 (ST-29) open); prior — 2026-11-06 (Sprint Execution `2026-11-03__release-v9.15` sprint close STEP 5.2 — BLG-OPS-197 notes ST-33's return to the backlog); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-06 (`ESC-CLOSE-20261106-01` ruling — BLG-FE-271 Notes line: §4.2.1 applies, strategy_rules.md v1.26 Known deviation); prior — 2026-11-06 (post-ship closure `2026-11-03__release-v9.15` STEP 8 — 1 new item added: BLG-GOV-413; deferred lessons-learnt patch, target v9.16); prior — 2026-11-06 (post-ship closure `2026-11-03__release-v9.15` STEP 3 — 45 items bannered ✅ COMPLETE: 41 shipped ST source items, the 3 in-sprint-resolved found defects BLG-BE-204/BLG-FE-273/BLG-QA-251, and BLG-FE-240 (ST-16, superseded by ST-12, v2.45 STEP 3.1); split-achievability carve-out leaves BLG-AI-23 (ST-24) and BLG-OPS-48 (ST-29) open); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -5388,6 +5388,8 @@ Trade Entry hides the pre-entry panel when the linked plan has a stored `pre_ent
 - If the ruling applies the rule: a plan-linked entry whose snapshot has an unacknowledged WARN/FAIL (or is stale) shows the panel once and disables Submit until it is acknowledged, and a plan whose checks all passed still shows only the on-plan line (Playwright)
 - Saving after the acknowledgement writes one `pre_entry_override` event (`source: trade_entry`) (backend test)
 
+
+**Notes:** Scope bullet 1 and the first AC are met: `ESC-CLOSE-20261106-01` (Strategy Rules & System Intent Owner, 2026-11-06) ruled option (a), so §4.2.1 v1.23 applies to the plan-linked route. The divergence is recorded as a Known deviation in `strategy_rules.md` §4.2.1 (v1.26). The conditional scope (show the panel on Trade Entry, Branch A gating, the override event, and the `position_form.md` and design record updates) now applies.
 ---
 
 ### BLG-QA-244 — Suppress the ⌘K tip toast in Playwright by default
