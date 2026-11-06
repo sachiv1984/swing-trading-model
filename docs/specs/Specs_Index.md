@@ -4,7 +4,7 @@
 **Purpose:** Single map of canonical product truth
 **Audience:** Product, Engineering, Analytics, Strategy
 **Status:** Authoritative
-**Last Updated:** 2026-11-03 (post-ship closure 2026-10-29__release-v9.14 STEP 7 — §54 Test Coverage Gaps (v9.14) added; STEP 7.3 sweep resolved 6 TSG entries); prior — 2026-11-02 (ST-50, EPIC-07, v9.14, BLG-GOV-184 — `metrics/win_rate_surface_consistency_2026-11-02.md` registered); prior — 2026-11-02 (ST-46, EPIC-07, v9.14, BLG-SPEC-77 — `frontend/patterns/gate_status_indicator.md` registered); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-06 (post-ship closure 2026-11-03__release-v9.15 STEP 7 — §55 Test Coverage Gaps (v9.15) added; STEP 7.3 sweep resolved 4 TSG entries); prior — 2026-11-03 (post-ship closure 2026-10-29__release-v9.14 STEP 7 — §54 Test Coverage Gaps (v9.14) added; STEP 7.3 sweep resolved 6 TSG entries); prior — 2026-11-02 (ST-50, EPIC-07, v9.14, BLG-GOV-184 — `metrics/win_rate_surface_consistency_2026-11-02.md` registered); prior history retained — see prior entries in version control
 
 ---
 
@@ -1320,7 +1320,7 @@ Identified during delivery verification (`verification_report.md §6`): **3 test
 ### 51.2 TSG-v9.11-02 — EPIC-02: Live holding-days readers guarded only by a source-scan test
 
 **Identified:** 2026-10-12 (delivery verification 2026-10-08__release-v9.11; first raised at PR #1969 review)
-**Status:** Open
+**Status:** RESOLVED — 2026-11-06, cycle `2026-11-03__release-v9.15` (ST-39, `BLG-QA-220` ✅ COMPLETE; post-ship closure STEP 7.3)
 **Owner:** QA & Testing Owner
 **Gap:** ST-12's compliance and AI-briefing readers of live holding days have only a source-scan guard, with no behavioural test. Qualifying reason: Spec section partly uncovered: `strategy_rules.md` §6.2 calendar-day grace on two reader paths.
 **Backlog item:** BLG-QA-220
@@ -1352,7 +1352,7 @@ Identified during delivery verification (`verification_report.md §6`): **2 test
 ### 52.1 TSG-v9.12-01 — EPIC-01: Journal-summary UUID path and daily cost sum tested only against a stubbed database
 
 **Identified:** 2026-10-15 (delivery verification 2026-10-12__release-v9.12; first raised at PR #2022 review)
-**Status:** Open
+**Status:** RESOLVED — 2026-11-06, cycle `2026-11-03__release-v9.15` (ST-40, `BLG-QA-221` ✅ COMPLETE; post-ship closure STEP 7.3)
 **Owner:** QA & Testing Owner
 **Gap:** The `ai_audit_log.trade_ids` `UUID[]` write/read path (DS-31) and the `claude_audit_log` daily cost sum used by `POST /ai/check-daily-cost` are covered only by tests against a stubbed database. Qualifying reason: Spec sections partly uncovered: `data_model.md#DS-31`; `ai_endpoints.md#POST /ai/check-daily-cost`.
 **Backlog item:** BLG-QA-221
@@ -1454,7 +1454,7 @@ Identified during delivery verification (`verification_report.md §6`): **3 test
 ### 54.2 TSG-v9.14-02 — EPIC-05: Exit modal date test asserts the defective UTC prefill
 
 **Identified:** 2026-11-02 (delivery verification 2026-10-29__release-v9.14; first raised at PR #2139 review)
-**Status:** Open
+**Status:** RESOLVED — 2026-11-06, cycle `2026-11-03__release-v9.15` (ST-04, `BLG-FE-243` ✅ COMPLETE; post-ship closure STEP 7.3)
 **Owner:** QA & Testing Owner; Frontend Specifications & UX Documentation Owner
 **Gap:** SC-PEM-01 asserts the UTC date that Exit, Trade Entry and Cash Management prefill, so it passes on the local-date defect instead of catching it. Qualifying reason: Core user journey (exit) asserted against defective behaviour. The fix scope updates SC-PEM-01 and adds a Europe/London 00:30 case.
 **Backlog item:** BLG-FE-243
@@ -1462,7 +1462,7 @@ Identified during delivery verification (`verification_report.md §6`): **3 test
 ### 54.3 TSG-v9.14-03 — EPIC-07: No test pins the canonical win rate on two surfaces
 
 **Identified:** 2026-11-02 (delivery verification 2026-10-29__release-v9.14; first raised at ST-50)
-**Status:** Open
+**Status:** RESOLVED — 2026-11-06, cycle `2026-11-03__release-v9.15` (`BLG-FE-239` ✅ COMPLETE via ST-15; `BLG-FE-240` ✅ COMPLETE as superseded by ST-12, which removed the legacy Dashboard widgets; post-ship closure STEP 7.3)
 **Owner:** QA & Testing Owner; Metrics Definitions & Analytics Canonical Owner
 **Gap:** Trade History counts `pnl = 0` as a win, and the Dashboard win-rate widgets read open positions only; no test pins either surface to `metrics_definitions.md` §Win Rate. Qualifying reason: Spec section uncovered on two surfaces: `metrics_definitions.md#Win Rate`. Both fix scopes include Playwright tests.
 **Backlog item:** BLG-FE-239, BLG-FE-240
@@ -1470,6 +1470,20 @@ Identified during delivery verification (`verification_report.md §6`): **3 test
 **Endpoint coverage drift check (STEP 6 advisory):** PASSED, no drift (153 normalised `openapi.yaml` endpoints, 0 missing from `api_performance_baseline.md`; `scripts/check_api_performance_baseline_drift.py` also PASSED). No route was added this cycle and one was retired (`POST /trade-plans/{plan_id}/generate-thesis`, ST-22), so no new top-level prefix reaches `categorizeEndpoint()`.
 
 **TSG backlog reconciliation (§7.3 — full-document sweep):** Scanned all 43 pre-existing `### N.N TSG-*` entries for `**Status:** Open` before adding §54. 12 Open entries found (TSG-v9.10-01..03, TSG-v9.11-02..03, TSG-v9.12-01..02, TSG-v9.13-01..05). 6 resolved: TSG-v9.10-01 (`BLG-QA-214`, ST-33), TSG-v9.10-02 (`BLG-QA-215`, ST-34), TSG-v9.10-03 (`BLG-QA-216`, ST-35), TSG-v9.11-03 (`BLG-QA-219`, ST-37), TSG-v9.13-04 (`BLG-QA-237`, ST-29) and TSG-v9.13-05 (`BLG-BE-190`, ST-09), all COMPLETE this cycle. The other 6 remain Open; their backlog items are still open.
+
+---
+
+## 55. Test Coverage Gaps — v9.15 (2026-11-03__release-v9.15)
+
+Identified during delivery verification (`verification_report.md §6`): **0 new test coverage gaps.** All 45 referenced `test_scenarios` files across the 7 EPICs exist on disk and were cited as run. Frontend-visible ACs in EPIC-01, EPIC-02 and EPIC-03 have Playwright coverage. Known coverage remainders are already tracked by their own backlog items and are not new gaps: `BLG-QA-250` (19 remaining cross-file duplicate scenario IDs), `BLG-QA-252` and `BLG-QA-253` (CI detector fail-safe and docs-coupled selection tests).
+
+| gap_id | EPIC | Description | Disposition |
+|--------|------|-------------|-------------|
+| — | — | No gaps identified this cycle | not_applicable |
+
+**Endpoint coverage drift check (STEP 6 advisory):** PASSED, no drift (153 normalised `openapi.yaml` endpoints, 0 missing from `api_performance_baseline.md`; `scripts/check_api_performance_baseline_drift.py` also PASSED). No route was added or retired this cycle, so no new top-level prefix needs a `categorizeEndpoint()` case.
+
+**TSG backlog reconciliation (§7.3 — full-document sweep):** Scanned all 46 pre-existing `### N.N TSG-*` entries for `**Status:** Open` before adding §55. 9 Open entries found (TSG-v9.11-02, TSG-v9.12-01..02, TSG-v9.13-01..03, TSG-v9.14-01..03). 4 resolved: TSG-v9.11-02 (`BLG-QA-220`, ST-39), TSG-v9.12-01 (`BLG-QA-221`, ST-40), TSG-v9.14-02 (`BLG-FE-243`, ST-04), TSG-v9.14-03 (`BLG-FE-239` via ST-15; `BLG-FE-240` bannered as superseded by ST-12 under `post_ship_closure.md` v2.45 STEP 3.1). The other 5 remain Open with open backlog items.
 
 ---
 
@@ -1486,6 +1500,7 @@ Identified during delivery verification (`verification_report.md §6`): **3 test
 
 | Date | Change |
 |------|--------|
+| 2026-11-06 | Post-ship closure `2026-11-03__release-v9.15` — §55 Test Coverage Gaps (v9.15) added: 0 new gaps (remainders already tracked by `BLG-QA-250`, `BLG-QA-252`, `BLG-QA-253`); endpoint coverage drift check PASSED, 0 gaps, no new routes; full-document TSG sweep: 9 Open entries checked, 4 resolved (TSG-v9.11-02, TSG-v9.12-01, TSG-v9.14-02, TSG-v9.14-03); §6/§7: no items resolved by this delivery. |
 | 2026-11-03 | Post-ship closure `2026-10-29__release-v9.14` — §54 Test Coverage Gaps (v9.14) added: 3 gaps (TSG-v9.14-01..03), each already tracked by a backlog item (`BLG-QA-239`, `BLG-FE-243`, `BLG-FE-239`/`BLG-FE-240`), plus 2 not-applicable rows; endpoint coverage drift check PASSED, 0 gaps; full-document TSG sweep: 12 Open entries checked, 6 resolved (TSG-v9.10-01..03, TSG-v9.11-03, TSG-v9.13-04, TSG-v9.13-05); §6/§7: no items resolved by this delivery |
 | 2026-11-02 | ST-50 (EPIC-07, v9.14, BLG-GOV-184) — `docs/specs/metrics/win_rate_surface_consistency_2026-11-02.md` registered under metrics. |
 | 2026-11-02 | ST-46 (EPIC-07, v9.14, BLG-SPEC-77) — `docs/specs/frontend/patterns/gate_status_indicator.md` registered under Frontend — Patterns. |

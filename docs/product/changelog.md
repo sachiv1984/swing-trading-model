@@ -3,11 +3,88 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-11-03 (post-ship closure 2026-10-29__release-v9.14 — v9.14 entry added); prior — 2026-10-29 (post-ship closure 2026-10-16__release-v9.13 — v9.13 entry added); prior — 2026-10-15 (post-ship closure 2026-10-12__release-v9.12 — v9.12 entry added); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-06 (post-ship closure 2026-11-03__release-v9.15 — v9.15 entry added); prior — 2026-11-03 (post-ship closure 2026-10-29__release-v9.14 — v9.14 entry added); prior — 2026-10-29 (post-ship closure 2026-10-16__release-v9.13 — v9.13 entry added); prior history retained
 
 > This document is a human-maintained record of what was shipped in each product version and when. It records delivery milestones and notable decisions. It is not an immutable system record — for point-in-time system status reports, see `docs/operations/status_reports/`.
 
 > **Authoring convention — `User Impact` column (added v8.8, ST-13, BLG-FE-161):** each `### Changes shipped` table row carries a `User Impact` cell in addition to `Description`. Write `User Impact` only for EPICs that changed something a user can see, click, or notice the effect of — one to two sentences, present tense (or implied second person), no ticket IDs, no implementation nouns (endpoint/table/component names). Leave it `—` for backend/infra/governance/test-coverage rows with no user-facing effect. `Description` is retained unchanged as the engineering record — it is not replaced. `GET /changelog/latest` sources the in-app "What's New" panel from `User Impact` only; rows with a blank/`—` cell are excluded from that feed entirely (`docs/specs/api_contracts/changelog_endpoints.md`).
+
+---
+
+## v9.15 — Site Structure & Usability, Phase 1 — 2026-11-06
+Cycle: 2026-11-03__release-v9.15
+Verified: Verified_with_deviations
+Verification report: claude/cycles/2026-11-03__release-v9.15/verification_report.md
+
+### Changes shipped
+| EPIC | Description | User Impact | Spec sections updated |
+|------|-------------|-------------|----------------------|
+| EPIC-01 | Trade Entry Integrity & Sizing — every route into Trade Entry shows the §4.2 pre-entry checks with acknowledge-to-proceed (Branch A, `ESC-EXEC-20261104-01`, BLG-FE-244, P1); the FX rate is pre-filled from the live rate and a US trade cannot be saved without one (BLG-FE-245, P1); the FX rate is labelled the same on entry and exit; trade, exit and cash dates default to the local date; the ATR preview and save normalise the ticker the same way; the Trail Stop modal uses the §7.2 multipliers and breakeven floor; signal cost says it includes fees and the zero-ATR sizing reason is plain English | Trade Entry now shows the pre-entry checks however you open it, and asks you to acknowledge a warning or failure before saving. The FX rate is filled in from the live rate, dates default to your local day, and the Trail Stop value matches the trailing-stop rules. | `docs/specs/frontend/components/position_form.md#Pre-Entry Checks`, `#FX Rate`; `exit_modal.md`; `trade_plan.md`; `docs/specs/api_contracts/portfolio_endpoints.md`; `strategy_rules.md#4.2.1` (v1.23); `stop_trail_endpoint.md`; `positions.md`; `signals.md`; `signal_endpoints.md`; design records `trade-entry-pre-entry-checks`, `trade-entry-fx-rate` |
+| EPIC-02 | Site Structure & Usability Phase 1 — Specs, Vocabulary & Quick Wins — navigation spec v2 with a glossary UI-label section; the Dashboard "Today" action-list spec; one Journal area spec; one name per page and action across sidebar, headings, command palette and tab title (`src/lib/pageLabels.js`); the legacy widget Dashboard route removed, with the Daily Position Monitor moved to the Positions header (`ESC-EXEC-20261104-05`); a browser-tab title per page; the version label, What's New heading and sidebar height fixed | Each page now has one name everywhere you see it, including the browser tab. The old duplicate Dashboard is gone (the Daily Monitor is now on the Positions page), and the footer version, What's New heading and sidebar height display correctly. | `docs/specs/frontend/navigation.md`; `glossary.md`; `dashboard.md#1B`; `journal.md`; `positions.md`; design record `site-structure-phase1` |
+| EPIC-03 | Metric & Display Correctness — Trade History stops counting a break-even trade as a win (closes the BLG-FE-239 Known Deviation); View Trail wording matches the read-only ruling; the Strategy Benchmark Rebalance badge meets contrast; the price-alert duplicate fallback no longer returns 500 at >4 dp; strategy v1.15's effective date is its deploy date; a failed summary regeneration shows the code-written fallback; the gap-risk weekend statistic follows the exchange calendar; the open-position pnl definition matches the code | Trade History's win rate no longer counts break-even trades as wins. The Rebalance badge is readable in both themes, and a failed monthly summary regeneration shows the fallback summary instead of nothing. | `metrics_definitions.md#Win Rate`, `#Position Risk`; `trade_history.md#Summary Stats`; `positions.md#Trail Stop Action`; `strategy_benchmark.md#7.3`; `data_model.md#DS-28`; `reports.md#AI Summary`; `data_model_positions_dictionary.md#5.2` |
+| EPIC-04 | AI Output Checks & §13 Boundary — briefing ticker-caveat token review (production read carried, BLG-AI-27); the journal summary advisory check amended under ruling (A″) for remaining false positives/misses and "could/may help explain"; the chat stop-time focus rule ignores upper-case non-ticker words; a §13 boundary clarity pass on the AI journal summary | — | `docs/specs/api_contracts/ai_endpoints.md#POST /ai/daily-briefing`, `#POST /ai/journal-summary`, `#POST /ai/chat`; `ai_s13_boundary_test_suite.md#Scenario B-JS-04`; `strategy_rules.md#13.2`, `#13.5` |
+| EPIC-05 | Operations, Security & Market-Data Monitoring — the `ANTHROPIC_API_KEY` six-month scope audit (found the overdue rotation, BLG-OPS-214, and a key copy in the Pages build, BLG-OPS-213); rebalance-exit generation checks that today's screener run completed (DS-39); governance-only and docs-only pushes skip the code-test suites; the month-end job tells "no qualifying tickers" apart from "momentum run missing". ST-33 (market-data call-volume baseline) returned to the backlog | — | `docs/security/anthropic_api_key_scope_audit_2026-11-06.md`; `api_key_rotation_policy.md`; `signal_endpoints.md#POST /signals/rebalance-exit`; `data_model.md#DS-39`; `.github/actions/detect-code-changes/action.yml`; `ci-tests.yml` |
+| EPIC-06 | Data Model & Spec Debt — the 8 contract success-example drifts cleared; DS-38 re-applies NOT NULL on `positions.portfolio_id` and `total_cost` (staging and production); DS-17's open-position unique index applied to staging | — | `docs/reference/openapi.yaml`; `health_endpoints.md#POST /test/endpoints`; `reports_endpoints.md#GET /reports/tax-year`; `data_model.md#DS-38`, `#DS-17` |
+| EPIC-07 | QA & Governance Tooling — the gate scan treats a shipped roadmap feature ID as a met gate; the state check counts uninitialised EPICs as pending; behavioural tests for live holding days; real-Postgres tests for the UUID[] path and daily cost sum; the `utils.*` leak guard covers patched attributes; SC-TS-* scenario IDs unique with a uniqueness check; an escalation SLA-breach dry run; strategic exclusions and Priority 3 initiatives reviewed | — | `scripts/scan_backlog_gate_conditions.py`; `release_planning_prompt.md`; `scripts/check_execution_state_consistency.py`; `data_model.md#DS-31`; `scripts/check_e2e_scenario_id_uniqueness.py`; `docs/ops/escalation_sla_breach_dry_run_2026-11-05.md`; ST-44, ST-45 decision records |
+
+### Deviations accepted
+| Ref | Priority | Description | Accepted by |
+|-----|----------|-------------|-------------|
+| BLG-OPS-214 (ST-29 found defect) | P1 | `ANTHROPIC_API_KEY` rotation overdue since 2026-08-25 (only key created 2026-05-25, never rotated). Pre-existing. Carried post-merge, v9.16 | PO + DoQ (2026-11-06T10:06:48Z, the user in session) |
+| BLG-OPS-213 (ST-29 found defect) | P2 | A second copy of the key is injected into the public GitHub Pages build as `REACT_APP_ANTHROPIC_API_KEY`. Pre-existing. Carried post-merge, v9.16 | PO + DoQ (2026-11-06T10:06:48Z, the user in session) |
+| BLG-FE-271 (ST-01 found gap) | P2 | Plan-linked Trade Entry does not require the acknowledgement when the plan's stored checks were WARN/FAIL. Follows the locked design record; whether `strategy_rules.md` §4.2.1 v1.23 covers this route awaits a Strategy Rules & System Intent Owner ruling. v9.16 | PO (2026-11-04); PO + DoQ re-confirmed (2026-11-06) |
+
+6 minor deviations (P3) — see `verification_report.md §4`: ST-20 (`BLG-BE-203`), ST-24 (`BLG-AI-27`), ST-29 AC 1 register drift (`BLG-SPEC-223`), ST-31 narrowed by ruling with no remainder (`BLG-OPS-211`), ST-42 (`BLG-QA-250`), ST-40 found defect (`BLG-BE-206`). Three P2 found defects were fixed in-sprint (`BLG-BE-204`, `BLG-FE-273`, `BLG-QA-251`). No canonical-spec `DEV-*` records were filed.
+
+### Tech backlog items shipped
+- [ST-01] [U] Pre-entry checks on every route into Trade Entry, acknowledge to proceed (BLG-FE-244)
+- [ST-02] [U] Trade Entry FX rate pre-filled from the live rate (BLG-FE-245)
+- [ST-03] [U] FX rate labelled the same way on entry and exit (BLG-FE-246)
+- [ST-04] [U] Trade, exit and cash dates default to the local date (BLG-FE-243)
+- [ST-05] [D] Ticker normalised the same way for the ATR preview and save (BLG-FE-222)
+- [ST-06] [U] Trail Stop modal ATR value uses the §7.2 multipliers and breakeven floor (BLG-BE-173)
+- [ST-07] [U] Signal cost labelled as including fees; plain-English zero-ATR sizing reason (BLG-FE-219)
+- [ST-08] [P] Navigation spec v2 with a glossary UI-label section (BLG-SPEC-214)
+- [ST-09] [P] Dashboard "Today" action-list spec (BLG-SPEC-215)
+- [ST-10] [P] One Journal area spec (BLG-SPEC-216)
+- [ST-11] [U] One name per page and action across sidebar, headings and command palette (BLG-FE-248)
+- [ST-12] [U] Legacy widget Dashboard route removed; Daily Monitor moved to Positions (BLG-FE-247)
+- [ST-13] [U] Browser-tab title for each page (BLG-FE-249)
+- [ST-14] [U] Version label, What's New heading and sidebar height fixed (BLG-FE-266)
+- [ST-15] [U] Trade History stops counting a break-even trade as a win (BLG-FE-239)
+- [ST-17] [U] View Trail modal wording aligned with the read-only ruling (BLG-FE-218)
+- [ST-18] [U] Strategy Benchmark Rebalance badge contrast fixed; exit-reason badge style settled (BLG-FE-220)
+- [ST-19] [D] Price-alert duplicate fallback no longer returns 500 above 4 dp (BLG-BE-170)
+- [ST-20] [D] Strategy v1.15 effective date set to its deploy date; v1.17/v1.20 carried (BLG-BE-171)
+- [ST-21] [U] Failed monthly P&L summary regeneration shows the code-written fallback (BLG-BE-172)
+- [ST-22] [D] Gap-risk weekend statistic follows the exchange calendar (BLG-BE-174)
+- [ST-23] [D] Open-position pnl dictionary entry matches the code (BLG-SPEC-198)
+- [ST-24] [D] Briefing ticker-caveat token review — production token list carried, BLG-AI-27 (BLG-AI-23)
+- [ST-25] [D] Journal summary advisory check: remaining false positives and misses (BLG-AI-24)
+- [ST-26] [D] Chat stop-time focus rule ignores upper-case non-ticker words (BLG-AI-25)
+- [ST-27] [D] Journal summary advisory check stops flagging "could/may help explain" (BLG-AI-26)
+- [ST-28] [G] §13 boundary language clarity pass — AI journal summarisation (BLG-GOV-194)
+- [ST-29] [D] `ANTHROPIC_API_KEY` six-month scope audit — rotation and register remainders carried (BLG-OPS-48)
+- [ST-30] [D] Rebalance-exit generation checks today's screener run completed (BLG-OPS-190)
+- [ST-31] [D] Code-test workflows skip governance-only and docs-only pushes (BLG-OPS-191)
+- [ST-32] [D] Month-end job separates "no qualifying tickers" from "momentum run missing" (BLG-OPS-192)
+- [ST-34] [D] 8 contract success-example drifts cleared (BLG-SPEC-194)
+- [ST-35] [D] NOT NULL re-applied on `positions.portfolio_id` and `total_cost` (BLG-SPEC-196)
+- [ST-36] [D] DS-17 open-position unique index applied to staging (BLG-SPEC-197)
+- [ST-37] [G] Gate scan treats a shipped roadmap feature ID as a met gate (BLG-GOV-404)
+- [ST-38] [G] Execution-state check counts uninitialised EPICs as pending (BLG-QA-240)
+- [ST-39] [D] Behavioural tests for live holding days in compliance and AI briefing (BLG-QA-220)
+- [ST-40] [D] Real-Postgres tests for the `ai_audit_log` UUID[] path and daily cost sum (BLG-QA-221)
+- [ST-41] [D] `utils.*` leak guard extended to patched attributes (BLG-QA-222)
+- [ST-42] [D] SC-TS-* Playwright scenario IDs unique, with a uniqueness check (BLG-QA-224)
+- [ST-43] [G] Escalation SLA breach dry-run test (BLG-GOV-193)
+- [ST-44] [G] Strategic exclusions review cadence (BLG-GOV-195)
+- [ST-45] [G] Priority 3 deferred-initiative sunset review (BLG-GOV-196)
+
+ST-16 (BLG-FE-240) was deferred at planning (superseded by ST-12); ST-33 (BLG-OPS-197) was returned to the backlog.
+
+Sign-off: Product Owner — 2026-11-06
+QA sign-off: Director of Quality — 2026-11-06
 
 ---
 

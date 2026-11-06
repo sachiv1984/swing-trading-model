@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.16
-**Last Updated:** 2026-10-29 (post-ship closure `2026-10-16__release-v9.13` STEP 8, immediate lessons-learnt actions — STEP 2.1 found-defect severity applies to any grade, including `Pass with notes` (LL-v9.13-P4-01); seal-marked `post-merge` ACs are a planned remainder, not a deviation (LL-v9.13-P3-03)); prior — 2026-10-12 (post-ship closure `2026-10-08__release-v9.11` STEP 8, immediate lessons-learnt action LL-v9.11-P4-01 — STEP 2.1 `Pass_with_deviation` found-defect severity rule); prior — 2026-10-07 (post-ship closure `2026-10-06__release-v9.10` STEP 8, carried v9.9 lessons-learnt action LL-v9.9-P4-01 — STEP 2.1/2.3 gain a `Pass_with_deviation` no-remainder variant: a comment may cite the Owner ruling that fully disposes of the narrowing in place of a backlog item); prior history retained — see prior entries in version control
+**Version:** 3.17
+**Last Updated:** 2026-11-06 (post-ship closure `2026-11-03__release-v9.15` STEP 8 — STEP 1 accepts `deferred_at_planning` as an outcome, with the same backlog check as `returned_to_backlog` (LL-v9.15-P4-01)); prior — 2026-10-29 (post-ship closure `2026-10-16__release-v9.13` STEP 8, immediate lessons-learnt actions — STEP 2.1 found-defect severity applies to any grade, including `Pass with notes` (LL-v9.13-P4-01); seal-marked `post-merge` ACs are a planned remainder, not a deviation (LL-v9.13-P3-03)); prior — 2026-10-12 (post-ship closure `2026-10-08__release-v9.11` STEP 8, immediate lessons-learnt action LL-v9.11-P4-01 — STEP 2.1 `Pass_with_deviation` found-defect severity rule); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -233,12 +233,12 @@ Purpose: confirm every item that was in scope has a traceable outcome.
 For every ST item in the authoritative backlog slice (identified in STEP -1.1):
 
 1. Locate its record in `execution_state.json`.
-2. Check status — must be `done`, `merged`, or `returned_to_backlog`.
+2. Check status — must be `done`, `merged`, `returned_to_backlog`, or `deferred_at_planning` (the status `execution_prompt.md` STEP 5.1 requires for a slice item deferred at Sprint Planning; LL-v9.15-P4-01, applied v9.15 post-ship closure). Record a `deferred_at_planning` item in the traceability matrix with Outcome `deferred_at_planning` and its recorded reason.
    - If any item has no record, or has status `not_started` / `in_progress` / `blocked_*` without a `returned_to_backlog` disposition: traceability gap — halt in `strict` mode; flag and continue in `standard` mode.
 3. For `done` / `merged` items: confirm `spec_references` is non-empty.
    - If `spec_references = []`: check `spec_reference_not_applicable`. If `true` (per `execution_prompt.md` STEP 3.1.A Case E — a structured field, added v3.55): this is exempt, not a gap — record it in the traceability matrix as `spec_reference_not_applicable` with the story's `spec_reference_not_applicable_reason` as the rationale, and do **not** count it toward the `Traceability gaps` flag count. Legacy records predating this field are exempt on the same terms if `notes` contains exactly "no prior spec applicable".
    - If `spec_references = []` and neither exemption applies: flag as traceability gap. Cannot verify against spec with no reference.
-4. For `returned_to_backlog` items: confirm a corresponding entry exists in `claude/backlog/backlog.md` referencing this `cycle_id`.
+4. For `returned_to_backlog` and `deferred_at_planning` items: confirm a corresponding entry exists in `claude/backlog/backlog.md` referencing this `cycle_id`.
    - If the backlog entry is missing: **add it now** (permitted write):
      ```
      - [ST-xx] <title> — returned from <cycle_id>: <reason>. See sprint_close.md.

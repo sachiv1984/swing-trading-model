@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.44
-**Last Updated:** 2026-11-03 (`ESC-RB-20261103-01` — Next-step line: `run roadmap` first when next release is `[TBD]`); prior — 2026-11-03 (AUD-2026-11-03-002 — STEP 10 never writes `last_audit_cycle_count`; `run audit` is its only writer); prior — 2026-10-29 (`ESC-CLOSE-20261029-02` ruling, option (b) — §5 and STEP 5: a `strategy_rules.md` Known Deviations entry is routed to its owner by an `ESC-CLOSE-*` escalation with proposed text, not edited by this routine); prior history retained — see prior entries in version control
+**Version:** 2.45
+**Last Updated:** 2026-11-06 (post-ship closure `2026-11-03__release-v9.15` STEP 8 — STEP 3.1 banners a planning-deferred item that is already met or superseded (LL-v9.15-Release-02)); prior — 2026-11-03 (`ESC-RB-20261103-01` — Next-step line: `run roadmap` first when next release is `[TBD]`); prior — 2026-11-03 (AUD-2026-11-03-002 — STEP 10 never writes `last_audit_cycle_count`; `run audit` is its only writer); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 **Process Reference:** None — the former process document `docs/team_skills/pmo/processess/post-ship_closure.md` was retired 2026-03-13 (commit `11db3666`, deleted with its whole `processess/` directory); this prompt is the sole authority for the Post-Ship Closure Engine.
@@ -348,6 +348,8 @@ For every ST item in `execution_state.json` with status `done` or `merged`:
 - Mark it **✅ COMPLETE** with closure date and `cycle_id` reference.
 - If the item is not in `backlog.md`: record the gap in the closure record (permitted to add a note; do not silently skip).
 - **Split-achievability carve-out (LL-v8.9-P-Closure-01):** Before marking a backlog item ✅ COMPLETE, check whether the corresponding ST item's own `execution_state.json` notes record a partial/split-achievability outcome (only part of the item's scope actually landed), or whether `sprint_close.md`/`verification_report.md` carries an open, carried-forward escalation referencing that backlog item's ID. If so: leave the backlog item's status as-is (do not mark COMPLETE) — instead record the split-achievability disposition under the closure record's §6 Outstanding Actions, naming the specific outstanding scope and its tracking escalation/reference. Applying this literally without the carve-out would mark a genuinely-partial item COMPLETE and — since STEP 12 (`groom backlog`) runs later in this same routine — risk it being archived the same session, silently dropping its escalation cross-reference from active tracking (confirmed real risk at `2026-08-17__release-v8.9`, `BLG-GOV-264`/`ESC-EXEC-20260818-02`).
+
+- **Planning-deferred items with no work left (LL-v9.15-Release-02, applied v9.15 post-ship closure):** for every `execution_state.json.deferred_at_planning` entry whose recorded reason is that the item is already met, or is superseded by a story that merged this cycle, add the ✅ COMPLETE banner to its backlog item as well, naming the reason and the superseding story. Otherwise the item re-enters the next Release Planning ready pool. At `2026-11-03__release-v9.15` Release Planning, `BLG-GOV-185` (v9.14 ST-51, deferred as already met) was selected again because it had no banner. Leave an item open if the deferral was for any other reason.
 
 ### 3.2 Confirm Phase 4 additions are present
 

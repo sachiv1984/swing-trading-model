@@ -3,7 +3,7 @@
 **Class:** Operational Record (Class 3)
 **Status:** Active
 **Version:** 1.4
-**Last Updated:** 2026-11-03 (post-ship closure 2026-10-29__release-v9.14 — v9.14 row added, rolling average window advanced to v9.9–v9.14); prior — 2026-10-29 (post-ship closure 2026-10-16__release-v9.13 — v9.13 row added, rolling average window advanced to v9.8–v9.13); prior — 2026-10-15 (post-ship closure 2026-10-12__release-v9.12 — v9.12 row added, rolling average window advanced to v9.7–v9.12); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-06 (post-ship closure 2026-11-03__release-v9.15 — v9.15 row added, rolling average window advanced to v9.10–v9.15); prior — 2026-11-03 (post-ship closure 2026-10-29__release-v9.14 — v9.14 row added, rolling average window advanced to v9.9–v9.14); prior — 2026-10-29 (post-ship closure 2026-10-16__release-v9.13 — v9.13 row added, rolling average window advanced to v9.8–v9.13); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Created by:** ST-13 (BLG-GOV-09, v2.4)
 ---
@@ -126,7 +126,9 @@
 
 | v9.14 | 53      | 53        | 1.00     | All 53 stories done across 7 EPICs (production deploy & market-data resilience build-and-ship, sizing/exit/position correctness, AI output safety & audit hygiene, reports/dashboard/System Status UI build-and-ship, test coverage & tooling, operations/cost/security, specs & governance), sized to 28.00 days (top of capacity band, "use full capacity"); ST-51 deferred at planning as already met (not counted); P1 `BLG-OPS-193` shipped as ST-01 (production deploy restored); no roadmap-committed items (DL-087); schema change DS-37; 6 delegations (4 unblocked in-cycle, 2 carried post-sprint to `BLG-OPS-201`/`BLG-GOV-399`); 5 escalations all resolved within SLA; 0 returned, 0 blocked; Verified_with_deviations (3 accepted P2 found defects `BLG-FE-239`, `BLG-FE-240`, `BLG-FE-243`; 2 P3 `Pass_with_deviation`: ST-01 → `BLG-OPS-204` resolved, ST-54 → `BLG-GOV-403`) |
 
-**Rolling 6-cycle average (v9.9–v9.14):** 1.00
+| v9.15 | 44      | 43        | 0.98     | 43 of 44 stories done across 7 EPICs (Trade Entry integrity & sizing build-and-ship, Site Structure & Usability Phase 1 specs/vocabulary/quick wins, metric & display correctness, AI output checks & §13, operations/security/market-data monitoring, data model & spec debt, QA & governance tooling), sized to 28.00 days (top of capacity band, "use full capacity"); P1 `BLG-FE-244`/`BLG-FE-245` shipped as ST-01/ST-02. ST-33 (`BLG-OPS-197`, conditional, gate 2026-11-09) returned to the backlog in flight; ST-16 (`BLG-FE-240`) deferred at planning as superseded by ST-12 and not counted as Planned (v9.14 ST-51 precedent) |
+
+**Rolling 6-cycle average (v9.10–v9.15):** 1.00 (0.996: five cycles at 1.00 and v9.15 at 0.977)
 
 ---
 

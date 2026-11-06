@@ -1,13 +1,62 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-10-29 (post-ship closure 2026-10-16__release-v9.13, manage roadmap STEP 11 — "v9.13 — Committed items" Now-horizon section retired: BLG-FE-226, BLG-FE-227 and BLG-BE-182 shipped v9.13); prior — 2026-10-15 (post-ship closure 2026-10-12__release-v9.12, manage roadmap STEP 11 — "v9.12 — Committed items" Now-horizon section retired: BLG-BE-162 shipped v9.12); prior — 2026-10-12 (post-ship closure 2026-10-08__release-v9.11, manage roadmap STEP 11 — "v9.11 — Committed items" Now-horizon section retired: BLG-BE-152, BLG-BE-150, BLG-FE-206, BLG-BE-154 shipped v9.11); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-06 (post-ship closure 2026-11-03__release-v9.15, manage roadmap STEP 11 — "v9.15 — Committed items" Now-horizon section retired: all ten DL-088 items shipped; programme plan carried forward in current_roadmap.md §3); prior — 2026-10-29 (post-ship closure 2026-10-16__release-v9.13, manage roadmap STEP 11 — "v9.13 — Committed items" Now-horizon section retired: BLG-FE-226, BLG-FE-227 and BLG-BE-182 shipped v9.13); prior — 2026-10-15 (post-ship closure 2026-10-12__release-v9.12, manage roadmap STEP 11 — "v9.12 — Committed items" Now-horizon section retired: BLG-BE-162 shipped v9.12); prior history retained — see prior entries in version control
 
 # Roadmap Archive — Momentum Trading Assistant
 
 This document is the permanent record of completed and killed roadmap items retired from `claude/roadmap/current_roadmap.md`. Items are listed in retirement order, most recent first.
 
 Entries are append-only. Do not edit existing entries.
+
+---
+
+## v9.15 — Committed items (Now horizon)
+
+**Original roadmap location:** §3 Delivery Plan — Horizon: Now
+**Status at retirement:** ✅ Complete
+**Retired from active roadmap:** 2026-11-06
+**Shipped version:** v9.15
+**Cycle reference:** 2026-11-03__release-v9.15
+**Verification report:** claude/cycles/2026-11-03__release-v9.15/verification_report.md
+**Decision log reference:** DL-088 (roadmap rebalance `2026-11-03__scheduled` — committed ten Site Structure & Usability Phase 1 items to v9.15; not a kill/defer decision)
+**Retirement confirmed by:** Product Owner (acceptance recorded in `verification_report.md` §9, the user in session, 2026-11-06)
+
+*Carry-forward note:* the section's Programme plan table was not retired. It moved to `current_roadmap.md` §3 `### Programme plan — Site Structure & Usability (DL-088)` (BLG-GOV-406), because Phases 2, 3 and the close-out have not shipped.
+
+### Original Roadmap Entry
+
+### v9.15 — Site Structure & Usability, Phase 1 (roadmap rebalance `2026-11-03__scheduled`, DL-088) — ✅ Complete — Shipped 2026-11-06 — cycle: 2026-11-03__release-v9.15
+
+*Added by the rebalance, not by Release Planning: the release's full scope, capacity fit and story breakdown are set at `plan release v9.15`. The items below are committed to it.*
+
+**Release focus:** this release opens the **Site Structure & Usability programme**, from the Head of UX & Design website review of 2026-11-03 (first-principles target vs the current site; IA verdict "modify substantially, don't redesign": keep the domain model, URLs and page content; regroup navigation by the trader's jobs, remove duplicate surfaces, fix vocabulary and onward links; redesign only the home page and the entry flow). Phase 1 closes the strategy-integrity and sizing gaps first, fixes the vocabulary, and writes the specs Phase 2 builds from.
+
+| Item | Why it is here | Priority | Effort |
+|------|----------------|----------|--------|
+| `BLG-FE-244` — pre-entry checks on every route into Trade Entry | STEP 8.0 Correctness Fast-Track: three entry routes skip the §4.2 checks (incl. §4.2.1 unknown regime). Strategy Rules & System Intent Owner confirmed §4.2 covers unplanned entries; display-only. | P1 | M (~2-3 days) |
+| `BLG-FE-245` — Trade Entry FX pre-fill from the live rate, not 1.27 | STEP 8.0 Correctness Fast-Track: US sizing scales with FX² since `BLG-BE-190` (§4.1.3 v1.21); the fixed default distorts suggested size. | P1 | S (~0.5-1 day) |
+| `BLG-FE-246` — one FX label on entry and exit | The same rate is labelled USD/GBP on entry and GBP/USD on exit. | P2 | S (~0.5 day) |
+| `BLG-SPEC-214` — navigation spec v2 + glossary UI labels | Spec for Phase 2's sidebar, wayfinding and naming. | P2 | M (~2 days) |
+| `BLG-FE-248` — one name per page and action | Seven pages carry different names across sidebar, heading and palette. Depends on `BLG-SPEC-214`. | P2 | S (~1 day) |
+| `BLG-SPEC-215` — Dashboard "Today" action-list spec | Spec for Phase 2's home page redesign. | P2 | M (~2 days) |
+| `BLG-SPEC-216` — single Journal area spec | Spec for Phase 3's journal merge (§13 confirmation inside). | P3 | M (~2 days) |
+| `BLG-FE-247` — remove the legacy Dashboard route and duplicate palette entry | Quick win. | P3 | S (~0.5 day) |
+| `BLG-FE-249` — browser-tab title per page | Quick win. | P3 | S (~0.5 day) |
+| `BLG-FE-266` — version label, What's New heading, sidebar height | Quick win. | P3 | S (~0.5 day) |
+
+Committed ≈ 11.5-13 days of the ~24–28-day band. The rest of v9.15 is set by `plan release v9.15` (closure carry-forward: weigh `BLG-FE-239`, `BLG-FE-240`, `BLG-FE-243`).
+
+**Programme plan (provisional — later phases are not committed by this section; each is seated by its own `plan release`, and a rebalance may revise it):**
+
+| Phase | Provisional release | Items |
+|-------|--------------------|-------|
+| 1 — Integrity, vocabulary, specs | v9.15 (this section) | as above |
+| 2 — Navigation, home page, entry flow, colour tokens | v9.16 | `BLG-FE-250`, `251`, `252`, `253`, `254`, `255`, `256`, `264` (≈15.5 days) |
+| 3 — Consolidation, Positions redesign, token sweep | v9.17 | `BLG-FE-257`, `258`, `259`, `260`, `261`, `262`, `263`, `265` (≈20.5 days) |
+| Close-out — first-principles UX re-review | v9.18 | `BLG-UX-08` (gated on every other programme item; Head of UX & Design confirms or revises the 2026-11-03 verdict against its baseline metrics) |
+
+`BLG-FE-54` (Arc 5 unified pre-entry gateway) keeps its Arc 5 gate; `BLG-FE-244` and `BLG-FE-255` deliver the ungated slices now (PO decision, DL-088). `BLG-FE-224`/`BLG-FE-242` are superseded by `BLG-FE-265` on completion unless shipped earlier.
 
 ---
 
