@@ -6,7 +6,7 @@
   "invoked_utc": "2026-11-04T10:55:44Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-05T18:21:46Z",
+  "last_updated_utc": "2026-11-05T18:26:04Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-03",
@@ -1334,7 +1334,7 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": "AC met: no completed run today (no DS-39 marker) -> no signals, 503, rebalance_exit error (RX-08, RX-09). Interpretation: 'screener run' = the momentum signal run feeding the ranking (matches v9.13 ST-05). Deviation check: none (contract v1.11 updated in the same commit). Follow-up BLG-OPS-212 (DS-39 Live Confirmation, post-deploy; not an ST-30 AC). ci_pending: pushed with 898003a9; CI on branch head 898003a9."
+          "notes": "AC met: no completed run today (no DS-39 marker) -> no signals, 503, rebalance_exit error (RX-08, RX-09). Interpretation: 'screener run' = the momentum signal run feeding the ranking (matches v9.13 ST-05). Deviation check: none (contract v1.11 updated in the same commit). Follow-up BLG-OPS-212 (DS-39 Live Confirmation, post-deploy; not an ST-30 AC). CI on branch head 898003a9 (covers e0329f64): CI Pytest 42083447473, Smoke 42083447471, Service Coverage 42083447599, Golden 42083447457, Integration 42083447464 all success."
         },
         "ST-31": {
           "title": "Skip the five code-test workflows on governance-only and docs-only pushes",
@@ -1359,7 +1359,7 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": "Implemented per Product Owner ruling ESC-EXEC-20261105-05: four suites skip on claude/**/docs/**-only changes; CI Pytest Phase A runs the docs-coupled subset. AC 2 checked on the EPIC-05 PR (code PR runs all suites). AC 1 post-merge, tracked by BLG-OPS-211 (seal-marked). Deviation check: none (ruling leaves no remainder). ci_pending: 898003a9."
+          "notes": "Implemented per Product Owner ruling ESC-EXEC-20261105-05: four suites skip on claude/**/docs/**-only changes; CI Pytest Phase A runs the docs-coupled subset. AC 2 checked on the EPIC-05 PR (code PR runs all suites). AC 1 post-merge, tracked by BLG-OPS-211 (seal-marked). Deviation check: none (ruling leaves no remainder). CI on branch head 898003a9 (covers e0329f64): CI Pytest 42083447473, Smoke 42083447471, Service Coverage 42083447599, Golden 42083447457, Integration 42083447464 all success. Live branch check on claude/-only push cef1df61: the four suites and Phase B skipped (reported success), Phase A ran the docs-coupled subset and passed. AC 2 shown on 898003a9 (all five suites ran)."
         },
         "ST-32": {
           "title": "Tell \"no qualifying tickers\" apart from \"momentum run missing\" in the month-end rebalance job",
@@ -1385,7 +1385,7 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": "AC met: zero-qualifier completed run -> signals for non-risk-off, post-8.1 positions, no 503 (RX-11, RX-12); missing run -> 503 (RX-08). Marker writes covered by tests/test_momentum_signal_run_marker.py. Deviation check: none. ci_pending: CI on branch head 898003a9."
+          "notes": "AC met: zero-qualifier completed run -> signals for non-risk-off, post-8.1 positions, no 503 (RX-11, RX-12); missing run -> 503 (RX-08). Marker writes covered by tests/test_momentum_signal_run_marker.py. Deviation check: none. CI on branch head 898003a9 (covers e0329f64): CI Pytest 42083447473, Smoke 42083447471, Service Coverage 42083447599, Golden 42083447457, Integration 42083447464 all success."
         },
         "ST-33": {
           "title": "Record the weekly market-data call-volume baseline from production",
