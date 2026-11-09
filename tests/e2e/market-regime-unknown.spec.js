@@ -3,8 +3,9 @@
  * ST-03 (EPIC-01, v9.14, BLG-BE-193)
  * Design: docs/design/2026-10-29__release-v9.14/market-regime-unknown/decision_record.md
  *
- *   SC-MRU-01: Dashboard Card 4 shows UNKNOWN ? for an unmeasured SPY (never RISK-OFF), with the
- *              ruling explanation as the badge's accessible description; FTSE stays RISK-ON ✓
+ *   SC-MRU-01: the Dashboard shows UNKNOWN ? for an unmeasured SPY (never RISK-OFF), with the
+ *              ruling explanation as the badge's accessible description; FTSE stays RISK-ON ✓.
+ *              v9.16 ST-06 (BLG-FE-254): Card 4 merged into the Today list's Market regime group.
  *   SC-MRU-02: the Signals market status bar shows "Unknown" and "Price unavailable" for the same mock
  *   SC-MRU-03: (customisable Dashboard regime widget) v9.15 ST-12 (BLG-FE-247): removed with the legacy page
  *
@@ -42,6 +43,14 @@ async function mockApi(page) {
   await page.route(`${API}/market/status`, (route) =>
     route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MARKET_STATUS) })
   );
+  // A signal dated today keeps the Today list out of its quiet-day line, so the regime rows show.
+  await page.route(`${API}/signals`, (route) =>
+    route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify([{ id: 'sig-mru', ticker: 'AAPL', market: 'US', status: 'new', signal_date: '2026-10-29' }]),
+    })
+  );
   await page.route(`${API}/market/regime`, (route) =>
     route.fulfill({
       status: 200,
@@ -55,7 +64,8 @@ async function mockApi(page) {
   );
 }
 
-test('SC-MRU-01: Card 4 shows SPY as UNKNOWN with the ruling as its accessible description', async ({ page }) => {
+test('SC-MRU-01: the Today list shows SPY as UNKNOWN with the ruling as its accessible description', async ({ page }) => {
+  await page.clock.setFixedTime(new Date('2026-10-29T12:00:00'));
   await mockApi(page);
   await page.goto('/#/');
   const badge = page.getByTestId('regime-unknown-SPY');

@@ -1814,6 +1814,8 @@ def update_trade_plan(trade_plan_id: str, portfolio_id: str, data: dict) -> dict
         "planned_quantity", "planned_entry_price", "planned_stop_price",
         "trade_tags", "thesis_model_version", "thesis_prompt_version",
         "invalidation_condition", "is_ai_draft",
+        # ST-05 (EPIC-02, v9.16, BLG-FE-271): trade_plan.md v1.22 §5e
+        "pre_entry_validation_snapshot",
     }
     fields = {k: v for k, v in data.items() if k in allowed}
     if not fields:
@@ -1828,7 +1830,7 @@ def update_trade_plan(trade_plan_id: str, portfolio_id: str, data: dict) -> dict
     set_clauses = []
     values = []
     for k, v in fields.items():
-        if k == "checklist_items":
+        if k in ("checklist_items", "pre_entry_validation_snapshot"):
             set_clauses.append(f"{k} = %s::jsonb")
             values.append(__import__("json").dumps(v))
         else:
@@ -1851,7 +1853,7 @@ def update_trade_plan(trade_plan_id: str, portfolio_id: str, data: dict) -> dict
     # logged. Non-blocking: a logging failure never affects the edit itself.
     if after_plan and before_plan and (before_plan.get("position_id") or after_plan.get("position_id")):
         for field_name in fields:
-            if field_name == "checklist_items":
+            if field_name in ("checklist_items", "pre_entry_validation_snapshot"):
                 continue  # structural field, not a meaningful single-value diff
             before_val = before_plan.get(field_name)
             after_val = after_plan.get(field_name)

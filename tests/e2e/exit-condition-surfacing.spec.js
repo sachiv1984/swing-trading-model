@@ -2,7 +2,7 @@
  * v9.10 ST-08 / ST-09 (BLG-FE-198 / BLG-FE-199, EPIC-02) — exit-condition surfacing.
  *
  * Design source: docs/design/2026-10-06__release-v9.10/exit-condition-surfacing/decision_record.md §5
- * Specs: positions.md §Exit Dialog Pre-Selection and Deep Link; dashboard.md §1A Exit Conditions Met Row
+ * Specs: positions.md §Exit Dialog Pre-Selection and Deep Link; dashboard.md §1B Today list (v4.0)
  *
  *   SC-ECP-01..04  Shared predicate (src/lib/exitCondition.js): priority order and grace boundary
  *   SC-EXD-01  Risk-off position opens the exit dialog with "Risk-Off Signal" and its note
@@ -10,8 +10,7 @@
  *   SC-EXD-03  In-grace breached position and an ordinary position open with "Manual Exit", no note
  *   SC-EXD-04  Changing the selection hides the note
  *   SC-EXD-05  /#/Positions?exit={id} opens the right dialog and the parameter is cleared
- *   SC-EXC-01  Dashboard card lists qualifying positions with reason pills and Review exit links
- *   SC-EXC-02  Dashboard card is absent when no position qualifies
+ *   SC-EXC-01/02  retired v9.16 (ST-06): the row moved into the Today list — dashboard-today-list.spec.js
  *
  * Infrastructure: page.route() network interception — no live backend required.
  */
@@ -150,37 +149,8 @@ test.describe('Exit dialog pre-selection (ST-08)', () => {
 });
 
 // ---------------------------------------------------------------------------
-// Dashboard card
+// Dashboard card (SC-EXC-01/02): retired v9.16. The Exit Conditions Met row moved into the
+// Dashboard Today list's Exits due group (ST-06, BLG-FE-254, dashboard.md v4.0 §1B), with the
+// same predicate, pills, link, aria-label and sub-line. Coverage: tests/e2e/dashboard-today-list.spec.js
+// SC-TL-05/06/07/08/13/21/22.
 // ---------------------------------------------------------------------------
-
-async function gotoDashboard(page, positions) {
-  await page.route(new RegExp(`${API}/`), (r) =>
-    r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok', data: [] }) })
-  );
-  await page.route(`${API}/positions`, (r) =>
-    r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(positions) })
-  );
-  await page.goto('/#/DashboardHome');
-  await expect(page.getByTestId('morning-briefing')).toBeVisible({ timeout: 10000 });
-}
-
-test.describe('Exit Conditions Met row (ST-09)', () => {
-  test('SC-EXC-01: lists qualifying positions with pills and exit links', async ({ page }) => {
-    await gotoDashboard(page, [RISK_OFF, BREACHED, IN_GRACE_BREACHED, ORDINARY]);
-    const card = page.getByTestId('exit-conditions-card');
-    await expect(card).toBeVisible({ timeout: 8000 });
-    await expect(card.getByTestId('exit-conditions-count')).toHaveText('(2)');
-    await expect(card.getByTestId('exit-conditions-row-pos-ro')).toContainText('RISK OFF');
-    await expect(card.getByTestId('exit-conditions-row-pos-br')).toContainText('STOP REACHED');
-    await expect(card.getByTestId('exit-conditions-row-pos-gr')).toHaveCount(0);
-    await expect(card).toContainText('Nothing is exited automatically.');
-    const link = card.getByRole('link', { name: 'Review exit for BRCH' });
-    await expect(link).toHaveAttribute('href', '#/Positions?exit=pos-br');
-  });
-
-  test('SC-EXC-02: absent when no position qualifies', async ({ page }) => {
-    await gotoDashboard(page, [IN_GRACE_BREACHED, ORDINARY]);
-    await expect(page.getByTestId('morning-briefing')).toBeVisible();
-    await expect(page.getByTestId('exit-conditions-card')).toHaveCount(0);
-  });
-});

@@ -137,6 +137,10 @@ class TradePlanUpdate(BaseModel):
     thesis_prompt_version: Optional[str] = None
     invalidation_condition: Optional[str] = None
     is_ai_draft: Optional[bool] = None
+    # ST-05 (EPIC-02, v9.16, BLG-FE-271): the plan form re-sends its dated
+    # pre-entry result on edit (trade_plan.md v1.22 §5e). Object replaces the
+    # stored snapshot; null/omitted leaves it unchanged, like every PUT field.
+    pre_entry_validation_snapshot: Optional[Any] = None
 
 
 class BulkTagRequest(BaseModel):
@@ -609,10 +613,19 @@ def update_plan(plan_id: str, body: TradePlanUpdate):
                     detail="Cannot set status='active' without a linked position_id — an active plan must back a real position",
                 )
 
+        # ST-05 (EPIC-02, v9.16, PR #2228 review): the edit form re-sends the stored
+        # acknowledgement on every save, so write the override event only when the
+        # stored value goes from not-true to true. A re-save of an already
+        # acknowledged plan writes nothing (trade_plan_endpoints.md v0.23).
+        was_acknowledged = False
+        if body.pre_entry_override_acknowledged:
+            before = get_trade_plan_by_id(plan_id, portfolio_id)
+            was_acknowledged = bool(before) and before.get("pre_entry_override_acknowledged") is True
+
         plan = update_trade_plan(plan_id, portfolio_id, data)
         if not plan:
             raise HTTPException(status_code=404, detail="Trade plan not found")
-        if body.pre_entry_override_acknowledged:
+        if body.pre_entry_override_acknowledged and not was_acknowledged:
             _maybe_write_override_event(plan.get("ticker", ""), plan.get("position_id"))
         # Only an update that saves the checklist can skip it.
         if "checklist_items" in data:

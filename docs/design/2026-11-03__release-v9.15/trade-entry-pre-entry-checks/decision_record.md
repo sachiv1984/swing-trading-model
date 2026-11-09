@@ -14,6 +14,8 @@ The `strategy_rules.md` §4.2 pre-entry checks run only on the Trade Plan form (
 
 ### 2.1 When the panel shows
 
+> **Superseded for the plan-linked rows (v9.16, ST-05, BLG-FE-271):** see `docs/design/2026-11-06__release-v9.16/plan-linked-pre-entry-checks/decision_record.md`. A linked plan's snapshot now hides the panel only when it is less than 24 hours old and either passed or had its warnings acknowledged on the plan.
+
 | Entry state | Panel |
 |-------------|-------|
 | No plan linked | Shown |

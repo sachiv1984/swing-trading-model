@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-09 (session — 2 new item(s) added: BLG-FE-275, BLG-FE-276; agent-mediated review of PR #2227, EPIC-01, `2026-11-06__release-v9.16`); prior — 2026-11-09 (session — 2 new item(s) added: BLG-SPEC-226, BLG-SPEC-227; agent-mediated DoQ review of EPIC-01, `2026-11-06__release-v9.16`); prior — 2026-11-09 (session — 4 new item(s) added: BLG-OPS-215, BLG-GOV-414, BLG-SPEC-224, BLG-SPEC-225; Sprint Planning `2026-11-06__release-v9.16` pre-seal filings); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-09 (session — 8 new item(s) added: BLG-FE-278, BLG-FE-279, BLG-QA-254, BLG-FE-280, BLG-SPEC-228, BLG-FEAT-101, BLG-QA-255, BLG-UX-09; agent-mediated review of PR #2228, EPIC-02, `2026-11-06__release-v9.16`); prior — 2026-11-09 (session — 1 new item(s) added: BLG-FE-277; ST-05, EPIC-02, `2026-11-06__release-v9.16`); prior — 2026-11-09 (session — 2 new item(s) added: BLG-FE-275, BLG-FE-276; agent-mediated review of PR #2227, EPIC-01, `2026-11-06__release-v9.16`); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -6174,5 +6174,183 @@ ST-03's "Showing trades for {TICKER}" banner sits above both Trade History views
 **Acceptance Criteria**
 - With `?ticker=` set, the Calendar view does not claim to be filtered unless it is
 - The chosen behaviour is written into `trade_history.md` alongside BLG-SPEC-227
+
+---
+
+### BLG-FE-277 — Trade Plan edit: clear the stored pre-entry snapshot when the form has no result
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Frontend Specifications & UX Documentation Owner; API Contracts & Documentation Owner
+**Source:** ST-05, EPIC-02, `2026-11-06__release-v9.16` — found during sprint execution; deviation `DEV-v9.16-ST05-01` in `trade_plan.md` Known Deviations — 2026-11-09
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.17
+
+**Problem**
+`trade_plan.md` v1.22 §5e says that on edit the stored `pre_entry_validation_snapshot` is "replaced with the current result, or cleared if there is none". `PUT /trade-plans/{id}` treats `null` as "leave unchanged" for every field (`trade_plan_endpoints.md` v0.23). So an edited plan saved with no panel result (shares cleared, check still loading, or endpoint error) keeps its earlier snapshot. For up to 24 hours, Trade Entry may then show the on-plan line based on that earlier result instead of re-running the checks.
+
+**Scope**
+- Decide how to clear the snapshot on edit. One option is a named PUT exception where an explicit `null` clears this field, documented in `trade_plan_endpoints.md` and `openapi.yaml`. The other is to amend §5e.
+- Implement the decision in `TradePlan.js` and `backend/routers/trade_plans.py` / `database.update_trade_plan`, or amend the spec.
+
+**Acceptance Criteria**
+- An edited plan saved with no panel result stores no snapshot (backend test + Playwright), or the Frontend Specifications & UX Documentation Owner amends §5e
+- `DEV-v9.16-ST05-01` is marked resolved in `trade_plan.md` Known Deviations
+
+---
+
+### BLG-FE-278 — Reset the Trade Plan pre-entry acknowledgement when the check result changes
+**Priority:** P2 (Medium)
+**Type:** Frontend / UX
+**Owner:** Frontend Specifications & UX Documentation Owner; Strategy Rules & System Intent Owner
+**Source:** Director of Quality finding 3, PR #2228 agent-mediated review (EPIC-02, `2026-11-06__release-v9.16`) — 2026-11-09
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.17
+
+**Problem**
+Neither the Trade Plan form nor Trade Entry clears the acknowledgement box when the pre-entry result changes (`PreEntryValidationPanel.js`). An edited plan that was acknowledged for an earlier WARN can therefore save `pre_entry_override_acknowledged: true` alongside a new FAIL the user never saw. Trade Entry then shows "warnings were acknowledged there" and skips the panel (`position_form.md` v1.14), which undercuts `strategy_rules.md` §4.2.1 v1.23 for the plan-linked route.
+
+**Scope**
+- Decide with the Strategy Rules & System Intent Owner: clear the box when `advisory_status` or `checks` change, or store the acknowledgement inside the dated snapshot
+- Implement in `TradePlan.js` (and Trade Entry if the panel is shared) and update `trade_plan.md` §5e
+
+**Acceptance Criteria**
+- Editing an acknowledged plan so that a new WARN/FAIL appears leaves the box unticked until the user ticks it (Playwright)
+- A plan saved without re-acknowledging shows the Trade Entry panel with the unacknowledged reason line (Playwright)
+
+---
+
+### BLG-FE-279 — Signal Context follows the Ticker field when Trade Plan was opened with signal_id
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Frontend Specifications & UX Documentation Owner; Head of Engineering
+**Source:** Director of Quality finding 4, PR #2228 agent-mediated review (EPIC-02, `2026-11-06__release-v9.16`) — 2026-11-09
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.17
+
+**Problem**
+With `signal_id`, `linkedSignal` in `TradePlan.js` stays on that signal even after the user edits the Ticker field, so the Signal Context panel can describe a different ticker from the plan being written. Without `signal_id` the watchlisted lookup follows the ticker.
+
+**Scope**
+- Use the `signal_id` signal only while `form.ticker` matches its ticker (compared with the `.L` suffix removed); otherwise fall back to the watchlisted lookup (`trade_plan.md` v1.23 §5a.1)
+
+**Acceptance Criteria**
+- Opening Trade Plan from "Plan this" and changing the ticker hides or switches Signal Context to the new ticker (Playwright)
+
+---
+
+### BLG-QA-254 — Cover UK (.L) tickers in the "Plan this" flow and settle the ticker form
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** QA & Testing Owner; Frontend Specifications & UX Documentation Owner
+**Source:** Director of Quality finding 5, PR #2228 agent-mediated review (EPIC-02, `2026-11-06__release-v9.16`) — 2026-11-09
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.17
+
+**Problem**
+Screener "Plan this" passes the raw `r.ticker` (e.g. `BP.L`) while the Screener's own watchlist add strips the suffix. `plan-this.spec.js` has no UK case for the URL, the `signal_id` match or the watchlisted fallback, so a suffix mismatch would go unnoticed.
+
+**Scope**
+- Confirm with the spec owner which ticker form `trade_plan.md` §2 expects for UK plans
+- Add UK Playwright cases for Signals and Screener "Plan this", including the Signal Context match
+
+**Acceptance Criteria**
+- A UK signal and a UK screener row each open a pre-filled Trade Plan with the agreed ticker form and the right Signal Context (Playwright)
+
+---
+
+### BLG-FE-280 — Today list: treat a non-array GET /positions response as an error, not an empty list
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Head of Engineering; Frontend Specifications & UX Documentation Owner
+**Source:** Director of Quality finding 6, PR #2228 agent-mediated review (EPIC-02, `2026-11-06__release-v9.16`) — 2026-11-09
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.17
+
+**Problem**
+`TodayList.js` coerces a non-array `GET /positions` body to `[]`. If signals are also empty, the list shows "Nothing due today", a false all-clear. The removed Exit Conditions Met row rendered nothing in that case.
+
+**Scope**
+- Treat a non-array positions body as a failed source for Exits due and Grace ends today (`dashboard.md` §1B States)
+
+**Acceptance Criteria**
+- With `GET /positions` returning `{}`, the Exits due and Grace error lines show and the quiet-day line does not (Playwright)
+
+---
+
+### BLG-SPEC-228 — position_form.md: decide whether Trade Entry inputs that differ from the plan snapshot make it stale
+**Priority:** P3 (Low)
+**Type:** Spec Debt
+**Owner:** Frontend Specifications & UX Documentation Owner; Strategy Rules & System Intent Owner
+**Source:** Director of Quality finding 7, PR #2228 agent-mediated review (EPIC-02, `2026-11-06__release-v9.16`) — 2026-11-09
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.17
+
+**Problem**
+A fresh plan snapshot hides the Trade Entry pre-entry panel even when Trade Entry's Shares or Entry Price differ from the snapshot's `inputs` (for example five times the planned shares). This follows `position_form.md` v1.14, but the checks may no longer describe the entry being made.
+
+**Scope**
+- Rule whether an input mismatch (and what tolerance) counts as stale in §Pre-Entry Checks
+- If yes, file the frontend change
+
+**Acceptance Criteria**
+- `position_form.md` §Pre-Entry Checks states the rule, with the owner's dated ruling
+
+---
+
+### BLG-FEAT-101 — Decide whether the Dashboard Today list's New signals should offer "Plan this"
+**Priority:** P3 (Low)
+**Type:** Product Feature
+**Owner:** Product Owner; Strategy Rules & System Intent Owner; Head of UX & Design
+**Source:** Product Owner finding 2, PR #2228 agent-mediated review (EPIC-02, `2026-11-06__release-v9.16`) — 2026-11-09
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.17
+
+**Problem**
+The Today list's New signals group offers only "Research" (`TodayList.js`), so the shortest signal-to-plan path still goes through the Signals page. `dashboard.md` §1B says no list item pre-fills an action, so adding "Plan this" there needs its own §13 confirmation and a spec change.
+
+**Scope**
+- Seek the §13 confirmation
+- If confirmed, update `dashboard.md` §1B and add the link using `planThisUrl()`
+
+**Acceptance Criteria**
+- A dated §13 ruling is recorded; if approved, New signals rows link to a pre-filled Trade Plan (Playwright)
+
+---
+
+### BLG-QA-255 — Mobile coverage for the Signals card action row and the Screener action cell
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** QA & Testing Owner
+**Source:** Product Owner finding 4, PR #2228 agent-mediated review (EPIC-02, `2026-11-06__release-v9.16`) — 2026-11-09
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.17
+
+**Problem**
+New signal cards now carry three buttons (Add to Watchlist, Plan this, Dismiss) and Screener rows a third action. No test runs either at 375 px, so overflow or poor wrapping would not be caught.
+
+**Scope**
+- Add Playwright cases at 375 px for a new Signals card and a Screener row
+
+**Acceptance Criteria**
+- At 375 px every action is visible and inside the card or cell, with no horizontal page scroll (Playwright)
+
+---
+
+### BLG-UX-09 — Review "Plan this" placement on watchlisted cards and the "§4.1" wording in the suggested-size line
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Head of UX & Design; Frontend Specifications & UX Documentation Owner
+**Source:** Product Owner findings 3 and 5, PR #2228 agent-mediated review (EPIC-02, `2026-11-06__release-v9.16`) — 2026-11-09
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.17
+
+**Problem**
+On watchlisted Signals cards "Plan this" sits alone on a row under the watchlist banner (`SignalCard.js`), which looks detached. The Trade Plan line "Suggested size: N shares (§4.1, R% risk)" (`PlanSuggestedSize.js`) puts an internal section reference in user copy. Both follow the `signal-to-plan-flow` decision record.
+
+**Scope**
+- Decide placement and copy; update `signals.md` and `trade_plan.md` §5f if changed
+
+**Acceptance Criteria**
+- A dated Head of UX & Design decision is recorded, and any copy or layout change is implemented with Playwright coverage
 
 ---

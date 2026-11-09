@@ -28,6 +28,32 @@ import { todayLocal } from "../lib/localDate";
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:8000";
 
+// ST-05 (BLG-FE-271, EPIC-02, v9.16): position_form.md v1.14 §Pre-Entry Checks
+// "When it shows" table for a linked plan. `linkedAtMs` is when the plan was
+// linked; the snapshot is stale when captured more than 24 hours before it.
+export const PLAN_SNAPSHOT_MAX_AGE_MS = 24 * 60 * 60 * 1000;
+export function getPlanPreEntryRow(plan, linkedAtMs) {
+  const panel = (reason) => ({ showPanel: true, reason, onPlanText: null });
+  if (!plan) return panel(null);
+  const snap = plan.pre_entry_validation_snapshot;
+  const capturedMs = snap && snap.captured_at ? Date.parse(snap.captured_at) : NaN;
+  if (!snap || isNaN(capturedMs)) return panel(null);
+  if (linkedAtMs - capturedMs > PLAN_SNAPSHOT_MAX_AGE_MS) {
+    return panel("The linked plan's checks are more than a day old, so they have been run again.");
+  }
+  if (snap.advisory_status === "pass") {
+    return { showPanel: false, reason: null, onPlanText: "Pre-entry checks were run on the linked plan." };
+  }
+  if (plan.pre_entry_override_acknowledged === true) {
+    return {
+      showPanel: false,
+      reason: null,
+      onPlanText: "Pre-entry checks were run on the linked plan, and their warnings were acknowledged there.",
+    };
+  }
+  return panel("The linked plan's checks had warnings that were not acknowledged.");
+}
+
 export default function TradeEntry() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -157,14 +183,21 @@ export default function TradeEntry() {
   const marketKnown = previewTicker !== "";
 
   // ST-01 (BLG-FE-244, EPIC-01, v9.15): the §4.2 pre-entry checks on every
-  // route into Trade Entry (position_form.md v1.13 §Pre-Entry Checks). Hidden
-  // only when a linked plan already ran them (stored snapshot), so the panel
-  // shows at most once. Branch A (ESC-EXEC-20261104-01, strategy_rules.md
-  // §4.2.6 v1.23): an unacknowledged WARN/FAIL disables Submit.
+  // route into Trade Entry (position_form.md §Pre-Entry Checks). Branch A
+  // (ESC-EXEC-20261104-01, strategy_rules.md §4.2.6 v1.23): an unacknowledged
+  // WARN/FAIL disables Submit.
+  // ST-05 (BLG-FE-271, EPIC-02, v9.16; ESC-CLOSE-20261106-01 option (a)):
+  // a linked plan's snapshot hides the panel only when it is fresh (24 hours,
+  // judged at the moment the plan was linked) and either passed or had its
+  // warnings acknowledged on the plan (position_form.md v1.14).
   const [preEntryAck, setPreEntryAck] = useState(false);
   const [preEntryNeedsAck, setPreEntryNeedsAck] = useState(false);
-  const planRanChecks = !!linkedPlanId && linkedPlan?.pre_entry_validation_snapshot != null;
-  const showPreEntryChecks = !planRanChecks;
+  const [planLinkedAt, setPlanLinkedAt] = useState(() => Date.now());
+  useEffect(() => {
+    setPlanLinkedAt(Date.now());
+  }, [linkedPlanId]);
+  const planCheckRow = getPlanPreEntryRow(linkedPlanId ? linkedPlan : null, planLinkedAt);
+  const showPreEntryChecks = planCheckRow.showPanel;
   const preEntryAckRequired = showPreEntryChecks && preEntryNeedsAck && !preEntryAck;
 
   const [tagInput, setTagInput] = useState("");
@@ -834,7 +867,12 @@ export default function TradeEntry() {
         </motion.div>
       )}
 
-      {/* Pre-Entry Checks (ST-01, BLG-FE-244, v9.15) — position_form.md §Pre-Entry Checks */}
+      {/* Pre-Entry Checks (ST-01, BLG-FE-244, v9.15; ST-05, BLG-FE-271, v9.16) — position_form.md v1.14 §Pre-Entry Checks */}
+      {showPreEntryChecks && planCheckRow.reason && (
+        <p data-testid="pre-entry-rerun-reason" className="text-xs text-slate-600 dark:text-slate-400">
+          {planCheckRow.reason}
+        </p>
+      )}
       {showPreEntryChecks ? (
         <PreEntryValidationPanel
           ticker={normalizedTicker}
@@ -849,7 +887,7 @@ export default function TradeEntry() {
         />
       ) : (
         <p data-testid="pre-entry-checks-on-plan" className="text-xs text-slate-600 dark:text-slate-400">
-          Pre-entry checks were run on the linked plan.
+          {planCheckRow.onPlanText}
         </p>
       )}
 

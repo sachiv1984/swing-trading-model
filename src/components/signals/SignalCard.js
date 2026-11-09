@@ -4,7 +4,29 @@ import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
 import { TrendingUp, TrendingDown, Bookmark, Award, CheckCircle2, Lock, XCircle, BookmarkCheck } from "lucide-react";
 import { cn } from "../../lib/utils";
+import { planThisUrl, PLAN_THIS_SIGNAL_STATUSES } from "../../lib/planThis";
 import { formatCurrency, formatPercent, currencyForMarket } from "../../lib/format";
+
+// ST-07 (BLG-FE-255, EPIC-02, v9.16): signals.md v0.9 §"Plan this" Action —
+// secondary button after the primary CTA; opens an unsaved Trade Plan.
+function PlanThisButton({ signal }) {
+  if (!PLAN_THIS_SIGNAL_STATUSES.includes(signal.status)) return null;
+  return (
+    <Button
+      asChild
+      variant="outline"
+      className="border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 h-11 px-4"
+    >
+      <Link
+        to={planThisUrl({ ticker: signal.ticker, market: signal.market, price: signal.current_price, signalId: signal.id })}
+        aria-label={`Plan this: ${signal.ticker}`}
+        data-testid={`signal-plan-this-${signal.ticker}`}
+      >
+        Plan this
+      </Link>
+    </Button>
+  );
+}
 
 export default function SignalCard({ signal, onAddToWatchlist, onDismiss, isAddingToWatchlist }) {
   const isUS = signal.market === "US";
@@ -177,6 +199,7 @@ export default function SignalCard({ signal, onAddToWatchlist, onDismiss, isAddi
             <Bookmark className="w-5 h-5 mr-2" />
             {isAddingToWatchlist ? "Adding…" : "Add to Watchlist"}
           </Button>
+          <PlanThisButton signal={signal} />
           <Button
             onClick={() => onDismiss(signal.id)}
             variant="outline"
@@ -198,6 +221,11 @@ export default function SignalCard({ signal, onAddToWatchlist, onDismiss, isAddi
           >
             View in Watchlist →
           </Link>
+        </div>
+      )}
+      {isWatchlisted && (
+        <div className="flex mt-2">
+          <PlanThisButton signal={signal} />
         </div>
       )}
 

@@ -19,6 +19,17 @@
  *   SC-TEPC-09  Endpoint failure never disables Submit
  *   SC-TEPC-10  All checks pass: no acknowledgement, Submit enabled, no override flag sent
  *
+ * ST-05 (BLG-FE-271, EPIC-02, v9.16) — plan-linked rows, position_form.md v1.14;
+ * design: docs/design/2026-11-06__release-v9.16/plan-linked-pre-entry-checks/decision_record.md §6.
+ * The clock is fixed at NOW so the 24-hour age is deterministic.
+ *   SC-TEPC-07  (updated) Fresh pass snapshot: on-plan line, no panel
+ *   SC-TEPC-11  Fresh FAIL snapshot, plan not acknowledged: panel once with the reason line,
+ *               Submit disabled until ticked; the save sends pre_entry_override_acknowledged: true
+ *   SC-TEPC-12  Fresh FAIL snapshot, plan acknowledged: on-plan line "acknowledged there", no panel
+ *   SC-TEPC-13  Snapshot captured 25 hours earlier: panel with the stale reason line
+ *   SC-TEPC-14  No snapshot: panel and no reason line (also SC-TEPC-08)
+ *   SC-TEPC-15  Plan-linked by prefill ("Start Trade from Plan"): unacknowledged WARN shows the panel
+ *
  * Infrastructure: Playwright page.route() network interception. No live backend.
  * ROUTING NOTE: App uses HashRouter — navigate via page.goto('/#/TradeEntry').
  */
@@ -205,6 +216,17 @@ test('SC-TEPC-06: before Shares is entered, the panel shows the waiting line', a
   await expect(page.getByTestId('pre-entry-checks-waiting')).toHaveText('Enter shares to run the pre-entry checks.');
 });
 
+const NOW = new Date('2026-11-09T12:00:00Z');
+const HOURS_AGO = (h) => new Date(NOW.getTime() - h * 3600 * 1000).toISOString();
+const snapshot = (advisory, capturedAt = HOURS_AGO(1)) => ({
+  captured_at: capturedAt,
+  advisory_status: advisory,
+  checks: advisory === 'pass' ? PASS_CHECKS : RISK_OFF_CHECKS,
+  inputs: { quantity: 10, entry_price: 100, stop_price: 90 },
+});
+const STALE_REASON = "The linked plan's checks are more than a day old, so they have been run again.";
+const UNACK_REASON = "The linked plan's checks had warnings that were not acknowledged.";
+
 const PLAN_BASE = {
   ticker: 'LGEN', market: 'UK', status: 'draft', position_id: null, r_target: 2,
   setup_thesis: 'Breakout', updated_at: '2026-11-01T10:00:00Z',
@@ -216,8 +238,9 @@ async function linkPlan(page, plan) {
   await page.getByRole('option', { name: new RegExp(plan.ticker) }).click();
 }
 
-test('SC-TEPC-07: a linked plan with stored checks hides the panel and shows the on-plan line once', async ({ page }) => {
-  const plan = { ...PLAN_BASE, id: 'plan-tepc-snap', pre_entry_validation_snapshot: { advisory_status: 'pass', checks: PASS_CHECKS } };
+test('SC-TEPC-07: a linked plan with a fresh passing snapshot hides the panel and shows the on-plan line once', async ({ page }) => {
+  const plan = { ...PLAN_BASE, id: 'plan-tepc-snap', pre_entry_validation_snapshot: snapshot('pass') };
+  await page.clock.setFixedTime(NOW);
   await mockFallback(page);
   await mockValidation(page, { checks: RISK_OFF_CHECKS, advisory: 'fail' });
   await mockPlans(page, plan);
@@ -230,6 +253,7 @@ test('SC-TEPC-07: a linked plan with stored checks hides the panel and shows the
   await expect(page.getByTestId('pre-entry-checks-on-plan')).toHaveCount(1, { timeout: 10000 });
   await expect(page.getByTestId('pre-entry-checks-on-plan')).toHaveText('Pre-entry checks were run on the linked plan.');
   await expect(page.getByTestId('pre-entry-checks-panel')).toHaveCount(0);
+  await expect(page.getByTestId('pre-entry-rerun-reason')).toHaveCount(0);
   await expect(submit(page)).toBeEnabled();
   // Form state survives the switch.
   await expect(page.getByPlaceholder('0', { exact: true })).toHaveValue('10');
@@ -272,4 +296,85 @@ test('SC-TEPC-10: when every check passes there is no acknowledgement and no ove
   await submit(page).click();
   await expect.poll(() => body).not.toBeNull();
   expect(body.pre_entry_override_acknowledged).toBeUndefined();
+});
+
+async function gotoLinked(page, plan, validation) {
+  await page.clock.setFixedTime(NOW);
+  await mockFallback(page);
+  await mockValidation(page, validation);
+  await mockPlans(page, plan);
+  await page.goto('/#/TradeEntry');
+  await expect(page.getByTestId('link-trade-plan-select')).toBeVisible({ timeout: 10000 });
+  await fillUkEntry(page);
+  await linkPlan(page, plan);
+}
+
+test('SC-TEPC-11: a fresh FAIL snapshot the plan did not acknowledge re-runs the checks and needs the acknowledgement', async ({ page }) => {
+  let body = null;
+  const plan = { ...PLAN_BASE, id: 'plan-tepc-unack', pre_entry_validation_snapshot: snapshot('fail'), pre_entry_override_acknowledged: false };
+  await gotoLinked(page, plan, { checks: RISK_OFF_CHECKS, advisory: 'fail' });
+  // Registered after the fallback so it takes precedence.
+  await mockAddPosition(page, (b) => { body = b; });
+
+  await expect(page.getByTestId('pre-entry-rerun-reason')).toHaveText(UNACK_REASON, { timeout: 10000 });
+  await expect(page.getByTestId('pre-entry-checks-panel')).toHaveCount(1);
+  await expect(page.getByTestId('pre-entry-checks-on-plan')).toHaveCount(0);
+  await expect(page.getByTestId('pre-entry-check-regime_gate')).toHaveAttribute('data-status', 'fail', { timeout: 10000 });
+  await expect(submit(page)).toBeDisabled();
+  await expect(page.getByTestId('pre-entry-ack-required')).toBeVisible();
+
+  await page.getByTestId('override-acknowledgement-checkbox').check();
+  await expect(submit(page)).toBeEnabled();
+  await submit(page).click();
+  await expect.poll(() => body).not.toBeNull();
+  expect(body.trade_plan_id).toBe(plan.id);
+  expect(body.pre_entry_override_acknowledged).toBe(true);
+});
+
+test('SC-TEPC-12: a fresh FAIL snapshot acknowledged on the plan shows the acknowledged on-plan line', async ({ page }) => {
+  const plan = { ...PLAN_BASE, id: 'plan-tepc-ack', pre_entry_validation_snapshot: snapshot('fail'), pre_entry_override_acknowledged: true };
+  await gotoLinked(page, plan, { checks: RISK_OFF_CHECKS, advisory: 'fail' });
+
+  const line = page.getByTestId('pre-entry-checks-on-plan');
+  await expect(line).toHaveText('Pre-entry checks were run on the linked plan, and their warnings were acknowledged there.', { timeout: 10000 });
+  await expect(line).toHaveCount(1);
+  await expect(page.getByTestId('pre-entry-checks-panel')).toHaveCount(0);
+  await expect(page.getByTestId('pre-entry-rerun-reason')).toHaveCount(0);
+  await expect(submit(page)).toBeEnabled();
+});
+
+test('SC-TEPC-13: a snapshot captured 25 hours earlier is stale and the checks run again', async ({ page }) => {
+  const plan = { ...PLAN_BASE, id: 'plan-tepc-stale', pre_entry_validation_snapshot: snapshot('pass', HOURS_AGO(25)) };
+  await gotoLinked(page, plan, { checks: RISK_OFF_CHECKS, advisory: 'fail' });
+
+  await expect(page.getByTestId('pre-entry-rerun-reason')).toHaveText(STALE_REASON, { timeout: 10000 });
+  await expect(page.getByTestId('pre-entry-checks-panel')).toHaveCount(1);
+  await expect(page.getByTestId('pre-entry-checks-on-plan')).toHaveCount(0);
+  await expect(page.getByTestId('pre-entry-check-regime_gate')).toHaveAttribute('data-status', 'fail', { timeout: 10000 });
+  await expect(submit(page)).toBeDisabled();
+});
+
+test('SC-TEPC-14: a linked plan with no snapshot shows the panel without a reason line', async ({ page }) => {
+  const plan = { ...PLAN_BASE, id: 'plan-tepc-none', pre_entry_validation_snapshot: null };
+  await gotoLinked(page, plan, { checks: PASS_CHECKS, advisory: 'pass' });
+
+  await expect(page.getByTestId('pre-entry-check-regime_gate')).toBeVisible({ timeout: 10000 });
+  await expect(page.getByTestId('pre-entry-checks-panel')).toHaveCount(1);
+  await expect(page.getByTestId('pre-entry-rerun-reason')).toHaveCount(0);
+  await expect(page.getByTestId('pre-entry-checks-on-plan')).toHaveCount(0);
+});
+
+test('SC-TEPC-15: a plan linked by prefill with an unacknowledged WARN shows the panel with the reason line', async ({ page }) => {
+  const plan = { ...PLAN_BASE, id: 'plan-tepc-prefill', pre_entry_validation_snapshot: snapshot('warn'), pre_entry_override_acknowledged: null };
+  await page.clock.setFixedTime(NOW);
+  await mockFallback(page);
+  await mockValidation(page, { checks: PASS_CHECKS, advisory: 'pass' });
+  await mockPlans(page, plan);
+  // The real "Start Trade" action on Trade Plans sets location.state (trade_plan_prefill).
+  await page.goto('/#/TradePlans');
+  await page.getByTestId(`start-trade-from-plan-${plan.id}`).click();
+  await expect(page).toHaveURL(/#\/TradeEntry/, { timeout: 5000 });
+  await expect(page.getByTestId('pre-entry-rerun-reason')).toHaveText(UNACK_REASON, { timeout: 10000 });
+  await expect(page.getByTestId('pre-entry-checks-panel')).toHaveCount(1);
+  await expect(page.getByTestId('pre-entry-checks-on-plan')).toHaveCount(0);
 });
