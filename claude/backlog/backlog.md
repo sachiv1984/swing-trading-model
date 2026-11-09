@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-09 (session — 2 new item(s) added: BLG-SPEC-226, BLG-SPEC-227; agent-mediated DoQ review of EPIC-01, `2026-11-06__release-v9.16`); prior — 2026-11-09 (session — 4 new item(s) added: BLG-OPS-215, BLG-GOV-414, BLG-SPEC-224, BLG-SPEC-225; Sprint Planning `2026-11-06__release-v9.16` pre-seal filings); prior — 2026-11-06 (Release Planning `2026-11-06__release-v9.16` §1.3a — gating-item-shipped gates cleared in place (a) on BLG-FE-39, BLG-QA-21, BLG-QA-22, BLG-QA-23, BLG-GOV-26: PT-04 shipped v6.1, Arc 2 complete); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-09 (session — 2 new item(s) added: BLG-FE-275, BLG-FE-276; agent-mediated review of PR #2227, EPIC-01, `2026-11-06__release-v9.16`); prior — 2026-11-09 (session — 2 new item(s) added: BLG-SPEC-226, BLG-SPEC-227; agent-mediated DoQ review of EPIC-01, `2026-11-06__release-v9.16`); prior — 2026-11-09 (session — 4 new item(s) added: BLG-OPS-215, BLG-GOV-414, BLG-SPEC-224, BLG-SPEC-225; Sprint Planning `2026-11-06__release-v9.16` pre-seal filings); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -6131,5 +6131,48 @@ ST-03 added a `?ticker=` filter to Trade History so that the Red Flag Journal's 
 **Acceptance Criteria**
 - `trade_history.md` describes the `?ticker=` filter as listed in Scope
 - The description matches `src/pages/TradeHistory.js` and `onward-links.spec.js` SC-ONW-08/09
+
+---
+
+### BLG-FE-275 — Analytics section link: keep the section in view while sections above it finish loading
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Head of Engineering; Head of UX & Design
+**Source:** Agent-mediated PR #2227 review (EPIC-01, ST-04, `2026-11-06__release-v9.16`), Director of Quality finding — 2026-11-09
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+`useSectionScroll()` scrolls to Arc 5 Signal Compliance as soon as that section's own query finishes. Six sections above it on Analytics fetch their own data (MetricsStalenessIndicator, RMultipleDistribution, TradePlanTagFilter, CohortAnalysis, DisciplineComplianceSection, MarketCorrelationSection). If any of them resolves later and its skeleton changes height, the section moves away from the top of the viewport after the scroll, and the digest's "Strategy Compliance" link lands the user part-way down the page. The design record's skeleton rule is meant to avoid scrolling while the layout above is still settling. SC-SEC-01..07 cannot catch this, because every other endpoint is mocked to answer at once.
+
+**Scope**
+- Wait until the sections above the anchor have settled before scrolling, or keep the section anchored (for example with a ResizeObserver on the content above) until the first user interaction or a short time limit
+- Add a Playwright case that delays one section above Arc 5 until after the Arc 5 response, and asserts the section is still at the top of the viewport afterwards
+
+**Acceptance Criteria**
+- With a section above Arc 5 resolving after it, `/#/PerformanceAnalytics?section=strategy-compliance` leaves the Arc 5 section at the top of the viewport with its heading focused
+- The once-only, reduced-motion and user-scrolled-first rules in `analytics.md` §19.1 still hold (SC-SEC-01..07 pass)
+
+---
+
+### BLG-FE-276 — Trade History: show the `?ticker=` banner only where the filter applies
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Head of Engineering; Head of UX & Design
+**Source:** Agent-mediated PR #2227 review (EPIC-01, ST-03, `2026-11-06__release-v9.16`), Director of Quality and Product Owner finding — 2026-11-09
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+**Depends on:** BLG-SPEC-227 (document the `?ticker=` filter in `trade_history.md`)
+
+**Problem**
+ST-03's "Showing trades for {TICKER}" banner sits above both Trade History views. The table, summary stats and AI summary apply the ticker filter. The Calendar view fetches `GET /reports/daily-pnl` itself and applies no page filter (unchanged behaviour), so with the banner showing it displays every ticker's daily P&L. A user arriving from a Red Flag Journal event who switches to Calendar is told the page is filtered when that view is not.
+
+**Scope**
+- Decide the Calendar view behaviour under `?ticker=`: hide the banner there, or say "Calendar shows all tickers", or filter the calendar if the endpoint supports it
+- Playwright case for the chosen behaviour
+
+**Acceptance Criteria**
+- With `?ticker=` set, the Calendar view does not claim to be filtered unless it is
+- The chosen behaviour is written into `trade_history.md` alongside BLG-SPEC-227
 
 ---
