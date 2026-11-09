@@ -98,8 +98,10 @@ test('SC-ONW-02: a Trade History row links its ticker to Research', async ({ pag
   await page.goto('/#/TradeHistory');
   const links = page.getByTestId('trade-ticker-research-link');
   await expect(links).toHaveCount(2, { timeout: 15000 });
-  await expect(links.filter({ hasText: 'VOD' })).toHaveAttribute('href', '#/research/VOD.L');
-  await links.filter({ hasText: 'AAPL' }).click();
+  await expect(page.getByRole('link', { name: 'Research VOD', exact: true })).toHaveAttribute('href', '#/research/VOD.L');
+  // The ticker text itself still expands the row (it is not the link).
+  await expect(page.getByRole('link', { name: 'AAPL', exact: true })).toHaveCount(0);
+  await page.getByRole('link', { name: 'Research AAPL', exact: true }).click();
   await expect(page).toHaveURL(/#\/research\/AAPL$/);
   await expect(page.getByRole('heading', { level: 1, name: 'AAPL — Research', exact: true })).toBeVisible({ timeout: 15000 });
 });

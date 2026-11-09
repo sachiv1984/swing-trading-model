@@ -149,7 +149,7 @@ An existing "Back" button that calls `navigate(-1)` may stay, but it does not re
 | Trade Plans | Trade Plan (new or edit); Trade Entry from a plan | Exists |
 | Trade Plan | Trade Entry from the plan | Exists |
 | Ticker Universe | Screener | Built — ST-03 (v9.16) |
-| Trade History | Research for a trade's ticker | Built — ST-03 (v9.16): each row's ticker links to `/research/:ticker` |
+| Trade History | Research for a trade's ticker | Built — ST-03 (v9.16): each row has a "Research {TICKER}" icon link to `/research/:ticker` beside the ticker; clicking the ticker text still expands the row |
 | Analytics | Trade History | Built — ST-03 (v9.16); shows in the populated state |
 | Reports | Analytics | Built — ST-03 (v9.16) |
 | Strategy Benchmark | Analytics | Built — ST-03 (v9.16) |
