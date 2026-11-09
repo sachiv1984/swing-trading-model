@@ -34,6 +34,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import moment from "moment";
 import { todayLocal } from "../lib/localDate";
 import { PAGE_LABELS } from "../lib/pageLabels";
+import OnwardLink from "../components/ui/OnwardLink";
 
 // ST-10 (EPIC-02, v9.13, BLG-SPEC-188): hours with one decimal below 48 h, else
 // days and hours (system_status.md v1.3 §Stop Freshness Panel).
@@ -362,6 +363,10 @@ export default function SystemStatus() {
             {PAGE_LABELS.SystemStatus}
           </h1>
           <p className="text-slate-600 dark:text-slate-400 mt-1">Monitor system health and validate calculations</p>
+          {/* navigation.md v2.0 §Onward Links (ST-03, BLG-FE-252) */}
+          <div className="mt-2">
+            <OnwardLink to="/Settings" label={PAGE_LABELS.Settings} />
+          </div>
         </div>
         <div className="flex flex-wrap items-center gap-3">
           <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-800/50 border border-slate-700/50">

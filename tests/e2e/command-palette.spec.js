@@ -227,3 +227,19 @@ test('SC-CP-16: ⌘K badge renders the canonical secondary-text colour, not the 
   const color = await badge.evaluate((el) => getComputedStyle(el).color);
   expect(color).toBe('rgb(148, 163, 184)');
 });
+
+// ST-01 (EPIC-01, v9.16, BLG-FE-250): Research gets a palette entry that opens
+// the new /Research landing (navigation.md §Global Command Palette, Content).
+test('SC-CP-17: typing "Research" and selecting it opens the Research landing', async ({ page }) => {
+  await goto(page, '/#/Positions');
+  await page.keyboard.press('Control+k');
+  const input = page.getByTestId('command-palette-input');
+  await expect(input).toBeVisible();
+  await input.fill('Research');
+  const option = page.getByRole('option', { name: 'Research', exact: true });
+  await expect(option).toHaveCount(1);
+  await option.click();
+  await expect(page).toHaveURL(/#\/Research$/);
+  await expect(page.getByRole('heading', { level: 1, name: 'Research', exact: true })).toBeVisible({ timeout: 10000 });
+  await expect(page.getByTestId('research-landing-ticker')).toBeVisible();
+});

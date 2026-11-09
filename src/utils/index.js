@@ -24,6 +24,7 @@ export const createPageUrl = (pageName) => {
     Replay: '/Replay',
     TradePlan: '/TradePlan',
     TradePlans: '/TradePlans',
+    Research: '/Research',
   };
   return routes[pageName] || '/';
 };

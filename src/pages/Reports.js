@@ -1143,6 +1143,7 @@ export default function Reports() {
     <div className="space-y-6">
       <PageHeader
         title={PAGE_LABELS.Reports}
+        onward={{ label: PAGE_LABELS.PerformanceAnalytics, to: "/PerformanceAnalytics" }}
         description="Performance analysis and export tools"
         actions={
           activeTab === "performance" ? (

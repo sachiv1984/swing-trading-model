@@ -112,13 +112,11 @@ test('SC-REP-01: "Replay" nav item is present and navigates to the Replay page',
   await page.goto('/#/DashboardHome');
   await page.waitForLoadState('domcontentloaded');
 
-  // The sidebar groups items under collapsible sections (Trading, Analytics, Tools,
-  // System -- Layout.js NAV_GROUPS). Only the group containing the *current* page
-  // starts expanded; "Replay" lives in "Analytics", collapsed by default from
-  // DashboardHome. Expand it before clicking the link (same pattern as
-  // strategy-benchmark.spec.js).
-  await page.getByRole('button', { name: 'Analytics' }).click();
-  await page.getByRole('link', { name: 'Replay' }).click();
+  // navigation.md v2.0 (ST-01, EPIC-01, v9.16): "Replay" lives in the Review
+  // area, collapsed by default from DashboardHome (Today). Expand it first.
+  const nav = page.getByTestId('desktop-sidebar-nav');
+  await nav.getByTestId('nav-area-review').click();
+  await nav.getByRole('link', { name: 'Replay', exact: true }).click();
 
   await expect(page).toHaveURL(/#\/Replay/);
   await expect(page.getByRole('heading', { name: 'Replay', exact: true })).toBeVisible({ timeout: 10000 });

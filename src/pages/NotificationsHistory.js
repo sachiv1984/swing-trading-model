@@ -194,6 +194,7 @@ export default function NotificationsHistory() {
     <div className="space-y-6">
       <PageHeader
         title={PAGE_LABELS.NotificationsHistory}
+        parent={{ label: PAGE_LABELS.notifications, to: "/notifications" }}
         description="A log of every alert rule evaluation by the system."
       />
 

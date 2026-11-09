@@ -4,7 +4,8 @@
  *
  * Scenarios:
  *   SC-NND-01  No nav entry named "Alerts" remains (duplicate of Notifications removed)
- *   SC-NND-02  Weekly Digest appears in the same nav group (System) as Notifications
+ *   SC-NND-02  Notifications is in Today and Weekly Digest in Review (navigation.md v2.0;
+ *              superseded the v1.4 "same System group" rule — ST-01, EPIC-01, v9.16, BLG-FE-250)
  *   SC-NND-03  Weekly Digest's "Alerts Fired (7d)" value links to /notifications?since_days=7
  *   SC-NND-04  Weekly Digest's "Alerts Dismissed (7d)" value links to /notifications?since_days=7&read=true
  *   SC-NND-05  Clicking the "Alerts Fired (7d)" link navigates to the filtered Notification Feed
@@ -12,7 +13,7 @@
  *   SC-NND-07  Daily Portfolio Summary preference row links to the Weekly Digest page
  *
  * Spec refs:
- *   docs/specs/frontend/pages/navigation.md v1.4
+ *   docs/specs/frontend/pages/navigation.md v2.0 §Page Placement
  *   docs/specs/frontend/pages/notifications.md v0.5
  *   docs/specs/frontend/pages/weekly_digest.md v0.2
  *   docs/specs/api_contracts/alerts_endpoints.md v0.6
@@ -75,34 +76,36 @@ test('SC-NND-01: no nav entry named "Alerts" exists', async ({ page }) => {
   await page.goto('/#/Watchlist');
   await page.waitForLoadState('domcontentloaded');
 
-  // Expand every group to make sure "Alerts" isn't hiding in a collapsed one
-  for (const label of ['Trading', 'Analytics', 'Tools', 'System']) {
-    const btn = page.getByRole('button', { name: new RegExp(`^${label}$`, 'i') }).first();
-    if (await btn.isVisible().catch(() => false)) {
-      const disabled = await btn.getAttribute('disabled');
-      if (disabled === null) await btn.click().catch(() => {});
-    }
+  // Expand every area to make sure "Alerts" isn't hiding in a collapsed one
+  const nav = page.getByTestId('desktop-sidebar-nav');
+  for (const key of ['today', 'portfolio', 'find', 'review', 'settings']) {
+    const btn = nav.getByTestId(`nav-area-${key}`);
+    await expect(btn).toBeVisible({ timeout: 5000 });
+    if ((await btn.getAttribute('aria-expanded')) === 'false') await btn.click();
+    await expect(btn).toHaveAttribute('aria-expanded', 'true');
   }
 
-  await expect(page.getByRole('link', { name: 'Alerts' })).toHaveCount(0);
+  await expect(nav.getByRole('link', { name: 'Alerts', exact: true })).toHaveCount(0);
 });
 
 // ---------------------------------------------------------------------------
-// SC-NND-02 — Weekly Digest shares the System nav group with Notifications
+// SC-NND-02 — Notifications in Today, Weekly Digest in Review (navigation.md v2.0)
 // ---------------------------------------------------------------------------
 
-test('SC-NND-02: Weekly Digest and Notifications are both in the System nav group', async ({ page }) => {
+test('SC-NND-02: Notifications is in the Today area and Weekly Digest in the Review area', async ({ page }) => {
   await stubLayout(page);
+  await page.addInitScript(() => sessionStorage.removeItem('nav-group-collapse'));
   await page.goto('/#/Watchlist');
   await page.waitForLoadState('domcontentloaded');
 
-  const systemHeader = page.getByRole('button', { name: /^system/i }).first();
-  await expect(systemHeader).toBeVisible({ timeout: 5000 });
-  const expanded = await page.getByRole('link', { name: 'Notifications' }).first().isVisible().catch(() => false);
-  if (!expanded) await systemHeader.click();
+  const nav = page.getByTestId('desktop-sidebar-nav');
+  // Today is expanded by default; Review is collapsed while on Watchlist.
+  await expect(nav.getByTestId('nav-area-today')).toHaveAttribute('aria-expanded', 'true', { timeout: 5000 });
+  await expect(nav.locator('a[href="#/notifications"]')).toBeVisible();
+  await expect(nav.getByRole('link', { name: 'Weekly Digest', exact: true })).toHaveCount(0);
 
-  await expect(page.getByRole('link', { name: 'Weekly Digest' }).first()).toBeVisible({ timeout: 5000 });
-  await expect(page.getByRole('link', { name: 'Notifications' }).first()).toBeVisible();
+  await nav.getByTestId('nav-area-review').click();
+  await expect(nav.getByRole('link', { name: 'Weekly Digest', exact: true })).toBeVisible({ timeout: 5000 });
 });
 
 // ---------------------------------------------------------------------------

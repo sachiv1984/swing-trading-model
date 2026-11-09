@@ -1,6 +1,7 @@
 import { useState, useMemo } from "react";
+import { Link } from "react-router-dom";
 import { format } from "date-fns";
-import { TrendingUp, TrendingDown, ChevronDown, ChevronRight, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
+import { TrendingUp, TrendingDown, ChevronDown, ChevronRight, ArrowUpDown, ArrowUp, ArrowDown, Search } from "lucide-react";
 import { DataTable, TableHeader, TableHead, TableBody, TableRow, TableCell } from "../ui/DataTable";
 import { cn } from "../../lib/utils";
 import PlanVsReality from "./PlanVsReality";
@@ -378,6 +379,22 @@ export default function TradeHistoryTable({ trades, tradesForCharts = [] }) {
                     <span className="text-xs px-2 py-0.5 rounded-full bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-700">
                       {trade.market}
                     </span>
+                    {/* navigation.md §Onward Links (ST-03, BLG-FE-252): Research for
+                        this trade's ticker. A separate icon link, so clicking the
+                        ticker text still expands the row as before;
+                        stopPropagation keeps the row toggle from firing. */}
+                    {trade.ticker && (
+                      <Link
+                        to={`/research/${encodeURIComponent(trade.ticker)}`}
+                        onClick={(e) => e.stopPropagation()}
+                        data-testid="trade-ticker-research-link"
+                        aria-label={`Research ${trade.ticker.replace(".L", "")}`}
+                        title={`Research ${trade.ticker.replace(".L", "")}`}
+                        className="inline-flex items-center justify-center w-6 h-6 rounded text-slate-500 hover:text-cyan-400 hover:bg-slate-800 dark:text-slate-400 print-hide"
+                      >
+                        <Search className="w-3.5 h-3.5" aria-hidden="true" />
+                      </Link>
+                    )}
                   </div>
                 </TableCell>
 

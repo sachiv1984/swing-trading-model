@@ -88,6 +88,14 @@ const AuthenticatedApp = () => {
           <NotificationsHistory />
         </LayoutWrapper>
       } />
+      {/* ST-01 (BLG-FE-250, v9.16): Research landing — sidebar and palette
+          entry (navigation.md §Page Placement). Submitting a ticker goes to
+          /research/:ticker. */}
+      <Route path="/Research" element={
+        <LayoutWrapper currentPageName="Research">
+          <Research />
+        </LayoutWrapper>
+      } />
       <Route path="/research/:ticker" element={
         <LayoutWrapper currentPageName="Research">
           <Research />

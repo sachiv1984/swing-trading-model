@@ -19,9 +19,10 @@ const { test, expect } = require('./fixtures/api-status-guard');
 
 const API = 'http://localhost:8000';
 
-// [route hash, canonical label] for every page with a sidebar entry today.
-// Deliberate differences (glossary §UI Labels) are not in this list:
-// the Positions journal view keeps "Trade Journal"; Research needs a ticker.
+// [route hash, canonical label] for every page with a sidebar entry
+// (navigation.md v2.0 §Page Placement — 21 entries; ST-01, BLG-FE-250, v9.16
+// added Research and Trade Plans). Deliberate differences (glossary §UI Labels)
+// are not in this list: the Positions journal view keeps "Trade Journal".
 const SIDEBAR_PAGES = [
   ['/#/', 'Dashboard'],
   ['/#/Positions', 'Positions'],
@@ -37,6 +38,8 @@ const SIDEBAR_PAGES = [
   ['/#/Reports', 'Reports'],
   ['/#/Screener', 'Screener'],
   ['/#/Watchlist', 'Watchlist'],
+  ['/#/Research', 'Research'],
+  ['/#/TradePlans', 'Trade Plans'],
   ['/#/TickerUniverse', 'Ticker Universe'],
   ['/#/Settings', 'Settings'],
   ['/#/SystemStatus', 'System Status'],
@@ -45,7 +48,6 @@ const SIDEBAR_PAGES = [
 ];
 
 const PALETTE_ONLY_PAGES = [
-  ['TradePlans', 'Trade Plans'],
   ['TradePlan', 'Trade Plan'],
 ];
 
@@ -68,12 +70,8 @@ for (const [hash, label] of SIDEBAR_PAGES) {
     await expect(page.getByRole('heading', { level: 1, name: label, exact: true })).toBeVisible({ timeout: 15000 });
     const sidebar = page.getByRole('complementary');
     const link = sidebar.getByRole('link', { name: label, exact: true }).first();
-    // Notifications is the alert-badge carrier: in the v1.x groups it does not anchor
-    // the active group, so its group may start collapsed (navigation.md v2.0 moves it
-    // to Today, expanded by default, via BLG-FE-250). Expand the group in that case.
-    if (!(await link.isVisible())) {
-      await sidebar.getByRole('button', { name: /^System/ }).first().click();
-    }
+    // navigation.md v2.0 §Default Expansion: the active area is always expanded,
+    // so the current page's own entry is visible without expanding anything.
     await expect(link).toBeVisible();
   });
 }

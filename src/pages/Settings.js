@@ -165,6 +165,7 @@ export default function Settings() {
     <div className="space-y-6 max-w-2xl mx-auto">
       <PageHeader
         title={PAGE_LABELS.Settings}
+        onward={{ label: PAGE_LABELS.NotificationPreferences, to: "/notifications/preferences" }}
         description="Configure your strategy parameters and preferences"
         actions={
           <div className="flex flex-wrap items-center justify-end gap-3 w-full sm:w-auto">

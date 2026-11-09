@@ -1,7 +1,9 @@
+import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { apiFetch } from "../api/base44Client";
 import { Button } from "../components/ui/button";
+import { Input } from "../components/ui/input";
 import PageHeader from "../components/ui/PageHeader";
 import { PAGE_LABELS } from "../lib/pageLabels";
 import EntryChecklist from "../components/trades/EntryChecklist";
@@ -66,6 +68,40 @@ function Skeleton({ className }) {
   return <div className={cn("h-4 bg-slate-700/50 rounded animate-pulse", className)} />;
 }
 
+// Research landing (ST-01, EPIC-01, v9.16, BLG-FE-250; navigation.md §Page
+// Placement): the Research sidebar and palette entry open /Research, which
+// has the page heading and a single ticker input — nothing else. Submitting
+// a ticker goes to /research/:ticker.
+function ResearchLanding() {
+  const navigate = useNavigate();
+  const [value, setValue] = useState("");
+  const onSubmit = (e) => {
+    e.preventDefault();
+    const t = value.trim().toUpperCase();
+    if (!t) return;
+    navigate(`/research/${encodeURIComponent(t)}`);
+  };
+  return (
+    <div className="space-y-6">
+      <PageHeader title={PAGE_LABELS.Research} />
+      <form onSubmit={onSubmit} className="flex gap-2 max-w-md" data-testid="research-landing-form">
+        <label htmlFor="research-ticker" className="sr-only">Ticker</label>
+        <Input
+          id="research-ticker"
+          data-testid="research-landing-ticker"
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          placeholder="Ticker, e.g. AAPL or VOD.L"
+          autoComplete="off"
+        />
+        <Button type="submit" disabled={!value.trim()} data-testid="research-landing-submit">
+          Research
+        </Button>
+      </form>
+    </div>
+  );
+}
+
 export default function Research() {
   const { ticker } = useParams();
   const navigate = useNavigate();
@@ -117,6 +153,8 @@ export default function Research() {
     retry: 1,
   });
 
+  if (!ticker) return <ResearchLanding />;
+
   if (researchError) {
     const errorStatus = researchError?.message?.match(/HTTP (\d+)/)?.[1];
     const errorMessage =
@@ -129,6 +167,7 @@ export default function Research() {
       <div className="space-y-6">
         <PageHeader
           title={ticker ? `${stripUkSuffix(ticker)} — ${PAGE_LABELS.Research}` : PAGE_LABELS.Research}
+          parent={{ label: PAGE_LABELS.Research, to: "/Research" }}
           description="Pre-trade research"
           actions={
             <Button
@@ -183,6 +222,7 @@ export default function Research() {
     <div className="space-y-6">
       <PageHeader
         title={ticker ? `${stripUkSuffix(ticker)} — ${PAGE_LABELS.Research}` : PAGE_LABELS.Research}
+        parent={{ label: PAGE_LABELS.Research, to: "/Research" }}
         description={
           researchLoading
             ? "Loading…"

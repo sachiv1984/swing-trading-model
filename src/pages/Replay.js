@@ -129,7 +129,11 @@ export default function Replay() {
 
   return (
     <div className="p-6 max-w-6xl mx-auto space-y-6">
-      <PageHeader title={PAGE_LABELS.Replay} description="Replay your own past trades through today's strategy rules." />
+      <PageHeader
+        title={PAGE_LABELS.Replay}
+        description="Replay your own past trades through today's strategy rules."
+        onward={{ label: PAGE_LABELS.TradeHistory, to: "/TradeHistory" }}
+      />
 
       {/* Selector — decision_record.md §2.2: two mutually exclusive, tab-switched input modes */}
       <div className="bg-white dark:bg-slate-800/50 rounded-lg border border-slate-200 dark:border-slate-700/50 p-5 space-y-4">

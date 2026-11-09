@@ -213,7 +213,8 @@ test('SC-RES-03: Signal badge shows Watch status from API', async ({ page }) => 
   await mockPlans(page);
   await gotoResearch(page);
 
-  await expect(page.getByText('Watch')).toBeVisible({ timeout: 8000 });
+  // Scoped to <main>: the v2 sidebar (ST-01, v9.16) shows "Watchlist" on Research pages.
+  await expect(page.locator('main').getByText('Watch', { exact: true })).toBeVisible({ timeout: 8000 });
 });
 
 // ---------------------------------------------------------------------------

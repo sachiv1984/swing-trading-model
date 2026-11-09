@@ -157,7 +157,8 @@ test.describe('ST-07 — Earnings past/today display', () => {
       await setupWatchlist(page, TODAY_EARNINGS);
       await page.goto('/#/Watchlist');
       await expect(page.getByText('MSFT')).toBeVisible({ timeout: 8000 });
-      await expect(page.getByText('Today')).toBeVisible({ timeout: 5000 });
+      // Scoped to <main>: the v2 sidebar (ST-01, v9.16) has a "Today" area header.
+      await expect(page.locator('main').getByText('Today', { exact: true })).toBeVisible({ timeout: 5000 });
     });
   });
 

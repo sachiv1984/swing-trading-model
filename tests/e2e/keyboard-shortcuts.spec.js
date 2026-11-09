@@ -200,10 +200,12 @@ test('SC-KBD-08: n key on Dashboard does not navigate away', async ({ page }) =>
 test('SC-KBD-09: Sidebar footer shows n and r hints on Positions page', async ({ page }) => {
   await goto(page, '/#/Positions');
 
-  // Sidebar footer should contain kbd elements for 'n' and 'r'
+  // Sidebar footer should contain kbd elements for 'n' and 'r'. Scoped to kbd
+  // chips (ST-01, v9.16): the v2 sidebar areas contain enough link text that a
+  // bare toContainText('n') on the whole <aside> would pass trivially.
   const sidebar = page.locator('aside').first();
-  await expect(sidebar).toContainText('n', { timeout: 5000 });
-  await expect(sidebar).toContainText('r');
+  await expect(sidebar.locator('kbd').filter({ hasText: /^n$/ })).toBeVisible({ timeout: 5000 });
+  await expect(sidebar.locator('kbd').filter({ hasText: /^r$/ })).toBeVisible();
 });
 
 // SC-KBD-10 — Sidebar footer shows correct hints on Screener
@@ -211,8 +213,8 @@ test('SC-KBD-10: Sidebar footer shows w and r hints on Screener page', async ({ 
   await goto(page, '/#/Screener');
 
   const sidebar = page.locator('aside').first();
-  await expect(sidebar).toContainText('w', { timeout: 5000 });
-  await expect(sidebar).toContainText('r');
+  await expect(sidebar.locator('kbd').filter({ hasText: /^w$/ })).toBeVisible({ timeout: 5000 });
+  await expect(sidebar.locator('kbd').filter({ hasText: /^r$/ })).toBeVisible();
 });
 
 // SC-KBD-11 — Typing in form inputs still works (no global suppression of keydown)
@@ -234,4 +236,20 @@ test('SC-KBD-11: Typing in an input field works normally (no interference)', asy
   } else {
     test.skip();
   }
+});
+
+// SC-KBD-12 — New v2 sidebar entry (Trade Plans, ST-01 BLG-FE-250 v9.16):
+// only the default 'r' hint shows, and 'n' does not navigate away.
+test('SC-KBD-12: on Trade Plans (new sidebar entry) only the r hint shows and n does nothing', async ({ page }) => {
+  await goto(page, '/#/TradePlans');
+  const sidebar = page.locator('aside').first();
+  await expect(sidebar.locator('kbd').filter({ hasText: /^r$/ })).toBeVisible({ timeout: 5000 });
+  await expect(sidebar.locator('kbd').filter({ hasText: /^n$/ })).toHaveCount(0);
+  await expect(sidebar.locator('kbd').filter({ hasText: /^w$/ })).toHaveCount(0);
+
+  await page.locator('body').click({ position: { x: 900, y: 600 } });
+  const startUrl = page.url();
+  await page.keyboard.press('n');
+  await page.waitForTimeout(300);
+  expect(page.url()).toBe(startUrl);
 });

@@ -30,6 +30,9 @@ import {
   Search,
   Wallet,
   RotateCcw,
+  BookOpen,
+  ClipboardList,
+  NotebookPen,
 } from "lucide-react";
 import { Button } from "./components/ui/button";
 import { cn } from "./lib/utils";
@@ -43,6 +46,7 @@ import { toast } from "sonner";
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
 
+// Pages whose visit clears the alert badge (navigation.md §Alert Badge Integration).
 const NOTIFICATIONS_PAGES = ["notifications", "NotificationPreferences"];
 
 // Keyboard shortcuts: keys available on each page (ST-11)
@@ -54,81 +58,94 @@ const PAGE_SHORTCUTS = {
 };
 const DEFAULT_SHORTCUTS = [{ key: "r", label: "Refresh" }];
 
-// Nav item labels come from src/lib/pageLabels.js (ST-11, BLG-FE-248, v9.15;
-// glossary.md §UI Labels). Groups are still v1.x until BLG-FE-250 builds
-// navigation.md v2.0's areas.
-// Nav group structure — per navigation.md v1.4 (ST-02, EPIC-02, v7.7, BLG-FE-114)
-// v1.4: "Alerts" (formerly Tools group) removed — duplicate destination of
-// "Notifications" (System group), which is now the sole nav path and inherits
-// the alert-count badge. "Weekly Digest" moved from Analytics to System,
-// positioned directly above "Notifications" (both are activity-summary surfaces).
-const NAV_GROUPS = [
+// Sidebar areas — navigation.md v2.0 §Areas / §Page Placement (ST-01,
+// EPIC-01, v9.16, BLG-FE-250). Five job-based areas replace the v1.x feature
+// groups (Trading, Analytics, Tools, System). Labels come from
+// src/lib/pageLabels.js (glossary.md §UI Labels). Dashboard is now the first
+// entry in Today rather than an ungrouped link above the groups.
+const NAV_AREAS = [
   {
-    label: "Trading",
-    key: "trading",
+    label: "Today",
+    key: "today",
+    items: [
+      { name: PAGE_LABELS.DashboardHome, icon: LayoutDashboard, page: "DashboardHome" },
+      { name: PAGE_LABELS.notifications, icon: Bell, page: "notifications", alertBadge: true },
+    ],
+  },
+  {
+    label: "Portfolio",
+    key: "portfolio",
     items: [
       { name: PAGE_LABELS.Positions,     icon: Briefcase,   page: "Positions" },
-      { name: PAGE_LABELS.TradeEntry,   icon: PlusCircle,  page: "TradeEntry" },
-      { name: PAGE_LABELS.TradeHistory, icon: History,     page: "TradeHistory" },
-      { name: PAGE_LABELS.TradeReflection,   icon: FileBarChart, page: "TradeReflection" },
-      { name: PAGE_LABELS.RedFlagJournal, icon: Flag, page: "RedFlagJournal" },
+      { name: PAGE_LABELS.TradeEntry,    icon: PlusCircle,  page: "TradeEntry" },
+      { name: PAGE_LABELS.RiskDashboard, icon: ShieldAlert, page: "RiskDashboard" },
     ],
   },
   {
-    label: "Analytics",
-    key: "analytics",
+    label: "Find trades",
+    key: "find",
     items: [
-      { name: PAGE_LABELS.PerformanceAnalytics,           icon: TrendingUp,   page: "PerformanceAnalytics" },
-      { name: PAGE_LABELS.StrategyBenchmark,  icon: BarChart2,    page: "StrategyBenchmark" },
-      { name: PAGE_LABELS.Replay,              icon: RotateCcw,    page: "Replay" },
-      { name: PAGE_LABELS.RiskDashboard,      icon: ShieldAlert,  page: "RiskDashboard" },
-      { name: PAGE_LABELS.Signals,             icon: Zap,          page: "Signals" },
-      { name: PAGE_LABELS.Reports,             icon: FileBarChart,  page: "Reports" },
+      { name: PAGE_LABELS.Signals,        icon: Zap,           page: "Signals" },
+      { name: PAGE_LABELS.Screener,       icon: ScanSearch,    page: "Screener" },
+      { name: PAGE_LABELS.Watchlist,      icon: Eye,           page: "Watchlist" },
+      { name: PAGE_LABELS.Research,       icon: BookOpen,      page: "Research" },
+      { name: PAGE_LABELS.TradePlans,     icon: ClipboardList, page: "TradePlans" },
+      { name: PAGE_LABELS.TickerUniverse, icon: Globe,         page: "TickerUniverse" },
     ],
   },
   {
-    label: "Tools",
-    key: "tools",
+    label: "Review",
+    key: "review",
     items: [
-      { name: PAGE_LABELS.Screener,         icon: ScanSearch, page: "Screener" },
-      { name: PAGE_LABELS.Watchlist,        icon: Eye,        page: "Watchlist" },
-      { name: PAGE_LABELS.TickerUniverse,  icon: Globe,      page: "TickerUniverse" },
+      { name: PAGE_LABELS.TradeHistory,         icon: History,      page: "TradeHistory" },
+      { name: PAGE_LABELS.PerformanceAnalytics, icon: TrendingUp,   page: "PerformanceAnalytics" },
+      { name: PAGE_LABELS.Reports,              icon: FileBarChart, page: "Reports" },
+      { name: PAGE_LABELS.StrategyBenchmark,    icon: BarChart2,    page: "StrategyBenchmark" },
+      { name: PAGE_LABELS.Replay,               icon: RotateCcw,    page: "Replay" },
+      { name: PAGE_LABELS.TradeReflection,      icon: NotebookPen,  page: "TradeReflection" },
+      { name: PAGE_LABELS.RedFlagJournal,       icon: Flag,         page: "RedFlagJournal" },
+      { name: PAGE_LABELS.WeeklyDigest,         icon: CalendarDays, page: "WeeklyDigest" },
     ],
   },
   {
-    label: "System",
-    key: "system",
+    label: "Settings",
+    key: "settings",
     items: [
-      { name: PAGE_LABELS.Settings,      icon: Settings,  page: "Settings" },
-      { name: PAGE_LABELS.SystemStatus, icon: Activity,  page: "SystemStatus" },
-      { name: PAGE_LABELS.WeeklyDigest, icon: CalendarDays, page: "WeeklyDigest" },
-      { name: PAGE_LABELS.notifications, icon: Bell,      page: "notifications", alertBadge: true },
+      { name: PAGE_LABELS.Settings,     icon: Settings, page: "Settings" },
+      { name: PAGE_LABELS.SystemStatus, icon: Activity, page: "SystemStatus" },
     ],
   },
 ];
 
-function getActiveGroupKey(pageName) {
-  // alertBadge items are shortcut badges — they don't anchor the active group
-  for (const group of NAV_GROUPS) {
-    if (
-      group.items.some(
-        (item) =>
-          !item.alertBadge && (
-            item.page === pageName ||
-            (item.page === "notifications" && NOTIFICATIONS_PAGES.includes(pageName))
-          )
-      )
-    ) {
-      return group.key;
-    }
-  }
-  return null;
+// navigation.md §Default Expansion: Today and Portfolio, plus the active area.
+const DEFAULT_EXPANDED_AREAS = ["today", "portfolio"];
+
+// navigation.md §Active Item: a page without a sidebar entry highlights its
+// parent's entry. /notifications/history already renders under the
+// "notifications" Layout key (App.js); /research/:ticker under "Research".
+const NAV_PARENT_PAGE = {
+  TradePlan: "TradePlans",
+  NotificationPreferences: "notifications",
+  NotificationsHistory: "notifications",
+};
+
+function navPageFor(pageName) {
+  return NAV_PARENT_PAGE[pageName] || pageName;
+}
+
+function getActiveAreaKey(pageName) {
+  const navPage = navPageFor(pageName);
+  const area = NAV_AREAS.find((a) => a.items.some((item) => item.page === navPage));
+  return area ? area.key : null;
 }
 
 function buildDefaultCollapse(pageName) {
-  const activeKey = getActiveGroupKey(pageName);
-  return NAV_GROUPS.reduce(
-    (acc, g) => ({ ...acc, [g.key]: g.key !== activeKey }),
+  const activeKey = getActiveAreaKey(pageName);
+  return NAV_AREAS.reduce(
+    (acc, a) => ({
+      ...acc,
+      [a.key]: !(DEFAULT_EXPANDED_AREAS.includes(a.key) || a.key === activeKey),
+    }),
     {}
   );
 }
@@ -249,29 +266,34 @@ export default function Layout({ children, currentPageName }) {
     staleTime: 30 * 1000,
   });
 
-  const isActive = (pageName) =>
-    pageName === "notifications"
-      ? NOTIFICATIONS_PAGES.includes(currentPageName)
-      : currentPageName === pageName;
+  const isActive = (pageName) => navPageFor(currentPageName) === pageName;
 
-  // Collapse state — persisted in sessionStorage, resets on full page reload
+  // Collapse state — persisted in sessionStorage for the session
+  // (navigation.md §Default Expansion and Collapse). Stored values are merged
+  // over the defaults so a value saved under the v1.x group keys cannot leave
+  // a v2 area undefined.
   const [groupCollapse, setGroupCollapse] = useState(() => {
+    const defaults = buildDefaultCollapse(currentPageName);
     try {
       const stored = sessionStorage.getItem("nav-group-collapse");
       if (stored) {
         const parsed = JSON.parse(stored);
-        // Always ensure active group is expanded
-        const activeKey = getActiveGroupKey(currentPageName);
-        if (activeKey) parsed[activeKey] = false;
-        return parsed;
+        const merged = { ...defaults };
+        for (const area of NAV_AREAS) {
+          if (typeof parsed?.[area.key] === "boolean") merged[area.key] = parsed[area.key];
+        }
+        // The active area is always expanded
+        const activeKey = getActiveAreaKey(currentPageName);
+        if (activeKey) merged[activeKey] = false;
+        return merged;
       }
     } catch {}
-    return buildDefaultCollapse(currentPageName);
+    return defaults;
   });
 
-  // Expand active group automatically on page change
+  // Expand the active area automatically on page change
   useEffect(() => {
-    const activeKey = getActiveGroupKey(currentPageName);
+    const activeKey = getActiveAreaKey(currentPageName);
     if (!activeKey) return;
     setGroupCollapse((prev) => {
       if (!prev[activeKey]) return prev;
@@ -282,7 +304,7 @@ export default function Layout({ children, currentPageName }) {
   }, [currentPageName]);
 
   const toggleGroup = (key) => {
-    if (key === getActiveGroupKey(currentPageName)) return; // active group cannot collapse
+    if (key === getActiveAreaKey(currentPageName)) return; // active area cannot collapse
     setGroupCollapse((prev) => {
       const next = { ...prev, [key]: !prev[key] };
       try { sessionStorage.setItem("nav-group-collapse", JSON.stringify(next)); } catch {}
@@ -367,17 +389,23 @@ export default function Layout({ children, currentPageName }) {
 
   const renderNavGroups = (onItemClick) => (
     <div className="space-y-1">
-      {NAV_GROUPS.map((group) => {
+      {NAV_AREAS.map((group) => {
         const isCollapsed = groupCollapse[group.key];
-        const isActiveGroup = group.key === getActiveGroupKey(currentPageName);
-        const showBadge = group.key === "system" && isCollapsed && alertCount > 0;
+        const isActiveGroup = group.key === getActiveAreaKey(currentPageName);
+        // navigation.md §Alert Badge Integration: the count shows on the Today
+        // header while Today is collapsed, otherwise on the Notifications entry.
+        const showBadge =
+          group.items.some((item) => item.alertBadge) && isCollapsed && alertCount > 0;
 
         return (
           <div key={group.key}>
             {/* Group header */}
             <button
+              type="button"
               onClick={() => toggleGroup(group.key)}
               disabled={isActiveGroup}
+              aria-expanded={!isCollapsed}
+              data-testid={`nav-area-${group.key}`}
               className={cn(
                 "w-full flex items-center justify-between px-4 py-2 mt-2 rounded-lg transition-all",
                 isActiveGroup
@@ -431,14 +459,14 @@ export default function Layout({ children, currentPageName }) {
                   <div className="mt-0.5 space-y-0.5 pb-1">
                     {group.items.map((item) => {
                       const Icon = item.icon;
-                      // alertBadge items are badge carriers — suppress active state to avoid dual-highlight
-                      const active = !item.alertBadge && isActive(item.page);
+                      const active = isActive(item.page);
                       const showItemBadge = item.alertBadge && alertCount > 0;
                       return (
                         <Link
                           key={item.name}
                           to={createPageUrl(item.page)}
                           onClick={onItemClick}
+                          aria-current={active ? "page" : undefined}
                           className={cn(
                             "flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all ml-3 border-l-2",
                             active
@@ -569,6 +597,8 @@ export default function Layout({ children, currentPageName }) {
               variant="ghost"
               size="icon"
               onClick={() => setSidebarOpen(true)}
+              aria-label="Open menu"
+              data-testid="mobile-menu-trigger"
               className={cn(
                 "h-9 w-9",
                 isDark
@@ -633,23 +663,8 @@ export default function Layout({ children, currentPageName }) {
                 </Button>
               </div>
 
-              {/* Mobile: Dashboard shortcut + groups */}
-              <nav className="p-4 space-y-1 overflow-y-auto h-[calc(100%-65px)]">
-                <Link
-                  to={createPageUrl("DashboardHome")}
-                  onClick={() => setSidebarOpen(false)}
-                  className={cn(
-                    "flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all mb-3",
-                    isActive("DashboardHome")
-                      ? "bg-gradient-to-r from-cyan-500/20 to-violet-500/20 text-cyan-600 border border-cyan-500/30"
-                      : isDark
-                        ? "text-slate-400 hover:text-white hover:bg-slate-800/50"
-                        : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
-                  )}
-                >
-                  <LayoutDashboard className="w-4 h-4 shrink-0" />
-                  {PAGE_LABELS.DashboardHome}
-                </Link>
+              {/* Mobile drawer: same areas, order and default expansion as desktop */}
+              <nav className="p-4 space-y-1 overflow-y-auto h-[calc(100%-65px)]" data-testid="mobile-sidebar-nav">
                 {renderNavGroups(() => setSidebarOpen(false))}
               </nav>
             </motion.aside>
@@ -736,26 +751,8 @@ export default function Layout({ children, currentPageName }) {
         </div>
 
         {/* Navigation — scrollable */}
-        <nav className="flex-1 overflow-y-auto px-4 py-4 space-y-1">
-          {/* Dashboard — ungrouped home link */}
-          <Link
-            to={createPageUrl("DashboardHome")}
-            className={cn(
-              "flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all mb-3",
-              isActive("DashboardHome")
-                ? isDark
-                  ? "bg-gradient-to-r from-cyan-500/20 to-violet-500/20 text-cyan-400 border border-cyan-500/30 shadow-lg shadow-cyan-500/10"
-                  : "bg-gradient-to-r from-cyan-500/10 to-violet-500/10 text-cyan-600 border border-cyan-500/20"
-                : isDark
-                  ? "text-slate-400 hover:text-white hover:bg-slate-800/50"
-                  : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
-            )}
-          >
-            <LayoutDashboard className="w-4 h-4 shrink-0" />
-            {PAGE_LABELS.DashboardHome}
-          </Link>
-
-          {/* Collapsible groups */}
+        <nav className="flex-1 overflow-y-auto px-4 py-4 space-y-1" data-testid="desktop-sidebar-nav">
+          {/* Collapsible areas (navigation.md v2.0 §Areas) */}
           {renderNavGroups(null)}
         </nav>
 

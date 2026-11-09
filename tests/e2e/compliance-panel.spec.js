@@ -152,7 +152,8 @@ test('SC-COMP-02: Table View — all compliant shows "Compliant" badge and panel
   // Panel is collapsed by default — aria-expanded="false" on the toggle button.
   // (CSS max-height:0/overflow:hidden doesn't satisfy Playwright's toBeVisible check,
   // so we verify collapse state via the aria-expanded attribute instead.)
-  const toggleBtn = page.locator('button[aria-expanded]').first();
+  // Scoped to <main>: the v2 sidebar area headers (ST-01, v9.16) also carry aria-expanded.
+  const toggleBtn = page.locator('main button[aria-expanded]').first();
   await expect(toggleBtn).toHaveAttribute('aria-expanded', 'false');
 });
 
@@ -255,7 +256,8 @@ test('SC-COMP-07: panel can be manually collapsed and re-expanded by clicking th
   await page.waitForTimeout(400); // allow CSS transition
 
   // Panel now collapsed — aria-expanded="false"
-  const toggleBtn = page.locator('button[aria-expanded]').first();
+  // Scoped to <main>: the v2 sidebar area headers (ST-01, v9.16) also carry aria-expanded.
+  const toggleBtn = page.locator('main button[aria-expanded]').first();
   await expect(toggleBtn).toHaveAttribute('aria-expanded', 'false');
 
   // Click header again to expand

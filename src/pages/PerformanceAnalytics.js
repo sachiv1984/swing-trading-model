@@ -569,6 +569,7 @@ export default function PerformanceAnalytics() {
         <PageHeader
           title={PAGE_LABELS.PerformanceAnalytics}
           description="Deep dive into your trading performance and strategy effectiveness"
+          onward={{ label: PAGE_LABELS.TradeHistory, to: "/TradeHistory" }}
           actions={
             /* ST-12 (BLG-FE-94, EPIC-04, v8.5): flex-col sm:flex-row --
                per analytics.md "Period selector and export button stack or
@@ -621,6 +622,7 @@ export default function PerformanceAnalytics() {
       <PageHeader
         title={PAGE_LABELS.PerformanceAnalytics}
         description="Deep dive into your trading performance and strategy effectiveness"
+        onward={{ label: PAGE_LABELS.TradeHistory, to: "/TradeHistory" }}
         actions={
           /* ST-12 (BLG-FE-94, EPIC-04, v8.5): flex-col sm:flex-row -- see
              matching comment above for rationale. */

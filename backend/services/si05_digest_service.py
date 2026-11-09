@@ -280,14 +280,25 @@ def _format_deep_links(frontend_url: Optional[str]) -> str:
     """
     Format deep link footer pointing to relevant app screens (BLG-FE-73).
     Returns empty string if FRONTEND_URL env var is not configured.
-    In MarkdownV2 inline links only ) and backslash need escaping in the URL part.
+    In MarkdownV2 inline links only ) and backslash need escaping in the URL part;
+    ? and = do not.
+
+    ST-04 (EPIC-01, v9.16, BLG-FE-253): a third link, "Strategy Compliance",
+    opens Analytics scrolled to the Arc 5 Signal Compliance section, where the
+    Top Rule Breach and override rate are shown (analytics.md §19.1). The Risk
+    Dashboard link stays page-level: that page has no rule-breach section
+    (digest-section-link/decision_record.md §2.3).
     """
     if not frontend_url:
         return ""
     base = frontend_url.rstrip("/")
     risk_url = f"{base}/#/RiskDashboard"
     rfj_url = f"{base}/#/RedFlagJournal"
-    return f"🔗 [Risk Dashboard]({risk_url}) · [Red Flag Journal]({rfj_url})"
+    compliance_url = f"{base}/#/PerformanceAnalytics?section=strategy-compliance"
+    return (
+        f"🔗 [Risk Dashboard]({risk_url}) · [Red Flag Journal]({rfj_url})"
+        f" · [Strategy Compliance]({compliance_url})"
+    )
 
 
 def format_si05_section(data: dict) -> str:

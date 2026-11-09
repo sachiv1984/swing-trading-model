@@ -530,24 +530,24 @@ test('SC-SCR-DEG-02: No degraded panel shown when run_quality is FULL', async ({
   await expect(panel).toHaveAttribute('data-quality', 'FULL');
 });
 
-// SC-SCR-18 — Screener nav item in Tools group links to /Screener
-test('SC-SCR-18: Screener nav item present in Tools group', async ({ page }) => {
+// SC-SCR-18 — Screener nav item in the Find trades area links to /Screener
+// (navigation.md v2.0; was the Tools group before ST-01, EPIC-01, v9.16)
+test('SC-SCR-18: Screener nav item present in Find trades area', async ({ page }) => {
   await stubScreener(page, []);
   await stubWatchlist(page);
 
-  // Go to a non-Screener page first so Tools group may be collapsed
+  // Go to a non-Find-trades page first so the area starts collapsed
   await page.route(`${API}/portfolio/positions**`, (route) =>
     route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ data: { positions: [] } }) })
   );
   await goto(page, '/#/Positions');
 
-  // Expand Tools group
-  const toolsBtn = page.getByRole('button', { name: /tools/i });
-  const screenerLink = page.getByRole('link', { name: 'Screener' }).first();
-  const alreadyVisible = await screenerLink.isVisible().catch(() => false);
-  if (!alreadyVisible) {
-    await toolsBtn.click();
-  }
+  // Expand the Find trades area
+  const nav = page.getByTestId('desktop-sidebar-nav');
+  const findBtn = nav.getByTestId('nav-area-find');
+  const screenerLink = nav.getByRole('link', { name: 'Screener', exact: true });
+  await expect(findBtn).toHaveAttribute('aria-expanded', 'false', { timeout: 5000 });
+  await findBtn.click();
 
   await expect(screenerLink).toBeVisible({ timeout: 3000 });
   await screenerLink.click();

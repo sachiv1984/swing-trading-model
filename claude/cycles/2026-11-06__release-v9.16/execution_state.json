@@ -1,0 +1,187 @@
+{
+  "cycle_id": "2026-11-06__release-v9.16",
+  "sprint_goal": "Ship Site Structure & Usability Phase 2 complete (job-based sidebar with parent and onward links, the Dashboard Today list, \"Plan this\" with suggested size, the plan-linked pre-entry acknowledgement fix `BLG-FE-271`, and the first semantic colour tokens), and close the Anthropic key exposure by rotating the overdue key (`BLG-OPS-214`, P1) and removing the key secret from the public Pages build (`BLG-OPS-213`).",
+  "backlog_slice_source": "claude/cycles/2026-11-06__release-v9.16/stage4_backlog_slice.md",
+  "backlog_slice_addendum": "claude/cycles/2026-11-06__release-v9.16/stage4_backlog_slice_addendum.md",
+  "invoked_utc": "2026-11-09T09:15:14Z",
+  "mode": "standard",
+  "status": "Running",
+  "last_updated_utc": "2026-11-09T11:13:37Z",
+  "merge_order": [
+    "EPIC-01",
+    "EPIC-02",
+    "EPIC-05",
+    "EPIC-07",
+    "EPIC-06",
+    "EPIC-03",
+    "EPIC-04"
+  ],
+  "epics": {
+    "EPIC-01": {
+      "status": "done",
+      "branch": "exec/2026-11-06__release-v9.16/EPIC-01",
+      "pr_number": 2227,
+      "pr_status": "open",
+      "qa_signed_off": true,
+      "qa_evidence_log": "claude/cycles/2026-11-06__release-v9.16/qa_evidence_EPIC-01.md",
+      "test_scenarios": [
+        "tests/e2e/sidebar-nav-groups.spec.js",
+        "tests/e2e/alert-nav-badge.spec.js",
+        "tests/e2e/command-palette.spec.js",
+        "tests/e2e/keyboard-shortcuts.spec.js",
+        "tests/e2e/parent-links.spec.js",
+        "tests/e2e/onward-links.spec.js",
+        "tests/e2e/analytics-section-link.spec.js",
+        "tests/test_si05_digest_service.py"
+      ],
+      "stories": {
+        "ST-01": {
+          "title": "Build the job-based sidebar and surface Trade Plans and Research",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 2197,
+          "branch": "exec/2026-11-06__release-v9.16/EPIC-01",
+          "commit_sha": "d2d67ede32e7b59698c016132a0314bdc3028835",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-11-09T09:35:39Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/pages/navigation.md",
+            "tests/e2e/sidebar-nav-groups.spec.js",
+            "tests/e2e/alert-nav-badge.spec.js",
+            "tests/e2e/command-palette.spec.js",
+            "tests/e2e/keyboard-shortcuts.spec.js"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.push",
+          "sign_off_record": null,
+          "notes": "AC 1 (sidebar matches navigation.md v2 desktop + mobile): SC-SNV-01..08, 11..14. AC 2 (Trade Plans one click): SC-SNV-09. AC 3 (alert-nav-badge, command-palette, keyboard-shortcuts updated and passing): SC-ANB-01..09, SC-CP-17, SC-KBD-09/10 tightened + SC-KBD-12. Cross-spec selector check: v1 group selectors updated in 4 specs at d2d67ede; CI run 42594634796 then found 6 more collisions (SC-SCR-18, SC-REP-01, SC-RES-03, SC-E03-04, SC-COMP-02/07), fixed in follow-up commit a46fecf2 (same story). CI on a46fecf2: all 8 triggered workflows success - Playwright E2E 42597580117, CI Pytest 42597580080, Critical-Path Smoke 42597580082; Frontend Production Build ran green on d2d67ede (42594634824). Deviation check: DEV-NAV-ST01-01 (P3, BLG-SPEC-226) - collapse state survives a reload; otherwise matches navigation.md v2.0. Local-only: SC-NOTIF-02b 3s timing test fails on the local dev server on unmodified main too - environmental. DoQ review pass 1 finding 2: collapse state survives a full reload, contrary to navigation.md §Default Expansion (inherited v1.x) - filed DEV-NAV-ST01-01 in navigation.md §Known Deviations, tracked by BLG-SPEC-226 (commit 0630e644); qa_evidence row graded Pass_with_deviation.",
+          "follow_up_commits": [
+            "a46fecf2ece4caf632f0c582d3d6a9eb93699fcd",
+            "0630e644f9720d7b4237659cff670ea7da013df2"
+          ]
+        },
+        "ST-02": {
+          "title": "Add a parent link on detail pages",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 2198,
+          "branch": "exec/2026-11-06__release-v9.16/EPIC-01",
+          "commit_sha": "9b36b84d457fd4380e44c461889c3ffd948e74d0",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-11-09T10:20:41Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/pages/navigation.md",
+            "tests/e2e/parent-links.spec.js"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.push",
+          "sign_off_record": null,
+          "notes": "AC (each listed page shows a parent link that navigates correctly; Playwright passes): SC-PAR-01..04 (text, href, above h1, click to parent), SC-PAR-05 Research error state, SC-PAR-06 no parent link on sidebar pages. Deviation check: none - matches navigation.md v2.0 §Parent Links. Final CI on 8d0800e1 (last code commit before the DoQ fix 0630e644, whose CI also passed: Playwright 42606292427): all 9 workflows success - Playwright E2E 42603163545 (attempt 2; attempt 1 failed one axe scan, Reports Monthly dark, with the first-session Cmd-K tip toast mid-animation over the page; passes 16/16 locally and on the two prior CI runs; single unreproduced occurrence, not quarantined per Flaky-Test Disposition step 1), CI Pytest 42603163482, Frontend Production Build 42603163252, Critical-Path Smoke 42603163270."
+        },
+        "ST-03": {
+          "title": "Give each dead-end page an onward next-step link",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 2199,
+          "branch": "exec/2026-11-06__release-v9.16/EPIC-01",
+          "commit_sha": "9b36b84d457fd4380e44c461889c3ffd948e74d0",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-11-09T10:20:41Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/pages/navigation.md",
+            "claude/cycles/2026-11-06__release-v9.16/stage4_backlog_slice_addendum.md",
+            "tests/e2e/onward-links.spec.js"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.push",
+          "sign_off_record": null,
+          "notes": "AC 1 (re-run of the link scan finds 0 dead-end pages): SC-ONW-12 over the 11 former dead ends finds 0; the 14 pages already 'Exists' at v2.0 re-checked in source (recorded in qa_evidence). AC 2 (each new link has Playwright coverage): SC-ONW-01..11 + SC-PAR-03. CI run 42600227514 on 06ec6d45 failed 26 tests (plan-vs-reality, trade-debrief) that expand a trade row by clicking its ticker, which 9b36b84d had made the Research link; fixed in 8d0800e1 by keeping the ticker as the row toggle and adding a separate 'Research {TICKER}' icon link. navigation.md -> v2.1 (status + ?ticker= filter). Deviation check: none - the Trade History ?ticker= filter is new behaviour required by navigation.md §Onward Links and recorded there. Final CI on 8d0800e1 (last code commit before the DoQ fix 0630e644, whose CI also passed: Playwright 42606292427): all 9 workflows success - Playwright E2E 42603163545 (attempt 2; attempt 1 failed one axe scan, Reports Monthly dark, with the first-session Cmd-K tip toast mid-animation over the page; passes 16/16 locally and on the two prior CI runs; single unreproduced occurrence, not quarantined per Flaky-Test Disposition step 1), CI Pytest 42603163482, Frontend Production Build 42603163252, Critical-Path Smoke 42603163270. DoQ review pass 1 finding 1 (blocking): SC-ONW-03/12 used fixed September trade dates and rendered Analytics' empty state; fixed in 0630e644 (relative dates, populated-only Arc 5 assertion; mutation-checked). BLG-SPEC-227 filed for the ?ticker= filter in trade_history.md.",
+          "follow_up_commits": [
+            "8d0800e15c02fd89cf6d7b11166d3606df2497d8",
+            "0630e644f9720d7b4237659cff670ea7da013df2"
+          ]
+        },
+        "ST-04": {
+          "title": "Anchor the digest's Risk Dashboard link to the right section",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 2200,
+          "branch": "exec/2026-11-06__release-v9.16/EPIC-01",
+          "commit_sha": "06ec6d45bbdc6260d31bbe2e83aeac496b483cc2",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-11-09T10:20:54Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/pages/analytics.md",
+            "docs/design/2026-11-06__release-v9.16/digest-section-link/decision_record.md",
+            "tests/e2e/analytics-section-link.spec.js",
+            "tests/test_si05_digest_service.py"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.push",
+          "sign_off_record": null,
+          "notes": "AC 1 (section link scrolls the named section into view): SC-SEC-01 (reduced motion, in viewport, heading focused), SC-SEC-04..07. AC 2 (Playwright passes): SC-SEC-01..07, incl. SC-SEC-02 unknown id. AC 3 (digest link updated): test_deep_links_include_strategy_compliance_section_link (39 passed). Journey map F-04 resolved. Scroll/focus timing ACs observed passing in real GitHub Actions CI (environment-parity sub-clause). Deviation check: none - matches analytics.md v2.3 §19.1 and the design record. Final CI on 8d0800e1 (last code commit before the DoQ fix 0630e644, whose CI also passed: Playwright 42606292427): all 9 workflows success - Playwright E2E 42603163545 (attempt 2; attempt 1 failed one axe scan, Reports Monthly dark, with the first-session Cmd-K tip toast mid-animation over the page; passes 16/16 locally and on the two prior CI runs; single unreproduced occurrence, not quarantined per Flaky-Test Disposition step 1), CI Pytest 42603163482, Frontend Production Build 42603163252, Critical-Path Smoke 42603163270."
+        }
+      },
+      "sign_off_record": {
+        "role": "Director of Quality",
+        "status": "cleared",
+        "method": "agent_mediated",
+        "date": "2026-11-09",
+        "reference": "qa_evidence_EPIC-01.md Standard Sign-Off Block",
+        "notes": "User-directed in session 2026-11-09. Pass 1 Blocked (finding 1: Analytics populated-state onward link untested) - fixed 0630e644; findings 2-5 non-blocking, applied (DEV-NAV-ST01-01/BLG-SPEC-226, BLG-SPEC-227, evidence corrections). Pass 2 Approved; 2 non-blocking note-wording leftovers fixed in the sign-off commit."
+      }
+    }
+  },
+  "deferred_at_planning": [],
+  "blocked_items": [],
+  "delegated_items": [],
+  "completed_items": [
+    "ST-01",
+    "ST-02",
+    "ST-03",
+    "ST-04"
+  ],
+  "open_escalations": {},
+  "merge_gate": {
+    "epics_merged": [],
+    "epics_pending": [
+      "EPIC-01",
+      "EPIC-02",
+      "EPIC-03",
+      "EPIC-04",
+      "EPIC-05",
+      "EPIC-06",
+      "EPIC-07"
+    ],
+    "all_merged": false
+  },
+  "process_notes": [
+    "EPIC-01 (2026-11-09): the STEP 3.1.A step 13 cross-spec selector scan at ST-01 grepped for v1 group names and sidebar selectors only; it missed bare getByText/locator collisions with newly visible sidebar text ('Today', 'Watchlist') and aria-expanded area headers, and a link placed on clickable row text. CI caught 6 (ST-01, a46fecf2) and 26 (ST-03, 8d0800e1) failures; all fixed before DoQ. Candidate lesson for Phase 3: when a story makes new text or interactive elements visible on every page, scan specs for unscoped getByText/role locators of that text, not only for the renamed selectors."
+  ],
+  "sealed": false,
+  "sealed_utc": null
+}

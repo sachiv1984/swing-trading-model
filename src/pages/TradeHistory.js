@@ -114,6 +114,16 @@ export default function TradeHistory() {
   // An unknown/foreign trade_id is ignored silently (no modal, no toast).
   const [searchParams, setSearchParams] = useSearchParams();
   const reflectId = searchParams.get("reflect");
+  // ST-03 (EPIC-01, v9.16, BLG-FE-252): ?ticker= filter — the Red Flag Journal's
+  // onward link opens Trade History filtered to the flagged trade's ticker
+  // (navigation.md §Onward Links). Matches with or without the UK ".L" suffix.
+  const tickerParam = (searchParams.get("ticker") || "").trim().toUpperCase();
+  const tickerParamBase = tickerParam.replace(/\.L$/, "");
+  const clearTickerParam = () => {
+    const next = new URLSearchParams(searchParams);
+    next.delete("ticker");
+    setSearchParams(next, { replace: true });
+  };
   const [reflectionTrade, setReflectionTrade] = useState(null);
   useEffect(() => {
     if (!reflectId || isLoading) return;
@@ -146,6 +156,7 @@ export default function TradeHistory() {
 
   // ── Filter logic ─────────────────────────────────────────────────────────────
   const filteredTrades = trades.filter((trade) => {
+    if (tickerParamBase && (trade.ticker || "").toUpperCase().replace(/\.L$/, "") !== tickerParamBase) return false;
     if (filters.market !== "all" && trade.market?.toUpperCase() !== filters.market) return false;
     // ST-15 (BLG-FE-239, v9.15): a win is pnl > 0 (metrics_definitions.md §Win Rate),
     // so a break-even trade is neither a win nor a loss.
@@ -267,6 +278,26 @@ export default function TradeHistory() {
           </Button>
         }
       />
+
+      {tickerParamBase && (
+        <div
+          data-testid="trade-history-ticker-filter"
+          className="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-300"
+        >
+          <span>
+            Showing trades for <span className="font-mono font-semibold">{tickerParamBase}</span>
+          </span>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={clearTickerParam}
+            data-testid="trade-history-ticker-filter-clear"
+            className="h-7 px-2 text-xs"
+          >
+            Show all trades
+          </Button>
+        </div>
+      )}
 
       {isLoading ? (
         <div className="flex items-center justify-center py-20">

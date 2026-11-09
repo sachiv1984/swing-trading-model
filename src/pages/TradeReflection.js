@@ -28,6 +28,7 @@ export default function TradeReflection() {
     <div className="space-y-6">
       <PageHeader
         title={PAGE_LABELS.TradeReflection}
+        onward={{ label: PAGE_LABELS.TradeHistory, to: "/TradeHistory" }}
         description="Review and revisit your structured post-trade reflections."
       />
 
