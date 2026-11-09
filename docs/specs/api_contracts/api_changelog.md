@@ -48,7 +48,7 @@ Rules:
 | Change | Details |
 |--------|---------|
 | Updated endpoint: POST /trade-plans | Optional `pre_entry_validation_snapshot` object (`captured_at`, `advisory_status`, `checks`, `inputs`) documented; the route already accepted it. The Trade Plan form now sends it on save (`trade_plan.md` v1.22 §5e, BLG-FE-271). |
-| Updated endpoint: PUT /trade-plans/{id} | Now stores `pre_entry_validation_snapshot` (JSONB), so an edited plan's snapshot is replaced; `null` or omitted leaves it unchanged. `openapi.yaml` 3.48.0. |
+| Updated endpoint: PUT /trade-plans/{id} | Now stores `pre_entry_validation_snapshot` (JSONB), so an edited plan's snapshot is replaced; `null` or omitted leaves it unchanged. Writes the `pre_entry_override` event only when `pre_entry_override_acknowledged` changes from not-true to true. `openapi.yaml` 3.48.0. |
 
 ## v9.15.0 (2026-11-03 — Release v9.15)
 

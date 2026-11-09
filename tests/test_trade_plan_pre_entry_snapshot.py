@@ -120,3 +120,63 @@ class TestPlanLinkedEntryOverrideEvent:
             position_id="pos-1",
             context={"source": "trade_entry", "override_acknowledged": True},
         )
+
+
+class TestUpdateOverrideEventOnlyOnTransition:
+    """PR #2228 review (DoQ finding 1): the edit form re-sends the stored
+    acknowledgement on every save, so PUT writes the pre_entry_override event
+    only when the stored value goes from not-true to true."""
+
+    PLAN_ID = "11111111-1111-1111-1111-111111111111"
+
+    def _put_twice(self, stored_before_first):
+        from tests._real_database import real_database_imports
+        with real_database_imports():
+            from fastapi.testclient import TestClient
+            import main
+            from routers import trade_plans
+        client = TestClient(main.app, raise_server_exceptions=False)
+        stored = {"value": stored_before_first}
+
+        def fake_get(plan_id, portfolio_id):
+            return {"id": plan_id, "ticker": "AAPL", "position_id": None, "status": "draft",
+                    "pre_entry_override_acknowledged": stored["value"]}
+
+        def fake_update(plan_id, portfolio_id, data):
+            if "pre_entry_override_acknowledged" in data:
+                stored["value"] = data["pre_entry_override_acknowledged"]
+            return fake_get(plan_id, portfolio_id)
+
+        with patch.object(trade_plans, "ensure_trade_plans_table"), \
+             patch.object(trade_plans, "_get_portfolio_id", return_value="portfolio-1"), \
+             patch.object(trade_plans, "get_trade_plan_by_id", side_effect=fake_get), \
+             patch.object(trade_plans, "update_trade_plan", side_effect=fake_update), \
+             patch.object(trade_plans, "_maybe_write_override_event") as mock_event:
+            for _ in range(2):
+                r = client.put(f"/trade-plans/{self.PLAN_ID}", json={"pre_entry_override_acknowledged": True})
+                assert r.status_code == 200, r.text
+        return mock_event
+
+    def test_two_puts_with_true_from_unacknowledged_write_one_event(self):
+        assert self._put_twice(stored_before_first=False).call_count == 1
+
+    def test_resaving_an_already_acknowledged_plan_writes_no_event(self):
+        assert self._put_twice(stored_before_first=True).call_count == 0
+
+    def test_put_with_false_writes_no_event(self):
+        from tests._real_database import real_database_imports
+        with real_database_imports():
+            from fastapi.testclient import TestClient
+            import main
+            from routers import trade_plans
+        client = TestClient(main.app, raise_server_exceptions=False)
+        plan = {"id": self.PLAN_ID, "ticker": "AAPL", "position_id": None, "status": "draft",
+                "pre_entry_override_acknowledged": False}
+        with patch.object(trade_plans, "ensure_trade_plans_table"), \
+             patch.object(trade_plans, "_get_portfolio_id", return_value="portfolio-1"), \
+             patch.object(trade_plans, "get_trade_plan_by_id", return_value=plan), \
+             patch.object(trade_plans, "update_trade_plan", return_value=plan), \
+             patch.object(trade_plans, "_maybe_write_override_event") as mock_event:
+            r = client.put(f"/trade-plans/{self.PLAN_ID}", json={"pre_entry_override_acknowledged": False})
+        assert r.status_code == 200, r.text
+        mock_event.assert_not_called()
