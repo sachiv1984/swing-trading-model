@@ -6,7 +6,7 @@
   "invoked_utc": "2026-11-09T09:15:14Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-09T11:30:46Z",
+  "last_updated_utc": "2026-11-09T12:18:32Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-02",
@@ -164,24 +164,36 @@
       "pr_number": null,
       "pr_status": null,
       "qa_signed_off": false,
-      "test_scenarios": [],
+      "test_scenarios": [
+        "tests/e2e/trade-entry-pre-entry-checks.spec.js",
+        "tests/e2e/trade-plan.spec.js",
+        "tests/test_trade_plan_pre_entry_snapshot.py"
+      ],
       "stories": {
         "ST-05": {
-          "status": "not_started",
+          "status": "done",
           "classification": "autonomous",
           "spec_references": [
             "docs/specs/frontend/components/position_form.md#Pre-Entry Checks",
             "docs/specs/frontend/pages/trade_plan.md#5e",
             "docs/design/2026-11-06__release-v9.16/plan-linked-pre-entry-checks/decision_record.md",
-            "claude/strategy/strategy_rules.md#4.2.1"
+            "claude/strategy/strategy_rules.md#4.2.1",
+            "docs/specs/api_contracts/trade_plan_endpoints.md#PUT /trade-plans/{id}",
+            "tests/test_trade_plan_pre_entry_snapshot.py",
+            "tests/e2e/trade-entry-pre-entry-checks.spec.js"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "github_issue": 2201,
           "branch": "exec/2026-11-06__release-v9.16/EPIC-02",
-          "deviations_filed": false,
-          "acceptance_verified": false,
-          "commit_sha": null
+          "deviations_filed": true,
+          "acceptance_verified": true,
+          "commit_sha": "0d637f4ceef1ed0072857caa588158d7e7b71ae4",
+          "completed_utc": "2026-11-09T11:55:01Z",
+          "notes": "AC1 Playwright SC-TEPC-07/11..15, SC-TP-32a/b; AC2 tests/test_trade_plan_pre_entry_snapshot.py::TestPlanLinkedEntryOverrideEvent; AC3 strategy_rules.md v1.27 (case (c)), DOCUMENTATION_ONLY_VERSIONS 1.27. CI all green on 0d637f4c: Playwright E2E run 42612772069 success, CI Pytest 42612772030 success. Deviation DEV-v9.16-ST05-01 (P3, snapshot replaced but not cleared on edit) filed in trade_plan.md Known Deviations, tracked BLG-FE-277. Opportunistic: PUT /trade-plans now stores the snapshot (contract v0.23, openapi 3.48.0).",
+          "deviations": [
+            "DEV-v9.16-ST05-01"
+          ]
         },
         "ST-06": {
           "status": "not_started",
@@ -238,7 +250,8 @@
     "ST-01",
     "ST-02",
     "ST-03",
-    "ST-04"
+    "ST-04",
+    "ST-05"
   ],
   "open_escalations": {},
   "merge_gate": {
