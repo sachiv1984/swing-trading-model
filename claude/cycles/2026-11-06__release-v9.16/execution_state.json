@@ -6,7 +6,7 @@
   "invoked_utc": "2026-11-09T09:15:14Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-09T09:15:14Z",
+  "last_updated_utc": "2026-11-09T10:10:01Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-02",
@@ -34,25 +34,32 @@
         "ST-01": {
           "title": "Build the job-based sidebar and surface Trade Plans and Research",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 2197,
           "branch": "exec/2026-11-06__release-v9.16/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "d2d67ede32e7b59698c016132a0314bdc3028835",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-11-09T09:35:39Z",
+          "acceptance_verified": true,
           "spec_references": [
-            "docs/specs/frontend/pages/navigation.md"
+            "docs/specs/frontend/pages/navigation.md",
+            "tests/e2e/sidebar-nav-groups.spec.js",
+            "tests/e2e/alert-nav-badge.spec.js",
+            "tests/e2e/command-palette.spec.js",
+            "tests/e2e/keyboard-shortcuts.spec.js"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.push",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "AC 1 (sidebar matches navigation.md v2 desktop + mobile): SC-SNV-01..08, 11..14. AC 2 (Trade Plans one click): SC-SNV-09. AC 3 (alert-nav-badge, command-palette, keyboard-shortcuts updated and passing): SC-ANB-01..09, SC-CP-17, SC-KBD-09/10 tightened + SC-KBD-12. Cross-spec selector check: v1 group selectors updated in 4 specs at d2d67ede; CI run 42594634796 then found 6 more collisions (SC-SCR-18, SC-REP-01, SC-RES-03, SC-E03-04, SC-COMP-02/07), fixed in follow-up commit a46fecf2 (same story). CI on a46fecf2: all 8 triggered workflows success - Playwright E2E 42597580117, CI Pytest 42597580080, Critical-Path Smoke 42597580082; Frontend Production Build ran green on d2d67ede (42594634824). Deviation check: none - matches navigation.md v2.0. Local-only: SC-NOTIF-02b 3s timing test fails on the local dev server on unmodified main too - environmental.",
+          "follow_up_commits": [
+            "a46fecf2ece4caf632f0c582d3d6a9eb93699fcd"
+          ]
         },
         "ST-02": {
           "title": "Add a parent link on detail pages",
@@ -130,7 +137,9 @@
   "deferred_at_planning": [],
   "blocked_items": [],
   "delegated_items": [],
-  "completed_items": [],
+  "completed_items": [
+    "ST-01"
+  ],
   "open_escalations": {},
   "merge_gate": {
     "epics_merged": [],
