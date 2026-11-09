@@ -154,6 +154,8 @@ for (const theme of ['dark', 'light']) {
       await gotoDashboard(page);
       const exits = group(page, 'exits');
       await expect(exits.getByTestId('today-header')).toHaveText('Exits due · 4');
+      // dashboard.md v4.1 TL-21: the Market regime header has no count.
+      await expect(group(page, 'regime').getByTestId('today-header')).toHaveText('Market regime');
       await expect(exits).toContainText('These positions meet a strategy exit condition (§8). Nothing is exited automatically.');
       const tickers = await exits.locator('[data-testid^="today-item-exits-"]').evaluateAll(
         (els) => els.map((e) => e.getAttribute('data-testid').replace('today-item-exits-', ''))

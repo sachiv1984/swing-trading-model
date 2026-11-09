@@ -14,6 +14,8 @@
  *   SC-PT-05  A dismissed signal_id falls back to the watchlisted lookup (no panel here)
  *   SC-PT-05b A dismissed signal_id with a watchlisted signal on the ticker shows that signal's panel
  *   SC-PT-06  A failed GET /signals for signal_id falls back to the watchlisted lookup
+ *   SC-PT-06b A signal_id not in a successful GET /signals falls back to the watchlisted lookup
+ *             (trade_plan.md v1.23 §5a.1)
  * SC-PT-01 and SC-PT-03 run in the dark and light themes.
  *
  * Infrastructure: page.route() network interception — no live backend.
@@ -156,4 +158,11 @@ test('SC-PT-06: a failed signal_id fetch falls back to the watchlisted lookup', 
   await page.goto('/#/TradePlan?ticker=AAPL&market=US&entry_price=182.3&signal_id=sig-missing');
   await expect(page.getByTestId('signal-context-panel')).toBeVisible({ timeout: 10000 });
   await expect(page.getByTestId('signal-context-panel')).toContainText('#7');
+});
+
+test('SC-PT-06b: a signal_id missing from a successful fetch falls back to the watchlisted lookup', async ({ page }) => {
+  await mockApi(page, { signals: [{ ...SIGNAL, id: 'sig-pt-other', status: 'watchlisted', rank: 9 }] });
+  await page.goto('/#/TradePlan?ticker=AAPL&market=US&entry_price=182.3&signal_id=sig-not-in-list');
+  await expect(page.getByTestId('signal-context-panel')).toBeVisible({ timeout: 10000 });
+  await expect(page.getByTestId('signal-context-panel')).toContainText('#9');
 });
