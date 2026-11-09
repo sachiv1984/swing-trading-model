@@ -13,7 +13,8 @@
  *   SC-TP-29  Native form fields use the shared focus-visible:ring pattern (ST-04, EPIC-01, v8.2, BLG-FE-138)
  *   SC-TP-31  A plan saves while the pre-entry panel shows Fail or Warn — advisory checks never block
  *   SC-TP-32  Save sends a dated pre_entry_validation_snapshot when the panel holds a result, and null
- *             when it does not (ST-05, BLG-FE-271, v9.16; trade_plan.md v1.22 §5e)
+ *             when it does not (ST-05, BLG-FE-271, v9.16; trade_plan.md v1.22 §5e); SC-TP-32c: an edited
+ *             plan's PUT carries the new snapshot and the box's real acknowledgement state
  *             submission (strategy_rules.md §4.2.6; ST-13, EPIC-02, v9.13, BLG-QA-208)
  *
  * Spec refs: GitHub Issue #311 (ST-03 AC), GitHub Issue #394 (ST-09 AC)
@@ -1161,4 +1162,38 @@ test('SC-TP-32b: with no panel result, Save sends a null snapshot', async ({ pag
   await expect.poll(() => body).not.toBeNull();
   expect(body).toHaveProperty('pre_entry_validation_snapshot', null);
   expect(body.pre_entry_override_acknowledged).toBe(false);
+});
+
+test('SC-TP-32c: editing a plan sends the current snapshot and the loaded acknowledgement on PUT', async ({ page }) => {
+  const plan = {
+    id: 'plan-tp32c', ticker: 'AAPL', market: 'US', status: 'draft', position_id: null, checklist_items: [],
+    planned_quantity: 10, planned_entry_price: 150, planned_stop_price: 140,
+    pre_entry_override_acknowledged: true,
+    pre_entry_validation_snapshot: { captured_at: '2026-11-01T09:00:00.000Z', advisory_status: 'pass', checks: [], inputs: {} },
+  };
+  const now = new Date('2026-11-09T12:00:00Z');
+  await page.clock.setFixedTime(now);
+  let put = null;
+  await mockFallback(page);
+  await mockMarketStatus(page);
+  await page.route(`${API}/trade-plans/${plan.id}`, (route) => {
+    if (route.request().method() === 'PUT') {
+      put = route.request().postDataJSON();
+      return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok', data: plan }) });
+    }
+    return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok', data: plan }) });
+  });
+  await page.route(`${API}/portfolio/pre-entry-validation*`, (route) =>
+    route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(preEntryPayload('warn')) })
+  );
+  await page.goto(`/#/TradePlan?edit=${plan.id}`);
+  const panel = page.getByTestId('pre-entry-checks-panel');
+  await expect(panel.getByText('Warn', { exact: true })).toBeVisible({ timeout: 10000 });
+  await expect(page.getByTestId('override-acknowledgement-checkbox')).toBeChecked();
+  await page.getByTestId('override-acknowledgement-checkbox').uncheck();
+  await page.getByRole('button', { name: /update plan/i }).click();
+  await expect.poll(() => put).not.toBeNull();
+  expect(put.pre_entry_validation_snapshot.advisory_status).toBe('warn');
+  expect(put.pre_entry_validation_snapshot.captured_at).toBe(now.toISOString());
+  expect(put.pre_entry_override_acknowledged).toBe(false);
 });

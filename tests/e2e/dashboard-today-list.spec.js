@@ -236,6 +236,21 @@ for (const theme of ['dark', 'light']) {
       await expect(page.getByTestId('today-skeleton-signals')).toHaveCount(0);
     });
 
+    test(`SC-TL-15b (${theme}): before any source resolves, each group shows one skeleton row`, async ({ page }) => {
+      await mockSources(page, {
+        market: { body: MARKET_ON, delayMs: 4000 },
+        positions: { body: [riskOff('RSK')], delayMs: 4000 },
+        signals: { body: [signal('SIG')], delayMs: 4000 },
+      });
+      await page.goto('/#/DashboardHome');
+      await expect(list(page)).toBeVisible({ timeout: 10000 });
+      for (const g of ['regime', 'exits', 'grace', 'signals']) {
+        await expect(page.getByTestId(`today-skeleton-${g}`)).toHaveCount(1);
+      }
+      await expect(page.getByTestId('today-quiet')).toHaveCount(0);
+      await expect(group(page, 'exits')).toContainText('RSK', { timeout: 10000 });
+    });
+
     test(`SC-TL-16/25 (${theme}): a failed source shows its error line with Retry, no quiet line, and Retry refetches only that source`, async ({ page }) => {
       const counts = await mockSources(page, { signals: { fail: true } });
       await gotoDashboard(page);

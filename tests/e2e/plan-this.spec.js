@@ -12,6 +12,8 @@
  *   SC-PT-03  Screener row: one click opens a pre-filled Trade Plan with no signal_id and no panel
  *   SC-PT-04  Screener row: the panel shows when a watchlisted signal exists for the ticker
  *   SC-PT-05  A dismissed signal_id falls back to the watchlisted lookup (no panel here)
+ *   SC-PT-05b A dismissed signal_id with a watchlisted signal on the ticker shows that signal's panel
+ *   SC-PT-06  A failed GET /signals for signal_id falls back to the watchlisted lookup
  * SC-PT-01 and SC-PT-03 run in the dark and light themes.
  *
  * Infrastructure: page.route() network interception — no live backend.
@@ -136,4 +138,22 @@ test('SC-PT-05: a dismissed signal_id falls back to the watchlisted lookup', asy
   await page.goto('/#/TradePlan?ticker=AAPL&market=US&entry_price=182.3&signal_id=sig-pt-0001');
   await expect(page.getByTestId('planned-entry-price-input')).toHaveValue('182.3', { timeout: 10000 });
   await expect(page.getByTestId('signal-context-panel')).toHaveCount(0);
+});
+
+test('SC-PT-05b: a dismissed signal_id falls back to a watchlisted signal on the same ticker', async ({ page }) => {
+  await mockApi(page, { signals: [{ ...SIGNAL, status: 'dismissed' }, { ...SIGNAL, id: 'sig-pt-wl', status: 'watchlisted', rank: 4 }] });
+  await page.goto('/#/TradePlan?ticker=AAPL&market=US&entry_price=182.3&signal_id=sig-pt-0001');
+  await expect(page.getByTestId('signal-context-panel')).toBeVisible({ timeout: 10000 });
+  await expect(page.getByTestId('signal-context-panel')).toContainText('#4');
+});
+
+test('SC-PT-06: a failed signal_id fetch falls back to the watchlisted lookup', async ({ page }) => {
+  await mockApi(page, { signals: [{ ...SIGNAL, status: 'watchlisted', rank: 7 }] });
+  // GET /signals with no status filter (the signal_id lookup) fails; the watchlisted lookup still answers.
+  await page.route(new RegExp(`${API}/signals$`), (r) =>
+    r.fulfill({ status: 500, contentType: 'application/json', body: JSON.stringify({ status: 'error' }) })
+  );
+  await page.goto('/#/TradePlan?ticker=AAPL&market=US&entry_price=182.3&signal_id=sig-missing');
+  await expect(page.getByTestId('signal-context-panel')).toBeVisible({ timeout: 10000 });
+  await expect(page.getByTestId('signal-context-panel')).toContainText('#7');
 });
