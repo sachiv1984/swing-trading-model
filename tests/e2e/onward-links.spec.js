@@ -48,6 +48,19 @@ const RED_FLAG_EVENTS = {
   },
 };
 
+// Closed trades dated relative to now, so they fall inside Analytics' default
+// "last month" period and the page renders its populated state (fixed dates
+// would age out and leave Analytics on its empty state — DoQ review finding 1).
+function recentTrades(count = 12) {
+  const now = Date.now();
+  return Array.from({ length: count }, (_, i) => ({
+    ...TRADES[0],
+    id: `t-${i}`,
+    entry_date: new Date(now - (i + 5) * 86400000).toISOString().slice(0, 10),
+    exit_date: new Date(now - (i + 1) * 86400000).toISOString().slice(0, 10),
+  }));
+}
+
 async function stubAll(page) {
   await page.route(new RegExp(`${API}/`), (route) =>
     route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok', data: [] }) })
@@ -108,12 +121,15 @@ test('SC-ONW-02: a Trade History row links its ticker to Research', async ({ pag
 
 test('SC-ONW-03: Analytics (populated) links onward to Trade History', async ({ page }) => {
   // Populated analytics: enough closed trades for the main view.
-  const many = Array.from({ length: 12 }, (_, i) => ({ ...TRADES[0], id: `t-${i}`, exit_date: `2026-09-${String(10 + i).padStart(2, '0')}` }));
+  const many = recentTrades();
   await page.route(/localhost:8000\/trades(\?|$)/, (route) =>
     route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok', data: { trades: many } }) })
   );
   await page.goto('/#/PerformanceAnalytics');
   await expect(page.getByRole('heading', { level: 1, name: 'Analytics', exact: true })).toBeVisible({ timeout: 15000 });
+  // Populated state only: the Arc 5 section renders only in the populated branch
+  // (PerformanceAnalytics.js), so its presence proves which header is under test.
+  await expect(page.getByTestId('analytics-section-strategy-compliance')).toBeVisible({ timeout: 15000 });
   const link = page.locator('main').getByTestId('onward-link');
   await expect(link).toHaveCount(1);
   await expect(link).toHaveText('Trade History');
@@ -197,7 +213,7 @@ function routeOf(hash) {
 
 test('SC-ONW-12: dead-end scan re-run — the 11 former dead-end pages all link onward', async ({ page }) => {
   test.setTimeout(180000);
-  const many = Array.from({ length: 12 }, (_, i) => ({ ...TRADES[0], id: `t-${i}`, exit_date: `2026-09-${String(10 + i).padStart(2, '0')}` }));
+  const many = recentTrades();
   await page.route(/localhost:8000\/trades(\?|$)/, (route) =>
     route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok', data: { trades: many } }) })
   );
@@ -210,6 +226,10 @@ test('SC-ONW-12: dead-end scan re-run — the 11 former dead-end pages all link 
     await page.goto(hash);
     await expect(page.locator('main h1').first()).toBeVisible({ timeout: 15000 });
     await page.waitForTimeout(500);
+    if (hash === '/#/PerformanceAnalytics') {
+      // Count only the populated state (navigation.md: an empty-state-only link does not count).
+      await expect(page.getByTestId('analytics-section-strategy-compliance')).toBeVisible({ timeout: 15000 });
+    }
     const self = routeOf(hash);
     const targets = await page.locator('main a[href^="#/"]').evaluateAll((els) => els.map((e) => e.getAttribute('href')));
     if (!targets.some((h) => routeOf(h) !== self)) deadEnds.push(hash);

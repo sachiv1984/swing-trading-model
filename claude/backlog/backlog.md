@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-09 (session — 4 new item(s) added: BLG-OPS-215, BLG-GOV-414, BLG-SPEC-224, BLG-SPEC-225; Sprint Planning `2026-11-06__release-v9.16` pre-seal filings); prior — 2026-11-06 (Release Planning `2026-11-06__release-v9.16` §1.3a — gating-item-shipped gates cleared in place (a) on BLG-FE-39, BLG-QA-21, BLG-QA-22, BLG-QA-23, BLG-GOV-26: PT-04 shipped v6.1, Arc 2 complete); prior — 2026-11-06 (`ESC-CLOSE-20261106-01` ruling — BLG-FE-271 Notes line: §4.2.1 applies, strategy_rules.md v1.26 Known deviation); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-09 (session — 2 new item(s) added: BLG-SPEC-226, BLG-SPEC-227; agent-mediated DoQ review of EPIC-01, `2026-11-06__release-v9.16`); prior — 2026-11-09 (session — 4 new item(s) added: BLG-OPS-215, BLG-GOV-414, BLG-SPEC-224, BLG-SPEC-225; Sprint Planning `2026-11-06__release-v9.16` pre-seal filings); prior — 2026-11-06 (Release Planning `2026-11-06__release-v9.16` §1.3a — gating-item-shipped gates cleared in place (a) on BLG-FE-39, BLG-QA-21, BLG-QA-22, BLG-QA-23, BLG-GOV-26: PT-04 shipped v6.1, Arc 2 complete); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -6088,5 +6088,48 @@ ST-28 adds the split-achievability case (ii) to `post_ship_closure.md` STEP 3.1.
 **Acceptance Criteria**
 - `grep -n "/trade-plans/" docs/specs/frontend/pages/trade_plan.md` finds no route entry
 - §2's routes match `navigation.md` v2.0
+
+---
+
+### BLG-SPEC-226 — navigation.md §Default Expansion: state when the sidebar collapse state resets
+**Priority:** P3 (Low)
+**Type:** Spec Debt / Frontend
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** Agent-mediated Director of Quality review of EPIC-01 (ST-01, `2026-11-06__release-v9.16`), finding 2 — 2026-11-09
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`navigation.md` §Default Expansion and Collapse says collapse state is kept in `sessionStorage` and "resets to the default on a full page reload". `sessionStorage` survives a reload, so `Layout.js` keeps the stored state across reloads. It resets only when the tab session ends. The behaviour is inherited from v1.x. `sidebar-nav-groups.spec.js` SC-SNV-07 clears storage before it reloads, so it has never tested the stated rule.
+
+**Scope**
+- Decide which rule stands: correct the wording to "resets when the browser tab session ends" (the current behaviour), or change `Layout.js` to reset on reload
+- Update SC-SNV-07 to test the rule that stands, without clearing storage by hand
+- Version bump and changelog row on `navigation.md`
+
+**Acceptance Criteria**
+- `navigation.md` §Default Expansion and Collapse and `Layout.js` describe and do the same thing
+- SC-SNV-07 tests that rule and passes in CI
+
+---
+
+### BLG-SPEC-227 — trade_history.md: document the `?ticker=` URL filter
+**Priority:** P3 (Low)
+**Type:** Spec Debt / Frontend
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** Agent-mediated Director of Quality review of EPIC-01 (ST-03, `2026-11-06__release-v9.16`), finding 3 — 2026-11-09
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+ST-03 added a `?ticker=` filter to Trade History so that the Red Flag Journal's onward link can open Trade History filtered to the flagged trade's ticker (`navigation.md` §Onward Links). The behaviour is recorded only in `navigation.md` v2.1. `trade_history.md`, the page's own spec, does not mention it.
+
+**Scope**
+- Add the `?ticker=` filter to `trade_history.md` (§Filters or a URL parameters note): it matches with or without the `.L` suffix; it shows "Showing trades for {TICKER}" with a "Show all trades" button that removes the parameter; it applies on top of the page's filters and is not stored with them; CSV export ignores it, as it ignores all filters
+- Cross-reference `navigation.md` §Onward Links; version bump and changelog row
+
+**Acceptance Criteria**
+- `trade_history.md` describes the `?ticker=` filter as listed in Scope
+- The description matches `src/pages/TradeHistory.js` and `onward-links.spec.js` SC-ONW-08/09
 
 ---
