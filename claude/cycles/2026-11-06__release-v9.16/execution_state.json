@@ -6,7 +6,7 @@
   "invoked_utc": "2026-11-09T09:15:14Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-09T11:13:37Z",
+  "last_updated_utc": "2026-11-09T11:28:06Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-02",
@@ -18,10 +18,10 @@
   ],
   "epics": {
     "EPIC-01": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-11-06__release-v9.16/EPIC-01",
       "pr_number": 2227,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-11-06__release-v9.16/qa_evidence_EPIC-01.md",
       "test_scenarios": [
@@ -38,7 +38,7 @@
         "ST-01": {
           "title": "Build the job-based sidebar and surface Trade Plans and Research",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2197,
           "branch": "exec/2026-11-06__release-v9.16/EPIC-01",
@@ -69,7 +69,7 @@
         "ST-02": {
           "title": "Add a parent link on detail pages",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2198,
           "branch": "exec/2026-11-06__release-v9.16/EPIC-01",
@@ -93,7 +93,7 @@
         "ST-03": {
           "title": "Give each dead-end page an onward next-step link",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2199,
           "branch": "exec/2026-11-06__release-v9.16/EPIC-01",
@@ -122,7 +122,7 @@
         "ST-04": {
           "title": "Anchor the digest's Risk Dashboard link to the right section",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2200,
           "branch": "exec/2026-11-06__release-v9.16/EPIC-01",
@@ -153,7 +153,9 @@
         "date": "2026-11-09",
         "reference": "qa_evidence_EPIC-01.md Standard Sign-Off Block",
         "notes": "User-directed in session 2026-11-09. Pass 1 Blocked (finding 1: Analytics populated-state onward link untested) - fixed 0630e644; findings 2-5 non-blocking, applied (DEV-NAV-ST01-01/BLG-SPEC-226, BLG-SPEC-227, evidence corrections). Pass 2 Approved; 2 non-blocking note-wording leftovers fixed in the sign-off commit."
-      }
+      },
+      "merged_utc": "2026-11-09T11:27:35Z",
+      "merge_commit": "8f525f242b02a986b11105efa130907ca883f820"
     }
   },
   "deferred_at_planning": [],
@@ -167,9 +169,10 @@
   ],
   "open_escalations": {},
   "merge_gate": {
-    "epics_merged": [],
+    "epics_merged": [
+      "EPIC-01"
+    ],
     "epics_pending": [
-      "EPIC-01",
       "EPIC-02",
       "EPIC-03",
       "EPIC-04",
@@ -180,7 +183,8 @@
     "all_merged": false
   },
   "process_notes": [
-    "EPIC-01 (2026-11-09): the STEP 3.1.A step 13 cross-spec selector scan at ST-01 grepped for v1 group names and sidebar selectors only; it missed bare getByText/locator collisions with newly visible sidebar text ('Today', 'Watchlist') and aria-expanded area headers, and a link placed on clickable row text. CI caught 6 (ST-01, a46fecf2) and 26 (ST-03, 8d0800e1) failures; all fixed before DoQ. Candidate lesson for Phase 3: when a story makes new text or interactive elements visible on every page, scan specs for unscoped getByText/role locators of that text, not only for the renamed selectors."
+    "EPIC-01 (2026-11-09): the STEP 3.1.A step 13 cross-spec selector scan at ST-01 grepped for v1 group names and sidebar selectors only; it missed bare getByText/locator collisions with newly visible sidebar text ('Today', 'Watchlist') and aria-expanded area headers, and a link placed on clickable row text. CI caught 6 (ST-01, a46fecf2) and 26 (ST-03, 8d0800e1) failures; all fixed before DoQ. Candidate lesson for Phase 3: when a story makes new text or interactive elements visible on every page, scan specs for unscoped getByText/role locators of that text, not only for the renamed selectors.",
+    "EPIC-01 merge-gate resume sync (2026-11-09): PR #2227 merged by sachiv1984 at 2026-11-09T11:27:35Z, merge commit 8f525f24. Orphaned post-merge commit check: git log origin/main..origin/exec/2026-11-06__release-v9.16/EPIC-01 empty - nothing to reconcile."
   ],
   "sealed": false,
   "sealed_utc": null
