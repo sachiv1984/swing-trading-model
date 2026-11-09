@@ -1,8 +1,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 1.22
-**Last Updated:** 2026-11-06 (v9.16 design gate — ST-05/ST-07/ST-08, BLG-FE-271/255/256: new §5e dated pre-entry snapshot on save, `entry_price`/`signal_id` route parameters, new §5f suggested size before shares); prior — 2026-11-03 (v9.15 design gate — ST-03/BLG-FE-246: §5d.2 FX input label aligned with every FX input); prior — 2026-10-30 (ST-09, EPIC-02, v9.14, BLG-BE-190 — §5d.2's reproducibility note quotes the corrected US sizing formula `risk_amount × fx_rate_used / stop_distance`); prior history retained — see prior entries in version control
+**Version:** 1.23
+**Last Updated:** 2026-11-09 (ST-07, EPIC-02, v9.16, BLG-FE-255 — §5a.1: a missing or dismissed `signal_id` signal falls back to the watchlisted lookup, as a failed fetch does; clarification, edited on user direction); prior — 2026-11-06 (v9.16 design gate — ST-05/ST-07/ST-08, BLG-FE-271/255/256: new §5e dated pre-entry snapshot on save, `entry_price`/`signal_id` route parameters, new §5f suggested size before shares); prior — 2026-11-03 (v9.15 design gate — ST-03/BLG-FE-246: §5d.2 FX input label aligned with every FX input); prior history retained — see prior entries in version control
 **Design Source (v1.22 snapshot, Plan this, suggested size):** docs/design/2026-11-06__release-v9.16/plan-linked-pre-entry-checks/decision_record.md, docs/design/2026-11-06__release-v9.16/signal-to-plan-flow/decision_record.md
 **Design Source (v1.16 setup_type copy fix):** docs/design/2026-09-23__release-v9.7/trade-plan-clone-setup-type/decision_record.md
 **Design Source (v1.15 clone as new plan):** docs/design/2026-09-21__release-v9.6/trade-plan-clone/decision_record.md
@@ -213,7 +213,7 @@ The Signal Context panel is shown **in the trade plan creation form only**, belo
 
 Shown when a linked signal exists for the trade plan ticker: a signal record where `ticker` matches and `status = "watchlisted"`.
 
-**v1.22 (ST-07, BLG-FE-255):** when the form was opened with `signal_id` ("Plan this" from Signals), the linked signal is that signal, for any status except `dismissed`, and the watchlisted lookup is skipped. If the fetch fails, fall back to the watchlisted lookup.
+**v1.22 (ST-07, BLG-FE-255):** when the form was opened with `signal_id` ("Plan this" from Signals), the linked signal is that signal, for any status except `dismissed`, and the watchlisted lookup is skipped. If the fetch fails, the signal is not found, or its status is `dismissed`, the form uses the watchlisted lookup above, as if no `signal_id` were given (v1.23).
 
 When no linked signal exists: panel is hidden entirely. No placeholder shown. No regression to current form behaviour.
 
@@ -723,6 +723,7 @@ User-initiated batch of the same manual mutations already available one plan at 
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.23 | 2026-11-09 | ST-07 (EPIC-02, v9.16, BLG-FE-255). §5a.1: a `signal_id` whose signal is not found or is `dismissed` falls back to the watchlisted lookup, as a failed fetch already did, so the page behaves as the Screener path does. Clarification, no behaviour change. Recommended by the Frontend Specifications & UX Documentation Owner (agent-mediated, §5.3) after the EPIC-02 DoQ review; edited on user direction, 2026-11-09. |
 | 1.22 | 2026-11-06 | v9.16 design gate. (ST-05, EPIC-02, BLG-FE-271) new §5e: plan save sends a dated `pre_entry_validation_snapshot`, which the form never sent before. (ST-07, BLG-FE-255) §2 "Plan this" route parameters `entry_price` and `signal_id`, and §5a.1 `signal_id` presence. (ST-08, BLG-FE-256) new §5f: Entry and Stop move above Planned Shares, and a suggested-size line pre-fills shares until the user edits them. Design sources: `docs/design/2026-11-06__release-v9.16/plan-linked-pre-entry-checks/` and `…/signal-to-plan-flow/`. |
 | 1.21 | 2026-11-03 | v9.15 design gate — (ST-03, EPIC-01, BLG-FE-246) §5d.2 FX input label "FX rate — USD per £1 (GBP/USD)" with hint, as every FX input; replaces "FX Rate (USD/GBP)". Design source: `docs/design/2026-11-03__release-v9.15/trade-entry-fx-rate/decision_record.md`. |
 | 1.20 | 2026-10-30 | ST-09 (EPIC-02, v9.14, BLG-BE-190): the reproducibility note's server-side formula now reads `raw_shares = risk_amount × fx_rate_used / stop_distance`, matching `strategy_rules.md` v1.21 §4.1.3. It quoted the inverted formula the code used before. Wording only. |
