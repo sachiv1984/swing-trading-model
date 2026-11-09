@@ -1,8 +1,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 2.1
-**Last Updated:** 2026-11-09 (ST-01/ST-02/ST-03, EPIC-01, v9.16 — BLG-FE-250/251/252 built: §Implementation Status and §Onward Links status updated; Trade History `?ticker=` filter recorded under §Onward Links); prior — 2026-11-04 (ST-08, EPIC-02, v9.15, BLG-SPEC-214 — navigation v2: five job-based areas, placement for all 25 pages, parent links and onward-link rule); prior — 2026-11-03 (v9.15 design gate — ST-12/ST-13/ST-14: §Legacy Dashboard Route, §Browser Tab Title, §Sidebar Footer and Height); prior history retained — see prior entries in version control
+**Version:** 2.2
+**Last Updated:** 2026-11-09 (ST-06/ST-07, EPIC-02, v9.16, BLG-FE-254/255 — §Onward Links: Signals and Screener gain "Plan this" to Trade Plan; Dashboard Today items built); prior — 2026-11-09 (ST-01/ST-02/ST-03, EPIC-01, v9.16 — BLG-FE-250/251/252 built: §Implementation Status and §Onward Links status updated; Trade History `?ticker=` filter recorded under §Onward Links); prior — 2026-11-04 (ST-08, EPIC-02, v9.15, BLG-SPEC-214 — navigation v2: five job-based areas, placement for all 25 pages, parent links and onward-link rule); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Design Source:** docs/design/2026-03-24__release-v2.3/sidebar-nav-groups/ux_spec.md
 **Design Source (v1.3 command palette):** docs/design/2026-07-17__release-v7.5/command-palette/ux_spec.md
@@ -136,14 +136,14 @@ An existing "Back" button that calls `navigate(-1)` may stay, but it does not re
 
 | Page | Required onward link | Status (v2.1) |
 |------|----------------------|---------------|
-| Dashboard | Each card to its page (Positions, Risk Dashboard, Signals, Screener, Trade History, Red Flag Journal, Analytics); Today items to their action once `BLG-FE-254` ships (`dashboard.md`) | Exists |
+| Dashboard | Each card to its page (Positions, Risk Dashboard, Signals, Screener, Trade History, Red Flag Journal, Analytics); Today items to their action (`dashboard.md` §1B) | Exists; Today items built — ST-06 (v9.16) |
 | Notifications | Notification Preferences | Exists |
 | Notification History | Notifications (parent link) | Built — ST-02 (v9.16) |
 | Positions | Trade Entry ("New Position") | Exists |
 | Trade Entry | Positions after save; Trade Plan | Exists |
 | Risk Dashboard | Positions | Exists |
-| Signals | Watchlist | Exists |
-| Screener | Research for a result's ticker | Exists |
+| Signals | Watchlist; Trade Plan ("Plan this" on new and watchlisted signal cards, `signals.md` v0.9) | Watchlist exists; Trade Plan built — ST-07 (v9.16) |
+| Screener | Research for a result's ticker; Trade Plan ("Plan this" on every result row, `screener_results.md` v1.11 §11.1) | Research exists; Trade Plan built — ST-07 (v9.16) |
 | Watchlist | Research for a ticker | Exists |
 | Research | Trade Plan for this ticker | Exists |
 | Trade Plans | Trade Plan (new or edit); Trade Entry from a plan | Exists |
@@ -329,6 +329,7 @@ First-session-only dismissible tooltip on the nav-bar search affordance. No moda
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.2 | 2026-11-09 | ST-06/ST-07 (EPIC-02, v9.16, BLG-FE-254/255). §Onward Links: Signals → Trade Plan and Screener → Trade Plan rows ("Plan this", `signal-to-plan-flow` decision record §5); Dashboard Today items marked built. No sidebar rule changes. |
 | 2.1 | 2026-11-09 | ST-01/ST-02/ST-03 (EPIC-01, v9.16, BLG-FE-250/251/252). §Implementation Status: areas, parent links and onward links built. §Onward Links status column updated to built; records the header onward-link placement, the SC-ONW-12 automated scan and the Trade History `?ticker=` filter that the Red Flag Journal link uses. No sidebar rule changes. New behaviour: the Trade History `?ticker=` filter (to be added to `trade_history.md` by `BLG-SPEC-227`); the Trade History onward link is a separate "Research {TICKER}" icon link, so the ticker text still toggles the row. Open spec question on reload persistence: `BLG-SPEC-226`. |
 | 2.0 | 2026-11-04 | ST-08 (EPIC-02, v9.15, BLG-SPEC-214). Navigation v2 against the `site-structure-phase1` §2.1 brief. Replaces the drifted §Group Structure table with five job-based areas (Today · Portfolio · Find trades · Review · Settings) and §Page Placement for all 25 files in `src/pages/` (21 sidebar entries, 3 detail pages with parents, `Dashboard.js` removed). Today and Portfolio expanded by default, plus the active area; collapsible pattern, active-area-always-expanded and session persistence kept. Trade Plans and Research gain sidebar entries (new `/Research` landing). New §Parent Links and §Onward Links (dead-end rule). Alert badge moves with Notifications to Today. §Browser Tab Title, §Legacy Dashboard Route and §Sidebar Footer and Height kept. New §Implementation Status maps each part to its build item (`BLG-FE-250/251/252`, v9.16; ST-11 to ST-14, v9.15). Labels come from `glossary.md` §UI Labels (v1.3). Head of UX & Design review: see the v9.15 `qa_evidence_EPIC-02.md` ST-08 entry. |
 | 1.8 | 2026-11-03 | `2026-11-03__release-v9.15` design gate. New §Sidebar Footer and Height (ST-14, BLG-FE-266: real release version, none when absent; full-height background), §Legacy Dashboard Route (ST-12, BLG-FE-247: `/Dashboard` removed, redirects to `/`, one palette entry) and §Browser Tab Title (ST-13, BLG-FE-249: `{page label} · Position Manager`, Research adds the ticker). Notes the §Group Structure drift that ST-08's v2.0 replaces. Design source: `docs/design/2026-11-03__release-v9.15/site-structure-phase1/decision_record.md`. Head of UX & Design + Product Owner approved. Head of Specs Team confirmed. |

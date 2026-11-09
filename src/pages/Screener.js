@@ -11,6 +11,7 @@ import { PAGE_LABELS } from "../lib/pageLabels";
 import DataState from "../components/ui/DataState";
 import { Skeleton } from "../components/ui/skeleton";
 import { cn } from "../lib/utils";
+import { planThisUrl } from "../lib/planThis";
 import { formatCurrency, formatPercent } from "../lib/format";
 import {
   RefreshCw,
@@ -535,6 +536,15 @@ const SCREENER_COLUMNS = [
           title="Pre-trade research"
         >
           Research
+        </button>
+        {/* ST-07 (BLG-FE-255, v9.16): screener_results.md v1.11 §11.1 — navigation only */}
+        <button
+          onClick={() => ctx.navigate(planThisUrl({ ticker: r.ticker, market: r.market, price: r.price }))}
+          aria-label={`Plan this: ${r.ticker}`}
+          data-testid={`screener-plan-this-${r.ticker}`}
+          className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs border border-slate-600/30 text-slate-600 dark:text-slate-400 hover:text-cyan-400 hover:border-cyan-500/30 transition-colors"
+        >
+          Plan this
         </button>
       </div>
     ),

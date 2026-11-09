@@ -12,6 +12,7 @@ import SignalContextPanel, { buildSignalPrePopulation } from "../components/trad
 import SetupQualityScorePanel from "../components/trades/SetupQualityScorePanel";
 import WhatIfSizingPreview from "../components/trades/WhatIfSizingPreview";
 import PreEntryValidationPanel from "../components/trades/PreEntryValidationPanel";
+import PlanSuggestedSize from "../components/trades/PlanSuggestedSize";
 import { BookOpen, Save, ArrowLeft, AlertTriangle, ChevronDown, ChevronUp, Newspaper, Sparkles, X as XIcon, ThumbsUp, ThumbsDown, Tag as TagIcon, Rocket, Printer, Copy } from "lucide-react";
 import { TradePlanStatusBadge, isStartTradeEligible } from "./TradePlans";
 import { StandingAlert } from "../components/ui/StandingAlert";
@@ -253,6 +254,14 @@ export default function TradePlan() {
   // Ignored when ?edit= is present (editing takes precedence).
   const cloneFromId = editId ? null : searchParams.get("clone_from");
   const priceAlertId = searchParams.get("price_alert_id"); // ST-09, BLG-BE-84, EPIC-02, v8.8
+  // ST-07 (BLG-FE-255, EPIC-02, v9.16): "Plan this" route parameters (trade_plan.md v1.22 §2).
+  // New-plan form only: entry_price pre-fills Planned Entry Price, signal_id picks the
+  // Signal Context signal (§5a.1). Neither applies in edit mode or when cloning.
+  const isPlanThisForm = !editId && !cloneFromId;
+  const entryPriceParam = searchParams.get("entry_price");
+  const prefillEntryPrice =
+    isPlanThisForm && entryPriceParam && Number(entryPriceParam) > 0 ? entryPriceParam : "";
+  const signalIdParam = isPlanThisForm ? searchParams.get("signal_id") : null;
 
   const [form, setForm] = useState({
     ...EMPTY_FORM,
@@ -260,6 +269,7 @@ export default function TradePlan() {
     market,
     position_id: positionId || null,
     triggered_by_price_alert_id: priceAlertId || null,
+    planned_entry_price: prefillEntryPrice,
   });
   const [saved, setSaved] = useState(false);
   const [isAiDraft, setIsAiDraft] = useState(false);
@@ -270,6 +280,9 @@ export default function TradePlan() {
   const [isClaudeDraft, setIsClaudeDraft] = useState(false);
   // ST-05 (BLG-FE-271, v9.16): the panel's dated result, sent on save (trade_plan.md §5e).
   const [preEntrySnapshot, setPreEntrySnapshot] = useState(null);
+  // ST-08 (BLG-FE-256, v9.16): §5f — the suggestion pre-fills Planned Shares only until
+  // the user types there. In edit mode a stored planned_quantity counts as typed.
+  const [sharesTyped, setSharesTyped] = useState(false);
   const [feedbackJustGiven, setFeedbackJustGiven] = useState(false);
   const hasUnsavedAiChanges = useRef(false);
   const [isAiLoading, setIsAiLoading] = useState(false);
@@ -346,6 +359,7 @@ export default function TradePlan() {
         pre_entry_override_acknowledged: !!existingPlan.pre_entry_override_acknowledged,
       });
       setIsClaudeDraft(!!existingPlan.is_ai_draft);
+      if (existingPlan.planned_quantity != null) setSharesTyped(true);
     }
   }, [existingPlan]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -455,9 +469,34 @@ export default function TradePlan() {
     staleTime: 30000,
   });
 
-  const linkedSignal = watchlistedSignals.find(
+  // ST-07 (BLG-FE-255, v9.16): with signal_id ("Plan this" from Signals), §5a.1 uses that
+  // signal for any status except dismissed. GET /signals has every status; there is no
+  // single-signal GET. If the fetch fails or the signal is missing or dismissed, the
+  // watchlisted lookup below applies unchanged.
+  const {
+    data: signalById,
+    isLoading: signalByIdLoading,
+    isError: signalByIdFailed,
+  } = useQuery({
+    queryKey: ["signal-by-id", signalIdParam],
+    queryFn: async () => {
+      const res = await apiFetch(`${API_BASE}/signals`);
+      if (!res.ok) throw new Error("signals unavailable");
+      const json = await res.json();
+      const list = Array.isArray(json) ? json : Array.isArray(json?.data) ? json.data : [];
+      return list.find((s) => String(s.id) === String(signalIdParam)) || null;
+    },
+    enabled: !!signalIdParam,
+    retry: false,
+    staleTime: 30000,
+  });
+  const usesSignalId =
+    !!signalIdParam && !signalByIdFailed && (signalByIdLoading || (!!signalById && signalById.status !== "dismissed"));
+
+  const watchlistedMatch = watchlistedSignals.find(
     (s) => s.ticker === form.ticker || s.ticker === form.ticker + ".L" || s.ticker.replace(/\.L$/, "") === form.ticker
   ) || null;
+  const linkedSignal = usesSignalId ? signalById || null : watchlistedMatch;
 
   const prePopApplied = useRef(false);
   useEffect(() => {
@@ -874,15 +913,8 @@ export default function TradePlan() {
 
         <NewsContextPanel ticker={form.ticker} market={form.market} />
 
-        {/* Pre-Entry Validation — ST-03 / ST-16 */}
-        <Field label="Planned Shares (for pre-entry checks)">
-          <TextInput
-            type="number"
-            value={form.planned_quantity}
-            onChange={set("planned_quantity")}
-            placeholder="e.g. 50"
-          />
-        </Field>
+        {/* Pre-Entry Validation — ST-03 / ST-16. ST-08 (BLG-FE-256, v9.16): trade_plan.md v1.22 §5f
+            field order — Entry | Stop, then the suggested size, then Planned Shares, then the panel. */}
         <div className="grid grid-cols-2 gap-3">
           <Field label="Planned Entry Price (optional)">
             <TextInput
@@ -903,6 +935,29 @@ export default function TradePlan() {
             />
           </Field>
         </div>
+        <PlanSuggestedSize
+          ticker={form.ticker}
+          market={form.market}
+          entryPrice={form.planned_entry_price}
+          stopPrice={form.planned_stop_price}
+          riskPercent={defaultRiskPercent}
+          shares={form.planned_quantity}
+          sharesTyped={sharesTyped}
+          onPrefill={(v) => setForm((prev) => ({ ...prev, planned_quantity: v }))}
+          onUse={(v) => setForm((prev) => ({ ...prev, planned_quantity: v }))}
+        />
+        <Field label="Planned Shares (for pre-entry checks)">
+          <TextInput
+            type="number"
+            data-testid="planned-quantity-input"
+            value={form.planned_quantity}
+            onChange={(e) => {
+              setSharesTyped(true);
+              set("planned_quantity")(e);
+            }}
+            placeholder="e.g. 50"
+          />
+        </Field>
         <PreEntryValidationPanel
           ticker={form.ticker}
           market={form.market}
@@ -910,7 +965,8 @@ export default function TradePlan() {
           entryPrice={form.planned_entry_price}
           stopPrice={form.planned_stop_price}
           overrideAcknowledged={form.pre_entry_override_acknowledged}
-          onOverrideChange={(val) => setForm((prev) => ({ ...prev, pre_entry_override_acknowledged: val }))}          onResultChange={setPreEntrySnapshot}
+          onOverrideChange={(val) => setForm((prev) => ({ ...prev, pre_entry_override_acknowledged: val }))}
+          onResultChange={setPreEntrySnapshot}
         />
 
         <div className="space-y-1">
