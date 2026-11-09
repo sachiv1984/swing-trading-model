@@ -6,7 +6,7 @@
   "invoked_utc": "2026-11-09T09:15:14Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-09T10:10:01Z",
+  "last_updated_utc": "2026-11-09T10:54:56Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-02",
@@ -18,7 +18,7 @@
   ],
   "epics": {
     "EPIC-01": {
-      "status": "in_progress",
+      "status": "done",
       "branch": "exec/2026-11-06__release-v9.16/EPIC-01",
       "pr_number": null,
       "pr_status": "none",
@@ -28,7 +28,11 @@
         "tests/e2e/sidebar-nav-groups.spec.js",
         "tests/e2e/alert-nav-badge.spec.js",
         "tests/e2e/command-palette.spec.js",
-        "tests/e2e/keyboard-shortcuts.spec.js"
+        "tests/e2e/keyboard-shortcuts.spec.js",
+        "tests/e2e/parent-links.spec.js",
+        "tests/e2e/onward-links.spec.js",
+        "tests/e2e/analytics-section-link.spec.js",
+        "tests/test_si05_digest_service.py"
       ],
       "stories": {
         "ST-01": {
@@ -64,72 +68,80 @@
         "ST-02": {
           "title": "Add a parent link on detail pages",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 2198,
           "branch": "exec/2026-11-06__release-v9.16/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "9b36b84d457fd4380e44c461889c3ffd948e74d0",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-11-09T10:20:41Z",
+          "acceptance_verified": true,
           "spec_references": [
-            "docs/specs/frontend/pages/navigation.md"
+            "docs/specs/frontend/pages/navigation.md",
+            "tests/e2e/parent-links.spec.js"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.push",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "AC (each listed page shows a parent link that navigates correctly; Playwright passes): SC-PAR-01..04 (text, href, above h1, click to parent), SC-PAR-05 Research error state, SC-PAR-06 no parent link on sidebar pages. Deviation check: none - matches navigation.md v2.0 §Parent Links. Final CI on branch head 8d0800e1: all 9 workflows success - Playwright E2E 42603163545 (attempt 2; attempt 1 failed one axe scan, Reports Monthly dark, with the first-session Cmd-K tip toast mid-animation over the page; passes 16/16 locally and on the two prior CI runs; single unreproduced occurrence, not quarantined per Flaky-Test Disposition step 1), CI Pytest 42603163482, Frontend Production Build 42603163252, Critical-Path Smoke 42603163270."
         },
         "ST-03": {
           "title": "Give each dead-end page an onward next-step link",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 2199,
           "branch": "exec/2026-11-06__release-v9.16/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "9b36b84d457fd4380e44c461889c3ffd948e74d0",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-11-09T10:20:41Z",
+          "acceptance_verified": true,
           "spec_references": [
-            "docs/specs/frontend/pages/navigation.md"
+            "docs/specs/frontend/pages/navigation.md",
+            "claude/cycles/2026-11-06__release-v9.16/stage4_backlog_slice_addendum.md",
+            "tests/e2e/onward-links.spec.js"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.push",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "AC 1 (re-run of the link scan finds 0 dead-end pages): SC-ONW-12 over the 11 former dead ends finds 0; the 14 pages already 'Exists' at v2.0 re-checked in source (recorded in qa_evidence). AC 2 (each new link has Playwright coverage): SC-ONW-01..11 + SC-PAR-03. CI run 42600227514 on 06ec6d45 failed 26 tests (plan-vs-reality, trade-debrief) that expand a trade row by clicking its ticker, which 9b36b84d had made the Research link; fixed in 8d0800e1 by keeping the ticker as the row toggle and adding a separate 'Research {TICKER}' icon link. navigation.md -> v2.1 (status + ?ticker= filter). Deviation check: none - the Trade History ?ticker= filter is new behaviour required by navigation.md §Onward Links and recorded there. Final CI on branch head 8d0800e1: all 9 workflows success - Playwright E2E 42603163545 (attempt 2; attempt 1 failed one axe scan, Reports Monthly dark, with the first-session Cmd-K tip toast mid-animation over the page; passes 16/16 locally and on the two prior CI runs; single unreproduced occurrence, not quarantined per Flaky-Test Disposition step 1), CI Pytest 42603163482, Frontend Production Build 42603163252, Critical-Path Smoke 42603163270.",
+          "follow_up_commits": [
+            "8d0800e15c02fd89cf6d7b11166d3606df2497d8"
+          ]
         },
         "ST-04": {
           "title": "Anchor the digest's Risk Dashboard link to the right section",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 2200,
           "branch": "exec/2026-11-06__release-v9.16/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "06ec6d45bbdc6260d31bbe2e83aeac496b483cc2",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-11-09T10:20:54Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/specs/frontend/pages/analytics.md",
-            "docs/design/2026-11-06__release-v9.16/digest-section-link/decision_record.md"
+            "docs/design/2026-11-06__release-v9.16/digest-section-link/decision_record.md",
+            "tests/e2e/analytics-section-link.spec.js",
+            "tests/test_si05_digest_service.py"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.push",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "AC 1 (section link scrolls the named section into view): SC-SEC-01 (reduced motion, in viewport, heading focused), SC-SEC-04..07. AC 2 (Playwright passes): SC-SEC-01..07, incl. SC-SEC-02 unknown id. AC 3 (digest link updated): test_deep_links_include_strategy_compliance_section_link (39 passed). Journey map F-04 resolved. Scroll/focus timing ACs observed passing in real GitHub Actions CI (environment-parity sub-clause). Deviation check: none - matches analytics.md v2.3 §19.1 and the design record. Final CI on branch head 8d0800e1: all 9 workflows success - Playwright E2E 42603163545 (attempt 2; attempt 1 failed one axe scan, Reports Monthly dark, with the first-session Cmd-K tip toast mid-animation over the page; passes 16/16 locally and on the two prior CI runs; single unreproduced occurrence, not quarantined per Flaky-Test Disposition step 1), CI Pytest 42603163482, Frontend Production Build 42603163252, Critical-Path Smoke 42603163270."
         }
       }
     }
@@ -138,7 +150,10 @@
   "blocked_items": [],
   "delegated_items": [],
   "completed_items": [
-    "ST-01"
+    "ST-01",
+    "ST-02",
+    "ST-03",
+    "ST-04"
   ],
   "open_escalations": {},
   "merge_gate": {
@@ -154,7 +169,9 @@
     ],
     "all_merged": false
   },
-  "process_notes": [],
+  "process_notes": [
+    "EPIC-01 (2026-11-09): the STEP 3.1.A step 13 cross-spec selector scan at ST-01 grepped for v1 group names and sidebar selectors only; it missed bare getByText/locator collisions with newly visible sidebar text ('Today', 'Watchlist') and aria-expanded area headers, and a link placed on clickable row text. CI caught 6 (ST-01, a46fecf2) and 26 (ST-03, 8d0800e1) failures; all fixed before DoQ. Candidate lesson for Phase 3: when a story makes new text or interactive elements visible on every page, scan specs for unscoped getByText/role locators of that text, not only for the renamed selectors."
+  ],
   "sealed": false,
   "sealed_utc": null
 }
