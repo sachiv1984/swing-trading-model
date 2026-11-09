@@ -1,8 +1,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 2.0
-**Last Updated:** 2026-11-04 (ST-08, EPIC-02, v9.15, BLG-SPEC-214 — navigation v2: five job-based areas, placement for all 25 pages, default-expanded Today and Portfolio, Trade Plans and Research surfaced, parent links and onward-link rule; labels from glossary §UI Labels); prior — 2026-11-03 (v9.15 design gate — ST-12/ST-13/ST-14: §Legacy Dashboard Route, §Browser Tab Title, §Sidebar Footer and Height); prior — 2026-09-28 (ST-06, EPIC-01, v9.8, BLG-SPEC-159 — §Keyboard Shortcuts canonical inventory); prior history retained — see prior entries in version control
+**Version:** 2.1
+**Last Updated:** 2026-11-09 (ST-01/ST-02/ST-03, EPIC-01, v9.16 — BLG-FE-250/251/252 built: §Implementation Status and §Onward Links status updated; Trade History `?ticker=` filter recorded under §Onward Links); prior — 2026-11-04 (ST-08, EPIC-02, v9.15, BLG-SPEC-214 — navigation v2: five job-based areas, placement for all 25 pages, parent links and onward-link rule); prior — 2026-11-03 (v9.15 design gate — ST-12/ST-13/ST-14: §Legacy Dashboard Route, §Browser Tab Title, §Sidebar Footer and Height); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Design Source:** docs/design/2026-03-24__release-v2.3/sidebar-nav-groups/ux_spec.md
 **Design Source (v1.3 command palette):** docs/design/2026-07-17__release-v7.5/command-palette/ux_spec.md
@@ -24,19 +24,19 @@ Defines the left sidebar: its areas, which page sits where, how groups expand an
 
 ## Implementation Status
 
-This version is a spec ahead of the code. Each part is built by the backlog item named here, not by ST-08.
+v2.0 was a spec ahead of the code. From v2.1 every part is built. Each part was built by the backlog item named here, not by ST-08.
 
 | Section | Built by | Target |
 |---------|----------|--------|
-| §Areas, §Page Placement, §Default Expansion | `BLG-FE-250` | v9.16 |
-| §Parent Links | `BLG-FE-251` | v9.16 |
-| §Onward Links | `BLG-FE-252` | v9.16 |
+| §Areas, §Page Placement, §Default Expansion | `BLG-FE-250` (ST-01) | v9.16 — built |
+| §Parent Links | `BLG-FE-251` (ST-02) | v9.16 — built |
+| §Onward Links | `BLG-FE-252` (ST-03) | v9.16 — built |
 | Labels from glossary §UI Labels | ST-11 (`BLG-FE-248`) | v9.15 |
 | §Browser Tab Title | ST-13 (`BLG-FE-249`) | v9.15 |
 | §Legacy Dashboard Route | ST-12 (`BLG-FE-247`) | v9.15 |
 | §Sidebar Footer and Height | ST-14 (`BLG-FE-266`) | v9.15 |
 
-Until `BLG-FE-250` ships, `src/Layout.js` `NAV_GROUPS` keeps the v1.x groups (Trading, Analytics, Tools, System). That gap is planned work, not a deviation.
+`src/Layout.js` `NAV_AREAS` holds the five areas. The v1.x `NAV_GROUPS` (Trading, Analytics, Tools, System) are gone.
 
 ## Areas
 
@@ -134,11 +134,11 @@ An existing "Back" button that calls `navigate(-1)` may stay, but it does not re
 
 **Rule:** every page has at least one in-page link to the next page a user is likely to need, beyond the sidebar. A page with no such link is a dead end. The table names the required onward link per page. A page may have more links than the one listed.
 
-| Page | Required onward link | Status at v2.0 |
-|------|----------------------|----------------|
+| Page | Required onward link | Status (v2.1) |
+|------|----------------------|---------------|
 | Dashboard | Each card to its page (Positions, Risk Dashboard, Signals, Screener, Trade History, Red Flag Journal, Analytics); Today items to their action once `BLG-FE-254` ships (`dashboard.md`) | Exists |
 | Notifications | Notification Preferences | Exists |
-| Notification History | Notifications (parent link) | New — `BLG-FE-251` / `BLG-FE-252` |
+| Notification History | Notifications (parent link) | Built — ST-02 (v9.16) |
 | Positions | Trade Entry ("New Position") | Exists |
 | Trade Entry | Positions after save; Trade Plan | Exists |
 | Risk Dashboard | Positions | Exists |
@@ -148,20 +148,22 @@ An existing "Back" button that calls `navigate(-1)` may stay, but it does not re
 | Research | Trade Plan for this ticker | Exists |
 | Trade Plans | Trade Plan (new or edit); Trade Entry from a plan | Exists |
 | Trade Plan | Trade Entry from the plan | Exists |
-| Ticker Universe | Screener | New — `BLG-FE-252` |
-| Trade History | Research for a trade's ticker | New — `BLG-FE-252` |
-| Analytics | Trade History | New — `BLG-FE-252` (the only link today, "Log a trade", is in the empty state) |
-| Reports | Analytics | New — `BLG-FE-252` |
-| Strategy Benchmark | Analytics | New — `BLG-FE-252` |
-| Replay | Trade History | New — `BLG-FE-252` |
-| Trade Reflections | Trade History | New — `BLG-FE-252` |
-| Red Flag Journal | Trade History filtered to the flagged trade's ticker | New — `BLG-FE-252` |
+| Ticker Universe | Screener | Built — ST-03 (v9.16) |
+| Trade History | Research for a trade's ticker | Built — ST-03 (v9.16): each row's ticker links to `/research/:ticker` |
+| Analytics | Trade History | Built — ST-03 (v9.16); shows in the populated state |
+| Reports | Analytics | Built — ST-03 (v9.16) |
+| Strategy Benchmark | Analytics | Built — ST-03 (v9.16) |
+| Replay | Trade History | Built — ST-03 (v9.16) |
+| Trade Reflections | Trade History | Built — ST-03 (v9.16) |
+| Red Flag Journal | Trade History filtered to the flagged trade's ticker | Built — ST-03 (v9.16): each event links to `/TradeHistory?ticker={TICKER}` |
 | Weekly Digest | Notifications | Exists |
-| Settings | Notification Preferences | New — see note |
-| Notification Preferences | Notifications (parent link); Weekly Digest | Parent link new — `BLG-FE-251`; Weekly Digest link exists |
-| System Status | Settings | New — `BLG-FE-252` |
+| Settings | Notification Preferences | Built — ST-03 (v9.16) |
+| Notification Preferences | Notifications (parent link); Weekly Digest | Parent link built — ST-02 (v9.16); Weekly Digest link exists |
+| System Status | Settings | Built — ST-03 (v9.16) |
 
 The "Status at v2.0" column comes from a scan of in-page links in `src/pages/` and the components they render (2026-11-04). "Exists" means the link shows in the page's normal populated state; a link that shows only in the empty state does not count. Links that depend on data being present (Risk Dashboard → Positions shows when grace-period rows exist; Signals → Watchlist after a ticker is watched) count as existing. The scan agrees with the eight dead-end pages listed in `BLG-FE-252` and finds three more: Settings and Trade History link to no other page, and Analytics links out only from its empty state. `BLG-FE-252`'s AC is that a re-run of the scan finds 0 dead-end pages, so that re-run also covers these three. Its required link is the one in this table.
+
+**v2.1 (ST-03, v9.16):** a header onward link sits under the page description (`PageHeader` `onward`, shared `OnwardLink` component): an arrow after the target's canonical label. The scan is re-run by Playwright `onward-links.spec.js` SC-ONW-12 over every routed page; it finds 0 dead ends. **Trade History ticker filter:** `/TradeHistory?ticker={TICKER}` shows only that ticker's trades (with or without the `.L` suffix), with a "Showing trades for {TICKER}" line and a "Show all trades" button that removes the parameter. It applies on top of the page's other filters and is not stored with them.
 
 ## Responsive Behaviour
 
@@ -317,6 +319,7 @@ First-session-only dismissible tooltip on the nav-bar search affordance. No moda
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.1 | 2026-11-09 | ST-01/ST-02/ST-03 (EPIC-01, v9.16, BLG-FE-250/251/252). §Implementation Status: areas, parent links and onward links built. §Onward Links status column updated to built; records the header onward-link placement, the SC-ONW-12 automated scan and the Trade History `?ticker=` filter that the Red Flag Journal link uses. No rule changes. |
 | 2.0 | 2026-11-04 | ST-08 (EPIC-02, v9.15, BLG-SPEC-214). Navigation v2 against the `site-structure-phase1` §2.1 brief. Replaces the drifted §Group Structure table with five job-based areas (Today · Portfolio · Find trades · Review · Settings) and §Page Placement for all 25 files in `src/pages/` (21 sidebar entries, 3 detail pages with parents, `Dashboard.js` removed). Today and Portfolio expanded by default, plus the active area; collapsible pattern, active-area-always-expanded and session persistence kept. Trade Plans and Research gain sidebar entries (new `/Research` landing). New §Parent Links and §Onward Links (dead-end rule). Alert badge moves with Notifications to Today. §Browser Tab Title, §Legacy Dashboard Route and §Sidebar Footer and Height kept. New §Implementation Status maps each part to its build item (`BLG-FE-250/251/252`, v9.16; ST-11 to ST-14, v9.15). Labels come from `glossary.md` §UI Labels (v1.3). Head of UX & Design review: see the v9.15 `qa_evidence_EPIC-02.md` ST-08 entry. |
 | 1.8 | 2026-11-03 | `2026-11-03__release-v9.15` design gate. New §Sidebar Footer and Height (ST-14, BLG-FE-266: real release version, none when absent; full-height background), §Legacy Dashboard Route (ST-12, BLG-FE-247: `/Dashboard` removed, redirects to `/`, one palette entry) and §Browser Tab Title (ST-13, BLG-FE-249: `{page label} · Position Manager`, Research adds the ticker). Notes the §Group Structure drift that ST-08's v2.0 replaces. Design source: `docs/design/2026-11-03__release-v9.15/site-structure-phase1/decision_record.md`. Head of UX & Design + Product Owner approved. Head of Specs Team confirmed. |
 | 1.7 | 2026-09-28 | ST-06 (EPIC-01, v9.8, BLG-SPEC-159): §Keyboard Shortcuts gains "Canonical Inventory — All Keyboard-Handling Sites", listing the global shortcuts (already documented) alongside the page-local `onKeyDown` handlers in `TradeEntry.js`, `TradePlan.js`, `RedFlagJournal.js` and `TickerUniverse.js` that had no single documented home. Conflict analysis performed: none found (global handlers are input-focus-suppressed by construction; page-local handlers are scoped to one element each). Documentation-only; no implementation change. |

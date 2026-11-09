@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect } from "react";
 import { apiFetch } from "../api/base44Client";
 import { Button } from "../components/ui/button";
 import PageHeader from "../components/ui/PageHeader";
+import OnwardLink from "../components/ui/OnwardLink";
 import { PAGE_LABELS } from "../lib/pageLabels";
 import { Skeleton } from "../components/ui/skeleton";
 import { cn } from "../lib/utils";
@@ -190,7 +191,7 @@ function EventRow({ event }) {
           <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5 truncate">{summary}</p>
         )}
       </div>
-      <div className="shrink-0 text-right">
+      <div className="shrink-0 text-right flex flex-col items-end gap-1">
         <span
           data-testid="event-date"
           className="text-xs text-slate-600 dark:text-slate-400"
@@ -198,6 +199,16 @@ function EventRow({ event }) {
         >
           {relTime}
         </span>
+        {/* navigation.md §Onward Links (ST-03, BLG-FE-252): Trade History
+            filtered to the flagged trade's ticker. */}
+        {event.ticker && (
+          <OnwardLink
+            to={`/TradeHistory?ticker=${encodeURIComponent(event.ticker)}`}
+            label={PAGE_LABELS.TradeHistory}
+            testId="event-trade-history-link"
+            className="text-xs"
+          />
+        )}
       </div>
     </div>
   );

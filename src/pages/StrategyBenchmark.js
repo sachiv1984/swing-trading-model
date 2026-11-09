@@ -968,6 +968,7 @@ export default function StrategyBenchmark() {
         <div className="flex-1">
           <PageHeader
             title={PAGE_LABELS.StrategyBenchmark}
+            onward={{ label: PAGE_LABELS.PerformanceAnalytics, to: "/PerformanceAnalytics" }}
             description="Compare live trading vs backtest"
             actions={
               <button

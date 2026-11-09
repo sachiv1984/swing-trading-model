@@ -597,6 +597,7 @@ export default function TradePlan() {
     <div className="space-y-6">
       <PageHeader
         title={PAGE_LABELS.TradePlan}
+        parent={{ label: PAGE_LABELS.TradePlans, to: "/TradePlans" }}
         description={
           <div className="flex items-center gap-2 flex-wrap">
             <span>{form.ticker ? `${form.ticker} — ${form.market}` : "Document your pre-trade reasoning"}</span>

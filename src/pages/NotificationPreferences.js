@@ -112,6 +112,7 @@ export default function NotificationPreferences() {
     <div className="space-y-6">
       <PageHeader
         title={PAGE_LABELS.NotificationPreferences}
+        parent={{ label: PAGE_LABELS.notifications, to: "/notifications" }}
         description="Configure which alerts you receive by email, and set custom thresholds."
       />
 

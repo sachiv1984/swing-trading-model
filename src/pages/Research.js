@@ -167,6 +167,7 @@ export default function Research() {
       <div className="space-y-6">
         <PageHeader
           title={ticker ? `${stripUkSuffix(ticker)} — ${PAGE_LABELS.Research}` : PAGE_LABELS.Research}
+          parent={{ label: PAGE_LABELS.Research, to: "/Research" }}
           description="Pre-trade research"
           actions={
             <Button
@@ -221,6 +222,7 @@ export default function Research() {
     <div className="space-y-6">
       <PageHeader
         title={ticker ? `${stripUkSuffix(ticker)} — ${PAGE_LABELS.Research}` : PAGE_LABELS.Research}
+        parent={{ label: PAGE_LABELS.Research, to: "/Research" }}
         description={
           researchLoading
             ? "Loading…"
