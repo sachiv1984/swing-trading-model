@@ -9,8 +9,12 @@
  * badge's 8-9px count text does not qualify for the "large text" exemption).
  * Fixed by swapping to `bg-red-600` (4.83:1).
  *
- *   SC-BC-01  System-group-header badge (collapsed) resolves to red-600, not red-500
- *   SC-BC-02  Item-level badge (System expanded) resolves to red-600, not red-500
+ *   SC-BC-01  Area-header badge (Today collapsed) resolves to red-600, not red-500
+ *   SC-BC-02  Item-level badge (Today expanded) resolves to red-600, not red-500
+ *
+ * Updated v9.16 (ST-01, EPIC-01, BLG-FE-250): Notifications moved from the
+ * System group to the Today area (navigation.md v2.0 §Alert Badge Integration),
+ * which is expanded by default — SC-BC-01 now collapses Today explicitly.
  *
  * Design source: docs/design/2026-07-24__release-v7.8/notification-accessibility-audit/decision_record.md
  * Spec ref: docs/specs/frontend/pages/notifications.md §Nav Alert Badge (v0.7)
@@ -55,41 +59,40 @@ async function mockWatchlist(page) {
   );
 }
 
-test('SC-BC-01: collapsed System-group-header badge resolves to red-600 (fixed), not red-500', async ({ page }) => {
+test('SC-BC-01: collapsed Today-header badge resolves to red-600 (fixed), not red-500', async ({ page }) => {
   await mockHistory(page, makeHistoryResponse(5));
   await mockWatchlist(page);
   await page.addInitScript(() => sessionStorage.removeItem('alerts-last-visit'));
+  await page.addInitScript(() => sessionStorage.removeItem('nav-group-collapse'));
 
   await page.goto('/#/Watchlist');
   await page.waitForLoadState('domcontentloaded');
 
-  const badge = page
-    .getByRole('button', { name: /^system/i })
-    .first()
-    .locator('[class*="bg-red-600"]');
+  const todayHeader = page.getByTestId('desktop-sidebar-nav').getByTestId('nav-area-today');
+  await expect(todayHeader).toHaveAttribute('aria-expanded', 'true', { timeout: 5000 });
+  await todayHeader.click();
+  await expect(todayHeader).toHaveAttribute('aria-expanded', 'false');
+
+  const badge = todayHeader.locator('[class*="bg-red-600"]');
   await expect(badge).toBeVisible({ timeout: 5000 });
   const bg = await badge.evaluate((el) => getComputedStyle(el).backgroundColor);
   expect(bg).toBe(RED_600_RGB);
   expect(bg).not.toBe(RED_500_RGB);
 });
 
-test('SC-BC-02: item-level badge (System expanded, non-Notifications page) resolves to red-600, not red-500', async ({ page }) => {
+test('SC-BC-02: item-level badge (Today expanded, non-Notifications page) resolves to red-600, not red-500', async ({ page }) => {
   await mockHistory(page, makeHistoryResponse(5));
   await mockWatchlist(page);
   await page.addInitScript(() => sessionStorage.removeItem('alerts-last-visit'));
+  await page.addInitScript(() => sessionStorage.removeItem('nav-group-collapse'));
 
   // Stay on Watchlist (count is only cleared by visiting the Notifications
-  // page itself, per SC-ANB-05) and manually expand the System group so the
-  // item-level badge (rather than the collapsed-header badge) renders.
+  // page itself, per SC-ANB-05). Today is expanded by default, so the
+  // item-level badge renders on the Notifications entry.
   await page.goto('/#/Watchlist');
   await page.waitForLoadState('domcontentloaded');
 
-  const systemHeader = page.getByRole('button', { name: /^system/i }).first();
-  const notificationsLink = page.getByRole('link', { name: 'Notifications' }).first();
-  const alreadyExpanded = await notificationsLink.isVisible().catch(() => false);
-  if (!alreadyExpanded) {
-    await systemHeader.click();
-  }
+  const notificationsLink = page.getByTestId('desktop-sidebar-nav').locator('a[href="#/notifications"]');
   await expect(notificationsLink).toBeVisible({ timeout: 5000 });
 
   const badge = notificationsLink.locator('[class*="bg-red-600"]');

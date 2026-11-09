@@ -5,23 +5,29 @@
  * badge now lives on the retained "Notifications" item, propagating to the
  * System group header when that group is collapsed.
  *
+ * Updated v9.16 (ST-01, EPIC-01, BLG-FE-250, navigation.md v2.0 §Alert Badge
+ * Integration): Notifications moved to the Today area, which is expanded by
+ * default. The count therefore shows on the Notifications entry; it moves to
+ * the Today header only while Today is collapsed (SC-ANB-09).
+ *
  * Covers non-visual AC only. Visual AC (badge colour, position, typography)
  * requires DoQ staging/local-run verification — see
  * docs/testing/alert_nav_badge_scenarios.md SC-ANB-VIS-01 through SC-ANB-VIS-05.
  *
  * Scenarios:
- *   SC-ANB-01  Notifications nav item present in System group
+ *   SC-ANB-01  Notifications nav item present in the Today area (expanded by default)
  *   SC-ANB-02  Badge hidden when alert history is empty
- *   SC-ANB-03  Badge shows full history count when no prior Notifications visit (System group header, collapsed)
+ *   SC-ANB-03  Badge shows full history count when no prior Notifications visit (Notifications entry)
  *   SC-ANB-04  Badge reflects only evaluations after last-visit timestamp
  *   SC-ANB-05  Badge clears on navigation to Notifications page
  *   SC-ANB-06  Badge persists across non-Notifications page navigation
  *   SC-ANB-07  Badge displays "99+" when unacknowledged count exceeds 99
- *   SC-ANB-08  No regression: existing nav items still present after ST-10
+ *   SC-ANB-08  No regression: the five v2 area headers and Dashboard are present
+ *   SC-ANB-09  With Today collapsed, the count moves to the Today header
  *
  * Spec refs:
  *   docs/specs/frontend/pages/notifications.md §Nav Alert Badge v0.5
- *   docs/specs/frontend/pages/navigation.md v1.4 §Alert Badge Integration
+ *   docs/specs/frontend/pages/navigation.md v2.0 §Alert Badge Integration
  *   docs/design/2026-03-24__release-v2.3/alert-nav-badge/ux_spec.md
  *   docs/design/2026-07-21__release-v7.7/nav-notification-digest-consolidation/ux_spec.md
  *
@@ -92,57 +98,55 @@ async function mockNotificationsFeed(page) {
   );
 }
 
-/** Navigate to Watchlist page (Tools group active — System group collapsed by default). */
+/** Navigate to Watchlist page (Find trades active; Today expanded by default). */
 async function gotoWatchlist(page) {
   await page.goto('/#/Watchlist');
   await page.waitForLoadState('domcontentloaded');
 }
 
-/** Navigate to the Notifications page (System group active — expanded). */
+/** Navigate to the Notifications page (Today active). */
 async function gotoNotifications(page) {
   await page.goto('/#/notifications');
   await page.waitForLoadState('domcontentloaded');
 }
 
-/** Locate the System group header button. */
-function systemGroupHeader(page) {
-  return page.getByRole('button', { name: /^system/i }).first();
+const desktopNav = (page) => page.getByTestId('desktop-sidebar-nav');
+
+/** The Today area header button. */
+function todayHeader(page) {
+  return desktopNav(page).getByTestId('nav-area-today');
 }
 
-/** Locate the badge on the System group header row (shown when System is collapsed). */
-function systemGroupHeaderBadge(page) {
-  return systemGroupHeader(page).locator('[class*="bg-red-600"]');
+/** Badge on the Today header row (shown only while Today is collapsed). */
+function todayHeaderBadge(page) {
+  return todayHeader(page).locator('[class*="bg-red-600"]');
 }
 
-/** Locate the Notifications nav link (only in the DOM when System group is expanded). */
+/** The Notifications nav link (in the DOM while Today is expanded). */
 function notificationsNavLink(page) {
-  return page.getByRole('link', { name: 'Notifications' }).first();
+  // Located by href: the link's accessible name includes the badge count.
+  return desktopNav(page).locator('a[href="#/notifications"]').first();
 }
 
-/** Locate the badge inside the Notifications nav link (item-level, System expanded). */
+/** Badge inside the Notifications nav link (item-level, Today expanded). */
 function notificationsNavBadge(page) {
   return notificationsNavLink(page).locator('[class*="bg-red-600"]');
 }
 
 // ---------------------------------------------------------------------------
-// SC-ANB-01 — Notifications nav item present in System group
+// SC-ANB-01 — Notifications nav item present in the Today area
 // ---------------------------------------------------------------------------
 
-test('SC-ANB-01: Notifications nav item visible in System group', async ({ page }) => {
+test('SC-ANB-01: Notifications nav item visible in the Today area', async ({ page }) => {
   await mockHistory(page, makeHistoryResponse(0));
   await mockWatchlist(page);
+  await page.addInitScript(() => sessionStorage.removeItem('nav-group-collapse'));
 
   await gotoWatchlist(page);
 
-  // System group is not active here (Tools is) — expand it to reveal Notifications
-  const systemHeader = systemGroupHeader(page);
-  await expect(systemHeader).toBeVisible({ timeout: 5000 });
-  const alreadyExpanded = await notificationsNavLink(page).isVisible().catch(() => false);
-  if (!alreadyExpanded) {
-    await systemHeader.click();
-  }
-
+  await expect(todayHeader(page)).toHaveAttribute('aria-expanded', 'true', { timeout: 5000 });
   await expect(notificationsNavLink(page)).toBeVisible({ timeout: 5000 });
+  await expect(notificationsNavLink(page)).toHaveAttribute('href', '#/notifications');
 });
 
 // ---------------------------------------------------------------------------
@@ -155,8 +159,10 @@ test('SC-ANB-02: Badge hidden when alert history returns 0 evaluations', async (
 
   await gotoWatchlist(page);
 
-  // Neither the collapsed-group header badge nor an item-level badge must exist
-  await expect(systemGroupHeaderBadge(page)).toHaveCount(0, { timeout: 5000 });
+  // Neither the item-level badge nor a header badge must exist
+  await expect(notificationsNavLink(page)).toBeVisible({ timeout: 5000 });
+  await expect(notificationsNavBadge(page)).toHaveCount(0);
+  await expect(todayHeaderBadge(page)).toHaveCount(0);
 });
 
 // ---------------------------------------------------------------------------
@@ -173,8 +179,8 @@ test('SC-ANB-03: Badge shows full count when no prior Notifications page visit (
 
   await gotoWatchlist(page);
 
-  // Tools is active, System is collapsed by default — badge propagates to the group header
-  const badge = systemGroupHeaderBadge(page);
+  // Today is expanded by default — the count shows on the Notifications entry
+  const badge = notificationsNavBadge(page);
   await expect(badge).toBeVisible({ timeout: 5000 });
   await expect(badge).toHaveText(String(evalCount));
 });
@@ -215,8 +221,8 @@ test('SC-ANB-04: Badge counts only evaluations after last-visit timestamp', asyn
 
   await gotoWatchlist(page);
 
-  // Badge must show 1 (only the newer eval after lastVisit), on the System group header
-  const badge = systemGroupHeaderBadge(page);
+  // Badge must show 1 (only the newer eval after lastVisit), on the Notifications entry
+  const badge = notificationsNavBadge(page);
   await expect(badge).toBeVisible({ timeout: 5000 });
   await expect(badge).toHaveText('1');
 });
@@ -241,14 +247,14 @@ test('SC-ANB-05: Badge count resets to 0 after navigating to Notifications page'
 
   await gotoWatchlist(page);
 
-  // Assert header badge is visible with count 3 (System collapsed, Tools active)
-  await expect(systemGroupHeaderBadge(page)).toBeVisible({ timeout: 5000 });
+  // Item-level badge visible with count 3
+  await expect(notificationsNavBadge(page)).toBeVisible({ timeout: 5000 });
 
-  // Navigate to Notifications page (System becomes active/expanded)
+  // Navigate to Notifications page (Today active)
   await gotoNotifications(page);
 
   // Badge must be gone — both the header and item-level forms
-  await expect(systemGroupHeaderBadge(page)).toHaveCount(0, { timeout: 5000 });
+  await expect(todayHeaderBadge(page)).toHaveCount(0, { timeout: 5000 });
   await expect(notificationsNavBadge(page)).toHaveCount(0, { timeout: 5000 });
 });
 
@@ -272,17 +278,17 @@ test('SC-ANB-06: Badge count persists when navigating between non-Notifications 
 
   await gotoWatchlist(page);
 
-  // Badge visible on Watchlist (System group header, collapsed)
-  await expect(systemGroupHeaderBadge(page)).toBeVisible({ timeout: 5000 });
-  await expect(systemGroupHeaderBadge(page)).toHaveText(String(evalCount));
+  // Badge visible on Watchlist (Notifications entry)
+  await expect(notificationsNavBadge(page)).toBeVisible({ timeout: 5000 });
+  await expect(notificationsNavBadge(page)).toHaveText(String(evalCount));
 
-  // Navigate to Positions (non-Notifications page — Trading group becomes active)
+  // Navigate to Positions (non-Notifications page — Portfolio active)
   await page.goto('/#/Positions');
   await page.waitForLoadState('domcontentloaded');
 
-  // Badge still visible with same count (System group still collapsed)
-  await expect(systemGroupHeaderBadge(page)).toBeVisible({ timeout: 5000 });
-  await expect(systemGroupHeaderBadge(page)).toHaveText(String(evalCount));
+  // Badge still visible with same count
+  await expect(notificationsNavBadge(page)).toBeVisible({ timeout: 5000 });
+  await expect(notificationsNavBadge(page)).toHaveText(String(evalCount));
 });
 
 // ---------------------------------------------------------------------------
@@ -296,7 +302,7 @@ test('SC-ANB-07: Badge shows "99+" when unacknowledged count > 99', async ({ pag
 
   await gotoWatchlist(page);
 
-  const badge = systemGroupHeaderBadge(page);
+  const badge = notificationsNavBadge(page);
   await expect(badge).toBeVisible({ timeout: 5000 });
   await expect(badge).toHaveText('99+');
 });
@@ -305,17 +311,38 @@ test('SC-ANB-07: Badge shows "99+" when unacknowledged count > 99', async ({ pag
 // SC-ANB-08 — No regression: existing nav items still present
 // ---------------------------------------------------------------------------
 
-test('SC-ANB-08: No regression — all pre-existing nav items remain visible', async ({ page }) => {
+test('SC-ANB-08: No regression — Dashboard and the five v2 area headers are present', async ({ page }) => {
   await mockHistory(page, makeHistoryResponse(0));
   await mockWatchlist(page);
 
   await gotoWatchlist(page);
 
-  // Dashboard is ungrouped at top — always visible
-  await expect(page.getByRole('link', { name: 'Dashboard' }).first()).toBeVisible({ timeout: 5000 });
-
-  // Verify group headers present (button or text)
-  for (const label of ['Trading', 'Analytics', 'Tools', 'System']) {
-    await expect(page.getByText(label, { exact: true }).first()).toBeVisible({ timeout: 3000 });
+  await expect(desktopNav(page).getByRole('link', { name: 'Dashboard', exact: true })).toBeVisible({ timeout: 5000 });
+  for (const key of ['today', 'portfolio', 'find', 'review', 'settings']) {
+    await expect(desktopNav(page).getByTestId(`nav-area-${key}`)).toBeVisible({ timeout: 3000 });
   }
+});
+
+// ---------------------------------------------------------------------------
+// SC-ANB-09 — With Today collapsed, the count moves to the Today header
+// ---------------------------------------------------------------------------
+
+test('SC-ANB-09: collapsing Today moves the count to the Today header; expanding moves it back', async ({ page }) => {
+  await mockHistory(page, makeHistoryResponse(4));
+  await mockWatchlist(page);
+  await page.addInitScript(() => sessionStorage.removeItem('alerts-last-visit'));
+  await page.addInitScript(() => sessionStorage.removeItem('nav-group-collapse'));
+
+  await gotoWatchlist(page);
+  await expect(notificationsNavBadge(page)).toHaveText('4', { timeout: 5000 });
+  await expect(todayHeaderBadge(page)).toHaveCount(0);
+
+  await todayHeader(page).click();
+  await expect(todayHeader(page)).toHaveAttribute('aria-expanded', 'false');
+  await expect(todayHeaderBadge(page)).toBeVisible({ timeout: 5000 });
+  await expect(todayHeaderBadge(page)).toHaveText('4');
+
+  await todayHeader(page).click();
+  await expect(todayHeaderBadge(page)).toHaveCount(0, { timeout: 5000 });
+  await expect(notificationsNavBadge(page)).toHaveText('4');
 });

@@ -36,8 +36,8 @@ export const PAGE_LABELS = {
 
 // Pages with a command-palette entry (glossary §UI Labels "Palette" column).
 // Detail pages without a palette entry (Notification History, Notification
-// Preferences) are left out. Research follows once its /Research landing
-// exists (BLG-FE-250); until then the palette reaches it through Your Data.
+// Preferences) are left out. Research opens its /Research landing (ST-01,
+// BLG-FE-250, v9.16).
 export const PALETTE_PAGE_KEYS = [
   "DashboardHome",
   "notifications",
@@ -47,6 +47,7 @@ export const PALETTE_PAGE_KEYS = [
   "Signals",
   "Screener",
   "Watchlist",
+  "Research",
   "TradePlans",
   "TradePlan",
   "TickerUniverse",
