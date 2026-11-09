@@ -1,8 +1,9 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 1.10
-**Last Updated:** 2026-10-16 (v9.13 design gate — ST-25/BLG-FE-221: "Add to Watchlist" and empty-state Scan buttons use emerald-700 with white text); prior — 2026-09-29 (ST-26, EPIC-05, v9.8, BLG-SPEC-161 — §4/§5.3 column lists corrected to match the live `SCREENER_COLUMNS`: added the missing Earnings column, and replaced the stale separate "Actions" column with the actual shape — Watchlist/Research actions live inside the News cell); prior — 2026-09-28 (v9.8 design gate — ST-02/BLG-FE-185: new §14 Column Definition Architecture note — `SCREENER_COLUMNS` is the single source for header, body cell and CSV value; no visual change); prior history retained — see prior entries in version control
+**Version:** 1.11
+**Last Updated:** 2026-11-06 (v9.16 design gate — ST-07/BLG-FE-255: "Plan this" on every result row); prior — 2026-10-16 (v9.13 design gate — ST-25/BLG-FE-221: "Add to Watchlist" and empty-state Scan buttons use emerald-700 with white text); prior — 2026-09-29 (ST-26, EPIC-05, v9.8, BLG-SPEC-161 — §4/§5.3 column lists corrected to match the live `SCREENER_COLUMNS`: added the missing Earnings column, and replaced the stale separate "Actions" column with the actual shape — Watchlist/Research actions live inside the News cell); prior history retained — see prior entries in version control
+**Design Source (v1.11 Plan this):** docs/design/2026-11-06__release-v9.16/signal-to-plan-flow/decision_record.md
 **Design Source (v1.10 button fills):** docs/design/2026-10-16__release-v9.13/coloured-button-fills/decision_record.md
 **Design Source (v1.8 column architecture):** docs/design/2026-09-28__release-v9.8/screener-watchlist-shared-column-definitions/decision_record.md
 **Design Source (v1.7 CSV export):** docs/design/2026-09-21__release-v9.6/screener-watchlist-csv-export/decision_record.md
@@ -234,6 +235,20 @@ Each ticker row in the screener results table has a **"Research"** action (text 
 
 **Back navigation:** User clicking `← Back` on the research view returns to `/screener` via browser back.
 
+### 11.1 "Plan this" Action
+
+*Added v1.11 (ST-07, BLG-FE-255).*
+
+**Design source:** `docs/design/2026-11-06__release-v9.16/signal-to-plan-flow/decision_record.md` §2.1
+
+| Attribute | Specification |
+|-----------|---------------|
+| Label | "Plan this", `aria-label="Plan this: {TICKER}"`, `data-testid="screener-plan-this-{ticker}"` |
+| Placement | Same action cell, after "Research", in the same small bordered style |
+| Shown | Every result row |
+| Target | `/TradePlan?ticker={ticker}&market={market}&entry_price={price}`, with `entry_price` omitted when `price` is null. No `signal_id`: the Signal Context panel shows only if a watchlisted signal exists for the ticker (`trade_plan.md` §5a.1). |
+| Side effects | None. No plan is created until the user saves. |
+
 **Design source:** `docs/design/2026-05-05__release-v3.2/screener-to-research-navigation/ux_spec.md`
 
 ---
@@ -329,6 +344,7 @@ This spec covers all DS-02 interaction patterns:
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.11 | 2026-11-06 | v9.16 design gate — new §11.1 "Plan this" (ST-07, EPIC-02, BLG-FE-255): on every result row, after "Research", opens a pre-filled, unsaved Trade Plan (ticker, market, entry price). Design source: `docs/design/2026-11-06__release-v9.16/signal-to-plan-flow/decision_record.md`. |
 | 1.10 | 2026-10-16 | v9.13 design gate — ST-25 (EPIC-04, BLG-FE-221): "Add to Watchlist" and the empty-state Scan button are `bg-emerald-700 hover:bg-emerald-800 text-white`. Their authored `bg-emerald-600` never rendered and fails AA with white text. Design source: `docs/design/2026-10-16__release-v9.13/coloured-button-fills/decision_record.md`. Head of UX & Design sign-off: 2026-10-16. Product Owner approved: 2026-10-16. Head of Specs Team confirmed. |
 | 1.9 | 2026-09-29 | ST-26 (EPIC-05, v9.8, BLG-SPEC-161): §4/§5.3 corrected to match live `SCREENER_COLUMNS` — added the missing Earnings column (present in code since an earlier cycle but never documented) and replaced the stale separate "Actions" column with its actual shape (Watchlist + Research actions live inside the News cell, not a distinct column). No code change. Authority: Head of Specs Team. |
 | 1.8 | 2026-09-28 | v9.8 design gate — ST-02 (EPIC-01, BLG-FE-185): added §14 Column Definition Architecture — `SCREENER_COLUMNS` documented as the single source for header, body cell and CSV value. No visual change. Design source: `docs/design/2026-09-28__release-v9.8/screener-watchlist-shared-column-definitions/decision_record.md`. Authority: Head of Specs Team. |

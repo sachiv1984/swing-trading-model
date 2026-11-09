@@ -1,8 +1,9 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 1.21
-**Last Updated:** 2026-11-03 (v9.15 design gate — ST-03/BLG-FE-246: §5d.2 FX input label aligned with every FX input); prior — 2026-10-30 (ST-09, EPIC-02, v9.14, BLG-BE-190 — §5d.2's reproducibility note quotes the corrected US sizing formula `risk_amount × fx_rate_used / stop_distance`); prior — 2026-10-15 (post-ship closure `2026-10-12__release-v9.12` §6 row 5 — Known Deviations: DEV-v3.4-01 marked resolved in v3.5); prior history retained — see prior entries in version control
+**Version:** 1.22
+**Last Updated:** 2026-11-06 (v9.16 design gate — ST-05/ST-07/ST-08, BLG-FE-271/255/256: new §5e dated pre-entry snapshot on save, `entry_price`/`signal_id` route parameters, new §5f suggested size before shares); prior — 2026-11-03 (v9.15 design gate — ST-03/BLG-FE-246: §5d.2 FX input label aligned with every FX input); prior — 2026-10-30 (ST-09, EPIC-02, v9.14, BLG-BE-190 — §5d.2's reproducibility note quotes the corrected US sizing formula `risk_amount × fx_rate_used / stop_distance`); prior history retained — see prior entries in version control
+**Design Source (v1.22 snapshot, Plan this, suggested size):** docs/design/2026-11-06__release-v9.16/plan-linked-pre-entry-checks/decision_record.md, docs/design/2026-11-06__release-v9.16/signal-to-plan-flow/decision_record.md
 **Design Source (v1.16 setup_type copy fix):** docs/design/2026-09-23__release-v9.7/trade-plan-clone-setup-type/decision_record.md
 **Design Source (v1.15 clone as new plan):** docs/design/2026-09-21__release-v9.6/trade-plan-clone/decision_record.md
 **Design Source (v1.15 stale plan marker):** docs/design/2026-09-21__release-v9.6/trade-plan-stale-marker/decision_record.md
@@ -56,6 +57,7 @@ Users should be able to:
 | `/trade-plans/new` | Create new trade plan (form) |
 | `/trade-plans/new?ticker={ticker}` | Create new trade plan pre-populated with ticker |
 | `/trade-plans/new?clone_from={id}` | Create new trade plan pre-populated from an existing plan (v1.15 — §4.5) |
+| `/TradePlan?ticker={ticker}&market={market}&entry_price={price}[&signal_id={id}]` | "Plan this" from Signals or Screener (v1.22, ST-07). Pre-fills Ticker, Market and Planned Entry Price. `signal_id` selects the Signal Context signal (§5a.1). Applies to the new-plan form only, and never overwrites a typed value. The live route is `/TradePlan` (`navigation.md` v2.0 §Page Placement), and these parameters are read by `TradePlan.js` `useSearchParams`. |
 | `/trade-plans/{id}` | Trade plan detail view |
 | `/trade-plans/{id}/edit` | Edit trade plan |
 
@@ -211,6 +213,8 @@ The Signal Context panel is shown **in the trade plan creation form only**, belo
 
 Shown when a linked signal exists for the trade plan ticker: a signal record where `ticker` matches and `status = "watchlisted"`.
 
+**v1.22 (ST-07, BLG-FE-255):** when the form was opened with `signal_id` ("Plan this" from Signals), the linked signal is that signal, for any status except `dismissed`, and the watchlisted lookup is skipped. If the fetch fails, fall back to the watchlisted lookup.
+
 When no linked signal exists: panel is hidden entirely. No placeholder shown. No regression to current form behaviour.
 
 ### 5a.2 Panel Content
@@ -313,6 +317,55 @@ Debounced 300ms after any input change. Calls `POST /portfolio/size` — the sam
 ### 5d.4 No Persistence Guarantee
 
 Nothing in this panel triggers `POST /trade-plans` or `PUT /trade-plans/{id}`. Planned Entry Price, the panel's Risk % override, and the FX Rate override (§5d.2) are never part of the Save Trade Plan payload (§5.2) — `trade_plans` has no `entry_price` or `fx_rate` column (`docs/specs/data_model.md`), so this holds by construction.
+
+---
+
+## 5e. Pre-Entry Snapshot on Save
+
+*Added v1.22 (ST-05, BLG-FE-271).*
+
+**Design source:** `docs/design/2026-11-06__release-v9.16/plan-linked-pre-entry-checks/decision_record.md`
+
+When a plan is saved (create or edit) and the Pre-Entry Validation panel holds a result, the save payload includes:
+
+```json
+"pre_entry_validation_snapshot": {
+  "captured_at": "<ISO-8601 UTC, when the result was received>",
+  "advisory_status": "pass | warn | fail",
+  "checks": [ { "rule": "...", "status": "...", "detail": "..." } ],
+  "inputs": { "quantity": 50, "entry_price": 150.0, "stop_price": 142.0 }
+}
+```
+
+If the panel has no result (shares not entered, still loading, or endpoint error), the field is `null`. On edit, the snapshot is replaced with the current result, or cleared. Before v1.22 the form never sent this field. Trade Entry reads the snapshot, with the plan's `pre_entry_override_acknowledged`, to decide whether to re-run the checks (`components/position_form.md` v1.14 §Pre-Entry Checks; 24-hour age).
+
+The Trade Plan acknowledgement stays advisory. It does not disable Save.
+
+## 5f. Suggested Size Before Shares
+
+*Added v1.22 (ST-08, BLG-FE-256).*
+
+**Design source:** `docs/design/2026-11-06__release-v9.16/signal-to-plan-flow/decision_record.md` §2.2
+
+> **§13 Compliance:** Deterministic §4.1 sizing shown as advice. It pre-fills an editable field and never saves or gates anything (as §10.6a).
+
+**Field order** in the pre-entry block of the creation and edit forms:
+1. Planned Entry Price | Planned Stop Price
+2. Suggested size line
+3. Planned Shares (for pre-entry checks)
+4. Pre-Entry Validation panel
+
+**Suggested size line** (`data-testid="plan-suggested-size"`): shown once entry and stop are both valid positive numbers. Before then, there is no line and no placeholder. It calls `POST /portfolio/size` (debounced 300 ms), with the settings default risk %, and with the live FX rate for US plans.
+
+| State | Display |
+|-------|---------|
+| Loading | One-line skeleton |
+| Valid, cash sufficient | "Suggested size: {N} shares (§4.1, {risk}% risk)", `text-sm text-slate-800 dark:text-slate-200` |
+| Invalid or cash-insufficient | §10.6a `AMBER_MESSAGES` / `SYSTEM_MESSAGES` text and colours |
+
+**Pre-fill:** on a valid, cash-sufficient result, Planned Shares is set to `suggested_shares`, floored to whole shares, as long as the user has not typed in it. After the user edits it, the line stays but stops writing. In edit mode a stored `planned_quantity` counts as typed. When the field's value differs from the suggestion, a **"Use suggested size"** button under the line copies the suggestion in.
+
+§5d What-If Sizing Preview is unchanged.
 
 ---
 
@@ -669,6 +722,7 @@ User-initiated batch of the same manual mutations already available one plan at 
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.22 | 2026-11-06 | v9.16 design gate. (ST-05, EPIC-02, BLG-FE-271) new §5e: plan save sends a dated `pre_entry_validation_snapshot`, which the form never sent before. (ST-07, BLG-FE-255) §2 "Plan this" route parameters `entry_price` and `signal_id`, and §5a.1 `signal_id` presence. (ST-08, BLG-FE-256) new §5f: Entry and Stop move above Planned Shares, and a suggested-size line pre-fills shares until the user edits them. Design sources: `docs/design/2026-11-06__release-v9.16/plan-linked-pre-entry-checks/` and `…/signal-to-plan-flow/`. |
 | 1.21 | 2026-11-03 | v9.15 design gate — (ST-03, EPIC-01, BLG-FE-246) §5d.2 FX input label "FX rate — USD per £1 (GBP/USD)" with hint, as every FX input; replaces "FX Rate (USD/GBP)". Design source: `docs/design/2026-11-03__release-v9.15/trade-entry-fx-rate/decision_record.md`. |
 | 1.20 | 2026-10-30 | ST-09 (EPIC-02, v9.14, BLG-BE-190): the reproducibility note's server-side formula now reads `raw_shares = risk_amount × fx_rate_used / stop_distance`, matching `strategy_rules.md` v1.21 §4.1.3. It quoted the inverted formula the code used before. Wording only. |
 | 1.19 | 2026-10-15 | Known Deviations: `DEV-v3.4-01`'s Target resolution corrected from "v3.5" to "Resolved — v3.5". Its tracking item `BLG-SPEC-31` was COMPLETE in v3.5 (ST-09, 2026-05-15), but the row was never updated (deviation consolidation review 2026-10-07 Finding 3; post-ship closure `2026-10-12__release-v9.12` §6 row 5). No requirement change. Edited on user direction for the Frontend Specifications & UX Documentation Owner. |

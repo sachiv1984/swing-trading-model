@@ -1,0 +1,452 @@
+[
+ {
+  "cycle": "2026-11-06__release-v9.16",
+  "epic": "EPIC-01",
+  "story_id": "ST-01",
+  "s2_id": "S2-01",
+  "source": "BLG-FE-250",
+  "title": "Build the job-based sidebar and surface Trade Plans and Research",
+  "priority": "P2",
+  "effort": "M (~2-3 days)",
+  "labels": [
+   "sprint",
+   "EPIC-01",
+   "cycle:2026-11-06__release-v9.16"
+  ]
+ },
+ {
+  "cycle": "2026-11-06__release-v9.16",
+  "epic": "EPIC-01",
+  "story_id": "ST-02",
+  "s2_id": "S2-02",
+  "source": "BLG-FE-251",
+  "title": "Add a parent link on detail pages",
+  "priority": "P3",
+  "effort": "S (~1 day)",
+  "labels": [
+   "sprint",
+   "EPIC-01",
+   "cycle:2026-11-06__release-v9.16"
+  ]
+ },
+ {
+  "cycle": "2026-11-06__release-v9.16",
+  "epic": "EPIC-01",
+  "story_id": "ST-03",
+  "s2_id": "S2-03",
+  "source": "BLG-FE-252",
+  "title": "Give each dead-end page an onward next-step link",
+  "priority": "P3",
+  "effort": "M (~2 days)",
+  "labels": [
+   "sprint",
+   "EPIC-01",
+   "cycle:2026-11-06__release-v9.16"
+  ]
+ },
+ {
+  "cycle": "2026-11-06__release-v9.16",
+  "epic": "EPIC-01",
+  "story_id": "ST-04",
+  "s2_id": "S2-04",
+  "source": "BLG-FE-253",
+  "title": "Anchor the digest's Risk Dashboard link to the right section",
+  "priority": "P3",
+  "effort": "S (~0.5 day)",
+  "labels": [
+   "sprint",
+   "EPIC-01",
+   "cycle:2026-11-06__release-v9.16"
+  ]
+ },
+ {
+  "cycle": "2026-11-06__release-v9.16",
+  "epic": "EPIC-02",
+  "story_id": "ST-05",
+  "s2_id": "S2-05",
+  "source": "BLG-FE-271",
+  "title": "Require the acknowledgement on plan-linked Trade Entry when the plan's checks were WARN/FAIL",
+  "priority": "P2",
+  "effort": "S (~0.5-1d)",
+  "labels": [
+   "sprint",
+   "EPIC-02",
+   "cycle:2026-11-06__release-v9.16"
+  ]
+ },
+ {
+  "cycle": "2026-11-06__release-v9.16",
+  "epic": "EPIC-02",
+  "story_id": "ST-06",
+  "s2_id": "S2-06",
+  "source": "BLG-FE-254",
+  "title": "Build the \"Today\" action list on the Dashboard",
+  "priority": "P2",
+  "effort": "L (~3-4 days)",
+  "labels": [
+   "sprint",
+   "EPIC-02",
+   "cycle:2026-11-06__release-v9.16"
+  ]
+ },
+ {
+  "cycle": "2026-11-06__release-v9.16",
+  "epic": "EPIC-02",
+  "story_id": "ST-07",
+  "s2_id": "S2-07",
+  "source": "BLG-FE-255",
+  "title": "Add \"Plan this\" to Signals and Screener rows",
+  "priority": "P2",
+  "effort": "M (~2-3 days)",
+  "labels": [
+   "sprint",
+   "EPIC-02",
+   "cycle:2026-11-06__release-v9.16"
+  ]
+ },
+ {
+  "cycle": "2026-11-06__release-v9.16",
+  "epic": "EPIC-02",
+  "story_id": "ST-08",
+  "s2_id": "S2-08",
+  "source": "BLG-FE-256",
+  "title": "On Trade Plan, show the suggested size before asking for shares",
+  "priority": "P2",
+  "effort": "S (~1 day)",
+  "labels": [
+   "sprint",
+   "EPIC-02",
+   "cycle:2026-11-06__release-v9.16"
+  ]
+ },
+ {
+  "cycle": "2026-11-06__release-v9.16",
+  "epic": "EPIC-03",
+  "story_id": "ST-09",
+  "s2_id": "S2-09",
+  "source": "BLG-FE-264",
+  "title": "Semantic colour tokens for the base, card and table shells",
+  "priority": "P2",
+  "effort": "M (~2-3 days)",
+  "labels": [
+   "sprint",
+   "EPIC-03",
+   "cycle:2026-11-06__release-v9.16"
+  ]
+ },
+ {
+  "cycle": "2026-11-06__release-v9.16",
+  "epic": "EPIC-03",
+  "story_id": "ST-10",
+  "s2_id": "S2-10",
+  "source": "BLG-FE-223",
+  "title": "Inputs apply dark:text-slate-400 to typed text instead of the placeholder",
+  "priority": "P3",
+  "effort": "S (~0.5 day; held at 0.5d, count named at v9.14: 18 occurrences in 8 files under `src/`)",
+  "labels": [
+   "sprint",
+   "EPIC-03",
+   "cycle:2026-11-06__release-v9.16"
+  ]
+ },
+ {
+  "cycle": "2026-11-06__release-v9.16",
+  "epic": "EPIC-04",
+  "story_id": "ST-11",
+  "s2_id": "S2-11",
+  "source": "BLG-OPS-214",
+  "title": "Rotate the Anthropic API key (overdue since 2026-08-25) and revoke the old key",
+  "priority": "P1",
+  "effort": "XS (<1h)",
+  "labels": [
+   "sprint",
+   "EPIC-04",
+   "cycle:2026-11-06__release-v9.16"
+  ]
+ },
+ {
+  "cycle": "2026-11-06__release-v9.16",
+  "epic": "EPIC-04",
+  "story_id": "ST-12",
+  "s2_id": "S2-12",
+  "source": "BLG-OPS-213",
+  "title": "Stop injecting REACT_APP_ANTHROPIC_API_KEY into the public GitHub Pages build",
+  "priority": "P2",
+  "effort": "S (~0.5d)",
+  "labels": [
+   "sprint",
+   "EPIC-04",
+   "cycle:2026-11-06__release-v9.16"
+  ]
+ },
+ {
+  "cycle": "2026-11-06__release-v9.16",
+  "epic": "EPIC-04",
+  "story_id": "ST-13",
+  "s2_id": "S2-13",
+  "source": "BLG-OPS-197",
+  "title": "Record the weekly market-data call-volume baseline from production",
+  "priority": "P3",
+  "effort": "XS (<1h)",
+  "labels": [
+   "sprint",
+   "EPIC-04",
+   "cycle:2026-11-06__release-v9.16"
+  ]
+ },
+ {
+  "cycle": "2026-11-06__release-v9.16",
+  "epic": "EPIC-04",
+  "story_id": "ST-14",
+  "s2_id": "S2-14",
+  "source": "BLG-OPS-198",
+  "title": "Record the full screener run p50/p95 baseline from production",
+  "priority": "P3",
+  "effort": "XS (<1h)",
+  "labels": [
+   "sprint",
+   "EPIC-04",
+   "cycle:2026-11-06__release-v9.16"
+  ]
+ },
+ {
+  "cycle": "2026-11-06__release-v9.16",
+  "epic": "EPIC-04",
+  "story_id": "ST-15",
+  "s2_id": "S2-15",
+  "source": "BLG-OPS-199",
+  "title": "Fail the staging smoke host check when the backend reports no Render service ID",
+  "priority": "P3",
+  "effort": "XS (<1h)",
+  "labels": [
+   "sprint",
+   "EPIC-04",
+   "cycle:2026-11-06__release-v9.16"
+  ]
+ },
+ {
+  "cycle": "2026-11-06__release-v9.16",
+  "epic": "EPIC-05",
+  "story_id": "ST-16",
+  "s2_id": "S2-16",
+  "source": "BLG-BE-175",
+  "title": "Exiting a US position with a NULL fill_price fails in the P&L arithmetic",
+  "priority": "P3",
+  "effort": "XS (<0.5d)",
+  "labels": [
+   "sprint",
+   "EPIC-05",
+   "cycle:2026-11-06__release-v9.16"
+  ]
+ },
+ {
+  "cycle": "2026-11-06__release-v9.16",
+  "epic": "EPIC-05",
+  "story_id": "ST-17",
+  "s2_id": "S2-17",
+  "source": "BLG-BE-176",
+  "title": "Lifecycle badge and Risk page disagree for a US row with no fill_price and no fx_rate",
+  "priority": "P3",
+  "effort": "XS (<0.5d)",
+  "labels": [
+   "sprint",
+   "EPIC-05",
+   "cycle:2026-11-06__release-v9.16"
+  ]
+ },
+ {
+  "cycle": "2026-11-06__release-v9.16",
+  "epic": "EPIC-05",
+  "story_id": "ST-18",
+  "s2_id": "S2-18",
+  "source": "BLG-BE-177",
+  "title": "Frozen-stop marker is not written when the on-load recompute has no live price",
+  "priority": "P3",
+  "effort": "XS (<0.5d)",
+  "labels": [
+   "sprint",
+   "EPIC-05",
+   "cycle:2026-11-06__release-v9.16"
+  ]
+ },
+ {
+  "cycle": "2026-11-06__release-v9.16",
+  "epic": "EPIC-05",
+  "story_id": "ST-19",
+  "s2_id": "S2-19",
+  "source": "BLG-AI-27",
+  "title": "Read production briefing ticker-caveat tokens and add any non-tickers",
+  "priority": "P3",
+  "effort": "XS (<1h plus tests)",
+  "labels": [
+   "sprint",
+   "EPIC-05",
+   "cycle:2026-11-06__release-v9.16"
+  ]
+ },
+ {
+  "cycle": "2026-11-06__release-v9.16",
+  "epic": "EPIC-05",
+  "story_id": "ST-20",
+  "s2_id": "S2-20",
+  "source": "BLG-AI-28",
+  "title": "Handle `_NON_TICKER_WORDS` entries that are also real tickers deliberately",
+  "priority": "P3",
+  "effort": "XS (<1h plus tests)",
+  "labels": [
+   "sprint",
+   "EPIC-05",
+   "cycle:2026-11-06__release-v9.16"
+  ]
+ },
+ {
+  "cycle": "2026-11-06__release-v9.16",
+  "epic": "EPIC-05",
+  "story_id": "ST-21",
+  "s2_id": "S2-21",
+  "source": "BLG-SPEC-195",
+  "title": "Journal summary: remove the stale AI_MODEL override line, or cost the model actually used",
+  "priority": "P4",
+  "effort": "XS (<1h)",
+  "labels": [
+   "sprint",
+   "EPIC-05",
+   "cycle:2026-11-06__release-v9.16"
+  ]
+ },
+ {
+  "cycle": "2026-11-06__release-v9.16",
+  "epic": "EPIC-05",
+  "story_id": "ST-22",
+  "s2_id": "S2-22",
+  "source": "BLG-SPEC-200",
+  "title": "Add the 11 missing positions columns to the positions data dictionary",
+  "priority": "P4",
+  "effort": "XS (<1h)",
+  "labels": [
+   "sprint",
+   "EPIC-05",
+   "cycle:2026-11-06__release-v9.16"
+  ]
+ },
+ {
+  "cycle": "2026-11-06__release-v9.16",
+  "epic": "EPIC-05",
+  "story_id": "ST-23",
+  "s2_id": "S2-23",
+  "source": "BLG-SPEC-201",
+  "title": "Point settings.md at the moved strategy constants module",
+  "priority": "P4",
+  "effort": "XS (<1h)",
+  "labels": [
+   "sprint",
+   "EPIC-05",
+   "cycle:2026-11-06__release-v9.16"
+  ]
+ },
+ {
+  "cycle": "2026-11-06__release-v9.16",
+  "epic": "EPIC-06",
+  "story_id": "ST-24",
+  "s2_id": "S2-24",
+  "source": "BLG-QA-21",
+  "title": "Arc 2 end-to-end QA protocol",
+  "priority": "P3",
+  "effort": "M (~2 days)",
+  "labels": [
+   "sprint",
+   "EPIC-06",
+   "cycle:2026-11-06__release-v9.16"
+  ]
+ },
+ {
+  "cycle": "2026-11-06__release-v9.16",
+  "epic": "EPIC-06",
+  "story_id": "ST-25",
+  "s2_id": "S2-25",
+  "source": "BLG-QA-22",
+  "title": "Arc 2 DoQ standards review",
+  "priority": "P3",
+  "effort": "S (~1 day)",
+  "labels": [
+   "sprint",
+   "EPIC-06",
+   "cycle:2026-11-06__release-v9.16"
+  ]
+ },
+ {
+  "cycle": "2026-11-06__release-v9.16",
+  "epic": "EPIC-06",
+  "story_id": "ST-26",
+  "s2_id": "S2-26",
+  "source": "BLG-QA-23",
+  "title": "Trade plan lifecycle end-to-end test",
+  "priority": "P3",
+  "effort": "M (~2 days)",
+  "labels": [
+   "sprint",
+   "EPIC-06",
+   "cycle:2026-11-06__release-v9.16"
+  ]
+ },
+ {
+  "cycle": "2026-11-06__release-v9.16",
+  "epic": "EPIC-06",
+  "story_id": "ST-27",
+  "s2_id": "S2-27",
+  "source": "BLG-FE-39",
+  "title": "Arc 2 user journey map",
+  "priority": "P3",
+  "effort": "M (~1–2 days)",
+  "labels": [
+   "sprint",
+   "EPIC-06",
+   "cycle:2026-11-06__release-v9.16"
+  ]
+ },
+ {
+  "cycle": "2026-11-06__release-v9.16",
+  "epic": "EPIC-07",
+  "story_id": "ST-28",
+  "s2_id": "S2-28",
+  "source": "BLG-GOV-413",
+  "title": "Split-achievability carve-out: close a source item whose whole remainder has its own backlog items",
+  "priority": "P3",
+  "effort": "XS (<1h)",
+  "labels": [
+   "sprint",
+   "EPIC-07",
+   "cycle:2026-11-06__release-v9.16"
+  ]
+ },
+ {
+  "cycle": "2026-11-06__release-v9.16",
+  "epic": "EPIC-07",
+  "story_id": "ST-29",
+  "s2_id": "S2-29",
+  "source": "BLG-GOV-26",
+  "title": "Arc velocity tracking dashboard",
+  "priority": "P3",
+  "effort": "S (~1 day)",
+  "labels": [
+   "sprint",
+   "EPIC-07",
+   "cycle:2026-11-06__release-v9.16"
+  ]
+ },
+ {
+  "cycle": "2026-11-06__release-v9.16",
+  "epic": "EPIC-07",
+  "story_id": "ST-30",
+  "s2_id": "S2-30",
+  "source": "BLG-GOV-198",
+  "title": "Base44 prompt versioning convention",
+  "priority": "P3",
+  "effort": "S (~0.5-2 days)",
+  "labels": [
+   "sprint",
+   "EPIC-07",
+   "cycle:2026-11-06__release-v9.16"
+  ]
+ }
+]
