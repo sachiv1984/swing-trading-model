@@ -41,11 +41,11 @@ Every observable AC has Playwright coverage (ST-01: SC-SNV, SC-ANB, SC-CP-17, SC
 
 ## Standard Sign-Off Block
 
-- [ ] All acceptance criteria verified against canonical spec
-- [ ] No unresolved P0 or P1 deviations
-- [ ] Regression areas checked
-- [ ] For any frontend component making direct URL construction (not via api.* wrapper): confirm the URL-base variable is exposed on the imported object — N/A, no new direct URL construction
-- [ ] **Strategy values checked:** N/A — no stop/grace/ATR/exit/sizing logic touched
-- Signed off by:
-- Date:
-- Comments: Awaiting Director of Quality sign-off (human, or agent-mediated per §5.3 on your direction).
+- [x] All acceptance criteria verified against canonical spec
+- [x] No unresolved P0 or P1 deviations
+- [x] Regression areas checked
+- [x] For any frontend component making direct URL construction (not via api.* wrapper): confirm the URL-base variable is exposed on the imported object — N/A, no new direct URL construction
+- [x] **Strategy values checked:** N/A — no stop/grace/ATR/exit/sizing logic touched
+- Signed off by: Sprint Execution Engine (agent-mediated, Director of Quality role — §5.3)
+- Date: 2026-11-09
+- Comments: Agent-mediated DoQ review (§5.3), user-directed in session 2026-11-09 ("run the agent-mediated Director of Quality review"). **Pass 1 Blocked** on finding 1: SC-ONW-03/12 rendered Analytics' empty state, so the populated-state onward link had no real Playwright coverage. Fixed in `0630e644` with relative trade dates and a populated-only assertion; a mutation check confirmed SC-ONW-03 now fails without the link. Findings 2–5 were non-blocking and applied as recorded under QA Test Coverage: DEV-NAV-ST01-01 / BLG-SPEC-226, `navigation.md` v2.1 wording and BLG-SPEC-227, the CI narrative, and assertion depth. **Pass 2 Approved.** The reviewer confirmed in the CI logs that SC-ONW-03 and SC-ONW-12 passed in Playwright run 42606292427 on `0630e644`: 8 shards, 1260 passed, and the only ✘ is SC-ASG-01, which is designed to fail. No `src/` or `backend/` change since pass 1. Backlog integrity OK, and the backlog change adds new items only. Two non-blocking wording leftovers in `execution_state.json` notes were fixed in this sign-off commit. **Post-open CI-fix restatement:** ST-01 (`a46fecf2`, Playwright 42597580117), ST-03 (`8d0800e1`, all 9 workflows on Playwright 42603163545; `0630e644`, Playwright 42606292427). ST-04's interaction-timing ACs (SC-SEC-01..07) were observed passing in real GitHub Actions runs 42603163545 and 42606292427. This agent-mediated sign-off does not satisfy the always-human merge gate: QA sign-off and Product Owner acceptance on the PR remain the human's.

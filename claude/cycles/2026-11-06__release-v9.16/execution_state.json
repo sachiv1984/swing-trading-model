@@ -6,7 +6,7 @@
   "invoked_utc": "2026-11-09T09:15:14Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-09T11:06:27Z",
+  "last_updated_utc": "2026-11-09T11:13:03Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-02",
@@ -22,7 +22,7 @@
       "branch": "exec/2026-11-06__release-v9.16/EPIC-01",
       "pr_number": null,
       "pr_status": "none",
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-11-06__release-v9.16/qa_evidence_EPIC-01.md",
       "test_scenarios": [
         "tests/e2e/sidebar-nav-groups.spec.js",
@@ -60,7 +60,7 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.push",
           "sign_off_record": null,
-          "notes": "AC 1 (sidebar matches navigation.md v2 desktop + mobile): SC-SNV-01..08, 11..14. AC 2 (Trade Plans one click): SC-SNV-09. AC 3 (alert-nav-badge, command-palette, keyboard-shortcuts updated and passing): SC-ANB-01..09, SC-CP-17, SC-KBD-09/10 tightened + SC-KBD-12. Cross-spec selector check: v1 group selectors updated in 4 specs at d2d67ede; CI run 42594634796 then found 6 more collisions (SC-SCR-18, SC-REP-01, SC-RES-03, SC-E03-04, SC-COMP-02/07), fixed in follow-up commit a46fecf2 (same story). CI on a46fecf2: all 8 triggered workflows success - Playwright E2E 42597580117, CI Pytest 42597580080, Critical-Path Smoke 42597580082; Frontend Production Build ran green on d2d67ede (42594634824). Deviation check: none - matches navigation.md v2.0. Local-only: SC-NOTIF-02b 3s timing test fails on the local dev server on unmodified main too - environmental. DoQ review pass 1 finding 2: collapse state survives a full reload, contrary to navigation.md §Default Expansion (inherited v1.x) - filed DEV-NAV-ST01-01 in navigation.md §Known Deviations, tracked by BLG-SPEC-226 (commit 0630e644); qa_evidence row graded Pass_with_deviation.",
+          "notes": "AC 1 (sidebar matches navigation.md v2 desktop + mobile): SC-SNV-01..08, 11..14. AC 2 (Trade Plans one click): SC-SNV-09. AC 3 (alert-nav-badge, command-palette, keyboard-shortcuts updated and passing): SC-ANB-01..09, SC-CP-17, SC-KBD-09/10 tightened + SC-KBD-12. Cross-spec selector check: v1 group selectors updated in 4 specs at d2d67ede; CI run 42594634796 then found 6 more collisions (SC-SCR-18, SC-REP-01, SC-RES-03, SC-E03-04, SC-COMP-02/07), fixed in follow-up commit a46fecf2 (same story). CI on a46fecf2: all 8 triggered workflows success - Playwright E2E 42597580117, CI Pytest 42597580080, Critical-Path Smoke 42597580082; Frontend Production Build ran green on d2d67ede (42594634824). Deviation check: DEV-NAV-ST01-01 (P3, BLG-SPEC-226) - collapse state survives a reload; otherwise matches navigation.md v2.0. Local-only: SC-NOTIF-02b 3s timing test fails on the local dev server on unmodified main too - environmental. DoQ review pass 1 finding 2: collapse state survives a full reload, contrary to navigation.md §Default Expansion (inherited v1.x) - filed DEV-NAV-ST01-01 in navigation.md §Known Deviations, tracked by BLG-SPEC-226 (commit 0630e644); qa_evidence row graded Pass_with_deviation.",
           "follow_up_commits": [
             "a46fecf2ece4caf632f0c582d3d6a9eb93699fcd",
             "0630e644f9720d7b4237659cff670ea7da013df2"
@@ -88,7 +88,7 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.push",
           "sign_off_record": null,
-          "notes": "AC (each listed page shows a parent link that navigates correctly; Playwright passes): SC-PAR-01..04 (text, href, above h1, click to parent), SC-PAR-05 Research error state, SC-PAR-06 no parent link on sidebar pages. Deviation check: none - matches navigation.md v2.0 §Parent Links. Final CI on branch head 8d0800e1: all 9 workflows success - Playwright E2E 42603163545 (attempt 2; attempt 1 failed one axe scan, Reports Monthly dark, with the first-session Cmd-K tip toast mid-animation over the page; passes 16/16 locally and on the two prior CI runs; single unreproduced occurrence, not quarantined per Flaky-Test Disposition step 1), CI Pytest 42603163482, Frontend Production Build 42603163252, Critical-Path Smoke 42603163270."
+          "notes": "AC (each listed page shows a parent link that navigates correctly; Playwright passes): SC-PAR-01..04 (text, href, above h1, click to parent), SC-PAR-05 Research error state, SC-PAR-06 no parent link on sidebar pages. Deviation check: none - matches navigation.md v2.0 §Parent Links. Final CI on 8d0800e1 (last code commit before the DoQ fix 0630e644, whose CI also passed: Playwright 42606292427): all 9 workflows success - Playwright E2E 42603163545 (attempt 2; attempt 1 failed one axe scan, Reports Monthly dark, with the first-session Cmd-K tip toast mid-animation over the page; passes 16/16 locally and on the two prior CI runs; single unreproduced occurrence, not quarantined per Flaky-Test Disposition step 1), CI Pytest 42603163482, Frontend Production Build 42603163252, Critical-Path Smoke 42603163270."
         },
         "ST-03": {
           "title": "Give each dead-end page an onward next-step link",
@@ -113,7 +113,7 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.push",
           "sign_off_record": null,
-          "notes": "AC 1 (re-run of the link scan finds 0 dead-end pages): SC-ONW-12 over the 11 former dead ends finds 0; the 14 pages already 'Exists' at v2.0 re-checked in source (recorded in qa_evidence). AC 2 (each new link has Playwright coverage): SC-ONW-01..11 + SC-PAR-03. CI run 42600227514 on 06ec6d45 failed 26 tests (plan-vs-reality, trade-debrief) that expand a trade row by clicking its ticker, which 9b36b84d had made the Research link; fixed in 8d0800e1 by keeping the ticker as the row toggle and adding a separate 'Research {TICKER}' icon link. navigation.md -> v2.1 (status + ?ticker= filter). Deviation check: none - the Trade History ?ticker= filter is new behaviour required by navigation.md §Onward Links and recorded there. Final CI on branch head 8d0800e1: all 9 workflows success - Playwright E2E 42603163545 (attempt 2; attempt 1 failed one axe scan, Reports Monthly dark, with the first-session Cmd-K tip toast mid-animation over the page; passes 16/16 locally and on the two prior CI runs; single unreproduced occurrence, not quarantined per Flaky-Test Disposition step 1), CI Pytest 42603163482, Frontend Production Build 42603163252, Critical-Path Smoke 42603163270. DoQ review pass 1 finding 1 (blocking): SC-ONW-03/12 used fixed September trade dates and rendered Analytics' empty state; fixed in 0630e644 (relative dates, populated-only Arc 5 assertion; mutation-checked). BLG-SPEC-227 filed for the ?ticker= filter in trade_history.md.",
+          "notes": "AC 1 (re-run of the link scan finds 0 dead-end pages): SC-ONW-12 over the 11 former dead ends finds 0; the 14 pages already 'Exists' at v2.0 re-checked in source (recorded in qa_evidence). AC 2 (each new link has Playwright coverage): SC-ONW-01..11 + SC-PAR-03. CI run 42600227514 on 06ec6d45 failed 26 tests (plan-vs-reality, trade-debrief) that expand a trade row by clicking its ticker, which 9b36b84d had made the Research link; fixed in 8d0800e1 by keeping the ticker as the row toggle and adding a separate 'Research {TICKER}' icon link. navigation.md -> v2.1 (status + ?ticker= filter). Deviation check: none - the Trade History ?ticker= filter is new behaviour required by navigation.md §Onward Links and recorded there. Final CI on 8d0800e1 (last code commit before the DoQ fix 0630e644, whose CI also passed: Playwright 42606292427): all 9 workflows success - Playwright E2E 42603163545 (attempt 2; attempt 1 failed one axe scan, Reports Monthly dark, with the first-session Cmd-K tip toast mid-animation over the page; passes 16/16 locally and on the two prior CI runs; single unreproduced occurrence, not quarantined per Flaky-Test Disposition step 1), CI Pytest 42603163482, Frontend Production Build 42603163252, Critical-Path Smoke 42603163270. DoQ review pass 1 finding 1 (blocking): SC-ONW-03/12 used fixed September trade dates and rendered Analytics' empty state; fixed in 0630e644 (relative dates, populated-only Arc 5 assertion; mutation-checked). BLG-SPEC-227 filed for the ?ticker= filter in trade_history.md.",
           "follow_up_commits": [
             "8d0800e15c02fd89cf6d7b11166d3606df2497d8",
             "0630e644f9720d7b4237659cff670ea7da013df2"
@@ -143,8 +143,16 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.push",
           "sign_off_record": null,
-          "notes": "AC 1 (section link scrolls the named section into view): SC-SEC-01 (reduced motion, in viewport, heading focused), SC-SEC-04..07. AC 2 (Playwright passes): SC-SEC-01..07, incl. SC-SEC-02 unknown id. AC 3 (digest link updated): test_deep_links_include_strategy_compliance_section_link (39 passed). Journey map F-04 resolved. Scroll/focus timing ACs observed passing in real GitHub Actions CI (environment-parity sub-clause). Deviation check: none - matches analytics.md v2.3 §19.1 and the design record. Final CI on branch head 8d0800e1: all 9 workflows success - Playwright E2E 42603163545 (attempt 2; attempt 1 failed one axe scan, Reports Monthly dark, with the first-session Cmd-K tip toast mid-animation over the page; passes 16/16 locally and on the two prior CI runs; single unreproduced occurrence, not quarantined per Flaky-Test Disposition step 1), CI Pytest 42603163482, Frontend Production Build 42603163252, Critical-Path Smoke 42603163270."
+          "notes": "AC 1 (section link scrolls the named section into view): SC-SEC-01 (reduced motion, in viewport, heading focused), SC-SEC-04..07. AC 2 (Playwright passes): SC-SEC-01..07, incl. SC-SEC-02 unknown id. AC 3 (digest link updated): test_deep_links_include_strategy_compliance_section_link (39 passed). Journey map F-04 resolved. Scroll/focus timing ACs observed passing in real GitHub Actions CI (environment-parity sub-clause). Deviation check: none - matches analytics.md v2.3 §19.1 and the design record. Final CI on 8d0800e1 (last code commit before the DoQ fix 0630e644, whose CI also passed: Playwright 42606292427): all 9 workflows success - Playwright E2E 42603163545 (attempt 2; attempt 1 failed one axe scan, Reports Monthly dark, with the first-session Cmd-K tip toast mid-animation over the page; passes 16/16 locally and on the two prior CI runs; single unreproduced occurrence, not quarantined per Flaky-Test Disposition step 1), CI Pytest 42603163482, Frontend Production Build 42603163252, Critical-Path Smoke 42603163270."
         }
+      },
+      "sign_off_record": {
+        "role": "Director of Quality",
+        "status": "cleared",
+        "method": "agent_mediated",
+        "date": "2026-11-09",
+        "reference": "qa_evidence_EPIC-01.md Standard Sign-Off Block",
+        "notes": "User-directed in session 2026-11-09. Pass 1 Blocked (finding 1: Analytics populated-state onward link untested) - fixed 0630e644; findings 2-5 non-blocking, applied (DEV-NAV-ST01-01/BLG-SPEC-226, BLG-SPEC-227, evidence corrections). Pass 2 Approved; 2 non-blocking note-wording leftovers fixed in the sign-off commit."
       }
     }
   },
