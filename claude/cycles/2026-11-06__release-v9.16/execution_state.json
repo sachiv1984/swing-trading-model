@@ -193,7 +193,7 @@
           "acceptance_verified": true,
           "commit_sha": "0d637f4ceef1ed0072857caa588158d7e7b71ae4",
           "completed_utc": "2026-11-09T11:55:01Z",
-          "notes": "AC1 Playwright SC-TEPC-07/11..15, SC-TP-32a/b; AC2 tests/test_trade_plan_pre_entry_snapshot.py::TestPlanLinkedEntryOverrideEvent; AC3 strategy_rules.md v1.27 (case (c)), DOCUMENTATION_ONLY_VERSIONS 1.27. CI all green on 0d637f4c: Playwright E2E run 42612772069 success, CI Pytest 42612772030 success. Deviation DEV-v9.16-ST05-01 (P3, snapshot replaced but not cleared on edit) filed in trade_plan.md Known Deviations, tracked BLG-FE-277. Opportunistic: PUT /trade-plans now stores the snapshot (contract v0.23, openapi 3.48.0).",
+          "notes": "AC1 Playwright SC-TEPC-07/11..15, SC-TP-32a/b; AC2 tests/test_trade_plan_pre_entry_snapshot.py::TestPlanLinkedEntryOverrideEvent; AC3 strategy_rules.md v1.27 (case (c)), DOCUMENTATION_ONLY_VERSIONS 1.27. CI all green on 0d637f4c: Playwright E2E run 42612772069 success, CI Pytest 42612772030 success. Deviation DEV-v9.16-ST05-01 (P3, snapshot replaced but not cleared on edit) filed in trade_plan.md Known Deviations, tracked BLG-FE-277. Opportunistic: PUT /trade-plans now stores the snapshot (contract v0.23, openapi 3.48.0). PR #2228 review DoQ finding 1 (blocking): edit-save re-sent the acknowledgement and PUT wrote a duplicate pre_entry_override event each time; fixed in 9902d774 (event only on not-true -> true), tests TestUpdateOverrideEventOnlyOnTransition.",
           "deviations": [
             "DEV-v9.16-ST05-01"
           ]
