@@ -268,6 +268,8 @@ export default function TradePlan() {
   // also true there) with no model call, so it must never trigger the feedback
   // control (ux_spec.md "Trigger Condition" note, ST-07/BLG-FE-46, v6.5).
   const [isClaudeDraft, setIsClaudeDraft] = useState(false);
+  // ST-05 (BLG-FE-271, v9.16): the panel's dated result, sent on save (trade_plan.md §5e).
+  const [preEntrySnapshot, setPreEntrySnapshot] = useState(null);
   const [feedbackJustGiven, setFeedbackJustGiven] = useState(false);
   const hasUnsavedAiChanges = useRef(false);
   const [isAiLoading, setIsAiLoading] = useState(false);
@@ -339,6 +341,9 @@ export default function TradePlan() {
         // already-AI-generated, unedited plan doesn't lose them.
         thesis_model_version: existingPlan.thesis_model_version || null,
         thesis_prompt_version: existingPlan.thesis_prompt_version || null,
+        // ST-05 (BLG-FE-271, v9.16): load the stored acknowledgement so a
+        // re-save sends the box's real state, not a stale stored true.
+        pre_entry_override_acknowledged: !!existingPlan.pre_entry_override_acknowledged,
       });
       setIsClaudeDraft(!!existingPlan.is_ai_draft);
     }
@@ -579,6 +584,11 @@ export default function TradePlan() {
       planned_entry_price: toNum(form.planned_entry_price, parseFloat),
       planned_stop_price: toNum(form.planned_stop_price, parseFloat),
       is_ai_draft: isClaudeDraft,
+      // ST-05 (BLG-FE-271, v9.16): trade_plan.md v1.22 §5e — the dated result
+      // the Pre-Entry Validation panel holds, or null when it holds none. Trade
+      // Entry reads it with the acknowledgement below (position_form.md v1.14).
+      pre_entry_validation_snapshot: preEntrySnapshot,
+      pre_entry_override_acknowledged: !!form.pre_entry_override_acknowledged,
     };
     const targetId = editId || createdId;
     if (targetId) {
@@ -900,7 +910,7 @@ export default function TradePlan() {
           entryPrice={form.planned_entry_price}
           stopPrice={form.planned_stop_price}
           overrideAcknowledged={form.pre_entry_override_acknowledged}
-          onOverrideChange={(val) => setForm((prev) => ({ ...prev, pre_entry_override_acknowledged: val }))}
+          onOverrideChange={(val) => setForm((prev) => ({ ...prev, pre_entry_override_acknowledged: val }))}          onResultChange={setPreEntrySnapshot}
         />
 
         <div className="space-y-1">

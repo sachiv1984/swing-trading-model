@@ -110,6 +110,7 @@ DOCUMENTATION_ONLY_VERSIONS = frozenset({
     "1.24",  # Change Log row 1.15 dated to its deploy date; effective-date rule (ST-20, BLG-BE-171)
     "1.25",  # §13.2 AI-text clarification; §13.5 roster row (journal summary) (ST-28, BLG-GOV-194)
     "1.26",  # §4.2.1 Known deviation: plan-linked Trade Entry skips the acknowledgement (ESC-CLOSE-20261106-01, BLG-FE-271)
+    "1.27",  # §4.2.1 Known deviation (v1.26) resolved (ST-05, EPIC-02, v9.16, BLG-FE-271)
 })
 
 

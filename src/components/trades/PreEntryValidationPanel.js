@@ -37,6 +37,10 @@ const ADVISORY_BADGE = {
  * - onWarningsChange(bool): called with true while a WARN/FAIL result needs
  *   acknowledging. An endpoint failure or a pending request reports false, so
  *   it never disables a caller's Submit.
+ * - onResultChange(snapshot | null): called with the dated result the panel
+ *   holds, shaped as trade_plan.md v1.22 §5e's pre_entry_validation_snapshot
+ *   ({captured_at, advisory_status, checks, inputs}), or null while there is no
+ *   result (no shares, loading, or endpoint error). ST-05, BLG-FE-271, v9.16.
  */
 export default function PreEntryValidationPanel({
   ticker,
@@ -48,11 +52,12 @@ export default function PreEntryValidationPanel({
   onOverrideChange,
   showWaiting = false,
   onWarningsChange,
+  onResultChange,
 }) {
   const [collapsed, setCollapsed] = useState(false);
   const hasInputs = !!ticker && !!quantity && Number(quantity) > 0;
 
-  const { data, isLoading, isError } = useQuery({
+  const { data, isLoading, isError, dataUpdatedAt } = useQuery({
     queryKey: ["pre-entry-validation", ticker, market, quantity, entryPrice, stopPrice],
     queryFn: async () => {
       const paramObj = { ticker, quantity, market };
@@ -75,6 +80,27 @@ export default function PreEntryValidationPanel({
   useEffect(() => {
     if (onWarningsChange) onWarningsChange(hasInputs && !isLoading && !isError && hasWarnings);
   }, [onWarningsChange, hasInputs, isLoading, isError, hasWarnings]);
+
+  // ST-05 (BLG-FE-271, v9.16): the dated snapshot the Trade Plan form saves.
+  // captured_at is when this result was received (trade_plan.md §5e).
+  const hasResult = hasInputs && !isLoading && !isError && !!data?.advisory_status;
+  useEffect(() => {
+    if (!onResultChange) return;
+    if (!hasResult) {
+      onResultChange(null);
+      return;
+    }
+    const num = (v) => {
+      const n = parseFloat(v);
+      return isNaN(n) ? null : n;
+    };
+    onResultChange({
+      captured_at: new Date(dataUpdatedAt || Date.now()).toISOString(),
+      advisory_status: data.advisory_status,
+      checks: (data.checks || []).map((c) => ({ rule: c.rule, status: c.status, detail: c.detail ?? null })),
+      inputs: { quantity: num(quantity), entry_price: num(entryPrice), stop_price: num(stopPrice) },
+    });
+  }, [onResultChange, hasResult, data, dataUpdatedAt, quantity, entryPrice, stopPrice]);
 
   if (!hasInputs && !showWaiting) return null;
 

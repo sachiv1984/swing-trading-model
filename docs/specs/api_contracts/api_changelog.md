@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Class 2
 **Status:** Canonical
-**Version:** 1.29.5
-**Last Updated:** 2026-11-05 (ST-30/ST-32, EPIC-05, v9.15, BLG-OPS-190/BLG-OPS-192 — v9.15.0 entry adds signal_endpoints.md v1.11 and openapi.yaml 3.47.4); prior — 2026-11-05 (ST-34, EPIC-06, v9.15, BLG-SPEC-194 — v9.15.0 entry adds health_endpoints.md v1.10 and the openapi.yaml 3.47.3 tax-year correction); prior — 2026-11-04 (ST-22, EPIC-03, v9.15, BLG-BE-204 — v9.15.0 entry adds earnings_endpoints.md v0.2); prior history retained — see prior entries in version control
+**Version:** 1.30.0
+**Last Updated:** 2026-11-09 (ST-05, EPIC-02, v9.16, BLG-FE-271 — new v9.16.0 entry: trade_plan_endpoints.md v0.23, openapi.yaml 3.48.0); prior — 2026-11-05 (ST-30/ST-32, EPIC-05, v9.15, BLG-OPS-190/BLG-OPS-192 — v9.15.0 entry adds signal_endpoints.md v1.11 and openapi.yaml 3.47.4); prior — 2026-11-05 (ST-34, EPIC-06, v9.15, BLG-SPEC-194 — v9.15.0 entry adds health_endpoints.md v1.10 and the openapi.yaml 3.47.3 tax-year correction); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 # API Changelog
@@ -37,6 +37,18 @@ Rules:
 **Sign-off:** Head of Specs Team — Approved. Formalising an already-consistently-used structure (rather than introducing a new one requiring migration) is the right scope for this story — the conformance check confirms there was nothing to migrate. Sprint Execution Engine (agent-mediated, Head of Specs Team role — §5.3), 2026-09-08.
 
 ---
+
+## v9.16.0 (2026-11-09 — Release v9.16)
+
+### trade_plan_endpoints.md — v0.23 (UPDATED)
+
+**EPIC:** EPIC-02
+**ST:** ST-05
+
+| Change | Details |
+|--------|---------|
+| Updated endpoint: POST /trade-plans | Optional `pre_entry_validation_snapshot` object (`captured_at`, `advisory_status`, `checks`, `inputs`) documented; the route already accepted it. The Trade Plan form now sends it on save (`trade_plan.md` v1.22 §5e, BLG-FE-271). |
+| Updated endpoint: PUT /trade-plans/{id} | Now stores `pre_entry_validation_snapshot` (JSONB), so an edited plan's snapshot is replaced; `null` or omitted leaves it unchanged. `openapi.yaml` 3.48.0. |
 
 ## v9.15.0 (2026-11-03 — Release v9.15)
 

@@ -137,6 +137,10 @@ class TradePlanUpdate(BaseModel):
     thesis_prompt_version: Optional[str] = None
     invalidation_condition: Optional[str] = None
     is_ai_draft: Optional[bool] = None
+    # ST-05 (EPIC-02, v9.16, BLG-FE-271): the plan form re-sends its dated
+    # pre-entry result on edit (trade_plan.md v1.22 §5e). Object replaces the
+    # stored snapshot; null/omitted leaves it unchanged, like every PUT field.
+    pre_entry_validation_snapshot: Optional[Any] = None
 
 
 class BulkTagRequest(BaseModel):

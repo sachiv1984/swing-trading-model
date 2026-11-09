@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-09 (session — 2 new item(s) added: BLG-FE-275, BLG-FE-276; agent-mediated review of PR #2227, EPIC-01, `2026-11-06__release-v9.16`); prior — 2026-11-09 (session — 2 new item(s) added: BLG-SPEC-226, BLG-SPEC-227; agent-mediated DoQ review of EPIC-01, `2026-11-06__release-v9.16`); prior — 2026-11-09 (session — 4 new item(s) added: BLG-OPS-215, BLG-GOV-414, BLG-SPEC-224, BLG-SPEC-225; Sprint Planning `2026-11-06__release-v9.16` pre-seal filings); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-09 (session — 1 new item(s) added: BLG-FE-277; ST-05, EPIC-02, `2026-11-06__release-v9.16`); prior — 2026-11-09 (session — 2 new item(s) added: BLG-FE-275, BLG-FE-276; agent-mediated review of PR #2227, EPIC-01, `2026-11-06__release-v9.16`); prior — 2026-11-09 (session — 2 new item(s) added: BLG-SPEC-226, BLG-SPEC-227; agent-mediated DoQ review of EPIC-01, `2026-11-06__release-v9.16`); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -6174,5 +6174,26 @@ ST-03's "Showing trades for {TICKER}" banner sits above both Trade History views
 **Acceptance Criteria**
 - With `?ticker=` set, the Calendar view does not claim to be filtered unless it is
 - The chosen behaviour is written into `trade_history.md` alongside BLG-SPEC-227
+
+---
+
+### BLG-FE-277 — Trade Plan edit: clear the stored pre-entry snapshot when the form has no result
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Frontend Specifications & UX Documentation Owner; API Contracts & Documentation Owner
+**Source:** ST-05, EPIC-02, `2026-11-06__release-v9.16` — found during sprint execution; deviation `DEV-v9.16-ST05-01` in `trade_plan.md` Known Deviations — 2026-11-09
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.17
+
+**Problem**
+`trade_plan.md` v1.22 §5e says that on edit the stored `pre_entry_validation_snapshot` is "replaced with the current result, or cleared if there is none". `PUT /trade-plans/{id}` treats `null` as "leave unchanged" for every field (`trade_plan_endpoints.md` v0.23). So an edited plan saved with no panel result (shares cleared, check still loading, or endpoint error) keeps its earlier snapshot. For up to 24 hours, Trade Entry may then show the on-plan line based on that earlier result instead of re-running the checks.
+
+**Scope**
+- Decide how to clear the snapshot on edit. One option is a named PUT exception where an explicit `null` clears this field, documented in `trade_plan_endpoints.md` and `openapi.yaml`. The other is to amend §5e.
+- Implement the decision in `TradePlan.js` and `backend/routers/trade_plans.py` / `database.update_trade_plan`, or amend the spec.
+
+**Acceptance Criteria**
+- An edited plan saved with no panel result stores no snapshot (backend test + Playwright), or the Frontend Specifications & UX Documentation Owner amends §5e
+- `DEV-v9.16-ST05-01` is marked resolved in `trade_plan.md` Known Deviations
 
 ---
