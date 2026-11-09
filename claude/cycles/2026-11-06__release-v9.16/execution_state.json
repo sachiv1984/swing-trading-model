@@ -6,7 +6,7 @@
   "invoked_utc": "2026-11-09T09:15:14Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-09T11:13:03Z",
+  "last_updated_utc": "2026-11-09T11:13:37Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-02",
@@ -20,8 +20,8 @@
     "EPIC-01": {
       "status": "done",
       "branch": "exec/2026-11-06__release-v9.16/EPIC-01",
-      "pr_number": null,
-      "pr_status": "none",
+      "pr_number": 2227,
+      "pr_status": "open",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-11-06__release-v9.16/qa_evidence_EPIC-01.md",
       "test_scenarios": [
