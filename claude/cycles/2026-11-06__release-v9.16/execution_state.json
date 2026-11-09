@@ -6,7 +6,7 @@
   "invoked_utc": "2026-11-09T09:15:14Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-09T12:18:32Z",
+  "last_updated_utc": "2026-11-09T13:08:38Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-02",
@@ -159,7 +159,7 @@
     },
     "EPIC-02": {
       "title": "Site Structure & Usability Phase 2: Today List & Signal-to-Entry Flow (build-and-ship)",
-      "status": "in_progress",
+      "status": "done",
       "branch": "exec/2026-11-06__release-v9.16/EPIC-02",
       "pr_number": null,
       "pr_status": null,
@@ -167,7 +167,10 @@
       "test_scenarios": [
         "tests/e2e/trade-entry-pre-entry-checks.spec.js",
         "tests/e2e/trade-plan.spec.js",
-        "tests/test_trade_plan_pre_entry_snapshot.py"
+        "tests/test_trade_plan_pre_entry_snapshot.py",
+        "tests/e2e/dashboard-today-list.spec.js",
+        "tests/e2e/plan-this.spec.js",
+        "tests/e2e/trade-plan-suggested-size.spec.js"
       ],
       "stories": {
         "ST-05": {
@@ -196,49 +199,59 @@
           ]
         },
         "ST-06": {
-          "status": "not_started",
+          "status": "done",
           "classification": "autonomous",
           "spec_references": [
-            "docs/specs/frontend/pages/dashboard.md#1B"
+            "docs/specs/frontend/pages/dashboard.md#1B",
+            "tests/e2e/dashboard-today-list.spec.js"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "github_issue": 2202,
           "branch": "exec/2026-11-06__release-v9.16/EPIC-02",
-          "deviations_filed": false,
-          "acceptance_verified": false,
-          "commit_sha": null
+          "deviations_filed": true,
+          "acceptance_verified": true,
+          "commit_sha": "739286e759062b0bc15cd42b8aa626bdf7c3e22b",
+          "completed_utc": "2026-11-09T12:57:13Z",
+          "notes": "TL-01..08, 11..29 (both themes) + SC-TL-STOPS; TL-09/10 deferred by sealed AC (BLG-BE-205). CI on branch head 978b4e48 (contains this commit; no run on 739286e7 itself, pushed together): Playwright E2E 42621274114 success, Frontend Build 42621274014 success. No deviation; intent note: regime header without count. Removed SignalStatusCard/ExitConditionsCard (deletions accidentally landed in 2d26da87, see process_notes)."
         },
         "ST-07": {
-          "status": "not_started",
+          "status": "done",
           "classification": "autonomous",
           "spec_references": [
             "docs/specs/frontend/pages/signals.md",
             "docs/specs/frontend/pages/screener_results.md#11.1",
             "docs/specs/frontend/pages/trade_plan.md#5a.1",
-            "docs/design/2026-11-06__release-v9.16/signal-to-plan-flow/decision_record.md"
+            "docs/design/2026-11-06__release-v9.16/signal-to-plan-flow/decision_record.md",
+            "docs/specs/frontend/pages/navigation.md#Onward Links",
+            "tests/e2e/plan-this.spec.js"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "github_issue": 2203,
           "branch": "exec/2026-11-06__release-v9.16/EPIC-02",
-          "deviations_filed": false,
-          "acceptance_verified": false,
-          "commit_sha": null
+          "deviations_filed": true,
+          "acceptance_verified": true,
+          "commit_sha": "978b4e48f962483878d4cae102c683f7c762f6da",
+          "completed_utc": "2026-11-09T12:57:14Z",
+          "notes": "SC-PT-01..05. CI on 978b4e48: Playwright E2E 42621274114 success; CI Pytest 42621274186 failed on scenario-ID collision introduced by ST-08 spec (fixed 87d78b39). Shared commit with ST-08 (both edit TradePlan.js). No deviation."
         },
         "ST-08": {
-          "status": "not_started",
+          "status": "done",
           "classification": "autonomous",
           "spec_references": [
-            "docs/specs/frontend/pages/trade_plan.md#5f"
+            "docs/specs/frontend/pages/trade_plan.md#5f",
+            "tests/e2e/trade-plan-suggested-size.spec.js"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "github_issue": 2204,
           "branch": "exec/2026-11-06__release-v9.16/EPIC-02",
-          "deviations_filed": false,
-          "acceptance_verified": false,
-          "commit_sha": null
+          "deviations_filed": true,
+          "acceptance_verified": true,
+          "commit_sha": "87d78b39830b7de9de48b3710c79bbf7da31521d",
+          "completed_utc": "2026-11-09T13:02:22Z",
+          "notes": "SC-TPSZ-01..07. Implementation in 978b4e48 (with ST-07); 87d78b39 renames scenario IDs SC-TPS->SC-TPSZ after CI Pytest uniqueness failure. CI on 87d78b39: CI Pytest 42621978038 success; Playwright E2E 42621977762 attempt 1 failed only the known Reports Monthly (light) axe flake (EPIC-01 evidence); re-run of shard 1/8 passed (42621977762 attempt 2, all workflows green on 87d78b39)."
         }
       }
     }
@@ -251,7 +264,10 @@
     "ST-02",
     "ST-03",
     "ST-04",
-    "ST-05"
+    "ST-05",
+    "ST-06",
+    "ST-07",
+    "ST-08"
   ],
   "open_escalations": {},
   "merge_gate": {
@@ -270,7 +286,9 @@
   },
   "process_notes": [
     "EPIC-01 (2026-11-09): the STEP 3.1.A step 13 cross-spec selector scan at ST-01 grepped for v1 group names and sidebar selectors only; it missed bare getByText/locator collisions with newly visible sidebar text ('Today', 'Watchlist') and aria-expanded area headers, and a link placed on clickable row text. CI caught 6 (ST-01, a46fecf2) and 26 (ST-03, 8d0800e1) failures; all fixed before DoQ. Candidate lesson for Phase 3: when a story makes new text or interactive elements visible on every page, scan specs for unscoped getByText/role locators of that text, not only for the renamed selectors.",
-    "EPIC-01 merge-gate resume sync (2026-11-09): PR #2227 merged by sachiv1984 at 2026-11-09T11:27:35Z, merge commit 8f525f24. Orphaned post-merge commit check: git log origin/main..origin/exec/2026-11-06__release-v9.16/EPIC-01 empty - nothing to reconcile."
+    "EPIC-01 merge-gate resume sync (2026-11-09): PR #2227 merged by sachiv1984 at 2026-11-09T11:27:35Z, merge commit 8f525f24. Orphaned post-merge commit check: git log origin/main..origin/exec/2026-11-06__release-v9.16/EPIC-01 empty - nothing to reconcile.",
+    "EPIC-02 (2026-11-09): the ST-05 state commit 2d26da87 also committed two ST-06 deletions (SignalStatusCard.js, ExitConditionsCard.js) staged earlier with `git rm`; DashboardHome.js still imported SignalStatusCard there, so Frontend Production Build and Playwright failed at 2d26da87. Fixed by the ST-06 commit 739286e7 (no force-push). Candidate lesson: check `git diff --cached` is empty before a state-only commit, or commit with explicit pathspecs.",
+    "EPIC-02 (2026-11-09): ST-08's new spec reused prefix SC-TPS (trade-plan-stale-marker.spec.js). CI Pytest 42621274186 caught it (test_check_e2e_scenario_id_uniqueness.py); renamed to SC-TPSZ in 87d78b39. Candidate lesson: run scripts/check_e2e_scenario_id_uniqueness.py before pushing a new spec."
   ],
   "sealed": false,
   "sealed_utc": null
