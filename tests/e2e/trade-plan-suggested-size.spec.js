@@ -4,14 +4,14 @@
  * Design: docs/design/2026-11-06__release-v9.16/signal-to-plan-flow/decision_record.md §2.2, §6
  * Spec: docs/specs/frontend/pages/trade_plan.md v1.22 §5f
  *
- *   SC-TPS-01  Field order Entry | Stop → suggested size → Planned Shares; with entry and stop
+ *   SC-TPSZ-01  Field order Entry | Stop → suggested size → Planned Shares; with entry and stop
  *              entered, Planned Shares pre-fills with the floored §4.1 suggestion (light and dark)
- *   SC-TPS-02  Before entry and stop are both valid there is no line and no placeholder
- *   SC-TPS-03  A typed shares value is not overwritten; "Use suggested size" copies the suggestion in
- *   SC-TPS-04  After the user edits a pre-filled value, a new suggestion no longer writes to it
- *   SC-TPS-05  Cash-insufficient and invalid results show the §10.6a messages and do not pre-fill
- *   SC-TPS-06  Edit mode: a stored planned_quantity counts as typed
- *   SC-TPS-07  "Plan this" (entry pre-filled): entering the stop alone pre-fills shares
+ *   SC-TPSZ-02  Before entry and stop are both valid there is no line and no placeholder
+ *   SC-TPSZ-03  A typed shares value is not overwritten; "Use suggested size" copies the suggestion in
+ *   SC-TPSZ-04  After the user edits a pre-filled value, a new suggestion no longer writes to it
+ *   SC-TPSZ-05  Cash-insufficient and invalid results show the §10.6a messages and do not pre-fill
+ *   SC-TPSZ-06  Edit mode: a stored planned_quantity counts as typed
+ *   SC-TPSZ-07  "Plan this" (entry pre-filled): entering the stop alone pre-fills shares
  *
  * Infrastructure: page.route() network interception — no live backend.
  * ROUTING NOTE: App uses HashRouter — navigate via page.goto('/#/…').
@@ -61,7 +61,7 @@ async function gotoNewPlan(page, query = 'ticker=AAPL&market=US') {
 }
 
 for (const theme of ['dark', 'light']) {
-  test(`SC-TPS-01 (${theme}): with entry and stop, Planned Shares pre-fills with the floored §4.1 suggestion`, async ({ page }) => {
+  test(`SC-TPSZ-01 (${theme}): with entry and stop, Planned Shares pre-fills with the floored §4.1 suggestion`, async ({ page }) => {
     await page.addInitScript((t) => window.localStorage.setItem('theme', t), theme);
     await mockCommon(page);
     const calls = await mockSize(page, VALID(10.7));
@@ -84,7 +84,7 @@ for (const theme of ['dark', 'light']) {
   });
 }
 
-test('SC-TPS-02: before entry and stop are both valid there is no suggested-size line', async ({ page }) => {
+test('SC-TPSZ-02: before entry and stop are both valid there is no suggested-size line', async ({ page }) => {
   await mockCommon(page);
   await mockSize(page, VALID());
   await gotoNewPlan(page);
@@ -95,7 +95,7 @@ test('SC-TPS-02: before entry and stop are both valid there is no suggested-size
   await expect(shares(page)).toHaveValue('');
 });
 
-test('SC-TPS-03: a typed shares value is not overwritten, and "Use suggested size" restores the suggestion', async ({ page }) => {
+test('SC-TPSZ-03: a typed shares value is not overwritten, and "Use suggested size" restores the suggestion', async ({ page }) => {
   await mockCommon(page);
   await mockSize(page, VALID(12));
   await gotoNewPlan(page);
@@ -111,7 +111,7 @@ test('SC-TPS-03: a typed shares value is not overwritten, and "Use suggested siz
   await expect(use).toHaveCount(0);
 });
 
-test('SC-TPS-04: after the user edits a pre-filled value, a new suggestion does not write to it', async ({ page }) => {
+test('SC-TPSZ-04: after the user edits a pre-filled value, a new suggestion does not write to it', async ({ page }) => {
   await mockCommon(page);
   await mockSize(page, (body) => VALID(body.stop_price === 140 ? 10 : 20));
   await gotoNewPlan(page);
@@ -124,7 +124,7 @@ test('SC-TPS-04: after the user edits a pre-filled value, a new suggestion does 
   await expect(shares(page)).toHaveValue('7');
 });
 
-test('SC-TPS-05: cash-insufficient and invalid results show their messages and do not pre-fill', async ({ page }) => {
+test('SC-TPSZ-05: cash-insufficient and invalid results show their messages and do not pre-fill', async ({ page }) => {
   await mockCommon(page);
   await mockSize(page, (body) =>
     body.stop_price < body.entry_price
@@ -141,7 +141,7 @@ test('SC-TPS-05: cash-insufficient and invalid results show their messages and d
   await expect(shares(page)).toHaveValue('');
 });
 
-test('SC-TPS-06: in edit mode a stored planned_quantity counts as typed', async ({ page }) => {
+test('SC-TPSZ-06: in edit mode a stored planned_quantity counts as typed', async ({ page }) => {
   const plan = {
     id: 'plan-tps-edit', ticker: 'AAPL', market: 'US', status: 'draft', position_id: null,
     planned_quantity: 30, planned_entry_price: 150, planned_stop_price: 140, checklist_items: [],
@@ -155,7 +155,7 @@ test('SC-TPS-06: in edit mode a stored planned_quantity counts as typed', async 
   await expect(page.getByTestId('plan-use-suggested-size')).toBeVisible();
 });
 
-test('SC-TPS-07: from "Plan this" (entry pre-filled), entering the stop pre-fills shares', async ({ page }) => {
+test('SC-TPSZ-07: from "Plan this" (entry pre-filled), entering the stop pre-fills shares', async ({ page }) => {
   await mockCommon(page);
   await mockSize(page, VALID(8.9));
   await gotoNewPlan(page, 'ticker=MSFT&market=US&entry_price=410.25');
