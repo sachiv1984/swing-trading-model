@@ -2,20 +2,19 @@ import { useQueryClient } from "@tanstack/react-query";
 import OpenPositionsCard from "../components/dashboard/home/OpenPositionsCard";
 import PortfolioHeatCard from "../components/dashboard/home/PortfolioHeatCard";
 import GracePeriodCard from "../components/dashboard/home/GracePeriodCard";
-import SignalStatusCard from "../components/dashboard/home/SignalStatusCard";
 import RecentActivityCard from "../components/dashboard/home/RecentActivityCard";
 import MorningBriefing from "../components/dashboard/home/MorningBriefing";
 import GateProgressStrip from "../components/dashboard/home/GateProgressStrip";
 import AiDailyBriefing from "../components/dashboard/home/AiDailyBriefing";
 import { PAGE_LABELS } from "../lib/pageLabels";
 import WhatsNewCard from "../components/dashboard/home/WhatsNewCard";
+import TodayList, { TODAY_QUERY_KEYS } from "../components/dashboard/home/TodayList";
 
 const DASHBOARD_QUERY_KEYS = [
   "home-open-positions",
   "home-portfolio-heat",
   "home-grace-period",
-  "home-market-status",
-  "home-signals-today",
+  ...TODAY_QUERY_KEYS,
   "home-recent-activity",
   "morning-screener-hits",
   "morning-grace-alerts",
@@ -40,6 +39,11 @@ export default function DashboardHome() {
         <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">Session summary — live data</p>
       </div>
 
+      {/* ST-06 (BLG-FE-254, EPIC-02, v9.16): dashboard.md v4.0 §1B — the Today list
+          is first under the page title. It absorbs Card 4 (Signal Status) and the
+          Morning Briefing's Exit Conditions Met row. */}
+      <TodayList />
+
       {/* ST-03 (EPIC-01, v7.3): briefing section — visually distinguished from the
           status-card grid below via an accent border/tint, and placed first so
           it is visible on page load without scrolling past other cards. */}
@@ -55,9 +59,8 @@ export default function DashboardHome() {
         <GracePeriodCard />
       </div>
 
-      {/* Bottom row: Signal Status, Recent Activity */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <SignalStatusCard />
+      {/* Bottom row (v4.0): Recent Activity alone, full width — Card 4 moved into the Today list */}
+      <div className="grid grid-cols-1 gap-4">
         <RecentActivityCard />
       </div>
 
