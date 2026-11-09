@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { ShieldCheck, Activity, AlertTriangle, ClipboardList, Info } from "lucide-react";
 import { cn } from "../../lib/utils";
 import { api } from "../../api/base44Client";
+import useSectionScroll from "../../hooks/useSectionScroll";
 import { formatPercent } from "../../lib/format";
 
 // Low-trade-volume advisory threshold (ST-01, EPIC-01, v9.2, BLG-FEAT-44).
@@ -45,6 +46,10 @@ export default function Arc5ComplianceSection() {
     queryFn: () => api.analytics.arc5Compliance("7d"),
     retry: 1,
   });
+
+  // analytics.md §19.1 Section Link (ST-04, BLG-FE-253): ?section=strategy-compliance
+  // scrolls here once the section has rendered with data, an error or an empty state.
+  const { sectionRef, headingRef } = useSectionScroll("strategy-compliance", !isLoading);
 
   const metrics = data;
 
@@ -91,8 +96,19 @@ export default function Arc5ComplianceSection() {
   ];
 
   return (
-    <div>
-      <h2 className="text-lg font-semibold text-white mb-4">Arc 5 Signal Compliance</h2>
+    <div
+      id="strategy-compliance"
+      data-testid="analytics-section-strategy-compliance"
+      ref={sectionRef}
+      className="scroll-mt-20 lg:scroll-mt-4"
+    >
+      <h2
+        ref={headingRef}
+        tabIndex={-1}
+        className="text-lg font-semibold text-white mb-4 focus:outline-none"
+      >
+        Arc 5 Signal Compliance
+      </h2>
       {showLowVolumeAdvisory && (
         <div
           role="status"

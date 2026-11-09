@@ -648,6 +648,30 @@ class TestDeepLinks:
         assert "https://app.example.com/#/RiskDashboard" in section
         assert "https://app.example.com/#/RedFlagJournal" in section
 
+    def test_deep_links_include_strategy_compliance_section_link(self):
+        """ST-04 (BLG-FE-253): third footer link opens Analytics at the Arc 5 section.
+
+        Exact footer per digest-section-link/decision_record.md §2.3; ? and = are
+        not escaped in the MarkdownV2 URL part. The Risk Dashboard link stays
+        page-level (no ?section= on it).
+        """
+        format_si05_section = get_service()[0]
+        data = {
+            "validation_pass_rate": 0.85,
+            "events_per_week": 0.5,
+            "override_rate": 0.10,
+            "top_rule_breach": "stop_widened",
+        }
+        with patch.dict("os.environ", {"FRONTEND_URL": "https://app.example.com/"}):
+            section = format_si05_section(data)
+        expected_footer = (
+            "🔗 [Risk Dashboard](https://app.example.com/#/RiskDashboard)"
+            " · [Red Flag Journal](https://app.example.com/#/RedFlagJournal)"
+            " · [Strategy Compliance](https://app.example.com/#/PerformanceAnalytics?section=strategy-compliance)"
+        )
+        assert section.endswith(expected_footer)
+        assert "RiskDashboard?section" not in section
+
     def test_deep_links_absent_when_frontend_url_not_set(self):
         """Without FRONTEND_URL, no deep links in digest (graceful omission)."""
         format_si05_section = get_service()[0]

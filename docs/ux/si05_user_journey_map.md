@@ -1,7 +1,7 @@
 **Owner:** Head of UX & Design
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-08-10 (ST-16, BLG-FE-65, v8.5 — full re-walkthrough; original 2026-06-15 findings superseded by BLG-FE-73/74 fixes shipped v5.6, 2 days after the original walkthrough); prior — 2026-06-15 (ST-10, EPIC-03, v5.5 — initial walkthrough)
+**Last Updated:** 2026-11-09 (ST-04, EPIC-01, v9.16, BLG-FE-253 — F-04 marked resolved: digest "Strategy Compliance" section link); prior — 2026-08-10 (ST-16, BLG-FE-65, v8.5 — full re-walkthrough; original 2026-06-15 findings superseded by BLG-FE-73/74 fixes shipped v5.6); prior — 2026-06-15 (ST-10, EPIC-03, v5.5 — initial walkthrough)
 **Source:** ST-16 (EPIC-05, v8.5) — BLG-FE-65 (re-walkthrough); originally ST-10 (EPIC-03, v5.5) — BLG-FE-65
 
 ---
@@ -71,7 +71,9 @@ Original finding: `N/A` values gave no reason (data-unavailable vs. no-events-th
 ### F-03 — Gate progress line has no context for new users (LOW) — **STILL OPEN, UNCHANGED**
 The `Closed trades: 14 / Gate 1: 20 / Gate 2: 50 / Gate 3: 100` line remains compact and opaque to a first-time reader; no deep link or explanatory context was added by either v5.6 fix (out of scope for both). Disposition unchanged from the original walkthrough: low priority, not filed (P4 — accept risk for now), given the current single-user context.
 
-### F-04 — New: deep links land on the page, not the specific panel (LOW) — **NEW FINDING**
+### F-04 — New: deep links land on the page, not the specific panel (LOW) — **RESOLVED 2026-11-09**
+**Resolved:** 2026-11-09, ST-04 (EPIC-01, `2026-11-06__release-v9.16`, BLG-FE-253). The Risk Dashboard has no rule-breach section, so the digest gained a third footer link, "Strategy Compliance", to `#/PerformanceAnalytics?section=strategy-compliance`. It opens Analytics scrolled to Arc 5 Signal Compliance, where the Top Rule Breach and override rate are shown (`analytics.md` §19.1; design `docs/design/2026-11-06__release-v9.16/digest-section-link/decision_record.md`). The Risk Dashboard link stays page-level. The "Top rule breach" item now takes 1 step. Text below is the original finding.
+
 The `Risk Dashboard` deep link (`#/RiskDashboard`) lands on the top of the Risk Dashboard page, not scrolled/anchored to the pre-entry-validation or override-rate panel specifically — for the "Top rule breach" digest item in particular, the user still has to find the rule-breakdown section manually after arriving. This is a real, but minor, residual gap: it took step count from 3 to ~1.5 for that item, not fully to 1 like the other two Risk-Dashboard-bound items.
 
 **Impact:** Low — the deep link still gets the user to the right page in one action; only fine-grained in-page scrolling remains manual.
