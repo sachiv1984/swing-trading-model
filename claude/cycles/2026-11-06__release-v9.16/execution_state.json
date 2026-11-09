@@ -1,0 +1,151 @@
+{
+  "cycle_id": "2026-11-06__release-v9.16",
+  "sprint_goal": "Ship Site Structure & Usability Phase 2 complete (job-based sidebar with parent and onward links, the Dashboard Today list, \"Plan this\" with suggested size, the plan-linked pre-entry acknowledgement fix `BLG-FE-271`, and the first semantic colour tokens), and close the Anthropic key exposure by rotating the overdue key (`BLG-OPS-214`, P1) and removing the key secret from the public Pages build (`BLG-OPS-213`).",
+  "backlog_slice_source": "claude/cycles/2026-11-06__release-v9.16/stage4_backlog_slice.md",
+  "backlog_slice_addendum": "claude/cycles/2026-11-06__release-v9.16/stage4_backlog_slice_addendum.md",
+  "invoked_utc": "2026-11-09T09:15:14Z",
+  "mode": "standard",
+  "status": "Running",
+  "last_updated_utc": "2026-11-09T09:15:14Z",
+  "merge_order": [
+    "EPIC-01",
+    "EPIC-02",
+    "EPIC-05",
+    "EPIC-07",
+    "EPIC-06",
+    "EPIC-03",
+    "EPIC-04"
+  ],
+  "epics": {
+    "EPIC-01": {
+      "status": "in_progress",
+      "branch": "exec/2026-11-06__release-v9.16/EPIC-01",
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": false,
+      "qa_evidence_log": "claude/cycles/2026-11-06__release-v9.16/qa_evidence_EPIC-01.md",
+      "test_scenarios": [
+        "tests/e2e/sidebar-nav-groups.spec.js",
+        "tests/e2e/alert-nav-badge.spec.js",
+        "tests/e2e/command-palette.spec.js",
+        "tests/e2e/keyboard-shortcuts.spec.js"
+      ],
+      "stories": {
+        "ST-01": {
+          "title": "Build the job-based sidebar and surface Trade Plans and Research",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 2197,
+          "branch": "exec/2026-11-06__release-v9.16/EPIC-01",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "docs/specs/frontend/pages/navigation.md"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": ""
+        },
+        "ST-02": {
+          "title": "Add a parent link on detail pages",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 2198,
+          "branch": "exec/2026-11-06__release-v9.16/EPIC-01",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "docs/specs/frontend/pages/navigation.md"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": ""
+        },
+        "ST-03": {
+          "title": "Give each dead-end page an onward next-step link",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 2199,
+          "branch": "exec/2026-11-06__release-v9.16/EPIC-01",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "docs/specs/frontend/pages/navigation.md"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": ""
+        },
+        "ST-04": {
+          "title": "Anchor the digest's Risk Dashboard link to the right section",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 2200,
+          "branch": "exec/2026-11-06__release-v9.16/EPIC-01",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "docs/specs/frontend/pages/analytics.md",
+            "docs/design/2026-11-06__release-v9.16/digest-section-link/decision_record.md"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": ""
+        }
+      }
+    }
+  },
+  "deferred_at_planning": [],
+  "blocked_items": [],
+  "delegated_items": [],
+  "completed_items": [],
+  "open_escalations": {},
+  "merge_gate": {
+    "epics_merged": [],
+    "epics_pending": [
+      "EPIC-01",
+      "EPIC-02",
+      "EPIC-03",
+      "EPIC-04",
+      "EPIC-05",
+      "EPIC-06",
+      "EPIC-07"
+    ],
+    "all_merged": false
+  },
+  "process_notes": [],
+  "sealed": false,
+  "sealed_utc": null
+}
