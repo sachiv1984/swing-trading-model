@@ -34,17 +34,19 @@ Last Updated: 2026-11-09
 - **Known deviations:** DEV-v9.16-ST05-01 (P3, BLG-FE-277). No other deviation found; every story's deviation check is complete.
 - **Process deviation (2026-11-09):** the ST-05 state commit `2d26da87` also carried two ST-06 file deletions (`SignalStatusCard.js`, `ExitConditionsCard.js`) that were already staged. At that SHA `DashboardHome.js` still imported `SignalStatusCard`, so the Frontend Production Build and Playwright workflows failed there. The ST-06 commit `739286e7` restores a consistent tree. No force-push was used.
 
+- **Agent-mediated DoQ review, pass 1 (2026-11-09): Approved**, with 5 non-blocking findings. 1: the Market regime header shows no count, which is an intent reading of TL-21 (see the ST-06 row). A spec-owner confirmation is requested: the Frontend Specifications & UX Documentation Owner either adds "Market regime header shows no count" to `dashboard.md` §1B, or the row is regraded `Pass_with_deviation` with a DEV item and a backlog item. 2: the `signal_id` fallback also covers a missing or dismissed signal, not only a failed fetch. Now tested by SC-PT-05b and SC-PT-06; spec-owner confirmation requested alongside finding 1. 3: TL-15's "before any source resolves" half is now covered by SC-TL-15b (both themes). 4: the evidence re-run line is committed. 5: the edit-mode PUT body is now covered by SC-TP-32c. Fixes are in `220f9fe9` (test-only). CI on `220f9fe9`: all 8 triggered workflows succeeded (Playwright E2E 42631414602, CI Pytest 42631414668; test-only commit, so no Frontend Build run).
+
 ## Frontend Testing Gate
 
-Every observable AC has Playwright coverage: ST-05 SC-TEPC-07/11..15 and SC-TP-32; ST-06 SC-TL (both themes); ST-07 SC-PT; ST-08 SC-TPSZ. TL-09 and TL-10 are not testable this release by the sealed AC (Stops moved needs BLG-BE-205). No AC is "code review only", so no backlog item is required. Same-EPIC testing-gap consistency check: no story filed a testing-gap item.
+Every observable AC has Playwright coverage: ST-05 SC-TEPC-07/11..15 and SC-TP-32; ST-06 SC-TL incl. SC-TL-15b (both themes); ST-07 SC-PT incl. SC-PT-05b/06; ST-08 SC-TPSZ; ST-05 edit path SC-TP-32c. TL-09 and TL-10 are not testable this release by the sealed AC (Stops moved needs BLG-BE-205). No AC is "code review only", so no backlog item is required. Same-EPIC testing-gap consistency check: no story filed a testing-gap item.
 
 ## DoQ Sign-Off
 
-- [ ] All acceptance criteria verified against canonical spec
-- [ ] No unresolved P0 or P1 deviations
-- [ ] Regression areas checked
-- [ ] For any frontend component making direct URL construction (not via api.* wrapper): confirm the URL-base variable is exposed on the imported object
-- [ ] **Strategy values checked:** ST-05 — §4.2.1 regime gate and §4.2.6 acknowledgement (no value changed); ST-08 — §4.1 sizing is the backend `POST /portfolio/size` result, displayed floored to whole shares, with the settings default risk % (§11 not changed).
-- Signed off by:
-- Date:
-- Comments:
+- [x] All acceptance criteria verified against canonical spec
+- [x] No unresolved P0 or P1 deviations
+- [x] Regression areas checked
+- [x] For any frontend component making direct URL construction (not via api.* wrapper): confirm the URL-base variable is exposed on the imported object. `TradePlan.js` (signal_id lookup) and `PreEntryValidationPanel.js` build URLs from their module-level `API_BASE` with `apiFetch`, the existing pattern in both files.
+- [x] **Strategy values checked:** ST-05 — §4.2.1 regime gate and §4.2.6 acknowledgement (no value changed). ST-08 — §4.1 sizing is the backend `POST /portfolio/size` result, shown floored to whole shares with the settings default risk % (§11 unchanged). ST-06 — Exits due reuses the §8 `getExitCondition` predicate unchanged; Grace ends today reads `grace_days_remaining` (§6), with no value computed.
+- Signed off by: Sprint Execution Engine (agent-mediated, Director of Quality role — §5.3)
+- Date: 2026-11-09
+- Comments: Pass 1 Approved with 5 non-blocking findings (QA Test Coverage above). Findings 2, 3 and 5 are closed by new tests in `220f9fe9`, and finding 4 by the evidence commit. Finding 1 (the regime header's count), with the finding 2 fallback scope, awaits a Frontend Specifications & UX Documentation Owner confirmation. If that owner declines, ST-06 is regraded `Pass_with_deviation`. Post-open CI-fix restatement: ST-08's ID rename `87d78b39` passed (CI Pytest 42621978038; Playwright 42621977762 green on attempt 2 after the known Reports axe flake). The final head `220f9fe9` has all 8 workflows green. Frontend testing gate met: no code-review-only AC. This sign-off is agent-mediated and does not satisfy the always-human merge gate: QA sign-off and Product Owner acceptance on the PR remain with the human.

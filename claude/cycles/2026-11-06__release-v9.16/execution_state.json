@@ -163,7 +163,7 @@
       "branch": "exec/2026-11-06__release-v9.16/EPIC-02",
       "pr_number": null,
       "pr_status": null,
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "test_scenarios": [
         "tests/e2e/trade-entry-pre-entry-checks.spec.js",
         "tests/e2e/trade-plan.spec.js",
@@ -253,6 +253,13 @@
           "completed_utc": "2026-11-09T13:02:22Z",
           "notes": "SC-TPSZ-01..07. Implementation in 978b4e48 (with ST-07); 87d78b39 renames scenario IDs SC-TPS->SC-TPSZ after CI Pytest uniqueness failure. CI on 87d78b39: CI Pytest 42621978038 success; Playwright E2E 42621977762 attempt 1 failed only the known Reports Monthly (light) axe flake (EPIC-01 evidence); re-run of shard 1/8 passed (42621977762 attempt 2, all workflows green on 87d78b39)."
         }
+      },
+      "sign_off_record": {
+        "role": "Director of Quality",
+        "method": "agent_mediated",
+        "status": "cleared",
+        "date": "2026-11-09",
+        "notes": "Pass 1 Approved, 5 non-blocking findings; 2,3,5 closed by tests in 220f9fe9; 1 (and 2's scope) referred to Frontend Specifications & UX Documentation Owner."
       }
     }
   },
