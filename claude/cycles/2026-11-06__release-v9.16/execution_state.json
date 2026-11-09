@@ -6,7 +6,7 @@
   "invoked_utc": "2026-11-09T09:15:14Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-09T14:11:34Z",
+  "last_updated_utc": "2026-11-09T15:33:39Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-02",
@@ -159,10 +159,10 @@
     },
     "EPIC-02": {
       "title": "Site Structure & Usability Phase 2: Today List & Signal-to-Entry Flow (build-and-ship)",
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-11-06__release-v9.16/EPIC-02",
       "pr_number": 2228,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "test_scenarios": [
         "tests/e2e/trade-entry-pre-entry-checks.spec.js",
@@ -174,7 +174,7 @@
       ],
       "stories": {
         "ST-05": {
-          "status": "done",
+          "status": "merged",
           "classification": "autonomous",
           "spec_references": [
             "docs/specs/frontend/components/position_form.md#Pre-Entry Checks",
@@ -199,7 +199,7 @@
           ]
         },
         "ST-06": {
-          "status": "done",
+          "status": "merged",
           "classification": "autonomous",
           "spec_references": [
             "docs/specs/frontend/pages/dashboard.md#1B",
@@ -216,7 +216,7 @@
           "notes": "TL-01..08, 11..29 (both themes) + SC-TL-STOPS; TL-09/10 deferred by sealed AC (BLG-BE-205). CI on branch head 978b4e48 (contains this commit; no run on 739286e7 itself, pushed together): Playwright E2E 42621274114 success, Frontend Build 42621274014 success. No deviation; intent note: regime header without count. Removed SignalStatusCard/ExitConditionsCard (deletions accidentally landed in 2d26da87, see process_notes)."
         },
         "ST-07": {
-          "status": "done",
+          "status": "merged",
           "classification": "autonomous",
           "spec_references": [
             "docs/specs/frontend/pages/signals.md",
@@ -237,7 +237,7 @@
           "notes": "SC-PT-01..05. CI on 978b4e48: Playwright E2E 42621274114 success; CI Pytest 42621274186 failed on scenario-ID collision introduced by ST-08 spec (fixed 87d78b39). Shared commit with ST-08 (both edit TradePlan.js). No deviation."
         },
         "ST-08": {
-          "status": "done",
+          "status": "merged",
           "classification": "autonomous",
           "spec_references": [
             "docs/specs/frontend/pages/trade_plan.md#5f",
@@ -260,7 +260,9 @@
         "status": "cleared",
         "date": "2026-11-09",
         "notes": "Pass 1 Approved, 5 non-blocking findings; 2,3,5 closed by tests in 220f9fe9; 1 (and 2's scope) referred to Frontend Specifications & UX Documentation Owner."
-      }
+      },
+      "merged_utc": "2026-11-09T15:33:10Z",
+      "merge_commit": "13e7bd20"
     }
   },
   "deferred_at_planning": [],
@@ -279,10 +281,10 @@
   "open_escalations": {},
   "merge_gate": {
     "epics_merged": [
-      "EPIC-01"
+      "EPIC-01",
+      "EPIC-02"
     ],
     "epics_pending": [
-      "EPIC-02",
       "EPIC-03",
       "EPIC-04",
       "EPIC-05",
@@ -295,7 +297,8 @@
     "EPIC-01 (2026-11-09): the STEP 3.1.A step 13 cross-spec selector scan at ST-01 grepped for v1 group names and sidebar selectors only; it missed bare getByText/locator collisions with newly visible sidebar text ('Today', 'Watchlist') and aria-expanded area headers, and a link placed on clickable row text. CI caught 6 (ST-01, a46fecf2) and 26 (ST-03, 8d0800e1) failures; all fixed before DoQ. Candidate lesson for Phase 3: when a story makes new text or interactive elements visible on every page, scan specs for unscoped getByText/role locators of that text, not only for the renamed selectors.",
     "EPIC-01 merge-gate resume sync (2026-11-09): PR #2227 merged by sachiv1984 at 2026-11-09T11:27:35Z, merge commit 8f525f24. Orphaned post-merge commit check: git log origin/main..origin/exec/2026-11-06__release-v9.16/EPIC-01 empty - nothing to reconcile.",
     "EPIC-02 (2026-11-09): the ST-05 state commit 2d26da87 also committed two ST-06 deletions (SignalStatusCard.js, ExitConditionsCard.js) staged earlier with `git rm`; DashboardHome.js still imported SignalStatusCard there, so Frontend Production Build and Playwright failed at 2d26da87. Fixed by the ST-06 commit 739286e7 (no force-push). Candidate lesson: check `git diff --cached` is empty before a state-only commit, or commit with explicit pathspecs.",
-    "EPIC-02 (2026-11-09): ST-08's new spec reused prefix SC-TPS (trade-plan-stale-marker.spec.js). CI Pytest 42621274186 caught it (test_check_e2e_scenario_id_uniqueness.py); renamed to SC-TPSZ in 87d78b39. Candidate lesson: run scripts/check_e2e_scenario_id_uniqueness.py before pushing a new spec."
+    "EPIC-02 (2026-11-09): ST-08's new spec reused prefix SC-TPS (trade-plan-stale-marker.spec.js). CI Pytest 42621274186 caught it (test_check_e2e_scenario_id_uniqueness.py); renamed to SC-TPSZ in 87d78b39. Candidate lesson: run scripts/check_e2e_scenario_id_uniqueness.py before pushing a new spec.",
+    "EPIC-02 merge-gate sync (2026-11-09): PR #2228 merged by sachiv1984 at 2026-11-09T15:33:10Z, merge commit 13e7bd20. Orphaned post-merge commit check: git log origin/main..origin/exec/2026-11-06__release-v9.16/EPIC-02 empty - nothing to reconcile."
   ],
   "sealed": false,
   "sealed_utc": null
