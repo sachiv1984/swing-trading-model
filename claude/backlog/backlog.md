@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-06 (Release Planning `2026-11-06__release-v9.16` §1.3a — gating-item-shipped gates cleared in place (a) on BLG-FE-39, BLG-QA-21, BLG-QA-22, BLG-QA-23, BLG-GOV-26: PT-04 shipped v6.1, Arc 2 complete); prior — 2026-11-06 (`ESC-CLOSE-20261106-01` ruling — BLG-FE-271 Notes line: §4.2.1 applies, strategy_rules.md v1.26 Known deviation); prior — 2026-11-06 (post-ship closure `2026-11-03__release-v9.15` STEP 8 — 1 new item added: BLG-GOV-413; deferred lessons-learnt patch, target v9.16); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-09 (session — 4 new item(s) added: BLG-OPS-215, BLG-GOV-414, BLG-SPEC-224, BLG-SPEC-225; Sprint Planning `2026-11-06__release-v9.16` pre-seal filings); prior — 2026-11-06 (Release Planning `2026-11-06__release-v9.16` §1.3a — gating-item-shipped gates cleared in place (a) on BLG-FE-39, BLG-QA-21, BLG-QA-22, BLG-QA-23, BLG-GOV-26: PT-04 shipped v6.1, Arc 2 complete); prior — 2026-11-06 (`ESC-CLOSE-20261106-01` ruling — BLG-FE-271 Notes line: §4.2.1 applies, strategy_rules.md v1.26 Known deviation); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -6004,5 +6004,89 @@ On a governance-only or docs-only change, CI Pytest Phase A runs only test files
 **Acceptance Criteria**
 - STEP 3.1 states both cases, citing `BLG-AI-23`/`BLG-AI-27` as the case (ii) example
 - `BLG-AI-23` and `BLG-OPS-48` are bannered or given a recorded reason to stay open at the next `groom backlog` after the change
+
+---
+
+### BLG-OPS-215 — Delete the REACT_APP_ANTHROPIC_API_KEY secret and confirm production Trade Plan AI controls after ST-12 deploys
+**Priority:** P2 (Medium)
+**Type:** Operations / Security
+**Owner:** Cybersecurity & Trust Lead; Infrastructure & Operations Owner
+**Source:** Sprint Planning `2026-11-06__release-v9.16`, post-merge tracker for ST-12 (`BLG-OPS-213`) AC 2 and AC 4 (production half), filed before seal per `sprint_planning_prompt.md` §6.2 (Product Owner authorised) — 2026-11-09
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.16 (post-merge)
+
+**Problem**
+ST-12 removes `REACT_APP_ANTHROPIC_API_KEY` from `deploy.yml` and replaces `HAS_AI` in `TradePlan.js`. The GitHub secret can only be deleted safely after that change is on `main` and the Pages site has redeployed: deleting it earlier makes the next Pages build from `main` evaluate `HAS_AI` as false and hide the Trade Plan AI controls in production. The design gate addendum also measures ST-12 AC 4 ("behave as before") against the production Pages build, which exists only after merge.
+
+**Scope**
+- After ST-12 merges and the Pages deploy from `main` succeeds, delete the `REACT_APP_ANTHROPIC_API_KEY` GitHub secret
+- Load production Trade Plan and confirm the AI controls show and work as before
+- Record both in ST-12's QA evidence (`qa_evidence_EPIC-04.md`)
+
+**Acceptance Criteria**
+- `gh secret list` no longer lists `REACT_APP_ANTHROPIC_API_KEY`
+- A dated production check records that the Trade Plan AI controls show and respond after the post-merge Pages deploy
+
+---
+
+### BLG-GOV-414 — At the first groom backlog after ST-28 merges, banner BLG-AI-23 and BLG-OPS-48 or record why each stays open
+**Priority:** P3 (Low)
+**Type:** Governance Process
+**Owner:** Head of Specs Team; PMO Lead
+**Source:** Sprint Planning `2026-11-06__release-v9.16`, post-merge tracker for ST-28 (`BLG-GOV-413`) AC 2, filed before seal per `sprint_planning_prompt.md` §6.2 (Product Owner authorised) — 2026-11-09
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.16 (first `groom backlog` after ST-28 merges)
+
+**Problem**
+ST-28 adds the split-achievability case (ii) to `post_ship_closure.md` STEP 3.1. Its AC 2 can only be met by the next `groom backlog` run after the change merges, which applies the rule to `BLG-AI-23` (remainder `BLG-AI-27`) and `BLG-OPS-48` (remainders `BLG-OPS-214`, `BLG-OPS-213`, `BLG-SPEC-223`). Without a tracker the remainder has no owner after sprint close.
+
+**Scope**
+- At the first `groom backlog` after ST-28 is on `main`, apply STEP 3.1 case (ii) to `BLG-AI-23` and `BLG-OPS-48`
+- Banner each ✅ COMPLETE naming its follow-up items, or record a reason it stays open
+
+**Acceptance Criteria**
+- `BLG-AI-23` and `BLG-OPS-48` each carry a ✅ COMPLETE banner naming their follow-up items, or a dated recorded reason to stay open
+- The groom run's health report names this item as met
+
+---
+
+### BLG-SPEC-224 — trade_plan.md: list planned_entry_price and planned_quantity as persisted fields
+**Priority:** P4 (Trivial)
+**Type:** Spec Debt / Frontend
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** Design Gate `2026-11-06__release-v9.16` observation (design_gate.md "Observations for filing"), filed at Sprint Planning (Product Owner authorised) — 2026-11-09
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`trade_plan.md` §5d.4 says `trade_plans` has no entry-price column, but `TradePlan.js:578–579` persists `planned_entry_price` and `planned_quantity`, and §5.1's field table lists neither. The spec under-describes what a saved plan stores.
+
+**Scope**
+- Add `planned_entry_price` and `planned_quantity` to `trade_plan.md` §5.1's field table, matching `data_model.md`
+- Correct §5d.4's "no entry-price column" statement; version bump and changelog row
+
+**Acceptance Criteria**
+- `trade_plan.md` §5.1 lists both fields with the type and nullability in `data_model.md`
+- No statement in `trade_plan.md` says `trade_plans` lacks an entry-price column
+
+---
+
+### BLG-SPEC-225 — trade_plan.md §2: replace the stale /trade-plans/... routes with the live routes
+**Priority:** P4 (Trivial)
+**Type:** Spec Debt / Frontend
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** Design Gate `2026-11-06__release-v9.16` observation (design_gate.md "Observations for filing"), filed at Sprint Planning (Product Owner authorised) — 2026-11-09
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`trade_plan.md` §2 lists `/trade-plans/...` routes. The live routes are `/TradePlans` and `/TradePlan?…` (`navigation.md` v2.0). The v1.22 row added at the design gate names the live route, so the section now contradicts itself.
+
+**Scope**
+- Replace the `/trade-plans/...` routes in `trade_plan.md` §2 with the live routes from `navigation.md` v2.0; version bump and changelog row
+
+**Acceptance Criteria**
+- `grep -n "/trade-plans/" docs/specs/frontend/pages/trade_plan.md` finds no route entry
+- §2's routes match `navigation.md` v2.0
 
 ---

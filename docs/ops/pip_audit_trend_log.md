@@ -2,7 +2,7 @@
 **Class:** Operational Record (Class 3)
 **Status:** Active
 **Version:** 1.0
-**Last Updated:** 2026-11-03 (sprint planning `2026-11-03__release-v9.15` — trend row appended); prior — 2026-10-29 (sprint planning `2026-10-29__release-v9.14` — trend row appended); prior — 2026-10-16 (sprint planning `2026-10-16__release-v9.13` — trend row appended); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-11-09 (sprint planning `2026-11-06__release-v9.16` — trend row appended); prior — 2026-11-03 (sprint planning `2026-11-03__release-v9.15` — trend row appended); prior — 2026-10-29 (sprint planning `2026-10-29__release-v9.14` — trend row appended); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -33,6 +33,7 @@ A recurring `Unavailable` reading (the same environment gap appearing 2+ consecu
 | Cycle | Date | Dependencies scanned | Result | Resolution status | Notes |
 |-------|------|----------------------|--------|--------------------|-------|
 | `2026-11-03__release-v9.15` | 2026-11-03 | 53 | Clean | — | Sprint planning STEP -1.6. Run via the project virtualenv (`backend/.venv/bin/pip-audit`). Same 53-dependency count as v9.14. |
+| `2026-11-06__release-v9.16` | 2026-11-09 | 53 | Clean | — | Sprint planning STEP -1.6. Run via the project virtualenv (`backend/.venv/bin/python3 -m pip_audit`; system `pip-audit` not installed). Same 53-dependency count as v9.15. |
 | `2026-10-29__release-v9.14` | 2026-10-29 | 53 | Clean | — | Sprint planning STEP -1.6. Run via the project virtualenv (`backend/.venv/bin/pip-audit`). Same 53-dependency count as v9.13. |
 | `2026-10-16__release-v9.13` | 2026-10-16 | 53 | Clean | — | Sprint planning STEP -1.6. Run via the project virtualenv (`backend/.venv/bin/pip-audit`). 53 dependencies, up from 52 at v9.12. |
 | `2026-10-12__release-v9.12` | 2026-10-13 | 52 | Clean | — | Sprint planning STEP -1.6. Run via the project virtualenv (`backend/.venv/bin/pip-audit`). The count dropped from 60 to 52 with no change to `backend/requirements.txt` in this cycle, so the drop is in transitive resolution. Not investigated here; ST-28's dependency bumps will move it again. |
