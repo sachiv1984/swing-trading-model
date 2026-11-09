@@ -52,3 +52,15 @@ Every observable AC has Playwright coverage: ST-05 SC-TEPC-07/11..15 and SC-TP-3
 - Signed off by: Sprint Execution Engine (agent-mediated, Director of Quality role — §5.3)
 - Date: 2026-11-09
 - Comments: Pass 1 Approved with 5 non-blocking findings (QA Test Coverage above). Findings 2, 3 and 5 are closed by new tests in `220f9fe9`, and finding 4 by the evidence commit. Finding 1 (the regime header's count), with the finding 2 fallback scope, awaits a Frontend Specifications & UX Documentation Owner confirmation. If that owner declines, ST-06 is regraded `Pass_with_deviation`. Post-open CI-fix restatement: ST-08's ID rename `87d78b39` passed (CI Pytest 42621978038; Playwright 42621977762 green on attempt 2 after the known Reports axe flake). The final head `220f9fe9` has all 8 workflows green. Frontend testing gate met: no code-review-only AC. This sign-off is agent-mediated and does not satisfy the always-human merge gate: QA sign-off and Product Owner acceptance on the PR remain with the human.
+
+## Merge Gate Confirmations
+
+- **Director of Quality QA sign-off:** given by the human repository owner, acting as Director of Quality, in session at 2026-11-09T15:13:44Z ("give DOQ and PO accpetance"), before the merge. It accepts:
+  - this evidence: ST-05 Pass_with_deviation (DEV-v9.16-ST05-01 / BLG-FE-277); ST-06, ST-07 and ST-08 Pass;
+  - the agent-mediated sign-off block above (pass 1 Approved);
+  - the spec-owner clarifications `dashboard.md` v4.1 and `trade_plan.md` v1.23;
+  - the agent-mediated PR #2228 review (comment 6743004450). There DoQ was ❌ Changes Requested and PO ⚠️ Approved with Comments. The blocking DoQ finding 1 is fixed in `9902d774`, and the non-blocking findings are filed as BLG-FE-278, BLG-FE-279, BLG-FE-280, BLG-QA-254, BLG-QA-255, BLG-SPEC-228, BLG-FEAT-101 and BLG-UX-09.
+
+  At the time of acceptance the PR head was `d4bd4076`, with 49 checks passed, 1 pending, 5 skipped and no failures.
+- **Product Owner acceptance:** given by the human repository owner, acting as Product Owner, in the same instruction at 2026-11-09T15:13:44Z, before the merge. It accepts ST-05 to ST-08 against `stage4_backlog_slice.md` and its addendum. That includes the ST-06 deferral of TL-09/TL-10 (Stops moved, BLG-BE-205) and the ST-05 known deviation tracked by BLG-FE-277. There are no post-merge ACs. Follow-ups: BLG-FE-277, BLG-FE-278, BLG-FE-279, BLG-FE-280, BLG-QA-254, BLG-QA-255, BLG-SPEC-228, BLG-FEAT-101, BLG-UX-09.
+- **Merged:** pending. The merge is the human developer's decision.
