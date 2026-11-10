@@ -100,6 +100,11 @@ const KNOWN_VIOLATIONS = {
   'DashboardPopulated:light': new Set([]),
   'TradeHistoryExpanded:light': new Set([]),
   'WeeklyDigest:light': new Set([]),
+  // EPIC-03 review pass 1 (Product Owner ruling, 2026-11-10): the Trade Entry
+  // card is themed so ST-10's text-app-fg input text reads in light.
+  // label (Risk % and entry date inputs) and button-name (market Select):
+  // pre-existing and theme-independent, BLG-FE-286.
+  'TradeEntry:light': new Set(['label', 'button-name']),
 };
 
 async function mockRoutes(page) {
@@ -618,6 +623,14 @@ test.describe('Shell consumers axe scan, populated — light theme (ST-09)', () 
     await page.waitForLoadState('networkidle');
     await expectThemeApplied(page, 'light');
     await runAxeScan(page, 'TradeHistoryExpanded:light', { include: 'table' });
+  });
+
+  test('Trade Entry (light)', async ({ page }) => {
+    await page.goto('/#/TradeEntry');
+    await expect(page.getByPlaceholder('e.g., AAPL or VOD.L')).toBeVisible({ timeout: 10000 });
+    await page.getByPlaceholder('e.g., AAPL or VOD.L').fill('AAPL');
+    await expectThemeApplied(page, 'light');
+    await runAxeScan(page, 'TradeEntry:light');
   });
 
   test('Weekly Digest (light)', async ({ page }) => {

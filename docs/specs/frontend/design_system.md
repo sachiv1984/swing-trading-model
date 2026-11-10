@@ -129,6 +129,11 @@ These are single-class tokens for the eight shell roles. Each maps to a pair alr
 
 **Shell consumers outside the AC pages (Product Owner scope ruling, 2026-11-10).** Before ST-09 the table and card shells were dark in both themes, so dark-only content inside them stayed readable in light. Once they turned white, that content had to be paired too. ST-09 paired the bare dark-only text, fill, border and hover classes in every other consumer, following the §Light-Theme Colour Tokens table: `TradeHistoryTable` (rows, sort headers, expanded journal row and empty state), `PlanVsReality` (filled lifecycle badges keep white text, rule 4), `WeeklyDigest`, and the nine Dashboard cards (`OpenPositionsCard`, `PortfolioHeatCard`, `RecentActivityCard`, `GracePeriodCard`, `ComplianceCard`, `ScreenerHitsCard`, `ExitZoneCard`, `RedFlagsCard`, `EarningsAlertCard`). Regions of the Trade History page outside the table were already dark-only before ST-09 and are tracked by `BLG-FE-285`.
 
+**Review pass 1 fixes (agent-mediated Director of Quality and Head of UX & Design review, 2026-11-10).**
+- **Containers around token-coloured inputs (Product Owner ruling, 2026-11-10):** §Input Text Colours puts `text-app-fg` on every input, which is only correct when the input's container follows the theme. The Trade Entry form cards (`bg-white dark:bg-gradient-to-br dark:from-slate-900 dark:to-slate-800`), the Edit Position and Exit modals (`DialogContent` `bg-white dark:bg-slate-900`) and the panels inside the Trade Entry card (`PositionSizingWidget`, `PreEntryValidationPanel`) now carry light/dark pairs. Their input fills are `bg-slate-100 dark:bg-slate-800/50`.
+- **Text on a tinted `/15`–`/20` fill:** a 700 shade is only measured on white, slate-50 and slate-100 (rule 2 above). On a tint it can fall below 4.5:1 (amber-700 on amber-500/20 over slate-50 measured 4.15:1). Use the 800 shade in light: `PlanVsReality` adherence badges (emerald/amber/rose-800, 5.85–6.12:1) and the Positions grace pill (amber-800 on amber-500/15 over white, 6.32:1).
+- **Icon-only buttons in a converted shell** take a 700 light shade (WCAG 1.4.11 non-text 3:1): the Positions table row actions (`text-cyan-700 dark:text-cyan-500/70`, `text-violet-700 dark:text-violet-400`, `text-amber-700 dark:text-amber-400/80`, `text-rose-700 dark:text-rose-400`).
+
 Verified by the light-theme scans in `tests/e2e/accessibility-axe-scan.spec.js` (ST-09), all with no baseline entry: Dashboard (empty and populated), Positions (empty, populated card view and populated table view), Trade Plan, Settings, Weekly Digest, and the Trade History table with a journal row expanded.
 
 ### Input Text Colours
@@ -140,7 +145,8 @@ Verified by the light-theme scans in `tests/e2e/accessibility-axe-scan.spec.js` 
 Every text, number and search input, and every textarea:
 
 - **Placeholder:** `placeholder:text-slate-600 dark:placeholder:text-slate-400`
-- **Typed text:** `text-app-fg`. Built in ST-10 (EPIC-03, v9.16) across the 18 sites the grep check found (8 files); verified by `tests/e2e/input-text-colours.spec.js` (SC-ITC-01/02).
+- **Typed text:** `text-app-fg`. Built in ST-10 (EPIC-03, v9.16) across the 18 sites the grep check found (8 files); verified by `tests/e2e/input-text-colours.spec.js` (SC-ITC-01..04, contrast measured against the composited background including gradients).
+- **Container rule:** `text-app-fg` is only correct inside a container that follows the theme. An input inside a container that is dark in both themes needs that container paired first (see §Semantic Colour Tokens, review pass 1 fixes).
 - **Defect pattern:** a bare `dark:text-*` written next to a `placeholder:` class colours the typed text, not the placeholder. `grep -rnE 'placeholder:text-[a-z]+-[0-9]+ +dark:text-' src/` must return nothing.
 
 ---

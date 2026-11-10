@@ -1075,7 +1075,7 @@ export default function Positions() {
                   <TableCell>
                     {position.grace_days_remaining !== null &&
                     position.grace_days_remaining !== undefined ? (
-                      <span className="text-xs font-medium px-2 py-1 rounded-lg bg-amber-500/15 text-amber-700 dark:text-amber-400 border border-amber-500/25 whitespace-nowrap">
+                      <span className="text-xs font-medium px-2 py-1 rounded-lg bg-amber-500/15 text-amber-800 dark:text-amber-400 border border-amber-500/25 whitespace-nowrap">
                         Day {(position.holding_days ?? 0) + 1} of {GRACE_PERIOD_DAYS}
                       </span>
                     ) : (
@@ -1107,7 +1107,7 @@ export default function Positions() {
                         variant="ghost"
                         size="icon"
                         title="Trade Plan"
-                        className="h-8 w-8 text-cyan-500/70 hover:text-cyan-700 dark:hover:text-cyan-400 hover:bg-cyan-500/10"
+                        className="h-8 w-8 text-cyan-700 dark:text-cyan-500/70 hover:text-cyan-800 dark:hover:text-cyan-400 hover:bg-cyan-500/10"
                         onClick={() => navigate(`/TradePlan?position_id=${position.id}&ticker=${position.ticker}&market=${position.market}`)}
                       >
                         <BookOpen className="w-4 h-4" />
@@ -1122,7 +1122,7 @@ export default function Positions() {
                           title={(!position.current_stop && !position.stop_price) ? "No stop is recorded for this position yet, so there is no trail to compare." : "View Trail"}
                           aria-label="View Trail"
                           disabled={!position.current_stop && !position.stop_price}
-                          className="h-8 w-8 text-violet-400 hover:text-violet-300 hover:bg-violet-500/10 disabled:opacity-40"
+                          className="h-8 w-8 text-violet-700 dark:text-violet-400 hover:text-violet-800 dark:hover:text-violet-300 hover:bg-violet-500/10 disabled:opacity-40"
                           onClick={() => setTrailStopPosition(position)}
                         >
                           <ArrowUpDown className="w-4 h-4" />
@@ -1136,7 +1136,7 @@ export default function Positions() {
                         title="Recheck Compliance"
                         aria-label={`Recheck compliance for ${position.ticker}`}
                         data-testid="recheck-compliance-button"
-                        className="h-8 w-8 text-amber-400/80 hover:text-amber-300 hover:bg-amber-500/10"
+                        className="h-8 w-8 text-amber-700 dark:text-amber-400/80 hover:text-amber-800 dark:hover:text-amber-300 hover:bg-amber-500/10"
                         onClick={() => setRecheckingPosition(position)}
                       >
                         <Zap className="w-4 h-4" />
@@ -1145,7 +1145,7 @@ export default function Positions() {
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-8 w-8 text-rose-400 hover:text-rose-300 hover:bg-rose-500/10"
+                        className="h-8 w-8 text-rose-700 dark:text-rose-400 hover:text-rose-800 dark:hover:text-rose-300 hover:bg-rose-500/10"
                         aria-label={`Exit ${position.ticker}`}
                         onClick={() => setExitingPosition(position)}
                       >

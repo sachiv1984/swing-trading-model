@@ -66,10 +66,10 @@ function CompRow({ label, planned, actual, actualClass }) {
 // ─── Plan adherence badge ──────────────────────────────────────────────────────
 function AdherenceBadge({ flag }) {
   const config = {
-    on_plan:         { label: "On Plan",      cls: "bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border-emerald-500/30" },
-    entry_deviation: { label: "Entry Deviation", cls: "bg-amber-500/20 text-amber-700 dark:text-amber-300 border-amber-500/30" },
-    stop_deviation:  { label: "Stop Deviation",  cls: "bg-amber-500/20 text-amber-700 dark:text-amber-300 border-amber-500/30" },
-    early_exit:      { label: "Early Exit",      cls: "bg-rose-500/20 text-rose-700 dark:text-rose-300 border-rose-500/30"    },
+    on_plan:         { label: "On Plan",      cls: "bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 border-emerald-500/30" },
+    entry_deviation: { label: "Entry Deviation", cls: "bg-amber-500/20 text-amber-800 dark:text-amber-300 border-amber-500/30" },
+    stop_deviation:  { label: "Stop Deviation",  cls: "bg-amber-500/20 text-amber-800 dark:text-amber-300 border-amber-500/30" },
+    early_exit:      { label: "Early Exit",      cls: "bg-rose-500/20 text-rose-800 dark:text-rose-300 border-rose-500/30"    },
   };
   const c = config[flag] || { label: flag || "—", cls: "bg-slate-500/20 text-slate-700 dark:text-slate-300 border-slate-500/30" };
   return (
