@@ -592,7 +592,13 @@ def analyze_positions() -> Dict:
             if not grace_period:
                 position_updates['stop_frozen_reason'] = 'atr_unavailable' if atr_unavailable else None
             update_position(str(pos['id']), position_updates)
-        
+        elif not grace_period and atr_unavailable:
+            # ST-18 (BLG-BE-177, v9.16): no live price, and the stop was kept for
+            # lack of ATR. Nothing else is written without a live price, but the
+            # stop is still frozen, so record it now rather than waiting for the
+            # nightly job (which writes only this field in the same case).
+            update_position(str(pos['id']), {'stop_frozen_reason': 'atr_unavailable'})
+
         # Add to actions
         actions.append({
             "ticker": pos['ticker'],

@@ -324,6 +324,24 @@ class TestStopFrozenReason(_Patcher):
         _, mock_update = _AnalyzeRun._run(self, pos, price=110.0, fetched_atr=None)
         assert "stop_frozen_reason" not in mock_update.call_args.args[1]
 
+    # ST-18 (BLG-BE-177, EPIC-05, v9.16): the on-load path wrote the marker only
+    # inside `if live_price:`, so a stop kept for lack of ATR with no live price
+    # stayed unmarked until the nightly job ran.
+    def test_on_load_without_live_price_or_atr_sets_it(self):
+        _, mock_update = _AnalyzeRun._run(self, _open_position(atr=None, current_price=95.0), price=None, fetched_atr=None)
+        mock_update.assert_called_once_with("pos-1", {"stop_frozen_reason": "atr_unavailable"})
+
+    def test_on_load_without_live_price_with_atr_writes_nothing(self):
+        # A stop is only recomputed and written with a live price; nothing to record.
+        pos = _open_position(stop_frozen_reason="atr_unavailable", current_price=95.0)
+        _, mock_update = _AnalyzeRun._run(self, pos, price=None, fetched_atr=None)
+        mock_update.assert_not_called()
+
+    def test_on_load_without_live_price_in_grace_writes_nothing(self):
+        pos = _open_position(atr=None, current_price=95.0, entry_date=date.today() - timedelta(days=3))
+        _, mock_update = _AnalyzeRun._run(self, pos, price=None, fetched_atr=None)
+        mock_update.assert_not_called()
+
     @pytest.mark.parametrize("reason", ["atr_unavailable", None])
     def test_get_positions_returns_it(self, reason):
         self._patch("get_portfolio", return_value={"id": "portfolio-1"})
