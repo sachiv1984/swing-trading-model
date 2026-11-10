@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-10 (session — 2 new item(s) added: BLG-BE-208, BLG-QA-256; agent-mediated DoQ review of EPIC-05, v9.16); prior — 2026-11-09 (session — 8 new item(s) added: BLG-FE-278, BLG-FE-279, BLG-QA-254, BLG-FE-280, BLG-SPEC-228, BLG-FEAT-101, BLG-QA-255, BLG-UX-09; agent-mediated review of PR #2228, EPIC-02, `2026-11-06__release-v9.16`); prior — 2026-11-09 (session — 1 new item(s) added: BLG-FE-277; ST-05, EPIC-02, `2026-11-06__release-v9.16`); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-10 (session — 3 new item(s) added: BLG-BE-209, BLG-BE-210, BLG-QA-257; agent-mediated DoQ and PO review of PR #2229, EPIC-05, v9.16); prior — 2026-11-10 (session — 2 new item(s) added: BLG-BE-208, BLG-QA-256; agent-mediated DoQ review of EPIC-05, v9.16); prior — 2026-11-09 (session — 8 new item(s) added: BLG-FE-278, BLG-FE-279, BLG-QA-254, BLG-FE-280, BLG-SPEC-228, BLG-FEAT-101, BLG-QA-255, BLG-UX-09; agent-mediated review of PR #2228, EPIC-02, `2026-11-06__release-v9.16`); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -6392,5 +6392,66 @@ The native-entry fallback (`fill_price`, else `entry_price × stored fx_rate`, e
 
 **Acceptance Criteria**
 - The test passes in that subset, alone, and in the full suite
+
+---
+
+### BLG-BE-209 — Net R-multiple must not treat a US trade's USD risk as GBP when entry_fx_rate is NULL
+**Priority:** P3 (Low)
+**Type:** Backend Engineering / Correctness
+**Owner:** Head of Engineering; Financial Reporting & Records Owner
+**Source:** Agent-mediated Director of Quality review of PR #2229 (ST-16, EPIC-05, cycle `2026-11-06__release-v9.16`) — 2026-11-10
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+ST-16 (v9.16) lets a US position with a NULL `fill_price` and a NULL `fx_rate` exit; its `trade_history.entry_fx_rate` is recorded as NULL (the column is nullable, and the entry rate is unknown). Before v9.16 such an exit crashed, so no such row existed. `_compute_net_r()` (`backend/services/trade_service.py`) uses `entry_fx_rate or 1.0` for US trades, so for this row it divides USD risk by 1.0 and reports a net R-multiple off by the FX rate (about 1.3×). `replay_service` and `reports_service` already treat a NULL rate as unavailable.
+
+**Scope**
+- In `_compute_net_r()`, for a US trade with a NULL or non-positive `entry_fx_rate`, use `exit_fx_rate` if the caller can pass it, else return `None` (unknown), never 1.0
+- Unit tests for a US trade with NULL `entry_fx_rate`, with and without `exit_fx_rate`
+
+**Acceptance Criteria**
+- A US trade with NULL `entry_fx_rate` never gets a net R computed on an FX rate of 1.0 (unit test)
+- UK and US trades with a stored `entry_fx_rate` are unchanged (existing tests pass)
+
+---
+
+### BLG-BE-210 — Record or correct US lifecycle-state history written from v9.12 to v9.16
+**Priority:** P3 (Low)
+**Type:** Backend Engineering / Data Integrity
+**Owner:** Data Model & Domain Schema Owner; Head of Engineering
+**Source:** Agent-mediated Product Owner and Director of Quality review of PR #2229 (ST-17, EPIC-05, cycle `2026-11-06__release-v9.16`) — 2026-11-10
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+From `cc7774e9` (v9.12 ST-13, 2026-10-13) until ST-17 (v9.16) deploys, `GET /positions` badged each US position against its native entry multiplied by the FX rate a second time. A US position up by less than about 25% in dollars was stored as `LOSING`, and the wrong transitions were written to `positions.state_history`, `state_entered_at` and the `position_state_history` table. On the first `GET /positions` after deploy each such position flips to its correct state and its `days_in_state` restarts. Nothing records that the history in that window is unreliable for US positions.
+
+**Scope**
+- Decide, as Data Model & Domain Schema Owner: annotate the window as a known data issue (`data_model.md` Known Deviations or the lifecycle diagram section), or recompute and correct the affected US rows
+- Count the affected US positions and transitions in production for the decision
+
+**Acceptance Criteria**
+- A dated decision is recorded, and either the window is documented as unreliable for US positions in `data_model.md` or the affected rows are corrected with a recorded migration and verification query
+
+---
+
+### BLG-QA-257 — Confirm on staging that US lifecycle badges and View Trail show correctly after ST-17
+**Priority:** P3 (Low)
+**Type:** QA / Staging Verification
+**Owner:** QA & Testing Owner
+**Source:** Agent-mediated Director of Quality review of PR #2229 (ST-17, EPIC-05, cycle `2026-11-06__release-v9.16`) — 2026-11-10
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+ST-17 is a backend change (its ACs are unit tests), but it changes what the Positions page shows for US positions: the lifecycle badge, and the View Trail button, which shows only for `PROFITABLE` / `EXIT ZONE` (`Positions.js`). No Playwright test or staging run covers a US position's badge against the real backend, so the user-visible effect of the fix is unconfirmed.
+
+**Scope**
+- After EPIC-05 deploys to staging, open Positions with a US position that is up in dollars by less than its entry FX rate's premium (e.g. 5–20%) and one that is down
+- Record the badge, View Trail visibility and `display_status` for each
+
+**Acceptance Criteria**
+- On staging, a US position up in dollars shows `PROFITABLE` (or `EXIT ZONE`) with View Trail, one down shows `LOSING` without it, and both agree with the Risk page; the date and result are recorded
 
 ---
