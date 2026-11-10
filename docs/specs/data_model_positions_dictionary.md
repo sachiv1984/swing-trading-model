@@ -1,8 +1,8 @@
 **Owner:** Data Model Domain & Schema Owner
 **Class:** Class 1 Canonical Specification
 **Status:** Active
-**Version:** 0.7
-**Last Updated:** 2026-11-04 (ST-23, EPIC-03, v9.15, BLG-SPEC-198 — §5.2 and the pnl row state the live basis: live GBP/USD rate, not net of fees_paid; decision and difference from realised P&L recorded. Data Model & Domain Schema Owner ruling ESC-EXEC-20261104-04); prior — 2026-10-30 (ST-13, EPIC-02, v9.14, BLG-SPEC-190 — `user_fill_price` row added; every price field and the `total_cost`/`pnl` derivations checked against `add_position()` and `data_model.md` §2); prior — 2026-10-13 (BLG-SPEC-199, PR #2024 review, EPIC-05, v9.12 — Nullable for holding_days, pnl, pnl_pct, status, created_at and updated_at set to YES, and a risk_off_exit row added, matching data_model.md v2.60; exit_note marked as not live; coverage note added); prior history retained — see prior entries in version control
+**Version:** 0.8
+**Last Updated:** 2026-11-10 (ST-22, EPIC-05, v9.16, BLG-SPEC-200 — the 11 missing columns added, every §2 column now listed with matching type and Nullable; exit_note kept as a marked historical row; coverage note replaced); prior — 2026-11-04 (ST-23, EPIC-03, v9.15, BLG-SPEC-198 — §5.2 and the pnl row state the live basis: live GBP/USD rate, not net of fees_paid; decision and difference from realised P&L recorded. Data Model & Domain Schema Owner ruling ESC-EXEC-20261104-04); prior — 2026-10-30 (ST-13, EPIC-02, v9.14, BLG-SPEC-190 — `user_fill_price` row added; every price field and the `total_cost`/`pnl` derivations checked against `add_position()` and `data_model.md` §2); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -27,7 +27,7 @@ The `positions` table serves **both open and closed positions** within a single 
 
 ## 3. Field Dictionary
 
-> **Coverage (v0.6):** for every column listed here, Nullable matches `data_model.md` §2. This dictionary does not yet list 10 newer `positions` columns that `data_model.md` §2 documents: `position_state`, `state_entered_at`, `state_history`, `stop_calculated_at`, `atr_calculated_at`, `active_atr_multiplier`, `atr_source`, `stop_calculation_source`, `strategy_version_at_entry`, `last_reviewed_at`. Use `data_model.md` §2 for those.
+> **Coverage (v0.8):** every column in `data_model.md` §2's Fields table has a row here, with the same SQL type and Nullable value. The only other row is `exit_note`, marked historical. `tests/test_positions_dictionary_coverage.py` checks both.
 
 ### 3.1 Primary Key and Foreign Keys
 
@@ -61,6 +61,7 @@ The `positions` table serves **both open and closed positions** within a single 
 | `total_cost` | DECIMAL(12,2) | NO | Total cost of the position **in GBP**, including fees. Derivation at entry: UK `total_cost = entry_price × shares + fees_paid`; US `total_cost = fill_price × shares / fx_rate + fees_paid`, which equals `entry_price × shares + fees_paid` because `entry_price` is already GBP (§5.1). Reduced proportionally on partial exit, with `fees_paid`; stored rounded to 2 dp. |
 | `fees_paid` | DECIMAL(10,2) | NO | Total fees paid at entry, in GBP, reduced proportionally on partial exit. `NOT NULL`, no default — re-applied live 2026-10-05 (`data_model.md` DS-23); an insert that omits it fails rather than recording £0. |
 | `fee_type` | VARCHAR(20) | YES | Fee calculation method applied (e.g. `"flat"`, `"percent"`). Informational — does not affect `fees_paid` which is always the computed amount. Added in migration v1.1→v1.2. |
+| `strategy_version_at_entry` | VARCHAR(10) | YES | Active `strategy_rules.md` version at entry (`get_current_strategy_version()`), stamped by `add_position()`. Forward-only: never rewritten, and NULL for positions entered before the column was added (v8.0, ST-01). Added v0.8. |
 
 ---
 
@@ -71,6 +72,12 @@ The `positions` table serves **both open and closed positions** within a single 
 | `initial_stop` | DECIMAL(10,4) | YES | Stop-loss price at entry, in native currency. Set using `atr_multiplier_initial × atr` below entry price (per `strategy_rules.md §4`). NULL if not set at entry. |
 | `current_stop` | DECIMAL(10,4) | YES | Current trailing stop price, in native currency. Updated as price moves in favour; uses `atr_multiplier_trailing` once position is profitable. NULL if position has been closed. |
 | `atr` | DECIMAL(10,4) | YES | Average True Range value at entry, in native currency. Used for stop calculation. NULL if ATR data was unavailable at entry. |
+| `atr_source` | VARCHAR(10) | YES | Where the stored `atr` came from: `fetched` (computed from market data), `user` (typed at entry) or `fallback` (no ATR could be fetched at entry, so 2% of the entry price was used). Written at entry and whenever ATR is freshly fetched on a recompute. NULL for positions entered before the column was added and not freshly recomputed since (`data_model.md` DS-25). Added v0.8. |
+| `atr_calculated_at` | TIMESTAMPTZ | YES | UTC timestamp of the most recent fresh `atr` computation; not stamped when a stored ATR is merely reused. NULL if never recomputed since the column was added (`data_model.md` DS-22). Added v0.8. |
+| `stop_calculated_at` | TIMESTAMPTZ | YES | UTC timestamp of the most recent `current_stop` recalculation against ATR, by the on-load path (`GET /positions/analyze`) or the nightly job (`POST /positions/nightly-stop-update`). The grace-period carry-over does not stamp it. NULL if never recomputed since the column was added (`data_model.md` DS-22). Added v0.8. |
+| `stop_calculation_source` | VARCHAR(10) | YES | Which path last recalculated `current_stop`: `on_load` or `nightly`. Written together with `stop_calculated_at`. NULL until the first recompute after the column was added (`data_model.md` DS-26). Added v0.8. |
+| `active_atr_multiplier` | DECIMAL(4,2) | YES | The ATR multiplier behind the current `current_stop` (`calculate_trailing_stop()`'s returned multiplier: 5 while losing, 2 once profitable, `strategy_rules.md` §7.2/§11). Unitless. NULL if never recomputed since the column was added (`data_model.md` DS-22). Copied to `trade_history.active_atr_multiplier` at exit. Added v0.8. |
+| `stop_frozen_reason` | VARCHAR(20) | YES | Why the last post-grace recompute kept `current_stop` instead of recalculating it. Only value: `atr_unavailable` (no ATR could be fetched and none was stored), enforced by CHECK. Written by the on-load path (with or without a live price) and the nightly job; cleared to NULL by the next post-grace recompute that has an ATR; never written during grace (`strategy_rules.md` §6.3). Drives the Positions frozen-stop indicator (`data_model.md` DS-32). Added v0.8. |
 
 ---
 
@@ -90,6 +97,9 @@ The `positions` table serves **both open and closed positions** within a single 
 | Field | SQL Type | Nullable | Description |
 |-------|----------|----------|-------------|
 | `status` | VARCHAR(20) | YES | Lifecycle state: `'open'` or `'closed'`. Constrained by CHECK. Default `'open'`. All `exit_*` fields are NULL while `status = 'open'`. Do not query across status boundaries without explicit filtering. Nullable `YES` from v0.5: the column has a `DEFAULT` but no `NOT NULL`, matching `data_model.md` v2.60 and the live schema. |
+| `position_state` | VARCHAR(20) | YES | Lifecycle state: `GRACE`, `LOSING`, `PROFITABLE`, `EXIT ZONE` or `UNKNOWN`, computed by `PositionLifecycleService` from the native entry and native current price (`position_endpoints.md` `position_state` note). Persisted and refreshed on each `GET /positions`. Distinct from `status`. NULL for closed positions. Added v0.8. |
+| `state_entered_at` | TIMESTAMP | YES | UTC timestamp at which the current `position_state` was entered; updated on each state transition. NULL for closed positions. Added v0.8. |
+| `state_history` | JSONB | NO | Ordered array of `{state, entered_at}` objects recording every `position_state` transition. Default `[]`. Never truncated. Transitions are also written to the `position_state_history` table. Added v0.8. |
 | `exit_date` | DATE | YES | Date the position was closed. NULL while open. **This field drives UK tax-year attribution** — the tax year is determined by `exit_date` for closed trades (see `docs/specs/api_contracts/reports_endpoints.md`). |
 | `exit_price` | DECIMAL(10,4) | YES | Exit execution price in native currency. NULL while open. |
 | `exit_reason` | VARCHAR(50) | YES | Reason for exit (e.g. `"stop_hit"`, `"target_reached"`, `"manual_close"`). NULL while open. Informational. |
@@ -102,8 +112,9 @@ The `positions` table serves **both open and closed positions** within a single 
 | Field | SQL Type | Nullable | Description |
 |-------|----------|----------|-------------|
 | `entry_note` | TEXT | YES | Free-text journal note recorded at position entry. NULL if not provided. Added in migration v1.3→v1.4. |
-| `exit_note` | TEXT | YES | **Not a live `positions` column** (`data_model.md` §2, BLG-SPEC-149). Exit journal notes are stored in `trade_history.exit_note`. Row kept for traceability; see the coverage note at the top of this section. |
+| `exit_note` | TEXT | YES | **Historical row — not a live `positions` column** (`data_model.md` §2, BLG-SPEC-149). Exit journal notes are stored in `trade_history.exit_note`. Kept, marked historical, for traceability (v0.8, ST-22: the only row here that `data_model.md` §2 does not list). |
 | `tags` | TEXT[] | YES | Array of strategy or classification tags (e.g. `['momentum', 'earnings-play']`). NULL if no tags applied. Indexed with GIN for array containment queries. Added in migration v1.3→v1.4. |
+| `last_reviewed_at` | TIMESTAMPTZ | YES | When the user last marked the position reviewed (`PATCH /positions/{id}/mark-reviewed`). The timestamp is system-stamped; the action is the user's. NULL if never reviewed. Added v0.8. |
 
 ---
 
@@ -214,3 +225,4 @@ Closed trades are attributed to the UK tax year containing their `exit_date`. Th
 | 0.5 | 2026-10-13 | BLG-SPEC-199 (PR #2024 agent-mediated Director of Quality review, EPIC-05, v9.12): `holding_days`, `pnl`, `pnl_pct`, `status`, `created_at` and `updated_at` Nullable `NO` → `YES` (each has a `DEFAULT` but no `NOT NULL`), matching `data_model.md` v2.60. Added a `risk_off_exit` row (`NOT NULL DEFAULT FALSE`). `exit_note` marked as not a live column (BLG-SPEC-149). Coverage note lists the 11 newer columns documented only in `data_model.md` §2. |
 | 0.7 | 2026-11-04 | ST-23 (EPIC-03, v9.15, BLG-SPEC-198): §5.2 and the `pnl` row state the live computation: open-position `pnl` is the native price move at the live GBP/USD rate, not net of `fees_paid`. The closed-position formulas are replaced by a pointer to `trade_history.pnl`, because `positions.pnl` is not rewritten at exit. The decision, its rationale and the difference from realised P&L are recorded in §5.2. Data Model & Domain Schema Owner ruling `ESC-EXEC-20261104-04` (spec follows code), given in-session by the user acting in that role, 2026-11-04. Follow-ups: `BLG-SPEC-218` (basis alignment), `BLG-SPEC-219` (§5.3 `pnl_pct`). |
 | 0.6 | 2026-10-30 | ST-13 (EPIC-02, v9.14, BLG-SPEC-190): `user_fill_price` row added to §3.3 (native broker fill, the request's optional `fill_price`, stored unchanged by `add_position()`; slippage only). Checked every price field (`entry_price`, `fill_price`, `user_fill_price`) and the `total_cost` and `pnl` derivations against `add_position()` and `data_model.md` §2: they agree. Coverage note now lists 10 columns not yet in this dictionary. `metrics_definitions.md` §Position Risk Data Sources no longer calls `positions.entry_price` native currency (v1.33.1). |
+| 0.8 | 2026-11-10 | ST-22 (EPIC-05, v9.16, BLG-SPEC-200): rows added for the 11 `positions` columns `data_model.md` §2 documents but this dictionary did not, each with §2's SQL type and Nullable value: `strategy_version_at_entry` (§3.3); `atr_source`, `atr_calculated_at`, `stop_calculated_at`, `stop_calculation_source`, `active_atr_multiplier`, `stop_frozen_reason` (§3.4); `position_state`, `state_entered_at`, `state_history` (§3.6); `last_reviewed_at` (§3.7). `exit_note` kept as an explicitly marked historical row (decision: traceability, BLG-SPEC-149). The v0.6 coverage note is replaced by a statement of full coverage; `tests/test_positions_dictionary_coverage.py` pins it. |

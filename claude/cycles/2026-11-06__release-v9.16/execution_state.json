@@ -6,7 +6,7 @@
   "invoked_utc": "2026-11-09T09:15:14Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-10T08:07:27Z",
+  "last_updated_utc": "2026-11-10T08:09:41Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-02",
@@ -274,7 +274,9 @@
       "qa_evidence_log": "claude/cycles/2026-11-06__release-v9.16/qa_evidence_EPIC-05.md",
       "test_scenarios": [
         "tests/test_exit_null_fill_price.py",
-        "tests/test_display_status_native_basis.py"
+        "tests/test_display_status_native_basis.py",
+        "tests/test_atr_provenance.py",
+        "tests/test_journal_summary_claude_audit.py"
       ],
       "stories": {
         "ST-16": {
@@ -304,7 +306,7 @@
         "ST-17": {
           "title": "Lifecycle badge and Risk page disagree for a US row with no fill_price and no fx_rate",
           "classification": "autonomous",
-          "status": "in_progress",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 2213,
           "branch": "exec/2026-11-06__release-v9.16/EPIC-05",
@@ -312,39 +314,42 @@
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-11-10T08:05:03Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/specs/api_contracts/position_endpoints.md#GET /positions",
             "tests/test_display_status_native_basis.py"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": "3.1.A.push",
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": null
+          "notes": "Decision: all live-rate (display_status has no UNKNOWN value; display_status and stop arithmetic already live-rate). AC (NULL fill_price + NULL fx_rate: display_status and position_state agree): tests/test_display_status_native_basis.py test_null_fill_price_and_null_fx_rate_agree_on_the_live_rate + test_badge_on_the_get_positions_row_agrees_with_its_display_status (12 cases, 9 fail on old code) + GET /positions/{id} NULL fx test. Found in-story: GET /positions badged its already-native API row as entry x fx_rate (double conversion, every US row with stored fx_rate); fixed with native_entry_price carried on the row. GET /positions/{id} and GET /portfolio 500 on NULL fx_rate fixed. Contract position_endpoints.md 2.20.0 updated in the same commit; no deviation. CI on 6381ceab: all 7 workflows success (CI Pytest Suite 42779882727, Playwright smoke 42779882696)."
         },
         "ST-18": {
           "title": "Frozen-stop marker is not written when the on-load recompute has no live price",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 2214,
           "branch": "exec/2026-11-06__release-v9.16/EPIC-05",
-          "commit_sha": null,
+          "commit_sha": "e7524eb93d22e30aa1a77092991806f3959fc215",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-11-10T08:06:14Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/position_endpoints.md#GET /positions/analyze",
+            "tests/test_atr_provenance.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": null
+          "notes": "Option chosen: write the marker (not document the exclusion). AC (no live price + no ATR post-grace -> stop_frozen_reason = atr_unavailable): tests/test_atr_provenance.py test_on_load_without_live_price_or_atr_sets_it (fails on old code) + 2 no-write cases. Contract position_endpoints.md 2.20.1 updated; no deviation. ci_pending: 42780034645 (CI Pytest Suite); other 6 workflows success."
         },
         "ST-19": {
           "title": "Read production briefing ticker-caveat tokens and add any non-tickers",
@@ -393,21 +398,24 @@
         "ST-21": {
           "title": "Journal summary: remove the stale AI_MODEL override line, or cost the model actually used",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "in_progress",
           "assigned_to": "engine",
           "github_issue": 2217,
           "branch": "exec/2026-11-06__release-v9.16/EPIC-05",
-          "commit_sha": null,
+          "commit_sha": "f1eddc619b07b31421c1c243dbace8f903ef2385",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
           "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": [],
+          "spec_references": [
+            "docs/specs/api_contracts/ai_endpoints.md#POST /ai/journal-summary",
+            "tests/test_journal_summary_claude_audit.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
-          "last_completed_substep": null,
+          "last_completed_substep": "3.1.A.push",
           "sign_off_record": null,
           "notes": null
         },
@@ -472,7 +480,9 @@
     "ST-06",
     "ST-07",
     "ST-08",
-    "ST-16"
+    "ST-16",
+    "ST-17",
+    "ST-18"
   ],
   "open_escalations": {
     "ESC-EXEC-20261110-01": {
