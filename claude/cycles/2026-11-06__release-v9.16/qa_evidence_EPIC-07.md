@@ -47,6 +47,8 @@ Last Updated: 2026-11-10
 - **ST-30 reclassification (execution_prompt.md §5.1, LL-v2.3-EX-02):** sealed as `delegated_decision`. After the ruling resolved the decision, it was reclassified to `autonomous` for the write. `execution_state.json` records `classification: autonomous`, with the history in the story notes. Because the EPIC had a `delegated_*` story, the BLG-GOV-19 autonomous-class sign-off was not used (`qa_evidence_template.md` mixed-class note).
 - **DoQ review pass 1 (agent-mediated, 2026-11-10): Blocked.** Finding 1 was blocking: the Arc 2 report said five of the six shortfalls fell in v5.4–v5.8, but the correct figure is four, and v4.1 was omitted. Fixed, together with non-blocking findings 2, 3, 5 and 6, in the ST-29 follow-up commit. Finding 4 (the placeholder for ST-30's CI) was filled before the review completed.
 
+- **PR #2230 review (agent-mediated, on behalf of Director of Quality and Product Owner, 2026-11-10):** both reviews were Approved with Comments, and no story grade changed. Two non-blocking follow-ups were filed. `BLG-GOV-416`: the Base44 prompt file field is not yet in the `shared_standards.md` §16.3 delegation schema or `base44_frontend_prompt_owner.md` §7/§12 (ST-30 AC 2 was met in `OPERATIONAL_GUIDE.md`). `BLG-GOV-417`: ST-28 case (ii) should carry an open escalation onto the follow-up item before the source is bannered. There was also a note with no filing: for an arc shorter than 6 cycles, pass `--window` to get a rolling figure. The human QA sign-off and PO acceptance are still required at merge.
+
 ## Standard Sign-Off Block
 
 - [x] All acceptance criteria verified against canonical spec
