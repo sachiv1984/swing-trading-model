@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-09 (session — 8 new item(s) added: BLG-FE-278, BLG-FE-279, BLG-QA-254, BLG-FE-280, BLG-SPEC-228, BLG-FEAT-101, BLG-QA-255, BLG-UX-09; agent-mediated review of PR #2228, EPIC-02, `2026-11-06__release-v9.16`); prior — 2026-11-09 (session — 1 new item(s) added: BLG-FE-277; ST-05, EPIC-02, `2026-11-06__release-v9.16`); prior — 2026-11-09 (session — 2 new item(s) added: BLG-FE-275, BLG-FE-276; agent-mediated review of PR #2227, EPIC-01, `2026-11-06__release-v9.16`); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-10 (session — 2 new item(s) added: BLG-BE-208, BLG-QA-256; agent-mediated DoQ review of EPIC-05, v9.16); prior — 2026-11-09 (session — 8 new item(s) added: BLG-FE-278, BLG-FE-279, BLG-QA-254, BLG-FE-280, BLG-SPEC-228, BLG-FEAT-101, BLG-QA-255, BLG-UX-09; agent-mediated review of PR #2228, EPIC-02, `2026-11-06__release-v9.16`); prior — 2026-11-09 (session — 1 new item(s) added: BLG-FE-277; ST-05, EPIC-02, `2026-11-06__release-v9.16`); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -6352,5 +6352,45 @@ On watchlisted Signals cards "Plan this" sits alone on a row under the watchlist
 
 **Acceptance Criteria**
 - A dated Head of UX & Design decision is recorded, and any copy or layout change is implemented with Playwright coverage
+
+---
+
+### BLG-BE-208 — Use one native-entry function on every position path
+**Priority:** P4 (Low)
+**Type:** Backend Engineering / Tech Debt
+**Owner:** Head of Engineering
+**Source:** Agent-mediated DoQ review of ST-17 (EPIC-05, cycle `2026-11-06__release-v9.16`), finding 6 — 2026-11-10
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+The native-entry fallback (`fill_price`, else `entry_price × stored fx_rate`, else `× live rate`) is implemented three times: `position_service.native_entry_price()`, `position_lifecycle_service._native_entry()`, and inline in `portfolio_service.get_portfolio_summary()`. ST-17 (v9.16) made them agree so `display_status` and `position_state` match, but three copies can drift apart again.
+
+**Scope**
+- Have `_native_entry()` and `get_portfolio_summary()` call `native_entry_price()` (keeping `_native_entry()`'s caller-supplied `native_entry_price` short-circuit)
+- No behaviour change
+
+**Acceptance Criteria**
+- One implementation of the fallback remains
+- `tests/test_display_status_native_basis.py` passes unchanged
+
+---
+
+### BLG-QA-256 — Fix order-dependent log capture in the sizing fail-open test
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** QA & Testing Owner
+**Source:** Agent-mediated DoQ review of EPIC-05 (cycle `2026-11-06__release-v9.16`), finding 7 — 2026-11-10
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`tests/test_sizing_concentration.py::TestFailOpenLogging::test_exception_fails_open_and_logs_with_ticker` fails when run in the subset `-k "ticker or focus or briefing or chat or ai_"`, with or without EPIC-05's changes, yet passes alone and in the full suite. It is a deterministic test-isolation defect (QA evidence template Flaky-Test addendum, step 3), not a flaky test, so it must not be quarantined.
+
+**Scope**
+- Find the logger or `caplog` state leaking from an earlier test in that subset and fix the isolation
+
+**Acceptance Criteria**
+- The test passes in that subset, alone, and in the full suite
 
 ---

@@ -6,7 +6,7 @@
   "invoked_utc": "2026-11-09T09:15:14Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-10T08:34:17Z",
+  "last_updated_utc": "2026-11-10T09:10:16Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-02",
@@ -266,11 +266,11 @@
     },
     "EPIC-05": {
       "title": "Backend Correctness, AI Ticker Check & Spec Debt",
-      "status": "in_progress",
+      "status": "done",
       "branch": "exec/2026-11-06__release-v9.16/EPIC-05",
       "pr_number": null,
       "pr_status": null,
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-11-06__release-v9.16/qa_evidence_EPIC-05.md",
       "test_scenarios": [
         "tests/test_exit_null_fill_price.py",
@@ -330,7 +330,7 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": "Decision: all live-rate (display_status has no UNKNOWN value; display_status and stop arithmetic already live-rate). AC (NULL fill_price + NULL fx_rate: display_status and position_state agree): tests/test_display_status_native_basis.py test_null_fill_price_and_null_fx_rate_agree_on_the_live_rate + test_badge_on_the_get_positions_row_agrees_with_its_display_status (12 cases, 9 fail on old code) + GET /positions/{id} NULL fx test. Found in-story: GET /positions badged its already-native API row as entry x fx_rate (double conversion, every US row with stored fx_rate); fixed with native_entry_price carried on the row. GET /positions/{id} and GET /portfolio 500 on NULL fx_rate fixed. Contract position_endpoints.md 2.20.0 updated in the same commit; no deviation. CI on 6381ceab: all 7 workflows success (CI Pytest Suite 42779882727, Playwright smoke 42779882696)."
+          "notes": "Decision: all live-rate (display_status has no UNKNOWN value; display_status and stop arithmetic already live-rate). AC (NULL fill_price + NULL fx_rate: display_status and position_state agree): tests/test_display_status_native_basis.py test_null_fill_price_and_null_fx_rate_agree_on_the_live_rate + test_badge_on_the_get_positions_row_agrees_with_its_display_status (12 cases, 9 fail on old code) + GET /positions/{id} NULL fx test. Found in-story: GET /positions badged its already-native API row as entry x fx_rate (double conversion, every US row with stored fx_rate); fixed with native_entry_price carried on the row. GET /positions/{id} and GET /portfolio 500 on NULL fx_rate fixed. Contract position_endpoints.md 2.20.0 updated in the same commit; no deviation. CI on 6381ceab: all 7 workflows success (CI Pytest Suite 42779882727, Playwright smoke 42779882696). DoQ finding 4: response-shape test at a0f3bfb2; finding 5 (FX fetch on refresh-state / closed branch) disclosed in QA evidence; finding 6 tracked BLG-BE-208."
         },
         "ST-18": {
           "title": "Frozen-stop marker is not written when the on-load recompute has no live price",
@@ -414,7 +414,7 @@
             "date": "2026-11-10",
             "notes": "ESC-EXEC-20261110-01 resolved: option (A) context rule."
           },
-          "notes": "AC 1: ruling ESC-EXEC-20261110-01 (A) recorded at 4c88f45f before the code; clarification (MA after determiner) recorded in the escalation and committed with the code. AC 2: test_pm_as_a_ticker_is_not_given_to_the_focus / test_pm_after_a_time_still_gets_the_focus_note. AC 3: v9.14 ST-16/ST-17 and v9.15 ST-26 tests (test_briefing_summary_ticker_check.py, test_ai_stop_time_focus_attribution.py) pass unchanged; full suite 3455 passed. ai_endpoints.md 1.41. No deviation. ci_pending: CI on 50632e61."
+          "notes": "AC 1: ruling ESC-EXEC-20261110-01 (A) recorded at 4c88f45f before the code; clarification (MA after determiner) recorded in the escalation and committed with the code. AC 2: test_pm_as_a_ticker_is_not_given_to_the_focus / test_pm_after_a_time_still_gets_the_focus_note. AC 3: v9.14 ST-16/ST-17 and v9.15 ST-26 tests (test_briefing_summary_ticker_check.py, test_ai_stop_time_focus_attribution.py) pass unchanged; full suite 3455 passed. ai_endpoints.md 1.41. No deviation. CI on 50632e61: all 7 workflows success (CI Pytest 42782001835). DoQ finding 1 fix ad89d686 (PM/AM clock time); head a0f3bfb2 all 7 workflows success (CI Pytest 42787788418)."
         },
         "ST-21": {
           "title": "Journal summary: remove the stale AI_MODEL override line, or cost the model actually used",
@@ -490,6 +490,13 @@
           "notes": "Case B. AC (settings.md names src/constants/strategy.js; no docs/specs file names the old path): test_no_canonical_spec_names_the_old_module. Changelog row worded without the old path so the AC holds literally. Documentation only; no frontend change. No deviation. CI on b7becc3c: all 7 workflows success (CI Pytest Suite 42780717286).",
           "delivery_note": "docs/specs/frontend/pages/settings.md v1.10"
         }
+      },
+      "sign_off_record": {
+        "role": "Director of Quality",
+        "method": "agent_mediated",
+        "status": "cleared",
+        "date": "2026-11-10",
+        "notes": "Pass 1 Approved with 8 non-blocking findings; 1 fixed ad89d686, 3-4 fixed a0f3bfb2, 2 and 5 in evidence, 6-7 tracked BLG-BE-208/BLG-QA-256, 8 recorded as recommended check."
       }
     }
   },
