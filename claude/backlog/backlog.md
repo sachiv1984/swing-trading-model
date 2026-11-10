@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-10 (session — 3 new item(s) added: BLG-BE-209, BLG-BE-210, BLG-QA-257; agent-mediated DoQ and PO review of PR #2229, EPIC-05, v9.16); prior — 2026-11-10 (session — 2 new item(s) added: BLG-BE-208, BLG-QA-256; agent-mediated DoQ review of EPIC-05, v9.16); prior — 2026-11-09 (session — 8 new item(s) added: BLG-FE-278, BLG-FE-279, BLG-QA-254, BLG-FE-280, BLG-SPEC-228, BLG-FEAT-101, BLG-QA-255, BLG-UX-09; agent-mediated review of PR #2228, EPIC-02, `2026-11-06__release-v9.16`); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-10 (session — 2 new item(s) added: BLG-GOV-416, BLG-GOV-417; agent-mediated DoQ and PO review of PR #2230, EPIC-07, v9.16); prior — 2026-11-10 (session — 1 new item(s) added: BLG-GOV-415; ST-29 AC 4, EPIC-07, v9.16); prior — 2026-11-10 (session — 3 new item(s) added: BLG-BE-209, BLG-BE-210, BLG-QA-257; agent-mediated DoQ and PO review of PR #2229, EPIC-05, v9.16); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -6453,5 +6453,72 @@ ST-17 is a backend change (its ACs are unit tests), but it changes what the Posi
 
 **Acceptance Criteria**
 - On staging, a US position up in dollars shows `PROFITABLE` (or `EXIT ZONE`) with View Trail, one down shows `LOSING` without it, and both agree with the Risk page; the date and result are recorded
+
+---
+
+### BLG-GOV-415 — Make the arc velocity report an arc-close output and a Release Planning input for arc-boundary cycles
+**Priority:** P3 (Low)
+**Type:** Governance Process
+**Owner:** PMO Lead; Head of Specs Team
+**Source:** ST-29 (EPIC-07, cycle `2026-11-06__release-v9.16`, `BLG-GOV-26` Scope bullets 2–3 and restated AC 4) — 2026-11-10
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+ST-29 produced `docs/governance/arc_velocity_report_arc2.md` and the reusable generator `scripts/arc_velocity_report.py`. No governance prompt runs the generator at arc close (`post_ship_closure.md`) or reads the report at an arc-boundary Release Planning (`release_planning_prompt.md`), so `BLG-GOV-26`'s "updated at arc close" and "Input to release planning engine for arc-boundary cycles" depend on someone remembering. ST-29 AC 4 allows filing this instead of a prompt change. `release_planning_prompt.md` is already over the 68,500-byte cap (baseline 92,197), so room for a new step must be found first.
+
+**Scope**
+- `post_ship_closure.md`: at the closure that marks an arc complete in `current_roadmap.md`, run `scripts/arc_velocity_report.py` for that arc's release range and commit `docs/governance/arc_velocity_report_arc<N>.md`
+- `release_planning_prompt.md`: for the first release of a new arc, read the latest arc velocity report as a velocity/capacity input
+- Apply the CLAUDE.md §6 checklist to both files
+
+**Acceptance Criteria**
+- `post_ship_closure.md` names the arc-close trigger and the generator command
+- `release_planning_prompt.md` names the arc-boundary read and what it informs
+- Both files stay within their `scripts/prompt_size_baseline.json` entries, or any baseline raise is reasoned in its `prompt_change_log.md` row
+
+---
+
+### BLG-GOV-416 — Add the Base44 prompt file field to the delegation record schema and the Base44 owner charter
+**Priority:** P3 (Low)
+**Type:** Governance Process
+**Owner:** Head of Specs Team; Base44 Frontend Prompt Owner
+**Source:** PR #2230 review (EPIC-07, cycle `2026-11-06__release-v9.16`, ST-30, agent-mediated Director of Quality and Product Owner review) — 2026-11-10
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+ST-30 wrote the Base44 prompt versioning convention (`ESC-EXEC-20261110-02` ruling) into `OPERATIONAL_GUIDE.md` §8.3 only, which met its AC 2. The engine writes delegation records from `shared_standards.md` §16.3, whose Delegation Record Format has `**Base44 prompt draft:**` but no `**Base44 prompt file:**` field. `execution_prompt.md` §3.1.B step 2 and `base44_frontend_prompt_owner.md` §7 (Prompt Filing) and §12 (mandatory delegation fields) do not mention it either. The playbook defers to these documents, so the next `delegated_frontend` record can omit the field while still meeting the schema.
+
+**Scope**
+- `shared_standards.md` §16.3: add `**Base44 prompt file:**` (`delegated_frontend` only; `pending — not yet filed` until filed) to the Delegation Record Format and the `delegated_frontend` compliance rule
+- `base44_frontend_prompt_owner.md` §7: the filed prompt carries a `**Story:**` header line; §12: list the new field
+- Point `OPERATIONAL_GUIDE.md` §8.3 at §16.3 as the schema; apply the CLAUDE.md §6 checklist to each file changed
+
+**Acceptance Criteria**
+- `shared_standards.md` §16.3's Delegation Record Format and compliance rules name `**Base44 prompt file:**` for `delegated_frontend` records
+- `base44_frontend_prompt_owner.md` §7 requires the `**Story:**` header line and §12 lists the field
+- The CLAUDE.md §6 checklist is complete for every file bumped, and `scripts/check_prompt_size_budget.py` passes
+
+---
+
+### BLG-GOV-417 — Split-achievability case (ii): carry an open escalation onto the follow-up item before bannering the source
+**Priority:** P3 (Low)
+**Type:** Governance Process
+**Owner:** Head of Specs Team; PMO Lead
+**Source:** PR #2230 review (EPIC-07, cycle `2026-11-06__release-v9.16`, ST-28, agent-mediated Director of Quality review) — 2026-11-10
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`post_ship_closure.md` v2.46 STEP 3.1 case (ii) banners a partly-shipped source item ✅ COMPLETE when every unmet AC has moved to a named follow-up backlog item. The carve-out also fires when an open, carried-forward escalation names the source item. If such an escalation exists and the follow-up item does not cite it, case (ii) still banners the source, and STEP 12 (`groom backlog`) can archive it in the same session. The escalation then points at an archived item, which is the cross-reference loss the carve-out was written to prevent (`BLG-GOV-264`/`ESC-EXEC-20260818-02`).
+
+**Scope**
+- In STEP 3.1 case (ii), require every open escalation that names the source item to be cited on the follow-up item that carries its AC (or its `open_escalations` entry updated to name the follow-up) before the source is bannered; otherwise case (i) applies
+- Apply the CLAUDE.md §6 checklist; keep `post_ship_closure.md` within its prompt size baseline
+
+**Acceptance Criteria**
+- STEP 3.1 case (ii) states the escalation re-pointing condition and falls back to case (i) when it is not met
+- `scripts/check_prompt_size_budget.py` passes, or any baseline raise is reasoned in the `prompt_change_log.md` row
 
 ---

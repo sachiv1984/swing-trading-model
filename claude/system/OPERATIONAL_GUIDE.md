@@ -4,8 +4,8 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.254
-**Last Updated:** 2026-11-06 (`ESC-CLOSE-20261106-02` ruling — release_planning_prompt.md v2.72, §1.4c step 0 programme-phase hold); prior — 2026-11-06 (post-ship closure `2026-11-03__release-v9.15` STEP 8 — execution_prompt.md v3.93, release_planning_prompt.md v2.71, delivery_verification_prompt.md v3.17, post_ship_closure.md v2.45); prior — 2026-11-06 (BLG-GOV-395, Head of Specs Team, user-directed — release_planning_prompt.md v2.70, STEP 7 sync writes `execution_state_path`; renumbered from v4.251 at merge with ST-37); prior history retained — see prior entries in version control
+**Version:** 4.256
+**Last Updated:** 2026-11-10 (sprint execution `2026-11-06__release-v9.16` ST-30, BLG-GOV-198 — §8.3 Base44 prompt versioning convention, `ESC-EXEC-20261110-02` ruling); prior — 2026-11-10 (sprint execution `2026-11-06__release-v9.16` ST-28, BLG-GOV-413 — post_ship_closure.md v2.46, STEP 3.1 split-achievability carve-out case (i)/(ii)); prior — 2026-11-06 (`ESC-CLOSE-20261106-02` ruling — release_planning_prompt.md v2.72, §1.4c step 0 programme-phase hold); prior history retained — see prior entries in version control
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -937,6 +937,11 @@ Delegated items are tracked in `delegation_log.md`. Nothing is silently skipped.
 
 **Frontend delegation:** Engine must produce a complete Base44 prompt draft (all six sections: context, change, API contract, behaviour rules, non-functional rules, expected outcome) as part of the delegation record.
 
+**Base44 prompt versioning convention (ST-30, BLG-GOV-198, v9.16; Base44 Frontend Prompt Owner ruling 2026-11-10, `ESC-EXEC-20261110-02`):** the ST-id is recorded in two places, each pointing to the other.
+- **Filed prompt header.** Every prompt filed at `docs/frontend/prompts/{feature-slug}-{version}.md` (`base44_frontend_prompt_owner.md` §7) carries a `**Story:** ST-xx (BLG-xx, EPIC-xx, vX.Y)` line in its header block. A regenerated prompt (`-v2`, `-v3`, ...) names the story that asked for the regeneration.
+- **Delegation record field.** Every `delegated_frontend` record in `delegation_log.md` carries `**Base44 prompt file:** docs/frontend/prompts/{feature-slug}-{version}.md` next to its `ST Item` field. It is set when the prompt is filed, and reads `pending — not yet filed` until then.
+- **Example (dry run on an existing pair):** `DEL-20260629-02` (v6.3, `**ST Item:** ST-11`) would add `**Base44 prompt file:** docs/frontend/prompts/strategy-benchmark-v1.md`, and that file's header already reads `**Story:** ST-11 (BLG-FEAT-53, EPIC-03, v6.3)`. The question "which prompt produced this component?" is then answered from either side.
+
 ### 8.4 Key Artefacts Produced
 
 | Artefact | Location | Purpose |
@@ -1063,7 +1068,7 @@ If test scenario gaps are found (scenarios that exist in `docs/testing/` but wer
 
 ## 10. Post-Ship Closure
 
-**Source prompt:** `claude/system/post_ship_closure.md` (v2.45)
+**Source prompt:** `claude/system/post_ship_closure.md` (v2.46)
 **Process document:** None — the former process document `docs/team_skills/pmo/processess/post-ship_closure.md` was retired 2026-03-13 (commit `11db3666`, deleted with its whole `processess/` directory); `claude/system/post_ship_closure.md` is the sole authority.
 **Owner:** PMO Lead
 **Trigger:** Phase 4 complete — `.claude_current_state.json` status = `Verified` or `Verified_with_deviations`
@@ -1382,8 +1387,8 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 4.254 |
-| Last Updated | 2026-11-06 |
+| Version | 4.256 |
+| Last Updated | 2026-11-10 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.13 |
 | Idea Template | `claude/system/idea_template.md` |
@@ -1405,7 +1410,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | QA Evidence Template | `claude/system/templates/qa_evidence_template.md` v1.18 |
 | Verification Engine Source | `claude/system/delivery_verification_prompt.md` v3.17 |
 | Ideas Housekeeping Engine | `claude/system/ideas_housekeeping_prompt.md` v1.2 |
-| Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.45 |
+| Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.46 |
 | Shared Standards | `claude/system/shared_standards.md` v3.41 |
 | Governance Invariants | `claude/system/invariants.md` v1.0 |
 | Lessons Learnt Prompt | `claude/system/lessons_learnt_prompt.md` v1.17 |
@@ -1523,6 +1528,8 @@ Living references introduced in v3.2: `component_inventory.md`, `design_system.m
 **Header-drift prevention (added v4.85, roadmap rebalance 2026-07-08__scheduled, Friction Item — 4th recurrence of this exact pattern per the 4.79/4.80/4.81 entries below):** Before bumping the top `**Version:**`/`**Last Updated:**` header fields, read the highest version number already present in this table's top row — do not increment from the header field alone, since it has drifted below the table's actual latest entry on at least 4 prior occasions.
 
 | Version | Date | Change Summary |
+| 4.256 | 2026-11-10 | **Sprint execution `2026-11-06__release-v9.16` EPIC-07/ST-30 (`BLG-GOV-198`), Base44 Frontend Prompt Owner ruling 2026-11-10 (`ESC-EXEC-20261110-02`, user acting in role) — no source prompt bumped.** Frontend delegation text gains the Base44 prompt versioning convention: each filed prompt carries a `**Story:**` header line, and each `delegated_frontend` delegation record carries a `**Base44 prompt file:**` field, with a dry-run example on `DEL-20260629-02`/`strategy-benchmark-v1.md`. §14 self-row and header 4.255→4.256. |
+| 4.255 | 2026-11-10 | **Sprint execution `2026-11-06__release-v9.16` EPIC-07/ST-28 (`BLG-GOV-413`) — 1 source prompt bumped.** `post_ship_closure.md` v2.45→v2.46: STEP 3.1 split-achievability carve-out distinguishes (i) a remainder tracked only by an escalation or the source item (keep open) from (ii) every unmet AC moved to a named follow-up backlog item filed this cycle (banner the source, naming the follow-ups; `BLG-AI-23`/`BLG-AI-27` example). §10 source-prompt line and §14 Post-Ship Closure Engine row updated; §14 self-row and header 4.254→4.255. |
 | 4.254 | 2026-11-06 | **`ESC-CLOSE-20261106-02` ruling, option (b) (Head of Specs Team with the Product Owner, agent-mediated per §5.3, user-directed) — 1 source prompt bumped.** `release_planning_prompt.md` v2.71→v2.72: §1.4c step 0 programme-phase hold. Later-phase P2/P3 items of a §3 `### Programme plan` subsection are held until their phase's release unless a dated PO reason is recorded. §6B source-prompt line and §14 Release Engine Source row updated; §14 self-row and header 4.253→4.254. |
 | 4.253 | 2026-11-06 | **Post-ship closure `2026-11-03__release-v9.15` STEP 8 — 4 source prompts bumped (immediate lessons-learnt actions).** `execution_prompt.md` v3.92→v3.93: §3.2.A/§7 same-branch fix banner (LL-v9.15-P3-01); STEP 5.2 in-flight return note timing (LL-v9.15-P3-02); STEP 5.1 PO + DoQ acceptance record for P1/P2 found defects (LL-v9.15-P4-02). `release_planning_prompt.md` v2.70→v2.71: STEP 4 calibration reads Scope or AC text (LL-v9.15-Release-03). `delivery_verification_prompt.md` v3.16→v3.17: STEP 1 accepts `deferred_at_planning` (LL-v9.15-P4-01). `post_ship_closure.md` v2.44→v2.45: STEP 3.1 banners a planning-deferred item already met or superseded (LL-v9.15-Release-02). §6B, §8, §9 and §10 source-prompt lines and §14 rows updated; §14 self-row and header 4.252→4.253. |
 | 4.252 | 2026-11-06 | **`BLG-GOV-395` applied, Head of Specs Team, user-directed ("BLG-GOV-395 - fix now") — 1 source prompt bumped.** `release_planning_prompt.md` v2.69→v2.70: STEP 7's intermediate sync writes `execution_state_path` atomically with `active_cycle`; `state_field_owners.json` names Release Planning as owner. §6B source-prompt line and §14 row updated. Authored 2026-11-03 as 4.251 / v2.69; renumbered at merge (CLAUDE.md §8 step 2a) because ST-37 shipped a different change under both numbers. |

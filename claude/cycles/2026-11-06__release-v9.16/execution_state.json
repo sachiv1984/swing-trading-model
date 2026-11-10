@@ -6,7 +6,7 @@
   "invoked_utc": "2026-11-09T09:15:14Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-10T09:27:07Z",
+  "last_updated_utc": "2026-11-10T09:58:00Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-02",
@@ -500,6 +500,105 @@
       },
       "merged_utc": "2026-11-10T09:26:42Z",
       "merge_commit": "8a51d3ab"
+    },
+    "EPIC-07": {
+      "title": "Governance Process",
+      "status": "done",
+      "branch": "exec/2026-11-06__release-v9.16/EPIC-07",
+      "pr_number": 2230,
+      "pr_status": "open",
+      "qa_signed_off": true,
+      "qa_evidence_log": "claude/cycles/2026-11-06__release-v9.16/qa_evidence_EPIC-07.md",
+      "test_scenarios": [
+        "tests/test_arc_velocity_report.py"
+      ],
+      "stories": {
+        "ST-28": {
+          "title": "Split-achievability carve-out: close a source item whose whole remainder has its own backlog items",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 2224,
+          "branch": "exec/2026-11-06__release-v9.16/EPIC-07",
+          "commit_sha": "5243368bac9ea875a096a1a7b7935d658d3a2c0c",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-11-10T09:30:50Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/system/post_ship_closure.md#3.1 Mark shipped items complete"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
+          "sign_off_record": null,
+          "notes": "AC 1 (STEP 3.1 states both cases, citing BLG-AI-23/BLG-AI-27 as case (ii)): post_ship_closure.md v2.46 STEP 3.1 carve-out cases (i) keep open / (ii) banner the source. AC 2 is post-merge (sealed sprint_backlog.md), tracked by BLG-GOV-414. CLAUDE.md \u00a76: OPERATIONAL_GUIDE.md v4.255, post_ship_closure_changelog.md 2.46, prompt_change_log.md rows. Size budget held (72,734 <= 72,930 baseline) by moving 3 precedent sentences to the changelog. Deviation check: none (governance prompt, no canonical spec divergence). CI on 5243368b: all 7 workflows success (CI Pytest Suite 42791340576)."
+        },
+        "ST-29": {
+          "title": "Arc velocity tracking dashboard",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 2225,
+          "branch": "exec/2026-11-06__release-v9.16/EPIC-07",
+          "commit_sha": "c196c0948bd8bfbd35f71b83423b693f18bdcda2",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-11-10T09:33:50Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/governance/arc_velocity_report_arc2.md",
+            "claude/cycles/velocity_metrics.md",
+            "tests/test_arc_velocity_report.py"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
+          "sign_off_record": null,
+          "notes": "Case B (documentation-creation). AC 1 (Arc 2 report v3.1-v6.1 from velocity_metrics.md and cycle records): docs/governance/arc_velocity_report_arc2.md, 31 cycles. AC 2 (reusable for Arc 3+): scripts/arc_velocity_report.py + reuse steps; tests/test_arc_velocity_report.py 7 passed locally. AC 3 met at seal (PMO Lead, agent-mediated). AC 4: no governance prompt changed; filed BLG-GOV-415. Deviation check: none. CI on c196c094: all 7 workflows success (CI Pytest Suite 42791766580)."
+        },
+        "ST-30": {
+          "title": "Base44 prompt versioning convention",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 2226,
+          "branch": "exec/2026-11-06__release-v9.16/EPIC-07",
+          "commit_sha": "1c21656dc61be09eac81d5e63df3d710f1c42705",
+          "delegation_record_id": null,
+          "blocked_since_utc": "2026-11-10T09:34:25Z",
+          "unblock_criteria": "Dated Base44 Frontend Prompt Owner ruling recorded in ESC-EXEC-20261110-02 resolution",
+          "completed_utc": "2026-11-10T09:38:21Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/system/OPERATIONAL_GUIDE.md#8.3 Delegation Model"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
+          "sign_off_record": {
+            "role": "Base44 Frontend Prompt Owner",
+            "method": "human_in_session",
+            "status": "cleared",
+            "date": "2026-11-10",
+            "reference": "ESC-EXEC-20261110-02"
+          },
+          "notes": "Was delegated_decision; ESC-EXEC-20261110-02 resolved 2026-11-10T09:37:55Z (ruling: both). Reclassified to autonomous for the write. AC 1: ruling dated 2026-11-10 in ESC-EXEC-20261110-02. AC 2: OPERATIONAL_GUIDE.md v4.256 \u00a78.3 (CLAUDE.md \u00a76). AC 3: dry-run on DEL-20260629-02 / strategy-benchmark-v1.md recorded in \u00a78.3. Case B. Deviation check: none. CI on 1c21656d: all 7 workflows success (CI Pytest Suite 42792403600)."
+        }
+      },
+      "sign_off_record": {
+        "role": "Director of Quality",
+        "method": "agent_mediated",
+        "status": "cleared",
+        "date": "2026-11-10",
+        "passes": 2,
+        "reference": "qa_evidence_EPIC-07.md Standard Sign-Off Block"
+      }
     }
   },
   "deferred_at_planning": [],
@@ -521,7 +620,10 @@
     "ST-20",
     "ST-21",
     "ST-22",
-    "ST-23"
+    "ST-23",
+    "ST-28",
+    "ST-29",
+    "ST-30"
   ],
   "open_escalations": {
     "ESC-EXEC-20261110-01": {
@@ -536,6 +638,19 @@
       "resolved_utc": "2026-11-10T08:12:43Z",
       "resolved_by": "AI Compliance & Governance Officer (the user, in session)",
       "resolution_summary": "(A) context rule: PM/AM non-tickers only after a time, MA only after a number or period, ON only after RISK; otherwise tickers on the briefing check and the chat focus rule. Note text, result values and fail-open unchanged."
+    },
+    "ESC-EXEC-20261110-02": {
+      "cycle": "2026-11-06__release-v9.16",
+      "summary": "ST-30/EPIC-07 - Base44 Frontend Prompt Owner ruling: where the ST-id is recorded for each Base44 prompt draft (comment header, delegation log field, or both)",
+      "trigger_type": "Lifecycle",
+      "owning_authority": "Base44 Frontend Prompt Owner",
+      "raised_utc": "2026-11-10T09:34:25Z",
+      "sla_due_utc": "2026-11-11T09:34:25Z",
+      "blocks_execution": false,
+      "disposition": "Resolved",
+      "resolved_utc": "2026-11-10T09:37:55Z",
+      "resolved_by": "Base44 Frontend Prompt Owner (the user, in session)",
+      "resolution_summary": "Both: **Story:** header line in each filed Base44 prompt, and a **Base44 prompt file:** field in each delegated_frontend delegation record. Written into OPERATIONAL_GUIDE.md frontend delegation text (CLAUDE.md \u00a76)."
     }
   },
   "merge_gate": {
