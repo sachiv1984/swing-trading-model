@@ -264,10 +264,10 @@ export default function ExitModal({ position, open, onClose, onConfirm, preselec
   return (
     <Dialog open={open} onOpenChange={onClose}>
       {/* GRID SHELL so the body row always scrolls */}
-      <DialogContent className="bg-slate-900 border-slate-700 text-white max-w-md max-h-[90vh] grid grid-rows-[auto_1fr_auto]">
+      <DialogContent className="bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white max-w-md max-h-[90vh] grid grid-rows-[auto_1fr_auto]">
         {/* Row 1: Header */}
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-rose-400">
+          <DialogTitle className="flex items-center gap-2 text-rose-700 dark:text-rose-400">
             <AlertTriangle className="w-5 h-5" />
             Exit Position
           </DialogTitle>
@@ -303,18 +303,18 @@ export default function ExitModal({ position, open, onClose, onConfirm, preselec
               )}
 
               {/* Top summary */}
-              <div className="p-3 rounded-lg bg-slate-800/50 border border-slate-700/50 grid grid-cols-3 gap-3 text-center">
+              <div className="p-3 rounded-lg bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 grid grid-cols-3 gap-3 text-center">
                 <div>
                   <div className="text-xs text-slate-600 dark:text-slate-400">Ticker</div>
-                  <div className="font-medium text-white">{position.ticker}</div>
+                  <div className="font-medium text-slate-900 dark:text-white">{position.ticker}</div>
                 </div>
                 <div>
                   <div className="text-xs text-slate-600 dark:text-slate-400">Total Shares</div>
-                  <div className="font-medium text-white">{position.shares}</div>
+                  <div className="font-medium text-slate-900 dark:text-white">{position.shares}</div>
                 </div>
                 <div>
                   <div className="text-xs text-slate-600 dark:text-slate-400">Entry Price</div>
-                  <div className="font-medium text-white">
+                  <div className="font-medium text-slate-900 dark:text-white">
                     {formatCurrency(Number(position.entry_price || 0), { currency: exitCurrency })}
                   </div>
                 </div>
@@ -334,10 +334,10 @@ export default function ExitModal({ position, open, onClose, onConfirm, preselec
                       onChange={(e) =>
                         setExitData({ ...exitData, shares: e.target.value })
                       }
-                      className="bg-slate-800/50 border-slate-700 text-white h-9"
+                      className="bg-slate-100 dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white h-9"
                     />
                     {!isValidShares && exitData.shares && (
-                      <p className="text-xs text-rose-400 mt-1">
+                      <p className="text-xs text-rose-700 dark:text-rose-400 mt-1">
                         Must be between 0.01 and {position.shares}
                       </p>
                     )}
@@ -354,10 +354,10 @@ export default function ExitModal({ position, open, onClose, onConfirm, preselec
                       onChange={(e) =>
                         setExitData({ ...exitData, exit_price: e.target.value })
                       }
-                      className="bg-slate-800/50 border-slate-700 text-white h-9"
+                      className="bg-slate-100 dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white h-9"
                     />
                     {!isValidPrice && exitData.exit_price && (
-                      <p className="text-xs text-rose-400 mt-1">
+                      <p className="text-xs text-rose-700 dark:text-rose-400 mt-1">
                         Price must be greater than 0
                       </p>
                     )}
@@ -373,7 +373,7 @@ export default function ExitModal({ position, open, onClose, onConfirm, preselec
                       onChange={(e) =>
                         setExitData({ ...exitData, exit_date: e.target.value })
                       }
-                      className="bg-slate-800/50 border-slate-700 text-white h-9"
+                      className="bg-slate-100 dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white h-9"
                     />
                   </div>
                   {position.market === "US" ? (
@@ -393,7 +393,7 @@ export default function ExitModal({ position, open, onClose, onConfirm, preselec
                             exit_fx_rate: e.target.value,
                           })
                         }
-                        className="bg-slate-800/50 border-slate-700 text-white h-9"
+                        className="bg-slate-100 dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white h-9"
                       />
                       <p id="exit-fx-rate-hint" data-testid="fx-rate-hint" className="text-xs text-slate-600 dark:text-slate-400">How many US dollars £1 buys.</p>
                     </div>
@@ -408,10 +408,10 @@ export default function ExitModal({ position, open, onClose, onConfirm, preselec
                       setExitData({ ...exitData, exit_reason: value })
                     }
                   >
-                    <SelectTrigger aria-label="Exit reason" data-testid="exit-reason-select" className="bg-slate-800/50 border-slate-700 text-white h-9">
+                    <SelectTrigger aria-label="Exit reason" data-testid="exit-reason-select" className="bg-slate-100 dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white h-9">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent className="bg-slate-800 border-slate-700">
+                    <SelectContent className="bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700">
                       {EXIT_REASON_VALUES.map((value) => (
                         <SelectItem key={value} value={value}>{EXIT_REASONS[value].label}</SelectItem>
                       ))}
@@ -439,13 +439,13 @@ export default function ExitModal({ position, open, onClose, onConfirm, preselec
                       }
                     }}
                     placeholder="How did the trade play out? What did you learn?"
-                    className="bg-slate-800/50 border-slate-700 text-app-fg placeholder:text-slate-600 dark:placeholder:text-slate-400 focus:border-cyan-500/50 resize-none"
+                    className="bg-slate-100 dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 text-app-fg placeholder:text-slate-600 dark:placeholder:text-slate-400 focus:border-cyan-500/50 resize-none"
                     rows={3}
                   />
                   <div className="flex justify-end">
                     <span className={cn(
                       "text-xs",
-                      exitData.exit_note.length > 450 ? "text-rose-400" : "text-slate-600 dark:text-slate-400"
+                      exitData.exit_note.length > 450 ? "text-rose-700 dark:text-rose-400" : "text-slate-600 dark:text-slate-400"
                     )}>
                       {exitData.exit_note.length}/500
                     </span>
@@ -455,8 +455,8 @@ export default function ExitModal({ position, open, onClose, onConfirm, preselec
 
               {/* Breakdown */}
               {exitData.exit_price && exitData.shares ? (
-                <div className="p-3 rounded-lg bg-slate-800/50 border border-slate-700/50 space-y-2">
-                  <p className="text-xs font-semibold text-slate-300 mb-2">
+                <div className="p-3 rounded-lg bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 space-y-2">
+                  <p className="text-xs font-semibold text-slate-700 dark:text-slate-300 mb-2">
                     Exit Cost Breakdown
                   </p>
 
@@ -465,7 +465,7 @@ export default function ExitModal({ position, open, onClose, onConfirm, preselec
                       <span className="text-slate-600 dark:text-slate-400">
                         Gross Value {position.market === "US" ? "(USD)" : ""}
                       </span>
-                      <span className="text-white">
+                      <span className="text-slate-900 dark:text-white">
                         {formatCurrency(grossProceeds, { currency: exitCurrency })}
                       </span>
                     </div>
@@ -473,7 +473,7 @@ export default function ExitModal({ position, open, onClose, onConfirm, preselec
                     {/* ALWAYS show commission (even if $0.00) */}
                     <div className="flex justify-between">
                       <span className="text-slate-600 dark:text-slate-400">Commission</span>
-                      <span className={commission > 0 ? "text-rose-400" : "text-slate-600 dark:text-slate-400"}>
+                      <span className={commission > 0 ? "text-rose-700 dark:text-rose-400" : "text-slate-600 dark:text-slate-400"}>
                         {commission > 0 ? "-" : ""}
                         {formatCurrency(commission, { currency: exitCurrency })}
                       </span>
@@ -483,7 +483,7 @@ export default function ExitModal({ position, open, onClose, onConfirm, preselec
                     {position.market === "US" && (
                       <div className="flex justify-between">
                         <span className="text-slate-600 dark:text-slate-400">FX Fee (0.15%)</span>
-                        <span className="text-rose-400">
+                        <span className="text-rose-700 dark:text-rose-400">
                           -{formatCurrency(fxFee, { currency: "USD" })}
                         </span>
                       </div>
@@ -496,7 +496,7 @@ export default function ExitModal({ position, open, onClose, onConfirm, preselec
                           <span className="text-slate-600 dark:text-slate-400">
                             Net Proceeds (USD)
                           </span>
-                          <span className="text-white">
+                          <span className="text-slate-900 dark:text-white">
                             {formatCurrency(netProceeds, { currency: "USD" })}
                           </span>
                         </div>
@@ -511,26 +511,26 @@ export default function ExitModal({ position, open, onClose, onConfirm, preselec
                       </>
                     )}
                     
-                    <div className="flex justify-between pt-1.5 border-t border-slate-700 font-medium">
-                      <span className="text-slate-300">Net Proceeds (GBP)</span>
-                      <span className="text-white">
+                    <div className="flex justify-between pt-1.5 border-t border-slate-200 dark:border-slate-700 font-medium">
+                      <span className="text-slate-700 dark:text-slate-300">Net Proceeds (GBP)</span>
+                      <span className="text-slate-900 dark:text-white">
                         {formatCurrency(netProceedsGBP)}
                       </span>
                     </div>
                   </div>
 
-                  <div className="space-y-1.5 pt-2 border-t-2 border-slate-700 text-xs">
+                  <div className="space-y-1.5 pt-2 border-t-2 border-slate-200 dark:border-slate-700 text-xs">
                     <div className="flex justify-between">
                       <span className="text-slate-600 dark:text-slate-400">Entry Cost (incl. fees)</span>
-                      <span className="text-white">
+                      <span className="text-slate-900 dark:text-white">
                         {formatCurrency(entryCostForExitShares)}
                       </span>
                     </div>
-                    <div className="flex justify-between font-bold pt-1.5 border-t border-slate-700">
-                      <span className={pnl > 0 ? "text-emerald-400" : pnl < 0 ? "text-rose-400" : "text-slate-300"}>
+                    <div className="flex justify-between font-bold pt-1.5 border-t border-slate-200 dark:border-slate-700">
+                      <span className={pnl > 0 ? "text-emerald-700 dark:text-emerald-400" : pnl < 0 ? "text-rose-700 dark:text-rose-400" : "text-slate-700 dark:text-slate-300"}>
                         Realized P&L
                       </span>
-                      <span className={pnl > 0 ? "text-emerald-400" : pnl < 0 ? "text-rose-400" : "text-slate-300"}>
+                      <span className={pnl > 0 ? "text-emerald-700 dark:text-emerald-400" : pnl < 0 ? "text-rose-700 dark:text-rose-400" : "text-slate-700 dark:text-slate-300"}>
                         {formatCurrency(pnl, { signed: true })} ({formatPercent(pnlPercent, { signed: true })})
                       </span>
                     </div>
@@ -546,7 +546,7 @@ export default function ExitModal({ position, open, onClose, onConfirm, preselec
           <Button
             variant="ghost"
             onClick={onClose}
-            className="text-slate-600 dark:text-slate-400 hover:text-white hover:bg-slate-800"
+            className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"
           >
             Cancel
           </Button>

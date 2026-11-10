@@ -135,10 +135,10 @@ export default function PositionSizingWidget({
   const status = getStatus();
 
   return (
-    <div className="rounded-xl bg-slate-800/50 border border-slate-700/50 p-4 space-y-3">
+    <div className="rounded-xl bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 p-4 space-y-3">
       <div className="flex items-center gap-2">
-        <Ruler className="w-4 h-4 text-slate-400" />
-        <span className="text-sm font-medium text-slate-300">Position Sizing</span>
+        <Ruler className="w-4 h-4 text-slate-600 dark:text-slate-400" />
+        <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Position Sizing</span>
       </div>
 
       <div className="grid grid-cols-2 gap-4">
@@ -151,24 +151,24 @@ export default function PositionSizingWidget({
             max="100"
             value={riskPercent}
             onChange={(e) => setRiskPercent(e.target.value)}
-            className="bg-slate-900/60 border-slate-700 text-white h-9 text-sm"
+            className="bg-slate-50 dark:bg-slate-900/60 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white h-9 text-sm"
           />
         </div>
         <div className="space-y-1.5">
           <Label className="text-slate-600 dark:text-slate-400 text-xs">Suggested Shares</Label>
           <div
             className={cn(
-              "h-9 px-3 rounded-md border bg-slate-900/60 border-slate-700 flex items-center",
+              "h-9 px-3 rounded-md border bg-slate-50 dark:bg-slate-900/60 border-slate-200 dark:border-slate-700 flex items-center",
               isValid && !cashSufficient && "opacity-60"
             )}
           >
             {sizingLoading ? (
-              <Loader2 className="w-4 h-4 text-slate-400 animate-spin" />
+              <Loader2 className="w-4 h-4 text-slate-600 dark:text-slate-400 animate-spin" />
             ) : (
               <span
                 className={cn(
                   "text-sm font-medium",
-                  isValid && cashSufficient && "text-cyan-400",
+                  isValid && cashSufficient && "text-cyan-700 dark:text-cyan-400",
                   (!isValid || !cashSufficient) && "text-slate-600 dark:text-slate-400",
                   isValid && !cashSufficient && "line-through"
                 )}
@@ -196,7 +196,7 @@ export default function PositionSizingWidget({
       )}
 
       {status?.type === "amber" && (
-        <p className="text-amber-400 text-xs">{status.text}</p>
+        <p className="text-amber-700 dark:text-amber-400 text-xs">{status.text}</p>
       )}
       {status?.type === "grey" && (
         <p className="text-slate-600 dark:text-slate-400 text-xs">{status.text}</p>
@@ -207,7 +207,7 @@ export default function PositionSizingWidget({
           variant="outline"
           size="sm"
           onClick={handleUseSuggested}
-          className="w-full bg-slate-700/50 border-slate-600 text-slate-300 hover:bg-slate-700 hover:text-white text-xs h-8"
+          className="w-full bg-slate-200 dark:bg-slate-700/50 border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white text-xs h-8"
         >
           Use suggested shares
         </Button>
