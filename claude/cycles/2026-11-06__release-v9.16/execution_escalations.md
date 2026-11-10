@@ -37,4 +37,5 @@ Last Updated: 2026-11-10
 - **Unblock criteria:** A dated ruling is recorded in this escalation's resolution. The engine then writes the convention to the place the ruling names (AC 2) and records the AC 3 example.
 - **SLA due-by:** 2026-11-11T09:34:25Z (24h — Lifecycle)
 - **Blocks execution:** No
-- **Disposition:** Open
+- **Disposition:** Resolved
+- **Resolution summary (2026-11-10T09:37:55Z):** Base44 Frontend Prompt Owner ruling, given in session by the user acting in that role, dated 2026-11-10: **both.** (1) Every filed Base44 prompt (`docs/frontend/prompts/{feature-slug}-{version}.md`) carries a `**Story:** ST-xx (BLG-xx, EPIC-xx, vX.Y)` header line. (2) Every `delegated_frontend` delegation record carries a `**Base44 prompt file:**` field with that filed prompt's path, set when the prompt is filed. Written into the `OPERATIONAL_GUIDE.md` frontend delegation text under the CLAUDE.md §6 checklist (AC 2). AC 3 is met by a recorded dry-run: `DEL-20260629-02` (v6.3 ST-11) with `docs/frontend/prompts/strategy-benchmark-v1.md`.

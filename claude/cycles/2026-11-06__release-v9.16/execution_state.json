@@ -563,8 +563,8 @@
         },
         "ST-30": {
           "title": "Base44 prompt versioning convention",
-          "classification": "delegated_decision",
-          "status": "blocked_decision",
+          "classification": "autonomous",
+          "status": "in_progress",
           "assigned_to": "engine",
           "github_issue": 2226,
           "branch": "exec/2026-11-06__release-v9.16/EPIC-07",
@@ -580,15 +580,13 @@
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "Escalated ESC-EXEC-20261110-02 (Base44 Frontend Prompt Owner, 24h Lifecycle SLA)."
+          "notes": "Was delegated_decision; ESC-EXEC-20261110-02 resolved 2026-11-10T09:37:55Z (ruling: both). Reclassified to autonomous for the write."
         }
       }
     }
   },
   "deferred_at_planning": [],
-  "blocked_items": [
-    "ST-30"
-  ],
+  "blocked_items": [],
   "delegated_items": [],
   "completed_items": [
     "ST-01",
@@ -632,7 +630,10 @@
       "raised_utc": "2026-11-10T09:34:25Z",
       "sla_due_utc": "2026-11-11T09:34:25Z",
       "blocks_execution": false,
-      "disposition": "Open"
+      "disposition": "Resolved",
+      "resolved_utc": "2026-11-10T09:37:55Z",
+      "resolved_by": "Base44 Frontend Prompt Owner (the user, in session)",
+      "resolution_summary": "Both: **Story:** header line in each filed Base44 prompt, and a **Base44 prompt file:** field in each delegated_frontend delegation record. Written into OPERATIONAL_GUIDE.md frontend delegation text (CLAUDE.md \u00a76)."
     }
   },
   "merge_gate": {
