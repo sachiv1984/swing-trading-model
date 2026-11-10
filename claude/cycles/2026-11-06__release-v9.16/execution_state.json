@@ -608,29 +608,34 @@
       "pr_status": null,
       "qa_signed_off": false,
       "qa_evidence_log": "claude/cycles/2026-11-06__release-v9.16/qa_evidence_EPIC-06.md",
-      "test_scenarios": [],
+      "test_scenarios": [
+        "tests/e2e/trade-plan-lifecycle.spec.js",
+        "tests/e2e/arc2-happy-path.spec.js"
+      ],
       "sign_off_record": null,
       "stories": {
         "ST-26": {
           "title": "Trade plan lifecycle end-to-end test",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 2222,
           "branch": "exec/2026-11-06__release-v9.16/EPIC-06",
-          "commit_sha": null,
+          "commit_sha": "3bb258da63deba70404a6a4ab0ec2b29aa23d205",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-11-10T10:12:05Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "tests/e2e/trade-plan-lifecycle.spec.js"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Case C (test-authoring). AC 1 (full lifecycle Playwright test authored and passing in CI): tests/e2e/trade-plan-lifecycle.spec.js SC-TPL-01..05 - Signals Plan this -> plan with quality score + ST-08 suggested size -> save (draft) -> reopen (score shown) -> Start Trade -> Create Position (draft->active) -> Exit -> Plan vs Reality values worked by hand. Local 3/3; mutation (trade_plan_id: null) fails it. AC 2: cleared-gate evidence confirmed at seal. Mock backend moved to tests/e2e/mocks/trade-plan-lifecycle-backend.js in the ST-24 commit (shared). Out-of-scope findings: BLG-BE-211 (plan not moved to closed on exit; post-exit status not asserted until fixed), BLG-BE-212 (entry delta uses signal price at exit; filed by ST-24). Deviation check: none (test only). ci_pending: 42797119521 (Playwright E2E on 3bb258da; Critical-Path Smoke, Portfolio Integration, Golden Output, Service Layer, Endpoint Coverage success; CI Pytest 42797119509 pending, no backend change)."
         },
         "ST-24": {
           "title": "Arc 2 end-to-end QA protocol",
@@ -718,6 +723,7 @@
     "ST-21",
     "ST-22",
     "ST-23",
+    "ST-26",
     "ST-28",
     "ST-29",
     "ST-30"

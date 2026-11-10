@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-10 (session — 1 new item(s) added: BLG-BE-211; ST-26, EPIC-06, v9.16); prior — 2026-11-10 (session — 2 new item(s) added: BLG-GOV-416, BLG-GOV-417; agent-mediated DoQ and PO review of PR #2230, EPIC-07, v9.16); prior — 2026-11-10 (session — 1 new item(s) added: BLG-GOV-415; ST-29 AC 4, EPIC-07, v9.16); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-10 (session — 2 new item(s) added: BLG-FE-281, BLG-BE-212; ST-24, EPIC-06, v9.16); prior — 2026-11-10 (session — 1 new item(s) added: BLG-BE-211; ST-26, EPIC-06, v9.16); prior — 2026-11-10 (session — 2 new item(s) added: BLG-GOV-416, BLG-GOV-417; agent-mediated DoQ and PO review of PR #2230, EPIC-07, v9.16); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -6543,5 +6543,49 @@ ST-30 wrote the Base44 prompt versioning convention (`ESC-EXEC-20261110-02` ruli
 - After a full exit, the linked plan's status is `closed`; after a partial exit it stays `active`
 - Existing `active` plans whose position is already closed are backfilled to `closed`
 - `tests/e2e/trade-plan-lifecycle.spec.js`'s exit mock sets `closed`, and the test asserts the Trade Plans "Closed" badge after the exit
+
+---
+
+### BLG-FE-281 — Pass the market from Research View's "Create Trade Plan" so a UK plan is not created as US
+**Priority:** P2 (Medium)
+**Type:** Frontend / UX
+**Owner:** Head of Engineering; Frontend Specifications & UX Documentation Owner
+**Source:** ST-24 (EPIC-06, v9.16) — found while writing the Arc 2 QA protocol (`docs/qa/arc2_e2e_qa_protocol.md` M-09) — 2026-11-10
+**Effort:** XS (<1h plus a Playwright test)
+**Provisional-Target:** v9.17
+
+**Problem**
+`Research.js` navigates "Create Trade Plan" to `/TradePlan?ticker={ticker}` with no `market`, and `TradePlan.js` defaults a missing `market` to `US`. A plan created from the Research View for a UK ticker (e.g. `VOD.L`) is therefore saved as a US plan: amounts show in $, and the suggested-size request is sent with `market: US`, applying the FX rate to a sterling price.
+
+**Scope**
+- Add `market` (from the research response's `market`) to the "Create Trade Plan" URL in `Research.js`; check the "View full plan" link carries it too
+- Playwright: a UK ticker's Research View → "Create Trade Plan" opens a UK plan
+
+**Acceptance Criteria**
+- From the Research View of a UK ticker, "Create Trade Plan" opens a Trade Plan with market UK and £ amounts; a US ticker still opens US
+- Playwright coverage passes
+
+---
+
+### BLG-BE-212 — Snapshot Plan vs Reality's planned entry from the linked plan, not the signal's price at exit
+**Priority:** P3 (Low)
+**Type:** Backend engineering
+**Owner:** Head of Engineering; Data Model & Domain Schema Owner
+**Source:** ST-24 (EPIC-06, v9.16) — found while writing the Arc 2 QA protocol (`docs/qa/arc2_e2e_qa_protocol.md` M-06) — 2026-11-10
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v9.17
+
+**Problem**
+On exit, `position_service.py` sets `trade_history.planned_entry_price` from the ticker's current signal `current_price` whenever a linked plan exists, and `plan_vs_reality_service.py` computes `entry_delta_pct` against that value. The signal price at exit time is not the price the user planned to enter at: it moves with every scan, and it is null when no signal exists for the ticker (e.g. a plan created from the Screener or Research View), which shows the "historical trades" placeholder for a new trade. The linked plan's own `planned_entry_price` is the planned value. `data_model.md` (Plan vs Reality response, `entry_delta_pct`) still says the field is "null until planned_entry_price snapshot is implemented", which no longer matches the code either way.
+
+**Scope**
+- At exit, snapshot `planned_entry_price` from the linked plan's `planned_entry_price` (fall back to the signal only if the plan has none, or drop the fallback — decide with the Data Model owner)
+- Update the `data_model.md` `entry_delta_pct` description
+- pytest for plan-priced, signal-only and neither cases; update `tests/e2e/mocks/trade-plan-lifecycle-backend.js`'s exit handler and the lifecycle test's worked entry delta
+
+**Acceptance Criteria**
+- A trade whose linked plan has a planned entry shows an entry delta against that price, whatever the signal price at exit
+- `data_model.md` describes the field as built
+- Tests above pass
 
 ---
