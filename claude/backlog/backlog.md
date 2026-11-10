@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-10 (session — 2 new item(s) added: BLG-GOV-416, BLG-GOV-417; agent-mediated DoQ and PO review of PR #2230, EPIC-07, v9.16); prior — 2026-11-10 (session — 1 new item(s) added: BLG-GOV-415; ST-29 AC 4, EPIC-07, v9.16); prior — 2026-11-10 (session — 3 new item(s) added: BLG-BE-209, BLG-BE-210, BLG-QA-257; agent-mediated DoQ and PO review of PR #2229, EPIC-05, v9.16); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-10 (session — 1 new item(s) added: BLG-BE-211; ST-26, EPIC-06, v9.16); prior — 2026-11-10 (session — 2 new item(s) added: BLG-GOV-416, BLG-GOV-417; agent-mediated DoQ and PO review of PR #2230, EPIC-07, v9.16); prior — 2026-11-10 (session — 1 new item(s) added: BLG-GOV-415; ST-29 AC 4, EPIC-07, v9.16); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -6520,5 +6520,28 @@ ST-30 wrote the Base44 prompt versioning convention (`ESC-EXEC-20261110-02` ruli
 **Acceptance Criteria**
 - STEP 3.1 case (ii) states the escalation re-pointing condition and falls back to case (i) when it is not met
 - `scripts/check_prompt_size_budget.py` passes, or any baseline raise is reasoned in the `prompt_change_log.md` row
+
+---
+
+### BLG-BE-211 — Move a linked trade plan to `closed` when its position closes
+**Priority:** P2 (Medium)
+**Type:** Backend engineering
+**Owner:** Head of Engineering
+**Source:** ST-26 (EPIC-06, v9.16) — found while building the trade plan lifecycle Playwright test — 2026-11-10
+**Effort:** S (~0.5–1 day)
+**Provisional-Target:** v9.17
+
+**Problem**
+`data_model.md` §Trade Plan Lifecycle says "`active` → `closed` happens when the linked position closes", but no backend code path writes status `closed` to `trade_plans`: the only status write outside the generic `PUT /trade-plans/{id}` is `add_position()`'s `active` link step (`position_service.py`). Every linked plan therefore stays `active` after its trade closes. The Trade Plans list shows those plans as Active, and `pnl_reconciliation_service.py` raises `trade_history_plan_not_closed` for each such trade while counting 0 closed plans.
+
+**Scope**
+- In the `POST /positions/{id}/exit` full-exit path, set `status = 'closed'` on the plan linked to the position (best-effort, like the link step); a partial exit leaves the plan `active`
+- One-off backfill: plans with `status = 'active'` whose linked position is `closed` become `closed`
+- pytest for the full-exit, partial-exit and no-plan cases
+
+**Acceptance Criteria**
+- After a full exit, the linked plan's status is `closed`; after a partial exit it stays `active`
+- Existing `active` plans whose position is already closed are backfilled to `closed`
+- `tests/e2e/trade-plan-lifecycle.spec.js`'s exit mock sets `closed`, and the test asserts the Trade Plans "Closed" badge after the exit
 
 ---
