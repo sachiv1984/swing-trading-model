@@ -4,7 +4,7 @@
   "status": "Executing",
   "prior_status": "Sprint_Planning_Complete",
   "engine": "Sprint Execution",
-  "last_updated_utc": "2026-11-10T08:07:27Z",
+  "last_updated_utc": "2026-11-10T08:12:43Z",
   "execution_state_path": "claude/cycles/2026-11-06__release-v9.16/execution_state.json",
   "backlog_slice_path": "claude/cycles/2026-11-06__release-v9.16/stage4_backlog_slice.md",
   "design_gate_required": true,
@@ -673,7 +673,10 @@
       "raised_utc": "2026-11-10T08:07:27Z",
       "sla_due_utc": "2026-11-13T08:07:27Z",
       "blocks_execution": false,
-      "disposition": "Open"
+      "disposition": "Resolved",
+      "resolved_utc": "2026-11-10T08:12:43Z",
+      "resolved_by": "AI Compliance & Governance Officer (the user, in session)",
+      "resolution_summary": "(A) context rule: PM/AM non-tickers only after a time, MA only after a number or period, ON only after RISK; otherwise tickers on the briefing check and the chat focus rule. Note text, result values and fail-open unchanged."
     }
   },
   "deferred_escalations": {

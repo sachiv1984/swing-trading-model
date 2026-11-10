@@ -6,7 +6,7 @@
   "invoked_utc": "2026-11-09T09:15:14Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-10T08:11:54Z",
+  "last_updated_utc": "2026-11-10T08:12:43Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-02",
@@ -378,9 +378,9 @@
         },
         "ST-20": {
           "title": "Handle _NON_TICKER_WORDS entries that are also real tickers deliberately",
-          "classification": "delegated_decision",
-          "status": "blocked_decision",
-          "assigned_to": "AI Compliance & Governance Officer",
+          "classification": "autonomous",
+          "status": "in_progress",
+          "assigned_to": "engine",
           "github_issue": 2216,
           "branch": "exec/2026-11-06__release-v9.16/EPIC-05",
           "commit_sha": null,
@@ -393,8 +393,14 @@
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
-          "last_completed_substep": "3.1.D.escalated",
-          "sign_off_record": null,
+          "last_completed_substep": "3.1.D.resolved",
+          "sign_off_record": {
+            "role": "AI Compliance & Governance Officer",
+            "method": "human_in_session",
+            "status": "cleared",
+            "date": "2026-11-10",
+            "notes": "ESC-EXEC-20261110-01 resolved: option (A) context rule."
+          },
           "notes": null
         },
         "ST-21": {
@@ -475,9 +481,7 @@
     }
   },
   "deferred_at_planning": [],
-  "blocked_items": [
-    "ST-20"
-  ],
+  "blocked_items": [],
   "delegated_items": [
     "ST-19"
   ],
@@ -506,7 +510,10 @@
       "raised_utc": "2026-11-10T08:07:27Z",
       "sla_due_utc": "2026-11-13T08:07:27Z",
       "blocks_execution": false,
-      "disposition": "Open"
+      "disposition": "Resolved",
+      "resolved_utc": "2026-11-10T08:12:43Z",
+      "resolved_by": "AI Compliance & Governance Officer (the user, in session)",
+      "resolution_summary": "(A) context rule: PM/AM non-tickers only after a time, MA only after a number or period, ON only after RISK; otherwise tickers on the briefing check and the chat focus rule. Note text, result values and fail-open unchanged."
     }
   },
   "merge_gate": {
