@@ -654,6 +654,8 @@ def get_positions_endpoint():
             # endpoint's documented response contract -- drop it so the
             # response shape is unchanged from before this optimisation.
             pos.pop("state_history", None)
+            # ST-17 (BLG-BE-176, v9.16): lifecycle input only, like state_history.
+            pos.pop("native_entry_price", None)
         return positions
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
@@ -1988,7 +1990,11 @@ def get_position_by_id_endpoint(position_id: str):
             current_price_native = pos.get("current_price") or pos["entry_price"]
 
         if pos["market"] == "US":
-            entry_price_display = pos.get("fill_price") or pos["entry_price"] * pos.get("fx_rate", 1.27)
+            # ST-17 (BLG-BE-176, v9.16): one native-entry fallback on every path
+            # (fill_price, else entry_price x stored fx_rate, else x live rate).
+            # pos.get("fx_rate", 1.27) returned None for a NULL fx_rate and raised.
+            from services.position_service import native_entry_price
+            entry_price_display = native_entry_price(pos, live_fx_rate)
             current_price_gbp = current_price_native / live_fx_rate
         else:
             entry_price_display = pos["entry_price"]
@@ -2040,7 +2046,9 @@ def get_position_by_id_endpoint(position_id: str):
             "sector": sector,
             "industry": industry,
         }
-        lifecycle = get_lifecycle_fields_for_position({**pos, "current_price_native": current_price_native})
+        lifecycle = get_lifecycle_fields_for_position(
+            {**pos, "current_price_native": current_price_native, "live_fx_rate": live_fx_rate}
+        )
         result.update(lifecycle)
         return result
     except HTTPException:

@@ -285,6 +285,10 @@ def get_positions_with_prices() -> List[Dict]:
             "position_state": pos.get("position_state"),
             "state_history": pos.get("state_history"),
             "state_entered_at": pos.get("state_entered_at"),
+            # ST-17 (BLG-BE-176, v9.16): the native entry display_status used, so
+            # the badge compares with the same value (this row's entry_price is
+            # already native and it has no fill_price). Popped with state_history.
+            "native_entry_price": entry_price_display,
             "ticker": display_ticker,
             "market": pos['market'],
             "initial_stop": round(initial_stop, 2) if initial_stop is not None else None,

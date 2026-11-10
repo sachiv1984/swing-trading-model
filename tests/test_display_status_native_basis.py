@@ -24,6 +24,7 @@ import services.position_service as position_service
 from services.position_lifecycle_service import compute_position_state
 
 LIVE_FX = 1.30
+PROFITABLE = "PROFITABLE"
 
 
 def _us_row(**overrides):
@@ -68,6 +69,15 @@ def _positions_display_status(row, live_price):
         return position_service.get_positions_with_prices()[0]["display_status"]
 
 
+def _positions_row(row, live_price):
+    with patch.object(position_service, "get_portfolio", return_value={"id": "pf-1"}), \
+         patch.object(position_service, "get_positions", return_value=[row]), \
+         patch.object(position_service, "get_live_fx_rate", return_value=LIVE_FX), \
+         patch.object(position_service, "get_current_price", return_value=live_price), \
+         patch.object(position_service, "get_sector_and_industry", return_value=(None, None)):
+        return position_service.get_positions_with_prices()[0]
+
+
 def _badge(row, price):
     return compute_position_state({**row, "current_price": price})
 
@@ -94,10 +104,56 @@ class TestUsDisplayStatusAgreesWithBadge:
         assert _portfolio_display_status(row, price) == expected
         assert _positions_display_status(row, price) == expected
 
-    def test_us_badge_without_any_native_entry_is_unknown(self):
-        assert _badge(_us_row(fill_price=None, fx_rate=None), 101.0) == "UNKNOWN"
+    @pytest.mark.parametrize("price,expected", [(105.0, "PROFITABLE"), (103.0, "LOSING")])
+    def test_null_fill_price_and_null_fx_rate_agree_on_the_live_rate(self, price, expected):
+        # ST-17 (BLG-BE-176, v9.16): no fill_price and no fx_rate. Every path uses
+        # entry_price x the live rate (£80 x 1.30 = $104), so the badge and
+        # display_status agree; the badge used to be UNKNOWN here.
+        row = _us_row(fill_price=None, fx_rate=None)
+        with patch("utils.pricing.get_live_fx_rate", return_value=LIVE_FX):
+            assert _badge(row, price) == expected
+        assert _portfolio_display_status(row, price) == expected
+        positions_row = _positions_row(row, price)
+        assert positions_row["display_status"] == expected
+        assert compute_position_state(positions_row) == expected
+
+    @pytest.mark.parametrize("overrides", [{}, {"fill_price": None}, {"fill_price": None, "fx_rate": None}])
+    @pytest.mark.parametrize("price", [95.0, 101.0, 110.0, 120.0])
+    def test_badge_on_the_get_positions_row_agrees_with_its_display_status(self, overrides, price):
+        # ST-17: GET /positions badges its own API row, whose entry_price is
+        # already native and which has no fill_price. The badge re-derived the
+        # entry as entry_price x fx_rate, so a US position up less than ~25% in
+        # dollars showed LOSING next to a PROFITABLE display_status.
+        positions_row = _positions_row(_us_row(**overrides), price)
+        with patch("utils.pricing.get_live_fx_rate", return_value=LIVE_FX):
+            badge = compute_position_state(positions_row)
+        # EXIT ZONE is a sub-state of PROFITABLE (strategy_rules.md §9).
+        assert (PROFITABLE if badge == "EXIT ZONE" else badge) == positions_row["display_status"]
 
     def test_uk_badge_unchanged(self):
         row = _us_row(market="UK", ticker="VOD.L", entry_price=100.0, fill_price=None, fx_rate=1.0)
         assert _badge(row, 101.0) == "PROFITABLE"
         assert _badge(row, 99.0) == "LOSING"
+
+
+def test_get_position_by_id_with_null_fill_price_and_fx_rate_uses_the_live_rate():
+    # ST-17: GET /positions/{id} computed the native entry as
+    # entry_price * pos.get("fx_rate", 1.27), which raised for a NULL fx_rate (500).
+    from tests._real_database import real_database_imports
+    with real_database_imports():
+        from fastapi.testclient import TestClient
+        import main
+        import services.position_lifecycle_service as lifecycle
+    row = _us_row(fill_price=None, fx_rate=None)
+    client = TestClient(main.app, raise_server_exceptions=False)
+    with patch.object(main, "get_position_by_id", return_value=row), \
+         patch("utils.pricing.get_live_fx_rate", return_value=LIVE_FX), \
+         patch("utils.pricing.get_current_price", return_value=105.0), \
+         patch("services.sector_service.get_sector_and_industry", return_value=(None, None)), \
+         patch.object(lifecycle, "update_position_lifecycle_state", return_value=None), \
+         patch.object(lifecycle, "create_position_state_history_entry", return_value=None):
+        response = client.get("/positions/pos-us-1")
+    assert response.status_code == 200, response.text
+    body = response.json()
+    assert body["entry_price"] == pytest.approx(80.0 * LIVE_FX)  # $104
+    assert body["position_state"] == "PROFITABLE"  # $105 > $104
