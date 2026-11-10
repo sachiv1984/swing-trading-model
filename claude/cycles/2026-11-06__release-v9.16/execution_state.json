@@ -6,7 +6,7 @@
   "invoked_utc": "2026-11-09T09:15:14Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-10T10:05:00Z",
+  "last_updated_utc": "2026-11-10T14:00:38Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-02",
@@ -602,10 +602,10 @@
     },
     "EPIC-06": {
       "title": "Arc 2 Retrospective: QA Protocol, Lifecycle Test & Journey Map",
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-11-06__release-v9.16/EPIC-06",
       "pr_number": 2231,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-11-06__release-v9.16/qa_evidence_EPIC-06.md",
       "test_scenarios": [
@@ -624,7 +624,7 @@
         "ST-26": {
           "title": "Trade plan lifecycle end-to-end test",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2222,
           "branch": "exec/2026-11-06__release-v9.16/EPIC-06",
@@ -647,7 +647,7 @@
         "ST-24": {
           "title": "Arc 2 end-to-end QA protocol",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2220,
           "branch": "exec/2026-11-06__release-v9.16/EPIC-06",
@@ -671,7 +671,7 @@
         "ST-25": {
           "title": "Arc 2 DoQ standards review",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2221,
           "branch": "exec/2026-11-06__release-v9.16/EPIC-06",
@@ -701,7 +701,7 @@
         "ST-27": {
           "title": "Arc 2 user journey map",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2223,
           "branch": "exec/2026-11-06__release-v9.16/EPIC-06",
@@ -791,12 +791,12 @@
       "EPIC-01",
       "EPIC-02",
       "EPIC-05",
-      "EPIC-07"
+      "EPIC-07",
+      "EPIC-06"
     ],
     "epics_pending": [
       "EPIC-03",
-      "EPIC-04",
-      "EPIC-06"
+      "EPIC-04"
     ],
     "all_merged": false
   },
@@ -807,7 +807,8 @@
     "EPIC-02 (2026-11-09): ST-08's new spec reused prefix SC-TPS (trade-plan-stale-marker.spec.js). CI Pytest 42621274186 caught it (test_check_e2e_scenario_id_uniqueness.py); renamed to SC-TPSZ in 87d78b39. Candidate lesson: run scripts/check_e2e_scenario_id_uniqueness.py before pushing a new spec.",
     "EPIC-02 merge-gate sync (2026-11-09): PR #2228 merged by sachiv1984 at 2026-11-09T15:33:10Z, merge commit 13e7bd20. Orphaned post-merge commit check: git log origin/main..origin/exec/2026-11-06__release-v9.16/EPIC-02 empty - nothing to reconcile.",
     "EPIC-05 (2026-11-10): PR #2229 merged by the human repository owner at 2026-11-10T09:26:42Z, merge commit 8a51d3ab. STEP 4 orphaned post-merge commit check: git log origin/main..origin/exec/2026-11-06__release-v9.16/EPIC-05 lists nothing; no reconciliation needed.",
-    "2026-11-10 EPIC-07: PR #2230 merged 2026-11-10T10:02:22Z by the human repository owner (merge commit 7824a75c). Orphaned post-merge commit check (LL-v6.8-P3-01): git log origin/main..origin/exec/2026-11-06__release-v9.16/EPIC-07 empty - nothing to reconcile. Sibling sync (step 3c): no pending EPIC branch exists yet (EPIC-06/03/04 not cut) - none needed."
+    "2026-11-10 EPIC-07: PR #2230 merged 2026-11-10T10:02:22Z by the human repository owner (merge commit 7824a75c). Orphaned post-merge commit check (LL-v6.8-P3-01): git log origin/main..origin/exec/2026-11-06__release-v9.16/EPIC-07 empty - nothing to reconcile. Sibling sync (step 3c): no pending EPIC branch exists yet (EPIC-06/03/04 not cut) - none needed.",
+    "2026-11-10 EPIC-06: PR #2231 merged 2026-11-10T14:00:18Z by the human repository owner (merge commit 9df2088b). Orphaned post-merge commit check (LL-v6.8-P3-01): git log origin/main..origin/exec/2026-11-06__release-v9.16/EPIC-06 empty - nothing to reconcile. STEP 4 step 3c: no v9.16 EPIC-03/EPIC-04 branch exists yet, so no sibling execution_state.json sync was needed."
   ],
   "sealed": false,
   "sealed_utc": null

@@ -83,4 +83,4 @@ Last Updated: 2026-11-10
 
   At acceptance the PR head was `e29623ef`, with 28 checks passed, 21 pending, 5 skipped and no failures. The pending checks must be green before merge.
 - **Product Owner acceptance:** given by the human repository owner, acting as Product Owner, in the same instruction at 2026-11-10T13:41:19Z, before the merge. It accepts ST-24 to ST-27 against `stage4_backlog_slice.md`, including ST-26's partial "plan state transitions" coverage against `BLG-BE-211`, and the `shared_standards.md` v3.42 §25 amendment under ST-25 AC 2. There are no post-merge ACs. Follow-ups: BLG-BE-211, BLG-BE-212, BLG-FE-281, BLG-FE-282 (recommended ahead of other v9.17 P2s), BLG-FE-283, BLG-FE-284, BLG-GOV-418, BLG-QA-258, BLG-QA-259.
-- **Merge:** pending. To be recorded (who, when, merge commit) when the human merges PR #2231.
+- **Merge:** PR #2231 merged by the human repository owner at 2026-11-10T14:00:18Z, merge commit `9df2088b`, after the DoQ sign-off and PO acceptance above.
