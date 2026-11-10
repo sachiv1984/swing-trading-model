@@ -243,3 +243,14 @@ class TestFrontendMirror:
             if "strategyParameters" in p.read_text(encoding="utf-8") and p.name != "strategy.js"
         ]
         assert offenders == []
+
+    def test_no_canonical_spec_names_the_old_module(self):
+        # ST-23 (BLG-SPEC-201, EPIC-05, v9.16): settings.md still named the old
+        # module after the move; specs must name src/constants/strategy.js.
+        offenders = [
+            str(p.relative_to(ROOT)) for p in (ROOT / "docs" / "specs").rglob("*.md")
+            if "src/lib/strategyParameters.js" in p.read_text(encoding="utf-8")
+        ]
+        assert offenders == []
+        assert "src/constants/strategy.js" in (
+            ROOT / "docs" / "specs" / "frontend" / "pages" / "settings.md").read_text(encoding="utf-8")
