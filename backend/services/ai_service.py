@@ -349,8 +349,10 @@ _NON_TICKER_WORDS = frozenset({
 # non-ticker only in its usual non-ticker usage, read from the text just before
 # it; otherwise it is a ticker on both the briefing check and the chat focus rule.
 _CONTEXT_NON_TICKER_WORDS = {
-    "AM": re.compile(r"\d(?::\d\d)?\s?$"),   # "3 AM", "9:30 AM"
-    "PM": re.compile(r"\d(?::\d\d)?\s?$"),   # "3 PM", "3:30 PM"
+    # A clock time only ("3 PM", "9:30 AM"): an hour 1-12 with optional minutes,
+    # not any number, so "100 PM shares" is still the Philip Morris ticker.
+    "AM": re.compile(r"(?<![\w.:])(?:1[0-2]|0?[1-9])(?::[0-5]\d)?\s?$"),
+    "PM": re.compile(r"(?<![\w.:])(?:1[0-2]|0?[1-9])(?::[0-5]\d)?\s?$"),
     # "200 MA", "50-day MA"; and after a determiner ("above the MA", "its MA"),
     # added by the ruling's 2026-11-10 clarification.
     "MA": re.compile(r"(?:\d(?:[- ]?(?:day|week|month|period)s?)?[- ]?|\b(?:the|its|a|an|their) )$",

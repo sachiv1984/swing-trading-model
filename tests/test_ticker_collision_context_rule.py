@@ -49,6 +49,8 @@ class TestChatFocusRule:
 
     @pytest.mark.parametrize("text", [
         "Your stop was hit at 3:30 PM.",
+        "Your stop was hit at 12 PM.",
+        "Your stop was hit at 09:15 AM.",
         "Your stop moved at 9 AM.",
         "Your stop is above the 50-day MA.",
         "Your stop is above the 200 MA.",
@@ -59,6 +61,8 @@ class TestChatFocusRule:
         assert _chat(text) == (f"{text} {MU_NOTE}", "appended")
 
     @pytest.mark.parametrize("text", [
+        "You bought 100 PM shares and the stop was hit.",
+        "PM's stop was hit after Q3 results.",
         "MA's stop was hit last week.",
         "ON's stop was hit last week.",
         "AM stop was hit.",
@@ -84,6 +88,8 @@ class TestBriefingSummaryCheck:
 
     @pytest.mark.parametrize("token,summary", [
         ("PM", "PM rallied after earnings."),
+        ("PM", "You hold 100 PM shares worth watching."),
+        ("PM", "Watch Q3 PM results."),
         ("MA", "MA reported strong volumes."),
         ("ON", "ON fell 4% today."),
     ])
