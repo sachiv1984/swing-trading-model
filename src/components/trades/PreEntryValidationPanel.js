@@ -21,9 +21,9 @@ const STATUS_COLOR = {
   skipped: "text-slate-600 dark:text-slate-400",
 };
 const ADVISORY_BADGE = {
-  pass: "bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 border-emerald-500/30",
-  warn: "bg-amber-500/20 text-amber-700 dark:text-amber-400 border-amber-500/30",
-  fail: "bg-red-500/20 text-red-700 dark:text-red-400 border-red-500/30",
+  pass: "bg-emerald-500/20 text-emerald-800 dark:text-emerald-400 border-emerald-500/30",
+  warn: "bg-amber-500/20 text-amber-800 dark:text-amber-400 border-amber-500/30",
+  fail: "bg-red-500/20 text-red-800 dark:text-red-400 border-red-500/30",
 };
 
 /**

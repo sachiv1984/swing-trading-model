@@ -482,7 +482,7 @@ export default function TradeEntry() {
       {planPrefill && (
         <div
           data-testid="trade-plan-linked-banner"
-          className="rounded-xl bg-emerald-500/10 border border-emerald-500/30 px-4 py-3 text-sm text-emerald-700 dark:text-emerald-300 flex items-center gap-2"
+          className="rounded-xl bg-emerald-500/10 border border-emerald-500/30 px-4 py-3 text-sm text-emerald-800 dark:text-emerald-300 flex items-center gap-2"
         >
           <Rocket className="w-4 h-4 shrink-0" />
           Linked to trade plan for {planPrefill.ticker} — saving this trade will mark that plan Active.
@@ -753,12 +753,12 @@ export default function TradeEntry() {
                   {formData.tags.map((tag) => (
                     <span
                       key={tag}
-                      className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium bg-cyan-500/20 text-cyan-700 dark:text-cyan-400 border border-cyan-500/30"
+                      className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium bg-cyan-500/20 text-cyan-800 dark:text-cyan-400 border border-cyan-500/30"
                     >
                       {tag}
                       <button
                         onClick={() => handleRemoveTag(tag)}
-                        className="hover:text-cyan-300 transition-colors"
+                        className="hover:text-cyan-950 dark:hover:text-cyan-300 transition-colors"
                       >
                         <X className="w-3 h-3" />
                       </button>

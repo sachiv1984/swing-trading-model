@@ -183,7 +183,7 @@ export default function PositionSizingWidget({
       {/* ST-04 (BLG-BE-104): concentration reason — re-evaluates on every debounced
           recalculation, no dismiss affordance (design_record.md §2) */}
       {isValid && sizingResult?.concentration_reason && (
-        <p className="flex items-start gap-1.5 text-amber-600 dark:text-amber-400 text-xs">
+        <p className="flex items-start gap-1.5 text-amber-700 dark:text-amber-400 text-xs">
           <AlertTriangle className="w-3.5 h-3.5 text-amber-500 shrink-0 mt-0.5" />
           <span>{sizingResult.concentration_reason}</span>
         </p>
@@ -207,7 +207,7 @@ export default function PositionSizingWidget({
           variant="outline"
           size="sm"
           onClick={handleUseSuggested}
-          className="w-full bg-slate-200 dark:bg-slate-700/50 border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white text-xs h-8"
+          className="w-full bg-slate-200 dark:bg-slate-700/50 border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white text-xs h-8"
         >
           Use suggested shares
         </Button>

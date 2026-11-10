@@ -105,6 +105,8 @@ const KNOWN_VIOLATIONS = {
   // label (Risk % and entry date inputs) and button-name (market Select):
   // pre-existing and theme-independent, BLG-FE-286.
   'TradeEntry:light': new Set(['label', 'button-name']),
+  // EPIC-03 review pass 2: the pre-entry advisory badges, rendered.
+  'TradeEntryPreEntry:light': new Set([]),
 };
 
 async function mockRoutes(page) {
@@ -631,6 +633,37 @@ test.describe('Shell consumers axe scan, populated — light theme (ST-09)', () 
     await page.getByPlaceholder('e.g., AAPL or VOD.L').fill('AAPL');
     await expectThemeApplied(page, 'light');
     await runAxeScan(page, 'TradeEntry:light');
+  });
+
+  // Review pass 2: the catch-all mock returns no checks, so the scans above
+  // never render PreEntryValidationPanel's pass/warn/fail badges. This one
+  // does, and scopes the scan to the panel.
+  test('Trade Entry pre-entry checks with pass, warn and fail badges (light)', async ({ page }) => {
+    await page.route(new RegExp(`${API}/portfolio/pre-entry-validation`), (route) =>
+      route.fulfill({
+        status: 200, contentType: 'application/json',
+        body: JSON.stringify({
+          status: 'ok',
+          data: {
+            advisory_status: 'warn',
+            checks: [
+              { rule: 'regime_gate', status: 'pass', detail: 'UK market is risk-on' },
+              { rule: 'cash_constraint', status: 'warn', detail: 'Cash is close to the limit' },
+              { rule: 'concentration', status: 'fail', detail: 'Position exceeds the concentration limit' },
+            ],
+          },
+        }),
+      })
+    );
+    await page.goto('/#/TradeEntry');
+    await page.getByPlaceholder('e.g., AAPL or VOD.L').fill('LGEN');
+    await page.getByPlaceholder('0.00').first().fill('100');
+    await page.getByPlaceholder('Fetched automatically if blank').fill('2');
+    await page.getByPlaceholder('0', { exact: true }).fill('10');
+    const panel = page.getByTestId('pre-entry-checks-panel');
+    await expect(panel.getByTestId('pre-entry-check-regime_gate')).toBeVisible({ timeout: 10000 });
+    await expectThemeApplied(page, 'light');
+    await runAxeScan(page, 'TradeEntryPreEntry:light', { include: '[data-testid="pre-entry-checks-panel"]' });
   });
 
   test('Weekly Digest (light)', async ({ page }) => {

@@ -198,7 +198,7 @@ export default function PositionModal({ position, open, onClose, onSave }) {
                     {journalData.tags.map((tag) => (
                       <span
                         key={tag}
-                        className="px-2 py-1 text-xs rounded-full bg-cyan-500/20 text-cyan-700 dark:text-cyan-400 border border-cyan-500/30"
+                        className="px-2 py-1 text-xs rounded-full bg-cyan-500/20 text-cyan-800 dark:text-cyan-400 border border-cyan-500/30"
                       >
                         {tag}
                       </span>
@@ -241,12 +241,12 @@ export default function PositionModal({ position, open, onClose, onSave }) {
                       {journalData.tags.map((tag) => (
                         <span
                           key={tag}
-                          className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium bg-cyan-500/20 text-cyan-700 dark:text-cyan-400 border border-cyan-500/30"
+                          className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium bg-cyan-500/20 text-cyan-800 dark:text-cyan-400 border border-cyan-500/30"
                         >
                           {tag}
                           <button
                             onClick={() => handleRemoveTag(tag)}
-                            className="hover:text-cyan-300 transition-colors"
+                            className="hover:text-cyan-950 dark:hover:text-cyan-300 transition-colors"
                           >
                             <X className="w-3 h-3" />
                           </button>

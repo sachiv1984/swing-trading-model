@@ -105,9 +105,9 @@ function LastReviewedRow({ position, drawdownActive }) {
   return (
     <div className="flex items-center justify-between gap-2 pb-3 mb-1" data-testid="last-reviewed-row">
       <div className="flex items-center gap-1.5">
-        {flagged && <Clock className="w-3 h-3 text-amber-600 dark:text-amber-400 flex-shrink-0" aria-hidden="true" />}
+        {flagged && <Clock className="w-3 h-3 text-amber-700 dark:text-amber-400 flex-shrink-0" aria-hidden="true" />}
         <span
-          className={cn("text-xs", flagged ? "text-amber-600 dark:text-amber-400" : "text-slate-600 dark:text-slate-400")}
+          className={cn("text-xs", flagged ? "text-amber-700 dark:text-amber-400" : "text-slate-600 dark:text-slate-400")}
           aria-label={ariaLabel}
         >
           {label}
