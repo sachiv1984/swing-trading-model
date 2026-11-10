@@ -677,6 +677,19 @@
       "resolved_utc": "2026-11-10T08:12:43Z",
       "resolved_by": "AI Compliance & Governance Officer (the user, in session)",
       "resolution_summary": "(A) context rule: PM/AM non-tickers only after a time, MA only after a number or period, ON only after RISK; otherwise tickers on the briefing check and the chat focus rule. Note text, result values and fail-open unchanged."
+    },
+    "ESC-EXEC-20261110-02": {
+      "cycle": "2026-11-06__release-v9.16",
+      "summary": "ST-30/EPIC-07 - Base44 Frontend Prompt Owner ruling: where the ST-id is recorded for each Base44 prompt draft",
+      "trigger_type": "Lifecycle",
+      "owning_authority": "Base44 Frontend Prompt Owner",
+      "raised_utc": "2026-11-10T09:34:25Z",
+      "sla_due_utc": "2026-11-11T09:34:25Z",
+      "blocks_execution": false,
+      "disposition": "Resolved",
+      "resolved_utc": "2026-11-10T09:37:55Z",
+      "resolved_by": "Base44 Frontend Prompt Owner (the user, in session)",
+      "resolution_summary": "Both: **Story:** header line in each filed Base44 prompt and a **Base44 prompt file:** field in each delegated_frontend delegation record; written into OPERATIONAL_GUIDE.md §8.3 (v4.256)."
     }
   },
   "deferred_escalations": {
