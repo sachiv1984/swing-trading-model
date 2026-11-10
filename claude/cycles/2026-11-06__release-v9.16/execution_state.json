@@ -534,7 +534,7 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": "AC 1 (STEP 3.1 states both cases, citing BLG-AI-23/BLG-AI-27 as case (ii)): post_ship_closure.md v2.46 STEP 3.1 carve-out cases (i) keep open / (ii) banner the source. AC 2 is post-merge (sealed sprint_backlog.md), tracked by BLG-GOV-414. CLAUDE.md \u00a76: OPERATIONAL_GUIDE.md v4.255, post_ship_closure_changelog.md 2.46, prompt_change_log.md rows. Size budget held (72,734 <= 72,930 baseline) by moving 3 precedent sentences to the changelog. Deviation check: none (governance prompt, no canonical spec divergence). ci_pending: CI Pytest Suite 42791340576 (6 other workflows success)."
+          "notes": "AC 1 (STEP 3.1 states both cases, citing BLG-AI-23/BLG-AI-27 as case (ii)): post_ship_closure.md v2.46 STEP 3.1 carve-out cases (i) keep open / (ii) banner the source. AC 2 is post-merge (sealed sprint_backlog.md), tracked by BLG-GOV-414. CLAUDE.md \u00a76: OPERATIONAL_GUIDE.md v4.255, post_ship_closure_changelog.md 2.46, prompt_change_log.md rows. Size budget held (72,734 <= 72,930 baseline) by moving 3 precedent sentences to the changelog. Deviation check: none (governance prompt, no canonical spec divergence). CI on 5243368b: all 7 workflows success (CI Pytest Suite 42791340576)."
         },
         "ST-29": {
           "title": "Arc velocity tracking dashboard",
@@ -559,7 +559,7 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": "Case B (documentation-creation). AC 1 (Arc 2 report v3.1-v6.1 from velocity_metrics.md and cycle records): docs/governance/arc_velocity_report_arc2.md, 31 cycles. AC 2 (reusable for Arc 3+): scripts/arc_velocity_report.py + reuse steps; tests/test_arc_velocity_report.py 7 passed locally. AC 3 met at seal (PMO Lead, agent-mediated). AC 4: no governance prompt changed; filed BLG-GOV-415. Deviation check: none. ci_pending: CI Pytest Suite 42791766580 and 4 others in progress at write."
+          "notes": "Case B (documentation-creation). AC 1 (Arc 2 report v3.1-v6.1 from velocity_metrics.md and cycle records): docs/governance/arc_velocity_report_arc2.md, 31 cycles. AC 2 (reusable for Arc 3+): scripts/arc_velocity_report.py + reuse steps; tests/test_arc_velocity_report.py 7 passed locally. AC 3 met at seal (PMO Lead, agent-mediated). AC 4: no governance prompt changed; filed BLG-GOV-415. Deviation check: none. CI on c196c094: all 7 workflows success (CI Pytest Suite 42791766580)."
         },
         "ST-30": {
           "title": "Base44 prompt versioning convention",
@@ -588,7 +588,7 @@
             "date": "2026-11-10",
             "reference": "ESC-EXEC-20261110-02"
           },
-          "notes": "Was delegated_decision; ESC-EXEC-20261110-02 resolved 2026-11-10T09:37:55Z (ruling: both). Reclassified to autonomous for the write. AC 1: ruling dated 2026-11-10 in ESC-EXEC-20261110-02. AC 2: OPERATIONAL_GUIDE.md v4.256 \u00a78.3 (CLAUDE.md \u00a76). AC 3: dry-run on DEL-20260629-02 / strategy-benchmark-v1.md recorded in \u00a78.3. Case B. Deviation check: none."
+          "notes": "Was delegated_decision; ESC-EXEC-20261110-02 resolved 2026-11-10T09:37:55Z (ruling: both). Reclassified to autonomous for the write. AC 1: ruling dated 2026-11-10 in ESC-EXEC-20261110-02. AC 2: OPERATIONAL_GUIDE.md v4.256 \u00a78.3 (CLAUDE.md \u00a76). AC 3: dry-run on DEL-20260629-02 / strategy-benchmark-v1.md recorded in \u00a78.3. Case B. Deviation check: none. CI on 1c21656d: all 7 workflows success (CI Pytest Suite 42792403600)."
         }
       }
     }
