@@ -1273,7 +1273,14 @@ def exit_position(
     settings = settings_list[0] if settings_list else None
     
     market = position['market']
-    entry_price = position.get('fill_price', position['entry_price']) if market == 'US' else position['entry_price']
+    # ST-16 (BLG-BE-175, v9.16): the native entry written to trade_history.entry_price
+    # (NOT NULL, native currency). position.get('fill_price', ...) returned None for
+    # a US row whose fill_price is NULL, and the trade_history write failed. Use the
+    # same fallback as the recompute paths: fill_price, else entry_price (GBP) x the
+    # stored fx_rate, else x this exit's fx_rate.
+    position_floats = decimal_to_float(dict(position))
+    entry_price = native_entry_price(position_floats, fx_rate_to_use)
+    stored_entry_fx_rate = position_floats.get('fx_rate')
     
     # Calculate exit proceeds
     proceeds = calculate_exit_proceeds(
@@ -1391,7 +1398,11 @@ def exit_position(
         'pnl_pct': realized_pnl_pct,
         'holding_days': holding_days,
         'exit_reason': reason,
-        'entry_fx_rate': float(position.get('fx_rate', 1.0)),
+        # NULL stays NULL for a US row (entry_fx_rate is nullable); UK keeps 1.0.
+        'entry_fx_rate': (
+            float(stored_entry_fx_rate) if stored_entry_fx_rate is not None
+            else (None if market == 'US' else 1.0)
+        ),
         'exit_fx_rate': fx_rate_to_use,
         'entry_note': position.get('entry_note'),
         'exit_note': exit_note,
