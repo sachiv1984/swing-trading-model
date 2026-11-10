@@ -73,3 +73,14 @@ Last Updated: 2026-11-10
 - Signed off by: Sprint Execution Engine (agent-mediated, Director of Quality role — §5.3)
 - Date: 2026-11-10
 - Comments: Agent-mediated review (§5.3), user-invoked `run sprint --epic EPIC-06`; pending human DoQ confirmation at the merge gate. Pass 1 Blocked (ST-26 grade, uncommitted files, §25 heading IDs), pass 2 Approved for DoQ and Head of UX & Design, pass 3 Approved for Head of Specs Team (§25 wording) — see Review passes. Grades: ST-24 Pass, ST-25 Pass, ST-26 Pass_with_deviation (`BLG-BE-211`), ST-27 Pass. Story-level authority sign-offs (BLG-GOV-14): Head of Specs Team for `shared_standards.md` §25 (cleared, pass 3); Head of UX & Design for `docs/ux/arc2_user_journey_map.md` (cleared, pass 2). Final CI: every story commit green (run IDs in QA test coverage); ST-24/ST-26 Playwright journeys passed first attempt in real GitHub Actions runs 42797119521 and 42797687776. §25: not applicable — this EPIC changes no page hand-off, lifecycle field or data-gated feature (tests and documents only).
+
+## Merge Gate Confirmations
+
+- **Director of Quality QA sign-off:** given by the human repository owner, acting as Director of Quality, in session at 2026-11-10T13:41:19Z ("give DOQ and PO acceptance"), before the merge. It accepts:
+  - this evidence: ST-24, ST-25 and ST-27 graded Pass, and ST-26 graded `Pass_with_deviation` against `BLG-BE-211` (`active`→`closed` cannot be asserted until the backend writes it);
+  - the agent-mediated sign-off block above: pass 1 was Blocked for DoQ and Head of Specs Team (fixed in `1be3ae14` and `086d575d`), pass 2 Approved for DoQ and Head of UX & Design, pass 3 Approved for Head of Specs Team;
+  - the agent-mediated PR #2231 review (comment 6768850174): DoQ ⚠️ Approved with Comments and PO ⚠️ Approved with Comments, with no blocking finding and follow-ups filed as BLG-QA-258 and BLG-QA-259.
+
+  At acceptance the PR head was `e29623ef`, with 28 checks passed, 21 pending, 5 skipped and no failures. The pending checks must be green before merge.
+- **Product Owner acceptance:** given by the human repository owner, acting as Product Owner, in the same instruction at 2026-11-10T13:41:19Z, before the merge. It accepts ST-24 to ST-27 against `stage4_backlog_slice.md`, including ST-26's partial "plan state transitions" coverage against `BLG-BE-211`, and the `shared_standards.md` v3.42 §25 amendment under ST-25 AC 2. There are no post-merge ACs. Follow-ups: BLG-BE-211, BLG-BE-212, BLG-FE-281, BLG-FE-282 (recommended ahead of other v9.17 P2s), BLG-FE-283, BLG-FE-284, BLG-GOV-418, BLG-QA-258, BLG-QA-259.
+- **Merge:** pending. To be recorded (who, when, merge commit) when the human merges PR #2231.
