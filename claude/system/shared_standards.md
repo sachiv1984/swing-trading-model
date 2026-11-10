@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.41
-**Last Updated:** 2026-11-03 (BLG-GOV-392/405, Head of Specs Team, user-directed — §2 halt-state rule for engines that may not write `status`; §11 size-budget headroom rule; two history passages moved to the changelog); prior — 2026-11-03 (AUD-2026-11-03-003 — §11 size budget enforced by CI: scripts/check_prompt_size_budget.py ratchet against scripts/prompt_size_baseline.json); prior — 2026-10-08 (ST-33, EPIC-06, v9.11, BLG-GOV-375 — canonical Owner role names: write-time check scripts/check_sprint_backlog_owners.py); prior history retained — see prior entries in version control
+**Version:** 3.42
+**Last Updated:** 2026-11-10 (sprint execution `2026-11-06__release-v9.16` ST-25, BLG-QA-22 — new §25 DoQ checks for hand-off, lifecycle and data-gated stories); prior — 2026-11-03 (BLG-GOV-392/405, Head of Specs Team, user-directed — §2 halt-state rule for engines that may not write `status`; §11 size-budget headroom rule; two history passages moved to the changelog); prior — 2026-11-03 (AUD-2026-11-03-003 — §11 size budget enforced by CI: scripts/check_prompt_size_budget.py ratchet against scripts/prompt_size_baseline.json); prior history retained — see prior entries in version control
 
 # Shared Standards — All Governed Routines
 
@@ -951,7 +951,7 @@ Original / Amended — <file path used>
 
 **Used by:** Roadmap Engine (write at STEP 4.2 and STEP 9), Backlog Management Engine (validate at STEP 1), Release Planning Engine (read at STEP 4.5 Capacity Feasibility Sense Check)
 
-**Origin:** `2026-07-14__release-v7.1` Release Planning Friction Item 1, escalated to Head of Specs Team at that cycle's post-ship closure and resolved 2026-07-14. Root cause: items filed to `backlog.md` via `roadmap_prompt.md` STEP 4.2's `📋 Backlog (gate-conditional)` disposition path bypass STEP 6 (Scoring Matrix Overlay), which is the only place the existing `S (≤ 1 day) / M (2–5 days) / L (> 5 days)` day-range convention (§16.7) was ever documented — so STEP 4.2 items routinely landed with a bare letter and no range, forcing Release Planning's capacity check to infer ranges by analogy to unrelated items.
+**Origin:** moved to `changelogs/shared_standards_changelog.md` (v3.42 entry).
 
 ### Field syntax
 
@@ -976,7 +976,7 @@ Original / Amended — <file path used>
 
 **Used by:** Sprint Execution Engine (written at STEP 5.2 agent-mediated sign-off protocol)
 
-**Origin:** Moved from `execution_prompt.md` §5.1 (AUD-2026-07-20-004) — canonicalised here alongside the other governed JSON schemas rather than kept inline, per §16's own stated purpose.
+**Origin:** moved to `changelogs/shared_standards_changelog.md` (v3.42 entry).
 
 **Schema** (added to `execution_state.json` per-story):
 
@@ -1061,7 +1061,7 @@ Original / Amended — <file path used>
 
 No governed engine's declared Write Scope (§7 pattern, `claude/system/shared/governance_preamble.md §Write-Scope`) includes `.claude/skills/`. Skill files (`.claude/skills/**/SKILL.md`) are process tooling that sits adjacent to, but outside, the five governed routines — they are invoked directly by the user or by Claude Code's skill dispatch, not by any of the phase engines.
 
-This left a gap: a deferred patch to `.claude/skills/commit-check/SKILL.md` (adding a diff-verification step) carried unresolved across three consecutive cycles (v6.4 → v6.5 → v6.6) because no engine's write scope covered the file, and no explicit authority was named to action it outside a governed routine.
+Background (why §17 exists): moved to `changelogs/shared_standards_changelog.md` (v3.42 entry).
 
 **Provision:** The **Head of Specs Team** holds standing write authority over `.claude/skills/**`, independent of any single engine's per-run Write Scope. This authority may be exercised:
 - Directly, at any time, without opening a governed cycle — skill files are process tooling, not release-scoped artefacts.
@@ -1107,7 +1107,7 @@ When writing or updating Playwright tests in this project:
 
 ## 19. Array Guard Standard for JSON API Response Fields
 
-**Origin:** Recurrence escalation, first raised `2026-07-17__release-v7.5` closure, carried unresolved across 3 consecutive Post-Ship Closure cycles (v7.5 → v7.6 → v7.7) because its named target ("next roadmap review") did not occur until this cycle (`2026-07-24__scheduled` — no `run roadmap` invocation had run since `2026-07-17__scheduled`; v7.6 and v7.7 both used direct-write bypass patterns instead). Owner: Head of Engineering.
+**Origin:** moved to `changelogs/shared_standards_changelog.md` (v3.42 entry).
 
 **Standard:** Any frontend code calling `.map()`, `.filter()`, `.forEach()`, or similar array methods directly on a field sourced from a JSON API response must first guard with `Array.isArray(...)` (or an equivalent explicit type check) before iterating. Do not assume an API response field is an array merely because the contract types it as one — a malformed response, a partial/error payload, or a schema drift not yet caught by the OpenAPI Drift Detection gate can deliver `null`, `undefined`, or a non-array value at runtime, and an unguarded `.map()`/`.filter()` call throws and can crash the enclosing component.
 
@@ -1180,7 +1180,7 @@ This is a logging convention only — it does not gate anything and has no pass/
 
 **Purpose:** a programmatic write to a governance JSON file (`.claude_current_state.json`, `execution_state.json`, and any other JSON file routinely carrying non-ASCII prose — em-dashes `—`, section markers `§`, curly quotes) must not silently re-escape every non-ASCII character into `\uXXXX` sequences on every write, which degrades diff quality and human readability far beyond the fields actually changed.
 
-**Root cause (found live, PR #1662, EPIC-01/v9.4):** Python's `json.dump(..., indent=2)` defaults to `ensure_ascii=True`, which escapes every non-ASCII character in the **entire** file, not just newly-written fields. A ~5-field semantic edit to a ~125-line file produced a 15-line diff, and every em-dash/`§` already present in the file (not touched by the edit) was rewritten to an escape sequence.
+**Root cause:** moved to `changelogs/shared_standards_changelog.md` (v3.42 entry).
 
 **Convention:** any programmatic write to a governance JSON file must pass `ensure_ascii=False` explicitly:
 
@@ -1207,6 +1207,22 @@ This preserves non-ASCII characters literally, keeping diffs minimal (only the s
 **Validation:** `claude/system/state_schema.json` is the structural JSON Schema for `.claude_current_state.json` (field names/types/presence — distinct from `claude/system/lifecycle_schema.json`, the canonical state-machine definition of valid `status` values and transitions). Run `python3 scripts/validate_state_schema.py` to validate the live state file and report `last_updated_utc`'s computed age; not currently wired into any engine's preflight as a hard gate — advisory/manual use for now, same posture as other structural-drift detectors in this codebase (e.g. `check_specs_index_freshness.py`).
 
 **Sign-off:** Head of Specs Team — Approved. Sprint Execution Engine (agent-mediated, Head of Specs Team role — §5.3), 2026-09-30.
+
+---
+
+## 25. DoQ Checks for Flow, Lifecycle and Data-Gated Stories (ST-25, EPIC-06, v9.16, BLG-QA-22)
+
+**Purpose:** conditional checks the Director of Quality applies at EPIC sign-off (`execution_prompt.md` §3.2.A), alongside the template's Standard Sign-Off Block. Rationale and the defects each gap let through: `docs/qa/arc2_doq_standards_review.md`.
+
+| # | Trigger (any story in the EPIC…) | Evidence required |
+|---|----------------------------------|-------------------|
+| 25.1 Hand-off | adds or changes data passed from one page to another (URL parameters, router state, or a write a later page reads) | A Playwright test or recorded staging run from the sending page that asserts the value on the receiving page or in the write. Single-page tests do not count. |
+| 25.2 Lifecycle | adds or changes a status or lifecycle field, or the spec's lifecycle diagram for one | Each transition the spec states, with the code path that performs it and a test; or marked not implemented with its backlog item. |
+| 25.3 Data gate | ships a feature whose output depends on a data threshold (e.g. ≥ 20 closed trades) | Which branches were seen on real (staging or production) data and which only on mocks, plus a backlog item to verify each unseen branch once the threshold is met. |
+
+Record each applicable check in the sign-off block's `Comments:` field (`25.1: …`, `25.2: …`, `25.3: …`), or write `§25: not applicable` when no trigger is met. A missing applicable check is a Blocked finding at DoQ review, not a deviation. Template wiring: `BLG-GOV-418`.
+
+**Sign-off:** PENDING — Head of Specs Team (agent-mediated, §5.3), EPIC-06 DoQ.
 
 ---
 

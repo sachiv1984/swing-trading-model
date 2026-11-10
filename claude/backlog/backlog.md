@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-10 (session — 2 new item(s) added: BLG-FE-281, BLG-BE-212; ST-24, EPIC-06, v9.16); prior — 2026-11-10 (session — 1 new item(s) added: BLG-BE-211; ST-26, EPIC-06, v9.16); prior — 2026-11-10 (session — 2 new item(s) added: BLG-GOV-416, BLG-GOV-417; agent-mediated DoQ and PO review of PR #2230, EPIC-07, v9.16); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-10 (session — 1 new item(s) added: BLG-GOV-418; ST-25, EPIC-06, v9.16); prior — 2026-11-10 (session — 2 new item(s) added: BLG-FE-281, BLG-BE-212; ST-24, EPIC-06, v9.16); prior — 2026-11-10 (session — 1 new item(s) added: BLG-BE-211; ST-26, EPIC-06, v9.16); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -6587,5 +6587,26 @@ On exit, `position_service.py` sets `trade_history.planned_entry_price` from the
 - A trade whose linked plan has a planned entry shows an entry delta against that price, whatever the signal price at exit
 - `data_model.md` describes the field as built
 - Tests above pass
+
+---
+
+### BLG-GOV-418 — Add the §25 DoQ checks as checkbox lines in the QA evidence template
+**Priority:** P3 (Low)
+**Type:** Governance Process
+**Owner:** Head of Specs Team; Director of Quality
+**Source:** ST-25 (EPIC-06, v9.16) — Arc 2 DoQ standards review (`docs/qa/arc2_doq_standards_review.md` §4) — 2026-11-10
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.17
+
+**Problem**
+`shared_standards.md` v3.42 §25 adds three conditional DoQ checks (25.1 hand-off, 25.2 lifecycle, 25.3 data gate). ST-25's sealed AC named only `shared_standards.md`, so the Standard Sign-Off Block in `claude/system/templates/qa_evidence_template.md` does not yet show them. A signer working from the template alone can miss them, as the conditional Strategy-values line was designed to prevent for strategy values.
+
+**Scope**
+- Add one conditional checkbox line to the template's Standard Sign-Off Block pointing to `shared_standards.md` §25, in the same style as the "Strategy values checked" line
+- CLAUDE.md §6 checklist for the template bump
+
+**Acceptance Criteria**
+- The template's Standard Sign-Off Block carries a §25 line requiring `25.1`/`25.2`/`25.3` entries or `§25: not applicable`
+- Template version, `OPERATIONAL_GUIDE.md` §14 row and `prompt_change_log.md` updated in the same commit
 
 ---
