@@ -1,8 +1,8 @@
 **Owner:** QA & Testing Owner
 **Class:** Class 3 Operational Record
 **Status:** Active
-**Version:** 1.0
-**Last Updated:** 2026-04-24
+**Version:** 1.1
+**Last Updated:** 2026-11-10 (ST-21, EPIC-05, v9.16, BLG-SPEC-195 — journal-summary `model` verification: Haiku-only, no `AI_MODEL` override); prior — 2026-04-24
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Canonical specs:** docs/specs/api_contracts/ai_endpoints.md v1.0; docs/specs/data_model.md (trade_history table)
 
@@ -57,7 +57,7 @@ POST /api/ai/journal-summary
 **Verification:**
 - `summary` is a non-null, non-empty string
 - `trade_count` equals number of trades with matching IDs that have an `exit_date`
-- `model` matches the configured model (default `claude-haiku-4-5-20251001` or `AI_MODEL` env var)
+- `model` is `claude-haiku-4-5-20251001` (the endpoint is Haiku-only; there is no `AI_MODEL` override — v9.16 ST-21)
 - `cached` is `false` (caching not implemented)
 - One audit record created in `ai_audit_log`: `summary_produced = true`, `output_hash` non-null
 

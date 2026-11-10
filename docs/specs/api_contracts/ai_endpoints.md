@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical (Class 1)
 **Status:** Canonical
-**Version:** 1.39
-**Last Updated:** 2026-11-05 (ST-25/ST-27, EPIC-04, v9.15, BLG-AI-24/BLG-AI-26 — journal-summary language check amended by ruling `ESC-EXEC-20261105-01` (A″): "can", past-tense reported speech and "help explain" pass; five more advisory forms fail); prior — 2026-11-05 (ST-26, EPIC-04, v9.15, BLG-AI-25 — `_NON_TICKER_WORDS` adds time, chat and abbreviation words, so chat stop sentences such as "Your stop was hit at 3 PM." go to the focus ticker again); prior — 2026-10-30 (ST-15, EPIC-03, v9.14, BLG-AI-20 — the journal-summary language check also fails five advisory phrasing forms as `trading_change`; ruling `ESC-EXEC-20261030-02`); prior history retained — see prior entries in version control
+**Version:** 1.40
+**Last Updated:** 2026-11-10 (ST-21, EPIC-05, v9.16, BLG-SPEC-195 — POST /ai/journal-summary is Haiku-only; the stale AI_MODEL override sentence is removed); prior — 2026-11-05 (ST-25/ST-27, EPIC-04, v9.15, BLG-AI-24/BLG-AI-26 — journal-summary language check amended by ruling `ESC-EXEC-20261105-01` (A″): "can", past-tense reported speech and "help explain" pass; five more advisory forms fail); prior — 2026-11-05 (ST-26, EPIC-04, v9.15, BLG-AI-25 — `_NON_TICKER_WORDS` adds time, chat and abbreviation words, so chat stop sentences such as "Your stop was hit at 3 PM." go to the focus ticker again); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -127,7 +127,7 @@ When the external LLM API is unreachable or returns an error, the endpoint retur
 
 - AI summary output **must not** be stored in the database or used as input to any calculation.
 - External LLM API key must be read from environment variable `ANTHROPIC_API_KEY`. No secrets in code.
-- Default model: `claude-haiku-4-5-20251001`. Override via `AI_MODEL` env var.
+- Model: `claude-haiku-4-5-20251001` (`ai_models.CLAUDE_HAIKU_4_5`, `MODEL_VERSION`). The endpoint is Haiku-only: there is no override, by environment variable or argument (`docs/governance/ai_model_version_pinning_policy.md` prohibits runtime overrides), so the audit row's Haiku cost rates below always match the model called. (v9.16 ST-21, BLG-SPEC-195: the "Override via `AI_MODEL` env var" sentence described an override removed in v4.2.)
 - If LLM API is unreachable: return HTTP 200 with `summary: null` and informational `message`. Do not raise HTTP 500.
 - Endpoint is read-only: no trade data is modified.
 - **Claude audit row (ST-06, v9.12, BLG-OPS-183):** each model call writes one `claude_audit_log` row: `endpoint` `POST /ai/journal-summary`, the model ID, `prompt_version` (`v1.1` from ST-18; `v1.0` before), tokens, `cost_usd` (Haiku 4.5 at $1/M input and $5/M output tokens), `latency_ms`, `prompt_hash` (SHA-256 of an empty system prompt plus the prompt, first 16 hex characters) and `response_length`. A call that fails after retries writes a row with `compliance_check_result = 'model_call_failed'` and no cost. No summary text is stored, so the "must not be stored" rule above still holds. Before v9.12 the journal summary wrote only `ai_audit_log`, which has no cost column, so its spend was missing from the daily cost alert, `GET /ai/monthly-cost`, `GET /ai/monthly-cost-by-feature` and the endpoint anomaly check. An audit failure is logged and never affects the summary.
@@ -978,6 +978,7 @@ Not a new endpoint — this is internal instrumentation, not part of this contra
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.40 | 2026-11-10 | ST-21 (EPIC-05, v9.16, BLG-SPEC-195): `POST /ai/journal-summary` implementation constraints — the "Override via `AI_MODEL` env var" sentence is replaced: the endpoint is Haiku-only (`claude-haiku-4-5-20251001`), with no environment or argument override, so the Haiku cost rates on its `claude_audit_log` row always match the model called. The `AI_MODEL` override was removed in v4.2 under the model-pinning policy; the unused `model` argument of `summarise_journal_notes()` is removed too. No behaviour or shape change. |
 | 1.39 | 2026-11-05 | ST-25/ST-27 (EPIC-04, v9.15, BLG-AI-24/BLG-AI-26; ruling `ESC-EXEC-20261105-01` (A″), amending (A) and (A′)): `POST /ai/journal-summary` language check — "can" dropped from the passive form; "help explain/account for/show" excluded from the evaluative phrase; past-tense reported speech passes; five more advisory forms fail as `trading_change`. No prompt, version, result-value or fallback change. |
 | 1.38 | 2026-11-05 | ST-26 (EPIC-04, v9.15, BLG-AI-25): `_NON_TICKER_WORDS` adds AM, PM, EOD, EOW, EOM, IMO, IMHO, FYI, NOTE, TBD, ASAP, Q1–Q4, FY, YOY, VIX, GMT and BST. The `POST /ai/chat` focus rule (ST-17) shares the list, so a stop sentence naming only these words goes to the held focus ticker again; `POST /ai/daily-briefing` check 3 no longer caveats them. Within ruling `ESC-EXEC-20261027-02` (B) condition 2 (a minimum list). No prompt, response-shape or result-value change. |
 | 1.37 | 2026-10-30 | ST-15 (EPIC-03, v9.14, BLG-AI-20; ruling `ESC-EXEC-20261030-02`, extending `ESC-EXEC-20261027-03` (A)): `POST /ai/journal-summary` language check also fails, as `trading_change`, five advisory phrasing forms with no "needs/should" cue ("consider/try …", "worth …", passive modal + "be" + change verb, gerund/review-of/comparative + evaluative phrase, "is something to …"). Past tense still passes. No prompt, version, result-value or fallback change. |

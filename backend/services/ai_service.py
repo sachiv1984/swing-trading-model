@@ -548,18 +548,20 @@ def journal_summary_language_failures(text: Optional[str]) -> list:
     return found
 
 
-def summarise_journal_notes(
-    notes: list[str],
-    model: Optional[str] = None,
-) -> dict:
+def summarise_journal_notes(notes: list[str]) -> dict:
     """
     Call the Anthropic API to summarise a list of journal note strings.
+
+    Haiku-only (ST-21, BLG-SPEC-195, v9.16): always MODEL_VERSION
+    (ai_models.CLAUDE_HAIKU_4_5), which the audit row's Haiku cost rates assume.
+    The unused `model` argument is removed so no other model can be passed;
+    runtime overrides are prohibited by ai_model_version_pinning_policy.md.
 
     Returns a dict with keys: summary (str|None), model (str|None), message (str|None).
     On LLM unavailability, returns summary=None with an informational message — never raises.
     """
     api_key = os.getenv("ANTHROPIC_API_KEY")
-    model = model or MODEL_VERSION
+    model = MODEL_VERSION
 
     if not api_key:
         return {
