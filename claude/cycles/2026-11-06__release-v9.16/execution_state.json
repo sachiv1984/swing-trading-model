@@ -6,7 +6,7 @@
   "invoked_utc": "2026-11-09T09:15:14Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-10T09:55:00Z",
+  "last_updated_utc": "2026-11-10T09:58:00Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-02",
@@ -505,8 +505,8 @@
       "title": "Governance Process",
       "status": "done",
       "branch": "exec/2026-11-06__release-v9.16/EPIC-07",
-      "pr_number": null,
-      "pr_status": "none",
+      "pr_number": 2230,
+      "pr_status": "open",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-11-06__release-v9.16/qa_evidence_EPIC-07.md",
       "test_scenarios": [
