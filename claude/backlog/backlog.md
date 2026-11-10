@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-10 (session — 3 new item(s) added: BLG-FE-282, BLG-FE-283, BLG-FE-284; ST-27, EPIC-06, v9.16); prior — 2026-11-10 (session — 1 new item(s) added: BLG-GOV-418; ST-25, EPIC-06, v9.16); prior — 2026-11-10 (session — 2 new item(s) added: BLG-FE-281, BLG-BE-212; ST-24, EPIC-06, v9.16); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-10 (session — 2 new item(s) added: BLG-QA-258, BLG-QA-259; agent-mediated DoQ and PO review of PR #2231, EPIC-06, v9.16); prior — 2026-11-10 (session — 3 new item(s) added: BLG-FE-282, BLG-FE-283, BLG-FE-284; ST-27, EPIC-06, v9.16); prior — 2026-11-10 (session — 1 new item(s) added: BLG-GOV-418; ST-25, EPIC-06, v9.16); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -6675,5 +6675,47 @@ Research View's "Create Trade Plan" opens `/TradePlan?ticker={ticker}` although 
 **Acceptance Criteria**
 - Immediately after saving a new, start-eligible plan, "Start Trade from Plan" is shown and opens Trade Entry pre-filled and linked
 - Playwright coverage passes
+
+---
+
+### BLG-QA-258 — Run the Arc 2 protocol's backend write-through checks on staging once
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** QA Lead; QA & Testing Owner
+**Source:** PR #2231 agent-mediated review (Director of Quality), EPIC-06, v9.16 — 2026-11-10
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v9.17
+
+**Problem**
+The two Arc 2 journey tests added by ST-24/ST-26 (`arc2-happy-path.spec.js`, `trade-plan-lifecycle.spec.js`) run against a mock backend that copies the link, stop and Plan vs Reality rules but cannot prove the real API performs them. The mock also leaves out the `get_unlinked_trade_plan_for_entry` auto-link fallback. `docs/qa/arc2_e2e_qa_protocol.md` §5.1 (M-01 to M-06) defines the staging checks that close this gap, but nothing schedules their first run, so the arc's write-through (plan link, auto-link, exit, partial exit, Plan vs Reality values) has never been verified end to end on a real database.
+
+**Scope**
+- Run protocol §5.1 M-01 to M-06 once on staging with a test portfolio
+- Record date, tester and result per row; file any failure as its own item
+
+**Acceptance Criteria**
+- M-01 to M-06 each have a recorded staging result (M-04 and M-06 recorded against the known gaps `BLG-BE-211` / `BLG-BE-212` if those are not yet fixed)
+- Any unexpected result has a backlog item
+
+---
+
+### BLG-QA-259 — Re-derive the Playwright coverage matrix spec index (55 of 159 specs missing)
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** Director of Quality; QA Lead
+**Source:** PR #2231 agent-mediated review (Director of Quality), EPIC-06, v9.16 — 2026-11-10
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v9.17
+
+**Problem**
+`docs/qa/playwright_coverage_matrix.md` (v1.5, last re-derived 2026-09-16 by BLG-QA-167) does not name 55 of the 159 spec files now in `tests/e2e/`, including v9.16's `plan-this.spec.js`, `trade-plan-suggested-size.spec.js`, `trade-plan-lifecycle.spec.js` and `arc2-happy-path.spec.js`. Specs are added every cycle with no step that registers them, so the matrix drifts back to stale after each manual re-derive.
+
+**Scope**
+- Re-derive the §2 Spec File Index from `tests/e2e/*.spec.js`
+- Add a check (script or CI step) that fails when a spec file is missing from the index, or record a decision to retire the index in favour of generating it
+
+**Acceptance Criteria**
+- Every `tests/e2e/*.spec.js` file appears in the matrix index
+- A mechanical check or a recorded retire/generate decision prevents the drift recurring
 
 ---
