@@ -4,8 +4,8 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.256
-**Last Updated:** 2026-11-10 (sprint execution `2026-11-06__release-v9.16` ST-30, BLG-GOV-198 — §8.3 Base44 prompt versioning convention, `ESC-EXEC-20261110-02` ruling); prior — 2026-11-10 (sprint execution `2026-11-06__release-v9.16` ST-28, BLG-GOV-413 — post_ship_closure.md v2.46, STEP 3.1 split-achievability carve-out case (i)/(ii)); prior — 2026-11-06 (`ESC-CLOSE-20261106-02` ruling — release_planning_prompt.md v2.72, §1.4c step 0 programme-phase hold); prior history retained — see prior entries in version control
+**Version:** 4.257
+**Last Updated:** 2026-11-10 (sprint execution `2026-11-06__release-v9.16` ST-25, BLG-QA-22 — §14 Shared Standards row v3.42, new §25 DoQ checks); prior — 2026-11-10 (sprint execution `2026-11-06__release-v9.16` ST-30, BLG-GOV-198 — §8.3 Base44 prompt versioning convention, `ESC-EXEC-20261110-02` ruling); prior — 2026-11-10 (sprint execution `2026-11-06__release-v9.16` ST-28, BLG-GOV-413 — post_ship_closure.md v2.46, STEP 3.1 split-achievability carve-out case (i)/(ii)); prior history retained — see prior entries in version control
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -1387,7 +1387,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 4.256 |
+| Version | 4.257 |
 | Last Updated | 2026-11-10 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.13 |
@@ -1411,7 +1411,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Verification Engine Source | `claude/system/delivery_verification_prompt.md` v3.17 |
 | Ideas Housekeeping Engine | `claude/system/ideas_housekeeping_prompt.md` v1.2 |
 | Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.46 |
-| Shared Standards | `claude/system/shared_standards.md` v3.41 |
+| Shared Standards | `claude/system/shared_standards.md` v3.42 |
 | Governance Invariants | `claude/system/invariants.md` v1.0 |
 | Lessons Learnt Prompt | `claude/system/lessons_learnt_prompt.md` v1.17 |
 | Prompt Change Log | `claude/system/prompt_change_log.md` |
@@ -1528,6 +1528,7 @@ Living references introduced in v3.2: `component_inventory.md`, `design_system.m
 **Header-drift prevention (added v4.85, roadmap rebalance 2026-07-08__scheduled, Friction Item — 4th recurrence of this exact pattern per the 4.79/4.80/4.81 entries below):** Before bumping the top `**Version:**`/`**Last Updated:**` header fields, read the highest version number already present in this table's top row — do not increment from the header field alone, since it has drifted below the table's actual latest entry on at least 4 prior occasions.
 
 | Version | Date | Change Summary |
+| 4.257 | 2026-11-10 | **Sprint execution `2026-11-06__release-v9.16` EPIC-06/ST-25 (`BLG-QA-22`) — 1 source document bumped.** `shared_standards.md` v3.41→v3.42: new §25 DoQ Checks for Flow, Lifecycle and Data-Gated Stories (25.1 hand-off, 25.2 lifecycle, 25.3 data gate), from `docs/qa/arc2_doq_standards_review.md`. §14 Shared Standards row v3.42; §14 self-row 4.257. |
 | 4.256 | 2026-11-10 | **Sprint execution `2026-11-06__release-v9.16` EPIC-07/ST-30 (`BLG-GOV-198`), Base44 Frontend Prompt Owner ruling 2026-11-10 (`ESC-EXEC-20261110-02`, user acting in role) — no source prompt bumped.** Frontend delegation text gains the Base44 prompt versioning convention: each filed prompt carries a `**Story:**` header line, and each `delegated_frontend` delegation record carries a `**Base44 prompt file:**` field, with a dry-run example on `DEL-20260629-02`/`strategy-benchmark-v1.md`. §14 self-row and header 4.255→4.256. |
 | 4.255 | 2026-11-10 | **Sprint execution `2026-11-06__release-v9.16` EPIC-07/ST-28 (`BLG-GOV-413`) — 1 source prompt bumped.** `post_ship_closure.md` v2.45→v2.46: STEP 3.1 split-achievability carve-out distinguishes (i) a remainder tracked only by an escalation or the source item (keep open) from (ii) every unmet AC moved to a named follow-up backlog item filed this cycle (banner the source, naming the follow-ups; `BLG-AI-23`/`BLG-AI-27` example). §10 source-prompt line and §14 Post-Ship Closure Engine row updated; §14 self-row and header 4.254→4.255. |
 | 4.254 | 2026-11-06 | **`ESC-CLOSE-20261106-02` ruling, option (b) (Head of Specs Team with the Product Owner, agent-mediated per §5.3, user-directed) — 1 source prompt bumped.** `release_planning_prompt.md` v2.71→v2.72: §1.4c step 0 programme-phase hold. Later-phase P2/P3 items of a §3 `### Programme plan` subsection are held until their phase's release unless a dated PO reason is recorded. §6B source-prompt line and §14 Release Engine Source row updated; §14 self-row and header 4.253→4.254. |

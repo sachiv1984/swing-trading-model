@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-10 (session — 2 new item(s) added: BLG-GOV-416, BLG-GOV-417; agent-mediated DoQ and PO review of PR #2230, EPIC-07, v9.16); prior — 2026-11-10 (session — 1 new item(s) added: BLG-GOV-415; ST-29 AC 4, EPIC-07, v9.16); prior — 2026-11-10 (session — 3 new item(s) added: BLG-BE-209, BLG-BE-210, BLG-QA-257; agent-mediated DoQ and PO review of PR #2229, EPIC-05, v9.16); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-10 (session — 2 new item(s) added: BLG-QA-258, BLG-QA-259; agent-mediated DoQ and PO review of PR #2231, EPIC-06, v9.16); prior — 2026-11-10 (session — 3 new item(s) added: BLG-FE-282, BLG-FE-283, BLG-FE-284; ST-27, EPIC-06, v9.16); prior — 2026-11-10 (session — 1 new item(s) added: BLG-GOV-418; ST-25, EPIC-06, v9.16); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -6520,5 +6520,202 @@ ST-30 wrote the Base44 prompt versioning convention (`ESC-EXEC-20261110-02` ruli
 **Acceptance Criteria**
 - STEP 3.1 case (ii) states the escalation re-pointing condition and falls back to case (i) when it is not met
 - `scripts/check_prompt_size_budget.py` passes, or any baseline raise is reasoned in the `prompt_change_log.md` row
+
+---
+
+### BLG-BE-211 — Move a linked trade plan to `closed` when its position closes
+**Priority:** P2 (Medium)
+**Type:** Backend engineering
+**Owner:** Head of Engineering
+**Source:** ST-26 (EPIC-06, v9.16) — found while building the trade plan lifecycle Playwright test — 2026-11-10
+**Effort:** S (~0.5–1 day)
+**Provisional-Target:** v9.17
+
+**Problem**
+`data_model.md` §Trade Plan Lifecycle says "`active` → `closed` happens when the linked position closes", but no backend code path writes status `closed` to `trade_plans`: the only status write outside the generic `PUT /trade-plans/{id}` is `add_position()`'s `active` link step (`position_service.py`). Every linked plan therefore stays `active` after its trade closes. The Trade Plans list shows those plans as Active, and `pnl_reconciliation_service.py` raises `trade_history_plan_not_closed` for each such trade while counting 0 closed plans.
+
+**Scope**
+- In the `POST /positions/{id}/exit` full-exit path, set `status = 'closed'` on the plan linked to the position (best-effort, like the link step); a partial exit leaves the plan `active`
+- One-off backfill: plans with `status = 'active'` whose linked position is `closed` become `closed`
+- pytest for the full-exit, partial-exit and no-plan cases
+
+**Acceptance Criteria**
+- After a full exit, the linked plan's status is `closed`; after a partial exit it stays `active`
+- Existing `active` plans whose position is already closed are backfilled to `closed`
+- `tests/e2e/trade-plan-lifecycle.spec.js`'s exit mock sets `closed`, and the test asserts the Trade Plans "Closed" badge after the exit
+
+---
+
+### BLG-FE-281 — Pass the market from Research View's "Create Trade Plan" so a UK plan is not created as US
+**Priority:** P2 (Medium)
+**Type:** Frontend / UX
+**Owner:** Head of Engineering; Frontend Specifications & UX Documentation Owner
+**Source:** ST-24 (EPIC-06, v9.16) — found while writing the Arc 2 QA protocol (`docs/qa/arc2_e2e_qa_protocol.md` M-09) — 2026-11-10
+**Effort:** XS (<1h plus a Playwright test)
+**Provisional-Target:** v9.17
+
+**Problem**
+`Research.js` navigates "Create Trade Plan" to `/TradePlan?ticker={ticker}` with no `market`, and `TradePlan.js` defaults a missing `market` to `US`. A plan created from the Research View for a UK ticker (e.g. `VOD.L`) is therefore saved as a US plan: amounts show in $, and the suggested-size request is sent with `market: US`, applying the FX rate to a sterling price.
+
+**Scope**
+- Add `market` (from the research response's `market`) to the "Create Trade Plan" URL in `Research.js`; check the "View full plan" link carries it too
+- Playwright: a UK ticker's Research View → "Create Trade Plan" opens a UK plan
+
+**Acceptance Criteria**
+- From the Research View of a UK ticker, "Create Trade Plan" opens a Trade Plan with market UK and £ amounts; a US ticker still opens US
+- Playwright coverage passes
+
+---
+
+### BLG-BE-212 — Snapshot Plan vs Reality's planned entry from the linked plan, not the signal's price at exit
+**Priority:** P3 (Low)
+**Type:** Backend engineering
+**Owner:** Head of Engineering; Data Model & Domain Schema Owner
+**Source:** ST-24 (EPIC-06, v9.16) — found while writing the Arc 2 QA protocol (`docs/qa/arc2_e2e_qa_protocol.md` M-06) — 2026-11-10
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v9.17
+
+**Problem**
+On exit, `position_service.py` sets `trade_history.planned_entry_price` from the ticker's current signal `current_price` whenever a linked plan exists, and `plan_vs_reality_service.py` computes `entry_delta_pct` against that value. The signal price at exit time is not the price the user planned to enter at: it moves with every scan, and it is null when no signal exists for the ticker (e.g. a plan created from the Screener or Research View), which shows the "historical trades" placeholder for a new trade. The linked plan's own `planned_entry_price` is the planned value. `data_model.md` (Plan vs Reality response, `entry_delta_pct`) still says the field is "null until planned_entry_price snapshot is implemented", which no longer matches the code either way.
+
+**Scope**
+- At exit, snapshot `planned_entry_price` from the linked plan's `planned_entry_price` (fall back to the signal only if the plan has none, or drop the fallback — decide with the Data Model owner)
+- Update the `data_model.md` `entry_delta_pct` description
+- pytest for plan-priced, signal-only and neither cases; update `tests/e2e/mocks/trade-plan-lifecycle-backend.js`'s exit handler and the lifecycle test's worked entry delta
+
+**Acceptance Criteria**
+- A trade whose linked plan has a planned entry shows an entry delta against that price, whatever the signal price at exit
+- `data_model.md` describes the field as built
+- Tests above pass
+
+---
+
+### BLG-GOV-418 — Add the §25 DoQ checks as checkbox lines in the QA evidence template
+**Priority:** P3 (Low)
+**Type:** Governance Process
+**Owner:** Head of Specs Team; Director of Quality
+**Source:** ST-25 (EPIC-06, v9.16) — Arc 2 DoQ standards review (`docs/qa/arc2_doq_standards_review.md` §4) — 2026-11-10
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.17
+
+**Problem**
+`shared_standards.md` v3.42 §25 adds three conditional DoQ checks (25.1 hand-off, 25.2 lifecycle, 25.3 data gate). ST-25's sealed AC named only `shared_standards.md`, so the Standard Sign-Off Block in `claude/system/templates/qa_evidence_template.md` does not yet show them. A signer working from the template alone can miss them, as the conditional Strategy-values line was designed to prevent for strategy values.
+
+**Scope**
+- Add one conditional checkbox line to the template's Standard Sign-Off Block pointing to `shared_standards.md` §25, in the same style as the "Strategy values checked" line
+- CLAUDE.md §6 checklist for the template bump
+
+**Acceptance Criteria**
+- The template's Standard Sign-Off Block carries a §25 line requiring `25.1`/`25.2`/`25.3` entries or `§25: not applicable`
+- Template version, `OPERATIONAL_GUIDE.md` §14 row and `prompt_change_log.md` updated in the same commit
+
+---
+
+### BLG-FE-282 — Pre-fill the Trade Plan stop from the §5 suggested stop and flag a typed stop that differs
+**Priority:** P2 (Medium)
+**Type:** Frontend / UX
+**Owner:** Head of Engineering; Frontend Specifications & UX Documentation Owner; Strategy Rules & System Intent Owner (consulted)
+**Source:** ST-27 (EPIC-06, v9.16) — Arc 2 user journey map (`docs/ux/arc2_user_journey_map.md` F-03) — 2026-11-10
+**Effort:** S (~1 day)
+**Provisional-Target:** v9.17
+
+**Problem**
+`trade_plan.md` §5a.3 says Stop Level is pre-filled from the signal's suggested stop (entry − 5×ATR, `strategy_rules.md` §5). `TradePlan.js`'s signal pre-population fills only the thesis, entry rationale and confirmation criteria, so the field stays empty while the Signal Context panel shows "Suggested stop". The §4.1 suggested size is computed from whatever stop the user types, but Trade Entry stores entry − 5×ATR and shows the planned stop for reference only. A plan typed with a tighter stop than §5 gets a larger suggested size than §4.1 allows at the stop that will be stored, so the entered position can risk more than the configured percentage.
+
+**Scope**
+- Pre-fill Stop Level from the signal's suggested stop per §5a.3 (new plans with signal context; never overwrite a typed value)
+- When the typed stop differs from the §5 stop (entry − 5×ATR, where ATR is known), show next to the suggested size that Trade Entry will store the §5 stop, with that stop's value
+- Playwright coverage; `trade_plan.md` §5a.3/§5f updated if wording changes
+
+**Acceptance Criteria**
+- Opening a plan from a signal ("Plan this" or the watchlisted lookup) pre-fills Stop Level with entry − 5×ATR; a typed value is not overwritten
+- With a typed stop that differs from the §5 stop, the page states the stop Trade Entry will store
+- Playwright coverage passes
+
+---
+
+### BLG-FE-283 — Carry entry price and signal from Research View's "Create Trade Plan"
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Head of Engineering; Head of UX & Design
+**Source:** ST-27 (EPIC-06, v9.16) — Arc 2 user journey map (`docs/ux/arc2_user_journey_map.md` F-01) — 2026-11-10
+**Effort:** XS (<1h plus a Playwright test)
+**Provisional-Target:** v9.17
+**Depends on:** BLG-FE-281 (market on the same link) — can ship together
+
+**Problem**
+Research View's "Create Trade Plan" opens `/TradePlan?ticker={ticker}` although the page already holds the signal's entry price and ID. The user retypes the entry and sees the Signal Context panel only if the signal is watchlisted. "Plan this" on Signals and Screener already passes `market`, `entry_price` and `signal_id` through `planThisUrl` (`trade_plan.md` §2).
+
+**Scope**
+- Build the Research View link with `planThisUrl` (or the same parameters) when the research response has a signal
+- Playwright: Research → Create Trade Plan pre-fills the entry price and shows Signal Context
+
+**Acceptance Criteria**
+- From a Research View with a signal, "Create Trade Plan" opens a plan with the entry price pre-filled and the Signal Context panel shown
+- Without a signal, the link still opens a plan for the ticker and market
+- Playwright coverage passes
+
+---
+
+### BLG-FE-284 — Offer "Start Trade from Plan" right after a new plan is saved
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Head of UX & Design; Frontend Specifications & UX Documentation Owner
+**Source:** ST-27 (EPIC-06, v9.16) — Arc 2 user journey map (`docs/ux/arc2_user_journey_map.md` F-02) — 2026-11-10
+**Effort:** XS (<1h plus a Playwright test)
+**Provisional-Target:** v9.17
+
+**Problem**
+"Start Trade from Plan" renders only in edit mode (`?edit=`). After saving a new plan the page shows "Trade plan saved successfully." with no way to start the trade, so the user opens Trade Plans and finds the plan: the journey's only 2-step hand-off, at the point of decision.
+
+**Scope**
+- After a successful create, show "Start Trade from Plan" for the saved plan (e.g. switch to the edit URL, or render the action from the created plan)
+- Update `trade_plan.md` §10 if the entry point changes; Playwright coverage
+
+**Acceptance Criteria**
+- Immediately after saving a new, start-eligible plan, "Start Trade from Plan" is shown and opens Trade Entry pre-filled and linked
+- Playwright coverage passes
+
+---
+
+### BLG-QA-258 — Run the Arc 2 protocol's backend write-through checks on staging once
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** QA Lead; QA & Testing Owner
+**Source:** PR #2231 agent-mediated review (Director of Quality), EPIC-06, v9.16 — 2026-11-10
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v9.17
+
+**Problem**
+The two Arc 2 journey tests added by ST-24/ST-26 (`arc2-happy-path.spec.js`, `trade-plan-lifecycle.spec.js`) run against a mock backend that copies the link, stop and Plan vs Reality rules but cannot prove the real API performs them. The mock also leaves out the `get_unlinked_trade_plan_for_entry` auto-link fallback. `docs/qa/arc2_e2e_qa_protocol.md` §5.1 (M-01 to M-06) defines the staging checks that close this gap, but nothing schedules their first run, so the arc's write-through (plan link, auto-link, exit, partial exit, Plan vs Reality values) has never been verified end to end on a real database.
+
+**Scope**
+- Run protocol §5.1 M-01 to M-06 once on staging with a test portfolio
+- Record date, tester and result per row; file any failure as its own item
+
+**Acceptance Criteria**
+- M-01 to M-06 each have a recorded staging result (M-04 and M-06 recorded against the known gaps `BLG-BE-211` / `BLG-BE-212` if those are not yet fixed)
+- Any unexpected result has a backlog item
+
+---
+
+### BLG-QA-259 — Re-derive the Playwright coverage matrix spec index (55 of 159 specs missing)
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** Director of Quality; QA Lead
+**Source:** PR #2231 agent-mediated review (Director of Quality), EPIC-06, v9.16 — 2026-11-10
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v9.17
+
+**Problem**
+`docs/qa/playwright_coverage_matrix.md` (v1.5, last re-derived 2026-09-16 by BLG-QA-167) does not name 55 of the 159 spec files now in `tests/e2e/`, including v9.16's `plan-this.spec.js`, `trade-plan-suggested-size.spec.js`, `trade-plan-lifecycle.spec.js` and `arc2-happy-path.spec.js`. Specs are added every cycle with no step that registers them, so the matrix drifts back to stale after each manual re-derive.
+
+**Scope**
+- Re-derive the §2 Spec File Index from `tests/e2e/*.spec.js`
+- Add a check (script or CI step) that fails when a spec file is missing from the index, or record a decision to retire the index in favour of generating it
+
+**Acceptance Criteria**
+- Every `tests/e2e/*.spec.js` file appears in the matrix index
+- A mechanical check or a recorded retire/generate decision prevents the drift recurring
 
 ---
