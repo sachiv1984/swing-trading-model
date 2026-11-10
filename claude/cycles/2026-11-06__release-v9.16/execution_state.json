@@ -6,7 +6,7 @@
   "invoked_utc": "2026-11-09T09:15:14Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-10T09:39:00Z",
+  "last_updated_utc": "2026-11-10T09:55:00Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-02",
@@ -503,11 +503,11 @@
     },
     "EPIC-07": {
       "title": "Governance Process",
-      "status": "in_progress",
+      "status": "done",
       "branch": "exec/2026-11-06__release-v9.16/EPIC-07",
       "pr_number": null,
       "pr_status": "none",
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-11-06__release-v9.16/qa_evidence_EPIC-07.md",
       "test_scenarios": [
         "tests/test_arc_velocity_report.py"
@@ -590,6 +590,14 @@
           },
           "notes": "Was delegated_decision; ESC-EXEC-20261110-02 resolved 2026-11-10T09:37:55Z (ruling: both). Reclassified to autonomous for the write. AC 1: ruling dated 2026-11-10 in ESC-EXEC-20261110-02. AC 2: OPERATIONAL_GUIDE.md v4.256 \u00a78.3 (CLAUDE.md \u00a76). AC 3: dry-run on DEL-20260629-02 / strategy-benchmark-v1.md recorded in \u00a78.3. Case B. Deviation check: none. CI on 1c21656d: all 7 workflows success (CI Pytest Suite 42792403600)."
         }
+      },
+      "sign_off_record": {
+        "role": "Director of Quality",
+        "method": "agent_mediated",
+        "status": "cleared",
+        "date": "2026-11-10",
+        "passes": 2,
+        "reference": "qa_evidence_EPIC-07.md Standard Sign-Off Block"
       }
     }
   },
