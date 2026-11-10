@@ -59,3 +59,18 @@ Last Updated: 2026-11-10
 - Signed off by: Sprint Execution Engine (agent-mediated, Director of Quality role — §5.3)
 - Date: 2026-11-10
 - Comments: Pass 1 was Blocked (1 blocking and 5 non-blocking findings; see Decisions and Escalations). Pass 2 on `788f3ce0` was Approved, with all six findings fixed and the arithmetic re-shown. 365−347 = 18 missed stories = 14 gate + 3 `delegated_frontend` + 1 PO deferral. 6 cycles are below 1.00, so 25 of 31 are at 1.00. The lowest rolling velocity is 4.46/6 = 0.743 and the rolling velocity at arc close is 5/6 = 0.833. `tests/test_arc_velocity_report.py`: 7 passed. The generator's output is identical to the report's data section. `check_prompt_size_budget.py`: OK. `check_execution_state_consistency.py`: OK. After pass 2, the STEP 0 changelog sentence's escaped quotes were made byte-identical to the original. CI: all 7 workflows succeeded on each story commit (runs listed above). All 9 ACs are graded Pass. ST-28 AC 2 is post-merge, as marked at seal, and tracked by `BLG-GOV-414`. No deviations were filed. Human Director of Quality QA sign-off and Product Owner acceptance remain required at the merge gate. This agent-mediated sign-off does not satisfy them.
+
+## Merge Gate Confirmations
+
+- **Director of Quality QA sign-off:** given by the human repository owner, acting as Director of Quality, in session at 2026-11-10T09:54:17Z ("give DOQ and PO acceptance"), before the merge. It accepts:
+  - this evidence, with all 9 in-sprint ACs for ST-28, ST-29 and ST-30 graded Pass;
+  - the agent-mediated sign-off block above: pass 1 was Blocked (1 blocking and 5 non-blocking findings, all fixed in `99b3c818`, `788f3ce0` and `23f478e2`), and pass 2 was Approved;
+  - the agent-mediated PR #2230 review (comment 6764295689): DoQ ⚠️ Approved with Comments and PO ⚠️ Approved with Comments, with no blocking finding and follow-ups filed as BLG-GOV-416 and BLG-GOV-417.
+
+  At acceptance the PR head was `2f04ece9`, with 36 checks passed, 3 pending, 5 skipped and no failures. The pending checks must be green before merge.
+- **Product Owner acceptance:** given by the human repository owner, acting as Product Owner, in the same instruction at 2026-11-10T09:54:17Z, before the merge. It accepts ST-28, ST-29 and ST-30 against `stage4_backlog_slice.md`, including:
+  - the ST-30 convention ruling ("both", `ESC-EXEC-20261110-02`);
+  - `BLG-GOV-26`'s arc-close and Release Planning scope moving to BLG-GOV-415 under ST-29 AC 4.
+
+  Post-merge AC: ST-28 AC 2, tracked by BLG-GOV-414 at the next `groom backlog`. Follow-ups: BLG-GOV-414, BLG-GOV-415, BLG-GOV-416, BLG-GOV-417.
+- **Merge:** pending. To be recorded (who, when, merge commit) when the human merges PR #2230.
