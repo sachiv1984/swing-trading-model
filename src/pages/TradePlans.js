@@ -209,7 +209,11 @@ export default function TradePlans() {
         onResult={handleBulkResult}
       />
 
-      <div className="rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 border border-slate-700/50 overflow-hidden">
+      {/* EPIC-03 review pass 4: this card is dark in both themes, so it carries
+          the `dark` class. Its contents (DataState headings, dark: pairs, app-*
+          tokens) then resolve to their dark values in light mode too
+          (design_system.md §Semantic Colour Tokens, dark-in-both-themes rule). */}
+      <div className="dark rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 border border-slate-700/50 overflow-hidden">
         <DataState
           loading={isLoading}
           error={isError}

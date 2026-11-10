@@ -531,8 +531,10 @@ test.describe('Shell pages axe scan — light theme (ST-09)', () => {
     await expect(page.getByRole('row').filter({ hasText: 'WDC' }).getByText('Today')).toBeVisible({ timeout: 10000 });
     await expect(page.getByRole('row').filter({ hasText: 'VOD.L' }).getByText('⚠ 3d')).toBeVisible({ timeout: 10000 });
     await expectThemeApplied(page, 'light');
-    // axe reports text on a translucent tint as `incomplete`, not a violation
-    // (BLG-QA-260), so the earnings badges' light colour is asserted directly:
+    // With the old bare text-amber-400 rendered, axe still reported no
+    // color-contrast violation on this scan (checked 2026-11-10; it does not
+    // always decide text on translucent fills, BLG-QA-260), so the earnings
+    // badges' light colour is asserted directly:
     // amber-800 (rgb 146, 64, 14) on amber-500/15 over white measures 6.32:1.
     await expect(page.getByRole('row').filter({ hasText: 'WDC' }).getByText('Today')).toHaveCSS('color', 'rgb(146, 64, 14)');
     await expect(page.getByRole('row').filter({ hasText: 'VOD.L' }).getByText('⚠ 3d')).toHaveCSS('color', 'rgb(146, 64, 14)');
@@ -689,3 +691,32 @@ test.describe('Shell consumers axe scan, populated — light theme (ST-09)', () 
     await runAxeScan(page, 'WeeklyDigest:light');
   });
 });
+
+// ---------------------------------------------------------------------------
+// EPIC-03 review pass 4: DataState's headings became `text-slate-900
+// dark:text-white` (ST-09). Three consumers wrap DataState in a card that is
+// dark in both themes; those cards now carry the `dark` class, so the heading
+// stays white in light mode. axe reports text over a gradient as `incomplete`
+// (BLG-QA-260), so the colour is asserted directly: white on slate-900/800 is
+// 14.63:1 or better.
+// ---------------------------------------------------------------------------
+
+for (const [page_, route, heading] of [
+  ['Trade Plans', '/#/TradePlans', 'No trade plans yet'],
+  ['Watchlist', '/#/Watchlist', 'Your watchlist is empty'],
+  ['Notifications', '/#/Notifications', 'No notifications yet'],
+]) {
+  test(`${page_} empty-state heading stays white on its dark card in the light theme (EPIC-03)`, async ({ page }) => {
+    await page.addInitScript(() => window.localStorage.setItem('theme', 'light'));
+    await mockRoutes(page);
+    await page.route(new RegExp(`${API}/notifications\\?`), (r) =>
+      r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok', data: { notifications: [], has_more: false } }) })
+    );
+    await page.goto(route);
+    const h = page.getByText(heading, { exact: true });
+    await expect(h).toBeVisible({ timeout: 10000 });
+    await expectThemeApplied(page, 'light');
+    await expect(h).toHaveCSS('color', 'rgb(255, 255, 255)');
+  });
+}
+
