@@ -604,8 +604,8 @@
       "title": "Arc 2 Retrospective: QA Protocol, Lifecycle Test & Journey Map",
       "status": "done",
       "branch": "exec/2026-11-06__release-v9.16/EPIC-06",
-      "pr_number": null,
-      "pr_status": null,
+      "pr_number": 2231,
+      "pr_status": "open",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-11-06__release-v9.16/qa_evidence_EPIC-06.md",
       "test_scenarios": [
