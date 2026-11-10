@@ -529,7 +529,7 @@ export default function TradeEntry() {
                 value={formData.ticker}
                 onChange={(e) => handleTickerChange(e.target.value)}
                 placeholder="e.g., AAPL or VOD.L"
-                className="bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-600 dark:text-slate-400 focus:border-cyan-500/50 focus:ring-cyan-500/20"
+                className="bg-slate-800/50 border-slate-700 text-app-fg placeholder:text-slate-600 dark:placeholder:text-slate-400 focus:border-cyan-500/50 focus:ring-cyan-500/20"
               />
             </div>
             <div className="space-y-2">
@@ -569,7 +569,7 @@ export default function TradeEntry() {
               value={formData.entry_price}
               onChange={(e) => handleChange("entry_price", e.target.value)}
               placeholder="0.00"
-              className="bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-600 dark:text-slate-400"
+              className="bg-slate-800/50 border-slate-700 text-app-fg placeholder:text-slate-600 dark:placeholder:text-slate-400"
             />
           </div>
 
@@ -582,7 +582,7 @@ export default function TradeEntry() {
               value={formData.fill_price}
               onChange={(e) => handleChange("fill_price", e.target.value)}
               placeholder="Actual broker fill price"
-              className="bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-600 dark:text-slate-400"
+              className="bg-slate-800/50 border-slate-700 text-app-fg placeholder:text-slate-600 dark:placeholder:text-slate-400"
             />
           </div>
 
@@ -637,7 +637,7 @@ export default function TradeEntry() {
                 aria-invalid={showAtrError ? "true" : undefined}
                 aria-describedby={showAtrError ? "atr-implausible-error" : undefined}
                 placeholder="Fetched automatically if blank"
-                className="bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-600 dark:text-slate-400"
+                className="bg-slate-800/50 border-slate-700 text-app-fg placeholder:text-slate-600 dark:placeholder:text-slate-400"
               />
               {showAtrError && (
                 <p id="atr-implausible-error" data-testid="atr-implausible-error" className="text-xs text-rose-700 dark:text-rose-400">
@@ -716,7 +716,7 @@ export default function TradeEntry() {
               value={formData.shares}
               onChange={(e) => handleChange("shares", e.target.value)}
               placeholder="0"
-              className="bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-600 dark:text-slate-400"
+              className="bg-slate-800/50 border-slate-700 text-app-fg placeholder:text-slate-600 dark:placeholder:text-slate-400"
             />
           </div>
 
@@ -731,7 +731,7 @@ export default function TradeEntry() {
                 }
               }}
               placeholder="Why are you entering this trade? What's your thesis?"
-              className="bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-600 dark:text-slate-400 focus:border-cyan-500/50 focus:ring-cyan-500/20 resize-none"
+              className="bg-slate-800/50 border-slate-700 text-app-fg placeholder:text-slate-600 dark:placeholder:text-slate-400 focus:border-cyan-500/50 focus:ring-cyan-500/20 resize-none"
               rows={4}
             />
             <div className="flex justify-end">
@@ -779,7 +779,7 @@ export default function TradeEntry() {
                     onBlur={() => setTimeout(() => setShowTagSuggestions(false), 200)}
                     onKeyDown={handleTagInputKeyDown}
                     placeholder="Type to add tags..."
-                    className="bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-600 dark:text-slate-400 focus:border-cyan-500/50 focus:ring-cyan-500/20"
+                    className="bg-slate-800/50 border-slate-700 text-app-fg placeholder:text-slate-600 dark:placeholder:text-slate-400 focus:border-cyan-500/50 focus:ring-cyan-500/20"
                   />
                   {showTagSuggestions && filteredTags.length > 0 && (
                     <div className="absolute z-10 w-full mt-1 bg-slate-800 border border-slate-700 rounded-lg shadow-xl max-h-48 overflow-auto">

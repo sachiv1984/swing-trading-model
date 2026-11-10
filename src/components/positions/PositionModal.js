@@ -219,7 +219,7 @@ export default function PositionModal({ position, open, onClose, onSave }) {
                       }
                     }}
                     placeholder="Why are you entering this trade? What's your thesis?"
-                    className="bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-600 dark:text-slate-400 focus:border-cyan-500/50 resize-none"
+                    className="bg-slate-800/50 border-slate-700 text-app-fg placeholder:text-slate-600 dark:placeholder:text-slate-400 focus:border-cyan-500/50 resize-none"
                     rows={4}
                   />
                   <div className="flex justify-end">
@@ -268,7 +268,7 @@ export default function PositionModal({ position, open, onClose, onSave }) {
                         onBlur={() => setTimeout(() => setShowTagSuggestions(false), 200)}
                         onKeyDown={handleTagInputKeyDown}
                         placeholder="Type to add tags..."
-                        className="bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-600 dark:text-slate-400 focus:border-cyan-500/50"
+                        className="bg-slate-800/50 border-slate-700 text-app-fg placeholder:text-slate-600 dark:placeholder:text-slate-400 focus:border-cyan-500/50"
                       />
 
                       {showTagSuggestions && filteredTags.length > 0 && (

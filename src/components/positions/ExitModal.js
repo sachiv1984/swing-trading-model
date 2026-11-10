@@ -439,7 +439,7 @@ export default function ExitModal({ position, open, onClose, onConfirm, preselec
                       }
                     }}
                     placeholder="How did the trade play out? What did you learn?"
-                    className="bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-600 dark:text-slate-400 focus:border-cyan-500/50 resize-none"
+                    className="bg-slate-800/50 border-slate-700 text-app-fg placeholder:text-slate-600 dark:placeholder:text-slate-400 focus:border-cyan-500/50 resize-none"
                     rows={3}
                   />
                   <div className="flex justify-end">

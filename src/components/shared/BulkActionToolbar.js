@@ -172,7 +172,7 @@ export default function BulkActionToolbar({
               onKeyDown={handleTagKeyDown}
               placeholder="Add a tag and press Enter"
               list={tagAction.tagOptions?.length ? "bulk-tag-options" : undefined}
-              className="bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-600 dark:text-slate-400 h-8 text-sm max-w-xs"
+              className="bg-slate-800/50 border-slate-700 text-app-fg placeholder:text-slate-600 dark:placeholder:text-slate-400 h-8 text-sm max-w-xs"
             />
             {tagAction.tagOptions?.length > 0 && (
               <datalist id="bulk-tag-options">

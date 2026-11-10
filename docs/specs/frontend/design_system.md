@@ -3,9 +3,10 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 1.25
-**Last Updated:** 2026-11-06 (v9.16 design gate — ST-09/ST-10, BLG-FE-264/223: new §Semantic Colour Tokens and §Input Text Colours under §Theme & Colors); prior — 2026-10-28 (ST-25, EPIC-04, v9.13, BLG-FE-221 — new §Coloured Button Fills under §Buttons: authored fill renders via tailwind-merge in cn(), white text, AA rest and hover shades); prior — 2026-10-13 (ST-23, EPIC-03, v9.12, BLG-FE-200 — new §Light-Theme Colour Tokens under §Theme & Colors: light mode is a supported theme; token pairs from the v9.12 light-theme decision record §3); prior history retained — see prior entries in version control
+**Version:** 1.26
+**Last Updated:** 2026-11-10 (ST-09/ST-10, EPIC-03, v9.16, BLG-FE-264/223 — §Semantic Colour Tokens and §Input Text Colours built: tokens in `src/index.css`/`tailwind.config.js`, four shells converted, 18 input sites moved to the pair); prior — 2026-11-06 (v9.16 design gate — ST-09/ST-10, BLG-FE-264/223: new §Semantic Colour Tokens and §Input Text Colours under §Theme & Colors); prior — 2026-10-28 (ST-25, EPIC-04, v9.13, BLG-FE-221 — new §Coloured Button Fills under §Buttons); prior history retained — see prior entries in version control
 **Header remediation note (v6.7 ST-03, shared_standards.md §9):** this document previously had no lifecycle header. Header applied now (version stamped at 1.0, reflecting no prior tracked version history) rather than backfilling an assumed version — content itself is unchanged by this remediation.
+**v1.26 (ST-09/ST-10, EPIC-03, v9.16, BLG-FE-264/BLG-FE-223):** §Semantic Colour Tokens and §Input Text Colours are now built, so their "spec ahead of the code" notes are removed. §Semantic Colour Tokens gains the **content fixes** made in ST-09: the design record's §5 rule (light-theme axe findings inside the converted shells on the four AC pages) and the Product Owner's 2026-11-10 ruling extending them to every other shell consumer (Trade History table, Weekly Digest, the nine Dashboard cards), all fixed with explicit pairs or tokens and notes that the `PageHeader` title is now solid `app-fg` text rather than a gradient. No token value changes.
 **v1.25 (v9.16 design gate, ST-09/ST-10, BLG-FE-264/BLG-FE-223):** added **§Semantic Colour Tokens** and **§Input Text Colours** under §Theme & Colors. There are eight `app-*` tokens built from the v1.23 measured pairs, with no new colours, and the placeholder and typed-text pair for inputs. The code is built by ST-09 and ST-10 (design source `docs/design/2026-11-06__release-v9.16/semantic-colour-tokens/decision_record.md`).
 **v1.24 (ST-25, EPIC-04, v9.13, BLG-FE-221):** added **§Coloured Button Fills** under §Shared UI Components → Buttons. `cn()` now merges with `tailwind-merge`, so a `<Button>`'s authored colour fill wins over the variant's `bg-primary`; the rule fixes white text and AA rest/hover shades for each fill role. Design source: `docs/design/2026-10-16__release-v9.13/coloured-button-fills/decision_record.md` §2.
 **v1.23 (ST-23, EPIC-03, v9.12, BLG-FE-200):** added **§Light-Theme Colour Tokens** under §Theme & Colors. Light mode is a supported theme (Head of UX & Design with the Product Owner, 2026-10-12, resolving RISK-03). The light+dark pairs for card surfaces, nested rows, primary/strong/secondary text, P&L, warning and accent text, with measured contrast and four usage rules. Applied in-story to Reports (Monthly, Tax Year) and Notifications (Preferences, History). Design source: `docs/design/2026-10-12__release-v9.12/light-theme-support/decision_record.md` §3.
@@ -95,7 +96,7 @@ Skeleton placeholders keep their own pair, `bg-slate-300/60 dark:bg-slate-700/60
 
 **Design source:** `docs/design/2026-11-06__release-v9.16/semantic-colour-tokens/decision_record.md`
 
-This is a spec ahead of the code: ST-09 (v9.16) builds it.
+Built in ST-09 (EPIC-03, v9.16).
 
 These are single-class tokens for the eight shell roles. Each maps to a pair already measured in §Light-Theme Colour Tokens, so no new colours are introduced. They are defined as CSS custom properties on `:root` and `.dark` in `src/index.css`, and exposed in `tailwind.config.js` under an `app` namespace. The namespace keeps them apart from shadcn's `--background`, `--card` and `--border`.
 
@@ -116,6 +117,19 @@ These are single-class tokens for the eight shell roles. Each maps to a pair alr
 3. Rule 2 of §Light-Theme Colour Tokens still applies: `app-positive` and `app-warning` pass only on white, slate-50 and slate-100.
 4. Filled badges keep their fixed fills (rule 4 above) and are not tokenised.
 5. **Converted in ST-09:** `body` (`bg-app-surface text-app-fg`), `DashboardCard` (`bg-app-raised border-app-line`; title `app-fg`, sub-label `app-muted`), `DataTable` (container `bg-app-raised border-app-line`; header cells `app-muted`, body cells `app-fg`, dividers `app-line`) and `PageHeader` (title `app-fg`, subtitle `app-muted`). Content inside these shells moves to tokens in Phase 3 (`BLG-FE-265`). Until then, existing explicit pairs remain valid. New code uses the tokens for these eight roles.
+6. **`PageHeader` title:** solid `text-app-fg`. The earlier gradient-clipped title (`bg-clip-text text-transparent`) is removed; axe `color-contrast` cannot measure gradient text.
+7. **Hover fills** on the converted shells (`DashboardCard`, `DataTable` rows) and the `DataTable` header band keep explicit pairs (`hover:bg-slate-50 dark:hover:bg-slate-800/70`, `bg-slate-50 dark:bg-slate-800/50`), per rule 2.
+
+**Content fixes made in ST-09 (design record §5).** Once the shells turned white in the light theme, the light-theme axe scans found dark-only content inside them on the four AC pages. Each element was fixed with an explicit pair or a token; the shell list was not widened:
+- `DataState` empty and error headings: `text-slate-900 dark:text-white`.
+- `WhatsNewCard` (Dashboard): card surface `bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700/50`, heading `text-slate-900 dark:text-white`.
+- `GateProgressStrip` (Dashboard): strip `bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800`, track `bg-slate-200 dark:bg-slate-700`, unlocked text `text-emerald-700 dark:text-emerald-400`.
+- Market pill on `PositionCard` and the Positions table: `bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700`.
+- Positions table rows: ticker `text-slate-900 dark:text-white`; price and share cells `text-slate-700 dark:text-slate-300`; stop and P&L cells `text-app-negative`/`text-app-positive`; grace pill text `text-amber-700 dark:text-amber-400`.
+
+**Shell consumers outside the AC pages (Product Owner scope ruling, 2026-11-10).** Before ST-09 the table and card shells were dark in both themes, so dark-only content inside them stayed readable in light. Once they turned white, that content had to be paired too. ST-09 paired the bare dark-only text, fill, border and hover classes in every other consumer, following the §Light-Theme Colour Tokens table: `TradeHistoryTable` (rows, sort headers, expanded journal row and empty state), `PlanVsReality` (filled lifecycle badges keep white text, rule 4), `WeeklyDigest`, and the nine Dashboard cards (`OpenPositionsCard`, `PortfolioHeatCard`, `RecentActivityCard`, `GracePeriodCard`, `ComplianceCard`, `ScreenerHitsCard`, `ExitZoneCard`, `RedFlagsCard`, `EarningsAlertCard`). Regions of the Trade History page outside the table were already dark-only before ST-09 and are tracked by `BLG-FE-285`.
+
+Verified by the light-theme scans in `tests/e2e/accessibility-axe-scan.spec.js` (ST-09), all with no baseline entry: Dashboard (empty and populated), Positions (empty, populated card view and populated table view), Trade Plan, Settings, Weekly Digest, and the Trade History table with a journal row expanded.
 
 ### Input Text Colours
 
@@ -126,7 +140,7 @@ These are single-class tokens for the eight shell roles. Each maps to a pair alr
 Every text, number and search input, and every textarea:
 
 - **Placeholder:** `placeholder:text-slate-600 dark:placeholder:text-slate-400`
-- **Typed text:** `text-app-fg`. Until ST-09 merges, use `text-slate-900 dark:text-white`.
+- **Typed text:** `text-app-fg`. Built in ST-10 (EPIC-03, v9.16) across the 18 sites the grep check found (8 files); verified by `tests/e2e/input-text-colours.spec.js` (SC-ITC-01/02).
 - **Defect pattern:** a bare `dark:text-*` written next to a `placeholder:` class colours the typed text, not the placeholder. `grep -rnE 'placeholder:text-[a-z]+-[0-9]+ +dark:text-' src/` must return nothing.
 
 ---
