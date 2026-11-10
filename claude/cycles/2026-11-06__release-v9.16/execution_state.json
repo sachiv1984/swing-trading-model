@@ -6,7 +6,7 @@
   "invoked_utc": "2026-11-09T09:15:14Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-10T08:34:04Z",
+  "last_updated_utc": "2026-11-10T08:34:17Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-02",
@@ -359,23 +359,23 @@
         "ST-19": {
           "title": "Read production briefing ticker-caveat tokens and add any non-tickers",
           "classification": "delegated_backend",
-          "status": "blocked_backend",
-          "assigned_to": "AI Compliance & Governance Officer",
+          "status": "done",
+          "assigned_to": "engine",
           "github_issue": 2215,
           "branch": "exec/2026-11-06__release-v9.16/EPIC-05",
-          "commit_sha": null,
+          "commit_sha": "fc89fdb52429063b0fa1d1f3fa1788ec31eae0d4",
           "delegation_record_id": "DEL-20261110-01",
           "blocked_since_utc": "2026-11-10T08:07:27Z",
           "unblock_criteria": "Production briefing ticker-caveat token list with counts since 2026-10-30 (or \"no lines logged\") supplied in session or in DEL-20261110-01.",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-11-10T08:34:04Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/specs/api_contracts/ai_endpoints.md#POST /ai/daily-briefing"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": "3.1.B.sign_off_cleared",
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.B.unblocked",
           "sign_off_record": {
             "role": "AI Compliance & Governance Officer",
             "method": "human_in_session",
@@ -383,7 +383,7 @@
             "date": "2026-11-10",
             "notes": "Token review result supplied in session: none found (Render logs ~7 days, production claude_audit_log since 2026-10-30, 0 rows)."
           },
-          "notes": null
+          "notes": "AC 1 (token list with counts recorded): none found, recorded in DEL-20261110-01 with window and evidence. AC 2: review records none found; no _NON_TICKER_WORDS change. Evidence: production Render logs (~7 days) no action=caveat_appended lines; production claude_audit_log daily-briefing rows with ticker_outside_context_appended since 2026-10-30: 0. Limitation: briefing call volume not checked. Recording-only commit, no code: CI not applicable beyond governance workflows. No deviation. BLG-AI-27 (source) fully met: candidate for a same-branch fix banner at 3.2.A."
         },
         "ST-20": {
           "title": "Handle _NON_TICKER_WORDS entries that are also real tickers deliberately",
@@ -495,9 +495,7 @@
   },
   "deferred_at_planning": [],
   "blocked_items": [],
-  "delegated_items": [
-    "ST-19"
-  ],
+  "delegated_items": [],
   "completed_items": [
     "ST-01",
     "ST-02",
@@ -510,6 +508,7 @@
     "ST-16",
     "ST-17",
     "ST-18",
+    "ST-19",
     "ST-20",
     "ST-21",
     "ST-22",
