@@ -3,6 +3,12 @@
  * Used by tests/e2e/trade-plan-lifecycle.spec.js (ST-26) and tests/e2e/arc2-happy-path.spec.js (ST-24),
  * EPIC-06, v9.16. See trade-plan-lifecycle.spec.js's header for which backend rules each write
  * handler copies, and for the known gap tracked by BLG-BE-211 (plan not moved to `closed` on exit).
+ *
+ * Partial copies: POST /portfolio/position links only an explicit trade_plan_id; the backend's
+ * get_unlinked_trade_plan_for_entry auto-link fallback is not modelled, so a test where the frontend
+ * omits trade_plan_id fails here even though production might still link by ticker. The initial stop
+ * is rounded to 2 dp; the backend does not round. POST /portfolio/size returns a fixed fixture, not a
+ * §4.1 calculation.
  */
 
 'use strict';

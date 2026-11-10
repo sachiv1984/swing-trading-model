@@ -602,7 +602,7 @@
     },
     "EPIC-06": {
       "title": "Arc 2 Retrospective: QA Protocol, Lifecycle Test & Journey Map",
-      "status": "in_progress",
+      "status": "done",
       "branch": "exec/2026-11-06__release-v9.16/EPIC-06",
       "pr_number": null,
       "pr_status": null,
@@ -635,7 +635,7 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": "Case C (test-authoring). AC 1 (full lifecycle Playwright test authored and passing in CI): tests/e2e/trade-plan-lifecycle.spec.js SC-TPL-01..05 - Signals Plan this -> plan with quality score + ST-08 suggested size -> save (draft) -> reopen (score shown) -> Start Trade -> Create Position (draft->active) -> Exit -> Plan vs Reality values worked by hand. Local 3/3; mutation (trade_plan_id: null) fails it. AC 2: cleared-gate evidence confirmed at seal. Mock backend moved to tests/e2e/mocks/trade-plan-lifecycle-backend.js in the ST-24 commit (shared). Out-of-scope findings: BLG-BE-211 (plan not moved to closed on exit; post-exit status not asserted until fixed), BLG-BE-212 (entry delta uses signal price at exit; filed by ST-24). Deviation check: none (test only). CI on 3bb258da: all 8 workflows success; SC-TPL-01..05 passed first attempt in Playwright E2E 42797119521 (also passed in 42797687776 on 46aed77f). ci_pending cleared."
+          "notes": "Case C (test-authoring). AC 1 (full lifecycle Playwright test authored and passing in CI): tests/e2e/trade-plan-lifecycle.spec.js SC-TPL-01..05 - Signals Plan this -> plan with quality score + ST-08 suggested size -> save (draft) -> reopen (score shown) -> Start Trade -> Create Position (draft->active) -> Exit -> Plan vs Reality values worked by hand. Local 3/3; mutation (trade_plan_id: null) fails it. AC 2: cleared-gate evidence confirmed at seal. Mock backend moved to tests/e2e/mocks/trade-plan-lifecycle-backend.js in the ST-24 commit (shared). Out-of-scope findings: BLG-BE-211 (plan not moved to closed on exit; post-exit status not asserted until fixed), BLG-BE-212 (entry delta uses signal price at exit; filed by ST-24). Deviation check: none (test only). CI on 3bb258da: all 8 workflows success; SC-TPL-01..05 passed first attempt in Playwright E2E 42797119521 (also passed in 42797687776 on 46aed77f). ci_pending cleared. DoQ review pass 1: graded Pass_with_deviation against BLG-BE-211 (active->closed in scope but not assertable); mock header now states its partial copies."
         },
         "ST-24": {
           "title": "Arc 2 end-to-end QA protocol",
@@ -683,28 +683,30 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": "Case B (documentation-creation). AC 1 (DoQ standards reviewed; gaps documented): docs/qa/arc2_doq_standards_review.md v1.0 - 6 Arc 2 QA evidence files reviewed; 3 gaps (hand-off, lifecycle, data gate), 5 already-closed gaps listed. AC 2 (amendments warranted -> shared_standards.md per CLAUDE.md §6): v3.41->v3.42 §25; OPERATIONAL_GUIDE.md v4.257; shared_standards_changelog 3.42; 2 prompt_change_log rows; size budget held 95,859 <= 95,910 by moving 5 history passages to the changelog. §25 Sign-off line PENDING Head of Specs Team agent-mediated review at EPIC-06 DoQ. RISK-07: EPIC-07 (owner of the shared governance files) already merged, no co-bump collision. AC 3: cleared-gate evidence confirmed at seal. Filed BLG-GOV-418 (template wiring). CI on fcb00246: all 7 triggered workflows success (CI Pytest 42798465550). Deviation check: none."
+          "notes": "Case B (documentation-creation). AC 1 (DoQ standards reviewed; gaps documented): docs/qa/arc2_doq_standards_review.md v1.0 - 6 Arc 2 QA evidence files reviewed; 3 gaps (hand-off, lifecycle, data gate), 5 already-closed gaps listed. AC 2 (amendments warranted -> shared_standards.md per CLAUDE.md §6): v3.41->v3.42 §25; OPERATIONAL_GUIDE.md v4.257; shared_standards_changelog 3.42; 2 prompt_change_log rows; size budget held 95,869 <= 95,910 (after DoQ pass 1 fix: IDs moved out of the §25 heading) by moving 5 history passages to the changelog. §25 Sign-off line PENDING Head of Specs Team agent-mediated review at EPIC-06 DoQ. RISK-07: EPIC-07 (owner of the shared governance files) already merged, no co-bump collision. AC 3: cleared-gate evidence confirmed at seal. Filed BLG-GOV-418 (template wiring). CI on fcb00246: all 7 triggered workflows success (CI Pytest 42798465550). Deviation check: none."
         },
         "ST-27": {
           "title": "Arc 2 user journey map",
           "classification": "autonomous",
-          "status": "in_progress",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 2223,
           "branch": "exec/2026-11-06__release-v9.16/EPIC-06",
-          "commit_sha": null,
+          "commit_sha": "3875e325aad531e08215ac21ee57238d821d1812",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-11-10T10:24:05Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/ux/arc2_user_journey_map.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Case B (documentation-creation). AC 1 (journey map in docs/ux/ alongside si05_user_journey_map.md): docs/ux/arc2_user_journey_map.md - 7 entry points, stage table, 5 friction points, recommendation maintain + fix hand-offs. AC 2 (friction enumerated; actionable items filed, cross-checked vs Site Structure & Usability programme incl. held Phase 3 BLG-FE-257..263, 265): BLG-FE-282 (P2, Stop Level not pre-filled per trade_plan.md §5a.3; strategy_rules.md §4.1.8), BLG-FE-283, BLG-FE-284 filed; BLG-FE-281/BLG-BE-211 referenced. AC 3: cleared-gate evidence confirmed at seal. CI on 3875e325: all 7 triggered workflows success (CI Pytest 42798832397). Head of UX & Design sign-off line PENDING agent-mediated review at EPIC DoQ. Deviation check: none (pre-existing §5a.3 gap tracked by BLG-FE-282)."
         }
       }
     }
@@ -732,6 +734,7 @@
     "ST-24",
     "ST-25",
     "ST-26",
+    "ST-27",
     "ST-28",
     "ST-29",
     "ST-30"

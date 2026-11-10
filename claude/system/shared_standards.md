@@ -1210,9 +1210,9 @@ This preserves non-ASCII characters literally, keeping diffs minimal (only the s
 
 ---
 
-## 25. DoQ Checks for Flow, Lifecycle and Data-Gated Stories (ST-25, EPIC-06, v9.16, BLG-QA-22)
+## 25. DoQ Checks for Flow, Lifecycle and Data-Gated Stories
 
-**Purpose:** conditional checks the Director of Quality applies at EPIC sign-off (`execution_prompt.md` §3.2.A), alongside the template's Standard Sign-Off Block. Rationale and the defects each gap let through: `docs/qa/arc2_doq_standards_review.md`.
+**Purpose (ST-25, EPIC-06, v9.16, BLG-QA-22):** conditional checks the Director of Quality applies at EPIC sign-off (`execution_prompt.md` §3.2.A), alongside the template's Standard Sign-Off Block. Rationale: `docs/qa/arc2_doq_standards_review.md`.
 
 | # | Trigger (any story in the EPIC…) | Evidence required |
 |---|----------------------------------|-------------------|
