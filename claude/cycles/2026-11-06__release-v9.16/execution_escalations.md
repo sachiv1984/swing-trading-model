@@ -22,3 +22,19 @@ Last Updated: 2026-11-10
 - **Disposition:** Resolved
 - **Resolution summary (2026-11-10T08:12:43Z):** AI Compliance & Governance Officer ruling, given in-session by the user acting in that role, dated 2026-11-10: **option (A), context rule.** PM, MA and ON (and AM, for symmetry with PM) count as non-tickers only in their usual non-ticker usage, and otherwise as tickers on both the briefing summary check (check 3, ruling `ESC-EXEC-20261027-02` (B)) and the chat focus rule (ruling `ESC-EXEC-20261030-03`): PM/AM only directly after a time ("3 PM", "3:30 PM", "3PM"); MA only directly after a number or a period ("200 MA", "50-day MA", "20-week MA"); ON only directly after RISK ("RISK ON"). Otherwise a non-held one is caveated in the briefing (unless in the context) and is an "other ticker" in chat, so "PM's stop was hit last week." with focus MU held and PM not held gets no MU note; "Your stop was hit at 3 PM." still gets the MU note. A held collision ticker is still cited first. Note text, `compliance_check_result` values and fail-open behaviour are unchanged; model text is never edited. Applies to any token ST-19 finds that collides with the scan universe. ST-20 reclassified `autonomous`.
 - **Clarification (2026-11-10, same officer, in session):** implementing (A) as worded flipped the v9.14 test sentence "Your stop is above the MA and ATR stays OK." (focus NVDA), which ST-20 AC 3 requires to keep passing. Ruled: MA is also a non-ticker directly after a determiner ("the", "its", "a", "an", "their"), the moving-average usage. The rest of (A) is unchanged.
+
+## ESC-EXEC-20261110-02
+
+- **Raised at:** 2026-11-10T09:34:25Z
+- **Routine:** Sprint Execution
+- **Cycle ID:** 2026-11-06__release-v9.16
+- **Step:** STEP 3.1.D (EPIC-07 execution loop, first sub-step of ST-30 per `sprint_backlog.md` ST-30 Notes)
+- **ST/EPIC item:** ST-30 / EPIC-07 (BLG-GOV-198)
+- **Trigger type:** Lifecycle
+- **Blocking statement:** ST-30 AC 1 needs a dated decision naming where the ST-id is recorded for each Base44 prompt draft: a comment header, a delegation log field, or both. The engine may not choose the convention. Current practice: all 3 filed prompts in `docs/frontend/prompts/` (v6.3) already carry a `**Story:** ST-xx (BLG-xx, EPIC-xx, vX.Y)` header line, but no rule requires it. `base44_frontend_prompt_owner.md` §12 already makes `ST item` a mandatory delegation record field, but the record does not link to the filed prompt.
+- **Engine recommendation (non-binding):** Both. The filed prompt's header carries a `**Story:**` line, and the `delegated_frontend` delegation record names the filed prompt path. Write the convention into the `OPERATIONAL_GUIDE.md` frontend delegation text under the CLAUDE.md §6 checklist (AC 2). Use `strategy-benchmark-v1.md` (ST-11, v6.3) as the AC 3 existing example.
+- **Owning authority:** Base44 Frontend Prompt Owner
+- **Unblock criteria:** A dated ruling is recorded in this escalation's resolution. The engine then writes the convention to the place the ruling names (AC 2) and records the AC 3 example.
+- **SLA due-by:** 2026-11-11T09:34:25Z (24h — Lifecycle)
+- **Blocks execution:** No
+- **Disposition:** Open
