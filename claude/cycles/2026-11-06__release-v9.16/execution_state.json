@@ -6,7 +6,7 @@
   "invoked_utc": "2026-11-09T09:15:14Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-10T08:05:17Z",
+  "last_updated_utc": "2026-11-10T08:07:27Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-02",
@@ -349,42 +349,44 @@
         "ST-19": {
           "title": "Read production briefing ticker-caveat tokens and add any non-tickers",
           "classification": "delegated_backend",
-          "status": "not_started",
-          "assigned_to": "engine",
+          "status": "blocked_backend",
+          "assigned_to": "AI Compliance & Governance Officer",
           "github_issue": 2215,
           "branch": "exec/2026-11-06__release-v9.16/EPIC-05",
           "commit_sha": null,
-          "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
+          "delegation_record_id": "DEL-20261110-01",
+          "blocked_since_utc": "2026-11-10T08:07:27Z",
+          "unblock_criteria": "Production briefing ticker-caveat token list with counts since 2026-10-30 (or \"no lines logged\") supplied in session or in DEL-20261110-01.",
           "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": [],
+          "spec_references": [
+            "docs/specs/api_contracts/ai_endpoints.md#POST /ai/daily-briefing"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
-          "last_completed_substep": null,
+          "last_completed_substep": "3.1.B.delegated",
           "sign_off_record": null,
           "notes": null
         },
         "ST-20": {
           "title": "Handle _NON_TICKER_WORDS entries that are also real tickers deliberately",
           "classification": "delegated_decision",
-          "status": "not_started",
-          "assigned_to": "engine",
+          "status": "blocked_decision",
+          "assigned_to": "AI Compliance & Governance Officer",
           "github_issue": 2216,
           "branch": "exec/2026-11-06__release-v9.16/EPIC-05",
           "commit_sha": null,
           "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
+          "blocked_since_utc": "2026-11-10T08:07:27Z",
+          "unblock_criteria": "ESC-EXEC-20261110-01 resolved with a dated AI Compliance & Governance Officer ruling on PM/MA/ON collisions; ST-19 first (its tokens may collide).",
           "completed_utc": null,
           "acceptance_verified": false,
           "spec_references": [],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
-          "last_completed_substep": null,
+          "last_completed_substep": "3.1.D.escalated",
           "sign_off_record": null,
           "notes": null
         },
@@ -455,8 +457,12 @@
     }
   },
   "deferred_at_planning": [],
-  "blocked_items": [],
-  "delegated_items": [],
+  "blocked_items": [
+    "ST-20"
+  ],
+  "delegated_items": [
+    "ST-19"
+  ],
   "completed_items": [
     "ST-01",
     "ST-02",
@@ -468,7 +474,18 @@
     "ST-08",
     "ST-16"
   ],
-  "open_escalations": {},
+  "open_escalations": {
+    "ESC-EXEC-20261110-01": {
+      "cycle": "2026-11-06__release-v9.16",
+      "summary": "ST-20/EPIC-05 - AI Compliance ruling: _NON_TICKER_WORDS entries that are scan-universe tickers (PM, MA, ON)",
+      "trigger_type": "Strategy",
+      "owning_authority": "AI Compliance & Governance Officer",
+      "raised_utc": "2026-11-10T08:07:27Z",
+      "sla_due_utc": "2026-11-13T08:07:27Z",
+      "blocks_execution": false,
+      "disposition": "Open"
+    }
+  },
   "merge_gate": {
     "epics_merged": [
       "EPIC-01",

@@ -4,7 +4,7 @@
   "status": "Executing",
   "prior_status": "Sprint_Planning_Complete",
   "engine": "Sprint Execution",
-  "last_updated_utc": "2026-11-09T09:14:23Z",
+  "last_updated_utc": "2026-11-10T08:07:27Z",
   "execution_state_path": "claude/cycles/2026-11-06__release-v9.16/execution_state.json",
   "backlog_slice_path": "claude/cycles/2026-11-06__release-v9.16/stage4_backlog_slice.md",
   "design_gate_required": true,
@@ -664,6 +664,16 @@
       "resolved_utc": "2026-11-05T18:01:33Z",
       "resolved_by": "Product Owner (the user, in session)",
       "resolution_summary": "Engine recommendation accepted: on claude/**- or docs/**-only pushes CI Pytest Phase A runs only the docs-coupled subset; the other four suites skip via job-level skips so required checks report. No backlog remainder."
+    },
+    "ESC-EXEC-20261110-01": {
+      "cycle": "2026-11-06__release-v9.16",
+      "summary": "ST-20/EPIC-05 - AI Compliance ruling: _NON_TICKER_WORDS entries that are scan-universe tickers (PM, MA, ON)",
+      "trigger_type": "Strategy",
+      "owning_authority": "AI Compliance & Governance Officer",
+      "raised_utc": "2026-11-10T08:07:27Z",
+      "sla_due_utc": "2026-11-13T08:07:27Z",
+      "blocks_execution": false,
+      "disposition": "Open"
     }
   },
   "deferred_escalations": {
