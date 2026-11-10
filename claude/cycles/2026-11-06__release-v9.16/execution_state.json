@@ -733,8 +733,8 @@
       "title": "Site Structure & Usability Phase 2: Colour Tokens & Input Contrast (build-and-ship)",
       "status": "done",
       "branch": "exec/2026-11-06__release-v9.16/EPIC-03",
-      "pr_number": null,
-      "pr_status": null,
+      "pr_number": 2232,
+      "pr_status": "open",
       "qa_signed_off": true,
       "test_scenarios": [
         "tests/e2e/accessibility-axe-scan.spec.js",
