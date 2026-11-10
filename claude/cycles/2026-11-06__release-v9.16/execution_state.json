@@ -6,7 +6,7 @@
   "invoked_utc": "2026-11-09T09:15:14Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-10T09:58:00Z",
+  "last_updated_utc": "2026-11-10T10:05:00Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-02",
@@ -503,10 +503,10 @@
     },
     "EPIC-07": {
       "title": "Governance Process",
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-11-06__release-v9.16/EPIC-07",
       "pr_number": 2230,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-11-06__release-v9.16/qa_evidence_EPIC-07.md",
       "test_scenarios": [
@@ -516,7 +516,7 @@
         "ST-28": {
           "title": "Split-achievability carve-out: close a source item whose whole remainder has its own backlog items",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2224,
           "branch": "exec/2026-11-06__release-v9.16/EPIC-07",
@@ -539,7 +539,7 @@
         "ST-29": {
           "title": "Arc velocity tracking dashboard",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2225,
           "branch": "exec/2026-11-06__release-v9.16/EPIC-07",
@@ -564,7 +564,7 @@
         "ST-30": {
           "title": "Base44 prompt versioning convention",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2226,
           "branch": "exec/2026-11-06__release-v9.16/EPIC-07",
@@ -657,13 +657,13 @@
     "epics_merged": [
       "EPIC-01",
       "EPIC-02",
-      "EPIC-05"
+      "EPIC-05",
+      "EPIC-07"
     ],
     "epics_pending": [
       "EPIC-03",
       "EPIC-04",
-      "EPIC-06",
-      "EPIC-07"
+      "EPIC-06"
     ],
     "all_merged": false
   },
@@ -673,7 +673,8 @@
     "EPIC-02 (2026-11-09): the ST-05 state commit 2d26da87 also committed two ST-06 deletions (SignalStatusCard.js, ExitConditionsCard.js) staged earlier with `git rm`; DashboardHome.js still imported SignalStatusCard there, so Frontend Production Build and Playwright failed at 2d26da87. Fixed by the ST-06 commit 739286e7 (no force-push). Candidate lesson: check `git diff --cached` is empty before a state-only commit, or commit with explicit pathspecs.",
     "EPIC-02 (2026-11-09): ST-08's new spec reused prefix SC-TPS (trade-plan-stale-marker.spec.js). CI Pytest 42621274186 caught it (test_check_e2e_scenario_id_uniqueness.py); renamed to SC-TPSZ in 87d78b39. Candidate lesson: run scripts/check_e2e_scenario_id_uniqueness.py before pushing a new spec.",
     "EPIC-02 merge-gate sync (2026-11-09): PR #2228 merged by sachiv1984 at 2026-11-09T15:33:10Z, merge commit 13e7bd20. Orphaned post-merge commit check: git log origin/main..origin/exec/2026-11-06__release-v9.16/EPIC-02 empty - nothing to reconcile.",
-    "EPIC-05 (2026-11-10): PR #2229 merged by the human repository owner at 2026-11-10T09:26:42Z, merge commit 8a51d3ab. STEP 4 orphaned post-merge commit check: git log origin/main..origin/exec/2026-11-06__release-v9.16/EPIC-05 lists nothing; no reconciliation needed."
+    "EPIC-05 (2026-11-10): PR #2229 merged by the human repository owner at 2026-11-10T09:26:42Z, merge commit 8a51d3ab. STEP 4 orphaned post-merge commit check: git log origin/main..origin/exec/2026-11-06__release-v9.16/EPIC-05 lists nothing; no reconciliation needed.",
+    "2026-11-10 EPIC-07: PR #2230 merged 2026-11-10T10:02:22Z by the human repository owner (merge commit 7824a75c). Orphaned post-merge commit check (LL-v6.8-P3-01): git log origin/main..origin/exec/2026-11-06__release-v9.16/EPIC-07 empty - nothing to reconcile. Sibling sync (step 3c): no pending EPIC branch exists yet (EPIC-06/03/04 not cut) - none needed."
   ],
   "sealed": false,
   "sealed_utc": null

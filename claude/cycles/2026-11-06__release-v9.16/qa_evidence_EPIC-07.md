@@ -73,4 +73,4 @@ Last Updated: 2026-11-10
   - `BLG-GOV-26`'s arc-close and Release Planning scope moving to BLG-GOV-415 under ST-29 AC 4.
 
   Post-merge AC: ST-28 AC 2, tracked by BLG-GOV-414 at the next `groom backlog`. Follow-ups: BLG-GOV-414, BLG-GOV-415, BLG-GOV-416, BLG-GOV-417.
-- **Merge:** pending. To be recorded (who, when, merge commit) when the human merges PR #2230.
+- **Merge:** PR #2230 was merged by the human repository owner (`sachiv1984`) at 2026-11-10T10:02:22Z, merge commit `7824a75c`. This followed the in-session QA sign-off and PO acceptance above.
