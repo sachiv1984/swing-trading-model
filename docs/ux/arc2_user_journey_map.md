@@ -117,4 +117,4 @@ Already filed this cycle and referenced, not re-filed: `BLG-FE-281` (F-01, marke
 
 ## 6. Sign-Off
 
-- **Head of UX & Design:** PENDING — agent-mediated review (§5.3) at EPIC-06 DoQ, v9.16.
+- **Head of UX & Design:** Approved (review passes 1 and 2). Sprint Execution Engine (agent-mediated, Head of UX & Design role — §5.3), 2026-11-10. Pending human confirmation at the merge gate.

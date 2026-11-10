@@ -1212,17 +1212,17 @@ This preserves non-ASCII characters literally, keeping diffs minimal (only the s
 
 ## 25. DoQ Checks for Flow, Lifecycle and Data-Gated Stories
 
-**Purpose (ST-25, EPIC-06, v9.16, BLG-QA-22):** conditional checks the Director of Quality applies at EPIC sign-off (`execution_prompt.md` §3.2.A), alongside the template's Standard Sign-Off Block. Rationale: `docs/qa/arc2_doq_standards_review.md`.
+**Purpose:** conditional checks the Director of Quality applies at EPIC sign-off (`execution_prompt.md` §3.2.A), alongside the template's sign-off block (ST-25, EPIC-06, v9.16, BLG-QA-22). Rationale: `docs/qa/arc2_doq_standards_review.md`.
 
 | # | Trigger (any story in the EPIC…) | Evidence required |
 |---|----------------------------------|-------------------|
 | 25.1 Hand-off | adds or changes data passed from one page to another (URL parameters, router state, or a write a later page reads) | A Playwright test or recorded staging run from the sending page that asserts the value on the receiving page or in the write. Single-page tests do not count. |
 | 25.2 Lifecycle | adds or changes a status or lifecycle field, or the spec's lifecycle diagram for one | Each transition the spec states, with the code path that performs it and a test; or marked not implemented with its backlog item. |
-| 25.3 Data gate | ships a feature whose output depends on a data threshold (e.g. ≥ 20 closed trades) | Which branches were seen on real (staging or production) data and which only on mocks, plus a backlog item to verify each unseen branch once the threshold is met. |
+| 25.3 Data gate | ships a feature whose output depends on a data threshold (e.g. ≥ 20 closed trades) | Which branches were seen on real (staging/production) data and which only on mocks, plus a backlog item to verify each unseen branch once the threshold is met. |
 
 Record each applicable check in the sign-off block's `Comments:` field (`25.1: …`, `25.2: …`, `25.3: …`), or write `§25: not applicable` when no trigger is met. A missing applicable check is a Blocked finding at DoQ review, not a deviation. Template wiring: `BLG-GOV-418`.
 
-**Sign-off:** PENDING — Head of Specs Team (agent-mediated, §5.3), EPIC-06 DoQ.
+**Sign-off:** Head of Specs Team — Approved. Sprint Execution Engine (agent-mediated, Head of Specs Team role — §5.3), 2026-11-10.
 
 ---
 
