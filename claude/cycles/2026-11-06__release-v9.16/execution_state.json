@@ -731,43 +731,77 @@
     },
     "EPIC-03": {
       "title": "Site Structure & Usability Phase 2: Colour Tokens & Input Contrast (build-and-ship)",
-      "status": "in_progress",
+      "status": "done",
       "branch": "exec/2026-11-06__release-v9.16/EPIC-03",
       "pr_number": null,
       "pr_status": null,
-      "qa_signed_off": false,
-      "test_scenarios": [],
+      "qa_signed_off": true,
+      "test_scenarios": [
+        "tests/e2e/accessibility-axe-scan.spec.js",
+        "tests/e2e/visual-regression-baselines.spec.js",
+        "tests/e2e/input-text-colours.spec.js",
+        "tests/e2e/heading-light-theme-contrast.spec.js",
+        "tests/e2e/page-header-dark-gradient-contrast.spec.js"
+      ],
       "stories": {
         "ST-09": {
-          "status": "in_progress",
+          "status": "done",
           "classification": "autonomous",
           "spec_references": [
             "docs/specs/frontend/design_system.md#Semantic Colour Tokens",
-            "docs/design/2026-11-06__release-v9.16/semantic-colour-tokens/decision_record.md"
+            "docs/design/2026-11-06__release-v9.16/semantic-colour-tokens/decision_record.md",
+            "tests/e2e/accessibility-axe-scan.spec.js",
+            "tests/e2e/visual-regression-baselines.spec.js"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "github_issue": 2205,
           "branch": "exec/2026-11-06__release-v9.16/EPIC-03",
-          "deviations_filed": false,
-          "acceptance_verified": false,
-          "commit_sha": null
+          "deviations_filed": true,
+          "acceptance_verified": true,
+          "commit_sha": "672ba549fa927f40f9924e47dbcf97b0a4148d15",
+          "completed_utc": "2026-11-10T23:36:03Z",
+          "last_completed_substep": "3.1.A.10a",
+          "notes": "Commits bd4698b1 (tokens, shells, content and shell-consumer fixes, specs), 16898a45 (design_system.md v1.26, shared with ST-10), 1d563782 (baselines regenerated on CI runner, update-visual-snapshots run 42865530371, committed from its artifact after its push hit 403 - BLG-OPS-216). AC1: light axe scans (ST-09 blocks) green in Playwright E2E 42865530089 (16898a45) and 42866370507 (1d563782). AC2: pixel job 10 passed on 1d563782 (run 42866370507). All workflows success on both SHAs (bd4698b1 was pushed with 16898a45 in one push, so CI ran on the tip). Deviation check: none - PageHeader solid title is spec rule 5; consumer fixes add no new shell. PO scope ruling 2026-11-10 in process_notes. Filed BLG-FE-285, BLG-OPS-216. Review pass 1 fixes: 1be92fef (PlanVsReality adherence badges 800 shades, Positions grace pill amber-800, Positions row icons 700 light shades, Trade Entry light scan), 6d3ed39b + e841209f (stale Positions baselines removed then regenerated on the CI runner, update-visual-snapshots run 42900475761, committed from artifact). All 9 workflows success on 6d3ed39b (Playwright E2E 42900476304). Review pass 2 fixes in a369a231 (tinted-fill 800 shades, amber-600 -> 700, rendered pre-entry badge light scan). CI on a369a231: all 9 success (Playwright E2E 42911157311). Review pass 3 fixes in d5c6191f (Positions earnings badges amber-800 light, PositionCard flag restored to amber-600). CI on d5c6191f: 8/9 success first attempt; Playwright E2E 42919378000 shard 1 failed once on ReportsMonthly:dark (unrelated, unreproduced), re-run passed. Review pass 4 fix in 672ba549 (TradePlans/Watchlist/Notifications dark-in-both-themes cards carry the dark class). CI on 672ba549: all 9 success (Playwright E2E 42924717901).",
+          "sign_off_record": {
+            "role": "Director of Quality",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "date": "2026-11-10"
+          }
         },
         "ST-10": {
-          "status": "in_progress",
+          "status": "done",
           "classification": "autonomous",
           "spec_references": [
+            "docs/design/2026-11-06__release-v9.16/semantic-colour-tokens/decision_record.md",
             "docs/specs/frontend/design_system.md#Input Text Colours",
-            "docs/design/2026-11-06__release-v9.16/semantic-colour-tokens/decision_record.md"
+            "tests/e2e/input-text-colours.spec.js"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "github_issue": 2206,
           "branch": "exec/2026-11-06__release-v9.16/EPIC-03",
-          "deviations_filed": false,
-          "acceptance_verified": false,
-          "commit_sha": null
+          "deviations_filed": true,
+          "acceptance_verified": true,
+          "commit_sha": "a369a2314cd3f3e04dea85db3c58511f460a3f6d",
+          "completed_utc": "2026-11-10T22:04:49Z",
+          "last_completed_substep": "3.1.A.10a",
+          "notes": "18 sites / 8 files. AC grep returns nothing on 16898a45. SC-ITC-01/02 green in Playwright E2E 42865530089 (local 17.79:1 dark, 5.47:1 light). All 9 workflows success on 16898a45. Deviation check: none. Review pass 1: 16898a45 left 10 inputs inside containers dark in both themes (light typed text ~1.10:1); SC-ITC-02's helper ignored background-image. Fixed in 1c2b01c0 (PO ruling: theme the containers - Trade Entry cards, Edit Position and Exit modals, PositionSizingWidget, PreEntryValidationPanel) and 1be92fef; helper now composites gradient stops (verified to fail at 1.10:1 on 16898a45); SC-ITC-03/04 added. CI success on 6d3ed39b. Review pass 2 fixes in a369a231 (tinted-fill 800 shades, amber-600 -> 700, rendered pre-entry badge light scan). CI on a369a231: all 9 success (Playwright E2E 42911157311).",
+          "sign_off_record": {
+            "role": "Director of Quality",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "date": "2026-11-10"
+          }
         }
+      },
+      "sign_off_record": {
+        "role": "Director of Quality",
+        "method": "agent_mediated",
+        "status": "cleared",
+        "date": "2026-11-10",
+        "notes": "Five agent-mediated passes (DoQ + Head of UX & Design): 1-4 Blocked, each fixed on branch; pass 5 Approved, conditional on CI on 672ba549, which finished all 9 green. Pending human DoQ confirmation and PO acceptance at the merge gate."
       }
     }
   },
@@ -797,7 +831,9 @@
     "ST-27",
     "ST-28",
     "ST-29",
-    "ST-30"
+    "ST-30",
+    "ST-09",
+    "ST-10"
   ],
   "open_escalations": {
     "ESC-EXEC-20261110-01": {
@@ -850,7 +886,9 @@
     "EPIC-05 (2026-11-10): PR #2229 merged by the human repository owner at 2026-11-10T09:26:42Z, merge commit 8a51d3ab. STEP 4 orphaned post-merge commit check: git log origin/main..origin/exec/2026-11-06__release-v9.16/EPIC-05 lists nothing; no reconciliation needed.",
     "2026-11-10 EPIC-07: PR #2230 merged 2026-11-10T10:02:22Z by the human repository owner (merge commit 7824a75c). Orphaned post-merge commit check (LL-v6.8-P3-01): git log origin/main..origin/exec/2026-11-06__release-v9.16/EPIC-07 empty - nothing to reconcile. Sibling sync (step 3c): no pending EPIC branch exists yet (EPIC-06/03/04 not cut) - none needed.",
     "2026-11-10 EPIC-06: PR #2231 merged 2026-11-10T14:00:18Z by the human repository owner (merge commit 9df2088b). Orphaned post-merge commit check (LL-v6.8-P3-01): git log origin/main..origin/exec/2026-11-06__release-v9.16/EPIC-06 empty - nothing to reconcile. STEP 4 step 3c: no v9.16 EPIC-03/EPIC-04 branch exists yet, so no sibling execution_state.json sync was needed.",
-    "2026-11-10 EPIC-03 ST-09 scope ruling (Product Owner, the user in session): converting DataTable/DashboardCard to app-raised (white in light) exposed dark-only content in shell consumers outside the 4 AC pages (TradeHistoryTable journal/debrief rows - broke SC-DBF-06a light axe; WeeklyDigest table; the 9 Dashboard cards in populated states). Options offered: fix all shell consumers / fix Trade History only + P2 backlog item / escalate to Head of UX. Ruling: fix all shell consumers in ST-09 with explicit light/dark pairs and add light axe coverage; recorded as a scope note, not a new story. Design record section 5 ('do not widen the shell list') is respected: no new shells are tokenised."
+    "2026-11-10 EPIC-03 ST-09 scope ruling (Product Owner, the user in session): converting DataTable/DashboardCard to app-raised (white in light) exposed dark-only content in shell consumers outside the 4 AC pages (TradeHistoryTable journal/debrief rows - broke SC-DBF-06a light axe; WeeklyDigest table; the 9 Dashboard cards in populated states). Options offered: fix all shell consumers / fix Trade History only + P2 backlog item / escalate to Head of UX. Ruling: fix all shell consumers in ST-09 with explicit light/dark pairs and add light axe coverage; recorded as a scope note, not a new story. Design record section 5 ('do not widen the shell list') is respected: no new shells are tokenised.",
+    "2026-11-10 EPIC-03 agent-mediated DoQ + Head of UX & Design review pass 1 (§5.3): both Blocked. DoQ-1/UX-1: ST-10 put text-app-fg on 10 inputs inside containers dark in both themes (Trade Entry card TradeEntry.js:499, PositionModal and ExitModal DialogContent) - light typed text ~1.1:1; SC-ITC-02's helper ignored background-image so measured the page, not the card. DoQ-2: positions baselines not regenerated (still show the pre-ST-09 defect). DoQ-3/UX-2: PlanVsReality AdherenceBadge 700 shades on /20 tints 4.15-4.37:1. Product Owner ruling (the user in session): theme the containers - give the Trade Entry card and both modals light/dark pairs so text-app-fg is correct as specified.",
+    "2026-11-10 EPIC-03 Product Owner ruling (the user in session): DashboardCard label as text-app-fg (design_system.md v1.25 rule 5) accepted as built; label/figure hierarchy question filed as BLG-UX-10 for Head of UX & Design and Head of Specs Team (product_owner.md §4/§9: PO states intent, does not amend the spec)."
   ],
   "sealed": false,
   "sealed_utc": null
