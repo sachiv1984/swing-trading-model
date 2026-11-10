@@ -24,7 +24,7 @@ export default function GateProgressStrip() {
         className="rounded-lg bg-emerald-500/10 border border-emerald-500/30 px-4 py-2 flex items-center gap-2"
         data-testid="gate-progress-strip"
       >
-        <span className="text-sm text-emerald-400 font-medium">Quality insights unlocked ✓</span>
+        <span className="text-sm text-emerald-700 dark:text-emerald-400 font-medium">Quality insights unlocked ✓</span>
         <span className="text-xs text-slate-600 dark:text-slate-400">
           {closed} closed trades
         </span>
@@ -34,7 +34,7 @@ export default function GateProgressStrip() {
 
   return (
     <div
-      className="rounded-lg bg-slate-900 border border-slate-800 px-4 py-3"
+      className="rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-4 py-3"
       data-testid="gate-progress-strip"
     >
       <div className="flex items-center justify-between mb-1.5">
@@ -43,7 +43,7 @@ export default function GateProgressStrip() {
         </span>
         <span className="text-xs text-slate-600 dark:text-slate-400">{Math.round(progressPct)}%</span>
       </div>
-      <div className="h-1.5 rounded-full bg-slate-700 overflow-hidden">
+      <div className="h-1.5 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
         <div
           className="h-full rounded-full bg-blue-500 transition-all"
           style={{ width: `${progressPct}%` }}

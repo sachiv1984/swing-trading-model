@@ -40,8 +40,8 @@ export default function ComplianceCard() {
     Minus;
 
   const trendColor =
-    trend === "up" ? "text-emerald-400" :
-    trend === "down" ? "text-rose-400" :
+    trend === "up" ? "text-emerald-700 dark:text-emerald-400" :
+    trend === "down" ? "text-rose-700 dark:text-rose-400" :
     "text-slate-600 dark:text-slate-400";
 
   return (
@@ -56,7 +56,7 @@ export default function ComplianceCard() {
       emptyBody="Your score will show here once available."
     >
       <div className="flex items-end gap-2 mb-2">
-        <p className="text-4xl font-bold text-emerald-400">{score != null ? `${score}%` : ""}</p>
+        <p className="text-4xl font-bold text-emerald-700 dark:text-emerald-400">{score != null ? `${score}%` : ""}</p>
         <TrendIcon className={`w-5 h-5 mb-1 ${trendColor}`} />
       </div>
       <p className="text-sm text-slate-600 dark:text-slate-400">7-day compliance score</p>

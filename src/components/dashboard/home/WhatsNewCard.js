@@ -33,12 +33,12 @@ export default function WhatsNewCard() {
 
   return (
     <div
-      className="rounded-2xl bg-slate-800/50 border border-slate-700/50 backdrop-blur-sm p-6"
+      className="rounded-2xl bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 backdrop-blur-sm p-6"
       data-testid="whats-new-card"
     >
       <div className="flex items-center gap-2 mb-4">
         <Sparkles className="w-4 h-4 text-slate-500" />
-        <h2 className="text-sm font-semibold text-white">
+        <h2 className="text-sm font-semibold text-slate-900 dark:text-white">
           {/* ST-14 (BLG-FE-266, v9.15): no suffix when the version is absent (dashboard.md §6A). */}
           {formatReleaseVersion(entry?.version) ? `What's New — ${formatReleaseVersion(entry.version)}` : "What's New"}
         </h2>

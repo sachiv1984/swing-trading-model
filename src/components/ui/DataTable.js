@@ -1,10 +1,16 @@
 import { motion } from "framer-motion";
 import { cn } from "../../lib/utils";
 
+// ST-09 (BLG-FE-264, EPIC-03, v9.16): the table shell uses the semantic colour
+// tokens (design_system.md v1.25 §Semantic Colour Tokens rule 5): container
+// app-raised/app-line, header cells app-muted, body cells app-fg, dividers
+// app-line. Fills that need an alpha (header band, row hover) keep explicit
+// light/dark pairs, since tokens take no opacity modifier (rule 2).
+
 export function DataTable({ children, className }) {
   return (
     <div className={cn(
-      "rounded-2xl border border-slate-700/50 bg-gradient-to-br from-slate-900 to-slate-800 backdrop-blur-sm overflow-hidden",
+      "rounded-2xl border border-app-line bg-app-raised backdrop-blur-sm overflow-hidden",
       className
     )}>
       <div className="overflow-x-auto">
@@ -18,7 +24,7 @@ export function DataTable({ children, className }) {
 
 export function TableHeader({ children }) {
   return (
-    <thead className="bg-slate-800/50 border-b border-slate-700/50">
+    <thead className="bg-slate-50 dark:bg-slate-800/50 border-b border-app-line">
       <tr>{children}</tr>
     </thead>
   );
@@ -27,7 +33,7 @@ export function TableHeader({ children }) {
 export function TableHead({ children, className, ...props }) {
   return (
     <th className={cn(
-      "px-6 py-4 text-left text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wider",
+      "px-6 py-4 text-left text-xs font-medium text-app-muted uppercase tracking-wider",
       className
     )} {...props}>
       {children}
@@ -36,7 +42,7 @@ export function TableHead({ children, className, ...props }) {
 }
 
 export function TableBody({ children }) {
-  return <tbody className="divide-y divide-slate-700/30">{children}</tbody>;
+  return <tbody className="divide-y divide-app-line">{children}</tbody>;
 }
 
 export function TableRow({ children, className, onClick, ...rest }) {
@@ -45,7 +51,7 @@ export function TableRow({ children, className, onClick, ...rest }) {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       className={cn(
-        "hover:bg-slate-800/30 transition-colors",
+        "hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors",
         onClick && "cursor-pointer",
         className
       )}
@@ -59,7 +65,7 @@ export function TableRow({ children, className, onClick, ...rest }) {
 
 export function TableCell({ children, className, colSpan }) {
   return (
-    <td className={cn("px-6 py-4 text-sm text-slate-300", className)} colSpan={colSpan}>
+    <td className={cn("px-6 py-4 text-sm text-app-fg", className)} colSpan={colSpan}>
       {children}
     </td>
   );

@@ -145,24 +145,25 @@ test.describe("Positions Table View — P&L Columns (V-PATH2-01 to V-PATH2-04)",
 
   test("V-PATH2-02 — Positive P&L rows have emerald colour class applied", async ({ page }) => {
     // LGEN: pnl = 70.05 (positive)
-    // The P&L value is inside a div.text-emerald-400, not directly on the <td>
+    // The P&L value is inside a div.text-app-positive (ST-09, v9.16 semantic token;
+    // was text-emerald-400), not directly on the <td>
     const lgenRow = page.getByRole("row").filter({ hasText: "LGEN" });
-    const pnlDiv = lgenRow.locator("div.text-emerald-400").filter({ hasText: /£70/ });
+    const pnlDiv = lgenRow.locator("div.text-app-positive").filter({ hasText: /£70/ });
     await expect(pnlDiv).toBeVisible();
   });
 
   test("V-PATH2-03 — Negative P&L rows have rose colour class applied", async ({ page }) => {
     // TSCO: pnl = -38.50 (negative)
-    // The P&L value is inside a div.text-rose-400, not directly on the <td>
+    // The P&L value is inside a div.text-app-negative (ST-09, v9.16; was text-rose-400)
     const tscoRow = page.getByRole("row").filter({ hasText: "TSCO" });
-    const pnlDiv = tscoRow.locator("div.text-rose-400").filter({ hasText: /£38/ });
+    const pnlDiv = tscoRow.locator("div.text-app-negative").filter({ hasText: /£38/ });
     await expect(pnlDiv).toBeVisible();
   });
 
   test("V-PATH2-04 — P&L (GBP) and P&L % display in separate cells", async ({ page }) => {
     const barcRow = page.getByRole("row").filter({ hasText: "BARC" });
     // GBP value in its own cell
-    await expect(barcRow.locator("div.text-emerald-400").filter({ hasText: /£96/ })).toBeVisible();
+    await expect(barcRow.locator("div.text-app-positive").filter({ hasText: /£96/ })).toBeVisible();
     // Percentage in separate cell — use \d to tolerate JS rounding (13.6 or 13.7)
     await expect(barcRow.getByText(/\+13\.\d%/)).toBeVisible();
   });

@@ -95,7 +95,7 @@ export default function DataState({
       <div className={`flex flex-col items-center justify-center ${compact ? "py-4 gap-2" : "py-16 gap-4"} text-center px-6 ${className}`}>
         <AlertCircle className={`${compact ? "w-6 h-6" : "w-10 h-10"} text-rose-400`} />
         <div>
-          <p className="text-sm font-semibold text-white mb-1">{errorHeading}</p>
+          <p className="text-sm font-semibold text-slate-900 dark:text-white mb-1">{errorHeading}</p>
           <p className="text-xs text-slate-600 dark:text-slate-400">
             {errorBody}
           </p>
@@ -126,7 +126,7 @@ export default function DataState({
       <div className={`flex flex-col items-center justify-center ${compact ? "py-4 gap-2" : "py-16 gap-3"} text-center px-6 ${className}`}>
         {emptyIcon && <div className="mb-1">{emptyIcon}</div>}
         {emptyHeading && (
-          <p className="text-sm font-semibold text-white">{emptyHeading}</p>
+          <p className="text-sm font-semibold text-slate-900 dark:text-white">{emptyHeading}</p>
         )}
         {emptyBody && (
           <p className="text-xs text-slate-600 dark:text-slate-400">{emptyBody}</p>

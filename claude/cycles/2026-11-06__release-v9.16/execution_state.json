@@ -728,6 +728,47 @@
           "notes": "Case B (documentation-creation). AC 1 (journey map in docs/ux/ alongside si05_user_journey_map.md): docs/ux/arc2_user_journey_map.md - 7 entry points, stage table, 5 friction points, recommendation maintain + fix hand-offs. AC 2 (friction enumerated; actionable items filed, cross-checked vs Site Structure & Usability programme incl. held Phase 3 BLG-FE-257..263, 265): BLG-FE-282 (P2, Stop Level not pre-filled per trade_plan.md §5a.3; strategy_rules.md §4.1.8), BLG-FE-283, BLG-FE-284 filed; BLG-FE-281/BLG-BE-211 referenced. AC 3: cleared-gate evidence confirmed at seal. CI on 3875e325: all 7 triggered workflows success (CI Pytest 42798832397). Head of UX & Design sign-off line PENDING agent-mediated review at EPIC DoQ. Deviation check: none (pre-existing §5a.3 gap tracked by BLG-FE-282)."
         }
       }
+    },
+    "EPIC-03": {
+      "title": "Site Structure & Usability Phase 2: Colour Tokens & Input Contrast (build-and-ship)",
+      "status": "in_progress",
+      "branch": "exec/2026-11-06__release-v9.16/EPIC-03",
+      "pr_number": null,
+      "pr_status": null,
+      "qa_signed_off": false,
+      "test_scenarios": [],
+      "stories": {
+        "ST-09": {
+          "status": "in_progress",
+          "classification": "autonomous",
+          "spec_references": [
+            "docs/specs/frontend/design_system.md#Semantic Colour Tokens",
+            "docs/design/2026-11-06__release-v9.16/semantic-colour-tokens/decision_record.md"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "github_issue": 2205,
+          "branch": "exec/2026-11-06__release-v9.16/EPIC-03",
+          "deviations_filed": false,
+          "acceptance_verified": false,
+          "commit_sha": null
+        },
+        "ST-10": {
+          "status": "in_progress",
+          "classification": "autonomous",
+          "spec_references": [
+            "docs/specs/frontend/design_system.md#Input Text Colours",
+            "docs/design/2026-11-06__release-v9.16/semantic-colour-tokens/decision_record.md"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "github_issue": 2206,
+          "branch": "exec/2026-11-06__release-v9.16/EPIC-03",
+          "deviations_filed": false,
+          "acceptance_verified": false,
+          "commit_sha": null
+        }
+      }
     }
   },
   "deferred_at_planning": [],
@@ -808,7 +849,8 @@
     "EPIC-02 merge-gate sync (2026-11-09): PR #2228 merged by sachiv1984 at 2026-11-09T15:33:10Z, merge commit 13e7bd20. Orphaned post-merge commit check: git log origin/main..origin/exec/2026-11-06__release-v9.16/EPIC-02 empty - nothing to reconcile.",
     "EPIC-05 (2026-11-10): PR #2229 merged by the human repository owner at 2026-11-10T09:26:42Z, merge commit 8a51d3ab. STEP 4 orphaned post-merge commit check: git log origin/main..origin/exec/2026-11-06__release-v9.16/EPIC-05 lists nothing; no reconciliation needed.",
     "2026-11-10 EPIC-07: PR #2230 merged 2026-11-10T10:02:22Z by the human repository owner (merge commit 7824a75c). Orphaned post-merge commit check (LL-v6.8-P3-01): git log origin/main..origin/exec/2026-11-06__release-v9.16/EPIC-07 empty - nothing to reconcile. Sibling sync (step 3c): no pending EPIC branch exists yet (EPIC-06/03/04 not cut) - none needed.",
-    "2026-11-10 EPIC-06: PR #2231 merged 2026-11-10T14:00:18Z by the human repository owner (merge commit 9df2088b). Orphaned post-merge commit check (LL-v6.8-P3-01): git log origin/main..origin/exec/2026-11-06__release-v9.16/EPIC-06 empty - nothing to reconcile. STEP 4 step 3c: no v9.16 EPIC-03/EPIC-04 branch exists yet, so no sibling execution_state.json sync was needed."
+    "2026-11-10 EPIC-06: PR #2231 merged 2026-11-10T14:00:18Z by the human repository owner (merge commit 9df2088b). Orphaned post-merge commit check (LL-v6.8-P3-01): git log origin/main..origin/exec/2026-11-06__release-v9.16/EPIC-06 empty - nothing to reconcile. STEP 4 step 3c: no v9.16 EPIC-03/EPIC-04 branch exists yet, so no sibling execution_state.json sync was needed.",
+    "2026-11-10 EPIC-03 ST-09 scope ruling (Product Owner, the user in session): converting DataTable/DashboardCard to app-raised (white in light) exposed dark-only content in shell consumers outside the 4 AC pages (TradeHistoryTable journal/debrief rows - broke SC-DBF-06a light axe; WeeklyDigest table; the 9 Dashboard cards in populated states). Options offered: fix all shell consumers / fix Trade History only + P2 backlog item / escalate to Head of UX. Ruling: fix all shell consumers in ST-09 with explicit light/dark pairs and add light axe coverage; recorded as a scope note, not a new story. Design record section 5 ('do not widen the shell list') is respected: no new shells are tokenised."
   ],
   "sealed": false,
   "sealed_utc": null

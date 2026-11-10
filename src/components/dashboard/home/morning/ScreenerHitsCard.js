@@ -23,7 +23,7 @@ export default function ScreenerHitsCard() {
       emptyHeading="No new signals"
       emptyBody="New matches will show here."
     >
-      <p className="text-4xl font-bold text-indigo-400 mb-2">{newHits}</p>
+      <p className="text-4xl font-bold text-indigo-700 dark:text-indigo-400 mb-2">{newHits}</p>
       <p className="text-sm text-slate-600 dark:text-slate-400">
         new signal{newHits !== 1 ? "s" : ""} today
       </p>

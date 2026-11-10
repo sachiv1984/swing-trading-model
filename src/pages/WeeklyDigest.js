@@ -89,7 +89,7 @@ export default function WeeklyDigest() {
                 size="sm"
                 data-testid="print-export-pdf-btn"
                 onClick={() => window.print()}
-                className="border-slate-700 text-slate-300 hover:bg-slate-800"
+                className="border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
               >
                 <Printer className="w-4 h-4 mr-2" />
                 Print / Export PDF
@@ -99,7 +99,7 @@ export default function WeeklyDigest() {
               variant="ghost"
               size="sm"
               onClick={() => refetch()}
-              className="text-slate-600 dark:text-slate-400 hover:text-white hover:bg-slate-800"
+              className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"
             >
               <RefreshCw className="w-4 h-4 mr-2" />
               Refresh
@@ -127,14 +127,14 @@ export default function WeeklyDigest() {
               const isLinkable = linkTo && value !== "—";
               return (
                 <TableRow key={field}>
-                  <TableCell className="font-medium text-slate-200">{label}</TableCell>
+                  <TableCell className="font-medium text-slate-800 dark:text-slate-200">{label}</TableCell>
                   <TableCell className="text-slate-600 dark:text-slate-400 text-sm">{unit}</TableCell>
-                  <TableCell className="text-right font-mono text-slate-300">
+                  <TableCell className="text-right font-mono text-slate-700 dark:text-slate-300">
                     {isLinkable ? (
                       <Link
                         to={linkTo}
                         data-testid={`digest-link-${field}`}
-                        className="text-cyan-400 hover:text-cyan-300 underline underline-offset-2"
+                        className="text-cyan-700 dark:text-cyan-400 hover:text-cyan-800 dark:hover:text-cyan-300 underline underline-offset-2"
                       >
                         {value}
                       </Link>

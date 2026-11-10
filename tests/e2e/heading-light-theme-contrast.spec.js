@@ -7,10 +7,11 @@
  *
  *   SC-HTC-01  Dashboard "Dashboard" h1 — dark theme: resolves to white (unchanged)
  *   SC-HTC-02  Dashboard "Dashboard" h1 — light theme: resolves to slate-900 (fixed)
- *   SC-HTC-03  StrategyBenchmark "Strategy Benchmark" h1 — dark theme: gradient resolves to white (unchanged)
- *   SC-HTC-04  StrategyBenchmark "Strategy Benchmark" h1 — light theme: gradient resolves to slate-900 (fixed)
- *              (SC-HTC-03/04 rewritten for the ST-19/BLG-FE-106 PageHeader
- *              consolidation, v7.10 — see test body comment for detail)
+ *   SC-HTC-03  StrategyBenchmark "Strategy Benchmark" h1 — dark theme: resolves to white (unchanged)
+ *   SC-HTC-04  StrategyBenchmark "Strategy Benchmark" h1 — light theme: resolves to slate-900 (fixed)
+ *              (SC-HTC-03/04 checked gradient stops from v7.10 to v9.16; the
+ *              solid text-app-fg title (ST-09, BLG-FE-264) restores the
+ *              text-colour check — see test body comment)
  *
  * Design source: docs/design/2026-07-12__release-v7.0/heading-light-theme-contrast/decision_record.md
  * Spec refs: docs/specs/frontend/pages/dashboard.md §Page Header (v2.8),
@@ -70,37 +71,28 @@ test.describe('Dashboard heading contrast (SC-HTC-01/02)', () => {
 });
 
 test.describe('Strategy Benchmark heading contrast (SC-HTC-03/04)', () => {
-  // ST-19 (EPIC-05, v7.10, BLG-FE-106) consolidated this heading onto the
-  // shared PageHeader component, whose title is a gradient-clipped
-  // (`bg-clip-text text-transparent`) <h1> rather than a solid-colour one —
-  // `getComputedStyle(el).color` now resolves to transparent regardless of
-  // theme, so these two tests are rewritten to check the gradient's
-  // `background-image` stops instead, matching the same technique already
-  // established for other PageHeader-consuming pages in
-  // page-header-dark-gradient-contrast.spec.js. The original solid-colour
-  // assertion this replaces is preserved in git history (pre-v7.10).
-  const WHITE_STOP = '255, 255, 255';
-  const SLATE_900_STOP = '15, 23, 42';
-
-  test('SC-HTC-03: Strategy Benchmark h1 gradient resolves to white in dark theme (unchanged)', async ({ page }) => {
+  // ST-09 (EPIC-03, v9.16, BLG-FE-264): PageHeader's title moved from a
+  // gradient-clipped (`bg-clip-text text-transparent`) <h1> to the solid
+  // `text-app-fg` semantic token (design_system.md v1.25 §Semantic Colour
+  // Tokens rule 5), so these tests check the computed text colour again
+  // instead of the gradient's background-image stops (v7.10 form, in git
+  // history).
+  test('SC-HTC-03: Strategy Benchmark h1 resolves to white in dark theme (unchanged)', async ({ page }) => {
     await mockFallback(page);
     await page.goto('/#/StrategyBenchmark');
 
     const heading = page.locator('h1', { hasText: 'Strategy Benchmark' });
     await expect(heading).toBeVisible({ timeout: 8000 });
-    const backgroundImage = await heading.evaluate((el) => getComputedStyle(el).backgroundImage);
-    expect(backgroundImage).toContain(WHITE_STOP);
+    await expect(heading).toHaveCSS('color', WHITE_RGB);
   });
 
-  test('SC-HTC-04: Strategy Benchmark h1 gradient resolves to slate-900 in light theme (fixed)', async ({ page }) => {
+  test('SC-HTC-04: Strategy Benchmark h1 resolves to slate-900 in light theme (fixed)', async ({ page }) => {
     await mockFallback(page);
     await page.addInitScript(() => window.localStorage.setItem('theme', 'light'));
     await page.goto('/#/StrategyBenchmark');
 
     const heading = page.locator('h1', { hasText: 'Strategy Benchmark' });
     await expect(heading).toBeVisible({ timeout: 8000 });
-    const backgroundImage = await heading.evaluate((el) => getComputedStyle(el).backgroundImage);
-    expect(backgroundImage).toContain(SLATE_900_STOP);
-    expect(backgroundImage).not.toContain(WHITE_STOP);
+    await expect(heading).toHaveCSS('color', SLATE_900_RGB);
   });
 });

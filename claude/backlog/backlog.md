@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-10 (session — 2 new item(s) added: BLG-QA-258, BLG-QA-259; agent-mediated DoQ and PO review of PR #2231, EPIC-06, v9.16); prior — 2026-11-10 (session — 3 new item(s) added: BLG-FE-282, BLG-FE-283, BLG-FE-284; ST-27, EPIC-06, v9.16); prior — 2026-11-10 (session — 1 new item(s) added: BLG-GOV-418; ST-25, EPIC-06, v9.16); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-10 (session — 1 new item(s) added: BLG-FE-285; ST-09, EPIC-03, v9.16); prior — 2026-11-10 (session — 2 new item(s) added: BLG-QA-258, BLG-QA-259; agent-mediated DoQ and PO review of PR #2231, EPIC-06, v9.16); prior — 2026-11-10 (session — 3 new item(s) added: BLG-FE-282, BLG-FE-283, BLG-FE-284; ST-27, EPIC-06, v9.16); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -6675,6 +6675,28 @@ Research View's "Create Trade Plan" opens `/TradePlan?ticker={ticker}` although 
 **Acceptance Criteria**
 - Immediately after saving a new, start-eligible plan, "Start Trade from Plan" is shown and opens Trade Entry pre-filled and linked
 - Playwright coverage passes
+
+---
+
+### BLG-FE-285 — Give the Trade History filters, AI summary and view toggle light-theme colours
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** ST-09 (EPIC-03, 2026-11-06__release-v9.16) light-theme axe scan of Trade History — 2026-11-10
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v9.17
+
+**Problem**
+ST-09's light-theme axe scan of Trade History found dark-only regions outside the trade table: the filters panel (slate-600 text on #888f9a, 2.32:1), the AI Journal Summary header (text-slate-300, 2.19:1), the saved-filters select (1.45:1), the Table/Calendar toggle (cyan-400 3.39:1; slate-600 1.02:1), and two Select comboboxes with no accessible name (button-name, critical). None sit in ST-09's converted shells; they were dark-only in light before ST-09, so the ST-09 scan is limited to the table.
+
+**Scope**
+- Give each region the design_system.md §Light-Theme Colour Tokens pairs or app-* tokens
+- Add accessible names to the two filter Selects and the saved-filters select
+- Coordinate with Phase 3 content sweep BLG-FE-265
+
+**Acceptance Criteria**
+- An unscoped light-theme axe scan of Trade History with a journal row expanded reports no serious or critical finding
+- The `include: 'table'` scope is removed from the TradeHistoryExpanded:light scan in tests/e2e/accessibility-axe-scan.spec.js
 
 ---
 

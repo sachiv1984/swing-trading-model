@@ -978,26 +978,26 @@ export default function Positions() {
                 >
                   <TableCell>
                     <div className="flex items-center gap-2">
-                      <span className="font-semibold text-white">
+                      <span className="font-semibold text-slate-900 dark:text-white">
                         {position.ticker}
                       </span>
-                      <span className="text-xs px-2 py-0.5 rounded-full bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-700">
+                      <span className="text-xs px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
                         {position.market}
                       </span>
                     </div>
                   </TableCell>
 
-                  <TableCell className="text-slate-300">
+                  <TableCell className="text-slate-700 dark:text-slate-300">
                     {formatCurrency(position.entry_price, { currency })}
                   </TableCell>
 
-                  <TableCell className="text-slate-300">
+                  <TableCell className="text-slate-700 dark:text-slate-300">
                     {formatCurrency(displayCurrentPrice || null, { currency })}
                     {position.price_is_stale === true && <StaleMarker explanation={STALE_EXPLANATION_POSITIONS} />}
                   </TableCell>
 
                   {/* ST-01 (BLG-FEAT-46): two-line stop cell — initial stop / trailing stop + breach badge */}
-                  <TableCell className="text-rose-400 font-medium">
+                  <TableCell className="text-app-negative font-medium">
                     <div className="flex flex-col gap-0.5 leading-tight">
                       <span className="text-xs text-slate-600 dark:text-slate-400">
                         Init: {formatCurrency(position.initial_stop, { currency })}
@@ -1024,7 +1024,7 @@ export default function Positions() {
                     </div>
                   </TableCell>
 
-                  <TableCell className="text-slate-300">
+                  <TableCell className="text-slate-700 dark:text-slate-300">
                     {position.shares}
                   </TableCell>
 
@@ -1032,7 +1032,7 @@ export default function Positions() {
                     <div
                       className={cn(
                         "inline-flex items-center gap-1.5 font-medium",
-                        isProfit ? "text-emerald-400" : "text-rose-400"
+                        isProfit ? "text-app-positive" : "text-app-negative"
                       )}
                     >
                       {isProfit ? (
@@ -1048,7 +1048,7 @@ export default function Positions() {
                     <span
                       className={cn(
                         "text-sm font-medium",
-                        isProfit ? "text-emerald-400" : "text-rose-400"
+                        isProfit ? "text-app-positive" : "text-app-negative"
                       )}
                     >
                       {formatPercent(pnlPercent, { signed: true })}
@@ -1075,7 +1075,7 @@ export default function Positions() {
                   <TableCell>
                     {position.grace_days_remaining !== null &&
                     position.grace_days_remaining !== undefined ? (
-                      <span className="text-xs font-medium px-2 py-1 rounded-lg bg-amber-500/15 text-amber-400 border border-amber-500/25 whitespace-nowrap">
+                      <span className="text-xs font-medium px-2 py-1 rounded-lg bg-amber-500/15 text-amber-700 dark:text-amber-400 border border-amber-500/25 whitespace-nowrap">
                         Day {(position.holding_days ?? 0) + 1} of {GRACE_PERIOD_DAYS}
                       </span>
                     ) : (
@@ -1096,7 +1096,8 @@ export default function Positions() {
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-8 w-8 text-slate-600 dark:text-slate-400 hover:text-white hover:bg-slate-800"
+                        className="h-8 w-8 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"
+                        aria-label={`Edit ${position.ticker}`}
                         onClick={() => setEditingPosition(position)}
                       >
                         <Edit2 className="w-4 h-4" />
@@ -1106,7 +1107,7 @@ export default function Positions() {
                         variant="ghost"
                         size="icon"
                         title="Trade Plan"
-                        className="h-8 w-8 text-cyan-500/70 hover:text-cyan-400 hover:bg-cyan-500/10"
+                        className="h-8 w-8 text-cyan-500/70 hover:text-cyan-700 dark:hover:text-cyan-400 hover:bg-cyan-500/10"
                         onClick={() => navigate(`/TradePlan?position_id=${position.id}&ticker=${position.ticker}&market=${position.market}`)}
                       >
                         <BookOpen className="w-4 h-4" />

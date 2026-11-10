@@ -16,12 +16,15 @@ export default function DashboardCard({
   className,
   descriptions = [],
 }) {
+  // ST-09 (BLG-FE-264, EPIC-03, v9.16): shell on the semantic colour tokens
+  // (design_system.md v1.25 §Semantic Colour Tokens rule 5). The hover fill
+  // keeps an explicit pair because tokens take no opacity modifier (rule 2).
   const content = (
     <div className={cn(
-      "relative rounded-2xl bg-slate-800/50 border border-slate-700/50 backdrop-blur-sm p-6 transition-all hover:border-slate-600/70 hover:bg-slate-800/70 cursor-pointer h-full",
+      "relative rounded-2xl bg-app-raised border border-app-line backdrop-blur-sm p-6 transition-all hover:border-slate-300 hover:bg-slate-50 dark:hover:border-slate-600/70 dark:hover:bg-slate-800/70 cursor-pointer h-full",
       className
     )}>
-      <p className="text-xs text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-3">{title}</p>
+      <p className="text-xs text-app-fg uppercase tracking-wider mb-3">{title}</p>
 
       {isLoading && (
         <div className="flex justify-center py-4">
@@ -30,7 +33,7 @@ export default function DashboardCard({
       )}
 
       {!isLoading && error && (
-        <div className="flex items-center gap-2 text-rose-400">
+        <div className="flex items-center gap-2 text-app-negative">
           <AlertCircle className="w-4 h-4 shrink-0" />
           <span className="text-sm">Unable to load</span>
         </div>

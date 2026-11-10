@@ -185,7 +185,7 @@ test.describe('SC-NR-04 — Net R colour coding (AC-02)', () => {
     await mockTrades(page, [TRADE_WITH_COSTS]);
     await gotoTradeHistory(page);
 
-    const positiveNetR = page.locator('td span.text-emerald-400', { hasText: /R$/ });
+    const positiveNetR = page.locator('td span.text-emerald-700', { hasText: /R$/ });
     await expect(positiveNetR.first()).toBeVisible({ timeout: 10000 });
   });
 
@@ -194,7 +194,7 @@ test.describe('SC-NR-04 — Net R colour coding (AC-02)', () => {
     await mockTrades(page, [TRADE_NEGATIVE_NET_R]);
     await gotoTradeHistory(page);
 
-    const negativeNetR = page.locator('td span.text-rose-400', { hasText: /R$/ });
+    const negativeNetR = page.locator('td span.text-rose-700', { hasText: /R$/ });
     await expect(negativeNetR.first()).toBeVisible({ timeout: 10000 });
   });
 });

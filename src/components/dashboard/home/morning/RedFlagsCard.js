@@ -31,7 +31,7 @@ export default function RedFlagsCard() {
       emptyHeading="No red flags this week"
       emptyBody="Journal entries flagged for review will show here."
     >
-      <p className="text-4xl font-bold text-rose-400 mb-2">{total}</p>
+      <p className="text-4xl font-bold text-rose-700 dark:text-rose-400 mb-2">{total}</p>
       <p className="text-sm text-slate-600 dark:text-slate-400">
         event{total !== 1 ? "s" : ""} in last 7 days
       </p>

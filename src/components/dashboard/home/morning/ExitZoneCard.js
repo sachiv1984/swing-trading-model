@@ -40,7 +40,7 @@ export default function ExitZoneCard() {
       emptyHeading="No positions to watch"
       emptyBody="Positions nearing exit zone or grace will show here."
     >
-      <p className="text-4xl font-bold text-amber-400 mb-2">{total}</p>
+      <p className="text-4xl font-bold text-amber-700 dark:text-amber-400 mb-2">{total}</p>
       <p className="text-sm text-slate-600 dark:text-slate-400">{subtext}</p>
     </DashboardCard>
   );

@@ -63,6 +63,22 @@ module.exports = {
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',
+        // ST-09 (BLG-FE-264, EPIC-03, v9.16): semantic colour tokens,
+        // design_system.md v1.25 §Semantic Colour Tokens. Values are CSS
+        // custom properties on :root (light) and .dark in src/index.css, so
+        // one class themes itself with no `dark:` partner. The `app`
+        // namespace keeps them apart from shadcn's --background/--card/
+        // --border. Opacity modifiers (bg-app-raised/70) are not supported.
+        app: {
+          surface: 'var(--app-surface)',
+          raised: 'var(--app-raised)',
+          fg: 'var(--app-fg)',
+          muted: 'var(--app-muted)',
+          line: 'var(--app-line)',
+          positive: 'var(--app-positive)',
+          negative: 'var(--app-negative)',
+          warning: 'var(--app-warning)',
+        },
         // (all your Base44 extended colors here)
       },
       keyframes: {

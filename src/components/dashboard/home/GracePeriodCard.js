@@ -29,7 +29,7 @@ export default function GracePeriodCard() {
       emptyHeading="No positions in grace"
       emptyBody="Positions approaching grace deadlines will show here."
     >
-      <p className="text-4xl font-bold text-amber-400 mb-2">{gracePositions.length}</p>
+      <p className="text-4xl font-bold text-amber-700 dark:text-amber-400 mb-2">{gracePositions.length}</p>
       <p className="text-sm text-slate-600 dark:text-slate-400">
         {nextExpiry
           ? `Next expiry: ${format(new Date(nextExpiry.grace_end_date), "d MMM")}`
