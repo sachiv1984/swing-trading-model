@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Class 2
 **Status:** Canonical
-**Version:** 1.30.0
-**Last Updated:** 2026-11-09 (ST-05, EPIC-02, v9.16, BLG-FE-271 — new v9.16.0 entry: trade_plan_endpoints.md v0.23, openapi.yaml 3.48.0); prior — 2026-11-05 (ST-30/ST-32, EPIC-05, v9.15, BLG-OPS-190/BLG-OPS-192 — v9.15.0 entry adds signal_endpoints.md v1.11 and openapi.yaml 3.47.4); prior — 2026-11-05 (ST-34, EPIC-06, v9.15, BLG-SPEC-194 — v9.15.0 entry adds health_endpoints.md v1.10 and the openapi.yaml 3.47.3 tax-year correction); prior history retained — see prior entries in version control
+**Version:** 1.31.0
+**Last Updated:** 2026-11-10 (ST-17/ST-18/ST-20/ST-21, EPIC-05, v9.16 — v9.16.0 entry adds position_endpoints.md v2.20.1 and ai_endpoints.md v1.41); prior — 2026-11-09 (ST-05, EPIC-02, v9.16, BLG-FE-271 — new v9.16.0 entry: trade_plan_endpoints.md v0.23, openapi.yaml 3.48.0); prior — 2026-11-05 (ST-30/ST-32, EPIC-05, v9.15, BLG-OPS-190/BLG-OPS-192 — v9.15.0 entry adds signal_endpoints.md v1.11 and openapi.yaml 3.47.4); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 # API Changelog
@@ -49,6 +49,28 @@ Rules:
 |--------|---------|
 | Updated endpoint: POST /trade-plans | Optional `pre_entry_validation_snapshot` object (`captured_at`, `advisory_status`, `checks`, `inputs`) documented; the route already accepted it. The Trade Plan form now sends it on save (`trade_plan.md` v1.22 §5e, BLG-FE-271). |
 | Updated endpoint: PUT /trade-plans/{id} | Now stores `pre_entry_validation_snapshot` (JSONB), so an edited plan's snapshot is replaced; `null` or omitted leaves it unchanged. Writes the `pre_entry_override` event only when `pre_entry_override_acknowledged` changes from not-true to true. `openapi.yaml` 3.48.0. |
+
+### position_endpoints.md — v2.20.1 (UPDATED)
+
+**EPIC:** EPIC-05
+**ST:** ST-17, ST-18
+
+| Change | Details |
+|--------|---------|
+| Updated endpoint: GET /positions | ST-17 (BLG-BE-176): `position_state` is decided against the same native entry `display_status` uses: `fill_price`, else `entry_price × fx_rate`, else `entry_price ×` the live rate when `fx_rate` is NULL (previously `UNKNOWN`). The badge had re-derived the entry from the response row, which is already native, multiplying a US entry by the FX rate twice. Values change for US rows only; no shape change (v2.20.0). |
+| Updated endpoint: GET /positions/{position_id} | ST-17: a US row with a NULL `fx_rate` uses the live rate for its native entry and `position_state`; it returned `500` before (v2.20.0). |
+| Updated endpoint: GET /positions/analyze | ST-18 (BLG-BE-177): writes `stop_frozen_reason = "atr_unavailable"` for a post-grace position whose stop is kept for lack of ATR even when no live price was fetched, and nothing else in that case (v2.20.1). |
+
+### ai_endpoints.md — v1.41 (UPDATED)
+
+**EPIC:** EPIC-05
+**ST:** ST-20, ST-21
+
+| Change | Details |
+|--------|---------|
+| Updated endpoint: POST /ai/daily-briefing | ST-20 (BLG-AI-28; ruling `ESC-EXEC-20261110-01` (A)): check 3 treats PM, MA, ON and AM as non-tickers only in their usual usage (PM/AM after a clock time, MA after a number, period or determiner, ON after RISK); otherwise as tickers, caveated unless held, a context signal or in the context (v1.41). |
+| Updated endpoint: POST /ai/chat | ST-20: the focus rule uses the same context rule, so "PM's stop was hit last week." with focus MU held and PM not held no longer gets the MU note (v1.41). |
+| Updated endpoint: POST /ai/journal-summary | ST-21 (BLG-SPEC-195): the contract states the endpoint is Haiku-only; the stale "Override via `AI_MODEL` env var" sentence is removed. No behaviour change (v1.40). |
 
 ## v9.15.0 (2026-11-03 — Release v9.15)
 

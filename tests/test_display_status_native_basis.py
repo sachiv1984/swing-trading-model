@@ -157,3 +157,25 @@ def test_get_position_by_id_with_null_fill_price_and_fx_rate_uses_the_live_rate(
     body = response.json()
     assert body["entry_price"] == pytest.approx(80.0 * LIVE_FX)  # $104
     assert body["position_state"] == "PROFITABLE"  # $105 > $104
+
+
+def test_get_positions_response_does_not_expose_native_entry_price():
+    # ST-17: native_entry_price is lifecycle input only (like state_history) and
+    # is popped before GET /positions returns; it is not in the contract.
+    from tests._real_database import real_database_imports
+    with real_database_imports():
+        from fastapi.testclient import TestClient
+        import main
+    row = {"id": "pos-us-1", "market": "US", "entry_date": str(date.today() - timedelta(days=20)),
+           "entry_price": 100.0, "native_entry_price": 100.0, "current_price_native": 105.0,
+           "state_history": [], "display_status": "PROFITABLE"}
+    client = TestClient(main.app, raise_server_exceptions=False)
+    with patch.object(main, "get_positions_with_prices", return_value=[row]), \
+         patch.object(main, "get_lifecycle_fields_for_position",
+                      return_value={"position_state": "PROFITABLE", "state_entered_at": None,
+                                    "days_in_state": 0, "lifecycle_reason": None}):
+        response = client.get("/positions")
+    assert response.status_code == 200, response.text
+    body = response.json()[0]
+    assert "native_entry_price" not in body
+    assert "state_history" not in body
