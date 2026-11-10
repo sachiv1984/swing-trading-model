@@ -471,7 +471,7 @@ function PositionEarningsCell({ ticker, market }) {
   if (days < 0) return <TableCell><span className="text-slate-600 text-xs">—</span></TableCell>;
   if (days === 0) return (
     <TableCell>
-      <span className="text-xs font-medium px-2 py-0.5 rounded bg-amber-500/15 text-amber-400 border border-amber-500/25" title={data.next_earnings_date}>
+      <span className="text-xs font-medium px-2 py-0.5 rounded bg-amber-500/15 text-amber-800 dark:text-amber-400 border border-amber-500/25" title={data.next_earnings_date}>
         Today
       </span>
     </TableCell>
@@ -480,7 +480,7 @@ function PositionEarningsCell({ ticker, market }) {
   return (
     <TableCell>
       <span
-        className={`text-xs font-medium px-2 py-0.5 rounded ${isNear ? "bg-amber-500/15 text-amber-400 border border-amber-500/25" : "text-slate-600 dark:text-slate-400"}`}
+        className={`text-xs font-medium px-2 py-0.5 rounded ${isNear ? "bg-amber-500/15 text-amber-800 dark:text-amber-400 border border-amber-500/25" : "text-slate-600 dark:text-slate-400"}`}
         title={data.next_earnings_date}
       >
         {isNear ? `⚠ ${days}d` : `${days}d`}

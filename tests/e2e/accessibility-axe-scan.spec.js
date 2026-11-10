@@ -482,6 +482,15 @@ async function mockSt09PopulatedPositions(page) {
   await page.route(new RegExp(`${API}/positions(\\?|$)`), (route) =>
     route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(ST09_POSITIONS) })
   );
+  // Review pass 3: render both earnings badge variants (Today, and near-term
+  // within 5 days) in the Positions table, which the white shell exposed.
+  await page.route(new RegExp(`${API}/earnings/`), (route) => {
+    const days = route.request().url().includes('/earnings/WDC') ? 0 : 3;
+    return route.fulfill({
+      status: 200, contentType: 'application/json',
+      body: JSON.stringify({ days_until_earnings: days, next_earnings_date: '2026-11-13' }),
+    });
+  });
 }
 
 test.describe('Shell pages axe scan — light theme (ST-09)', () => {
@@ -519,7 +528,14 @@ test.describe('Shell pages axe scan — light theme (ST-09)', () => {
     await tableBtn.waitFor({ state: 'visible', timeout: 10000 });
     await tableBtn.click();
     await expect(page.getByRole('row').filter({ hasText: 'WDC' })).toBeVisible({ timeout: 10000 });
+    await expect(page.getByRole('row').filter({ hasText: 'WDC' }).getByText('Today')).toBeVisible({ timeout: 10000 });
+    await expect(page.getByRole('row').filter({ hasText: 'VOD.L' }).getByText('⚠ 3d')).toBeVisible({ timeout: 10000 });
     await expectThemeApplied(page, 'light');
+    // axe reports text on a translucent tint as `incomplete`, not a violation
+    // (BLG-QA-260), so the earnings badges' light colour is asserted directly:
+    // amber-800 (rgb 146, 64, 14) on amber-500/15 over white measures 6.32:1.
+    await expect(page.getByRole('row').filter({ hasText: 'WDC' }).getByText('Today')).toHaveCSS('color', 'rgb(146, 64, 14)');
+    await expect(page.getByRole('row').filter({ hasText: 'VOD.L' }).getByText('⚠ 3d')).toHaveCSS('color', 'rgb(146, 64, 14)');
     await runAxeScan(page, 'PositionsPopulatedTable:light');
   });
 
