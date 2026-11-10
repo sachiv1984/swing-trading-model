@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-10 (session — 1 new item(s) added: BLG-GOV-418; ST-25, EPIC-06, v9.16); prior — 2026-11-10 (session — 2 new item(s) added: BLG-FE-281, BLG-BE-212; ST-24, EPIC-06, v9.16); prior — 2026-11-10 (session — 1 new item(s) added: BLG-BE-211; ST-26, EPIC-06, v9.16); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-10 (session — 3 new item(s) added: BLG-FE-282, BLG-FE-283, BLG-FE-284; ST-27, EPIC-06, v9.16); prior — 2026-11-10 (session — 1 new item(s) added: BLG-GOV-418; ST-25, EPIC-06, v9.16); prior — 2026-11-10 (session — 2 new item(s) added: BLG-FE-281, BLG-BE-212; ST-24, EPIC-06, v9.16); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -6608,5 +6608,72 @@ On exit, `position_service.py` sets `trade_history.planned_entry_price` from the
 **Acceptance Criteria**
 - The template's Standard Sign-Off Block carries a §25 line requiring `25.1`/`25.2`/`25.3` entries or `§25: not applicable`
 - Template version, `OPERATIONAL_GUIDE.md` §14 row and `prompt_change_log.md` updated in the same commit
+
+---
+
+### BLG-FE-282 — Pre-fill the Trade Plan stop from the §5 suggested stop and flag a typed stop that differs
+**Priority:** P2 (Medium)
+**Type:** Frontend / UX
+**Owner:** Head of Engineering; Frontend Specifications & UX Documentation Owner; Strategy Rules & System Intent Owner (consulted)
+**Source:** ST-27 (EPIC-06, v9.16) — Arc 2 user journey map (`docs/ux/arc2_user_journey_map.md` F-03) — 2026-11-10
+**Effort:** S (~1 day)
+**Provisional-Target:** v9.17
+
+**Problem**
+`trade_plan.md` §5a.3 says Stop Level is pre-filled from the signal's suggested stop (entry − 5×ATR, `strategy_rules.md` §5). `TradePlan.js`'s signal pre-population fills only the thesis, entry rationale and confirmation criteria, so the field stays empty while the Signal Context panel shows "Suggested stop". The §4.1 suggested size is computed from whatever stop the user types, but Trade Entry stores entry − 5×ATR and shows the planned stop for reference only. A plan typed with a tighter stop than §5 gets a larger suggested size than §4.1 allows at the stop that will be stored, so the entered position can risk more than the configured percentage.
+
+**Scope**
+- Pre-fill Stop Level from the signal's suggested stop per §5a.3 (new plans with signal context; never overwrite a typed value)
+- When the typed stop differs from the §5 stop (entry − 5×ATR, where ATR is known), show next to the suggested size that Trade Entry will store the §5 stop, with that stop's value
+- Playwright coverage; `trade_plan.md` §5a.3/§5f updated if wording changes
+
+**Acceptance Criteria**
+- Opening a plan from a signal ("Plan this" or the watchlisted lookup) pre-fills Stop Level with entry − 5×ATR; a typed value is not overwritten
+- With a typed stop that differs from the §5 stop, the page states the stop Trade Entry will store
+- Playwright coverage passes
+
+---
+
+### BLG-FE-283 — Carry entry price and signal from Research View's "Create Trade Plan"
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Head of Engineering; Head of UX & Design
+**Source:** ST-27 (EPIC-06, v9.16) — Arc 2 user journey map (`docs/ux/arc2_user_journey_map.md` F-01) — 2026-11-10
+**Effort:** XS (<1h plus a Playwright test)
+**Provisional-Target:** v9.17
+**Depends on:** BLG-FE-281 (market on the same link) — can ship together
+
+**Problem**
+Research View's "Create Trade Plan" opens `/TradePlan?ticker={ticker}` although the page already holds the signal's entry price and ID. The user retypes the entry and sees the Signal Context panel only if the signal is watchlisted. "Plan this" on Signals and Screener already passes `market`, `entry_price` and `signal_id` through `planThisUrl` (`trade_plan.md` §2).
+
+**Scope**
+- Build the Research View link with `planThisUrl` (or the same parameters) when the research response has a signal
+- Playwright: Research → Create Trade Plan pre-fills the entry price and shows Signal Context
+
+**Acceptance Criteria**
+- From a Research View with a signal, "Create Trade Plan" opens a plan with the entry price pre-filled and the Signal Context panel shown
+- Without a signal, the link still opens a plan for the ticker and market
+- Playwright coverage passes
+
+---
+
+### BLG-FE-284 — Offer "Start Trade from Plan" right after a new plan is saved
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Head of UX & Design; Frontend Specifications & UX Documentation Owner
+**Source:** ST-27 (EPIC-06, v9.16) — Arc 2 user journey map (`docs/ux/arc2_user_journey_map.md` F-02) — 2026-11-10
+**Effort:** XS (<1h plus a Playwright test)
+**Provisional-Target:** v9.17
+
+**Problem**
+"Start Trade from Plan" renders only in edit mode (`?edit=`). After saving a new plan the page shows "Trade plan saved successfully." with no way to start the trade, so the user opens Trade Plans and finds the plan: the journey's only 2-step hand-off, at the point of decision.
+
+**Scope**
+- After a successful create, show "Start Trade from Plan" for the saved plan (e.g. switch to the edit URL, or render the action from the created plan)
+- Update `trade_plan.md` §10 if the entry point changes; Playwright coverage
+
+**Acceptance Criteria**
+- Immediately after saving a new, start-eligible plan, "Start Trade from Plan" is shown and opens Trade Entry pre-filled and linked
+- Playwright coverage passes
 
 ---
