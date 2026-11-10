@@ -6,7 +6,7 @@
   "invoked_utc": "2026-11-09T09:15:14Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-10T09:11:06Z",
+  "last_updated_utc": "2026-11-10T09:27:07Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-02",
@@ -266,10 +266,10 @@
     },
     "EPIC-05": {
       "title": "Backend Correctness, AI Ticker Check & Spec Debt",
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-11-06__release-v9.16/EPIC-05",
       "pr_number": 2229,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-11-06__release-v9.16/qa_evidence_EPIC-05.md",
       "test_scenarios": [
@@ -287,7 +287,7 @@
         "ST-16": {
           "title": "Exiting a US position with a NULL fill_price fails in the P&L arithmetic",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2212,
           "branch": "exec/2026-11-06__release-v9.16/EPIC-05",
@@ -311,7 +311,7 @@
         "ST-17": {
           "title": "Lifecycle badge and Risk page disagree for a US row with no fill_price and no fx_rate",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2213,
           "branch": "exec/2026-11-06__release-v9.16/EPIC-05",
@@ -335,7 +335,7 @@
         "ST-18": {
           "title": "Frozen-stop marker is not written when the on-load recompute has no live price",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2214,
           "branch": "exec/2026-11-06__release-v9.16/EPIC-05",
@@ -359,7 +359,7 @@
         "ST-19": {
           "title": "Read production briefing ticker-caveat tokens and add any non-tickers",
           "classification": "delegated_backend",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2215,
           "branch": "exec/2026-11-06__release-v9.16/EPIC-05",
@@ -388,7 +388,7 @@
         "ST-20": {
           "title": "Handle _NON_TICKER_WORDS entries that are also real tickers deliberately",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2216,
           "branch": "exec/2026-11-06__release-v9.16/EPIC-05",
@@ -419,7 +419,7 @@
         "ST-21": {
           "title": "Journal summary: remove the stale AI_MODEL override line, or cost the model actually used",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2217,
           "branch": "exec/2026-11-06__release-v9.16/EPIC-05",
@@ -443,7 +443,7 @@
         "ST-22": {
           "title": "Add the 11 missing positions columns to the positions data dictionary",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2218,
           "branch": "exec/2026-11-06__release-v9.16/EPIC-05",
@@ -468,7 +468,7 @@
         "ST-23": {
           "title": "Point settings.md at the moved strategy constants module",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2219,
           "branch": "exec/2026-11-06__release-v9.16/EPIC-05",
@@ -497,7 +497,9 @@
         "status": "cleared",
         "date": "2026-11-10",
         "notes": "Pass 1 Approved with 8 non-blocking findings; 1 fixed ad89d686, 3-4 fixed a0f3bfb2, 2 and 5 in evidence, 6-7 tracked BLG-BE-208/BLG-QA-256, 8 recorded as recommended check."
-      }
+      },
+      "merged_utc": "2026-11-10T09:26:42Z",
+      "merge_commit": "8a51d3ab"
     }
   },
   "deferred_at_planning": [],
@@ -539,12 +541,12 @@
   "merge_gate": {
     "epics_merged": [
       "EPIC-01",
-      "EPIC-02"
+      "EPIC-02",
+      "EPIC-05"
     ],
     "epics_pending": [
       "EPIC-03",
       "EPIC-04",
-      "EPIC-05",
       "EPIC-06",
       "EPIC-07"
     ],
@@ -555,7 +557,8 @@
     "EPIC-01 merge-gate resume sync (2026-11-09): PR #2227 merged by sachiv1984 at 2026-11-09T11:27:35Z, merge commit 8f525f24. Orphaned post-merge commit check: git log origin/main..origin/exec/2026-11-06__release-v9.16/EPIC-01 empty - nothing to reconcile.",
     "EPIC-02 (2026-11-09): the ST-05 state commit 2d26da87 also committed two ST-06 deletions (SignalStatusCard.js, ExitConditionsCard.js) staged earlier with `git rm`; DashboardHome.js still imported SignalStatusCard there, so Frontend Production Build and Playwright failed at 2d26da87. Fixed by the ST-06 commit 739286e7 (no force-push). Candidate lesson: check `git diff --cached` is empty before a state-only commit, or commit with explicit pathspecs.",
     "EPIC-02 (2026-11-09): ST-08's new spec reused prefix SC-TPS (trade-plan-stale-marker.spec.js). CI Pytest 42621274186 caught it (test_check_e2e_scenario_id_uniqueness.py); renamed to SC-TPSZ in 87d78b39. Candidate lesson: run scripts/check_e2e_scenario_id_uniqueness.py before pushing a new spec.",
-    "EPIC-02 merge-gate sync (2026-11-09): PR #2228 merged by sachiv1984 at 2026-11-09T15:33:10Z, merge commit 13e7bd20. Orphaned post-merge commit check: git log origin/main..origin/exec/2026-11-06__release-v9.16/EPIC-02 empty - nothing to reconcile."
+    "EPIC-02 merge-gate sync (2026-11-09): PR #2228 merged by sachiv1984 at 2026-11-09T15:33:10Z, merge commit 13e7bd20. Orphaned post-merge commit check: git log origin/main..origin/exec/2026-11-06__release-v9.16/EPIC-02 empty - nothing to reconcile.",
+    "EPIC-05 (2026-11-10): PR #2229 merged by the human repository owner at 2026-11-10T09:26:42Z, merge commit 8a51d3ab. STEP 4 orphaned post-merge commit check: git log origin/main..origin/exec/2026-11-06__release-v9.16/EPIC-05 lists nothing; no reconciliation needed."
   ],
   "sealed": false,
   "sealed_utc": null
