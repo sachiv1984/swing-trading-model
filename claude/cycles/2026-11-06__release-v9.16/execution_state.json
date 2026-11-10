@@ -6,7 +6,7 @@
   "invoked_utc": "2026-11-09T09:15:14Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-10T09:10:16Z",
+  "last_updated_utc": "2026-11-10T09:11:06Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-02",
@@ -268,8 +268,8 @@
       "title": "Backend Correctness, AI Ticker Check & Spec Debt",
       "status": "done",
       "branch": "exec/2026-11-06__release-v9.16/EPIC-05",
-      "pr_number": null,
-      "pr_status": null,
+      "pr_number": 2229,
+      "pr_status": "open",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-11-06__release-v9.16/qa_evidence_EPIC-05.md",
       "test_scenarios": [
