@@ -285,6 +285,10 @@ def get_positions_with_prices() -> List[Dict]:
             "position_state": pos.get("position_state"),
             "state_history": pos.get("state_history"),
             "state_entered_at": pos.get("state_entered_at"),
+            # ST-17 (BLG-BE-176, v9.16): the native entry display_status used, so
+            # the badge compares with the same value (this row's entry_price is
+            # already native and it has no fill_price). Popped with state_history.
+            "native_entry_price": entry_price_display,
             "ticker": display_ticker,
             "market": pos['market'],
             "initial_stop": round(initial_stop, 2) if initial_stop is not None else None,
@@ -588,7 +592,13 @@ def analyze_positions() -> Dict:
             if not grace_period:
                 position_updates['stop_frozen_reason'] = 'atr_unavailable' if atr_unavailable else None
             update_position(str(pos['id']), position_updates)
-        
+        elif not grace_period and atr_unavailable:
+            # ST-18 (BLG-BE-177, v9.16): no live price, and the stop was kept for
+            # lack of ATR. Nothing else is written without a live price, but the
+            # stop is still frozen, so record it now rather than waiting for the
+            # nightly job (which writes only this field in the same case).
+            update_position(str(pos['id']), {'stop_frozen_reason': 'atr_unavailable'})
+
         # Add to actions
         actions.append({
             "ticker": pos['ticker'],
@@ -1273,7 +1283,14 @@ def exit_position(
     settings = settings_list[0] if settings_list else None
     
     market = position['market']
-    entry_price = position.get('fill_price', position['entry_price']) if market == 'US' else position['entry_price']
+    # ST-16 (BLG-BE-175, v9.16): the native entry written to trade_history.entry_price
+    # (NOT NULL, native currency). position.get('fill_price', ...) returned None for
+    # a US row whose fill_price is NULL, and the trade_history write failed. Use the
+    # same fallback as the recompute paths: fill_price, else entry_price (GBP) x the
+    # stored fx_rate, else x this exit's fx_rate.
+    position_floats = decimal_to_float(dict(position))
+    entry_price = native_entry_price(position_floats, fx_rate_to_use)
+    stored_entry_fx_rate = position_floats.get('fx_rate')
     
     # Calculate exit proceeds
     proceeds = calculate_exit_proceeds(
@@ -1391,7 +1408,11 @@ def exit_position(
         'pnl_pct': realized_pnl_pct,
         'holding_days': holding_days,
         'exit_reason': reason,
-        'entry_fx_rate': float(position.get('fx_rate', 1.0)),
+        # NULL stays NULL for a US row (entry_fx_rate is nullable); UK keeps 1.0.
+        'entry_fx_rate': (
+            float(stored_entry_fx_rate) if stored_entry_fx_rate is not None
+            else (None if market == 'US' else 1.0)
+        ),
         'exit_fx_rate': fx_rate_to_use,
         'entry_note': position.get('entry_note'),
         'exit_note': exit_note,

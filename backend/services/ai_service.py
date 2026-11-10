@@ -333,15 +333,41 @@ _TICKER_TOKEN_RE = re.compile(r"(?<![A-Za-z0-9_.&$£])[A-Z][A-Z0-9_]{1,14}(?:\.[
 # ST-16 (BLG-AI-21, v9.14): indicator, earnings, macro and exchange
 # acronyms added; the ruling's list is a minimum ("at least").
 _NON_TICKER_WORDS = frozenset({
-    "UK", "US", "USD", "GBP", "GBX", "EXIT", "ENTER", "MONITOR", "HOLD", "ATR", "MA", "ETF", "AI", "UTC",
-    "SPY", "FTSE", "RISK", "ON", "OFF", "STOP", "BREACH", "OK", "YTD",
+    "UK", "US", "USD", "GBP", "GBX", "EXIT", "ENTER", "MONITOR", "HOLD", "ATR", "ETF", "AI", "UTC",
+    "SPY", "FTSE", "RISK", "OFF", "STOP", "BREACH", "OK", "YTD",
     "RSI", "MACD", "EMA", "SMA", "VWAP", "EPS", "PE", "IPO", "CEO", "CFO",
     "GDP", "CPI", "PPI", "PMI", "FOMC", "FED", "ECB", "BOE", "NB", "NYSE", "LSE", "NASDAQ",
     # ST-26 (BLG-AI-25, v9.15): time, chat and abbreviation words seen in chat
     # replies, which the ST-17 focus rule shares; still within the minimum list.
-    "AM", "PM", "EOD", "EOW", "EOM", "IMO", "IMHO", "FYI", "NOTE", "TBD", "ASAP",
+    "EOD", "EOW", "EOM", "IMO", "IMHO", "FYI", "NOTE", "TBD", "ASAP",
     "Q1", "Q2", "Q3", "Q4", "FY", "YOY", "VIX", "GMT", "BST",
 })
+
+# ST-20 (BLG-AI-28, v9.16; AI Compliance & Governance Officer ruling
+# ESC-EXEC-20261110-01, option (A)): PM, MA and ON are also scan-universe tickers
+# (Philip Morris, Mastercard, ON Semiconductor), and AM is ruled with PM. Each is a
+# non-ticker only in its usual non-ticker usage, read from the text just before
+# it; otherwise it is a ticker on both the briefing check and the chat focus rule.
+_CONTEXT_NON_TICKER_WORDS = {
+    # A clock time only ("3 PM", "9:30 AM"): an hour 1-12 with optional minutes,
+    # not any number, so "100 PM shares" is still the Philip Morris ticker.
+    "AM": re.compile(r"(?<![\w.:])(?:1[0-2]|0?[1-9])(?::[0-5]\d)?\s?$"),
+    "PM": re.compile(r"(?<![\w.:])(?:1[0-2]|0?[1-9])(?::[0-5]\d)?\s?$"),
+    # "200 MA", "50-day MA"; and after a determiner ("above the MA", "its MA"),
+    # added by the ruling's 2026-11-10 clarification.
+    "MA": re.compile(r"(?:\d(?:[- ]?(?:day|week|month|period)s?)?[- ]?|\b(?:the|its|a|an|their) )$",
+                     re.IGNORECASE),
+    "ON": re.compile(r"\bRISK[- ]?$", re.IGNORECASE),  # "RISK ON"
+}
+
+
+def _is_non_ticker(match, text: str) -> bool:
+    """Whether a _TICKER_TOKEN_RE match in text is a known non-ticker word."""
+    token = match.group(0)
+    context_rule = _CONTEXT_NON_TICKER_WORDS.get(token)
+    if context_rule is not None:
+        return context_rule.search(text[:match.start()]) is not None
+    return token in _NON_TICKER_WORDS
 
 
 def _names_other_ticker(sentence: str, focus: str) -> bool:
@@ -349,7 +375,7 @@ def _names_other_ticker(sentence: str, focus: str) -> bool:
     sentence names a ticker-like token, not a known non-ticker word, other
     than the focus ticker (normalised as ST-15)."""
     focus_n = _normalise_ticker(focus)
-    return any(m.group(0) not in _NON_TICKER_WORDS and _normalise_ticker(m.group(0)) != focus_n
+    return any(not _is_non_ticker(m, sentence) and _normalise_ticker(m.group(0)) != focus_n
                for m in _TICKER_TOKEN_RE.finditer(sentence))
 
 
@@ -367,7 +393,7 @@ def _summary_ticker_caveat(summary, context_tickers, context: str):
         unknown = []
         for m in _TICKER_TOKEN_RE.finditer(summary):
             token = m.group(0)
-            if (token in unknown or token in _NON_TICKER_WORDS or _normalise_ticker(token) in known
+            if (token in unknown or _is_non_ticker(m, summary) or _normalise_ticker(token) in known
                     or _word_in(token, context)):
                 continue
             unknown.append(token)
@@ -548,18 +574,20 @@ def journal_summary_language_failures(text: Optional[str]) -> list:
     return found
 
 
-def summarise_journal_notes(
-    notes: list[str],
-    model: Optional[str] = None,
-) -> dict:
+def summarise_journal_notes(notes: list[str]) -> dict:
     """
     Call the Anthropic API to summarise a list of journal note strings.
+
+    Haiku-only (ST-21, BLG-SPEC-195, v9.16): always MODEL_VERSION
+    (ai_models.CLAUDE_HAIKU_4_5), which the audit row's Haiku cost rates assume.
+    The unused `model` argument is removed so no other model can be passed;
+    runtime overrides are prohibited by ai_model_version_pinning_policy.md.
 
     Returns a dict with keys: summary (str|None), model (str|None), message (str|None).
     On LLM unavailability, returns summary=None with an informational message — never raises.
     """
     api_key = os.getenv("ANTHROPIC_API_KEY")
-    model = model or MODEL_VERSION
+    model = MODEL_VERSION
 
     if not api_key:
         return {

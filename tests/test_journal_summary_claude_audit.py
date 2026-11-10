@@ -74,3 +74,25 @@ def test_no_model_call_no_row(db):
     with patch.dict("os.environ", {"ANTHROPIC_API_KEY": "k"}):
         assert ai_service.summarise_journal_notes([])["summary"] is None
     db.create_claude_audit_entry.assert_not_called()
+
+
+def test_endpoint_is_haiku_only(db):
+    # ST-21 (BLG-SPEC-195, EPIC-05, v9.16): the contract states the endpoint is
+    # Haiku-only, so the Haiku cost rates above always match the model called.
+    # No model argument exists, and an AI_MODEL env var changes nothing.
+    import inspect
+    from services import ai_service
+    from ai_models import CLAUDE_HAIKU_4_5
+    assert list(inspect.signature(ai_service.summarise_journal_notes).parameters) == ["notes"]
+    resp = MagicMock()
+    resp.content = [MagicMock(text="Patient entries.")]
+    resp.usage = MagicMock(input_tokens=1000, output_tokens=200)
+    with patch.object(ai_service, "_create_message", return_value=resp) as create, \
+         patch.object(ai_service, "sample_ai_output"), \
+         patch.dict("os.environ", {"ANTHROPIC_API_KEY": "k", "AI_MODEL": "claude-sonnet-4-6"}):
+        result = ai_service.summarise_journal_notes(["note"])
+    assert create.call_args.kwargs["model"] == CLAUDE_HAIKU_4_5
+    assert result["model"] == CLAUDE_HAIKU_4_5
+    kw = db.create_claude_audit_entry.call_args.kwargs
+    assert kw["model_id"] == CLAUDE_HAIKU_4_5
+    assert kw["cost_usd"] == pytest.approx(1000 * 1e-6 + 200 * 5e-6)

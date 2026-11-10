@@ -175,8 +175,12 @@ def get_portfolio_summary() -> Dict:
             # Convert entry_price and current_stop to GBP for display
             # Spec: risk_dashboard.md §6.2 — all price columns in GBP
             if market == 'US':
-                entry_price_gbp = round(entry_price / stored_fx_rate, 2)
-                current_stop_gbp = round(stop_native / stored_fx_rate, 2)
+                # ST-17 (BLG-BE-176, v9.16): the native entry above already fell
+                # back to the live rate for a NULL fx_rate; convert back with the
+                # same rate. Dividing by the NULL stored rate raised.
+                entry_fx_rate = stored_fx_rate or live_fx_rate
+                entry_price_gbp = round(entry_price / entry_fx_rate, 2)
+                current_stop_gbp = round(stop_native / entry_fx_rate, 2)
             else:
                 entry_price_gbp = round(entry_price, 2)
                 current_stop_gbp = round(stop_native, 2)

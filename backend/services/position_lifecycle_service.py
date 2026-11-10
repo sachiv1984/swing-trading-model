@@ -58,6 +58,35 @@ def _count_calendar_days(entry_date_str: str) -> Optional[int]:
     return max(0, (date.today() - entry).days)
 
 
+def _native_entry(position: dict) -> Optional[float]:
+    """The native entry the badge compares with (ST-17, BLG-BE-176, v9.16).
+
+    - native_entry_price, when the caller already resolved it. GET /positions
+      passes its API row, whose entry_price is already native and which has no
+      fill_price, so re-deriving here multiplied a US entry by fx_rate twice.
+    - UK: entry_price.
+    - US: fill_price, else entry_price (GBP) x the stored fx_rate, else x the
+      live rate: the fallback native_entry_price() (position_service) and
+      get_portfolio_summary() use for display_status and stop arithmetic, so
+      the badge and display_status agree for a row with neither (BLG-BE-176).
+      The live rate is the caller's live_fx_rate if given, else fetched.
+    """
+    if position.get("native_entry_price") is not None:
+        return float(position["native_entry_price"])
+    entry_price = position.get("entry_price")
+    if position.get("market") != "US":
+        return entry_price
+    if position.get("fill_price"):
+        return position["fill_price"]
+    if not entry_price:
+        return None
+    fx_rate = position.get("fx_rate") or position.get("live_fx_rate")
+    if not fx_rate:
+        from utils.pricing import get_live_fx_rate
+        fx_rate = get_live_fx_rate()
+    return float(entry_price) * float(fx_rate)
+
+
 def classify_position(position: dict) -> Tuple[str, Optional[str]]:
     """Return (state, lifecycle_reason). The reason is non-null only for UNKNOWN."""
     days_held = _count_calendar_days(position.get("entry_date"))
@@ -73,12 +102,7 @@ def classify_position(position: dict) -> Tuple[str, Optional[str]]:
     # current_price and initial_stop are native, so a US row's native entry is
     # fill_price, else entry_price × fx_rate. Comparing the GBP entry with a USD
     # price showed a US position down by up to ~20% in dollars as PROFITABLE.
-    entry_price = position.get("entry_price")
-    if position.get("market") == "US":
-        fx_rate = position.get("fx_rate")
-        entry_price = position.get("fill_price") or (
-            float(entry_price) * float(fx_rate) if entry_price and fx_rate else None
-        )
+    entry_price = _native_entry(position)
     current_price = (
         position.get("current_price_native")
         or position.get("current_price")

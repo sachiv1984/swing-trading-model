@@ -6,7 +6,7 @@
   "invoked_utc": "2026-11-09T09:15:14Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-09T15:33:39Z",
+  "last_updated_utc": "2026-11-10T09:11:06Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-02",
@@ -263,6 +263,241 @@
       },
       "merged_utc": "2026-11-09T15:33:10Z",
       "merge_commit": "13e7bd20"
+    },
+    "EPIC-05": {
+      "title": "Backend Correctness, AI Ticker Check & Spec Debt",
+      "status": "done",
+      "branch": "exec/2026-11-06__release-v9.16/EPIC-05",
+      "pr_number": 2229,
+      "pr_status": "open",
+      "qa_signed_off": true,
+      "qa_evidence_log": "claude/cycles/2026-11-06__release-v9.16/qa_evidence_EPIC-05.md",
+      "test_scenarios": [
+        "tests/test_exit_null_fill_price.py",
+        "tests/test_display_status_native_basis.py",
+        "tests/test_atr_provenance.py",
+        "tests/test_journal_summary_claude_audit.py",
+        "tests/test_positions_dictionary_coverage.py",
+        "tests/test_strategy_parameter_parity.py",
+        "tests/test_ticker_collision_context_rule.py",
+        "tests/test_briefing_summary_ticker_check.py",
+        "tests/test_ai_stop_time_focus_attribution.py"
+      ],
+      "stories": {
+        "ST-16": {
+          "title": "Exiting a US position with a NULL fill_price fails in the P&L arithmetic",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 2212,
+          "branch": "exec/2026-11-06__release-v9.16/EPIC-05",
+          "commit_sha": "be22f813675b4b50b83f1160f5ecb43c4958307c",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-11-10T07:56:14Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/data_model_positions_dictionary.md",
+            "tests/test_exit_null_fill_price.py"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
+          "sign_off_record": null,
+          "notes": "AC (US NULL fill_price exits without error; trade native entry = entry_price x fx_rate): tests/test_exit_null_fill_price.py (6 tests, 5 fail on old code). Also NULL-safe entry_fx_rate (scope: else the exit fx_rate). CI on be22f813: CI Pytest Suite 42778803911 success, Playwright smoke 42778803858.. all 7 workflows success. Deviation check: POST /positions/{id}/exit contract does not specify the trade row native entry; data_model trade_history.entry_price native NOT NULL, entry_fx_rate nullable - implementation conforms, none filed."
+        },
+        "ST-17": {
+          "title": "Lifecycle badge and Risk page disagree for a US row with no fill_price and no fx_rate",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 2213,
+          "branch": "exec/2026-11-06__release-v9.16/EPIC-05",
+          "commit_sha": "6381ceab2a86347ff2e1a3fe4aebcb0bc7031686",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-11-10T08:05:03Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/position_endpoints.md#GET /positions",
+            "tests/test_display_status_native_basis.py"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
+          "sign_off_record": null,
+          "notes": "Decision: all live-rate (display_status has no UNKNOWN value; display_status and stop arithmetic already live-rate). AC (NULL fill_price + NULL fx_rate: display_status and position_state agree): tests/test_display_status_native_basis.py test_null_fill_price_and_null_fx_rate_agree_on_the_live_rate + test_badge_on_the_get_positions_row_agrees_with_its_display_status (12 cases, 9 fail on old code) + GET /positions/{id} NULL fx test. Found in-story: GET /positions badged its already-native API row as entry x fx_rate (double conversion, every US row with stored fx_rate); fixed with native_entry_price carried on the row. GET /positions/{id} and GET /portfolio 500 on NULL fx_rate fixed. Contract position_endpoints.md 2.20.0 updated in the same commit; no deviation. CI on 6381ceab: all 7 workflows success (CI Pytest Suite 42779882727, Playwright smoke 42779882696). DoQ finding 4: response-shape test at a0f3bfb2; finding 5 (FX fetch on refresh-state / closed branch) disclosed in QA evidence; finding 6 tracked BLG-BE-208."
+        },
+        "ST-18": {
+          "title": "Frozen-stop marker is not written when the on-load recompute has no live price",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 2214,
+          "branch": "exec/2026-11-06__release-v9.16/EPIC-05",
+          "commit_sha": "e7524eb93d22e30aa1a77092991806f3959fc215",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-11-10T08:06:14Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/position_endpoints.md#GET /positions/analyze",
+            "tests/test_atr_provenance.py"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
+          "sign_off_record": null,
+          "notes": "Option chosen: write the marker (not document the exclusion). AC (no live price + no ATR post-grace -> stop_frozen_reason = atr_unavailable): tests/test_atr_provenance.py test_on_load_without_live_price_or_atr_sets_it (fails on old code) + 2 no-write cases. Contract position_endpoints.md 2.20.1 updated; no deviation. CI on e7524eb9: all 7 workflows success (CI Pytest Suite 42780034645 cleared ci_pending, Playwright smoke 42780034527)."
+        },
+        "ST-19": {
+          "title": "Read production briefing ticker-caveat tokens and add any non-tickers",
+          "classification": "delegated_backend",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 2215,
+          "branch": "exec/2026-11-06__release-v9.16/EPIC-05",
+          "commit_sha": "fc89fdb52429063b0fa1d1f3fa1788ec31eae0d4",
+          "delegation_record_id": "DEL-20261110-01",
+          "blocked_since_utc": "2026-11-10T08:07:27Z",
+          "unblock_criteria": "Production briefing ticker-caveat token list with counts since 2026-10-30 (or \"no lines logged\") supplied in session or in DEL-20261110-01.",
+          "completed_utc": "2026-11-10T08:34:04Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/ai_endpoints.md#POST /ai/daily-briefing"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.B.unblocked",
+          "sign_off_record": {
+            "role": "AI Compliance & Governance Officer",
+            "method": "human_in_session",
+            "status": "cleared",
+            "date": "2026-11-10",
+            "notes": "Token review result supplied in session: none found (Render logs ~7 days, production claude_audit_log since 2026-10-30, 0 rows)."
+          },
+          "notes": "AC 1 (token list with counts recorded): none found, recorded in DEL-20261110-01 with window and evidence. AC 2: review records none found; no _NON_TICKER_WORDS change. Evidence: production Render logs (~7 days) no action=caveat_appended lines; production claude_audit_log daily-briefing rows with ticker_outside_context_appended since 2026-10-30: 0. Limitation: briefing call volume not checked. Recording-only commit, no code: CI not applicable beyond governance workflows. No deviation. BLG-AI-27 (source) fully met: candidate for a same-branch fix banner at 3.2.A."
+        },
+        "ST-20": {
+          "title": "Handle _NON_TICKER_WORDS entries that are also real tickers deliberately",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 2216,
+          "branch": "exec/2026-11-06__release-v9.16/EPIC-05",
+          "commit_sha": "50632e61a3c72741b1971ee13e683846e066173c",
+          "delegation_record_id": null,
+          "blocked_since_utc": "2026-11-10T08:07:27Z",
+          "unblock_criteria": "ESC-EXEC-20261110-01 resolved with a dated AI Compliance & Governance Officer ruling on PM/MA/ON collisions; ST-19 first (its tokens may collide).",
+          "completed_utc": "2026-11-10T08:21:26Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/ai_endpoints.md#POST /ai/daily-briefing",
+            "docs/specs/api_contracts/ai_endpoints.md#POST /ai/chat",
+            "tests/test_ticker_collision_context_rule.py"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
+          "sign_off_record": {
+            "role": "AI Compliance & Governance Officer",
+            "method": "human_in_session",
+            "status": "cleared",
+            "date": "2026-11-10",
+            "notes": "ESC-EXEC-20261110-01 resolved: option (A) context rule."
+          },
+          "notes": "AC 1: ruling ESC-EXEC-20261110-01 (A) recorded at 4c88f45f before the code; clarification (MA after determiner) recorded in the escalation and committed with the code. AC 2: test_pm_as_a_ticker_is_not_given_to_the_focus / test_pm_after_a_time_still_gets_the_focus_note. AC 3: v9.14 ST-16/ST-17 and v9.15 ST-26 tests (test_briefing_summary_ticker_check.py, test_ai_stop_time_focus_attribution.py) pass unchanged; full suite 3455 passed. ai_endpoints.md 1.41. No deviation. CI on 50632e61: all 7 workflows success (CI Pytest 42782001835). DoQ finding 1 fix ad89d686 (PM/AM clock time); head a0f3bfb2 all 7 workflows success (CI Pytest 42787788418)."
+        },
+        "ST-21": {
+          "title": "Journal summary: remove the stale AI_MODEL override line, or cost the model actually used",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 2217,
+          "branch": "exec/2026-11-06__release-v9.16/EPIC-05",
+          "commit_sha": "f1eddc619b07b31421c1c243dbace8f903ef2385",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-11-10T08:09:15Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/ai_endpoints.md#POST /ai/journal-summary",
+            "tests/test_journal_summary_claude_audit.py"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
+          "sign_off_record": null,
+          "notes": "Option chosen: contract states Haiku-only (AI_MODEL override removed v4.2 under ai_model_version_pinning_policy.md); unused model argument removed so no non-Haiku model can be passed. AC 1 (contract describes only model selection in code): ai_endpoints.md 1.40. AC 2: contract states Haiku-only + test_endpoint_is_haiku_only pins model_id and Haiku cost. Also docs/testing/ai_scenarios.md 1.1 (same stale line). No deviation. CI on f1eddc61: all 7 workflows success (CI Pytest Suite 42780416786, Playwright smoke 42780416366)."
+        },
+        "ST-22": {
+          "title": "Add the 11 missing positions columns to the positions data dictionary",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 2218,
+          "branch": "exec/2026-11-06__release-v9.16/EPIC-05",
+          "commit_sha": "a123151ac35df7dff4a88c2fc9dc2ee392f95ee2",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-11-10T08:11:02Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/data_model_positions_dictionary.md",
+            "tests/test_positions_dictionary_coverage.py"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
+          "sign_off_record": null,
+          "notes": "Case B (documentation-creation). AC 1 (every data_model.md \u00a72 column has a row with same type and Nullable) and AC 2 (no extra column except a marked historical row): tests/test_positions_dictionary_coverage.py (both fail on v0.7). Decision: exit_note kept as marked historical row. data_model.md not edited. No deviation. CI on a123151a: all 7 workflows success (CI Pytest Suite 42780647846).",
+          "delivery_note": "docs/specs/data_model_positions_dictionary.md v0.8"
+        },
+        "ST-23": {
+          "title": "Point settings.md at the moved strategy constants module",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 2219,
+          "branch": "exec/2026-11-06__release-v9.16/EPIC-05",
+          "commit_sha": "b7becc3cfc9263dc057c33c09de9f8fcf823f044",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-11-10T08:11:36Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/pages/settings.md",
+            "tests/test_strategy_parameter_parity.py"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
+          "sign_off_record": null,
+          "notes": "Case B. AC (settings.md names src/constants/strategy.js; no docs/specs file names the old path): test_no_canonical_spec_names_the_old_module. Changelog row worded without the old path so the AC holds literally. Documentation only; no frontend change. No deviation. CI on b7becc3c: all 7 workflows success (CI Pytest Suite 42780717286).",
+          "delivery_note": "docs/specs/frontend/pages/settings.md v1.10"
+        }
+      },
+      "sign_off_record": {
+        "role": "Director of Quality",
+        "method": "agent_mediated",
+        "status": "cleared",
+        "date": "2026-11-10",
+        "notes": "Pass 1 Approved with 8 non-blocking findings; 1 fixed ad89d686, 3-4 fixed a0f3bfb2, 2 and 5 in evidence, 6-7 tracked BLG-BE-208/BLG-QA-256, 8 recorded as recommended check."
+      }
     }
   },
   "deferred_at_planning": [],
@@ -276,9 +511,31 @@
     "ST-05",
     "ST-06",
     "ST-07",
-    "ST-08"
+    "ST-08",
+    "ST-16",
+    "ST-17",
+    "ST-18",
+    "ST-19",
+    "ST-20",
+    "ST-21",
+    "ST-22",
+    "ST-23"
   ],
-  "open_escalations": {},
+  "open_escalations": {
+    "ESC-EXEC-20261110-01": {
+      "cycle": "2026-11-06__release-v9.16",
+      "summary": "ST-20/EPIC-05 - AI Compliance ruling: _NON_TICKER_WORDS entries that are scan-universe tickers (PM, MA, ON)",
+      "trigger_type": "Strategy",
+      "owning_authority": "AI Compliance & Governance Officer",
+      "raised_utc": "2026-11-10T08:07:27Z",
+      "sla_due_utc": "2026-11-13T08:07:27Z",
+      "blocks_execution": false,
+      "disposition": "Resolved",
+      "resolved_utc": "2026-11-10T08:12:43Z",
+      "resolved_by": "AI Compliance & Governance Officer (the user, in session)",
+      "resolution_summary": "(A) context rule: PM/AM non-tickers only after a time, MA only after a number or period, ON only after RISK; otherwise tickers on the briefing check and the chat focus rule. Note text, result values and fail-open unchanged."
+    }
+  },
   "merge_gate": {
     "epics_merged": [
       "EPIC-01",
