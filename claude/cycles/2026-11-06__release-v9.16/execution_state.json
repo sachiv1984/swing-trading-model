@@ -6,7 +6,7 @@
   "invoked_utc": "2026-11-09T09:15:14Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-10T08:21:46Z",
+  "last_updated_utc": "2026-11-10T08:34:04Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-02",
@@ -375,8 +375,14 @@
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
-          "last_completed_substep": "3.1.B.delegated",
-          "sign_off_record": null,
+          "last_completed_substep": "3.1.B.sign_off_cleared",
+          "sign_off_record": {
+            "role": "AI Compliance & Governance Officer",
+            "method": "human_in_session",
+            "status": "cleared",
+            "date": "2026-11-10",
+            "notes": "Token review result supplied in session: none found (Render logs ~7 days, production claude_audit_log since 2026-10-30, 0 rows)."
+          },
           "notes": null
         },
         "ST-20": {
