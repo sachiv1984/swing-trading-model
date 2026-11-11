@@ -5,8 +5,8 @@
   "backlog_slice_addendum": "claude/cycles/2026-11-06__release-v9.16/stage4_backlog_slice_addendum.md",
   "invoked_utc": "2026-11-09T09:15:14Z",
   "mode": "standard",
-  "status": "Running",
-  "last_updated_utc": "2026-11-11T13:00:05Z",
+  "status": "Sealed",
+  "last_updated_utc": "2026-11-11T15:17:34Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-02",
@@ -262,7 +262,8 @@
         "notes": "Pass 1 Approved, 5 non-blocking findings; 2,3,5 closed by tests in 220f9fe9; 1 (and 2's scope) referred to Frontend Specifications & UX Documentation Owner."
       },
       "merged_utc": "2026-11-09T15:33:10Z",
-      "merge_commit": "13e7bd20"
+      "merge_commit": "13e7bd20",
+      "qa_evidence_log": "claude/cycles/2026-11-06__release-v9.16/qa_evidence_EPIC-02.md"
     },
     "EPIC-05": {
       "title": "Backend Correctness, AI Ticker Check & Spec Debt",
@@ -598,7 +599,9 @@
         "date": "2026-11-10",
         "passes": 2,
         "reference": "qa_evidence_EPIC-07.md Standard Sign-Off Block"
-      }
+      },
+      "merged_utc": "2026-11-10T10:02:22Z",
+      "merge_commit": "7824a75c"
     },
     "EPIC-06": {
       "title": "Arc 2 Retrospective: QA Protocol, Lifecycle Test & Journey Map",
@@ -727,7 +730,9 @@
           },
           "notes": "Case B (documentation-creation). AC 1 (journey map in docs/ux/ alongside si05_user_journey_map.md): docs/ux/arc2_user_journey_map.md - 7 entry points, stage table, 5 friction points, recommendation maintain + fix hand-offs. AC 2 (friction enumerated; actionable items filed, cross-checked vs Site Structure & Usability programme incl. held Phase 3 BLG-FE-257..263, 265): BLG-FE-282 (P2, Stop Level not pre-filled per trade_plan.md §5a.3; strategy_rules.md §4.1.8), BLG-FE-283, BLG-FE-284 filed; BLG-FE-281/BLG-BE-211 referenced. AC 3: cleared-gate evidence confirmed at seal. CI on 3875e325: all 7 triggered workflows success (CI Pytest 42798832397). Head of UX & Design sign-off line PENDING agent-mediated review at EPIC DoQ. Deviation check: none (pre-existing §5a.3 gap tracked by BLG-FE-282)."
         }
-      }
+      },
+      "merged_utc": "2026-11-10T14:00:18Z",
+      "merge_commit": "9df2088b"
     },
     "EPIC-03": {
       "title": "Site Structure & Usability Phase 2: Colour Tokens & Input Contrast (build-and-ship)",
@@ -802,7 +807,10 @@
         "status": "cleared",
         "date": "2026-11-10",
         "notes": "Five agent-mediated passes (DoQ + Head of UX & Design): 1-4 Blocked, each fixed on branch; pass 5 Approved, conditional on CI on 672ba549, which finished all 9 green. Pending human DoQ confirmation and PO acceptance at the merge gate."
-      }
+      },
+      "merged_utc": "2026-11-11T08:02:52Z",
+      "merge_commit": "977fb22f",
+      "qa_evidence_log": "claude/cycles/2026-11-06__release-v9.16/qa_evidence_EPIC-03.md"
     },
     "EPIC-04": {
       "title": "Anthropic Key Security & Operations Baselines",
@@ -1049,8 +1057,9 @@
     "2026-11-10 EPIC-03 agent-mediated DoQ + Head of UX & Design review pass 1 (§5.3): both Blocked. DoQ-1/UX-1: ST-10 put text-app-fg on 10 inputs inside containers dark in both themes (Trade Entry card TradeEntry.js:499, PositionModal and ExitModal DialogContent) - light typed text ~1.1:1; SC-ITC-02's helper ignored background-image so measured the page, not the card. DoQ-2: positions baselines not regenerated (still show the pre-ST-09 defect). DoQ-3/UX-2: PlanVsReality AdherenceBadge 700 shades on /20 tints 4.15-4.37:1. Product Owner ruling (the user in session): theme the containers - give the Trade Entry card and both modals light/dark pairs so text-app-fg is correct as specified.",
     "2026-11-10 EPIC-03 Product Owner ruling (the user in session): DashboardCard label as text-app-fg (design_system.md v1.25 rule 5) accepted as built; label/figure hierarchy question filed as BLG-UX-10 for Head of UX & Design and Head of Specs Team (product_owner.md §4/§9: PO states intent, does not amend the spec).",
     "2026-11-11 STEP 4 EPIC-03: PR #2232 merged by the human repository owner (holds the Director of Quality and Product Owner roles) at 2026-11-11T08:02:52Z (merge commit 977fb22f) after the human Director of Quality sign-off and Product Owner acceptance were recorded (be3501f8, PR comment). The engine's own gh pr merge attempt was refused by the required-review branch policy; --admin was not used. Orphaned post-merge commit check: git log origin/main..origin/exec/2026-11-06__release-v9.16/EPIC-03 lists nothing. Sibling sync (3c): EPIC-04 has no branch yet, so there is nothing to sync.",
-    "2026-11-11 EPIC-04 ST-14: the v9.15/v9.16 plans dated DS-36's production deploy to 2026-11-02 (the v9.14 EPIC-05 merge, PR #2139). DS-36 shipped with v9.13 EPIC-05 (PR #2075, merged 2026-10-28) and production recorded screener durations from 2026-10-29, so ST-14's gate cleared on 2026-11-11 rather than ~2026-11-12 and ST-13's measurement window was a later week than planned. Recorded in api_performance_baseline.md §53.2 and data_pipeline_cost_baseline.md §4. Candidate lesson for Phase 3: when a conditional gate is dated from a deploy, cite the PR that shipped the dependency, not a nearby merge date."
+    "2026-11-11 EPIC-04 ST-14: the v9.15/v9.16 plans dated DS-36's production deploy to 2026-11-02 (the v9.14 EPIC-05 merge, PR #2139). DS-36 shipped with v9.13 EPIC-05 (PR #2075, merged 2026-10-28) and production recorded screener durations from 2026-10-29, so ST-14's gate cleared on 2026-11-11 rather than ~2026-11-12 and ST-13's measurement window was a later week than planned. Recorded in api_performance_baseline.md §53.2 and data_pipeline_cost_baseline.md §4. Candidate lesson for Phase 3: when a conditional gate is dated from a deploy, cite the PR that shipped the dependency, not a nearby merge date.",
+    "2026-11-11 STEP 5 sprint close: STEP 5.0A pr_status sync confirmed all 7 PRs MERGED via gh pr view (no change); merged_utc/merge_commit backfilled for EPIC-07 (7824a75c), EPIC-06 (9df2088b) and EPIC-03 (977fb22f) from their merge-gate process notes, and qa_evidence_log backfilled for EPIC-02/03/06/07. Orphaned-commit check across all 7 exec branches: none. STEP 5.3 LL-v9.15-P4-02: BLG-FE-281, BLG-FE-282 (EPIC-06) and BLG-OPS-217 (EPIC-04), P2 pre-existing found defects, had no explicit PO + DoQ acceptance with rationale; the user (PO and DoQ) accepted all three in session at 2026-11-11T15:13:05Z, recorded in qa_evidence_EPIC-06.md and qa_evidence_EPIC-04.md Merge Gate Confirmations."
   ],
-  "sealed": false,
-  "sealed_utc": null
+  "sealed": true,
+  "sealed_utc": "2026-11-11T15:17:34Z"
 }

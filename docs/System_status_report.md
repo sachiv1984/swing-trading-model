@@ -1,9 +1,38 @@
 **Owner:** Director of Quality
 **Class:** Living Document (Class 3)
 **Status:** Active
-**Version:** 4.58
-**Last Updated:** 2026-11-06 (delivery verification 2026-11-03__release-v9.15 — status line updated Sprint_Complete → Verified_with_deviations, STEP 6 reconciliation, EPIC-01 row marks the P2 found gap BLG-FE-271 as accepted post-merge); prior — 2026-11-06 (sprint close 2026-11-03__release-v9.15 — new Sprint section added, no other corrections); prior — 2026-11-02 (delivery verification 2026-10-29__release-v9.14 — status line updated Sprint_Complete → Verified_with_deviations, STEP 6 reconciliation); prior history retained — see prior entries in version control.
+**Version:** 4.59
+**Last Updated:** 2026-11-11 (sprint close 2026-11-06__release-v9.16 — new Sprint section added, no other corrections); prior — 2026-11-06 (delivery verification 2026-11-03__release-v9.15 — status line updated Sprint_Complete → Verified_with_deviations, STEP 6 reconciliation, EPIC-01 row marks the P2 found gap BLG-FE-271 as accepted post-merge); prior — 2026-11-06 (sprint close 2026-11-03__release-v9.15 — new Sprint section added, no other corrections); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
+
+---
+
+## Sprint: 2026-11-06__release-v9.16
+**Date:** 2026-11-11
+**Status:** Sprint_Complete — pending verification
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-01 | The sidebar is grouped by job and surfaces Trade Plans and Research (ST-01). Detail pages have a parent link (ST-02). The 11 dead-end pages have an onward next-step link (ST-03). The digest's Risk Dashboard link opens the right Analytics section (ST-04) | `navigation.md`; `analytics.md`; `stage4_backlog_slice_addendum.md`; design record `digest-section-link` | ST-01 Pass_with_deviation (`DEV-NAV-ST01-01`, P3, `BLG-SPEC-226`) |
+| EPIC-02 | Plan-linked Trade Entry requires the acknowledgement when the plan's checks were WARN/FAIL (ST-05, `BLG-FE-271`). The Dashboard shows the "Today" action list (ST-06). Signals and Screener rows offer "Plan this" (ST-07). Trade Plan shows the suggested size before asking for shares (ST-08) | `position_form.md#Pre-Entry Checks`; `trade_plan.md#5e`/`#5a.1`/`#5f`; `strategy_rules.md#4.2.1`; `trade_plan_endpoints.md#PUT /trade-plans/{id}`; `dashboard.md#1B`; `signals.md`; `screener_results.md#11.1`; design records `plan-linked-pre-entry-checks`, `signal-to-plan-flow` | ST-05 Pass_with_deviation (`DEV-v9.16-ST05-01`, P3, `BLG-FE-277`); found gap `BLG-FE-278` (P2, accepted by PO and DoQ) |
+| EPIC-05 | A US exit with a NULL fill_price no longer fails (ST-16). The lifecycle badge and the Risk page agree on a US row with no fill_price or fx_rate (ST-17). The frozen-stop marker is written when the on-load recompute has no live price (ST-18). Production briefing caveat tokens reviewed (ST-19). Words that are both non-tickers and real tickers follow a context rule (ST-20). The journal summary contract is Haiku-only (ST-21). The positions dictionary covers all columns (ST-22). `settings.md` names the moved constants module (ST-23) | `data_model_positions_dictionary.md`; `position_endpoints.md#GET /positions`/`#GET /positions/analyze`; `ai_endpoints.md#POST /ai/daily-briefing`/`#POST /ai/chat`/`#POST /ai/journal-summary`; `settings.md` | None |
+| EPIC-07 | The split-achievability carve-out in post-ship closure (ST-28). The Arc 2 velocity report and its generator (ST-29). The Base44 prompt versioning convention (ST-30) | `post_ship_closure.md#3.1`; `arc_velocity_report_arc2.md`; `velocity_metrics.md`; `OPERATIONAL_GUIDE.md#8.3` | None (ST-28 AC 2 post-merge, `BLG-GOV-414`) |
+| EPIC-06 | A trade plan lifecycle Playwright test (ST-26). The Arc 2 end-to-end QA protocol and happy-path test (ST-24). The Arc 2 DoQ standards review and `shared_standards.md` §25 (ST-25). The Arc 2 user journey map (ST-27) | `trade-plan-lifecycle.spec.js`; `arc2_e2e_qa_protocol.md`; `arc2_doq_standards_review.md`; `shared_standards.md#25`; `arc2_user_journey_map.md` | ST-26 Pass_with_deviation (`BLG-BE-211`, P2, accepted); found defects `BLG-FE-281`, `BLG-FE-282` (P2, accepted by PO and DoQ 2026-11-11) |
+| EPIC-03 | Semantic colour tokens for the base, card and table shells, with light-theme axe coverage (ST-09). Typed input text is readable in both themes (ST-10) | `design_system.md#Semantic Colour Tokens`/`#Input Text Colours`; design record `semantic-colour-tokens` | None |
+| EPIC-04 | The Anthropic key was rotated and the old key revoked (ST-11). The key secret is no longer in the public Pages build, and "Improve with AI" no longer depends on a build-time flag (ST-12). The weekly market-data call-volume baseline (ST-13) and the full screener p50/p95 baseline (ST-14) are recorded from production. The staging smoke host check fails when no Render service ID is reported (ST-15) | `external_api_credential_inventory.md`; `api_key_rotation_and_audit_schedule.md`; `deploy.yml`; `trade_plan.md`; `data_model.md#DS-36`; `data_pipeline_cost_baseline.md`; `api_performance_baseline.md#53`; `staging_deploy_notes.md` | ST-12 Pass_with_deviation (`DEV-v9.16-ST12-01`, P3, `BLG-SPEC-229`; AC 3 met post-merge, `BLG-OPS-218`; AC 2 and AC 4 production met post-merge, `BLG-OPS-215`); found defect `BLG-OPS-217` (P2, accepted by PO and DoQ 2026-11-11) |
+
+### Capabilities deferred or returned
+
+| ST Item | Reason | Backlog reference |
+|---------|--------|-------------------|
+| None | All 30 stories merged; none returned or deferred | — |
+
+### Verification inputs ready
+- QA evidence logs: `qa_evidence_EPIC-01.md`, `qa_evidence_EPIC-02.md`, `qa_evidence_EPIC-03.md`, `qa_evidence_EPIC-04.md`, `qa_evidence_EPIC-05.md`, `qa_evidence_EPIC-06.md`, `qa_evidence_EPIC-07.md`
+- Deviations filed: `DEV-NAV-ST01-01` (`navigation.md`, P3), `DEV-v9.16-ST05-01` (`trade_plan.md`, P3), `DEV-v9.16-ST12-01` (`trade_plan.md`, P3). Pass_with_deviation: ST-01, ST-05, ST-12, ST-26. Found P2 defects, each accepted by the PO and DoQ: `BLG-BE-211`, `BLG-FE-278`, `BLG-FE-281`, `BLG-FE-282`, `BLG-OPS-217`. Post-merge remainder open: `BLG-GOV-414`
+- Test scenarios referenced: `tests/e2e/sidebar-nav-groups.spec.js`, `tests/e2e/alert-nav-badge.spec.js`, `tests/e2e/command-palette.spec.js`, `tests/e2e/keyboard-shortcuts.spec.js`, `tests/e2e/parent-links.spec.js`, `tests/e2e/onward-links.spec.js`, `tests/e2e/analytics-section-link.spec.js`, `tests/test_si05_digest_service.py`, `tests/test_trade_plan_pre_entry_snapshot.py`, `tests/e2e/trade-entry-pre-entry-checks.spec.js`, `tests/e2e/dashboard-today-list.spec.js`, `tests/e2e/plan-this.spec.js`, `tests/e2e/trade-plan-suggested-size.spec.js`, `tests/test_exit_null_fill_price.py`, `tests/test_display_status_native_basis.py`, `tests/test_atr_provenance.py`, `tests/test_ticker_collision_context_rule.py`, `tests/test_journal_summary_claude_audit.py`, `tests/test_positions_dictionary_coverage.py`, `tests/test_strategy_parameter_parity.py`, `tests/test_arc_velocity_report.py`, `tests/e2e/trade-plan-lifecycle.spec.js`, `tests/e2e/arc2-happy-path.spec.js`, `tests/e2e/accessibility-axe-scan.spec.js`, `tests/e2e/visual-regression-baselines.spec.js`, `tests/e2e/input-text-colours.spec.js`, `tests/e2e/trade-plan.spec.js`, `tests/test_staging_smoke_test.py`
 
 ---
 

@@ -1,7 +1,7 @@
 Owner: Director of Quality
 Class: Planning Document (Class 4)
 Status: Active
-Last Updated: 2026-11-10
+Last Updated: 2026-11-11
 
 # QA Evidence — EPIC-06 — Arc 2 Retrospective: QA Protocol, Lifecycle Test & Journey Map
 
@@ -84,3 +84,4 @@ Last Updated: 2026-11-10
   At acceptance the PR head was `e29623ef`, with 28 checks passed, 21 pending, 5 skipped and no failures. The pending checks must be green before merge.
 - **Product Owner acceptance:** given by the human repository owner, acting as Product Owner, in the same instruction at 2026-11-10T13:41:19Z, before the merge. It accepts ST-24 to ST-27 against `stage4_backlog_slice.md`, including ST-26's partial "plan state transitions" coverage against `BLG-BE-211`, and the `shared_standards.md` v3.42 §25 amendment under ST-25 AC 2. There are no post-merge ACs. Follow-ups: BLG-BE-211, BLG-BE-212, BLG-FE-281, BLG-FE-282 (recommended ahead of other v9.17 P2s), BLG-FE-283, BLG-FE-284, BLG-GOV-418, BLG-QA-258, BLG-QA-259.
 - **Merge:** PR #2231 merged by the human repository owner at 2026-11-10T14:00:18Z, merge commit `9df2088b`, after the DoQ sign-off and PO acceptance above.
+- **Sprint-close acceptance of P2 found defects (Product Owner and Director of Quality, the human repository owner, in session, 2026-11-11T15:13:05Z, `execution_prompt.md` STEP 5.3, LL-v9.15-P4-02):** `BLG-FE-281` (P2, found by ST-24) and `BLG-FE-282` (P2, found by ST-27) are accepted as open at the v9.16 close. Rationale: both existed before this sprint and no v9.16 code introduced them. Both are tracked at P2 for v9.17 planning, with `BLG-FE-282` seated ahead of the other v9.17 P2s, per the PO's PR #2231 recommendation. `BLG-BE-211` (P2, ST-26) was already accepted with a rationale by both roles above.
