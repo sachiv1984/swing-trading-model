@@ -6,7 +6,7 @@
   "invoked_utc": "2026-11-09T09:15:14Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-11T08:13:03Z",
+  "last_updated_utc": "2026-11-11T08:40:00Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-02",
@@ -919,16 +919,16 @@
         "ST-15": {
           "title": "Fail the staging smoke host check when the backend reports no Render service ID",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 2211,
           "branch": "exec/2026-11-06__release-v9.16/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "324eae3667fe68a5ef41b3603cbc19bfe8f4345e",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-11-11T08:08:55Z",
+          "acceptance_verified": true,
           "spec_references": [
             "scripts/staging_smoke_test.py",
             "docs/ops/staging_deploy_notes.md",
@@ -936,10 +936,10 @@
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": null
+          "notes": "AC 1 (a /health/detailed response without render_service_id fails the smoke test): TestHostCheckMissingServiceId (missing/null/empty -> UNIDENTIFIED STAGING HOST; main() exits 1) and test_staging_deploy_both_services.py::test_missing_field_fails. AC 2 (expected service ID has one definition): staging_smoke_test.py reads STAGING_SERVICES from check_staging_deploy_drift.py; test_expected_service_id_has_one_definition_in_the_repo asserts the literal lives in one scripts/ file; tests read it from STAGING_SERVICES. Not changed: .github/workflows/render-si05-log-query.yml sets SERVICE_ID for its Render log query (a different consumer, YAML that cannot import STAGING_SERVICES). Mutation check: 6 tests fail against the previous script. Deviation check: none - docs/ops/staging_deploy_notes.md v1.6 §4 updated in the same commit. CI on 324eae36: all 7 workflows success (CI Pytest Suite 42984744161, Critical-Path Smoke 42984744329); also green on 596c427c (CI Pytest 42985198198)."
         }
       }
     }
@@ -974,15 +974,16 @@
     "ST-21",
     "ST-22",
     "ST-23",
-    "ST-24",
-    "ST-25",
-    "ST-26",
-    "ST-27",
     "ST-28",
     "ST-29",
     "ST-30",
+    "ST-26",
+    "ST-24",
+    "ST-25",
+    "ST-27",
     "ST-09",
-    "ST-10"
+    "ST-10",
+    "ST-15"
   ],
   "open_escalations": {
     "ESC-EXEC-20261110-01": {
