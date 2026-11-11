@@ -88,6 +88,25 @@ const KNOWN_VIOLATIONS = {
   'ReportsTaxYear:light': new Set([]),
   'NotificationPreferences:light': new Set([]),
   'NotificationsHistory:light': new Set([]),
+  // ST-09 (BLG-FE-264, EPIC-03, v9.16): the four shell pages in the light theme.
+  'DashboardHome:light': new Set([]),
+  'PositionsEmpty:light': new Set([]),
+  'PositionsPopulated:light': new Set([]),
+  'PositionsPopulatedTable:light': new Set([]),
+  'TradePlan:light': new Set([]),
+  'Settings:light': new Set([]),
+  // ST-09 scope ruling (Product Owner, 2026-11-10): the other consumers of the
+  // converted shells, in populated states, in the light theme.
+  'DashboardPopulated:light': new Set([]),
+  'TradeHistoryExpanded:light': new Set([]),
+  'WeeklyDigest:light': new Set([]),
+  // EPIC-03 review pass 1 (Product Owner ruling, 2026-11-10): the Trade Entry
+  // card is themed so ST-10's text-app-fg input text reads in light.
+  // label (Risk % and entry date inputs) and button-name (market Select):
+  // pre-existing and theme-independent, BLG-FE-286.
+  'TradeEntry:light': new Set(['label', 'button-name']),
+  // EPIC-03 review pass 2: the pre-entry advisory badges, rendered.
+  'TradeEntryPreEntry:light': new Set([]),
 };
 
 async function mockRoutes(page) {
@@ -159,7 +178,7 @@ async function waitForEntranceAnimations(page) {
   }
 }
 
-async function runAxeScan(page, pageName) {
+async function runAxeScan(page, pageName, { include } = {}) {
   // BLG-FE-169 root cause (v9.1/ST-05): PageHeader.js (and other page-level
   // containers) fade in via framer-motion (opacity 0 -> 1, ~0.3-0.8s
   // default transition). page.waitForLoadState('networkidle') does not
@@ -171,7 +190,11 @@ async function runAxeScan(page, pageName) {
   // across repeated runs" — it's a scan-timing race, not a colour defect.
   // Waiting out the entrance animation before scanning removes the race.
   await waitForEntranceAnimations(page);
-  const results = await new AxeBuilder({ page }).analyze();
+  // `include` (ST-09, v9.16) limits a scan to one region, for a page whose
+  // other regions are tracked separately.
+  const builder = new AxeBuilder({ page });
+  if (include) builder.include(include);
+  const results = await builder.analyze();
   const known = KNOWN_VIOLATIONS[pageName] || new Set();
 
   const seriousOrCritical = results.violations.filter((v) => v.impact === 'serious' || v.impact === 'critical');
@@ -424,6 +447,276 @@ for (const theme of ['dark', 'light']) {
       await expect(page.getByTestId('replay-results-table')).toBeVisible({ timeout: 10000 });
       await runAxeScan(page, `ReplayResult:${theme}`);
     });
+  });
+}
+
+
+// ---------------------------------------------------------------------------
+// ST-09 (BLG-FE-264, EPIC-03, v9.16): light-theme scans of the four shell
+// pages named by the story's AC: Dashboard, Positions (empty and populated,
+// in card and table view), Trade Plan and Settings. The body base, DashboardCard,
+// DataTable and PageHeader moved to the app-* semantic colour tokens
+// (design_system.md v1.25 §Semantic Colour Tokens), so these pages no longer
+// render dark-only shells in the light theme. No baseline entries: a
+// color-contrast finding here fails the build.
+// ---------------------------------------------------------------------------
+
+const ST09_POSITIONS = [
+  {
+    id: 'pos-st09-us', ticker: 'WDC', market: 'US', entry_price: 100.0, current_price: 92.31,
+    current_price_native: 120.0, initial_stop: 80.0, current_trailing_stop: 76.92,
+    current_trailing_stop_native: 100.0, stop_price: 76.92, stop_price_native: 100.0, shares: 10,
+    pnl: 153.85, pnl_percent: 20.0, holding_days: 15, grace_days_remaining: null, status: 'open',
+    entry_date: '2026-07-25', tags: null,
+  },
+  {
+    id: 'pos-st09-uk', ticker: 'VOD.L', market: 'UK', entry_price: 120.0, current_price: 100.0,
+    current_price_native: 100.0, initial_stop: 95.0, current_trailing_stop: 95.0,
+    current_trailing_stop_native: 95.0, stop_price: 95.0, stop_price_native: 95.0, shares: 10,
+    pnl: -200.0, pnl_percent: -16.67, holding_days: 3, grace_days_remaining: 2, status: 'open',
+    entry_date: '2026-11-05', tags: null,
+  },
+];
+
+async function mockSt09PopulatedPositions(page) {
+  await page.route(new RegExp(`${API}/positions(\\?|$)`), (route) =>
+    route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(ST09_POSITIONS) })
+  );
+  // Review pass 3: render both earnings badge variants (Today, and near-term
+  // within 5 days) in the Positions table, which the white shell exposed.
+  await page.route(new RegExp(`${API}/earnings/`), (route) => {
+    const days = route.request().url().includes('/earnings/WDC') ? 0 : 3;
+    return route.fulfill({
+      status: 200, contentType: 'application/json',
+      body: JSON.stringify({ days_until_earnings: days, next_earnings_date: '2026-11-13' }),
+    });
+  });
+}
+
+test.describe('Shell pages axe scan — light theme (ST-09)', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.addInitScript(() => window.localStorage.setItem('theme', 'light'));
+    await mockRoutes(page);
+  });
+
+  test('Dashboard (light)', async ({ page }) => {
+    await page.goto('/#/DashboardHome');
+    await page.waitForLoadState('networkidle');
+    await expectThemeApplied(page, 'light');
+    await runAxeScan(page, 'DashboardHome:light');
+  });
+
+  test('Positions, empty (light)', async ({ page }) => {
+    await page.goto('/#/positions');
+    await page.waitForLoadState('networkidle');
+    await expectThemeApplied(page, 'light');
+    await runAxeScan(page, 'PositionsEmpty:light');
+  });
+
+  test('Positions, populated card view (light)', async ({ page }) => {
+    await mockSt09PopulatedPositions(page);
+    await page.goto('/#/positions');
+    await expect(page.getByText('WDC').first()).toBeVisible({ timeout: 10000 });
+    await expectThemeApplied(page, 'light');
+    await runAxeScan(page, 'PositionsPopulated:light');
+  });
+
+  test('Positions, populated table view (light)', async ({ page }) => {
+    await mockSt09PopulatedPositions(page);
+    await page.goto('/#/positions');
+    const tableBtn = page.locator('[aria-label="Table view"]');
+    await tableBtn.waitFor({ state: 'visible', timeout: 10000 });
+    await tableBtn.click();
+    await expect(page.getByRole('row').filter({ hasText: 'WDC' })).toBeVisible({ timeout: 10000 });
+    await expect(page.getByRole('row').filter({ hasText: 'WDC' }).getByText('Today')).toBeVisible({ timeout: 10000 });
+    await expect(page.getByRole('row').filter({ hasText: 'VOD.L' }).getByText('⚠ 3d')).toBeVisible({ timeout: 10000 });
+    await expectThemeApplied(page, 'light');
+    // With the old bare text-amber-400 rendered, axe still reported no
+    // color-contrast violation on this scan (checked 2026-11-10; it does not
+    // always decide text on translucent fills, BLG-QA-260), so the earnings
+    // badges' light colour is asserted directly:
+    // amber-800 (rgb 146, 64, 14) on amber-500/15 over white measures 6.32:1.
+    await expect(page.getByRole('row').filter({ hasText: 'WDC' }).getByText('Today')).toHaveCSS('color', 'rgb(146, 64, 14)');
+    await expect(page.getByRole('row').filter({ hasText: 'VOD.L' }).getByText('⚠ 3d')).toHaveCSS('color', 'rgb(146, 64, 14)');
+    await runAxeScan(page, 'PositionsPopulatedTable:light');
+  });
+
+  test('Trade Plan (light)', async ({ page }) => {
+    await page.goto('/#/TradePlan?ticker=AAPL&market=US');
+    await expect(page.locator('h1').filter({ hasText: /Trade Plan/i })).toBeVisible({ timeout: 10000 });
+    await expectThemeApplied(page, 'light');
+    await runAxeScan(page, 'TradePlan:light');
+  });
+
+  test('Settings (light)', async ({ page }) => {
+    await page.goto('/#/Settings');
+    await page.waitForLoadState('networkidle');
+    await expectThemeApplied(page, 'light');
+    await runAxeScan(page, 'Settings:light');
+  });
+});
+
+// ---------------------------------------------------------------------------
+// ST-09 scope ruling (Product Owner, 2026-11-10): turning DataTable and
+// DashboardCard white in the light theme exposed dark-only content in their
+// other consumers. These scans cover those consumers in populated states:
+// the Dashboard cards holding data, Trade History with a journal row
+// expanded, and the Weekly Digest table.
+// ---------------------------------------------------------------------------
+
+const ST09_TRADES = [
+  {
+    id: 'trade-st09-win', ticker: 'AAPL', market: 'US', entry_date: '2026-10-01', exit_date: '2026-10-20',
+    entry_price: 170, exit_price: 184, shares: 100, pnl: 1400, pnl_pct: 8.24, fee_drag_pct: 0.45,
+    slippage_pct: -0.25, net_r_multiple: 1.8, exit_reason: 'Trailing stop',
+    entry_note: 'Breakout above the 50-day high on volume.', exit_note: 'Trail hit after earnings drift.',
+    tags: ['breakout'],
+  },
+  {
+    id: 'trade-st09-loss', ticker: 'VOD.L', market: 'UK', entry_date: '2026-10-05', exit_date: '2026-10-12',
+    entry_price: 75, exit_price: 70, shares: 200, pnl: -1000, pnl_pct: -6.67, fee_drag_pct: null,
+    slippage_pct: 0.5, net_r_multiple: -1.0, exit_reason: 'Initial stop', entry_note: null, exit_note: null, tags: [],
+  },
+];
+
+async function mockSt09Populated(page) {
+  await mockSt09PopulatedPositions(page);
+  await page.route(new RegExp(`${API}/positions(\\?|$)`), (route) =>
+    route.fulfill({
+      status: 200, contentType: 'application/json',
+      body: JSON.stringify(ST09_POSITIONS.map((p, i) => (i === 1 ? { ...p, grace_period: true, grace_end_date: '2026-11-12' } : p))),
+    })
+  );
+  await page.route(new RegExp(`${API}/portfolio(\\?|$)`), (route) =>
+    route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok', data: { portfolio_heat_percent: 18.2, positions: [] } }) })
+  );
+  await page.route(new RegExp(`${API}/trades(\\?|$)`), (route) =>
+    route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok', total_trades: 2, win_rate: 50, total_pnl: 400, trades: ST09_TRADES }) })
+  );
+  await page.route(new RegExp(`${API}/signals(\\?|$)`), (route) =>
+    route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify([{ id: 'sig-1', ticker: 'MSFT', market: 'US', status: 'new' }]) })
+  );
+  await page.route(/\/analytics\/arc5-compliance/, (route) =>
+    route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok', data: { validation_pass_rate_by_rule: { stop: 0.9, size: 0.8 } } }) })
+  );
+  await page.route(/\/portfolio\/red-flag-journal/, (route) =>
+    route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok', data: { total: 2, items: [] } }) })
+  );
+  await page.route(/\/digest\/weekly/, (route) =>
+    route.fulfill({
+      status: 200, contentType: 'application/json',
+      body: JSON.stringify({
+        status: 'ok',
+        data: {
+          realised_pnl_7d: 166.1, unrealised_pnl_delta_7d: -42.8, alerts_fired_7d: 5, alerts_dismissed_7d: 3,
+          compliance_score_current: 80.0, compliance_score_7d_ago: 75.0, staleness_hours: 18.5,
+          as_of_utc: '2026-04-01T10:30:00+00:00',
+        },
+      }),
+    })
+  );
+}
+
+test.describe('Shell consumers axe scan, populated — light theme (ST-09)', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.addInitScript(() => window.localStorage.setItem('theme', 'light'));
+    await mockRoutes(page);
+    await mockSt09Populated(page);
+  });
+
+  test('Dashboard with populated cards (light)', async ({ page }) => {
+    await page.goto('/#/DashboardHome');
+    await expect(page.getByText('Heat elevated — monitor closely')).toBeVisible({ timeout: 10000 });
+    await page.waitForLoadState('networkidle');
+    await expectThemeApplied(page, 'light');
+    await runAxeScan(page, 'DashboardPopulated:light');
+  });
+
+  // Scoped to the trade table (the DataTable shell and its expanded journal
+  // row). The rest of the Trade History page (filters panel, AI Journal
+  // Summary, saved-filters select, view toggle) is outside the converted
+  // shells and was already dark-only in the light theme before ST-09: BLG-FE-285.
+  test('Trade History with a journal row expanded (light)', async ({ page }) => {
+    await page.goto('/#/TradeHistory');
+    await page.getByText('AAPL').first().click();
+    await expect(page.getByText('Breakout above the 50-day high on volume.')).toBeVisible({ timeout: 10000 });
+    await page.waitForLoadState('networkidle');
+    await expectThemeApplied(page, 'light');
+    await runAxeScan(page, 'TradeHistoryExpanded:light', { include: 'table' });
+  });
+
+  test('Trade Entry (light)', async ({ page }) => {
+    await page.goto('/#/TradeEntry');
+    await expect(page.getByPlaceholder('e.g., AAPL or VOD.L')).toBeVisible({ timeout: 10000 });
+    await page.getByPlaceholder('e.g., AAPL or VOD.L').fill('AAPL');
+    await expectThemeApplied(page, 'light');
+    await runAxeScan(page, 'TradeEntry:light');
+  });
+
+  // Review pass 2: the catch-all mock returns no checks, so the scans above
+  // never render PreEntryValidationPanel's pass/warn/fail badges. This one
+  // does, and scopes the scan to the panel.
+  test('Trade Entry pre-entry checks with pass, warn and fail badges (light)', async ({ page }) => {
+    await page.route(new RegExp(`${API}/portfolio/pre-entry-validation`), (route) =>
+      route.fulfill({
+        status: 200, contentType: 'application/json',
+        body: JSON.stringify({
+          status: 'ok',
+          data: {
+            advisory_status: 'warn',
+            checks: [
+              { rule: 'regime_gate', status: 'pass', detail: 'UK market is risk-on' },
+              { rule: 'cash_constraint', status: 'warn', detail: 'Cash is close to the limit' },
+              { rule: 'concentration', status: 'fail', detail: 'Position exceeds the concentration limit' },
+            ],
+          },
+        }),
+      })
+    );
+    await page.goto('/#/TradeEntry');
+    await page.getByPlaceholder('e.g., AAPL or VOD.L').fill('LGEN');
+    await page.getByPlaceholder('0.00').first().fill('100');
+    await page.getByPlaceholder('Fetched automatically if blank').fill('2');
+    await page.getByPlaceholder('0', { exact: true }).fill('10');
+    const panel = page.getByTestId('pre-entry-checks-panel');
+    await expect(panel.getByTestId('pre-entry-check-regime_gate')).toBeVisible({ timeout: 10000 });
+    await expectThemeApplied(page, 'light');
+    await runAxeScan(page, 'TradeEntryPreEntry:light', { include: '[data-testid="pre-entry-checks-panel"]' });
+  });
+
+  test('Weekly Digest (light)', async ({ page }) => {
+    await page.goto('/#/WeeklyDigest');
+    await expect(page.getByText('Realised P&L (7d)')).toBeVisible({ timeout: 10000 });
+    await expectThemeApplied(page, 'light');
+    await runAxeScan(page, 'WeeklyDigest:light');
+  });
+});
+
+// ---------------------------------------------------------------------------
+// EPIC-03 review pass 4: DataState's headings became `text-slate-900
+// dark:text-white` (ST-09). Three consumers wrap DataState in a card that is
+// dark in both themes; those cards now carry the `dark` class, so the heading
+// stays white in light mode. axe reports text over a gradient as `incomplete`
+// (BLG-QA-260), so the colour is asserted directly: white on slate-900/800 is
+// 14.63:1 or better.
+// ---------------------------------------------------------------------------
+
+for (const [page_, route, heading] of [
+  ['Trade Plans', '/#/TradePlans', 'No trade plans yet'],
+  ['Watchlist', '/#/Watchlist', 'Your watchlist is empty'],
+  ['Notifications', '/#/Notifications', 'No notifications yet'],
+]) {
+  test(`${page_} empty-state heading stays white on its dark card in the light theme (EPIC-03)`, async ({ page }) => {
+    await page.addInitScript(() => window.localStorage.setItem('theme', 'light'));
+    await mockRoutes(page);
+    await page.route(new RegExp(`${API}/notifications\\?`), (r) =>
+      r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok', data: { notifications: [], has_more: false } }) })
+    );
+    await page.goto(route);
+    const h = page.getByText(heading, { exact: true });
+    await expect(h).toBeVisible({ timeout: 10000 });
+    await expectThemeApplied(page, 'light');
+    await expect(h).toHaveCSS('color', 'rgb(255, 255, 255)');
   });
 }
 

@@ -99,12 +99,12 @@ export default function PositionModal({ position, open, onClose, onSave }) {
   return (
     <Dialog open={open} onOpenChange={onClose}>
       {/* ✅ FIXED: Use grid instead of flex for proper scrolling */}
-      <DialogContent className="bg-slate-900 border-slate-700 text-white max-w-lg max-h-[90vh] grid grid-rows-[auto_1fr_auto]">
+      <DialogContent className="bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white max-w-lg max-h-[90vh] grid grid-rows-[auto_1fr_auto]">
         {/* Row 1: Header (auto height) */}
         <DialogHeader>
           <DialogTitle className="flex items-center gap-3">
             <span className="text-xl font-bold">{position.ticker}</span>
-            <span className="text-xs px-2 py-1 rounded-full bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-700">
+            <span className="text-xs px-2 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
               {position.market}
             </span>
           </DialogTitle>
@@ -114,13 +114,13 @@ export default function PositionModal({ position, open, onClose, onSave }) {
         <div className="space-y-6 py-4 overflow-y-auto min-h-0">
           {/* Summary Stats */}
           <div className="grid grid-cols-3 gap-3">
-            <div className="p-3 rounded-xl bg-slate-800/50 border border-slate-700/50">
+            <div className="p-3 rounded-xl bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50">
               <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Days Held</p>
-              <p className="text-lg font-semibold text-white">{daysHeld}</p>
+              <p className="text-lg font-semibold text-slate-900 dark:text-white">{daysHeld}</p>
             </div>
-            <div className="p-3 rounded-xl bg-slate-800/50 border border-slate-700/50">
+            <div className="p-3 rounded-xl bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50">
               <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Shares</p>
-              <p className="text-lg font-semibold text-white">{shares}</p>
+              <p className="text-lg font-semibold text-slate-900 dark:text-white">{shares}</p>
             </div>
             <div className={cn(
               "p-3 rounded-xl border",
@@ -128,12 +128,12 @@ export default function PositionModal({ position, open, onClose, onSave }) {
                 ? "bg-emerald-500/10 border-emerald-500/30"
                 : pnl < 0
                   ? "bg-rose-500/10 border-rose-500/30"
-                  : "bg-slate-800/50 border-slate-700/50"
+                  : "bg-slate-100 dark:bg-slate-800/50 border-slate-200 dark:border-slate-700/50"
             )}>
               <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">P&L</p>
               <p className={cn(
                 "text-lg font-semibold",
-                pnl > 0 ? "text-emerald-400" : pnl < 0 ? "text-rose-400" : "text-slate-300"
+                pnl > 0 ? "text-emerald-700 dark:text-emerald-400" : pnl < 0 ? "text-rose-700 dark:text-rose-400" : "text-slate-700 dark:text-slate-300"
               )}>
                 {formatCurrency(pnl, { signed: true, currency: positionCurrency })}
               </p>
@@ -141,33 +141,33 @@ export default function PositionModal({ position, open, onClose, onSave }) {
           </div>
 
           {/* Entry Details */}
-          <div className="p-4 rounded-xl bg-slate-800/30 border border-slate-700/50 space-y-3">
+          <div className="p-4 rounded-xl bg-slate-100 dark:bg-slate-800/30 border border-slate-200 dark:border-slate-700/50 space-y-3">
             <h4 className="text-sm font-medium text-slate-600 dark:text-slate-400">Entry Details</h4>
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <p className="text-xs text-slate-600 dark:text-slate-400">Entry Date</p>
-                <p className="text-sm text-white">{format(new Date(position.entry_date), "MMM d, yyyy")}</p>
+                <p className="text-sm text-slate-900 dark:text-white">{format(new Date(position.entry_date), "MMM d, yyyy")}</p>
               </div>
               <div>
                 <p className="text-xs text-slate-600 dark:text-slate-400">Entry Price</p>
-                <p className="text-sm text-white">{formatCurrency(entryPriceNative, { currency: positionCurrency })}</p>
+                <p className="text-sm text-slate-900 dark:text-white">{formatCurrency(entryPriceNative, { currency: positionCurrency })}</p>
               </div>
               <div>
                 <p className="text-xs text-slate-600 dark:text-slate-400">ATR Value</p>
-                <p className="text-sm text-white">{position.atr_value != null ? formatCurrency(position.atr_value, { currency: positionCurrency }) : "—"}</p>
+                <p className="text-sm text-slate-900 dark:text-white">{position.atr_value != null ? formatCurrency(position.atr_value, { currency: positionCurrency }) : "—"}</p>
               </div>
               <div>
                 <p className="text-xs text-slate-600 dark:text-slate-400">FX Rate</p>
-                <p className="text-sm text-white">{position.fx_rate?.toFixed(4) || "1.0000"}</p>
+                <p className="text-sm text-slate-900 dark:text-white">{position.fx_rate?.toFixed(4) || "1.0000"}</p>
               </div>
             </div>
           </div>
 
           {/* Trade Journal */}
-          <div className="p-4 rounded-xl bg-slate-800/30 border border-slate-700/50 space-y-3">
+          <div className="p-4 rounded-xl bg-slate-100 dark:bg-slate-800/30 border border-slate-200 dark:border-slate-700/50 space-y-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <BookOpen className="w-4 h-4 text-cyan-400" />
+                <BookOpen className="w-4 h-4 text-cyan-700 dark:text-cyan-400" />
                 <h4 className="text-sm font-medium text-slate-600 dark:text-slate-400">Trade Journal</h4>
               </div>
               {!journalEdit && (
@@ -175,7 +175,7 @@ export default function PositionModal({ position, open, onClose, onSave }) {
                   variant="ghost"
                   size="sm"
                   onClick={() => setJournalEdit(true)}
-                  className="h-8 text-slate-600 dark:text-slate-400 hover:text-white hover:bg-slate-800"
+                  className="h-8 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"
                 >
                   <Edit2 className="w-3 h-3 mr-1" />
                   Edit
@@ -186,8 +186,8 @@ export default function PositionModal({ position, open, onClose, onSave }) {
             {!journalEdit ? (
               <div className="space-y-3">
                 {journalData.entry_note ? (
-                  <div className="p-3 rounded-lg bg-slate-800/50 border border-slate-700/30">
-                    <p className="text-sm text-slate-300 whitespace-pre-wrap">{journalData.entry_note}</p>
+                  <div className="p-3 rounded-lg bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/30">
+                    <p className="text-sm text-slate-700 dark:text-slate-300 whitespace-pre-wrap">{journalData.entry_note}</p>
                   </div>
                 ) : (
                   <p className="text-sm text-slate-600 dark:text-slate-400 italic">No entry note</p>
@@ -198,7 +198,7 @@ export default function PositionModal({ position, open, onClose, onSave }) {
                     {journalData.tags.map((tag) => (
                       <span
                         key={tag}
-                        className="px-2 py-1 text-xs rounded-full bg-cyan-500/20 text-cyan-400 border border-cyan-500/30"
+                        className="px-2 py-1 text-xs rounded-full bg-cyan-500/20 text-cyan-800 dark:text-cyan-400 border border-cyan-500/30"
                       >
                         {tag}
                       </span>
@@ -219,13 +219,13 @@ export default function PositionModal({ position, open, onClose, onSave }) {
                       }
                     }}
                     placeholder="Why are you entering this trade? What's your thesis?"
-                    className="bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-600 dark:text-slate-400 focus:border-cyan-500/50 resize-none"
+                    className="bg-slate-100 dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 text-app-fg placeholder:text-slate-600 dark:placeholder:text-slate-400 focus:border-cyan-500/50 resize-none"
                     rows={4}
                   />
                   <div className="flex justify-end">
                     <span className={cn(
                       "text-xs",
-                      journalData.entry_note.length > 450 ? "text-rose-400" : "text-slate-600 dark:text-slate-400"
+                      journalData.entry_note.length > 450 ? "text-rose-700 dark:text-rose-400" : "text-slate-600 dark:text-slate-400"
                     )}>
                       {journalData.entry_note.length}/500
                     </span>
@@ -241,12 +241,12 @@ export default function PositionModal({ position, open, onClose, onSave }) {
                       {journalData.tags.map((tag) => (
                         <span
                           key={tag}
-                          className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium bg-cyan-500/20 text-cyan-400 border border-cyan-500/30"
+                          className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium bg-cyan-500/20 text-cyan-800 dark:text-cyan-400 border border-cyan-500/30"
                         >
                           {tag}
                           <button
                             onClick={() => handleRemoveTag(tag)}
-                            className="hover:text-cyan-300 transition-colors"
+                            className="hover:text-cyan-950 dark:hover:text-cyan-300 transition-colors"
                           >
                             <X className="w-3 h-3" />
                           </button>
@@ -268,16 +268,16 @@ export default function PositionModal({ position, open, onClose, onSave }) {
                         onBlur={() => setTimeout(() => setShowTagSuggestions(false), 200)}
                         onKeyDown={handleTagInputKeyDown}
                         placeholder="Type to add tags..."
-                        className="bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-600 dark:text-slate-400 focus:border-cyan-500/50"
+                        className="bg-slate-100 dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 text-app-fg placeholder:text-slate-600 dark:placeholder:text-slate-400 focus:border-cyan-500/50"
                       />
 
                       {showTagSuggestions && filteredTags.length > 0 && (
-                        <div className="absolute z-10 w-full mt-1 bg-slate-800 border border-slate-700 rounded-lg shadow-xl max-h-48 overflow-auto">
+                        <div className="absolute z-10 w-full mt-1 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-xl max-h-48 overflow-auto">
                           {filteredTags.slice(0, 10).map((tag) => (
                             <button
                               key={tag}
                               onClick={() => handleAddTag(tag)}
-                              className="w-full px-3 py-2 text-left text-sm text-slate-300 hover:bg-slate-700 hover:text-white transition-colors"
+                              className="w-full px-3 py-2 text-left text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white transition-colors"
                             >
                               {tag}
                             </button>
@@ -298,7 +298,7 @@ export default function PositionModal({ position, open, onClose, onSave }) {
                       tags: position.tags || []
                     });
                   }}
-                  className="text-slate-600 dark:text-slate-400 hover:text-white hover:bg-slate-800"
+                  className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"
                 >
                   Cancel
                 </Button>
@@ -312,7 +312,7 @@ export default function PositionModal({ position, open, onClose, onSave }) {
           <Button 
             variant="ghost" 
             onClick={onClose} 
-            className="text-slate-600 dark:text-slate-400 hover:text-white hover:bg-slate-800"
+            className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"
           >
             Cancel
           </Button>

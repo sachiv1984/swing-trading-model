@@ -97,7 +97,7 @@ export default function SavedFiltersControl({ hasActiveFilters, currentFilterSta
               onChange={(e) => { setNameInput(e.target.value); setSaveError(null); }}
               placeholder="Preset name"
               maxLength={100}
-              className="bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-600 dark:text-slate-400 h-8 text-sm max-w-xs"
+              className="bg-slate-800/50 border-slate-700 text-app-fg placeholder:text-slate-600 dark:placeholder:text-slate-400 h-8 text-sm max-w-xs"
             />
             <Button
               size="sm"

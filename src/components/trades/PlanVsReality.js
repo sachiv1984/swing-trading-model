@@ -35,19 +35,19 @@ function StateBadge({ state }) {
 
 // ─── R colour coding (spec §3.2: green ≥ target, amber ≥ 80%, red < 80%) ─────
 function rColourClass(rAchieved, rTarget) {
-  if (rAchieved == null) return "text-slate-300";
-  if (rTarget == null)   return "text-slate-300";
-  if (rAchieved >= rTarget)              return "text-emerald-400";
-  if (rAchieved >= rTarget * 0.8)        return "text-amber-400";
-  return "text-rose-400";
+  if (rAchieved == null) return "text-slate-700 dark:text-slate-300";
+  if (rTarget == null)   return "text-slate-700 dark:text-slate-300";
+  if (rAchieved >= rTarget)              return "text-emerald-700 dark:text-emerald-400";
+  if (rAchieved >= rTarget * 0.8)        return "text-amber-700 dark:text-amber-400";
+  return "text-rose-700 dark:text-rose-400";
 }
 
 // ─── Skeleton loader ───────────────────────────────────────────────────────────
 function Skeleton() {
   return (
     <div className="space-y-2 animate-pulse" data-testid="pvr-skeleton">
-      <div className="h-3 bg-slate-700 rounded w-1/2" />
-      <div className="h-3 bg-slate-700 rounded w-3/4" />
+      <div className="h-3 bg-slate-200 dark:bg-slate-700 rounded w-1/2" />
+      <div className="h-3 bg-slate-200 dark:bg-slate-700 rounded w-3/4" />
     </div>
   );
 }
@@ -58,7 +58,7 @@ function CompRow({ label, planned, actual, actualClass }) {
     <div className="grid grid-cols-3 gap-2 text-xs items-baseline">
       <span className="text-slate-600 dark:text-slate-400 font-medium">{label}</span>
       <span className="text-slate-600 dark:text-slate-400 truncate">{planned ?? "—"}</span>
-      <span className={cn("font-semibold truncate", actualClass || "text-slate-200")}>{actual ?? "—"}</span>
+      <span className={cn("font-semibold truncate", actualClass || "text-slate-800 dark:text-slate-200")}>{actual ?? "—"}</span>
     </div>
   );
 }
@@ -66,12 +66,12 @@ function CompRow({ label, planned, actual, actualClass }) {
 // ─── Plan adherence badge ──────────────────────────────────────────────────────
 function AdherenceBadge({ flag }) {
   const config = {
-    on_plan:         { label: "On Plan",      cls: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30" },
-    entry_deviation: { label: "Entry Deviation", cls: "bg-amber-500/20 text-amber-300 border-amber-500/30" },
-    stop_deviation:  { label: "Stop Deviation",  cls: "bg-amber-500/20 text-amber-300 border-amber-500/30" },
-    early_exit:      { label: "Early Exit",      cls: "bg-rose-500/20 text-rose-300 border-rose-500/30"    },
+    on_plan:         { label: "On Plan",      cls: "bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 border-emerald-500/30" },
+    entry_deviation: { label: "Entry Deviation", cls: "bg-amber-500/20 text-amber-800 dark:text-amber-300 border-amber-500/30" },
+    stop_deviation:  { label: "Stop Deviation",  cls: "bg-amber-500/20 text-amber-800 dark:text-amber-300 border-amber-500/30" },
+    early_exit:      { label: "Early Exit",      cls: "bg-rose-500/20 text-rose-800 dark:text-rose-300 border-rose-500/30"    },
   };
-  const c = config[flag] || { label: flag || "—", cls: "bg-slate-500/20 text-slate-300 border-slate-500/30" };
+  const c = config[flag] || { label: flag || "—", cls: "bg-slate-500/20 text-slate-700 dark:text-slate-300 border-slate-500/30" };
   return (
     <span className={cn("inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border", c.cls)}>
       {c.label}
@@ -101,9 +101,9 @@ export default function PlanVsReality({ tradeId }) {
       <div className="space-y-2.5">
         <div className="flex items-center gap-2">
           <div className="w-2 h-2 rounded-full bg-blue-400" />
-          <h4 className="text-xs font-semibold uppercase tracking-wider text-blue-400">Plan vs Reality</h4>
+          <h4 className="text-xs font-semibold uppercase tracking-wider text-blue-700 dark:text-blue-400">Plan vs Reality</h4>
         </div>
-        <div className="w-full bg-slate-800/50 rounded-xl p-4 border border-blue-600/20 shadow-lg">
+        <div className="w-full bg-slate-100 dark:bg-slate-800/50 rounded-xl p-4 border border-blue-600/20 shadow-lg">
           <Skeleton />
         </div>
       </div>
@@ -123,14 +123,14 @@ export default function PlanVsReality({ tradeId }) {
     <div className="space-y-2.5" data-testid="plan-vs-reality-section">
       <div className="flex items-center gap-2">
         <div className="w-2 h-2 rounded-full bg-blue-400" />
-        <h4 className="text-xs font-semibold uppercase tracking-wider text-blue-400">Plan vs Reality</h4>
+        <h4 className="text-xs font-semibold uppercase tracking-wider text-blue-700 dark:text-blue-400">Plan vs Reality</h4>
         <AdherenceBadge flag={plan_adherence_flag} />
       </div>
 
-      <div className="w-full bg-slate-800/50 rounded-xl border-l-4 border-l-[#2563EB] border border-slate-700/30 shadow-lg">
+      <div className="w-full bg-slate-100 dark:bg-slate-800/50 rounded-xl border-l-4 border-l-[#2563EB] border border-slate-200 dark:border-slate-700/30 shadow-lg">
         <div className="p-4 space-y-3">
           {/* Column headers */}
-          <div className="grid grid-cols-3 gap-2 text-xs text-slate-600 dark:text-slate-400 font-medium pb-1 border-b border-slate-700/30">
+          <div className="grid grid-cols-3 gap-2 text-xs text-slate-600 dark:text-slate-400 font-medium pb-1 border-b border-slate-200 dark:border-slate-700/30">
             <span>Metric</span>
             <span>Planned</span>
             <span>Actual</span>
@@ -157,7 +157,7 @@ export default function PlanVsReality({ tradeId }) {
               label="Entry Delta"
               planned="—"
               actual={formatPercent(entry_delta_pct, { signed: true, dp: 2 })}
-              actualClass={entry_delta_pct <= 0 ? "text-emerald-400" : "text-rose-400"}
+              actualClass={entry_delta_pct <= 0 ? "text-emerald-700 dark:text-emerald-400" : "text-rose-700 dark:text-rose-400"}
             />
           ) : (
             <div className="grid grid-cols-3 gap-2 text-xs items-baseline" data-testid="entry-delta-historical">
@@ -177,9 +177,9 @@ export default function PlanVsReality({ tradeId }) {
 
           {/* R delta summary */}
           {r_delta != null && (
-            <div className="pt-2 border-t border-slate-700/30 text-xs text-slate-600 dark:text-slate-400">
+            <div className="pt-2 border-t border-slate-200 dark:border-slate-700/30 text-xs text-slate-600 dark:text-slate-400">
               R delta:{" "}
-              <span className={r_delta > 0 ? "text-emerald-400 font-semibold" : r_delta < 0 ? "text-rose-400 font-semibold" : "text-slate-300 font-semibold"}>
+              <span className={r_delta > 0 ? "text-emerald-700 dark:text-emerald-400 font-semibold" : r_delta < 0 ? "text-rose-700 dark:text-rose-400 font-semibold" : "text-slate-700 dark:text-slate-300 font-semibold"}>
                 {formatR(r_delta)} vs target
               </span>
             </div>
@@ -187,7 +187,7 @@ export default function PlanVsReality({ tradeId }) {
 
           {/* Deviation note (user-authored via future ST-06 annotation flow) */}
           {deviation_note && (
-            <div className="pt-2 border-t border-slate-700/30 text-xs text-slate-300 italic">
+            <div className="pt-2 border-t border-slate-200 dark:border-slate-700/30 text-xs text-slate-700 dark:text-slate-300 italic">
               Note: {deviation_note}
             </div>
           )}

@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-10 (session — 2 new item(s) added: BLG-QA-258, BLG-QA-259; agent-mediated DoQ and PO review of PR #2231, EPIC-06, v9.16); prior — 2026-11-10 (session — 3 new item(s) added: BLG-FE-282, BLG-FE-283, BLG-FE-284; ST-27, EPIC-06, v9.16); prior — 2026-11-10 (session — 1 new item(s) added: BLG-GOV-418; ST-25, EPIC-06, v9.16); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-10 (session — 5 new item(s) added: BLG-FE-285, BLG-OPS-216, BLG-FE-286, BLG-QA-260, BLG-UX-10; EPIC-03, v9.16); prior — 2026-11-10 (session — 2 new item(s) added: BLG-QA-258, BLG-QA-259; agent-mediated DoQ and PO review of PR #2231, EPIC-06, v9.16); prior — 2026-11-10 (session — 3 new item(s) added: BLG-FE-282, BLG-FE-283, BLG-FE-284; ST-27, EPIC-06, v9.16); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -6678,6 +6678,28 @@ Research View's "Create Trade Plan" opens `/TradePlan?ticker={ticker}` although 
 
 ---
 
+### BLG-FE-285 — Give the Trade History filters, AI summary and view toggle light-theme colours
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** ST-09 (EPIC-03, 2026-11-06__release-v9.16) light-theme axe scan of Trade History — 2026-11-10
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v9.17
+
+**Problem**
+ST-09's light-theme axe scan of Trade History found dark-only regions outside the trade table: the filters panel (slate-600 text on #888f9a, 2.32:1), the AI Journal Summary header (text-slate-300, 2.19:1), the saved-filters select (1.45:1), the Table/Calendar toggle (cyan-400 3.39:1; slate-600 1.02:1), and two Select comboboxes with no accessible name (button-name, critical). None sit in ST-09's converted shells; they were dark-only in light before ST-09, so the ST-09 scan is limited to the table.
+
+**Scope**
+- Give each region the design_system.md §Light-Theme Colour Tokens pairs or app-* tokens
+- Add accessible names to the two filter Selects and the saved-filters select
+- Coordinate with Phase 3 content sweep BLG-FE-265
+
+**Acceptance Criteria**
+- An unscoped light-theme axe scan of Trade History with a journal row expanded reports no serious or critical finding
+- The `include: 'table'` scope is removed from the TradeHistoryExpanded:light scan in tests/e2e/accessibility-axe-scan.spec.js
+
+---
+
 ### BLG-QA-258 — Run the Arc 2 protocol's backend write-through checks on staging once
 **Priority:** P3 (Low)
 **Type:** QA / Test Automation
@@ -6717,5 +6739,88 @@ The two Arc 2 journey tests added by ST-24/ST-26 (`arc2-happy-path.spec.js`, `tr
 **Acceptance Criteria**
 - Every `tests/e2e/*.spec.js` file appears in the matrix index
 - A mechanical check or a recorded retire/generate decision prevents the drift recurring
+
+---
+
+### BLG-OPS-216 — Give the visual snapshot workflow permission to push regenerated baselines
+**Priority:** P3 (Low)
+**Type:** Operations / CI
+**Owner:** Infrastructure & Operations Owner
+**Source:** ST-09 (EPIC-03, 2026-11-06__release-v9.16), Update Visual Snapshot Baselines run 42865530371 — 2026-11-10
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.17
+
+**Problem**
+.github/workflows/update-visual-snapshots.yml regenerates baselines on the CI runner, then its push step fails with 403 (github-actions[bot] denied): the workflow has no `permissions: contents: write`. ST-09 had to commit the PNGs by hand from the run's artifact.
+
+**Scope**
+- Add `permissions: contents: write` to the workflow job
+- Correct the stale header comment (it names only visual-snapshots.spec.js)
+
+**Acceptance Criteria**
+- A dispatch against an exec branch commits and pushes changed baselines with no 403
+
+---
+
+### BLG-FE-286 — Label the Trade Entry Risk % and date inputs and the market Select
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** EPIC-03 (2026-11-06__release-v9.16) Trade Entry light-theme axe scan, review pass 1 — 2026-11-10
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v9.17
+
+**Problem**
+axe on Trade Entry finds `label` (the Risk % number input and the entry date input have no associated label) and `button-name` (the market Select trigger has no accessible name). Both are critical, theme-independent and pre-existing; EPIC-03 added the first scan of this page. They are listed in `KNOWN_VIOLATIONS['TradeEntry:light']` in tests/e2e/accessibility-axe-scan.spec.js against this item.
+
+**Scope**
+- Associate a label (htmlFor/id) or add aria-label to the Risk % and entry date inputs
+- Give the market Select trigger an accessible name
+
+**Acceptance Criteria**
+- `label` and `button-name` are removed from `KNOWN_VIOLATIONS['TradeEntry:light']` and the scan passes
+
+---
+
+### BLG-QA-260 — Report axe "incomplete" color-contrast results in runAxeScan
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** QA & Testing Owner
+**Source:** EPIC-03 (2026-11-06__release-v9.16) agent-mediated Director of Quality review, pass 1 — 2026-11-10
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.17
+
+**Problem**
+`runAxeScan` in tests/e2e/accessibility-axe-scan.spec.js fails only on `violations`. axe returns contrast it cannot decide (for example text on a translucent tint) as `incomplete`, which is silently ignored: the Positions table grace pill measured 4.48:1 against AA 4.5:1 yet the light scan passed (fixed in EPIC-03 with amber-800, 6.32:1).
+
+**Scope**
+- Log incomplete color-contrast nodes for every scan
+- Add a strict-page set whose incomplete color-contrast nodes fail the scan
+
+**Acceptance Criteria**
+- Incomplete color-contrast nodes appear in the scan output
+- A scan of a page in the strict set fails on an incomplete color-contrast node
+
+---
+
+### BLG-UX-10 — Decide whether the DashboardCard label should stay primary text or return to secondary
+**Priority:** P3 (Low)
+**Type:** UX / Design System
+**Owner:** Head of UX & Design; Head of Specs Team
+**Source:** EPIC-03 (2026-11-06__release-v9.16) agent-mediated Head of UX & Design review, pass 1; Product Owner accepted as built and asked for this item — 2026-11-10
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v9.17
+
+**Problem**
+`design_system.md` v1.25 §Semantic Colour Tokens rule 5 sets the `DashboardCard` title to `text-app-fg`. ST-09 built it as specified, so the small uppercase card label, previously muted (`text-slate-600 dark:text-slate-400`), is now as bright as the card's figure in dark mode, which flattens the label/figure hierarchy. The decision record also mentions a `DashboardCard` "sub-label" that the component does not have, so the intended mapping is unclear.
+
+**Scope**
+- Head of UX & Design reviews the label/figure hierarchy on the Dashboard cards in both themes, with evidence rather than opinion
+- If the label should be secondary: Head of Specs Team amends rule 5 to `text-app-muted` for the label and corrects the "sub-label" wording; the code change follows in the same story
+- If it stays primary: record the decision and correct the "sub-label" wording
+
+**Acceptance Criteria**
+- Rule 5's `DashboardCard` entry names the label's token explicitly and drops the non-existent "sub-label", with the decision and its evidence recorded
+- `DashboardCard.js` matches the amended rule
 
 ---

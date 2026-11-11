@@ -105,7 +105,7 @@ test.describe('Position Sizing — Concentration Display (V-SIZE-01, V-SIZE-02)'
 
     // Amber styling per decision_record.md §2 — not a StandingAlert, no dismiss affordance.
     // The text renders inside a <span> nested in the styled <p> — assert the class on the <p> ancestor.
-    const reasonContainer = page.locator('p.text-amber-600', { hasText: reasonText });
+    const reasonContainer = page.locator('p.text-amber-700', { hasText: reasonText });
     await expect(reasonContainer).toBeVisible();
     // AlertTriangle (lucide-react aliases to triangle-alert) renders beside the text.
     await expect(reasonContainer.locator('svg.lucide-triangle-alert')).toBeVisible();

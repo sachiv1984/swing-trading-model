@@ -152,7 +152,7 @@ test('SC-RCN-03: Table View flags (amber + clock icon) when days_since_review >=
 
   const cell = page.locator('[data-testid="last-reviewed-cell"]');
   const text = cell.locator('span');
-  await expect(text).toHaveClass(/text-amber-600/);
+  await expect(text).toHaveClass(/text-amber-700/);
   await expect(cell.locator('svg.lucide-clock')).toBeVisible();
 });
 
@@ -174,7 +174,7 @@ test('SC-RCN-04: Table View suppresses flag when GRACE with grace_days_remaining
   const text = cell.locator('span');
   // Text still renders (informational), but not flagged amber
   await expect(cell).toContainText('Reviewed 20d ago');
-  await expect(text).not.toHaveClass(/text-amber-600/);
+  await expect(text).not.toHaveClass(/text-amber-700/);
   // ST-06 (EPIC-03, v8.6, BLG-FE-149): non-flagged state must use the
   // canonical secondary-text token (text-slate-600 dark:text-slate-400),
   // not the failing text-slate-500 shade this story corrected.
@@ -193,7 +193,7 @@ test('SC-RCN-05: Table View suppresses flag when portfolio drawdown is active (A
   await expect(cell).toContainText('Reviewed 20d ago');
   // Suppression depends on the (independent, async) drawdown-status query
   // resolving — poll rather than a single immediate check.
-  await expect(text).not.toHaveClass(/text-amber-600/, { timeout: 8000 });
+  await expect(text).not.toHaveClass(/text-amber-700/, { timeout: 8000 });
 });
 
 test('SC-RCN-06: Clicking "Mark Reviewed" fires PATCH /positions/{id}/mark-reviewed', async ({ page }) => {
@@ -287,7 +287,7 @@ async function gridLastReviewedText(page, pos) {
 test('SC-RCN-09: stored GRACE with grace ended (grace_days_remaining null, holding_days 11) is not flagged, table and grid', async ({ page }) => {
   const pos = endedGracePosition();
   const tableText = await lastReviewedTexts(page, pos);
-  await expect(tableText).not.toHaveClass(/text-amber-600/);
+  await expect(tableText).not.toHaveClass(/text-amber-700/);
   await expect(tableText).toHaveClass(/text-slate-600/);
 
   const gridText = await gridLastReviewedText(page, pos);
@@ -298,7 +298,7 @@ test('SC-RCN-09: stored GRACE with grace ended (grace_days_remaining null, holdi
 test('SC-RCN-10: the same position with position_state LOSING is flagged, table and grid', async ({ page }) => {
   const pos = endedGracePosition({ lifecycle_state: 'LOSING', position_state: 'LOSING' });
   const tableText = await lastReviewedTexts(page, pos);
-  await expect(tableText).toHaveClass(/text-amber-600/);
+  await expect(tableText).toHaveClass(/text-amber-700/);
 
   const gridText = await gridLastReviewedText(page, pos);
   await expect(gridText).toHaveClass(/text-amber-600/);

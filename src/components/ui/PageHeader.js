@@ -9,6 +9,10 @@ import OnwardLink from "./OnwardLink";
 // any "Back" button, which depends on how the user arrived.
 // `onward` (navigation.md v2.0 §Onward Links; ST-03, BLG-FE-252): { label, to }
 // renders the page's required onward link under the description.
+// ST-09 (BLG-FE-264, EPIC-03, v9.16): title text-app-fg and subtitle
+// text-app-muted (design_system.md v1.25 §Semantic Colour Tokens rule 5). The
+// title is solid primary text; the gradient-clipped title it replaces could
+// not be checked by axe color-contrast.
 export default function PageHeader({ title, description, actions, parent, onward }) {
   return (
     <motion.div
@@ -28,11 +32,11 @@ export default function PageHeader({ title, description, actions, parent, onward
       )}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold bg-gradient-to-r from-slate-900 via-slate-700 to-slate-500 dark:from-white dark:via-slate-300 dark:to-slate-400 bg-clip-text text-transparent tracking-tight">
+          <h1 className="text-2xl font-bold text-app-fg tracking-tight">
             {title}
           </h1>
           {description && (
-            <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">{description}</p>
+            <p className="text-sm text-app-muted mt-1">{description}</p>
           )}
           {onward && (
             <div className="mt-2">

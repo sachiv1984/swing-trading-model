@@ -9,10 +9,10 @@ import { fxSourceNotice } from "../../../lib/fxSource";
 import { STALE_EXPLANATION_RISK } from "../../ui/StaleMarker";
 
 function heatColor(pct) {
-  if (pct == null) return "text-white";
-  if (pct < 15) return "text-emerald-400";
-  if (pct <= 25) return "text-amber-400";
-  return "text-rose-400";
+  if (pct == null) return "text-slate-900 dark:text-white";
+  if (pct < 15) return "text-emerald-700 dark:text-emerald-400";
+  if (pct <= 25) return "text-amber-700 dark:text-amber-400";
+  return "text-rose-700 dark:text-rose-400";
 }
 
 export default function PortfolioHeatCard() {

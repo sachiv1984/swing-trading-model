@@ -49,7 +49,7 @@ export default function EarningsAlertCard() {
       emptyHeading="No earnings in 7 days"
       emptyBody="Upcoming earnings will show here."
     >
-      <p className="text-4xl font-bold text-yellow-400 mb-2">{count}</p>
+      <p className="text-4xl font-bold text-yellow-700 dark:text-yellow-400 mb-2">{count}</p>
       <p className="text-sm text-slate-600 dark:text-slate-400">{subtext}</p>
     </DashboardCard>
   );

@@ -169,7 +169,7 @@ export default function PositionCard({ position, onEdit, onExit, onRecheck, draw
         <div>
           <div className="flex items-center gap-2 flex-wrap">
             <h3 className="text-lg font-bold text-white">{position.ticker}</h3>
-            <span className="text-xs px-2 py-0.5 rounded-full bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-700">
+            <span className="text-xs px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
               {position.market}
             </span>
           </div>

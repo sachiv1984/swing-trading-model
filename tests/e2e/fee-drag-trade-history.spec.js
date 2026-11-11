@@ -191,8 +191,8 @@ test.describe('SC-FEE-02 — Non-null fee drag renders amber', () => {
   });
 
   test('SC-FEE-02a: Trade with fee_drag_pct renders +X.XX% in amber', async ({ page }) => {
-    // LGEN has fee_drag_pct: 0.45 → formatFeeDrag → "+0.45%", class → text-amber-400
-    const feeCell = page.locator('.text-amber-400').filter({ hasText: '+0.45%' });
+    // LGEN has fee_drag_pct: 0.45 → formatFeeDrag → "+0.45%", class → text-amber-700 dark:text-amber-400 (light/dark pair since ST-09, v9.16)
+    const feeCell = page.locator('.text-amber-700').filter({ hasText: '+0.45%' });
     await expect(feeCell).toBeVisible();
   });
 

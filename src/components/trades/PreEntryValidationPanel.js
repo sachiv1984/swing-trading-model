@@ -15,15 +15,15 @@ export const RULE_LABELS = {
 
 const STATUS_ICON = { pass: "✓", warn: "⚠", fail: "✗", skipped: "—" };
 const STATUS_COLOR = {
-  pass: "text-emerald-400",
-  warn: "text-amber-400",
-  fail: "text-red-400",
+  pass: "text-emerald-700 dark:text-emerald-400",
+  warn: "text-amber-700 dark:text-amber-400",
+  fail: "text-red-700 dark:text-red-400",
   skipped: "text-slate-600 dark:text-slate-400",
 };
 const ADVISORY_BADGE = {
-  pass: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30",
-  warn: "bg-amber-500/20 text-amber-400 border-amber-500/30",
-  fail: "bg-red-500/20 text-red-400 border-red-500/30",
+  pass: "bg-emerald-500/20 text-emerald-800 dark:text-emerald-400 border-emerald-500/30",
+  warn: "bg-amber-500/20 text-amber-800 dark:text-amber-400 border-amber-500/30",
+  fail: "bg-red-500/20 text-red-800 dark:text-red-400 border-red-500/30",
 };
 
 /**
@@ -109,7 +109,7 @@ export default function PreEntryValidationPanel({
   const failCount = checks.filter((c) => c.status === "fail").length;
 
   return (
-    <div data-testid="pre-entry-checks-panel" className="rounded-xl border border-slate-700/50 bg-slate-800/30 overflow-hidden">
+    <div data-testid="pre-entry-checks-panel" className="rounded-xl border border-slate-200 dark:border-slate-700/50 bg-slate-100 dark:bg-slate-800/30 overflow-hidden">
       <button
         type="button"
         data-testid="pre-entry-panel-toggle"
@@ -117,8 +117,8 @@ export default function PreEntryValidationPanel({
         onClick={() => setCollapsed((c) => !c)}
       >
         <div className="flex items-center gap-2">
-          <ShieldCheck className="w-3.5 h-3.5 text-slate-400" />
-          <span className="text-xs font-medium text-slate-300 uppercase tracking-wide">Pre-Entry Checks</span>
+          <ShieldCheck className="w-3.5 h-3.5 text-slate-600 dark:text-slate-400" />
+          <span className="text-xs font-medium text-slate-700 dark:text-slate-300 uppercase tracking-wide">Pre-Entry Checks</span>
           {advisory && (
             <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border ${ADVISORY_BADGE[advisory] || ADVISORY_BADGE.warn}`}>
               {advisory === "pass" ? "Pass" : advisory === "warn" ? "Warn" : "Fail"}
@@ -139,7 +139,7 @@ export default function PreEntryValidationPanel({
         </p>
       )}
       {hasInputs && !collapsed && (
-        <div className="px-4 pb-4 space-y-2 border-t border-slate-700/50 pt-3">
+        <div className="px-4 pb-4 space-y-2 border-t border-slate-200 dark:border-slate-700/50 pt-3">
           {isError && <p className="text-xs text-slate-600 dark:text-slate-400">Validation unavailable — proceed with manual checks</p>}
           {!isLoading && !isError && checks.length === 0 && (
             <p className="text-xs text-slate-600 dark:text-slate-400">No checks available</p>
@@ -150,7 +150,7 @@ export default function PreEntryValidationPanel({
                 {STATUS_ICON[check.status] || "?"}
               </span>
               <div className="flex-1 min-w-0">
-                <span className="text-slate-300">{RULE_LABELS[check.rule] || check.rule}</span>
+                <span className="text-slate-700 dark:text-slate-300">{RULE_LABELS[check.rule] || check.rule}</span>
                 {check.detail && (
                   <span className="text-slate-600 dark:text-slate-400"> — {check.detail}</span>
                 )}
@@ -164,9 +164,9 @@ export default function PreEntryValidationPanel({
                 data-testid="override-acknowledgement-checkbox"
                 checked={overrideAcknowledged || false}
                 onChange={(e) => onOverrideChange(e.target.checked)}
-                className="w-4 h-4 rounded border-slate-600 bg-slate-800 text-amber-500 focus:ring-amber-500/30"
+                className="w-4 h-4 rounded border-slate-300 dark:border-slate-600 bg-slate-100 dark:bg-slate-800 text-amber-500 focus:ring-amber-500/30"
               />
-              <span className="text-xs text-amber-400">I acknowledge the advisory warnings</span>
+              <span className="text-xs text-amber-700 dark:text-amber-400">I acknowledge the advisory warnings</span>
             </label>
           )}
         </div>

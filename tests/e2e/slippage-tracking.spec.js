@@ -153,14 +153,14 @@ test.describe('SC-SLIP-02 — Slippage column colour-coded values', () => {
 
   test('SC-SLIP-02b: Negative slippage renders with emerald (favourable) colour class', async ({ page }) => {
     // LGEN has slippage_pct: -0.25 — formatSlippage → "−0.25%" (typographic minus U+2212, ST-06/BLG-FE-182
-    // shared number-format convention; was an ASCII hyphen), slippageColour → text-emerald-400
-    const slippageCell = page.locator('.text-emerald-400').filter({ hasText: '\u22120.25%' });
+    // shared number-format convention; was an ASCII hyphen), slippageColour → text-emerald-700 dark:text-emerald-400 (pair since ST-09, v9.16)
+    const slippageCell = page.locator('.text-emerald-700').filter({ hasText: '\u22120.25%' });
     await expect(slippageCell).toBeVisible();
   });
 
   test('SC-SLIP-02c: Positive slippage renders with rose (unfavourable) colour class', async ({ page }) => {
-    // BARC has slippage_pct: 0.50 — formatSlippage → "+0.50%", slippageColour → text-rose-400
-    const slippageCell = page.locator('.text-rose-400').filter({ hasText: '+0.50%' });
+    // BARC has slippage_pct: 0.50 — formatSlippage → "+0.50%", slippageColour → text-rose-700 dark:text-rose-400
+    const slippageCell = page.locator('.text-rose-700').filter({ hasText: '+0.50%' });
     await expect(slippageCell).toBeVisible();
   });
 

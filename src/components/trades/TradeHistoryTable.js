@@ -46,9 +46,9 @@ function formatR(r) {
  */
 function rColour(r) {
   if (r === null) return "text-slate-600 dark:text-slate-400";
-  if (r > 0)  return "text-emerald-400";
-  if (r < 0)  return "text-rose-400";
-  return "text-slate-300";
+  if (r > 0)  return "text-emerald-700 dark:text-emerald-400";
+  if (r < 0)  return "text-rose-700 dark:text-rose-400";
+  return "text-slate-700 dark:text-slate-300";
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -64,9 +64,9 @@ function formatSlippage(pct) {
 
 function slippageColour(pct) {
   if (pct === null || pct === undefined) return "text-slate-600 dark:text-slate-400";
-  if (pct < 0) return "text-emerald-400";
-  if (pct > 0) return "text-rose-400";
-  return "text-slate-300";
+  if (pct < 0) return "text-emerald-700 dark:text-emerald-400";
+  if (pct > 0) return "text-rose-700 dark:text-rose-400";
+  return "text-slate-700 dark:text-slate-300";
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -98,7 +98,7 @@ const SORT_DESC = "desc";
 // Applies to all TableHead cells in this file only — DataTable.js default unchanged.
 // px-2 overrides DataTable's px-6 to keep 10 columns from requiring horizontal scroll.
 // whitespace-nowrap prevents multi-line headers (e.g. "Entry Date ↓").
-const TH_CLASS = "font-semibold text-slate-300 tracking-wide px-2 whitespace-nowrap";
+const TH_CLASS = "font-semibold text-slate-700 dark:text-slate-300 tracking-wide px-2 whitespace-nowrap";
 // TD_CLASS: matching compact horizontal padding for all data cells in this table.
 const TD_CLASS = "px-2";
 
@@ -255,14 +255,14 @@ export default function TradeHistoryTable({ trades, tradesForCharts = [] }) {
 
   if (!trades || trades.length === 0) {
     return (
-      <div className="rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 border border-slate-700/50 p-12 text-center">
+      <div className="rounded-2xl bg-white dark:bg-gradient-to-br dark:from-slate-900 dark:to-slate-800 border border-slate-200 dark:border-slate-700/50 p-12 text-center">
         <p className="text-slate-600 dark:text-slate-400">No trade history yet</p>
       </div>
     );
   }
 
   // Sort icon helper — returns an arrow icon component for a given sort state
-  const SortIcon = ({ state, color = "text-cyan-400" }) => {
+  const SortIcon = ({ state, color = "text-cyan-700 dark:text-cyan-400" }) => {
     if (state === SORT_ASC)  return <ArrowUp   className={`w-3 h-3 ml-1 inline ${color}`} />;
     if (state === SORT_DESC) return <ArrowDown  className={`w-3 h-3 ml-1 inline ${color}`} />;
     return <ArrowUpDown className="w-3 h-3 ml-1 inline text-slate-500" />;
@@ -271,7 +271,7 @@ export default function TradeHistoryTable({ trades, tradesForCharts = [] }) {
   // Aliases for backwards compatibility with existing sort icons
   const RSortIcon       = () => <SortIcon state={rSort} />;
   const SlippageSortIcon = () => <SortIcon state={slippageSort} />;
-  const FeeDragSortIcon  = () => <SortIcon state={feeDragSort} color="text-amber-400" />;
+  const FeeDragSortIcon  = () => <SortIcon state={feeDragSort} color="text-amber-700 dark:text-amber-400" />;
 
   return (
     <DataTable>
@@ -280,28 +280,28 @@ export default function TradeHistoryTable({ trades, tradesForCharts = [] }) {
         <TableHead className={TH_CLASS}>Ticker</TableHead>
         {/* ST-11: Entry Date — sortable */}
         <TableHead
-          className={cn(TH_CLASS, "cursor-pointer select-none hover:text-white transition-colors")}
+          className={cn(TH_CLASS, "cursor-pointer select-none hover:text-slate-900 dark:hover:text-white transition-colors")}
           onClick={() => cycle(setEntryDateSort)}
         >
           Entry Date <SortIcon state={entryDateSort} />
         </TableHead>
         {/* ST-11: Exit Date — sortable, default DESC (newest first) */}
         <TableHead
-          className={cn(TH_CLASS, "cursor-pointer select-none hover:text-white transition-colors")}
+          className={cn(TH_CLASS, "cursor-pointer select-none hover:text-slate-900 dark:hover:text-white transition-colors")}
           onClick={() => cycle(setExitDateSort)}
         >
           Exit Date <SortIcon state={exitDateSort} />
         </TableHead>
         {/* ST-11: P&L GBP — sortable */}
         <TableHead
-          className={cn(TH_CLASS, "text-right cursor-pointer select-none hover:text-white transition-colors")}
+          className={cn(TH_CLASS, "text-right cursor-pointer select-none hover:text-slate-900 dark:hover:text-white transition-colors")}
           onClick={() => cycle(setPnlSort)}
         >
           P&L <SortIcon state={pnlSort} />
         </TableHead>
         {/* ST-11: P&L % — sortable */}
         <TableHead
-          className={cn(TH_CLASS, "text-right cursor-pointer select-none hover:text-white transition-colors")}
+          className={cn(TH_CLASS, "text-right cursor-pointer select-none hover:text-slate-900 dark:hover:text-white transition-colors")}
           onClick={() => cycle(setPnlPctSort)}
         >
           % P&L <SortIcon state={pnlPctSort} />
@@ -309,14 +309,14 @@ export default function TradeHistoryTable({ trades, tradesForCharts = [] }) {
         <TableHead className={TH_CLASS}>Exit Reason</TableHead>
         {/* ST-11: Days Held — analytical, hidden below 2xl */}
         <TableHead
-          className={cn(TH_CLASS, "text-right cursor-pointer select-none hover:text-white transition-colors")}
+          className={cn(TH_CLASS, "text-right cursor-pointer select-none hover:text-slate-900 dark:hover:text-white transition-colors")}
           onClick={() => cycle(setDaysHeldSort)}
         >
           Days <SortIcon state={daysHeldSort} />
         </TableHead>
         {/* ST-14: Slippage column — analytical, hidden below 2xl */}
         <TableHead
-          className={cn(TH_CLASS, "text-right cursor-pointer select-none hover:text-white transition-colors")}
+          className={cn(TH_CLASS, "text-right cursor-pointer select-none hover:text-slate-900 dark:hover:text-white transition-colors")}
           onClick={cycleSlippageSort}
           title="Entry deviation: fill price vs limit price at entry. Null when fill price not recorded."
         >
@@ -324,7 +324,7 @@ export default function TradeHistoryTable({ trades, tradesForCharts = [] }) {
         </TableHead>
         {/* ST-09: Fee Drag % column — analytical, hidden below 2xl */}
         <TableHead
-          className={cn(TH_CLASS, "text-right cursor-pointer select-none hover:text-white transition-colors")}
+          className={cn(TH_CLASS, "text-right cursor-pointer select-none hover:text-slate-900 dark:hover:text-white transition-colors")}
           onClick={cycleFeeSort}
           title="Fee Drag % = Exit fees / Gross proceeds × 100. Measures the proportion of gross sale proceeds consumed by broker exit fees."
         >
@@ -332,7 +332,7 @@ export default function TradeHistoryTable({ trades, tradesForCharts = [] }) {
         </TableHead>
         {/* BLG-FEAT-02: R-Multiple column — analytical, hidden below 2xl */}
         <TableHead
-          className={cn(TH_CLASS, "text-right cursor-pointer select-none hover:text-white transition-colors")}
+          className={cn(TH_CLASS, "text-right cursor-pointer select-none hover:text-slate-900 dark:hover:text-white transition-colors")}
           onClick={cycleRSort}
         >
           R-Multiple <RSortIcon />
@@ -365,18 +365,18 @@ export default function TradeHistoryTable({ trades, tradesForCharts = [] }) {
               <TableRow
                 key={tradeId}
                 onClick={() => hasExpandableContent && toggleRow(tradeId)}
-                className={cn(hasExpandableContent && "cursor-pointer hover:bg-slate-800/50 transition-colors")}
+                className={cn(hasExpandableContent && "cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors")}
               >
                 {/* Ticker + market */}
                 <TableCell className={TD_CLASS}>
                   <div className="flex items-center gap-2">
                     {hasExpandableContent && (
                       isExpanded
-                        ? <ChevronDown  className="w-4 h-4 text-slate-400" />
-                        : <ChevronRight className="w-4 h-4 text-slate-400" />
+                        ? <ChevronDown  className="w-4 h-4 text-slate-600 dark:text-slate-400" />
+                        : <ChevronRight className="w-4 h-4 text-slate-600 dark:text-slate-400" />
                     )}
-                    <span className="font-medium text-white">{trade.ticker?.replace(".L", "")}</span>
-                    <span className="text-xs px-2 py-0.5 rounded-full bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-700">
+                    <span className="font-medium text-slate-900 dark:text-white">{trade.ticker?.replace(".L", "")}</span>
+                    <span className="text-xs px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
                       {trade.market}
                     </span>
                     {/* navigation.md §Onward Links (ST-03, BLG-FE-252): Research for
@@ -390,7 +390,7 @@ export default function TradeHistoryTable({ trades, tradesForCharts = [] }) {
                         data-testid="trade-ticker-research-link"
                         aria-label={`Research ${trade.ticker.replace(".L", "")}`}
                         title={`Research ${trade.ticker.replace(".L", "")}`}
-                        className="inline-flex items-center justify-center w-6 h-6 rounded text-slate-500 hover:text-cyan-400 hover:bg-slate-800 dark:text-slate-400 print-hide"
+                        className="inline-flex items-center justify-center w-6 h-6 rounded text-slate-500 hover:text-cyan-700 dark:hover:text-cyan-400 hover:bg-slate-100 dark:hover:bg-slate-800 dark:text-slate-400 print-hide"
                       >
                         <Search className="w-3.5 h-3.5" aria-hidden="true" />
                       </Link>
@@ -412,7 +412,7 @@ export default function TradeHistoryTable({ trades, tradesForCharts = [] }) {
                 <TableCell className={cn(TD_CLASS, "text-right")}>
                   <div className={cn(
                     "inline-flex items-center gap-1.5 font-medium",
-                    isProfit ? "text-emerald-400" : "text-rose-400"
+                    isProfit ? "text-emerald-700 dark:text-emerald-400" : "text-rose-700 dark:text-rose-400"
                   )}>
                     {isProfit ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
                     {formatCurrency(trade.pnl, { currency: "GBP", signed: true })}
@@ -421,7 +421,7 @@ export default function TradeHistoryTable({ trades, tradesForCharts = [] }) {
 
                 {/* % P&L */}
                 <TableCell className={cn(TD_CLASS, "text-right")}>
-                  <span className={cn("font-medium", isProfit ? "text-emerald-400" : "text-rose-400")}>
+                  <span className={cn("font-medium", isProfit ? "text-emerald-700 dark:text-emerald-400" : "text-rose-700 dark:text-rose-400")}>
                     {formatPercent(trade.pnl_pct, { signed: true })}
                   </span>
                 </TableCell>
@@ -451,7 +451,7 @@ export default function TradeHistoryTable({ trades, tradesForCharts = [] }) {
                 <TableCell className={cn(TD_CLASS, "text-right")}>
                   <span className={cn(
                     "font-medium tabular-nums",
-                    trade.fee_drag_pct != null ? "text-amber-400" : "text-slate-600 dark:text-slate-400"
+                    trade.fee_drag_pct != null ? "text-amber-700 dark:text-amber-400" : "text-slate-600 dark:text-slate-400"
                   )}>
                     {formatFeeDrag(trade.fee_drag_pct)}
                   </span>
@@ -467,7 +467,7 @@ export default function TradeHistoryTable({ trades, tradesForCharts = [] }) {
                 {/* Net R — ST-03 (EPIC-02, v6.0) — visible only when cost data present */}
                 <TableCell className={cn(TD_CLASS, "text-right")}>
                   {trade.net_r_multiple != null ? (
-                    <span className={cn("font-medium tabular-nums", trade.net_r_multiple > 0 ? "text-emerald-400" : trade.net_r_multiple < 0 ? "text-rose-400" : "text-slate-300")}>
+                    <span className={cn("font-medium tabular-nums", trade.net_r_multiple > 0 ? "text-emerald-700 dark:text-emerald-400" : trade.net_r_multiple < 0 ? "text-rose-700 dark:text-rose-400" : "text-slate-700 dark:text-slate-300")}>
                       {formatRShared(trade.net_r_multiple)}
                     </span>
                   ) : (
@@ -478,22 +478,22 @@ export default function TradeHistoryTable({ trades, tradesForCharts = [] }) {
 
               {/* Expanded journal row — colSpan 11 (ST-03 added Net R column) */}
               {isExpanded && hasExpandableContent && (
-                <TableRow key={`${tradeId}-details`} className="bg-slate-900/50 border-t-2 border-slate-700/50">
+                <TableRow key={`${tradeId}-details`} className="bg-slate-50 dark:bg-slate-900/50 border-t-2 border-slate-200 dark:border-slate-700/50">
                   <TableCell colSpan={11} className="!p-0">
                     <div className="w-full px-6 py-5 space-y-5">
-                      <div className="flex items-center gap-2 pb-3 border-b border-slate-700/50">
+                      <div className="flex items-center gap-2 pb-3 border-b border-slate-200 dark:border-slate-700/50">
                         <div className="w-1 h-4 bg-gradient-to-b from-cyan-500 to-violet-500 rounded-full" />
-                        <h3 className="text-sm font-semibold text-slate-300">Trade Journal</h3>
+                        <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300">Trade Journal</h3>
                       </div>
 
                       {trade.entry_note && (
                         <div className="space-y-2.5">
                           <div className="flex items-center gap-2">
                             <div className="w-2 h-2 rounded-full bg-cyan-400" />
-                            <h4 className="text-xs font-semibold uppercase tracking-wider text-cyan-400">Entry Analysis</h4>
+                            <h4 className="text-xs font-semibold uppercase tracking-wider text-cyan-700 dark:text-cyan-400">Entry Analysis</h4>
                           </div>
-                          <div className="w-full bg-slate-800/50 rounded-xl p-4 border border-slate-700/30 shadow-lg">
-                            <p className="text-sm text-slate-300 leading-relaxed whitespace-pre-wrap">{trade.entry_note}</p>
+                          <div className="w-full bg-slate-100 dark:bg-slate-800/50 rounded-xl p-4 border border-slate-200 dark:border-slate-700/30 shadow-lg">
+                            <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-wrap">{trade.entry_note}</p>
                           </div>
                         </div>
                       )}
@@ -502,10 +502,10 @@ export default function TradeHistoryTable({ trades, tradesForCharts = [] }) {
                         <div className="space-y-2.5">
                           <div className="flex items-center gap-2">
                             <div className="w-2 h-2 rounded-full bg-rose-400" />
-                            <h4 className="text-xs font-semibold uppercase tracking-wider text-rose-400">Exit Reflection</h4>
+                            <h4 className="text-xs font-semibold uppercase tracking-wider text-rose-700 dark:text-rose-400">Exit Reflection</h4>
                           </div>
-                          <div className="w-full bg-slate-800/50 rounded-xl p-4 border border-slate-700/30 shadow-lg">
-                            <p className="text-sm text-slate-300 leading-relaxed whitespace-pre-wrap">{trade.exit_note}</p>
+                          <div className="w-full bg-slate-100 dark:bg-slate-800/50 rounded-xl p-4 border border-slate-200 dark:border-slate-700/30 shadow-lg">
+                            <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-wrap">{trade.exit_note}</p>
                           </div>
                         </div>
                       )}
@@ -514,13 +514,13 @@ export default function TradeHistoryTable({ trades, tradesForCharts = [] }) {
                         <div className="space-y-2.5">
                           <div className="flex items-center gap-2">
                             <div className="w-2 h-2 rounded-full bg-violet-400" />
-                            <h4 className="text-xs font-semibold uppercase tracking-wider text-violet-400">Strategy Tags</h4>
+                            <h4 className="text-xs font-semibold uppercase tracking-wider text-violet-700 dark:text-violet-400">Strategy Tags</h4>
                           </div>
                           <div className="flex flex-wrap gap-2">
                             {trade.tags.map((tag) => (
                               <span
                                 key={tag}
-                                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-gradient-to-r from-cyan-500/10 to-violet-500/10 text-cyan-300 border border-cyan-500/30 hover:border-cyan-400/50 transition-colors"
+                                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-gradient-to-r from-cyan-500/10 to-violet-500/10 text-cyan-700 dark:text-cyan-300 border border-cyan-500/30 hover:border-cyan-400/50 transition-colors"
                               >
                                 <span className="w-1 h-1 rounded-full bg-cyan-400" />
                                 {tag}

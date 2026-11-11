@@ -471,7 +471,7 @@ function PositionEarningsCell({ ticker, market }) {
   if (days < 0) return <TableCell><span className="text-slate-600 text-xs">—</span></TableCell>;
   if (days === 0) return (
     <TableCell>
-      <span className="text-xs font-medium px-2 py-0.5 rounded bg-amber-500/15 text-amber-400 border border-amber-500/25" title={data.next_earnings_date}>
+      <span className="text-xs font-medium px-2 py-0.5 rounded bg-amber-500/15 text-amber-800 dark:text-amber-400 border border-amber-500/25" title={data.next_earnings_date}>
         Today
       </span>
     </TableCell>
@@ -480,7 +480,7 @@ function PositionEarningsCell({ ticker, market }) {
   return (
     <TableCell>
       <span
-        className={`text-xs font-medium px-2 py-0.5 rounded ${isNear ? "bg-amber-500/15 text-amber-400 border border-amber-500/25" : "text-slate-600 dark:text-slate-400"}`}
+        className={`text-xs font-medium px-2 py-0.5 rounded ${isNear ? "bg-amber-500/15 text-amber-800 dark:text-amber-400 border border-amber-500/25" : "text-slate-600 dark:text-slate-400"}`}
         title={data.next_earnings_date}
       >
         {isNear ? `⚠ ${days}d` : `${days}d`}
@@ -595,9 +595,9 @@ function LastReviewedCell({ position, drawdownActive }) {
   return (
     <TableCell>
       <div className="flex items-center gap-1.5" data-testid="last-reviewed-cell">
-        {flagged && <Clock className="w-3 h-3 text-amber-600 dark:text-amber-400 flex-shrink-0" aria-hidden="true" />}
+        {flagged && <Clock className="w-3 h-3 text-amber-700 dark:text-amber-400 flex-shrink-0" aria-hidden="true" />}
         <span
-          className={cn("text-xs", flagged ? "text-amber-600 dark:text-amber-400" : "text-slate-600 dark:text-slate-400")}
+          className={cn("text-xs", flagged ? "text-amber-700 dark:text-amber-400" : "text-slate-600 dark:text-slate-400")}
           aria-label={ariaLabel}
         >
           {label}
@@ -978,26 +978,26 @@ export default function Positions() {
                 >
                   <TableCell>
                     <div className="flex items-center gap-2">
-                      <span className="font-semibold text-white">
+                      <span className="font-semibold text-slate-900 dark:text-white">
                         {position.ticker}
                       </span>
-                      <span className="text-xs px-2 py-0.5 rounded-full bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-700">
+                      <span className="text-xs px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
                         {position.market}
                       </span>
                     </div>
                   </TableCell>
 
-                  <TableCell className="text-slate-300">
+                  <TableCell className="text-slate-700 dark:text-slate-300">
                     {formatCurrency(position.entry_price, { currency })}
                   </TableCell>
 
-                  <TableCell className="text-slate-300">
+                  <TableCell className="text-slate-700 dark:text-slate-300">
                     {formatCurrency(displayCurrentPrice || null, { currency })}
                     {position.price_is_stale === true && <StaleMarker explanation={STALE_EXPLANATION_POSITIONS} />}
                   </TableCell>
 
                   {/* ST-01 (BLG-FEAT-46): two-line stop cell — initial stop / trailing stop + breach badge */}
-                  <TableCell className="text-rose-400 font-medium">
+                  <TableCell className="text-app-negative font-medium">
                     <div className="flex flex-col gap-0.5 leading-tight">
                       <span className="text-xs text-slate-600 dark:text-slate-400">
                         Init: {formatCurrency(position.initial_stop, { currency })}
@@ -1024,7 +1024,7 @@ export default function Positions() {
                     </div>
                   </TableCell>
 
-                  <TableCell className="text-slate-300">
+                  <TableCell className="text-slate-700 dark:text-slate-300">
                     {position.shares}
                   </TableCell>
 
@@ -1032,7 +1032,7 @@ export default function Positions() {
                     <div
                       className={cn(
                         "inline-flex items-center gap-1.5 font-medium",
-                        isProfit ? "text-emerald-400" : "text-rose-400"
+                        isProfit ? "text-app-positive" : "text-app-negative"
                       )}
                     >
                       {isProfit ? (
@@ -1048,7 +1048,7 @@ export default function Positions() {
                     <span
                       className={cn(
                         "text-sm font-medium",
-                        isProfit ? "text-emerald-400" : "text-rose-400"
+                        isProfit ? "text-app-positive" : "text-app-negative"
                       )}
                     >
                       {formatPercent(pnlPercent, { signed: true })}
@@ -1075,7 +1075,7 @@ export default function Positions() {
                   <TableCell>
                     {position.grace_days_remaining !== null &&
                     position.grace_days_remaining !== undefined ? (
-                      <span className="text-xs font-medium px-2 py-1 rounded-lg bg-amber-500/15 text-amber-400 border border-amber-500/25 whitespace-nowrap">
+                      <span className="text-xs font-medium px-2 py-1 rounded-lg bg-amber-500/15 text-amber-800 dark:text-amber-400 border border-amber-500/25 whitespace-nowrap">
                         Day {(position.holding_days ?? 0) + 1} of {GRACE_PERIOD_DAYS}
                       </span>
                     ) : (
@@ -1096,7 +1096,8 @@ export default function Positions() {
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-8 w-8 text-slate-600 dark:text-slate-400 hover:text-white hover:bg-slate-800"
+                        className="h-8 w-8 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"
+                        aria-label={`Edit ${position.ticker}`}
                         onClick={() => setEditingPosition(position)}
                       >
                         <Edit2 className="w-4 h-4" />
@@ -1106,7 +1107,7 @@ export default function Positions() {
                         variant="ghost"
                         size="icon"
                         title="Trade Plan"
-                        className="h-8 w-8 text-cyan-500/70 hover:text-cyan-400 hover:bg-cyan-500/10"
+                        className="h-8 w-8 text-cyan-700 dark:text-cyan-500/70 hover:text-cyan-800 dark:hover:text-cyan-400 hover:bg-cyan-500/10"
                         onClick={() => navigate(`/TradePlan?position_id=${position.id}&ticker=${position.ticker}&market=${position.market}`)}
                       >
                         <BookOpen className="w-4 h-4" />
@@ -1121,7 +1122,7 @@ export default function Positions() {
                           title={(!position.current_stop && !position.stop_price) ? "No stop is recorded for this position yet, so there is no trail to compare." : "View Trail"}
                           aria-label="View Trail"
                           disabled={!position.current_stop && !position.stop_price}
-                          className="h-8 w-8 text-violet-400 hover:text-violet-300 hover:bg-violet-500/10 disabled:opacity-40"
+                          className="h-8 w-8 text-violet-700 dark:text-violet-400 hover:text-violet-800 dark:hover:text-violet-300 hover:bg-violet-500/10 disabled:opacity-40"
                           onClick={() => setTrailStopPosition(position)}
                         >
                           <ArrowUpDown className="w-4 h-4" />
@@ -1135,7 +1136,7 @@ export default function Positions() {
                         title="Recheck Compliance"
                         aria-label={`Recheck compliance for ${position.ticker}`}
                         data-testid="recheck-compliance-button"
-                        className="h-8 w-8 text-amber-400/80 hover:text-amber-300 hover:bg-amber-500/10"
+                        className="h-8 w-8 text-amber-700 dark:text-amber-400/80 hover:text-amber-800 dark:hover:text-amber-300 hover:bg-amber-500/10"
                         onClick={() => setRecheckingPosition(position)}
                       >
                         <Zap className="w-4 h-4" />
@@ -1144,7 +1145,7 @@ export default function Positions() {
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-8 w-8 text-rose-400 hover:text-rose-300 hover:bg-rose-500/10"
+                        className="h-8 w-8 text-rose-700 dark:text-rose-400 hover:text-rose-800 dark:hover:text-rose-300 hover:bg-rose-500/10"
                         aria-label={`Exit ${position.ticker}`}
                         onClick={() => setExitingPosition(position)}
                       >
