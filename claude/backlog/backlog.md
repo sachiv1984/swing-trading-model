@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-11 (session — 1 new item added: BLG-SPEC-229; ST-12, EPIC-04, v9.16); prior — 2026-11-10 (session — 5 new item(s) added: BLG-FE-285, BLG-OPS-216, BLG-FE-286, BLG-QA-260, BLG-UX-10; EPIC-03, v9.16); prior — 2026-11-10 (session — 2 new item(s) added: BLG-QA-258, BLG-QA-259; agent-mediated DoQ and PO review of PR #2231, EPIC-06, v9.16); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-11 (session — 2 new items added: BLG-SPEC-229, BLG-OPS-217; ST-12/ST-13, EPIC-04, v9.16); prior — 2026-11-10 (session — 5 new item(s) added: BLG-FE-285, BLG-OPS-216, BLG-FE-286, BLG-QA-260, BLG-UX-10; EPIC-03, v9.16); prior — 2026-11-10 (session — 2 new item(s) added: BLG-QA-258, BLG-QA-259; agent-mediated DoQ and PO review of PR #2231, EPIC-06, v9.16); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -6780,6 +6780,30 @@ The two Arc 2 journey tests added by ST-24/ST-26 (`arc2-happy-path.spec.js`, `tr
 
 **Acceptance Criteria**
 - A dispatch against an exec branch commits and pushes changed baselines with no 403
+
+---
+
+### BLG-OPS-217 — Find out why most on-demand Yahoo calls fail on production (earnings, positions, gap risk, research)
+**Priority:** P2 (Medium)
+**Type:** Operations / Backend
+**Owner:** Infrastructure & Operations Owner; Head of Engineering
+**Source:** ST-13 (EPIC-04, `2026-11-06__release-v9.16`), production weekly attribution report recorded in `data_pipeline_cost_baseline.md` §4 — 2026-11-11
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+The first production weekly attribution report (`GET /ops/api-call-attribution?window=weekly`, 2026-11-11, about 2026-11-04 to 2026-11-11) shows 665 failed Yahoo calls out of 4,488 (14.8%). Almost all come from on-demand features: `GET /earnings/{ticker}` 373 of 427 failed, `GET /positions` 201 of 331, `GET /positions/{position_id}/gap-risk` 57 of 64, `GET /research/{ticker}` 21 of 24. The nightly jobs that call Yahoo rarely fail (screener 13 of 3,074; signal generation 0 of 3,035). A failure in `api_call_log` is an exception or an HTTP status of 400 or above, so the cause is not known: throttling of bursts from page loads, symbols Yahoo does not serve (for example earnings for ETFs or `.L` tickers), or a broken call. Earnings and gap risk feed risk warnings, so failures may hide them from the user. The failures are also inside the §4 baseline, so §5's failure advisory only fires at about 1,330 Yahoo failures a week.
+
+**Scope**
+- Break the failures down by `endpoint` (provider path) and ticker from production `api_call_log` for each of the four features, and find the cause
+- Fix what is broken, or document an expected failure (for example a symbol with no earnings data) so it is not counted as a provider failure
+- Check what the user sees when these calls fail (earnings badge, gap-risk warning, positions prices, research)
+- If the failure count changes materially, re-record §4's failure column from a new production weekly report
+
+**Acceptance Criteria**
+- Each of the four features has a recorded cause for its failures
+- After the fix, one production weekly report shows each feature's failure rate below 10%, or the remaining failures are documented as expected
+- `data_pipeline_cost_baseline.md` §4 failures reflect the post-fix state, or state why they were kept
 
 ---
 
