@@ -1,7 +1,7 @@
 Owner: PMO Lead
 Class: Operational Record (Class 3)
 Status: Active
-Last Updated: 2026-11-11 (created)
+Last Updated: 2026-11-11 (Carry-Forward 2 updated: ESC-CLOSE-20261111-01 ruled); prior — 2026-11-11 (created)
 Cycle: 2026-11-06__release-v9.16
 
 ---
@@ -138,6 +138,6 @@ Items: 4
 | # | Observation | Implication | Engine |
 |---|-------------|-------------|--------|
 | 1 | Five P2 found defects are open, each accepted by the PO and DoQ: `BLG-FE-282` (recommended first), `BLG-FE-281`, `BLG-OPS-217` (target still `TBD`), `BLG-BE-211` and `BLG-FE-278` | Seat them in the v9.17 slice ahead of P3 work, or record a dated PO reason for leaving one out | Release Planning |
-| 2 | Until `ESC-CLOSE-20261111-01` is ruled, Phase 3's P3 items (`BLG-FE-257`–`263`, `265`, less the P2 `BLG-FE-260`) are not reached by §1.4c at v9.17 | Apply the ruling if given; otherwise seat them by recorded PO override, as at v9.16 | Release Planning |
+| 2 | Until `ESC-CLOSE-20261111-01` is ruled, Phase 3's P3 items (`BLG-FE-257`–`263`, `265`, less the P2 `BLG-FE-260`) are not reached by §1.4c at v9.17 | Apply the ruling if given; otherwise seat them by recorded PO override, as at v9.16. **Update 2026-11-11:** ruled option (a); `release_planning_prompt.md` v2.74 §1.4c step 1b seats them, no override needed | Release Planning |
 | 3 | `docs/governance/governance_overhead_audit_2026-11-02.md` (v9.14 ST-53 AC 2) and the ST-45 sunset review (`BLG-GOV-408`) are still unlinked; `completed_cycle_count` is now 93 (odd), and `next_release` is unscoped | Run `run roadmap --reason "scheduled"` before `plan release`, and link both as inputs | Roadmap |
 | 4 | `BLG-FE-254`'s Stops moved group (TL-09/TL-10) waits on `BLG-BE-205`, whose ACs cover the data but not the two Playwright ACs | Seat `BLG-BE-205` with the TL-09/TL-10 tests, or add them to its ACs, then banner `BLG-FE-254` | Release Planning |

@@ -1,7 +1,7 @@
 Owner: PMO Lead
 Class: Operational Record (Class 3)
 Status: Active
-Last Updated: 2026-11-11 (created)
+Last Updated: 2026-11-11 (follow-up — §6 row 4 resolved: ESC-CLOSE-20261111-01 ruling, option (a)); prior — 2026-11-11 (created)
 Cycle: 2026-11-06__release-v9.16
 
 ---
@@ -96,7 +96,7 @@ Full detail: `claude/cycles/2026-11-06__release-v9.16/lessons_learnt_closure.md`
 | 1 | **Spec owner notice (STEP 5):** this routine added Known Deviations row `DEV-v9.16-ST27-01` to `docs/specs/frontend/pages/trade_plan.md` (v1.23→v1.24) for the pre-existing §5a.3 Stop Level pre-fill gap (`BLG-FE-282`, P2). Review the entry. | Frontend Specifications & UX Documentation Owner | Before `BLG-FE-282` is seated | — | *(open)* |
 | 2 | Mark `docs/specs/metrics_definitions.md` Appendix E Item 4 (Dashboard win-rate widgets, `BLG-FE-240`) Resolved. It was superseded by v9.15 ST-12, which removed the legacy Dashboard, and `BLG-FE-240` is bannered and archived (deviation consolidation review 2026-11-11 Finding 1). | Metrics Definitions & Analytics Canonical Owner | Next spec edit | `docs/governance/deviation_consolidation_review_2026-11-11.md` | *(open)* |
 | 3 | **Split-achievability disposition, case (i):** `BLG-FE-254` (ST-06) is not marked COMPLETE. Outstanding scope: `dashboard.md` §1B TL-09 and TL-10 Playwright coverage (Stops moved group). `BLG-BE-205` supplies the data but its ACs do not include the two tests. | Head of Engineering; Head of UX & Design | When `BLG-BE-205` is seated | `BLG-BE-205`; `backlog_health_20261111.md` | *(open)* |
-| 4 | Rule whether §1.4c seats the current programme phase's ready P3/P4 items as a tier (`LL-v9.16-Release-01`). Options are in the escalation. Until ruled, `plan release v9.17` needs a PO override for Phase 3's P3 items. | Head of Specs Team; Product Owner | 2026-11-14T16:55:20Z | `ESC-CLOSE-20261111-01` | *(open)* |
+| 4 | Rule whether §1.4c seats the current programme phase's ready P3/P4 items as a tier (`LL-v9.16-Release-01`). Options are in the escalation. Until ruled, `plan release v9.17` needs a PO override for Phase 3's P3 items. | Head of Specs Team; Product Owner | 2026-11-14T16:55:20Z | `ESC-CLOSE-20261111-01` | ✅ Resolved 2026-11-11T17:15:20Z (Head of Specs Team with the Product Owner, agent-mediated, user-directed): option (a). `release_planning_prompt.md` v2.74 §1.4c step 1b current programme phase tier |
 | 5 | Add ACs to, or kill, the legacy governance items `BLG-GOV-200` and `BLG-GOV-201` (carried from v9.15 §6 row 5; `BLG-GOV-192` bannered and `BLG-GOV-198` shipped this cycle). | PMO Lead; item owners | Before either is seated | `backlog_health_20261111.md` | *(open)* |
 | 6 | Retarget stale tags: `BLG-OPS-217` (`TBD`; acceptance says v9.17), the 28 open v9.16-tagged items and the 43 open v9.15-tagged items listed in `backlog_health_20261111.md`. | PMO Lead; item owners | Next Release Planning run | `backlog_health_20261111.md` | *(open)* |
 | 7 | Confirm the ninth deviation consolidation review (agent-mediated DoQ sign-off, pending human confirmation). | Director of Quality | Next session | `docs/governance/deviation_consolidation_review_2026-11-11.md` | *(open)* |
@@ -110,6 +110,6 @@ Post-ship closure complete — 2026-11-06__release-v9.16 — 2026-11-11
 Release: v9.16 — Site Structure & Usability, Phase 2
 Verification status: Verified_with_deviations
 Lessons learnt applied: 8 immediate | 2 deferred | 1 escalated
-Outstanding actions carried forward: 9 in §6
+Outstanding actions carried forward: 9 in §6 (row 4 since resolved)
 Next cycle may now open.
 ```
