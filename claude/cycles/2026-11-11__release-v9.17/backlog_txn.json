@@ -1,0 +1,11 @@
+{
+  "cycle_id": "2026-11-11__release-v9.17",
+  "release": "v9.17",
+  "txn_id": "BLTX-20261111-01",
+  "state": "committed",
+  "prepared_utc": "2026-11-11T20:54:46Z",
+  "marker": "RP:v9.17:2026-11-11__release-v9.17",
+  "target_file": "claude/backlog/backlog.md",
+  "committed_utc": "2026-11-11T20:54:46Z",
+  "notes": "Idempotency search: marker RP:v9.17:2026-11-11__release-v9.17 not present in claude/backlog/backlog.md (0 matches). Release slice written to claude/cycles/2026-11-11__release-v9.17/stage4_backlog_slice.md, which carries the marker (v9.8-v9.16 practice). No global reprioritisation. No backlog.md edit this run: the §1.3a scan listed 0 date-lapsed items, and all 14 gating-item-shipped items keep an unmet limb, so no gate was cleared."
+}

@@ -1,17 +1,17 @@
 {
-  "active_cycle": "2026-11-06__release-v9.16",
-  "cycle_name": "v9.16 — Site Structure & Usability, Phase 2",
-  "status": "Closed",
-  "prior_status": "Verified",
-  "engine": "Post-Ship Closure",
-  "last_updated_utc": "2026-11-11T20:43:48Z",
-  "execution_state_path": "claude/cycles/2026-11-06__release-v9.16/execution_state.json",
-  "backlog_slice_path": "claude/cycles/2026-11-06__release-v9.16/stage4_backlog_slice.md",
+  "active_cycle": "2026-11-11__release-v9.17",
+  "cycle_name": "v9.17 — Site Structure & Usability, Phase 3",
+  "status": "Release_Planning_Complete",
+  "prior_status": "Closed",
+  "engine": "Release Planning",
+  "last_updated_utc": "2026-11-11T20:59:15Z",
+  "execution_state_path": "claude/cycles/2026-11-11__release-v9.17/execution_state.json",
+  "backlog_slice_path": "claude/cycles/2026-11-11__release-v9.17/stage4_backlog_slice.md",
   "design_gate_required": true,
-  "design_gate_status": "Passed",
+  "design_gate_status": "not_started",
   "design_gate_record": "claude/cycles/2026-11-06__release-v9.16/design_gate.md",
   "design_gate_completed_utc": "2026-11-06T17:43:15Z",
-  "sprint_sealed": true,
+  "sprint_sealed": false,
   "_sprint_sealed_note": "Set true at Sprint Planning STEP 7 for 2026-11-06__release-v9.16. Sign-off gate (STEP 6.2) passed: no [AWAITING SIGN-OFF], [AC REQUIRED] or [ESTIMATE REQUIRED] placeholders, no Blocker? Yes outstanding actions, check_sprint_backlog_owners.py exits 0, and every staging-only/post-merge AC is marked with a tracking item (BLG-OPS-215, BLG-GOV-414, BLG-OPS-197, BLG-OPS-198). RISK-02 resolved: the Strategy Rules & System Intent Owner confirmed ST-05's case (c) strategy_rules.md line on 2026-11-09. Product Owner confirmed the sprint goal as drafted, accepted 30 stories at 27.95/28.00 (99.8%) above the 95% buffer floor, single sprint, and confirmed the cleared-gate evidence for ST-24, ST-26, ST-27. Capacity check outcome pass, so capacity_warn_acknowledged is false.",
   "sprint_goal_path": "claude/cycles/2026-11-06__release-v9.16/sprint_goal.md",
   "sprint_backlog_path": "claude/cycles/2026-11-06__release-v9.16/sprint_backlog.md",
@@ -38,7 +38,7 @@
   "sprint2_gate_confirmed_utc": "2026-08-18T00:00:00Z",
   "sprint2_close_utc": "2026-08-20T11:58:57Z",
   "verification_utc": "2026-11-11T15:31:00Z",
-  "last_sync_utc": "2026-11-11T17:15:20Z",
+  "last_sync_utc": "2026-11-11T20:59:15Z",
   "blocked_sla_breached": false,
   "last_deviation_consolidation_review_utc": "2026-11-11T17:00:35Z",
   "deviation_consolidation_review_cycle_count": 0,
@@ -739,9 +739,9 @@
     }
   },
   "release_plan": {
-    "release_plan_path": "claude/cycles/2026-11-06__release-v9.16/release_plan.md",
-    "cycle_id": "2026-11-06__release-v9.16",
-    "published_utc": "2026-11-06T17:18:06Z",
+    "release_plan_path": "claude/cycles/2026-11-11__release-v9.17/release_plan.md",
+    "cycle_id": "2026-11-11__release-v9.17",
+    "published_utc": "2026-11-11T20:59:15Z",
     "epics": [
       "EPIC-01",
       "EPIC-02",
@@ -751,19 +751,19 @@
       "EPIC-06",
       "EPIC-07"
     ],
-    "story_items": 30,
-    "story_items_firm": 28,
-    "story_items_conditional": 2,
-    "scope_items": 30,
+    "story_items": 20,
+    "story_items_firm": 20,
+    "story_items_conditional": 0,
+    "scope_items": 20,
     "capacity_check": "pass",
     "design_gate_required": true,
-    "state_json": "claude/cycles/2026-11-06__release-v9.16/state.json",
-    "scope_doc": "docs/product/scope/scope--2026-11-06__release-v9.16-site-structure-phase-2.md"
+    "state_json": "claude/cycles/2026-11-11__release-v9.17/state.json",
+    "scope_doc": "docs/product/scope/scope--2026-11-11__release-v9.17-site-structure-phase-3.md"
   },
   "prior_release_plan": {
-    "release_plan_path": "claude/cycles/2026-11-03__release-v9.15/release_plan.md",
-    "cycle_id": "2026-11-03__release-v9.15",
-    "published_utc": "2026-11-03T15:22:58Z"
+    "release_plan_path": "claude/cycles/2026-11-06__release-v9.16/release_plan.md",
+    "cycle_id": "2026-11-06__release-v9.16",
+    "published_utc": "2026-11-06T17:18:06Z"
   },
-  "_next_release_note": "Set 2026-11-11 by explicit Product Owner direction (user, in session) after post-ship closure 2026-11-06__release-v9.16. Owner per state_field_owners.json is release_planning_prompt.md STEP 9, which re-stamps it from --version at `plan release v9.17`."
+  "_next_release_note": "Set by release_planning_prompt.md STEP 9 from --version at plan release v9.17 (2026-11-11); first set 2026-11-11 by explicit Product Owner direction after post-ship closure 2026-11-06__release-v9.16."
 }
