@@ -1,7 +1,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-2026-11-11 (post-ship closure `2026-11-06__release-v9.16` STEP 2 — v9.16 ✅ Complete; Next planned release → [TBD]; programme plan Phase 2 marked shipped; §8 row added; RA:v9.16 closure status added; STEP 11 manage roadmap — 0 retired, RA:v9.12-committed-items pointer pruned); prior — 2026-11-06 (Release Planning `2026-11-06__release-v9.16` STEP 5 — RA:v9.16 execution notes added under the §1 Next planned release line; no scope change); prior — 2026-11-06 (Product Owner, user-directed — Next planned release named v9.16, Site Structure & Usability Phase 2; scope set at `plan release v9.16`); prior history retained — see prior entries in version control; prior history retained — see prior entries in version control
+2026-11-11 (Product Owner, user-directed — Next planned release named v9.17, Site Structure & Usability Phase 3; scope set at `plan release v9.17`); prior — 2026-11-11 (post-ship closure `2026-11-06__release-v9.16` STEP 2 — v9.16 ✅ Complete; Next planned release → [TBD]; programme plan Phase 2 marked shipped; §8 row added; RA:v9.16 closure status added; STEP 11 manage roadmap — 0 retired, RA:v9.12-committed-items pointer pruned); prior — 2026-11-06 (Release Planning `2026-11-06__release-v9.16` STEP 5 — RA:v9.16 execution notes added under the §1 Next planned release line; no scope change); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-11-03 (cycle 2026-11-03__scheduled — Standard tier, CPS=N/A (0 active initiatives, 19th consecutive cycle); STEP -1.5 cleared after 1 OVERDUE deferred patch was applied (Head of Specs Team, user acting in role); reduced-roster intake IW-20261103-01 (11 ideas from the Head of UX & Design website review → 27 backlog items); STEP 8.0 Correctness Fast-Track promoted BLG-FE-244 and BLG-FE-245 (P1); PVR 0.307 (Advisory, 1st reading out of Alert); Skill-Silo 68.1% pooled (above ceiling, sustained-failure clause applies); STEP 8.1 Option (a), v9.15 section added; DL-088)
 
 > ⚠️ **Standing Notice:** This document records product intent and prioritisation thinking. All implementation detail (formulas, schemas, endpoint paths) is illustrative and indicative only. Before any feature moves to implementation, the relevant canonical specifications must be authored or updated by the appropriate domain owner. This document must not be cited as canonical intent.
@@ -11,7 +11,7 @@
 ## 1. Current Version
 
 **v9.16** — Site Structure & Usability, Phase 2 — ✅ Complete — Shipped 2026-11-11 — cycle: 2026-11-06__release-v9.16
-**Next planned release:** [TBD] (the §3 programme plan provisionally places Site Structure & Usability Phase 3 at v9.17; not yet named or scoped)
+**Next planned release:** v9.17 — Site Structure & Usability, Phase 3 (named by the Product Owner 2026-11-11, user-directed, after post-ship closure `2026-11-06__release-v9.16`; scope not yet set — the §3 programme plan lists Phase 3's provisional items; scope is set at `plan release v9.17`)
 
 *Previous release:* **v9.15** — Site Structure & Usability, Phase 1 — ✅ Complete — Shipped 2026-11-06 — cycle: 2026-11-03__release-v9.15
 
