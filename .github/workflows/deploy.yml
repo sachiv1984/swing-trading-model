@@ -30,7 +30,6 @@ jobs:
     - name: Build
       env:
         REACT_APP_API_KEY: ${{ secrets.REACT_APP_API_KEY }}
-        REACT_APP_ANTHROPIC_API_KEY: ${{ secrets.REACT_APP_ANTHROPIC_API_KEY }}
         # GitHub Pages serves this app from a /swing-trading-model subpath, not
         # domain root. .env.production sets PUBLIC_URL=/ for the Render static
         # site (which serves at root) and CRA loads .env.production

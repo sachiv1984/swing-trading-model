@@ -1,8 +1,8 @@
 **Owner:** Cybersecurity & Trust Lead
 **Class:** Operational Policy (Class 2)
 **Status:** Active
-**Version:** 1.4
-**Last Updated:** 2026-09-14 (ST-27, EPIC-05, v9.3, DEL-20260910-01 — added `## Rotation Drill History` section, first entry: News API Key drill, General Procedure confirmed working as written); prior — 2026-08-16 (ST-25, BLG-SEC-28, v8.8 — Telegram Bot Token/Chat ID added to Scope/Rotation Schedule/Credential-Specific Notes, cross-referencing the api_key_security_register.md §7 entry that has held this credential since v6.8); prior — 2026-08-10 (ST-05, BLG-SEC-16, v8.5 — Application X-API-Key added); prior history retained — see prior entries in version control
+**Version:** 1.5
+**Last Updated:** 2026-11-11 (ST-11, EPIC-04, v9.16, BLG-OPS-214 — Anthropic routine-rotation row: last rotated 2026-11-11, next due 2027-10-28); prior — 2026-09-14 (ST-27, EPIC-05, v9.3, DEL-20260910-01 — added `## Rotation Drill History` section, first entry: News API Key drill, General Procedure confirmed working as written); prior — 2026-08-16 (ST-25, BLG-SEC-28, v8.8 — Telegram Bot Token/Chat ID added to Scope/Rotation Schedule/Credential-Specific Notes, cross-referencing the api_key_security_register.md §7 entry that has held this credential since v6.8); prior history retained — see prior entries in version control
 **Cycle:** 2026-09-09__release-v9.3 (ST-27 — DEL-20260910-01)
 
 ---
@@ -42,7 +42,7 @@ This policy covers all external API credentials listed in `docs/security/api_key
 | Credential | Cadence | Trigger |
 |-----------|---------|---------|
 | Alpaca API Key + Secret | Annual (12 months) | Calendar schedule; first rotation due 12 months from last recorded rotation |
-| Anthropic API Key | Annual (12 months) | Calendar schedule; first rotation due 2026-08-25 (90 days from first inventory) |
+| Anthropic API Key | Annual (12 months) | Calendar schedule; last rotated 2026-11-11 (ST-11, EPIC-04, v9.16), next due 2027-10-28 (two weeks before the key's 2027-11-11 expiry) |
 | News API Key | Annual (12 months) | Calendar schedule |
 | Supabase DB Connection | Not scheduled — see emergency trigger table | Rotate only on suspected breach |
 | Application X-API-Key | Annual (12 months) | Calendar schedule; last rotated 2026-08-04 (ST-06, BLG-SEC-27, v8.2), next due 2026-08-04 + 12 months |

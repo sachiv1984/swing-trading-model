@@ -6,7 +6,7 @@
   "invoked_utc": "2026-11-09T09:15:14Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-11T08:10:00Z",
+  "last_updated_utc": "2026-11-11T11:55:00Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-02",
@@ -803,6 +803,159 @@
         "date": "2026-11-10",
         "notes": "Five agent-mediated passes (DoQ + Head of UX & Design): 1-4 Blocked, each fixed on branch; pass 5 Approved, conditional on CI on 672ba549, which finished all 9 green. Pending human DoQ confirmation and PO acceptance at the merge gate."
       }
+    },
+    "EPIC-04": {
+      "title": "Anthropic Key Security & Operations Baselines",
+      "status": "done",
+      "branch": "exec/2026-11-06__release-v9.16/EPIC-04",
+      "pr_number": 2233,
+      "pr_status": "open",
+      "qa_signed_off": true,
+      "qa_evidence_log": "claude/cycles/2026-11-06__release-v9.16/qa_evidence_EPIC-04.md",
+      "test_scenarios": [
+        "tests/test_staging_smoke_test.py",
+        "tests/test_staging_deploy_both_services.py",
+        "tests/e2e/trade-plan.spec.js"
+      ],
+      "stories": {
+        "ST-11": {
+          "title": "Rotate the Anthropic API key (overdue since 2026-08-25) and revoke the old key",
+          "classification": "delegated_backend",
+          "status": "done",
+          "assigned_to": "Cybersecurity & Trust Lead; Infrastructure & Operations Owner",
+          "github_issue": 2207,
+          "branch": "exec/2026-11-06__release-v9.16/EPIC-04",
+          "commit_sha": "f97ff5624ef62080312b09b45aa749867a66554c",
+          "delegation_record_id": "DEL-20261111-01",
+          "blocked_since_utc": "2026-11-11T08:13:03Z",
+          "unblock_criteria": "DEL-20261111-01 answered: rotation date; console shows one active key created that date, old key(s) revoked; AI endpoint OK on staging and production; Render static-site env var outcome.",
+          "completed_utc": "2026-11-11T11:37:08Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/ops/external_api_credential_inventory.md",
+            "docs/ops/api_key_rotation_and_audit_schedule.md"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.B.unblocked",
+          "sign_off_record": null,
+          "notes": "Human-Delegation (sprint_backlog.md ST-11; LL-v8.0-P3-01 infra/ops pattern): Anthropic console + Render env. AC 3 (inventory/schedule dates) is engine work once the rotation date is known. 2026-11-11: DEL-20261111-01 answered in session - rotated 2026-11-11 (new key set on staging then production, AI checked on both; 2026-05-25 key revoked; key expiry 2027-11-11). AC 1 and AC 2: user-confirmed in session. AC 3 met at f97ff562: inventory Last rotated 2026-11-11, schedule next due 2027-10-28 (two weeks ahead of expiry); register and policy updated; inventory cadence wording corrected 90 days -> annual. Render frontend env var held `true` (no key exposure there), deleted. Deviation check: none."
+        },
+        "ST-12": {
+          "title": "Stop injecting REACT_APP_ANTHROPIC_API_KEY into the public GitHub Pages build",
+          "classification": "delegated_backend",
+          "status": "done",
+          "assigned_to": "engine (code); Cybersecurity & Trust Lead (AC 3)",
+          "github_issue": 2208,
+          "branch": "exec/2026-11-06__release-v9.16/EPIC-04",
+          "commit_sha": "596c427ce33f27b77cc30b20f50ed9abe5dc190a",
+          "delegation_record_id": "DEL-20261111-01",
+          "blocked_since_utc": "2026-11-11T08:13:03Z",
+          "unblock_criteria": "AC 3: DEL-20261111-01 confirms the key(s) the REACT_APP_ANTHROPIC_API_KEY secret held are revoked in the console.",
+          "completed_utc": "2026-11-11T11:37:08Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            ".github/workflows/deploy.yml",
+            "src/pages/TradePlan.js",
+            "docs/specs/frontend/pages/trade_plan.md",
+            "claude/cycles/2026-11-06__release-v9.16/stage4_backlog_slice_addendum.md",
+            "tests/e2e/trade-plan.spec.js"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.B.unblocked",
+          "sign_off_record": null,
+          "notes": "Code pushed at 596c427c (2026-11-11T08:12:20Z): HAS_AI removed from TradePlan.js; secret removed from deploy.yml; dead flag removed from playwright.config.js and .env.staging/.env.production. AC 1: grep -rn REACT_APP_ANTHROPIC .github src finds nothing. AC 2 + production half of AC 4: post-merge, BLG-OPS-215 (sealed). AC 3: blocked on DEL-20261111-01. AC 4 in CI: trade-plan.spec.js SC-TP-23* (CI already built with the flag set, so the button was visible there before and after). Deviation check: DEV-v9.16-ST12-01 (P3) in trade_plan.md §Known Deviations - §5b still names HAS_AI; tracked by BLG-SPEC-229. Local CI=false npm run build exit 0; no key string in bundle. CI on 596c427c: all 9 workflows success - Playwright E2E 42985197871 (incl. trade-plan.spec.js SC-TP-23*), Frontend Production Build 42985197838, CI Pytest 42985198198, Critical-Path Smoke 42985198210. 2026-11-11: AC 3 moved post-merge at the user's choice (GitHub cannot show the secret's value); tracked by BLG-OPS-218 (P2), filed before PR, run with BLG-OPS-215. DEL-20261111-01 Unblocked in-session.",
+          "post_merge_tracking": [
+            "BLG-OPS-215",
+            "BLG-OPS-218"
+          ]
+        },
+        "ST-13": {
+          "title": "Record the weekly market-data call-volume baseline from production",
+          "classification": "delegated_backend",
+          "status": "done",
+          "assigned_to": "FinOps & Resource Architect; Data Model & Domain Schema Owner",
+          "github_issue": 2209,
+          "branch": "exec/2026-11-06__release-v9.16/EPIC-04",
+          "commit_sha": "ba2b965e227814f801297096b9d2ba809a518d3d",
+          "delegation_record_id": "DEL-20261111-02",
+          "blocked_since_utc": "2026-11-11T08:13:03Z",
+          "unblock_criteria": "DEL-20261111-02 answered: production DS-36 Verification rows and one production weekly attribution report (or a dated not-available-in-sprint statement -> returned at close).",
+          "completed_utc": "2026-11-11T08:34:21Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/data_model.md#DS-36 — Attribute provider calls in api_call_log, and time screener runs (v2.65, 2026-10-27)",
+            "docs/ops/data_pipeline_cost_baseline.md"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.B.unblocked",
+          "sign_off_record": null,
+          "notes": "Conditional (gate 2026-11-09, passed by date). Production reads: Human-Delegation, tracked by BLG-OPS-197. 2026-11-11: AC 1 met - production DS-36 Verification rows supplied in session by the user (feature text YES, duration_seconds numeric YES, idx_acl_called_at_feature) and recorded in data_model.md DS-36. AC 2 (weekly attribution report) still pending on DEL-20261111-02. AC 2 met at ba2b965e: data_pipeline_cost_baseline.md v1.1 §4 filled from one production weekly report (2026-11-11; 7,105 calls / 665 failures / $0.00; top_contributors screener run, signals generate, earnings) and §6 volume line ticked. Gate (§1.4b): promoted to firm on the dated production data, 2026-11-11. Out-of-scope finding: BLG-OPS-217 (P2), Yahoo failures concentrated in earnings/positions/gap-risk/research. Deviation check: none - recorded as DS-36 and §4 specify; the window is the second post-deploy week, noted in §4. DEL-20261111-02 Unblocked in-session. Follow-up (wording only): §4 window note corrected - DS-36 reached production 2026-10-28, not 2026-11-02.",
+          "follow_up_commits": [
+            "a9f657fee8ccd0df878a282c9448ec4f679efc35"
+          ]
+        },
+        "ST-14": {
+          "title": "Record the full screener run p50/p95 baseline from production",
+          "classification": "delegated_backend",
+          "status": "done",
+          "assigned_to": "Infrastructure & Operations Owner",
+          "github_issue": 2210,
+          "branch": "exec/2026-11-06__release-v9.16/EPIC-04",
+          "commit_sha": "ae785cfee003130f13555858b9a9aafe3381c396",
+          "delegation_record_id": "DEL-20261111-03",
+          "blocked_since_utc": "2026-11-11T08:13:03Z",
+          "unblock_criteria": "DEL-20261111-03 answered: screener_run_benchmark.py output, exit 0, against production (or a dated not-available-in-sprint statement -> returned at close).",
+          "completed_utc": "2026-11-11T08:40:28Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/ops/api_performance_baseline.md#53. Full Screener Run Benchmark (ST-32, EPIC-05, v9.13, BLG-OPS-23)"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.B.unblocked",
+          "sign_off_record": null,
+          "notes": "Conditional (>=10 nightly production runs after 2026-11-02, ~2026-11-12). Production API key: Human-Delegation, tracked by BLG-OPS-198. 2026-11-11: AC met at ae785cfe - production benchmark exit 0, 10 runs, p50 237.6 s, p95 249.2 s, threshold 356.4 s, 2026-10-29 to 2026-11-11, recorded in api_performance_baseline.md v2.44 §53.2/§53.4. Gate (§1.4b): promoted to firm on the script's exit 0, 2026-11-11 (earlier than the ~2026-11-12 estimate because DS-36 reached production 2026-10-28, not 2026-11-02 as planned; 3 of 10 runs predate 11-02, kept - no duration-affecting change in between, p95 within 5% of p50). Deviation check: none. DEL-20261111-03 Unblocked in-session."
+        },
+        "ST-15": {
+          "title": "Fail the staging smoke host check when the backend reports no Render service ID",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 2211,
+          "branch": "exec/2026-11-06__release-v9.16/EPIC-04",
+          "commit_sha": "324eae3667fe68a5ef41b3603cbc19bfe8f4345e",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-11-11T08:08:55Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "scripts/staging_smoke_test.py",
+            "docs/ops/staging_deploy_notes.md",
+            "tests/test_staging_smoke_test.py"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
+          "sign_off_record": null,
+          "notes": "AC 1 (a /health/detailed response without render_service_id fails the smoke test): TestHostCheckMissingServiceId (missing/null/empty -> UNIDENTIFIED STAGING HOST; main() exits 1) and test_staging_deploy_both_services.py::test_missing_field_fails. AC 2 (expected service ID has one definition): staging_smoke_test.py reads STAGING_SERVICES from check_staging_deploy_drift.py; test_expected_service_id_has_one_definition_in_the_repo asserts the literal lives in one scripts/ file; tests read it from STAGING_SERVICES. Not changed: .github/workflows/render-si05-log-query.yml sets SERVICE_ID for its Render log query (a different consumer, YAML that cannot import STAGING_SERVICES). Mutation check: 6 tests fail against the previous script. Deviation check: none - docs/ops/staging_deploy_notes.md v1.6 §4 updated in the same commit. CI on 324eae36: all 7 workflows success (CI Pytest Suite 42984744161, Critical-Path Smoke 42984744329); also green on 596c427c (CI Pytest 42985198198)."
+        }
+      },
+      "sign_off_record": {
+        "role": "Director of Quality",
+        "method": "agent_mediated",
+        "status": "cleared",
+        "date": "2026-11-11",
+        "notes": "Pass 1 Approved with comments (5 non-blocking). PR #2233 review DoQ/PO Approved with Comments (comment 6795099417); follow-ups BLG-FE-287, BLG-QA-261, BLG-OPS-219. Human DoQ and PO acceptance given in session 2026-11-11T11:54:34Z, before merge."
+      }
     }
   },
   "deferred_at_planning": [],
@@ -825,15 +978,20 @@
     "ST-21",
     "ST-22",
     "ST-23",
-    "ST-24",
-    "ST-25",
-    "ST-26",
-    "ST-27",
     "ST-28",
     "ST-29",
     "ST-30",
+    "ST-26",
+    "ST-24",
+    "ST-25",
+    "ST-27",
     "ST-09",
-    "ST-10"
+    "ST-10",
+    "ST-13",
+    "ST-14",
+    "ST-15",
+    "ST-11",
+    "ST-12"
   ],
   "open_escalations": {
     "ESC-EXEC-20261110-01": {
@@ -889,7 +1047,8 @@
     "2026-11-10 EPIC-03 ST-09 scope ruling (Product Owner, the user in session): converting DataTable/DashboardCard to app-raised (white in light) exposed dark-only content in shell consumers outside the 4 AC pages (TradeHistoryTable journal/debrief rows - broke SC-DBF-06a light axe; WeeklyDigest table; the 9 Dashboard cards in populated states). Options offered: fix all shell consumers / fix Trade History only + P2 backlog item / escalate to Head of UX. Ruling: fix all shell consumers in ST-09 with explicit light/dark pairs and add light axe coverage; recorded as a scope note, not a new story. Design record section 5 ('do not widen the shell list') is respected: no new shells are tokenised.",
     "2026-11-10 EPIC-03 agent-mediated DoQ + Head of UX & Design review pass 1 (§5.3): both Blocked. DoQ-1/UX-1: ST-10 put text-app-fg on 10 inputs inside containers dark in both themes (Trade Entry card TradeEntry.js:499, PositionModal and ExitModal DialogContent) - light typed text ~1.1:1; SC-ITC-02's helper ignored background-image so measured the page, not the card. DoQ-2: positions baselines not regenerated (still show the pre-ST-09 defect). DoQ-3/UX-2: PlanVsReality AdherenceBadge 700 shades on /20 tints 4.15-4.37:1. Product Owner ruling (the user in session): theme the containers - give the Trade Entry card and both modals light/dark pairs so text-app-fg is correct as specified.",
     "2026-11-10 EPIC-03 Product Owner ruling (the user in session): DashboardCard label as text-app-fg (design_system.md v1.25 rule 5) accepted as built; label/figure hierarchy question filed as BLG-UX-10 for Head of UX & Design and Head of Specs Team (product_owner.md §4/§9: PO states intent, does not amend the spec).",
-    "2026-11-11 STEP 4 EPIC-03: PR #2232 merged by the human repository owner (holds the Director of Quality and Product Owner roles) at 2026-11-11T08:02:52Z (merge commit 977fb22f) after the human Director of Quality sign-off and Product Owner acceptance were recorded (be3501f8, PR comment). The engine's own gh pr merge attempt was refused by the required-review branch policy; --admin was not used. Orphaned post-merge commit check: git log origin/main..origin/exec/2026-11-06__release-v9.16/EPIC-03 lists nothing. Sibling sync (3c): EPIC-04 has no branch yet, so there is nothing to sync."
+    "2026-11-11 STEP 4 EPIC-03: PR #2232 merged by the human repository owner (holds the Director of Quality and Product Owner roles) at 2026-11-11T08:02:52Z (merge commit 977fb22f) after the human Director of Quality sign-off and Product Owner acceptance were recorded (be3501f8, PR comment). The engine's own gh pr merge attempt was refused by the required-review branch policy; --admin was not used. Orphaned post-merge commit check: git log origin/main..origin/exec/2026-11-06__release-v9.16/EPIC-03 lists nothing. Sibling sync (3c): EPIC-04 has no branch yet, so there is nothing to sync.",
+    "2026-11-11 EPIC-04 ST-14: the v9.15/v9.16 plans dated DS-36's production deploy to 2026-11-02 (the v9.14 EPIC-05 merge, PR #2139). DS-36 shipped with v9.13 EPIC-05 (PR #2075, merged 2026-10-28) and production recorded screener durations from 2026-10-29, so ST-14's gate cleared on 2026-11-11 rather than ~2026-11-12 and ST-13's measurement window was a later week than planned. Recorded in api_performance_baseline.md §53.2 and data_pipeline_cost_baseline.md §4. Candidate lesson for Phase 3: when a conditional gate is dated from a deploy, cite the PR that shipped the dependency, not a nearby merge date."
   ],
   "sealed": false,
   "sealed_utc": null

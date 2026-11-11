@@ -22,6 +22,10 @@ sys.path.insert(0, str(Path(__file__).parent.parent / "scripts"))
 import staging_smoke_test as smoke  # noqa: E402
 import pytest  # noqa: E402
 
+# The autouse fixture below patches check_host_is_staging_backend; keep the
+# real function for the ST-15 tests at the end of this file.
+_real_host_check = smoke.check_host_is_staging_backend
+
 
 @pytest.fixture(autouse=True)
 def _host_check_passes():
@@ -320,3 +324,49 @@ class TestStaleCheckTarget:
             import pytest
             pytest.skip("commit 1639c956 not in this checkout's history")
         assert not smoke.latest_deploy_commit("1639c956").startswith("1639c956")
+
+
+class TestHostCheckMissingServiceId:
+    """ST-15 (BLG-OPS-199, EPIC-04, v9.16): a GET /health/detailed response
+    without render_service_id fails the smoke test, and the expected
+    service ID has one definition in the repo (STAGING_SERVICES)."""
+
+    def _check(self, body):
+        import json as _json
+        with patch.object(smoke, "_request", return_value=(200, _json.dumps(body).encode())):
+            return _real_host_check("http://staging", "k")
+
+    @pytest.mark.parametrize("body", [
+        {"status": "ok", "deployed_commit_sha": "abc"},
+        {"status": "ok", "render_service_id": None},
+        {"status": "ok", "render_service_id": ""},
+    ])
+    def test_missing_render_service_id_is_a_failure(self, body):
+        result = self._check(body)
+        assert result.startswith("UNIDENTIFIED STAGING HOST")
+        assert not result.startswith("known limit:")
+
+    def test_main_exits_1_when_render_service_id_is_missing(self, monkeypatch):
+        monkeypatch.setenv("STAGING_API_URL", "http://staging")
+        monkeypatch.delenv("EXPECTED_COMMIT_SHA", raising=False)
+        with patch.object(smoke, "_wake_up", return_value=True), \
+             patch.object(smoke, "run_checks", return_value=[]), \
+             patch.object(smoke, "check_host_is_staging_backend", side_effect=self._missing_field_check):
+            assert smoke.main() == 1
+
+    def _missing_field_check(self, base_url, api_key):
+        return self._check({"status": "ok"})
+
+    def test_expected_service_id_comes_from_staging_services(self):
+        import check_staging_deploy_drift
+        assert smoke.STAGING_BACKEND_SERVICE_ID == \
+            check_staging_deploy_drift.STAGING_SERVICES["trading-assistant-api-staging"]
+
+    def test_expected_service_id_has_one_definition_in_the_repo(self):
+        """The literal service ID appears in exactly one Python file under
+        scripts/ (check_staging_deploy_drift.py's STAGING_SERVICES)."""
+        sid = smoke.STAGING_BACKEND_SERVICE_ID
+        scripts_dir = Path(__file__).parent.parent / "scripts"
+        holders = [p.name for p in scripts_dir.glob("*.py") if sid in p.read_text()]
+        assert holders == ["check_staging_deploy_drift.py"]
+

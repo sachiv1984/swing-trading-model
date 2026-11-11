@@ -1,8 +1,8 @@
 **Owner:** Infrastructure & Operations Owner
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Version:** 1.0
-**Last Updated:** 2026-10-27 (created; weekly call volumes pending the first full week of attribution data)
+**Version:** 1.1
+**Last Updated:** 2026-11-11 (ST-13, EPIC-04, v9.16, BLG-OPS-197 — §4 weekly calls and failures recorded from one production report; §6 volume line ticked); prior — 2026-10-27 (created; weekly call volumes pending the first full week of attribution data)
 **Source:** ST-30 (`BLG-OPS-18`), EPIC-05, cycle `2026-10-16__release-v9.13`
 
 # Data Pipeline Cost Baseline
@@ -38,11 +38,15 @@ Before v9.13 only Alpaca bar calls were counted (`service = 'alpaca'`, `GET /ops
 
 | Source | Calls per week | Failures per week | Cost per week |
 |--------|---------------|-------------------|---------------|
-| Alpaca data (`alpaca_data`) | Pending | Pending | $0.00 |
-| Alpaca news (`alpaca_news`) | Pending | Pending | $0.00 |
-| Alpaca paper (`alpaca_paper`) | Pending | Pending | $0.00 |
-| Yahoo Finance (`yahoo`) | Pending | Pending | $0.00 |
-| **Combined** | **Pending** | **Pending** | **$0.00** |
+| Alpaca data (`alpaca_data`) | 2,616 | 0 | $0.00 |
+| Alpaca news (`alpaca_news`) | 1 | 0 | $0.00 |
+| Alpaca paper (`alpaca_paper`) | 0 | 0 | $0.00 |
+| Yahoo Finance (`yahoo`) | 4,488 | 665 | $0.00 |
+| **Combined** | **7,105** | **665** | **$0.00** |
+
+**Recorded:** 2026-11-11, from one production `GET /ops/api-call-attribution?window=weekly` report (the last 7 days, about 2026-11-04 to 2026-11-11), supplied by the user (Infrastructure & Operations Owner) in session (ST-13, EPIC-04, v9.16, `DEL-20261111-02`; closes `DEL-20261027-06`). `top_contributors`: `POST /screener/run` (3,074 calls: 2,535 Alpaca data, 539 Yahoo; 13 failures), `POST /signals/generate` (3,035 Yahoo; 0 failures), `GET /earnings/{ticker}` (427 Yahoo; 373 failures). No call was made to `alpaca_paper`, `alpaca_trading`, `twelve_data` or `stooq` in the window. DS-36 reached production with v9.13 EPIC-05 (merged 2026-10-28), not on 2026-11-02 as planning assumed (see `api_performance_baseline.md` §53.2 window note), so this is a later week than the first full one, and all of it is after DS-36 shipped.
+
+**Failures in this baseline.** All 665 failures are Yahoo calls, and 652 of them come from four on-demand features: `GET /earnings/{ticker}` (373 of 427), `GET /positions` (201 of 331), `GET /positions/{position_id}/gap-risk` (57 of 64) and `GET /research/{ticker}` (21 of 24). The nightly jobs fail rarely (screener 13 of 3,074; signal generation, stop update and alerts 0). This is the measured state, not an expected one. It is tracked by `BLG-OPS-217`. While it stands, §5's failure rule (more than 2× baseline) only fires at about 1,330 Yahoo failures a week.
 
 **Measurement window:** the first full 7 days of production data after the deploy that ships DS-36. The volumes are filled in from `GET /ops/api-call-attribution?window=weekly` run on production at the end of that week, with the date and the report's `top_contributors` recorded here. That measurement is delegated to the Infrastructure & Operations Owner (needs production API access).
 
@@ -63,7 +67,7 @@ The threshold is reviewed when a baseline is first recorded, and whenever the ac
 ## 6. Sign-Off
 
 - [x] Combined cost baseline across Alpaca, Yahoo Finance and the news API: $0.00 per week, with the basis for each source (§2)
-- [ ] Weekly call-volume baseline per source: pending one week of production attribution data (§4, delegated)
+- [x] Weekly call-volume baseline per source: recorded 2026-11-11 from one production weekly report (§4; ST-13, v9.16)
 - [x] Advisory threshold defined: more than 2× baseline volume, cost or failures (§5)
 - [x] Gate (`BLG-OPS-17`) verified at Release Planning 2026-10-16
 - Prepared by: Sprint Execution Engine (ST-30)
