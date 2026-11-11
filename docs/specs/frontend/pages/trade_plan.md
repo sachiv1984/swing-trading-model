@@ -1,8 +1,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 1.24
-**Last Updated:** 2026-11-11 (post-ship closure `2026-11-06__release-v9.16` STEP 5 — §Known Deviations: `DEV-v9.16-ST27-01` added for the pre-existing §5a.3 Stop Level pre-fill gap, `BLG-FE-282`; deviation compliance only); prior — 2026-11-11 (ST-12, EPIC-04, v9.16, BLG-OPS-213 — §Known Deviations: DEV-v9.16-ST12-01, §5b `HAS_AI` gate removed; deviation documentation only, tracked by BLG-SPEC-229); prior — 2026-11-09 (ST-07, EPIC-02, v9.16, BLG-FE-255 — §5a.1: a missing or dismissed `signal_id` signal falls back to the watchlisted lookup, as a failed fetch does; clarification, edited on user direction); prior history retained — see prior entries in version control
+**Version:** 1.25
+**Last Updated:** 2026-11-11 (v9.17 design gate — ST-07/BLG-FE-263: new §5g Section Index; ST-12/BLG-FE-278: §5e acknowledgement resets when the check result changes; ST-14/BLG-FE-282: §5a.3 stop pre-fill restated and §5f stored-stop line); prior — 2026-11-11 (post-ship closure `2026-11-06__release-v9.16` STEP 5 — §Known Deviations: `DEV-v9.16-ST27-01` added for the pre-existing §5a.3 Stop Level pre-fill gap, `BLG-FE-282`; deviation compliance only); prior — 2026-11-11 (ST-12, EPIC-04, v9.16, BLG-OPS-213 — §Known Deviations: DEV-v9.16-ST12-01, §5b `HAS_AI` gate removed; deviation documentation only, tracked by BLG-SPEC-229); prior history retained — see prior entries in version control
 **Design Source (v1.22 snapshot, Plan this, suggested size):** docs/design/2026-11-06__release-v9.16/plan-linked-pre-entry-checks/decision_record.md, docs/design/2026-11-06__release-v9.16/signal-to-plan-flow/decision_record.md
 **Design Source (v1.16 setup_type copy fix):** docs/design/2026-09-23__release-v9.7/trade-plan-clone-setup-type/decision_record.md
 **Design Source (v1.15 clone as new plan):** docs/design/2026-09-21__release-v9.6/trade-plan-clone/decision_record.md
@@ -236,6 +236,7 @@ On initial form load (new trade plan from signal context):
 
 - **`setup_thesis`** pre-filled with: `"Rank {N} {market} momentum candidate. {momentum context.} Price {above/below} 200-day MA by {x.x}%. Regime {on/off}."` (user-editable; corrected from a stale `risk_reward_notes` reference — no such field exists in `src/pages/TradePlan.js`, confirmed via grep)
 - **Stop Level** pre-filled with suggested stop: `entry_price − (5 × atr)` (user-editable; not overwritten if already set)
+  - *v1.25 (ST-14, BLG-FE-282) — precise rule:* Planned Stop Price is filled with the value the Signal Context panel shows as "Suggested stop", from one shared helper `getSuggestedStop(signal)` (the signal's `initial_stop`, else `current_price − INITIAL_ATR_MULTIPLIER × atr_value`), rounded to 2 dp in the plan currency. It applies to both linked-signal routes ("Plan this" `signal_id` and the watchlisted lookup). Once the user has typed in the field (including clearing it), it is never overwritten, and a later entry-price change does not move it. Design source: `docs/design/2026-11-11__release-v9.17/trade-plan-found-defects/decision_record.md` §4.1.
 
 Pre-population does not apply in edit mode. Existing user-set values are never overwritten.
 
@@ -341,6 +342,13 @@ If the panel has no result (shares not entered, still loading, or endpoint error
 
 The Trade Plan acknowledgement stays advisory. It does not disable Save.
 
+**Acknowledgement reset (v1.25 — ST-12, BLG-FE-278).** Design source: `docs/design/2026-11-11__release-v9.17/trade-plan-found-defects/decision_record.md` §2.
+
+- The **result key** is `advisory_status` plus the set of `{rule, status}` pairs in `checks` (not `detail`, not `captured_at`).
+- When the key changes and the new status is `warn` or `fail`, the box is unticked and a note shows under it: "The check results changed. Review them and tick again to acknowledge." (`text-xs text-app-warning`, `data-testid="acknowledgement-reset-note"`) until the box is ticked or the result returns to `pass`. On `pass` the box is hidden and saved as `false`.
+- On edit, the stored acknowledgement shows only if the first result's key equals the stored snapshot's key; otherwise the box starts unticked with the note.
+- Storage: option (a) clear `pre_entry_override_acknowledged` on change, or (b) write `acknowledged` inside `pre_entry_validation_snapshot` (top-level flag mirrors it; a snapshot without it counts as not acknowledged). The Strategy Rules & System Intent Owner records the choice before the sprint seals (RISK-05); the implementing story deletes the unused option from this section.
+
 ## 5f. Suggested Size Before Shares
 
 *Added v1.22 (ST-08, BLG-FE-256).*
@@ -365,7 +373,27 @@ The Trade Plan acknowledgement stays advisory. It does not disable Save.
 
 **Pre-fill:** on a valid, cash-sufficient result, Planned Shares is set to `suggested_shares`, floored to whole shares, as long as the user has not typed in it. After the user edits it, the line stays but stops writing. In edit mode a stored `planned_quantity` counts as typed. When the field's value differs from the suggestion, a **"Use suggested size"** button under the line copies the suggestion in.
 
+**Stored-stop line (v1.25 — ST-14, BLG-FE-282).** The §5 stop for the plan is Planned Entry Price − `INITIAL_ATR_MULTIPLIER` × the linked signal's `atr_value`. When both are known and Planned Stop Price differs from it by more than 0.005, a line under the suggested size line reads: "Trade Entry will store a stop of {§5 stop} (entry − 5×ATR, §5). The suggested size above uses your stop of {typed stop}." (`text-sm text-app-warning`, `data-testid="plan-stored-stop-note"`, values via `formatCurrency` in the plan currency). Absent when they match or no ATR is known. Advisory: it changes no field, does not resize, does not block Save. Design source: `docs/design/2026-11-11__release-v9.17/trade-plan-found-defects/decision_record.md` §4.2.
+
 §5d What-If Sizing Preview is unchanged.
+
+## 5g. Section Index
+
+*Added v1.25 (ST-07, BLG-FE-263).* **Design source:** `docs/design/2026-11-11__release-v9.17/long-page-section-index/decision_record.md`
+
+The create and edit form uses the shared `SectionIndex` (`src/components/ui/SectionIndex.js`): a sticky "On this page" column at `lg` and up, a sticky sideways-scrolling pill row below `lg`. Instant jump (no smooth scroll), focus moves to the section heading, `?section={id}` updated by replace and honoured on load, current section marked `aria-current` via `IntersectionObserver`. Fields are not reordered. Sections:
+
+| id | Label | Contents |
+|----|-------|----------|
+| `basics` | Basics | Ticker, Market, Status, R Target, Regime at Entry, Tags |
+| `setup` | Signal and setup | Signal Context (new plans), Setup Type, Setup Quality Score, News Context |
+| `entry` | Entry, stop and size | Planned Entry/Stop, suggested size and stored-stop lines, Planned Shares, Pre-Entry Validation |
+| `thesis` | Thesis | Setup Thesis and its AI controls (§5b) |
+| `rules` | Rules | Entry Rationale, Confirmation Criteria, Early Exit Conditions, Invalidation Condition |
+| `sizing` | What-if sizing | §5d |
+| `checklist` | Checklist | §6 Pre-Entry Checklist |
+
+A section with no rendered field is left out of the index. The list view and the read-only detail view have no index. `data-testid="section-index"`, links `section-link-{id}`.
 
 ---
 
@@ -725,6 +753,7 @@ User-initiated batch of the same manual mutations already available one plan at 
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.25 | 2026-11-11 | v9.17 design gate. (ST-07, BLG-FE-263) new §5g Section Index on the create and edit form (design source `docs/design/2026-11-11__release-v9.17/long-page-section-index/decision_record.md`). (ST-12, BLG-FE-278) §5e: the acknowledgement box unticks with a note when the result key (`advisory_status` and `{rule, status}` pairs) changes to WARN/FAIL; storage option (clear on change, or snapshot-bound) is the Strategy Rules & System Intent Owner's (RISK-05). (ST-14, BLG-FE-282) §5a.3 stop pre-fill uses the Signal Context panel's suggested-stop helper and never overwrites a typed value; §5f gains the stored-stop line. Design source `docs/design/2026-11-11__release-v9.17/trade-plan-found-defects/decision_record.md`. Approved: Head of UX & Design and Product Owner, 2026-11-11. |
 | 1.24 | 2026-11-11 | Post-ship closure `2026-11-06__release-v9.16` STEP 5 (deviation compliance only): Known Deviations row `DEV-v9.16-ST27-01` added for the pre-existing §5a.3 Stop Level pre-fill gap found by ST-27 and tracked by `BLG-FE-282` (P2, accepted). Routed from Delivery Verification §4. No requirement change. |
 | 1.23 | 2026-11-09 | ST-07 (EPIC-02, v9.16, BLG-FE-255). §5a.1: a `signal_id` whose signal is not found or is `dismissed` falls back to the watchlisted lookup, as a failed fetch already did, so the page behaves as the Screener path does. Clarification, no behaviour change. Recommended by the Frontend Specifications & UX Documentation Owner (agent-mediated, §5.3) after the EPIC-02 DoQ review; edited on user direction, 2026-11-09. |
 | 1.22 | 2026-11-06 | v9.16 design gate. (ST-05, EPIC-02, BLG-FE-271) new §5e: plan save sends a dated `pre_entry_validation_snapshot`, which the form never sent before. (ST-07, BLG-FE-255) §2 "Plan this" route parameters `entry_price` and `signal_id`, and §5a.1 `signal_id` presence. (ST-08, BLG-FE-256) new §5f: Entry and Stop move above Planned Shares, and a suggested-size line pre-fills shares until the user edits them. Design sources: `docs/design/2026-11-06__release-v9.16/plan-linked-pre-entry-checks/` and `…/signal-to-plan-flow/`. |

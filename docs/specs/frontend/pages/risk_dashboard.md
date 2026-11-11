@@ -1,8 +1,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Active
-**Version:** 0.1.15
-**Last Updated:** 2026-11-02 (ST-47, EPIC-07, v9.14, BLG-SPEC-189 — §5.1 and §6.1 name only fields `GET /portfolio` returns: `grace_period`, `display_status`); prior — 2026-10-29 (v9.14 design gate — ST-04/ST-05: new §2a FX Rate Source Notice; ST-08/BLG-FE-214: §6.6 stale marker focusable with an accessible description); prior — 2026-10-12 (v9.12 design gate — ST-22/BLG-FE-207: §5.2 Grace Period panel rows link to Positions; shipped text aligned to the spec; row layout described); prior history retained — see prior entries in version control
+**Version:** 0.1.16
+**Last Updated:** 2026-11-11 (v9.17 design gate — ST-04/BLG-FE-257: §5 Grace Period panel becomes a count and a link to the single grace view on Positions); prior — 2026-11-02 (ST-47, EPIC-07, v9.14, BLG-SPEC-189 — §5.1 and §6.1 name only fields `GET /portfolio` returns: `grace_period`, `display_status`); prior — 2026-10-29 (v9.14 design gate — ST-04/ST-05: new §2a FX Rate Source Notice; ST-08/BLG-FE-214: §6.6 stale marker focusable with an accessible description); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Design Source (v0.1.14):** docs/design/2026-10-29__release-v9.14/fx-rate-source-indicator/decision_record.md, docs/design/2026-10-29__release-v9.14/stale-price-marker/decision_record.md
 **Design Source (v0.1.12):** docs/design/2026-10-08__release-v9.11/risk-price-integrity/decision_record.md
@@ -137,6 +137,8 @@ Colour applies to: gauge fill, threshold label badge, card left-border accent.
 - **Fields:** `ticker`, `entry_date`, `grace_period`, `grace_days_remaining`, `holding_days`
 
 ### 5.2 Display
+
+> **v0.1.16 (ST-04, BLG-FE-257) — supersedes the row list below when ST-04 merges.** Grace detail lives only in `positions.md` §Grace Period View. This panel shows: the card heading; the count badge (unchanged); a line "Next ends in {n} day(s)" from the lowest `grace_days_remaining` ("Ends today" when it is 1, omitted when null); and a text link "View grace periods on Positions" → `/#/Positions?grace=open` (`data-testid="grace-panel-link"`, trailing `ChevronRight` as the v0.1.13 row link). No rows. §5.3 and §5.4 retire with the rows; §5.5's Empty, Loading and Error states stand, and Loaded renders the count, line and link. Design source: `docs/design/2026-11-11__release-v9.17/positions-decision-first/decision_record.md` §5.3.
 
 - Card heading: "Grace Period Positions"
 - Count badge: "N positions in grace period" where N is the count ("1 position in grace period" when N = 1)
@@ -458,6 +460,7 @@ The following deviations were identified at v1.8 sprint execution and accepted f
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.1.16 | 2026-11-11 | v9.17 design gate. (ST-04, BLG-FE-257) §5 Grace Period Status Panel: the per-position rows are removed; the panel shows its heading, the count badge, "Next ends in {n} day(s)" and a "View grace periods on Positions" link to `/Positions?grace=open` (`positions.md` v2.25 §Grace Period View, the only per-position grace detail). §5.3–§5.4 retire with the rows. §6 "Not enforced (grace)" cells unchanged. Design source: `docs/design/2026-11-11__release-v9.17/positions-decision-first/decision_record.md` §5.3. Approved: Head of UX & Design and Product Owner, 2026-11-11. |
 | 0.1.15 | 2026-11-02 | ST-47 (EPIC-07, v9.14, BLG-SPEC-189): §5.1 grace panel source is `grace_period = true`, not `status = "GRACE"` (a value `GET /portfolio` never returns); §6.1 states that `display_status` drives the State badge, with §6.2 State column and §6.3 header renamed to match. Wording only: matches the shipped `GracePeriodPanel.js` and `PositionRiskTable.js`, no behaviour change. Head of Specs Team confirmed. |
 | 0.1.14 | 2026-10-29 | v9.14 design gate. (ST-04/ST-05, BLG-BE-194/BLG-BE-169) new §2a FX Rate Source Notice under the heading when the FX rate is last-known or the fixed fallback. (ST-08, BLG-FE-214) §6.6 marker becomes a focusable button with the explanation as its accessible description and a hover/focus/tap tooltip, new copy with a next step, and the light-theme amber pair. Design sources: `docs/design/2026-10-29__release-v9.14/fx-rate-source-indicator/decision_record.md`, `docs/design/2026-10-29__release-v9.14/stale-price-marker/decision_record.md`. Head of UX & Design sign-off: 2026-10-29. Product Owner approved: 2026-10-29. Head of Specs Team confirmed. |
 | 0.1.13 | 2026-10-12 | v9.12 design gate. (ST-22, BLG-FE-207) §5.2: each grace row links to `/#/Positions?position={id}`; the heading, badge and `dd MMM yyyy` date format are aligned to this spec (the Product Owner kept the spec wording); the list-of-rows layout is described in place of "Table". Design source: `docs/design/2026-10-12__release-v9.12/grace-panel-position-link/decision_record.md`. Head of UX & Design sign-off: 2026-10-12. Product Owner approved: 2026-10-12. Head of Specs Team confirmed. |
