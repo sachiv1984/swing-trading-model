@@ -73,4 +73,7 @@ Last Updated: 2026-11-11
 - **Spec reference:** `docs/ops/api_performance_baseline.md` §53 Full Screener Run Benchmark; `stage4_backlog_slice.md#ST-14`
 - **Unblock criteria:** script output with exit 0 supplied in session or in this record, or a dated statement that 10 qualifying runs will not exist in-sprint (ST-14 is then returned at close).
 - **Commit format required:** `[EPIC-04][ST-14] <description>` (engine records the values)
-- **Status:** Pending
+- **Result (supplied in session by the user, 2026-11-11):** `screener_run_benchmark.py` against production, exit 0: 10 qualifying runs, `min_tickers` 545, p50 237.6 s, p95 249.2 s, threshold 356.4 s, runs 2026-10-29T01:30:20Z to 2026-11-11T01:41:56Z. Recorded in `api_performance_baseline.md` v2.44 §53.2 (`ae785cfe`). 3 runs predate 2026-11-02; DS-36 actually reached production with v9.13 EPIC-05 (merged 2026-10-28), so they are kept (window note in §53.2). Closes `DEL-20261027-05` (v9.13 log, sealed; closure recorded here).
+- **Sign-off:** sign_off_cleared — production benchmark output supplied by the user in session, 2026-11-11.
+- **Commit SHA:** ae785cfee003130f13555858b9a9aafe3381c396
+- **Status:** Unblocked (2026-11-11T08:40:47Z) — Unblocked in-session — production benchmark output, supplied by the user, same session as delegation.
