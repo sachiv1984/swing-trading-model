@@ -39,6 +39,12 @@ render_service_id must equal STAGING_BACKEND_SERVICE_ID. Until 2026-10-15
 the secret pointed at an unidentified host, which the commit check above
 could not tell apart from a stale deploy. See check_host_is_staging_backend().
 
+ST-15 (BLG-OPS-199, EPIC-04, v9.16): a /health/detailed response with no
+render_service_id now fails the host check. It was a warning while hosts
+from before v9.13 could still be live; BLG-OPS-196 has since shown the
+field on staging. The expected ID is read from check_staging_deploy_drift's
+STAGING_SERVICES, its one definition in the repo.
+
 Exit code: 0 if all checks pass, 1 if any fails (same convention as
 scripts/check_api_performance_baseline_drift.py /
 scripts/check_deploy_path_filter_drift.py).
@@ -51,6 +57,9 @@ import time
 import urllib.error
 import urllib.request
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from check_staging_deploy_drift import STAGING_SERVICES  # noqa: E402
 
 # Render free-tier services spin down after inactivity and take ~30-60s to
 # cold-start on the next request (same constraint class as
@@ -230,14 +239,13 @@ def check_deployed_commit(base_url: str, api_key: str, expected_sha: str) -> str
     return ""
 
 
-STAGING_BACKEND_SERVICE_ID = "srv-d6rtdg94tr6s73ce2j6g"
+STAGING_BACKEND_SERVICE_ID = STAGING_SERVICES["trading-assistant-api-staging"]
 
 
 def check_host_is_staging_backend(base_url: str, api_key: str) -> str:
     """Confirm GET /health/detailed's render_service_id is the staging
-    backend's Render service ID. Returns a failure description, "" when it
-    matches, or a "known limit:" message when the host does not report the
-    field (a deploy from before v9.13), which the caller treats as a warning."""
+    backend's Render service ID. Returns "" when it matches, otherwise a
+    failure description, including when the field is null or missing."""
     try:
         status, body = _request(f"{base_url}/health/detailed", api_key=api_key, timeout=30)
     except (urllib.error.HTTPError, urllib.error.URLError, OSError, TimeoutError) as e:
@@ -249,8 +257,10 @@ def check_host_is_staging_backend(base_url: str, api_key: str) -> str:
     except (json.JSONDecodeError, AttributeError):
         return "GET /health/detailed: could not check the host's Render service — response is not a JSON object"
     if not service_id:
-        return ("known limit: GET /health/detailed did not report render_service_id (null/missing) -- "
-                "cannot confirm STAGING_API_URL is the staging backend until it runs v9.13 or later")
+        return (f"UNIDENTIFIED STAGING HOST: GET /health/detailed on {base_url} did not report "
+                f"render_service_id (null/missing), so STAGING_API_URL cannot be confirmed as the "
+                f"staging backend {STAGING_BACKEND_SERVICE_ID!r} -- check the host runs v9.13 or later "
+                f"and has RENDER_SERVICE_ID set (docs/ops/staging_deploy_notes.md §4)")
     if service_id != STAGING_BACKEND_SERVICE_ID:
         return (f"WRONG STAGING HOST: STAGING_API_URL ({base_url}) is served by Render service "
                 f"{service_id!r}, not the staging backend {STAGING_BACKEND_SERVICE_ID!r} -- "
@@ -276,9 +286,7 @@ def main() -> int:
     failures = run_checks(base_url, api_key)
 
     host_check_result = check_host_is_staging_backend(base_url, api_key)
-    if host_check_result.startswith("known limit:"):
-        print(f"::warning::{host_check_result}")
-    elif host_check_result:
+    if host_check_result:
         failures.append(host_check_result)
     else:
         print(f"  ✓ {base_url} is the staging backend ({STAGING_BACKEND_SERVICE_ID})")

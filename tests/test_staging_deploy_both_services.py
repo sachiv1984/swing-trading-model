@@ -26,14 +26,16 @@ import yaml
 
 sys.path.insert(0, str(Path(__file__).parent.parent / "scripts"))
 
+import check_staging_deploy_drift  # noqa: E402
 import staging_smoke_test as smoke  # noqa: E402
 import trigger_staging_deploy as trig  # noqa: E402
 import wait_for_staging_deploy_live as waiter  # noqa: E402
 
 BACKEND = "trading-assistant-api-staging"
 FRONTEND = "trading-assistant-staging"
-BACKEND_ID = "srv-d6rtdg94tr6s73ce2j6g"
-FRONTEND_ID = "srv-d6rtdg94tr6s73ce2j60"
+# ST-15 (BLG-OPS-199, v9.16): read from the one definition in the repo.
+BACKEND_ID = check_staging_deploy_drift.STAGING_SERVICES[BACKEND]
+FRONTEND_ID = check_staging_deploy_drift.STAGING_SERVICES[FRONTEND]
 
 
 def _workflow():
@@ -221,8 +223,9 @@ class TestSmokeHostCheck:
     def test_frontend_service_fails(self):
         assert self._check({"render_service_id": FRONTEND_ID}).startswith("WRONG STAGING HOST")
 
-    def test_missing_field_is_a_known_limit_warning(self):
-        assert self._check({"deployed_commit_sha": "abc"}).startswith("known limit:")
+    def test_missing_field_fails(self):
+        # ST-15 (BLG-OPS-199, v9.16): a failure, no longer a known-limit warning.
+        assert self._check({"deployed_commit_sha": "abc"}).startswith("UNIDENTIFIED STAGING HOST")
 
     def test_main_fails_on_wrong_host(self, monkeypatch):
         monkeypatch.setenv("STAGING_API_URL", "http://staging")
