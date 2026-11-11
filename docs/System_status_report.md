@@ -2,14 +2,14 @@
 **Class:** Living Document (Class 3)
 **Status:** Active
 **Version:** 4.59
-**Last Updated:** 2026-11-11 (sprint close 2026-11-06__release-v9.16 — new Sprint section added, no other corrections); prior — 2026-11-06 (delivery verification 2026-11-03__release-v9.15 — status line updated Sprint_Complete → Verified_with_deviations, STEP 6 reconciliation, EPIC-01 row marks the P2 found gap BLG-FE-271 as accepted post-merge); prior — 2026-11-06 (sprint close 2026-11-03__release-v9.15 — new Sprint section added, no other corrections); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-11-11 (delivery verification 2026-11-06__release-v9.16 — status line updated Sprint_Complete → Verified_with_deviations, STEP 6 reconciliation, no other corrections); prior — 2026-11-11 (sprint close 2026-11-06__release-v9.16 — new Sprint section added, no other corrections); prior — 2026-11-06 (delivery verification 2026-11-03__release-v9.15 — status line updated Sprint_Complete → Verified_with_deviations, STEP 6 reconciliation, EPIC-01 row marks the P2 found gap BLG-FE-271 as accepted post-merge); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
 
 ## Sprint: 2026-11-06__release-v9.16
 **Date:** 2026-11-11
-**Status:** Sprint_Complete — pending verification
+**Status:** Verified_with_deviations — 2026-11-11
 
 ### Capabilities now live (merged this sprint)
 

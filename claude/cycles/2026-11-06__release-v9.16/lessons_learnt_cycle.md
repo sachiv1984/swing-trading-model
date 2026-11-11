@@ -59,3 +59,35 @@ Items: 4
 | 2 | Met but not bannered: `BLG-OPS-215`, `BLG-OPS-218` (post-merge, met 2026-11-11), `BLG-OPS-197`, `BLG-OPS-198` (met by ST-13, ST-14), plus the source items of the 30 shipped stories | Banner them at post-ship closure STEP 3.1, and leave them out of v9.17 candidate selection | Post-Ship Closure |
 | 3 | `BLG-GOV-414` (ST-28 AC 2) is due at the first `groom backlog` after ST-28 merged | Run it at the next `groom backlog`. Do not re-grade ST-28 | Backlog Management |
 | 4 | DS-36 reached production on 2026-10-28 (PR #2075), not 2026-11-02 | Use the corrected date in any later DS-36-gated planning (friction item 4) | Release Planning |
+
+## Phase 4
+
+**Phase:** Delivery Verification
+**Cycle:** 2026-11-06__release-v9.16
+**Section anchor:** `## Phase 4` (stable — cycle_id in field above, not in header)
+**Filed:** 2026-11-11
+**Reviewed by:** PMO Lead
+**Invocation context:** invoking_routine `delivery_verification_prompt.md` (STEP 8.5); cycle_id `2026-11-06__release-v9.16`; phase Phase 4; prior_cycle_id `2026-11-03__release-v9.15`.
+**Prior cycle checked:** 2026-11-03__release-v9.15 (`lessons_learnt_cycle.md` `## Phase 4`). It filed 2 friction items. Each was re-checked against `prompt_change_log.md` and `closure_record.md` as of this run (BLG-GOV-312, LL-v9.1-Closure-01):
+1. **`LL-v9.15-P4-01`: STEP 1 did not name `deferred_at_planning`.** **Applied:** `delivery_verification_prompt.md` v3.16→v3.17 (`prompt_change_log.md` 2026-11-06; `2026-11-03__release-v9.15` `closure_record.md` line 75). STEP 1 now names it. No slice item was deferred at planning this cycle, so it was not exercised. **Resolved; not a recurrence.**
+2. **`LL-v9.15-P4-02`: a P1/P2 found defect reached verification without a PO + DoQ acceptance record.** **Applied:** `execution_prompt.md` v3.93 (`closure_record.md` line 76). It worked live: the sprint-close check caught `BLG-FE-281`, `BLG-FE-282` and `BLG-OPS-217`, and the user accepted all three at close (2026-11-11T15:13:05Z). As a result, this run found every open P2 with an acceptance and a rationale already recorded, and did not have to stop at §9. The scope gap (the check runs at close, not at merge) is already Phase 3 friction item 5. **Resolved; not a recurrence.**
+
+| friction_item | phase | type | classification | action | owner | target_date |
+|---------------|-------|------|----------------|--------|-------|-------------|
+| **Post-merge AC met before verification has no named disposition.** ST-12 AC 3 was moved post-merge by the PO at the merge gate, not at seal, so it is graded `Pass_with_deviation` (STEP 2.1, LL-v9.13-P3-03). Its tracker `BLG-OPS-218` was met on 2026-11-11, before this run. STEP 2.1 and STEP 3 do not say how to register a `Pass_with_deviation` gap that is fully closed by verification time. The LL-v8.6-P4-03 Resolved-deviation carve-out covers `DEV-*` records with `Status: Resolved`, not QA-evidence-only gaps. This run recorded it as "Resolved post-merge" by analogy. **Blast radius:** one AC this cycle. Severity was P3, so the outcome did not change, but a P1/P2-severity gap in the same shape would leave it unclear whether §7 acceptance is still required. Recovery cost: one written interpretation. Propagation: any cycle where a merge-gate post-merge AC is met before verification. Classification: Type B — Semantic Mismatch: The same concept was named or interpreted differently across documents or roles | Phase 4 | B | defer | **Deferred patch:** File `claude/system/delivery_verification_prompt.md`, section STEP 2.1, `Pass_with_deviation` paragraph. After the "Seal-marked post-merge ACs" sentence, add: "A `Pass_with_deviation` gap whose tracking item is met, with a dated record in the QA evidence log, before this run is entered in the Deviation Register as `Resolved post-merge`. It keeps its grade. The LL-v8.6-P4-03 carve-out applies to it on the same terms: no §7 acceptance is required whatever its severity, provided the met record is dated before this run." | Head of Specs Team | 2026-11-06__release-v9.16 post-ship closure |
+
+**What worked well:**
+- Every preflight gate passed on the first invocation, for the fifth cycle running. All seven QA evidence logs were signed, dated and carried `## Merge Gate Confirmations`. The readiness statement was all `Yes`, and GitHub confirmed all seven PRs `MERGED` at their recorded times.
+- `sprint_close.md`'s deviation tables mapped one-to-one onto the §4 register: three `DEV-*` records, four `Pass_with_deviation` grades, and the found-defect rows under `Pass` grades with tracking-item priorities. No severity call needed reworking.
+- All three `DEV-*` records already had complete Known Deviations entries with the correct backlog references. Nothing was routed to Post-Ship Closure STEP 5 for a missing entry.
+- All 34 `test_scenarios` references resolved on disk and were cited in the QA evidence. No TSG rows.
+- No backlog entries had to be added this run. Every outstanding item already had one.
+
+**Recurrence Notes:**
+None against the prior cycle. Both v9.15 Phase 4 rows are dispositioned **Applied** above (AUD-2026-10-08-004 row-completeness). The friction item this cycle is new: no patch in the last 3 cycles targeted STEP 2.1's handling of a post-merge gap met before verification.
+
+Severity calls were not contested. The DoQ sign-offs, `sprint_close.md` and this run agree on P3 for the three `DEV-*` records and on P2 for the five found defects. The user, acting as Director of Quality and Product Owner, gave the §9 sign-off in one step (2026-11-11). The pre-seal gate (LL-v2.4-DV-01) held: the §9 dates were filled only after that decision.
+
+### Phase 4 Recurrence Escalations
+
+None.
