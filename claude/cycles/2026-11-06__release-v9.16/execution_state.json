@@ -6,7 +6,7 @@
   "invoked_utc": "2026-11-09T09:15:14Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-11T11:44:13Z",
+  "last_updated_utc": "2026-11-11T11:55:00Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-02",
@@ -948,6 +948,13 @@
           "sign_off_record": null,
           "notes": "AC 1 (a /health/detailed response without render_service_id fails the smoke test): TestHostCheckMissingServiceId (missing/null/empty -> UNIDENTIFIED STAGING HOST; main() exits 1) and test_staging_deploy_both_services.py::test_missing_field_fails. AC 2 (expected service ID has one definition): staging_smoke_test.py reads STAGING_SERVICES from check_staging_deploy_drift.py; test_expected_service_id_has_one_definition_in_the_repo asserts the literal lives in one scripts/ file; tests read it from STAGING_SERVICES. Not changed: .github/workflows/render-si05-log-query.yml sets SERVICE_ID for its Render log query (a different consumer, YAML that cannot import STAGING_SERVICES). Mutation check: 6 tests fail against the previous script. Deviation check: none - docs/ops/staging_deploy_notes.md v1.6 §4 updated in the same commit. CI on 324eae36: all 7 workflows success (CI Pytest Suite 42984744161, Critical-Path Smoke 42984744329); also green on 596c427c (CI Pytest 42985198198)."
         }
+      },
+      "sign_off_record": {
+        "role": "Director of Quality",
+        "method": "agent_mediated",
+        "status": "cleared",
+        "date": "2026-11-11",
+        "notes": "Pass 1 Approved with comments (5 non-blocking). PR #2233 review DoQ/PO Approved with Comments (comment 6795099417); follow-ups BLG-FE-287, BLG-QA-261, BLG-OPS-219. Human DoQ and PO acceptance given in session 2026-11-11T11:54:34Z, before merge."
       }
     }
   },

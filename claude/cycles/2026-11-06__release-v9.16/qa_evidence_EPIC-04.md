@@ -108,3 +108,17 @@ ST-12 changes `src/pages/TradePlan.js`, so the gate applies and the autonomous D
   **Frontend gate:** ST-12 AC 4 observed passing in real GitHub Actions CI (SC-TP-23a–f, run 42985197871, `596c427c`). No AC is "code review only".
 
   **Post-open CI-fix restatement:** not applicable; no PR is open yet.
+
+## Merge Gate Confirmations
+
+- **Director of Quality QA sign-off:** given by the human repository owner, acting as Director of Quality, in session at 2026-11-11T11:54:34Z ("give DoQ and PO acceptance"), before the merge. It accepts:
+  - this evidence: ST-11, ST-13, ST-14 and ST-15 Pass; ST-12 Pass_with_deviation (`BLG-OPS-218`, `DEV-v9.16-ST12-01`);
+  - the agent-mediated sign-off block above (pass 1 Approved with comments, 5 non-blocking findings);
+  - the agent-mediated PR #2233 review (comment 6795099417), DoQ ⚠️ Approved with Comments, no blocking finding, with follow-ups filed as `BLG-FE-287`, `BLG-QA-261` and `BLG-OPS-219`.
+
+  At the time of acceptance the PR head was `8f50c928`, with 21 checks passed, 29 pending, 5 skipped and no failures. The pending checks must be green before merge.
+- **Product Owner acceptance:** given by the human repository owner, acting as Product Owner, in the same instruction at 2026-11-11T11:54:34Z, before the merge. It accepts ST-11 to ST-15 against `stage4_backlog_slice.md`, read with `stage4_backlog_slice_addendum.md` § ST-12. That includes:
+  - the next rotation date of 2027-10-28, set two weeks ahead of the key's 2027-11-11 expiry;
+  - ST-12 AC 3 moving to after the merge (`BLG-OPS-218`).
+
+  Post-merge ACs: ST-12 AC 2 and the production half of AC 4 (`BLG-OPS-215`), and ST-12 AC 3 (`BLG-OPS-218`). Follow-ups: `BLG-OPS-217`, `BLG-SPEC-229`, `BLG-FE-287`, `BLG-QA-261`, `BLG-OPS-219`.
