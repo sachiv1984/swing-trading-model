@@ -6,7 +6,7 @@
   "invoked_utc": "2026-11-09T09:15:14Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-11T11:37:08Z",
+  "last_updated_utc": "2026-11-11T11:43:42Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-02",
@@ -806,11 +806,11 @@
     },
     "EPIC-04": {
       "title": "Anthropic Key Security & Operations Baselines",
-      "status": "in_progress",
+      "status": "done",
       "branch": "exec/2026-11-06__release-v9.16/EPIC-04",
       "pr_number": null,
       "pr_status": null,
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-11-06__release-v9.16/qa_evidence_EPIC-04.md",
       "test_scenarios": [
         "tests/test_staging_smoke_test.py",
