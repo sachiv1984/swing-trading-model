@@ -120,8 +120,6 @@ function NewsContextPanel({ ticker, market }) {
   );
 }
 
-const HAS_AI = !!process.env.REACT_APP_ANTHROPIC_API_KEY;
-
 function generateThesisTemplate({ setupType, ticker, market, signal, headlines }) {
   const parts = [];
   const setupLabel = setupType || "Technical";
@@ -1010,7 +1008,10 @@ export default function TradePlan() {
                 <Sparkles size={12} />
                 Generate thesis
               </button>
-              {HAS_AI && form.ticker && (
+              {/* ST-12 (BLG-OPS-213, v9.16): no client-side key check. The
+                  backend holds ANTHROPIC_API_KEY; POST /trade-plans/generate-plan
+                  answers available:false without it, and nothing changes. */}
+              {form.ticker && (
                 <button
                   type="button"
                   data-testid="improve-with-ai-btn"

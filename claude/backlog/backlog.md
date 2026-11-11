@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-10 (session — 5 new item(s) added: BLG-FE-285, BLG-OPS-216, BLG-FE-286, BLG-QA-260, BLG-UX-10; EPIC-03, v9.16); prior — 2026-11-10 (session — 2 new item(s) added: BLG-QA-258, BLG-QA-259; agent-mediated DoQ and PO review of PR #2231, EPIC-06, v9.16); prior — 2026-11-10 (session — 3 new item(s) added: BLG-FE-282, BLG-FE-283, BLG-FE-284; ST-27, EPIC-06, v9.16); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-11 (session — 1 new item added: BLG-SPEC-229; ST-12, EPIC-04, v9.16); prior — 2026-11-10 (session — 5 new item(s) added: BLG-FE-285, BLG-OPS-216, BLG-FE-286, BLG-QA-260, BLG-UX-10; EPIC-03, v9.16); prior — 2026-11-10 (session — 2 new item(s) added: BLG-QA-258, BLG-QA-259; agent-mediated DoQ and PO review of PR #2231, EPIC-06, v9.16); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -6294,6 +6294,27 @@ A fresh plan snapshot hides the Trade Entry pre-entry panel even when Trade Entr
 
 **Acceptance Criteria**
 - `position_form.md` §Pre-Entry Checks states the rule, with the owner's dated ruling
+
+---
+
+### BLG-SPEC-229 — trade_plan.md §5b: drop the `HAS_AI` gate from the "Improve with AI" description
+**Priority:** P3 (Low)
+**Type:** Spec Debt / Frontend
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** ST-12 (EPIC-04, `2026-11-06__release-v9.16`) deviation check — 2026-11-11; tracks `DEV-v9.16-ST12-01`
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+ST-12 (`BLG-OPS-213`) removed the client-side `HAS_AI` check (`!!process.env.REACT_APP_ANTHROPIC_API_KEY`) from `TradePlan.js`, so the public build no longer needs a key copy. "Improve with AI" now shows whenever a ticker is set; without a backend `ANTHROPIC_API_KEY`, `POST /trade-plans/generate-plan` answers `available: false` and the form is left unchanged. The design-gate addendum (`stage4_backlog_slice_addendum.md` §ST-12) approved this. `trade_plan.md` §5b still says the button is "shown only when `HAS_AI` and a ticker is set".
+
+**Scope**
+- Rewrite the §5b "Improve with AI" bullet: shown when a ticker is set; describe the `available: false` no-op
+- Mark `DEV-v9.16-ST12-01` resolved in §Known Deviations; version bump and changelog row
+
+**Acceptance Criteria**
+- `trade_plan.md` §5b no longer mentions `HAS_AI` and matches `src/pages/TradePlan.js`
+- `DEV-v9.16-ST12-01` reads Resolved with the fixing version
 
 ---
 
