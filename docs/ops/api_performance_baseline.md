@@ -2,8 +2,8 @@
 **Owner:** Infrastructure & Operations Owner
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Version:** 2.43
-**Date:** 2026-10-27
+**Version:** 2.44
+**Date:** 2026-11-11
 **Story:** ST-11 (BLG-OPS-05) — initial baseline; ST-06 (v2.5 EPIC-02) — outlier investigation; ST-01 (v2.7 EPIC-01) — Supavisor baseline re-run; ST-05 (v6.1 EPIC-02) — PATCH /trades/{id}/costs registration; ST-11 (v6.4 EPIC-03, BLG-OPS-82) — v6.3 endpoint registration; ST-04 (v6.5 EPIC-02, BLG-OPS-83) — v6.4 endpoint registration; ST-01 (v6.9 EPIC-01, BLG-FEAT-64) — GET /positions/{id}/compliance-recheck registration; ST-02 (v6.9 EPIC-02, BLG-FEAT-65) — GET /positions/{id}/gap-risk registration; ST-15 (v7.0 EPIC-03, BLG-FEAT-68) — PATCH /positions/{id}/mark-reviewed registration; ST-02 (v7.5 EPIC-02, BLG-FE-116) — GET/POST /price-alerts, DELETE /price-alerts/{id} registration; ST-03 (v7.5 EPIC-03, BLG-FE-117) — bulk actions toolbar endpoint registration; ST-04 (v7.5 EPIC-04, BLG-FE-118) — saved filters & daily P&L endpoint registration; ST-09 (v9.4 EPIC-03, BLG-OPS-151) — POST /ai/check-endpoint-anomalies registration; ST-09/ST-06 (v9.5 EPIC-02, BLG-OPS-156/BLG-OPS-153) — GET /positions/{id}, GET /ai/spend-trend-by-feature registration; ST-01b (v9.7 EPIC-01, BLG-FEAT-74) — POST /replay/run registration; ST-17 (v9.12 EPIC-03, BLG-BE-146) — GET /market/atr/{ticker} registration
 **Cycle:** 2026-03-31__release-v2.4 (baseline); 2026-04-05__release-v2.5 (ST-06 update); 2026-04-13__release-v2.7 (Supavisor re-run)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
@@ -2307,10 +2307,13 @@ Registered by: Sprint Execution Engine — 2026-10-27. Infrastructure & Operatio
 
 | Measure | Value | Runs | Window |
 |---------|-------|------|--------|
-| p50 duration | Pending: needs 10 qualifying runs after deploy | — | — |
-| p95 duration | Pending | — | — |
+| p50 duration | 237.6 s | 10 | 2026-10-29T01:30:20Z – 2026-11-11T01:41:56Z |
+| p95 duration | 249.2 s | 10 | same |
+| Regression threshold (1.5 × p50) | 356.4 s | — | — |
 
-The figures are filled in from the script's output once 10 nightly runs have recorded a duration (about two weeks of weekdays after the deploy that ships DS-36).
+**Recorded:** 2026-11-11, from `scripts/screener_run_benchmark.py` run against production by the user (Infrastructure & Operations Owner), exit 0: 10 qualifying runs, `min_tickers` 545 (90% of the largest run), the 10 weekday nightly `screener-refresh.yml` runs from 2026-10-28 to 2026-11-10 (UTC start times are a few hours after the 22:00 schedule) (ST-14, EPIC-04, v9.16, `DEL-20261111-03`; closes `DEL-20261027-05`).
+
+**Window note.** v9.15 and v9.16 planning dated DS-36's production deploy to 2026-11-02. That is the v9.14 EPIC-05 merge. DS-36 shipped with v9.13 EPIC-05 (merged 2026-10-28, PR #2075), and production recorded durations from the next nightly run. The one data-path change between the two dates (`alpaca_service.get_ohlcv_bars` gained an optional `start`, used only by the SPY regime fallback when Yahoo fails, v9.14 ST-02) does not change a normal run's duration. The tight spread (p95 within 5% of p50) shows no slower or faster early cluster, so all 10 runs are kept.
 
 ### 53.3 Regression Threshold
 
@@ -2321,10 +2324,10 @@ A full run is a **regression** when its `duration_seconds` is more than **1.5 ×
 ```
 ST-32 (v9.13 EPIC-05, BLG-OPS-23) — Screener Run Benchmark
 
-AC: full-universe run p50/p95 measured and filed. PENDING — instrumentation shipped (DS-36, scripts/screener_run_benchmark.py); live measurement delegated.
+AC: full-universe run p50/p95 measured and filed. PASS — p50 237.6 s, p95 249.2 s over 10 production runs (2026-10-29 to 2026-11-11), recorded 2026-11-11 (v9.16 ST-14, BLG-OPS-198).
 AC: regression threshold (>1.5x baseline duration) defined. PASS (§53.3)
 
-Registered by: Sprint Execution Engine — 2026-10-27. Infrastructure & Operations Owner measurement pending.
+Registered by: Sprint Execution Engine — 2026-10-27. Measured by: the user (Infrastructure & Operations Owner), production, 2026-11-11; recorded by Sprint Execution Engine (v9.16 ST-14).
 ```
 
 ---
@@ -2333,6 +2336,7 @@ Registered by: Sprint Execution Engine — 2026-10-27. Infrastructure & Operatio
 
 | Version | Date | Author | Change |
 |---------|------|--------|--------|
+| 2.44 | 2026-11-11 | Sprint Execution Engine | ST-14 (v9.16 EPIC-04, BLG-OPS-198): §53.2 filled from production — p50 237.6 s, p95 249.2 s, threshold 356.4 s over 10 runs (2026-10-29 to 2026-11-11); window note on the DS-36 deploy date; §53.4 p50/p95 AC PASS. |
 | 2.43 | 2026-10-27 | Sprint Execution Engine | ST-31 (v9.13 EPIC-05, BLG-OPS-19): §52 added — GET /ops/api-call-attribution registered pending live timing run. ST-32 (BLG-OPS-23): §53 added — full screener run benchmark method and the >1.5× regression threshold; p50/p95 pending live measurement. |
 | 2.42 | 2026-10-27 | Sprint Execution Engine | ST-22 (v9.13 EPIC-03, BLG-FE-208): §51 added — POST /ai/chat/{answer_id}/rating registered as a write-op exclusion (estimated). Required by the API Performance Baseline Drift Detection CI gate after `openapi.yaml` gained the path in the same commit. |
 | 2.41 | 2026-10-17 | Sprint Execution Engine | ST-10 (v9.13 EPIC-02, BLG-SPEC-188): §50 added — GET /positions/stop-freshness registered pending live timing run. Required by the API Performance Baseline Drift Detection CI gate after `openapi.yaml` gained the path in the same commit. |
