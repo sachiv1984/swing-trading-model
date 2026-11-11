@@ -1,7 +1,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-11-06 (groom backlog GROOM-20261106-01, post-ship closure 2026-11-03__release-v9.15 STEP 12 — 63 items archived: 45 v9.15 shipped items, BLG-GOV-185 (v9.14 ST-51, already met), 10 from the v9.15 Release Planning archive list (incl. BLG-GOV-400 and BLG-OPS-203, bannered this run), BLG-SPEC-217 (bannered this run), and 6 out-of-sprint governance patches (BLG-GOV-392/393/395/405/406/407)); prior — 2026-11-03 (groom backlog post-ship closure 2026-10-29__release-v9.14 — 56 items archived: 52 v9.14 shipped items, BLG-OPS-196, and BLG-GOV-142/BLG-GOV-360/BLG-SPEC-199 from the Release Planning archive list); prior — 2026-10-29 (groom backlog post-ship closure 2026-10-16__release-v9.13 — 41 items archived: 40 v9.13 shipped items and BLG-GOV-368, closed as met); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-11 (groom backlog GROOM-20261111-01, post-ship closure 2026-11-06__release-v9.16 STEP 12 — 35 items archived: 33 v9.16 items bannered at closure STEP 3, `BLG-GOV-414` (met) and `BLG-GOV-192` (already met)); prior — 2026-11-06 (groom backlog GROOM-20261106-01, post-ship closure 2026-11-03__release-v9.15 STEP 12 — 63 items archived: 45 v9.15 shipped items, BLG-GOV-185 (v9.14 ST-51, already met), 10 from the v9.15 Release Planning archive list (incl. BLG-GOV-400 and BLG-OPS-203, bannered this run), BLG-SPEC-217 (bannered this run), and 6 out-of-sprint governance patches (BLG-GOV-392/393/395/405/406/407)); prior — 2026-11-03 (groom backlog post-ship closure 2026-10-29__release-v9.14 — 56 items archived: 52 v9.14 shipped items, BLG-OPS-196, and BLG-GOV-142/BLG-GOV-360/BLG-SPEC-199 from the Release Planning archive list); prior history retained — see prior entries in version control
 
 # Backlog Archive — Momentum Trading Assistant
 
@@ -9,6 +9,1079 @@ Permanent record of completed and killed backlog items retired from `claude/back
 
 ---
 
+### BLG-FE-39 — Arc 2 user journey map
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3
+**Retired:** 2026-11-11
+**Shipped in:** v9.16
+**Evidence:** docs/product/changelog.md#v9.16; claude/cycles/2026-11-06__release-v9.16/verification_report.md; banner: ✅ COMPLETE — 2026-11-11 — cycle `2026-11-06__release-v9.16` (ST-27, EPIC-06) — PR #2231, commit 3875e325
+
+### BLG-FE-39 — Arc 2 user journey map
+**✅ COMPLETE — 2026-11-11 — cycle `2026-11-06__release-v9.16` (ST-27, EPIC-06) — PR #2231, commit 3875e325**
+**Priority:** P3 (Low)
+**Type:** Frontend / UX Design
+**Owner:** Head of UX & Design
+**Source:** IDEA-ux-design-20260421-01 — Promoted-Backlog cycle 2026-05-21__scheduled (DL-032)
+**Effort:** M (~1–2 days)
+**Provisional-Target:** Unscheduled
+
+**Gate note (2026-11-06):** (Release Planning `2026-11-06__release-v9.16`, §1.3a "gating item shipped — verify" disposition (a), in-place clearance per ST-45/`ESC-EXEC-20261102-01`, within the `ESC-CLOSE-20261007-01` bounds) Gate cleared. The removed gate read "PT-04 (Setup Quality Score) shipped.". Its whole condition is met: PT-04 (Setup Quality Score) shipped in v6.1 (2026-06-23; `current_roadmap.md` Arc 2 table, ✅ Shipped). AC 3 ("Gate condition verified by Product Owner before sprint planning") names the gate; it is not edited, and is restated in the v9.16 slice.
+
+**Problem**
+No end-to-end user journey map exists covering the full Arc 2 flow: Screener → Watchlist → Research View → Trade Plan → Execution. As Arc 2 ships its final features, a journey map would surface UX gaps, confirm feature sequencing, and establish the baseline for Arc 3 UX planning. Requires PT-04 to be shipped so the full flow is complete before mapping.
+
+**Scope**
+- User journey map covering screener discovery → trade plan creation → execution
+- Identify friction points and hand-off gaps between views
+- Produce design recommendation: maintain current or file targeted UX improvement items
+
+**Acceptance Criteria**
+- Journey map document produced
+- Friction points enumerated; any actionable items filed as backlog entries
+- Gate condition verified by Product Owner before sprint planning
+
+---
+
+### BLG-QA-21 — Arc 2 end-to-end QA protocol
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3
+**Retired:** 2026-11-11
+**Shipped in:** v9.16
+**Evidence:** docs/product/changelog.md#v9.16; claude/cycles/2026-11-06__release-v9.16/verification_report.md; banner: ✅ COMPLETE — 2026-11-11 — cycle `2026-11-06__release-v9.16` (ST-24, EPIC-06) — PR #2231, commit 46aed77f
+
+### BLG-QA-21 — Arc 2 end-to-end QA protocol
+**✅ COMPLETE — 2026-11-11 — cycle `2026-11-06__release-v9.16` (ST-24, EPIC-06) — PR #2231, commit 46aed77f**
+**Priority:** P3 (Low)
+**Type:** QA / Test Coverage
+**Owner:** QA Lead
+**Source:** IDEA-qa-20260421-01 — Promoted-Backlog cycle 2026-05-21__scheduled (DL-032)
+**Effort:** M (~2 days)
+**Provisional-Target:** Unscheduled
+
+**Gate note (2026-11-06):** (Release Planning `2026-11-06__release-v9.16`, §1.3a "gating item shipped — verify" disposition (a), in-place clearance per ST-45/`ESC-EXEC-20261102-01`, within the `ESC-CLOSE-20261007-01` bounds) Gate cleared. The removed gate read "PT-04 (Setup Quality Score) shipped — Arc 2 feature set complete.". Its whole condition is met: PT-04 (Setup Quality Score) shipped in v6.1 (2026-06-23; `current_roadmap.md` Arc 2 table, ✅ Shipped), and Arc 2 is complete (`current_roadmap.md` "Arc 2 ✅ Fully Complete (v3.1–v6.1): All five features PT-01 through PT-05 shipped"). AC 3 ("Gate condition verified by QA Lead and Product Owner before sprint planning") names the gate; it is not edited, and is restated in the v9.16 slice.
+
+**Problem**
+No consolidated end-to-end QA protocol covers the full Arc 2 feature set (Screener, Research View, Trade Plan, Setup Quality Score). Individual EPICs have per-story DoQ sign-offs, but there is no arc-level protocol that exercises the full workflow from screener discovery to closed trade with a quality score. Such a protocol is most valuable once Arc 2 is complete.
+
+**Scope**
+- Arc-level E2E test protocol document covering full Arc 2 flow
+- Playwright automation for the core arc-level happy path
+- Manual checklist for Arc 2 edge cases not covered by Playwright
+
+**Acceptance Criteria**
+- Arc 2 E2E protocol document produced and filed in `docs/qa/`
+- Core happy path covered by Playwright
+- Gate condition verified by QA Lead and Product Owner before sprint planning
+
+---
+
+### BLG-QA-22 — Arc 2 DoQ standards review
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3
+**Retired:** 2026-11-11
+**Shipped in:** v9.16
+**Evidence:** docs/product/changelog.md#v9.16; claude/cycles/2026-11-06__release-v9.16/verification_report.md; banner: ✅ COMPLETE — 2026-11-11 — cycle `2026-11-06__release-v9.16` (ST-25, EPIC-06) — PR #2231, commit fcb00246
+
+### BLG-QA-22 — Arc 2 DoQ standards review
+**✅ COMPLETE — 2026-11-11 — cycle `2026-11-06__release-v9.16` (ST-25, EPIC-06) — PR #2231, commit fcb00246**
+**Priority:** P3 (Low)
+**Type:** QA / Governance
+**Owner:** QA Lead; Head of Specs Team
+**Source:** IDEA-qa-20260421-02 — Promoted-Backlog cycle 2026-05-21__scheduled (DL-032)
+**Effort:** S (~1 day)
+**Provisional-Target:** Unscheduled
+
+**Gate note (2026-11-06):** (Release Planning `2026-11-06__release-v9.16`, §1.3a "gating item shipped — verify" disposition (a), in-place clearance per ST-45/`ESC-EXEC-20261102-01`, within the `ESC-CLOSE-20261007-01` bounds) Gate cleared. The removed gate read "PT-04 (Setup Quality Score) shipped — Arc 2 feature set complete.". Its whole condition is met: PT-04 (Setup Quality Score) shipped in v6.1 (2026-06-23; `current_roadmap.md` Arc 2 table, ✅ Shipped), and Arc 2 is complete (`current_roadmap.md` "Arc 2 ✅ Fully Complete (v3.1–v6.1): All five features PT-01 through PT-05 shipped"). AC 3 ("Gate condition verified before sprint planning") names the gate; it is not edited, and is restated in the v9.16 slice.
+
+**Problem**
+DoQ standards (shared_standards.md §DoQ) were established in Arc 1 and have evolved incrementally. Arc 2 introduced new feature types (research views, AI-assisted UX, trade plans) that may expose gaps in the existing DoQ rubric. A targeted review of DoQ standards against Arc 2 artefacts will ensure the standards remain fit for Arc 3 and beyond.
+
+**Scope**
+- Review DoQ standards against Arc 2 EPIC QA evidence files
+- Identify any rubric gaps introduced by Arc 2 feature types
+- Propose amendments to `shared_standards.md` DoQ section if warranted
+
+**Acceptance Criteria**
+- DoQ standards reviewed; gaps (if any) documented
+- If amendments warranted: `shared_standards.md` updated per §6 governance checklist
+- Gate condition verified before sprint planning
+
+---
+
+### BLG-QA-23 — Trade plan lifecycle end-to-end test
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3
+**Retired:** 2026-11-11
+**Shipped in:** v9.16
+**Evidence:** docs/product/changelog.md#v9.16; claude/cycles/2026-11-06__release-v9.16/verification_report.md; banner: ✅ COMPLETE — 2026-11-11 — cycle `2026-11-06__release-v9.16` (ST-26, EPIC-06) — PR #2231, commit 3bb258da — `active`→`closed` assertion carried by `BLG-BE-211` (P2, accepted)
+
+### BLG-QA-23 — Trade plan lifecycle end-to-end test
+**✅ COMPLETE — 2026-11-11 — cycle `2026-11-06__release-v9.16` (ST-26, EPIC-06) — PR #2231, commit 3bb258da — `active`→`closed` assertion carried by `BLG-BE-211` (P2, accepted)**
+**Priority:** P3 (Low)
+**Type:** QA / Test Coverage
+**Owner:** QA Lead
+**Source:** IDEA-qa-20260421-03 — Promoted-Backlog cycle 2026-05-21__scheduled (DL-032)
+**Effort:** M (~2 days)
+**Provisional-Target:** Unscheduled
+
+**Gate note (2026-11-06):** (Release Planning `2026-11-06__release-v9.16`, §1.3a "gating item shipped — verify" disposition (a), in-place clearance per ST-45/`ESC-EXEC-20261102-01`, within the `ESC-CLOSE-20261007-01` bounds) Gate cleared. The removed gate read "PT-04 (Setup Quality Score) shipped.". Its whole condition is met: PT-04 (Setup Quality Score) shipped in v6.1 (2026-06-23; `current_roadmap.md` Arc 2 table, ✅ Shipped). AC 2 ("Gate condition verified by QA Lead and Product Owner before sprint planning") names the gate; it is not edited, and is restated in the v9.16 slice.
+
+**Problem**
+No Playwright test covers the full trade plan lifecycle: create → edit → link to position → close → view in plan-vs-reality. Individual story tests cover creation and display, but lifecycle continuity (plan survives position link, quality score visible at creation, plan-vs-reality renders post-close) is not tested end-to-end. PT-04 must be shipped to make the quality-score step part of the lifecycle.
+
+**Scope**
+- Playwright E2E test: create plan with quality score visible → link to position → close position → verify plan-vs-reality
+- Cover: plan state transitions, quality score persistence, plan-vs-reality accuracy
+
+**Acceptance Criteria**
+- Full lifecycle Playwright test authored and passing in CI
+- Gate condition verified by QA Lead and Product Owner before sprint planning
+
+---
+
+### BLG-OPS-48 — ANTHROPIC_API_KEY 6-month scope audit
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2
+**Retired:** 2026-11-11
+**Shipped in:** v9.16
+**Evidence:** docs/product/changelog.md#v9.16; claude/cycles/2026-11-06__release-v9.16/verification_report.md; banner: ✅ COMPLETE — 2026-11-11 — cycle `2026-11-06__release-v9.16` — `post_ship_closure.md` v2.46 STEP 3.1 case (ii) (`BLG-GOV-414`): AC 2 (key rotation) carried by `BLG-OPS-214`, shipped as ST-11 (PR #2233); the Pages-build key copy by `BLG-OPS-213`, shipped as ST-12; AC 1 (touchpoint-register drift) carried by the open follow-up `BLG-SPEC-223`. No ESC names this item
+
+### BLG-OPS-48 — ANTHROPIC_API_KEY 6-month scope audit
+**✅ COMPLETE — 2026-11-11 — cycle `2026-11-06__release-v9.16` — `post_ship_closure.md` v2.46 STEP 3.1 case (ii) (`BLG-GOV-414`): AC 2 (key rotation) carried by `BLG-OPS-214`, shipped as ST-11 (PR #2233); the Pages-build key copy by `BLG-OPS-213`, shipped as ST-12; AC 1 (touchpoint-register drift) carried by the open follow-up `BLG-SPEC-223`. No ESC names this item**
+**Priority:** P2 (Medium)
+**Type:** Operations / Security
+**Owner:** Cybersecurity & Trust Lead; Infrastructure & Operations Owner
+**Source:** IDEA-cybersecurity-20260601-02 — Promoted-Backlog cycle 2026-06-01__scheduled (DL-036)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** ~v4.9 (date-gated)
+**Gate note (2026-11-03):** (Release Planning `2026-11-03__release-v9.15`, §1.3a date-lapsed disposition (a), within the ESC-CLOSE-20261007-01 bounds; also on the "gating item shipped" list, so cleared once under the date-lapsed disposition) Gate cleared. The removed gate read "No earlier than 2026-11-01 (~6 months after BLG-OPS-36 scope review in v4.2, 2026-05-28)". Its whole condition is met: the gating item `BLG-OPS-36` shipped in v4.2 (2026-05-28, archived), and the gate's only other limb is the calendar date itself, now passed (scan as-of 2026-11-03). No AC names the gate's date or gating item.
+
+**Problem**
+BLG-OPS-36 (ANTHROPIC_API_KEY scope review) was completed in v4.2 (2026-05-28). Security policy (BLG-OPS-38) requires periodic key scope reviews. 6-month follow-up due ~November 2026 to verify key scope remains minimal and no scope creep has occurred in the API key permissions.
+
+**Scope**
+- Review ANTHROPIC_API_KEY permissions against current usage patterns
+- Confirm key is not used outside the documented endpoints (generate-thesis, check-daily-cost)
+- Verify key rotation has occurred per BLG-OPS-38 policy
+- Document review findings
+
+**Acceptance Criteria**
+- ANTHROPIC_API_KEY scope confirmed minimal (only documented endpoints)
+- Key rotation confirmed per BLG-OPS-38 schedule
+- Review findings documented
+
+---
+
+### BLG-GOV-26 — Arc velocity tracking dashboard
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3
+**Retired:** 2026-11-11
+**Shipped in:** v9.16
+**Evidence:** docs/product/changelog.md#v9.16; claude/cycles/2026-11-06__release-v9.16/verification_report.md; banner: ✅ COMPLETE — 2026-11-11 — cycle `2026-11-06__release-v9.16` (ST-29, EPIC-07) — PR #2230, commit c196c094
+
+### BLG-GOV-26 — Arc velocity tracking dashboard
+**✅ COMPLETE — 2026-11-11 — cycle `2026-11-06__release-v9.16` (ST-29, EPIC-07) — PR #2230, commit c196c094**
+**Priority:** P3 (Low)
+**Type:** Governance Process
+**Owner:** PMO Lead
+**Source:** IDEA-governance-20260421-01 — Promoted-Backlog cycle 2026-05-21__scheduled (DL-032)
+**Effort:** S (~1 day)
+**Provisional-Target:** Unscheduled
+
+**Gate note (2026-11-06):** (Release Planning `2026-11-06__release-v9.16`, §1.3a "gating item shipped — verify" disposition (a), in-place clearance per ST-45/`ESC-EXEC-20261102-01`, within the `ESC-CLOSE-20261007-01` bounds) Gate cleared. The removed gate read "PT-04 (Setup Quality Score) shipped — Arc 2 velocity history complete.". Its whole condition is met: PT-04 (Setup Quality Score) shipped in v6.1 (2026-06-23; `current_roadmap.md` Arc 2 table, ✅ Shipped), and Arc 2 is complete (`current_roadmap.md` "Arc 2 ✅ Fully Complete (v3.1–v6.1): All five features PT-01 through PT-05 shipped"). AC 3 ("Gate condition verified by PMO Lead before sprint planning") names the gate; it is not edited, and is restated in the v9.16 slice.
+
+**Problem**
+No arc-level velocity tracking exists. Cycle velocity is tracked per-cycle (cycle_velocity in run_manifest.md), but no aggregate view shows velocity trends across an entire arc. Once Arc 2 is complete (PT-04 shipped), an Arc 2 velocity retrospective would establish baseline expectations for Arc 3 planning.
+
+**Scope**
+- Arc velocity report: stories/cycle, epic completion rate, arc-level rolling velocity
+- Filed in governance reporting; updated at arc close
+- Input to release planning engine for arc-boundary cycles
+
+**Acceptance Criteria**
+- Arc 2 velocity report produced at arc close
+- Report format reusable for Arc 3+
+- Gate condition verified by PMO Lead before sprint planning
+
+---
+
+### BLG-GOV-192 — Governance prompt cross-reference sweep cadence
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3
+**Retired:** 2026-11-11
+**Shipped in:** v9.16
+**Evidence:** claude/cycles/2026-11-06__release-v9.16/run_manifest.md; banner: ✅ COMPLETE — 2026-11-11 — already met: `roadmap_management_prompt.md` §5.5 runs the `governance-drift` check every 3rd `manage roadmap` invocation (ST-30, v9.6, `BLG-GOV-325`), and `run audit` checks §14 every 3 cycles; recorded as met at Release Planning `2026-11-06__release-v9.16` (`run_manifest.md` explicitly-ungated list)
+
+### BLG-GOV-192 — Governance prompt cross-reference sweep cadence
+**✅ COMPLETE — 2026-11-11 — already met: `roadmap_management_prompt.md` §5.5 runs the `governance-drift` check every 3rd `manage roadmap` invocation (ST-30, v9.6, `BLG-GOV-325`), and `run audit` checks §14 every 3 cycles; recorded as met at Release Planning `2026-11-06__release-v9.16` (`run_manifest.md` explicitly-ungated list)**
+**Priority:** P3 (Low)
+**Type:** Governance / Process
+**Owner:** Head of Specs Team
+**Source:** Idea intake IW-20260710-01 (IDEA-head-of-specs-20260710-02), roadmap rebalance 2026-07-10__scheduled
+**Effort:** S (~0.5-2 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+§14 OPERATIONAL_GUIDE.md version drift is currently only caught opportunistically (e.g. by the `governance-drift` skill when invoked, or when a friction item happens to surface it) rather than on a fixed cadence.
+
+**Proposed solution**
+Schedule a periodic (e.g. every-3-cycle, alongside the meta-review) explicit governance-drift check rather than relying on incidental discovery.
+
+---
+
+### BLG-GOV-198 — Base44 prompt versioning convention
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3
+**Retired:** 2026-11-11
+**Shipped in:** v9.16
+**Evidence:** docs/product/changelog.md#v9.16; claude/cycles/2026-11-06__release-v9.16/verification_report.md; banner: ✅ COMPLETE — 2026-11-11 — cycle `2026-11-06__release-v9.16` (ST-30, EPIC-07) — PR #2230, commit 1c21656d
+
+### BLG-GOV-198 — Base44 prompt versioning convention
+**✅ COMPLETE — 2026-11-11 — cycle `2026-11-06__release-v9.16` (ST-30, EPIC-07) — PR #2230, commit 1c21656d**
+**Priority:** P3 (Low)
+**Type:** Governance / Process
+**Owner:** Base44 Frontend Prompt Owner
+**Source:** Idea intake IW-20260710-01 (IDEA-base44-frontend-20260710-02), roadmap rebalance 2026-07-10__scheduled
+**Effort:** S (~0.5-2 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+There is no convention tracking which Base44 prompt draft shipped with which ST-id, making future regression triage ("which prompt produced this component") harder than necessary.
+
+**Proposed solution**
+Adopt a lightweight convention (e.g. a comment header or delegation log field) recording the ST-id alongside each Base44 prompt draft.
+
+---
+
+### BLG-BE-175 — Exiting a US position with a NULL fill_price fails in the P&L arithmetic
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3
+**Retired:** 2026-11-11
+**Shipped in:** v9.16
+**Evidence:** docs/product/changelog.md#v9.16; claude/cycles/2026-11-06__release-v9.16/verification_report.md; banner: ✅ COMPLETE — 2026-11-11 — cycle `2026-11-06__release-v9.16` (ST-16, EPIC-05) — PR #2229, commit be22f813
+
+### BLG-BE-175 — Exiting a US position with a NULL fill_price fails in the P&L arithmetic
+**✅ COMPLETE — 2026-11-11 — cycle `2026-11-06__release-v9.16` (ST-16, EPIC-05) — PR #2229, commit be22f813**
+**Priority:** P3 (Low)
+**Type:** Backend / Robustness
+**Owner:** Head of Engineering
+**Source:** ST-12 (EPIC-02, cycle `2026-10-12__release-v9.12`) — found while fixing BLG-BE-145's recompute paths — 2026-10-13
+**Effort:** XS (<0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+`exit_position()` (`backend/services/position_service.py`) reads the native entry as `position.get('fill_price', position['entry_price'])` for US positions. When the key exists but is NULL this returns None, and the realised P&L arithmetic raises. Falling back to `entry_price` would also be wrong, because `positions.entry_price` is GBP for every market (`data_model_positions_dictionary.md` v0.4). ST-12 fixed the same pattern on the on-load, nightly and `GET /positions` paths with `native_entry_price()`, which uses `fill_price`, else `entry_price × fx_rate`. The exit path was left alone because it writes a closed trade's realised P&L, which is outside ST-12's scope.
+
+**Scope**
+- Use `native_entry_price(position, <stored fx_rate, else the exit fx_rate>)` in `exit_position()`
+- Add a unit test for a US exit with a NULL `fill_price`
+
+**Acceptance Criteria**
+- A US position with a NULL `fill_price` exits without error, and its realised P&L uses `entry_price × fx_rate` as the native entry (unit test)
+
+---
+
+### BLG-BE-176 — Lifecycle badge and Risk page disagree for a US row with no fill_price and no fx_rate
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3
+**Retired:** 2026-11-11
+**Shipped in:** v9.16
+**Evidence:** docs/product/changelog.md#v9.16; claude/cycles/2026-11-06__release-v9.16/verification_report.md; banner: ✅ COMPLETE — 2026-11-11 — cycle `2026-11-06__release-v9.16` (ST-17, EPIC-05) — PR #2229, commit 6381ceab
+
+### BLG-BE-176 — Lifecycle badge and Risk page disagree for a US row with no fill_price and no fx_rate
+**✅ COMPLETE — 2026-11-11 — cycle `2026-11-06__release-v9.16` (ST-17, EPIC-05) — PR #2229, commit 6381ceab**
+**Priority:** P3 (Low)
+**Type:** Backend Engineering / Correctness
+**Owner:** Head of Engineering
+**Source:** EPIC-02 PR review (agent-mediated Director of Quality, user-directed), cycle `2026-10-12__release-v9.12` — 2026-10-13
+**Effort:** XS (<0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+`classify_position()` (`backend/services/position_lifecycle_service.py`) returns UNKNOWN for a US row whose `fill_price` and `fx_rate` are both NULL (ST-13, v9.12), while `native_entry_price()` (`position_service.py`) and `portfolio_service.get_portfolio_summary()` fall back to the live FX rate, so `display_status` still shows PROFITABLE/LOSING for the same row. ST-13's goal was that the two agree.
+
+**Scope**
+- Use one fallback on all paths (either all UNKNOWN, or all live-rate), decided against `position_endpoints.md`'s `position_state` field note
+- Add a unit test for this row
+
+**Acceptance Criteria**
+- For a US row with NULL `fill_price` and NULL `fx_rate`, `display_status` and `position_state` agree (unit test)
+
+---
+
+### BLG-BE-177 — Frozen-stop marker is not written when the on-load recompute has no live price
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3
+**Retired:** 2026-11-11
+**Shipped in:** v9.16
+**Evidence:** docs/product/changelog.md#v9.16; claude/cycles/2026-11-06__release-v9.16/verification_report.md; banner: ✅ COMPLETE — 2026-11-11 — cycle `2026-11-06__release-v9.16` (ST-18, EPIC-05) — PR #2229, commit e7524eb9
+
+### BLG-BE-177 — Frozen-stop marker is not written when the on-load recompute has no live price
+**✅ COMPLETE — 2026-11-11 — cycle `2026-11-06__release-v9.16` (ST-18, EPIC-05) — PR #2229, commit e7524eb9**
+**Priority:** P3 (Low)
+**Type:** Backend Engineering / Improvement
+**Owner:** Head of Engineering
+**Source:** EPIC-02 PR review (agent-mediated Director of Quality, user-directed), cycle `2026-10-12__release-v9.12` — 2026-10-13
+**Effort:** XS (<0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+On the on-load path, `stop_frozen_reason` (ST-15, DS-32) is written only inside `if live_price:` (`analyze_positions`, `backend/services/position_service.py`). A post-grace position with no live price and no ATR keeps its stop but is never marked frozen until the nightly job runs.
+
+**Scope**
+- Write the marker when the stop is kept for lack of ATR even without a live price, or document the exclusion in `position_endpoints.md`
+
+**Acceptance Criteria**
+- Unit test: no live price and no ATR, post-grace → `stop_frozen_reason = 'atr_unavailable'` (or the contract states the exclusion)
+
+---
+
+### BLG-SPEC-195 — Journal summary: remove the stale AI_MODEL override line, or cost the model actually used
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P4
+**Retired:** 2026-11-11
+**Shipped in:** v9.16
+**Evidence:** docs/product/changelog.md#v9.16; claude/cycles/2026-11-06__release-v9.16/verification_report.md; banner: ✅ COMPLETE — 2026-11-11 — cycle `2026-11-06__release-v9.16` (ST-21, EPIC-05) — PR #2229, commit f1eddc61
+
+### BLG-SPEC-195 — Journal summary: remove the stale AI_MODEL override line, or cost the model actually used
+**✅ COMPLETE — 2026-11-11 — cycle `2026-11-06__release-v9.16` (ST-21, EPIC-05) — PR #2229, commit f1eddc61**
+**Priority:** P4 (Low)
+**Type:** Spec Debt
+**Owner:** API Contracts & Documentation Owner; Backend Engineering Patterns Owner
+**Source:** Agent-mediated Director of Quality review (second pass) of EPIC-01, ST-06, cycle `2026-10-12__release-v9.12` — 2026-10-13
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD (re-targeted from v9.13 by the PMO Lead 2026-10-29: v9.13 shipped without it; `ESC-CLOSE-20260923-01`, closure_record.md §6 row 5)
+
+**Problem**
+`ai_endpoints.md` §POST /ai/journal-summary says "Default model: `claude-haiku-4-5-20251001`. Override via `AI_MODEL` env var." No such override exists: `summarise_journal_notes()` uses `MODEL_VERSION = CLAUDE_HAIKU_4_5`, and the router never passes a model. ST-06 (v9.12) added `claude_audit_log` cost logging for the journal summary at Haiku 4.5 rates regardless of the `model` argument. That is correct today, but the costing would be wrong if an override were ever added.
+
+**Scope**
+- Remove the `AI_MODEL` override sentence from the contract (or implement the override and cost by model)
+- If a non-Haiku model can ever be passed, select the cost rates by model in `_audit_journal_summary_call()`
+
+**Acceptance Criteria**
+- The contract describes only model selection that exists in code
+- A test pins the cost rates to the model used, or the contract states the endpoint is Haiku-only
+
+---
+
+### BLG-AI-23 — Review logged briefing ticker-caveat tokens for further non-tickers
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3
+**Retired:** 2026-11-11
+**Shipped in:** v9.16
+**Evidence:** docs/product/changelog.md#v9.16; claude/cycles/2026-11-06__release-v9.16/verification_report.md; banner: ✅ COMPLETE — 2026-11-11 — cycle `2026-11-06__release-v9.16` — `post_ship_closure.md` v2.46 STEP 3.1 case (ii) (`BLG-GOV-414`): its whole remainder (both ACs) moved to `BLG-AI-27`, which shipped as ST-19 (EPIC-05, PR #2229) with the review recording no further non-tickers
+
+### BLG-AI-23 — Review logged briefing ticker-caveat tokens for further non-tickers
+**✅ COMPLETE — 2026-11-11 — cycle `2026-11-06__release-v9.16` — `post_ship_closure.md` v2.46 STEP 3.1 case (ii) (`BLG-GOV-414`): its whole remainder (both ACs) moved to `BLG-AI-27`, which shipped as ST-19 (EPIC-05, PR #2229) with the review recording no further non-tickers**
+**Priority:** P3 (Low)
+**Type:** AI Compliance / Correctness
+**Owner:** AI Compliance & Governance Officer; Backend Engineering Patterns Owner
+**Source:** ST-16 (EPIC-03, cycle `2026-10-29__release-v9.14`, BLG-AI-21 second Scope bullet; ST-16 AC 4 — the live-log review was not granted in-sprint, so it is filed) — 2026-10-30
+**Effort:** XS (<1h plus tests)
+**Provisional-Target:** TBD
+
+**Problem**
+ST-16 added 22 indicator, earnings, macro and exchange acronyms to `_NON_TICKER_WORDS`. Other non-ticker words may still get the "(Note: X is not one of your open positions or today's top signals.)" caveat, which confuses the user and inflates the `ticker_outside_context_appended` count the ruling uses to judge the check. The `ticker check: ... action=caveat_appended` warning lines record which tokens fired; reading them needs a live log or database read, which needs the user's permission.
+
+**Scope**
+- With the user's permission, list the tokens caveated since 2026-10-30 with their counts
+- Classify each as ticker or non-ticker
+- Add the non-tickers to `_NON_TICKER_WORDS` (ruling `ESC-EXEC-20261027-02` (B) condition 2 is a minimum list)
+
+**Acceptance Criteria**
+- The token list with counts is recorded
+- Each non-ticker found is added, and `test_non_ticker_words_ignored` covers it; or the review records that none was found
+
+---
+
+### BLG-AI-27 — Read production briefing ticker-caveat tokens and add any non-tickers (carried from ST-24)
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3
+**Retired:** 2026-11-11
+**Shipped in:** v9.16
+**Evidence:** docs/product/changelog.md#v9.16; claude/cycles/2026-11-06__release-v9.16/verification_report.md; banner: ✅ COMPLETE — 2026-11-11 — cycle `2026-11-06__release-v9.16` (ST-19, EPIC-05) — PR #2229, commit fc89fdb5 — no further non-tickers found (`DEL-20261110-01`)
+
+### BLG-AI-27 — Read production briefing ticker-caveat tokens and add any non-tickers (carried from ST-24)
+**✅ COMPLETE — 2026-11-11 — cycle `2026-11-06__release-v9.16` (ST-19, EPIC-05) — PR #2229, commit fc89fdb5 — no further non-tickers found (`DEL-20261110-01`)**
+**Priority:** P3 (Low)
+**Type:** AI Compliance / Correctness
+**Owner:** AI Compliance & Governance Officer; Backend Engineering Patterns Owner
+**Source:** ST-24 (EPIC-04, cycle `2026-11-03__release-v9.15`, `BLG-AI-23`; `DEL-20261105-01`). The production log read was not available in-sprint, and the AI Compliance & Governance Officer chose to carry it post-merge — 2026-11-05
+**Effort:** XS (<1h plus tests)
+**Provisional-Target:** TBD
+
+**Problem**
+ST-24's acceptance criteria need the tokens the daily-briefing ticker check has caveated since 2026-10-30. They are on the production Render log lines `ticker check: endpoint=POST /ai/daily-briefing field=summary ticker=<TOKEN> action=caveat_appended`. The sandbox `DATABASE_URL` is staging and the engine has no production log access, so the review could not run in-sprint. ST-26 (v9.15) added AM, PM, EOD, EOW, EOM, IMO, IMHO, FYI, NOTE, TBD, ASAP, Q1–Q4, FY, YOY, VIX, GMT and BST to `_NON_TICKER_WORDS`, so those tokens no longer fire. Any other non-ticker word still gets the caveat and inflates the `ticker_outside_context_appended` count.
+
+**Scope**
+- The user supplies the token list with counts since 2026-10-30, or grants a one-off read
+- Classify each token as ticker or non-ticker
+- Add the non-tickers to `_NON_TICKER_WORDS` (ruling `ESC-EXEC-20261027-02` (B) condition 2 is a minimum list) and to the `ai_endpoints.md` check 3 list
+
+**Acceptance Criteria**
+- The token list with counts is recorded
+- Each non-ticker found is added and covered by `test_non_ticker_words_ignored`, or the review records that none was found
+
+---
+
+### BLG-AI-28 — Handle `_NON_TICKER_WORDS` entries that are also real tickers deliberately
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3
+**Retired:** 2026-11-11
+**Shipped in:** v9.16
+**Evidence:** docs/product/changelog.md#v9.16; claude/cycles/2026-11-06__release-v9.16/verification_report.md; banner: ✅ COMPLETE — 2026-11-11 — cycle `2026-11-06__release-v9.16` (ST-20, EPIC-05) — PR #2229, commit 50632e61
+
+### BLG-AI-28 — Handle `_NON_TICKER_WORDS` entries that are also real tickers deliberately
+**✅ COMPLETE — 2026-11-11 — cycle `2026-11-06__release-v9.16` (ST-20, EPIC-05) — PR #2229, commit 50632e61**
+**Priority:** P3 (Low)
+**Type:** AI Compliance / Correctness
+**Owner:** AI Compliance & Governance Officer; Backend Engineering Patterns Owner
+**Source:** Agent-mediated AI Compliance & Governance Officer review of ST-26 (EPIC-04, cycle `2026-11-03__release-v9.15`, `BLG-AI-25`), finding 2 — 2026-11-05
+**Effort:** XS (<1h plus tests)
+**Provisional-Target:** TBD
+
+**Problem**
+`_NON_TICKER_WORDS` contains words that are also listed tickers. MA (Mastercard) and ON (ON Semiconductor) were already on the list, and PM (Philip Morris, in `backend/tickers_full_list.csv`) was added by ST-26. AM, IMO, NOTE and BST are listed symbols outside the scan universe. A held one is still cited, because `_ticker_in` runs first. A non-held one is no longer caveated in the briefing summary. In chat, "PM's stop was hit last week." with focus `MU` held and PM not held now gets the MU note, which is the misattribution ruling `ESC-EXEC-20261030-03` exists to prevent. The case is unlikely and fails soft, because a note is added and model text is never edited. But neither ruling nor the contract says the collision was decided.
+
+**Scope**
+- Ask the AI Compliance & Governance Officer how to treat collisions: for example, AM/PM count as non-tickers only after a time digit, or a word that is in the scan universe goes to the focus rule's "other ticker" path
+- Implement the ruling for PM, MA and ON (and any other universe collision), with tests
+- State the collision handling in `ai_endpoints.md` check 3 and in the chat focus paragraph
+
+**Acceptance Criteria**
+- The ruling is recorded before the code change
+- With focus `MU` held and PM not held, "PM's stop was hit last week." gets the result the ruling assigns, in a test; "Your stop was hit at 3 PM." still gets the MU note
+- All ST-16, ST-17 and ST-26 tests pass
+
+---
+
+### BLG-SPEC-200 — Add the 11 missing positions columns to the positions data dictionary
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P4
+**Retired:** 2026-11-11
+**Shipped in:** v9.16
+**Evidence:** docs/product/changelog.md#v9.16; claude/cycles/2026-11-06__release-v9.16/verification_report.md; banner: ✅ COMPLETE — 2026-11-11 — cycle `2026-11-06__release-v9.16` (ST-22, EPIC-05) — PR #2229, commit a123151a
+
+### BLG-SPEC-200 — Add the 11 missing positions columns to the positions data dictionary
+**✅ COMPLETE — 2026-11-11 — cycle `2026-11-06__release-v9.16` (ST-22, EPIC-05) — PR #2229, commit a123151a**
+**Priority:** P4 (Trivial)
+**Type:** Spec Debt / Data Model
+**Owner:** Data Model & Domain Schema Owner
+**Source:** BLG-SPEC-199 fix on PR #2024 (EPIC-05, cycle `2026-10-12__release-v9.12`), user request — 2026-10-13
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`data_model_positions_dictionary.md` (v0.5) does not describe 11 `positions` columns that `data_model.md` §2 documents: `user_fill_price`, `position_state`, `state_entered_at`, `state_history`, `stop_calculated_at`, `atr_calculated_at`, `active_atr_multiplier`, `atr_source`, `stop_calculation_source`, `strategy_version_at_entry`, `last_reviewed_at`. Its v0.5 coverage note sends readers to `data_model.md` for them. The dictionary is meant to be the canonical per-field reference, so readers have to consult two documents. It also still carries an `exit_note` row for a column that does not exist live, kept only for traceability.
+
+**Scope**
+- Add a dictionary row for each of the 11 columns (SQL type, Nullable, description), taken from `data_model.md` §2 and its DS-xx migration sections, in the matching §3.x subsection
+- Decide whether to remove the `exit_note` row or keep it as a marked historical row
+- Remove the v0.5 coverage note once every column is listed; version bump
+
+**Acceptance Criteria**
+- Every column in `data_model.md` §2's Fields table has a dictionary row, with the same type and Nullable value
+- The dictionary lists no column that `data_model.md` §2 does not, other than an explicitly marked historical row
+
+---
+
+### BLG-SPEC-201 — Point settings.md at the moved strategy constants module
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P4
+**Retired:** 2026-11-11
+**Shipped in:** v9.16
+**Evidence:** docs/product/changelog.md#v9.16; claude/cycles/2026-11-06__release-v9.16/verification_report.md; banner: ✅ COMPLETE — 2026-11-11 — cycle `2026-11-06__release-v9.16` (ST-23, EPIC-05) — PR #2229, commit b7becc3c
+
+### BLG-SPEC-201 — Point settings.md at the moved strategy constants module
+**✅ COMPLETE — 2026-11-11 — cycle `2026-11-06__release-v9.16` (ST-23, EPIC-05) — PR #2229, commit b7becc3c**
+**Priority:** P4 (Trivial)
+**Type:** Spec Debt / Frontend
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** ST-21/EPIC-03, cycle `2026-10-12__release-v9.12` — 2026-10-13
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+ST-21 moved the frontend display mirror of the `strategy_rules.md` §11 parameters from `src/lib/strategyParameters.js` to `src/constants/strategy.js` (Head of Specs Team interpretation, 2026-10-13), leaving one module. `docs/specs/frontend/pages/settings.md` §Strategy Parameter Presentation (line ~121) still says the displayed values come from `src/lib/strategyParameters.js`, which no longer exists. Sprint Execution may not edit a canonical spec beyond deviation documentation, so the path was not changed in ST-21's commit.
+
+**Scope**
+- Replace the path in `settings.md` with `src/constants/strategy.js`; version bump and changelog row
+
+**Acceptance Criteria**
+- `settings.md` names `src/constants/strategy.js`, and no canonical spec under `docs/specs/` names `src/lib/strategyParameters.js`
+
+---
+
+### BLG-FE-223 — Inputs apply dark:text-slate-400 to typed text instead of the placeholder
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3
+**Retired:** 2026-11-11
+**Shipped in:** v9.16
+**Evidence:** docs/product/changelog.md#v9.16; claude/cycles/2026-11-06__release-v9.16/verification_report.md; banner: ✅ COMPLETE — 2026-11-11 — cycle `2026-11-06__release-v9.16` (ST-10, EPIC-03) — PR #2232, commit a369a231
+
+### BLG-FE-223 — Inputs apply dark:text-slate-400 to typed text instead of the placeholder
+**✅ COMPLETE — 2026-11-11 — cycle `2026-11-06__release-v9.16` (ST-10, EPIC-03) — PR #2232, commit a369a231**
+**Priority:** P3 (Low)
+**Type:** Frontend / Accessibility
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** EPIC-03, cycle `2026-10-12__release-v9.12`, agent-mediated Director of Quality review (follow-up 4) — 2026-10-13
+**Effort:** S (~0.5 day)
+**Provisional-Target:** TBD
+
+**Problem**
+Several inputs use `placeholder:text-slate-600 dark:text-slate-400`. The `dark:` variant applies to the typed text, not the placeholder (`dark:placeholder:` was intended), so typed values render slate-400 in dark mode and placeholder colour is unpaired. Seen on the Trade Entry inputs and the Notifications inputs.
+
+**Scope**
+- Replace with `placeholder:text-slate-600 dark:placeholder:text-slate-400` and an explicit typed-text pair (`text-slate-900 dark:text-white`) across `src/`
+
+**Acceptance Criteria**
+- No input class string uses a bare `dark:text-*` intended for its placeholder (grep check); typed text passes contrast in both themes
+
+---
+
+### BLG-OPS-197 — Record the weekly market-data call-volume baseline from production
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3
+**Retired:** 2026-11-11
+**Shipped in:** v9.16
+**Evidence:** docs/product/changelog.md#v9.16; claude/cycles/2026-11-06__release-v9.16/verification_report.md; banner: ✅ COMPLETE — 2026-11-11 — cycle `2026-11-06__release-v9.16` (ST-13, EPIC-04) — PR #2233, commit ba2b965e
+
+### BLG-OPS-197 — Record the weekly market-data call-volume baseline from production
+**✅ COMPLETE — 2026-11-11 — cycle `2026-11-06__release-v9.16` (ST-13, EPIC-04) — PR #2233, commit ba2b965e**
+**Priority:** P3 (Low)
+**Type:** Operations / Cost Monitoring
+**Owner:** FinOps & Resource Architect; Infrastructure & Operations Owner
+**Source:** ST-30 (BLG-OPS-18) AC 1 and ST-31 (BLG-OPS-19) AC 2, EPIC-05, cycle `2026-10-16__release-v9.13` — post-merge remainder, `DEL-20261027-06` and the production half of `DEL-20261027-04` — 2026-10-28
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.15 (retargeted 2026-11-03 from v9.14, PMO Lead with the item owners, user-directed; post-ship closure `2026-10-29__release-v9.14` §6 row 5)
+**Depends on:** EPIC-05 merged and deployed to production; 7 days of production data
+**Sprint return:** returned to backlog from `2026-11-03__release-v9.15` as ST-33 (EPIC-05), 2026-11-05: its conditional gate (7 days of production data after the 2026-11-02 deploy, from 2026-11-09) could not clear before EPIC-05 merged. Product Owner authorised; expected path, not a deviation.
+
+**Problem**
+ST-30 filed the combined weekly cost baseline ($0.00, every source free) and the 2× advisory threshold, but the per-source weekly call volumes in `docs/ops/data_pipeline_cost_baseline.md` §4 are pending: they need a week of production attribution data, which only exists after EPIC-05 deploys. ST-31's DS-36 columns were confirmed on staging; their production Live Confirmation is also outstanding. Without the volume baseline, the 2× advisory (and BLG-OPS-195's automated check) has nothing to compare with.
+
+**Scope**
+- After the production deploy, run DS-36's Verification query on production and record it in `data_model.md` DS-36
+- 7 full days after deploy, call `GET /ops/api-call-attribution?window=weekly` on production and fill §4's calls and failures per source, with the date and `top_contributors`
+- Close `DEL-20261027-04` and `DEL-20261027-06`
+
+**Acceptance Criteria**
+- DS-36 Live Confirmation for production is recorded: `api_call_log.feature` text YES, `screener_runs.duration_seconds` numeric YES, index `idx_acl_called_at_feature`
+- `data_pipeline_cost_baseline.md` §4 has weekly calls and failures for each source and combined, from one production weekly report, with its date and `top_contributors` (3 features, or every feature with calls if fewer than 3 made any); the §6 volume sign-off line is ticked
+
+---
+
+### BLG-OPS-198 — Record the full screener run p50/p95 baseline from production
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3
+**Retired:** 2026-11-11
+**Shipped in:** v9.16
+**Evidence:** docs/product/changelog.md#v9.16; claude/cycles/2026-11-06__release-v9.16/verification_report.md; banner: ✅ COMPLETE — 2026-11-11 — cycle `2026-11-06__release-v9.16` (ST-14, EPIC-04) — PR #2233, commit ae785cfe
+
+### BLG-OPS-198 — Record the full screener run p50/p95 baseline from production
+**✅ COMPLETE — 2026-11-11 — cycle `2026-11-06__release-v9.16` (ST-14, EPIC-04) — PR #2233, commit ae785cfe**
+**Priority:** P3 (Low)
+**Type:** Operations / Performance
+**Owner:** Infrastructure & Operations Owner
+**Source:** ST-32 (BLG-OPS-23), EPIC-05, cycle `2026-10-16__release-v9.13` — post-merge remainder of AC 1, `DEL-20261027-05` — 2026-10-28
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.15 (retargeted 2026-11-03 from v9.14, PMO Lead with the item owners, user-directed; post-ship closure `2026-10-29__release-v9.14` §6 row 5)
+**Depends on:** EPIC-05 merged and deployed to production; at least 10 nightly production screener runs after deploy
+
+**Problem**
+ST-32 made each screener run record `duration_seconds` and added `scripts/screener_run_benchmark.py`, which computes p50/p95 over full-universe runs, and defined the >1.5× regression threshold in `docs/ops/api_performance_baseline.md` §53. The p50/p95 values themselves are pending: runs before v9.13 have no duration, so the baseline needs about 10 nightly production runs (two weeks of weekdays) after deploy. Until then the regression threshold has no baseline to multiply.
+
+**Scope**
+- After at least 10 nightly production runs, run `API_URL=<production> API_KEY=<key> python3 scripts/screener_run_benchmark.py`
+- Record its output (runs counted, min tickers, p50, p95, regression threshold, first and last run) in `api_performance_baseline.md` §53
+- Close `DEL-20261027-05`
+
+**Acceptance Criteria**
+- The script exits 0 (at least 10 qualifying runs) and its p50, p95 and 1.5× threshold in seconds are recorded in `api_performance_baseline.md` §53 with the run date range
+
+---
+
+### BLG-OPS-199 — Fail the staging smoke host check when the backend reports no Render service ID
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3
+**Retired:** 2026-11-11
+**Shipped in:** v9.16
+**Evidence:** docs/product/changelog.md#v9.16; claude/cycles/2026-11-06__release-v9.16/verification_report.md; banner: ✅ COMPLETE — 2026-11-11 — cycle `2026-11-06__release-v9.16` (ST-15, EPIC-04) — PR #2233, commit 324eae36
+
+### BLG-OPS-199 — Fail the staging smoke host check when the backend reports no Render service ID
+**✅ COMPLETE — 2026-11-11 — cycle `2026-11-06__release-v9.16` (ST-15, EPIC-04) — PR #2233, commit 324eae36**
+**Priority:** P3 (Low)
+**Type:** Operations / Deployment
+**Owner:** Infrastructure & Operations Owner
+**Source:** PR #2075 review (EPIC-05, cycle `2026-10-16__release-v9.13`, ST-29/ST-31) — 2026-10-28
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.15 (retargeted 2026-11-03 from v9.14, PMO Lead with the item owners, user-directed; post-ship closure `2026-10-29__release-v9.14` §6 row 5)
+**Depends on:** BLG-OPS-196 (first green staging deploy on `main` showing the host check pass)
+
+**Problem**
+`scripts/staging_smoke_test.py` `check_host_is_staging_backend()` treats a missing `render_service_id` on `GET /health/detailed` as a warning, so deploys from before v9.13 do not fail the smoke test. Once staging runs v9.13, a missing value means `RENDER_SERVICE_ID` is not set or `STAGING_API_URL` points at another host, and the check would pass with only a warning, which is the silent wrong-host case ST-29 exists to catch. The script also repeats the staging backend's service ID as its own literal instead of reading `STAGING_SERVICES` in `check_staging_deploy_drift.py`.
+
+**Scope**
+- Make a missing `render_service_id` a failure, once BLG-OPS-196 has shown the field on staging
+- Read the expected service ID from `STAGING_SERVICES`
+- Update `tests/test_staging_smoke_test.py`
+
+**Acceptance Criteria**
+- A `/health/detailed` response without `render_service_id` fails the smoke test (test)
+- The expected service ID has one definition in the repo
+
+---
+
+### BLG-FE-250 — Build the job-based sidebar and surface Trade Plans and Research
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2
+**Retired:** 2026-11-11
+**Shipped in:** v9.16
+**Evidence:** docs/product/changelog.md#v9.16; claude/cycles/2026-11-06__release-v9.16/verification_report.md; banner: ✅ COMPLETE — 2026-11-11 — cycle `2026-11-06__release-v9.16` (ST-01, EPIC-01) — PR #2227, commit d2d67ede — P3 `DEV-NAV-ST01-01` tracked by `BLG-SPEC-226`
+
+### BLG-FE-250 — Build the job-based sidebar and surface Trade Plans and Research
+**✅ COMPLETE — 2026-11-11 — cycle `2026-11-06__release-v9.16` (ST-01, EPIC-01) — PR #2227, commit d2d67ede — P3 `DEV-NAV-ST01-01` tracked by `BLG-SPEC-226`**
+**Priority:** P2 (Medium)
+**Type:** Frontend / navigation [U]
+**Owner:** Head of Engineering; Head of UX & Design
+**Source:** IDEA-head-of-ux-20261103-03 (IW-20261103-01), roadmap rebalance `2026-11-03__scheduled`, DL-088
+**Effort:** M (~2-3 days)
+**Provisional-Target:** v9.16
+**Depends on:** `BLG-SPEC-214`
+
+**Problem**
+`NAV_GROUPS` in `src/Layout.js` holds 18 entries in 4 type-based groups, 3 collapsed by default; Trade Plans has no sidebar entry and is reachable only through the command palette.
+
+**Scope**
+- Implement `navigation.md` v2's areas, placement and default-expanded groups on desktop and the mobile drawer
+- Add Trade Plans and Research entry points
+
+**Acceptance Criteria**
+- Sidebar matches `navigation.md` v2 on desktop and mobile
+- Trade Plans is reachable from the sidebar in one click
+- `alert-nav-badge.spec.js`, `command-palette.spec.js`, `keyboard-shortcuts.spec.js` updated and passing
+
+---
+
+### BLG-FE-251 — Add a parent link on detail pages
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3
+**Retired:** 2026-11-11
+**Shipped in:** v9.16
+**Evidence:** docs/product/changelog.md#v9.16; claude/cycles/2026-11-06__release-v9.16/verification_report.md; banner: ✅ COMPLETE — 2026-11-11 — cycle `2026-11-06__release-v9.16` (ST-02, EPIC-01) — PR #2227, commit 9b36b84d
+
+### BLG-FE-251 — Add a parent link on detail pages
+**✅ COMPLETE — 2026-11-11 — cycle `2026-11-06__release-v9.16` (ST-02, EPIC-01) — PR #2227, commit 9b36b84d**
+**Priority:** P3 (Low)
+**Type:** Frontend / wayfinding [U]
+**Owner:** Head of Engineering
+**Source:** IDEA-head-of-ux-20261103-03 (IW-20261103-01), roadmap rebalance `2026-11-03__scheduled`, DL-088
+**Effort:** S (~1 day)
+**Provisional-Target:** v9.16
+**Depends on:** `BLG-SPEC-214`
+
+**Problem**
+Trade Plan, Research (`/research/:ticker`), Notification Preferences and Notification History have no link back to their parent page; the user relies on the browser's back button.
+
+**Scope**
+- A parent link (or breadcrumb) on each detail page per `navigation.md` v2
+
+**Acceptance Criteria**
+- Each listed page shows a parent link that navigates correctly; Playwright coverage passes
+
+---
+
+### BLG-FE-252 — Give each dead-end page an onward next-step link
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3
+**Retired:** 2026-11-11
+**Shipped in:** v9.16
+**Evidence:** docs/product/changelog.md#v9.16; claude/cycles/2026-11-06__release-v9.16/verification_report.md; banner: ✅ COMPLETE — 2026-11-11 — cycle `2026-11-06__release-v9.16` (ST-03, EPIC-01) — PR #2227, commit 9b36b84d
+
+### BLG-FE-252 — Give each dead-end page an onward next-step link
+**✅ COMPLETE — 2026-11-11 — cycle `2026-11-06__release-v9.16` (ST-03, EPIC-01) — PR #2227, commit 9b36b84d**
+**Priority:** P3 (Low)
+**Type:** Frontend / wayfinding [U]
+**Owner:** Head of Engineering; Head of UX & Design
+**Source:** IDEA-head-of-ux-20261103-03 (IW-20261103-01), roadmap rebalance `2026-11-03__scheduled`, DL-088
+**Effort:** M (~2 days)
+**Provisional-Target:** v9.16
+**Depends on:** `BLG-SPEC-214`
+
+**Problem**
+Eight pages have no link to any other page: Reports, Red Flag Journal, Trade Reflections, Replay, Strategy Benchmark, Ticker Universe, System Status, Notification History (inter-page link scan, 2026-11-03).
+
+**Scope**
+- Add the onward link(s) `navigation.md` v2 assigns to each (e.g. Red Flag Journal → the flagged trade; Reports → Performance detail; Ticker Universe → Screener)
+
+**Acceptance Criteria**
+- A re-run of the inter-page link scan finds 0 dead-end pages; each new link has Playwright coverage
+
+---
+
+### BLG-FE-253 — Anchor the digest's Risk Dashboard link to the right section
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3
+**Retired:** 2026-11-11
+**Shipped in:** v9.16
+**Evidence:** docs/product/changelog.md#v9.16; claude/cycles/2026-11-06__release-v9.16/verification_report.md; banner: ✅ COMPLETE — 2026-11-11 — cycle `2026-11-06__release-v9.16` (ST-04, EPIC-01) — PR #2227, commit 06ec6d45
+
+### BLG-FE-253 — Anchor the digest's Risk Dashboard link to the right section
+**✅ COMPLETE — 2026-11-11 — cycle `2026-11-06__release-v9.16` (ST-04, EPIC-01) — PR #2227, commit 06ec6d45**
+**Priority:** P3 (Low)
+**Type:** Frontend / wayfinding [U]
+**Owner:** Head of Engineering
+**Source:** IDEA-head-of-ux-20261103-03 (IW-20261103-01), roadmap rebalance `2026-11-03__scheduled`, DL-088; `docs/ux/si05_user_journey_map.md` F-04
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v9.16
+
+**Problem**
+The SI-05 digest's Risk Dashboard link lands at the top of `RiskDashboard.js`; for "Top rule breach" the user must find the pre-entry validation section by hand (journey map F-04, unfiled until now).
+
+**Scope**
+- Support a section query (e.g. `?section=pre-entry-validation`) that scrolls to the section; use it in the digest's deep link
+
+**Acceptance Criteria**
+- Opening the section link scrolls the named section into view; Playwright coverage passes; digest link updated
+
+---
+
+### BLG-FE-255 — Add "Plan this" to Signals and Screener rows
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2
+**Retired:** 2026-11-11
+**Shipped in:** v9.16
+**Evidence:** docs/product/changelog.md#v9.16; claude/cycles/2026-11-06__release-v9.16/verification_report.md; banner: ✅ COMPLETE — 2026-11-11 — cycle `2026-11-06__release-v9.16` (ST-07, EPIC-02) — PR #2228, commit 978b4e48
+
+### BLG-FE-255 — Add "Plan this" to Signals and Screener rows
+**✅ COMPLETE — 2026-11-11 — cycle `2026-11-06__release-v9.16` (ST-07, EPIC-02) — PR #2228, commit 978b4e48**
+**Priority:** P2 (Medium)
+**Type:** Frontend / UX (entry journey) [U]
+**Owner:** Head of Engineering; Head of UX & Design
+**Source:** IDEA-head-of-ux-20261103-04 (IW-20261103-01), roadmap rebalance `2026-11-03__scheduled`, DL-088
+**Effort:** M (~2-3 days)
+**Provisional-Target:** v9.16
+**Related:** `BLG-FE-54` (keeps its Arc 5 gate)
+
+**Problem**
+From a signal to an entered, checked trade takes 5 pages (Signals → Add to Watchlist → Watchlist → Research → Trade Plan → Trade Entry). Signals rows offer only "Add to Watchlist"; Screener rows offer Research or watchlist only (`Screener.js:525–532`).
+
+**Scope**
+- A "Plan this" action on Signals and Screener rows that opens Trade Plan pre-filled with ticker, market, price and signal context (`SignalContextPanel` already exists)
+
+**Acceptance Criteria**
+- From a Signals row and a Screener row, "Plan this" opens a pre-filled Trade Plan in one click; Playwright coverage passes
+
+---
+
+### BLG-FE-256 — On Trade Plan, show the suggested size before asking for shares
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2
+**Retired:** 2026-11-11
+**Shipped in:** v9.16
+**Evidence:** docs/product/changelog.md#v9.16; claude/cycles/2026-11-06__release-v9.16/verification_report.md; banner: ✅ COMPLETE — 2026-11-11 — cycle `2026-11-06__release-v9.16` (ST-08, EPIC-02) — PR #2228, commit 87d78b39
+
+### BLG-FE-256 — On Trade Plan, show the suggested size before asking for shares
+**✅ COMPLETE — 2026-11-11 — cycle `2026-11-06__release-v9.16` (ST-08, EPIC-02) — PR #2228, commit 87d78b39**
+**Priority:** P2 (Medium)
+**Type:** Frontend / UX (sizing) [U]
+**Owner:** Head of Engineering; Frontend Specifications & UX Documentation Owner
+**Source:** IDEA-head-of-ux-20261103-04 (IW-20261103-01), roadmap rebalance `2026-11-03__scheduled`, DL-088
+**Effort:** S (~1 day)
+**Provisional-Target:** v9.16
+
+**Problem**
+`TradePlan.js` asks for "Planned Shares (for pre-entry checks)" (line 976) before showing the §4.1 suggested size (`WhatIfSizingPreview`, line 1215), so the user types a number the system could suggest.
+
+**Scope**
+- Show the §4.1 suggested size above the shares field and pre-fill the field from it once entry and stop are known; keep it editable
+
+**Acceptance Criteria**
+- With entry and stop entered, the shares field pre-fills with the §4.1 suggestion; Playwright coverage passes
+
+---
+
+### BLG-FE-264 — Semantic colour tokens for the base, card and table shells
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2
+**Retired:** 2026-11-11
+**Shipped in:** v9.16
+**Evidence:** docs/product/changelog.md#v9.16; claude/cycles/2026-11-06__release-v9.16/verification_report.md; banner: ✅ COMPLETE — 2026-11-11 — cycle `2026-11-06__release-v9.16` (ST-09, EPIC-03) — PR #2232, commit 672ba549
+
+### BLG-FE-264 — Semantic colour tokens for the base, card and table shells
+**✅ COMPLETE — 2026-11-11 — cycle `2026-11-06__release-v9.16` (ST-09, EPIC-03) — PR #2232, commit 672ba549**
+**Priority:** P2 (Medium)
+**Type:** Frontend / design system [U]
+**Owner:** Frontend Specifications & UX Documentation Owner; Head of Engineering
+**Source:** IDEA-frontend-specs-20261103-03 (IW-20261103-01), roadmap rebalance `2026-11-03__scheduled`, DL-088
+**Effort:** M (~2-3 days)
+**Provisional-Target:** v9.16
+
+**Problem**
+`src/index.css` sets `body` to `bg-slate-950 text-white` in both themes; `DashboardCard.js:21` and `ui/DataTable.js` use dark-only fills. Light baselines show an invisible Positions empty-state heading, illegible RISK-ON badges and a black gate strip. `src/` has 376 bare `text-white` and 331 bare `bg-slate-800/900` classes, fixed one element at a time (`BLG-FE-87/88/95/200/224/242`).
+
+**Scope**
+- Define semantic tokens (surface, surface-raised, text, text-muted, border, positive, negative, warning) for light and dark in `tailwind.config.js`/`index.css`
+- Convert the body base, `DashboardCard`, `DataTable` and `PageHeader` shells to them; update `design_system.md`
+
+**Acceptance Criteria**
+- axe `color-contrast` passes in the light theme on Dashboard, Positions (empty and populated), Trade Plan and Settings
+- Visual baselines regenerated for both themes
+
+---
+
+### BLG-FE-271 — Require the acknowledgement on plan-linked Trade Entry when the plan's checks were WARN/FAIL
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2
+**Retired:** 2026-11-11
+**Shipped in:** v9.16
+**Evidence:** docs/product/changelog.md#v9.16; claude/cycles/2026-11-06__release-v9.16/verification_report.md; banner: ✅ COMPLETE — 2026-11-11 — cycle `2026-11-06__release-v9.16` (ST-05, EPIC-02) — PR #2228, commit 0d637f4c — P3 `DEV-v9.16-ST05-01` tracked by `BLG-FE-277`; P2 found gap `BLG-FE-278` accepted
+
+### BLG-FE-271 — Require the acknowledgement on plan-linked Trade Entry when the plan's checks were WARN/FAIL
+**✅ COMPLETE — 2026-11-11 — cycle `2026-11-06__release-v9.16` (ST-05, EPIC-02) — PR #2228, commit 0d637f4c — P3 `DEV-v9.16-ST05-01` tracked by `BLG-FE-277`; P2 found gap `BLG-FE-278` accepted**
+**Priority:** P2 (Medium)
+**Type:** Frontend / UX
+**Owner:** Frontend Specifications & UX Documentation Owner; Strategy Rules & System Intent Owner
+**Source:** Agent-mediated Product Owner review of PR #2189 (`2026-11-03__release-v9.15` EPIC-01, ST-01), user-authorised — 2026-11-04
+**Effort:** S (~0.5-1d)
+**Provisional-Target:** v9.16
+
+**Problem**
+Trade Entry hides the pre-entry panel when the linked plan has a stored `pre_entry_validation_snapshot`, per the locked `trade-entry-pre-entry-checks/decision_record.md` (AC 3, "not shown twice"). The Trade Plan form's acknowledgement is advisory only (`strategy_rules.md` §4.2.6 v1.23). A plan saved over a risk-off or unknown-regime FAIL can therefore become a position with no acknowledgement and no `pre_entry_override` event. That reads against §4.2.1 v1.23 ("an entry is blocked by requiring the user to acknowledge the FAIL before it can be saved"). The snapshot can also be days old, so it may not reflect today's regime.
+
+**Scope**
+- Get a Strategy Rules & System Intent Owner ruling on whether §4.2.1 v1.23 applies to the plan-linked route
+- If it does: when the snapshot holds a WARN/FAIL with no recorded acknowledgement, or is older than a set age, show the panel on Trade Entry (re-run the checks) instead of the on-plan line, with the same Branch A gating and override event
+- Update `position_form.md` §Pre-Entry Checks and the design record
+
+**Acceptance Criteria**
+- A dated ruling is recorded
+- If the ruling applies the rule: a plan-linked entry whose snapshot has an unacknowledged WARN/FAIL (or is stale) shows the panel once and disables Submit until it is acknowledged, and a plan whose checks all passed still shows only the on-plan line (Playwright)
+- Saving after the acknowledgement writes one `pre_entry_override` event (`source: trade_entry`) (backend test)
+
+
+**Notes:** Scope bullet 1 and the first AC are met: `ESC-CLOSE-20261106-01` (Strategy Rules & System Intent Owner, 2026-11-06) ruled option (a), so §4.2.1 v1.23 applies to the plan-linked route. The divergence is recorded as a Known deviation in `strategy_rules.md` §4.2.1 (v1.26). The conditional scope (show the panel on Trade Entry, Branch A gating, the override event, and the `position_form.md` and design record updates) now applies.
+
+---
+
+### BLG-OPS-213 — Stop injecting REACT_APP_ANTHROPIC_API_KEY into the public GitHub Pages build
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2
+**Retired:** 2026-11-11
+**Shipped in:** v9.16
+**Evidence:** docs/product/changelog.md#v9.16; claude/cycles/2026-11-06__release-v9.16/verification_report.md; banner: ✅ COMPLETE — 2026-11-11 — cycle `2026-11-06__release-v9.16` (ST-12, EPIC-04) — PR #2233, commit 596c427c — post-merge ACs met 2026-11-11 (`BLG-OPS-215`, `BLG-OPS-218`); P3 `DEV-v9.16-ST12-01` tracked by `BLG-SPEC-229`
+
+### BLG-OPS-213 — Stop injecting REACT_APP_ANTHROPIC_API_KEY into the public GitHub Pages build
+**✅ COMPLETE — 2026-11-11 — cycle `2026-11-06__release-v9.16` (ST-12, EPIC-04) — PR #2233, commit 596c427c — post-merge ACs met 2026-11-11 (`BLG-OPS-215`, `BLG-OPS-218`); P3 `DEV-v9.16-ST12-01` tracked by `BLG-SPEC-229`**
+**Priority:** P2 (Medium)
+**Type:** Operations / Security
+**Owner:** Cybersecurity & Trust Lead; Infrastructure & Operations Owner
+**Source:** Sprint execution `2026-11-03__release-v9.15`, ST-29 (EPIC-05) ANTHROPIC_API_KEY scope audit — 2026-11-05
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.16
+
+**Problem**
+`.github/workflows/deploy.yml` passes the GitHub Actions secret `REACT_APP_ANTHROPIC_API_KEY` (set 2026-05-25) into `npm run build` for the public GitHub Pages site, and Create React App inlines every `REACT_APP_*` value into the client bundle. `src/pages/TradePlan.js:122` reads it only as a boolean (`HAS_AI = !!process.env.REACT_APP_ANTHROPIC_API_KEY`), and the published bundle (`gh-pages` `c329390a`, 2026-11-05) contains no key, because the minifier folds the expression. Any future code that reads the value would publish the key. The frontend makes no Anthropic call; AI runs only in the backend.
+
+**Scope**
+- Replace `HAS_AI` with a non-secret flag, or remove it if AI is always available through the backend
+- Remove `REACT_APP_ANTHROPIC_API_KEY` from `deploy.yml` and delete the GitHub secret
+- If the secret held a live key, revoke it in the Anthropic console
+
+**Acceptance Criteria**
+- `grep -rn REACT_APP_ANTHROPIC .github src` finds nothing
+- `gh secret list` no longer lists `REACT_APP_ANTHROPIC_API_KEY`
+- Any key the secret held shows as revoked in the Anthropic console
+- The Trade Plan AI controls behave as before (Playwright or a recorded staging check)
+
+---
+
+### BLG-OPS-214 — Rotate the Anthropic API key (overdue since 2026-08-25) and revoke the old key
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P1
+**Retired:** 2026-11-11
+**Shipped in:** v9.16
+**Evidence:** docs/product/changelog.md#v9.16; claude/cycles/2026-11-06__release-v9.16/verification_report.md; banner: ✅ COMPLETE — 2026-11-11 — cycle `2026-11-06__release-v9.16` (ST-11, EPIC-04) — PR #2233, commit f97ff562
+
+### BLG-OPS-214 — Rotate the Anthropic API key (overdue since 2026-08-25) and revoke the old key
+**✅ COMPLETE — 2026-11-11 — cycle `2026-11-06__release-v9.16` (ST-11, EPIC-04) — PR #2233, commit f97ff562**
+**Priority:** P1 (High)
+**Type:** Operations / Security
+**Owner:** Cybersecurity & Trust Lead; Infrastructure & Operations Owner
+**Source:** Sprint execution `2026-11-03__release-v9.15`, ST-29 (EPIC-05) ANTHROPIC_API_KEY scope audit, AC 2 not met — 2026-11-06
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.16
+
+**Problem**
+The Anthropic workspace has one API key, created 2026-05-25 and never rotated (console read, 2026-11-06, `docs/security/anthropic_api_key_scope_audit_2026-11-06.md`). `docs/ops/api_key_rotation_policy.md` set its first rotation due on 2026-08-25, so it is about ten weeks overdue. The GitHub secret `REACT_APP_ANTHROPIC_API_KEY`, set the same day, very likely holds the same key (BLG-OPS-213).
+
+**Scope**
+- Create a new key in the Anthropic console; set it as `ANTHROPIC_API_KEY` on Render staging, check one AI endpoint, then production
+- Revoke the old key in the console
+- Delete the `REACT_APP_ANTHROPIC_API_KEY` GitHub secret (or replace it with a non-secret flag, per BLG-OPS-213)
+- Record the rotation date in `docs/ops/external_api_credential_inventory.md` (`Last rotated`) and `docs/ops/api_key_rotation_and_audit_schedule.md`
+
+**Acceptance Criteria**
+- The console lists one active key, created on the rotation date; the 2026-05-25 key is revoked
+- An AI endpoint succeeds on staging and production with the new key
+- The inventory's `Last rotated` field and the schedule's next-due date are filled in
+
+---
+
+### BLG-GOV-413 — Split-achievability carve-out: close a source item whose whole remainder has its own backlog items
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3
+**Retired:** 2026-11-11
+**Shipped in:** v9.16
+**Evidence:** docs/product/changelog.md#v9.16; claude/cycles/2026-11-06__release-v9.16/verification_report.md; banner: ✅ COMPLETE — 2026-11-11 — cycle `2026-11-06__release-v9.16` (ST-28, EPIC-07) — PR #2230, commit 5243368b — STEP 3.1 case (ii): AC 2 (post-merge) carried by `BLG-GOV-414`, filed this cycle
+
+### BLG-GOV-413 — Split-achievability carve-out: close a source item whose whole remainder has its own backlog items
+**✅ COMPLETE — 2026-11-11 — cycle `2026-11-06__release-v9.16` (ST-28, EPIC-07) — PR #2230, commit 5243368b — STEP 3.1 case (ii): AC 2 (post-merge) carried by `BLG-GOV-414`, filed this cycle**
+**Priority:** P3 (Low)
+**Type:** Governance Process
+**Owner:** Head of Specs Team; PMO Lead
+**Source:** Post-ship closure `2026-11-03__release-v9.15` STEP 8, closure-phase Friction Item 1 (`LL-v9.15-Closure-01`) — 2026-11-06
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.16
+
+**Problem**
+`post_ship_closure.md` STEP 3.1's split-achievability carve-out (LL-v8.9-P-Closure-01) leaves a backlog item open whenever its story only partly landed. It was written for `BLG-GOV-264`/`BLG-GOV-178`, where the remainder was tracked only by an escalation. At `2026-11-03__release-v9.15`, `BLG-AI-23` (ST-24; whole remainder moved to `BLG-AI-27`) and `BLG-OPS-48` (ST-29; remainders moved to `BLG-OPS-214`, `BLG-OPS-213` and `BLG-SPEC-223`) were left open under it. Each unmet AC is now tracked twice, and the next Release Planning may seat the source item and its follow-up together.
+
+**Scope**
+- In `post_ship_closure.md` STEP 3.1, distinguish (i) a remainder tracked only by an escalation or by the source item itself (keep open, as now) from (ii) every unmet AC moved to a named follow-up backlog item filed this cycle (banner the source item ✅ COMPLETE, naming the follow-up items)
+- Apply the CLAUDE.md §6 checklist
+
+**Acceptance Criteria**
+- STEP 3.1 states both cases, citing `BLG-AI-23`/`BLG-AI-27` as the case (ii) example
+- `BLG-AI-23` and `BLG-OPS-48` are bannered or given a recorded reason to stay open at the next `groom backlog` after the change
+
+---
+
+### BLG-OPS-215 — Delete the REACT_APP_ANTHROPIC_API_KEY secret and confirm production Trade Plan AI controls after ST-12 deploys
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2
+**Retired:** 2026-11-11
+**Shipped in:** v9.16
+**Evidence:** docs/product/changelog.md#v9.16; claude/cycles/2026-11-06__release-v9.16/verification_report.md; banner: ✅ COMPLETE — 2026-11-11 — cycle `2026-11-06__release-v9.16` (ST-12 post-merge AC 2 and AC 4 production half, EPIC-04) — secret deleted and production Trade Plan AI controls confirmed; recorded in `qa_evidence_EPIC-04.md` (commit 53da08cd)
+
+### BLG-OPS-215 — Delete the REACT_APP_ANTHROPIC_API_KEY secret and confirm production Trade Plan AI controls after ST-12 deploys
+**✅ COMPLETE — 2026-11-11 — cycle `2026-11-06__release-v9.16` (ST-12 post-merge AC 2 and AC 4 production half, EPIC-04) — secret deleted and production Trade Plan AI controls confirmed; recorded in `qa_evidence_EPIC-04.md` (commit 53da08cd)**
+**Priority:** P2 (Medium)
+**Type:** Operations / Security
+**Owner:** Cybersecurity & Trust Lead; Infrastructure & Operations Owner
+**Source:** Sprint Planning `2026-11-06__release-v9.16`, post-merge tracker for ST-12 (`BLG-OPS-213`) AC 2 and AC 4 (production half), filed before seal per `sprint_planning_prompt.md` §6.2 (Product Owner authorised) — 2026-11-09
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.16 (post-merge)
+
+**Problem**
+ST-12 removes `REACT_APP_ANTHROPIC_API_KEY` from `deploy.yml` and replaces `HAS_AI` in `TradePlan.js`. The GitHub secret can only be deleted safely after that change is on `main` and the Pages site has redeployed: deleting it earlier makes the next Pages build from `main` evaluate `HAS_AI` as false and hide the Trade Plan AI controls in production. The design gate addendum also measures ST-12 AC 4 ("behave as before") against the production Pages build, which exists only after merge.
+
+**Scope**
+- After ST-12 merges and the Pages deploy from `main` succeeds, delete the `REACT_APP_ANTHROPIC_API_KEY` GitHub secret
+- Load production Trade Plan and confirm the AI controls show and work as before
+- Record both in ST-12's QA evidence (`qa_evidence_EPIC-04.md`)
+
+**Acceptance Criteria**
+- `gh secret list` no longer lists `REACT_APP_ANTHROPIC_API_KEY`
+- A dated production check records that the Trade Plan AI controls show and respond after the post-merge Pages deploy
+
+---
+
+### BLG-GOV-414 — At the first groom backlog after ST-28 merges, banner BLG-AI-23 and BLG-OPS-48 or record why each stays open
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3
+**Retired:** 2026-11-11
+**Shipped in:** v9.16 (post-merge tracker)
+**Evidence:** docs/product/changelog.md#v9.16; claude/cycles/2026-11-06__release-v9.16/verification_report.md; banner: ✅ COMPLETE — 2026-11-11 — met by post-ship closure `2026-11-06__release-v9.16` STEP 3.1, the first run after ST-28 merged: `BLG-AI-23` and `BLG-OPS-48` bannered under case (ii), naming their follow-up items; named as met in `claude/backlog/backlog_health_20261111.md`
+
+### BLG-GOV-414 — At the first groom backlog after ST-28 merges, banner BLG-AI-23 and BLG-OPS-48 or record why each stays open
+**✅ COMPLETE — 2026-11-11 — met by post-ship closure `2026-11-06__release-v9.16` STEP 3.1, the first run after ST-28 merged: `BLG-AI-23` and `BLG-OPS-48` bannered under case (ii), naming their follow-up items; named as met in `claude/backlog/backlog_health_20261111.md`**
+**Priority:** P3 (Low)
+**Type:** Governance Process
+**Owner:** Head of Specs Team; PMO Lead
+**Source:** Sprint Planning `2026-11-06__release-v9.16`, post-merge tracker for ST-28 (`BLG-GOV-413`) AC 2, filed before seal per `sprint_planning_prompt.md` §6.2 (Product Owner authorised) — 2026-11-09
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.16 (first `groom backlog` after ST-28 merges)
+
+**Problem**
+ST-28 adds the split-achievability case (ii) to `post_ship_closure.md` STEP 3.1. Its AC 2 can only be met by the next `groom backlog` run after the change merges, which applies the rule to `BLG-AI-23` (remainder `BLG-AI-27`) and `BLG-OPS-48` (remainders `BLG-OPS-214`, `BLG-OPS-213`, `BLG-SPEC-223`). Without a tracker the remainder has no owner after sprint close.
+
+**Scope**
+- At the first `groom backlog` after ST-28 is on `main`, apply STEP 3.1 case (ii) to `BLG-AI-23` and `BLG-OPS-48`
+- Banner each ✅ COMPLETE naming its follow-up items, or record a reason it stays open
+
+**Acceptance Criteria**
+- `BLG-AI-23` and `BLG-OPS-48` each carry a ✅ COMPLETE banner naming their follow-up items, or a dated recorded reason to stay open
+- The groom run's health report names this item as met
+
+---
+
+### BLG-OPS-218 — Confirm the key the REACT_APP_ANTHROPIC_API_KEY GitHub secret held is revoked, after ST-12 merges
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2
+**Retired:** 2026-11-11
+**Shipped in:** v9.16
+**Evidence:** docs/product/changelog.md#v9.16; claude/cycles/2026-11-06__release-v9.16/verification_report.md; banner: ✅ COMPLETE — 2026-11-11 — cycle `2026-11-06__release-v9.16` (ST-12 AC 3, EPIC-04) — console check records one active key (created 2026-11-11); recorded in `qa_evidence_EPIC-04.md` (commit 779b12e2)
+
+### BLG-OPS-218 — Confirm the key the REACT_APP_ANTHROPIC_API_KEY GitHub secret held is revoked, after ST-12 merges
+**✅ COMPLETE — 2026-11-11 — cycle `2026-11-06__release-v9.16` (ST-12 AC 3, EPIC-04) — console check records one active key (created 2026-11-11); recorded in `qa_evidence_EPIC-04.md` (commit 779b12e2)**
+**Priority:** P2 (Medium)
+**Type:** Operations / Security
+**Owner:** Cybersecurity & Trust Lead; Infrastructure & Operations Owner
+**Source:** Sprint Execution `2026-11-06__release-v9.16`, ST-12 (`BLG-OPS-213`) AC 3, moved to post-merge by the user — 2026-11-11
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.16 (post-merge)
+
+**Problem**
+ST-11 rotated the Anthropic key on 2026-11-11 and revoked the 2026-05-25 key. GitHub cannot show a secret's stored value, so no one has confirmed whether `REACT_APP_ANTHROPIC_API_KEY` held that key, another key, or only `true` (the Render frontend variable held `true`). ST-12 AC 3 needs any key the secret held to be shown as revoked.
+
+**Scope**
+- Do this alongside `BLG-OPS-215`, before deleting the secret: check that the Anthropic console lists only the key created 2026-11-11 as active
+- Record the dated result against ST-12 AC 3 in `qa_evidence_EPIC-04.md`
+
+**Acceptance Criteria**
+- A dated console check records exactly one active Anthropic key (created 2026-11-11) and no other active key
+- ST-12 AC 3 is marked met in `qa_evidence_EPIC-04.md`
+
+---
 ### BLG-GOV-185 — Changelog section in metrics_definitions.md
 
 **Status at retirement:** ✅ Complete

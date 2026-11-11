@@ -3,11 +3,75 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-11-06 (post-ship closure 2026-11-03__release-v9.15 — v9.15 entry added); prior — 2026-11-03 (post-ship closure 2026-10-29__release-v9.14 — v9.14 entry added); prior — 2026-10-29 (post-ship closure 2026-10-16__release-v9.13 — v9.13 entry added); prior history retained
+**Last Updated:** 2026-11-11 (post-ship closure 2026-11-06__release-v9.16 — v9.16 entry added); prior — 2026-11-06 (post-ship closure 2026-11-03__release-v9.15 — v9.15 entry added); prior — 2026-11-03 (post-ship closure 2026-10-29__release-v9.14 — v9.14 entry added); prior history retained
 
 > This document is a human-maintained record of what was shipped in each product version and when. It records delivery milestones and notable decisions. It is not an immutable system record — for point-in-time system status reports, see `docs/operations/status_reports/`.
 
 > **Authoring convention — `User Impact` column (added v8.8, ST-13, BLG-FE-161):** each `### Changes shipped` table row carries a `User Impact` cell in addition to `Description`. Write `User Impact` only for EPICs that changed something a user can see, click, or notice the effect of — one to two sentences, present tense (or implied second person), no ticket IDs, no implementation nouns (endpoint/table/component names). Leave it `—` for backend/infra/governance/test-coverage rows with no user-facing effect. `Description` is retained unchanged as the engineering record — it is not replaced. `GET /changelog/latest` sources the in-app "What's New" panel from `User Impact` only; rows with a blank/`—` cell are excluded from that feed entirely (`docs/specs/api_contracts/changelog_endpoints.md`).
+
+---
+
+## v9.16 — Site Structure & Usability, Phase 2 — 2026-11-11
+Cycle: 2026-11-06__release-v9.16
+Verified: Verified_with_deviations
+Verification report: claude/cycles/2026-11-06__release-v9.16/verification_report.md
+
+### Changes shipped
+| EPIC | Description | User Impact | Spec sections updated |
+|------|-------------|-------------|----------------------|
+| EPIC-01 | Site Structure & Usability Phase 2 — Navigation & Wayfinding — the `navigation.md` v2 job-based sidebar (desktop and mobile drawer) with Trade Plans and Research entries; a parent link on each detail page; an onward next-step link on every former dead-end page (link scan: 0 dead ends); the digest's Risk Dashboard link scrolls to and focuses the named section | The sidebar is now grouped by what you are doing, and Trade Plans and Research are one click away. Detail pages link back to their parent, every page offers a next step, and the digest's Risk Dashboard link opens at the right section. | `docs/specs/frontend/navigation.md` (§Areas, §Parent Links, §Onward Links); `analytics.md#19.1`; design record `digest-section-link` |
+| EPIC-02 | Site Structure & Usability Phase 2 — Today List & Signal-to-Entry Flow — plan-linked Trade Entry requires the acknowledgement when the plan's checks were WARN/FAIL (BLG-FE-271; closes the `strategy_rules.md` §4.2.1 Known deviation); the Dashboard "Today" action list (`dashboard.md` §1B TL-01..TL-29 except TL-09/TL-10, which wait on BLG-BE-205); "Plan this" on Signals and Screener rows; Trade Plan shows the suggested size before asking for shares | The Dashboard now opens with a "Today" list of what needs your attention. Signals and Screener rows have a "Plan this" button, Trade Plan shows the suggested position size up front, and entering a trade from a plan whose checks warned or failed now asks you to acknowledge them first. | `position_form.md#Pre-Entry Checks`; `trade_plan.md#5a.1`, `#5e`, `#5f`; `strategy_rules.md#4.2.1`; `trade_plan_endpoints.md#PUT /trade-plans/{id}`; `dashboard.md#1B`; `signals.md`; `screener_results.md#11.1`; design record `signal-to-plan-flow` |
+| EPIC-03 | Site Structure & Usability Phase 2 — Colour Tokens & Input Contrast — the first semantic colour tokens for the base, card and table shells; inputs apply `dark:text-slate-400` to the placeholder, not the typed text (18 sites, 8 files) | Typed text in form fields is now easy to read in dark mode, and page, card and table backgrounds use one consistent colour set. | `design_system.md#Semantic Colour Tokens`, `#Input Text Colours` (v1.26); design record `semantic-colour-tokens` |
+| EPIC-04 | Anthropic Key Security & Operations Baselines — the Anthropic API key rotated and the 2026-05-25 key revoked (BLG-OPS-214, P1); `REACT_APP_ANTHROPIC_API_KEY` removed from the public GitHub Pages build and the secret deleted (BLG-OPS-213); the weekly market-data call-volume and full screener p50/p95 baselines recorded from production; the staging smoke host check fails when the backend reports no Render service ID | — | `external_api_credential_inventory.md`; `api_key_rotation_and_audit_schedule.md`; `.github/workflows/deploy.yml`; `trade_plan.md`; `data_model.md#DS-36`; `data_pipeline_cost_baseline.md`; `api_performance_baseline.md#53`; `staging_deploy_notes.md` |
+| EPIC-05 | Backend Correctness, AI Ticker Check & Spec Debt — exiting a US position with a NULL `fill_price` no longer fails; the lifecycle badge and Risk page agree for a US row with no `fill_price`/`fx_rate` (all live-rate); the frozen-stop marker is written when the on-load recompute has no live price; the production briefing caveat-token review (none found); real-ticker entries in `_NON_TICKER_WORDS` handled by a context rule (`ESC-EXEC-20261110-01`); the journal-summary stale `AI_MODEL` override line removed; the 11 missing positions columns added to the dictionary; `settings.md` points at the moved strategy constants module | Closing a US position that has no recorded fill price now works, and its lifecycle badge matches the Risk page. | `data_model_positions_dictionary.md`; `position_endpoints.md#GET /positions`, `#GET /positions/analyze`; `ai_endpoints.md#POST /ai/daily-briefing`, `#POST /ai/chat`, `#POST /ai/journal-summary`; `settings.md` |
+| EPIC-06 | Arc 2 Retrospective — QA Protocol, Lifecycle Test & Journey Map — the Arc 2 end-to-end QA protocol and happy-path test; the Arc 2 DoQ standards review (`shared_standards.md` §25); the trade plan lifecycle Playwright test; the Arc 2 user journey map | — | `docs/qa/arc2_e2e_qa_protocol.md`; `docs/qa/arc2_doq_standards_review.md`; `shared_standards.md#25`; `tests/e2e/trade-plan-lifecycle.spec.js`; `docs/ux/arc2_user_journey_map.md` |
+| EPIC-07 | Governance Process — the STEP 3.1 split-achievability carve-out distinguishes a remainder tracked only by an escalation or the source item (keep open) from one wholly moved to follow-up items (banner the source); the Arc 2 velocity report; the Base44 prompt versioning convention (`ESC-EXEC-20261110-02`) | — | `post_ship_closure.md#3.1` (v2.46); `docs/governance/arc_velocity_report_arc2.md`; `velocity_metrics.md`; `OPERATIONAL_GUIDE.md#8.3` |
+
+### Deviations accepted
+| Ref | Priority | Description | Accepted by |
+|-----|----------|-------------|-------------|
+| BLG-BE-211 (ST-26 found defect) | P2 | No backend path moves a linked trade plan to `closed`, so the lifecycle test cannot assert `active`→`closed`. Pre-existing. v9.17 | PO + DoQ (2026-11-10T13:41:19Z, the user in session) |
+| BLG-FE-278 (ST-05 found gap) | P2 | The Trade Plan pre-entry acknowledgement is not reset when the check result changes. v9.17 | PO + DoQ (2026-11-09T15:13:44Z, the user in session) |
+| BLG-FE-281 (ST-24 found defect) | P2 | Research "Create Trade Plan" drops the market, so UK plans open as US. Pre-existing. v9.17 | PO + DoQ (2026-11-11T15:13:05Z, the user in session) |
+| BLG-FE-282 (ST-27 found defect) | P2 | Trade Plan Stop Level is not pre-filled from the §5 stop (`trade_plan.md` §5a.3). Pre-existing. v9.17 | PO + DoQ (2026-11-11T15:13:05Z, the user in session) |
+| BLG-OPS-217 (ST-13 found defect) | P2 | 665 of 7,105 weekly production market-data calls fail, all Yahoo calls in on-demand features. Pre-existing; ST-13 measured it | PO + DoQ (2026-11-11T15:13:05Z, the user in session) |
+
+4 minor deviations (P3) — see `verification_report.md §4`: `DEV-NAV-ST01-01` (`BLG-SPEC-226`), `DEV-v9.16-ST05-01` (`BLG-FE-277`), `DEV-v9.16-ST12-01` (`BLG-SPEC-229`), and ST-12 AC 3 moved post-merge (`BLG-OPS-218`, met 2026-11-11).
+
+### Tech backlog items shipped
+- [ST-01] [U] Job-based sidebar; Trade Plans and Research surfaced (BLG-FE-250)
+- [ST-02] [U] Parent link on detail pages (BLG-FE-251)
+- [ST-03] [U] Onward next-step link on each former dead-end page (BLG-FE-252)
+- [ST-04] [U] Digest's Risk Dashboard link anchored to the right section (BLG-FE-253)
+- [ST-05] [U] Plan-linked Trade Entry requires the acknowledgement when the plan's checks were WARN/FAIL (BLG-FE-271)
+- [ST-06] [U] Dashboard "Today" action list; Stops moved group waits on BLG-BE-205 (BLG-FE-254)
+- [ST-07] [U] "Plan this" on Signals and Screener rows (BLG-FE-255)
+- [ST-08] [U] Trade Plan shows the suggested size before asking for shares (BLG-FE-256)
+- [ST-09] [U] Semantic colour tokens for the base, card and table shells (BLG-FE-264)
+- [ST-10] [U] Inputs apply the muted dark-mode colour to the placeholder, not typed text (BLG-FE-223)
+- [ST-11] [D] Anthropic API key rotated and the old key revoked (BLG-OPS-214)
+- [ST-12] [D] `REACT_APP_ANTHROPIC_API_KEY` removed from the public Pages build; secret deleted (BLG-OPS-213)
+- [ST-13] [D] Weekly market-data call-volume baseline recorded from production (BLG-OPS-197)
+- [ST-14] [D] Full screener run p50/p95 baseline recorded from production (BLG-OPS-198)
+- [ST-15] [D] Staging smoke host check fails when no Render service ID is reported (BLG-OPS-199)
+- [ST-16] [D] US position exit with NULL `fill_price` no longer fails in the P&L arithmetic (BLG-BE-175)
+- [ST-17] [D] Lifecycle badge and Risk page agree for a US row with no `fill_price`/`fx_rate` (BLG-BE-176)
+- [ST-18] [D] Frozen-stop marker written when the on-load recompute has no live price (BLG-BE-177)
+- [ST-19] [D] Production briefing ticker-caveat token review — none found (BLG-AI-27)
+- [ST-20] [D] `_NON_TICKER_WORDS` entries that are real tickers handled by a context rule (BLG-AI-28)
+- [ST-21] [D] Journal summary contract: stale `AI_MODEL` override line removed (BLG-SPEC-195)
+- [ST-22] [D] 11 missing positions columns added to the data dictionary (BLG-SPEC-200)
+- [ST-23] [D] `settings.md` points at the moved strategy constants module (BLG-SPEC-201)
+- [ST-24] [D] Arc 2 end-to-end QA protocol (BLG-QA-21)
+- [ST-25] [D] Arc 2 DoQ standards review (BLG-QA-22)
+- [ST-26] [D] Trade plan lifecycle end-to-end test (BLG-QA-23)
+- [ST-27] [P] Arc 2 user journey map (BLG-FE-39)
+- [ST-28] [G] Split-achievability carve-out: close a source item whose whole remainder has follow-up items (BLG-GOV-413)
+- [ST-29] [G] Arc velocity tracking report (BLG-GOV-26)
+- [ST-30] [G] Base44 prompt versioning convention (BLG-GOV-198)
+
+Sign-off: Product Owner — 2026-11-11
+QA sign-off: Director of Quality — 2026-11-11
 
 ---
 

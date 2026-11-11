@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.46
-**Last Updated:** 2026-11-10 (sprint execution `2026-11-06__release-v9.16` ST-28, BLG-GOV-413 — STEP 3.1 split-achievability carve-out distinguishes a remainder tracked only by an escalation or the source item (keep open) from one wholly moved to follow-up backlog items (banner the source)); prior — 2026-11-06 (post-ship closure `2026-11-03__release-v9.15` STEP 8 — STEP 3.1 banners a planning-deferred item that is already met or superseded (LL-v9.15-Release-02)); prior — 2026-11-03 (`ESC-RB-20261103-01` — Next-step line: `run roadmap` first when next release is `[TBD]`); prior history retained — see prior entries in version control
+**Version:** 2.47
+**Last Updated:** 2026-11-11 (post-ship closure `2026-11-06__release-v9.16` STEP 8 — STEP 3.1: a banner without a fixing story flags any open Known Deviations entry that names the item, for its spec owner (LL-v9.16-Closure-01)); prior — 2026-11-10 (sprint execution `2026-11-06__release-v9.16` ST-28, BLG-GOV-413 — STEP 3.1 split-achievability carve-out distinguishes a remainder tracked only by an escalation or the source item (keep open) from one wholly moved to follow-up backlog items (banner the source)); prior — 2026-11-06 (post-ship closure `2026-11-03__release-v9.15` STEP 8 — STEP 3.1 banners a planning-deferred item that is already met or superseded (LL-v9.15-Release-02)); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 **Process Reference:** None — the former process document `docs/team_skills/pmo/processess/post-ship_closure.md` was retired 2026-03-13 (commit `11db3666`, deleted with its whole `processess/` directory); this prompt is the sole authority for the Post-Ship Closure Engine.
@@ -353,6 +353,8 @@ For every ST item in `execution_state.json` with status `done` or `merged`:
   - If follow-up items cover only some unmet ACs, case (i) applies; record which ACs they cover.
 
 - **Planning-deferred items with no work left (LL-v9.15-Release-02, applied v9.15 post-ship closure):** for every `execution_state.json.deferred_at_planning` entry whose recorded reason is that the item is already met, or is superseded by a story that merged this cycle, add the ✅ COMPLETE banner to its backlog item as well, naming the reason and the superseding story. Otherwise the item re-enters the next Release Planning ready pool (`BLG-GOV-185` precedent). Leave an item open if the deferral was for any other reason.
+
+- **Banner on a Known Deviations backlog reference (LL-v9.16-Closure-01, applied v9.16 post-ship closure):** whenever this step banners an item ✅ COMPLETE without a story that fixed it (a planning-deferred item above, or a split-achievability case (ii) source item), grep `docs/` and `claude/strategy/` for the item ID. If it is the backlog reference of a Known Deviations entry that is still open, record a closure record §6 action for that spec's owner to mark the entry resolved, citing the banner. A story that fixes a deviation updates its spec in the same commit, but a banner touches only `backlog.md`, so nothing else updates the spec. Found by the ninth deviation consolidation review (`docs/governance/deviation_consolidation_review_2026-11-11.md` Finding 1): `metrics_definitions.md` Appendix E Item 4 still read Open after `BLG-FE-240` was bannered at the v9.15 closure.
 
 ### 3.2 Confirm Phase 4 additions are present
 

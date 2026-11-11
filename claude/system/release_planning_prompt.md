@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.72
-**Last Updated:** 2026-11-06 (`ESC-CLOSE-20261106-02` ruling, option (b) — §1.4c step 0 programme-phase hold for later-phase items of a DL-recorded programme plan); prior — 2026-11-06 (post-ship closure `2026-11-03__release-v9.15` STEP 8 — STEP 4 calibration check reads Scope or Acceptance Criteria text (LL-v9.15-Release-03)); prior — 2026-11-06 (BLG-GOV-395, Head of Specs Team — STEP 7 sync writes `execution_state_path` with `active_cycle`; renumbered at merge, see changelog); prior history retained — see prior entries in version control
+**Version:** 2.73
+**Last Updated:** 2026-11-11 (post-ship closure `2026-11-06__release-v9.16` STEP 8 — §1.4b step 5: a deploy-derived gate date cites the merged PR and its merge date (LL-v9.16-P3-04)); prior — 2026-11-06 (`ESC-CLOSE-20261106-02` ruling, option (b) — §1.4c step 0 programme-phase hold for later-phase items of a DL-recorded programme plan); prior — 2026-11-06 (post-ship closure `2026-11-03__release-v9.15` STEP 8 — STEP 4 calibration check reads Scope or Acceptance Criteria text (LL-v9.15-Release-03)); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -617,6 +617,7 @@ Before finalising sprint capacity and scope classification, identify any candida
 2. **Mandatory classification rule:** Any item with a within-sprint date gate **must** be classified as **conditional** in the release plan and sprint backlog. It may **not** be classified as firm capacity, regardless of how likely the gate is to clear.
 3. **Promotion path:** The item may be promoted from conditional → firm only when the gate owner **explicitly confirms** the gate condition has been met (dated confirmation recorded in `run_manifest.md` or sprint planning artefact).
 4. **Record:** For each within-sprint date gate item, record in the run manifest: item ID, gate condition, gate clearing date, and "classified: conditional."
+5. **Deploy-derived gate dates (LL-v9.16-P3-04, applied v9.16 post-ship closure):** when the clearing date is counted from a deploy (for example "N nightly runs after X ships"), cite the merged PR that shipped the dependency and its merge date, checked with `gh pr view <n> --json mergedAt`. Do not take the date from an adjacent release's merge or ship date. At `2026-11-06__release-v9.16`, ST-13 and ST-14's gates were dated from a 2026-11-02 deploy, but DS-36 reached production on 2026-10-28 (PR #2075). ST-14 cleared a day early, and ST-13 measured a later week than planned.
 
 **Rationale (why mandatory):** This rule was filed as advisory (LL-P3-03-v55, v5.5 post-ship) and elevated to mandatory after the pattern recurred across five consecutive releases: v5.4 ST-03, v5.5 ST-11–14, v5.6 ST-03, v5.7 ST-09/ST-12–14, v5.8 ST-01/ST-02 — all returned to backlog at sprint close because a within-sprint date gate was not met. Items classified as firm with a within-sprint date gate predictably return to backlog. This rule eliminates the source of that return pattern. Applied action-now: rebalance 2026-06-17__scheduled (LL-P3-03-v55/LL-P4-01-v55 overdue).
 
