@@ -38,7 +38,10 @@ Last Updated: 2026-11-11
 - **Spec reference:** `docs/ops/external_api_credential_inventory.md` §3 Anthropic API Key (rotation policy steps); `docs/ops/api_key_rotation_and_audit_schedule.md` row 2; `stage4_backlog_slice.md#ST-11`, `#ST-12`
 - **Unblock criteria:** in session or in this record: the rotation date; confirmation that the console shows one active key created that date with the old key(s) revoked; an AI endpoint succeeded on staging and on production; the Render static-site env var outcome. The engine then records the date in the inventory (`Last rotated`) and the schedule's next-due date (ST-11 AC 3).
 - **Commit format required:** `[EPIC-04][ST-11] <description>` on `exec/2026-11-06__release-v9.16/EPIC-04` (engine commits the doc dates)
-- **Status:** Pending
+- **Result (supplied in session by the user, 2026-11-11):** steps 1–6 confirmed done: new key created 2026-11-11 (console expiry 2027-11-11), set on Render staging and checked ("Improve with AI"), then production and checked; 2026-05-25 key revoked; the Render frontend `REACT_APP_ANTHROPIC_API_KEY` held `true`, not a key, and was deleted; GitHub secret left in place for `BLG-OPS-215`. Recorded at `f97ff562`: rotated 2026-11-11, next due 2027-10-28 (two weeks ahead of the expiry) in the credential inventory, schedule, register and policy. ST-12 AC 3 (the key the GitHub secret held is revoked): the user chose to confirm after merge, since GitHub cannot show a secret's value; tracked by `BLG-OPS-218` (P2), run with `BLG-OPS-215`.
+- **Sign-off:** sign_off_cleared — rotation steps confirmed by the user in session, 2026-11-11; ST-12 AC 3 deferred post-merge to `BLG-OPS-218`.
+- **Commit SHA:** f97ff5624ef62080312b09b45aa749867a66554c
+- **Status:** Unblocked (2026-11-11T11:37:08Z) — Unblocked in-session — rotation confirmed by the user, same session as delegation.
 
 ## DEL-20261111-02
 

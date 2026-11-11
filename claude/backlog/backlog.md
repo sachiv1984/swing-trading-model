@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-11 (session — 2 new items added: BLG-SPEC-229, BLG-OPS-217; ST-12/ST-13, EPIC-04, v9.16); prior — 2026-11-10 (session — 5 new item(s) added: BLG-FE-285, BLG-OPS-216, BLG-FE-286, BLG-QA-260, BLG-UX-10; EPIC-03, v9.16); prior — 2026-11-10 (session — 2 new item(s) added: BLG-QA-258, BLG-QA-259; agent-mediated DoQ and PO review of PR #2231, EPIC-06, v9.16); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-11 (session — 1 new item added: BLG-OPS-218; ST-11/ST-12, EPIC-04, v9.16); prior — 2026-11-11 (session — 2 new items added: BLG-SPEC-229, BLG-OPS-217; ST-12/ST-13, EPIC-04, v9.16); prior — 2026-11-10 (session — 5 new item(s) added: BLG-FE-285, BLG-OPS-216, BLG-FE-286, BLG-QA-260, BLG-UX-10; EPIC-03, v9.16); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -6867,5 +6867,26 @@ axe on Trade Entry finds `label` (the Risk % number input and the entry date inp
 **Acceptance Criteria**
 - Rule 5's `DashboardCard` entry names the label's token explicitly and drops the non-existent "sub-label", with the decision and its evidence recorded
 - `DashboardCard.js` matches the amended rule
+
+---
+
+### BLG-OPS-218 — Confirm the key the REACT_APP_ANTHROPIC_API_KEY GitHub secret held is revoked, after ST-12 merges
+**Priority:** P2 (Medium)
+**Type:** Operations / Security
+**Owner:** Cybersecurity & Trust Lead; Infrastructure & Operations Owner
+**Source:** Sprint Execution `2026-11-06__release-v9.16`, ST-12 (`BLG-OPS-213`) AC 3, moved to post-merge by the user — 2026-11-11
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.16 (post-merge)
+
+**Problem**
+ST-11 rotated the Anthropic key on 2026-11-11 and revoked the 2026-05-25 key. GitHub cannot show a secret's stored value, so no one has confirmed whether `REACT_APP_ANTHROPIC_API_KEY` held that key, another key, or only `true` (the Render frontend variable held `true`). ST-12 AC 3 needs any key the secret held to be shown as revoked.
+
+**Scope**
+- Do this alongside `BLG-OPS-215`, before deleting the secret: check that the Anthropic console lists only the key created 2026-11-11 as active
+- Record the dated result against ST-12 AC 3 in `qa_evidence_EPIC-04.md`
+
+**Acceptance Criteria**
+- A dated console check records exactly one active Anthropic key (created 2026-11-11) and no other active key
+- ST-12 AC 3 is marked met in `qa_evidence_EPIC-04.md`
 
 ---
