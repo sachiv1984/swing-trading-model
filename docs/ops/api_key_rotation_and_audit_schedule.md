@@ -1,8 +1,8 @@
 **Owner:** Cybersecurity & Trust Lead
 **Class:** Operational Policy (Class 2)
 **Status:** Active
-**Version:** 1.0
-**Last Updated:** 2026-07-26
+**Version:** 1.1
+**Last Updated:** 2026-11-11 (ST-11, EPIC-04, v9.16 — Claude / Anthropic row: rotated 2026-11-11, next rotation due 2027-10-28, BLG-OPS-214); prior — 2026-07-26
 **Cycle:** 2026-07-24__release-v7.8 (ST-07 — BLG-SEC-20)
 
 ---
@@ -22,7 +22,7 @@ This document does not replace `docs/ops/alpaca_key_rotation_policy.md` or `docs
 | # | Key Type | Credential Exists? | Rotation Cadence | First Rotation Due | Audit Cadence | First Audit Due |
 |---|----------|--------------------|--------------------|--------------------|--------------|-------|
 | 1 | Alpaca (`APCA_API_KEY_ID` + `APCA_API_SECRET_KEY`) | Yes | Annual (12 months) — per `alpaca_key_rotation_policy.md` | 2027-07-26 (anchored today; prior rotation date was unknown/pre-register — see Note A) | Quarterly (90 days) | 2026-10-24 |
-| 2 | Claude / Anthropic (`ANTHROPIC_API_KEY`) | Yes | Annual (12 months) — per `api_key_rotation_policy.md §Anthropic API Key` | 2026-08-25 (existing register date, unchanged) | Quarterly (90 days) | 2026-10-24 |
+| 2 | Claude / Anthropic (`ANTHROPIC_API_KEY`) | Yes | Annual (12 months) — per `api_key_rotation_policy.md §Anthropic API Key` | Rotated 2026-11-11 (ST-11, EPIC-04, v9.16; overdue since 2026-08-25). Next due **2027-10-28**: two weeks before the new key's 2027-11-11 expiry | Quarterly (90 days) | 2026-10-24 |
 | 3 | Telegram (`TELEGRAM_BOT_TOKEN` + `TELEGRAM_CHAT_ID`) | Yes | Annual (12 months) — per `api_key_security_register.md` entry #7 | 2027-07-26 (anchored today; prior rotation date was unknown/pre-register — see Note A) | Quarterly (90 days) | 2026-10-24 |
 | 4 | Yahoo Finance | **No** — see Note B | Not applicable (no credential to rotate) | Not applicable | Quarterly (90 days) — confirms Note B still holds | 2026-10-24 |
 | 5 | Gemini | **No** — see Note C | Not applicable (no credential to rotate) | Not applicable | Quarterly (90 days) — confirms Note C still holds | 2026-10-24 |

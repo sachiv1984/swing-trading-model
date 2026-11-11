@@ -1,8 +1,8 @@
 **Owner:** Cybersecurity & Trust Lead
 **Class:** Operational Policy (Class 2)
 **Status:** Active
-**Version:** 1.2
-**Last Updated:** 2026-11-06 (ST-29, EPIC-05, v9.15 — Anthropic key `Last rotated` recorded as never rotated since its 2026-05-25 creation, overdue since 2026-08-25, BLG-OPS-214); prior — 2026-05-27
+**Version:** 1.3
+**Last Updated:** 2026-11-11 (ST-11, EPIC-04, v9.16 — Anthropic key rotated 2026-11-11; next rotation due 2027-10-28, ahead of the new key's 2027-11-11 expiry, BLG-OPS-214); prior — 2026-11-06 (ST-29, EPIC-05, v9.15 — Anthropic key `Last rotated` recorded as never rotated since its 2026-05-25 creation, overdue since 2026-08-25, BLG-OPS-214); prior — 2026-05-27
 **Cycle:** 2026-04-29__release-v3.1 (ST-12)
 
 ---
@@ -60,9 +60,9 @@ This document is the authoritative inventory of all external API credentials use
 | Credential type | API Key |
 | Scope | Full Anthropic API access (platform does not support key-level scope restriction as of 2026-05-27) — application-level controls apply (see `docs/security/anthropic_api_key_scope_review.md`) |
 | Storage location | Render environment variables: `ANTHROPIC_API_KEY` |
-| Rotation policy | Rotate every 90 days or on suspected compromise. Step-by-step: (1) generate new key in Anthropic Console → Settings → API Keys; (2) update `ANTHROPIC_API_KEY` in Render staging env; (3) verify thesis generation on staging; (4) update production env; (5) revoke old key in Anthropic Console; (6) update `last_rotated` in this file |
-| Last rotated | Never rotated: the only key was created 2026-05-25 (console read 2026-11-06, `docs/security/anthropic_api_key_scope_audit_2026-11-06.md`). Rotation overdue since 2026-08-25; tracked by `BLG-OPS-214` |
-| Rotation due | 90 days from first inventory date (2026-08-25) |
+| Rotation policy | Rotate annually (12 months, per `docs/ops/api_key_rotation_policy.md`) or on suspected compromise. Step-by-step: (1) generate new key in Anthropic Console → Settings → API Keys; (2) update `ANTHROPIC_API_KEY` in Render staging env; (3) verify thesis generation on staging; (4) update production env; (5) revoke old key in Anthropic Console; (6) update `last_rotated` in this file |
+| Last rotated | 2026-11-11 (ST-11, EPIC-04, v9.16, BLG-OPS-214, DEL-20261111-01): new key created and set on Render staging then production, "Improve with AI" checked on both, 2026-05-25 key revoked. The new key expires 2027-11-11 (console expiry set at creation) |
+| Rotation due | 2027-10-28: annual cadence, brought forward two weeks so the rotation lands before the key's 2027-11-11 expiry takes AI features down |
 | Notes | Legacy service file `backend/services/gemini_service.py` uses this key (filename retained for backward compatibility). Cost audit logging active via `gemini_audit_log` table. Monthly threshold: $5.00 (`docs/ops/gemini_cost_tracking.md`). |
 
 ---
