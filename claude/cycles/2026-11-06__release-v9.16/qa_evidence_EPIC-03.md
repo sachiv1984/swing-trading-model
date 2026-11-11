@@ -83,6 +83,6 @@ Also fixed in-file (disclosed in `bd4698b1`): the Positions table Edit icon butt
 
 ## Merge Gate Confirmations
 
-- **Director of Quality QA sign-off:** not yet given by a human (the block above is agent-mediated).
-- **Product Owner acceptance:** not yet given.
+- **Director of Quality QA sign-off:** given by the user (human, holds the Director of Quality role), in the Sprint Execution session, 2026-11-11 ("give DOQ and PO acceptance"). Confirms the agent-mediated sign-off block above. Recorded on PR #2232 as a comment.
+- **Product Owner acceptance:** given by the user (human, holds the Product Owner role), same session and message, 2026-11-11. Recorded on PR #2232 as a comment.
 - **Merge:** not yet merged.
