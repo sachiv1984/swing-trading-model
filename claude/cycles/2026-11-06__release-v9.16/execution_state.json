@@ -6,7 +6,7 @@
   "invoked_utc": "2026-11-09T09:15:14Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-10T14:00:38Z",
+  "last_updated_utc": "2026-11-11T08:10:00Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-02",
@@ -731,10 +731,10 @@
     },
     "EPIC-03": {
       "title": "Site Structure & Usability Phase 2: Colour Tokens & Input Contrast (build-and-ship)",
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-11-06__release-v9.16/EPIC-03",
       "pr_number": 2232,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "test_scenarios": [
         "tests/e2e/accessibility-axe-scan.spec.js",
@@ -745,7 +745,7 @@
       ],
       "stories": {
         "ST-09": {
-          "status": "done",
+          "status": "merged",
           "classification": "autonomous",
           "spec_references": [
             "docs/specs/frontend/design_system.md#Semantic Colour Tokens",
@@ -771,7 +771,7 @@
           }
         },
         "ST-10": {
-          "status": "done",
+          "status": "merged",
           "classification": "autonomous",
           "spec_references": [
             "docs/design/2026-11-06__release-v9.16/semantic-colour-tokens/decision_record.md",
@@ -869,10 +869,10 @@
       "EPIC-02",
       "EPIC-05",
       "EPIC-07",
-      "EPIC-06"
+      "EPIC-06",
+      "EPIC-03"
     ],
     "epics_pending": [
-      "EPIC-03",
       "EPIC-04"
     ],
     "all_merged": false
@@ -888,7 +888,8 @@
     "2026-11-10 EPIC-06: PR #2231 merged 2026-11-10T14:00:18Z by the human repository owner (merge commit 9df2088b). Orphaned post-merge commit check (LL-v6.8-P3-01): git log origin/main..origin/exec/2026-11-06__release-v9.16/EPIC-06 empty - nothing to reconcile. STEP 4 step 3c: no v9.16 EPIC-03/EPIC-04 branch exists yet, so no sibling execution_state.json sync was needed.",
     "2026-11-10 EPIC-03 ST-09 scope ruling (Product Owner, the user in session): converting DataTable/DashboardCard to app-raised (white in light) exposed dark-only content in shell consumers outside the 4 AC pages (TradeHistoryTable journal/debrief rows - broke SC-DBF-06a light axe; WeeklyDigest table; the 9 Dashboard cards in populated states). Options offered: fix all shell consumers / fix Trade History only + P2 backlog item / escalate to Head of UX. Ruling: fix all shell consumers in ST-09 with explicit light/dark pairs and add light axe coverage; recorded as a scope note, not a new story. Design record section 5 ('do not widen the shell list') is respected: no new shells are tokenised.",
     "2026-11-10 EPIC-03 agent-mediated DoQ + Head of UX & Design review pass 1 (§5.3): both Blocked. DoQ-1/UX-1: ST-10 put text-app-fg on 10 inputs inside containers dark in both themes (Trade Entry card TradeEntry.js:499, PositionModal and ExitModal DialogContent) - light typed text ~1.1:1; SC-ITC-02's helper ignored background-image so measured the page, not the card. DoQ-2: positions baselines not regenerated (still show the pre-ST-09 defect). DoQ-3/UX-2: PlanVsReality AdherenceBadge 700 shades on /20 tints 4.15-4.37:1. Product Owner ruling (the user in session): theme the containers - give the Trade Entry card and both modals light/dark pairs so text-app-fg is correct as specified.",
-    "2026-11-10 EPIC-03 Product Owner ruling (the user in session): DashboardCard label as text-app-fg (design_system.md v1.25 rule 5) accepted as built; label/figure hierarchy question filed as BLG-UX-10 for Head of UX & Design and Head of Specs Team (product_owner.md §4/§9: PO states intent, does not amend the spec)."
+    "2026-11-10 EPIC-03 Product Owner ruling (the user in session): DashboardCard label as text-app-fg (design_system.md v1.25 rule 5) accepted as built; label/figure hierarchy question filed as BLG-UX-10 for Head of UX & Design and Head of Specs Team (product_owner.md §4/§9: PO states intent, does not amend the spec).",
+    "2026-11-11 STEP 4 EPIC-03: PR #2232 merged by the human repository owner (holds the Director of Quality and Product Owner roles) at 2026-11-11T08:02:52Z (merge commit 977fb22f) after the human Director of Quality sign-off and Product Owner acceptance were recorded (be3501f8, PR comment). The engine's own gh pr merge attempt was refused by the required-review branch policy; --admin was not used. Orphaned post-merge commit check: git log origin/main..origin/exec/2026-11-06__release-v9.16/EPIC-03 lists nothing. Sibling sync (3c): EPIC-04 has no branch yet, so there is nothing to sync."
   ],
   "sealed": false,
   "sealed_utc": null

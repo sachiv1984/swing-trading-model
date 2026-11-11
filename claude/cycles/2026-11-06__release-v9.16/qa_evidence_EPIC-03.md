@@ -85,4 +85,4 @@ Also fixed in-file (disclosed in `bd4698b1`): the Positions table Edit icon butt
 
 - **Director of Quality QA sign-off:** given by the user (human, holds the Director of Quality role), in the Sprint Execution session, 2026-11-11 ("give DOQ and PO acceptance"). Confirms the agent-mediated sign-off block above. Recorded on PR #2232 as a comment.
 - **Product Owner acceptance:** given by the user (human, holds the Product Owner role), same session and message, 2026-11-11. Recorded on PR #2232 as a comment.
-- **Merge:** not yet merged.
+- **Merge:** PR #2232 merged 2026-11-11T08:02:52Z by the human repository owner (holds the Director of Quality and Product Owner roles), merge commit `977fb22f`. The separately recorded confirmations above came first; this is not a confirmation-by-merge record.
