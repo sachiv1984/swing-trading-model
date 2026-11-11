@@ -59,6 +59,14 @@ Last Updated: 2026-11-11
   - ST-12 AC 3 moved post-merge after seal (`BLG-OPS-218`).
   - All other stories' deviation checks completed with nothing to file.
 - **Backlog items filed during this EPIC:** `BLG-SPEC-229` (P3), `BLG-OPS-217` (P2), `BLG-OPS-218` (P2).
+- **PR #2233 review (2026-11-11, agent-mediated for the Director of Quality and the Product Owner, user-directed, pending human confirmation):**
+  - **Verdicts:** DoQ ⚠️ Approved with Comments; PO ⚠️ Approved with Comments. Posted on the PR (comment 6795099417). No blocking finding; grades unchanged.
+  - **Checked during the review:** the scheduled staging smoke run 42962434894 (2026-11-11, `main`) logged the host check passing (`✓ … is the staging backend`), so ST-15 will not turn the next run red. The smoke script's new import uses only the standard library.
+  - **Follow-ups filed:**
+    - `BLG-FE-287` (P3): "Improve with AI" gives no feedback on `available: false` or an error.
+    - `BLG-QA-261` (P3): CI guard against `REACT_APP_*` variables fed from third-party secrets.
+    - `BLG-OPS-219` (P3): Anthropic key Scope and key-type rows (workspace, service account); replaces the earlier "record only" note on this.
+  - **PO note:** `BLG-OPS-217` (P2, Yahoo failures) is recommended for v9.17 planning. Suggested release-notes line: the Trade Plan AI button no longer depends on a build-time key, and the Anthropic key was rotated.
 - **Post-merge items (for `sprint_close.md` "Items Delegated and outstanding"):**
   - `BLG-OPS-215`: delete the GitHub secret after the Pages redeploy; production Trade Plan AI check (ST-12 AC 2 and the production half of AC 4).
   - `BLG-OPS-218`: console check for ST-12 AC 3, run before the secret is deleted.

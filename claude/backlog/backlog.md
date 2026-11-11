@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-11 (session — 1 new item added: BLG-OPS-218; ST-11/ST-12, EPIC-04, v9.16); prior — 2026-11-11 (session — 2 new items added: BLG-SPEC-229, BLG-OPS-217; ST-12/ST-13, EPIC-04, v9.16); prior — 2026-11-10 (session — 5 new item(s) added: BLG-FE-285, BLG-OPS-216, BLG-FE-286, BLG-QA-260, BLG-UX-10; EPIC-03, v9.16); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-11 (session — 3 new items added: BLG-FE-287, BLG-QA-261, BLG-OPS-219; agent-mediated DoQ and PO review of PR #2233, EPIC-04, v9.16); prior — 2026-11-11 (session — 1 new item added: BLG-OPS-218; ST-11/ST-12, EPIC-04, v9.16); prior — 2026-11-11 (session — 2 new items added: BLG-SPEC-229, BLG-OPS-217; ST-12/ST-13, EPIC-04, v9.16); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -6888,5 +6888,71 @@ ST-11 rotated the Anthropic key on 2026-11-11 and revoked the 2026-05-25 key. Gi
 **Acceptance Criteria**
 - A dated console check records exactly one active Anthropic key (created 2026-11-11) and no other active key
 - ST-12 AC 3 is marked met in `qa_evidence_EPIC-04.md`
+
+---
+
+### BLG-FE-287 — Tell the user when "Improve with AI" cannot generate, instead of doing nothing
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Head of Engineering; Head of UX & Design
+**Source:** Agent-mediated DoQ and Product Owner review of PR #2233 (EPIC-04, `2026-11-06__release-v9.16`), Product Owner finding — 2026-11-11
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.17
+
+**Problem**
+The Trade Plan "Improve with AI" handler (`src/pages/TradePlan.js`) acts only when `POST /trade-plans/generate-plan` returns `data.available` and `data.fields`. When the backend has no Anthropic key, it returns `available: false`; on an error, the `catch` is empty. Either way the button stops loading and nothing changes, with no message. Since ST-12 (v9.16) removed the client-side `HAS_AI` check, the button shows in every build, so this silent case is reachable wherever the backend lacks a key or the call fails.
+
+**Scope**
+- Show a short inline message when the response has `available: false` or the request fails, for example "AI drafting is unavailable right now"; leave the form unchanged
+- Add the message to `trade_plan.md` §5b
+- Add a Playwright scenario that stubs `available: false` and asserts the message
+
+**Acceptance Criteria**
+- With `generate-plan` stubbed to `available: false`, clicking "Improve with AI" shows the message and the form fields are unchanged (Playwright)
+- With the request stubbed to fail (500), the same message shows (Playwright)
+
+---
+
+### BLG-QA-261 — Fail CI when a deploy workflow or .env file passes a third-party secret into a REACT_APP_ variable
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** Cybersecurity & Trust Lead; Director of Quality
+**Source:** Agent-mediated DoQ and Product Owner review of PR #2233 (EPIC-04, `2026-11-06__release-v9.16`), Director of Quality finding — 2026-11-11
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.17
+
+**Problem**
+CRA inlines every `REACT_APP_*` variable into the public bundle. `REACT_APP_ANTHROPIC_API_KEY` was passed from a GitHub secret into the Pages build from v4.3 until ST-12 (v9.16) removed it (`BLG-OPS-213`). Gitleaks did not catch this, because the repo held only `${{ secrets.X }}`, never the value. ST-12 AC 1 was checked once, by a manual grep. Nothing stops the same pattern coming back.
+
+**Scope**
+- Add a test that scans `.github/workflows/*.yml`, `.env*` and `playwright.config.js` for `REACT_APP_*` variables fed from `secrets.*` or named like a key, token or secret
+- Allow-list `REACT_APP_API_KEY` (the app's own `X-API-Key`, public by design, `api_key_security_register.md` §6), with the reason in the test
+- Run it in the existing CI Pytest suite
+
+**Acceptance Criteria**
+- The test fails when `REACT_APP_ANTHROPIC_API_KEY: ${{ secrets.REACT_APP_ANTHROPIC_API_KEY }}` is added back to `deploy.yml` (checked by mutation)
+- The test passes on `main`, with `REACT_APP_API_KEY` as the only allow-listed entry
+
+---
+
+### BLG-OPS-219 — Update the Anthropic key's Scope and key type in the credential inventory and security register
+**Priority:** P3 (Low)
+**Type:** Operations / Security
+**Owner:** Cybersecurity & Trust Lead
+**Source:** Agent-mediated DoQ and Product Owner review of PR #2233 (EPIC-04, `2026-11-06__release-v9.16`), Director of Quality finding — 2026-11-11
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.17
+
+**Problem**
+`external_api_credential_inventory.md` §3 and `api_key_security_register.md` §3 both say the Anthropic platform "does not support key-level scope restriction". The Anthropic console now creates keys scoped to one workspace, and lets a key belong to a service account rather than a person. Neither document says whether the key set on 2026-11-11 (ST-11) is workspace-scoped or a service-account key. A key tied to a person stops working if that person's access changes.
+
+**Scope**
+- Check in the console whether the 2026-11-11 key is workspace-scoped and whether it belongs to a service account
+- Update the Scope row in both documents, and `anthropic_api_key_scope_review.md` if its finding is out of date
+- If the key is personal or not workspace-scoped, record that, and plan the change for the 2027-10-28 rotation
+
+**Acceptance Criteria**
+- Both Scope rows match the console's current options and state the key's workspace and owner type, with the check date
+- The 2027-10-28 rotation entry says whether the next key should be workspace-scoped and owned by a service account
 
 ---
