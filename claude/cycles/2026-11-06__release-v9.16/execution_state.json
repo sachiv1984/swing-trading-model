@@ -6,7 +6,7 @@
   "invoked_utc": "2026-11-09T09:15:14Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-11T11:55:00Z",
+  "last_updated_utc": "2026-11-11T13:05:00Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-02",
@@ -806,10 +806,10 @@
     },
     "EPIC-04": {
       "title": "Anthropic Key Security & Operations Baselines",
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-11-06__release-v9.16/EPIC-04",
       "pr_number": 2233,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-11-06__release-v9.16/qa_evidence_EPIC-04.md",
       "test_scenarios": [
@@ -955,7 +955,9 @@
         "status": "cleared",
         "date": "2026-11-11",
         "notes": "Pass 1 Approved with comments (5 non-blocking). PR #2233 review DoQ/PO Approved with Comments (comment 6795099417); follow-ups BLG-FE-287, BLG-QA-261, BLG-OPS-219. Human DoQ and PO acceptance given in session 2026-11-11T11:54:34Z, before merge."
-      }
+      },
+      "merged_utc": "2026-11-11T12:59:20Z",
+      "merge_commit": "7fb39495"
     }
   },
   "deferred_at_planning": [],
@@ -1028,12 +1030,11 @@
       "EPIC-05",
       "EPIC-07",
       "EPIC-06",
-      "EPIC-03"
-    ],
-    "epics_pending": [
+      "EPIC-03",
       "EPIC-04"
     ],
-    "all_merged": false
+    "epics_pending": [],
+    "all_merged": true
   },
   "process_notes": [
     "EPIC-01 (2026-11-09): the STEP 3.1.A step 13 cross-spec selector scan at ST-01 grepped for v1 group names and sidebar selectors only; it missed bare getByText/locator collisions with newly visible sidebar text ('Today', 'Watchlist') and aria-expanded area headers, and a link placed on clickable row text. CI caught 6 (ST-01, a46fecf2) and 26 (ST-03, 8d0800e1) failures; all fixed before DoQ. Candidate lesson for Phase 3: when a story makes new text or interactive elements visible on every page, scan specs for unscoped getByText/role locators of that text, not only for the renamed selectors.",

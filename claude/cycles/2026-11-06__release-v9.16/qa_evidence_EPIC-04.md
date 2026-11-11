@@ -122,3 +122,5 @@ ST-12 changes `src/pages/TradePlan.js`, so the gate applies and the autonomous D
   - ST-12 AC 3 moving to after the merge (`BLG-OPS-218`).
 
   Post-merge ACs: ST-12 AC 2 and the production half of AC 4 (`BLG-OPS-215`), and ST-12 AC 3 (`BLG-OPS-218`). Follow-ups: `BLG-OPS-217`, `BLG-SPEC-229`, `BLG-FE-287`, `BLG-QA-261`, `BLG-OPS-219`.
+- **Merged:** PR #2233, by the human repository owner (`sachiv1984`), at 2026-11-11T12:59:20Z, merge commit `7fb39495`. The merger holds both roles, so under `ESC-CLOSE-20261103-01` the QA sign-off and PO acceptance are confirmed by the merge, in addition to the explicit in-session acceptances above. The orphaned-commit check found no commits left on the branch after the merge.
+- **Post-merge status at recording (2026-11-11T13:05Z):** the Pages deploy from `7fb39495` (run 43025075223) was in progress. `gh secret list` still lists `REACT_APP_ANTHROPIC_API_KEY` (last updated 2026-05-25T20:00:59Z, the same day the revoked key was created). `BLG-OPS-218` and `BLG-OPS-215` are open.
