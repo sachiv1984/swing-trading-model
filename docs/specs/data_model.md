@@ -4,7 +4,7 @@
 **Class:** Class 1
 **Status:** Canonical
 **Version:** 2.68
-**Last Updated:** 2026-11-05 (ST-30/ST-32, EPIC-05, v9.15, BLG-OPS-190/BLG-OPS-192 — DS-39 (v2.68): new `momentum_signal_runs` table, one completion marker per momentum signal run, read by the month-end rebalance job); prior — 2026-11-05 (BLG-SPEC-217, EPIC-06 post-merge, v9.15 — DS-38 production Live Confirmation recorded; Fields rows and Drift Triage row 3 updated); prior — 2026-11-05 (ST-35/ST-36, EPIC-06, v9.15, BLG-SPEC-196/BLG-SPEC-197 — DS-38 (v2.67): `NOT NULL` re-applied to `positions.portfolio_id` and `positions.total_cost`; DS-17 staging Live Confirmation recorded, applied on staging; production post-merge, BLG-SPEC-217); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-11 (ST-13, EPIC-04, v9.16, BLG-OPS-197 — DS-36 production Live Confirmation recorded; sign-off line updated); prior — 2026-11-05 (ST-30/ST-32, EPIC-05, v9.15, BLG-OPS-190/BLG-OPS-192 — DS-39 (v2.68): new `momentum_signal_runs` table, one completion marker per momentum signal run, read by the month-end rebalance job); prior — 2026-11-05 (BLG-SPEC-217, EPIC-06 post-merge, v9.15 — DS-38 production Live Confirmation recorded; Fields rows and Drift Triage row 3 updated); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 This document describes the complete database schema and data structures used in the **Position Manager Web App**.
@@ -3578,8 +3578,9 @@ SELECT indexname FROM pg_indexes WHERE indexname = 'idx_acl_called_at_feature';
 Expect 2 rows, `feature` text YES and `duration_seconds` numeric YES, and 1 index row.
 
 **Sign-off:**
-- Data Model & Domain Schema Owner: two nullable columns and one index on existing tables, reversible, created at runtime by idempotent ensure-functions. Live Confirmation recorded below for staging, 2026-10-28; production pending until after merge (`DEL-20261027-04`).
+- Data Model & Domain Schema Owner: two nullable columns and one index on existing tables, reversible, created at runtime by idempotent ensure-functions. Live Confirmation recorded below for staging, 2026-10-28, and production, 2026-11-11 (`DEL-20261027-04`, closed by v9.16 ST-13).
 - **Live Confirmation — staging:** confirmed 2026-10-28 by the user (Data Model & Domain Schema Owner), Supabase SQL editor, after a screener run on the staging backend deployed from `exec/2026-10-16__release-v9.13/EPIC-05` (the ensure-functions created the columns and index; no manual migration). Columns: `screener_runs.duration_seconds` numeric `is_nullable = YES`; `api_call_log.feature` text `is_nullable = YES`. Index: `idx_acl_called_at_feature`. Matches the expected output.
+- **Live Confirmation — production:** confirmed 2026-11-11 by the user (Data Model & Domain Schema Owner), production Supabase SQL editor, the Verification queries run one at a time (ST-13, EPIC-04, v9.16, `DEL-20261111-02`). Columns: `screener_runs.duration_seconds` numeric `is_nullable = YES`; `api_call_log.feature` text `is_nullable = YES`. Index: `idx_acl_called_at_feature`. Matches the expected output. Created by the ensure-functions after the 2026-11-02 production deploy; no manual migration.
 
 ---
 

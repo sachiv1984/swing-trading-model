@@ -6,7 +6,7 @@
   "invoked_utc": "2026-11-09T09:15:14Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-11T08:40:00Z",
+  "last_updated_utc": "2026-11-11T09:00:00Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-02",
@@ -889,9 +889,9 @@
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
-          "last_completed_substep": "3.1.B.4",
+          "last_completed_substep": "3.1.B.partial_ac1",
           "sign_off_record": null,
-          "notes": "Conditional (gate 2026-11-09, passed by date). Production reads: Human-Delegation, tracked by BLG-OPS-197."
+          "notes": "Conditional (gate 2026-11-09, passed by date). Production reads: Human-Delegation, tracked by BLG-OPS-197. 2026-11-11: AC 1 met - production DS-36 Verification rows supplied in session by the user (feature text YES, duration_seconds numeric YES, idx_acl_called_at_feature) and recorded in data_model.md DS-36. AC 2 (weekly attribution report) still pending on DEL-20261111-02."
         },
         "ST-14": {
           "title": "Record the full screener run p50/p95 baseline from production",
