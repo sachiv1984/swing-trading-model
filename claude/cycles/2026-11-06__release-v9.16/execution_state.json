@@ -6,7 +6,7 @@
   "invoked_utc": "2026-11-09T09:15:14Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-11T09:00:00Z",
+  "last_updated_utc": "2026-11-11T08:34:37Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-02",
@@ -872,26 +872,26 @@
         "ST-13": {
           "title": "Record the weekly market-data call-volume baseline from production",
           "classification": "delegated_backend",
-          "status": "blocked_backend",
+          "status": "done",
           "assigned_to": "FinOps & Resource Architect; Data Model & Domain Schema Owner",
           "github_issue": 2209,
           "branch": "exec/2026-11-06__release-v9.16/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "ba2b965e227814f801297096b9d2ba809a518d3d",
           "delegation_record_id": "DEL-20261111-02",
           "blocked_since_utc": "2026-11-11T08:13:03Z",
           "unblock_criteria": "DEL-20261111-02 answered: production DS-36 Verification rows and one production weekly attribution report (or a dated not-available-in-sprint statement -> returned at close).",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-11-11T08:34:21Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/specs/data_model.md#DS-36 — Attribute provider calls in api_call_log, and time screener runs (v2.65, 2026-10-27)",
             "docs/ops/data_pipeline_cost_baseline.md"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": "3.1.B.partial_ac1",
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.B.unblocked",
           "sign_off_record": null,
-          "notes": "Conditional (gate 2026-11-09, passed by date). Production reads: Human-Delegation, tracked by BLG-OPS-197. 2026-11-11: AC 1 met - production DS-36 Verification rows supplied in session by the user (feature text YES, duration_seconds numeric YES, idx_acl_called_at_feature) and recorded in data_model.md DS-36. AC 2 (weekly attribution report) still pending on DEL-20261111-02."
+          "notes": "Conditional (gate 2026-11-09, passed by date). Production reads: Human-Delegation, tracked by BLG-OPS-197. 2026-11-11: AC 1 met - production DS-36 Verification rows supplied in session by the user (feature text YES, duration_seconds numeric YES, idx_acl_called_at_feature) and recorded in data_model.md DS-36. AC 2 (weekly attribution report) still pending on DEL-20261111-02. AC 2 met at ba2b965e: data_pipeline_cost_baseline.md v1.1 §4 filled from one production weekly report (2026-11-11; 7,105 calls / 665 failures / $0.00; top_contributors screener run, signals generate, earnings) and §6 volume line ticked. Gate (§1.4b): promoted to firm on the dated production data, 2026-11-11. Out-of-scope finding: BLG-OPS-217 (P2), Yahoo failures concentrated in earnings/positions/gap-risk/research. Deviation check: none - recorded as DS-36 and §4 specify; the window is the second post-deploy week, noted in §4. DEL-20261111-02 Unblocked in-session."
         },
         "ST-14": {
           "title": "Record the full screener run p50/p95 baseline from production",
@@ -948,13 +948,11 @@
   "blocked_items": [
     "ST-11",
     "ST-12",
-    "ST-13",
     "ST-14"
   ],
   "delegated_items": [
     "ST-11",
     "ST-12",
-    "ST-13",
     "ST-14"
   ],
   "completed_items": [
@@ -983,6 +981,7 @@
     "ST-27",
     "ST-09",
     "ST-10",
+    "ST-13",
     "ST-15"
   ],
   "open_escalations": {

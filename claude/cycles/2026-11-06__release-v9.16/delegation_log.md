@@ -54,7 +54,10 @@ Last Updated: 2026-11-11
 - **Spec reference:** `docs/specs/data_model.md#DS-36` (Verification, Live Confirmation); `docs/ops/data_pipeline_cost_baseline.md` §4, §6; `stage4_backlog_slice.md#ST-13`
 - **Unblock criteria:** both outputs supplied in session or in this record, or a dated statement that production data is not available in-sprint (ST-13 is then returned at close, the expected path for a conditional story).
 - **Commit format required:** `[EPIC-04][ST-13] <description>` (engine records the values)
-- **Status:** Pending
+- **Result (supplied in session by the user, 2026-11-11):** (1) production DS-36 Verification, queries run one at a time in the Supabase SQL editor: `api_call_log.feature` text YES, `screener_runs.duration_seconds` numeric YES, index `idx_acl_called_at_feature`, as expected; recorded in `data_model.md` DS-36 (`4995b075`). (2) production `GET /ops/api-call-attribution?window=weekly`: 7,105 calls, 665 failures (all Yahoo), $0.00; recorded in `data_pipeline_cost_baseline.md` §4 (`ba2b965e`). The Yahoo failure rate is filed as `BLG-OPS-217` (P2). Closes `DEL-20261027-04` and `DEL-20261027-06` (v9.13 log, sealed; closure recorded here).
+- **Sign-off:** sign_off_cleared — production outputs supplied by the user in session, 2026-11-11.
+- **Commit SHA:** ba2b965e227814f801297096b9d2ba809a518d3d (AC 1 at 4995b075)
+- **Status:** Unblocked (2026-11-11T08:34:37Z) — Unblocked in-session — production SQL results and weekly attribution report, supplied by the user, same session as delegation.
 
 ## DEL-20261111-03
 
