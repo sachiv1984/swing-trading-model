@@ -6,7 +6,7 @@
   "invoked_utc": "2026-11-09T09:15:14Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-11T08:10:00Z",
+  "last_updated_utc": "2026-11-11T08:08:00Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-02",
@@ -802,6 +802,145 @@
         "status": "cleared",
         "date": "2026-11-10",
         "notes": "Five agent-mediated passes (DoQ + Head of UX & Design): 1-4 Blocked, each fixed on branch; pass 5 Approved, conditional on CI on 672ba549, which finished all 9 green. Pending human DoQ confirmation and PO acceptance at the merge gate."
+      }
+    },
+    "EPIC-04": {
+      "title": "Anthropic Key Security & Operations Baselines",
+      "status": "in_progress",
+      "branch": "exec/2026-11-06__release-v9.16/EPIC-04",
+      "pr_number": null,
+      "pr_status": null,
+      "qa_signed_off": false,
+      "qa_evidence_log": "claude/cycles/2026-11-06__release-v9.16/qa_evidence_EPIC-04.md",
+      "test_scenarios": [
+        "tests/test_staging_smoke_test.py",
+        "tests/test_staging_deploy_both_services.py",
+        "tests/e2e/trade-plan.spec.js"
+      ],
+      "stories": {
+        "ST-11": {
+          "title": "Rotate the Anthropic API key (overdue since 2026-08-25) and revoke the old key",
+          "classification": "delegated_backend",
+          "status": "not_started",
+          "assigned_to": null,
+          "github_issue": 2207,
+          "branch": "exec/2026-11-06__release-v9.16/EPIC-04",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "docs/ops/external_api_credential_inventory.md",
+            "docs/ops/api_key_rotation_and_audit_schedule.md"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "Human-Delegation (sprint_backlog.md ST-11; LL-v8.0-P3-01 infra/ops pattern): Anthropic console + Render env. AC 3 (inventory/schedule dates) is engine work once the rotation date is known."
+        },
+        "ST-12": {
+          "title": "Stop injecting REACT_APP_ANTHROPIC_API_KEY into the public GitHub Pages build",
+          "classification": "delegated_backend",
+          "status": "not_started",
+          "assigned_to": null,
+          "github_issue": 2208,
+          "branch": "exec/2026-11-06__release-v9.16/EPIC-04",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            ".github/workflows/deploy.yml",
+            "src/pages/TradePlan.js",
+            "docs/specs/frontend/pages/trade_plan.md",
+            "claude/cycles/2026-11-06__release-v9.16/stage4_backlog_slice_addendum.md",
+            "tests/e2e/trade-plan.spec.js"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "Code change engine-authored (sprint_backlog.md ST-12 Notes). AC 2 and the production half of AC 4 are post-merge, tracked by BLG-OPS-215 (sealed). AC 3 (console revocation) is Human-Delegation, done with ST-11."
+        },
+        "ST-13": {
+          "title": "Record the weekly market-data call-volume baseline from production",
+          "classification": "delegated_backend",
+          "status": "not_started",
+          "assigned_to": null,
+          "github_issue": 2209,
+          "branch": "exec/2026-11-06__release-v9.16/EPIC-04",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "docs/specs/data_model.md#DS-36 — Attribute provider calls in api_call_log, and time screener runs (v2.65, 2026-10-27)",
+            "docs/ops/data_pipeline_cost_baseline.md"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "Conditional (gate 2026-11-09, passed by date). Production reads: Human-Delegation, tracked by BLG-OPS-197."
+        },
+        "ST-14": {
+          "title": "Record the full screener run p50/p95 baseline from production",
+          "classification": "delegated_backend",
+          "status": "not_started",
+          "assigned_to": null,
+          "github_issue": 2210,
+          "branch": "exec/2026-11-06__release-v9.16/EPIC-04",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "docs/ops/api_performance_baseline.md#53. Full Screener Run Benchmark (ST-32, EPIC-05, v9.13, BLG-OPS-23)"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "Conditional (>=10 nightly production runs after 2026-11-02, ~2026-11-12). Production API key: Human-Delegation, tracked by BLG-OPS-198."
+        },
+        "ST-15": {
+          "title": "Fail the staging smoke host check when the backend reports no Render service ID",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 2211,
+          "branch": "exec/2026-11-06__release-v9.16/EPIC-04",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "scripts/staging_smoke_test.py",
+            "docs/ops/staging_deploy_notes.md",
+            "tests/test_staging_smoke_test.py"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": null
+        }
       }
     }
   },
