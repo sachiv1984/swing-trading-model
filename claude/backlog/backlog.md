@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-11 (groom backlog GROOM-20261111-01, post-ship closure `2026-11-06__release-v9.16` STEP 12 — 35 items archived; `BLG-GOV-414` and `BLG-GOV-192` bannered; spec-debt deep review marker advanced); prior — 2026-11-11 (post-ship closure `2026-11-06__release-v9.16` — STEP 3 banners (29 shipped source items, `BLG-OPS-215`/`218`, case (ii) `BLG-AI-23`/`BLG-OPS-48`); STEP 8 — 1 new item added: BLG-GOV-419); prior — 2026-11-11 (session — 3 new items added: BLG-FE-287, BLG-QA-261, BLG-OPS-219; agent-mediated DoQ and PO review of PR #2233, EPIC-04, v9.16); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-12 (session — 3 new items added: BLG-BE-213, BLG-BE-214, BLG-GOV-420; BLG-BE-208 expanded to six copies and raised to P2; post-v9.16 quality review); prior — 2026-11-11 (groom backlog GROOM-20261111-01, post-ship closure `2026-11-06__release-v9.16` STEP 12 — 35 items archived; `BLG-GOV-414` and `BLG-GOV-192` bannered; spec-debt deep review marker advanced); prior — 2026-11-11 (post-ship closure `2026-11-06__release-v9.16` — STEP 3 banners (29 shipped source items, `BLG-OPS-215`/`218`, case (ii) `BLG-AI-23`/`BLG-OPS-48`); STEP 8 — 1 new item added: BLG-GOV-419); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -5640,23 +5640,26 @@ On watchlisted Signals cards "Plan this" sits alone on a row under the watchlist
 ---
 
 ### BLG-BE-208 — Use one native-entry function on every position path
-**Priority:** P4 (Low)
+**Priority:** P2 (Medium)
 **Type:** Backend Engineering / Tech Debt
 **Owner:** Head of Engineering
 **Source:** Agent-mediated DoQ review of ST-17 (EPIC-05, cycle `2026-11-06__release-v9.16`), finding 6 — 2026-11-10
-**Effort:** XS (<1h)
+**Effort:** S (~0.5d)
 **Provisional-Target:** TBD
 
 **Problem**
 The native-entry fallback (`fill_price`, else `entry_price × stored fx_rate`, else `× live rate`) is implemented three times: `position_service.native_entry_price()`, `position_lifecycle_service._native_entry()`, and inline in `portfolio_service.get_portfolio_summary()`. ST-17 (v9.16) made them agree so `display_status` and `position_state` match, but three copies can drift apart again.
 
+**Update 2026-11-12 (post-v9.16 quality review):** there are six copies, not three: `position_service.native_entry_price()`, `position_lifecycle_service._native_entry()`, two inline in `portfolio_service.get_portfolio_summary()`, and two inline in `routers/portfolio_risk.py` (`_get_portfolio_heat_and_positions()`, `compute_sector_exposure()`). The `portfolio_risk.py` copies already disagree for a NULL `fx_rate` (BLG-BE-213). `tests/test_fx_market_matrix.py::test_no_new_inline_native_entry_fallback` now pins the inline count, so a new copy fails CI. Priority raised P4 → P2 and effort XS → S: duplicated FX logic was the most frequent defect source in v9.12–v9.16.
+
 **Scope**
-- Have `_native_entry()` and `get_portfolio_summary()` call `native_entry_price()` (keeping `_native_entry()`'s caller-supplied `native_entry_price` short-circuit)
+- Have `_native_entry()`, `get_portfolio_summary()` and both `portfolio_risk.py` functions call `native_entry_price()` (keeping `_native_entry()`'s caller-supplied `native_entry_price` short-circuit)
 - No behaviour change
 
 **Acceptance Criteria**
 - One implementation of the fallback remains
 - `tests/test_display_status_native_basis.py` passes unchanged
+- `KNOWN_INLINE_NATIVE_ENTRY_COPIES` in `tests/test_fx_market_matrix.py` is lowered to `{}` and the test passes
 
 ---
 
@@ -6218,5 +6221,73 @@ When Release Planning §1.3a clears a gate in place, bound 2 of the `ESC-CLOSE-2
 **Acceptance Criteria**
 - §1.3a states that a gate clearance may set a gate-worded `Provisional-Target` to `TBD` in the same edit, and lists it in `run_manifest.md`
 - The next Release Planning gate scan after a clearance does not list the cleared item as a data-quality warning for its `Provisional-Target`
+
+---
+
+### BLG-BE-213 — Use the live FX rate, not a hard-coded 1.27, when a position's fx_rate is NULL
+**Priority:** P2 (Medium)
+**Type:** Backend Engineering
+**Owner:** Head of Engineering
+**Source:** `tests/test_fx_market_matrix.py`, added in the post-v9.16 quality review with the Product Owner — 2026-11-12
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.18
+**Depends on:** none (pairs with BLG-BE-208, which merges the native-entry copies)
+
+**Problem**
+`backend/routers/portfolio_risk.py` (`_get_portfolio_heat_and_positions()` and `compute_sector_exposure()`) and `backend/services/compliance_service.py` read `pos.get("fx_rate") or 1.27`. Every other path (`portfolio_service`, `position_service.native_entry_price()`, `position_lifecycle_service._native_entry()`) uses the live rate for a NULL `fx_rate`. So for a US position with a NULL `fx_rate` the Risk page and the Dashboard disagree. With a live rate of 1.30, position risk is £91.34 on the Risk page against £107.69 on the Dashboard when `fill_price` is also NULL, and £78.74 against £76.92 when `fill_price` is present. Sector exposure is 43.9% against 44.4%.
+
+**Scope**
+- Replace the 1.27 fallback in both `portfolio_risk.py` functions with the live rate, using `native_entry_price()` for the native entry
+- Check what `compliance_service.py`'s `fx_rate` feeds; fix it the same way and add it to the matrix if it converts a price or a risk
+- No other behaviour change
+
+**Acceptance Criteria**
+- The 3 `xfail` markers tagged `BLG-BE-213` in `tests/test_fx_market_matrix.py` are removed and those tests pass
+- `grep -rn "or 1.27" backend/` returns no FX fallback
+- `compliance_service.py`'s use is covered by the matrix, or the item records why it does not convert a money value
+
+---
+
+### BLG-BE-214 — Keep closed and abandoned trade plans terminal
+**Priority:** P3 (Low)
+**Type:** Backend Engineering
+**Owner:** Head of Engineering
+**Source:** `tests/test_lifecycle_transitions.py`, added in the post-v9.16 quality review with the Product Owner — 2026-11-12
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.18
+
+**Problem**
+`data_model.md` §Trade Plan Lifecycle says `abandoned` and `closed` are terminal and "no code path transitions out of either". Two code paths do. `PUT /trade-plans/{id}` (`routers/trade_plans.py::update_plan()`) accepts any status change on a closed or abandoned plan. `add_position()` with an explicit `trade_plan_id` links an abandoned plan that has no `position_id` and sets it `active`, because `get_trade_plan_by_id()` has no status filter. The implicit `get_unlinked_trade_plan_for_entry()` path already excludes abandoned plans.
+
+**Scope**
+- `update_plan()`: return 400 when the stored status is `closed` or `abandoned` and the update changes `status`
+- `add_position()`: do not link an explicit `trade_plan_id` whose status is `active`, `closed` or `abandoned`, and report `trade_plan_linked: false`
+- Document the new 400 in `docs/specs/api_contracts/trade_plan_endpoints.md` and `docs/reference/openapi.yaml`
+
+**Acceptance Criteria**
+- The 5 `xfail` tests tagged `BLG-BE-214` in `tests/test_lifecycle_transitions.py` pass with their markers removed
+- The contract and OpenAPI entries list the 400 for a status change on a terminal plan
+
+---
+
+### BLG-GOV-420 — Require the pre-commit code review and impact statement in execution_prompt.md
+**Priority:** P2 (Medium)
+**Type:** Governance Process
+**Owner:** Head of Specs Team
+**Source:** Post-v9.16 quality review with the Product Owner; commit-check skill Check 11 added the same day — 2026-11-12
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.18
+
+**Problem**
+`commit-check` Check 11 (added 2026-11-12) requires `/code-review` on the staged diff before an implementation commit, plus `Review:` and `Impact:` lines in the commit body. `claude/system/execution_prompt.md` does not require Check 11, so the rule only applies when the skill happens to be run. Most v9.16 defects were found by PR reviews after the commit, and two fixes created new defects (ST-16 → BLG-BE-209, ST-12 → BLG-FE-287) that an impact check would have found.
+
+**Scope**
+- Add to `execution_prompt.md`'s story-completion steps: run `commit-check` (including Check 11) before every implementation commit
+- Complete the CLAUDE.md §6 checklist: version bump, `OPERATIONAL_GUIDE.md` §14 table, phase section header, `prompt_change_log.md` row
+
+**Acceptance Criteria**
+- `execution_prompt.md` requires Check 11 before every implementation commit
+- All four §6 steps are in the same commit
+- The `governance-drift` skill passes
 
 ---
