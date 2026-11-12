@@ -20,7 +20,7 @@
 'use strict';
 
 const { test, expect } = require('./fixtures/api-status-guard');
-const { expandAllPositionRows } = require('./fixtures/positions-table');
+const { expandAllPositionRows, openPositionsWarning } = require('./fixtures/positions-table');
 
 const API = 'http://localhost:8000';
 
@@ -115,6 +115,8 @@ test.describe('ST-12 — lifecycle badge grace window in calendar days', () => {
       grace_days_remaining: 2, trade_plan_id: null, trade_plan_summary: null,
     };
     await setup(page, [makePosition({ grace_days_remaining: 2, days_in_state: 8, holding_days: 8 })], [alert]);
+    // ST-03 (BLG-FE-262, v9.17): the grace copy sits in the warning strip's grace entry.
+    await openPositionsWarning(page, 'grace');
     await expect(page.getByText(/grace period ends in 2 days\./i)).toBeVisible();
     await expect(page.getByText(/trading day/i)).toHaveCount(0);
     await expect(page.locator('[title*="trading day" i]')).toHaveCount(0);
