@@ -5,7 +5,7 @@
   "invoked_utc": "2026-11-12T13:22:26Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-12T16:13:36Z",
+  "last_updated_utc": "2026-11-12T16:40:00Z",
   "epics": {
     "EPIC-01": {
       "title": "Site Structure & Usability Phase 3: Positions Redesign (build-and-ship)",
@@ -22,16 +22,16 @@
         "ST-01": {
           "title": "Decision-first Positions table",
           "classification": "autonomous",
-          "status": "in_progress",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 2236,
           "branch": "exec/2026-11-11__release-v9.17/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "6b475ae0e6f6cb449c8dee21ead32d41f3f6bb55",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-11-12T16:19:44Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/specs/frontend/pages/positions.md#Decision-First Table",
             "docs/design/2026-11-11__release-v9.17/positions-decision-first/decision_record.md",
@@ -39,10 +39,10 @@
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": "3.1.A.2b",
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.done",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Commits: b2d93f6d (implementation, spec, existing-spec selector updates), 6b475ae0 (compliance-panel locator fix after CI run 43256379461 shard 2/8 failed SC-COMP-03/07). Deviation check vs positions.md v2.25: none. Implementation notes (intent-matching, LL-v3.4-P3-03): in-grace rows count as no stop distance for ordering (the cell shows none, so they sort last in tier 4 per the spec's null-distance rule); the in-grace Stop cell keeps the stop-details tooltip trigger; the expanded row's stop provenance shows '\u2014' when the stop is frozen, because the frozen indicator is in the Stop column. Pre-commit /code-review findings filed: BLG-SPEC-232 (To stop % GBP basis vs Risk Dashboard native), BLG-FE-289 (shared breach predicate/pills, expanded-id pruning). Process: the step 13 new-visible-text locator grep was not run before b2d93f6d; CI caught the collision (fixed in 6b475ae0). CI on 6b475ae0: all 8 workflows success; Playwright E2E Acceptance Tests run 43257460636 success (step 4c); CI Pytest Suite 43257460500 success; Frontend Production Build success on b2d93f6d (run 43256379674)."
         },
         "ST-02": {
           "title": "Card layout for Positions on narrow screens",
@@ -120,7 +120,9 @@
   },
   "blocked_items": [],
   "delegated_items": [],
-  "completed_items": [],
+  "completed_items": [
+    "ST-01"
+  ],
   "open_escalations": {},
   "merge_gate": {
     "epics_merged": [],
@@ -136,7 +138,8 @@
     "all_merged": false
   },
   "process_notes": [
-    "2026-11-12T13:22:26Z: run sprint --epic EPIC-01 \u2014 EPIC-01 is the execution_state.json owner (sprint_backlog.md Merge Order); other EPICs append their own sections on first invocation."
+    "2026-11-12T13:22:26Z: run sprint --epic EPIC-01 \u2014 EPIC-01 is the execution_state.json owner (sprint_backlog.md Merge Order); other EPICs append their own sections on first invocation.",
+    "2026-11-12: ST-01 \u2014 the STEP 3.1.A step 13 grep for unscoped locators matching new visible text (LL-v9.16-P3-01) was missed before b2d93f6d; the caption 'Sorted by what needs attention first' and the row chevrons' aria-expanded broke compliance-panel SC-COMP-03/07 in CI run 43256379461; fixed in 6b475ae0."
   ],
   "sealed": false,
   "sealed_utc": null
