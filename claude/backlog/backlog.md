@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-12 (session — 3 new items added: BLG-BE-213, BLG-BE-214, BLG-GOV-420; BLG-BE-208 expanded to six copies and raised to P2; post-v9.16 quality review); prior — 2026-11-11 (groom backlog GROOM-20261111-01, post-ship closure `2026-11-06__release-v9.16` STEP 12 — 35 items archived; `BLG-GOV-414` and `BLG-GOV-192` bannered; spec-debt deep review marker advanced); prior — 2026-11-11 (post-ship closure `2026-11-06__release-v9.16` — STEP 3 banners (29 shipped source items, `BLG-OPS-215`/`218`, case (ii) `BLG-AI-23`/`BLG-OPS-48`); STEP 8 — 1 new item added: BLG-GOV-419); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-12 (session — 1 new item added: BLG-GOV-421; prompt size budget enforcement for direct-to-main commits); prior — 2026-11-12 (session — 3 new items added: BLG-BE-213, BLG-BE-214, BLG-GOV-420; BLG-BE-208 expanded to six copies and raised to P2; post-v9.16 quality review); prior — 2026-11-11 (groom backlog GROOM-20261111-01, post-ship closure `2026-11-06__release-v9.16` STEP 12 — 35 items archived; `BLG-GOV-414` and `BLG-GOV-192` bannered; spec-debt deep review marker advanced); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -6289,5 +6289,28 @@ When Release Planning §1.3a clears a gate in place, bound 2 of the `ESC-CLOSE-2
 - `execution_prompt.md` requires Check 11 before every implementation commit
 - All four §6 steps are in the same commit
 - The `governance-drift` skill passes
+
+---
+
+### BLG-GOV-421 — Enforce the prompt size budget on commits that go straight to main
+**Priority:** P2 (Medium)
+**Type:** Governance Process
+**Owner:** Head of Specs Team; Head of Engineering
+**Source:** PR #2235 `Engine prompt size budget` failure, raised with the Product Owner — 2026-11-12
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.18
+
+**Problem**
+`prompt-size-budget.yml` runs only on pull requests. Post-ship closure, roadmap and escalation-ruling commits go straight to `main`, so prompt growth from them is never measured. The next unrelated PR that touches `claude/system/` then fails and has to raise the baselines. This has happened two cycles running: v9.15 (`4b1b01e3`, `5337d4ca`, raised in `725a92bd`) and v9.16 (`40dab67f`, `5fcf82d5`, raised in PR #2235). `shared_standards.md` §11's headroom rule (BLG-GOV-405) already says to move out an equal amount of rationale, but it is not checked, so it gets skipped.
+
+**Scope**
+- `.githooks/pre-commit`: when any `claude/system/*.md` file is staged, run `python3 scripts/check_prompt_size_budget.py` and block the commit if it fails
+- `prompt-size-budget.yml`: also run on `push` to `main`, so a commit that bypasses the hook shows as a red run on that commit
+- `post_ship_closure.md` STEP 8 and `roadmap_prompt.md` STEP 11: run the budget check before committing an action-now patch, and apply §11's headroom rule if it fails (CLAUDE.md §6 checklist for both)
+
+**Acceptance Criteria**
+- A local commit that pushes a `claude/system/` prompt over its baseline is blocked by the pre-commit hook, with the script's message
+- The workflow runs on pushes to `main`
+- The next post-ship closure after this ships does not raise any baseline in a later PR
 
 ---
