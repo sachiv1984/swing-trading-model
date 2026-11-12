@@ -5,15 +5,15 @@
   "invoked_utc": "2026-11-12T13:22:26Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-12T21:30:00Z",
+  "last_updated_utc": "2026-11-12T21:45:00Z",
   "epics": {
     "EPIC-01": {
       "title": "Site Structure & Usability Phase 3: Positions Redesign (build-and-ship)",
-      "status": "in_progress",
+      "status": "done",
       "branch": "exec/2026-11-11__release-v9.17/EPIC-01",
       "pr_number": null,
       "pr_status": "none",
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-11-11__release-v9.17/qa_evidence_EPIC-01.md",
       "test_scenarios": [
         "tests/e2e/positions-decision-first.spec.js",
@@ -125,6 +125,17 @@
           "sign_off_record": null,
           "notes": "Commits: 661cc4ee (implementation), d11ff814 (Risk Dashboard grace panel lines at about 2:1 contrast in light mode, found by the agent-mediated DoQ review; SC-POSGV-08 hardened to fail on axe 'incomplete'; ended-grace 'next ends' fix; deviation heading). CI on d11ff814: all 9 workflows success; Playwright E2E run 43301555472; Frontend Production Build 43301555497. Further filings: BLG-SPEC-235, BLG-FE-292. Deviation filed: DEV-EPIC01-ST04-01 (P3, positions.md Known Deviations; BLG-BE-215) - rows with more than 2 days of grace left show no trade plan line, because GET /positions/grace-period-alerts returns only rows with 2 days or fewer. Design gate obligations met: grace_alert_dismissed_* reads removed; positions.md v2.26 \u00a7Grace Period Alert Zone is a 'Superseded' stub. Implementation notes (intent-matching): the Risk Dashboard next-end line uses n - 1 ('Next ends in 1 day' for 2; 'Ends today' for 1; 'Grace period has ended' for 0) to agree with the strip's date - spec wording filed as BLG-SPEC-234; alert-only rows (grace just ended, or GET /positions empty) are listed; the expanded-row Grace pill stays (design \u00a75.2) and renders only when a row is opened, so SC-POSGV-07's 'only element' check holds on default views. Pre-commit /code-review medium: 5 findings fixed in-commit; filed BLG-BE-215, BLG-FE-291, BLG-SPEC-234. Local Playwright on an E2E-env production build: 173 passed, 1 skipped (existing SC-GPL-01 fixme). CI on 661cc4ee: all 9 workflows success; Playwright E2E Acceptance Tests run 43293797244 (step 4c); CI Pytest Suite 43293797711; Frontend Production Build 43293797748."
         }
+      },
+      "sign_off_record": {
+        "status": "cleared",
+        "role": "Director of Quality",
+        "method": "agent_mediated",
+        "signed_by": "Sprint Execution Engine (agent-mediated, Director of Quality role \u2014 \u00a75.3)",
+        "date": "2026-11-12",
+        "user_directed": true,
+        "rounds": 2,
+        "first_round": "Blocked (1 P2, 5 P3)",
+        "evidence": "claude/cycles/2026-11-11__release-v9.17/qa_evidence_EPIC-01.md"
       }
     }
   },
