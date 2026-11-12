@@ -5,7 +5,7 @@
   "invoked_utc": "2026-11-12T13:22:26Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-12T16:40:00Z",
+  "last_updated_utc": "2026-11-12T20:10:00Z",
   "epics": {
     "EPIC-01": {
       "title": "Site Structure & Usability Phase 3: Positions Redesign (build-and-ship)",
@@ -16,7 +16,8 @@
       "qa_signed_off": false,
       "qa_evidence_log": "claude/cycles/2026-11-11__release-v9.17/qa_evidence_EPIC-01.md",
       "test_scenarios": [
-        "tests/e2e/positions-decision-first.spec.js"
+        "tests/e2e/positions-decision-first.spec.js",
+        "tests/e2e/positions-decision-cards.spec.js"
       ],
       "stories": {
         "ST-01": {
@@ -47,25 +48,28 @@
         "ST-02": {
           "title": "Card layout for Positions on narrow screens",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 2237,
           "branch": "exec/2026-11-11__release-v9.17/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "540887b99aa173cc0938d8583beb1923806dd997",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-11-12T19:02:43Z",
+          "acceptance_verified": true,
           "spec_references": [
-            "docs/specs/frontend/pages/positions.md#Responsive Behavior"
+            "docs/specs/frontend/pages/positions.md#Responsive Behavior",
+            "docs/specs/frontend/pages/positions.md#Decision-First Table",
+            "docs/design/2026-11-11__release-v9.17/positions-decision-first/decision_record.md",
+            "tests/e2e/positions-decision-cards.spec.js"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.done",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Commit 540887b9. Deviation check vs positions.md v2.25 \u00a7Responsive Behavior (Table v2.25 row) and design record \u00a74: none. Implementation notes: the Table view switches layout with useIsMobile (< 768 px), so only one layout is in the DOM; use-mobile.js now reads window.innerWidth on the first render (its only other consumer, ui/sidebar.js, is not mounted). ST-01's decision-first fixtures and route stub moved into tests/e2e/fixtures/positions-table.js and are shared by SC-POSDF and SC-POSDC. Pre-commit /code-review medium: four findings fixed in-commit; filed BLG-FE-290 and BLG-SPEC-233 (ST-01 code; BLG-FE-289 already covered two more). Local Playwright: SC-POSDC 7/7, SC-POSDF 7/7; the wider local regression run was invalid (build lacked the E2E env) and is not cited. CI on 540887b9: all 9 workflows success; Playwright E2E Acceptance Tests run 43286093150 success (step 4c); CI Pytest Suite 43286092915; Frontend Production Build 43286093194."
         },
         "ST-03": {
           "title": "Combine the four banners above the Positions table into one strip",
@@ -121,7 +125,8 @@
   "blocked_items": [],
   "delegated_items": [],
   "completed_items": [
-    "ST-01"
+    "ST-01",
+    "ST-02"
   ],
   "open_escalations": {},
   "merge_gate": {
