@@ -3,8 +3,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.25
-**Last Updated:** 2026-11-11 (v9.17 design gate — ST-01..ST-04/BLG-FE-260, 261, 262, 257: decision-first table, narrow-screen cards, one warning strip, one grace view; ST-19/BLG-SPEC-202: Exit Zone tooltip wording by the strategy owner's choice); prior — 2026-11-04 (ST-12, EPIC-02, v9.15, BLG-FE-247 — the Daily Position Monitor opens from the Positions header, not the removed legacy Dashboard; Product Owner ruling ESC-EXEC-20261104-05 (a)); prior — 2026-11-04 (ST-05, EPIC-01, v9.15, BLG-FE-222 — `?exit=` deep link uses the same open-position test as `?position=`); prior history retained — see prior entries in version control
+**Version:** 2.26
+**Last Updated:** 2026-11-12 (ST-04, EPIC-01, v9.17, BLG-FE-257 — §Grace Period Alert Zone is now a "Superseded" stub; §Grace Period View ships); prior — 2026-11-11 (v9.17 design gate — ST-01..ST-04/BLG-FE-260, 261, 262, 257: decision-first table, narrow-screen cards, one warning strip, one grace view; ST-19/BLG-SPEC-202: Exit Zone tooltip wording by the strategy owner's choice); prior — 2026-11-04 (ST-12, EPIC-02, v9.15, BLG-FE-247 — the Daily Position Monitor opens from the Positions header, not the removed legacy Dashboard; Product Owner ruling ESC-EXEC-20261104-05 (a)); prior history retained — see prior entries in version control
 **Design Source (v9.14 additions):** docs/design/2026-10-29__release-v9.14/stale-price-marker/decision_record.md, docs/design/2026-10-29__release-v9.14/monitor-grace-aware-suggestions/decision_record.md, docs/design/2026-10-29__release-v9.14/last-reviewed-ended-grace/decision_record.md
 **Design Source (v9.13 additions):** docs/design/2026-10-16__release-v9.13/monitor-exit-queue/decision_record.md, docs/design/2026-10-16__release-v9.13/chat-answer-rating/decision_record.md
 **Design Source (v9.11 additions):** docs/design/2026-10-08__release-v9.11/grace-alert-calendar-days/decision_record.md
@@ -29,6 +29,7 @@
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.26 | 2026-11-12 | (ST-04, EPIC-01, v9.17, BLG-FE-257) §Grace Period Alert Zone becomes a "Superseded" stub that points to §Grace Period View (design gate obligation, `decision_record.md` §5). `GracePeriodView` (`src/components/positions/GracePeriodView.js`) ships as the §Warning Strip grace entry's content; the alert cards, Dismiss and the `grace_alert_dismissed_*` keys are removed. No change to §Grace Period View's rules. New Known Deviation DEV-EPIC01-ST04-01: rows with more than 2 days of grace left show no trade plan line, because the alerts endpoint returns only positions with 2 days or fewer (BLG-BE-215). |
 | 2.25 | 2026-11-11 | v9.17 design gate. (ST-01, BLG-FE-260) new §Decision-First Table: urgency tiers (exit condition met → stop reached → near stop ≤ 5% → other), six default columns (Ticker, Price, Stop, To stop in R and %, P&L %, Action needed) plus expand and Actions, every other field in an expandable row. (ST-02, BLG-FE-261) §Responsive Behavior: the Table view renders decision cards below `md`. (ST-03, BLG-FE-262) new §Warning Strip replaces the four stacked banners. (ST-04, BLG-FE-257) §Grace Period Alert Zone replaced by §Grace Period View, the only per-position grace detail in the app, listing every in-grace position, no dismiss; `?grace=open`. (ST-19, BLG-SPEC-202) §Position Lifecycle State Badge: PROFITABLE and EXIT ZONE tooltips follow the Strategy Rules & System Intent Owner's choice. Design source: `docs/design/2026-11-11__release-v9.17/positions-decision-first/decision_record.md`. Approved: Head of UX & Design and Product Owner, 2026-11-11. |
 | 2.24 | 2026-11-04 | (ST-12, EPIC-02, v9.15, BLG-FE-247) §Daily Position Monitor Exit Queue: the Monitor's entry point moves to a "Daily Monitor" button in the Positions page header (`DailyMonitor.js`), because the legacy widget Dashboard and its Quick Actions widget are removed. `MonitorModal`, the exit queue and the pre-select rules are unchanged. Product Owner ruling `ESC-EXEC-20261104-05` option (a), 2026-11-04; Head of UX & Design placement and Head of Specs Team confirmation: see the v9.15 `qa_evidence_EPIC-02.md` ST-12 entry. |
 | 2.23 | 2026-11-04 | (ST-05, EPIC-01, v9.15, BLG-FE-222) §Exit Dialog Deep Link: `?exit=` uses the same open-position test as `?position=` (`status === "open"`); it previously accepted any status other than `closed`. Implemented in `Positions.js`. |
@@ -345,35 +346,9 @@ Two distinct empty states:
 
 ---
 
-## Grace Period Alert Zone (v3.3 — ST-05 IT-02)
+## Grace Period Alert Zone — Superseded
 
-> **Superseded by §Grace Period View (v2.25, ST-04, BLG-FE-257)** when ST-04 merges. Until then this section stands, rendered as the grace entry of §Warning Strip (ST-03). The day convention and the body copy below carry into §Grace Period View; the trigger (≤ 2 days left), the one-card-per-alert layout and §Dismiss Behaviour do not.
-
-**Design source:** docs/design/2026-05-09__release-v3.3/grace-period-alert/ux_spec.md
-
-**Placement:** Above the View Switcher, at the top of the Positions page. A dedicated Alert Zone with amber background (`#FEF3C7`) and left border (`#D97706`, 4px).
-
-**Trigger:** One or more open positions with `position_state = 'GRACE'` AND `grace_days_remaining ≤ 2` (8 or more calendar days since entry). Data source: `GET /positions/grace-period-alerts`. *(v2.15 — ST-14, BLG-BE-147: was `days_in_state ≥ 8`. `days_in_state` counts days in the current lifecycle state, so a reset `state_entered_at` dropped a day-8 position from the list. No grace reading on this page uses `days_in_state`.)*
-
-**One alert card per qualifying position.** Cards stack vertically in the Alert Zone.
-
-### Alert Card Contents
-
-- Header: "⚠ Grace Period Alert — {TICKER}" + "Day {min(11 − grace_days_remaining, 10)} of 10" sub-label + Dismiss (✕) button *(v2.15 — ST-14: 1-based calendar day, the same convention as §Days in Grace. Example: entered 8 calendar days ago → `grace_days_remaining = 2` → "Day 9 of 10". When `grace_days_remaining` is null, the sub-label and the days-left sentence are omitted; there is no fallback to `days_in_state`.)*
-- Body: "Your grace period ends in {grace_days_remaining} day(s). Review your original thesis before the window closes." (v9.10, ST-12: days-left basis changed from `10 − days_in_state` to the calendar-day `grace_days_remaining`; the word "trading" is removed.)
-  - When `grace_days_remaining = 0` *(v2.15 — ST-14; was `days_in_state = 10`)*: "Grace period has ended. Your position will transition to LOSING or PROFITABLE on next refresh."
-- Trade plan context block (when `trade_plan_id` present): Thesis (first 120 chars), Entry zone, Stop, R-target
-- "View Trade Plan →" text link (when `trade_plan_id` present)
-
-### Dismiss Behaviour
-
-- Per-position per-session via localStorage key `grace_alert_dismissed_{position_id}`
-- Alert reappears on next browser session (no expiry)
-- When all cards dismissed: Alert Zone collapses to zero height (no visual gap)
-
-**§13 constraint:** Display-only. No automated recommendation. Human decides action.
-
-**Accessibility:** Alert Zone has `role="alert"` and `aria-live="polite"`.
+> **Superseded by §Grace Period View (v2.26, ST-04, BLG-FE-257, v9.17).** The alert cards, their ≤ 2-days-left trigger, the one-card-per-alert layout, the Dismiss button and the `grace_alert_dismissed_{position_id}` session keys are removed. §Grace Period View lists every in-grace position with no dismiss, as the expanded content of the §Warning Strip grace entry. Two parts carry over unchanged: the day convention ("Day {min(11 − grace_days_remaining, 10)} of 10", entry day = Day 1) and the body copy, including the `grace_days_remaining = 0` sentence. The full v3.3–v2.25 text of this section is in version control (`git log -p -- docs/specs/frontend/pages/positions.md`). Data source unchanged: `GET /positions/grace-period-alerts` (`grace_period_alert_endpoint.md`) supplies the trade plan summary.
 
 ---
 
@@ -1016,3 +991,12 @@ Documentation-only requirements baseline for this table-based page — no implem
 - **Owner:** Frontend Specifications & UX Documentation Owner
 - **Backlog reference:** BLG-FE-06 (filed delivery verification 2026-03-30, cycle 2026-03-24__release-v2.3)
 - **Resolution:** Resolved by ST-04, cycle 2026-03-31__release-v2.4 (shipped 2026-04-03). P&L (GBP) column added. Changelog: docs/product/changelog.md#v24
+
+### DEV-EPIC01-ST04-01 — Grace Period View: trade plan shown only for positions within 2 days of the end of grace
+
+- **Description:** §Grace Period View lists every in-grace position and joins each to `GET /positions/grace-period-alerts` for its trade plan summary. That endpoint returns only positions with `grace_days_remaining ≤ 2` (`grace_period_alert_endpoint.md`), so a position with 3 or more days left has no alert row, and the view cannot tell whether a plan is linked. Those rows show no trade plan line and no "View Trade Plan" link, rather than a "No trade plan linked." that may be wrong. Rows with 2 days or fewer left are as specified. Found by the ST-04 pre-commit code review, cycle `2026-11-11__release-v9.17`.
+- **Canonical requirement:** §Grace Period View, Row: "the trade plan block (Thesis, Stop, R-target) or "No trade plan linked." · "View Trade Plan" link when linked", for every in-grace position.
+- **Priority:** P3
+- **Target resolution release:** v9.18
+- **Owner:** Head of Engineering
+- **Backlog reference:** BLG-BE-215 (filed 2026-11-12, cycle 2026-11-11__release-v9.17)

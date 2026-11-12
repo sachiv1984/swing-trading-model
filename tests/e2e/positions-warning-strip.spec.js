@@ -19,8 +19,8 @@
  *                staleness entry reads "Data as of …" with the UTC time as its title
  *   SC-POSWS-08  With GET /positions returning no positions, a grace-period alert still
  *                shows the grace entry, and the "next ends" date counts day 1 as today
- *   SC-POSWS-07  axe colour contrast of the strip (collapsed, and with the drawdown,
- *                concentration and staleness entries open) in light and dark themes
+ *   SC-POSWS-07  axe colour contrast of the strip, collapsed and with every entry open,
+ *                in light and dark themes
  *
  * Mock layer: page.route(). HashRouter: navigate with '/#/…'.
  */
@@ -115,7 +115,7 @@ test.describe('Positions warning strip (ST-03, BLG-FE-262)', () => {
     const expected = {
       drawdown: 'Portfolio Drawdown Review',
       concentration: 'Concentration Limits',
-      grace: `Grace Period Alert — ${GRACE_BREACH.ticker}`,
+      grace: GRACE_BREACH.ticker,
       staleness: 'Updated: 2026-03-29 09:41 UTC',
     };
     for (const [kind, text] of Object.entries(expected)) {
@@ -160,7 +160,7 @@ test.describe('Positions warning strip (ST-03, BLG-FE-262)', () => {
   test('SC-POSWS-05 — ?grace=open opens the grace entry', async ({ page }) => {
     await gotoWithWarnings(page, { hash: '/#/Positions?grace=open' });
     await expect(toggleOf(page, 'grace')).toHaveAttribute('aria-expanded', 'true');
-    await expect(page.locator('#warning-detail-grace')).toContainText(`Grace Period Alert — ${GRACE_BREACH.ticker}`);
+    await expect(page.locator('#warning-detail-grace').getByTestId(`grace-row-${GRACE_BREACH.ticker}`)).toBeVisible();
     await expect(entry(page, 'grace')).toBeInViewport();
     // The other entries stay collapsed.
     await expect(toggleOf(page, 'drawdown')).toHaveAttribute('aria-expanded', 'false');
@@ -198,12 +198,10 @@ test.describe('Positions warning strip (ST-03, BLG-FE-262)', () => {
       const collapsed = await new AxeBuilder({ page })
         .include('[data-testid="positions-warning-strip"]').withRules(['color-contrast']).analyze();
       expect(collapsed.violations).toEqual([]);
-      // The grace entry's content is replaced by GracePeriodView at ST-04, so it is
-      // scanned there; here the other three entries' content is scanned open.
-      for (const kind of ['drawdown', 'concentration', 'staleness']) await toggleOf(page, kind).click();
+      // Every entry open, including the grace view (ST-04).
+      for (const kind of ['drawdown', 'concentration', 'grace', 'staleness']) await toggleOf(page, kind).click();
       const open = await new AxeBuilder({ page })
         .include('[data-testid="positions-warning-strip"]')
-        .exclude('[data-testid="warning-entry-grace"]')
         .withRules(['color-contrast']).analyze();
       expect(open.violations).toEqual([]);
     });

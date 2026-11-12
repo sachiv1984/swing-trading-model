@@ -21,7 +21,9 @@ export default function GracePeriodCard() {
   return (
     <DashboardCard
       title="In Grace Today"
-      to="/RiskDashboard"
+      // ST-04 (BLG-FE-257, v9.17): the card opens the single grace view
+      // (dashboard.md v4.2 Card 3; positions.md §Grace Period View).
+      to="/Positions?grace=open"
       isLoading={isLoading}
       error={error}
       empty={gracePositions.length === 0}

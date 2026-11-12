@@ -7,11 +7,14 @@
  *
  * Coverage:
  *   SC-GPL-01  Clicking a grace row opens Positions with that position visible and highlighted
- *              (data-highlighted="true", ring), the ?position= parameter stripped (AC 1)
+ *              (data-highlighted="true", ring), the ?position= parameter stripped (AC 1).
+ *              ST-04 (BLG-FE-257, v9.17): the row link now lives in the Positions grace
+ *              view (positions.md §Grace Period View), reached via the panel's link.
  *   SC-GPL-02  The highlight is removed after 2000 ms
  *   SC-GPL-03  Table view: the matching row is highlighted
  *   SC-GPL-04  An id not in the open list is ignored and the parameter stripped
- *   SC-GPL-05  Heading, badge, entry date format and row link attributes match §5.2 (AC 2)
+ *   SC-GPL-05  Heading, badge, next-end line and the link to the grace view match
+ *              risk_dashboard.md v0.1.16 §5.2 (ST-04 removed the rows)
  *
  * Infrastructure: Playwright page.route() network interception. No live backend.
  * ROUTING NOTE: App uses HashRouter.
@@ -61,7 +64,7 @@ async function stub(page) {
 
 async function gotoRiskDashboard(page) {
   await page.goto('/#/RiskDashboard');
-  await expect(page.locator('[data-testid="grace-period-row"]').first()).toBeVisible({ timeout: 15000 });
+  await expect(page.getByTestId('grace-panel-link')).toBeVisible({ timeout: 15000 });
 }
 
 test('SC-GPL-01: clicking a grace row opens Positions with that position highlighted', async ({ page }) => {
@@ -69,6 +72,7 @@ test('SC-GPL-01: clicking a grace row opens Positions with that position highlig
   await stub(page);
   await gotoRiskDashboard(page);
 
+  await page.getByTestId('grace-panel-link').click();
   await page.getByRole('link', { name: 'Open FOXT on Positions' }).click();
 
   const card = page.locator('[data-position-id="p-foxt"]');
@@ -120,14 +124,16 @@ test('SC-GPL-04: an unknown id is ignored and the parameter stripped', async ({ 
   await expect(page.locator('[data-highlighted="true"]')).toHaveCount(0);
 });
 
-test('SC-GPL-05: heading, badge, date format and row link match risk_dashboard.md §5.2', async ({ page }) => {
+test('SC-GPL-05: heading, badge, next-end line and grace view link match risk_dashboard.md §5.2', async ({ page }) => {
   await stub(page);
   await gotoRiskDashboard(page);
 
   await expect(page.getByRole('heading', { name: 'Grace Period Positions', exact: true })).toBeVisible();
   await expect(page.getByText('3 positions in grace period', { exact: true })).toBeVisible();
-  const foxt = page.getByRole('link', { name: 'Open FOXT on Positions' });
-  await expect(foxt).toContainText('28 Feb 2026');
-  await expect(foxt).toHaveAttribute('href', /#\/Positions\?position=p-foxt$/);
-  await expect(foxt.locator('svg.lucide-chevron-right')).toHaveAttribute('aria-hidden', 'true');
+  await expect(page.getByTestId('grace-panel-next-ends')).toHaveText('Ends today');
+  const link = page.getByTestId('grace-panel-link');
+  await expect(link).toHaveAttribute('href', /#\/Positions\?grace=open$/);
+  await expect(link.locator('svg.lucide-chevron-right')).toHaveAttribute('aria-hidden', 'true');
+  // No per-position rows on the Risk Dashboard any more.
+  await expect(page.getByRole('link', { name: 'Open FOXT on Positions' })).toHaveCount(0);
 });

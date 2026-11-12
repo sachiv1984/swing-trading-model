@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-12 (session — 2 new items added: BLG-FE-290, BLG-SPEC-233; v9.17 ST-02 pre-commit code review); prior — 2026-11-12 (session — 2 new items added: BLG-SPEC-232, BLG-FE-289; v9.17 ST-01 pre-commit code review); prior — 2026-11-12 (session — 3 new items added: BLG-SPEC-230, BLG-SPEC-231, BLG-FE-288; v9.17 Sprint Planning pre-seal filings); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-12 (session — 3 new items added: BLG-BE-215, BLG-FE-291, BLG-SPEC-234; v9.17 ST-04 pre-commit code review); prior — 2026-11-12 (session — 2 new items added: BLG-FE-290, BLG-SPEC-233; v9.17 ST-02 pre-commit code review); prior — 2026-11-12 (session — 2 new items added: BLG-SPEC-232, BLG-FE-289; v9.17 ST-01 pre-commit code review); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -6463,5 +6463,72 @@ Three small gaps in ST-01's Positions code. "Grace ends today" in `ActionNeeded`
 **Acceptance Criteria**
 - `positions.md` records the decision with a date and the deciding owner
 - If the order changes, a follow-up frontend item is filed to implement it and update SC-POSDF-01 and SC-POSDC-01
+
+---
+
+### BLG-BE-215 — Give the Positions grace view a trade plan link for every in-grace position
+**Priority:** P3 (Low)
+**Type:** Backend Engineering
+**Owner:** Head of Engineering
+**Source:** ST-04 / EPIC-01 pre-commit `/code-review`, `2026-11-11__release-v9.17` — 2026-11-12 (`positions.md` Known Deviation DEV-EPIC01-ST04-01)
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+`GracePeriodView` (`positions.md` §Grace Period View) lists every in-grace position and takes each one's trade plan summary from `GET /positions/grace-period-alerts`. That endpoint returns only positions with `grace_days_remaining <= 2` (`backend/main.py`, `grace_period_alert_endpoint.md`). A position with 3 or more days of grace left therefore has no trade plan data, so its row shows no plan line and no "View Trade Plan" link, even when a plan is linked.
+
+**Scope**
+- Return the trade plan link and summary for every open in-grace position, either by adding an option to `GET /positions/grace-period-alerts` (for example `?all=true`) or by adding `trade_plan_id` and the summary to `GET /positions`
+- Update the API contract and `docs/reference/openapi.yaml` in the same commit, and the endpoint test entry if a route changes
+- Switch `GracePeriodView` to the new data and close DEV-EPIC01-ST04-01's labelled fields
+
+**Acceptance Criteria**
+- An in-grace position with 6 days left and a linked plan shows the Thesis, Stop and R-target block and a "View Trade Plan" link in the grace view (Playwright)
+- One with no plan shows "No trade plan linked."
+- `positions.md` DEV-EPIC01-ST04-01 is marked resolved
+
+---
+
+### BLG-FE-291 — Count Dashboard Card 3 with the same in-grace rule as the grace view it opens
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Head of Engineering
+**Source:** ST-04 / EPIC-01 pre-commit `/code-review`, `2026-11-11__release-v9.17` — 2026-11-12
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+Since ST-04, Dashboard Card 3 "In Grace Today" links to `/Positions?grace=open`. It counts positions with `grace_days_remaining > 0 || grace_end_date || status === "GRACE"`, with no open-status or `grace_period` check. The grace view it opens uses `grace_period === true` on open positions (`isInGrace`). A position matching only the looser rule makes the card show a count that the grace view does not list, and the link then opens no grace entry.
+
+**Scope**
+- Count Card 3 with `isInGrace` on open positions, and take "Next expires" from the same set
+- Confirm the rule in `dashboard.md` Card 3
+
+**Acceptance Criteria**
+- With one open position in grace and one closed position with a `grace_end_date`, Card 3 shows 1 (Playwright)
+- Card 3's count equals the number of rows in the grace view for the same data
+
+---
+
+### BLG-SPEC-234 — Settle three grace display rules left open by the single grace view
+**Priority:** P3 (Low)
+**Type:** Spec Debt
+**Owner:** Frontend Specifications & UX Documentation Owner; Head of UX & Design
+**Source:** ST-04 / EPIC-01 pre-commit `/code-review`, `2026-11-11__release-v9.17` — 2026-11-12
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+Three grace rules disagree after ST-04. First, `risk_dashboard.md` v0.1.16 §5.2 says "Next ends in {n} day(s)" from the lowest `grace_days_remaining`, with "Ends today" when it is 1. Read literally, 2 gives "in 2 days" while 1 gives "today", which skips a day and disagrees with the Positions strip's "next ends" date. ST-04 shipped `n − 1` ("Next ends in 1 day" for 2) and "Grace period has ended" for 0, as an intent reading. Second, the expanded row's Grace pill (`positions.md` §Grace Days Remaining Column) shows "Day {holding_days + 1} of 10", while §Grace Period View uses "Day {min(11 − grace_days_remaining, 10)} of 10". The two can differ for one position. Third, §Grace Period View's row ID `grace-row-{ticker}` is not unique when two open lots share a ticker.
+
+**Scope**
+- Confirm or amend the `risk_dashboard.md` §5.2 wording to the `n − 1` convention and the 0-day text ST-04 shipped
+- Pick one day convention for the Grace pill and the grace view, and file a frontend item if the code must change
+- Make the grace row ID unique per position (for example `grace-row-{id}`), and file a frontend item for it
+
+**Acceptance Criteria**
+- `risk_dashboard.md` §5.2 states the shipped next-end wording, or a frontend item is filed to change the code
+- `positions.md` uses one grace day convention throughout
+- `positions.md` §Grace Period View names a per-position row ID
 
 ---
