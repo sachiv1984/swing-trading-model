@@ -1,7 +1,8 @@
-import { useState, useEffect } from "react";
+import { Fragment, useState, useEffect, useMemo, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEarnings } from "../hooks/useEarnings";
 import { useGapRisk } from "../hooks/useGapRisk";
+import { useIsMobile } from "../hooks/use-mobile";
 import { base44, api, apiFetch } from "../api/base44Client";
 import {
   LayoutGrid,
@@ -19,6 +20,8 @@ import {
   Zap,
   Clock,
   Check,
+  ChevronDown,
+  ChevronRight,
 } from "lucide-react";
 
 import DataState from "../components/ui/DataState";
@@ -34,7 +37,17 @@ import TradeReflectionModal from "../components/trades/TradeReflectionModal";
 import { formatCurrency, formatPercent, formatR, currencyForMarket } from "../lib/format";
 import ComplianceRecheckModal from "../components/positions/ComplianceRecheckModal";
 import TrailingStopExplainerIcon from "../components/positions/TrailingStopExplainerIcon";
-import { StopProvenanceLine, StopDetailsTrigger } from "../components/positions/StopProvenance";
+import GracePeriodView, { graceRows } from "../components/positions/GracePeriodView";
+import { StopProvenanceLine, StopDetailsTrigger, StopFrozenIndicator, isStopFrozen } from "../components/positions/StopProvenance";
+import {
+  URGENCY_TIER,
+  getUrgencyTier,
+  sortByUrgency,
+  isInGrace,
+  stopDistancePct,
+  stopDistanceClass,
+  formatStopDistance,
+} from "../lib/positionUrgency";
 import {
   DataTable,
   TableHeader,
@@ -45,11 +58,16 @@ import {
 } from "../components/ui/DataTable";
 import { cn } from "../lib/utils";
 import { friendlyErrorMessage } from "../lib/apiError";
-import { differenceInDays } from "date-fns";
+import { differenceInDays, addDays, format } from "date-fns";
 import { getReviewCadenceState } from "../lib/reviewCadence";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { createPageUrl } from "../utils";
-import MetricsStalenessIndicator from "../components/analytics/MetricsStalenessIndicator";
+import {
+  useMetricsLastSyncAt,
+  isMetricsStale,
+  stalenessText,
+  formatAbsoluteTime,
+} from "../components/analytics/MetricsStalenessIndicator";
 import StrategyCompliancePanel from "../components/positions/StrategyCompliancePanel";
 import PaperAccountPanel from "../components/positions/PaperAccountPanel";
 import AiChatWidget from "../components/AiChatWidget";
@@ -112,13 +130,17 @@ function LifecycleBadge({ state, daysInState, graceDaysRemaining, lifecycleReaso
 }
 
 // ---------------------------------------------------------------------------
-// ST-02 (IT-02) — Grace period alert card
+// Grace period alerts (trade plan summary per in-grace position)
+// ST-04 (BLG-FE-257, v9.17): the per-position grace detail is GracePeriodView
+// (src/components/positions/GracePeriodView.js). The alert cards and their
+// grace_alert_dismissed_* session keys are gone.
 // ---------------------------------------------------------------------------
 
-const GRACE_DISMISS_KEY = (positionId) => `grace_alert_dismissed_${positionId}`;
-
-function GracePeriodAlertZone() {
-  const { data: alerts = [] } = useQuery({
+// ST-03 (BLG-FE-262, v9.17): the warning strip runs this query, so the alerts
+// are loaded before the grace entry is opened and can activate the entry when
+// GET /positions is slow or fails.
+function useGracePeriodAlerts() {
+  const { data = [], isLoading } = useQuery({
     queryKey: ["gracePeriodAlerts"],
     queryFn: async () => {
       const res = await apiFetch(`${API_BASE}/positions/grace-period-alerts`);
@@ -127,85 +149,7 @@ function GracePeriodAlertZone() {
     },
     staleTime: 60000,
   });
-
-  const [dismissed, setDismissed] = useState(() => {
-    const d = {};
-    alerts.forEach((a) => {
-      if (sessionStorage.getItem(GRACE_DISMISS_KEY(a.position_id))) d[a.position_id] = true;
-    });
-    return d;
-  });
-
-  const dismiss = (positionId) => {
-    sessionStorage.setItem(GRACE_DISMISS_KEY(positionId), "1");
-    setDismissed((prev) => ({ ...prev, [positionId]: true }));
-  };
-
-  const visible = alerts.filter((a) => !dismissed[a.position_id]);
-  if (visible.length === 0) return null;
-
-  return (
-    <div role="alert" aria-live="polite" className="space-y-3">
-      {visible.map((alert) => {
-        // ST-12 (BLG-FE-196, v9.10) / ST-14 (BLG-BE-147, v9.11): every grace reading
-        // comes from grace_days_remaining (calendar days since entry, §6.2), never
-        // days_in_state. Day number: min(grace + 1 − grace_days_remaining, grace), entry day = Day 1.
-        const daysLeft = alert.grace_days_remaining;
-        const dayNumber = daysLeft != null ? Math.min(GRACE_PERIOD_DAYS + 1 - daysLeft, GRACE_PERIOD_DAYS) : null;
-        const bodyText = daysLeft === 0
-          ? "Grace period has ended. Your position will transition to LOSING or PROFITABLE on next refresh."
-          : daysLeft != null
-            ? `Your grace period ends in ${daysLeft} day${daysLeft !== 1 ? "s" : ""}. Review your original thesis before the window closes.`
-            : "Your grace period is ending. Review your original thesis before the window closes.";
-        const tp = alert.trade_plan_summary;
-
-        return (
-          <div
-            key={alert.position_id}
-            className="rounded-xl border-l-4 border-amber-500 bg-amber-500/10 px-4 py-3"
-            style={{ borderLeftColor: "#D97706" }}
-          >
-            <div className="flex items-start justify-between gap-3">
-              <div className="flex items-center gap-2 text-amber-300 font-semibold text-sm">
-                <AlertTriangle className="w-4 h-4 flex-shrink-0" />
-                Grace Period Alert — {alert.ticker}
-                {dayNumber != null && (
-                  <span className="text-xs font-medium text-amber-400 bg-amber-500/20 px-1.5 py-0.5 rounded" data-testid="grace-alert-day-label">
-                    Day {dayNumber} of {GRACE_PERIOD_DAYS}
-                  </span>
-                )}
-              </div>
-              <button
-                onClick={() => dismiss(alert.position_id)}
-                aria-label={`Dismiss grace period alert for ${alert.ticker}`}
-                className="text-amber-400/60 hover:text-amber-300 flex-shrink-0"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-            <p className="text-sm text-amber-200/80 mt-1">{bodyText}</p>
-            {tp ? (
-              <div className="mt-2 text-xs text-slate-300 space-y-0.5">
-                {tp.setup_thesis && <div><span className="text-slate-600 dark:text-slate-400">Thesis: </span>"{tp.setup_thesis.slice(0, 120)}{tp.setup_thesis.length > 120 ? "…" : ""}"</div>}
-                {tp.stop_level != null && <div><span className="text-slate-600 dark:text-slate-400">Stop: </span>{tp.stop_level}</div>}
-                {tp.r_target != null && <div><span className="text-slate-600 dark:text-slate-400">R-target: </span>{tp.r_target}R</div>}
-              </div>
-            ) : (
-              <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">No trade plan linked. Consider adding a plan for context.</p>
-            )}
-            {alert.trade_plan_id && (
-              <Link
-                to={`/TradePlan?edit=${alert.trade_plan_id}&ticker=${alert.ticker}`}
-                className="inline-block mt-2 text-xs text-amber-400 hover:text-amber-300 underline"
-              >
-                View Trade Plan →
-              </Link>
-            )}
-          </div>
-        );
-      })}
-    </div>
-  );
+  return { alerts: data, isLoading };
 }
 
 // ---------------------------------------------------------------------------
@@ -330,20 +274,9 @@ const LIFECYCLE_BADGE_COLOURS = {
   UNKNOWN: "bg-gray-500",
 };
 
-function DrawdownReviewPrompt() {
-  const [dismissed, setDismissed] = useState(false);
-  const { data } = useQuery({
-    queryKey: ["drawdown-status"],
-    queryFn: async () => {
-      const res = await apiFetch(`${API_BASE}/portfolio/drawdown-status`);
-      const json = await res.json();
-      return json?.data || {};
-    },
-    staleTime: 2 * 60 * 1000,
-  });
-
-  if (dismissed || !data?.threshold_breached) return null;
-
+// ST-03 (BLG-FE-262, v9.17): expanded content of the warning strip's drawdown
+// entry, unchanged apart from role="alert" (removed). Dismiss hides the entry.
+function DrawdownReviewContent({ data, onDismiss }) {
   const stateColours = {
     GRACE: "bg-blue-600",
     PROFITABLE: "bg-green-700",
@@ -355,14 +288,14 @@ function DrawdownReviewPrompt() {
   const statesByCount = Object.entries(data.positions_by_state || {}).filter(([, count]) => count > 0);
 
   return (
-    <div className="rounded-lg bg-amber-50 border border-amber-300 p-4" role="alert">
+    <div className="rounded-lg bg-amber-50 border border-amber-300 p-4">
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-2">
           <AlertTriangle className="w-5 h-5 text-amber-700 flex-shrink-0" aria-hidden="true" />
           <span className="font-semibold text-amber-900">Portfolio Drawdown Review</span>
         </div>
         <button
-          onClick={() => setDismissed(true)}
+          onClick={onDismiss}
           aria-label="Dismiss drawdown review prompt"
           className="text-amber-700 hover:text-amber-900 transition-colors flex-shrink-0"
         >
@@ -399,23 +332,13 @@ function DrawdownReviewPrompt() {
   );
 }
 
-function ConcentrationLimitsWarning() {
-  const { data } = useQuery({
-    queryKey: ["concentration-status"],
-    queryFn: async () => {
-      const res = await apiFetch(`${API_BASE}/portfolio/concentration-status`);
-      const json = await res.json();
-      return json?.data || {};
-    },
-    staleTime: 2 * 60 * 1000,
-  });
-
-  if (!data?.any_breach) return null;
-
+// ST-03 (BLG-FE-262, v9.17): expanded content of the warning strip's
+// concentration entry, unchanged apart from role="alert" (removed).
+function ConcentrationLimitsContent({ data }) {
   const { breaching_positions = [], breaching_sectors = [] } = data;
 
   return (
-    <div className="rounded-lg bg-amber-50 border border-amber-300 p-4" role="alert">
+    <div className="rounded-lg bg-amber-50 border border-amber-300 p-4">
       <div className="flex items-center gap-2">
         <AlertTriangle className="w-5 h-5 text-amber-700 flex-shrink-0" aria-hidden="true" />
         <span className="font-semibold text-amber-900">Concentration Limits</span>
@@ -463,29 +386,196 @@ function ConcentrationLimitsWarning() {
   );
 }
 
-function PositionEarningsCell({ ticker, market }) {
+// ---------------------------------------------------------------------------
+// ST-03 (BLG-FE-262, v9.17) — Warning strip
+// One strip replaces the four banners above the view content (positions.md
+// §Warning Strip; design record positions-decision-first §6). One entry per
+// active warning in fixed order, each a summary line with Show/Hide details.
+// Summaries read each warning's existing query: no new API call. Display-only (§13).
+// ---------------------------------------------------------------------------
+
+const WARNING_ICON_CLASS = "w-4 h-4 flex-shrink-0 text-amber-600 dark:text-amber-400";
+
+function WarningEntry({ kind, icon, summary, open, onToggle, entryRef, children }) {
+  const detailId = `warning-detail-${kind}`;
+  return (
+    <li ref={entryRef} data-testid={`warning-entry-${kind}`} className="px-4 py-3">
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+        {icon}
+        <span className="flex-1 min-w-0 text-sm text-app-fg" data-testid="warning-summary">{summary}</span>
+        <button
+          type="button"
+          onClick={() => onToggle(kind)}
+          aria-expanded={open}
+          aria-controls={open ? detailId : undefined}
+          className="text-xs font-medium text-app-muted hover:text-app-fg underline-offset-2 hover:underline"
+        >
+          {open ? "Hide details" : "Show details"}
+        </button>
+      </div>
+      {open && (
+        <div id={detailId} className="mt-3">
+          {children}
+        </div>
+      )}
+    </li>
+  );
+}
+
+function plural(n, one, many) {
+  return `${n} ${n === 1 ? one : many}`;
+}
+
+function PositionsWarningStrip({ positions, graceDeepLink }) {
+  const { data: drawdown } = useQuery({
+    queryKey: ["drawdown-status"],
+    queryFn: async () => {
+      const res = await apiFetch(`${API_BASE}/portfolio/drawdown-status`);
+      const json = await res.json();
+      return json?.data || {};
+    },
+    staleTime: 2 * 60 * 1000,
+  });
+  const { data: concentration } = useQuery({
+    queryKey: ["concentration-status"],
+    queryFn: async () => {
+      const res = await apiFetch(`${API_BASE}/portfolio/concentration-status`);
+      const json = await res.json();
+      return json?.data || {};
+    },
+    staleTime: 2 * 60 * 1000,
+  });
+  const lastSyncAt = useMetricsLastSyncAt();
+  const { alerts: graceAlerts } = useGracePeriodAlerts();
+
+  // Session-only, as DrawdownReviewPrompt's dismiss was.
+  const [drawdownDismissed, setDrawdownDismissed] = useState(false);
+  const [openKinds, setOpenKinds] = useState(() => new Set(graceDeepLink ? ["grace"] : []));
+  const toggle = (kind) =>
+    setOpenKinds((prev) => {
+      const next = new Set(prev);
+      if (next.has(kind)) next.delete(kind);
+      else next.add(kind);
+      return next;
+    });
+
+  // ST-04 (BLG-FE-257): the grace rows are the in-grace positions joined to the
+  // grace-period alerts; when GET /positions has none (loading or failed), the
+  // alerts alone supply them.
+  const graceSource = useMemo(() => graceRows(positions, graceAlerts), [positions, graceAlerts]);
+  // A row at 0 days has already ended ("Grace period has ended"), so it does not
+  // set the next end date.
+  const graceDays = graceSource.map((p) => p.grace_days_remaining).filter((d) => d !== null && d !== undefined && d >= 1);
+  // grace_days_remaining = 1 is the last day ("Grace ends today", Day 10 of 10),
+  // so the end date is today + (days remaining − 1).
+  const nextGraceEnd = graceDays.length ? addDays(new Date(), Math.min(...graceDays) - 1) : null;
+  const concentrationBreaches =
+    (concentration?.breaching_positions?.length || 0) + (concentration?.breaching_sectors?.length || 0);
+
+  const entries = [];
+  if (drawdown?.threshold_breached && !drawdownDismissed) {
+    entries.push({
+      kind: "drawdown",
+      icon: <AlertTriangle className={WARNING_ICON_CLASS} aria-hidden="true" />,
+      summary: `Drawdown review: ${formatPercent(drawdown.current_drawdown_pct)} against a ${formatPercent(drawdown.threshold_pct)} threshold`,
+      content: <DrawdownReviewContent data={drawdown} onDismiss={() => setDrawdownDismissed(true)} />,
+    });
+  }
+  if (concentration?.any_breach) {
+    entries.push({
+      kind: "concentration",
+      icon: <AlertTriangle className={WARNING_ICON_CLASS} aria-hidden="true" />,
+      summary: concentrationBreaches > 0
+        ? `Concentration limit exceeded: ${plural(concentrationBreaches, "breach", "breaches")}`
+        : "Concentration limit exceeded",
+      content: <ConcentrationLimitsContent data={concentration} />,
+    });
+  }
+  if (graceSource.length > 0) {
+    entries.push({
+      kind: "grace",
+      icon: <Clock className={WARNING_ICON_CLASS} aria-hidden="true" />,
+      summary: `${plural(graceSource.length, "position", "positions")} in grace${nextGraceEnd ? ` · next ends ${format(nextGraceEnd, "dd MMM")}` : ""}`,
+      content: <GracePeriodView rows={graceSource} />,
+    });
+  }
+  if (lastSyncAt) {
+    const stale = isMetricsStale(lastSyncAt);
+    entries.push({
+      kind: "staleness",
+      icon: stale
+        ? <AlertTriangle className={WARNING_ICON_CLASS} aria-hidden="true" />
+        : <Clock className="w-4 h-4 flex-shrink-0 text-slate-500" aria-hidden="true" />,
+      summary: <span title={formatAbsoluteTime(lastSyncAt)}>{stalenessText(lastSyncAt)}</span>,
+      content: <p className="text-sm text-app-muted">{formatAbsoluteTime(lastSyncAt)}</p>,
+    });
+  }
+
+  // ?grace=open opens the grace entry and brings it into view (instant).
+  // It scrolls once per arrival, not again when a refetch changes the entries.
+  const graceRef = useRef(null);
+  const graceScrolledRef = useRef(false);
+  const graceActive = graceSource.length > 0;
+  useEffect(() => {
+    if (graceDeepLink) setOpenKinds((prev) => (prev.has("grace") ? prev : new Set(prev).add("grace")));
+    else graceScrolledRef.current = false;
+  }, [graceDeepLink]);
+  useEffect(() => {
+    if (graceDeepLink && graceActive && !graceScrolledRef.current && graceRef.current) {
+      graceRef.current.scrollIntoView({ block: "start", behavior: "auto" });
+      graceScrolledRef.current = true;
+    }
+  }, [graceDeepLink, graceActive]);
+
+  if (entries.length === 0) return null;
+
+  return (
+    <section
+      role="region"
+      aria-label="Warnings"
+      data-testid="positions-warning-strip"
+      className="bg-app-raised border border-app-line rounded-xl"
+    >
+      <ul className="divide-y divide-app-line">
+        {entries.map((e) => (
+          <WarningEntry
+            key={e.kind}
+            kind={e.kind}
+            icon={e.icon}
+            summary={e.summary}
+            open={openKinds.has(e.kind)}
+            onToggle={toggle}
+            entryRef={e.kind === "grace" ? graceRef : undefined}
+          >
+            {e.content}
+          </WarningEntry>
+        ))}
+      </ul>
+    </section>
+  );
+}
+
+// ST-01 (BLG-FE-260, v9.17): rendered in the expanded row's label/value grid,
+// so it returns the value only (no table cell).
+function PositionEarningsValue({ ticker, market }) {
   const { data, loading } = useEarnings(ticker, market);
-  if (loading) return <TableCell><span className="text-slate-600 text-xs">…</span></TableCell>;
-  if (!data || data.days_until_earnings == null) return <TableCell><span className="text-slate-600 text-xs">—</span></TableCell>;
+  if (loading) return <span className="text-slate-600 text-xs">…</span>;
+  if (!data || data.days_until_earnings == null) return <span className="text-slate-600 text-xs">—</span>;
   const days = data.days_until_earnings;
-  if (days < 0) return <TableCell><span className="text-slate-600 text-xs">—</span></TableCell>;
+  if (days < 0) return <span className="text-slate-600 text-xs">—</span>;
   if (days === 0) return (
-    <TableCell>
-      <span className="text-xs font-medium px-2 py-0.5 rounded bg-amber-500/15 text-amber-800 dark:text-amber-400 border border-amber-500/25" title={data.next_earnings_date}>
-        Today
-      </span>
-    </TableCell>
+    <span className="text-xs font-medium px-2 py-0.5 rounded bg-amber-500/15 text-amber-800 dark:text-amber-400 border border-amber-500/25" title={data.next_earnings_date}>
+      Today
+    </span>
   );
   const isNear = days <= 5;
   return (
-    <TableCell>
-      <span
-        className={`text-xs font-medium px-2 py-0.5 rounded ${isNear ? "bg-amber-500/15 text-amber-800 dark:text-amber-400 border border-amber-500/25" : "text-slate-600 dark:text-slate-400"}`}
-        title={data.next_earnings_date}
-      >
-        {isNear ? `⚠ ${days}d` : `${days}d`}
-      </span>
-    </TableCell>
+    <span
+      className={`text-xs font-medium px-2 py-0.5 rounded ${isNear ? "bg-amber-500/15 text-amber-800 dark:text-amber-400 border border-amber-500/25" : "text-slate-600 dark:text-slate-400"}`}
+      title={data.next_earnings_date}
+    >
+      {isNear ? `⚠ ${days}d` : `${days}d`}
+    </span>
   );
 }
 
@@ -588,32 +678,381 @@ function useMarkReviewedMutation() {
   });
 }
 
-function LastReviewedCell({ position, drawdownActive }) {
+function LastReviewedValue({ position, drawdownActive }) {
   const { label, flagged, ariaLabel } = getReviewCadenceState(position, drawdownActive);
   const markReviewed = useMarkReviewedMutation();
 
   return (
-    <TableCell>
-      <div className="flex items-center gap-1.5" data-testid="last-reviewed-cell">
-        {flagged && <Clock className="w-3 h-3 text-amber-700 dark:text-amber-400 flex-shrink-0" aria-hidden="true" />}
-        <span
-          className={cn("text-xs", flagged ? "text-amber-700 dark:text-amber-400" : "text-slate-600 dark:text-slate-400")}
-          aria-label={ariaLabel}
-        >
-          {label}
-        </span>
-        <button
-          onClick={() => markReviewed.mutate(position.id)}
-          disabled={markReviewed.isPending}
-          title="Mark Reviewed"
-          aria-label={`Mark ${position.ticker} as reviewed`}
-          data-testid="mark-reviewed-button"
-          className="text-slate-600 hover:text-emerald-400 disabled:opacity-40 flex-shrink-0"
-        >
-          <Check className="w-3.5 h-3.5" />
-        </button>
+    <div className="flex items-center gap-1.5" data-testid="last-reviewed-cell">
+      {flagged && <Clock className="w-3 h-3 text-amber-700 dark:text-amber-400 flex-shrink-0" aria-hidden="true" />}
+      <span
+        className={cn("text-xs", flagged ? "text-amber-700 dark:text-amber-400" : "text-slate-600 dark:text-slate-400")}
+        aria-label={ariaLabel}
+      >
+        {label}
+      </span>
+      <button
+        onClick={() => markReviewed.mutate(position.id)}
+        disabled={markReviewed.isPending}
+        title="Mark Reviewed"
+        aria-label={`Mark ${position.ticker} as reviewed`}
+        data-testid="mark-reviewed-button"
+        className="text-slate-600 hover:text-emerald-400 disabled:opacity-40 flex-shrink-0"
+      >
+        <Check className="w-3.5 h-3.5" />
+      </button>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// ST-01 (BLG-FE-260, v9.17) — Decision-first table
+// Spec: positions.md v2.25 §Decision-First Table. Design:
+// docs/design/2026-11-11__release-v9.17/positions-decision-first/decision_record.md §2–§3.
+// Display-only (§13): the urgency tiers reuse the §7/§8 tests and the Risk
+// Dashboard's ≤ 5% band; "Action needed" reuses existing copy. Nothing submits an exit.
+// ---------------------------------------------------------------------------
+
+const NOT_ENFORCED_GRACE = "Not enforced (grace)";
+
+function RiskOffPill() {
+  return (
+    <span
+      className="inline-flex items-center w-fit text-xs px-2 py-0.5 rounded-full font-medium text-white"
+      style={{ backgroundColor: "#1E40AF" }}
+    >
+      RISK OFF
+    </span>
+  );
+}
+
+function StopReachedPill() {
+  return (
+    <span
+      className="inline-flex items-center w-fit text-xs px-2 py-0.5 rounded-full font-medium text-white"
+      style={{ backgroundColor: "#EA580C" }}
+    >
+      STOP REACHED
+    </span>
+  );
+}
+
+function ActionNeeded({ position }) {
+  const tier = getUrgencyTier(position);
+  let content;
+  if (tier === URGENCY_TIER.EXIT_CONDITION) content = <RiskOffPill />;
+  else if (tier === URGENCY_TIER.STOP_REACHED) content = <StopReachedPill />;
+  else if (tier === URGENCY_TIER.NEAR_STOP) content = <span className="text-xs font-medium text-app-negative">Near stop</span>;
+  else if (isInGrace(position) && position.grace_days_remaining === 1) content = <span className="text-xs text-app-warning">Grace ends today</span>;
+  else content = <span className="text-app-muted">—</span>;
+  return <div data-testid="action-needed">{content}</div>;
+}
+
+function StopDistance({ position }) {
+  if (isInGrace(position)) {
+    return <span data-testid="stop-distance" className="text-xs text-app-muted">{NOT_ENFORCED_GRACE}</span>;
+  }
+  const pct = stopDistancePct(position);
+  return (
+    <span data-testid="stop-distance" className={cn("text-sm font-medium whitespace-nowrap", stopDistanceClass(pct))}>
+      {formatStopDistance(position)}
+    </span>
+  );
+}
+
+// The Stop column: trailing stop (native) with the breach badge and frozen
+// indicator; in grace "Not enforced (grace)". The value keeps its per-row
+// stop details tooltip (positions.md §Stop Provenance Line).
+function StopValue({ position, currency }) {
+  const displayStopPrice = position.stop_price_native || position.stop_price;
+  const trailStopNative = position.current_trailing_stop_native;
+  // GBP basis on both sides, as the breach test (ST-02, BLG-BE-103, v8.9).
+  const trailStop = position.current_trailing_stop;
+  const currentPriceGbp = position.current_price;
+  const trailBreached = trailStop > 0 && currentPriceGbp > 0 && currentPriceGbp <= trailStop;
+
+  if (isInGrace(position)) {
+    return (
+      <span className="text-xs text-app-muted font-normal" data-testid="stop-value">
+        <StopDetailsTrigger position={position} currency={currency}>
+          {NOT_ENFORCED_GRACE}
+        </StopDetailsTrigger>
+      </span>
+    );
+  }
+  return (
+    <div className="flex flex-col gap-0.5 leading-tight" data-testid="stop-value">
+      {/* flex-wrap: on a 390px decision card (ST-02) the badge drops below the value */}
+      <div className="flex flex-wrap items-center gap-1.5">
+        <StopDetailsTrigger position={position} currency={currency}>
+          {trailStopNative > 0 ? formatCurrency(trailStopNative, { currency }) : formatCurrency(displayStopPrice, { currency })}
+        </StopDetailsTrigger>
+        {/* ST-09 (v7.0, BLG-FE-96): breach badge — visible when price <= trailing stop */}
+        {trailBreached && (
+          <span
+            className="inline-flex items-center gap-0.5 text-xs px-1.5 py-0.5 rounded-full bg-orange-600 text-white font-medium"
+            title="Trailing stop breach: current price is at or below trailing stop level"
+            aria-label="Trailing stop breach: current price is at or below trailing stop level"
+            data-testid="breach-badge"
+          >
+            ⚠ BREACH
+          </span>
+        )}
       </div>
-    </TableCell>
+      {isStopFrozen(position) && <StopFrozenIndicator />}
+    </div>
+  );
+}
+
+function PriceValue({ position, currency }) {
+  const displayCurrentPrice = position.current_price_native || position.current_price;
+  return (
+    <>
+      {formatCurrency(displayCurrentPrice || null, { currency })}
+      {position.price_is_stale === true && <StaleMarker explanation={STALE_EXPLANATION_POSITIONS} />}
+    </>
+  );
+}
+
+function PnlPercent({ position }) {
+  const isProfit = (position.pnl || 0) >= 0;
+  return (
+    <span className={cn("text-sm font-medium", isProfit ? "text-app-positive" : "text-app-negative")}>
+      {formatPercent(position.pnl_percent || 0, { signed: true })}
+    </span>
+  );
+}
+
+function MarketPill({ market }) {
+  return (
+    <span className="text-xs px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
+      {market}
+    </span>
+  );
+}
+
+function DetailItem({ label, children }) {
+  return (
+    <div className="min-w-0">
+      <dt className="text-xs text-app-muted">{label}</dt>
+      <dd className="mt-0.5 text-sm text-app-fg">{children}</dd>
+    </div>
+  );
+}
+
+// The expanded row's label/value grid (design record §3.2): every field the
+// default columns leave out, 2 columns below lg and 4 at lg.
+function PositionDetailGrid({ position, currency, drawdownActive }) {
+  const pnl = position.pnl || 0;
+  const isProfit = pnl >= 0;
+  const daysHeld = differenceInDays(new Date(), new Date(position.entry_date));
+  const state = position.lifecycle_state || position.position_state;
+  return (
+    <dl className="grid grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-3">
+      <DetailItem label="Entry price">{formatCurrency(position.entry_price, { currency })}</DetailItem>
+      <DetailItem label="Initial stop">{formatCurrency(position.initial_stop, { currency })}</DetailItem>
+      <DetailItem label="Shares">{position.shares}</DetailItem>
+      <DetailItem label="P&L (GBP)">
+        <span className={cn("inline-flex items-center gap-1.5 font-medium", isProfit ? "text-app-positive" : "text-app-negative")}>
+          {isProfit ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
+          {formatCurrency(pnl, { currency: "GBP", signed: true })}
+        </span>
+      </DetailItem>
+      <DetailItem label="Days held">{daysHeld}</DetailItem>
+      <DetailItem label="State">
+        {state ? (
+          <LifecycleBadge
+            state={state}
+            daysInState={position.days_in_state}
+            graceDaysRemaining={position.grace_days_remaining}
+            lifecycleReason={position.lifecycle_reason}
+          />
+        ) : (
+          <span className="text-slate-600 text-xs">—</span>
+        )}
+      </DetailItem>
+      <DetailItem label="Grace">
+        {position.grace_days_remaining !== null && position.grace_days_remaining !== undefined ? (
+          <span className="text-xs font-medium px-2 py-1 rounded-lg bg-amber-500/15 text-amber-800 dark:text-amber-400 border border-amber-500/25 whitespace-nowrap">
+            Day {(position.holding_days ?? 0) + 1} of {GRACE_PERIOD_DAYS}
+          </span>
+        ) : (
+          <span className="text-slate-600">—</span>
+        )}
+      </DetailItem>
+      <DetailItem label="Earnings"><PositionEarningsValue ticker={position.ticker} market={position.market} /></DetailItem>
+      <DetailItem label="Alerts"><AlertsCell position={position} /></DetailItem>
+      <DetailItem label="Last reviewed"><LastReviewedValue position={position} drawdownActive={drawdownActive} /></DetailItem>
+      <DetailItem label="Stop provenance">
+        {isStopFrozen(position) ? <span className="text-slate-600 text-xs">—</span> : <StopProvenanceLine position={position} currency={currency} />}
+      </DetailItem>
+    </dl>
+  );
+}
+
+// The row's action buttons, unchanged (exit stays the user's click).
+function PositionActions({ position, onEdit, onExit, onTrail, onRecheck, onTradePlan, buttonClassName = "h-8 w-8" }) {
+  const showTrail =
+    position.lifecycle_state === "PROFITABLE" || position.lifecycle_state === "EXIT ZONE" ||
+    position.position_state === "PROFITABLE" || position.position_state === "EXIT ZONE";
+  return (
+    <div className="flex items-center gap-2">
+      <Button
+        variant="ghost"
+        size="icon"
+        className={cn(buttonClassName, "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800")}
+        aria-label={`Edit ${position.ticker}`}
+        onClick={() => onEdit(position)}
+      >
+        <Edit2 className="w-4 h-4" />
+      </Button>
+
+      <Button
+        variant="ghost"
+        size="icon"
+        title="Trade Plan"
+        className={cn(buttonClassName, "text-cyan-700 dark:text-cyan-500/70 hover:text-cyan-800 dark:hover:text-cyan-400 hover:bg-cyan-500/10")}
+        onClick={() => onTradePlan(position)}
+      >
+        <BookOpen className="w-4 h-4" />
+      </Button>
+
+      {/* ST-03 (IT-03): View Trail (renamed from Trail Stop, ST-10 Branch B) — shown for PROFITABLE/EXIT ZONE; disabled when no stop */}
+      {showTrail && (
+        <Button
+          variant="ghost"
+          size="icon"
+          title={(!position.current_stop && !position.stop_price) ? "No stop is recorded for this position yet, so there is no trail to compare." : "View Trail"}
+          aria-label="View Trail"
+          disabled={!position.current_stop && !position.stop_price}
+          className={cn(buttonClassName, "text-violet-700 dark:text-violet-400 hover:text-violet-800 dark:hover:text-violet-300 hover:bg-violet-500/10 disabled:opacity-40")}
+          onClick={() => onTrail(position)}
+        >
+          <ArrowUpDown className="w-4 h-4" />
+        </Button>
+      )}
+
+      {/* ST-01 (v6.9, BLG-FEAT-64): Recheck Compliance — on-demand SI-01 recheck */}
+      <Button
+        variant="ghost"
+        size="icon"
+        title="Recheck Compliance"
+        aria-label={`Recheck compliance for ${position.ticker}`}
+        data-testid="recheck-compliance-button"
+        className={cn(buttonClassName, "text-amber-700 dark:text-amber-400/80 hover:text-amber-800 dark:hover:text-amber-300 hover:bg-amber-500/10")}
+        onClick={() => onRecheck(position)}
+      >
+        <Zap className="w-4 h-4" />
+      </Button>
+
+      <Button
+        variant="ghost"
+        size="icon"
+        className={cn(buttonClassName, "text-rose-700 dark:text-rose-400 hover:text-rose-800 dark:hover:text-rose-300 hover:bg-rose-500/10")}
+        aria-label={`Exit ${position.ticker}`}
+        onClick={() => onExit(position)}
+      >
+        <LogOut className="w-4 h-4" />
+      </Button>
+    </div>
+  );
+}
+
+function ExpandChevron({ position, expanded, onToggle }) {
+  return (
+    <button
+      type="button"
+      onClick={() => onToggle(String(position.id))}
+      aria-expanded={expanded}
+      aria-controls={`position-detail-${position.id}`}
+      aria-label={`Show details for ${position.ticker}`}
+      data-testid="position-expand"
+      className="inline-flex items-center justify-center h-8 w-8 rounded-lg text-app-muted hover:text-app-fg hover:bg-slate-100 dark:hover:bg-slate-800"
+    >
+      {expanded ? <ChevronDown className="w-4 h-4" aria-hidden="true" /> : <ChevronRight className="w-4 h-4" aria-hidden="true" />}
+    </button>
+  );
+}
+
+// ST-02 (BLG-FE-261, v9.17): the Table view below md (< 768 px) renders one
+// decision card per position instead of the table, in the same urgency order
+// and with the same leading fields (positions.md §Responsive Behavior; design
+// record §4). Details opens the expanded row's grid (2 columns); the row's
+// action buttons sit in the card footer, always visible, 44 × 44 px minimum.
+function PositionDecisionCard({ position, expanded, highlighted, onToggle, drawdownActive, actionProps }) {
+  const currency = currencyForMarket(position.market);
+  const detailId = `position-detail-${position.id}`;
+  return (
+    <li
+      data-position-id={position.id}
+      data-testid="position-decision-card"
+      data-highlighted={highlighted ? "true" : undefined}
+      className={cn(
+        "min-w-0 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50",
+        highlighted && "ring-2 ring-cyan-500"
+      )}
+    >
+      <div className="p-4 space-y-3">
+        <div className="flex items-start justify-between gap-3">
+          <div className="flex items-center gap-2 min-w-0">
+            <span className="font-semibold text-slate-900 dark:text-white">{position.ticker}</span>
+            <MarketPill market={position.market} />
+          </div>
+          <ActionNeeded position={position} />
+        </div>
+
+        <dl className="grid grid-cols-3 gap-3">
+          <DetailItem label="Price">
+            <span className="text-slate-700 dark:text-slate-300">
+              <PriceValue position={position} currency={currency} />
+            </span>
+          </DetailItem>
+          <DetailItem label="Stop">
+            <span className="text-app-negative font-medium">
+              <StopValue position={position} currency={currency} />
+            </span>
+          </DetailItem>
+          <DetailItem label="To stop">
+            <StopDistance position={position} />
+          </DetailItem>
+        </dl>
+
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex items-baseline gap-1.5">
+            <span className="text-xs text-app-muted">P&amp;L</span>
+            <PnlPercent position={position} />
+          </div>
+          <button
+            type="button"
+            onClick={() => onToggle(String(position.id))}
+            aria-expanded={expanded}
+            aria-controls={detailId}
+            aria-label={`Show details for ${position.ticker}`}
+            data-testid="position-card-details"
+            className="inline-flex items-center gap-1 min-h-[44px] px-3 rounded-lg text-sm text-app-muted hover:text-app-fg hover:bg-slate-100 dark:hover:bg-slate-800"
+          >
+            {expanded ? <ChevronDown className="w-4 h-4" aria-hidden="true" /> : <ChevronRight className="w-4 h-4" aria-hidden="true" />}
+            Details
+          </button>
+        </div>
+      </div>
+
+      {/* Details: the expanded row's grid, 2 columns; no animation (design record §3.2, §4) */}
+      {expanded && (
+        <div
+          id={detailId}
+          data-testid="position-detail"
+          data-detail-for={position.ticker}
+          className="border-t border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/20 px-4 py-3"
+        >
+          <PositionDetailGrid position={position} currency={currency} drawdownActive={drawdownActive} />
+        </div>
+      )}
+
+      <div className="border-t border-slate-200 dark:border-slate-800 px-2 py-1" data-testid="position-card-actions">
+        <PositionActions position={position} buttonClassName="h-11 w-11" {...actionProps} />
+      </div>
+    </li>
   );
 }
 
@@ -628,6 +1067,8 @@ export default function Positions() {
   const [reflectionTrade, setReflectionTrade] = useState(null);
   const [trailStopPosition, setTrailStopPosition] = useState(null);
   const [recheckingPosition, setRecheckingPosition] = useState(null);
+  // ST-02 (BLG-FE-261, v9.17): below md the Table view renders decision cards.
+  const isNarrow = useIsMobile();
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -670,11 +1111,24 @@ export default function Positions() {
   // POSITION_HIGHLIGHT_MS, then drops the parameter (positions.md §Position
   // Deep Link). An id that is not in the list is ignored. Navigation only (§13).
   const [highlightedPositionId, setHighlightedPositionId] = useState(null);
+  // ST-01 (BLG-FE-260, v9.17): expanded rows; several may be open; not persisted.
+  const [expandedIds, setExpandedIds] = useState(() => new Set());
+  const toggleExpanded = (id) =>
+    setExpandedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
   useEffect(() => {
     const positionId = new URLSearchParams(location.search).get("position");
     if (!positionId || !Array.isArray(positions)) return;
     const target = positions.find((p) => String(p.id) === positionId && isOpenPosition(p));
-    if (target) setHighlightedPositionId(String(target.id));
+    if (target) {
+      setHighlightedPositionId(String(target.id));
+      // ST-01 (BLG-FE-260, v9.17): the deep link also opens that row's details.
+      setExpandedIds((prev) => new Set(prev).add(String(target.id)));
+    }
     navigate(location.pathname, { replace: true });
   }, [location.search, location.pathname, positions, navigate]);
 
@@ -787,7 +1241,14 @@ export default function Positions() {
   };
 
   const allPositions = positions || [];
-  const openPositions = allPositions.filter((p) => p.status === "open");
+  // ST-01 (BLG-FE-260, v9.17): the Table and Grid views follow the urgency order
+  // (src/lib/positionUrgency.js). A deep link does not change it.
+  // The Daily Position Monitor keeps the API order (newest entry first); it is not
+  // part of the decision-first table.
+  const openPositionsByEntry = useMemo(() => allPositions.filter((p) => p.status === "open"), [positions]); // eslint-disable-line react-hooks/exhaustive-deps
+  const openPositions = useMemo(() => sortByUrgency(openPositionsByEntry), [positions]); // eslint-disable-line react-hooks/exhaustive-deps
+  const openTradePlan = (position) =>
+    navigate(`/TradePlan?position_id=${position.id}&ticker=${position.ticker}&market=${position.market}`);
 
   return (
     <div className="space-y-6">
@@ -853,7 +1314,7 @@ export default function Positions() {
 
             {/* ST-12 (BLG-FE-247, v9.15): Daily Position Monitor entry point,
                 moved here from the removed legacy Dashboard (ESC-EXEC-20261104-05 (a)). */}
-            <DailyMonitor positions={openPositions} isLoading={isLoading} />
+            <DailyMonitor positions={openPositionsByEntry} isLoading={isLoading} />
 
             <Link to={createPageUrl("TradeEntry")}>
               <Button className="bg-gradient-to-r from-cyan-500 to-violet-500 hover:from-cyan-400 hover:to-violet-400 text-white border-0 shadow-lg shadow-violet-500/25">
@@ -865,17 +1326,13 @@ export default function Positions() {
         }
       />
 
-      {/* ST-02 (BLG-FEAT-09): Metrics staleness indicator — below title, inline with view controls */}
-      <MetricsStalenessIndicator />
-
-      {/* IT-04 (Arc 3): Drawdown review prompt — portfolio-level, highest severity */}
-      <DrawdownReviewPrompt />
-
-      {/* IT-05 (Arc 3): Concentration limits warning — portfolio-level, structural */}
-      <ConcentrationLimitsWarning />
-
-      {/* ST-02 (IT-02): Grace period alert zone — display-only, §13 compliant */}
-      <GracePeriodAlertZone />
+      {/* ST-03 (BLG-FE-262, v9.17): one warning strip replaces the metrics
+          staleness indicator, drawdown review prompt, concentration limits
+          warning and grace period alert zone. */}
+      <PositionsWarningStrip
+        positions={openPositionsByEntry}
+        graceDeepLink={new URLSearchParams(location.search).get("grace") === "open"}
+      />
 
       {/* ST-12 (BLG-FE-02): DataState standardised loading/empty/error — Table/Grid views */}
       <DataState
@@ -913,251 +1370,132 @@ export default function Positions() {
           ))}
         </div>
       ) : (
-        <DataTable>
-          <TableHeader>
-            <TableHead>Ticker</TableHead>
-            <TableHead>Entry Price</TableHead>
-            <TableHead>Current Price</TableHead>
-            <TableHead title="Initial stop (entry) / Current trailing stop (computed)">
-              <span className="inline-flex items-center gap-1">
-                Stop
-                <TrailingStopExplainerIcon />
-              </span>
-            </TableHead>
-            <TableHead>Shares</TableHead>
-            <TableHead className="text-right">P&amp;L (GBP)</TableHead>
-            <TableHead className="text-right">P&amp;L %</TableHead>
-            <TableHead>Days</TableHead>
-            {/* ST-01 (IT-01): Lifecycle state badge column */}
-            <TableHead title="Position lifecycle state">State</TableHead>
-            <TableHead>Grace</TableHead>
-            <TableHead title="Days until next earnings">Earnings</TableHead>
-            {/* ST-05 (v6.2) / ST-02 (v6.9): Alerts column — Risk-Off + Gap Risk badges, stacked */}
-            <TableHead>Alerts</TableHead>
-            {/* ST-15 (v7.0, BLG-FEAT-68): Last Reviewed — position review cadence nudge */}
-            <TableHead>Last Reviewed</TableHead>
-            <TableHead>Actions</TableHead>
-          </TableHeader>
-
-          <TableBody>
+        <div className="space-y-2">
+          {/* ST-01 (BLG-FE-260, v9.17): the order is the urgency order; headers are not sortable */}
+          <p data-testid="urgency-caption" className="text-xs text-app-muted">
+            Sorted by what needs attention first
+          </p>
+          {isNarrow ? (
+          <ul className="space-y-3" data-testid="position-decision-cards">
             {openPositions.map((position) => {
-              // P&L is already calculated in GBP by backend
-              const pnl = position.pnl || 0;
-              const pnlPercent = position.pnl_percent || 0;
-              const isProfit = pnl >= 0;
-              const daysHeld = differenceInDays(
-                new Date(),
-                new Date(position.entry_date)
-              );
-
-              // ST-06 (BLG-FE-182): all cells below format via src/lib/format.js
-              const currency = currencyForMarket(position.market);
-
-              // Use native prices for display
-              const displayCurrentPrice =
-                position.current_price_native || position.current_price;
-              const displayStopPrice =
-                position.stop_price_native || position.stop_price;
-
-              // ST-01 (BLG-FEAT-46): trailing stop breach detection
-              // ST-02 (BLG-BE-103, v8.9): trailBreached stays on GBP-basis values (both
-              // sides GBP) — only the rendered value below needs the native counterpart,
-              // since it is displayed next to the native currencySymbol.
-              const trailStop = position.current_trailing_stop;
-              const trailStopNative = position.current_trailing_stop_native;
-              const currentPriceGbp = position.current_price;
-              const trailBreached =
-                trailStop > 0 && currentPriceGbp > 0 && currentPriceGbp <= trailStop;
-
+              const id = String(position.id);
               return (
-                <TableRow
+                <PositionDecisionCard
                   key={position.id}
-                  data-position-id={position.id}
-                  data-highlighted={highlightedPositionId === String(position.id) ? "true" : undefined}
-                  className={highlightedPositionId === String(position.id) ? "ring-2 ring-cyan-500" : undefined}
-                >
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <span className="font-semibold text-slate-900 dark:text-white">
-                        {position.ticker}
-                      </span>
-                      <span className="text-xs px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
-                        {position.market}
-                      </span>
-                    </div>
-                  </TableCell>
-
-                  <TableCell className="text-slate-700 dark:text-slate-300">
-                    {formatCurrency(position.entry_price, { currency })}
-                  </TableCell>
-
-                  <TableCell className="text-slate-700 dark:text-slate-300">
-                    {formatCurrency(displayCurrentPrice || null, { currency })}
-                    {position.price_is_stale === true && <StaleMarker explanation={STALE_EXPLANATION_POSITIONS} />}
-                  </TableCell>
-
-                  {/* ST-01 (BLG-FEAT-46): two-line stop cell — initial stop / trailing stop + breach badge */}
-                  <TableCell className="text-app-negative font-medium">
-                    <div className="flex flex-col gap-0.5 leading-tight">
-                      <span className="text-xs text-slate-600 dark:text-slate-400">
-                        Init: {formatCurrency(position.initial_stop, { currency })}
-                      </span>
-                      <div className="flex items-center gap-1.5">
-                        {/* ST-06 (BLG-FE-193, v9.10): per-row stop details tooltip */}
-                        <StopDetailsTrigger position={position} currency={currency}>
-                          {trailStopNative > 0 ? formatCurrency(trailStopNative, { currency }) : formatCurrency(displayStopPrice, { currency })}
-                        </StopDetailsTrigger>
-                        {/* ST-09 (v7.0, BLG-FE-96): breach badge — visible when price <= trailing stop, spec colour/label */}
-                        {trailBreached && (
-                          <span
-                            className="inline-flex items-center gap-0.5 text-xs px-1.5 py-0.5 rounded-full bg-orange-600 text-white font-medium"
-                            title="Trailing stop breach: current price is at or below trailing stop level"
-                            aria-label="Trailing stop breach: current price is at or below trailing stop level"
-                            data-testid="breach-badge"
-                          >
-                            ⚠ BREACH
-                          </span>
-                        )}
-                      </div>
-                      {/* ST-06 (BLG-FE-193, v9.10): always-visible stop provenance line */}
-                      <StopProvenanceLine position={position} currency={currency} />
-                    </div>
-                  </TableCell>
-
-                  <TableCell className="text-slate-700 dark:text-slate-300">
-                    {position.shares}
-                  </TableCell>
-
-                  <TableCell className="text-right">
-                    <div
-                      className={cn(
-                        "inline-flex items-center gap-1.5 font-medium",
-                        isProfit ? "text-app-positive" : "text-app-negative"
-                      )}
-                    >
-                      {isProfit ? (
-                        <TrendingUp className="w-4 h-4" />
-                      ) : (
-                        <TrendingDown className="w-4 h-4" />
-                      )}
-                      {formatCurrency(pnl, { currency: "GBP", signed: true })}
-                    </div>
-                  </TableCell>
-
-                  <TableCell className="text-right">
-                    <span
-                      className={cn(
-                        "text-sm font-medium",
-                        isProfit ? "text-app-positive" : "text-app-negative"
-                      )}
-                    >
-                      {formatPercent(pnlPercent, { signed: true })}
-                    </span>
-                  </TableCell>
-
-                  <TableCell className="text-slate-600 dark:text-slate-400">{daysHeld}</TableCell>
-
-                  {/* ST-01 (IT-01): Lifecycle state badge */}
-                  <TableCell>
-                    {(position.lifecycle_state || position.position_state) ? (
-                      <LifecycleBadge
-                        state={position.lifecycle_state || position.position_state}
-                        daysInState={position.days_in_state}
-                        graceDaysRemaining={position.grace_days_remaining}
-                        lifecycleReason={position.lifecycle_reason}
-                      />
-                    ) : (
-                      <span className="text-slate-600 text-xs">—</span>
-                    )}
-                  </TableCell>
-
-                  {/* BLG-FEAT-06: Grace Days Remaining */}
-                  <TableCell>
-                    {position.grace_days_remaining !== null &&
-                    position.grace_days_remaining !== undefined ? (
-                      <span className="text-xs font-medium px-2 py-1 rounded-lg bg-amber-500/15 text-amber-800 dark:text-amber-400 border border-amber-500/25 whitespace-nowrap">
-                        Day {(position.holding_days ?? 0) + 1} of {GRACE_PERIOD_DAYS}
-                      </span>
-                    ) : (
-                      <span className="text-slate-600">—</span>
-                    )}
-                  </TableCell>
-
-                  <PositionEarningsCell ticker={position.ticker} market={position.market} />
-
-                  <TableCell>
-                    <AlertsCell position={position} />
-                  </TableCell>
-
-                  <LastReviewedCell position={position} drawdownActive={drawdownActive} />
-
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"
-                        aria-label={`Edit ${position.ticker}`}
-                        onClick={() => setEditingPosition(position)}
-                      >
-                        <Edit2 className="w-4 h-4" />
-                      </Button>
-
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        title="Trade Plan"
-                        className="h-8 w-8 text-cyan-700 dark:text-cyan-500/70 hover:text-cyan-800 dark:hover:text-cyan-400 hover:bg-cyan-500/10"
-                        onClick={() => navigate(`/TradePlan?position_id=${position.id}&ticker=${position.ticker}&market=${position.market}`)}
-                      >
-                        <BookOpen className="w-4 h-4" />
-                      </Button>
-
-                      {/* ST-03 (IT-03): View Trail (renamed from Trail Stop, ST-10 Branch B) — shown for PROFITABLE/EXIT ZONE; disabled when no stop */}
-                      {(position.lifecycle_state === "PROFITABLE" || position.lifecycle_state === "EXIT ZONE" ||
-                        position.position_state === "PROFITABLE" || position.position_state === "EXIT ZONE") && (
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          title={(!position.current_stop && !position.stop_price) ? "No stop is recorded for this position yet, so there is no trail to compare." : "View Trail"}
-                          aria-label="View Trail"
-                          disabled={!position.current_stop && !position.stop_price}
-                          className="h-8 w-8 text-violet-700 dark:text-violet-400 hover:text-violet-800 dark:hover:text-violet-300 hover:bg-violet-500/10 disabled:opacity-40"
-                          onClick={() => setTrailStopPosition(position)}
-                        >
-                          <ArrowUpDown className="w-4 h-4" />
-                        </Button>
-                      )}
-
-                      {/* ST-01 (v6.9, BLG-FEAT-64): Recheck Compliance — on-demand SI-01 recheck */}
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        title="Recheck Compliance"
-                        aria-label={`Recheck compliance for ${position.ticker}`}
-                        data-testid="recheck-compliance-button"
-                        className="h-8 w-8 text-amber-700 dark:text-amber-400/80 hover:text-amber-800 dark:hover:text-amber-300 hover:bg-amber-500/10"
-                        onClick={() => setRecheckingPosition(position)}
-                      >
-                        <Zap className="w-4 h-4" />
-                      </Button>
-
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8 text-rose-700 dark:text-rose-400 hover:text-rose-800 dark:hover:text-rose-300 hover:bg-rose-500/10"
-                        aria-label={`Exit ${position.ticker}`}
-                        onClick={() => setExitingPosition(position)}
-                      >
-                        <LogOut className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
+                  position={position}
+                  expanded={expandedIds.has(id)}
+                  highlighted={highlightedPositionId === id}
+                  onToggle={toggleExpanded}
+                  drawdownActive={drawdownActive}
+                  actionProps={{
+                    onEdit: setEditingPosition,
+                    onExit: setExitingPosition,
+                    onTrail: setTrailStopPosition,
+                    onRecheck: setRecheckingPosition,
+                    onTradePlan: openTradePlan,
+                  }}
+                />
               );
             })}
-          </TableBody>
-        </DataTable>
+          </ul>
+          ) : (
+          <DataTable>
+            <TableHeader>
+              <TableHead className="w-12 px-3"><span className="sr-only">Details</span></TableHead>
+              <TableHead>Ticker</TableHead>
+              <TableHead>Price</TableHead>
+              <TableHead title="Current trailing stop (computed)">
+                <span className="inline-flex items-center gap-1">
+                  Stop
+                  <TrailingStopExplainerIcon />
+                </span>
+              </TableHead>
+              <TableHead title="Distance from the price to the trailing stop, in R and %">To stop</TableHead>
+              <TableHead className="text-right">P&amp;L %</TableHead>
+              <TableHead>Action needed</TableHead>
+              <TableHead>Actions</TableHead>
+            </TableHeader>
+
+            <TableBody>
+              {openPositions.map((position) => {
+                // ST-06 (BLG-FE-182): all cells below format via src/lib/format.js
+                const currency = currencyForMarket(position.market);
+                const id = String(position.id);
+                const expanded = expandedIds.has(id);
+                const highlighted = highlightedPositionId === id;
+
+                return (
+                  <Fragment key={position.id}>
+                    <TableRow
+                      data-position-id={position.id}
+                      data-testid="position-row"
+                      data-highlighted={highlighted ? "true" : undefined}
+                      className={highlighted ? "ring-2 ring-cyan-500" : undefined}
+                    >
+                      <TableCell className="w-12 px-3">
+                        <ExpandChevron position={position} expanded={expanded} onToggle={toggleExpanded} />
+                      </TableCell>
+
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          <span className="font-semibold text-slate-900 dark:text-white">
+                            {position.ticker}
+                          </span>
+                          <MarketPill market={position.market} />
+                        </div>
+                      </TableCell>
+
+                      <TableCell className="text-slate-700 dark:text-slate-300">
+                        <PriceValue position={position} currency={currency} />
+                      </TableCell>
+
+                      <TableCell className="text-app-negative font-medium">
+                        <StopValue position={position} currency={currency} />
+                      </TableCell>
+
+                      <TableCell>
+                        <StopDistance position={position} />
+                      </TableCell>
+
+                      <TableCell className="text-right">
+                        <PnlPercent position={position} />
+                      </TableCell>
+
+                      <TableCell>
+                        <ActionNeeded position={position} />
+                      </TableCell>
+
+                      <TableCell>
+                        <PositionActions
+                          position={position}
+                          onEdit={setEditingPosition}
+                          onExit={setExitingPosition}
+                          onTrail={setTrailStopPosition}
+                          onRecheck={setRecheckingPosition}
+                          onTradePlan={openTradePlan}
+                        />
+                      </TableCell>
+                    </TableRow>
+                    {/* Expanded row: no animation (design record §3.2) */}
+                    {expanded && (
+                      <tr
+                        id={`position-detail-${position.id}`}
+                        data-testid="position-detail"
+                        data-detail-for={position.ticker}
+                        className="bg-slate-50/60 dark:bg-slate-800/20"
+                      >
+                        <td colSpan={8} className="px-6 py-4">
+                          <PositionDetailGrid position={position} currency={currency} drawdownActive={drawdownActive} />
+                        </td>
+                      </tr>
+                    )}
+                  </Fragment>
+                );
+              })}
+            </TableBody>
+          </DataTable>
+          )}
+        </div>
       )}
       </DataState>
 

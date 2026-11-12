@@ -1,0 +1,174 @@
+{
+  "cycle_id": "2026-11-11__release-v9.17",
+  "sprint_goal": "Ship Site Structure & Usability Phase 3 complete (decision-first Positions page with narrow-screen cards, one warning strip and one grace view; the single Journal area; one Performance page; section indexes on Trade Plan and Strategy Benchmark; the semantic colour token sweep), finish Phase 2's Stops moved group, and fix the four v9.16 Trade Plan found defects.",
+  "backlog_slice_source": "claude/cycles/2026-11-11__release-v9.17/stage4_backlog_slice.md (read with claude/cycles/2026-11-11__release-v9.17/stage4_backlog_slice_addendum.md)",
+  "invoked_utc": "2026-11-12T13:22:26Z",
+  "mode": "standard",
+  "status": "Running",
+  "last_updated_utc": "2026-11-12T22:40:00Z",
+  "epics": {
+    "EPIC-01": {
+      "title": "Site Structure & Usability Phase 3: Positions Redesign (build-and-ship)",
+      "status": "done",
+      "branch": "exec/2026-11-11__release-v9.17/EPIC-01",
+      "pr_number": 2256,
+      "pr_status": "open",
+      "qa_signed_off": true,
+      "qa_evidence_log": "claude/cycles/2026-11-11__release-v9.17/qa_evidence_EPIC-01.md",
+      "test_scenarios": [
+        "tests/e2e/positions-decision-first.spec.js",
+        "tests/e2e/positions-decision-cards.spec.js",
+        "tests/e2e/positions-warning-strip.spec.js",
+        "tests/e2e/positions-grace-view.spec.js"
+      ],
+      "stories": {
+        "ST-01": {
+          "title": "Decision-first Positions table",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 2236,
+          "branch": "exec/2026-11-11__release-v9.17/EPIC-01",
+          "commit_sha": "6b475ae0e6f6cb449c8dee21ead32d41f3f6bb55",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-11-12T16:19:44Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/pages/positions.md#Decision-First Table",
+            "docs/design/2026-11-11__release-v9.17/positions-decision-first/decision_record.md",
+            "tests/e2e/positions-decision-first.spec.js"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.done",
+          "sign_off_record": null,
+          "notes": "Commits: b2d93f6d (implementation, spec, existing-spec selector updates), 6b475ae0 (compliance-panel locator fix after CI run 43256379461 shard 2/8 failed SC-COMP-03/07). Deviation check vs positions.md v2.25: none. Implementation notes (intent-matching, LL-v3.4-P3-03): in-grace rows count as no stop distance for ordering (the cell shows none, so they sort last in tier 4 per the spec's null-distance rule); the in-grace Stop cell keeps the stop-details tooltip trigger; the expanded row's stop provenance shows '\u2014' when the stop is frozen, because the frozen indicator is in the Stop column. Pre-commit /code-review findings filed: BLG-SPEC-232 (To stop % GBP basis vs Risk Dashboard native), BLG-FE-289 (shared breach predicate/pills, expanded-id pruning). Process: the step 13 new-visible-text locator grep was not run before b2d93f6d; CI caught the collision (fixed in 6b475ae0). CI on 6b475ae0: all 8 workflows success; Playwright E2E Acceptance Tests run 43257460636 success (step 4c); CI Pytest Suite 43257460500 success; Frontend Production Build success on b2d93f6d (run 43256379674)."
+        },
+        "ST-02": {
+          "title": "Card layout for Positions on narrow screens",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 2237,
+          "branch": "exec/2026-11-11__release-v9.17/EPIC-01",
+          "commit_sha": "540887b99aa173cc0938d8583beb1923806dd997",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-11-12T19:02:43Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/pages/positions.md#Responsive Behavior",
+            "docs/specs/frontend/pages/positions.md#Decision-First Table",
+            "docs/design/2026-11-11__release-v9.17/positions-decision-first/decision_record.md",
+            "tests/e2e/positions-decision-cards.spec.js"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.done",
+          "sign_off_record": null,
+          "notes": "Commit 540887b9. Deviation check vs positions.md v2.25 \u00a7Responsive Behavior (Table v2.25 row) and design record \u00a74: none. Implementation notes: the Table view switches layout with useIsMobile (< 768 px), so only one layout is in the DOM; use-mobile.js now reads window.innerWidth on the first render (its only other consumer, ui/sidebar.js, is not mounted). ST-01's decision-first fixtures and route stub moved into tests/e2e/fixtures/positions-table.js and are shared by SC-POSDF and SC-POSDC. Pre-commit /code-review medium: four findings fixed in-commit; filed BLG-FE-290 and BLG-SPEC-233 (ST-01 code; BLG-FE-289 already covered two more). Local Playwright: SC-POSDC 7/7, SC-POSDF 7/7; the wider local regression run was invalid (build lacked the E2E env) and is not cited. CI on 540887b9: all 9 workflows success; Playwright E2E Acceptance Tests run 43286093150 success (step 4c); CI Pytest Suite 43286092915; Frontend Production Build 43286093194."
+        },
+        "ST-03": {
+          "title": "Combine the four banners above the Positions table into one strip",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 2238,
+          "branch": "exec/2026-11-11__release-v9.17/EPIC-01",
+          "commit_sha": "360bf1778eeb17b85b75e91a9ba0e17faba226b5",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-11-12T19:25:04Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/pages/positions.md#Warning Strip",
+            "docs/design/2026-11-11__release-v9.17/positions-decision-first/decision_record.md",
+            "tests/e2e/positions-warning-strip.spec.js"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.done",
+          "sign_off_record": null,
+          "notes": "Commits: 99f16e6d (implementation, spec, existing-spec updates), 360bf177 (SC-LBG-03 opens the grace entry after CI run 43288957471 shard 3/8 failed). Deviation check vs positions.md v2.25 \u00a7Warning Strip and design record \u00a76: none. Implementation notes (intent-matching, LL-v3.4-P3-03): the staleness entry is active whenever MetricsStalenessIndicator would render, which includes the fresh 'Data as of N mins ago' state (literal reading of the spec's 'Active when'; keeps SC-STALE-04); the drawdown content keeps its session dismiss, which now removes the drawdown entry; the grace entry is also activated by grace-period alerts when GET /positions is empty or failed; before ST-04 the grace content showed a line when no position was within 2 days of the end. Pre-commit /code-review medium: 7 findings fixed in 99f16e6d, 1 declined with reason (memoising the entries array). CI on 360bf177: all workflows success; Playwright E2E Acceptance Tests run 43289954700 success (step 4c); CI Pytest Suite 43289955322; Frontend Production Build success on 99f16e6d (run 43288957562)."
+        },
+        "ST-04": {
+          "title": "Show grace period in one place, linked from the others",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 2239,
+          "branch": "exec/2026-11-11__release-v9.17/EPIC-01",
+          "commit_sha": "d11ff8149d5a99e3d2e333b74e0323cbeceb4176",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-11-12T20:33:52Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/pages/positions.md#Grace Period View",
+            "docs/specs/frontend/pages/dashboard.md#Card 3 \u2014 In Grace Today",
+            "docs/specs/frontend/pages/risk_dashboard.md#5. Component: Grace Period Status Panel",
+            "docs/design/2026-11-11__release-v9.17/positions-decision-first/decision_record.md",
+            "tests/e2e/positions-grace-view.spec.js"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.done",
+          "sign_off_record": null,
+          "notes": "Commits: 661cc4ee (implementation), d11ff814 (Risk Dashboard grace panel lines at about 2:1 contrast in light mode, found by the agent-mediated DoQ review; SC-POSGV-08 hardened to fail on axe 'incomplete'; ended-grace 'next ends' fix; deviation heading). CI on d11ff814: all 9 workflows success; Playwright E2E run 43301555472; Frontend Production Build 43301555497. Further filings: BLG-SPEC-235, BLG-FE-292. Deviation filed: DEV-EPIC01-ST04-01 (P3, positions.md Known Deviations; BLG-BE-215) - rows with more than 2 days of grace left show no trade plan line, because GET /positions/grace-period-alerts returns only rows with 2 days or fewer. Design gate obligations met: grace_alert_dismissed_* reads removed; positions.md v2.26 \u00a7Grace Period Alert Zone is a 'Superseded' stub. Implementation notes (intent-matching): the Risk Dashboard next-end line uses n - 1 ('Next ends in 1 day' for 2; 'Ends today' for 1; 'Grace period has ended' for 0) to agree with the strip's date - spec wording filed as BLG-SPEC-234; alert-only rows (grace just ended, or GET /positions empty) are listed; the expanded-row Grace pill stays (design \u00a75.2) and renders only when a row is opened, so SC-POSGV-07's 'only element' check holds on default views. Pre-commit /code-review medium: 5 findings fixed in-commit; filed BLG-BE-215, BLG-FE-291, BLG-SPEC-234. Local Playwright on an E2E-env production build: 173 passed, 1 skipped (existing SC-GPL-01 fixme). CI on 661cc4ee: all 9 workflows success; Playwright E2E Acceptance Tests run 43293797244 (step 4c); CI Pytest Suite 43293797711; Frontend Production Build 43293797748."
+        }
+      },
+      "sign_off_record": {
+        "status": "cleared",
+        "role": "Director of Quality",
+        "method": "agent_mediated",
+        "signed_by": "Sprint Execution Engine (agent-mediated, Director of Quality role \u2014 \u00a75.3)",
+        "date": "2026-11-12",
+        "user_directed": true,
+        "rounds": 2,
+        "first_round": "Blocked (1 P2, 5 P3)",
+        "evidence": "claude/cycles/2026-11-11__release-v9.17/qa_evidence_EPIC-01.md"
+      }
+    }
+  },
+  "blocked_items": [],
+  "delegated_items": [],
+  "completed_items": [
+    "ST-01",
+    "ST-02",
+    "ST-03",
+    "ST-04"
+  ],
+  "open_escalations": {},
+  "merge_gate": {
+    "epics_merged": [],
+    "epics_pending": [
+      "EPIC-01",
+      "EPIC-04",
+      "EPIC-07",
+      "EPIC-06",
+      "EPIC-05",
+      "EPIC-02",
+      "EPIC-03"
+    ],
+    "all_merged": false
+  },
+  "process_notes": [
+    "2026-11-12T13:22:26Z: run sprint --epic EPIC-01 \u2014 EPIC-01 is the execution_state.json owner (sprint_backlog.md Merge Order); other EPICs append their own sections on first invocation.",
+    "2026-11-12: ST-01 \u2014 the STEP 3.1.A step 13 grep for unscoped locators matching new visible text (LL-v9.16-P3-01) was missed before b2d93f6d; the caption 'Sorted by what needs attention first' and the row chevrons' aria-expanded broke compliance-panel SC-COMP-03/07 in CI run 43256379461; fixed in 6b475ae0.",
+    "2026-11-12: ST-03 \u2014 99f16e6d failed Playwright E2E (run 43288957471, shard 3/8): SC-LBG-03 asserted the grace alert body on page load, which now sits in the collapsed strip entry. The pre-commit grep for specs asserting on the replaced banners searched headings, labels and dismiss text but not body copy. Fixed in 360bf177.",
+    "2026-11-12: EPIC-01 agent-mediated DoQ review (\u00a75.3, user-directed) returned Blocked: one P2 (Risk Dashboard grace panel contrast; SC-POSGV-08 passed vacuously because axe reported the gradient-backed text as incomplete) and five P3 evidence/comment corrections. All applied (d11ff814, QA evidence update); re-review requested (retry 1 of 2).",
+    "2026-11-12: EPIC-01 prevention retrospective (user-directed) - Phase 3 friction candidates for STEP 5.4. EPIC-01 filed 12 follow-up items. (1) Six were spec questions the design gate could have settled: a data source that does not return the field for the whole list (BLG-BE-215; the contract states the <= 2 filter), and one value shown on five surfaces specified separately (BLG-SPEC-232..236). Target design_gate_prompt.md STEP 2.2 - data-source check and worked-examples table; filed BLG-GOV-422. (2) Three were edge-input bugs in pure src/lib functions, and the repo runs no frontend unit tests (BLG-FE-289/290/292); filed BLG-QA-262. (3) Tests passed on empty or undecidable data: SC-POSDC-02 mocked compliance empty (BLG-FE-293), and SC-POSGV-08 passed while axe left the lines 'incomplete'. This is the second occurrence after v9.16 EPIC-03 (BLG-QA-260 open, Provisional-Target v9.17, not seated): a recurrence candidate. (4) Drift without a guard: page size and the grace predicate (BLG-TECH-34, BLG-FE-291); filed BLG-TECH-35. (5) Shared-module review depth: ST-01's medium review left findings that the ST-02 and ST-04 reviews then surfaced; candidate execution_prompt.md / commit-check Check 11 rule - review at high when a story creates a module later stories build on (relates to BLG-GOV-420).",
+    "2026-11-12: Product Owner direction (user, in session): prioritise BLG-GOV-422 and BLG-QA-262 for the next release, with BLG-QA-260. Carry-forward for v9.18 Release Planning. BLG-GOV-422 and BLG-QA-262 are P2, so release_planning_prompt.md selection step 1 (P1-then-P2-first) seats them if ready. BLG-QA-260 is P3 with a stale Provisional-Target v9.17 and needs a recorded Product Owner override in run_manifest.md (\u00a71.4c). Sprint Execution may not change Priority or Provisional-Target (\u00a77). STEP 5.3 and Post-Ship Closure: carry this into the closure Carry-Forward section."
+  ],
+  "sealed": false,
+  "sealed_utc": null
+}

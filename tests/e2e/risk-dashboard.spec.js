@@ -177,109 +177,85 @@ test.describe('Group A — Heat Gauge Threshold Colours', () => {
 
 // ---------------------------------------------------------------------------
 // Group B — Grace Period Panel
-// Spec: risk_dashboard.md §5.3, §5.4
+// Spec: risk_dashboard.md v0.1.16 §5.2 (§5.3, §5.4 retired with the rows at ST-04)
 // ---------------------------------------------------------------------------
 
 test.describe('Group B — Grace Period Panel', () => {
+  // ST-04 (BLG-FE-257, v9.17): risk_dashboard.md v0.1.16 §5.2. The per-position
+  // rows (and §5.3 colour coding, §5.4 sort) are removed; the panel shows the
+  // count badge, when the next grace period ends, and a link to the single grace
+  // view on Positions. grace_days_remaining 1 is the last day ("Ends today"), so
+  // a value n ends in n − 1 days (the Positions strip's convention).
+  const panel = (page) => page.locator('div.rounded-2xl').filter({ has: page.getByRole('heading', { name: 'Grace Period Positions', exact: true }) });
 
   // SC-RD-07
-  test('SC-RD-07: grace period sort and colour coding (3 positions)', async ({ page }) => {
+  test('SC-RD-07: panel shows the count, next end and the link to Positions; no rows', async ({ page }) => {
     await mockPortfolio(page, TD_07);
     await navigateToRiskDashboard(page);
 
-    // Panel shows 3 rows (INDI has grace_period=false — excluded)
-    const graceRows = page.locator('[data-testid="grace-period-row"]');
-    await expect(graceRows).toHaveCount(3);
-
-    // Row 1 — FOXT (1d remaining) — red badge
-    const row1 = graceRows.nth(0);
-    await expect(row1).toContainText('FOXT');
-    await expect(row1).toContainText('1d remaining');
-    await expect(row1.locator('[class*="text-rose-400"]')).toBeVisible();
-
-    // Row 2 — GOLF (4d remaining) — amber badge
-    const row2 = graceRows.nth(1);
-    await expect(row2).toContainText('GOLF');
-    await expect(row2).toContainText('4d remaining');
-    await expect(row2.locator('[class*="text-amber-400"]')).toBeVisible();
-
-    // Row 3 — HOTL (5d remaining) — green badge
-    const row3 = graceRows.nth(2);
-    await expect(row3).toContainText('HOTL');
-    await expect(row3).toContainText('5d remaining');
-    await expect(row3.locator('[class*="text-emerald-400"]')).toBeVisible();
-
-    // Count badge (risk_dashboard.md §5.2; text aligned in v9.12 ST-22)
+    // INDI has grace_period=false, so it is not counted.
     await expect(page.getByText('3 positions in grace period', { exact: true })).toBeVisible();
+    await expect(page.getByTestId('grace-panel-next-ends')).toHaveText('Ends today');
+    const link = page.getByTestId('grace-panel-link');
+    await expect(link).toHaveText('View grace periods on Positions');
+    await expect(link).toHaveAttribute('href', /#\/Positions\?grace=open$/);
+    await expect(link.locator('svg.lucide-chevron-right')).toHaveAttribute('aria-hidden', 'true');
+    await expect(page.locator('[data-testid="grace-period-row"]')).toHaveCount(0);
+    await expect(panel(page)).not.toContainText('FOXT');
   });
 
   // SC-RD-08
-  test('SC-RD-08: grace_days_remaining=1 renders red badge', async ({ page }) => {
-    // TD_07 contains FOXT with 1 day remaining — use it
-    await mockPortfolio(page, TD_07);
+  test('SC-RD-08: lowest grace_days_remaining 1 reads "Ends today"', async ({ page }) => {
+    await mockPortfolio(page, TD_07); // FOXT has 1 day remaining
     await navigateToRiskDashboard(page);
-
-    const foxtRow = page.locator('[data-testid="grace-period-row"]').filter({ hasText: 'FOXT' });
-    await expect(foxtRow).toBeVisible();
-    await expect(foxtRow).toContainText('1d remaining');
-    await expect(foxtRow.locator('[class*="text-rose-400"]')).toBeVisible();
+    await expect(page.getByTestId('grace-panel-next-ends')).toHaveText('Ends today');
   });
 
   // SC-RD-09
-  test('SC-RD-09: grace_days_remaining=2 renders amber badge (lower amber boundary)', async ({ page }) => {
-    // Create a dataset with one position at 2 days remaining
+  test('SC-RD-09: lowest grace_days_remaining 2 reads "Next ends in 1 day"', async ({ page }) => {
     const td = {
       ...TD_07,
       positions: [{ ...TD_07.positions[1], ticker: 'TEST2', grace_days_remaining: 2 }],
     };
     await mockPortfolio(page, td);
     await navigateToRiskDashboard(page);
-
-    const row = page.locator('[data-testid="grace-period-row"]').filter({ hasText: 'TEST2' });
-    await expect(row).toContainText('2d remaining');
-    await expect(row.locator('[class*="text-amber-400"]')).toBeVisible();
+    await expect(page.getByText('1 position in grace period', { exact: true })).toBeVisible();
+    await expect(page.getByTestId('grace-panel-next-ends')).toHaveText('Next ends in 1 day');
   });
 
   // SC-RD-10
-  test('SC-RD-10: grace_days_remaining=4 renders amber badge (upper amber boundary)', async ({ page }) => {
-    // TD_07 contains GOLF with 4 days remaining
-    await mockPortfolio(page, TD_07);
+  test('SC-RD-10: the line uses the lowest grace_days_remaining across positions', async ({ page }) => {
+    const td = {
+      ...TD_07,
+      positions: [
+        { ...TD_07.positions[1], ticker: 'GOLF', grace_days_remaining: 4 },
+        { ...TD_07.positions[1], id: 'p-hotl2', ticker: 'HOTL', grace_days_remaining: 5 },
+      ],
+    };
+    await mockPortfolio(page, td);
     await navigateToRiskDashboard(page);
-
-    const golfRow = page.locator('[data-testid="grace-period-row"]').filter({ hasText: 'GOLF' });
-    await expect(golfRow).toContainText('4d remaining');
-    await expect(golfRow.locator('[class*="text-amber-400"]')).toBeVisible();
-    // Must NOT be green
-    await expect(golfRow.locator('[class*="text-emerald-400"]')).toHaveCount(0);
+    await expect(page.getByTestId('grace-panel-next-ends')).toHaveText('Next ends in 3 days');
   });
 
   // SC-RD-11
-  test('SC-RD-11: grace_days_remaining=5 renders green badge (green boundary)', async ({ page }) => {
-    // TD_07 contains HOTL with 5 days remaining
-    await mockPortfolio(page, TD_07);
+  test('SC-RD-11: the line is omitted when grace_days_remaining is null', async ({ page }) => {
+    const td = {
+      ...TD_07,
+      positions: [{ ...TD_07.positions[1], ticker: 'NULLD', grace_days_remaining: null }],
+    };
+    await mockPortfolio(page, td);
     await navigateToRiskDashboard(page);
-
-    const hotlRow = page.locator('[data-testid="grace-period-row"]').filter({ hasText: 'HOTL' });
-    await expect(hotlRow).toContainText('5d remaining');
-    await expect(hotlRow.locator('[class*="text-emerald-400"]')).toBeVisible();
-    // Must NOT be amber
-    await expect(hotlRow.locator('[class*="text-amber-400"]')).toHaveCount(0);
+    await expect(page.getByTestId('grace-panel-link')).toBeVisible();
+    await expect(page.getByTestId('grace-panel-next-ends')).toHaveCount(0);
   });
 
   // SC-RD-12
-  test('SC-RD-12: expired grace position (grace_period=false) not shown; in-grace position shown', async ({ page }) => {
+  test('SC-RD-12: expired grace position (grace_period=false) not counted', async ({ page }) => {
     await mockPortfolio(page, TD_08);
     await navigateToRiskDashboard(page);
-
-    // JULIET (grace_period=true, 10d) appears
-    await expect(page.locator('[data-testid="grace-period-row"]').filter({ hasText: 'JULIET' })).toBeVisible();
-    await expect(page.locator('text=10d remaining')).toBeVisible();
-
-    // KILO (grace_period=false) does NOT appear
-    await expect(page.locator('[data-testid="grace-period-row"]').filter({ hasText: 'KILO' })).toHaveCount(0);
-
-    // Count badge: "1 position"
-    await expect(page.locator('text=1 position')).toBeVisible();
+    // JULIET (grace_period=true, 10d) counts; KILO (grace_period=false) does not.
+    await expect(page.getByText('1 position in grace period', { exact: true })).toBeVisible();
+    await expect(page.getByTestId('grace-panel-next-ends')).toHaveText('Next ends in 9 days');
   });
 
 });

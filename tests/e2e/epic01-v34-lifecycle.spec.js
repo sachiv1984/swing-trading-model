@@ -31,6 +31,8 @@
 'use strict';
 
 const { test, expect } = require('./fixtures/api-status-guard');
+// ST-03 (BLG-FE-262, v9.17): the grace alert content renders inside the warning strip's grace entry.
+const { expandAllPositionRows, openPositionsWarning } = require('./fixtures/positions-table');
 
 const API = 'http://localhost:8000';
 
@@ -99,6 +101,8 @@ async function goToTableView(page) {
   const tableBtn = page.locator('[aria-label="Table view"]');
   if (await tableBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
     await tableBtn.click();
+    // ST-01 (BLG-FE-260, v9.17): State lives in the expanded row.
+    await expandAllPositionRows(page);
   }
 }
 
@@ -107,12 +111,13 @@ async function goToTableView(page) {
 // ---------------------------------------------------------------------------
 
 test.describe('ST-01 — Position lifecycle state badge', () => {
-  test('SC-LS-01: "State" column header present in table view', async ({ page }) => {
+  // ST-01 (BLG-FE-260, v9.17): State moved from a column to the expanded row.
+  test('SC-LS-01: "State" field present in the table view expanded row', async ({ page }) => {
     await stubCommon(page);
     await setupPositions(page, [makePosition({ lifecycle_state: 'PROFITABLE', days_in_state: 3 })]);
     await goToTableView(page);
     await expect(page.getByText('NVDA')).toBeVisible({ timeout: 8000 });
-    await expect(page.locator('th', { hasText: 'State' })).toBeVisible();
+    await expect(page.getByTestId('position-detail').locator('dt', { hasText: /^State$/ })).toBeVisible();
   });
 
   test('SC-LS-02: GRACE badge renders calendar days of grace left', async ({ page }) => {
@@ -165,21 +170,24 @@ test.describe('ST-02 — Grace period alert card', () => {
 
   test('SC-GP-01: Alert card renders when position is GRACE ≥ day 8', async ({ page }) => {
     await stubCommon(page);
-    await setupPositions(page, [makePosition({ lifecycle_state: 'GRACE', days_in_state: 8 })]);
+    await setupPositions(page, [makePosition({ lifecycle_state: 'GRACE', days_in_state: 8, grace_period: true, grace_days_remaining: 2 })]);
     await page.route(`${API}/positions/grace-period-alerts`, (r) =>
       r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok', data: [makeAlert()] }) })
     );
     await page.goto('/#/Positions');
-    await expect(page.getByText(/grace period alert/i)).toBeVisible({ timeout: 8000 });
+    await openPositionsWarning(page, 'grace');
+    // ST-04 (BLG-FE-257, v9.17): the alert cards became GracePeriodView rows.
+    await expect(page.getByTestId('grace-period-view').getByTestId('grace-row-NVDA')).toBeVisible({ timeout: 8000 });
   });
 
   test('SC-GP-02: Alert card shows "Day N of 10" label and contextual body text', async ({ page }) => {
     await stubCommon(page);
-    await setupPositions(page, [makePosition({ lifecycle_state: 'GRACE', days_in_state: 8 })]);
+    await setupPositions(page, [makePosition({ lifecycle_state: 'GRACE', days_in_state: 8, grace_period: true, grace_days_remaining: 2 })]);
     await page.route(`${API}/positions/grace-period-alerts`, (r) =>
       r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok', data: [makeAlert({ days_in_state: 8 })] }) })
     );
     await page.goto('/#/Positions');
+    await openPositionsWarning(page, 'grace');
     // v9.11 ST-14 (BLG-BE-147): Day min(11 − grace_days_remaining, 10); 2 left = Day 9.
     await expect(page.getByText(/day 9 of 10/i)).toBeVisible({ timeout: 8000 });
     // v9.10 ST-12: calendar days from grace_days_remaining; "trading" removed.
@@ -188,36 +196,41 @@ test.describe('ST-02 — Grace period alert card', () => {
 
   test('SC-GP-04: day 8 since entry with state_entered_at today still shows "Day 9 of 10" (v9.11 ST-14)', async ({ page }) => {
     await stubCommon(page);
-    await setupPositions(page, [makePosition({ lifecycle_state: 'GRACE', days_in_state: 0, grace_days_remaining: 2 })]);
+    await setupPositions(page, [makePosition({ lifecycle_state: 'GRACE', days_in_state: 0, grace_period: true, grace_days_remaining: 2 })]);
     await page.route(`${API}/positions/grace-period-alerts`, (r) =>
       r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok', data: [makeAlert({ days_in_state: 0, grace_days_remaining: 2 })] }) })
     );
     await page.goto('/#/Positions');
+    await openPositionsWarning(page, 'grace');
     await expect(page.getByTestId('grace-alert-day-label')).toHaveText('Day 9 of 10', { timeout: 8000 });
     await expect(page.getByText(/grace period ends in 2 days\./i)).toBeVisible();
   });
 
   test('SC-GP-05: grace_days_remaining 0 shows "Day 10 of 10" and the ended body (v9.11 ST-14)', async ({ page }) => {
     await stubCommon(page);
-    await setupPositions(page, [makePosition({ lifecycle_state: 'GRACE', days_in_state: 3, grace_days_remaining: 0 })]);
+    await setupPositions(page, [makePosition({ lifecycle_state: 'GRACE', days_in_state: 3, grace_period: true, grace_days_remaining: 0 })]);
     await page.route(`${API}/positions/grace-period-alerts`, (r) =>
       r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok', data: [makeAlert({ days_in_state: 3, grace_days_remaining: 0 })] }) })
     );
     await page.goto('/#/Positions');
+    await openPositionsWarning(page, 'grace');
     await expect(page.getByTestId('grace-alert-day-label')).toHaveText('Day 10 of 10', { timeout: 8000 });
     await expect(page.getByText(/grace period has ended/i)).toBeVisible();
   });
 
-  test('SC-GP-03: Alert card dismissed on ✕ click', async ({ page }) => {
+  // ST-04 (BLG-FE-257, v9.17): GracePeriodView has no dismiss (positions.md
+  // §Grace Period View), and a grace_alert_dismissed_* key no longer hides a row.
+  test('SC-GP-03: the grace view has no dismiss, and old dismiss keys are ignored', async ({ page }) => {
     await stubCommon(page);
-    await setupPositions(page, [makePosition({ lifecycle_state: 'GRACE', days_in_state: 8 })]);
+    await setupPositions(page, [makePosition({ lifecycle_state: 'GRACE', days_in_state: 8, grace_period: true, grace_days_remaining: 2 })]);
     await page.route(`${API}/positions/grace-period-alerts`, (r) =>
       r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok', data: [makeAlert()] }) })
     );
+    await page.addInitScript(() => window.sessionStorage.setItem('grace_alert_dismissed_pos-001', '1'));
     await page.goto('/#/Positions');
-    await expect(page.getByText(/grace period alert/i)).toBeVisible({ timeout: 8000 });
-    await page.getByRole('button', { name: /dismiss grace period alert for NVDA/i }).click();
-    await expect(page.getByText(/grace period alert — NVDA/i)).not.toBeVisible();
+    const view = await openPositionsWarning(page, 'grace');
+    await expect(view.getByTestId('grace-row-NVDA')).toBeVisible({ timeout: 8000 });
+    await expect(view.getByRole('button', { name: /dismiss/i })).toHaveCount(0);
   });
 });
 

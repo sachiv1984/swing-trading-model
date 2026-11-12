@@ -18,7 +18,7 @@ import { AlertTriangle, Clock } from "lucide-react";
 import { apiFetch } from "../../api/base44Client";
 
 const API_URL = process.env.REACT_APP_API_URL || "http://localhost:8000";
-const STALE_THRESHOLD_MS = 4 * 60 * 60 * 1000; // 4 hours
+export const STALE_THRESHOLD_MS = 4 * 60 * 60 * 1000; // 4 hours
 
 /**
  * Compute human-readable relative time string from a UTC ISO timestamp.
@@ -28,7 +28,7 @@ const STALE_THRESHOLD_MS = 4 * 60 * 60 * 1000; // 4 hours
  *   1–23 h   → "Nh ago"
  *   ≥ 24 h   → "N days ago"
  */
-function formatRelativeTime(isoString) {
+export function formatRelativeTime(isoString) {
   const syncTime = new Date(isoString);
   const nowMs = Date.now();
   const diffMs = nowMs - syncTime.getTime();
@@ -46,7 +46,7 @@ function formatRelativeTime(isoString) {
  * Format absolute ISO timestamp for tooltip display.
  * Output: "Updated: 2026-03-24 09:41 UTC"
  */
-function formatAbsoluteTime(isoString) {
+export function formatAbsoluteTime(isoString) {
   const d = new Date(isoString);
   const year = d.getUTCFullYear();
   const month = String(d.getUTCMonth() + 1).padStart(2, "0");
@@ -56,8 +56,13 @@ function formatAbsoluteTime(isoString) {
   return `Updated: ${year}-${month}-${day} ${hours}:${mins} UTC`;
 }
 
-export default function MetricsStalenessIndicator() {
-  const { data: lastSyncAt } = useQuery({
+/**
+ * The indicator's query, shared with the Positions warning strip (ST-03,
+ * BLG-FE-262, v9.17), which shows this text as its staleness entry.
+ * Same query key, so react-query makes one request.
+ */
+export function useMetricsLastSyncAt() {
+  const { data } = useQuery({
     queryKey: ["analyticsLastSyncAt"],
     queryFn: async () => {
       try {
@@ -72,12 +77,27 @@ export default function MetricsStalenessIndicator() {
     staleTime: 5 * 60 * 1000,
     retry: false,
   });
+  return data ?? null;
+}
+
+/** True when the last sync is 4 hours old or more. */
+export function isMetricsStale(lastSyncAt) {
+  return Date.now() - new Date(lastSyncAt).getTime() >= STALE_THRESHOLD_MS;
+}
+
+/** The indicator's one-line text, e.g. "Data as of 5h ago — may be outdated". */
+export function stalenessText(lastSyncAt) {
+  const relativeTime = formatRelativeTime(lastSyncAt);
+  return isMetricsStale(lastSyncAt) ? `Data as of ${relativeTime} — may be outdated` : `Data as of ${relativeTime}`;
+}
+
+export default function MetricsStalenessIndicator() {
+  const lastSyncAt = useMetricsLastSyncAt();
 
   if (!lastSyncAt) return null;
 
-  const diffMs = Date.now() - new Date(lastSyncAt).getTime();
-  const isStale = diffMs >= STALE_THRESHOLD_MS;
-  const relativeTime = formatRelativeTime(lastSyncAt);
+  const isStale = isMetricsStale(lastSyncAt);
+  const text = stalenessText(lastSyncAt);
   const absoluteTime = formatAbsoluteTime(lastSyncAt);
 
   return isStale ? (
@@ -86,7 +106,7 @@ export default function MetricsStalenessIndicator() {
       className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-amber-500/15 border border-amber-500/30 text-amber-400 text-xs font-medium cursor-default select-none"
     >
       <AlertTriangle className="w-3 h-3 shrink-0" />
-      Data as of {relativeTime} — may be outdated
+      {text}
     </span>
   ) : (
     <span
@@ -94,7 +114,7 @@ export default function MetricsStalenessIndicator() {
       className="inline-flex items-center gap-1.5 text-slate-600 dark:text-slate-400 text-xs cursor-default select-none"
     >
       <Clock className="w-3 h-3 shrink-0 text-slate-500" />
-      Data as of {relativeTime}
+      {text}
     </span>
   );
 }

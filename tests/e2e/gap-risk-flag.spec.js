@@ -30,6 +30,7 @@
 'use strict';
 
 const { test, expect } = require('./fixtures/api-status-guard');
+const { expandAllPositionRows } = require('./fixtures/positions-table');
 
 // v9.12 ST-24 (BLG-FE-210): axe color-contrast scoped to one badge.
 const AxeBuilder = require('@axe-core/playwright').default;
@@ -112,6 +113,8 @@ async function gotoPositionsTable(page, positions, gapRiskPayload) {
   await tableBtn.waitFor({ state: 'visible', timeout: 8000 });
   await tableBtn.click();
   await page.waitForSelector('table', { timeout: 5000 });
+  // ST-01 (BLG-FE-260, v9.17): fields outside the six default columns live in the expanded row.
+  await expandAllPositionRows(page);
 }
 
 test('SC-GR-01: No flag — Alerts column shows a dash', async ({ page }) => {

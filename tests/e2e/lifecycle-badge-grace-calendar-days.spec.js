@@ -20,6 +20,7 @@
 'use strict';
 
 const { test, expect } = require('./fixtures/api-status-guard');
+const { expandAllPositionRows, openPositionsWarning } = require('./fixtures/positions-table');
 
 const API = 'http://localhost:8000';
 
@@ -84,6 +85,8 @@ async function setup(page, positions, alerts = []) {
   const tableBtn = page.locator('[aria-label="Table view"]');
   if (await tableBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
     await tableBtn.click();
+    // ST-01 (BLG-FE-260, v9.17): State lives in the expanded row.
+    await expandAllPositionRows(page);
   }
   await expect(page.getByText('NVDA').first()).toBeVisible({ timeout: 8000 });
 }
@@ -112,6 +115,8 @@ test.describe('ST-12 — lifecycle badge grace window in calendar days', () => {
       grace_days_remaining: 2, trade_plan_id: null, trade_plan_summary: null,
     };
     await setup(page, [makePosition({ grace_days_remaining: 2, days_in_state: 8, holding_days: 8 })], [alert]);
+    // ST-03 (BLG-FE-262, v9.17): the grace copy sits in the warning strip's grace entry.
+    await openPositionsWarning(page, 'grace');
     await expect(page.getByText(/grace period ends in 2 days\./i)).toBeVisible();
     await expect(page.getByText(/trading day/i)).toHaveCount(0);
     await expect(page.locator('[title*="trading day" i]')).toHaveCount(0);

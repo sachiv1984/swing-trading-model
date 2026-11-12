@@ -21,6 +21,7 @@
 'use strict';
 
 const { test, expect } = require('./fixtures/api-status-guard');
+const { expandAllPositionRows } = require('./fixtures/positions-table');
 
 const API = 'http://localhost:8000';
 const M = '−';
@@ -74,16 +75,22 @@ async function gotoPositionsTable(page) {
   await page.waitForSelector('text=GAIN', { timeout: 10000 });
   await page.locator('[aria-label="Table view"]').click();
   await page.waitForSelector('table', { timeout: 5000 });
+  // ST-01 (BLG-FE-260, v9.17): Entry price and P&L (GBP) live in the expanded row.
+  await expandAllPositionRows(page);
 }
 
 test('SC-NFT-01: Positions table — grouped 2 dp money, signed P&L with typographic minus, signed 1 dp %', async ({ page }) => {
   await gotoPositionsTable(page);
-  const row = (t) => page.locator('tr', { hasText: t }).first();
+  // ST-01 (BLG-FE-260, v9.17): the table row plus its expanded detail row.
+  const row = (t) => ({
+    innerText: async () =>
+      `${await page.locator('tr', { hasText: t }).first().innerText()}\n${await page.locator(`tr[data-detail-for="${t}"]`).innerText()}`,
+  });
 
   const gain = await row('GAIN').innerText();
   expect(gain).toContain('$1,234.50');          // entry: grouped, native currency
   expect(gain).toContain('$1,300.00');          // current
-  expect(gain).toContain('Init: $1,100.00');    // initial stop
+  expect(gain).toMatch(/Initial stop\s+\$1,100\.00/); // initial stop (expanded row)
   expect(gain).toContain('$1,200.50');          // trailing stop (native)
   expect(gain).toContain('+£1,250.00');         // P&L: explicit sign, GBP, grouped
   expect(gain).toContain('+4.2%');              // P&L %: 1 dp, signed

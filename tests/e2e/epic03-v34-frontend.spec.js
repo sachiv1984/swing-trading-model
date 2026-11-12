@@ -40,6 +40,7 @@
 'use strict';
 
 const { test, expect } = require('./fixtures/api-status-guard');
+const { expandAllPositionRows } = require('./fixtures/positions-table');
 
 // v9.12 ST-24 (BLG-FE-210): axe color-contrast scoped to one badge.
 const AxeBuilder = require('@axe-core/playwright').default;
@@ -180,7 +181,8 @@ test.describe('ST-07 — Earnings past/today display', () => {
       );
     }
 
-    test('SC-E03-05: days < 0 — Earnings column visible in Positions table', async ({ page }) => {
+    // ST-01 (BLG-FE-260, v9.17): Earnings moved from a column to the expanded row.
+    test('SC-E03-05: days < 0 — Earnings field visible in the Positions expanded row', async ({ page }) => {
       await setupPositions(page, PAST_EARNINGS);
       await page.goto('/#/Positions');
       await page.getByRole('button', { name: /table/i }).click().catch(() => {});
@@ -189,7 +191,10 @@ test.describe('ST-07 — Earnings past/today display', () => {
       if (await tableBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
         await tableBtn.click();
       }
-      await expect(page.locator('th', { hasText: 'Earnings' })).toBeVisible({ timeout: 8000 });
+      await expandAllPositionRows(page);
+      const detail = page.getByTestId('position-detail');
+      await expect(detail.locator('dt', { hasText: /^Earnings$/ })).toBeVisible({ timeout: 8000 });
+      await expect(detail.locator('dt', { hasText: /^Earnings$/ }).locator('xpath=..').locator('dd')).toHaveText('—');
     });
 
     test('SC-E03-06: days = 0 renders "Today" in Positions table', async ({ page }) => {

@@ -44,7 +44,8 @@ const AUDIT = [
   { file: 'components/dashboard/home/PortfolioHeatCard.js', heading: 'No portfolio heat data', kind: 'card', to: '/RiskDashboard', title: 'Portfolio Heat' },
   { file: 'components/dashboard/home/RecentActivityCard.js', heading: 'No recent activity', kind: 'card', to: '/TradeHistory', title: 'Recent Activity' },
   { file: 'components/dashboard/home/OpenPositionsCard.js', heading: 'No open positions', kind: 'card', to: '/Positions', title: 'Open Positions' },
-  { file: 'components/dashboard/home/GracePeriodCard.js', heading: 'No positions in grace', kind: 'card', to: '/RiskDashboard', title: 'In Grace Today' },
+  // ST-04 (BLG-FE-257, v9.17): Card 3 opens the single grace view (dashboard.md v4.2).
+  { file: 'components/dashboard/home/GracePeriodCard.js', heading: 'No positions in grace', kind: 'card', to: '/Positions?grace=open', title: 'In Grace Today' },
   { file: 'components/dashboard/home/morning/ExitZoneCard.js', heading: 'No positions to watch', kind: 'card', to: '/Positions', title: 'Positions to Watch' },
   { file: 'components/dashboard/home/morning/ScreenerHitsCard.js', heading: 'No new signals', kind: 'card', to: '/Screener', title: 'Screener Hits' },
   { file: 'components/dashboard/home/morning/RedFlagsCard.js', heading: 'No red flags this week', kind: 'card', to: '/RedFlagJournal', title: 'Red Flags' },

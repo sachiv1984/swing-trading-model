@@ -1,19 +1,29 @@
-import { Clock, ShieldAlert, AlertCircle, ChevronRight } from "lucide-react";
+import { ShieldAlert, AlertCircle, ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
-import { format } from "date-fns";
-import { cn } from "../../lib/utils";
 import { createPageUrl } from "../../utils";
+import { isInGrace } from "../../lib/positionUrgency";
 
-function daysColor(days) {
-  if (days <= 1) return "text-rose-400 bg-rose-500/10 border-rose-500/30";
-  if (days <= 4) return "text-amber-400 bg-amber-500/10 border-amber-500/30";
-  return "text-emerald-400 bg-emerald-500/10 border-emerald-500/30";
+// ST-04 (BLG-FE-257, v9.17): grace detail lives only in the Positions grace view
+// (positions.md §Grace Period View). This panel shows the heading, the count
+// badge, when the next grace period ends, and a link to that view
+// (risk_dashboard.md v0.1.16 §5.2). The per-position rows are removed.
+// grace_days_remaining 1 is the last day of grace ("Ends today", Day 10 of 10),
+// so a value n ends in n − 1 days, matching the Positions strip's "next ends"
+// date. 0 means grace has just ended; the position moves on at the next refresh.
+function nextEndsText(days) {
+  if (days === null) return null;
+  if (days <= 0) return "Grace period has ended";
+  if (days === 1) return "Ends today";
+  const n = days - 1;
+  return `Next ends in ${n} day${n === 1 ? "" : "s"}`;
 }
 
 export default function GracePeriodPanel({ positions = [], error }) {
-  const gracePosts = [...positions]
-    .filter((p) => p.grace_period)
-    .sort((a, b) => (a.grace_days_remaining ?? 999) - (b.grace_days_remaining ?? 999));
+  const gracePosts = positions.filter(isInGrace);
+  const days = gracePosts
+    .map((p) => p.grace_days_remaining)
+    .filter((d) => d !== null && d !== undefined);
+  const nextEnds = nextEndsText(days.length ? Math.min(...days) : null);
 
   return (
     <div className="rounded-2xl bg-gradient-to-br from-slate-800/50 to-slate-900/50 border border-slate-700/50 backdrop-blur-sm p-6">
@@ -37,38 +47,21 @@ export default function GracePeriodPanel({ positions = [], error }) {
       ) : gracePosts.length === 0 ? (
         <p className="text-sm text-slate-600 dark:text-slate-400 italic">No positions currently in grace period.</p>
       ) : (
-        <div className="space-y-2">
-          {gracePosts.map((p) => {
-            const days = p.grace_days_remaining ?? null;
-            return (
-              // ST-22 (BLG-FE-207, v9.12): each row links to the position on
-              // Positions (risk_dashboard.md §5.2; positions.md §Position Deep Link).
-              <Link
-                key={p.id}
-                to={`${createPageUrl("Positions")}?position=${encodeURIComponent(p.id)}`}
-                aria-label={`Open ${p.ticker} on Positions`}
-                data-testid="grace-period-row"
-                className="flex items-center justify-between px-3 py-2.5 rounded-lg bg-slate-800/40 border border-slate-700/30 hover:bg-slate-200/60 dark:hover:bg-slate-700/40"
-              >
-                <div className="flex items-center gap-3">
-                  <span className="font-semibold text-white">{p.ticker}</span>
-                  <span className="text-xs text-slate-600 dark:text-slate-400">
-                    {p.entry_date ? format(new Date(p.entry_date), "dd MMM yyyy") : "—"}
-                  </span>
-                  <span className="text-xs text-slate-600 dark:text-slate-400">
-                    {p.holding_days != null ? `${p.holding_days}d in grace` : "—"}
-                  </span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className={cn("flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full border", daysColor(days ?? 999))}>
-                    <Clock className="w-3 h-3" />
-                    {days === null ? "N/A" : `${days}d remaining`}
-                  </div>
-                  <ChevronRight size={14} className="text-slate-600 dark:text-slate-400" aria-hidden="true" />
-                </div>
-              </Link>
-            );
-          })}
+        // An opaque inset with paired light/dark text, so both lines meet WCAG AA
+        // contrast in both themes. The panel's own surface is a translucent
+        // gradient, which turns mid-grey in light mode.
+        <div className="space-y-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2.5">
+          {nextEnds && (
+            <p className="text-sm text-slate-900 dark:text-white" data-testid="grace-panel-next-ends">{nextEnds}</p>
+          )}
+          <Link
+            to={`${createPageUrl("Positions")}?grace=open`}
+            data-testid="grace-panel-link"
+            className="inline-flex items-center gap-1 text-sm font-medium text-amber-700 dark:text-amber-400 hover:text-amber-800 dark:hover:text-amber-300 underline underline-offset-2"
+          >
+            View grace periods on Positions
+            <ChevronRight size={14} aria-hidden="true" />
+          </Link>
         </div>
       )}
     </div>

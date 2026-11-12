@@ -43,6 +43,7 @@
 'use strict';
 
 const { test, expect } = require('./fixtures/api-status-guard');
+const { expandAllPositionRows, positionDetail } = require('./fixtures/positions-table');
 const AxeBuilder = require('@axe-core/playwright').default;
 
 const API = 'http://localhost:8000';
@@ -528,16 +529,19 @@ test.describe('Shell pages axe scan — light theme (ST-09)', () => {
     await tableBtn.waitFor({ state: 'visible', timeout: 10000 });
     await tableBtn.click();
     await expect(page.getByRole('row').filter({ hasText: 'WDC' })).toBeVisible({ timeout: 10000 });
-    await expect(page.getByRole('row').filter({ hasText: 'WDC' }).getByText('Today')).toBeVisible({ timeout: 10000 });
-    await expect(page.getByRole('row').filter({ hasText: 'VOD.L' }).getByText('⚠ 3d')).toBeVisible({ timeout: 10000 });
+    // ST-01 (BLG-FE-260, v9.17): Earnings lives in the expanded row; opening every
+    // row also puts the detail grid in the scan.
+    await expandAllPositionRows(page);
+    await expect(positionDetail(page, 'WDC').getByText('Today')).toBeVisible({ timeout: 10000 });
+    await expect(positionDetail(page, 'VOD.L').getByText('⚠ 3d')).toBeVisible({ timeout: 10000 });
     await expectThemeApplied(page, 'light');
     // With the old bare text-amber-400 rendered, axe still reported no
     // color-contrast violation on this scan (checked 2026-11-10; it does not
     // always decide text on translucent fills, BLG-QA-260), so the earnings
     // badges' light colour is asserted directly:
     // amber-800 (rgb 146, 64, 14) on amber-500/15 over white measures 6.32:1.
-    await expect(page.getByRole('row').filter({ hasText: 'WDC' }).getByText('Today')).toHaveCSS('color', 'rgb(146, 64, 14)');
-    await expect(page.getByRole('row').filter({ hasText: 'VOD.L' }).getByText('⚠ 3d')).toHaveCSS('color', 'rgb(146, 64, 14)');
+    await expect(positionDetail(page, 'WDC').getByText('Today')).toHaveCSS('color', 'rgb(146, 64, 14)');
+    await expect(positionDetail(page, 'VOD.L').getByText('⚠ 3d')).toHaveCSS('color', 'rgb(146, 64, 14)');
     await runAxeScan(page, 'PositionsPopulatedTable:light');
   });
 

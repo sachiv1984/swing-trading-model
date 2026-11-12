@@ -37,6 +37,7 @@
 'use strict';
 
 const { test, expect } = require('./fixtures/api-status-guard');
+const { expandAllPositionRows } = require('./fixtures/positions-table');
 
 // ---------------------------------------------------------------------------
 // Mock data builders
@@ -142,6 +143,8 @@ async function gotoPositionsTable(page, positions) {
   await tableBtn.waitFor({ state: 'visible', timeout: 8000 });
   await tableBtn.click();
   await page.waitForSelector('table', { timeout: 5000 });
+  // ST-01 (BLG-FE-260, v9.17): fields outside the six default columns live in the expanded row.
+  await expandAllPositionRows(page);
 }
 
 async function stubSignalsPage(page, signals, positions = []) {
@@ -177,12 +180,15 @@ test('SC-TSC-01: Trailing stop value shown in Stop column', async ({ page }) => 
   await expect(page.locator('text=£115.00').first()).toBeVisible({ timeout: 5000 });
 });
 
-test('SC-TSC-02: "Init:" label present in Stop column', async ({ page }) => {
+// ST-01 (BLG-FE-260, v9.17): the initial stop moved from the Stop column's
+// "Init:" line to the expanded row's "Initial stop" field.
+test('SC-TSC-02: Initial stop shown in the expanded row', async ({ page }) => {
   const pos = makePosition({ initial_stop: 130.00, current_trailing_stop: 115.00 });
   await gotoPositionsTable(page, [pos]);
 
-  // "Init: £130.00" sub-label shown above the trailing stop value
-  await expect(page.locator('text=/Init:.*130/').first()).toBeVisible({ timeout: 5000 });
+  const detail = page.getByTestId('position-detail');
+  await expect(detail.locator('dt', { hasText: /^Initial stop$/ })).toBeVisible({ timeout: 5000 });
+  await expect(detail.getByText(/130\.00/)).toBeVisible();
 });
 
 test('SC-TSC-03: Breach badge present when current_price ≤ current_trailing_stop', async ({ page }) => {

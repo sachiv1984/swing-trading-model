@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-12 (session — 3 new items added: BLG-SPEC-230, BLG-SPEC-231, BLG-FE-288; v9.17 Sprint Planning pre-seal filings); prior — 2026-11-12 (session — 1 new item added: BLG-GOV-421; prompt size budget enforcement for direct-to-main commits); prior — 2026-11-12 (session — 3 new items added: BLG-BE-213, BLG-BE-214, BLG-GOV-420; BLG-BE-208 expanded to six copies and raised to P2; post-v9.16 quality review); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-12 (session — 3 new items added: BLG-GOV-422, BLG-QA-262, BLG-TECH-35; EPIC-01 prevention retrospective, user-directed); prior — 2026-11-12 (session — 3 new items added: BLG-SPEC-236, BLG-FE-293, BLG-TECH-34; PR #2256 agent-mediated review); prior — 2026-11-12 (session — 2 new items added: BLG-SPEC-235, BLG-FE-292; v9.17 EPIC-01 agent-mediated DoQ review and follow-up code review); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -6374,5 +6374,337 @@ At v9.17 Sprint Planning, `BLG-FE-265`'s sweep was bounded to `src/pages/` in fu
 **Acceptance Criteria**
 - No bare `text-white` remains in `src/components/` outside coloured fills
 - axe `color-contrast` still passes in the light theme on every routed page
+
+---
+
+### BLG-SPEC-232 — Decide one basis for the Positions "To stop" % so it matches the Risk Dashboard
+**Priority:** P3 (Low)
+**Type:** Spec Debt
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** ST-01 / EPIC-01 pre-commit `/code-review`, `2026-11-11__release-v9.17` — 2026-11-12
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+`positions.md` v2.25 §Stop Distance defines the "To stop" % on the GBP basis of the breach test (`current_price`, `current_trailing_stop`), and ST-01 built it that way. The Risk Dashboard's Stop Dist % moved to the API's native `stop_distance_pct` in `BLG-BE-155`, because the GBP figures mix entry FX with live FX. After an FX move, a US position can be "Near stop" (≤ 5%, red) on Positions and amber on the Risk Dashboard. The cell's native R can also disagree with its GBP %. The urgency sort uses the same %.
+
+**Scope**
+- Decide whether §Stop Distance and the near-stop tier should use the native basis (or the API's `stop_distance_pct`), as `risk_dashboard.md` §6 does
+- Update `positions.md` and, if the basis changes, `src/lib/positionUrgency.js` (`stopDistancePct`)
+
+**Acceptance Criteria**
+- `positions.md` §Stop Distance names one basis, and it matches `risk_dashboard.md` §6
+- For a US position whose FX has moved since entry, Positions and the Risk Dashboard show the same % (Playwright)
+
+---
+
+### BLG-FE-289 — Share the breach test and exit pills across the Positions decision-first table
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Head of Engineering
+**Source:** ST-01 / EPIC-01 pre-commit `/code-review`, `2026-11-11__release-v9.17` — 2026-11-12
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+ST-01 left three small copies of shared logic. The BREACH badge (`StopValue` in `src/pages/Positions.js`) repeats the breach test inline with no grace check, while the urgency tier uses `isPostGraceStopBreach` (`grace_period === false`). If `grace_period` is null or missing, the badge shows a breach but the row is not ranked "Stop reached". The RISK OFF and STOP REACHED pills are hand-copied in `ActionNeeded`, `AlertsCell` and `TodayList.js`, so a colour or contrast fix must find every copy. `expandedIds` keeps the IDs of positions that have since closed.
+
+**Scope**
+- Use one breach predicate (from `src/lib/exitCondition.js`) for the badge and the tier
+- Extract one RISK OFF pill and one STOP REACHED pill component, keeping `AlertsCell`'s `title` and `aria-label`, and use them in all three places
+- Drop expanded IDs that are no longer in the open-position list
+
+**Acceptance Criteria**
+- The badge and the tier call the same predicate
+- Each pill label has one component, used in `Positions.js` and `TodayList.js`
+- The expanded set holds only open-position IDs
+- The SC-POSDF, SC-TSC and SC-TL Playwright scenarios pass
+
+---
+
+### BLG-FE-290 — Tidy three small inconsistencies in the Positions decision-first table
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Head of Engineering
+**Source:** ST-02 / EPIC-01 pre-commit `/code-review` (findings in ST-01 code not covered by BLG-FE-289), `2026-11-11__release-v9.17` — 2026-11-12
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+Three small gaps in ST-01's Positions code. "Grace ends today" in `ActionNeeded` (`src/pages/Positions.js`) tests `grace_days_remaining === 1`, while `TodayList.js` tests `Number(p.grace_days_remaining) === 1`, so a string `"1"` shows the copy on Home but "—" on Positions. A `?position=` deep link adds the ID to `expandedIds` even in Grid view, which has no expansion, so switching to Table later shows that row already open for no visible reason. The `openPositions` `useMemo` keys on `[positions]` behind an eslint-disable instead of on its real input, and `ActionNeeded` recomputes `getUrgencyTier` on every render although `sortByUrgency` already computed it.
+
+**Scope**
+- Use one "grace ends today" helper in `ActionNeeded` and `TodayList.js`
+- Expand a deep-linked row only when the Table view is active (or clear the expansion on a view switch)
+- Key the `openPositions` memo on its real input without the eslint-disable, and pass the computed tier to `ActionNeeded`
+
+**Acceptance Criteria**
+- A position with `grace_days_remaining: "1"` shows "Grace ends today" on both Home and Positions (Playwright)
+- A `?position=` deep link opened in Grid view, then a switch to Table, shows no row expanded (Playwright)
+- No `react-hooks/exhaustive-deps` disable remains on the `openPositions` memo
+
+---
+
+### BLG-SPEC-233 — Decide where an in-grace position already below its stop sorts on Positions
+**Priority:** P3 (Low)
+**Type:** Spec Debt
+**Owner:** Frontend Specifications & UX Documentation Owner; Head of UX & Design
+**Source:** ST-02 / EPIC-01 pre-commit `/code-review`, `2026-11-11__release-v9.17` — 2026-11-12
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`positions.md` v2.25 §Urgency Order gives in-grace rows no stop distance, so they sort last in tier 4. An in-grace position whose price is already below its trailing stop, even one showing "Grace ends today", is therefore listed after positions 16% or more from their stop, although it becomes a stop breach at the next session. That works against "Sorted by what needs attention first". SC-POSDF-01 locks the current order.
+
+**Scope**
+- Decide whether such rows sort first within tier 4 (for example by grace days remaining, or by raw distance), keeping the rule display-only (§13)
+- Record the decision in `positions.md` §Urgency Order
+
+**Acceptance Criteria**
+- `positions.md` records the decision with a date and the deciding owner
+- If the order changes, a follow-up frontend item is filed to implement it and update SC-POSDF-01 and SC-POSDC-01
+
+---
+
+### BLG-BE-215 — Give the Positions grace view a trade plan link for every in-grace position
+**Priority:** P3 (Low)
+**Type:** Backend Engineering
+**Owner:** Head of Engineering
+**Source:** ST-04 / EPIC-01 pre-commit `/code-review`, `2026-11-11__release-v9.17` — 2026-11-12 (`positions.md` Known Deviation DEV-EPIC01-ST04-01)
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+`GracePeriodView` (`positions.md` §Grace Period View) lists every in-grace position and takes each one's trade plan summary from `GET /positions/grace-period-alerts`. That endpoint returns only positions with `grace_days_remaining <= 2` (`backend/main.py`, `grace_period_alert_endpoint.md`). A position with 3 or more days of grace left therefore has no trade plan data, so its row shows no plan line and no "View Trade Plan" link, even when a plan is linked.
+
+**Scope**
+- Return the trade plan link and summary for every open in-grace position, either by adding an option to `GET /positions/grace-period-alerts` (for example `?all=true`) or by adding `trade_plan_id` and the summary to `GET /positions`
+- Update the API contract and `docs/reference/openapi.yaml` in the same commit, and the endpoint test entry if a route changes
+- Switch `GracePeriodView` to the new data and close DEV-EPIC01-ST04-01's labelled fields
+
+**Acceptance Criteria**
+- An in-grace position with 6 days left and a linked plan shows the Thesis, Stop and R-target block and a "View Trade Plan" link in the grace view (Playwright)
+- One with no plan shows "No trade plan linked."
+- `positions.md` DEV-EPIC01-ST04-01 is marked resolved
+
+---
+
+### BLG-FE-291 — Count Dashboard Card 3 with the same in-grace rule as the grace view it opens
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Head of Engineering
+**Source:** ST-04 / EPIC-01 pre-commit `/code-review`, `2026-11-11__release-v9.17` — 2026-11-12
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+Since ST-04, Dashboard Card 3 "In Grace Today" links to `/Positions?grace=open`. It counts positions with `grace_days_remaining > 0 || grace_end_date || status === "GRACE"`, with no open-status or `grace_period` check. The grace view it opens uses `grace_period === true` on open positions (`isInGrace`). A position matching only the looser rule makes the card show a count that the grace view does not list, and the link then opens no grace entry.
+
+**Scope**
+- Count Card 3 with `isInGrace` on open positions, and take "Next expires" from the same set
+- Confirm the rule in `dashboard.md` Card 3
+
+**Acceptance Criteria**
+- With one open position in grace and one closed position with a `grace_end_date`, Card 3 shows 1 (Playwright)
+- Card 3's count equals the number of rows in the grace view for the same data
+
+---
+
+### BLG-SPEC-234 — Settle three grace display rules left open by the single grace view
+**Priority:** P3 (Low)
+**Type:** Spec Debt
+**Owner:** Frontend Specifications & UX Documentation Owner; Head of UX & Design
+**Source:** ST-04 / EPIC-01 pre-commit `/code-review`, `2026-11-11__release-v9.17` — 2026-11-12
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+Three grace rules disagree after ST-04. First, `risk_dashboard.md` v0.1.16 §5.2 says "Next ends in {n} day(s)" from the lowest `grace_days_remaining`, with "Ends today" when it is 1. Read literally, 2 gives "in 2 days" while 1 gives "today", which skips a day and disagrees with the Positions strip's "next ends" date. ST-04 shipped `n − 1` ("Next ends in 1 day" for 2) and "Grace period has ended" for 0, as an intent reading. Second, the expanded row's Grace pill (`positions.md` §Grace Days Remaining Column) shows "Day {holding_days + 1} of 10", while §Grace Period View uses "Day {min(11 − grace_days_remaining, 10)} of 10". The two can differ for one position. Third, §Grace Period View's row ID `grace-row-{ticker}` is not unique when two open lots share a ticker.
+
+**Scope**
+- Confirm or amend the `risk_dashboard.md` §5.2 wording to the `n − 1` convention and the 0-day text ST-04 shipped
+- Pick one day convention for the Grace pill and the grace view, and file a frontend item if the code must change
+- Make the grace row ID unique per position (for example `grace-row-{id}`), and file a frontend item for it
+
+**Acceptance Criteria**
+- `risk_dashboard.md` §5.2 states the shipped next-end wording, or a frontend item is filed to change the code
+- `positions.md` uses one grace day convention throughout
+- `positions.md` §Grace Period View names a per-position row ID
+
+---
+
+### BLG-SPEC-235 — Decide whether the grace view lists positions whose grace has just ended
+**Priority:** P3 (Low)
+**Type:** Spec Debt
+**Owner:** Frontend Specifications & UX Documentation Owner; Head of UX & Design
+**Source:** EPIC-01 agent-mediated Director of Quality review (ST-04), `2026-11-11__release-v9.17` — 2026-11-12
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`positions.md` §Grace Period View says the view lists "every open position in grace (`grace_period === true`)" and also carries over the `grace_days_remaining = 0` sentence ("Grace period has ended…"). A position at 0 days has `grace_period === false` in `GET /positions`, so that sentence can only appear if the view also lists alert rows. ST-04 lists them: a grace-period alert whose position is not flagged in grace is shown, as is any alert while `GET /positions` is empty. As a result, the Positions strip can count one more position than the Risk Dashboard panel and Dashboard Card 3, which count `grace_period` positions only. With the SC-POSGV fixture, the strip reads "5 positions in grace" and the panel reads "4 positions in grace period". Two related copy points came from the follow-up code review. First, the carried-over body sentence says "Your grace period ends in 1 day" when `grace_days_remaining` is 1, while the same row reads "Day 10 of 10", the table says "Grace ends today", and the Risk panel says "Ends today". Second, the expanded row's Grace pill shows a "Day N of 10" badge for any non-null `grace_days_remaining`, even after grace has ended (see also BLG-SPEC-234's day-convention point).
+
+**Scope**
+- Decide whether the grace view (and its strip count) includes just-ended positions, or whether the count and the list should differ
+- Record the rule in `positions.md` §Grace Period View, and in `risk_dashboard.md` §5.2 and `dashboard.md` Card 3 if their counts change
+- Settle the days-left sentence for `grace_days_remaining = 1` (for example "Your grace period ends today.") and whether the expanded-row Grace pill shows after grace ends
+- File a frontend item if the code must change
+
+**Acceptance Criteria**
+- `positions.md` §Grace Period View states which positions it lists and what the strip counts
+- The Positions strip, Risk Dashboard panel and Card 3 counts agree for the same data, or the spec explains why they differ
+
+---
+
+### BLG-FE-292 — Fix four small gaps in the Positions decision-first code
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Head of Engineering
+**Source:** EPIC-01 pre-commit `/code-review` of the ST-04 contrast fix (branch-wide findings in ST-01 and ST-03 code), `2026-11-11__release-v9.17` — 2026-11-12
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+Four small gaps in the v9.17 Positions code. First, `stopDistanceR` (`src/lib/positionUrgency.js`) has no `stop > 0` guard, unlike `stopDistancePct`. With `current_trailing_stop_native = 0` it reports a large made-up R (for example "10.4R · —"). Second, when there is no trailing stop, `StopValue` falls back to `stop_price`, but `StopDistance` and the urgency tier read only `current_trailing_stop`. That row shows a stop but gets no distance and sorts last in tier 4. Third, the `drawdown-status` query is written out twice in `src/pages/Positions.js`, in `PositionsWarningStrip` and `Positions()`, under one cache key. A nearby comment also still names the removed `DrawdownReviewPrompt`. Fourth, `?grace=open` stays in the URL, so following the same link again while on Positions does not re-open or re-scroll a collapsed grace entry.
+
+**Scope**
+- Guard `stopDistanceR` on a positive stop
+- Decide with the spec owner whether the distance and tier use the `stop_price` fallback, and apply the decision
+- Extract one `useDrawdownStatus()` hook and fix the stale comment
+- Drop `?grace=open` after it is handled, as `?position=` does, or re-open the entry on each arrival
+
+**Acceptance Criteria**
+- A position with `current_trailing_stop_native = 0` shows "—" for R (unit or Playwright test)
+- One `drawdown-status` query definition remains in `Positions.js`
+- Following `/Positions?grace=open` twice re-opens a collapsed grace entry (Playwright)
+
+---
+
+### BLG-SPEC-236 — Decide whether a fresh "Data as of" line belongs in the Positions warning strip
+**Priority:** P3 (Low)
+**Type:** Spec Debt
+**Owner:** Frontend Specifications & UX Documentation Owner; Head of UX & Design
+**Source:** PR #2256 agent-mediated Product Owner review (EPIC-01, ST-03), `2026-11-11__release-v9.17` — 2026-11-12
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`positions.md` §Warning Strip makes the staleness entry active whenever `MetricsStalenessIndicator` would render, and ST-03 implemented that literally. The indicator renders whenever analytics have synced at all, including the fresh state ("Data as of 5 mins ago"). So the "Warnings" strip shows on almost every visit with an entry that is not a warning. That goes against the design record's intent (§6: "a quiet portfolio shows no strip and no gap") and weakens the strip as a signal.
+
+**Scope**
+- Decide whether the staleness entry is active only when the data is stale (4 hours or more), and where the fresh "Data as of" line goes (for example, the page header)
+- Update `positions.md` §Warning Strip, and file a frontend item if the code must change (SC-STALE-04 and SC-POSWS-06 assert the current behaviour)
+
+**Acceptance Criteria**
+- `positions.md` §Warning Strip states when the staleness entry is active
+- With fresh data and no other warning, the spec says whether a strip renders
+
+---
+
+### BLG-FE-293 — Stop the Strategy Compliance panel clipping its table on narrow screens
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Head of Engineering
+**Source:** PR #2256 agent-mediated Director of Quality review (EPIC-01, ST-02), `2026-11-11__release-v9.17` — 2026-11-12
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+Since ST-02, the Positions Table view is usable at phone width as decision cards. The Strategy Compliance panel below the cards (`src/components/positions/StrategyCompliancePanel.js`) wraps its per-position table in `overflow-hidden` with no horizontal scroll or card layout. At 390 px its right-hand columns (Size Compliance and beyond) are clipped and cannot be reached. SC-POSDC-02 does not catch this because it mocks the compliance data as empty. The page itself does not scroll sideways.
+
+**Scope**
+- Make the compliance table reachable below `md` (an `overflow-x-auto` wrapper, or stacked rows)
+- Extend SC-POSDC-02 to run with compliance rows present
+
+**Acceptance Criteria**
+- At 390 px with compliance rows, every column of the compliance table can be reached and the page has no horizontal scroll (Playwright)
+
+---
+
+### BLG-TECH-34 — Split src/pages/Positions.js into smaller modules
+**Priority:** P3 (Low)
+**Type:** Platform / Technical Debt
+**Owner:** Head of Engineering
+**Source:** PR #2256 agent-mediated Director of Quality review (EPIC-01), `2026-11-11__release-v9.17` — 2026-11-12
+**Effort:** M (~1–2d)
+**Provisional-Target:** TBD
+
+**Problem**
+After EPIC-01, `src/pages/Positions.js` is 1,549 lines (1,211 on `main` before it). One file holds the page, the warning strip and its four content components, the decision table and cards, the trail stop modal and several queries. Later stories that touch the page (v9.17 EPIC-03 ST-08 and EPIC-07 ST-19 rebase onto it) will meet conflicts more often and are harder to review. The `drawdown-status` query is already defined twice in the file (BLG-FE-292).
+
+**Scope**
+- Move the warning strip and its content components, the decision table and cards, and the trail stop modal into `src/components/positions/`
+- No behaviour change; existing Playwright specs pass unchanged
+
+**Acceptance Criteria**
+- `Positions.js` is under 600 lines
+- The full Playwright suite passes with no spec changes
+
+---
+
+### BLG-GOV-422 — Design gate: check each new view's data source and write worked examples for shared values
+**Priority:** P2 (Medium)
+**Type:** Governance Process
+**Owner:** Head of Specs Team; Head of UX & Design
+**Source:** EPIC-01 retrospective on its 12 backlog filings, `2026-11-11__release-v9.17`, user-directed — 2026-11-12
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+EPIC-01 filed 12 follow-up backlog items. Six were spec questions that a design gate check could have settled before any code was written. `BLG-BE-215`: the design record told `GracePeriodView` to take every row's trade plan from `GET /positions/grace-period-alerts`, but that endpoint's contract (line 12) returns only rows with `grace_days_remaining <= 2`. `BLG-SPEC-234` and `BLG-SPEC-235`: one value, `grace_days_remaining`, is shown on five surfaces (strip, grace row, Risk Dashboard panel, expanded-row pill, Today list), each specified separately. They disagreed on the last day ("ends in 1 day" next to "Grace ends today") and on counts. `BLG-SPEC-232`, `BLG-SPEC-233` and `BLG-SPEC-236` were the same kind of question: a rule written for the normal case, with its other input states not listed (the "To stop" basis, an in-grace position below its stop, a fresh staleness indicator counting as a warning). `design_gate_prompt.md` STEP 2.2 asks for "edge cases" but names neither check.
+
+**Scope**
+- `design_gate_prompt.md` STEP 2.2: add a **data-source check**. For every field a new or changed view displays, name the endpoint and the contract line showing that the endpoint returns the field for the whole population the view lists. Any gap is either a backend story in the slice or a spec change, decided before the gate passes
+- STEP 2.2: add a **worked-examples table** for any value displayed on two or more surfaces, or any rule with a threshold. Take one set of boundary inputs (for example 0, 1, 2 and null days, and true, false and null flags) and give the exact text each surface shows for each
+- STEP 2.2: for any rule that depends on another component's state ("active when X would render"), list X's states and the rule's result for each
+- CLAUDE.md §6 governance file checklist in the same commit
+
+**Acceptance Criteria**
+- `design_gate_prompt.md` STEP 2.2 requires the data-source check, the worked-examples table and the dependent-state list, and the design gate record template has a place to record each
+- Re-running the three checks on the v9.17 `positions-decision-first` decision record finds the BLG-BE-215 gap and the BLG-SPEC-234/235 last-day contradiction (dry run recorded in the commit or a docs/ops note)
+
+---
+
+### BLG-QA-262 — Unit-test pure frontend logic in CI
+**Priority:** P2 (Medium)
+**Type:** QA / Test Automation
+**Owner:** QA & Testing Owner; Head of Engineering
+**Source:** EPIC-01 retrospective on its 12 backlog filings, `2026-11-11__release-v9.17`, user-directed — 2026-11-12
+**Effort:** M (~1–2d)
+**Provisional-Target:** TBD
+
+**Problem**
+The repo has no frontend unit tests (`find src -name "*.test.js"` finds none), and no CI workflow runs `npm test`, although `react-scripts test` is configured. Pure modules such as `src/lib/positionUrgency.js` and `src/lib/exitCondition.js` are tested only through Playwright, which builds the app and mocks the API and so covers few inputs. Three EPIC-01 filings were edge-input bugs in pure functions that a table-driven unit test would have caught in the ST-01 commit: `BLG-FE-289` (a null `grace_period` is treated two ways), `BLG-FE-290` (a string `"1"` for `grace_days_remaining`) and `BLG-FE-292` (`stopDistanceR` with a 0 stop).
+
+**Scope**
+- A CI job that runs `CI=true npm test -- --watchAll=false` on every PR touching `src/**`
+- Table-driven unit tests for `src/lib/positionUrgency.js` and `src/lib/exitCondition.js` covering null, missing, string and 0 values for each input
+- A rule in the test conventions doc: a new or changed pure module under `src/lib/` ships with unit tests in the same commit
+
+**Acceptance Criteria**
+- The new CI job fails a PR whose `src/lib` unit test fails
+- `positionUrgency.test.js` asserts `stopDistanceR` returns null for a 0 stop, and that a null `grace_period` is tiered the same way the cells display it (fails until BLG-FE-289/292 are fixed, or is marked `test.failing` with those IDs)
+- The convention is written in the testing standards doc
+
+---
+
+### BLG-TECH-35 — Add two source guards: a page-size warning and a shared grace predicate lint
+**Priority:** P3 (Low)
+**Type:** Platform / Technical Debt
+**Owner:** Head of Engineering
+**Source:** EPIC-01 retrospective on its 12 backlog filings, `2026-11-11__release-v9.17`, user-directed — 2026-11-12
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+Two EPIC-01 filings come from drift that a guard would have flagged as it happened. `BLG-TECH-34`: `src/pages/Positions.js` grew from 1,211 to 1,549 lines with nothing to warn about it. `BLG-FE-289` and `BLG-FE-291`: "is this position in grace" is written several ways (`grace_period === true`, `=== false`, truthy `p.grace_period`, `grace_days_remaining > 0 || grace_end_date || status === "GRACE"`), so surfaces that link to each other count different sets.
+
+**Scope**
+- A CI check that warns (non-blocking) when a file under `src/pages/` or `src/components/` passes 1,000 lines, naming the file
+- An ESLint `no-restricted-syntax` rule in `eslint.config.mjs` that flags direct comparisons on `grace_period` outside `src/lib/positionUrgency.js`, pointing to `isInGrace` (depends on BLG-TECH-33 for the flat config to load)
+
+**Acceptance Criteria**
+- A PR that grows a page past 1,000 lines shows the warning
+- `npx eslint` on a file comparing `p.grace_period === true` outside `positionUrgency.js` reports the rule
 
 ---

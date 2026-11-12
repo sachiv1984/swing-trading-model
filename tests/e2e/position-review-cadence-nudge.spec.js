@@ -24,6 +24,7 @@
 'use strict';
 
 const { test, expect } = require('./fixtures/api-status-guard');
+const { expandAllPositionRows } = require('./fixtures/positions-table');
 
 function makePosition(overrides = {}) {
   const daysAgo = (n) => {
@@ -122,6 +123,8 @@ async function gotoPositionsTable(page, positions, opts) {
   await tableBtn.waitFor({ state: 'visible', timeout: 8000 });
   await tableBtn.click();
   await page.waitForSelector('table', { timeout: 5000 });
+  // ST-01 (BLG-FE-260, v9.17): fields outside the six default columns live in the expanded row.
+  await expandAllPositionRows(page);
 }
 
 test('SC-RCN-01: Table View shows "Reviewed {N}d ago" for a reviewed position', async ({ page }) => {
