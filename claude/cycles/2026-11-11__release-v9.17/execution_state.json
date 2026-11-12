@@ -5,14 +5,14 @@
   "invoked_utc": "2026-11-12T13:22:26Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-12T21:45:00Z",
+  "last_updated_utc": "2026-11-12T21:55:00Z",
   "epics": {
     "EPIC-01": {
       "title": "Site Structure & Usability Phase 3: Positions Redesign (build-and-ship)",
       "status": "done",
       "branch": "exec/2026-11-11__release-v9.17/EPIC-01",
-      "pr_number": null,
-      "pr_status": "none",
+      "pr_number": 2256,
+      "pr_status": "open",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-11-11__release-v9.17/qa_evidence_EPIC-01.md",
       "test_scenarios": [
