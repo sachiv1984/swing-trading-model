@@ -2,6 +2,7 @@ import { Fragment, useState, useEffect, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEarnings } from "../hooks/useEarnings";
 import { useGapRisk } from "../hooks/useGapRisk";
+import { useIsMobile } from "../hooks/use-mobile";
 import { base44, api, apiFetch } from "../api/base44Client";
 import {
   LayoutGrid,
@@ -701,7 +702,8 @@ function StopValue({ position, currency }) {
   }
   return (
     <div className="flex flex-col gap-0.5 leading-tight" data-testid="stop-value">
-      <div className="flex items-center gap-1.5">
+      {/* flex-wrap: on a 390px decision card (ST-02) the badge drops below the value */}
+      <div className="flex flex-wrap items-center gap-1.5">
         <StopDetailsTrigger position={position} currency={currency}>
           {trailStopNative > 0 ? formatCurrency(trailStopNative, { currency }) : formatCurrency(displayStopPrice, { currency })}
         </StopDetailsTrigger>
@@ -892,6 +894,88 @@ function ExpandChevron({ position, expanded, onToggle }) {
   );
 }
 
+// ST-02 (BLG-FE-261, v9.17): the Table view below md (< 768 px) renders one
+// decision card per position instead of the table, in the same urgency order
+// and with the same leading fields (positions.md §Responsive Behavior; design
+// record §4). Details opens the expanded row's grid (2 columns); the row's
+// action buttons sit in the card footer, always visible, 44 × 44 px minimum.
+function PositionDecisionCard({ position, expanded, highlighted, onToggle, drawdownActive, actionProps }) {
+  const currency = currencyForMarket(position.market);
+  const detailId = `position-detail-${position.id}`;
+  return (
+    <li
+      data-position-id={position.id}
+      data-testid="position-decision-card"
+      data-highlighted={highlighted ? "true" : undefined}
+      className={cn(
+        "min-w-0 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50",
+        highlighted && "ring-2 ring-cyan-500"
+      )}
+    >
+      <div className="p-4 space-y-3">
+        <div className="flex items-start justify-between gap-3">
+          <div className="flex items-center gap-2 min-w-0">
+            <span className="font-semibold text-slate-900 dark:text-white">{position.ticker}</span>
+            <MarketPill market={position.market} />
+          </div>
+          <ActionNeeded position={position} />
+        </div>
+
+        <dl className="grid grid-cols-3 gap-3">
+          <DetailItem label="Price">
+            <span className="text-slate-700 dark:text-slate-300">
+              <PriceValue position={position} currency={currency} />
+            </span>
+          </DetailItem>
+          <DetailItem label="Stop">
+            <span className="text-app-negative font-medium">
+              <StopValue position={position} currency={currency} />
+            </span>
+          </DetailItem>
+          <DetailItem label="To stop">
+            <StopDistance position={position} />
+          </DetailItem>
+        </dl>
+
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex items-baseline gap-1.5">
+            <span className="text-xs text-app-muted">P&amp;L</span>
+            <PnlPercent position={position} />
+          </div>
+          <button
+            type="button"
+            onClick={() => onToggle(String(position.id))}
+            aria-expanded={expanded}
+            aria-controls={detailId}
+            aria-label={`Show details for ${position.ticker}`}
+            data-testid="position-card-details"
+            className="inline-flex items-center gap-1 min-h-[44px] px-3 rounded-lg text-sm text-app-muted hover:text-app-fg hover:bg-slate-100 dark:hover:bg-slate-800"
+          >
+            {expanded ? <ChevronDown className="w-4 h-4" aria-hidden="true" /> : <ChevronRight className="w-4 h-4" aria-hidden="true" />}
+            Details
+          </button>
+        </div>
+      </div>
+
+      {/* Details: the expanded row's grid, 2 columns; no animation (design record §3.2, §4) */}
+      {expanded && (
+        <div
+          id={detailId}
+          data-testid="position-detail"
+          data-detail-for={position.ticker}
+          className="border-t border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/20 px-4 py-3"
+        >
+          <PositionDetailGrid position={position} currency={currency} drawdownActive={drawdownActive} />
+        </div>
+      )}
+
+      <div className="border-t border-slate-200 dark:border-slate-800 px-2 py-1" data-testid="position-card-actions">
+        <PositionActions position={position} buttonClassName="h-11 w-11" {...actionProps} />
+      </div>
+    </li>
+  );
+}
+
 // ST-05 (BLG-FE-222, v9.15): the ?exit= and ?position= deep links use the
 // same open-position test.
 const isOpenPosition = (p) => p.status === "open";
@@ -903,6 +987,8 @@ export default function Positions() {
   const [reflectionTrade, setReflectionTrade] = useState(null);
   const [trailStopPosition, setTrailStopPosition] = useState(null);
   const [recheckingPosition, setRecheckingPosition] = useState(null);
+  // ST-02 (BLG-FE-261, v9.17): below md the Table view renders decision cards.
+  const isNarrow = useIsMobile();
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -1213,6 +1299,30 @@ export default function Positions() {
           <p data-testid="urgency-caption" className="text-xs text-app-muted">
             Sorted by what needs attention first
           </p>
+          {isNarrow ? (
+          <ul className="space-y-3" data-testid="position-decision-cards">
+            {openPositions.map((position) => {
+              const id = String(position.id);
+              return (
+                <PositionDecisionCard
+                  key={position.id}
+                  position={position}
+                  expanded={expandedIds.has(id)}
+                  highlighted={highlightedPositionId === id}
+                  onToggle={toggleExpanded}
+                  drawdownActive={drawdownActive}
+                  actionProps={{
+                    onEdit: setEditingPosition,
+                    onExit: setExitingPosition,
+                    onTrail: setTrailStopPosition,
+                    onRecheck: setRecheckingPosition,
+                    onTradePlan: openTradePlan,
+                  }}
+                />
+              );
+            })}
+          </ul>
+          ) : (
           <DataTable>
             <TableHeader>
               <TableHead className="w-12 px-3"><span className="sr-only">Details</span></TableHead>
@@ -1308,6 +1418,7 @@ export default function Positions() {
               })}
             </TableBody>
           </DataTable>
+          )}
         </div>
       )}
       </DataState>

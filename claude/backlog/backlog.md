@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-12 (session — 2 new items added: BLG-SPEC-232, BLG-FE-289; v9.17 ST-01 pre-commit code review); prior — 2026-11-12 (session — 3 new items added: BLG-SPEC-230, BLG-SPEC-231, BLG-FE-288; v9.17 Sprint Planning pre-seal filings); prior — 2026-11-12 (session — 1 new item added: BLG-GOV-421; prompt size budget enforcement for direct-to-main commits); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-12 (session — 2 new items added: BLG-FE-290, BLG-SPEC-233; v9.17 ST-02 pre-commit code review); prior — 2026-11-12 (session — 2 new items added: BLG-SPEC-232, BLG-FE-289; v9.17 ST-01 pre-commit code review); prior — 2026-11-12 (session — 3 new items added: BLG-SPEC-230, BLG-SPEC-231, BLG-FE-288; v9.17 Sprint Planning pre-seal filings); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -6419,5 +6419,49 @@ ST-01 left three small copies of shared logic. The BREACH badge (`StopValue` in 
 - Each pill label has one component, used in `Positions.js` and `TodayList.js`
 - The expanded set holds only open-position IDs
 - The SC-POSDF, SC-TSC and SC-TL Playwright scenarios pass
+
+---
+
+### BLG-FE-290 — Tidy three small inconsistencies in the Positions decision-first table
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Head of Engineering
+**Source:** ST-02 / EPIC-01 pre-commit `/code-review` (findings in ST-01 code not covered by BLG-FE-289), `2026-11-11__release-v9.17` — 2026-11-12
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+Three small gaps in ST-01's Positions code. "Grace ends today" in `ActionNeeded` (`src/pages/Positions.js`) tests `grace_days_remaining === 1`, while `TodayList.js` tests `Number(p.grace_days_remaining) === 1`, so a string `"1"` shows the copy on Home but "—" on Positions. A `?position=` deep link adds the ID to `expandedIds` even in Grid view, which has no expansion, so switching to Table later shows that row already open for no visible reason. The `openPositions` `useMemo` keys on `[positions]` behind an eslint-disable instead of on its real input, and `ActionNeeded` recomputes `getUrgencyTier` on every render although `sortByUrgency` already computed it.
+
+**Scope**
+- Use one "grace ends today" helper in `ActionNeeded` and `TodayList.js`
+- Expand a deep-linked row only when the Table view is active (or clear the expansion on a view switch)
+- Key the `openPositions` memo on its real input without the eslint-disable, and pass the computed tier to `ActionNeeded`
+
+**Acceptance Criteria**
+- A position with `grace_days_remaining: "1"` shows "Grace ends today" on both Home and Positions (Playwright)
+- A `?position=` deep link opened in Grid view, then a switch to Table, shows no row expanded (Playwright)
+- No `react-hooks/exhaustive-deps` disable remains on the `openPositions` memo
+
+---
+
+### BLG-SPEC-233 — Decide where an in-grace position already below its stop sorts on Positions
+**Priority:** P3 (Low)
+**Type:** Spec Debt
+**Owner:** Frontend Specifications & UX Documentation Owner; Head of UX & Design
+**Source:** ST-02 / EPIC-01 pre-commit `/code-review`, `2026-11-11__release-v9.17` — 2026-11-12
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`positions.md` v2.25 §Urgency Order gives in-grace rows no stop distance, so they sort last in tier 4. An in-grace position whose price is already below its trailing stop, even one showing "Grace ends today", is therefore listed after positions 16% or more from their stop, although it becomes a stop breach at the next session. That works against "Sorted by what needs attention first". SC-POSDF-01 locks the current order.
+
+**Scope**
+- Decide whether such rows sort first within tier 4 (for example by grace days remaining, or by raw distance), keeping the rule display-only (§13)
+- Record the decision in `positions.md` §Urgency Order
+
+**Acceptance Criteria**
+- `positions.md` records the decision with a date and the deciding owner
+- If the order changes, a follow-up frontend item is filed to implement it and update SC-POSDF-01 and SC-POSDC-01
 
 ---

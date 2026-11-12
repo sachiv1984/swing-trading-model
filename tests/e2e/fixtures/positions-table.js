@@ -52,4 +52,97 @@ function positionDetail(page, ticker) {
   return page.locator(`[data-testid="position-detail"][data-detail-for="${ticker}"]`);
 }
 
-module.exports = { expandPositionRow, expandAllPositionRows, positionDetail };
+// ---------------------------------------------------------------------------
+// Decision-first position fixtures and the Positions page route stub, shared by
+// positions-decision-first.spec.js (ST-01) and positions-decision-cards.spec.js
+// (ST-02) so both views are tested against the same urgency order.
+// ---------------------------------------------------------------------------
+
+const TODAY = new Date().toISOString();
+
+function makePosition(overrides = {}) {
+  return {
+    id: 'pos-x',
+    ticker: 'XXX',
+    market: 'US',
+    entry_price: 100,
+    current_price: 120,
+    current_price_native: 120,
+    current_trailing_stop: 100,
+    current_trailing_stop_native: 100,
+    stop_price: 90,
+    stop_price_native: 90,
+    initial_stop: 90,
+    shares: 10,
+    pnl: 200,
+    pnl_percent: 20,
+    holding_days: 30,
+    grace_period: false,
+    grace_days_remaining: null,
+    status: 'open',
+    entry_date: TODAY,
+    risk_off_exit: false,
+    lifecycle_state: 'PROFITABLE',
+    position_state: 'PROFITABLE',
+    days_in_state: 10,
+    tags: null,
+    last_reviewed_at: TODAY,
+    ...overrides,
+  };
+}
+
+// Tier 4 (other): 16.7% from the stop.
+const OTHER = makePosition({ id: 'pos-oth', ticker: 'OTHR' });
+// Tier 1 (exit condition met): risk-off regime.
+const RISK_OFF = makePosition({ id: 'pos-rof', ticker: 'RISK', risk_off_exit: true });
+// Tier 2 (stop reached): post-grace, price at or below the trailing stop.
+const BREACH = makePosition({
+  id: 'pos-brc', ticker: 'BRCH', current_price: 98, current_price_native: 98, pnl: -20, pnl_percent: -2,
+  lifecycle_state: 'LOSING', position_state: 'LOSING',
+});
+// Tier 3 (near stop): 4.0% from the stop. R = (104 − 100) ÷ (100 − 90) = 0.4R.
+const NEAR = makePosition({
+  id: 'pos-nea', ticker: 'NEAR', current_price: 104, current_price_native: 104, pnl: 40, pnl_percent: 4,
+});
+// In grace with the price below the stop: never tiers 2–3, so tier 4.
+const GRACE_BREACH = makePosition({
+  id: 'pos-gbr', ticker: 'GRCB', current_price: 95, current_price_native: 95, pnl: -50, pnl_percent: -5,
+  grace_period: true, grace_days_remaining: 1, holding_days: 9,
+  lifecycle_state: 'GRACE', position_state: 'GRACE',
+});
+// Tier 4, 10% from the stop: amber band.
+const WARN = makePosition({
+  id: 'pos-wrn', ticker: 'WARN', current_price: 111.11, current_price_native: 111.11, pnl: 111, pnl_percent: 11.1,
+});
+
+const ALL = [OTHER, GRACE_BREACH, WARN, NEAR, BREACH, RISK_OFF];
+
+async function stubPositionsPage(page, positions) {
+  const json = (body) => ({ status: 200, contentType: 'application/json', body: JSON.stringify(body) });
+  await page.route('**/positions*', (route) => {
+    const url = route.request().url();
+    if (url.includes('/compliance') || url.includes('/grace-period-alerts') || url.includes('/gap-risk')) {
+      return route.continue();
+    }
+    return route.fulfill(json(positions));
+  });
+  await page.route('**/positions/*/gap-risk', (route) =>
+    route.fulfill(json({ status: 'ok', data: { flagged: false, reasons: [], avg_gap_pct: null, event_count: 0, insufficient_history: false } }))
+  );
+  await page.route('**/positions/compliance*', (route) => route.fulfill(json({ status: 'ok', data: [] })));
+  await page.route('**/positions/grace-period-alerts', (route) => route.fulfill(json({ data: [] })));
+  await page.route('**/portfolio/drawdown-status', (route) => route.fulfill(json({ status: 'ok', data: { threshold_breached: false } })));
+  await page.route('**/portfolio/concentration-status', (route) => route.fulfill(json({ status: 'ok', data: { any_breach: false } })));
+  await page.route('**/portfolio*', (route) => route.fulfill(json({ status: 'ok', data: { cash: 10000, initial_cash: 50000 } })));
+  await page.route('**/analytics/**', (route) => route.fulfill(json({ status: 'ok', data: { last_sync_at: null } })));
+  await page.route('**/alerts/history**', (route) => route.fulfill(json({ data: { evaluations: [] } })));
+  await page.route('**/watchlist**', (route) => route.fulfill(json({ items: [] })));
+  await page.route('**/earnings/**', (route) => route.fulfill(json({ next_earnings_date: null, days_until_earnings: null })));
+}
+
+const DECISION_FIXTURES = { OTHER, RISK_OFF, BREACH, NEAR, GRACE_BREACH, WARN, ALL };
+
+module.exports = {
+  expandPositionRow, expandAllPositionRows, positionDetail,
+  makePosition, stubPositionsPage, DECISION_FIXTURES,
+};
