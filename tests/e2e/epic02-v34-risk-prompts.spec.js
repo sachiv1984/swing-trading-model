@@ -23,6 +23,10 @@
 
 const { test, expect } = require('./fixtures/api-status-guard');
 
+// ST-03 (BLG-FE-262, v9.17): both warnings now render collapsed inside the
+// Positions warning strip; open the entry before asserting on its content.
+const { openPositionsWarning } = require('./fixtures/positions-table');
+
 const API = 'http://localhost:8000';
 
 // ---------------------------------------------------------------------------
@@ -119,6 +123,7 @@ test.describe('ST-05 — Drawdown-Triggered Review Prompt', () => {
       r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok', data: NO_BREACH_CONCENTRATION }) })
     );
     await page.goto('/#/Positions');
+    await openPositionsWarning(page, 'drawdown');
     await expect(page.getByText('Portfolio Drawdown Review')).toBeVisible({ timeout: 8000 });
   });
 
@@ -131,8 +136,9 @@ test.describe('ST-05 — Drawdown-Triggered Review Prompt', () => {
       r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok', data: NO_BREACH_CONCENTRATION }) })
     );
     await page.goto('/#/Positions');
+    await openPositionsWarning(page, 'drawdown');
     await expect(page.getByText('Portfolio Drawdown Review')).toBeVisible({ timeout: 8000 });
-    await expect(page.getByText('12.4%')).toBeVisible();
+    await expect(page.locator('#warning-detail-drawdown').getByText('12.4%')).toBeVisible();
     await expect(page.getByText('6.3%')).toBeVisible();
     await expect(page.getByText('Bearish')).toBeVisible();
   });
@@ -146,6 +152,7 @@ test.describe('ST-05 — Drawdown-Triggered Review Prompt', () => {
       r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok', data: NO_BREACH_CONCENTRATION }) })
     );
     await page.goto('/#/Positions');
+    await openPositionsWarning(page, 'drawdown');
     await expect(page.getByText('Portfolio Drawdown Review')).toBeVisible({ timeout: 8000 });
     // GRACE (2), PROFITABLE (1), LOSING (3) should be visible; EXIT ZONE (0) and UNKNOWN (0) should not
     await expect(page.locator('span.bg-blue-600')).toBeVisible();   // GRACE
@@ -164,6 +171,7 @@ test.describe('ST-05 — Drawdown-Triggered Review Prompt', () => {
       r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok', data: NO_BREACH_CONCENTRATION }) })
     );
     await page.goto('/#/Positions');
+    await openPositionsWarning(page, 'drawdown');
     await expect(page.getByText('Portfolio Drawdown Review')).toBeVisible({ timeout: 8000 });
     await page.getByRole('button', { name: /dismiss drawdown review prompt/i }).click();
     await expect(page.getByText('Portfolio Drawdown Review')).not.toBeVisible();
@@ -197,6 +205,7 @@ test.describe('ST-06 — Position Concentration Limits Warning', () => {
       r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok', data: BREACH_CONCENTRATION }) })
     );
     await page.goto('/#/Positions');
+    await openPositionsWarning(page, 'concentration');
     await expect(page.getByText('Concentration Limits')).toBeVisible({ timeout: 8000 });
   });
 
@@ -209,6 +218,7 @@ test.describe('ST-06 — Position Concentration Limits Warning', () => {
       r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok', data: BREACH_CONCENTRATION }) })
     );
     await page.goto('/#/Positions');
+    await openPositionsWarning(page, 'concentration');
     await expect(page.getByText('Concentration Limits')).toBeVisible({ timeout: 8000 });
     await expect(page.getByText('NVDA')).toBeVisible();
     await expect(page.getByText(/22\.1%/)).toBeVisible();
@@ -224,6 +234,7 @@ test.describe('ST-06 — Position Concentration Limits Warning', () => {
       r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok', data: BREACH_CONCENTRATION }) })
     );
     await page.goto('/#/Positions');
+    await openPositionsWarning(page, 'concentration');
     await expect(page.getByText('Concentration Limits')).toBeVisible({ timeout: 8000 });
     await expect(page.getByText('Technology')).toBeVisible();
     await expect(page.getByText(/41\.2%/)).toBeVisible();
@@ -239,6 +250,7 @@ test.describe('ST-06 — Position Concentration Limits Warning', () => {
       r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok', data: BREACH_CONCENTRATION }) })
     );
     await page.goto('/#/Positions');
+    await openPositionsWarning(page, 'concentration');
     await expect(page.getByText('Concentration Limits')).toBeVisible({ timeout: 8000 });
     // No dismiss button — warning persists; only a "Review Settings" link
     await expect(page.getByRole('link', { name: /review.*settings/i })).toBeVisible();

@@ -1,4 +1,4 @@
-import { Fragment, useState, useEffect, useMemo } from "react";
+import { Fragment, useState, useEffect, useMemo, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEarnings } from "../hooks/useEarnings";
 import { useGapRisk } from "../hooks/useGapRisk";
@@ -57,11 +57,16 @@ import {
 } from "../components/ui/DataTable";
 import { cn } from "../lib/utils";
 import { friendlyErrorMessage } from "../lib/apiError";
-import { differenceInDays } from "date-fns";
+import { differenceInDays, addDays, format } from "date-fns";
 import { getReviewCadenceState } from "../lib/reviewCadence";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { createPageUrl } from "../utils";
-import MetricsStalenessIndicator from "../components/analytics/MetricsStalenessIndicator";
+import {
+  useMetricsLastSyncAt,
+  isMetricsStale,
+  stalenessText,
+  formatAbsoluteTime,
+} from "../components/analytics/MetricsStalenessIndicator";
 import StrategyCompliancePanel from "../components/positions/StrategyCompliancePanel";
 import PaperAccountPanel from "../components/positions/PaperAccountPanel";
 import AiChatWidget from "../components/AiChatWidget";
@@ -129,8 +134,11 @@ function LifecycleBadge({ state, daysInState, graceDaysRemaining, lifecycleReaso
 
 const GRACE_DISMISS_KEY = (positionId) => `grace_alert_dismissed_${positionId}`;
 
-function GracePeriodAlertZone() {
-  const { data: alerts = [] } = useQuery({
+// ST-03 (BLG-FE-262, v9.17): the warning strip runs this query, so the alerts
+// are loaded before the grace entry is opened and can activate the entry when
+// GET /positions is slow or fails.
+function useGracePeriodAlerts() {
+  const { data = [], isLoading } = useQuery({
     queryKey: ["gracePeriodAlerts"],
     queryFn: async () => {
       const res = await apiFetch(`${API_BASE}/positions/grace-period-alerts`);
@@ -139,25 +147,40 @@ function GracePeriodAlertZone() {
     },
     staleTime: 60000,
   });
+  return { alerts: data, isLoading };
+}
 
-  const [dismissed, setDismissed] = useState(() => {
-    const d = {};
-    alerts.forEach((a) => {
-      if (sessionStorage.getItem(GRACE_DISMISS_KEY(a.position_id))) d[a.position_id] = true;
-    });
-    return d;
-  });
+function GracePeriodAlertContent({ alerts, isLoading }) {
+  // Dismissals made this session, plus any already in sessionStorage. Read at
+  // render, so an alert dismissed before a reload stays dismissed whenever the
+  // entry is opened.
+  const [dismissed, setDismissed] = useState({});
+  const isDismissed = (positionId) =>
+    dismissed[positionId] === true || Boolean(sessionStorage.getItem(GRACE_DISMISS_KEY(positionId)));
 
   const dismiss = (positionId) => {
     sessionStorage.setItem(GRACE_DISMISS_KEY(positionId), "1");
     setDismissed((prev) => ({ ...prev, [positionId]: true }));
   };
 
-  const visible = alerts.filter((a) => !dismissed[a.position_id]);
-  if (visible.length === 0) return null;
+  if (isLoading) {
+    return <p className="text-sm text-app-muted">Loading grace period alerts…</p>;
+  }
+
+  const visible = alerts.filter((a) => !isDismissed(a.position_id));
+  // ST-03 (BLG-FE-262, v9.17): the warning strip's grace entry expands to this
+  // content, so it no longer returns null or announces itself (role="alert"
+  // removed, positions.md §Warning Strip). ST-04 replaces it with GracePeriodView.
+  if (visible.length === 0) {
+    return (
+      <p className="text-sm text-app-muted">
+        No position is within 2 days of the end of its grace period.
+      </p>
+    );
+  }
 
   return (
-    <div role="alert" aria-live="polite" className="space-y-3">
+    <div className="space-y-3">
       {visible.map((alert) => {
         // ST-12 (BLG-FE-196, v9.10) / ST-14 (BLG-BE-147, v9.11): every grace reading
         // comes from grace_days_remaining (calendar days since entry, §6.2), never
@@ -342,20 +365,9 @@ const LIFECYCLE_BADGE_COLOURS = {
   UNKNOWN: "bg-gray-500",
 };
 
-function DrawdownReviewPrompt() {
-  const [dismissed, setDismissed] = useState(false);
-  const { data } = useQuery({
-    queryKey: ["drawdown-status"],
-    queryFn: async () => {
-      const res = await apiFetch(`${API_BASE}/portfolio/drawdown-status`);
-      const json = await res.json();
-      return json?.data || {};
-    },
-    staleTime: 2 * 60 * 1000,
-  });
-
-  if (dismissed || !data?.threshold_breached) return null;
-
+// ST-03 (BLG-FE-262, v9.17): expanded content of the warning strip's drawdown
+// entry, unchanged apart from role="alert" (removed). Dismiss hides the entry.
+function DrawdownReviewContent({ data, onDismiss }) {
   const stateColours = {
     GRACE: "bg-blue-600",
     PROFITABLE: "bg-green-700",
@@ -367,14 +379,14 @@ function DrawdownReviewPrompt() {
   const statesByCount = Object.entries(data.positions_by_state || {}).filter(([, count]) => count > 0);
 
   return (
-    <div className="rounded-lg bg-amber-50 border border-amber-300 p-4" role="alert">
+    <div className="rounded-lg bg-amber-50 border border-amber-300 p-4">
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-2">
           <AlertTriangle className="w-5 h-5 text-amber-700 flex-shrink-0" aria-hidden="true" />
           <span className="font-semibold text-amber-900">Portfolio Drawdown Review</span>
         </div>
         <button
-          onClick={() => setDismissed(true)}
+          onClick={onDismiss}
           aria-label="Dismiss drawdown review prompt"
           className="text-amber-700 hover:text-amber-900 transition-colors flex-shrink-0"
         >
@@ -411,23 +423,13 @@ function DrawdownReviewPrompt() {
   );
 }
 
-function ConcentrationLimitsWarning() {
-  const { data } = useQuery({
-    queryKey: ["concentration-status"],
-    queryFn: async () => {
-      const res = await apiFetch(`${API_BASE}/portfolio/concentration-status`);
-      const json = await res.json();
-      return json?.data || {};
-    },
-    staleTime: 2 * 60 * 1000,
-  });
-
-  if (!data?.any_breach) return null;
-
+// ST-03 (BLG-FE-262, v9.17): expanded content of the warning strip's
+// concentration entry, unchanged apart from role="alert" (removed).
+function ConcentrationLimitsContent({ data }) {
   const { breaching_positions = [], breaching_sectors = [] } = data;
 
   return (
-    <div className="rounded-lg bg-amber-50 border border-amber-300 p-4" role="alert">
+    <div className="rounded-lg bg-amber-50 border border-amber-300 p-4">
       <div className="flex items-center gap-2">
         <AlertTriangle className="w-5 h-5 text-amber-700 flex-shrink-0" aria-hidden="true" />
         <span className="font-semibold text-amber-900">Concentration Limits</span>
@@ -472,6 +474,173 @@ function ConcentrationLimitsWarning() {
         Review Settings
       </Link>
     </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// ST-03 (BLG-FE-262, v9.17) — Warning strip
+// One strip replaces the four banners above the view content (positions.md
+// §Warning Strip; design record positions-decision-first §6). One entry per
+// active warning in fixed order, each a summary line with Show/Hide details.
+// Summaries read each warning's existing query: no new API call. Display-only (§13).
+// ---------------------------------------------------------------------------
+
+const WARNING_ICON_CLASS = "w-4 h-4 flex-shrink-0 text-amber-600 dark:text-amber-400";
+
+function WarningEntry({ kind, icon, summary, open, onToggle, entryRef, children }) {
+  const detailId = `warning-detail-${kind}`;
+  return (
+    <li ref={entryRef} data-testid={`warning-entry-${kind}`} className="px-4 py-3">
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+        {icon}
+        <span className="flex-1 min-w-0 text-sm text-app-fg" data-testid="warning-summary">{summary}</span>
+        <button
+          type="button"
+          onClick={() => onToggle(kind)}
+          aria-expanded={open}
+          aria-controls={open ? detailId : undefined}
+          className="text-xs font-medium text-app-muted hover:text-app-fg underline-offset-2 hover:underline"
+        >
+          {open ? "Hide details" : "Show details"}
+        </button>
+      </div>
+      {open && (
+        <div id={detailId} className="mt-3">
+          {children}
+        </div>
+      )}
+    </li>
+  );
+}
+
+function plural(n, one, many) {
+  return `${n} ${n === 1 ? one : many}`;
+}
+
+function PositionsWarningStrip({ positions, graceDeepLink }) {
+  const { data: drawdown } = useQuery({
+    queryKey: ["drawdown-status"],
+    queryFn: async () => {
+      const res = await apiFetch(`${API_BASE}/portfolio/drawdown-status`);
+      const json = await res.json();
+      return json?.data || {};
+    },
+    staleTime: 2 * 60 * 1000,
+  });
+  const { data: concentration } = useQuery({
+    queryKey: ["concentration-status"],
+    queryFn: async () => {
+      const res = await apiFetch(`${API_BASE}/portfolio/concentration-status`);
+      const json = await res.json();
+      return json?.data || {};
+    },
+    staleTime: 2 * 60 * 1000,
+  });
+  const lastSyncAt = useMetricsLastSyncAt();
+  const { alerts: graceAlerts, isLoading: graceAlertsLoading } = useGracePeriodAlerts();
+
+  // Session-only, as DrawdownReviewPrompt's dismiss was.
+  const [drawdownDismissed, setDrawdownDismissed] = useState(false);
+  const [openKinds, setOpenKinds] = useState(() => new Set(graceDeepLink ? ["grace"] : []));
+  const toggle = (kind) =>
+    setOpenKinds((prev) => {
+      const next = new Set(prev);
+      if (next.has(kind)) next.delete(kind);
+      else next.add(kind);
+      return next;
+    });
+
+  // In grace from GET /positions; when that list is empty (loading or failed),
+  // the grace-period alerts still activate the entry, as the old alert zone did.
+  const inGrace = positions.filter(isInGrace);
+  const graceSource = inGrace.length > 0 ? inGrace : graceAlerts;
+  const graceDays = graceSource.map((p) => p.grace_days_remaining).filter((d) => d !== null && d !== undefined);
+  // grace_days_remaining = 1 is the last day ("Grace ends today", Day 10 of 10),
+  // so the end date is today + (days remaining − 1).
+  const nextGraceEnd = graceDays.length ? addDays(new Date(), Math.max(0, Math.min(...graceDays) - 1)) : null;
+  const concentrationBreaches =
+    (concentration?.breaching_positions?.length || 0) + (concentration?.breaching_sectors?.length || 0);
+
+  const entries = [];
+  if (drawdown?.threshold_breached && !drawdownDismissed) {
+    entries.push({
+      kind: "drawdown",
+      icon: <AlertTriangle className={WARNING_ICON_CLASS} aria-hidden="true" />,
+      summary: `Drawdown review: ${formatPercent(drawdown.current_drawdown_pct)} against a ${formatPercent(drawdown.threshold_pct)} threshold`,
+      content: <DrawdownReviewContent data={drawdown} onDismiss={() => setDrawdownDismissed(true)} />,
+    });
+  }
+  if (concentration?.any_breach) {
+    entries.push({
+      kind: "concentration",
+      icon: <AlertTriangle className={WARNING_ICON_CLASS} aria-hidden="true" />,
+      summary: concentrationBreaches > 0
+        ? `Concentration limit exceeded: ${plural(concentrationBreaches, "breach", "breaches")}`
+        : "Concentration limit exceeded",
+      content: <ConcentrationLimitsContent data={concentration} />,
+    });
+  }
+  if (graceSource.length > 0) {
+    entries.push({
+      kind: "grace",
+      icon: <Clock className={WARNING_ICON_CLASS} aria-hidden="true" />,
+      summary: `${plural(graceSource.length, "position", "positions")} in grace${nextGraceEnd ? ` · next ends ${format(nextGraceEnd, "dd MMM")}` : ""}`,
+      content: <GracePeriodAlertContent alerts={graceAlerts} isLoading={graceAlertsLoading} />,
+    });
+  }
+  if (lastSyncAt) {
+    const stale = isMetricsStale(lastSyncAt);
+    entries.push({
+      kind: "staleness",
+      icon: stale
+        ? <AlertTriangle className={WARNING_ICON_CLASS} aria-hidden="true" />
+        : <Clock className="w-4 h-4 flex-shrink-0 text-slate-500" aria-hidden="true" />,
+      summary: <span title={formatAbsoluteTime(lastSyncAt)}>{stalenessText(lastSyncAt)}</span>,
+      content: <p className="text-sm text-app-muted">{formatAbsoluteTime(lastSyncAt)}</p>,
+    });
+  }
+
+  // ?grace=open opens the grace entry and brings it into view (instant).
+  // It scrolls once per arrival, not again when a refetch changes the entries.
+  const graceRef = useRef(null);
+  const graceScrolledRef = useRef(false);
+  const graceActive = graceSource.length > 0;
+  useEffect(() => {
+    if (graceDeepLink) setOpenKinds((prev) => (prev.has("grace") ? prev : new Set(prev).add("grace")));
+    else graceScrolledRef.current = false;
+  }, [graceDeepLink]);
+  useEffect(() => {
+    if (graceDeepLink && graceActive && !graceScrolledRef.current && graceRef.current) {
+      graceRef.current.scrollIntoView({ block: "start", behavior: "auto" });
+      graceScrolledRef.current = true;
+    }
+  }, [graceDeepLink, graceActive]);
+
+  if (entries.length === 0) return null;
+
+  return (
+    <section
+      role="region"
+      aria-label="Warnings"
+      data-testid="positions-warning-strip"
+      className="bg-app-raised border border-app-line rounded-xl"
+    >
+      <ul className="divide-y divide-app-line">
+        {entries.map((e) => (
+          <WarningEntry
+            key={e.kind}
+            kind={e.kind}
+            icon={e.icon}
+            summary={e.summary}
+            open={openKinds.has(e.kind)}
+            onToggle={toggle}
+            entryRef={e.kind === "grace" ? graceRef : undefined}
+          >
+            {e.content}
+          </WarningEntry>
+        ))}
+      </ul>
+    </section>
   );
 }
 
@@ -1246,17 +1415,13 @@ export default function Positions() {
         }
       />
 
-      {/* ST-02 (BLG-FEAT-09): Metrics staleness indicator — below title, inline with view controls */}
-      <MetricsStalenessIndicator />
-
-      {/* IT-04 (Arc 3): Drawdown review prompt — portfolio-level, highest severity */}
-      <DrawdownReviewPrompt />
-
-      {/* IT-05 (Arc 3): Concentration limits warning — portfolio-level, structural */}
-      <ConcentrationLimitsWarning />
-
-      {/* ST-02 (IT-02): Grace period alert zone — display-only, §13 compliant */}
-      <GracePeriodAlertZone />
+      {/* ST-03 (BLG-FE-262, v9.17): one warning strip replaces the metrics
+          staleness indicator, drawdown review prompt, concentration limits
+          warning and grace period alert zone. */}
+      <PositionsWarningStrip
+        positions={openPositionsByEntry}
+        graceDeepLink={new URLSearchParams(location.search).get("grace") === "open"}
+      />
 
       {/* ST-12 (BLG-FE-02): DataState standardised loading/empty/error — Table/Grid views */}
       <DataState

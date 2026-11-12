@@ -140,9 +140,25 @@ async function stubPositionsPage(page, positions) {
   await page.route('**/earnings/**', (route) => route.fulfill(json({ next_earnings_date: null, days_until_earnings: null })));
 }
 
+/**
+ * ST-03 (BLG-FE-262, v9.17): the drawdown, concentration, grace and staleness
+ * warnings render inside the Positions warning strip, collapsed. Open one
+ * entry ("drawdown" | "concentration" | "grace" | "staleness") before asserting
+ * on its content; returns the expanded content locator.
+ */
+async function openPositionsWarning(page, kind) {
+  const entry = page.getByTestId(`warning-entry-${kind}`);
+  const button = entry.getByRole('button', { name: /^(Show|Hide) details$/ });
+  await button.waitFor({ state: 'visible', timeout: 8000 });
+  if ((await button.getAttribute('aria-expanded')) !== 'true') await button.click();
+  const detail = page.locator(`#warning-detail-${kind}`);
+  await detail.waitFor({ state: 'visible', timeout: 5000 });
+  return detail;
+}
+
 const DECISION_FIXTURES = { OTHER, RISK_OFF, BREACH, NEAR, GRACE_BREACH, WARN, ALL };
 
 module.exports = {
   expandPositionRow, expandAllPositionRows, positionDetail,
-  makePosition, stubPositionsPage, DECISION_FIXTURES,
+  makePosition, stubPositionsPage, DECISION_FIXTURES, openPositionsWarning,
 };
