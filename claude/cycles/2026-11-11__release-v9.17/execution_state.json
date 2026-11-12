@@ -5,7 +5,7 @@
   "invoked_utc": "2026-11-12T13:22:26Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-12T20:10:00Z",
+  "last_updated_utc": "2026-11-12T20:40:00Z",
   "epics": {
     "EPIC-01": {
       "title": "Site Structure & Usability Phase 3: Positions Redesign (build-and-ship)",
@@ -17,7 +17,8 @@
       "qa_evidence_log": "claude/cycles/2026-11-11__release-v9.17/qa_evidence_EPIC-01.md",
       "test_scenarios": [
         "tests/e2e/positions-decision-first.spec.js",
-        "tests/e2e/positions-decision-cards.spec.js"
+        "tests/e2e/positions-decision-cards.spec.js",
+        "tests/e2e/positions-warning-strip.spec.js"
       ],
       "stories": {
         "ST-01": {
@@ -74,25 +75,27 @@
         "ST-03": {
           "title": "Combine the four banners above the Positions table into one strip",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 2238,
           "branch": "exec/2026-11-11__release-v9.17/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "360bf1778eeb17b85b75e91a9ba0e17faba226b5",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-11-12T19:25:04Z",
+          "acceptance_verified": true,
           "spec_references": [
-            "docs/specs/frontend/pages/positions.md#Warning Strip"
+            "docs/specs/frontend/pages/positions.md#Warning Strip",
+            "docs/design/2026-11-11__release-v9.17/positions-decision-first/decision_record.md",
+            "tests/e2e/positions-warning-strip.spec.js"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.done",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Commits: 99f16e6d (implementation, spec, existing-spec updates), 360bf177 (SC-LBG-03 opens the grace entry after CI run 43288957471 shard 3/8 failed). Deviation check vs positions.md v2.25 \u00a7Warning Strip and design record \u00a76: none. Implementation notes (intent-matching, LL-v3.4-P3-03): the staleness entry is active whenever MetricsStalenessIndicator would render, which includes the fresh 'Data as of N mins ago' state (literal reading of the spec's 'Active when'; keeps SC-STALE-04); the drawdown content keeps its session dismiss, which now removes the drawdown entry; the grace entry is also activated by grace-period alerts when GET /positions is empty or failed; before ST-04 the grace content showed a line when no position was within 2 days of the end. Pre-commit /code-review medium: 7 findings fixed in 99f16e6d, 1 declined with reason (memoising the entries array). CI on 360bf177: all workflows success; Playwright E2E Acceptance Tests run 43289954700 success (step 4c); CI Pytest Suite 43289955322; Frontend Production Build success on 99f16e6d (run 43288957562)."
         },
         "ST-04": {
           "title": "Show grace period in one place, linked from the others",
@@ -126,7 +129,8 @@
   "delegated_items": [],
   "completed_items": [
     "ST-01",
-    "ST-02"
+    "ST-02",
+    "ST-03"
   ],
   "open_escalations": {},
   "merge_gate": {
@@ -144,7 +148,8 @@
   },
   "process_notes": [
     "2026-11-12T13:22:26Z: run sprint --epic EPIC-01 \u2014 EPIC-01 is the execution_state.json owner (sprint_backlog.md Merge Order); other EPICs append their own sections on first invocation.",
-    "2026-11-12: ST-01 \u2014 the STEP 3.1.A step 13 grep for unscoped locators matching new visible text (LL-v9.16-P3-01) was missed before b2d93f6d; the caption 'Sorted by what needs attention first' and the row chevrons' aria-expanded broke compliance-panel SC-COMP-03/07 in CI run 43256379461; fixed in 6b475ae0."
+    "2026-11-12: ST-01 \u2014 the STEP 3.1.A step 13 grep for unscoped locators matching new visible text (LL-v9.16-P3-01) was missed before b2d93f6d; the caption 'Sorted by what needs attention first' and the row chevrons' aria-expanded broke compliance-panel SC-COMP-03/07 in CI run 43256379461; fixed in 6b475ae0.",
+    "2026-11-12: ST-03 \u2014 99f16e6d failed Playwright E2E (run 43288957471, shard 3/8): SC-LBG-03 asserted the grace alert body on page load, which now sits in the collapsed strip entry. The pre-commit grep for specs asserting on the replaced banners searched headings, labels and dismiss text but not body copy. Fixed in 360bf177."
   ],
   "sealed": false,
   "sealed_utc": null
