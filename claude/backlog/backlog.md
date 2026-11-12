@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-12 (session — 3 new items added: BLG-SPEC-236, BLG-FE-293, BLG-TECH-34; PR #2256 agent-mediated review); prior — 2026-11-12 (session — 2 new items added: BLG-SPEC-235, BLG-FE-292; v9.17 EPIC-01 agent-mediated DoQ review and follow-up code review); prior — 2026-11-12 (session — 3 new items added: BLG-BE-215, BLG-FE-291, BLG-SPEC-234; v9.17 ST-04 pre-commit code review); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-12 (session — 3 new items added: BLG-GOV-422, BLG-QA-262, BLG-TECH-35; EPIC-01 prevention retrospective, user-directed); prior — 2026-11-12 (session — 3 new items added: BLG-SPEC-236, BLG-FE-293, BLG-TECH-34; PR #2256 agent-mediated review); prior — 2026-11-12 (session — 2 new items added: BLG-SPEC-235, BLG-FE-292; v9.17 EPIC-01 agent-mediated DoQ review and follow-up code review); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -6639,5 +6639,72 @@ After EPIC-01, `src/pages/Positions.js` is 1,549 lines (1,211 on `main` before i
 **Acceptance Criteria**
 - `Positions.js` is under 600 lines
 - The full Playwright suite passes with no spec changes
+
+---
+
+### BLG-GOV-422 — Design gate: check each new view's data source and write worked examples for shared values
+**Priority:** P2 (Medium)
+**Type:** Governance Process
+**Owner:** Head of Specs Team; Head of UX & Design
+**Source:** EPIC-01 retrospective on its 12 backlog filings, `2026-11-11__release-v9.17`, user-directed — 2026-11-12
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+EPIC-01 filed 12 follow-up backlog items. Six were spec questions that a design gate check could have settled before any code was written. `BLG-BE-215`: the design record told `GracePeriodView` to take every row's trade plan from `GET /positions/grace-period-alerts`, but that endpoint's contract (line 12) returns only rows with `grace_days_remaining <= 2`. `BLG-SPEC-234` and `BLG-SPEC-235`: one value, `grace_days_remaining`, is shown on five surfaces (strip, grace row, Risk Dashboard panel, expanded-row pill, Today list), each specified separately. They disagreed on the last day ("ends in 1 day" next to "Grace ends today") and on counts. `BLG-SPEC-232`, `BLG-SPEC-233` and `BLG-SPEC-236` were the same kind of question: a rule written for the normal case, with its other input states not listed (the "To stop" basis, an in-grace position below its stop, a fresh staleness indicator counting as a warning). `design_gate_prompt.md` STEP 2.2 asks for "edge cases" but names neither check.
+
+**Scope**
+- `design_gate_prompt.md` STEP 2.2: add a **data-source check**. For every field a new or changed view displays, name the endpoint and the contract line showing that the endpoint returns the field for the whole population the view lists. Any gap is either a backend story in the slice or a spec change, decided before the gate passes
+- STEP 2.2: add a **worked-examples table** for any value displayed on two or more surfaces, or any rule with a threshold. Take one set of boundary inputs (for example 0, 1, 2 and null days, and true, false and null flags) and give the exact text each surface shows for each
+- STEP 2.2: for any rule that depends on another component's state ("active when X would render"), list X's states and the rule's result for each
+- CLAUDE.md §6 governance file checklist in the same commit
+
+**Acceptance Criteria**
+- `design_gate_prompt.md` STEP 2.2 requires the data-source check, the worked-examples table and the dependent-state list, and the design gate record template has a place to record each
+- Re-running the three checks on the v9.17 `positions-decision-first` decision record finds the BLG-BE-215 gap and the BLG-SPEC-234/235 last-day contradiction (dry run recorded in the commit or a docs/ops note)
+
+---
+
+### BLG-QA-262 — Unit-test pure frontend logic in CI
+**Priority:** P2 (Medium)
+**Type:** QA / Test Automation
+**Owner:** QA & Testing Owner; Head of Engineering
+**Source:** EPIC-01 retrospective on its 12 backlog filings, `2026-11-11__release-v9.17`, user-directed — 2026-11-12
+**Effort:** M (~1–2d)
+**Provisional-Target:** TBD
+
+**Problem**
+The repo has no frontend unit tests (`find src -name "*.test.js"` finds none), and no CI workflow runs `npm test`, although `react-scripts test` is configured. Pure modules such as `src/lib/positionUrgency.js` and `src/lib/exitCondition.js` are tested only through Playwright, which builds the app and mocks the API and so covers few inputs. Three EPIC-01 filings were edge-input bugs in pure functions that a table-driven unit test would have caught in the ST-01 commit: `BLG-FE-289` (a null `grace_period` is treated two ways), `BLG-FE-290` (a string `"1"` for `grace_days_remaining`) and `BLG-FE-292` (`stopDistanceR` with a 0 stop).
+
+**Scope**
+- A CI job that runs `CI=true npm test -- --watchAll=false` on every PR touching `src/**`
+- Table-driven unit tests for `src/lib/positionUrgency.js` and `src/lib/exitCondition.js` covering null, missing, string and 0 values for each input
+- A rule in the test conventions doc: a new or changed pure module under `src/lib/` ships with unit tests in the same commit
+
+**Acceptance Criteria**
+- The new CI job fails a PR whose `src/lib` unit test fails
+- `positionUrgency.test.js` asserts `stopDistanceR` returns null for a 0 stop, and that a null `grace_period` is tiered the same way the cells display it (fails until BLG-FE-289/292 are fixed, or is marked `test.failing` with those IDs)
+- The convention is written in the testing standards doc
+
+---
+
+### BLG-TECH-35 — Add two source guards: a page-size warning and a shared grace predicate lint
+**Priority:** P3 (Low)
+**Type:** Platform / Technical Debt
+**Owner:** Head of Engineering
+**Source:** EPIC-01 retrospective on its 12 backlog filings, `2026-11-11__release-v9.17`, user-directed — 2026-11-12
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+Two EPIC-01 filings come from drift that a guard would have flagged as it happened. `BLG-TECH-34`: `src/pages/Positions.js` grew from 1,211 to 1,549 lines with nothing to warn about it. `BLG-FE-289` and `BLG-FE-291`: "is this position in grace" is written several ways (`grace_period === true`, `=== false`, truthy `p.grace_period`, `grace_days_remaining > 0 || grace_end_date || status === "GRACE"`), so surfaces that link to each other count different sets.
+
+**Scope**
+- A CI check that warns (non-blocking) when a file under `src/pages/` or `src/components/` passes 1,000 lines, naming the file
+- An ESLint `no-restricted-syntax` rule in `eslint.config.mjs` that flags direct comparisons on `grace_period` outside `src/lib/positionUrgency.js`, pointing to `isInGrace` (depends on BLG-TECH-33 for the flat config to load)
+
+**Acceptance Criteria**
+- A PR that grows a page past 1,000 lines shows the warning
+- `npx eslint` on a file comparing `p.grace_period === true` outside `positionUrgency.js` reports the rule
 
 ---
