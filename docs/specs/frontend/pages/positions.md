@@ -3,8 +3,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.24
-**Last Updated:** 2026-11-04 (ST-12, EPIC-02, v9.15, BLG-FE-247 — the Daily Position Monitor opens from the Positions header, not the removed legacy Dashboard; Product Owner ruling ESC-EXEC-20261104-05 (a)); prior — 2026-11-04 (ST-05, EPIC-01, v9.15, BLG-FE-222 — `?exit=` deep link uses the same open-position test as `?position=`); prior — 2026-11-03 (v9.15 design gate — ST-06/BLG-BE-173: Trail Stop footnote states the §7.2 profit formula with the breakeven floor; ST-17/BLG-FE-218: View Trail heading, row label and tooltip wording); prior history retained — see prior entries in version control
+**Version:** 2.25
+**Last Updated:** 2026-11-11 (v9.17 design gate — ST-01..ST-04/BLG-FE-260, 261, 262, 257: decision-first table, narrow-screen cards, one warning strip, one grace view; ST-19/BLG-SPEC-202: Exit Zone tooltip wording by the strategy owner's choice); prior — 2026-11-04 (ST-12, EPIC-02, v9.15, BLG-FE-247 — the Daily Position Monitor opens from the Positions header, not the removed legacy Dashboard; Product Owner ruling ESC-EXEC-20261104-05 (a)); prior — 2026-11-04 (ST-05, EPIC-01, v9.15, BLG-FE-222 — `?exit=` deep link uses the same open-position test as `?position=`); prior history retained — see prior entries in version control
 **Design Source (v9.14 additions):** docs/design/2026-10-29__release-v9.14/stale-price-marker/decision_record.md, docs/design/2026-10-29__release-v9.14/monitor-grace-aware-suggestions/decision_record.md, docs/design/2026-10-29__release-v9.14/last-reviewed-ended-grace/decision_record.md
 **Design Source (v9.13 additions):** docs/design/2026-10-16__release-v9.13/monitor-exit-queue/decision_record.md, docs/design/2026-10-16__release-v9.13/chat-answer-rating/decision_record.md
 **Design Source (v9.11 additions):** docs/design/2026-10-08__release-v9.11/grace-alert-calendar-days/decision_record.md
@@ -20,6 +20,7 @@
 **Design Source (v6.2 additions):** docs/design/2026-06-24__release-v6.2/trailing-stop-display/ux_spec.md, docs/design/2026-06-24__release-v6.2/risk-off-exit-alert/ux_spec.md, docs/design/2026-06-24__release-v6.2/ai-chat-widget/ux_spec.md
 **Design Source (v6.4 additions):** docs/specs/qa/ai_disclaimer_visibility_assessment.md (BLG-UX-02 remediation)
 **Design Source (v6.7 additions):** docs/design/2026-07-06__release-v6.7/secondary-text-contrast/ux_spec.md (BLG-FE-88 remediation)
+**Design Source (v9.17 additions):** docs/design/2026-11-11__release-v9.17/positions-decision-first/decision_record.md
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -28,6 +29,7 @@
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.25 | 2026-11-11 | v9.17 design gate. (ST-01, BLG-FE-260) new §Decision-First Table: urgency tiers (exit condition met → stop reached → near stop ≤ 5% → other), six default columns (Ticker, Price, Stop, To stop in R and %, P&L %, Action needed) plus expand and Actions, every other field in an expandable row. (ST-02, BLG-FE-261) §Responsive Behavior: the Table view renders decision cards below `md`. (ST-03, BLG-FE-262) new §Warning Strip replaces the four stacked banners. (ST-04, BLG-FE-257) §Grace Period Alert Zone replaced by §Grace Period View, the only per-position grace detail in the app, listing every in-grace position, no dismiss; `?grace=open`. (ST-19, BLG-SPEC-202) §Position Lifecycle State Badge: PROFITABLE and EXIT ZONE tooltips follow the Strategy Rules & System Intent Owner's choice. Design source: `docs/design/2026-11-11__release-v9.17/positions-decision-first/decision_record.md`. Approved: Head of UX & Design and Product Owner, 2026-11-11. |
 | 2.24 | 2026-11-04 | (ST-12, EPIC-02, v9.15, BLG-FE-247) §Daily Position Monitor Exit Queue: the Monitor's entry point moves to a "Daily Monitor" button in the Positions page header (`DailyMonitor.js`), because the legacy widget Dashboard and its Quick Actions widget are removed. `MonitorModal`, the exit queue and the pre-select rules are unchanged. Product Owner ruling `ESC-EXEC-20261104-05` option (a), 2026-11-04; Head of UX & Design placement and Head of Specs Team confirmation: see the v9.15 `qa_evidence_EPIC-02.md` ST-12 entry. |
 | 2.23 | 2026-11-04 | (ST-05, EPIC-01, v9.15, BLG-FE-222) §Exit Dialog Deep Link: `?exit=` uses the same open-position test as `?position=` (`status === "open"`); it previously accepted any status other than `closed`. Implemented in `Positions.js`. |
 | 2.22 | 2026-11-03 | v9.15 design gate. (ST-06, BLG-BE-173) §Trail Stop Action footnote states the §7.2 profit formula with the breakeven floor and no literal multiplier; `atr_trail_stop` uses `calculate_trailing_stop`. (ST-17, BLG-FE-218) modal heading "View Trail — {TICKER}", row "Difference vs current stop", disabled tooltip no longer asks the user to add a stop. Design source: `docs/design/2026-11-03__release-v9.15/trail-stop-modal-wording/decision_record.md`. Head of UX & Design + Product Owner approved. Head of Specs Team confirmed. |
@@ -93,7 +95,80 @@ Each view replaces the entire main content area. Switching views does not trigge
 
 ---
 
+## Decision-First Table (v2.25)
+
+**Design source:** `docs/design/2026-11-11__release-v9.17/positions-decision-first/decision_record.md` §2–§4
+
+> **§13 Compliance:** Display-only. The tiers apply the existing §7/§8 tests and the Risk Dashboard's existing stop-distance band. No new score, ranking signal or recommendation. "Action needed" reuses existing copy. Nothing submits an exit.
+
+### Urgency Order
+
+One shared module, `src/lib/positionUrgency.js` (`getUrgencyTier`, `compareByUrgency`), orders the Table view, the narrow-screen cards and the Grid view. First match wins:
+
+| Tier | Name | Test |
+|------|------|------|
+| 1 | Exit condition met | `getExitCondition(position).riskOff` (`src/lib/exitCondition.js`) |
+| 2 | Stop reached | `isPostGraceStopBreach(position)` |
+| 3 | Near stop | Post-grace, not tier 1–2, stop distance ≤ 5.0% (the `risk_dashboard.md` §6 rose band) |
+| 4 | Other | Everything else, including every in-grace position |
+
+Within a tier: stop distance % ascending, then ticker A–Z; a null distance sorts last in its tier. A deep link does not change the order. Headers are not sortable. A muted caption above the table reads "Sorted by what needs attention first" (`data-testid="urgency-caption"`).
+
+### Stop Distance
+
+- **%:** `(current_price − current_trailing_stop) ÷ current_price × 100` on the GBP basis of the breach test, 1 decimal place.
+- **R:** `(current_price_native − current_trailing_stop_native) ÷ (entry_price − initial_stop)`, 1 decimal place; "—" when the denominator is ≤ 0 or an input is null.
+- **Cell:** "{x.x}R · {y.y}%", `data-testid="stop-distance"`. ≤ 5% `text-app-negative`, ≤ 15% `text-app-warning`, otherwise `text-app-fg`.
+- **In grace:** "Not enforced (grace)", `text-xs text-app-muted`, no colour band (as `risk_dashboard.md` §6.2a).
+
+### Default Columns
+
+Expand chevron · **Ticker** (with market pill) · **Price** (with stale marker) · **Stop** (trailing stop, breach badge, frozen indicator; in grace "Not enforced (grace)") · **To stop** · **P&L %** · **Action needed** · Actions (unchanged icon buttons).
+
+**Action needed** (`data-testid="action-needed"`): tier 1 the existing "RISK OFF" pill; tier 2 the existing "STOP REACHED" pill; tier 3 "Near stop" (`text-xs font-medium text-app-negative`); in grace with `grace_days_remaining = 1` "Grace ends today" (`text-xs text-app-warning`); otherwise "—".
+
+### Expanded Row
+
+The chevron (`aria-expanded`, `aria-controls="position-detail-{id}"`, `aria-label="Show details for {TICKER}"`) opens a full-width row `data-testid="position-detail"` with a label/value grid (2 columns below `lg`, 4 at `lg`): Entry price · Initial stop · Shares · P&L (GBP) · Days held · State (lifecycle badge) · Grace (days-remaining pill) · Earnings · Alerts · Last reviewed · stop provenance line. Collapsed by default; several may be open; not persisted; a `?position=` deep link opens its row. No animation.
+
+---
+
+## Warning Strip (v2.25)
+
+**Design source:** as §Decision-First Table, §6
+
+One `PositionsWarningStrip` (`data-testid="positions-warning-strip"`, `role="region"`, `aria-label="Warnings"`) replaces `MetricsStalenessIndicator`, `DrawdownReviewPrompt`, `ConcentrationLimitsWarning` and `GracePeriodAlertZone` stacked between the header and the view content. It renders only when at least one warning is active.
+
+| Order | Entry (`data-testid`) | Summary line | Expands to |
+|-------|----------------------|--------------|------------|
+| 1 | `warning-entry-drawdown` | "Drawdown review: {current}% against a {threshold}% threshold" | `DrawdownReviewPrompt` content, unchanged |
+| 2 | `warning-entry-concentration` | "Concentration limit exceeded: {n} breach(es)" | `ConcentrationLimitsWarning` content, unchanged |
+| 3 | `warning-entry-grace` | "{n} position(s) in grace · next ends {dd MMM}" | §Grace Period View (before ST-04: the §Grace Period Alert Zone content) |
+| 4 | `warning-entry-staleness` | The indicator's current one-line text | `MetricsStalenessIndicator` detail, unchanged |
+
+Each entry: icon in the warning's existing accent colour, summary line, and a "Show details" / "Hide details" button (`aria-expanded`, `aria-controls`). All start collapsed, except that `?grace=open` opens the grace entry. Surface `bg-app-raised border border-app-line rounded-xl`, entries divided by `border-app-line`. The per-warning `role="alert"` live regions are removed. No animation. No new API call.
+
+---
+
+## Grace Period View (v2.25)
+
+**Design source:** as §Decision-First Table, §5
+
+`GracePeriodView` (`data-testid="grace-period-view"`) is the only component in the app that renders per-position grace detail. It is the expanded content of the §Warning Strip grace entry.
+
+- **Lists every open position in grace** (`grace_period === true` from `GET /positions`), joined to `GET /positions/grace-period-alerts` for the trade plan summary. Order: `grace_days_remaining` ascending, then ticker.
+- **Row** (`data-testid="grace-row-{ticker}"`): ticker linking to `/Positions?position={id}` · "Day {min(11 − grace_days_remaining, 10)} of 10" · the §Grace Period Alert Zone body sentence (including the `grace_days_remaining = 0` sentence) · the trade plan block (Thesis, Stop, R-target) or "No trade plan linked." · "View Trade Plan" link when linked.
+- Rows with `grace_days_remaining ≤ 2` keep the amber accent (left border, `text-app-warning` day label).
+- **No dismiss.** The `grace_alert_dismissed_*` keys are no longer read.
+- **Deep link:** `/Positions?grace=open` opens the grace entry and scrolls it into view (instant).
+- **Not grace detail, so unchanged elsewhere:** the days-remaining pill (now in the expanded row), Dashboard Card 3's count and next-expiry line, the Today list's "Grace ends today" rows, and the Risk Dashboard's "Not enforced (grace)" cells.
+- **Other surfaces link here:** Dashboard Card 3 (`dashboard.md` v4.2) and the Risk Dashboard Grace panel (`risk_dashboard.md` v0.1.16 §5) → `/Positions?grace=open`.
+
+---
+
 ### Table View (default)
+
+> **v2.25 (v9.17, ST-01):** the column set below is the full field list. From ST-01 the table shows six of them by default and the rest in an expandable row; see §Decision-First Table above for order, columns and expansion.
 
 Displays each open position as a row with:
 
@@ -148,8 +223,8 @@ Displays each open position as a row with:
 |-------|---------|
 | GRACE | ~~"Exits grace when position moves > 0.5 ATR or after 10 trading days"~~ → (v9.10) "Grace period: {n} calendar day(s) left. The stop is tracked but not enforced until the grace period ends (10 calendar days, §6)." |
 | LOSING | ~~"Exits when price rises above entry by 0.5 ATR"~~ → (v9.10 ST-11) "Past grace with P&L at or below zero: wide stop (§7.2). Becomes PROFITABLE when the price rises above entry." |
-| PROFITABLE | "Advances to Exit Zone when P&L reaches 2R target" |
-| EXIT ZONE | "Position has reached R-target. Review stop or exit." |
+| PROFITABLE | "Advances to Exit Zone when P&L reaches 2R target" — **v2.25 (ST-19, BLG-SPEC-202):** replaced by the row of the design record §7 that the Strategy Rules & System Intent Owner chooses before the sprint seals: (a) "Advances to Exit Zone when the price reaches {EXIT_ZONE_R_MULTIPLE}R above entry (§11)." with the number imported from `src/constants/strategy.js`; or (b) "Advances to Exit Zone when the price is well above the initial risk taken. The app's lifecycle labels mark this; it is not a strategy rule." |
+| EXIT ZONE | "Position has reached R-target. Review stop or exit." — **v2.25 (ST-19):** (a) "The price is {EXIT_ZONE_R_MULTIPLE}R or more above entry (§11). Review the stop or exit." or (b) "The price is well above the initial risk taken. Review the stop or exit." |
 | UNKNOWN | (v9.10) By backend reason. See §Grace Precedence and UNKNOWN Reasons below. The prior "Set a stop and R-target…" copy is retired. |
 
 **Null handling:** If `position_state` is null (pre-Arc 3 position pending back-fill), display UNKNOWN badge. Never display a dash or empty cell.
@@ -271,6 +346,8 @@ Two distinct empty states:
 ---
 
 ## Grace Period Alert Zone (v3.3 — ST-05 IT-02)
+
+> **Superseded by §Grace Period View (v2.25, ST-04, BLG-FE-257)** when ST-04 merges. Until then this section stands, rendered as the grace entry of §Warning Strip (ST-03). The day convention and the body copy below carry into §Grace Period View; the trigger (≤ 2 days left), the one-card-per-alert layout and §Dismiss Behaviour do not.
 
 **Design source:** docs/design/2026-05-09__release-v3.3/grace-period-alert/ux_spec.md
 
@@ -832,8 +909,9 @@ The page has three view modes (Grid, Table, Journal — toggle in the page heade
 
 | View | Narrow-width (<768px) behaviour | Column/content priority |
 |------|----------------------------------|--------------------------|
-| **Grid** (default) | `PositionCard`s reflow via CSS Grid: `grid-cols-1` below `md`, `grid-cols-2` at `md`, `grid-cols-3` at `lg` — 1 card per row on mobile, no card content is hidden | N/A — cards show all fields; no priority ordering |
+| **Grid** (default; v2.25: cards follow the §Decision-First Table urgency order) | `PositionCard`s reflow via CSS Grid: `grid-cols-1` below `md`, `grid-cols-2` at `md`, `grid-cols-3` at `lg` — 1 card per row on mobile, no card content is hidden | N/A — cards show all fields; no priority ordering |
 | **Table** | Does **not** collapse to cards. Uses the shared `DataTable` component (`overflow-x-auto` wrapper): all 13 data columns (Ticker, Entry Price, Current Price, Stop, Shares, P&L (GBP), P&L %, Days, State, Grace, Earnings, Alerts, Last Reviewed) plus Actions render unconditionally — the user scrolls horizontally to reach columns past the viewport width. No column-hiding/priority logic exists | None — no column is hidden at any width |
+| **Table (v2.25, ST-02)** | Replaces the row above when ST-02 merges. Renders one decision card per position (`data-testid="position-decision-card"`) in urgency order, with Ticker, market pill, Action needed, Price, Stop, To stop and P&L %; a Details button opens the expanded-row fields in 2 columns; the row's action buttons sit in the card footer (44 × 44 px minimum). No horizontal page scroll at 390 px. See §Decision-First Table. | Urgency tier, then stop distance |
 | **Journal** | `JournalView` cards stack in a single column at all widths below `lg`; no separate mobile treatment beyond the existing card layout | N/A |
 
 - Filter bar stacks vertically on narrow screens; tag pills wrap

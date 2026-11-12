@@ -1,0 +1,302 @@
+[
+ {
+  "cycle": "2026-11-11__release-v9.17",
+  "epic": "EPIC-01",
+  "story_id": "ST-01",
+  "s2_id": "S2-01",
+  "source": "BLG-FE-260",
+  "title": "Decision-first Positions table",
+  "priority": "P2",
+  "effort": "M (~2-3 days)",
+  "labels": [
+   "sprint",
+   "EPIC-01",
+   "cycle:2026-11-11__release-v9.17"
+  ]
+ },
+ {
+  "cycle": "2026-11-11__release-v9.17",
+  "epic": "EPIC-01",
+  "story_id": "ST-02",
+  "s2_id": "S2-02",
+  "source": "BLG-FE-261",
+  "title": "Card layout for Positions on narrow screens",
+  "priority": "P3",
+  "effort": "M (~2 days)",
+  "labels": [
+   "sprint",
+   "EPIC-01",
+   "cycle:2026-11-11__release-v9.17"
+  ]
+ },
+ {
+  "cycle": "2026-11-11__release-v9.17",
+  "epic": "EPIC-01",
+  "story_id": "ST-03",
+  "s2_id": "S2-03",
+  "source": "BLG-FE-262",
+  "title": "Combine the four banners above the Positions table into one strip",
+  "priority": "P3",
+  "effort": "S (~1 day)",
+  "labels": [
+   "sprint",
+   "EPIC-01",
+   "cycle:2026-11-11__release-v9.17"
+  ]
+ },
+ {
+  "cycle": "2026-11-11__release-v9.17",
+  "epic": "EPIC-01",
+  "story_id": "ST-04",
+  "s2_id": "S2-04",
+  "source": "BLG-FE-257",
+  "title": "Show grace period in one place, linked from the others",
+  "priority": "P3",
+  "effort": "M (~2 days)",
+  "labels": [
+   "sprint",
+   "EPIC-01",
+   "cycle:2026-11-11__release-v9.17"
+  ]
+ },
+ {
+  "cycle": "2026-11-11__release-v9.17",
+  "epic": "EPIC-02",
+  "story_id": "ST-05",
+  "s2_id": "S2-05",
+  "source": "BLG-FE-258",
+  "title": "Build the single Journal area",
+  "priority": "P3",
+  "effort": "L (~3-4 days)",
+  "labels": [
+   "sprint",
+   "EPIC-02",
+   "cycle:2026-11-11__release-v9.17"
+  ]
+ },
+ {
+  "cycle": "2026-11-11__release-v9.17",
+  "epic": "EPIC-02",
+  "story_id": "ST-06",
+  "s2_id": "S2-06",
+  "source": "BLG-FE-259",
+  "title": "Merge Reports and Performance Analytics into one Performance page",
+  "priority": "P3",
+  "effort": "L (~3-4 days)",
+  "labels": [
+   "sprint",
+   "EPIC-02",
+   "cycle:2026-11-11__release-v9.17"
+  ]
+ },
+ {
+  "cycle": "2026-11-11__release-v9.17",
+  "epic": "EPIC-02",
+  "story_id": "ST-07",
+  "s2_id": "S2-07",
+  "source": "BLG-FE-263",
+  "title": "Use tabs or sections on the long single-scroll pages",
+  "priority": "P3",
+  "effort": "M (~2-3 days)",
+  "labels": [
+   "sprint",
+   "EPIC-02",
+   "cycle:2026-11-11__release-v9.17"
+  ]
+ },
+ {
+  "cycle": "2026-11-11__release-v9.17",
+  "epic": "EPIC-03",
+  "story_id": "ST-08",
+  "s2_id": "S2-08",
+  "source": "BLG-FE-265",
+  "title": "Move the remaining pages onto the semantic colour tokens",
+  "priority": "P3",
+  "effort": "L (~3-4 days)",
+  "labels": [
+   "sprint",
+   "EPIC-03",
+   "cycle:2026-11-11__release-v9.17"
+  ]
+ },
+ {
+  "cycle": "2026-11-11__release-v9.17",
+  "epic": "EPIC-04",
+  "story_id": "ST-09",
+  "s2_id": "S2-09",
+  "source": "BLG-BE-205",
+  "title": "Record when the nightly job last moved each position's stop",
+  "priority": "P3",
+  "effort": "M (~1 day)",
+  "labels": [
+   "sprint",
+   "EPIC-04",
+   "cycle:2026-11-11__release-v9.17"
+  ]
+ },
+ {
+  "cycle": "2026-11-11__release-v9.17",
+  "epic": "EPIC-04",
+  "story_id": "ST-10",
+  "s2_id": "S2-10",
+  "source": "BLG-FE-254",
+  "title": "Today list \"Stops moved\" group: TL-09 and TL-10",
+  "priority": "P2",
+  "effort": "S (~0.5d, split-achievability remainder of L)",
+  "labels": [
+   "sprint",
+   "EPIC-04",
+   "cycle:2026-11-11__release-v9.17"
+  ]
+ },
+ {
+  "cycle": "2026-11-11__release-v9.17",
+  "epic": "EPIC-05",
+  "story_id": "ST-11",
+  "s2_id": "S2-11",
+  "source": "BLG-BE-211",
+  "title": "Move a linked trade plan to `closed` when its position closes",
+  "priority": "P2",
+  "effort": "S (~0.5–1 day)",
+  "labels": [
+   "sprint",
+   "EPIC-05",
+   "cycle:2026-11-11__release-v9.17"
+  ]
+ },
+ {
+  "cycle": "2026-11-11__release-v9.17",
+  "epic": "EPIC-05",
+  "story_id": "ST-12",
+  "s2_id": "S2-12",
+  "source": "BLG-FE-278",
+  "title": "Reset the Trade Plan pre-entry acknowledgement when the check result changes",
+  "priority": "P2",
+  "effort": "S (~0.5d)",
+  "labels": [
+   "sprint",
+   "EPIC-05",
+   "cycle:2026-11-11__release-v9.17"
+  ]
+ },
+ {
+  "cycle": "2026-11-11__release-v9.17",
+  "epic": "EPIC-05",
+  "story_id": "ST-13",
+  "s2_id": "S2-13",
+  "source": "BLG-FE-281",
+  "title": "Pass the market from Research View's \"Create Trade Plan\" so a UK plan is not created as US",
+  "priority": "P2",
+  "effort": "XS (<1h plus a Playwright test)",
+  "labels": [
+   "sprint",
+   "EPIC-05",
+   "cycle:2026-11-11__release-v9.17"
+  ]
+ },
+ {
+  "cycle": "2026-11-11__release-v9.17",
+  "epic": "EPIC-05",
+  "story_id": "ST-14",
+  "s2_id": "S2-14",
+  "source": "BLG-FE-282",
+  "title": "Pre-fill the Trade Plan stop from the §5 suggested stop and flag a typed stop that differs",
+  "priority": "P2",
+  "effort": "S (~1 day)",
+  "labels": [
+   "sprint",
+   "EPIC-05",
+   "cycle:2026-11-11__release-v9.17"
+  ]
+ },
+ {
+  "cycle": "2026-11-11__release-v9.17",
+  "epic": "EPIC-06",
+  "story_id": "ST-15",
+  "s2_id": "S2-15",
+  "source": "BLG-OPS-217",
+  "title": "Find out why most on-demand Yahoo calls fail on production (earnings, positions, gap risk, research)",
+  "priority": "P2",
+  "effort": "S (~0.5d)",
+  "labels": [
+   "sprint",
+   "EPIC-06",
+   "cycle:2026-11-11__release-v9.17"
+  ]
+ },
+ {
+  "cycle": "2026-11-11__release-v9.17",
+  "epic": "EPIC-06",
+  "story_id": "ST-16",
+  "s2_id": "S2-16",
+  "source": "BLG-OPS-195",
+  "title": "Alert when weekly market-data call volume exceeds 2× the baseline",
+  "priority": "P3",
+  "effort": "S (~0.5d)",
+  "labels": [
+   "sprint",
+   "EPIC-06",
+   "cycle:2026-11-11__release-v9.17"
+  ]
+ },
+ {
+  "cycle": "2026-11-11__release-v9.17",
+  "epic": "EPIC-06",
+  "story_id": "ST-17",
+  "s2_id": "S2-17",
+  "source": "BLG-BE-178",
+  "title": "Batch signal sizing can allocate more than available cash once fees are added",
+  "priority": "P3",
+  "effort": "S (~0.5d)",
+  "labels": [
+   "sprint",
+   "EPIC-06",
+   "cycle:2026-11-11__release-v9.17"
+  ]
+ },
+ {
+  "cycle": "2026-11-11__release-v9.17",
+  "epic": "EPIC-07",
+  "story_id": "ST-18",
+  "s2_id": "S2-18",
+  "source": "BLG-GOV-419",
+  "title": "Release Planning §1.3a: let a gate clearance also set a gate-worded Provisional-Target to TBD",
+  "priority": "P3",
+  "effort": "XS (<1h)",
+  "labels": [
+   "sprint",
+   "EPIC-07",
+   "cycle:2026-11-11__release-v9.17"
+  ]
+ },
+ {
+  "cycle": "2026-11-11__release-v9.17",
+  "epic": "EPIC-07",
+  "story_id": "ST-19",
+  "s2_id": "S2-19",
+  "source": "BLG-SPEC-202",
+  "title": "Define or remove the 2R Exit Zone threshold the Positions page states",
+  "priority": "P3",
+  "effort": "XS (~0.25 day)",
+  "labels": [
+   "sprint",
+   "EPIC-07",
+   "cycle:2026-11-11__release-v9.17"
+  ]
+ },
+ {
+  "cycle": "2026-11-11__release-v9.17",
+  "epic": "EPIC-07",
+  "story_id": "ST-20",
+  "s2_id": "S2-20",
+  "source": "BLG-QA-223",
+  "title": "Stop check_data_model_drift.py reading index names from rollback blocks",
+  "priority": "P4",
+  "effort": "XS (<1h)",
+  "labels": [
+   "sprint",
+   "EPIC-07",
+   "cycle:2026-11-11__release-v9.17"
+  ]
+ }
+]

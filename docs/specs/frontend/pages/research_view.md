@@ -1,8 +1,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 1.4
-**Last Updated:** 2026-08-16
+**Version:** 1.5
+**Last Updated:** 2026-11-11 (v9.17 design gate — ST-13/BLG-FE-281: §4.7 "Create Trade Plan" names the live route and carries `market`); prior — 2026-08-16; prior history retained — see prior entries in version control
 **Story:** ST-09 (EPIC-03, v3.3) — BLG-SPEC-24
 **§13 Compliance:** Confirmed — display-only. No automated recommendation generated. See §8.
 **API contract:** docs/specs/api_contracts/research_endpoint.md
@@ -129,7 +129,7 @@ When `data.earnings` is null: display "No upcoming earnings data".
 
 - Fetched via `GET /trade-plans?ticker={ticker}`
 - When active plan exists: shows plan status, stop level, R/R notes, and read-only pre-entry checklist
-- When no plan: CTA button "Create Trade Plan" → navigates to `/trade-plans/new?ticker={ticker}`
+- When no plan: CTA button "Create Trade Plan" → navigates to `/TradePlan?ticker={ticker}&market={market}`, `market` from the research response *(v1.5 — ST-13, BLG-FE-281; was `/trade-plans/new?ticker={ticker}`, a pre-v8 route, and the shipped link omitted `market`, so `TradePlan.js` defaulted to US)*. "View full plan" on an existing plan → `/TradePlan?edit={id}&ticker={ticker}`; edit mode loads the plan's stored market
 - **Status badge source (v1.3 — ST-14, BLG-FE-162):** the plan status badge renders via the shared `TradePlanStatusBadge`/`STATUS_CONFIG` exported from `TradePlans.js` — the single canonical source for all 6 statuses (plus `abandoned`) app-wide. This page must not maintain its own local status→label/colour map. Design source: `docs/design/2026-08-14__release-v8.8/research-status-badge-single-source/decision_record.md`.
 - **Plan selection precedence (v1.3 — ST-14, BLG-FE-162):** when `GET /trade-plans?ticker={ticker}` returns more than one plan for the ticker, exactly one is shown. Precedence (first match wins): `active` → `entry_conditions_set` → `research_complete` → `research_pending` → `draft` → `closed`, i.e. most-currently-relevant-in-the-plan-lifecycle first. Prior to this story the selection only checked `active`/`entry_conditions_set`/`draft`, so a ticker whose only plan was `research_pending`, `research_complete`, or `closed` silently fell through to the no-plan CTA — found and fixed via this story's own Playwright coverage (`tests/e2e/research-trade-plan-status-badge.spec.js`), not a pre-existing design-time AC.
 
@@ -193,6 +193,7 @@ None.
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.5 | 2026-11-11 | v9.17 design gate. (ST-13, BLG-FE-281) §4.7: "Create Trade Plan" navigates to `/TradePlan?ticker={ticker}&market={market}` (from the research response's `market`), so a UK plan is not created as US; the pre-v8 `/trade-plans/new` route is corrected. "View full plan" (`/TradePlan?edit={id}&ticker={ticker}`) loads the stored market. Design source: `docs/design/2026-11-11__release-v9.17/trade-plan-found-defects/decision_record.md` §3. Approved: Head of UX & Design and Product Owner, 2026-11-11. |
 | 1.4 | 2026-08-16 | Sprint execution `2026-08-14__release-v8.8` EPIC-03/ST-14: §4.7 gains a documented plan-selection precedence rule (`active → entry_conditions_set → research_complete → research_pending → draft → closed`). Root cause found via this story's own new Playwright coverage: `Research.js`'s `activePlan` derivation only matched 3 of 6 statuses (`active`/`entry_conditions_set`/`draft`), so a ticker whose only plan was `research_pending`/`research_complete`/`closed` silently fell through to the no-plan CTA instead of showing the (now-correct) badge — fixed in the same commit as the badge-source change. Authority: Sprint Execution Engine (ST-14, 2026-08-16). |
 | 1.3 | 2026-08-14 | v8.8 design gate (ST-14, BLG-FE-162): §4.7 Trade Plan Panel — documented that the status badge must render via the shared `TradePlanStatusBadge`/`STATUS_CONFIG` (`TradePlans.js`), not a page-local map; closes the 3-of-6-statuses-fall-back-to-raw-snake_case defect. No new colours or component. Design source: `docs/design/2026-08-14__release-v8.8/research-status-badge-single-source/decision_record.md`. Head of UX & Design confirmed 2026-08-14. |
 | 1.2 | 2026-05-27 | v4.1 ST-10 (BLG-FE-44): §4.2 Signal Panel — added `signal_type` field (`data.signal.signal_type`, plain text, null → `—`). Playwright test coverage note added. Playwright coverage in tests/e2e/research-view-signal-type.spec.js. |

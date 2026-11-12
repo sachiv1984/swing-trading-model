@@ -1,8 +1,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 0.9
-**Last Updated:** 2026-11-03 (v9.15 design gate — ST-18/BLG-FE-220: §7.3 exit-reason badges filled, Rebalance teal-700); prior — 2026-10-12 (v9.12 design gate — ST-24/BLG-FE-210: Trade Log Risk-Off exit-reason badge recorded as filled `bg-amber-700 text-white`); prior — 2026-08-18 (ST-07, EPIC-02, v8.9, BLG-FEAT-89 — implementation-time resolution: §7.6's deferred candidate-input mechanism resolved to a structured parameter form; Empty/Error state text updated to match); prior history retained — see prior entries in version control
+**Version:** 0.10
+**Last Updated:** 2026-11-11 (v9.17 design gate — ST-07/BLG-FE-263: new §3a Section Index on the Benchmark tab); prior — 2026-11-03 (v9.15 design gate — ST-18/BLG-FE-220: §7.3 exit-reason badges filled, Rebalance teal-700); prior — 2026-10-12 (v9.12 design gate — ST-24/BLG-FE-210: Trade Log Risk-Off exit-reason badge recorded as filled `bg-amber-700 text-white`); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Release:** v7.7
 **EPIC:** EPIC-01
@@ -64,6 +64,14 @@ Positioned below the page header. Remains visible while scrolling.
 - Default: Year = All, Market = All
 - Active pill: filled background (consistent with existing pill-tab pattern)
 - Order: Year filter first, Market filter second
+
+---
+
+## 3a. Section Index (v0.10)
+
+**Design source:** `docs/design/2026-11-11__release-v9.17/long-page-section-index/decision_record.md`
+
+On the Benchmark tab only, the shared `SectionIndex` (`src/components/ui/SectionIndex.js`) lists: `open-positions` Open positions (§4.5) · `parity` Performance parity (§5) · `yearly` Yearly breakdown (§6) · `trade-log` Trade log (§7). Sticky column at `lg` and up, sticky pill row below `lg`; instant jump, focus to the heading, `?section={id}` (replace) honoured on load and combined with `?tab=`; ignored on the other two tabs. Current section marked `aria-current` via `IntersectionObserver`. No content moves. `data-testid="section-index"`, links `section-link-{id}`.
 
 ---
 
@@ -374,6 +382,7 @@ All endpoints must be documented in `docs/reference/openapi.yaml` and `docs/spec
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.10 | 2026-11-11 | v9.17 design gate. (ST-07, BLG-FE-263) new §3a Section Index on the Benchmark tab (Open positions, Performance parity, Yearly breakdown, Trade log), the shared `SectionIndex`; `?section=` combines with `?tab=`. The Version Comparison and Backtest Rule Change tabs are unchanged. Design source: `docs/design/2026-11-11__release-v9.17/long-page-section-index/decision_record.md`. Approved: Head of UX & Design and Product Owner, 2026-11-11. |
 | 0.9 | 2026-11-03 | v9.15 design gate — (ST-18, EPIC-03, BLG-FE-220) §7.3 Exit Reason Badges: filled with white text ruled for every reason, matching the shipped page. Stop `bg-red-600`, Rebalance `bg-teal-600` → `bg-teal-700` (3.74:1 → 5.47:1); the unmapped-reason row records the shipped plain-text fallback. Design source: `docs/design/2026-11-03__release-v9.15/exit-reason-badges/decision_record.md`. Head of UX & Design + Product Owner approved. |
 | 0.8 | 2026-10-12 | v9.12 design gate — (ST-24, EPIC-03, BLG-FE-210) §7 Trade Log Risk-Off exit-reason badge: the row now records the shipped filled style, moved from `bg-amber-600` (3.19:1) to `bg-amber-700 text-white` (5.02:1). The other exit-reason rows still list a tinted style that differs from the shipped filled badges; that drift is noted in the design gate record and not changed here. Head of UX & Design sign-off: 2026-10-12. Product Owner approved: 2026-10-12. Head of Specs Team confirmed. |
 | 0.7 | 2026-08-18 | ST-07 (EPIC-02, v8.9, BLG-FEAT-89) implementation-time resolution: §7.6's candidate-input mechanism resolved to a structured parameter form (not raw diff text — no safe deterministic parse path from `strategy_rules.md` prose). Empty-state text adapted (`"Set parameter overrides..."` vs. the design source's `"Paste a candidate rule change..."`, which assumed the other input option). Error state's "Retry" clarified as re-clicking the same Run Backtest button, not a separate affordance. §9 API Endpoints gained the 3 new endpoints. Authority: Frontend Specifications & UX Documentation Owner. |

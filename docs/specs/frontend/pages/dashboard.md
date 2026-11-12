@@ -3,8 +3,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 4.1
-**Last Updated:** 2026-11-09 (ST-06, EPIC-02, v9.16, BLG-FE-254 — §1B Group headers and TL-21: the Market regime header shows its name only, no count; clarification, edited on user direction); prior — 2026-11-04 (ST-09, EPIC-02, v9.15, BLG-SPEC-215 — new §1B Today list: market regime, exits due, grace ends today, stops moved, new signals, first on the page (Product Owner ruling on "stop changes due"); Card 4 and the Exit Conditions Met row merge into it; testable ACs TL-01..TL-29); prior — 2026-11-03 (v9.15 design gate — ST-14/BLG-FE-266: §6A header has no version suffix when the version is absent); prior history retained — see prior entries in version control
+**Version:** 4.2
+**Last Updated:** 2026-11-11 (v9.17 design gate — ST-04/BLG-FE-257: Card 3 click target is the single grace view, `/Positions?grace=open`); prior — 2026-11-09 (ST-06, EPIC-02, v9.16, BLG-FE-254 — §1B Group headers and TL-21: the Market regime header shows its name only, no count; clarification, edited on user direction); prior — 2026-11-04 (ST-09, EPIC-02, v9.15, BLG-SPEC-215 — new §1B Today list: market regime, exits due, grace ends today, stops moved, new signals, first on the page (Product Owner ruling on "stop changes due"); Card 4 and the Exit Conditions Met row merge into it; testable ACs TL-01..TL-29); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Release:** v8.8
 **EPIC:** EPIC-03
@@ -291,7 +291,7 @@ All 5 cards stack vertically in order: Open Positions → Portfolio Heat → In 
 - **Primary:** count of positions currently in grace period (integer)
 - **Sub-label:** “Next expires: {date}” using the earliest `grace_end_date` among grace positions; if none in grace: show “No positions in grace”
 - **Source:** `GET /portfolio` or `GET /positions`
-- **Click target:** navigates to `/risk` (scrolled to grace panel where supported)
+- **Click target:** navigates to `/Positions?grace=open`, which opens the single grace view (`positions.md` v2.25 §Grace Period View) *(v4.2 — ST-04, BLG-FE-257; was `/risk`, scrolled to the grace panel)*
 
 ---
 
@@ -567,6 +567,7 @@ Cards are fully clickable (entire card surface is the click target). Visual affo
 
 | Version | Date | Change |
 |---------|------|--------|
+| 4.2 | 2026-11-11 | v9.17 design gate. (ST-04, BLG-FE-257) Card 3 — In Grace Today: click target changes from `/risk` to `/Positions?grace=open`, the single grace view (`positions.md` v2.25 §Grace Period View). Count and next-expiry line unchanged. The Morning Briefing "Positions to Watch" card is already a count and a link and is unchanged. Design source: `docs/design/2026-11-11__release-v9.17/positions-decision-first/decision_record.md` §5.3. Approved: Head of UX & Design and Product Owner, 2026-11-11. |
 | 4.1 | 2026-11-09 | ST-06 (EPIC-02, v9.16, BLG-FE-254). §1B Group headers and TL-21: the Market regime header shows its name only, "Market regime", with no count, because its rows are the two markets, not items due. Clarification, no behaviour change. Recommended by the Frontend Specifications & UX Documentation Owner (agent-mediated, §5.3) after the EPIC-02 DoQ review; edited on user direction, 2026-11-09. |
 | 4.0 | 2026-11-04 | ST-09 (EPIC-02, v9.15, BLG-SPEC-215) against the `site-structure-phase1` §2.2 brief. New §1B Today list ("Due today"), first on the page: Market regime (US, UK; unknown state kept), Exits due (the `getExitCondition` predicate, risk-off first, v9.10 sub-line kept), Grace ends today (`grace_days_remaining = 1`), Stops moved (needs `BLG-BE-205`'s read-only `stop_last_moved_date`/`previous_stop`; not rendered until then), New signals (screener order, no rank shown, "Research" link). Fixed group order, caps of 5 with "+N more", a one-line quiet-day state, loading/per-source error/all-failed states, and testable ACs TL-01..TL-29 for `BLG-FE-254`. The brief's "stop changes due" is met by the Grace ends today and Stops moved groups (Product Owner ruling 2026-11-04). Card 4 and the §1A Exit Conditions Met row merge into the list; §3 page order, §7 and §8 updated. §13: display-only, no new ranking, score or "do this" wording. Built by `BLG-FE-254` (v9.16); v3.11 layout stands until then. Head of UX & Design and Head of Specs Team review: see the v9.15 `qa_evidence_EPIC-02.md` ST-09 entry. |
 | 3.11 | 2026-11-03 | v9.15 design gate — (ST-14, EPIC-02, BLG-FE-266) §6A What's New header drops the version suffix when the payload has no version; the sidebar footer shows the same version (`navigation.md` v1.8). Design source: `docs/design/2026-11-03__release-v9.15/site-structure-phase1/decision_record.md`. Head of UX & Design + Product Owner approved. Head of Specs Team confirmed. |
