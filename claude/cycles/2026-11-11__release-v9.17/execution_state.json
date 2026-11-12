@@ -5,7 +5,7 @@
   "invoked_utc": "2026-11-12T13:22:26Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-12T20:40:00Z",
+  "last_updated_utc": "2026-11-12T21:00:00Z",
   "epics": {
     "EPIC-01": {
       "title": "Site Structure & Usability Phase 3: Positions Redesign (build-and-ship)",
@@ -18,7 +18,8 @@
       "test_scenarios": [
         "tests/e2e/positions-decision-first.spec.js",
         "tests/e2e/positions-decision-cards.spec.js",
-        "tests/e2e/positions-warning-strip.spec.js"
+        "tests/e2e/positions-warning-strip.spec.js",
+        "tests/e2e/positions-grace-view.spec.js"
       ],
       "stories": {
         "ST-01": {
@@ -100,27 +101,29 @@
         "ST-04": {
           "title": "Show grace period in one place, linked from the others",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 2239,
           "branch": "exec/2026-11-11__release-v9.17/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "661cc4ee82623fbb3af98998353788203c5bb50e",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-11-12T19:47:38Z",
+          "acceptance_verified": true,
           "spec_references": [
-            "docs/specs/frontend/pages/positions.md",
-            "docs/specs/frontend/pages/dashboard.md",
-            "docs/specs/frontend/pages/risk_dashboard.md"
+            "docs/specs/frontend/pages/positions.md#Grace Period View",
+            "docs/specs/frontend/pages/dashboard.md#Card 3 \u2014 In Grace Today",
+            "docs/specs/frontend/pages/risk_dashboard.md#5. Component: Grace Period Status Panel",
+            "docs/design/2026-11-11__release-v9.17/positions-decision-first/decision_record.md",
+            "tests/e2e/positions-grace-view.spec.js"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.done",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Commit 661cc4ee. Deviation filed: DEV-EPIC01-ST04-01 (P3, positions.md Known Deviations; BLG-BE-215) - rows with more than 2 days of grace left show no trade plan line, because GET /positions/grace-period-alerts returns only rows with 2 days or fewer. Design gate obligations met: grace_alert_dismissed_* reads removed; positions.md v2.26 \u00a7Grace Period Alert Zone is a 'Superseded' stub. Implementation notes (intent-matching): the Risk Dashboard next-end line uses n - 1 ('Next ends in 1 day' for 2; 'Ends today' for 1; 'Grace period has ended' for 0) to agree with the strip's date - spec wording filed as BLG-SPEC-234; alert-only rows (grace just ended, or GET /positions empty) are listed; the expanded-row Grace pill stays (design \u00a75.2) and renders only when a row is opened, so SC-POSGV-07's 'only element' check holds on default views. Pre-commit /code-review medium: 5 findings fixed in-commit; filed BLG-BE-215, BLG-FE-291, BLG-SPEC-234. Local Playwright on an E2E-env production build: 173 passed, 1 skipped (existing SC-GPL-01 fixme). CI on 661cc4ee: all 9 workflows success; Playwright E2E Acceptance Tests run 43293797244 (step 4c); CI Pytest Suite 43293797711; Frontend Production Build 43293797748."
         }
       }
     }
@@ -130,7 +133,8 @@
   "completed_items": [
     "ST-01",
     "ST-02",
-    "ST-03"
+    "ST-03",
+    "ST-04"
   ],
   "open_escalations": {},
   "merge_gate": {
