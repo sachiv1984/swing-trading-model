@@ -28,6 +28,7 @@
 'use strict';
 
 const { test, expect } = require('./fixtures/api-status-guard');
+const { expandAllPositionRows } = require('./fixtures/positions-table');
 
 function makePosition(overrides = {}) {
   return {
@@ -107,6 +108,8 @@ async function gotoPositionsTable(page, positions) {
   await tableBtn.waitFor({ state: 'visible', timeout: 8000 });
   await tableBtn.click();
   await page.waitForSelector('table', { timeout: 5000 });
+  // ST-01 (BLG-FE-260, v9.17): fields outside the six default columns live in the expanded row.
+  await expandAllPositionRows(page);
 }
 
 
@@ -127,8 +130,12 @@ const NULLS = {
   stop_calculated_at: null, stop_calculation_source: null, grace_period: false,
 };
 
+// ST-01 (BLG-FE-260, v9.17): the table row or its expanded detail row, which
+// holds the stop provenance line.
 function rowFor(page, ticker) {
-  return page.locator('tr', { has: page.getByText(ticker, { exact: true }) });
+  return page
+    .locator('tr', { has: page.getByText(ticker, { exact: true }) })
+    .or(page.locator(`tr[data-detail-for="${ticker}"]`));
 }
 
 async function openStopDetails(page, ticker) {

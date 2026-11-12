@@ -20,6 +20,7 @@
 'use strict';
 
 const { test, expect } = require('./fixtures/api-status-guard');
+const { expandAllPositionRows } = require('./fixtures/positions-table');
 
 const API = 'http://localhost:8000';
 
@@ -84,6 +85,8 @@ async function setup(page, positions, alerts = []) {
   const tableBtn = page.locator('[aria-label="Table view"]');
   if (await tableBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
     await tableBtn.click();
+    // ST-01 (BLG-FE-260, v9.17): State lives in the expanded row.
+    await expandAllPositionRows(page);
   }
   await expect(page.getByText('NVDA').first()).toBeVisible({ timeout: 8000 });
 }

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { Fragment, useState, useEffect, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEarnings } from "../hooks/useEarnings";
 import { useGapRisk } from "../hooks/useGapRisk";
@@ -19,6 +19,8 @@ import {
   Zap,
   Clock,
   Check,
+  ChevronDown,
+  ChevronRight,
 } from "lucide-react";
 
 import DataState from "../components/ui/DataState";
@@ -34,7 +36,16 @@ import TradeReflectionModal from "../components/trades/TradeReflectionModal";
 import { formatCurrency, formatPercent, formatR, currencyForMarket } from "../lib/format";
 import ComplianceRecheckModal from "../components/positions/ComplianceRecheckModal";
 import TrailingStopExplainerIcon from "../components/positions/TrailingStopExplainerIcon";
-import { StopProvenanceLine, StopDetailsTrigger } from "../components/positions/StopProvenance";
+import { StopProvenanceLine, StopDetailsTrigger, StopFrozenIndicator, isStopFrozen } from "../components/positions/StopProvenance";
+import {
+  URGENCY_TIER,
+  getUrgencyTier,
+  sortByUrgency,
+  isInGrace,
+  stopDistancePct,
+  stopDistanceClass,
+  formatStopDistance,
+} from "../lib/positionUrgency";
 import {
   DataTable,
   TableHeader,
@@ -463,29 +474,27 @@ function ConcentrationLimitsWarning() {
   );
 }
 
-function PositionEarningsCell({ ticker, market }) {
+// ST-01 (BLG-FE-260, v9.17): rendered in the expanded row's label/value grid,
+// so it returns the value only (no table cell).
+function PositionEarningsValue({ ticker, market }) {
   const { data, loading } = useEarnings(ticker, market);
-  if (loading) return <TableCell><span className="text-slate-600 text-xs">…</span></TableCell>;
-  if (!data || data.days_until_earnings == null) return <TableCell><span className="text-slate-600 text-xs">—</span></TableCell>;
+  if (loading) return <span className="text-slate-600 text-xs">…</span>;
+  if (!data || data.days_until_earnings == null) return <span className="text-slate-600 text-xs">—</span>;
   const days = data.days_until_earnings;
-  if (days < 0) return <TableCell><span className="text-slate-600 text-xs">—</span></TableCell>;
+  if (days < 0) return <span className="text-slate-600 text-xs">—</span>;
   if (days === 0) return (
-    <TableCell>
-      <span className="text-xs font-medium px-2 py-0.5 rounded bg-amber-500/15 text-amber-800 dark:text-amber-400 border border-amber-500/25" title={data.next_earnings_date}>
-        Today
-      </span>
-    </TableCell>
+    <span className="text-xs font-medium px-2 py-0.5 rounded bg-amber-500/15 text-amber-800 dark:text-amber-400 border border-amber-500/25" title={data.next_earnings_date}>
+      Today
+    </span>
   );
   const isNear = days <= 5;
   return (
-    <TableCell>
-      <span
-        className={`text-xs font-medium px-2 py-0.5 rounded ${isNear ? "bg-amber-500/15 text-amber-800 dark:text-amber-400 border border-amber-500/25" : "text-slate-600 dark:text-slate-400"}`}
-        title={data.next_earnings_date}
-      >
-        {isNear ? `⚠ ${days}d` : `${days}d`}
-      </span>
-    </TableCell>
+    <span
+      className={`text-xs font-medium px-2 py-0.5 rounded ${isNear ? "bg-amber-500/15 text-amber-800 dark:text-amber-400 border border-amber-500/25" : "text-slate-600 dark:text-slate-400"}`}
+      title={data.next_earnings_date}
+    >
+      {isNear ? `⚠ ${days}d` : `${days}d`}
+    </span>
   );
 }
 
@@ -588,32 +597,298 @@ function useMarkReviewedMutation() {
   });
 }
 
-function LastReviewedCell({ position, drawdownActive }) {
+function LastReviewedValue({ position, drawdownActive }) {
   const { label, flagged, ariaLabel } = getReviewCadenceState(position, drawdownActive);
   const markReviewed = useMarkReviewedMutation();
 
   return (
-    <TableCell>
-      <div className="flex items-center gap-1.5" data-testid="last-reviewed-cell">
-        {flagged && <Clock className="w-3 h-3 text-amber-700 dark:text-amber-400 flex-shrink-0" aria-hidden="true" />}
-        <span
-          className={cn("text-xs", flagged ? "text-amber-700 dark:text-amber-400" : "text-slate-600 dark:text-slate-400")}
-          aria-label={ariaLabel}
-        >
-          {label}
-        </span>
-        <button
-          onClick={() => markReviewed.mutate(position.id)}
-          disabled={markReviewed.isPending}
-          title="Mark Reviewed"
-          aria-label={`Mark ${position.ticker} as reviewed`}
-          data-testid="mark-reviewed-button"
-          className="text-slate-600 hover:text-emerald-400 disabled:opacity-40 flex-shrink-0"
-        >
-          <Check className="w-3.5 h-3.5" />
-        </button>
+    <div className="flex items-center gap-1.5" data-testid="last-reviewed-cell">
+      {flagged && <Clock className="w-3 h-3 text-amber-700 dark:text-amber-400 flex-shrink-0" aria-hidden="true" />}
+      <span
+        className={cn("text-xs", flagged ? "text-amber-700 dark:text-amber-400" : "text-slate-600 dark:text-slate-400")}
+        aria-label={ariaLabel}
+      >
+        {label}
+      </span>
+      <button
+        onClick={() => markReviewed.mutate(position.id)}
+        disabled={markReviewed.isPending}
+        title="Mark Reviewed"
+        aria-label={`Mark ${position.ticker} as reviewed`}
+        data-testid="mark-reviewed-button"
+        className="text-slate-600 hover:text-emerald-400 disabled:opacity-40 flex-shrink-0"
+      >
+        <Check className="w-3.5 h-3.5" />
+      </button>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// ST-01 (BLG-FE-260, v9.17) — Decision-first table
+// Spec: positions.md v2.25 §Decision-First Table. Design:
+// docs/design/2026-11-11__release-v9.17/positions-decision-first/decision_record.md §2–§3.
+// Display-only (§13): the urgency tiers reuse the §7/§8 tests and the Risk
+// Dashboard's ≤ 5% band; "Action needed" reuses existing copy. Nothing submits an exit.
+// ---------------------------------------------------------------------------
+
+const NOT_ENFORCED_GRACE = "Not enforced (grace)";
+
+function RiskOffPill() {
+  return (
+    <span
+      className="inline-flex items-center w-fit text-xs px-2 py-0.5 rounded-full font-medium text-white"
+      style={{ backgroundColor: "#1E40AF" }}
+    >
+      RISK OFF
+    </span>
+  );
+}
+
+function StopReachedPill() {
+  return (
+    <span
+      className="inline-flex items-center w-fit text-xs px-2 py-0.5 rounded-full font-medium text-white"
+      style={{ backgroundColor: "#EA580C" }}
+    >
+      STOP REACHED
+    </span>
+  );
+}
+
+function ActionNeeded({ position }) {
+  const tier = getUrgencyTier(position);
+  let content;
+  if (tier === URGENCY_TIER.EXIT_CONDITION) content = <RiskOffPill />;
+  else if (tier === URGENCY_TIER.STOP_REACHED) content = <StopReachedPill />;
+  else if (tier === URGENCY_TIER.NEAR_STOP) content = <span className="text-xs font-medium text-app-negative">Near stop</span>;
+  else if (isInGrace(position) && position.grace_days_remaining === 1) content = <span className="text-xs text-app-warning">Grace ends today</span>;
+  else content = <span className="text-app-muted">—</span>;
+  return <div data-testid="action-needed">{content}</div>;
+}
+
+function StopDistance({ position }) {
+  if (isInGrace(position)) {
+    return <span data-testid="stop-distance" className="text-xs text-app-muted">{NOT_ENFORCED_GRACE}</span>;
+  }
+  const pct = stopDistancePct(position);
+  return (
+    <span data-testid="stop-distance" className={cn("text-sm font-medium whitespace-nowrap", stopDistanceClass(pct))}>
+      {formatStopDistance(position)}
+    </span>
+  );
+}
+
+// The Stop column: trailing stop (native) with the breach badge and frozen
+// indicator; in grace "Not enforced (grace)". The value keeps its per-row
+// stop details tooltip (positions.md §Stop Provenance Line).
+function StopValue({ position, currency }) {
+  const displayStopPrice = position.stop_price_native || position.stop_price;
+  const trailStopNative = position.current_trailing_stop_native;
+  // GBP basis on both sides, as the breach test (ST-02, BLG-BE-103, v8.9).
+  const trailStop = position.current_trailing_stop;
+  const currentPriceGbp = position.current_price;
+  const trailBreached = trailStop > 0 && currentPriceGbp > 0 && currentPriceGbp <= trailStop;
+
+  if (isInGrace(position)) {
+    return (
+      <span className="text-xs text-app-muted font-normal" data-testid="stop-value">
+        <StopDetailsTrigger position={position} currency={currency}>
+          {NOT_ENFORCED_GRACE}
+        </StopDetailsTrigger>
+      </span>
+    );
+  }
+  return (
+    <div className="flex flex-col gap-0.5 leading-tight" data-testid="stop-value">
+      <div className="flex items-center gap-1.5">
+        <StopDetailsTrigger position={position} currency={currency}>
+          {trailStopNative > 0 ? formatCurrency(trailStopNative, { currency }) : formatCurrency(displayStopPrice, { currency })}
+        </StopDetailsTrigger>
+        {/* ST-09 (v7.0, BLG-FE-96): breach badge — visible when price <= trailing stop */}
+        {trailBreached && (
+          <span
+            className="inline-flex items-center gap-0.5 text-xs px-1.5 py-0.5 rounded-full bg-orange-600 text-white font-medium"
+            title="Trailing stop breach: current price is at or below trailing stop level"
+            aria-label="Trailing stop breach: current price is at or below trailing stop level"
+            data-testid="breach-badge"
+          >
+            ⚠ BREACH
+          </span>
+        )}
       </div>
-    </TableCell>
+      {isStopFrozen(position) && <StopFrozenIndicator />}
+    </div>
+  );
+}
+
+function PriceValue({ position, currency }) {
+  const displayCurrentPrice = position.current_price_native || position.current_price;
+  return (
+    <>
+      {formatCurrency(displayCurrentPrice || null, { currency })}
+      {position.price_is_stale === true && <StaleMarker explanation={STALE_EXPLANATION_POSITIONS} />}
+    </>
+  );
+}
+
+function PnlPercent({ position }) {
+  const isProfit = (position.pnl || 0) >= 0;
+  return (
+    <span className={cn("text-sm font-medium", isProfit ? "text-app-positive" : "text-app-negative")}>
+      {formatPercent(position.pnl_percent || 0, { signed: true })}
+    </span>
+  );
+}
+
+function MarketPill({ market }) {
+  return (
+    <span className="text-xs px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
+      {market}
+    </span>
+  );
+}
+
+function DetailItem({ label, children }) {
+  return (
+    <div className="min-w-0">
+      <dt className="text-xs text-app-muted">{label}</dt>
+      <dd className="mt-0.5 text-sm text-app-fg">{children}</dd>
+    </div>
+  );
+}
+
+// The expanded row's label/value grid (design record §3.2): every field the
+// default columns leave out, 2 columns below lg and 4 at lg.
+function PositionDetailGrid({ position, currency, drawdownActive }) {
+  const pnl = position.pnl || 0;
+  const isProfit = pnl >= 0;
+  const daysHeld = differenceInDays(new Date(), new Date(position.entry_date));
+  const state = position.lifecycle_state || position.position_state;
+  return (
+    <dl className="grid grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-3">
+      <DetailItem label="Entry price">{formatCurrency(position.entry_price, { currency })}</DetailItem>
+      <DetailItem label="Initial stop">{formatCurrency(position.initial_stop, { currency })}</DetailItem>
+      <DetailItem label="Shares">{position.shares}</DetailItem>
+      <DetailItem label="P&L (GBP)">
+        <span className={cn("inline-flex items-center gap-1.5 font-medium", isProfit ? "text-app-positive" : "text-app-negative")}>
+          {isProfit ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
+          {formatCurrency(pnl, { currency: "GBP", signed: true })}
+        </span>
+      </DetailItem>
+      <DetailItem label="Days held">{daysHeld}</DetailItem>
+      <DetailItem label="State">
+        {state ? (
+          <LifecycleBadge
+            state={state}
+            daysInState={position.days_in_state}
+            graceDaysRemaining={position.grace_days_remaining}
+            lifecycleReason={position.lifecycle_reason}
+          />
+        ) : (
+          <span className="text-slate-600 text-xs">—</span>
+        )}
+      </DetailItem>
+      <DetailItem label="Grace">
+        {position.grace_days_remaining !== null && position.grace_days_remaining !== undefined ? (
+          <span className="text-xs font-medium px-2 py-1 rounded-lg bg-amber-500/15 text-amber-800 dark:text-amber-400 border border-amber-500/25 whitespace-nowrap">
+            Day {(position.holding_days ?? 0) + 1} of {GRACE_PERIOD_DAYS}
+          </span>
+        ) : (
+          <span className="text-slate-600">—</span>
+        )}
+      </DetailItem>
+      <DetailItem label="Earnings"><PositionEarningsValue ticker={position.ticker} market={position.market} /></DetailItem>
+      <DetailItem label="Alerts"><AlertsCell position={position} /></DetailItem>
+      <DetailItem label="Last reviewed"><LastReviewedValue position={position} drawdownActive={drawdownActive} /></DetailItem>
+      <DetailItem label="Stop provenance">
+        {isStopFrozen(position) ? <span className="text-slate-600 text-xs">—</span> : <StopProvenanceLine position={position} currency={currency} />}
+      </DetailItem>
+    </dl>
+  );
+}
+
+// The row's action buttons, unchanged (exit stays the user's click).
+function PositionActions({ position, onEdit, onExit, onTrail, onRecheck, onTradePlan, buttonClassName = "h-8 w-8" }) {
+  const showTrail =
+    position.lifecycle_state === "PROFITABLE" || position.lifecycle_state === "EXIT ZONE" ||
+    position.position_state === "PROFITABLE" || position.position_state === "EXIT ZONE";
+  return (
+    <div className="flex items-center gap-2">
+      <Button
+        variant="ghost"
+        size="icon"
+        className={cn(buttonClassName, "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800")}
+        aria-label={`Edit ${position.ticker}`}
+        onClick={() => onEdit(position)}
+      >
+        <Edit2 className="w-4 h-4" />
+      </Button>
+
+      <Button
+        variant="ghost"
+        size="icon"
+        title="Trade Plan"
+        className={cn(buttonClassName, "text-cyan-700 dark:text-cyan-500/70 hover:text-cyan-800 dark:hover:text-cyan-400 hover:bg-cyan-500/10")}
+        onClick={() => onTradePlan(position)}
+      >
+        <BookOpen className="w-4 h-4" />
+      </Button>
+
+      {/* ST-03 (IT-03): View Trail (renamed from Trail Stop, ST-10 Branch B) — shown for PROFITABLE/EXIT ZONE; disabled when no stop */}
+      {showTrail && (
+        <Button
+          variant="ghost"
+          size="icon"
+          title={(!position.current_stop && !position.stop_price) ? "No stop is recorded for this position yet, so there is no trail to compare." : "View Trail"}
+          aria-label="View Trail"
+          disabled={!position.current_stop && !position.stop_price}
+          className={cn(buttonClassName, "text-violet-700 dark:text-violet-400 hover:text-violet-800 dark:hover:text-violet-300 hover:bg-violet-500/10 disabled:opacity-40")}
+          onClick={() => onTrail(position)}
+        >
+          <ArrowUpDown className="w-4 h-4" />
+        </Button>
+      )}
+
+      {/* ST-01 (v6.9, BLG-FEAT-64): Recheck Compliance — on-demand SI-01 recheck */}
+      <Button
+        variant="ghost"
+        size="icon"
+        title="Recheck Compliance"
+        aria-label={`Recheck compliance for ${position.ticker}`}
+        data-testid="recheck-compliance-button"
+        className={cn(buttonClassName, "text-amber-700 dark:text-amber-400/80 hover:text-amber-800 dark:hover:text-amber-300 hover:bg-amber-500/10")}
+        onClick={() => onRecheck(position)}
+      >
+        <Zap className="w-4 h-4" />
+      </Button>
+
+      <Button
+        variant="ghost"
+        size="icon"
+        className={cn(buttonClassName, "text-rose-700 dark:text-rose-400 hover:text-rose-800 dark:hover:text-rose-300 hover:bg-rose-500/10")}
+        aria-label={`Exit ${position.ticker}`}
+        onClick={() => onExit(position)}
+      >
+        <LogOut className="w-4 h-4" />
+      </Button>
+    </div>
+  );
+}
+
+function ExpandChevron({ position, expanded, onToggle }) {
+  return (
+    <button
+      type="button"
+      onClick={() => onToggle(String(position.id))}
+      aria-expanded={expanded}
+      aria-controls={`position-detail-${position.id}`}
+      aria-label={`Show details for ${position.ticker}`}
+      data-testid="position-expand"
+      className="inline-flex items-center justify-center h-8 w-8 rounded-lg text-app-muted hover:text-app-fg hover:bg-slate-100 dark:hover:bg-slate-800"
+    >
+      {expanded ? <ChevronDown className="w-4 h-4" aria-hidden="true" /> : <ChevronRight className="w-4 h-4" aria-hidden="true" />}
+    </button>
   );
 }
 
@@ -670,11 +945,24 @@ export default function Positions() {
   // POSITION_HIGHLIGHT_MS, then drops the parameter (positions.md §Position
   // Deep Link). An id that is not in the list is ignored. Navigation only (§13).
   const [highlightedPositionId, setHighlightedPositionId] = useState(null);
+  // ST-01 (BLG-FE-260, v9.17): expanded rows; several may be open; not persisted.
+  const [expandedIds, setExpandedIds] = useState(() => new Set());
+  const toggleExpanded = (id) =>
+    setExpandedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
   useEffect(() => {
     const positionId = new URLSearchParams(location.search).get("position");
     if (!positionId || !Array.isArray(positions)) return;
     const target = positions.find((p) => String(p.id) === positionId && isOpenPosition(p));
-    if (target) setHighlightedPositionId(String(target.id));
+    if (target) {
+      setHighlightedPositionId(String(target.id));
+      // ST-01 (BLG-FE-260, v9.17): the deep link also opens that row's details.
+      setExpandedIds((prev) => new Set(prev).add(String(target.id)));
+    }
     navigate(location.pathname, { replace: true });
   }, [location.search, location.pathname, positions, navigate]);
 
@@ -787,7 +1075,14 @@ export default function Positions() {
   };
 
   const allPositions = positions || [];
-  const openPositions = allPositions.filter((p) => p.status === "open");
+  // ST-01 (BLG-FE-260, v9.17): the Table and Grid views follow the urgency order
+  // (src/lib/positionUrgency.js). A deep link does not change it.
+  // The Daily Position Monitor keeps the API order (newest entry first); it is not
+  // part of the decision-first table.
+  const openPositionsByEntry = useMemo(() => allPositions.filter((p) => p.status === "open"), [positions]); // eslint-disable-line react-hooks/exhaustive-deps
+  const openPositions = useMemo(() => sortByUrgency(openPositionsByEntry), [positions]); // eslint-disable-line react-hooks/exhaustive-deps
+  const openTradePlan = (position) =>
+    navigate(`/TradePlan?position_id=${position.id}&ticker=${position.ticker}&market=${position.market}`);
 
   return (
     <div className="space-y-6">
@@ -853,7 +1148,7 @@ export default function Positions() {
 
             {/* ST-12 (BLG-FE-247, v9.15): Daily Position Monitor entry point,
                 moved here from the removed legacy Dashboard (ESC-EXEC-20261104-05 (a)). */}
-            <DailyMonitor positions={openPositions} isLoading={isLoading} />
+            <DailyMonitor positions={openPositionsByEntry} isLoading={isLoading} />
 
             <Link to={createPageUrl("TradeEntry")}>
               <Button className="bg-gradient-to-r from-cyan-500 to-violet-500 hover:from-cyan-400 hover:to-violet-400 text-white border-0 shadow-lg shadow-violet-500/25">
@@ -913,251 +1208,107 @@ export default function Positions() {
           ))}
         </div>
       ) : (
-        <DataTable>
-          <TableHeader>
-            <TableHead>Ticker</TableHead>
-            <TableHead>Entry Price</TableHead>
-            <TableHead>Current Price</TableHead>
-            <TableHead title="Initial stop (entry) / Current trailing stop (computed)">
-              <span className="inline-flex items-center gap-1">
-                Stop
-                <TrailingStopExplainerIcon />
-              </span>
-            </TableHead>
-            <TableHead>Shares</TableHead>
-            <TableHead className="text-right">P&amp;L (GBP)</TableHead>
-            <TableHead className="text-right">P&amp;L %</TableHead>
-            <TableHead>Days</TableHead>
-            {/* ST-01 (IT-01): Lifecycle state badge column */}
-            <TableHead title="Position lifecycle state">State</TableHead>
-            <TableHead>Grace</TableHead>
-            <TableHead title="Days until next earnings">Earnings</TableHead>
-            {/* ST-05 (v6.2) / ST-02 (v6.9): Alerts column — Risk-Off + Gap Risk badges, stacked */}
-            <TableHead>Alerts</TableHead>
-            {/* ST-15 (v7.0, BLG-FEAT-68): Last Reviewed — position review cadence nudge */}
-            <TableHead>Last Reviewed</TableHead>
-            <TableHead>Actions</TableHead>
-          </TableHeader>
+        <div className="space-y-2">
+          {/* ST-01 (BLG-FE-260, v9.17): the order is the urgency order; headers are not sortable */}
+          <p data-testid="urgency-caption" className="text-xs text-app-muted">
+            Sorted by what needs attention first
+          </p>
+          <DataTable>
+            <TableHeader>
+              <TableHead className="w-12 px-3"><span className="sr-only">Details</span></TableHead>
+              <TableHead>Ticker</TableHead>
+              <TableHead>Price</TableHead>
+              <TableHead title="Current trailing stop (computed)">
+                <span className="inline-flex items-center gap-1">
+                  Stop
+                  <TrailingStopExplainerIcon />
+                </span>
+              </TableHead>
+              <TableHead title="Distance from the price to the trailing stop, in R and %">To stop</TableHead>
+              <TableHead className="text-right">P&amp;L %</TableHead>
+              <TableHead>Action needed</TableHead>
+              <TableHead>Actions</TableHead>
+            </TableHeader>
 
-          <TableBody>
-            {openPositions.map((position) => {
-              // P&L is already calculated in GBP by backend
-              const pnl = position.pnl || 0;
-              const pnlPercent = position.pnl_percent || 0;
-              const isProfit = pnl >= 0;
-              const daysHeld = differenceInDays(
-                new Date(),
-                new Date(position.entry_date)
-              );
+            <TableBody>
+              {openPositions.map((position) => {
+                // ST-06 (BLG-FE-182): all cells below format via src/lib/format.js
+                const currency = currencyForMarket(position.market);
+                const id = String(position.id);
+                const expanded = expandedIds.has(id);
+                const highlighted = highlightedPositionId === id;
 
-              // ST-06 (BLG-FE-182): all cells below format via src/lib/format.js
-              const currency = currencyForMarket(position.market);
+                return (
+                  <Fragment key={position.id}>
+                    <TableRow
+                      data-position-id={position.id}
+                      data-testid="position-row"
+                      data-highlighted={highlighted ? "true" : undefined}
+                      className={highlighted ? "ring-2 ring-cyan-500" : undefined}
+                    >
+                      <TableCell className="w-12 px-3">
+                        <ExpandChevron position={position} expanded={expanded} onToggle={toggleExpanded} />
+                      </TableCell>
 
-              // Use native prices for display
-              const displayCurrentPrice =
-                position.current_price_native || position.current_price;
-              const displayStopPrice =
-                position.stop_price_native || position.stop_price;
-
-              // ST-01 (BLG-FEAT-46): trailing stop breach detection
-              // ST-02 (BLG-BE-103, v8.9): trailBreached stays on GBP-basis values (both
-              // sides GBP) — only the rendered value below needs the native counterpart,
-              // since it is displayed next to the native currencySymbol.
-              const trailStop = position.current_trailing_stop;
-              const trailStopNative = position.current_trailing_stop_native;
-              const currentPriceGbp = position.current_price;
-              const trailBreached =
-                trailStop > 0 && currentPriceGbp > 0 && currentPriceGbp <= trailStop;
-
-              return (
-                <TableRow
-                  key={position.id}
-                  data-position-id={position.id}
-                  data-highlighted={highlightedPositionId === String(position.id) ? "true" : undefined}
-                  className={highlightedPositionId === String(position.id) ? "ring-2 ring-cyan-500" : undefined}
-                >
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <span className="font-semibold text-slate-900 dark:text-white">
-                        {position.ticker}
-                      </span>
-                      <span className="text-xs px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
-                        {position.market}
-                      </span>
-                    </div>
-                  </TableCell>
-
-                  <TableCell className="text-slate-700 dark:text-slate-300">
-                    {formatCurrency(position.entry_price, { currency })}
-                  </TableCell>
-
-                  <TableCell className="text-slate-700 dark:text-slate-300">
-                    {formatCurrency(displayCurrentPrice || null, { currency })}
-                    {position.price_is_stale === true && <StaleMarker explanation={STALE_EXPLANATION_POSITIONS} />}
-                  </TableCell>
-
-                  {/* ST-01 (BLG-FEAT-46): two-line stop cell — initial stop / trailing stop + breach badge */}
-                  <TableCell className="text-app-negative font-medium">
-                    <div className="flex flex-col gap-0.5 leading-tight">
-                      <span className="text-xs text-slate-600 dark:text-slate-400">
-                        Init: {formatCurrency(position.initial_stop, { currency })}
-                      </span>
-                      <div className="flex items-center gap-1.5">
-                        {/* ST-06 (BLG-FE-193, v9.10): per-row stop details tooltip */}
-                        <StopDetailsTrigger position={position} currency={currency}>
-                          {trailStopNative > 0 ? formatCurrency(trailStopNative, { currency }) : formatCurrency(displayStopPrice, { currency })}
-                        </StopDetailsTrigger>
-                        {/* ST-09 (v7.0, BLG-FE-96): breach badge — visible when price <= trailing stop, spec colour/label */}
-                        {trailBreached && (
-                          <span
-                            className="inline-flex items-center gap-0.5 text-xs px-1.5 py-0.5 rounded-full bg-orange-600 text-white font-medium"
-                            title="Trailing stop breach: current price is at or below trailing stop level"
-                            aria-label="Trailing stop breach: current price is at or below trailing stop level"
-                            data-testid="breach-badge"
-                          >
-                            ⚠ BREACH
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          <span className="font-semibold text-slate-900 dark:text-white">
+                            {position.ticker}
                           </span>
-                        )}
-                      </div>
-                      {/* ST-06 (BLG-FE-193, v9.10): always-visible stop provenance line */}
-                      <StopProvenanceLine position={position} currency={currency} />
-                    </div>
-                  </TableCell>
+                          <MarketPill market={position.market} />
+                        </div>
+                      </TableCell>
 
-                  <TableCell className="text-slate-700 dark:text-slate-300">
-                    {position.shares}
-                  </TableCell>
+                      <TableCell className="text-slate-700 dark:text-slate-300">
+                        <PriceValue position={position} currency={currency} />
+                      </TableCell>
 
-                  <TableCell className="text-right">
-                    <div
-                      className={cn(
-                        "inline-flex items-center gap-1.5 font-medium",
-                        isProfit ? "text-app-positive" : "text-app-negative"
-                      )}
-                    >
-                      {isProfit ? (
-                        <TrendingUp className="w-4 h-4" />
-                      ) : (
-                        <TrendingDown className="w-4 h-4" />
-                      )}
-                      {formatCurrency(pnl, { currency: "GBP", signed: true })}
-                    </div>
-                  </TableCell>
+                      <TableCell className="text-app-negative font-medium">
+                        <StopValue position={position} currency={currency} />
+                      </TableCell>
 
-                  <TableCell className="text-right">
-                    <span
-                      className={cn(
-                        "text-sm font-medium",
-                        isProfit ? "text-app-positive" : "text-app-negative"
-                      )}
-                    >
-                      {formatPercent(pnlPercent, { signed: true })}
-                    </span>
-                  </TableCell>
+                      <TableCell>
+                        <StopDistance position={position} />
+                      </TableCell>
 
-                  <TableCell className="text-slate-600 dark:text-slate-400">{daysHeld}</TableCell>
+                      <TableCell className="text-right">
+                        <PnlPercent position={position} />
+                      </TableCell>
 
-                  {/* ST-01 (IT-01): Lifecycle state badge */}
-                  <TableCell>
-                    {(position.lifecycle_state || position.position_state) ? (
-                      <LifecycleBadge
-                        state={position.lifecycle_state || position.position_state}
-                        daysInState={position.days_in_state}
-                        graceDaysRemaining={position.grace_days_remaining}
-                        lifecycleReason={position.lifecycle_reason}
-                      />
-                    ) : (
-                      <span className="text-slate-600 text-xs">—</span>
+                      <TableCell>
+                        <ActionNeeded position={position} />
+                      </TableCell>
+
+                      <TableCell>
+                        <PositionActions
+                          position={position}
+                          onEdit={setEditingPosition}
+                          onExit={setExitingPosition}
+                          onTrail={setTrailStopPosition}
+                          onRecheck={setRecheckingPosition}
+                          onTradePlan={openTradePlan}
+                        />
+                      </TableCell>
+                    </TableRow>
+                    {/* Expanded row: no animation (design record §3.2) */}
+                    {expanded && (
+                      <tr
+                        id={`position-detail-${position.id}`}
+                        data-testid="position-detail"
+                        data-detail-for={position.ticker}
+                        className="bg-slate-50/60 dark:bg-slate-800/20"
+                      >
+                        <td colSpan={8} className="px-6 py-4">
+                          <PositionDetailGrid position={position} currency={currency} drawdownActive={drawdownActive} />
+                        </td>
+                      </tr>
                     )}
-                  </TableCell>
-
-                  {/* BLG-FEAT-06: Grace Days Remaining */}
-                  <TableCell>
-                    {position.grace_days_remaining !== null &&
-                    position.grace_days_remaining !== undefined ? (
-                      <span className="text-xs font-medium px-2 py-1 rounded-lg bg-amber-500/15 text-amber-800 dark:text-amber-400 border border-amber-500/25 whitespace-nowrap">
-                        Day {(position.holding_days ?? 0) + 1} of {GRACE_PERIOD_DAYS}
-                      </span>
-                    ) : (
-                      <span className="text-slate-600">—</span>
-                    )}
-                  </TableCell>
-
-                  <PositionEarningsCell ticker={position.ticker} market={position.market} />
-
-                  <TableCell>
-                    <AlertsCell position={position} />
-                  </TableCell>
-
-                  <LastReviewedCell position={position} drawdownActive={drawdownActive} />
-
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"
-                        aria-label={`Edit ${position.ticker}`}
-                        onClick={() => setEditingPosition(position)}
-                      >
-                        <Edit2 className="w-4 h-4" />
-                      </Button>
-
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        title="Trade Plan"
-                        className="h-8 w-8 text-cyan-700 dark:text-cyan-500/70 hover:text-cyan-800 dark:hover:text-cyan-400 hover:bg-cyan-500/10"
-                        onClick={() => navigate(`/TradePlan?position_id=${position.id}&ticker=${position.ticker}&market=${position.market}`)}
-                      >
-                        <BookOpen className="w-4 h-4" />
-                      </Button>
-
-                      {/* ST-03 (IT-03): View Trail (renamed from Trail Stop, ST-10 Branch B) — shown for PROFITABLE/EXIT ZONE; disabled when no stop */}
-                      {(position.lifecycle_state === "PROFITABLE" || position.lifecycle_state === "EXIT ZONE" ||
-                        position.position_state === "PROFITABLE" || position.position_state === "EXIT ZONE") && (
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          title={(!position.current_stop && !position.stop_price) ? "No stop is recorded for this position yet, so there is no trail to compare." : "View Trail"}
-                          aria-label="View Trail"
-                          disabled={!position.current_stop && !position.stop_price}
-                          className="h-8 w-8 text-violet-700 dark:text-violet-400 hover:text-violet-800 dark:hover:text-violet-300 hover:bg-violet-500/10 disabled:opacity-40"
-                          onClick={() => setTrailStopPosition(position)}
-                        >
-                          <ArrowUpDown className="w-4 h-4" />
-                        </Button>
-                      )}
-
-                      {/* ST-01 (v6.9, BLG-FEAT-64): Recheck Compliance — on-demand SI-01 recheck */}
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        title="Recheck Compliance"
-                        aria-label={`Recheck compliance for ${position.ticker}`}
-                        data-testid="recheck-compliance-button"
-                        className="h-8 w-8 text-amber-700 dark:text-amber-400/80 hover:text-amber-800 dark:hover:text-amber-300 hover:bg-amber-500/10"
-                        onClick={() => setRecheckingPosition(position)}
-                      >
-                        <Zap className="w-4 h-4" />
-                      </Button>
-
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8 text-rose-700 dark:text-rose-400 hover:text-rose-800 dark:hover:text-rose-300 hover:bg-rose-500/10"
-                        aria-label={`Exit ${position.ticker}`}
-                        onClick={() => setExitingPosition(position)}
-                      >
-                        <LogOut className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              );
-            })}
-          </TableBody>
-        </DataTable>
+                  </Fragment>
+                );
+              })}
+            </TableBody>
+          </DataTable>
+        </div>
       )}
       </DataState>
 

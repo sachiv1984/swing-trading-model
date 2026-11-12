@@ -31,6 +31,7 @@
 'use strict';
 
 const { test, expect } = require('./fixtures/api-status-guard');
+const { expandAllPositionRows } = require('./fixtures/positions-table');
 
 const API = 'http://localhost:8000';
 
@@ -99,6 +100,8 @@ async function goToTableView(page) {
   const tableBtn = page.locator('[aria-label="Table view"]');
   if (await tableBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
     await tableBtn.click();
+    // ST-01 (BLG-FE-260, v9.17): State lives in the expanded row.
+    await expandAllPositionRows(page);
   }
 }
 
@@ -107,12 +110,13 @@ async function goToTableView(page) {
 // ---------------------------------------------------------------------------
 
 test.describe('ST-01 — Position lifecycle state badge', () => {
-  test('SC-LS-01: "State" column header present in table view', async ({ page }) => {
+  // ST-01 (BLG-FE-260, v9.17): State moved from a column to the expanded row.
+  test('SC-LS-01: "State" field present in the table view expanded row', async ({ page }) => {
     await stubCommon(page);
     await setupPositions(page, [makePosition({ lifecycle_state: 'PROFITABLE', days_in_state: 3 })]);
     await goToTableView(page);
     await expect(page.getByText('NVDA')).toBeVisible({ timeout: 8000 });
-    await expect(page.locator('th', { hasText: 'State' })).toBeVisible();
+    await expect(page.getByTestId('position-detail').locator('dt', { hasText: /^State$/ })).toBeVisible();
   });
 
   test('SC-LS-02: GRACE badge renders calendar days of grace left', async ({ page }) => {

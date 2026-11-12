@@ -28,6 +28,7 @@
 'use strict';
 
 const { test, expect } = require('./fixtures/api-status-guard');
+const { expandAllPositionRows } = require('./fixtures/positions-table');
 
 const API = 'http://localhost:8000';
 
@@ -393,6 +394,8 @@ test('VS-14: Positions table PositionEarningsCell has text-amber-400 class when 
   // Switch to table view to reveal PositionEarningsCell
   await page.getByRole('button', { name: 'Table view' }).click();
   await page.waitForSelector('table', { timeout: 5000 });
+  // ST-01 (BLG-FE-260, v9.17): Earnings lives in the expanded row.
+  await expandAllPositionRows(page);
 
   // PositionEarningsCell renders "⚠ 2d" with text-amber-400 class when days ≤ 5
   const cell = page.locator('span').filter({ hasText: /⚠\s*2d/ }).first();

@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-12 (session — 3 new items added: BLG-SPEC-230, BLG-SPEC-231, BLG-FE-288; v9.17 Sprint Planning pre-seal filings); prior — 2026-11-12 (session — 1 new item added: BLG-GOV-421; prompt size budget enforcement for direct-to-main commits); prior — 2026-11-12 (session — 3 new items added: BLG-BE-213, BLG-BE-214, BLG-GOV-420; BLG-BE-208 expanded to six copies and raised to P2; post-v9.16 quality review); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-12 (session — 2 new items added: BLG-SPEC-232, BLG-FE-289; v9.17 ST-01 pre-commit code review); prior — 2026-11-12 (session — 3 new items added: BLG-SPEC-230, BLG-SPEC-231, BLG-FE-288; v9.17 Sprint Planning pre-seal filings); prior — 2026-11-12 (session — 1 new item added: BLG-GOV-421; prompt size budget enforcement for direct-to-main commits); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -6374,5 +6374,50 @@ At v9.17 Sprint Planning, `BLG-FE-265`'s sweep was bounded to `src/pages/` in fu
 **Acceptance Criteria**
 - No bare `text-white` remains in `src/components/` outside coloured fills
 - axe `color-contrast` still passes in the light theme on every routed page
+
+---
+
+### BLG-SPEC-232 — Decide one basis for the Positions "To stop" % so it matches the Risk Dashboard
+**Priority:** P3 (Low)
+**Type:** Spec Debt
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** ST-01 / EPIC-01 pre-commit `/code-review`, `2026-11-11__release-v9.17` — 2026-11-12
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+`positions.md` v2.25 §Stop Distance defines the "To stop" % on the GBP basis of the breach test (`current_price`, `current_trailing_stop`), and ST-01 built it that way. The Risk Dashboard's Stop Dist % moved to the API's native `stop_distance_pct` in `BLG-BE-155`, because the GBP figures mix entry FX with live FX. After an FX move, a US position can be "Near stop" (≤ 5%, red) on Positions and amber on the Risk Dashboard. The cell's native R can also disagree with its GBP %. The urgency sort uses the same %.
+
+**Scope**
+- Decide whether §Stop Distance and the near-stop tier should use the native basis (or the API's `stop_distance_pct`), as `risk_dashboard.md` §6 does
+- Update `positions.md` and, if the basis changes, `src/lib/positionUrgency.js` (`stopDistancePct`)
+
+**Acceptance Criteria**
+- `positions.md` §Stop Distance names one basis, and it matches `risk_dashboard.md` §6
+- For a US position whose FX has moved since entry, Positions and the Risk Dashboard show the same % (Playwright)
+
+---
+
+### BLG-FE-289 — Share the breach test and exit pills across the Positions decision-first table
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Head of Engineering
+**Source:** ST-01 / EPIC-01 pre-commit `/code-review`, `2026-11-11__release-v9.17` — 2026-11-12
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+ST-01 left three small copies of shared logic. The BREACH badge (`StopValue` in `src/pages/Positions.js`) repeats the breach test inline with no grace check, while the urgency tier uses `isPostGraceStopBreach` (`grace_period === false`). If `grace_period` is null or missing, the badge shows a breach but the row is not ranked "Stop reached". The RISK OFF and STOP REACHED pills are hand-copied in `ActionNeeded`, `AlertsCell` and `TodayList.js`, so a colour or contrast fix must find every copy. `expandedIds` keeps the IDs of positions that have since closed.
+
+**Scope**
+- Use one breach predicate (from `src/lib/exitCondition.js`) for the badge and the tier
+- Extract one RISK OFF pill and one STOP REACHED pill component, keeping `AlertsCell`'s `title` and `aria-label`, and use them in all three places
+- Drop expanded IDs that are no longer in the open-position list
+
+**Acceptance Criteria**
+- The badge and the tier call the same predicate
+- Each pill label has one component, used in `Positions.js` and `TodayList.js`
+- The expanded set holds only open-position IDs
+- The SC-POSDF, SC-TSC and SC-TL Playwright scenarios pass
 
 ---

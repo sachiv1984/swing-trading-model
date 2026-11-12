@@ -26,6 +26,7 @@
 'use strict';
 
 const { test, expect } = require('./fixtures/api-status-guard');
+const { expandAllPositionRows } = require('./fixtures/positions-table');
 
 const API = 'http://localhost:8000';
 
@@ -283,15 +284,18 @@ test.describe('Positions — Earnings column and proximity warning', () => {
     await page.getByRole('button', { name: 'Table view' }).click();
     // Wait for table to render
     await page.waitForSelector('table', { timeout: 5000 });
+    // ST-01 (BLG-FE-260, v9.17): Earnings lives in the expanded row.
+    await expandAllPositionRows(page);
   }
 
-  test('SC-EARN-07: Positions table view has Earnings column header', async ({ page }) => {
+  // ST-01 (BLG-FE-260, v9.17): Earnings moved from a column to the expanded row.
+  test('SC-EARN-07: Positions table view shows an Earnings field in the expanded row', async ({ page }) => {
     await setupPositions(page, NULL_EARNINGS);
     await goto(page, '/#/Positions');
 
     await expect(page.getByText('NVDA')).toBeVisible({ timeout: 8000 });
     await switchToTableView(page);
-    await expect(page.getByRole('columnheader', { name: /earnings/i })).toBeVisible();
+    await expect(page.getByTestId('position-detail').locator('dt', { hasText: /^Earnings$/ })).toBeVisible();
   });
 
   test('SC-EARN-08: Positions table row shows amber warning when earnings ≤5 days away', async ({ page }) => {

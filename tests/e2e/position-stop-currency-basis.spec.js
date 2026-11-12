@@ -26,6 +26,7 @@
  */
 
 const { test, expect } = require("./fixtures/api-status-guard");
+const { expandPositionRow } = require("./fixtures/positions-table");
 
 // US-market profitable position: entry $100, live $120, breakeven-floored
 // native stop $100.00. GBP-converted counterpart at fx_rate 1.30 is $76.92 —
@@ -136,8 +137,13 @@ test.describe("Trailing Stop Currency Basis — US-market position (V-CURR-01, V
     await page.waitForTimeout(300);
 
     const row = page.getByRole("row").filter({ hasText: "WDC" });
-    await expect(row.getByText("Init: $80.00")).toBeVisible();
-    await expect(row.getByText("$100.00").first()).toBeVisible();
+    // ST-01 (BLG-FE-260, v9.17): the initial stop moved to the expanded row;
+    // the Stop column shows the live trailing stop.
+    await expect(row.getByTestId("stop-value").getByText("$100.00")).toBeVisible();
+    const detail = await expandPositionRow(page, "WDC");
+    await expect(detail.getByText("$80.00")).toBeVisible();
+    // The GBP-converted value must not appear in the expanded row either.
+    await expect(detail.getByText("$76.92")).toHaveCount(0);
     await expect(row.getByText("$76.92")).toHaveCount(0);
   });
 });
@@ -163,7 +169,10 @@ test.describe("Trailing Stop Currency Basis — UK-market position (V-CURR-03, V
     await page.waitForTimeout(300);
 
     const row = page.getByRole("row").filter({ hasText: "VOD.L" });
-    await expect(row.getByText("Init: £80.00")).toBeVisible();
-    await expect(row.getByText("£90.00").first()).toBeVisible();
+    // ST-01 (BLG-FE-260, v9.17): the initial stop moved to the expanded row;
+    // the Stop column shows the live trailing stop.
+    await expect(row.getByTestId("stop-value").getByText("£90.00")).toBeVisible();
+    const detail = await expandPositionRow(page, "VOD.L");
+    await expect(detail.getByText("£80.00")).toBeVisible();
   });
 });
