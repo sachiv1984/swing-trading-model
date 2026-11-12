@@ -992,7 +992,9 @@ Documentation-only requirements baseline for this table-based page — no implem
 - **Backlog reference:** BLG-FE-06 (filed delivery verification 2026-03-30, cycle 2026-03-24__release-v2.3)
 - **Resolution:** Resolved by ST-04, cycle 2026-03-31__release-v2.4 (shipped 2026-04-03). P&L (GBP) column added. Changelog: docs/product/changelog.md#v24
 
-### DEV-EPIC01-ST04-01 — Grace Period View: trade plan shown only for positions within 2 days of the end of grace
+### Grace Period View: trade plan shown only for positions within 2 days of the end of grace
+
+**DEV-EPIC01-ST04-01**
 
 - **Description:** §Grace Period View lists every in-grace position and joins each to `GET /positions/grace-period-alerts` for its trade plan summary. That endpoint returns only positions with `grace_days_remaining ≤ 2` (`grace_period_alert_endpoint.md`), so a position with 3 or more days left has no alert row, and the view cannot tell whether a plan is linked. Those rows show no trade plan line and no "View Trade Plan" link, rather than a "No trade plan linked." that may be wrong. Rows with 2 days or fewer left are as specified. Found by the ST-04 pre-commit code review, cycle `2026-11-11__release-v9.17`.
 - **Canonical requirement:** §Grace Period View, Row: "the trade plan block (Thesis, Stop, R-target) or "No trade plan linked." · "View Trade Plan" link when linked", for every in-grace position.

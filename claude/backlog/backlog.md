@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-12 (session — 3 new items added: BLG-BE-215, BLG-FE-291, BLG-SPEC-234; v9.17 ST-04 pre-commit code review); prior — 2026-11-12 (session — 2 new items added: BLG-FE-290, BLG-SPEC-233; v9.17 ST-02 pre-commit code review); prior — 2026-11-12 (session — 2 new items added: BLG-SPEC-232, BLG-FE-289; v9.17 ST-01 pre-commit code review); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-12 (session — 2 new items added: BLG-SPEC-235, BLG-FE-292; v9.17 EPIC-01 agent-mediated DoQ review and follow-up code review); prior — 2026-11-12 (session — 3 new items added: BLG-BE-215, BLG-FE-291, BLG-SPEC-234; v9.17 ST-04 pre-commit code review); prior — 2026-11-12 (session — 2 new items added: BLG-FE-290, BLG-SPEC-233; v9.17 ST-02 pre-commit code review); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -6530,5 +6530,52 @@ Three grace rules disagree after ST-04. First, `risk_dashboard.md` v0.1.16 §5.2
 - `risk_dashboard.md` §5.2 states the shipped next-end wording, or a frontend item is filed to change the code
 - `positions.md` uses one grace day convention throughout
 - `positions.md` §Grace Period View names a per-position row ID
+
+---
+
+### BLG-SPEC-235 — Decide whether the grace view lists positions whose grace has just ended
+**Priority:** P3 (Low)
+**Type:** Spec Debt
+**Owner:** Frontend Specifications & UX Documentation Owner; Head of UX & Design
+**Source:** EPIC-01 agent-mediated Director of Quality review (ST-04), `2026-11-11__release-v9.17` — 2026-11-12
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`positions.md` §Grace Period View says the view lists "every open position in grace (`grace_period === true`)" and also carries over the `grace_days_remaining = 0` sentence ("Grace period has ended…"). A position at 0 days has `grace_period === false` in `GET /positions`, so that sentence can only appear if the view also lists alert rows. ST-04 lists them: a grace-period alert whose position is not flagged in grace is shown, as is any alert while `GET /positions` is empty. As a result, the Positions strip can count one more position than the Risk Dashboard panel and Dashboard Card 3, which count `grace_period` positions only. With the SC-POSGV fixture, the strip reads "5 positions in grace" and the panel reads "4 positions in grace period". Two related copy points came from the follow-up code review. First, the carried-over body sentence says "Your grace period ends in 1 day" when `grace_days_remaining` is 1, while the same row reads "Day 10 of 10", the table says "Grace ends today", and the Risk panel says "Ends today". Second, the expanded row's Grace pill shows a "Day N of 10" badge for any non-null `grace_days_remaining`, even after grace has ended (see also BLG-SPEC-234's day-convention point).
+
+**Scope**
+- Decide whether the grace view (and its strip count) includes just-ended positions, or whether the count and the list should differ
+- Record the rule in `positions.md` §Grace Period View, and in `risk_dashboard.md` §5.2 and `dashboard.md` Card 3 if their counts change
+- Settle the days-left sentence for `grace_days_remaining = 1` (for example "Your grace period ends today.") and whether the expanded-row Grace pill shows after grace ends
+- File a frontend item if the code must change
+
+**Acceptance Criteria**
+- `positions.md` §Grace Period View states which positions it lists and what the strip counts
+- The Positions strip, Risk Dashboard panel and Card 3 counts agree for the same data, or the spec explains why they differ
+
+---
+
+### BLG-FE-292 — Fix four small gaps in the Positions decision-first code
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Head of Engineering
+**Source:** EPIC-01 pre-commit `/code-review` of the ST-04 contrast fix (branch-wide findings in ST-01 and ST-03 code), `2026-11-11__release-v9.17` — 2026-11-12
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+Four small gaps in the v9.17 Positions code. First, `stopDistanceR` (`src/lib/positionUrgency.js`) has no `stop > 0` guard, unlike `stopDistancePct`. With `current_trailing_stop_native = 0` it reports a large made-up R (for example "10.4R · —"). Second, when there is no trailing stop, `StopValue` falls back to `stop_price`, but `StopDistance` and the urgency tier read only `current_trailing_stop`. That row shows a stop but gets no distance and sorts last in tier 4. Third, the `drawdown-status` query is written out twice in `src/pages/Positions.js`, in `PositionsWarningStrip` and `Positions()`, under one cache key. A nearby comment also still names the removed `DrawdownReviewPrompt`. Fourth, `?grace=open` stays in the URL, so following the same link again while on Positions does not re-open or re-scroll a collapsed grace entry.
+
+**Scope**
+- Guard `stopDistanceR` on a positive stop
+- Decide with the spec owner whether the distance and tier use the `stop_price` fallback, and apply the decision
+- Extract one `useDrawdownStatus()` hook and fix the stale comment
+- Drop `?grace=open` after it is handled, as `?position=` does, or re-open the entry on each arrival
+
+**Acceptance Criteria**
+- A position with `current_trailing_stop_native = 0` shows "—" for R (unit or Playwright test)
+- One `drawdown-status` query definition remains in `Positions.js`
+- Following `/Positions?grace=open` twice re-opens a collapsed grace entry (Playwright)
 
 ---

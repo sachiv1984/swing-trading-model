@@ -463,10 +463,12 @@ function PositionsWarningStrip({ positions, graceDeepLink }) {
   // grace-period alerts; when GET /positions has none (loading or failed), the
   // alerts alone supply them.
   const graceSource = useMemo(() => graceRows(positions, graceAlerts), [positions, graceAlerts]);
-  const graceDays = graceSource.map((p) => p.grace_days_remaining).filter((d) => d !== null && d !== undefined);
+  // A row at 0 days has already ended ("Grace period has ended"), so it does not
+  // set the next end date.
+  const graceDays = graceSource.map((p) => p.grace_days_remaining).filter((d) => d !== null && d !== undefined && d >= 1);
   // grace_days_remaining = 1 is the last day ("Grace ends today", Day 10 of 10),
   // so the end date is today + (days remaining − 1).
-  const nextGraceEnd = graceDays.length ? addDays(new Date(), Math.max(0, Math.min(...graceDays) - 1)) : null;
+  const nextGraceEnd = graceDays.length ? addDays(new Date(), Math.min(...graceDays) - 1) : null;
   const concentrationBreaches =
     (concentration?.breaching_positions?.length || 0) + (concentration?.breaching_sectors?.length || 0);
 

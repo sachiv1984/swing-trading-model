@@ -47,17 +47,20 @@ export default function GracePeriodPanel({ positions = [], error }) {
       ) : gracePosts.length === 0 ? (
         <p className="text-sm text-slate-600 dark:text-slate-400 italic">No positions currently in grace period.</p>
       ) : (
-        <div className="space-y-3">
+        // An opaque inset with paired light/dark text, so both lines meet WCAG AA
+        // contrast in both themes. The panel's own surface is a translucent
+        // gradient, which turns mid-grey in light mode.
+        <div className="space-y-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2.5">
           {nextEnds && (
-            <p className="text-sm text-slate-300" data-testid="grace-panel-next-ends">{nextEnds}</p>
+            <p className="text-sm text-slate-900 dark:text-white" data-testid="grace-panel-next-ends">{nextEnds}</p>
           )}
           <Link
             to={`${createPageUrl("Positions")}?grace=open`}
             data-testid="grace-panel-link"
-            className="inline-flex items-center gap-1 text-sm font-medium text-amber-400 hover:text-amber-300 underline-offset-2 hover:underline"
+            className="inline-flex items-center gap-1 text-sm font-medium text-amber-700 dark:text-amber-400 hover:text-amber-800 dark:hover:text-amber-300 underline underline-offset-2"
           >
             View grace periods on Positions
-            <ChevronRight size={14} className="text-slate-600 dark:text-slate-400" aria-hidden="true" />
+            <ChevronRight size={14} aria-hidden="true" />
           </Link>
         </div>
       )}

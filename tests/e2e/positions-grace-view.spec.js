@@ -112,7 +112,9 @@ test.describe('Single grace view (ST-04, BLG-FE-257)', () => {
     await expect(a.getByRole('link', { name: /View Trade Plan/ })).toHaveCount(0);
     await expect(view.getByTestId('grace-row-OTHR')).toHaveCount(0);
 
-    // The strip summary counts the same four rows.
+    // The strip counts the five rows: the four in-grace positions plus the alert
+    // whose grace has just ended (EEEE). The Risk Dashboard counts grace_period
+    // positions only, so it reads 4 (SC-POSGV-06; BLG-SPEC-235).
     await expect(page.getByTestId('warning-entry-grace').getByTestId('warning-summary')).toHaveText(/^5 positions in grace · next ends /);
   });
 
@@ -199,6 +201,12 @@ test.describe('Single grace view (ST-04, BLG-FE-257)', () => {
         .include('[data-testid="grace-panel-next-ends"]')
         .withRules(['color-contrast']).analyze();
       expect(results.violations).toEqual([]);
+      // axe cannot rate text over a translucent or gradient background and
+      // reports it as "incomplete", not as a violation. Require a definite
+      // pass for both lines.
+      expect(results.incomplete).toEqual([]);
+      // Both lines (the next-end text and the link text) were rated and passed.
+      expect(results.passes.flatMap((r) => r.nodes).length).toBeGreaterThanOrEqual(2);
     });
   }
 });

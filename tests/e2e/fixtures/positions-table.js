@@ -100,7 +100,8 @@ const BREACH = makePosition({
   id: 'pos-brc', ticker: 'BRCH', current_price: 98, current_price_native: 98, pnl: -20, pnl_percent: -2,
   lifecycle_state: 'LOSING', position_state: 'LOSING',
 });
-// Tier 3 (near stop): 4.0% from the stop. R = (104 − 100) ÷ (100 − 90) = 0.4R.
+// Tier 3 (near stop): 3.8% from the stop on the price basis ((104 − 100) ÷ 104).
+// R = (104 − 100) ÷ (100 − 90) = 0.4R.
 const NEAR = makePosition({
   id: 'pos-nea', ticker: 'NEAR', current_price: 104, current_price_native: 104, pnl: 40, pnl_percent: 4,
 });
