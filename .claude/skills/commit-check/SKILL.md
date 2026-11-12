@@ -173,6 +173,26 @@ Per CLAUDE.md §2 — omitting any of these four steps is a process deviation.
 
 ---
 
+### Check 11 — Code review and change impact before commit
+
+This check fires when any staged file is implementation code: `backend/**/*.py` (outside `tests/`), `src/**`, `.github/workflows/**`, or any `.env*` file. It does not fire for a commit that stages only tests or docs.
+
+Why (added 2026-11-12, Head of Specs Team, after the v9.16 review): most v9.16 defects were found by agent-mediated PR reviews *after* the story was committed, and two fixes caused new defects nobody looked for. ST-16 made a crashing US exit succeed, which created BLG-BE-209. ST-12 removed the client-side `HAS_AI` check, which created BLG-FE-287. This check moves that review before the commit.
+
+1. **Run `/code-review` on the staged diff before committing.**
+   - Use **medium** by default.
+   - Use **high** when the diff touches money, FX, data history or secrets: any file that reads or writes `fx_rate`, `entry_fx_rate`, `fill_price`, `entry_price`, `pnl`, `state_history` or a `status` column, plus `backend/routers/portfolio_risk.py`, `backend/utils/pricing.py`, `backend/utils/calculations.py`, `.github/workflows/**`, `.env*`, and any `REACT_APP_*` variable.
+2. **Every finding is fixed in this commit or filed with `/backlog-add`.** Put each filed item's ID in the commit body: `Review: BLG-xx-nnn (<one line>)`, or `Review: clean` if nothing was found.
+3. **State the change's impact in the commit body.** For each behaviour the diff changes, grep for its callers and consumers and list what each one now sees, under an `Impact:` heading. Behaviour changes include: an error path that now succeeds, a guard or gate removed or loosened, a value that can now be NULL, a status or state write added or removed, and a changed return shape. Example: `Impact: exit_position now succeeds for a NULL fill_price; _compute_net_r reads the resulting NULL entry_fx_rate as 1.0 (filed BLG-BE-209).` Write `Impact: none (refactor, no behaviour change)` only when that is true.
+4. **Keep the shared matrices current.**
+   - If the diff adds or changes a native-entry or FX conversion path, `tests/test_fx_market_matrix.py` must cover it.
+   - If the diff adds or changes a trade plan or position status write, `tests/test_lifecycle_transitions.py` must cover it.
+   - If either file has an `xfail` for the backlog item this story fixes, remove the marker in this commit.
+
+**FAIL if:** the review was not run, a finding is neither fixed nor filed, the commit body has no `Review:` or `Impact:` line, or a new FX or status-write path is missing from its matrix.
+
+---
+
 ## Step 4 — Render the result
 
 ```
@@ -194,6 +214,7 @@ Staged files ({n}):
   ✅ Check 5 — No direct commits to main for sprint work
   ✅ Check 6 — No sealed artefacts modified
   ✅ Check 7 — E2E coverage declaration (N/A — no frontend files staged)
+  ✅ Check 11 — Code review and change impact (N/A — no implementation files staged)
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 RESULT: ❌ NOT READY — 1 check failed
@@ -215,6 +236,7 @@ Don't just report failures — help resolve them:
 - **Check 4 fail (§6):** Identify exactly which of the four steps is missing and action it
 - **Check 2 fail (message):** Draft the correct commit message
 - **Check 1 fail (branch):** Explain the correct branch and how to move the changes there
+- **Check 11 fail (review/impact):** Run `/code-review` on the staged diff, fix or file each finding, then draft the `Review:` and `Impact:` lines from the findings and a grep of the changed behaviour's callers
 - **Check 7 fail (E2E):** Ask whether the story has interaction/API-call AC (if yes, identify which scenario IDs need spec coverage and whether a spec file exists or needs creating); if all AC is visual-only, add `E2E: N/A — visual-only AC` to the commit message body
 
 Re-run the checklist after fixes are applied to confirm the commit is clean.
