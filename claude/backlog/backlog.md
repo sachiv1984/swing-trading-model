@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-12 (session — 1 new item added: BLG-GOV-421; prompt size budget enforcement for direct-to-main commits); prior — 2026-11-12 (session — 3 new items added: BLG-BE-213, BLG-BE-214, BLG-GOV-420; BLG-BE-208 expanded to six copies and raised to P2; post-v9.16 quality review); prior — 2026-11-11 (groom backlog GROOM-20261111-01, post-ship closure `2026-11-06__release-v9.16` STEP 12 — 35 items archived; `BLG-GOV-414` and `BLG-GOV-192` bannered; spec-debt deep review marker advanced); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-12 (session — 3 new items added: BLG-SPEC-230, BLG-SPEC-231, BLG-FE-288; v9.17 Sprint Planning pre-seal filings); prior — 2026-11-12 (session — 1 new item added: BLG-GOV-421; prompt size budget enforcement for direct-to-main commits); prior — 2026-11-12 (session — 3 new items added: BLG-BE-213, BLG-BE-214, BLG-GOV-420; BLG-BE-208 expanded to six copies and raised to P2; post-v9.16 quality review); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -6312,5 +6312,67 @@ When Release Planning §1.3a clears a gate in place, bound 2 of the `ESC-CLOSE-2
 - A local commit that pushes a `claude/system/` prompt over its baseline is blocked by the pre-commit hook, with the script's message
 - The workflow runs on pushes to `main`
 - The next post-ship closure after this ships does not raise any baseline in a later PR
+
+---
+
+### BLG-SPEC-230 — Make positions.md name one default Positions view
+**Priority:** P4 (Trivial)
+**Type:** Spec Debt
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** Design gate `2026-11-11__release-v9.17` observation (`design_gate.md` §Notes), filed at Sprint Planning with Product Owner authorisation — 2026-11-12
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`docs/specs/frontend/pages/positions.md` names two different default views. §Table View is headed "Table View (default)" (line ~169), and the §Responsive Behavior table marks **Grid** "(default; v2.25 …)" (line ~912). A reader or test author cannot tell which view the page opens in.
+
+**Scope**
+- Check which view `src/pages/Positions.js` opens in by default (after v9.17 EPIC-01 merges, since ST-01/ST-02 rewrite the page)
+- Correct the heading or table row that disagrees with the shipped default, with a Change Log row
+
+**Acceptance Criteria**
+- `positions.md` names exactly one default view, and it matches the shipped default in `Positions.js`
+
+---
+
+### BLG-SPEC-231 — Rename the Morning Briefing "Positions to Act On" card to "Positions to Watch" in dashboard.md
+**Priority:** P4 (Trivial)
+**Type:** Spec Debt
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** Design gate `2026-11-11__release-v9.17` observation (`design_gate.md` §Notes; first noted in `dashboard.md` v4.0), filed at Sprint Planning with Product Owner authorisation — 2026-11-12
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`docs/specs/frontend/pages/dashboard.md` §1A Morning Briefing still names a "Positions to Act On" card (layout line ~175, Cards table line ~199). The shipped card is "Positions to Watch" (`ExitZoneCard.js`). The drift was noted at v4.0 but never filed, so the spec misnames a live card.
+
+**Scope**
+- Rename the card in §1A's layout line and Cards table to "Positions to Watch", and check that the row's data and empty-state columns match `ExitZoneCard.js`
+- Remove the v4.0 "Observation (not changed here)" note and add a Change Log row
+
+**Acceptance Criteria**
+- `dashboard.md` no longer contains "Positions to Act On"; the §1A card row matches the shipped `ExitZoneCard.js` title and content
+
+---
+
+### BLG-FE-288 — Move the remaining shared components onto the semantic colour tokens
+**Priority:** P3 (Low)
+**Type:** Frontend / design system [U]
+**Owner:** Frontend Specifications & UX Documentation Owner; Head of Engineering
+**Source:** Sprint Planning `2026-11-11__release-v9.17` (RISK-02 boundary decision for ST-08 / `BLG-FE-265`, PMO Lead and Product Owner) — 2026-11-12
+**Effort:** L (~3-4 days)
+**Provisional-Target:** TBD
+**Depends on:** `BLG-FE-265` (v9.17 ST-08, page-level sweep)
+
+**Problem**
+At v9.17 Sprint Planning, `BLG-FE-265`'s sweep was bounded to `src/pages/` in full plus any component that fails axe `color-contrast` on a routed page in the light theme. The component-only remainder was split out here. On 2026-11-11, `src/components/` held 251 `text-white` and 233 `bg-slate-800/900` classes in 87 files. Components left on dark-only classes will regress the light theme wherever they are reused.
+
+**Scope**
+- Replace dark-only colour classes in `src/components/` with the `app-*` semantic tokens (`design_system.md` §Semantic Colour Tokens, §Light-Theme Colour Tokens); remove redundant `dark:` pairs
+- Regenerate visual baselines for both themes
+
+**Acceptance Criteria**
+- No bare `text-white` remains in `src/components/` outside coloured fills
+- axe `color-contrast` still passes in the light theme on every routed page
 
 ---
