@@ -5,14 +5,14 @@
   "invoked_utc": "2026-11-12T13:22:26Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-12T22:40:00Z",
+  "last_updated_utc": "2026-11-12T21:15:00Z",
   "epics": {
     "EPIC-01": {
       "title": "Site Structure & Usability Phase 3: Positions Redesign (build-and-ship)",
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-11-11__release-v9.17/EPIC-01",
       "pr_number": 2256,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-11-11__release-v9.17/qa_evidence_EPIC-01.md",
       "test_scenarios": [
@@ -25,7 +25,7 @@
         "ST-01": {
           "title": "Decision-first Positions table",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2236,
           "branch": "exec/2026-11-11__release-v9.17/EPIC-01",
@@ -50,7 +50,7 @@
         "ST-02": {
           "title": "Card layout for Positions on narrow screens",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2237,
           "branch": "exec/2026-11-11__release-v9.17/EPIC-01",
@@ -76,7 +76,7 @@
         "ST-03": {
           "title": "Combine the four banners above the Positions table into one strip",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2238,
           "branch": "exec/2026-11-11__release-v9.17/EPIC-01",
@@ -101,7 +101,7 @@
         "ST-04": {
           "title": "Show grace period in one place, linked from the others",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2239,
           "branch": "exec/2026-11-11__release-v9.17/EPIC-01",
@@ -149,9 +149,10 @@
   ],
   "open_escalations": {},
   "merge_gate": {
-    "epics_merged": [],
+    "epics_merged": [
+      "EPIC-01"
+    ],
     "epics_pending": [
-      "EPIC-01",
       "EPIC-04",
       "EPIC-07",
       "EPIC-06",
@@ -167,7 +168,8 @@
     "2026-11-12: ST-03 \u2014 99f16e6d failed Playwright E2E (run 43288957471, shard 3/8): SC-LBG-03 asserted the grace alert body on page load, which now sits in the collapsed strip entry. The pre-commit grep for specs asserting on the replaced banners searched headings, labels and dismiss text but not body copy. Fixed in 360bf177.",
     "2026-11-12: EPIC-01 agent-mediated DoQ review (\u00a75.3, user-directed) returned Blocked: one P2 (Risk Dashboard grace panel contrast; SC-POSGV-08 passed vacuously because axe reported the gradient-backed text as incomplete) and five P3 evidence/comment corrections. All applied (d11ff814, QA evidence update); re-review requested (retry 1 of 2).",
     "2026-11-12: EPIC-01 prevention retrospective (user-directed) - Phase 3 friction candidates for STEP 5.4. EPIC-01 filed 12 follow-up items. (1) Six were spec questions the design gate could have settled: a data source that does not return the field for the whole list (BLG-BE-215; the contract states the <= 2 filter), and one value shown on five surfaces specified separately (BLG-SPEC-232..236). Target design_gate_prompt.md STEP 2.2 - data-source check and worked-examples table; filed BLG-GOV-422. (2) Three were edge-input bugs in pure src/lib functions, and the repo runs no frontend unit tests (BLG-FE-289/290/292); filed BLG-QA-262. (3) Tests passed on empty or undecidable data: SC-POSDC-02 mocked compliance empty (BLG-FE-293), and SC-POSGV-08 passed while axe left the lines 'incomplete'. This is the second occurrence after v9.16 EPIC-03 (BLG-QA-260 open, Provisional-Target v9.17, not seated): a recurrence candidate. (4) Drift without a guard: page size and the grace predicate (BLG-TECH-34, BLG-FE-291); filed BLG-TECH-35. (5) Shared-module review depth: ST-01's medium review left findings that the ST-02 and ST-04 reviews then surfaced; candidate execution_prompt.md / commit-check Check 11 rule - review at high when a story creates a module later stories build on (relates to BLG-GOV-420).",
-    "2026-11-12: Product Owner direction (user, in session): prioritise BLG-GOV-422 and BLG-QA-262 for the next release, with BLG-QA-260. Carry-forward for v9.18 Release Planning. BLG-GOV-422 and BLG-QA-262 are P2, so release_planning_prompt.md selection step 1 (P1-then-P2-first) seats them if ready. BLG-QA-260 is P3 with a stale Provisional-Target v9.17 and needs a recorded Product Owner override in run_manifest.md (\u00a71.4c). Sprint Execution may not change Priority or Provisional-Target (\u00a77). STEP 5.3 and Post-Ship Closure: carry this into the closure Carry-Forward section."
+    "2026-11-12: Product Owner direction (user, in session): prioritise BLG-GOV-422 and BLG-QA-262 for the next release, with BLG-QA-260. Carry-forward for v9.18 Release Planning. BLG-GOV-422 and BLG-QA-262 are P2, so release_planning_prompt.md selection step 1 (P1-then-P2-first) seats them if ready. BLG-QA-260 is P3 with a stale Provisional-Target v9.17 and needs a recorded Product Owner override in run_manifest.md (\u00a71.4c). Sprint Execution may not change Priority or Provisional-Target (\u00a77). STEP 5.3 and Post-Ship Closure: carry this into the closure Carry-Forward section.",
+    "2026-11-12: EPIC-01 PR #2256 merged by the human repository owner (sachiv1984) at 2026-11-12T21:07:56Z, merge commit 61154853. Orphaned post-merge commit check (LL-v6.8-P3-01): git log origin/main..origin/exec/2026-11-11__release-v9.17/EPIC-01 lists nothing - no reconciliation needed."
   ],
   "sealed": false,
   "sealed_utc": null
