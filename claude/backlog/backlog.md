@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-12 (session — 2 new items added: BLG-SPEC-235, BLG-FE-292; v9.17 EPIC-01 agent-mediated DoQ review and follow-up code review); prior — 2026-11-12 (session — 3 new items added: BLG-BE-215, BLG-FE-291, BLG-SPEC-234; v9.17 ST-04 pre-commit code review); prior — 2026-11-12 (session — 2 new items added: BLG-FE-290, BLG-SPEC-233; v9.17 ST-02 pre-commit code review); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-12 (session — 3 new items added: BLG-SPEC-236, BLG-FE-293, BLG-TECH-34; PR #2256 agent-mediated review); prior — 2026-11-12 (session — 2 new items added: BLG-SPEC-235, BLG-FE-292; v9.17 EPIC-01 agent-mediated DoQ review and follow-up code review); prior — 2026-11-12 (session — 3 new items added: BLG-BE-215, BLG-FE-291, BLG-SPEC-234; v9.17 ST-04 pre-commit code review); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -6577,5 +6577,67 @@ Four small gaps in the v9.17 Positions code. First, `stopDistanceR` (`src/lib/po
 - A position with `current_trailing_stop_native = 0` shows "—" for R (unit or Playwright test)
 - One `drawdown-status` query definition remains in `Positions.js`
 - Following `/Positions?grace=open` twice re-opens a collapsed grace entry (Playwright)
+
+---
+
+### BLG-SPEC-236 — Decide whether a fresh "Data as of" line belongs in the Positions warning strip
+**Priority:** P3 (Low)
+**Type:** Spec Debt
+**Owner:** Frontend Specifications & UX Documentation Owner; Head of UX & Design
+**Source:** PR #2256 agent-mediated Product Owner review (EPIC-01, ST-03), `2026-11-11__release-v9.17` — 2026-11-12
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`positions.md` §Warning Strip makes the staleness entry active whenever `MetricsStalenessIndicator` would render, and ST-03 implemented that literally. The indicator renders whenever analytics have synced at all, including the fresh state ("Data as of 5 mins ago"). So the "Warnings" strip shows on almost every visit with an entry that is not a warning. That goes against the design record's intent (§6: "a quiet portfolio shows no strip and no gap") and weakens the strip as a signal.
+
+**Scope**
+- Decide whether the staleness entry is active only when the data is stale (4 hours or more), and where the fresh "Data as of" line goes (for example, the page header)
+- Update `positions.md` §Warning Strip, and file a frontend item if the code must change (SC-STALE-04 and SC-POSWS-06 assert the current behaviour)
+
+**Acceptance Criteria**
+- `positions.md` §Warning Strip states when the staleness entry is active
+- With fresh data and no other warning, the spec says whether a strip renders
+
+---
+
+### BLG-FE-293 — Stop the Strategy Compliance panel clipping its table on narrow screens
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Head of Engineering
+**Source:** PR #2256 agent-mediated Director of Quality review (EPIC-01, ST-02), `2026-11-11__release-v9.17` — 2026-11-12
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+Since ST-02, the Positions Table view is usable at phone width as decision cards. The Strategy Compliance panel below the cards (`src/components/positions/StrategyCompliancePanel.js`) wraps its per-position table in `overflow-hidden` with no horizontal scroll or card layout. At 390 px its right-hand columns (Size Compliance and beyond) are clipped and cannot be reached. SC-POSDC-02 does not catch this because it mocks the compliance data as empty. The page itself does not scroll sideways.
+
+**Scope**
+- Make the compliance table reachable below `md` (an `overflow-x-auto` wrapper, or stacked rows)
+- Extend SC-POSDC-02 to run with compliance rows present
+
+**Acceptance Criteria**
+- At 390 px with compliance rows, every column of the compliance table can be reached and the page has no horizontal scroll (Playwright)
+
+---
+
+### BLG-TECH-34 — Split src/pages/Positions.js into smaller modules
+**Priority:** P3 (Low)
+**Type:** Platform / Technical Debt
+**Owner:** Head of Engineering
+**Source:** PR #2256 agent-mediated Director of Quality review (EPIC-01), `2026-11-11__release-v9.17` — 2026-11-12
+**Effort:** M (~1–2d)
+**Provisional-Target:** TBD
+
+**Problem**
+After EPIC-01, `src/pages/Positions.js` is 1,549 lines (1,211 on `main` before it). One file holds the page, the warning strip and its four content components, the decision table and cards, the trail stop modal and several queries. Later stories that touch the page (v9.17 EPIC-03 ST-08 and EPIC-07 ST-19 rebase onto it) will meet conflicts more often and are harder to review. The `drawdown-status` query is already defined twice in the file (BLG-FE-292).
+
+**Scope**
+- Move the warning strip and its content components, the decision table and cards, and the trail stop modal into `src/components/positions/`
+- No behaviour change; existing Playwright specs pass unchanged
+
+**Acceptance Criteria**
+- `Positions.js` is under 600 lines
+- The full Playwright suite passes with no spec changes
 
 ---
