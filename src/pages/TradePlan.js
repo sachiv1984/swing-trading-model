@@ -8,7 +8,9 @@ import PageHeader from "../components/ui/PageHeader";
 import { PAGE_LABELS } from "../lib/pageLabels";
 import DataState from "../components/ui/DataState";
 import EntryChecklist, { DEFAULT_CHECKLIST_ITEMS } from "../components/trades/EntryChecklist";
-import SignalContextPanel, { buildSignalPrePopulation } from "../components/trades/SignalContextPanel";
+import SignalContextPanel, { buildSignalPrePopulation, getSuggestedStop } from "../components/trades/SignalContextPanel";
+import { formatCurrency, currencyForMarket } from "../lib/format";
+import { INITIAL_ATR_MULTIPLIER } from "../constants/strategy";
 import SetupQualityScorePanel from "../components/trades/SetupQualityScorePanel";
 import WhatIfSizingPreview from "../components/trades/WhatIfSizingPreview";
 import PreEntryValidationPanel from "../components/trades/PreEntryValidationPanel";
@@ -213,6 +215,30 @@ function preEntryResultKey(snapshot) {
   return `${snapshot.advisory_status}|${pairs.join(",")}`;
 }
 
+// ST-14 (BLG-FE-282, v9.17): trade_plan.md v1.25 §5f stored-stop line. The §5 stop is
+// Planned Entry − INITIAL_ATR_MULTIPLIER × the linked signal's atr_value. Shown under the
+// suggested size line when both are known and the planned stop differs by more than 0.005.
+// Advisory only: it changes no field and does not resize. "about" and the signal's ATR are
+// named because Trade Entry computes the stop from the ATR at entry time, which may have
+// moved since the signal ran (wording ruling 2026-11-13, Frontend Specifications & UX
+// Documentation Owner).
+function PlanStoredStopNote({ entryPrice, stopPrice, atrValue, market }) {
+  const entry = parseFloat(entryPrice);
+  const stop = parseFloat(stopPrice);
+  const atr = atrValue == null || atrValue === "" ? NaN : Number(atrValue);
+  if (!(entry > 0) || !(stop > 0) || !(atr > 0)) return null;
+  const sectionFiveStop = entry - INITIAL_ATR_MULTIPLIER * atr;
+  if (!(sectionFiveStop > 0) || Math.abs(stop - sectionFiveStop) <= 0.005) return null;
+  const currency = currencyForMarket(market);
+  return (
+    <p data-testid="plan-stored-stop-note" className="text-sm text-app-warning">
+      Trade Entry will store a stop of about {formatCurrency(sectionFiveStop, { currency })} (entry − {INITIAL_ATR_MULTIPLIER}×ATR,
+      using the signal&apos;s ATR of {formatCurrency(atr, { currency })}; §5).
+      {" "}The suggested size above uses your stop of {formatCurrency(stop, { currency })}.
+    </p>
+  );
+}
+
 function Field({ label, labelId, children }) {
   return (
     <div className="space-y-1">
@@ -314,6 +340,9 @@ export default function TradePlan() {
   // ST-08 (BLG-FE-256, v9.16): §5f — the suggestion pre-fills Planned Shares only until
   // the user types there. In edit mode a stored planned_quantity counts as typed.
   const [sharesTyped, setSharesTyped] = useState(false);
+  // ST-14 (BLG-FE-282, v9.17): §5a.3 — once the user has typed in Planned Stop Price
+  // (including clearing it), the signal pre-fill never writes it.
+  const stopTyped = useRef(false);
   const [feedbackJustGiven, setFeedbackJustGiven] = useState(false);
   const hasUnsavedAiChanges = useRef(false);
   const [isAiLoading, setIsAiLoading] = useState(false);
@@ -538,8 +567,17 @@ export default function TradePlan() {
     if (!editId && linkedSignal && !prePopApplied.current) {
       prePopApplied.current = true;
       const { setupThesis, entryRationale, confirmationCriteria } = buildSignalPrePopulation(linkedSignal, form.market);
+      // ST-14 (BLG-FE-282, v9.17): §5a.3 — Stop Level from the panel's "Suggested stop",
+      // 2 dp in the plan currency; never over a value already set or typed.
+      const suggestedStop = getSuggestedStop(linkedSignal);
       setForm((prev) => ({
         ...prev,
+        planned_stop_price:
+          prev.planned_stop_price !== "" && prev.planned_stop_price != null
+            ? prev.planned_stop_price
+            : !stopTyped.current && suggestedStop != null && suggestedStop > 0
+              ? String(Math.round(suggestedStop * 100) / 100)
+              : prev.planned_stop_price,
         setup_type: prev.setup_type || "Momentum Continuation",
         setup_thesis: prev.setup_thesis || setupThesis,
         entry_rationale: prev.entry_rationale || entryRationale,
@@ -965,7 +1003,10 @@ export default function TradePlan() {
               type="number"
               data-testid="planned-stop-price-input"
               value={form.planned_stop_price}
-              onChange={set("planned_stop_price")}
+              onChange={(e) => {
+                stopTyped.current = true;
+                set("planned_stop_price")(e);
+              }}
               placeholder="e.g. 142.00"
             />
           </Field>
@@ -980,6 +1021,12 @@ export default function TradePlan() {
           sharesTyped={sharesTyped}
           onPrefill={(v) => setForm((prev) => ({ ...prev, planned_quantity: v }))}
           onUse={(v) => setForm((prev) => ({ ...prev, planned_quantity: v }))}
+        />
+        <PlanStoredStopNote
+          entryPrice={form.planned_entry_price}
+          stopPrice={form.planned_stop_price}
+          atrValue={linkedSignal?.atr_value}
+          market={form.market}
         />
         <Field label="Planned Shares (for pre-entry checks)">
           <TextInput

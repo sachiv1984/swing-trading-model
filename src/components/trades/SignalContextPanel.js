@@ -6,6 +6,23 @@ import { formatCurrency, formatPercent, currencyForMarket } from "../../lib/form
 import { INITIAL_ATR_MULTIPLIER, ATR_PERIOD_DAYS } from "../../constants/strategy";
 
 /**
+ * The signal's suggested stop, as the panel shows it (trade_plan.md v1.25 §5a.3):
+ * the signal's initial_stop when present, otherwise
+ * current_price − INITIAL_ATR_MULTIPLIER × atr_value; null when neither is known.
+ * ST-14 (BLG-FE-282, v9.17): shared with the Trade Plan form's Stop pre-fill so the
+ * two cannot disagree.
+ */
+export function getSuggestedStop(signal) {
+  if (!signal) return null;
+  const num = (v) => (v == null || v === "" ? null : Number.isFinite(Number(v)) ? Number(v) : null);
+  const initialStop = num(signal.initial_stop);
+  if (initialStop != null) return initialStop;
+  const price = num(signal.current_price);
+  const atr = num(signal.atr_value);
+  return price != null && atr != null ? price - INITIAL_ATR_MULTIPLIER * atr : null;
+}
+
+/**
  * Read-only Signal Context Panel shown in trade plan creation form (§5a, trade_plan.md v0.5).
  * Shown only when a linked watchlisted signal exists for the plan ticker.
  * §13 compliant: display-only, no automated entry.
@@ -15,11 +32,7 @@ export default function SignalContextPanel({ signal, market }) {
 
   const panelCurrency = currencyForMarket(market || signal.market);
 
-  const suggestedStop = signal.initial_stop != null
-    ? signal.initial_stop
-    : signal.current_price != null && signal.atr_value != null
-      ? signal.current_price - INITIAL_ATR_MULTIPLIER * signal.atr_value
-      : null;
+  const suggestedStop = getSuggestedStop(signal);
 
   const maPercent = signal.price_vs_50d_ma ?? null;
   const showMA = maPercent != null;

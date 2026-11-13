@@ -5,7 +5,7 @@
   "invoked_utc": "2026-11-12T13:22:26Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-13T16:30:00Z",
+  "last_updated_utc": "2026-11-13T16:37:00Z",
   "epics": {
     "EPIC-01": {
       "title": "Site Structure & Usability Phase 3: Positions Redesign (build-and-ship)",
@@ -450,7 +450,8 @@
         "tests/test_trade_plan_close_on_exit.py",
         "tests/test_lifecycle_transitions.py",
         "tests/e2e/trade-plan-lifecycle.spec.js",
-        "tests/e2e/research-create-plan-market.spec.js"
+        "tests/e2e/research-create-plan-market.spec.js",
+        "tests/e2e/trade-plan-ack-reset.spec.js"
       ],
       "sign_off_record": null,
       "stories": {
@@ -484,23 +485,27 @@
         "ST-12": {
           "title": "Reset the Trade Plan pre-entry acknowledgement when the check result changes",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 2247,
           "branch": "exec/2026-11-11__release-v9.17/EPIC-05",
-          "commit_sha": null,
+          "commit_sha": "94dc3bd87537fcbc9e2ab85dd13c1152273f1a67",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-11-13T16:35:56Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/pages/trade_plan.md#5e. Pre-Entry Snapshot on Save",
+            "docs/design/2026-11-11__release-v9.17/trade-plan-found-defects/decision_record.md#2. Reset the acknowledgement when the result changes",
+            "tests/e2e/trade-plan-ack-reset.spec.js"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.done",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Commit 94dc3bd8. RISK-05 option (a) clear on change. AC 1: a new FAIL after a WARN tick leaves the box unticked with acknowledgement-reset-note (SC-TPAR-01), tick again / same-key refetch / back to PASS / edit matching and differing stored snapshots (SC-TPAR-02..05). AC 2: the plan saved without re-acknowledging sends acknowledged false with the FAIL snapshot, and Trade Entry linking it shows the panel with the unacknowledged reason line (SC-TPAR-01). SC-TP-32c fixture updated so its stored snapshot key matches (its tick still stands under \u00a75e). trade_plan.md v1.26 \u00a75e: option (b) deleted. RISK-07: the reset is in TradePlan.js only; Trade Entry's tick does not reset, so BLG-FE-269 AC 1 (both pages) is NOT met; record for groom backlog. Local E2E build (lint on, exit 0; TradePlan.js warnings pre-existing): SC-TPAR 5/5 plus trade-plan, trade-entry-pre-entry-checks and si01-si03-integration, 77/77. Logic of the result key checked with node (null, empty, sorted, detail ignored). Deviation check vs trade_plan.md \u00a75e and design \u00a72.1: none. Step 13: the note is new text inside the panel only, not app-shell; no selector renamed. ci_pending: CI on 94dc3bd8 not yet concluded."
         },
         "ST-13": {
           "title": "Pass the market from Research View's \"Create Trade Plan\" so a UK plan is not created as US",
@@ -524,7 +529,7 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.done",
           "sign_off_record": null,
-          "notes": "Commit 3d802d1c. AC 1: Research.js Create Trade Plan sends market from the research response (.L fallback); VOD.L opens UK (URL, Market field, header, POST /portfolio/size market UK with no fx_rate, no USD FX field) and AAPL opens US (SC-RCPM-01/02); View full plan keeps the stored UK market in edit mode (SC-RCPM-03). AC 2: local E2E build (lint on, exit 0, pre-existing warnings only) 3/3 SC-RCPM plus pre-trade-research and arc2-happy-path 19/19. Deviation check vs research_view.md v1.5 \u00a74.7: none. Step 13: URL change only, no DOM element changed. ci_pending: CI on 3d802d1c not yet concluded."
+          "notes": "Commit 3d802d1c. AC 1: Research.js Create Trade Plan sends market from the research response (.L fallback); VOD.L opens UK (URL, Market field, header, POST /portfolio/size market UK with no fx_rate, no USD FX field) and AAPL opens US (SC-RCPM-01/02); View full plan keeps the stored UK market in edit mode (SC-RCPM-03). AC 2: local E2E build (lint on, exit 0, pre-existing warnings only) 3/3 SC-RCPM plus pre-trade-research and arc2-happy-path 19/19. Deviation check vs research_view.md v1.5 \u00a74.7: none. Step 13: URL change only, no DOM element changed. CI on 3d802d1c: all 9 workflows success (steps 4c/4d): Playwright E2E Acceptance Tests 43463014141; CI Pytest Suite 43463014917; Frontend Production Build 43463014908."
         },
         "ST-14": {
           "title": "Pre-fill the Trade Plan stop from the \u00a75 suggested stop and flag a typed stop that differs",
@@ -560,6 +565,7 @@
     "ST-09",
     "ST-10",
     "ST-11",
+    "ST-12",
     "ST-13",
     "ST-15",
     "ST-16",
