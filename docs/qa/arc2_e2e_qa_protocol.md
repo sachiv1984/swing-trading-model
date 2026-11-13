@@ -2,7 +2,7 @@
 **Class:** Planning Document (Class 4)
 **Status:** Active
 **Version:** 1.1
-**Last Updated:** 2026-11-13 (ST-11, EPIC-05, v9.17, BLG-BE-211 — M-04 expects the plan `closed` after a full exit; §6 row marked fixed); prior — 2026-11-10 (ST-24, EPIC-06, v9.16, BLG-QA-21 — initial arc-level protocol)
+**Last Updated:** 2026-11-13 (ST-13, EPIC-05, v9.17, BLG-FE-281 — M-09 expects a UK plan; §6 row marked fixed); prior — 2026-11-13 (ST-11, EPIC-05, v9.17, BLG-BE-211 — M-04 expects the plan `closed` after a full exit; §6 row marked fixed); prior — 2026-11-10 (ST-24, EPIC-06, v9.16, BLG-QA-21 — initial arc-level protocol)
 **Cycle:** 2026-11-06__release-v9.16 (ST-24 — BLG-QA-21)
 
 ---
@@ -113,7 +113,7 @@ Run on staging with a test portfolio. Record the date, tester and result per row
 |---|-------|----------|
 | M-07 | Quality score for a ticker with < 20 closed trades | "Insufficient trade history (< 20 trades)" with the count; no score |
 | M-08 | Quality score after a new trade on the ticker closes | The score is recomputed (it is not stored on the plan); a reopened plan shows the new value |
-| M-09 | Research View for a UK ticker (`.L`), then "Create Trade Plan" | The plan's market is UK and amounts are in £. **Known gap — opens as US** (§6, BLG-FE-281) |
+| M-09 | Research View for a UK ticker (`.L`), then "Create Trade Plan" | The plan's market is UK and amounts are in £ (fixed v9.17, ST-13, BLG-FE-281; `research-create-plan-market.spec.js`) |
 | M-10 | Suggested size when cash is short, and when the stop is above the entry | "Max affordable: … shares" / "Stop price must be below entry price"; shares not pre-filled |
 | M-11 | Research View with earnings inside 7 days | Earnings proximity is shown; the checklist does not tick itself |
 | M-12 | Research View when the prospective-heat call fails | Heat shows N/A; the rest of the page renders (SC-RES-06 covers the UI; check the real error path once) |
@@ -133,7 +133,7 @@ Run on staging with a test portfolio. Record the date, tester and result per row
 | ID | Finding | Effect on this protocol |
 |----|---------|-------------------------|
 | `BLG-BE-211` (P2) | No backend code moves a linked plan from `active` to `closed` when its position closes, although `data_model.md` §Trade Plan Lifecycle says it does | Fixed v9.17 (ST-11): a full exit closes the linked plan; M-04 and the lifecycle test (SC-TPL-04) assert `closed` and the "Closed" badge |
-| `BLG-FE-281` (P2) | Research View's "Create Trade Plan" passes only `ticker`, so the plan's market defaults to US; a UK ticker's plan is sized and priced as US | M-09 records the gap |
+| `BLG-FE-281` (P2) | Research View's "Create Trade Plan" passes only `ticker`, so the plan's market defaults to US; a UK ticker's plan is sized and priced as US | Fixed v9.17 (ST-13): the link carries `market`; M-09 and SC-RCPM-01..03 assert UK and US |
 | `BLG-BE-212` (P3) | `trade_history.planned_entry_price` is snapshotted at exit from the ticker's current signal price, not from the plan's `planned_entry_price`, so Plan vs Reality's entry delta measures the fill against a later signal price (and is null when no signal exists) | M-06 records the gap; the lifecycle test asserts the formula as built |
 
 ---

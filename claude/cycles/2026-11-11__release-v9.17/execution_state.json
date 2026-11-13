@@ -5,7 +5,7 @@
   "invoked_utc": "2026-11-12T13:22:26Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-13T16:07:31Z",
+  "last_updated_utc": "2026-11-13T16:25:00Z",
   "epics": {
     "EPIC-01": {
       "title": "Site Structure & Usability Phase 3: Positions Redesign (build-and-ship)",
@@ -446,29 +446,39 @@
       "pr_status": null,
       "qa_signed_off": false,
       "qa_evidence_log": "claude/cycles/2026-11-11__release-v9.17/qa_evidence_EPIC-05.md",
-      "test_scenarios": [],
+      "test_scenarios": [
+        "tests/test_trade_plan_close_on_exit.py",
+        "tests/test_lifecycle_transitions.py",
+        "tests/e2e/trade-plan-lifecycle.spec.js"
+      ],
       "sign_off_record": null,
       "stories": {
         "ST-11": {
           "title": "Move a linked trade plan to `closed` when its position closes",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 2246,
           "branch": "exec/2026-11-11__release-v9.17/EPIC-05",
-          "commit_sha": null,
+          "commit_sha": "ceda52c5d4947a262a8c0988b8d3e79cd5cca3f1",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-11-13T16:23:16Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/data_model.md#DS-41 \u2014 Close active trade plans whose linked position is closed (v2.70, 2026-11-13)",
+            "docs/specs/data_model.md#Trade Plan Lifecycle (`trade_plans.status`)",
+            "docs/specs/api_contracts/position_endpoints.md#POST /positions/{position_id}/exit",
+            "tests/test_trade_plan_close_on_exit.py",
+            "tests/e2e/trade-plan-lifecycle.spec.js"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.done",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Commit ceda52c5. AC 1: full exit closes the linked active plan, partial exit leaves it active (tests/test_trade_plan_close_on_exit.py, test_lifecycle_transitions.py active->closed edge, strict xfail removed). AC 2: DS-41 startup backfill (CTE: UPDATE + backfill-st11 audit rows in one transaction), idempotent; backfill, idempotency and down migration pass against a real local Postgres 18 (8/8) and run in CI Phase B; the production run and its row count are the seal-marked post-merge part, tracked by BLG-BE-211. AC 3: lifecycle mock closes the plan on full exit; SC-TPL-04 asserts the Trade Plans 'Closed' badge; local E2E build: trade-plan-lifecycle and arc2-happy-path 2/2 pass. Deviation check vs data_model.md \u00a7Trade Plan Lifecycle and position_endpoints.md: none. Pre-commit /code-review medium: 10 findings; 5 fixed (atomic audit, position-exit audit source, per-plan try, mock partial shares, per-row DDL), 2 recorded as reconciliation gaps -> BLG-BE-219 (P3), 3 declined with reasons in the commit. Full backend suite 3645 passed locally. Step 13: no DOM change. ci_pending: CI on ceda52c5 not yet concluded."
         },
         "ST-12": {
           "title": "Reset the Trade Plan pre-entry acknowledgement when the check result changes",
@@ -545,6 +555,7 @@
     "ST-04",
     "ST-09",
     "ST-10",
+    "ST-11",
     "ST-15",
     "ST-16",
     "ST-17",
