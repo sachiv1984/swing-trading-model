@@ -218,83 +218,99 @@
     },
     "EPIC-07": {
       "title": "Governance, Strategy Copy & Drift Tooling",
-      "status": "in_progress",
+      "status": "done",
       "branch": "exec/2026-11-11__release-v9.17/EPIC-07",
       "pr_number": null,
       "pr_status": null,
       "qa_signed_off": false,
       "qa_evidence_log": null,
-      "test_scenarios": [],
+      "test_scenarios": [
+        "tests/test_check_data_model_drift.py",
+        "tests/e2e/lifecycle-badge-grace-calendar-days.spec.js"
+      ],
       "stories": {
         "ST-18": {
           "title": "Release Planning \u00a71.3a: let a gate clearance also set a gate-worded Provisional-Target to TBD",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 2253,
           "branch": "exec/2026-11-11__release-v9.17/EPIC-07",
-          "commit_sha": null,
+          "commit_sha": "02587c70e199b7cd51c531b53aead4185ef62cfb",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-11-13T10:19:20Z",
+          "acceptance_verified": true,
           "spec_references": [
-            "claude/system/release_planning_prompt.md#1.3a"
+            "claude/system/release_planning_prompt.md#1.3a Gate-Detection Procedure (Mandatory, Scripted)",
+            "claude/system/changelogs/release_planning_changelog.md"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.done",
+          "sign_off_record": {
+            "status": "cleared",
+            "role": "Head of Specs Team",
+            "method": "agent_mediated",
+            "date": "2026-11-13",
+            "rounds": 1,
+            "outcome": "Approved; ESC-CLOSE-20261007-01 bound 2 extension recorded"
+          },
+          "notes": "Commit 02587c70. release_planning_prompt.md v2.74->v2.75 (\u00a71.3a bound 2, bound 6, \u00a77 carve-out); OPERATIONAL_GUIDE.md 4.259->4.260; changelog and prompt_change_log rows; prompt size baseline 93,785->94,344 (+559, reason in prompt_change_log). Head of Specs Team agent-mediated (\u00a75.3): Approved, recorded as an extension of ESC-CLOSE-20261007-01 bound 2 limited to clearing edits; mandatory 'sets' wording accepted over 'may'; scope read as replacing the whole gate-worded value with TBD, old value kept in the dated note. Verified TBD is not matched by scan_backlog_gate_conditions.EMBEDDED_GATE_SIGNAL_RE. AC 2 post-merge, tracked by BLG-GOV-419 (seal-marked). governance-drift Step 1b: PASS (4.260/2026-11-13 in all three places); all 28 \u00a714 rows match. Deviation check: none. CI on 02587c70: all 7 workflows success; CI Pytest Suite 43408259465."
         },
         "ST-19": {
           "title": "Define or remove the 2R Exit Zone threshold the Positions page states",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 2254,
           "branch": "exec/2026-11-11__release-v9.17/EPIC-07",
-          "commit_sha": null,
+          "commit_sha": "5a7db63b7a0de9cb9b8511b3bd5180f7478b69f3",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-11-13T10:10:39Z",
+          "acceptance_verified": true,
           "spec_references": [
-            "docs/specs/frontend/pages/positions.md",
-            "docs/design/2026-11-11__release-v9.17/positions-decision-first/decision_record.md"
+            "src/pages/Positions.js",
+            "docs/specs/frontend/pages/positions.md#Position Lifecycle State Badge",
+            "docs/design/2026-11-11__release-v9.17/positions-decision-first/decision_record.md",
+            "tests/e2e/lifecycle-badge-grace-calendar-days.spec.js"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.done",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Commit 5a7db63b. RISK-05 option (b) wording for PROFITABLE and EXIT ZONE tooltips; positions.md v2.26->v2.27 (option (a) wording removed). check_strategy_copy.py: 0 contradictions, 0 literals. New SC-LBG-06 (2 cases) asserts both tooltips and no '2R'/'R-target' title. Local E2E-env build: SC-LBG/SC-POSDF/SC-POSDC 23/23. Deviation check vs positions.md v2.27 and design record \u00a77: none. CI on 5a7db63b: all 9 workflows success; Playwright E2E Acceptance Tests run 43407147398 success (step 4c); Frontend Production Build 43407147461; CI Pytest Suite 43407147609."
         },
         "ST-20": {
           "title": "Stop check_data_model_drift.py reading index names from rollback blocks",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 2255,
           "branch": "exec/2026-11-11__release-v9.17/EPIC-07",
-          "commit_sha": null,
+          "commit_sha": "6dc668d842a18787f59f2523bbc6a03bcabed598",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-11-13T10:21:03Z",
+          "acceptance_verified": true,
           "spec_references": [
-            "scripts/check_data_model_drift.py"
+            "scripts/check_data_model_drift.py",
+            "tests/test_check_data_model_drift.py",
+            "docs/ops/data_model_drift_runs/README.md",
+            "docs/ops/data_model_drift_runs/2026-11-13_staging_triage.md"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.done",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Commits f1299c5c (rollback-block exclusion, tests, docs), 6dc668d8 (staging run output and triage; opportunistic in-file fix: INDEX_RE no longer yields 'IF' from DS-36 prose). Read-only staging run with user permission 2026-11-13 (PGOPTIONS default_transaction_read_only=on): idx_trade_plans_ticker not reported (AC 1); output kept at docs/ops/data_model_drift_runs/2026-11-13_staging.json and cited by 2026-11-13_staging_triage.md (AC 3). Regression proof: rollback tests fail when strip_rollback_sql is bypassed. New finding recorded as unconfirmed: idx_momentum_signal_runs_portfolio_date (DS-39 lazy table). Deviation check: none. CI on f1299c5c and 6dc668d8: all 7 workflows success; CI Pytest Suite 43408448753."
         }
       }
     }
@@ -307,7 +323,10 @@
     "ST-03",
     "ST-04",
     "ST-09",
-    "ST-10"
+    "ST-10",
+    "ST-18",
+    "ST-19",
+    "ST-20"
   ],
   "open_escalations": {},
   "merge_gate": {
