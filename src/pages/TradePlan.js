@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiFetch } from "../api/base44Client";
@@ -202,6 +202,17 @@ const EMPTY_FORM = {
 const TRADE_TAG_MAX_LENGTH = 20;
 const TRADE_TAG_MAX_COUNT = 10;
 
+// ST-12 (BLG-FE-278, v9.17): trade_plan.md v1.25 §5e — the Pre-Entry Validation
+// result key is advisory_status plus the set of {rule, status} pairs; detail and
+// captured_at are not part of it, so a refetch with the same outcome is no change.
+function preEntryResultKey(snapshot) {
+  if (!snapshot || !snapshot.advisory_status) return null;
+  const pairs = (Array.isArray(snapshot.checks) ? snapshot.checks : [])
+    .map((c) => `${c.rule}:${c.status}`)
+    .sort();
+  return `${snapshot.advisory_status}|${pairs.join(",")}`;
+}
+
 function Field({ label, labelId, children }) {
   return (
     <div className="space-y-1">
@@ -278,6 +289,28 @@ export default function TradePlan() {
   const [isClaudeDraft, setIsClaudeDraft] = useState(false);
   // ST-05 (BLG-FE-271, v9.16): the panel's dated result, sent on save (trade_plan.md §5e).
   const [preEntrySnapshot, setPreEntrySnapshot] = useState(null);
+  // ST-12 (BLG-FE-278, v9.17): §5e acknowledgement reset, option (a) clear on change
+  // (RISK-05, Strategy Rules & System Intent Owner, 2026-11-12). lastResultKey is the
+  // key the acknowledgement was given against: undefined on a new form until the first
+  // result arrives, or the stored snapshot's key ("none" without one) in edit mode.
+  const lastResultKey = useRef(undefined);
+  const [ackResetNote, setAckResetNote] = useState(false);
+  const handlePreEntryResult = useCallback((snapshot) => {
+    setPreEntrySnapshot(snapshot);
+    const key = preEntryResultKey(snapshot);
+    if (key == null) return; // no shares, loading or endpoint error: not a result
+    const previous = lastResultKey.current;
+    lastResultKey.current = key;
+    if (snapshot.advisory_status === "pass") {
+      // The box is hidden on pass and saved as false.
+      setForm((prev) => (prev.pre_entry_override_acknowledged ? { ...prev, pre_entry_override_acknowledged: false } : prev));
+      setAckResetNote(false);
+      return;
+    }
+    if (previous === undefined || previous === key) return;
+    setForm((prev) => ({ ...prev, pre_entry_override_acknowledged: false }));
+    setAckResetNote(true);
+  }, []);
   // ST-08 (BLG-FE-256, v9.16): §5f — the suggestion pre-fills Planned Shares only until
   // the user types there. In edit mode a stored planned_quantity counts as typed.
   const [sharesTyped, setSharesTyped] = useState(false);
@@ -356,6 +389,10 @@ export default function TradePlan() {
         // re-save sends the box's real state, not a stale stored true.
         pre_entry_override_acknowledged: !!existingPlan.pre_entry_override_acknowledged,
       });
+      // ST-12: the stored acknowledgement stands only if the first result has the
+      // stored snapshot's key (§5e); a plan saved without a snapshot never matches.
+      lastResultKey.current = preEntryResultKey(existingPlan.pre_entry_validation_snapshot) ?? "none";
+      setAckResetNote(false);
       setIsClaudeDraft(!!existingPlan.is_ai_draft);
       if (existingPlan.planned_quantity != null) setSharesTyped(true);
     }
@@ -963,8 +1000,12 @@ export default function TradePlan() {
           entryPrice={form.planned_entry_price}
           stopPrice={form.planned_stop_price}
           overrideAcknowledged={form.pre_entry_override_acknowledged}
-          onOverrideChange={(val) => setForm((prev) => ({ ...prev, pre_entry_override_acknowledged: val }))}
-          onResultChange={setPreEntrySnapshot}
+          onOverrideChange={(val) => {
+            setForm((prev) => ({ ...prev, pre_entry_override_acknowledged: val }));
+            if (val) setAckResetNote(false);
+          }}
+          onResultChange={handlePreEntryResult}
+          showAcknowledgementResetNote={ackResetNote}
         />
 
         <div className="space-y-1">

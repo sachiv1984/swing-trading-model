@@ -5,7 +5,7 @@
   "invoked_utc": "2026-11-12T13:22:26Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-13T16:25:00Z",
+  "last_updated_utc": "2026-11-13T16:30:00Z",
   "epics": {
     "EPIC-01": {
       "title": "Site Structure & Usability Phase 3: Positions Redesign (build-and-ship)",
@@ -449,7 +449,8 @@
       "test_scenarios": [
         "tests/test_trade_plan_close_on_exit.py",
         "tests/test_lifecycle_transitions.py",
-        "tests/e2e/trade-plan-lifecycle.spec.js"
+        "tests/e2e/trade-plan-lifecycle.spec.js",
+        "tests/e2e/research-create-plan-market.spec.js"
       ],
       "sign_off_record": null,
       "stories": {
@@ -478,7 +479,7 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.done",
           "sign_off_record": null,
-          "notes": "Commit ceda52c5. AC 1: full exit closes the linked active plan, partial exit leaves it active (tests/test_trade_plan_close_on_exit.py, test_lifecycle_transitions.py active->closed edge, strict xfail removed). AC 2: DS-41 startup backfill (CTE: UPDATE + backfill-st11 audit rows in one transaction), idempotent; backfill, idempotency and down migration pass against a real local Postgres 18 (8/8) and run in CI Phase B; the production run and its row count are the seal-marked post-merge part, tracked by BLG-BE-211. AC 3: lifecycle mock closes the plan on full exit; SC-TPL-04 asserts the Trade Plans 'Closed' badge; local E2E build: trade-plan-lifecycle and arc2-happy-path 2/2 pass. Deviation check vs data_model.md \u00a7Trade Plan Lifecycle and position_endpoints.md: none. Pre-commit /code-review medium: 10 findings; 5 fixed (atomic audit, position-exit audit source, per-plan try, mock partial shares, per-row DDL), 2 recorded as reconciliation gaps -> BLG-BE-219 (P3), 3 declined with reasons in the commit. Full backend suite 3645 passed locally. Step 13: no DOM change. ci_pending: CI on ceda52c5 not yet concluded."
+          "notes": "Commit ceda52c5. AC 1: full exit closes the linked active plan, partial exit leaves it active (tests/test_trade_plan_close_on_exit.py, test_lifecycle_transitions.py active->closed edge, strict xfail removed). AC 2: DS-41 startup backfill (CTE: UPDATE + backfill-st11 audit rows in one transaction), idempotent; backfill, idempotency and down migration pass against a real local Postgres 18 (8/8) and run in CI Phase B; the production run and its row count are the seal-marked post-merge part, tracked by BLG-BE-211. AC 3: lifecycle mock closes the plan on full exit; SC-TPL-04 asserts the Trade Plans 'Closed' badge; local E2E build: trade-plan-lifecycle and arc2-happy-path 2/2 pass. Deviation check vs data_model.md \u00a7Trade Plan Lifecycle and position_endpoints.md: none. Pre-commit /code-review medium: 10 findings; 5 fixed (atomic audit, position-exit audit source, per-plan try, mock partial shares, per-row DDL), 2 recorded as reconciliation gaps -> BLG-BE-219 (P3), 3 declined with reasons in the commit. Full backend suite 3645 passed locally. Step 13: no DOM change. CI on ceda52c5: all 8 workflows success (steps 4c/4d): Playwright E2E Acceptance Tests 43462222803; CI Pytest Suite 43462223438."
         },
         "ST-12": {
           "title": "Reset the Trade Plan pre-entry acknowledgement when the check result changes",
@@ -504,23 +505,26 @@
         "ST-13": {
           "title": "Pass the market from Research View's \"Create Trade Plan\" so a UK plan is not created as US",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 2248,
           "branch": "exec/2026-11-11__release-v9.17/EPIC-05",
-          "commit_sha": null,
+          "commit_sha": "3d802d1cbe4d346a8fde571f49d2b02fed93a983",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-11-13T16:28:08Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/pages/research_view.md#4.7 Trade Plan Panel",
+            "tests/e2e/research-create-plan-market.spec.js"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.done",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Commit 3d802d1c. AC 1: Research.js Create Trade Plan sends market from the research response (.L fallback); VOD.L opens UK (URL, Market field, header, POST /portfolio/size market UK with no fx_rate, no USD FX field) and AAPL opens US (SC-RCPM-01/02); View full plan keeps the stored UK market in edit mode (SC-RCPM-03). AC 2: local E2E build (lint on, exit 0, pre-existing warnings only) 3/3 SC-RCPM plus pre-trade-research and arc2-happy-path 19/19. Deviation check vs research_view.md v1.5 \u00a74.7: none. Step 13: URL change only, no DOM element changed. ci_pending: CI on 3d802d1c not yet concluded."
         },
         "ST-14": {
           "title": "Pre-fill the Trade Plan stop from the \u00a75 suggested stop and flag a typed stop that differs",
@@ -556,6 +560,7 @@
     "ST-09",
     "ST-10",
     "ST-11",
+    "ST-13",
     "ST-15",
     "ST-16",
     "ST-17",

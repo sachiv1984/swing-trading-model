@@ -41,6 +41,9 @@ const ADVISORY_BADGE = {
  *   holds, shaped as trade_plan.md v1.22 §5e's pre_entry_validation_snapshot
  *   ({captured_at, advisory_status, checks, inputs}), or null while there is no
  *   result (no shares, loading, or endpoint error). ST-05, BLG-FE-271, v9.16.
+ * - showAcknowledgementResetNote: render trade_plan.md v1.25 §5e's reset note
+ *   under the acknowledgement box. The caller decides when (ST-12, BLG-FE-278,
+ *   v9.17: the Trade Plan form only; Trade Entry does not pass it).
  */
 export default function PreEntryValidationPanel({
   ticker,
@@ -53,6 +56,7 @@ export default function PreEntryValidationPanel({
   showWaiting = false,
   onWarningsChange,
   onResultChange,
+  showAcknowledgementResetNote = false,
 }) {
   const [collapsed, setCollapsed] = useState(false);
   const hasInputs = !!ticker && !!quantity && Number(quantity) > 0;
@@ -168,6 +172,11 @@ export default function PreEntryValidationPanel({
               />
               <span className="text-xs text-amber-700 dark:text-amber-400">I acknowledge the advisory warnings</span>
             </label>
+          )}
+          {hasWarnings && showAcknowledgementResetNote && !overrideAcknowledged && (
+            <p data-testid="acknowledgement-reset-note" className="text-xs text-app-warning">
+              The check results changed. Review them and tick again to acknowledge.
+            </p>
           )}
         </div>
       )}
