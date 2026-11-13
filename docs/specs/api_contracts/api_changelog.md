@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Class 2
 **Status:** Canonical
-**Version:** 1.31.0
-**Last Updated:** 2026-11-10 (ST-17/ST-18/ST-20/ST-21, EPIC-05, v9.16 — v9.16.0 entry adds position_endpoints.md v2.20.1 and ai_endpoints.md v1.41); prior — 2026-11-09 (ST-05, EPIC-02, v9.16, BLG-FE-271 — new v9.16.0 entry: trade_plan_endpoints.md v0.23, openapi.yaml 3.48.0); prior — 2026-11-05 (ST-30/ST-32, EPIC-05, v9.15, BLG-OPS-190/BLG-OPS-192 — v9.15.0 entry adds signal_endpoints.md v1.11 and openapi.yaml 3.47.4); prior history retained — see prior entries in version control
+**Version:** 1.32.0
+**Last Updated:** 2026-11-12 (ST-09, EPIC-04, v9.17, BLG-BE-205 — new v9.17.0 entry: position_endpoints.md v2.21.0, openapi.yaml 3.49.0); prior — 2026-11-10 (ST-17/ST-18/ST-20/ST-21, EPIC-05, v9.16 — v9.16.0 entry adds position_endpoints.md v2.20.1 and ai_endpoints.md v1.41); prior — 2026-11-09 (ST-05, EPIC-02, v9.16, BLG-FE-271 — new v9.16.0 entry: trade_plan_endpoints.md v0.23, openapi.yaml 3.48.0); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 # API Changelog
@@ -37,6 +37,19 @@ Rules:
 **Sign-off:** Head of Specs Team — Approved. Formalising an already-consistently-used structure (rather than introducing a new one requiring migration) is the right scope for this story — the conformance check confirms there was nothing to migrate. Sprint Execution Engine (agent-mediated, Head of Specs Team role — §5.3), 2026-09-08.
 
 ---
+
+## v9.17.0 (2026-11-12 — Release v9.17)
+
+### position_endpoints.md — v2.21.0 (UPDATED)
+
+**EPIC:** EPIC-04
+**ST:** ST-09
+
+| Change | Details |
+|--------|---------|
+| Updated endpoint: GET /positions | Gains read-only `stop_last_moved_date` (`YYYY-MM-DD` \| `null`) and `previous_stop` (native, 2 dp \| `null`): when a stop recompute last raised the stop, and the stop before that move (DS-40, BLG-BE-205). Written by both recompute paths. For the Dashboard Today list's Stops moved group. `openapi.yaml` 3.49.0. |
+| Updated endpoint: POST /positions/nightly-stop-update | Writes `stop_last_moved_date` and `previous_stop` only when the stop it stores is above a stored stop; response shape unchanged (v2.21.0). |
+| Updated endpoint: GET /positions/analyze | Writes the same two fields when its on-load recompute raises a stored stop, so a stop the 16:00 UTC snapshot raises is recorded (ruling 2026-11-13; v2.21.0). |
 
 ## v9.16.0 (2026-11-09 — Release v9.16)
 

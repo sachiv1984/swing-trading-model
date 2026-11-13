@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-12 (session — 3 new items added: BLG-GOV-422, BLG-QA-262, BLG-TECH-35; EPIC-01 prevention retrospective, user-directed); prior — 2026-11-12 (session — 3 new items added: BLG-SPEC-236, BLG-FE-293, BLG-TECH-34; PR #2256 agent-mediated review); prior — 2026-11-12 (session — 2 new items added: BLG-SPEC-235, BLG-FE-292; v9.17 EPIC-01 agent-mediated DoQ review and follow-up code review); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-13 (session — 2 new items added: BLG-BE-216, BLG-QA-263; PR #2257 agent-mediated review, EPIC-04, v9.17); prior — 2026-11-13 (session — 1 new item added: BLG-SPEC-238; ST-10 deviation DEV-EPIC04-ST10-01, EPIC-04, v9.17); prior — 2026-11-13 (session — 1 new item added: BLG-SPEC-237; ST-09 pre-commit review, EPIC-04, v9.17); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -6601,6 +6601,50 @@ Four small gaps in the v9.17 Positions code. First, `stopDistanceR` (`src/lib/po
 
 ---
 
+### BLG-SPEC-237 — Decide whether data_model.md migration headings may carry their DS-nn identifier
+**Priority:** P3 (Low)
+**Type:** Spec Debt
+**Owner:** Data Model & Domain Schema Owner; Head of Specs Team
+**Source:** ST-09 pre-commit `/code-review` high, EPIC-04, `2026-11-11__release-v9.17` — 2026-11-13
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+CLAUDE.md §2 says task, story and ticket references must never appear in document section headings. Every migration block in `docs/specs/data_model.md` is headed `## DS-nn — <description> (vX.YY, date)`, from DS-01 to DS-40 (ST-09 added DS-40 in the same form to stay consistent). Other documents cite these blocks as "`data_model.md` DS-nn", so the identifier works as a stable anchor rather than a ticket reference, but the rule does not say so.
+
+**Scope**
+- Decide whether a migration identifier in a `data_model.md` heading is allowed (and record the exception in CLAUDE.md §2 or `shared_standards.md`), or move the identifier out of the headings
+- If moved: rename the 40 headings and update every "DS-nn" cross-reference that relies on the heading text
+
+**Acceptance Criteria**
+- The rule for `data_model.md` migration headings is written down in one place
+- `data_model.md` headings follow it
+
+---
+
+### BLG-SPEC-238 — Reword the Today list Stops moved rules to match how stop moves are recorded
+**Priority:** P3 (Low)
+**Type:** Spec Debt
+**Owner:** Frontend Specifications & UX Documentation Owner; Head of UX & Design
+**Source:** ST-10 (EPIC-04, `2026-11-11__release-v9.17`), DEV-EPIC04-ST10-01 — 2026-11-13
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`dashboard.md` §1B says stops are moved only by the nightly job, which writes `stop_last_moved_date`, and TL-09 lists positions whose date is "the latest nightly run date". Since v9.17 ST-09 (ruling 2026-11-13), both stop recompute paths record a move, and `GET /positions` has no run date, so `TodayList.js` shows moves dated today or the previous weekday (UTC), a ruling made in session on 2026-11-13 and recorded as DEV-EPIC04-ST10-01. On a weekday afternoon the group can mix the previous weekday's moves with today's, and the rule exists only in code and the deviation note. Separately, Recent Activity's empty state still says "Trades and stop updates will appear here." although that card no longer shows stop updates (ST-09 removed the dead branch; `v7.2-dashboard-tradeplan-ux-hardening.spec.js` asserts the text).
+
+**Scope**
+- Reword §1B (Stops moved row, "why it is here", Data dependency) and TL-09 to say moves come from either recompute path and how the latest date is chosen
+- Write the today-or-previous-weekday window into §1B, or replace it with an API run date (file a backend item if so)
+- Decide the Recent Activity empty-state copy (§4A) and update the v7.2 spec assertion if it changes
+
+**Acceptance Criteria**
+- §1B and TL-09 match the shipped behaviour or a filed item changes the behaviour
+- DEV-EPIC04-ST10-01 is closed in `dashboard.md` Known Deviations
+- Recent Activity's empty-state copy is settled in §4A
+
+---
+
 ### BLG-FE-293 — Stop the Strategy Compliance panel clipping its table on narrow screens
 **Priority:** P3 (Low)
 **Type:** Frontend / UX
@@ -6708,3 +6752,45 @@ Two EPIC-01 filings come from drift that a guard would have flagged as it happen
 - `npx eslint` on a file comparing `p.grace_period === true` outside `positionUrgency.js` reports the rule
 
 ---
+
+### BLG-BE-216 — Use stop_last_moved_date for the Strategy Compliance panel's Stop Age
+**Priority:** P3 (Low)
+**Type:** Enhancement
+**Owner:** Backend Engineering Patterns Owner; Frontend Specifications & UX Documentation Owner
+**Source:** PR #2257 agent-mediated Product Owner review (EPIC-04, ST-09), `2026-11-11__release-v9.17` — 2026-11-13
+**Effort:** S (~0.5 day)
+**Provisional-Target:** TBD
+
+**Problem**
+`compliance_service.py` approximates a position's Stop Age as `holding_days` "because the positions table has no stop_updated_at column" (module docstring and `_compute_stop_age`). Since v9.17 ST-09 (DS-40), `positions.stop_last_moved_date` records the UTC date a stop recompute last raised the stop. The panel still reports the worst-case age, so a stop raised yesterday on a 40-day position shows as 40 days old.
+
+**Scope**
+- Stop Age = days since `stop_last_moved_date` when set; keep `holding_days` (or days since grace ended) when it is NULL, since no earlier move was recorded
+- Update `positions.md` §Strategy Compliance Panel and the `compliance_service.py` docstrings to the new rule
+- Unit tests for set, NULL and in-grace cases
+
+**Acceptance Criteria**
+- With `stop_last_moved_date` set, Stop Age is the whole days since that date (pytest)
+- With it NULL, Stop Age is unchanged from today's behaviour (pytest)
+- The spec states both cases
+
+---
+
+### BLG-QA-263 — Test the Today list Stops moved window on weekend and mid-week clocks
+**Priority:** P3 (Low)
+**Type:** Test Gap
+**Owner:** QA & Testing Owner
+**Source:** PR #2257 agent-mediated Director of Quality review (EPIC-04, ST-10), `2026-11-11__release-v9.17` — 2026-11-13
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`stopsMovedWindow()` in `TodayList.js` returns today and the previous weekday (UTC): Monday → Friday, Tuesday → Monday, Saturday and Sunday → Friday (DEV-EPIC04-ST10-01). Every Stops moved scenario in `tests/e2e/dashboard-today-list.spec.js` runs with the clock fixed on Monday 2026-11-09, so only the Monday → Friday case is tested. The other cases were checked by hand with a node script before commit. CI has no frontend unit tests yet (`BLG-QA-262`).
+
+**Scope**
+- Cover Tuesday, Saturday and Sunday clocks: either Playwright scenarios with `page.clock.setFixedTime` on those days, or unit tests for `stopsMovedWindow` once `BLG-QA-262` lands
+- Include a clock near UTC midnight to pin the UTC (not local) date
+
+**Acceptance Criteria**
+- Tuesday, Saturday and Sunday clocks each assert which dated moves show and which do not
+- The tests run in CI

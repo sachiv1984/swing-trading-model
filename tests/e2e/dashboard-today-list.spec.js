@@ -4,11 +4,11 @@
  * Spec: docs/specs/frontend/pages/dashboard.md v4.0 §1B (TL-01..TL-29)
  * Design brief: docs/design/2026-11-03__release-v9.15/site-structure-phase1/decision_record.md §2.2
  *
- * Every scenario runs in the dark and the light theme. TL-09 and TL-10 (Stops moved) are not
- * testable this release: the group needs BLG-BE-205's stop_last_moved_date/previous_stop
- * (dashboard.md §1B "Data dependency"). SC-TL-STOPS asserts the group does not render, with no
- * placeholder, while GET /positions lacks those fields (ST-06 AC 2). TL-20 is the CI copy check
- * scripts/check_ui_copy_forbidden_phrases.py, not a Playwright scenario.
+ * Every scenario runs in the dark and the light theme. TL-09 and TL-10 (Stops moved) were added by
+ * ST-10 (BLG-FE-254, EPIC-04, v9.17) once ST-09 (BLG-BE-205) put stop_last_moved_date and
+ * previous_stop on GET /positions: SC-TL-09, SC-TL-09b and SC-TL-10. SC-TL-STOPS asserts the
+ * group does not render, with no placeholder, while no position has those fields (TL-13).
+ * TL-20 is the CI copy check scripts/check_ui_copy_forbidden_phrases.py, not a Playwright scenario.
  *
  * Infrastructure: page.route() network interception, clock fixed at NOW. No live backend.
  * ROUTING NOTE: App uses HashRouter — navigate via page.goto('/#/…').
@@ -22,6 +22,8 @@ const API = 'http://localhost:8000';
 const NOW = new Date('2026-11-09T12:00:00');
 const TODAY = '2026-11-09';
 const YESTERDAY = '2026-11-08';
+// NOW is a Monday: the Stops moved window is today and the previous weekday, Friday (DEV-EPIC04-ST10-01).
+const PREV_WEEKDAY = '2026-11-06';
 const US_EXPLANATION =
   'US market regime could not be measured: index data is unavailable. New entries in this market are blocked until it is measured.';
 
@@ -57,6 +59,10 @@ function pos(overrides = {}) {
 const riskOff = (ticker) => pos({ ticker, risk_off_exit: true });
 const breached = (ticker) => pos({ ticker, current_price: 85, current_price_native: 85 });
 const inGraceBreached = (ticker) => pos({ ticker, current_price: 85, current_price_native: 85, grace_period: true, grace_days_remaining: 4 });
+const moved = (ticker, date, previous, current, market = 'US') => pos({
+  ticker, market, stop_last_moved_date: date, previous_stop: previous,
+  current_trailing_stop_native: current, stop_price_native: current,
+});
 const graceLeft = (ticker, n) => pos({ ticker, grace_period: n != null, grace_days_remaining: n });
 const signal = (ticker, overrides = {}) => ({
   id: `sig-${ticker}`, ticker, market: 'US', status: 'new', signal_date: TODAY, rank: 1, ...overrides,
@@ -117,9 +123,9 @@ for (const theme of ['dark', 'light']) {
       expect(firstAfterTitle).toEqual({ followsTitle: true, beforeBriefing: true });
     });
 
-    test(`SC-TL-02 (${theme}): the groups render in the order regime, exits, grace, signals`, async ({ page }) => {
+    test(`SC-TL-02 (${theme}): the groups render in the order regime, exits, grace, stops, signals`, async ({ page }) => {
       await mockSources(page, {
-        positions: { body: [riskOff('RSK'), graceLeft('GRC', 1)] },
+        positions: { body: [riskOff('RSK'), graceLeft('GRC', 1), moved('MOV', TODAY, 80, 85)] },
         signals: { body: [signal('SIG')] },
       });
       await gotoDashboard(page);
@@ -127,7 +133,7 @@ for (const theme of ['dark', 'light']) {
       const order = await list(page).locator('[data-testid^="today-group-"]').evaluateAll(
         (els) => els.map((e) => e.getAttribute('data-testid'))
       );
-      expect(order).toEqual(['today-group-regime', 'today-group-exits', 'today-group-grace', 'today-group-signals']);
+      expect(order).toEqual(['today-group-regime', 'today-group-exits', 'today-group-grace', 'today-group-stops', 'today-group-signals']);
     });
 
     test(`SC-TL-03/04 (${theme}): regime shows US then UK with badges; UNKNOWN keeps its description; rows link to Signals`, async ({ page }) => {
@@ -246,7 +252,7 @@ for (const theme of ['dark', 'light']) {
       });
       await page.goto('/#/DashboardHome');
       await expect(list(page)).toBeVisible({ timeout: 10000 });
-      for (const g of ['regime', 'exits', 'grace', 'signals']) {
+      for (const g of ['regime', 'exits', 'grace', 'stops', 'signals']) {
         await expect(page.getByTestId(`today-skeleton-${g}`)).toHaveCount(1);
       }
       await expect(page.getByTestId('today-quiet')).toHaveCount(0);
@@ -320,6 +326,7 @@ for (const theme of ['dark', 'light']) {
       await gotoDashboard(page);
       await expect(page.getByTestId('today-error-exits')).toContainText("Couldn't load Exits due.", { timeout: 15000 });
       await expect(page.getByTestId('today-error-grace')).toContainText("Couldn't load Grace ends today.");
+      await expect(page.getByTestId('today-error-stops')).toContainText("Couldn't load Stops moved.");
       await expect(page.getByTestId('today-error-regime')).toContainText("Couldn't load Market regime.");
       await expect(group(page, 'signals')).toContainText('SIG');
     });
@@ -370,7 +377,60 @@ for (const theme of ['dark', 'light']) {
       await expect(signals.getByTestId('today-item-signals-DIS')).toBeVisible();
     });
 
-    test(`SC-TL-STOPS (${theme}): the Stops moved group and any placeholder are absent while GET /positions lacks stop_last_moved_date`, async ({ page }) => {
+    test(`SC-TL-09 (${theme}): stops moved lists today's and the previous weekday's moves A–Z, "Stop moved from {previous} to {current}" in native currency`, async ({ page }) => {
+      await mockSources(page, {
+        positions: {
+          body: [
+            moved('ZUS', TODAY, 85, 90.5),
+            moved('OLD', '2026-11-05', 70, 75),
+            moved('SUN', YESTERDAY, 70, 75),
+            moved('LOW', TODAY, 90, 88),
+            moved('AUK.L', PREV_WEEKDAY, 1.2, 1.25, 'UK'),
+            pos({ ticker: 'NVR' }),
+          ],
+        },
+      });
+      await gotoDashboard(page);
+      const stops = group(page, 'stops');
+      await expect(stops.getByTestId('today-header')).toHaveText('Stops moved · 2');
+      const rows = stops.getByRole('link');
+      await expect(rows).toHaveCount(2);
+      await expect(rows.nth(0)).toHaveText('AUK.LStop moved from £1.20 to £1.25');
+      await expect(rows.nth(1)).toHaveText('ZUSStop moved from $85.00 to $90.50');
+      await expect(stops.getByTestId('today-item-stops-OLD')).toHaveCount(0);
+      await expect(stops.getByTestId('today-item-stops-NVR')).toHaveCount(0);
+      await expect(stops.getByTestId('today-item-stops-LOW')).toHaveCount(0);
+      await expect(page.getByTestId('today-quiet')).toHaveCount(0);
+    });
+
+    test(`SC-TL-09c (${theme}): a move older than the previous weekday does not show and leaves the quiet-day line`, async ({ page }) => {
+      await mockSources(page, { positions: { body: [moved('OLD', '2026-11-05', 70, 75)] } });
+      await gotoDashboard(page);
+      await expect(page.getByTestId('today-quiet')).toBeVisible();
+      await expect(group(page, 'stops')).toHaveCount(0);
+    });
+
+    test(`SC-TL-09b (${theme}): more than 5 stops moved show 5 rows and "+N more" to Positions`, async ({ page }) => {
+      const tickers = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
+      await mockSources(page, { positions: { body: tickers.map((t) => moved(`MV${t}`, TODAY, 80, 85)) } });
+      await gotoDashboard(page);
+      const stops = group(page, 'stops');
+      await expect(stops.getByTestId('today-header')).toHaveText('Stops moved · 7');
+      await expect(stops.locator('[data-testid^="today-item-stops-"]')).toHaveCount(5);
+      await expect(page.getByTestId('today-overflow-stops')).toHaveText('+2 more');
+      await expect(page.getByTestId('today-overflow-stops')).toHaveAttribute('href', '#/Positions');
+    });
+
+    test(`SC-TL-10 (${theme}): a stops moved row links to /Positions?position={id}`, async ({ page }) => {
+      await mockSources(page, { positions: { body: [moved('MOV', TODAY, 80, 85)] } });
+      await gotoDashboard(page);
+      const row = page.getByTestId('today-item-stops-MOV');
+      await expect(row).toHaveAttribute('href', '#/Positions?position=pos-MOV');
+      await row.click();
+      await expect(page).toHaveURL(/#\/Positions\?position=pos-MOV$/);
+    });
+
+    test(`SC-TL-STOPS (${theme}): the Stops moved group and any placeholder are absent while no position has stop_last_moved_date`, async ({ page }) => {
       await mockSources(page, {
         positions: { body: [riskOff('RSK'), graceLeft('GRC', 1)] },
         signals: { body: [signal('SIG')] },

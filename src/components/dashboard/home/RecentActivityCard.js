@@ -14,9 +14,9 @@ function activityLabel(t) {
       date: t.exit_date ?? t.updated_date,
     };
   }
-  if (t.stop_updated_date) {
-    return { label: `Stop updated on ${t.ticker}`, detail: "", date: t.stop_updated_date };
-  }
+  // ST-09 (BLG-BE-205, v9.17): the "Stop updated" branch read stop_updated_date,
+  // which no API sends. Stop moves are shown in the Today list's Stops moved
+  // group (dashboard.md §1B).
   return { label: `${t.ticker} opened`, detail: "", date: t.entry_date ?? t.created_date };
 }
 

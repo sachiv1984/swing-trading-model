@@ -5,7 +5,7 @@
   "invoked_utc": "2026-11-12T13:22:26Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-12T21:15:00Z",
+  "last_updated_utc": "2026-11-13T09:37:36Z",
   "epics": {
     "EPIC-01": {
       "title": "Site Structure & Usability Phase 3: Positions Redesign (build-and-ship)",
@@ -137,6 +137,84 @@
         "first_round": "Blocked (1 P2, 5 P3)",
         "evidence": "claude/cycles/2026-11-11__release-v9.17/qa_evidence_EPIC-01.md"
       }
+    },
+    "EPIC-04": {
+      "title": "Site Structure & Usability Phase 2 Completion: Stops Moved Group",
+      "status": "done",
+      "branch": "exec/2026-11-11__release-v9.17/EPIC-04",
+      "pr_number": 2257,
+      "pr_status": "open",
+      "qa_signed_off": true,
+      "qa_evidence_log": "claude/cycles/2026-11-11__release-v9.17/qa_evidence_EPIC-04.md",
+      "test_scenarios": [
+        "tests/test_stop_last_moved.py",
+        "tests/e2e/dashboard-today-list.spec.js"
+      ],
+      "sign_off_record": {
+        "status": "cleared",
+        "role": "Director of Quality",
+        "method": "agent_mediated",
+        "signed_by": "Sprint Execution Engine (agent-mediated, Director of Quality role \u2014 \u00a75.3)",
+        "date": "2026-11-13",
+        "user_directed": true,
+        "rounds": 2,
+        "first_round": "Blocked (1 P2, 2 P3)",
+        "evidence": "claude/cycles/2026-11-11__release-v9.17/qa_evidence_EPIC-04.md"
+      },
+      "stories": {
+        "ST-09": {
+          "title": "Record when the nightly job last moved each position's stop",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 2244,
+          "branch": "exec/2026-11-11__release-v9.17/EPIC-04",
+          "commit_sha": "c50dd966b0f38f4aa4dc84e893445160d06ec7e6",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-11-13T08:07:08Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/data_model.md",
+            "docs/specs/data_model_positions_dictionary.md",
+            "docs/specs/api_contracts/position_endpoints.md#GET /positions",
+            "docs/specs/api_contracts/position_endpoints.md#POST /positions/nightly-stop-update",
+            "docs/reference/openapi.yaml",
+            "tests/test_stop_last_moved.py"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.done",
+          "sign_off_record": null,
+          "notes": "Commit c50dd966. AC 1 (raised stop records run date and previous stop) and AC 2 (unchanged stop leaves both) verified by tests/test_stop_last_moved.py (13 tests, nightly and on-load paths, NULL stop, missing columns, ensure-function); AC 3 contract + OpenAPI documented, drift checks pass (check_openapi_drift, 3-way sweep, baseline drift, heading lint). Ruling 2026-11-13 (user in session as Head of Specs Team and Data Model & Domain Schema Owner): both recompute paths record moves, because daily-snapshot.yml's 16:00 UTC GET /positions/analyze usually raises a stop before the 22:30 nightly run; scope wording named the nightly job only. Deviation check vs data_model.md DS-40 / position_endpoints.md v2.21.0: none (specs updated in the same commit); dashboard.md wording mismatch filed by ST-10 as DEV-EPIC04-ST10-01. Pre-commit /code-review high: 9 findings, 8 fixed in-commit (incl. the on-load finding via ruling), 1 filed BLG-SPEC-237. Full local pytest 3562 passed. CI on c50dd966: all 9 workflows success; CI Pytest Suite 43390721278; Playwright E2E Acceptance Tests 43390721105 (step 4c); Frontend Production Build 43390721108. Production/staging migration: startup ensure-function makes deploy order not a risk; Live Confirmation remains the planned Human-Delegation deploy step (RISK-03). Follow-up commit bf6ac67b (from ST-10's review): previous_stop keeps the day's first value across same-day raises; a rise hidden at 2 dp is not a move; 15 tests. CI on 2d52ac16 (contains bf6ac67b): all 9 workflows success; CI Pytest Suite 43393813008."
+        },
+        "ST-10": {
+          "title": "Today list \"Stops moved\" group: TL-09 and TL-10",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 2245,
+          "branch": "exec/2026-11-11__release-v9.17/EPIC-04",
+          "commit_sha": "2d52ac16b1ae15932c651125a5b3ddd9ddf006b0",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-11-13T08:30:53Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/pages/dashboard.md#1B. Today List",
+            "tests/e2e/dashboard-today-list.spec.js"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.done",
+          "sign_off_record": null,
+          "notes": "Commit 2d52ac16. AC 1: SC-TL-09/09b/09c/10 new, SC-TL-02/15b/26/STOPS updated, light and dark; local E2E build 50/50; CI Playwright E2E Acceptance Tests run 43393813050 success on 2d52ac16 (step 4c); all 9 workflows success (step 4d). AC 2 is a Post-Ship Closure banner on BLG-FE-254 (planned, not in-sprint). Deviation filed: DEV-EPIC04-ST10-01 (P3, dashboard.md v4.3 \u00a71B Known Deviations; BLG-SPEC-238): data written by both recompute paths; TL-09 latest nightly run date read as today or the previous weekday (UTC), ruling 2026-11-13 by the user as Frontend Specifications & UX Documentation Owner / Head of UX & Design. Step 13 grep: 'Stops moved'/'Stop moved' appear in no other e2e spec; the group renders only when a fixture carries stop_last_moved_date. Pre-commit /code-review medium: 8 findings, all fixed (two via the window ruling, two backend in bf6ac67b, plus direction check, SC-TL-09c, PositionLinkGroup); API run-date suggestion folded into BLG-SPEC-238. Production build exits 0 (3 pre-existing base44Client.js warnings)."
+        }
+      }
     }
   },
   "blocked_items": [],
@@ -145,7 +223,9 @@
     "ST-01",
     "ST-02",
     "ST-03",
-    "ST-04"
+    "ST-04",
+    "ST-09",
+    "ST-10"
   ],
   "open_escalations": {},
   "merge_gate": {
@@ -169,7 +249,13 @@
     "2026-11-12: EPIC-01 agent-mediated DoQ review (\u00a75.3, user-directed) returned Blocked: one P2 (Risk Dashboard grace panel contrast; SC-POSGV-08 passed vacuously because axe reported the gradient-backed text as incomplete) and five P3 evidence/comment corrections. All applied (d11ff814, QA evidence update); re-review requested (retry 1 of 2).",
     "2026-11-12: EPIC-01 prevention retrospective (user-directed) - Phase 3 friction candidates for STEP 5.4. EPIC-01 filed 12 follow-up items. (1) Six were spec questions the design gate could have settled: a data source that does not return the field for the whole list (BLG-BE-215; the contract states the <= 2 filter), and one value shown on five surfaces specified separately (BLG-SPEC-232..236). Target design_gate_prompt.md STEP 2.2 - data-source check and worked-examples table; filed BLG-GOV-422. (2) Three were edge-input bugs in pure src/lib functions, and the repo runs no frontend unit tests (BLG-FE-289/290/292); filed BLG-QA-262. (3) Tests passed on empty or undecidable data: SC-POSDC-02 mocked compliance empty (BLG-FE-293), and SC-POSGV-08 passed while axe left the lines 'incomplete'. This is the second occurrence after v9.16 EPIC-03 (BLG-QA-260 open, Provisional-Target v9.17, not seated): a recurrence candidate. (4) Drift without a guard: page size and the grace predicate (BLG-TECH-34, BLG-FE-291); filed BLG-TECH-35. (5) Shared-module review depth: ST-01's medium review left findings that the ST-02 and ST-04 reviews then surfaced; candidate execution_prompt.md / commit-check Check 11 rule - review at high when a story creates a module later stories build on (relates to BLG-GOV-420).",
     "2026-11-12: Product Owner direction (user, in session): prioritise BLG-GOV-422 and BLG-QA-262 for the next release, with BLG-QA-260. Carry-forward for v9.18 Release Planning. BLG-GOV-422 and BLG-QA-262 are P2, so release_planning_prompt.md selection step 1 (P1-then-P2-first) seats them if ready. BLG-QA-260 is P3 with a stale Provisional-Target v9.17 and needs a recorded Product Owner override in run_manifest.md (\u00a71.4c). Sprint Execution may not change Priority or Provisional-Target (\u00a77). STEP 5.3 and Post-Ship Closure: carry this into the closure Carry-Forward section.",
-    "2026-11-12: EPIC-01 PR #2256 merged by the human repository owner (sachiv1984) at 2026-11-12T21:07:56Z, merge commit 61154853. Orphaned post-merge commit check (LL-v6.8-P3-01): git log origin/main..origin/exec/2026-11-11__release-v9.17/EPIC-01 lists nothing - no reconciliation needed."
+    "2026-11-12: EPIC-01 PR #2256 merged by the human repository owner (sachiv1984) at 2026-11-12T21:07:56Z, merge commit 61154853. Orphaned post-merge commit check (LL-v6.8-P3-01): git log origin/main..origin/exec/2026-11-11__release-v9.17/EPIC-01 lists nothing - no reconciliation needed.",
+    "2026-11-12T21:11:33Z: run sprint --epic EPIC-04 \u2014 EPIC-04 section appended to the existing execution_state.json (owner EPIC-01). Branch cut from main at c3a09481 after EPIC-01 merged (Merge Order position 2). Issues #2244/#2245 found from sync gh. Both stories autonomous per sprint_backlog.md. Invocation typed as '--epic epic04', normalised to EPIC-04.",
+    "2026-11-13T08:17:13Z: ST-09 - pre-commit /code-review high found that GET /positions/analyze (16:00 UTC daily-snapshot.yml) raises stops before the nightly job; user ruled in session (Head of Specs Team, Data Model & Domain Schema Owner) to record moves on both paths. Recorded in DS-40, position_endpoints.md v2.21.0 and dashboard.md DEV-EPIC04-ST10-01.",
+    "2026-11-13T08:36:11Z: ST-10 - pre-commit /code-review medium found the most-recent-move-date rule kept old moves under 'Due today' and blocked the quiet-day line; user ruled in session (Frontend Specifications & UX Documentation Owner, Head of UX & Design) for a today-or-previous-weekday window. EPIC-04 stories done; QA evidence consolidated; DoQ sign-off requested (autonomous class unavailable: src/components changed).",
+    "2026-11-13T08:54:06Z: EPIC-04 agent-mediated DoQ review (user-directed): round 1 Blocked (1 P2 spec drift for the bf6ac67b rules, 2 P3), fixed in ad71e504; round 2 Approved with 2 P3 notes, applied in the sign-off commit.",
+    "2026-11-13T09:34:47Z: EPIC-04 human Director of Quality QA sign-off and Product Owner acceptance given in session by the repository owner (holds both roles), before merge; also confirms the bf6ac67b same-day previous_stop and 2 dp rules. Recorded in qa_evidence_EPIC-04.md Merge Gate Confirmations and on PR #2257.",
+    "2026-11-13T09:37:36Z: Product Owner direction (user, in session): extend BLG-GOV-422's scope at v9.18 Release Planning with two more design gate STEP 2.2 checks from the EPIC-04 retrospective. (1) Writer check: for every spec or AC claim that a field is 'written by X' or that 'only X does Y', grep every writer in the code and record the result; a false premise is a slice or spec change decided before the gate passes (EPIC-04: dashboard.md \u00a71B said only the nightly job moves stops, but GET /positions/analyze also ratchets them; this cost a review round and BLG-SPEC-238). (2) Time-boundary worked examples: for any date, window or 'latest' rule, give the result for stale data (no event for a week), a quiet day, weekends, UTC midnight and the latest row disappearing, and name the data source for any run date the rule needs (EPIC-04: TL-09's 'latest nightly run date' had no source, giving DEV-EPIC04-ST10-01). Add a matching AC: re-running the checks on dashboard.md v4.0 \u00a71B finds both gaps. Sprint Execution may not edit BLG-GOV-422 (\u00a77). STEP 5.3 and Post-Ship Closure: carry this into the closure Carry-Forward section beside the 2026-11-12 BLG-GOV-422/BLG-QA-262/BLG-QA-260 priority direction."
   ],
   "sealed": false,
   "sealed_utc": null

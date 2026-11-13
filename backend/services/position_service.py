@@ -22,6 +22,7 @@ from database import (
     get_portfolio,
     get_positions,
     update_position,
+    ensure_stop_last_moved_columns,
     create_position,
     update_portfolio_cash,
     get_settings,
@@ -89,6 +90,48 @@ def stop_to_store(new_stop: float, stored_stop: Optional[float]) -> float:
     """
     stored = stored_stop or 0
     return max(round(new_stop, 2), stored)
+
+
+def stop_move_columns_ready() -> bool:
+    """True when positions.stop_last_moved_date/previous_stop exist (ST-09, DS-40).
+
+    They are added at startup. If they are still missing, both recompute paths
+    ratchet stops as before and record no move, rather than failing the update.
+    """
+    try:
+        ensure_stop_last_moved_columns()
+        return True
+    except Exception as e:
+        print(f"⚠️ stop_last_moved columns unavailable; stop moves not recorded: {e}")
+        return False
+
+
+def record_stop_move(updates: Dict, pos: Dict, stored_stop: float, move_date: str) -> None:
+    """Add the stop-move fields to a recompute's update when it raised the stop.
+
+    ST-09 (BLG-BE-205, EPIC-04, v9.17; data_model.md DS-40). Both recompute paths
+    (GET /positions/analyze and the nightly job) call this: ruling 2026-11-13 by
+    the user acting as Head of Specs Team and Data Model & Domain Schema Owner,
+    because the 16:00 UTC snapshot's on-load recompute usually raises a stop
+    before the 22:30 nightly run. A move is a stored value above a non-null
+    stored stop (the §7.3 ratchet raised it) that is visible at 2 dp; a NULL
+    stop's first write is not. An unchanged stop leaves both fields as they were.
+    """
+    before = pos.get('current_stop')
+    if before is None:
+        return
+    before = float(before)
+    # A rise that 2 dp hides is not shown as a move ("from 85.00 to 85.00").
+    if round(stored_stop, 2) <= round(before, 2):
+        return
+    updates['stop_last_moved_date'] = move_date
+    # Several raises on one UTC day (16:00 snapshot, page loads, 22:30 nightly)
+    # keep the stop from before the day's first move, so the row shows the
+    # whole day's move rather than its last step.
+    last = pos.get('stop_last_moved_date')
+    if last is not None and str(last) == move_date and pos.get('previous_stop') is not None:
+        return
+    updates['previous_stop'] = before
 
 
 def native_entry_price(pos: Dict, live_fx_rate: float) -> float:
@@ -268,6 +311,13 @@ def get_positions_with_prices() -> List[Dict]:
         # ST-15 (BLG-FE-202, v9.12, DS-32): 'atr_unavailable' when the last
         # post-grace recompute kept the stop for lack of ATR; NULL otherwise.
         stop_frozen_reason = pos.get('stop_frozen_reason')
+        # ST-09 (BLG-BE-205, v9.17, DS-40): when a recompute (on-load or nightly)
+        # last raised the stop, and the native stop before that move. NULL until
+        # the first move.
+        stop_last_moved_date = pos.get('stop_last_moved_date')
+        stop_last_moved_date = str(stop_last_moved_date) if stop_last_moved_date else None
+        previous_stop = pos.get('previous_stop')
+        previous_stop = round(float(previous_stop), 2) if previous_stop is not None else None
 
         # Build position dict
         positions_list.append({
@@ -324,6 +374,8 @@ def get_positions_with_prices() -> List[Dict]:
             "atr_source": atr_source,
             "stop_calculation_source": stop_calculation_source,
             "stop_frozen_reason": stop_frozen_reason,
+            "stop_last_moved_date": stop_last_moved_date,
+            "previous_stop": previous_stop,
             "fx_rate": pos.get('fx_rate', 1.0),
             "live_fx_rate": live_fx_rate,
             # ST-05 (BLG-BE-169, v9.14): where live_fx_rate came from.
@@ -395,6 +447,9 @@ def analyze_positions() -> Dict:
     
     # Get live FX rate
     live_fx_rate = get_live_fx_rate()
+    # ST-09 (BLG-BE-205, v9.17, DS-40): record stop moves on this path too.
+    record_moves = stop_move_columns_ready()
+    move_date = datetime.now(timezone.utc).strftime('%Y-%m-%d')
     
     # Get market regime
     print("\n📊 Checking market regime...")
@@ -578,6 +633,8 @@ def analyze_positions() -> Dict:
             # rewritten, not even rounded. Trailing starts on day 10.
             if not grace_period:
                 position_updates['current_stop'] = stop_to_store(trailing_stop_native, current_stop_native)
+                if record_moves:
+                    record_stop_move(position_updates, pos, position_updates['current_stop'], move_date)
             # ST-01 (BLG-BE-135, EPIC-01, v9.9): only stamp stop_calculated_at /
             # active_atr_multiplier when the stop was actually recalculated
             # against ATR (grace period carries the stop over unchanged, with
@@ -679,6 +736,11 @@ def run_nightly_trailing_stop_update() -> Dict:
     portfolio_id = str(portfolio['id'])
     positions = get_positions(portfolio_id, status='open')
     live_fx_rate = get_live_fx_rate()
+    # ST-09 (BLG-BE-205, v9.17): one UTC date for the run, written to
+    # stop_last_moved_date and returned as run_date, so the two always agree.
+    run_date = datetime.now(timezone.utc).strftime('%Y-%m-%d')
+    # ST-09 (DS-40): if the move columns are missing, ratchet without recording.
+    record_moves = stop_move_columns_ready()
 
     results = []
     for pos in positions:
@@ -772,6 +834,9 @@ def run_nightly_trailing_stop_update() -> Dict:
             # not merely read from cache", DS-22). A reused stored ATR keeps
             # its original timestamp.
             nightly_updates['atr_calculated_at'] = now_utc
+        # ST-09 (BLG-BE-205, v9.17, DS-40): record when and from where the stop moved.
+        if record_moves:
+            record_stop_move(nightly_updates, pos, nightly_updates['current_stop'], run_date)
         update_position(position_id, nightly_updates)
 
         results.append({
@@ -788,7 +853,7 @@ def run_nightly_trailing_stop_update() -> Dict:
     updated = sum(1 for r in results if r['status'] == 'updated')
     skipped = sum(1 for r in results if r['status'] == 'skipped')
     return {
-        "run_date": datetime.now().strftime('%Y-%m-%d'),
+        "run_date": run_date,
         "positions_processed": len(positions),
         "updated": updated,
         "skipped": skipped,

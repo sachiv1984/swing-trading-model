@@ -2094,6 +2094,26 @@ def ensure_last_reviewed_at_column():
         conn.commit()
 
 
+@ensure_once
+def ensure_stop_last_moved_columns():
+    """Add stop_last_moved_date and previous_stop to positions (idempotent).
+
+    ST-09 (BLG-BE-205, EPIC-04, v9.17, data_model.md DS-40). Written by both
+    stop recompute paths (analyze_positions, run_nightly_trailing_stop_update)
+    when the §7.3 ratchet raises the stored stop; read-only on GET /positions. Nullable, no default, no backfill.
+    Reversible: DROP COLUMN IF EXISTS for each.
+    """
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                "ALTER TABLE positions ADD COLUMN IF NOT EXISTS stop_last_moved_date DATE"
+            )
+            cur.execute(
+                "ALTER TABLE positions ADD COLUMN IF NOT EXISTS previous_stop DECIMAL(10, 4)"
+            )
+        conn.commit()
+
+
 def mark_position_reviewed(position_id: str) -> dict:
     """Set last_reviewed_at = NOW() for the given position (ST-15, BLG-FEAT-68).
 
