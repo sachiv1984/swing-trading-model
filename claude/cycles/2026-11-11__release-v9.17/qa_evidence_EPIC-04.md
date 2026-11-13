@@ -21,8 +21,10 @@ Last Updated: 2026-11-13
 1. As Head of Specs Team and Data Model & Domain Schema Owner: both stop recompute paths record moves, not only the nightly job, because `daily-snapshot.yml`'s 16:00 UTC `GET /positions/analyze` usually raises a stop before the 22:30 UTC nightly run (found by ST-09's pre-commit `/code-review` high). Recorded in DS-40, `position_endpoints.md` v2.21.0 and DEV-EPIC04-ST10-01.
 2. As Frontend Specifications & UX Documentation Owner and Head of UX & Design: the Stops moved group shows moves dated today or the previous weekday (UTC), because `GET /positions` has no run date and "most recent move date" kept old moves under "Due today" and blocked the quiet-day line (found by ST-10's pre-commit `/code-review` medium). Recorded in DEV-EPIC04-ST10-01.
 
+**Engine reading pending owner confirmation:** the `bf6ac67b` rules (a move is recorded only when visible at 2 dp; a second raise on the same UTC day keeps the day's first `previous_stop`) are the engine's reading of ST-09 AC 1 ("the stop before the move" as the day's move, LL-v3.4-P3-03), documented in DS-40, the dictionary, `position_endpoints.md` v2.21.0 and `openapi.yaml` 3.49.0. No Data Model & Domain Schema Owner ruling covers them; the owner confirms or rejects them at PR review, and a rejection is a follow-up change, not a merge blocker under this sign-off.
+
 **QA test coverage:**
-- Scenarios run: `tests/test_stop_last_moved.py` (15); full local pytest 3562 passed before the follow-up (stub `DATABASE_URL`); `tests/e2e/dashboard-today-list.spec.js` 50/50 locally on an E2E-env production build and in CI; the 15 other DashboardHome Playwright specs 141/141 locally; CI on `2d52ac16`: all 9 workflows success (Playwright E2E 43393813050, Critical-Path Smoke 43393813169, CI Pytest 43393813008, Frontend Production Build 43393813095).
+- Scenarios run: `tests/test_stop_last_moved.py` (15; 17 with `test_positions_dictionary_coverage.py` after `ad71e504`); full local pytest 3562 passed before the follow-up (stub `DATABASE_URL`); `tests/e2e/dashboard-today-list.spec.js` 50/50 locally on an E2E-env production build and in CI; the 15 other DashboardHome Playwright specs 141/141 locally; CI on `2d52ac16`: all 9 workflows success (Playwright E2E 43393813050, Critical-Path Smoke 43393813169, CI Pytest 43393813008, Frontend Production Build 43393813095). CI on the final head `ad71e504` (documentation only): all 7 triggered workflows success (CI Pytest 43396639890, Critical-Path Smoke 43396639964, Golden Output 43396639953, Portfolio Integration 43396640096, Service Layer 43396640271, Endpoint Coverage 43396640010, Governance Sync 43396640109); Playwright E2E and Frontend Production Build are path-filtered out for docs-only commits and last ran green on `2d52ac16`, the final `src/`/`tests/e2e` change.
 - Regression areas checked: stop ratchet on both recompute paths (`test_atr_provenance.py`, `test_trailing_stop_breakeven_floor.py`, `test_strategy_parameter_parity.py`, `test_live_exit_decision.py`), positions dictionary coverage, OpenAPI/contract drift, Dashboard Today list groups and states, Recent Activity card.
 - Known deviations: DEV-EPIC04-ST10-01 (P3, BLG-SPEC-238). ST-09's deviation check found none.
 - Frontend testing gate: every observable ST-10 AC (TL-09 rendering and text, TL-10 link and navigation, cap, quiet day, skeleton, error line) has Playwright coverage observed passing in real CI (run 43393813050). ST-09's frontend change removes unreachable code with no rendered difference. No "code review only" AC.
@@ -33,11 +35,11 @@ Last Updated: 2026-11-13
 
 ## Standard Sign-Off Block
 
-- [ ] All acceptance criteria verified against canonical spec
-- [ ] No unresolved P0 or P1 deviations
-- [ ] Regression areas checked
-- [ ] For any frontend component making direct URL construction (not via api.* wrapper): confirm the URL-base variable is exposed on the imported object
-- [ ] **Strategy values checked:** ST-09 — §7.1 (both recompute paths), §7.3 (ratchet: a move is a rise of the stored stop; nothing lowers it), §6.3 (in-grace positions record nothing); stop arithmetic and §11 parameters unchanged. ST-10 — displays the stored stops only; no formula.
-- Signed off by:
-- Date:
-- Comments:
+- [x] All acceptance criteria verified against canonical spec
+- [x] No unresolved P0 or P1 deviations
+- [x] Regression areas checked
+- [x] For any frontend component making direct URL construction (not via api.* wrapper): confirm the URL-base variable is exposed on the imported object — N/A, `TodayList.js` uses `api.positions.list()` and router-relative links
+- [x] **Strategy values checked:** ST-09 — §7.1 (both recompute paths), §7.3 (ratchet: a move is a rise of the stored stop; nothing lowers it), §6.3 (in-grace positions record nothing); stop arithmetic and §11 parameters unchanged. ST-10 — displays the stored stops only; no formula.
+- Signed off by: Sprint Execution Engine (agent-mediated, Director of Quality role — §5.3)
+- Date: 2026-11-13
+- Comments: User-directed agent-mediated review against `claude/agents/director_of_quality.md`. Round 1 (on `82ecbaea`): Blocked — 1 P2 (DS-40, dictionary, `position_endpoints.md` and `openapi.yaml` did not describe the `bf6ac67b` same-day `previous_stop` and 2 dp rules, while ST-09 was graded Pass), 2 P3 (`api_changelog.md` "nightly job" wording; nightly `stop_moved` compares unrounded stops, undocumented). All fixed in `ad71e504`. Round 2 (retry 1 of 2): Approved, with 2 P3 notes, both applied here: CI on the final head cited above; the same-day/2 dp rules recorded as an engine reading pending owner confirmation. Reviewer evidence: `tests/test_stop_last_moved.py` + dictionary coverage 17 passed; `check_openapi_drift.py` and the heading lint exit 0; `gh run list` on `2d52ac16` all 9 workflows success. Frontend testing gate: every observable ST-10 AC has Playwright coverage observed passing in real CI (run 43393813050). ST-10 graded `Pass_with_deviation` (DEV-EPIC04-ST10-01, P3, BLG-SPEC-238). No P1/P2 found defects filed in this EPIC. This agent-mediated sign-off does not satisfy the always-human QA sign-off or Product Owner acceptance merge-gate rows.

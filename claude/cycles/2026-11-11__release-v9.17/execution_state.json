@@ -5,7 +5,7 @@
   "invoked_utc": "2026-11-12T13:22:26Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-13T08:36:11Z",
+  "last_updated_utc": "2026-11-13T08:54:06Z",
   "epics": {
     "EPIC-01": {
       "title": "Site Structure & Usability Phase 3: Positions Redesign (build-and-ship)",
@@ -144,13 +144,23 @@
       "branch": "exec/2026-11-11__release-v9.17/EPIC-04",
       "pr_number": null,
       "pr_status": null,
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-11-11__release-v9.17/qa_evidence_EPIC-04.md",
       "test_scenarios": [
         "tests/test_stop_last_moved.py",
         "tests/e2e/dashboard-today-list.spec.js"
       ],
-      "sign_off_record": null,
+      "sign_off_record": {
+        "status": "cleared",
+        "role": "Director of Quality",
+        "method": "agent_mediated",
+        "signed_by": "Sprint Execution Engine (agent-mediated, Director of Quality role \u2014 \u00a75.3)",
+        "date": "2026-11-13",
+        "user_directed": true,
+        "rounds": 2,
+        "first_round": "Blocked (1 P2, 2 P3)",
+        "evidence": "claude/cycles/2026-11-11__release-v9.17/qa_evidence_EPIC-04.md"
+      },
       "stories": {
         "ST-09": {
           "title": "Record when the nightly job last moved each position's stop",
@@ -242,7 +252,8 @@
     "2026-11-12: EPIC-01 PR #2256 merged by the human repository owner (sachiv1984) at 2026-11-12T21:07:56Z, merge commit 61154853. Orphaned post-merge commit check (LL-v6.8-P3-01): git log origin/main..origin/exec/2026-11-11__release-v9.17/EPIC-01 lists nothing - no reconciliation needed.",
     "2026-11-12T21:11:33Z: run sprint --epic EPIC-04 \u2014 EPIC-04 section appended to the existing execution_state.json (owner EPIC-01). Branch cut from main at c3a09481 after EPIC-01 merged (Merge Order position 2). Issues #2244/#2245 found from sync gh. Both stories autonomous per sprint_backlog.md. Invocation typed as '--epic epic04', normalised to EPIC-04.",
     "2026-11-13T08:17:13Z: ST-09 - pre-commit /code-review high found that GET /positions/analyze (16:00 UTC daily-snapshot.yml) raises stops before the nightly job; user ruled in session (Head of Specs Team, Data Model & Domain Schema Owner) to record moves on both paths. Recorded in DS-40, position_endpoints.md v2.21.0 and dashboard.md DEV-EPIC04-ST10-01.",
-    "2026-11-13T08:36:11Z: ST-10 - pre-commit /code-review medium found the most-recent-move-date rule kept old moves under 'Due today' and blocked the quiet-day line; user ruled in session (Frontend Specifications & UX Documentation Owner, Head of UX & Design) for a today-or-previous-weekday window. EPIC-04 stories done; QA evidence consolidated; DoQ sign-off requested (autonomous class unavailable: src/components changed)."
+    "2026-11-13T08:36:11Z: ST-10 - pre-commit /code-review medium found the most-recent-move-date rule kept old moves under 'Due today' and blocked the quiet-day line; user ruled in session (Frontend Specifications & UX Documentation Owner, Head of UX & Design) for a today-or-previous-weekday window. EPIC-04 stories done; QA evidence consolidated; DoQ sign-off requested (autonomous class unavailable: src/components changed).",
+    "2026-11-13T08:54:06Z: EPIC-04 agent-mediated DoQ review (user-directed): round 1 Blocked (1 P2 spec drift for the bf6ac67b rules, 2 P3), fixed in ad71e504; round 2 Approved with 2 P3 notes, applied in the sign-off commit."
   ],
   "sealed": false,
   "sealed_utc": null
