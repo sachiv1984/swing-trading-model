@@ -47,7 +47,7 @@ Rules:
 
 | Change | Details |
 |--------|---------|
-| Updated endpoint: GET /positions | Gains read-only `stop_last_moved_date` (`YYYY-MM-DD` \| `null`) and `previous_stop` (native, 2 dp \| `null`): when the nightly job last raised the stop, and the stop before that move (DS-40, BLG-BE-205). Written by both recompute paths. For the Dashboard Today list's Stops moved group. `openapi.yaml` 3.49.0. |
+| Updated endpoint: GET /positions | Gains read-only `stop_last_moved_date` (`YYYY-MM-DD` \| `null`) and `previous_stop` (native, 2 dp \| `null`): when a stop recompute last raised the stop, and the stop before that move (DS-40, BLG-BE-205). Written by both recompute paths. For the Dashboard Today list's Stops moved group. `openapi.yaml` 3.49.0. |
 | Updated endpoint: POST /positions/nightly-stop-update | Writes `stop_last_moved_date` and `previous_stop` only when the stop it stores is above a stored stop; response shape unchanged (v2.21.0). |
 | Updated endpoint: GET /positions/analyze | Writes the same two fields when its on-load recompute raises a stored stop, so a stop the 16:00 UTC snapshot raises is recorded (ruling 2026-11-13; v2.21.0). |
 

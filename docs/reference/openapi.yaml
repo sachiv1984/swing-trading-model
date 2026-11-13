@@ -7098,7 +7098,7 @@ components:
               type: number
               nullable: true
               readOnly: true
-              description: v9.17 ST-09 (BLG-BE-205) — the stored stop in native currency immediately before the move in stop_last_moved_date, 2 dp. Pair with current_trailing_stop_native. Null until the first move. DS-40.
+              description: v9.17 ST-09 (BLG-BE-205) — the stored stop in native currency before the day's move in stop_last_moved_date (the stop before that UTC day's first raise), 2 dp. Pair with current_trailing_stop_native. Null until the first move. DS-40.
             fx_rate: { type: number }
             live_fx_rate: { type: number }
             price_is_stale:
