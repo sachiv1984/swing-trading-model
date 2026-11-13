@@ -431,6 +431,14 @@ def on_startup():
     except Exception as _e:
         _log.error("ensure_last_reviewed_at_column FAILED at startup: %s", _e)
     try:
+        # ST-09 (BLG-BE-205, v9.17, DS-40): both stop recompute paths write these two
+        # columns when they raise a stop, so add them before the first recompute.
+        from database import ensure_stop_last_moved_columns
+        ensure_stop_last_moved_columns()
+        _log.info("ensure_stop_last_moved_columns: OK")
+    except Exception as _e:
+        _log.error("ensure_stop_last_moved_columns FAILED at startup: %s", _e)
+    try:
         from database import ensure_signals_allocation_insufficient_status
         ensure_signals_allocation_insufficient_status()
         _log.info("ensure_signals_allocation_insufficient_status: OK")

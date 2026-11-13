@@ -2,7 +2,9 @@ openapi: 3.0.3
 
 info:
   title: Momentum Trading Assistant API
-  version: 3.48.0
+  version: 3.49.0
+  # v3.49.0 (2026-11-12, ST-09, EPIC-04, v9.17): GET /positions gains stop_last_moved_date and
+  # previous_stop (read-only, DS-40; BLG-BE-205), written by either recompute path when it raises a stop. No new endpoint.
   # v3.48.0 (2026-11-09, ST-05, EPIC-02, v9.16): POST and PUT /trade-plans document the optional
   # pre_entry_validation_snapshot object (captured_at, advisory_status, checks, inputs; trade_plan.md v1.22 §5e).
   # PUT now stores it (BLG-FE-271). No new endpoint.
@@ -7086,6 +7088,17 @@ components:
               enum: [atr_unavailable]
               nullable: true
               description: v9.12 ST-15 (BLG-FE-202) — atr_unavailable when the last post-grace recompute (on-load or nightly) kept the stop because no ATR was available; null otherwise. Cleared by the next recompute with an ATR. Never set during grace. DS-32.
+            stop_last_moved_date:
+              type: string
+              format: date
+              nullable: true
+              readOnly: true
+              description: v9.17 ST-09 (BLG-BE-205) — UTC date of the recompute (GET /positions/analyze or the nightly stop update) that last raised the stored stop (§7.3 ratchet). Unchanged by a recompute that keeps the stop. Null until the first move. DS-40.
+            previous_stop:
+              type: number
+              nullable: true
+              readOnly: true
+              description: v9.17 ST-09 (BLG-BE-205) — the stored stop in native currency immediately before the move in stop_last_moved_date, 2 dp. Pair with current_trailing_stop_native. Null until the first move. DS-40.
             fx_rate: { type: number }
             live_fx_rate: { type: number }
             price_is_stale:

@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-12 (session — 3 new items added: BLG-GOV-422, BLG-QA-262, BLG-TECH-35; EPIC-01 prevention retrospective, user-directed); prior — 2026-11-12 (session — 3 new items added: BLG-SPEC-236, BLG-FE-293, BLG-TECH-34; PR #2256 agent-mediated review); prior — 2026-11-12 (session — 2 new items added: BLG-SPEC-235, BLG-FE-292; v9.17 EPIC-01 agent-mediated DoQ review and follow-up code review); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-13 (session — 1 new item added: BLG-SPEC-237; ST-09 pre-commit review, EPIC-04, v9.17); prior — 2026-11-12 (session — 3 new items added: BLG-GOV-422, BLG-QA-262, BLG-TECH-35; EPIC-01 prevention retrospective, user-directed); prior — 2026-11-12 (session — 3 new items added: BLG-SPEC-236, BLG-FE-293, BLG-TECH-34; PR #2256 agent-mediated review); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -6598,6 +6598,27 @@ Four small gaps in the v9.17 Positions code. First, `stopDistanceR` (`src/lib/po
 **Acceptance Criteria**
 - `positions.md` §Warning Strip states when the staleness entry is active
 - With fresh data and no other warning, the spec says whether a strip renders
+
+---
+
+### BLG-SPEC-237 — Decide whether data_model.md migration headings may carry their DS-nn identifier
+**Priority:** P3 (Low)
+**Type:** Spec Debt
+**Owner:** Data Model & Domain Schema Owner; Head of Specs Team
+**Source:** ST-09 pre-commit `/code-review` high, EPIC-04, `2026-11-11__release-v9.17` — 2026-11-13
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+CLAUDE.md §2 says task, story and ticket references must never appear in document section headings. Every migration block in `docs/specs/data_model.md` is headed `## DS-nn — <description> (vX.YY, date)`, from DS-01 to DS-40 (ST-09 added DS-40 in the same form to stay consistent). Other documents cite these blocks as "`data_model.md` DS-nn", so the identifier works as a stable anchor rather than a ticket reference, but the rule does not say so.
+
+**Scope**
+- Decide whether a migration identifier in a `data_model.md` heading is allowed (and record the exception in CLAUDE.md §2 or `shared_standards.md`), or move the identifier out of the headings
+- If moved: rename the 40 headings and update every "DS-nn" cross-reference that relies on the heading text
+
+**Acceptance Criteria**
+- The rule for `data_model.md` migration headings is written down in one place
+- `data_model.md` headings follow it
 
 ---
 

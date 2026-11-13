@@ -3,8 +3,8 @@
 **Owner:** Data Model & Domain Schema Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.68
-**Last Updated:** 2026-11-11 (ST-13, EPIC-04, v9.16, BLG-OPS-197 — DS-36 production Live Confirmation recorded; sign-off line updated); prior — 2026-11-05 (ST-30/ST-32, EPIC-05, v9.15, BLG-OPS-190/BLG-OPS-192 — DS-39 (v2.68): new `momentum_signal_runs` table, one completion marker per momentum signal run, read by the month-end rebalance job); prior — 2026-11-05 (BLG-SPEC-217, EPIC-06 post-merge, v9.15 — DS-38 production Live Confirmation recorded; Fields rows and Drift Triage row 3 updated); prior history retained — see prior entries in version control
+**Version:** 2.69
+**Last Updated:** 2026-11-12 (ST-09, EPIC-04, v9.17, BLG-BE-205 — DS-40 (v2.69): `stop_last_moved_date` and `previous_stop` on positions, written by either stop recompute path when it raises a stop); prior — 2026-11-11 (ST-13, EPIC-04, v9.16, BLG-OPS-197 — DS-36 production Live Confirmation recorded; sign-off line updated); prior — 2026-11-05 (ST-30/ST-32, EPIC-05, v9.15, BLG-OPS-190/BLG-OPS-192 — DS-39 (v2.68): new `momentum_signal_runs` table, one completion marker per momentum signal run, read by the month-end rebalance job); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 This document describes the complete database schema and data structures used in the **Position Manager Web App**.
@@ -96,7 +96,9 @@ CREATE TABLE positions (
     active_atr_multiplier DECIMAL(4, 2),
     atr_source VARCHAR(10) CHECK (atr_source IN ('fetched', 'user', 'fallback')),
     stop_calculation_source VARCHAR(10) CHECK (stop_calculation_source IN ('on_load', 'nightly')),
-    stop_frozen_reason VARCHAR(20) CHECK (stop_frozen_reason IN ('atr_unavailable'))
+    stop_frozen_reason VARCHAR(20) CHECK (stop_frozen_reason IN ('atr_unavailable')),
+    stop_last_moved_date DATE,
+    previous_stop DECIMAL(10, 4)
 );
 
 CREATE INDEX idx_positions_portfolio ON positions(portfolio_id);
@@ -147,6 +149,8 @@ CREATE INDEX idx_positions_tags ON positions USING GIN(tags);
 | atr_source | VARCHAR(10) | YES | system-stamped | Where the stored `atr` came from: `fetched` (computed from market data), `user` (typed at entry), or `fallback` (no ATR could be fetched at entry, so 2% of the entry price was substituted). `NULL` for positions entered before this column was added and not freshly recomputed since. Written at entry and whenever ATR is freshly fetched on recompute. Added v2.50 (DS-25). |
 | stop_calculation_source | VARCHAR(10) | YES | system-stamped | Which path last recalculated `current_stop` against ATR: `on_load` (`GET /positions/analyze`) or `nightly` (`POST /positions/nightly-stop-update`). Written together with `stop_calculated_at`; the grace-period carry-over writes neither. `NULL` until the first recompute after this column was added. Added v2.51 (DS-26). |
 | stop_frozen_reason | VARCHAR(20) | YES | system-stamped | Why the last post-grace recompute kept `current_stop` instead of recalculating it: `atr_unavailable` (no ATR could be fetched and none was stored). Written by both `GET /positions/analyze` and `POST /positions/nightly-stop-update`; cleared to `NULL` by the next post-grace recompute that has an ATR. Never written during grace (the stop is frozen there by rule, §6.3). Drives the Positions frozen-stop indicator (`positions.md` §Frozen Stop Indicator). Added v2.61 (DS-32). |
+| stop_last_moved_date | DATE | YES | system-stamped | The UTC date of the recompute that last raised `current_stop` under the §7.3 ratchet: `analyze_positions()` (`GET /positions/analyze`, including the 16:00 UTC snapshot) or `run_nightly_trailing_stop_update()` (its `run_date`). Written only when the stored stop goes up from a non-null value; a recompute that keeps the stop, an in-grace position and a skipped position leave it unchanged. `NULL` until the first move after this column was added. Read-only on `GET /positions`; drives the Dashboard Today list's Stops moved group (`dashboard.md` §1B). Added v2.69 (DS-40). |
+| previous_stop | DECIMAL(10,4) | YES | system-stamped | `current_stop` (native currency) immediately before the move recorded in `stop_last_moved_date`; written in the same update. `NULL` until the first move. Added v2.69 (DS-40). |
 | strategy_version_at_entry | VARCHAR(10) | YES | system-stamped | Active `strategy_rules.md` version at entry (`get_current_strategy_version()`), forward-only. Added v8.0 (ST-01). *(Row added v2.55 — ST-30; the column was live but missing from this table.)* |
 | risk_off_exit | BOOLEAN | NO | derived | `NOT NULL DEFAULT FALSE` (`ensure_risk_off_exit_column()`; Nullable corrected YES → NO in v2.60). Risk-off exit alert flag, set and cleared by the nightly risk-off job from the market regime (ST-05). *(Row added v2.55 — ST-30.)* |
 | last_reviewed_at | TIMESTAMPTZ | YES | system-stamped | When the user last marked the position reviewed (`PATCH /positions/{id}/mark-reviewed`); null if never. The timestamp is system-stamped; the action is the user's. *(Row added v2.55 — ST-30.)* |
@@ -3767,6 +3771,48 @@ Expect 6 columns, none nullable; `idx_momentum_signal_runs_portfolio_date` and t
 
 ---
 
+## DS-40 — Add stop_last_moved_date and previous_stop to positions (v2.69, 2026-11-12)
+
+**Story:** ST-09 (EPIC-04, v9.17) — `BLG-BE-205`.
+
+**Rationale:** `GET /positions` did not record when a position's stop last moved. `stop_calculated_at` is stamped on every recompute, whether or not the stop changed, and by both the on-load and nightly paths. The Dashboard Today list's Stops moved group (`dashboard.md` §1B, TL-09/TL-10) needs the date a stop was last raised and the stop before that move. Both recompute paths, `analyze_positions()` (`GET /positions/analyze`) and `run_nightly_trailing_stop_update()`, write both columns in the same update as the new `current_stop`, through `record_stop_move()`, and only when the value stored is above a non-null stored stop (`stop_to_store(new, stored) > stored`, the §7.3 ratchet raising it). The date is the UTC date of that recompute. An unchanged stop, a NULL stored stop's first write, an in-grace position and a skipped position leave both columns as they were. The sealed scope named the nightly job only; the on-load path was added by ruling 2026-11-13, the user acting as Head of Specs Team and Data Model & Domain Schema Owner, because `daily-snapshot.yml` calls `GET /positions/analyze` at 16:00 UTC on weekdays and that call usually raises a stop before the 22:30 nightly run, which would then record nothing. If the columns cannot be added, both paths still ratchet stops and record no move.
+
+**Deploy order:** not a risk. `database.ensure_stop_last_moved_columns()` runs the Up Migration's `ADD COLUMN IF NOT EXISTS` statements at startup (`main.py` `on_startup`), the same pattern as `last_reviewed_at`. Both columns are nullable with no default, so adding them rewrites no rows. Applying the migration ahead of deploy, staging first, is the planned Human-Delegation deploy step (sprint backlog ST-09 notes, RISK-03); if they cannot be added, `stop_move_columns_ready()` reports it and both recompute paths ratchet stops without recording moves, so nothing fails, but the Stops moved group stays empty until the Verification query passes.
+
+### Up Migration (v2.68 → v2.69)
+
+```sql
+ALTER TABLE positions ADD COLUMN IF NOT EXISTS stop_last_moved_date DATE;
+ALTER TABLE positions ADD COLUMN IF NOT EXISTS previous_stop DECIMAL(10, 4);
+```
+
+Additive and nullable, with no default and no backfill. No earlier move is recorded, so each position gets its first values on its next move. `previous_stop` uses `current_stop`'s type, so the stored stop is kept to the same precision.
+
+### Down Migration (v2.69 → v2.68)
+
+```sql
+ALTER TABLE positions DROP COLUMN IF EXISTS previous_stop;
+ALTER TABLE positions DROP COLUMN IF EXISTS stop_last_moved_date;
+```
+
+Roll back the code first: v2.69's nightly job writes both columns when a stop moves, and the startup ensure-function would re-add them.
+
+### Verification
+
+```sql
+SELECT column_name, data_type, numeric_precision, numeric_scale, is_nullable
+FROM information_schema.columns
+WHERE table_name = 'positions' AND column_name IN ('stop_last_moved_date', 'previous_stop')
+ORDER BY column_name;
+```
+
+Expect 2 rows: `previous_stop`, `numeric`, `10`, `4`, `YES`; `stop_last_moved_date`, `date`, null, null, `YES`.
+
+**Sign-off:**
+- Data Model & Domain Schema Owner: additive, nullable and reversible; added at runtime by an idempotent ensure-function; no backfill. Recording on the on-load path as well as the nightly job: ruling 2026-11-13 (the user acting in this role and as Head of Specs Team, in session). Live Confirmation on staging and production is the Human-Delegation deploy step (Infrastructure & Operations Owner, RISK-03), to be recorded here when supplied.
+
+---
+
 ## Drift Detector Triage (2026-10-13, v2.60)
 
 **Story:** ST-34 (EPIC-05, `2026-10-12__release-v9.12`), BLG-SPEC-178. Triage of the findings `scripts/check_data_model_drift.py` reported on its first run (ST-28, v9.9, 2026-10-01) beyond the 5 known divergence classes.
@@ -3801,6 +3847,6 @@ Expect 6 columns, none nullable; `idx_momentum_signal_runs_portfolio_date` and t
 
 ---
 
-**Document Version:** 2.68
+**Document Version:** 2.69
 **Maintained By:** Data Model & Domain Schema Owner
-**Last Review:** 2026-11-05 (ST-30/ST-32, EPIC-05, v9.15, BLG-OPS-190/BLG-OPS-192 — DS-39 (v2.68): new `momentum_signal_runs` table, one completion marker per momentum signal run); prior — 2026-11-05 (BLG-SPEC-217, EPIC-06 post-merge, v9.15 — DS-38 production Live Confirmation recorded; Fields rows and Drift Triage row 3 updated); prior — 2026-11-05 (ST-35/ST-36, EPIC-06, v9.15, BLG-SPEC-196/BLG-SPEC-197 — DS-38 (v2.67): `NOT NULL` re-applied to `positions.portfolio_id` and `positions.total_cost`; DS-17 staging Live Confirmation recorded); prior history retained — see prior entries in version control
+**Last Review:** 2026-11-12 (ST-09, EPIC-04, v9.17, BLG-BE-205 — DS-40 (v2.69): `stop_last_moved_date` and `previous_stop` on positions); prior — 2026-11-05 (ST-30/ST-32, EPIC-05, v9.15, BLG-OPS-190/BLG-OPS-192 — DS-39 (v2.68): new `momentum_signal_runs` table, one completion marker per momentum signal run); prior — 2026-11-05 (BLG-SPEC-217, EPIC-06 post-merge, v9.15 — DS-38 production Live Confirmation recorded; Fields rows and Drift Triage row 3 updated); prior history retained — see prior entries in version control
