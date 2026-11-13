@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-13 (session — 1 new item added: BLG-SPEC-238; ST-10 deviation DEV-EPIC04-ST10-01, EPIC-04, v9.17); prior — 2026-11-13 (session — 1 new item added: BLG-SPEC-237; ST-09 pre-commit review, EPIC-04, v9.17); prior — 2026-11-12 (session — 3 new items added: BLG-GOV-422, BLG-QA-262, BLG-TECH-35; EPIC-01 prevention retrospective, user-directed); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-13 (session — 2 new items added: BLG-BE-216, BLG-QA-263; PR #2257 agent-mediated review, EPIC-04, v9.17); prior — 2026-11-13 (session — 1 new item added: BLG-SPEC-238; ST-10 deviation DEV-EPIC04-ST10-01, EPIC-04, v9.17); prior — 2026-11-13 (session — 1 new item added: BLG-SPEC-237; ST-09 pre-commit review, EPIC-04, v9.17); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -6752,3 +6752,45 @@ Two EPIC-01 filings come from drift that a guard would have flagged as it happen
 - `npx eslint` on a file comparing `p.grace_period === true` outside `positionUrgency.js` reports the rule
 
 ---
+
+### BLG-BE-216 — Use stop_last_moved_date for the Strategy Compliance panel's Stop Age
+**Priority:** P3 (Low)
+**Type:** Enhancement
+**Owner:** Backend Engineering Patterns Owner; Frontend Specifications & UX Documentation Owner
+**Source:** PR #2257 agent-mediated Product Owner review (EPIC-04, ST-09), `2026-11-11__release-v9.17` — 2026-11-13
+**Effort:** S (~0.5 day)
+**Provisional-Target:** TBD
+
+**Problem**
+`compliance_service.py` approximates a position's Stop Age as `holding_days` "because the positions table has no stop_updated_at column" (module docstring and `_compute_stop_age`). Since v9.17 ST-09 (DS-40), `positions.stop_last_moved_date` records the UTC date a stop recompute last raised the stop. The panel still reports the worst-case age, so a stop raised yesterday on a 40-day position shows as 40 days old.
+
+**Scope**
+- Stop Age = days since `stop_last_moved_date` when set; keep `holding_days` (or days since grace ended) when it is NULL, since no earlier move was recorded
+- Update `positions.md` §Strategy Compliance Panel and the `compliance_service.py` docstrings to the new rule
+- Unit tests for set, NULL and in-grace cases
+
+**Acceptance Criteria**
+- With `stop_last_moved_date` set, Stop Age is the whole days since that date (pytest)
+- With it NULL, Stop Age is unchanged from today's behaviour (pytest)
+- The spec states both cases
+
+---
+
+### BLG-QA-263 — Test the Today list Stops moved window on weekend and mid-week clocks
+**Priority:** P3 (Low)
+**Type:** Test Gap
+**Owner:** QA & Testing Owner
+**Source:** PR #2257 agent-mediated Director of Quality review (EPIC-04, ST-10), `2026-11-11__release-v9.17` — 2026-11-13
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`stopsMovedWindow()` in `TodayList.js` returns today and the previous weekday (UTC): Monday → Friday, Tuesday → Monday, Saturday and Sunday → Friday (DEV-EPIC04-ST10-01). Every Stops moved scenario in `tests/e2e/dashboard-today-list.spec.js` runs with the clock fixed on Monday 2026-11-09, so only the Monday → Friday case is tested. The other cases were checked by hand with a node script before commit. CI has no frontend unit tests yet (`BLG-QA-262`).
+
+**Scope**
+- Cover Tuesday, Saturday and Sunday clocks: either Playwright scenarios with `page.clock.setFixedTime` on those days, or unit tests for `stopsMovedWindow` once `BLG-QA-262` lands
+- Include a clock near UTC midnight to pin the UTC (not local) date
+
+**Acceptance Criteria**
+- Tuesday, Saturday and Sunday clocks each assert which dated moves show and which do not
+- The tests run in CI
