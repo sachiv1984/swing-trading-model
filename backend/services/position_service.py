@@ -200,9 +200,7 @@ def get_positions_with_prices() -> List[Dict]:
         # stored price is shown, the same flag GET /portfolio returns.
         price_is_stale = not live_price
         if live_price:
-            # Fix UK stocks: Yahoo returns pence
-            if pos['market'] == 'UK' and live_price > 1000:
-                live_price = live_price / 100
+            # ST-15 (v9.17): get_current_price returns UK prices in pounds.
             current_price_native = live_price
             print(f"   ✓ Live: {current_price_native:.2f}")
         else:
@@ -482,10 +480,7 @@ def analyze_positions() -> Dict:
         entry_price = native_entry_price(pos, live_fx_rate)
         
         if live_price:
-            # Fix UK stocks: Yahoo returns pence
-            if pos['market'] == 'UK' and live_price > 1000:
-                live_price = live_price / 100
-                print(f"   ✓ Converted from pence to pounds")
+            # ST-15 (v9.17): get_current_price returns UK prices in pounds.
             
             print(f"   ✓ Live price: {live_price:.2f}")
             print(f"   Entry price: {entry_price:.2f}")
@@ -752,8 +747,6 @@ def run_nightly_trailing_stop_update() -> Dict:
             results.append({"ticker": pos['ticker'], "status": "skipped", "reason": "price unavailable"})
             continue
 
-        if pos['market'] == 'UK' and live_price > 1000:
-            live_price = live_price / 100
 
         entry_price = native_entry_price(pos, live_fx_rate)
 

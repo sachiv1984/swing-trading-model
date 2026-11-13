@@ -114,10 +114,7 @@ def get_portfolio_summary() -> Dict:
             live_price = get_current_price(pos['ticker'], pos.get('market'))
 
             if live_price:
-                # Fix UK stocks: Yahoo returns pence
-                if pos['market'] == 'UK' and live_price > 1000:
-                    live_price = live_price / 100
-                    print(f"   ✓ Converted {pos['ticker']} from pence to pounds: {live_price}")
+                # ST-15 (v9.17): get_current_price returns UK prices in pounds.
                 current_price_native = live_price
                 price_is_stale = False
                 print(f"   ✓ Live price: {current_price_native:.2f}")

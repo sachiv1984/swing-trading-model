@@ -348,3 +348,103 @@ def test_ttl_cache_expiry():
     assert cache.get("k", now=109.9) == "v"
     assert cache.get("k", "gone", now=110.0) == "gone"
     assert len(cache) == 0
+
+
+# ---------------------------------------------------------------------------
+# 5. UK prices in pence (EPIC-06 DoQ review round 1, P2)
+#    Yahoo chart meta.currency on 2026-11-13: VOD.L GBp 116.0, AZN.L GBp
+#    13962.0, BARC.L GBp 430.25, VUSA.L GBP 109.3125. Callers guessed "UK and
+#    above 1000 means pence", so VOD at 116p read as GBP 116; pre-entry
+#    validation and the compliance recheck did not convert at all.
+# ---------------------------------------------------------------------------
+
+@pytest.mark.parametrize("price,currency,expected", [
+    (116.0, "GBp", 1.16),
+    (13962.0, "GBp", 139.62),
+    (430.25, "GBX", 4.3025),
+    (109.3125, "GBP", 109.3125),
+    (1200.0, "GBP", 1200.0),
+    (354.88, "USD", 354.88),
+    (354.88, None, 354.88),
+])
+def test_to_major_currency_units(price, currency, expected):
+    assert pricing.to_major_currency_units(price, currency) == pytest.approx(expected)
+
+
+class _ChartResponse:
+    def __init__(self, price, currency):
+        self.payload = {"chart": {"result": [{"meta": {"regularMarketPrice": price, "currency": currency}}]}}
+
+    def json(self):
+        return self.payload
+
+
+@pytest.mark.parametrize("symbol,price,currency,expected", [
+    ("VOD.L", 116.0, "GBp", 1.16),
+    ("AZN.L", 13962.0, "GBp", 139.62),
+    ("VUSA.L", 109.3125, "GBP", 109.3125),
+    ("AAPL", 354.88, "USD", 354.88),
+])
+def test_yahoo_price_is_returned_in_pounds_for_pence_quotes(monkeypatch, symbol, price, currency, expected):
+    monkeypatch.setattr(pricing.time, "sleep", lambda *_: None)
+    monkeypatch.setattr(pricing.requests, "get", lambda *a, **k: _ChartResponse(price, currency))
+    assert pricing._yahoo_get_current_price(symbol) == pytest.approx(expected)
+
+
+def _uk_row(ticker, entry, stored):
+    return {
+        "id": f"pos-{ticker}", "portfolio_id": "pf-1", "ticker": ticker, "market": "UK",
+        "entry_date": "2026-10-01", "entry_price": entry, "fill_price": entry, "fx_rate": None,
+        "shares": 100, "current_price": stored, "current_stop": entry * 0.9, "initial_stop": entry * 0.85,
+        "holding_days": 40, "total_cost": entry * 100, "atr": entry * 0.03, "status": "open",
+    }
+
+
+@pytest.mark.parametrize("live_pounds", [1.16, 139.62, 1200.0])
+def test_positions_use_the_pounds_price_as_is(live_pounds):
+    """No caller re-divides: 1.16 stays 1.16 (was read as 116 when Yahoo gave
+    116p), and a pounds price above 1000 is not divided again."""
+    row = _uk_row("VOD.L", entry=1.10, stored=1.12)
+    with patch.object(position_service, "get_portfolio", return_value={"id": "pf-1"}), \
+         patch.object(position_service, "get_positions", return_value=[row]), \
+         patch.object(position_service, "get_live_fx_rate", return_value=1.30), \
+         patch.object(position_service, "get_current_price", return_value=live_pounds), \
+         patch.object(position_service, "get_sector_and_industry", return_value=(None, None)):
+        out = position_service.get_positions_with_prices()
+    assert out[0]["current_price_native"] == pytest.approx(live_pounds)
+
+
+def test_pre_entry_uk_cash_check_uses_pounds():
+    """BARC typed without .L, 1,000 shares at 430.25p = GBP 4,302.50, within GBP 10,000."""
+    from routers import pre_entry_validation
+
+    def fake_get(*a, **k):
+        assert a[0].endswith("/BARC.L")
+        return _ChartResponse(430.25, "GBp")
+
+    with patch("database.get_portfolio", return_value={"id": "pf-1", "cash": 10_000.0}), \
+         patch.object(pricing.requests, "get", side_effect=fake_get), \
+         patch.object(pricing.time, "sleep", lambda *_: None):
+        result = pre_entry_validation._check_cash_constraint("BARC", "UK", 1000)
+    assert result["status"] == "pass"
+    assert result["estimated_cost_gbp"] == pytest.approx(4302.50)
+
+
+class _OkChart(_ChartResponse):
+    ok = True
+
+
+@pytest.mark.parametrize("symbol,price,currency,expected", [
+    ("VOD.L", 116.0, "GBp", 1.16),
+    ("VUSA.L", 109.3125, "GBP", 109.3125),
+    ("VOD.L", 116.0, None, 1.16),  # no currency given: pence, as before
+])
+def test_research_price_uses_the_quote_currency(symbol, price, currency, expected):
+    from routers import research
+    payload = _OkChart(price, currency)
+    if currency is None:
+        del payload.payload["chart"]["result"][0]["meta"]["currency"]
+    with patch.object(research.requests, "get", return_value=payload), \
+         patch.object(research.time, "sleep", lambda *_: None):
+        out = research._get_price_data(symbol, "UK")
+    assert out["price"] == pytest.approx(expected)

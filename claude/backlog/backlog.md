@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-13 (session — 1 new item added: BLG-FE-294; ST-15 production api_call_log read, EPIC-06, v9.17); prior — 2026-11-13 (session — 2 new items added: BLG-QA-265, BLG-GOV-423; PR #2258 filing retrospective, EPIC-07, v9.17); prior — 2026-11-13 (session — 2 new items added: BLG-SPEC-239, BLG-QA-264; PR #2258 agent-mediated review, EPIC-07, v9.17); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-13 (session — 1 new item added: BLG-BE-217; EPIC-06 agent-mediated DoQ review, v9.17); prior — 2026-11-13 (session — 1 new item added: BLG-FE-294; ST-15 production api_call_log read, EPIC-06, v9.17); prior — 2026-11-13 (session — 2 new items added: BLG-QA-265, BLG-GOV-423; PR #2258 filing retrospective, EPIC-07, v9.17); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -6904,5 +6904,26 @@ The detector reports a documented index or CHECK constraint as missing without s
 - The Screener, Positions and Watchlist badges show "unknown" for `unavailable` and nothing for `ok` with a null date (Playwright)
 - An `unavailable` answer is retried on the next render rather than cached for the session
 - The UK-row decision is recorded in the spec
+
+---
+
+### BLG-BE-217 — Remove the remaining UK pence guesses: the ATR "above 100" rule and price alerts without a market
+**Priority:** P3 (Low)
+**Type:** Backend Engineering / Correctness
+**Owner:** Head of Engineering
+**Source:** EPIC-06 agent-mediated Director of Quality review, round 1 (finding 2), ST-15 (`BLG-OPS-217`), cycle `2026-11-11__release-v9.17` — 2026-11-13
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+ST-15 made `get_current_price()` return UK prices in pounds, converted from the Yahoo quote's own currency (`GBp`/`GBX` are pence; some London listings, such as VUSA.L, are quoted in `GBP`), and removed the callers' "UK and above 1000 means pence" guesses. Two guesses of the same kind remain. The nightly stop update divides a UK ATR by 100 when it is above 100 (`position_service.py`, `atr_value > 100`): a pence ATR below 100 (a share under about £30 with a normal daily range) is kept as pounds, and a pounds ATR above 100 would be divided. Custom price alerts (`alerts_service.py`) call `get_current_price(ticker)` with no market, because `price_alerts` has no market column, so a UK alert ticker stored without `.L` is priced as a US ticker.
+
+**Scope**
+- Give `calculate_atr()` (or its UK data path) the bar currency and convert pence ATRs to pounds at the source, as `to_major_currency_units()` does for prices; remove the `atr_value > 100` rule
+- Price alerts: store or derive the market (or require `.L` on UK alert tickers) and pass it to `get_current_price()`; state the units of the alert threshold in the alerts contract
+
+**Acceptance Criteria**
+- A UK ATR of 8.5p and one of 250p both reach the stop calculation as £0.085 and £2.50; a pounds-quoted ATR is unchanged (unit tests)
+- A UK price alert on a ticker without `.L` is priced from the `.L` symbol (unit test)
 
 ---
