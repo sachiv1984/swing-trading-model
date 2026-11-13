@@ -215,6 +215,88 @@
           "notes": "Commit 2d52ac16. AC 1: SC-TL-09/09b/09c/10 new, SC-TL-02/15b/26/STOPS updated, light and dark; local E2E build 50/50; CI Playwright E2E Acceptance Tests run 43393813050 success on 2d52ac16 (step 4c); all 9 workflows success (step 4d). AC 2 is a Post-Ship Closure banner on BLG-FE-254 (planned, not in-sprint). Deviation filed: DEV-EPIC04-ST10-01 (P3, dashboard.md v4.3 \u00a71B Known Deviations; BLG-SPEC-238): data written by both recompute paths; TL-09 latest nightly run date read as today or the previous weekday (UTC), ruling 2026-11-13 by the user as Frontend Specifications & UX Documentation Owner / Head of UX & Design. Step 13 grep: 'Stops moved'/'Stop moved' appear in no other e2e spec; the group renders only when a fixture carries stop_last_moved_date. Pre-commit /code-review medium: 8 findings, all fixed (two via the window ruling, two backend in bf6ac67b, plus direction check, SC-TL-09c, PositionLinkGroup); API run-date suggestion folded into BLG-SPEC-238. Production build exits 0 (3 pre-existing base44Client.js warnings)."
         }
       }
+    },
+    "EPIC-07": {
+      "title": "Governance, Strategy Copy & Drift Tooling",
+      "status": "in_progress",
+      "branch": "exec/2026-11-11__release-v9.17/EPIC-07",
+      "pr_number": null,
+      "pr_status": null,
+      "qa_signed_off": false,
+      "qa_evidence_log": null,
+      "test_scenarios": [],
+      "stories": {
+        "ST-18": {
+          "title": "Release Planning \u00a71.3a: let a gate clearance also set a gate-worded Provisional-Target to TBD",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 2253,
+          "branch": "exec/2026-11-11__release-v9.17/EPIC-07",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "claude/system/release_planning_prompt.md#1.3a"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": ""
+        },
+        "ST-19": {
+          "title": "Define or remove the 2R Exit Zone threshold the Positions page states",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 2254,
+          "branch": "exec/2026-11-11__release-v9.17/EPIC-07",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "docs/specs/frontend/pages/positions.md",
+            "docs/design/2026-11-11__release-v9.17/positions-decision-first/decision_record.md"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": ""
+        },
+        "ST-20": {
+          "title": "Stop check_data_model_drift.py reading index names from rollback blocks",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 2255,
+          "branch": "exec/2026-11-11__release-v9.17/EPIC-07",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "scripts/check_data_model_drift.py"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": ""
+        }
+      }
     }
   },
   "blocked_items": [],

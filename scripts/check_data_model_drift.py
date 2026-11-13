@@ -34,9 +34,20 @@ mechanises that comparison so it can be re-run instead of re-derived by hand:
 Runs read-only wherever DATABASE_URL is available; refuses to run any
 write statement itself regardless of the connected role's privileges.
 
+Index and CHECK names are read from forward SQL only (ST-20, EPIC-07, v9.17,
+BLG-QA-223): SQL under a `### Down Migration` heading or in a `Reversible:`
+rollback is skipped, because it recreates the schema from before a migration
+(e.g. `idx_trade_plans_ticker`, replaced by `idx_trade_plans_ticker_upper`).
+
 Usage:
     python3 scripts/check_data_model_drift.py docs/specs/data_model.md
     python3 scripts/check_data_model_drift.py docs/specs/data_model.md --json
+
+Keeping a run's output: any run used for triage is saved with `--json` to
+`docs/ops/data_model_drift_runs/<YYYY-MM-DD>_<environment>.json` (for example
+`2026-11-13_staging.json`) and committed with the triage that uses it. The
+triage cites that file, so every finding can be named later (the v9.9 run kept
+no output, and 3 of its 11 names could not be recovered at v9.12).
 """
 import argparse
 import decimal
@@ -201,12 +212,63 @@ def default_mismatches(documented: dict, live: dict):
     ]
 
 
+# ST-20 (EPIC-07, v9.17, BLG-QA-223): rollback SQL describes the schema
+# *before* a migration, so names in it are not expected live.
+DOWN_MIGRATION_HEADING_RE = re.compile(r"^#+\s+Down Migration\b", re.I)
+HEADING_RE = re.compile(r"^#+\s")
+REVERSIBLE_RE = re.compile(r"^\s*(?:\*\*)?Reversible:", re.I)
+FENCE_RE = re.compile(r"^\s*```")
+
+
+def strip_rollback_sql(text: str) -> str:
+    """Return `text` without its rollback SQL, for index and CHECK name parsing.
+
+    Removed:
+    - everything under a `### Down Migration` heading, up to the next heading;
+    - a line starting `Reversible:` (or `**Reversible:**`), which may carry
+      the rollback SQL inline; when the line has nothing after the marker,
+      also the fenced code block that follows it (if the next non-blank
+      line opens one).
+    """
+    lines = text.splitlines()
+    kept = []
+    i = 0
+    in_down = False
+    while i < len(lines):
+        line = lines[i]
+        if HEADING_RE.match(line):
+            in_down = bool(DOWN_MIGRATION_HEADING_RE.match(line))
+            kept.append(line)
+            i += 1
+            continue
+        if in_down:
+            i += 1
+            continue
+        if REVERSIBLE_RE.match(line):
+            i += 1
+            rest = REVERSIBLE_RE.sub("", line, count=1).replace("**", "").strip()
+            if rest:  # rollback given inline (or prose); the next block is not rollback SQL
+                continue
+            j = i
+            while j < len(lines) and not lines[j].strip():
+                j += 1
+            if j < len(lines) and FENCE_RE.match(lines[j]):
+                j += 1
+                while j < len(lines) and not FENCE_RE.match(lines[j]):
+                    j += 1
+                i = j + 1  # past the closing fence
+            continue
+        kept.append(line)
+        i += 1
+    return "\n".join(kept)
+
+
 def parse_index_names(text: str):
-    return sorted(set(INDEX_RE.findall(text)))
+    return sorted(set(INDEX_RE.findall(strip_rollback_sql(text))))
 
 
 def parse_check_constraint_names(text: str):
-    return sorted(set(CHECK_CONSTRAINT_RE.findall(text)))
+    return sorted(set(CHECK_CONSTRAINT_RE.findall(strip_rollback_sql(text))))
 
 
 def run_live_checks(tables, index_names, check_names, documented_defaults=None):

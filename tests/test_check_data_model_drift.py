@@ -237,3 +237,68 @@ def test_tool_issues_only_select_statements():
     src = (Path(__file__).resolve().parent.parent / "scripts" / "check_data_model_drift.py").read_text()
     executed = re.findall(r'cur\.execute\(\s*"(\w+)', src)
     assert executed and all(stmt.upper() == "SELECT" for stmt in executed)
+
+
+# ST-20 (EPIC-07, v9.17, BLG-QA-223): rollback SQL is not parsed for names.
+ROLLBACK_FIXTURE = """\
+## 1. Plans Table
+
+```sql
+CREATE INDEX IF NOT EXISTS idx_plans_ticker_upper ON plans (UPPER(ticker));
+ALTER TABLE plans ADD CONSTRAINT plans_status_check CHECK (status IN ('a', 'b'));
+```
+
+Reversible:
+```sql
+BEGIN;
+DROP INDEX IF EXISTS idx_plans_ticker_upper;
+CREATE INDEX IF NOT EXISTS idx_plans_ticker_fenced ON plans(ticker);
+ALTER TABLE plans ADD CONSTRAINT plans_old_check CHECK (status IN ('a'));
+COMMIT;
+```
+
+Reversible: `CREATE INDEX idx_plans_ticker_inline ON plans(ticker);`
+
+**Reversible:** `ALTER TABLE plans ADD CONSTRAINT plans_bold_check CHECK (x > 0);`
+
+### Down Migration (v2.2 → v2.1)
+
+```sql
+BEGIN;
+CREATE INDEX idx_plans_ticker_down ON plans(ticker);
+ALTER TABLE plans ADD CONSTRAINT plans_down_check CHECK (x > 1);
+COMMIT;
+```
+
+### Indexes
+
+```sql
+CREATE INDEX idx_plans_after_down ON plans(created_at);
+```
+
+Reversible: see Down Migration above.
+
+```sql
+CREATE INDEX idx_plans_after_prose ON plans(updated_at);
+```
+"""
+
+
+def test_rollback_only_index_names_are_not_parsed():
+    assert parse_index_names(ROLLBACK_FIXTURE) == [
+        "idx_plans_after_down",
+        "idx_plans_after_prose",
+        "idx_plans_ticker_upper",
+    ]
+
+
+def test_rollback_only_check_constraint_names_are_not_parsed():
+    assert parse_check_constraint_names(ROLLBACK_FIXTURE) == ["plans_status_check"]
+
+
+def test_real_data_model_md_does_not_report_rollback_only_trade_plans_index():
+    """idx_trade_plans_ticker appears only in the v2.21 -> v2.22 rollback block."""
+    data_model = Path(__file__).resolve().parent.parent / "docs" / "specs" / "data_model.md"
+    names = parse_index_names(data_model.read_text())
+    assert "idx_trade_plans_ticker" not in names
+    assert "idx_trade_plans_ticker_upper" in names
