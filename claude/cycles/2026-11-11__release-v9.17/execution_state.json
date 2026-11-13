@@ -5,7 +5,7 @@
   "invoked_utc": "2026-11-12T13:22:26Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-13T08:54:39Z",
+  "last_updated_utc": "2026-11-13T09:34:47Z",
   "epics": {
     "EPIC-01": {
       "title": "Site Structure & Usability Phase 3: Positions Redesign (build-and-ship)",
@@ -253,7 +253,8 @@
     "2026-11-12T21:11:33Z: run sprint --epic EPIC-04 \u2014 EPIC-04 section appended to the existing execution_state.json (owner EPIC-01). Branch cut from main at c3a09481 after EPIC-01 merged (Merge Order position 2). Issues #2244/#2245 found from sync gh. Both stories autonomous per sprint_backlog.md. Invocation typed as '--epic epic04', normalised to EPIC-04.",
     "2026-11-13T08:17:13Z: ST-09 - pre-commit /code-review high found that GET /positions/analyze (16:00 UTC daily-snapshot.yml) raises stops before the nightly job; user ruled in session (Head of Specs Team, Data Model & Domain Schema Owner) to record moves on both paths. Recorded in DS-40, position_endpoints.md v2.21.0 and dashboard.md DEV-EPIC04-ST10-01.",
     "2026-11-13T08:36:11Z: ST-10 - pre-commit /code-review medium found the most-recent-move-date rule kept old moves under 'Due today' and blocked the quiet-day line; user ruled in session (Frontend Specifications & UX Documentation Owner, Head of UX & Design) for a today-or-previous-weekday window. EPIC-04 stories done; QA evidence consolidated; DoQ sign-off requested (autonomous class unavailable: src/components changed).",
-    "2026-11-13T08:54:06Z: EPIC-04 agent-mediated DoQ review (user-directed): round 1 Blocked (1 P2 spec drift for the bf6ac67b rules, 2 P3), fixed in ad71e504; round 2 Approved with 2 P3 notes, applied in the sign-off commit."
+    "2026-11-13T08:54:06Z: EPIC-04 agent-mediated DoQ review (user-directed): round 1 Blocked (1 P2 spec drift for the bf6ac67b rules, 2 P3), fixed in ad71e504; round 2 Approved with 2 P3 notes, applied in the sign-off commit.",
+    "2026-11-13T09:34:47Z: EPIC-04 human Director of Quality QA sign-off and Product Owner acceptance given in session by the repository owner (holds both roles), before merge; also confirms the bf6ac67b same-day previous_stop and 2 dp rules. Recorded in qa_evidence_EPIC-04.md Merge Gate Confirmations and on PR #2257."
   ],
   "sealed": false,
   "sealed_utc": null

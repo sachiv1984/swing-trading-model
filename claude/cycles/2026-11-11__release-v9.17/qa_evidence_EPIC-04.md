@@ -43,3 +43,14 @@ Last Updated: 2026-11-13
 - Signed off by: Sprint Execution Engine (agent-mediated, Director of Quality role — §5.3)
 - Date: 2026-11-13
 - Comments: User-directed agent-mediated review against `claude/agents/director_of_quality.md`. Round 1 (on `82ecbaea`): Blocked — 1 P2 (DS-40, dictionary, `position_endpoints.md` and `openapi.yaml` did not describe the `bf6ac67b` same-day `previous_stop` and 2 dp rules, while ST-09 was graded Pass), 2 P3 (`api_changelog.md` "nightly job" wording; nightly `stop_moved` compares unrounded stops, undocumented). All fixed in `ad71e504`. Round 2 (retry 1 of 2): Approved, with 2 P3 notes, both applied here: CI on the final head cited above; the same-day/2 dp rules recorded as an engine reading pending owner confirmation. Reviewer evidence: `tests/test_stop_last_moved.py` + dictionary coverage 17 passed; `check_openapi_drift.py` and the heading lint exit 0; `gh run list` on `2d52ac16` all 9 workflows success. Frontend testing gate: every observable ST-10 AC has Playwright coverage observed passing in real CI (run 43393813050). ST-10 graded `Pass_with_deviation` (DEV-EPIC04-ST10-01, P3, BLG-SPEC-238). No P1/P2 found defects filed in this EPIC. This agent-mediated sign-off does not satisfy the always-human QA sign-off or Product Owner acceptance merge-gate rows.
+
+## Merge Gate Confirmations
+
+- **Director of Quality QA sign-off:** given by the human repository owner, acting as Director of Quality, in session at 2026-11-13T09:34:47Z ("give DOQ and PO acceptance"), before the merge. It accepts:
+  - this evidence: ST-09 Pass; ST-10 Pass_with_deviation (DEV-EPIC04-ST10-01, BLG-SPEC-238);
+  - the agent-mediated sign-off block above (round 2 Approved);
+  - the agent-mediated PR #2257 review comment (Director of Quality: Approved with Comments).
+
+  It also confirms the open review point: the same-UTC-day `previous_stop` rule and the 2 dp visibility rule (`bf6ac67b`, documented in `ad71e504`) are accepted as the reading of ST-09 AC 1, so the "Engine reading pending owner confirmation" note above is closed. EPIC-04 has no P1 or P2 found defects; every follow-up is P3.
+- **Product Owner acceptance:** given by the human repository owner, acting as Product Owner, in the same instruction at 2026-11-13T09:34:47Z, before the merge. It accepts ST-09 and ST-10 against `stage4_backlog_slice.md`. This includes the two in-session rulings of 2026-11-13: both recompute paths record moves, and the Stops moved window is today and the previous weekday (UTC). It also includes DEV-EPIC04-ST10-01. ST-10 AC 2 (the `BLG-FE-254` ✅ COMPLETE banner) is a Post-Ship Closure action. Follow-ups (P3): BLG-SPEC-237, BLG-SPEC-238, BLG-BE-216, BLG-QA-263. Deploy: DS-40 Live Confirmation on staging, then production, remains the Human-Delegation step (RISK-03).
+- **Merged:** pending (recorded at the next `run sprint` after the merge).
