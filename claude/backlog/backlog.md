@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-13 (session — 2 new items added: BLG-SPEC-239, BLG-QA-264; PR #2258 agent-mediated review, EPIC-07, v9.17); prior — 2026-11-13 (session — 2 new items added: BLG-BE-216, BLG-QA-263; PR #2257 agent-mediated review, EPIC-04, v9.17); prior — 2026-11-13 (session — 1 new item added: BLG-SPEC-238; ST-10 deviation DEV-EPIC04-ST10-01, EPIC-04, v9.17); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-13 (session — 2 new items added: BLG-QA-265, BLG-GOV-423; PR #2258 filing retrospective, EPIC-07, v9.17); prior — 2026-11-13 (session — 2 new items added: BLG-SPEC-239, BLG-QA-264; PR #2258 agent-mediated review, EPIC-07, v9.17); prior — 2026-11-13 (session — 2 new items added: BLG-BE-216, BLG-QA-263; PR #2257 agent-mediated review, EPIC-04, v9.17); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -6837,3 +6837,46 @@ The 2026-11-13 read-only staging run reported `idx_momentum_signal_runs_portfoli
 **Acceptance Criteria**
 - `idx_momentum_signal_runs_portfolio_date` has a recorded disposition (present, known lazy-creation pattern, or needs live action) with the query evidence cited
 - `data_model.md` §Drift Detector Triage no longer describes the rollback-SQL false positive as open, and links the runs folder
+
+---
+
+### BLG-QA-265 — Have check_data_model_drift.py say when a missing index's table is absent
+**Priority:** P4 (Trivial)
+**Type:** QA / Test Tooling
+**Owner:** QA & Testing Owner; Data Model & Domain Schema Owner
+**Source:** ST-20/EPIC-07, cycle `2026-11-11__release-v9.17`, retrospective on PR #2258's filings (BLG-QA-264), user-directed — 2026-11-13
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+The detector reports a documented index or CHECK constraint as missing without saying whether its table exists. Tables created lazily on first use (the audit-log tables, `momentum_signal_runs`) therefore show up as missing indexes on staging, and each one needs a separate catalog query to classify. Four of the 2026-11-13 run's 7 index findings were this case, and one (`idx_momentum_signal_runs_portfolio_date`) had to be filed as BLG-QA-264 because the run could not tell.
+
+**Scope**
+- In the same read-only run, look up the table each documented index belongs to (from its `ON <table>` clause) and check `information_schema.tables` (a SELECT, like the existing queries)
+- Report missing names in two groups: table present (real drift) and table absent (lazy creation or not deployed); include the group in `--json`
+- Unit test the `ON <table>` parsing and the grouping with a fixture
+
+**Acceptance Criteria**
+- A run lists missing indexes whose table is absent separately from those whose table exists, in text and `--json` output
+- `tests/test_check_data_model_drift.py` covers the parsing and grouping; the tool still issues only SELECT statements (`test_tool_issues_only_select_statements`)
+
+---
+
+### BLG-GOV-423 — Sprint Execution: a fix that clears a recorded known false positive updates that record in the same commit
+**Priority:** P3 (Low)
+**Type:** Governance Process
+**Owner:** Head of Specs Team
+**Source:** ST-20/EPIC-07, cycle `2026-11-11__release-v9.17`, retrospective on PR #2258's filings (BLG-QA-264), user-directed — 2026-11-13
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`execution_prompt.md` STEP 3.1.A step 10a's resolving-commit discipline (LL-v9.0-P4-01) makes a story that closes a filed `DEV-*` deviation update that deviation's fields in the same commit. It does not cover other recorded known issues, such as a "false positive" row in a spec's triage table. ST-20 fixed the `idx_trade_plans_ticker` false positive, but `data_model.md` §Drift Detector Triage still says the detector reads rollback SQL, and the execution write scope (spec edits for deviations only) kept the story from correcting it. The stale row became part of BLG-QA-264.
+
+**Scope**
+- Extend step 10a's resolving-commit discipline, and §7's spec write scope, to a known false positive or known-issue row in a canonical spec or `docs/ops` record that the story's fix resolves: mark it resolved with the story and commit, nothing else
+- CLAUDE.md §6 governance file checklist in the same commit
+
+**Acceptance Criteria**
+- `execution_prompt.md` step 10a and §7 allow and require that update, limited to marking the row resolved
+- The rule cites the ST-20 / `data_model.md` §Drift Detector Triage case
