@@ -5,7 +5,7 @@
   "invoked_utc": "2026-11-12T13:22:26Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-13T09:34:47Z",
+  "last_updated_utc": "2026-11-13T09:37:36Z",
   "epics": {
     "EPIC-01": {
       "title": "Site Structure & Usability Phase 3: Positions Redesign (build-and-ship)",
@@ -254,7 +254,8 @@
     "2026-11-13T08:17:13Z: ST-09 - pre-commit /code-review high found that GET /positions/analyze (16:00 UTC daily-snapshot.yml) raises stops before the nightly job; user ruled in session (Head of Specs Team, Data Model & Domain Schema Owner) to record moves on both paths. Recorded in DS-40, position_endpoints.md v2.21.0 and dashboard.md DEV-EPIC04-ST10-01.",
     "2026-11-13T08:36:11Z: ST-10 - pre-commit /code-review medium found the most-recent-move-date rule kept old moves under 'Due today' and blocked the quiet-day line; user ruled in session (Frontend Specifications & UX Documentation Owner, Head of UX & Design) for a today-or-previous-weekday window. EPIC-04 stories done; QA evidence consolidated; DoQ sign-off requested (autonomous class unavailable: src/components changed).",
     "2026-11-13T08:54:06Z: EPIC-04 agent-mediated DoQ review (user-directed): round 1 Blocked (1 P2 spec drift for the bf6ac67b rules, 2 P3), fixed in ad71e504; round 2 Approved with 2 P3 notes, applied in the sign-off commit.",
-    "2026-11-13T09:34:47Z: EPIC-04 human Director of Quality QA sign-off and Product Owner acceptance given in session by the repository owner (holds both roles), before merge; also confirms the bf6ac67b same-day previous_stop and 2 dp rules. Recorded in qa_evidence_EPIC-04.md Merge Gate Confirmations and on PR #2257."
+    "2026-11-13T09:34:47Z: EPIC-04 human Director of Quality QA sign-off and Product Owner acceptance given in session by the repository owner (holds both roles), before merge; also confirms the bf6ac67b same-day previous_stop and 2 dp rules. Recorded in qa_evidence_EPIC-04.md Merge Gate Confirmations and on PR #2257.",
+    "2026-11-13T09:37:36Z: Product Owner direction (user, in session): extend BLG-GOV-422's scope at v9.18 Release Planning with two more design gate STEP 2.2 checks from the EPIC-04 retrospective. (1) Writer check: for every spec or AC claim that a field is 'written by X' or that 'only X does Y', grep every writer in the code and record the result; a false premise is a slice or spec change decided before the gate passes (EPIC-04: dashboard.md \u00a71B said only the nightly job moves stops, but GET /positions/analyze also ratchets them; this cost a review round and BLG-SPEC-238). (2) Time-boundary worked examples: for any date, window or 'latest' rule, give the result for stale data (no event for a week), a quiet day, weekends, UTC midnight and the latest row disappearing, and name the data source for any run date the rule needs (EPIC-04: TL-09's 'latest nightly run date' had no source, giving DEV-EPIC04-ST10-01). Add a matching AC: re-running the checks on dashboard.md v4.0 \u00a71B finds both gaps. Sprint Execution may not edit BLG-GOV-422 (\u00a77). STEP 5.3 and Post-Ship Closure: carry this into the closure Carry-Forward section beside the 2026-11-12 BLG-GOV-422/BLG-QA-262/BLG-QA-260 priority direction."
   ],
   "sealed": false,
   "sealed_utc": null
