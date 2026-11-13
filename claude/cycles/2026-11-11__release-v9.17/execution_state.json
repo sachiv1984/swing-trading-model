@@ -5,7 +5,7 @@
   "invoked_utc": "2026-11-12T13:22:26Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-13T08:17:13Z",
+  "last_updated_utc": "2026-11-13T08:36:11Z",
   "epics": {
     "EPIC-01": {
       "title": "Site Structure & Usability Phase 3: Positions Redesign (build-and-ship)",
@@ -140,13 +140,14 @@
     },
     "EPIC-04": {
       "title": "Site Structure & Usability Phase 2 Completion: Stops Moved Group",
-      "status": "in_progress",
+      "status": "done",
       "branch": "exec/2026-11-11__release-v9.17/EPIC-04",
       "pr_number": null,
       "pr_status": null,
       "qa_signed_off": false,
-      "qa_evidence_log": null,
+      "qa_evidence_log": "claude/cycles/2026-11-11__release-v9.17/qa_evidence_EPIC-04.md",
       "test_scenarios": [
+        "tests/test_stop_last_moved.py",
         "tests/e2e/dashboard-today-list.spec.js"
       ],
       "sign_off_record": null,
@@ -177,30 +178,31 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.done",
           "sign_off_record": null,
-          "notes": "Commit c50dd966. AC 1 (raised stop records run date and previous stop) and AC 2 (unchanged stop leaves both) verified by tests/test_stop_last_moved.py (13 tests, nightly and on-load paths, NULL stop, missing columns, ensure-function); AC 3 contract + OpenAPI documented, drift checks pass (check_openapi_drift, 3-way sweep, baseline drift, heading lint). Ruling 2026-11-13 (user in session as Head of Specs Team and Data Model & Domain Schema Owner): both recompute paths record moves, because daily-snapshot.yml's 16:00 UTC GET /positions/analyze usually raises a stop before the 22:30 nightly run; scope wording named the nightly job only. Deviation check vs data_model.md DS-40 / position_endpoints.md v2.21.0: none (specs updated in the same commit); dashboard.md wording mismatch filed by ST-10 as DEV-EPIC04-ST10-01. Pre-commit /code-review high: 9 findings, 8 fixed in-commit (incl. the on-load finding via ruling), 1 filed BLG-SPEC-237. Full local pytest 3562 passed. CI on c50dd966: all 9 workflows success; CI Pytest Suite 43390721278; Playwright E2E Acceptance Tests 43390721105 (step 4c); Frontend Production Build 43390721108. Production/staging migration: startup ensure-function makes deploy order not a risk; Live Confirmation remains the planned Human-Delegation deploy step (RISK-03)."
+          "notes": "Commit c50dd966. AC 1 (raised stop records run date and previous stop) and AC 2 (unchanged stop leaves both) verified by tests/test_stop_last_moved.py (13 tests, nightly and on-load paths, NULL stop, missing columns, ensure-function); AC 3 contract + OpenAPI documented, drift checks pass (check_openapi_drift, 3-way sweep, baseline drift, heading lint). Ruling 2026-11-13 (user in session as Head of Specs Team and Data Model & Domain Schema Owner): both recompute paths record moves, because daily-snapshot.yml's 16:00 UTC GET /positions/analyze usually raises a stop before the 22:30 nightly run; scope wording named the nightly job only. Deviation check vs data_model.md DS-40 / position_endpoints.md v2.21.0: none (specs updated in the same commit); dashboard.md wording mismatch filed by ST-10 as DEV-EPIC04-ST10-01. Pre-commit /code-review high: 9 findings, 8 fixed in-commit (incl. the on-load finding via ruling), 1 filed BLG-SPEC-237. Full local pytest 3562 passed. CI on c50dd966: all 9 workflows success; CI Pytest Suite 43390721278; Playwright E2E Acceptance Tests 43390721105 (step 4c); Frontend Production Build 43390721108. Production/staging migration: startup ensure-function makes deploy order not a risk; Live Confirmation remains the planned Human-Delegation deploy step (RISK-03). Follow-up commit bf6ac67b (from ST-10's review): previous_stop keeps the day's first value across same-day raises; a rise hidden at 2 dp is not a move; 15 tests. CI on 2d52ac16 (contains bf6ac67b): all 9 workflows success; CI Pytest Suite 43393813008."
         },
         "ST-10": {
           "title": "Today list \"Stops moved\" group: TL-09 and TL-10",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 2245,
           "branch": "exec/2026-11-11__release-v9.17/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "2d52ac16b1ae15932c651125a5b3ddd9ddf006b0",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-11-13T08:30:53Z",
+          "acceptance_verified": true,
           "spec_references": [
-            "docs/specs/frontend/pages/dashboard.md#1B. Today List"
+            "docs/specs/frontend/pages/dashboard.md#1B. Today List",
+            "tests/e2e/dashboard-today-list.spec.js"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.done",
           "sign_off_record": null,
-          "notes": null
+          "notes": "Commit 2d52ac16. AC 1: SC-TL-09/09b/09c/10 new, SC-TL-02/15b/26/STOPS updated, light and dark; local E2E build 50/50; CI Playwright E2E Acceptance Tests run 43393813050 success on 2d52ac16 (step 4c); all 9 workflows success (step 4d). AC 2 is a Post-Ship Closure banner on BLG-FE-254 (planned, not in-sprint). Deviation filed: DEV-EPIC04-ST10-01 (P3, dashboard.md v4.3 \u00a71B Known Deviations; BLG-SPEC-238): data written by both recompute paths; TL-09 latest nightly run date read as today or the previous weekday (UTC), ruling 2026-11-13 by the user as Frontend Specifications & UX Documentation Owner / Head of UX & Design. Step 13 grep: 'Stops moved'/'Stop moved' appear in no other e2e spec; the group renders only when a fixture carries stop_last_moved_date. Pre-commit /code-review medium: 8 findings, all fixed (two via the window ruling, two backend in bf6ac67b, plus direction check, SC-TL-09c, PositionLinkGroup); API run-date suggestion folded into BLG-SPEC-238. Production build exits 0 (3 pre-existing base44Client.js warnings)."
         }
       }
     }
@@ -212,7 +214,8 @@
     "ST-02",
     "ST-03",
     "ST-04",
-    "ST-09"
+    "ST-09",
+    "ST-10"
   ],
   "open_escalations": {},
   "merge_gate": {
@@ -238,7 +241,8 @@
     "2026-11-12: Product Owner direction (user, in session): prioritise BLG-GOV-422 and BLG-QA-262 for the next release, with BLG-QA-260. Carry-forward for v9.18 Release Planning. BLG-GOV-422 and BLG-QA-262 are P2, so release_planning_prompt.md selection step 1 (P1-then-P2-first) seats them if ready. BLG-QA-260 is P3 with a stale Provisional-Target v9.17 and needs a recorded Product Owner override in run_manifest.md (\u00a71.4c). Sprint Execution may not change Priority or Provisional-Target (\u00a77). STEP 5.3 and Post-Ship Closure: carry this into the closure Carry-Forward section.",
     "2026-11-12: EPIC-01 PR #2256 merged by the human repository owner (sachiv1984) at 2026-11-12T21:07:56Z, merge commit 61154853. Orphaned post-merge commit check (LL-v6.8-P3-01): git log origin/main..origin/exec/2026-11-11__release-v9.17/EPIC-01 lists nothing - no reconciliation needed.",
     "2026-11-12T21:11:33Z: run sprint --epic EPIC-04 \u2014 EPIC-04 section appended to the existing execution_state.json (owner EPIC-01). Branch cut from main at c3a09481 after EPIC-01 merged (Merge Order position 2). Issues #2244/#2245 found from sync gh. Both stories autonomous per sprint_backlog.md. Invocation typed as '--epic epic04', normalised to EPIC-04.",
-    "2026-11-13T08:17:13Z: ST-09 - pre-commit /code-review high found that GET /positions/analyze (16:00 UTC daily-snapshot.yml) raises stops before the nightly job; user ruled in session (Head of Specs Team, Data Model & Domain Schema Owner) to record moves on both paths. Recorded in DS-40, position_endpoints.md v2.21.0 and dashboard.md DEV-EPIC04-ST10-01."
+    "2026-11-13T08:17:13Z: ST-09 - pre-commit /code-review high found that GET /positions/analyze (16:00 UTC daily-snapshot.yml) raises stops before the nightly job; user ruled in session (Head of Specs Team, Data Model & Domain Schema Owner) to record moves on both paths. Recorded in DS-40, position_endpoints.md v2.21.0 and dashboard.md DEV-EPIC04-ST10-01.",
+    "2026-11-13T08:36:11Z: ST-10 - pre-commit /code-review medium found the most-recent-move-date rule kept old moves under 'Due today' and blocked the quiet-day line; user ruled in session (Frontend Specifications & UX Documentation Owner, Head of UX & Design) for a today-or-previous-weekday window. EPIC-04 stories done; QA evidence consolidated; DoQ sign-off requested (autonomous class unavailable: src/components changed)."
   ],
   "sealed": false,
   "sealed_utc": null
