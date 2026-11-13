@@ -4,7 +4,7 @@
 **Class:** Class 1
 **Status:** Canonical
 **Version:** 2.69
-**Last Updated:** 2026-11-13 (BLG-BE-205, EPIC-04 post-merge, v9.17 — DS-40 staging Live Confirmation recorded); prior — 2026-11-12 (ST-09, EPIC-04, v9.17, BLG-BE-205 — DS-40 (v2.69): `stop_last_moved_date` and `previous_stop` on positions, written by either stop recompute path when it raises a stop); prior — 2026-11-11 (ST-13, EPIC-04, v9.16, BLG-OPS-197 — DS-36 production Live Confirmation recorded; sign-off line updated); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-13 (BLG-BE-205, EPIC-04 post-merge, v9.17 — DS-40 staging and production Live Confirmations recorded); prior — 2026-11-12 (ST-09, EPIC-04, v9.17, BLG-BE-205 — DS-40 (v2.69): `stop_last_moved_date` and `previous_stop` on positions, written by either stop recompute path when it raises a stop); prior — 2026-11-11 (ST-13, EPIC-04, v9.16, BLG-OPS-197 — DS-36 production Live Confirmation recorded; sign-off line updated); prior history retained — see prior entries in version control; prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 This document describes the complete database schema and data structures used in the **Position Manager Web App**.
@@ -3811,7 +3811,7 @@ Expect 2 rows: `previous_stop`, `numeric`, `10`, `4`, `YES`; `stop_last_moved_da
 **Sign-off:**
 - Data Model & Domain Schema Owner: additive, nullable and reversible; added at runtime by an idempotent ensure-function; no backfill. Recording on the on-load path as well as the nightly job: ruling 2026-11-13 (the user acting in this role and as Head of Specs Team, in session). Live Confirmation on staging and production is the Human-Delegation deploy step (Infrastructure & Operations Owner, RISK-03).
 - **Live Confirmation — staging, applied 2026-11-13:** Up Migration returned "Success. No rows returned". Verification: `previous_stop`, `numeric`, `10`, `4`, `YES`; `stop_last_moved_date`, `date`, null, null, `YES` (2 rows, as expected). Supplied in-session by the user (human, with live write access, acting for the Data Model & Domain Schema Owner and Infrastructure & Operations Owner) after the EPIC-04 merge (PR #2257, merge commit `71e86455`).
-- **Live Confirmation — production:** pending.
+- **Live Confirmation — production, applied 2026-11-13:** Up Migration returned "Success. No rows returned". Verification: `previous_stop`, `numeric`, `10`, `4`, `YES`; `stop_last_moved_date`, `date`, null, null, `YES` (2 rows), identical to staging. Supplied in-session by the user (same roles as staging). **DS-40 is confirmed live on staging and production as of 2026-11-13** (RISK-03 closed for ST-09).
 
 ---
 
