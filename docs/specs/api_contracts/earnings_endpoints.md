@@ -77,6 +77,7 @@ Returns the next scheduled earnings date for a given ticker.
 - Earnings dates beyond ~4 weeks are subject to revision.
 - Some tickers (especially smaller UK stocks) may have no earnings date data; null is returned gracefully.
 - Yahoo often keeps only the last report date for UK tickers until it publishes the next one, so a UK ticker shortly after its report returns null (v0.3).
+- **Caching (v0.3, ST-15, BLG-OPS-217).** Results are cached per Yahoo symbol for 12 hours after a usable Yahoo answer (one that carries `quoteType`), so a new or rescheduled date can take up to 12 hours to appear. A failed or throttled lookup is not cached. `days_until_earnings` is counted on every call, and a cached date that has passed is looked up again. The `Ticker.info` answer is shared with the sector lookup and the research market cap (`backend/utils/yahoo_info.py`), and at most 4 Yahoo lookups run at once across the server; a request that waits more than 30 seconds for a slot returns the null response. Production evidence: on 2026-11-09 15:37–15:38 a page firing one lookup per row made 471 Yahoo calls in two minutes and 418 failed.
 
 ---
 
@@ -84,6 +85,6 @@ Returns the next scheduled earnings date for a given ticker.
 
 | Version | Date | Summary |
 |---------|------|---------|
-| 0.3 | 2026-11-13 | ST-15 (EPIC-06, v9.17, BLG-OPS-217): `next_earnings_date` is the earliest upcoming of `earningsDate`, `earningsTimestampStart`, `earningsTimestampEnd` and `earningsTimestamp`, or null when all are past. Before v0.3 it was `earningsTimestamp`, which keeps the past report after it happens, so the badge (which hides negative days) and the `strategy_rules.md` §4.2.3 pre-entry check missed the next report. Funds skip the calendar fallback, whose two 404 calls counted as provider failures. No shape change. |
+| 0.3 | 2026-11-13 | ST-15 (EPIC-06, v9.17, BLG-OPS-217): results cached 12 hours per symbol after a usable answer, and at most 4 Yahoo lookups at once (Known Limitations). `next_earnings_date` is the earliest upcoming of `earningsDate`, `earningsTimestampStart`, `earningsTimestampEnd` and `earningsTimestamp`, or null when all are past. Before v0.3 it was `earningsTimestamp`, which keeps the past report after it happens, so the badge (which hides negative days) and the `strategy_rules.md` §4.2.3 pre-entry check missed the next report. Funds skip the calendar fallback, whose two 404 calls counted as provider failures. No shape change. |
 | 0.2 | 2026-11-04 | ST-22 (EPIC-03, v9.15, BLG-BE-174) and BLG-BE-204 (PR #2190 review): `next_earnings_date` from a timestamp is its America/New_York date, and `days_until_earnings` counts from the US market date, so both share one basis. The server-date count gave `-1` on the evening of an ET-evening release before it happened, which turned the `strategy_rules.md` §4.2.3 pre-entry earnings check from WARN to PASS. No shape change. |
 | 0.1 | 2026-04-30 | Initial contract — ST-07 DS-04 |

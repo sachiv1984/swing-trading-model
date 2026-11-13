@@ -167,3 +167,184 @@ def test_non_date_values_are_ignored():
     info = {"earningsTimestamp": True, "earningsTimestampStart": "soon", "earningsTimestampEnd": None}
     out, _ = _earnings(info, date(2026, 11, 13), calendar=None)
     assert out["next_earnings_date"] is None
+
+
+# ---------------------------------------------------------------------------
+# 4. Bursts: shared Ticker.info cache and concurrency cap
+#    Production 2026-11-09 15:37-15:38: 471 calls, 418 failed (86% of the
+#    week's on-demand failures) when a page fired one earnings lookup per row.
+# ---------------------------------------------------------------------------
+
+import threading  # noqa: E402
+import time  # noqa: E402
+from concurrent.futures import ThreadPoolExecutor  # noqa: E402
+
+import services.sector_service as sector_service  # noqa: E402
+from utils import yahoo_info  # noqa: E402
+
+_EQUITY_INFO = {"quoteType": "EQUITY", "sector": "Technology", "industry": "Semis",
+                "earningsTimestampStart": _ts(2027, 1, 28), "marketCap": 1}
+
+
+class _CountingTicker:
+    """A yf.Ticker stand-in that counts .info fetches and the peak number
+    running at once."""
+
+    def __init__(self, info=None, delay=0.0, fail=False):
+        self.info_value = dict(_EQUITY_INFO if info is None else info)
+        self.delay = delay
+        self.fail = fail
+        self.fetches = 0
+        self.running = 0
+        self.peak = 0
+        self.lock = threading.Lock()
+
+    def __call__(self, symbol):
+        outer = self
+
+        class _T:
+            @property
+            def info(self_inner):
+                with outer.lock:
+                    outer.fetches += 1
+                    outer.running += 1
+                    outer.peak = max(outer.peak, outer.running)
+                try:
+                    time.sleep(outer.delay)
+                    if outer.fail:
+                        raise RuntimeError("401 Invalid Crumb")
+                    return dict(outer.info_value)
+                finally:
+                    with outer.lock:
+                        outer.running -= 1
+
+            calendar = None
+        return _T()
+
+
+def _with_fake(fake, fn):
+    with patch.object(earnings_service.yf, "Ticker", side_effect=fake), \
+         patch.object(sector_service.yf, "Ticker", side_effect=fake), \
+         patch.object(earnings_service, "us_market_date", return_value=date(2026, 11, 13)):
+        return fn()
+
+
+def test_burst_of_100_tickers_never_runs_more_than_4_lookups_at_once():
+    fake = _CountingTicker(delay=0.02)
+    tickers = [f"T{i}" for i in range(100)]
+
+    def burst():
+        with ThreadPoolExecutor(max_workers=40) as pool:
+            return list(pool.map(lambda t: earnings_service.get_earnings(t, "US"), tickers))
+
+    results = _with_fake(fake, burst)
+    assert fake.peak <= yahoo_info.MAX_CONCURRENT_LOOKUPS
+    assert fake.peak >= 2  # the cap is the limit, not a serial queue
+    assert fake.fetches == 100
+    assert all(r["next_earnings_date"] == "2027-01-28" for r in results)
+
+
+def test_reload_of_the_same_page_costs_no_yahoo_call():
+    fake = _CountingTicker()
+    tickers = [f"T{i}" for i in range(20)]
+
+    def two_loads():
+        first = [earnings_service.get_earnings(t, "US") for t in tickers]
+        second = [earnings_service.get_earnings(t, "US") for t in tickers]
+        return first, second
+
+    first, second = _with_fake(fake, two_loads)
+    assert fake.fetches == 20
+    assert first == second
+
+
+def test_sector_earnings_and_market_cap_share_one_lookup_per_symbol():
+    """Research looked up Ticker.info three times per symbol; GET /positions once
+    per position per load."""
+    fake = _CountingTicker()
+
+    def research_like():
+        sector = sector_service.get_sector_and_industry("AAPL", "US")
+        earnings = earnings_service.get_earnings("AAPL", "US")
+        cap = yahoo_info.get_info("AAPL", lambda: fake("AAPL").info)["marketCap"]
+        return sector, earnings, cap
+
+    sector, earnings, cap = _with_fake(fake, research_like)
+    assert sector == ("Technology", "Semis")
+    assert earnings["next_earnings_date"] == "2027-01-28"
+    assert cap == 1
+    assert fake.fetches == 1
+
+
+def test_failed_lookup_is_not_cached():
+    fake = _CountingTicker(fail=True)
+
+    def twice():
+        a = earnings_service.get_earnings("AAPL", "US")
+        b = sector_service.get_sector_and_industry("AAPL", "US")
+        return a, b
+
+    a, b = _with_fake(fake, twice)
+    assert a["next_earnings_date"] is None and b == (None, None)
+    assert fake.fetches == 2
+    fake.fail = False
+    a2 = _with_fake(fake, lambda: earnings_service.get_earnings("AAPL", "US"))
+    assert a2["next_earnings_date"] == "2027-01-28"
+    assert fake.fetches == 3
+
+
+def test_throttled_empty_answer_is_not_cached_as_no_earnings():
+    """A throttled lookup can return a dict without quoteType; it must not be
+    kept for 12 hours as "no earnings"."""
+    fake = _CountingTicker(info={})
+    out = _with_fake(fake, lambda: earnings_service.get_earnings("AAPL", "US"))
+    assert out["next_earnings_date"] is None
+    fake.info_value = dict(_EQUITY_INFO)
+    out = _with_fake(fake, lambda: earnings_service.get_earnings("AAPL", "US"))
+    assert out["next_earnings_date"] == "2027-01-28"
+    assert fake.fetches == 2
+
+
+def test_cached_date_that_has_passed_is_looked_up_again():
+    fake = _CountingTicker(info={"quoteType": "EQUITY", "earningsTimestampStart": _ts(2026, 11, 14)})
+    first = _with_fake(fake, lambda: earnings_service.get_earnings("AAPL", "US"))
+    assert first["days_until_earnings"] == 1
+    with patch.object(earnings_service.yf, "Ticker", side_effect=fake), \
+         patch.object(earnings_service, "us_market_date", return_value=date(2026, 11, 15)):
+        later = earnings_service.get_earnings("AAPL", "US")
+    assert later["next_earnings_date"] is None
+    assert fake.fetches == 1  # the Ticker.info answer is reused; only the result is re-derived
+
+
+def test_days_until_is_counted_on_each_call_from_a_cached_date():
+    fake = _CountingTicker()
+    _with_fake(fake, lambda: earnings_service.get_earnings("AAPL", "US"))
+    with patch.object(earnings_service.yf, "Ticker", side_effect=fake), \
+         patch.object(earnings_service, "us_market_date", return_value=date(2026, 11, 20)):
+        out = earnings_service.get_earnings("AAPL", "US")
+    assert out["days_until_earnings"] == 69
+    assert fake.fetches == 1
+
+
+def test_no_free_slot_within_the_wait_is_a_failed_lookup_not_a_hang():
+    with patch.object(yahoo_info, "SLOT_WAIT_SECONDS", 0.05):
+        for _ in range(yahoo_info.MAX_CONCURRENT_LOOKUPS):
+            assert yahoo_info._slots.acquire(timeout=1)
+        try:
+            with pytest.raises(yahoo_info.YahooInfoBusy):
+                yahoo_info.get_info("AAPL", lambda: dict(_EQUITY_INFO))
+            fake = _CountingTicker()
+            out = _with_fake(fake, lambda: earnings_service.get_earnings("AAPL", "US"))
+            assert out["next_earnings_date"] is None
+            assert fake.fetches == 0
+        finally:
+            for _ in range(yahoo_info.MAX_CONCURRENT_LOOKUPS):
+                yahoo_info._slots.release()
+
+
+def test_ttl_cache_expiry():
+    cache = yahoo_info.TTLCache()
+    cache.set("k", "v", 10, now=100.0)
+    assert cache.get("k", now=109.9) == "v"
+    assert cache.get("k", "gone", now=110.0) == "gone"
+    assert len(cache) == 0

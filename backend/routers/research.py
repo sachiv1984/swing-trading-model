@@ -110,7 +110,11 @@ def _get_price_data(ticker: str, market: str):
 def _get_market_cap(ticker: str) -> Optional[float]:
     try:
         import yfinance as yf
-        info = yf.Ticker(ticker).info
+        # ST-15 (BLG-OPS-217, v9.17): reuses the Ticker.info already fetched
+        # for the sector and earnings lookups (utils/yahoo_info cache).
+        from utils import yahoo_info
+        t = yf.Ticker(ticker)
+        info = yahoo_info.get_info(ticker, lambda: t.info)
         return info.get("marketCap")
     except Exception:
         return None

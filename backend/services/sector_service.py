@@ -8,6 +8,8 @@ Scope: US and UK tickers. UK tickers use the .L suffix for Yahoo Finance.
 Data source: yfinance Ticker.info ('sector', 'industry' fields).
 """
 import yfinance as yf
+
+from utils import yahoo_info
 from typing import Optional, Tuple
 
 
@@ -23,7 +25,10 @@ def get_sector_and_industry(ticker: str, market: str) -> Tuple[Optional[str], Op
         if market == "UK" and not ticker.endswith(".L"):
             yf_ticker = ticker + ".L"
 
-        info = yf.Ticker(yf_ticker).info
+        # ST-15 (BLG-OPS-217, v9.17): shared Ticker.info cache and concurrency
+        # cap; GET /positions looked this up once per position on every load.
+        t = yf.Ticker(yf_ticker)
+        info = yahoo_info.get_info(yf_ticker, lambda: t.info)
         sector = info.get("sector") or None
         industry = info.get("industry") or None
         return sector, industry

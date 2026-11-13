@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-13 (session — 2 new items added: BLG-QA-265, BLG-GOV-423; PR #2258 filing retrospective, EPIC-07, v9.17); prior — 2026-11-13 (session — 2 new items added: BLG-SPEC-239, BLG-QA-264; PR #2258 agent-mediated review, EPIC-07, v9.17); prior — 2026-11-13 (session — 2 new items added: BLG-BE-216, BLG-QA-263; PR #2257 agent-mediated review, EPIC-04, v9.17); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-13 (session — 1 new item added: BLG-FE-294; ST-15 production api_call_log read, EPIC-06, v9.17); prior — 2026-11-13 (session — 2 new items added: BLG-QA-265, BLG-GOV-423; PR #2258 filing retrospective, EPIC-07, v9.17); prior — 2026-11-13 (session — 2 new items added: BLG-SPEC-239, BLG-QA-264; PR #2258 agent-mediated review, EPIC-07, v9.17); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -6880,3 +6880,29 @@ The detector reports a documented index or CHECK constraint as missing without s
 **Acceptance Criteria**
 - `execution_prompt.md` step 10a and §7 allow and require that update, limited to marking the row resolved
 - The rule cites the ST-20 / `data_model.md` §Drift Detector Triage case
+
+---
+
+### BLG-FE-294 — Show "earnings unknown" instead of nothing when an earnings or gap-risk lookup fails
+**Priority:** P2 (Medium)
+**Type:** Frontend / UX
+**Owner:** Frontend Specifications & UX Documentation Owner; Head of Engineering
+**Source:** ST-15 (`BLG-OPS-217`), EPIC-06, cycle `2026-11-11__release-v9.17` — production `api_call_log` read (`DEL-20261113-01`) — 2026-11-13
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+`GET /earnings/{ticker}` returns the same null response when the Yahoo lookup fails as when a ticker has no upcoming earnings, and `useEarnings` (`src/hooks/useEarnings.js`) shows no badge for either. It also caches the failed null for the browser session. In production in the 7 days to 2026-11-13, 344 of the 366 failed Yahoo calls behind earnings lookups came in one burst (2026-11-09 15:37–15:38), so the earnings badge and the gap-risk warning (which depends on `get_earnings()`) disappeared for every ticker in that window, indistinguishable from "no earnings soon". ST-15 reduces the bursts (12-hour cache, at most 4 lookups at once), but a failed lookup still looks like "no earnings". Separately, the Screener looks up earnings for UK rows (about 44 of the failing symbols), although the `strategy_rules.md` §4.2.3 earnings check applies to US tickers only.
+
+**Scope**
+- Backend: add a field (e.g. `data_status: ok | unavailable`) to `GET /earnings/{ticker}` and to the gap-risk response, so that a failed lookup is distinguishable from a successful lookup with no date (`earnings_endpoints.md`, `openapi.yaml`)
+- Frontend: show "Earnings: unknown" on the badge and the gap-risk warning for `unavailable`, and do not cache an `unavailable` answer for the session
+- Decide whether the Screener should skip earnings lookups for UK rows, and record the decision in the spec
+
+**Acceptance Criteria**
+- A failed Yahoo lookup returns `data_status: unavailable`; a successful lookup with no upcoming date returns `ok` with a null date (unit tests)
+- The Screener, Positions and Watchlist badges show "unknown" for `unavailable` and nothing for `ok` with a null date (Playwright)
+- An `unavailable` answer is retried on the next render rather than cached for the session
+- The UK-row decision is recorded in the spec
+
+---
