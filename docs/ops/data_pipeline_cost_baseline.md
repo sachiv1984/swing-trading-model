@@ -1,8 +1,8 @@
 **Owner:** Infrastructure & Operations Owner
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Version:** 1.1
-**Last Updated:** 2026-11-11 (ST-13, EPIC-04, v9.16, BLG-OPS-197 — §4 weekly calls and failures recorded from one production report; §6 volume line ticked); prior — 2026-10-27 (created; weekly call volumes pending the first full week of attribution data)
+**Version:** 1.2
+**Last Updated:** 2026-11-13 (ST-16, EPIC-06, v9.17, BLG-OPS-195 — §5 is now checked weekly by `market-data-volume-check.yml`, which reads the §4 table); prior — 2026-11-11 (ST-13, EPIC-04, v9.16, BLG-OPS-197 — §4 weekly calls and failures recorded from one production report; §6 volume line ticked); prior — 2026-10-27 (created; weekly call volumes pending the first full week of attribution data)
 **Source:** ST-30 (`BLG-OPS-18`), EPIC-05, cycle `2026-10-16__release-v9.13`
 
 # Data Pipeline Cost Baseline
@@ -60,7 +60,14 @@ An advisory is raised when, for any source, the last 7 days exceed **2× the bas
 2. **Cost:** combined weekly estimated cost more than 2× the baseline cost. While the baseline is $0.00, this means **any non-zero estimated cost**, which only happens if a unit cost in `UNIT_COST_USD` is set because a source has started charging.
 3. **Failures:** the volume rule above, applied to failures. A sudden rise in failures usually means a provider is throttling or down, and the risk assessment's fail-open regime and frozen FX follow.
 
-An advisory is a prompt to check the attribution report's `by_feature` breakdown for the feature that grew, not an automatic action. Until an automated check exists, compare at the monthly cost review. Automating it (a scheduled call to the report and a Telegram message over threshold, as `ai-daily-cost-check.yml` does for AI spend) is filed as `BLG-OPS-195`.
+An advisory is a prompt to check the attribution report's `by_feature` breakdown for the feature that grew, not an automatic action.
+
+**Automated check (ST-16, `BLG-OPS-195`, v9.17).** `.github/workflows/market-data-volume-check.yml` runs every Monday at 08:00 UTC. It runs `scripts/check_market_data_volume.py`, which calls `GET /ops/api-call-attribution?window=weekly` on production and compares the result with the §4 table. When any figure is more than 2× its baseline, it sends a Telegram message naming the source, the figure, the baseline and the source's top 3 features by calls. A failed report call, missing secrets or an unreadable §4 table fail the run and send a failure message, as `ai-daily-cost-check.yml` does; a failed call is never read as zero.
+
+- **The §4 table is the only copy of the baseline.** The script reads it at run time, so re-recording §4 changes the check. Keep its layout: one row per source with the service name in backticks, and a **Combined** row. The script fails loudly if it cannot read them.
+- **Exactly 2× is not an advisory**; the rule is "more than".
+- **A zero baseline exceeds on any non-zero figure.** This applies to the $0.00 cost baseline (rule 2), to a source whose §4 calls or failures are 0 (for example one Alpaca data failure), and to a source not in §4 at all (`alpaca_trading`, `twelve_data`, `stooq`). Those are sources this baseline expects to be idle, so any use is worth a look.
+- Per-source failures are compared per source; the combined row compares the sum across sources.
 
 The threshold is reviewed when a baseline is first recorded, and whenever the active ticker universe grows by more than 25% (screener volume scales with it).
 

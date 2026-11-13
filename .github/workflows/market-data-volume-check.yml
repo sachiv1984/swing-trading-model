@@ -1,0 +1,96 @@
+# .github/workflows/market-data-volume-check.yml
+# Weekly market-data volume check — Telegram delivery.
+# ST-16 (BLG-OPS-195, EPIC-06, v9.17): docs/ops/data_pipeline_cost_baseline.md
+# §5 defines an advisory when a source's weekly calls, failures or estimated
+# cost exceed 2x the §4 baseline, but nothing checked it. This workflow calls
+# GET /ops/api-call-attribution?window=weekly through
+# scripts/check_market_data_volume.py, which reads the baseline from §4 at run
+# time (the figures are kept only there, not copied here).
+#
+# Exit codes from the script: 0 = within baseline, 1 = advisory (message sent
+# to Telegram), 2 = the check could not run. Like ai-daily-cost-check.yml it
+# fails loudly: missing secrets, an unreachable API, a non-200 report or an
+# unreadable §4 table fail the job, and the last step sends a Telegram message
+# whenever any earlier step fails. A failed report call is never read as zero.
+name: Market Data Volume Check
+
+on:
+  schedule:
+    - cron: '0 8 * * 1'  # Mondays 08:00 UTC; the report covers the last 7 days
+  workflow_dispatch:     # Allow manual trigger for testing
+
+concurrency:
+  group: market-data-volume-check
+  cancel-in-progress: false
+
+jobs:
+  check-market-data-volume:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install requests
+        run: pip install requests
+
+      - name: Compare the weekly report with the §4 baseline
+        id: check
+        shell: bash
+        env:
+          API_URL: ${{ secrets.API_URL }}
+          API_KEY: ${{ secrets.API_KEY }}
+        run: |
+          if [ -z "$API_URL" ] || [ -z "$API_KEY" ]; then
+            echo "::error::API_URL / API_KEY not configured as repo secrets; the market-data volume check cannot run."
+            exit 1
+          fi
+          set +e
+          python3 scripts/check_market_data_volume.py --message-file advisory_message.txt
+          code=$?
+          set -e
+          echo "exit_code=${code}" >> "$GITHUB_OUTPUT"
+          if [ "$code" -ne 0 ] && [ "$code" -ne 1 ]; then
+            echo "::error::market-data volume check could not run (exit ${code}); see the error above."
+            exit "$code"
+          fi
+
+      - name: Send Telegram advisory when over 2x baseline
+        if: steps.check.outputs.exit_code == '1'
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          RUN_URL="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+          MESSAGE="$(cat advisory_message.txt)
+          ${RUN_URL}"
+          echo "$MESSAGE"
+          if [ -n "$TELEGRAM_BOT_TOKEN" ] && [ -n "$TELEGRAM_CHAT_ID" ]; then
+            curl -sS --fail-with-body --max-time 30 -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+              --data-urlencode "chat_id=${TELEGRAM_CHAT_ID}" \
+              --data-urlencode "text=${MESSAGE}"
+          else
+            echo "::warning::TELEGRAM_BOT_TOKEN/TELEGRAM_CHAT_ID not configured as repo secrets — advisory not sent. Message would have been: ${MESSAGE}"
+          fi
+
+      - name: Send Telegram alert on failure
+        if: failure()
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          RUN_URL="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+          MESSAGE="Market-data volume check FAILED: this week's call volume is unknown (report call or workflow error). ${RUN_URL}"
+          echo "$MESSAGE"
+          if [ -n "$TELEGRAM_BOT_TOKEN" ] && [ -n "$TELEGRAM_CHAT_ID" ]; then
+            curl -sS --max-time 30 -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+              --data-urlencode "chat_id=${TELEGRAM_CHAT_ID}" \
+              --data-urlencode "text=${MESSAGE}"
+          else
+            echo "::warning::TELEGRAM_BOT_TOKEN/TELEGRAM_CHAT_ID not configured as repo secrets — alert not sent. Message would have been: ${MESSAGE}"
+          fi

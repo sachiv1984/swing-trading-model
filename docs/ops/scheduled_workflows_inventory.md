@@ -1,8 +1,8 @@
 **Owner:** Infrastructure & Operations Owner
 **Class:** Reference Document (Class 4)
 **Status:** Active
-**Version:** 1.1
-**Last Updated:** 2026-10-30 (ST-42, BLG-OPS-188, EPIC-06, v9.14 — `ci-usage-report.yml` row: the report goes to a branch and a PR, not a push to `main`); prior — 2026-10-15 (ST-32, BLG-GOV-371, EPIC-04, v9.12 — initial version)
+**Version:** 1.2
+**Last Updated:** 2026-11-13 (ST-16, BLG-OPS-195, EPIC-06, v9.17 — `market-data-volume-check.yml` row added); prior — 2026-10-30 (ST-42, BLG-OPS-188, EPIC-06, v9.14 — `ci-usage-report.yml` row: the report goes to a branch and a PR, not a push to `main`); prior — 2026-10-15 (ST-32, BLG-GOV-371, EPIC-04, v9.12 — initial version)
 **Co-owner:** FinOps & Resource Architect (minutes/month column)
 
 ---
@@ -33,6 +33,7 @@ All times are UTC. **Writes** names the database tables a run changes (through t
 | `dependency-vuln-rescan.yml` | Cybersecurity & Trust Lead | `0 7 1 * *` (monthly) | GitHub issue; no database | 1 | 0.86 | 0.9 |
 | `escalation-sla-reminder.yml` | PMO Lead | `23 7 * * *` | GitHub issue (`escalation-sla`); no database | 6 † | 0.22 | 6.7 † |
 | `health-check-alert.yml` | Infrastructure & Operations Owner | `*/15 * * * *` | None (read-only); Telegram | 159 ‡ | 1.20 | 190.8 |
+| `market-data-volume-check.yml` | Infrastructure & Operations Owner | `0 8 * * 1` (weekly) | None (reads `api_call_log` through `GET /ops/api-call-attribution?window=weekly`); Telegram | 0 ¶ | 0.5 ¶ | 2.2 ¶ |
 | `nightly-stop-update-staleness-check.yml` | Infrastructure & Operations Owner | `0 */6 * * *` | None (reads `GET /health/scheduler`); Telegram | 79 ‡ | 0.73 | 57.7 |
 | `nightly-stop-update.yml` | Infrastructure & Operations Owner | `30 22 * * 1-5` | `positions` (trailing stops), `api_call_log` | 18 § | 0.23 | 4.1 |
 | `post-deploy-stop-health.yml` | Infrastructure & Operations Owner | `30 7 * * 1-5` (also after each production deploy) | None (read-only); Telegram | 2 † | 0.73 | 15.8 † |
@@ -44,13 +45,15 @@ All times are UTC. **Writes** names the database tables a run changes (through t
 | `si05-weekly-digest.yml` | Infrastructure & Operations Owner | `0 19 * * 0` (weekly) | `si05_digest_log`; Telegram (the digest itself) | 4 | 0.94 | 3.8 |
 | `staging-deploy-drift-check.yml` | Infrastructure & Operations Owner | `0 * * * *` (hourly) | None (read-only); Telegram | 143 ‡ | 0.32 | 45.8 |
 | `staging-smoke-test.yml` | Infrastructure & Operations Owner | `0 */6 * * *` | None (GET-only against staging); Telegram | 106 ‡ | 1.96 | 207.8 |
-| **Total** | | | | | | **≈1,032** |
+| **Total** | | | | | | **≈1,034** |
 
 † Added within the 30-day window (`ai-daily-cost-check.yml` 2026-10-13, `escalation-sla-reminder.yml` and `post-deploy-stop-health.yml` 2026-10-08). Minutes/month is projected at the full cron cadence (121.7, 30.4 and 21.7 runs/month), not taken from the partial count.
 
 ‡ GitHub Actions delays and drops scheduled runs under load, so high-frequency crons run far less often than the cron implies (`health-check-alert.yml`: 159 runs against about 2,900 cron slots). The actual count is used.
 
 § 18 runs against 22 weekdays in the window. See Observations.
+
+¶ Added 2026-11-13 (ST-16, BLG-OPS-195, v9.17), after this inventory's 30-day window, so it has no runs yet. Avg min/run is an estimate (checkout, Python setup and one GET, like `nightly-stop-update-staleness-check.yml`); minutes/month is 0.5 × 4.35 weekly runs.
 
 ## Method
 
