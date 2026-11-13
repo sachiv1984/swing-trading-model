@@ -220,8 +220,8 @@
       "title": "Governance, Strategy Copy & Drift Tooling",
       "status": "done",
       "branch": "exec/2026-11-11__release-v9.17/EPIC-07",
-      "pr_number": null,
-      "pr_status": null,
+      "pr_number": 2258,
+      "pr_status": "open",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-11-11__release-v9.17/qa_evidence_EPIC-07.md",
       "test_scenarios": [
