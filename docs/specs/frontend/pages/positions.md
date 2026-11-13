@@ -227,9 +227,9 @@ Displays each open position as a row with:
 | LOSING | ~~"Exits when price rises above entry by 0.5 ATR"~~ → (v9.10 ST-11) "Past grace with P&L at or below zero: wide stop (§7.2). Becomes PROFITABLE when the price rises above entry." |
 | PROFITABLE | ~~"Advances to Exit Zone when P&L reaches 2R target"~~ → (v2.27, ST-19, BLG-SPEC-202) "Advances to Exit Zone when the price is well above the initial risk taken. The app's lifecycle labels mark this; it is not a strategy rule." |
 | EXIT ZONE | ~~"Position has reached R-target. Review stop or exit."~~ → (v2.27, ST-19) "The price is well above the initial risk taken. Review the stop or exit." |
+| UNKNOWN | (v9.10) By backend reason. See §Grace Precedence and UNKNOWN Reasons below. The prior "Set a stop and R-target…" copy is retired. |
 
 **Exit Zone tooltips state no number (v2.27, ST-19, BLG-SPEC-202).** `strategy_rules.md` defines no R-multiple rule; the 2R test exists only in `backend/services/position_lifecycle_service.py`. The Strategy Rules & System Intent Owner chose option (b) of the design record §7 on 2026-11-12 (RISK-05): reword without a number, with no `strategy_rules.md` §11 entry and no `src/constants/strategy.js` constant. Design source: `docs/design/2026-11-11__release-v9.17/positions-decision-first/decision_record.md` §7.
-| UNKNOWN | (v9.10) By backend reason. See §Grace Precedence and UNKNOWN Reasons below. The prior "Set a stop and R-target…" copy is retired. |
 
 **Null handling:** If `position_state` is null (pre-Arc 3 position pending back-fill), display UNKNOWN badge. Never display a dash or empty cell.
 
