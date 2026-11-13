@@ -67,3 +67,17 @@ Last Updated: 2026-11-13
   - Post-open CI-fix restatement: not applicable (no PR was open when the fixes were made).
   - Story-level authority: the Infrastructure & Operations Owner supplied ST-15's production data (`DEL-20261113-01`, Unblocked) and the round 2 production check, and confirmed ST-16's zero-baseline rule — confirmed cleared.
   - Still open, and always human: the QA sign-off and Product Owner acceptance at the merge gate, including acceptance of the two P2 found defects (BLG-FE-294, open; the UK pence defect, fixed in-sprint).
+
+## Merge Gate Confirmations
+
+- **Director of Quality QA sign-off:** given by the human repository owner, acting as Director of Quality, in session at 2026-11-13T14:57:46Z ("give DOQ and PO acceptance"), before the merge. It accepts:
+  - this evidence: ST-15, ST-16 and ST-17 all Pass, with no deviations;
+  - the agent-mediated sign-off block above (round 1 Blocked, P2 fixed in `c341eee7`; round 2 Blocked, stored-data risk cleared by read-only checks; round 3 Approved).
+- **Product Owner acceptance:** given by the human repository owner, acting as Product Owner, in the same instruction at 2026-11-13T14:57:46Z, before the merge. It accepts ST-15, ST-16 and ST-17 against `stage4_backlog_slice.md`. ST-15 AC 2 and AC 3 remain post-merge, tracked by BLG-OPS-217. The acceptance covers the deploy behaviour changes listed in PR #2259, and the owner made no separate comment on any of them:
+  - UK live prices in pounds;
+  - `.L` price alerts comparing pounds;
+  - earnings results cached up to 12 hours.
+- **P1/P2 found defects filed during this EPIC (LL-v9.16-P3-05),** each accepted by the same instruction as Director of Quality and Product Owner, with the rationale presented in the request:
+  - **BLG-FE-294 (P2, open):** a failed earnings lookup is shown the same as "no upcoming earnings"; also covers the Screener's UK earnings lookups. Accepted to ship open. It is a display gap that existed before this EPIC, not a regression. ST-15's cache and cap make failed lookups much rarer, and the item is tracked for a later release.
+  - **UK prices in pence read as pounds (P2, DoQ round 1):** fixed in-sprint in `c341eee7` before merge. Production had no open UK positions, and the staging rows were checked and are unaffected. The remaining same-class cases are tracked as BLG-BE-217 and BLG-BE-218 (P3).
+- **Merged:** pending. To be recorded on `main` at the next `run sprint` resume-sync (merger, time and merge commit). A merge by the same owner also counts as a confirmation under `ESC-CLOSE-20261103-01`.
