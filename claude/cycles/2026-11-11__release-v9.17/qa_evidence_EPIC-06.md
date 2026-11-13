@@ -42,3 +42,28 @@ Last Updated: 2026-11-13
 - Same-EPIC testing-gap consistency: no testing-gap backlog item was filed in this EPIC.
 - P1/P2 found defects during this EPIC: (1) BLG-FE-294 (P2, open) — a failed earnings lookup is shown the same as "no upcoming earnings", and the Screener looks up earnings for UK rows; (2) UK prices in pence read as pounds (P2, DoQ round 1) — fixed in-sprint in `c341eee7`, not filed, with the remaining same-class cases tracked as BLG-BE-217 (P3). PO and DoQ acceptance and rationale for each go in the Merge Gate Confirmations section (LL-v9.16-P3-05).
 - Autonomous DoQ class: not available (ST-15 is `delegated_backend`, and its verification read a live database; BLG-GOV-335).
+
+## Standard Sign-Off Block
+
+- [x] All acceptance criteria verified against canonical spec
+- [x] No unresolved P0 or P1 deviations
+- [x] Regression areas checked
+- [x] For any frontend component making direct URL construction (not via api.* wrapper): confirm the URL-base variable is exposed on the imported object — N/A, no frontend file changed
+- [x] **Strategy values checked:** ST-17 — `strategy_rules.md` §4.1.6: estimated cost including fees must not exceed available cash; batch sizing now keeps each signal's fee-inclusive `total_cost` within its allocation, so the batch is within available cash (UK case: 19 shares at £100 cost £1,919.45 ≤ £2,000; 20 shares would cost £2,019.95). ST-15 — §4.2.3: the earnings check uses the *next* earnings date, 0–5 days inclusive; `get_earnings()` now returns the earliest date on or after the US market date (it returned the last report, giving negative days). ST-15's UK price units also feed §4.1.6 and §4.2.2 in pre-entry validation (now pounds). ST-16 touches no stop/grace/ATR/exit/sizing logic.
+- Signed off by: Sprint Execution Engine (agent-mediated, Director of Quality role — §5.3)
+- Date: 2026-11-13
+- Comments: User-directed agent-mediated review against `claude/agents/director_of_quality.md` (the user: "agent-mediated review", 2026-11-13). Three rounds (the §5.3 limit).
+  - Round 1: **Blocked**, 1 P2, 1 P3 and 3 observations. P2: UK Yahoo prices are in pence and were read as pounds in pre-entry validation and the compliance recheck (and below 1000p elsewhere); ST-15's `.L` fix widened it. Fixed in `c341eee7` at the source (the user chose this over filing). P3 (price alerts with no market) filed as BLG-BE-217.
+  - Round 2: **Blocked**, 1 P2 risk: UK stops or prices already stored from pence-as-pounds values would look breached after deploy. Cleared before merge by read-only checks: production had no open UK positions (the user); staging BARC/LGEN ratios were about 1 (engine, user-permitted). Also filed BLG-BE-218 (P3: screener and `calculate_atr` always divide UK by 100), and recorded the `.L` price-alert behaviour change.
+  - Round 3: **Approved**.
+  - Checks the reviewer ran and cited:
+    - 8-file pytest set: 197 passed in round 1, then 215 at `3882d98d` in round 2.
+    - Collected tests: `test_signal_sizing` 14, `test_market_data_volume_check` 20, `test_yahoo_on_demand_failures` 45.
+    - `check_execution_state_consistency.py` OK; `check_backlog_item_integrity.py` OK; `check_api_performance_baseline_drift.py` PASSED.
+    - §4 arithmetic: 366 + 30 + 71 + 21 = 488 failures; 418 / 488 = 85.7%.
+    - ST-17 worked case as above.
+    - All 10 `get_current_price` callers grepped: 9 pass the market and none re-divides; the 10th, `alerts_service`, is tracked in BLG-BE-217. Every remaining `/ 100` near a price is named in BLG-BE-217 or BLG-BE-218.
+    - CI, all 7 workflows success on each: `7b3b59e8` (43430040716), `5578c103` (43431251776), `5cc4e8bd` (43432809810), `c313bc90` (43435796962), `c341eee7` (43438529026), `3882d98d` (43438598138).
+  - Post-open CI-fix restatement: not applicable (no PR was open when the fixes were made).
+  - Story-level authority: the Infrastructure & Operations Owner supplied ST-15's production data (`DEL-20261113-01`, Unblocked) and the round 2 production check, and confirmed ST-16's zero-baseline rule — confirmed cleared.
+  - Still open, and always human: the QA sign-off and Product Owner acceptance at the merge gate, including acceptance of the two P2 found defects (BLG-FE-294, open; the UK pence defect, fixed in-sprint).
