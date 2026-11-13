@@ -12,6 +12,9 @@
  *   SC-LBG-03  No element or tooltip on the page says "trading day"
  *   SC-LBG-04  Each UNKNOWN lifecycle_reason renders its own tooltip
  *   SC-LBG-05  LOSING tooltip states the §9 P&L rule (ST-11), with no 0.5 ATR band
+ *   SC-LBG-06  PROFITABLE and EXIT ZONE tooltips state no R multiple (v9.17 ST-19,
+ *              BLG-SPEC-202; design record docs/design/2026-11-11__release-v9.17/
+ *              positions-decision-first/decision_record.md §7, option (b))
  *
  * Infrastructure: page.route() network interception — no live backend required.
  * ROUTING NOTE: App uses HashRouter. ALL navigation via page.goto('/#/Positions')
@@ -153,4 +156,23 @@ test.describe('ST-12 — lifecycle badge grace window in calendar days', () => {
       'Past grace with P&L at or below zero: wide stop (§7.2). Becomes PROFITABLE when the price rises above entry.');
     await expect(page.locator('[title*="0.5 ATR"]')).toHaveCount(0);
   });
+
+  // ST-19 (BLG-SPEC-202, v9.17): RISK-05 option (b), no number in either tooltip.
+  const noNumberCases = [
+    ['PROFITABLE', "Advances to Exit Zone when the price is well above the initial risk taken. The app's lifecycle labels mark this; it is not a strategy rule."],
+    ['EXIT ZONE', 'The price is well above the initial risk taken. Review the stop or exit.'],
+  ];
+  for (const [state, tip] of noNumberCases) {
+    test(`SC-LBG-06: ${state} tooltip states no R multiple`, async ({ page }) => {
+      await setup(page, [makePosition({
+        lifecycle_state: state, position_state: state, lifecycle_reason: null,
+        grace_period: false, grace_days_remaining: null, holding_days: 20,
+      })]);
+      const badge = page.getByTestId('lifecycle-badge');
+      await expect(badge).toContainText(state);
+      await expect(badge).toHaveAttribute('title', tip);
+      await expect(page.locator('[title*="2R"]')).toHaveCount(0);
+      await expect(page.locator('[title*="R-target"]')).toHaveCount(0);
+    });
+  }
 });

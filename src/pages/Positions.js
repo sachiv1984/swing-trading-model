@@ -85,11 +85,13 @@ const POSITION_HIGHLIGHT_MS = 2000;
 // ST-01 (IT-01) — Lifecycle state badge
 // ---------------------------------------------------------------------------
 
+// ST-19 (BLG-SPEC-202, v9.17): PROFITABLE and EXIT ZONE tooltips state no R multiple
+// (RISK-05 option (b); strategy_rules.md defines none). Design record §7.
 const LIFECYCLE_CONFIG = {
   GRACE:      { label: "GRACE",      bg: "bg-blue-600",   tip: `The stop is tracked but not enforced until the grace period ends (${GRACE_PERIOD_DAYS} calendar days, §6).` },
   LOSING:     { label: "LOSING",     bg: "bg-red-600",    tip: "Past grace with P&L at or below zero: wide stop (§7.2). Becomes PROFITABLE when the price rises above entry." },
-  PROFITABLE: { label: "PROFITABLE", bg: "bg-green-700",  tip: "Advances to Exit Zone when P&L reaches 2R target" },
-  "EXIT ZONE":{ label: "EXIT ZONE",  bg: "bg-violet-600", tip: "Position has reached R-target. Review stop or exit." },
+  PROFITABLE: { label: "PROFITABLE", bg: "bg-green-700",  tip: "Advances to Exit Zone when the price is well above the initial risk taken. The app's lifecycle labels mark this; it is not a strategy rule." },
+  "EXIT ZONE":{ label: "EXIT ZONE",  bg: "bg-violet-600", tip: "The price is well above the initial risk taken. Review the stop or exit." },
   UNKNOWN:    { label: "UNKNOWN",    bg: "bg-gray-500",   tip: "No lifecycle state is available for this position." },
 };
 
