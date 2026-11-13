@@ -222,8 +222,8 @@
       "branch": "exec/2026-11-11__release-v9.17/EPIC-07",
       "pr_number": null,
       "pr_status": null,
-      "qa_signed_off": false,
-      "qa_evidence_log": null,
+      "qa_signed_off": true,
+      "qa_evidence_log": "claude/cycles/2026-11-11__release-v9.17/qa_evidence_EPIC-07.md",
       "test_scenarios": [
         "tests/test_check_data_model_drift.py",
         "tests/e2e/lifecycle-badge-grace-calendar-days.spec.js"
@@ -267,11 +267,11 @@
           "assigned_to": "engine",
           "github_issue": 2254,
           "branch": "exec/2026-11-11__release-v9.17/EPIC-07",
-          "commit_sha": "5a7db63b7a0de9cb9b8511b3bd5180f7478b69f3",
+          "commit_sha": "cad3b87fca459231bee4b70734a5cb57c07b2f6d",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": "2026-11-13T10:10:39Z",
+          "completed_utc": "2026-11-13T11:05:58Z",
           "acceptance_verified": true,
           "spec_references": [
             "src/pages/Positions.js",
@@ -284,7 +284,7 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.done",
           "sign_off_record": null,
-          "notes": "Commit 5a7db63b. RISK-05 option (b) wording for PROFITABLE and EXIT ZONE tooltips; positions.md v2.26->v2.27 (option (a) wording removed). check_strategy_copy.py: 0 contradictions, 0 literals. New SC-LBG-06 (2 cases) asserts both tooltips and no '2R'/'R-target' title. Local E2E-env build: SC-LBG/SC-POSDF/SC-POSDC 23/23. Deviation check vs positions.md v2.27 and design record \u00a77: none. CI on 5a7db63b: all 9 workflows success; Playwright E2E Acceptance Tests run 43407147398 success (step 4c); Frontend Production Build 43407147461; CI Pytest Suite 43407147609."
+          "notes": "Commits: 5a7db63b (implementation, spec, SC-LBG-06), cad3b87f (positions.md: the v2.27 note had split the tooltip table; moved below it after DoQ round 1). RISK-05 option (b) wording for PROFITABLE and EXIT ZONE tooltips; positions.md v2.26->v2.27 (option (a) wording removed). check_strategy_copy.py: 0 contradictions, 0 literals. New SC-LBG-06 (2 cases) asserts both tooltips and no '2R'/'R-target' title. Local E2E-env build: SC-LBG/SC-POSDF/SC-POSDC 23/23. Deviation check vs positions.md v2.27 and design record \u00a77: none. CI on 5a7db63b: all 9 workflows success; Playwright E2E Acceptance Tests run 43407147398 success (step 4c); Frontend Production Build 43407147461; CI Pytest Suite 43407147609."
         },
         "ST-20": {
           "title": "Stop check_data_model_drift.py reading index names from rollback blocks",
@@ -312,6 +312,17 @@
           "sign_off_record": null,
           "notes": "Commits f1299c5c (rollback-block exclusion, tests, docs), 6dc668d8 (staging run output and triage; opportunistic in-file fix: INDEX_RE no longer yields 'IF' from DS-36 prose). Read-only staging run with user permission 2026-11-13 (PGOPTIONS default_transaction_read_only=on): idx_trade_plans_ticker not reported (AC 1); output kept at docs/ops/data_model_drift_runs/2026-11-13_staging.json and cited by 2026-11-13_staging_triage.md (AC 3). Regression proof: rollback tests fail when strip_rollback_sql is bypassed. New finding recorded as unconfirmed: idx_momentum_signal_runs_portfolio_date (DS-39 lazy table). Deviation check: none. CI on f1299c5c and 6dc668d8: all 7 workflows success; CI Pytest Suite 43408448753."
         }
+      },
+      "sign_off_record": {
+        "status": "cleared",
+        "role": "Director of Quality",
+        "method": "agent_mediated",
+        "signed_by": "Sprint Execution Engine (agent-mediated, Director of Quality role \u2014 \u00a75.3)",
+        "date": "2026-11-13",
+        "user_directed": true,
+        "rounds": 2,
+        "first_round": "Blocked (1 P2, 2 observations)",
+        "evidence": "claude/cycles/2026-11-11__release-v9.17/qa_evidence_EPIC-07.md"
       }
     }
   },
