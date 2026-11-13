@@ -114,16 +114,24 @@ def record_stop_move(updates: Dict, pos: Dict, stored_stop: float, move_date: st
     the user acting as Head of Specs Team and Data Model & Domain Schema Owner,
     because the 16:00 UTC snapshot's on-load recompute usually raises a stop
     before the 22:30 nightly run. A move is a stored value above a non-null
-    stored stop (the §7.3 ratchet raised it); a NULL stop's first write is not.
-    An unchanged stop leaves both fields as they were.
+    stored stop (the §7.3 ratchet raised it) that is visible at 2 dp; a NULL
+    stop's first write is not. An unchanged stop leaves both fields as they were.
     """
     before = pos.get('current_stop')
     if before is None:
         return
     before = float(before)
-    if stored_stop > before:
-        updates['stop_last_moved_date'] = move_date
-        updates['previous_stop'] = before
+    # A rise that 2 dp hides is not shown as a move ("from 85.00 to 85.00").
+    if round(stored_stop, 2) <= round(before, 2):
+        return
+    updates['stop_last_moved_date'] = move_date
+    # Several raises on one UTC day (16:00 snapshot, page loads, 22:30 nightly)
+    # keep the stop from before the day's first move, so the row shows the
+    # whole day's move rather than its last step.
+    last = pos.get('stop_last_moved_date')
+    if last is not None and str(last) == move_date and pos.get('previous_stop') is not None:
+        return
+    updates['previous_stop'] = before
 
 
 def native_entry_price(pos: Dict, live_fx_rate: float) -> float:

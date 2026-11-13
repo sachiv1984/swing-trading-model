@@ -131,6 +131,23 @@ class TestNightlyStopLastMoved(_Patcher):
         assert "stop_last_moved_date" not in written
         assert "previous_stop" not in written
 
+    def test_second_raise_same_day_keeps_the_days_first_previous_stop(self):
+        today = position_service.datetime.now(position_service.timezone.utc).strftime("%Y-%m-%d")
+        pos = _open_position(current_stop=83.0, stop_last_moved_date=date.fromisoformat(today), previous_stop=80.0)
+        _, mock_update = self._run(pos, price=120.0)
+        written = mock_update.call_args.args[1]
+        assert written["current_stop"] == pytest.approx(110.0)
+        assert written["stop_last_moved_date"] == today
+        assert "previous_stop" not in written  # stays 80, the stop before the day's first move
+
+    def test_rise_hidden_at_2dp_is_not_a_move(self):
+        # Stored 84.996; the ratchet writes 85.00. Both show as 85.00, so no move.
+        pos = _open_position(current_stop=84.996, entry_price=60.0)
+        _, mock_update = self._run(pos, price=95.0, atr=5.0)
+        written = mock_update.call_args.args[1]
+        assert written["current_stop"] == pytest.approx(85.0)
+        assert "stop_last_moved_date" not in written
+
     def test_null_stored_stop_is_not_a_move(self):
         # A NULL current_stop reads as 0 in the job; its first write is not a move "from 0".
         _, mock_update = self._run(_open_position(current_stop=None), price=120.0)
