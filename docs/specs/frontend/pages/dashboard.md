@@ -3,8 +3,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 4.2
-**Last Updated:** 2026-11-11 (v9.17 design gate — ST-04/BLG-FE-257: Card 3 click target is the single grace view, `/Positions?grace=open`); prior — 2026-11-09 (ST-06, EPIC-02, v9.16, BLG-FE-254 — §1B Group headers and TL-21: the Market regime header shows its name only, no count; clarification, edited on user direction); prior — 2026-11-04 (ST-09, EPIC-02, v9.15, BLG-SPEC-215 — new §1B Today list: market regime, exits due, grace ends today, stops moved, new signals, first on the page (Product Owner ruling on "stop changes due"); Card 4 and the Exit Conditions Met row merge into it; testable ACs TL-01..TL-29); prior history retained — see prior entries in version control
+**Version:** 4.3
+**Last Updated:** 2026-11-13 (ST-10, EPIC-04, v9.17, BLG-FE-254 — §1B Known Deviations: DEV-EPIC04-ST10-01, Stops moved data source and today-or-previous-weekday window); prior — 2026-11-11 (v9.17 design gate — ST-04/BLG-FE-257: Card 3 click target is the single grace view, `/Positions?grace=open`); prior — 2026-11-09 (ST-06, EPIC-02, v9.16, BLG-FE-254 — §1B Group headers and TL-21: the Market regime header shows its name only, no count; clarification, edited on user direction); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Release:** v8.8
 **EPIC:** EPIC-03
@@ -151,6 +151,17 @@ The five Morning Briefing cards, the AI Daily Briefing, Cards 1, 2, 3 and 5, Gat
 | TL-28 | With Card 4 removed, Recent Activity spans the full width of its row (§3) | Playwright: Recent Activity card width equals the row width at 1440px |
 | TL-29 | New signals uses Card 4's date filter (local `signal_date`, or `created_date` starting with it) and counts every status | Playwright with one signal of each status dated today and one dated yesterday |
 
+
+### Known Deviations
+
+**DEV-EPIC04-ST10-01 — Stops moved: data written by both stop recompute paths; "latest nightly run date" read as today or the previous weekday**
+- **Description:** §1B says stops are moved only by the nightly trailing-stop job and that `stop_last_moved_date` is written by it. In fact `GET /positions/analyze` also raises stops (the 16:00 UTC `daily-snapshot.yml` call and page loads), usually before the 22:30 UTC nightly run, so v9.17 ST-09 records a move from either path (ruling 2026-11-13, the user in session as Head of Specs Team and Data Model & Domain Schema Owner; `data_model.md` DS-40, `position_endpoints.md` v2.21.0). `GET /positions` carries no run date of its own, so `TodayList.js` (ST-10) reads TL-09's "latest nightly run date" as a window: positions whose `stop_last_moved_date` (UTC) is today or the previous weekday, A–Z (ruling 2026-11-13, the user in session as Frontend Specifications & UX Documentation Owner and Head of UX & Design). The nightly job runs 22:30 UTC Monday to Friday and the snapshot recompute 16:00 UTC, so the window always holds the last run; older moves never show, so the quiet-day line still appears. A row also needs `previous_stop` and a current stop above it. When one UTC day has several raises, `previous_stop` is the stop before that day's first move, and a rise hidden at 2 dp is not recorded (ST-09 follow-up). On a weekday afternoon the group can show both the previous weekday's and today's moves.
+- **Canonical requirement:** §1B Stops moved row, "Stops moved, why it is here", "Data dependency (Stops moved)" and TL-09.
+- **Priority:** P3 (display-only; the group never shows a stop that did not move).
+- **Target resolution release:** next release that seats `BLG-SPEC-238`.
+- **Owner:** Frontend Specifications & UX Documentation Owner; Head of UX & Design.
+- **Backlog reference:** `BLG-SPEC-238` (reword §1B and TL-09 to the window rule, or replace it with an API run date).
+- **Status:** Open.
 ---
 
 ## 1A. Morning Briefing Section
@@ -567,6 +578,7 @@ Cards are fully clickable (entire card surface is the click target). Visual affo
 
 | Version | Date | Change |
 |---------|------|--------|
+| 4.3 | 2026-11-13 | ST-10 (EPIC-04, v9.17, BLG-FE-254): §1B Known Deviations added: DEV-EPIC04-ST10-01 (Stops moved written by both stop recompute paths per the 2026-11-13 ruling; TL-09's latest nightly run date read as today or the previous weekday (UTC), ruling 2026-11-13; `BLG-SPEC-238`). Deviation documentation only; no other text changed. |
 | 4.2 | 2026-11-11 | v9.17 design gate. (ST-04, BLG-FE-257) Card 3 — In Grace Today: click target changes from `/risk` to `/Positions?grace=open`, the single grace view (`positions.md` v2.25 §Grace Period View). Count and next-expiry line unchanged. The Morning Briefing "Positions to Watch" card is already a count and a link and is unchanged. Design source: `docs/design/2026-11-11__release-v9.17/positions-decision-first/decision_record.md` §5.3. Approved: Head of UX & Design and Product Owner, 2026-11-11. |
 | 4.1 | 2026-11-09 | ST-06 (EPIC-02, v9.16, BLG-FE-254). §1B Group headers and TL-21: the Market regime header shows its name only, "Market regime", with no count, because its rows are the two markets, not items due. Clarification, no behaviour change. Recommended by the Frontend Specifications & UX Documentation Owner (agent-mediated, §5.3) after the EPIC-02 DoQ review; edited on user direction, 2026-11-09. |
 | 4.0 | 2026-11-04 | ST-09 (EPIC-02, v9.15, BLG-SPEC-215) against the `site-structure-phase1` §2.2 brief. New §1B Today list ("Due today"), first on the page: Market regime (US, UK; unknown state kept), Exits due (the `getExitCondition` predicate, risk-off first, v9.10 sub-line kept), Grace ends today (`grace_days_remaining = 1`), Stops moved (needs `BLG-BE-205`'s read-only `stop_last_moved_date`/`previous_stop`; not rendered until then), New signals (screener order, no rank shown, "Research" link). Fixed group order, caps of 5 with "+N more", a one-line quiet-day state, loading/per-source error/all-failed states, and testable ACs TL-01..TL-29 for `BLG-FE-254`. The brief's "stop changes due" is met by the Grace ends today and Stops moved groups (Product Owner ruling 2026-11-04). Card 4 and the §1A Exit Conditions Met row merge into the list; §3 page order, §7 and §8 updated. §13: display-only, no new ranking, score or "do this" wording. Built by `BLG-FE-254` (v9.16); v3.11 layout stands until then. Head of UX & Design and Head of Specs Team review: see the v9.15 `qa_evidence_EPIC-02.md` ST-09 entry. |

@@ -7,12 +7,13 @@ import { Skeleton } from "../../ui/skeleton";
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "../../ui/tooltip";
 import { REGIME_RISK_ON, REGIME_UNKNOWN, regimeStatusOf, unknownRegimeExplanation } from "../../../lib/regime";
 import { getExitCondition } from "../../../lib/exitCondition";
+import { formatCurrency, currencyForMarket } from "../../../lib/format";
 
 // ST-06 (BLG-FE-254, EPIC-02, v9.16): dashboard.md v4.0 §1B Today list ("Due today").
 // Display-only: every item is a link to the page where the user acts; nothing
 // here executes, confirms or pre-fills an action (§1B Strategy constraints, §13).
-// The Stops moved group needs BLG-BE-205's stop_last_moved_date/previous_stop and
-// is not rendered until then (§1B Data dependency; TL-09/TL-10 deferred).
+// ST-10 (BLG-FE-254, EPIC-04, v9.17): the Stops moved group (TL-09/TL-10) reads
+// GET /positions' stop_last_moved_date/previous_stop (ST-09, BLG-BE-205).
 
 export const TODAY_QUERY_KEYS = ["today-market-status", "today-positions", "today-signals"];
 
@@ -25,6 +26,7 @@ const GROUP_NAMES = {
   regime: "Market regime",
   exits: "Exits due",
   grace: "Grace ends today",
+  stops: "Stops moved",
   signals: "New signals",
 };
 
@@ -105,6 +107,36 @@ function Overflow({ group, count, to }) {
   );
 }
 
+// Grace ends today and Stops moved rows: ticker and a muted line, linking to the position.
+function PositionLinkGroup({ group, items, text }) {
+  const { shown, overflow } = capped(items);
+  return (
+    <div data-testid={`today-group-${group}`} className="space-y-1">
+      <GroupHeader name={GROUP_NAMES[group]} count={items.length} />
+      <ul className="space-y-1">
+        {shown.map((p) => (
+          <li key={p.id}>
+            <Link
+              to={`/Positions?position=${encodeURIComponent(p.id)}`}
+              data-testid={`today-item-${group}-${p.ticker}`}
+              className="flex items-center gap-3 text-sm rounded hover:bg-slate-100 dark:hover:bg-slate-700/40"
+            >
+              <span className={`font-semibold ${TEXT}`}>{p.ticker}</span>
+              <span className={MUTED}>{text(p)}</span>
+            </Link>
+          </li>
+        ))}
+      </ul>
+      <Overflow group={group} count={overflow} to="/Positions" />
+    </div>
+  );
+}
+
+const stopMovedText = (p) => {
+  const currency = currencyForMarket(p.market);
+  return `Stop moved from ${formatCurrency(p.previous_stop, { currency })} to ${formatCurrency(p.current_trailing_stop_native, { currency })}`;
+};
+
 function capped(items) {
   return { shown: items.slice(0, MAX_ITEMS), overflow: Math.max(0, items.length - MAX_ITEMS) };
 }
@@ -123,6 +155,28 @@ export function selectExitsDue(positions) {
 
 export function selectGraceEndsToday(positions) {
   return positions.filter((p) => Number(p.grace_days_remaining) === 1 && p.grace_days_remaining != null).sort(byTicker);
+}
+
+// Stops moved (dashboard.md §1B, TL-09; DEV-EPIC04-ST10-01). GET /positions has no run
+// date, so "the latest nightly run" is read as a window: moves whose stop_last_moved_date
+// (UTC) is today or the previous weekday (ruling 2026-11-13, Frontend Specifications & UX
+// Documentation Owner / Head of UX & Design). The nightly job runs 22:30 UTC Mon–Fri and
+// the snapshot recompute 16:00 UTC, so the window always covers the last run. A row needs
+// both fields and a current stop above the previous one. A–Z by ticker.
+export function stopsMovedWindow(now = new Date()) {
+  const iso = (d) => d.toISOString().slice(0, 10);
+  const prev = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
+  do {
+    prev.setUTCDate(prev.getUTCDate() - 1);
+  } while (prev.getUTCDay() === 0 || prev.getUTCDay() === 6);
+  return [iso(now), iso(prev)];
+}
+
+export function selectStopsMoved(positions, window) {
+  return positions
+    .filter((p) => p.stop_last_moved_date && window.includes(String(p.stop_last_moved_date).slice(0, 10)))
+    .filter((p) => p.previous_stop != null && Number(p.current_trailing_stop_native) > Number(p.previous_stop))
+    .sort(byTicker);
 }
 
 // Same filter as the v3.11 Card 4 (SignalStatusCard.js, removed in v9.16): local signal_date, or
@@ -164,9 +218,10 @@ export default function TodayList() {
   const positions = Array.isArray(positionsQuery.data) ? positionsQuery.data : [];
   const exits = selectExitsDue(positions);
   const grace = selectGraceEndsToday(positions);
+  const stops = selectStopsMoved(positions, stopsMovedWindow());
   const signals = selectTodaySignals(Array.isArray(signalsQuery.data) ? signalsQuery.data : [], today);
 
-  const isQuiet = allResolved && !anyFailed && exits.length === 0 && grace.length === 0 && signals.length === 0;
+  const isQuiet = allResolved && !anyFailed && exits.length === 0 && grace.length === 0 && stops.length === 0 && signals.length === 0;
 
   const retryAll = () => queries.forEach((q) => q.refetch());
 
@@ -222,16 +277,18 @@ export default function TodayList() {
           </div>
         )}
 
-        {/* 2. Exits due and 3. Grace ends today: GET /positions */}
+        {/* 2. Exits due, 3. Grace ends today and 4. Stops moved: GET /positions */}
         {positionsQuery.isLoading ? (
           <>
             <SkeletonGroup group="exits" />
             <SkeletonGroup group="grace" />
+            <SkeletonGroup group="stops" />
           </>
         ) : positionsQuery.isError ? (
           <>
             <ErrorGroup group="exits" onRetry={() => positionsQuery.refetch()} />
             <ErrorGroup group="grace" onRetry={() => positionsQuery.refetch()} />
+            <ErrorGroup group="stops" onRetry={() => positionsQuery.refetch()} />
           </>
         ) : (
           <>
@@ -280,33 +337,16 @@ export default function TodayList() {
                 </div>
               );
             })()}
-            {grace.length > 0 && (() => {
-              const { shown, overflow } = capped(grace);
-              return (
-                <div data-testid="today-group-grace" className="space-y-1">
-                  <GroupHeader name={GROUP_NAMES.grace} count={grace.length} />
-                  <ul className="space-y-1">
-                    {shown.map((p) => (
-                      <li key={p.id}>
-                        <Link
-                          to={`/Positions?position=${encodeURIComponent(p.id)}`}
-                          data-testid={`today-item-grace-${p.ticker}`}
-                          className="flex items-center gap-3 text-sm rounded hover:bg-slate-100 dark:hover:bg-slate-700/40"
-                        >
-                          <span className={`font-semibold ${TEXT}`}>{p.ticker}</span>
-                          <span className={MUTED}>Grace ends today — the trailing stop applies from the next session</span>
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                  <Overflow group="grace" count={overflow} to="/Positions" />
-                </div>
-              );
-            })()}
+            {grace.length > 0 && (
+              <PositionLinkGroup
+                group="grace"
+                items={grace}
+                text={() => "Grace ends today — the trailing stop applies from the next session"}
+              />
+            )}
+            {stops.length > 0 && <PositionLinkGroup group="stops" items={stops} text={stopMovedText} />}
           </>
         )}
-
-        {/* 4. Stops moved: not rendered until BLG-BE-205 (dashboard.md §1B Data dependency). */}
 
         {/* 5. New signals: GET /signals, API order, no rank shown */}
         {signalsQuery.isLoading ? (

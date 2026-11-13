@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-13 (session — 1 new item added: BLG-SPEC-237; ST-09 pre-commit review, EPIC-04, v9.17); prior — 2026-11-12 (session — 3 new items added: BLG-GOV-422, BLG-QA-262, BLG-TECH-35; EPIC-01 prevention retrospective, user-directed); prior — 2026-11-12 (session — 3 new items added: BLG-SPEC-236, BLG-FE-293, BLG-TECH-34; PR #2256 agent-mediated review); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-13 (session — 1 new item added: BLG-SPEC-238; ST-10 deviation DEV-EPIC04-ST10-01, EPIC-04, v9.17); prior — 2026-11-13 (session — 1 new item added: BLG-SPEC-237; ST-09 pre-commit review, EPIC-04, v9.17); prior — 2026-11-12 (session — 3 new items added: BLG-GOV-422, BLG-QA-262, BLG-TECH-35; EPIC-01 prevention retrospective, user-directed); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -6619,6 +6619,29 @@ CLAUDE.md §2 says task, story and ticket references must never appear in docume
 **Acceptance Criteria**
 - The rule for `data_model.md` migration headings is written down in one place
 - `data_model.md` headings follow it
+
+---
+
+### BLG-SPEC-238 — Reword the Today list Stops moved rules to match how stop moves are recorded
+**Priority:** P3 (Low)
+**Type:** Spec Debt
+**Owner:** Frontend Specifications & UX Documentation Owner; Head of UX & Design
+**Source:** ST-10 (EPIC-04, `2026-11-11__release-v9.17`), DEV-EPIC04-ST10-01 — 2026-11-13
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`dashboard.md` §1B says stops are moved only by the nightly job, which writes `stop_last_moved_date`, and TL-09 lists positions whose date is "the latest nightly run date". Since v9.17 ST-09 (ruling 2026-11-13), both stop recompute paths record a move, and `GET /positions` has no run date, so `TodayList.js` shows moves dated today or the previous weekday (UTC), a ruling made in session on 2026-11-13 and recorded as DEV-EPIC04-ST10-01. On a weekday afternoon the group can mix the previous weekday's moves with today's, and the rule exists only in code and the deviation note. Separately, Recent Activity's empty state still says "Trades and stop updates will appear here." although that card no longer shows stop updates (ST-09 removed the dead branch; `v7.2-dashboard-tradeplan-ux-hardening.spec.js` asserts the text).
+
+**Scope**
+- Reword §1B (Stops moved row, "why it is here", Data dependency) and TL-09 to say moves come from either recompute path and how the latest date is chosen
+- Write the today-or-previous-weekday window into §1B, or replace it with an API run date (file a backend item if so)
+- Decide the Recent Activity empty-state copy (§4A) and update the v7.2 spec assertion if it changes
+
+**Acceptance Criteria**
+- §1B and TL-09 match the shipped behaviour or a filed item changes the behaviour
+- DEV-EPIC04-ST10-01 is closed in `dashboard.md` Known Deviations
+- Recent Activity's empty-state copy is settled in §4A
 
 ---
 
