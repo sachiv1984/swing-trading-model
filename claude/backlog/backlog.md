@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-13 (session — 1 new item added: BLG-BE-217; EPIC-06 agent-mediated DoQ review, v9.17); prior — 2026-11-13 (session — 1 new item added: BLG-FE-294; ST-15 production api_call_log read, EPIC-06, v9.17); prior — 2026-11-13 (session — 2 new items added: BLG-QA-265, BLG-GOV-423; PR #2258 filing retrospective, EPIC-07, v9.17); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-13 (session — 1 new item added: BLG-BE-218; EPIC-06 agent-mediated DoQ review round 2, v9.17); prior — 2026-11-13 (session — 1 new item added: BLG-BE-217; EPIC-06 agent-mediated DoQ review, v9.17); prior — 2026-11-13 (session — 1 new item added: BLG-FE-294; ST-15 production api_call_log read, EPIC-06, v9.17); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -6925,5 +6925,25 @@ ST-15 made `get_current_price()` return UK prices in pounds, converted from the 
 **Acceptance Criteria**
 - A UK ATR of 8.5p and one of 250p both reach the stop calculation as £0.085 and £2.50; a pounds-quoted ATR is unchanged (unit tests)
 - A UK price alert on a ticker without `.L` is priced from the `.L` symbol (unit test)
+
+---
+
+### BLG-BE-218 — Convert screener and ATR prices for UK listings from the quote currency, not always by 100
+**Priority:** P3 (Low)
+**Type:** Backend Engineering / Correctness
+**Owner:** Head of Engineering
+**Source:** EPIC-06 agent-mediated Director of Quality review, round 2 (finding 2), ST-15 (`BLG-OPS-217`), cycle `2026-11-11__release-v9.17` — 2026-11-13
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+Since ST-15 (`c341eee7`), `get_current_price()` converts a UK price from the Yahoo quote's own currency: `GBp`/`GBX` are divided by 100, `GBP` is kept. Some London listings are quoted in pounds (VUSA.L `GBP` 109.3125, checked 2026-11-13). Two other paths still always divide UK values by 100. `signal_service.py` (signal generation) divides every UK screener price and ATR by 100, and `pricing.calculate_atr()` divides every `.L` ATR by 100. For a pounds-quoted listing, both come out 100× too small: the suggested size, stop distance and ATR for a signal on such a listing would be wrong. Both behaved this way before v9.17. This item is separate from `BLG-BE-217`, which covers the nightly stop update's `atr_value > 100` rule and price alerts with no market.
+
+**Scope**
+- Carry the bar data's currency through the screener and ATR paths (Yahoo chart `meta.currency`), and convert with `pricing.to_major_currency_units()`
+- Unit tests for a pence-quoted and a pounds-quoted London listing in both paths
+
+**Acceptance Criteria**
+- A `GBp` listing's price and ATR are divided by 100 and a `GBP` listing's are kept, in signal generation and in `calculate_atr()` (unit tests)
 
 ---
