@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 1.11
-**Last Updated:** 2026-11-05 (ST-30/ST-32, EPIC-05, v9.15, BLG-OPS-190/BLG-OPS-192 — `POST /signals/rebalance-exit` ranks from the momentum run's completion marker (`data_model.md` DS-39): no completed run today → 503 as before; a completed run that ranked nothing → an empty ranking and 200); prior — 2026-11-04 (ST-07, EPIC-01, v9.15, BLG-FE-219 — zero-ATR `reason` strings reworded in plain English); prior — 2026-10-16 (ST-05, EPIC-01, v9.13, BLG-GOV-391 — `POST /signals/rebalance-exit` implements `strategy_rules.md` §8.4: status-independent ranking, §8.1/§8.2 precedence, 503 when today's momentum signal run is missing); prior history retained — see prior entries in version control
+**Version:** 1.12
+**Last Updated:** 2026-11-13 (ST-17, EPIC-06, v9.17, BLG-BE-178 — batch sizing removes whole shares until a signal's fee-inclusive `total_cost` fits its `allocation_gbp`, so a batch's summed `total_cost` never exceeds available cash); prior — 2026-11-05 (ST-30/ST-32, EPIC-05, v9.15, BLG-OPS-190/BLG-OPS-192 — `POST /signals/rebalance-exit` ranks from the momentum run's completion marker (`data_model.md` DS-39): no completed run today → 503 as before; a completed run that ranked nothing → an empty ranking and 200); prior — 2026-11-04 (ST-07, EPIC-01, v9.15, BLG-FE-219 — zero-ATR `reason` strings reworded in plain English); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Overview
@@ -105,7 +105,7 @@ Response uses the standard success envelope from **conventions.md**.
 
 | Field | Notes |
 |-------|-------|
-| `suggested_shares` | Always an integer (whole shares). Fractional share sizing is not supported in signal generation. Actual position entry via `POST /portfolio/position` supports fractional shares |
+| `suggested_shares` | Always an integer (whole shares). Fractional share sizing is not supported in signal generation. Actual position entry via `POST /portfolio/position` supports fractional shares. For a new signal it is the largest whole number of shares whose `total_cost` (fees included) is within `allocation_gbp`: `floor(allocation_gbp / price_gbp)`, less one share at a time until the fees fit. Because the weights sum to 1.0, the batch's summed `total_cost` never exceeds the available cash (v1.12, BLG-BE-178). |
 | `current_price` | Native currency price at signal generation time. Point-in-time — will diverge from live price as time passes. Do not use as a live price |
 | `price_gbp` | GBP equivalent at signal generation time. Point-in-time |
 | `atr_value` | ATR at generation time. Stored for auditability; not updated after generation |
@@ -374,6 +374,7 @@ Errors use the standard error envelope from **conventions.md**.
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.12 | 2026-11-13 | ST-17 (EPIC-06, v9.17, BLG-BE-178): `suggested_shares` for a new signal is reduced one whole share at a time until its fee-inclusive `total_cost` fits its `allocation_gbp`. Before v1.12 shares were floored from the allocation and fees added on top, so a batch's summed `total_cost` could exceed available cash by up to its fees. No shape change. API Contracts & Documentation Owner. |
 | 1.11 | 2026-11-05 | ST-30/ST-32 (EPIC-05, v9.15, BLG-OPS-190/BLG-OPS-192): `POST /signals/rebalance-exit` reads today's ranking from the momentum run's completion marker (`data_model.md` DS-39) instead of today's signal rows. No marker today (missing or unfinished run) → 503, as before; the message now reads "No completed momentum signal run recorded for <date>". A completed run that ranked nothing → an empty ranking, §8.4 signals for eligible positions, and 200 (previously a false 503). No shape change. API Contracts & Documentation Owner. |
 | 1.10 | 2026-11-04 | ST-07 (EPIC-01, v9.15, BLG-FE-219): the two zero-ATR `reason` strings are reworded in plain English (`signals.md` v0.8; design record `signal-card-cost-and-sizing-reason`). No shape change. API Contracts & Documentation Owner. |
 | 1.9 | 2026-10-16 | ST-05 (EPIC-01, v9.13, BLG-GOV-391; absorbs BLG-OPS-190): `POST /signals/rebalance-exit` implements `strategy_rules.md` §8.4 (v1.17). The ranking is every ticker today's momentum signal run wrote, whatever its status; `risk_off_exit` positions are skipped (§8.2 governs), as are positions at their stop (§8.1); with no run recorded today it creates nothing and returns 503 (`screener_run_missing: true`). Strategy Rules & System Intent Owner ruling `ESC-EXEC-20261016-01`. |

@@ -9,7 +9,7 @@ Tests three nightly computation services:
   - size_batch_inv_vol()          — services/sizing_service.py
 
 Scenario coverage defined in docs/specs/qa/strategy_signal_regression_spec.md v1.0.
-Fixture data: tests/fixtures/nightly_portfolio_state.json (spec_version: 1.0).
+Fixture data: tests/fixtures/nightly_portfolio_state.json (spec_version: 1.1).
 """
 
 import json

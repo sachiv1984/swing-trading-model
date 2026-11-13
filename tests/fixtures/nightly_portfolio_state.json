@@ -1,5 +1,5 @@
 {
-  "spec_version": "1.0",
+  "spec_version": "1.1",
   "description": "Fixture dataset for nightly computation CI simulation tests (ST-07 BLG-QA-65). Update spec_version when strategy_rules.md constants change.",
   "settings": {
     "atr_multiplier_trailing": 2.0,
