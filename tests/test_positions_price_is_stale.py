@@ -24,7 +24,7 @@ def _positions(prices):
     with patch.object(position_service, "get_portfolio", return_value={"id": "pf-1"}), \
          patch.object(position_service, "get_positions", return_value=[_row("MU", 101.0), _row("WDC", 55.0)]), \
          patch.object(position_service, "get_live_fx_rate", return_value=1.30), \
-         patch.object(position_service, "get_current_price", side_effect=lambda t: prices[t]), \
+         patch.object(position_service, "get_current_price", side_effect=lambda t, market=None: prices[t]), \
          patch.object(position_service, "get_sector_and_industry", return_value=(None, None)):
         return {p["ticker"]: p for p in position_service.get_positions_with_prices()}
 

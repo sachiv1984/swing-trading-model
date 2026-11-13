@@ -15,6 +15,10 @@ from services.us_market_calendar import US_MARKET_TZ, us_market_date
 from zoneinfo import ZoneInfo
 
 
+# Yahoo quoteType values that never carry earnings (ST-15, BLG-OPS-217, v9.17).
+_NO_EARNINGS_QUOTE_TYPES = frozenset({"ETF", "MUTUALFUND", "INDEX", "CURRENCY", "CRYPTOCURRENCY", "FUTURE"})
+
+
 def _et_date(dt: datetime) -> date:
     """The America/New_York date of an aware datetime (ST-22, BLG-BE-174).
 
@@ -24,6 +28,24 @@ def _et_date(dt: datetime) -> date:
     if dt.tzinfo is None:
         return dt.date()
     return dt.astimezone(ZoneInfo(US_MARKET_TZ)).date()
+
+
+def _to_et_date(value) -> Optional[date]:
+    """An earnings value from `Ticker.info` as an America/New_York date, or None.
+
+    ST-22 (BLG-BE-174, v9.15): a timestamp is converted to its America/New_York
+    date, so a 21:00 ET (after-close) release is that ET day, not the next UTC
+    day. A naive datetime keeps its own date; a bare date is kept as it is.
+    """
+    if isinstance(value, bool):
+        return None
+    if isinstance(value, (int, float)):
+        return _et_date(datetime.fromtimestamp(value, timezone.utc))
+    if isinstance(value, datetime):
+        return _et_date(value)
+    if isinstance(value, date):
+        return value
+    return None
 
 
 def _yf_ticker_symbol(ticker: str, market: str) -> str:
@@ -44,26 +66,42 @@ def get_earnings(ticker: str, market: str = "US") -> Dict[str, Any]:
     try:
         t = yf.Ticker(yf_symbol)
         info = t.info
-        earnings_date = info.get("earningsDate") or info.get("earningsTimestamp")
+        # BLG-BE-204 (PR #2190 review, ST-22 follow-through): the US market date,
+        # the same basis as next_earnings_date.
+        today = us_market_date()
 
-        if isinstance(earnings_date, list):
-            earnings_date = earnings_date[0] if earnings_date else None
+        # ST-15 (BLG-OPS-217, v9.17): after a company reports, Yahoo keeps the
+        # past report in `earningsTimestamp` while `earningsTimestampStart`/`End`
+        # already hold the next one (AAPL on 2026-11-13: 2026-11-02 and
+        # 2027-01-28). Reading `earningsTimestamp` alone returned the past date,
+        # a negative days_until_earnings that the frontend hides, so the badge
+        # and the §4.2.3 pre-entry warning never showed for the next report.
+        # The next date is the earliest candidate on or after today; when every
+        # candidate is in the past, there is no known next date.
+        candidates = []
+        for key in ("earningsDate", "earningsTimestampStart", "earningsTimestampEnd", "earningsTimestamp"):
+            value = info.get(key)
+            for item in (value if isinstance(value, list) else [value]):
+                parsed = _to_et_date(item)
+                if parsed is not None:
+                    candidates.append(parsed)
+        upcoming = [d for d in candidates if d >= today]
+        earnings_date = min(upcoming) if upcoming else None
 
-        # ST-22 (BLG-BE-174, v9.15): a timestamp is converted to its
-        # America/New_York date, so a 21:00 ET (after-close) release is that ET
-        # day, not the next UTC day. A naive datetime keeps its own date.
-        if isinstance(earnings_date, (int, float)):
-            earnings_date = _et_date(datetime.fromtimestamp(earnings_date, timezone.utc))
-        elif isinstance(earnings_date, datetime):
-            earnings_date = _et_date(earnings_date)
+        # ST-15: funds and indices have no earnings. Their calendar lookup is a
+        # quoteSummary call that Yahoo answers 404 ("No fundamentals data
+        # found", twice with the crumb retry), counted as provider failures.
+        no_earnings_type = info.get("quoteType") in _NO_EARNINGS_QUOTE_TYPES
 
-        if earnings_date is None:
+        if earnings_date is None and not candidates and not no_earnings_type:
             cal = getattr(t, "calendar", None)
             if cal is not None and hasattr(cal, "columns"):
                 if "Earnings Date" in cal.columns:
                     val = cal["Earnings Date"].iloc[0] if len(cal) > 0 else None
                     if val is not None:
                         earnings_date = val.date() if hasattr(val, "date") else None
+            if earnings_date is not None and earnings_date < today:
+                earnings_date = None
 
         if earnings_date is None:
             return {
@@ -78,7 +116,6 @@ def get_earnings(ticker: str, market: str = "US") -> Dict[str, Any]:
         # market date, the same basis as next_earnings_date. With the server's
         # UTC date, a 21:00 ET release viewed at 00:30 UTC (19:30 ET, before it)
         # gave -1 days, and the §4.2.3 pre-entry check passed instead of warning.
-        today = us_market_date()
         days_until = (earnings_date - today).days
         fiscal_quarter = info.get("earningsQuarterlyGrowth") and None  # not reliable from info
         try:

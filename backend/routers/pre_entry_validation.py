@@ -71,7 +71,7 @@ def _check_cash_constraint(ticker: str, market: str, quantity: float) -> dict:
             return {"rule": "cash_constraint", "status": "skipped", "detail": "Portfolio not found", "severity": "fail"}
 
         available_cash_gbp = float(portfolio["cash"])
-        live_price = get_current_price(ticker)
+        live_price = get_current_price(ticker, market)
         if live_price is None:
             return {"rule": "cash_constraint", "status": "skipped", "detail": "Live price unavailable", "severity": "fail"}
 
@@ -142,7 +142,7 @@ def _check_sector_concentration(ticker: str, market: str, quantity: float) -> di
             if pos.get("sector") and pos["sector"].lower() == sector.lower():
                 current_sector_value += value_gbp
 
-        live_price = get_current_price(ticker)
+        live_price = get_current_price(ticker, market)
         if live_price is None:
             return {
                 "rule": "sector_concentration",

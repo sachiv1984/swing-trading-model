@@ -1989,7 +1989,7 @@ def get_position_by_id_endpoint(position_id: str):
             return pos
 
         live_fx_rate = get_live_fx_rate()
-        live_price = get_current_price(pos["ticker"])
+        live_price = get_current_price(pos["ticker"], pos.get("market"))
         if live_price:
             if pos["market"] == "UK" and live_price > 1000:
                 live_price = live_price / 100
@@ -2209,7 +2209,7 @@ def get_stop_trail_endpoint(position_id: str):
         if row.get("market") == "UK":
             ticker = ticker.replace(".L", "")
 
-        current_price = get_current_price(ticker if row.get("market") == "US" else row.get("ticker"))
+        current_price = get_current_price(str(row.get("ticker") or ""), row.get("market"))
         if current_price is None:
             raise HTTPException(status_code=503, detail="Live price unavailable")
         if row.get("market") == "UK" and current_price > 1000:

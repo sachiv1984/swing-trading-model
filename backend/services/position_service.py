@@ -194,7 +194,7 @@ def get_positions_with_prices() -> List[Dict]:
         
         # ALWAYS fetch live price
         print(f"   Fetching {pos['ticker']}...")
-        live_price = get_current_price(pos['ticker'])
+        live_price = get_current_price(pos['ticker'], pos.get('market'))
         
         # ST-07 (BLG-BE-168, v9.14): true when the live fetch failed and the
         # stored price is shown, the same flag GET /portfolio returns.
@@ -476,7 +476,7 @@ def analyze_positions() -> Dict:
         
         # Get live price
         print(f"   🔍 Fetching live price from Yahoo Finance...")
-        live_price = get_current_price(pos['ticker'])
+        live_price = get_current_price(pos['ticker'], pos.get('market'))
         
         # Determine entry price
         entry_price = native_entry_price(pos, live_fx_rate)
@@ -747,7 +747,7 @@ def run_nightly_trailing_stop_update() -> Dict:
         pos = decimal_to_float(pos)
         position_id = str(pos['id'])
 
-        live_price = get_current_price(pos['ticker'])
+        live_price = get_current_price(pos['ticker'], pos.get('market'))
         if not live_price:
             results.append({"ticker": pos['ticker'], "status": "skipped", "reason": "price unavailable"})
             continue

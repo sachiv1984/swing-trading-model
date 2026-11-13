@@ -4,7 +4,7 @@
 **Class:** Class 1
 **Status:** Canonical
 **Version:** 2.69
-**Last Updated:** 2026-11-13 (BLG-BE-205, EPIC-04 post-merge, v9.17 — DS-40 staging and production Live Confirmations recorded); prior — 2026-11-12 (ST-09, EPIC-04, v9.17, BLG-BE-205 — DS-40 (v2.69): `stop_last_moved_date` and `previous_stop` on positions, written by either stop recompute path when it raises a stop); prior — 2026-11-11 (ST-13, EPIC-04, v9.16, BLG-OPS-197 — DS-36 production Live Confirmation recorded; sign-off line updated); prior history retained — see prior entries in version control; prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-13 (ST-15, EPIC-06, v9.17, BLG-OPS-217 — DS-36 `success` note: a 404 from `fc.yahoo.com` is a success on attribution rows from 2026-11-13; no schema change); prior — 2026-11-13 (BLG-BE-205, EPIC-04 post-merge, v9.17 — DS-40 staging and production Live Confirmations recorded); prior — 2026-11-12 (ST-09, EPIC-04, v9.17, BLG-BE-205 — DS-40 (v2.69): `stop_last_moved_date` and `previous_stop` on positions, written by either stop recompute path when it raises a stop); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 This document describes the complete database schema and data structures used in the **Position Manager Web App**.
@@ -3536,7 +3536,7 @@ ALTER TABLE screener_runs ADD COLUMN IF NOT EXISTS duration_seconds NUMERIC;
 | `endpoint` | TEXT | NO | Provider path called, e.g. `/v8/finance/chart/AAPL` |
 | `session_id` | TEXT | YES | Research session UUID (`research` rows only) |
 | `called_at` | TIMESTAMPTZ | NO | When the call was made, default `NOW()` |
-| `success` | BOOLEAN | NO | `false` on an exception or an HTTP status of 400 or above |
+| `success` | BOOLEAN | NO | `false` on an exception or an HTTP status of 400 or above. Attribution rows from 2026-11-13 (ST-15, v9.17, BLG-OPS-217): a 404 from `fc.yahoo.com` (yfinance's cookie request, answered 404 while setting the cookie) is `true`; earlier rows count it as `false` |
 | `feature` | TEXT | YES | **New.** `"<METHOD> <route template>"` of the request that triggered the call (e.g. `POST /screener/run`), `startup`, or `unattributed`. `NULL` on per-call-site rows and on rows before v9.13 |
 
 Indexes: `idx_acl_service_called_at (service, called_at DESC)`, `idx_acl_session_id (session_id)`, and **new** `idx_acl_called_at_feature (called_at DESC, feature)` for the attribution report. Retention: rows older than 90 days are purged by `POST /ops/purge-audit-logs` (`docs/ops/ai_audit_log_retention_policy.md`).

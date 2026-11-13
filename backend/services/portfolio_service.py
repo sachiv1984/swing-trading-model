@@ -111,7 +111,7 @@ def get_portfolio_summary() -> Dict:
 
             # FETCH LIVE PRICE
             print(f"   Fetching live price for {pos['ticker']}...")
-            live_price = get_current_price(pos['ticker'])
+            live_price = get_current_price(pos['ticker'], pos.get('market'))
 
             if live_price:
                 # Fix UK stocks: Yahoo returns pence

@@ -83,7 +83,16 @@ def _yahoo_get_current_price(ticker: str) -> Optional[float]:
         return None
 
 
-def get_current_price(ticker: str) -> Optional[float]:
+def market_symbol(ticker: str, market: Optional[str]) -> str:
+    """The provider symbol for a stored ticker: a UK ticker gets its `.L`
+    suffix if it lacks one (ST-15, BLG-OPS-217, v9.17). Any other market, or
+    no market, returns the ticker unchanged."""
+    if market and market.upper() == "UK" and ticker and not ticker.endswith(".L"):
+        return f"{ticker}.L"
+    return ticker
+
+
+def get_current_price(ticker: str, market: Optional[str] = None) -> Optional[float]:
     """
     Fetch current price for a ticker.
 
@@ -92,9 +101,15 @@ def get_current_price(ticker: str) -> Optional[float]:
     - UK tickers (.L suffix): Yahoo Finance only (Alpaca does not support UK tickers).
     Fallback is always logged per BLG-SPEC-22 contract.
 
+    `market` (ST-15, BLG-OPS-217, v9.17): pass the position's market when it is
+    known. A UK row stored without `.L` (e.g. "BARC") was otherwise routed as
+    US: an Alpaca miss, then Yahoo `chart/BARC`, which returns 404, so the page
+    fell back to the stored price and the call counted as a provider failure.
+
     Returns price in native currency (USD for US, pence for UK).
     UK stocks need pence→pounds conversion by caller.
     """
+    ticker = market_symbol(ticker, market)
     if _is_us_ticker(ticker):
         # US: try Alpaca first (DS-05)
         try:
