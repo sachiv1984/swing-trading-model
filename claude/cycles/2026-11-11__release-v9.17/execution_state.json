@@ -5,7 +5,7 @@
   "invoked_utc": "2026-11-12T13:22:26Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-13T11:33:07Z",
+  "last_updated_utc": "2026-11-13T12:50:14Z",
   "epics": {
     "EPIC-01": {
       "title": "Site Structure & Usability Phase 3: Positions Redesign (build-and-ship)",
@@ -218,10 +218,10 @@
     },
     "EPIC-07": {
       "title": "Governance, Strategy Copy & Drift Tooling",
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-11-11__release-v9.17/EPIC-07",
       "pr_number": 2258,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-11-11__release-v9.17/qa_evidence_EPIC-07.md",
       "test_scenarios": [
@@ -232,7 +232,7 @@
         "ST-18": {
           "title": "Release Planning \u00a71.3a: let a gate clearance also set a gate-worded Provisional-Target to TBD",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2253,
           "branch": "exec/2026-11-11__release-v9.17/EPIC-07",
@@ -263,7 +263,7 @@
         "ST-19": {
           "title": "Define or remove the 2R Exit Zone threshold the Positions page states",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2254,
           "branch": "exec/2026-11-11__release-v9.17/EPIC-07",
@@ -289,7 +289,7 @@
         "ST-20": {
           "title": "Stop check_data_model_drift.py reading index names from rollback blocks",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2255,
           "branch": "exec/2026-11-11__release-v9.17/EPIC-07",
@@ -343,10 +343,10 @@
   "merge_gate": {
     "epics_merged": [
       "EPIC-01",
-      "EPIC-04"
+      "EPIC-04",
+      "EPIC-07"
     ],
     "epics_pending": [
-      "EPIC-07",
       "EPIC-06",
       "EPIC-05",
       "EPIC-02",
@@ -371,7 +371,8 @@
     "2026-11-13T09:56:19Z: EPIC-04 PR #2257 merged by the human repository owner (sachiv1984) at 2026-11-13T09:55:54Z, merge commit 71e86455. Orphaned post-merge commit check (LL-v6.8-P3-01): git log origin/main..origin/exec/2026-11-11__release-v9.17/EPIC-04 lists nothing - no reconciliation needed. Step 3c sibling sync: no pending EPIC branch exists yet (EPIC-07/06/05/02/03 not started) - nothing to sync.",
     "2026-11-13T10:00:19Z: DS-40 Live Confirmation (RISK-03, ST-09 Human-Delegation deploy step): applied and verified by the user on staging and production 2026-11-13; recorded in data_model.md DS-40 sign-off (b2b24b10 staging, this commit production).",
     "2026-11-13T11:30:53Z: User agreed in session (EPIC-07 / PR #2258 filing retrospective) to capture this for v9.18 Release Planning as a further extension of BLG-GOV-422's design gate STEP 2.2 checks, alongside the a207af77 direction. Competing-value check: when a rule's threshold exists only in code, search for any user-set value of the same concept and add a worked example where they disagree, so the owner decides between them before the gate passes. (v9.17: decision record \u00a77 said the 2R test exists only in position_lifecycle_service.py but did not check trade plans' r_target. A 3R plan sees EXIT ZONE at 2R \u2192 BLG-SPEC-239.) Also filed: BLG-QA-265, BLG-GOV-423.",
-    "2026-11-13T11:33:07Z: EPIC-07 human Director of Quality QA sign-off and Product Owner acceptance given in session by the repository owner (holds both roles), before merge; includes the ESC-CLOSE-20261007-01 bound 2 extension and ST-18's mandatory wording. Recorded in qa_evidence_EPIC-07.md Merge Gate Confirmations and on PR #2258."
+    "2026-11-13T11:33:07Z: EPIC-07 human Director of Quality QA sign-off and Product Owner acceptance given in session by the repository owner (holds both roles), before merge; includes the ESC-CLOSE-20261007-01 bound 2 extension and ST-18's mandatory wording. Recorded in qa_evidence_EPIC-07.md Merge Gate Confirmations and on PR #2258.",
+    "2026-11-13T12:50:14Z: EPIC-07 PR #2258 merged by the human repository owner (sachiv1984) at 2026-11-13T12:49:47Z, merge commit c7153fba. Orphaned post-merge commit check: none (git log origin/main..origin/exec/2026-11-11__release-v9.17/EPIC-07 empty). STEP 4 step 3c sibling sync: no pending EPIC branch exists yet (EPIC-06/05/02/03), nothing to sync. Issues #2253-2255 closed."
   ],
   "sealed": false,
   "sealed_utc": null

@@ -58,5 +58,5 @@ Last Updated: 2026-11-13
   - the Head of Specs Team's recorded extension of `ESC-CLOSE-20261007-01` bound 2;
   - ST-18's mandatory "sets" wording, in place of the AC's "may".
 - **P1/P2 found defects filed during this EPIC:** none. Follow-ups filed: BLG-SPEC-239 (P3), BLG-QA-264 (P4), BLG-QA-265 (P4), BLG-GOV-423 (P3), and a recorded BLG-GOV-422 scope-extension note for v9.18 planning.
-- **Merged:** pending. To be recorded at the STEP 4 merge (who, when, merge commit).
+- **Merged:** PR #2258, by the human repository owner (`sachiv1984`), at 2026-11-13T12:49:47Z, merge commit `c7153fba`. The merger holds both roles, so under `ESC-CLOSE-20261103-01` this merge also counts as a confirmation: QA sign-off and PO acceptance confirmed by merge, the human repository owner, 2026-11-13T12:49:47Z, merge commit `c7153fba`. This is in addition to the explicit in-session acceptance above.
 
