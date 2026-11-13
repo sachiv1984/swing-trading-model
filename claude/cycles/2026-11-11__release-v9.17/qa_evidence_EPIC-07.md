@@ -47,3 +47,16 @@ Last Updated: 2026-11-13
 - Signed off by: Sprint Execution Engine (agent-mediated, Director of Quality role — §5.3)
 - Date: 2026-11-13
 - Comments: User-directed agent-mediated review against `claude/agents/director_of_quality.md` (the user: "agent-mediated review", 2026-11-13). Round 1: **Blocked**, 1 P2 and 2 observations. P2: the ST-19 v2.27 note in `positions.md` was inserted between the EXIT ZONE and UNKNOWN tooltip rows, ending the table early. Fixed in `cad3b87f` (note moved below the table, text unchanged, no version bump). Observations: EPIC-07 `qa_evidence_log` unset (set); signer format (used here). Round 2: **Approved**. The reviewer re-ran and cited: `pytest tests/test_check_data_model_drift.py` 17 passed; with `strip_rollback_sql` made a no-op, 3 tests fail, and with the old `INDEX_RE`, the `IF` test fails; on `data_model.md`, raw-minus-parsed names = {`IF`, `idx_trade_plans_ticker`}, parsed-minus-raw empty, CHECK names unchanged; `check_strategy_copy.py` 0 contradictions/0 literals; prompt size budget OK; scenario IDs OK (1232); execution-state consistency OK; ST-19 tooltip text byte-identical to decision record §7 option (b) and `positions.md` v2.27; job logs of run 43407147398 show both SC-LBG-06 cases passing; ST-18 bounds consistent and all four CLAUDE.md §6 steps present; `EMBEDDED_GATE_SIGNAL_RE` matches `~v4.9 (date-gated)` but not `TBD` or `v9.18`. Post-open CI-fix restatement: ST-19's follow-up `cad3b87f` (Markdown only) — all 7 workflows success, CI Pytest Suite 43414296538. Final CI per story: ST-18 `02587c70` 7/7; ST-19 `5a7db63b` 9/9 (Playwright E2E 43407147398) and `cad3b87f` 7/7; ST-20 `f1299c5c` and `6dc668d8` 7/7 each. Story-level authority: ST-18 Head of Specs Team (agent-mediated) Approved, `ESC-CLOSE-20261007-01` bound 2 extension recorded above — confirmed cleared. The human QA sign-off and Product Owner acceptance at the merge gate remain open (always-human).
+
+## Merge Gate Confirmations
+
+- **Director of Quality QA sign-off:** given by the human repository owner, acting as Director of Quality, in session at 2026-11-13T11:33:07Z ("give DOQ and PO acceptance"), before the merge. It accepts:
+  - this evidence: ST-18, ST-19 and ST-20 all Pass, with no deviations;
+  - the agent-mediated sign-off block above (round 1 Blocked, P2 fixed in `cad3b87f`; round 2 Approved);
+  - the agent-mediated PR #2258 review comment (Director of Quality: Approved with Comments, 4 non-blocking observations).
+- **Product Owner acceptance:** given by the human repository owner, acting as Product Owner, in the same instruction at 2026-11-13T11:33:07Z, before the merge. It accepts ST-18, ST-19 and ST-20 against `stage4_backlog_slice.md`. ST-18 AC 2 remains post-merge, tracked by BLG-GOV-419. The acceptance covers the two points the PR review raised for the Product Owner, and the owner made no separate comment on either:
+  - the Head of Specs Team's recorded extension of `ESC-CLOSE-20261007-01` bound 2;
+  - ST-18's mandatory "sets" wording, in place of the AC's "may".
+- **P1/P2 found defects filed during this EPIC:** none. Follow-ups filed: BLG-SPEC-239 (P3), BLG-QA-264 (P4), BLG-QA-265 (P4), BLG-GOV-423 (P3), and a recorded BLG-GOV-422 scope-extension note for v9.18 planning.
+- **Merged:** pending. To be recorded at the STEP 4 merge (who, when, merge commit).
+
