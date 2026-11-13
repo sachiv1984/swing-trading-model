@@ -327,12 +327,12 @@
     },
     "EPIC-06": {
       "title": "Market-Data Reliability & Sizing Correctness",
-      "status": "in_progress",
+      "status": "done",
       "branch": "exec/2026-11-11__release-v9.17/EPIC-06",
       "pr_number": null,
       "pr_status": "none",
       "qa_signed_off": false,
-      "qa_evidence_log": null,
+      "qa_evidence_log": "claude/cycles/2026-11-11__release-v9.17/qa_evidence_EPIC-06.md",
       "test_scenarios": [
         "tests/test_signal_sizing.py",
         "tests/test_market_data_volume_check.py",
@@ -372,7 +372,7 @@
             "date": "2026-11-13",
             "evidence": "DEL-20261113-01 result; data_pipeline_cost_baseline.md \u00a74 v1.3"
           },
-          "notes": "Commits 5cc4e8bd (UK .L price symbol; fc.yahoo.com cookie 404 counted as success, ops_endpoints.md v1.5, DS-36 note; next earnings date from earningsTimestampStart/End, earnings_endpoints.md v0.3, user-approved; funds skip the calendar fallback) and c313bc90 (backend/utils/yahoo_info.py: Ticker.info cached 12 h per symbol after a usable answer, at most 4 lookups at once, 30 s slot wait; earnings result cache; sector and research market cap share the info). AC 1 met: cause per feature in data_pipeline_cost_baseline.md \u00a74 v1.3 from the production read (DEL-20261113-01): 418 of 488 failures (86%) in one burst 2026-11-09 15:37-15:38. Earlier hypothesis of a steady block (from Q1/Q2) withdrawn after Q3. AC 2 and AC 3 are seal-marked post-merge, tracked by BLG-OPS-217 (7 days of production data after deploy). Follow-up filed: BLG-FE-294 (P2, failed lookup shown as no earnings; UK Screener lookups). Observation, not changed: fiscal_quarter returns mostRecentQuarter as an epoch string. Deviation check: none (earnings and ops contracts, DS-36 note updated in the same commits). Tests: tests/test_yahoo_on_demand_failures.py (28) + 2 in test_api_call_attribution.py; full suite 3621 passed. CI on 5cc4e8bd: all 7 workflows success (CI Pytest Suite 43432809810). ci_pending: CI on c313bc90 not yet checked."
+          "notes": "Commits 5cc4e8bd (UK .L price symbol; fc.yahoo.com cookie 404 counted as success, ops_endpoints.md v1.5, DS-36 note; next earnings date from earningsTimestampStart/End, earnings_endpoints.md v0.3, user-approved; funds skip the calendar fallback) and c313bc90 (backend/utils/yahoo_info.py: Ticker.info cached 12 h per symbol after a usable answer, at most 4 lookups at once, 30 s slot wait; earnings result cache; sector and research market cap share the info). AC 1 met: cause per feature in data_pipeline_cost_baseline.md \u00a74 v1.3 from the production read (DEL-20261113-01): 418 of 488 failures (86%) in one burst 2026-11-09 15:37-15:38. Earlier hypothesis of a steady block (from Q1/Q2) withdrawn after Q3. AC 2 and AC 3 are seal-marked post-merge, tracked by BLG-OPS-217 (7 days of production data after deploy). Follow-up filed: BLG-FE-294 (P2, failed lookup shown as no earnings; UK Screener lookups). Observation, not changed: fiscal_quarter returns mostRecentQuarter as an epoch string. Deviation check: none (earnings and ops contracts, DS-36 note updated in the same commits). Tests: tests/test_yahoo_on_demand_failures.py (27) + 2 in test_api_call_attribution.py; full suite 3621 passed. CI on 5cc4e8bd: all 7 workflows success (CI Pytest Suite 43432809810). CI on c313bc90: all 7 workflows success (CI Pytest Suite 43435796962)."
         },
         "ST-16": {
           "title": "Alert when weekly market-data call volume exceeds 2\u00d7 the baseline",
