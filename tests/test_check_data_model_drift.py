@@ -302,3 +302,11 @@ def test_real_data_model_md_does_not_report_rollback_only_trade_plans_index():
     names = parse_index_names(data_model.read_text())
     assert "idx_trade_plans_ticker" not in names
     assert "idx_trade_plans_ticker_upper" in names
+
+
+def test_prose_create_index_if_not_exists_does_not_yield_if():
+    """data_model.md prose "CREATE INDEX IF NOT EXISTS`)" was parsed as index "IF"."""
+    text = "Created by the ensure-function (`CREATE INDEX IF NOT EXISTS`) on first use.\n"
+    assert parse_index_names(text) == []
+    data_model = Path(__file__).resolve().parent.parent / "docs" / "specs" / "data_model.md"
+    assert "IF" not in parse_index_names(data_model.read_text())

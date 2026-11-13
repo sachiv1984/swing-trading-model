@@ -1,0 +1,15 @@
+{
+  "tables": {},
+  "missing_indexes": [
+    "IF",
+    "idx_momentum_signal_runs_portfolio_date",
+    "idx_portfolio_history_portfolio",
+    "idx_position_audit_log_position_id",
+    "idx_sector_regime_history_portfolio_date",
+    "idx_trade_plan_audit_log_trade_plan_id",
+    "idx_trade_reflections_trade"
+  ],
+  "missing_check_constraints": [
+    "settings_risk_percent_check"
+  ]
+}

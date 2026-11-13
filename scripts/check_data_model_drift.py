@@ -62,7 +62,9 @@ CREATE_TABLE_NAME_RE = re.compile(r"CREATE TABLE\s+(\w+)\s*\(", re.I)
 FIELDS_TABLE_ROW_RE = re.compile(
     r"^\|\s*([A-Za-z_][\w]*)\s*\|\s*([^|]+?)\s*\|\s*(YES|NO)\s*\|", re.M
 )
-INDEX_RE = re.compile(r"CREATE\s+(?:UNIQUE\s+)?INDEX\s+(?:IF NOT EXISTS\s+)?(\w+)", re.I)
+# (?!IF\b): prose such as "CREATE INDEX IF NOT EXISTS`" (no space after
+# EXISTS) must not yield the name "IF" (found by the ST-20 staging run, v9.17).
+INDEX_RE = re.compile(r"CREATE\s+(?:UNIQUE\s+)?INDEX\s+(?:IF NOT EXISTS\s+)?(?!IF\b)(\w+)", re.I)
 CHECK_CONSTRAINT_RE = re.compile(r"ADD CONSTRAINT\s+(\w+)\s+CHECK", re.I)
 
 # ST-37 (BLG-SPEC-184): column defaults.
