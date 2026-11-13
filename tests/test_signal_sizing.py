@@ -200,17 +200,117 @@ class TestBatchSizingZeroAtrAndFees(unittest.TestCase):
             self.assertEqual(sig["reason"], _sz.ZERO_ATR_REASON_LIST)
 
     def test_uk_total_cost_includes_stamp_duty_and_commission(self):
-        """ST-08 AC 1 (UK): 100 shares at £100 → £10,000 + £50 stamp duty + £9.95 commission."""
-        result = self._call([self._uk(5.0)], available_cash=10_000.0)
+        """ST-08 AC 1 (UK): 100 shares at £100 → £10,000 + £50 stamp duty + £9.95 commission.
+
+        Cash is £10,100 so the 100 shares and their fees fit (BLG-BE-178, v9.17).
+        """
+        result = self._call([self._uk(5.0)], available_cash=10_100.0)
         self.assertEqual(result[0]["suggested_shares"], 100)
         self.assertEqual(result[0]["total_cost"], 10_059.95)
 
     def test_us_total_cost_includes_fx_fee_in_gbp(self):
-        """ST-08 AC 1 (US): 100 shares at $100, fx 1.25 → ($10,000 + $15.00 FX fee) / 1.25 = £8,012.00."""
+        """ST-08 AC 1 (US): 100 shares at $100, fx 1.25 → ($10,000 + $15.00 FX fee) / 1.25 = £8,012.00.
+
+        Cash is £8,050 so the 100 shares and their fees fit (BLG-BE-178, v9.17).
+        """
         sig = {"atr_value": 5.0, "price_gbp": 80.0, "current_price": 100.0, "market": "US", "status": "new"}
-        result = self._call([sig], available_cash=8_000.0, fx_rate=1.25)
+        result = self._call([sig], available_cash=8_050.0, fx_rate=1.25)
         self.assertEqual(result[0]["suggested_shares"], 100)
         self.assertEqual(result[0]["total_cost"], 8_012.00)
+
+
+class TestBatchSizingFeesFitAvailableCash(unittest.TestCase):
+    """BLG-BE-178 (ST-17, EPIC-06, cycle 2026-11-11__release-v9.17).
+
+    The sum of total_cost across a batch must not exceed available_cash once
+    entry fees are added. Before the fix, shares were floored from the
+    allocation and fees were added on top, so a batch could overspend by up
+    to its fees.
+    """
+
+    _SETTINGS = TestBatchSizingZeroAtrAndFees._SETTINGS
+    _FX = 1.25
+
+    def _call(self, signals, available_cash, fx_rate=_FX):
+        import services.sizing_service as _sz
+        with patch.object(_sz, "get_settings", MagicMock(return_value=[self._SETTINGS])):
+            return _sz.size_batch_inv_vol(signals, available_cash=available_cash, fx_rate=fx_rate)
+
+    @staticmethod
+    def _uk(atr, price):
+        return {"atr_value": atr, "price_gbp": price, "current_price": price, "market": "UK", "status": "new"}
+
+    @classmethod
+    def _us(cls, atr, price_usd):
+        return {"atr_value": atr, "price_gbp": price_usd / cls._FX, "current_price": price_usd,
+                "market": "US", "status": "new"}
+
+    @staticmethod
+    def _half_up(x):
+        from decimal import Decimal, ROUND_HALF_UP
+        return float(Decimal(str(x)).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP))
+
+    def _cost_of(self, sig, shares):
+        """Independent fee-inclusive GBP cost of `shares`, for the one-more-share check.
+
+        Fees round half-up to pence as utils/calculations.py does; the GBP total
+        rounds with round() as size_batch_inv_vol does.
+        """
+        h = self._half_up
+        gross = shares * sig["current_price"]
+        if sig["market"] == "US":
+            fee = h(self._SETTINGS["us_commission"] + h(gross * self._SETTINGS["fx_fee_rate"]))
+            return round((gross + fee) / self._FX, 2)
+        fee = h(self._SETTINGS["uk_commission"] + h(gross * self._SETTINGS["stamp_duty_rate"]))
+        return round(gross + fee, 2)
+
+    def _assert_batch_fits(self, result, available_cash):
+        total = sum(s["total_cost"] for s in result)
+        self.assertLessEqual(total, available_cash,
+                             f"batch total_cost {total} exceeds available_cash {available_cash}")
+        for sig in result:
+            shares = sig["suggested_shares"]
+            self.assertLessEqual(sig["total_cost"], sig["allocation_gbp"] + 0.005)
+            if shares > 0:
+                self.assertEqual(sig["total_cost"], self._cost_of(sig, shares))
+            # Largest whole share count that fits: one more share would not.
+            self.assertGreater(self._cost_of(sig, shares + 1), sig["allocation_gbp"] - 0.005)
+
+    def test_uk_batch_total_cost_within_available_cash(self):
+        """UK batch: before the fix, 5 × 20 shares at £100 cost 5 × £2,019.95 = £10,099.75 > £10,000."""
+        signals = [self._uk(2.0, 100.0) for _ in range(5)]
+        result = self._call(signals, available_cash=10_000.0)
+        self._assert_batch_fits(result, 10_000.0)
+        for sig in result:
+            self.assertEqual(sig["suggested_shares"], 19)
+            self.assertEqual(sig["total_cost"], 1_919.45)  # £1,900 + £9.50 stamp duty + £9.95
+
+    def test_us_batch_total_cost_within_available_cash(self):
+        """US batch: 5 × 25 shares at $100 cost ($2,500 + $3.75) / 1.25 = £2,003.00 each before the fix."""
+        signals = [self._us(2.0, 100.0) for _ in range(5)]
+        result = self._call(signals, available_cash=10_000.0)
+        self._assert_batch_fits(result, 10_000.0)
+        for sig in result:
+            self.assertEqual(sig["suggested_shares"], 24)
+            self.assertEqual(sig["total_cost"], 1_922.88)  # ($2,400 + $3.60) / 1.25
+
+    def test_mixed_batch_total_cost_within_available_cash(self):
+        """Mixed UK and US batch with unequal ATRs and prices."""
+        signals = [
+            self._uk(1.5, 250.0), self._us(3.0, 180.0), self._uk(4.0, 12.34),
+            self._us(2.5, 47.5), self._uk(2.0, 999.0), self._us(1.0, 610.0),
+        ]
+        result = self._call(signals, available_cash=25_000.0)
+        self._assert_batch_fits(result, 25_000.0)
+        self.assertTrue(all(s["suggested_shares"] > 0 for s in result))
+
+    def test_allocation_below_uk_commission_gives_zero_shares(self):
+        """A UK allocation that cannot cover even one share plus £9.95 commission gets 0 shares."""
+        result = self._call([self._uk(2.0, 95.0)], available_cash=100.0)
+        self._assert_batch_fits(result, 100.0)
+        self.assertEqual(result[0]["suggested_shares"], 0)
+        self.assertEqual(result[0]["total_cost"], 0)
+        self.assertTrue(result[0]["reason"])
 
 
 if __name__ == "__main__":

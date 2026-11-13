@@ -83,7 +83,7 @@ def _check_sector_concentration_recheck(position_id: str, ticker: str, market: s
             if pos.get("sector") and pos["sector"].lower() == sector.lower():
                 current_sector_value += value_gbp
 
-        live_price = get_current_price(ticker)
+        live_price = get_current_price(ticker, market)
         if live_price is None:
             return {
                 "rule": "sector_concentration",

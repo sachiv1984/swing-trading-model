@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-13 (session — 2 new items added: BLG-QA-265, BLG-GOV-423; PR #2258 filing retrospective, EPIC-07, v9.17); prior — 2026-11-13 (session — 2 new items added: BLG-SPEC-239, BLG-QA-264; PR #2258 agent-mediated review, EPIC-07, v9.17); prior — 2026-11-13 (session — 2 new items added: BLG-BE-216, BLG-QA-263; PR #2257 agent-mediated review, EPIC-04, v9.17); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-13 (session — 1 new item added: BLG-BE-218; EPIC-06 agent-mediated DoQ review round 2, v9.17); prior — 2026-11-13 (session — 1 new item added: BLG-BE-217; EPIC-06 agent-mediated DoQ review, v9.17); prior — 2026-11-13 (session — 1 new item added: BLG-FE-294; ST-15 production api_call_log read, EPIC-06, v9.17); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -6880,3 +6880,70 @@ The detector reports a documented index or CHECK constraint as missing without s
 **Acceptance Criteria**
 - `execution_prompt.md` step 10a and §7 allow and require that update, limited to marking the row resolved
 - The rule cites the ST-20 / `data_model.md` §Drift Detector Triage case
+
+---
+
+### BLG-FE-294 — Show "earnings unknown" instead of nothing when an earnings or gap-risk lookup fails
+**Priority:** P2 (Medium)
+**Type:** Frontend / UX
+**Owner:** Frontend Specifications & UX Documentation Owner; Head of Engineering
+**Source:** ST-15 (`BLG-OPS-217`), EPIC-06, cycle `2026-11-11__release-v9.17` — production `api_call_log` read (`DEL-20261113-01`) — 2026-11-13
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+`GET /earnings/{ticker}` returns the same null response when the Yahoo lookup fails as when a ticker has no upcoming earnings, and `useEarnings` (`src/hooks/useEarnings.js`) shows no badge for either. It also caches the failed null for the browser session. In production in the 7 days to 2026-11-13, 344 of the 366 failed Yahoo calls behind earnings lookups came in one burst (2026-11-09 15:37–15:38), so the earnings badge and the gap-risk warning (which depends on `get_earnings()`) disappeared for every ticker in that window, indistinguishable from "no earnings soon". ST-15 reduces the bursts (12-hour cache, at most 4 lookups at once), but a failed lookup still looks like "no earnings". Separately, the Screener looks up earnings for UK rows (about 44 of the failing symbols), although the `strategy_rules.md` §4.2.3 earnings check applies to US tickers only.
+
+**Scope**
+- Backend: add a field (e.g. `data_status: ok | unavailable`) to `GET /earnings/{ticker}` and to the gap-risk response, so that a failed lookup is distinguishable from a successful lookup with no date (`earnings_endpoints.md`, `openapi.yaml`)
+- Frontend: show "Earnings: unknown" on the badge and the gap-risk warning for `unavailable`, and do not cache an `unavailable` answer for the session
+- Decide whether the Screener should skip earnings lookups for UK rows, and record the decision in the spec
+
+**Acceptance Criteria**
+- A failed Yahoo lookup returns `data_status: unavailable`; a successful lookup with no upcoming date returns `ok` with a null date (unit tests)
+- The Screener, Positions and Watchlist badges show "unknown" for `unavailable` and nothing for `ok` with a null date (Playwright)
+- An `unavailable` answer is retried on the next render rather than cached for the session
+- The UK-row decision is recorded in the spec
+
+---
+
+### BLG-BE-217 — Remove the remaining UK pence guesses: the ATR "above 100" rule and price alerts without a market
+**Priority:** P3 (Low)
+**Type:** Backend Engineering / Correctness
+**Owner:** Head of Engineering
+**Source:** EPIC-06 agent-mediated Director of Quality review, round 1 (finding 2), ST-15 (`BLG-OPS-217`), cycle `2026-11-11__release-v9.17` — 2026-11-13
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+ST-15 made `get_current_price()` return UK prices in pounds, converted from the Yahoo quote's own currency (`GBp`/`GBX` are pence; some London listings, such as VUSA.L, are quoted in `GBP`), and removed the callers' "UK and above 1000 means pence" guesses. Two guesses of the same kind remain. The nightly stop update divides a UK ATR by 100 when it is above 100 (`position_service.py`, `atr_value > 100`): a pence ATR below 100 (a share under about £30 with a normal daily range) is kept as pounds, and a pounds ATR above 100 would be divided. Custom price alerts (`alerts_service.py`) call `get_current_price(ticker)` with no market, because `price_alerts` has no market column, so a UK alert ticker stored without `.L` is priced as a US ticker.
+
+**Scope**
+- Give `calculate_atr()` (or its UK data path) the bar currency and convert pence ATRs to pounds at the source, as `to_major_currency_units()` does for prices; remove the `atr_value > 100` rule
+- Price alerts: store or derive the market (or require `.L` on UK alert tickers) and pass it to `get_current_price()`; state the units of the alert threshold in the alerts contract
+
+**Acceptance Criteria**
+- A UK ATR of 8.5p and one of 250p both reach the stop calculation as £0.085 and £2.50; a pounds-quoted ATR is unchanged (unit tests)
+- A UK price alert on a ticker without `.L` is priced from the `.L` symbol (unit test)
+
+---
+
+### BLG-BE-218 — Convert screener and ATR prices for UK listings from the quote currency, not always by 100
+**Priority:** P3 (Low)
+**Type:** Backend Engineering / Correctness
+**Owner:** Head of Engineering
+**Source:** EPIC-06 agent-mediated Director of Quality review, round 2 (finding 2), ST-15 (`BLG-OPS-217`), cycle `2026-11-11__release-v9.17` — 2026-11-13
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+Since ST-15 (`c341eee7`), `get_current_price()` converts a UK price from the Yahoo quote's own currency: `GBp`/`GBX` are divided by 100, `GBP` is kept. Some London listings are quoted in pounds (VUSA.L `GBP` 109.3125, checked 2026-11-13). Two other paths still always divide UK values by 100. `signal_service.py` (signal generation) divides every UK screener price and ATR by 100, and `pricing.calculate_atr()` divides every `.L` ATR by 100. For a pounds-quoted listing, both come out 100× too small: the suggested size, stop distance and ATR for a signal on such a listing would be wrong. Both behaved this way before v9.17. This item is separate from `BLG-BE-217`, which covers the nightly stop update's `atr_value > 100` rule and price alerts with no market.
+
+**Scope**
+- Carry the bar data's currency through the screener and ATR paths (Yahoo chart `meta.currency`), and convert with `pricing.to_major_currency_units()`
+- Unit tests for a pence-quoted and a pounds-quoted London listing in both paths
+
+**Acceptance Criteria**
+- A `GBp` listing's price and ATR are divided by 100 and a `GBP` listing's are kept, in signal generation and in `calculate_atr()` (unit tests)
+
+---

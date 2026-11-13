@@ -5,7 +5,7 @@
   "invoked_utc": "2026-11-12T13:22:26Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-13T12:50:14Z",
+  "last_updated_utc": "2026-11-13T14:59:30Z",
   "epics": {
     "EPIC-01": {
       "title": "Site Structure & Usability Phase 3: Positions Redesign (build-and-ship)",
@@ -324,6 +324,119 @@
         "first_round": "Blocked (1 P2, 2 observations)",
         "evidence": "claude/cycles/2026-11-11__release-v9.17/qa_evidence_EPIC-07.md"
       }
+    },
+    "EPIC-06": {
+      "title": "Market-Data Reliability & Sizing Correctness",
+      "status": "done",
+      "branch": "exec/2026-11-11__release-v9.17/EPIC-06",
+      "pr_number": 2259,
+      "pr_status": "open",
+      "qa_signed_off": true,
+      "qa_evidence_log": "claude/cycles/2026-11-11__release-v9.17/qa_evidence_EPIC-06.md",
+      "test_scenarios": [
+        "tests/test_signal_sizing.py",
+        "tests/test_market_data_volume_check.py",
+        "tests/test_yahoo_on_demand_failures.py",
+        "tests/test_api_call_attribution.py"
+      ],
+      "sign_off_record": {
+        "status": "cleared",
+        "role": "Director of Quality",
+        "method": "agent_mediated",
+        "signed_by": "Sprint Execution Engine (agent-mediated, Director of Quality role \u2014 \u00a75.3)",
+        "date": "2026-11-13",
+        "user_directed": true,
+        "rounds": 3,
+        "first_round": "Blocked (1 P2, 1 P3, 3 observations)",
+        "second_round": "Blocked (1 P2 stored-data risk; cleared by read-only checks)",
+        "evidence": "claude/cycles/2026-11-11__release-v9.17/qa_evidence_EPIC-06.md"
+      },
+      "stories": {
+        "ST-15": {
+          "title": "Find out why most on-demand Yahoo calls fail on production (earnings, positions, gap risk, research)",
+          "classification": "delegated_backend",
+          "status": "done",
+          "assigned_to": "Infrastructure & Operations Owner; Head of Engineering",
+          "github_issue": 2250,
+          "branch": "exec/2026-11-11__release-v9.17/EPIC-06",
+          "commit_sha": "c341eee77f9afd1b5eae99bd25e1cfe0a120bc58",
+          "delegation_record_id": "DEL-20261113-01",
+          "blocked_since_utc": "2026-11-13T13:06:31Z",
+          "unblock_criteria": "Production api_call_log Q1-Q3 output (DEL-20261113-01) supplied in session or in the delegation record; engine then records a cause per feature (AC 1) and commits fixes. AC 2/AC 3 are seal-marked post-merge, tracked by BLG-OPS-217.",
+          "completed_utc": "2026-11-13T13:59:33Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/ops/data_pipeline_cost_baseline.md#4. Weekly Baseline",
+            "docs/specs/api_contracts/ops_endpoints.md#GET /ops/api-call-attribution",
+            "docs/specs/api_contracts/earnings_endpoints.md#GET /earnings/{ticker}",
+            "docs/specs/data_model.md#DS-36 \u2014 Attribute provider calls in api_call_log, and time screener runs (v2.65, 2026-10-27)",
+            "tests/test_yahoo_on_demand_failures.py"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.B.unblocked",
+          "sign_off_record": {
+            "status": "cleared",
+            "role": "Infrastructure & Operations Owner",
+            "method": "human_in_session",
+            "date": "2026-11-13",
+            "evidence": "DEL-20261113-01 result; data_pipeline_cost_baseline.md \u00a74 v1.3"
+          },
+          "notes": "Commits 5cc4e8bd (UK .L price symbol; fc.yahoo.com cookie 404 counted as success, ops_endpoints.md v1.5, DS-36 note; next earnings date from earningsTimestampStart/End, earnings_endpoints.md v0.3, user-approved; funds skip the calendar fallback) and c313bc90 (backend/utils/yahoo_info.py: Ticker.info cached 12 h per symbol after a usable answer, at most 4 lookups at once, 30 s slot wait; earnings result cache; sector and research market cap share the info). AC 1 met: cause per feature in data_pipeline_cost_baseline.md \u00a74 v1.3 from the production read (DEL-20261113-01): 418 of 488 failures (86%) in one burst 2026-11-09 15:37-15:38. Earlier hypothesis of a steady block (from Q1/Q2) withdrawn after Q3. AC 2 and AC 3 are seal-marked post-merge, tracked by BLG-OPS-217 (7 days of production data after deploy). Follow-up filed: BLG-FE-294 (P2, failed lookup shown as no earnings; UK Screener lookups). Observation, not changed: fiscal_quarter returns mostRecentQuarter as an epoch string. Deviation check: none (earnings and ops contracts, DS-36 note updated in the same commits). Tests: tests/test_yahoo_on_demand_failures.py (45) + 2 in test_api_call_attribution.py; full suite 3621 passed. CI on 5cc4e8bd: all 7 workflows success (CI Pytest Suite 43432809810). CI on c313bc90: all 7 workflows success (CI Pytest Suite 43435796962). DoQ round 1 (agent-mediated, user-directed): Blocked on a P2 \u2014 UK Yahoo prices in pence read as pounds, widened by the .L fix; fixed in c341eee7 (prices converted from the quote currency at the source; caller heuristics removed); BLG-BE-217 (P3) filed for the ATR '>100' rule and price alerts. Full suite 3639 passed. CI on c341eee7: all 7 workflows success (CI Pytest Suite 43438529026). DoQ round 2: Blocked on a stored-data risk (UK stops trailed from pence-as-pounds prices); cleared by read-only checks \u2014 production no open UK positions (user), staging BARC/LGEN ratios ~1 (engine, user-permitted). BLG-BE-218 (P3) filed for screener/calculate_atr always dividing UK by 100."
+        },
+        "ST-16": {
+          "title": "Alert when weekly market-data call volume exceeds 2\u00d7 the baseline",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 2251,
+          "branch": "exec/2026-11-11__release-v9.17/EPIC-06",
+          "commit_sha": "5578c1034aa740d9e68fb6f75c4355ce2a9cfd5f",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-11-13T13:09:38Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/ops/data_pipeline_cost_baseline.md#5. Advisory Threshold",
+            "scripts/check_market_data_volume.py",
+            ".github/workflows/market-data-volume-check.yml",
+            "tests/test_market_data_volume_check.py"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.done",
+          "sign_off_record": null,
+          "notes": "Commit 5578c103: market-data-volume-check.yml (Mondays 08:00 UTC) runs scripts/check_market_data_volume.py, which reads the baseline from data_pipeline_cost_baseline.md \u00a74 at run time and calls GET /ops/api-call-attribution?window=weekly; advisory over 2x names the source, figure, baseline and top 3 features (Telegram). Fails loudly: exit 2 on any report/baseline failure fails the job and the if: failure() step alerts. AC 1 and AC 2 covered by tests/test_market_data_volume_check.py (20 tests). Zero-baseline rule (any non-zero figure exceeds) confirmed by the user in session as Infrastructure & Operations Owner, 2026-11-13. Docs: baseline v1.2 \u00a75, scheduled_workflows_inventory v1.2, secrets map. Deviation check: none. Full backend suite 3592 passed locally. CI on 5578c103: all 7 workflows success (step 4d); CI Pytest Suite 43431251776."
+        },
+        "ST-17": {
+          "title": "Batch signal sizing can allocate more than available cash once fees are added",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 2252,
+          "branch": "exec/2026-11-11__release-v9.17/EPIC-06",
+          "commit_sha": "7b3b59e8060187efaf9d84297d5f069b6e82ad4b",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-11-13T13:01:11Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/signal_endpoints.md#Field notes",
+            "docs/specs/qa/strategy_signal_regression_spec.md#Inverse-Volatility Sizing",
+            "tests/test_signal_sizing.py"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.done",
+          "sign_off_record": null,
+          "notes": "Commit 7b3b59e8: size_batch_inv_vol() removes whole shares until each signal's fee-inclusive total_cost fits its allocation, so sum(total_cost) <= available_cash. TestBatchSizingFeesFitAvailableCash covers UK, US and mixed batches (AC) plus sub-commission allocation; all 5 fail without the fix. Two v9.12 fee tests pinned the over-budget case and had their cash raised. signal_endpoints.md v1.12; strategy_signal_regression_spec.md v1.1 (fixture spec_version 1.1). Opportunistic in-file fix disclosed: regression spec IV-05 described pre-v9.12 zero-ATR behaviour. Deviation check: none (contract and regression spec updated in the same commit). Full backend suite 3572 passed locally. CI on 7b3b59e8: all 7 workflows success (step 4d); CI Pytest Suite 43430040716."
+        }
+      }
     }
   },
   "blocked_items": [],
@@ -335,6 +448,9 @@
     "ST-04",
     "ST-09",
     "ST-10",
+    "ST-15",
+    "ST-16",
+    "ST-17",
     "ST-18",
     "ST-19",
     "ST-20"
@@ -372,7 +488,9 @@
     "2026-11-13T10:00:19Z: DS-40 Live Confirmation (RISK-03, ST-09 Human-Delegation deploy step): applied and verified by the user on staging and production 2026-11-13; recorded in data_model.md DS-40 sign-off (b2b24b10 staging, this commit production).",
     "2026-11-13T11:30:53Z: User agreed in session (EPIC-07 / PR #2258 filing retrospective) to capture this for v9.18 Release Planning as a further extension of BLG-GOV-422's design gate STEP 2.2 checks, alongside the a207af77 direction. Competing-value check: when a rule's threshold exists only in code, search for any user-set value of the same concept and add a worked example where they disagree, so the owner decides between them before the gate passes. (v9.17: decision record \u00a77 said the 2R test exists only in position_lifecycle_service.py but did not check trade plans' r_target. A 3R plan sees EXIT ZONE at 2R \u2192 BLG-SPEC-239.) Also filed: BLG-QA-265, BLG-GOV-423.",
     "2026-11-13T11:33:07Z: EPIC-07 human Director of Quality QA sign-off and Product Owner acceptance given in session by the repository owner (holds both roles), before merge; includes the ESC-CLOSE-20261007-01 bound 2 extension and ST-18's mandatory wording. Recorded in qa_evidence_EPIC-07.md Merge Gate Confirmations and on PR #2258.",
-    "2026-11-13T12:50:14Z: EPIC-07 PR #2258 merged by the human repository owner (sachiv1984) at 2026-11-13T12:49:47Z, merge commit c7153fba. Orphaned post-merge commit check: none (git log origin/main..origin/exec/2026-11-11__release-v9.17/EPIC-07 empty). STEP 4 step 3c sibling sync: no pending EPIC branch exists yet (EPIC-06/05/02/03), nothing to sync. Issues #2253-2255 closed."
+    "2026-11-13T12:50:14Z: EPIC-07 PR #2258 merged by the human repository owner (sachiv1984) at 2026-11-13T12:49:47Z, merge commit c7153fba. Orphaned post-merge commit check: none (git log origin/main..origin/exec/2026-11-11__release-v9.17/EPIC-07 empty). STEP 4 step 3c sibling sync: no pending EPIC branch exists yet (EPIC-06/05/02/03), nothing to sync. Issues #2253-2255 closed.",
+    "2026-11-13T12:52:00Z: run sprint --epic EPIC-06 (typed 'epic06', normalised). EPIC-06 section appended to the existing execution_state.json (owner EPIC-01). Branch cut from main at 5838bece after EPIC-07 merged (Merge Order position 4). Issues #2250-#2252 found from sync gh. Classes per sprint_backlog.md: ST-15 delegated_backend, ST-16/ST-17 autonomous.",
+    "2026-11-13T14:59:09Z: Product Owner direction (user, in session; EPIC-06 filing retrospective): extend BLG-GOV-422's design gate STEP 2.2 checks at v9.18 Release Planning with a failure-state check. For every value a view shows from an outside source (Yahoo, Alpaca, news), the design records what the screen shows when the lookup fails and what it shows when the lookup succeeds with no data, and the two must be distinguishable when the value backs a risk warning. (v9.17: ST-15's scope said 'check what the user sees when these calls fail', but no state was defined before sizing; a failed earnings lookup looked the same as 'no upcoming earnings', hiding the earnings badge and gap-risk warning during throttling -> BLG-FE-294.) Add a matching AC: re-running the check on earnings_endpoints.md v0.2 finds the gap. Sprint Execution may not edit BLG-GOV-422 (\u00a77). STEP 5.3 and Post-Ship Closure: carry this into the closure Carry-Forward section beside the earlier BLG-GOV-422 extensions (2026-11-12, 2026-11-13T09:37:36Z, 2026-11-13T11:30:53Z)."
   ],
   "sealed": false,
   "sealed_utc": null

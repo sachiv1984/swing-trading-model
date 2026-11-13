@@ -96,7 +96,10 @@ def _get_price_data(ticker: str, market: str):
             if price and prev_close:
                 change_pct = (price - prev_close) / prev_close * 100
         if price and market == "UK":
-            price = price / 100  # pence → pounds
+            # ST-15 (BLG-OPS-217, v9.17): convert from the quote's own currency;
+            # some London listings are quoted in pounds (VUSA.L "GBP"), not pence.
+            from utils.pricing import to_major_currency_units
+            price = to_major_currency_units(price, meta.get("currency", "GBp"))
         return {
             "price": float(price) if price else None,
             "price_change_pct": float(change_pct) / 100 if change_pct is not None else None,
@@ -110,7 +113,11 @@ def _get_price_data(ticker: str, market: str):
 def _get_market_cap(ticker: str) -> Optional[float]:
     try:
         import yfinance as yf
-        info = yf.Ticker(ticker).info
+        # ST-15 (BLG-OPS-217, v9.17): reuses the Ticker.info already fetched
+        # for the sector and earnings lookups (utils/yahoo_info cache).
+        from utils import yahoo_info
+        t = yf.Ticker(ticker)
+        info = yahoo_info.get_info(ticker, lambda: t.info)
         return info.get("marketCap")
     except Exception:
         return None

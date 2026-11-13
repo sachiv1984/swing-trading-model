@@ -122,6 +122,27 @@ class TestTransport:
             ("alpaca_data", "GET /market/regime", False),
         ]
 
+    def test_fc_yahoo_cookie_404_is_a_success(self):
+        """ST-15 (BLG-OPS-217, v9.17): fc.yahoo.com answers 404 while setting the
+        cookie yfinance needs, so that 404 is not a provider failure. A 404 from
+        any other provider host, and any other fc.yahoo.com error, still is."""
+        responses = [_response(404), _response(404), _response(500)]
+        with patch("requests.adapters.HTTPAdapter.send", side_effect=responses):
+            requests.get("https://fc.yahoo.com", timeout=1)
+            requests.get(YAHOO, timeout=1)
+            requests.get("https://fc.yahoo.com", timeout=1)
+        assert [(r[1], r[3]) for r in _buffered()] == [
+            ("/", True),
+            ("/v8/finance/chart/AAPL", False),
+            ("/", False),
+        ]
+
+    def test_is_expected_status(self):
+        assert api_attribution.is_expected_status("https://fc.yahoo.com/", 404) is True
+        assert api_attribution.is_expected_status("https://FC.yahoo.com", 404) is True
+        assert api_attribution.is_expected_status("https://fc.yahoo.com", 429) is False
+        assert api_attribution.is_expected_status(YAHOO, 404) is False
+
     def test_exception_is_recorded_as_failure_and_reraised(self):
         with patch("requests.adapters.HTTPAdapter.send", side_effect=requests.ConnectionError("down")):
             with pytest.raises(requests.ConnectionError):

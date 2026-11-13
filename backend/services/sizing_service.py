@@ -442,6 +442,25 @@ _INV_VOL_MIN_WEIGHT = 0.05   # 5% of available cash minimum allocation
 _INV_VOL_MAX_WEIGHT = 0.20   # 20% of available cash maximum allocation
 
 
+def _batch_total_cost(sig: dict, shares: int, price_gbp: float, settings: dict, fx_rate: float) -> float:
+    """GBP cost of `shares` of a batch signal including estimated entry fees,
+    rounded to pence; 0 when `shares` is 0.
+
+    The fee functions return their sum under 'total' (BLG-BE-158). gross_cost
+    is native: USD for US, pounds for UK.
+    """
+    if shares <= 0:
+        return 0
+    gross_cost = shares * (sig.get('current_price', price_gbp))
+    if sig.get('market') == 'US':
+        fee = calculate_us_entry_fees(gross_cost, settings)['total']
+        total_cost_gbp = (gross_cost + fee) / fx_rate if fx_rate else 0
+    else:
+        fee = calculate_uk_entry_fees(gross_cost, settings)['total']
+        total_cost_gbp = gross_cost + fee
+    return round(total_cost_gbp, 2)
+
+
 def size_batch_inv_vol(signals: list, available_cash: float, fx_rate: float = 1.0) -> list:
     """
     Compute inverse-volatility position sizes for a batch of momentum signals.
@@ -455,7 +474,9 @@ def size_batch_inv_vol(signals: list, available_cash: float, fx_rate: float = 1.
       6. total_cost_i = gross cost + estimated entry fees, in GBP (BLG-BE-158).
          US: (shares * current_price + US fees) / fx_rate, the US fees (commission
          plus FX fee) being computed on the USD gross. UK: shares * current_price
-         (pounds) + stamp duty + commission.
+         (pounds) + stamp duty + commission. If total_cost_i exceeds
+         allocation_gbp_i, whole shares are removed until it fits (BLG-BE-178),
+         so the batch's summed total_cost never exceeds available_cash.
 
     A signal with zero or missing ATR takes no part in steps 2-3: it gets weight 0,
     0 shares and a reason, and the other signals' weights still sum to 1.0
@@ -531,17 +552,14 @@ def size_batch_inv_vol(signals: list, available_cash: float, fx_rate: float = 1.
         raw_shares = allocation_gbp / price_gbp
         whole_shares = int(math.floor(raw_shares))
 
-        # Fee estimation. The fee functions return their sum under 'total'
-        # (BLG-BE-158). gross_cost is native: USD for US, pounds for UK.
-        gross_cost = whole_shares * (sig.get('current_price', price_gbp))
-        if sig.get('market') == 'US':
-            fee = calculate_us_entry_fees(gross_cost, settings)['total']
-            total_cost_gbp = (gross_cost + fee) / fx_rate if fx_rate else 0
-        else:
-            fee = calculate_uk_entry_fees(gross_cost, settings)['total']
-            total_cost_gbp = gross_cost + fee
-
-        total_cost = round(total_cost_gbp, 2) if whole_shares > 0 else 0
+        # Step 6 — fees must fit inside the allocation (BLG-BE-178, ST-17, v9.17).
+        # The weights sum to 1.0, so keeping each signal's fee-inclusive
+        # total_cost within its own allocation keeps the batch's summed
+        # total_cost within available_cash. Drop whole shares until it fits.
+        total_cost = _batch_total_cost(sig, whole_shares, price_gbp, settings, fx_rate)
+        while whole_shares > 0 and total_cost > allocation_gbp:
+            whole_shares -= 1
+            total_cost = _batch_total_cost(sig, whole_shares, price_gbp, settings, fx_rate)
 
         sig['suggested_shares'] = whole_shares
         sig['allocation_gbp'] = round(allocation_gbp, 2)

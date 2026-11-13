@@ -70,8 +70,26 @@ def _yahoo_fetch_price(ticker: str) -> float:
         if "meta" in result and "regularMarketPrice" in result["meta"]:
             price = float(result["meta"]["regularMarketPrice"])
             if price > 0:
-                return price
+                return to_major_currency_units(price, result["meta"].get("currency"))
     raise ValueError(f"No valid price in Yahoo Finance response for {ticker}")
+
+
+# Yahoo quote currencies given in pence (ST-15, BLG-OPS-217, v9.17).
+_PENCE_CURRENCIES = frozenset({"GBp", "GBX"})
+
+
+def to_major_currency_units(price: float, currency: Optional[str]) -> float:
+    """A Yahoo price in pounds when Yahoo quotes it in pence, else unchanged.
+
+    ST-15 (BLG-OPS-217, v9.17): most London listings are quoted in pence
+    (`meta.currency` "GBp": VOD.L 116.0, AZN.L 13962.0) but some in pounds
+    ("GBP": VUSA.L 109.31), checked 2026-11-13. Callers used to guess with
+    "UK and above 1000 means pence", which read VOD at 116p as GBP 116 and
+    would read a pounds-quoted price above 1000 as pence.
+    """
+    if currency in _PENCE_CURRENCIES:
+        return price / 100
+    return price
 
 
 def _yahoo_get_current_price(ticker: str) -> Optional[float]:
@@ -83,7 +101,16 @@ def _yahoo_get_current_price(ticker: str) -> Optional[float]:
         return None
 
 
-def get_current_price(ticker: str) -> Optional[float]:
+def market_symbol(ticker: str, market: Optional[str]) -> str:
+    """The provider symbol for a stored ticker: a UK ticker gets its `.L`
+    suffix if it lacks one (ST-15, BLG-OPS-217, v9.17). Any other market, or
+    no market, returns the ticker unchanged."""
+    if market and market.upper() == "UK" and ticker and not ticker.endswith(".L"):
+        return f"{ticker}.L"
+    return ticker
+
+
+def get_current_price(ticker: str, market: Optional[str] = None) -> Optional[float]:
     """
     Fetch current price for a ticker.
 
@@ -92,9 +119,16 @@ def get_current_price(ticker: str) -> Optional[float]:
     - UK tickers (.L suffix): Yahoo Finance only (Alpaca does not support UK tickers).
     Fallback is always logged per BLG-SPEC-22 contract.
 
-    Returns price in native currency (USD for US, pence for UK).
-    UK stocks need pence→pounds conversion by caller.
+    `market` (ST-15, BLG-OPS-217, v9.17): pass the position's market when it is
+    known. A UK row stored without `.L` (e.g. "BARC") was otherwise routed as
+    US: an Alpaca miss, then Yahoo `chart/BARC`, which returns 404, so the page
+    fell back to the stored price and the call counted as a provider failure.
+
+    Returns price in native currency: USD for US, pounds for UK. A London
+    price Yahoo quotes in pence is converted to pounds here from the quote's
+    own currency (ST-15, BLG-OPS-217, v9.17); callers no longer convert.
     """
+    ticker = market_symbol(ticker, market)
     if _is_us_ticker(ticker):
         # US: try Alpaca first (DS-05)
         try:

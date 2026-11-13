@@ -129,6 +129,22 @@ def classify(url: str) -> Optional[Tuple[str, str]]:
     return service, path
 
 
+# (host, HTTP status) pairs that are a provider's normal answer, not a failure
+# (ST-15, BLG-OPS-217, v9.17). yfinance's cookie request to fc.yahoo.com is
+# answered 404 while setting the A3 cookie it needs (checked 2026-11-13), so
+# every cookie fetch was counted as a failed Yahoo call although it worked.
+EXPECTED_STATUSES = frozenset({("fc.yahoo.com", 404)})
+
+
+def is_expected_status(url: str, status: int) -> bool:
+    """True when `status` from this URL's host is a normal answer."""
+    try:
+        host = (urlsplit(url).hostname or "").lower()
+    except ValueError:
+        return False
+    return (host, status) in EXPECTED_STATUSES
+
+
 def record_call(url: str, success: bool) -> None:
     """Buffer one call if `url` is a provider; flush when the buffer is full."""
     classified = classify(url)
@@ -172,7 +188,7 @@ def _wrap_request(original):
             record_call(str(url), False)
             raise
         status = getattr(response, "status_code", 200) or 200
-        record_call(str(url), status < 400)
+        record_call(str(url), status < 400 or is_expected_status(str(url), status))
         return response
 
     request._api_attribution_original = original

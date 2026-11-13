@@ -1,8 +1,8 @@
 **Owner:** QA & Testing Owner; Director of Quality
 **Class:** Canonical (Class 1)
 **Status:** Canonical
-**Version:** 1.0
-**Last Updated:** 2026-06-29
+**Version:** 1.1
+**Last Updated:** 2026-11-13 (ST-17, EPIC-06, v9.17, BLG-BE-178 — `suggested_shares` fits fees inside the allocation; IV-05 and the `inv_vol_weight` row brought in line with BLG-BE-157); prior — 2026-06-29 (ST-08, BLG-QA-66, v6.3 — initial version)
 **Story:** ST-08 (BLG-QA-66, EPIC-02, v6.3)
 **Implements:** BLG-QA-65 (ST-07) — Nightly stop computation CI simulation tests
 
@@ -62,7 +62,7 @@ All scenarios test `size_batch_inv_vol(signals, available_cash, fx_rate)`.
 | IV-02 | Two signals — unequal ATR → proportional allocation | 2 signals with different ATR values; weights computed proportionally | Weights sum to 1.0; lower-ATR signal gets higher weight |
 | IV-03 | Max weight cap reduces dominance | Signal has very low ATR (high raw weight) that exceeds `_INV_VOL_MAX_WEIGHT` | Pre-normalisation weight capped at `_INV_VOL_MAX_WEIGHT`; post-normalisation weight is strictly less than the uncapped raw weight; re-normalised weights sum to 1.0. Note: post-normalisation weight may still exceed `_INV_VOL_MAX_WEIGHT` — the cap reduces concentration, not constrains the final output. |
 | IV-04 | Min weight floor raises near-zero allocation | Signal has very high ATR (near-zero raw weight) below `_INV_VOL_MIN_WEIGHT` | Pre-normalisation weight floored at `_INV_VOL_MIN_WEIGHT`; post-normalisation weight is strictly greater than the uncapped raw weight; re-normalised weights sum to 1.0. |
-| IV-05 | ATR = 0 for one signal | One signal has `atr_value = 0`; other has valid ATR | Zero-ATR signal gets `_INV_VOL_MIN_WEIGHT` allocation (floor applied before normalisation); valid signal gets higher weight. Full-zero allocation only occurs when ALL ATR values are 0 (IV-06). |
+| IV-05 | ATR = 0 for one signal | One signal has `atr_value = 0`; other has valid ATR | Zero-ATR signal takes no part in the clamp or renormalisation: it gets `inv_vol_weight` 0, `allocation_gbp` 0, `suggested_shares` 0 and a `reason`; the valid-ATR signals' weights sum to 1.0 (BLG-BE-157, v9.12). |
 | IV-06 | All ATR = 0 | All signals have `atr_value = 0` | All signals get `suggested_shares = 0`; no division by zero |
 | IV-07 | Mixed volatility — 3 signals | Low ATR (large position), medium ATR, high ATR (small position) | Weights inversely proportional to ATR; all sum to 1.0 after normalisation |
 
@@ -113,10 +113,10 @@ All scenarios test `size_batch_inv_vol(signals, available_cash, fx_rate)`.
 
 | Field | Type | Constraints |
 |-------|------|-------------|
-| `suggested_shares` | int | ≥ 0; `floor(allocation_gbp / price_gbp)` for valid signals |
+| `suggested_shares` | int | ≥ 0; for valid signals, `floor(allocation_gbp / price_gbp)` less any whole shares needed for `total_cost` (fees included) to fit `allocation_gbp` (BLG-BE-178, v1.1) |
 | `allocation_gbp` | float | ≥ 0; `available_cash × normalised_weight` |
-| `total_cost` | float | ≥ 0 |
-| `inv_vol_weight` | float | `[_INV_VOL_MIN_WEIGHT, _INV_VOL_MAX_WEIGHT]` after capping; normalised weights sum to 1.0 |
+| `total_cost` | float | ≥ 0; ≤ `allocation_gbp`; summed across the batch, ≤ `available_cash` (BLG-BE-178, v1.1) |
+| `inv_vol_weight` | float | `[_INV_VOL_MIN_WEIGHT, _INV_VOL_MAX_WEIGHT]` after capping, or 0 for a zero/missing-ATR signal (BLG-BE-157); valid-ATR normalised weights sum to 1.0 |
 
 **Tolerance:** `pytest.approx(..., rel=1e-6)` for float comparisons. `suggested_shares` must be exact integer.
 

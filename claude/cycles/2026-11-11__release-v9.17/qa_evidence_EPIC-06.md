@@ -1,0 +1,83 @@
+Owner: Director of Quality
+Class: Planning Document (Class 4)
+Status: Active
+Last Updated: 2026-11-13
+
+# QA Evidence — EPIC-06: Market-Data Reliability and Sizing Correctness
+
+**EPIC:** EPIC-06 — Market-Data Reliability & Sizing Correctness
+**Cycle:** 2026-11-11__release-v9.17
+**Sprint goal:** Ship Site Structure & Usability Phase 3 complete (decision-first Positions page with narrow-screen cards, one warning strip and one grace view; the single Journal area; one Performance page; section indexes on Trade Plan and Strategy Benchmark; the semantic colour token sweep), finish Phase 2's Stops moved group, and fix the four v9.16 Trade Plan found defects.
+**Test scenarios used:** `tests/test_signal_sizing.py`, `tests/test_market_data_volume_check.py`, `tests/test_yahoo_on_demand_failures.py`, `tests/test_api_call_attribution.py`
+
+| ST Item | Spec Reference | What was built | Acceptance criteria | Result | Deviations |
+|---------|----------------|----------------|---------------------|--------|------------|
+| ST-15 | `docs/ops/data_pipeline_cost_baseline.md` §4 (v1.3); `docs/specs/api_contracts/earnings_endpoints.md` (v0.3); `docs/specs/api_contracts/ops_endpoints.md` §GET /ops/api-call-attribution (v1.5); `data_model.md` DS-36 `success` note | Causes found from a production `api_call_log` read (`DEL-20261113-01`, Q1–Q3 supplied by the Infrastructure & Operations Owner), a read-only staging read and a sandbox probe. `5cc4e8bd`: UK tickers stored without `.L` priced with the `.L` symbol; `fc.yahoo.com`'s cookie 404 counted as a success; `GET /earnings/{ticker}` returns the earliest upcoming date (it returned the last report); funds skip the calendar fallback. `c313bc90`: `backend/utils/yahoo_info.py` — `Ticker.info` cached 12 h per symbol after a usable answer, at most 4 Yahoo lookups at once; earnings results cached; sector and research market cap share the lookup. `c341eee7` (DoQ round 1 P2): UK prices returned in pounds from the Yahoo quote's own currency (`GBp`/`GBX` divided by 100, `GBP` kept); the callers' "above 1000 means pence" guesses removed; research converts from the quote currency. | AC 1: each of the four features has a recorded cause — **met** (§4 v1.3 causes table: earnings, gap risk, positions, research; 418 of 488 failures in one burst on 2026-11-09 15:37–15:38). AC 2: post-fix production weekly report below 10% per feature, or the rest documented as expected — *post-merge, seal-marked, tracked by BLG-OPS-217* (needs 7 days of production data). AC 3: §4 failures reflect the post-fix state, or state why kept — *post-merge, seal-marked, tracked by BLG-OPS-217*. | Pass | None (follow-ups BLG-FE-294 P2, BLG-BE-217 P3, BLG-BE-218 P3) |
+| ST-16 | `docs/ops/data_pipeline_cost_baseline.md` §5 (v1.2); `scripts/check_market_data_volume.py`; `.github/workflows/market-data-volume-check.yml` | Weekly workflow (Mondays 08:00 UTC) runs a script that reads the baseline from §4 at run time, calls `GET /ops/api-call-attribution?window=weekly`, and sends a Telegram advisory naming the source, figure, baseline and top 3 features when any figure is over 2× (`5578c103`). Zero-baseline rule (any non-zero figure exceeds) confirmed by the user as Infrastructure & Operations Owner. Inventory and secrets map updated. | AC 1: a report over 2× produces the advisory and one under it produces none — **met** (`test_source_calls_over_2x_baseline_names_source_and_top_features`, `test_failures_over_2x_baseline_produce_advisory`, `test_any_non_zero_cost_exceeds_a_zero_cost_baseline`, `test_report_under_2x_baseline_produces_no_message`, `test_exactly_2x_baseline_is_not_an_advisory`). AC 2: a failed report call fails the workflow loudly — **met** (503, unreachable API, malformed body and missing credentials exit 2; workflow fails the step and its `if: failure()` step sends Telegram; `test_workflow_sends_advisory_on_exit_1_and_alerts_on_failure`). | Pass | None |
+| ST-17 | `docs/specs/api_contracts/signal_endpoints.md` §Field notes (v1.12); `docs/specs/qa/strategy_signal_regression_spec.md` (v1.1) | `size_batch_inv_vol()` removes whole shares until each signal's fee-inclusive `total_cost` fits its allocation, so the batch total stays within available cash (`7b3b59e8`). | For UK, US and mixed batches, the sum of `total_cost` is ≤ `available_cash` (unit test) — **met** (`TestBatchSizingFeesFitAvailableCash`: UK, US, mixed and sub-commission cases; all fail without the fix). | Pass | None |
+
+**AC coverage:** ST-15 has three ACs, ST-16 two, ST-17 one (`stage4_backlog_slice.md#ST-15`, `#ST-16`, `#ST-17`); each is named in its row. ST-15 AC 2 and AC 3 are the only post-merge ACs, marked `post-merge` at seal with BLG-OPS-217 as their tracker, so ST-15 is graded on its in-sprint AC (execution_prompt.md §3.2.A, LL-v9.13-P3-03). They go into `sprint_close.md` under "Items Delegated and outstanding".
+
+**Story-level authority sign-offs:**
+- ST-15 — Infrastructure & Operations Owner (the user, in session, 2026-11-13): supplied the production Q1–Q3 output (`DEL-20261113-01`, Unblocked in-session). The user also approved fixing the earnings next-date defect inside ST-15 and the cache-and-cap fix after Q3.
+- ST-16 — Infrastructure & Operations Owner (the user, in session, 2026-11-13): confirmed the literal §5 zero-baseline rule.
+- ST-17 — no sign-off named in the sealed plan.
+
+**Implementation notes:**
+- ST-15: an earlier reading of Q1/Q2 as a steady crumb block was withdrawn after Q3 showed the burst; the cache had been held back and was then built. The causes table in §4 records the final reading.
+- ST-15: the UK `.L` fix addresses staging data (BARC, LGEN stored without `.L`); production UK rows carry `.L`. The only writer (`create_position`) already adds `.L`.
+- ST-15, DoQ round 1 P2 (fixed in `c341eee7`, user chose to fix at the source): Yahoo quotes most London listings in pence (`GBp`) and some in pounds (VUSA.L `GBP`). Callers guessed "UK and above 1000 means pence" (so VOD at 116p read as £116), and pre-entry validation and the compliance recheck did not convert at all; the `.L` fix would have widened that to UK tickers typed without `.L`. `get_current_price()` now returns pounds for UK, converted from the quote's currency. The same class remains in the nightly stop update's UK ATR "above 100" rule and in price alerts (no market column): filed as BLG-BE-217 (P3).
+- ST-15: the 4-lookup cap means a cold burst holds API worker threads while lookups queue; documented in `yahoo_info.py` and `earnings_endpoints.md` Known Limitations. A warm cache serves repeat loads with no Yahoo call.
+- ST-15: earnings results can be up to 12 hours stale (documented in `earnings_endpoints.md`); `days_until_earnings` is counted on every call and a passed cached date is looked up again.
+- ST-17: the two v9.12 fee tests in `tests/test_signal_sizing.py` pinned the over-budget case; their cash was raised so the same fee arithmetic is still checked. Opportunistic in-file fix disclosed in `7b3b59e8`: the regression spec's IV-05 row described pre-v9.12 zero-ATR behaviour.
+- ST-15, DoQ round 2: (1) **Stored UK values written under the old pence guess** (a stop trailed from a pence price read as pounds would look breached after deploy) — checked read-only before merge with the query "every open UK position with `current_price`/`current_stop` over `entry_price`". Production (run by the user as Infrastructure & Operations Owner, 2026-11-13): no rows (no open UK positions). Staging (run by the engine, read-only, with the user's permission, 2026-11-13): 2 rows, BARC and LGEN, price-to-entry 1.04/1.03 and stop-to-entry 0.90/0.90, so neither is affected; their price lookups had always failed, so the stored values were never overwritten. No repair needed. (2) The screener's UK price/ATR and `calculate_atr()` still divide every UK value by 100 (wrong for pounds-quoted listings such as VUSA.L; behaviour before v9.17): filed as BLG-BE-218 (P3). (3) Behaviour change on deploy: price alerts on `.L` tickers now compare a pounds price with the threshold, which the UI shows in £; before, they compared pence with it, so active `.L` alerts may change trigger state.
+- Observation, not changed: `GET /earnings/{ticker}` `fiscal_quarter` returns Yahoo's `mostRecentQuarter` as an epoch string; the contract says it is usually null.
+
+**QA test coverage:**
+- Scenarios run: `tests/test_signal_sizing.py` (14), `tests/test_market_data_volume_check.py` (20), `tests/test_yahoo_on_demand_failures.py` (45), `tests/test_api_call_attribution.py` (2 new), plus updated `tests/test_gap_risk.py`, `tests/test_positions_price_is_stale.py` and `tests/test_nightly_computations.py`. Full backend suite 3639 passed locally at `c341eee7`. Regression proof: ST-17's 5 new tests and ST-15's 17 earlier tests fail with the fixes reverted.
+- CI per story SHA: ST-17 `7b3b59e8` all 7 workflows success (CI Pytest Suite 43430040716); ST-16 `5578c103` all 7 success (43431251776); ST-15 `5cc4e8bd` all 7 success (43432809810), `c313bc90` all 7 success (43435796962) and `c341eee7` all 7 success (43438529026); state commits `d922c513` and `3882d98d` all 7 success.
+- Regression areas checked: batch signal sizing (UK/US fees, zero-ATR, weight clamps); price lookup routing (Alpaca first for US, Yahoo `.L` for UK) and UK price units (pence/pounds from the quote currency) across positions, portfolio, position detail, stop preview, compliance recheck, pre-entry validation and research; earnings date selection with ST-22's ET-date rule and BLG-BE-204's US-market-date count; gap risk and pre-entry earnings consumers; api_call_log attribution; sector lookups.
+- Known deviations: None found — all three stories' deviation checks completed with nothing to file. Contracts updated in the same commits: `signal_endpoints.md` v1.12, `strategy_signal_regression_spec.md` v1.1, `earnings_endpoints.md` v0.3, `ops_endpoints.md` v1.5, `data_model.md` DS-36 note, `data_pipeline_cost_baseline.md` v1.3.
+- Frontend testing gate: no story changes a frontend file (`src/**` untouched). The display effect of ST-15's earnings fix (a badge now appears for the next report) comes from the backend response; the frontend's handling of a failed lookup is filed as BLG-FE-294.
+- Same-EPIC testing-gap consistency: no testing-gap backlog item was filed in this EPIC.
+- P1/P2 found defects during this EPIC: (1) BLG-FE-294 (P2, open) — a failed earnings lookup is shown the same as "no upcoming earnings", and the Screener looks up earnings for UK rows; (2) UK prices in pence read as pounds (P2, DoQ round 1) — fixed in-sprint in `c341eee7`, not filed, with the remaining same-class cases tracked as BLG-BE-217 (P3). PO and DoQ acceptance and rationale for each go in the Merge Gate Confirmations section (LL-v9.16-P3-05).
+- Autonomous DoQ class: not available (ST-15 is `delegated_backend`, and its verification read a live database; BLG-GOV-335).
+
+## Standard Sign-Off Block
+
+- [x] All acceptance criteria verified against canonical spec
+- [x] No unresolved P0 or P1 deviations
+- [x] Regression areas checked
+- [x] For any frontend component making direct URL construction (not via api.* wrapper): confirm the URL-base variable is exposed on the imported object — N/A, no frontend file changed
+- [x] **Strategy values checked:** ST-17 — `strategy_rules.md` §4.1.6: estimated cost including fees must not exceed available cash; batch sizing now keeps each signal's fee-inclusive `total_cost` within its allocation, so the batch is within available cash (UK case: 19 shares at £100 cost £1,919.45 ≤ £2,000; 20 shares would cost £2,019.95). ST-15 — §4.2.3: the earnings check uses the *next* earnings date, 0–5 days inclusive; `get_earnings()` now returns the earliest date on or after the US market date (it returned the last report, giving negative days). ST-15's UK price units also feed §4.1.6 and §4.2.2 in pre-entry validation (now pounds). ST-16 touches no stop/grace/ATR/exit/sizing logic.
+- Signed off by: Sprint Execution Engine (agent-mediated, Director of Quality role — §5.3)
+- Date: 2026-11-13
+- Comments: User-directed agent-mediated review against `claude/agents/director_of_quality.md` (the user: "agent-mediated review", 2026-11-13). Three rounds (the §5.3 limit).
+  - Round 1: **Blocked**, 1 P2, 1 P3 and 3 observations. P2: UK Yahoo prices are in pence and were read as pounds in pre-entry validation and the compliance recheck (and below 1000p elsewhere); ST-15's `.L` fix widened it. Fixed in `c341eee7` at the source (the user chose this over filing). P3 (price alerts with no market) filed as BLG-BE-217.
+  - Round 2: **Blocked**, 1 P2 risk: UK stops or prices already stored from pence-as-pounds values would look breached after deploy. Cleared before merge by read-only checks: production had no open UK positions (the user); staging BARC/LGEN ratios were about 1 (engine, user-permitted). Also filed BLG-BE-218 (P3: screener and `calculate_atr` always divide UK by 100), and recorded the `.L` price-alert behaviour change.
+  - Round 3: **Approved**.
+  - Checks the reviewer ran and cited:
+    - 8-file pytest set: 197 passed in round 1, then 215 at `3882d98d` in round 2.
+    - Collected tests: `test_signal_sizing` 14, `test_market_data_volume_check` 20, `test_yahoo_on_demand_failures` 45.
+    - `check_execution_state_consistency.py` OK; `check_backlog_item_integrity.py` OK; `check_api_performance_baseline_drift.py` PASSED.
+    - §4 arithmetic: 366 + 30 + 71 + 21 = 488 failures; 418 / 488 = 85.7%.
+    - ST-17 worked case as above.
+    - All 10 `get_current_price` callers grepped: 9 pass the market and none re-divides; the 10th, `alerts_service`, is tracked in BLG-BE-217. Every remaining `/ 100` near a price is named in BLG-BE-217 or BLG-BE-218.
+    - CI, all 7 workflows success on each: `7b3b59e8` (43430040716), `5578c103` (43431251776), `5cc4e8bd` (43432809810), `c313bc90` (43435796962), `c341eee7` (43438529026), `3882d98d` (43438598138).
+  - Post-open CI-fix restatement: not applicable (no PR was open when the fixes were made).
+  - Story-level authority: the Infrastructure & Operations Owner supplied ST-15's production data (`DEL-20261113-01`, Unblocked) and the round 2 production check, and confirmed ST-16's zero-baseline rule — confirmed cleared.
+  - Still open, and always human: the QA sign-off and Product Owner acceptance at the merge gate, including acceptance of the two P2 found defects (BLG-FE-294, open; the UK pence defect, fixed in-sprint).
+
+## Merge Gate Confirmations
+
+- **Director of Quality QA sign-off:** given by the human repository owner, acting as Director of Quality, in session at 2026-11-13T14:57:46Z ("give DOQ and PO acceptance"), before the merge. It accepts:
+  - this evidence: ST-15, ST-16 and ST-17 all Pass, with no deviations;
+  - the agent-mediated sign-off block above (round 1 Blocked, P2 fixed in `c341eee7`; round 2 Blocked, stored-data risk cleared by read-only checks; round 3 Approved).
+- **Product Owner acceptance:** given by the human repository owner, acting as Product Owner, in the same instruction at 2026-11-13T14:57:46Z, before the merge. It accepts ST-15, ST-16 and ST-17 against `stage4_backlog_slice.md`. ST-15 AC 2 and AC 3 remain post-merge, tracked by BLG-OPS-217. The acceptance covers the deploy behaviour changes listed in PR #2259, and the owner made no separate comment on any of them:
+  - UK live prices in pounds;
+  - `.L` price alerts comparing pounds;
+  - earnings results cached up to 12 hours.
+- **P1/P2 found defects filed during this EPIC (LL-v9.16-P3-05),** each accepted by the same instruction as Director of Quality and Product Owner, with the rationale presented in the request:
+  - **BLG-FE-294 (P2, open):** a failed earnings lookup is shown the same as "no upcoming earnings"; also covers the Screener's UK earnings lookups. Accepted to ship open. It is a display gap that existed before this EPIC, not a regression. ST-15's cache and cap make failed lookups much rarer, and the item is tracked for a later release.
+  - **UK prices in pence read as pounds (P2, DoQ round 1):** fixed in-sprint in `c341eee7` before merge. Production had no open UK positions, and the staging rows were checked and are unaffected. The remaining same-class cases are tracked as BLG-BE-217 and BLG-BE-218 (P3).
+- **Merged:** pending. To be recorded on `main` at the next `run sprint` resume-sync (merger, time and merge commit). A merge by the same owner also counts as a confirmation under `ESC-CLOSE-20261103-01`.

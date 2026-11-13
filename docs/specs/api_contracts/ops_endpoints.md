@@ -1,8 +1,8 @@
 **Owner:** Infrastructure & Operations Owner; API Contracts & Documentation Owner
 **Class:** Canonical (Class 1)
 **Status:** Canonical
-**Version:** 1.4
-**Last Updated:** 2026-10-27 (ST-31, EPIC-05, v9.13, BLG-OPS-19 — added GET /ops/api-call-attribution); prior — 2026-09-29 (ST-20, EPIC-05, v9.8, BLG-API-04 — added an Idempotency subsection to POST /ops/purge-audit-logs); prior — 2026-09-16 (ST-07/ST-06, BLG-OPS-154/BLG-OPS-153 — purge-audit-logs extended to api_call_log, added possible_silent_failure signal); prior history retained — see prior entries in version control
+**Version:** 1.5
+**Last Updated:** 2026-11-13 (ST-15, EPIC-06, v9.17, BLG-OPS-217 — GET /ops/api-call-attribution: a 404 from `fc.yahoo.com`, yfinance's cookie request, is counted as a success); prior — 2026-10-27 (ST-31, EPIC-05, v9.13, BLG-OPS-19 — added GET /ops/api-call-attribution); prior — 2026-09-29 (ST-20, EPIC-05, v9.8, BLG-API-04 — added an Idempotency subsection to POST /ops/purge-audit-logs); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -141,7 +141,7 @@ Returns calls to market-data providers over the requested window, grouped by the
 
 Added for ST-31 (BLG-OPS-19, EPIC-05, v9.13).
 
-**How calls are counted.** `backend/utils/api_attribution.py` wraps `requests.Session.request` and curl_cffi's `Session.request` (yfinance's transport), so every HTTP request to a provider host is counted, whichever code made it. Each HTTP attempt is one call, so internal retries count. Calls are written to `api_call_log` (DS-36) in batches at the end of each request, at the end of each screener run, and every 100 calls. Hosts and service names:
+**How calls are counted.** `backend/utils/api_attribution.py` wraps `requests.Session.request` and curl_cffi's `Session.request` (yfinance's transport), so every HTTP request to a provider host is counted, whichever code made it. Each HTTP attempt is one call, so internal retries count. A call fails on an exception or an HTTP status of 400 or above, except a status that is the provider's normal answer (`api_attribution.EXPECTED_STATUSES`): a 404 from `fc.yahoo.com`, which answers yfinance's cookie request with 404 while setting the cookie (v1.5, ST-15, BLG-OPS-217). Before v1.5 every such cookie request was counted as a failed Yahoo call. Calls are written to `api_call_log` (DS-36) in batches at the end of each request, at the end of each screener run, and every 100 calls. Hosts and service names:
 
 | Service | Host |
 |---------|------|
@@ -281,6 +281,7 @@ No parameters, no request body.
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.5 | 2026-11-13 | ST-15 (EPIC-06, v9.17, BLG-OPS-217): `GET /ops/api-call-attribution` — a 404 from `fc.yahoo.com` (yfinance's cookie request, answered 404 while setting the cookie) is counted as a success, not a failure. No shape change. Infrastructure & Operations Owner. |
 | 1.4 | 2026-10-27 | ST-31 (EPIC-05, v9.13, BLG-OPS-19): Added `GET /ops/api-call-attribution` — market-data provider calls by triggering feature, with estimated cost and the top 3 contributors. `openapi.yaml` 3.39.0 updated in the same commit. |
 | 1.2 | 2026-09-16 | ST-07/ST-06 (EPIC-02, v9.5, BLG-OPS-154/BLG-OPS-153): `POST /ops/purge-audit-logs` now also purges `api_call_log` (>90 days) and returns a `possible_silent_failure` field flagging any table where 0 rows were deleted despite stale rows still being present. `openapi.yaml` updated in the same commit. Infrastructure & Operations Owner sign-off. |
 | 1.1 | 2026-09-10 | ST-13 (EPIC-03, v9.3, BLG-OPS-94): Added `POST /ops/purge-audit-logs` — deletes gemini_audit_log (>90 days) and claude_audit_log (>730 days) rows per the new retention policy (`docs/ops/ai_audit_log_retention_policy.md`). `openapi.yaml` updated in the same commit. Infrastructure & Operations Owner sign-off. |

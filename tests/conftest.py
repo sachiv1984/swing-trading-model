@@ -397,6 +397,20 @@ def _utils_attributes_not_leaked(request):
         pytest.fail(f"{request.node.nodeid} {_UTILS_ATTR_HINT}: {replaced}", pytrace=False)
 
 
+@pytest.fixture(autouse=True)
+def _yahoo_info_caches_cleared():
+    """ST-15 (BLG-OPS-217, v9.17): utils/yahoo_info caches Ticker.info and
+    earnings results per symbol for 12 hours. Clear them around every test so
+    one test's mocked Yahoo answer is never served to another."""
+    def _clear():
+        module = sys.modules.get("utils.yahoo_info")
+        if module is not None:
+            module.clear_caches()
+    _clear()
+    yield
+    _clear()
+
+
 # Import mock harness fixtures (BLG-QA-08 / ST-09)
 from tests.mock_harness.conftest_extension import (  # noqa: F401, E402
     alpaca_mock_harness,

@@ -194,15 +194,13 @@ def get_positions_with_prices() -> List[Dict]:
         
         # ALWAYS fetch live price
         print(f"   Fetching {pos['ticker']}...")
-        live_price = get_current_price(pos['ticker'])
+        live_price = get_current_price(pos['ticker'], pos.get('market'))
         
         # ST-07 (BLG-BE-168, v9.14): true when the live fetch failed and the
         # stored price is shown, the same flag GET /portfolio returns.
         price_is_stale = not live_price
         if live_price:
-            # Fix UK stocks: Yahoo returns pence
-            if pos['market'] == 'UK' and live_price > 1000:
-                live_price = live_price / 100
+            # ST-15 (v9.17): get_current_price returns UK prices in pounds.
             current_price_native = live_price
             print(f"   ✓ Live: {current_price_native:.2f}")
         else:
@@ -476,16 +474,13 @@ def analyze_positions() -> Dict:
         
         # Get live price
         print(f"   🔍 Fetching live price from Yahoo Finance...")
-        live_price = get_current_price(pos['ticker'])
+        live_price = get_current_price(pos['ticker'], pos.get('market'))
         
         # Determine entry price
         entry_price = native_entry_price(pos, live_fx_rate)
         
         if live_price:
-            # Fix UK stocks: Yahoo returns pence
-            if pos['market'] == 'UK' and live_price > 1000:
-                live_price = live_price / 100
-                print(f"   ✓ Converted from pence to pounds")
+            # ST-15 (v9.17): get_current_price returns UK prices in pounds.
             
             print(f"   ✓ Live price: {live_price:.2f}")
             print(f"   Entry price: {entry_price:.2f}")
@@ -747,13 +742,11 @@ def run_nightly_trailing_stop_update() -> Dict:
         pos = decimal_to_float(pos)
         position_id = str(pos['id'])
 
-        live_price = get_current_price(pos['ticker'])
+        live_price = get_current_price(pos['ticker'], pos.get('market'))
         if not live_price:
             results.append({"ticker": pos['ticker'], "status": "skipped", "reason": "price unavailable"})
             continue
 
-        if pos['market'] == 'UK' and live_price > 1000:
-            live_price = live_price / 100
 
         entry_price = native_entry_price(pos, live_fx_rate)
 

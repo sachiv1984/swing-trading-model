@@ -1,8 +1,8 @@
 **Owner:** Infrastructure & Operations Owner
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Version:** 1.1
-**Last Updated:** 2026-11-11 (ST-13, EPIC-04, v9.16, BLG-OPS-197 — §4 weekly calls and failures recorded from one production report; §6 volume line ticked); prior — 2026-10-27 (created; weekly call volumes pending the first full week of attribution data)
+**Version:** 1.3
+**Last Updated:** 2026-11-13 (ST-15, EPIC-06, v9.17, BLG-OPS-217 — §4 causes of the on-demand Yahoo failures recorded from a production api_call_log read, with the fix per feature); prior — 2026-11-13 (ST-16, EPIC-06, v9.17, BLG-OPS-195 — §5 is now checked weekly by `market-data-volume-check.yml`, which reads the §4 table); prior — 2026-11-11 (ST-13, EPIC-04, v9.16, BLG-OPS-197 — §4 weekly calls and failures recorded from one production report; §6 volume line ticked); prior history retained — see prior entries in version control
 **Source:** ST-30 (`BLG-OPS-18`), EPIC-05, cycle `2026-10-16__release-v9.13`
 
 # Data Pipeline Cost Baseline
@@ -48,6 +48,17 @@ Before v9.13 only Alpaca bar calls were counted (`service = 'alpaca'`, `GET /ops
 
 **Failures in this baseline.** All 665 failures are Yahoo calls, and 652 of them come from four on-demand features: `GET /earnings/{ticker}` (373 of 427), `GET /positions` (201 of 331), `GET /positions/{position_id}/gap-risk` (57 of 64) and `GET /research/{ticker}` (21 of 24). The nightly jobs fail rarely (screener 13 of 3,074; signal generation, stop update and alerts 0). This is the measured state, not an expected one. It is tracked by `BLG-OPS-217`. While it stands, §5's failure rule (more than 2× baseline) only fires at about 1,330 Yahoo failures a week.
 
+**Causes (ST-15, `BLG-OPS-217`, v9.17, recorded 2026-11-13).** From a production `api_call_log` read for the 7 days to 2026-11-13, supplied by the user (Infrastructure & Operations Owner) in session (`DEL-20261113-01`; queries Q1–Q3 in that record), with a read-only staging read and a sandbox probe of the live calls. In that week the four features had 488 failed Yahoo calls. Yahoo calls that need its session token ("crumb": `getcrumb`, then `quoteSummary` and `v7/finance/quote`) failed almost every time, while calls that do not need it (`v8/finance/chart`: 3 failures in 3,569; `fundamentals-timeseries`: 0 in 60) did not. The time breakdown shows why: **418 of the 488 failures (86%) came in one two-minute burst on 2026-11-09 15:37–15:38** (471 calls), when a page fired one earnings lookup per row at about four Yahoo calls each, and Yahoo stopped issuing the token. Quiet page loads succeeded apart from the cookie request below.
+
+| Feature | Cause | Share in the burst or a burst-like cluster | Fix (v9.17, ST-15) |
+|---|---|---|---|
+| `GET /earnings/{ticker}` | Page-load burst: one lookup per row, each a `Ticker.info` fetch needing the token | 344 of 366 in the 2026-11-09 burst | `Ticker.info` cached 12 h per symbol and at most 4 Yahoo lookups at once (`backend/utils/yahoo_info.py`); funds skip the calendar lookup |
+| `GET /positions/{position_id}/gap-risk` | Each position's gap-risk request runs an earnings lookup, so a Positions page load is itself a burst | 29 of 30 in three clusters (09:29, 11:32, 15:37) | Same cache and cap (shares `get_earnings()`) |
+| `GET /positions` | The per-position sector/industry lookup (`Ticker.info`) failing during bursts; on quiet loads the only failure was the cookie request | 44 of 71 in the burst; the cookie request was 6 more | Same cache and cap; the cookie request is no longer counted as a failure |
+| `GET /research/{ticker}` | Three `Ticker.info` fetches per symbol (sector, market cap, earnings), all in the burst | 21 of 21 | One shared, cached fetch per symbol |
+
+Two further findings, also fixed in ST-15: yfinance's cookie request to `fc.yahoo.com` is answered 404 while setting the cookie, and was counted as a failure every time (it now counts as a success); and on staging, UK positions stored without `.L` were priced as US tickers (`chart/BARC` 31 of 31 failed; production UK rows carry `.L`). A separate defect found while checking what the user sees, also fixed: the earnings lookup returned the last report date rather than the next one. While earnings lookups fail, the earnings badge and the gap-risk warning show nothing, the same as "no upcoming earnings"; that display gap is filed as `BLG-FE-294`. The post-fix production weekly report (ST-15 AC 2) and the re-recorded §4 failure column (AC 3) follow once the fix has run for 7 days in production, tracked by `BLG-OPS-217`.
+
 **Measurement window:** the first full 7 days of production data after the deploy that ships DS-36. The volumes are filled in from `GET /ops/api-call-attribution?window=weekly` run on production at the end of that week, with the date and the report's `top_contributors` recorded here. That measurement is delegated to the Infrastructure & Operations Owner (needs production API access).
 
 **Expected shape (estimate, not a baseline):** most calls come from the nightly screener run, which fetches each active ticker's bars once, from Alpaca for US and from Yahoo for UK, falling back to Yahoo for US. Next come the nightly stop update and position views (prices, ATR, FX and regime). News calls only happen when news is viewed.
@@ -60,7 +71,14 @@ An advisory is raised when, for any source, the last 7 days exceed **2× the bas
 2. **Cost:** combined weekly estimated cost more than 2× the baseline cost. While the baseline is $0.00, this means **any non-zero estimated cost**, which only happens if a unit cost in `UNIT_COST_USD` is set because a source has started charging.
 3. **Failures:** the volume rule above, applied to failures. A sudden rise in failures usually means a provider is throttling or down, and the risk assessment's fail-open regime and frozen FX follow.
 
-An advisory is a prompt to check the attribution report's `by_feature` breakdown for the feature that grew, not an automatic action. Until an automated check exists, compare at the monthly cost review. Automating it (a scheduled call to the report and a Telegram message over threshold, as `ai-daily-cost-check.yml` does for AI spend) is filed as `BLG-OPS-195`.
+An advisory is a prompt to check the attribution report's `by_feature` breakdown for the feature that grew, not an automatic action.
+
+**Automated check (ST-16, `BLG-OPS-195`, v9.17).** `.github/workflows/market-data-volume-check.yml` runs every Monday at 08:00 UTC. It runs `scripts/check_market_data_volume.py`, which calls `GET /ops/api-call-attribution?window=weekly` on production and compares the result with the §4 table. When any figure is more than 2× its baseline, it sends a Telegram message naming the source, the figure, the baseline and the source's top 3 features by calls. A failed report call, missing secrets or an unreadable §4 table fail the run and send a failure message, as `ai-daily-cost-check.yml` does; a failed call is never read as zero.
+
+- **The §4 table is the only copy of the baseline.** The script reads it at run time, so re-recording §4 changes the check. Keep its layout: one row per source with the service name in backticks, and a **Combined** row. The script fails loudly if it cannot read them.
+- **Exactly 2× is not an advisory**; the rule is "more than".
+- **A zero baseline exceeds on any non-zero figure.** This applies to the $0.00 cost baseline (rule 2), to a source whose §4 calls or failures are 0 (for example one Alpaca data failure), and to a source not in §4 at all (`alpaca_trading`, `twelve_data`, `stooq`). Those are sources this baseline expects to be idle, so any use is worth a look.
+- Per-source failures are compared per source; the combined row compares the sum across sources.
 
 The threshold is reviewed when a baseline is first recorded, and whenever the active ticker universe grows by more than 25% (screener volume scales with it).
 

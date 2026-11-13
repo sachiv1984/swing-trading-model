@@ -396,7 +396,10 @@ def test_earnings_timestamp_at_2100_et_maps_to_that_et_date():
     ts = datetime(2026, 10, 29, 1, 0, tzinfo=timezone.utc).timestamp()
     mock_ticker = MagicMock()
     mock_ticker.info = {"earningsTimestamp": ts}
-    with patch("services.earnings_service.yf.Ticker", return_value=mock_ticker):
+    # Viewed on the release day: since ST-15 (BLG-OPS-217, v9.17) a past date
+    # is not a next earnings date, so "today" is pinned.
+    with patch("services.earnings_service.yf.Ticker", return_value=mock_ticker), \
+         patch("services.earnings_service.us_market_date", return_value=date(2026, 10, 28)):
         out = earnings_service.get_earnings("AAPL", "US")
     assert out["next_earnings_date"] == "2026-10-28"
 
