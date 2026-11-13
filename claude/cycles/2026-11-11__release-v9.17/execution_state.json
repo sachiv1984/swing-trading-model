@@ -5,7 +5,7 @@
   "invoked_utc": "2026-11-12T13:22:26Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-13T13:11:00Z",
+  "last_updated_utc": "2026-11-13T13:24:00Z",
   "epics": {
     "EPIC-01": {
       "title": "Site Structure & Usability Phase 3: Positions Redesign (build-and-ship)",
@@ -335,7 +335,9 @@
       "qa_evidence_log": null,
       "test_scenarios": [
         "tests/test_signal_sizing.py",
-        "tests/test_market_data_volume_check.py"
+        "tests/test_market_data_volume_check.py",
+        "tests/test_yahoo_on_demand_failures.py",
+        "tests/test_api_call_attribution.py"
       ],
       "sign_off_record": null,
       "stories": {
@@ -354,14 +356,17 @@
           "acceptance_verified": false,
           "spec_references": [
             "docs/ops/data_pipeline_cost_baseline.md#4. Weekly Baseline",
-            "docs/specs/api_contracts/ops_endpoints.md#GET /ops/api-call-attribution"
+            "docs/specs/api_contracts/ops_endpoints.md#GET /ops/api-call-attribution",
+            "docs/specs/api_contracts/earnings_endpoints.md#GET /earnings/{ticker}",
+            "docs/specs/data_model.md#DS-36 \u2014 Attribute provider calls in api_call_log, and time screener runs (v2.65, 2026-10-27)",
+            "tests/test_yahoo_on_demand_failures.py"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
-          "last_completed_substep": "3.1.B.delegated",
+          "last_completed_substep": "3.1.B.code_fixes_committed",
           "sign_off_record": null,
-          "notes": "Sandbox probe 2026-11-13 (public Yahoo endpoints, no database): fc.yahoo.com answers 404 while setting the A3 cookie, so yfinance's cookie bootstrap is always recorded as a failure; quoteSummary returns 404 'No fundamentals data found' for ETFs (SPY), two per earnings lookup. No 429s from the sandbox IP. Separate finding: get_earnings() reads info['earningsTimestamp'], which still holds the last report after it happens (AAPL 2026-11-02, -11 days) while earningsTimestampStart has the next (2027-01-28); raised with the user."
+          "notes": "In-sprint code fixes in 5cc4e8bd (story stays blocked_backend until DEL-20261113-01's production breakdown confirms each feature's cause, AC 1). Evidence: read-only staging api_call_log, 7 days to 2026-11-13 (user-authorised in session, default_transaction_read_only=on): GET /positions chart/BARC and chart/LGEN 31/31 failed (UK rows stored without .L priced as US), fc.yahoo.com '/' 30/30 (cookie request answered 404 while setting A3), earnings 33/37 failed in one minute (2026-11-11 10:01, getcrumb, quote and quoteSummary: a burst), GET /portfolio 66/68 and pre-entry validation 35/50 (same price path). Fixes: (1) get_current_price(ticker, market) adds .L for UK, all market-aware callers pass it; (2) attribution counts fc.yahoo.com 404 as success (ops_endpoints.md v1.5, DS-36 note); (3) get_earnings returns the earliest upcoming of earningsDate/earningsTimestampStart/End/earningsTimestamp, null when all past (user-approved; earnings_endpoints.md v0.3); funds skip the calendar fallback (its two 404s). Held pending production Q3: a server-side earnings cache against page-load bursts. Observation, not changed: fiscal_quarter returns mostRecentQuarter as an epoch string. Tests: tests/test_yahoo_on_demand_failures.py (19) + 2 in test_api_call_attribution.py; 17 fail without the fixes; full suite 3612 passed."
         },
         "ST-16": {
           "title": "Alert when weekly market-data call volume exceeds 2\u00d7 the baseline",
@@ -387,7 +392,7 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.done",
           "sign_off_record": null,
-          "notes": "Commit 5578c103: market-data-volume-check.yml (Mondays 08:00 UTC) runs scripts/check_market_data_volume.py, which reads the baseline from data_pipeline_cost_baseline.md \u00a74 at run time and calls GET /ops/api-call-attribution?window=weekly; advisory over 2x names the source, figure, baseline and top 3 features (Telegram). Fails loudly: exit 2 on any report/baseline failure fails the job and the if: failure() step alerts. AC 1 and AC 2 covered by tests/test_market_data_volume_check.py (20 tests). Zero-baseline rule (any non-zero figure exceeds) confirmed by the user in session as Infrastructure & Operations Owner, 2026-11-13. Docs: baseline v1.2 \u00a75, scheduled_workflows_inventory v1.2, secrets map. Deviation check: none. Full backend suite 3592 passed locally. ci_pending: CI on 5578c103 not yet checked."
+          "notes": "Commit 5578c103: market-data-volume-check.yml (Mondays 08:00 UTC) runs scripts/check_market_data_volume.py, which reads the baseline from data_pipeline_cost_baseline.md \u00a74 at run time and calls GET /ops/api-call-attribution?window=weekly; advisory over 2x names the source, figure, baseline and top 3 features (Telegram). Fails loudly: exit 2 on any report/baseline failure fails the job and the if: failure() step alerts. AC 1 and AC 2 covered by tests/test_market_data_volume_check.py (20 tests). Zero-baseline rule (any non-zero figure exceeds) confirmed by the user in session as Infrastructure & Operations Owner, 2026-11-13. Docs: baseline v1.2 \u00a75, scheduled_workflows_inventory v1.2, secrets map. Deviation check: none. Full backend suite 3592 passed locally. CI on 5578c103: all 7 workflows success (step 4d); CI Pytest Suite 43431251776."
         },
         "ST-17": {
           "title": "Batch signal sizing can allocate more than available cash once fees are added",
