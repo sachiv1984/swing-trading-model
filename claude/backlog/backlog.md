@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-13 (session — 1 new item added: BLG-BE-218; EPIC-06 agent-mediated DoQ review round 2, v9.17); prior — 2026-11-13 (session — 1 new item added: BLG-BE-217; EPIC-06 agent-mediated DoQ review, v9.17); prior — 2026-11-13 (session — 1 new item added: BLG-FE-294; ST-15 production api_call_log read, EPIC-06, v9.17); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-13 (session — 1 new item added: BLG-BE-219; ST-11 pre-commit code review, EPIC-05, v9.17); prior — 2026-11-13 (session — 1 new item added: BLG-BE-218; EPIC-06 agent-mediated DoQ review round 2, v9.17); prior — 2026-11-13 (session — 1 new item added: BLG-BE-217; EPIC-06 agent-mediated DoQ review, v9.17); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -6945,5 +6945,28 @@ Since ST-15 (`c341eee7`), `get_current_price()` converts a UK price from the Yah
 
 **Acceptance Criteria**
 - A `GBp` listing's price and ATR are divided by 100 and a `GBP` listing's are kept, in signal generation and in `calculate_atr()` (unit tests)
+
+---
+
+### BLG-BE-219 — Stop P&L reconciliation flagging partial exits and pre-BLG-TECH-07 closed trades
+**Priority:** P3 (Low)
+**Type:** Backend engineering
+**Owner:** Head of Engineering; Data Model & Domain Schema Owner
+**Source:** ST-11 (EPIC-05, v9.17) — found by the pre-commit /code-review of the close-on-exit change — 2026-11-13
+**Effort:** S (~0.5 day)
+**Provisional-Target:** TBD
+
+**Problem**
+`pnl_reconciliation_service.reconcile_pnl_vs_trade_plans()` (`pnl_export_reconciliation.md` §3) raises `trade_history_plan_not_closed` for every `trade_history` row whose linked plan is not `closed`. A partial exit writes a `trade_history` row while its plan correctly stays `active` (ST-11, `data_model.md` §Trade Plan Lifecycle), so each partial exit is a false mismatch. It also raises `closed_plan_no_trade_history` for a closed plan whose position's `trade_history` rows predate `trade_history.position_id` (BLG-TECH-07, `position_id` NULL). The DS-41 backfill (v9.17) closes such plans, so they now appear as new mismatches.
+
+**Scope**
+- Flag `trade_history_plan_not_closed` only when the position itself is closed
+- Match legacy `trade_history` rows by ticker, market and exit date when `position_id` is NULL, or exclude them and report a separate legacy count
+- Update `pnl_export_reconciliation.md` §3
+
+**Acceptance Criteria**
+- A partial exit on a plan-linked position produces no mismatch (pytest)
+- A closed plan whose `trade_history` row has `position_id` NULL is not reported as `closed_plan_no_trade_history`, or is reported in a separate legacy count (pytest)
+- §3 describes both rules
 
 ---

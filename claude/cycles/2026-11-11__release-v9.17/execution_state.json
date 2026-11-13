@@ -5,7 +5,7 @@
   "invoked_utc": "2026-11-12T13:22:26Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-13T15:15:00Z",
+  "last_updated_utc": "2026-11-13T16:07:31Z",
   "epics": {
     "EPIC-01": {
       "title": "Site Structure & Usability Phase 3: Positions Redesign (build-and-ship)",
@@ -437,6 +437,103 @@
           "notes": "Commit 7b3b59e8: size_batch_inv_vol() removes whole shares until each signal's fee-inclusive total_cost fits its allocation, so sum(total_cost) <= available_cash. TestBatchSizingFeesFitAvailableCash covers UK, US and mixed batches (AC) plus sub-commission allocation; all 5 fail without the fix. Two v9.12 fee tests pinned the over-budget case and had their cash raised. signal_endpoints.md v1.12; strategy_signal_regression_spec.md v1.1 (fixture spec_version 1.1). Opportunistic in-file fix disclosed: regression spec IV-05 described pre-v9.12 zero-ATR behaviour. Deviation check: none (contract and regression spec updated in the same commit). Full backend suite 3572 passed locally. CI on 7b3b59e8: all 7 workflows success (step 4d); CI Pytest Suite 43430040716."
         }
       }
+    },
+    "EPIC-05": {
+      "title": "Trade Plan Found Defects (v9.16 Carry-Forward)",
+      "status": "in_progress",
+      "branch": "exec/2026-11-11__release-v9.17/EPIC-05",
+      "pr_number": null,
+      "pr_status": null,
+      "qa_signed_off": false,
+      "qa_evidence_log": "claude/cycles/2026-11-11__release-v9.17/qa_evidence_EPIC-05.md",
+      "test_scenarios": [],
+      "sign_off_record": null,
+      "stories": {
+        "ST-11": {
+          "title": "Move a linked trade plan to `closed` when its position closes",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 2246,
+          "branch": "exec/2026-11-11__release-v9.17/EPIC-05",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": ""
+        },
+        "ST-12": {
+          "title": "Reset the Trade Plan pre-entry acknowledgement when the check result changes",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 2247,
+          "branch": "exec/2026-11-11__release-v9.17/EPIC-05",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": ""
+        },
+        "ST-13": {
+          "title": "Pass the market from Research View's \"Create Trade Plan\" so a UK plan is not created as US",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 2248,
+          "branch": "exec/2026-11-11__release-v9.17/EPIC-05",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": ""
+        },
+        "ST-14": {
+          "title": "Pre-fill the Trade Plan stop from the \u00a75 suggested stop and flag a typed stop that differs",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 2249,
+          "branch": "exec/2026-11-11__release-v9.17/EPIC-05",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": ""
+        }
+      }
     }
   },
   "blocked_items": [],
@@ -491,7 +588,8 @@
     "2026-11-13T12:50:14Z: EPIC-07 PR #2258 merged by the human repository owner (sachiv1984) at 2026-11-13T12:49:47Z, merge commit c7153fba. Orphaned post-merge commit check: none (git log origin/main..origin/exec/2026-11-11__release-v9.17/EPIC-07 empty). STEP 4 step 3c sibling sync: no pending EPIC branch exists yet (EPIC-06/05/02/03), nothing to sync. Issues #2253-2255 closed.",
     "2026-11-13T12:52:00Z: run sprint --epic EPIC-06 (typed 'epic06', normalised). EPIC-06 section appended to the existing execution_state.json (owner EPIC-01). Branch cut from main at 5838bece after EPIC-07 merged (Merge Order position 4). Issues #2250-#2252 found from sync gh. Classes per sprint_backlog.md: ST-15 delegated_backend, ST-16/ST-17 autonomous.",
     "2026-11-13T14:59:09Z: Product Owner direction (user, in session; EPIC-06 filing retrospective): extend BLG-GOV-422's design gate STEP 2.2 checks at v9.18 Release Planning with a failure-state check. For every value a view shows from an outside source (Yahoo, Alpaca, news), the design records what the screen shows when the lookup fails and what it shows when the lookup succeeds with no data, and the two must be distinguishable when the value backs a risk warning. (v9.17: ST-15's scope said 'check what the user sees when these calls fail', but no state was defined before sizing; a failed earnings lookup looked the same as 'no upcoming earnings', hiding the earnings badge and gap-risk warning during throttling -> BLG-FE-294.) Add a matching AC: re-running the check on earnings_endpoints.md v0.2 finds the gap. Sprint Execution may not edit BLG-GOV-422 (\u00a77). STEP 5.3 and Post-Ship Closure: carry this into the closure Carry-Forward section beside the earlier BLG-GOV-422 extensions (2026-11-12, 2026-11-13T09:37:36Z, 2026-11-13T11:30:53Z).",
-    "2026-11-13T15:11:51Z: EPIC-06 PR #2259 merged by sachiv1984, merge commit aaeb2957. Merge state recorded on main (STEP 4 steps 2-3a). Orphaned post-merge commit check: none. Sibling execution_state sync (3c): no branch exists yet for EPIC-05, EPIC-02 or EPIC-03, nothing to sync."
+    "2026-11-13T15:11:51Z: EPIC-06 PR #2259 merged by sachiv1984, merge commit aaeb2957. Merge state recorded on main (STEP 4 steps 2-3a). Orphaned post-merge commit check: none. Sibling execution_state sync (3c): no branch exists yet for EPIC-05, EPIC-02 or EPIC-03, nothing to sync.",
+    "2026-11-13T16:07:31Z: run sprint --epic EPIC-05 (typed 'epic05', normalised). EPIC-05 section appended to the existing execution_state.json (owner EPIC-01). Branch cut from main at c71409bf after EPIC-06 merged (Merge Order position 5). Issues #2246-#2249 found from sync gh. All four stories autonomous per sprint_backlog.md."
   ],
   "sealed": false,
   "sealed_utc": null

@@ -1242,6 +1242,35 @@ def strategy_parameter_snapshot(position: Dict, holding_days: int) -> Dict:
     }
 
 
+def _close_linked_trade_plans(position_id: str, portfolio_id: str) -> List[str]:
+    """Set every `active` trade plan linked to this position to `closed`.
+
+    ST-11 (BLG-BE-211, EPIC-05, v9.17). Called only on a full exit. Only
+    `active` plans move: `closed` and `abandoned` are terminal, and a linked
+    plan in any other status was set there by hand through
+    PUT /trade-plans/{id}, so it is left alone. update_trade_plan() audit-logs
+    the change with source 'position-exit', so it reads differently from a
+    user's own edit. Best-effort, per plan: one failed write does not stop
+    the others or the exit. Returns the IDs closed.
+    """
+    closed_ids: List[str] = []
+    try:
+        plans = get_trade_plans_by_position(position_id, portfolio_id)
+    except Exception as e:
+        print(f"   ⚠️  Trade plan close skipped: {e}")
+        return closed_ids
+    for plan in plans:
+        if plan.get("status") != "active":
+            continue
+        try:
+            update_trade_plan(str(plan["id"]), portfolio_id, {"status": "closed"}, audit_source="position-exit")
+            closed_ids.append(str(plan["id"]))
+            print(f"   ✓ Trade plan {plan['id']} closed with its position")
+        except Exception as e:
+            print(f"   ⚠️  Trade plan {plan.get('id')} close skipped: {e}")
+    return closed_ids
+
+
 def exit_position(
     position_id: str,
     exit_price: float,
@@ -1527,9 +1556,15 @@ def exit_position(
                 })
             else:
                 raise
-        
+
         print(f"   ✓ Position closed")
-    
+
+        # ST-11 (BLG-BE-211, EPIC-05, v9.17): data_model.md §Trade Plan
+        # Lifecycle — `active` → `closed` when the linked position closes.
+        # Best-effort, like add_position()'s link step: a failure here must
+        # not undo or block the exit. A partial exit leaves the plan `active`.
+        _close_linked_trade_plans(position_id, portfolio_id)
+
     # Update portfolio cash
     current_cash = float(portfolio['cash'])
     new_cash = current_cash + net_proceeds_gbp

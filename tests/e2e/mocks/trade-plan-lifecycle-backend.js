@@ -2,7 +2,7 @@
  * Stateful mock backend for the trade plan lifecycle journey.
  * Used by tests/e2e/trade-plan-lifecycle.spec.js (ST-26) and tests/e2e/arc2-happy-path.spec.js (ST-24),
  * EPIC-06, v9.16. See trade-plan-lifecycle.spec.js's header for which backend rules each write
- * handler copies, and for the known gap tracked by BLG-BE-211 (plan not moved to `closed` on exit).
+ * handler copies.
  *
  * Partial copies: POST /portfolio/position links only an explicit trade_plan_id; the backend's
  * get_unlinked_trade_plan_for_entry auto-link fallback is not modelled, so a test where the frontend
@@ -203,8 +203,20 @@ async function mockBackend(page) {
     const id = new URL(r.request().url()).pathname.split('/').slice(-2)[0];
     const body = r.request().postDataJSON();
     const position = db.positions.find((p) => p.id === id);
-    position.status = 'closed';
     const hasPlan = db.plans.some((p) => p.position_id === id);
+    const isFullExit = body.shares == null || body.shares >= position.shares;
+    if (!isFullExit) position.shares -= body.shares;
+    if (isFullExit) {
+      position.status = 'closed';
+      // ST-11 (BLG-BE-211, v9.17): position_service.py::_close_linked_trade_plans — a full exit
+      // moves the linked `active` plan to `closed`; a partial exit leaves it `active`.
+      db.plans
+        .filter((p) => p.position_id === id && p.status === 'active')
+        .forEach((p) => {
+          Object.assign(p, { status: 'closed', updated_at: now() });
+          db.log.push(['plan', 'closed']);
+        });
+    }
     const trade = {
       id: 'trade-tpl-0001', position_id: id, ticker: position.ticker, market: position.market,
       entry_date: position.entry_date.slice(0, 10), exit_date: body.exit_date,

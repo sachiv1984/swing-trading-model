@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Class 2
 **Status:** Canonical
-**Version:** 1.32.0
-**Last Updated:** 2026-11-12 (ST-09, EPIC-04, v9.17, BLG-BE-205 — new v9.17.0 entry: position_endpoints.md v2.21.0, openapi.yaml 3.49.0); prior — 2026-11-10 (ST-17/ST-18/ST-20/ST-21, EPIC-05, v9.16 — v9.16.0 entry adds position_endpoints.md v2.20.1 and ai_endpoints.md v1.41); prior — 2026-11-09 (ST-05, EPIC-02, v9.16, BLG-FE-271 — new v9.16.0 entry: trade_plan_endpoints.md v0.23, openapi.yaml 3.48.0); prior history retained — see prior entries in version control
+**Version:** 1.33.0
+**Last Updated:** 2026-11-13 (ST-11, EPIC-05, v9.17, BLG-BE-211 — v9.17.0 entry adds position_endpoints.md v2.22.0: a full exit closes the linked trade plan); prior — 2026-11-12 (ST-09, EPIC-04, v9.17, BLG-BE-205 — new v9.17.0 entry: position_endpoints.md v2.21.0, openapi.yaml 3.49.0); prior — 2026-11-10 (ST-17/ST-18/ST-20/ST-21, EPIC-05, v9.16 — v9.16.0 entry adds position_endpoints.md v2.20.1 and ai_endpoints.md v1.41); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 # API Changelog
@@ -39,6 +39,15 @@ Rules:
 ---
 
 ## v9.17.0 (2026-11-12 — Release v9.17)
+
+### position_endpoints.md — v2.22.0 (UPDATED)
+
+**EPIC:** EPIC-05
+**ST:** ST-11
+
+| Change | Details |
+|--------|---------|
+| Updated endpoint: POST /positions/{position_id}/exit | A full exit now moves every `active` trade plan linked to the position to `closed` (best-effort, audit-logged), as `data_model.md` §Trade Plan Lifecycle requires (BLG-BE-211). A partial exit leaves the plan `active`. Request and response unchanged, so `openapi.yaml` is unchanged. Existing plans are closed by the DS-41 startup backfill. |
 
 ### position_endpoints.md — v2.21.0 (UPDATED)
 

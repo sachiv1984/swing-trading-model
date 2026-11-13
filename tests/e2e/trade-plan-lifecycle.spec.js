@@ -10,7 +10,8 @@
  *              ticker, not stored on the plan, so "persistence" means it survives a reload)
  *   SC-TPL-03  Trade Plans → "Start Trade" → Trade Entry pre-filled from the plan; Create Position
  *              sends trade_plan_id; the plan moves `draft` → `active` and gains position_id
- *   SC-TPL-04  Positions → Exit → Confirm Exit closes the position and writes a trade
+ *   SC-TPL-04  Positions → Exit → Confirm Exit closes the position and writes a trade; the linked
+ *              plan moves `active` → `closed` and Trade Plans shows its "Closed" badge (ST-11, v9.17)
  *   SC-TPL-05  Trade History → expand the trade → Plan vs Reality shows the values the backend
  *              formulas give for the plan and fills entered above (R achieved, R target, R delta,
  *              entry delta, adherence badge, state at exit)
@@ -22,17 +23,12 @@
  *   - POST /portfolio/position: initial stop = entry − 5×ATR (calculations.py::calculate_initial_stop);
  *     an explicit trade_plan_id links the plan and sets status `active` (position_service.py::add_position)
  *   - POST /positions/{id}/exit: planned_entry_price is snapshotted from the ticker's signal
- *     current_price (position_service.py, Arc 4 PO-01); the plan's status is left unchanged — see
- *     the known gap below
+ *     current_price (position_service.py, Arc 4 PO-01); a full exit sets the linked `active` plan to
+ *     `closed` (position_service.py::_close_linked_trade_plans, ST-11, BLG-BE-211, v9.17)
  *   - GET /trades/{id}/plan-vs-reality: a port of plan_vs_reality_service.py::compute_plan_vs_reality.
  *     The formulas themselves are unit-tested in tests/test_plan_vs_reality.py; this test checks that
  *     the numbers entered through the UI reach that comparison and are displayed correctly. The
  *     expected values below are worked by hand, not read back from the port.
- *
- * Known gap (BLG-BE-211, filed by this story): data_model.md §Trade Plan Lifecycle says `active` →
- * `closed` happens when the linked position closes, but no backend code path writes `closed`. This
- * test therefore does not assert the plan's status after the exit; when BLG-BE-211 ships, add that
- * assertion (Trade Plans badge "Closed") and make the exit handler below set it.
  *
  * Known gap (BLG-BE-212, filed by ST-24): the exit snapshots planned_entry_price from the signal's
  * price at exit, not from the plan, so the entry delta below is the formula as built. When BLG-BE-212
@@ -126,6 +122,13 @@ test('SC-TPL-01..05: a plan goes from "Plan this" to a closed trade and its Plan
   expect(db.lastExit).toMatchObject({ shares: 10, exit_price: EXIT_PRICE });
   expect(db.positions[0].status).toBe('closed');
   expect(db.trades).toHaveLength(1);
+  // ST-11 (BLG-BE-211): the full exit closes the linked plan.
+  expect(db.plans[0]).toMatchObject({ status: 'closed', position_id: 'pos-tpl-0001' });
+  expect(db.log).toEqual([['plan', 'draft'], ['plan', 'active'], ['plan', 'closed']]);
+
+  await page.goto('/#/TradePlans');
+  await expect(planStatusBadge(page, 'Closed')).toBeVisible({ timeout: 10000 });
+  await expect(planStatusBadge(page, 'Active')).toHaveCount(0);
 
   // ── SC-TPL-05: Plan vs Reality for the closed trade ──
   // Worked by hand from the values entered above:

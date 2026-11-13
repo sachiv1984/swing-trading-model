@@ -1,8 +1,8 @@
 **Owner:** QA Lead; Director of Quality
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Version:** 1.0
-**Last Updated:** 2026-11-10 (ST-24, EPIC-06, v9.16, BLG-QA-21 — initial arc-level protocol)
+**Version:** 1.1
+**Last Updated:** 2026-11-13 (ST-11, EPIC-05, v9.17, BLG-BE-211 — M-04 expects the plan `closed` after a full exit; §6 row marked fixed); prior — 2026-11-10 (ST-24, EPIC-06, v9.16, BLG-QA-21 — initial arc-level protocol)
 **Cycle:** 2026-11-06__release-v9.16 (ST-24 — BLG-QA-21)
 
 ---
@@ -103,7 +103,7 @@ Run on staging with a test portfolio. Record the date, tester and result per row
 | M-01 | Create a plan, Start Trade, Create Position | `trade_plans.position_id` set, `status = 'active'`; Trade Entry toast "Linked to trade plan for {TICKER}." |
 | M-02 | Enter a position **without** Start Trade for a ticker that has one unlinked pre-entry plan | The plan auto-links (`get_unlinked_trade_plan_for_entry`); with no such plan the toast reads "No matching plan found — logged unlinked." |
 | M-03 | Same as M-02 with **two** unlinked plans for the ticker | Exactly one links: the most recently created pre-entry plan (`ORDER BY created_at DESC LIMIT 1`) |
-| M-04 | Fully exit the linked position | A `trade_history` row exists; Plan vs Reality returns 200. Plan status: **known gap — stays `active`** (§6, BLG-BE-211) |
+| M-04 | Fully exit the linked position | A `trade_history` row exists; Plan vs Reality returns 200. Plan status is `closed` and Trade Plans shows the "Closed" badge (fixed v9.17, ST-11, BLG-BE-211) |
 | M-05 | Partially exit the linked position | A `trade_history` row is written for the exited shares and has its own Plan vs Reality; the position and the plan stay open/`active` |
 | M-06 | Plan vs Reality for the closed trade | R achieved = (exit − entry) / (entry − initial stop); R target from the plan; stop discipline against the plan's stop. Entry delta: **known gap** (§6, BLG-BE-212) |
 
@@ -132,7 +132,7 @@ Run on staging with a test portfolio. Record the date, tester and result per row
 
 | ID | Finding | Effect on this protocol |
 |----|---------|-------------------------|
-| `BLG-BE-211` (P2) | No backend code moves a linked plan from `active` to `closed` when its position closes, although `data_model.md` §Trade Plan Lifecycle says it does | M-04 records the gap; the lifecycle test does not assert post-exit status until the fix |
+| `BLG-BE-211` (P2) | No backend code moves a linked plan from `active` to `closed` when its position closes, although `data_model.md` §Trade Plan Lifecycle says it does | Fixed v9.17 (ST-11): a full exit closes the linked plan; M-04 and the lifecycle test (SC-TPL-04) assert `closed` and the "Closed" badge |
 | `BLG-FE-281` (P2) | Research View's "Create Trade Plan" passes only `ticker`, so the plan's market defaults to US; a UK ticker's plan is sized and priced as US | M-09 records the gap |
 | `BLG-BE-212` (P3) | `trade_history.planned_entry_price` is snapshotted at exit from the ticker's current signal price, not from the plan's `planned_entry_price`, so Plan vs Reality's entry delta measures the fill against a later signal price (and is null when no signal exists) | M-06 records the gap; the lifecycle test asserts the formula as built |
 
