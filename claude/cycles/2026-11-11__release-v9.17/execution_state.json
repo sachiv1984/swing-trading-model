@@ -612,23 +612,26 @@
         "ST-06": {
           "title": "Merge Reports and Performance Analytics into one Performance page",
           "classification": "delegated_decision",
-          "status": "not_started",
+          "status": "blocked_decision",
           "assigned_to": "engine",
           "github_issue": 2241,
           "branch": "exec/2026-11-11__release-v9.17/EPIC-02",
           "commit_sha": null,
-          "delegation_record_id": null,
-          "blocked_since_utc": null,
+          "delegation_record_id": "ESC-EXEC-20261116-01",
+          "blocked_since_utc": "2026-11-16T13:00:31Z",
           "unblock_criteria": "docs/specs/frontend/pages/performance.md exists, meets performance-page-brief/decision_record.md \u00a72, and carries a dated Head of UX & Design approval (addendum); Metrics Definitions & Analytics Owner KPI confirmation dated in QA evidence (AC 2)",
           "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": [],
+          "spec_references": [
+            "docs/specs/frontend/pages/performance.md",
+            "docs/design/2026-11-11__release-v9.17/performance-page-brief/decision_record.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Sub-step 1 (spec) done: performance.md v1.0 draft written 2026-11-16 (KPI inventory of Reports.js and PerformanceAnalytics.js; found the Analytics page computes its \u00a71/\u00a73 metrics in the browser \u2014 listed in \u00a75.2). Build gated on ESC-EXEC-20261116-01."
         },
         "ST-07": {
           "title": "Use tabs or sections on the long single-scroll pages",
@@ -659,7 +662,9 @@
       }
     }
   },
-  "blocked_items": [],
+  "blocked_items": [
+    "ST-06"
+  ],
   "delegated_items": [],
   "completed_items": [
     "ST-01",
@@ -681,7 +686,18 @@
     "ST-19",
     "ST-20"
   ],
-  "open_escalations": {},
+  "open_escalations": {
+    "ESC-EXEC-20261116-01": {
+      "cycle": "2026-11-11__release-v9.17",
+      "summary": "ST-06/EPIC-02 \u2014 performance.md v1.0 draft needs dated Head of UX & Design approval and Metrics owner KPI confirmation (scope rule; server-canonical KPIs) before the build",
+      "trigger_type": "Lifecycle",
+      "owning_authority": "Head of UX & Design; Metrics Definitions & Analytics Canonical Owner",
+      "raised_utc": "2026-11-16T13:00:31Z",
+      "sla_due_utc": "2026-11-17T13:00:31Z",
+      "blocks_execution": false,
+      "disposition": "Open"
+    }
+  },
   "merge_gate": {
     "epics_merged": [
       "EPIC-01",
