@@ -5,7 +5,7 @@
   "invoked_utc": "2026-11-12T13:22:26Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-13T16:37:00Z",
+  "last_updated_utc": "2026-11-16T08:30:00Z",
   "epics": {
     "EPIC-01": {
       "title": "Site Structure & Usability Phase 3: Positions Redesign (build-and-ship)",
@@ -440,20 +440,31 @@
     },
     "EPIC-05": {
       "title": "Trade Plan Found Defects (v9.16 Carry-Forward)",
-      "status": "in_progress",
+      "status": "done",
       "branch": "exec/2026-11-11__release-v9.17/EPIC-05",
       "pr_number": null,
       "pr_status": null,
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-11-11__release-v9.17/qa_evidence_EPIC-05.md",
       "test_scenarios": [
         "tests/test_trade_plan_close_on_exit.py",
         "tests/test_lifecycle_transitions.py",
         "tests/e2e/trade-plan-lifecycle.spec.js",
         "tests/e2e/research-create-plan-market.spec.js",
-        "tests/e2e/trade-plan-ack-reset.spec.js"
+        "tests/e2e/trade-plan-ack-reset.spec.js",
+        "tests/e2e/trade-plan-stop-prefill.spec.js"
       ],
-      "sign_off_record": null,
+      "sign_off_record": {
+        "status": "cleared",
+        "role": "Director of Quality",
+        "method": "agent_mediated",
+        "signed_by": "Sprint Execution Engine (agent-mediated, Director of Quality role \u2014 \u00a75.3)",
+        "date": "2026-11-16",
+        "user_directed": true,
+        "rounds": 1,
+        "first_round": "Approved (2 P3 fixed in-story in f2749a24, 4 observations recorded)",
+        "evidence": "claude/cycles/2026-11-11__release-v9.17/qa_evidence_EPIC-05.md"
+      },
       "stories": {
         "ST-11": {
           "title": "Move a linked trade plan to `closed` when its position closes",
@@ -505,7 +516,7 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.done",
           "sign_off_record": null,
-          "notes": "Commit 94dc3bd8. RISK-05 option (a) clear on change. AC 1: a new FAIL after a WARN tick leaves the box unticked with acknowledgement-reset-note (SC-TPAR-01), tick again / same-key refetch / back to PASS / edit matching and differing stored snapshots (SC-TPAR-02..05). AC 2: the plan saved without re-acknowledging sends acknowledged false with the FAIL snapshot, and Trade Entry linking it shows the panel with the unacknowledged reason line (SC-TPAR-01). SC-TP-32c fixture updated so its stored snapshot key matches (its tick still stands under \u00a75e). trade_plan.md v1.26 \u00a75e: option (b) deleted. RISK-07: the reset is in TradePlan.js only; Trade Entry's tick does not reset, so BLG-FE-269 AC 1 (both pages) is NOT met; record for groom backlog. Local E2E build (lint on, exit 0; TradePlan.js warnings pre-existing): SC-TPAR 5/5 plus trade-plan, trade-entry-pre-entry-checks and si01-si03-integration, 77/77. Logic of the result key checked with node (null, empty, sorted, detail ignored). Deviation check vs trade_plan.md \u00a75e and design \u00a72.1: none. Step 13: the note is new text inside the panel only, not app-shell; no selector renamed. ci_pending: CI on 94dc3bd8 not yet concluded."
+          "notes": "Commit 94dc3bd8. RISK-05 option (a) clear on change. AC 1: a new FAIL after a WARN tick leaves the box unticked with acknowledgement-reset-note (SC-TPAR-01), tick again / same-key refetch / back to PASS / edit matching and differing stored snapshots (SC-TPAR-02..05). AC 2: the plan saved without re-acknowledging sends acknowledged false with the FAIL snapshot, and Trade Entry linking it shows the panel with the unacknowledged reason line (SC-TPAR-01). SC-TP-32c fixture updated so its stored snapshot key matches (its tick still stands under \u00a75e). trade_plan.md v1.26 \u00a75e: option (b) deleted. RISK-07: the reset is in TradePlan.js only; Trade Entry's tick does not reset, so BLG-FE-269 AC 1 (both pages) is NOT met; record for groom backlog. Local E2E build (lint on, exit 0; TradePlan.js warnings pre-existing): SC-TPAR 5/5 plus trade-plan, trade-entry-pre-entry-checks and si01-si03-integration, 77/77. Logic of the result key checked with node (null, empty, sorted, detail ignored). Deviation check vs trade_plan.md \u00a75e and design \u00a72.1: none. Step 13: the note is new text inside the panel only, not app-shell; no selector renamed. CI on 94dc3bd8: all 9 workflows success (steps 4c/4d): Playwright E2E Acceptance Tests 43464334506; CI Pytest Suite 43464334625; Frontend Production Build 43464334479."
         },
         "ST-13": {
           "title": "Pass the market from Research View's \"Create Trade Plan\" so a UK plan is not created as US",
@@ -534,23 +545,28 @@
         "ST-14": {
           "title": "Pre-fill the Trade Plan stop from the \u00a75 suggested stop and flag a typed stop that differs",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 2249,
           "branch": "exec/2026-11-11__release-v9.17/EPIC-05",
-          "commit_sha": null,
+          "commit_sha": "f2749a24fece430b9974df7db0dc44f333dbbeee",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-11-16T08:04:38Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/pages/trade_plan.md#5a.3 Pre-Population Rules (creation form only)",
+            "docs/specs/frontend/pages/trade_plan.md#5f. Suggested Size Before Shares",
+            "docs/specs/frontend/pages/trade_plan.md#Known Deviations",
+            "tests/e2e/trade-plan-stop-prefill.spec.js"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.done",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Commits: 21b8dbe7 (implementation), f2749a24 (DoQ review findings 1-2: pre-fill only for the opened ticker's signal, untouched pre-fill cleared on ticker change; SC-TPSP-06, SC-TPSP-07 x2, SC-TPSP-02 data). Commit 21b8dbe7. AC 1: 'Plan this' (SC-TPSP-01, current_price - 5xATR = 165.05, equal to the panel) and the watchlisted lookup (SC-TPSP-02, initial_stop 0.62, UK) pre-fill Stop via the shared getSuggestedStop(); a typed or cleared stop survives an entry change (SC-TPSP-03); edit mode does not pre-fill (SC-TPSP-05). AC 2: plan-stored-stop-note states the stop Trade Entry will store with both values (SC-TPSP-03); absent within 0.005 (SC-TPSP-04) and without ATR (SC-TPSP-04b). Premise check (first-time-right #7): Trade Entry computes the stop from the ATR fetched or typed at entry, not the signal's atr_value; raised before commit, and the user (Frontend Specifications & UX Documentation Owner) ruled 2026-11-13 to word the line 'about ... using the signal's ATR of ...'; trade_plan.md v1.27 \u00a75f updated. AC 3: local E2E build (lint on, exit 0; warnings pre-existing): SC-TPSP 6/6; trade-plan-lifecycle, plan-this, trade-plan-suggested-size, trade-plan.spec, trade-plan-ack-reset, research-create-plan-market all pass. AC 4: DEV-v9.16-ST27-01 marked Resolved - v9.17 in trade_plan.md Known Deviations (resolving-commit discipline, LL-v9.0-P4-01). Worked examples checked with node (null/0/string inputs, 0.005 boundary). Deviation check vs \u00a75a.3/\u00a75f: none (wording change is a spec update by ruling, not a deviation). Step 13: stop input keeps its test id; no app-shell text. CI on 21b8dbe7: all 9 workflows success (steps 4c/4d): Playwright E2E Acceptance Tests 43479256427; CI Pytest Suite 43479256051; Frontend Production Build 43479255946. CI on f2749a24: all 9 workflows success (Playwright E2E 43828387765, CI Pytest 43828387794, Frontend Production Build 43828387873)."
         }
       }
     }
@@ -567,6 +583,7 @@
     "ST-11",
     "ST-12",
     "ST-13",
+    "ST-14",
     "ST-15",
     "ST-16",
     "ST-17",
