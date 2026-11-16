@@ -591,11 +591,11 @@
           "assigned_to": "engine",
           "github_issue": 2240,
           "branch": "exec/2026-11-11__release-v9.17/EPIC-02",
-          "commit_sha": "617dc36ba42a4d6ca558dda525ce452583ca07e1",
+          "commit_sha": "452438876e381fbb11a0a688a4954785fa0537c3",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": "2026-11-16T10:05:07Z",
+          "completed_utc": "2026-11-16T10:43:05Z",
           "acceptance_verified": true,
           "spec_references": [
             "docs/specs/frontend/pages/journal.md",
@@ -606,7 +606,7 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.push",
           "sign_off_record": null,
-          "notes": "First-time-right: 2026-11-16 pass A \u2014 7 raised (journal.md \u00a74/JA-09 premise false: GET /positions is open-only, main.py get_positions(status='open') \u2192 user ruling 2026-11-16 as Frontend Specs/Head of UX: add closed from GET /trades, which carries entry_note/exit_note/tags); 20 raised (Reflections single empty copy misleads under the shared filter \u2192 ruling: separate 'No closed trades match {TICKER}.' + Clear filter); 1 raised (Position notes P&L badge shows GBP pnl, position_service.py:359, with native symbol \u2192 ruling: format GBP, in-file fix); 2/8/19 done (ticker filter: '', 'aa', 'LGEN', 'LGEN.L', '  aapl '; red-flag debounce 300 ms/Enter; tab switch keeps filter); 3 done (match helper node -e); 4 done (populated fixtures for all three panels in axe/375px); 5 high (new Journal module); 6 done (old copy grep: 12 e2e specs + test_red_flag_checklist_skipped.py + test_si05 digest URL); 11,17,18 N/A or done (no new write; fixtures from /trades and /positions contract shapes). | First-time-right: 2026-11-16 pass B \u2014 9 done (own gap fixed: Position notes date inputs overflowed 66 px at 375 px, now stacked below sm); 10 done (journal.md v1.1, navigation.md v2.3, glossary v1.4, positions.md v2.28, reflections.md v0.4, red_flag_journal.md v1.5 in the same commit); 13 done (table pipe counts read back, all 6 files); 15 done (toReflectionRow shared by TradeReflection.list and Reflections; ['positions'] queryFn identical to Positions.js); 12,14,16 N/A (no live read, no stored-data meaning change); 18/19 re-run against journal.spec.js (fixtures from contract shapes, non-exact FX rounding; filter matrix '', 'aa', 'LGEN', 'lgen.l', key-by-key, mid-word edit, Enter, saved ticker). /code-review high: 9 findings, all fixed in-commit (URL-driven input under react-router 7 startTransition \u2192 local state; Enter reads the box; page reset in render; shared ['positions']/['trades'] caches; placeholderData; UK ticker on closed cards; ui/tabs wrapper; DataState for loading/error). | Commit 617dc36b. Deviation check vs journal.md v1.1: none (the three build-time rulings are in the spec, not deviations). ci_pending: Playwright E2E Acceptance Tests 43845620070, CI Pytest Suite 43845619756, Frontend Production Build 43845619833 \u2014 STEP 3.2.A must clear before DoQ sign-off."
+          "notes": "First-time-right: 2026-11-16 pass A \u2014 7 raised (journal.md \u00a74/JA-09 premise false: GET /positions is open-only, main.py get_positions(status='open') \u2192 user ruling 2026-11-16 as Frontend Specs/Head of UX: add closed from GET /trades, which carries entry_note/exit_note/tags); 20 raised (Reflections single empty copy misleads under the shared filter \u2192 ruling: separate 'No closed trades match {TICKER}.' + Clear filter); 1 raised (Position notes P&L badge shows GBP pnl, position_service.py:359, with native symbol \u2192 ruling: format GBP, in-file fix); 2/8/19 done (ticker filter: '', 'aa', 'LGEN', 'LGEN.L', '  aapl '; red-flag debounce 300 ms/Enter; tab switch keeps filter); 3 done (match helper node -e); 4 done (populated fixtures for all three panels in axe/375px); 5 high (new Journal module); 6 done (old copy grep: 12 e2e specs + test_red_flag_checklist_skipped.py + test_si05 digest URL); 11,17,18 N/A or done (no new write; fixtures from /trades and /positions contract shapes). | First-time-right: 2026-11-16 pass B \u2014 9 done (own gap fixed: Position notes date inputs overflowed 66 px at 375 px, now stacked below sm); 10 done (journal.md v1.1, navigation.md v2.3, glossary v1.4, positions.md v2.28, reflections.md v0.4, red_flag_journal.md v1.5 in the same commit); 13 done (table pipe counts read back, all 6 files); 15 done (toReflectionRow shared by TradeReflection.list and Reflections; ['positions'] queryFn identical to Positions.js); 12,14,16 N/A (no live read, no stored-data meaning change); 18/19 re-run against journal.spec.js (fixtures from contract shapes, non-exact FX rounding; filter matrix '', 'aa', 'LGEN', 'lgen.l', key-by-key, mid-word edit, Enter, saved ticker). /code-review high: 9 findings, all fixed in-commit (URL-driven input under react-router 7 startTransition \u2192 local state; Enter reads the box; page reset in render; shared ['positions']/['trades'] caches; placeholderData; UK ticker on closed cards; ui/tabs wrapper; DataState for loading/error). | Commit 617dc36b. Deviation check vs journal.md v1.1: none (the three build-time rulings are in the spec, not deviations). CI on 617dc36b: 8 of 9 workflows success (CI Pytest Suite 43845619756, Frontend Production Build 43845619833); Playwright E2E Acceptance Tests 43845620070 failed SC-JNL-20 (24 px overflow at 375 px from the Red flags event-type select, CI fonts). Fixed in 45243887 (select capped to the column; test waits for the selected tab). ci_pending: Playwright on 45243887 \u2014 STEP 3.2.A must clear before DoQ sign-off."
         },
         "ST-06": {
           "title": "Merge Reports and Performance Analytics into one Performance page",
@@ -632,7 +632,7 @@
         "ST-07": {
           "title": "Use tabs or sections on the long single-scroll pages",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "in_progress",
           "assigned_to": "engine",
           "github_issue": 2242,
           "branch": "exec/2026-11-11__release-v9.17/EPIC-02",
@@ -652,7 +652,7 @@
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": ""
+          "notes": "First-time-right: 2026-11-16 pass A \u2014 1 N/A (navigation only, no value shown); 2/19 done (Trade Plan 'sizing' link present iff WhatIfSizingPreview renders: stop '', null, 0, -1, 'abc' \u2192 absent; 140 \u2192 present; stop cleared after load \u2192 link drops; Benchmark 'open-positions' absent when no open positions and not loading/error; parity/yearly/trade-log absent while loading or on error; ?section= ignored on the other tabs; ?section=unknown does nothing); 3 done (current-section pick: node -e over rect lists); 4 done (populated Benchmark and Trade Plan fixtures for the 390 px scroll check); 5 high (new shared module reused by ST-06); 6 done (grep tests/e2e for the 7 new headings and 4 index labels: no unscoped collisions; Strategy Benchmark h2s unchanged); 7 done (TradePlan reads only primitive ?edit/ticker/market/clone_from values, so writing ?section= re-runs no effect); 8,11,17,18 N/A (no dates, thresholds, writes); 20 done (labels as decision record \u00a73)."
         }
       }
     }
