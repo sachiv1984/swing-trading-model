@@ -17,7 +17,7 @@
  *              with the new year and re-renders the table.
  *
  * Infrastructure: Playwright page.route() network interception. No live backend.
- * ROUTING NOTE: App uses HashRouter — navigate via page.goto('/#/Reports'), then click the
+ * ROUTING NOTE: App uses HashRouter — navigate via page.goto('/#/Performance?section=reports'), then click the
  * relevant tab (default tab is "Performance").
  */
 
@@ -92,15 +92,16 @@ async function setupPage(page) {
     route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(monthlyPnlResponse(months)) });
   });
 
-  await page.goto('/#/Reports');
+  await page.goto('/#/Performance?section=reports');
 }
 
 test('SC-TYL-01: selecting an older tax year and clicking the restated-months notice link lands on the Monthly tab filtered to that year', async ({ page }) => {
   await setupPage(page);
-  await page.getByRole('button', { name: /tax year p&l/i }).click();
+  await page.getByRole('tab', { name: 'Tax year' }).click();
 
   // Select the older tax year (>=1 restated month per the mock above).
-  await page.locator('button[role="combobox"]').first().click();
+  // ST-06: the page header now has a period combobox; scope to Reports.
+  await page.locator('section#reports button[role="combobox"]').first().click();
   await page.getByRole('option', { name: `${OLDER_TAX_YEAR}/${String(OLDER_TAX_YEAR + 1).slice(2)}` }).click();
 
   const notice = page.getByTestId('taxyear-restated-notice');
@@ -123,15 +124,17 @@ test('SC-TYL-01: selecting an older tax year and clicking the restated-months no
 
 test('SC-TYL-02: direct navigation to the Monthly tab still defaults to the current tax year, even after a prior notice-link visit', async ({ page }) => {
   await setupPage(page);
-  await page.getByRole('button', { name: /tax year p&l/i }).click();
-  await page.locator('button[role="combobox"]').first().click();
+  await page.getByRole('tab', { name: 'Tax year' }).click();
+  // ST-06: the page header now has a period combobox; scope to Reports.
+  await page.locator('section#reports button[role="combobox"]').first().click();
   await page.getByRole('option', { name: `${OLDER_TAX_YEAR}/${String(OLDER_TAX_YEAR + 1).slice(2)}` }).click();
   await page.getByTestId('taxyear-restated-notice').getByRole('button', { name: 'Monthly tab' }).click();
   await expect(page.getByTestId('monthly-tax-year-filter')).toContainText(String(OLDER_TAX_YEAR));
 
   // Now navigate away and back to Monthly via the plain tab button (not the notice link).
-  await page.getByRole('button', { name: /^performance$/i }).click();
-  await page.getByRole('button', { name: /monthly p&l/i }).click();
+  // ST-06: leave Monthly through the Reports tablist, then come back.
+  await page.getByTestId('performance-report-tab-tax-year').click();
+  await page.getByTestId('performance-report-tab-monthly').click();
 
   await expect(page.getByTestId('monthly-tax-year-filter')).toContainText(
     `${CURRENT_TAX_YEAR}/${String(CURRENT_TAX_YEAR + 1).slice(2)}`
@@ -141,7 +144,7 @@ test('SC-TYL-02: direct navigation to the Monthly tab still defaults to the curr
 
 test('SC-TYL-03: changing the Monthly tab Tax Year filter re-fetches and re-renders for the new year', async ({ page }) => {
   await setupPage(page);
-  await page.getByRole('button', { name: /monthly p&l/i }).click();
+  await page.getByRole('tab', { name: 'Monthly' }).click();
   await expect(page.getByTestId('monthly-realised-pnl-cell')).toContainText('£111.00', { timeout: 8000 });
 
   await page.getByTestId('monthly-tax-year-filter').click();

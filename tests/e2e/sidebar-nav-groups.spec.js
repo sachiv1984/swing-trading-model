@@ -53,7 +53,7 @@ const AREAS = [
   { key: 'today',     label: 'Today',       items: ['Dashboard', 'Notifications'] },
   { key: 'portfolio', label: 'Portfolio',   items: ['Positions', 'Trade Entry', 'Risk Dashboard'] },
   { key: 'find',      label: 'Find trades', items: ['Signals', 'Screener', 'Watchlist', 'Research', 'Trade Plans', 'Ticker Universe'] },
-  { key: 'review',    label: 'Review',      items: ['Trade History', 'Analytics', 'Reports', 'Strategy Benchmark', 'Replay', 'Journal', 'Weekly Digest'] },
+  { key: 'review',    label: 'Review',      items: ['Trade History', 'Performance', 'Strategy Benchmark', 'Replay', 'Journal', 'Weekly Digest'] },
   { key: 'settings',  label: 'Settings',    items: ['Settings', 'System Status'] },
 ];
 
@@ -71,8 +71,7 @@ const HREFS = {
   'Trade Plans': '#/TradePlans',
   'Ticker Universe': '#/TickerUniverse',
   'Trade History': '#/TradeHistory',
-  'Analytics': '#/PerformanceAnalytics',
-  'Reports': '#/Reports',
+  'Performance': '#/Performance',
   'Strategy Benchmark': '#/StrategyBenchmark',
   'Replay': '#/Replay',
   'Journal': '#/Journal',
@@ -178,12 +177,12 @@ test('SC-SNV-03: clicking a non-active area header expands and then collapses it
   await expectExpanded(nav, 'review', false);
   await areaBtn(nav, 'review').click();
   await expectExpanded(nav, 'review', true);
-  await expect(navLink(nav, 'Analytics')).toBeVisible();
+  await expect(navLink(nav, 'Performance')).toBeVisible();
   await expect(navLink(nav, 'Weekly Digest')).toBeVisible();
 
   await areaBtn(nav, 'review').click();
   await expectExpanded(nav, 'review', false);
-  await expect(navLink(nav, 'Analytics')).toHaveCount(0, { timeout: 3000 });
+  await expect(navLink(nav, 'Performance')).toHaveCount(0, { timeout: 3000 });
 });
 
 test('SC-SNV-04: clicking the active area header does not collapse it', async ({ page }) => {
@@ -258,7 +257,7 @@ test('SC-SNV-08: every area lists exactly its spec entries in order, with the ri
     await expectExpanded(nav, area.key, true);
   }
   const links = nav.getByRole('link');
-  await expect(links).toHaveCount(20); // ST-05 (v9.17): Journal replaces two entries
+  await expect(links).toHaveCount(19); // ST-05 (v9.17): Journal replaces two entries; ST-06: Performance replaces two
   const got = await links.evaluateAll((els) =>
     els.map((e) => [e.textContent.trim(), e.getAttribute('href')])
   );

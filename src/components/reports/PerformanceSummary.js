@@ -2,6 +2,8 @@ import { motion } from "framer-motion";
 import { TrendingUp, TrendingDown, Target, Shield, DollarSign, Percent } from "lucide-react";
 import { formatCurrency } from "../../lib/format";
 
+// Performance → Analytics (performance.md v1.1 §4): Best / Worst Trade rows
+// removed; Best / Worst Trades lists them with detail.
 export default function PerformanceSummary({ metrics, period }) {
   const netPnL = metrics.totalPnL - metrics.totalFees;
   const summaryItems = [
@@ -28,18 +30,6 @@ export default function PerformanceSummary({ metrics, period }) {
       value: formatCurrency(metrics.avgLoss),
       icon: Shield,
       color: "text-amber-400"
-    },
-    {
-      label: "Best Trade",
-      value: formatCurrency(metrics.bestTrade),
-      icon: TrendingUp,
-      color: "text-emerald-400"
-    },
-    {
-      label: "Worst Trade",
-      value: formatCurrency(metrics.worstTrade),
-      icon: TrendingDown,
-      color: "text-rose-400"
     },
     {
       label: "Total Fees",

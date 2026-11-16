@@ -13,10 +13,10 @@ export default function ConsistencyMetrics({ metrics }) {
             </div>
             <div>
               <p className="text-xs text-slate-600 dark:text-slate-400">Consecutive Months Profitable</p>
-              <p className="text-2xl font-bold text-white mt-1">{metrics.consecutiveProfitableMonths}</p>
+              <p className="text-2xl font-bold text-white mt-1">{metrics.consecutiveProfitableMonths ?? "—"}</p>
             </div>
           </div>
-          <p className="text-xs text-slate-600 dark:text-slate-400">Current streak: {metrics.currentStreak} months</p>
+          <p className="text-xs text-slate-600 dark:text-slate-400">Current streak: {metrics.currentStreak ?? "—"} months</p>
         </div>
 
         <div className="p-4 rounded-lg bg-slate-900/50 border border-slate-700/30">
@@ -30,7 +30,7 @@ export default function ConsistencyMetrics({ metrics }) {
             </div>
           </div>
           <p className="text-xs text-slate-600 dark:text-slate-400">
-            {metrics.winRateStdDev < 10 ? "Very consistent" : metrics.winRateStdDev < 20 ? "Consistent" : "Variable"}
+            {metrics.winRateStdDev == null ? "No data" : metrics.winRateStdDev < 10 ? "Very consistent" : metrics.winRateStdDev < 20 ? "Consistent" : "Variable"}
           </p>
         </div>
 

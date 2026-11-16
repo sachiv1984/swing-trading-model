@@ -10,7 +10,7 @@
  *
  * Infrastructure:
  * - Playwright page.route() network interception. No live backend required.
- * - ROUTING NOTE: App uses HashRouter — navigate via page.goto('/#/Reports').
+ * - ROUTING NOTE: App uses HashRouter — navigate via page.goto('/#/Performance?section=reports').
  * - api.analytics.metrics(period) → GET /analytics/metrics?period=<param>
  *   doFetch returns response.data; analyticsData = data object directly.
  * - Period selector maps: "month" → "last_month", "week" → "last_7_days", etc.
@@ -128,7 +128,7 @@ test.describe('SC-REP-01 — Performance tab summary stats', () => {
     await mockFallback(page);
     await mockAnalyticsMetrics(page, ANALYTICS_FULL);
     await mockPositions(page, []);
-    await page.goto('/#/Reports');
+    await page.goto('/#/Performance?section=reports');
     // Wait for all API calls to settle before asserting
   });
 
@@ -152,7 +152,8 @@ test.describe('SC-REP-01 — Performance tab summary stats', () => {
 
   test('SC-REP-01d: Profit Factor StatsCard renders value from executive_metrics', async ({ page }) => {
     // metrics.profitFactor = analyticsData.executive_metrics.profit_factor = 1.64
-    await expect(page.getByText('1.64')).toBeVisible({ timeout: 8000 });
+    // ST-06: scoped to the Summary cards (Key Insights also quotes the figure).
+    await expect(page.getByTestId('performance-summary-cards').getByText('1.64', { exact: true })).toBeVisible({ timeout: 8000 });
   });
 });
 
@@ -171,13 +172,15 @@ test.describe('SC-REP-02 — Period selector maps to correct backend period para
     await mockFallback(page);
     await mockAnalyticsMetrics(page, ANALYTICS_FULL);
     await mockPositions(page, []);
-    await page.goto('/#/Reports');
+    await page.goto('/#/Performance?section=reports');
     // Allow request to fire
     await page.waitForTimeout(500);
 
     const analyticsRequests = requests.filter(u => u.includes('/analytics/metrics'));
     expect(analyticsRequests.length).toBeGreaterThan(0);
-    expect(analyticsRequests[0]).toContain('period=last_month');
+    // ST-06: the staleness indicator may request /analytics/metrics first; the
+    // page's own request carries the period.
+    expect(analyticsRequests.some((u) => u.includes('period=last_month'))).toBe(true);
   });
 
   test('SC-REP-02b: Selecting "Last 7 Days" re-fetches with period=last_7_days', async ({ page }) => {
@@ -190,7 +193,7 @@ test.describe('SC-REP-02 — Period selector maps to correct backend period para
     await mockFallback(page);
     await mockAnalyticsMetrics(page, ANALYTICS_FULL);
     await mockPositions(page, []);
-    await page.goto('/#/Reports');
+    await page.goto('/#/Performance?section=reports');
     await page.waitForTimeout(300);
 
     // Clear captured requests to isolate the selector change
@@ -218,7 +221,7 @@ test.describe('SC-REP-02 — Period selector maps to correct backend period para
     await mockFallback(page);
     await mockAnalyticsMetrics(page, ANALYTICS_FULL);
     await mockPositions(page, []);
-    await page.goto('/#/Reports');
+    await page.goto('/#/Performance?section=reports');
     await page.waitForTimeout(300);
 
     requests.length = 0;
@@ -254,11 +257,11 @@ test.describe('SC-REP-03 — Loading state during fetch', () => {
         body: JSON.stringify(ANALYTICS_FULL),
       });
     });
-    await page.goto('/#/Reports');
+    await page.goto('/#/Performance?section=reports');
 
     // Loading spinner should be visible before data arrives
     // The page renders <Loader2 className="animate-spin"> during isLoading
-    await expect(page.locator('.animate-spin')).toBeVisible({ timeout: 3000 });
+    await expect(page.locator('section#summary .animate-spin')).toBeVisible({ timeout: 3000 });
 
     // After load completes, stats should appear
     await expect(page.getByText(/\+£1,250\.50/)).toBeVisible({ timeout: 5000 });
@@ -275,7 +278,7 @@ test.describe('SC-REP-04 — Empty state (no trades for period)', () => {
     await mockFallback(page);
     await mockAnalyticsMetrics(page, ANALYTICS_EMPTY);
     await mockPositions(page, []);
-    await page.goto('/#/Reports');
+    await page.goto('/#/Performance?section=reports');
   });
 
   test('SC-REP-04a: Total P&L shows £0.00 when no trades', async ({ page }) => {
@@ -321,7 +324,9 @@ const MONTHLY_PNL_WITH_COMPLIANCE = {
   },
 };
 
-test.describe('SC-REP-05: Monthly P&L — Strategy Compliance section', () => {
+// ST-06 (v9.17, performance.md v1.1 §4): the Monthly "Strategy Compliance" block
+// moved to the Compliance section as "Last 30 days", without Most Frequent Breach.
+test.describe('SC-REP-05: Compliance — Last 30 days block (moved from Monthly)', () => {
   test.beforeEach(async ({ page }) => {
     // Fallback registered FIRST (lowest priority — Playwright uses LIFO route evaluation).
     await page.route(new RegExp(`${API}/`), (route) =>
@@ -336,14 +341,16 @@ test.describe('SC-REP-05: Monthly P&L — Strategy Compliance section', () => {
     await page.route(`${API}/reports/monthly-pnl*`, (route) =>
       route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MONTHLY_PNL_WITH_COMPLIANCE) })
     );
-    await page.goto('/#/Reports');
-    // Navigate to Monthly P&L tab
-    await page.getByRole('button', { name: /Monthly P&L/i }).click();
+    await page.goto('/#/Performance?section=compliance');
   });
 
-  test('SC-REP-05a: Strategy Compliance heading visible in Monthly P&L tab', async ({ page }) => {
-    await expect(page.getByTestId('strategy-compliance-section')).toBeVisible({ timeout: 8000 });
-    await expect(page.getByText('Strategy Compliance')).toBeVisible({ timeout: 5000 });
+  test('SC-REP-05a: the Last 30 days block is in Compliance, not in the Monthly view', async ({ page }) => {
+    const block = page.locator('section#compliance').getByTestId('strategy-compliance-section');
+    await expect(block).toBeVisible({ timeout: 8000 });
+    await expect(block.getByText('Last 30 days', { exact: true })).toBeVisible();
+    await expect(page.getByTestId('compliance-rule-breach')).toHaveCount(0);
+    await page.getByTestId('performance-report-tab-monthly').click();
+    await expect(page.locator('section#reports').getByTestId('strategy-compliance-section')).toHaveCount(0);
   });
 
   test('SC-REP-05b: Validation Pass Rate and Override Count metric fields visible', async ({ page }) => {

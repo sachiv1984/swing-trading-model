@@ -667,7 +667,7 @@ class TestDeepLinks:
         expected_footer = (
             "🔗 [Risk Dashboard](https://app.example.com/#/RiskDashboard)"
             " · [Red Flag Journal](https://app.example.com/#/Journal?section=red-flags)"
-            " · [Strategy Compliance](https://app.example.com/#/PerformanceAnalytics?section=strategy-compliance)"
+            " · [Strategy Compliance](https://app.example.com/#/Performance?section=compliance)"
         )
         assert section.endswith(expected_footer)
         assert "RiskDashboard?section" not in section

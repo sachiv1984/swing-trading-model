@@ -13,7 +13,7 @@
  *   SC-MRU-05  Monthly Financial Table rows unchanged — still realised-only per row (AC regression)
  *
  * Infrastructure: Playwright page.route() network interception. No live backend.
- * ROUTING NOTE: App uses HashRouter — navigate via page.goto('/#/Reports'), then click
+ * ROUTING NOTE: App uses HashRouter — navigate via page.goto('/#/Performance?section=reports'), then click
  * the "Monthly P&L" tab (default tab is "Performance").
  */
 
@@ -51,8 +51,8 @@ async function mockMonthlyPnl(page, response) {
 }
 
 async function gotoMonthlyTab(page) {
-  await page.goto('/#/Reports');
-  await page.getByRole('button', { name: /monthly p&l/i }).click();
+  await page.goto('/#/Performance?section=reports');
+  await page.getByRole('tab', { name: 'Monthly' }).click();
 }
 
 test('SC-MRU-01: Unrealised P&L Card shown below the Monthly Financial Table', async ({ page }) => {
@@ -88,7 +88,7 @@ test('SC-MRU-03: Positive unrealised P&L renders emerald; negative renders rose'
 
   await mockMonthlyPnl(page, monthlyPnlResponse({ months: MONTHS, estimatedUnrealisedPnl: -120.00 }));
   await page.reload();
-  await page.getByRole('button', { name: /monthly p&l/i }).click();
+  await page.getByRole('tab', { name: 'Monthly' }).click();
 
   const negativeFigure = page.getByTestId('monthly-unrealised-pnl-card').locator('p.text-2xl');
   await expect(negativeFigure).toHaveClass(/text-rose-400/);

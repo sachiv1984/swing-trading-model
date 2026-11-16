@@ -294,7 +294,7 @@ def _format_deep_links(frontend_url: Optional[str]) -> str:
     base = frontend_url.rstrip("/")
     risk_url = f"{base}/#/RiskDashboard"
     rfj_url = f"{base}/#/Journal?section=red-flags"
-    compliance_url = f"{base}/#/PerformanceAnalytics?section=strategy-compliance"
+    compliance_url = f"{base}/#/Performance?section=compliance"
     return (
         f"🔗 [Risk Dashboard]({risk_url}) · [Red Flag Journal]({rfj_url})"
         f" · [Strategy Compliance]({compliance_url})"

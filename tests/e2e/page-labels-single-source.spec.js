@@ -22,19 +22,19 @@ const API = 'http://localhost:8000';
 // [route hash, canonical label] for every page with a sidebar entry
 // (navigation.md v2.3 §Page Placement — 20 entries; ST-01, BLG-FE-250, v9.16
 // added Research and Trade Plans; ST-05, BLG-FE-258, v9.17 replaced Trade
-// Reflections and Red Flag Journal with Journal).
+// Reflections and Red Flag Journal with Journal; ST-06, BLG-FE-259, v9.17
+// replaced Analytics and Reports with Performance — 19 entries).
 const SIDEBAR_PAGES = [
   ['/#/', 'Dashboard'],
   ['/#/Positions', 'Positions'],
   ['/#/TradeEntry', 'Trade Entry'],
   ['/#/TradeHistory', 'Trade History'],
   ['/#/Journal', 'Journal'],
-  ['/#/PerformanceAnalytics', 'Analytics'],
+  ['/#/Performance', 'Performance'],
   ['/#/StrategyBenchmark', 'Strategy Benchmark'],
   ['/#/Replay', 'Replay'],
   ['/#/RiskDashboard', 'Risk Dashboard'],
   ['/#/Signals', 'Signals'],
-  ['/#/Reports', 'Reports'],
   ['/#/Screener', 'Screener'],
   ['/#/Watchlist', 'Watchlist'],
   ['/#/Research', 'Research'],
@@ -87,7 +87,7 @@ test('SC-PL-02: the palette lists every palette page under its canonical label',
     await expect(page.getByRole('option', { name: label, exact: true })).toHaveCount(1);
   }
   // Superseded labels are gone (ST-05, v9.17: journal.md JA-14).
-  for (const old of ['Trade Reflection', 'Trade Reflections', 'Red Flag Journal']) {
+  for (const old of ['Trade Reflection', 'Trade Reflections', 'Red Flag Journal', 'Analytics', 'Reports']) {
     await input.fill(old);
     await expect(page.getByRole('option', { name: old, exact: true })).toHaveCount(0);
   }

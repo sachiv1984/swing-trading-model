@@ -5,7 +5,9 @@ export default function KeyInsightsCard({ metrics, winRate }) {
   const insights = [];
 
   // 1. Sharpe Ratio assessment
-  if (metrics.sharpeRatio !== undefined) {
+  // != null, not !== undefined: the Performance page passes null for a
+  // metric the server did not return (performance.md v1.1 §5.2).
+  if (metrics.sharpeRatio != null) {
     if (metrics.sharpeRatio > 2) {
       insights.push(`Excellent risk-adjusted returns with a Sharpe ratio of ${metrics.sharpeRatio.toFixed(2)}`);
     } else if (metrics.sharpeRatio > 1) {
@@ -38,7 +40,7 @@ export default function KeyInsightsCard({ metrics, winRate }) {
   }
 
   // 4. Expectancy insight
-  if (metrics.expectancy !== undefined) {
+  if (metrics.expectancy != null) {
     if (metrics.expectancy > 50) {
       insights.push(`Strong positive edge - expecting ${formatCurrency(metrics.expectancy, { signed: true })} profit per trade`);
     } else if (metrics.expectancy > 0) {

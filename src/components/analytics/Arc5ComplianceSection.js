@@ -2,7 +2,6 @@ import { useQuery } from "@tanstack/react-query";
 import { ShieldCheck, Activity, AlertTriangle, ClipboardList, Info } from "lucide-react";
 import { cn } from "../../lib/utils";
 import { api } from "../../api/base44Client";
-import useSectionScroll from "../../hooks/useSectionScroll";
 import { formatPercent } from "../../lib/format";
 
 // Low-trade-volume advisory threshold (ST-01, EPIC-01, v9.2, BLG-FEAT-44).
@@ -47,9 +46,10 @@ export default function Arc5ComplianceSection() {
     retry: 1,
   });
 
-  // analytics.md §19.1 Section Link (ST-04, BLG-FE-253): ?section=strategy-compliance
-  // scrolls here once the section has rendered with data, an error or an empty state.
-  const { sectionRef, headingRef } = useSectionScroll("strategy-compliance", !isLoading);
+  // The §19.1 section link (ST-04, BLG-FE-253) is superseded by the
+  // Performance page's section index (performance.md v1.1 §3, §7; ST-06,
+  // v9.17): the old ?section=strategy-compliance link redirects to
+  // ?section=compliance. The id stays as an anchor for existing links.
 
   const metrics = data;
 
@@ -99,11 +99,9 @@ export default function Arc5ComplianceSection() {
     <div
       id="strategy-compliance"
       data-testid="analytics-section-strategy-compliance"
-      ref={sectionRef}
       className="scroll-mt-20 lg:scroll-mt-4"
     >
       <h2
-        ref={headingRef}
         tabIndex={-1}
         className="text-lg font-semibold text-white mb-4 focus:outline-none"
       >

@@ -19,7 +19,7 @@
  *   SC-MPR-07  Tax Year summary notice is absent when restated_month_count = 0
  *
  * Infrastructure: Playwright page.route() network interception. No live backend.
- * ROUTING NOTE: App uses HashRouter — navigate via page.goto('/#/Reports'), then click the relevant tab
+ * ROUTING NOTE: App uses HashRouter — navigate via page.goto('/#/Performance?section=reports'), then click the relevant tab
  * (default tab is "Performance").
  */
 
@@ -91,8 +91,8 @@ async function mockTaxYear(page, restatedMonthCount) {
 }
 
 async function gotoMonthlyTab(page) {
-  await page.goto('/#/Reports');
-  await page.getByRole('button', { name: /monthly p&l/i }).click();
+  await page.goto('/#/Performance?section=reports');
+  await page.getByRole('tab', { name: 'Monthly' }).click();
 }
 
 test('SC-MPR-01: "Restated" marker shows only on months with restated = true', async ({ page }) => {
@@ -221,8 +221,8 @@ test('SC-MPR-06: Tax Year notice shows when restated_month_count >= 1 and links 
   await mockFallback(page);
   await mockTaxYear(page, 2);
   await mockMonthlyPnl(page, [RESTATED_UP]);
-  await page.goto('/#/Reports');
-  await page.getByRole('button', { name: /tax year p&l/i }).click();
+  await page.goto('/#/Performance?section=reports');
+  await page.getByRole('tab', { name: 'Tax year' }).click();
 
   const notice = page.getByTestId('taxyear-restated-notice');
   await expect(notice).toBeVisible({ timeout: 8000 });
@@ -236,8 +236,8 @@ test('SC-MPR-06: Tax Year notice shows when restated_month_count >= 1 and links 
 test('SC-MPR-06b: Tax Year notice uses singular wording at restated_month_count = 1', async ({ page }) => {
   await mockFallback(page);
   await mockTaxYear(page, 1);
-  await page.goto('/#/Reports');
-  await page.getByRole('button', { name: /tax year p&l/i }).click();
+  await page.goto('/#/Performance?section=reports');
+  await page.getByRole('tab', { name: 'Tax year' }).click();
 
   await expect(page.getByTestId('taxyear-restated-notice')).toContainText(
     'Includes 1 restated month — see the Monthly tab for details.',
@@ -248,8 +248,8 @@ test('SC-MPR-06b: Tax Year notice uses singular wording at restated_month_count 
 test('SC-MPR-07: Tax Year notice is absent when restated_month_count = 0', async ({ page }) => {
   await mockFallback(page);
   await mockTaxYear(page, 0);
-  await page.goto('/#/Reports');
-  await page.getByRole('button', { name: /tax year p&l/i }).click();
+  await page.goto('/#/Performance?section=reports');
+  await page.getByRole('tab', { name: 'Tax year' }).click();
 
   // Wait for the summary bar (loaded state) before asserting absence.
   await expect(page.getByText('Total Realised P&L')).toBeVisible({ timeout: 8000 });

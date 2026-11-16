@@ -15,7 +15,6 @@ import {
   Moon,
   TrendingUp,
   ExternalLink,
-  FileBarChart,
   Zap,
   Activity,
   ShieldAlert,
@@ -97,8 +96,7 @@ const NAV_AREAS = [
     key: "review",
     items: [
       { name: PAGE_LABELS.TradeHistory,         icon: History,      page: "TradeHistory" },
-      { name: PAGE_LABELS.PerformanceAnalytics, icon: TrendingUp,   page: "PerformanceAnalytics" },
-      { name: PAGE_LABELS.Reports,              icon: FileBarChart, page: "Reports" },
+      { name: PAGE_LABELS.Performance,          icon: TrendingUp,   page: "Performance" },
       { name: PAGE_LABELS.StrategyBenchmark,    icon: BarChart2,    page: "StrategyBenchmark" },
       { name: PAGE_LABELS.Replay,               icon: RotateCcw,    page: "Replay" },
       { name: PAGE_LABELS.Journal,              icon: NotebookPen,  page: "Journal" },

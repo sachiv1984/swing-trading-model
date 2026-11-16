@@ -90,9 +90,9 @@ test('SC-DCO-03: MonitorModal DialogContent honours max-w-2xl/flex', async ({ pa
 
 test('SC-DCO-04: ExportModal DialogTitle honours font-bold', async ({ page }) => {
   await mockFallback(page);
-  await page.goto('/#/Reports');
+  await page.goto('/#/Performance?section=reports');
 
-  await page.getByRole('button', { name: 'Export' }).click();
+  await page.getByRole('button', { name: 'Export', exact: true }).click();
 
   const title = page.getByRole('heading', { name: 'Export Report' });
   await expect(title).toBeVisible({ timeout: 10000 });

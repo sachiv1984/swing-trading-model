@@ -49,13 +49,12 @@
  */
 import DashboardHome from './pages/DashboardHome';
 import Positions from './pages/Positions';
-import Reports from './pages/Reports';
 import Settings from './pages/Settings';
 import Signals from './pages/Signals';
 import TradeEntry from './pages/TradeEntry';
 import TradeHistory from './pages/TradeHistory';
 import SystemStatus from './pages/SystemStatus';
-import PerformanceAnalytics from './pages/PerformanceAnalytics';
+import Performance from './pages/Performance';
 import RiskDashboard from './pages/RiskDashboard';
 import Watchlist from './pages/Watchlist';
 import WeeklyDigest from './pages/WeeklyDigest';
@@ -72,13 +71,12 @@ import __Layout from './Layout.js';
 export const PAGES = {
     "DashboardHome": DashboardHome,
     "Positions": Positions,
-    "Reports": Reports,
     "Settings": Settings,
     "Signals": Signals,
     "TradeEntry": TradeEntry,
     "TradeHistory": TradeHistory,
     "SystemStatus": SystemStatus,
-    "PerformanceAnalytics": PerformanceAnalytics,
+    "Performance": Performance,
     "RiskDashboard": RiskDashboard,
     "Watchlist": Watchlist,
     "WeeklyDigest": WeeklyDigest,

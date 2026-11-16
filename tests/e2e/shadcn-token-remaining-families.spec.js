@@ -174,8 +174,8 @@ test.describe('SC-TOK-02 — accent token (TradeEntry.js Select item highlight)'
 
 test.describe('SC-TOK-03 — destructive token (Reports.js download-failure toast)', () => {
   async function gotoTaxYearTab(page) {
-    await page.goto('/#/Reports');
-    await page.getByRole('button', { name: /tax year p&l/i }).click();
+    await page.goto('/#/Performance?section=reports');
+    await page.getByRole('tab', { name: 'Tax year' }).click();
   }
 
   test('SC-TOK-03: PDF download failure toast resolves to the destructive token', async ({ page }) => {

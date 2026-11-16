@@ -21,7 +21,7 @@
  * via page.addInitScript setting localStorage["theme"], same pattern as
  * heading-light-theme-contrast.spec.js.
  *
- * ROUTING NOTE: App uses HashRouter — navigate via page.goto('/#/Reports'),
+ * ROUTING NOTE: App uses HashRouter — navigate via page.goto('/#/Performance?section=reports'),
  * then click the "Tax Year P&L" tab (default tab is "Performance").
  */
 
@@ -100,8 +100,8 @@ async function mockArc5Compliance(page, tradePlanAdherenceRate) {
 }
 
 async function gotoTaxYearTab(page) {
-  await page.goto('/#/Reports');
-  await page.getByRole('button', { name: /tax year p&l/i }).click();
+  await page.goto('/#/Performance?section=reports');
+  await page.getByRole('tab', { name: 'Tax year' }).click();
   await expect(page.getByTestId('si02-gate-status-section')).toBeVisible({ timeout: 10000 });
 }
 

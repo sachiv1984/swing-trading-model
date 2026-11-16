@@ -39,6 +39,7 @@
 'use strict';
 
 const { test, expect } = require('./fixtures/api-status-guard');
+const { mockAnalyticsMetrics } = require('./fixtures/analytics-metrics');
 const {
   CORRELATION_RESPONSE,
   CORRELATION_ERROR_RESPONSE,
@@ -106,7 +107,8 @@ async function setupAnalyticsPage(page, correlationPayload = CORRELATION_RESPONS
     { timeout: 15000 }
   );
 
-  await page.goto('/#/PerformanceAnalytics');
+  await mockAnalyticsMetrics(page); // ST-06: Analytics needs a populated metrics response
+  await page.goto('/#/Performance?section=analytics');
 
   // Wait for the correlation endpoint to have responded
   await corrResponsePromise;
@@ -260,7 +262,8 @@ test('SC-CORR-FE-05: data loaded from GET /analytics/market-correlation', async 
     { timeout: 15000 }
   );
 
-  await page.goto('/#/PerformanceAnalytics');
+  await mockAnalyticsMetrics(page); // ST-06: Analytics needs a populated metrics response
+  await page.goto('/#/Performance?section=analytics');
   await corrResponsePromise;
   await expect(page.locator('[class*="animate-spin"]')).toHaveCount(0, { timeout: 10000 });
 

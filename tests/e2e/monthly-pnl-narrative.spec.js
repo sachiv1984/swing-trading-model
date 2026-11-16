@@ -84,8 +84,8 @@ async function mockNarrative(page, { getData = (y) => emptyNarrative(y), post } 
 }
 
 async function gotoMonthlyTab(page) {
-  await page.goto('/#/Reports');
-  await page.getByRole('button', { name: /monthly p&l/i }).click();
+  await page.goto('/#/Performance?section=reports');
+  await page.getByRole('tab', { name: 'Monthly' }).click();
 }
 
 test('SC-MPN-01: the card renders unprompted, with badge and caption, and nothing is generated until Generate', async ({ page }) => {
@@ -142,7 +142,7 @@ test('SC-MPN-04: Hide removes the card, survives a reload, and Show restores it'
   await expect(page.getByTestId('monthly-narrative-show')).toBeVisible();
 
   await page.reload();
-  await page.getByRole('button', { name: /monthly p&l/i }).click();
+  await page.getByRole('tab', { name: 'Monthly' }).click();
   await expect(page.getByTestId('monthly-narrative-show')).toBeVisible({ timeout: 8000 });
   await expect(page.getByTestId('monthly-narrative-card')).toHaveCount(0);
 

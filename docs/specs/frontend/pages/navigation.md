@@ -1,8 +1,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 2.3
-**Last Updated:** 2026-11-16 (ST-05, EPIC-02, v9.17, BLG-FE-258 — one Journal page replaces Trade Reflections and Red Flag Journal in Review; old routes redirect; Journal onward links; keyboard inventory row); prior — 2026-11-09 (ST-06/ST-07, EPIC-02, v9.16, BLG-FE-254/255 — §Onward Links: Signals and Screener gain "Plan this" to Trade Plan; Dashboard Today items built); prior — 2026-11-09 (ST-01/ST-02/ST-03, EPIC-01, v9.16 — BLG-FE-250/251/252 built: §Implementation Status and §Onward Links status updated); prior history retained — see prior entries in version control
+**Version:** 2.4
+**Last Updated:** 2026-11-16 (ST-06, EPIC-02, v9.17, BLG-FE-259 — one Performance page replaces Analytics and Reports in Review; old routes redirect; onward links updated); prior — 2026-11-16 (ST-05, EPIC-02, v9.17, BLG-FE-258 — one Journal page replaces Trade Reflections and Red Flag Journal in Review; old routes redirect; Journal onward links; keyboard inventory row); prior — 2026-11-09 (ST-06/ST-07, EPIC-02, v9.16, BLG-FE-254/255 — §Onward Links: Signals and Screener gain "Plan this" to Trade Plan; Dashboard Today items built); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Design Source:** docs/design/2026-03-24__release-v2.3/sidebar-nav-groups/ux_spec.md
 **Design Source (v1.3 command palette):** docs/design/2026-07-17__release-v7.5/command-palette/ux_spec.md
@@ -71,25 +71,26 @@ Every page in `src/pages/` has one row. Labels are the glossary §UI Labels cano
 | `TradePlan.js` | `/TradePlan` | Trade Plan | Find trades | No | — | Create/edit form for one plan; reached from Trade Plans, Trade Entry, Research and notifications |
 | `TickerUniverse.js` | `/TickerUniverse` | Ticker Universe | Find trades | Yes | 6 | — |
 | `TradeHistory.js` | `/TradeHistory` | Trade History | Review | Yes | 1 | — |
-| `PerformanceAnalytics.js` | `/PerformanceAnalytics` | Analytics | Review | Yes | 2 | — |
-| `Reports.js` | `/Reports` | Reports | Review | Yes | 3 | — |
-| `StrategyBenchmark.js` | `/StrategyBenchmark` | Strategy Benchmark | Review | Yes | 4 | — |
-| `Replay.js` | `/Replay` | Replay | Review | Yes | 5 | — |
-| `Journal.js` | `/Journal` | Journal | Review | Yes | 6 | Reflections, Red flags and Position notes tabs (`journal.md`) |
-| `WeeklyDigest.js` | `/WeeklyDigest` | Weekly Digest | Review | Yes | 7 | — |
+| `Performance.js` | `/Performance` | Performance | Review | Yes | 2 | Summary, Reports, Analytics and Compliance sections (`performance.md`) |
+| `StrategyBenchmark.js` | `/StrategyBenchmark` | Strategy Benchmark | Review | Yes | 3 | — |
+| `Replay.js` | `/Replay` | Replay | Review | Yes | 4 | — |
+| `Journal.js` | `/Journal` | Journal | Review | Yes | 5 | Reflections, Red flags and Position notes tabs (`journal.md`) |
+| `WeeklyDigest.js` | `/WeeklyDigest` | Weekly Digest | Review | Yes | 6 | — |
 | `Settings.js` | `/Settings` | Settings | Settings | Yes | 1 | — |
 | `SystemStatus.js` | `/SystemStatus` | System Status | Settings | Yes | 2 | — |
 | `Dashboard.js` | `/Dashboard` | — | — | No | — | Removed by ST-12; `/Dashboard` redirects to `/` (§Legacy Dashboard Route) |
 | `TradeReflection.js` | `/TradeReflection` | — | — | No | — | Removed by ST-05 (v9.17, BLG-FE-258); redirects to `/Journal?section=reflections` (`journal.md` §5) |
 | `RedFlagJournal.js` | `/RedFlagJournal` | — | — | No | — | Removed by ST-05 (v9.17, BLG-FE-258); redirects to `/Journal?section=red-flags` (`journal.md` §5) |
+| `PerformanceAnalytics.js` | `/PerformanceAnalytics` | — | — | No | — | Removed by ST-06 (v9.17, BLG-FE-259); redirects to `/Performance?section=analytics` (`?section=strategy-compliance` → `section=compliance`; `performance.md` §7) |
+| `Reports.js` | `/Reports` | — | — | No | — | Removed by ST-06 (v9.17, BLG-FE-259); redirects to `/Performance?section=reports` (`performance.md` §7) |
 
-**Counts:** 20 sidebar entries: the 21 of v2.0 less Trade Reflections and Red Flag Journal, plus Journal. 3 detail pages without a sidebar entry, each with a parent. 3 page files removed, each with a redirect.
+**Counts:** 19 sidebar entries: the 21 of v2.0 less Trade Reflections, Red Flag Journal, Analytics and Reports, plus Journal and Performance. 3 detail pages without a sidebar entry, each with a parent. 5 page files removed, each with a redirect.
 
 **`__StandingAlertHarness.js`** is a test-only harness on `/__test/standing-alert` (no Layout). It is not a page and has no placement or label.
 
 **Research landing (new route):** the Research sidebar entry opens `/Research`, which has the page heading "Research" and a single ticker input. Submitting a ticker goes to `/research/:ticker`. Nothing else is on the landing. `BLG-FE-250` builds it.
 
-**Later merges:** the Journal merge (`BLG-FE-258`) shipped at v9.17 (rows above). `BLG-FE-259` may merge Reports and Analytics into one Performance page; it revises this table when it ships.
+**Later merges:** the Journal merge (`BLG-FE-258`) and the Performance merge (`BLG-FE-259`) both shipped at v9.17 (rows above).
 
 ## Default Expansion and Collapse
 
@@ -137,7 +138,7 @@ An existing "Back" button that calls `navigate(-1)` may stay, but it does not re
 
 | Page | Required onward link | Status (v2.1) |
 |------|----------------------|---------------|
-| Dashboard | Each card to its page (Positions, Risk Dashboard, Signals, Screener, Trade History, Journal's Red flags section, Analytics); Today items to their action (`dashboard.md` §1B) | Exists; Today items built — ST-06 (v9.16) |
+| Dashboard | Each card to its page (Positions, Risk Dashboard, Signals, Screener, Trade History, Journal's Red flags section, Performance's Compliance section); Today items to their action (`dashboard.md` §1B) | Exists; Today items built — ST-06 (v9.16) |
 | Notifications | Notification Preferences | Exists |
 | Notification History | Notifications (parent link) | Built — ST-02 (v9.16) |
 | Positions | Trade Entry ("New Position"); Journal Position notes ("Position notes") | Exists; "Position notes" built — ST-05 (v9.17) |
@@ -151,9 +152,8 @@ An existing "Back" button that calls `navigate(-1)` may stay, but it does not re
 | Trade Plan | Trade Entry from the plan | Exists |
 | Ticker Universe | Screener | Built — ST-03 (v9.16) |
 | Trade History | Research for a trade's ticker | Built — ST-03 (v9.16): each row has a "Research {TICKER}" icon link to `/research/:ticker` beside the ticker; clicking the ticker text still expands the row |
-| Analytics | Trade History | Built — ST-03 (v9.16); shows in the populated state |
-| Reports | Analytics | Built — ST-03 (v9.16) |
-| Strategy Benchmark | Analytics | Built — ST-03 (v9.16) |
+| Performance | Trade History | Built — ST-06 (v9.17, `performance.md` §7); replaces the Analytics and Reports rows |
+| Strategy Benchmark | Performance (Analytics section) | Built — ST-03 (v9.16); target changed by ST-06 (v9.17) |
 | Replay | Trade History | Built — ST-03 (v9.16) |
 | Journal | Trade History filtered to the item's ticker ("View trade" on each reflection and red flag); Positions for an open position's note ("Open position") | Built — ST-05 (v9.17, `journal.md` §4); replaces the Trade Reflections and Red Flag Journal rows |
 | Weekly Digest | Notifications | Exists |
@@ -329,6 +329,7 @@ First-session-only dismissible tooltip on the nav-bar search affordance. No moda
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.4 | 2026-11-16 | ST-06 (EPIC-02, v9.17, BLG-FE-259), per `performance.md` §2 and §7. §Page Placement: one Performance row (Review, position 2) replaces Analytics and Reports; both old routes listed as removed with their redirects; counts updated; "Later merges" note closed. §Onward Links: one Performance row replaces the Analytics and Reports rows; Strategy Benchmark and the Dashboard compliance card point at Performance. |
 | 2.3 | 2026-11-16 | ST-05 (EPIC-02, v9.17, BLG-FE-258), per `journal.md` §2. §Page Placement: one Journal row (Review, position 6) replaces Trade Reflections and Red Flag Journal; both old routes listed as removed with their redirects; counts updated; "Later merges" note updated. §Onward Links: one Journal row replaces the two; Positions gains "Position notes"; Dashboard's red-flag card goes to the Journal's Red flags section. Keyboard inventory: the Red Flag Journal ticker input row is now the Journal's shared filter. |
 | 2.2 | 2026-11-09 | ST-06/ST-07 (EPIC-02, v9.16, BLG-FE-254/255). §Onward Links: Signals → Trade Plan and Screener → Trade Plan rows ("Plan this", `signal-to-plan-flow` decision record §5); Dashboard Today items marked built. No sidebar rule changes. |
 | 2.1 | 2026-11-09 | ST-01/ST-02/ST-03 (EPIC-01, v9.16, BLG-FE-250/251/252). §Implementation Status: areas, parent links and onward links built. §Onward Links status column updated to built; records the header onward-link placement, the SC-ONW-12 automated scan and the Trade History `?ticker=` filter that the Red Flag Journal link uses. No sidebar rule changes. New behaviour: the Trade History `?ticker=` filter (to be added to `trade_history.md` by `BLG-SPEC-227`); the Trade History onward link is a separate "Research {TICKER}" icon link, so the ticker text still toggles the row. Open spec question on reload persistence: `BLG-SPEC-226`. |

@@ -97,8 +97,8 @@ test.describe('WatchlistModal theming (SC-MTC-01/02)', () => {
 
 test.describe('ExportModal theming (SC-MTC-03/04)', () => {
   async function openExportModal(page) {
-    await page.goto('/#/Reports');
-    await page.getByRole('button', { name: 'Export' }).click();
+    await page.goto('/#/Performance?section=reports');
+    await page.getByRole('button', { name: 'Export', exact: true }).click();
     await expect(page.getByRole('heading', { name: 'Export Report' })).toBeVisible({ timeout: 10000 });
   }
 

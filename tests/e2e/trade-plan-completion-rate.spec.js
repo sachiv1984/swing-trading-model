@@ -110,7 +110,7 @@ async function mockCompletionRate(page, payload = COMPLETION_RATE_OK, status = 2
 
 /** Navigate to the Performance Analytics page and wait for it to mount. */
 async function gotoAnalytics(page) {
-  await page.goto('/#/PerformanceAnalytics');
+  await page.goto('/#/Performance?section=analytics');
   await expect(page.locator('body')).toBeVisible({ timeout: 10000 });
 }
 

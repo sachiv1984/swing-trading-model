@@ -47,7 +47,7 @@ export default function ComplianceCard() {
   return (
     <DashboardCard
       title="Signal Compliance"
-      to="/PerformanceAnalytics"
+      to="/Performance?section=compliance"
       isLoading={loading7d || loading30d}
       error={error7d}
       empty={score == null}

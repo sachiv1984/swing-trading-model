@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-16 (session — 1 new item added: BLG-BE-221; EPIC-05 post-merge production startup log, v9.17); prior — 2026-11-16 (BLG-BE-211 bannered complete after the DS-41 staging and production Live Confirmations; EPIC-05 post-merge, v9.17); prior — 2026-11-16 (session — 1 new item added: BLG-BE-220; BLG-FE-296 bannered complete; agent-mediated PR #2260 re-review, EPIC-05, v9.17); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-16 (session — 1 new item added: BLG-FE-299; ST-06, EPIC-02, v9.17); prior — 2026-11-16 (session — 1 new item added: BLG-BE-221; EPIC-05 post-merge production startup log, v9.17); prior — 2026-11-16 (BLG-BE-211 bannered complete after the DS-41 staging and production Live Confirmations; EPIC-05 post-merge, v9.17); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -7057,6 +7057,28 @@ Opening a plan saved before v9.16 (no `pre_entry_validation_snapshot`) for editi
 **Acceptance Criteria**
 - Editing a plan with no stored snapshot and a WARN result shows the no-snapshot wording (Playwright)
 - `trade_plan.md` §5e describes the no-snapshot note
+
+---
+
+### BLG-FE-299 — Show the Discipline & Compliance window, or pass the page period to its endpoint
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Head of Engineering; Frontend Specifications & UX Documentation Owner
+**Source:** Sprint Execution, ST-06 (EPIC-02, cycle `2026-11-11__release-v9.17`), found while testing the Performance page period selector (PF-07) — 2026-11-16
+**Effort:** S (~0.5 day)
+**Provisional-Target:** TBD
+
+**Problem**
+`DisciplineComplianceSection` (`analytics.md` §17, now in the Performance page's Compliance section) passes the page period to `api.analytics.complianceMetrics(period)`, but that client function ignores its argument and `GET /analytics/compliance-metrics` takes no period (`backend/routers/analytics.py`). Changing the period selector refetches the section but always shows the same window, while the rest of the page changes. A user can read the §17 figures as belonging to the selected period. The gap existed on the old Analytics page; ST-06 recorded it in `performance.md` v1.1 §3 without changing it.
+
+**Scope**
+- Decide with the Metrics Definitions & Analytics Canonical Owner whether §17 should follow the page period
+- Either add a `period` query to `GET /analytics/compliance-metrics` (contract, OpenAPI, service) and send it from `api.analytics.complianceMetrics`, or show the section's fixed window in its heading and stop refetching on a period change
+- Update `analytics.md` §17 and `performance.md` §3
+
+**Acceptance Criteria**
+- Either: changing the Performance period selector requests `/analytics/compliance-metrics` with that period and the §17 figures change (Playwright request capture); or: the section states its fixed window and is not refetched on a period change (Playwright)
+- `performance.md` §3 and `analytics.md` §17 describe the chosen behaviour
 
 ---
 

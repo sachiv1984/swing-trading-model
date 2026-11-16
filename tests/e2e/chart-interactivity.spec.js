@@ -36,6 +36,7 @@
 'use strict';
 
 const { test, expect } = require('./fixtures/api-status-guard');
+const { mockAnalyticsMetrics } = require('./fixtures/analytics-metrics');
 const {
   ALL_TRADES,
   JAN_2026_EXPECTED,
@@ -76,9 +77,10 @@ async function setupAnalytics(page) {
   });
 
   // HashRouter — must use hash-based path
-  await page.goto('/#/PerformanceAnalytics');
+  await mockAnalyticsMetrics(page, { trades: ALL_TRADES }); // ST-06: Analytics needs a populated metrics response
+  await page.goto('/#/Performance?section=analytics');
   await expect(
-    page.locator('h1, [class*="text-2xl"], [class*="text-3xl"]').filter({ hasText: /^Analytics$/ })
+    page.locator('h1, [class*="text-2xl"], [class*="text-3xl"]').filter({ hasText: /^Performance$/ })
   ).toBeVisible({ timeout: 20000 });
   await expect(page.locator('[class*="animate-spin"]')).toHaveCount(0, { timeout: 15000 });
 
@@ -555,9 +557,10 @@ test.describe('SC-CHART-IX-06 — Cross-Chart Data Integrity', () => {
       route.fulfill({ status: 200, contentType: 'application/json', body: '[]' });
     });
 
-    await page.goto('/#/PerformanceAnalytics');
+    await mockAnalyticsMetrics(page, { trades: ALL_TRADES }); // ST-06: Analytics needs a populated metrics response
+    await page.goto('/#/Performance?section=analytics');
     await expect(
-      page.locator('h1, [class*="text-2xl"], [class*="text-3xl"]').filter({ hasText: /^Analytics$/ })
+      page.locator('h1, [class*="text-2xl"], [class*="text-3xl"]').filter({ hasText: /^Performance$/ })
     ).toBeVisible({ timeout: 20000 });
     await expect(page.locator('[class*="animate-spin"]')).toHaveCount(0, { timeout: 15000 });
 

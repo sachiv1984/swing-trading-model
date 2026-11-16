@@ -1,8 +1,8 @@
 **Owner:** Head of Specs Team
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 1.4
-**Last Updated:** 2026-11-16 (ST-05, EPIC-02, v9.17, BLG-FE-258 — §UI Labels: one "Journal" row replaces "Trade Reflections" and "Red Flag Journal"; the Positions "Trade Journal" deliberate difference removed); prior — 2026-11-04 (ST-08, EPIC-02, v9.15, BLG-SPEC-214 — new §UI Labels: one canonical label per page and primary action, deliberate differences recorded, "trade" vs "position" rule); prior — 2026-09-07 (ST-41, EPIC-05, v9.1, BLG-SPEC-126 — 5 terms added); prior history retained — see prior entries in version control
+**Version:** 1.5
+**Last Updated:** 2026-11-16 (ST-06, EPIC-02, v9.17, BLG-FE-259 — §UI Labels: one "Performance" row replaces "Analytics" and "Reports"); prior — 2026-11-16 (ST-05, EPIC-02, v9.17, BLG-FE-258 — §UI Labels: one "Journal" row replaces "Trade Reflections" and "Red Flag Journal"; the Positions "Trade Journal" deliberate difference removed); prior — 2026-11-04 (ST-08, EPIC-02, v9.15, BLG-SPEC-214 — new §UI Labels); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -303,8 +303,7 @@ Page labels are in Title Case. The browser-tab title is `{Canonical label} · Po
 | `TradePlan` | Trade Plan | Find trades | No (detail) | Yes | Yes | Detail page: no sidebar entry. Its parent is Trade Plans. |
 | `TickerUniverse` | Ticker Universe | Find trades | Yes | Yes | Yes | — |
 | `TradeHistory` | Trade History | Review | Yes | Yes | Yes | — |
-| `PerformanceAnalytics` | Analytics | Review | Yes | Yes | Yes | — |
-| `Reports` | Reports | Review | Yes | Yes | Yes | — |
+| `Performance` | Performance | Review | Yes | Yes | Yes | Replaces "Analytics" and "Reports" (ST-06, v9.17); sections "Summary", "Reports", "Analytics", "Compliance" (`performance.md` §3). |
 | `StrategyBenchmark` | Strategy Benchmark | Review | Yes | Yes | Yes | — |
 | `Replay` | Replay | Review | Yes | Yes | Yes | — |
 | `Journal` | Journal | Review | Yes | Yes | Yes | Replaces "Trade Reflections" and "Red Flag Journal" (ST-05, v9.17); their tabs are "Reflections", "Red flags" and "Position notes" (`journal.md` §3). |
@@ -313,6 +312,7 @@ Page labels are in Title Case. The browser-tab title is `{Canonical label} · Po
 | `NotificationPreferences` | Notification Preferences | Today | No (detail) | Yes | No | Detail page: no sidebar or palette entry. Its parent is Notifications; Settings links to it. |
 | `SystemStatus` | System Status | Settings | Yes | Yes | Yes | — |
 | `Dashboard` (legacy) | — | — | — | — | — | Removed (ST-12). `/Dashboard` redirects to `/`. |
+| `PerformanceAnalytics`, `Reports` (legacy) | — | — | — | — | — | Removed (ST-06, v9.17). Redirect to `/Performance?section=analytics` and `/Performance?section=reports`. |
 | `TradeReflection`, `RedFlagJournal` (legacy) | — | — | — | — | — | Removed (ST-05, v9.17). Redirect to `/Journal?section=reflections` and `/Journal?section=red-flags`. |
 
 **Labels that change from the v9.14 UI** (ST-11 applies them): sidebar "Reflections" → "Trade Reflections"; headings "Open Positions" → "Positions", "Enter New Position" → "Trade Entry", "Performance Analytics" → "Analytics", "Monthly Signals" → "Signals", "Replay Mode" → "Replay", "Alert History" → "Notification History"; palette "Trade Reflection" → "Trade Reflections". ST-11 also adds palette entries for Replay and Notifications; the Research palette entry follows once `BLG-FE-250` builds the `/Research` landing.

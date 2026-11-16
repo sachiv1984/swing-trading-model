@@ -256,7 +256,7 @@ test('SC-LS-10: Analytics — spinner visible while API response is pending', as
   // Settings call — stub immediately so it doesn't also delay
   await mockOk(page, /\/settings/, { data: [{ min_trades_for_analytics: 10 }] });
 
-  await page.goto('/#/PerformanceAnalytics');
+  await page.goto('/#/Performance?section=analytics');
 
   await expect(page.locator('[class*="animate-spin"]').first()).toBeVisible({ timeout: 3000 });
   await expect(page.locator('[class*="animate-spin"]').first()).toHaveCount(0, { timeout: 5000 });
@@ -270,10 +270,12 @@ test('SC-LS-11: Analytics — error state shown on API failure', async ({ page }
   await mockError(page, `${API}/trades`);
   await mockOk(page, /\/settings/, { data: [{ min_trades_for_analytics: 10 }] });
 
-  await page.goto('/#/PerformanceAnalytics');
+  await page.goto('/#/Performance?section=analytics');
 
-  await expect(page.getByText('Something went wrong')).toBeVisible({ timeout: 5000 });
-  await expect(page.getByRole('button', { name: 'Try again' })).toBeVisible();
+  // ST-06: scoped to the Analytics section (other sections have their own states).
+  const analytics = page.locator('section#analytics');
+  await expect(analytics.getByText('Something went wrong')).toBeVisible({ timeout: 5000 });
+  await expect(analytics.getByRole('button', { name: 'Try again' })).toBeVisible();
   await expect(page.getByText(/500|Internal server error/i)).toHaveCount(0);
 });
 

@@ -20,7 +20,7 @@
  *              and the Month column is sticky
  *
  * Infrastructure: Playwright page.route() network interception. No live backend.
- * ROUTING NOTE: App uses HashRouter — navigate via page.goto('/#/Reports'), then click the Monthly tab.
+ * ROUTING NOTE: App uses HashRouter — navigate via page.goto('/#/Performance?section=reports'), then click the Monthly tab.
  */
 
 'use strict';
@@ -82,8 +82,8 @@ async function mockApi(page, months, { unrealised = null } = {}) {
 }
 
 async function gotoMonthlyTab(page) {
-  await page.goto('/#/Reports');
-  await page.getByRole('button', { name: /monthly p&l/i }).click();
+  await page.goto('/#/Performance?section=reports');
+  await page.getByRole('tab', { name: 'Monthly' }).click();
 }
 
 for (const theme of ['dark', 'light']) {
