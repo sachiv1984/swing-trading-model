@@ -30,6 +30,9 @@
  *   SC-TPSP-07  A stop typed (or typed and cleared) before the signal arrives is not overwritten
  *               when it does (DoQ review finding 2)
  *   SC-TPSP-08  A UK signal without initial_stop pre-fills current_price − 5 × atr_value (0.72 − 0.15 = 0.57)
+ *   SC-TPSP-09  BLG-FE-295: after "Plan this", changing the ticker hides the Signal Context panel and the
+ *               stored-stop line (they described the old ticker's signal); changing it back, in any
+ *               case, shows them again
  *
  * Infrastructure: page.route() network interception — no live backend.
  * ROUTING NOTE: App uses HashRouter — navigate via page.goto('/#/…').
@@ -202,4 +205,24 @@ test('SC-TPSP-08: a UK signal without initial_stop pre-fills current_price − 5
   await expect(page.getByTestId('signal-context-panel')).toBeVisible({ timeout: 10000 });
   await expect(stop(page)).toHaveValue('0.57');
   await expect(page.getByTestId('signal-context-panel')).toContainText('£0.57');
+});
+
+test('SC-TPSP-09: changing the ticker after "Plan this" hides the panel and the stored-stop line', async ({ page }) => {
+  await mockApp(page, { signals: [US_SIGNAL] });
+  await page.goto(`/#/TradePlan?ticker=AAPL&market=US&signal_id=${US_SIGNAL.id}&entry_price=182.3`);
+  const panel = page.getByTestId('signal-context-panel');
+  await expect(panel).toBeVisible({ timeout: 10000 });
+  await stop(page).fill('160');
+  // AAPL: §5 stop 182.3 − 5 × 3.45 = 165.05 differs from 160, so the line shows.
+  await expect(note(page)).toBeVisible({ timeout: 5000 });
+
+  const ticker = page.getByPlaceholder('e.g. AAPL');
+  await ticker.fill('MSFT');
+  await expect(panel).toHaveCount(0);
+  await expect(note(page)).toHaveCount(0);
+  await expect(stop(page)).toHaveValue('160'); // the typed stop is the trader's
+
+  await ticker.fill('aapl');
+  await expect(panel).toBeVisible();
+  await expect(note(page)).toBeVisible();
 });

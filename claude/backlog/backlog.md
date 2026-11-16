@@ -6972,6 +6972,7 @@ Since ST-15 (`c341eee7`), `get_current_price()` converts a UK price from the Yah
 ---
 
 ### BLG-FE-295 — Hide the Trade Plan stored-stop line and Signal Context when the ticker no longer matches the "Plan this" signal
+**✅ COMPLETE — 2026-11-16, `2026-11-11__release-v9.17`, found during ST-14's PR #2260 review, resolved in-sprint on EPIC-05 (this item's fixing commit, SC-TPSP-09); the AC is met — see `qa_evidence_EPIC-05.md` ST-14 row.**
 **Priority:** P3 (Low)
 **Type:** Frontend / UX
 **Owner:** Frontend Specifications & UX Documentation Owner

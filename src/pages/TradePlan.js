@@ -562,7 +562,14 @@ export default function TradePlan() {
   const watchlistedMatch = watchlistedSignals.find(
     (s) => s.ticker === form.ticker || s.ticker === form.ticker + ".L" || s.ticker.replace(/\.L$/, "") === form.ticker
   ) || null;
-  const linkedSignal = usesSignalId ? signalById || null : watchlistedMatch;
+  // BLG-FE-295 (v9.17, PR #2260 review): the "Plan this" signal belongs to its ticker. If the
+  // trader changes the ticker, the signal no longer describes the plan, so the Signal Context
+  // panel and the §5f stored-stop line are hidden (case and the .L suffix are ignored).
+  const baseTicker = (t) => String(t || "").trim().toUpperCase().replace(/\.L$/, "");
+  const signalMatchesTicker = (s) => !!s && baseTicker(s.ticker) === baseTicker(form.ticker);
+  const linkedSignal = usesSignalId
+    ? (signalMatchesTicker(signalById) ? signalById : null)
+    : watchlistedMatch;
 
   const prePopApplied = useRef(false);
   useEffect(() => {
