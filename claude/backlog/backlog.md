@@ -7083,6 +7083,7 @@ Opening a plan saved before v9.16 (no `pre_entry_validation_snapshot`) for editi
 ---
 
 ### BLG-FE-300 — Show Total P&L, Win Rate and Total Trades on Performance even when the period has too few trades
+**✅ COMPLETE — 2026-11-16, `2026-11-11__release-v9.17`, found during ST-06's PR #2261 review, resolved in-sprint on EPIC-02 in `9e807be8`** (Product Owner decision 2026-11-16; `performance.md` v1.2 §6; server returns the real `win_rate`/`total_pnl` below the minimum, `analytics_endpoints.md` v2.5.2).
 **Priority:** P2 (Medium)
 **Type:** Frontend / UX
 **Owner:** Product Owner; Frontend Specifications & UX Documentation Owner; Metrics Definitions & Analytics Canonical Owner
