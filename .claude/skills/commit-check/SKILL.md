@@ -191,6 +191,20 @@ Why (added 2026-11-12, Head of Specs Team, after the v9.16 review): most v9.16 d
 
 **FAIL if:** the review was not run, a finding is neither fixed nor filed, the commit body has no `Review:` or `Impact:` line, or a new FX or status-write path is missing from its matrix.
 
+### Check 12 — First-time-right record and pre-commit subset
+
+This check fires on the same files as Check 11, on an `exec/**` branch. It was added on 2026-11-16 by user direction; see the `/first-time-right` skill.
+
+1. **Pass A is recorded.** The story's `notes` in `execution_state.json` contain a `First-time-right:` line written before the first code commit. `.claude/hooks/check_commit_gates.py` warns when it is missing.
+2. **Pre-commit subset of pass B:**
+   - Every gap in this story's own work that takes under an hour is fixed in this commit, not filed (check 9).
+   - Specs, contracts, the data model and OpenAPI that describe changed behaviour are staged in this commit (check 10).
+   - Any edited spec table was read back unbroken (check 13).
+   - The test fixtures added or changed in this commit match the writer's formula or a real row (check 18).
+   - The change matrix rows are asserted (check 19).
+
+**FAIL if:** the record is missing, or any pre-commit subset item is unmet with no reason given.
+
 ---
 
 ## Step 4 — Render the result
@@ -215,6 +229,7 @@ Staged files ({n}):
   ✅ Check 6 — No sealed artefacts modified
   ✅ Check 7 — E2E coverage declaration (N/A — no frontend files staged)
   ✅ Check 11 — Code review and change impact (N/A — no implementation files staged)
+  ✅ Check 12 — First-time-right record (N/A — no implementation files staged)
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 RESULT: ❌ NOT READY — 1 check failed
