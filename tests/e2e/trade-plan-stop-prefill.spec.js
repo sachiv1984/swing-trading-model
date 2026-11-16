@@ -10,12 +10,17 @@
  *
  *   SC-TPSP-01  "Plan this" (signal_id) with no initial_stop: Stop = current_price − 5×ATR
  *               (182.30 − 5 × 3.45 = 165.05), the same value the panel shows; no stored-stop line
- *   SC-TPSP-02  Watchlisted lookup (no signal_id): Stop = the signal's initial_stop (UK, 0.62)
+ *   SC-TPSP-02  Watchlisted lookup (no signal_id): Stop = the signal's initial_stop (UK, 0.63, which
+ *               differs from current_price − 5×ATR = 0.62, so the initial_stop branch is the one shown)
  *   SC-TPSP-03  A typed stop is not overwritten: it survives an entry change, and the line states
  *               the stop Trade Entry will store with both values (entry 180 → $162.75; yours $160.00)
  *   SC-TPSP-04  A stop within 0.005 of the §5 stop shows no line
  *   SC-TPSP-04b A signal with no ATR shows no line (its initial_stop still pre-fills)
  *   SC-TPSP-05  Edit mode does not pre-fill: a stored plan without a stop stays blank
+ *   SC-TPSP-06  A pre-filled stop belongs to its ticker: changing the ticker clears an untouched
+ *               pre-fill, and a typed stop survives the ticker change (DoQ review finding 1)
+ *   SC-TPSP-07  A stop typed (or typed and cleared) before the signal arrives is not overwritten
+ *               when it does (DoQ review finding 2)
  *
  * Infrastructure: page.route() network interception — no live backend.
  * ROUTING NOTE: App uses HashRouter — navigate via page.goto('/#/…').
@@ -33,7 +38,7 @@ const US_SIGNAL = {
 };
 const UK_SIGNAL = {
   id: 'sig-tpsp-uk', ticker: 'VOD.L', market: 'UK', signal_date: '2026-11-12', rank: 2, status: 'watchlisted',
-  momentum_percent: 9.1, current_price: 0.72, atr_value: 0.02, initial_stop: 0.62, regime: 'on',
+  momentum_percent: 9.1, current_price: 0.72, atr_value: 0.02, initial_stop: 0.63, regime: 'on',
 };
 const NO_ATR_SIGNAL = { ...US_SIGNAL, id: 'sig-tpsp-noatr', atr_value: null, initial_stop: 170 };
 
@@ -76,8 +81,8 @@ test('SC-TPSP-02: the watchlisted lookup pre-fills Stop with the signal\'s initi
   await page.goto('/#/TradePlan?ticker=VOD.L&market=UK');
 
   await expect(page.getByTestId('signal-context-panel')).toBeVisible({ timeout: 10000 });
-  await expect(stop(page)).toHaveValue('0.62');
-  await expect(page.getByTestId('signal-context-panel')).toContainText('£0.62');
+  await expect(stop(page)).toHaveValue('0.63');
+  await expect(page.getByTestId('signal-context-panel')).toContainText('£0.63');
 });
 
 test('SC-TPSP-03: a typed stop is kept when the entry changes, and the line states the stored stop', async ({ page }) => {
@@ -130,3 +135,42 @@ test('SC-TPSP-05: edit mode does not pre-fill the stop', async ({ page }) => {
   await expect(entry(page)).toHaveValue('0.72', { timeout: 10000 });
   await expect(stop(page)).toHaveValue('');
 });
+
+test('SC-TPSP-06: changing the ticker clears an untouched pre-filled stop, not a typed one', async ({ page }) => {
+  await mockApp(page, { signals: [US_SIGNAL] });
+  await page.goto(`/#/TradePlan?ticker=AAPL&market=US&signal_id=${US_SIGNAL.id}&entry_price=182.3`);
+  await expect(stop(page)).toHaveValue('165.05', { timeout: 10000 });
+
+  const ticker = page.getByPlaceholder('e.g. AAPL');
+  await ticker.fill('MSFT');
+  await expect(stop(page)).toHaveValue('');
+
+  // A stop the user typed is theirs, whatever the ticker.
+  await stop(page).fill('300');
+  await ticker.fill('NVDA');
+  await expect(stop(page)).toHaveValue('300');
+});
+
+for (const [label, typed] of [['typed', '150'], ['typed and cleared', '']]) {
+  test(`SC-TPSP-07 (${label}): a stop ${label} before the signal arrives is kept`, async ({ page }) => {
+    await mockApp(page, { signals: [US_SIGNAL] });
+    let release;
+    const signalGate = new Promise((resolve) => { release = resolve; });
+    // Registered after mockApp, so it takes precedence: /signals answers only once released.
+    await page.route(`${API}/signals`, async (r) => {
+      await signalGate;
+      return r.fulfill(json({ status: 'ok', data: [US_SIGNAL] }));
+    });
+    await page.goto(`/#/TradePlan?ticker=AAPL&market=US&signal_id=${US_SIGNAL.id}&entry_price=182.3`);
+    await expect(stop(page)).toBeVisible({ timeout: 10000 });
+    await expect(page.getByTestId('signal-context-panel')).toHaveCount(0);
+
+    await stop(page).fill('150');
+    if (typed === '') await stop(page).fill('');
+    release();
+
+    await expect(page.getByTestId('signal-context-panel')).toBeVisible({ timeout: 10000 });
+    await expect(page.getByTestId('signal-context-panel')).toContainText('$165.05');
+    await expect(stop(page)).toHaveValue(typed);
+  });
+}

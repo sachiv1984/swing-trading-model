@@ -343,6 +343,7 @@ export default function TradePlan() {
   // ST-14 (BLG-FE-282, v9.17): §5a.3 — once the user has typed in Planned Stop Price
   // (including clearing it), the signal pre-fill never writes it.
   const stopTyped = useRef(false);
+  const prefilledStop = useRef(null); // { value, ticker } of the untouched §5a.3 pre-fill
   const [feedbackJustGiven, setFeedbackJustGiven] = useState(false);
   const hasUnsavedAiChanges = useRef(false);
   const [isAiLoading, setIsAiLoading] = useState(false);
@@ -568,23 +569,40 @@ export default function TradePlan() {
       prePopApplied.current = true;
       const { setupThesis, entryRationale, confirmationCriteria } = buildSignalPrePopulation(linkedSignal, form.market);
       // ST-14 (BLG-FE-282, v9.17): §5a.3 — Stop Level from the panel's "Suggested stop",
-      // 2 dp in the plan currency; never over a value already set or typed.
+      // 2 dp in the plan currency; never over a value already set or typed. Only for the
+      // ticker the form opened with ("on initial form load"), so a signal matched while
+      // the user is typing another ticker never sets a risk value (DoQ review finding 1).
       const suggestedStop = getSuggestedStop(linkedSignal);
-      setForm((prev) => ({
+      const openedTicker = (ticker || "").toUpperCase();
+      const stopValue =
+        openedTicker && (form.ticker || "").toUpperCase() === openedTicker &&
+        !stopTyped.current && suggestedStop != null && suggestedStop > 0
+          ? String(Math.round(suggestedStop * 100) / 100)
+          : null;
+      setForm((prev) => {
+        const keep = prev.planned_stop_price !== "" && prev.planned_stop_price != null;
+        if (!keep && stopValue != null) prefilledStop.current = { value: stopValue, ticker: prev.ticker };
+        return {
         ...prev,
-        planned_stop_price:
-          prev.planned_stop_price !== "" && prev.planned_stop_price != null
-            ? prev.planned_stop_price
-            : !stopTyped.current && suggestedStop != null && suggestedStop > 0
-              ? String(Math.round(suggestedStop * 100) / 100)
-              : prev.planned_stop_price,
+        planned_stop_price: keep || stopValue == null ? prev.planned_stop_price : stopValue,
         setup_type: prev.setup_type || "Momentum Continuation",
         setup_thesis: prev.setup_thesis || setupThesis,
         entry_rationale: prev.entry_rationale || entryRationale,
         confirmation_criteria: prev.confirmation_criteria || confirmationCriteria,
-      }));
+        };
+      });
     }
   }, [linkedSignal]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // ST-14 (DoQ review finding 1): a pre-filled stop belongs to the ticker it came from.
+  // If the ticker changes while the stop is still the untouched pre-fill, clear it.
+  useEffect(() => {
+    const filled = prefilledStop.current;
+    if (!filled || form.ticker === filled.ticker) return;
+    prefilledStop.current = null;
+    if (stopTyped.current) return;
+    setForm((prev) => (prev.planned_stop_price === filled.value ? { ...prev, planned_stop_price: "" } : prev));
+  }, [form.ticker]);
 
   const { data: existingByPosition } = useQuery({
     queryKey: ["tradePlanByPosition", positionId],
