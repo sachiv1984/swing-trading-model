@@ -28,7 +28,14 @@ Last Updated: 2026-11-16
 
 **`BLG-FE-237` (Reports tab bar and Monthly table overflow):** its AC is met by ST-06 (`performance.md` §9): at 375 px no page-level horizontal scroll on any Reports view and the Monthly Avg P&L/Trade column scrolls into view inside its card (SC-PERF-11 at 390 and 375 px). Recorded here for `groom backlog`.
 
-**Found defects filed during this EPIC:** `BLG-FE-299` (P3) — the Discipline & Compliance section's endpoint takes no period, so it does not follow the Performance period selector; pre-existing on the old Analytics page. No P1 or P2 found defect was filed.
+**Found defects filed during this EPIC:**
+- `BLG-FE-299` (P3) — the Discipline & Compliance section's endpoint takes no period, so it does not follow the Performance period selector; pre-existing on the old Analytics page.
+- From the agent-mediated PR #2261 review (Director of Quality and Product Owner, 2026-11-16; both "Approved with Comments", no P1):
+  - **`BLG-FE-300` (P2)** — the Performance Summary hides Total P&L, Win Rate and Total Trades when the period has too few trades; the old Reports Performance tab showed them in any month. Spec-conformant (`performance.md` §6) but a user-visible change not listed in the PR. **Needs the human Product Owner and Director of Quality acceptance, with rationale, in the Merge Gate Confirmations (LL-v9.16-P3-05)** — or a fix before merge.
+  - `BLG-FE-301` (P3) — Summary card order vs §4; "Not enough trades" action copy and duplicate block.
+  - `BLG-FE-302` (P3) — section-index and deep-link hardening (settle check, modifier clicks, heading levels, Trade Plan edit-error jump).
+  - `BLG-QA-266` (P3) — SC-JNL-17 should prove the debounce restarts per keystroke.
+  - `BLG-BE-222` (P3) — SI-05 digest link labels still use retired page names.
 
 **QA test coverage:**
 - Scenarios run (new): SC-JNL-01, 02, 03, 04, 05, 06, 06b, 06c, 07, 07b, 08, 08b, 09, 09b, 10, 11, 12, 13, 15, 17, 17b, 19, 20; SC-SIX-01, 02, 03, 04, 05, 06, 06b, 07, 08, 09, 09b; SC-PERF-01, 02, 03, 05, 06, 06b, 07, 08, 09, 10, 11, 13, 14. Existing specs retargeted to the new routes and run (every functional reference to the old routes; the advisory visual-regression spec is covered in the note below): red-flag-journal (3 files), si01-si03-integration, exit-reason-badges, r-multiple-reflection, dialog-classname-override-fixes, morning-briefing, empty-state-next-action, page-labels-single-source, sidebar-nav-groups, onward-links, browser-tab-title, and 30 Reports/Analytics specs (monthly-pnl-*, reports-*, tax-year-*, arc5-compliance-section, analytics-section-link (rewritten for `?section=compliance`), chart-interactivity, analytics-mobile-responsive, market-correlation, trade-plan-tag-filter, staleness-indicator, loading-states, accessibility-axe-scan, and others). Local E2E-env build: 341 Performance-related scenarios passed; Trade Plan and Strategy Benchmark specs 451 passed (2 skipped, existing). pytest: `test_red_flag_checklist_skipped.py`, `test_si05_digest_service.py`, `test_motion_timing_500ms_ceiling_regression.py`.
