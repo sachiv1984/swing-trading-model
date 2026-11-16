@@ -5,6 +5,7 @@ import { useSearchParams } from 'react-router-dom';
 import { api } from '../api/base44Client';
 import { BarChart2, RefreshCw, Upload, ChevronDown, ChevronUp, Play, Loader2 } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+import SectionIndex, { SECTION_SCROLL_MARGIN_UNDER_STICKY_BAR as SECTION_SCROLL_MARGIN } from '../components/ui/SectionIndex';
 import PageHeader from '../components/ui/PageHeader';
 import { PAGE_LABELS } from '../lib/pageLabels';
 import { formatCurrency, formatPercent, formatR } from '../lib/format';
@@ -898,6 +899,9 @@ export default function StrategyBenchmark() {
     'benchmark';
   const setActiveTab = (tab) => {
     const next = new URLSearchParams(searchParams);
+    // A tab switch drops ?section= so returning to Benchmark does not jump
+    // back to an old section (strategy_benchmark.md §3a).
+    next.delete('section');
     if (tab === 'version-comparison' || tab === 'backtest-rule-change') next.set('tab', tab);
     else next.delete('tab');
     setSearchParams(next, { replace: true });
@@ -955,6 +959,21 @@ export default function StrategyBenchmark() {
   }, [fetchData]);
 
   const availableYears = summary?.available_years || [];
+
+  // ST-07 (BLG-FE-263, v9.17): strategy_benchmark.md §3a — section index on
+  // the Benchmark tab only, listing the panels that render right now.
+  const showOpenPositions = openPositionsLoading || openPositionsError || openPositions?.open_positions?.length > 0;
+  const showMainPanels = !loading && !error;
+  const benchmarkSections = [
+    ...(showOpenPositions ? [{ id: 'open-positions', label: 'Open positions' }] : []),
+    ...(showMainPanels
+      ? [
+          { id: 'parity', label: 'Performance parity' },
+          { id: 'yearly', label: 'Yearly breakdown' },
+          { id: 'trade-log', label: 'Trade log' },
+        ]
+      : []),
+  ];
 
   return (
     <div className="p-4 md:p-6 space-y-6 max-w-7xl mx-auto" data-testid="strategy-benchmark-page">
@@ -1040,7 +1059,13 @@ export default function StrategyBenchmark() {
       ) : activeTab === 'backtest-rule-change' ? (
         <BacktestRuleChangeTab />
       ) : (
-      <>
+      <div className="space-y-6 lg:space-y-0 lg:grid lg:grid-cols-[minmax(0,1fr)_12rem] lg:gap-6">
+      <SectionIndex
+        sections={benchmarkSections}
+        className="lg:order-2"
+        ready={!loading && !openPositionsLoading && (summary !== null || error !== null)}
+      />
+      <div className="lg:order-1 min-w-0 space-y-6">
       {/* Sticky filters */}
       <div
         className="sticky top-0 z-10 bg-slate-900/95 backdrop-blur-sm border border-slate-700 rounded-lg p-3 flex flex-wrap gap-3 items-center"
@@ -1089,8 +1114,8 @@ export default function StrategyBenchmark() {
 
       {/* Panel 0 — Open Positions (independent loading/error state; renders even if
           Panel 1-3's fetch fails, per ux_spec.md "does not break rest of page") */}
-      {(openPositionsLoading || openPositionsError || (openPositions?.open_positions?.length > 0)) && (
-        <div className="rounded-xl border border-slate-700 bg-slate-900 p-4">
+      {showOpenPositions && (
+        <div id="open-positions" className={`rounded-xl border border-slate-700 bg-slate-900 p-4 ${SECTION_SCROLL_MARGIN}`}>
           <Panel0
             openPositions={openPositions}
             loading={openPositionsLoading}
@@ -1118,10 +1143,10 @@ export default function StrategyBenchmark() {
         </div>
       )}
 
-      {!loading && !error && (
+      {showMainPanels && (
         <div className="space-y-6">
           {/* Panel 1 */}
-          <div className="rounded-xl border border-slate-700 bg-slate-900 p-4">
+          <div id="parity" className={`rounded-xl border border-slate-700 bg-slate-900 p-4 ${SECTION_SCROLL_MARGIN}`}>
             <Panel1
               backtest={summary?.backtest_stats}
               actual={summary?.actual_stats}
@@ -1130,12 +1155,12 @@ export default function StrategyBenchmark() {
           </div>
 
           {/* Panel 2 */}
-          <div className="rounded-xl border border-slate-700 bg-slate-900 p-4">
+          <div id="yearly" className={`rounded-xl border border-slate-700 bg-slate-900 p-4 ${SECTION_SCROLL_MARGIN}`}>
             <Panel2 rows={summary?.yearly_breakdown || []} />
           </div>
 
           {/* Panel 3 */}
-          <div className="rounded-xl border border-slate-700 bg-slate-900 p-4">
+          <div id="trade-log" className={`rounded-xl border border-slate-700 bg-slate-900 p-4 ${SECTION_SCROLL_MARGIN}`}>
             <Panel3
               backtestTrades={trades?.backtest_trades || []}
               actualTrades={trades?.actual_trades || []}
@@ -1145,7 +1170,8 @@ export default function StrategyBenchmark() {
           </div>
         </div>
       )}
-      </>
+      </div>
+      </div>
       )}
     </div>
   );
