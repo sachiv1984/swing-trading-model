@@ -3,8 +3,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.27
-**Last Updated:** 2026-11-13 (ST-19, EPIC-07, v9.17, BLG-SPEC-202 — PROFITABLE and EXIT ZONE tooltips reworded without a number, option (b); option (a) wording removed); prior — 2026-11-12 (ST-04, EPIC-01, v9.17, BLG-FE-257 — §Grace Period Alert Zone is now a "Superseded" stub; §Grace Period View ships); prior — 2026-11-11 (v9.17 design gate — ST-01..ST-04/BLG-FE-260, 261, 262, 257: decision-first table, narrow-screen cards, one warning strip, one grace view; ST-19/BLG-SPEC-202: Exit Zone tooltip wording by the strategy owner's choice); prior history retained — see prior entries in version control
+**Version:** 2.28
+**Last Updated:** 2026-11-16 (ST-05, EPIC-02, v9.17, BLG-FE-258 — Journal View removed from Positions: §View Switcher is Grid and Table plus a "Position notes" link to the Journal; §Journal View superseded by `journal.md` §4); prior — 2026-11-13 (ST-19, EPIC-07, v9.17, BLG-SPEC-202 — PROFITABLE and EXIT ZONE tooltips reworded without a number, option (b); option (a) wording removed); prior — 2026-11-12 (ST-04, EPIC-01, v9.17, BLG-FE-257 — §Grace Period Alert Zone is now a "Superseded" stub; §Grace Period View ships); prior history retained — see prior entries in version control
 **Design Source (v9.14 additions):** docs/design/2026-10-29__release-v9.14/stale-price-marker/decision_record.md, docs/design/2026-10-29__release-v9.14/monitor-grace-aware-suggestions/decision_record.md, docs/design/2026-10-29__release-v9.14/last-reviewed-ended-grace/decision_record.md
 **Design Source (v9.13 additions):** docs/design/2026-10-16__release-v9.13/monitor-exit-queue/decision_record.md, docs/design/2026-10-16__release-v9.13/chat-answer-rating/decision_record.md
 **Design Source (v9.11 additions):** docs/design/2026-10-08__release-v9.11/grace-alert-calendar-days/decision_record.md
@@ -29,6 +29,7 @@
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.28 | 2026-11-16 | (ST-05, EPIC-02, v9.17, BLG-FE-258, per `journal.md` §2 and §5) The Journal View leaves Positions. §View Switcher: Grid and Table only, plus a "Position notes" header link to `/Journal?section=notes` before the Daily Monitor button; the heading is always "Positions". §Journal View is marked superseded by `journal.md` §4 (its content stays here as the reference that section cites). Keyboard requirements, "Hidden in Journal View" notes, Responsive Behavior, Empty State and API Dependencies no longer name a journal view. |
 | 2.27 | 2026-11-13 | (ST-19, EPIC-07, v9.17, BLG-SPEC-202) §Position Lifecycle State Badge: PROFITABLE and EXIT ZONE tooltips take the design record §7 option (b) wording, which states no R multiple (Strategy Rules & System Intent Owner, RISK-05, 2026-11-12). The option (a) wording and its `{EXIT_ZONE_R_MULTIPLE}` placeholder are removed. No `strategy_rules.md`, constants or lint change. |
 | 2.26 | 2026-11-12 | (ST-04, EPIC-01, v9.17, BLG-FE-257) §Grace Period Alert Zone becomes a "Superseded" stub that points to §Grace Period View (design gate obligation, `decision_record.md` §5). `GracePeriodView` (`src/components/positions/GracePeriodView.js`) ships as the §Warning Strip grace entry's content; the alert cards, Dismiss and the `grace_alert_dismissed_*` keys are removed. No change to §Grace Period View's rules. New Known Deviation DEV-EPIC01-ST04-01: rows with more than 2 days of grace left show no trade plan line, because the alerts endpoint returns only positions with 2 days or fewer (BLG-BE-215). |
 | 2.25 | 2026-11-11 | v9.17 design gate. (ST-01, BLG-FE-260) new §Decision-First Table: urgency tiers (exit condition met → stop reached → near stop ≤ 5% → other), six default columns (Ticker, Price, Stop, To stop in R and %, P&L %, Action needed) plus expand and Actions, every other field in an expandable row. (ST-02, BLG-FE-261) §Responsive Behavior: the Table view renders decision cards below `md`. (ST-03, BLG-FE-262) new §Warning Strip replaces the four stacked banners. (ST-04, BLG-FE-257) §Grace Period Alert Zone replaced by §Grace Period View, the only per-position grace detail in the app, listing every in-grace position, no dismiss; `?grace=open`. (ST-19, BLG-SPEC-202) §Position Lifecycle State Badge: PROFITABLE and EXIT ZONE tooltips follow the Strategy Rules & System Intent Owner's choice. Design source: `docs/design/2026-11-11__release-v9.17/positions-decision-first/decision_record.md`. Approved: Head of UX & Design and Product Owner, 2026-11-11. |
@@ -78,8 +79,8 @@ Its primary purpose is to help users:
 - Monitor active trades
 - Identify positions requiring attention (e.g., approaching stops, in grace period)
 - Access entry/exit workflows
-- Review or edit journal notes and tags
-- Switch between different views depending on the task (table, grid, journal)
+- Review or edit journal notes and tags (reading them across positions is on the Journal page, `journal.md`)
+- Switch between the grid and table views
 
 ---
 
@@ -87,13 +88,14 @@ Its primary purpose is to help users:
 
 ### View Switcher
 
-A three‑way toggle enabling users to switch between:
+A two‑way toggle enabling users to switch between:
 
 1. **Grid View** – Card‑based layout showing key metrics
 2. **Table View** – Detailed, sortable table of positions
-3. **Journal View** – All positions displayed with notes, tags, and filters for reflection
 
-Each view replaces the entire main content area. Switching views does not trigger a new data fetch — the same position data drives all three views.
+Each view replaces the entire main content area. Switching views does not trigger a new data fetch — the same position data drives both views. The page heading is always "Positions".
+
+**Position notes link (v2.28, ST-05, BLG-FE-258):** the Journal View moved to the Journal page (`journal.md` §4, Position notes). In its place, a "Position notes" text link in the page header actions, before the Daily Monitor button, goes to `/Journal?section=notes`.
 
 ---
 
@@ -298,6 +300,8 @@ Designed for readability and scannability.
 
 ### Journal View
 
+> **Superseded by `journal.md` §4 (v2.28, ST-05, BLG-FE-258).** This view is no longer on Positions; it is the Journal page's Position notes section. The text below stays as the content reference `journal.md` §4 cites. Where `journal.md` v1.1 differs (closed positions come from `GET /trades`; P&L shown in GBP; the "no results match" state), `journal.md` governs.
+
 The Journal View is a dedicated reflection interface accessible from the view switcher. It exists to support trade review, pattern recognition, and learning — the user's goal here is different from the Table and Grid views. They are not monitoring live positions; they are reading their own documented reasoning and outcomes.
 
 #### Scope
@@ -411,7 +415,6 @@ Opened by clicking the enabled button. Data source: `GET /positions/{id}/stop-tr
 - Label: "Recheck Compliance"
 - Style: secondary (outlined)
 - **Shown** for all open positions in Table View and Grid View
-- **Hidden** in Journal View (read/reflection surface — no live actions)
 - Loading state: inline spinner, button disabled during request
 
 ### Compliance Recheck Panel (Modal)
@@ -456,7 +459,7 @@ Opened by clicking "Recheck Compliance". Data source: `GET /positions/{id}/compl
 
 **Design source:** docs/ux_specs/paper-trading/ux_spec.md
 
-**Placement:** Collapsible panel appended below the Strategy Compliance Panel in Table View only. Hidden in Grid View and Journal View.
+**Placement:** Collapsible panel appended below the Strategy Compliance Panel in Table View only. Hidden in Grid View.
 
 **Conditional rendering:** Panel rendered only when `ALPACA_PAPER_API_KEY` is configured. When credentials are absent, `GET /portfolio/paper-positions` returns `{"paper_tracking_enabled": false}` and the panel is not rendered — no unconfigured state visible to the user.
 
@@ -829,13 +832,12 @@ Each POST /ai/chat is stateless (no session state persisted to backend; the v2.2
 
 - Position cards
 - Positions table
-- Journal cards (see `journal_components.md` — Expandable Journal Card)
 - Exit Position Modal
 - Daily Monitor button (`DailyMonitor.js`, page header) → Daily Position Monitor (`MonitorModal.js`) and its exit queue (v2.24)
 - Position Detail Modal (journal editor)
 - Tag pills (see `journal_components.md` — Tag List)
 - Tag editor with autocomplete (see `journal_components.md` — Tag Editor)
-- View switcher control
+- View switcher control (Grid / Table) and the "Position notes" link
 
 ---
 
@@ -852,8 +854,6 @@ Shown when no open positions exist (Table / Grid views):
 - Message explaining there are no active trades
 - Action: "Enter New Position"
 
-For Journal View empty states, see the Journal View section above.
-
 ### Error State
 
 - Global error banner if positions list fails to load
@@ -865,8 +865,8 @@ For Journal View empty states, see the Journal View section above.
 
 | Endpoint | Purpose |
 |----------|---------|
-| `GET /positions` | Primary data source for all three views. Returns open positions with live pricing, journal fields, `grace_days_remaining`, `position_state`, `state_entered_at`, `days_in_state`. |
-| `GET /positions/tags` | Tag autocomplete source for the Journal View filter dropdown and for the Position Detail Modal's tag editor |
+| `GET /positions` | Primary data source for both views. Returns open positions with live pricing, journal fields, `grace_days_remaining`, `position_state`, `state_entered_at`, `days_in_state`. |
+| `GET /positions/tags` | Tag autocomplete source for the Position Detail Modal's tag editor |
 | `GET /positions/compliance` | *(v2.3 — ST-01)* Strategy Compliance Panel data source. Returns ATR-based per-position stop compliance, stop age, and size compliance flags. Display-only; §13.3 constraint applies. |
 | `GET /positions/grace-period-alerts` | *(v3.3 — ST-05)* Returns positions in GRACE state with `grace_days_remaining ≤ 2` (v2.15 — ST-14; was `days_in_state ≥ 8`), including trade plan context. Source for Grace Period Alert Zone. |
 | `GET /positions/{id}/stop-trail` | *(v3.3 — ST-07)* Returns ATR trail stop calculation for a single position. Source for Trail Stop Modal. |
@@ -883,14 +883,13 @@ For Journal View empty states, see the Journal View section above.
 
 ## Responsive Behavior
 
-The page has three view modes (Grid, Table, Journal — toggle in the page header); each behaves differently below `md` (768px):
+The page has two view modes (Grid, Table — toggle in the page header); each behaves differently below `md` (768px):
 
 | View | Narrow-width (<768px) behaviour | Column/content priority |
 |------|----------------------------------|--------------------------|
 | **Grid** (default; v2.25: cards follow the §Decision-First Table urgency order) | `PositionCard`s reflow via CSS Grid: `grid-cols-1` below `md`, `grid-cols-2` at `md`, `grid-cols-3` at `lg` — 1 card per row on mobile, no card content is hidden | N/A — cards show all fields; no priority ordering |
 | **Table** | Does **not** collapse to cards. Uses the shared `DataTable` component (`overflow-x-auto` wrapper): all 13 data columns (Ticker, Entry Price, Current Price, Stop, Shares, P&L (GBP), P&L %, Days, State, Grace, Earnings, Alerts, Last Reviewed) plus Actions render unconditionally — the user scrolls horizontally to reach columns past the viewport width. No column-hiding/priority logic exists | None — no column is hidden at any width |
 | **Table (v2.25, ST-02)** | Replaces the row above when ST-02 merges. Renders one decision card per position (`data-testid="position-decision-card"`) in urgency order, with Ticker, market pill, Action needed, Price, Stop, To stop and P&L %; a Details button opens the expanded-row fields in 2 columns; the row's action buttons sit in the card footer (44 × 44 px minimum). No horizontal page scroll at 390 px. See §Decision-First Table. | Urgency tier, then stop distance |
-| **Journal** | `JournalView` cards stack in a single column at all widths below `lg`; no separate mobile treatment beyond the existing card layout | N/A |
 
 - Filter bar stacks vertically on narrow screens; tag pills wrap
 - Tags wrap gracefully on narrow screens (Grid/Journal card content)
@@ -906,7 +905,7 @@ The page has three view modes (Grid, Table, Journal — toggle in the page heade
 
 ### Placement
 
-Collapsible panel appended below the Table View only. Hidden in Grid View and Journal View.
+Collapsible panel appended below the Table View only. Hidden in Grid View.
 
 Label: **"Strategy Compliance"** with expand/collapse chevron.
 
@@ -946,7 +945,7 @@ Backend must provide compliance flags per position (new endpoint or extension to
 - Journal editing should feel lightweight, using inline editors where possible
 - The user should be able to switch between views without losing filtering or scroll position
 - Data should update smoothly after exits or journal edits
-- The Journal View is a **reading and reflection experience**, not a live monitoring surface. Layout and density decisions should reflect this: more vertical space per entry, no live price indicators, no stop-level warnings
+- The Journal View (now the Journal page's Position notes, `journal.md`) is a **reading and reflection experience**, not a live monitoring surface. Layout and density decisions should reflect this: more vertical space per entry, no live price indicators, no stop-level warnings
 
 ---
 
@@ -954,10 +953,10 @@ Backend must provide compliance flags per position (new endpoint or extension to
 
 Documentation-only requirements baseline for this table-based page — no implementation change ships with this addition; conformance is verified per-component as each is next touched.
 
-- **View Switcher:** the three view toggles (Grid / Table / Journal) are reachable via Tab in visual order and activate on Enter or Space; the currently-active view is exposed to assistive tech (`aria-pressed` or equivalent) so its state is announced, not just visually indicated.
+- **View Switcher:** the two view toggles (Grid / Table) are reachable via Tab in visual order and activate on Enter or Space; the currently-active view is exposed to assistive tech (`aria-pressed` or equivalent) so its state is announced, not just visually indicated.
 - **Table View:** row order is the DOM/tab order (no visual-only reordering that diverges from tab order). Each row's interactive controls (Trail Stop button, Recheck Compliance button, Exit action, tag editor) are individually reachable via Tab; arrow-key row-to-row navigation is not required, but Tab must never skip an entire row's controls.
 - **Trail Stop Modal / Compliance Recheck Panel (Modal):** on open, focus moves into the modal (first focusable control, or the modal heading if no control precedes it); Escape closes the modal and returns focus to the control that opened it (the Trail Stop / Recheck Compliance button); Tab is trapped within the modal while open (see design_system.md's "Focus trapping and restoration in modals" principle — this section names the two on-page instances it applies to).
-- **Grid View / Journal View:** cards and journal entries follow the same "Tab order = visual order" rule as Table View rows; inline journal editors (notes, tags) are reachable and editable via keyboard alone — see position_detail_modal.md §Accessibility Considerations for the equivalent tag-input keyboard pattern this page's inline editors should match.
+- **Grid View:** cards follow the same "Tab order = visual order" rule as Table View rows; inline journal editors (notes, tags) are reachable and editable via keyboard alone — see position_detail_modal.md §Accessibility Considerations for the equivalent tag-input keyboard pattern this page's inline editors should match.
 - **Paper Account Panel:** its table follows the same row/control tab-order rule as the main Table View.
 - **Focus indicator:** every interactive element above renders a focus indicator meeting design_system.md's "Focus indicator contrast" rule (≥3:1 against adjacent colour, both themes).
 

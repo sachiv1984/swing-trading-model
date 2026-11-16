@@ -11,7 +11,9 @@
  *
  * Infrastructure:
  * - Playwright page.route() network interception — no live backend required.
- * - ROUTING NOTE: App uses HashRouter — navigate via page.goto('/#/RedFlagJournal').
+ * - ROUTING NOTE: App uses HashRouter. Since ST-05 (EPIC-02, v9.17, BLG-FE-258)
+ *   the Red Flag Journal is the Journal page's Red flags section:
+ *   page.goto('/#/Journal?section=red-flags').
  * - LIFO ordering: catch-all registered FIRST so specific mocks take precedence.
  */
 
@@ -20,7 +22,7 @@
 const { test, expect } = require('./fixtures/api-status-guard');
 
 const API = 'http://localhost:8000';
-const PAGE_URL = '/#/RedFlagJournal';
+const PAGE_URL = '/#/Journal?section=red-flags';
 
 // ---------------------------------------------------------------------------
 // Mock data
@@ -81,7 +83,7 @@ async function setup(page, journalResponse) {
   await mockFallback(page);
   await mockJournal(page, journalResponse);
   await page.goto(PAGE_URL);
-  await page.getByRole('heading', { name: 'Red Flag Journal' }).waitFor({ timeout: 8000 });
+  await page.getByRole('heading', { name: 'Journal', exact: true }).waitFor({ timeout: 8000 });
 }
 
 // ---------------------------------------------------------------------------
@@ -94,7 +96,7 @@ test.describe('Red Flag Journal', () => {
     await setup(page, makeJournalResponse(MOCK_EVENTS));
 
     // Page title visible
-    await expect(page.getByRole('heading', { name: 'Red Flag Journal' })).toBeVisible({ timeout: 8000 });
+    await expect(page.getByRole('heading', { name: 'Journal', exact: true })).toBeVisible({ timeout: 8000 });
 
     // Event rows rendered
     const rows = page.getByTestId('event-row');
@@ -120,7 +122,7 @@ test.describe('Red Flag Journal', () => {
     await setup(page, makeJournalResponse([], 0));
 
     // Page title visible
-    await expect(page.getByRole('heading', { name: 'Red Flag Journal' })).toBeVisible({ timeout: 8000 });
+    await expect(page.getByRole('heading', { name: 'Journal', exact: true })).toBeVisible({ timeout: 8000 });
 
     // Empty state message
     await expect(page.getByTestId('empty-state')).toBeVisible({ timeout: 8000 });
@@ -256,7 +258,7 @@ test.describe('Red Flag Journal', () => {
     });
 
     await page.goto(PAGE_URL);
-    await page.getByRole('heading', { name: 'Red Flag Journal' }).waitFor({ timeout: 8000 });
+    await page.getByRole('heading', { name: 'Journal', exact: true }).waitFor({ timeout: 8000 });
 
     // During the delay window, skeleton rows render with the shared
     // Skeleton primitive's shimmer class.

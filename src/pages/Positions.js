@@ -32,7 +32,6 @@ import PositionCard from "../components/positions/PositionCard";
 import PositionModal from "../components/positions/PositionModal";
 import ExitModal from "../components/positions/ExitModal";
 import DailyMonitor from "../components/monitor/DailyMonitor";
-import JournalView from "../components/positions/JournalView";
 import TradeReflectionModal from "../components/trades/TradeReflectionModal";
 import { formatCurrency, formatPercent, formatR, currencyForMarket } from "../lib/format";
 import ComplianceRecheckModal from "../components/positions/ComplianceRecheckModal";
@@ -1145,15 +1144,6 @@ export default function Positions() {
     return () => clearTimeout(timer);
   }, [highlightedPositionId]);
 
-  const { data: availableTags = [] } = useQuery({
-    queryKey: ["position-tags"],
-    queryFn: async () => {
-      const positionsList = await base44.entities.Position.list();
-      const allTags = positionsList.flatMap((p) => p.tags || []);
-      return [...new Set(allTags)].sort();
-    },
-  });
-
   // FIXED: Exit mutation now accepts exitData directly from ExitModal
   const exitMutation = useMutation({
     mutationFn: (exitData) => {
@@ -1255,14 +1245,10 @@ export default function Positions() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title={viewMode === "journal" ? "Trade Journal" : PAGE_LABELS.Positions}
-        description={
-          viewMode === "journal"
-            ? `${allPositions.length} total entries`
-            : `${openPositions.length} active position${
-                openPositions.length !== 1 ? "s" : ""
-              }`
-        }
+        title={PAGE_LABELS.Positions}
+        description={`${openPositions.length} active position${
+          openPositions.length !== 1 ? "s" : ""
+        }`}
         actions={
           // ST-12 follow-up (v9.15): wraps at phone width now that the header
           // also carries the Daily Monitor button.
@@ -1297,22 +1283,17 @@ export default function Positions() {
               >
                 <List className="w-4 h-4" />
               </Button>
-
-              <Button
-                aria-label="Journal view"
-                variant="ghost"
-                size="sm"
-                onClick={() => setViewMode("journal")}
-                className={cn(
-                  "h-8 w-8 p-0 rounded-lg",
-                  viewMode === "journal"
-                    ? "bg-gradient-to-r from-cyan-500/20 to-violet-500/20 text-cyan-400"
-                    : "text-slate-600 dark:text-slate-400 hover:text-white"
-                )}
-              >
-                <BookOpen className="w-4 h-4" />
-              </Button>
             </div>
+
+            {/* journal.md §5 (ST-05, BLG-FE-258, v9.17): the journal view moved
+                to the Journal page's Position notes section. */}
+            <Link
+              to="/Journal?section=notes"
+              data-testid="positions-notes-link"
+              className="text-sm font-medium text-cyan-700 hover:text-cyan-900 dark:text-cyan-400 dark:hover:text-cyan-300 transition-colors"
+            >
+              Position notes
+            </Link>
 
             {/* ST-12 (BLG-FE-247, v9.15): Daily Position Monitor entry point,
                 moved here from the removed legacy Dashboard (ESC-EXEC-20261104-05 (a)). */}
@@ -1342,7 +1323,7 @@ export default function Positions() {
         error={isError}
         onRetry={refetch}
         className="min-h-[300px]"
-        empty={!isLoading && !isError && viewMode !== "journal" && openPositions.length === 0}
+        empty={!isLoading && !isError && openPositions.length === 0}
         emptyIcon={<FolderOpen className="w-10 h-10 text-slate-600" />}
         emptyHeading="No open positions"
         emptyBody="Enter a trade to see your positions here."
@@ -1355,9 +1336,7 @@ export default function Positions() {
           </Link>
         }
       >
-        {viewMode === "journal" ? (
-          <JournalView positions={allPositions} availableTags={availableTags} />
-        ) : viewMode === "grid" ? (
+        {viewMode === "grid" ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {openPositions.map((position) => (
             <PositionCard

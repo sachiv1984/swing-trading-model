@@ -9,7 +9,7 @@ import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClientInstance } from './lib/query-client'
 import NavigationTracker from './lib/NavigationTracker'
 import { pagesConfig } from './pages.config'
-import { HashRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import { HashRouter as Router, Route, Routes, Navigate, useLocation } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from './lib/AuthContext';
 import UserNotRegisteredError from './components/UserNotRegisteredError';
@@ -21,6 +21,17 @@ const MainPage = mainPageKey ? Pages[mainPageKey] : <></>;
 const LayoutWrapper = ({ children, currentPageName }) => Layout ?
   <Layout currentPageName={currentPageName}>{children}</Layout>
   : <>{children}</>;
+
+// journal.md §5 (ST-05, BLG-FE-258, v9.17): the old Trade Reflections and Red
+// Flag Journal routes redirect to their Journal section with a replace
+// navigation, keeping any query string except `section`.
+const JournalRedirect = ({ section }) => {
+  const location = useLocation();
+  const params = new URLSearchParams(location.search);
+  params.delete('section');
+  const rest = params.toString();
+  return <Navigate to={`/Journal?section=${section}${rest ? `&${rest}` : ''}`} replace />;
+};
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -68,6 +79,8 @@ const AuthenticatedApp = () => {
           /Dashboard redirects to the Dashboard home with a replace navigation
           so Back does not return to the redirect (navigation.md §Legacy Dashboard Route). */}
       <Route path="/Dashboard" element={<Navigate to="/" replace />} />
+      <Route path="/TradeReflection" element={<JournalRedirect section="reflections" />} />
+      <Route path="/RedFlagJournal" element={<JournalRedirect section="red-flags" />} />
       <Route path="/notifications" element={
         <LayoutWrapper currentPageName="notifications">
           <Notifications />

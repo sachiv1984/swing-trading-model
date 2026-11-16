@@ -1,8 +1,8 @@
 **Owner:** Head of Specs Team
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 1.3
-**Last Updated:** 2026-11-04 (ST-08, EPIC-02, v9.15, BLG-SPEC-214 — new §UI Labels: one canonical label per page and primary action, deliberate differences recorded, "trade" vs "position" rule); prior — 2026-09-07 (ST-41, EPIC-05, v9.1, BLG-SPEC-126 — 5 terms added: Compliance Score, Concentration, Drift Score, R-Target, Setup Thesis; each cross-referenced to its authoritative spec); prior history retained — see prior entries in version control
+**Version:** 1.4
+**Last Updated:** 2026-11-16 (ST-05, EPIC-02, v9.17, BLG-FE-258 — §UI Labels: one "Journal" row replaces "Trade Reflections" and "Red Flag Journal"; the Positions "Trade Journal" deliberate difference removed); prior — 2026-11-04 (ST-08, EPIC-02, v9.15, BLG-SPEC-214 — new §UI Labels: one canonical label per page and primary action, deliberate differences recorded, "trade" vs "position" rule); prior — 2026-09-07 (ST-41, EPIC-05, v9.1, BLG-SPEC-126 — 5 terms added); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -292,7 +292,7 @@ Page labels are in Title Case. The browser-tab title is `{Canonical label} · Po
 | `DashboardHome` | Dashboard | Today | Yes | Yes | Yes | The area is called "Today". The page keeps the label "Dashboard". |
 | `notifications` (`Notifications.js`) | Notifications | Today | Yes | Yes | Yes | — |
 | `NotificationsHistory` | Notification History | Today | No (detail) | Yes | No | Detail page: no sidebar or palette entry. The current heading "Alert History" changes to the canonical label. |
-| `Positions` | Positions | Portfolio | Yes | Yes | Yes | The journal view's heading "Trade Journal" stays until the Journal area (`BLG-SPEC-216`, `BLG-FE-258`) replaces that view. |
+| `Positions` | Positions | Portfolio | Yes | Yes | Yes | — |
 | `TradeEntry` | Trade Entry | Portfolio | Yes | Yes | Yes | — |
 | `RiskDashboard` | Risk Dashboard | Portfolio | Yes | Yes | Yes | — |
 | `Signals` | Signals | Find trades | Yes | Yes | Yes | — |
@@ -307,13 +307,13 @@ Page labels are in Title Case. The browser-tab title is `{Canonical label} · Po
 | `Reports` | Reports | Review | Yes | Yes | Yes | — |
 | `StrategyBenchmark` | Strategy Benchmark | Review | Yes | Yes | Yes | — |
 | `Replay` | Replay | Review | Yes | Yes | Yes | — |
-| `TradeReflection` | Trade Reflections | Review | Yes | Yes | Yes | — |
-| `RedFlagJournal` | Red Flag Journal | Review | Yes | Yes | Yes | — |
+| `Journal` | Journal | Review | Yes | Yes | Yes | Replaces "Trade Reflections" and "Red Flag Journal" (ST-05, v9.17); their tabs are "Reflections", "Red flags" and "Position notes" (`journal.md` §3). |
 | `WeeklyDigest` | Weekly Digest | Review | Yes | Yes | Yes | — |
 | `Settings` | Settings | Settings | Yes | Yes | Yes | — |
 | `NotificationPreferences` | Notification Preferences | Today | No (detail) | Yes | No | Detail page: no sidebar or palette entry. Its parent is Notifications; Settings links to it. |
 | `SystemStatus` | System Status | Settings | Yes | Yes | Yes | — |
 | `Dashboard` (legacy) | — | — | — | — | — | Removed (ST-12). `/Dashboard` redirects to `/`. |
+| `TradeReflection`, `RedFlagJournal` (legacy) | — | — | — | — | — | Removed (ST-05, v9.17). Redirect to `/Journal?section=reflections` and `/Journal?section=red-flags`. |
 
 **Labels that change from the v9.14 UI** (ST-11 applies them): sidebar "Reflections" → "Trade Reflections"; headings "Open Positions" → "Positions", "Enter New Position" → "Trade Entry", "Performance Analytics" → "Analytics", "Monthly Signals" → "Signals", "Replay Mode" → "Replay", "Alert History" → "Notification History"; palette "Trade Reflection" → "Trade Reflections". ST-11 also adds palette entries for Replay and Notifications; the Research palette entry follows once `BLG-FE-250` builds the `/Research` landing.
 
@@ -336,7 +336,7 @@ Buttons are in Title Case. The keyboard-shortcut legend uses sentence case with 
 ### "Trade" or "position"
 
 - **Position** is what the user holds, or held: something with an entry, a stop and, while open, a live P&L. Use it for anything about a holding: Positions, New Position, Create Position, open position, position size.
-- **Trade** is the act of buying or selling, the plan for it, and the closed record of it. Use it for Trade Entry, Trade Plan(s), Trade History, Trade Reflections and "closed trade" (see **Trade** and **Closed Trade** above).
+- **Trade** is the act of buying or selling, the plan for it, and the closed record of it. Use it for Trade Entry, Trade Plan(s), Trade History and "closed trade" (see **Trade** and **Closed Trade** above).
 - Entering a trade opens a position, and exiting a position closes the trade. A sentence may use both words when it refers to both. Do not use one in place of the other: a button that opens a holding says "position", not "trade".
 - The shortcut legend's "New trade" (`n`) becomes "New position" under this rule (ST-11).
 

@@ -53,7 +53,7 @@ const AREAS = [
   { key: 'today',     label: 'Today',       items: ['Dashboard', 'Notifications'] },
   { key: 'portfolio', label: 'Portfolio',   items: ['Positions', 'Trade Entry', 'Risk Dashboard'] },
   { key: 'find',      label: 'Find trades', items: ['Signals', 'Screener', 'Watchlist', 'Research', 'Trade Plans', 'Ticker Universe'] },
-  { key: 'review',    label: 'Review',      items: ['Trade History', 'Analytics', 'Reports', 'Strategy Benchmark', 'Replay', 'Trade Reflections', 'Red Flag Journal', 'Weekly Digest'] },
+  { key: 'review',    label: 'Review',      items: ['Trade History', 'Analytics', 'Reports', 'Strategy Benchmark', 'Replay', 'Journal', 'Weekly Digest'] },
   { key: 'settings',  label: 'Settings',    items: ['Settings', 'System Status'] },
 ];
 
@@ -75,8 +75,7 @@ const HREFS = {
   'Reports': '#/Reports',
   'Strategy Benchmark': '#/StrategyBenchmark',
   'Replay': '#/Replay',
-  'Trade Reflections': '#/TradeReflection',
-  'Red Flag Journal': '#/RedFlagJournal',
+  'Journal': '#/Journal',
   'Weekly Digest': '#/WeeklyDigest',
   'Settings': '#/Settings',
   'System Status': '#/SystemStatus',
@@ -259,7 +258,7 @@ test('SC-SNV-08: every area lists exactly its spec entries in order, with the ri
     await expectExpanded(nav, area.key, true);
   }
   const links = nav.getByRole('link');
-  await expect(links).toHaveCount(21);
+  await expect(links).toHaveCount(20); // ST-05 (v9.17): Journal replaces two entries
   const got = await links.evaluateAll((els) =>
     els.map((e) => [e.textContent.trim(), e.getAttribute('href')])
   );

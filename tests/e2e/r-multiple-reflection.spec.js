@@ -11,7 +11,7 @@
  * Infrastructure: Playwright page.route() network interception.
  * No live backend required.
  *
- * ROUTING NOTE: App uses HashRouter. Navigate via page.goto('/#/TradeReflection').
+ * ROUTING NOTE: App uses HashRouter. The reflections are the Journal's Reflections section since ST-05 (v9.17): page.goto('/#/Journal?section=reflections').
  */
 
 'use strict';
@@ -119,7 +119,7 @@ async function stubRoutesAndLoad(page) {
     route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ next_earnings_date: null }) })
   );
 
-  await page.goto('/#/TradeReflection');
+  await page.goto('/#/Journal?section=reflections');
   // Wait for at least one trade card to render
   await expect(page.getByText('NVDA')).toBeVisible({ timeout: 8000 });
 }

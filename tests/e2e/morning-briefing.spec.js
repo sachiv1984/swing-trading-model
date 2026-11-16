@@ -8,7 +8,7 @@
  *   SC-MB-02  All 5 card types show data or empty state without error (AC-07)
  *   SC-MB-03  Screener Hits card renders and links to /Screener (AC-02)
  *   SC-MB-04  Positions to Watch card renders and links to /Positions (AC-03)
- *   SC-MB-05  Red Flags card renders and links to /RedFlagJournal (AC-04)
+ *   SC-MB-05  Red Flags card renders and links to the Journal's Red flags section (AC-04; route since ST-05, v9.17)
  *   SC-MB-06  Earnings card renders and links to /Positions (AC-05)
  *   SC-MB-07  Compliance card renders and links to /PerformanceAnalytics (AC-06)
  *
@@ -245,13 +245,13 @@ test.describe('SC-MB-05 — Red Flags card (AC-04)', () => {
     await expect(page.getByText(/events in last 7 days/)).toBeVisible({ timeout: 5000 });
   });
 
-  test('SC-MB-05b: Red Flags card links to /RedFlagJournal', async ({ page }) => {
+  test('SC-MB-05b: Red Flags card links to /Journal?section=red-flags', async ({ page }) => {
     await mockFallback(page);
     await mockAllMorningBriefingEndpoints(page);
     await gotoDashboard(page);
 
     await expect(page.getByText('Morning Briefing')).toBeVisible({ timeout: 10000 });
-    const link = page.locator('a[href*="RedFlagJournal"]');
+    const link = page.locator('a[href*="Journal?section=red-flags"]');
     await expect(link.first()).toBeVisible({ timeout: 5000 });
   });
 });

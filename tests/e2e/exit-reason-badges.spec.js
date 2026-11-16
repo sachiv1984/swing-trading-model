@@ -67,7 +67,7 @@ async function stubTrades(page) {
 async function openReflections(page, theme) {
   if (theme === 'light') await page.addInitScript(() => window.localStorage.setItem('theme', 'light'));
   await stubTrades(page);
-  await page.goto('/#/TradeReflection');
+  await page.goto('/#/Journal?section=reflections');
   await expect(page.getByTestId('exit-reason-badge')).toHaveCount(CASES.length, { timeout: 10000 });
 }
 

@@ -646,7 +646,7 @@ class TestDeepLinks:
         assert "Risk Dashboard" in section
         assert "Red Flag Journal" in section
         assert "https://app.example.com/#/RiskDashboard" in section
-        assert "https://app.example.com/#/RedFlagJournal" in section
+        assert "https://app.example.com/#/Journal?section=red-flags" in section
 
     def test_deep_links_include_strategy_compliance_section_link(self):
         """ST-04 (BLG-FE-253): third footer link opens Analytics at the Arc 5 section.
@@ -666,7 +666,7 @@ class TestDeepLinks:
             section = format_si05_section(data)
         expected_footer = (
             "🔗 [Risk Dashboard](https://app.example.com/#/RiskDashboard)"
-            " · [Red Flag Journal](https://app.example.com/#/RedFlagJournal)"
+            " · [Red Flag Journal](https://app.example.com/#/Journal?section=red-flags)"
             " · [Strategy Compliance](https://app.example.com/#/PerformanceAnalytics?section=strategy-compliance)"
         )
         assert section.endswith(expected_footer)

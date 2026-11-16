@@ -48,7 +48,7 @@ const AUDIT = [
   { file: 'components/dashboard/home/GracePeriodCard.js', heading: 'No positions in grace', kind: 'card', to: '/Positions?grace=open', title: 'In Grace Today' },
   { file: 'components/dashboard/home/morning/ExitZoneCard.js', heading: 'No positions to watch', kind: 'card', to: '/Positions', title: 'Positions to Watch' },
   { file: 'components/dashboard/home/morning/ScreenerHitsCard.js', heading: 'No new signals', kind: 'card', to: '/Screener', title: 'Screener Hits' },
-  { file: 'components/dashboard/home/morning/RedFlagsCard.js', heading: 'No red flags this week', kind: 'card', to: '/RedFlagJournal', title: 'Red Flags' },
+  { file: 'components/dashboard/home/morning/RedFlagsCard.js', heading: 'No red flags this week', kind: 'card', to: '/Journal?section=red-flags', title: 'Red Flags' }, // ST-05 (v9.17): the Journal's Red flags section
   { file: 'components/dashboard/home/morning/EarningsAlertCard.js', heading: 'No earnings in 7 days', kind: 'card', to: '/Positions', title: 'Earnings' },
   { file: 'components/dashboard/home/morning/ComplianceCard.js', heading: 'No compliance data yet', kind: 'card', to: '/PerformanceAnalytics', title: 'Signal Compliance' },
   { file: 'components/dashboard/home/AiDailyBriefing.js', heading: 'No briefing for today', kind: 'excluded',

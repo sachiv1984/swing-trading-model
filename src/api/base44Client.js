@@ -92,6 +92,25 @@ async function getPublicSettingsById(appId) {
 }
 
 // ---------- Auth ----------
+// One closed trade from GET /trades as a reflection card row. Shared by
+// base44.entities.TradeReflection.list and the Journal's Reflections section,
+// which reads the ['trades'] query (ST-05, BLG-FE-258).
+export function toReflectionRow(t) {
+  return {
+    id: t.id,
+    trade_id: t.id,
+    ticker: t.ticker,
+    market: t.market,
+    entry_price: t.entry_price,
+    exit_price: t.exit_price,
+    exit_reason: t.exit_reason,
+    exit_date: t.exit_date,
+    hold_days: t.holding_days,
+    r_multiple: t.net_r_multiple ?? null,
+    pnl: t.pnl,
+  };
+}
+
 export const base44 = {
   baseUrl: API_BASE_URL,
   auth: {
@@ -366,20 +385,7 @@ export const base44 = {
     TradeReflection: {
       list: async () => {
         const result = await doFetch('/trades');
-        const trades = result?.trades || [];
-        return trades.map((t) => ({
-          id: t.id,
-          trade_id: t.id,
-          ticker: t.ticker,
-          market: t.market,
-          entry_price: t.entry_price,
-          exit_price: t.exit_price,
-          exit_reason: t.exit_reason,
-          exit_date: t.exit_date,
-          hold_days: t.holding_days,
-          r_multiple: t.net_r_multiple ?? null,
-          pnl: t.pnl,
-        }));
+        return (result?.trades || []).map(toReflectionRow);
       },
       filter: async ({ trade_id }) => {
         try {

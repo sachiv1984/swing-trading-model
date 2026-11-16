@@ -10,7 +10,7 @@ Journal writer coverage.
 - Writer coverage: every event type declared in database._VALID_EVENT_TYPES
   has a create_red_flag_event writer in backend/, or a dated allow-list entry
   below, never both. The frontend's RECORDED_EVENT_TYPES
-  (src/pages/RedFlagJournal.js) must equal the set of written types, so that
+  (src/components/journal/RedFlagsSection.js) must equal the set of written types, so that
   adding a writer means editing one list on each side.
 """
 import re
@@ -63,7 +63,7 @@ def coverage_gaps(declared, written, allow_list) -> dict:
 
 
 def frontend_recorded_types() -> set:
-    source = (ROOT / "src" / "pages" / "RedFlagJournal.js").read_text(encoding="utf-8")
+    source = (ROOT / "src" / "components" / "journal" / "RedFlagsSection.js").read_text(encoding="utf-8")
     block = re.search(r"RECORDED_EVENT_TYPES\s*=\s*\[(.*?)\]", source, re.S).group(1)
     return set(re.findall(r'"(\w+)"', block))
 

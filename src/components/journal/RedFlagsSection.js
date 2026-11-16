@@ -1,11 +1,9 @@
 import { useState, useCallback, useEffect } from "react";
-import { apiFetch } from "../api/base44Client";
-import { Button } from "../components/ui/button";
-import PageHeader from "../components/ui/PageHeader";
-import OnwardLink from "../components/ui/OnwardLink";
-import { PAGE_LABELS } from "../lib/pageLabels";
-import { Skeleton } from "../components/ui/skeleton";
-import { cn } from "../lib/utils";
+import { apiFetch } from "../../api/base44Client";
+import { Button } from "../ui/button";
+import OnwardLink from "../ui/OnwardLink";
+import { Skeleton } from "../ui/skeleton";
+import { cn } from "../../lib/utils";
 import {
   AlertTriangle,
   CheckSquare,
@@ -15,7 +13,7 @@ import {
   ChevronRight,
   RefreshCw,
 } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, keepPreviousData } from "@tanstack/react-query";
 
 const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:8000";
 
@@ -88,6 +86,9 @@ export function recordedTypesNote() {
 }
 
 // A stored filter naming a type with no writer resets to "All types".
+// Since the Journal (journal.md v1.1 §3; ST-05, BLG-FE-258) the stored filters
+// hold no ticker: the shared ticker filter lives in ?ticker=, and an old
+// stored tickerFilter is ignored.
 function storedEventTypeFilter() {
   const stored = loadStoredFilters()?.eventTypeFilter ?? "";
   return stored && !RECORDED_EVENT_TYPES.includes(stored) ? "" : stored;
@@ -199,12 +200,12 @@ function EventRow({ event }) {
         >
           {relTime}
         </span>
-        {/* navigation.md §Onward Links (ST-03, BLG-FE-252): Trade History
-            filtered to the flagged trade's ticker. */}
+        {/* journal.md §4 (ST-05, BLG-FE-258): "View trade" opens Trade
+            History filtered to the flagged trade's ticker. */}
         {event.ticker && (
           <OnwardLink
             to={`/TradeHistory?ticker=${encodeURIComponent(event.ticker)}`}
-            label={PAGE_LABELS.TradeHistory}
+            label="View trade"
             testId="event-trade-history-link"
             className="text-xs"
           />
@@ -233,18 +234,17 @@ function SkeletonRow() {
   );
 }
 
-export default function RedFlagJournal() {
+// Journal → Red flags section (journal.md v1.1 §4; ST-05, BLG-FE-258,
+// EPIC-02, v9.17). Content and states from red_flag_journal.md §4–§9. The
+// ticker comes from the Journal's shared filter (already debounced, sent
+// upper-cased as typed); the event type and date filters stay here.
+export default function RedFlagsSection({ ticker = "", onCount, onClearTicker }) {
   const [page, setPage] = useState(1);
   const [eventTypeFilter, setEventTypeFilter] = useState(storedEventTypeFilter);
-  const [tickerFilter, setTickerFilter] = useState(
-    () => loadStoredFilters()?.tickerFilter ?? ""
-  );
   const [sinceFilter, setSinceFilter] = useState(
     () => loadStoredFilters()?.sinceFilter ?? ""
   );
-  const [tickerInput, setTickerInput] = useState(
-    () => loadStoredFilters()?.tickerFilter ?? ""
-  );
+  const tickerFilter = ticker;
 
   const PAGE_SIZE = 20;
 
@@ -254,17 +254,25 @@ export default function RedFlagJournal() {
         FILTER_STORAGE_KEY,
         JSON.stringify({
           version: FILTER_STORAGE_VERSION,
-          data: { eventTypeFilter, tickerFilter, sinceFilter },
+          data: { eventTypeFilter, sinceFilter },
         })
       );
     } catch {
       // ignore — localStorage unavailable (e.g. private browsing)
     }
-  }, [eventTypeFilter, tickerFilter, sinceFilter]);
+  }, [eventTypeFilter, sinceFilter]);
+
+  // A new shared ticker starts again from page 1, reset during render so the
+  // first request for the new ticker already asks for page 1.
+  const [prevTicker, setPrevTicker] = useState(tickerFilter);
+  if (prevTicker !== tickerFilter) {
+    setPrevTicker(tickerFilter);
+    setPage(1);
+  }
 
   const queryKey = ["red-flag-journal", page, eventTypeFilter, tickerFilter, sinceFilter];
 
-  const { data, isLoading, isError, refetch } = useQuery({
+  const { data, isLoading, isError, isPlaceholderData, refetch } = useQuery({
     queryKey,
     queryFn: async () => {
       const params = new URLSearchParams({ page, page_size: PAGE_SIZE });
@@ -276,23 +284,17 @@ export default function RedFlagJournal() {
       const body = await res.json();
       return body.data;
     },
-    keepPreviousData: true,
+    placeholderData: keepPreviousData,
   });
 
   const hasFilters = eventTypeFilter || tickerFilter || sinceFilter;
 
   const clearFilters = useCallback(() => {
     setEventTypeFilter("");
-    setTickerFilter("");
-    setTickerInput("");
     setSinceFilter("");
     setPage(1);
-  }, []);
-
-  const applyTickerFilter = useCallback(() => {
-    setTickerFilter(tickerInput.trim().toUpperCase() || "");
-    setPage(1);
-  }, [tickerInput]);
+    onClearTicker?.();
+  }, [onClearTicker]);
 
   const handleEventTypeChange = useCallback((e) => {
     setEventTypeFilter(e.target.value);
@@ -307,10 +309,20 @@ export default function RedFlagJournal() {
   const total = data?.total ?? 0;
   const items = data?.items ?? [];
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  // The tab count is the total under the current filters, so it is hidden
+  // while the previous filters' result is still on screen.
+  const loaded = !isLoading && !isError && !isPlaceholderData;
+
+  useEffect(() => {
+    onCount?.(loaded ? total : null);
+  }, [loaded, total, onCount]);
+
+  // journal.md §3: the server matches the exact ticker, so a UK ticker needs
+  // ".L". Shown when a ticker without ".L" finds no events.
+  const ukSuffixHint = tickerFilter && !tickerFilter.endsWith(".L");
 
   return (
-    <div className="p-6 max-w-4xl mx-auto space-y-6">
-      <PageHeader title={PAGE_LABELS.RedFlagJournal} />
+    <div className="max-w-4xl space-y-6">
 
       {/* Filter controls */}
       <div
@@ -331,29 +343,6 @@ export default function RedFlagJournal() {
               </option>
             ))}
           </select>
-        </div>
-
-        <div className="flex flex-col gap-1">
-          <label className="text-xs text-slate-600 dark:text-slate-400">Ticker</label>
-          <div className="flex gap-1">
-            <input
-              data-testid="ticker-filter-input"
-              type="text"
-              value={tickerInput}
-              onChange={(e) => setTickerInput(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && applyTickerFilter()}
-              placeholder="e.g. AAPL"
-              className="bg-slate-800 border border-slate-600 text-slate-200 text-sm rounded px-2 py-1.5 w-28 focus:outline-none focus:border-slate-400"
-            />
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={applyTickerFilter}
-              className="text-xs"
-            >
-              Apply
-            </Button>
-          </div>
         </div>
 
         <div className="flex flex-col gap-1">
@@ -389,7 +378,7 @@ export default function RedFlagJournal() {
           className="flex flex-col items-center gap-3 py-12 text-center"
         >
           <p className="text-slate-300">
-            Unable to load Red Flag Journal. Please try again.
+            Unable to load red flags. Please try again.
           </p>
           <Button variant="outline" size="sm" onClick={() => refetch()}>
             <RefreshCw className="w-4 h-4 mr-2" />
@@ -407,7 +396,9 @@ export default function RedFlagJournal() {
           {hasFilters ? (
             <>
               <p className="text-slate-300 text-sm">
-                No events match your current filters.
+                {ukSuffixHint
+                  ? `No events for ${tickerFilter}. UK tickers need the .L suffix here, e.g. LGEN.L.`
+                  : "No events match your current filters."}
               </p>
               <button
                 onClick={clearFilters}

@@ -135,7 +135,7 @@ async function mockTradeReflectionRoutes(page) {
 test('SC-DCO-05: TradeReflectionModal DialogContent honours max-w-2xl/flex', async ({ page }) => {
   await mockFallback(page);
   await mockTradeReflectionRoutes(page);
-  await page.goto('/#/TradeReflection');
+  await page.goto('/#/Journal?section=reflections');
 
   const card = page.locator('button').filter({ hasText: 'NVDA' }).first();
   await expect(card).toBeVisible({ timeout: 8000 });
