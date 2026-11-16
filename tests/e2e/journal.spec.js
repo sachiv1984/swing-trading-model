@@ -590,6 +590,10 @@ test('SC-JNL-20: at 375 px the tabs scroll, the filter is full width, and the pa
   expect(Math.abs(filterBox.width - listBox.width)).toBeLessThanOrEqual(2);
   for (const section of ['reflections', 'red-flags', 'notes']) {
     await page.getByTestId(`journal-tab-${section}`).click();
+    // The selected tab follows ?section=, which react-router commits in a
+    // transition: wait for it, so the panel measured is this section's.
+    await expect(page.getByTestId(`journal-tab-${section}`)).toHaveAttribute('aria-selected', 'true');
+    await expect(panel(page, section)).toBeVisible();
     const scroll = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
     expect(scroll, `${section}: page-level horizontal scroll`).toBeLessThanOrEqual(0);
   }

@@ -329,13 +329,15 @@ export default function RedFlagsSection({ ticker = "", onCount, onClearTicker })
         data-testid="filter-controls"
         className="flex flex-wrap gap-3 items-end"
       >
-        <div className="flex flex-col gap-1">
+        {/* min-w-0/max-w-full: a native select is as wide as its longest
+            option ("… — not yet recorded"), which overflowed 375 px (JA-20). */}
+        <div className="flex flex-col gap-1 min-w-0 max-w-full">
           <label className="text-xs text-slate-600 dark:text-slate-400">Event type</label>
           <select
             data-testid="event-type-filter"
             value={eventTypeFilter}
             onChange={handleEventTypeChange}
-            className="bg-slate-800 border border-slate-600 text-slate-200 text-sm rounded px-2 py-1.5 focus:outline-none focus:border-slate-400"
+            className="max-w-full bg-slate-800 border border-slate-600 text-slate-200 text-sm rounded px-2 py-1.5 focus:outline-none focus:border-slate-400"
           >
             {EVENT_TYPE_OPTIONS.map((o) => (
               <option key={o.value} value={o.value} disabled={o.disabled}>
