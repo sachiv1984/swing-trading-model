@@ -51,6 +51,15 @@ Last Updated: 2026-11-16 (PR #2260 review: ST-14 native-ATR fix)
 
 ## Merge Gate Confirmations
 
-- **Director of Quality QA sign-off (human):** not yet given.
-- **Product Owner acceptance (human):** not yet given.
-- **Merged:** not yet.
+- **Director of Quality QA sign-off (human):** given by the human repository owner, acting as Director of Quality, in session at 2026-11-16T08:54:06Z ("give DOQ and PO acceptance"), before the merge. It accepts:
+  - this evidence: ST-11, ST-12, ST-13 and ST-14 all Pass, with no deviations;
+  - the agent-mediated sign-off block above (round 1 Approved; two P3 fixed in `f2749a24`);
+  - the agent-mediated PR #2260 review (DoQ Changes Requested on the P2, which was fixed in `d485d9ca` and `084bdaac`; re-review Approved);
+  - the in-PR follow-up fixes: BLG-FE-295 (`0594c4b4`), BLG-FE-296 (`d485d9ca`) and BLG-FE-298 (`79ec393f`).
+- **Product Owner acceptance (human):** given by the human repository owner, acting as Product Owner, in the same instruction at 2026-11-16T08:54:06Z, before the merge. It accepts ST-11 to ST-14 against `stage4_backlog_slice.md` and the addendum, including the three points the PR review asked the Product Owner to accept explicitly:
+  - ST-11 AC 2's production backfill run is post-merge, tracked by BLG-BE-211 until the first production startup count and the DS-41 verification query are recorded;
+  - ST-12's reset is in the Trade Plan form only, so BLG-FE-269 AC 1 stays open;
+  - the ST-14 stored-stop wording ruling of 2026-11-13 ("about … using the signal's ATR"), with `trade_plan.md` §5f v1.27 as the current text.
+- **P1/P2 found defects filed during this EPIC:** none. The PR review's P2 was a defect in this EPIC's own new code and was fixed before merge, not filed. Open follow-ups: BLG-BE-219, BLG-FE-297 and BLG-BE-220 (all P3).
+- **CI at confirmation:** PR head `1f0f0007` had 26 checks passed, 22 pending and 5 skipped. Every workflow was green on `084bdaac` and `0594c4b4`. The merge should wait until the head checks are green.
+- **Merged:** not yet. The human developer makes the merge decision.
