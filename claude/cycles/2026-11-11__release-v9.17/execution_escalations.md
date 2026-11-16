@@ -19,4 +19,5 @@ Last Updated: 2026-11-16
 - **Unblock criteria:** both dated confirmations recorded in `performance.md` §11 Change Log (and the KPI confirmation in `qa_evidence_EPIC-02.md` at sign-off), with any requested changes applied to the draft.
 - **SLA due-by:** 2026-11-17T13:00:31Z (24h — Lifecycle)
 - **Blocks execution:** No
-- **Disposition:** Open
+- **Disposition:** Resolved
+- **Resolution summary (2026-11-16T13:03:54Z):** Head of UX & Design approval of `performance.md` v1.0, given in-session by the user acting in that role, dated 2026-11-16: approved as drafted, including the §5 scope rule (one home per period-level KPI; scoped figures stay with their breakdowns). Metrics Definitions & Analytics Canonical Owner confirmation, given in-session by the user acting in that role, dated 2026-11-16: every KPI keeps its canonical definition, read from the server's `GET /analytics/metrics` (and the other named endpoints) per §5.2; the browser recomputation is removed. Both recorded in `performance.md` §11. ST-06 reclassified `autonomous`; build sub-step unblocked.

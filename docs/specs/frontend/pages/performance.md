@@ -1,6 +1,6 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Canonical Specification (Class 1)
-**Status:** Draft — awaiting Head of UX & Design approval (build gated, `stage4_backlog_slice_addendum.md` ST-06)
+**Status:** Approved — not yet built (`BLG-FE-259`)
 **Version:** 1.0
 **Last Updated:** 2026-11-16 (ST-06, EPIC-02, v9.17, BLG-FE-259 — initial draft: one Performance page from Reports and Analytics, against the `performance-page-brief` decision record §2)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
@@ -61,7 +61,7 @@ Metrics staleness indicator
 
 ## 5. One Home per KPI
 
-**Scope rule:** a KPI over the page period (the header selector) has exactly one home. The same KPI over a narrower, labelled scope — one tax year, one month, one market, one exit reason, one tag, one cohort — is a different figure and stays with its breakdown. *(Interpretation for Head of UX & Design approval.)*
+**Scope rule:** a KPI over the page period (the header selector) has exactly one home. The same KPI over a narrower, labelled scope — one tax year, one month, one market, one exit reason, one tag, one cohort — is a different figure and stays with its breakdown. *(Approved by the Head of UX & Design, 2026-11-16.)*
 
 ### 5.1 Period-level KPIs
 
@@ -99,7 +99,7 @@ The Analytics page computes its §1 and §3 metrics in the browser from `GET /tr
 | Expectancy, Profit Factor, Risk/Reward | browser, same formulas, browser period filter | server, same formulas, server period filter | changes only where the two period filters select different trades |
 | Win/Loss Streak, Avg Hold, Trade Frequency, Capital Efficiency, Time Underwater, Consistency Metrics | browser (Consistency from the browser monthly grouping) | server `advanced_metrics` | may change |
 
-This is the brief §2.4 case ("the canonical one is kept"). It is not a recalculation of any server figure. *(The Metrics Definitions & Analytics Canonical Owner confirms §5 with a date — slice ST-06 AC 2.)*
+This is the brief §2.4 case ("the canonical one is kept"). It is not a recalculation of any server figure. *(Confirmed by the Metrics Definitions & Analytics Canonical Owner, 2026-11-16 — slice ST-06 AC 2.)*
 
 ## 6. States
 
@@ -151,4 +151,4 @@ At 390 px the page has no page-level horizontal scroll. The section index is the
 
 | Version | Date | Change |
 |---------|------|--------|
-| 1.0 | 2026-11-16 | Initial draft. ST-06 (EPIC-02, v9.17, BLG-FE-259) against the `performance-page-brief` §2 brief: route and label, four sections with the shared section index, one home per KPI with the scope rule, the browser-vs-server divergence list (§5.2), states, redirects incl. the SI-05 compliance link, §13 note, 390 px rule absorbing `BLG-FE-237`, ACs PF-01..PF-14. Head of UX & Design approval: *pending*. Metrics Definitions & Analytics Canonical Owner KPI confirmation (§5): *pending*. |
+| 1.0 | 2026-11-16 | Initial draft. ST-06 (EPIC-02, v9.17, BLG-FE-259) against the `performance-page-brief` §2 brief: route and label, four sections with the shared section index, one home per KPI with the scope rule, the browser-vs-server divergence list (§5.2), states, redirects incl. the SI-05 compliance link, §13 note, 390 px rule absorbing `BLG-FE-237`, ACs PF-01..PF-14. **Head of UX & Design approval: 2026-11-16** (the user, in session, acting in that role; approved as drafted, including the §5 scope rule). **Metrics Definitions & Analytics Canonical Owner KPI confirmation (§5): 2026-11-16** (the user, in session, acting in that role; every KPI keeps its canonical definition, read from its server source per §5.2). |
