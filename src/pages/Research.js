@@ -123,6 +123,14 @@ export default function Research() {
     retry: 1,
   });
 
+  // ST-13 (BLG-FE-281, v9.17): research_view.md v1.5 §4.7 — "Create Trade Plan"
+  // carries the research response's market, so a UK ticker's plan is not created
+  // as US. Same .L rule as GET /research/{ticker} if the response has none.
+  const planMarket =
+    researchData?.market === "UK" || researchData?.market === "US"
+      ? researchData.market
+      : (ticker || "").toUpperCase().endsWith(".L") ? "UK" : "US";
+
   const sigEntry = researchData?.signal?.entry_price ?? null;
   const sigStop = researchData?.signal?.stop_price ?? null;
   const canCalculateHeat = sigEntry !== null && sigStop !== null && sigEntry > sigStop;
@@ -368,7 +376,7 @@ export default function Research() {
             <p className="text-sm text-slate-600 dark:text-slate-400">No trade plan for {ticker}.</p>
             <Button
               size="sm"
-              onClick={() => navigate(`/TradePlan?ticker=${ticker}`)}
+              onClick={() => navigate(`/TradePlan?ticker=${encodeURIComponent(ticker)}&market=${planMarket}`)}
               className="bg-gradient-to-r from-cyan-500 to-violet-500 hover:from-cyan-400 hover:to-violet-400 text-white border-0 text-xs"
             >
               Create Trade Plan

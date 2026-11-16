@@ -238,7 +238,6 @@ class TestPositionOpenAndClose:
         assert update_position.call_args[0][1]["status"] == "closed"
 
     @covers(PLAN, ("active", "closed"))
-    @pytest.mark.xfail(strict=True, reason="BLG-BE-211 (v9.17 ST-11): no code path moves a linked plan to closed")
     def test_full_exit_closes_the_linked_active_plan(self):
         plan = {"id": "plan-1", "status": "active", "position_id": "pos-1"}
         _, _, update_plan = _exit_open_position([plan])

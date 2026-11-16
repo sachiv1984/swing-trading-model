@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiFetch } from "../api/base44Client";
@@ -8,7 +8,9 @@ import PageHeader from "../components/ui/PageHeader";
 import { PAGE_LABELS } from "../lib/pageLabels";
 import DataState from "../components/ui/DataState";
 import EntryChecklist, { DEFAULT_CHECKLIST_ITEMS } from "../components/trades/EntryChecklist";
-import SignalContextPanel, { buildSignalPrePopulation } from "../components/trades/SignalContextPanel";
+import SignalContextPanel, { buildSignalPrePopulation, getSuggestedStop, getSignalAtr } from "../components/trades/SignalContextPanel";
+import { formatCurrency, currencyForMarket } from "../lib/format";
+import { INITIAL_ATR_MULTIPLIER } from "../constants/strategy";
 import SetupQualityScorePanel from "../components/trades/SetupQualityScorePanel";
 import WhatIfSizingPreview from "../components/trades/WhatIfSizingPreview";
 import PreEntryValidationPanel from "../components/trades/PreEntryValidationPanel";
@@ -202,6 +204,42 @@ const EMPTY_FORM = {
 const TRADE_TAG_MAX_LENGTH = 20;
 const TRADE_TAG_MAX_COUNT = 10;
 
+// ST-12 (BLG-FE-278, v9.17): trade_plan.md v1.25 §5e — the Pre-Entry Validation
+// result key is advisory_status plus the set of {rule, status} pairs; detail and
+// captured_at are not part of it, so a refetch with the same outcome is no change.
+function preEntryResultKey(snapshot) {
+  if (!snapshot || !snapshot.advisory_status) return null;
+  const pairs = (Array.isArray(snapshot.checks) ? snapshot.checks : [])
+    .map((c) => `${c.rule}:${c.status}`)
+    .sort();
+  return `${snapshot.advisory_status}|${pairs.join(",")}`;
+}
+
+// ST-14 (BLG-FE-282, v9.17): trade_plan.md §5f stored-stop line. The §5 stop is
+// Planned Entry − INITIAL_ATR_MULTIPLIER × the linked signal's ATR in its own currency
+// (getSignalAtr: a US signal's atr_value is GBP, so its ATR is derived from initial_stop). Shown under the
+// suggested size line when both are known and the planned stop differs by more than 0.005.
+// Advisory only: it changes no field and does not resize. "about" and the signal's ATR are
+// named because Trade Entry computes the stop from the ATR at entry time, which may have
+// moved since the signal ran (wording ruling 2026-11-13, Frontend Specifications & UX
+// Documentation Owner).
+function PlanStoredStopNote({ entryPrice, stopPrice, atrValue, market }) {
+  const entry = parseFloat(entryPrice);
+  const stop = parseFloat(stopPrice);
+  const atr = atrValue == null || atrValue === "" ? NaN : Number(atrValue);
+  if (!(entry > 0) || !(stop > 0) || !(atr > 0)) return null;
+  const sectionFiveStop = entry - INITIAL_ATR_MULTIPLIER * atr;
+  if (!(sectionFiveStop > 0) || Math.abs(stop - sectionFiveStop) <= 0.005) return null;
+  const currency = currencyForMarket(market);
+  return (
+    <p data-testid="plan-stored-stop-note" className="text-sm text-app-warning">
+      Trade Entry will store a stop of about {formatCurrency(sectionFiveStop, { currency })} (entry − {INITIAL_ATR_MULTIPLIER}×ATR,
+      using the signal&apos;s ATR of {formatCurrency(atr, { currency })}; §5).
+      {" "}The suggested size above uses your stop of {formatCurrency(stop, { currency })}.
+    </p>
+  );
+}
+
 function Field({ label, labelId, children }) {
   return (
     <div className="space-y-1">
@@ -278,9 +316,47 @@ export default function TradePlan() {
   const [isClaudeDraft, setIsClaudeDraft] = useState(false);
   // ST-05 (BLG-FE-271, v9.16): the panel's dated result, sent on save (trade_plan.md §5e).
   const [preEntrySnapshot, setPreEntrySnapshot] = useState(null);
+  // ST-12 (BLG-FE-278, v9.17): §5e acknowledgement reset, option (a) clear on change
+  // (RISK-05, Strategy Rules & System Intent Owner, 2026-11-12). lastResultKey is the
+  // key the acknowledgement was given against: undefined on a new form until the first
+  // result arrives, or the stored snapshot's key ("none" without one) in edit mode.
+  const lastResultKey = useRef(undefined);
+  // BLG-FE-298 (v9.17, Head of UX & Design recommendation, user ruling 2026-11-16): the
+  // reset note shows only when the reset clears a tick the trader gave (or a stored tick),
+  // and says why: "changed" (the result key changed) or "no-snapshot" (an edited plan saved
+  // before check results were kept). null = no note.
+  const [ackResetReason, setAckResetReason] = useState(null);
+  // Mirrors the box so the result handler knows whether a reset clears a real tick.
+  const ackTicked = useRef(false);
+  ackTicked.current = !!form.pre_entry_override_acknowledged;
+  // A tick cleared by a PASS result still counts as cleared when WARN/FAIL returns.
+  const tickClearedByPass = useRef(false);
+  const handlePreEntryResult = useCallback((snapshot) => {
+    setPreEntrySnapshot(snapshot);
+    const key = preEntryResultKey(snapshot);
+    if (key == null) return; // no shares, loading or endpoint error: not a result
+    const previous = lastResultKey.current;
+    lastResultKey.current = key;
+    if (snapshot.advisory_status === "pass") {
+      // The box is hidden on pass and saved as false.
+      if (ackTicked.current) tickClearedByPass.current = true;
+      setForm((prev) => (prev.pre_entry_override_acknowledged ? { ...prev, pre_entry_override_acknowledged: false } : prev));
+      setAckResetReason(null);
+      return;
+    }
+    if (previous === undefined || previous === key) return;
+    const clearsATick = ackTicked.current || tickClearedByPass.current;
+    tickClearedByPass.current = false;
+    setForm((prev) => (prev.pre_entry_override_acknowledged ? { ...prev, pre_entry_override_acknowledged: false } : prev));
+    setAckResetReason(clearsATick ? (previous === "none" ? "no-snapshot" : "changed") : null);
+  }, []);
   // ST-08 (BLG-FE-256, v9.16): §5f — the suggestion pre-fills Planned Shares only until
   // the user types there. In edit mode a stored planned_quantity counts as typed.
   const [sharesTyped, setSharesTyped] = useState(false);
+  // ST-14 (BLG-FE-282, v9.17): §5a.3 — once the user has typed in Planned Stop Price
+  // (including clearing it), the signal pre-fill never writes it.
+  const stopTyped = useRef(false);
+  const prefilledStop = useRef(null); // { value, ticker } of the untouched §5a.3 pre-fill
   const [feedbackJustGiven, setFeedbackJustGiven] = useState(false);
   const hasUnsavedAiChanges = useRef(false);
   const [isAiLoading, setIsAiLoading] = useState(false);
@@ -356,6 +432,11 @@ export default function TradePlan() {
         // re-save sends the box's real state, not a stale stored true.
         pre_entry_override_acknowledged: !!existingPlan.pre_entry_override_acknowledged,
       });
+      // ST-12: the stored acknowledgement stands only if the first result has the
+      // stored snapshot's key (§5e); a plan saved without a snapshot never matches.
+      lastResultKey.current = preEntryResultKey(existingPlan.pre_entry_validation_snapshot) ?? "none";
+      setAckResetReason(null);
+      tickClearedByPass.current = false;
       setIsClaudeDraft(!!existingPlan.is_ai_draft);
       if (existingPlan.planned_quantity != null) setSharesTyped(true);
     }
@@ -494,22 +575,55 @@ export default function TradePlan() {
   const watchlistedMatch = watchlistedSignals.find(
     (s) => s.ticker === form.ticker || s.ticker === form.ticker + ".L" || s.ticker.replace(/\.L$/, "") === form.ticker
   ) || null;
-  const linkedSignal = usesSignalId ? signalById || null : watchlistedMatch;
+  // BLG-FE-295 (v9.17, PR #2260 review): the "Plan this" signal belongs to its ticker. If the
+  // trader changes the ticker, the signal no longer describes the plan, so the Signal Context
+  // panel and the §5f stored-stop line are hidden (case and the .L suffix are ignored).
+  const baseTicker = (t) => String(t || "").trim().toUpperCase().replace(/\.L$/, "");
+  const signalMatchesTicker = (s) => !!s && baseTicker(s.ticker) === baseTicker(form.ticker);
+  const linkedSignal = usesSignalId
+    ? (signalMatchesTicker(signalById) ? signalById : null)
+    : watchlistedMatch;
 
   const prePopApplied = useRef(false);
   useEffect(() => {
     if (!editId && linkedSignal && !prePopApplied.current) {
       prePopApplied.current = true;
       const { setupThesis, entryRationale, confirmationCriteria } = buildSignalPrePopulation(linkedSignal, form.market);
-      setForm((prev) => ({
+      // ST-14 (BLG-FE-282, v9.17): §5a.3 — Stop Level from the panel's "Suggested stop",
+      // 2 dp in the plan currency; never over a value already set or typed. Only for the
+      // ticker the form opened with ("on initial form load"), so a signal matched while
+      // the user is typing another ticker never sets a risk value (DoQ review finding 1).
+      const suggestedStop = getSuggestedStop(linkedSignal);
+      const openedTicker = (ticker || "").toUpperCase();
+      const stopValue =
+        openedTicker && (form.ticker || "").toUpperCase() === openedTicker &&
+        !stopTyped.current && suggestedStop != null && suggestedStop > 0
+          ? String(Math.round(suggestedStop * 100) / 100)
+          : null;
+      setForm((prev) => {
+        const keep = prev.planned_stop_price !== "" && prev.planned_stop_price != null;
+        if (!keep && stopValue != null) prefilledStop.current = { value: stopValue, ticker: prev.ticker };
+        return {
         ...prev,
+        planned_stop_price: keep || stopValue == null ? prev.planned_stop_price : stopValue,
         setup_type: prev.setup_type || "Momentum Continuation",
         setup_thesis: prev.setup_thesis || setupThesis,
         entry_rationale: prev.entry_rationale || entryRationale,
         confirmation_criteria: prev.confirmation_criteria || confirmationCriteria,
-      }));
+        };
+      });
     }
   }, [linkedSignal]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // ST-14 (DoQ review finding 1): a pre-filled stop belongs to the ticker it came from.
+  // If the ticker changes while the stop is still the untouched pre-fill, clear it.
+  useEffect(() => {
+    const filled = prefilledStop.current;
+    if (!filled || form.ticker === filled.ticker) return;
+    prefilledStop.current = null;
+    if (stopTyped.current) return;
+    setForm((prev) => (prev.planned_stop_price === filled.value ? { ...prev, planned_stop_price: "" } : prev));
+  }, [form.ticker]);
 
   const { data: existingByPosition } = useQuery({
     queryKey: ["tradePlanByPosition", positionId],
@@ -928,7 +1042,10 @@ export default function TradePlan() {
               type="number"
               data-testid="planned-stop-price-input"
               value={form.planned_stop_price}
-              onChange={set("planned_stop_price")}
+              onChange={(e) => {
+                stopTyped.current = true;
+                set("planned_stop_price")(e);
+              }}
               placeholder="e.g. 142.00"
             />
           </Field>
@@ -943,6 +1060,12 @@ export default function TradePlan() {
           sharesTyped={sharesTyped}
           onPrefill={(v) => setForm((prev) => ({ ...prev, planned_quantity: v }))}
           onUse={(v) => setForm((prev) => ({ ...prev, planned_quantity: v }))}
+        />
+        <PlanStoredStopNote
+          entryPrice={form.planned_entry_price}
+          stopPrice={form.planned_stop_price}
+          atrValue={getSignalAtr(linkedSignal)}
+          market={form.market}
         />
         <Field label="Planned Shares (for pre-entry checks)">
           <TextInput
@@ -963,8 +1086,15 @@ export default function TradePlan() {
           entryPrice={form.planned_entry_price}
           stopPrice={form.planned_stop_price}
           overrideAcknowledged={form.pre_entry_override_acknowledged}
-          onOverrideChange={(val) => setForm((prev) => ({ ...prev, pre_entry_override_acknowledged: val }))}
-          onResultChange={setPreEntrySnapshot}
+          onOverrideChange={(val) => {
+            setForm((prev) => ({ ...prev, pre_entry_override_acknowledged: val }));
+            if (val) {
+              setAckResetReason(null);
+              tickClearedByPass.current = false;
+            }
+          }}
+          onResultChange={handlePreEntryResult}
+          acknowledgementResetReason={ackResetReason}
         />
 
         <div className="space-y-1">

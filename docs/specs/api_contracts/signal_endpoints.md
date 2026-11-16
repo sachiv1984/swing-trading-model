@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 1.12
-**Last Updated:** 2026-11-13 (ST-17, EPIC-06, v9.17, BLG-BE-178 — batch sizing removes whole shares until a signal's fee-inclusive `total_cost` fits its `allocation_gbp`, so a batch's summed `total_cost` never exceeds available cash); prior — 2026-11-05 (ST-30/ST-32, EPIC-05, v9.15, BLG-OPS-190/BLG-OPS-192 — `POST /signals/rebalance-exit` ranks from the momentum run's completion marker (`data_model.md` DS-39): no completed run today → 503 as before; a completed run that ranked nothing → an empty ranking and 200); prior — 2026-11-04 (ST-07, EPIC-01, v9.15, BLG-FE-219 — zero-ATR `reason` strings reworded in plain English); prior history retained — see prior entries in version control
+**Version:** 1.13
+**Last Updated:** 2026-11-16 (ST-14 follow-up, EPIC-05, v9.17, BLG-FE-296 — `atr_value`'s currency documented: GBP for both markets; no behaviour change); prior — 2026-11-13 (ST-17, EPIC-06, v9.17, BLG-BE-178 — batch sizing removes whole shares until a signal's fee-inclusive `total_cost` fits its `allocation_gbp`, so a batch's summed `total_cost` never exceeds available cash); prior — 2026-11-05 (ST-30/ST-32, EPIC-05, v9.15, BLG-OPS-190/BLG-OPS-192 — `POST /signals/rebalance-exit` ranks from the momentum run's completion marker (`data_model.md` DS-39): no completed run today → 503 as before; a completed run that ranked nothing → an empty ranking and 200); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Overview
@@ -108,7 +108,7 @@ Response uses the standard success envelope from **conventions.md**.
 | `suggested_shares` | Always an integer (whole shares). Fractional share sizing is not supported in signal generation. Actual position entry via `POST /portfolio/position` supports fractional shares. For a new signal it is the largest whole number of shares whose `total_cost` (fees included) is within `allocation_gbp`: `floor(allocation_gbp / price_gbp)`, less one share at a time until the fees fit. Because the weights sum to 1.0, the batch's summed `total_cost` never exceeds the available cash (v1.12, BLG-BE-178). |
 | `current_price` | Native currency price at signal generation time. Point-in-time — will diverge from live price as time passes. Do not use as a live price |
 | `price_gbp` | GBP equivalent at signal generation time. Point-in-time |
-| `atr_value` | ATR at generation time. Stored for auditability; not updated after generation |
+| `atr_value` | ATR at generation time, **in GBP for both markets**: UK is the native ATR in pounds (pence ÷ 100), the same currency as `current_price`; US is the native USD ATR ÷ the live FX rate at generation time (`signal_service.py`), so it is **not** in the same currency as a US `current_price` or `initial_stop`. The native US ATR is `(current_price − initial_stop) / 5`. Stored for auditability; not updated after generation. *(Currency documented v1.13, BLG-FE-296; behaviour unchanged.)* |
 | `initial_stop` | Suggested stop in native currency: `current_price − (atr_multiplier_initial × ATR)`. Uses `atr_multiplier_initial` at generation time |
 | `volatility` | Volatility measure computed at generation time. Stored for auditability; not used for position sizing |
 | `allocation_gbp` | GBP share of available cash assigned to the signal by inverse-volatility weighting (`available_cash × inv_vol_weight`, from `sizing_service.size_batch_inv_vol()`). Excludes fees; see `total_cost`. (v6.2 ST-04 BLG-FEAT-48: changed from fixed risk-based `size_position()` to inverse-volatility batch sizing. Manual sizing via `POST /portfolio/size` remains unchanged.) |
@@ -374,6 +374,7 @@ Errors use the standard error envelope from **conventions.md**.
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.13 | 2026-11-16 | ST-14 follow-up (EPIC-05, v9.17, BLG-FE-296; PR #2260 review P2): the `atr_value` field note now states its currency, GBP for both markets (US: native ATR ÷ live FX), and how to get the native US ATR. Documentation of existing behaviour; no shape or value change. API Contracts & Documentation Owner. |
 | 1.12 | 2026-11-13 | ST-17 (EPIC-06, v9.17, BLG-BE-178): `suggested_shares` for a new signal is reduced one whole share at a time until its fee-inclusive `total_cost` fits its `allocation_gbp`. Before v1.12 shares were floored from the allocation and fees added on top, so a batch's summed `total_cost` could exceed available cash by up to its fees. No shape change. API Contracts & Documentation Owner. |
 | 1.11 | 2026-11-05 | ST-30/ST-32 (EPIC-05, v9.15, BLG-OPS-190/BLG-OPS-192): `POST /signals/rebalance-exit` reads today's ranking from the momentum run's completion marker (`data_model.md` DS-39) instead of today's signal rows. No marker today (missing or unfinished run) → 503, as before; the message now reads "No completed momentum signal run recorded for <date>". A completed run that ranked nothing → an empty ranking, §8.4 signals for eligible positions, and 200 (previously a false 503). No shape change. API Contracts & Documentation Owner. |
 | 1.10 | 2026-11-04 | ST-07 (EPIC-01, v9.15, BLG-FE-219): the two zero-ATR `reason` strings are reworded in plain English (`signals.md` v0.8; design record `signal-card-cost-and-sizing-reason`). No shape change. API Contracts & Documentation Owner. |

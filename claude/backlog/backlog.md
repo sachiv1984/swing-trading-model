@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-13 (session — 1 new item added: BLG-BE-218; EPIC-06 agent-mediated DoQ review round 2, v9.17); prior — 2026-11-13 (session — 1 new item added: BLG-BE-217; EPIC-06 agent-mediated DoQ review, v9.17); prior — 2026-11-13 (session — 1 new item added: BLG-FE-294; ST-15 production api_call_log read, EPIC-06, v9.17); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-16 (session — 1 new item added: BLG-BE-220; BLG-FE-296 bannered complete; agent-mediated PR #2260 re-review, EPIC-05, v9.17); prior — 2026-11-16 (session — 4 new items added: BLG-FE-295, BLG-FE-296, BLG-FE-297, BLG-FE-298; agent-mediated PR #2260 review, EPIC-05, v9.17); prior — 2026-11-13 (session — 1 new item added: BLG-BE-219; ST-11 pre-commit code review, EPIC-05, v9.17); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -6945,5 +6945,137 @@ Since ST-15 (`c341eee7`), `get_current_price()` converts a UK price from the Yah
 
 **Acceptance Criteria**
 - A `GBp` listing's price and ATR are divided by 100 and a `GBP` listing's are kept, in signal generation and in `calculate_atr()` (unit tests)
+
+---
+
+### BLG-BE-219 — Stop P&L reconciliation flagging partial exits and pre-BLG-TECH-07 closed trades
+**Priority:** P3 (Low)
+**Type:** Backend engineering
+**Owner:** Head of Engineering; Data Model & Domain Schema Owner
+**Source:** ST-11 (EPIC-05, v9.17) — found by the pre-commit /code-review of the close-on-exit change — 2026-11-13
+**Effort:** S (~0.5 day)
+**Provisional-Target:** TBD
+
+**Problem**
+`pnl_reconciliation_service.reconcile_pnl_vs_trade_plans()` (`pnl_export_reconciliation.md` §3) raises `trade_history_plan_not_closed` for every `trade_history` row whose linked plan is not `closed`. A partial exit writes a `trade_history` row while its plan correctly stays `active` (ST-11, `data_model.md` §Trade Plan Lifecycle), so each partial exit is a false mismatch. It also raises `closed_plan_no_trade_history` for a closed plan whose position's `trade_history` rows predate `trade_history.position_id` (BLG-TECH-07, `position_id` NULL). The DS-41 backfill (v9.17) closes such plans, so they now appear as new mismatches.
+
+**Scope**
+- Flag `trade_history_plan_not_closed` only when the position itself is closed
+- Match legacy `trade_history` rows by ticker, market and exit date when `position_id` is NULL, or exclude them and report a separate legacy count
+- Update `pnl_export_reconciliation.md` §3
+
+**Acceptance Criteria**
+- A partial exit on a plan-linked position produces no mismatch (pytest)
+- A closed plan whose `trade_history` row has `position_id` NULL is not reported as `closed_plan_no_trade_history`, or is reported in a separate legacy count (pytest)
+- §3 describes both rules
+
+---
+
+### BLG-FE-295 — Hide the Trade Plan stored-stop line and Signal Context when the ticker no longer matches the "Plan this" signal
+**✅ COMPLETE — 2026-11-16, `2026-11-11__release-v9.17`, found during ST-14's PR #2260 review, resolved in-sprint on EPIC-05 (`0594c4b4`, SC-TPSP-09); the AC is met — see `qa_evidence_EPIC-05.md` ST-14 row.**
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** Agent-mediated PR #2260 review (EPIC-05, v9.17), Director of Quality finding 2 — 2026-11-16
+**Effort:** XS (<1h plus a Playwright test)
+**Provisional-Target:** TBD
+
+**Problem**
+On the "Plan this" route (`signal_id`), `TradePlan.js`'s `linkedSignal` ignores `form.ticker`. After the trader changes the ticker, the stored-stop line `plan-stored-stop-note` (new in ST-14) and the Signal Context panel still describe the first ticker's signal, so the line can state a stop worked out from another stock's ATR.
+
+**Scope**
+- When the linked signal's ticker (ignoring `.L`) differs from `form.ticker`, treat the form as having no linked signal
+
+**Acceptance Criteria**
+- Changing the ticker after "Plan this" hides the Signal Context panel and the stored-stop line (Playwright)
+
+---
+
+### BLG-FE-296 — Show a US signal's ATR in dollars on the Signal Context panel
+**✅ COMPLETE — 2026-11-16, `2026-11-11__release-v9.17`, found during ST-14's PR #2260 review, resolved in-sprint on EPIC-05 (`d485d9ca` and its UK-rounding follow-up); both ACs met — see `qa_evidence_EPIC-05.md` ST-14 row.**
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Head of Engineering; Frontend Specifications & UX Documentation Owner
+**Source:** Agent-mediated PR #2260 review (EPIC-05, v9.17), Director of Quality backlog candidate; pre-existing, found with ST-14's stored-stop line — 2026-11-16
+**Effort:** S (~0.5 day)
+**Provisional-Target:** TBD
+
+**Problem**
+`signal_service.py` stores `atr_value` in GBP for US tickers (`native_atr / live_fx_rate`), while `current_price` and `initial_stop` are in USD. `SignalContextPanel.js` formats `atr_value` in the plan's USD currency, so "ATR (14d)" shows a GBP figure as dollars. `getSuggestedStop()`'s fallback (`current_price − 5 × atr_value`) would also mix currencies if a signal ever lacked `initial_stop`. `signal_endpoints.md` does not say which currency `atr_value` is in.
+
+**Scope**
+- Show the ATR in the signal's own currency (for example `(current_price − initial_stop) / 5`, or a stored native ATR)
+- State `atr_value`'s currency for each market in `signal_endpoints.md`
+
+**Acceptance Criteria**
+- A US signal's "ATR (14d)" equals `(current_price − initial_stop) / 5` (unit or Playwright)
+- `signal_endpoints.md` names `atr_value`'s currency for US and UK
+
+---
+
+### BLG-FE-297 — Word the Trade Plan stored-stop line for an untouched pre-filled stop, without "§5"
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** Agent-mediated PR #2260 review (EPIC-05, v9.17), Product Owner UX comment — 2026-11-16
+**Effort:** S (~0.5 day)
+**Provisional-Target:** TBD
+
+**Problem**
+When the trader changes Planned Entry after ST-14's stop pre-fill, `plan-stored-stop-note` calls the system's own untouched pre-filled stop "your stop" and shows a second, different system stop. "§5" means nothing to a trader.
+
+**Scope**
+- Distinguish a pre-filled stop from a typed one in the line's copy
+- Replace "§5" with plain wording such as "the strategy's 5×ATR rule"
+- Update `trade_plan.md` §5f
+
+**Acceptance Criteria**
+- With an untouched pre-filled stop and a changed entry, the line says the stop came from the signal (Playwright)
+- The line contains no "§5"
+- `trade_plan.md` §5f matches the copy
+
+---
+
+### BLG-FE-298 — Reword the acknowledgement reset note for plans saved without a pre-entry snapshot
+**✅ COMPLETE — 2026-11-16, `2026-11-11__release-v9.17`, found during ST-12's PR #2260 review, resolved in-sprint on EPIC-05 (the commit that adds this banner; Head of UX & Design recommendation, user ruling 2026-11-16); both ACs met (SC-TPAR-06, `trade_plan.md` §5e) — see `qa_evidence_EPIC-05.md` ST-12 row.**
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** Agent-mediated PR #2260 review (EPIC-05, v9.17), Product Owner UX comment — 2026-11-16
+**Effort:** XS (<1h plus a Playwright test)
+**Provisional-Target:** TBD
+
+**Problem**
+Opening a plan saved before v9.16 (no `pre_entry_validation_snapshot`) for editing always unticks the acknowledgement box and shows "The check results changed" (ST-12, `trade_plan.md` §5e), although nothing visible changed. The trader cannot tell why the tick was cleared.
+
+**Scope**
+- Show a different note when the plan has no stored snapshot, for example "This plan was saved before checks were recorded. Review them and tick to acknowledge."
+- Keep `data-testid="acknowledgement-reset-note"`
+- Update `trade_plan.md` §5e
+
+**Acceptance Criteria**
+- Editing a plan with no stored snapshot and a WARN result shows the no-snapshot wording (Playwright)
+- `trade_plan.md` §5e describes the no-snapshot note
+
+---
+
+### BLG-BE-220 — Stop the Research View and the AI thesis reading a US signal's GBP ATR as dollars
+**Priority:** P3 (Low)
+**Type:** Backend engineering
+**Owner:** Head of Engineering; AI Compliance & Governance Officer
+**Source:** Agent-mediated PR #2260 re-review (EPIC-05, v9.17), remaining readers of `atr_value` after ST-14's fix (BLG-FE-296) — 2026-11-16
+**Effort:** S (~0.5 day)
+**Provisional-Target:** TBD
+
+**Problem**
+`GET /signals` stores `atr_value` in GBP for both markets (US: native ATR ÷ live FX, `signal_service.py`), and `signal_endpoints.md` v1.13 now says so. Two readers still treat a US value as dollars. `research.py` returns the raw `atr_value` as `signal.atr`, which `Research.js` formats in USD, so the Research View's "ATR (14d)" shows a GBP figure with a $ sign. `gemini_service.py` divides the USD risk (planned entry − stop) by the GBP `atr_value`, so the AI thesis describes a real 5×ATR US stop as about 6.3×ATR.
+
+**Scope**
+- Give both readers the native ATR (for example `(current_price − initial_stop) / 5` when `initial_stop` is present, as `SignalContextPanel.getSignalAtr` does), or have `GET /research/{ticker}` return a native `atr`
+- Record the prompt-input change for the thesis call per the QA evidence AI-touching addendum
+
+**Acceptance Criteria**
+- For a US signal, the Research View's "ATR (14d)" equals `(entry_price − stop_price) / 5` in USD (Playwright or unit test with a real-shaped US signal)
+- For a US signal whose stop is entry − 5 × native ATR, the thesis input describes the stop as "5.0×ATR below entry" (unit test with a real-shaped US signal)
 
 ---

@@ -1169,7 +1169,14 @@ test('SC-TP-32c: editing a plan sends the current snapshot and the loaded acknow
     id: 'plan-tp32c', ticker: 'AAPL', market: 'US', status: 'draft', position_id: null, checklist_items: [],
     planned_quantity: 10, planned_entry_price: 150, planned_stop_price: 140,
     pre_entry_override_acknowledged: true,
-    pre_entry_validation_snapshot: { captured_at: '2026-11-01T09:00:00.000Z', advisory_status: 'pass', checks: [], inputs: {} },
+    // ST-12 (v9.17, trade_plan.md §5e): the stored tick stands only when the first result has the
+    // stored snapshot's key, so the stored snapshot carries the same WARN statuses as the live result.
+    pre_entry_validation_snapshot: {
+      captured_at: '2026-11-01T09:00:00.000Z',
+      advisory_status: 'warn',
+      checks: preEntryPayload('warn').data.checks.map(({ rule, status }) => ({ rule, status, detail: null })),
+      inputs: {},
+    },
   };
   const now = new Date('2026-11-09T12:00:00Z');
   await page.clock.setFixedTime(now);

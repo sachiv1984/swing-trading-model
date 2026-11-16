@@ -541,6 +541,15 @@ def on_startup():
     except Exception as _e:
         _log.error("ensure_trade_plans_active_requires_position_constraint FAILED at startup: %s", _e)
     try:
+        # ST-11 (BLG-BE-211, v9.17, DS-41): close `active` plans whose linked
+        # position is already closed. Idempotent; the count is the deploy-time
+        # record BLG-BE-211 asks for (0 on every later startup).
+        from database import backfill_closed_position_trade_plans
+        _closed_plan_ids = backfill_closed_position_trade_plans()
+        _log.info("backfill_closed_position_trade_plans: closed %d trade plan(s)", len(_closed_plan_ids))
+    except Exception as _e:
+        _log.error("backfill_closed_position_trade_plans FAILED at startup: %s", _e)
+    try:
         from utils.feature_flags import log_flag_states
         log_flag_states()
     except Exception as _e:

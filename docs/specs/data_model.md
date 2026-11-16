@@ -3,8 +3,8 @@
 **Owner:** Data Model & Domain Schema Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.69
-**Last Updated:** 2026-11-13 (ST-15, EPIC-06, v9.17, BLG-OPS-217 — DS-36 `success` note: a 404 from `fc.yahoo.com` is a success on attribution rows from 2026-11-13; no schema change); prior — 2026-11-13 (BLG-BE-205, EPIC-04 post-merge, v9.17 — DS-40 staging and production Live Confirmations recorded); prior — 2026-11-12 (ST-09, EPIC-04, v9.17, BLG-BE-205 — DS-40 (v2.69): `stop_last_moved_date` and `previous_stop` on positions, written by either stop recompute path when it raises a stop); prior history retained — see prior entries in version control
+**Version:** 2.70
+**Last Updated:** 2026-11-13 (ST-11, EPIC-05, v9.17, BLG-BE-211 — DS-41 (v2.70): startup backfill closes `active` trade plans whose linked position is closed; the full-exit path now closes the linked plan; no schema change); prior — 2026-11-13 (ST-15, EPIC-06, v9.17, BLG-OPS-217 — DS-36 `success` note: a 404 from `fc.yahoo.com` is a success on attribution rows from 2026-11-13; no schema change); prior — 2026-11-13 (BLG-BE-205, EPIC-04 post-merge, v9.17 — DS-40 staging and production Live Confirmations recorded); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 This document describes the complete database schema and data structures used in the **Position Manager Web App**.
@@ -664,7 +664,7 @@ stateDiagram-v2
     draft --> active: auto-link (no research steps required)
     research_pending --> active: auto-link
     research_complete --> active: auto-link
-    active --> closed: linked position closes
+    active --> closed: linked position fully exits (position_service.exit_position, ST-11)
     draft --> abandoned: PUT /trade-plans/{id} {status: abandoned}
     research_pending --> abandoned
     research_complete --> abandoned
@@ -673,7 +673,7 @@ stateDiagram-v2
     closed --> [*]
 ```
 
-Plain-text equivalent (for non-rendering contexts): `draft` → (optionally) `research_pending` → `research_complete` → `entry_conditions_set` → `active` → `closed`. Each of the 4 pre-`active` states may instead transition directly to `abandoned` (terminal). `active` requires a non-null `position_id`, enforced by `trade_plans_active_requires_position_check` (DS-12) — the only code path that sets `status = 'active'` is `position_service.py::add_position()`'s auto-link step, which always sets `position_id` in the same write. `active` → `closed` happens when the linked position closes (see Position Lifecycle below); `abandoned` requires `abandonment_reason` (enforced at the API layer, DS-06). Both `abandoned` and `closed` are terminal — no code path transitions out of either.
+Plain-text equivalent (for non-rendering contexts): `draft` → (optionally) `research_pending` → `research_complete` → `entry_conditions_set` → `active` → `closed`. Each of the 4 pre-`active` states may instead transition directly to `abandoned` (terminal). `active` requires a non-null `position_id`, enforced by `trade_plans_active_requires_position_check` (DS-12) — the only code path that sets `status = 'active'` is `position_service.py::add_position()`'s auto-link step, which always sets `position_id` in the same write. `active` → `closed` happens when the linked position closes: `position_service.exit_position()`'s full-exit path sets every `active` plan linked to the position to `closed` (best-effort per plan, audit source `position-exit`; a partial exit leaves it `active`), and the DS-41 startup backfill closed the plans left `active` before v9.17 (ST-11, BLG-BE-211; see Position Lifecycle below); `abandoned` requires `abandonment_reason` (enforced at the API layer, DS-06). Both `abandoned` and `closed` are terminal — no code path transitions out of either.
 
 ### Position Lifecycle (`positions.status` + `positions.position_state`)
 
@@ -3815,6 +3815,60 @@ Expect 2 rows: `previous_stop`, `numeric`, `10`, `4`, `YES`; `stop_last_moved_da
 
 ---
 
+## DS-41 — Close active trade plans whose linked position is closed (v2.70, 2026-11-13)
+
+**Story:** ST-11 (EPIC-05, v9.17) — `BLG-BE-211`.
+
+**Rationale:** §Trade Plan Lifecycle says a plan moves `active` → `closed` when its linked position closes, but before v9.17 no code path wrote `closed`, so every plan linked to a closed position stayed `active`. The Trade Plans list showed them as Active, and `pnl_reconciliation_service.py` raised `trade_history_plan_not_closed` for each fully exited trade. (Reconciliation still flags a partial exit's `trade_history` row while its plan correctly stays `active`, and a plan whose closed trade predates `trade_history.position_id` (BLG-TECH-07) as `closed_plan_no_trade_history`. Both are reconciliation-rule gaps, not lifecycle ones, tracked by BLG-BE-219.) From v9.17 the full-exit path of `POST /positions/{position_id}/exit` closes the linked `active` plan (`position_endpoints.md` v2.22.0, Side effects). This entry is the one-off data backfill for the plans left behind. No schema change.
+
+**Deploy order:** not a risk. `database.backfill_closed_position_trade_plans()` runs the Up Migration at startup (`main.py` `on_startup`), after the DS-12 and DS-21 constraint ensure-functions, and logs `backfill_closed_position_trade_plans: closed N trade plan(s)`. It is idempotent: a second run matches no rows, so every later startup logs 0. The first startup's N on staging, then production, is the deploy-time row count (sprint backlog ST-11 notes, RISK-03; tracked post-merge by `BLG-BE-211`).
+
+### Up Migration (v2.69 → v2.70)
+
+```sql
+UPDATE trade_plans tp
+SET status = 'closed', updated_at = NOW()
+FROM positions p
+WHERE tp.position_id = p.id
+  AND tp.portfolio_id = p.portfolio_id
+  AND tp.status = 'active'
+  AND p.status = 'closed'
+RETURNING tp.id;
+```
+
+In the same statement and transaction (a CTE: `INSERT INTO trade_plan_audit_log ... SELECT ... FROM` the UPDATE's `RETURNING`), for each returned ID one `trade_plan_audit_log` row: `source = 'backfill-st11'`, `field = 'status'`, `before_value = 'active'`, `after_value = 'closed'`. Only `active` plans change; `abandoned`, `closed` and pre-entry statuses are left as they are. A plan whose `position_id` points at a position in another portfolio is not matched.
+
+### Down Migration (v2.70 → v2.69)
+
+```sql
+UPDATE trade_plans
+SET status = 'active', updated_at = NOW()
+WHERE id IN (
+  SELECT trade_plan_id FROM trade_plan_audit_log
+  WHERE source = 'backfill-st11' AND field = 'status'
+);
+```
+
+Roll back the code first: v2.70's startup backfill would close the plans again, and its exit path closes plans on every full exit. Reopening the plans restores the pre-v9.17 state, which `pnl_reconciliation_service.py` reports as `trade_history_plan_not_closed`.
+
+### Verification
+
+```sql
+SELECT COUNT(*) AS active_plans_on_closed_positions
+FROM trade_plans tp
+JOIN positions p ON p.id = tp.position_id AND p.portfolio_id = tp.portfolio_id
+WHERE tp.status = 'active' AND p.status = 'closed';
+
+SELECT COUNT(*) AS backfilled FROM trade_plan_audit_log WHERE source = 'backfill-st11';
+```
+
+Expect `active_plans_on_closed_positions` = 0 after the first startup, and `backfilled` = the N that startup logged.
+
+**Sign-off:**
+- Data Model & Domain Schema Owner: data-only, idempotent and reversible through its audit rows; no schema change. Tested against a real Postgres in `tests/test_trade_plan_close_on_exit.py` (CI Phase B). Live Confirmation on staging and production (the first startup's logged N and the Verification query) is the post-merge deploy step tracked by `BLG-BE-211` (Infrastructure & Operations Owner, RISK-03).
+
+---
+
 ## Drift Detector Triage (2026-10-13, v2.60)
 
 **Story:** ST-34 (EPIC-05, `2026-10-12__release-v9.12`), BLG-SPEC-178. Triage of the findings `scripts/check_data_model_drift.py` reported on its first run (ST-28, v9.9, 2026-10-01) beyond the 5 known divergence classes.
@@ -3849,6 +3903,6 @@ Expect 2 rows: `previous_stop`, `numeric`, `10`, `4`, `YES`; `stop_last_moved_da
 
 ---
 
-**Document Version:** 2.69
+**Document Version:** 2.70
 **Maintained By:** Data Model & Domain Schema Owner
-**Last Review:** 2026-11-12 (ST-09, EPIC-04, v9.17, BLG-BE-205 — DS-40 (v2.69): `stop_last_moved_date` and `previous_stop` on positions); prior — 2026-11-05 (ST-30/ST-32, EPIC-05, v9.15, BLG-OPS-190/BLG-OPS-192 — DS-39 (v2.68): new `momentum_signal_runs` table, one completion marker per momentum signal run); prior — 2026-11-05 (BLG-SPEC-217, EPIC-06 post-merge, v9.15 — DS-38 production Live Confirmation recorded; Fields rows and Drift Triage row 3 updated); prior history retained — see prior entries in version control
+**Last Review:** 2026-11-13 (ST-11, EPIC-05, v9.17, BLG-BE-211 — DS-41 (v2.70): startup backfill closes `active` trade plans whose linked position is closed; the full-exit path now closes the linked plan; no schema change); prior — 2026-11-12 (ST-09, EPIC-04, v9.17, BLG-BE-205 — DS-40 (v2.69): `stop_last_moved_date` and `previous_stop` on positions); prior — 2026-11-05 (ST-30/ST-32, EPIC-05, v9.15, BLG-OPS-190/BLG-OPS-192 — DS-39 (v2.68): new `momentum_signal_runs` table, one completion marker per momentum signal run); prior history retained — see prior entries in version control

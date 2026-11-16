@@ -1805,7 +1805,7 @@ def get_trade_plan_by_id(trade_plan_id: str, portfolio_id: str) -> dict:
             return dict(row) if row else None
 
 
-def update_trade_plan(trade_plan_id: str, portfolio_id: str, data: dict) -> dict:
+def update_trade_plan(trade_plan_id: str, portfolio_id: str, data: dict, audit_source: str = "post-entry-edit") -> dict:
     allowed = {
         "position_id", "setup_type", "setup_thesis", "entry_rationale", "regime_context_at_entry",
         "r_target", "early_exit_conditions", "confirmation_criteria",
@@ -1859,7 +1859,7 @@ def update_trade_plan(trade_plan_id: str, portfolio_id: str, data: dict) -> dict
             after_val = after_plan.get(field_name)
             if before_val != after_val:
                 create_trade_plan_audit_log_entry(
-                    trade_plan_id, "post-entry-edit", field_name, before_val, after_val,
+                    trade_plan_id, audit_source, field_name, before_val, after_val,
                 )
 
     return after_plan
@@ -4668,6 +4668,45 @@ def ensure_trade_plans_active_requires_position_constraint() -> None:
                 "CHECK (status != 'active' OR position_id IS NOT NULL) NOT VALID"
             )
         conn.commit()
+
+
+def backfill_closed_position_trade_plans() -> list:
+    """One-off, idempotent backfill (ST-11, BLG-BE-211, EPIC-05, v9.17; DS-41).
+
+    Before v9.17 no code path moved a linked trade plan from `active` to
+    `closed` when its position closed, so every such plan stayed `active`.
+    This sets `status = 'closed'` on each `active` plan whose linked position
+    is `closed` and, in the same statement and transaction, writes one
+    trade_plan_audit_log row per plan (source 'backfill-st11', field
+    'status'), so the DS-41 Down Migration can always find what it closed.
+    A second run finds no rows, so it is safe at every startup. Returns the
+    IDs of the plans it closed.
+    """
+    ensure_trade_plan_audit_log_table()
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                """
+                WITH closed AS (
+                    UPDATE trade_plans tp
+                    SET status = 'closed', updated_at = NOW()
+                    FROM positions p
+                    WHERE tp.position_id = p.id
+                      AND tp.portfolio_id = p.portfolio_id
+                      AND tp.status = 'active'
+                      AND p.status = 'closed'
+                    RETURNING tp.id
+                ), audit AS (
+                    INSERT INTO trade_plan_audit_log
+                        (trade_plan_id, source, field, before_value, after_value)
+                    SELECT id, 'backfill-st11', 'status', 'active', 'closed' FROM closed
+                )
+                SELECT id FROM closed
+                """
+            )
+            ids = [str(r["id"]) for r in cur.fetchall()]
+        conn.commit()
+    return ids
 
 
 def ensure_trade_plans_extended_status() -> None:

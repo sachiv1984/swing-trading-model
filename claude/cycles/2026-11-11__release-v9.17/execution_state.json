@@ -5,7 +5,7 @@
   "invoked_utc": "2026-11-12T13:22:26Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-13T15:15:00Z",
+  "last_updated_utc": "2026-11-16T08:54:06Z",
   "epics": {
     "EPIC-01": {
       "title": "Site Structure & Usability Phase 3: Positions Redesign (build-and-ship)",
@@ -437,6 +437,139 @@
           "notes": "Commit 7b3b59e8: size_batch_inv_vol() removes whole shares until each signal's fee-inclusive total_cost fits its allocation, so sum(total_cost) <= available_cash. TestBatchSizingFeesFitAvailableCash covers UK, US and mixed batches (AC) plus sub-commission allocation; all 5 fail without the fix. Two v9.12 fee tests pinned the over-budget case and had their cash raised. signal_endpoints.md v1.12; strategy_signal_regression_spec.md v1.1 (fixture spec_version 1.1). Opportunistic in-file fix disclosed: regression spec IV-05 described pre-v9.12 zero-ATR behaviour. Deviation check: none (contract and regression spec updated in the same commit). Full backend suite 3572 passed locally. CI on 7b3b59e8: all 7 workflows success (step 4d); CI Pytest Suite 43430040716."
         }
       }
+    },
+    "EPIC-05": {
+      "title": "Trade Plan Found Defects (v9.16 Carry-Forward)",
+      "status": "done",
+      "branch": "exec/2026-11-11__release-v9.17/EPIC-05",
+      "pr_number": 2260,
+      "pr_status": "open",
+      "qa_signed_off": true,
+      "qa_evidence_log": "claude/cycles/2026-11-11__release-v9.17/qa_evidence_EPIC-05.md",
+      "test_scenarios": [
+        "tests/test_trade_plan_close_on_exit.py",
+        "tests/test_lifecycle_transitions.py",
+        "tests/e2e/trade-plan-lifecycle.spec.js",
+        "tests/e2e/research-create-plan-market.spec.js",
+        "tests/e2e/trade-plan-ack-reset.spec.js",
+        "tests/e2e/trade-plan-stop-prefill.spec.js"
+      ],
+      "sign_off_record": {
+        "status": "cleared",
+        "role": "Director of Quality",
+        "method": "agent_mediated",
+        "signed_by": "Sprint Execution Engine (agent-mediated, Director of Quality role \u2014 \u00a75.3)",
+        "date": "2026-11-16",
+        "user_directed": true,
+        "rounds": 2,
+        "first_round": "Approved (2 P3 fixed in-story in f2749a24, 4 observations recorded)",
+        "evidence": "claude/cycles/2026-11-11__release-v9.17/qa_evidence_EPIC-05.md",
+        "second_round": "PR #2260 agent-mediated review 2026-11-16: Changes Requested (P2 GBP ATR vs USD entry) -> fixed d485d9ca + rounding follow-up; re-review Approved"
+      },
+      "stories": {
+        "ST-11": {
+          "title": "Move a linked trade plan to `closed` when its position closes",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 2246,
+          "branch": "exec/2026-11-11__release-v9.17/EPIC-05",
+          "commit_sha": "ceda52c5d4947a262a8c0988b8d3e79cd5cca3f1",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-11-13T16:23:16Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/data_model.md#DS-41 \u2014 Close active trade plans whose linked position is closed (v2.70, 2026-11-13)",
+            "docs/specs/data_model.md#Trade Plan Lifecycle (`trade_plans.status`)",
+            "docs/specs/api_contracts/position_endpoints.md#POST /positions/{position_id}/exit",
+            "tests/test_trade_plan_close_on_exit.py",
+            "tests/e2e/trade-plan-lifecycle.spec.js"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.done",
+          "sign_off_record": null,
+          "notes": "Commit ceda52c5. AC 1: full exit closes the linked active plan, partial exit leaves it active (tests/test_trade_plan_close_on_exit.py, test_lifecycle_transitions.py active->closed edge, strict xfail removed). AC 2: DS-41 startup backfill (CTE: UPDATE + backfill-st11 audit rows in one transaction), idempotent; backfill, idempotency and down migration pass against a real local Postgres 18 (8/8) and run in CI Phase B; the production run and its row count are the seal-marked post-merge part, tracked by BLG-BE-211. AC 3: lifecycle mock closes the plan on full exit; SC-TPL-04 asserts the Trade Plans 'Closed' badge; local E2E build: trade-plan-lifecycle and arc2-happy-path 2/2 pass. Deviation check vs data_model.md \u00a7Trade Plan Lifecycle and position_endpoints.md: none. Pre-commit /code-review medium: 10 findings; 5 fixed (atomic audit, position-exit audit source, per-plan try, mock partial shares, per-row DDL), 2 recorded as reconciliation gaps -> BLG-BE-219 (P3), 3 declined with reasons in the commit. Full backend suite 3645 passed locally. Step 13: no DOM change. CI on ceda52c5: all 8 workflows success (steps 4c/4d): Playwright E2E Acceptance Tests 43462222803; CI Pytest Suite 43462223438."
+        },
+        "ST-12": {
+          "title": "Reset the Trade Plan pre-entry acknowledgement when the check result changes",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 2247,
+          "branch": "exec/2026-11-11__release-v9.17/EPIC-05",
+          "commit_sha": "94dc3bd87537fcbc9e2ab85dd13c1152273f1a67",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-11-13T16:35:56Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/pages/trade_plan.md#5e. Pre-Entry Snapshot on Save",
+            "docs/design/2026-11-11__release-v9.17/trade-plan-found-defects/decision_record.md#2. Reset the acknowledgement when the result changes",
+            "tests/e2e/trade-plan-ack-reset.spec.js"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.done",
+          "sign_off_record": null,
+          "notes": "Commit 94dc3bd8. RISK-05 option (a) clear on change. AC 1: a new FAIL after a WARN tick leaves the box unticked with acknowledgement-reset-note (SC-TPAR-01), tick again / same-key refetch / back to PASS / edit matching and differing stored snapshots (SC-TPAR-02..05). AC 2: the plan saved without re-acknowledging sends acknowledged false with the FAIL snapshot, and Trade Entry linking it shows the panel with the unacknowledged reason line (SC-TPAR-01). SC-TP-32c fixture updated so its stored snapshot key matches (its tick still stands under \u00a75e). trade_plan.md v1.26 \u00a75e: option (b) deleted. RISK-07: the reset is in TradePlan.js only; Trade Entry's tick does not reset, so BLG-FE-269 AC 1 (both pages) is NOT met; record for groom backlog. Local E2E build (lint on, exit 0; TradePlan.js warnings pre-existing): SC-TPAR 5/5 plus trade-plan, trade-entry-pre-entry-checks and si01-si03-integration, 77/77. Logic of the result key checked with node (null, empty, sorted, detail ignored). Deviation check vs trade_plan.md \u00a75e and design \u00a72.1: none. Step 13: the note is new text inside the panel only, not app-shell; no selector renamed. CI on 94dc3bd8: all 9 workflows success (steps 4c/4d): Playwright E2E Acceptance Tests 43464334506; CI Pytest Suite 43464334625; Frontend Production Build 43464334479. PR review follow-up BLG-FE-298 fixed in-sprint in 79ec393f (Head of UX & Design recommendation, user ruling 2026-11-16): the reset note shows only when a tick is cleared, with 'changed' or 'no-snapshot' wording and data-reason; SC-TPAR-06..09; local 92/92."
+        },
+        "ST-13": {
+          "title": "Pass the market from Research View's \"Create Trade Plan\" so a UK plan is not created as US",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 2248,
+          "branch": "exec/2026-11-11__release-v9.17/EPIC-05",
+          "commit_sha": "3d802d1cbe4d346a8fde571f49d2b02fed93a983",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-11-13T16:28:08Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/pages/research_view.md#4.7 Trade Plan Panel",
+            "tests/e2e/research-create-plan-market.spec.js"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.done",
+          "sign_off_record": null,
+          "notes": "Commit 3d802d1c. AC 1: Research.js Create Trade Plan sends market from the research response (.L fallback); VOD.L opens UK (URL, Market field, header, POST /portfolio/size market UK with no fx_rate, no USD FX field) and AAPL opens US (SC-RCPM-01/02); View full plan keeps the stored UK market in edit mode (SC-RCPM-03). AC 2: local E2E build (lint on, exit 0, pre-existing warnings only) 3/3 SC-RCPM plus pre-trade-research and arc2-happy-path 19/19. Deviation check vs research_view.md v1.5 \u00a74.7: none. Step 13: URL change only, no DOM element changed. CI on 3d802d1c: all 9 workflows success (steps 4c/4d): Playwright E2E Acceptance Tests 43463014141; CI Pytest Suite 43463014917; Frontend Production Build 43463014908."
+        },
+        "ST-14": {
+          "title": "Pre-fill the Trade Plan stop from the \u00a75 suggested stop and flag a typed stop that differs",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 2249,
+          "branch": "exec/2026-11-11__release-v9.17/EPIC-05",
+          "commit_sha": "f2749a24fece430b9974df7db0dc44f333dbbeee",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-11-16T08:04:38Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/pages/trade_plan.md#5a.3 Pre-Population Rules (creation form only)",
+            "docs/specs/frontend/pages/trade_plan.md#5f. Suggested Size Before Shares",
+            "docs/specs/frontend/pages/trade_plan.md#Known Deviations",
+            "tests/e2e/trade-plan-stop-prefill.spec.js"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.done",
+          "sign_off_record": null,
+          "notes": "Commits: 21b8dbe7 (implementation), d485d9ca + UK-rounding follow-up (PR #2260 review P2: the stored-stop line and panel ATR used the GBP atr_value of US signals; getSignalAtr derives the native ATR from initial_stop; fixtures now real-shaped; BLG-FE-296 met and bannered; BLG-BE-220 filed for the Research View and AI thesis readers), f2749a24 (DoQ review findings 1-2: pre-fill only for the opened ticker's signal, untouched pre-fill cleared on ticker change; SC-TPSP-06, SC-TPSP-07 x2, SC-TPSP-02 data). Commit 21b8dbe7. AC 1: 'Plan this' (SC-TPSP-01, current_price - 5xATR = 165.05, equal to the panel) and the watchlisted lookup (SC-TPSP-02, initial_stop 0.62, UK) pre-fill Stop via the shared getSuggestedStop(); a typed or cleared stop survives an entry change (SC-TPSP-03); edit mode does not pre-fill (SC-TPSP-05). AC 2: plan-stored-stop-note states the stop Trade Entry will store with both values (SC-TPSP-03); absent within 0.005 (SC-TPSP-04) and without ATR (SC-TPSP-04b). Premise check (first-time-right #7): Trade Entry computes the stop from the ATR fetched or typed at entry, not the signal's atr_value; raised before commit, and the user (Frontend Specifications & UX Documentation Owner) ruled 2026-11-13 to word the line 'about ... using the signal's ATR of ...'; trade_plan.md v1.27 \u00a75f updated. AC 3: local E2E build (lint on, exit 0; warnings pre-existing): SC-TPSP 6/6; trade-plan-lifecycle, plan-this, trade-plan-suggested-size, trade-plan.spec, trade-plan-ack-reset, research-create-plan-market all pass. AC 4: DEV-v9.16-ST27-01 marked Resolved - v9.17 in trade_plan.md Known Deviations (resolving-commit discipline, LL-v9.0-P4-01). Worked examples checked with node (null/0/string inputs, 0.005 boundary). Deviation check vs \u00a75a.3/\u00a75f: none (wording change is a spec update by ruling, not a deviation). Step 13: stop input keeps its test id; no app-shell text. CI on 21b8dbe7: all 9 workflows success (steps 4c/4d): Playwright E2E Acceptance Tests 43479256427; CI Pytest Suite 43479256051; Frontend Production Build 43479255946. CI on f2749a24: all 9 workflows success (Playwright E2E 43828387765, CI Pytest 43828387794, Frontend Production Build 43828387873). PR review follow-ups fixed in-sprint at the user's direction 2026-11-16: BLG-FE-295 in 0594c4b4 (a 'Plan this' signal whose ticker no longer matches the form's is not linked; SC-TPSP-09; CI all workflows success); the native-ATR fix d485d9ca/084bdaac CI all workflows success. Process: /commit-check (Check 11 Review:/Impact: lines) was not run before EPIC-05 commits; first-time-right pass records predate the skill (built efd23278 on main)."
+        }
+      }
     }
   },
   "blocked_items": [],
@@ -448,6 +581,10 @@
     "ST-04",
     "ST-09",
     "ST-10",
+    "ST-11",
+    "ST-12",
+    "ST-13",
+    "ST-14",
     "ST-15",
     "ST-16",
     "ST-17",
@@ -491,7 +628,11 @@
     "2026-11-13T12:50:14Z: EPIC-07 PR #2258 merged by the human repository owner (sachiv1984) at 2026-11-13T12:49:47Z, merge commit c7153fba. Orphaned post-merge commit check: none (git log origin/main..origin/exec/2026-11-11__release-v9.17/EPIC-07 empty). STEP 4 step 3c sibling sync: no pending EPIC branch exists yet (EPIC-06/05/02/03), nothing to sync. Issues #2253-2255 closed.",
     "2026-11-13T12:52:00Z: run sprint --epic EPIC-06 (typed 'epic06', normalised). EPIC-06 section appended to the existing execution_state.json (owner EPIC-01). Branch cut from main at 5838bece after EPIC-07 merged (Merge Order position 4). Issues #2250-#2252 found from sync gh. Classes per sprint_backlog.md: ST-15 delegated_backend, ST-16/ST-17 autonomous.",
     "2026-11-13T14:59:09Z: Product Owner direction (user, in session; EPIC-06 filing retrospective): extend BLG-GOV-422's design gate STEP 2.2 checks at v9.18 Release Planning with a failure-state check. For every value a view shows from an outside source (Yahoo, Alpaca, news), the design records what the screen shows when the lookup fails and what it shows when the lookup succeeds with no data, and the two must be distinguishable when the value backs a risk warning. (v9.17: ST-15's scope said 'check what the user sees when these calls fail', but no state was defined before sizing; a failed earnings lookup looked the same as 'no upcoming earnings', hiding the earnings badge and gap-risk warning during throttling -> BLG-FE-294.) Add a matching AC: re-running the check on earnings_endpoints.md v0.2 finds the gap. Sprint Execution may not edit BLG-GOV-422 (\u00a77). STEP 5.3 and Post-Ship Closure: carry this into the closure Carry-Forward section beside the earlier BLG-GOV-422 extensions (2026-11-12, 2026-11-13T09:37:36Z, 2026-11-13T11:30:53Z).",
-    "2026-11-13T15:11:51Z: EPIC-06 PR #2259 merged by sachiv1984, merge commit aaeb2957. Merge state recorded on main (STEP 4 steps 2-3a). Orphaned post-merge commit check: none. Sibling execution_state sync (3c): no branch exists yet for EPIC-05, EPIC-02 or EPIC-03, nothing to sync."
+    "2026-11-13T15:11:51Z: EPIC-06 PR #2259 merged by sachiv1984, merge commit aaeb2957. Merge state recorded on main (STEP 4 steps 2-3a). Orphaned post-merge commit check: none. Sibling execution_state sync (3c): no branch exists yet for EPIC-05, EPIC-02 or EPIC-03, nothing to sync.",
+    "2026-11-13T16:07:31Z: run sprint --epic EPIC-05 (typed 'epic05', normalised). EPIC-05 section appended to the existing execution_state.json (owner EPIC-01). Branch cut from main at c71409bf after EPIC-06 merged (Merge Order position 5). Issues #2246-#2249 found from sync gh. All four stories autonomous per sprint_backlog.md.",
+    "2026-11-16T08:35:00Z: EPIC-05 PR #2260 opened after the pre-PR gates passed: no foreign-EPIC commits in origin/main..HEAD; API performance baseline drift PASSED; backlog item integrity OK; no governance file changed. Session resumed 2026-11-16 after a 3-day gap; main had not moved and the branch matched origin. DoQ agent-mediated review round 1 Approved; findings 1-2 (P3) fixed in-story in f2749a24 (rule: fix own XS gaps) rather than filed.",
+    "2026-11-16T08:4xZ (timestamp corrected; it was written as an estimate): PR #2260 agent-mediated review (DoQ Changes Requested -> P2 fixed d485d9ca/084bdaac, re-review Approved; PO Approved with Comments). Follow-ups: BLG-FE-295 and BLG-FE-298 fixed in-sprint and bannered; BLG-FE-296 fixed and bannered; BLG-FE-297 and BLG-BE-220 open (P3). First-time-right skill, commit-check Check 12 and a commit-gates nudge committed to main as efd23278 [GOVERNANCE] (user direction).",
+    "2026-11-16T08:54:06Z: EPIC-05 human Director of Quality QA sign-off and Product Owner acceptance given in session by the repository owner (holds both roles), before merge. They cover the post-merge ST-11 production backfill (BLG-BE-211), the ST-12 Trade Plan-only scope (BLG-FE-269 open) and the ST-14 wording ruling. Recorded in qa_evidence_EPIC-05.md Merge Gate Confirmations and on PR #2260. Not merged: the merge stays with the human, after head CI on 1f0f0007 is green."
   ],
   "sealed": false,
   "sealed_utc": null
