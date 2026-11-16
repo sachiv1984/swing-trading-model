@@ -13,23 +13,26 @@ const toNumber = (v) => (v == null || v === "" ? null : Number.isFinite(Number(v
  * GET /signals stores `atr_value` in GBP for both markets (signal_service.py:
  * `atr_gbp = native_atr / live_fx_rate` for US), while `current_price` and
  * `initial_stop` are native (USD for US). So:
- * - UK: `atr_value` is already in pounds, the same currency as the price.
- * - US (or market unknown): derived from the native stop the signal was built with,
- *   `(current_price − initial_stop) / INITIAL_ATR_MULTIPLIER`; null without it.
- *   The GBP `atr_value` is never used against a USD price.
- * ST-14 follow-up (PR #2260 review P2; BLG-FE-296), v9.17.
+ * - When `initial_stop` is present (both markets): derived from the native stop the
+ *   signal was built with, `(current_price − initial_stop) / INITIAL_ATR_MULTIPLIER`.
+ *   This also matches the stop exactly at the signal's price, where mixing the 4 dp
+ *   `atr_value` with the 2 dp price would not (UK rounding).
+ * - Otherwise UK `atr_value` (already in pounds); otherwise null. The GBP
+ *   `atr_value` is never used against a USD price.
+ * ST-14 follow-up (PR #2260 review P2 and re-review; BLG-FE-296), v9.17.
  */
 export function getSignalAtr(signal) {
   if (!signal) return null;
+  const price = toNumber(signal.current_price);
+  const initialStop = toNumber(signal.initial_stop);
+  if (price != null && initialStop != null && price > initialStop) {
+    return (price - initialStop) / INITIAL_ATR_MULTIPLIER;
+  }
   if (signal.market === "UK") {
     const atr = toNumber(signal.atr_value);
     return atr != null && atr > 0 ? atr : null;
   }
-  const price = toNumber(signal.current_price);
-  const initialStop = toNumber(signal.initial_stop);
-  return price != null && initialStop != null && price > initialStop
-    ? (price - initialStop) / INITIAL_ATR_MULTIPLIER
-    : null;
+  return null;
 }
 
 /**

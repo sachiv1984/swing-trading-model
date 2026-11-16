@@ -5,7 +5,7 @@
   "invoked_utc": "2026-11-12T13:22:26Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-16T08:35:00Z",
+  "last_updated_utc": "2026-11-16T10:30:00Z",
   "epics": {
     "EPIC-01": {
       "title": "Site Structure & Usability Phase 3: Positions Redesign (build-and-ship)",
@@ -461,9 +461,10 @@
         "signed_by": "Sprint Execution Engine (agent-mediated, Director of Quality role \u2014 \u00a75.3)",
         "date": "2026-11-16",
         "user_directed": true,
-        "rounds": 1,
+        "rounds": 2,
         "first_round": "Approved (2 P3 fixed in-story in f2749a24, 4 observations recorded)",
-        "evidence": "claude/cycles/2026-11-11__release-v9.17/qa_evidence_EPIC-05.md"
+        "evidence": "claude/cycles/2026-11-11__release-v9.17/qa_evidence_EPIC-05.md",
+        "second_round": "PR #2260 agent-mediated review 2026-11-16: Changes Requested (P2 GBP ATR vs USD entry) -> fixed d485d9ca + rounding follow-up; re-review Approved"
       },
       "stories": {
         "ST-11": {
@@ -566,7 +567,7 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.done",
           "sign_off_record": null,
-          "notes": "Commits: 21b8dbe7 (implementation), f2749a24 (DoQ review findings 1-2: pre-fill only for the opened ticker's signal, untouched pre-fill cleared on ticker change; SC-TPSP-06, SC-TPSP-07 x2, SC-TPSP-02 data). Commit 21b8dbe7. AC 1: 'Plan this' (SC-TPSP-01, current_price - 5xATR = 165.05, equal to the panel) and the watchlisted lookup (SC-TPSP-02, initial_stop 0.62, UK) pre-fill Stop via the shared getSuggestedStop(); a typed or cleared stop survives an entry change (SC-TPSP-03); edit mode does not pre-fill (SC-TPSP-05). AC 2: plan-stored-stop-note states the stop Trade Entry will store with both values (SC-TPSP-03); absent within 0.005 (SC-TPSP-04) and without ATR (SC-TPSP-04b). Premise check (first-time-right #7): Trade Entry computes the stop from the ATR fetched or typed at entry, not the signal's atr_value; raised before commit, and the user (Frontend Specifications & UX Documentation Owner) ruled 2026-11-13 to word the line 'about ... using the signal's ATR of ...'; trade_plan.md v1.27 \u00a75f updated. AC 3: local E2E build (lint on, exit 0; warnings pre-existing): SC-TPSP 6/6; trade-plan-lifecycle, plan-this, trade-plan-suggested-size, trade-plan.spec, trade-plan-ack-reset, research-create-plan-market all pass. AC 4: DEV-v9.16-ST27-01 marked Resolved - v9.17 in trade_plan.md Known Deviations (resolving-commit discipline, LL-v9.0-P4-01). Worked examples checked with node (null/0/string inputs, 0.005 boundary). Deviation check vs \u00a75a.3/\u00a75f: none (wording change is a spec update by ruling, not a deviation). Step 13: stop input keeps its test id; no app-shell text. CI on 21b8dbe7: all 9 workflows success (steps 4c/4d): Playwright E2E Acceptance Tests 43479256427; CI Pytest Suite 43479256051; Frontend Production Build 43479255946. CI on f2749a24: all 9 workflows success (Playwright E2E 43828387765, CI Pytest 43828387794, Frontend Production Build 43828387873)."
+          "notes": "Commits: 21b8dbe7 (implementation), d485d9ca + UK-rounding follow-up (PR #2260 review P2: the stored-stop line and panel ATR used the GBP atr_value of US signals; getSignalAtr derives the native ATR from initial_stop; fixtures now real-shaped; BLG-FE-296 met and bannered; BLG-BE-220 filed for the Research View and AI thesis readers), f2749a24 (DoQ review findings 1-2: pre-fill only for the opened ticker's signal, untouched pre-fill cleared on ticker change; SC-TPSP-06, SC-TPSP-07 x2, SC-TPSP-02 data). Commit 21b8dbe7. AC 1: 'Plan this' (SC-TPSP-01, current_price - 5xATR = 165.05, equal to the panel) and the watchlisted lookup (SC-TPSP-02, initial_stop 0.62, UK) pre-fill Stop via the shared getSuggestedStop(); a typed or cleared stop survives an entry change (SC-TPSP-03); edit mode does not pre-fill (SC-TPSP-05). AC 2: plan-stored-stop-note states the stop Trade Entry will store with both values (SC-TPSP-03); absent within 0.005 (SC-TPSP-04) and without ATR (SC-TPSP-04b). Premise check (first-time-right #7): Trade Entry computes the stop from the ATR fetched or typed at entry, not the signal's atr_value; raised before commit, and the user (Frontend Specifications & UX Documentation Owner) ruled 2026-11-13 to word the line 'about ... using the signal's ATR of ...'; trade_plan.md v1.27 \u00a75f updated. AC 3: local E2E build (lint on, exit 0; warnings pre-existing): SC-TPSP 6/6; trade-plan-lifecycle, plan-this, trade-plan-suggested-size, trade-plan.spec, trade-plan-ack-reset, research-create-plan-market all pass. AC 4: DEV-v9.16-ST27-01 marked Resolved - v9.17 in trade_plan.md Known Deviations (resolving-commit discipline, LL-v9.0-P4-01). Worked examples checked with node (null/0/string inputs, 0.005 boundary). Deviation check vs \u00a75a.3/\u00a75f: none (wording change is a spec update by ruling, not a deviation). Step 13: stop input keeps its test id; no app-shell text. CI on 21b8dbe7: all 9 workflows success (steps 4c/4d): Playwright E2E Acceptance Tests 43479256427; CI Pytest Suite 43479256051; Frontend Production Build 43479255946. CI on f2749a24: all 9 workflows success (Playwright E2E 43828387765, CI Pytest 43828387794, Frontend Production Build 43828387873)."
         }
       }
     }

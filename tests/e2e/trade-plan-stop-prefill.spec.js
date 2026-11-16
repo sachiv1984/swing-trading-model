@@ -17,7 +17,8 @@
  *   SC-TPSP-01  "Plan this", real-shaped US signal: Stop = initial_stop 165.05, the panel's suggested
  *               stop; the panel's ATR is the native $3.45, not the stored GBP 2.72; an untouched
  *               pre-fill shows no stored-stop line (the P2 regression: it used to say "about $168.72")
- *   SC-TPSP-02  Watchlisted lookup (no signal_id), UK: Stop = initial_stop 0.62; ATR £0.02
+ *   SC-TPSP-02  Watchlisted lookup (no signal_id), UK with real rounding: Stop = initial_stop 0.63;
+ *               ATR (0.72 − 0.63) / 5 = £0.02; no line at the signal's price (re-review finding a)
  *   SC-TPSP-03  A typed stop is not overwritten: it survives an entry change, and the line states
  *               the stop Trade Entry will store with both values (entry 180 → $162.75; yours $160.00)
  *   SC-TPSP-04  A stop within 0.005 of the §5 stop shows no line
@@ -46,7 +47,9 @@ const US_SIGNAL = {
 };
 const UK_SIGNAL = {
   id: 'sig-tpsp-uk', ticker: 'VOD.L', market: 'UK', signal_date: '2026-11-12', rank: 2, status: 'watchlisted',
-  momentum_percent: 9.1, current_price: 0.72, atr_value: 0.02, initial_stop: 0.62, regime: 'on',
+  // Real rounding: price 0.7249 → current_price 0.72 (2 dp), ATR 0.0191 (4 dp), initial_stop
+  // round(0.7249 − 0.0955, 2) = 0.63. 0.72 − 5 × 0.0191 = 0.6245 would not match the stop.
+  momentum_percent: 9.1, current_price: 0.72, atr_value: 0.0191, initial_stop: 0.63, regime: 'on',
 };
 const US_NO_STOP_SIGNAL = { ...US_SIGNAL, id: 'sig-tpsp-nostop', initial_stop: null };
 const UK_NO_STOP_SIGNAL = { ...UK_SIGNAL, id: 'sig-tpsp-uk-nostop', atr_value: 0.03, initial_stop: null };
@@ -92,8 +95,8 @@ test('SC-TPSP-02: the watchlisted lookup pre-fills Stop with the signal\'s initi
   await page.goto('/#/TradePlan?ticker=VOD.L&market=UK');
 
   await expect(page.getByTestId('signal-context-panel')).toBeVisible({ timeout: 10000 });
-  await expect(stop(page)).toHaveValue('0.62');
-  await expect(page.getByTestId('signal-context-panel')).toContainText('£0.62');
+  await expect(stop(page)).toHaveValue('0.63');
+  await expect(page.getByTestId('signal-context-panel')).toContainText('£0.63');
   await expect(page.getByTestId('signal-context-atr')).toHaveText('£0.02');
   // The watchlisted route has no entry_price; at the signal's price the pre-fill is the §5 stop.
   await entry(page).fill('0.72');

@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-16 (session — 4 new items added: BLG-FE-295, BLG-FE-296, BLG-FE-297, BLG-FE-298; agent-mediated PR #2260 review, EPIC-05, v9.17); prior — 2026-11-13 (session — 1 new item added: BLG-BE-219; ST-11 pre-commit code review, EPIC-05, v9.17); prior — 2026-11-13 (session — 1 new item added: BLG-BE-218; EPIC-06 agent-mediated DoQ review round 2, v9.17); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-16 (session — 1 new item added: BLG-BE-220; BLG-FE-296 bannered complete; agent-mediated PR #2260 re-review, EPIC-05, v9.17); prior — 2026-11-16 (session — 4 new items added: BLG-FE-295, BLG-FE-296, BLG-FE-297, BLG-FE-298; agent-mediated PR #2260 review, EPIC-05, v9.17); prior — 2026-11-13 (session — 1 new item added: BLG-BE-219; ST-11 pre-commit code review, EPIC-05, v9.17); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -6991,6 +6991,7 @@ On the "Plan this" route (`signal_id`), `TradePlan.js`'s `linkedSignal` ignores 
 ---
 
 ### BLG-FE-296 — Show a US signal's ATR in dollars on the Signal Context panel
+**✅ COMPLETE — 2026-11-16, `2026-11-11__release-v9.17`, found during ST-14's PR #2260 review, resolved in-sprint on EPIC-05 (`d485d9ca` and its UK-rounding follow-up); both ACs met — see `qa_evidence_EPIC-05.md` ST-14 row.**
 **Priority:** P3 (Low)
 **Type:** Frontend / UX
 **Owner:** Head of Engineering; Frontend Specifications & UX Documentation Owner
@@ -7053,5 +7054,26 @@ Opening a plan saved before v9.16 (no `pre_entry_validation_snapshot`) for editi
 **Acceptance Criteria**
 - Editing a plan with no stored snapshot and a WARN result shows the no-snapshot wording (Playwright)
 - `trade_plan.md` §5e describes the no-snapshot note
+
+---
+
+### BLG-BE-220 — Stop the Research View and the AI thesis reading a US signal's GBP ATR as dollars
+**Priority:** P3 (Low)
+**Type:** Backend engineering
+**Owner:** Head of Engineering; AI Compliance & Governance Officer
+**Source:** Agent-mediated PR #2260 re-review (EPIC-05, v9.17), remaining readers of `atr_value` after ST-14's fix (BLG-FE-296) — 2026-11-16
+**Effort:** S (~0.5 day)
+**Provisional-Target:** TBD
+
+**Problem**
+`GET /signals` stores `atr_value` in GBP for both markets (US: native ATR ÷ live FX, `signal_service.py`), and `signal_endpoints.md` v1.13 now says so. Two readers still treat a US value as dollars. `research.py` returns the raw `atr_value` as `signal.atr`, which `Research.js` formats in USD, so the Research View's "ATR (14d)" shows a GBP figure with a $ sign. `gemini_service.py` divides the USD risk (planned entry − stop) by the GBP `atr_value`, so the AI thesis describes a real 5×ATR US stop as about 6.3×ATR.
+
+**Scope**
+- Give both readers the native ATR (for example `(current_price − initial_stop) / 5` when `initial_stop` is present, as `SignalContextPanel.getSignalAtr` does), or have `GET /research/{ticker}` return a native `atr`
+- Record the prompt-input change for the thesis call per the QA evidence AI-touching addendum
+
+**Acceptance Criteria**
+- For a US signal, the Research View's "ATR (14d)" equals `(entry_price − stop_price) / 5` in USD (Playwright or unit test with a real-shaped US signal)
+- For a US signal whose stop is entry − 5 × native ATR, the thesis input describes the stop as "5.0×ATR below entry" (unit test with a real-shaped US signal)
 
 ---
