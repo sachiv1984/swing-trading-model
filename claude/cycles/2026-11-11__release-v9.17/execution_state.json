@@ -580,7 +580,8 @@
       "qa_signed_off": false,
       "qa_evidence_log": "claude/cycles/2026-11-11__release-v9.17/qa_evidence_EPIC-02.md",
       "test_scenarios": [
-        "tests/e2e/journal.spec.js"
+        "tests/e2e/journal.spec.js",
+        "tests/e2e/section-index.spec.js"
       ],
       "sign_off_record": null,
       "stories": {
@@ -632,27 +633,28 @@
         "ST-07": {
           "title": "Use tabs or sections on the long single-scroll pages",
           "classification": "autonomous",
-          "status": "in_progress",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 2242,
           "branch": "exec/2026-11-11__release-v9.17/EPIC-02",
-          "commit_sha": null,
+          "commit_sha": "a7af866b29611dd28977e42d3e14ffd50967afec",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-11-16T10:58:49Z",
+          "acceptance_verified": true,
           "spec_references": [
-            "docs/specs/frontend/pages/trade_plan.md",
-            "docs/specs/frontend/pages/strategy_benchmark.md",
-            "docs/design/2026-11-11__release-v9.17/long-page-section-index/decision_record.md"
+            "docs/specs/frontend/pages/trade_plan.md#5g. Section Index",
+            "docs/specs/frontend/pages/strategy_benchmark.md#3a. Section Index (v0.10)",
+            "docs/design/2026-11-11__release-v9.17/long-page-section-index/decision_record.md",
+            "tests/e2e/section-index.spec.js"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.push",
           "sign_off_record": null,
-          "notes": "First-time-right: 2026-11-16 pass A \u2014 1 N/A (navigation only, no value shown); 2/19 done (Trade Plan 'sizing' link present iff WhatIfSizingPreview renders: stop '', null, 0, -1, 'abc' \u2192 absent; 140 \u2192 present; stop cleared after load \u2192 link drops; Benchmark 'open-positions' absent when no open positions and not loading/error; parity/yearly/trade-log absent while loading or on error; ?section= ignored on the other tabs; ?section=unknown does nothing); 3 done (current-section pick: node -e over rect lists); 4 done (populated Benchmark and Trade Plan fixtures for the 390 px scroll check); 5 high (new shared module reused by ST-06); 6 done (grep tests/e2e for the 7 new headings and 4 index labels: no unscoped collisions; Strategy Benchmark h2s unchanged); 7 done (TradePlan reads only primitive ?edit/ticker/market/clone_from values, so writing ?section= re-runs no effect); 8,11,17,18 N/A (no dates, thresholds, writes); 20 done (labels as decision record \u00a73)."
+          "notes": "First-time-right: 2026-11-16 pass A \u2014 1 N/A (navigation only, no value shown); 2/19 done (Trade Plan 'sizing' link present iff WhatIfSizingPreview renders: stop '', null, 0, -1, 'abc' \u2192 absent; 140 \u2192 present; stop cleared after load \u2192 link drops; Benchmark 'open-positions' absent when no open positions and not loading/error; parity/yearly/trade-log absent while loading or on error; ?section= ignored on the other tabs; ?section=unknown does nothing); 3 done (current-section pick: node -e over rect lists); 4 done (populated Benchmark and Trade Plan fixtures for the 390 px scroll check); 5 high (new shared module reused by ST-06); 6 done (grep tests/e2e for the 7 new headings and 4 index labels: no unscoped collisions; Strategy Benchmark h2s unchanged); 7 done (TradePlan reads only primitive ?edit/ticker/market/clone_from values, so writing ?section= re-runs no effect); 8,11,17,18 N/A (no dates, thresholds, writes); 20 done (labels as decision record \u00a73). | First-time-right: 2026-11-16 pass B \u2014 9 done (own gaps fixed in-commit: jumped-section pin, ready gate); 10 done (both specs' build notes in the same commit); 13 done (tables read back); 15 done (isStopLevelValid shared by panel and index); 18/19 re-run (stop '',0,-1,140; edit/clone populate; tab switch). /code-review high: 9 findings fixed. Deviation check vs \u00a75g/\u00a73a: none (implementation notes recorded in the specs). ci_pending: Playwright and Frontend Production Build on a7af866b \u2014 STEP 3.2.A must clear."
         }
       }
     }
@@ -665,6 +667,7 @@
     "ST-03",
     "ST-04",
     "ST-05",
+    "ST-07",
     "ST-09",
     "ST-10",
     "ST-11",
