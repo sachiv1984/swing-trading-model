@@ -14,7 +14,7 @@
  *   SC-PERF-09  PF-09        too few trades: Summary and Analytics empty; Reports and Compliance render
  *   SC-PERF-10  PF-10        Arc 5 failure stays inside Compliance; Last 30 days block, no Most Frequent Breach
  *   SC-PERF-11  PF-11        390 px and 375 px: no page-level horizontal scroll; Monthly table scrolls in its card (BLG-FE-237)
- *   SC-PERF-13  PF-13        Export opens its dialog; Export PDF enabled with data
+ *   SC-PERF-13  PF-13        Export opens its dialog; Export PDF produces the report (print stubbed)
  *   SC-PERF-14  PF-14        axe on section index and Reports tablist (light and dark)
  * PF-04 (sidebar, palette): sidebar-nav-groups.spec.js, page-labels-single-source.spec.js.
  * PF-12 (links): empty-state-next-action.spec.js (Dashboard card), onward-links.spec.js
@@ -144,16 +144,32 @@ test('SC-PERF-05: each period-level KPI has one home; removed duplicates are gon
   // Period-level KPI labels. "Total P&L" and "Total Trades" also head scoped
   // breakdown columns (per exit reason, per market) — the §5 scope rule — so
   // they are checked inside Summary and Analytics' headline blocks below.
-  for (const label of ['Profit Factor', 'Expectancy', 'Sharpe Ratio', 'Max Drawdown', 'Recovery Factor', 'Time Underwater', 'Risk/Reward Ratio', 'Win Streak', 'Capital Efficiency']) {
+  for (const label of [
+    'Profit Factor', 'Expectancy', 'Sharpe Ratio', 'Max Drawdown', 'Recovery Factor', 'Time Underwater',
+    'Risk/Reward Ratio', 'Win Streak', 'Loss Streak', 'Avg Hold Time (Winners)', 'Avg Hold Time (Losers)',
+    'Trade Frequency', 'Capital Efficiency', 'Average Win', 'Average Loss',
+    'Total Fees', 'Net P&L', 'Consecutive Months Profitable', 'Win Rate Consistency',
+  ]) {
     await expect(main(page).getByText(label, { exact: true }), label).toHaveCount(1);
   }
-  for (const label of ['Total P&L', 'Total Trades']) {
+  // Gross Profit / Gross Loss also head the Tax year summary bar (one tax year,
+  // a scoped figure under §5): once in Analytics' Performance Summary.
+  for (const label of ['Gross Profit', 'Gross Loss']) {
+    await expect(page.locator('section#analytics').getByText(label, { exact: true }), label).toHaveCount(1);
+  }
+  // Headline KPIs that also head scoped breakdown columns (§5 scope rule):
+  // once among the Summary cards.
+  for (const label of ['Total P&L', 'Total Trades', 'Win Rate']) {
     await expect(page.getByTestId('performance-summary-cards').getByText(label, { exact: true }), label).toHaveCount(1);
+  }
+  // Compliance KPIs, once each (Last 30 days loads when it nears the viewport).
+  await page.locator('section#compliance').scrollIntoViewIfNeeded();
+  await expect(page.getByTestId('compliance-pass-rate')).toBeVisible({ timeout: 15000 });
+  for (const label of ['Red Flag Events/Week', 'Override Rate', 'Top Rule Breach', 'Trade Plan Adherence', 'Validation Pass Rate', 'Override Count', 'Red Flag Events']) {
+    await expect(main(page).getByText(label, { exact: true }), label).toHaveCount(1);
   }
   await expect(main(page).getByText('Trade Breakdown', { exact: true })).toHaveCount(0);
   await expect(main(page).getByText('Most Frequent Breach', { exact: true })).toHaveCount(0);
-  const summary = page.locator('section#analytics').getByText('Gross Profit', { exact: true });
-  await expect(summary).toHaveCount(1);
 });
 
 test('SC-PERF-06: KPIs show the server values from GET /analytics/metrics', async ({ page }) => {
@@ -175,7 +191,8 @@ test('SC-PERF-06: KPIs show the server values from GET /analytics/metrics', asyn
   await expect(analytics).toContainText('Consistent');
 });
 
-test('SC-PERF-06b: Sharpe shows N/A when the server reports insufficient data', async ({ page }) => {
+test('SC-PERF-06b: Sharpe shows N/A when the server reports insufficient data (page and print report)', async ({ page }) => {
+  await page.context().addInitScript(() => { window.print = () => {}; });
   await stub(page);
   await page.route(/localhost:8000\/analytics\/metrics/, (r) => {
     const body = metricsResponse();
@@ -187,6 +204,10 @@ test('SC-PERF-06b: Sharpe shows N/A when the server reports insufficient data', 
   await expect(card).toContainText('N/A', { timeout: 15000 });
   await expect(card).not.toContainText('Needs Improvement');
   await expect(page.locator('section#summary')).not.toContainText('Sharpe: 0.00');
+  const [popup] = await Promise.all([page.waitForEvent('popup'), page.getByRole('button', { name: 'Export PDF' }).click()]);
+  await expect.poll(async () => (await popup.content()).includes('Key Insights')).toBe(true);
+  expect(await popup.content()).not.toContain('need improvement (Sharpe');
+  await popup.close();
 });
 
 test('SC-PERF-07: the period selector sets ?period= and refetches metrics and compliance metrics', async ({ page }) => {
@@ -201,6 +222,16 @@ test('SC-PERF-07: the period selector sets ?period= and refetches metrics and co
   // Discipline & Compliance refetches on the new period key; its endpoint takes
   // no period today (performance.md v1.1 §3), so count the requests.
   await expect.poll(() => requests.filter((r) => r.startsWith('/analytics/compliance-metrics')).length).toBeGreaterThanOrEqual(2);
+  // The Reports section ignores the period: its tax-year report is not refetched.
+  const taxYearCalls = () => requests.filter((r) => r.startsWith('/reports/tax-year')).length;
+  const before = taxYearCalls();
+  expect(before).toBeGreaterThanOrEqual(1);
+  await page.getByTestId('performance-period').click();
+  await page.getByRole('option', { name: 'All Time' }).click();
+  await expect(page).toHaveURL(/period=all_time/);
+  await expect.poll(() => requests.some((r) => r.startsWith('/analytics/metrics') && r.includes('period=all_time'))).toBe(true);
+  await page.waitForTimeout(500);
+  expect(taxYearCalls()).toBe(before);
 });
 
 test('SC-PERF-08: the Reports tablist switches views and holds ?report= by replace', async ({ page }) => {
@@ -264,11 +295,21 @@ for (const width of [390, 375]) {
   });
 }
 
-test('SC-PERF-13: Export opens its dialog; Export PDF is enabled with data', async ({ page }) => {
+test('SC-PERF-13: Export opens its dialog; Export PDF produces the report', async ({ page }) => {
+  await page.context().addInitScript(() => { window.print = () => {}; });
   await stub(page);
   await page.goto('/#/Performance');
   await expect(page.getByTestId('performance-summary-cards')).toBeVisible({ timeout: 15000 });
   await expect(page.getByRole('button', { name: 'Export PDF' })).toBeEnabled();
+  const [popup] = await Promise.all([
+    page.waitForEvent('popup'),
+    page.getByRole('button', { name: 'Export PDF' }).click(),
+  ]);
+  await expect.poll(async () => (await popup.content()).includes('Performance Analytics Report')).toBe(true);
+  const report = await popup.content();
+  expect(report).toContain('Last Month');
+  expect(report).toContain('1.37'); // server Sharpe
+  await popup.close();
   await page.getByRole('button', { name: 'Export', exact: true }).click();
   await expect(page.getByRole('dialog')).toBeVisible();
 });
@@ -282,6 +323,10 @@ for (const theme of ['light', 'dark']) {
     const results = await new AxeBuilder({ page })
       .include('[data-testid="section-index"]')
       .include('[data-testid="performance-report-tabs"]')
+      .include('[data-testid="performance-header-actions"]')
+      // The Export button keeps the app-wide cyan-violet gradient primary style
+      // (unchanged from the Reports page); its contrast is outside this story.
+      .exclude('[data-testid="performance-export"]')
       .include('main section > h2')
       .analyze();
     expect(results.violations).toEqual([]);

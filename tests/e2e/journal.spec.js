@@ -282,6 +282,11 @@ test('SC-JNL-06b: partial ".L"-blind match in the browser; exact upper-cased tic
 
   await tab(page, 'Position notes').click();
   await expect(panel(page, 'notes').getByTestId('position-note-card')).toHaveCount(1, { timeout: 15000 });
+  // JA-16: partial match in Position notes too — "aa" finds the open and closed AAPL.
+  await filter(page).fill('aa');
+  await expect(panel(page, 'notes').getByTestId('position-note-card')).toHaveCount(2);
+  await filter(page).fill('LGEN');
+  await expect(panel(page, 'notes').getByTestId('position-note-card')).toHaveCount(1);
   // Closed UK card reads "LGEN", as open UK positions do (GET /positions drops ".L").
   await expect(panel(page, 'notes').getByTestId('position-note-card').first()).toContainText('LGEN');
   await expect(panel(page, 'notes').getByTestId('position-note-card').first()).not.toContainText('LGEN.L');
@@ -341,6 +346,12 @@ test('SC-JNL-08: Red flags renders its event list, own filters, pagination, empt
   await expect(p.getByTestId('ticker-filter-input')).toHaveCount(0); // replaced by the shared filter
   await expect(p.getByText('Page 1 of 2')).toBeVisible();
   await expect(p.getByText('25 events recorded')).toBeVisible();
+  // Pagination moves to page 2 and requests it.
+  const page2 = page.waitForRequest((r) => r.url().includes('/portfolio/red-flag-journal') && r.url().includes('page=2'));
+  await p.getByRole('button', { name: 'Next' }).click();
+  await page2;
+  await expect(p.getByText('Page 2 of 2')).toBeVisible();
+  await expect(p.getByRole('button', { name: 'Next' })).toBeDisabled();
 });
 
 test('SC-JNL-08b: Red flags empty state', async ({ page }) => {

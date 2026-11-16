@@ -172,18 +172,19 @@ export default function Performance() {
         description="How your closed trades performed, with tax-year reports and rule compliance."
         onward={{ label: PAGE_LABELS.TradeHistory, to: "/TradeHistory" }}
         actions={
-          <div className="flex flex-col sm:flex-row gap-2">
+          <div className="flex flex-col sm:flex-row gap-2" data-testid="performance-header-actions">
             <Select value={period} onValueChange={(v) => setParam("period", v)}>
               <SelectTrigger aria-label="Performance period" data-testid="performance-period" className="w-48 bg-app-raised border-app-line text-app-fg">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent className="bg-slate-800 border-slate-700">
+              <SelectContent className="bg-app-raised border-app-line text-app-fg">
                 {PERIODS.map((p) => (
                   <SelectItem key={p.value} value={p.value}>{p.label}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
             <Button
+              data-testid="performance-export"
               onClick={() => setExportOpen(true)}
               className="bg-gradient-to-r from-cyan-500 to-violet-500 hover:from-cyan-600 hover:to-violet-600 text-white"
             >
@@ -194,7 +195,7 @@ export default function Performance() {
               onClick={() => generatePerformancePrintReport(metrics, periodLabel, summary.totalTrades)}
               variant="outline"
               disabled={!enough}
-              className="bg-slate-800/50 border-slate-700 text-white hover:bg-slate-700"
+              className="bg-app-raised border-app-line text-app-fg hover:bg-app-surface"
             >
               <Download className="w-4 h-4 mr-2" />
               Export PDF

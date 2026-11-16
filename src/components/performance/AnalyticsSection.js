@@ -96,7 +96,7 @@ export function generatePerformancePrintReport(metrics, periodLabel, tradeCount)
         <div class="section">
           <div class="section-title">Key Insights</div>
           <ul class="insight-list">
-            ${metrics.sharpeRatio > 2 ? `<li class="insight-item">Excellent risk-adjusted returns with a Sharpe ratio of ${fx(metrics.sharpeRatio, 2)}</li>` :
+            ${metrics.sharpeRatio == null ? '' : metrics.sharpeRatio > 2 ? `<li class="insight-item">Excellent risk-adjusted returns with a Sharpe ratio of ${fx(metrics.sharpeRatio, 2)}</li>` :
               metrics.sharpeRatio > 1 ? `<li class="insight-item">Strong risk-adjusted returns with a Sharpe ratio of ${fx(metrics.sharpeRatio, 2)}</li>` :
               `<li class="insight-item">Risk-adjusted returns need improvement (Sharpe: ${fx(metrics.sharpeRatio, 2)})</li>`}
             ${metrics.avgHoldWinners > metrics.avgHoldLosers ?

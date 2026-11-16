@@ -150,7 +150,7 @@ export default function Journal() {
               if (e.key === "Enter") setRedFlagFilter(redFlagTicker(e.currentTarget.value));
             }}
             placeholder="Filter by ticker…"
-            className="bg-slate-800/50 border-slate-700 text-white pl-10"
+            className="bg-app-raised border-app-line text-app-fg placeholder:text-app-muted pl-10"
           />
         </div>
 

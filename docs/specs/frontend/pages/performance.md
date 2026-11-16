@@ -1,12 +1,12 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Canonical Specification (Class 1)
-**Status:** Approved — not yet built (`BLG-FE-259`)
+**Status:** Built (`BLG-FE-259`, ST-06, v9.17)
 **Version:** 1.1
 **Last Updated:** 2026-11-16 (ST-06, EPIC-02, v9.17, BLG-FE-259 — v1.1: the Monthly "Strategy Compliance" block moves to Compliance as "Last 30 days" without its breach tile, ruling at build time); prior — 2026-11-16 (ST-06 — initial draft: one Performance page from Reports and Analytics, against the `performance-page-brief` decision record §2)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Design Source:** docs/design/2026-11-11__release-v9.17/performance-page-brief/decision_record.md §2
 **Builds on:** `reports.md` v0.26, `analytics.md` v2.3, `navigation.md` v2.3, `glossary.md` v1.4, `docs/specs/metrics_definitions.md` v1.35.0, the shared `SectionIndex` (`long-page-section-index` decision record §2; `trade_plan.md` §5g)
-**Built by:** `BLG-FE-259` (ST-06, EPIC-02, v9.17)
+**Built by:** `BLG-FE-259` (ST-06, EPIC-02, v9.17): `src/pages/Performance.js`, `src/components/performance/` (`ReportViews.js`, `AnalyticsSection.js`, `Last30DaysCompliance.js`), `src/lib/performanceMetrics.js`
 
 ---
 
