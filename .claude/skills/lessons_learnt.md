@@ -52,6 +52,15 @@ The goal is a compounding improvement: each mistake makes the next run of that s
 ### governance-drift
 | 2026-09-14 | governance-drift | Step 3's untracked-file scan only globbed `claude/system/*.md`, never `claude/charter/*.md` — even though Step 1's §14 extraction already expects charter files to appear in the map (e.g. `team_charter.md`). This let `claude/charter/governance_role_onboarding_checklist.md` v1.0 (created alongside `claude/system/agent_onboarding_runbook.md` at the same ST-32/BLG-GOV-271 commit, 2026-09-08) go undetected through a full lifecycle audit (AUD-2026-09-14) and one governance-drift re-run before a second, broader re-run caught it. | Step 3 must glob both `claude/system/*.md` and `claude/charter/*.md` for the untracked-file scan, not just the directory Step 1's extraction happens to read from first. SKILL.md Step 3 updated to make this explicit (2026-09-14). |
 
+
+### first-time-right
+| 2026-11-16 | first-time-right | EPIC-02 (v9.17) filed 6 follow-ups after review; 5 came from checks applied only to new code and new strings, not to moved code, reused copy, child components and every reader of a renamed page. | Top-of-skill rule: apply each check to everything the change touches. |
+| 2026-11-16 | first-time-right | ST-06's new Summary hid Total P&L in quiet months where the old Reports tab showed it (BLG-FE-300, P2); nobody compared the old page's states with the new page's. | New check 21: parity with what the story replaces, before the spec is approved. |
+| 2026-11-16 | first-time-right | Test fixtures were built from the API contract's summary, so `has_enough_data` and the consistency fields sat in the wrong objects and hid two adapter bugs until code review. | Check 18: build the response shape from the code that writes it. |
+| 2026-11-16 | first-time-right | Change matrix covered only the first request: late-mounting child fetches and a failed plan load broke the `?section=` jump (BLG-FE-302). | Check 19: every async source, each with an "arrives late" and a "fails" row. |
+| 2026-11-16 | first-time-right | Rename grep covered `#/Route` in e2e only; an `href*=` selector and the digest's link text kept retired names (BLG-BE-222). | Check 6: whole-repo grep for old route and label in every form. |
+| 2026-11-16 | first-time-right | Moved copy ("Enter Your First Position") misled in its new context and appeared twice (BLG-FE-301); the compliance endpoint silently dropped the page period (BLG-FE-299). | Check 20 covers moved/reused copy; check 1 traces every input passed down to the request. |
+| 2026-11-16 | first-time-right | Ctrl-click, heading outline and debounce-test gaps (BLG-FE-302, BLG-QA-266): a debounce test used one `fill()` event; region-scoped axe missed heading order. | New check 22 (navigation and structure basics); Pass B re-run asks that each test performs the action its row names and asserts spec-stated order. |
 ---
 
 ## Cross-skill lessons (general patterns)
