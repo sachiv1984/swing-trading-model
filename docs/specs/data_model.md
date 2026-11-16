@@ -4,7 +4,7 @@
 **Class:** Class 1
 **Status:** Canonical
 **Version:** 2.70
-**Last Updated:** 2026-11-13 (ST-11, EPIC-05, v9.17, BLG-BE-211 — DS-41 (v2.70): startup backfill closes `active` trade plans whose linked position is closed; the full-exit path now closes the linked plan; no schema change); prior — 2026-11-13 (ST-15, EPIC-06, v9.17, BLG-OPS-217 — DS-36 `success` note: a 404 from `fc.yahoo.com` is a success on attribution rows from 2026-11-13; no schema change); prior — 2026-11-13 (BLG-BE-205, EPIC-04 post-merge, v9.17 — DS-40 staging and production Live Confirmations recorded); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-16 (BLG-BE-211, EPIC-05 post-merge, v9.17 — DS-41 production Live Confirmation recorded: 3 plans closed, verification 0 / 3; no schema change); prior — 2026-11-13 (ST-11, EPIC-05, v9.17, BLG-BE-211 — DS-41 (v2.70): startup backfill closes `active` trade plans whose linked position is closed; the full-exit path now closes the linked plan; no schema change); prior — 2026-11-13 (ST-15, EPIC-06, v9.17, BLG-OPS-217 — DS-36 `success` note: a 404 from `fc.yahoo.com` is a success on attribution rows from 2026-11-13; no schema change); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 This document describes the complete database schema and data structures used in the **Position Manager Web App**.
@@ -3866,6 +3866,7 @@ Expect `active_plans_on_closed_positions` = 0 after the first startup, and `back
 
 **Sign-off:**
 - Data Model & Domain Schema Owner: data-only, idempotent and reversible through its audit rows; no schema change. Tested against a real Postgres in `tests/test_trade_plan_close_on_exit.py` (CI Phase B). Live Confirmation on staging and production (the first startup's logged N and the Verification query) is the post-merge deploy step tracked by `BLG-BE-211` (Infrastructure & Operations Owner, RISK-03).
+- **Live Confirmation — production, applied 2026-11-16:** the first startup after the EPIC-05 merge (PR #2260, merge commit `cb65bb12`, Render service `trading-assistant-api-c0f9`) logged `backfill_closed_position_trade_plans: closed 3 trade plan(s)` at 2026-11-16T09:07:12Z, and startup completed. Verification: `active_plans_on_closed_positions` = 0; `backfilled` = 3, which equals the logged N. Supplied in session by the user (human, with production access, acting for the Data Model & Domain Schema Owner and the Infrastructure & Operations Owner). Staging Live Confirmation is pending.
 
 ---
 
