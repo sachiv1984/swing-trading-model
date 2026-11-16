@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-13 (session — 1 new item added: BLG-BE-219; ST-11 pre-commit code review, EPIC-05, v9.17); prior — 2026-11-13 (session — 1 new item added: BLG-BE-218; EPIC-06 agent-mediated DoQ review round 2, v9.17); prior — 2026-11-13 (session — 1 new item added: BLG-BE-217; EPIC-06 agent-mediated DoQ review, v9.17); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-16 (session — 4 new items added: BLG-FE-295, BLG-FE-296, BLG-FE-297, BLG-FE-298; agent-mediated PR #2260 review, EPIC-05, v9.17); prior — 2026-11-13 (session — 1 new item added: BLG-BE-219; ST-11 pre-commit code review, EPIC-05, v9.17); prior — 2026-11-13 (session — 1 new item added: BLG-BE-218; EPIC-06 agent-mediated DoQ review round 2, v9.17); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -6968,5 +6968,90 @@ Since ST-15 (`c341eee7`), `get_current_price()` converts a UK price from the Yah
 - A partial exit on a plan-linked position produces no mismatch (pytest)
 - A closed plan whose `trade_history` row has `position_id` NULL is not reported as `closed_plan_no_trade_history`, or is reported in a separate legacy count (pytest)
 - §3 describes both rules
+
+---
+
+### BLG-FE-295 — Hide the Trade Plan stored-stop line and Signal Context when the ticker no longer matches the "Plan this" signal
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** Agent-mediated PR #2260 review (EPIC-05, v9.17), Director of Quality finding 2 — 2026-11-16
+**Effort:** XS (<1h plus a Playwright test)
+**Provisional-Target:** TBD
+
+**Problem**
+On the "Plan this" route (`signal_id`), `TradePlan.js`'s `linkedSignal` ignores `form.ticker`. After the trader changes the ticker, the stored-stop line `plan-stored-stop-note` (new in ST-14) and the Signal Context panel still describe the first ticker's signal, so the line can state a stop worked out from another stock's ATR.
+
+**Scope**
+- When the linked signal's ticker (ignoring `.L`) differs from `form.ticker`, treat the form as having no linked signal
+
+**Acceptance Criteria**
+- Changing the ticker after "Plan this" hides the Signal Context panel and the stored-stop line (Playwright)
+
+---
+
+### BLG-FE-296 — Show a US signal's ATR in dollars on the Signal Context panel
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Head of Engineering; Frontend Specifications & UX Documentation Owner
+**Source:** Agent-mediated PR #2260 review (EPIC-05, v9.17), Director of Quality backlog candidate; pre-existing, found with ST-14's stored-stop line — 2026-11-16
+**Effort:** S (~0.5 day)
+**Provisional-Target:** TBD
+
+**Problem**
+`signal_service.py` stores `atr_value` in GBP for US tickers (`native_atr / live_fx_rate`), while `current_price` and `initial_stop` are in USD. `SignalContextPanel.js` formats `atr_value` in the plan's USD currency, so "ATR (14d)" shows a GBP figure as dollars. `getSuggestedStop()`'s fallback (`current_price − 5 × atr_value`) would also mix currencies if a signal ever lacked `initial_stop`. `signal_endpoints.md` does not say which currency `atr_value` is in.
+
+**Scope**
+- Show the ATR in the signal's own currency (for example `(current_price − initial_stop) / 5`, or a stored native ATR)
+- State `atr_value`'s currency for each market in `signal_endpoints.md`
+
+**Acceptance Criteria**
+- A US signal's "ATR (14d)" equals `(current_price − initial_stop) / 5` (unit or Playwright)
+- `signal_endpoints.md` names `atr_value`'s currency for US and UK
+
+---
+
+### BLG-FE-297 — Word the Trade Plan stored-stop line for an untouched pre-filled stop, without "§5"
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** Agent-mediated PR #2260 review (EPIC-05, v9.17), Product Owner UX comment — 2026-11-16
+**Effort:** S (~0.5 day)
+**Provisional-Target:** TBD
+
+**Problem**
+When the trader changes Planned Entry after ST-14's stop pre-fill, `plan-stored-stop-note` calls the system's own untouched pre-filled stop "your stop" and shows a second, different system stop. "§5" means nothing to a trader.
+
+**Scope**
+- Distinguish a pre-filled stop from a typed one in the line's copy
+- Replace "§5" with plain wording such as "the strategy's 5×ATR rule"
+- Update `trade_plan.md` §5f
+
+**Acceptance Criteria**
+- With an untouched pre-filled stop and a changed entry, the line says the stop came from the signal (Playwright)
+- The line contains no "§5"
+- `trade_plan.md` §5f matches the copy
+
+---
+
+### BLG-FE-298 — Reword the acknowledgement reset note for plans saved without a pre-entry snapshot
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** Agent-mediated PR #2260 review (EPIC-05, v9.17), Product Owner UX comment — 2026-11-16
+**Effort:** XS (<1h plus a Playwright test)
+**Provisional-Target:** TBD
+
+**Problem**
+Opening a plan saved before v9.16 (no `pre_entry_validation_snapshot`) for editing always unticks the acknowledgement box and shows "The check results changed" (ST-12, `trade_plan.md` §5e), although nothing visible changed. The trader cannot tell why the tick was cleared.
+
+**Scope**
+- Show a different note when the plan has no stored snapshot, for example "This plan was saved before checks were recorded. Review them and tick to acknowledge."
+- Keep `data-testid="acknowledgement-reset-note"`
+- Update `trade_plan.md` §5e
+
+**Acceptance Criteria**
+- Editing a plan with no stored snapshot and a WARN result shows the no-snapshot wording (Playwright)
+- `trade_plan.md` §5e describes the no-snapshot note
 
 ---
