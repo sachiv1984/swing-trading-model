@@ -699,7 +699,10 @@
       "raised_utc": "2026-11-16T13:00:31Z",
       "sla_due_utc": "2026-11-17T13:00:31Z",
       "blocks_execution": false,
-      "disposition": "Open"
+      "disposition": "Resolved",
+      "resolved_utc": "2026-11-16T13:03:54Z",
+      "resolved_by": "Head of UX & Design; Metrics Definitions & Analytics Canonical Owner (the user, in session)",
+      "resolution_summary": "performance.md v1.0 approved as drafted (scope rule) and KPI definitions confirmed (server-canonical values), 2026-11-16; ST-06 build unblocked."
     }
   },
   "deferred_escalations": {
