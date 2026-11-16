@@ -575,8 +575,8 @@
       "title": "Site Structure & Usability Phase 3: Journal & Performance Consolidation (build-and-ship)",
       "status": "done",
       "branch": "exec/2026-11-11__release-v9.17/EPIC-02",
-      "pr_number": null,
-      "pr_status": null,
+      "pr_number": 2261,
+      "pr_status": "open",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-11-11__release-v9.17/qa_evidence_EPIC-02.md",
       "test_scenarios": [
