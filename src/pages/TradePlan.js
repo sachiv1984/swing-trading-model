@@ -8,7 +8,7 @@ import PageHeader from "../components/ui/PageHeader";
 import { PAGE_LABELS } from "../lib/pageLabels";
 import DataState from "../components/ui/DataState";
 import EntryChecklist, { DEFAULT_CHECKLIST_ITEMS } from "../components/trades/EntryChecklist";
-import SignalContextPanel, { buildSignalPrePopulation, getSuggestedStop } from "../components/trades/SignalContextPanel";
+import SignalContextPanel, { buildSignalPrePopulation, getSuggestedStop, getSignalAtr } from "../components/trades/SignalContextPanel";
 import { formatCurrency, currencyForMarket } from "../lib/format";
 import { INITIAL_ATR_MULTIPLIER } from "../constants/strategy";
 import SetupQualityScorePanel from "../components/trades/SetupQualityScorePanel";
@@ -215,8 +215,9 @@ function preEntryResultKey(snapshot) {
   return `${snapshot.advisory_status}|${pairs.join(",")}`;
 }
 
-// ST-14 (BLG-FE-282, v9.17): trade_plan.md v1.25 §5f stored-stop line. The §5 stop is
-// Planned Entry − INITIAL_ATR_MULTIPLIER × the linked signal's atr_value. Shown under the
+// ST-14 (BLG-FE-282, v9.17): trade_plan.md §5f stored-stop line. The §5 stop is
+// Planned Entry − INITIAL_ATR_MULTIPLIER × the linked signal's ATR in its own currency
+// (getSignalAtr: a US signal's atr_value is GBP, so its ATR is derived from initial_stop). Shown under the
 // suggested size line when both are known and the planned stop differs by more than 0.005.
 // Advisory only: it changes no field and does not resize. "about" and the signal's ATR are
 // named because Trade Entry computes the stop from the ATR at entry time, which may have
@@ -1043,7 +1044,7 @@ export default function TradePlan() {
         <PlanStoredStopNote
           entryPrice={form.planned_entry_price}
           stopPrice={form.planned_stop_price}
-          atrValue={linkedSignal?.atr_value}
+          atrValue={getSignalAtr(linkedSignal)}
           market={form.market}
         />
         <Field label="Planned Shares (for pre-entry checks)">
