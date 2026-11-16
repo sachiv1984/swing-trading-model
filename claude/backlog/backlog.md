@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-16 (BLG-BE-211 bannered complete after the DS-41 staging and production Live Confirmations; EPIC-05 post-merge, v9.17); prior — 2026-11-16 (session — 1 new item added: BLG-BE-220; BLG-FE-296 bannered complete; agent-mediated PR #2260 re-review, EPIC-05, v9.17); prior — 2026-11-16 (session — 4 new items added: BLG-FE-295, BLG-FE-296, BLG-FE-297, BLG-FE-298; agent-mediated PR #2260 review, EPIC-05, v9.17); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-16 (session — 1 new item added: BLG-BE-221; EPIC-05 post-merge production startup log, v9.17); prior — 2026-11-16 (BLG-BE-211 bannered complete after the DS-41 staging and production Live Confirmations; EPIC-05 post-merge, v9.17); prior — 2026-11-16 (session — 1 new item added: BLG-BE-220; BLG-FE-296 bannered complete; agent-mediated PR #2260 re-review, EPIC-05, v9.17); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -7078,5 +7078,27 @@ Opening a plan saved before v9.16 (no `pre_entry_validation_snapshot`) for editi
 **Acceptance Criteria**
 - For a US signal, the Research View's "ATR (14d)" equals `(entry_price − stop_price) / 5` in USD (Playwright or unit test with a real-shaped US signal)
 - For a US signal whose stop is entry − 5 × native ATR, the thesis input describes the stop as "5.0×ATR below entry" (unit test with a real-shaped US signal)
+
+---
+
+### BLG-BE-221 — Stop two outdated signals status ensure-functions logging false errors at every production startup
+**Priority:** P3 (Low)
+**Type:** Backend engineering
+**Owner:** Head of Engineering; Data Model & Domain Schema Owner
+**Source:** EPIC-05 post-merge deploy check (BLG-BE-211, v9.17), production Render startup log of `cb65bb12` — 2026-11-16
+**Effort:** S (~0.5 day)
+**Provisional-Target:** TBD
+
+**Problem**
+At startup, `main.py` runs three functions that each drop and re-add `signals_status_check` with their own status list. `ensure_signals_watchlisted_status()` (`database.py:2300`) and `ensure_signals_allocation_insufficient_status()` (`:2318`) run first, and their lists predate `allocation_insufficient` and `exit_rebalance`. On production, where `signals` rows hold those statuses, the re-add fails with `check constraint "signals_status_check" of relation "signals" is violated by some row`. Each function's transaction rolls back, so the constraint is never missing, and `ensure_signals_exit_rebalance_status()` (`:4922`) later restores the full list. But every production startup logs two false `ERROR` lines, which hide real startup errors. Staging logs both as OK because it has no rows with the newer statuses, so a staging deploy cannot show the problem.
+
+**Scope**
+- Give all three functions one shared, complete status list (or make the two older ones no-ops that defer to the newest), so none re-adds a narrower constraint
+- Keep the constraint's live definition unchanged; update `data_model.md` if its signals status documentation needs it
+- Add a test that runs the three functions in startup order against a table holding `allocation_insufficient` and `exit_rebalance` rows
+
+**Acceptance Criteria**
+- Running the three functions in startup order against a real Postgres (CI Phase B) with rows in every status raises no error, and the constraint allows the full status list afterwards (pytest)
+- The next production startup log has no `signals_status_check` error line (post-merge, recorded in the QA evidence)
 
 ---
