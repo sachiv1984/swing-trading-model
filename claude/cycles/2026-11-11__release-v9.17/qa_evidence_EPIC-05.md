@@ -62,4 +62,4 @@ Last Updated: 2026-11-16 (PR #2260 review: ST-14 native-ATR fix)
   - the ST-14 stored-stop wording ruling of 2026-11-13 ("about … using the signal's ATR"), with `trade_plan.md` §5f v1.27 as the current text.
 - **P1/P2 found defects filed during this EPIC:** none. The PR review's P2 was a defect in this EPIC's own new code and was fixed before merge, not filed. Open follow-ups: BLG-BE-219, BLG-FE-297 and BLG-BE-220 (all P3).
 - **CI at confirmation:** PR head `1f0f0007` had 26 checks passed, 22 pending and 5 skipped. Every workflow was green on `084bdaac` and `0594c4b4`. The merge should wait until the head checks are green.
-- **Merged:** not yet. The human developer makes the merge decision.
+- **Merged:** PR #2260, by the human repository owner (`sachiv1984`), at 2026-11-16T09:04:48Z, merge commit `cb65bb12`; head `e9f13c2c` had all 20 workflows succeed. The merger holds both roles, so under `ESC-CLOSE-20261103-01` the merge also counts as a confirmation: QA sign-off and PO acceptance confirmed by merge — the human repository owner, 2026-11-16T09:04:48Z, merge commit `cb65bb12`. This is in addition to the explicit in-session confirmations above.
