@@ -39,14 +39,14 @@ Last Updated: 2026-11-16
 
 ## Standard Sign-Off Block
 
-- [ ] All acceptance criteria verified against canonical spec
-- [ ] No unresolved P0 or P1 deviations
-- [ ] Regression areas checked
-- [ ] For any frontend component making direct URL construction (not via api.* wrapper): confirm the URL-base variable is exposed on the imported object
-- [ ] **Strategy values checked:** N/A — no stop/grace/ATR/exit/sizing logic touched (the Journal, Performance and section-index changes display existing values only).
-- Signed off by: Pending DoQ
-- Date:
-- Comments:
+- [x] All acceptance criteria verified against canonical spec
+- [x] No unresolved P0 or P1 deviations
+- [x] Regression areas checked
+- [x] For any frontend component making direct URL construction (not via api.* wrapper): confirm the URL-base variable is exposed on the imported object. The only direct construction added is `Last30DaysCompliance` (`${base44.baseUrl}/reports/monthly-pnl`, the same form `ReportViews.js` already uses); `base44.baseUrl` is exposed on the imported object.
+- [x] **Strategy values checked:** N/A — no stop/grace/ATR/exit/sizing logic touched (the Journal, Performance and section-index changes display existing values only).
+- Signed off by: Sprint Execution Engine (agent-mediated, Director of Quality role — §5.3)
+- Date: 2026-11-16
+- Comments: Agent-mediated Director of Quality review under the user's explicit direction (2026-11-16, "Agent-mediated, then PR"). Round 1 Blocked on one P2 (the advisory visual-regression spec still used the old Analytics route and the evidence overstated the retargeting) and five P3s (print report Sharpe line when not computed; partly-asserted spec ACs; scenario ID ranges; `performance.md` status; header controls not on `app-*` tokens). All fixed in `09658bd6`. Round 2 Approved, conditional on CI on `09658bd6`, with one P3 (restate the final CI runs here). **Final CI on `09658bd6` (head of the EPIC's code): all 9 workflows success** — Playwright E2E Acceptance Tests 43903323106, CI Pytest Suite 43903322939, Frontend Production Build 43903323153, Critical-Path Smoke Tests 43903322856, Golden Output Regression Gate 43903323167, Service Layer Coverage Gate 43903322826, Portfolio Integration Tests 43903322846, Endpoint Coverage Report 43903322834, Governance Sync Loop 43903322986. Post-open-style CI fixes, each restated: ST-05 `45243887` (Playwright 43851366613), ST-07 `44736ed8` (Playwright 43871300660), ST-06 `68b0418b` (Playwright 43894993795); each superseded by the all-green run on `09658bd6` above. Story-level authority sign-offs consolidated here: ST-05 build-time rulings (Frontend Specifications & UX Documentation Owner / Head of UX & Design, 2026-11-16); ST-06 `performance.md` approval (Head of UX & Design, 2026-11-16) and KPI confirmation (Metrics Definitions & Analytics Canonical Owner, 2026-11-16, ESC-EXEC-20261116-01 resolved) and the v1.1 compliance-block ruling (same roles, 2026-11-16) — all given by the user in session. Found defects filed: BLG-FE-299 (P3). No P1 or P2 found defect. This agent-mediated sign-off does not satisfy the merge gate's human QA sign-off or Product Owner acceptance.
 
 ## Merge Gate Confirmations
 
