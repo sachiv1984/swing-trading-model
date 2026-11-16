@@ -17,7 +17,15 @@
  *   SC-TPAR-04  Edit: the stored acknowledgement shows when the first result's key equals the
  *               stored snapshot's key
  *   SC-TPAR-05  Edit: a first result whose key differs from the stored snapshot starts unticked
- *               with the note
+ *               with the note (the stored plan was ticked)
+ *   SC-TPAR-06  Edit: a plan saved without a snapshot and stored ticked starts unticked with the
+ *               no-snapshot note; Save stays enabled (BLG-FE-298)
+ *   SC-TPAR-07  Edit: a plan saved without a snapshot and stored unticked starts unticked, no note
+ *   SC-TPAR-08  New form, WARN (never ticked) → PASS → WARN: no note — nothing was cleared
+ *   SC-TPAR-09  New form, WARN ticked → PASS → WARN: the "changed" note (the PASS cleared the tick)
+ *
+ * BLG-FE-298 (Head of UX & Design recommendation, user ruling 2026-11-16): the note shows only when
+ * the reset clears a tick, with data-reason "changed" or "no-snapshot".
  *
  * Infrastructure: page.route() network interception — no live backend. Clock fixed so the
  * snapshot is fresh for Trade Entry's 24-hour rule (position_form.md v1.14).
@@ -30,7 +38,8 @@ const { test, expect } = require('./fixtures/api-status-guard');
 
 const API = 'http://localhost:8000';
 const NOW = new Date('2026-11-13T12:00:00Z');
-const RESET_NOTE = 'The check results changed. Review them and tick again to acknowledge.';
+const RESET_NOTE = 'The check results changed, so your tick was cleared. Review them and tick again to acknowledge.';
+const NO_SNAPSHOT_NOTE = 'This plan was saved before check results were kept, so your tick was cleared. Review the results and tick again to acknowledge.';
 const UNACK_REASON = "The linked plan's checks had warnings that were not acknowledged.";
 
 const checks = (cash, detail = 'Cash check') => [
@@ -101,6 +110,7 @@ test('SC-TPAR-01: a new FAIL unticks the box; saving unacknowledged reaches Trad
   await expect(badge(page, 'Fail')).toBeVisible({ timeout: 8000 });
   await expect(box(page)).not.toBeChecked();
   await expect(note(page)).toHaveText(RESET_NOTE);
+  await expect(note(page)).toHaveAttribute('data-reason', 'changed');
 
   // Save stays enabled (advisory).
   await page.getByRole('button', { name: /save plan/i }).click();
@@ -198,8 +208,70 @@ test('SC-TPAR-05: edit — a first result that differs from the stored snapshot 
   await expect(badge(page, 'Warn')).toBeVisible({ timeout: 10000 });
   await expect(box(page)).not.toBeChecked();
   await expect(note(page)).toHaveText(RESET_NOTE);
+  await expect(note(page)).toHaveAttribute('data-reason', 'changed');
 
   await page.getByRole('button', { name: /update plan/i }).click();
   await expect.poll(() => put).not.toBeNull();
   expect(put.pre_entry_override_acknowledged).toBe(false);
+});
+
+const noSnapshotPlan = (acknowledged) => ({ ...storedPlan(null), pre_entry_override_acknowledged: acknowledged });
+
+test('SC-TPAR-06: edit — a plan saved without a snapshot and stored ticked shows the no-snapshot note', async ({ page }) => {
+  const plan = noSnapshotPlan(true);
+  let put = null;
+  await mockApp(page, { editPlan: plan, onPut: (b) => { put = b; } });
+  await page.goto(`/#/TradePlan?edit=${plan.id}`);
+  await expect(badge(page, 'Warn')).toBeVisible({ timeout: 10000 });
+  await expect(box(page)).not.toBeChecked();
+  await expect(note(page)).toHaveText(NO_SNAPSHOT_NOTE);
+  await expect(note(page)).toHaveAttribute('data-reason', 'no-snapshot');
+
+  const update = page.getByRole('button', { name: /update plan/i });
+  await expect(update).toBeEnabled();
+  await box(page).check();
+  await expect(note(page)).toHaveCount(0);
+  await update.click();
+  await expect.poll(() => put).not.toBeNull();
+  expect(put.pre_entry_override_acknowledged).toBe(true);
+});
+
+test('SC-TPAR-07: edit — a plan saved without a snapshot and stored unticked shows no note', async ({ page }) => {
+  const plan = noSnapshotPlan(false);
+  await mockApp(page, { editPlan: plan });
+  await page.goto(`/#/TradePlan?edit=${plan.id}`);
+  await expect(badge(page, 'Warn')).toBeVisible({ timeout: 10000 });
+  await expect(box(page)).not.toBeChecked();
+  await expect(note(page)).toHaveCount(0);
+});
+
+test('SC-TPAR-08: new form, WARN never ticked → PASS → WARN shows no note', async ({ page }) => {
+  await mockApp(page);
+  await openNewPlan(page);
+  await shares(page).fill('100');
+  await expect(badge(page, 'Warn')).toBeVisible({ timeout: 8000 });
+  await shares(page).fill('20');
+  await expect(badge(page, 'Pass')).toBeVisible({ timeout: 8000 });
+  await shares(page).fill('150');
+  await expect(badge(page, 'Warn')).toBeVisible({ timeout: 8000 });
+  await expect(box(page)).not.toBeChecked();
+  await expect(note(page)).toHaveCount(0);
+  // A key change while unticked is also not a cleared tick.
+  await shares(page).fill('500');
+  await expect(badge(page, 'Fail')).toBeVisible({ timeout: 8000 });
+  await expect(note(page)).toHaveCount(0);
+});
+
+test('SC-TPAR-09: new form, WARN ticked → PASS → WARN shows the "changed" note', async ({ page }) => {
+  await mockApp(page);
+  await openNewPlan(page);
+  await tickAtWarn(page);
+  await shares(page).fill('20');
+  await expect(badge(page, 'Pass')).toBeVisible({ timeout: 8000 });
+  await expect(note(page)).toHaveCount(0);
+  await shares(page).fill('150');
+  await expect(badge(page, 'Warn')).toBeVisible({ timeout: 8000 });
+  await expect(box(page)).not.toBeChecked();
+  await expect(note(page)).toHaveText(RESET_NOTE);
+  await expect(note(page)).toHaveAttribute('data-reason', 'changed');
 });

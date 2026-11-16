@@ -321,7 +321,16 @@ export default function TradePlan() {
   // key the acknowledgement was given against: undefined on a new form until the first
   // result arrives, or the stored snapshot's key ("none" without one) in edit mode.
   const lastResultKey = useRef(undefined);
-  const [ackResetNote, setAckResetNote] = useState(false);
+  // BLG-FE-298 (v9.17, Head of UX & Design recommendation, user ruling 2026-11-16): the
+  // reset note shows only when the reset clears a tick the trader gave (or a stored tick),
+  // and says why: "changed" (the result key changed) or "no-snapshot" (an edited plan saved
+  // before check results were kept). null = no note.
+  const [ackResetReason, setAckResetReason] = useState(null);
+  // Mirrors the box so the result handler knows whether a reset clears a real tick.
+  const ackTicked = useRef(false);
+  ackTicked.current = !!form.pre_entry_override_acknowledged;
+  // A tick cleared by a PASS result still counts as cleared when WARN/FAIL returns.
+  const tickClearedByPass = useRef(false);
   const handlePreEntryResult = useCallback((snapshot) => {
     setPreEntrySnapshot(snapshot);
     const key = preEntryResultKey(snapshot);
@@ -330,13 +339,16 @@ export default function TradePlan() {
     lastResultKey.current = key;
     if (snapshot.advisory_status === "pass") {
       // The box is hidden on pass and saved as false.
+      if (ackTicked.current) tickClearedByPass.current = true;
       setForm((prev) => (prev.pre_entry_override_acknowledged ? { ...prev, pre_entry_override_acknowledged: false } : prev));
-      setAckResetNote(false);
+      setAckResetReason(null);
       return;
     }
     if (previous === undefined || previous === key) return;
-    setForm((prev) => ({ ...prev, pre_entry_override_acknowledged: false }));
-    setAckResetNote(true);
+    const clearsATick = ackTicked.current || tickClearedByPass.current;
+    tickClearedByPass.current = false;
+    setForm((prev) => (prev.pre_entry_override_acknowledged ? { ...prev, pre_entry_override_acknowledged: false } : prev));
+    setAckResetReason(clearsATick ? (previous === "none" ? "no-snapshot" : "changed") : null);
   }, []);
   // ST-08 (BLG-FE-256, v9.16): §5f — the suggestion pre-fills Planned Shares only until
   // the user types there. In edit mode a stored planned_quantity counts as typed.
@@ -423,7 +435,8 @@ export default function TradePlan() {
       // ST-12: the stored acknowledgement stands only if the first result has the
       // stored snapshot's key (§5e); a plan saved without a snapshot never matches.
       lastResultKey.current = preEntryResultKey(existingPlan.pre_entry_validation_snapshot) ?? "none";
-      setAckResetNote(false);
+      setAckResetReason(null);
+      tickClearedByPass.current = false;
       setIsClaudeDraft(!!existingPlan.is_ai_draft);
       if (existingPlan.planned_quantity != null) setSharesTyped(true);
     }
@@ -1075,10 +1088,13 @@ export default function TradePlan() {
           overrideAcknowledged={form.pre_entry_override_acknowledged}
           onOverrideChange={(val) => {
             setForm((prev) => ({ ...prev, pre_entry_override_acknowledged: val }));
-            if (val) setAckResetNote(false);
+            if (val) {
+              setAckResetReason(null);
+              tickClearedByPass.current = false;
+            }
           }}
           onResultChange={handlePreEntryResult}
-          showAcknowledgementResetNote={ackResetNote}
+          acknowledgementResetReason={ackResetReason}
         />
 
         <div className="space-y-1">

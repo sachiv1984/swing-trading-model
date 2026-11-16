@@ -6972,7 +6972,7 @@ Since ST-15 (`c341eee7`), `get_current_price()` converts a UK price from the Yah
 ---
 
 ### BLG-FE-295 — Hide the Trade Plan stored-stop line and Signal Context when the ticker no longer matches the "Plan this" signal
-**✅ COMPLETE — 2026-11-16, `2026-11-11__release-v9.17`, found during ST-14's PR #2260 review, resolved in-sprint on EPIC-05 (this item's fixing commit, SC-TPSP-09); the AC is met — see `qa_evidence_EPIC-05.md` ST-14 row.**
+**✅ COMPLETE — 2026-11-16, `2026-11-11__release-v9.17`, found during ST-14's PR #2260 review, resolved in-sprint on EPIC-05 (`0594c4b4`, SC-TPSP-09); the AC is met — see `qa_evidence_EPIC-05.md` ST-14 row.**
 **Priority:** P3 (Low)
 **Type:** Frontend / UX
 **Owner:** Frontend Specifications & UX Documentation Owner
@@ -7037,6 +7037,7 @@ When the trader changes Planned Entry after ST-14's stop pre-fill, `plan-stored-
 ---
 
 ### BLG-FE-298 — Reword the acknowledgement reset note for plans saved without a pre-entry snapshot
+**✅ COMPLETE — 2026-11-16, `2026-11-11__release-v9.17`, found during ST-12's PR #2260 review, resolved in-sprint on EPIC-05 (the commit that adds this banner; Head of UX & Design recommendation, user ruling 2026-11-16); both ACs met (SC-TPAR-06, `trade_plan.md` §5e) — see `qa_evidence_EPIC-05.md` ST-12 row.**
 **Priority:** P3 (Low)
 **Type:** Frontend / UX
 **Owner:** Frontend Specifications & UX Documentation Owner
