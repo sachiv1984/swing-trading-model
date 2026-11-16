@@ -690,6 +690,16 @@
       "resolved_utc": "2026-11-10T09:37:55Z",
       "resolved_by": "Base44 Frontend Prompt Owner (the user, in session)",
       "resolution_summary": "Both: **Story:** header line in each filed Base44 prompt and a **Base44 prompt file:** field in each delegated_frontend delegation record; written into OPERATIONAL_GUIDE.md §8.3 (v4.256)."
+    },
+    "ESC-EXEC-20261116-01": {
+      "cycle": "2026-11-11__release-v9.17",
+      "summary": "ST-06/EPIC-02 — performance.md v1.0 draft needs dated Head of UX & Design approval and Metrics owner KPI confirmation (scope rule; server-canonical KPIs) before the build",
+      "trigger_type": "Lifecycle",
+      "owning_authority": "Head of UX & Design; Metrics Definitions & Analytics Canonical Owner",
+      "raised_utc": "2026-11-16T13:00:31Z",
+      "sla_due_utc": "2026-11-17T13:00:31Z",
+      "blocks_execution": false,
+      "disposition": "Open"
     }
   },
   "deferred_escalations": {
