@@ -212,9 +212,11 @@ function Panel0({ openPositions, loading, error, showMarketBadge }) {
 
 function StatCard({ label, backtest, actual }) {
   return (
-    <div className="bg-slate-800 rounded-lg p-3 border border-slate-700">
+    <div className="min-w-0 bg-slate-800 rounded-lg p-3 border border-slate-700">
       <p className="text-xs text-slate-600 dark:text-slate-400 mb-2">{label}</p>
-      <div className="flex items-end justify-between gap-2">
+      {/* ST-07 (v9.17): wraps Actual under Backtest when two GBP values do not
+          fit a half-width card at 390 px (no page-level horizontal scroll). */}
+      <div className="flex flex-wrap items-end justify-between gap-x-2 gap-y-1">
         <div>
           <p className="text-xs text-slate-600 dark:text-slate-400 mb-0.5">Backtest</p>
           <p className="text-base font-semibold text-white">{backtest}</p>
