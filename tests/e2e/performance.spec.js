@@ -11,7 +11,9 @@
  *                            consistency from consistency_metrics; Sharpe N/A when sharpe_method is insufficient_data
  *   SC-PERF-07  PF-07        period selector: ?period= and refetch of metrics and compliance-metrics
  *   SC-PERF-08  PF-08        Reports tablist Tax year / Monthly / Reconciliation, ?report= by replace
- *   SC-PERF-09  PF-09        too few trades: Summary and Analytics empty; Reports and Compliance render
+ *   SC-PERF-09  PF-09        too few trades: Summary still shows Total P&L, Win Rate, Total Trades (BLG-FE-300);
+ *                            statistical KPIs, chart and Analytics show the empty state; Reports and Compliance render
+ *   SC-PERF-09b PF-09        zero trades: Summary shows only the empty state (no 0.0% win rate)
  *   SC-PERF-10  PF-10        Arc 5 failure stays inside Compliance; Last 30 days block, no Most Frequent Breach
  *   SC-PERF-11  PF-11        390 px and 375 px: no page-level horizontal scroll; Monthly table scrolls in its card (BLG-FE-237)
  *   SC-PERF-13  PF-13        Export opens its dialog; Export PDF produces the report (print stubbed)
@@ -45,13 +47,18 @@ const TRADES = Array.from({ length: 12 }, (_, i) => {
   };
 });
 
-function metricsResponse({ enough = true } = {}) {
+function metricsResponse({ enough = true, zeroTrades = false } = {}) {
+  if (zeroTrades) {
+    return { status: 'ok', data: { summary: { total_pnl: 0.0, win_rate: 0.0, total_trades: 0, has_enough_data: false, min_required: 10 }, executive_metrics: {}, advanced_metrics: {}, consistency_metrics: {}, trades_for_charts: [] } };
+  }
   return {
     status: 'ok',
     data: {
       // Shape per analytics_service.py: has_enough_data and min_required inside
       // summary; consistency_metrics is its own object.
-      summary: { total_pnl: 551.18, win_rate: 66.7, total_trades: enough ? 12 : 3, has_enough_data: enough, min_required: 10 },
+      // Below the minimum the server still sends the real total and win rate
+      // (BLG-FE-300): the first 3 trades are -39.37, +78.74, +78.74 = 118.11, 2 of 3 won.
+      summary: { total_pnl: enough ? 551.18 : 118.11, win_rate: 66.7, total_trades: enough ? 12 : 3, has_enough_data: enough, min_required: 10 },
       executive_metrics: enough ? { sharpe_ratio: 1.37, sharpe_method: 'trade', max_drawdown: { percent: -4.2, amount: 118.11, date: day(4) }, recovery_factor: 4.67, expectancy: 45.93, profit_factor: 4.0, risk_reward_ratio: 2.0 } : {},
       advanced_metrics: enough ? { win_streak: 4, loss_streak: 1, avg_hold_winners: 19, avg_hold_losers: 19, trade_frequency: 2.3, capital_efficiency: 5.5, days_underwater: 0, portfolio_peak_equity: 551.18, peak_date: day(1) } : {},
       consistency_metrics: enough ? { consecutive_profitable_months: 3, current_streak: 2, win_rate_std_dev: 12.4, pnl_std_dev: 210.55 } : {},
@@ -71,14 +78,14 @@ const MONTHLY = {
   compliance_summary: { period_days: 30, validation_pass_rate: 0.82, override_count: 2, red_flag_events_count: 5, most_frequent_rule_breach: 'sector_concentration' },
 };
 
-async function stub(page, { enough = true, arc5Status = 200, requests = null } = {}) {
+async function stub(page, { enough = true, zeroTrades = false, arc5Status = 200, requests = null } = {}) {
   if (requests) {
     page.on('request', (r) => {
       if (r.url().startsWith(API)) { const u = new URL(r.url()); requests.push(u.pathname + u.search); }
     });
   }
   await page.route(new RegExp(`${API}/`), (r) => r.fulfill(json({ status: 'ok', data: [] })));
-  await page.route(/localhost:8000\/analytics\/metrics/, (r) => r.fulfill(json(metricsResponse({ enough }))));
+  await page.route(/localhost:8000\/analytics\/metrics/, (r) => r.fulfill(json(metricsResponse({ enough, zeroTrades }))));
   await page.route(/localhost:8000\/trades(\?|$)/, (r) => r.fulfill(json({ status: 'ok', data: { trades: enough ? TRADES : TRADES.slice(0, 3) } })));
   await page.route(/localhost:8000\/reports\/monthly-pnl(?!\?format=csv)/, (r) => r.fulfill(json(MONTHLY)));
   await page.route(/localhost:8000\/analytics\/arc5-compliance/, (r) =>
@@ -103,6 +110,10 @@ test('SC-PERF-01: /Performance shows the heading, four sections in order and the
   await expect(heading(page)).toBeVisible({ timeout: 15000 });
   await expect(main(page).locator('section > h2')).toHaveText(['Summary', 'Reports', 'Analytics', 'Compliance']);
   await expect(page).toHaveTitle('Performance · Position Manager');
+  // Summary cards in performance.md §4 order.
+  const cards = page.getByTestId('performance-summary-cards');
+  await expect(cards).toBeVisible({ timeout: 15000 });
+  await expect(cards.locator('p').filter({ hasText: /^(Total P&L|Win Rate|Total Trades|Profit Factor|Expectancy)$/ })).toHaveText(['Total P&L', 'Win Rate', 'Total Trades', 'Profit Factor', 'Expectancy']);
 });
 
 test('SC-PERF-02: the section index reaches each section in one click; ?section=compliance opens there', async ({ page }) => {
@@ -250,13 +261,36 @@ test('SC-PERF-08: the Reports tablist switches views and holds ?report= by repla
   await expect(page.getByTestId('performance-report-tab-monthly')).toHaveAttribute('aria-selected', 'true', { timeout: 15000 });
 });
 
-test('SC-PERF-09: with too few trades, Summary and Analytics show the empty state; Reports and Compliance render', async ({ page }) => {
+test('SC-PERF-09: with too few trades, Summary keeps the totals and the statistical KPIs show the empty state', async ({ page }) => {
   await stub(page, { enough: false });
   await page.goto('/#/Performance');
-  await expect(page.locator('section#summary').getByText('Not enough trades', { exact: true })).toBeVisible({ timeout: 15000 });
+  // BLG-FE-300 (performance.md v1.2 §6): the three totals always show, from the server.
+  const cards = page.getByTestId('performance-summary-cards');
+  await expect(cards).toBeVisible({ timeout: 15000 });
+  await expect(cards.locator('p').filter({ hasText: /^(Total P&L|Win Rate|Total Trades|Profit Factor|Expectancy)$/ })).toHaveText(['Total P&L', 'Win Rate', 'Total Trades']);
+  await expect(cards).toContainText('+£118.11');
+  await expect(cards).toContainText('66.7%');
+  const valueOf = (title) => cards.locator('p', { hasText: new RegExp(`^${title}$`) }).locator('xpath=following-sibling::p[1]');
+  await expect(valueOf('Total Trades')).toHaveText('3');
+  await expect(cards).toContainText('2W / 1L');
+  const summary = page.locator('section#summary');
+  await expect(summary.getByText('Not enough trades', { exact: true })).toBeVisible();
+  // With some trades the empty state points to a longer period, not to a first position.
+  await expect(summary).toContainText('This period has 3 closed trades; analytics needs at least 10. Try a longer period.');
+  await expect(summary.getByText('Enter Your First Position')).toHaveCount(0);
   await expect(page.locator('section#analytics').getByText('Not enough trades', { exact: true })).toBeVisible();
   await expect(page.getByTestId('performance-report-tabs')).toBeVisible();
   await expect(page.getByTestId('strategy-compliance-section')).toBeVisible();
+});
+
+test('SC-PERF-09b: with no trades in the period, Summary shows only the empty state (no 0.0% win rate)', async ({ page }) => {
+  await stub(page, { zeroTrades: true });
+  await page.goto('/#/Performance');
+  const summary = page.locator('section#summary');
+  await expect(summary.getByText('Not enough trades', { exact: true })).toBeVisible({ timeout: 15000 });
+  await expect(page.getByTestId('performance-summary-cards')).toHaveCount(0);
+  await expect(summary).not.toContainText('0.0%');
+  await expect(summary.getByText('Enter Your First Position')).toBeVisible();
 });
 
 test('SC-PERF-10: an Arc 5 failure stays inside Compliance; the Last 30 days block shows three tiles', async ({ page }) => {

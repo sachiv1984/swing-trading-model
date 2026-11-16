@@ -1,8 +1,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Built (`BLG-FE-259`, ST-06, v9.17)
-**Version:** 1.1
-**Last Updated:** 2026-11-16 (ST-06, EPIC-02, v9.17, BLG-FE-259 — v1.1: the Monthly "Strategy Compliance" block moves to Compliance as "Last 30 days" without its breach tile, ruling at build time); prior — 2026-11-16 (ST-06 — initial draft: one Performance page from Reports and Analytics, against the `performance-page-brief` decision record §2)
+**Version:** 1.2
+**Last Updated:** 2026-11-16 (ST-06, EPIC-02, v9.17, BLG-FE-300 — v1.2: Total P&L, Win Rate and Total Trades always show; only the statistical KPIs wait for enough trades); prior — 2026-11-16 (ST-06, EPIC-02, v9.17, BLG-FE-259 — v1.1: the Monthly "Strategy Compliance" block moves to Compliance as "Last 30 days" without its breach tile, ruling at build time); prior — 2026-11-16 (ST-06 — initial draft: one Performance page from Reports and Analytics, against the `performance-page-brief` decision record §2); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Design Source:** docs/design/2026-11-11__release-v9.17/performance-page-brief/decision_record.md §2
 **Builds on:** `reports.md` v0.26, `analytics.md` v2.3, `navigation.md` v2.3, `glossary.md` v1.4, `docs/specs/metrics_definitions.md` v1.35.0, the shared `SectionIndex` (`long-page-section-index` decision record §2; `trade_plan.md` §5g)
@@ -105,8 +105,9 @@ The Analytics section's charts and tables also group the server's `trades_for_ch
 ## 6. States
 
 - **Page loading:** the header and section index render at once; each section shows its own loading state.
-- **Summary / Analytics, too few trades:** when the period has fewer than `min_trades_for_analytics` closed trades (server `summary.has_enough_data: false`; the minimum shown is `summary.min_required`), both sections show the existing Analytics empty state ("Not enough trades", with "Enter Your First Position"); Reports and Compliance are unaffected.
-- **No closed trades at all:** Summary shows the same empty state; the Reports tabs show their existing empty states (`reports.md` §Empty State).
+- **Summary / Analytics, too few trades (v1.2, BLG-FE-300):** when the period has fewer than `min_trades_for_analytics` closed trades (server `summary.has_enough_data: false`; the minimum shown is `summary.min_required`), Summary still shows **Total P&L, Win Rate and Total Trades** from `summary` — a sum, a percentage and a count, which the server returns for every period (`analytics_endpoints.md` v2.5.2). Profit Factor, Expectancy, the Portfolio Growth chart and Key Insights are replaced by the existing "Not enough trades" state (with "Enter Your First Position"), and Analytics shows the same state. Reports and Compliance are unaffected. *Product Owner decision, 2026-11-16 (the user, in session), from the PR #2261 review: the old Reports Performance tab had no minimum, and a quiet month must still answer "how did I do?".*
+- **No closed trades at all (zero in the period):** Summary shows only the empty state — no cards, so no "0.0%" win rate is shown for a period with no trades; the Reports tabs show their existing empty states (`reports.md` §Empty State).
+- **Empty-state wording (v1.2):** with zero trades the block keeps "Enter Your First Position". With 1 or more trades it says how many the period has and how many analytics needs, and suggests a longer period, with no button. Win Rate's subtitle counts wins, losses and break-even trades ("xW / yL / z even"), so it adds up to Total Trades.
 - **Errors:** a failed request shows the existing error state inside its own section only; the other sections keep working. A component that already has its own error state (Arc 5, Discipline, Completion Rate, Cohort, Market Correlation) keeps it.
 
 ## 7. Redirects and Links
@@ -141,7 +142,7 @@ At 390 px the page has no page-level horizontal scroll. The section index is the
 | PF-06 | Summary, Analytics and Compliance KPIs show the server values from `GET /analytics/metrics` (mocked with values a browser recomputation would not produce); no Sharpe or Expectancy is derived from `GET /trades` | Playwright with mocked responses |
 | PF-07 | The period selector updates `?period=` and refetches `GET /analytics/metrics` with the new period and `GET /analytics/compliance-metrics`; the Reports section ignores it | Playwright request capture |
 | PF-08 | Reports tablist Tax year / Monthly / Reconciliation, `?report=` by replace, each view as `reports.md` | Playwright (retargeted Reports scenarios) |
-| PF-09 | Too few trades: Summary and Analytics show "Not enough trades"; Reports and Compliance still render | Playwright |
+| PF-09 | Too few trades (1 or more): Summary shows Total P&L, Win Rate and Total Trades from `summary`, and "Not enough trades" in place of the statistical KPIs; Analytics shows "Not enough trades"; Reports and Compliance still render. Zero trades: Summary shows only the empty state | Playwright |
 | PF-10 | A failed `GET /analytics/arc5-compliance` affects only Compliance | Playwright |
 | PF-11 | At 390 px and 375 px no page-level horizontal scroll on every Reports view; the Monthly Avg P&L/Trade column scrolls into view inside its card | Playwright |
 | PF-12 | Dashboard Signal Compliance card, Strategy Benchmark onward link and the SI-05 digest link point at the new routes | Playwright + pytest (digest) |
@@ -152,5 +153,6 @@ At 390 px the page has no page-level horizontal scroll. The section index is the
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.2 | 2026-11-16 | BLG-FE-300 (ST-06, EPIC-02, v9.17), Product Owner decision 2026-11-16 (the user, in session, after the agent-mediated PR #2261 review): §6 — with too few trades, Summary still shows Total P&L, Win Rate and Total Trades; only Profit Factor, Expectancy, the growth chart, Key Insights and Analytics wait for enough trades. Zero trades: Summary shows only the empty state. The empty state's wording depends on whether the period has any trades; Win Rate's subtitle counts break-even trades. PF-09 updated. The server now returns the real `win_rate` and `total_pnl` below the minimum (`analytics_endpoints.md` v2.5.2; they were 0.0, so the old Reports tab showed £0.00 and 0.0% in a quiet month). Summary cards now render in the §4 order. |
 | 1.1 | 2026-11-16 | ST-06 build-time ruling (first-time-right check 7: the v1.0 premise that the Monthly "Strategy Compliance" block only duplicated Arc 5 was false — Arc 5 shows no Validation Pass Rate and no 30-day counts). Ruling by the user as Head of UX & Design / Metrics Definitions & Analytics Canonical Owner, 2026-11-16: move the block into Compliance as "Last 30 days" (Validation Pass Rate, Override Count, Red Flag Events) and drop Most Frequent Breach, whose one home is Arc 5's Top Rule Breach. §4 and §5.1 updated. |
 | 1.0 | 2026-11-16 | Initial draft. ST-06 (EPIC-02, v9.17, BLG-FE-259) against the `performance-page-brief` §2 brief: route and label, four sections with the shared section index, one home per KPI with the scope rule, the browser-vs-server divergence list (§5.2), states, redirects incl. the SI-05 compliance link, §13 note, 390 px rule absorbing `BLG-FE-237`, ACs PF-01..PF-14. **Head of UX & Design approval: 2026-11-16** (the user, in session, acting in that role; approved as drafted, including the §5 scope rule). **Metrics Definitions & Analytics Canonical Owner KPI confirmation (§5): 2026-11-16** (the user, in session, acting in that role; every KPI keeps its canonical definition, read from its server source per §5.2). |

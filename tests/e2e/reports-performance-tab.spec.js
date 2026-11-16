@@ -281,27 +281,22 @@ test.describe('SC-REP-04 — Empty state (no trades for period)', () => {
     await page.goto('/#/Performance?section=reports');
   });
 
-  test('SC-REP-04a: Total P&L shows £0.00 when no trades', async ({ page }) => {
-    // metrics.totalPnL = 0 -> "£0.00", unsigned -- formatCurrency's zero-is-unsigned
-    // convention (design_system.md §Number and Currency Formatting) applies even with
-    // signed: true. BLG-QA-197: this assertion previously expected a signed "+£0.00",
-    // which the convention has never produced. Scoped to the Total P&L StatsCard itself
-    // (not just page-wide text) since PerformanceSummary/TradeBreakdown below it can also
-    // render "£0.00" for other zeroed metrics in this same empty state.
-    const totalPnLCard = page.locator('p', { hasText: 'Total P&L' }).locator('..');
-    await expect(totalPnLCard.getByText('£0.00', { exact: true })).toBeVisible({ timeout: 8000 });
+  // ST-06 / BLG-FE-300 (performance.md v1.2 §6): with no trades in the period,
+  // Summary shows only the empty state. It no longer shows £0.00 / 0.0% / 0.00
+  // cards, which read as a period where every trade lost.
+  test('SC-REP-04a: no Summary cards when the period has no trades', async ({ page }) => {
+    const summary = page.locator('section#summary');
+    await expect(summary.getByText('Not enough trades', { exact: true })).toBeVisible({ timeout: 8000 });
+    await expect(page.getByTestId('performance-summary-cards')).toHaveCount(0);
   });
 
-  test('SC-REP-04b: Win Rate shows 0.0% when no trades', async ({ page }) => {
-    await expect(page.getByText('0.0%')).toBeVisible({ timeout: 8000 });
+  test('SC-REP-04b: no 0.0% win rate is shown when the period has no trades', async ({ page }) => {
+    await expect(page.locator('section#summary').getByText('Not enough trades', { exact: true })).toBeVisible({ timeout: 8000 });
+    await expect(page.locator('section#summary')).not.toContainText('0.0%');
   });
 
-  test('SC-REP-04c: Profit Factor shows 0.00 when no trades', async ({ page }) => {
-    // Scope to the Profit Factor card to avoid strict-mode violation: multiple StatsCards
-    // show "0.00" when there are no trades. The value <p> is the immediate sibling of the
-    // label <p>Profit Factor</p>, so use XPath following-sibling to target it precisely.
-    const profitFactorLabel = page.locator('p').filter({ hasText: /^Profit Factor$/ });
-    await expect(profitFactorLabel.locator('xpath=following-sibling::p[1]')).toHaveText('0.00', { timeout: 8000 });
+  test('SC-REP-04c: the empty Summary offers Enter Your First Position', async ({ page }) => {
+    await expect(page.locator('section#summary').getByText('Enter Your First Position')).toBeVisible({ timeout: 8000 });
   });
 });
 

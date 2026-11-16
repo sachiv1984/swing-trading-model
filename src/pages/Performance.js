@@ -24,7 +24,7 @@ import { PAGE_LABELS } from "../lib/pageLabels";
 import { formatCurrency, formatPercent } from "../lib/format";
 import { toMetricsProps, toSummary } from "../lib/performanceMetrics";
 
-// Performance (performance.md v1.1; ST-06, BLG-FE-259, EPIC-02, v9.17): one
+// Performance (performance.md v1.2; ST-06, BLG-FE-259, EPIC-02, v9.17): one
 // page for Reports and Analytics. Sections Summary · Reports · Analytics ·
 // Compliance with the shared section index (?section=). ?period= drives
 // Summary, Analytics and Discipline & Compliance; ?report= picks the Reports
@@ -163,6 +163,9 @@ export default function Performance() {
   }, [chartTrades, summary, metrics, openCount]);
 
   const enough = !isLoading && !isError && summary.hasEnoughData && metrics;
+  // W / L / even from the same rows, so the three add up to the trade count.
+  const evenTrades = chartTrades.length - reportMetrics.winningTrades - reportMetrics.losingTrades;
+  const winLossLabel = `${reportMetrics.winningTrades}W / ${reportMetrics.losingTrades}L${evenTrades > 0 ? ` / ${evenTrades} even` : ""}`;
   const totalPnl = summary.totalPnl ?? 0;
 
   return (
@@ -212,11 +215,20 @@ export default function Performance() {
           <Section id="summary" label="Summary">
             {isLoading || isError ? (
               <DataState loading={isLoading} error={isError} onRetry={refetch} className="min-h-[200px]" />
-            ) : !enough ? (
-              <NotEnoughTrades minTrades={minTrades} tradeCount={summary.totalTrades ?? 0} />
+            ) : !(summary.totalTrades > 0) ? (
+              // Zero trades in the period: only the empty state, so no "0.0%"
+              // win rate is shown for a period with no trades (§6).
+              <NotEnoughTrades minTrades={minTrades} tradeCount={0} />
             ) : (
               <>
-                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-4" data-testid="performance-summary-cards">
+                {/* BLG-FE-300 (performance.md v1.2 §6): Total P&L, Win Rate and Total
+                    Trades always show — a sum, a percentage and a count need no
+                    sample minimum. Profit Factor, Expectancy, the growth chart and
+                    Key Insights wait for enough trades. Order per §4. */}
+                <div
+                  className={`grid grid-cols-1 gap-4 ${enough ? "sm:grid-cols-2 xl:grid-cols-5" : "sm:grid-cols-3"}`}
+                  data-testid="performance-summary-cards"
+                >
                   <StatsCard
                     title="Total P&L"
                     value={formatCurrency(totalPnl, { signed: true })}
@@ -227,16 +239,9 @@ export default function Performance() {
                   <StatsCard
                     title="Win Rate"
                     value={formatPercent(summary.winRate)}
-                    subtitle={`${reportMetrics.winningTrades}W / ${reportMetrics.losingTrades}L`}
+                    subtitle={winLossLabel}
                     icon={PieChart}
                     gradient="cyan"
-                  />
-                  <StatsCard
-                    title="Profit Factor"
-                    value={metrics.profitFactor == null ? "N/A" : metrics.profitFactor.toFixed(2)}
-                    subtitle="Gross profit / gross loss"
-                    icon={BarChart3}
-                    gradient="violet"
                   />
                   <StatsCard
                     title="Total Trades"
@@ -245,16 +250,33 @@ export default function Performance() {
                     icon={FileText}
                     gradient="fuchsia"
                   />
-                  <StatsCard
-                    title="Expectancy"
-                    value={metrics.expectancy == null ? "N/A" : formatCurrency(metrics.expectancy, { signed: true })}
-                    subtitle="Edge per trade"
-                    icon={Zap}
-                    gradient={metrics.expectancy > 0 ? "emerald" : metrics.expectancy < 0 ? "rose" : "cyan"}
-                  />
+                  {enough && (
+                    <>
+                      <StatsCard
+                        title="Profit Factor"
+                        value={metrics.profitFactor == null ? "N/A" : metrics.profitFactor.toFixed(2)}
+                        subtitle="Gross profit / gross loss"
+                        icon={BarChart3}
+                        gradient="violet"
+                      />
+                      <StatsCard
+                        title="Expectancy"
+                        value={metrics.expectancy == null ? "N/A" : formatCurrency(metrics.expectancy, { signed: true })}
+                        subtitle="Edge per trade"
+                        icon={Zap}
+                        gradient={metrics.expectancy > 0 ? "emerald" : metrics.expectancy < 0 ? "rose" : "cyan"}
+                      />
+                    </>
+                  )}
                 </div>
-                <PortfolioGrowthChart positions={chartTrades} period={period} periodDates={periodDates} />
-                <KeyInsightsCard metrics={metrics} winRate={summary.winRate ?? 0} />
+                {enough ? (
+                  <>
+                    <PortfolioGrowthChart positions={chartTrades} period={period} periodDates={periodDates} />
+                    <KeyInsightsCard metrics={metrics} winRate={summary.winRate ?? 0} />
+                  </>
+                ) : (
+                  <NotEnoughTrades minTrades={minTrades} tradeCount={summary.totalTrades ?? 0} />
+                )}
               </>
             )}
           </Section>

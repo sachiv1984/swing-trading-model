@@ -154,14 +154,21 @@ export function generatePerformancePrintReport(metrics, periodLabel, tradeCount)
 
 // "Not enough trades" (analytics.md §Page States), shared by the Summary and
 // Analytics sections of the Performance page (performance.md v1.1 §6).
+// Wording by trade count (performance.md v1.2 §6): "Enter Your First Position"
+// only when the period has no trades; with some trades, point to a longer period.
 export function NotEnoughTrades({ minTrades, tradeCount }) {
+  const some = tradeCount > 0;
   return (
     <DataState
       empty
       emptyIcon={<BarChart2 className="w-10 h-10 text-slate-600" />}
       emptyHeading="Not enough trades"
-      emptyBody={`Need at least ${minTrades} closed trades to show analytics. You currently have ${tradeCount} trade${tradeCount !== 1 ? 's' : ''} in the selected period.`}
-      emptyAction={<EmptyStateAction variant="button" to="/TradeEntry">Enter Your First Position</EmptyStateAction>}
+      emptyBody={
+        some
+          ? `This period has ${tradeCount} closed trade${tradeCount !== 1 ? 's' : ''}; analytics needs at least ${minTrades}. Try a longer period.`
+          : `Need at least ${minTrades} closed trades to show analytics. You currently have 0 trades in the selected period.`
+      }
+      emptyAction={some ? undefined : <EmptyStateAction variant="button" to="/TradeEntry">Enter Your First Position</EmptyStateAction>}
       className="min-h-[240px]"
     />
   );
