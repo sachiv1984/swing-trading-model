@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-16 (session — 1 new item added: BLG-BE-220; BLG-FE-296 bannered complete; agent-mediated PR #2260 re-review, EPIC-05, v9.17); prior — 2026-11-16 (session — 4 new items added: BLG-FE-295, BLG-FE-296, BLG-FE-297, BLG-FE-298; agent-mediated PR #2260 review, EPIC-05, v9.17); prior — 2026-11-13 (session — 1 new item added: BLG-BE-219; ST-11 pre-commit code review, EPIC-05, v9.17); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-16 (BLG-BE-211 bannered complete after the DS-41 staging and production Live Confirmations; EPIC-05 post-merge, v9.17); prior — 2026-11-16 (session — 1 new item added: BLG-BE-220; BLG-FE-296 bannered complete; agent-mediated PR #2260 re-review, EPIC-05, v9.17); prior — 2026-11-16 (session — 4 new items added: BLG-FE-295, BLG-FE-296, BLG-FE-297, BLG-FE-298; agent-mediated PR #2260 review, EPIC-05, v9.17); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -5811,6 +5811,7 @@ ST-30 wrote the Base44 prompt versioning convention (`ESC-EXEC-20261110-02` ruli
 ---
 
 ### BLG-BE-211 — Move a linked trade plan to `closed` when its position closes
+**✅ COMPLETE — 2026-11-16, `2026-11-11__release-v9.17`, ST-11 (EPIC-05), PR #2260 merged as `cb65bb12`. All three ACs are met. The post-merge production backfill closed 3 plans (verification: 0 active plans on closed positions, 3 audit rows) and staging closed 0. See `qa_evidence_EPIC-05.md` Merge Gate Confirmations and `data_model.md` DS-41.**
 **Priority:** P2 (Medium)
 **Type:** Backend engineering
 **Owner:** Head of Engineering
