@@ -1,7 +1,7 @@
 **Owner:** Head of UX & Design
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Last Updated:** 2026-11-17 (§10 Technical Quality and Performance Review added at the user's request; 5 items filed); prior — 2026-11-17 (§9 Accessibility Review added at the user's request; 6 accessibility items filed); prior — 2026-11-17 (§8 Content Review added at the user's request; 5 content findings filed); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-17 (§11 AI opportunities review added at the user's request; 1 gated item filed); prior — 2026-11-17 (§10 Technical Quality and Performance Review added at the user's request; 5 items filed); prior — 2026-11-17 (§9 Accessibility Review added at the user's request; 6 accessibility items filed); prior history retained — see prior entries in version control
 
 # Site Structure & Usability — First-Principles Re-Review
 
@@ -246,3 +246,50 @@ AA is the right minimum for a single-user app. Two AAA criteria are worth adopti
 7. **Preconnect to the API origin** in `public/index.html` (one line; include in `BLG-FE-316`). Immutable caching and Brotli need a host that allows custom headers (for example Cloudflare Pages); not recommended unless measurements show it matters.
 
 **Technical verdict:** for a single-user, authenticated, CSR app with no third-party scripts and no images, the asset side is lean, except JavaScript. The bundle is 2.7× its own budget because nothing is code-split, and the Dashboard repeats its main API call four times. Both are straightforward fixes. No Web Vitals have ever been measured, so the first step is to measure (`BLG-QA-271`), then confirm the gains from items 1–4 against that baseline.
+
+---
+
+## 11. Where AI Could Genuinely Help (added 2026-11-17, user request)
+
+**Test applied:** each candidate must solve a real user problem *better than conventional UX* — a filter, a pre-filled field, a deterministic rule, plain copy — and stay inside `strategy_rules.md` §13. §13.2 says the system "is not … a machine-learning or AI-driven prediction system" and that AI-written text "must not suggest changing stops, position sizing, setups or any other strategy parameter". Every new AI surface needs its own §13 review before it ships (§13.5).
+
+### 11.1 Evidence: How the Existing AI Is Used
+
+Seven AI features ship: daily briefing, chat ("Ask Advisor"), trade plan generation, setup thesis, post-trade debrief and journal summary (the six measured below), plus the monthly P&L narrative added in v9.11, after the measurement window. The only production usage data is `docs/ops/ai_feature_usage_review_2026-09-24.md` (102 days, 2026-06-25 to 2026-10-05):
+
+- **31 AI calls in total, about $0.17.** 23 of them fell in the first week after launch.
+- Daily briefing: used on 2 days, last 2026-06-30. Chat: 10 calls, last 2026-08-17. Plan generation: 7 calls.
+- Setup thesis, trade debrief and journal summary: **never used.**
+- The chat widget appears only on Positions and Signals (`AiChatWidget.js`).
+
+**What this means for the review:** the binding constraint is not a lack of AI capability, it is that the AI already built is rarely used. Adding more AI would add §13 review work, cost and failure modes for features with no evidence of demand. The next usage review is scheduled for 2027-01-03 (`BLG-GOV-382`) and should decide whether to keep, re-place or retire each never-used feature. That is a higher-value AI action than any new capability below.
+
+### 11.2 Candidates Assessed
+
+| Capability | User problem it would solve | Why AI rather than conventional UX? | Data it would need | Risks | When the AI is wrong | Verdict |
+|------------|---------------------------|--------------------------------------|--------------------|-------|----------------------|---------|
+| **Intelligent search** (natural-language search across trades, plans and journal) | Finding a past trade by situation ("trades I exited early in a risk-off week") | **Weak case.** One user, a few hundred records. Trade History already has filters, saved filters, tags and a calendar; Journal filters by ticker; the command palette finds pages, tickers and plans | Trades, journal, plans, regime history | Misparsed queries silently drop results; the user cannot see why a trade is missing | User acts on an incomplete set (for example a review that misses losing trades) | **Not recommended.** Add a structured filter (for example regime at exit) if this need appears |
+| **Natural-language discovery** (of signals or tickers) | "Find me momentum stocks like X" | **Ruled out by §13.2:** signals come from one fixed, deterministic rule set. AI-ranked or AI-described candidates are discretionary selection by another route | Market data, signal history | Strategy drift; the user trusts an AI pick over the rule | A trade outside the strategy | **Not recommended (boundary)** |
+| **Guided navigation** | Knowing what to do next | **Already solved deterministically.** The "Due today" list orders regime → exits → grace → stops → signals by the strategy's own rules, each one click from its action (§4) | — | Non-deterministic ordering of safety-critical items | An exit is pushed below the fold | **Not recommended.** Keep the rules-based list |
+| **Recommendations** (trades, sizes, stops) | "What should I do?" | **Ruled out by §13.2** (no suggesting changes to stops, sizing, setups or parameters; no prediction) | — | Direct strategy breach | Real financial loss | **Not recommended (boundary)** |
+| **Personalised journeys** | Different paths for different users | **No problem to solve:** one user, one fixed daily routine | Behaviour history | Unpredictable UI | User cannot find a page that moved | **Not recommended** |
+| **Conversational assistance** | Asking a question about one's own data that no single page answers ("which trades this quarter broke a rule, and in what regime?") | **Plausible.** The answer joins trades, journal, regime and plan data that the UI shows across several pages; the chat already does this with portfolio context | Already passed to chat (positions, regime, trades); would add the selected trade/position | Wrong numbers stated confidently; drift towards advice (§13.2) — already governed by the chat's §13 review and output checks | User draws a wrong lesson from a misstated figure. Mitigation: show the source records with each answer, and keep the existing advisory label and disclaimer | **Conditional — reuse, don't add.** See 11.3 |
+| **Content summarisation** (weekly or monthly review in prose) | The Weekly Digest is hard to read (§8, `BLG-UX-15`) | **Weak case.** The problem is presentation, and a deterministic template with exact figures fixes it. The monthly AI narrative (v9.11) and journal summary already exist; the journal summary has never been used | Weekly figures, trades, red flags | AI misstating P&L or compliance; cost per view | User trusts a wrong summary figure over the table | **Not recommended.** Fix the layout (`BLG-UX-15`); revisit only if the monthly narrative shows real use at the 2027-01-03 review |
+| **Support automation** | — | **N/A:** a single user, no support function | — | — | — | **Not applicable** |
+| **Intelligent forms** (AI-filled trade plans or reflections) | Typing effort on Trade Plan (about 14 fields) | **Mostly solved conventionally:** "Plan this" pre-fills ticker, market, price and signal context; the suggested size fills from §4.1. AI plan generation (7 uses) and thesis/debrief (0 uses) already exist. The thesis is the trader's own reasoning — generating it removes the point of writing it | Signal, research, price data | The trader adopts an AI thesis they did not form; a plan that looks considered but isn't | A trade entered on AI-written reasoning | **Not recommended** beyond what exists. Remove or relocate the unused generators if the 2027-01-03 review confirms no use |
+| **Contextual help** ("why is this flagged?", "what is ATR?") | Strategy terms and rule references are unexplained (§8: 84 "§x.y" references; no glossary in the app) | **Weak case.** Explanations must be exact and identical every time; a static glossary plus deterministic "why" text (stop provenance already does this well) is better and cheaper | Glossary, rule text | Paraphrase that subtly misstates a rule | User misunderstands a stop or exit rule | **Not recommended.** Use plain copy and an in-app "How this works" view (`BLG-UX-14`, `BLG-UX-16`) |
+
+### 11.3 The One Recommendation
+
+**Put the existing chat where the questions arise, and only if the 2027-01-03 review keeps it.** A scoped "Ask about this trade" entry on a Trade History row, a Journal entry or Performance, which opens the existing chat with that trade preselected as context. This adds no new model, endpoint or capability. It reuses a §13-reviewed surface, so it needs a §13 re-attestation for the changed context, not a new review.
+
+- **Problem it solves:** questions about past trades come up during review, not on Positions or Signals, the only two pages where the chat appears today.
+- **Why AI:** the questions are open-ended and join several data sources; a fixed report would answer only the questions someone anticipated.
+- **Data:** the existing chat context plus the selected trade's record, plan and journal entries.
+- **Risks:** confident misstatement of figures; the answer reading as advice.
+- **When wrong:** each answer names the records it used (so a wrong figure can be checked against the trade row on the same screen), keeps the "AI Advisory" label, and is subject to the existing §13.2 output checks.
+- **Measured by:** the shipped chat engagement metric (`BLG-FEAT-60`) — if contextual entry does not raise use, remove it.
+
+Filed, gated on that review's outcome, as `BLG-UX-17`.
+
+**AI verdict:** no new AI capability is recommended. The evidence says the opportunity is in making the existing AI findable at the point of need, or retiring what is unused, not in adding more. Most of the candidate areas are already solved better by deterministic UX, and two (discovery and recommendations) would breach the strategy's own boundary.

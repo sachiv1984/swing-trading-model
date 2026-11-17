@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-17 (session — 5 new items added: BLG-FE-315, BLG-FE-316, BLG-FE-317, BLG-QA-271, BLG-OPS-221; BLG-UX-08 re-review §10 technical review); prior — 2026-11-17 (session — 6 new items added: BLG-FE-311, BLG-FE-312, BLG-FE-313, BLG-FE-314, BLG-QA-269, BLG-QA-270; BLG-UX-08 re-review §9 accessibility review); prior — 2026-11-17 (session — 5 new items added: BLG-UX-14, BLG-FE-309, BLG-UX-15, BLG-FE-310, BLG-UX-16; BLG-UX-08 re-review §8 content review); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-17 (session — 1 new item added: BLG-UX-17; BLG-UX-08 re-review §11 AI opportunities); prior — 2026-11-17 (session — 5 new items added: BLG-FE-315, BLG-FE-316, BLG-FE-317, BLG-QA-271, BLG-OPS-221; BLG-UX-08 re-review §10 technical review); prior — 2026-11-17 (session — 6 new items added: BLG-FE-311, BLG-FE-312, BLG-FE-313, BLG-FE-314, BLG-QA-269, BLG-QA-270; BLG-UX-08 re-review §9 accessibility review); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -7231,5 +7231,30 @@ The live site serves `static/js/main.*.js.map` (9.1 MB, HTTP 200, checked 2026-1
 
 **Acceptance Criteria**
 - After the next deploy, requesting the live `main.*.js.map` returns 404, and the deploy workflow records the setting
+
+---
+
+### BLG-UX-17 — Open the existing AI chat from a trade, scoped to that trade, where review questions arise
+**Priority:** P3 (Low)
+**Type:** UX / AI placement
+**Owner:** Head of UX & Design; AI Compliance & Governance Officer
+**Source:** `BLG-UX-08` re-review §11.3 AI opportunities (`docs/ux/site_structure_rereview_2026-11-17.md`) — 2026-11-17
+**Effort:** S (~0.5-1 day, plus §13 re-attestation)
+**Provisional-Target:** TBD
+**Gate criteria:** The 2027-01-03 AI feature usage review (`BLG-GOV-382`) decides to keep the AI chat. If it retires or re-scopes chat, close this item.
+
+**Problem**
+Questions about past trades come up during review (Trade History, Journal, Performance), but the AI chat appears only on Positions and Signals (`AiChatWidget.js`). Usage of the existing AI is very low — 31 calls in 102 days, chat last used 2026-08-17 (`docs/ops/ai_feature_usage_review_2026-09-24.md`) — so the review recommends better placement of the existing chat rather than any new AI capability.
+
+**Scope**
+- Add an "Ask about this trade" entry on Trade History rows and Journal entries (and Performance, if useful) that opens the existing chat with that trade preselected as context; no new model or endpoint
+- Each answer names the records it used; keep the "AI Advisory" label and the §13.2 output checks
+- §13 re-attestation for the changed context (`strategy_rules.md` §13.5 roster entry for BLG-FEAT-50/51)
+- Measure with the shipped chat engagement metric (`BLG-FEAT-60`); remove the entry if use does not rise
+
+**Acceptance Criteria**
+- From a Trade History row, "Ask about this trade" opens chat with that trade in context, and the answer lists its source records (Playwright, mocked AI response)
+- The §13 re-attestation is recorded in `docs/product/decisions/section13_reattestation_log.md`
+- An engagement reading 30 days after release is recorded, with a keep/remove decision
 
 ---
