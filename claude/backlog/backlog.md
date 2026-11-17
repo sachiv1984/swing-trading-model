@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-17 (session — 6 new items added: BLG-FE-311, BLG-FE-312, BLG-FE-313, BLG-FE-314, BLG-QA-269, BLG-QA-270; BLG-UX-08 re-review §9 accessibility review); prior — 2026-11-17 (session — 5 new items added: BLG-UX-14, BLG-FE-309, BLG-UX-15, BLG-FE-310, BLG-UX-16; BLG-UX-08 re-review §8 content review); prior — 2026-11-17 (session, user-directed — BLG-UX-08 completed and archived; 4 new items added: BLG-UX-11, BLG-FE-308, BLG-UX-12, BLG-UX-13); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-17 (session — 5 new items added: BLG-FE-315, BLG-FE-316, BLG-FE-317, BLG-QA-271, BLG-OPS-221; BLG-UX-08 re-review §10 technical review); prior — 2026-11-17 (session — 6 new items added: BLG-FE-311, BLG-FE-312, BLG-FE-313, BLG-FE-314, BLG-QA-269, BLG-QA-270; BLG-UX-08 re-review §9 accessibility review); prior — 2026-11-17 (session — 5 new items added: BLG-UX-14, BLG-FE-309, BLG-UX-15, BLG-FE-310, BLG-UX-16; BLG-UX-08 re-review §8 content review); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -7121,5 +7121,115 @@ Several WCAG 2.2 AA criteria cannot be settled from code or by axe: tab order an
 
 **Acceptance Criteria**
 - A dated record in `docs/qa/` gives a pass/fail per criterion listed in Problem, for each journey, and every failure has a backlog item
+
+---
+
+### BLG-FE-315 — Split the JavaScript bundle by route and drop duplicate libraries to meet the performance budget
+**Priority:** P3 (Low)
+**Type:** Frontend / Performance
+**Owner:** Head of Engineering; Frontend Specifications & UX Documentation Owner
+**Source:** `BLG-UX-08` re-review §10 technical review, recommendations 1–2 (`docs/ux/site_structure_rereview_2026-11-17.md`) — 2026-11-17
+**Effort:** M (~1-2 days)
+**Provisional-Target:** TBD
+
+**Problem**
+The app ships one bundle, `main.*.js`: 1,992 KB minified, 542 KB gzipped (552 KB served). `performance_budget.md` §3.3 sets ≤ 200 KB gzipped for the main bundle and ≤ 500 KB in total, so the main bundle is 2.7× its budget. There is no code splitting (no `React.lazy` or dynamic `import()`), so every page and Recharts (about 16% of the source) load on first visit, although only Performance, Strategy Benchmark, Risk Dashboard and Settings draw charts. Two date libraries (`moment`, imported only by `SystemStatus.js`, and `date-fns`) and two toast systems (`sonner` and the Radix toaster, both mounted in `App.js`) are bundled.
+
+**Scope**
+- Lazy-load each routed page with `React.lazy` + `Suspense`, using the existing skeleton as fallback
+- Replace `moment` in `SystemStatus.js` with `date-fns` and remove the dependency
+- Keep one toast system and migrate its callers
+- Record the before/after sizes in `performance_budget.md` §3.3
+
+**Acceptance Criteria**
+- After `npm run build`, `main.*.js` is ≤ 200 KB gzipped and total JS ≤ 500 KB gzipped, or `performance_budget.md` records a dated, owner-approved revised budget with the measured value
+- `moment` is no longer in `package.json`, and only one toast provider is mounted
+- The full Playwright suite passes
+
+---
+
+### BLG-FE-316 — Stop the Dashboard fetching the same data several times on load
+**Priority:** P3 (Low)
+**Type:** Frontend / Performance
+**Owner:** Head of Engineering
+**Source:** `BLG-UX-08` re-review §10 technical review, recommendations 3 and 7 (`docs/ux/site_structure_rereview_2026-11-17.md`) — 2026-11-17
+**Effort:** S (~0.5-1 day)
+**Provisional-Target:** TBD
+
+**Problem**
+The Dashboard makes about 16 requests on load, plus one per open position. `GET /positions` is fetched 4 times under 4 query keys (`home-open-positions`, `home-grace-period`, `today-positions`, `morning-positions`), `GET /signals` twice (`today-signals`, `morning-screener-hits`), and the earnings card makes one request per open position (`EarningsAlertCard.js` `useQueries`). The query client sets no `staleTime` (`src/lib/query-client.js`), so every page visit refetches. This slows the page, adds backend load, and adds on-demand Yahoo calls (see `BLG-OPS-217`).
+
+**Scope**
+- Share one query key (and hook) for `GET /positions` and one for `GET /signals` across the Dashboard components
+- Set a default `staleTime` (for example 30–60 s), keeping explicit refresh behaviour
+- Batch the per-position earnings lookups into one request, if the API supports it (or file the API change)
+- Add `<link rel="preconnect">` to the API origin in `public/index.html`
+
+**Acceptance Criteria**
+- On a Dashboard load with 3 open positions, `GET /positions` and `GET /signals` are each requested once (Playwright request count)
+- Navigating away and back within the `staleTime` makes no repeat requests for unchanged data (Playwright)
+
+---
+
+### BLG-FE-317 — Stop page headers starting invisible, so they do not delay the largest paint
+**Priority:** P3 (Low)
+**Type:** Frontend / Performance
+**Owner:** Head of Engineering; Head of UX & Design
+**Source:** `BLG-UX-08` re-review §10 technical review, recommendation 4 (`docs/ux/site_structure_rereview_2026-11-17.md`) — 2026-11-17
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+**Depends on:** `BLG-FE-314` (reduced-motion handling, do together)
+
+**Problem**
+`PageHeader.js` animates every page heading from `opacity: 0, y: -20` (framer-motion). Chrome does not count an element for Largest Contentful Paint while it is invisible, so the heading — often the largest element on a data-light page — is held back by the animation. The fade has also caused flaky axe results before (`BLG-FE-169`).
+
+**Scope**
+- Start headers fully opaque (translate-only or no entrance), and keep the reduced-motion handling from `BLG-FE-314`
+
+**Acceptance Criteria**
+- `PageHeader` renders at full opacity on first paint (Playwright: opacity of the `h1` is 1 immediately after navigation)
+- The visual baselines are unchanged at rest
+
+---
+
+### BLG-QA-271 — Measure Core Web Vitals and bring the performance budget up to date
+**Priority:** P3 (Low)
+**Type:** QA / Performance measurement
+**Owner:** QA & Testing Owner; Frontend Specifications & UX Documentation Owner
+**Source:** `BLG-UX-08` re-review §10 technical review, recommendation 5 (`docs/ux/site_structure_rereview_2026-11-17.md`) — 2026-11-17
+**Effort:** M (~1-2 days)
+**Provisional-Target:** TBD
+
+**Problem**
+LCP, INP and CLS have never been measured. There is no `web-vitals` reporting, no Lighthouse run, and `performance_budget.md` (v1.0) still says "TBD" for its baseline. The budget targets only an unthrottled desktop, has no INP or CLS target, and still uses TTI, which Lighthouse no longer reports. Without a baseline, the gains from `BLG-FE-315`, `BLG-FE-316` and `BLG-FE-317` cannot be confirmed.
+
+**Scope**
+- Revise `performance_budget.md` to Core Web Vitals (LCP ≤ 2.5 s, INP ≤ 200 ms, CLS ≤ 0.1) on a mobile profile and on desktop; drop TTI
+- Add a Lighthouse CI job (mobile and desktop) for Dashboard, Positions, Trade Plan and Performance, against mocked API data, and a bundle-size check against §3.3
+- Add `web-vitals` reporting in the app (console in development; a lightweight log in production if wanted)
+- Record the first baseline, before `BLG-FE-315`/`316`/`317` land
+
+**Acceptance Criteria**
+- `performance_budget.md` lists CWV targets and a dated baseline per page and profile
+- CI runs Lighthouse and the bundle-size check on each PR and reports the values
+
+---
+
+### BLG-OPS-221 — Stop publishing the front-end source map on GitHub Pages
+**Priority:** P3 (Low)
+**Type:** Operations / Build hygiene
+**Owner:** Infrastructure & Operations Owner
+**Source:** `BLG-UX-08` re-review §10 technical review, recommendation 6 (`docs/ux/site_structure_rereview_2026-11-17.md`) — 2026-11-17
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+The live site serves `static/js/main.*.js.map` (9.1 MB, HTTP 200, checked 2026-11-17), so the full front-end source, including comments, can be downloaded by anyone. Create React App emits source maps by default, and `.github/workflows/deploy.yml` does not set `GENERATE_SOURCEMAP=false`. It does not slow page loads (browsers fetch maps only with DevTools open), but it is avoidable exposure.
+
+**Scope**
+- Set `GENERATE_SOURCEMAP=false` for the Pages build in `deploy.yml` (or upload maps privately if error tracking needs them)
+
+**Acceptance Criteria**
+- After the next deploy, requesting the live `main.*.js.map` returns 404, and the deploy workflow records the setting
 
 ---

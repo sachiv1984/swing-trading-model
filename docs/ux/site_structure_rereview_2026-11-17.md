@@ -1,7 +1,7 @@
 **Owner:** Head of UX & Design
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Last Updated:** 2026-11-17 (§9 Accessibility Review added at the user's request; 6 accessibility items filed); prior — 2026-11-17 (§8 Content Review added at the user's request; 5 content findings filed); prior — 2026-11-17 (created — `BLG-UX-08`)
+**Last Updated:** 2026-11-17 (§10 Technical Quality and Performance Review added at the user's request; 5 items filed); prior — 2026-11-17 (§9 Accessibility Review added at the user's request; 6 accessibility items filed); prior — 2026-11-17 (§8 Content Review added at the user's request; 5 content findings filed); prior history retained — see prior entries in version control
 
 # Site Structure & Usability — First-Principles Re-Review
 
@@ -207,3 +207,42 @@ A1 and A2 are Level A failures on core journeys (exiting a position, the daily m
 AA is the right minimum for a single-user app. Two AAA criteria are worth adopting because the app is built for keyboard use (shortcuts, command palette) and uses a lot of animation, and each is cheap: **2.4.13 Focus Appearance** (a clear, consistent focus ring, which A4 delivers) and **2.3.3 Animation from Interactions** (respect `prefers-reduced-motion`, also A4). A full AAA target is not recommended: 1.4.6 Enhanced Contrast (7:1) would mean re-tokenising the colour system v9.17 just finished, for little gain.
 
 **Accessibility verdict:** text contrast, landmarks, image alternatives and most labelling are in good shape, and CI guards them. The observed failures are concentrated in places the automated scan does not reach — dialogs, custom click targets and the Dashboard's heading structure — so the main recommendation, besides fixing A1–A4, is to widen the scan and run one manual keyboard and screen-reader pass (`BLG-QA-269`, `BLG-QA-270`).
+
+---
+
+## 10. Technical Quality and Performance Review (added 2026-11-17, user request)
+
+**Method:** a local production build (`npm run build`, `react-scripts` 5, built from `main` after the last source change), its source map, HTTP headers from the live GitHub Pages site (`curl -I`, 2026-11-17), the data-fetching code, `docs/specs/frontend/performance_budget.md` (v1.0) and `docs/ops/api_performance_baseline.md`.
+
+**No field or lab Web Vitals data exists.** There is no RUM (`web-vitals` is not installed), no Lighthouse run in CI, and the budget's baseline reading has been "TBD" since v2.6. The app has a single user, so CrUX field data will not exist either. So **no LCP, INP or CLS value is reported here.** Where a section says "likely", it is an inference from the code, and it is listed under "needs testing".
+
+### 10.1 Findings by Area
+
+| Area | Observed | Needs testing |
+|------|----------|---------------|
+| **Core Web Vitals (LCP, INP, CLS)** | No measurement exists (above). The budget targets LCP ≤ 2,500 ms, but only on an unthrottled desktop; it has no INP or CLS target (INP replaced FID in 2024) and still uses TTI, which Lighthouse no longer reports | LCP, INP and CLS on Dashboard, Positions, Trade Plan and Performance, on a mobile profile (Lighthouse "Slow 4G", mid-tier CPU) and on desktop |
+| **Rendering approach** | Client-side-rendered SPA (Create React App, `HashRouter`) on GitHub Pages; the HTML is a 1.7 KB shell plus a 1-line GitHub Pages SPA redirect script. Nothing paints until the full JS bundle has downloaded, parsed and run, and then data loads from the Render API. For a single-user authenticated tool, CSR is a reasonable choice; SSR is not recommended | Time from navigation to first paint on mobile |
+| **LCP (likely drivers)** | (1) The single 552 KB (gzipped) bundle must load before anything renders. (2) Every `PageHeader` fades in from `opacity: 0` (`PageHeader.js:19`, framer-motion), and Chrome does not count an element for LCP while it is invisible, so the heading — often the LCP element — is held back by the animation. (3) Page content waits on the API: the last measured `GET /positions` was p50 244 ms / p95 547 ms (v2.7); later baselines are estimates, and the Render service can cold-start (RFM-01, "tens of seconds") | Actual LCP element and time per page; effect of removing the fade |
+| **INP** | No obvious long tasks found in code review. Candidates: Positions (sorting/expanding many rows), Performance charts (Recharts re-render on period change), Screener filters | INP on those interactions (Chrome DevTools Performance / web-vitals) |
+| **CLS** | Loading states use skeletons (`animate-pulse`). But the Today list, the briefing cards and the status cards each swap a skeleton for content of a different height as their queries resolve, so content below can shift. The fixed "Press ⌘K" tip does not shift layout | CLS on the Dashboard as its ~16 queries resolve |
+| **Loading behaviour** | **Duplicate requests on the Dashboard:** about 16 queries on load. `GET /positions` is fetched 4 times under 4 different query keys (`home-open-positions`, `home-grace-period`, `today-positions`, `morning-positions`), and `GET /signals` twice (`today-signals`, `morning-screener-hits`). The Morning Briefing earnings card makes one request per open position (`useQueries`, `EarningsAlertCard.js:17`). The query client sets no `staleTime` (`query-client.js`), so every page visit refetches everything | Request count and waterfall on a cold and a warm load |
+| **JavaScript weight** | **Over budget.** One bundle, `main.*.js`: 1,992 KB minified, 542 KB gzipped locally, 552 KB served. `performance_budget.md` §3.3 sets ≤ 200 KB for the main bundle and ≤ 500 KB in total. **No code splitting:** no `React.lazy`/dynamic `import()`, so all 22 pages and every chart load on first visit. Approximate composition by source size (source map): app code 23%, Recharts 16%, react-dom 10%, framer-motion/motion-dom 9%, react-router 6%, TanStack Query 4%, moment 3%, Redux Toolkit 3% (pulled in by Recharts), date-fns 3%, lucide-react 3%, react-day-picker 3%. **Duplicates:** two date libraries (`moment` is imported only by `SystemStatus.js`; `date-fns` everywhere else) and two toast systems (`sonner` and the Radix toaster, both mounted in `App.js`) | Parse and compile time on a mid-tier phone |
+| **Resource loading** | One deferred script and one stylesheet (121 KB, 20 KB gzipped); no preload/preconnect hints. The API origin (Render) is not preconnected, so the first API call pays DNS, TCP and TLS after the bundle runs | Effect of `<link rel="preconnect">` to the API origin |
+| **Caching** | GitHub Pages serves everything, including content-hashed bundles, with `cache-control: max-age=600` and an ETag. Repeat visits after 10 minutes revalidate (a cheap 304), but the hashed assets could be cached as immutable for a year. GitHub Pages does not allow custom headers; this matters little for a single user and is not worth a hosting move on its own | — |
+| **Compression** | gzip only, no Brotli (a GitHub Pages limit). Brotli would save roughly 15–20% more on the bundle; same hosting caveat | — |
+| **Image optimisation / responsive assets** | **N/A in practice.** No raster images in `src/` (no `<img>`); icons are inline SVG (lucide-react, tree-shaken named imports); no web fonts (system font stack). Charts are SVG | — |
+| **Third-party scripts** | **None in the browser.** No analytics, tag managers, fonts or CDN scripts; the only external origin is the app's own API. Market data (Yahoo, Alpaca) and AI calls go through the backend | — |
+| **Mobile performance** | Positions has a card layout below `md`; Performance has phone-width checks. The full 552 KB bundle and the same ~16 Dashboard requests apply on a phone, including when the Telegram digest sends the user into the app | Lighthouse mobile run; real-device check on the digest → Dashboard and Positions paths |
+| **Build hygiene** | **Public source map:** the live site serves `main.*.js.map` (9.1 MB, HTTP 200), so the full front-end source is downloadable. It does not slow users down (browsers fetch it only with DevTools open), but it exposes code and comments. CRA emits it by default; `GENERATE_SOURCEMAP=false` is not set in `deploy.yml` | — |
+
+### 10.2 Recommendations (Most Value First)
+
+1. **Route-level code splitting** (`React.lazy` + `Suspense` per page in `App.js`/`pages.config.js`). Recharts then loads only on Performance, Strategy Benchmark, Risk Dashboard and Settings (AI spend chart). This is the main way to get back under the budget's 200 KB main-bundle limit. → `BLG-FE-315`
+2. **Remove duplicate libraries:** replace `moment` in `SystemStatus.js` with `date-fns`, and keep one toast system. → `BLG-FE-315`
+3. **Stop the duplicate Dashboard requests:** share one query key for `GET /positions` and one for `GET /signals`; set a default `staleTime` (for example 30–60 s); batch the per-position earnings lookups into one request. This cuts Dashboard load requests from about 16 + N to about 10, and lowers backend and Yahoo load (relevant to `BLG-OPS-217`). → `BLG-FE-316`
+4. **Do not start page headers at `opacity: 0`.** Keep a translate-only or no entrance, and respect reduced motion (with `BLG-FE-314`). → `BLG-FE-317`
+5. **Measure, then budget:** add `web-vitals` reporting (to the console or a lightweight endpoint) and a Lighthouse CI job (mobile and desktop) for the four main pages; update `performance_budget.md` to Core Web Vitals (LCP ≤ 2.5 s, INP ≤ 200 ms, CLS ≤ 0.1, mobile profile), drop TTI, record the first baseline, and add a bundle-size check to CI. → `BLG-QA-271`
+6. **Stop publishing source maps** (`GENERATE_SOURCEMAP=false` in the deploy build, or upload them privately if error tracking needs them). → `BLG-OPS-221`
+7. **Preconnect to the API origin** in `public/index.html` (one line; include in `BLG-FE-316`). Immutable caching and Brotli need a host that allows custom headers (for example Cloudflare Pages); not recommended unless measurements show it matters.
+
+**Technical verdict:** for a single-user, authenticated, CSR app with no third-party scripts and no images, the asset side is lean, except JavaScript. The bundle is 2.7× its own budget because nothing is code-split, and the Dashboard repeats its main API call four times. Both are straightforward fixes. No Web Vitals have ever been measured, so the first step is to measure (`BLG-QA-271`), then confirm the gains from items 1–4 against that baseline.
