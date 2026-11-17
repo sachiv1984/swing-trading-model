@@ -3,8 +3,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 0.9
-**Last Updated:** 2026-11-06 (v9.16 design gate — ST-07/BLG-FE-255: "Plan this" on new and watchlisted signal cards); prior — 2026-11-03 (v9.15 design gate — ST-07/BLG-FE-219: new §Signal Card Cost and Sizing Reason); prior — 2026-10-29 (v9.14 design gate — ST-03/ST-04/ST-05: new §Market Status Bar with the unknown regime state and the FX rate source); prior history retained — see prior entries in version control
+**Version:** 0.10
+**Last Updated:** 2026-11-17 (ST-08, EPIC-03, v9.17, BLG-FE-265 — new §Resolved Card States: no fade on cards that are not new; the status badge shows the state; Product Owner ratification 2026-11-17); prior — 2026-11-06 (v9.16 design gate — ST-07/BLG-FE-255: "Plan this" on new and watchlisted signal cards); prior — 2026-11-03 (v9.15 design gate — ST-07/BLG-FE-219: new §Signal Card Cost and Sizing Reason); prior history retained — see prior entries in version control
 **Design Source (v0.9 Plan this):** docs/design/2026-11-06__release-v9.16/signal-to-plan-flow/decision_record.md
 **Design Source (v0.7 market status bar):** docs/design/2026-10-29__release-v9.14/market-regime-unknown/decision_record.md, docs/design/2026-10-29__release-v9.14/fx-rate-source-indicator/decision_record.md
 **Design Source (v0.5 rebalance interim label):** docs/design/2026-10-16__release-v9.13/rebalance-exit-interim-label/decision_record.md
@@ -166,6 +166,12 @@ Behaviour unchanged from prior implementation.
 
 **Non-regression:** "Add Position" CTA is removed from the signals page entirely. No signal card shows "Add Position" as a CTA.
 
+### Resolved Card States (v0.10 — ST-08, BLG-FE-265)
+
+Cards whose signal is not new (Entered, Already Held, Dismissed, Cannot Size, and the Month-End Exit card) are **not faded**. The labelled status badge with its icon shows the state, and only new cards show the action buttons and the sizing panel (§New Signal above). An opacity fade is not used because it takes card text and filled badges below WCAG AA 4.5:1 in the light theme (`design_system.md` §Page Colour Token Sweep rule 5); it also dimmed Month-End Exit cards, which ask the user to act. Dismissed cards stay hidden unless "Show dismissed" is on.
+
+*Ruling: Product Owner, 2026-11-17, on the Head of UX & Design recommendation (agent-mediated, PR #2262 review), extending the 2026-11-17 Trade Plans abandoned-row ruling. An AA-safe way to de-emphasise resolved cards (muted surface, or new-first ordering) is tracked by `BLG-FE-306`.*
+
 ### "Plan this" Action
 
 *Added v0.9 (ST-07, BLG-FE-255).*
@@ -222,6 +228,7 @@ The frontend must not calculate or derive signal scores, rankings, or fields. Al
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.10 | 2026-11-17 | ST-08 (EPIC-03, v9.17, BLG-FE-265), semantic colour token sweep: new §Resolved Card States under §Signal Card Actions. Cards that are not new are no longer faded (`opacity-60`, and `opacity-80` for Cannot Size): the fade put card text and filled badges below WCAG AA 4.5:1 in the light theme and also dimmed actionable Month-End Exit cards. The status badge shows the state. Product Owner ratification 2026-11-17, on the Head of UX & Design recommendation (agent-mediated, PR #2262), extending the 2026-11-17 Trade Plans ruling. AA-safe de-emphasis follow-up: `BLG-FE-306`. |
 | 0.9 | 2026-11-06 | v9.16 design gate — new §"Plan this" Action under §Signal Card Actions (ST-07, EPIC-02, BLG-FE-255): a secondary "Plan this" button on new and watchlisted cards opens a pre-filled, unsaved Trade Plan with the signal's context. It does not change status. Design source: `docs/design/2026-11-06__release-v9.16/signal-to-plan-flow/decision_record.md`. |
 | 0.8 | 2026-11-03 | v9.15 design gate — new §Signal Card Cost and Sizing Reason (ST-07, BLG-FE-219): cost label "Total cost (incl. fees)"; the two zero-ATR `reason` strings in plain English. Design source: `docs/design/2026-11-03__release-v9.15/signal-card-cost-and-sizing-reason/decision_record.md`. Head of UX & Design + Product Owner approved. |
 | 0.7 | 2026-10-29 | v9.14 design gate — new §Market Status Bar. (ST-03, BLG-BE-193) regime tiles gain an Unknown state that never renders as Risk Off. (ST-04/ST-05, BLG-BE-194/BLG-BE-169) the FX Rate tile shows its source and age, and the page's own 1.3611 fallback is removed. Design sources: `docs/design/2026-10-29__release-v9.14/market-regime-unknown/decision_record.md`, `docs/design/2026-10-29__release-v9.14/fx-rate-source-indicator/decision_record.md`. Head of UX & Design sign-off: 2026-10-29. Product Owner approved: 2026-10-29. Head of Specs Team confirmed. |

@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-17 (session — 5 new items added: BLG-FE-303, BLG-OPS-220, BLG-QA-267, BLG-FE-304, BLG-FE-305; PR #2262 agent-mediated review, EPIC-03, v9.17); prior — 2026-11-16 (session — 5 new items added: BLG-FE-300, BLG-FE-301, BLG-FE-302, BLG-QA-266, BLG-BE-222; PR #2261 agent-mediated review, EPIC-02, v9.17); prior — 2026-11-16 (session — 1 new item added: BLG-FE-299; ST-06, EPIC-02, v9.17); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-17 (session — 2 new items added: BLG-FE-306, BLG-FE-307; PR #2262 Head of UX & Design review, EPIC-03, v9.17); prior — 2026-11-17 (session — 5 new items added: BLG-FE-303, BLG-OPS-220, BLG-QA-267, BLG-FE-304, BLG-FE-305; PR #2262 agent-mediated review, EPIC-03, v9.17); prior — 2026-11-16 (session — 5 new items added: BLG-FE-300, BLG-FE-301, BLG-FE-302, BLG-QA-266, BLG-BE-222; PR #2261 agent-mediated review, EPIC-02, v9.17); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -7341,5 +7341,49 @@ On the Trade History calendar (`src/components/trades/CalendarView.js`), days ou
 **Acceptance Criteria**
 - Outside-month dates are readable but visibly muted in both themes (Playwright asserts the class pair on an outside day)
 - The Trade History calendar axe scans still pass in both themes
+
+---
+
+### BLG-FE-306 — Give resolved Signal cards an AA-safe de-emphasis
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Head of UX & Design; Frontend Specifications & UX Documentation Owner
+**Source:** PR #2262 agent-mediated Head of UX & Design review (EPIC-03 / ST-08, `2026-11-11__release-v9.17`); Product Owner decision to file — 2026-11-17
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+ST-08 removed the opacity fade from Signal cards that are not new, because it took text and badges below WCAG AA in the light theme (`signals.md` v0.10 §Resolved Card States). The status badge now shows each state, but cards are sorted by rank only, so Entered, Already Held and Cannot Size cards sit among new ones at the same visual weight. Users scanning for actionable signals have to read each badge.
+
+**Scope**
+- Decide, with the Product Owner, between a muted card surface for resolved states (AA-safe tokens, no opacity) and listing new and watchlisted cards first within rank (a product behaviour change)
+- Record the choice in `signals.md` §Resolved Card States and build it
+
+**Acceptance Criteria**
+- Resolved cards are visibly secondary to new cards in both themes, with no opacity applied to readable content
+- axe `color-contrast` passes in light and dark with new and resolved cards on the Signals page (`accessibility-axe-scan.spec.js` Signals entries)
+- If ordering changes, a Playwright test asserts the order
+
+---
+
+### BLG-FE-307 — Make the dark-theme Monthly heatmap tiles stand out and show magnitude
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Head of UX & Design; Frontend Specifications & UX Documentation Owner
+**Source:** PR #2262 agent-mediated Head of UX & Design review (EPIC-03 / ST-08, `2026-11-11__release-v9.17`); Product Owner decision to file — 2026-11-17
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+ST-08 moved the Monthly heatmap tile fills to emerald-800/700, slate-600 and rose-700/800 so their white text meets 4.5:1 in both themes (`analytics.md` v2.5 §4). In the dark theme the extreme tiles (emerald-800, rose-800) are about as dark as the neutral slate-600 tile and only about 1.9:1 against the card, below the 3:1 non-text contrast bar, so the largest results recede most and the 700/800 step shows magnitude weakly. The text on each tile still carries the value.
+
+**Scope**
+- Give the dark theme a tile treatment that meets 3:1 against the card and reads larger results as stronger (for example a tile outline, or a dark-specific scale that keeps white text at 4.5:1)
+- Record it in `analytics.md` §4 and `design_system.md` §Page Colour Token Sweep rule 6
+
+**Acceptance Criteria**
+- In the dark theme each tile fill is at least 3:1 against the card, and white tile text stays at least 4.5:1
+- Larger positive and negative months are visibly stronger than smaller ones in both themes
+- Light-theme tiles are unchanged, or any change is recorded with its measured contrast
 
 ---
