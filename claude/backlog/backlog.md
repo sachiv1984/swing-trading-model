@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-17 (session, user-directed — BLG-UX-08 completed and archived; 4 new items added: BLG-UX-11, BLG-FE-308, BLG-UX-12, BLG-UX-13); prior — 2026-11-17 (session, user-directed after post-ship closure `2026-11-11__release-v9.17` — BLG-FE-224 and BLG-FE-242 closed as superseded by their named owner; BLG-SPEC-221 met; all three archived); prior — 2026-11-17 (post-ship closure `2026-11-11__release-v9.17` — STEP 3: 17 shipped source items bannered ✅ COMPLETE, `BLG-OPS-217` and `BLG-GOV-419` kept open as post-merge trackers; STEP 8: 1 new item added, BLG-QA-268); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-17 (session — 5 new items added: BLG-UX-14, BLG-FE-309, BLG-UX-15, BLG-FE-310, BLG-UX-16; BLG-UX-08 re-review §8 content review); prior — 2026-11-17 (session, user-directed — BLG-UX-08 completed and archived; 4 new items added: BLG-UX-11, BLG-FE-308, BLG-UX-12, BLG-UX-13); prior — 2026-11-17 (session, user-directed after post-ship closure `2026-11-11__release-v9.17` — BLG-FE-224 and BLG-FE-242 closed as superseded by their named owner; BLG-SPEC-221 met; all three archived); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -6894,5 +6894,108 @@ The Today list's "New signals" rows link to Research, so signal → entry from t
 
 **Acceptance Criteria**
 - `dashboard.md` §1B records the decision; if "Plan this" is added, it opens Trade Plan pre-filled with the signal's ticker and market (Playwright)
+
+---
+
+### BLG-UX-14 — Decide one rule for strategy-rule references (§) in user-visible copy
+**Priority:** P3 (Low)
+**Type:** UX / Content
+**Owner:** Head of UX & Design; Frontend Specifications & UX Documentation Owner
+**Source:** `BLG-UX-08` re-review §8 content review, finding C1 (`docs/ux/site_structure_rereview_2026-11-17.md`) — 2026-11-17
+**Effort:** M (~1-2 days: decision, then a copy sweep)
+**Provisional-Target:** TBD
+
+**Problem**
+User-visible copy cites strategy-rule sections ("§7.2", "§4.1", "§8.1 Stop-loss trigger") in 84 places across 15 files (Settings, Performance reports, Trade Entry, Positions, stop provenance, exit reasons). The user sees document references instead of plain explanations. Single instances are being fixed one at a time (`BLG-UX-06`, `BLG-UX-09`) with no site-wide rule. Some strings in `src/constants/exitReasons.js` may also be stored values, so changing their text could affect saved data.
+
+**Scope**
+- Record a dated Head of UX & Design decision in `glossary.md` §UI Labels or `design_system.md`: drop § references from user-visible copy, keep them only in tooltips, or keep them
+- If the decision changes copy, sweep the 15 files, checking whether each exit-reason string is stored before changing it, and update the specs and tests that assert the old text
+- Fold `BLG-UX-06`'s and `BLG-UX-09`'s copy parts into the sweep
+
+**Acceptance Criteria**
+- The decision is recorded with its date
+- After the sweep, a grep of user-visible strings in `src/` finds no § reference outside the places the decision allows, and stored exit-reason values are unchanged or migrated (tests)
+
+---
+
+### BLG-FE-309 — Fix or remove the sidebar "Docs" link that points nowhere
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Frontend Specifications & UX Documentation Owner; Head of Engineering
+**Source:** `BLG-UX-08` re-review §8 content review, finding C2 (`docs/ux/site_structure_rereview_2026-11-17.md`) — 2026-11-17
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+**Depends on:** `BLG-UX-16` (if the link is to point at in-app help)
+
+**Problem**
+The sidebar footer shows "Docs" with an external-link icon (`Layout.js` ~line 829), but its `href` is `#`, so clicking it does nothing. It is the app's only help affordance, and it looks broken.
+
+**Scope**
+- Point it at the help content `BLG-UX-16` adds, or remove it until that exists; update `navigation.md` §Sidebar Footer
+
+**Acceptance Criteria**
+- The sidebar has no link whose target is `#` (Playwright)
+
+---
+
+### BLG-UX-15 — Rewrite the Weekly Digest page as a readable weekly summary
+**Priority:** P3 (Low)
+**Type:** UX / Content
+**Owner:** Head of UX & Design; Frontend Specifications & UX Documentation Owner
+**Source:** `BLG-UX-08` re-review §8 content review, finding C3 (`docs/ux/site_structure_rereview_2026-11-17.md`) — 2026-11-17
+**Effort:** S (~0.5-1 day)
+**Provisional-Target:** TBD
+**Depends on:** `BLG-UX-12` (do together)
+
+**Problem**
+The Weekly Digest page shows a `Field / Unit / Value` table with API-style labels: "Unrealised P&L Delta (7d)", "Data Staleness", "As of (UTC)" with unit "timestamp" (`WeeklyDigest.js` lines 57-64). It reads like a data dump, not a weekly review. Its description is the fragment "7-day trading summary".
+
+**Scope**
+- Revise `weekly_digest.md`: labelled figures in plain language (for example "Realised P&L this week", "Change in open P&L"), no Unit column, the as-of time as a caption, and a description that says what the page is for
+- Build it with `BLG-UX-12`'s onward links
+
+**Acceptance Criteria**
+- No "Field", "Unit" or "timestamp" text renders on the page, and each figure has a plain-language label (Playwright, light and dark)
+
+---
+
+### BLG-FE-310 — Plain-language copy fixes found by the content review
+**Priority:** P3 (Low)
+**Type:** Frontend / Content
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** `BLG-UX-08` re-review §8 content review, finding C4 (`docs/ux/site_structure_rereview_2026-11-17.md`) — 2026-11-17
+**Effort:** S (~0.5 day)
+**Provisional-Target:** TBD
+
+**Problem**
+The content review found user-visible copy that is raw data, internal jargon or misleading: Trade Plan "Regime at Entry" shows the raw value `risk_on` (`TradePlan.js` ~976); Performance shows the internal ID heading "SI-02 Gate Status" (`ReportViews.js` ~502); Risk Dashboard says "showing entity data fallback" (`RiskDashboard.js` ~104); the Settings description "Configure your strategy parameters and preferences" contradicts its read-only strategy block; the Dashboard subtitle "Session summary — live data" names the data, not the job; the gate strip's "unlock quality insights" does not say which insights; page descriptions are uneven ("Pre-trade research", "Compare live trading vs backtest"); the exported Performance report uses "Executive Summary"/"Key Insights".
+
+**Scope**
+- Rewrite each string per the Change column of `site_structure_rereview_2026-11-17.md` §8.2, update the page specs, and update tests that assert the old text
+
+**Acceptance Criteria**
+- None of the old strings listed in Problem render (Playwright or unit tests), and the regime shows as a label (for example "Risk-on"), not `risk_on`
+
+---
+
+### BLG-UX-16 — Say in the app what it is for, explain its core terms, and use one product name
+**Priority:** P3 (Low)
+**Type:** UX / Content
+**Owner:** Head of UX & Design; Product Owner
+**Source:** `BLG-UX-08` re-review §8 content review, finding C5 (`docs/ux/site_structure_rereview_2026-11-17.md`) — 2026-11-17
+**Effort:** M (~1-2 days)
+**Provisional-Target:** TBD
+
+**Problem**
+Nothing in the app says what it is for (a rules-based momentum strategy with ATR stops, where the trader decides) or explains its core terms (R, ATR, grace period, regime, heat) in one place. They are explained piecemeal in tooltips, or by citing rule sections. The product also has three names: "Position Manager" (sidebar, tab title, PDF export), "Swing Trading Position Manager" (`public/index.html`) and "Momentum Trading Assistant" (changelog, backlog).
+
+**Scope**
+- Product Owner picks one product name; apply it in the UI, `index.html` and the PDF export
+- Add a short in-app "How this works" view (what the app does, the daily routine, the core terms, linked from the glossary), reachable from the sidebar footer (see `BLG-FE-309`); spec it in `navigation.md`
+
+**Acceptance Criteria**
+- One product name appears across the UI, the tab title, `index.html` and the PDF export
+- The "How this works" view exists, defines R, ATR, grace period, regime and heat, and is linked from the sidebar (Playwright)
 
 ---

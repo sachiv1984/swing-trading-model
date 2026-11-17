@@ -1,7 +1,7 @@
 **Owner:** Head of UX & Design
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Last Updated:** 2026-11-17 (created — `BLG-UX-08`)
+**Last Updated:** 2026-11-17 (§8 Content Review added at the user's request; 5 content findings filed); prior — 2026-11-17 (created — `BLG-UX-08`)
 
 # Site Structure & Usability — First-Principles Re-Review
 
@@ -94,3 +94,60 @@ No finding needs a P1 or P2. Nothing found contradicts `strategy_rules.md` or mo
 - Reviewed by: Head of UX & Design (agent-mediated, §5.3; user-directed 2026-11-17)
 - Date: 2026-11-17
 - Confirm-or-revise statement: **Confirmed** — the IA verdict "modify substantially, don't redesign" stands. Top 5 items 1, 3 and 4 are done; items 2 and 5 are partly done, with the remainder filed as `BLG-UX-11` and `BLG-FE-308`.
+
+---
+
+## 8. Content Review (added 2026-11-17, user request)
+
+Added at the user's request after §1–§7 were filed: a review of the words on the site, against 15 criteria, with Keep / Change / Remove / Add for the important pages. Method: the visible copy (headings, page descriptions, labels, helper text, empty states, buttons, tooltips) was extracted from `src/pages/` and the components they render on `main` at `6813c15c`, and read against the light/dark baselines.
+
+**Context for the criteria.** This is a single-user decision-support tool for one trader running one rules-based strategy, not a public site selling a product. Criteria written for marketing pages are applied in their in-app sense below. Where a criterion has no in-app meaning, it says N/A and why, rather than being skipped.
+
+### 8.1 Findings by Criterion
+
+| Criterion | Assessment | Evidence |
+|-----------|------------|----------|
+| Headline clarity | **Mostly good.** One canonical label per page (§3). Weak spots: the Dashboard subtitle "Session summary — live data" describes the data, not the job; "Due today" (the Today list title) is clear | `DashboardHome.js`; `TodayList.js` |
+| Value proposition | **Missing in-app.** Nothing in the app says what it is for (a momentum strategy, ATR stops, a human who decides). The product also has three names: "Position Manager" (sidebar, tab title, PDF export), "Swing Trading Position Manager" (`index.html` meta) and "Momentum Trading Assistant" (changelog, backlog) | `Layout.js:543`, `pageLabels.js:73`, `public/index.html:7` |
+| Product/service explanations | **Strong at the point of use, absent overall.** Stop provenance, the FX hint ("How many US dollars £1 buys."), "Initial Stop (set by system)" and the Trail Stop note ("for reference only") explain well. Nothing explains the strategy's core ideas (R, ATR, grace period, regime, heat) in one place | `StopProvenance.js`, `TradeEntry.js`, `Positions.js` |
+| Differentiation | **N/A as marketing.** There is no competing product to set the app against. In-app sense: does the app make clear what is *system-set* vs *user-set*? Mostly yes ("set by system", "fixed by the strategy rules"); the Settings page description contradicts it (below) | `Settings.js` |
+| Readability | **Good on action pages, poor on Weekly Digest.** The digest renders a `Field / Unit / Value` table with API-style labels ("Unrealised P&L Delta (7d)", "Data Staleness", "As of (UTC)", unit "timestamp") | `WeeklyDigest.js:57-64` |
+| Tone of voice | **Consistent, plain, second person.** One outlier: the exported Performance report uses corporate headings ("Executive Summary", "Key Insights") | `AnalyticsSection.js` export HTML |
+| Excessive copy | **Low on pages; high on the quiet Dashboard** — 11 empty-state boxes each with a heading and a sentence (finding F1, `BLG-UX-11`). Positions rows carry 4 secondary actions (Mark Reviewed, Recheck Compliance, View Trail, Trade Plan) | Dashboard baselines; `Positions.js` |
+| Missing information | (1) The gate strip says "20 more to unlock quality insights" without saying which insights. (2) Signals' "Top N" and "Lookback Days" controls have no explanation. (3) The Trade Plan "Setup Quality Score: Low" gives no reason on the collapsed panel. (4) No help or FAQ (below) | `GateProgressStrip.js:42`; `Signals.js`; `SetupQualityScorePanel.js` |
+| Terminology/jargon | (1) **84 strategy-rule references** ("§7.2", "§4.1", "§8.1") in user-visible copy across 15 files, fixed one at a time so far (`BLG-UX-06`, `BLG-UX-09`). (2) Internal IDs: "SI-02 Gate Status" heading on Performance. (3) Raw values: Trade Plan "Regime at Entry" shows `risk_on`. (4) "Live heat unavailable — showing entity data fallback" on Risk Dashboard | `ReportViews.js:502`; `TradePlan.js:976`; `RiskDashboard.js:104` |
+| CTA language | **Good and consistent** (glossary §Primary action labels: New Position, Create Position, Plan this, Save Plan, Confirm Exit). "Click Regenerate to generate your daily summary." repeats itself | `AiDailyBriefing.js` |
+| Proof points | **Present, in-app sense:** Replay ("your own past trades through today's strategy rules") and Strategy Benchmark ("live vs backtest") are the app's evidence that the rules work. Strategy Benchmark's description "Compare live trading vs backtest" undersells it | `Replay.js`, `StrategyBenchmark.js` |
+| Testimonials | **N/A.** Single user, no prospects to persuade | — |
+| Case studies | **N/A as marketing.** The in-app equivalent is Replay of the user's own trades (Keep) | — |
+| FAQs | **Missing, and the one help affordance is broken:** the sidebar "Docs" link has an external-link icon and `href="#"` — it goes nowhere | `Layout.js:829-835` |
+| Trust content | **Strong.** "AI Advisory — All actions require your confirmation"; stop provenance; signal timing ("generated daily at 4 PM UTC weekdays"); data staleness indicator; "Indicative only — not a tax liability"; fees shown as estimates before save | `AiDailyBriefing.js`, `Signals.js`, `TradeEntry.js` |
+
+### 8.2 Keep / Change / Remove / Add — Important Pages
+
+| Page | KEEP | CHANGE | REMOVE | ADD |
+|------|------|--------|--------|-----|
+| **App shell** | One label per page; "AI Advisory" label; keyboard legend | Pick one product name (§8.1 Value proposition) | The dead "Docs" link (or make it work) | A short "How this works" entry point (help/FAQ) |
+| **Dashboard** | "Due today" and its quiet line "Nothing due today · US … · UK …"; regime badges | Subtitle "Session summary — live data" → say the job (for example "What the strategy says to do today"); "Click Regenerate to generate…" → "Regenerate to get today's summary" | The 11 quiet-day empty boxes (`BLG-UX-11`) | — |
+| **Positions** | "Sorted by what needs attention first"; "Action needed"; "To stop" with its tooltip; stop provenance | State tooltips citing "§7.2"/"§6.3" → plain words (policy item) | — | — |
+| **Trade Entry** | "Initial Stop (set by system)"; FX label and hint; fee preview "(preview — actual fees calculated on submission)"; the no-plan nudge | "Entry − 5× ATR (§5)" → plain words; description "Add a new trade to your portfolio" → match the glossary's trade/position rule ("Record a new position") | — | — |
+| **Trade Plan** | Section index; "Planned Shares (for pre-entry checks)"; checklist | "Regime at Entry: `risk_on`" → "Risk-on (US)"; "Suggested size: … (§4.1, …)" (`BLG-UX-09`) | — | A one-line reason on the collapsed Setup Quality Score |
+| **Signals** | "Signals are generated daily at 4 PM UTC weekdays"; "Plan this" | — | — | Helper text for "Top N" and "Lookback Days" |
+| **Performance** | "Expectancy — Edge per trade"; "Profit Factor — Gross profit / gross loss" helpers; "Not enough trades" states | "SI-02 Gate Status" → plain heading (for example "Trades needed for quality insights"); exit-condition labels "Stop-loss (§8.1)" → plain; export headings "Executive Summary"/"Key Insights" → match in-app tone | — | — |
+| **Journal** | Description "Your reflections, rule red flags and position notes in one place." | — | — | — |
+| **Risk Dashboard** | "Daily portfolio risk snapshot — review before making trading decisions." | "showing entity data fallback" → "showing the last saved figures"; "See strategy rules §6" → plain | — | — |
+| **Weekly Digest** | Alert-count deep links | The `Field / Unit / Value` table → a readable weekly summary (sentences or labelled figures); "7-day trading summary" → a fuller description | "Unit" column; "As of (UTC)" as a row (show as a caption) | Links to Performance/Journal (`BLG-UX-12`); trades closed this week |
+| **Settings** | "These parameters are fixed by the strategy rules … shown for reference"; fee defaults shown inline | Description "Configure your strategy parameters and preferences" contradicts the read-only strategy block → "Set fees, risk limits and preferences. Strategy parameters are shown for reference." | — | — |
+| **Strategy Benchmark / Replay** | Replay description | "Compare live trading vs backtest" → say what it shows (for example "How your live trades compare with the backtest of the same rules") | — | — |
+
+### 8.3 Content Findings (Filed)
+
+| Ref | Finding | Backlog item |
+|-----|---------|--------------|
+| C1 | No site-wide rule for strategy-rule references ("§7.2") in user-visible copy: 84 instances in 15 files, fixed piecemeal by `BLG-UX-06` and `BLG-UX-09`. Some (`src/constants/exitReasons.js`) may be stored values, so a copy change needs a data check | `BLG-UX-14` |
+| C2 | The sidebar "Docs" link points to `#` | `BLG-FE-309` |
+| C3 | Weekly Digest reads as an API table, not a summary | `BLG-UX-15` |
+| C4 | Copy fixes: raw `risk_on`, "SI-02 Gate Status", "entity data fallback", the Settings description, the Dashboard subtitle, "unlock quality insights", terse page descriptions, the exported report's headings | `BLG-FE-310` |
+| C5 | No in-app statement of what the app is for or of its core terms, and three product names | `BLG-UX-16` |
+
+**Content verdict:** the copy is clear, consistent and trustworthy where the user acts (entry, exit, plan, stops), which is where it matters most. It is weakest where the app explains itself (no value statement, no help, a broken Docs link) and where it reports (Weekly Digest, the quiet Dashboard). None of this changes the IA verdict in §1.
