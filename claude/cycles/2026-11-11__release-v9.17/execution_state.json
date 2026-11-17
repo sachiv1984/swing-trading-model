@@ -675,10 +675,10 @@
     },
     "EPIC-03": {
       "title": "Site Structure & Usability Phase 3: Semantic Colour Token Sweep (build-and-ship)",
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-11-11__release-v9.17/EPIC-03",
       "pr_number": 2262,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-11-11__release-v9.17/qa_evidence_EPIC-03.md",
       "test_scenarios": [
@@ -690,7 +690,7 @@
         "ST-08": {
           "title": "Move the remaining pages onto the semantic colour tokens",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2243,
           "branch": "exec/2026-11-11__release-v9.17/EPIC-03",
@@ -776,12 +776,11 @@
       "EPIC-07",
       "EPIC-06",
       "EPIC-05",
-      "EPIC-02"
-    ],
-    "epics_pending": [
+      "EPIC-02",
       "EPIC-03"
     ],
-    "all_merged": false
+    "epics_pending": [],
+    "all_merged": true
   },
   "process_notes": [
     "2026-11-12T13:22:26Z: run sprint --epic EPIC-01 \u2014 EPIC-01 is the execution_state.json owner (sprint_backlog.md Merge Order); other EPICs append their own sections on first invocation.",
@@ -814,7 +813,8 @@
     "2026-11-17T14:10:00Z: EPIC-03 PR #2262 opened (STEP 3.2.B) after agent-mediated DoQ sign-off (round 2 Approved). Pre-PR checks: API performance baseline drift PASSED; origin/main..HEAD lists only [EPIC-03] commits. Update Visual Snapshot Baselines cannot push to exec branches (403, GITHUB_TOKEN lacks write); baselines were committed from the run artifact. Merge awaits the human Director of Quality and Product Owner.",
     "2026-11-17T15:00:00Z: PR #2262 agent-mediated DoQ + PO review posted (user-directed; comment 6947461775). DoQ: Changes Requested \u2014 AC 1 partly met: WhatIfSizingPreview, SetupThesisDigestPanel, AiSpendTrendChart, CashManagementModal, MonitorModal, AiChatWidget still dark-only in unscanned states inside the RISK-02 boundary (BLG-FE-303, P2); evidence 'Pass' overstated pending (a) in-branch fix or (b) PO-accepted narrowing to Pass_with_deviation. PO: Approved with Comments, pending confirmation of the Signal-card fade extension and visible AA changes. Filed BLG-FE-303, BLG-OPS-220, BLG-QA-267, BLG-FE-304, BLG-FE-305 (a160ceff). Not merged.",
     "2026-11-17T18:00:00Z: PR #2262 Head of UX & Design agent-mediated review posted (comment 6949459816): keep Signal cards unfaded; heatmap, filter pill, amber and accessible-name changes endorsed (dark heatmap note). Product Owner (repository owner, in session) ratified the Signal-card no-fade rule: signals.md v0.10 \u00a7Resolved Card States; design_system.md rule 5 reworded. Filed BLG-FE-306 (resolved-card de-emphasis) and BLG-FE-307 (dark-theme heatmap). Not merged.",
-    "2026-11-17T18:30:00Z: EPIC-03 human Director of Quality QA sign-off and Product Owner acceptance given in session by the repository owner (holds both roles) on PR #2262 head ff08a481, covering the BLG-FE-303 in-branch fix, the visible AA changes and the Signal-card no-fade rule. Recorded in qa_evidence_EPIC-03.md Merge Gate Confirmations and on PR #2262. Not merged: the merge stays with the human."
+    "2026-11-17T18:30:00Z: EPIC-03 human Director of Quality QA sign-off and Product Owner acceptance given in session by the repository owner (holds both roles) on PR #2262 head ff08a481, covering the BLG-FE-303 in-branch fix, the visible AA changes and the Signal-card no-fade rule. Recorded in qa_evidence_EPIC-03.md Merge Gate Confirmations and on PR #2262. Not merged: the merge stays with the human.",
+    "2026-11-17: run sprint resume-sync \u2014 PR #2262 (EPIC-03) found merged by the human repository owner at 2026-11-17T14:38:11Z, merge commit 3400cba4; EPIC-03 and ST-08 set merged, merge_gate.all_merged true. Orphaned post-merge commit check (LL-v6.8-P3-01): git log origin/main..origin/exec/2026-11-11__release-v9.17/EPIC-03 empty \u2014 nothing to reconcile. Merge recorded in qa_evidence_EPIC-03.md Merge Gate Confirmations."
   ],
   "sealed": false,
   "sealed_utc": null
