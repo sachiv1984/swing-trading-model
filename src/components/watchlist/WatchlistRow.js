@@ -14,7 +14,7 @@ function AddedCell({ entry }) {
   if (isStale) {
     return (
       <span
-        className="inline-flex items-center gap-1 text-xs text-amber-600 dark:text-amber-400"
+        className="inline-flex items-center gap-1 text-xs text-amber-700 dark:text-amber-400"
         aria-label={`On watchlist ${days} days with no action — consider Keep or Remove`}
       >
         <Clock className="w-3.5 h-3.5" />
@@ -40,11 +40,11 @@ AddedCell.propTypes = {
 };
 
 function NewsToggleCell({ entry, isExpanded, onToggle }) {
-  if (entry.market !== "US") return <span className="text-slate-600 text-xs">—</span>;
+  if (entry.market !== "US") return <span className="text-app-muted text-xs">—</span>;
   return (
     <button
       onClick={onToggle}
-      className="flex items-center gap-1 text-xs text-slate-600 dark:text-slate-400 hover:text-cyan-400 transition-colors"
+      className="flex items-center gap-1 text-xs text-slate-600 dark:text-slate-400 hover:text-cyan-700 dark:hover:text-cyan-400 transition-colors"
       title="Show news headlines"
     >
       <Newspaper className="w-3.5 h-3.5" />
@@ -61,7 +61,7 @@ NewsToggleCell.propTypes = {
 function TickerCell({ entry, onEdit }) {
   return (
     <button onClick={onEdit} className="text-left group">
-      <span className="block text-cyan-400 group-hover:text-cyan-300 font-semibold text-sm transition-colors">
+      <span className="block text-cyan-700 dark:text-cyan-400 group-hover:text-cyan-800 dark:group-hover:text-cyan-300 font-semibold text-sm transition-colors">
         {entry.ticker}
       </span>
       {entry.company_name && (
@@ -103,7 +103,7 @@ export const WATCHLIST_COLUMNS = [
     header: "Research", value: (e, ctx) => (ctx.screenerTickers.has(e.ticker?.toUpperCase()) ? "Yes" : "No"),
     cell: (e, ctx) => (
       <BookOpen
-        className={cn("w-4 h-4", ctx.hasResearch ? "text-emerald-400" : "text-slate-600")}
+        className={cn("w-4 h-4", ctx.hasResearch ? "text-app-positive" : "text-app-muted")}
         title={ctx.hasResearch ? "Research data available" : "No research data"}
       />
     ),
@@ -119,7 +119,7 @@ export default function WatchlistRow({
   onEdit, onToggleNews, onCloseNews, onResearch, onAddToPosition, onDeleteConfirm, onKeep,
 }) {
   const cellCtx = { onEdit, hasResearch, isNewsExpanded, onToggleNews };
-  // Columns whose <td> previously carried "text-sm text-slate-300" beyond the shared padding.
+  // Columns whose <td> previously carried "text-sm text-slate-700 dark:text-slate-300" beyond the shared padding.
   const TEXT_CELL_HEADERS = new Set(["Target Entry", "Stop (Initial)", "Stop (Current)"]);
 
   return (
@@ -135,13 +135,14 @@ export default function WatchlistRow({
         {WATCHLIST_COLUMNS.map((col) => (
           <td
             key={col.header}
-            className={cn("px-5 py-4", TEXT_CELL_HEADERS.has(col.header) && "text-sm text-slate-300")}
+            className={cn("px-5 py-4", TEXT_CELL_HEADERS.has(col.header) && "text-sm text-slate-700 dark:text-slate-300")}
           >
             {col.cell(entry, cellCtx)}
           </td>
         ))}
         <td className="px-5 py-4">
           <WatchlistRowActions
+            ticker={entry.ticker}
             isStale={!!entry.is_stale}
             onResearch={onResearch}
             onAddToPosition={onAddToPosition}

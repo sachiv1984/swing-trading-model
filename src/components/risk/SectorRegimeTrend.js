@@ -34,11 +34,11 @@ function reshapeWeeksForChart(weeks) {
 function SectorTrendTooltip({ active, payload, label }) {
   if (!active || !payload || payload.length === 0) return null;
   return (
-    <div className="rounded-xl bg-slate-800 border border-slate-700 px-4 py-3 shadow-xl text-sm">
-      <p className="font-semibold text-white mb-1">{label}</p>
+    <div className="rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-4 py-3 shadow-xl text-sm">
+      <p className="font-semibold text-app-fg mb-1">{label}</p>
       {payload.map((p) => (
-        <p key={p.dataKey} className="text-slate-300">
-          {p.dataKey}: <span className="font-medium text-white">{formatPercent(p.value)}</span>
+        <p key={p.dataKey} className="text-slate-700 dark:text-slate-300">
+          {p.dataKey}: <span className="font-medium text-app-fg">{formatPercent(p.value)}</span>
         </p>
       ))}
     </div>
@@ -88,8 +88,8 @@ function RegimeTrendStrip({ weeks }) {
 
 function CardShell({ children }) {
   return (
-    <div className="bg-slate-900 rounded-xl p-4 border border-slate-800">
-      <h2 className="text-sm font-medium text-slate-300 mb-3">Sector &amp; Regime Exposure Trend</h2>
+    <div className="bg-white dark:bg-slate-900 rounded-xl p-4 border border-slate-200 dark:border-slate-800">
+      <h2 className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">Sector &amp; Regime Exposure Trend</h2>
       {children}
     </div>
   );
@@ -144,7 +144,7 @@ export default function SectorRegimeTrend() {
   if (isLoading) {
     return (
       <CardShell>
-        <div className="h-48 rounded-lg bg-slate-800 animate-pulse" />
+        <div className="h-48 rounded-lg bg-slate-100 dark:bg-slate-800 animate-pulse" />
       </CardShell>
     );
   }

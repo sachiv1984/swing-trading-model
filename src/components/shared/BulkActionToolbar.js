@@ -109,14 +109,14 @@ export default function BulkActionToolbar({
       {selectedCount > 0 && (
       <div className="flex items-center justify-between px-4 py-3 flex-wrap gap-2">
         <div className="flex items-center gap-3 flex-wrap">
-          <span className="text-sm font-semibold text-white">{selectedCount} selected</span>
+          <span className="text-sm font-semibold text-app-fg">{selectedCount} selected</span>
 
           {tagAction && (
             <Button
               size="sm"
               variant="outline"
               onClick={() => setShowTagForm((v) => !v)}
-              className="h-7 bg-slate-800/50 border-slate-700 text-slate-300 hover:text-white text-xs"
+              className="h-7 bg-app-raised border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white text-xs"
             >
               Bulk Tag
             </Button>
@@ -128,14 +128,14 @@ export default function BulkActionToolbar({
               size="sm"
               variant="outline"
               onClick={() => setConfirmingKey(action.key)}
-              className="h-7 bg-slate-800/50 border-slate-700 text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 text-xs"
+              className="h-7 bg-app-raised border-slate-200 dark:border-slate-700 text-app-negative hover:text-rose-800 dark:hover:text-rose-300 hover:bg-rose-500/10 text-xs"
             >
               {action.label}
             </Button>
           ))}
 
           {excludedNote && (
-            <span className="text-xs text-amber-400">{excludedNote}</span>
+            <span className="text-xs text-app-warning">{excludedNote}</span>
           )}
         </div>
 
@@ -143,7 +143,7 @@ export default function BulkActionToolbar({
           size="sm"
           variant="ghost"
           onClick={onClear}
-          className="h-7 text-slate-600 dark:text-slate-400 hover:text-white text-xs"
+          className="h-7 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white text-xs"
         >
           Clear
         </Button>
@@ -156,7 +156,7 @@ export default function BulkActionToolbar({
             {pendingTags.map((tag) => (
               <span
                 key={tag}
-                className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-slate-700/60 text-xs text-slate-200"
+                className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-700/60 text-xs text-slate-800 dark:text-slate-200"
               >
                 {tag}
                 <button onClick={() => setPendingTags((prev) => prev.filter((t) => t !== tag))}>
@@ -172,7 +172,7 @@ export default function BulkActionToolbar({
               onKeyDown={handleTagKeyDown}
               placeholder="Add a tag and press Enter"
               list={tagAction.tagOptions?.length ? "bulk-tag-options" : undefined}
-              className="bg-slate-800/50 border-slate-700 text-app-fg placeholder:text-slate-600 dark:placeholder:text-slate-400 h-8 text-sm max-w-xs"
+              className="bg-app-raised border-slate-200 dark:border-slate-700 text-app-fg placeholder:text-slate-600 dark:placeholder:text-slate-400 h-8 text-sm max-w-xs"
             />
             {tagAction.tagOptions?.length > 0 && (
               <datalist id="bulk-tag-options">
@@ -193,7 +193,7 @@ export default function BulkActionToolbar({
               size="sm"
               variant="ghost"
               onClick={() => { setShowTagForm(false); setPendingTags([]); setTagInput(""); }}
-              className="h-8 text-slate-600 dark:text-slate-400 hover:text-white text-xs"
+              className="h-8 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white text-xs"
             >
               Cancel
             </Button>
@@ -203,10 +203,10 @@ export default function BulkActionToolbar({
 
       {confirmingAction && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-          <div className="w-full max-w-md rounded-2xl bg-slate-900 border border-slate-700 p-6 space-y-4 mx-4">
+          <div className="w-full max-w-md rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 p-6 space-y-4 mx-4">
             <div className="flex items-center gap-3">
-              <AlertTriangle className="w-5 h-5 text-rose-400 flex-shrink-0" />
-              <h2 className="text-lg font-semibold text-white">{confirmingAction.confirmText}</h2>
+              <AlertTriangle className="w-5 h-5 text-app-negative flex-shrink-0" />
+              <h2 className="text-lg font-semibold text-app-fg">{confirmingAction.confirmText}</h2>
             </div>
             <div className="flex gap-3 justify-end">
               <Button
@@ -232,7 +232,7 @@ export default function BulkActionToolbar({
         <div className="px-4 pb-3">
           <div className={cn(
             "rounded-lg px-3 py-2 text-xs flex flex-col gap-1",
-            toast.failed.length > 0 ? "bg-amber-500/10 text-amber-300" : "bg-emerald-500/10 text-emerald-300"
+            toast.failed.length > 0 ? "bg-amber-500/10 text-amber-800 dark:text-amber-300" : "bg-emerald-500/10 text-emerald-800 dark:text-emerald-300"
           )}>
             <div className="flex items-center justify-between">
               <span>{toast.message}</span>

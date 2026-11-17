@@ -7,7 +7,7 @@ import { formatPercent } from "../../lib/format";
 function ComplianceCard({ title, value, subLabel, icon: CardIcon, gradient, isLoading, isError }) {
   const Icon = CardIcon;
   return (
-    <div className="relative overflow-hidden rounded-2xl bg-slate-800/50 border border-slate-700/50 p-6 backdrop-blur-sm">
+    <div className="relative overflow-hidden rounded-2xl bg-app-raised border border-app-line p-6 backdrop-blur-sm">
       <div className={cn("absolute inset-0 opacity-10 bg-gradient-to-br", gradient)} />
       <div className="relative z-10">
         <div className="flex items-start justify-between mb-4">
@@ -17,15 +17,15 @@ function ComplianceCard({ title, value, subLabel, icon: CardIcon, gradient, isLo
           </div>
         </div>
         {isLoading ? (
-          <Loader2 className="w-5 h-5 animate-spin text-slate-500" />
+          <Loader2 className="w-5 h-5 animate-spin text-app-muted" />
         ) : isError ? (
-          <div className="flex items-center gap-2 text-rose-400">
+          <div className="flex items-center gap-2 text-app-negative">
             <AlertCircle className="w-4 h-4" />
             <span className="text-sm">Unable to load</span>
           </div>
         ) : (
           <>
-            <p className="text-2xl font-bold text-white">{value}</p>
+            <p className="text-2xl font-bold text-app-fg">{value}</p>
             {subLabel && <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">{subLabel}</p>}
           </>
         )}
@@ -80,7 +80,7 @@ export default function DisciplineComplianceSection({ period }) {
 
   return (
     <div>
-      <h2 className="text-lg font-semibold text-white mb-4">Discipline &amp; Compliance</h2>
+      <h2 className="text-lg font-semibold text-app-fg mb-4">Discipline &amp; Compliance</h2>
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {cards.map((card) => (
           <ComplianceCard

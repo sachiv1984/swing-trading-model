@@ -58,7 +58,7 @@ export default function ExecutiveSummaryCards({ metrics, advancedMetrics }) {
       {cards.map((card, idx) => (
         <div
           key={idx}
-          className="relative overflow-hidden rounded-2xl bg-slate-800/50 border border-slate-700/50 p-6 backdrop-blur-sm"
+          className="relative overflow-hidden rounded-2xl bg-app-raised border border-app-line p-6 backdrop-blur-sm"
         >
           <div className={cn("absolute inset-0 opacity-10 bg-gradient-to-br", card.gradient)} />
           <div className="relative z-10">
@@ -72,7 +72,7 @@ export default function ExecutiveSummaryCards({ metrics, advancedMetrics }) {
               </div>
             </div>
             <div>
-              <p className="text-2xl font-bold text-white mb-1">{card.value}</p>
+              <p className="text-2xl font-bold text-app-fg mb-1">{card.value}</p>
               {card.subValue && <p className="text-sm text-slate-600 dark:text-slate-400">{card.subValue}</p>}
               {card.date && <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">{card.date}</p>}
               {card.benchmark && (
@@ -80,9 +80,9 @@ export default function ExecutiveSummaryCards({ metrics, advancedMetrics }) {
                   <span className={cn(
                     "text-xs px-2 py-1 rounded-full",
                     card.benchmark.includes("Excellent") || card.benchmark.includes("Strong")
-                      ? "bg-emerald-500/20 text-emerald-400"
+                      ? "bg-emerald-500/20 text-emerald-800 dark:text-emerald-400"
                       : card.benchmark.includes("Good")
-                      ? "bg-cyan-500/20 text-cyan-400"
+                      ? "bg-cyan-500/20 text-cyan-800 dark:text-cyan-400"
                       : "bg-slate-500/20 text-slate-600 dark:text-slate-400"
                   )}>
                     {card.benchmark}
@@ -94,8 +94,8 @@ export default function ExecutiveSummaryCards({ metrics, advancedMetrics }) {
                   <span className={cn(
                     "text-xs px-2 py-1 rounded-full",
                     card.isPositive
-                      ? "bg-emerald-500/20 text-emerald-400"
-                      : "bg-rose-500/20 text-rose-400"
+                      ? "bg-emerald-500/20 text-emerald-800 dark:text-emerald-400"
+                      : "bg-rose-500/20 text-rose-800 dark:text-rose-400"
                   )}>
                     {card.isPositive ? "Positive Edge" : "Negative Edge"}
                   </span>

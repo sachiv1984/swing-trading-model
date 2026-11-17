@@ -81,7 +81,7 @@ export default function RiskDashboard() {
 
       {isLoading ? (
         <div className="flex items-center justify-center py-24">
-          <Loader2 className="w-8 h-8 animate-spin text-slate-500" />
+          <Loader2 className="w-8 h-8 animate-spin text-app-muted" />
         </div>
       ) : (
         <div className="space-y-6">
@@ -101,7 +101,7 @@ export default function RiskDashboard() {
           </div>
 
           {usingEntityFallback && (
-            <p className="text-xs text-amber-400">Live heat unavailable — showing entity data fallback.</p>
+            <p className="text-xs text-app-warning">Live heat unavailable — showing entity data fallback.</p>
           )}
 
           {/* Grace Period Panel */}

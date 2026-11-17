@@ -166,7 +166,9 @@ test.describe('SC-RM-03 — R-multiple colour coding', () => {
     const nvdaCard = page.locator('button').filter({ hasText: 'NVDA' }).first();
     const rCell = nvdaCard.getByText('+1.50R');
     await expect(rCell).toBeVisible({ timeout: 3000 });
-    await expect(rCell).toHaveClass(/text-emerald-400/);
+    // ST-08 (v9.17): the positive/negative P&L colours are the app-positive and
+    // app-negative tokens (emerald-700/400, rose-700/400 by theme).
+    await expect(rCell).toHaveClass(/text-app-positive/);
   });
 
   test('SC-RM-03b: Negative R-multiple (-0.75R) rendered in red', async ({ page }) => {
@@ -176,7 +178,7 @@ test.describe('SC-RM-03 — R-multiple colour coding', () => {
     // Typographic minus U+2212 (ST-01, EPIC-01, v9.8: renders via the shared formatR helper).
     const rCell = aaplCard.getByText('−0.75R');
     await expect(rCell).toBeVisible({ timeout: 3000 });
-    await expect(rCell).toHaveClass(/text-rose-400/);
+    await expect(rCell).toHaveClass(/text-app-negative/);
   });
 
   test('SC-RM-03c: Null R-multiple (N/A) rendered in neutral slate colour, not green or red', async ({ page }) => {
@@ -186,7 +188,7 @@ test.describe('SC-RM-03 — R-multiple colour coding', () => {
     const rCell = shelCard.getByText('N/A');
     await expect(rCell).toBeVisible({ timeout: 3000 });
     await expect(rCell).toHaveClass(/text-slate-400/);
-    await expect(rCell).not.toHaveClass(/text-emerald-400/);
-    await expect(rCell).not.toHaveClass(/text-rose-400/);
+    await expect(rCell).not.toHaveClass(/text-app-positive/);
+    await expect(rCell).not.toHaveClass(/text-app-negative/);
   });
 });

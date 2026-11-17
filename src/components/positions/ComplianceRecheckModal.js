@@ -58,15 +58,15 @@ const RULE_LABELS = {
 
 const STATUS_ICON = { pass: "✓", warn: "⚠", fail: "✗", skipped: "—" };
 const STATUS_COLOR = {
-  pass: "text-emerald-400",
-  warn: "text-amber-400",
-  fail: "text-red-400",
+  pass: "text-app-positive",
+  warn: "text-app-warning",
+  fail: "text-red-700 dark:text-red-400",
   skipped: "text-slate-600 dark:text-slate-400",
 };
 const OVERALL_BADGE = {
-  pass: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30",
-  warn: "bg-amber-500/20 text-amber-400 border-amber-500/30",
-  fail: "bg-red-500/20 text-red-400 border-red-500/30",
+  pass: "bg-emerald-500/20 text-emerald-800 dark:text-emerald-400 border-emerald-500/30",
+  warn: "bg-amber-500/20 text-amber-800 dark:text-amber-400 border-amber-500/30",
+  fail: "bg-red-500/20 text-red-800 dark:text-red-400 border-red-500/30",
 };
 const OVERALL_LABEL = { pass: "Pass", warn: "Warn", fail: "Fail" };
 
@@ -99,7 +99,7 @@ export default function ComplianceRecheckModal({ position, open, onClose }) {
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent
-        className="w-full max-w-md rounded-2xl bg-slate-900 border border-slate-700 !p-0 !gap-0"
+        className="w-full max-w-md rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 !p-0 !gap-0"
         data-testid="compliance-recheck-modal"
         onCloseAutoFocus={(e) => {
           e.preventDefault();
@@ -109,9 +109,9 @@ export default function ComplianceRecheckModal({ position, open, onClose }) {
         {!position ? null : (
           <>
             {/* Header */}
-            <div className="flex items-center gap-2 px-5 py-4 border-b border-slate-700/50">
-              <Zap className="w-4 h-4 text-cyan-400" />
-              <DialogTitle className="!text-sm font-semibold text-white !leading-normal !tracking-wide uppercase">
+            <div className="flex items-center gap-2 px-5 py-4 border-b border-app-line">
+              <Zap className="w-4 h-4 text-cyan-700 dark:text-cyan-400" />
+              <DialogTitle className="!text-sm font-semibold text-app-fg !leading-normal !tracking-wide uppercase">
                 Compliance Recheck — {position.ticker}
               </DialogTitle>
               {overallStatus && (
@@ -133,16 +133,16 @@ export default function ComplianceRecheckModal({ position, open, onClose }) {
             <div className="px-5 py-4 space-y-3">
               {isLoading && (
                 <div className="flex items-center justify-center py-6" data-testid="compliance-recheck-loading">
-                  <RotateCw className="w-5 h-5 text-slate-500 animate-spin" />
+                  <RotateCw className="w-5 h-5 text-app-muted animate-spin" />
                 </div>
               )}
 
               {!isLoading && isError && (
                 <div className="text-center py-4 space-y-3" data-testid="compliance-recheck-error">
-                  <p className="text-sm text-rose-400">Recheck unavailable — try again</p>
+                  <p className="text-sm text-app-negative">Recheck unavailable — try again</p>
                   <button
                     onClick={() => refetch()}
-                    className="text-xs px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 border border-slate-700"
+                    className="text-xs px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700"
                   >
                     Retry
                   </button>
@@ -155,7 +155,7 @@ export default function ComplianceRecheckModal({ position, open, onClose }) {
                     {STATUS_ICON[check.status] || "?"}
                   </span>
                   <div className="flex-1 min-w-0">
-                    <span className="text-slate-200">{RULE_LABELS[check.rule_key] || check.rule_key}</span>
+                    <span className="text-slate-800 dark:text-slate-200">{RULE_LABELS[check.rule_key] || check.rule_key}</span>
                     {check.detail && (
                       <span className="text-slate-600 dark:text-slate-400"> — {check.detail}</span>
                     )}
@@ -164,22 +164,22 @@ export default function ComplianceRecheckModal({ position, open, onClose }) {
               ))}
 
               {!isLoading && !isError && hasWarnOrFail && (
-                <label className="flex items-center gap-2 mt-4 pt-3 border-t border-slate-700/50 cursor-pointer">
+                <label className="flex items-center gap-2 mt-4 pt-3 border-t border-app-line cursor-pointer">
                   <input
                     type="checkbox"
                     data-testid="compliance-recheck-override-checkbox"
                     checked={overrideAcknowledged}
                     onChange={(e) => setOverrideAcknowledged(e.target.checked)}
-                    className="w-4 h-4 rounded border-slate-600 bg-slate-800 text-amber-500 focus:ring-amber-500/30"
+                    className="w-4 h-4 rounded border-slate-300 dark:border-slate-600 bg-slate-100 dark:bg-slate-800 text-amber-500 focus:ring-amber-500/30"
                   />
-                  <span className="text-xs text-amber-400">I acknowledge the advisory result</span>
+                  <span className="text-xs text-app-warning">I acknowledge the advisory result</span>
                 </label>
               )}
 
               {!isLoading && !isError && allPassed && (
                 <p
                   data-testid="compliance-recheck-all-pass-note"
-                  className="mt-4 pt-3 border-t border-slate-700/50 text-xs text-emerald-400"
+                  className="mt-4 pt-3 border-t border-app-line text-xs text-app-positive"
                 >
                   All 5 checks passed — no action needed.
                 </p>

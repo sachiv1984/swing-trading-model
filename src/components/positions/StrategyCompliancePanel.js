@@ -21,21 +21,21 @@ const API_URL = process.env.REACT_APP_API_URL || "http://localhost:8000";
 const STATUS_CONFIG = {
   Compliant: {
     label: "Compliant",
-    badgeClass: "bg-emerald-500/15 text-emerald-400 border border-emerald-500/30",
+    badgeClass: "bg-emerald-500/15 text-emerald-800 dark:text-emerald-400 border border-emerald-500/30",
     Icon: ShieldCheck,
-    iconClass: "text-emerald-400",
+    iconClass: "text-app-positive",
   },
   "Needs Attention": {
     label: "Needs Attention",
-    badgeClass: "bg-amber-500/15 text-amber-400 border border-amber-500/30",
+    badgeClass: "bg-amber-500/15 text-amber-800 dark:text-amber-400 border border-amber-500/30",
     Icon: ShieldAlert,
-    iconClass: "text-amber-400",
+    iconClass: "text-app-warning",
   },
   "Review Required": {
     label: "Review Required",
-    badgeClass: "bg-rose-500/15 text-rose-400 border border-rose-500/30",
+    badgeClass: "bg-rose-500/15 text-rose-800 dark:text-rose-400 border border-rose-500/30",
     Icon: ShieldX,
-    iconClass: "text-rose-400",
+    iconClass: "text-app-negative",
   },
 };
 
@@ -44,12 +44,12 @@ const STATUS_CONFIG = {
 // ---------------------------------------------------------------------------
 function ComplianceFlag({ value }) {
   if (value === null || value === undefined) {
-    return <span className="text-slate-600">—</span>;
+    return <span className="text-app-muted">—</span>;
   }
   return value ? (
-    <span className="text-emerald-400" title="Compliant">✅</span>
+    <span className="text-app-positive" title="Compliant">✅</span>
   ) : (
-    <span className="text-amber-400" title="Non-compliant">⚠️</span>
+    <span className="text-app-warning" title="Non-compliant">⚠️</span>
   );
 }
 
@@ -57,7 +57,7 @@ function StopAge({ days }) {
   if (days === null || days === undefined) {
     return <span className="text-slate-600 dark:text-slate-400 italic">Not set</span>;
   }
-  return <span className="text-slate-300">{days} {days === 1 ? "day" : "days"}</span>;
+  return <span className="text-slate-700 dark:text-slate-300">{days} {days === 1 ? "day" : "days"}</span>;
 }
 
 // ---------------------------------------------------------------------------
@@ -101,21 +101,21 @@ export default function StrategyCompliancePanel() {
   const { Icon } = config;
 
   return (
-    <div className="rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 border border-slate-700/50 overflow-hidden">
+    <div className="rounded-2xl bg-white dark:bg-gradient-to-br dark:from-slate-900 dark:to-slate-800 border border-app-line overflow-hidden">
       {/* Header — always visible */}
       <button
         type="button"
         onClick={() => setIsExpanded((v) => !v)}
-        className="w-full flex items-center justify-between px-5 py-3 cursor-pointer hover:bg-slate-700/20 transition-colors"
+        className="w-full flex items-center justify-between px-5 py-3 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700/20 transition-colors"
         aria-expanded={isExpanded}
       >
         <div className="flex items-center gap-3">
           {isLoading ? (
-            <Loader2 className="w-4 h-4 animate-spin text-slate-500" />
+            <Loader2 className="w-4 h-4 animate-spin text-app-muted" />
           ) : (
             <Icon className={`w-4 h-4 ${config.iconClass}`} />
           )}
-          <span className="text-sm font-medium text-slate-300">
+          <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
             Strategy Compliance
           </span>
           {!isLoading && data && (
@@ -135,9 +135,9 @@ export default function StrategyCompliancePanel() {
             </span>
           )}
           {isLoading ? null : isExpanded ? (
-            <ChevronUp className="w-4 h-4 text-slate-500" />
+            <ChevronUp className="w-4 h-4 text-app-muted" />
           ) : (
-            <ChevronDown className="w-4 h-4 text-slate-500" />
+            <ChevronDown className="w-4 h-4 text-app-muted" />
           )}
         </div>
       </button>
@@ -152,10 +152,10 @@ export default function StrategyCompliancePanel() {
       >
         {data && data.positions && data.positions.length > 0 && (
           <div className="px-5 pb-4">
-            <div className="border-t border-slate-700/50 pt-3">
+            <div className="border-t border-app-line pt-3">
               <table className="w-full text-xs">
                 <thead>
-                  <tr className="text-slate-600 dark:text-slate-400 border-b border-slate-700/40">
+                  <tr className="text-slate-600 dark:text-slate-400 border-b border-slate-200 dark:border-slate-700/40">
                     <th className="text-left pb-2 font-medium">Ticker</th>
                     <th className="text-center pb-2 font-medium">Stop Compliance</th>
                     <th className="text-center pb-2 font-medium">Stop Age</th>
@@ -166,12 +166,12 @@ export default function StrategyCompliancePanel() {
                   {data.positions.map((pos) => (
                     <tr
                       key={pos.position_id}
-                      className="border-b border-slate-700/20 last:border-0"
+                      className="border-b border-slate-200 dark:border-slate-700/20 last:border-0"
                     >
                       <td className="py-2">
                         <div className="flex items-center gap-1.5">
-                          <span className="font-semibold text-white">{pos.ticker}</span>
-                          <span className="text-xs px-1.5 py-0.5 rounded bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-700">
+                          <span className="font-semibold text-app-fg">{pos.ticker}</span>
+                          <span className="text-xs px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
                             {pos.market}
                           </span>
                         </div>

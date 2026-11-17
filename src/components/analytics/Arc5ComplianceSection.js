@@ -13,7 +13,7 @@ const LOW_VOLUME_THRESHOLD = 20;
 function ComplianceCard({ title, value, subLabel, icon: CardIcon, gradient, isLoading, isError }) {
   const Icon = CardIcon;
   return (
-    <div className="relative overflow-hidden rounded-2xl bg-slate-800/50 border border-slate-700/50 p-6 backdrop-blur-sm">
+    <div className="relative overflow-hidden rounded-2xl bg-app-raised border border-app-line p-6 backdrop-blur-sm">
       <div className={cn("absolute inset-0 opacity-10 bg-gradient-to-br", gradient)} />
       <div className="relative z-10">
         <div className="flex items-start justify-between mb-4">
@@ -23,12 +23,12 @@ function ComplianceCard({ title, value, subLabel, icon: CardIcon, gradient, isLo
           </div>
         </div>
         {isLoading ? (
-          <div className="h-7 w-16 bg-slate-700 rounded animate-pulse" />
+          <div className="h-7 w-16 bg-slate-200 dark:bg-slate-700 rounded animate-pulse" />
         ) : isError ? (
-          <p className="text-sm text-rose-400">Unable to load</p>
+          <p className="text-sm text-app-negative">Unable to load</p>
         ) : (
           <>
-            <p className="text-2xl font-bold text-white">{value}</p>
+            <p className="text-2xl font-bold text-app-fg">{value}</p>
             {subLabel && <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">{subLabel}</p>}
           </>
         )}
@@ -103,7 +103,7 @@ export default function Arc5ComplianceSection() {
     >
       <h2
         tabIndex={-1}
-        className="text-lg font-semibold text-white mb-4 focus:outline-none"
+        className="text-lg font-semibold text-app-fg mb-4 focus:outline-none"
       >
         Arc 5 Signal Compliance
       </h2>

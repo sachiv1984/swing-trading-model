@@ -20,7 +20,7 @@ function PriceField({ label, value, onChange }) {
         value={value}
         onChange={onChange}
         placeholder="Optional"
-        className="bg-slate-800/50 border-slate-700 text-app-fg placeholder:text-slate-600 dark:placeholder:text-slate-400 h-9"
+        className="bg-app-raised border-slate-200 dark:border-slate-700 text-app-fg placeholder:text-slate-600 dark:placeholder:text-slate-400 h-9"
       />
     </div>
   );
@@ -46,8 +46,8 @@ function MarketToggle({ market, isEdit, onSelect }) {
             className={cn(
               "py-2 rounded-lg text-sm font-medium border transition-all",
               market === m
-                ? "bg-gradient-to-r from-cyan-500/20 to-violet-500/20 border-cyan-500/40 text-cyan-400"
-                : "bg-slate-800/50 border-slate-700 text-slate-600 dark:text-slate-400",
+                ? "bg-gradient-to-r from-cyan-500/20 to-violet-500/20 border-cyan-500/40 text-cyan-800 dark:text-cyan-400"
+                : "bg-app-raised border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400",
               isEdit && "opacity-50 cursor-not-allowed"
             )}
           >
@@ -76,7 +76,7 @@ export default function WatchlistEntryFields({ form, setForm, tickerError, isEdi
           disabled={isEdit}
           placeholder="e.g. AAPL"
           className={cn(
-            "bg-slate-800/50 border-slate-700 text-app-fg placeholder:text-slate-600 dark:placeholder:text-slate-400 h-9",
+            "bg-app-raised border-slate-200 dark:border-slate-700 text-app-fg placeholder:text-slate-600 dark:placeholder:text-slate-400 h-9",
             isEdit && "opacity-50 cursor-not-allowed",
             tickerError && "border-rose-500/60"
           )}

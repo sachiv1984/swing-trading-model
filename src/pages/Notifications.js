@@ -134,7 +134,7 @@ export default function Notifications() {
         {hasUnread && !loading && !loadError && (
           <button
             onClick={handleMarkAllRead}
-            className="mt-1 text-sm text-cyan-400 hover:text-cyan-300 transition-colors shrink-0"
+            className="mt-1 text-sm text-cyan-700 dark:text-cyan-400 hover:text-cyan-800 dark:hover:text-cyan-300 transition-colors shrink-0"
           >
             Mark all as read
           </button>
@@ -142,12 +142,7 @@ export default function Notifications() {
       </div>
 
       <NotificationTabBar />
-
-      {/* EPIC-03 review pass 4: this card is dark in both themes, so it carries
-          the `dark` class. Its contents (DataState headings, dark: pairs, app-*
-          tokens) then resolve to their dark values in light mode too
-          (design_system.md §Semantic Colour Tokens, dark-in-both-themes rule). */}
-      <div className="dark rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 border border-slate-700/50 divide-y divide-slate-700/50">
+      <div className="rounded-2xl bg-white dark:bg-gradient-to-br dark:from-slate-900 dark:to-slate-800 border border-app-line divide-y divide-app-line">
         <DataState
           loading={loading}
           error={loadError}
@@ -165,7 +160,7 @@ export default function Notifications() {
               .catch(() => { setLoadError(true); setLoading(false); });
           }}
           empty={!loading && !loadError && notifications.length === 0}
-          emptyIcon={<Bell className="w-10 h-10 text-slate-600" />}
+          emptyIcon={<Bell className="w-10 h-10 text-app-muted" />}
           emptyHeading="No notifications yet"
           emptyBody="Alert notifications will appear here when triggered."
           emptyAction={<EmptyStateAction to="/notifications/preferences">Review alert settings</EmptyStateAction>}
@@ -183,7 +178,7 @@ export default function Notifications() {
                 <button
                   onClick={handleLoadMore}
                   disabled={loadingMore}
-                  className="text-sm text-cyan-400 hover:text-cyan-300 transition-colors disabled:opacity-50"
+                  className="text-sm text-cyan-700 dark:text-cyan-400 hover:text-cyan-800 dark:hover:text-cyan-300 transition-colors disabled:opacity-50"
                 >
                   {loadingMore ? "Loading…" : "Load more"}
                 </button>

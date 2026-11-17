@@ -142,9 +142,9 @@ export default function PositionNotesSection({ ticker = "", onCount, onClearTick
     return (
       <div
         data-testid="notes-empty"
-        className="rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 border border-slate-700/50 p-12 text-center"
+        className="rounded-2xl bg-white dark:bg-gradient-to-br dark:from-slate-900 dark:to-slate-800 border border-app-line p-12 text-center"
       >
-        <NotebookPen className="w-10 h-10 text-slate-600 mx-auto mb-3" />
+        <NotebookPen className="w-10 h-10 text-app-muted mx-auto mb-3" />
         <p className="text-slate-600 dark:text-slate-400 mb-4">
           No positions yet. Notes and tags you add to a position appear here.
         </p>
@@ -161,16 +161,16 @@ export default function PositionNotesSection({ ticker = "", onCount, onClearTick
   return (
     <div className="space-y-4">
       {/* Filters */}
-      <div className="rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 border border-slate-700/50 p-4 space-y-4">
+      <div className="rounded-2xl bg-white dark:bg-gradient-to-br dark:from-slate-900 dark:to-slate-800 border border-app-line p-4 space-y-4">
         {/* Search */}
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-app-muted" />
           <Input
             value={searchText}
             onChange={(e) => setSearchText(e.target.value)}
             placeholder="Search in notes..."
             aria-label="Search in notes"
-            className="bg-slate-800/50 border-slate-700 text-white pl-10"
+            className="bg-app-raised border-slate-200 dark:border-slate-700 text-app-fg pl-10"
           />
         </div>
 
@@ -180,9 +180,9 @@ export default function PositionNotesSection({ ticker = "", onCount, onClearTick
             <div className="relative">
               <button
                 onClick={() => setShowTagDropdown(!showTagDropdown)}
-                className="w-full flex items-center gap-2 px-4 py-2 bg-slate-800/50 border border-slate-700 rounded-lg text-white hover:bg-slate-800 transition-colors"
+                className="w-full flex items-center gap-2 px-4 py-2 bg-app-raised border border-slate-200 dark:border-slate-700 rounded-lg text-app-fg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
               >
-                <Tag className="w-4 h-4 text-violet-400" />
+                <Tag className="w-4 h-4 text-violet-700 dark:text-violet-400" />
                 <span className="text-sm">
                   {selectedTags.length === 0 
                     ? "All tags" 
@@ -191,7 +191,7 @@ export default function PositionNotesSection({ ticker = "", onCount, onClearTick
               </button>
               
               {showTagDropdown && (
-                <div className="absolute z-10 w-full mt-1 bg-slate-800 border border-slate-700 rounded-lg shadow-xl max-h-64 overflow-auto">
+                <div className="absolute z-10 w-full mt-1 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-xl max-h-64 overflow-auto">
                   {availableTags.map((tag) => (
                     <button
                       key={tag}
@@ -199,8 +199,8 @@ export default function PositionNotesSection({ ticker = "", onCount, onClearTick
                       className={cn(
                         "w-full px-4 py-2.5 text-left text-sm transition-colors flex items-center justify-between",
                         selectedTags.includes(tag)
-                          ? "bg-cyan-500/20 text-cyan-400"
-                          : "text-slate-300 hover:bg-slate-700"
+                          ? "bg-cyan-500/20 text-cyan-800 dark:text-cyan-400"
+                          : "text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700"
                       )}
                     >
                       <span>{tag}</span>
@@ -218,7 +218,7 @@ export default function PositionNotesSection({ ticker = "", onCount, onClearTick
               aria-label="Winners or losers"
               value={winLossFilter}
               onChange={(e) => setWinLossFilter(e.target.value)}
-              className="px-4 py-2 bg-slate-800/50 border border-slate-700 rounded-lg text-white text-sm"
+              className="px-4 py-2 bg-app-raised border border-slate-200 dark:border-slate-700 rounded-lg text-app-fg text-sm"
             >
               <option value="all">All Trades</option>
               <option value="win">Winners</option>
@@ -229,24 +229,24 @@ export default function PositionNotesSection({ ticker = "", onCount, onClearTick
                 375 px without page-level horizontal scroll (journal.md JA-20). */}
             <div className="flex flex-col sm:flex-row gap-2 flex-1 min-w-0">
               <div className="relative flex-1 min-w-0">
-                <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+                <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-app-muted" />
                 <Input
                   type="date"
                   aria-label="Entry date from"
                   value={dateFrom}
                   onChange={(e) => setDateFrom(e.target.value)}
-                  className="bg-slate-800/50 border-slate-700 text-white pl-10"
+                  className="bg-app-raised border-slate-200 dark:border-slate-700 text-app-fg pl-10"
                   placeholder="From"
                 />
               </div>
               <div className="relative flex-1 min-w-0">
-                <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+                <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-app-muted" />
                 <Input
                   type="date"
                   aria-label="Entry date to"
                   value={dateTo}
                   onChange={(e) => setDateTo(e.target.value)}
-                  className="bg-slate-800/50 border-slate-700 text-white pl-10"
+                  className="bg-app-raised border-slate-200 dark:border-slate-700 text-app-fg pl-10"
                   placeholder="To"
                 />
               </div>
@@ -261,7 +261,7 @@ export default function PositionNotesSection({ ticker = "", onCount, onClearTick
               <button
                 key={tag}
                 onClick={() => handleTagToggle(tag)}
-                className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 hover:bg-cyan-500/30 transition-colors"
+                className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs bg-cyan-500/20 text-cyan-800 dark:text-cyan-400 border border-cyan-500/30 hover:bg-cyan-500/30 transition-colors"
               >
                 {tag}
                 <X className="w-3 h-3" />
@@ -276,7 +276,7 @@ export default function PositionNotesSection({ ticker = "", onCount, onClearTick
         {filteredPositions.length === 0 ? (
           <div
             data-testid="notes-no-match"
-            className="rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 border border-slate-700/50 p-12 text-center"
+            className="rounded-2xl bg-white dark:bg-gradient-to-br dark:from-slate-900 dark:to-slate-800 border border-app-line p-12 text-center"
           >
             <p className="text-slate-600 dark:text-slate-400">No positions match your filters.</p>
             <Button variant="outline" size="sm" className="mt-3" onClick={clearFilters}>
@@ -298,19 +298,19 @@ export default function PositionNotesSection({ ticker = "", onCount, onClearTick
                 data-testid="position-note-card"
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 border border-slate-700/50 p-5"
+                className="rounded-2xl bg-white dark:bg-gradient-to-br dark:from-slate-900 dark:to-slate-800 border border-app-line p-5"
               >
                 {/* Header */}
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center gap-3">
                     <div>
                       <div className="flex items-center gap-2 mb-1">
-                        <h3 className="text-lg font-bold text-white">{position.ticker}</h3>
-                        <span className="text-xs px-2 py-0.5 rounded-full bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-700">
+                        <h3 className="text-lg font-bold text-app-fg">{position.ticker}</h3>
+                        <span className="text-xs px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
                           {position.market}
                         </span>
                         {isClosed && (
-                          <span className="text-xs px-2 py-0.5 rounded-full bg-slate-700 text-slate-600 dark:text-slate-400">
+                          <span className="text-xs px-2 py-0.5 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300">
                             CLOSED
                           </span>
                         )}
@@ -324,22 +324,22 @@ export default function PositionNotesSection({ ticker = "", onCount, onClearTick
                   <div className={cn(
                     "px-3 py-1 rounded-lg border flex items-center gap-1.5 font-medium",
                     pnl > 0
-                      ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/30"
+                      ? "bg-emerald-500/20 text-emerald-800 dark:text-emerald-400 border-emerald-500/30"
                       : pnl < 0
-                        ? "bg-rose-500/20 text-rose-400 border-rose-500/30"
-                        : "bg-slate-700/30 text-slate-300 border-slate-600/30"
+                        ? "bg-rose-500/20 text-rose-800 dark:text-rose-400 border-rose-500/30"
+                        : "bg-slate-100 dark:bg-slate-700/30 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-600/30"
                   )}>
                     {pnl >= 0 ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
                     <span>{formatCurrency(pnl, { signed: true })}</span>
-                    <span className="text-xs opacity-70">({formatPercent(pnlPercent)})</span>
+                    <span className="text-xs">({formatPercent(pnlPercent)})</span>
                   </div>
                 </div>
 
                 {/* Entry Note */}
                 {position.entry_note && (
                   <div className="mb-3">
-                    <h4 className="text-xs font-medium text-cyan-400 mb-2">Entry Note</h4>
-                    <p className="text-sm text-slate-300 whitespace-pre-wrap bg-slate-800/50 p-3 rounded-lg border border-slate-700/30">
+                    <h4 className="text-xs font-medium text-cyan-700 dark:text-cyan-400 mb-2">Entry Note</h4>
+                    <p className="text-sm text-slate-700 dark:text-slate-300 whitespace-pre-wrap bg-app-raised p-3 rounded-lg border border-slate-200 dark:border-slate-700/30">
                       {position.entry_note}
                     </p>
                   </div>
@@ -351,7 +351,7 @@ export default function PositionNotesSection({ ticker = "", onCount, onClearTick
                     {position.tags.map((tag) => (
                       <span
                         key={tag}
-                        className="px-3 py-1 text-xs rounded-full bg-violet-500/20 text-violet-400 border border-violet-500/30"
+                        className="px-3 py-1 text-xs rounded-full bg-violet-500/20 text-violet-800 dark:text-violet-400 border border-violet-500/30"
                       >
                         {tag}
                       </span>
@@ -361,10 +361,10 @@ export default function PositionNotesSection({ ticker = "", onCount, onClearTick
 
                 {/* Exit Details (for closed positions) */}
                 {isClosed && position.exit_note && (
-                  <div className="border-t border-slate-700/50 pt-3 mt-3">
+                  <div className="border-t border-app-line pt-3 mt-3">
                     <button
                       onClick={() => setExpandedEntry(isExpanded ? null : position.key)}
-                      className="flex items-center gap-2 text-sm font-medium text-slate-300 hover:text-white transition-colors w-full"
+                      className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors w-full"
                     >
                       {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                       Exit Details
@@ -384,8 +384,8 @@ export default function PositionNotesSection({ ticker = "", onCount, onClearTick
                           className="overflow-hidden"
                         >
                           <div className="mt-3">
-                            <h4 className="text-xs font-medium text-rose-400 mb-2">Exit Note</h4>
-                            <p className="text-sm text-slate-300 whitespace-pre-wrap bg-slate-800/50 p-3 rounded-lg border border-slate-700/30">
+                            <h4 className="text-xs font-medium text-app-negative mb-2">Exit Note</h4>
+                            <p className="text-sm text-slate-700 dark:text-slate-300 whitespace-pre-wrap bg-app-raised p-3 rounded-lg border border-slate-200 dark:border-slate-700/30">
                               {position.exit_note}
                             </p>
                           </div>

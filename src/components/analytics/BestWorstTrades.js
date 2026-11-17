@@ -60,10 +60,10 @@ function TradeCard({ trade, rValue, isBest }) {
     )}>
       {/* Top row: ticker + R-multiple */}
       <div className="flex items-start justify-between mb-3">
-        <span className="font-bold text-white text-base">{trade.ticker?.replace(".L", "") || "—"}</span>
+        <span className="font-bold text-app-fg text-base">{trade.ticker?.replace(".L", "") || "—"}</span>
         <span className={cn(
           "font-bold text-lg tabular-nums",
-          isBest ? "text-emerald-400" : "text-rose-400"
+          isBest ? "text-app-positive" : "text-app-negative"
         )}>
           {rText}
         </span>
@@ -71,7 +71,7 @@ function TradeCard({ trade, rValue, isBest }) {
 
       {/* Secondary row: P&L + exit date */}
       <div className="flex items-center justify-between text-xs text-slate-600 dark:text-slate-400 mb-2">
-        <span className={cn("font-medium", pnlPos ? "text-emerald-400" : pnlNeg ? "text-rose-400" : "text-slate-300")}>
+        <span className={cn("font-medium", pnlPos ? "text-app-positive" : pnlNeg ? "text-app-negative" : "text-slate-700 dark:text-slate-300")}>
           {formatPnL(pnlVal)}
         </span>
         <span>{formatDate(trade.exitDate)}</span>
@@ -96,18 +96,18 @@ function Panel({ title, trades, isBest, emptyMessage }) {
   const Icon = isBest ? Trophy : AlertTriangle;
 
   return (
-    <div className="rounded-2xl bg-slate-800/50 border border-slate-700/50 p-6 backdrop-blur-sm">
+    <div className="rounded-2xl bg-app-raised border border-app-line p-6 backdrop-blur-sm">
       {/* Header */}
       <div className="flex items-center gap-3 mb-5">
         <div className={cn(
           "p-2 rounded-lg",
           isBest ? "bg-emerald-500/20" : "bg-rose-500/20"
         )}>
-          <Icon className={cn("w-5 h-5", isBest ? "text-emerald-400" : "text-rose-400")} />
+          <Icon className={cn("w-5 h-5", isBest ? "text-app-positive" : "text-app-negative")} />
         </div>
         <div>
-          <h3 className="text-base font-semibold text-white">{title}</h3>
-          <p className={cn("text-xs mt-0.5", isBest ? "text-emerald-400/70" : "text-rose-400/70")}>
+          <h3 className="text-base font-semibold text-app-fg">{title}</h3>
+          <p className={cn("text-xs mt-0.5", isBest ? "text-app-positive" : "text-app-negative")}>
             By R-Multiple
           </p>
         </div>

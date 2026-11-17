@@ -23,7 +23,7 @@ export default function DownloadCsvButton({ onDownload, disabled, className, tes
       disabled={disabled}
       title={disabled ? "Nothing to export" : undefined}
       data-testid={testId}
-      className={cn("border-slate-600 text-slate-300 hover:text-white hover:border-slate-500 h-9", className)}
+      className={cn("border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:border-slate-300 dark:hover:border-slate-500 h-9", className)}
     >
       <FileDown className="w-4 h-4 mr-2" />
       Download CSV

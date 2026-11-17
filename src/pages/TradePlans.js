@@ -208,18 +208,13 @@ export default function TradePlans() {
         ]}
         onResult={handleBulkResult}
       />
-
-      {/* EPIC-03 review pass 4: this card is dark in both themes, so it carries
-          the `dark` class. Its contents (DataState headings, dark: pairs, app-*
-          tokens) then resolve to their dark values in light mode too
-          (design_system.md §Semantic Colour Tokens, dark-in-both-themes rule). */}
-      <div className="dark rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 border border-slate-700/50 overflow-hidden">
+      <div className="rounded-2xl bg-white dark:bg-gradient-to-br dark:from-slate-900 dark:to-slate-800 border border-app-line overflow-hidden">
         <DataState
           loading={isLoading}
           error={isError}
           onRetry={refetch}
           empty={!isLoading && !isError && plans.length === 0}
-          emptyIcon={<FileText className="w-10 h-10 text-slate-600" />}
+          emptyIcon={<FileText className="w-10 h-10 text-app-muted" />}
           emptyHeading="No trade plans yet"
           emptyBody="Create a trade plan before opening your next position."
           emptyAction={
@@ -235,7 +230,7 @@ export default function TradePlans() {
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-slate-700/50">
+                <tr className="border-b border-app-line">
                   <th className="px-5 py-3.5 text-left w-8">
                     <Checkbox
                       checked={sorted.length > 0 && selectedIds.size === sorted.length}
@@ -253,13 +248,12 @@ export default function TradePlans() {
                   ))}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-700/30">
+              <tbody className="divide-y divide-slate-200 dark:divide-slate-700/30">
                 {sorted.map((plan) => (
                   <tr
                     key={plan.id}
                     className={cn(
                       "transition-colors",
-                      plan.status === "abandoned" && "opacity-70",
                       selectedIds.has(plan.id) && "bg-cyan-500/5"
                     )}
                   >
@@ -271,7 +265,7 @@ export default function TradePlans() {
                       />
                     </td>
                     <td className="px-5 py-4">
-                      <span className="font-semibold text-white text-sm">{plan.ticker}</span>
+                      <span className="font-semibold text-app-fg text-sm">{plan.ticker}</span>
                       {plan.market && (
                         <span className="ml-2 text-xs text-slate-600 dark:text-slate-400">{plan.market}</span>
                       )}
@@ -287,7 +281,7 @@ export default function TradePlans() {
                               data-testid="stale-plan-marker"
                               aria-label={`Last updated ${staleDays} days ago — plan is stale`}
                               title={`Last updated ${format(new Date(plan.updated_at), "d MMM yyyy")}. Display only — nothing happens automatically.`}
-                              className="inline-flex items-center gap-1 text-xs text-amber-600 dark:text-amber-400"
+                              className="inline-flex items-center gap-1 text-xs text-amber-700 dark:text-amber-400"
                             >
                               <Clock className="w-3 h-3" aria-hidden="true" />
                               Stale ({staleDays} days)
@@ -296,7 +290,7 @@ export default function TradePlans() {
                         })()}
                       </div>
                     </td>
-                    <td className="px-5 py-4 text-sm text-slate-300">
+                    <td className="px-5 py-4 text-sm text-slate-700 dark:text-slate-300">
                       {/* ST-06 (BLG-FE-182): user-entered target — as entered, up to 2 dp, trimmed, unsigned */}
                       {formatR(plan.r_target, { target: true })}
                     </td>
@@ -317,7 +311,7 @@ export default function TradePlans() {
                             variant="outline"
                             size="sm"
                             data-testid={`start-trade-from-plan-${plan.id}`}
-                            className="h-7 border-emerald-500/40 text-emerald-400 hover:bg-emerald-500/10 hover:text-emerald-300"
+                            className="h-7 border-emerald-500/40 text-app-positive hover:bg-emerald-500/10 hover:text-emerald-800 dark:hover:text-emerald-300"
                             onClick={() => handleStartTrade(plan)}
                           >
                             <Rocket className="w-3.5 h-3.5 mr-1.5" />
@@ -332,7 +326,7 @@ export default function TradePlans() {
                           size="sm"
                           data-testid={`clone-plan-${plan.id}`}
                           aria-label={`Clone ${plan.ticker} plan`}
-                          className="h-7 px-2 text-xs text-slate-600 dark:text-slate-400 hover:text-white hover:bg-slate-800"
+                          className="h-7 px-2 text-xs text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"
                           onClick={() => navigate(`/TradePlan?clone_from=${plan.id}`)}
                         >
                           Clone
@@ -341,7 +335,8 @@ export default function TradePlans() {
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-7 w-7 text-slate-600 dark:text-slate-400 hover:text-white hover:bg-slate-800"
+                            aria-label={`Edit trade plan for ${plan.ticker}`}
+                            className="h-7 w-7 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"
                             onClick={() =>
                               navigate(
                                 `/TradePlan?edit=${plan.id}&ticker=${plan.ticker}&market=${plan.market || "US"}`
@@ -354,7 +349,8 @@ export default function TradePlans() {
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="h-7 w-7 text-slate-600 dark:text-slate-400 hover:text-rose-400 hover:bg-rose-500/10"
+                          aria-label={`Delete trade plan for ${plan.ticker}`}
+                          className="h-7 w-7 text-slate-600 dark:text-slate-400 hover:text-rose-700 dark:hover:text-rose-400 hover:bg-rose-500/10"
                           onClick={() => setDeleteTarget(plan)}
                         >
                           <Trash2 className="w-4 h-4" />
@@ -372,10 +368,10 @@ export default function TradePlans() {
       {/* Delete confirmation */}
       {deleteTarget && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-          <div className="w-full max-w-md rounded-2xl bg-slate-900 border border-slate-700 p-6 space-y-4 mx-4">
+          <div className="w-full max-w-md rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 p-6 space-y-4 mx-4">
             <div className="flex items-center gap-3">
-              <AlertTriangle className="w-5 h-5 text-rose-400 flex-shrink-0" />
-              <h2 className="text-lg font-semibold text-white">
+              <AlertTriangle className="w-5 h-5 text-app-negative flex-shrink-0" />
+              <h2 className="text-lg font-semibold text-app-fg">
                 Delete plan for {deleteTarget.ticker}?
               </h2>
             </div>

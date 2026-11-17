@@ -58,8 +58,8 @@ export default function TagPerformance({ trades }) {
   };
 
   const getWinRateColor = (rate) => {
-    if (rate >= 60) return "bg-emerald-500/20 text-emerald-400";
-    if (rate >= 50) return "bg-cyan-500/20 text-cyan-400";
+    if (rate >= 60) return "bg-emerald-500/20 text-emerald-800 dark:text-emerald-400";
+    if (rate >= 50) return "bg-cyan-500/20 text-cyan-800 dark:text-cyan-400";
     return "bg-slate-500/20 text-slate-600 dark:text-slate-400";
   };
 
@@ -72,26 +72,26 @@ export default function TagPerformance({ trades }) {
   };
 
   return (
-    <div className="rounded-2xl bg-slate-800/50 border border-slate-700/50 backdrop-blur-sm overflow-hidden">
-      <div className="p-6 border-b border-slate-700/50">
+    <div className="rounded-2xl bg-app-raised border border-app-line backdrop-blur-sm overflow-hidden">
+      <div className="p-6 border-b border-app-line">
         <div className="flex items-center gap-3 mb-2">
           <div className="p-2 rounded-lg bg-gradient-to-br from-violet-500 to-purple-500">
             <TrendingUp className="w-5 h-5 text-white" />
           </div>
-          <h3 className="text-lg font-semibold text-white">Performance by Strategy Tag</h3>
+          <h3 className="text-lg font-semibold text-app-fg">Performance by Strategy Tag</h3>
         </div>
         <p className="text-sm text-slate-600 dark:text-slate-400">Analyze which strategies are working best</p>
       </div>
 
       <div className="overflow-x-auto">
         <table className="w-full">
-          <thead className="bg-slate-800/50 border-b border-slate-700/50">
+          <thead className="bg-app-raised border-b border-app-line">
             <tr>
               <th className="px-6 py-4 text-left text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wider">
                 Tag
               </th>
               <th
-                className="px-6 py-4 text-right text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wider cursor-pointer hover:text-slate-300 transition-colors"
+                className="px-6 py-4 text-right text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wider cursor-pointer hover:text-slate-700 dark:hover:text-slate-300 transition-colors"
                 onClick={() => handleSort("count")}
               >
                 <div className="flex items-center justify-end gap-1">
@@ -100,7 +100,7 @@ export default function TagPerformance({ trades }) {
                 </div>
               </th>
               <th
-                className="px-6 py-4 text-right text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wider cursor-pointer hover:text-slate-300 transition-colors"
+                className="px-6 py-4 text-right text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wider cursor-pointer hover:text-slate-700 dark:hover:text-slate-300 transition-colors"
                 onClick={() => handleSort("winRate")}
               >
                 <div className="flex items-center justify-end gap-1">
@@ -109,7 +109,7 @@ export default function TagPerformance({ trades }) {
                 </div>
               </th>
               <th
-                className="px-6 py-4 text-right text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wider cursor-pointer hover:text-slate-300 transition-colors"
+                className="px-6 py-4 text-right text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wider cursor-pointer hover:text-slate-700 dark:hover:text-slate-300 transition-colors"
                 onClick={() => handleSort("pnl")}
               >
                 <div className="flex items-center justify-end gap-1">
@@ -122,15 +122,15 @@ export default function TagPerformance({ trades }) {
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-700/30">
+          <tbody className="divide-y divide-slate-200 dark:divide-slate-700/30">
             {sortedData.map((item, idx) => (
-              <tr key={idx} className="hover:bg-slate-800/30 transition-colors">
+              <tr key={idx} className="hover:bg-slate-100 dark:hover:bg-slate-800/30 transition-colors">
                 <td className="px-6 py-4">
-                  <Badge className="bg-violet-500/20 text-violet-300 border-violet-500/30">
+                  <Badge className="bg-violet-500/20 text-violet-800 dark:text-violet-300 border-violet-500/30">
                     {item.tag}
                   </Badge>
                 </td>
-                <td className="px-6 py-4 text-right text-sm text-slate-300">
+                <td className="px-6 py-4 text-right text-sm text-slate-700 dark:text-slate-300">
                   {item.count}
                 </td>
                 <td className="px-6 py-4 text-right">
@@ -138,10 +138,10 @@ export default function TagPerformance({ trades }) {
                     {formatPercent(item.winRate, { dp: 0 })}
                   </Badge>
                 </td>
-                <td className={`px-6 py-4 text-right text-sm font-medium ${item.totalPnl > 0 ? 'text-emerald-400' : item.totalPnl < 0 ? 'text-rose-400' : 'text-slate-300'}`}>
+                <td className={`px-6 py-4 text-right text-sm font-medium ${item.totalPnl > 0 ? 'text-app-positive' : item.totalPnl < 0 ? 'text-app-negative' : 'text-slate-700 dark:text-slate-300'}`}>
                   {formatCurrency(item.totalPnl, { signed: true })}
                 </td>
-                <td className={`px-6 py-4 text-right text-sm font-medium ${item.avgPnl > 0 ? 'text-emerald-400' : item.avgPnl < 0 ? 'text-rose-400' : 'text-slate-300'}`}>
+                <td className={`px-6 py-4 text-right text-sm font-medium ${item.avgPnl > 0 ? 'text-app-positive' : item.avgPnl < 0 ? 'text-app-negative' : 'text-slate-700 dark:text-slate-300'}`}>
                   {formatCurrency(item.avgPnl, { signed: true })}
                 </td>
               </tr>
@@ -150,9 +150,9 @@ export default function TagPerformance({ trades }) {
         </table>
       </div>
 
-      <div className="p-4 bg-slate-800/30 border-t border-slate-700/50">
+      <div className="p-4 bg-slate-50 dark:bg-slate-800/30 border-t border-app-line">
         <p className="text-sm text-slate-600 dark:text-slate-400">
-          Your <span className="text-violet-400 font-semibold">'{bestTag.tag}'</span> strategy has the {metricLabels[sortBy]} with {bestTag.count} trades.
+          Your <span className="text-violet-700 dark:text-violet-400 font-semibold">'{bestTag.tag}'</span> strategy has the {metricLabels[sortBy]} with {bestTag.count} trades.
         </p>
       </div>
     </div>

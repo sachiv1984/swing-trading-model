@@ -188,8 +188,8 @@ test('VS-06: In Watchlist chip is emerald with checkmark', async ({ page }) => {
 
   const chip = page.locator('span').filter({ hasText: /Added/ }).first();
   await expect(chip).toBeVisible({ timeout: 5000 });
-  // Added chip renders with emerald (green) styling
-  await expect(chip).toHaveClass(/text-emerald-400/);
+  // Added chip renders green: the app-positive token (emerald-700/400, ST-08)
+  await expect(chip).toHaveClass(/text-app-positive/);
 });
 
 // ---------------------------------------------------------------------------
@@ -331,7 +331,7 @@ test('VS-12: Market filter bar renders All / US / UK segments', async ({ page })
 // ---------------------------------------------------------------------------
 // VS-13 — EarningsBadge amber colour class when earnings ≤5 days (Screener)
 // ---------------------------------------------------------------------------
-test('VS-13: Screener EarningsBadge has text-amber-400 class when earnings ≤5 days', async ({ page }) => {
+test('VS-13: Screener EarningsBadge has the app-warning colour when earnings ≤5 days', async ({ page }) => {
   const d = new Date();
   d.setDate(d.getDate() + 3);
   const earningsData = { next_earnings_date: d.toISOString().split('T')[0], days_until_earnings: 3, fiscal_quarter: 'Q2', data_source: 'yahoo_finance' };
@@ -345,10 +345,10 @@ test('VS-13: Screener EarningsBadge has text-amber-400 class when earnings ≤5 
 
   await page.waitForSelector('text=AAPL', { timeout: 8000 });
 
-  // EarningsBadge renders "3d" with text-amber-400 class when days ≤ 5
+  // EarningsBadge renders "3d" in the app-warning token (amber-700/400, ST-08) when days ≤ 5
   const badge = page.locator('span').filter({ hasText: /^3d$/ }).first();
   await expect(badge).toBeVisible({ timeout: 5000 });
-  await expect(badge).toHaveClass(/text-amber-400/);
+  await expect(badge).toHaveClass(/text-app-warning/);
 });
 
 // ---------------------------------------------------------------------------

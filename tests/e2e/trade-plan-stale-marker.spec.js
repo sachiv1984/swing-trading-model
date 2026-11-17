@@ -97,7 +97,7 @@ test('SC-TPS-05: The marker is display-only text alongside the unchanged status 
   const marker = row.getByTestId('stale-plan-marker');
   await expect(marker).toHaveAttribute('aria-label', 'Last updated 20 days ago — plan is stale');
   await expect(marker).toHaveAttribute('title', /Last updated .+\. Display only — nothing happens automatically\./);
-  await expect(marker).toHaveClass(/text-amber-600/);
+  await expect(marker).toHaveClass(/text-amber-700/); // ST-08: amber-600 fails on white (design_system.md rule 3)
   await expect(marker).toHaveClass(/dark:text-amber-400/);
   // Not interactive: no button/link role, no "Keep" action anywhere in the row
   expect(await marker.evaluate((el) => el.tagName)).toBe('SPAN');

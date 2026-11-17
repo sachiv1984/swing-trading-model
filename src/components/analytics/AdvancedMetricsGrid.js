@@ -23,16 +23,16 @@ export default function AdvancedMetricsGrid({ metrics, executiveMetrics = metric
   ];
 
   return (
-    <div className="rounded-2xl bg-slate-800/50 border border-slate-700/50 p-6 backdrop-blur-sm">
-      <h3 className="text-lg font-semibold text-white mb-6">Advanced Metrics</h3>
+    <div className="rounded-2xl bg-app-raised border border-app-line p-6 backdrop-blur-sm">
+      <h3 className="text-lg font-semibold text-app-fg mb-6">Advanced Metrics</h3>
       <div className="space-y-6">
         {gridMetrics.map((row, rowIdx) => (
           <div key={rowIdx} className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {row.map((metric, idx) => (
-              <div key={idx} className="p-4 rounded-lg bg-slate-900/50 border border-slate-700/30">
+              <div key={idx} className="p-4 rounded-lg bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700/30">
                 <p className="text-xs text-slate-600 dark:text-slate-400 mb-2">{metric.label}</p>
                 <div className="flex items-baseline gap-2">
-                  <p className="text-xl font-bold text-white">
+                  <p className="text-xl font-bold text-app-fg">
                     {metric.value}{metric.suffix || ""}
                   </p>
                   {metric.target && (

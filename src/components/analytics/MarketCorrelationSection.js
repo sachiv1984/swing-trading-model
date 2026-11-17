@@ -6,10 +6,10 @@ import { api } from "../../api/base44Client";
 const SEVERITY_ORDER = { high: 0, moderate: 1, low: 2, unknown: 3 };
 
 const SEVERITY_STYLES = {
-  high: "bg-rose-500/20 text-rose-400 border-rose-500/30",
-  moderate: "bg-amber-500/20 text-amber-400 border-amber-500/30",
-  low: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30",
-  unknown: "bg-slate-500/20 text-slate-600 dark:text-slate-400 border-slate-500/30",
+  high: "bg-rose-500/20 text-rose-800 dark:text-rose-400 border-rose-500/30",
+  moderate: "bg-amber-500/20 text-amber-800 dark:text-amber-400 border-amber-500/30",
+  low: "bg-emerald-500/20 text-emerald-800 dark:text-emerald-400 border-emerald-500/30",
+  unknown: "bg-slate-500/20 text-slate-600 dark:text-slate-400 border-slate-300 dark:border-slate-500/30",
 };
 
 function SeverityBadge({ severity }) {
@@ -51,23 +51,23 @@ export default function MarketCorrelationSection() {
   const noPositions = !isLoading && !error && correlations.length === 0;
 
   return (
-    <div className="rounded-2xl bg-slate-800/50 border border-slate-700/50 p-6 space-y-4">
+    <div className="rounded-2xl bg-app-raised border border-app-line p-6 space-y-4">
       <div className="flex items-center gap-2">
         <div className="p-2 rounded-lg bg-gradient-to-br from-cyan-500/20 to-blue-500/20">
-          <TrendingUp className="w-4 h-4 text-cyan-400" />
+          <TrendingUp className="w-4 h-4 text-cyan-700 dark:text-cyan-400" />
         </div>
         <div>
-          <h3 className="text-sm font-semibold text-white">Market Correlation</h3>
+          <h3 className="text-sm font-semibold text-app-fg">Market Correlation</h3>
           <p className="text-xs text-slate-600 dark:text-slate-400">Per-position Pearson correlation vs benchmark</p>
         </div>
       </div>
 
       {isLoading ? (
         <div className="flex items-center justify-center py-8">
-          <Loader2 className="w-5 h-5 animate-spin text-slate-500" />
+          <Loader2 className="w-5 h-5 animate-spin text-app-muted" />
         </div>
       ) : error ? (
-        <div className="flex items-center gap-2 text-rose-400 text-sm py-4">
+        <div className="flex items-center gap-2 text-app-negative text-sm py-4">
           <AlertCircle className="w-4 h-4 flex-shrink-0" />
           <span>Unable to load correlation data. Please try again later.</span>
         </div>
@@ -76,11 +76,11 @@ export default function MarketCorrelationSection() {
       ) : (
         <>
           {portfolioCorr && (
-            <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-slate-900/50 border border-slate-700/30">
+            <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700/30">
               <div className="flex-1">
                 <p className="text-xs text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1">Portfolio Weighted Average</p>
                 <div className="flex items-center gap-2">
-                  <span className="text-xl font-bold text-white">
+                  <span className="text-xl font-bold text-app-fg">
                     {portfolioCorr.value != null ? portfolioCorr.value.toFixed(2) : "N/A"}
                   </span>
                   {portfolioCorr.severity && portfolioCorr.value != null && (
@@ -97,18 +97,18 @@ export default function MarketCorrelationSection() {
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-slate-700/50">
+                <tr className="border-b border-app-line">
                   <th className="text-left py-2 pr-4 text-xs text-slate-600 dark:text-slate-400 font-medium uppercase tracking-wider">Ticker</th>
                   <th className="text-left py-2 pr-4 text-xs text-slate-600 dark:text-slate-400 font-medium uppercase tracking-wider">Correlation</th>
                   <th className="text-left py-2 pr-4 text-xs text-slate-600 dark:text-slate-400 font-medium uppercase tracking-wider">Severity</th>
                   <th className="text-left py-2 text-xs text-slate-600 dark:text-slate-400 font-medium uppercase tracking-wider">vs. Market</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-700/30">
+              <tbody className="divide-y divide-slate-200 dark:divide-slate-700/30">
                 {sortedCorrelations.map((row) => (
-                  <tr key={row.ticker} className="hover:bg-slate-700/20 transition-colors">
-                    <td className="py-2.5 pr-4 font-mono text-white font-medium">{row.ticker?.toUpperCase()}</td>
-                    <td className="py-2.5 pr-4 text-slate-300">
+                  <tr key={row.ticker} className="hover:bg-slate-100 dark:hover:bg-slate-700/20 transition-colors">
+                    <td className="py-2.5 pr-4 font-mono text-app-fg font-medium">{row.ticker?.toUpperCase()}</td>
+                    <td className="py-2.5 pr-4 text-slate-700 dark:text-slate-300">
                       {row.correlation != null ? row.correlation.toFixed(2) : "N/A"}
                     </td>
                     <td className="py-2.5 pr-4">

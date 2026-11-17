@@ -6,15 +6,15 @@ function ErrorCard({ onRetry }) {
   return (
     <div className="rounded-2xl bg-rose-900/20 border border-rose-500/40 p-6 flex flex-col items-center gap-4 w-full">
       <div className="flex items-center gap-3">
-        <AlertCircle className="w-5 h-5 text-rose-400 flex-shrink-0" />
-        <p className="text-sm text-rose-300">Unable to load heat data</p>
+        <AlertCircle className="w-5 h-5 text-app-negative flex-shrink-0" />
+        <p className="text-sm text-rose-800 dark:text-rose-300">Unable to load heat data</p>
       </div>
       {onRetry && (
         <Button
           variant="outline"
           size="sm"
           onClick={onRetry}
-          className="border-rose-500/40 text-rose-300 hover:bg-rose-500/10 hover:text-rose-200 gap-2"
+          className="border-rose-500/40 text-rose-800 dark:text-rose-300 hover:bg-rose-500/10 hover:text-rose-800 dark:hover:text-rose-200 gap-2"
         >
           <RefreshCw className="w-3.5 h-3.5" />
           Retry
@@ -53,7 +53,7 @@ export default function HeatGauge({ heatPercent, positionRisks = [], error, onRe
   const largeArc = sweepAngle > 180 ? 1 : 0;
 
   return (
-    <div className="rounded-2xl bg-gradient-to-br from-slate-800/50 to-slate-900/50 border border-slate-700/50 backdrop-blur-sm p-6 flex flex-col items-center justify-center">
+    <div className="rounded-2xl bg-white dark:bg-gradient-to-br dark:from-slate-800/50 dark:to-slate-900/50 border border-app-line backdrop-blur-sm p-6 flex flex-col items-center justify-center">
       {error ? (
         <ErrorCard onRetry={onRetry} />
       ) : (

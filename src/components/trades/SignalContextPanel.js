@@ -72,7 +72,7 @@ export default function SignalContextPanel({ signal, market }) {
 
   return (
     <div
-      className="rounded-xl bg-slate-800/40 border border-slate-700/60 p-4 space-y-3"
+      className="rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/60 p-4 space-y-3"
       data-testid="signal-context-panel"
       aria-label="Signal Context"
     >
@@ -84,14 +84,14 @@ export default function SignalContextPanel({ signal, market }) {
       <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
         <div>
           <p className="text-xs text-slate-600 dark:text-slate-400 mb-0.5">Rank</p>
-          <p className="text-sm font-semibold text-white">#{signal.rank}</p>
+          <p className="text-sm font-semibold text-app-fg">#{signal.rank}</p>
         </div>
 
         <div>
           <p className="text-xs text-slate-600 dark:text-slate-400 mb-0.5">Momentum</p>
           <p className={cn(
             "text-sm font-semibold flex items-center gap-1",
-            signal.momentum_percent >= 0 ? "text-emerald-400" : "text-red-400"
+            signal.momentum_percent >= 0 ? "text-app-positive" : "text-red-700 dark:text-red-400"
           )}>
             <TrendingUp className="w-3.5 h-3.5" />
             {formatPercent(signal.momentum_percent, { signed: true })}
@@ -103,7 +103,7 @@ export default function SignalContextPanel({ signal, market }) {
             <p className="text-xs text-slate-600 dark:text-slate-400 mb-0.5">vs 200-day MA</p>
             <p className={cn(
               "text-sm font-semibold",
-              maPercent >= 0 ? "text-emerald-400" : "text-amber-400"
+              maPercent >= 0 ? "text-app-positive" : "text-app-warning"
             )}>
               {formatPercent(Math.abs(maPercent))} {maPercent >= 0 ? "above" : "below"}
             </p>
@@ -116,8 +116,8 @@ export default function SignalContextPanel({ signal, market }) {
             <span className={cn(
               "inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium",
               regimeOn
-                ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/40"
-                : "bg-amber-500/20 text-amber-400 border border-amber-500/40"
+                ? "bg-emerald-500/20 text-emerald-800 dark:text-emerald-400 border border-emerald-500/40"
+                : "bg-amber-500/20 text-amber-800 dark:text-amber-400 border border-amber-500/40"
             )}>
               {regimeOn ? "On" : "Off"}
             </span>
@@ -127,7 +127,7 @@ export default function SignalContextPanel({ signal, market }) {
         {signalAtr != null && (
           <div>
             <p className="text-xs text-slate-600 dark:text-slate-400 mb-0.5">ATR ({ATR_PERIOD_DAYS}d)</p>
-            <p className="text-sm font-semibold text-white" data-testid="signal-context-atr">
+            <p className="text-sm font-semibold text-app-fg" data-testid="signal-context-atr">
               {formatCurrency(signalAtr, { currency: panelCurrency })}
             </p>
           </div>
@@ -136,10 +136,10 @@ export default function SignalContextPanel({ signal, market }) {
         {suggestedStop != null && (
           <div>
             <p className="text-xs text-slate-600 dark:text-slate-400 mb-0.5">Suggested stop</p>
-            <p className="text-sm font-semibold text-rose-400">
+            <p className="text-sm font-semibold text-app-negative">
               {formatCurrency(suggestedStop, { currency: panelCurrency })}
             </p>
-            <p className="text-xs text-slate-600">entry − {INITIAL_ATR_MULTIPLIER}×ATR</p>
+            <p className="text-xs text-app-muted">entry − {INITIAL_ATR_MULTIPLIER}×ATR</p>
           </div>
         )}
       </div>

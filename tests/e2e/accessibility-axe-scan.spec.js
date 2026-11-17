@@ -218,7 +218,9 @@ async function runAxeScan(page, pageName, { include } = {}) {
 
   if (blocking.length > 0) {
     const detail = blocking
-      .map((v) => `  - [${v.impact}] ${v.id}: ${v.help} (${v.nodes.length} node(s)) — ${v.helpUrl}`)
+      .map((v) => `  - [${v.impact}] ${v.id}: ${v.help} (${v.nodes.length} node(s)) — ${v.helpUrl}\n`
+        // ST-08: name the first nodes, so a CI failure says which element to fix.
+        + v.nodes.slice(0, 5).map((n) => `      ${n.target.join(' ')} | ${n.html.slice(0, 140)} | ${(n.any[0] || {}).message || ''}`.slice(0, 400)).join('\n'))
       .join('\n');
     throw new Error(`[axe-core] ${pageName}: ${blocking.length} NEW serious/critical accessibility violation(s) (not in the KNOWN_VIOLATIONS baseline):\n${detail}`);
   }
@@ -700,12 +702,10 @@ test.describe('Shell consumers axe scan, populated — light theme (ST-09)', () 
 });
 
 // ---------------------------------------------------------------------------
-// EPIC-03 review pass 4: DataState's headings became `text-slate-900
-// dark:text-white` (ST-09). Three consumers wrap DataState in a card that is
-// dark in both themes; those cards now carry the `dark` class, so the heading
-// stays white in light mode. axe reports text over a gradient as `incomplete`
-// (BLG-QA-260), so the colour is asserted directly: white on slate-900/800 is
-// 14.63:1 or better.
+// EPIC-03 review pass 4 (v9.16) kept three DataState consumers on a card that
+// was dark in both themes, using the `dark` class. ST-08 (BLG-FE-265, v9.17)
+// themes those cards, so in the light theme the card is white and the
+// empty-state heading is slate-900 (17.85:1 on white).
 // ---------------------------------------------------------------------------
 
 for (const [page_, route, heading] of [
@@ -713,7 +713,7 @@ for (const [page_, route, heading] of [
   ['Watchlist', '/#/Watchlist', 'Your watchlist is empty'],
   ['Notifications', '/#/Notifications', 'No notifications yet'],
 ]) {
-  test(`${page_} empty-state heading stays white on its dark card in the light theme (EPIC-03)`, async ({ page }) => {
+  test(`${page_} empty-state heading is dark text on a themed card in the light theme (ST-08)`, async ({ page }) => {
     await page.addInitScript(() => window.localStorage.setItem('theme', 'light'));
     await mockRoutes(page);
     await page.route(new RegExp(`${API}/notifications\\?`), (r) =>
@@ -723,7 +723,63 @@ for (const [page_, route, heading] of [
     const h = page.getByText(heading, { exact: true });
     await expect(h).toBeVisible({ timeout: 10000 });
     await expectThemeApplied(page, 'light');
-    await expect(h).toHaveCSS('color', 'rgb(255, 255, 255)');
+    await expect(h).toHaveCSS('color', 'rgb(15, 23, 42)');
+    await runAxeScan(page, `${page_.replace(/ /g, '')}Empty:light`);
   });
 }
 
+// ---------------------------------------------------------------------------
+// ST-08 (BLG-FE-265, EPIC-03, v9.17): every routed page in the light theme.
+// AC: "axe color-contrast passes in the light theme on every routed page".
+// Pages already scanned above (Dashboard, Positions, Trade Plan, Settings,
+// Weekly Digest, Trade History, Trade Entry, Replay, Notification preferences
+// and history) are not repeated. Each page here is scanned populated, with
+// the payloads in fixtures/routed-pages-populated.js (copied from each page's
+// own spec). No baseline entries.
+// ---------------------------------------------------------------------------
+
+const routed = require('./fixtures/routed-pages-populated');
+
+const ST08_PAGES = [
+  // [name, route, mock, text that proves the data rendered, optional step]
+  ['TradePlans', '/#/TradePlans', routed.mockTradePlans, 'AAA'],
+  ['Signals', '/#/Signals', routed.mockSignals, 'VOD'],
+  ['Screener', '/#/Screener', routed.mockScreener, 'BARC'],
+  ['StrategyBenchmark', '/#/StrategyBenchmark', routed.mockStrategyBenchmark, 'TSLA'],
+  ['SystemStatus', '/#/SystemStatus', routed.mockSystemStatus, 'GET /signals', async (page) => {
+    await page.getByRole('button', { name: /Run Tests/ }).click();
+  }],
+  ['TickerUniverse', '/#/TickerUniverse', routed.mockTickerUniverse, 'British American Tobacco'],
+  ['Watchlist', '/#/Watchlist', routed.mockWatchlist, 'VOD.L'],
+  ['ResearchLanding', '/#/Research', routed.catchAll, null],
+  ['ResearchTicker', '/#/research/AAPL', routed.mockResearch, 'Apple reports record quarterly revenue'],
+  ['RiskDashboard', '/#/RiskDashboard', routed.mockRiskDashboard, null],
+  ['JournalReflections', '/#/Journal?section=reflections', routed.mockJournal, 'LGEN'],
+  ['JournalRedFlags', '/#/Journal?section=red-flags', routed.mockJournal, null, async (page) => {
+    await expect(page.getByTestId('event-type-label')).toHaveCount(2, { timeout: 15000 });
+  }],
+  ['JournalNotes', '/#/Journal?section=notes', routed.mockJournal, 'NVDA'],
+  ['Performance', '/#/Performance', routed.mockPerformance, 'Profit Factor'],
+  ['Notifications', '/#/notifications', routed.mockNotifications, 'Stop Loss Approaching: LGEN'],
+];
+
+// The dark run guards the sweep's promise that dark values are unchanged.
+for (const theme of ['light', 'dark']) {
+  test.describe(`Every routed page, populated — ${theme} theme (ST-08)`, () => {
+    test.beforeEach(async ({ page }) => {
+      await page.addInitScript((t) => window.localStorage.setItem('theme', t), theme);
+    });
+
+    for (const [name, route, mock, marker, step] of ST08_PAGES) {
+      test(`${name} (${theme})`, async ({ page }) => {
+        await mock(page);
+        await page.goto(route);
+        await expect(page.locator('main h1').first()).toBeVisible({ timeout: 15000 });
+        if (step) await step(page);
+        if (marker) await expect(page.locator('main').getByText(marker, { exact: false }).first()).toBeVisible({ timeout: 15000 });
+        await expectThemeApplied(page, theme);
+        await runAxeScan(page, `${name}:${theme}`);
+      });
+    }
+  });
+}

@@ -225,8 +225,9 @@ test.describe('Red Flag Journal', () => {
     const labels = page.getByTestId('event-type-label');
     await expect(labels).toHaveCount(4, { timeout: 8000 });
 
-    // pre_entry_override retains amber-400
-    await expect(labels.nth(0)).toHaveClass(/text-amber-400/);
+    // pre_entry_override retains amber (the app-warning token since ST-08, v9.17:
+    // amber-700 in light, amber-400 in dark)
+    await expect(labels.nth(0)).toHaveClass(/text-app-warning/);
     // checklist_skipped moves from orange-400 to sky-400 — administrative
     // miss, not a risk event, per the v6.0 RFJ design review §3.
     await expect(labels.nth(1)).toHaveClass(/text-sky-400/);

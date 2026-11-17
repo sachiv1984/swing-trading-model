@@ -62,18 +62,18 @@ export default function KeyInsightsCard({ metrics, winRate }) {
   }
 
   return (
-    <div className="rounded-2xl bg-slate-800/50 border border-slate-700/50 p-6 backdrop-blur-sm">
+    <div className="rounded-2xl bg-app-raised border border-app-line p-6 backdrop-blur-sm">
       <div className="flex items-center gap-3 mb-6">
         <div className="p-2 rounded-lg bg-gradient-to-br from-amber-500 to-orange-500">
           <Lightbulb className="w-5 h-5 text-white" />
         </div>
-        <h3 className="text-lg font-semibold text-white">Key Insights</h3>
+        <h3 className="text-lg font-semibold text-app-fg">Key Insights</h3>
       </div>
       <div className="space-y-3">
         {insights.slice(0, 5).map((insight, idx) => (
           <div key={idx} className="flex gap-3">
             <div className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-amber-400 mt-2" />
-            <p className="text-sm text-slate-300 leading-relaxed">{insight}</p>
+            <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed">{insight}</p>
           </div>
         ))}
       </div>

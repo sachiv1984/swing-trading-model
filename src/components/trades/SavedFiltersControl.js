@@ -84,7 +84,7 @@ export default function SavedFiltersControl({ hasActiveFilters, currentFilterSta
         {hasActiveFilters && !showNameInput && (
           <button
             onClick={() => setShowNameInput(true)}
-            className="text-sm text-cyan-400 hover:text-cyan-300 transition-colors"
+            className="text-sm text-cyan-700 dark:text-cyan-400 hover:text-cyan-800 dark:hover:text-cyan-300 transition-colors"
           >
             Save current filters as…
           </button>
@@ -97,7 +97,7 @@ export default function SavedFiltersControl({ hasActiveFilters, currentFilterSta
               onChange={(e) => { setNameInput(e.target.value); setSaveError(null); }}
               placeholder="Preset name"
               maxLength={100}
-              className="bg-slate-800/50 border-slate-700 text-app-fg placeholder:text-slate-600 dark:placeholder:text-slate-400 h-8 text-sm max-w-xs"
+              className="bg-app-raised border-slate-200 dark:border-slate-700 text-app-fg placeholder:text-slate-600 dark:placeholder:text-slate-400 h-8 text-sm max-w-xs"
             />
             <Button
               size="sm"
@@ -111,7 +111,7 @@ export default function SavedFiltersControl({ hasActiveFilters, currentFilterSta
               size="sm"
               variant="ghost"
               onClick={() => { setShowNameInput(false); setNameInput(""); setSaveError(null); }}
-              className="h-8 text-slate-600 dark:text-slate-400 hover:text-white text-xs"
+              className="h-8 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white text-xs"
             >
               Cancel
             </Button>
@@ -120,10 +120,10 @@ export default function SavedFiltersControl({ hasActiveFilters, currentFilterSta
 
         <div className="flex items-center gap-1">
           <Select onValueChange={handleApply}>
-            <SelectTrigger className="bg-slate-800/50 border-slate-700 text-white h-8 text-sm w-48">
+            <SelectTrigger className="bg-app-raised border-slate-200 dark:border-slate-700 text-app-fg h-8 text-sm w-48">
               <SelectValue placeholder={presets.length === 0 ? "No saved filters" : "Saved filters"} />
             </SelectTrigger>
-            <SelectContent className="bg-slate-800 border-slate-700">
+            <SelectContent className="bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700">
               {presets.length === 0 ? (
                 <div className="px-3 py-2 text-xs text-slate-600 dark:text-slate-400">No saved filters</div>
               ) : (
@@ -132,7 +132,7 @@ export default function SavedFiltersControl({ hasActiveFilters, currentFilterSta
                     <SelectItem value={p.id} className="flex-1">{p.name}</SelectItem>
                     <button
                       onClick={(e) => { e.stopPropagation(); setConfirmingDeleteId(p.id); }}
-                      className="p-1 text-slate-600 dark:text-slate-400 hover:text-rose-400"
+                      className="p-1 text-slate-600 dark:text-slate-400 hover:text-rose-700 dark:hover:text-rose-400"
                       aria-label={`Delete preset ${p.name}`}
                     >
                       <X className="w-3 h-3" />
@@ -149,8 +149,8 @@ export default function SavedFiltersControl({ hasActiveFilters, currentFilterSta
 
       {confirmingDeleteId && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-          <div className="w-full max-w-md rounded-2xl bg-slate-900 border border-slate-700 p-6 space-y-4 mx-4">
-            <h2 className="text-lg font-semibold text-white">
+          <div className="w-full max-w-md rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 p-6 space-y-4 mx-4">
+            <h2 className="text-lg font-semibold text-app-fg">
               Delete preset '{presets.find((p) => p.id === confirmingDeleteId)?.name}'?
             </h2>
             <div className="flex gap-3 justify-end">

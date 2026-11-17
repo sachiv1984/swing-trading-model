@@ -127,8 +127,8 @@ test.describe('SC-RPI-02 — GBP entry prices and grace stops (ST-11, BLG-FE-206
     await expect(cells.first()).toHaveAttribute('title', 'Stops are not enforced during the 10-day grace period. See strategy rules §6.');
     // Stop Dist % cell (6th column) carries no rose/amber distance colour.
     const distCell = row.locator('td').nth(5);
-    await expect(distCell).not.toHaveClass(/text-rose-400|text-amber-400/);
-    await expect(distCell.locator('.text-rose-400, .text-amber-400')).toHaveCount(0);
+    await expect(distCell).not.toHaveClass(/text-app-negative|text-app-warning/);
+    await expect(distCell.locator('.text-app-negative, .text-app-warning, .text-rose-400, .text-amber-400')).toHaveCount(0);
     // A post-grace row still shows its stop price.
     await expect(page.locator('tr', { hasText: 'MU' }).getByTestId('stop-not-enforced')).toHaveCount(0);
   });
@@ -155,9 +155,9 @@ test.describe('SC-RPI-03 — Stop Dist % from the API (ST-13, BLG-BE-155)', () =
     await gotoRisk(page);
     const distOf = (t) => page.locator('tr', { hasText: t }).locator('td').nth(5);
     await expect(distOf('MU')).toHaveText('8.0%');
-    await expect(distOf('MU')).toHaveClass(/text-amber-400/);
+    await expect(distOf('MU')).toHaveClass(/text-app-warning/); // ST-08: amber-700/400 token
     await expect(distOf('WDC')).toHaveText('4.2%');
-    await expect(distOf('WDC')).toHaveClass(/text-rose-400/);
+    await expect(distOf('WDC')).toHaveClass(/text-app-negative/);
     await expect(distOf('DELL')).toHaveText('—');
     // Within PROFITABLE, smallest API distance first.
     await expect(page.locator('tbody tr td:first-child')).toHaveText(['WDC', 'MU', 'DELL']);

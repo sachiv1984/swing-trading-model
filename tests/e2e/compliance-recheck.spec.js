@@ -188,7 +188,7 @@ test('SC-CR-09: Pass result shows the all-pass affirmation line (ST-02, EPIC-01,
   const note = page.locator('[data-testid="compliance-recheck-all-pass-note"]');
   await expect(note).toBeVisible({ timeout: 5000 });
   await expect(note).toHaveText('All 5 checks passed — no action needed.');
-  await expect(note).toHaveClass(/text-emerald-400/);
+  await expect(note).toHaveClass(/text-app-positive/); // ST-08 token: emerald-700/400
 });
 
 test('SC-CR-10: Warn/Fail results do not show the all-pass affirmation line', async ({ page }) => {

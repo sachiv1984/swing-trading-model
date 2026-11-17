@@ -33,9 +33,9 @@ export default function MarketComparison({ ukMetrics, usMetrics }) {
     const m = normalizeMetrics(metrics);
 
     return (
-      <div className="rounded-2xl bg-slate-800/50 border border-slate-700/50 p-6 backdrop-blur-sm">
+      <div className="rounded-2xl bg-app-raised border border-app-line p-6 backdrop-blur-sm">
         <div className="flex items-center justify-between mb-6">
-          <h3 className="text-lg font-semibold text-white">{title}</h3>
+          <h3 className="text-lg font-semibold text-app-fg">{title}</h3>
           <div className={`px-3 py-1 rounded-lg bg-gradient-to-r ${gradient} text-white text-xs font-medium`}>
             {m.totalTrades} trades
           </div>
@@ -44,38 +44,38 @@ export default function MarketComparison({ ukMetrics, usMetrics }) {
         <div className="space-y-4">
           <div className="flex justify-between items-center">
             <span className="text-sm text-slate-600 dark:text-slate-400">Win Rate</span>
-            <span className="text-sm font-semibold text-white">{m.winRate}%</span>
+            <span className="text-sm font-semibold text-app-fg">{m.winRate}%</span>
           </div>
 
           <div className="flex justify-between items-center">
             <span className="text-sm text-slate-600 dark:text-slate-400">Total P&amp;L</span>
-            <span className={`text-sm font-semibold ${m.totalPnl > 0 ? "text-emerald-400" : m.totalPnl < 0 ? "text-rose-400" : "text-slate-300"}`}>
+            <span className={`text-sm font-semibold ${m.totalPnl > 0 ? "text-app-positive" : m.totalPnl < 0 ? "text-app-negative" : "text-slate-700 dark:text-slate-300"}`}>
               {formatCurrency(m.totalPnl, { signed: true })}
             </span>
           </div>
 
           <div className="flex justify-between items-center">
             <span className="text-sm text-slate-600 dark:text-slate-400">Avg Win</span>
-            <span className="text-sm font-semibold text-emerald-400">{formatCurrency(m.avgWin, { signed: true })}</span>
+            <span className="text-sm font-semibold text-app-positive">{formatCurrency(m.avgWin, { signed: true })}</span>
           </div>
 
           <div className="flex justify-between items-center">
             <span className="text-sm text-slate-600 dark:text-slate-400">Avg Loss</span>
-            <span className="text-sm font-semibold text-rose-400">
+            <span className="text-sm font-semibold text-app-negative">
               {formatCurrency(-Math.abs(m.avgLoss), { signed: true })}
             </span>
           </div>
 
-          <div className="pt-4 border-t border-slate-700/50">
+          <div className="pt-4 border-t border-app-line">
             <div className="flex items-center gap-2 mb-2">
-              <TrendingUp className="w-4 h-4 text-emerald-400" />
+              <TrendingUp className="w-4 h-4 text-app-positive" />
               <span className="text-xs text-slate-600 dark:text-slate-400">Best Performer</span>
             </div>
 
             {m.bestPerformer ? (
               <>
-                <p className="text-sm font-semibold text-white">{m.bestPerformer.ticker?.replace(".L", "")}</p>
-                <p className="text-xs text-emerald-400">{formatCurrency(m.bestPerformer.pnl, { signed: true })}</p>
+                <p className="text-sm font-semibold text-app-fg">{m.bestPerformer.ticker?.replace(".L", "")}</p>
+                <p className="text-xs text-app-positive">{formatCurrency(m.bestPerformer.pnl, { signed: true })}</p>
               </>
             ) : (
               <p className="text-sm text-slate-600 dark:text-slate-400">No trades yet</p>
@@ -84,14 +84,14 @@ export default function MarketComparison({ ukMetrics, usMetrics }) {
 
           <div className="pt-2">
             <div className="flex items-center gap-2 mb-2">
-              <TrendingDown className="w-4 h-4 text-rose-400" />
+              <TrendingDown className="w-4 h-4 text-app-negative" />
               <span className="text-xs text-slate-600 dark:text-slate-400">Worst Performer</span>
             </div>
 
             {m.worstPerformer ? (
               <>
-                <p className="text-sm font-semibold text-white">{m.worstPerformer.ticker?.replace(".L", "")}</p>
-                <p className="text-xs text-rose-400">{formatCurrency(-Math.abs(m.worstPerformer.pnl), { signed: true })}</p>
+                <p className="text-sm font-semibold text-app-fg">{m.worstPerformer.ticker?.replace(".L", "")}</p>
+                <p className="text-xs text-app-negative">{formatCurrency(-Math.abs(m.worstPerformer.pnl), { signed: true })}</p>
               </>
             ) : (
               <p className="text-sm text-slate-600 dark:text-slate-400">No trades yet</p>

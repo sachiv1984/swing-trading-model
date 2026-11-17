@@ -325,13 +325,16 @@ test.describe('ST-10 — Trade plan status badges and abandonment UI', () => {
     await expect(page.getByText('Abandoned').first()).toBeVisible();
   });
 
-  test('SC-E03-12: Abandoned plan row has reduced opacity', async ({ page }) => {
+  test('SC-E03-12: Abandoned plan row is marked by its badge, not faded', async ({ page }) => {
     await setupTradePlans(page);
     await page.goto('/#/TradePlans');
     await expect(page.getByText('TSLA')).toBeVisible({ timeout: 8000 });
-    // The abandoned row should have opacity-70 class
+    // trade_plan.md v1.29 (ST-08, v9.17): the opacity-70 fade put the row below
+    // WCAG AA in the light theme, so the row is no longer faded; the
+    // "Abandoned" status badge marks it.
     const abandonedRow = page.locator('tr').filter({ hasText: 'TSLA' });
-    await expect(abandonedRow).toHaveClass(/opacity-70/);
+    await expect(abandonedRow).not.toHaveClass(/opacity-70/);
+    await expect(abandonedRow.getByText('Abandoned', { exact: true })).toBeVisible();
   });
 
   test('SC-E03-13: TradePlan edit page shows Abandon Plan button for non-abandoned plan', async ({ page }) => {

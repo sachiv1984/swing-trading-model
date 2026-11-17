@@ -137,7 +137,7 @@ export function TaxYearReport({ onViewMonthly }) {
   }, [reportData, sortField, sortDir]);
 
   const SortIcon = ({ field }) => {
-    if (sortField !== field) return <ChevronsUpDown className="w-3 h-3 text-slate-500 inline ml-1" />;
+    if (sortField !== field) return <ChevronsUpDown className="w-3 h-3 text-app-muted inline ml-1" />;
     return sortDir === "asc"
       ? <ChevronUp className="w-3 h-3 text-cyan-700 dark:text-cyan-400 inline ml-1" />
       : <ChevronDown className="w-3 h-3 text-cyan-700 dark:text-cyan-400 inline ml-1" />;
@@ -183,7 +183,7 @@ export function TaxYearReport({ onViewMonthly }) {
             onClick={handlePdfDownload}
             disabled={pdfGenerating}
             variant="outline"
-            className="border-slate-300 dark:border-slate-600 text-slate-800 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:border-slate-500 h-9"
+            className="border-slate-300 dark:border-slate-600 text-slate-800 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:border-slate-300 dark:hover:border-slate-500 h-9"
           >
             {pdfGenerating ? (
               <>
@@ -202,7 +202,7 @@ export function TaxYearReport({ onViewMonthly }) {
             onClick={handleCsvDownload}
             disabled={csvGenerating}
             variant="outline"
-            className="border-slate-300 dark:border-slate-600 text-slate-800 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:border-slate-500 h-9"
+            className="border-slate-300 dark:border-slate-600 text-slate-800 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:border-slate-300 dark:hover:border-slate-500 h-9"
           >
             {csvGenerating ? (
               <>
@@ -221,7 +221,7 @@ export function TaxYearReport({ onViewMonthly }) {
 
       {isLoading ? (
         <div className="flex items-center justify-center py-20">
-          <Loader2 className="w-8 h-8 animate-spin text-slate-500" />
+          <Loader2 className="w-8 h-8 animate-spin text-app-muted" />
         </div>
       ) : isError ? (
         <div className="rounded-xl border border-rose-500/30 bg-rose-500/10 p-6 text-center">
@@ -308,7 +308,7 @@ export function TaxYearReport({ onViewMonthly }) {
           {/* Trades Table */}
           {sortedTrades.length === 0 ? (
             <div className="rounded-xl border border-slate-200 dark:border-slate-700/50 bg-white dark:bg-slate-800/50 py-12 text-center">
-              <FileText className="w-10 h-10 text-slate-600 mx-auto mb-3" />
+              <FileText className="w-10 h-10 text-app-muted mx-auto mb-3" />
               <p className="text-slate-600 dark:text-slate-400">
                 No closed trades recorded for the {taxYearLabel} tax year.
               </p>
@@ -369,7 +369,7 @@ export function TaxYearReport({ onViewMonthly }) {
                       >
                         <td className="px-3 py-3 font-medium text-slate-900 dark:text-white">{trade.ticker}</td>
                         <td className="px-3 py-3">
-                          <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${trade.market === "US" ? "bg-violet-500/20 text-violet-300" : "bg-cyan-500/20 text-cyan-700 dark:text-cyan-300"}`}>
+                          <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${trade.market === "US" ? "bg-violet-500/20 text-violet-800 dark:text-violet-300" : "bg-cyan-500/20 text-cyan-800 dark:text-cyan-300"}`}>
                             {trade.market}
                           </span>
                         </td>
@@ -484,7 +484,7 @@ function SI02GateStatusSection() {
   const GateBadge = ({ met }) => (
     <span
       className={`px-2.5 py-1 rounded-full text-xs font-semibold ${
-        met ? "bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30" : "bg-amber-500/20 text-amber-700 dark:text-amber-400 border border-amber-500/30"
+        met ? "bg-emerald-500/20 text-emerald-800 dark:text-emerald-400 border border-emerald-500/30" : "bg-amber-500/20 text-amber-800 dark:text-amber-400 border border-amber-500/30"
       }`}
     >
       {met ? "MET" : "NOT MET"}
@@ -593,8 +593,8 @@ export function ReconciliationReport() {
       data-testid="reconciliation-match-badge"
       className={`px-2.5 py-1 rounded-full text-xs font-semibold ${
         matched
-          ? "bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30"
-          : "bg-amber-500/20 text-amber-700 dark:text-amber-400 border border-amber-500/30"
+          ? "bg-emerald-500/20 text-emerald-800 dark:text-emerald-400 border border-emerald-500/30"
+          : "bg-amber-500/20 text-amber-800 dark:text-amber-400 border border-amber-500/30"
       }`}
     >
       {matched ? "✓ Reconciled" : `⚠ Discrepancy — ${formatGBP(diff)} difference`}
@@ -745,7 +745,7 @@ export function MonthlyPnlTable({ initialYear }) {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <Loader2 className="w-8 h-8 animate-spin text-slate-500" />
+        <Loader2 className="w-8 h-8 animate-spin text-app-muted" />
       </div>
     );
   }
@@ -800,7 +800,7 @@ export function MonthlyPnlTable({ initialYear }) {
           onClick={handleCsvDownload}
           disabled={csvGenerating}
           variant="outline"
-          className="border-slate-300 dark:border-slate-600 text-slate-800 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:border-slate-500 h-9"
+          className="border-slate-300 dark:border-slate-600 text-slate-800 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:border-slate-300 dark:hover:border-slate-500 h-9"
         >
           {csvGenerating ? (
             <>

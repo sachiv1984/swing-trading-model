@@ -5,7 +5,7 @@ import { formatPercent } from "../../lib/format";
 function tileClass(exposurePct) {
   if (exposurePct >= 40) return "border border-amber-400 bg-amber-400/10";
   if (exposurePct >= 20) return "border border-amber-400/60";
-  return "border border-slate-700";
+  return "border border-slate-200 dark:border-slate-700";
 }
 
 function SectorTile({ sector_name, position_count, exposure_pct }) {
@@ -18,7 +18,7 @@ function SectorTile({ sector_name, position_count, exposure_pct }) {
       <span className="text-xs text-slate-600 dark:text-slate-400 truncate" title={sector_name}>
         {sector_name}
       </span>
-      <span className="text-lg font-semibold text-white leading-tight">
+      <span className="text-lg font-semibold text-app-fg leading-tight">
         {formatPercent(exposure_pct)}
       </span>
       <span className="text-xs text-slate-600 dark:text-slate-400">
@@ -37,11 +37,11 @@ export default function SectorHeatMap() {
 
   if (isLoading) {
     return (
-      <div className="bg-slate-900 rounded-xl p-4 border border-slate-800">
-        <h2 className="text-sm font-medium text-slate-300 mb-3">Sector Concentration</h2>
+      <div className="bg-white dark:bg-slate-900 rounded-xl p-4 border border-slate-200 dark:border-slate-800">
+        <h2 className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">Sector Concentration</h2>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
           {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="h-20 rounded-lg bg-slate-800 animate-pulse" />
+            <div key={i} className="h-20 rounded-lg bg-slate-100 dark:bg-slate-800 animate-pulse" />
           ))}
         </div>
       </div>
@@ -57,19 +57,19 @@ export default function SectorHeatMap() {
 
   if (sectors.length === 0) {
     return (
-      <div className="bg-slate-900 rounded-xl p-4 border border-slate-800">
-        <h2 className="text-sm font-medium text-slate-300 mb-2">Sector Concentration</h2>
+      <div className="bg-white dark:bg-slate-900 rounded-xl p-4 border border-slate-200 dark:border-slate-800">
+        <h2 className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Sector Concentration</h2>
         <p className="text-sm text-slate-600 dark:text-slate-400">No open positions.</p>
       </div>
     );
   }
 
   return (
-    <div className="bg-slate-900 rounded-xl p-4 border border-slate-800">
+    <div className="bg-white dark:bg-slate-900 rounded-xl p-4 border border-slate-200 dark:border-slate-800">
       <div className="flex items-center justify-between mb-3">
-        <h2 className="text-sm font-medium text-slate-300">Sector Concentration</h2>
+        <h2 className="text-sm font-medium text-slate-700 dark:text-slate-300">Sector Concentration</h2>
         {concentrationAlert && (
-          <span className="text-xs font-medium text-amber-400 bg-amber-400/10 border border-amber-400/30 rounded px-2 py-0.5">
+          <span className="text-xs font-medium text-amber-800 dark:text-amber-400 bg-amber-400/10 border border-amber-400/30 rounded px-2 py-0.5">
             Concentration Alert
           </span>
         )}

@@ -28,7 +28,7 @@ function ConditionText({ alert }) {
 function StatusBadge({ alert }) {
   if (alert.active) {
     return (
-      <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-700 dark:text-emerald-400">
+      <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-800 dark:text-emerald-400">
         Active
       </span>
     );
@@ -154,7 +154,7 @@ function CreateForm({ onSave, onCancel }) {
               className={cn(
                 "px-4 py-2 rounded-lg text-sm font-medium border transition-all capitalize",
                 condition === c
-                  ? "bg-gradient-to-r from-cyan-500/20 to-violet-500/20 border-cyan-500/40 text-cyan-700 dark:text-cyan-400"
+                  ? "bg-gradient-to-r from-cyan-500/20 to-violet-500/20 border-cyan-500/40 text-cyan-800 dark:text-cyan-400"
                   : "bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400"
               )}
             >
@@ -304,7 +304,7 @@ export default function CustomPriceAlertsSection() {
         ) : alerts.length === 0 ? (
           <>
             <div className="flex flex-col items-center justify-center py-16 text-center px-6">
-              <BellPlus className="w-10 h-10 text-slate-600 mb-3" />
+              <BellPlus className="w-10 h-10 text-app-muted mb-3" />
               <h3 className="text-base font-semibold text-slate-900 dark:text-white mb-1">No custom price alerts.</h3>
               <p className="text-sm text-slate-600 dark:text-slate-400 mb-5">
                 Create an alert to be notified when a ticker crosses a price you choose.
@@ -340,7 +340,7 @@ export default function CustomPriceAlertsSection() {
                       variant="ghost"
                       size="icon"
                       onClick={() => setConfirmDeleteId(alert.id)}
-                      className="h-7 w-7 text-slate-600 dark:text-slate-400 hover:text-rose-400 hover:bg-rose-500/10"
+                      className="h-7 w-7 text-slate-600 dark:text-slate-400 hover:text-rose-700 dark:hover:text-rose-400 hover:bg-rose-500/10"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                     </Button>

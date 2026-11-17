@@ -240,7 +240,7 @@ test.describe('SC-TPCR-07 — Completion rate colour convention', () => {
 
     const rate = page.getByText('62.5%');
     await expect(rate).toBeVisible({ timeout: 8000 });
-    await expect(rate).toHaveClass(/text-emerald-400/);
+    await expect(rate).toHaveClass(/text-app-positive/); // ST-08 token: emerald-700/400
   });
 
   test('SC-TPCR-07b: Rate 40-59% renders in the amber colour class', async ({ page }) => {
@@ -250,7 +250,7 @@ test.describe('SC-TPCR-07 — Completion rate colour convention', () => {
 
     const rate = page.getByText('50.0%');
     await expect(rate).toBeVisible({ timeout: 8000 });
-    await expect(rate).toHaveClass(/text-amber-400/);
+    await expect(rate).toHaveClass(/text-app-warning/);
   });
 
   test('SC-TPCR-07c: Rate <40% renders in the red (rose) colour class', async ({ page }) => {
@@ -260,6 +260,6 @@ test.describe('SC-TPCR-07 — Completion rate colour convention', () => {
 
     const rate = page.getByText('30.0%');
     await expect(rate).toBeVisible({ timeout: 8000 });
-    await expect(rate).toHaveClass(/text-rose-400/);
+    await expect(rate).toHaveClass(/text-app-negative/);
   });
 });

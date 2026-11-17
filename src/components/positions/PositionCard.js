@@ -105,9 +105,9 @@ function LastReviewedRow({ position, drawdownActive }) {
   return (
     <div className="flex items-center justify-between gap-2 pb-3 mb-1" data-testid="last-reviewed-row">
       <div className="flex items-center gap-1.5">
-        {flagged && <Clock className="w-3 h-3 text-amber-600 dark:text-amber-400 flex-shrink-0" aria-hidden="true" />}
+        {flagged && <Clock className="w-3 h-3 text-amber-700 dark:text-amber-400 flex-shrink-0" aria-hidden="true" />}
         <span
-          className={cn("text-xs", flagged ? "text-amber-600 dark:text-amber-400" : "text-slate-600 dark:text-slate-400")}
+          className={cn("text-xs", flagged ? "text-amber-700 dark:text-amber-400" : "text-slate-600 dark:text-slate-400")}
           aria-label={ariaLabel}
         >
           {label}
@@ -119,7 +119,7 @@ function LastReviewedRow({ position, drawdownActive }) {
         title="Mark Reviewed"
         aria-label={`Mark ${position.ticker} as reviewed`}
         data-testid="mark-reviewed-button"
-        className="text-slate-600 hover:text-emerald-400 disabled:opacity-40"
+        className="text-app-muted hover:text-emerald-700 dark:hover:text-emerald-400 disabled:opacity-40"
       >
         <Check className="w-3.5 h-3.5" />
       </button>
@@ -159,8 +159,8 @@ export default function PositionCard({ position, onEdit, onExit, onRecheck, draw
       data-highlighted={highlighted ? "true" : undefined}
       className={cn(
         "relative overflow-hidden rounded-2xl border p-5 transition-colors",
-        "bg-gradient-to-br from-slate-900 to-slate-800 backdrop-blur-sm",
-        "border-slate-700/50 hover:border-slate-600/50",
+        "bg-white dark:bg-gradient-to-br dark:from-slate-900 dark:to-slate-800 backdrop-blur-sm",
+        "border-app-line hover:border-slate-300 dark:hover:border-slate-600/50",
         // ST-22 (BLG-FE-207, v9.12): ?position={id} deep-link highlight (positions.md §Position Deep Link)
         highlighted && "ring-2 ring-cyan-500"
       )}
@@ -168,7 +168,7 @@ export default function PositionCard({ position, onEdit, onExit, onRecheck, draw
       <div className="flex items-start justify-between mb-4">
         <div>
           <div className="flex items-center gap-2 flex-wrap">
-            <h3 className="text-lg font-bold text-white">{position.ticker}</h3>
+            <h3 className="text-lg font-bold text-app-fg">{position.ticker}</h3>
             <span className="text-xs px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
               {position.market}
             </span>
@@ -182,13 +182,14 @@ export default function PositionCard({ position, onEdit, onExit, onRecheck, draw
           isProfit ? "bg-emerald-500/20" : "bg-rose-500/20"
         )}>
           {isProfit ? (
-            <TrendingUp className="w-4 h-4 text-emerald-400" />
+            <TrendingUp className="w-4 h-4 text-app-positive" />
           ) : (
-            <TrendingDown className="w-4 h-4 text-rose-400" />
+            <TrendingDown className="w-4 h-4 text-app-negative" />
           )}
           <span className={cn(
             "text-sm font-semibold",
-            isProfit ? "text-emerald-400" : "text-rose-400"
+            // Text on a /20 tint takes the 800 shade in light (design_system.md §Page Colour Token Sweep rule 2).
+            isProfit ? "text-emerald-800 dark:text-emerald-400" : "text-rose-800 dark:text-rose-400"
           )}>
             {formatPercent(pnlPercent, { signed: true })}
           </span>
@@ -199,15 +200,15 @@ export default function PositionCard({ position, onEdit, onExit, onRecheck, draw
       <PositionCardAlertsRow position={position} />
 
       <div className="grid grid-cols-3 gap-4 mb-4">
-        <div className="p-3 rounded-xl bg-slate-800/50">
+        <div className="p-3 rounded-xl bg-app-raised">
           <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Entry</p>
-          <p className="text-sm font-semibold text-white">
+          <p className="text-sm font-semibold text-app-fg">
             {formatCurrency(position.entry_price, { currency })}
           </p>
         </div>
-        <div className="p-3 rounded-xl bg-slate-800/50">
+        <div className="p-3 rounded-xl bg-app-raised">
           <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Current</p>
-          <p className="text-sm font-semibold text-white">
+          <p className="text-sm font-semibold text-app-fg">
             {formatCurrency(displayCurrentPrice || null, { currency })}
             {position.price_is_stale === true && <StaleMarker explanation={STALE_EXPLANATION_POSITIONS} />}
           </p>
@@ -218,7 +219,7 @@ export default function PositionCard({ position, onEdit, onExit, onRecheck, draw
             <span>Init: {formatCurrency(position.initial_stop, { currency })}</span>
             <TrailingStopExplainerIcon />
           </p>
-          <p className="text-sm font-semibold text-rose-400 flex items-center gap-1">
+          <p className="text-sm font-semibold text-app-negative flex items-center gap-1">
             {/* ST-06 (BLG-FE-193, v9.10): per-row stop details tooltip */}
             <StopDetailsTrigger position={position} currency={currency}>
               {formatCurrency(displayTrailStop, { currency })}
@@ -239,11 +240,11 @@ export default function PositionCard({ position, onEdit, onExit, onRecheck, draw
 
       {/* Note & Tags Preview */}
       {(position.entry_note || position.tags?.length > 0) && (
-        <div className="mb-4 p-3 rounded-xl bg-slate-800/30 border border-slate-700/30">
+        <div className="mb-4 p-3 rounded-xl bg-slate-50 dark:bg-slate-800/30 border border-slate-200 dark:border-slate-700/30">
           {position.entry_note && (
             <button
               onClick={() => setShowNoteModal(true)}
-              className="w-full text-left mb-2 text-sm text-slate-600 dark:text-slate-400 italic hover:text-slate-300 transition-colors"
+              className="w-full text-left mb-2 text-sm text-slate-600 dark:text-slate-400 italic hover:text-slate-700 dark:hover:text-slate-300 transition-colors"
             >
               {position.entry_note.length > 80 
                 ? `${position.entry_note.substring(0, 80)}...` 
@@ -255,7 +256,7 @@ export default function PositionCard({ position, onEdit, onExit, onRecheck, draw
               {position.tags.slice(0, 3).map((tag) => (
                 <span
                   key={tag}
-                  className="px-2 py-0.5 text-xs rounded-full bg-cyan-500/20 text-cyan-400 border border-cyan-500/30"
+                  className="px-2 py-0.5 text-xs rounded-full bg-cyan-500/20 text-cyan-800 dark:text-cyan-400 border border-cyan-500/30"
                 >
                   {tag}
                 </span>
@@ -271,7 +272,7 @@ export default function PositionCard({ position, onEdit, onExit, onRecheck, draw
       )}
 
       {/* ST-15 (v7.0, BLG-FEAT-68): card footer, after the alert-icon row, before Actions */}
-      <div className="pt-4 border-t border-slate-700/50">
+      <div className="pt-4 border-t border-app-line">
         <LastReviewedRow position={position} drawdownActive={drawdownActive} />
       </div>
 
@@ -279,7 +280,7 @@ export default function PositionCard({ position, onEdit, onExit, onRecheck, draw
         <Button
           variant="ghost"
           size="sm"
-          className="flex-1 text-slate-600 dark:text-slate-400 hover:text-white hover:bg-slate-800"
+          className="flex-1 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"
           onClick={() => onEdit(position)}
         >
           <Edit2 className="w-4 h-4 mr-2" />
@@ -292,7 +293,7 @@ export default function PositionCard({ position, onEdit, onExit, onRecheck, draw
           title="Recheck Compliance"
           aria-label={`Recheck compliance for ${position.ticker}`}
           data-testid="recheck-compliance-button"
-          className="flex-1 text-amber-400/80 hover:text-amber-300 hover:bg-amber-500/10"
+          className="flex-1 text-amber-700 dark:text-amber-400/80 hover:text-amber-800 dark:hover:text-amber-300 hover:bg-amber-500/10"
           onClick={() => onRecheck(position)}
         >
           <Zap className="w-4 h-4 mr-2" />
@@ -301,7 +302,7 @@ export default function PositionCard({ position, onEdit, onExit, onRecheck, draw
         <Button
           variant="ghost"
           size="sm"
-          className="flex-1 text-rose-400 hover:text-rose-300 hover:bg-rose-500/10"
+          className="flex-1 text-app-negative hover:text-rose-800 dark:hover:text-rose-300 hover:bg-rose-500/10"
           onClick={() => onExit(position)}
         >
           <LogOut className="w-4 h-4 mr-2" />
@@ -317,22 +318,22 @@ export default function PositionCard({ position, onEdit, onExit, onRecheck, draw
 
       {/* Note Modal */}
       <Dialog open={showNoteModal} onOpenChange={setShowNoteModal}>
-        <DialogContent className="bg-slate-900 border-slate-700 text-white max-w-md">
+        <DialogContent className="bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-app-fg max-w-md">
           <DialogHeader>
-            <DialogTitle className="text-cyan-400">Trade Entry Note</DialogTitle>
+            <DialogTitle className="text-cyan-700 dark:text-cyan-400">Trade Entry Note</DialogTitle>
           </DialogHeader>
           <div className="py-4">
-            <p className="text-sm text-slate-300 leading-relaxed whitespace-pre-wrap">
+            <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-wrap">
               {position.entry_note}
             </p>
             {position.tags?.length > 0 && (
-              <div className="mt-4 pt-4 border-t border-slate-700/50">
+              <div className="mt-4 pt-4 border-t border-app-line">
                 <p className="text-xs text-slate-600 dark:text-slate-400 mb-2">Tags:</p>
                 <div className="flex flex-wrap gap-2">
                   {position.tags.map((tag) => (
                     <span
                       key={tag}
-                      className="px-2 py-1 text-xs rounded-full bg-cyan-500/20 text-cyan-400 border border-cyan-500/30"
+                      className="px-2 py-1 text-xs rounded-full bg-cyan-500/20 text-cyan-800 dark:text-cyan-400 border border-cyan-500/30"
                     >
                       {tag}
                     </span>

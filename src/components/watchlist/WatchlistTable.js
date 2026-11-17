@@ -18,7 +18,7 @@ export default function WatchlistTable({ entries, screenerTickers, newsHook, mod
     <div className="overflow-x-auto">
       <table className="w-full">
         <thead>
-          <tr className="border-b border-slate-700/50">
+          <tr className="border-b border-app-line">
             <th className="px-5 py-3.5 text-left w-8">
               <Checkbox checked={allSelected} onCheckedChange={onToggleAll} aria-label="Select all" />
             </th>
@@ -29,7 +29,7 @@ export default function WatchlistTable({ entries, screenerTickers, newsHook, mod
             ))}
           </tr>
         </thead>
-        <tbody className="divide-y divide-slate-700/30">
+        <tbody className="divide-y divide-slate-200 dark:divide-slate-700/30">
           {entries.map((entry) => (
             <WatchlistRow
               key={entry.id}

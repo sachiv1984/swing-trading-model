@@ -93,13 +93,13 @@ function stripUkSuffix(ticker) {
 function RegimeBadge({ status }) {
   if (status === "risk_on") {
     return (
-      <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+      <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-500/20 text-emerald-800 dark:text-emerald-400 border border-emerald-500/30">
         Risk On
       </span>
     );
   }
   return (
-    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-slate-700/50 text-slate-600 dark:text-slate-400 border border-slate-600/30">
+    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-slate-100 dark:bg-slate-700/50 text-slate-600 dark:text-slate-400 border border-slate-300 dark:border-slate-600/30">
       Risk Off
     </span>
   );
@@ -108,8 +108,8 @@ function RegimeBadge({ status }) {
 function MarketBadge({ market }) {
   const cls =
     market === "UK"
-      ? "bg-blue-500/20 text-blue-400 border-blue-500/30"
-      : "bg-violet-500/20 text-violet-400 border-violet-500/30";
+      ? "bg-blue-500/20 text-blue-800 dark:text-blue-400 border-blue-500/30"
+      : "bg-violet-500/20 text-violet-800 dark:text-violet-400 border-violet-500/30";
   return (
     <span className={cn("inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border", cls)}>
       {market}
@@ -162,11 +162,11 @@ function RegimeHistoryPanel({ onRun, running }) {
   return (
     <div
       data-testid="regime-history-panel"
-      className="mb-4 p-4 rounded-xl border border-slate-700/50 bg-slate-800/30"
+      className="mb-4 p-4 rounded-xl border border-app-line bg-slate-50 dark:bg-slate-800/30"
     >
       <div className="flex items-center justify-between mb-3">
-        <h3 className="text-sm font-semibold text-white">Regime History</h3>
-        <div className="flex rounded-md border border-slate-700 overflow-hidden text-xs" data-testid="regime-window-selector">
+        <h3 className="text-sm font-semibold text-app-fg">Regime History</h3>
+        <div className="flex rounded-md border border-slate-200 dark:border-slate-700 overflow-hidden text-xs" data-testid="regime-window-selector">
           {["30d", "60d", "all"].map((w) => (
             <button
               key={w}
@@ -175,8 +175,8 @@ function RegimeHistoryPanel({ onRun, running }) {
               className={cn(
                 "px-3 py-1.5 transition-colors capitalize",
                 window_ === w
-                  ? "bg-slate-700 text-white"
-                  : "bg-slate-900 text-slate-600 dark:text-slate-400 hover:text-white"
+                  ? "bg-slate-200 dark:bg-slate-700 text-app-fg"
+                  : "bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
               )}
             >
               {w === "all" ? "All" : w}
@@ -190,7 +190,7 @@ function RegimeHistoryPanel({ onRun, running }) {
         error={error}
         onRetry={() => fetchDistribution(window_)}
         empty={!loading && !error && !hasData}
-        emptyIcon={<BarChart2 className="w-8 h-8 text-slate-600" />}
+        emptyIcon={<BarChart2 className="w-8 h-8 text-app-muted" />}
         emptyHeading="No regime history yet"
         emptyBody="Regime history accrues as screener runs complete over the selected window."
         emptyAction={
@@ -206,7 +206,7 @@ function RegimeHistoryPanel({ onRun, running }) {
           <>
             <div
               data-testid="regime-distribution-bar"
-              className="flex h-2.5 rounded-full overflow-hidden bg-slate-900"
+              className="flex h-2.5 rounded-full overflow-hidden bg-white dark:bg-slate-900"
             >
               <div
                 data-testid="regime-bar-risk-on"
@@ -231,16 +231,16 @@ function RegimeHistoryPanel({ onRun, running }) {
 
 function EarningsBadge({ ticker, market }) {
   const { data, loading } = useEarnings(ticker, market);
-  if (loading) return <span className="text-slate-600 text-xs">…</span>;
-  if (!data || data.days_until_earnings == null) return <span className="text-slate-600 text-xs">—</span>;
+  if (loading) return <span className="text-app-muted text-xs">…</span>;
+  if (!data || data.days_until_earnings == null) return <span className="text-app-muted text-xs">—</span>;
   const days = data.days_until_earnings;
-  if (days < 0) return <span className="text-slate-600 text-xs">—</span>;
-  if (days === 0) return <span className="text-amber-400 font-medium text-xs">Today</span>;
+  if (days < 0) return <span className="text-app-muted text-xs">—</span>;
+  if (days === 0) return <span className="text-app-warning font-medium text-xs">Today</span>;
   const cls =
     days <= 5
-      ? "text-amber-400 font-medium"
+      ? "text-app-warning font-medium"
       : days <= 14
-      ? "text-yellow-500"
+      ? "text-yellow-700 dark:text-yellow-500"
       : "text-slate-600 dark:text-slate-400";
   return <span className={`text-xs ${cls}`}>{days}d</span>;
 }
@@ -253,10 +253,10 @@ function EarningsBadge({ ticker, market }) {
 // own skeleton.
 function SkeletonRow() {
   return (
-    <tr className="border-b border-slate-800/50">
+    <tr className="border-b border-slate-200 dark:border-slate-800/50">
       {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((i) => (
         <td key={i} className="px-3 py-3">
-          <Skeleton className="h-4 bg-slate-700/50" style={{ width: `${50 + (i * 13) % 40}%` }} />
+          <Skeleton className="h-4 bg-slate-100 dark:bg-slate-700/50" style={{ width: `${50 + (i * 13) % 40}%` }} />
         </td>
       ))}
     </tr>
@@ -305,11 +305,11 @@ function WatchlistPopover({ result, onClose, onAdded }) {
 
   return (
     <td colSpan={10} className="p-0">
-      <div className="mx-3 my-1 p-3 bg-slate-800 border border-slate-700 rounded-lg">
+      <div className="mx-3 my-1 p-3 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg">
         <div className="flex items-start justify-between gap-4 flex-wrap">
           <div className="flex items-center gap-3 flex-wrap">
-            <span className="text-sm font-medium text-white">
-              Add <span className="text-emerald-400">{result.market === "UK" ? stripUkSuffix(result.ticker) : result.ticker}</span> to Watchlist
+            <span className="text-sm font-medium text-app-fg">
+              Add <span className="text-app-positive">{result.market === "UK" ? stripUkSuffix(result.ticker) : result.ticker}</span> to Watchlist
             </span>
             <span className="text-xs text-slate-600 dark:text-slate-400">
               {formatPrice(result.price, result.currency)}
@@ -319,7 +319,7 @@ function WatchlistPopover({ result, onClose, onAdded }) {
               <input
                 type="number"
                 step="0.01"
-                className="w-24 px-2 py-1 text-sm bg-slate-900 border border-slate-600 rounded text-white focus:outline-none focus:border-emerald-500"
+                className="w-24 px-2 py-1 text-sm bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded text-app-fg focus:outline-none focus:border-emerald-500"
                 value={targetPrice}
                 onChange={(e) => setTargetPrice(e.target.value)}
                 placeholder="Optional"
@@ -327,7 +327,7 @@ function WatchlistPopover({ result, onClose, onAdded }) {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            {error && <span className="text-xs text-red-400">{error}</span>}
+            {error && <span className="text-xs text-red-700 dark:text-red-400">{error}</span>}
             <Button
               size="sm"
               onClick={handleAdd}
@@ -338,7 +338,7 @@ function WatchlistPopover({ result, onClose, onAdded }) {
             </Button>
             <button
               onClick={onClose}
-              className="text-slate-600 dark:text-slate-400 hover:text-white p-1 rounded"
+              className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white p-1 rounded"
             >
               <X className="w-4 h-4" />
             </button>
@@ -357,13 +357,13 @@ function NewsPanel({ ticker, cache, onClose }) {
   const { loading, headlines = [] } = cache || { loading: true, headlines: [] };
   return (
     <td colSpan={10} className="p-0">
-      <div className="mx-3 my-1 p-3 bg-slate-800/60 border border-slate-700/50 rounded-lg">
+      <div className="mx-3 my-1 p-3 bg-slate-50 dark:bg-slate-800/60 border border-app-line rounded-lg">
         <div className="flex items-center justify-between mb-2">
-          <span className="text-xs font-medium text-slate-300">
+          <span className="text-xs font-medium text-slate-700 dark:text-slate-300">
             <Newspaper className="w-3 h-3 inline mr-1" />
             Recent news — {ticker}
           </span>
-          <button onClick={onClose} className="text-slate-600 dark:text-slate-400 hover:text-white">
+          <button onClick={onClose} className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">
             <X className="w-3 h-3" />
           </button>
         </div>
@@ -372,12 +372,12 @@ function NewsPanel({ ticker, cache, onClose }) {
         ) : headlines.length > 0 ? (
           <ul className="space-y-1.5">
             {headlines.slice(0, 10).map((h, i) => (
-              <li key={i} className="text-xs text-slate-300 flex gap-2">
+              <li key={i} className="text-xs text-slate-700 dark:text-slate-300 flex gap-2">
                 <span className="shrink-0 text-slate-600 dark:text-slate-400 mt-0.5">
                   {h.published_at ? relativeTime(h.published_at) : ""}
                 </span>
                 {h.url ? (
-                  <a href={h.url} target="_blank" rel="noopener noreferrer" className="hover:text-blue-400 hover:underline">{h.headline || h.title}</a>
+                  <a href={h.url} target="_blank" rel="noopener noreferrer" className="hover:text-blue-700 dark:hover:text-blue-400 hover:underline">{h.headline || h.title}</a>
                 ) : (
                   <span>{h.headline || h.title}</span>
                 )}
@@ -389,7 +389,7 @@ function NewsPanel({ ticker, cache, onClose }) {
         )}
         <button
           onClick={onClose}
-          className="mt-2 text-xs text-slate-600 dark:text-slate-400 hover:text-slate-300 underline"
+          className="mt-2 text-xs text-slate-600 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 underline"
         >
           Close
         </button>
@@ -408,7 +408,7 @@ function SortHeader({ label, field, current, dir, onSort, className }) {
     <th
       className={cn(
         "px-3 py-3 text-left text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wider cursor-pointer select-none whitespace-nowrap",
-        active && "text-white",
+        active && "text-app-fg",
         className
       )}
       onClick={() => onSort(field)}
@@ -442,7 +442,7 @@ function SortHeader({ label, field, current, dir, onSort, className }) {
 const SCREENER_COLUMNS = [
   {
     header: "Ticker", value: (r) => (r.market === "UK" ? stripUkSuffix(r.ticker) : r.ticker),
-    cdClass: "px-3 py-3 font-mono font-medium text-white",
+    cdClass: "px-3 py-3 font-mono font-medium text-app-fg",
     cell: (r) => (r.market === "UK" ? stripUkSuffix(r.ticker) : r.ticker),
   },
   {
@@ -451,12 +451,12 @@ const SCREENER_COLUMNS = [
   },
   {
     header: "Price", sortField: "price", value: (r) => r.price,
-    cdClass: "px-3 py-3 text-slate-300",
+    cdClass: "px-3 py-3 text-slate-700 dark:text-slate-300",
     cell: (r) => formatPrice(r.price, r.currency),
   },
   {
     header: "ATR", sortField: "atr", value: (r) => r.atr,
-    cdClass: "px-3 py-3 text-slate-300",
+    cdClass: "px-3 py-3 text-slate-700 dark:text-slate-300",
     cell: (r) => formatATR(r.atr, r.atr_pct, r.currency),
   },
   {
@@ -467,10 +467,10 @@ const SCREENER_COLUMNS = [
     header: "Signal", sortField: "signal_score", value: (r) => r.signal_score,
     cell: (r) => (
       <div className="flex items-center gap-2">
-        <div className="w-16 bg-slate-700/50 rounded-full h-1.5 overflow-hidden">
+        <div className="w-16 bg-slate-100 dark:bg-slate-700/50 rounded-full h-1.5 overflow-hidden">
           <div className="h-full bg-emerald-500 rounded-full" style={{ width: `${(r.signal_score || 0) * 100}%` }} />
         </div>
-        <span className="text-slate-300 text-xs">{formatSignal(r.signal_score)}</span>
+        <span className="text-slate-700 dark:text-slate-300 text-xs">{formatSignal(r.signal_score)}</span>
       </div>
     ),
   },
@@ -501,8 +501,8 @@ const SCREENER_COLUMNS = [
             className={cn(
               "inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs border transition-colors",
               ctx.newsOpen
-                ? "bg-blue-500/20 text-blue-400 border-blue-500/30"
-                : "bg-slate-700/50 text-slate-600 dark:text-slate-400 border-slate-600/30 hover:text-blue-400"
+                ? "bg-blue-500/20 text-blue-800 dark:text-blue-400 border-blue-500/30"
+                : "bg-slate-100 dark:bg-slate-700/50 text-slate-600 dark:text-slate-400 border-slate-300 dark:border-slate-600/30 hover:text-blue-700 dark:hover:text-blue-400"
             )}
             title="Show news headlines"
           >
@@ -512,7 +512,7 @@ const SCREENER_COLUMNS = [
         ) : null}
 
         {ctx.added ? (
-          <span className="inline-flex items-center gap-1 text-xs text-emerald-400">
+          <span className="inline-flex items-center gap-1 text-xs text-app-positive">
             <Check className="w-3 h-3" /> Added
           </span>
         ) : (
@@ -521,8 +521,8 @@ const SCREENER_COLUMNS = [
             className={cn(
               "inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs border transition-colors",
               ctx.isPromoOpen
-                ? "border-emerald-500/50 bg-emerald-500/10 text-emerald-400"
-                : "border-slate-600/30 text-slate-600 dark:text-slate-400 hover:text-emerald-400 hover:border-emerald-500/30"
+                ? "border-emerald-500/50 bg-emerald-500/10 text-emerald-800 dark:text-emerald-400"
+                : "border-slate-300 dark:border-slate-600/30 text-slate-600 dark:text-slate-400 hover:text-emerald-700 dark:hover:text-emerald-400 hover:border-emerald-500/30"
             )}
             title="Add to watchlist"
           >
@@ -532,7 +532,7 @@ const SCREENER_COLUMNS = [
         )}
         <button
           onClick={() => ctx.navigate(`/research/${r.ticker}`)}
-          className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs border border-slate-600/30 text-slate-600 dark:text-slate-400 hover:text-cyan-400 hover:border-cyan-500/30 transition-colors"
+          className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs border border-slate-300 dark:border-slate-600/30 text-slate-600 dark:text-slate-400 hover:text-cyan-700 dark:hover:text-cyan-400 hover:border-cyan-500/30 transition-colors"
           title="Pre-trade research"
         >
           Research
@@ -542,7 +542,7 @@ const SCREENER_COLUMNS = [
           onClick={() => ctx.navigate(planThisUrl({ ticker: r.ticker, market: r.market, price: r.price }))}
           aria-label={`Plan this: ${r.ticker}`}
           data-testid={`screener-plan-this-${r.ticker}`}
-          className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs border border-slate-600/30 text-slate-600 dark:text-slate-400 hover:text-cyan-400 hover:border-cyan-500/30 transition-colors"
+          className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs border border-slate-300 dark:border-slate-600/30 text-slate-600 dark:text-slate-400 hover:text-cyan-700 dark:hover:text-cyan-400 hover:border-cyan-500/30 transition-colors"
         >
           Plan this
         </button>
@@ -566,12 +566,12 @@ function ScreenerQualityPanel({ runQuality, tickersRequested, tickersLoaded, tic
   if (runQuality === "FULL") {
     return (
       <div data-testid="screener-quality-panel" data-quality="FULL" className="mb-4 space-y-2">
-        <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-sm text-emerald-400">
+        <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-sm text-emerald-800 dark:text-emerald-400">
           <span className="font-semibold">Full run</span>
-          <span className="text-emerald-300">{tickersLoaded} / {tickersRequested} tickers loaded</span>
+          <span className="text-emerald-800 dark:text-emerald-300">{tickersLoaded} / {tickersRequested} tickers loaded</span>
         </div>
         {isStale && (
-          <div data-testid="stale-advisory" className="px-4 py-2 rounded-lg bg-slate-800 border border-slate-700 text-xs text-slate-600 dark:text-slate-400">
+          <div data-testid="stale-advisory" className="px-4 py-2 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs text-slate-600 dark:text-slate-400">
             Last full run: {staleHours} hours ago
           </div>
         )}
@@ -583,17 +583,17 @@ function ScreenerQualityPanel({ runQuality, tickersRequested, tickersLoaded, tic
     const failedCount = Array.isArray(tickersFailed) ? tickersFailed.length : 0;
     return (
       <div data-testid="screener-quality-panel" data-quality="DEGRADED" className="mb-4 space-y-2">
-        <div className="flex items-start gap-2 px-4 py-3 rounded-lg bg-amber-500/10 border border-amber-500/30 text-sm text-amber-400">
+        <div className="flex items-start gap-2 px-4 py-3 rounded-lg bg-amber-500/10 border border-amber-500/30 text-sm text-amber-800 dark:text-amber-400">
           <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" />
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-1">
               <span className="font-semibold">Degraded run</span>
-              <span className="text-amber-300">{tickersLoaded} / {tickersRequested} tickers loaded</span>
+              <span className="text-amber-800 dark:text-amber-300">{tickersLoaded} / {tickersRequested} tickers loaded</span>
             </div>
-            <p className="text-amber-300/80">Results may be incomplete — {failedCount} ticker{failedCount !== 1 ? "s" : ""} failed to load</p>
+            <p className="text-amber-800 dark:text-amber-300/80">Results may be incomplete — {failedCount} ticker{failedCount !== 1 ? "s" : ""} failed to load</p>
             {failedCount > 0 && (
               <button
-                className="mt-1 text-xs underline text-amber-400/70 hover:text-amber-400"
+                className="mt-1 text-xs underline text-amber-800 dark:text-amber-400/70 hover:text-amber-700 dark:hover:text-amber-400"
                 onClick={() => setFailedExpanded(v => !v)}
                 aria-expanded={failedExpanded}
               >
@@ -601,7 +601,7 @@ function ScreenerQualityPanel({ runQuality, tickersRequested, tickersLoaded, tic
               </button>
             )}
             {failedExpanded && failedCount > 0 && (
-              <div data-testid="failed-ticker-list" className="mt-2 text-xs text-amber-300/60 flex flex-wrap gap-1">
+              <div data-testid="failed-ticker-list" className="mt-2 text-xs text-amber-800 dark:text-amber-300/60 flex flex-wrap gap-1">
                 {tickersFailed.map(t => (
                   <span key={t} className="px-1.5 py-0.5 bg-amber-500/10 rounded">{t}</span>
                 ))}
@@ -610,7 +610,7 @@ function ScreenerQualityPanel({ runQuality, tickersRequested, tickersLoaded, tic
           </div>
         </div>
         {isStale && (
-          <div data-testid="stale-advisory" className="px-4 py-2 rounded-lg bg-slate-800 border border-slate-700 text-xs text-slate-600 dark:text-slate-400">
+          <div data-testid="stale-advisory" className="px-4 py-2 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs text-slate-600 dark:text-slate-400">
             Last full run: {staleHours} hours ago
           </div>
         )}
@@ -621,10 +621,10 @@ function ScreenerQualityPanel({ runQuality, tickersRequested, tickersLoaded, tic
   // FAILED state
   return (
     <div data-testid="screener-quality-panel" data-quality="FAILED" className="mb-4">
-      <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-red-500/10 border border-red-500/30 text-sm text-red-400">
+      <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-red-500/10 border border-red-500/30 text-sm text-red-800 dark:text-red-400">
         <AlertTriangle className="w-4 h-4 shrink-0" />
         <span>Screener run failed — </span>
-        <button className="underline hover:text-red-300" onClick={() => window.dispatchEvent(new Event("app:refresh"))}>
+        <button className="underline hover:text-red-800 dark:hover:text-red-300" onClick={() => window.dispatchEvent(new Event("app:refresh"))}>
           retry
         </button>
       </div>
@@ -891,8 +891,8 @@ export default function Screener() {
       className={cn(
         "text-xs px-2 py-0.5 rounded-full border",
         stale
-          ? "bg-amber-500/10 text-amber-400 border-amber-500/30"
-          : "bg-slate-700/50 text-slate-600 dark:text-slate-400 border-slate-600/30"
+          ? "bg-amber-500/10 text-amber-800 dark:text-amber-400 border-amber-500/30"
+          : "bg-slate-100 dark:bg-slate-700/50 text-slate-600 dark:text-slate-400 border-slate-300 dark:border-slate-600/30"
       )}
     >
       {stale ? "Results may be stale — " : "Last screened: "}
@@ -908,7 +908,7 @@ export default function Screener() {
       variant="outline"
       onClick={triggerScan}
       disabled={scanning}
-      className="h-8 gap-2 text-xs border-slate-700 text-slate-300 hover:text-white hover:border-slate-500"
+      className="h-8 gap-2 text-xs border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:border-slate-300 dark:hover:border-slate-500"
     >
       {scanning ? (
         <>
@@ -954,7 +954,7 @@ export default function Screener() {
       )}
 
       {scanError && (
-        <div className="mb-4 p-3 rounded-lg bg-red-500/10 border border-red-500/30 text-sm text-red-400">
+        <div className="mb-4 p-3 rounded-lg bg-red-500/10 border border-red-500/30 text-sm text-red-800 dark:text-red-400">
           Screener run failed — try again
         </div>
       )}
@@ -963,7 +963,7 @@ export default function Screener() {
       {!loading && !error && results.length > 0 && (
         <div className="flex flex-wrap items-center gap-3 mb-4">
           {/* Market filter */}
-          <div className="flex rounded-md border border-slate-700 overflow-hidden text-xs" data-testid="market-filter-bar">
+          <div className="flex rounded-md border border-slate-200 dark:border-slate-700 overflow-hidden text-xs" data-testid="market-filter-bar">
             {["All", "US", "UK"].map((m) => (
               <button
                 key={m}
@@ -972,8 +972,8 @@ export default function Screener() {
                 className={cn(
                   "px-3 py-1.5 transition-colors",
                   marketFilter === m
-                    ? "bg-slate-700 text-white"
-                    : "bg-slate-900 text-slate-600 dark:text-slate-400 hover:text-white"
+                    ? "bg-slate-200 dark:bg-slate-700 text-app-fg"
+                    : "bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
                 )}
               >
                 {m}
@@ -987,8 +987,8 @@ export default function Screener() {
             className={cn(
               "px-3 py-1.5 rounded-md border text-xs transition-colors",
               regimeFilter
-                ? "border-emerald-500/50 bg-emerald-500/10 text-emerald-400"
-                : "border-slate-700 bg-slate-900 text-slate-600 dark:text-slate-400 hover:text-white"
+                ? "border-emerald-500/50 bg-emerald-500/10 text-emerald-800 dark:text-emerald-400"
+                : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
             )}
           >
             Risk-On only
@@ -1002,8 +1002,8 @@ export default function Screener() {
                 className={cn(
                   "px-3 py-1.5 rounded-md border text-xs transition-colors flex items-center gap-1",
                   sectorFilter.length > 0
-                    ? "border-blue-500/50 bg-blue-500/10 text-blue-400"
-                    : "border-slate-700 bg-slate-900 text-slate-600 dark:text-slate-400 hover:text-white"
+                    ? "border-blue-500/50 bg-blue-500/10 text-blue-800 dark:text-blue-400"
+                    : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
                 )}
               >
                 <Search className="w-3 h-3" />
@@ -1011,9 +1011,9 @@ export default function Screener() {
                 <ChevronDown className="w-3 h-3" />
               </button>
               {sectorMenuOpen && (
-                <div className="absolute top-full left-0 mt-1 z-20 w-48 bg-slate-800 border border-slate-700 rounded-lg shadow-xl py-1 max-h-52 overflow-y-auto">
+                <div className="absolute top-full left-0 mt-1 z-20 w-48 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-xl py-1 max-h-52 overflow-y-auto">
                   <button
-                    className="w-full text-left px-3 py-1.5 text-xs text-slate-600 dark:text-slate-400 hover:text-white hover:bg-slate-700"
+                    className="w-full text-left px-3 py-1.5 text-xs text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-700"
                     onClick={() => { setSectorFilter([]); setSectorMenuOpen(false); }}
                   >
                     All sectors
@@ -1029,8 +1029,8 @@ export default function Screener() {
                       className={cn(
                         "w-full text-left px-3 py-1.5 text-xs flex items-center gap-2",
                         sectorFilter.includes(s)
-                          ? "text-blue-400 bg-blue-500/10"
-                          : "text-slate-300 hover:text-white hover:bg-slate-700"
+                          ? "text-blue-800 dark:text-blue-400 bg-blue-500/10"
+                          : "text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-700"
                       )}
                     >
                       {sectorFilter.includes(s) && <Check className="w-3 h-3 shrink-0" />}
@@ -1045,7 +1045,7 @@ export default function Screener() {
           {(marketFilter !== "All" || regimeFilter || sectorFilter.length > 0) && (
             <button
               onClick={() => { setMarketFilter("All"); setRegimeFilter(false); setSectorFilter([]); }}
-              className="text-xs text-slate-600 dark:text-slate-400 hover:text-slate-300 underline"
+              className="text-xs text-slate-600 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 underline"
             >
               Clear filters
             </button>
@@ -1095,10 +1095,10 @@ export default function Screener() {
         )}
 
         {!noRuns && !noPass && (
-          <div className="overflow-x-auto rounded-lg border border-slate-800">
+          <div className="overflow-x-auto rounded-lg border border-slate-200 dark:border-slate-800">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-slate-800 bg-slate-900/50">
+                <tr className="border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50">
                   {SCREENER_COLUMNS.map((col) =>
                     col.sortField ? (
                       <SortHeader key={col.header} label={col.header} field={col.sortField} current={sortField} dir={sortDir} onSort={handleSort} />
@@ -1128,7 +1128,7 @@ export default function Screener() {
                         <>
                           <tr
                             key={row.ticker}
-                            className="border-b border-slate-800/50 hover:bg-slate-800/30 transition-colors"
+                            className="border-b border-slate-200 dark:border-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800/30 transition-colors"
                           >
                             {SCREENER_COLUMNS.map((col) => (
                               <td key={col.header} className={col.cdClass || "px-3 py-3"}>
@@ -1139,7 +1139,7 @@ export default function Screener() {
 
                           {/* Watchlist promotion popover row */}
                           {isPromoOpen && (
-                            <tr key={`promo-${row.ticker}`} className="bg-slate-900/40">
+                            <tr key={`promo-${row.ticker}`} className="bg-slate-50 dark:bg-slate-900/40">
                               <WatchlistPopover
                                 result={row}
                                 onClose={() => setPromoRow(null)}
@@ -1153,7 +1153,7 @@ export default function Screener() {
 
                           {/* News panel row */}
                           {newsOpen && (
-                            <tr key={`news-${row.ticker}`} className="bg-slate-900/40">
+                            <tr key={`news-${row.ticker}`} className="bg-slate-50 dark:bg-slate-900/40">
                               <NewsPanel
                                 ticker={row.ticker}
                                 cache={newsCache[row.ticker]}

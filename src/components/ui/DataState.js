@@ -17,7 +17,7 @@ import { Skeleton } from "./skeleton";
  *     error={isError}
  *     onRetry={refetch}
  *     empty={data.length === 0}
- *     emptyIcon={<InboxIcon className="w-10 h-10 text-slate-600" />}
+ *     emptyIcon={<InboxIcon className="w-10 h-10 text-app-muted" />}
  *     emptyHeading="No positions open"
  *     emptyBody="Open a position to see it here."
  *     emptyAction={<Button>Add trade</Button>}
@@ -85,7 +85,7 @@ export default function DataState({
     }
     return (
       <div className={`flex items-center justify-center ${compact ? "py-4" : "py-16"} ${className}`}>
-        <Loader2 className={`${compact ? "w-5 h-5" : "w-8 h-8"} animate-spin text-slate-500`} />
+        <Loader2 className={`${compact ? "w-5 h-5" : "w-8 h-8"} animate-spin text-app-muted`} />
       </div>
     );
   }
@@ -93,7 +93,7 @@ export default function DataState({
   if (error) {
     return (
       <div className={`flex flex-col items-center justify-center ${compact ? "py-4 gap-2" : "py-16 gap-4"} text-center px-6 ${className}`}>
-        <AlertCircle className={`${compact ? "w-6 h-6" : "w-10 h-10"} text-rose-400`} />
+        <AlertCircle className={`${compact ? "w-6 h-6" : "w-10 h-10"} text-app-negative`} />
         <div>
           <p className="text-sm font-semibold text-slate-900 dark:text-white mb-1">{errorHeading}</p>
           <p className="text-xs text-slate-600 dark:text-slate-400">
@@ -105,7 +105,7 @@ export default function DataState({
             variant="outline"
             size="sm"
             onClick={onRetry}
-            className="bg-slate-800/50 border-slate-700 text-slate-300 hover:text-white"
+            className="bg-app-raised border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white"
           >
             Try again
           </Button>
