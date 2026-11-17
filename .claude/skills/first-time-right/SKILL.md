@@ -5,8 +5,8 @@ description: Run the first-time-right checks for a sprint story so it ships righ
 
 # First-Time-Right Checks
 
-Twenty-two checks, each learned from a real miss in v9.17 (EPIC-01 filed 12 follow-ups; EPIC-02, -04, -05, -06 and -07 added the rest). Run them in two passes:
-- **Pass A, before build:** checks 1–8, 11, 17–21. These shape what you build.
+Twenty-three checks, each learned from a real miss in v9.17 (EPIC-01 filed 12 follow-ups; EPIC-02 to -07 added the rest). Run them in two passes:
+- **Pass A, before build:** checks 1–8, 11, 17–21 and 23. These shape what you build.
 - **Pass B, before commit or review:** checks 9, 10, 12–16 and 22, plus a re-run of 18 and 19 against the tests you wrote.
 
 **Apply each check to everything the change touches, not only the new code.** Moved code, reused copy, child components and every reader of a renamed page count. Most of EPIC-02's follow-ups came from applying an existing check too narrowly (EPIC-02, v9.17).
@@ -38,7 +38,10 @@ For each check, write one line: **done**, **N/A** (with the reason), or **raised
    - *(ST-14: a US signal's `atr_value` is GBP while `current_price` is USD. ST-06: the page period never reached `GET /analytics/compliance-metrics`, found late by a test — BLG-FE-299.)*
 2. **Worked examples.** For a value shown on more than one surface, or a rule with a threshold, write the exact text each surface shows for boundary inputs: 0, 1, 2, null, true/false/null, and a value exactly at the threshold.
 3. **Pure logic.** Check new `src/lib` or helper functions with a quick `node -e` run on null, missing, string, 0 and negative inputs. CI has no frontend unit tests until BLG-QA-262.
+   - **A new guard, lint or check script must fail on a deliberately bad sample of every form it claims to catch,** not only on the old code. For a source scanner that means at least: a multi-line string, a template literal with `${}`, and text containing an apostrophe. State any form it cannot see in its docstring and failure message. *(ST-08: the colour token check passed review but could not see multi-line or template class strings — BLG-QA-267.)*
 4. **Test data for layout.** Layout, no-scroll and axe tests use populated fixtures for every panel on the page. Axe checks also fail on `incomplete`.
+   - **"Every panel" includes the conditional ones.** For each page in scope, grep its JSX (and its children's) for conditional rendering (`&&`, `? (`, `hidden=`, `open=`, `isOpen`) and list every panel, modal, drawer and widget it can show: a panel shown once a field is filled, a modal opened from the sidebar, an open chat. Give each one a fixture state and a scan, or record why it is out of scope.
+   - **When scope is defined per component, check coverage per component, not per route.** Run the story's own scanner over the whole component tree, and for every hit decide: rendered on an in-scope page? Then it is in scope. A route list alone hides components that only appear in a state. *(ST-08: the scope was "any component failing on a routed page", the scans were per route, and six components in unscanned states — What-if sizing, Setup Thesis Digest, AI spend chart, Cash and Daily Monitor modals, Advisor chat — were found only at PR review: BLG-FE-303, P2. DoQ round 1's Trade History calendar view was the same miss.)*
 5. **Review depth.** Plan a `/code-review` at **high** when this story creates a module that later stories build on. Otherwise medium.
 6. **Collision grep.** When replacing UI, grep `tests/e2e` for the old body copy as well as headings and labels. When a page is renamed, merged or removed, grep the **whole repo** (`src`, `backend`, `tests`, `docs/specs`) for the old route **and** the old label, in every form: `#/Route`, `'/Route'`, `href*="Route"`, `createPageUrl("Route")`, link text and notification or digest copy. *(ST-05/ST-06: a test using `href*=` and the digest's link text kept the retired names — BLG-BE-222.)*
 7. **Spec premises.** For every "only X does Y" or "written by X", grep every writer of that field or behaviour. If the premise is false, raise it.
@@ -64,9 +67,16 @@ For each check, write one line: **done**, **N/A** (with the reason), or **raised
 20. **Copy in edge cases.** Read every new user-facing string in each edge case from 2, 8 and 19, **and every moved or reused string in its new context** (a component placed on a new page, or shown twice). If a literal reading would mislead the user ("tick again" when nothing was ticked; "results changed" when nothing visible changed; "Enter Your First Position" when the user has trades), raise it for a wording ruling. *(ST-06: copy moved from Analytics unchanged — BLG-FE-301.)*
 21. **Parity with what the story replaces.** When a story replaces, merges or moves a page or panel, list every state of the **old** one (empty, few rows, below a threshold, loading, error, each period or filter) and write what the **new** one shows in the same state. Raise every difference the spec does not state as intended, before the spec is approved, and list the accepted ones as behaviour changes in the PR. *(ST-06: the new Summary hid Total P&L in quiet months where the old Reports tab showed it — BLG-FE-300, P2.)*
 
+23. **Mechanical sweeps and bulk replacements.** Before applying a scripted rewrite across many files:
+    - dry-run it and count repeated output strings; any multi-class string repeated five or more times is a candidate for one shared class, token or component. Raise it with the design owner before the sweep, not after. *(ST-08: the themed card surface was written into ~22 places — BLG-FE-304.)*
+    - check both directions of the rule. A sweep that fixes light-theme failures should also flag what fails in the dark theme (for example a bare dark text colour with no `dark:` partner), because axe may not report it. *(ST-08: CalendarView outside-month days stayed dark on dark — BLG-FE-305.)*
+    - review every conversion the script cannot see context for (a value supplied by a variable, an inline `style`, a parent element) by hand.
+
 ## Step 3 — Pass B (before commit or review)
 
 9. **Fix, don't file, your own XS gaps.** A gap in this story's own work that takes under an hour gets fixed here, not filed.
+   - "Your own work" includes a test, guard or script you wrote for the story (BLG-QA-267), a defect in a file you are already editing that the in-file disclosure rule allows (`execution_prompt.md` §7; a one-class fix such as BLG-FE-305), and a workflow or tool the story relies on (BLG-OPS-220).
+   - **Before relying on a workflow to write** (push, comment, deploy), check it can: read its `permissions:` block and run `gh run list --workflow <file>` to see whether that step has ever succeeded. *(ST-08: the visual-baseline workflow's push had no write permission and failed with 403.)*
 10. **Specs stay in sync.** Any follow-up commit that changes behaviour updates the contract, data model, OpenAPI and page spec in the same commit.
 12. **Ask for the follow-up query with the run.** When asking permission for a live read, include the check its known blind spots need.
 13. **Read back edited Markdown tables.** After editing near a spec table, print the section with `sed -n` and confirm every row has the same number of `|`.
