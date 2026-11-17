@@ -1,7 +1,7 @@
 **Owner:** Head of UX & Design
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Last Updated:** 2026-11-17 (§14 Target State added at the user's request; 1 item filed); prior — 2026-11-17 (§13 Competitors and Best-in-Class Experiences added at the user's request; 5 items filed); prior — 2026-11-17 (§12 Trust, Privacy and Security Messaging added at the user's request; 4 items filed); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-17 (§15 Gap Analysis added at the user's request; no new items); prior — 2026-11-17 (§14 Target State added at the user's request; 1 item filed); prior — 2026-11-17 (§13 Competitors and Best-in-Class Experiences added at the user's request; 5 items filed); prior history retained — see prior entries in version control
 
 # Site Structure & Usability — First-Principles Re-Review
 
@@ -500,3 +500,48 @@ Settings
 4. **Speed and polish:** `BLG-FE-315`, `BLG-FE-316`, `BLG-FE-317`, `BLG-OPS-221`, `BLG-FEAT-102`, `BLG-UX-20`.
 
 This is advice for the next `run roadmap`, which owns sequencing. Ratifying the target state as the brief for a "Site Structure & Usability, Phase 4" programme is the Product Owner's decision → `BLG-UX-21`.
+
+---
+
+## 15. Gap Analysis: Current State vs Recommended Future State (added 2026-11-17, user request)
+
+Direct assessment. **Size** is the gap, not the effort: *Small* = polish, *Medium* = a visible change to how part of the app works, *Large* = a change to what the app is or how it is reached. "Current" is `main` at `80e8bca4` and the findings in §1–§13.
+
+| Area | Current state | Recommended future state | The gap, stated plainly | Size |
+|------|---------------|--------------------------|-------------------------|------|
+| **Brand** | Three product names ("Position Manager", "Swing Trading Position Manager", "Momentum Trading Assistant"); no statement of purpose anywhere in the app; the AI is branded "AI Trade Advisor"; decorative cyan-to-violet gradients on 26 buttons | One name; the purpose stated in the app ("a disciplined co-pilot for one momentum strategy"); no "Advisor"; colour used only for meaning | **There is no brand.** There is a page label used as a product name. The product does not say what it is or what it is for. Fixing this needs a Product Owner decision before any design work | Medium |
+| **UX** | Structure fixed by v9.15–v9.17: job-based navigation, Due today, decision-first Positions, one Journal, one Performance page. But the quiet-day Dashboard is still 11 empty boxes, the weekly review is 3 sidebar hops, the Trade Plan checklist asks for ticks on facts the system knows, and nothing shows direction of travel | Calm home with one quiet line; a weekly review that is one journey; checks the system can verify shown as status; trends visible | **The daily loop is good. The weekly loop and the quiet day are not.** The programme fixed *finding things*; it did not finish *reviewing things*. This is the largest remaining UX gap and it touches the most-used page | Medium |
+| **UI** | Semantic colour tokens on every page (v9.17), but 26 decorative gradient buttons, one fixed-width numeral treatment in only 13 places, two toast systems, custom clickable `div`s, entrance fades on every heading | One component per job; one solid primary colour; fixed-width numerals for all figures; no decorative motion | **Consistent in colour, inconsistent in components and emphasis.** Visually it still says "dashboard template", not "instrument" | Medium |
+| **Content** | 84 "§x.y" rule references in user copy; raw values (`risk_on`), internal IDs ("SI-02 Gate Status"), API-style Weekly Digest; Settings description contradicts the page; notification copy says "email" when delivery is Telegram; no help; dead Docs link. Strong at the point of action (stops, fees, FX) | Plain language everywhere; a "How this works" page; truthful channel copy; one error standard | **The app explains each number well and explains itself not at all.** One statement on screen (email) is false. Content needs a full pass, not spot fixes | Large |
+| **Information architecture** | 5 job-based areas, 19 entries, 0 dead ends, 0 undiscoverable pages | 5 areas, 18 entries: Weekly review leads Review; Strategy Benchmark inside Performance; Ticker Universe in Settings; a help page | **Small.** The IA is the most finished part of the app. What is left is two moves and one new page | Small |
+| **Functionality** | Strong core (pre-entry checks on every route, Plan this, stop provenance, one grace view, Replay, exports). Missing: rule-adherence filtering, price vs FX P&L split, direction of travel, delivery status for alerts. Carrying: 3 AI features never used, legacy placeholder storage | Retain the core; introduce adherence filtering, FX split, trend cues, delivery status; remove what is unused | **The app has more features than it uses and lacks the two that would make review honest** (adherence and FX). The gap is depth in review, not breadth | Medium |
+| **Mobile** | Positions has cards below `md`; Performance checked at 375/390 px; the full 552 KB bundle and ~16 Dashboard requests load on a phone; the Telegram digest sends the user into the app on mobile; no measured mobile performance; reflow at 320 px untested | Fast first load on a phone (code-split, deduplicated requests), every page reflows at 320 px, measured on a mobile profile | **Layouts are partly mobile-ready; delivery is not.** The heaviest path (Telegram link → Dashboard on a phone) is the least tested | Medium |
+| **Accessibility** | Text contrast and landmarks pass in CI. Observed Level A failures: 4 mouse-only controls; unlabelled fields on the Exit dialog — the most safety-critical form; Dashboard has no section headings; weak focus rings; no reduced-motion support; the scan never opens dialogs | WCAG 2.2 AA met and tested (automated plus one manual pass), with AAA focus appearance and reduced motion | **The app does not meet WCAG 2.2 AA today**, and its automated scan would not tell you. The failures are on core journeys. Two are P2 | Medium (fixes small, the testing gap large) |
+| **Performance** | One 542 KB gzipped bundle, 2.7× its own 200 KB budget; no code splitting; `GET /positions` fetched 4 times on Dashboard load; no caching between pages; headings start invisible; **no Core Web Vitals have ever been measured**; the budget is outdated (no INP/CLS, desktop only, baseline "TBD" since v2.6) | Measured CWV on mobile and desktop within a modern budget; code-split; each dataset fetched once | **Over budget and unmeasured.** The team cannot currently say whether the app is fast, and its own budget says it is too heavy | Medium |
+| **SEO** | Public repository, URL published, no `robots.txt` or `noindex`; a single-page app with no meaningful content for crawlers | **Not indexed** — the right goal for a private financial tool. No SEO investment | **The gap runs the other way: the app is findable when it should not be.** This is a security and privacy item (`BLG-SEC-46`), not a marketing one | Small (to fix), but tied to a Large decision |
+| **Conversion** (in-app: do the intended actions happen?) | No funnel data at all. The only evidence is AI usage: 31 calls in 102 days, 3 of 6 features never used. Unknown: how often signals become plans, plans become entries, closed trades get reflections, weekly reviews are opened | The intended loop (Due today → act → record → reflect → weekly review) instrumented, with each step's completion visible, and features that are not used retired | **Nobody knows whether the app's core loop is used.** Every product decision since v6.2 has been made without behavioural data, and the one place data exists says adoption is very low | Large |
+| **Technology** | Create React App (`react-scripts` 5, deprecated by the React team in February 2025), client-side SPA on GitHub Pages; Render backend with cold-start risk; no front-end auth; a full-scope API key in the public bundle (accepted risk); public 9.1 MB source map; duplicate libraries | The same architecture, made lean (code-split, one library per job), not publicly exposed, measured. Hosting change only if measurement or the access decision requires it | **Sound shape, exposed and heavy.** The serious gap is access, not framework. A build-tool migration off CRA is advisable in time but not urgent; it is not filed | Medium; Large if the access decision requires authentication |
+| **AI capability** | 7 AI features shipped, all advisory and §13-governed; usage very low; the chat appears only on two pages | Fewer, better-placed AI features: unused ones retired at the 2027-01-03 review; chat reachable from a trade if kept; no new AI capability | **Over-built relative to use.** The gap is not missing AI — it is AI nobody uses. The future state has *less* AI, and that is the recommendation | Medium (mostly decisions) |
+
+### 15.1 Scale of Change — Stated Plainly
+
+- **Filed work:** the 31 items from this review estimate at **17–33 days** (7 XS, 16 S, 8 M). One release's capacity ceiling is 28 days. **The filed work alone is roughly one full release, and possibly more.**
+- **Not yet estimated, and likely larger than any single filed item:**
+  - whatever remedy `BLG-SEC-46` chooses (adding authentication or access control would be a Large change to how the app is reached);
+  - the design-direction rollout (one primary colour, typography numerals, component consolidation) beyond the filed items;
+  - the shared-component colour sweep already open (`BLG-FE-288`);
+  - instrumenting the core loop for conversion data (not filed: it needs a Product Owner decision on what to measure);
+  - a build-tool migration off CRA (not filed).
+- **Realistic total:** **two releases of focused work, three if the access decision requires authentication.** The programme just finished (Phases 1–3) took three releases. This is a second programme of similar size, not a tidy-up.
+- **The hardest gaps are decisions, not code:**
+  1. the access/security posture (`BLG-SEC-46`);
+  2. the product name and purpose statement (`BLG-UX-16`);
+  3. which AI features to retire (`BLG-GOV-382`);
+  4. whether to adopt this target state (`BLG-UX-21`);
+  5. whether to measure the core loop at all.
+
+  Until those are made, roughly a third of the filed items cannot be finished well.
+
+### 15.2 Overall Verdict
+
+The 2026-11-03 verdict — *modify substantially, don't redesign* — still holds for structure. For the product as a whole, the honest position is stronger: **the app is well organised but unexplained, unmeasured, over-featured where it matters least, and exposed.** It is closer to the target in information architecture than in anything else, and furthest from it in content, conversion evidence and access. Reaching the target is a second programme, not a set of fixes.
