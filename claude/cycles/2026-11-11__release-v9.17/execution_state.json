@@ -5,7 +5,7 @@
   "invoked_utc": "2026-11-12T13:22:26Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-17T14:10:00Z",
+  "last_updated_utc": "2026-11-17T15:00:00Z",
   "epics": {
     "EPIC-01": {
       "title": "Site Structure & Usability Phase 3: Positions Redesign (build-and-ship)",
@@ -810,7 +810,8 @@
     "2026-11-16T08:54:06Z: EPIC-05 human Director of Quality QA sign-off and Product Owner acceptance given in session by the repository owner (holds both roles), before merge. They cover the post-merge ST-11 production backfill (BLG-BE-211), the ST-12 Trade Plan-only scope (BLG-FE-269 open) and the ST-14 wording ruling. Recorded in qa_evidence_EPIC-05.md Merge Gate Confirmations and on PR #2260. Not merged: the merge stays with the human, after head CI on 1f0f0007 is green.",
     "2026-11-16T09:05:36Z: EPIC-05 PR #2260 merged by sachiv1984 at 2026-11-16T09:04:48Z, merge commit cb65bb12; head e9f13c2c all 20 workflows success. Merge state recorded on main (STEP 4 steps 2-3a). Orphaned post-merge commit check: none. Sibling execution_state sync (3c): no branch exists yet for EPIC-02 or EPIC-03, nothing to sync. Issues #2246-#2249 closed. Post-merge: BLG-BE-211 production backfill count (DS-41) still to record.",
     "2026-11-17T09:15:00Z: EPIC-02 PR #2261 merged by sachiv1984 at 2026-11-17T09:09:42Z, merge commit 28fb7239. Human DoQ sign-off and PO acceptance given in session 2026-11-17 before the merge (qa_evidence_EPIC-02.md Merge Gate Confirmations). Merge state recorded on main (STEP 4 steps 2-3a). Orphaned post-merge commit check: none. Sibling execution_state sync (3c): no branch exists yet for EPIC-03, nothing to sync.",
-    "2026-11-17T14:10:00Z: EPIC-03 PR #2262 opened (STEP 3.2.B) after agent-mediated DoQ sign-off (round 2 Approved). Pre-PR checks: API performance baseline drift PASSED; origin/main..HEAD lists only [EPIC-03] commits. Update Visual Snapshot Baselines cannot push to exec branches (403, GITHUB_TOKEN lacks write); baselines were committed from the run artifact. Merge awaits the human Director of Quality and Product Owner."
+    "2026-11-17T14:10:00Z: EPIC-03 PR #2262 opened (STEP 3.2.B) after agent-mediated DoQ sign-off (round 2 Approved). Pre-PR checks: API performance baseline drift PASSED; origin/main..HEAD lists only [EPIC-03] commits. Update Visual Snapshot Baselines cannot push to exec branches (403, GITHUB_TOKEN lacks write); baselines were committed from the run artifact. Merge awaits the human Director of Quality and Product Owner.",
+    "2026-11-17T15:00:00Z: PR #2262 agent-mediated DoQ + PO review posted (user-directed; comment 6947461775). DoQ: Changes Requested \u2014 AC 1 partly met: WhatIfSizingPreview, SetupThesisDigestPanel, AiSpendTrendChart, CashManagementModal, MonitorModal, AiChatWidget still dark-only in unscanned states inside the RISK-02 boundary (BLG-FE-303, P2); evidence 'Pass' overstated pending (a) in-branch fix or (b) PO-accepted narrowing to Pass_with_deviation. PO: Approved with Comments, pending confirmation of the Signal-card fade extension and visible AA changes. Filed BLG-FE-303, BLG-OPS-220, BLG-QA-267, BLG-FE-304, BLG-FE-305 (a160ceff). Not merged."
   ],
   "sealed": false,
   "sealed_utc": null
