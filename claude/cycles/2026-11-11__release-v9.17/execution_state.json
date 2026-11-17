@@ -4,7 +4,7 @@
   "backlog_slice_source": "claude/cycles/2026-11-11__release-v9.17/stage4_backlog_slice.md (read with claude/cycles/2026-11-11__release-v9.17/stage4_backlog_slice_addendum.md)",
   "invoked_utc": "2026-11-12T13:22:26Z",
   "mode": "standard",
-  "status": "Running",
+  "status": "Sealed",
   "last_updated_utc": "2026-11-17T18:30:00Z",
   "epics": {
     "EPIC-01": {
@@ -599,7 +599,7 @@
         "ST-05": {
           "title": "Build the single Journal area",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2240,
           "branch": "exec/2026-11-11__release-v9.17/EPIC-02",
@@ -623,7 +623,7 @@
         "ST-06": {
           "title": "Merge Reports and Performance Analytics into one Performance page",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2241,
           "branch": "exec/2026-11-11__release-v9.17/EPIC-02",
@@ -648,7 +648,7 @@
         "ST-07": {
           "title": "Use tabs or sections on the long single-scroll pages",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2242,
           "branch": "exec/2026-11-11__release-v9.17/EPIC-02",
@@ -814,8 +814,10 @@
     "2026-11-17T15:00:00Z: PR #2262 agent-mediated DoQ + PO review posted (user-directed; comment 6947461775). DoQ: Changes Requested \u2014 AC 1 partly met: WhatIfSizingPreview, SetupThesisDigestPanel, AiSpendTrendChart, CashManagementModal, MonitorModal, AiChatWidget still dark-only in unscanned states inside the RISK-02 boundary (BLG-FE-303, P2); evidence 'Pass' overstated pending (a) in-branch fix or (b) PO-accepted narrowing to Pass_with_deviation. PO: Approved with Comments, pending confirmation of the Signal-card fade extension and visible AA changes. Filed BLG-FE-303, BLG-OPS-220, BLG-QA-267, BLG-FE-304, BLG-FE-305 (a160ceff). Not merged.",
     "2026-11-17T18:00:00Z: PR #2262 Head of UX & Design agent-mediated review posted (comment 6949459816): keep Signal cards unfaded; heatmap, filter pill, amber and accessible-name changes endorsed (dark heatmap note). Product Owner (repository owner, in session) ratified the Signal-card no-fade rule: signals.md v0.10 \u00a7Resolved Card States; design_system.md rule 5 reworded. Filed BLG-FE-306 (resolved-card de-emphasis) and BLG-FE-307 (dark-theme heatmap). Not merged.",
     "2026-11-17T18:30:00Z: EPIC-03 human Director of Quality QA sign-off and Product Owner acceptance given in session by the repository owner (holds both roles) on PR #2262 head ff08a481, covering the BLG-FE-303 in-branch fix, the visible AA changes and the Signal-card no-fade rule. Recorded in qa_evidence_EPIC-03.md Merge Gate Confirmations and on PR #2262. Not merged: the merge stays with the human.",
-    "2026-11-17: run sprint resume-sync \u2014 PR #2262 (EPIC-03) found merged by the human repository owner at 2026-11-17T14:38:11Z, merge commit 3400cba4; EPIC-03 and ST-08 set merged, merge_gate.all_merged true. Orphaned post-merge commit check (LL-v6.8-P3-01): git log origin/main..origin/exec/2026-11-11__release-v9.17/EPIC-03 empty \u2014 nothing to reconcile. Merge recorded in qa_evidence_EPIC-03.md Merge Gate Confirmations."
+    "2026-11-17: run sprint resume-sync \u2014 PR #2262 (EPIC-03) found merged by the human repository owner at 2026-11-17T14:38:11Z, merge commit 3400cba4; EPIC-03 and ST-08 set merged, merge_gate.all_merged true. Orphaned post-merge commit check (LL-v6.8-P3-01): git log origin/main..origin/exec/2026-11-11__release-v9.17/EPIC-03 empty \u2014 nothing to reconcile. Merge recorded in qa_evidence_EPIC-03.md Merge Gate Confirmations.",
+    "2026-11-17: STEP 5 sprint close \u2014 STEP 5.0 (DEL-20261113-01 terminal), 5.0A (all 7 PRs MERGED), 5.1 checks passed (20/20 stories vs 'Scope confirmed: 20'; slice items all recorded; every spec_references path resolves; acceptance_verified and deviations_filed true; Merge Gate Confirmations present with merge recorded in all 7 logs; sign-off dates non-blank; no unpushed exec commits). EPIC-02 stories ST-05/06/07 normalised done -> merged to match their merged EPIC. sprint_close.md written.",
+    "2026-11-17T14:43:55Z: STEP 5.3A System Status Report v4.60 section added; STEP 5.4 lessons_learnt_cycle.md Phase 3 created (5 friction items, all deferred); STEP 6 .claude_current_state.json -> Sprint_Complete; STEP 7 pre-seal checks: completed_items is the 20-story union; delegated_items empty (delegation_log.md check not triggered). Sealed."
   ],
-  "sealed": false,
-  "sealed_utc": null
+  "sealed": true,
+  "sealed_utc": "2026-11-17T14:43:55Z"
 }

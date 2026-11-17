@@ -1,12 +1,40 @@
 **Owner:** Director of Quality
 **Class:** Living Document (Class 3)
 **Status:** Active
-**Version:** 4.59
-**Last Updated:** 2026-11-11 (delivery verification 2026-11-06__release-v9.16 — status line updated Sprint_Complete → Verified_with_deviations, STEP 6 reconciliation, no other corrections); prior — 2026-11-11 (sprint close 2026-11-06__release-v9.16 — new Sprint section added, no other corrections); prior — 2026-11-06 (delivery verification 2026-11-03__release-v9.15 — status line updated Sprint_Complete → Verified_with_deviations, STEP 6 reconciliation, EPIC-01 row marks the P2 found gap BLG-FE-271 as accepted post-merge); prior history retained — see prior entries in version control.
+**Version:** 4.60
+**Last Updated:** 2026-11-17 (sprint close 2026-11-11__release-v9.17 — new Sprint section added, no other corrections); prior — 2026-11-11 (delivery verification 2026-11-06__release-v9.16 — status line updated Sprint_Complete → Verified_with_deviations, STEP 6 reconciliation, no other corrections); prior — 2026-11-11 (sprint close 2026-11-06__release-v9.16 — new Sprint section added, no other corrections); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
 
+## Sprint: 2026-11-11__release-v9.17
+**Date:** 2026-11-17
+**Status:** Sprint_Complete — pending verification
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-01 | The Positions table is decision-first, ordered by urgency (ST-01). Narrow screens show cards (ST-02). The four banners above the table are one warning strip (ST-03). Grace period detail is in one view on Positions, and the Dashboard and Risk Dashboard link to it (ST-04) | `positions.md#Decision-First Table`/`#Responsive Behavior`/`#Warning Strip`/`#Grace Period View`; `dashboard.md#Card 3`; `risk_dashboard.md#5`; design record `positions-decision-first` | ST-04 Pass_with_deviation (`DEV-EPIC01-ST04-01`, P3, `BLG-BE-215`) |
+| EPIC-04 | The nightly job and the on-load recompute record when each position's stop last moved (ST-09, DS-40). The Dashboard Today list shows a Stops moved group (ST-10) | `data_model.md#DS-40`; `position_endpoints.md`; `dashboard.md#1B` | ST-10 Pass_with_deviation (`DEV-EPIC04-ST10-01`, P3, `BLG-SPEC-238`) |
+| EPIC-07 | Release Planning §1.3a: a gate clearance also sets a gate-worded Provisional-Target to TBD (ST-18). The 2R Exit Zone threshold the Positions page states is defined (ST-19). `check_data_model_drift.py` no longer reads index names from rollback blocks (ST-20) | `release_planning_prompt.md#1.3a`; `positions.md`; `scripts/check_data_model_drift.py` | None (ST-18 AC 2 post-merge, `BLG-GOV-419`) |
+| EPIC-06 | The causes of failing on-demand Yahoo calls on production were found and fixed, including earnings caching and UK prices in pounds (ST-15). Weekly market-data call volume above 2× the baseline raises an alert (ST-16). Batch signal sizing no longer allocates more than the available cash once fees are included (ST-17) | `data_pipeline_cost_baseline.md#4`; `earnings_endpoints.md`; `ops_endpoints.md#GET /ops/api-call-attribution`; `data_model.md#DS-36` | None (ST-15 AC 2–3 post-merge, `BLG-OPS-217`; found P2 `BLG-FE-294` accepted by the PO and DoQ) |
+| EPIC-05 | A linked trade plan moves to `closed` when its position closes, and existing plans were backfilled on production (ST-11). The Trade Plan pre-entry acknowledgement resets when the check result changes (ST-12). Research View's "Create Trade Plan" passes the market (ST-13). The Trade Plan stop is pre-filled from the §5 suggested stop (ST-14) | `trade_plan_endpoints.md`; `trade_plan.md#5a.3`/`#5e`; `research_view.md` | None |
+| EPIC-02 | One Journal area (ST-05). Reports and Performance Analytics are one Performance page (ST-06). Trade Plan and Strategy Benchmark have section indexes (ST-07) | `journal.md`; `performance.md` v1.0; `trade_plan.md`; `strategy_benchmark.md` | None (found P2 `BLG-FE-300` fixed before merge) |
+| EPIC-03 | Every page uses the semantic colour tokens, and each page state is scanned by axe in both themes (ST-08); the remaining shared components are in `BLG-FE-288` | `design_system.md#Semantic Colour Tokens`; `signals.md#Resolved Card States` (v0.10) | None (found P2 `BLG-FE-303` fixed before merge) |
+
+### Capabilities deferred or returned
+
+| ST Item | Reason | Backlog reference |
+|---------|--------|-------------------|
+| None | All 20 stories merged; none returned or deferred | — |
+
+### Verification inputs ready
+- QA evidence logs: `qa_evidence_EPIC-01.md`, `qa_evidence_EPIC-02.md`, `qa_evidence_EPIC-03.md`, `qa_evidence_EPIC-04.md`, `qa_evidence_EPIC-05.md`, `qa_evidence_EPIC-06.md`, `qa_evidence_EPIC-07.md`
+- Deviations filed: `DEV-EPIC01-ST04-01` (`positions.md`, P3), `DEV-EPIC04-ST10-01` (`dashboard.md`, P3). Pass_with_deviation: ST-04, ST-10. Found P2 defects: `BLG-FE-294` (open, accepted by the PO and DoQ); `BLG-FE-300` and `BLG-FE-303` (fixed before merge). Post-merge remainder open: `BLG-OPS-217`, `BLG-GOV-419`
+- Test scenarios referenced: `tests/e2e/positions-decision-first.spec.js`, `tests/e2e/positions-decision-cards.spec.js`, `tests/e2e/positions-warning-strip.spec.js`, `tests/e2e/positions-grace-view.spec.js`, `tests/test_stop_last_moved.py`, `tests/e2e/dashboard-today-list.spec.js`, `tests/test_check_data_model_drift.py`, `tests/e2e/lifecycle-badge-grace-calendar-days.spec.js`, `tests/test_signal_sizing.py`, `tests/test_market_data_volume_check.py`, `tests/test_yahoo_on_demand_failures.py`, `tests/test_api_call_attribution.py`, `tests/test_trade_plan_close_on_exit.py`, `tests/test_lifecycle_transitions.py`, `tests/e2e/trade-plan-lifecycle.spec.js`, `tests/e2e/research-create-plan-market.spec.js`, `tests/e2e/trade-plan-ack-reset.spec.js`, `tests/e2e/trade-plan-stop-prefill.spec.js`, `tests/e2e/journal.spec.js`, `tests/e2e/performance.spec.js`, `tests/e2e/section-index.spec.js`, `tests/e2e/accessibility-axe-scan.spec.js`, `tests/test_page_colour_tokens.py`, `tests/e2e/visual-regression-baselines.spec.js`
+
+---
 ## Sprint: 2026-11-06__release-v9.16
 **Date:** 2026-11-11
 **Status:** Verified_with_deviations — 2026-11-11
