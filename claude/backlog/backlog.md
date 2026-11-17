@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-17 (session — 5 new items added: BLG-UX-14, BLG-FE-309, BLG-UX-15, BLG-FE-310, BLG-UX-16; BLG-UX-08 re-review §8 content review); prior — 2026-11-17 (session, user-directed — BLG-UX-08 completed and archived; 4 new items added: BLG-UX-11, BLG-FE-308, BLG-UX-12, BLG-UX-13); prior — 2026-11-17 (session, user-directed after post-ship closure `2026-11-11__release-v9.17` — BLG-FE-224 and BLG-FE-242 closed as superseded by their named owner; BLG-SPEC-221 met; all three archived); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-17 (session — 6 new items added: BLG-FE-311, BLG-FE-312, BLG-FE-313, BLG-FE-314, BLG-QA-269, BLG-QA-270; BLG-UX-08 re-review §9 accessibility review); prior — 2026-11-17 (session — 5 new items added: BLG-UX-14, BLG-FE-309, BLG-UX-15, BLG-FE-310, BLG-UX-16; BLG-UX-08 re-review §8 content review); prior — 2026-11-17 (session, user-directed — BLG-UX-08 completed and archived; 4 new items added: BLG-UX-11, BLG-FE-308, BLG-UX-12, BLG-UX-13); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -6997,5 +6997,129 @@ Nothing in the app says what it is for (a rules-based momentum strategy with ATR
 **Acceptance Criteria**
 - One product name appears across the UI, the tab title, `index.html` and the PDF export
 - The "How this works" view exists, defines R, ATR, grace period, regime and heat, and is linked from the sidebar (Playwright)
+
+---
+
+### BLG-FE-311 — Make the four mouse-only controls keyboard-operable and name the Screener close button
+**Priority:** P2 (Medium)
+**Type:** Frontend / Accessibility
+**Owner:** Head of Engineering; Frontend Specifications & UX Documentation Owner
+**Source:** `BLG-UX-08` re-review §9 accessibility review, finding A1 (`docs/ux/site_structure_rereview_2026-11-17.md`) — 2026-11-17
+**Effort:** S (~0.5-1 day)
+**Provisional-Target:** TBD
+
+**Problem**
+Four controls work only by mouse click (WCAG 2.2 2.1.1, Level A), because each puts `onClick` on a non-interactive element with no `tabIndex`, `role` or key handler: the Daily Position Monitor rows, which select positions to exit (`MonitorModal.js` ~94); Notification History row expansion (`NotificationsHistory.js` ~286); the Trade History AI journal summary toggle (`TradeHistory.js` ~530); and the Performance monthly heatmap tiles (`MonthlyHeatmap.js` ~66). The heatmap's month detail overlay has no `role="dialog"`/`aria-modal` (~131). The Screener "add to watchlist" popover close button is an icon with no accessible name (`Screener.js` ~339).
+
+**Scope**
+- Use a `<button>` (or a checkbox for the monitor's exit selection), with `aria-expanded` on the two toggles
+- Give the heatmap detail dialog semantics and focus management (or reuse the shared Dialog)
+- Name the Screener close button
+
+**Acceptance Criteria**
+- Each of the four controls can be reached with Tab and operated with Enter/Space, and the toggles expose `aria-expanded` (Playwright, keyboard only)
+- axe passes with the heatmap detail and the Screener popover open, with no `button-name` or `aria-dialog-name` violation (Playwright)
+
+---
+
+### BLG-FE-312 — Link the Exit dialog's visible labels to their inputs
+**Priority:** P2 (Medium)
+**Type:** Frontend / Accessibility
+**Owner:** Head of Engineering; Frontend Specifications & UX Documentation Owner
+**Source:** `BLG-UX-08` re-review §9 accessibility review, finding A2 (`docs/ux/site_structure_rereview_2026-11-17.md`) — 2026-11-17
+**Effort:** XS (<1h, plus a scan of the open dialog)
+**Provisional-Target:** TBD
+
+**Problem**
+In the Exit Position dialog, Shares to Exit, Exit Price, Exit Date and Exit Note show a visible `<Label>` that is not linked to its input: no `htmlFor`/`id` and no `aria-label` (`ExitModal.js` ~327–440). A screen reader announces unlabelled fields (WCAG 2.2 1.3.1, 3.3.2, 4.1.2, Level A) on the most safety-critical form in the app. Only the FX field is linked. The CI axe scan never opens this dialog, so it was not caught.
+
+**Scope**
+- Add `id`/`htmlFor` pairs for the four fields
+- Add an axe scan of the open Exit dialog, light and dark, to `accessibility-axe-scan.spec.js`
+
+**Acceptance Criteria**
+- `getByLabel('Shares to Exit')`, `'Exit Price'`, `'Exit Date'` and `'Exit Note (Optional)'` each resolve to their input (Playwright)
+- axe passes on the open dialog with no `label` violation (Playwright, both themes)
+
+---
+
+### BLG-FE-313 — Mark up the Dashboard's section titles as headings
+**Priority:** P3 (Low)
+**Type:** Frontend / Accessibility
+**Owner:** Frontend Specifications & UX Documentation Owner; Head of Engineering
+**Source:** `BLG-UX-08` re-review §9 accessibility review, finding A3 (`docs/ux/site_structure_rereview_2026-11-17.md`) — 2026-11-17
+**Effort:** XS (<1h, plus visual baseline check)
+**Provisional-Target:** TBD
+
+**Problem**
+The Dashboard has one `h1` and one `h2` ("Due today"). Its other visible section titles — Morning Briefing, the 5 briefing cards, Today's Briefing, Open Positions, Portfolio Heat, In Grace Today and Recent Activity — are `<p>` or `<span>` (`DashboardCard.js` ~27, `MorningBriefing.js` ~10, `AiDailyBriefing.js` ~121). Screen-reader users cannot move between sections by heading (WCAG 2.2 1.3.1).
+
+**Scope**
+- Render Morning Briefing as `h2`, and card titles (including Today's Briefing) as `h3`, keeping the current styles; update `dashboard.md` if it names the elements
+
+**Acceptance Criteria**
+- The Dashboard's heading outline is h1 → h2 → h3 with every visible section title present (Playwright `getByRole('heading')`), and the visual baselines are unchanged
+
+---
+
+### BLG-FE-314 — Give custom controls a visible focus ring and respect reduced motion
+**Priority:** P3 (Low)
+**Type:** Frontend / Accessibility
+**Owner:** Frontend Specifications & UX Documentation Owner; Head of Engineering
+**Source:** `BLG-UX-08` re-review §9 accessibility review, finding A4 (`docs/ux/site_structure_rereview_2026-11-17.md`) — 2026-11-17
+**Effort:** S (~0.5 day)
+**Provisional-Target:** TBD
+
+**Problem**
+16 custom inputs and buttons (Ticker Universe, Signals controls and others) set `focus:outline-none` and show focus only as a border-colour change (for example `slate-200` → `slate-400`), which is weak and probably below 3:1 against the unfocused state (WCAG 2.2 2.4.7 AA; 2.4.13 AAA). `framer-motion` animates in 17 files, but only `Positions.js` reads `prefers-reduced-motion` (2.3.3 AAA). The review recommends adopting both AAA criteria, given the app's keyboard shortcuts and animation.
+
+**Scope**
+- Add the shared `focus-visible` ring (`design_system.md`) to those controls, and record the focus-appearance rule there
+- Respect `prefers-reduced-motion` app-wide (for example framer-motion `MotionConfig reducedMotion="user"` and `motion-reduce:` on hover scale)
+
+**Acceptance Criteria**
+- Each of the 16 controls shows the shared focus ring when focused by keyboard (Playwright screenshot or class assertion)
+- With reduced motion emulated, page entrance and heatmap hover animations do not run (Playwright `emulateMedia`)
+
+---
+
+### BLG-QA-269 — Widen the CI accessibility scan to WCAG 2.2 rules, dialogs and transient states
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** QA & Testing Owner; Head of Engineering
+**Source:** `BLG-UX-08` re-review §9.2 CI coverage gaps, finding A5 (`docs/ux/site_structure_rereview_2026-11-17.md`) — 2026-11-17
+**Effort:** S (~0.5-1 day)
+**Provisional-Target:** TBD
+
+**Problem**
+`accessibility-axe-scan.spec.js` sets no rule tags, so WCAG 2.2 coverage (for example `target-size`) depends on axe-core defaults. It fails only on serious/critical impact, and never opens the dialogs and transient states where the review's observed failures sit: the Exit dialog, Daily Position Monitor, heatmap month detail and Screener popover.
+
+**Scope**
+- Set `withTags(['wcag2a','wcag2aa','wcag21a','wcag21aa','wcag22aa'])` and handle any new findings (fix or baseline with a backlog item)
+- Add scans with each of those four states open, in both themes
+
+**Acceptance Criteria**
+- The scan asserts the WCAG 2.2 AA tag set, and includes the four open states in both themes, passing in CI
+
+---
+
+### BLG-QA-270 — Run one manual keyboard, screen-reader and reflow pass against WCAG 2.2 AA
+**Priority:** P3 (Low)
+**Type:** QA / Accessibility testing
+**Owner:** QA & Testing Owner; Head of UX & Design
+**Source:** `BLG-UX-08` re-review §9 accessibility review, "needs testing" items (`docs/ux/site_structure_rereview_2026-11-17.md` §9.1) — 2026-11-17
+**Effort:** M (~1-2 days)
+**Provisional-Target:** TBD
+**Depends on:** `BLG-FE-311`, `BLG-FE-312` (test after the observed failures are fixed)
+
+**Problem**
+Several WCAG 2.2 AA criteria cannot be settled from code or by axe: tab order and keyboard traps (2.1.1/2.1.2), focus not obscured by the fixed mobile header, sticky bars and the "Press ⌘K" tip (2.4.11), reflow at 320 CSS px / 400% zoom and text spacing (1.4.10, 1.4.12), field-level error messages outside Trade Entry (3.3.1/3.3.3), target size of checklist checkboxes and pills (2.5.8), use of colour in P&L and the heatmap (1.4.1), and chart text alternatives (1.1.1).
+
+**Scope**
+- Walk the four core journeys (daily review, exit, signal → entry, weekly review) keyboard-only and with a screen reader (VoiceOver or NVDA), in both themes, at 320 px and 400% zoom, with text spacing overridden
+- Record results per criterion in `docs/qa/`, and file each failure as a backlog item
+
+**Acceptance Criteria**
+- A dated record in `docs/qa/` gives a pass/fail per criterion listed in Problem, for each journey, and every failure has a backlog item
 
 ---

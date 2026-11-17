@@ -1,7 +1,7 @@
 **Owner:** Head of UX & Design
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Last Updated:** 2026-11-17 (§8 Content Review added at the user's request; 5 content findings filed); prior — 2026-11-17 (created — `BLG-UX-08`)
+**Last Updated:** 2026-11-17 (§9 Accessibility Review added at the user's request; 6 accessibility items filed); prior — 2026-11-17 (§8 Content Review added at the user's request; 5 content findings filed); prior — 2026-11-17 (created — `BLG-UX-08`)
 
 # Site Structure & Usability — First-Principles Re-Review
 
@@ -151,3 +151,59 @@ Added at the user's request after §1–§7 were filed: a review of the words on
 | C5 | No in-app statement of what the app is for or of its core terms, and three product names | `BLG-UX-16` |
 
 **Content verdict:** the copy is clear, consistent and trustworthy where the user acts (entry, exit, plan, stops), which is where it matters most. It is weakest where the app explains itself (no value statement, no help, a broken Docs link) and where it reports (Weekly Digest, the quiet Dashboard). None of this changes the IA verdict in §1.
+
+---
+
+## 9. Accessibility Review (added 2026-11-17, user request)
+
+**Standard:** WCAG 2.2 Level AA as the minimum. Two AAA criteria are recommended on top, for reasons given in §9.4.
+**Method:** static review of `src/` on `main` at `23f3e676`; the CI axe scan (`tests/e2e/accessibility-axe-scan.spec.js`, `@axe-core/playwright` 4.13) and its baseline exceptions; the light/dark visual baselines. No screen reader, keyboard-only session or zoom test was run. Results are kept in three classes:
+
+- **Observed:** a failure visible in the code, with file and line.
+- **Verified by automation:** a check that already runs in CI and passes.
+- **Needs testing:** cannot be settled from code, and needs an automated rule not yet enabled or a manual check.
+
+### 9.1 Findings by Area
+
+| Area | WCAG 2.2 criteria | Status | Finding |
+|------|-------------------|--------|---------|
+| Colour contrast | 1.4.3 (AA), 1.4.11 (AA) | **Verified by automation** for text: axe `color-contrast` passes on every routed page in the light theme, and on the scanned dark states (v9.17 ST-08). **Needs testing:** component remainder `BLG-FE-288`; dialogs and popovers the scan never opens (Exit, Daily Monitor, heatmap detail); non-text contrast of input borders and focus rings (axe does not test 1.4.11) | — |
+| Use of colour | 1.4.1 (A) | **Needs testing.** Regime badges carry text ("RISK-ON"); P&L and heatmap tiles rely partly on green/red | — |
+| Keyboard navigation | 2.1.1 (A), 2.1.2 (A) | **Observed — 4 failures.** Controls that work by mouse click only (`onClick` on a non-interactive element, no `tabIndex`, `role` or key handler): (1) Daily Position Monitor rows, which select positions to exit (`MonitorModal.js:94`); (2) Notification History row expansion (`NotificationsHistory.js:286`, a `<tr onClick>` with no button or `aria-expanded`); (3) the Trade History AI journal summary toggle (`TradeHistory.js:530`); (4) Performance monthly heatmap tiles, which open the month detail (`MonthlyHeatmap.js:66`). **Needs testing:** tab order through the Positions expandable rows and section indexes; no keyboard traps in the custom dialogs | A1 |
+| Focus indicators | 2.4.7 (AA), 2.4.11 Focus Not Obscured (AA, new in 2.2), 2.4.13 (AAA) | **Observed — weak.** shadcn components draw a `focus-visible` ring, but 16 custom inputs and buttons (Ticker Universe, Signals controls and others) use `focus:outline-none` with only a border-colour change (for example `slate-200` → `slate-400`), likely below 3:1 against the unfocused state. **Needs testing:** 2.4.11 with the fixed mobile header, the Strategy Benchmark sticky bar and the "Press ⌘K" tip, which overlays the top-right of the page (visible in the Dashboard baselines). Section links already set a scroll margin (`SectionIndex.js`) | A4 |
+| Heading hierarchy | 1.3.1 (A), 2.4.6 (AA) | **Observed.** The Dashboard has one `h1` and one `h2` ("Due today"). Its other visual headings — Morning Briefing, the 5 briefing cards, Today's Briefing, the 3 status cards and Recent Activity — are `<p>`/`<span>` (`DashboardCard.js:27`, `MorningBriefing.js:10`, `AiDailyBriefing.js:121`), so heading navigation skips them. Other pages use `PageHeader`'s `h1` and `h2`/`h3` sections | A3 |
+| Labels and forms | 1.3.1 (A), 3.3.2 (A), 4.1.2 (A) | **Observed — Exit dialog.** Shares to Exit, Exit Price, Exit Date and Exit Note have a visible `<Label>` that is not linked to its input (no `htmlFor`/`id`, no `aria-label`; `ExitModal.js` ~327–440). Only the FX field is linked. The CI scan never opens this dialog, so this was not caught. **Known, tracked:** Trade Entry Risk % and entry date inputs (`label`) and the market select (`button-name`), grandfathered in the scan as `BLG-FE-286`. **Needs testing:** 35 of 52 `<Label>` uses have no `htmlFor`; many inputs carry their own `aria-label`, so each needs checking (What-If sizing, alert thresholds, watchlist fields, custom price alerts) | A2 |
+| Accessible names | 4.1.2 (A), 2.5.3 Label in Name (A) | **Observed — 1.** The Screener "add to watchlist" popover close button is an `X` icon with no name (`Screener.js:339`). A static scan flagged 17 more, which on inspection carry text inside conditional expressions; axe `button-name` covers those it reaches. The AI chat send button is named ("Send question") | A2 |
+| Image alternatives | 1.1.1 (A) | **Verified (static).** No `<img>` without `alt` in `src/`; icons are `lucide-react` SVGs, mostly `aria-hidden` beside text. **Needs testing:** charts (Recharts) expose no text alternative beyond the surrounding figures | — |
+| Semantic structure | 1.3.1 (A), 2.4.1 (A), 3.1.1 (A), 4.1.2 (A) | **Verified (static):** `lang="en"`; `nav`, `aside` and `main` landmarks (`Layout.js`), which satisfy 2.4.1 Bypass Blocks. **Observed:** the heatmap month detail is a custom overlay with Escape support but no `role="dialog"`/`aria-modal` (`MonthlyHeatmap.js:131`). **Recommended:** a "Skip to content" link, because about 19 sidebar links precede `main` | A1 |
+| Link purpose | 2.4.4 (A) | **Mostly good.** Onward links name their destination (glossary labels); Research icon links are named "Research {TICKER}". **Observed:** the sidebar "Docs" link goes to `#` (filed as `BLG-FE-309`). "View trade" relies on its row for context, which 2.4.4 allows | — |
+| Error handling | 3.3.1 (A), 3.3.3 (AA), 4.1.3 Status Messages (AA) | **Good on Trade Entry** (`aria-invalid` plus a described message, for example "FX rate missing for US trades. Enter the rate to save."). Toasts are Radix and announced. **Needs testing:** only 3 fields in the app set `aria-invalid`; other forms (Exit dialog, Trade Plan, Settings, alert thresholds) may rely on a disabled submit or a toast with no field-level message. `BLG-UX-06` already covers one save-time error shown only in a toast | A5 |
+| Motion | 2.2.2 (A), 2.3.3 (AAA) | **No AA failure found:** entrance fades are short, and loaders pulse only while loading. **Observed:** `framer-motion` is used in 17 files and only one place reads `prefers-reduced-motion` (`Positions.js:1140`); heatmap tiles scale on hover | A4 |
+| Zoom/reflow | 1.4.4 (AA), 1.4.10 (AA), 1.4.12 (AA) | **Verified (static):** the viewport meta allows zoom. Positions switches to cards below `md`; Performance has 375/390 px Playwright checks. **Needs testing:** reflow at 320 CSS px / 400% zoom on every page (wide tables scroll inside their cards, which 1.4.10 allows for data tables), and the text-spacing override | A5 |
+| Touch target size | 2.5.8 Target Size (Minimum) (AA, new in 2.2) | **No failure observed:** icon buttons are 36 px (`size="icon"`), and the smallest found is exactly 24 px (Screener close). **Needs testing:** 16 px checkboxes on the Trade Plan checklist (pass if the label is clickable or spacing is ≥24 px), inline pills, and the regime badge tooltip trigger. The CI scan sets no `withTags`, so whether axe's `target-size` rule runs depends on axe-core defaults and is not asserted by the test | A5 |
+| Other WCAG 2.2 additions | 2.5.7 Dragging (AA), 3.2.6 Consistent Help (A), 3.3.7 Redundant Entry (A), 3.3.8 Accessible Authentication (AA) | 2.5.7: N/A (no drag interactions). 3.2.6: the one help link is broken (`BLG-FE-309`). 3.3.7: met where checked ("Plan this" pre-fills ticker, market and price into Trade Plan, and Trade Entry from a plan). 3.3.8: sign-in is handled outside the app (`AuthContext.js`) and not reviewable here | — |
+
+### 9.2 CI Coverage Gaps (Why Automation Missed the Observed Failures)
+
+- The scan fails only on `serious`/`critical` impact; `moderate`/`minor` findings are logged and ignored.
+- It sets no rule tags (`withTags`), so WCAG 2.2 coverage (for example `target-size`) depends on axe-core defaults and is not asserted.
+- It does not open dialogs and transient states — the Exit dialog, Daily Monitor, heatmap detail, Screener popover — where 3 of the observed failures live.
+- axe cannot test keyboard operability (2.1.1), focus visibility (2.4.7/2.4.11) or reflow, which need a manual or scripted pass.
+
+### 9.3 Findings (Filed)
+
+| Ref | Finding | Level | Backlog item |
+|-----|---------|-------|--------------|
+| A1 | 4 mouse-only controls (Daily Monitor exit rows, Notification History rows, Trade History AI summary toggle, heatmap tiles); heatmap detail lacks dialog semantics; Screener close button unnamed | A | `BLG-FE-311` (P2) |
+| A2 | Exit dialog fields have no programmatic labels | A | `BLG-FE-312` (P2) |
+| A3 | Dashboard section titles are not headings | A (1.3.1) | `BLG-FE-313` |
+| A4 | Weak focus indicator on 16 custom controls; no reduced-motion handling | AA (2.4.7) / AAA (2.3.3) | `BLG-FE-314` |
+| A5 | CI scan gaps (§9.2) and the manual checks above | — | `BLG-QA-269` (scan), `BLG-QA-270` (manual pass) |
+
+A1 and A2 are Level A failures on core journeys (exiting a position, the daily monitor), so they are filed at P2, above the content and structure findings.
+
+### 9.4 Standard
+
+AA is the right minimum for a single-user app. Two AAA criteria are worth adopting because the app is built for keyboard use (shortcuts, command palette) and uses a lot of animation, and each is cheap: **2.4.13 Focus Appearance** (a clear, consistent focus ring, which A4 delivers) and **2.3.3 Animation from Interactions** (respect `prefers-reduced-motion`, also A4). A full AAA target is not recommended: 1.4.6 Enhanced Contrast (7:1) would mean re-tokenising the colour system v9.17 just finished, for little gain.
+
+**Accessibility verdict:** text contrast, landmarks, image alternatives and most labelling are in good shape, and CI guards them. The observed failures are concentrated in places the automated scan does not reach — dialogs, custom click targets and the Dashboard's heading structure — so the main recommendation, besides fixing A1–A4, is to widen the scan and run one manual keyboard and screen-reader pass (`BLG-QA-269`, `BLG-QA-270`).
