@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-17 (session — 4 new items added: BLG-SEC-46, BLG-FE-318, BLG-UX-18, BLG-FE-319; BLG-UX-08 re-review §12 trust, privacy and security messaging); prior — 2026-11-17 (session — 1 new item added: BLG-UX-17; BLG-UX-08 re-review §11 AI opportunities); prior — 2026-11-17 (session — 5 new items added: BLG-FE-315, BLG-FE-316, BLG-FE-317, BLG-QA-271, BLG-OPS-221; BLG-UX-08 re-review §10 technical review); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-17 (session — 5 new items added: BLG-UX-19, BLG-FE-320, BLG-FEAT-102, BLG-UX-20, BLG-SPEC-240; BLG-UX-08 re-review §13 competitors and best-in-class); prior — 2026-11-17 (session — 4 new items added: BLG-SEC-46, BLG-FE-318, BLG-UX-18, BLG-FE-319; BLG-UX-08 re-review §12 trust, privacy and security messaging); prior — 2026-11-17 (session — 1 new item added: BLG-UX-17; BLG-UX-08 re-review §11 AI opportunities); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -7341,5 +7341,110 @@ The UI does not say that AI features send portfolio context (positions, cash, P&
 
 **Acceptance Criteria**
 - After load, none of `portfolio_data`, `position_data`, `settings_data`, `marketregime_data` exists in `localStorage` (Playwright)
+
+---
+
+### BLG-UX-19 — Show machine-checkable Trade Plan checklist items as automatic status, not manual ticks
+**Priority:** P3 (Low)
+**Type:** UX / Pre-entry flow
+**Owner:** Head of UX & Design; Frontend Specifications & UX Documentation Owner
+**Source:** `BLG-UX-08` re-review §13.2 (aviation checklist design), finding B1 (`docs/ux/site_structure_rereview_2026-11-17.md`) — 2026-11-17
+**Effort:** S (~0.5-1 day, spec then build)
+**Provisional-Target:** TBD
+
+**Problem**
+The Trade Plan "Pre-Entry Checklist" (`EntryChecklist.js`) asks the trader to tick "Position size within heat limits" and "Stop level defined", which the system already knows: the §4.2 pre-entry checks compute heat, and the stop is a form field. Aviation checklist practice (Boorman's Do-Confirm/Read-Do, reported in *The Checklist Manifesto*) keeps human checks to the few items a person must judge. Ticking facts the machine already knows trains the user to tick without reading, which weakens the items that do need judgement ("Strategy signal confirmed", "Pre-trade research reviewed").
+
+**Scope**
+- In `trade_plan.md`, split the checklist: system-verified items shown as pass/fail status from the pre-entry checks and the form, and human-judgement items kept as ticks
+- Build it; keep the existing acknowledgement before "Create Position" as the pause point
+- Check stored `checklist_items` compatibility (existing plans keep their saved ticks)
+
+**Acceptance Criteria**
+- "Position size within heat limits" and "Stop level defined" show as automatic status that follows the inputs and cannot be ticked by hand (Playwright)
+- Human-judgement items remain tickable, and existing plans load without losing saved ticks (Playwright + unit test)
+
+---
+
+### BLG-FE-320 — Filter Trade History and Journal by rules followed or broken
+**Priority:** P3 (Low)
+**Type:** Frontend / Review
+**Owner:** Frontend Specifications & UX Documentation Owner; Head of Engineering
+**Source:** `BLG-UX-08` re-review §13.1 (TradeZella Playbook), finding B2 (`docs/ux/site_structure_rereview_2026-11-17.md`) — 2026-11-17
+**Effort:** M (~1-2 days)
+**Provisional-Target:** TBD
+
+**Problem**
+Trade History can filter by ticker, tags, saved filters and dates, but not by whether the strategy's rules were followed. TradeZella's journal filters by rules followed vs rules broken, which separates execution mistakes from a weak setup, but relies on manual ticks. This app already holds the rule data deterministically: pre-entry check results and acknowledgements, §8 exit reasons, and red flags. So the filter can be computed rather than self-reported.
+
+**Scope**
+- Define "rules followed" per closed trade from existing data (pre-entry checks passed or acknowledged, exit reason, red flags), with the Metrics Definitions owner, in `metrics_definitions.md` and `trade_history.md`
+- Add a "Rules followed / Rules broken" filter to Trade History (and the Journal's red-flags section if useful), with summary counts
+
+**Acceptance Criteria**
+- The definition is recorded in `metrics_definitions.md`
+- With a fixture containing compliant and non-compliant closed trades, each filter shows only the matching trades (Playwright)
+
+---
+
+### BLG-FEAT-102 — Separate price movement from currency movement in US trade P&L
+**Priority:** P3 (Low)
+**Type:** Product feature / Metrics
+**Owner:** Metrics Definitions & Analytics Canonical Owner; Head of Engineering
+**Source:** `BLG-UX-08` re-review §13.1 (Sharesight performance report), finding B3 (`docs/ux/site_structure_rereview_2026-11-17.md`) — 2026-11-17
+**Effort:** M (~1-2 days)
+**Provisional-Target:** TBD
+
+**Problem**
+For a US position, the GBP P&L mixes the share-price move with the GBP/USD move between entry and exit. Nothing in the app separates them (no FX-effect field in the front end or back end). A trade can show a GBP gain or loss mostly because of currency, which blurs whether the strategy itself worked. Sharesight reports currency movement as a separate component of return.
+
+**Scope**
+- Define price effect and FX effect for closed US trades (from entry and exit prices, fill FX rates and fees) in `metrics_definitions.md`
+- Show the split on the closed trade (Trade History row detail) and as a period total on Performance
+
+**Acceptance Criteria**
+- For a worked example in `metrics_definitions.md`, price effect + FX effect + fees reconcile to the stored GBP P&L (unit test)
+- The split renders on a closed US trade and as a Performance period total (Playwright)
+
+---
+
+### BLG-UX-20 — Show on Positions whether each position is getting closer to its stop
+**Priority:** P3 (Low)
+**Type:** UX / Positions
+**Owner:** Head of UX & Design; Frontend Specifications & UX Documentation Owner
+**Source:** `BLG-UX-08` re-review §13.2 (NHS NEWS2 track-and-trigger), finding B4 (`docs/ux/site_structure_rereview_2026-11-17.md`) — 2026-11-17
+**Effort:** S (~1 day design + build, if data allows)
+**Provisional-Target:** TBD
+
+**Problem**
+The decision-first Positions table shows where each position is now ("To stop" in R and %, the action needed) but not its direction of travel. Early-warning systems such as NHS NEWS2 treat the trend between observations as being as important as the current reading. A position drifting towards its stop over several days looks the same as one that has just bounced off a low.
+
+**Scope**
+- Decide the indicator in `positions.md` (for example, change in distance to stop since the last nightly run, as an arrow or delta), using stored stop and price history where it exists; record if the data needs a new field
+- Do not add a composite risk score: each cue must name the rule or measure behind it
+
+**Acceptance Criteria**
+- `positions.md` records the decision and its data source
+- If built: with a fixture where one position moved closer to its stop and one moved away, each shows the right direction (Playwright)
+
+---
+
+### BLG-SPEC-240 — Adopt one written standard for error messages
+**Priority:** P3 (Low)
+**Type:** Spec debt / Design system
+**Owner:** Frontend Specifications & UX Documentation Owner; Head of UX & Design
+**Source:** `BLG-UX-08` re-review §13.2 (GOV.UK Design System error pattern), finding B5 (`docs/ux/site_structure_rereview_2026-11-17.md`) — 2026-11-17
+**Effort:** S (~0.5 day)
+**Provisional-Target:** TBD
+
+**Problem**
+Error handling differs by form: Trade Entry marks fields with `aria-invalid` and a described message, while other forms rely on disabled buttons or toasts (§9 of the review; `BLG-UX-06`). There is no written standard. The GOV.UK Design System pattern — an error summary linking to each field, plus an inline message that says what went wrong and how to fix it, avoiding "invalid" and "please" — is a proven, accessible standard.
+
+**Scope**
+- Add an "Error messages" section to `design_system.md` adapting that pattern (summary, inline message, wording rules, `aria-invalid`/`aria-describedby`, when a toast is acceptable)
+- List the forms that do not yet meet it, for later stories
+
+**Acceptance Criteria**
+- `design_system.md` has the section with a dated approval by the Head of UX & Design, and the non-conforming forms are listed
 
 ---
