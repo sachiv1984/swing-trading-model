@@ -1,7 +1,7 @@
 Owner: PMO Lead
 Class: Operational Record (Class 3)
 Status: Active
-Last Updated: 2026-11-17 (created)
+Last Updated: 2026-11-17 (follow-up — §6 row 3 resolved: spec pages registered); prior — 2026-11-17 (created)
 Cycle: 2026-11-11__release-v9.17
 
 ---
@@ -89,7 +89,7 @@ Full detail: `claude/cycles/2026-11-11__release-v9.17/lessons_learnt_closure.md`
 |---|-------------|-------|----------|-----------------|------------|
 | 1 | **Split-achievability case (i):** `BLG-OPS-217` not marked COMPLETE. Outstanding: ST-15 AC 2 (post-fix production weekly report, failure rate < 10% or documented) and AC 3 (`data_pipeline_cost_baseline.md` §4 updated). Needs 7 days of post-fix production data (EPIC-06 merged 2026-11-13). Its Provisional-Target is `TBD`. | Infrastructure & Operations Owner | On or after 2026-11-20 | `BLG-OPS-217` | *(open)* |
 | 2 | **Split-achievability case (i):** `BLG-GOV-419` not marked COMPLETE. Outstanding: ST-18 AC 2 (the next Release Planning gate scan after a clearance shows no data-quality warning for the cleared item's `Provisional-Target`). Its `Provisional-Target` still reads v9.17; retarget to the next release. | Head of Specs Team; PMO Lead | Next Release Planning run that clears a gate | `BLG-GOV-419` | *(open)* |
-| 3 | Register `docs/specs/frontend/pages/journal.md` and `docs/specs/frontend/pages/performance.md` in `docs/specs/Specs_Index.md` §8b (and review whether the Reports and Performance Analytics specs they replaced are marked superseded) | Head of Specs Team | Next spec edit | `Specs_Index.md` §57 | *(open)* |
+| 3 | Register `docs/specs/frontend/pages/journal.md` and `docs/specs/frontend/pages/performance.md` in `docs/specs/Specs_Index.md` §8b (and review whether the Reports and Performance Analytics specs they replaced are marked superseded) | Head of Specs Team | Next spec edit | `Specs_Index.md` §57 | ✅ Resolved 2026-11-17 (Head of Specs Team, user-directed): both registered in §8b; `reports.md` and `analytics.md` already carry their own "Superseded by `performance.md`" headers; `BLG-SPEC-221` met and archived |
 | 4 | Mark `docs/specs/metrics_definitions.md` Appendix E Item 4 (`BLG-FE-240`) Resolved (carried from v9.16 §6 row 2; still reads Open). | Metrics Definitions & Analytics Canonical Owner | Next spec edit | `deviation_consolidation_review_2026-11-11.md` | *(open)* |
 | 5 | Confirm the ninth deviation consolidation review (carried from v9.16 §6 row 7; agent-mediated DoQ sign-off still pending human confirmation). | Director of Quality | Next session | `docs/governance/deviation_consolidation_review_2026-11-11.md` | *(open)* |
 | 6 | Add ACs to, or kill, `BLG-GOV-200` and `BLG-GOV-201` (carried from v9.16 §6 row 5). | PMO Lead; item owners | Before either is seated | `backlog_health_20261111.md` | *(open)* |

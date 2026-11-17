@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-17 (post-ship closure `2026-11-11__release-v9.17` — STEP 3: 17 shipped source items bannered ✅ COMPLETE, `BLG-OPS-217` and `BLG-GOV-419` kept open as post-merge trackers; STEP 8: 1 new item added, BLG-QA-268); prior — 2026-11-17 (session — 2 new items added: BLG-FE-306, BLG-FE-307; PR #2262 Head of UX & Design review, EPIC-03, v9.17); prior — 2026-11-17 (session — 5 new items added: BLG-FE-303, BLG-OPS-220, BLG-QA-267, BLG-FE-304, BLG-FE-305; PR #2262 agent-mediated review, EPIC-03, v9.17); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-17 (session, user-directed after post-ship closure `2026-11-11__release-v9.17` — BLG-FE-224 and BLG-FE-242 closed as superseded by their named owner; BLG-SPEC-221 met; all three archived); prior — 2026-11-17 (post-ship closure `2026-11-11__release-v9.17` — STEP 3: 17 shipped source items bannered ✅ COMPLETE, `BLG-OPS-217` and `BLG-GOV-419` kept open as post-merge trackers; STEP 8: 1 new item added, BLG-QA-268); prior — 2026-11-17 (session — 2 new items added: BLG-FE-306, BLG-FE-307; PR #2262 Head of UX & Design review, EPIC-03, v9.17); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -2898,25 +2898,6 @@ With no path argument, `backend/.venv/bin/python3 -m pytest --collect-only -q` f
 
 ---
 
-### BLG-FE-224 — Move amber-600 text on light surfaces to amber-700
-**Priority:** P3 (Low)
-**Type:** Frontend / Accessibility
-**Owner:** Frontend Specifications & UX Documentation Owner
-**Source:** ST-24/EPIC-03, cycle `2026-10-12__release-v9.12`, agent-mediated Director of Quality review (follow-up 5) — 2026-10-13
-**Effort:** S (~0.5 day plus test updates)
-**Provisional-Target:** TBD
-
-**Problem**
-ST-24 fixed white text on amber-600 fills. `text-amber-600` used as text on light surfaces remains (about 3.2:1 on white, below AA; `design_system.md` §Light-Theme Colour Tokens rule 3): WatchlistRow, PositionSizingWidget, WhatIfSizingPreview, TradePlans (~285, stale marker), Positions/PositionCard. Some tests assert the class (e.g. `trade-plan-stale-marker.spec.js` SC-TPS-05, `position-sizing-concentration.spec.js` V-SIZE-01, `position-review-cadence-nudge.spec.js`).
-
-**Scope**
-- Move each to `text-amber-700 dark:text-amber-400` and update the asserting tests in the same commit
-
-**Acceptance Criteria**
-- No `text-amber-600` remains in `src/` outside Replay; scoped axe color-contrast scans of the changed elements pass in the light theme
-
----
-
 ### BLG-FE-225 — Cache the Trade Entry ATR preview per ticker and market
 **Priority:** P3 (Low)
 **Type:** Frontend / Performance
@@ -4305,29 +4286,6 @@ ST-48 made `metrics_definitions.md` Appendix F and `scripts/compute_effort_weigh
 
 ---
 
-### BLG-FE-242 — Give the Trade History filter fields and Exit dialog fields a light-theme fill
-**Priority:** P3 (Low)
-**Type:** Frontend / UX (light-theme contrast)
-**Owner:** Frontend Specifications & UX Owner
-**Source:** Sprint Execution, ST-30 / EPIC-05 of `2026-10-29__release-v9.14` (staging visual check of the tailwind-merge `cn()` change, before/after screenshots of `2f5cc56a~1` and `42bec3ce`); Product Owner chose to backlog rather than fix in-sprint — 2026-11-02
-**Effort:** XS (<1h)
-**Provisional-Target:** TBD
-
-**Problem**
-Since `cn()` runs `tailwind-merge` (v9.13 ST-25, `2f5cc56a`), a caller's `bg-slate-800/50` now beats the input and select default `bg-transparent`. The Trade History saved-filter picker, the Trade History filter selects and date inputs, and the Exit Position dialog fields all set this fill with no light-theme pair, so the light theme renders a dark fill. On the saved-filter picker the placeholder text "No saved filters" (`#737373`) measures 1.45:1 against that fill, down from 4.32:1 before the change (axe `color-contrast`, light theme). This is the dark-only-token defect class `design_system.md` warns about (BLG-FE-87/88/95).
-
-**Scope**
-- Replace the bare `bg-slate-800/50` on these fields with an explicit light+dark pair from `design_system.md` §Light-Theme Colour Tokens, with a light-theme text colour that meets 4.5:1 on it
-- Sites: the saved-filter picker in `src/components/trades/SavedFiltersControl.js`; the Trade History filter selects and date inputs; the Exit Position dialog inputs, Exit Reason select and note field
-- Add a light-theme axe `color-contrast` check of Trade History to `tests/e2e/accessibility-axe-scan.spec.js` that covers the saved-filter picker
-
-**Acceptance Criteria**
-- In the light theme, "No saved filters" and every Trade History filter field meet 4.5:1 text contrast (axe `color-contrast` passes for those elements)
-- The dark theme is unchanged: the fields keep the `bg-slate-800/50` fill
-- The new light-theme Trade History scan passes in CI
-
----
-
 ### BLG-UX-08 — First-principles UX re-review when the Site Structure & Usability programme completes
 **Priority:** P2 (Medium)
 **Type:** UX review (programme close-out)
@@ -4770,27 +4728,6 @@ ST-12 removed the legacy widget Dashboard and the components only it rendered, a
 
 **Acceptance Criteria**
 - A dated Product Owner decision is recorded on this item, with follow-up items filed if the views return
-
----
-
-### BLG-SPEC-221 — Bring Specs_Index.md back in line with check_specs_index_freshness.py
-**Priority:** P3 (Low)
-**Type:** Spec Debt
-**Owner:** Head of Specs Team
-**Source:** Sprint Execution 2026-11-03__release-v9.15, EPIC-06/ST-34 (found running the related spec checks) — 2026-11-05
-**Effort:** XS (<1h)
-**Provisional-Target:** v9.16
-
-**Problem**
-`python3 scripts/check_specs_index_freshness.py` exits 1 on `main`. `docs/specs/frontend/pages/journal.md` (added in v9.15) is not listed in `Specs_Index.md`, and `Specs_Index.md` refers to `qa_evidence_EPIC-xx.md`, which matches no real file. While the check fails, new index drift is harder to spot.
-
-**Scope**
-- Add `journal.md` to `Specs_Index.md` under Frontend pages
-- Fix or remove the `qa_evidence_EPIC-xx.md` reference (it is a placeholder, not a spec file)
-
-**Acceptance Criteria**
-- `python3 scripts/check_specs_index_freshness.py` exits 0 on `main`
-- Head of Specs Team reviews the two edits, as the script's own output asks
 
 ---
 

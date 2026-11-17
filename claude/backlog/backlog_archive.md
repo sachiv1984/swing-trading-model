@@ -1,11 +1,101 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-11-17 (groom backlog GROOM-20261117-01, post-ship closure 2026-11-11__release-v9.17 STEP 12 — 24 items archived: the 18 v9.17 source items bannered at closure STEP 3 or at their post-merge backfill, 5 in-sprint same-branch fixes (`BLG-FE-295`, `296`, `298`, `300`, `303`) and `BLG-FE-237` (met by ST-06)); prior — 2026-11-11 (groom backlog GROOM-20261111-01, post-ship closure 2026-11-06__release-v9.16 STEP 12 — 35 items archived: 33 v9.16 items bannered at closure STEP 3, `BLG-GOV-414` (met) and `BLG-GOV-192` (already met)); prior — 2026-11-06 (groom backlog GROOM-20261106-01, post-ship closure 2026-11-03__release-v9.15 STEP 12 — 63 items archived: 45 v9.15 shipped items, BLG-GOV-185 (v9.14 ST-51, already met), 10 from the v9.15 Release Planning archive list (incl. BLG-GOV-400 and BLG-OPS-203, bannered this run), BLG-SPEC-217 (bannered this run), and 6 out-of-sprint governance patches (BLG-GOV-392/393/395/405/406/407)); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-17 (session, user-directed — 3 items archived: BLG-FE-224, BLG-FE-242 (superseded by v9.17 ST-08, named-owner decision), BLG-SPEC-221 (met)); prior — 2026-11-17 (groom backlog GROOM-20261117-01, post-ship closure 2026-11-11__release-v9.17 STEP 12 — 24 items archived: the 18 v9.17 source items bannered at closure STEP 3 or at their post-merge backfill, 5 in-sprint same-branch fixes (`BLG-FE-295`, `296`, `298`, `300`, `303`) and `BLG-FE-237` (met by ST-06)); prior — 2026-11-11 (groom backlog GROOM-20261111-01, post-ship closure 2026-11-06__release-v9.16 STEP 12 — 35 items archived: 33 v9.16 items bannered at closure STEP 3, `BLG-GOV-414` (met) and `BLG-GOV-192` (already met)); prior history retained — see prior entries in version control
 
 # Backlog Archive — Momentum Trading Assistant
 
 Permanent record of completed and killed backlog items retired from `claude/backlog/backlog.md`. Listed in retirement order, most recent first. Append-only — do not edit existing entries.
+
+---
+
+### BLG-FE-224 — Move amber-600 text on light surfaces to amber-700
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3
+**Retired:** 2026-11-17
+**Shipped in:** v9.17 (superseded by ST-08)
+**Evidence:** banner on the item; `docs/specs/Specs_Index.md` changelog 2026-11-17 / `claude/cycles/2026-11-11__release-v9.17/closure_record.md` §6
+
+### BLG-FE-224 — Move amber-600 text on light surfaces to amber-700
+**✅ COMPLETE (superseded) — 2026-11-17, closed by the named owner, the Frontend Specifications & UX Documentation Owner (agent-mediated, user-directed; ownership confirmed by the user 2026-11-17). Superseded by v9.17 ST-08 (`BLG-FE-265`, PR #2262), as the v9.17 slice planned. All five text sites named in Problem now use tokens. The one remaining `text-amber-600` in `src/` outside Replay is `Positions.js` `WARNING_ICON_CLASS`: a decorative, `aria-hidden` icon always beside its text label. WCAG 1.4.3 text contrast does not apply to it, and it meets 1.4.11 non-text contrast (3.19:1 on white, 3.07:1 on amber-50). The literal AC wording is not met for that icon; the owner accepts it as compliant. Any further component sweep belongs to `BLG-FE-288`.**
+**Priority:** P3 (Low)
+**Type:** Frontend / Accessibility
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** ST-24/EPIC-03, cycle `2026-10-12__release-v9.12`, agent-mediated Director of Quality review (follow-up 5) — 2026-10-13
+**Effort:** S (~0.5 day plus test updates)
+**Provisional-Target:** TBD
+
+**Problem**
+ST-24 fixed white text on amber-600 fills. `text-amber-600` used as text on light surfaces remains (about 3.2:1 on white, below AA; `design_system.md` §Light-Theme Colour Tokens rule 3): WatchlistRow, PositionSizingWidget, WhatIfSizingPreview, TradePlans (~285, stale marker), Positions/PositionCard. Some tests assert the class (e.g. `trade-plan-stale-marker.spec.js` SC-TPS-05, `position-sizing-concentration.spec.js` V-SIZE-01, `position-review-cadence-nudge.spec.js`).
+
+**Scope**
+- Move each to `text-amber-700 dark:text-amber-400` and update the asserting tests in the same commit
+
+**Acceptance Criteria**
+- No `text-amber-600` remains in `src/` outside Replay; scoped axe color-contrast scans of the changed elements pass in the light theme
+
+---
+
+### BLG-FE-242 — Give the Trade History filter fields and Exit dialog fields a light-theme fill
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3
+**Retired:** 2026-11-17
+**Shipped in:** v9.17 (superseded by ST-08)
+**Evidence:** banner on the item; `docs/specs/Specs_Index.md` changelog 2026-11-17 / `claude/cycles/2026-11-11__release-v9.17/closure_record.md` §6
+
+### BLG-FE-242 — Give the Trade History filter fields and Exit dialog fields a light-theme fill
+**✅ COMPLETE (superseded) — 2026-11-17, closed by the named owner, the Frontend Specifications & UX Documentation Owner (agent-mediated, user-directed; ownership confirmed by the user 2026-11-17). Superseded by v9.17 ST-08 (`BLG-FE-265`, PR #2262), as the v9.17 slice planned. The saved-filter picker (`SavedFiltersControl.js`) and its select now use the `bg-app-raised` token with a 4.5:1 light-theme text pair; the Trade History filter fields no longer use bare `bg-slate-800/50`; the Exit dialog fields carry a light `bg-slate-100` / dark `dark:bg-slate-800/50` pair. ST-08 added a light-theme axe scan of the whole Trade History page (`accessibility-axe-scan.spec.js`, `ST08_PAGES` TradeHistory), which passes in CI (AC 1, AC 3). AC 2 (dark fill kept at `bg-slate-800/50`) is superseded by the semantic-token decision in `design_system.md` §Semantic Colour Tokens.**
+**Priority:** P3 (Low)
+**Type:** Frontend / UX (light-theme contrast)
+**Owner:** Frontend Specifications & UX Owner
+**Source:** Sprint Execution, ST-30 / EPIC-05 of `2026-10-29__release-v9.14` (staging visual check of the tailwind-merge `cn()` change, before/after screenshots of `2f5cc56a~1` and `42bec3ce`); Product Owner chose to backlog rather than fix in-sprint — 2026-11-02
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+Since `cn()` runs `tailwind-merge` (v9.13 ST-25, `2f5cc56a`), a caller's `bg-slate-800/50` now beats the input and select default `bg-transparent`. The Trade History saved-filter picker, the Trade History filter selects and date inputs, and the Exit Position dialog fields all set this fill with no light-theme pair, so the light theme renders a dark fill. On the saved-filter picker the placeholder text "No saved filters" (`#737373`) measures 1.45:1 against that fill, down from 4.32:1 before the change (axe `color-contrast`, light theme). This is the dark-only-token defect class `design_system.md` warns about (BLG-FE-87/88/95).
+
+**Scope**
+- Replace the bare `bg-slate-800/50` on these fields with an explicit light+dark pair from `design_system.md` §Light-Theme Colour Tokens, with a light-theme text colour that meets 4.5:1 on it
+- Sites: the saved-filter picker in `src/components/trades/SavedFiltersControl.js`; the Trade History filter selects and date inputs; the Exit Position dialog inputs, Exit Reason select and note field
+- Add a light-theme axe `color-contrast` check of Trade History to `tests/e2e/accessibility-axe-scan.spec.js` that covers the saved-filter picker
+
+**Acceptance Criteria**
+- In the light theme, "No saved filters" and every Trade History filter field meet 4.5:1 text contrast (axe `color-contrast` passes for those elements)
+- The dark theme is unchanged: the fields keep the `bg-slate-800/50` fill
+- The new light-theme Trade History scan passes in CI
+
+---
+
+### BLG-SPEC-221 — Bring Specs_Index.md back in line with check_specs_index_freshness.py
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3
+**Retired:** 2026-11-17
+**Shipped in:** N/A — spec debt resolved 2026-11-17
+**Evidence:** banner on the item; `docs/specs/Specs_Index.md` changelog 2026-11-17 / `claude/cycles/2026-11-11__release-v9.17/closure_record.md` §6
+
+### BLG-SPEC-221 — Bring Specs_Index.md back in line with check_specs_index_freshness.py
+**✅ COMPLETE — 2026-11-17, Head of Specs Team (agent-mediated, user-directed after post-ship closure `2026-11-11__release-v9.17`): `journal.md` and `performance.md` registered in `Specs_Index.md` §8b; the placeholder QA-evidence filename mentions rewritten as `qa_evidence_EPIC-<nn>.md`; `check_specs_index_freshness.py` exits 0 on this commit.**
+**Priority:** P3 (Low)
+**Type:** Spec Debt
+**Owner:** Head of Specs Team
+**Source:** Sprint Execution 2026-11-03__release-v9.15, EPIC-06/ST-34 (found running the related spec checks) — 2026-11-05
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.16
+
+**Problem**
+`python3 scripts/check_specs_index_freshness.py` exits 1 on `main`. `docs/specs/frontend/pages/journal.md` (added in v9.15) is not listed in `Specs_Index.md`, and `Specs_Index.md` refers to `qa_evidence_EPIC-xx.md`, which matches no real file. While the check fails, new index drift is harder to spot.
+
+**Scope**
+- Add `journal.md` to `Specs_Index.md` under Frontend pages
+- Fix or remove the `qa_evidence_EPIC-xx.md` reference (it is a placeholder, not a spec file)
+
+**Acceptance Criteria**
+- `python3 scripts/check_specs_index_freshness.py` exits 0 on `main`
+- Head of Specs Team reviews the two edits, as the script's own output asks
 
 ---
 

@@ -4,7 +4,7 @@
 **Purpose:** Single map of canonical product truth
 **Audience:** Product, Engineering, Analytics, Strategy
 **Status:** Authoritative
-**Last Updated:** 2026-11-17 (post-ship closure 2026-11-11__release-v9.17 STEP 7 — §57 Test Coverage Gaps (v9.17) added; STEP 7.3 sweep: 5 Open TSG entries checked, 0 resolved); prior — 2026-11-11 (post-ship closure 2026-11-06__release-v9.16 STEP 7 — §56 Test Coverage Gaps (v9.16) added; STEP 7.3 sweep: 5 Open TSG entries checked, 0 resolved); prior — 2026-11-06 (post-ship closure 2026-11-03__release-v9.15 STEP 7 — §55 Test Coverage Gaps (v9.15) added; STEP 7.3 sweep resolved 4 TSG entries); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-17 (Head of Specs Team, BLG-SPEC-221 — `journal.md` and `performance.md` registered in §8b; placeholder QA-evidence filename mentions rewritten; freshness check exits 0); prior — 2026-11-17 (post-ship closure 2026-11-11__release-v9.17 STEP 7 — §57 Test Coverage Gaps (v9.17) added; STEP 7.3 sweep: 5 Open TSG entries checked, 0 resolved); prior — 2026-11-11 (post-ship closure 2026-11-06__release-v9.16 STEP 7 — §56 Test Coverage Gaps (v9.16) added; STEP 7.3 sweep: 5 Open TSG entries checked, 0 resolved); prior history retained — see prior entries in version control
 
 ---
 
@@ -413,8 +413,10 @@ Populated by the ST-49 freshness-check remediation (`scripts/check_specs_index_f
 
 | Path | Title | Owner | Class |
 |------|-------|-------|-------|
+| `docs/specs/frontend/pages/journal.md` | journal.md — Journal (single Journal area; supersedes the separate journal surfaces) | Frontend Specifications & UX Documentation Owner | Canonical Specification (Class 1) |
 | `docs/specs/frontend/pages/navigation.md` | Frontend Specification — Sidebar Navigation | Frontend Specifications & UX Documentation Owner | Supporting Document (Class 2) |
 | `docs/specs/frontend/pages/notifications.md` | notifications.md — Notifications (Feed, Preferences, Alert Rules & History) | Frontend Specifications & UX Documentation Owner | Supporting Document (Class 2) |
+| `docs/specs/frontend/pages/performance.md` | performance.md — Performance (Reports and Performance Analytics in one page; supersedes `reports.md` and `analytics.md` for route, placement and layout) | Frontend Specifications & UX Documentation Owner | Canonical Specification (Class 1) |
 | `docs/specs/frontend/pages/positions.md` | positions.md | Frontend Specifications & UX Documentation Owner | Class 1 |
 | `docs/specs/frontend/pages/pre_trade_research.md` | pre_trade_research.md — Pre-Trade Research View | Frontend Specifications & UX Documentation Owner | Supporting Document (Class 2) |
 | `docs/specs/frontend/pages/red_flag_journal.md` | red_flag_journal.md — Red Flag Journal | Frontend Specifications & UX Documentation Owner | Supporting Document (Class 2) |
@@ -1134,7 +1136,7 @@ Both are tracked as a lessons-learnt friction item, not backlog debt (`lessons_l
 
 ## 41. Test Coverage Gaps — v9.1 (2026-09-03__release-v9.1)
 
-Identified during delivery verification (`verification_report.md §6`): **0 new test scenario gaps this cycle** — every EPIC's `test_scenarios` array was cross-referenced against its `qa_evidence_EPIC-xx.md` "Scenarios run" field and confirmed executed. Table is N/A per §6.
+Identified during delivery verification (`verification_report.md §6`): **0 new test scenario gaps this cycle** — every EPIC's `test_scenarios` array was cross-referenced against its `qa_evidence_EPIC-<nn>.md` "Scenarios run" field and confirmed executed. Table is N/A per §6.
 
 **TSG backlog reconciliation (§7.3 — full-document sweep, per `post_ship_closure.md`'s no-fixed-section-number scan rule):** Scanned all 26 `### N.N TSG-*` entries (§9–§40) for literal `**Status:** Open`. 0 Open entries found — every existing TSG entry already carries a `RESOLVED`/`not_applicable`/confirmed-still-open disposition (most recently reconciled at v8.6/§39 and v9.0/§40 closures). 0 Open TSG entries checked, 0 resolved.
 
@@ -1142,7 +1144,7 @@ Identified during delivery verification (`verification_report.md §6`): **0 new 
 
 ## 42. Test Coverage Gaps — v9.2 (2026-09-07__release-v9.2)
 
-Identified during delivery verification (`verification_report.md §6`): **0 new test scenario gaps this cycle** — EPIC-01/02/03/05's `test_scenarios` arrays were each cross-referenced against their `qa_evidence_EPIC-xx.md` "Scenarios run" field and confirmed executed; EPIC-04's short-circuit (`not_applicable` — no frontend-visible AC anywhere in the EPIC, confirmed via `git diff --stat`) applied cleanly. Table is N/A per §6.
+Identified during delivery verification (`verification_report.md §6`): **0 new test scenario gaps this cycle** — EPIC-01/02/03/05's `test_scenarios` arrays were each cross-referenced against their `qa_evidence_EPIC-<nn>.md` "Scenarios run" field and confirmed executed; EPIC-04's short-circuit (`not_applicable` — no frontend-visible AC anywhere in the EPIC, confirmed via `git diff --stat`) applied cleanly. Table is N/A per §6.
 
 **Endpoint coverage drift check (STEP 6 advisory, cross-referenced here as it touches spec/ops documentation currency):** `docs/reference/openapi.yaml` (139 normalised method+path endpoints) vs `docs/ops/api_performance_baseline.md` (138 normalised entries) — after normalising path parameters and the query-string-suffixed rows for `GET /analytics/metrics`/`GET /analytics/tag-performance` (baseline registers these with an example query string appended to the endpoint-name column, a pre-existing formatting quirk, not a missing registration), 0 genuine gaps found. No new `BLG-OPS-*` filing required.
 
@@ -1152,7 +1154,7 @@ Identified during delivery verification (`verification_report.md §6`): **0 new 
 
 ## 43. Test Coverage Gaps — v9.3 (2026-09-09__release-v9.3)
 
-Identified during delivery verification (`verification_report.md §6`): **0 new test scenario gaps this cycle** — every EPIC's `test_scenarios` array was cross-referenced against its `qa_evidence_EPIC-xx.md` "Scenarios run" field and confirmed executed (EPIC-05's path-naming inconsistency — `test_scenarios` lists the script path, `qa_evidence` lists its corresponding test file — flagged as a naming inconsistency only, not a coverage gap). Table is N/A per §6.
+Identified during delivery verification (`verification_report.md §6`): **0 new test scenario gaps this cycle** — every EPIC's `test_scenarios` array was cross-referenced against its `qa_evidence_EPIC-<nn>.md` "Scenarios run" field and confirmed executed (EPIC-05's path-naming inconsistency — `test_scenarios` lists the script path, `qa_evidence` lists its corresponding test file — flagged as a naming inconsistency only, not a coverage gap). Table is N/A per §6.
 
 **Endpoint coverage drift check (STEP 6 advisory, cross-referenced here as it touches spec/ops documentation currency):** `docs/reference/openapi.yaml` (144 normalised method+path endpoints) vs `docs/ops/api_performance_baseline.md` (250 normalised entries) — after normalising path parameters and stripping backticks/query-string suffixes, 1 genuine gap found: `GET /positions/{id}` (bare single-position fetch) has no baseline measurement row. No existing open `BLG-OPS-*` item covered this specific gap; filed `BLG-OPS-156`.
 
@@ -1162,7 +1164,7 @@ Identified during delivery verification (`verification_report.md §6`): **0 new 
 
 ## 44. Test Coverage Gaps — v9.4 (2026-09-14__release-v9.4)
 
-Identified during delivery verification (`verification_report.md §6`): **0 new test scenario gaps this cycle** — every EPIC's `test_scenarios` array was cross-referenced against its `qa_evidence_EPIC-xx.md` "Scenarios run" field and confirmed executed; EPIC-04 correctly recorded `not_applicable` (empty `test_scenarios`, no frontend-visible AC — all 5 stories were documentation/decision-record work). Table is N/A per §6.
+Identified during delivery verification (`verification_report.md §6`): **0 new test scenario gaps this cycle** — every EPIC's `test_scenarios` array was cross-referenced against its `qa_evidence_EPIC-<nn>.md` "Scenarios run" field and confirmed executed; EPIC-04 correctly recorded `not_applicable` (empty `test_scenarios`, no frontend-visible AC — all 5 stories were documentation/decision-record work). Table is N/A per §6.
 
 **Endpoint coverage drift check (STEP 6 advisory, cross-referenced here as it touches spec/ops documentation currency):** One new backend route was introduced this cycle — `POST /ai/check-endpoint-anomalies` (ST-09, BLG-OPS-151) — and was registered in the same commit (`952ac326`) across `docs/reference/openapi.yaml`, `docs/ops/api_performance_baseline.md` §44, `backend/routers/test.py`, and `src/pages/SystemStatus.js`'s endpoint-count fallback (122→123), per CLAUDE.md §2. No coverage drift found. No new top-level path prefix introduced (`/ai/` already an existing `categorizeEndpoint()` category).
 
@@ -1172,7 +1174,7 @@ Identified during delivery verification (`verification_report.md §6`): **0 new 
 
 ## 45. Test Coverage Gaps — v9.5 (2026-09-15__release-v9.5)
 
-Identified during delivery verification (`verification_report.md §6`): **0 new test scenario gaps this cycle** — all 6 EPICs' `test_scenarios` arrays were cross-referenced against their `qa_evidence_EPIC-xx.md` "Scenarios run" fields and confirmed executed; EPIC-05 correctly recorded `not_applicable` (empty `test_scenarios`, entirely governance/process/documentation scope, no frontend-visible AC). Table is N/A per §6.
+Identified during delivery verification (`verification_report.md §6`): **0 new test scenario gaps this cycle** — all 6 EPICs' `test_scenarios` arrays were cross-referenced against their `qa_evidence_EPIC-<nn>.md` "Scenarios run" fields and confirmed executed; EPIC-05 correctly recorded `not_applicable` (empty `test_scenarios`, entirely governance/process/documentation scope, no frontend-visible AC). Table is N/A per §6.
 
 **Endpoint coverage drift check (STEP 6 advisory, cross-referenced here as it touches spec/ops documentation currency):** Post-ship closure re-ran the normalised `openapi.yaml`-vs-`api_performance_baseline.md` diff (path-parameter and Markdown-formatting normalisation applied per v2.33). 146 normalised endpoints in `openapi.yaml`, all present in `api_performance_baseline.md` — 0 gap. New routes this cycle (`GET /ai/spend-trend-by-feature` ST-06, `POST /ops/purge-audit-logs` ST-07, `POST /ai/check-endpoint-anomalies` latency-column wiring ST-13) all fall under existing `categorizeEndpoint()` prefixes (`/ai`, `/ops` — the latter pre-dating this cycle via `BLG-OPS-17`/`BLG-OPS-20`, v9.3). No new top-level path prefix introduced.
 
@@ -1182,7 +1184,7 @@ Identified during delivery verification (`verification_report.md §6`): **0 new 
 
 ## 46. Test Coverage Gaps — v9.6 (2026-09-21__release-v9.6)
 
-Identified during delivery verification (`verification_report.md §6`): **0 new test scenario gaps this cycle** — all 5 EPICs with populated `test_scenarios` (EPIC-01 through EPIC-05) were cross-referenced against their `qa_evidence_EPIC-xx.md` "Scenarios run" fields and confirmed fully executed; EPIC-06 and EPIC-07 correctly recorded `not_applicable` (empty `test_scenarios`, no frontend/backend-observable AC — documentation, direct migration, or governance-prompt scope only). Table is N/A per §6.
+Identified during delivery verification (`verification_report.md §6`): **0 new test scenario gaps this cycle** — all 5 EPICs with populated `test_scenarios` (EPIC-01 through EPIC-05) were cross-referenced against their `qa_evidence_EPIC-<nn>.md` "Scenarios run" fields and confirmed fully executed; EPIC-06 and EPIC-07 correctly recorded `not_applicable` (empty `test_scenarios`, no frontend/backend-observable AC — documentation, direct migration, or governance-prompt scope only). Table is N/A per §6.
 
 **Endpoint coverage drift check (STEP 6 advisory, cross-referenced here as it touches spec/ops documentation currency):** Post-ship closure re-ran the normalised `openapi.yaml`-vs-`api_performance_baseline.md` diff (path-parameter and Markdown-formatting normalisation applied per v2.33). 146 normalised endpoints in `openapi.yaml`, all present in `api_performance_baseline.md` — 0 gap. No new backend routes were added this cycle (all 32 stories reused existing endpoints or shipped no new API surface); no new top-level path prefix introduced.
 
@@ -1192,7 +1194,7 @@ Identified during delivery verification (`verification_report.md §6`): **0 new 
 
 ## 47. Test Coverage Gaps — v9.7 (2026-09-23__release-v9.7)
 
-Identified during delivery verification (`verification_report.md §6`): **0 new test scenario gaps requiring a backlog item this cycle** — all 5 EPICs with populated `test_scenarios` (EPIC-01 through EPIC-04, EPIC-07) were cross-referenced against their `qa_evidence_EPIC-xx.md` "Scenarios run" fields and confirmed fully executed (including independent reviewer re-verification for EPIC-01/EPIC-04/EPIC-07); EPIC-05 and EPIC-06 correctly recorded `not_applicable` (empty `test_scenarios`, governance/documentation-only scope, no frontend-visible or backend-behavioural AC). Structured register: `TSG-v9.7-01` (EPIC-05, not_applicable), `TSG-v9.7-02` (EPIC-06, not_applicable).
+Identified during delivery verification (`verification_report.md §6`): **0 new test scenario gaps requiring a backlog item this cycle** — all 5 EPICs with populated `test_scenarios` (EPIC-01 through EPIC-04, EPIC-07) were cross-referenced against their `qa_evidence_EPIC-<nn>.md` "Scenarios run" fields and confirmed fully executed (including independent reviewer re-verification for EPIC-01/EPIC-04/EPIC-07); EPIC-05 and EPIC-06 correctly recorded `not_applicable` (empty `test_scenarios`, governance/documentation-only scope, no frontend-visible or backend-behavioural AC). Structured register: `TSG-v9.7-01` (EPIC-05, not_applicable), `TSG-v9.7-02` (EPIC-06, not_applicable).
 
 **Endpoint coverage drift check (STEP 6 advisory, cross-referenced here as it touches spec/ops documentation currency):** Post-ship closure re-ran the normalised `openapi.yaml`-vs-`api_performance_baseline.md` comparison. 147 normalised endpoints in `openapi.yaml`; this cycle's sole new endpoint (`POST /replay/run`, ST-01b/EPIC-01/BLG-FEAT-74) was already registered in `api_performance_baseline.md` §46 during sprint execution (same PR as the `openapi.yaml` addition) — 0 gap. No new top-level path prefix drift found in `api_performance_baseline.md` itself, but `src/pages/SystemStatus.js`'s `categorizeEndpoint()` has no case for the new `/replay` prefix (falls into `'Other'`) — flagged and filed as `BLG-FE-191` (P4) at post-ship closure STEP 6.
 
@@ -1202,7 +1204,7 @@ Identified during delivery verification (`verification_report.md §6`): **0 new 
 
 ## 48. Test Coverage Gaps — v9.8 (2026-09-28__release-v9.8)
 
-Identified during delivery verification (`verification_report.md §6`): **0 new test scenario gaps requiring a backlog item this cycle** — EPIC-01 through EPIC-04 (populated `test_scenarios`) were cross-referenced against their `qa_evidence_EPIC-xx.md` records and confirmed fully executed; EPIC-05 correctly recorded `not_applicable` (empty `test_scenarios`, documentation/spec/openapi-schema authoring, no frontend-visible AC or runtime behaviour change); EPIC-06 recorded `not_applicable` for the 9 governance/spec/tooling stories with no executable surface, with its 1 populated file (ST-30's Base44 template Playwright/axe check) confirmed run 12/12 pass. Structured register: `TSG-v9.8-01` (EPIC-05, not_applicable), `TSG-v9.8-02` (EPIC-06, not_applicable — 9 of 10 stories).
+Identified during delivery verification (`verification_report.md §6`): **0 new test scenario gaps requiring a backlog item this cycle** — EPIC-01 through EPIC-04 (populated `test_scenarios`) were cross-referenced against their `qa_evidence_EPIC-<nn>.md` records and confirmed fully executed; EPIC-05 correctly recorded `not_applicable` (empty `test_scenarios`, documentation/spec/openapi-schema authoring, no frontend-visible AC or runtime behaviour change); EPIC-06 recorded `not_applicable` for the 9 governance/spec/tooling stories with no executable surface, with its 1 populated file (ST-30's Base44 template Playwright/axe check) confirmed run 12/12 pass. Structured register: `TSG-v9.8-01` (EPIC-05, not_applicable), `TSG-v9.8-02` (EPIC-06, not_applicable — 9 of 10 stories).
 
 **Endpoint coverage drift check (STEP 6 advisory, cross-referenced here as it touches spec/ops documentation currency):** Post-ship closure re-ran `scripts/check_api_performance_baseline_drift.py` — PASSED, no new drift detected. No new backend routes were added this cycle (EPIC-05's 39-item slice was documentation/openapi-schema authoring only), so no `SystemStatus.js` `categorizeEndpoint()` follow-up is needed.
 
@@ -1212,7 +1214,7 @@ Identified during delivery verification (`verification_report.md §6`): **0 new 
 
 ## 49. Test Coverage Gaps — v9.9 (2026-09-30__release-v9.9)
 
-Identified during delivery verification (`verification_report.md §6`): **4 test coverage weaknesses, each already tracked by a backlog item filed in-cycle during PR review** — no new backlog items were needed. All 19 referenced `test_scenarios` files across the 6 EPICs exist on disk and were confirmed run against their `qa_evidence_EPIC-xx.md` records.
+Identified during delivery verification (`verification_report.md §6`): **4 test coverage weaknesses, each already tracked by a backlog item filed in-cycle during PR review** — no new backlog items were needed. All 19 referenced `test_scenarios` files across the 6 EPICs exist on disk and were confirmed run against their `qa_evidence_EPIC-<nn>.md` records.
 
 | gap_id | EPIC | Description | Disposition |
 |--------|------|-------------|-------------|
@@ -1509,7 +1511,7 @@ Identified during delivery verification (`verification_report.md §6`): **0 new 
 |--------|------|-------------|-------------|
 | — | — | No gaps identified this cycle | not_applicable |
 
-**Spec registry gap (STEP 7.2):** `scripts/check_specs_index_freshness.py` reports 2 live spec files added this cycle that this index does not reference: `docs/specs/frontend/pages/journal.md` (ST-05) and `docs/specs/frontend/pages/performance.md` (ST-06). Not added to §8b by Post-Ship Closure: the script asks for Head of Specs Team review before the registry is edited (closure record §6). The script's 1 REMOVALS entry (`qa_evidence_EPIC-xx.md`) is a placeholder pattern, not a missing file.
+**Spec registry gap (STEP 7.2) — resolved 2026-11-17 (Head of Specs Team, `BLG-SPEC-221`; both files added to §8b):** `scripts/check_specs_index_freshness.py` reported 2 live spec files added this cycle that this index does not reference: `docs/specs/frontend/pages/journal.md` (ST-05) and `docs/specs/frontend/pages/performance.md` (ST-06). Not added to §8b by Post-Ship Closure: the script asks for Head of Specs Team review before the registry is edited (closure record §6). The script's 1 REMOVALS entry (`qa_evidence_EPIC-<nn>.md`) is a placeholder pattern, not a missing file.
 
 **Endpoint coverage drift check (STEP 6 advisory):** PASSED, no drift (`scripts/check_api_performance_baseline_drift.py` PASSED). No route was added or retired this cycle.
 
@@ -1530,6 +1532,7 @@ Identified during delivery verification (`verification_report.md §6`): **0 new 
 
 | Date | Change |
 |------|--------|
+| 2026-11-17 | Head of Specs Team (`BLG-SPEC-221`, user-directed after post-ship closure `2026-11-11__release-v9.17`): §8b Frontend — Pages registers `journal.md` and `performance.md`; 11 placeholder QA-evidence filename mentions (EPIC-xx) rewritten as `qa_evidence_EPIC-<nn>.md` so the freshness check no longer reads them as a missing file; §57 registry gap marked resolved. `check_specs_index_freshness.py` exits 0. |
 | 2026-11-17 | Post-ship closure `2026-11-11__release-v9.17` — §57 Test Coverage Gaps (v9.17) added: 0 new gaps (remainders tracked by `BLG-QA-263`, `264`, `266`, `267` and `BLG-TECH-35`); spec registry gap recorded (`journal.md`, `performance.md` not yet in §8b, Head of Specs Team review); endpoint coverage drift check PASSED, no new routes; full-document TSG sweep: 5 Open entries checked, 0 resolved; §6/§7: no items resolved by this delivery. |
 | 2026-11-11 | Post-ship closure `2026-11-06__release-v9.16` — §56 Test Coverage Gaps (v9.16) added: 0 new gaps (remainders tracked by `BLG-BE-211`, `BLG-BE-205` and `BLG-QA-254`–`260`); endpoint coverage drift check PASSED, 0 gaps, no new routes; full-document TSG sweep: 5 Open entries checked, 0 resolved; §6/§7: no items resolved by this delivery. |
 | 2026-11-06 | Post-ship closure `2026-11-03__release-v9.15` — §55 Test Coverage Gaps (v9.15) added: 0 new gaps (remainders already tracked by `BLG-QA-250`, `BLG-QA-252`, `BLG-QA-253`); endpoint coverage drift check PASSED, 0 gaps, no new routes; full-document TSG sweep: 9 Open entries checked, 4 resolved (TSG-v9.11-02, TSG-v9.12-01, TSG-v9.14-02, TSG-v9.14-03); §6/§7: no items resolved by this delivery. |
@@ -1553,7 +1556,7 @@ Identified during delivery verification (`verification_report.md §6`): **0 new 
 | 2026-09-10 | ST-16 (EPIC-04, v9.3, BLG-SPEC-69): new `spec_debt_dashboard.md` (§8) registered on creation, mirroring `ops_endpoints.md`'s same-day-registration precedent. |
 | 2026-09-10 | ST-11/ST-12 (EPIC-03, v9.3, BLG-OPS-17/BLG-OPS-20): new `api_contracts/ops_endpoints.md` (§3.4) registered on creation, mirroring ST-43's same-day-registration precedent for `deprecated_endpoint_sunset_tracker.md` (2026-09-08 row below). |
 | 2026-09-09 | Post-ship closure `2026-09-07__release-v9.2` — §42 Test Coverage Gaps (v9.2) added, 0 new gaps this cycle; endpoint coverage drift check found 0 genuine gaps (openapi.yaml 139 vs api_performance_baseline.md 138 normalised endpoints, remaining delta is a query-string formatting quirk, not a missing registration); full-document TSG reconciliation sweep found 0 Open entries. |
-| 2026-09-08 | ST-49 (EPIC-05, v9.2, BLG-SPEC-135): added `## 8b. Full Spec File Registry` — all 78 files `scripts/check_specs_index_freshness.py` had flagged as unreferenced additions are now indexed by path, grouped by domain. Script now reports 0 unexplained additions (1 pre-existing REMOVALS entry, `qa_evidence_EPIC-xx.md`, is a template-pattern placeholder reference, not a real spec file, and is out of this story's scope). Later same day: ST-43's new `deprecated_endpoint_sunset_tracker.md` (§3.4) registered on creation to avoid immediately regressing the 0-additions state. |
+| 2026-09-08 | ST-49 (EPIC-05, v9.2, BLG-SPEC-135): added `## 8b. Full Spec File Registry` — all 78 files `scripts/check_specs_index_freshness.py` had flagged as unreferenced additions are now indexed by path, grouped by domain. Script now reports 0 unexplained additions (1 pre-existing REMOVALS entry, `qa_evidence_EPIC-<nn>.md`, is a template-pattern placeholder reference, not a real spec file, and is out of this story's scope). Later same day: ST-43's new `deprecated_endpoint_sunset_tracker.md` (§3.4) registered on creation to avoid immediately regressing the 0-additions state. |
 | 2026-09-07 | Post-ship closure `2026-09-03__release-v9.1` — §41 Test Coverage Gaps (v9.1) added, 0 new gaps this cycle; full-document TSG reconciliation sweep found 0 Open entries (all 26 already resolved). |
 | 2026-09-07 | ST-28 (EPIC-04, v9.1, BLG-SPEC-117): added this `## Changelog` table; collapsed the header `**Last Updated:**` field to a single line going forward. |
 | 2026-09-03 | Post-ship closure outstanding-actions resolution, Head of Specs Team/QA & Testing Owner direct action — TSG-v22-02 resolved via new `tests/test_health_response_schema.py`; TSG-v23-01 resolved, stale "staging-blocked" premise corrected — see §10.2/§10.3. |
