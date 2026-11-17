@@ -2,14 +2,14 @@
 **Class:** Living Document (Class 3)
 **Status:** Active
 **Version:** 4.60
-**Last Updated:** 2026-11-17 (sprint close 2026-11-11__release-v9.17 — new Sprint section added, no other corrections); prior — 2026-11-11 (delivery verification 2026-11-06__release-v9.16 — status line updated Sprint_Complete → Verified_with_deviations, STEP 6 reconciliation, no other corrections); prior — 2026-11-11 (sprint close 2026-11-06__release-v9.16 — new Sprint section added, no other corrections); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-11-17 (delivery verification 2026-11-11__release-v9.17 — status line updated Sprint_Complete → Verified_with_deviations; STEP 6 reconciliation corrected three spec-reference cells (EPIC-05, EPIC-02, EPIC-03) to match `execution_state.json`); prior — 2026-11-17 (sprint close 2026-11-11__release-v9.17 — new Sprint section added, no other corrections); prior — 2026-11-11 (delivery verification 2026-11-06__release-v9.16 — status line updated Sprint_Complete → Verified_with_deviations, STEP 6 reconciliation, no other corrections); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
 
 ## Sprint: 2026-11-11__release-v9.17
 **Date:** 2026-11-17
-**Status:** Sprint_Complete — pending verification
+**Status:** Verified_with_deviations — 2026-11-17
 
 ### Capabilities now live (merged this sprint)
 
@@ -19,9 +19,9 @@
 | EPIC-04 | The nightly job and the on-load recompute record when each position's stop last moved (ST-09, DS-40). The Dashboard Today list shows a Stops moved group (ST-10) | `data_model.md#DS-40`; `position_endpoints.md`; `dashboard.md#1B` | ST-10 Pass_with_deviation (`DEV-EPIC04-ST10-01`, P3, `BLG-SPEC-238`) |
 | EPIC-07 | Release Planning §1.3a: a gate clearance also sets a gate-worded Provisional-Target to TBD (ST-18). The 2R Exit Zone threshold the Positions page states is defined (ST-19). `check_data_model_drift.py` no longer reads index names from rollback blocks (ST-20) | `release_planning_prompt.md#1.3a`; `positions.md`; `scripts/check_data_model_drift.py` | None (ST-18 AC 2 post-merge, `BLG-GOV-419`) |
 | EPIC-06 | The causes of failing on-demand Yahoo calls on production were found and fixed, including earnings caching and UK prices in pounds (ST-15). Weekly market-data call volume above 2× the baseline raises an alert (ST-16). Batch signal sizing no longer allocates more than the available cash once fees are included (ST-17) | `data_pipeline_cost_baseline.md#4`; `earnings_endpoints.md`; `ops_endpoints.md#GET /ops/api-call-attribution`; `data_model.md#DS-36` | None (ST-15 AC 2–3 post-merge, `BLG-OPS-217`; found P2 `BLG-FE-294` accepted by the PO and DoQ) |
-| EPIC-05 | A linked trade plan moves to `closed` when its position closes, and existing plans were backfilled on production (ST-11). The Trade Plan pre-entry acknowledgement resets when the check result changes (ST-12). Research View's "Create Trade Plan" passes the market (ST-13). The Trade Plan stop is pre-filled from the §5 suggested stop (ST-14) | `trade_plan_endpoints.md`; `trade_plan.md#5a.3`/`#5e`; `research_view.md` | None |
-| EPIC-02 | One Journal area (ST-05). Reports and Performance Analytics are one Performance page (ST-06). Trade Plan and Strategy Benchmark have section indexes (ST-07) | `journal.md`; `performance.md` v1.0; `trade_plan.md`; `strategy_benchmark.md` | None (found P2 `BLG-FE-300` fixed before merge) |
-| EPIC-03 | Every page uses the semantic colour tokens, and each page state is scanned by axe in both themes (ST-08); the remaining shared components are in `BLG-FE-288` | `design_system.md#Semantic Colour Tokens`; `signals.md#Resolved Card States` (v0.10) | None (found P2 `BLG-FE-303` fixed before merge) |
+| EPIC-05 | A linked trade plan moves to `closed` when its position closes, and existing plans were backfilled on production (ST-11). The Trade Plan pre-entry acknowledgement resets when the check result changes (ST-12). Research View's "Create Trade Plan" passes the market (ST-13). The Trade Plan stop is pre-filled from the §5 suggested stop (ST-14) | `data_model.md#DS-41`; `position_endpoints.md#POST /positions/{position_id}/exit`; `trade_plan.md#5a.3`/`#5e`/`#5f`; `research_view.md#4.7` | None (ST-11 AC 2 post-merge production backfill met, `BLG-BE-211`) |
+| EPIC-02 | One Journal area (ST-05). Reports and Performance Analytics are one Performance page (ST-06). Trade Plan and Strategy Benchmark have section indexes (ST-07) | `journal.md`; `performance.md` v1.2; `trade_plan.md`; `strategy_benchmark.md` | None (found P2 `BLG-FE-300` fixed before merge) |
+| EPIC-03 | Every page uses the semantic colour tokens, and each page state is scanned by axe in both themes (ST-08); the remaining shared components are in `BLG-FE-288` | `design_system.md#Page Colour Token Sweep`/`#Semantic Colour Tokens`; `signals.md#Resolved Card States` (v0.10) | None (found P2 `BLG-FE-303` fixed before merge) |
 
 ### Capabilities deferred or returned
 
