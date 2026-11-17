@@ -25,15 +25,14 @@ AUDIT_VERSION = "6"
 
 # Prior audit tracking — the audit itself produces updated values at end (see §9 CONFIG UPDATE)
 PRIOR_AUDIT_ID = "AUD-2026-11-17"
-PRIOR_AUDIT_OPEN_ITEMS = [
-    "AUD-2026-11-17-001", "AUD-2026-11-17-002", "AUD-2026-11-17-003",
-    "AUD-2026-11-17-004",
-]
-  # Filed at AUD-2026-11-17; none applied in the filing session (each needs owner sign-off).
-  # All 7 AUD-2026-11-03 items verified RESOLVED (003 only partially effective: baselines raised 3x,
-  # no split). Next audit: verify 001 ended the 4-closure "next run roadmap" carry, and whether
-  # BLG-GOV-421 (size ratchet on direct-to-main pushes) shipped in v9.18. Re-run the Stage 7
-  # extraction scan (not re-run this audit). See
+PRIOR_AUDIT_OPEN_ITEMS = []
+  # All 4 improvements filed at AUD-2026-11-17 were applied post-publication, same session, on explicit
+  # user direction ("yes push to main and the 4 fixes") as Head of Specs Team rulings: 001 + 004
+  # post_ship_closure.md v2.49 (Carry-Forward age limit; cadence advisories in closure_record.md §1);
+  # 002 shared_standards.md v3.43 §11 cumulative-raise rule; 003 filed as BLG-GOV-424.
+  # Next audit: verify 001 ended the 4-closure "next run roadmap" carry; check whether any baseline
+  # raise crossed 5% of seed without a P2 split item (002); check whether BLG-GOV-421 shipped in v9.18;
+  # re-run the Stage 7 extraction scan (not re-run at AUD-2026-11-17). See
   # claude/cycles/2026-11-11__release-v9.17/audit_report_AUD-2026-11-17.md.
 
 

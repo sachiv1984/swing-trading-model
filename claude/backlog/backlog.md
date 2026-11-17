@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-17 (session — 1 new item added: BLG-UX-21; BLG-UX-08 re-review §14 target state); prior — 2026-11-17 (session — 5 new items added: BLG-UX-19, BLG-FE-320, BLG-FEAT-102, BLG-UX-20, BLG-SPEC-240; BLG-UX-08 re-review §13 competitors and best-in-class); prior — 2026-11-17 (session — 4 new items added: BLG-SEC-46, BLG-FE-318, BLG-UX-18, BLG-FE-319; BLG-UX-08 re-review §12 trust, privacy and security messaging); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-17 (session — 1 new item added: BLG-GOV-424; AUD-2026-11-17-003); prior — 2026-11-17 (session — 1 new item added: BLG-UX-21; BLG-UX-08 re-review §14 target state); prior — 2026-11-17 (session — 5 new items added: BLG-UX-19, BLG-FE-320, BLG-FEAT-102, BLG-UX-20, BLG-SPEC-240; BLG-UX-08 re-review §13 competitors and best-in-class); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -7467,5 +7467,31 @@ The re-review's §14 defines a target state: positioning, navigation, Dashboard 
 **Acceptance Criteria**
 - A dated Product Owner decision on §14 is in the decision log
 - If adopted: `navigation.md` and `design_system.md` reflect the decisions, with dated Head of UX & Design approval
+
+---
+
+### BLG-GOV-424 — Archive Resolved escalation records out of .claude_current_state.json
+**Priority:** P3 (Low)
+**Type:** Governance Process
+**Owner:** PMO Lead
+**Source:** Lifecycle audit `AUD-2026-11-17` improvement AUD-2026-11-17-003 (follow-on named by AUD-2026-11-03-001 but never filed) — 2026-11-17
+**Effort:** M (~1–2d)
+**Provisional-Target:** TBD
+
+**Problem**
+`.claude_current_state.json` is 59,278 bytes, and 46,980 of them are 52 `Resolved` escalation records in `open_escalations` that are never pruned. The session-start hook hides them, but every whole-file read still costs ~21,600 tokens. That includes `execution_prompt.md` STEP -1.2A, the `post_ship_closure.md` SLA mirror and a literal CLAUDE.md §0 read. The file grows ~900 bytes with each resolved escalation.
+
+**Scope**
+- Move `Resolved` escalation records to a registered archive (for example `claude/escalations/resolved_archive.json`), with an `OPERATIONAL_GUIDE.md` §13 row
+- Update `execution_prompt.md` STEP -1.2A and the `post_ship_closure.md` SLA mirror rule to read open and deferred records only (CLAUDE.md §6 checklist)
+- Update `scripts/validate_state_schema.py` / `state_schema.json` if the escalation map's shape changes
+
+**Acceptance Criteria**
+- Every `Resolved` record is in the archive, and none remains in `.claude_current_state.json`
+- The archive has an `OPERATIONAL_GUIDE.md` §13 row
+- `execution_prompt.md` STEP -1.2A and the `post_ship_closure.md` SLA mirror name open and deferred records only
+- `python3 scripts/validate_state_schema.py` reports `VALID`
+- `.claude_current_state.json` is under 15,000 bytes after migration
+- `.claude/hooks/inject_current_state.py` output is unchanged (same header fields and unresolved escalations)
 
 ---

@@ -1,7 +1,7 @@
 Owner: Head of Specs Team
 Class: Governance Artefact (Class 3)
 Status: Active
-Last Updated: 2026-11-17 (initial filing)
+Last Updated: 2026-11-17 (post-publication note — all 4 improvements applied same session); prior — 2026-11-17 (initial filing); prior history retained — see prior entries in version control
 Cycle: 2026-11-11__release-v9.17 (most recent closed cycle at time of run — governance-wide audit, not cycle-scoped)
 
 # Claude Lifecycle Audit — AUD-2026-11-17
@@ -426,6 +426,8 @@ STEP counts are unchanged from AUD-2026-11-03; no STEP was added in window.
 ```
 
 ### 5b. Individual improvements (AUD-ID order, weight desc)
+
+> **Post-publication note (2026-11-17, same session):** all 4 improvements were applied on explicit user direction ("yes push to main and the 4 fixes") as agent-mediated Head of Specs Team rulings, with the patches as drafted below. 001 and 004: `post_ship_closure.md` v2.49; 004 names `closure_record.md` §1 as where the advisory is recorded. 002: `shared_standards.md` v3.43. 003: filed as `BLG-GOV-424` (P3, PMO Lead). Under `BLG-GOV-405` headroom, both prompts moved history text to their changelogs and shrank (75,555→74,592 and 95,910→95,492 bytes). Their size baselines were lowered to match. `OPERATIONAL_GUIDE.md` v4.262.
 
 ### AUD-2026-11-17-001
 **Title:** Give Carry-Forward rows an age limit that forces an owner disposition
