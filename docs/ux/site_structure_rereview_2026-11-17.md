@@ -1,7 +1,7 @@
 **Owner:** Head of UX & Design
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Last Updated:** 2026-11-17 (§11 AI opportunities review added at the user's request; 1 gated item filed); prior — 2026-11-17 (§10 Technical Quality and Performance Review added at the user's request; 5 items filed); prior — 2026-11-17 (§9 Accessibility Review added at the user's request; 6 accessibility items filed); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-17 (§12 Trust, Privacy and Security Messaging added at the user's request; 4 items filed); prior — 2026-11-17 (§11 AI opportunities review added at the user's request; 1 gated item filed); prior — 2026-11-17 (§10 Technical Quality and Performance Review added at the user's request; 5 items filed); prior history retained — see prior entries in version control
 
 # Site Structure & Usability — First-Principles Re-Review
 
@@ -293,3 +293,44 @@ Seven AI features ship: daily briefing, chat ("Ask Advisor"), trade plan generat
 Filed, gated on that review's outcome, as `BLG-UX-17`.
 
 **AI verdict:** no new AI capability is recommended. The evidence says the opportunity is in making the existing AI findable at the point of need, or retiring what is unused, not in adding more. Most of the candidate areas are already solved better by deterministic UX, and two (discovery and recommendations) would breach the strategy's own boundary.
+
+---
+
+## 12. Trust, Privacy and Security Messaging (added 2026-11-17, user request)
+
+**Perspective:** what a user sees and is told, not a penetration test. **No technical vulnerability is claimed below unless it was demonstrated.** I made no calls to the production API and did not load the live app with data. The only live checks were header-only and static-file requests to the public GitHub Pages site (`robots.txt` and the source map), and `gh repo view` for repository visibility. Where a point depends on running the live app, it says so.
+
+**Context:** a single-user personal tool. The only user is the owner, who is also the operator. Many consumer-site obligations (cookie consent, privacy notice, data requests) therefore apply differently or not at all — but the user's data is their own **real personal financial data**: manually recorded real trades, fills, cash balance, P&L and journal reflections.
+
+### 12.1 Findings by Area
+
+| Area | Assessment | Evidence |
+|------|------------|----------|
+| **Cookie consent** | **No cookies set** by the app and no third-party scripts (§10). Browser storage: `localStorage` `theme` and `command-palette-tooltip-seen`; `sessionStorage` `nav-group-collapse` — all functional preferences. Also, legacy placeholder data written to `localStorage` on every load and never read: a fake £10,000 "Main Portfolio" and both market regimes set to `risk_on` (`src/utils/initializeData.js`, called from `index.js`). No consent banner, which is appropriate for an owner-only tool with no tracking | `Layout.js`, `initializeData.js` |
+| **Privacy communication** | No privacy notice, and none is needed while the owner is the only user. **Not disclosed in the UI:** portfolio context (positions, cash, P&L, journal text) is sent to an AI provider (Anthropic) when AI features are used; alerts and the weekly digest (P&L and compliance figures) go to Telegram; data is stored with third-party processors (Supabase, Render). The AI disclaimer says only "AI responses are advisory only. All trade decisions require human confirmation." | `AiDisclaimer.js`, `alerts_service.py`, `si05_digest_service.py` |
+| **Trust indicators** | **Strong for decision trust:** the "AI Advisory" label, stop provenance, signal timing, data-staleness indicator, "Indicative only — not a tax liability", fee estimates before save (§8). Weak point: the AI chat is titled "**AI Trade Advisor**" / "Ask Advisor", which may read as regulated advice — the strategy's own boundary (§13) is decision support, not advice | `AiChatWidget.js` |
+| **Account/security messaging** | **There is no sign-in.** `AuthContext.js` hard-codes a single user and logs "Single-user mode active (no authentication required)"; there is no sign-out, session or account page. The front end is a static site on GitHub Pages; the repository is **public**, the site URL is published in `package.json`, and there is no `robots.txt` (404) or `noindex`. The backend API key the front end uses is embedded in the public bundle with full read and write scope — **already documented and risk-accepted** by the Product Owner (`docs/operations/credential_policy.md` §1.1, ESC-EXEC-20261015-01, 2026-10-15). Nothing in the UI tells the user the app is open to anyone who has the URL | `AuthContext.js`, `credential_policy.md` §1.1 |
+| **Data requests** | Owner-only, so subject-access or erasure requests do not arise. Data portability exists: CSV export (Trade History), PDF export (Performance, Weekly Digest) | `DownloadCsvButton.js`, `ExportModal.js` |
+| **Forms requesting sensitive information** | No passwords, payment details, broker credentials or ID documents are requested in the UI (broker and AI keys are server-side environment variables). Forms do collect sensitive personal financial data (trade sizes, fills, cash movements, journal notes), which is expected for the product | Trade Entry, Exit, Cash Management |
+| **Misleading interaction patterns** | (1) **Notification Preferences say alerts are sent "by email"** (page description and toggles), but delivery is via **Telegram**; there is no email sending in the backend. (2) If Telegram is not configured, a notification is recorded as `delivered = TRUE` with error "email not configured", and the UI never shows delivery status, so the user cannot tell alerts are not arriving. Whether Telegram is configured in production was not checked. (3) Ticker Universe asks "**Permanently** deactivate X? (It can be re-added later.)" — contradictory | `NotificationPreferences.js:116`, `alerts_service.py:1053–1100`, `TickerUniverse.js:279` |
+| **Dark patterns** | **None found.** No pre-ticked checkboxes (0 `defaultChecked`/`checked={true}`); no confirm-shaming (the no-plan nudge reads "Consider creating one before entering — or continue without."); destructive actions are confirmed (trade plan delete, exit, deactivate); the pre-entry acknowledgement is opt-in and required only when checks warn | — |
+| **Transparency** | Good on how numbers are derived (stop provenance, fee preview, suggested size). Gaps: the third-party data flows above, the email/Telegram mismatch, and the open-access posture | — |
+
+### 12.2 Needs Specialist Review
+
+**Security (Cybersecurity & Trust Lead) — recommended now:**
+- **Public readability of the owner's financial data.** The 2026-10-15 accept-risk reasons that this is a "single-user app with no other users' data at risk", and focuses on write scope. It does not explicitly weigh that the owner's *own* real positions, cash, P&L and journal are readable by anyone who loads a publicly discoverable URL (public repo, no `noindex`). That follows from the documented design (no front-end sign-in, full-scope key in the bundle); **I did not demonstrate it** against production. Recommend the Lead re-review the accepted risk with this framing, and choose between keeping it, adding access control in front of the static site, or narrowing the key (the accept-risk's option (a)). → `BLG-SEC-46`
+- The public source map (§10, `BLG-OPS-221`) adds to the same exposure.
+
+**Legal — only if circumstances change:** none of the following is needed while the owner is the only user, but each needs legal review before the app is shared, opened to another user or used commercially: a storage/cookie consent assessment (UK PECR); a privacy notice and processor disclosures (UK GDPR: Anthropic, Supabase, Render, Telegram, market-data providers); and the "Advisor" naming and AI output wording against UK FCA rules on investment advice and financial promotions. Whether purely personal use falls under the GDPR household exemption is itself a legal question; it is assumed, not confirmed, here.
+
+### 12.3 Findings (Filed)
+
+| Ref | Finding | Backlog item |
+|-----|---------|--------------|
+| T1 | Re-review the accepted open-access risk for the owner's own financial data (specialist) | `BLG-SEC-46` (P2) |
+| T2 | Notification copy says email, delivery is Telegram; an unconfigured channel is recorded as delivered with no UI signal | `BLG-FE-318` |
+| T3 | Disclose third-party data flows (AI provider, Telegram); reconsider "AI Trade Advisor" naming; fix "Permanently … can be re-added later" | `BLG-UX-18` |
+| T4 | Legacy placeholder data written to `localStorage` on every load | `BLG-FE-319` |
+
+**Trust verdict:** no dark patterns, and decision-level trust signals are strong. The main concern is posture rather than pattern: an unauthenticated front end on a public URL, over a full-scope key, holding real personal financial data. It is already a recorded, accepted risk, but it deserves a specialist re-review with the owner's own privacy in view. The email/Telegram mismatch is the one place the UI tells the user something untrue.

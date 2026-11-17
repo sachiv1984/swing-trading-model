@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-17 (session — 1 new item added: BLG-UX-17; BLG-UX-08 re-review §11 AI opportunities); prior — 2026-11-17 (session — 5 new items added: BLG-FE-315, BLG-FE-316, BLG-FE-317, BLG-QA-271, BLG-OPS-221; BLG-UX-08 re-review §10 technical review); prior — 2026-11-17 (session — 6 new items added: BLG-FE-311, BLG-FE-312, BLG-FE-313, BLG-FE-314, BLG-QA-269, BLG-QA-270; BLG-UX-08 re-review §9 accessibility review); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-17 (session — 4 new items added: BLG-SEC-46, BLG-FE-318, BLG-UX-18, BLG-FE-319; BLG-UX-08 re-review §12 trust, privacy and security messaging); prior — 2026-11-17 (session — 1 new item added: BLG-UX-17; BLG-UX-08 re-review §11 AI opportunities); prior — 2026-11-17 (session — 5 new items added: BLG-FE-315, BLG-FE-316, BLG-FE-317, BLG-QA-271, BLG-OPS-221; BLG-UX-08 re-review §10 technical review); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -7256,5 +7256,90 @@ Questions about past trades come up during review (Trade History, Journal, Perfo
 - From a Trade History row, "Ask about this trade" opens chat with that trade in context, and the answer lists its source records (Playwright, mocked AI response)
 - The §13 re-attestation is recorded in `docs/product/decisions/section13_reattestation_log.md`
 - An engagement reading 30 days after release is recorded, with a keep/remove decision
+
+---
+
+### BLG-SEC-46 — Re-review the accepted open-access risk with the owner's own financial data in view
+**Priority:** P2 (Medium)
+**Type:** Security / Risk review
+**Owner:** Cybersecurity & Trust Lead; Product Owner
+**Source:** `BLG-UX-08` re-review §12.2, finding T1 (`docs/ux/site_structure_rereview_2026-11-17.md`) — 2026-11-17
+**Effort:** S (~0.5 day review; any chosen remedy is separate)
+**Provisional-Target:** TBD
+
+**Problem**
+The front end has no sign-in (`AuthContext.js` hard-codes a single user) and is served from a public URL. The repository is public, the URL is in `package.json`, and there is no `robots.txt` or `noindex`. The backend API key it uses is embedded in the public bundle with full read and write scope. The 2026-10-15 accept-risk (`docs/operations/credential_policy.md` §1.1, ESC-EXEC-20261015-01) reasons that it is a "single-user app with no other users' data at risk", and focuses on write scope. It does not explicitly weigh that the owner's own real positions, cash, P&L and journal entries are readable by anyone who loads the URL. This follows from the documented design; it was not demonstrated against production in the review. The public source map (`BLG-OPS-221`) adds to the exposure.
+
+**Scope**
+- Re-review the accepted risk with the owner's own data privacy and the URL's discoverability in view
+- Record a dated decision: keep the acceptance (with reasons), or add access control in front of the static site, or narrow the front-end key (the accept-risk's option (a)), or another remedy; add `noindex` if the acceptance stands
+- Update `credential_policy.md` §1.1 and its review triggers to match
+
+**Acceptance Criteria**
+- `credential_policy.md` §1.1 records the dated re-review decision by the Cybersecurity & Trust Lead and the Product Owner, explicitly covering read access to the owner's data
+- Any remedy chosen is filed as its own backlog item
+
+---
+
+### BLG-FE-318 — Say Telegram, not email, for alert delivery, and show when an alert was not sent
+**Priority:** P3 (Low)
+**Type:** Frontend / Backend correctness of user-facing status
+**Owner:** Head of Engineering; Frontend Specifications & UX Documentation Owner
+**Source:** `BLG-UX-08` re-review §12, finding T2 (`docs/ux/site_structure_rereview_2026-11-17.md`) — 2026-11-17
+**Effort:** S (~0.5 day)
+**Provisional-Target:** TBD
+
+**Problem**
+Notification Preferences say alerts are sent "by email" (the page description, the toggles and `notifications.md` "Email Preferences"), but `deliver_notification` (`alerts_service.py` ~1053) sends via Telegram, and the backend has no email sending. When `TELEGRAM_BOT_TOKEN` or `TELEGRAM_CHAT_ID` is not set, the notification is written as `delivered = TRUE` with `delivery_error = 'email not configured'`, and no screen shows delivery status. So the UI states a channel that is not used, and the user cannot tell when alerts are not arriving.
+
+**Scope**
+- Rename "email" to "Telegram" in the UI and in `notifications.md` (and the `email_enabled` label, keeping the column name if a migration is not wanted)
+- When the channel is unconfigured, record `delivered = FALSE` with a clear error, and show "Not sent: Telegram not configured" in Notifications/Notification History
+- Add the API contract change if the response gains a delivery-status field (with `openapi.yaml`)
+
+**Acceptance Criteria**
+- No "email" wording remains on Notification Preferences (Playwright)
+- With Telegram unconfigured, a new notification is stored as not delivered, and the UI shows that it was not sent (pytest + Playwright)
+
+---
+
+### BLG-UX-18 — Tell the user where their data goes, and fix two misleading labels
+**Priority:** P3 (Low)
+**Type:** UX / Content (transparency)
+**Owner:** Head of UX & Design; AI Compliance & Governance Officer
+**Source:** `BLG-UX-08` re-review §12, finding T3 (`docs/ux/site_structure_rereview_2026-11-17.md`) — 2026-11-17
+**Effort:** S (~0.5 day)
+**Provisional-Target:** TBD
+
+**Problem**
+The UI does not say that AI features send portfolio context (positions, cash, P&L, journal text) to an AI provider, or that alerts and the weekly digest (P&L and compliance figures) go to Telegram. The AI disclaimer says only that responses are advisory. The chat is titled "AI Trade Advisor" / "Ask Advisor", which may read as regulated advice, while `strategy_rules.md` §13 frames the system as decision support. Ticker Universe asks "Permanently deactivate X? (It can be re-added later.)", which contradicts itself.
+
+**Scope**
+- Add one line to the AI disclaimer naming what is sent and to whom; add a short "Where your data goes" note (Settings or the `BLG-UX-16` help view) listing the AI provider, Telegram, database and hosting
+- Decide a chat name without "Advisor" (or record why it stays), with the AI Compliance & Governance Officer
+- Reword the deactivate confirmation (for example "Deactivate X? You can re-add it later.")
+
+**Acceptance Criteria**
+- The AI disclaimer and the data-flow note render with the agreed text (Playwright)
+- The chat title and the deactivate confirmation use the agreed wording (Playwright)
+
+---
+
+### BLG-FE-319 — Remove the legacy placeholder data written to localStorage on every load
+**Priority:** P3 (Low)
+**Type:** Frontend / Hygiene
+**Owner:** Head of Engineering
+**Source:** `BLG-UX-08` re-review §12, finding T4 (`docs/ux/site_structure_rereview_2026-11-17.md`) — 2026-11-17
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`src/utils/initializeData.js`, called from `src/index.js` on every load, writes a fake £10,000 "Main Portfolio" (`portfolio_data`), empty `position_data`/`settings_data`, and both market regimes as `risk_on` (`marketregime_data`) to `localStorage`. Nothing reads them (legacy scaffolding). A stored default "risk_on" regime is the kind of fallback `BLG-BE-193` removed elsewhere, and the keys clutter browser storage.
+
+**Scope**
+- Delete `initializeData.js` and its call, and clear the four keys once on load (one release), then remove the clean-up
+
+**Acceptance Criteria**
+- After load, none of `portfolio_data`, `position_data`, `settings_data`, `marketregime_data` exists in `localStorage` (Playwright)
 
 ---
