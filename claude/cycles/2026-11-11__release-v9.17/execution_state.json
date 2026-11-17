@@ -5,7 +5,7 @@
   "invoked_utc": "2026-11-12T13:22:26Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-16T09:05:36Z",
+  "last_updated_utc": "2026-11-17T10:00:00Z",
   "epics": {
     "EPIC-01": {
       "title": "Site Structure & Usability Phase 3: Positions Redesign (build-and-ship)",
@@ -670,6 +670,44 @@
           "last_completed_substep": "3.1.A.push",
           "sign_off_record": null,
           "notes": "First-time-right: 2026-11-16 pass A \u2014 1 N/A (navigation only, no value shown); 2/19 done (Trade Plan 'sizing' link present iff WhatIfSizingPreview renders: stop '', null, 0, -1, 'abc' \u2192 absent; 140 \u2192 present; stop cleared after load \u2192 link drops; Benchmark 'open-positions' absent when no open positions and not loading/error; parity/yearly/trade-log absent while loading or on error; ?section= ignored on the other tabs; ?section=unknown does nothing); 3 done (current-section pick: node -e over rect lists); 4 done (populated Benchmark and Trade Plan fixtures for the 390 px scroll check); 5 high (new shared module reused by ST-06); 6 done (grep tests/e2e for the 7 new headings and 4 index labels: no unscoped collisions; Strategy Benchmark h2s unchanged); 7 done (TradePlan reads only primitive ?edit/ticker/market/clone_from values, so writing ?section= re-runs no effect); 8,11,17,18 N/A (no dates, thresholds, writes); 20 done (labels as decision record \u00a73). | First-time-right: 2026-11-16 pass B \u2014 9 done (own gaps fixed in-commit: jumped-section pin, ready gate); 10 done (both specs' build notes in the same commit); 13 done (tables read back); 15 done (isStopLevelValid shared by panel and index); 18/19 re-run (stop '',0,-1,140; edit/clone populate; tab switch). /code-review high: 9 findings fixed. Deviation check vs \u00a75g/\u00a73a: none (implementation notes recorded in the specs). CI on a7af866b: 8 of 9 workflows success (Frontend Production Build 43853635637, CI Pytest Suite 43853635767); Playwright E2E Acceptance Tests 43853635979 failed SC-SIX-07 (23 px overflow at 390 px from the Performance parity stat cards, CI fonts; pre-existing, inside this story's AC). Fixed in 44736ed8. CI on 44736ed8: all 9 workflows success; Playwright E2E Acceptance Tests 43871300660 (step 4c); CI Pytest Suite 43871300145; Frontend Production Build 43871300029 (step 4d). | DoQ round 1 fixes in 09658bd6 (all 9 workflows success; Playwright 43903323106)."
+        }
+      }
+    },
+    "EPIC-03": {
+      "title": "Site Structure & Usability Phase 3: Semantic Colour Token Sweep (build-and-ship)",
+      "status": "in_progress",
+      "branch": "exec/2026-11-11__release-v9.17/EPIC-03",
+      "pr_number": null,
+      "pr_status": null,
+      "qa_signed_off": false,
+      "qa_evidence_log": null,
+      "test_scenarios": [
+        "tests/e2e/accessibility-axe-scan.spec.js"
+      ],
+      "stories": {
+        "ST-08": {
+          "title": "Move the remaining pages onto the semantic colour tokens",
+          "classification": "autonomous",
+          "status": "in_progress",
+          "assigned_to": "engine",
+          "github_issue": 2243,
+          "branch": "exec/2026-11-11__release-v9.17/EPIC-03",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "docs/specs/frontend/design_system.md#Semantic Colour Tokens",
+            "tests/e2e/accessibility-axe-scan.spec.js"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": false,
+          "last_completed_substep": "3.1.A.start",
+          "sign_off_record": null,
+          "notes": "STEP 0 (resume, 2026-11-17): EPIC-03 had no execution_state section; added with branch created from main b90b11b9 (all six other EPICs merged, so the RISK-02 dependency is met). Issue #2243 found open (STEP 1). First-time-right: 2026-11-17 pass A \u2014 1/7/8/11/17/18/19/21 N/A (class-only change: no value shown, written or derived; no spec premise; no replaced page); 2 done (dark values kept identical except text-slate-500\u2192app-muted, a contrast gain); 3 N/A (no src/lib logic); 4 done (light axe scans use populated fixtures per page, not only empty catch-all); 5 done (medium /code-review; no new shared module); 6 done (25 e2e specs assert colour classes; re-check each against changed elements before commit); 20 N/A (no copy change)."
         }
       }
     }
