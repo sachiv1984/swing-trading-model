@@ -3,11 +3,63 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-11-11 (post-ship closure 2026-11-06__release-v9.16 — v9.16 entry added); prior — 2026-11-06 (post-ship closure 2026-11-03__release-v9.15 — v9.15 entry added); prior — 2026-11-03 (post-ship closure 2026-10-29__release-v9.14 — v9.14 entry added); prior history retained
+**Last Updated:** 2026-11-17 (post-ship closure 2026-11-11__release-v9.17 — v9.17 entry added); prior — 2026-11-11 (post-ship closure 2026-11-06__release-v9.16 — v9.16 entry added); prior — 2026-11-06 (post-ship closure 2026-11-03__release-v9.15 — v9.15 entry added); prior history retained — see prior entries in version control
 
 > This document is a human-maintained record of what was shipped in each product version and when. It records delivery milestones and notable decisions. It is not an immutable system record — for point-in-time system status reports, see `docs/operations/status_reports/`.
 
 > **Authoring convention — `User Impact` column (added v8.8, ST-13, BLG-FE-161):** each `### Changes shipped` table row carries a `User Impact` cell in addition to `Description`. Write `User Impact` only for EPICs that changed something a user can see, click, or notice the effect of — one to two sentences, present tense (or implied second person), no ticket IDs, no implementation nouns (endpoint/table/component names). Leave it `—` for backend/infra/governance/test-coverage rows with no user-facing effect. `Description` is retained unchanged as the engineering record — it is not replaced. `GET /changelog/latest` sources the in-app "What's New" panel from `User Impact` only; rows with a blank/`—` cell are excluded from that feed entirely (`docs/specs/api_contracts/changelog_endpoints.md`).
+
+---
+
+## v9.17 — Site Structure & Usability, Phase 3 — 2026-11-17
+Cycle: 2026-11-11__release-v9.17
+Verified: Verified_with_deviations
+Verification report: claude/cycles/2026-11-11__release-v9.17/verification_report.md
+
+### Changes shipped
+| EPIC | Description | User Impact | Spec sections updated |
+|------|-------------|-------------|----------------------|
+| EPIC-01 | Site Structure & Usability Phase 3 — Positions Redesign — the Positions table is decision-first, sorted by urgency (exit fired → stop breached → near stop → rest) with about 6 leading columns and an expandable row; a card layout below `md`; the four banners above the table combined into one warning strip; grace period detail in one view on Positions, linked from the Dashboard and Risk Dashboard | The Positions page now puts the positions that need action first and shows only the columns you need to decide, with the rest one click away. On a phone each position is a card. The warnings above the table are one strip, and grace period details live in one place that the Dashboard and Risk Dashboard link to. | `positions.md#Decision-First Table`, `#Responsive Behavior`, `#Warning Strip`, `#Grace Period View`; `dashboard.md#Card 3`; `risk_dashboard.md#5`; design record `positions-decision-first` |
+| EPIC-04 | Site Structure & Usability Phase 2 Completion — Stops Moved Group — the nightly job and the on-load recompute record when each position's stop last moved (DS-40); the Dashboard "Today" list shows the Stops moved group (TL-09, TL-10) | The Dashboard's Today list now tells you which stops moved overnight. | `data_model.md#DS-40`; `position_endpoints.md#GET /positions`, `#POST /positions/nightly-stop-update`; `openapi.yaml`; `dashboard.md#1B` |
+| EPIC-07 | Governance, Strategy Copy & Drift Tooling — Release Planning §1.3a lets a gate clearance also set a gate-worded `Provisional-Target` to TBD; the Positions lifecycle badge's 2R Exit Zone tooltip reworded without a number (RISK-05 option (b)); `check_data_model_drift.py` no longer reads index names from rollback blocks | The Exit Zone tooltip on Positions no longer quotes a threshold the app does not use. | `release_planning_prompt.md#1.3a`; `positions.md#Position Lifecycle State Badge`; `scripts/check_data_model_drift.py`; `docs/ops/data_model_drift_runs/` |
+| EPIC-06 | Market-Data Reliability & Sizing Correctness — the causes of failing on-demand Yahoo calls on production found and fixed (earnings caching and cap, UK prices in pounds; production `api_call_log` read under `DEL-20261113-01`); a weekly workflow alerts when market-data call volume exceeds 2× the baseline; batch signal sizing trims whole shares until each signal's fee-inclusive cost fits its allocation | Earnings, gap-risk and research lookups fail far less often, and batch signal sizes never add up to more cash than you have once fees are included. | `data_pipeline_cost_baseline.md#4`, `#5`; `ops_endpoints.md#GET /ops/api-call-attribution`; `earnings_endpoints.md#GET /earnings/{ticker}`; `data_model.md#DS-36`; `signal_endpoints.md#Field notes`; `strategy_signal_regression_spec.md#Inverse-Volatility Sizing` |
+| EPIC-05 | Trade Plan Found Defects (v9.16 carry-forward) — a linked trade plan moves to `closed` when its position closes, with a production backfill (DS-41, 3 plans closed); the Trade Plan pre-entry acknowledgement resets when the check result changes; Research View's "Create Trade Plan" passes the market; the Trade Plan stop is pre-filled from the §5 suggested stop and a typed stop that differs is flagged | Closing a position now closes its trade plan. A UK trade plan started from Research opens as UK, the stop is filled in from the suggested stop, and if the checks change after you acknowledged them you are asked again. | `data_model.md#DS-41`, `#Trade Plan Lifecycle`; `position_endpoints.md#POST /positions/{position_id}/exit`; `trade_plan.md#5a.3`, `#5e`, `#5f`, `#Known Deviations`; `research_view.md#4.7` |
+| EPIC-02 | Site Structure & Usability Phase 3 — Journal & Performance Consolidation — one Journal area; Reports and Performance Analytics merged into one Performance page (`performance.md` v1.2); section indexes on Trade Plan and Strategy Benchmark | Your journal is now in one place, and Reports and Performance Analytics are one Performance page. The long Trade Plan and Strategy Benchmark pages have a section index so you can jump straight to the part you need. | `journal.md`; `performance.md`; `trade_plan.md#5g`; `strategy_benchmark.md#3a`; design records `performance-page-brief`, `long-page-section-index` |
+| EPIC-03 | Site Structure & Usability Phase 3 — Semantic Colour Token Sweep — every routed page moved onto the semantic colour tokens, with axe scans of each page state in both themes; the remaining shared components are tracked by `BLG-FE-288` | Every page now reads clearly in the light theme as well as the dark one. | `design_system.md#Page Colour Token Sweep`, `#Semantic Colour Tokens`; `signals.md#Resolved Card States` |
+
+### Deviations accepted
+| Ref | Priority | Description | Accepted by |
+|-----|----------|-------------|-------------|
+| BLG-FE-294 (ST-15 found defect) | P2 | A failed earnings or gap-risk lookup shows the same as "no upcoming earnings", and the Screener looks up earnings for UK rows. Pre-existing; ST-15's cache and cap make failed lookups much rarer | PO + DoQ (2026-11-13T14:57:46Z, the user in session) |
+
+Two further P2 found defects, `BLG-FE-300` (ST-06, Performance Summary showed £0.00 below the trade minimum) and `BLG-FE-303` (ST-08, six components dark-only in unscanned page states), were fixed on their EPIC branches before merge; nothing is carried.
+
+2 minor deviations (P3) — see `verification_report.md §4`: `DEV-EPIC01-ST04-01` (`BLG-BE-215`), `DEV-EPIC04-ST10-01` (`BLG-SPEC-238`).
+
+### Tech backlog items shipped
+- [ST-01] [U] Decision-first Positions table (BLG-FE-260)
+- [ST-02] [U] Card layout for Positions on narrow screens (BLG-FE-261)
+- [ST-03] [U] The four banners above the Positions table combined into one warning strip (BLG-FE-262)
+- [ST-04] [U] Grace period shown in one place, linked from the Dashboard and Risk Dashboard (BLG-FE-257)
+- [ST-05] [U] The single Journal area (BLG-FE-258)
+- [ST-06] [U] Reports and Performance Analytics merged into one Performance page (BLG-FE-259)
+- [ST-07] [U] Section indexes on Trade Plan and Strategy Benchmark (BLG-FE-263)
+- [ST-08] [U] Remaining pages moved onto the semantic colour tokens (BLG-FE-265)
+- [ST-09] [D] Record when the nightly job last moved each position's stop (BLG-BE-205)
+- [ST-10] [U] Today list "Stops moved" group, TL-09 and TL-10 (BLG-FE-254 remainder)
+- [ST-11] [D] A linked trade plan moves to `closed` when its position closes; production backfill (BLG-BE-211)
+- [ST-12] [U] Trade Plan pre-entry acknowledgement resets when the check result changes (BLG-FE-278)
+- [ST-13] [U] Research View's "Create Trade Plan" passes the market (BLG-FE-281)
+- [ST-14] [U] Trade Plan stop pre-filled from the §5 suggested stop; a differing typed stop is flagged (BLG-FE-282)
+- [ST-15] [D] Causes of failing on-demand Yahoo calls on production found and fixed; post-fix weekly report pending (BLG-OPS-217)
+- [ST-16] [D] Alert when weekly market-data call volume exceeds 2× the baseline (BLG-OPS-195)
+- [ST-17] [D] Batch signal sizing no longer allocates more than available cash once fees are added (BLG-BE-178)
+- [ST-18] [G] Release Planning §1.3a: a gate clearance also sets a gate-worded Provisional-Target to TBD (BLG-GOV-419)
+- [ST-19] [U] 2R Exit Zone tooltip reworded without a number (BLG-SPEC-202)
+- [ST-20] [D] `check_data_model_drift.py` stops reading index names from rollback blocks (BLG-QA-223)
+
+Sign-off: Product Owner — 2026-11-17
+QA sign-off: Director of Quality — 2026-11-17
 
 ---
 

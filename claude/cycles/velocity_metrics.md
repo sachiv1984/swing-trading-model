@@ -3,7 +3,7 @@
 **Class:** Operational Record (Class 3)
 **Status:** Active
 **Version:** 1.4
-**Last Updated:** 2026-11-11 (post-ship closure 2026-11-06__release-v9.16 — v9.16 row added, rolling average window advanced to v9.11–v9.16); prior — 2026-11-06 (post-ship closure 2026-11-03__release-v9.15 — v9.15 row added, rolling average window advanced to v9.10–v9.15); prior — 2026-11-03 (post-ship closure 2026-10-29__release-v9.14 — v9.14 row added, rolling average window advanced to v9.9–v9.14); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-17 (post-ship closure 2026-11-11__release-v9.17 — v9.17 row added, rolling average window advanced to v9.12–v9.17); prior — 2026-11-11 (post-ship closure 2026-11-06__release-v9.16 — v9.16 row added, rolling average window advanced to v9.11–v9.16); prior — 2026-11-06 (post-ship closure 2026-11-03__release-v9.15 — v9.15 row added, rolling average window advanced to v9.10–v9.15); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Created by:** ST-13 (BLG-GOV-09, v2.4)
 ---
@@ -130,7 +130,9 @@
 
 | v9.16 | 30      | 30        | 1.00     | All 30 stories done across 7 EPICs (Site Structure & Usability Phase 2 navigation build-and-ship, Today list & signal-to-entry flow build-and-ship, colour tokens & input contrast build-and-ship, Anthropic key security & operations baselines, backend correctness/AI ticker check/spec debt, Arc 2 retrospective, governance process); 0 deferred at planning, 0 returned. Verified_with_deviations |
 
-**Rolling 6-cycle average (v9.11–v9.16):** 1.00 (0.996: five cycles at 1.00 and v9.15 at 0.977)
+| v9.17 | 20      | 20        | 1.00     | All 20 stories done across 7 EPICs (Site Structure & Usability Phase 3 Positions redesign build-and-ship, Journal & Performance consolidation build-and-ship, semantic colour token sweep build-and-ship, Phase 2 Stops moved group completion, v9.16 Trade Plan found defects, market-data reliability & sizing correctness, governance/strategy copy/drift tooling); 0 deferred at planning, 0 returned. Verified_with_deviations |
+
+**Rolling 6-cycle average (v9.12–v9.17):** 1.00 (0.996: five cycles at 1.00 and v9.15 at 0.977)
 
 ---
 

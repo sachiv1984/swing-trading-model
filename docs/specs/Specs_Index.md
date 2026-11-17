@@ -4,7 +4,7 @@
 **Purpose:** Single map of canonical product truth
 **Audience:** Product, Engineering, Analytics, Strategy
 **Status:** Authoritative
-**Last Updated:** 2026-11-11 (post-ship closure 2026-11-06__release-v9.16 STEP 7 — §56 Test Coverage Gaps (v9.16) added; STEP 7.3 sweep: 5 Open TSG entries checked, 0 resolved); prior — 2026-11-06 (post-ship closure 2026-11-03__release-v9.15 STEP 7 — §55 Test Coverage Gaps (v9.15) added; STEP 7.3 sweep resolved 4 TSG entries); prior — 2026-11-03 (post-ship closure 2026-10-29__release-v9.14 STEP 7 — §54 Test Coverage Gaps (v9.14) added; STEP 7.3 sweep resolved 6 TSG entries); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-17 (post-ship closure 2026-11-11__release-v9.17 STEP 7 — §57 Test Coverage Gaps (v9.17) added; STEP 7.3 sweep: 5 Open TSG entries checked, 0 resolved); prior — 2026-11-11 (post-ship closure 2026-11-06__release-v9.16 STEP 7 — §56 Test Coverage Gaps (v9.16) added; STEP 7.3 sweep: 5 Open TSG entries checked, 0 resolved); prior — 2026-11-06 (post-ship closure 2026-11-03__release-v9.15 STEP 7 — §55 Test Coverage Gaps (v9.15) added; STEP 7.3 sweep resolved 4 TSG entries); prior history retained — see prior entries in version control
 
 ---
 
@@ -1501,6 +1501,22 @@ Identified during delivery verification (`verification_report.md §6`): **0 new 
 
 ---
 
+## 57. Test Coverage Gaps — v9.17 (2026-11-11__release-v9.17)
+
+Identified during delivery verification (`verification_report.md §6`): **0 new test coverage gaps.** All 24 referenced `test_scenarios` files across the 7 EPICs exist on disk and were cited as run. Frontend-visible ACs in EPIC-01, EPIC-02, EPIC-03, EPIC-04 (ST-10), EPIC-05 and EPIC-07 (ST-19) have Playwright coverage run in real CI; EPIC-06 changes no frontend file. The known remainders already have their own backlog items: `BLG-QA-263` (weekend clock tests for Stops moved), `BLG-QA-264` (staging index check), `BLG-QA-266` (debounce test), `BLG-QA-267` (token check parser) and `BLG-TECH-35` (frontend unit tests in CI).
+
+| gap_id | EPIC | Description | Disposition |
+|--------|------|-------------|-------------|
+| — | — | No gaps identified this cycle | not_applicable |
+
+**Spec registry gap (STEP 7.2):** `scripts/check_specs_index_freshness.py` reports 2 live spec files added this cycle that this index does not reference: `docs/specs/frontend/pages/journal.md` (ST-05) and `docs/specs/frontend/pages/performance.md` (ST-06). Not added to §8b by Post-Ship Closure: the script asks for Head of Specs Team review before the registry is edited (closure record §6). The script's 1 REMOVALS entry (`qa_evidence_EPIC-xx.md`) is a placeholder pattern, not a missing file.
+
+**Endpoint coverage drift check (STEP 6 advisory):** PASSED, no drift (`scripts/check_api_performance_baseline_drift.py` PASSED). No route was added or retired this cycle.
+
+**TSG backlog reconciliation (§7.3 — full-document sweep):** Scanned every `### N.N TSG-*` entry for `**Status:** Open` before adding §57. 5 Open entries found (TSG-v9.12-02, TSG-v9.13-01..03, TSG-v9.14-01). Their backlog items (`BLG-QA-226`, `BLG-QA-229`, `BLG-QA-232`, `BLG-QA-230`, `BLG-QA-239`) are all still open, so 0 were resolved.
+
+---
+
 ## 12. Guiding Principle
 
 > Specs explain decisions.
@@ -1514,6 +1530,7 @@ Identified during delivery verification (`verification_report.md §6`): **0 new 
 
 | Date | Change |
 |------|--------|
+| 2026-11-17 | Post-ship closure `2026-11-11__release-v9.17` — §57 Test Coverage Gaps (v9.17) added: 0 new gaps (remainders tracked by `BLG-QA-263`, `264`, `266`, `267` and `BLG-TECH-35`); spec registry gap recorded (`journal.md`, `performance.md` not yet in §8b, Head of Specs Team review); endpoint coverage drift check PASSED, no new routes; full-document TSG sweep: 5 Open entries checked, 0 resolved; §6/§7: no items resolved by this delivery. |
 | 2026-11-11 | Post-ship closure `2026-11-06__release-v9.16` — §56 Test Coverage Gaps (v9.16) added: 0 new gaps (remainders tracked by `BLG-BE-211`, `BLG-BE-205` and `BLG-QA-254`–`260`); endpoint coverage drift check PASSED, 0 gaps, no new routes; full-document TSG sweep: 5 Open entries checked, 0 resolved; §6/§7: no items resolved by this delivery. |
 | 2026-11-06 | Post-ship closure `2026-11-03__release-v9.15` — §55 Test Coverage Gaps (v9.15) added: 0 new gaps (remainders already tracked by `BLG-QA-250`, `BLG-QA-252`, `BLG-QA-253`); endpoint coverage drift check PASSED, 0 gaps, no new routes; full-document TSG sweep: 9 Open entries checked, 4 resolved (TSG-v9.11-02, TSG-v9.12-01, TSG-v9.14-02, TSG-v9.14-03); §6/§7: no items resolved by this delivery. |
 | 2026-11-03 | Post-ship closure `2026-10-29__release-v9.14` — §54 Test Coverage Gaps (v9.14) added: 3 gaps (TSG-v9.14-01..03), each already tracked by a backlog item (`BLG-QA-239`, `BLG-FE-243`, `BLG-FE-239`/`BLG-FE-240`), plus 2 not-applicable rows; endpoint coverage drift check PASSED, 0 gaps; full-document TSG sweep: 12 Open entries checked, 6 resolved (TSG-v9.10-01..03, TSG-v9.11-03, TSG-v9.13-04, TSG-v9.13-05); §6/§7: no items resolved by this delivery |

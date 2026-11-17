@@ -1,11 +1,731 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-11-11 (groom backlog GROOM-20261111-01, post-ship closure 2026-11-06__release-v9.16 STEP 12 — 35 items archived: 33 v9.16 items bannered at closure STEP 3, `BLG-GOV-414` (met) and `BLG-GOV-192` (already met)); prior — 2026-11-06 (groom backlog GROOM-20261106-01, post-ship closure 2026-11-03__release-v9.15 STEP 12 — 63 items archived: 45 v9.15 shipped items, BLG-GOV-185 (v9.14 ST-51, already met), 10 from the v9.15 Release Planning archive list (incl. BLG-GOV-400 and BLG-OPS-203, bannered this run), BLG-SPEC-217 (bannered this run), and 6 out-of-sprint governance patches (BLG-GOV-392/393/395/405/406/407)); prior — 2026-11-03 (groom backlog post-ship closure 2026-10-29__release-v9.14 — 56 items archived: 52 v9.14 shipped items, BLG-OPS-196, and BLG-GOV-142/BLG-GOV-360/BLG-SPEC-199 from the Release Planning archive list); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-17 (groom backlog GROOM-20261117-01, post-ship closure 2026-11-11__release-v9.17 STEP 12 — 24 items archived: the 18 v9.17 source items bannered at closure STEP 3 or at their post-merge backfill, 5 in-sprint same-branch fixes (`BLG-FE-295`, `296`, `298`, `300`, `303`) and `BLG-FE-237` (met by ST-06)); prior — 2026-11-11 (groom backlog GROOM-20261111-01, post-ship closure 2026-11-06__release-v9.16 STEP 12 — 35 items archived: 33 v9.16 items bannered at closure STEP 3, `BLG-GOV-414` (met) and `BLG-GOV-192` (already met)); prior — 2026-11-06 (groom backlog GROOM-20261106-01, post-ship closure 2026-11-03__release-v9.15 STEP 12 — 63 items archived: 45 v9.15 shipped items, BLG-GOV-185 (v9.14 ST-51, already met), 10 from the v9.15 Release Planning archive list (incl. BLG-GOV-400 and BLG-OPS-203, bannered this run), BLG-SPEC-217 (bannered this run), and 6 out-of-sprint governance patches (BLG-GOV-392/393/395/405/406/407)); prior history retained — see prior entries in version control
 
 # Backlog Archive — Momentum Trading Assistant
 
 Permanent record of completed and killed backlog items retired from `claude/backlog/backlog.md`. Listed in retirement order, most recent first. Append-only — do not edit existing entries.
+
+---
+
+### BLG-BE-178 — Batch signal sizing can allocate more than available cash once fees are added
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3
+**Retired:** 2026-11-17
+**Shipped in:** v9.17
+**Evidence:** docs/product/changelog.md#v9.17; claude/cycles/2026-11-11__release-v9.17/verification_report.md; banner: ✅ COMPLETE — 2026-11-17, `2026-11-11__release-v9.17`, ST-17 (EPIC-06), PR #2259 merged as `aaeb2957` (story commit `7b3b59e8`). Bannered at post-ship closure STEP 3.1.
+
+### BLG-BE-178 — Batch signal sizing can allocate more than available cash once fees are added
+**✅ COMPLETE — 2026-11-17, `2026-11-11__release-v9.17`, ST-17 (EPIC-06), PR #2259 merged as `aaeb2957` (story commit `7b3b59e8`). Bannered at post-ship closure STEP 3.1.**
+**Priority:** P3 (Low)
+**Type:** Backend Engineering / Correctness
+**Owner:** Head of Engineering; Financial Reporting & Records Owner
+**Source:** EPIC-02 PR review (agent-mediated Product Owner, user-directed), cycle `2026-10-12__release-v9.12` — 2026-10-13
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+`size_batch_inv_vol()` floors shares from each signal's allocation of `available_cash` and then adds entry fees to `total_cost` (BLG-BE-158, v9.12). The weights sum to 1.0, so the sum of `total_cost` across a batch can exceed `available_cash` by up to the fees.
+
+**Scope**
+- Size against cash net of estimated fees (or reduce shares until fees fit), per signal or per batch
+- Unit tests for UK, US and mixed batches
+
+**Acceptance Criteria**
+- For UK, US and mixed batches, the sum of `total_cost` is ≤ `available_cash` (unit test)
+
+---
+
+### BLG-QA-223 — Stop check_data_model_drift.py reading index names from rollback blocks
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P4
+**Retired:** 2026-11-17
+**Shipped in:** v9.17
+**Evidence:** docs/product/changelog.md#v9.17; claude/cycles/2026-11-11__release-v9.17/verification_report.md; banner: ✅ COMPLETE — 2026-11-17, `2026-11-11__release-v9.17`, ST-20 (EPIC-07), PR #2258 merged as `c7153fba` (story commit `6dc668d8`). Bannered at post-ship closure STEP 3.1.
+
+### BLG-QA-223 — Stop check_data_model_drift.py reading index names from rollback blocks
+**✅ COMPLETE — 2026-11-17, `2026-11-11__release-v9.17`, ST-20 (EPIC-07), PR #2258 merged as `c7153fba` (story commit `6dc668d8`). Bannered at post-ship closure STEP 3.1.**
+**Priority:** P4 (Trivial)
+**Type:** QA / Test Tooling
+**Owner:** QA & Testing Owner; Data Model & Domain Schema Owner
+**Source:** ST-34/EPIC-05, cycle `2026-10-12__release-v9.12` (drift-detector triage of BLG-SPEC-178, read-only staging reads authorised by the user); BLG-SPEC-178 finding 5 — 2026-10-13
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`scripts/check_data_model_drift.py` collects every `CREATE INDEX` name in `data_model.md`, including those inside "Reversible:" and Down Migration blocks. A rollback that recreates a superseded index is then reported as a missing live index. `idx_trade_plans_ticker` (replaced by `idx_trade_plans_ticker_upper` in v2.22) is reported on every run for this reason. Each run therefore needs the same false positive to be ruled out by hand.
+
+**Scope**
+- Exclude SQL inside blocks introduced by `Reversible:` or under a `Down Migration` heading from index and CHECK-constraint name parsing
+- Add a unit test with a fixture containing a rollback-only index name
+- Keep each run's `--json` output (for example, a dated file under `docs/ops/` committed with the triage that uses it), so later triage can name every finding. The v9.9 run kept no output, which left 3 of finding 5's 11 names unidentifiable at ST-34 (v9.12; agent-mediated Director of Quality review, condition C1)
+
+**Acceptance Criteria**
+- Running the detector against `data_model.md` no longer reports `idx_trade_plans_ticker`
+- A unit test fails if a rollback-only index name is reported again
+- The detector's documented usage, or the triage procedure, says where a run's `--json` output is kept, and the next triage cites it
+
+**Notes:** Priority confirmed P4 (2026-10-15, owner decision on user direction, closing post-ship closure `2026-10-12__release-v9.12` §6 row 6). `sprint_close.md`'s P3 is the ST-34 `Pass_with_deviation` default severity, a separate figure (`execution_prompt.md` v3.87 §5.3 now shows both). The 3 unnamed finding-5 names cannot be recovered, so this item's value is preventing a recurrence, which is tooling hygiene.
+
+---
+
+### BLG-SPEC-202 — Define or remove the 2R Exit Zone threshold the Positions page states
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3
+**Retired:** 2026-11-17
+**Shipped in:** v9.17
+**Evidence:** docs/product/changelog.md#v9.17; claude/cycles/2026-11-11__release-v9.17/verification_report.md; banner: ✅ COMPLETE — 2026-11-17, `2026-11-11__release-v9.17`, ST-19 (EPIC-07), PR #2258 merged as `c7153fba` (story commit `cad3b87f`). RISK-05 option (b): tooltip reworded without a number; no `strategy_rules.md` write. Bannered at post-ship closure STEP 3.1.
+
+### BLG-SPEC-202 — Define or remove the 2R Exit Zone threshold the Positions page states
+**✅ COMPLETE — 2026-11-17, `2026-11-11__release-v9.17`, ST-19 (EPIC-07), PR #2258 merged as `c7153fba` (story commit `cad3b87f`). RISK-05 option (b): tooltip reworded without a number; no `strategy_rules.md` write. Bannered at post-ship closure STEP 3.1.**
+**Priority:** P3 (Low)
+**Type:** Specification / Strategy copy
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** PR #2026 (EPIC-03, cycle `2026-10-12__release-v9.12`), agent-mediated Director of Quality review — 2026-10-15
+**Effort:** XS (~0.25 day)
+**Provisional-Target:** TBD
+
+**Problem**
+The PROFITABLE lifecycle tooltip in `src/pages/Positions.js` (~69) says "Advances to Exit Zone when P&L reaches 2R target". `strategy_rules.md` has no 2R or R-multiple rule, so the ST-21 strategy-copy lint cannot check it and the constants module has no value for it. Either the UI restates a rule the strategy does not define, or the rule exists only in code.
+
+**Scope**
+- Find where the Exit Zone threshold is computed; with the strategy owner, either add it to `strategy_rules.md` §11 (then to `src/constants/strategy.js` and the lint) or reword the tooltip to describe the shipped behaviour without a rule number
+
+**Acceptance Criteria**
+- The tooltip's threshold is either defined in `strategy_rules.md` and imported from `src/constants/strategy.js`, or no longer stated as a number; `scripts/check_strategy_copy.py` passes
+
+---
+
+### BLG-OPS-195 — Alert when weekly market-data call volume exceeds 2× the baseline
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3
+**Retired:** 2026-11-17
+**Shipped in:** v9.17
+**Evidence:** docs/product/changelog.md#v9.17; claude/cycles/2026-11-11__release-v9.17/verification_report.md; banner: ✅ COMPLETE — 2026-11-17, `2026-11-11__release-v9.17`, ST-16 (EPIC-06), PR #2259 merged as `aaeb2957` (story commit `5578c103`). Bannered at post-ship closure STEP 3.1.
+
+### BLG-OPS-195 — Alert when weekly market-data call volume exceeds 2× the baseline
+**✅ COMPLETE — 2026-11-17, `2026-11-11__release-v9.17`, ST-16 (EPIC-06), PR #2259 merged as `aaeb2957` (story commit `5578c103`). Bannered at post-ship closure STEP 3.1.**
+**Priority:** P3 (Low)
+**Type:** Operations / Cost Monitoring
+**Owner:** Infrastructure & Operations Owner; FinOps & Resource Architect
+**Source:** ST-30 (BLG-OPS-18), EPIC-05, cycle `2026-10-16__release-v9.13` — `docs/ops/data_pipeline_cost_baseline.md` §5 — 2026-10-27
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.15 (retargeted 2026-11-03 from v9.14, PMO Lead with the item owners, user-directed; post-ship closure `2026-10-29__release-v9.14` §6 row 5)
+**Depends on:** ST-30's weekly baseline recorded in `docs/ops/data_pipeline_cost_baseline.md` §4
+
+**Problem**
+`data_pipeline_cost_baseline.md` §5 defines an advisory when a source's weekly calls, failures or estimated cost exceed 2× baseline, but nothing checks it; the comparison is manual at the monthly cost review. A provider starting to throttle, or a feature that suddenly multiplies calls, can go unnoticed for weeks.
+
+**Scope**
+- A weekly scheduled workflow that calls `GET /ops/api-call-attribution?window=weekly`, compares each source's calls, failures and estimated cost with the recorded baseline, and sends a Telegram message naming the source and the top features when any exceeds 2×
+- Keep the baseline figures in one place the check reads, not copied into the workflow
+
+**Acceptance Criteria**
+- A test with a report over 2× baseline produces the advisory message, and one under it produces none
+- A failed report call fails the workflow loudly (as `ai-daily-cost-check.yml` does)
+
+---
+
+### BLG-FE-254 — Build the "Today" action list on the Dashboard
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2
+**Retired:** 2026-11-17
+**Shipped in:** v9.17
+**Evidence:** docs/product/changelog.md#v9.17; claude/cycles/2026-11-11__release-v9.17/verification_report.md; banner: ✅ COMPLETE — 2026-11-17, `2026-11-11__release-v9.17`, ST-10 (EPIC-04), PR #2257 merged as `71e86455` (story commit `2d52ac16`). This closes the split-achievability remainder (TL-09/TL-10 Stops moved group) kept open at the v9.16 closure (closure record §6 row 3). Graded Pass_with_deviation: the Stop
+
+### BLG-FE-254 — Build the "Today" action list on the Dashboard
+**✅ COMPLETE — 2026-11-17, `2026-11-11__release-v9.17`, ST-10 (EPIC-04), PR #2257 merged as `71e86455` (story commit `2d52ac16`). This closes the split-achievability remainder (TL-09/TL-10 Stops moved group) kept open at the v9.16 closure (closure record §6 row 3). Graded Pass_with_deviation: the Stops moved data source and window differ from §1B's wording (`DEV-EPIC04-ST10-01`, P3), tracked by `BLG-SPEC-238`, filed this cycle. Bannered at post-ship closure STEP 3.1.**
+**Priority:** P2 (Medium)
+**Type:** Frontend / UX [U]
+**Owner:** Head of Engineering; Head of UX & Design
+**Source:** IDEA-head-of-ux-20261103-02 (IW-20261103-01), roadmap rebalance `2026-11-03__scheduled`, DL-088
+**Effort:** L (~3-4 days)
+**Provisional-Target:** v9.16
+**Depends on:** `BLG-SPEC-215`
+
+**Problem**
+See `BLG-SPEC-215`: `DashboardHome.js` shows 13 equal-weight blocks, the regime in row 4 and 11 empty-state boxes on a quiet day.
+
+**Scope**
+- Implement `dashboard.md`'s revised "Today" list, ordering, quiet-day state and the moved/merged cards
+
+**Acceptance Criteria**
+- Every observable AC in the revised `dashboard.md` has Playwright coverage that passes, in light and dark themes
+
+---
+
+### BLG-FE-257 — Show grace period in one place, linked from the others
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3
+**Retired:** 2026-11-17
+**Shipped in:** v9.17
+**Evidence:** docs/product/changelog.md#v9.17; claude/cycles/2026-11-11__release-v9.17/verification_report.md; banner: ✅ COMPLETE — 2026-11-17, `2026-11-11__release-v9.17`, ST-04 (EPIC-01), PR #2256 merged as `61154853` (story commit `d11ff814`). Graded Pass_with_deviation: rows with more than 2 grace days left show no trade plan line (`DEV-EPIC01-ST04-01`, P3); that remainder moved to `BLG-BE-215`, filed this cycle
+
+### BLG-FE-257 — Show grace period in one place, linked from the others
+**✅ COMPLETE — 2026-11-17, `2026-11-11__release-v9.17`, ST-04 (EPIC-01), PR #2256 merged as `61154853` (story commit `d11ff814`). Graded Pass_with_deviation: rows with more than 2 grace days left show no trade plan line (`DEV-EPIC01-ST04-01`, P3); that remainder moved to `BLG-BE-215`, filed this cycle. Bannered at post-ship closure STEP 3.1.**
+**Priority:** P3 (Low)
+**Type:** Frontend / UX (consolidation) [U]
+**Owner:** Frontend Specifications & UX Documentation Owner; Head of Engineering
+**Source:** IDEA-head-of-ux-20261103-05 (IW-20261103-01), roadmap rebalance `2026-11-03__scheduled`, DL-088
+**Effort:** M (~2 days)
+**Provisional-Target:** v9.17
+
+**Problem**
+Grace period appears in 4 places (Dashboard "In Grace Today", Dashboard "Positions to Watch", Positions `GracePeriodAlertZone`, Risk Dashboard `GracePeriodPanel`); surfaces have disagreed before (`BLG-BE-183`).
+
+**Scope**
+- One grace view on Positions; the Dashboard and Risk Dashboard show a count and link to it; short spec note in the affected page specs
+
+**Acceptance Criteria**
+- Grace detail renders in one component on one page; the other surfaces link to it; Playwright coverage passes
+
+---
+
+### BLG-FE-258 — Build the single Journal area
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3
+**Retired:** 2026-11-17
+**Shipped in:** v9.17
+**Evidence:** docs/product/changelog.md#v9.17; claude/cycles/2026-11-11__release-v9.17/verification_report.md; banner: ✅ COMPLETE — 2026-11-17, `2026-11-11__release-v9.17`, ST-05 (EPIC-02), PR #2261 merged as `28fb7239` (story commit `45243887`). Bannered at post-ship closure STEP 3.1.
+
+### BLG-FE-258 — Build the single Journal area
+**✅ COMPLETE — 2026-11-17, `2026-11-11__release-v9.17`, ST-05 (EPIC-02), PR #2261 merged as `28fb7239` (story commit `45243887`). Bannered at post-ship closure STEP 3.1.**
+**Priority:** P3 (Low)
+**Type:** Frontend / UX (consolidation) [U]
+**Owner:** Head of Engineering; Head of UX & Design
+**Source:** IDEA-head-of-ux-20261103-05 (IW-20261103-01), roadmap rebalance `2026-11-03__scheduled`, DL-088
+**Effort:** L (~3-4 days)
+**Provisional-Target:** v9.17
+**Depends on:** `BLG-SPEC-216`
+
+**Problem**
+See `BLG-SPEC-216`: three journaling surfaces with no links between them.
+
+**Scope**
+- Implement the Journal spec, redirects from the old routes and the Positions journal view change
+
+**Acceptance Criteria**
+- Every observable AC in the Journal spec has Playwright coverage that passes; old routes redirect
+
+---
+
+### BLG-FE-259 — Merge Reports and Performance Analytics into one Performance page
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3
+**Retired:** 2026-11-17
+**Shipped in:** v9.17
+**Evidence:** docs/product/changelog.md#v9.17; claude/cycles/2026-11-11__release-v9.17/verification_report.md; banner: ✅ COMPLETE — 2026-11-17, `2026-11-11__release-v9.17`, ST-06 (EPIC-02), PR #2261 merged as `28fb7239` (story commit `68b0418b`). Found P2 `BLG-FE-300` was fixed on the branch before merge. Bannered at post-ship closure STEP 3.1.
+
+### BLG-FE-259 — Merge Reports and Performance Analytics into one Performance page
+**✅ COMPLETE — 2026-11-17, `2026-11-11__release-v9.17`, ST-06 (EPIC-02), PR #2261 merged as `28fb7239` (story commit `68b0418b`). Found P2 `BLG-FE-300` was fixed on the branch before merge. Bannered at post-ship closure STEP 3.1.**
+**Priority:** P3 (Low)
+**Type:** Frontend / UX (consolidation) [U]
+**Owner:** Frontend Specifications & UX Documentation Owner; Head of Engineering
+**Source:** IDEA-head-of-ux-20261103-05 (IW-20261103-01), roadmap rebalance `2026-11-03__scheduled`, DL-088
+**Effort:** L (~3-4 days)
+**Provisional-Target:** v9.17
+**Related:** `BLG-FE-237` (Reports tab bar overflow at phone width)
+
+**Problem**
+Win rate, profit factor and total P&L appear on both `Reports.js` (1,287 lines) and `PerformanceAnalytics.js`; neither links to the other.
+
+**Scope**
+- A short spec for one Performance page (sections: summary, monthly/tax-year reports, analytics, compliance), then the build with redirects; Metrics Definitions & Analytics Owner confirms each KPI keeps its canonical definition
+
+**Acceptance Criteria**
+- One Performance page; old routes redirect; each KPI appears once; Playwright coverage passes
+
+---
+
+### BLG-FE-260 — Decision-first Positions table
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2
+**Retired:** 2026-11-17
+**Shipped in:** v9.17
+**Evidence:** docs/product/changelog.md#v9.17; claude/cycles/2026-11-11__release-v9.17/verification_report.md; banner: ✅ COMPLETE — 2026-11-17, `2026-11-11__release-v9.17`, ST-01 (EPIC-01), PR #2256 merged as `61154853` (story commit `6b475ae0`). Bannered at post-ship closure STEP 3.1.
+
+### BLG-FE-260 — Decision-first Positions table
+**✅ COMPLETE — 2026-11-17, `2026-11-11__release-v9.17`, ST-01 (EPIC-01), PR #2256 merged as `61154853` (story commit `6b475ae0`). Bannered at post-ship closure STEP 3.1.**
+**Priority:** P2 (Medium)
+**Type:** Frontend / UX [U]
+**Owner:** Head of Engineering; Head of UX & Design
+**Source:** IDEA-head-of-ux-20261103-06 (IW-20261103-01), roadmap rebalance `2026-11-03__scheduled`, DL-088
+**Effort:** M (~2-3 days)
+**Provisional-Target:** v9.17
+
+**Problem**
+The Positions table (`Positions.js`) has 14 equal-weight columns; stop proximity and fired exit conditions (§7, §8) are split across Stop, State and Alerts.
+
+**Scope**
+- Sort by urgency (exit fired → stop breached → near stop → rest); lead with ticker, distance to stop (R and %), action needed; remaining columns in an expandable row; positions page spec updated
+
+**Acceptance Criteria**
+- Default view shows about 6 columns in urgency order; expanding a row shows the rest; Playwright coverage passes
+
+---
+
+### BLG-FE-261 — Card layout for Positions on narrow screens
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3
+**Retired:** 2026-11-17
+**Shipped in:** v9.17
+**Evidence:** docs/product/changelog.md#v9.17; claude/cycles/2026-11-11__release-v9.17/verification_report.md; banner: ✅ COMPLETE — 2026-11-17, `2026-11-11__release-v9.17`, ST-02 (EPIC-01), PR #2256 merged as `61154853` (story commit `540887b9`). Bannered at post-ship closure STEP 3.1.
+
+### BLG-FE-261 — Card layout for Positions on narrow screens
+**✅ COMPLETE — 2026-11-17, `2026-11-11__release-v9.17`, ST-02 (EPIC-01), PR #2256 merged as `61154853` (story commit `540887b9`). Bannered at post-ship closure STEP 3.1.**
+**Priority:** P3 (Low)
+**Type:** Frontend / responsive [U]
+**Owner:** Head of Engineering
+**Source:** IDEA-head-of-ux-20261103-06 (IW-20261103-01), roadmap rebalance `2026-11-03__scheduled`, DL-088
+**Effort:** M (~2 days)
+**Provisional-Target:** v9.17
+
+**Problem**
+Below the `md` breakpoint the Positions table scrolls sideways (`DataTable` `overflow-x-auto`); the SI-05 digest sends the user into the app from a phone.
+
+**Scope**
+- A card layout below `md` with the same urgency order and leading fields as `BLG-FE-260`
+
+**Acceptance Criteria**
+- At 390px width, Positions shows cards with no horizontal page scroll; Playwright coverage passes
+
+---
+
+### BLG-FE-262 — Combine the four banners above the Positions table into one summary strip
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3
+**Retired:** 2026-11-17
+**Shipped in:** v9.17
+**Evidence:** docs/product/changelog.md#v9.17; claude/cycles/2026-11-11__release-v9.17/verification_report.md; banner: ✅ COMPLETE — 2026-11-17, `2026-11-11__release-v9.17`, ST-03 (EPIC-01), PR #2256 merged as `61154853` (story commit `360bf177`). Bannered at post-ship closure STEP 3.1.
+
+### BLG-FE-262 — Combine the four banners above the Positions table into one summary strip
+**✅ COMPLETE — 2026-11-17, `2026-11-11__release-v9.17`, ST-03 (EPIC-01), PR #2256 merged as `61154853` (story commit `360bf177`). Bannered at post-ship closure STEP 3.1.**
+**Priority:** P3 (Low)
+**Type:** Frontend / UX [U]
+**Owner:** Head of Engineering; Head of UX & Design
+**Source:** IDEA-head-of-ux-20261103-06 (IW-20261103-01), roadmap rebalance `2026-11-03__scheduled`, DL-088
+**Effort:** S (~1 day)
+**Provisional-Target:** v9.17
+
+**Problem**
+`MetricsStalenessIndicator`, `DrawdownReviewPrompt`, `ConcentrationLimitsWarning` and `GracePeriodAlertZone` stack between the Positions header and the table.
+
+**Scope**
+- One summary strip listing the active warnings, each expandable to its current content
+
+**Acceptance Criteria**
+- With all four conditions active, one strip shows four entries and each expands; Playwright coverage passes
+
+---
+
+### BLG-FE-263 — Use tabs or sections on the long single-scroll pages
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3
+**Retired:** 2026-11-17
+**Shipped in:** v9.17
+**Evidence:** docs/product/changelog.md#v9.17; claude/cycles/2026-11-11__release-v9.17/verification_report.md; banner: ✅ COMPLETE — 2026-11-17, `2026-11-11__release-v9.17`, ST-07 (EPIC-02), PR #2261 merged as `28fb7239` (story commit `44736ed8`). Bannered at post-ship closure STEP 3.1.
+
+### BLG-FE-263 — Use tabs or sections on the long single-scroll pages
+**✅ COMPLETE — 2026-11-17, `2026-11-11__release-v9.17`, ST-07 (EPIC-02), PR #2261 merged as `28fb7239` (story commit `44736ed8`). Bannered at post-ship closure STEP 3.1.**
+**Priority:** P3 (Low)
+**Type:** Frontend / UX (progressive disclosure) [U]
+**Owner:** Head of Engineering; Head of UX & Design
+**Source:** IDEA-head-of-ux-20261103-05 (IW-20261103-01), roadmap rebalance `2026-11-03__scheduled`, DL-088
+**Effort:** M (~2-3 days)
+**Provisional-Target:** v9.17
+
+**Problem**
+Trade Plan (1,313 lines) and Strategy Benchmark (1,149) are long single scrolls with no tabs or section navigation; Reports is handled by `BLG-FE-259`.
+
+**Scope**
+- Section tabs or an in-page section index on Trade Plan and Strategy Benchmark, keeping the current content
+
+**Acceptance Criteria**
+- Each page shows its sections as tabs or an index; each section is reachable in one click; Playwright coverage passes
+
+---
+
+### BLG-FE-265 — Move the remaining pages onto the semantic colour tokens
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3
+**Retired:** 2026-11-17
+**Shipped in:** v9.17
+**Evidence:** docs/product/changelog.md#v9.17; claude/cycles/2026-11-11__release-v9.17/verification_report.md; banner: ✅ COMPLETE — 2026-11-17, `2026-11-11__release-v9.17`, ST-08 (EPIC-03), PR #2262 merged as `3400cba4` (story commit `7b4e7736`). Found P2 `BLG-FE-303` was fixed on the branch before merge. The remaining shared components are `BLG-FE-288` (excluded at seal, RISK-02). Bannered at post-ship closure STEP
+
+### BLG-FE-265 — Move the remaining pages onto the semantic colour tokens
+**✅ COMPLETE — 2026-11-17, `2026-11-11__release-v9.17`, ST-08 (EPIC-03), PR #2262 merged as `3400cba4` (story commit `7b4e7736`). Found P2 `BLG-FE-303` was fixed on the branch before merge. The remaining shared components are `BLG-FE-288` (excluded at seal, RISK-02). Bannered at post-ship closure STEP 3.1.**
+**Priority:** P3 (Low)
+**Type:** Frontend / design system [U]
+**Owner:** Frontend Specifications & UX Documentation Owner; Head of Engineering
+**Source:** IDEA-frontend-specs-20261103-03 (IW-20261103-01), roadmap rebalance `2026-11-03__scheduled`, DL-088
+**Effort:** L (~3-4 days)
+**Provisional-Target:** v9.17
+**Depends on:** `BLG-FE-264`
+**Supersedes on completion:** `BLG-FE-224`, `BLG-FE-242` (close them when this ships, if not shipped earlier)
+
+**Problem**
+After `BLG-FE-264` converts the shells, page-level code still carries bare dark-only classes (376 `text-white`, 331 `bg-slate-800/900` at filing).
+
+**Scope**
+- Replace page-level dark-only colour classes with the tokens; remove redundant `dark:` pairs; update `design_system.md`
+
+**Acceptance Criteria**
+- axe `color-contrast` passes in the light theme on every routed page; no bare `text-white` remains outside coloured fills
+
+---
+
+### BLG-BE-205 — Record when the nightly job last moved each position's stop
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3
+**Retired:** 2026-11-17
+**Shipped in:** v9.17
+**Evidence:** docs/product/changelog.md#v9.17; claude/cycles/2026-11-11__release-v9.17/verification_report.md; banner: ✅ COMPLETE — 2026-11-17, `2026-11-11__release-v9.17`, ST-09 (EPIC-04), PR #2257 merged as `71e86455` (story commit `c50dd966`). DS-40. Bannered at post-ship closure STEP 3.1.
+
+### BLG-BE-205 — Record when the nightly job last moved each position's stop
+**✅ COMPLETE — 2026-11-17, `2026-11-11__release-v9.17`, ST-09 (EPIC-04), PR #2257 merged as `71e86455` (story commit `c50dd966`). DS-40. Bannered at post-ship closure STEP 3.1.**
+**Priority:** P3 (Low)
+**Type:** Backend / data model
+**Owner:** Backend Engineering Patterns Owner; Data Model & Domain Schema Owner
+**Source:** Sprint Execution `2026-11-03__release-v9.15`, EPIC-02 / ST-09 (`dashboard.md` v4.0 §1B Today list, "Stops moved" group; Product Owner ruling 2026-11-04 to keep both stop groups) — 2026-11-04
+**Effort:** M (~1 day)
+**Provisional-Target:** v9.16
+
+**Problem**
+`GET /positions` does not record when a position's stop last moved: `compliance_service.py` notes the positions table has no `stop_updated_at` column, and `stop_calculated_at` is stamped on every nightly run whether or not the stop moved. The Dashboard Today list's "Stops moved" group (`dashboard.md` §1B) needs it, and its ACs TL-09/TL-10 cannot be tested until it exists. `RecentActivityCard.js` also reads a `stop_updated_date` that the API never sends, so its "Stop updated" entry is dead code.
+
+**Scope**
+- Migration: `stop_last_moved_date` and `previous_stop` on positions (`data_model.md`)
+- `run_nightly_trailing_stop_update()` writes both only when the stop actually moves (the §7.3 ratchet raises it)
+- Return both fields read-only on `GET /positions`; update `position_endpoints.md` and `docs/reference/openapi.yaml`
+- Remove `RecentActivityCard.js`'s dead `stop_updated_date` branch
+
+**Acceptance Criteria**
+- After a nightly run that raises a stop, the position's `stop_last_moved_date` is that run's date and `previous_stop` is the stop before the move (pytest)
+- A run that leaves the stop unchanged leaves both fields unchanged (pytest)
+- Contract and OpenAPI document the fields; drift checks pass
+
+---
+
+### BLG-FE-278 — Reset the Trade Plan pre-entry acknowledgement when the check result changes
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2
+**Retired:** 2026-11-17
+**Shipped in:** v9.17
+**Evidence:** docs/product/changelog.md#v9.17; claude/cycles/2026-11-11__release-v9.17/verification_report.md; banner: ✅ COMPLETE — 2026-11-17, `2026-11-11__release-v9.17`, ST-12 (EPIC-05), PR #2260 merged as `cb65bb12` (story commit `94dc3bd8`). Trade Plan only; Trade Entry's reset stays with `BLG-FE-269`. Bannered at post-ship closure STEP 3.1.
+
+### BLG-FE-278 — Reset the Trade Plan pre-entry acknowledgement when the check result changes
+**✅ COMPLETE — 2026-11-17, `2026-11-11__release-v9.17`, ST-12 (EPIC-05), PR #2260 merged as `cb65bb12` (story commit `94dc3bd8`). Trade Plan only; Trade Entry's reset stays with `BLG-FE-269`. Bannered at post-ship closure STEP 3.1.**
+**Priority:** P2 (Medium)
+**Type:** Frontend / UX
+**Owner:** Frontend Specifications & UX Documentation Owner; Strategy Rules & System Intent Owner
+**Source:** Director of Quality finding 3, PR #2228 agent-mediated review (EPIC-02, `2026-11-06__release-v9.16`) — 2026-11-09
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.17
+
+**Problem**
+Neither the Trade Plan form nor Trade Entry clears the acknowledgement box when the pre-entry result changes (`PreEntryValidationPanel.js`). An edited plan that was acknowledged for an earlier WARN can therefore save `pre_entry_override_acknowledged: true` alongside a new FAIL the user never saw. Trade Entry then shows "warnings were acknowledged there" and skips the panel (`position_form.md` v1.14), which undercuts `strategy_rules.md` §4.2.1 v1.23 for the plan-linked route.
+
+**Scope**
+- Decide with the Strategy Rules & System Intent Owner: clear the box when `advisory_status` or `checks` change, or store the acknowledgement inside the dated snapshot
+- Implement in `TradePlan.js` (and Trade Entry if the panel is shared) and update `trade_plan.md` §5e
+
+**Acceptance Criteria**
+- Editing an acknowledged plan so that a new WARN/FAIL appears leaves the box unticked until the user ticks it (Playwright)
+- A plan saved without re-acknowledging shows the Trade Entry panel with the unacknowledged reason line (Playwright)
+
+---
+
+### BLG-BE-211 — Move a linked trade plan to `closed` when its position closes
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2
+**Retired:** 2026-11-17
+**Shipped in:** v9.17
+**Evidence:** docs/product/changelog.md#v9.17; claude/cycles/2026-11-11__release-v9.17/verification_report.md; banner: ✅ COMPLETE — 2026-11-16, `2026-11-11__release-v9.17`, ST-11 (EPIC-05), PR #2260 merged as `cb65bb12`. All three ACs are met. The post-merge production backfill closed 3 plans (verification: 0 active plans on closed positions, 3 audit rows) and staging closed 0. See `qa_evidence_EPIC-05.md` Merge Gat
+
+### BLG-BE-211 — Move a linked trade plan to `closed` when its position closes
+**✅ COMPLETE — 2026-11-16, `2026-11-11__release-v9.17`, ST-11 (EPIC-05), PR #2260 merged as `cb65bb12`. All three ACs are met. The post-merge production backfill closed 3 plans (verification: 0 active plans on closed positions, 3 audit rows) and staging closed 0. See `qa_evidence_EPIC-05.md` Merge Gate Confirmations and `data_model.md` DS-41.**
+**Priority:** P2 (Medium)
+**Type:** Backend engineering
+**Owner:** Head of Engineering
+**Source:** ST-26 (EPIC-06, v9.16) — found while building the trade plan lifecycle Playwright test — 2026-11-10
+**Effort:** S (~0.5–1 day)
+**Provisional-Target:** v9.17
+
+**Problem**
+`data_model.md` §Trade Plan Lifecycle says "`active` → `closed` happens when the linked position closes", but no backend code path writes status `closed` to `trade_plans`: the only status write outside the generic `PUT /trade-plans/{id}` is `add_position()`'s `active` link step (`position_service.py`). Every linked plan therefore stays `active` after its trade closes. The Trade Plans list shows those plans as Active, and `pnl_reconciliation_service.py` raises `trade_history_plan_not_closed` for each such trade while counting 0 closed plans.
+
+**Scope**
+- In the `POST /positions/{id}/exit` full-exit path, set `status = 'closed'` on the plan linked to the position (best-effort, like the link step); a partial exit leaves the plan `active`
+- One-off backfill: plans with `status = 'active'` whose linked position is `closed` become `closed`
+- pytest for the full-exit, partial-exit and no-plan cases
+
+**Acceptance Criteria**
+- After a full exit, the linked plan's status is `closed`; after a partial exit it stays `active`
+- Existing `active` plans whose position is already closed are backfilled to `closed`
+- `tests/e2e/trade-plan-lifecycle.spec.js`'s exit mock sets `closed`, and the test asserts the Trade Plans "Closed" badge after the exit
+
+---
+
+### BLG-FE-281 — Pass the market from Research View's "Create Trade Plan" so a UK plan is not created as US
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2
+**Retired:** 2026-11-17
+**Shipped in:** v9.17
+**Evidence:** docs/product/changelog.md#v9.17; claude/cycles/2026-11-11__release-v9.17/verification_report.md; banner: ✅ COMPLETE — 2026-11-17, `2026-11-11__release-v9.17`, ST-13 (EPIC-05), PR #2260 merged as `cb65bb12` (story commit `3d802d1c`). Bannered at post-ship closure STEP 3.1.
+
+### BLG-FE-281 — Pass the market from Research View's "Create Trade Plan" so a UK plan is not created as US
+**✅ COMPLETE — 2026-11-17, `2026-11-11__release-v9.17`, ST-13 (EPIC-05), PR #2260 merged as `cb65bb12` (story commit `3d802d1c`). Bannered at post-ship closure STEP 3.1.**
+**Priority:** P2 (Medium)
+**Type:** Frontend / UX
+**Owner:** Head of Engineering; Frontend Specifications & UX Documentation Owner
+**Source:** ST-24 (EPIC-06, v9.16) — found while writing the Arc 2 QA protocol (`docs/qa/arc2_e2e_qa_protocol.md` M-09) — 2026-11-10
+**Effort:** XS (<1h plus a Playwright test)
+**Provisional-Target:** v9.17
+
+**Problem**
+`Research.js` navigates "Create Trade Plan" to `/TradePlan?ticker={ticker}` with no `market`, and `TradePlan.js` defaults a missing `market` to `US`. A plan created from the Research View for a UK ticker (e.g. `VOD.L`) is therefore saved as a US plan: amounts show in $, and the suggested-size request is sent with `market: US`, applying the FX rate to a sterling price.
+
+**Scope**
+- Add `market` (from the research response's `market`) to the "Create Trade Plan" URL in `Research.js`; check the "View full plan" link carries it too
+- Playwright: a UK ticker's Research View → "Create Trade Plan" opens a UK plan
+
+**Acceptance Criteria**
+- From the Research View of a UK ticker, "Create Trade Plan" opens a Trade Plan with market UK and £ amounts; a US ticker still opens US
+- Playwright coverage passes
+
+---
+
+### BLG-FE-282 — Pre-fill the Trade Plan stop from the §5 suggested stop and flag a typed stop that differs
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2
+**Retired:** 2026-11-17
+**Shipped in:** v9.17
+**Evidence:** docs/product/changelog.md#v9.17; claude/cycles/2026-11-11__release-v9.17/verification_report.md; banner: ✅ COMPLETE — 2026-11-17, `2026-11-11__release-v9.17`, ST-14 (EPIC-05), PR #2260 merged as `cb65bb12` (story commit `f2749a24`). `trade_plan.md` Known Deviation `DEV-v9.16-ST27-01` marked RESOLVED by ST-14. Bannered at post-ship closure STEP 3.1.
+
+### BLG-FE-282 — Pre-fill the Trade Plan stop from the §5 suggested stop and flag a typed stop that differs
+**✅ COMPLETE — 2026-11-17, `2026-11-11__release-v9.17`, ST-14 (EPIC-05), PR #2260 merged as `cb65bb12` (story commit `f2749a24`). `trade_plan.md` Known Deviation `DEV-v9.16-ST27-01` marked RESOLVED by ST-14. Bannered at post-ship closure STEP 3.1.**
+**Priority:** P2 (Medium)
+**Type:** Frontend / UX
+**Owner:** Head of Engineering; Frontend Specifications & UX Documentation Owner; Strategy Rules & System Intent Owner (consulted)
+**Source:** ST-27 (EPIC-06, v9.16) — Arc 2 user journey map (`docs/ux/arc2_user_journey_map.md` F-03) — 2026-11-10
+**Effort:** S (~1 day)
+**Provisional-Target:** v9.17
+
+**Problem**
+`trade_plan.md` §5a.3 says Stop Level is pre-filled from the signal's suggested stop (entry − 5×ATR, `strategy_rules.md` §5). `TradePlan.js`'s signal pre-population fills only the thesis, entry rationale and confirmation criteria, so the field stays empty while the Signal Context panel shows "Suggested stop". The §4.1 suggested size is computed from whatever stop the user types, but Trade Entry stores entry − 5×ATR and shows the planned stop for reference only. A plan typed with a tighter stop than §5 gets a larger suggested size than §4.1 allows at the stop that will be stored, so the entered position can risk more than the configured percentage.
+
+**Scope**
+- Pre-fill Stop Level from the signal's suggested stop per §5a.3 (new plans with signal context; never overwrite a typed value)
+- When the typed stop differs from the §5 stop (entry − 5×ATR, where ATR is known), show next to the suggested size that Trade Entry will store the §5 stop, with that stop's value
+- Playwright coverage; `trade_plan.md` §5a.3/§5f updated if wording changes
+
+**Acceptance Criteria**
+- Opening a plan from a signal ("Plan this" or the watchlisted lookup) pre-fills Stop Level with entry − 5×ATR; a typed value is not overwritten
+- With a typed stop that differs from the §5 stop, the page states the stop Trade Entry will store
+- Playwright coverage passes
+
+---
+
+### BLG-FE-295 — Hide the Trade Plan stored-stop line and Signal Context when the ticker no longer matches the "Plan this" signal
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3
+**Retired:** 2026-11-17
+**Shipped in:** v9.17
+**Evidence:** docs/product/changelog.md#v9.17; claude/cycles/2026-11-11__release-v9.17/verification_report.md; banner: ✅ COMPLETE — 2026-11-16, `2026-11-11__release-v9.17`, found during ST-14's PR #2260 review, resolved in-sprint on EPIC-05 (`0594c4b4`, SC-TPSP-09); the AC is met — see `qa_evidence_EPIC-05.md` ST-14 row.
+
+### BLG-FE-295 — Hide the Trade Plan stored-stop line and Signal Context when the ticker no longer matches the "Plan this" signal
+**✅ COMPLETE — 2026-11-16, `2026-11-11__release-v9.17`, found during ST-14's PR #2260 review, resolved in-sprint on EPIC-05 (`0594c4b4`, SC-TPSP-09); the AC is met — see `qa_evidence_EPIC-05.md` ST-14 row.**
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** Agent-mediated PR #2260 review (EPIC-05, v9.17), Director of Quality finding 2 — 2026-11-16
+**Effort:** XS (<1h plus a Playwright test)
+**Provisional-Target:** TBD
+
+**Problem**
+On the "Plan this" route (`signal_id`), `TradePlan.js`'s `linkedSignal` ignores `form.ticker`. After the trader changes the ticker, the stored-stop line `plan-stored-stop-note` (new in ST-14) and the Signal Context panel still describe the first ticker's signal, so the line can state a stop worked out from another stock's ATR.
+
+**Scope**
+- When the linked signal's ticker (ignoring `.L`) differs from `form.ticker`, treat the form as having no linked signal
+
+**Acceptance Criteria**
+- Changing the ticker after "Plan this" hides the Signal Context panel and the stored-stop line (Playwright)
+
+---
+
+### BLG-FE-296 — Show a US signal's ATR in dollars on the Signal Context panel
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3
+**Retired:** 2026-11-17
+**Shipped in:** v9.17
+**Evidence:** docs/product/changelog.md#v9.17; claude/cycles/2026-11-11__release-v9.17/verification_report.md; banner: ✅ COMPLETE — 2026-11-16, `2026-11-11__release-v9.17`, found during ST-14's PR #2260 review, resolved in-sprint on EPIC-05 (`d485d9ca` and its UK-rounding follow-up); both ACs met — see `qa_evidence_EPIC-05.md` ST-14 row.
+
+### BLG-FE-296 — Show a US signal's ATR in dollars on the Signal Context panel
+**✅ COMPLETE — 2026-11-16, `2026-11-11__release-v9.17`, found during ST-14's PR #2260 review, resolved in-sprint on EPIC-05 (`d485d9ca` and its UK-rounding follow-up); both ACs met — see `qa_evidence_EPIC-05.md` ST-14 row.**
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Head of Engineering; Frontend Specifications & UX Documentation Owner
+**Source:** Agent-mediated PR #2260 review (EPIC-05, v9.17), Director of Quality backlog candidate; pre-existing, found with ST-14's stored-stop line — 2026-11-16
+**Effort:** S (~0.5 day)
+**Provisional-Target:** TBD
+
+**Problem**
+`signal_service.py` stores `atr_value` in GBP for US tickers (`native_atr / live_fx_rate`), while `current_price` and `initial_stop` are in USD. `SignalContextPanel.js` formats `atr_value` in the plan's USD currency, so "ATR (14d)" shows a GBP figure as dollars. `getSuggestedStop()`'s fallback (`current_price − 5 × atr_value`) would also mix currencies if a signal ever lacked `initial_stop`. `signal_endpoints.md` does not say which currency `atr_value` is in.
+
+**Scope**
+- Show the ATR in the signal's own currency (for example `(current_price − initial_stop) / 5`, or a stored native ATR)
+- State `atr_value`'s currency for each market in `signal_endpoints.md`
+
+**Acceptance Criteria**
+- A US signal's "ATR (14d)" equals `(current_price − initial_stop) / 5` (unit or Playwright)
+- `signal_endpoints.md` names `atr_value`'s currency for US and UK
+
+---
+
+### BLG-FE-298 — Reword the acknowledgement reset note for plans saved without a pre-entry snapshot
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3
+**Retired:** 2026-11-17
+**Shipped in:** v9.17
+**Evidence:** docs/product/changelog.md#v9.17; claude/cycles/2026-11-11__release-v9.17/verification_report.md; banner: ✅ COMPLETE — 2026-11-16, `2026-11-11__release-v9.17`, found during ST-12's PR #2260 review, resolved in-sprint on EPIC-05 (the commit that adds this banner; Head of UX & Design recommendation, user ruling 2026-11-16); both ACs met (SC-TPAR-06, `trade_plan.md` §5e) — see `qa_evidence_EPIC-05.md` ST-1
+
+### BLG-FE-298 — Reword the acknowledgement reset note for plans saved without a pre-entry snapshot
+**✅ COMPLETE — 2026-11-16, `2026-11-11__release-v9.17`, found during ST-12's PR #2260 review, resolved in-sprint on EPIC-05 (the commit that adds this banner; Head of UX & Design recommendation, user ruling 2026-11-16); both ACs met (SC-TPAR-06, `trade_plan.md` §5e) — see `qa_evidence_EPIC-05.md` ST-12 row.**
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** Agent-mediated PR #2260 review (EPIC-05, v9.17), Product Owner UX comment — 2026-11-16
+**Effort:** XS (<1h plus a Playwright test)
+**Provisional-Target:** TBD
+
+**Problem**
+Opening a plan saved before v9.16 (no `pre_entry_validation_snapshot`) for editing always unticks the acknowledgement box and shows "The check results changed" (ST-12, `trade_plan.md` §5e), although nothing visible changed. The trader cannot tell why the tick was cleared.
+
+**Scope**
+- Show a different note when the plan has no stored snapshot, for example "This plan was saved before checks were recorded. Review them and tick to acknowledge."
+- Keep `data-testid="acknowledgement-reset-note"`
+- Update `trade_plan.md` §5e
+
+**Acceptance Criteria**
+- Editing a plan with no stored snapshot and a WARN result shows the no-snapshot wording (Playwright)
+- `trade_plan.md` §5e describes the no-snapshot note
+
+---
+
+### BLG-FE-300 — Show Total P&L, Win Rate and Total Trades on Performance even when the period has too few trades
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2
+**Retired:** 2026-11-17
+**Shipped in:** v9.17
+**Evidence:** docs/product/changelog.md#v9.17; claude/cycles/2026-11-11__release-v9.17/verification_report.md; banner: ✅ COMPLETE — 2026-11-16, `2026-11-11__release-v9.17`, found during ST-06's PR #2261 review, resolved in-sprint on EPIC-02 in `9e807be8`** (Product Owner decision 2026-11-16; `performance.md` v1.2 §6; server returns the real `win_rate`/`total_pnl` below the minimum, `analytics_endpoints.md` v2.5.2).
+
+### BLG-FE-300 — Show Total P&L, Win Rate and Total Trades on Performance even when the period has too few trades
+**✅ COMPLETE — 2026-11-16, `2026-11-11__release-v9.17`, found during ST-06's PR #2261 review, resolved in-sprint on EPIC-02 in `9e807be8`** (Product Owner decision 2026-11-16; `performance.md` v1.2 §6; server returns the real `win_rate`/`total_pnl` below the minimum, `analytics_endpoints.md` v2.5.2).
+**Priority:** P2 (Medium)
+**Type:** Frontend / UX
+**Owner:** Product Owner; Frontend Specifications & UX Documentation Owner; Metrics Definitions & Analytics Canonical Owner
+**Source:** Agent-mediated PR #2261 review (EPIC-02, cycle `2026-11-11__release-v9.17`), Product Owner P2-1 finding — 2026-11-16
+**Effort:** S (~0.5 day)
+**Provisional-Target:** TBD
+
+**Problem**
+The Performance page's Summary hides all five cards and the growth chart when `summary.has_enough_data` is false (default minimum 10 closed trades, `performance.md` v1.1 §6). The old Reports Performance tab had no minimum (`Reports.js` on `main` before ST-06), so in a quiet month — and "Last Month" is the default period — a user who used to see realised P&L now sees only "Not enough trades". Total P&L, Win Rate and Total Trades are simple counts and sums that need no sample-size minimum. The PR #2261 behaviour-change list did not call this out.
+
+**Scope**
+- Product Owner decision: gate only the statistical KPIs (Profit Factor, Expectancy, Analytics) and always show Total P&L, Win Rate and Total Trades, or keep the current gate
+- If changed: amend `performance.md` §6, render the three cards from `summary` regardless of `has_enough_data`, keep the "Not enough trades" state for the rest
+- Playwright for both states
+
+**Acceptance Criteria**
+- `performance.md` §6 records the decision with a date
+- If the three cards always show: with `has_enough_data: false`, Summary shows Total P&L, Win Rate and Total Trades from `summary`, and Profit Factor/Expectancy/Analytics show the existing empty state (Playwright)
+
+---
+
+### BLG-FE-303 — Theme the components still dark-only in populated states of routed pages
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2
+**Retired:** 2026-11-17
+**Shipped in:** v9.17
+**Evidence:** docs/product/changelog.md#v9.17; claude/cycles/2026-11-11__release-v9.17/verification_report.md; banner: ✅ COMPLETE — 2026-11-17, `2026-11-11__release-v9.17`, found during ST-08's PR #2262 review, resolved in-sprint on EPIC-03 in `7b4e7736`** (user direction 2026-11-17, option (a); the six components and their shared children on tokens or pairs; each state scanned in light and dark; swept-list entries 
+
+### BLG-FE-303 — Theme the components still dark-only in populated states of routed pages
+**✅ COMPLETE — 2026-11-17, `2026-11-11__release-v9.17`, found during ST-08's PR #2262 review, resolved in-sprint on EPIC-03 in `7b4e7736`** (user direction 2026-11-17, option (a); the six components and their shared children on tokens or pairs; each state scanned in light and dark; swept-list entries added to `tests/test_page_colour_tokens.py`; CI 44090887930).
+**Priority:** P2 (Medium)
+**Type:** Frontend / design system [U]
+**Owner:** Frontend Specifications & UX Documentation Owner; Head of Engineering
+**Source:** PR #2262 agent-mediated Director of Quality review (EPIC-03 / ST-08, `2026-11-11__release-v9.17`) — 2026-11-17
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+**Depends on:** `BLG-FE-265` (v9.17 ST-08, page sweep)
+
+**Problem**
+ST-08's light-theme axe scans cover every routed page in a populated default state, but several components that render in normal states of those pages were never reached and are still dark-only. The What-if sizing panel on Trade Plan (shown whenever the stop is a positive number) labels in `text-slate-300` on `bg-slate-800/30` over a white card, about 1.2:1. The same applies to the Setup Thesis Digest on Trade Entry (linked plan), the AI spend trend chart on Settings (with spend data), the Manage Cash modal (every page, from the sidebar), the Daily Monitor modal on Positions and the open Advisor chat on Positions and Signals. These fall inside the RISK-02 boundary ("any component that fails axe color-contrast on a routed page in the light theme") that ST-08 was scoped to.
+
+**Scope**
+- Move `WhatIfSizingPreview`, `SetupThesisDigestPanel`, `AiSpendTrendChart`, `CashManagementModal`, `MonitorModal` and `AiChatWidget` onto the `app-*` tokens or light/dark pairs (`design_system.md` §Page Colour Token Sweep mapping and rules)
+- Add each of these states to the light and dark ST-08 blocks in `tests/e2e/accessibility-axe-scan.spec.js`, with populated fixtures built from each component's writer
+- Add the files to `tests/test_page_colour_tokens.py`'s swept list
+
+**Acceptance Criteria**
+- axe `color-contrast` passes in the light and dark themes with each of the six components rendered and populated, with no baseline entry
+- `tests/test_page_colour_tokens.py` passes with the six files in its swept list
+- Dark-theme values are unchanged (dark axe scans pass; class mapping keeps each dark value)
+
+---
+
+### BLG-FE-237 — Stop the Reports tab bar and Monthly table overflowing at phone width
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3
+**Retired:** 2026-11-17
+**Shipped in:** v9.17
+**Evidence:** docs/product/changelog.md#v9.17; claude/cycles/2026-11-11__release-v9.17/verification_report.md; banner: ✅ COMPLETE — 2026-11-17, `2026-11-11__release-v9.17`, met by ST-06 (EPIC-02, PR #2261 merged as `28fb7239`): `performance.md` §9 — at 375 px no page-level horizontal scroll on any Reports view, and the Monthly table scrolls inside its card (`qa_evidence_EPIC-02.md`; `verification_report.md` §5 "for 
+
+### BLG-FE-237 — Stop the Reports tab bar and Monthly table overflowing at phone width
+**✅ COMPLETE — 2026-11-17, `2026-11-11__release-v9.17`, met by ST-06 (EPIC-02, PR #2261 merged as `28fb7239`): `performance.md` §9 — at 375 px no page-level horizontal scroll on any Reports view, and the Monthly table scrolls inside its card (`qa_evidence_EPIC-02.md`; `verification_report.md` §5 "for `groom backlog` to close"). Bannered at groom backlog GROOM-20261117-01.**
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** Sprint Execution, ST-24 (EPIC-04, cycle `2026-10-29__release-v9.14`), found while hardening SC-MEC-07 at a 375px viewport after the agent-mediated DoQ review — 2026-11-02
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.15
+
+**Problem**
+At a 375px viewport the Reports page scrolls sideways: `document.documentElement.scrollWidth` is 393 with no Monthly rows at all, because the tab bar's last button (`reports-tab-reconciliation`) ends at x=393. On the Monthly tab, the Monthly Realised P&L table also extends to x=426 inside a card with `overflow-hidden`, so the Avg P&L/Trade column is clipped rather than scrollable. Neither is caused by v9.14's exit-condition card, which scrolls inside itself.
+
+**Scope**
+- Let the Reports tab bar wrap or scroll inside itself at narrow widths
+- Give the Monthly Realised P&L table the same `overflow-x-auto` treatment as the exit-condition card (sticky Month column optional)
+- Add a 375px Playwright check
+
+**Acceptance Criteria**
+- At 375px on the Monthly tab, `document.documentElement.scrollWidth` ≤ 375 (Playwright)
+- At 375px the Avg P&L/Trade column can be scrolled into view inside its card (Playwright)
 
 ---
 

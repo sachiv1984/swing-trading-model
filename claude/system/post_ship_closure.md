@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.47
-**Last Updated:** 2026-11-11 (post-ship closure `2026-11-06__release-v9.16` STEP 8 — STEP 3.1: a banner without a fixing story flags any open Known Deviations entry that names the item, for its spec owner (LL-v9.16-Closure-01)); prior — 2026-11-10 (sprint execution `2026-11-06__release-v9.16` ST-28, BLG-GOV-413 — STEP 3.1 split-achievability carve-out distinguishes a remainder tracked only by an escalation or the source item (keep open) from one wholly moved to follow-up backlog items (banner the source)); prior — 2026-11-06 (post-ship closure `2026-11-03__release-v9.15` STEP 8 — STEP 3.1 banners a planning-deferred item that is already met or superseded (LL-v9.15-Release-02)); prior history retained — see prior entries in version control
+**Version:** 2.48
+**Last Updated:** 2026-11-17 (post-ship closure `2026-11-11__release-v9.17` STEP 8 — STEP 2 item 5a programme phase rows with an open remainder (LL-v9.17-Release-01); STEP 3.1 case (i) remainder estimate note (LL-v9.17-Release-02); STEP 7.2 spec registry check (LL-v9.17-Closure-01)); prior — 2026-11-11 (post-ship closure `2026-11-06__release-v9.16` STEP 8 — STEP 3.1: a banner without a fixing story flags any open Known Deviations entry that names the item, for its spec owner (LL-v9.16-Closure-01)); prior — 2026-11-10 (sprint execution `2026-11-06__release-v9.16` ST-28, BLG-GOV-413 — STEP 3.1 split-achievability carve-out distinguishes a remainder tracked only by an escalation or the source item (keep open) from one wholly moved to follow-up backlog items (banner the source)); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 **Process Reference:** None — the former process document `docs/team_skills/pmo/processess/post-ship_closure.md` was retired 2026-03-13 (commit `11db3666`, deleted with its whole `processess/` directory); this prompt is the sole authority for the Post-Ship Closure Engine.
@@ -326,6 +326,7 @@ Update `claude/roadmap/current_roadmap.md`:
 3. Update the "Current Version" header to the shipped version.
 4. Update the "Next planned release" header to the next version (if known; leave as `[TBD]` if not).
 5. If the release contained P0/P1 quality gate items (confirmed in `verification_report.md`): mark those complete within their roadmap section.
+5a. **Programme phase rows with an open remainder (LL-v9.17-Release-01, applied v9.17 post-ship closure):** when this step marks a programme-plan phase shipped while one of its items stays open under STEP 3.1 case (i), write the row as "✅ shipped except `<item>`", and add any item that remainder waits on to the row's item list, not only its prose. At `2026-11-11__release-v9.17` Release Planning, the Phase 2 row read ✅ shipped with `BLG-FE-254` still open, and named `BLG-BE-205` only in prose, so §1.4c step 1b needed two readings to seat them.
 6. Update the release summary table if present.
 7. Update `Last Updated` to today's date.
 
@@ -351,6 +352,7 @@ For every ST item in `execution_state.json` with status `done` or `merged`:
   - **(i) Keep open** when any unmet AC is tracked only by an escalation or only by the source item itself. Leave the status as-is and record the disposition under the closure record's §6 Outstanding Actions, naming the outstanding scope and its tracking escalation/reference. Otherwise STEP 12 (`groom backlog`) could archive the item the same session and drop the escalation from tracking (`BLG-GOV-264`/`ESC-EXEC-20260818-02`, `BLG-GOV-178`/`ESC-EXEC-20260910-01`).
   - **(ii) Banner the source** when every unmet AC has moved to a named follow-up backlog item filed this cycle: mark it ✅ COMPLETE, naming each follow-up item and the AC it carries, so no AC is tracked twice. Example: `BLG-AI-23` (v9.15 ST-24), whose whole remainder moved to `BLG-AI-27`.
   - If follow-up items cover only some unmet ACs, case (i) applies; record which ACs they cover.
+  - **Remainder estimate (LL-v9.17-Release-02, applied v9.17 post-ship closure):** for every item kept open under case (i), add a dated note directly under its `**Effort:**` field giving the estimate for the open remainder only (for example `*Remainder estimate 2026-11-17: ~0.5d (TL-09/TL-10 only), post-ship closure <cycle_id>.*`). Leave the original Effort value in place. Release Planning and `workforce_capacity.md`'s "the item's own day figure wins" rule use this note as the item's day figure. At `2026-11-11__release-v9.17` Release Planning, `BLG-FE-254` still read L (~3-4 days) for about 0.5d of remaining work.
 
 - **Planning-deferred items with no work left (LL-v9.15-Release-02, applied v9.15 post-ship closure):** for every `execution_state.json.deferred_at_planning` entry whose recorded reason is that the item is already met, or is superseded by a story that merged this cycle, add the ✅ COMPLETE banner to its backlog item as well, naming the reason and the superseding story. Otherwise the item re-enters the next Release Planning ready pool (`BLG-GOV-185` precedent). Leave an item open if the deferral was for any other reason.
 
@@ -528,6 +530,7 @@ For each item in Section 6 (Pending Spec Work) and Section 7 (Open Compliance Is
 
 From `verification_report.md §6` (Test Coverage Assessment) and `qa_evidence_EPIC-xx.md` notes: identify any new spec gaps or compliance issues surfaced during this delivery that are not yet in the Specs Index.
 - Add each as a new entry in the appropriate section.
+- **Spec registry check (LL-v9.17-Closure-01, applied v9.17 post-ship closure):** run `python3 scripts/check_specs_index_freshness.py`. Record every ADDITIONS entry (a live `docs/specs/` file this index does not reference) in this cycle's Test Coverage Gaps section, and add a closure record §6 action for the Head of Specs Team to register it. Do not edit §8b here: the script asks for Head of Specs Team review first. At `2026-11-11__release-v9.17`, ST-05 and ST-06 created `journal.md` and `performance.md`, and nothing registered either file.
 
 ### 7.3 TSG backlog reconciliation (AUD-2026-06-22-005)
 

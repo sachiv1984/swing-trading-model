@@ -1,9 +1,14 @@
 Owner: Head of Specs Team
 Class: Planning Document (Class 4)
-Status: Active
+Status: Superseded
 Release: v9.17
 Cycle: 2026-11-11__release-v9.17
-Last Updated: 2026-11-11
+Last Updated: 2026-11-17 (post-ship closure `2026-11-11__release-v9.17` STEP 4 — Active → Superseded); prior — 2026-11-11 (created)
+
+Superseded by: v9.17 ship — 2026-11-17
+Changelog: docs/product/changelog.md#v9.17
+Verification report: claude/cycles/2026-11-11__release-v9.17/verification_report.md
+Cycle: 2026-11-11__release-v9.17
 
 ## Release Scope — v9.17 Site Structure & Usability, Phase 3
 
