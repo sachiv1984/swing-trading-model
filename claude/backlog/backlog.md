@@ -7237,6 +7237,7 @@ At startup, `main.py` runs three functions that each drop and re-add `signals_st
 ---
 
 ### BLG-FE-303 — Theme the components still dark-only in populated states of routed pages
+**✅ COMPLETE — 2026-11-17, `2026-11-11__release-v9.17`, found during ST-08's PR #2262 review, resolved in-sprint on EPIC-03 in `7b4e7736`** (user direction 2026-11-17, option (a); the six components and their shared children on tokens or pairs; each state scanned in light and dark; swept-list entries added to `tests/test_page_colour_tokens.py`; CI 44090887930).
 **Priority:** P2 (Medium)
 **Type:** Frontend / design system [U]
 **Owner:** Frontend Specifications & UX Documentation Owner; Head of Engineering
