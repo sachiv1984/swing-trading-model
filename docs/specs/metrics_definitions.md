@@ -2,8 +2,8 @@
 **Owner:** Metrics Definitions & Analytics Canonical Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 1.35.0
-**Last Updated:** 2026-11-04 (ST-23, EPIC-03, v9.15, BLG-SPEC-198 — §Position Risk Data Sources names fill_price (US) and entry_price (UK) as the native entry; no formula change); prior — 2026-11-04 (ST-21, EPIC-03, v9.15, BLG-BE-172 — AI Monthly P&L Narrative Usage: a failed regeneration call is one fallback generation, fail_fallback:model_call_failed; query unchanged); prior — 2026-11-04 (ST-15, EPIC-03, v9.15, BLG-FE-239 — Appendix E Backlog Item 3 resolved: Trade History counts a win as pnl > 0; no definition change); prior history retained — see prior entries in version control
+**Version:** 1.35.1
+**Last Updated:** 2026-11-16 (ST-06, EPIC-02, v9.17, BLG-FE-300 — §Minimum Trades Threshold: summary total_trades, win_rate and total_pnl stay real below the minimum; no formula change); prior — 2026-11-04 (ST-23, EPIC-03, v9.15, BLG-SPEC-198 — §Position Risk Data Sources names fill_price (US) and entry_price (UK) as the native entry; no formula change); prior — 2026-11-04 (ST-21, EPIC-03, v9.15, BLG-BE-172 — AI Monthly P&L Narrative Usage: a failed regeneration call is one fallback generation, fail_fallback:model_call_failed; query unchanged); prior history retained — see prior entries in version control
 **Review Cycle:** Monthly
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
@@ -39,7 +39,7 @@ All monetary values returned by analytics endpoints are **GBP**.
 `period` filters trades by `exit_date` and portfolio snapshots by `snapshot_date`.
 
 ### Minimum Trades Threshold
-If `total_trades < min_required`, the API returns HTTP 200 with `has_enough_data: false` and empty `{}` metric objects.
+If `total_trades < min_required`, the API returns HTTP 200 with `summary.has_enough_data: false` and empty `{}` metric objects. `summary.total_trades`, `win_rate` and `total_pnl` are still the period's real figures (a count, a percentage and a sum need no sample; BLG-FE-300, v9.17). Full list of empty fields: `analytics_endpoints.md` §summary.
 
 ---
 
@@ -1491,6 +1491,7 @@ Validation is performed by `POST /validate/calculations` comparing computed metr
 ## Appendix D — Change Log
 | Date | Version | Change | Author |
 |---|---|---|---|
+| 2026-11-16 | 1.35.1 | ST-06 (EPIC-02, v9.17, `BLG-FE-300`): §Minimum Trades Threshold — below the minimum, `summary.total_trades`, `win_rate` and `total_pnl` are still the period's real figures (the service returned 0.0 for the last two); the flag sits in `summary`. No formula change. Product Owner decision 2026-11-16; Metrics Definitions & Analytics Canonical Owner role held by the same user in session. | Sprint Execution Engine (ST-06) |
 | 2026-11-04 | 1.35.0 | ST-23 (EPIC-03, v9.15, `BLG-SPEC-198`): §Position Risk Data Sources names the native entry for both markets — `fill_price` (US) and `entry_price` (UK) — so `(entry − stop)` never mixes the GBP US `entry_price` with the native `initial_stop`. Open-position `pnl` basis (live FX, not net of fees) is recorded in `data_model_positions_dictionary.md` v0.7 §5.2 (ruling `ESC-EXEC-20261104-04`). No formula change. | Metrics Definitions & Analytics Owner |
 | 2026-11-04 | 1.34.4 | ST-21 (EPIC-03, v9.15, `BLG-BE-172`): § AI Monthly P&L Narrative Usage — a failed regeneration call stores the fallback and ends with `fail_fallback:model_call_failed`, counted once as a fallback generation. The terminal-result set and the query are unchanged. | Metrics Definitions & Analytics Owner |
 | 2026-11-04 | 1.34.3 | ST-15 (EPIC-03, v9.15, `BLG-FE-239`): Appendix E Backlog Item 3 resolved. Trade History now counts a win as `pnl > 0`, per §Win Rate. Implementation fix only; no definition change. | Metrics Definitions & Analytics Owner |

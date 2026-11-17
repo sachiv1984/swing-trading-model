@@ -73,7 +73,7 @@ test.describe('Red Flag Journal recorded types (ST-04)', () => {
     expect(events).toHaveLength(1);
 
     const { unchecked_items: n, total_items: m } = events[0].context;
-    await page.goto('/#/RedFlagJournal');
+    await page.goto('/#/Journal?section=red-flags');
     // Exclude the filter's own "Checklist Skipped" <option>.
     const rows = page.getByText('Checklist Skipped', { exact: true }).and(page.locator(':not(option)'));
     await expect(rows).toHaveCount(1, { timeout: 10000 });
@@ -83,7 +83,7 @@ test.describe('Red Flag Journal recorded types (ST-04)', () => {
 
   test('SC-RFR-02: types with no writer are disabled and labelled "not yet recorded"', async ({ page }) => {
     await stubJournal(page, []);
-    await page.goto('/#/RedFlagJournal');
+    await page.goto('/#/Journal?section=red-flags');
     const filter = page.getByTestId('event-type-filter');
     await expect(filter).toBeVisible({ timeout: 10000 });
     for (const [value, label, disabled] of [
@@ -102,7 +102,7 @@ test.describe('Red Flag Journal recorded types (ST-04)', () => {
 
   test('SC-RFR-03: both empty states carry the recorded-types note', async ({ page }) => {
     await stubJournal(page, []);
-    await page.goto('/#/RedFlagJournal');
+    await page.goto('/#/Journal?section=red-flags');
     await expect(page.getByText('No strategy deviations recorded yet')).toBeVisible({ timeout: 10000 });
     await expect(page.getByTestId('recorded-types-note')).toHaveText(NOTE);
 
@@ -117,7 +117,7 @@ test.describe('Red Flag Journal recorded types (ST-04)', () => {
       version: 1, data: { eventTypeFilter: 'stop_prompt_dismissed', tickerFilter: '', sinceFilter: '' },
     })));
     await stubJournal(page, []);
-    await page.goto('/#/RedFlagJournal');
+    await page.goto('/#/Journal?section=red-flags');
     await expect(page.getByTestId('event-type-filter')).toHaveValue('', { timeout: 10000 });
     await expect(page.getByText('No strategy deviations recorded yet')).toBeVisible();
   });

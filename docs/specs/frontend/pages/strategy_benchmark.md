@@ -1,8 +1,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 0.10
-**Last Updated:** 2026-11-11 (v9.17 design gate — ST-07/BLG-FE-263: new §3a Section Index on the Benchmark tab); prior — 2026-11-03 (v9.15 design gate — ST-18/BLG-FE-220: §7.3 exit-reason badges filled, Rebalance teal-700); prior — 2026-10-12 (v9.12 design gate — ST-24/BLG-FE-210: Trade Log Risk-Off exit-reason badge recorded as filled `bg-amber-700 text-white`); prior history retained — see prior entries in version control
+**Version:** 0.11
+**Last Updated:** 2026-11-16 (ST-07, EPIC-02, v9.17, BLG-FE-263 — §3a Section Index built; build notes); prior — 2026-11-11 (v9.17 design gate — ST-07/BLG-FE-263: new §3a Section Index on the Benchmark tab); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Release:** v7.7
 **EPIC:** EPIC-01
@@ -72,6 +72,8 @@ Positioned below the page header. Remains visible while scrolling.
 **Design source:** `docs/design/2026-11-11__release-v9.17/long-page-section-index/decision_record.md`
 
 On the Benchmark tab only, the shared `SectionIndex` (`src/components/ui/SectionIndex.js`) lists: `open-positions` Open positions (§4.5) · `parity` Performance parity (§5) · `yearly` Yearly breakdown (§6) · `trade-log` Trade log (§7). Sticky column at `lg` and up, sticky pill row below `lg`; instant jump, focus to the heading, `?section={id}` (replace) honoured on load and combined with `?tab=`; ignored on the other two tabs. Current section marked `aria-current` via `IntersectionObserver`. No content moves. `data-testid="section-index"`, links `section-link-{id}`.
+
+**Build notes (v0.11, ST-07, BLG-FE-263, built 2026-11-16):** The index lists only the panels that render: Open positions is left out when it is not shown (no open positions, not loading, no error), and the other three while the summary is loading or failed. The panels' existing headings are the jump and focus targets. The section the user jumped to (by a link or `?section=`) stays current while its heading is on screen, because a section near the end of the page cannot scroll its heading into the top quarter; otherwise the "most recently crossed" rule applies. `?section=` on load waits until the page's data has loaded, so late content does not move the section after the jump. Below `lg` the row is sticky at `top-16`, under the fixed 64 px mobile header; sections use `scroll-margin-top` to clear it. Tests: `tests/e2e/section-index.spec.js` (SC-SIX-06 to SC-SIX-08).
 
 ---
 
@@ -382,6 +384,7 @@ All endpoints must be documented in `docs/reference/openapi.yaml` and `docs/spec
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.11 | 2026-11-16 | ST-07 (EPIC-02, v9.17, BLG-FE-263): §3a built. Build notes added: only rendered panels are listed, the jumped-to section stays current near the end of the page, the load-time jump waits for data, sticky offset under the mobile header. No change to the section list or labels. |
 | 0.10 | 2026-11-11 | v9.17 design gate. (ST-07, BLG-FE-263) new §3a Section Index on the Benchmark tab (Open positions, Performance parity, Yearly breakdown, Trade log), the shared `SectionIndex`; `?section=` combines with `?tab=`. The Version Comparison and Backtest Rule Change tabs are unchanged. Design source: `docs/design/2026-11-11__release-v9.17/long-page-section-index/decision_record.md`. Approved: Head of UX & Design and Product Owner, 2026-11-11. |
 | 0.9 | 2026-11-03 | v9.15 design gate — (ST-18, EPIC-03, BLG-FE-220) §7.3 Exit Reason Badges: filled with white text ruled for every reason, matching the shipped page. Stop `bg-red-600`, Rebalance `bg-teal-600` → `bg-teal-700` (3.74:1 → 5.47:1); the unmapped-reason row records the shipped plain-text fallback. Design source: `docs/design/2026-11-03__release-v9.15/exit-reason-badges/decision_record.md`. Head of UX & Design + Product Owner approved. |
 | 0.8 | 2026-10-12 | v9.12 design gate — (ST-24, EPIC-03, BLG-FE-210) §7 Trade Log Risk-Off exit-reason badge: the row now records the shipped filled style, moved from `bg-amber-600` (3.19:1) to `bg-amber-700 text-white` (5.02:1). The other exit-reason rows still list a tinted style that differs from the shipped filled badges; that drift is noted in the design gate record and not changed here. Head of UX & Design sign-off: 2026-10-12. Product Owner approved: 2026-10-12. Head of Specs Team confirmed. |

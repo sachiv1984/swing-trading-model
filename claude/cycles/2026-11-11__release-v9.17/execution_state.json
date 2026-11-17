@@ -570,6 +570,108 @@
           "notes": "Commits: 21b8dbe7 (implementation), d485d9ca + UK-rounding follow-up (PR #2260 review P2: the stored-stop line and panel ATR used the GBP atr_value of US signals; getSignalAtr derives the native ATR from initial_stop; fixtures now real-shaped; BLG-FE-296 met and bannered; BLG-BE-220 filed for the Research View and AI thesis readers), f2749a24 (DoQ review findings 1-2: pre-fill only for the opened ticker's signal, untouched pre-fill cleared on ticker change; SC-TPSP-06, SC-TPSP-07 x2, SC-TPSP-02 data). Commit 21b8dbe7. AC 1: 'Plan this' (SC-TPSP-01, current_price - 5xATR = 165.05, equal to the panel) and the watchlisted lookup (SC-TPSP-02, initial_stop 0.62, UK) pre-fill Stop via the shared getSuggestedStop(); a typed or cleared stop survives an entry change (SC-TPSP-03); edit mode does not pre-fill (SC-TPSP-05). AC 2: plan-stored-stop-note states the stop Trade Entry will store with both values (SC-TPSP-03); absent within 0.005 (SC-TPSP-04) and without ATR (SC-TPSP-04b). Premise check (first-time-right #7): Trade Entry computes the stop from the ATR fetched or typed at entry, not the signal's atr_value; raised before commit, and the user (Frontend Specifications & UX Documentation Owner) ruled 2026-11-13 to word the line 'about ... using the signal's ATR of ...'; trade_plan.md v1.27 \u00a75f updated. AC 3: local E2E build (lint on, exit 0; warnings pre-existing): SC-TPSP 6/6; trade-plan-lifecycle, plan-this, trade-plan-suggested-size, trade-plan.spec, trade-plan-ack-reset, research-create-plan-market all pass. AC 4: DEV-v9.16-ST27-01 marked Resolved - v9.17 in trade_plan.md Known Deviations (resolving-commit discipline, LL-v9.0-P4-01). Worked examples checked with node (null/0/string inputs, 0.005 boundary). Deviation check vs \u00a75a.3/\u00a75f: none (wording change is a spec update by ruling, not a deviation). Step 13: stop input keeps its test id; no app-shell text. CI on 21b8dbe7: all 9 workflows success (steps 4c/4d): Playwright E2E Acceptance Tests 43479256427; CI Pytest Suite 43479256051; Frontend Production Build 43479255946. CI on f2749a24: all 9 workflows success (Playwright E2E 43828387765, CI Pytest 43828387794, Frontend Production Build 43828387873). PR review follow-ups fixed in-sprint at the user's direction 2026-11-16: BLG-FE-295 in 0594c4b4 (a 'Plan this' signal whose ticker no longer matches the form's is not linked; SC-TPSP-09; CI all workflows success); the native-ATR fix d485d9ca/084bdaac CI all workflows success. Process: /commit-check (Check 11 Review:/Impact: lines) was not run before EPIC-05 commits; first-time-right pass records predate the skill (built efd23278 on main)."
         }
       }
+    },
+    "EPIC-02": {
+      "title": "Site Structure & Usability Phase 3: Journal & Performance Consolidation (build-and-ship)",
+      "status": "done",
+      "branch": "exec/2026-11-11__release-v9.17/EPIC-02",
+      "pr_number": 2261,
+      "pr_status": "open",
+      "qa_signed_off": true,
+      "qa_evidence_log": "claude/cycles/2026-11-11__release-v9.17/qa_evidence_EPIC-02.md",
+      "test_scenarios": [
+        "tests/e2e/journal.spec.js",
+        "tests/e2e/performance.spec.js",
+        "tests/e2e/section-index.spec.js"
+      ],
+      "sign_off_record": {
+        "status": "cleared",
+        "role": "Director of Quality",
+        "method": "agent_mediated",
+        "signed_by": "Sprint Execution Engine (agent-mediated, Director of Quality role \u2014 \u00a75.3)",
+        "date": "2026-11-16",
+        "user_directed": true,
+        "rounds": 2,
+        "first_round": "Blocked (1 P2, 5 P3)",
+        "evidence": "claude/cycles/2026-11-11__release-v9.17/qa_evidence_EPIC-02.md"
+      },
+      "stories": {
+        "ST-05": {
+          "title": "Build the single Journal area",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 2240,
+          "branch": "exec/2026-11-11__release-v9.17/EPIC-02",
+          "commit_sha": "452438876e381fbb11a0a688a4954785fa0537c3",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-11-16T10:43:05Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/pages/journal.md",
+            "tests/e2e/journal.spec.js"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.push",
+          "sign_off_record": null,
+          "notes": "First-time-right: 2026-11-16 pass A \u2014 7 raised (journal.md \u00a74/JA-09 premise false: GET /positions is open-only, main.py get_positions(status='open') \u2192 user ruling 2026-11-16 as Frontend Specs/Head of UX: add closed from GET /trades, which carries entry_note/exit_note/tags); 20 raised (Reflections single empty copy misleads under the shared filter \u2192 ruling: separate 'No closed trades match {TICKER}.' + Clear filter); 1 raised (Position notes P&L badge shows GBP pnl, position_service.py:359, with native symbol \u2192 ruling: format GBP, in-file fix); 2/8/19 done (ticker filter: '', 'aa', 'LGEN', 'LGEN.L', '  aapl '; red-flag debounce 300 ms/Enter; tab switch keeps filter); 3 done (match helper node -e); 4 done (populated fixtures for all three panels in axe/375px); 5 high (new Journal module); 6 done (old copy grep: 12 e2e specs + test_red_flag_checklist_skipped.py + test_si05 digest URL); 11,17,18 N/A or done (no new write; fixtures from /trades and /positions contract shapes). | First-time-right: 2026-11-16 pass B \u2014 9 done (own gap fixed: Position notes date inputs overflowed 66 px at 375 px, now stacked below sm); 10 done (journal.md v1.1, navigation.md v2.3, glossary v1.4, positions.md v2.28, reflections.md v0.4, red_flag_journal.md v1.5 in the same commit); 13 done (table pipe counts read back, all 6 files); 15 done (toReflectionRow shared by TradeReflection.list and Reflections; ['positions'] queryFn identical to Positions.js); 12,14,16 N/A (no live read, no stored-data meaning change); 18/19 re-run against journal.spec.js (fixtures from contract shapes, non-exact FX rounding; filter matrix '', 'aa', 'LGEN', 'lgen.l', key-by-key, mid-word edit, Enter, saved ticker). /code-review high: 9 findings, all fixed in-commit (URL-driven input under react-router 7 startTransition \u2192 local state; Enter reads the box; page reset in render; shared ['positions']/['trades'] caches; placeholderData; UK ticker on closed cards; ui/tabs wrapper; DataState for loading/error). | Commit 617dc36b. Deviation check vs journal.md v1.1: none (the three build-time rulings are in the spec, not deviations). CI on 617dc36b: 8 of 9 workflows success (CI Pytest Suite 43845619756, Frontend Production Build 43845619833); Playwright E2E Acceptance Tests 43845620070 failed SC-JNL-20 (24 px overflow at 375 px from the Red flags event-type select, CI fonts). Fixed in 45243887 (select capped to the column; test waits for the selected tab). CI on 45243887: all 9 workflows success; Playwright E2E Acceptance Tests 43851366613 success (step 4c); CI Pytest Suite 43851366508; Frontend Production Build 43851366502 (step 4d). | DoQ round 1 fixes in 09658bd6 (all 9 workflows success; Playwright 43903323106)."
+        },
+        "ST-06": {
+          "title": "Merge Reports and Performance Analytics into one Performance page",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 2241,
+          "branch": "exec/2026-11-11__release-v9.17/EPIC-02",
+          "commit_sha": "68b0418ba9fc932428da6cf409842ff852d4df54",
+          "delegation_record_id": "ESC-EXEC-20261116-01",
+          "blocked_since_utc": "2026-11-16T13:00:31Z",
+          "unblock_criteria": "docs/specs/frontend/pages/performance.md exists, meets performance-page-brief/decision_record.md \u00a72, and carries a dated Head of UX & Design approval (addendum); Metrics Definitions & Analytics Owner KPI confirmation dated in QA evidence (AC 2)",
+          "completed_utc": "2026-11-16T15:18:50Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/pages/performance.md",
+            "docs/design/2026-11-11__release-v9.17/performance-page-brief/decision_record.md",
+            "tests/e2e/performance.spec.js"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.push",
+          "sign_off_record": null,
+          "notes": "Sub-step 1 (spec) done: performance.md v1.0 draft written 2026-11-16 (KPI inventory of Reports.js and PerformanceAnalytics.js; found the Analytics page computes its \u00a71/\u00a73 metrics in the browser \u2014 listed in \u00a75.2). Build gated on ESC-EXEC-20261116-01. | Unblocked 2026-11-16T13:03:54Z: ESC-EXEC-20261116-01 resolved (UX approval and KPI confirmation, 2026-11-16, recorded in performance.md \u00a711). Reclassified delegated_decision \u2192 autonomous (LL-v2.3-EX-02). | First-time-right: 2026-11-16 pass A \u2014 7 raised (performance.md v1.0 premise: Monthly Strategy Compliance block = Arc 5 duplicate; false, Arc 5 has no Validation Pass Rate or 30-day counts \u2192 ruling 2026-11-16: move as 'Last 30 days', drop breach tile; spec v1.1); 1 done (Summary/Analytics KPIs from GET /analytics/metrics: summary.*, executive_metrics.*, advanced_metrics.* per analytics_endpoints.md; max_drawdown.percent \u2264 0 shown as returned; period keys all_time/last_7_days/last_month/last_quarter/last_year/ytd; GBP); 2/19 done (period change refetches Summary, Analytics, \u00a717 only; has_enough_data false \u2192 'Not enough trades' in Summary and Analytics only; ?section/?report/?period combine; redirect query mapping); 4 done (populated fixtures for 390/375 px and axe); 5 high (page module); 6 done (34 e2e specs reference the old routes, retargeted in this story); 8 N/A (period filter is server-side now); 11,17,18 done/N/A (no writes; fixtures from the analytics contract with values a browser recomputation would not give, PF-06); 20 done. | First-time-right: 2026-11-16 pass B \u2014 9 done (own gaps fixed in-commit: Time-Based tab strip 442 px at 390 px; blank page on a metrics body without fields; Monthly year reset on direct tab choice; badges on missing values); 10 done (performance.md v1.1, navigation.md v2.4, glossary.md v1.5, reports.md v0.27, analytics.md v2.4 in the same commit); 13 done (all 5 spec tables read back); 15 done (shared components ExecutiveSummaryCards, AdvancedMetricsGrid, PerformanceSummary, KeyInsightsCard, ConsistencyMetrics, TimeBasedCharts, Arc5ComplianceSection have only the Performance page as caller); 18 re-run (fixtures moved to the real analytics_service.py shape after review found has_enough_data in summary and consistency_metrics top-level \u2014 the earlier fixtures had hidden both); 19 done (period, report view, section, too few trades, insufficient Sharpe, failed Arc 5). /code-review high: 10 findings, all fixed in-commit. Filed BLG-FE-299 (compliance-metrics takes no period, pre-existing). | Commit 2d739631. Deviation check vs performance.md v1.1: none. BLG-FE-237 AC met (Monthly table scrolls in its card; no page scroll at 375 px \u2014 SC-PERF-11), for groom backlog. CI on 2d739631: 8 of 9 workflows success (CI Pytest Suite 43893990452, Frontend Production Build 43893990465); Playwright E2E Acceptance Tests 43893990317 failed SC-MB-07b (morning-briefing used an href selector for the old route). Fixed in 68b0418b. CI on 68b0418b: all 8 triggered workflows success; Playwright E2E Acceptance Tests 43894993795 (step 4c); CI Pytest Suite 43894994147 (step 4d); Frontend Production Build last ran on 2d739631 (success, 43893990465; 68b0418b is test-only). | DoQ round 1 fixes in 09658bd6 (all 9 workflows success; Playwright 43903323106). | BLG-FE-300 fix (user as Product Owner, 2026-11-16: backend + frontend). First-time-right: 2026-11-16 pass A (fix) \u2014 1 raised (summary.total_pnl and win_rate are 0.0 in analytics_service.py's not-enough branch, so the old Reports tab showed \u00a30.00/0.0% in quiet months, not real totals \u2192 user chose server fix); 2 done (0, 1, 9, 10 trades; all losses; break-even); 17 done (readers of summary.total_pnl/win_rate: Performance.js only; validation_service.py reads executive/advanced only; golden_outputs.json has no analytics case); 18 done (fixture from analytics_service.py: has_enough_data false still carries real win_rate/total_pnl); 21 done (old Reports quiet month showed zeros; new shows real totals plus 'Not enough trades' for the statistical KPIs). | BLG-FE-300 fixed in 9e807be8 (server summary real below the minimum; Summary shows the three totals; zero trades shows the empty state). /code-review high: 9 findings, all fixed in-commit. First-time-right pass B (fix): 9 done (zero-trade 0.0% and copy fixed in-commit); 10 done (performance.md v1.2, analytics_endpoints.md v2.5.2, metrics_definitions.md v1.35.1 in the same commit); 13 done (tables read back; metrics_definitions change-log table column mismatch is pre-existing on HEAD); 18 re-run (fixture trades carry ticker, as the service reads; below-minimum summary from analytics_service.py); 19 done (1, 3, 0 trades; break-even). CI on 9e807be8: all 20 checks success (Playwright E2E 43930649035, CI Pytest Suite 43930648519, Frontend Production Build 43930648892, Analytics Validation Gate 43930648513, OpenAPI Drift Detection 43930648768)."
+        },
+        "ST-07": {
+          "title": "Use tabs or sections on the long single-scroll pages",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 2242,
+          "branch": "exec/2026-11-11__release-v9.17/EPIC-02",
+          "commit_sha": "44736ed8015d431b88ee975d334708f638a5f863",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-11-16T12:57:40Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/pages/trade_plan.md#5g. Section Index",
+            "docs/specs/frontend/pages/strategy_benchmark.md#3a. Section Index (v0.10)",
+            "docs/design/2026-11-11__release-v9.17/long-page-section-index/decision_record.md",
+            "tests/e2e/section-index.spec.js"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.push",
+          "sign_off_record": null,
+          "notes": "First-time-right: 2026-11-16 pass A \u2014 1 N/A (navigation only, no value shown); 2/19 done (Trade Plan 'sizing' link present iff WhatIfSizingPreview renders: stop '', null, 0, -1, 'abc' \u2192 absent; 140 \u2192 present; stop cleared after load \u2192 link drops; Benchmark 'open-positions' absent when no open positions and not loading/error; parity/yearly/trade-log absent while loading or on error; ?section= ignored on the other tabs; ?section=unknown does nothing); 3 done (current-section pick: node -e over rect lists); 4 done (populated Benchmark and Trade Plan fixtures for the 390 px scroll check); 5 high (new shared module reused by ST-06); 6 done (grep tests/e2e for the 7 new headings and 4 index labels: no unscoped collisions; Strategy Benchmark h2s unchanged); 7 done (TradePlan reads only primitive ?edit/ticker/market/clone_from values, so writing ?section= re-runs no effect); 8,11,17,18 N/A (no dates, thresholds, writes); 20 done (labels as decision record \u00a73). | First-time-right: 2026-11-16 pass B \u2014 9 done (own gaps fixed in-commit: jumped-section pin, ready gate); 10 done (both specs' build notes in the same commit); 13 done (tables read back); 15 done (isStopLevelValid shared by panel and index); 18/19 re-run (stop '',0,-1,140; edit/clone populate; tab switch). /code-review high: 9 findings fixed. Deviation check vs \u00a75g/\u00a73a: none (implementation notes recorded in the specs). CI on a7af866b: 8 of 9 workflows success (Frontend Production Build 43853635637, CI Pytest Suite 43853635767); Playwright E2E Acceptance Tests 43853635979 failed SC-SIX-07 (23 px overflow at 390 px from the Performance parity stat cards, CI fonts; pre-existing, inside this story's AC). Fixed in 44736ed8. CI on 44736ed8: all 9 workflows success; Playwright E2E Acceptance Tests 43871300660 (step 4c); CI Pytest Suite 43871300145; Frontend Production Build 43871300029 (step 4d). | DoQ round 1 fixes in 09658bd6 (all 9 workflows success; Playwright 43903323106)."
+        }
+      }
     }
   },
   "blocked_items": [],
@@ -579,6 +681,9 @@
     "ST-02",
     "ST-03",
     "ST-04",
+    "ST-05",
+    "ST-06",
+    "ST-07",
     "ST-09",
     "ST-10",
     "ST-11",
@@ -592,7 +697,21 @@
     "ST-19",
     "ST-20"
   ],
-  "open_escalations": {},
+  "open_escalations": {
+    "ESC-EXEC-20261116-01": {
+      "cycle": "2026-11-11__release-v9.17",
+      "summary": "ST-06/EPIC-02 \u2014 performance.md v1.0 draft needs dated Head of UX & Design approval and Metrics owner KPI confirmation (scope rule; server-canonical KPIs) before the build",
+      "trigger_type": "Lifecycle",
+      "owning_authority": "Head of UX & Design; Metrics Definitions & Analytics Canonical Owner",
+      "raised_utc": "2026-11-16T13:00:31Z",
+      "sla_due_utc": "2026-11-17T13:00:31Z",
+      "blocks_execution": false,
+      "disposition": "Resolved",
+      "resolved_utc": "2026-11-16T13:03:54Z",
+      "resolved_by": "Head of UX & Design; Metrics Definitions & Analytics Canonical Owner (the user, in session)",
+      "resolution_summary": "performance.md v1.0 approved as drafted (scope rule) and KPI definitions confirmed (server-canonical values), 2026-11-16; ST-06 build unblocked."
+    }
+  },
   "merge_gate": {
     "epics_merged": [
       "EPIC-01",

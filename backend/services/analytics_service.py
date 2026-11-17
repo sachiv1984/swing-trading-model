@@ -55,12 +55,19 @@ class AnalyticsService:
         total_trades = len(filtered)
         has_enough_data = total_trades >= min_trades
 
+        # One summary for both branches. BLG-FE-300 (ST-06, v9.17): win_rate and
+        # total_pnl are the period's real figures even below the minimum — a
+        # percentage and a sum need no sample (analytics_endpoints.md §summary).
+        wins = [t for t in filtered if t.get("pnl", 0) > 0]
+        total_pnl = sum(t.get("pnl", 0) for t in filtered)
+        win_rate = round(len(wins) / total_trades * 100, 1) if total_trades else 0.0
+
         if not has_enough_data:
             return {
                 "summary": {
                     "total_trades": total_trades,
-                    "win_rate": 0.0,
-                    "total_pnl": 0.0,
+                    "win_rate": win_rate,
+                    "total_pnl": round(total_pnl, 2),
                     "has_enough_data": False,
                     "min_required": min_trades,
                 },
@@ -75,10 +82,6 @@ class AnalyticsService:
                 "consistency_metrics": {},
                 "trades_for_charts": [],
             }
-
-        wins = [t for t in filtered if t.get("pnl", 0) > 0]
-        total_pnl = sum(t.get("pnl", 0) for t in filtered)
-        win_rate = round(len(wins) / total_trades * 100, 1)
 
         monthly = self._build_monthly_data(filtered)
 

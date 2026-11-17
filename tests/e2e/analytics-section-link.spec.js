@@ -24,6 +24,7 @@
 'use strict';
 
 const { test, expect } = require('./fixtures/api-status-guard');
+const { mockAnalyticsMetrics } = require('./fixtures/analytics-metrics');
 
 const API = 'http://localhost:8000';
 
@@ -69,122 +70,109 @@ async function mockArc5(page, { payload = ARC5_OK, status = 200, gate = null } =
   });
 }
 
-const section = (page) => page.getByTestId('analytics-section-strategy-compliance');
-const heading = (page) => section(page).getByRole('heading', { name: 'Arc 5 Signal Compliance' });
+// ST-06 (EPIC-02, v9.17, BLG-FE-259): the Analytics page's own
+// ?section=strategy-compliance link (analytics.md §19.1) is superseded by the
+// Performance page's section index (performance.md v1.1 §3, §7). The SI-05
+// digest's old link redirects to /Performance?section=compliance, which jumps
+// to the Compliance section heading once the page's data is ready. These
+// scenarios keep the §19.1 behaviours on the new route.
 
-async function headingIsFocused(page) {
-  return page.evaluate(() => {
-    const el = document.querySelector('#strategy-compliance h2');
-    return !!el && document.activeElement === el;
-  });
+const complianceHeading = (page) => page.locator('#compliance > h2');
+const arc5Heading = (page) => page.getByTestId('analytics-section-strategy-compliance').getByRole('heading', { name: 'Arc 5 Signal Compliance' });
+
+async function complianceFocused(page) {
+  return page.evaluate(() => document.activeElement === document.querySelector('#compliance > h2'));
 }
 
-async function sectionTopInViewport(page) {
+async function complianceTopInViewport(page) {
   return page.evaluate(() => {
-    const r = document.getElementById('strategy-compliance').getBoundingClientRect();
+    const r = document.querySelector('#compliance > h2').getBoundingClientRect();
     return r.top >= 0 && r.top < window.innerHeight;
   });
 }
 
-test('SC-SEC-01: with reduced motion, the section link puts the section in view and focuses its heading', async ({ page }) => {
+test('SC-SEC-01: the old digest link lands on Compliance, in view and focused (reduced motion)', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await mockFallback(page);
   await mockArc5(page);
   await page.goto('/#/PerformanceAnalytics?section=strategy-compliance');
 
-  await expect(heading(page)).toBeVisible({ timeout: 15000 });
-  await expect(section(page)).toHaveAttribute('id', 'strategy-compliance');
-  await expect(heading(page)).toHaveAttribute('tabindex', '-1');
-  await expect.poll(() => headingIsFocused(page), { timeout: 5000 }).toBe(true);
-  await expect(section(page)).toBeInViewport();
-  expect(await sectionTopInViewport(page)).toBe(true);
+  await expect(page).toHaveURL(/#\/Performance\?section=compliance$/);
+  await expect(arc5Heading(page)).toBeVisible({ timeout: 15000 });
+  await expect.poll(() => complianceFocused(page), { timeout: 5000 }).toBe(true);
+  expect(await complianceTopInViewport(page)).toBe(true);
   expect(await page.evaluate(() => window.scrollY)).toBeGreaterThan(0);
-  // The query stays in the URL.
-  await expect(page).toHaveURL(/\?section=strategy-compliance$/);
 });
 
 test('SC-SEC-02: an unknown section loads the page at the top with no error', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await mockFallback(page);
   await mockArc5(page);
-  await page.goto('/#/PerformanceAnalytics?section=unknown');
+  const errors = [];
+  page.on('pageerror', (e) => errors.push(e));
+  await page.goto('/#/Performance?section=unknown');
 
-  await expect(heading(page)).toBeVisible({ timeout: 15000 });
+  await expect(arc5Heading(page)).toBeVisible({ timeout: 15000 });
   await page.waitForTimeout(800);
   expect(await page.evaluate(() => window.scrollY)).toBe(0);
-  expect(await headingIsFocused(page)).toBe(false);
-  await expect(page.getByRole('heading', { level: 1, name: 'Analytics', exact: true })).toBeInViewport();
+  expect(await complianceFocused(page)).toBe(false);
+  await expect(page.getByRole('heading', { level: 1, name: 'Performance', exact: true })).toBeInViewport();
+  expect(errors).toHaveLength(0);
 });
 
 test('SC-SEC-03: without a section parameter the page loads at the top', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await mockFallback(page);
   await mockArc5(page);
-  await page.goto('/#/PerformanceAnalytics');
+  await page.goto('/#/Performance');
 
-  await expect(heading(page)).toBeVisible({ timeout: 15000 });
+  await expect(arc5Heading(page)).toBeVisible({ timeout: 15000 });
   await page.waitForTimeout(800);
   expect(await page.evaluate(() => window.scrollY)).toBe(0);
-  expect(await headingIsFocused(page)).toBe(false);
+  expect(await complianceFocused(page)).toBe(false);
 });
 
 test('SC-SEC-04: with default motion the section still ends up in view and focused', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'no-preference' });
   await mockFallback(page);
   await mockArc5(page);
-  await page.goto('/#/PerformanceAnalytics?section=strategy-compliance');
+  await page.goto('/#/Performance?section=compliance');
 
-  await expect(heading(page)).toBeVisible({ timeout: 15000 });
-  await expect.poll(() => headingIsFocused(page), { timeout: 5000 }).toBe(true);
-  await expect.poll(() => sectionTopInViewport(page), { timeout: 5000 }).toBe(true);
+  await expect(arc5Heading(page)).toBeVisible({ timeout: 15000 });
+  await expect.poll(() => complianceFocused(page), { timeout: 5000 }).toBe(true);
+  await expect.poll(() => complianceTopInViewport(page), { timeout: 5000 }).toBe(true);
 });
 
-test('SC-SEC-05: no scroll while the section shows its skeleton; it scrolls once data arrives', async ({ page }) => {
+test('SC-SEC-05: no jump while the page data is loading; it jumps once the data arrives', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await mockFallback(page);
+  await mockArc5(page);
   let release;
   const gate = new Promise((r) => { release = r; });
-  await mockArc5(page, { gate });
-  await page.goto('/#/PerformanceAnalytics?section=strategy-compliance');
+  await page.route(/localhost:8000\/analytics\/metrics/, async (route) => {
+    await gate;
+    await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok', data: { has_enough_data: false, summary: { total_trades: 0 } } }) });
+  });
+  await page.goto('/#/Performance?section=compliance');
 
-  await expect(heading(page)).toBeVisible({ timeout: 15000 });
-  await page.waitForTimeout(800);
-  expect(await page.evaluate(() => window.scrollY)).toBe(0);
-  expect(await headingIsFocused(page)).toBe(false);
-
-  release();
-  await expect.poll(() => headingIsFocused(page), { timeout: 5000 }).toBe(true);
-  expect(await sectionTopInViewport(page)).toBe(true);
-});
-
-test('SC-SEC-06: the section error state counts as rendered and is scrolled to', async ({ page }) => {
-  await page.emulateMedia({ reducedMotion: 'reduce' });
-  await mockFallback(page);
-  await mockArc5(page, { payload: { status: 'error', detail: 'boom' }, status: 500 });
-  await page.goto('/#/PerformanceAnalytics?section=strategy-compliance');
-
-  await expect(heading(page)).toBeVisible({ timeout: 15000 });
-  await expect.poll(() => headingIsFocused(page), { timeout: 15000 }).toBe(true);
-  expect(await sectionTopInViewport(page)).toBe(true);
-});
-
-test('SC-SEC-07: if the user scrolls before the section is ready, the page does not scroll them', async ({ page }) => {
-  await page.emulateMedia({ reducedMotion: 'reduce' });
-  await mockFallback(page);
-  let release;
-  const gate = new Promise((r) => { release = r; });
-  await mockArc5(page, { gate });
-  await page.goto('/#/PerformanceAnalytics?section=strategy-compliance');
-
-  await expect(heading(page)).toBeVisible({ timeout: 15000 });
-  await page.mouse.move(700, 400);
-  await page.mouse.wheel(0, 120);
-  await page.waitForTimeout(300);
-  const before = await page.evaluate(() => window.scrollY);
-
-  release();
-  await expect(section(page).getByText('Top Rule Breach')).toBeVisible({ timeout: 5000 });
+  await expect(complianceHeading(page)).toBeVisible({ timeout: 15000 });
   await page.waitForTimeout(600);
-  expect(await headingIsFocused(page)).toBe(false);
-  expect(Math.abs((await page.evaluate(() => window.scrollY)) - before)).toBeLessThan(5);
+  expect(await page.evaluate(() => window.scrollY)).toBe(0);
+  expect(await complianceFocused(page)).toBe(false);
+
+  release();
+  await expect.poll(() => complianceFocused(page), { timeout: 5000 }).toBe(true);
+  expect(await complianceTopInViewport(page)).toBe(true);
+});
+
+test('SC-SEC-06: an Arc 5 error state is still reached through the section link', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await mockFallback(page);
+  await mockArc5(page, { status: 500, payload: { status: 'error' } });
+  await mockAnalyticsMetrics(page);
+  await page.goto('/#/Performance?section=compliance');
+
+  await expect(page.locator('#compliance').getByText('Unable to load').first()).toBeVisible({ timeout: 20000 });
+  await expect.poll(() => complianceFocused(page), { timeout: 5000 }).toBe(true);
+  expect(await complianceTopInViewport(page)).toBe(true);
 });

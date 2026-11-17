@@ -6,13 +6,14 @@ import { Button } from "../components/ui/button";
 import { Dialog, DialogContent, DialogTitle } from "../components/ui/dialog";
 import PageHeader from "../components/ui/PageHeader";
 import { PAGE_LABELS } from "../lib/pageLabels";
+import SectionIndex, { SECTION_SCROLL_MARGIN } from "../components/ui/SectionIndex";
 import DataState from "../components/ui/DataState";
 import EntryChecklist, { DEFAULT_CHECKLIST_ITEMS } from "../components/trades/EntryChecklist";
 import SignalContextPanel, { buildSignalPrePopulation, getSuggestedStop, getSignalAtr } from "../components/trades/SignalContextPanel";
 import { formatCurrency, currencyForMarket } from "../lib/format";
 import { INITIAL_ATR_MULTIPLIER } from "../constants/strategy";
 import SetupQualityScorePanel from "../components/trades/SetupQualityScorePanel";
-import WhatIfSizingPreview from "../components/trades/WhatIfSizingPreview";
+import WhatIfSizingPreview, { isStopLevelValid } from "../components/trades/WhatIfSizingPreview";
 import PreEntryValidationPanel from "../components/trades/PreEntryValidationPanel";
 import PlanSuggestedSize from "../components/trades/PlanSuggestedSize";
 import { BookOpen, Save, ArrowLeft, AlertTriangle, ChevronDown, ChevronUp, Newspaper, Sparkles, X as XIcon, ThumbsUp, ThumbsDown, Tag as TagIcon, Rocket, Printer, Copy } from "lucide-react";
@@ -240,6 +241,33 @@ function PlanStoredStopNote({ entryPrice, stopPrice, atrValue, market }) {
   );
 }
 
+// ST-07 (BLG-FE-263, v9.17): trade_plan.md §5g — each group of fields is a
+// <section> with a visible heading, the target of the section index.
+const PLAN_SECTIONS = [
+  { id: "basics", label: "Basics" },
+  { id: "setup", label: "Signal and setup" },
+  { id: "entry", label: "Entry, stop and size" },
+  { id: "thesis", label: "Thesis" },
+  { id: "rules", label: "Rules" },
+  { id: "sizing", label: "What-if sizing" },
+  { id: "checklist", label: "Checklist" },
+];
+
+function PlanSection({ id, hidden = false, children }) {
+  const { label } = PLAN_SECTIONS.find((s) => s.id === id);
+  return (
+    <section id={id} hidden={hidden} aria-labelledby={`plan-section-${id}`} className={`space-y-6 ${SECTION_SCROLL_MARGIN}`}>
+      <h2
+        id={`plan-section-${id}`}
+        className="text-sm font-semibold text-white border-b border-slate-700/50 pb-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500 rounded-sm"
+      >
+        {label}
+      </h2>
+      {children}
+    </section>
+  );
+}
+
 function Field({ label, labelId, children }) {
   return (
     <div className="space-y-1">
@@ -397,6 +425,10 @@ export default function TradePlan() {
   });
   const defaultRiskPercent = settingsData?.[0]?.default_risk_percent ?? 1.0;
 
+  // §5g: the ?section= jump waits until an edited or cloned plan is in the
+  // form, so the populated fields do not move the section after the jump.
+  const [formPopulated, setFormPopulated] = useState(!editId && !cloneFromId);
+
   useEffect(() => {
     if (existingPlan && !hasUnsavedAiChanges.current) {
       const existingItems = Array.isArray(existingPlan.checklist_items) ? existingPlan.checklist_items : [];
@@ -440,6 +472,7 @@ export default function TradePlan() {
       setIsClaudeDraft(!!existingPlan.is_ai_draft);
       if (existingPlan.planned_quantity != null) setSharesTyped(true);
     }
+    if (existingPlan) setFormPopulated(true);
   }, [existingPlan]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // ST-01 (EPIC-01, v9.6, BLG-FEAT-96): clone-as-new-plan. Reads the source via the
@@ -485,7 +518,12 @@ export default function TradePlan() {
       status: "draft",
       position_id: null,
     });
+    setFormPopulated(true);
   }, [cloneSource]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (cloneLoadFailed) setFormPopulated(true);
+  }, [cloneLoadFailed]);
 
   useEffect(() => {
     if (cloneLoadFailed) {
@@ -753,6 +791,11 @@ export default function TradePlan() {
   // Derive abandonment state from the fetched plan OR form state (onSuccess removed in RQ v5)
   const isAbandoned = existingPlan?.status === "abandoned" || form.status === "abandoned";
   const abandonReasonValid = abandonReason.trim().length >= 10;
+  // §5g: a section with no rendered field is left out. Only What-if sizing can
+  // be empty: WhatIfSizingPreview renders nothing until the stop is a positive
+  // number (its own §5d.1 gate, same parse).
+  const sizingVisible = isStopLevelValid(form.planned_stop_price);
+  const planSections = PLAN_SECTIONS.filter((s) => s.id !== "sizing" || sizingVisible);
 
   return (
     <div className="space-y-6">
@@ -885,8 +928,11 @@ export default function TradePlan() {
         </div>
       )}
 
-      <div className="rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 border border-slate-700/50 p-6 space-y-6">
+      <div className="space-y-4 lg:space-y-0 lg:grid lg:grid-cols-[minmax(0,1fr)_12rem] lg:gap-6 print:block">
+      <SectionIndex sections={planSections} className="lg:order-2" ready={formPopulated} />
+      <div className="lg:order-1 min-w-0 rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 border border-slate-700/50 p-6 space-y-8">
 
+        <PlanSection id="basics">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <Field label="Ticker">
             <TextInput value={form.ticker} onChange={set("ticker")} placeholder="e.g. AAPL" />
@@ -1003,7 +1049,9 @@ export default function TradePlan() {
             )}
           </div>
         </Field>
+        </PlanSection>
 
+        <PlanSection id="setup">
         {!editId && <SignalContextPanel signal={linkedSignal} market={form.market} />}
 
         <Field label="Setup Type" labelId="trade-plan-setup-type-label">
@@ -1024,6 +1072,9 @@ export default function TradePlan() {
         <SetupQualityScorePanel ticker={form.ticker} />
 
         <NewsContextPanel ticker={form.ticker} market={form.market} />
+        </PlanSection>
+
+        <PlanSection id="entry">
 
         {/* Pre-Entry Validation — ST-03 / ST-16. ST-08 (BLG-FE-256, v9.16): trade_plan.md v1.22 §5f
             field order — Entry | Stop, then the suggested size, then Planned Shares, then the panel. */}
@@ -1096,7 +1147,9 @@ export default function TradePlan() {
           onResultChange={handlePreEntryResult}
           acknowledgementResetReason={ackResetReason}
         />
+        </PlanSection>
 
+        <PlanSection id="thesis">
         <div className="space-y-1">
           <div className="flex items-center justify-between">
             <label className="text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide">Setup Thesis</label>
@@ -1262,7 +1315,9 @@ export default function TradePlan() {
             placeholder="Describe the setup — what technical or fundamental condition makes this a candidate?"
           />
         </div>
+        </PlanSection>
 
+        <PlanSection id="rules">
         <Field label="Entry Rationale">
           <TextArea
             rows={3}
@@ -1300,14 +1355,22 @@ export default function TradePlan() {
           />
         </Field>
 
-        {/* What-If Sizing Preview — ST-05 (v8.9, BLG-FEAT-91), trade_plan.md §5d */}
-        <WhatIfSizingPreview
-          ticker={form.ticker}
-          market={form.market}
-          stopLevel={form.planned_stop_price}
-          defaultRiskPercent={defaultRiskPercent}
-        />
+        </PlanSection>
 
+        {/* What-If Sizing Preview — ST-05 (v8.9, BLG-FEAT-91), trade_plan.md §5d */}
+        {/* Hidden, not unmounted, while the stop is not a positive number, so
+            the panel's own entry price, FX override and collapse state survive
+            a stop edit that passes through "" or "0." (review finding). */}
+        <PlanSection id="sizing" hidden={!sizingVisible}>
+          <WhatIfSizingPreview
+            ticker={form.ticker}
+            market={form.market}
+            stopLevel={form.planned_stop_price}
+            defaultRiskPercent={defaultRiskPercent}
+          />
+        </PlanSection>
+
+        <PlanSection id="checklist">
         <Field label="Pre-Entry Checklist">
           <EntryChecklist
             items={form.checklist_items}
@@ -1315,6 +1378,7 @@ export default function TradePlan() {
             onToggle={handleChecklistToggle}
           />
         </Field>
+        </PlanSection>
 
         {!isAbandoned && (
           <div className="flex justify-end">
@@ -1328,6 +1392,7 @@ export default function TradePlan() {
             </Button>
           </div>
         )}
+      </div>
       </div>
 
       {/* Abandon modal — Radix Dialog primitive for focus trap/restoration (ST-07, BLG-FE-136, EPIC-02, v8.0) */}

@@ -20,6 +20,13 @@ import { formatCurrency, formatPercent } from "../../lib/format";
 // its own to avoid cross-page coupling").
 const SESSION_KEY = "what_if_preview_risk_percent";
 
+// §5d.1 presence gate, shared with Trade Plan's section index (trade_plan.md
+// §5g): the panel renders only while the stop parses to a positive number.
+export function isStopLevelValid(stopLevel) {
+  const parsed = stopLevel === "" || stopLevel == null ? null : parseFloat(stopLevel);
+  return parsed != null && parsed > 0;
+}
+
 export default function WhatIfSizingPreview({ ticker, market, stopLevel, fxRate, defaultRiskPercent }) {
   const [collapsed, setCollapsed] = useState(false);
   const [plannedEntryPrice, setPlannedEntryPrice] = useState("");
@@ -108,7 +115,7 @@ export default function WhatIfSizingPreview({ ticker, market, stopLevel, fxRate,
   // Price input; the *calculation/output* section (below) still only
   // renders once both inputs are valid, preserving the spec's intent that
   // no result is shown from a single input alone.
-  const stopLevelValid = parsedStop != null && parsedStop > 0;
+  const stopLevelValid = isStopLevelValid(stopLevel);
   if (!stopLevelValid) {
     return null;
   }

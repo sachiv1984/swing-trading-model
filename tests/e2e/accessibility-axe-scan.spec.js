@@ -341,22 +341,25 @@ for (const theme of ['dark', 'light']) {
     });
 
     test(`Reports Monthly tab with a restated month expanded (${theme})`, async ({ page }) => {
-      await page.goto('/#/Reports');
-      await page.getByRole('button', { name: /monthly p&l/i }).click();
+      await page.goto('/#/Performance?section=reports');
+      await page.getByTestId('performance-report-tab-monthly').click();
       const marker = page.getByTestId('monthly-restated-marker');
       await expect(marker).toBeVisible({ timeout: 10000 });
       await marker.click();
       await expect(page.getByTestId('monthly-restatement-detail')).toBeVisible();
       await expectThemeApplied(page, theme);
-      await runAxeScan(page, `ReportsMonthly:${theme}`);
+      // ST-06 (v9.17): Reports is one section of the Performance page; scan
+      // that section, as this test scanned the Reports page before. The other
+      // sections' analytics components are ST-08's token sweep.
+      await runAxeScan(page, `ReportsMonthly:${theme}`, { include: 'section#reports' });
     });
 
     test(`Reports Tax Year tab with the restated-months notice (${theme})`, async ({ page }) => {
-      await page.goto('/#/Reports');
-      await page.getByRole('button', { name: /tax year p&l/i }).click();
+      await page.goto('/#/Performance?section=reports');
+      await page.getByTestId('performance-report-tab-tax-year').click();
       await expect(page.getByTestId('taxyear-restated-notice')).toBeVisible({ timeout: 10000 });
       await expectThemeApplied(page, theme);
-      await runAxeScan(page, `ReportsTaxYear:${theme}`);
+      await runAxeScan(page, `ReportsTaxYear:${theme}`, { include: 'section#reports' });
     });
 
     test(`Notification preferences (${theme})`, async ({ page }) => {

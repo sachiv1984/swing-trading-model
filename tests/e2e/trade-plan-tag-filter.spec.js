@@ -12,12 +12,13 @@
  *   SC-TPTF-05  No closed trades for selected tag shows the empty-state message
  *
  * Infrastructure: Playwright page.route() network interception. No live backend required.
- * ROUTING NOTE: App uses HashRouter — navigate via page.goto('/#/PerformanceAnalytics').
+ * ROUTING NOTE: App uses HashRouter — navigate via page.goto('/#/Performance?section=analytics').
  */
 
 'use strict';
 
 const { test, expect } = require('./fixtures/api-status-guard');
+const { mockAnalyticsMetrics } = require('./fixtures/analytics-metrics');
 
 const API = 'http://localhost:8000';
 
@@ -68,7 +69,8 @@ async function mockTagPerformance(page, rows) {
 }
 
 async function gotoAnalytics(page) {
-  await page.goto('/#/PerformanceAnalytics');
+  await mockAnalyticsMetrics(page); // ST-06: Analytics needs a populated metrics response
+  await page.goto('/#/Performance?section=analytics');
   await expect(page.getByTestId('trade-plan-tag-filter')).toBeVisible({ timeout: 10000 });
 }
 

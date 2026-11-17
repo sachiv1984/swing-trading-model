@@ -11,15 +11,15 @@
  *   SC-ONW-01  Ticker Universe → Screener
  *   SC-ONW-02  Trade History → Research for a trade's ticker
  *   SC-ONW-03  Analytics → Trade History (populated state)
- *   SC-ONW-04  Reports → Analytics
- *   SC-ONW-05  Strategy Benchmark → Analytics
+ *   SC-ONW-04  Performance (old /Reports route) → Trade History (ST-06, v9.17)
+ *   SC-ONW-05  Strategy Benchmark → Performance's Analytics section (ST-06, v9.17)
  *   SC-ONW-06  Replay → Trade History
- *   SC-ONW-07  Trade Reflections → Trade History
- *   SC-ONW-08  Red Flag Journal → Trade History filtered to the event's ticker
+ *   SC-ONW-07  Journal Reflections → Trade History filtered to the trade's ticker ("View trade"; ST-05, v9.17)
+ *   SC-ONW-08  Journal Red flags → Trade History filtered to the event's ticker ("View trade"; ST-05, v9.17)
  *   SC-ONW-09  Trade History ?ticker= filter shows only that ticker; "Show all trades" clears it
  *   SC-ONW-10  Settings → Notification Preferences
  *   SC-ONW-11  System Status → Settings
- *   SC-ONW-12  Dead-end scan re-run over the 11 former dead-end pages: 0 dead ends
+ *   SC-ONW-12  Dead-end scan re-run over the former dead-end pages (Journal replaces two): 0 dead ends
  *
  * Infrastructure: page.route() network interception. No live backend required.
  * ROUTING NOTE: App uses HashRouter — navigate with page.goto('/#/…').
@@ -125,8 +125,8 @@ test('SC-ONW-03: Analytics (populated) links onward to Trade History', async ({ 
   await page.route(/localhost:8000\/trades(\?|$)/, (route) =>
     route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok', data: { trades: many } }) })
   );
-  await page.goto('/#/PerformanceAnalytics');
-  await expect(page.getByRole('heading', { level: 1, name: 'Analytics', exact: true })).toBeVisible({ timeout: 15000 });
+  await page.goto('/#/Performance?section=analytics');
+  await expect(page.getByRole('heading', { level: 1, name: 'Performance', exact: true })).toBeVisible({ timeout: 15000 });
   // Populated state only: the Arc 5 section renders only in the populated branch
   // (PerformanceAnalytics.js), so its presence proves which header is under test.
   await expect(page.getByTestId('analytics-section-strategy-compliance')).toBeVisible({ timeout: 15000 });
@@ -138,31 +138,43 @@ test('SC-ONW-03: Analytics (populated) links onward to Trade History', async ({ 
   await expect(page).toHaveURL(/#\/TradeHistory$/);
 });
 
-test('SC-ONW-04: Reports links onward to Analytics', async ({ page }) => {
-  await checkOnward(page, { from: '/#/Reports', heading: 'Reports', label: 'Analytics', href: '#/PerformanceAnalytics', lands: /#\/PerformanceAnalytics$/, targetHeading: 'Analytics' });
+test('SC-ONW-04: the old Reports route lands on Performance, which links onward to Trade History', async ({ page }) => {
+  await checkOnward(page, { from: '/#/Reports', heading: 'Performance', label: 'Trade History', href: '#/TradeHistory', lands: /#\/TradeHistory$/, targetHeading: 'Trade History' });
 });
 
-test('SC-ONW-05: Strategy Benchmark links onward to Analytics', async ({ page }) => {
-  await checkOnward(page, { from: '/#/StrategyBenchmark', heading: 'Strategy Benchmark', label: 'Analytics', href: '#/PerformanceAnalytics', lands: /#\/PerformanceAnalytics$/, targetHeading: 'Analytics' });
+test('SC-ONW-05: Strategy Benchmark links onward to Performance (Analytics section)', async ({ page }) => {
+  await checkOnward(page, { from: '/#/StrategyBenchmark', heading: 'Strategy Benchmark', label: 'Performance', href: '#/Performance?section=analytics', lands: /#\/Performance\?section=analytics$/, targetHeading: 'Performance' });
 });
 
 test('SC-ONW-06: Replay links onward to Trade History', async ({ page }) => {
   await checkOnward(page, { from: '/#/Replay', heading: 'Replay', label: 'Trade History', href: '#/TradeHistory', lands: /#\/TradeHistory$/, targetHeading: 'Trade History' });
 });
 
-test('SC-ONW-07: Trade Reflections links onward to Trade History', async ({ page }) => {
-  await checkOnward(page, { from: '/#/TradeReflection', heading: 'Trade Reflections', label: 'Trade History', href: '#/TradeHistory', lands: /#\/TradeHistory$/, targetHeading: 'Trade History' });
+// ST-05 (BLG-FE-258, v9.17): Trade Reflections and Red Flag Journal are the
+// Journal's Reflections and Red flags sections; each item links "View trade"
+// to Trade History filtered to its ticker (journal.md §4, JA-10).
+test('SC-ONW-07: a Journal reflection card links to Trade History filtered to its ticker', async ({ page }) => {
+  await stubTrades(page);
+  await page.goto('/#/Journal?section=reflections');
+  await expect(page.getByRole('heading', { level: 1, name: 'Journal', exact: true })).toBeVisible({ timeout: 15000 });
+  const links = page.getByTestId('reflection-view-trade');
+  await expect(links).toHaveCount(2, { timeout: 15000 });
+  await expect(links.first()).toHaveText('View trade');
+  await expect(links.first()).toHaveAttribute('href', '#/TradeHistory?ticker=AAPL');
+  await links.first().click();
+  await expect(page).toHaveURL(/#\/TradeHistory\?ticker=AAPL$/);
+  await expect(page.getByTestId('trade-history-ticker-filter')).toContainText('AAPL');
 });
 
-test('SC-ONW-08: a Red Flag Journal event links to Trade History filtered to its ticker', async ({ page }) => {
+test('SC-ONW-08: a Journal red flag links to Trade History filtered to its ticker', async ({ page }) => {
   await page.route(/localhost:8000\/portfolio\/red-flag-journal/, (route) =>
     route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(RED_FLAG_EVENTS) })
   );
   await stubTrades(page);
-  await page.goto('/#/RedFlagJournal');
+  await page.goto('/#/Journal?section=red-flags');
   const link = page.getByTestId('event-trade-history-link');
   await expect(link).toHaveCount(1, { timeout: 15000 });
-  await expect(link).toHaveText('Trade History');
+  await expect(link).toHaveText('View trade');
   await expect(link).toHaveAttribute('href', '#/TradeHistory?ticker=VOD.L');
   await link.click();
   await expect(page).toHaveURL(/#\/TradeHistory\?ticker=VOD\.L$/);
@@ -201,17 +213,17 @@ test('SC-ONW-11: System Status links onward to Settings', async ({ page }) => {
 // ---------------------------------------------------------------------------
 
 const DEAD_END_PAGES = [
-  '/#/notifications/history', '/#/TickerUniverse', '/#/TradeHistory', '/#/PerformanceAnalytics',
-  '/#/Reports', '/#/StrategyBenchmark', '/#/Replay', '/#/TradeReflection', '/#/RedFlagJournal',
+  '/#/notifications/history', '/#/TickerUniverse', '/#/TradeHistory', '/#/Performance?section=analytics',
+  '/#/Performance?section=reports', '/#/StrategyBenchmark', '/#/Replay', '/#/Journal',
   '/#/Settings', '/#/SystemStatus',
-];
+]; // ST-05 (v9.17): '/#/Journal' replaces '/#/TradeReflection' and '/#/RedFlagJournal' (both now redirect there)
 
 // Hash-route path of a link, or of the page itself (query string and case ignored).
 function routeOf(hash) {
   return (hash.replace(/^\/?#/, '').split('?')[0] || '/').toLowerCase();
 }
 
-test('SC-ONW-12: dead-end scan re-run — the 11 former dead-end pages all link onward', async ({ page }) => {
+test('SC-ONW-12: dead-end scan re-run — the former dead-end pages all link onward', async ({ page }) => {
   test.setTimeout(180000);
   const many = recentTrades();
   await page.route(/localhost:8000\/trades(\?|$)/, (route) =>
@@ -226,7 +238,7 @@ test('SC-ONW-12: dead-end scan re-run — the 11 former dead-end pages all link 
     await page.goto(hash);
     await expect(page.locator('main h1').first()).toBeVisible({ timeout: 15000 });
     await page.waitForTimeout(500);
-    if (hash === '/#/PerformanceAnalytics') {
+    if (hash === '/#/Performance?section=analytics') {
       // Count only the populated state (navigation.md: an empty-state-only link does not count).
       await expect(page.getByTestId('analytics-section-strategy-compliance')).toBeVisible({ timeout: 15000 });
     }

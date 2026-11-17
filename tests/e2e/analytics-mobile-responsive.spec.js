@@ -26,6 +26,7 @@
 'use strict';
 
 const { test, expect } = require('./fixtures/api-status-guard');
+const { mockAnalyticsMetrics } = require('./fixtures/analytics-metrics');
 const { ALL_TRADES, ANALYTICS_SETTINGS } = require('./mocks/analytics-mock-data');
 
 const API_BASE = 'http://localhost:8000';
@@ -41,9 +42,10 @@ async function setupAnalytics(page) {
   await page.route(`${API_BASE}/settings`, (route) =>
     route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(ANALYTICS_SETTINGS) })
   );
-  await page.goto('/#/PerformanceAnalytics');
+  await mockAnalyticsMetrics(page, { trades: ALL_TRADES }); // ST-06: Analytics needs a populated metrics response
+  await page.goto('/#/Performance?section=analytics');
   await expect(
-    page.locator('h1, [class*="text-2xl"], [class*="text-3xl"]').filter({ hasText: /^Analytics$/ })
+    page.locator('h1, [class*="text-2xl"], [class*="text-3xl"]').filter({ hasText: /^Performance$/ })
   ).toBeVisible({ timeout: 20000 });
   await expect(page.locator('[class*="animate-spin"]')).toHaveCount(0, { timeout: 15000 });
 
@@ -160,7 +162,8 @@ test.describe('ST-05 remaining -muted coverage — Tabs', () => {
     // the exact value is asserted directly (dark theme is this app's
     // default) -- matching command-palette.spec.js SC-CP-13/14's already-
     // established value for the same token.
-    const inactiveTab = page.getByRole('tab', { name: 'Monthly' });
+    // ST-06: scoped to Analytics; the Reports section has its own "Monthly" tab.
+    const inactiveTab = page.locator('section#analytics').getByRole('tab', { name: 'Monthly' });
     await expect(inactiveTab).toBeVisible({ timeout: 10000 });
     await expect(inactiveTab).toHaveAttribute('data-state', 'inactive');
     const color = await inactiveTab.evaluate((el) => getComputedStyle(el).color);

@@ -20,22 +20,21 @@ const { test, expect } = require('./fixtures/api-status-guard');
 const API = 'http://localhost:8000';
 
 // [route hash, canonical label] for every page with a sidebar entry
-// (navigation.md v2.0 §Page Placement — 21 entries; ST-01, BLG-FE-250, v9.16
-// added Research and Trade Plans). Deliberate differences (glossary §UI Labels)
-// are not in this list: the Positions journal view keeps "Trade Journal".
+// (navigation.md v2.3 §Page Placement — 20 entries; ST-01, BLG-FE-250, v9.16
+// added Research and Trade Plans; ST-05, BLG-FE-258, v9.17 replaced Trade
+// Reflections and Red Flag Journal with Journal; ST-06, BLG-FE-259, v9.17
+// replaced Analytics and Reports with Performance — 19 entries).
 const SIDEBAR_PAGES = [
   ['/#/', 'Dashboard'],
   ['/#/Positions', 'Positions'],
   ['/#/TradeEntry', 'Trade Entry'],
   ['/#/TradeHistory', 'Trade History'],
-  ['/#/TradeReflection', 'Trade Reflections'],
-  ['/#/RedFlagJournal', 'Red Flag Journal'],
-  ['/#/PerformanceAnalytics', 'Analytics'],
+  ['/#/Journal', 'Journal'],
+  ['/#/Performance', 'Performance'],
   ['/#/StrategyBenchmark', 'Strategy Benchmark'],
   ['/#/Replay', 'Replay'],
   ['/#/RiskDashboard', 'Risk Dashboard'],
   ['/#/Signals', 'Signals'],
-  ['/#/Reports', 'Reports'],
   ['/#/Screener', 'Screener'],
   ['/#/Watchlist', 'Watchlist'],
   ['/#/Research', 'Research'],
@@ -87,9 +86,11 @@ test('SC-PL-02: the palette lists every palette page under its canonical label',
     await input.fill(label);
     await expect(page.getByRole('option', { name: label, exact: true })).toHaveCount(1);
   }
-  // Superseded labels are gone.
-  await input.fill('Trade Reflection');
-  await expect(page.getByRole('option', { name: 'Trade Reflection', exact: true })).toHaveCount(0);
+  // Superseded labels are gone (ST-05, v9.17: journal.md JA-14).
+  for (const old of ['Trade Reflection', 'Trade Reflections', 'Red Flag Journal', 'Analytics', 'Reports']) {
+    await input.fill(old);
+    await expect(page.getByRole('option', { name: old, exact: true })).toHaveCount(0);
+  }
 });
 
 test('SC-PL-03: the shortcut legend says "New position"', async ({ page }) => {

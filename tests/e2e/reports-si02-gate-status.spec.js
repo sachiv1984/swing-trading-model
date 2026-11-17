@@ -15,7 +15,7 @@
  *   SC-SI02-11  Streak displays "+" suffix when capped
  *
  * Infrastructure: Playwright page.route() network interception. No live backend required.
- * ROUTING NOTE: App uses HashRouter — navigate via page.goto('/#/Reports'), then click
+ * ROUTING NOTE: App uses HashRouter — navigate via page.goto('/#/Performance?section=reports'), then click
  * the "Tax Year P&L" tab (default tab is "Performance").
  */
 
@@ -97,8 +97,8 @@ async function mockBehaviouralDrift(page, data) {
 }
 
 async function gotoTaxYearTab(page) {
-  await page.goto('/#/Reports');
-  await page.getByRole('button', { name: /tax year p&l/i }).click();
+  await page.goto('/#/Performance?section=reports');
+  await page.getByRole('tab', { name: 'Tax year' }).click();
   await expect(page.getByTestId('si02-gate-status-section')).toBeVisible({ timeout: 10000 });
 }
 

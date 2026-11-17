@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-16 (session — 1 new item added: BLG-BE-221; EPIC-05 post-merge production startup log, v9.17); prior — 2026-11-16 (BLG-BE-211 bannered complete after the DS-41 staging and production Live Confirmations; EPIC-05 post-merge, v9.17); prior — 2026-11-16 (session — 1 new item added: BLG-BE-220; BLG-FE-296 bannered complete; agent-mediated PR #2260 re-review, EPIC-05, v9.17); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-16 (session — 5 new items added: BLG-FE-300, BLG-FE-301, BLG-FE-302, BLG-QA-266, BLG-BE-222; PR #2261 agent-mediated review, EPIC-02, v9.17); prior — 2026-11-16 (session — 1 new item added: BLG-FE-299; ST-06, EPIC-02, v9.17); prior — 2026-11-16 (session — 1 new item added: BLG-BE-221; EPIC-05 post-merge production startup log, v9.17); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -7057,6 +7057,139 @@ Opening a plan saved before v9.16 (no `pre_entry_validation_snapshot`) for editi
 **Acceptance Criteria**
 - Editing a plan with no stored snapshot and a WARN result shows the no-snapshot wording (Playwright)
 - `trade_plan.md` §5e describes the no-snapshot note
+
+---
+
+### BLG-FE-299 — Show the Discipline & Compliance window, or pass the page period to its endpoint
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Head of Engineering; Frontend Specifications & UX Documentation Owner
+**Source:** Sprint Execution, ST-06 (EPIC-02, cycle `2026-11-11__release-v9.17`), found while testing the Performance page period selector (PF-07) — 2026-11-16
+**Effort:** S (~0.5 day)
+**Provisional-Target:** TBD
+
+**Problem**
+`DisciplineComplianceSection` (`analytics.md` §17, now in the Performance page's Compliance section) passes the page period to `api.analytics.complianceMetrics(period)`, but that client function ignores its argument and `GET /analytics/compliance-metrics` takes no period (`backend/routers/analytics.py`). Changing the period selector refetches the section but always shows the same window, while the rest of the page changes. A user can read the §17 figures as belonging to the selected period. The gap existed on the old Analytics page; ST-06 recorded it in `performance.md` v1.1 §3 without changing it.
+
+**Scope**
+- Decide with the Metrics Definitions & Analytics Canonical Owner whether §17 should follow the page period
+- Either add a `period` query to `GET /analytics/compliance-metrics` (contract, OpenAPI, service) and send it from `api.analytics.complianceMetrics`, or show the section's fixed window in its heading and stop refetching on a period change
+- Update `analytics.md` §17 and `performance.md` §3
+
+**Acceptance Criteria**
+- Either: changing the Performance period selector requests `/analytics/compliance-metrics` with that period and the §17 figures change (Playwright request capture); or: the section states its fixed window and is not refetched on a period change (Playwright)
+- `performance.md` §3 and `analytics.md` §17 describe the chosen behaviour
+
+---
+
+### BLG-FE-300 — Show Total P&L, Win Rate and Total Trades on Performance even when the period has too few trades
+**✅ COMPLETE — 2026-11-16, `2026-11-11__release-v9.17`, found during ST-06's PR #2261 review, resolved in-sprint on EPIC-02 in `9e807be8`** (Product Owner decision 2026-11-16; `performance.md` v1.2 §6; server returns the real `win_rate`/`total_pnl` below the minimum, `analytics_endpoints.md` v2.5.2).
+**Priority:** P2 (Medium)
+**Type:** Frontend / UX
+**Owner:** Product Owner; Frontend Specifications & UX Documentation Owner; Metrics Definitions & Analytics Canonical Owner
+**Source:** Agent-mediated PR #2261 review (EPIC-02, cycle `2026-11-11__release-v9.17`), Product Owner P2-1 finding — 2026-11-16
+**Effort:** S (~0.5 day)
+**Provisional-Target:** TBD
+
+**Problem**
+The Performance page's Summary hides all five cards and the growth chart when `summary.has_enough_data` is false (default minimum 10 closed trades, `performance.md` v1.1 §6). The old Reports Performance tab had no minimum (`Reports.js` on `main` before ST-06), so in a quiet month — and "Last Month" is the default period — a user who used to see realised P&L now sees only "Not enough trades". Total P&L, Win Rate and Total Trades are simple counts and sums that need no sample-size minimum. The PR #2261 behaviour-change list did not call this out.
+
+**Scope**
+- Product Owner decision: gate only the statistical KPIs (Profit Factor, Expectancy, Analytics) and always show Total P&L, Win Rate and Total Trades, or keep the current gate
+- If changed: amend `performance.md` §6, render the three cards from `summary` regardless of `has_enough_data`, keep the "Not enough trades" state for the rest
+- Playwright for both states
+
+**Acceptance Criteria**
+- `performance.md` §6 records the decision with a date
+- If the three cards always show: with `has_enough_data: false`, Summary shows Total P&L, Win Rate and Total Trades from `summary`, and Profit Factor/Expectancy/Analytics show the existing empty state (Playwright)
+
+---
+
+### BLG-FE-301 — Tidy the Performance Summary card order and the "Not enough trades" call to action
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** Agent-mediated PR #2261 review (EPIC-02, cycle `2026-11-11__release-v9.17`), Product Owner P3-1, P3-2 finding — 2026-11-16
+**Effort:** XS (<1h plus a Playwright check)
+**Provisional-Target:** TBD
+
+**Problem**
+The Summary cards render Total P&L, Win Rate, Profit Factor, Total Trades, Expectancy, but `performance.md` §4 lists Total Trades before Profit Factor. The "Not enough trades" block's button reads "Enter Your First Position" even when its body says the user already has trades in the period, and when the period has too few trades the same block and button appear twice (Summary and Analytics).
+
+**Scope**
+- Put the cards in the §4 order, or update §4 to the built order
+- Use a period-aware action when the user has trades (for example "Choose a longer period" opening the period selector), keep "Enter Your First Position" only at zero trades
+- Show the block once (Summary) and a short pointer in Analytics, or decide to keep both
+
+**Acceptance Criteria**
+- Card order matches `performance.md` §4 (Playwright)
+- With 1+ trades and too few for analytics, the action is not "Enter Your First Position" (Playwright); with 0 trades it is
+- `performance.md` §6 describes the chosen empty-state layout
+
+---
+
+### BLG-FE-302 — Harden the section index and Performance deep links
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Head of Engineering; Frontend Specifications & UX Documentation Owner
+**Source:** Agent-mediated PR #2261 review (EPIC-02, cycle `2026-11-11__release-v9.17`), Director of Quality P3-1, P3-2, P3-3, P3-5 finding — 2026-11-16
+**Effort:** S (~0.5 day)
+**Provisional-Target:** TBD
+
+**Problem**
+Four small gaps in the ST-06/ST-07 deep-link and section-index code. (1) `Performance.js` marks the page settled when `useIsFetching()` is 0 after `/analytics/metrics` resolves, but CohortAnalysis, RMultipleDistribution, TradePlanTagFilter and MarketCorrelationSection start fetching only after they mount, so `?section=compliance` can jump before they load and then be pushed down (no scroll anchoring in Safari). (2) `SectionIndex.js` always calls `preventDefault()`, so Ctrl/Cmd/Shift-click does an in-page jump instead of opening a new tab, despite the real href. (3) Moved components (`DisciplineComplianceSection`, `Arc5ComplianceSection`, `TradePlanCompletionRateSection`, `ReportViews` Monthly) still render `<h2>` inside the new sections whose own heading is `<h2>`, flattening the outline; Arc 5's comment overstates what `id="strategy-compliance"` still does. (4) On Trade Plan, `/TradePlan?edit=<missing id>&section=rules` never jumps, because `formPopulated` is not set when the edit query errors.
+
+**Scope**
+- Settle only after `fetching` stays 0 for a commit after the metrics load (or let AnalyticsSection report loaded)
+- Return early from the link click on a non-primary button or a modifier key
+- Demote the moved components' section headings to `<h3>` (or add a heading-level prop); correct the Arc 5 comment
+- Set `formPopulated` when the edit query errors
+
+**Acceptance Criteria**
+- `?section=compliance` lands on Compliance with a delayed analytics response (Playwright with a slow Cohort/Market Correlation stub)
+- Ctrl-click on a section link does not change `?section=` in the current page (Playwright)
+- The Performance page heading outline has the four section headings as the only `<h2>` (Playwright or axe `heading-order`)
+- `/TradePlan?edit=<missing>&section=rules` jumps to Rules once the error state shows (Playwright)
+
+---
+
+### BLG-QA-266 — Make SC-JNL-17 prove the red-flag debounce restarts on each keystroke
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** QA & Testing Owner
+**Source:** Agent-mediated PR #2261 review (EPIC-02, cycle `2026-11-11__release-v9.17`), Director of Quality P3-4 finding — 2026-11-16
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`journal.md` §3 and JA-17 say Red flags refetches 300 ms after typing stops. SC-JNL-17 uses `fill('AAPL')`, which sends one input event, so it proves "300 ms after one change" but not that the timer restarts on every keystroke.
+
+**Scope**
+- Type key by key (`pressSequentially`) with the fake clock advanced about 200 ms between keys; assert no request until 300 ms after the last key and exactly one request, for the full ticker
+
+**Acceptance Criteria**
+- SC-JNL-17 asserts zero red-flag requests for `A`, `AA`, `AAP` and exactly one for `AAPL`, 300 ms after the last key (Playwright, passes in CI)
+
+---
+
+### BLG-BE-222 — Rename the SI-05 digest links to the current page names
+**Priority:** P3 (Low)
+**Type:** Backend engineering
+**Owner:** Head of Engineering
+**Source:** Agent-mediated PR #2261 review (EPIC-02, cycle `2026-11-11__release-v9.17`), Product Owner P3-3 finding — 2026-11-16
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+ST-05 and ST-06 moved the SI-05 digest's links to `/Journal?section=red-flags` and `/Performance?section=compliance` (`backend/services/si05_digest_service.py`), but their text still reads "Red Flag Journal" and "Strategy Compliance". "Red Flag Journal" is now a legacy label (`glossary.md` §UI Labels), so the digest names a page that no longer appears in the sidebar.
+
+**Scope**
+- Relabel the links to match the canonical labels (for example "Journal: Red flags" and "Performance: Compliance"), checked with the Frontend Specifications & UX Documentation Owner
+- Update `tests/test_si05_digest_service.py` and the digest spec if it names the labels
+
+**Acceptance Criteria**
+- The digest footer uses the agreed labels (pytest)
+- No digest link text uses a label listed as legacy in `glossary.md` §UI Labels
 
 ---
 

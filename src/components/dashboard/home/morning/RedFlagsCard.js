@@ -23,7 +23,7 @@ export default function RedFlagsCard() {
   return (
     <DashboardCard
       title="Red Flags"
-      to="/RedFlagJournal"
+      to="/Journal?section=red-flags"
       isLoading={isLoading}
       error={error}
       empty={total === 0}

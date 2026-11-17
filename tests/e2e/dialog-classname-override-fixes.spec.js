@@ -90,9 +90,9 @@ test('SC-DCO-03: MonitorModal DialogContent honours max-w-2xl/flex', async ({ pa
 
 test('SC-DCO-04: ExportModal DialogTitle honours font-bold', async ({ page }) => {
   await mockFallback(page);
-  await page.goto('/#/Reports');
+  await page.goto('/#/Performance?section=reports');
 
-  await page.getByRole('button', { name: 'Export' }).click();
+  await page.getByRole('button', { name: 'Export', exact: true }).click();
 
   const title = page.getByRole('heading', { name: 'Export Report' });
   await expect(title).toBeVisible({ timeout: 10000 });
@@ -135,7 +135,7 @@ async function mockTradeReflectionRoutes(page) {
 test('SC-DCO-05: TradeReflectionModal DialogContent honours max-w-2xl/flex', async ({ page }) => {
   await mockFallback(page);
   await mockTradeReflectionRoutes(page);
-  await page.goto('/#/TradeReflection');
+  await page.goto('/#/Journal?section=reflections');
 
   const card = page.locator('button').filter({ hasText: 'NVDA' }).first();
   await expect(card).toBeVisible({ timeout: 8000 });

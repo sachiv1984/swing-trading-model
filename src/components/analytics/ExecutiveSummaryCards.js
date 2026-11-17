@@ -1,7 +1,11 @@
-import { TrendingUp, TrendingDown, Target, Zap, Calendar } from "lucide-react";
+import { TrendingUp, TrendingDown, Target, Calendar } from "lucide-react";
 import { cn } from "../../lib/utils";
 import { formatCurrency, formatPercent } from "../../lib/format";
 
+// Performance → Analytics risk cards (performance.md v1.1 §4–§5): Profit
+// Factor and Expectancy live in Summary, so they are not repeated here.
+// Values come from GET /analytics/metrics via toMetricsProps; the Performance
+// page passes the same object as `advancedMetrics`.
 export default function ExecutiveSummaryCards({ metrics, advancedMetrics }) {
   // Calculate days underwater color
   const getDaysUnderwaterColor = (days) => {
@@ -18,7 +22,8 @@ export default function ExecutiveSummaryCards({ metrics, advancedMetrics }) {
       value: metrics.sharpeRatio?.toFixed(2) || "N/A",
       icon: TrendingUp,
       gradient: "from-cyan-500 to-blue-500",
-      benchmark: metrics.sharpeRatio > 2 ? "Excellent" : metrics.sharpeRatio > 1 ? "Good" : "Needs Improvement"
+      // No badge for a missing value (e.g. sharpe_method "insufficient_data").
+      benchmark: metrics.sharpeRatio == null ? null : metrics.sharpeRatio > 2 ? "Excellent" : metrics.sharpeRatio > 1 ? "Good" : "Needs Improvement"
     },
     {
       title: "Max Drawdown",
@@ -35,15 +40,7 @@ export default function ExecutiveSummaryCards({ metrics, advancedMetrics }) {
       value: metrics.recoveryFactor?.toFixed(2) || "N/A",
       icon: Target,
       gradient: "from-violet-500 to-purple-500",
-      benchmark: metrics.recoveryFactor > 2 ? "Strong" : "Moderate"
-    },
-    {
-      title: "Expectancy",
-      subtitle: "Edge Per Trade",
-      value: metrics.expectancy ? formatCurrency(metrics.expectancy) : "N/A",
-      icon: Zap,
-      gradient: "from-emerald-500 to-green-500",
-      isPositive: metrics.expectancy > 0
+      benchmark: metrics.recoveryFactor == null ? null : metrics.recoveryFactor > 2 ? "Strong" : "Moderate"
     },
     {
       title: "Time Underwater",
@@ -54,18 +51,10 @@ export default function ExecutiveSummaryCards({ metrics, advancedMetrics }) {
       icon: Calendar,
       gradient: getDaysUnderwaterColor(advancedMetrics?.daysUnderwater || 0)
     },
-    {
-      title: "Profit Factor",
-      subtitle: "Win/Loss Ratio",
-      value: metrics.profitFactor?.toFixed(2) || "N/A",
-      icon: Target,
-      gradient: "from-amber-500 to-orange-500",
-      benchmark: metrics.profitFactor > 2 ? "Excellent" : metrics.profitFactor > 1 ? "Good" : "Poor"
-    }
   ];
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
       {cards.map((card, idx) => (
         <div
           key={idx}

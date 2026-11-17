@@ -263,8 +263,8 @@ test.describe('SC-SI-03 — Red Flag Journal (SI-03)', () => {
     await mockHealth(page);
     await mockSettings(page);
     await mockRedFlagJournal(page, RFJ_EVENTS_WITH_OVERRIDE);
-    await page.goto('/#/RedFlagJournal');
-    await expect(page.getByRole('heading', { name: 'Red Flag Journal' })).toBeVisible({ timeout: 8000 });
+    await page.goto('/#/Journal?section=red-flags');
+    await expect(page.getByRole('heading', { name: 'Journal', exact: true })).toBeVisible({ timeout: 8000 });
   });
 
   test('SC-SI-03a: RedFlagJournal renders event list with pre_entry_override event', async ({ page }) => {
@@ -325,8 +325,8 @@ test.describe('SC-SI-PATH — Full SI-01→SI-03 integration path', () => {
     await expect(checkbox).toBeChecked();
 
     // Step 4: Navigate to Red Flag Journal
-    await page.goto('/#/RedFlagJournal');
-    await expect(page.getByRole('heading', { name: 'Red Flag Journal' })).toBeVisible({ timeout: 8000 });
+    await page.goto('/#/Journal?section=red-flags');
+    await expect(page.getByRole('heading', { name: 'Journal', exact: true })).toBeVisible({ timeout: 8000 });
 
     // Step 5: Override event is present in the journal
     await expect(page.getByTestId('event-row').first()).toBeVisible({ timeout: 8000 });
@@ -338,8 +338,8 @@ test.describe('SC-SI-PATH — Full SI-01→SI-03 integration path', () => {
     await mockSettings(page);
     await mockRedFlagJournal(page, RFJ_EVENTS_WITH_OVERRIDE);
 
-    await page.goto('/#/RedFlagJournal');
-    await expect(page.getByRole('heading', { name: 'Red Flag Journal' })).toBeVisible({ timeout: 8000 });
+    await page.goto('/#/Journal?section=red-flags');
+    await expect(page.getByRole('heading', { name: 'Journal', exact: true })).toBeVisible({ timeout: 8000 });
 
     // Apply event type filter
     const filterDropdown = page.locator('[data-testid="event-type-filter"]');

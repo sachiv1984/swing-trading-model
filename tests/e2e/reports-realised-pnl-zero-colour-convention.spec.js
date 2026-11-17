@@ -29,7 +29,7 @@
  *              in agent-mediated DoQ review before this fix was added)
  *
  * Infrastructure: Playwright page.route() network interception. No live backend.
- * ROUTING NOTE: App uses HashRouter — navigate via page.goto('/#/Reports'), then
+ * ROUTING NOTE: App uses HashRouter — navigate via page.goto('/#/Performance?section=reports'), then
  * click the relevant tab (default tab is "Performance").
  */
 
@@ -86,8 +86,8 @@ test('SC-RPZ-01: Tax Year table — positive Realised P&L renders emerald', asyn
   await page.route(new RegExp(`${API}/reports/tax-year(?!\\?format=csv)`), (route) =>
     route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(taxYearReportResponse([taxYearTrade({ realised_pnl_gbp: 120.0 })])) })
   );
-  await page.goto('/#/Reports');
-  await page.getByRole('button', { name: /tax year p&l/i }).click();
+  await page.goto('/#/Performance?section=reports');
+  await page.getByRole('tab', { name: 'Tax year' }).click();
 
   const cell = page.getByTestId('tax-year-realised-pnl-cell');
   await expect(cell).toBeVisible({ timeout: 8000 });
@@ -100,8 +100,8 @@ test('SC-RPZ-02: Tax Year table — negative Realised P&L renders rose', async (
   await page.route(new RegExp(`${API}/reports/tax-year(?!\\?format=csv)`), (route) =>
     route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(taxYearReportResponse([taxYearTrade({ realised_pnl_gbp: -50.0 })])) })
   );
-  await page.goto('/#/Reports');
-  await page.getByRole('button', { name: /tax year p&l/i }).click();
+  await page.goto('/#/Performance?section=reports');
+  await page.getByRole('tab', { name: 'Tax year' }).click();
 
   const cell = page.getByTestId('tax-year-realised-pnl-cell');
   await expect(cell).toBeVisible({ timeout: 8000 });
@@ -114,8 +114,8 @@ test('SC-RPZ-03: Tax Year table — exactly-zero Realised P&L renders neutral, n
   await page.route(new RegExp(`${API}/reports/tax-year(?!\\?format=csv)`), (route) =>
     route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(taxYearReportResponse([taxYearTrade({ realised_pnl_gbp: 0 })])) })
   );
-  await page.goto('/#/Reports');
-  await page.getByRole('button', { name: /tax year p&l/i }).click();
+  await page.goto('/#/Performance?section=reports');
+  await page.getByRole('tab', { name: 'Tax year' }).click();
 
   const cell = page.getByTestId('tax-year-realised-pnl-cell');
   await expect(cell).toBeVisible({ timeout: 8000 });
@@ -129,8 +129,8 @@ test('SC-RPZ-05: Tax Year table — exactly-zero P&L % stays rose (unaffected by
   await page.route(new RegExp(`${API}/reports/tax-year(?!\\?format=csv)`), (route) =>
     route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(taxYearReportResponse([taxYearTrade({ realised_pnl_gbp: 0, pnl_pct: 0 })])) })
   );
-  await page.goto('/#/Reports');
-  await page.getByRole('button', { name: /tax year p&l/i }).click();
+  await page.goto('/#/Performance?section=reports');
+  await page.getByRole('tab', { name: 'Tax year' }).click();
 
   // The Realised P&L cell converges on neutral (SC-RPZ-03) ...
   const pnlCell = page.getByTestId('tax-year-realised-pnl-cell');
@@ -150,8 +150,8 @@ test('SC-RPZ-04: Monthly table — exactly-zero Realised P&L renders neutral (no
   await page.route(new RegExp(`${API}/reports/monthly-pnl(?!\\?format=csv)`), (route) =>
     route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(monthlyPnlResponse([{ year: 2026, month: 7, realised_pnl_gbp: 0, trade_count: 0 }])) })
   );
-  await page.goto('/#/Reports');
-  await page.getByRole('button', { name: /monthly p&l/i }).click();
+  await page.goto('/#/Performance?section=reports');
+  await page.getByRole('tab', { name: 'Monthly' }).click();
 
   const cell = page.getByTestId('monthly-realised-pnl-cell');
   await expect(cell).toBeVisible({ timeout: 8000 });

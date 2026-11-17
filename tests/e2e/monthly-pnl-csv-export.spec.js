@@ -18,7 +18,7 @@
  *   SC-MCSV-05  Empty months (zero closed trades) — button still enabled, download still fires
  *
  * Infrastructure: Playwright page.route() network interception. No live backend.
- * ROUTING NOTE: App uses HashRouter — navigate via page.goto('/#/Reports'), then click
+ * ROUTING NOTE: App uses HashRouter — navigate via page.goto('/#/Performance?section=reports'), then click
  * the "Monthly P&L" tab (default tab is "Performance").
  */
 
@@ -75,8 +75,8 @@ async function mockMonthlyPnl(page, { reportData = MONTHLY_PNL_REPORT, csvFails 
 }
 
 async function gotoMonthlyTab(page) {
-  await page.goto('/#/Reports');
-  await page.getByRole('button', { name: /monthly p&l/i }).click();
+  await page.goto('/#/Performance?section=reports');
+  await page.getByRole('tab', { name: 'Monthly' }).click();
   await expect(page.getByRole('button', { name: /download csv/i })).toBeVisible({ timeout: 10000 });
 }
 

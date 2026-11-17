@@ -1,18 +1,11 @@
 import { Fragment, useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { base44, apiFetch, api } from "../api/base44Client";
-import { useToast } from "../components/ui/use-toast";
+import { base44, apiFetch, api } from "../../api/base44Client";
+import { useToast } from "../ui/use-toast";
 import {
   FileText,
-  Download,
   Calendar,
-  TrendingUp,
-  TrendingDown,
-  Minus,
-  BarChart3,
-  PieChart,
   Loader2,
-  FileSpreadsheet,
   FileDown,
   AlertTriangle,
   ChevronUp,
@@ -20,24 +13,17 @@ import {
   ChevronsUpDown,
   History
 } from "lucide-react";
-import { Button } from "../components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
-import PageHeader from "../components/ui/PageHeader";
-import { PAGE_LABELS } from "../lib/pageLabels";
-import { StandingAlert } from "../components/ui/StandingAlert";
-import { formatCurrency, formatPercent } from "../lib/format";
-import StatsCard from "../components/ui/StatsCard";
-import PerformanceSummary from "../components/reports/PerformanceSummary";
-import PortfolioGrowthChart from "../components/reports/PortfolioGrowthChart";
-import TradeBreakdown from "../components/reports/TradeBreakdown";
-import ExportModal from "../components/reports/ExportModal";
-import MonthlyNarrativeCard from "../components/reports/MonthlyNarrativeCard";
-import ExitConditionBreakdownCard from "../components/reports/ExitConditionBreakdownCard";
+import { Button } from "../ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+import { StandingAlert } from "../ui/StandingAlert";
+import { formatCurrency, formatPercent } from "../../lib/format";
+import MonthlyNarrativeCard from "../reports/MonthlyNarrativeCard";
+import ExitConditionBreakdownCard from "../reports/ExitConditionBreakdownCard";
 import { motion } from "framer-motion";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
-function getCurrentUKTaxYear() {
+export function getCurrentUKTaxYear() {
   const today = new Date();
   const year = today.getFullYear();
   const taxYearStart = new Date(year, 3, 6); // April 6
@@ -54,7 +40,7 @@ function formatPct(value) {
 
 // ─── Tax Year P&L View ─────────────────────────────────────────────────────────
 
-function TaxYearReport({ onViewMonthly }) {
+export function TaxYearReport({ onViewMonthly }) {
   const currentTaxYear = getCurrentUKTaxYear();
   const [selectedYear, setSelectedYear] = useState(currentTaxYear);
   const [sortField, setSortField] = useState("exit_date");
@@ -581,7 +567,7 @@ function SI02GateStatusSection() {
 // reports.md §Reconciliation (ST-01, EPIC-01, v8.2, BLG-FEAT-88)
 // Design source: docs/design/2026-08-04__release-v8.2/pnl-reconciliation-report/decision_record.md
 // Reuses the SI-02 Gate Status stat-card / MET-NOT MET badge visual language verbatim.
-function ReconciliationReport() {
+export function ReconciliationReport() {
   const currentTaxYear = getCurrentUKTaxYear();
   const [selectedYear, setSelectedYear] = useState(currentTaxYear);
 
@@ -701,7 +687,7 @@ const MONTH_NAMES = [
   "July", "August", "September", "October", "November", "December",
 ];
 
-function MonthlyPnlTable({ initialYear }) {
+export function MonthlyPnlTable({ initialYear }) {
   const [csvGenerating, setCsvGenerating] = useState(false);
   // ST-04 (BLG-FE-188): months whose restatement detail row is expanded (collapsed by default).
   const [expandedMonths, setExpandedMonths] = useState(() => new Set());
@@ -765,7 +751,6 @@ function MonthlyPnlTable({ initialYear }) {
   }
 
   const rows = response?.data ?? [];
-  const compliance = response?.compliance_summary ?? null;
   const estimatedUnrealisedPnl = response?.estimated_unrealised_pnl;
   const unrealisedNote = response?.unrealised_note;
   const totalRealisedPnl = rows.reduce((sum, row) => sum + (row.realised_pnl_gbp ?? 0), 0);
@@ -852,6 +837,9 @@ function MonthlyPnlTable({ initialYear }) {
         {rows.length === 0 ? (
           <div className="px-6 py-10 text-center text-slate-600 dark:text-slate-400 text-sm">No closed trades in scope.</div>
         ) : (
+          // BLG-FE-237 (absorbed by ST-06, performance.md §9): the table scrolls
+          // inside its card at phone width instead of being clipped.
+          <div className="overflow-x-auto" data-testid="monthly-pnl-table-scroll">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-slate-200 dark:border-slate-700/50">
@@ -951,6 +939,7 @@ function MonthlyPnlTable({ initialYear }) {
               })}
             </tbody>
           </table>
+          </div>
         )}
         {restatementCheckUnavailable && (
           <p data-testid="monthly-restatement-unavailable" className="px-6 py-2 text-xs text-slate-600 dark:text-slate-400 border-t border-slate-200 dark:border-slate-700/30">
@@ -991,299 +980,6 @@ function MonthlyPnlTable({ initialYear }) {
         </div>
       )}
 
-      {/* Strategy Compliance — ST-18 (Arc 5, v4.3) */}
-      <div data-testid="strategy-compliance-section" className="bg-white dark:bg-slate-800/50 rounded-lg border border-slate-200 dark:border-slate-700/50 overflow-hidden">
-        <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-700/50">
-          <h3 className="text-sm font-semibold text-slate-900 dark:text-white">Strategy Compliance</h3>
-          <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">
-            Pre-entry discipline metrics — last {compliance?.period_days ?? 30} days.
-          </p>
-        </div>
-        {compliance === null ? (
-          <div className="px-6 py-6 text-center text-slate-600 dark:text-slate-400 text-sm">Compliance data unavailable.</div>
-        ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-px bg-slate-50 dark:bg-slate-700/30">
-            <div data-testid="compliance-pass-rate" className="bg-white dark:bg-slate-800/50 px-5 py-4">
-              <p className="text-xs text-slate-600 dark:text-slate-400 uppercase tracking-wide mb-1">Validation Pass Rate</p>
-              <p className="text-lg font-semibold text-slate-900 dark:text-white">
-                {formatPercent(compliance.validation_pass_rate != null ? compliance.validation_pass_rate * 100 : null)}
-              </p>
-            </div>
-            <div data-testid="compliance-override-count" className="bg-white dark:bg-slate-800/50 px-5 py-4">
-              <p className="text-xs text-slate-600 dark:text-slate-400 uppercase tracking-wide mb-1">Override Count</p>
-              <p className="text-lg font-semibold text-slate-900 dark:text-white">{compliance.override_count ?? "—"}</p>
-            </div>
-            <div data-testid="compliance-red-flag-count" className="bg-white dark:bg-slate-800/50 px-5 py-4">
-              <p className="text-xs text-slate-600 dark:text-slate-400 uppercase tracking-wide mb-1">Red Flag Events</p>
-              <p className="text-lg font-semibold text-slate-900 dark:text-white">{compliance.red_flag_events_count ?? "—"}</p>
-            </div>
-            <div data-testid="compliance-rule-breach" className="bg-white dark:bg-slate-800/50 px-5 py-4">
-              <p className="text-xs text-slate-600 dark:text-slate-400 uppercase tracking-wide mb-1">Most Frequent Breach</p>
-              <p className="text-lg font-semibold text-slate-900 dark:text-white">
-                {compliance.most_frequent_rule_breach ?? "None"}
-              </p>
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
-
-// ─── Main Reports Page ─────────────────────────────────────────────────────────
-
-// Map frontend period selector values to backend period parameter values
-const PERIOD_MAP = {
-  week: "last_7_days",
-  month: "last_month",
-  quarter: "last_quarter",
-  year: "last_year",
-  ytd: "ytd",
-  all: "all_time",
-};
-
-export default function Reports() {
-  const [activeTab, setActiveTab] = useState("performance");
-  const [period, setPeriod] = useState("month");
-  const [exportModalOpen, setExportModalOpen] = useState(false);
-  // ST-03 (EPIC-01, v9.8, BLG-FE-190): year the restated-months notice link was clicked for,
-  // if any -- passed to MonthlyPnlTable as its initial Tax Year filter value. Cleared by direct
-  // tab navigation so that path still defaults to the current tax year, per reports.md
-  // §Monthly Financial Table Tax Year Filter's "Default" bullet.
-  const [monthlyInitialYear, setMonthlyInitialYear] = useState(null);
-
-  const backendPeriod = PERIOD_MAP[period] ?? "last_month";
-
-  // Fetch backend-computed analytics metrics (period-filtered on server)
-  const { data: analyticsData, isLoading: loadingAnalytics } = useQuery({
-    queryKey: ["analyticsMetrics", backendPeriod],
-    queryFn: () => api.analytics.metrics(backendPeriod),
-    enabled: activeTab === "performance",
-  });
-
-  // Fetch open positions count for the StatsCard subtitle
-  const { data: openPositions = [] } = useQuery({
-    queryKey: ["openPositions"],
-    queryFn: () => api.positions.list(),
-    select: (data) => (data || []).filter(p => p.status === "open"),
-    enabled: activeTab === "performance",
-  });
-
-  // Calculate date range based on period (still needed for PortfolioGrowthChart)
-  const periodDates = useMemo(() => {
-    const now = new Date();
-    let start = new Date();
-    switch (period) {
-      case "week":   start.setDate(now.getDate() - 7); break;
-      case "month":  start.setMonth(now.getMonth() - 1); break;
-      case "quarter": start.setMonth(now.getMonth() - 3); break;
-      case "year":   start.setFullYear(now.getFullYear() - 1); break;
-      case "ytd":    start = new Date(now.getFullYear(), 0, 1); break;
-      case "all":    start = new Date(2020, 0, 1); break;
-      default:       start.setMonth(now.getMonth() - 1);
-    }
-    return { start, end: now };
-  }, [period]);
-
-  // Adapt trades_for_charts to the shape expected by sub-components
-  const filteredPositions = useMemo(() => {
-    const trades = analyticsData?.trades_for_charts || [];
-    return trades.map(t => ({
-      ...t,
-      status: "closed",
-      pnl_percent: t.pnl_pct ?? t.pnl_percent,
-      fees: t.fees ?? 0,
-    }));
-  }, [analyticsData]);
-
-  // Build metrics from backend analytics response
-  const metrics = useMemo(() => {
-    if (!analyticsData) {
-      return {
-        totalPnL: 0, winRate: 0, totalTrades: 0, winningTrades: 0, losingTrades: 0,
-        grossProfit: 0, grossLoss: 0, avgWin: 0, avgLoss: 0, profitFactor: 0,
-        totalFees: 0, openPositions: 0, bestTrade: 0, worstTrade: 0,
-      };
-    }
-    const trades = analyticsData.trades_for_charts || [];
-    const wins = trades.filter(t => (t.pnl || 0) > 0);
-    const lossesList = trades.filter(t => (t.pnl || 0) < 0);
-    const grossProfit = wins.reduce((s, t) => s + (t.pnl || 0), 0);
-    const grossLoss = Math.abs(lossesList.reduce((s, t) => s + (t.pnl || 0), 0));
-    return {
-      totalPnL: analyticsData.summary?.total_pnl ?? 0,
-      winRate: analyticsData.summary?.win_rate ?? 0,
-      totalTrades: analyticsData.summary?.total_trades ?? 0,
-      winningTrades: wins.length,
-      losingTrades: lossesList.length,
-      grossProfit,
-      grossLoss,
-      avgWin: wins.length > 0 ? grossProfit / wins.length : 0,
-      avgLoss: lossesList.length > 0 ? grossLoss / lossesList.length : 0,
-      profitFactor: analyticsData.executive_metrics?.profit_factor ?? 0,
-      totalFees: trades.reduce((s, t) => s + (t.fees || 0), 0),
-      openPositions: openPositions.length,
-      bestTrade: trades.length > 0 ? Math.max(...trades.map(t => t.pnl || 0)) : 0,
-      worstTrade: trades.length > 0 ? Math.min(...trades.map(t => t.pnl || 0)) : 0,
-    };
-  }, [analyticsData, openPositions]);
-
-  const periodLabels = {
-    week: "Last 7 Days",
-    month: "Last Month",
-    quarter: "Last Quarter",
-    year: "Last Year",
-    ytd: "Year to Date",
-    all: "All Time"
-  };
-
-  const isLoading = loadingAnalytics;
-
-  return (
-    <div className="space-y-6">
-      <PageHeader
-        title={PAGE_LABELS.Reports}
-        onward={{ label: PAGE_LABELS.PerformanceAnalytics, to: "/PerformanceAnalytics" }}
-        description="Performance analysis and export tools"
-        actions={
-          activeTab === "performance" ? (
-            <div className="flex items-center gap-3">
-              <Select value={period} onValueChange={setPeriod}>
-                <SelectTrigger aria-label="Performance period" className="w-40 bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
-                  <SelectItem value="week">Last 7 Days</SelectItem>
-                  <SelectItem value="month">Last Month</SelectItem>
-                  <SelectItem value="quarter">Last Quarter</SelectItem>
-                  <SelectItem value="year">Last Year</SelectItem>
-                  <SelectItem value="ytd">Year to Date</SelectItem>
-                  <SelectItem value="all">All Time</SelectItem>
-                </SelectContent>
-              </Select>
-              <Button
-                onClick={() => setExportModalOpen(true)}
-                className="bg-gradient-to-r from-cyan-500 to-violet-500 hover:from-cyan-600 hover:to-violet-600 text-white"
-              >
-                <Download className="w-4 h-4 mr-2" />
-                Export
-              </Button>
-            </div>
-          ) : null
-        }
-      />
-
-      {/* Tab Navigation */}
-      <div className="flex gap-1 border-b border-slate-200 dark:border-slate-700/50">
-        <button
-          onClick={() => setActiveTab("performance")}
-          className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
-            activeTab === "performance"
-              ? "border-cyan-500 text-slate-900 dark:text-white"
-              : "border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-300"
-          }`}
-        >
-          Performance
-        </button>
-        <button
-          onClick={() => setActiveTab("taxYear")}
-          className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
-            activeTab === "taxYear"
-              ? "border-cyan-500 text-slate-900 dark:text-white"
-              : "border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-300"
-          }`}
-        >
-          Tax Year P&L
-        </button>
-        <button
-          onClick={() => { setMonthlyInitialYear(null); setActiveTab("monthly"); }}
-          className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
-            activeTab === "monthly"
-              ? "border-cyan-500 text-slate-900 dark:text-white"
-              : "border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-300"
-          }`}
-        >
-          Monthly P&L
-        </button>
-        <button
-          onClick={() => setActiveTab("reconciliation")}
-          data-testid="reports-tab-reconciliation"
-          className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
-            activeTab === "reconciliation"
-              ? "border-cyan-500 text-slate-900 dark:text-white"
-              : "border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-300"
-          }`}
-        >
-          Reconciliation
-        </button>
-      </div>
-
-      {activeTab === "taxYear" ? (
-        <TaxYearReport onViewMonthly={(year) => { setMonthlyInitialYear(year); setActiveTab("monthly"); }} />
-      ) : activeTab === "monthly" ? (
-        <MonthlyPnlTable initialYear={monthlyInitialYear} />
-      ) : activeTab === "reconciliation" ? (
-        <ReconciliationReport />
-      ) : isLoading ? (
-        <div className="flex items-center justify-center py-20">
-          <Loader2 className="w-8 h-8 animate-spin text-slate-500" />
-        </div>
-      ) : (
-        <div className="space-y-8">
-          {/* Key Metrics */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <StatsCard
-              title="Total P&L"
-              value={formatCurrency(metrics.totalPnL, { signed: true })}
-              subtitle={periodLabels[period]}
-              icon={metrics.totalPnL > 0 ? TrendingUp : metrics.totalPnL < 0 ? TrendingDown : Minus}
-              gradient={metrics.totalPnL > 0 ? "emerald" : metrics.totalPnL < 0 ? "rose" : "cyan"}
-            />
-            <StatsCard
-              title="Win Rate"
-              value={formatPercent(metrics.winRate)}
-              subtitle={`${metrics.winningTrades}W / ${metrics.losingTrades}L`}
-              icon={PieChart}
-              gradient="cyan"
-            />
-            <StatsCard
-              title="Profit Factor"
-              value={metrics.profitFactor === Infinity ? "∞" : metrics.profitFactor.toFixed(2)}
-              subtitle="Risk/Reward"
-              icon={BarChart3}
-              gradient="violet"
-            />
-            <StatsCard
-              title="Total Trades"
-              value={metrics.totalTrades.toString()}
-              subtitle={`${metrics.openPositions} still open`}
-              icon={FileText}
-              gradient="fuchsia"
-            />
-          </div>
-
-          {/* Portfolio Growth Chart */}
-          <PortfolioGrowthChart
-            positions={filteredPositions}
-            period={period}
-            periodDates={periodDates}
-          />
-
-          {/* Performance Summary & Trade Breakdown */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <PerformanceSummary metrics={metrics} period={periodLabels[period]} />
-            <TradeBreakdown positions={filteredPositions} />
-          </div>
-        </div>
-      )}
-
-      <ExportModal
-        open={exportModalOpen}
-        onClose={() => setExportModalOpen(false)}
-        positions={filteredPositions}
-        metrics={metrics}
-        period={periodLabels[period]}
-      />
     </div>
   );
 }

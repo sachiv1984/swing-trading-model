@@ -1,10 +1,12 @@
 # reports.md
 
+> **Superseded by `performance.md` (v0.27, ST-06, EPIC-02, v9.17, BLG-FE-259).** Tax Year, Monthly and Reconciliation are the Performance page's Reports section (`/Performance?section=reports&report=…`); the Performance tab is split into Summary and Analytics; the Monthly "Strategy Compliance" block moved to Compliance as "Last 30 days" (no Most Frequent Breach); the Trade Breakdown card is removed. This file stays canonical for the report views' content and states.
+
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
-**Status:** Active
-**Version:** 0.26
-**Last Updated:** 2026-10-29 (v9.14 design gate — ST-24/BLG-FEAT-99: new §Exit Condition Breakdown; ST-26/BLG-FE-215: standard summary template pluralises the month counts); prior — 2026-10-17 (ST-09, EPIC-02, v9.13, BLG-BE-156 — §Monthly Restatement Marker Failure: Known limitation removed; the API now returns P&L without the snapshot fields, so "Restatement check unavailable." is reachable); prior — 2026-10-15 (post-ship closure `2026-10-12__release-v9.12` §6 row 3 — DEV-REPORTS-ST06-01 backlog reference updated to BLG-SPEC-203; no requirement change); prior history retained — see prior entries in version control
+**Status:** Active — **Superseded by `performance.md` for route, placement and layout (v9.17)**
+**Version:** 0.27
+**Last Updated:** 2026-11-16 (ST-06, EPIC-02, v9.17, BLG-FE-259 — superseded by `performance.md` for route, placement and layout); prior — 2026-10-29 (v9.14 design gate — ST-24/BLG-FEAT-99: new §Exit Condition Breakdown; ST-26/BLG-FE-215: standard summary template pluralises the month counts); prior — 2026-10-17 (ST-09, EPIC-02, v9.13, BLG-BE-156 — §Monthly Restatement Marker Failure: Known limitation removed; the API now returns P&L without the snapshot fields, so "Restatement check unavailable." is reachable); prior history retained — see prior entries in version control
 **Design Source (v0.26 exit condition breakdown):** docs/design/2026-10-29__release-v9.14/monthly-pnl-exit-condition-breakdown/decision_record.md
 **Design Source (v0.21 AI summary):** docs/design/2026-10-08__release-v9.11/monthly-pnl-ai-narrative/decision_record.md
 **Design Source (v0.20 restated-notice year-scoped link):** docs/design/2026-09-28__release-v9.8/tax-year-restated-notice-year-scoped-link/decision_record.md
@@ -612,6 +614,7 @@ A new **"Reconciliation"** tab (4th tab in the page's tab navigation, alongside 
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.27 | 2026-11-16 | ST-06 (EPIC-02, v9.17, BLG-FE-259), per `performance.md` §2 and brief §4: "Superseded by `performance.md`" header for route, placement and layout. Tax Year, Monthly and Reconciliation are the Performance page's Reports section (`/Performance?section=reports&report=…`); the Performance tab is split into Summary and Analytics; the Monthly "Strategy Compliance" block moved to Compliance as "Last 30 days" (no Most Frequent Breach); the Trade Breakdown card is removed. This file stays canonical for the report views' content and states. |
 | 0.26 | 2026-10-29 | v9.14 design gate. (ST-24, BLG-FEAT-99) new §Exit Condition Breakdown: per-month realised P&L and trade count by `strategy_rules.md` §8 exit condition, reconciling to the month's realised P&L. (ST-26, BLG-FE-215) §AI Summary standard summary template pluralises the profitable-month count ("1 month ended above zero"); wording only, FI-P3-02. Design source: `docs/design/2026-10-29__release-v9.14/monthly-pnl-exit-condition-breakdown/decision_record.md`. Head of UX & Design sign-off: 2026-10-29. Product Owner approved: 2026-10-29. Head of Specs Team confirmed. |
 | 0.25 | 2026-10-17 | §Monthly Restatement Marker, Failure: the Known limitation note is removed. `GET /reports/monthly-pnl` now returns P&L without the snapshot fields when `monthly_pnl_snapshots` fails (`reports_endpoints.md` v0.18), so "Restatement check unavailable." is reachable (Playwright SC-MPR-05c). No UI change. ST-09, EPIC-02, v9.13, BLG-BE-156. |
 | 0.24 | 2026-10-15 | Known Deviations: `DEV-REPORTS-ST06-01`'s backlog reference updated from the archived `BLG-SPEC-87` to its re-file, `BLG-SPEC-203` (deviation consolidation review 2026-10-07 Finding 1; post-ship closure `2026-10-12__release-v9.12` §6 row 3). The deviation is still open; no requirement change. Edited on user direction for the Frontend Specifications & UX Documentation Owner. |

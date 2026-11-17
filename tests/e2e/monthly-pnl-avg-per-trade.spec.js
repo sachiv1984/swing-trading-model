@@ -12,7 +12,7 @@
  *   SC-MAPT-05  Monthly CSV export column set unchanged — Avg P&L/Trade excluded (AC regression)
  *
  * Infrastructure: Playwright page.route() network interception. No live backend.
- * ROUTING NOTE: App uses HashRouter — navigate via page.goto('/#/Reports'), then click
+ * ROUTING NOTE: App uses HashRouter — navigate via page.goto('/#/Performance?section=reports'), then click
  * the "Monthly P&L" tab (default tab is "Performance").
  */
 
@@ -45,8 +45,8 @@ async function mockMonthlyPnl(page, response) {
 }
 
 async function gotoMonthlyTab(page) {
-  await page.goto('/#/Reports');
-  await page.getByRole('button', { name: /monthly p&l/i }).click();
+  await page.goto('/#/Performance?section=reports');
+  await page.getByRole('tab', { name: 'Monthly' }).click();
 }
 
 test('SC-MAPT-01: Avg P&L/Trade column header renders in the Monthly Financial Table', async ({ page }) => {

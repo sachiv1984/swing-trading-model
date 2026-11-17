@@ -1,10 +1,13 @@
 import { formatPercent } from "../../lib/format";
 
-export default function AdvancedMetricsGrid({ metrics, executiveMetrics }) {
+// Performance → Analytics (performance.md v1.1 §4–§5): Profit Factor's one
+// home is Summary. Risk/Reward is read from the same metrics object (the old
+// Analytics page never passed `executiveMetrics`, so it showed "N/A").
+export default function AdvancedMetricsGrid({ metrics, executiveMetrics = metrics }) {
   const gridMetrics = [
     [
-      { label: "Profit Factor", value: executiveMetrics?.profitFactor?.toFixed(2) || "N/A", target: ">1.5" },
-      { label: "Risk/Reward Ratio", value: executiveMetrics?.riskRewardRatio?.toFixed(2) || "N/A", target: ">2.0" }
+      { label: "Risk/Reward Ratio", value: executiveMetrics?.riskRewardRatio?.toFixed(2) || "N/A", target: ">2.0" },
+      { label: "Capital Efficiency", value: metrics.capitalEfficiency != null ? formatPercent(metrics.capitalEfficiency) : "N/A" }
     ],
     [
       { label: "Win Streak", value: metrics.winStreak || 0, suffix: " trades" },
@@ -15,8 +18,7 @@ export default function AdvancedMetricsGrid({ metrics, executiveMetrics }) {
       { label: "Avg Hold Time (Losers)", value: metrics.avgHoldLosers?.toFixed(1) || "N/A", suffix: " days" }
     ],
     [
-      { label: "Trade Frequency", value: metrics.tradeFrequency?.toFixed(1) || "N/A", suffix: " per week" },
-      { label: "Capital Efficiency", value: metrics.capitalEfficiency != null ? formatPercent(metrics.capitalEfficiency) : "N/A" }
+      { label: "Trade Frequency", value: metrics.tradeFrequency?.toFixed(1) || "N/A", suffix: " per week" }
     ]
   ];
 

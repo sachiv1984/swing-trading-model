@@ -53,7 +53,7 @@ test('SC-BTT-04: navigating updates the title, and routed pages get distinct tit
   for (const [hash, title] of [
     ['/#/', 'Dashboard · Position Manager'],
     ['/#/Signals', 'Signals · Position Manager'],
-    ['/#/PerformanceAnalytics', 'Analytics · Position Manager'],
+    ['/#/Performance?section=analytics', 'Performance · Position Manager'],
     ['/#/TradePlan', 'Trade Plan · Position Manager'],
   ]) {
     await page.goto(hash);

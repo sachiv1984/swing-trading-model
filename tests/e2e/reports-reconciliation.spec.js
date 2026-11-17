@@ -12,7 +12,7 @@
  *   SC-RECON-05  Error state renders without blocking rest of Reports page
  *
  * Infrastructure: Playwright page.route() network interception. No live backend required.
- * ROUTING NOTE: App uses HashRouter — navigate via page.goto('/#/Reports'), then click
+ * ROUTING NOTE: App uses HashRouter — navigate via page.goto('/#/Performance?section=reports'), then click
  * the "Reconciliation" tab (default tab is "Performance").
  */
 
@@ -39,8 +39,8 @@ async function mockReconciliation(page, data, status = 200) {
 }
 
 async function gotoReconciliationTab(page) {
-  await page.goto('/#/Reports');
-  await page.getByTestId('reports-tab-reconciliation').click();
+  await page.goto('/#/Performance?section=reports');
+  await page.getByTestId('performance-report-tab-reconciliation').click();
   await expect(page.getByTestId('reconciliation-content')).toBeVisible({ timeout: 10000 });
 }
 

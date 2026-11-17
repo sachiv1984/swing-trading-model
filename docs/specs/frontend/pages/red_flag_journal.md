@@ -1,8 +1,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 1.4
-**Last Updated:** 2026-10-16 (v9.13 design gate — ST-04/BLG-BE-182: unrecorded event types disabled in the filter and named in the empty states; Checklist Skipped row context); prior — 2026-09-15 (v9.4 sprint execution — ST-25/BLG-FE-174: `SkeletonRow` implementation confirmed refactored to compose from the shared `Skeleton` primitive; no visual change, new Playwright coverage passes); prior — 2026-09-14 (v9.4 design gate — ST-25/BLG-FE-174: §8 loading state now cites the canonical loading-skeleton pattern/shared `Skeleton` primitive); prior history retained — see prior entries in version control
+**Version:** 1.5
+**Last Updated:** 2026-11-16 (ST-05, EPIC-02, v9.17, BLG-FE-258 — §2 and §4 superseded by `journal.md`: the page is the Journal's Red flags section; the ticker input is the shared filter, no longer saved); prior — 2026-10-16 (v9.13 design gate — ST-04/BLG-BE-182: unrecorded event types disabled in the filter and named in the empty states; Checklist Skipped row context); prior — 2026-09-15 (v9.4 sprint execution — ST-25/BLG-FE-174: `SkeletonRow` refactored to the shared `Skeleton` primitive); prior history retained — see prior entries in version control
 **Design Source (v1.4):** docs/design/2026-10-16__release-v9.13/red-flag-journal-recorded-types/decision_record.md
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Design Source (v1.2):** docs/design/2026-09-14__release-v9.4/loading-skeleton-standardisation/decision_record.md
@@ -31,6 +31,8 @@ Users should be able to:
 
 ## 2. Navigation and Route
 
+> **Superseded by `journal.md` (v1.5, ST-05, EPIC-02, v9.17, BLG-FE-258).** The red flags now live in the Journal page's Red flags section (`/Journal?section=red-flags`). `/RedFlagJournal` redirects there, keeping its query string (`journal.md` §5). There is no separate sidebar or palette entry.
+
 - Route: `/red-flag-journal`
 - Page title: **"Red Flag Journal"**
 - Nav group: **Trading** (after Trade Reflection)
@@ -50,6 +52,8 @@ Each item: `{ event_type, ticker, context (JSON), created_at }`
 ---
 
 ## 4. Filter Controls
+
+> **Superseded in part by `journal.md` §3 (v1.5, ST-05, BLG-FE-258).** The ticker input and its Apply button are replaced by the Journal's shared ticker filter: the exact ticker, upper-cased as typed, sent 300 ms after typing stops or at once on Enter; a ticker without ".L" that finds no events shows "No events for {TICKER}. UK tickers need the .L suffix here, e.g. LGEN.L." The saved filters (`localStorage["redFlagJournal.filters"]`) no longer store the ticker, and an old saved ticker is ignored. The event type and date filters below are unchanged. Each event's onward link reads "View trade".
 
 Located above the event list.
 
@@ -128,6 +132,7 @@ Paginated list. 20 events per page. Most recent first.
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.5 | 2026-11-16 | ST-05 (EPIC-02, v9.17, BLG-FE-258), per `journal.md` §2: §2 and §4 carry a "superseded by `journal.md`" note. The page becomes the Journal's Red flags section; the shared ticker filter replaces the ticker input; the stored filters drop the ticker; the event link reads "View trade". Event list, pagination, empty, loading and error states unchanged. |
 | 1.4 | 2026-10-16 | v9.13 design gate — ST-04 (EPIC-01, BLG-BE-182): §4 unrecorded event types disabled with "— not yet recorded"; `RECORDED_EVENT_TYPES` constant; §5 Checklist Skipped context summary; §7 empty states carry the recorded-types note. Design source: `docs/design/2026-10-16__release-v9.13/red-flag-journal-recorded-types/decision_record.md`. Head of UX & Design sign-off: 2026-10-16. Product Owner approved: 2026-10-16. Head of Specs Team confirmed. |
 | 1.3 | 2026-09-15 | v9.4 sprint execution — ST-25 (EPIC-06, BLG-FE-174): §8 implementation confirmed — `RedFlagJournal.js`'s `SkeletonRow` refactored to compose from the shared `Skeleton` primitive (colour overrides preserve visual output). New `SC-RFJ-06` Playwright coverage added, passes. |
 | 1.2 | 2026-09-14 | v9.4 design gate — ST-25 (EPIC-06, BLG-FE-174): §8 Loading state now cites the canonical loading-skeleton pattern — Table/List Row Skeleton template (`base44_prompt_template_library.md` §8) backed by the shared `Skeleton` primitive. No visual change. Design source: `docs/design/2026-09-14__release-v9.4/loading-skeleton-standardisation/decision_record.md`. Head of UX & Design sign-off: 2026-09-14. Product Owner approved: 2026-09-14. Head of Specs Team confirmed. |

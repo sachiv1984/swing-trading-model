@@ -70,20 +70,20 @@ def _max_delay(expr: str, index_bound: int = None) -> float:
 
 
 class TestReportsTaxYearReport:
-    FILE = "pages/Reports.js"
+    FILE = "components/performance/ReportViews.js"  # moved from pages/Reports.js by ST-06 (v9.17)
     DELAYS = (0.05, 0.1, 0.15, 0.2)
 
     def test_all_four_stat_cards_have_explicit_duration_0_3(self):
         source = _read(self.FILE)
         for delay in self.DELAYS:
             pattern = r"transition=\{\{\s*delay:\s*" + re.escape(str(delay)) + r",\s*duration:\s*0\.3\s*\}\}"
-            assert re.search(pattern, source), f"Reports.js: expected explicit duration:0.3 for delay {delay} not found"
+            assert re.search(pattern, source), f"ReportViews.js: expected explicit duration:0.3 for delay {delay} not found"
 
     def test_max_combined_time_to_full_opacity_within_ceiling(self):
         transitions = [t for t in _transitions(_read(self.FILE)) if re.fullmatch(_NUM, t[0])]
         assert len(transitions) >= len(self.DELAYS), "stat-card transitions not found"
         for expr, duration in transitions:
-            assert _max_delay(expr) + duration <= CEILING_SECONDS, f"Reports.js: delay {expr} + {duration} > 0.5s"
+            assert _max_delay(expr) + duration <= CEILING_SECONDS, f"ReportViews.js: delay {expr} + {duration} > 0.5s"
 
 
 class TestSignalsPageStagger:

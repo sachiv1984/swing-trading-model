@@ -1,10 +1,12 @@
 # analytics.md
 
+> **Superseded by `performance.md` (v2.4, ST-06, EPIC-02, v9.17, BLG-FE-259).** The Analytics page is the Performance page's Analytics and Compliance sections (`/Performance?section=analytics` and `?section=compliance`). Period-level KPIs are read from `GET /analytics/metrics` (the browser recomputation is removed); Profit Factor and Expectancy cards and Key Insights move to Summary; §17, §19 and §21 move to Compliance. This file stays canonical for each component's content and states.
+
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Canonical Specification (Class 1)
-**Status:** Canonical
-**Version:** 2.3
-**Last Updated:** 2026-11-06 (v9.16 design gate — ST-04/BLG-FE-253: new §19.1 Section Link, `?section=strategy-compliance` scrolls to Arc 5 Signal Compliance); prior — 2026-09-21 (ST-05, EPIC-01, v9.6, BLG-FE-181 — §21 empty-state heading drops its trailing period and names the "Create a trade plan" next action, matching the shipped component; documentation-only); prior — 2026-08-11 (ST-10, EPIC-03, v8.6 — DEV-EPIC02-ST03-01 marked Resolved: CohortAnalysis.js was already migrated to GET /analytics/cohort, commit af22ea6e, 2026-03-16 — tracking-only correction, no new code shipped by this story); prior history retained — see prior entries in version control
+**Status:** Canonical — **Superseded by `performance.md` for route, placement and layout (v9.17)**
+**Version:** 2.4
+**Last Updated:** 2026-11-16 (ST-06, EPIC-02, v9.17, BLG-FE-259 — superseded by `performance.md` for route, placement and layout); prior — 2026-11-06 (v9.16 design gate — ST-04/BLG-FE-253: new §19.1 Section Link, `?section=strategy-compliance` scrolls to Arc 5 Signal Compliance); prior — 2026-09-21 (ST-05, EPIC-01, v9.6, BLG-FE-181 — §21 empty-state heading drops its trailing period and names the "Create a trade plan" next action, matching the shipped component; documentation-only); prior history retained — see prior entries in version control
 **Design Source (v2.3 section link):** docs/design/2026-11-06__release-v9.16/digest-section-link/decision_record.md
 **Design Source (v2.1 additions):** docs/design/2026-08-11__release-v8.6/trade-plan-completion-rate-metric/decision_record.md
 **Design Source (v2.0 additions):** docs/design/2026-07-08__release-v6.8/trade-tagging/ux_spec.md
@@ -805,6 +807,7 @@ All component props are null-safe with safe defaults. If the API returns partial
 
 | Version | Date | Change |
 | --- | --- | --- |
+| 2.4 | 2026-11-16 | ST-06 (EPIC-02, v9.17, BLG-FE-259), per `performance.md` §2 and brief §4: "Superseded by `performance.md`" header for route, placement and layout. The Analytics page is the Performance page's Analytics and Compliance sections (`/Performance?section=analytics` and `?section=compliance`). Period-level KPIs are read from `GET /analytics/metrics` (the browser recomputation is removed); Profit Factor and Expectancy cards and Key Insights move to Summary; §17, §19 and §21 move to Compliance. This file stays canonical for each component's content and states. |
 | 2.3 | 2026-11-06 | v9.16 design gate — new §19.1 Section Link (ST-04, EPIC-01, BLG-FE-253): `?section=strategy-compliance` scrolls once to Arc 5 Signal Compliance (smooth unless reduced motion), then focuses its heading. An unknown id loads the page at the top. The SI-05 digest gains a "Strategy Compliance" link to it. The Risk Dashboard has no rule-breach section, so the anchor is here (Product Owner, 2026-11-06). Design source: `docs/design/2026-11-06__release-v9.16/digest-section-link/decision_record.md`. |
 | 2.2 | 2026-09-21 | ST-05 (v9.6, EPIC-01, BLG-FE-181): §21 empty state — heading corrected to "No trade plans created yet" (no trailing period, v1.8 pattern) and the empty state now names its single next action, **"Create a trade plan"** (`design_system.md` v1.21 §Data States next-action rule). Documentation-only; the component change ships in the same story. |
 | 2.1 | 2026-08-11 | v8.6 design gate (ST-01, EPIC-01, BLG-FEAT-32): §21 Trade Plan Completion Rate added — 3 summary cards (plans_created, completion_rate, plans_abandoned) + optional PT-04 quality-tier breakdown table. API Dependency updated with `GET /analytics/trade-plan-completion-rate`. Component Rendering Order updated to 21 items. Design source: trade-plan-completion-rate-metric/decision_record.md. Approved: Product Owner 2026-08-11. Head of Specs Team confirmed. |

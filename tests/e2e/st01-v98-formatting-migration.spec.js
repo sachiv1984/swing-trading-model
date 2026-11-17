@@ -26,12 +26,13 @@
  * fix in one component, keeping the mock surface small.
  *
  * Infrastructure: Playwright page.route() network interception. No live backend.
- * ROUTING NOTE: App uses HashRouter — navigate via page.goto('/#/PerformanceAnalytics').
+ * ROUTING NOTE: App uses HashRouter — navigate via page.goto('/#/Performance?section=analytics').
  */
 
 'use strict';
 
 const { test, expect } = require('./fixtures/api-status-guard');
+const { mockAnalyticsMetrics } = require('./fixtures/analytics-metrics');
 
 const API_BASE = 'http://localhost:8000';
 
@@ -79,7 +80,8 @@ async function setupAnalyticsPage(page) {
 
   const tradesResponsePromise = page.waitForResponse((resp) => resp.url().endsWith('/trades'), { timeout: 15000 });
 
-  await page.goto('/#/PerformanceAnalytics');
+  await mockAnalyticsMetrics(page, { trades: TRADES }); // ST-06: Analytics needs a populated metrics response
+  await page.goto('/#/Performance?section=analytics');
   await tradesResponsePromise;
   await expect(page.locator('[class*="animate-spin"]')).toHaveCount(0, { timeout: 10000 });
 }

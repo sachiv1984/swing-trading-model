@@ -107,7 +107,7 @@ async function mockArc5Compliance(page, payload = ARC5_COMPLIANCE_OK, status = 2
 
 /** Navigate to the Performance Analytics page and wait for it to mount. */
 async function gotoAnalytics(page) {
-  await page.goto('/#/PerformanceAnalytics');
+  await page.goto('/#/Performance?section=analytics');
   // Wait for the page to mount — look for any content that indicates we're on the analytics page
   await expect(page.locator('body')).toBeVisible({ timeout: 10000 });
 }

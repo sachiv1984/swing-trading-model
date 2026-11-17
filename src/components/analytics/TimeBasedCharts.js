@@ -9,7 +9,9 @@ export default function TimeBasedCharts({ dayOfWeekData, monthlyData, holdingPer
     <div className="rounded-2xl bg-slate-800/50 border border-slate-700/50 p-6 backdrop-blur-sm">
       <h3 className="text-lg font-semibold text-white mb-6">Time-Based Analysis</h3>
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="bg-slate-900/50 mb-6">
+        {/* ST-06 (v9.17, performance.md §9): scrolls inside itself so the four
+            tabs do not widen the page at 390 px. */}
+        <TabsList className="bg-slate-900/50 mb-6 max-w-full overflow-x-auto justify-start">
           <TabsTrigger value="day">Day of Week</TabsTrigger>
           <TabsTrigger value="month">Monthly</TabsTrigger>
           <TabsTrigger value="holding">Holding Period</TabsTrigger>

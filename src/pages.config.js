@@ -49,22 +49,20 @@
  */
 import DashboardHome from './pages/DashboardHome';
 import Positions from './pages/Positions';
-import Reports from './pages/Reports';
 import Settings from './pages/Settings';
 import Signals from './pages/Signals';
 import TradeEntry from './pages/TradeEntry';
 import TradeHistory from './pages/TradeHistory';
 import SystemStatus from './pages/SystemStatus';
-import PerformanceAnalytics from './pages/PerformanceAnalytics';
+import Performance from './pages/Performance';
 import RiskDashboard from './pages/RiskDashboard';
-import TradeReflection from './pages/TradeReflection';
 import Watchlist from './pages/Watchlist';
 import WeeklyDigest from './pages/WeeklyDigest';
 import Screener from './pages/Screener';
 import TradePlan from './pages/TradePlan';
 import TradePlans from './pages/TradePlans';
 import TickerUniverse from './pages/TickerUniverse';
-import RedFlagJournal from './pages/RedFlagJournal';
+import Journal from './pages/Journal';
 import StrategyBenchmark from './pages/StrategyBenchmark';
 import Replay from './pages/Replay';
 import __Layout from './Layout.js';
@@ -73,22 +71,20 @@ import __Layout from './Layout.js';
 export const PAGES = {
     "DashboardHome": DashboardHome,
     "Positions": Positions,
-    "Reports": Reports,
     "Settings": Settings,
     "Signals": Signals,
     "TradeEntry": TradeEntry,
     "TradeHistory": TradeHistory,
     "SystemStatus": SystemStatus,
-    "PerformanceAnalytics": PerformanceAnalytics,
+    "Performance": Performance,
     "RiskDashboard": RiskDashboard,
-    "TradeReflection": TradeReflection,
     "Watchlist": Watchlist,
     "WeeklyDigest": WeeklyDigest,
     "Screener": Screener,
     "TradePlan": TradePlan,
     "TradePlans": TradePlans,
     "TickerUniverse": TickerUniverse,
-    "RedFlagJournal": RedFlagJournal,
+    "Journal": Journal,
     "StrategyBenchmark": StrategyBenchmark,
     "Replay": Replay,
 }

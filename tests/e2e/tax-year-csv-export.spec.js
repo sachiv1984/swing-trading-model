@@ -22,7 +22,7 @@
  *   SC-CSV-05  Empty year (zero closed trades) — button still enabled, download still fires
  *
  * Infrastructure: Playwright page.route() network interception. No live backend.
- * ROUTING NOTE: App uses HashRouter — navigate via page.goto('/#/Reports'), then click
+ * ROUTING NOTE: App uses HashRouter — navigate via page.goto('/#/Performance?section=reports'), then click
  * the "Tax Year P&L" tab (default tab is "Performance").
  */
 
@@ -97,8 +97,8 @@ async function mockTaxYearReport(page, { reportData = TAX_YEAR_REPORT, csvFails 
 }
 
 async function gotoTaxYearTab(page) {
-  await page.goto('/#/Reports');
-  await page.getByRole('button', { name: /tax year p&l/i }).click();
+  await page.goto('/#/Performance?section=reports');
+  await page.getByRole('tab', { name: 'Tax year' }).click();
   await expect(page.getByRole('button', { name: /download csv/i })).toBeVisible({ timeout: 10000 });
 }
 

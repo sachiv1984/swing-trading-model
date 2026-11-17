@@ -12,7 +12,9 @@
  *
  * Infrastructure:
  * - Playwright page.route() network interception — no live backend required.
- * - ROUTING NOTE: App uses HashRouter — navigate via page.goto('/#/RedFlagJournal').
+ * - ROUTING NOTE: App uses HashRouter. Since ST-05 (EPIC-02, v9.17, BLG-FE-258)
+ *   the page is the Journal's Red flags section; the ticker is the shared
+ *   filter, held in ?ticker= rather than localStorage (journal.md §3).
  */
 
 'use strict';
@@ -20,7 +22,7 @@
 const { test, expect } = require('./fixtures/api-status-guard');
 
 const API = 'http://localhost:8000';
-const PAGE_URL = '/#/RedFlagJournal';
+const PAGE_URL = '/#/Journal?section=red-flags';
 const STORAGE_KEY = 'redFlagJournal.filters';
 
 const MOCK_EVENTS = [
@@ -82,18 +84,21 @@ test.describe('Red Flag Journal — filter state persistence', () => {
   test('SC-RFJ-05a: Filter state persists across page reload', async ({ page }) => {
     await setup(page, makeJournalResponse(MOCK_EVENTS));
 
-    // Set event type filter and ticker filter
+    // Set the event type filter (saved) and the shared ticker filter (URL)
     await page.getByTestId('event-type-filter').selectOption('checklist_skipped');
-    await page.getByTestId('ticker-filter-input').fill('NVDA');
-    await page.getByTestId('ticker-filter-input').press('Enter');
+    await page.getByTestId('journal-ticker-filter').fill('NVDA');
+    await page.getByTestId('journal-ticker-filter').press('Enter');
+    await expect(page).toHaveURL(/ticker=NVDA/);
 
     // Reload the page — same mocks still apply
     await page.reload();
     await expect(page.getByTestId('event-type-filter')).toBeVisible({ timeout: 8000 });
 
-    // Filter controls restored from localStorage
+    // Event type restored from localStorage; ticker from ?ticker=, not storage
     await expect(page.getByTestId('event-type-filter')).toHaveValue('checklist_skipped');
-    await expect(page.getByTestId('ticker-filter-input')).toHaveValue('NVDA');
+    await expect(page.getByTestId('journal-ticker-filter')).toHaveValue('NVDA');
+    const stored = await page.evaluate((key) => JSON.parse(window.localStorage.getItem(key)), STORAGE_KEY);
+    expect(stored.data.tickerFilter).toBeUndefined();
   });
 
   test('SC-RFJ-05b: Stale/corrupt localStorage filter state is cleared gracefully without error', async ({ page }) => {
@@ -114,7 +119,7 @@ test.describe('Red Flag Journal — filter state persistence', () => {
     await page.goto(PAGE_URL);
 
     // No JS error surfaced, page renders normally with default (cleared) filters
-    await expect(page.getByRole('heading', { name: 'Red Flag Journal' })).toBeVisible({ timeout: 8000 });
+    await expect(page.getByRole('heading', { name: 'Journal', exact: true })).toBeVisible({ timeout: 8000 });
     await expect(page.getByTestId('event-type-filter')).toHaveValue('');
     expect(errors).toHaveLength(0);
 
