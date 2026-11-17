@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-17 (session, user-directed after post-ship closure `2026-11-11__release-v9.17` — BLG-FE-224 and BLG-FE-242 closed as superseded by their named owner; BLG-SPEC-221 met; all three archived); prior — 2026-11-17 (post-ship closure `2026-11-11__release-v9.17` — STEP 3: 17 shipped source items bannered ✅ COMPLETE, `BLG-OPS-217` and `BLG-GOV-419` kept open as post-merge trackers; STEP 8: 1 new item added, BLG-QA-268); prior — 2026-11-17 (session — 2 new items added: BLG-FE-306, BLG-FE-307; PR #2262 Head of UX & Design review, EPIC-03, v9.17); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-17 (session, user-directed — BLG-UX-08 completed and archived; 4 new items added: BLG-UX-11, BLG-FE-308, BLG-UX-12, BLG-UX-13); prior — 2026-11-17 (session, user-directed after post-ship closure `2026-11-11__release-v9.17` — BLG-FE-224 and BLG-FE-242 closed as superseded by their named owner; BLG-SPEC-221 met; all three archived); prior — 2026-11-17 (post-ship closure `2026-11-11__release-v9.17` — STEP 3: 17 shipped source items bannered ✅ COMPLETE, `BLG-OPS-217` and `BLG-GOV-419` kept open as post-merge trackers; STEP 8: 1 new item added, BLG-QA-268); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -4286,29 +4286,6 @@ ST-48 made `metrics_definitions.md` Appendix F and `scripts/compute_effort_weigh
 
 ---
 
-### BLG-UX-08 — First-principles UX re-review when the Site Structure & Usability programme completes
-**Priority:** P2 (Medium)
-**Type:** UX review (programme close-out)
-**Owner:** Head of UX & Design
-**Source:** IDEA-head-of-ux-20261103-07 (IW-20261103-01), roadmap rebalance `2026-11-03__scheduled`, DL-088. User request, 2026-11-03: "Once the last change is done I want you to review the site again and confirm that nothing has changed your view."
-**Effort:** S (~1 day)
-**Provisional-Target:** v9.18
-**Gate criteria:** Every other Site Structure & Usability programme item is ✅ COMPLETE or explicitly closed: `BLG-FE-244` to `BLG-FE-266` and `BLG-SPEC-214` to `BLG-SPEC-216`.
-
-**Problem**
-The 2026-11-03 review set a first-principles target and an IA verdict ("modify substantially, don't redesign") with a top 5. Nothing would otherwise trigger a check that the shipped changes reached that target, or that the verdict still holds.
-
-**Scope**
-- Repeat the review with the same method: label audit (sidebar vs heading vs palette), inter-page link scan, page-section order, the four journey walkthroughs (daily review, exit, signal → entry, weekly review) with step and input counts, light and dark screenshots (staging if available)
-- Compare each metric with the 2026-11-03 baseline: unchecked entry routes 3, sidebar entries 18 / 4 groups, undiscoverable pages 2, dead-end pages 8, signal → entry pages 5, Positions default columns 14, grace surfaces 4, journal surfaces 3, mismatched page names 7, tab titles 0
-- State whether the IA verdict and the top 5 still stand; file any new finding as a backlog item
-
-**Acceptance Criteria**
-- A review document in `docs/ux/` records before/after values for every baseline metric and an explicit confirm-or-revise statement on the verdict
-- Every new finding is filed (or the document says none was found)
-
----
-
 ### BLG-OPS-211 — Confirm on main that governance-only PRs skip the five code-test suites
 **Priority:** P3 (Low)
 **Type:** Operations / CI
@@ -6835,5 +6812,87 @@ ST-08 moved the Monthly heatmap tile fills to emerald-800/700, slate-600 and ros
 - Run against ST-01's `b2d93f6d` diff, the script flags the SC-COMP-03/07 locators; run against ST-03's pre-fix diff, it flags SC-LBG-03
 - `commit-check` runs the script for frontend diffs and reports its matches
 - §3.1.A step 13 names the script
+
+---
+
+### BLG-UX-11 — Make the quiet-day Dashboard a single line, not 11 empty boxes
+**Priority:** P3 (Low)
+**Type:** UX / Dashboard layout
+**Owner:** Head of UX & Design; Frontend Specifications & UX Documentation Owner
+**Source:** `BLG-UX-08` re-review, finding F1 (`docs/ux/site_structure_rereview_2026-11-17.md`) — 2026-11-17
+**Effort:** M (~1-2 days, spec revision then build)
+**Provisional-Target:** TBD
+
+**Problem**
+On a quiet day the Dashboard shows "Nothing due today" and then 11 empty-state boxes: the 5 Morning Briefing cards, the AI briefing, Open Positions, Portfolio Heat, In Grace Today, Recent Activity and What's New (`dashboard-home-light/dark-chromium.png`). The 2026-11-03 review set a target of 1. `dashboard.md` §3 v4.0 kept the briefing panel and status cards below the Today list unchanged, so the page still reports status rather than saying there is nothing to do.
+
+**Scope**
+- Revise `dashboard.md` §3 and §4A so cards in their zero state collapse on a quiet day (for example one muted "All clear" line naming them, each still a link), while cards with data keep their place and order
+- Build it, with Playwright coverage in both themes, and regenerate the Dashboard visual baselines
+
+**Acceptance Criteria**
+- With the quiet-day fixture, the Dashboard shows at most 1 empty-state element below "Due today" (Playwright, light and dark)
+- A card with data still renders in its v4.0 position (Playwright)
+
+---
+
+### BLG-FE-308 — Use one grace-period definition across the Dashboard's grace counts
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Frontend Specifications & UX Documentation Owner; Head of Engineering
+**Source:** `BLG-UX-08` re-review, finding F2 (`docs/ux/site_structure_rereview_2026-11-17.md`) — 2026-11-17
+**Effort:** S (~0.5 day)
+**Provisional-Target:** TBD
+
+**Problem**
+The Dashboard shows grace in 4 places with 3 definitions. "Positions to Watch" (`ExitZoneCard.js`) counts `grace_period === true` and links to `/Positions`, not the grace view. "Open Positions" (`OpenPositionsCard.js`) counts `grace_days_remaining > 0` or status `GRACE`. The Today list counts `grace_days_remaining === 1`, and "In Grace Today" links to `/Positions?grace=open`. Counts of the same thing computed differently can disagree on screen, the risk `BLG-BE-183` showed.
+
+**Scope**
+- Name one in-grace predicate in `dashboard.md` (matching `positions.md` §Grace Period View) and use it in `ExitZoneCard.js` and `OpenPositionsCard.js`
+- Point "Positions to Watch" at `/Positions?grace=open` when its count includes in-grace positions
+
+**Acceptance Criteria**
+- With a fixture where `grace_period` and `grace_days_remaining` disagree for one position, every Dashboard grace count shows the same number (Playwright)
+- "Positions to Watch" opens the Positions grace view (Playwright)
+
+---
+
+### BLG-UX-12 — Link the Weekly Digest figures to the pages where they are reviewed
+**Priority:** P3 (Low)
+**Type:** UX / Navigation
+**Owner:** Head of UX & Design; Frontend Specifications & UX Documentation Owner
+**Source:** `BLG-UX-08` re-review, finding F3 (`docs/ux/site_structure_rereview_2026-11-17.md`) — 2026-11-17
+**Effort:** S (~0.5 day)
+**Provisional-Target:** TBD
+
+**Problem**
+On the Weekly Digest page, only the alert counts link anywhere (to Notifications). The P&L, compliance and red-flag figures link nowhere, so the weekly review takes 3 sidebar hops (Performance, Journal, Trade History), and the Review area is collapsed by default. The 2026-11-03 target was a weekly review in one journey.
+
+**Scope**
+- Add `navigation.md` §Onward Links rows and `weekly_digest.md` links: realised P&L to Performance (Summary), compliance score to Performance (Compliance), red flags to Journal (Red flags)
+- Build them
+
+**Acceptance Criteria**
+- Each of the three figures links to its section, and the link lands on that section (Playwright)
+
+---
+
+### BLG-UX-13 — Offer "Plan this" on the Today list's New signals rows
+**Priority:** P3 (Low)
+**Type:** UX / Dashboard
+**Owner:** Head of UX & Design; Frontend Specifications & UX Documentation Owner
+**Source:** `BLG-UX-08` re-review, finding F4 (`docs/ux/site_structure_rereview_2026-11-17.md`) — 2026-11-17
+**Effort:** XS (<1h build, after the spec line)
+**Provisional-Target:** TBD
+
+**Problem**
+The Today list's "New signals" rows link to Research, so signal → entry from the Dashboard takes 4 pages (Dashboard → Research → Trade Plan → Trade Entry), against 3 from Signals or Screener via "Plan this".
+
+**Scope**
+- Decide in `dashboard.md` §1B whether a New signals row offers "Plan this" (to the pre-filled Trade Plan) beside the Research link, consistent with `signals.md` §"Plan this" Action and `BLG-UX-09`
+- Build it if chosen
+
+**Acceptance Criteria**
+- `dashboard.md` §1B records the decision; if "Plan this" is added, it opens Trade Plan pre-filled with the signal's ticker and market (Playwright)
 
 ---

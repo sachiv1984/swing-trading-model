@@ -1,11 +1,43 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-11-17 (session, user-directed — 3 items archived: BLG-FE-224, BLG-FE-242 (superseded by v9.17 ST-08, named-owner decision), BLG-SPEC-221 (met)); prior — 2026-11-17 (groom backlog GROOM-20261117-01, post-ship closure 2026-11-11__release-v9.17 STEP 12 — 24 items archived: the 18 v9.17 source items bannered at closure STEP 3 or at their post-merge backfill, 5 in-sprint same-branch fixes (`BLG-FE-295`, `296`, `298`, `300`, `303`) and `BLG-FE-237` (met by ST-06)); prior — 2026-11-11 (groom backlog GROOM-20261111-01, post-ship closure 2026-11-06__release-v9.16 STEP 12 — 35 items archived: 33 v9.16 items bannered at closure STEP 3, `BLG-GOV-414` (met) and `BLG-GOV-192` (already met)); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-17 (session, user-directed — BLG-UX-08 archived: programme re-review complete); prior — 2026-11-17 (session, user-directed — 3 items archived: BLG-FE-224, BLG-FE-242 (superseded by v9.17 ST-08, named-owner decision), BLG-SPEC-221 (met)); prior — 2026-11-17 (groom backlog GROOM-20261117-01, post-ship closure 2026-11-11__release-v9.17 STEP 12 — 24 items archived: the 18 v9.17 source items bannered at closure STEP 3 or at their post-merge backfill, 5 in-sprint same-branch fixes (`BLG-FE-295`, `296`, `298`, `300`, `303`) and `BLG-FE-237` (met by ST-06)); prior history retained — see prior entries in version control
 
 # Backlog Archive — Momentum Trading Assistant
 
 Permanent record of completed and killed backlog items retired from `claude/backlog/backlog.md`. Listed in retirement order, most recent first. Append-only — do not edit existing entries.
+
+---
+
+### BLG-UX-08 — First-principles UX re-review when the Site Structure & Usability programme completes
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2
+**Retired:** 2026-11-17
+**Shipped in:** N/A — review (programme close-out after v9.17)
+**Evidence:** docs/ux/site_structure_rereview_2026-11-17.md
+
+### BLG-UX-08 — First-principles UX re-review when the Site Structure & Usability programme completes
+**✅ COMPLETE — 2026-11-17, Head of UX & Design (agent-mediated, user-directed 2026-11-17, out of sprint; gate met at post-ship closure `2026-11-11__release-v9.17`): `docs/ux/site_structure_rereview_2026-11-17.md` records before/after values for all 10 baseline metrics and confirms the IA verdict "modify substantially, don't redesign". 4 new findings filed: `BLG-UX-11`, `BLG-FE-308`, `BLG-UX-12`, `BLG-UX-13`.**
+**Priority:** P2 (Medium)
+**Type:** UX review (programme close-out)
+**Owner:** Head of UX & Design
+**Source:** IDEA-head-of-ux-20261103-07 (IW-20261103-01), roadmap rebalance `2026-11-03__scheduled`, DL-088. User request, 2026-11-03: "Once the last change is done I want you to review the site again and confirm that nothing has changed your view."
+**Effort:** S (~1 day)
+**Provisional-Target:** v9.18
+**Gate criteria:** Every other Site Structure & Usability programme item is ✅ COMPLETE or explicitly closed: `BLG-FE-244` to `BLG-FE-266` and `BLG-SPEC-214` to `BLG-SPEC-216`.
+
+**Problem**
+The 2026-11-03 review set a first-principles target and an IA verdict ("modify substantially, don't redesign") with a top 5. Nothing would otherwise trigger a check that the shipped changes reached that target, or that the verdict still holds.
+
+**Scope**
+- Repeat the review with the same method: label audit (sidebar vs heading vs palette), inter-page link scan, page-section order, the four journey walkthroughs (daily review, exit, signal → entry, weekly review) with step and input counts, light and dark screenshots (staging if available)
+- Compare each metric with the 2026-11-03 baseline: unchecked entry routes 3, sidebar entries 18 / 4 groups, undiscoverable pages 2, dead-end pages 8, signal → entry pages 5, Positions default columns 14, grace surfaces 4, journal surfaces 3, mismatched page names 7, tab titles 0
+- State whether the IA verdict and the top 5 still stand; file any new finding as a backlog item
+
+**Acceptance Criteria**
+- A review document in `docs/ux/` records before/after values for every baseline metric and an explicit confirm-or-revise statement on the verdict
+- Every new finding is filed (or the document says none was found)
 
 ---
 

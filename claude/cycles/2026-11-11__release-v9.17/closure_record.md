@@ -1,7 +1,7 @@
 Owner: PMO Lead
 Class: Operational Record (Class 3)
 Status: Active
-Last Updated: 2026-11-17 (follow-up — §6 row 3 resolved: spec pages registered); prior — 2026-11-17 (created)
+Last Updated: 2026-11-17 (follow-up — §6 row 9 resolved: BLG-UX-08 review complete); prior — 2026-11-17 (follow-up — §6 row 3 resolved: spec pages registered); prior — 2026-11-17 (created)
 Cycle: 2026-11-11__release-v9.17
 
 ---
@@ -95,7 +95,7 @@ Full detail: `claude/cycles/2026-11-11__release-v9.17/lessons_learnt_closure.md`
 | 6 | Add ACs to, or kill, `BLG-GOV-200` and `BLG-GOV-201` (carried from v9.16 §6 row 5). | PMO Lead; item owners | Before either is seated | `backlog_health_20261111.md` | *(open)* |
 | 7 | Link `docs/governance/governance_overhead_audit_2026-11-02.md` and the ST-45 sunset review (`BLG-GOV-408`) as inputs at the next `run roadmap` (carried from v9.16 §6 row 8). | PMO Lead | Next `run roadmap` | `lessons_learnt_closure.md` Carry-Forward 3 | *(open)* |
 | 8 | Retarget stale tags: `BLG-GOV-419` (v9.17), and the open v9.15/v9.16/v9.17-tagged items listed in this run's `backlog_health` report (carried from v9.16 §6 row 6). `BLG-BE-215` reads `TBD` while its Known Deviation targets v9.18. | PMO Lead; item owners | Next Release Planning run | `backlog_health_20261117.md` | *(open)* |
-| 9 | `BLG-UX-08` gate met (all of `BLG-FE-244`–`266` and `BLG-SPEC-214`–`216` closed). Seat the programme close-out re-review and clear its gate in place. | Product Owner; Head of UX & Design | Next Release Planning run | `lessons_learnt_closure.md` Carry-Forward 4 | *(open)* |
+| 9 | `BLG-UX-08` gate met (all of `BLG-FE-244`–`266` and `BLG-SPEC-214`–`216` closed). Seat the programme close-out re-review and clear its gate in place. | Product Owner; Head of UX & Design | Next Release Planning run | `lessons_learnt_closure.md` Carry-Forward 4 | ✅ Resolved 2026-11-17 (Head of UX & Design, user-directed, out of sprint): review completed, `docs/ux/site_structure_rereview_2026-11-17.md`; verdict confirmed; 4 follow-ups filed; `BLG-UX-08` archived. Carry-Forward 4 needs no action at Release Planning |
 | 10 | Telegram changelog digest not delivered (credentials absent in this environment). Send the v9.17 digest from an environment with `TELEGRAM_BOT_TOKEN`/`TELEGRAM_CHAT_ID` if wanted. | Infrastructure & Operations Owner | Optional | — | *(open, non-blocking)* |
 
 The v9.16 closure's §6 row 1 (owner notice for `DEV-v9.16-ST27-01`) is superseded: ST-14 resolved that deviation. Rows 3 (`BLG-FE-254`) and 4 (`ESC-CLOSE-20261111-01`) are closed.
