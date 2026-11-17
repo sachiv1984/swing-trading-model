@@ -57,4 +57,7 @@ Last Updated: 2026-11-16
 
 ## Merge Gate Confirmations
 
-*(Written when the merge is recorded — STEP 4.)*
+- **Director of Quality QA sign-off (human):** given by the user, who holds the Director of Quality role, in session on 2026-11-17 ("give DOQ and PO acceptance"), on PR #2261 head `282050ea` with all CI checks green. Also recorded as a PR comment.
+- **Product Owner acceptance (human):** given by the user, who holds the Product Owner role, in the same instruction on 2026-11-17. Also recorded as a PR comment.
+- **P1/P2 found defects at the merge gate:** one, `BLG-FE-300` (P2, Summary showed £0.00 / 0.0% below the trade minimum). Fixed on this branch in `9e807be8` before merge, at the Product Owner's direction (2026-11-16); CI green on `9e807be8` and `282050ea`. Both roles accept the EPIC with it fixed; nothing is carried as an open P1/P2. Open P3 follow-ups: BLG-FE-299, BLG-FE-301 (partly done), BLG-FE-302, BLG-QA-266, BLG-BE-222.
+- **Merge:** pending. The human merges PR #2261; the engine does not. The merge (who, when, merge commit) is added here on `main` at STEP 4.
