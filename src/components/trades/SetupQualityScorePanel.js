@@ -7,14 +7,14 @@ import { cn } from "../../lib/utils";
 const MIN_TRADES = 20;
 
 function qualLabel(score) {
-  if (score >= 80) return { text: "Excellent", cls: "text-emerald-400" };
-  if (score >= 60) return { text: "Good", cls: "text-cyan-400" };
-  if (score >= 40) return { text: "Fair", cls: "text-amber-400" };
-  return { text: "Low", cls: "text-rose-400" };
+  if (score >= 80) return { text: "Excellent", cls: "text-app-positive" };
+  if (score >= 60) return { text: "Good", cls: "text-cyan-700 dark:text-cyan-400" };
+  if (score >= 40) return { text: "Fair", cls: "text-app-warning" };
+  return { text: "Low", cls: "text-app-negative" };
 }
 
 function Skeleton({ className }) {
-  return <div className={cn("h-4 bg-slate-700/50 rounded animate-pulse", className)} />;
+  return <div className={cn("h-4 bg-slate-100 dark:bg-slate-700/50 rounded animate-pulse", className)} />;
 }
 
 export default function SetupQualityScorePanel({ ticker }) {
@@ -32,7 +32,7 @@ export default function SetupQualityScorePanel({ ticker }) {
   return (
     <div
       data-testid="setup-quality-score-panel"
-      className="rounded-xl bg-slate-800/60 border border-slate-700/50 p-4"
+      className="rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-app-line p-4"
     >
       <div className="flex items-center justify-between mb-1">
         <span className="text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide">
@@ -42,7 +42,7 @@ export default function SetupQualityScorePanel({ ticker }) {
           <button
             type="button"
             onClick={() => setExpanded((v) => !v)}
-            className="text-slate-600 dark:text-slate-400 hover:text-slate-300 transition-colors"
+            className="text-slate-600 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 transition-colors"
             aria-label={expanded ? "Collapse details" : "Expand details"}
           >
             {expanded ? (
@@ -75,7 +75,7 @@ export default function SetupQualityScorePanel({ ticker }) {
           <div className="flex items-center gap-3 mt-1">
             <span
               data-testid="setup-quality-score-value"
-              className="text-2xl font-semibold text-white"
+              className="text-2xl font-semibold text-app-fg"
             >
               {data.score}
             </span>
@@ -94,15 +94,15 @@ export default function SetupQualityScorePanel({ ticker }) {
             >
               <div>
                 <p className="text-slate-600 dark:text-slate-400 mb-0.5">Trades</p>
-                <p className="text-slate-200 font-medium">{data.matching_trades}</p>
+                <p className="text-slate-800 dark:text-slate-200 font-medium">{data.matching_trades}</p>
               </div>
               <div>
                 <p className="text-slate-600 dark:text-slate-400 mb-0.5">Win Rate</p>
-                <p className="text-slate-200 font-medium">{data.win_rate}%</p>
+                <p className="text-slate-800 dark:text-slate-200 font-medium">{data.win_rate}%</p>
               </div>
               <div>
                 <p className="text-slate-600 dark:text-slate-400 mb-0.5">Avg Return</p>
-                <p className="text-slate-200 font-medium">
+                <p className="text-slate-800 dark:text-slate-200 font-medium">
                   {data.average_pnl_pct != null ? `${data.average_pnl_pct}%` : "—"}
                 </p>
               </div>

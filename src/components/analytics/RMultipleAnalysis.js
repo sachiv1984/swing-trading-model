@@ -26,18 +26,18 @@ export default function RMultipleAnalysis({ trades }) {
   // Check if we have valid data
   if (tradesWithR.length === 0) {
     return (
-      <div className="rounded-2xl bg-slate-800/50 border border-slate-700/50 backdrop-blur-sm p-6">
+      <div className="rounded-2xl bg-app-raised border border-app-line backdrop-blur-sm p-6">
         <div className="flex items-center gap-3 mb-2">
           <div className="p-2 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600">
             <TrendingUp className="w-5 h-5 text-white" />
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-white">R-Multiple Analysis</h3>
+            <h3 className="text-lg font-semibold text-app-fg">R-Multiple Analysis</h3>
             <p className="text-sm text-slate-600 dark:text-slate-400">Risk-adjusted returns</p>
           </div>
         </div>
         <div className="mt-4 p-4 bg-amber-500/10 border border-amber-500/30 rounded-lg">
-          <p className="text-sm text-amber-400">R-Multiple requires stop prices to be defined for all trades</p>
+          <p className="text-sm text-app-warning">R-Multiple requires stop prices to be defined for all trades</p>
         </div>
       </div>
     );
@@ -45,18 +45,18 @@ export default function RMultipleAnalysis({ trades }) {
 
   if (tradesWithR.length < 10) {
     return (
-      <div className="rounded-2xl bg-slate-800/50 border border-slate-700/50 backdrop-blur-sm p-6">
+      <div className="rounded-2xl bg-app-raised border border-app-line backdrop-blur-sm p-6">
         <div className="flex items-center gap-3 mb-2">
           <div className="p-2 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600">
             <TrendingUp className="w-5 h-5 text-white" />
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-white">R-Multiple Analysis</h3>
+            <h3 className="text-lg font-semibold text-app-fg">R-Multiple Analysis</h3>
             <p className="text-sm text-slate-600 dark:text-slate-400">Risk-adjusted returns</p>
           </div>
         </div>
         <div className="mt-4 p-4 bg-amber-500/10 border border-amber-500/30 rounded-lg">
-          <p className="text-sm text-amber-400">Need 10+ trades for meaningful R-Multiple analysis ({tradesWithR.length} trades found)</p>
+          <p className="text-sm text-app-warning">Need 10+ trades for meaningful R-Multiple analysis ({tradesWithR.length} trades found)</p>
         </div>
       </div>
     );
@@ -140,8 +140,8 @@ export default function RMultipleAnalysis({ trades }) {
   };
 
   const getAvgRColor = (r) => {
-    if (r >= 1) return "text-emerald-400";
-    if (r >= 0.5) return "text-amber-400";
+    if (r >= 1) return "text-app-positive";
+    if (r >= 0.5) return "text-app-warning";
     return "text-slate-600 dark:text-slate-400";
   };
 
@@ -150,23 +150,23 @@ export default function RMultipleAnalysis({ trades }) {
     const count = payload[0].value;
     const pct = total > 0 ? Math.round((count / total) * 100) : 0;
     return (
-      <div className="bg-slate-900 border border-slate-700 rounded-lg p-3 shadow-xl">
-        <p className="text-sm font-semibold text-white mb-1">{label}</p>
-        <p className="text-sm text-slate-300">{count} trade{count !== 1 ? "s" : ""}</p>
+      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg p-3 shadow-xl">
+        <p className="text-sm font-semibold text-app-fg mb-1">{label}</p>
+        <p className="text-sm text-slate-700 dark:text-slate-300">{count} trade{count !== 1 ? "s" : ""}</p>
         <p className="text-xs text-slate-600 dark:text-slate-400">{pct}% of closed trades</p>
       </div>
     );
   };
 
   return (
-    <div className="rounded-2xl bg-slate-800/50 border border-slate-700/50 backdrop-blur-sm overflow-hidden">
-      <div className="p-6 border-b border-slate-700/50">
+    <div className="rounded-2xl bg-app-raised border border-app-line backdrop-blur-sm overflow-hidden">
+      <div className="p-6 border-b border-app-line">
         <div className="flex items-center gap-3 mb-2">
           <div className="p-2 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600">
             <TrendingUp className="w-5 h-5 text-white" />
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-white">R-Multiple Analysis</h3>
+            <h3 className="text-lg font-semibold text-app-fg">R-Multiple Analysis</h3>
             <p className="text-sm text-slate-600 dark:text-slate-400">Risk-adjusted return distribution</p>
           </div>
         </div>
@@ -206,7 +206,7 @@ export default function RMultipleAnalysis({ trades }) {
           <h4 className="text-sm font-medium text-slate-600 dark:text-slate-400 mb-4">Statistics</h4>
           <div className="grid grid-cols-2 gap-4">
             {/* Average R */}
-            <div className="bg-slate-800/50 rounded-lg p-4 border border-slate-700/30">
+            <div className="bg-app-raised rounded-lg p-4 border border-slate-200 dark:border-slate-700/30">
               <div className={`text-3xl font-bold ${getAvgRColor(avgR)}`}>
                 {formatR(avgR)}
               </div>
@@ -214,40 +214,40 @@ export default function RMultipleAnalysis({ trades }) {
             </div>
 
             {/* Best Trade */}
-            <div className="bg-slate-800/50 rounded-lg p-4 border border-slate-700/30">
-              <div className="text-3xl font-bold text-emerald-400">
+            <div className="bg-app-raised rounded-lg p-4 border border-slate-200 dark:border-slate-700/30">
+              <div className="text-3xl font-bold text-app-positive">
                 {formatR(bestTrade.rMultiple)}
               </div>
               <div className="text-xs text-slate-600 dark:text-slate-400 mt-1">Max R • {bestTrade.ticker}</div>
             </div>
 
             {/* Worst Trade */}
-            <div className="bg-slate-800/50 rounded-lg p-4 border border-slate-700/30">
-              <div className="text-3xl font-bold text-rose-400">
+            <div className="bg-app-raised rounded-lg p-4 border border-slate-200 dark:border-slate-700/30">
+              <div className="text-3xl font-bold text-app-negative">
                 {formatR(worstTrade.rMultiple)}
               </div>
               <div className="text-xs text-slate-600 dark:text-slate-400 mt-1">Max loss • {worstTrade.ticker}</div>
             </div>
 
             {/* Win Rate */}
-            <div className="bg-slate-800/50 rounded-lg p-4 border border-slate-700/30">
-              <div className="text-3xl font-bold text-cyan-400">
+            <div className="bg-app-raised rounded-lg p-4 border border-slate-200 dark:border-slate-700/30">
+              <div className="text-3xl font-bold text-cyan-700 dark:text-cyan-400">
                 {formatPercent(winRate, { dp: 0 })}
               </div>
               <div className="text-xs text-slate-600 dark:text-slate-400 mt-1">Profitable trades</div>
             </div>
 
             {/* Avg Winner */}
-            <div className="bg-slate-800/50 rounded-lg p-4 border border-slate-700/30">
-              <div className="text-3xl font-bold text-emerald-400">
+            <div className="bg-app-raised rounded-lg p-4 border border-slate-200 dark:border-slate-700/30">
+              <div className="text-3xl font-bold text-app-positive">
                 {formatR(avgWinner)}
               </div>
               <div className="text-xs text-slate-600 dark:text-slate-400 mt-1">When profitable</div>
             </div>
 
             {/* Avg Loser */}
-            <div className="bg-slate-800/50 rounded-lg p-4 border border-slate-700/30">
-              <div className="text-3xl font-bold text-rose-400">
+            <div className="bg-app-raised rounded-lg p-4 border border-slate-200 dark:border-slate-700/30">
+              <div className="text-3xl font-bold text-app-negative">
                 {formatR(avgLoser)}
               </div>
               <div className="text-xs text-slate-600 dark:text-slate-400 mt-1">When stopped</div>
@@ -258,13 +258,13 @@ export default function RMultipleAnalysis({ trades }) {
 
       {/* R-Multiple by Tag */}
       {tagData.length > 0 && (
-        <div className="border-t border-slate-700/50">
+        <div className="border-t border-app-line">
           <button
             onClick={() => setExpandedTags(!expandedTags)}
-            className="w-full p-4 flex items-center justify-between hover:bg-slate-800/30 transition-colors"
+            className="w-full p-4 flex items-center justify-between hover:bg-slate-100 dark:hover:bg-slate-800/30 transition-colors"
           >
-            <span className="text-sm font-medium text-slate-300">R-Multiple by Tag</span>
-            {expandedTags ? <ChevronUp className="w-4 h-4 text-slate-400" /> : <ChevronDown className="w-4 h-4 text-slate-400" />}
+            <span className="text-sm font-medium text-slate-700 dark:text-slate-300">R-Multiple by Tag</span>
+            {expandedTags ? <ChevronUp className="w-4 h-4 text-app-muted" /> : <ChevronDown className="w-4 h-4 text-app-muted" />}
           </button>
           
           {expandedTags && (
@@ -274,11 +274,11 @@ export default function RMultipleAnalysis({ trades }) {
                   on small screens" spec, missing here (4 sibling table
                   components already had it). */}
               <table className="w-full">
-                <thead className="bg-slate-800/50">
+                <thead className="bg-app-raised">
                   <tr>
                     <th className="px-4 py-3 text-left text-xs font-medium text-slate-600 dark:text-slate-400 uppercase">Tag</th>
                     <th 
-                      className="px-4 py-3 text-right text-xs font-medium text-slate-600 dark:text-slate-400 uppercase cursor-pointer hover:text-slate-300"
+                      className="px-4 py-3 text-right text-xs font-medium text-slate-600 dark:text-slate-400 uppercase cursor-pointer hover:text-slate-700 dark:hover:text-slate-300"
                       onClick={() => handleTagSort("avgR")}
                     >
                       <div className="flex items-center justify-end gap-1">
@@ -287,7 +287,7 @@ export default function RMultipleAnalysis({ trades }) {
                       </div>
                     </th>
                     <th 
-                      className="px-4 py-3 text-right text-xs font-medium text-slate-600 dark:text-slate-400 uppercase cursor-pointer hover:text-slate-300"
+                      className="px-4 py-3 text-right text-xs font-medium text-slate-600 dark:text-slate-400 uppercase cursor-pointer hover:text-slate-700 dark:hover:text-slate-300"
                       onClick={() => handleTagSort("count")}
                     >
                       <div className="flex items-center justify-end gap-1">
@@ -296,7 +296,7 @@ export default function RMultipleAnalysis({ trades }) {
                       </div>
                     </th>
                     <th 
-                      className="px-4 py-3 text-right text-xs font-medium text-slate-600 dark:text-slate-400 uppercase cursor-pointer hover:text-slate-300"
+                      className="px-4 py-3 text-right text-xs font-medium text-slate-600 dark:text-slate-400 uppercase cursor-pointer hover:text-slate-700 dark:hover:text-slate-300"
                       onClick={() => handleTagSort("winRate")}
                     >
                       <div className="flex items-center justify-end gap-1">
@@ -306,21 +306,21 @@ export default function RMultipleAnalysis({ trades }) {
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-700/30">
+                <tbody className="divide-y divide-slate-200 dark:divide-slate-700/30">
                   {sortedTagData.map((item, idx) => (
-                    <tr key={idx} className="hover:bg-slate-800/20">
+                    <tr key={idx} className="hover:bg-slate-100 dark:hover:bg-slate-800/20">
                       <td className="px-4 py-3">
-                        <Badge className="bg-violet-500/20 text-violet-300 border-violet-500/30">
+                        <Badge className="bg-violet-500/20 text-violet-800 dark:text-violet-300 border-violet-500/30">
                           {item.tag}
                         </Badge>
                       </td>
                       <td className={`px-4 py-3 text-right text-sm font-medium ${getAvgRColor(item.avgR)}`}>
                         {formatR(item.avgR)}
                       </td>
-                      <td className="px-4 py-3 text-right text-sm text-slate-300">
+                      <td className="px-4 py-3 text-right text-sm text-slate-700 dark:text-slate-300">
                         {item.count}
                       </td>
-                      <td className="px-4 py-3 text-right text-sm text-slate-300">
+                      <td className="px-4 py-3 text-right text-sm text-slate-700 dark:text-slate-300">
                         {formatPercent(item.winRate, { dp: 0 })}
                       </td>
                     </tr>

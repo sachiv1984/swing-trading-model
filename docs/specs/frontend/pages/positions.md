@@ -3,8 +3,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.28
-**Last Updated:** 2026-11-16 (ST-05, EPIC-02, v9.17, BLG-FE-258 — Journal View removed from Positions: §View Switcher is Grid and Table plus a "Position notes" link to the Journal; §Journal View superseded by `journal.md` §4); prior — 2026-11-13 (ST-19, EPIC-07, v9.17, BLG-SPEC-202 — PROFITABLE and EXIT ZONE tooltips reworded without a number, option (b); option (a) wording removed); prior — 2026-11-12 (ST-04, EPIC-01, v9.17, BLG-FE-257 — §Grace Period Alert Zone is now a "Superseded" stub; §Grace Period View ships); prior history retained — see prior entries in version control
+**Version:** 2.29
+**Last Updated:** 2026-11-17 (ST-08, EPIC-03, v9.17, BLG-FE-265 — §Review Cadence flagged text `text-amber-700 dark:text-amber-400` in table and Grid View; Grid View card themed for the light theme); prior — 2026-11-16 (ST-05, EPIC-02, v9.17, BLG-FE-258 — Journal View removed from Positions: §View Switcher is Grid and Table plus a "Position notes" link to the Journal; §Journal View superseded by `journal.md` §4); prior — 2026-11-13 (ST-19, EPIC-07, v9.17, BLG-SPEC-202 — PROFITABLE and EXIT ZONE tooltips reworded without a number, option (b); option (a) wording removed); prior history retained — see prior entries in version control
 **Design Source (v9.14 additions):** docs/design/2026-10-29__release-v9.14/stale-price-marker/decision_record.md, docs/design/2026-10-29__release-v9.14/monitor-grace-aware-suggestions/decision_record.md, docs/design/2026-10-29__release-v9.14/last-reviewed-ended-grace/decision_record.md
 **Design Source (v9.13 additions):** docs/design/2026-10-16__release-v9.13/monitor-exit-queue/decision_record.md, docs/design/2026-10-16__release-v9.13/chat-answer-rating/decision_record.md
 **Design Source (v9.11 additions):** docs/design/2026-10-08__release-v9.11/grace-alert-calendar-days/decision_record.md
@@ -29,6 +29,7 @@
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.29 | 2026-11-17 | ST-08 (EPIC-03, v9.17, BLG-FE-265), semantic colour token sweep: §Review Cadence "Flagged display" `text-amber-600` → `text-amber-700 dark:text-amber-400` (amber-600 is 3.19:1 on white; the table moved in v9.16 ST-09, and the Grid View card is now themed, so both use it). No behaviour change. |
 | 2.28 | 2026-11-16 | (ST-05, EPIC-02, v9.17, BLG-FE-258, per `journal.md` §2 and §5) The Journal View leaves Positions. §View Switcher: Grid and Table only, plus a "Position notes" header link to `/Journal?section=notes` before the Daily Monitor button; the heading is always "Positions". §Journal View is marked superseded by `journal.md` §4 (its content stays here as the reference that section cites). Keyboard requirements, "Hidden in Journal View" notes, Responsive Behavior, Empty State and API Dependencies no longer name a journal view. |
 | 2.27 | 2026-11-13 | (ST-19, EPIC-07, v9.17, BLG-SPEC-202) §Position Lifecycle State Badge: PROFITABLE and EXIT ZONE tooltips take the design record §7 option (b) wording, which states no R multiple (Strategy Rules & System Intent Owner, RISK-05, 2026-11-12). The option (a) wording and its `{EXIT_ZONE_R_MULTIPLE}` placeholder are removed. No `strategy_rules.md`, constants or lint change. |
 | 2.26 | 2026-11-12 | (ST-04, EPIC-01, v9.17, BLG-FE-257) §Grace Period Alert Zone becomes a "Superseded" stub that points to §Grace Period View (design gate obligation, `decision_record.md` §5). `GracePeriodView` (`src/components/positions/GracePeriodView.js`) ships as the §Warning Strip grace entry's content; the alert cards, Dismiss and the `grace_alert_dismissed_*` keys are removed. No change to §Grace Period View's rules. New Known Deviation DEV-EPIC01-ST04-01: rows with more than 2 days of grace left show no trade plan line, because the alerts endpoint returns only positions with 2 days or fewer (BLG-BE-215). |
@@ -760,7 +761,7 @@ If the position is not in the list (closed, unknown, or filtered out), the param
 | Display (not flagged) | "Reviewed {N}d ago" — `text-slate-500 dark:text-slate-400` (existing secondary-text token, BLG-FE-89) |
 | Display (never reviewed) | "Not yet reviewed" — same styling |
 | Flag threshold | `days_since_review ≥ 14` (default; server-configurable constant, not user-editable this cycle) |
-| Flagged display | Text switches to `text-amber-600 dark:text-amber-400` + small clock icon prefix; label unchanged. Icon + colour only — no separate badge/pill, keeps it visually subordinate to the Alerts column's pill badges |
+| Flagged display | Text switches to `text-amber-700 dark:text-amber-400` (v2.29, ST-08: was `text-amber-600`, 3.19:1 on white) + small clock icon prefix; label unchanged. Icon + colour only — no separate badge/pill, keeps it visually subordinate to the Alerts column's pill badges |
 | `aria-label` | "Position not reviewed in {N} days — consider reviewing" (flagged) / "Last reviewed {N} days ago" (not flagged) |
 
 **Mark Reviewed action:** Small inline checkmark icon-button next to the text (not a full Actions-column button). Click → `PATCH /positions/{id}/mark-reviewed` (sets `last_reviewed_at = now()` server-side) → text resets to "Reviewed 0d ago", flagged state clears immediately (optimistic update). No confirmation modal.

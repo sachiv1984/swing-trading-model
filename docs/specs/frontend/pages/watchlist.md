@@ -1,8 +1,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 0.9
-**Last Updated:** 2026-09-28 (v9.8 design gate — ST-02/BLG-FE-185: new §Column Definition Architecture note — `WATCHLIST_COLUMNS` is the single source for header, body cell and CSV value; no visual change); prior — 2026-09-21 (v9.6 design gate — ST-03/BLG-FEAT-97: new §CSV Export, Page Header action group updated); prior — 2026-09-18 (ST-30, EPIC-04, v9.5, BLG-SPEC-143 — corrected "Your watchlist is empty." heading to drop the trailing period, matching already-shipped `Watchlist.js`; documentation-only); prior history retained — see prior entries in version control.
+**Version:** 0.10
+**Last Updated:** 2026-11-17 (ST-08, EPIC-03, v9.17, BLG-FE-265 — stale "no action" text `text-amber-700 dark:text-amber-400`; the watchlist card is themed for the light theme); prior — 2026-09-28 (v9.8 design gate — ST-02/BLG-FE-185: new §Column Definition Architecture note — `WATCHLIST_COLUMNS` is the single source for header, body cell and CSV value; no visual change); prior — 2026-09-21 (v9.6 design gate — ST-03/BLG-FEAT-97: new §CSV Export, Page Header action group updated); prior history retained — see prior entries in version control.
 **Design Source (v0.9 column architecture):** docs/design/2026-09-28__release-v9.8/screener-watchlist-shared-column-definitions/decision_record.md
 **Design Source (v0.8 CSV export):** docs/design/2026-09-21__release-v9.6/screener-watchlist-csv-export/decision_record.md
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
@@ -204,7 +204,7 @@ On removal (via Remove or Add to Position): row slides out or fades out before t
 | Condition | Display | Style |
 |-----------|---------|-------|
 | Not stale (`days_on_watchlist < 30`) | `"{N}d"` | `text-slate-500 dark:text-slate-400` (existing secondary-text token) |
-| Stale (`days_on_watchlist ≥ 30`) | `"{N}d, no action"` + clock icon prefix | `text-amber-600 dark:text-amber-400` |
+| Stale (`days_on_watchlist ≥ 30`) | `"{N}d, no action"` + clock icon prefix | `text-amber-700 dark:text-amber-400` (v0.10, ST-08: was `text-amber-600`, 3.19:1 on white) |
 
 `aria-label`: `"On watchlist {N} days with no action — consider Keep or Remove"` (stale) / `"Added {N} days ago"` (not stale).
 
@@ -297,6 +297,7 @@ A secondary (outline) **"Download CSV"** button with the download icon — same 
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.10 | 2026-11-17 | ST-08 (EPIC-03, v9.17, BLG-FE-265), semantic colour token sweep: §Added column stale style `text-amber-600` → `text-amber-700 dark:text-amber-400` (amber-600 is 3.19:1 on white). The watchlist card is now white in the light theme (it was dark in both themes since v9.16 review pass 4). |
 | 0.9 | 2026-09-28 | v9.8 design gate — ST-02 (EPIC-01, BLG-FE-185): added §Column Definition Architecture — `WATCHLIST_COLUMNS` documented as the single source for header, body cell and CSV value. No visual change. Design source: `docs/design/2026-09-28__release-v9.8/screener-watchlist-shared-column-definitions/decision_record.md`. Authority: Head of Specs Team. |
 | 0.8 | 2026-09-21 | v9.6 design gate — ST-03 (EPIC-01, BLG-FEAT-97): added §CSV Export and updated the Page Header action group — "Download CSV" button; exports displayed rows and the `TABLE_HEADERS` columns excluding checkbox/Actions; machine-readable values; UTF-8/RFC 4180, dated filename, formula-injection guard; disabled when empty. **Note:** no row for 0.7 (the v9.5 ST-30 heading fix) was appended to this table — recoverable via version control. Authority: Head of Specs Team. |
 | 0.6 | 2026-07-27 | ST-01 (BLG-FEAT-66, EPIC-01, v7.9) implementation: corrected the §Watchlist Table "Added" column placement (design said "after Research, before Target Entry"; the shipped table's actual column order has Research much later — placed after Entry Signal instead, honouring the design's stated signal/status-metadata-first rationale). `added_at` is an API-level alias for the existing `created_at` column, not a new column — no `data_model.md` change. `PATCH /watchlist/{id}` `added_at` is a server-authoritative reset trigger, never a client-supplied timestamp. Contract: `watchlist_endpoints.md` v1.2. |

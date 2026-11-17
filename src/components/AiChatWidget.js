@@ -7,11 +7,12 @@ import AiDisclaimer from './shared/AiDisclaimer';
 
 // ST-22 (EPIC-03, v9.13, BLG-FE-208): useful / not-useful rating under each
 // model answer. Design: docs/design/2026-10-16__release-v9.13/chat-answer-rating/decision_record.md
-// (positions.md §AI Trade Advisor Widget §Answer Rating). The panel is a fixed
-// dark surface in both themes, so single dark tokens apply.
+// (positions.md §AI Trade Advisor Widget §Answer Rating). The panel follows the
+// theme since ST-08 (v9.17, BLG-FE-303), so the rating colours use the app-*
+// tokens and light/dark pairs.
 const RATING_OPTIONS = [
-  { value: 'useful', label: 'Useful', Icon: ThumbsUp, testId: 'chat-rating-useful', selected: 'text-emerald-400' },
-  { value: 'not_useful', label: 'Not useful', Icon: ThumbsDown, testId: 'chat-rating-not-useful', selected: 'text-rose-400' },
+  { value: 'useful', label: 'Useful', Icon: ThumbsUp, testId: 'chat-rating-useful', selected: 'text-app-positive' },
+  { value: 'not_useful', label: 'Not useful', Icon: ThumbsDown, testId: 'chat-rating-not-useful', selected: 'text-app-negative' },
 ];
 
 function AnswerRating({ msg, onRate }) {
@@ -29,7 +30,7 @@ function AnswerRating({ msg, onRate }) {
               disabled={locked}
               onClick={() => onRate(value)}
               className={`flex items-center gap-1 text-xs ${
-                isSelected ? selected : `text-slate-400${locked ? '' : ' hover:text-slate-200'}`
+                isSelected ? selected : `text-slate-600 dark:text-slate-400${locked ? '' : ' hover:text-slate-800 dark:hover:text-slate-200'}`
               } disabled:cursor-default`}
               data-testid={testId}
             >
@@ -39,11 +40,11 @@ function AnswerRating({ msg, onRate }) {
           );
         })}
         {msg.thanks && (
-          <span className="text-xs text-slate-400" data-testid="chat-rating-thanks">Thanks — recorded.</span>
+          <span className="text-xs text-app-muted" data-testid="chat-rating-thanks">Thanks — recorded.</span>
         )}
       </div>
       {msg.ratingState === 'failed' && (
-        <p className="text-xs text-rose-400 mt-1" role="status" data-testid="chat-rating-error">
+        <p className="text-xs text-app-negative mt-1" role="status" data-testid="chat-rating-error">
           Couldn't save your rating. Try again.
         </p>
       )}
@@ -127,22 +128,23 @@ export default function AiChatWidget() {
       {open ? (
         /* Expanded panel */
         <div
-          className="flex flex-col rounded-xl border border-slate-700 bg-slate-900 shadow-2xl"
+          className="flex flex-col rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-2xl"
           style={{ width: 350, height: 480 }}
           data-testid="ai-chat-panel"
         >
           {/* Header */}
-          <div className="flex items-center justify-between px-4 py-3 border-b border-slate-700">
+          <div className="flex items-center justify-between px-4 py-3 border-b border-slate-200 dark:border-slate-700">
             <div className="flex items-center gap-2">
-              <span className="text-sm font-semibold text-white">AI Trade Advisor</span>
+              <span className="text-sm font-semibold text-app-fg">AI Trade Advisor</span>
               <span className="text-xs font-bold px-1.5 py-0.5 rounded bg-amber-700 text-white">
                 Advisory
               </span>
             </div>
             <button
               onClick={handleClose}
-              className="text-slate-600 dark:text-slate-400 hover:text-white"
+              className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
               data-testid="ai-chat-close"
+              aria-label="Close AI Trade Advisor"
             >
               <X className="w-4 h-4" />
             </button>
@@ -166,7 +168,7 @@ export default function AiChatWidget() {
                     className={`rounded-lg px-3 py-2 text-sm ${
                       msg.role === 'user'
                         ? 'bg-blue-700 text-white'
-                        : 'bg-slate-700 text-slate-200'
+                        : 'bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200'
                     }`}
                     data-testid={msg.role === 'ai' ? 'ai-chat-answer' : undefined}
                   >
@@ -181,7 +183,7 @@ export default function AiChatWidget() {
 
             {loading && (
               <div className="flex justify-start" data-testid="ai-chat-loading">
-                <div className="bg-slate-700 rounded-lg px-3 py-2">
+                <div className="bg-slate-200 dark:bg-slate-700 rounded-lg px-3 py-2">
                   <span className="flex gap-1 items-center text-slate-600 dark:text-slate-400 text-xs">
                     <span className="animate-bounce" style={{ animationDelay: '0ms' }}>•</span>
                     <span className="animate-bounce" style={{ animationDelay: '150ms' }}>•</span>
@@ -193,7 +195,7 @@ export default function AiChatWidget() {
 
             {error && (
               <div className="flex justify-start" data-testid="ai-chat-error">
-                <div className="bg-rose-900/40 border border-rose-700/50 rounded-lg px-3 py-2 text-sm text-rose-300">
+                <div className="bg-rose-50 dark:bg-rose-900/40 border border-rose-200 dark:border-rose-700/50 rounded-lg px-3 py-2 text-sm text-rose-800 dark:text-rose-300">
                   {error}
                 </div>
               </div>
@@ -205,7 +207,7 @@ export default function AiChatWidget() {
           {/* Input */}
           <form
             onSubmit={handleSubmit}
-            className="flex items-center gap-2 px-3 py-2 border-t border-slate-700"
+            className="flex items-center gap-2 px-3 py-2 border-t border-slate-200 dark:border-slate-700"
           >
             <input
               type="text"
@@ -213,7 +215,7 @@ export default function AiChatWidget() {
               onChange={e => setInput(e.target.value)}
               disabled={loading}
               placeholder="Ask about your portfolio…"
-              className="flex-1 bg-slate-800 border border-slate-600 rounded-md px-3 py-1.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 disabled:opacity-50"
+              className="flex-1 bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-md px-3 py-1.5 text-sm text-app-fg placeholder:text-slate-600 dark:placeholder:text-slate-400 focus:outline-none focus:border-blue-500 disabled:opacity-50"
               data-testid="ai-chat-input"
             />
             <button
@@ -221,6 +223,7 @@ export default function AiChatWidget() {
               disabled={loading || !input.trim()}
               className="p-1.5 rounded-md bg-blue-700 hover:bg-blue-600 text-white disabled:opacity-50 disabled:cursor-not-allowed"
               data-testid="ai-chat-submit"
+              aria-label="Send question"
             >
               <Send className="w-4 h-4" />
             </button>

@@ -130,9 +130,9 @@ export default function UnderwaterChart({ trades }) {
     if (active && payload && payload[0]) {
       const d = payload[0].payload;
       return (
-        <div className="bg-slate-900 border border-slate-700 rounded-lg p-3 shadow-xl">
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg p-3 shadow-xl">
           <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">{new Date(d.date).toLocaleDateString()}</p>
-          <p className="text-sm font-semibold text-rose-400">{formatPercent(d.drawdown, { dp: 2 })}</p>
+          <p className="text-sm font-semibold text-app-negative">{formatPercent(d.drawdown, { dp: 2 })}</p>
           <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">Current: {formatCurrency(d.equity)}</p>
           <p className="text-xs text-slate-600 dark:text-slate-400">Peak: {formatCurrency(d.peak)}</p>
         </div>
@@ -159,15 +159,15 @@ export default function UnderwaterChart({ trades }) {
   const hasData = data.length > 2;
 
   return (
-    <div className="rounded-2xl bg-slate-800/50 border border-slate-700/50 backdrop-blur-sm overflow-hidden">
-      <div className="p-6 border-b border-slate-700/50">
+    <div className="rounded-2xl bg-app-raised border border-app-line backdrop-blur-sm overflow-hidden">
+      <div className="p-6 border-b border-app-line">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="p-2 rounded-lg bg-gradient-to-br from-rose-500 to-red-600">
               <TrendingDown className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-white">Underwater Equity Curve</h3>
+              <h3 className="text-lg font-semibold text-app-fg">Underwater Equity Curve</h3>
               <p className="text-sm text-slate-600 dark:text-slate-400">% Below Peak Equity</p>
             </div>
           </div>
@@ -175,14 +175,14 @@ export default function UnderwaterChart({ trades }) {
             <div className="flex items-center gap-1">
               <button
                 onClick={() => applyZoom(1)}
-                className="p-1.5 rounded-lg text-slate-600 dark:text-slate-400 hover:text-white hover:bg-slate-700/50 transition-colors"
+                className="p-1.5 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-700/50 transition-colors"
                 title="Zoom in"
               >
                 <ZoomIn className="w-4 h-4" />
               </button>
               <button
                 onClick={() => applyZoom(-1)}
-                className="p-1.5 rounded-lg text-slate-600 dark:text-slate-400 hover:text-white hover:bg-slate-700/50 transition-colors"
+                className="p-1.5 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-700/50 transition-colors"
                 title="Zoom out"
               >
                 <ZoomOut className="w-4 h-4" />
@@ -190,7 +190,7 @@ export default function UnderwaterChart({ trades }) {
               {isZoomed && (
                 <button
                   onClick={() => setZoomRange(null)}
-                  className="px-2 py-1 rounded-lg text-xs text-slate-300 hover:text-white bg-slate-700/50 hover:bg-slate-700 transition-colors flex items-center gap-1"
+                  className="px-2 py-1 rounded-lg text-xs text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white bg-slate-100 dark:bg-slate-700/50 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors flex items-center gap-1"
                   title="Reset zoom"
                 >
                   <RotateCcw className="w-3 h-3" />

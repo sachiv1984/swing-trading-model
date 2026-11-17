@@ -58,10 +58,10 @@ export default function ProspectiveHeatPanel({ currentHeat }) {
     : null;
 
   const heatThreshold = (pct) => {
-    if (pct >= 30) return { label: "Extreme", color: "text-rose-400 bg-rose-500/20 border-rose-500/40" };
-    if (pct >= 20) return { label: "High",    color: "text-orange-400 bg-orange-500/20 border-orange-500/40" };
-    if (pct >= 10) return { label: "Moderate", color: "text-amber-400 bg-amber-500/20 border-amber-500/40" };
-    return             { label: "Low",        color: "text-emerald-400 bg-emerald-500/20 border-emerald-500/40" };
+    if (pct >= 30) return { label: "Extreme", color: "text-rose-800 dark:text-rose-400 bg-rose-500/20 border-rose-500/40" };
+    if (pct >= 20) return { label: "High",    color: "text-orange-800 dark:text-orange-400 bg-orange-500/20 border-orange-500/40" };
+    if (pct >= 10) return { label: "Moderate", color: "text-amber-800 dark:text-amber-400 bg-amber-500/20 border-amber-500/40" };
+    return             { label: "Low",        color: "text-emerald-800 dark:text-emerald-400 bg-emerald-500/20 border-emerald-500/40" };
   };
   const threshold = result?.projected_heat_percent != null ? heatThreshold(result.projected_heat_percent) : null;
 
@@ -81,7 +81,7 @@ export default function ProspectiveHeatPanel({ currentHeat }) {
           setForm((f) => ({ ...f, [id]: val }));
           setErrors((ev) => { const n = { ...ev }; delete n[id]; return n; });
         }}
-        className={cn("bg-slate-900/50 border-slate-700 text-slate-200 text-sm h-9",
+        className={cn("bg-slate-50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 text-sm h-9",
           errors[id] && "border-rose-500/70")}
       />
       {errors[id] && <p className="text-xs text-rose-700 dark:text-rose-400">{errors[id]}</p>}
@@ -89,22 +89,22 @@ export default function ProspectiveHeatPanel({ currentHeat }) {
   );
 
   return (
-    <div className="rounded-2xl bg-gradient-to-br from-slate-800/50 to-slate-900/50 border border-slate-700/50 backdrop-blur-sm overflow-hidden">
+    <div className="rounded-2xl bg-white dark:bg-gradient-to-br dark:from-slate-800/50 dark:to-slate-900/50 border border-app-line backdrop-blur-sm overflow-hidden">
       <button
         onClick={() => setOpen((o) => !o)}
-        className="w-full flex items-center gap-3 p-5 hover:bg-slate-800/30 transition-colors text-left"
+        className="w-full flex items-center gap-3 p-5 hover:bg-slate-100 dark:hover:bg-slate-800/30 transition-colors text-left"
       >
         <div className="p-2 rounded-lg bg-gradient-to-br from-cyan-500/30 to-violet-500/30">
-          <Zap className="w-5 h-5 text-cyan-400" />
+          <Zap className="w-5 h-5 text-cyan-700 dark:text-cyan-400" />
         </div>
-        <span className="text-sm font-medium text-slate-300">Prospective Heat Calculator</span>
+        <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Prospective Heat Calculator</span>
         <span className="ml-auto">
-          {open ? <ChevronDown className="w-4 h-4 text-slate-400" /> : <ChevronRight className="w-4 h-4 text-slate-400" />}
+          {open ? <ChevronDown className="w-4 h-4 text-app-muted" /> : <ChevronRight className="w-4 h-4 text-app-muted" />}
         </span>
       </button>
 
       {open && (
-        <div className="px-5 pb-5 border-t border-slate-700/30">
+        <div className="px-5 pb-5 border-t border-slate-200 dark:border-slate-700/30">
           <form onSubmit={handleSubmit} className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-4">
             {field("ticker", "Ticker", "e.g. AAPL")}
             {field("shares", "Shares", "100", "number")}
@@ -126,7 +126,7 @@ export default function ProspectiveHeatPanel({ currentHeat }) {
                   <div>
                     <span className="text-slate-600 dark:text-slate-400 text-xs">Projected Heat</span>
                     <div className="flex items-center gap-2">
-                      <p className="font-bold text-white">{formatPercent(result.projected_heat_percent)}</p>
+                      <p className="font-bold text-app-fg">{formatPercent(result.projected_heat_percent)}</p>
                       {threshold && (
                         <span className={`text-xs px-2 py-0.5 rounded-full border font-medium ${threshold.color}`}>
                           {threshold.label}
@@ -137,7 +137,7 @@ export default function ProspectiveHeatPanel({ currentHeat }) {
                   {delta !== null && (
                     <div>
                       <span className="text-slate-600 dark:text-slate-400 text-xs">Delta</span>
-                      <p className={cn("font-bold", delta > 0 ? "text-rose-400" : "text-emerald-400")}>
+                      <p className={cn("font-bold", delta > 0 ? "text-app-negative" : "text-app-positive")}>
                         {formatPercent(delta, { signed: true })}
                       </p>
                     </div>

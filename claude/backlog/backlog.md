@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-16 (session — 5 new items added: BLG-FE-300, BLG-FE-301, BLG-FE-302, BLG-QA-266, BLG-BE-222; PR #2261 agent-mediated review, EPIC-02, v9.17); prior — 2026-11-16 (session — 1 new item added: BLG-FE-299; ST-06, EPIC-02, v9.17); prior — 2026-11-16 (session — 1 new item added: BLG-BE-221; EPIC-05 post-merge production startup log, v9.17); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-17 (session — 2 new items added: BLG-FE-306, BLG-FE-307; PR #2262 Head of UX & Design review, EPIC-03, v9.17); prior — 2026-11-17 (session — 5 new items added: BLG-FE-303, BLG-OPS-220, BLG-QA-267, BLG-FE-304, BLG-FE-305; PR #2262 agent-mediated review, EPIC-03, v9.17); prior — 2026-11-16 (session — 5 new items added: BLG-FE-300, BLG-FE-301, BLG-FE-302, BLG-QA-266, BLG-BE-222; PR #2261 agent-mediated review, EPIC-02, v9.17); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -7233,5 +7233,157 @@ At startup, `main.py` runs three functions that each drop and re-add `signals_st
 **Acceptance Criteria**
 - Running the three functions in startup order against a real Postgres (CI Phase B) with rows in every status raises no error, and the constraint allows the full status list afterwards (pytest)
 - The next production startup log has no `signals_status_check` error line (post-merge, recorded in the QA evidence)
+
+---
+
+### BLG-FE-303 — Theme the components still dark-only in populated states of routed pages
+**✅ COMPLETE — 2026-11-17, `2026-11-11__release-v9.17`, found during ST-08's PR #2262 review, resolved in-sprint on EPIC-03 in `7b4e7736`** (user direction 2026-11-17, option (a); the six components and their shared children on tokens or pairs; each state scanned in light and dark; swept-list entries added to `tests/test_page_colour_tokens.py`; CI 44090887930).
+**Priority:** P2 (Medium)
+**Type:** Frontend / design system [U]
+**Owner:** Frontend Specifications & UX Documentation Owner; Head of Engineering
+**Source:** PR #2262 agent-mediated Director of Quality review (EPIC-03 / ST-08, `2026-11-11__release-v9.17`) — 2026-11-17
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+**Depends on:** `BLG-FE-265` (v9.17 ST-08, page sweep)
+
+**Problem**
+ST-08's light-theme axe scans cover every routed page in a populated default state, but several components that render in normal states of those pages were never reached and are still dark-only. The What-if sizing panel on Trade Plan (shown whenever the stop is a positive number) labels in `text-slate-300` on `bg-slate-800/30` over a white card, about 1.2:1. The same applies to the Setup Thesis Digest on Trade Entry (linked plan), the AI spend trend chart on Settings (with spend data), the Manage Cash modal (every page, from the sidebar), the Daily Monitor modal on Positions and the open Advisor chat on Positions and Signals. These fall inside the RISK-02 boundary ("any component that fails axe color-contrast on a routed page in the light theme") that ST-08 was scoped to.
+
+**Scope**
+- Move `WhatIfSizingPreview`, `SetupThesisDigestPanel`, `AiSpendTrendChart`, `CashManagementModal`, `MonitorModal` and `AiChatWidget` onto the `app-*` tokens or light/dark pairs (`design_system.md` §Page Colour Token Sweep mapping and rules)
+- Add each of these states to the light and dark ST-08 blocks in `tests/e2e/accessibility-axe-scan.spec.js`, with populated fixtures built from each component's writer
+- Add the files to `tests/test_page_colour_tokens.py`'s swept list
+
+**Acceptance Criteria**
+- axe `color-contrast` passes in the light and dark themes with each of the six components rendered and populated, with no baseline entry
+- `tests/test_page_colour_tokens.py` passes with the six files in its swept list
+- Dark-theme values are unchanged (dark axe scans pass; class mapping keeps each dark value)
+
+---
+
+### BLG-OPS-220 — Let the visual-baseline workflow push regenerated snapshots
+**Priority:** P3 (Low)
+**Type:** Operations / CI
+**Owner:** Infrastructure & Operations Owner
+**Source:** PR #2262 agent-mediated Director of Quality review (EPIC-03 / ST-08, `2026-11-11__release-v9.17`) — 2026-11-17
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`Update Visual Snapshot Baselines` (`.github/workflows/update-visual-snapshots.yml`) regenerates the baselines but its final `git push` fails with 403 because the workflow's `GITHUB_TOKEN` has no write permission (run 44073342137). The run is reported as failed, and the regenerated PNGs have to be downloaded from the `updated-visual-snapshots` artifact and committed by hand, as ST-08 did in `022f62a6`.
+
+**Scope**
+- Give the job `permissions: contents: write` (or document the repository setting it needs)
+- Confirm the commit message it creates passes `.githooks`/`quality_gate.yml` on `exec/**` branches
+
+**Acceptance Criteria**
+- A `workflow_dispatch` run on an `exec/**` branch with changed baselines pushes its commit and concludes `success`
+- The workflow header comment states the permission it relies on
+
+---
+
+### BLG-QA-267 — Make the page colour token check read JSX class names, not single-line strings
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** QA & Testing Owner
+**Source:** PR #2262 agent-mediated Director of Quality review (EPIC-03 / ST-08, `2026-11-11__release-v9.17`) — 2026-11-17
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+`tests/test_page_colour_tokens.py` enforces ST-08's "no bare `text-white` outside coloured fills" AC by scanning single-line quoted strings and skipping any string containing `${`. A class string split across lines, or a template literal such as `Positions.js:325` (`text-white` on a `stateColours[...]` fill), is never checked, and a quote regex can mis-pair strings around JSX text with apostrophes. The check is a static backstop the design system cites, so its blind spots should be closed or stated in its failure output.
+
+**Scope**
+- Parse `className`/`cn()`/`cva()` arguments with a JS parser (or an existing ESLint plugin), including template-literal quasis and multi-line strings
+- Keep the coloured-fill and paired-class allowances; express the inline-`backgroundColor` and fill-variable allowances explicitly
+
+**Acceptance Criteria**
+- A test fixture with a multi-line class string and a template literal containing a bare `text-white` makes the check fail
+- The check passes on `main` after ST-08 merges, with the same allowances
+
+---
+
+### BLG-FE-304 — Make the themed card surface one shared class or component
+**Priority:** P3 (Low)
+**Type:** Frontend / design system
+**Owner:** Frontend Specifications & UX Documentation Owner; Head of Engineering
+**Source:** ST-08 pre-commit `/code-review` (declined in-story) and PR #2262 agent-mediated review, `2026-11-11__release-v9.17` — 2026-11-17
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+ST-08 themed the gradient card surface by writing `bg-white dark:bg-gradient-to-br dark:from-slate-900 dark:to-slate-800` (with a border pair) into about 22 places in pages and components. The `app-*` tokens cannot express a gradient or an alpha (`design_system.md` §Semantic Colour Tokens rule 2), so there is no single class to change. The next change to the card surface has to find every copy, and any it misses drifts.
+
+**Scope**
+- Add one shared surface (a Tailwind component class, a token pair, or reuse of `DashboardCard`) and record it in `design_system.md`
+- Replace the copies in `src/pages/` and the swept components
+
+**Acceptance Criteria**
+- `grep -rn "dark:bg-gradient-to-br dark:from-slate-900 dark:to-slate-800" src/` returns only the shared definition
+- Light and dark axe scans and visual baselines are unchanged
+
+---
+
+### BLG-FE-305 — Give the calendar's outside-month days a dark-theme colour
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** PR #2262 agent-mediated Director of Quality review, round 2 observation (EPIC-03 / ST-08, `2026-11-11__release-v9.17`) — 2026-11-17
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+On the Trade History calendar (`src/components/trades/CalendarView.js`), days outside the current month keep `text-slate-700` in both themes. In the dark theme that is dark text on the dark card, so the dates are close to invisible. This predates ST-08, and axe does not flag it because the outside days are treated as decorative.
+
+**Scope**
+- Pair the outside-month day colour (for example `text-slate-400 dark:text-slate-500`) so it stays visibly secondary in both themes
+
+**Acceptance Criteria**
+- Outside-month dates are readable but visibly muted in both themes (Playwright asserts the class pair on an outside day)
+- The Trade History calendar axe scans still pass in both themes
+
+---
+
+### BLG-FE-306 — Give resolved Signal cards an AA-safe de-emphasis
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Head of UX & Design; Frontend Specifications & UX Documentation Owner
+**Source:** PR #2262 agent-mediated Head of UX & Design review (EPIC-03 / ST-08, `2026-11-11__release-v9.17`); Product Owner decision to file — 2026-11-17
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+ST-08 removed the opacity fade from Signal cards that are not new, because it took text and badges below WCAG AA in the light theme (`signals.md` v0.10 §Resolved Card States). The status badge now shows each state, but cards are sorted by rank only, so Entered, Already Held and Cannot Size cards sit among new ones at the same visual weight. Users scanning for actionable signals have to read each badge.
+
+**Scope**
+- Decide, with the Product Owner, between a muted card surface for resolved states (AA-safe tokens, no opacity) and listing new and watchlisted cards first within rank (a product behaviour change)
+- Record the choice in `signals.md` §Resolved Card States and build it
+
+**Acceptance Criteria**
+- Resolved cards are visibly secondary to new cards in both themes, with no opacity applied to readable content
+- axe `color-contrast` passes in light and dark with new and resolved cards on the Signals page (`accessibility-axe-scan.spec.js` Signals entries)
+- If ordering changes, a Playwright test asserts the order
+
+---
+
+### BLG-FE-307 — Make the dark-theme Monthly heatmap tiles stand out and show magnitude
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Head of UX & Design; Frontend Specifications & UX Documentation Owner
+**Source:** PR #2262 agent-mediated Head of UX & Design review (EPIC-03 / ST-08, `2026-11-11__release-v9.17`); Product Owner decision to file — 2026-11-17
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+ST-08 moved the Monthly heatmap tile fills to emerald-800/700, slate-600 and rose-700/800 so their white text meets 4.5:1 in both themes (`analytics.md` v2.5 §4). In the dark theme the extreme tiles (emerald-800, rose-800) are about as dark as the neutral slate-600 tile and only about 1.9:1 against the card, below the 3:1 non-text contrast bar, so the largest results recede most and the 700/800 step shows magnitude weakly. The text on each tile still carries the value.
+
+**Scope**
+- Give the dark theme a tile treatment that meets 3:1 against the card and reads larger results as stronger (for example a tile outline, or a dark-specific scale that keeps white text at 4.5:1)
+- Record it in `analytics.md` §4 and `design_system.md` §Page Colour Token Sweep rule 6
+
+**Acceptance Criteria**
+- In the dark theme each tile fill is at least 3:1 against the card, and white tile text stays at least 4.5:1
+- Larger positive and negative months are visibly stronger than smaller ones in both themes
+- Light-theme tiles are unchanged, or any change is recorded with its measured contrast
 
 ---

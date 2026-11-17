@@ -140,7 +140,7 @@ export default function Journal() {
         </TabsList>
 
         <div className="relative w-full sm:max-w-sm">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" aria-hidden="true" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-app-muted" aria-hidden="true" />
           <Input
             data-testid="journal-ticker-filter"
             aria-label="Filter by ticker"

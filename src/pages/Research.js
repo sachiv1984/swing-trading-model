@@ -46,10 +46,10 @@ function currencySymbol(ticker) {
 function SignalBadge({ status }) {
   const cfg =
     {
-      active: { label: "Active", cls: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30" },
-      watch: { label: "Watch", cls: "bg-amber-500/20 text-amber-400 border-amber-500/30" },
-      no_signal: { label: "No Signal", cls: "bg-slate-700/50 text-slate-600 dark:text-slate-400 border-slate-600/30" },
-    }[status] || { label: status ?? "—", cls: "bg-slate-700/50 text-slate-600 dark:text-slate-400 border-slate-600/30" };
+      active: { label: "Active", cls: "bg-emerald-500/20 text-emerald-800 dark:text-emerald-400 border-emerald-500/30" },
+      watch: { label: "Watch", cls: "bg-amber-500/20 text-amber-800 dark:text-amber-400 border-amber-500/30" },
+      no_signal: { label: "No Signal", cls: "bg-slate-100 dark:bg-slate-700/50 text-slate-600 dark:text-slate-400 border-slate-300 dark:border-slate-600/30" },
+    }[status] || { label: status ?? "—", cls: "bg-slate-100 dark:bg-slate-700/50 text-slate-600 dark:text-slate-400 border-slate-300 dark:border-slate-600/30" };
   return (
     <span className={cn("inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border whitespace-nowrap", cfg.cls)}>
       {cfg.label}
@@ -60,12 +60,12 @@ function SignalBadge({ status }) {
 function HeatValue({ value, isError }) {
   if (isError) return <span className="text-slate-600 dark:text-slate-400 text-sm">N/A</span>;
   if (value == null) return <span className="text-slate-600 dark:text-slate-400 text-sm">—</span>;
-  const cls = value > 25 ? "text-red-400" : value >= 15 ? "text-amber-400" : "text-emerald-400";
+  const cls = value > 25 ? "text-red-700 dark:text-red-400" : value >= 15 ? "text-app-warning" : "text-app-positive";
   return <span className={cn("text-xl font-semibold", cls)}>{formatPercent(Number(value))}</span>;
 }
 
 function Skeleton({ className }) {
-  return <div className={cn("h-4 bg-slate-700/50 rounded animate-pulse", className)} />;
+  return <div className={cn("h-4 bg-slate-100 dark:bg-slate-700/50 rounded animate-pulse", className)} />;
 }
 
 // Research landing (ST-01, EPIC-01, v9.16, BLG-FE-250; navigation.md §Page
@@ -182,7 +182,7 @@ export default function Research() {
               variant="ghost"
               size="sm"
               onClick={() => navigate(-1)}
-              className="text-slate-600 dark:text-slate-400 hover:text-white"
+              className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
             >
               <ArrowLeft className="w-4 h-4 mr-1" />
               Back
@@ -190,7 +190,7 @@ export default function Research() {
           }
         />
         <div className="rounded-xl bg-red-500/10 border border-red-500/30 p-8 text-center">
-          <p className="text-red-400 text-sm mb-4">{errorMessage}</p>
+          <p className="text-red-700 dark:text-red-400 text-sm mb-4">{errorMessage}</p>
           <Button
             onClick={() => refetch()}
             className="bg-red-600 hover:bg-red-700 text-white text-xs"
@@ -241,7 +241,7 @@ export default function Research() {
             variant="ghost"
             size="sm"
             onClick={() => navigate(-1)}
-            className="text-slate-600 dark:text-slate-400 hover:text-white"
+            className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
           >
             <ArrowLeft className="w-4 h-4 mr-1" />
             Back
@@ -255,7 +255,7 @@ export default function Research() {
           {r?.market_cap != null && (
             <span className="text-slate-600 dark:text-slate-400">
               Market cap:{" "}
-              <span className="text-slate-200">{formatMarketCap(r.market_cap)}</span>
+              <span className="text-slate-800 dark:text-slate-200">{formatMarketCap(r.market_cap)}</span>
             </span>
           )}
           {r?.updated_at && (
@@ -265,7 +265,7 @@ export default function Research() {
       )}
 
       {/* Price and Signal */}
-      <div className="rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 border border-slate-700/50 p-6">
+      <div className="rounded-2xl bg-white dark:bg-gradient-to-br dark:from-slate-900 dark:to-slate-800 border border-app-line p-6">
         <h2 className="text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-4">
           Price &amp; Signal
         </h2>
@@ -282,7 +282,7 @@ export default function Research() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             <div>
               <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Current Price</p>
-              <p className="text-xl font-semibold text-white">
+              <p className="text-xl font-semibold text-app-fg">
                 {formatCurrency(r?.price, { currency })}
               </p>
             </div>
@@ -294,8 +294,8 @@ export default function Research() {
                   priceChangePct == null
                     ? "text-slate-600 dark:text-slate-400"
                     : priceChangePos
-                    ? "text-emerald-400"
-                    : "text-red-400"
+                    ? "text-app-positive"
+                    : "text-red-700 dark:text-red-400"
                 )}
               >
                 {priceChangePct != null ? (
@@ -318,13 +318,13 @@ export default function Research() {
             </div>
             <div>
               <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Setup Type</p>
-              <p className="text-sm text-slate-200">
+              <p className="text-sm text-slate-800 dark:text-slate-200">
                 {r?.signal?.signal_type ?? "—"}
               </p>
             </div>
             <div>
               <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">ATR (14d)</p>
-              <p className="text-sm text-slate-200">
+              <p className="text-sm text-slate-800 dark:text-slate-200">
                 {formatCurrency(r?.signal?.atr, { currency })}
               </p>
             </div>
@@ -333,7 +333,7 @@ export default function Research() {
       </div>
 
       {/* Prospective Heat */}
-      <div className="rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 border border-slate-700/50 p-6">
+      <div className="rounded-2xl bg-white dark:bg-gradient-to-br dark:from-slate-900 dark:to-slate-800 border border-app-line p-6">
         <h2 className="text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-4">
           Prospective heat at entry
         </h2>
@@ -365,7 +365,7 @@ export default function Research() {
       <SetupQualityScorePanel ticker={ticker} />
 
       {/* Trade Plan Context Panel */}
-      <div className="rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 border border-slate-700/50 p-6">
+      <div className="rounded-2xl bg-white dark:bg-gradient-to-br dark:from-slate-900 dark:to-slate-800 border border-app-line p-6">
         <h2 className="text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-4">
           Trade Plan
         </h2>
@@ -388,7 +388,7 @@ export default function Research() {
               <TradePlanStatusBadge status={activePlan.status} />
               <button
                 onClick={() => navigate(`/TradePlan?edit=${activePlan.id}&ticker=${ticker}`)}
-                className="text-xs text-cyan-400 hover:text-cyan-300 underline"
+                className="text-xs text-cyan-700 dark:text-cyan-400 hover:text-cyan-800 dark:hover:text-cyan-300 underline"
               >
                 View full plan
               </button>
@@ -396,7 +396,7 @@ export default function Research() {
             {activePlan.stop_level != null && (
               <div>
                 <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Stop Level</p>
-                <p className="text-sm text-slate-200">{formatCurrency(activePlan.stop_level, { currency })}</p>
+                <p className="text-sm text-slate-800 dark:text-slate-200">{formatCurrency(activePlan.stop_level, { currency })}</p>
               </div>
             )}
             {activePlan.risk_reward_notes && (
@@ -412,7 +412,7 @@ export default function Research() {
             {activePlan.r_target != null && (
               <div>
                 <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">R Target</p>
-                <p className="text-sm text-slate-200">{activePlan.r_target}R</p>
+                <p className="text-sm text-slate-800 dark:text-slate-200">{activePlan.r_target}R</p>
               </div>
             )}
             {Array.isArray(activePlan.checklist_items) && activePlan.checklist_items.length > 0 && (
@@ -430,7 +430,7 @@ export default function Research() {
       </div>
 
       {/* Recent News */}
-      <div className="rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 border border-slate-700/50 p-6">
+      <div className="rounded-2xl bg-white dark:bg-gradient-to-br dark:from-slate-900 dark:to-slate-800 border border-app-line p-6">
         <h2 className="text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-4">
           Recent News
         </h2>
@@ -445,12 +445,12 @@ export default function Research() {
             {newsHeadlines.slice(0, 5).map((h, i) => (
               <li
                 key={i}
-                className="border-b border-slate-700/30 pb-3 last:border-0 last:pb-0"
+                className="border-b border-slate-200 dark:border-slate-700/30 pb-3 last:border-0 last:pb-0"
               >
                 {h.url ? (
-                  <a href={h.url} target="_blank" rel="noopener noreferrer" className="text-sm text-slate-200 hover:text-blue-400 hover:underline">{h.headline || h.title}</a>
+                  <a href={h.url} target="_blank" rel="noopener noreferrer" className="text-sm text-slate-800 dark:text-slate-200 hover:text-blue-700 dark:hover:text-blue-400 hover:underline">{h.headline || h.title}</a>
                 ) : (
-                  <p className="text-sm text-slate-200">{h.headline || h.title}</p>
+                  <p className="text-sm text-slate-800 dark:text-slate-200">{h.headline || h.title}</p>
                 )}
                 <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">
                   {h.source ? `${h.source} · ` : ""}

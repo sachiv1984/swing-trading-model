@@ -90,27 +90,27 @@ function NewsContextPanel({ ticker, market }) {
   };
 
   return (
-    <div data-testid="news-context-panel" className="rounded-xl border border-slate-700/50 bg-slate-800/30 overflow-hidden">
+    <div data-testid="news-context-panel" className="rounded-xl border border-app-line bg-slate-50 dark:bg-slate-800/30 overflow-hidden">
       <button
         type="button"
         onClick={toggle}
-        className="w-full flex items-center justify-between px-4 py-2.5 text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-700/30 transition-colors"
+        className="w-full flex items-center justify-between px-4 py-2.5 text-sm font-medium text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-700/30 transition-colors"
         data-testid="news-panel-toggle"
       >
         <div className="flex items-center gap-2">
-          <Newspaper size={14} className="text-slate-400" />
+          <Newspaper size={14} className="text-app-muted" />
           <span>News Context</span>
           {headlines.length > 0 && (
             <span className="text-xs text-slate-600 dark:text-slate-400">{headlines.length} headlines</span>
           )}
         </div>
-        {collapsed ? <ChevronDown size={14} className="text-slate-500" /> : <ChevronUp size={14} className="text-slate-500" />}
+        {collapsed ? <ChevronDown size={14} className="text-app-muted" /> : <ChevronUp size={14} className="text-app-muted" />}
       </button>
       {!collapsed && headlines.length > 0 && (
-        <ul className="divide-y divide-slate-700/30 px-4 pb-3" data-testid="news-headline-list">
+        <ul className="divide-y divide-slate-200 dark:divide-slate-700/30 px-4 pb-3" data-testid="news-headline-list">
           {headlines.map((item, i) => (
             <li key={i} className="py-2 space-y-0.5">
-              <p className="text-sm text-slate-200 leading-snug">{item.title || item.headline}</p>
+              <p className="text-sm text-slate-800 dark:text-slate-200 leading-snug">{item.title || item.headline}</p>
               <div className="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-400">
                 {(item.source || item.author) && <span>{item.source || item.author}</span>}
                 <span>{relativeAge(item.created_at || item.updated_at)}</span>
@@ -259,7 +259,7 @@ function PlanSection({ id, hidden = false, children }) {
     <section id={id} hidden={hidden} aria-labelledby={`plan-section-${id}`} className={`space-y-6 ${SECTION_SCROLL_MARGIN}`}>
       <h2
         id={`plan-section-${id}`}
-        className="text-sm font-semibold text-white border-b border-slate-700/50 pb-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500 rounded-sm"
+        className="text-sm font-semibold text-app-fg border-b border-app-line pb-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500 rounded-sm"
       >
         {label}
       </h2>
@@ -283,7 +283,7 @@ function Field({ label, labelId, children }) {
 function TextArea({ value, onChange, placeholder, rows = 3 }) {
   return (
     <textarea
-      className="w-full px-3 py-2 text-sm bg-slate-800 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring resize-none"
+      className="w-full px-3 py-2 text-sm bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-app-fg placeholder-slate-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring resize-none"
       rows={rows}
       value={value}
       onChange={onChange}
@@ -296,7 +296,7 @@ function TextInput({ value, onChange, placeholder, type = "text", ...rest }) {
   return (
     <input
       type={type}
-      className="w-full px-3 py-2 text-sm bg-slate-800 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+      className="w-full px-3 py-2 text-sm bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-app-fg placeholder-slate-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
       value={value}
       onChange={onChange}
       placeholder={placeholder}
@@ -831,7 +831,7 @@ export default function TradePlan() {
                     },
                   })
                 }
-                className="border-emerald-500/40 text-emerald-400 hover:bg-emerald-500/10 hover:text-emerald-300"
+                className="border-emerald-500/40 text-app-positive hover:bg-emerald-500/10 hover:text-emerald-800 dark:hover:text-emerald-300"
               >
                 <Rocket className="w-4 h-4 mr-1" />
                 Start Trade from Plan
@@ -843,7 +843,7 @@ export default function TradePlan() {
                 variant="outline"
                 size="sm"
                 onClick={() => setShowAbandonModal(true)}
-                className="border-amber-500/50 text-amber-400 hover:bg-amber-500/10 hover:text-amber-300"
+                className="border-amber-500/50 text-app-warning hover:bg-amber-500/10 hover:text-amber-800 dark:hover:text-amber-300"
               >
                 <AlertTriangle className="w-4 h-4 mr-1" />
                 Abandon Plan
@@ -856,7 +856,7 @@ export default function TradePlan() {
                 data-testid="clone-plan-btn"
                 aria-label={`Clone ${existingPlan.ticker} plan`}
                 onClick={() => navigate(`/TradePlan?clone_from=${existingPlan.id}`)}
-                className="border-slate-700 text-slate-300 hover:bg-slate-800"
+                className="border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
               >
                 <Copy className="w-4 h-4 mr-1" />
                 Clone
@@ -868,7 +868,7 @@ export default function TradePlan() {
                 size="sm"
                 data-testid="print-export-pdf-btn"
                 onClick={() => window.print()}
-                className="border-slate-700 text-slate-300 hover:bg-slate-800"
+                className="border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
               >
                 <Printer className="w-4 h-4 mr-1" />
                 Print / Export PDF
@@ -878,7 +878,7 @@ export default function TradePlan() {
               variant="ghost"
               size="sm"
               onClick={() => navigate(-1)}
-              className="text-slate-600 dark:text-slate-400 hover:text-white"
+              className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
             >
               <ArrowLeft className="w-4 h-4 mr-1" />
               Back
@@ -888,10 +888,10 @@ export default function TradePlan() {
       />
 
       {positionId && existingByPosition && !editId && (
-        <div className="rounded-xl bg-amber-500/10 border border-amber-500/30 px-4 py-3 text-sm text-amber-300">
+        <div className="rounded-xl bg-amber-500/10 border border-amber-500/30 px-4 py-3 text-sm text-amber-800 dark:text-amber-300">
           An existing trade plan was found for this position.{" "}
           <button
-            className="underline hover:text-amber-200"
+            className="underline hover:text-amber-800 dark:hover:text-amber-200"
             onClick={() =>
               navigate(`/TradePlan?edit=${existingByPosition.id}&position_id=${positionId}&ticker=${form.ticker}&market=${form.market}`)
             }
@@ -902,7 +902,7 @@ export default function TradePlan() {
       )}
 
       {saved && (
-        <div className="rounded-xl bg-emerald-500/10 border border-emerald-500/30 px-4 py-3 text-sm text-emerald-300">
+        <div className="rounded-xl bg-emerald-500/10 border border-emerald-500/30 px-4 py-3 text-sm text-emerald-800 dark:text-emerald-300">
           Trade plan saved successfully.
         </div>
       )}
@@ -922,7 +922,7 @@ export default function TradePlan() {
       )}
 
       {isAbandoned && (existingPlan?.abandonment_reason || form.abandonment_reason) && (
-        <div className="rounded-xl bg-red-500/10 border border-red-500/30 px-4 py-3 text-sm text-red-300">
+        <div className="rounded-xl bg-red-500/10 border border-red-500/30 px-4 py-3 text-sm text-red-800 dark:text-red-300">
           <span className="font-medium">Reason for abandoning: </span>
           {existingPlan?.abandonment_reason || form.abandonment_reason}
         </div>
@@ -930,7 +930,7 @@ export default function TradePlan() {
 
       <div className="space-y-4 lg:space-y-0 lg:grid lg:grid-cols-[minmax(0,1fr)_12rem] lg:gap-6 print:block">
       <SectionIndex sections={planSections} className="lg:order-2" ready={formPopulated} />
-      <div className="lg:order-1 min-w-0 rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 border border-slate-700/50 p-6 space-y-8">
+      <div className="lg:order-1 min-w-0 rounded-2xl bg-white dark:bg-gradient-to-br dark:from-slate-900 dark:to-slate-800 border border-app-line p-6 space-y-8">
 
         <PlanSection id="basics">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -940,7 +940,7 @@ export default function TradePlan() {
           <Field label="Market" labelId="trade-plan-market-label">
             <select
               aria-labelledby="trade-plan-market-label"
-              className="w-full px-3 py-2 text-sm bg-slate-800 border border-slate-700 rounded-lg text-white focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+              className="w-full px-3 py-2 text-sm bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-app-fg focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
               value={form.market}
               onChange={set("market")}
             >
@@ -951,7 +951,7 @@ export default function TradePlan() {
           <Field label="Status" labelId="trade-plan-status-label">
             <select
               aria-labelledby="trade-plan-status-label"
-              className="w-full px-3 py-2 text-sm bg-slate-800 border border-slate-700 rounded-lg text-white focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:opacity-50"
+              className="w-full px-3 py-2 text-sm bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-app-fg focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:opacity-50"
               value={form.status}
               onChange={set("status")}
               disabled={isAbandoned}
@@ -974,7 +974,7 @@ export default function TradePlan() {
             />
           </Field>
           <Field label="Regime at Entry">
-            <div className="px-3 py-2 text-sm bg-slate-800/50 border border-slate-700 rounded-lg text-slate-300 min-h-[38px] flex items-center">
+            <div className="px-3 py-2 text-sm bg-app-raised border border-slate-200 dark:border-slate-700 rounded-lg text-slate-700 dark:text-slate-300 min-h-[38px] flex items-center">
               {form.regime_context_at_entry || regimeFromHealth || <span className="text-slate-600 dark:text-slate-400 italic">loading…</span>}
             </div>
           </Field>
@@ -989,7 +989,7 @@ export default function TradePlan() {
                 {form.trade_tags.map((tag) => (
                   <span
                     key={tag}
-                    className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium bg-cyan-500/20 text-cyan-400 border border-cyan-500/30"
+                    className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium bg-cyan-500/20 text-cyan-800 dark:text-cyan-400 border border-cyan-500/30"
                   >
                     {tag}
                     {!isAbandoned && (
@@ -997,7 +997,7 @@ export default function TradePlan() {
                         type="button"
                         data-testid={`trade-plan-tag-remove-${tag}`}
                         onClick={() => handleRemoveTradeTag(tag)}
-                        className="hover:text-cyan-300 transition-colors"
+                        className="hover:text-cyan-800 dark:hover:text-cyan-300 transition-colors"
                         aria-label={`Remove tag ${tag}`}
                       >
                         <XIcon className="w-3 h-3" />
@@ -1013,7 +1013,7 @@ export default function TradePlan() {
             {!isAbandoned && form.trade_tags.length < TRADE_TAG_MAX_COUNT && (
               <div className="relative">
                 <div className="relative">
-                  <TagIcon className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
+                  <TagIcon className="w-4 h-4 text-app-muted absolute left-3 top-1/2 -translate-y-1/2" />
                   <input
                     data-testid="trade-plan-tag-input"
                     type="text"
@@ -1026,11 +1026,11 @@ export default function TradePlan() {
                     onBlur={() => setTimeout(() => setShowTagSuggestions(false), 200)}
                     onKeyDown={handleTradeTagInputKeyDown}
                     placeholder="Type to add tags…"
-                    className="w-full pl-9 pr-3 py-2 text-sm bg-slate-800 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                    className="w-full pl-9 pr-3 py-2 text-sm bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-app-fg placeholder-slate-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                   />
                 </div>
                 {showTagSuggestions && (
-                  <div className="absolute z-10 mt-1 w-full max-h-40 overflow-y-auto rounded-lg bg-slate-800 border border-slate-700 shadow-lg">
+                  <div className="absolute z-10 mt-1 w-full max-h-40 overflow-y-auto rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-lg">
                     {existingTradeTags
                       .filter((t) => t.toLowerCase().includes(tagInput.toLowerCase()) && !form.trade_tags.includes(t))
                       .map((t) => (
@@ -1038,7 +1038,7 @@ export default function TradePlan() {
                           type="button"
                           key={t}
                           onClick={() => handleAddTradeTag(t)}
-                          className="block w-full text-left px-3 py-2 text-sm text-slate-300 hover:bg-slate-700"
+                          className="block w-full text-left px-3 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700"
                         >
                           {t}
                         </button>
@@ -1058,7 +1058,7 @@ export default function TradePlan() {
           <select
             data-testid="setup-type-select"
             aria-labelledby="trade-plan-setup-type-label"
-            className="w-full px-3 py-2 text-sm bg-slate-800 border border-slate-700 rounded-lg text-white focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+            className="w-full px-3 py-2 text-sm bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-app-fg focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
             value={form.setup_type || ""}
             onChange={(e) => setForm((prev) => ({ ...prev, setup_type: e.target.value || null }))}
           >
@@ -1155,7 +1155,7 @@ export default function TradePlan() {
             <label className="text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide">Setup Thesis</label>
             <div className="flex items-center gap-2">
               {isAiDraft && (
-                <span data-testid="ai-draft-badge" className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs bg-violet-500/20 text-violet-300 border border-violet-500/30">
+                <span data-testid="ai-draft-badge" className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs bg-violet-500/20 text-violet-800 dark:text-violet-300 border border-violet-500/30">
                   <Sparkles size={10} />
                   AI draft
                 </span>
@@ -1185,7 +1185,7 @@ export default function TradePlan() {
                   setIsAiDraft(true);
                   setIsClaudeDraft(false);
                 }}
-                className="flex items-center gap-1 text-xs text-violet-400 hover:text-violet-300 transition-colors"
+                className="flex items-center gap-1 text-xs text-violet-700 dark:text-violet-400 hover:text-violet-800 dark:hover:text-violet-300 transition-colors"
                 title="Generate thesis from setup type and signal data"
               >
                 <Sparkles size={12} />
@@ -1199,7 +1199,7 @@ export default function TradePlan() {
                   type="button"
                   data-testid="improve-with-ai-btn"
                   disabled={isAiLoading}
-                  className="flex items-center gap-1 text-xs text-cyan-400 hover:text-cyan-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex items-center gap-1 text-xs text-cyan-700 dark:text-cyan-400 hover:text-cyan-800 dark:hover:text-cyan-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   onClick={async () => {
                     setIsAiLoading(true);
                     try {
@@ -1279,7 +1279,7 @@ export default function TradePlan() {
                       setTimeout(() => setFeedbackJustGiven(false), 2000);
                     }}
                     className={`flex items-center gap-1 text-xs transition-colors disabled:cursor-not-allowed ${
-                      form.thesis_feedback === "useful" ? "text-emerald-400" : "text-slate-600 dark:text-slate-400 hover:text-slate-600 dark:text-slate-400"
+                      form.thesis_feedback === "useful" ? "text-app-positive" : "text-slate-600 dark:text-slate-400 hover:text-slate-600 dark:hover:text-slate-600 dark:text-slate-400"
                     }`}
                   >
                     <ThumbsUp size={12} />
@@ -1296,7 +1296,7 @@ export default function TradePlan() {
                       setTimeout(() => setFeedbackJustGiven(false), 2000);
                     }}
                     className={`flex items-center gap-1 text-xs transition-colors disabled:cursor-not-allowed ${
-                      form.thesis_feedback === "not_useful" ? "text-rose-400" : "text-slate-600 dark:text-slate-400 hover:text-slate-600 dark:text-slate-400"
+                      form.thesis_feedback === "not_useful" ? "text-app-negative" : "text-slate-600 dark:text-slate-400 hover:text-slate-600 dark:hover:text-slate-600 dark:text-slate-400"
                     }`}
                   >
                     <ThumbsDown size={12} />
@@ -1308,7 +1308,7 @@ export default function TradePlan() {
           )}
           <textarea
             data-testid="setup-thesis-textarea"
-            className="w-full px-3 py-2 text-sm bg-slate-800 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring resize-none"
+            className="w-full px-3 py-2 text-sm bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-app-fg placeholder-slate-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring resize-none"
             rows={3}
             value={form.setup_thesis}
             onChange={setNarrativeField("setup_thesis")}
@@ -1407,7 +1407,7 @@ export default function TradePlan() {
         }}
       >
         <DialogContent
-          className="w-full max-w-md !rounded-2xl bg-slate-900 border border-slate-700 p-6 space-y-4 mx-4"
+          className="w-full max-w-md !rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 p-6 space-y-4 mx-4"
           onCloseAutoFocus={(e) => {
             // Radix's default onCloseAutoFocus focuses context.triggerRef, which is only
             // populated by <DialogTrigger> — this modal is opened via a plain Button (not
@@ -1418,8 +1418,8 @@ export default function TradePlan() {
           }}
         >
           <div className="flex items-center gap-3">
-            <AlertTriangle className="w-5 h-5 text-amber-400 flex-shrink-0" />
-            <DialogTitle className="text-lg font-semibold text-white">
+            <AlertTriangle className="w-5 h-5 text-app-warning flex-shrink-0" />
+            <DialogTitle className="text-lg font-semibold text-app-fg">
               Abandon trade plan for {form.ticker}?
             </DialogTitle>
           </div>
@@ -1428,11 +1428,11 @@ export default function TradePlan() {
           </p>
           <div className="space-y-1">
             <label className="text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide">
-              Reason for abandoning <span className="text-rose-400">*</span>
+              Reason for abandoning <span className="text-app-negative">*</span>
             </label>
             <textarea
               rows={3}
-              className="w-full px-3 py-2 text-sm bg-slate-800 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring resize-none"
+              className="w-full px-3 py-2 text-sm bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-app-fg placeholder-slate-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring resize-none"
               placeholder="Describe why you're abandoning this plan (min 10 characters)"
               value={abandonReason}
               onChange={(e) => setAbandonReason(e.target.value)}

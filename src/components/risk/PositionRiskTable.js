@@ -6,9 +6,9 @@ import StaleMarker, { STALE_EXPLANATION_RISK } from "../ui/StaleMarker";
 const STATUS_ORDER = { GRACE: 0, LOSING: 1, PROFITABLE: 2 };
 
 const statusBadge = {
-  GRACE:      "bg-blue-500/20 text-blue-400 border-blue-500/30",
-  LOSING:     "bg-rose-500/20 text-rose-400 border-rose-500/30",
-  PROFITABLE: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30",
+  GRACE:      "bg-blue-500/20 text-blue-800 dark:text-blue-400 border-blue-500/30",
+  LOSING:     "bg-rose-500/20 text-rose-800 dark:text-rose-400 border-rose-500/30",
+  PROFITABLE: "bg-emerald-500/20 text-emerald-800 dark:text-emerald-400 border-emerald-500/30",
 };
 
 // ST-11 (EPIC-02, v9.11, BLG-FE-206): risk_dashboard.md §6.2a.
@@ -47,16 +47,16 @@ export default function PositionRiskTable({ positions = [], error }) {
 
   if (error) {
     return (
-      <div className="rounded-2xl bg-gradient-to-br from-slate-800/50 to-slate-900/50 border border-slate-700/50 backdrop-blur-sm overflow-hidden">
-        <div className="p-4 border-b border-slate-700/50 flex items-center gap-3">
+      <div className="rounded-2xl bg-white dark:bg-gradient-to-br dark:from-slate-800/50 dark:to-slate-900/50 border border-app-line backdrop-blur-sm overflow-hidden">
+        <div className="p-4 border-b border-app-line flex items-center gap-3">
           <div className="p-2 rounded-lg bg-gradient-to-br from-violet-500/30 to-fuchsia-500/30">
-            <ArrowDown className="w-5 h-5 text-violet-400" />
+            <ArrowDown className="w-5 h-5 text-violet-700 dark:text-violet-400" />
           </div>
-          <h2 className="text-sm font-medium text-slate-300">Position Risk</h2>
+          <h2 className="text-sm font-medium text-slate-700 dark:text-slate-300">Position Risk</h2>
         </div>
         <div className="p-6 flex items-center gap-3 rounded-b-2xl bg-rose-900/10 border-t border-rose-500/20">
-          <AlertCircle className="w-4 h-4 text-rose-400 flex-shrink-0" />
-          <p className="text-sm text-rose-300">Unable to load position data</p>
+          <AlertCircle className="w-4 h-4 text-app-negative flex-shrink-0" />
+          <p className="text-sm text-rose-800 dark:text-rose-300">Unable to load position data</p>
         </div>
       </div>
     );
@@ -64,25 +64,25 @@ export default function PositionRiskTable({ positions = [], error }) {
 
   if (sorted.length === 0) {
     return (
-      <div className="rounded-2xl bg-gradient-to-br from-slate-800/50 to-slate-900/50 border border-slate-700/50 p-8 text-center">
+      <div className="rounded-2xl bg-white dark:bg-gradient-to-br dark:from-slate-800/50 dark:to-slate-900/50 border border-app-line p-8 text-center">
         <p className="text-slate-600 dark:text-slate-400 text-sm">No open positions to display.</p>
       </div>
     );
   }
 
   return (
-    <div className="rounded-2xl bg-gradient-to-br from-slate-800/50 to-slate-900/50 border border-slate-700/50 backdrop-blur-sm overflow-hidden">
-      <div className="p-4 border-b border-slate-700/50 flex items-center gap-3">
+    <div className="rounded-2xl bg-white dark:bg-gradient-to-br dark:from-slate-800/50 dark:to-slate-900/50 border border-app-line backdrop-blur-sm overflow-hidden">
+      <div className="p-4 border-b border-app-line flex items-center gap-3">
         <div className="p-2 rounded-lg bg-gradient-to-br from-violet-500/30 to-fuchsia-500/30">
-          <ArrowDown className="w-5 h-5 text-violet-400" />
+          <ArrowDown className="w-5 h-5 text-violet-700 dark:text-violet-400" />
         </div>
-        <h2 className="text-sm font-medium text-slate-300">Position Risk</h2>
+        <h2 className="text-sm font-medium text-slate-700 dark:text-slate-300">Position Risk</h2>
         <span className="ml-auto text-xs text-slate-600 dark:text-slate-400">{sorted.length} open</span>
       </div>
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-slate-700/30">
+            <tr className="border-b border-slate-200 dark:border-slate-700/30">
               {["Ticker", "State", "Entry (GBP)", "Current (GBP)", "Stop (GBP)", "Stop Dist %", "Held"].map((h) => (
                 <th key={h} className="px-4 py-3 text-left text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wider">
                   {h}
@@ -95,30 +95,30 @@ export default function PositionRiskTable({ positions = [], error }) {
               const dist = pos._stopDist;
               const inGrace = pos.display_status === "GRACE";
               const distColor = dist === null ? "text-slate-600 dark:text-slate-400"
-                : dist <= 5 ? "text-rose-400"
-                : dist <= 15 ? "text-amber-400"
-                : "text-slate-300";
+                : dist <= 5 ? "text-app-negative"
+                : dist <= 15 ? "text-app-warning"
+                : "text-slate-700 dark:text-slate-300";
 
               return (
                 <tr
                   key={pos.id ?? i}
-                  className={cn("border-b border-slate-700/20 hover:bg-slate-800/30 transition-colors", i % 2 === 0 ? "" : "bg-slate-800/10")}
+                  className={cn("border-b border-slate-200 dark:border-slate-700/20 hover:bg-slate-100 dark:hover:bg-slate-800/30 transition-colors", i % 2 === 0 ? "" : "bg-slate-50 dark:bg-slate-800/10")}
                 >
-                  <td className="px-4 py-3 font-semibold text-white">{pos.ticker}</td>
+                  <td className="px-4 py-3 font-semibold text-app-fg">{pos.ticker}</td>
                   <td className="px-4 py-3">
-                    <span className={cn("text-xs px-2.5 py-1 rounded-full border font-medium", statusBadge[pos.display_status] ?? "bg-slate-700 text-slate-300 border-slate-600")}>
+                    <span className={cn("text-xs px-2.5 py-1 rounded-full border font-medium", statusBadge[pos.display_status] ?? "bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-600")}>
                       {pos.display_status ?? "—"}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-slate-300 tabular-nums">
+                  <td className="px-4 py-3 text-slate-700 dark:text-slate-300 tabular-nums">
                     {/* ST-11: GET /portfolio returns entry_price in GBP for every market. */}
                     {pos.entry_price != null ? formatCurrency(pos.entry_price) : "—"}
                   </td>
-                  <td className="px-4 py-3 text-slate-300 tabular-nums">
+                  <td className="px-4 py-3 text-slate-700 dark:text-slate-300 tabular-nums">
                     {pos.current_price != null ? formatCurrency(pos.current_price) : "—"}
                     {pos.price_is_stale === true && <StaleMarker explanation={STALE_EXPLANATION_RISK} />}
                   </td>
-                  <td className="px-4 py-3 text-slate-300 tabular-nums">
+                  <td className="px-4 py-3 text-slate-700 dark:text-slate-300 tabular-nums">
                     {inGrace ? <NotEnforced /> : pos.current_stop ? formatCurrency(pos.current_stop) : "—"}
                   </td>
                   <td className={cn("px-4 py-3 tabular-nums font-medium", inGrace ? "" : distColor)}>

@@ -25,7 +25,7 @@ export default function EmptyStateAction({ to, onClick, variant = "link", disabl
     <Link
       to={to}
       data-testid="empty-state-action"
-      className="text-sm text-cyan-400 hover:text-cyan-300 underline underline-offset-2 transition-colors"
+      className="text-sm text-cyan-700 dark:text-cyan-400 hover:text-cyan-800 dark:hover:text-cyan-300 underline underline-offset-2 transition-colors"
     >
       {children}
     </Link>

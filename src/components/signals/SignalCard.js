@@ -39,44 +39,44 @@ export default function SignalCard({ signal, onAddToWatchlist, onDismiss, isAddi
 
   const rankColors = {
     1: "from-yellow-500/20 to-amber-500/20 border-yellow-500/50 shadow-yellow-500/10",
-    2: "from-slate-300/20 to-slate-400/20 border-slate-400/50 shadow-slate-400/10",
-    3: "from-slate-600/20 to-slate-700/20 border-slate-600/40 shadow-slate-600/10",
-    4: "from-slate-600/20 to-slate-700/20 border-slate-600/40 shadow-slate-600/10",
-    5: "from-slate-600/20 to-slate-700/20 border-slate-600/40 shadow-slate-600/10"
+    2: "dark:from-slate-300/20 dark:to-slate-400/20 border-slate-400/50 shadow-slate-400/10",
+    3: "dark:from-slate-600/20 dark:to-slate-700/20 border-slate-300 dark:border-slate-600/40 shadow-slate-600/10",
+    4: "dark:from-slate-600/20 dark:to-slate-700/20 border-slate-300 dark:border-slate-600/40 shadow-slate-600/10",
+    5: "dark:from-slate-600/20 dark:to-slate-700/20 border-slate-300 dark:border-slate-600/40 shadow-slate-600/10"
   };
 
   const statusConfig = {
     new: {
       label: "New Signal",
-      color: "bg-cyan-500/20 text-cyan-400 border-cyan-500/40"
+      color: "bg-cyan-500/20 text-cyan-800 dark:text-cyan-400 border-cyan-500/40"
     },
     entered: {
       label: "Entered",
-      color: "bg-emerald-500/20 text-emerald-400 border-emerald-500/40",
+      color: "bg-emerald-500/20 text-emerald-800 dark:text-emerald-400 border-emerald-500/40",
       icon: CheckCircle2
     },
     already_held: {
       label: "Already Held",
-      color: "bg-slate-500/20 text-slate-600 dark:text-slate-400 border-slate-500/40",
+      color: "bg-slate-500/20 text-slate-600 dark:text-slate-400 border-slate-300 dark:border-slate-500/40",
       icon: Lock
     },
     dismissed: {
       label: "Dismissed",
-      color: "bg-red-500/20 text-red-400 border-red-500/40",
+      color: "bg-red-500/20 text-red-800 dark:text-red-400 border-red-500/40",
       icon: XCircle
     },
     watchlisted: {
       label: "Added to Watchlist",
-      color: "bg-violet-500/20 text-violet-400 border-violet-500/40",
+      color: "bg-violet-500/20 text-violet-800 dark:text-violet-400 border-violet-500/40",
       icon: BookmarkCheck
     },
     allocation_insufficient: {
       label: "Cannot Size",
-      color: "bg-orange-500/20 text-orange-400 border-orange-500/40"
+      color: "bg-orange-500/20 text-orange-800 dark:text-orange-400 border-orange-500/40"
     },
     exit_rebalance: {
       label: "Month-End Exit",
-      color: "bg-amber-500/20 text-amber-400 border-amber-500/40",
+      color: "bg-amber-500/20 text-amber-800 dark:text-amber-400 border-amber-500/40",
       icon: TrendingDown
     }
   };
@@ -100,8 +100,10 @@ export default function SignalCard({ signal, onAddToWatchlist, onDismiss, isAddi
       transition={{ type: "spring", stiffness: 300, damping: 20 }}
       className={cn(
         "p-5 rounded-2xl border-2 backdrop-blur-sm transition-all",
-        !isNew && !isWatchlisted && !isAllocationInsufficient && "opacity-60",
-        isAllocationInsufficient && "opacity-80 border-orange-500/40",
+        // ST-08 (v9.17): no fade for non-new signals; the status badge marks the
+        // state (the same ruling as Trade Plans abandoned rows: a 60-80% fade
+        // put the card text below WCAG AA in the light theme).
+        isAllocationInsufficient && "border-orange-500/40",
         (isNew || isWatchlisted) && "hover:shadow-2xl",
         `bg-gradient-to-br ${rankColors[signal.rank] || rankColors[5]}`
       )}
@@ -112,14 +114,14 @@ export default function SignalCard({ signal, onAddToWatchlist, onDismiss, isAddi
           <div className={cn(
             "flex items-center justify-center w-12 h-12 rounded-xl font-bold text-lg shadow-lg",
             signal.rank === 1 && "bg-gradient-to-br from-yellow-400 to-amber-500 text-slate-900",
-            signal.rank === 2 && "bg-gradient-to-br from-slate-300 to-slate-400 text-slate-900",
-            signal.rank >= 3 && "bg-slate-700 text-slate-300"
+            signal.rank === 2 && "bg-white dark:bg-gradient-to-br dark:from-slate-300 dark:to-slate-400 text-slate-900",
+            signal.rank >= 3 && "bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300"
           )}>
             {signal.rank === 1 ? <Award className="w-6 h-6" /> : signal.rank}
           </div>
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <h3 className="text-3xl font-bold text-white">{signal.ticker.replace(".L", "")}</h3>
+              <h3 className="text-3xl font-bold text-app-fg">{signal.ticker.replace(".L", "")}</h3>
               <span className="text-2xl">{isUS ? "🇺🇸" : "🇬🇧"}</span>
             </div>
             <p className="text-sm text-slate-600 dark:text-slate-400 font-medium">{signal.market} Market</p>
@@ -133,22 +135,22 @@ export default function SignalCard({ signal, onAddToWatchlist, onDismiss, isAddi
 
       {/* Key Metrics Grid */}
       <div className="grid grid-cols-3 gap-3 mb-4">
-        <div className="p-3 rounded-lg bg-slate-900/40 border border-slate-700/50">
+        <div className="p-3 rounded-lg bg-slate-50 dark:bg-slate-900/40 border border-app-line">
           <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Momentum</p>
           <div className="flex items-center gap-1">
-            <TrendingUp className="w-4 h-4 text-emerald-400" />
-            <p className="text-lg font-bold text-emerald-400">
+            <TrendingUp className="w-4 h-4 text-app-positive" />
+            <p className="text-lg font-bold text-app-positive">
               {formatPercent(signal.momentum_percent, { signed: true })}
             </p>
           </div>
         </div>
-        <div className="p-3 rounded-lg bg-slate-900/40 border border-slate-700/50">
+        <div className="p-3 rounded-lg bg-slate-50 dark:bg-slate-900/40 border border-app-line">
           <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Price</p>
-          <p className="text-lg font-bold text-white">{formatCurrency(signal.current_price, { currency: currencyForMarket(signal.market) })}</p>
+          <p className="text-lg font-bold text-app-fg">{formatCurrency(signal.current_price, { currency: currencyForMarket(signal.market) })}</p>
         </div>
-        <div className="p-3 rounded-lg bg-slate-900/40 border border-slate-700/50">
+        <div className="p-3 rounded-lg bg-slate-50 dark:bg-slate-900/40 border border-app-line">
           <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Stop</p>
-          <p className="text-lg font-bold text-rose-400">{formatCurrency(signal.initial_stop, { currency: currencyForMarket(signal.market) })}</p>
+          <p className="text-lg font-bold text-app-negative">{formatCurrency(signal.initial_stop, { currency: currencyForMarket(signal.market) })}</p>
         </div>
       </div>
 
@@ -160,27 +162,27 @@ export default function SignalCard({ signal, onAddToWatchlist, onDismiss, isAddi
           className="mb-4"
         >
           <div className="p-4 rounded-xl bg-gradient-to-br from-cyan-500/10 to-violet-500/10 border border-cyan-500/30">
-            <p className="text-xs font-semibold text-cyan-400 mb-3">POSITION DETAILS</p>
+            <p className="text-xs font-semibold text-cyan-700 dark:text-cyan-400 mb-3">POSITION DETAILS</p>
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Suggested Shares</p>
-                <p className="text-xl font-bold text-white">{formatShares(signal.suggested_shares)}</p>
+                <p className="text-xl font-bold text-app-fg">{formatShares(signal.suggested_shares)}</p>
               </div>
               <div>
                 <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Total cost (incl. fees)</p>
-                <p className="text-xl font-bold text-white">{formatCurrency(signal.total_cost)}</p>
+                <p className="text-xl font-bold text-app-fg">{formatCurrency(signal.total_cost)}</p>
               </div>
             </div>
-            <div className="mt-3 pt-3 border-t border-slate-700/50">
-              <p className="text-sm text-slate-300">
-                Buy <span className="font-bold text-cyan-400">{formatShares(signal.suggested_shares)} shares</span> at{" "}
-                <span className="font-bold text-white">{formatCurrency(signal.current_price, { currency: currencyForMarket(signal.market) })}</span>
+            <div className="mt-3 pt-3 border-t border-app-line">
+              <p className="text-sm text-slate-700 dark:text-slate-300">
+                Buy <span className="font-bold text-cyan-700 dark:text-cyan-400">{formatShares(signal.suggested_shares)} shares</span> at{" "}
+                <span className="font-bold text-app-fg">{formatCurrency(signal.current_price, { currency: currencyForMarket(signal.market) })}</span>
               </p>
               <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
-                Stop distance: <span className="text-rose-400 font-mono">{formatCurrency(signal.current_price - signal.initial_stop, { currency: currencyForMarket(signal.market) })}</span>
+                Stop distance: <span className="text-app-negative font-mono">{formatCurrency(signal.current_price - signal.initial_stop, { currency: currencyForMarket(signal.market) })}</span>
               </p>
               {signal.reason && (
-                <p className="text-xs text-amber-400/80 mt-2">⚠ {signal.reason}</p>
+                <p className="text-xs text-amber-700 dark:text-amber-400/80 mt-2">⚠ {signal.reason}</p>
               )}
             </div>
           </div>
@@ -203,7 +205,7 @@ export default function SignalCard({ signal, onAddToWatchlist, onDismiss, isAddi
           <Button
             onClick={() => onDismiss(signal.id)}
             variant="outline"
-            className="border-slate-700 text-slate-600 dark:text-slate-400 hover:text-white hover:bg-slate-800 h-11 px-6"
+            className="border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 h-11 px-6"
           >
             Dismiss
           </Button>
@@ -213,11 +215,11 @@ export default function SignalCard({ signal, onAddToWatchlist, onDismiss, isAddi
       {/* Watchlisted state */}
       {isWatchlisted && (
         <div className="flex items-center justify-between py-2 px-4 rounded-lg bg-violet-500/10 border border-violet-500/30">
-          <p className="text-sm text-violet-400 font-medium">◉ Added to Watchlist</p>
+          <p className="text-sm text-violet-700 dark:text-violet-400 font-medium">◉ Added to Watchlist</p>
           <Link
             to="/Watchlist"
             data-testid="view-in-watchlist-link"
-            className="text-sm text-violet-400 hover:text-violet-300 underline font-medium"
+            className="text-sm text-violet-700 dark:text-violet-400 hover:text-violet-800 dark:hover:text-violet-300 underline font-medium"
           >
             View in Watchlist →
           </Link>
@@ -232,27 +234,27 @@ export default function SignalCard({ signal, onAddToWatchlist, onDismiss, isAddi
       {/* Info messages for non-NEW, non-watchlisted signals */}
       {isEntered && (
         <div className="text-center py-2 px-4 rounded-lg bg-emerald-500/10 border border-emerald-500/30">
-          <p className="text-sm text-emerald-400 font-medium">✓ Position successfully added</p>
+          <p className="text-sm text-app-positive font-medium">✓ Position successfully added</p>
         </div>
       )}
 
       {isAlreadyHeld && (
-        <div className="text-center py-2 px-4 rounded-lg bg-slate-700/30 border border-slate-600/30">
+        <div className="text-center py-2 px-4 rounded-lg bg-slate-100 dark:bg-slate-700/30 border border-slate-300 dark:border-slate-600/30">
           <p className="text-sm text-slate-600 dark:text-slate-400">◉ You already hold this position</p>
         </div>
       )}
 
       {isDismissed && (
         <div className="text-center py-2 px-4 rounded-lg bg-red-500/10 border border-red-500/30">
-          <p className="text-sm text-red-400">✗ Signal dismissed</p>
+          <p className="text-sm text-red-700 dark:text-red-400">✗ Signal dismissed</p>
         </div>
       )}
 
       {isAllocationInsufficient && (
         <div className="py-2 px-4 rounded-lg bg-orange-500/10 border border-orange-500/30">
-          <p className="text-sm text-orange-400 font-medium">⚠ Allocation insufficient</p>
+          <p className="text-sm text-orange-700 dark:text-orange-400 font-medium">⚠ Allocation insufficient</p>
           {signal.reason && (
-            <p className="text-xs text-orange-300/80 mt-1">{signal.reason}</p>
+            <p className="text-xs text-orange-800 dark:text-orange-300/80 mt-1">{signal.reason}</p>
           )}
         </div>
       )}

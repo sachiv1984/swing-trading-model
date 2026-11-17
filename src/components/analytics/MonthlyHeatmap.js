@@ -29,11 +29,13 @@ export default function MonthlyHeatmap({ monthlyData, trades = [] }) {
   }, [selectedMonth]);
 
   const getColor = (pnl) => {
-    if (pnl > 500) return "bg-emerald-500";
-    if (pnl > 100) return "bg-emerald-400";
+    // ST-08 (v9.17): tile fills carry white text, so each one meets 4.5:1 in
+    // both themes (design_system.md §Coloured Button Fills shades).
+    if (pnl > 500) return "bg-emerald-800";
+    if (pnl > 100) return "bg-emerald-700";
     if (pnl > -100) return "bg-slate-600";
-    if (pnl > -500) return "bg-rose-400";
-    return "bg-rose-500";
+    if (pnl > -500) return "bg-rose-700";
+    return "bg-rose-800";
   };
 
   const handleTileClick = (month) => {
@@ -49,8 +51,8 @@ export default function MonthlyHeatmap({ monthlyData, trades = [] }) {
 
   return (
     <>
-      <div className="rounded-2xl bg-slate-800/50 border border-slate-700/50 p-6 backdrop-blur-sm">
-        <h3 className="text-lg font-semibold text-white mb-6">Monthly Performance</h3>
+      <div className="rounded-2xl bg-app-raised border border-app-line p-6 backdrop-blur-sm">
+        <h3 className="text-lg font-semibold text-app-fg mb-6">Monthly Performance</h3>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
           {monthlyData.map((month, idx) => {
             const isTopRow = idx < 6;
@@ -72,27 +74,27 @@ export default function MonthlyHeatmap({ monthlyData, trades = [] }) {
                   )}
                   onClick={() => handleTileClick(month)}
                 >
-                  <p className="text-xs font-medium text-white/90">{month.month}</p>
+                  <p className="text-xs font-medium text-white">{month.month}</p>
                   <p className="text-sm font-bold text-white mt-1">
                     {formatCurrency(month.pnl, { signed: true })}
                   </p>
-                  <p className="text-xs text-white/70 mt-1">{month.trades} trades</p>
+                  <p className="text-xs text-white mt-1">{month.trades} trades</p>
                 </div>
                 <div className={cn(
                   "absolute left-1/2 -translate-x-1/2 hidden group-hover:block pointer-events-none z-10",
                   isTopRow ? "top-full mt-2" : "bottom-full mb-2"
                 )}>
-                  <div className="bg-slate-900 border border-slate-700 rounded-lg p-3 text-xs whitespace-nowrap shadow-2xl backdrop-blur-sm animate-in fade-in duration-200">
+                  <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg p-3 text-xs whitespace-nowrap shadow-2xl backdrop-blur-sm animate-in fade-in duration-200">
                     <div className="space-y-0.5">
-                      <p className="font-semibold text-white">{month.month}</p>
+                      <p className="font-semibold text-app-fg">{month.month}</p>
                       <p className={cn(
                         "font-medium",
-                        month.pnl > 0 ? "text-emerald-400" : month.pnl < 0 ? "text-rose-400" : "text-slate-300"
+                        month.pnl > 0 ? "text-app-positive" : month.pnl < 0 ? "text-app-negative" : "text-slate-700 dark:text-slate-300"
                       )}>
                         P&L: {formatCurrency(month.pnl, { signed: true })}
                       </p>
-                      <p className="text-slate-300">Trades: {month.trades}</p>
-                      <p className="text-slate-300">Win Rate: {month.winRate}%</p>
+                      <p className="text-slate-700 dark:text-slate-300">Trades: {month.trades}</p>
+                      <p className="text-slate-700 dark:text-slate-300">Win Rate: {month.winRate}%</p>
                     </div>
                   </div>
                 </div>
@@ -133,31 +135,31 @@ export default function MonthlyHeatmap({ monthlyData, trades = [] }) {
         >
           <div
             data-testid="heatmap-modal"
-            className="bg-slate-900 border border-slate-700 rounded-2xl max-w-2xl w-full max-h-[80vh] overflow-hidden shadow-2xl flex flex-col"
+            className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl max-w-2xl w-full max-h-[80vh] overflow-hidden shadow-2xl flex flex-col"
             onClick={e => e.stopPropagation()}
           >
             {/* Modal header */}
-            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-700/50">
-              <h2 className="text-lg font-semibold text-white">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-app-line">
+              <h2 className="text-lg font-semibold text-app-fg">
                 Trades — {formatMonthTitle(selectedMonth.month)}
               </h2>
               <button
                 data-testid="heatmap-modal-close"
                 onClick={() => setSelectedMonth(null)}
-                className="p-1.5 rounded-lg text-slate-600 dark:text-slate-400 hover:text-white hover:bg-slate-700/50 transition-colors"
+                className="p-1.5 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-700/50 transition-colors"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
             {/* Summary line */}
-            <div className="px-6 py-3 border-b border-slate-700/30 bg-slate-800/40">
-              <p className="text-sm text-slate-300">
-                <span className="font-medium text-white">{modalTrades.length}</span> trade{modalTrades.length !== 1 ? "s" : ""}
+            <div className="px-6 py-3 border-b border-slate-200 dark:border-slate-700/30 bg-slate-50 dark:bg-slate-800/40">
+              <p className="text-sm text-slate-700 dark:text-slate-300">
+                <span className="font-medium text-app-fg">{modalTrades.length}</span> trade{modalTrades.length !== 1 ? "s" : ""}
                 {" · "}Total P&L:{" "}
                 <span className={cn(
                   "font-medium",
-                  modalTotalPnl > 0 ? "text-emerald-400" : modalTotalPnl < 0 ? "text-rose-400" : "text-slate-300"
+                  modalTotalPnl > 0 ? "text-app-positive" : modalTotalPnl < 0 ? "text-app-negative" : "text-slate-700 dark:text-slate-300"
                 )}>
                   {formatCurrency(modalTotalPnl, { signed: true })}
                 </span>
@@ -171,7 +173,7 @@ export default function MonthlyHeatmap({ monthlyData, trades = [] }) {
                 components already had it). */}
             <div className="overflow-y-auto overflow-x-auto flex-1">
               <table className="w-full">
-                <thead className="bg-slate-800/70 sticky top-0">
+                <thead className="bg-slate-50 dark:bg-slate-800/70 sticky top-0">
                   <tr>
                     <th className="px-4 py-3 text-left text-xs font-medium text-slate-600 dark:text-slate-400 uppercase">Ticker</th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-slate-600 dark:text-slate-400 uppercase">Exit Date</th>
@@ -180,28 +182,28 @@ export default function MonthlyHeatmap({ monthlyData, trades = [] }) {
                     <th className="px-4 py-3 text-left text-xs font-medium text-slate-600 dark:text-slate-400 uppercase">Exit Reason</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-700/30">
+                <tbody className="divide-y divide-slate-200 dark:divide-slate-700/30">
                   {modalTrades.map((trade, idx) => {
                     const r = calcRMultiple(trade);
                     return (
-                      <tr key={idx} className="hover:bg-slate-800/30">
-                        <td className="px-4 py-3 text-sm font-medium text-white">{trade.ticker?.replace(".L", "")}</td>
-                        <td className="px-4 py-3 text-sm text-slate-300">
+                      <tr key={idx} className="hover:bg-slate-100 dark:hover:bg-slate-800/30">
+                        <td className="px-4 py-3 text-sm font-medium text-app-fg">{trade.ticker?.replace(".L", "")}</td>
+                        <td className="px-4 py-3 text-sm text-slate-700 dark:text-slate-300">
                           {new Date(trade.exit_date).toLocaleDateString("en-GB")}
                         </td>
                         <td className={cn(
                           "px-4 py-3 text-sm text-right font-medium",
-                          trade.pnl > 0 ? "text-emerald-400" : trade.pnl < 0 ? "text-rose-400" : "text-slate-300"
+                          trade.pnl > 0 ? "text-app-positive" : trade.pnl < 0 ? "text-app-negative" : "text-slate-700 dark:text-slate-300"
                         )}>
                           {formatCurrency(trade.pnl, { signed: true })}
                         </td>
-                        <td className="px-4 py-3 text-sm text-right text-slate-300">
+                        <td className="px-4 py-3 text-sm text-right text-slate-700 dark:text-slate-300">
                           {r !== null
-                            ? <span className={r > 0 ? "text-emerald-400" : r < 0 ? "text-rose-400" : "text-slate-300"}>{formatR(r)}</span>
+                            ? <span className={r > 0 ? "text-app-positive" : r < 0 ? "text-app-negative" : "text-slate-700 dark:text-slate-300"}>{formatR(r)}</span>
                             : <span className="text-slate-600 dark:text-slate-400">—</span>
                           }
                         </td>
-                        <td className="px-4 py-3 text-sm text-slate-300">
+                        <td className="px-4 py-3 text-sm text-slate-700 dark:text-slate-300">
                           {exitReasonLabel(trade.exit_reason)}
                         </td>
                       </tr>

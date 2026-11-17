@@ -5,8 +5,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical — **Superseded by `performance.md` for route, placement and layout (v9.17)**
-**Version:** 2.4
-**Last Updated:** 2026-11-16 (ST-06, EPIC-02, v9.17, BLG-FE-259 — superseded by `performance.md` for route, placement and layout); prior — 2026-11-06 (v9.16 design gate — ST-04/BLG-FE-253: new §19.1 Section Link, `?section=strategy-compliance` scrolls to Arc 5 Signal Compliance); prior — 2026-09-21 (ST-05, EPIC-01, v9.6, BLG-FE-181 — §21 empty-state heading drops its trailing period and names the "Create a trade plan" next action, matching the shipped component; documentation-only); prior history retained — see prior entries in version control
+**Version:** 2.5
+**Last Updated:** 2026-11-17 (ST-08, EPIC-03, v9.17, BLG-FE-265 — §4 heatmap tile fills darkened so their white text meets 4.5:1 in both themes); prior — 2026-11-16 (ST-06, EPIC-02, v9.17, BLG-FE-259 — superseded by `performance.md` for route, placement and layout); prior — 2026-11-06 (v9.16 design gate — ST-04/BLG-FE-253: new §19.1 Section Link, `?section=strategy-compliance` scrolls to Arc 5 Signal Compliance); prior history retained — see prior entries in version control
 **Design Source (v2.3 section link):** docs/design/2026-11-06__release-v9.16/digest-section-link/decision_record.md
 **Design Source (v2.1 additions):** docs/design/2026-08-11__release-v8.6/trade-plan-completion-rate-metric/decision_record.md
 **Design Source (v2.0 additions):** docs/design/2026-07-08__release-v6.8/trade-tagging/ux_spec.md
@@ -238,11 +238,13 @@ Tile colour is determined by P&L magnitude:
 
 | Range | Colour |
 |-------|--------|
-| > £500 | Emerald-500 |
-| £100 – £500 | Emerald-400 |
+| > £500 | Emerald-800 |
+| £100 – £500 | Emerald-700 |
 | ±£100 | Slate-600 |
-| -£100 to -£500 | Rose-400 |
-| < -£500 | Rose-500 |
+| -£100 to -£500 | Rose-700 |
+| < -£500 | Rose-800 |
+
+Tile text is white, at full opacity. *(v2.5, ST-08: fills were Emerald-500/400 and Rose-400/500, where white text measured 1.8–3.8:1; the new fills meet 4.5:1 in both themes, per design_system.md §Coloured Button Fills.)*
 
 Hover shows a tooltip with full detail (month, P&L, trades, win rate).
 
@@ -807,6 +809,7 @@ All component props are null-safe with safe defaults. If the API returns partial
 
 | Version | Date | Change |
 | --- | --- | --- |
+| 2.5 | 2026-11-17 | ST-08 (EPIC-03, v9.17, BLG-FE-265), semantic colour token sweep: §4 Monthly heatmap tile fills Emerald-500/400 and Rose-400/500 → Emerald-800/700 and Rose-700/800. The tiles carry white text, which measured 1.8–3.8:1 on the old fills in both themes; the new fills are the §Coloured Button Fills shades (5.48–7.68:1). Tile text is solid white (was 90% and 70%). |
 | 2.4 | 2026-11-16 | ST-06 (EPIC-02, v9.17, BLG-FE-259), per `performance.md` §2 and brief §4: "Superseded by `performance.md`" header for route, placement and layout. The Analytics page is the Performance page's Analytics and Compliance sections (`/Performance?section=analytics` and `?section=compliance`). Period-level KPIs are read from `GET /analytics/metrics` (the browser recomputation is removed); Profit Factor and Expectancy cards and Key Insights move to Summary; §17, §19 and §21 move to Compliance. This file stays canonical for each component's content and states. |
 | 2.3 | 2026-11-06 | v9.16 design gate — new §19.1 Section Link (ST-04, EPIC-01, BLG-FE-253): `?section=strategy-compliance` scrolls once to Arc 5 Signal Compliance (smooth unless reduced motion), then focuses its heading. An unknown id loads the page at the top. The SI-05 digest gains a "Strategy Compliance" link to it. The Risk Dashboard has no rule-breach section, so the anchor is here (Product Owner, 2026-11-06). Design source: `docs/design/2026-11-06__release-v9.16/digest-section-link/decision_record.md`. |
 | 2.2 | 2026-09-21 | ST-05 (v9.6, EPIC-01, BLG-FE-181): §21 empty state — heading corrected to "No trade plans created yet" (no trailing period, v1.8 pattern) and the empty state now names its single next action, **"Create a trade plan"** (`design_system.md` v1.21 §Data States next-action rule). Documentation-only; the component change ships in the same story. |

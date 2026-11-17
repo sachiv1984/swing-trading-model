@@ -137,7 +137,7 @@ export default function Settings() {
   if (isLoading || !formData) {
     return (
       <div className="flex items-center justify-center py-20">
-        <Loader2 className="w-8 h-8 animate-spin text-slate-500" />
+        <Loader2 className="w-8 h-8 animate-spin text-app-muted" />
       </div>
     );
   }
@@ -146,7 +146,7 @@ export default function Settings() {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 border border-slate-700/50 p-6"
+      className="rounded-2xl bg-white dark:bg-gradient-to-br dark:from-slate-900 dark:to-slate-800 border border-app-line p-6"
     >
       <div className="flex items-center gap-3 mb-6">
         <div className={cn("p-2.5 rounded-xl", iconColor)}>
@@ -155,7 +155,7 @@ export default function Settings() {
         {/* ST-02 (EPIC-02, v9.2, BLG-FE-170): was h3, skipping h2 under
             PageHeader's h1 -- axe-core heading-order finding. Tag bumped to
             h2; className unchanged, so no visual/layout change. */}
-        <h2 className="font-semibold text-white">{title}</h2>
+        <h2 className="font-semibold text-app-fg">{title}</h2>
       </div>
       {children}
     </motion.div>
@@ -201,7 +201,7 @@ export default function Settings() {
       <SectionCard
         icon={Sliders}
         title="Strategy Parameters"
-        iconColor="bg-cyan-500/20 text-cyan-400"
+        iconColor="bg-cyan-500/20 text-cyan-800 dark:text-cyan-400"
       >
         <div className="space-y-6">
           {/* ST-20 (BLG-FE-201, v9.12): each helper line states the rule in force
@@ -248,13 +248,13 @@ export default function Settings() {
                 value={formData.default_risk_percent}
                 onChange={(e) => handleChange("default_risk_percent", parseFloat(e.target.value))}
                 className={cn(
-                  "bg-slate-800/50 border-slate-700 text-white",
+                  "bg-app-raised border-slate-200 dark:border-slate-700 text-app-fg",
                   fieldErrors.default_risk_percent && "border-red-500 focus:border-red-500"
                 )}
               />
               {/* DEF-004: show inline error if backend rejected the value */}
               {fieldErrors.default_risk_percent ? (
-                <p className="text-xs text-red-400">{fieldErrors.default_risk_percent}</p>
+                <p className="text-xs text-red-700 dark:text-red-400">{fieldErrors.default_risk_percent}</p>
               ) : (
                 <p className="text-xs text-slate-600 dark:text-slate-400">Pre-populates the position sizing calculator</p>
               )}
@@ -267,7 +267,7 @@ export default function Settings() {
       <SectionCard
         icon={CreditCard}
         title="Commission & Fees"
-        iconColor="bg-violet-500/20 text-violet-400"
+        iconColor="bg-violet-500/20 text-violet-800 dark:text-violet-400"
       >
         <div className="space-y-6">
           <div className="grid grid-cols-2 gap-4">
@@ -279,7 +279,7 @@ export default function Settings() {
                 step="0.01"
                 value={formData.uk_commission}
                 onChange={(e) => handleChange("uk_commission", parseFloat(e.target.value))}
-                className="bg-slate-800/50 border-slate-700 text-white"
+                className="bg-app-raised border-slate-200 dark:border-slate-700 text-app-fg"
               />
             </div>
             <div className="space-y-2">
@@ -290,7 +290,7 @@ export default function Settings() {
                 step="0.01"
                 value={formData.us_commission}
                 onChange={(e) => handleChange("us_commission", parseFloat(e.target.value))}
-                className="bg-slate-800/50 border-slate-700 text-white"
+                className="bg-app-raised border-slate-200 dark:border-slate-700 text-app-fg"
               />
             </div>
           </div>
@@ -304,7 +304,7 @@ export default function Settings() {
                 step="0.001"
                 value={formData.stamp_duty_rate}
                 onChange={(e) => handleChange("stamp_duty_rate", parseFloat(e.target.value))}
-                className="bg-slate-800/50 border-slate-700 text-white"
+                className="bg-app-raised border-slate-200 dark:border-slate-700 text-app-fg"
               />
               <p className="text-xs text-slate-600 dark:text-slate-400">Default: 0.005 (0.5%)</p>
             </div>
@@ -316,7 +316,7 @@ export default function Settings() {
                 step="0.0001"
                 value={formData.fx_fee_rate}
                 onChange={(e) => handleChange("fx_fee_rate", parseFloat(e.target.value))}
-                className="bg-slate-800/50 border-slate-700 text-white"
+                className="bg-app-raised border-slate-200 dark:border-slate-700 text-app-fg"
               />
               <p className="text-xs text-slate-600 dark:text-slate-400">Default: 0.0015 (0.15%)</p>
             </div>
@@ -328,7 +328,7 @@ export default function Settings() {
       <SectionCard
         icon={Palette}
         title="Preferences"
-        iconColor="bg-fuchsia-500/20 text-fuchsia-400"
+        iconColor="bg-fuchsia-500/20 text-fuchsia-800 dark:text-fuchsia-400"
       >
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
@@ -339,10 +339,10 @@ export default function Settings() {
               value={formData.default_currency}
               onValueChange={(value) => handleChange("default_currency", value)}
             >
-              <SelectTrigger aria-labelledby="settings-default-currency-label" className="bg-slate-800/50 border-slate-700 text-white">
+              <SelectTrigger aria-labelledby="settings-default-currency-label" className="bg-app-raised border-slate-200 dark:border-slate-700 text-app-fg">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent className="bg-slate-800 border-slate-700">
+              <SelectContent className="bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700">
                 <SelectItem value="GBP">GBP (£)</SelectItem>
                 <SelectItem value="USD">USD ($)</SelectItem>
               </SelectContent>
@@ -354,10 +354,10 @@ export default function Settings() {
               value={formData.theme}
               onValueChange={(value) => handleChange("theme", value)}
             >
-              <SelectTrigger aria-labelledby="settings-theme-label" className="bg-slate-800/50 border-slate-700 text-white">
+              <SelectTrigger aria-labelledby="settings-theme-label" className="bg-app-raised border-slate-200 dark:border-slate-700 text-app-fg">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent className="bg-slate-800 border-slate-700">
+              <SelectContent className="bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700">
                 <SelectItem value="dark">Dark</SelectItem>
                 <SelectItem value="light">Light</SelectItem>
               </SelectContent>
@@ -370,7 +370,7 @@ export default function Settings() {
       <SectionCard
         icon={ShieldAlert}
         title="Risk Limits"
-        iconColor="bg-amber-500/20 text-amber-400"
+        iconColor="bg-amber-500/20 text-amber-800 dark:text-amber-400"
       >
         <div className="space-y-6">
           <div className="grid grid-cols-2 gap-4">
@@ -384,7 +384,7 @@ export default function Settings() {
                 max="100"
                 value={formData.concentration_position_threshold_pct ?? 15}
                 onChange={(e) => handleChange("concentration_position_threshold_pct", parseFloat(e.target.value))}
-                className="bg-slate-800/50 border-slate-700 text-white"
+                className="bg-app-raised border-slate-200 dark:border-slate-700 text-app-fg"
               />
               <p className="text-xs text-slate-600 dark:text-slate-400">Alert when 1 position exceeds this % of total portfolio heat (default: 15%)</p>
             </div>
@@ -398,7 +398,7 @@ export default function Settings() {
                 max="100"
                 value={formData.concentration_sector_threshold_pct ?? 30}
                 onChange={(e) => handleChange("concentration_sector_threshold_pct", parseFloat(e.target.value))}
-                className="bg-slate-800/50 border-slate-700 text-white"
+                className="bg-app-raised border-slate-200 dark:border-slate-700 text-app-fg"
               />
               <p className="text-xs text-slate-600 dark:text-slate-400">Alert when 1 sector exceeds this % of total portfolio heat (default: 30%)</p>
             </div>
@@ -410,7 +410,7 @@ export default function Settings() {
       <SectionCard
         icon={TrendingUp}
         title="Analytics"
-        iconColor="bg-emerald-500/20 text-emerald-400"
+        iconColor="bg-emerald-500/20 text-emerald-800 dark:text-emerald-400"
       >
         <div className="space-y-2">
           <Label htmlFor="settings-min-trades-for-analytics" className="text-slate-600 dark:text-slate-400">Minimum Trades for Analytics</Label>
@@ -421,7 +421,7 @@ export default function Settings() {
             min="1"
             value={formData.min_trades_for_analytics || 10}
             onChange={(e) => handleChange("min_trades_for_analytics", parseInt(e.target.value))}
-            className="bg-slate-800/50 border-slate-700 text-white"
+            className="bg-app-raised border-slate-200 dark:border-slate-700 text-app-fg"
           />
           <p className="text-xs text-slate-600 dark:text-slate-400">Minimum number of closed trades required to display analytics</p>
         </div>
@@ -432,15 +432,15 @@ export default function Settings() {
       <SectionCard
         icon={DollarSign}
         title="Claude API Usage & Costs"
-        iconColor="bg-amber-500/20 text-amber-400"
+        iconColor="bg-amber-500/20 text-amber-800 dark:text-amber-400"
       >
         <p className="text-xs text-slate-600 dark:text-slate-400 mb-3">Claude API spend for the current calendar month</p>
         {monthlyCostLoading ? (
-          <div className="h-6 w-24 rounded bg-slate-800/50 animate-pulse" />
+          <div className="h-6 w-24 rounded bg-app-raised animate-pulse" />
         ) : monthlyCostError ? (
           <p className="text-sm text-slate-600 dark:text-slate-400">AI cost data unavailable</p>
         ) : (
-          <p className="text-lg font-semibold text-white">
+          <p className="text-lg font-semibold text-app-fg">
             ${(monthlyCostData?.total_cost_usd ?? 0).toFixed(2)}
           </p>
         )}
@@ -449,7 +449,7 @@ export default function Settings() {
             state (loading/error/ready) is independent of the current-month
             figure above, per ux_spec.md §5. */}
         {spendTrendLoading ? (
-          <div className="mt-4 h-[180px] rounded bg-slate-800/50 animate-pulse" data-testid="ai-spend-trend-loading" />
+          <div className="mt-4 h-[180px] rounded bg-app-raised animate-pulse" data-testid="ai-spend-trend-loading" />
         ) : spendTrendError ? (
           <p className="mt-4 text-sm text-slate-600 dark:text-slate-400" data-testid="ai-spend-trend-error">
             AI spend trend unavailable

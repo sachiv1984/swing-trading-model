@@ -19,14 +19,14 @@ export default function RMultipleDistribution() {
   });
 
   return (
-    <div className="rounded-2xl bg-slate-800/50 border border-slate-700/50 backdrop-blur-sm overflow-hidden">
-      <div className="p-6 border-b border-slate-700/50">
+    <div className="rounded-2xl bg-app-raised border border-app-line backdrop-blur-sm overflow-hidden">
+      <div className="p-6 border-b border-app-line">
         <div className="flex items-center gap-3">
           <div className="p-2 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600">
             <TrendingUp className="w-5 h-5 text-white" />
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-white">R-Multiple Distribution</h3>
+            <h3 className="text-lg font-semibold text-app-fg">R-Multiple Distribution</h3>
             <p className="text-sm text-slate-600 dark:text-slate-400">Canonical metric — server-side computed frequency of R-multiple outcomes</p>
           </div>
         </div>
@@ -35,12 +35,12 @@ export default function RMultipleDistribution() {
       <div className="p-6">
         {isLoading && (
           <div className="flex items-center justify-center py-16">
-            <Loader2 className="w-8 h-8 animate-spin text-slate-500" />
+            <Loader2 className="w-8 h-8 animate-spin text-app-muted" />
           </div>
         )}
 
         {error && (
-          <div className="flex items-center gap-2 p-4 bg-rose-500/10 border border-rose-500/30 rounded-lg text-rose-400">
+          <div className="flex items-center gap-2 p-4 bg-rose-500/10 border border-rose-500/30 rounded-lg text-rose-800 dark:text-rose-400">
             <AlertCircle className="w-4 h-4 shrink-0" />
             <p className="text-sm">Failed to load R-multiple distribution data.</p>
           </div>
@@ -48,7 +48,7 @@ export default function RMultipleDistribution() {
 
         {!isLoading && !error && (!data?.buckets || data.buckets.length === 0) && (
           <div className="p-4 bg-amber-500/10 border border-amber-500/30 rounded-lg">
-            <p className="text-sm text-amber-400">Not enough closed trades for R-multiple distribution.</p>
+            <p className="text-sm text-app-warning">Not enough closed trades for R-multiple distribution.</p>
           </div>
         )}
 
@@ -56,27 +56,27 @@ export default function RMultipleDistribution() {
           <div className="space-y-6">
             {/* Stat cards — fields: median_r, pct_above_1r, avg_winner_r, avg_loser_r */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-              <div className="bg-slate-800/50 rounded-lg p-4 border border-slate-700/30">
+              <div className="bg-app-raised rounded-lg p-4 border border-slate-200 dark:border-slate-700/30">
                 <div className="text-xs text-slate-600 dark:text-slate-400 mb-1">Median R</div>
-                <div className={`text-2xl font-bold ${data.median_r > 0 ? "text-cyan-400" : data.median_r < 0 ? "text-rose-400" : "text-slate-300"}`}>
+                <div className={`text-2xl font-bold ${data.median_r > 0 ? "text-cyan-700 dark:text-cyan-400" : data.median_r < 0 ? "text-app-negative" : "text-slate-700 dark:text-slate-300"}`}>
                   {data.median_r != null ? formatR(data.median_r) : "—"}
                 </div>
               </div>
-              <div className="bg-slate-800/50 rounded-lg p-4 border border-slate-700/30">
+              <div className="bg-app-raised rounded-lg p-4 border border-slate-200 dark:border-slate-700/30">
                 <div className="text-xs text-slate-600 dark:text-slate-400 mb-1">% &gt; 1R</div>
-                <div className="text-2xl font-bold text-emerald-400">
+                <div className="text-2xl font-bold text-app-positive">
                   {data.pct_above_1r != null ? formatPercent(data.pct_above_1r) : "—"}
                 </div>
               </div>
-              <div className="bg-slate-800/50 rounded-lg p-4 border border-slate-700/30">
+              <div className="bg-app-raised rounded-lg p-4 border border-slate-200 dark:border-slate-700/30">
                 <div className="text-xs text-slate-600 dark:text-slate-400 mb-1">Avg Winner</div>
-                <div className="text-2xl font-bold text-emerald-400">
+                <div className="text-2xl font-bold text-app-positive">
                   {data.avg_winner_r != null ? formatR(data.avg_winner_r) : "—"}
                 </div>
               </div>
-              <div className="bg-slate-800/50 rounded-lg p-4 border border-slate-700/30">
+              <div className="bg-app-raised rounded-lg p-4 border border-slate-200 dark:border-slate-700/30">
                 <div className="text-xs text-slate-600 dark:text-slate-400 mb-1">Avg Loser</div>
-                <div className="text-2xl font-bold text-rose-400">
+                <div className="text-2xl font-bold text-app-negative">
                   {data.avg_loser_r != null ? formatR(data.avg_loser_r) : "—"}
                 </div>
               </div>

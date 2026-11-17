@@ -62,11 +62,11 @@ export default function PortfolioGrowthChart({ positions, period, periodDates })
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 border border-slate-700/50 p-6"
+      className="rounded-2xl bg-white dark:bg-gradient-to-br dark:from-slate-900 dark:to-slate-800 border border-app-line p-6"
     >
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h3 className="text-lg font-semibold text-white">Portfolio Growth</h3>
+          <h3 className="text-lg font-semibold text-app-fg">Portfolio Growth</h3>
           <p className="text-sm text-slate-600 dark:text-slate-400">Cumulative P&L over time</p>
         </div>
         <div className="flex items-center gap-4">

@@ -196,42 +196,42 @@ function TrailStopModal({ position, onClose }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60" role="dialog" aria-modal="true" aria-labelledby="trail-stop-modal-title">
-      <div className="w-full max-w-md rounded-2xl bg-slate-900 border border-slate-700 p-6 space-y-4 mx-4">
+      <div className="w-full max-w-md rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 p-6 space-y-4 mx-4">
         <div className="flex items-center justify-between">
           <div>
             {/* ST-17 (BLG-FE-218, v9.15): read-only wording per positions.md v2.22 §Trail Stop Action */}
-            <h2 id="trail-stop-modal-title" className="text-lg font-semibold text-white">View Trail — {position?.ticker}</h2>
+            <h2 id="trail-stop-modal-title" className="text-lg font-semibold text-app-fg">View Trail — {position?.ticker}</h2>
             <p className="text-xs text-slate-600 dark:text-slate-400">ATR-based stop trail calculation</p>
           </div>
-          <button onClick={onClose} aria-label="Close" className="text-slate-600 dark:text-slate-400 hover:text-white"><X className="w-5 h-5" /></button>
+          <button onClick={onClose} aria-label="Close" className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"><X className="w-5 h-5" /></button>
         </div>
 
         {isLoading && (
           <div className="space-y-3 animate-pulse">
-            <div className="h-5 bg-slate-700 rounded w-3/4" />
-            <div className="h-5 bg-slate-700 rounded w-2/3" />
-            <div className="h-5 bg-slate-700 rounded w-1/2" />
+            <div className="h-5 bg-slate-200 dark:bg-slate-700 rounded w-3/4" />
+            <div className="h-5 bg-slate-200 dark:bg-slate-700 rounded w-2/3" />
+            <div className="h-5 bg-slate-200 dark:bg-slate-700 rounded w-1/2" />
           </div>
         )}
 
         {isError && (
-          <div className="text-sm text-rose-400">Unable to load trail calculation. Please try again.</div>
+          <div className="text-sm text-app-negative">Unable to load trail calculation. Please try again.</div>
         )}
 
         {!isLoading && !isError && trailData && (
           <dl className="space-y-2 text-sm">
             <div className="flex justify-between">
               <dt className="text-slate-600 dark:text-slate-400">Current Stop</dt>
-              <dd className="text-white font-medium">{formatCurrency(trailData.current_stop ?? stopValue ?? 0, { currency: modalCurrency })}</dd>
+              <dd className="text-app-fg font-medium">{formatCurrency(trailData.current_stop ?? stopValue ?? 0, { currency: modalCurrency })}</dd>
             </div>
             <div className="flex justify-between">
               <dt className="text-slate-600 dark:text-slate-400">ATR Trail Stop</dt>
-              <dd className="text-white font-medium">{formatCurrency(atrTrailStop, { currency: modalCurrency })}</dd>
+              <dd className="text-app-fg font-medium">{formatCurrency(atrTrailStop, { currency: modalCurrency })}</dd>
             </div>
             {trailDiff != null && (
               <div className="flex justify-between">
                 <dt className="text-slate-600 dark:text-slate-400">Difference vs current stop</dt>
-                <dd className={cn("font-medium", isNegativeDiff ? "text-amber-700 dark:text-amber-400" : "text-emerald-400")}>
+                <dd className={cn("font-medium", isNegativeDiff ? "text-amber-700 dark:text-amber-400" : "text-app-positive")}>
                   {formatCurrency(trailDiff, { currency: modalCurrency, signed: true })}
                   {trailR != null && <span className="text-slate-600 dark:text-slate-400 ml-1">({formatR(trailR)})</span>}
                 </dd>
@@ -506,7 +506,7 @@ function PositionsWarningStrip({ positions, graceDeepLink }) {
       kind: "staleness",
       icon: stale
         ? <AlertTriangle className={WARNING_ICON_CLASS} aria-hidden="true" />
-        : <Clock className="w-4 h-4 flex-shrink-0 text-slate-500" aria-hidden="true" />,
+        : <Clock className="w-4 h-4 flex-shrink-0 text-app-muted" aria-hidden="true" />,
       summary: <span title={formatAbsoluteTime(lastSyncAt)}>{stalenessText(lastSyncAt)}</span>,
       content: <p className="text-sm text-app-muted">{formatAbsoluteTime(lastSyncAt)}</p>,
     });
@@ -560,10 +560,10 @@ function PositionsWarningStrip({ positions, graceDeepLink }) {
 // so it returns the value only (no table cell).
 function PositionEarningsValue({ ticker, market }) {
   const { data, loading } = useEarnings(ticker, market);
-  if (loading) return <span className="text-slate-600 text-xs">…</span>;
-  if (!data || data.days_until_earnings == null) return <span className="text-slate-600 text-xs">—</span>;
+  if (loading) return <span className="text-app-muted text-xs">…</span>;
+  if (!data || data.days_until_earnings == null) return <span className="text-app-muted text-xs">—</span>;
   const days = data.days_until_earnings;
-  if (days < 0) return <span className="text-slate-600 text-xs">—</span>;
+  if (days < 0) return <span className="text-app-muted text-xs">—</span>;
   if (days === 0) return (
     <span className="text-xs font-medium px-2 py-0.5 rounded bg-amber-500/15 text-amber-800 dark:text-amber-400 border border-amber-500/25" title={data.next_earnings_date}>
       Today
@@ -643,13 +643,13 @@ function AlertsCell({ position }) {
   ) : null;
 
   const gapBadge = gapRiskLoading ? (
-    <span className="inline-block h-4 w-20 rounded bg-slate-700/50 animate-pulse" data-testid="gap-risk-skeleton" />
+    <span className="inline-block h-4 w-20 rounded bg-slate-100 dark:bg-slate-700/50 animate-pulse" data-testid="gap-risk-skeleton" />
   ) : gapRisk?.flagged ? (
     <GapRiskBadge ticker={position.ticker} gapRisk={gapRisk} />
   ) : null;
 
   if (!riskOffBadge && !gapBadge) {
-    return <span className="text-slate-600 text-xs">—</span>;
+    return <span className="text-app-muted text-xs">—</span>;
   }
 
   return (
@@ -698,7 +698,7 @@ function LastReviewedValue({ position, drawdownActive }) {
         title="Mark Reviewed"
         aria-label={`Mark ${position.ticker} as reviewed`}
         data-testid="mark-reviewed-button"
-        className="text-slate-600 hover:text-emerald-400 disabled:opacity-40 flex-shrink-0"
+        className="text-app-muted hover:text-emerald-700 dark:hover:text-emerald-400 disabled:opacity-40 flex-shrink-0"
       >
         <Check className="w-3.5 h-3.5" />
       </button>
@@ -869,7 +869,7 @@ function PositionDetailGrid({ position, currency, drawdownActive }) {
             lifecycleReason={position.lifecycle_reason}
           />
         ) : (
-          <span className="text-slate-600 text-xs">—</span>
+          <span className="text-app-muted text-xs">—</span>
         )}
       </DetailItem>
       <DetailItem label="Grace">
@@ -878,14 +878,14 @@ function PositionDetailGrid({ position, currency, drawdownActive }) {
             Day {(position.holding_days ?? 0) + 1} of {GRACE_PERIOD_DAYS}
           </span>
         ) : (
-          <span className="text-slate-600">—</span>
+          <span className="text-app-muted">—</span>
         )}
       </DetailItem>
       <DetailItem label="Earnings"><PositionEarningsValue ticker={position.ticker} market={position.market} /></DetailItem>
       <DetailItem label="Alerts"><AlertsCell position={position} /></DetailItem>
       <DetailItem label="Last reviewed"><LastReviewedValue position={position} drawdownActive={drawdownActive} /></DetailItem>
       <DetailItem label="Stop provenance">
-        {isStopFrozen(position) ? <span className="text-slate-600 text-xs">—</span> : <StopProvenanceLine position={position} currency={currency} />}
+        {isStopFrozen(position) ? <span className="text-app-muted text-xs">—</span> : <StopProvenanceLine position={position} currency={currency} />}
       </DetailItem>
     </dl>
   );
@@ -1253,7 +1253,7 @@ export default function Positions() {
           // ST-12 follow-up (v9.15): wraps at phone width now that the header
           // also carries the Daily Monitor button.
           <div className="flex flex-wrap items-center justify-end gap-3">
-            <div className="flex items-center rounded-xl bg-slate-800/50 border border-slate-700/50 p-1">
+            <div className="flex items-center rounded-xl bg-app-raised border border-app-line p-1">
               <Button
                 aria-label="Grid view"
                 variant="ghost"
@@ -1262,8 +1262,8 @@ export default function Positions() {
                 className={cn(
                   "h-8 w-8 p-0 rounded-lg",
                   viewMode === "grid"
-                    ? "bg-gradient-to-r from-cyan-500/20 to-violet-500/20 text-cyan-400"
-                    : "text-slate-600 dark:text-slate-400 hover:text-white"
+                    ? "bg-gradient-to-r from-cyan-500/20 to-violet-500/20 text-cyan-800 dark:text-cyan-400"
+                    : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
                 )}
               >
                 <LayoutGrid className="w-4 h-4" />
@@ -1277,8 +1277,8 @@ export default function Positions() {
                 className={cn(
                   "h-8 w-8 p-0 rounded-lg",
                   viewMode === "table"
-                    ? "bg-gradient-to-r from-cyan-500/20 to-violet-500/20 text-cyan-400"
-                    : "text-slate-600 dark:text-slate-400 hover:text-white"
+                    ? "bg-gradient-to-r from-cyan-500/20 to-violet-500/20 text-cyan-800 dark:text-cyan-400"
+                    : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
                 )}
               >
                 <List className="w-4 h-4" />
@@ -1324,7 +1324,7 @@ export default function Positions() {
         onRetry={refetch}
         className="min-h-[300px]"
         empty={!isLoading && !isError && openPositions.length === 0}
-        emptyIcon={<FolderOpen className="w-10 h-10 text-slate-600" />}
+        emptyIcon={<FolderOpen className="w-10 h-10 text-app-muted" />}
         emptyHeading="No open positions"
         emptyBody="Enter a trade to see your positions here."
         emptyAction={

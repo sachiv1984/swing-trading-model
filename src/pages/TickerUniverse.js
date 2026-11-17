@@ -27,8 +27,8 @@ function displayTicker(ticker) {
 function MarketBadge({ market }) {
   const cls =
     market === "UK"
-      ? "bg-blue-500/20 text-blue-400 border-blue-500/30"
-      : "bg-violet-500/20 text-violet-400 border-violet-500/30";
+      ? "bg-blue-500/20 text-blue-800 dark:text-blue-400 border-blue-500/30"
+      : "bg-violet-500/20 text-violet-800 dark:text-violet-400 border-violet-500/30";
   return (
     <span className={cn("inline-flex items-center px-2 py-0.5 rounded text-xs font-medium border", cls)}>
       {market}
@@ -38,11 +38,11 @@ function MarketBadge({ market }) {
 
 function ActiveBadge({ active }) {
   return active ? (
-    <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+    <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-emerald-500/20 text-emerald-800 dark:text-emerald-400 border border-emerald-500/30">
       Active
     </span>
   ) : (
-    <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-slate-700/50 text-slate-600 dark:text-slate-400 border border-slate-600/30">
+    <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-slate-100 dark:bg-slate-700/50 text-slate-600 dark:text-slate-400 border border-slate-300 dark:border-slate-600/30">
       Inactive
     </span>
   );
@@ -91,19 +91,19 @@ function AddTickerForm({ onAdded, onCancel }) {
     });
   }
 
-  const inputCls = "w-full px-3 py-2 text-sm bg-slate-800 border border-slate-700 rounded-lg text-white focus:outline-none focus:border-cyan-500";
+  const inputCls = "w-full px-3 py-2 text-sm bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-app-fg focus:outline-none focus:border-cyan-500";
   const labelCls = "block text-xs text-slate-600 dark:text-slate-400 mb-1";
 
   return (
-    <form onSubmit={handleSubmit} data-testid="add-ticker-form" className="bg-slate-800/50 border border-slate-700 rounded-xl p-4 mb-4">
+    <form onSubmit={handleSubmit} data-testid="add-ticker-form" className="bg-app-raised border border-slate-200 dark:border-slate-700 rounded-xl p-4 mb-4">
       <div className="flex items-center justify-between mb-3">
-        <span className="text-sm font-medium text-slate-200">Add Ticker</span>
-        <button type="button" onClick={onCancel} className="text-slate-600 dark:text-slate-400 hover:text-slate-300">
+        <span className="text-sm font-medium text-slate-800 dark:text-slate-200">Add Ticker</span>
+        <button type="button" onClick={onCancel} className="text-slate-600 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300">
           <X size={16} />
         </button>
       </div>
       {error && (
-        <p className="text-red-400 text-xs mb-3 bg-red-900/20 border border-red-800/30 rounded px-3 py-2">
+        <p className="text-red-700 dark:text-red-400 text-xs mb-3 bg-red-900/20 border border-red-800/30 rounded px-3 py-2">
           {error}
         </p>
       )}
@@ -290,8 +290,8 @@ export default function TickerUniverse() {
     cn(
       "px-3 py-1.5 text-xs rounded-lg border transition-colors",
       active
-        ? "bg-cyan-600 border-cyan-500 text-white"
-        : "bg-slate-800 border-slate-700 text-slate-600 dark:text-slate-400 hover:text-slate-200"
+        ? "bg-cyan-700 border-cyan-600 text-white"
+        : "bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200"
     );
 
   return (
@@ -321,14 +321,14 @@ export default function TickerUniverse() {
           placeholder="Search ticker or company…"
           aria-label="Search ticker or company"
           data-testid="ticker-search-input"
-          className="flex-1 min-w-[220px] px-3 py-1.5 text-xs bg-slate-800 border border-slate-700 rounded-lg text-white placeholder:text-slate-600 dark:placeholder:text-slate-400 focus:outline-none focus:border-cyan-500"
+          className="flex-1 min-w-[220px] px-3 py-1.5 text-xs bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-app-fg placeholder:text-slate-600 dark:placeholder:text-slate-400 focus:outline-none focus:border-cyan-500"
         />
         <select
           value={sectorFilter}
           onChange={(e) => setSectorFilter(e.target.value)}
           aria-label="Filter by sector"
           data-testid="sector-filter"
-          className="px-3 py-1.5 text-xs bg-slate-800 border border-slate-700 rounded-lg text-slate-200 focus:outline-none focus:border-cyan-500"
+          className="px-3 py-1.5 text-xs bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-800 dark:text-slate-200 focus:outline-none focus:border-cyan-500"
         >
           <option value="all">All Sectors</option>
           {sectorOptions.map((s) => (
@@ -340,7 +340,7 @@ export default function TickerUniverse() {
           onChange={(e) => setIndustryFilter(e.target.value)}
           aria-label="Filter by industry"
           data-testid="industry-filter"
-          className="px-3 py-1.5 text-xs bg-slate-800 border border-slate-700 rounded-lg text-slate-200 focus:outline-none focus:border-cyan-500"
+          className="px-3 py-1.5 text-xs bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-800 dark:text-slate-200 focus:outline-none focus:border-cyan-500"
         >
           <option value="all">All Industries</option>
           {industryOptions.map((i) => (
@@ -389,10 +389,10 @@ export default function TickerUniverse() {
           message={tickers.length === 0 ? "No tickers in the universe yet. Add the first one." : "No tickers match the current filters."}
         />
       ) : (
-        <div className="bg-slate-800/50 border border-slate-700 rounded-xl overflow-hidden">
+        <div className="bg-app-raised border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden">
           <table className="w-full text-sm" data-testid="ticker-table">
             <thead>
-              <tr className="border-b border-slate-700 text-left">
+              <tr className="border-b border-slate-200 dark:border-slate-700 text-left">
                 <th className="px-4 py-3 text-xs font-medium text-slate-600 dark:text-slate-400">Ticker</th>
                 <th className="px-4 py-3 text-xs font-medium text-slate-600 dark:text-slate-400 hidden sm:table-cell">Company Name</th>
                 <th className="px-4 py-3 text-xs font-medium text-slate-600 dark:text-slate-400">Market</th>
@@ -404,9 +404,9 @@ export default function TickerUniverse() {
               {filtered.map((row) => {
                 const busy = !!pendingAction[row.ticker];
                 return (
-                  <tr key={row.ticker} className="border-b border-slate-700/50 last:border-0 hover:bg-slate-700/20 transition-colors" data-testid={`ticker-row-${row.ticker}`}>
-                    <td className="px-4 py-3 font-mono font-semibold text-slate-100">{displayTicker(row.ticker)}</td>
-                    <td className="px-4 py-3 text-slate-300 hidden sm:table-cell" data-testid={`company-name-${row.ticker}`}>{row.company_name || ""}</td>
+                  <tr key={row.ticker} className="border-b border-app-line last:border-0 hover:bg-slate-100 dark:hover:bg-slate-700/20 transition-colors" data-testid={`ticker-row-${row.ticker}`}>
+                    <td className="px-4 py-3 font-mono font-semibold text-slate-900 dark:text-slate-100">{displayTicker(row.ticker)}</td>
+                    <td className="px-4 py-3 text-slate-700 dark:text-slate-300 hidden sm:table-cell" data-testid={`company-name-${row.ticker}`}>{row.company_name || ""}</td>
                     <td className="px-4 py-3"><MarketBadge market={row.market} /></td>
                     <td className="px-4 py-3"><ActiveBadge active={row.active} /></td>
                     <td className="px-4 py-3">
@@ -417,12 +417,12 @@ export default function TickerUniverse() {
                           title={row.active ? "Deactivate" : "Reactivate"}
                           aria-label={row.active ? `Deactivate ${row.ticker}` : `Reactivate ${row.ticker}`}
                           data-testid={`toggle-${row.ticker}`}
-                          className="text-slate-600 dark:text-slate-400 hover:text-amber-400 disabled:opacity-40 transition-colors"
+                          className="text-slate-600 dark:text-slate-400 hover:text-amber-700 dark:hover:text-amber-400 disabled:opacity-40 transition-colors"
                         >
                           {busy ? (
                             <Loader2 size={16} className="animate-spin" />
                           ) : row.active ? (
-                            <ToggleRight size={16} className="text-emerald-400" />
+                            <ToggleRight size={16} className="text-app-positive" />
                           ) : (
                             <ToggleLeft size={16} />
                           )}
@@ -433,7 +433,7 @@ export default function TickerUniverse() {
                           title={`Delete ${row.ticker}`}
                           aria-label={`Delete ${row.ticker}`}
                           data-testid={`delete-${row.ticker}`}
-                          className="text-slate-600 dark:text-slate-400 hover:text-red-400 disabled:opacity-40 transition-colors"
+                          className="text-slate-600 dark:text-slate-400 hover:text-red-700 dark:hover:text-red-400 disabled:opacity-40 transition-colors"
                         >
                           <Trash2 size={16} />
                         </button>
@@ -444,7 +444,7 @@ export default function TickerUniverse() {
               })}
             </tbody>
           </table>
-          <div className="px-4 py-2 border-t border-slate-700 text-xs text-slate-600 dark:text-slate-400">
+          <div className="px-4 py-2 border-t border-slate-200 dark:border-slate-700 text-xs text-slate-600 dark:text-slate-400">
             Showing {filtered.length} of {tickers.length} tickers
           </div>
         </div>

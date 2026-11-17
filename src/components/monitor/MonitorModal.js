@@ -63,11 +63,11 @@ export default function MonitorModal({
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="bg-slate-900 border-slate-700 text-white !max-w-2xl max-h-[80vh] overflow-hidden !flex !flex-col">
+      <DialogContent className="bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-app-fg !max-w-2xl max-h-[80vh] overflow-hidden !flex !flex-col">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <div className="p-2 rounded-lg bg-amber-500/20">
-              <AlertTriangle className="w-5 h-5 text-amber-400" />
+              <AlertTriangle className="w-5 h-5 text-app-warning" />
             </div>
             Daily Position Monitor
           </DialogTitle>
@@ -76,7 +76,7 @@ export default function MonitorModal({
         <div className="flex-1 overflow-y-auto py-4">
           {isLoading ? (
             <div className="flex items-center justify-center py-12">
-              <Loader2 className="w-8 h-8 animate-spin text-slate-500" />
+              <Loader2 className="w-8 h-8 animate-spin text-app-muted" />
             </div>
           ) : positions?.length === 0 ? (
             <div className="text-center py-12">
@@ -104,7 +104,7 @@ export default function MonitorModal({
                         ? "bg-rose-500/10 border-rose-500/30" 
                         : isExitSuggested
                           ? "bg-amber-500/5 border-amber-500/20 hover:border-amber-500/40"
-                          : "bg-slate-800/30 border-slate-700/50"
+                          : "bg-slate-50 dark:bg-slate-800/30 border-app-line"
                     )}
                   >
                     <div className="flex items-center justify-between">
@@ -112,22 +112,22 @@ export default function MonitorModal({
                         {isExitSuggested ? (
                           isSelected ? (
                             <div className="p-2 rounded-lg bg-rose-500/20">
-                              <XCircle className="w-5 h-5 text-rose-400" />
+                              <XCircle className="w-5 h-5 text-app-negative" />
                             </div>
                           ) : (
                             <div className="p-2 rounded-lg bg-amber-500/20">
-                              <AlertTriangle className="w-5 h-5 text-amber-400" />
+                              <AlertTriangle className="w-5 h-5 text-app-warning" />
                             </div>
                           )
                         ) : (
                           <div className="p-2 rounded-lg bg-emerald-500/20">
-                            <CheckCircle2 className="w-5 h-5 text-emerald-400" />
+                            <CheckCircle2 className="w-5 h-5 text-app-positive" />
                           </div>
                         )}
                         <div>
                           <div className="flex items-center gap-2">
-                            <span className="font-semibold text-white">{position.ticker}</span>
-                            <span className="text-xs px-2 py-0.5 rounded-full bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-700">
+                            <span className="font-semibold text-app-fg">{position.ticker}</span>
+                            <span className="text-xs px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
                               {position.market}
                             </span>
                           </div>
@@ -138,22 +138,22 @@ export default function MonitorModal({
                     </div>
                     
                     {isExitSuggested && (
-                      <div className="mt-3 pt-3 border-t border-slate-700/50 grid grid-cols-3 gap-4 text-sm">
+                      <div className="mt-3 pt-3 border-t border-app-line grid grid-cols-3 gap-4 text-sm">
                         <div>
                           <p className="text-xs text-slate-600 dark:text-slate-400">Current</p>
-                          <p className="text-white font-medium">
+                          <p className="text-app-fg font-medium">
                             {position.current_price != null ? formatCurrency(position.current_price, { currency: positionCurrency }) : "—"}
                           </p>
                         </div>
                         <div>
                           <p className="text-xs text-slate-600 dark:text-slate-400">Stop</p>
-                          <p className="text-rose-400 font-medium">
+                          <p className="text-app-negative font-medium">
                             {position.stop_price != null ? formatCurrency(position.stop_price, { currency: positionCurrency }) : "—"}
                           </p>
                         </div>
                         <div>
                           <p className="text-xs text-slate-600 dark:text-slate-400">Entry</p>
-                          <p className="text-slate-300">
+                          <p className="text-slate-700 dark:text-slate-300">
                             {formatCurrency(position.entry_price, { currency: positionCurrency })}
                           </p>
                         </div>
@@ -166,7 +166,7 @@ export default function MonitorModal({
           )}
         </div>
 
-        <DialogFooter className="border-t border-slate-700 pt-4">
+        <DialogFooter className="border-t border-slate-200 dark:border-slate-700 pt-4">
           <div className="flex items-center justify-between w-full">
             <p className="text-sm text-slate-600 dark:text-slate-400">
               {selectedCount > 0 
@@ -180,7 +180,7 @@ export default function MonitorModal({
               <Button 
                 variant="ghost" 
                 onClick={onClose} 
-                className="text-slate-600 dark:text-slate-400 hover:text-white hover:bg-slate-800"
+                className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"
               >
                 Close
               </Button>

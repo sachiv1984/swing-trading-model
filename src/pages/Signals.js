@@ -228,7 +228,7 @@ export default function SignalsPage() {
               queryClient.invalidateQueries({ queryKey: ["signals"] });
               queryClient.invalidateQueries({ queryKey: ["marketStatus"] });
             }}
-            className="border-slate-700 text-slate-600 dark:text-slate-400 hover:text-white hover:bg-slate-800"
+            className="border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"
           >
             <RefreshCw className="w-4 h-4 mr-2" />
             Refresh
@@ -263,11 +263,11 @@ export default function SignalsPage() {
         >
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-cyan-500/20 flex items-center justify-center">
-              <Zap className="w-5 h-5 text-cyan-400" />
+              <Zap className="w-5 h-5 text-cyan-700 dark:text-cyan-400" />
             </div>
             <div>
               <p className="text-sm text-slate-600 dark:text-slate-400">New Signals</p>
-              <p className="text-2xl font-bold text-white">{newSignals.length}</p>
+              <p className="text-2xl font-bold text-app-fg">{newSignals.length}</p>
             </div>
           </div>
         </motion.div>
@@ -276,15 +276,15 @@ export default function SignalsPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="p-4 rounded-xl bg-slate-800/50 border border-slate-700/50"
+          className="p-4 rounded-xl bg-app-raised border border-app-line"
         >
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-violet-500/20 flex items-center justify-center">
-              <DollarSign className="w-5 h-5 text-violet-400" />
+              <DollarSign className="w-5 h-5 text-violet-700 dark:text-violet-400" />
             </div>
             <div>
               <p className="text-sm text-slate-600 dark:text-slate-400">Total Capital</p>
-              <p className="text-2xl font-bold text-white">{formatCurrency(totalCapital)}</p>
+              <p className="text-2xl font-bold text-app-fg">{formatCurrency(totalCapital)}</p>
             </div>
           </div>
         </motion.div>
@@ -293,15 +293,15 @@ export default function SignalsPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="p-4 rounded-xl bg-slate-800/50 border border-slate-700/50"
+          className="p-4 rounded-xl bg-app-raised border border-app-line"
         >
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-emerald-500/20 flex items-center justify-center">
-              <TrendingUp className="w-5 h-5 text-emerald-400" />
+              <TrendingUp className="w-5 h-5 text-app-positive" />
             </div>
             <div>
               <p className="text-sm text-slate-600 dark:text-slate-400">Avg Momentum</p>
-              <p className="text-2xl font-bold text-white">{formatPercent(avgMomentum)}</p>
+              <p className="text-2xl font-bold text-app-fg">{formatPercent(avgMomentum)}</p>
             </div>
           </div>
         </motion.div>
@@ -310,15 +310,15 @@ export default function SignalsPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="p-4 rounded-xl bg-slate-800/50 border border-slate-700/50"
+          className="p-4 rounded-xl bg-app-raised border border-app-line"
         >
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-fuchsia-500/20 flex items-center justify-center">
-              <Target className="w-5 h-5 text-fuchsia-400" />
+              <Target className="w-5 h-5 text-fuchsia-700 dark:text-fuchsia-400" />
             </div>
             <div>
               <p className="text-sm text-slate-600 dark:text-slate-400">Distribution</p>
-              <p className="text-2xl font-bold text-white">{usCount} US, {ukCount} UK</p>
+              <p className="text-2xl font-bold text-app-fg">{usCount} US, {ukCount} UK</p>
             </div>
           </div>
         </motion.div>
@@ -327,12 +327,12 @@ export default function SignalsPage() {
       {/* Filters */}
       <div className="flex flex-wrap items-center gap-4 mb-6">
         <div className="flex items-center gap-2">
-          <Filter className="w-4 h-4 text-slate-400" />
+          <Filter className="w-4 h-4 text-app-muted" />
           <Select value={marketFilter} onValueChange={setMarketFilter}>
-            <SelectTrigger className="w-32 bg-slate-800/50 border-slate-700 text-white h-9">
+            <SelectTrigger aria-label="Market" className="w-32 bg-app-raised border-slate-200 dark:border-slate-700 text-app-fg h-9">
               <SelectValue />
             </SelectTrigger>
-            <SelectContent className="bg-slate-800 border-slate-700">
+            <SelectContent className="bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700">
               <SelectItem value="all">All Markets</SelectItem>
               <SelectItem value="US">US Only</SelectItem>
               <SelectItem value="UK">UK Only</SelectItem>
@@ -341,10 +341,10 @@ export default function SignalsPage() {
         </div>
 
         <Select value={sortBy} onValueChange={setSortBy}>
-          <SelectTrigger className="w-40 bg-slate-800/50 border-slate-700 text-white h-9">
+          <SelectTrigger aria-label="Sort signals" className="w-40 bg-app-raised border-slate-200 dark:border-slate-700 text-app-fg h-9">
             <SelectValue />
           </SelectTrigger>
-          <SelectContent className="bg-slate-800 border-slate-700">
+          <SelectContent className="bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700">
             <SelectItem value="rank">Sort by Rank</SelectItem>
             <SelectItem value="momentum">Sort by Momentum</SelectItem>
             <SelectItem value="price">Sort by Price</SelectItem>
@@ -358,7 +358,8 @@ export default function SignalsPage() {
             min="1"
             value={topNInput}
             onChange={(e) => handleTopNChange(e.target.value)}
-            className="w-20 h-9 bg-slate-800/50 border border-slate-700 rounded-md text-white text-sm px-2 focus:outline-none focus:border-cyan-500"
+            aria-label="Top N"
+            className="w-20 h-9 bg-app-raised border border-slate-200 dark:border-slate-700 rounded-md text-app-fg text-sm px-2 focus:outline-none focus:border-cyan-500"
           />
         </div>
 
@@ -369,7 +370,8 @@ export default function SignalsPage() {
             min="1"
             value={lookbackDaysInput}
             onChange={(e) => handleLookbackDaysChange(e.target.value)}
-            className="w-24 h-9 bg-slate-800/50 border border-slate-700 rounded-md text-white text-sm px-2 focus:outline-none focus:border-cyan-500"
+            aria-label="Lookback Days"
+            className="w-24 h-9 bg-app-raised border border-slate-200 dark:border-slate-700 rounded-md text-app-fg text-sm px-2 focus:outline-none focus:border-cyan-500"
           />
         </div>
 
@@ -378,8 +380,8 @@ export default function SignalsPage() {
           size="sm"
           onClick={() => setShowDismissed(!showDismissed)}
           className={cn(
-            "border-slate-700 h-9",
-            showDismissed ? "bg-slate-700 text-white" : "text-slate-600 dark:text-slate-400 hover:text-white hover:bg-slate-800"
+            "border-slate-200 dark:border-slate-700 h-9",
+            showDismissed ? "bg-slate-200 dark:bg-slate-700 text-app-fg" : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"
           )}
         >
           {showDismissed ? "Hide" : "Show"} Dismissed
@@ -390,8 +392,8 @@ export default function SignalsPage() {
           size="sm"
           onClick={() => setShowRecentOnly(!showRecentOnly)}
           className={cn(
-            "border-slate-700 h-9",
-            showRecentOnly ? "bg-slate-700 text-white" : "text-slate-600 dark:text-slate-400 hover:text-white hover:bg-slate-800"
+            "border-slate-200 dark:border-slate-700 h-9",
+            showRecentOnly ? "bg-slate-200 dark:bg-slate-700 text-app-fg" : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"
           )}
         >
           {showRecentOnly ? "Most Recent Day" : "All Days"}
@@ -401,17 +403,17 @@ export default function SignalsPage() {
       {/* Signals Grid */}
       {isLoading ? (
         <div className="text-center py-12">
-          <RefreshCw className="w-8 h-8 text-slate-400 animate-spin mx-auto mb-4" />
+          <RefreshCw className="w-8 h-8 text-app-muted animate-spin mx-auto mb-4" />
           <p className="text-slate-600 dark:text-slate-400">Loading signals...</p>
         </div>
       ) : filteredSignals.length === 0 ? (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="text-center py-12 px-6 rounded-xl bg-slate-800/50 border border-slate-700/50"
+          className="text-center py-12 px-6 rounded-xl bg-app-raised border border-app-line"
         >
-          <Zap className="w-12 h-12 text-slate-600 mx-auto mb-4" />
-          <h3 className="text-xl font-semibold text-white mb-2">No signals found for the selected parameters.</h3>
+          <Zap className="w-12 h-12 text-app-muted mx-auto mb-4" />
+          <h3 className="text-xl font-semibold text-app-fg mb-2">No signals found for the selected parameters.</h3>
           <p className="text-slate-600 dark:text-slate-400 mb-4">
             Signals are generated daily at 4 PM UTC weekdays
           </p>

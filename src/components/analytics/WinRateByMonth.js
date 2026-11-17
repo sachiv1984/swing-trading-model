@@ -38,10 +38,10 @@ function WinRateTooltip({ active, payload, label }) {
   if (!active || !payload || payload.length === 0) return null;
   const d = payload[0].payload;
   return (
-    <div className="rounded-xl bg-slate-800 border border-slate-700 px-4 py-3 shadow-xl text-sm">
-      <p className="font-semibold text-white mb-1">{label}</p>
-      <p className="text-slate-300">
-        Win rate: <span className="font-medium text-white">{formatPercent(d.winRate)}</span>
+    <div className="rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-4 py-3 shadow-xl text-sm">
+      <p className="font-semibold text-app-fg mb-1">{label}</p>
+      <p className="text-slate-700 dark:text-slate-300">
+        Win rate: <span className="font-medium text-app-fg">{formatPercent(d.winRate)}</span>
       </p>
       <p className="text-slate-600 dark:text-slate-400 text-xs mt-0.5">
         {d.tradeCount} trade{d.tradeCount !== 1 ? "s" : ""}
@@ -60,9 +60,9 @@ export default function WinRateByMonth({ monthlyData = [] }) {
   }));
 
   return (
-    <div className="rounded-2xl bg-slate-800/50 border border-slate-700/50 p-6 backdrop-blur-sm">
+    <div className="rounded-2xl bg-app-raised border border-app-line p-6 backdrop-blur-sm">
       <div className="mb-6">
-        <h3 className="text-lg font-semibold text-white">Win Rate by Month</h3>
+        <h3 className="text-lg font-semibold text-app-fg">Win Rate by Month</h3>
         <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
           Monthly win rate with 50% break-even reference
         </p>

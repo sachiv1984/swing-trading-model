@@ -63,7 +63,7 @@ function fmtNum(val) {
 
 function pnlClass(val) {
   if (val == null) return 'text-slate-600 dark:text-slate-400';
-  return Number(val) >= 0 ? 'text-green-400' : 'text-red-400';
+  return Number(val) >= 0 ? 'text-green-700 dark:text-green-400' : 'text-red-700 dark:text-red-400';
 }
 
 // Panel 0 (Open Positions) uses emerald/rose per ux_spec.md, distinct from the
@@ -71,7 +71,7 @@ function pnlClass(val) {
 // unrealized figures are visually separate from realized ones (AC-02).
 function unrealizedPnlClass(val) {
   if (val == null) return 'text-slate-600 dark:text-slate-400';
-  return Number(val) >= 0 ? 'text-emerald-400' : 'text-rose-400';
+  return Number(val) >= 0 ? 'text-app-positive' : 'text-app-negative';
 }
 
 // Note (ST-01, v9.8): the `decimals` param is dropped — the shared helper fixes money at 2dp
@@ -98,8 +98,8 @@ function fmtDateLong(val) {
 function MarketBadge({ market }) {
   const cls =
     market === 'UK'
-      ? 'bg-blue-500/20 text-blue-400 border-blue-500/30'
-      : 'bg-violet-500/20 text-violet-400 border-violet-500/30';
+      ? 'bg-blue-500/20 text-blue-800 dark:text-blue-400 border-blue-500/30'
+      : 'bg-violet-500/20 text-violet-800 dark:text-violet-400 border-violet-500/30';
   return (
     <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border ${cls}`}>
       {market}
@@ -126,7 +126,7 @@ function Panel0({ openPositions, loading, error, showMarketBadge }) {
   if (error) {
     return (
       <section data-testid="benchmark-panel-0">
-        <h2 className="text-sm font-semibold text-white mb-3">Open Positions</h2>
+        <h2 className="text-sm font-semibold text-app-fg mb-3">Open Positions</h2>
         <p className="text-sm text-slate-600 dark:text-slate-400" data-testid="benchmark-open-positions-error">
           Open positions temporarily unavailable.
         </p>
@@ -137,9 +137,9 @@ function Panel0({ openPositions, loading, error, showMarketBadge }) {
   if (loading) {
     return (
       <section data-testid="benchmark-panel-0">
-        <h2 className="text-sm font-semibold text-white mb-3">Open Positions</h2>
+        <h2 className="text-sm font-semibold text-app-fg mb-3">Open Positions</h2>
         <div className="space-y-2 animate-pulse" data-testid="benchmark-open-positions-loading">
-          {[1, 2, 3].map(i => <div key={i} className="h-8 bg-slate-800 rounded-md" />)}
+          {[1, 2, 3].map(i => <div key={i} className="h-8 bg-slate-100 dark:bg-slate-800 rounded-md" />)}
         </div>
       </section>
     );
@@ -153,12 +153,12 @@ function Panel0({ openPositions, loading, error, showMarketBadge }) {
 
   const count = summary?.count ?? positions.length;
   const total = summary?.total_unrealized_pnl_gbp;
-  const summaryColour = total != null && Number(total) < 0 ? 'text-rose-400' : 'text-emerald-400';
+  const summaryColour = total != null && Number(total) < 0 ? 'text-app-negative' : 'text-app-positive';
 
   return (
     <section data-testid="benchmark-panel-0">
       <div className="flex items-center justify-between mb-3">
-        <h2 className="text-sm font-semibold text-white">Open Positions</h2>
+        <h2 className="text-sm font-semibold text-app-fg">Open Positions</h2>
       </div>
       <p className={`text-sm mb-3 ${summaryColour}`} data-testid="benchmark-open-positions-summary">
         {count} open position{count === 1 ? '' : 's'} · {fmtGbpSigned(total)} unrealized
@@ -166,7 +166,7 @@ function Panel0({ openPositions, loading, error, showMarketBadge }) {
       <div className="overflow-x-auto">
         <table className="w-full text-sm" data-testid="benchmark-open-positions-table">
           <thead>
-            <tr className="text-xs text-slate-600 dark:text-slate-400 border-b border-slate-700">
+            <tr className="text-xs text-slate-600 dark:text-slate-400 border-b border-slate-200 dark:border-slate-700">
               <th scope="col" className="text-left py-2 pr-3">Ticker</th>
               <th scope="col" className="text-left py-2 pr-3">Entry</th>
               <th scope="col" className="text-right py-2 pr-3">Entry £</th>
@@ -180,11 +180,11 @@ function Panel0({ openPositions, loading, error, showMarketBadge }) {
             {positions.map(pos => (
               <tr
                 key={`${pos.ticker}-${pos.entry_date}`}
-                className="border-b border-slate-800 hover:bg-slate-800/40"
+                className="border-b border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800/40"
                 data-testid={`benchmark-open-position-${pos.ticker}`}
               >
                 <td className="py-2 pr-3">
-                  <span className="font-semibold text-white">{pos.ticker}</span>
+                  <span className="font-semibold text-app-fg">{pos.ticker}</span>
                   {showMarketBadge && (
                     <span className="ml-1.5 inline-block align-middle">
                       <MarketBadge market={pos.market} />
@@ -192,11 +192,11 @@ function Panel0({ openPositions, loading, error, showMarketBadge }) {
                   )}
                 </td>
                 <td className="py-2 pr-3 text-slate-600 dark:text-slate-400">{fmtDateLong(pos.entry_date)}</td>
-                <td className="py-2 pr-3 text-right text-slate-300">{fmtGbpPrice(pos.entry_price)}</td>
-                <td className="py-2 pr-3 text-right text-slate-300">{fmtGbpPrice(pos.current_price)}</td>
+                <td className="py-2 pr-3 text-right text-slate-700 dark:text-slate-300">{fmtGbpPrice(pos.entry_price)}</td>
+                <td className="py-2 pr-3 text-right text-slate-700 dark:text-slate-300">{fmtGbpPrice(pos.current_price)}</td>
                 <td className={`py-2 pr-3 text-right ${unrealizedPnlClass(pos.unrealized_pnl_gbp)}`}>{fmtGbpSigned(pos.unrealized_pnl_gbp)}</td>
                 <td className={`py-2 pr-3 text-right ${unrealizedPnlClass(pos.unrealized_pnl_pct)}`}>{fmtPctSigned(pos.unrealized_pnl_pct)}</td>
-                <td className="py-2 text-right text-slate-300">{pos.days_held ?? '—'}</td>
+                <td className="py-2 text-right text-slate-700 dark:text-slate-300">{pos.days_held ?? '—'}</td>
               </tr>
             ))}
           </tbody>
@@ -212,14 +212,14 @@ function Panel0({ openPositions, loading, error, showMarketBadge }) {
 
 function StatCard({ label, backtest, actual }) {
   return (
-    <div className="min-w-0 bg-slate-800 rounded-lg p-3 border border-slate-700">
+    <div className="min-w-0 bg-slate-100 dark:bg-slate-800 rounded-lg p-3 border border-slate-200 dark:border-slate-700">
       <p className="text-xs text-slate-600 dark:text-slate-400 mb-2">{label}</p>
       {/* ST-07 (v9.17): wraps Actual under Backtest when two GBP values do not
           fit a half-width card at 390 px (no page-level horizontal scroll). */}
       <div className="flex flex-wrap items-end justify-between gap-x-2 gap-y-1">
         <div>
           <p className="text-xs text-slate-600 dark:text-slate-400 mb-0.5">Backtest</p>
-          <p className="text-base font-semibold text-white">{backtest}</p>
+          <p className="text-base font-semibold text-app-fg">{backtest}</p>
         </div>
         <div className="text-right">
           <p className="text-xs text-slate-600 dark:text-slate-400 mb-0.5">Actual</p>
@@ -239,7 +239,7 @@ function Panel1({ backtest, actual, lastImportedAt }) {
   return (
     <section data-testid="benchmark-panel-1">
       <div className="flex items-center justify-between mb-3">
-        <h2 className="text-sm font-semibold text-white">Performance Parity</h2>
+        <h2 className="text-sm font-semibold text-app-fg">Performance Parity</h2>
         {lastImportedAt && (
           <span className="text-xs text-slate-600 dark:text-slate-400">
             Last updated {new Date(lastImportedAt).toLocaleDateString('en-GB')}
@@ -250,7 +250,7 @@ function Panel1({ backtest, actual, lastImportedAt }) {
       {!backtest ? (
         <p className="text-sm text-slate-600 dark:text-slate-400 italic" data-testid="benchmark-no-data">
           No backtest data imported yet. Run{' '}
-          <code className="text-xs bg-slate-800 px-1 py-0.5 rounded">python import_backtest.py</code>{' '}
+          <code className="text-xs bg-slate-100 dark:bg-slate-800 px-1 py-0.5 rounded">python import_backtest.py</code>{' '}
           to import production_strategy.py results.
         </p>
       ) : (
@@ -294,7 +294,7 @@ function Panel2({ rows }) {
   if (!rows || rows.length === 0) {
     return (
       <section data-testid="benchmark-panel-2">
-        <h2 className="text-sm font-semibold text-white mb-3">Yearly Breakdown</h2>
+        <h2 className="text-sm font-semibold text-app-fg mb-3">Yearly Breakdown</h2>
         <p className="text-sm text-slate-600 dark:text-slate-400 italic">No yearly data available.</p>
       </section>
     );
@@ -302,11 +302,11 @@ function Panel2({ rows }) {
 
   return (
     <section data-testid="benchmark-panel-2">
-      <h2 className="text-sm font-semibold text-white mb-3">Yearly Breakdown</h2>
+      <h2 className="text-sm font-semibold text-app-fg mb-3">Yearly Breakdown</h2>
       <div className="overflow-x-auto">
         <table className="w-full text-sm" data-testid="benchmark-yearly-table">
           <thead>
-            <tr className="text-xs text-slate-600 dark:text-slate-400 border-b border-slate-700">
+            <tr className="text-xs text-slate-600 dark:text-slate-400 border-b border-slate-200 dark:border-slate-700">
               <th className="text-left py-2 pr-4">Year</th>
               <th className="text-right py-2 pr-4">Trades</th>
               <th className="text-right py-2 pr-4">Win Rate</th>
@@ -319,15 +319,15 @@ function Panel2({ rows }) {
             {rows.map(row => (
               <tr
                 key={row.entry_year}
-                className="border-b border-slate-800 hover:bg-slate-800/40"
+                className="border-b border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800/40"
                 data-testid={`benchmark-year-row-${row.entry_year}`}
               >
-                <td className="py-2 pr-4 font-medium text-white">{row.entry_year}</td>
-                <td className="py-2 pr-4 text-right text-slate-300">{fmtNum(row.num_trades)}</td>
-                <td className="py-2 pr-4 text-right text-slate-300">{fmtPct(row.win_rate_pct)}</td>
+                <td className="py-2 pr-4 font-medium text-app-fg">{row.entry_year}</td>
+                <td className="py-2 pr-4 text-right text-slate-700 dark:text-slate-300">{fmtNum(row.num_trades)}</td>
+                <td className="py-2 pr-4 text-right text-slate-700 dark:text-slate-300">{fmtPct(row.win_rate_pct)}</td>
                 <td className={`py-2 pr-4 text-right ${pnlClass(row.avg_pnl_gbp)}`}>{fmtGbp(row.avg_pnl_gbp)}</td>
                 <td className={`py-2 pr-4 text-right ${pnlClass(row.total_pnl_gbp)}`}>{fmtGbp(row.total_pnl_gbp)}</td>
-                <td className="py-2 text-right text-slate-300">{fmtDays(row.avg_hold_days)}</td>
+                <td className="py-2 text-right text-slate-700 dark:text-slate-300">{fmtDays(row.avg_hold_days)}</td>
               </tr>
             ))}
           </tbody>
@@ -343,11 +343,11 @@ function Panel2({ rows }) {
 
 function TradeRow({ trade, source }) {
   return (
-    <tr className="border-b border-slate-800 hover:bg-slate-800/40 text-sm">
+    <tr className="border-b border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800/40 text-sm">
       <td className="py-2 pr-3">
-        <span className="font-semibold text-white">{trade.ticker}</span>
+        <span className="font-semibold text-app-fg">{trade.ticker}</span>
         {source && (
-          <span className={`ml-1.5 text-xs px-1 py-0.5 rounded ${source === 'backtest' ? 'bg-slate-700 text-slate-600 dark:text-slate-400' : 'bg-blue-900 text-blue-300'}`}>
+          <span className={`ml-1.5 text-xs px-1 py-0.5 rounded ${source === 'backtest' ? 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400' : 'bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-300'}`}>
             {source === 'backtest' ? 'BT' : 'Live'}
           </span>
         )}
@@ -385,7 +385,7 @@ function Panel3({ backtestTrades, actualTrades, toggleMode, onToggleMode }) {
   return (
     <section data-testid="benchmark-panel-3">
       <div className="flex items-center justify-between mb-3">
-        <h2 className="text-sm font-semibold text-white">Trade Log</h2>
+        <h2 className="text-sm font-semibold text-app-fg">Trade Log</h2>
         <div className="flex gap-1" data-testid="benchmark-toggle-modes">
           {TOGGLE_MODES.map(mode => (
             <button
@@ -393,8 +393,8 @@ function Panel3({ backtestTrades, actualTrades, toggleMode, onToggleMode }) {
               onClick={() => onToggleMode(mode)}
               className={`text-xs px-2.5 py-1 rounded-md border transition-colors ${
                 toggleMode === mode
-                  ? 'border-slate-400 bg-slate-700 text-white'
-                  : 'border-slate-700 text-slate-600 dark:text-slate-400 hover:text-slate-300 hover:bg-slate-800'
+                  ? 'border-slate-400 bg-slate-200 dark:bg-slate-700 text-app-fg'
+                  : 'border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
               }`}
               data-testid={`benchmark-mode-${mode}`}
             >
@@ -412,7 +412,7 @@ function Panel3({ backtestTrades, actualTrades, toggleMode, onToggleMode }) {
         <div className="overflow-x-auto">
           <table className="w-full text-sm" data-testid="benchmark-trade-table">
             <thead>
-              <tr className="text-xs text-slate-600 dark:text-slate-400 border-b border-slate-700">
+              <tr className="text-xs text-slate-600 dark:text-slate-400 border-b border-slate-200 dark:border-slate-700">
                 <th className="text-left py-2 pr-3">Ticker</th>
                 <th className="text-left py-2 pr-3">Entry</th>
                 <th className="text-left py-2 pr-3">Exit</th>
@@ -450,13 +450,13 @@ function fmtDelta(val, suffix = '') {
 
 function deltaClass(val) {
   if (val == null) return 'text-slate-600 dark:text-slate-400';
-  return Number(val) >= 0 ? 'text-emerald-400' : 'text-rose-400';
+  return Number(val) >= 0 ? 'text-app-positive' : 'text-app-negative';
 }
 
 const ASSESSMENT_BADGE = {
-  Improved: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30',
-  Degraded: 'bg-rose-500/20 text-rose-400 border-rose-500/30',
-  'Insufficient data': 'bg-slate-500/20 text-slate-400 border-slate-500/30',
+  Improved: 'bg-emerald-500/20 text-emerald-800 dark:text-emerald-400 border-emerald-500/30',
+  Degraded: 'bg-rose-500/20 text-rose-800 dark:text-rose-400 border-rose-500/30',
+  'Insufficient data': 'bg-slate-500/20 text-app-muted border-slate-300 dark:border-slate-500/30',
 };
 
 function VersionComparisonTab() {
@@ -509,7 +509,7 @@ function VersionComparisonTab() {
           <select
             value={versionFrom}
             onChange={e => setVersionFrom(e.target.value)}
-            className="appearance-none bg-slate-800 border border-slate-600 rounded-md px-3 py-1.5 text-xs text-slate-300 focus:outline-none focus:border-slate-400"
+            className="appearance-none bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-md px-3 py-1.5 text-xs text-slate-700 dark:text-slate-300 focus:outline-none focus:border-slate-400"
             data-testid="version-from-select"
           >
             {STRATEGY_VERSIONS.map(v => (
@@ -526,7 +526,7 @@ function VersionComparisonTab() {
           <select
             value={versionTo}
             onChange={e => setVersionTo(e.target.value)}
-            className="appearance-none bg-slate-800 border border-slate-600 rounded-md px-3 py-1.5 text-xs text-slate-300 focus:outline-none focus:border-slate-400"
+            className="appearance-none bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-md px-3 py-1.5 text-xs text-slate-700 dark:text-slate-300 focus:outline-none focus:border-slate-400"
             data-testid="version-to-select"
           >
             {STRATEGY_VERSIONS.map(v => (
@@ -541,7 +541,7 @@ function VersionComparisonTab() {
         <button
           onClick={handleCompare}
           disabled={state === 'loading'}
-          className="text-xs px-3 py-1.5 rounded-md border border-slate-400 bg-slate-700 text-white hover:bg-slate-600 disabled:opacity-50"
+          className="text-xs px-3 py-1.5 rounded-md border border-slate-400 bg-slate-200 dark:bg-slate-700 text-app-fg hover:bg-slate-300 dark:hover:bg-slate-600 disabled:opacity-50"
           data-testid="version-compare-btn"
         >
           Compare
@@ -557,13 +557,13 @@ function VersionComparisonTab() {
 
       {state === 'loading' && (
         <div className="space-y-2 animate-pulse" data-testid="version-comparison-loading">
-          {[1, 2, 3, 4].map(i => <div key={i} className="h-8 bg-slate-800 rounded-md" />)}
+          {[1, 2, 3, 4].map(i => <div key={i} className="h-8 bg-slate-100 dark:bg-slate-800 rounded-md" />)}
         </div>
       )}
 
       {state === 'error' && generalError && (
         <div className="rounded-lg border border-red-800 bg-red-900/20 p-4" data-testid="version-comparison-error">
-          <p className="text-sm text-red-400">{generalError}</p>
+          <p className="text-sm text-red-700 dark:text-red-400">{generalError}</p>
         </div>
       )}
 
@@ -572,41 +572,41 @@ function VersionComparisonTab() {
           <div className="overflow-x-auto">
             <table className="w-full text-sm" data-testid="version-comparison-table">
               <thead>
-                <tr className="text-xs text-slate-600 dark:text-slate-400 border-b border-slate-700">
+                <tr className="text-xs text-slate-600 dark:text-slate-400 border-b border-slate-200 dark:border-slate-700">
                   <th scope="col" className="text-left py-2 pr-3">Metric</th>
                   <th scope="col" className="text-right py-2 pr-3">{result.version_from}</th>
                   <th scope="col" className="text-right py-2">{result.version_to}</th>
                 </tr>
               </thead>
               <tbody>
-                <tr className="border-b border-slate-800">
-                  <td className="py-2 pr-3 text-slate-300">Trades Compared</td>
-                  <td className="py-2 pr-3 text-right text-white">{fmtNum(result.version_from_metrics.trade_count)}</td>
-                  <td className="py-2 text-right text-white">{fmtNum(result.version_to_metrics.trade_count)}</td>
+                <tr className="border-b border-slate-200 dark:border-slate-800">
+                  <td className="py-2 pr-3 text-slate-700 dark:text-slate-300">Trades Compared</td>
+                  <td className="py-2 pr-3 text-right text-app-fg">{fmtNum(result.version_from_metrics.trade_count)}</td>
+                  <td className="py-2 text-right text-app-fg">{fmtNum(result.version_to_metrics.trade_count)}</td>
                 </tr>
-                <tr className="border-b border-slate-800">
-                  <td className="py-2 pr-3 text-slate-300">Win Rate</td>
-                  <td className="py-2 pr-3 text-right text-white">{fmtPct(result.version_from_metrics.win_rate * 100)}</td>
-                  <td className="py-2 text-right text-white">{fmtPct(result.version_to_metrics.win_rate * 100)}</td>
+                <tr className="border-b border-slate-200 dark:border-slate-800">
+                  <td className="py-2 pr-3 text-slate-700 dark:text-slate-300">Win Rate</td>
+                  <td className="py-2 pr-3 text-right text-app-fg">{fmtPct(result.version_from_metrics.win_rate * 100)}</td>
+                  <td className="py-2 text-right text-app-fg">{fmtPct(result.version_to_metrics.win_rate * 100)}</td>
                 </tr>
-                <tr className="border-b border-slate-800">
-                  <td className="py-2 pr-3 text-slate-300">Average R</td>
-                  <td className="py-2 pr-3 text-right text-white">{fmtR(result.version_from_metrics.avg_R)}</td>
-                  <td className="py-2 text-right text-white">{fmtR(result.version_to_metrics.avg_R)}</td>
+                <tr className="border-b border-slate-200 dark:border-slate-800">
+                  <td className="py-2 pr-3 text-slate-700 dark:text-slate-300">Average R</td>
+                  <td className="py-2 pr-3 text-right text-app-fg">{fmtR(result.version_from_metrics.avg_R)}</td>
+                  <td className="py-2 text-right text-app-fg">{fmtR(result.version_to_metrics.avg_R)}</td>
                 </tr>
                 <tr>
-                  <td className="py-2 pr-3 text-slate-300">
+                  <td className="py-2 pr-3 text-slate-700 dark:text-slate-300">
                     Compliance Rate
                     {(result.version_from_metrics.compliance_rate == null || result.version_to_metrics.compliance_rate == null) && (
                       <span className="ml-1 text-slate-600 dark:text-slate-400" title="Not yet available">ⓘ</span>
                     )}
                   </td>
-                  <td className="py-2 pr-3 text-right text-white">
+                  <td className="py-2 pr-3 text-right text-app-fg">
                     {result.version_from_metrics.compliance_rate != null
                       ? fmtPct(result.version_from_metrics.compliance_rate * 100)
                       : <span title="Not yet available">—</span>}
                   </td>
-                  <td className="py-2 text-right text-white">
+                  <td className="py-2 text-right text-app-fg">
                     {result.version_to_metrics.compliance_rate != null
                       ? fmtPct(result.version_to_metrics.compliance_rate * 100)
                       : <span title="Not yet available">—</span>}
@@ -617,14 +617,14 @@ function VersionComparisonTab() {
           </div>
 
           {/* Comparison Summary strip */}
-          <div className="mt-4 flex flex-wrap items-center gap-4 rounded-lg border border-slate-700 bg-slate-800/50 p-3" data-testid="version-comparison-summary">
+          <div className="mt-4 flex flex-wrap items-center gap-4 rounded-lg border border-slate-200 dark:border-slate-700 bg-app-raised p-3" data-testid="version-comparison-summary">
             <span className={`text-sm font-medium ${deltaClass(result.comparison_summary.win_rate_delta)}`}>
               Win Rate {formatPercent(result.comparison_summary.win_rate_delta * 100, { signed: true })}
             </span>
             <span className={`text-sm font-medium ${deltaClass(result.comparison_summary.avg_R_delta)}`}>
               Avg R {formatR(result.comparison_summary.avg_R_delta)}
             </span>
-            <span className="text-sm font-medium text-slate-300">
+            <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
               Trades {fmtDelta(result.comparison_summary.trade_count_delta)}
             </span>
             <span
@@ -662,10 +662,10 @@ const CANDIDATE_FIELDS = [
 
 function BacktestComparisonRow({ label, candidate, live, format }) {
   return (
-    <tr className="border-b border-slate-800">
-      <td className="py-2 pr-3 text-slate-300">{label}</td>
-      <td className="py-2 pr-3 text-right text-white">{format(candidate)}</td>
-      <td className="py-2 text-right text-white">{format(live)}</td>
+    <tr className="border-b border-slate-200 dark:border-slate-800">
+      <td className="py-2 pr-3 text-slate-700 dark:text-slate-300">{label}</td>
+      <td className="py-2 pr-3 text-right text-app-fg">{format(candidate)}</td>
+      <td className="py-2 text-right text-app-fg">{format(live)}</td>
     </tr>
   );
 }
@@ -696,22 +696,22 @@ function RMultipleComparisonChart({ candidateBuckets, liveBuckets }) {
 function BacktestRunHistoryItem({ run }) {
   const [expanded, setExpanded] = useState(false);
   return (
-    <div className="rounded-lg border border-slate-700/50 bg-slate-800/30" data-testid="backtest-run-history-item">
+    <div className="rounded-lg border border-app-line bg-slate-50 dark:bg-slate-800/30" data-testid="backtest-run-history-item">
       <button
         type="button"
         onClick={() => setExpanded((e) => !e)}
         className="w-full flex items-center justify-between px-3 py-2 text-left"
         data-testid="backtest-run-history-toggle"
       >
-        <div className="text-xs text-slate-300">
+        <div className="text-xs text-slate-700 dark:text-slate-300">
           <span className="text-slate-600 dark:text-slate-400">{new Date(run.created_at).toLocaleString()}</span>
           {' — '}
           <span>{run.rule_diff_summary}</span>
         </div>
-        {expanded ? <ChevronUp className="w-3.5 h-3.5 text-slate-500" /> : <ChevronDown className="w-3.5 h-3.5 text-slate-500" />}
+        {expanded ? <ChevronUp className="w-3.5 h-3.5 text-app-muted" /> : <ChevronDown className="w-3.5 h-3.5 text-app-muted" />}
       </button>
       {expanded && (
-        <div className="px-3 pb-3 text-xs text-slate-400 space-y-1">
+        <div className="px-3 pb-3 text-xs text-app-muted space-y-1">
           <div>By: {run.initiated_by || '—'}</div>
           <div>Universe: {run.universe_size} tickers, {run.universe_start_date} to {run.universe_end_date}</div>
           <div>Win Rate — Candidate {fmtPct(run.candidate_result?.win_rate_pct)} vs Live {fmtPct(run.live_result?.win_rate_pct)}</div>
@@ -774,8 +774,8 @@ function BacktestRuleChangeTab() {
     <section data-testid="backtest-rule-change-tab">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Left panel — Candidate Rule Input */}
-        <div className="rounded-xl border border-slate-700 bg-slate-900 p-4">
-          <h3 className="text-sm font-medium text-slate-300 mb-3">Candidate Rule Change</h3>
+        <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4">
+          <h3 className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">Candidate Rule Change</h3>
           <p className="text-xs text-slate-600 dark:text-slate-400 mb-3">
             Leave a field blank to use the live strategy_rules.md value.
           </p>
@@ -789,7 +789,7 @@ function BacktestRuleChangeTab() {
                   value={inputs[key] ?? ''}
                   onChange={(e) => handleFieldChange(key, e.target.value)}
                   data-testid={`backtest-input-${key}`}
-                  className="w-full bg-slate-800 border border-slate-700 rounded-md px-2 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-slate-400"
+                  className="w-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md px-2 py-1.5 text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:border-slate-400"
                 />
               </div>
             ))}
@@ -798,7 +798,7 @@ function BacktestRuleChangeTab() {
             onClick={handleRun}
             disabled={runState === 'loading'}
             data-testid="backtest-run-btn"
-            className="mt-4 flex items-center gap-2 text-xs px-3 py-2 rounded-md border border-slate-400 bg-slate-700 text-white hover:bg-slate-600 disabled:opacity-50"
+            className="mt-4 flex items-center gap-2 text-xs px-3 py-2 rounded-md border border-slate-400 bg-slate-200 dark:bg-slate-700 text-app-fg hover:bg-slate-300 dark:hover:bg-slate-600 disabled:opacity-50"
           >
             {runState === 'loading' ? (
               <>
@@ -813,13 +813,13 @@ function BacktestRuleChangeTab() {
             )}
           </button>
           {runState === 'error' && (
-            <p className="mt-2 text-xs text-rose-400" data-testid="backtest-run-error">{error}</p>
+            <p className="mt-2 text-xs text-app-negative" data-testid="backtest-run-error">{error}</p>
           )}
         </div>
 
         {/* Right panel — Results */}
-        <div className="rounded-xl border border-slate-700 bg-slate-900 p-4">
-          <h3 className="text-sm font-medium text-slate-300 mb-3">Results</h3>
+        <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4">
+          <h3 className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">Results</h3>
           {runState === 'idle' && (
             <p className="text-sm text-slate-600 dark:text-slate-400 italic" data-testid="backtest-results-empty">
               Set parameter overrides and run a backtest to compare it against your live strategy.
@@ -827,7 +827,7 @@ function BacktestRuleChangeTab() {
           )}
           {runState === 'loading' && (
             <div className="space-y-2 animate-pulse" data-testid="backtest-results-loading">
-              {[1, 2, 3].map((i) => <div key={i} className="h-8 bg-slate-800 rounded-md" />)}
+              {[1, 2, 3].map((i) => <div key={i} className="h-8 bg-slate-100 dark:bg-slate-800 rounded-md" />)}
             </div>
           )}
           {runState === 'loaded' && result && (
@@ -835,7 +835,7 @@ function BacktestRuleChangeTab() {
               <div className="overflow-x-auto mb-4">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="text-xs text-slate-600 dark:text-slate-400 border-b border-slate-700">
+                    <tr className="text-xs text-slate-600 dark:text-slate-400 border-b border-slate-200 dark:border-slate-700">
                       <th scope="col" className="text-left py-2 pr-3">Metric</th>
                       <th scope="col" className="text-right py-2 pr-3">Candidate</th>
                       <th scope="col" className="text-right py-2">Live</th>
@@ -866,15 +866,15 @@ function BacktestRuleChangeTab() {
       </div>
 
       {/* Run History (AC-03) */}
-      <div className="mt-4 rounded-xl border border-slate-700 bg-slate-900 p-4">
+      <div className="mt-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4">
         <button
           type="button"
           onClick={() => setHistoryExpanded((e) => !e)}
           className="w-full flex items-center justify-between"
           data-testid="backtest-run-history-toggle-panel"
         >
-          <h3 className="text-sm font-medium text-slate-300">Run History</h3>
-          {historyExpanded ? <ChevronUp className="w-4 h-4 text-slate-500" /> : <ChevronDown className="w-4 h-4 text-slate-500" />}
+          <h3 className="text-sm font-medium text-slate-700 dark:text-slate-300">Run History</h3>
+          {historyExpanded ? <ChevronUp className="w-4 h-4 text-app-muted" /> : <ChevronDown className="w-4 h-4 text-app-muted" />}
         </button>
         {historyExpanded && (
           <div className="mt-3 space-y-2" data-testid="backtest-run-history-list">
@@ -985,7 +985,7 @@ export default function StrategyBenchmark() {
           and the "Benchmark data as of" last-updated line are preserved as
           adjacent elements — PageHeader has no icon/subtitle-line prop. */}
       <div className="flex items-start gap-3">
-        <BarChart2 className="w-5 h-5 text-slate-400 mt-1.5 shrink-0" data-testid="benchmark-header-icon" />
+        <BarChart2 className="w-5 h-5 text-app-muted mt-1.5 shrink-0" data-testid="benchmark-header-icon" />
         <div className="flex-1">
           <PageHeader
             title={PAGE_LABELS.StrategyBenchmark}
@@ -995,7 +995,7 @@ export default function StrategyBenchmark() {
               <button
                 onClick={fetchData}
                 disabled={loading}
-                className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-md border border-slate-600 text-slate-300 hover:bg-slate-800 disabled:opacity-50"
+                className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-md border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-50"
                 data-testid="benchmark-refresh-btn"
               >
                 <RefreshCw className={`w-3 h-3 ${loading ? 'animate-spin' : ''}`} />
@@ -1012,7 +1012,7 @@ export default function StrategyBenchmark() {
       </div>
 
       {/* Sub-navigation (v0.4 — ST-01, EPIC-01, v7.7) */}
-      <div className="flex gap-1 border-b border-slate-700" role="tablist" data-testid="benchmark-subnav">
+      <div className="flex gap-1 border-b border-slate-200 dark:border-slate-700" role="tablist" data-testid="benchmark-subnav">
         <button
           role="tab"
           aria-selected={activeTab === 'benchmark'}
@@ -1020,7 +1020,7 @@ export default function StrategyBenchmark() {
           className={`text-sm px-3 py-2 border-b-2 transition-colors ${
             activeTab === 'benchmark'
               ? 'border-slate-400 text-slate-900 dark:text-white font-medium'
-              : 'border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-300'
+              : 'border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300'
           }`}
           data-testid="benchmark-tab-benchmark"
         >
@@ -1033,7 +1033,7 @@ export default function StrategyBenchmark() {
           className={`text-sm px-3 py-2 border-b-2 transition-colors ${
             activeTab === 'version-comparison'
               ? 'border-slate-400 text-slate-900 dark:text-white font-medium'
-              : 'border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-300'
+              : 'border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300'
           }`}
           data-testid="benchmark-tab-version-comparison"
         >
@@ -1046,7 +1046,7 @@ export default function StrategyBenchmark() {
           className={`text-sm px-3 py-2 border-b-2 transition-colors ${
             activeTab === 'backtest-rule-change'
               ? 'border-slate-400 text-slate-900 dark:text-white font-medium'
-              : 'border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-300'
+              : 'border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300'
           }`}
           data-testid="benchmark-tab-backtest-rule-change"
         >
@@ -1055,7 +1055,7 @@ export default function StrategyBenchmark() {
       </div>
 
       {activeTab === 'version-comparison' ? (
-        <div className="rounded-xl border border-slate-700 bg-slate-900 p-4">
+        <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4">
           <VersionComparisonTab />
         </div>
       ) : activeTab === 'backtest-rule-change' ? (
@@ -1070,7 +1070,7 @@ export default function StrategyBenchmark() {
       <div className="lg:order-1 min-w-0 space-y-6">
       {/* Sticky filters */}
       <div
-        className="sticky top-0 z-10 bg-slate-900/95 backdrop-blur-sm border border-slate-700 rounded-lg p-3 flex flex-wrap gap-3 items-center"
+        className="sticky top-0 z-10 bg-slate-50 dark:bg-slate-900/95 backdrop-blur-sm border border-slate-200 dark:border-slate-700 rounded-lg p-3 flex flex-wrap gap-3 items-center"
         data-testid="benchmark-filters"
       >
         {/* Year filter */}
@@ -1080,7 +1080,8 @@ export default function StrategyBenchmark() {
             <select
               value={year == null ? 'all' : String(year)}
               onChange={e => setYear(e.target.value === 'all' ? null : Number(e.target.value))}
-              className="appearance-none bg-slate-800 border border-slate-600 rounded-md pl-3 pr-7 py-1.5 text-xs text-slate-300 focus:outline-none focus:border-slate-400"
+              aria-label="Year"
+              className="appearance-none bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-md pl-3 pr-7 py-1.5 text-xs text-slate-700 dark:text-slate-300 focus:outline-none focus:border-slate-400"
               data-testid="benchmark-year-filter"
             >
               <option value="all">All Years</option>
@@ -1088,7 +1089,7 @@ export default function StrategyBenchmark() {
                 <option key={y} value={String(y)}>{y}</option>
               ))}
             </select>
-            <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-3 h-3 text-slate-500 pointer-events-none" />
+            <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-3 h-3 text-app-muted pointer-events-none" />
           </div>
         </div>
 
@@ -1102,8 +1103,8 @@ export default function StrategyBenchmark() {
                 onClick={() => setMarket(m)}
                 className={`text-xs px-2.5 py-1 rounded-md border transition-colors ${
                   market === m
-                    ? 'border-slate-400 bg-slate-700 text-white'
-                    : 'border-slate-700 text-slate-600 dark:text-slate-400 hover:text-slate-300 hover:bg-slate-800'
+                    ? 'border-slate-400 bg-slate-200 dark:bg-slate-700 text-app-fg'
+                    : 'border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
                 }`}
                 data-testid={`benchmark-market-${m.toLowerCase()}`}
               >
@@ -1117,7 +1118,7 @@ export default function StrategyBenchmark() {
       {/* Panel 0 — Open Positions (independent loading/error state; renders even if
           Panel 1-3's fetch fails, per ux_spec.md "does not break rest of page") */}
       {showOpenPositions && (
-        <div id="open-positions" className={`rounded-xl border border-slate-700 bg-slate-900 p-4 ${SECTION_SCROLL_MARGIN}`}>
+        <div id="open-positions" className={`rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 ${SECTION_SCROLL_MARGIN}`}>
           <Panel0
             openPositions={openPositions}
             loading={openPositionsLoading}
@@ -1130,7 +1131,7 @@ export default function StrategyBenchmark() {
       {/* Error state */}
       {error && (
         <div className="rounded-lg border border-red-800 bg-red-900/20 p-4">
-          <p className="text-sm text-red-400" data-testid="benchmark-error">{error}</p>
+          <p className="text-sm text-red-700 dark:text-red-400" data-testid="benchmark-error">{error}</p>
         </div>
       )}
 
@@ -1138,17 +1139,17 @@ export default function StrategyBenchmark() {
       {loading && (
         <div className="space-y-4 animate-pulse" data-testid="benchmark-loading">
           <div className="grid grid-cols-5 gap-3">
-            {[1,2,3,4,5].map(i => <div key={i} className="h-20 bg-slate-800 rounded-lg" />)}
+            {[1,2,3,4,5].map(i => <div key={i} className="h-20 bg-slate-100 dark:bg-slate-800 rounded-lg" />)}
           </div>
-          <div className="h-40 bg-slate-800 rounded-lg" />
-          <div className="h-60 bg-slate-800 rounded-lg" />
+          <div className="h-40 bg-slate-100 dark:bg-slate-800 rounded-lg" />
+          <div className="h-60 bg-slate-100 dark:bg-slate-800 rounded-lg" />
         </div>
       )}
 
       {showMainPanels && (
         <div className="space-y-6">
           {/* Panel 1 */}
-          <div id="parity" className={`rounded-xl border border-slate-700 bg-slate-900 p-4 ${SECTION_SCROLL_MARGIN}`}>
+          <div id="parity" className={`rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 ${SECTION_SCROLL_MARGIN}`}>
             <Panel1
               backtest={summary?.backtest_stats}
               actual={summary?.actual_stats}
@@ -1157,12 +1158,12 @@ export default function StrategyBenchmark() {
           </div>
 
           {/* Panel 2 */}
-          <div id="yearly" className={`rounded-xl border border-slate-700 bg-slate-900 p-4 ${SECTION_SCROLL_MARGIN}`}>
+          <div id="yearly" className={`rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 ${SECTION_SCROLL_MARGIN}`}>
             <Panel2 rows={summary?.yearly_breakdown || []} />
           </div>
 
           {/* Panel 3 */}
-          <div id="trade-log" className={`rounded-xl border border-slate-700 bg-slate-900 p-4 ${SECTION_SCROLL_MARGIN}`}>
+          <div id="trade-log" className={`rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 ${SECTION_SCROLL_MARGIN}`}>
             <Panel3
               backtestTrades={trades?.backtest_trades || []}
               actualTrades={trades?.actual_trades || []}

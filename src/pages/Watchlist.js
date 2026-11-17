@@ -109,18 +109,13 @@ export default function Watchlist() {
         ]}
         onResult={handleBulkResult}
       />
-
-      {/* EPIC-03 review pass 4: this card is dark in both themes, so it carries
-          the `dark` class. Its contents (DataState headings, dark: pairs, app-*
-          tokens) then resolve to their dark values in light mode too
-          (design_system.md §Semantic Colour Tokens, dark-in-both-themes rule). */}
-      <div className="dark rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 border border-slate-700/50 overflow-hidden">
+      <div className="rounded-2xl bg-white dark:bg-gradient-to-br dark:from-slate-900 dark:to-slate-800 border border-app-line overflow-hidden">
         <DataState
           loading={loading}
           error={loadError}
           onRetry={fetchEntries}
           empty={!loading && !loadError && entries.length === 0}
-          emptyIcon={<Eye className="w-10 h-10 text-slate-600" />}
+          emptyIcon={<Eye className="w-10 h-10 text-app-muted" />}
           emptyHeading="Your watchlist is empty"
           emptyBody="Add tickers you're monitoring for entry opportunities."
           emptyAction={<AddTickerButton onClick={() => modalHook.setModal({ mode: "add" })} />}

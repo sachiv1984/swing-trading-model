@@ -21,22 +21,22 @@ const EVENT_TYPE_CONFIG = {
   pre_entry_override: {
     label: "Pre-Entry Override",
     icon: AlertTriangle,
-    className: "text-amber-400",
+    className: "text-app-warning",
   },
   checklist_skipped: {
     label: "Checklist Skipped",
     icon: CheckSquare,
-    className: "text-sky-400",
+    className: "text-sky-700 dark:text-sky-400",
   },
   stop_prompt_dismissed: {
     label: "Stop Prompt Dismissed",
     icon: SkipForward,
-    className: "text-red-400",
+    className: "text-red-700 dark:text-red-400",
   },
   drawdown_prompt_dismissed: {
     label: "Drawdown Prompt Dismissed",
     icon: TrendingDown,
-    className: "text-red-500",
+    className: "text-red-800 dark:text-red-500",
   },
 };
 
@@ -171,7 +171,7 @@ function EventRow({ event }) {
   return (
     <div
       data-testid="event-row"
-      className="flex items-start gap-4 px-4 py-3 border border-slate-700/50 rounded-lg bg-slate-800/40 hover:bg-slate-800/60 transition-colors"
+      className="flex items-start gap-4 px-4 py-3 border border-app-line rounded-lg bg-slate-50 dark:bg-slate-800/40 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-colors"
     >
       <div className={cn("mt-0.5 shrink-0", config.className)}>
         <Icon className="w-4 h-4" />
@@ -183,7 +183,7 @@ function EventRow({ event }) {
           </span>
           <span
             data-testid="event-ticker"
-            className="text-sm font-mono text-slate-300"
+            className="text-sm font-mono text-slate-700 dark:text-slate-300"
           >
             {displayTicker}
           </span>
@@ -223,13 +223,13 @@ function EventRow({ event }) {
 // own skeleton (bg-slate-300/60 dark:bg-slate-700/60).
 function SkeletonRow() {
   return (
-    <div className="flex items-start gap-4 px-4 py-3 border border-slate-700/30 rounded-lg bg-slate-800/20">
-      <Skeleton className="w-4 h-4 mt-0.5 bg-slate-700 shrink-0" />
+    <div className="flex items-start gap-4 px-4 py-3 border border-slate-200 dark:border-slate-700/30 rounded-lg bg-slate-50 dark:bg-slate-800/20">
+      <Skeleton className="w-4 h-4 mt-0.5 bg-slate-200 dark:bg-slate-700 shrink-0" />
       <div className="flex-1 space-y-2">
-        <Skeleton className="h-3 w-40 bg-slate-700" />
-        <Skeleton className="h-3 w-64 bg-slate-700/60" />
+        <Skeleton className="h-3 w-40 bg-slate-200 dark:bg-slate-700" />
+        <Skeleton className="h-3 w-64 bg-slate-100 dark:bg-slate-700/60" />
       </div>
-      <Skeleton className="w-20 h-3 bg-slate-700" />
+      <Skeleton className="w-20 h-3 bg-slate-200 dark:bg-slate-700" />
     </div>
   );
 }
@@ -332,12 +332,13 @@ export default function RedFlagsSection({ ticker = "", onCount, onClearTicker })
         {/* min-w-0/max-w-full: a native select is as wide as its longest
             option ("… — not yet recorded"), which overflowed 375 px (JA-20). */}
         <div className="flex flex-col gap-1 min-w-0 max-w-full">
-          <label className="text-xs text-slate-600 dark:text-slate-400">Event type</label>
+          <label htmlFor="red-flag-event-type-filter" className="text-xs text-slate-600 dark:text-slate-400">Event type</label>
           <select
+            id="red-flag-event-type-filter"
             data-testid="event-type-filter"
             value={eventTypeFilter}
             onChange={handleEventTypeChange}
-            className="max-w-full bg-slate-800 border border-slate-600 text-slate-200 text-sm rounded px-2 py-1.5 focus:outline-none focus:border-slate-400"
+            className="max-w-full bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 text-slate-800 dark:text-slate-200 text-sm rounded px-2 py-1.5 focus:outline-none focus:border-slate-400"
           >
             {EVENT_TYPE_OPTIONS.map((o) => (
               <option key={o.value} value={o.value} disabled={o.disabled}>
@@ -348,12 +349,13 @@ export default function RedFlagsSection({ ticker = "", onCount, onClearTicker })
         </div>
 
         <div className="flex flex-col gap-1">
-          <label className="text-xs text-slate-600 dark:text-slate-400">From date</label>
+          <label htmlFor="red-flag-since-filter" className="text-xs text-slate-600 dark:text-slate-400">From date</label>
           <input
+            id="red-flag-since-filter"
             type="date"
             value={sinceFilter}
             onChange={handleSinceChange}
-            className="bg-slate-800 border border-slate-600 text-slate-200 text-sm rounded px-2 py-1.5 focus:outline-none focus:border-slate-400"
+            className="bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 text-slate-800 dark:text-slate-200 text-sm rounded px-2 py-1.5 focus:outline-none focus:border-slate-400"
           />
         </div>
 
@@ -379,7 +381,7 @@ export default function RedFlagsSection({ ticker = "", onCount, onClearTicker })
           data-testid="error-state"
           className="flex flex-col items-center gap-3 py-12 text-center"
         >
-          <p className="text-slate-300">
+          <p className="text-slate-700 dark:text-slate-300">
             Unable to load red flags. Please try again.
           </p>
           <Button variant="outline" size="sm" onClick={() => refetch()}>
@@ -397,20 +399,20 @@ export default function RedFlagsSection({ ticker = "", onCount, onClearTicker })
         >
           {hasFilters ? (
             <>
-              <p className="text-slate-300 text-sm">
+              <p className="text-slate-700 dark:text-slate-300 text-sm">
                 {ukSuffixHint
                   ? `No events for ${tickerFilter}. UK tickers need the .L suffix here, e.g. LGEN.L.`
                   : "No events match your current filters."}
               </p>
               <button
                 onClick={clearFilters}
-                className="text-xs text-slate-600 dark:text-slate-400 underline hover:text-slate-300"
+                className="text-xs text-slate-600 dark:text-slate-400 underline hover:text-slate-700 dark:hover:text-slate-300"
               >
                 Clear filters
               </button>
             </>
           ) : (
-            <p className="text-slate-300">No strategy deviations recorded yet</p>
+            <p className="text-slate-700 dark:text-slate-300">No strategy deviations recorded yet</p>
           )}
           <p data-testid="recorded-types-note" className="text-sm text-slate-600 dark:text-slate-400 max-w-sm">
             {recordedTypesNote()}

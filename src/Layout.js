@@ -739,7 +739,7 @@ export default function Layout({ children, currentPageName }) {
             <Wallet className="w-4 h-4 shrink-0" />
             <span className="flex-1 text-left">Manage Cash</span>
             {portfolioForCashModal?.cash_balance != null && (
-              <span className="text-xs opacity-80">
+              <span className="text-xs">
                 {formatCurrency(portfolioForCashModal.cash_balance)}
               </span>
             )}

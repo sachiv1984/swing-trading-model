@@ -163,18 +163,18 @@ export default function SystemStatus() {
 
   // Category icons and colors
   const categoryConfig = {
-    'Core': { icon: Server, color: 'text-blue-400', bg: 'bg-blue-500/10', border: 'border-blue-500/30' },
-    'Configuration': { icon: Settings, color: 'text-purple-400', bg: 'bg-purple-500/10', border: 'border-purple-500/30' },
-    'Portfolio': { icon: Database, color: 'text-green-400', bg: 'bg-green-500/10', border: 'border-green-500/30' },
-    'Trading': { icon: Activity, color: 'text-cyan-400', bg: 'bg-cyan-500/10', border: 'border-cyan-500/30' },
-    'Cash Management': { icon: Zap, color: 'text-amber-400', bg: 'bg-amber-500/10', border: 'border-amber-500/30' },
-    'Market Data': { icon: Globe, color: 'text-indigo-400', bg: 'bg-indigo-500/10', border: 'border-indigo-500/30' },
-    'Analytics': { icon: BarChart3, color: 'text-violet-400', bg: 'bg-violet-500/10', border: 'border-violet-500/30' },
-    'Validation': { icon: Shield, color: 'text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/30' },
-    'Alerts': { icon: Bell, color: 'text-rose-400', bg: 'bg-rose-500/10', border: 'border-rose-500/30' },
-    'Notifications': { icon: BellRing, color: 'text-orange-400', bg: 'bg-orange-500/10', border: 'border-orange-500/30' },
-    'Digest': { icon: Mail, color: 'text-teal-400', bg: 'bg-teal-500/10', border: 'border-teal-500/30' },
-    'Other': { icon: HelpCircle, color: 'text-slate-600 dark:text-slate-400', bg: 'bg-slate-500/10', border: 'border-slate-500/30' }
+    'Core': { icon: Server, color: 'text-blue-800 dark:text-blue-400', bg: 'bg-blue-500/10', border: 'border-blue-500/30' },
+    'Configuration': { icon: Settings, color: 'text-purple-800 dark:text-purple-400', bg: 'bg-purple-500/10', border: 'border-purple-500/30' },
+    'Portfolio': { icon: Database, color: 'text-green-800 dark:text-green-400', bg: 'bg-green-500/10', border: 'border-green-500/30' },
+    'Trading': { icon: Activity, color: 'text-cyan-800 dark:text-cyan-400', bg: 'bg-cyan-500/10', border: 'border-cyan-500/30' },
+    'Cash Management': { icon: Zap, color: 'text-amber-800 dark:text-amber-400', bg: 'bg-amber-500/10', border: 'border-amber-500/30' },
+    'Market Data': { icon: Globe, color: 'text-indigo-800 dark:text-indigo-400', bg: 'bg-indigo-500/10', border: 'border-indigo-500/30' },
+    'Analytics': { icon: BarChart3, color: 'text-violet-800 dark:text-violet-400', bg: 'bg-violet-500/10', border: 'border-violet-500/30' },
+    'Validation': { icon: Shield, color: 'text-emerald-800 dark:text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/30' },
+    'Alerts': { icon: Bell, color: 'text-rose-800 dark:text-rose-400', bg: 'bg-rose-500/10', border: 'border-rose-500/30' },
+    'Notifications': { icon: BellRing, color: 'text-orange-800 dark:text-orange-400', bg: 'bg-orange-500/10', border: 'border-orange-500/30' },
+    'Digest': { icon: Mail, color: 'text-teal-800 dark:text-teal-400', bg: 'bg-teal-500/10', border: 'border-teal-500/30' },
+    'Other': { icon: HelpCircle, color: 'text-slate-600 dark:text-slate-400', bg: 'bg-slate-500/10', border: 'border-slate-300 dark:border-slate-500/30' }
   };
 
   // Fetch health status
@@ -325,17 +325,17 @@ export default function SystemStatus() {
   };
 
   const statusConfig = {
-    healthy: { color: "text-emerald-400", bg: "bg-emerald-500/20", border: "border-emerald-500/40", icon: CheckCircle2 },
-    degraded: { color: "text-yellow-400", bg: "bg-yellow-500/20", border: "border-yellow-500/40", icon: AlertTriangle },
-    unhealthy: { color: "text-rose-400", bg: "bg-rose-500/20", border: "border-rose-500/40", icon: XCircle },
-    unknown: { color: "text-slate-600 dark:text-slate-400", bg: "bg-slate-500/20", border: "border-slate-500/40", icon: HelpCircle }
+    healthy: { color: "text-emerald-800 dark:text-emerald-400", bg: "bg-emerald-500/20", border: "border-emerald-500/40", icon: CheckCircle2 },
+    degraded: { color: "text-yellow-800 dark:text-yellow-400", bg: "bg-yellow-500/20", border: "border-yellow-500/40", icon: AlertTriangle },
+    unhealthy: { color: "text-rose-800 dark:text-rose-400", bg: "bg-rose-500/20", border: "border-rose-500/40", icon: XCircle },
+    unknown: { color: "text-slate-600 dark:text-slate-400", bg: "bg-slate-500/20", border: "border-slate-300 dark:border-slate-500/40", icon: HelpCircle }
   };
 
   const testStatusConfig = {
-    pass: { color: "text-emerald-400", bg: "bg-emerald-500/10", border: "border-emerald-500/30", icon: CheckCircle2 },
-    fail: { color: "text-rose-400", bg: "bg-rose-500/10", border: "border-rose-500/30", icon: XCircle },
-    error: { color: "text-yellow-400", bg: "bg-yellow-500/10", border: "border-yellow-500/30", icon: AlertTriangle },
-    warn: { color: "text-amber-400", bg: "bg-amber-500/10", border: "border-amber-500/30", icon: AlertTriangle }
+    pass: { color: "text-emerald-800 dark:text-emerald-400", bg: "bg-emerald-500/10", border: "border-emerald-500/30", icon: CheckCircle2 },
+    fail: { color: "text-rose-800 dark:text-rose-400", bg: "bg-rose-500/10", border: "border-rose-500/30", icon: XCircle },
+    error: { color: "text-yellow-800 dark:text-yellow-400", bg: "bg-yellow-500/10", border: "border-yellow-500/30", icon: AlertTriangle },
+    warn: { color: "text-amber-800 dark:text-amber-400", bg: "bg-amber-500/10", border: "border-amber-500/30", icon: AlertTriangle }
   };
 
   // Access nested summary object from backend response
@@ -369,20 +369,20 @@ export default function SystemStatus() {
           </div>
         </div>
         <div className="flex flex-wrap items-center gap-3">
-          <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-800/50 border border-slate-700/50">
+          <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-app-raised border border-app-line">
             <Switch
               checked={autoRefresh}
               onCheckedChange={setAutoRefresh}
               id="auto-refresh"
             />
-            <Label htmlFor="auto-refresh" className="text-sm text-slate-300 cursor-pointer">
+            <Label htmlFor="auto-refresh" className="text-sm text-slate-700 dark:text-slate-300 cursor-pointer">
               Auto-refresh
             </Label>
           </div>
           <Button
             onClick={() => refetchHealth()}
             disabled={healthLoading}
-            className="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white"
+            className="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 text-app-fg"
           >
             <RefreshCw className={cn("w-4 h-4 mr-2", healthLoading && "animate-spin")} />
             Refresh Health
@@ -400,7 +400,7 @@ export default function SystemStatus() {
 
       {/* Show error if fetch failed */}
       {healthError && (
-        <div className="p-4 rounded-lg bg-rose-500/10 border border-rose-500/30 text-rose-300">
+        <div className="p-4 rounded-lg bg-rose-500/10 border border-rose-500/30 text-rose-800 dark:text-rose-300">
           <div className="font-bold mb-2">❌ Health Check Failed:</div>
           <div className="text-sm">{healthError.message}</div>
           <div className="text-xs mt-2 opacity-70">
@@ -410,14 +410,14 @@ export default function SystemStatus() {
       )}
 
       {testError && (
-        <div className="p-4 rounded-lg bg-rose-500/10 border border-rose-500/30 text-rose-300">
+        <div className="p-4 rounded-lg bg-rose-500/10 border border-rose-500/30 text-rose-800 dark:text-rose-300">
           <div className="font-bold mb-2">❌ Endpoint Tests Failed:</div>
           <div className="text-sm">{testError.message}</div>
         </div>
       )}
 
       {validationError && (
-        <div className="p-4 rounded-lg bg-rose-500/10 border border-rose-500/30 text-rose-300">
+        <div className="p-4 rounded-lg bg-rose-500/10 border border-rose-500/30 text-rose-800 dark:text-rose-300">
           <div className="font-bold mb-2">❌ Validation Failed:</div>
           <div className="text-sm">{validationError.message}</div>
         </div>
@@ -431,13 +431,13 @@ export default function SystemStatus() {
           "p-8 rounded-2xl border-2 backdrop-blur-sm",
           isHealthy && "bg-gradient-to-br from-emerald-500/20 to-emerald-600/10 border-emerald-500/40",
           isDegraded && "bg-gradient-to-br from-yellow-500/20 to-yellow-600/10 border-yellow-500/40",
-          !isHealthy && !isDegraded && "bg-gradient-to-br from-slate-500/20 to-slate-600/10 border-slate-500/40"
+          !isHealthy && !isDegraded && "bg-white dark:bg-gradient-to-br dark:from-slate-500/20 dark:to-slate-600/10 border-slate-300 dark:border-slate-500/40"
         )}
       >
         {healthLoading ? (
           <div className="flex items-center justify-center py-12">
             <div className="text-center">
-              <RefreshCw className="w-12 h-12 text-slate-400 animate-spin mx-auto mb-4" />
+              <RefreshCw className="w-12 h-12 text-app-muted animate-spin mx-auto mb-4" />
               <p className="text-slate-600 dark:text-slate-400">Loading system status...</p>
             </div>
           </div>
@@ -450,22 +450,22 @@ export default function SystemStatus() {
                 isDegraded && "bg-yellow-500/30",
                 !isHealthy && !isDegraded && "bg-slate-500/30"
               )}>
-                {isHealthy && <CheckCircle2 className="w-12 h-12 text-emerald-400" />}
-                {isDegraded && <AlertTriangle className="w-12 h-12 text-yellow-400" />}
-                {!isHealthy && !isDegraded && <Activity className="w-12 h-12 text-slate-400" />}
+                {isHealthy && <CheckCircle2 className="w-12 h-12 text-app-positive" />}
+                {isDegraded && <AlertTriangle className="w-12 h-12 text-yellow-700 dark:text-yellow-400" />}
+                {!isHealthy && !isDegraded && <Activity className="w-12 h-12 text-app-muted" />}
               </div>
               <div>
                 <h2 className={cn(
                   "text-4xl font-bold mb-2",
-                  isHealthy && "text-emerald-400",
-                  isDegraded && "text-yellow-400",
+                  isHealthy && "text-app-positive",
+                  isDegraded && "text-yellow-700 dark:text-yellow-400",
                   !isHealthy && !isDegraded && "text-slate-600 dark:text-slate-400"
                 )}>
                   {isHealthy && "Healthy"}
                   {isDegraded && "Degraded"}
                   {!isHealthy && !isDegraded && "Unknown"}
                 </h2>
-                <p className="text-slate-300 text-lg">
+                <p className="text-slate-700 dark:text-slate-300 text-lg">
                   {isHealthy && "System is operating normally"}
                   {isDegraded && "System is experiencing issues"}
                   {!isHealthy && !isDegraded && "System status unknown"}
@@ -473,21 +473,21 @@ export default function SystemStatus() {
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
-              <div className="p-4 rounded-xl bg-slate-900/40 border border-slate-700/50">
+              <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/40 border border-app-line">
                 <div className="flex items-center gap-2 text-slate-600 dark:text-slate-400 text-sm mb-1">
                   <Zap className="w-4 h-4" />
                   Response Time
                 </div>
-                <p className="text-2xl font-bold text-white">
+                <p className="text-2xl font-bold text-app-fg">
                   {healthData?.response_time_ms?.toFixed(1) || "0.0"}ms
                 </p>
               </div>
-              <div className="p-4 rounded-xl bg-slate-900/40 border border-slate-700/50">
+              <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/40 border border-app-line">
                 <div className="flex items-center gap-2 text-slate-600 dark:text-slate-400 text-sm mb-1">
                   <Clock className="w-4 h-4" />
                   Last Updated
                 </div>
-                <p className="text-sm font-medium text-white">
+                <p className="text-sm font-medium text-app-fg">
                   {healthData?.timestamp ? moment(healthData.timestamp).fromNow() : "Never"}
                 </p>
               </div>
@@ -498,7 +498,7 @@ export default function SystemStatus() {
 
       {/* Component Health Checks */}
       <div>
-        <h2 className="text-xl font-bold text-white mb-4">Component Health Checks</h2>
+        <h2 className="text-xl font-bold text-app-fg mb-4">Component Health Checks</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {healthData?.checks && Object.entries(healthData.checks).map(([key, component]) => {
             const Icon = componentIcons[key] || Server;
@@ -519,14 +519,14 @@ export default function SystemStatus() {
               >
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex items-center gap-3">
-                    <div className={cn("p-2 rounded-lg bg-slate-900/40")}>
-                      <Icon className="w-5 h-5 text-slate-300" />
+                    <div className={cn("p-2 rounded-lg bg-slate-50 dark:bg-slate-900/40")}>
+                      <Icon className="w-5 h-5 text-slate-700 dark:text-slate-300" />
                     </div>
                     <div>
-                      <h3 className="font-semibold text-white capitalize">
+                      <h3 className="font-semibold text-app-fg capitalize">
                         {key.replace(/_/g, ' ').replace(/([A-Z])/g, ' $1').trim()}
                       </h3>
-                      <Badge className={cn("mt-1 border", config.color, config.border)}>
+                      <Badge variant="outline" className={cn("mt-1 border", config.color, config.border)}>
                         <StatusIcon className="w-3 h-3 mr-1" />
                         {component.status}
                       </Badge>
@@ -536,7 +536,9 @@ export default function SystemStatus() {
                     variant="ghost"
                     size="sm"
                     onClick={() => toggleComponentExpanded(key)}
-                    className="text-slate-600 dark:text-slate-400 hover:text-white"
+                    aria-label={`${isExpanded ? "Hide" : "Show"} ${key} details`}
+                    aria-expanded={isExpanded}
+                    className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
                   >
                     <ChevronDown className={cn(
                       "w-4 h-4 transition-transform",
@@ -551,9 +553,9 @@ export default function SystemStatus() {
                       initial={{ opacity: 0, height: 0 }}
                       animate={{ opacity: 1, height: "auto" }}
                       exit={{ opacity: 0, height: 0 }}
-                      className="mt-3 pt-3 border-t border-slate-700/50"
+                      className="mt-3 pt-3 border-t border-app-line"
                     >
-                      <pre className="text-xs text-slate-300 bg-slate-900/60 p-3 rounded-lg overflow-x-auto">
+                      <pre className="text-xs text-slate-700 dark:text-slate-300 bg-slate-50 dark:bg-slate-900/60 p-3 rounded-lg overflow-x-auto">
                         {JSON.stringify(component.details, null, 2)}
                       </pre>
                     </motion.div>
@@ -572,38 +574,38 @@ export default function SystemStatus() {
       <div>
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h2 className="text-xl font-bold text-white">Endpoint Tests</h2>
+            <h2 className="text-xl font-bold text-app-fg">Endpoint Tests</h2>
             <p className="text-slate-600 dark:text-slate-400 text-sm mt-1">Testing {totalTests} endpoints across all system modules</p>
           </div>
           {testResults && (
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-2 text-sm">
                 <span className="text-slate-600 dark:text-slate-400">Total:</span>
-                <span className="font-bold text-white">{totalTests}</span>
+                <span className="font-bold text-app-fg">{totalTests}</span>
               </div>
               <div className="flex items-center gap-2 text-sm">
                 <span className="text-slate-600 dark:text-slate-400">Passed:</span>
-                <span className="font-bold text-emerald-400">{passedTests}</span>
+                <span className="font-bold text-app-positive">{passedTests}</span>
               </div>
               {failedTests > 0 && (
                 <div className="flex items-center gap-2 text-sm">
                   <span className="text-slate-600 dark:text-slate-400">Failed:</span>
-                  <span className="font-bold text-rose-400">{failedTests}</span>
+                  <span className="font-bold text-app-negative">{failedTests}</span>
                 </div>
               )}
               {errorTests > 0 && (
                 <div className="flex items-center gap-2 text-sm">
                   <span className="text-slate-600 dark:text-slate-400">Errors:</span>
-                  <span className="font-bold text-yellow-400">{errorTests}</span>
+                  <span className="font-bold text-yellow-700 dark:text-yellow-400">{errorTests}</span>
                 </div>
               )}
               <div className="flex items-center gap-2 text-sm">
                 <span className="text-slate-600 dark:text-slate-400">Success Rate:</span>
                 <span className={cn(
                   "font-bold",
-                  parseFloat(successRate) === 100 ? "text-emerald-400" :
-                  parseFloat(successRate) >= 90 ? "text-yellow-400" :
-                  "text-rose-400"
+                  parseFloat(successRate) === 100 ? "text-app-positive" :
+                  parseFloat(successRate) >= 90 ? "text-yellow-700 dark:text-yellow-400" :
+                  "text-app-negative"
                 )}>{successRate}%</span>
               </div>
             </div>
@@ -611,17 +613,17 @@ export default function SystemStatus() {
         </div>
 
         {testLoading ? (
-          <div className="flex items-center justify-center py-12 bg-slate-800/30 rounded-xl border border-slate-700/50">
+          <div className="flex items-center justify-center py-12 bg-slate-50 dark:bg-slate-800/30 rounded-xl border border-app-line">
             <div className="text-center">
-              <RefreshCw className="w-10 h-10 text-slate-400 animate-spin mx-auto mb-3" />
+              <RefreshCw className="w-10 h-10 text-app-muted animate-spin mx-auto mb-3" />
               <p className="text-slate-600 dark:text-slate-400">Running endpoint tests...</p>
               <p className="text-slate-600 dark:text-slate-400 text-sm mt-1">This may take 10-30 seconds</p>
             </div>
           </div>
         ) : !testResults ? (
-          <div className="flex items-center justify-center py-12 bg-slate-800/30 rounded-xl border border-slate-700/50">
+          <div className="flex items-center justify-center py-12 bg-slate-50 dark:bg-slate-800/30 rounded-xl border border-app-line">
             <div className="text-center">
-              <Play className="w-10 h-10 text-slate-400 mx-auto mb-3" />
+              <Play className="w-10 h-10 text-app-muted mx-auto mb-3" />
               <p className="text-slate-600 dark:text-slate-400">Click 'Run Tests' to verify all endpoints</p>
               <p className="text-slate-600 dark:text-slate-400 text-sm mt-1">Tests {totalTests || '131'} endpoints</p>
             </div>
@@ -640,12 +642,12 @@ export default function SystemStatus() {
                 <div key={category} className={cn("rounded-xl border", config.bg, config.border)}>
                   <button
                     onClick={() => toggleCategoryExpanded(category)}
-                    className="w-full p-4 flex items-center justify-between hover:bg-slate-900/20 transition-colors"
+                    className="w-full p-4 flex items-center justify-between hover:bg-slate-100 dark:hover:bg-slate-900/20 transition-colors"
                   >
                     <div className="flex items-center gap-3">
                       <CategoryIcon className={cn("w-5 h-5", config.color)} />
-                      <span className="font-semibold text-white">{category}</span>
-                      <Badge variant="outline" className="text-slate-300">
+                      <span className="font-semibold text-app-fg">{category}</span>
+                      <Badge variant="outline" className="text-slate-700 dark:text-slate-300">
                         {categoryPassed}/{categoryTotal}
                       </Badge>
                     </div>
@@ -661,7 +663,7 @@ export default function SystemStatus() {
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: "auto" }}
                         exit={{ opacity: 0, height: 0 }}
-                        className="border-t border-slate-700/50"
+                        className="border-t border-app-line"
                       >
                         <div className="p-2 space-y-2">
                           {tests.map((test, index) => {
@@ -683,7 +685,7 @@ export default function SystemStatus() {
                                 <div className="flex items-center gap-3 flex-1">
                                   <StatusIcon className={cn("w-4 h-4", testConfig.color)} />
                                   <div className="flex-1">
-                                    <p className="font-medium text-white text-sm">{test.endpoint}</p>
+                                    <p className="font-medium text-app-fg text-sm">{test.endpoint}</p>
                                     {test.error && (
                                       <p className="text-xs text-slate-600 dark:text-slate-400 mt-1 truncate max-w-md">
                                         {test.error}
@@ -693,13 +695,13 @@ export default function SystemStatus() {
                                 </div>
                                 <div className="flex items-center gap-2">
                                   {test.status_code && (
-                                    <Badge variant="outline" className="text-slate-300 text-xs">
+                                    <Badge variant="outline" className="text-slate-700 dark:text-slate-300 text-xs">
                                       {test.status_code}
                                     </Badge>
                                   )}
                                   {test.response_time_ms && (
                                     <div className="text-right">
-                                      <p className="text-xs font-bold text-white">{test.response_time_ms.toFixed(0)}ms</p>
+                                      <p className="text-xs font-bold text-app-fg">{test.response_time_ms.toFixed(0)}ms</p>
                                     </div>
                                   )}
                                 </div>
@@ -720,34 +722,34 @@ export default function SystemStatus() {
       {/* Data Validation Section */}
       <div>
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-bold text-white">Data Validation</h2>
+          <h2 className="text-xl font-bold text-app-fg">Data Validation</h2>
           {validationResults && (
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-2 text-sm">
                 <span className="text-slate-600 dark:text-slate-400">Total:</span>
-                <span className="font-bold text-white">{totalValidations}</span>
+                <span className="font-bold text-app-fg">{totalValidations}</span>
               </div>
               <div className="flex items-center gap-2 text-sm">
                 <span className="text-slate-600 dark:text-slate-400">Passed:</span>
-                <span className="font-bold text-emerald-400">{passedValidations}</span>
+                <span className="font-bold text-app-positive">{passedValidations}</span>
               </div>
               {warnedValidations > 0 && (
                 <div className="flex items-center gap-2 text-sm">
                   <span className="text-slate-600 dark:text-slate-400">Warned:</span>
-                  <span className="font-bold text-amber-400">{warnedValidations}</span>
+                  <span className="font-bold text-app-warning">{warnedValidations}</span>
                 </div>
               )}
               {failedValidations > 0 && (
                 <div className="flex items-center gap-2 text-sm">
                   <span className="text-slate-600 dark:text-slate-400">Failed:</span>
-                  <span className="font-bold text-rose-400">{failedValidations}</span>
+                  <span className="font-bold text-app-negative">{failedValidations}</span>
                 </div>
               )}
               <Button
                 onClick={exportValidationCSV}
                 variant="outline"
                 size="sm"
-                className="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white"
+                className="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 text-app-fg"
               >
                 <Download className="w-4 h-4 mr-2" />
                 Export CSV
@@ -757,17 +759,17 @@ export default function SystemStatus() {
         </div>
 
         {validationLoading ? (
-          <div className="flex items-center justify-center py-12 bg-slate-800/30 rounded-xl border border-slate-700/50">
+          <div className="flex items-center justify-center py-12 bg-slate-50 dark:bg-slate-800/30 rounded-xl border border-app-line">
             <div className="text-center">
-              <RefreshCw className="w-10 h-10 text-slate-400 animate-spin mx-auto mb-3" />
+              <RefreshCw className="w-10 h-10 text-app-muted animate-spin mx-auto mb-3" />
               <p className="text-slate-600 dark:text-slate-400">Running validation checks...</p>
               <p className="text-slate-600 dark:text-slate-400 text-sm mt-1">Validating calculations...</p>
             </div>
           </div>
         ) : !validationResults ? (
-          <div className="flex items-center justify-center py-12 bg-slate-800/30 rounded-xl border border-slate-700/50">
+          <div className="flex items-center justify-center py-12 bg-slate-50 dark:bg-slate-800/30 rounded-xl border border-app-line">
             <div className="text-center">
-              <Calculator className="w-10 h-10 text-slate-400 mx-auto mb-3" />
+              <Calculator className="w-10 h-10 text-app-muted mx-auto mb-3" />
               <p className="text-slate-600 dark:text-slate-400">Click 'Run Validation' to verify calculations</p>
               <p className="text-slate-600 dark:text-slate-400 text-sm mt-1">Validates 12 metrics</p>
               <Button
@@ -802,10 +804,10 @@ export default function SystemStatus() {
                     <div className="flex items-center gap-3 flex-1">
                       <StatusIcon className={cn("w-5 h-5", config.color)} />
                       <div className="flex-1">
-                        <h3 className="font-semibold text-white capitalize">
+                        <h3 className="font-semibold text-app-fg capitalize">
                           {validation.metric.replace(/_/g, ' ')}
                         </h3>
-                        <Badge className={cn("mt-1 border", config.color, config.border)}>
+                        <Badge variant="outline" className={cn("mt-1 border", config.color, config.border)}>
                           {validation.status.toUpperCase()}
                         </Badge>
                       </div>
@@ -814,7 +816,8 @@ export default function SystemStatus() {
                       variant="ghost"
                       size="sm"
                       onClick={() => toggleValidationExpanded(validation.metric)}
-                      className="text-slate-600 dark:text-slate-400 hover:text-white"
+                      aria-label={`${isExpanded ? "Hide" : "Show"} ${validation.metric.replace(/_/g, ' ')} details`}
+                      className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
                     >
                       <ChevronDown className={cn(
                         "w-4 h-4 transition-transform",
@@ -826,19 +829,19 @@ export default function SystemStatus() {
                   <div className="grid grid-cols-3 gap-4 mb-3">
                     <div>
                       <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Expected</p>
-                      <p className="font-mono text-sm text-white">{validation.expected}</p>
+                      <p className="font-mono text-sm text-app-fg">{validation.expected}</p>
                     </div>
                     <div>
                       <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Actual</p>
-                      <p className="font-mono text-sm text-white">{validation.actual}</p>
+                      <p className="font-mono text-sm text-app-fg">{validation.actual}</p>
                     </div>
                     <div>
                       <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Difference</p>
                       <p className={cn(
                         "font-mono text-sm",
-                        validation.status === 'pass' ? "text-emerald-400" :
-                        validation.status === 'warn' ? "text-amber-400" :
-                        "text-rose-400"
+                        validation.status === 'pass' ? "text-app-positive" :
+                        validation.status === 'warn' ? "text-app-warning" :
+                        "text-app-negative"
                       )}>
                         {validation.diff} 
                         {validation.diff_percent && ` (${validation.diff_percent}%)`}
@@ -848,9 +851,9 @@ export default function SystemStatus() {
 
                   <div className={cn(
                     "px-3 py-2 rounded-lg text-sm",
-                    validation.status === 'pass' && "bg-emerald-500/10 text-emerald-400",
-                    validation.status === 'warn' && "bg-amber-500/10 text-amber-400",
-                    validation.status === 'fail' && "bg-rose-500/10 text-rose-400"
+                    validation.status === 'pass' && "bg-emerald-500/10 text-emerald-800 dark:text-emerald-400",
+                    validation.status === 'warn' && "bg-amber-500/10 text-amber-800 dark:text-amber-400",
+                    validation.status === 'fail' && "bg-rose-500/10 text-rose-800 dark:text-rose-400"
                   )}>
                     {validation.status === 'pass' && `✓ Within tolerance (±${validation.tolerance})`}
                     {validation.status === 'warn' && `⚠ Near tolerance limit (±${validation.tolerance})`}
@@ -863,12 +866,12 @@ export default function SystemStatus() {
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: "auto" }}
                         exit={{ opacity: 0, height: 0 }}
-                        className="mt-3 pt-3 border-t border-slate-700/50"
+                        className="mt-3 pt-3 border-t border-app-line"
                       >
-                        <h4 className="text-sm font-medium text-slate-300 mb-2">
+                        <h4 className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
                           Calculation Details
                         </h4>
-                        <div className="text-xs text-slate-600 dark:text-slate-400 bg-slate-900/50 p-3 rounded space-y-1">
+                        <div className="text-xs text-slate-600 dark:text-slate-400 bg-slate-50 dark:bg-slate-900/50 p-3 rounded space-y-1">
                           <p><span className="text-slate-600 dark:text-slate-400">Formula:</span> {validation.formula}</p>
                           {validation.method && (
                             <p><span className="text-slate-600 dark:text-slate-400">Method:</span> {validation.method}</p>

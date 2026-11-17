@@ -50,12 +50,12 @@ export default function StatsCard({
   };
 
   const iconColors = {
-    cyan: "text-cyan-400 bg-cyan-500/20",
-    violet: "text-violet-400 bg-violet-500/20",
-    fuchsia: "text-fuchsia-400 bg-fuchsia-500/20",
-    emerald: "text-emerald-400 bg-emerald-500/20",
-    amber: "text-amber-400 bg-amber-500/20",
-    rose: "text-rose-400 bg-rose-500/20",
+    cyan: "text-cyan-800 dark:text-cyan-400 bg-cyan-500/20",
+    violet: "text-violet-800 dark:text-violet-400 bg-violet-500/20",
+    fuchsia: "text-fuchsia-800 dark:text-fuchsia-400 bg-fuchsia-500/20",
+    emerald: "text-emerald-800 dark:text-emerald-400 bg-emerald-500/20",
+    amber: "text-amber-800 dark:text-amber-400 bg-amber-500/20",
+    rose: "text-rose-800 dark:text-rose-400 bg-rose-500/20",
   };
 
   const selectedGradient = gradient || "cyan";
@@ -83,7 +83,7 @@ export default function StatsCard({
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
               >
-                <Info className="w-3 h-3 text-slate-500 hover:text-slate-300 transition-colors" />
+                <Info className="w-3 h-3 text-app-muted hover:text-slate-700 dark:hover:text-slate-300 transition-colors" />
               </span>
             )}
           </p>
@@ -94,9 +94,9 @@ export default function StatsCard({
           {trendValue && (
             <div className={cn(
               "inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-full",
-              isPositive && "bg-emerald-500/20 text-emerald-400",
-              isNegative && "bg-rose-500/20 text-rose-400",
-              !isPositive && !isNegative && "bg-slate-800 text-slate-600 dark:text-slate-400"
+              isPositive && "bg-emerald-500/20 text-emerald-800 dark:text-emerald-400",
+              isNegative && "bg-rose-500/20 text-rose-800 dark:text-rose-400",
+              !isPositive && !isNegative && "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400"
             )}>
               {isPositive && "↑"}
               {isNegative && "↓"}
@@ -117,7 +117,7 @@ export default function StatsCard({
       {/* Tooltip rendered via portal — escapes all stacking contexts */}
       {tooltip && tooltipVisible && createPortal(
         <div
-          className="fixed z-[9999] w-56 rounded bg-slate-800 px-2 py-1.5 text-xs text-slate-200 shadow-lg pointer-events-none"
+          className="fixed z-[9999] w-56 rounded bg-slate-100 dark:bg-slate-800 px-2 py-1.5 text-xs text-slate-800 dark:text-slate-200 shadow-lg pointer-events-none"
           style={{ top: tooltipPos.top, left: tooltipPos.left, transform: "translateY(-50%)" }}
         >
           {tooltip}

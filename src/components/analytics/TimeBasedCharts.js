@@ -6,12 +6,12 @@ export default function TimeBasedCharts({ dayOfWeekData, monthlyData, holdingPer
   const [activeTab, setActiveTab] = useState("day");
 
   return (
-    <div className="rounded-2xl bg-slate-800/50 border border-slate-700/50 p-6 backdrop-blur-sm">
-      <h3 className="text-lg font-semibold text-white mb-6">Time-Based Analysis</h3>
+    <div className="rounded-2xl bg-app-raised border border-app-line p-6 backdrop-blur-sm">
+      <h3 className="text-lg font-semibold text-app-fg mb-6">Time-Based Analysis</h3>
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         {/* ST-06 (v9.17, performance.md §9): scrolls inside itself so the four
             tabs do not widen the page at 390 px. */}
-        <TabsList className="bg-slate-900/50 mb-6 max-w-full overflow-x-auto justify-start">
+        <TabsList className="bg-slate-50 dark:bg-slate-900/50 mb-6 max-w-full overflow-x-auto justify-start">
           <TabsTrigger value="day">Day of Week</TabsTrigger>
           <TabsTrigger value="month">Monthly</TabsTrigger>
           <TabsTrigger value="holding">Holding Period</TabsTrigger>
@@ -43,9 +43,9 @@ export default function TimeBasedCharts({ dayOfWeekData, monthlyData, holdingPer
               collapse on mobile. */}
           <div className="grid grid-cols-3 sm:grid-cols-5 gap-2 text-xs text-center">
             {dayOfWeekData.map((day, idx) => (
-              <div key={idx} className="p-2 bg-slate-900/50 rounded-lg">
+              <div key={idx} className="p-2 bg-slate-50 dark:bg-slate-900/50 rounded-lg">
                 <p className="text-slate-600 dark:text-slate-400">{day.day}</p>
-                <p className="text-white font-semibold">{day.trades} trades</p>
+                <p className="text-app-fg font-semibold">{day.trades} trades</p>
               </div>
             ))}
           </div>
@@ -85,9 +85,9 @@ export default function TimeBasedCharts({ dayOfWeekData, monthlyData, holdingPer
           </ResponsiveContainer>
           <div className="grid grid-cols-3 sm:grid-cols-5 gap-2 text-xs text-center">
             {holdingPeriodData.map((period, idx) => (
-              <div key={idx} className="p-2 bg-slate-900/50 rounded-lg">
+              <div key={idx} className="p-2 bg-slate-50 dark:bg-slate-900/50 rounded-lg">
                 <p className="text-slate-600 dark:text-slate-400">{period.period}</p>
-                <p className="text-white font-semibold">{period.trades} trades</p>
+                <p className="text-app-fg font-semibold">{period.trades} trades</p>
                 <p className="text-slate-600 dark:text-slate-400">{period.winRate}% win</p>
               </div>
             ))}

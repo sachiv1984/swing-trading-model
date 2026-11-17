@@ -103,7 +103,7 @@ export default function MetricsStalenessIndicator() {
   return isStale ? (
     <span
       title={absoluteTime}
-      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-amber-500/15 border border-amber-500/30 text-amber-400 text-xs font-medium cursor-default select-none"
+      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-amber-500/15 border border-amber-500/30 text-amber-800 dark:text-amber-400 text-xs font-medium cursor-default select-none"
     >
       <AlertTriangle className="w-3 h-3 shrink-0" />
       {text}
@@ -113,7 +113,7 @@ export default function MetricsStalenessIndicator() {
       title={absoluteTime}
       className="inline-flex items-center gap-1.5 text-slate-600 dark:text-slate-400 text-xs cursor-default select-none"
     >
-      <Clock className="w-3 h-3 shrink-0 text-slate-500" />
+      <Clock className="w-3 h-3 shrink-0 text-app-muted" />
       {text}
     </span>
   );

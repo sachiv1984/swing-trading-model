@@ -10,7 +10,7 @@ export default function WatchlistModalFooter({ isEdit, submitting, onRemoveClick
           <Button
             variant="ghost"
             onClick={onRemoveClick}
-            className="text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 px-2"
+            className="text-app-negative hover:text-rose-800 dark:hover:text-rose-300 hover:bg-rose-500/10 px-2"
           >
             Remove from Watchlist
           </Button>
@@ -20,7 +20,7 @@ export default function WatchlistModalFooter({ isEdit, submitting, onRemoveClick
         <Button
           variant="ghost"
           onClick={onCancel}
-          className="text-slate-600 dark:text-slate-400 hover:text-white hover:bg-slate-800"
+          className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"
         >
           Cancel
         </Button>

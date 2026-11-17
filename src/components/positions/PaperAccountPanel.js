@@ -20,7 +20,7 @@ const API_URL = process.env.REACT_APP_API_URL || "http://localhost:8000";
 function PnlCell({ value, kind = "currency" }) {
   if (value == null) return <span className="text-slate-600 dark:text-slate-400">—</span>;
   return (
-    <span className={cn("font-semibold", value > 0 ? "text-emerald-400" : value < 0 ? "text-rose-400" : "text-slate-300")}>
+    <span className={cn("font-semibold", value > 0 ? "text-app-positive" : value < 0 ? "text-app-negative" : "text-slate-700 dark:text-slate-300")}>
       {kind === "percent" ? formatPercent(value, { signed: true }) : formatCurrency(value, { currency: "USD", signed: true })}
     </span>
   );
@@ -60,22 +60,22 @@ export default function PaperAccountPanel() {
   const defaultExpanded = hasPositions;
 
   return (
-    <div className="mt-4 w-full rounded-xl border border-slate-700/50 bg-slate-800/40 overflow-hidden">
+    <div className="mt-4 w-full rounded-xl border border-app-line bg-slate-50 dark:bg-slate-800/40 overflow-hidden">
       {/* Header */}
       <button
-        className="w-full flex items-center justify-between px-4 py-3 text-left hover:bg-slate-700/30 transition-colors"
+        className="w-full flex items-center justify-between px-4 py-3 text-left hover:bg-slate-100 dark:hover:bg-slate-700/30 transition-colors"
         onClick={() => setExpanded((v) => !v)}
         aria-expanded={expanded}
         data-testid="paper-account-panel"
       >
         <div>
-          <span className="text-sm font-semibold text-slate-200">Paper Account</span>
+          <span className="text-sm font-semibold text-slate-800 dark:text-slate-200">Paper Account</span>
           <span className="ml-2 text-xs text-slate-600 dark:text-slate-400">Hypothetical tracking — US market positions only. Not real capital.</span>
         </div>
         {expanded ? (
-          <ChevronDown className="w-4 h-4 text-slate-400 flex-shrink-0" />
+          <ChevronDown className="w-4 h-4 text-app-muted flex-shrink-0" />
         ) : (
-          <ChevronRight className="w-4 h-4 text-slate-400 flex-shrink-0" />
+          <ChevronRight className="w-4 h-4 text-app-muted flex-shrink-0" />
         )}
       </button>
 
@@ -92,7 +92,7 @@ export default function PaperAccountPanel() {
             <div className="overflow-x-auto">
               <table className="w-full text-xs" data-testid="paper-positions-table">
                 <thead>
-                  <tr className="text-slate-600 dark:text-slate-400 border-b border-slate-700/50">
+                  <tr className="text-slate-600 dark:text-slate-400 border-b border-app-line">
                     <th className="text-left py-2 pr-4 font-medium">Ticker</th>
                     <th className="text-right py-2 pr-4 font-medium">Paper Entry</th>
                     <th className="text-right py-2 pr-4 font-medium">Current</th>
@@ -104,12 +104,12 @@ export default function PaperAccountPanel() {
                 </thead>
                 <tbody>
                   {positions.map((pos) => (
-                    <tr key={pos.ticker} className="border-b border-slate-700/20 last:border-0">
-                      <td className="py-2 pr-4 font-semibold text-slate-200">{pos.ticker}</td>
-                      <td className="py-2 pr-4 text-right text-slate-300">
+                    <tr key={pos.ticker} className="border-b border-slate-200 dark:border-slate-700/20 last:border-0">
+                      <td className="py-2 pr-4 font-semibold text-slate-800 dark:text-slate-200">{pos.ticker}</td>
+                      <td className="py-2 pr-4 text-right text-slate-700 dark:text-slate-300">
                         {formatCurrency(pos.paper_entry_price, { currency: "USD" })}
                       </td>
-                      <td className="py-2 pr-4 text-right text-slate-300">
+                      <td className="py-2 pr-4 text-right text-slate-700 dark:text-slate-300">
                         {formatCurrency(pos.current_market_price, { currency: "USD" })}
                       </td>
                       <td className="py-2 pr-4 text-right">
@@ -121,7 +121,7 @@ export default function PaperAccountPanel() {
                       <td className="py-2 pr-4 text-right text-slate-600 dark:text-slate-400">
                         {formatDate(pos.date_opened)}
                       </td>
-                      <td className="py-2 text-right text-slate-300">
+                      <td className="py-2 text-right text-slate-700 dark:text-slate-300">
                         {pos.position_size != null ? pos.position_size : "—"}
                       </td>
                     </tr>

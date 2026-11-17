@@ -161,7 +161,7 @@ export function NotEnoughTrades({ minTrades, tradeCount }) {
   return (
     <DataState
       empty
-      emptyIcon={<BarChart2 className="w-10 h-10 text-slate-600" />}
+      emptyIcon={<BarChart2 className="w-10 h-10 text-app-muted" />}
       emptyHeading="Not enough trades"
       emptyBody={
         some

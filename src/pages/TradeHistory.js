@@ -267,7 +267,7 @@ export default function TradeHistory() {
             onClick={handleCsvExport}
             disabled={csvExporting}
             variant="outline"
-            className="bg-slate-800/50 border-slate-700 text-white hover:bg-slate-700 disabled:opacity-50"
+            className="bg-app-raised border-slate-200 dark:border-slate-700 text-app-fg hover:bg-slate-200 dark:hover:bg-slate-700 disabled:opacity-50"
           >
             {csvExporting ? (
               <Loader2 className="w-4 h-4 mr-2 animate-spin" />
@@ -301,7 +301,7 @@ export default function TradeHistory() {
 
       {isLoading ? (
         <div className="flex items-center justify-center py-20">
-          <Loader2 className="w-8 h-8 animate-spin text-slate-500" />
+          <Loader2 className="w-8 h-8 animate-spin text-app-muted" />
         </div>
       ) : (
         <>
@@ -363,7 +363,7 @@ export default function TradeHistory() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="rounded-2xl bg-slate-800/50 border border-slate-700/50 p-6 space-y-4"
+            className="rounded-2xl bg-app-raised border border-app-line p-6 space-y-4"
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2 text-slate-600 dark:text-slate-400">
@@ -371,12 +371,12 @@ export default function TradeHistory() {
                 <span className="text-sm font-medium">Filters</span>
               </div>
               {/* ST-04 (BLG-FE-118, EPIC-04, v7.5): Table / Calendar view toggle */}
-              <div className="flex gap-1 rounded-lg bg-slate-900/50 p-1">
+              <div className="flex gap-1 rounded-lg bg-slate-50 dark:bg-slate-900/50 p-1">
                 <button
                   onClick={() => setView("table")}
                   className={cn(
                     "px-3 py-1 rounded-md text-xs font-medium transition-colors",
-                    view === "table" ? "bg-cyan-500/20 text-cyan-400" : "text-slate-600 dark:text-slate-400 hover:text-white"
+                    view === "table" ? "bg-cyan-500/20 text-cyan-800 dark:text-cyan-400" : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
                   )}
                 >
                   Table
@@ -385,7 +385,7 @@ export default function TradeHistory() {
                   onClick={() => setView("calendar")}
                   className={cn(
                     "px-3 py-1 rounded-md text-xs font-medium transition-colors",
-                    view === "calendar" ? "bg-cyan-500/20 text-cyan-400" : "text-slate-600 dark:text-slate-400 hover:text-white"
+                    view === "calendar" ? "bg-cyan-500/20 text-cyan-800 dark:text-cyan-400" : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
                   )}
                 >
                   Calendar
@@ -398,10 +398,10 @@ export default function TradeHistory() {
                 value={filters.market}
                 onValueChange={(value) => setFilters({ ...filters, market: value })}
               >
-                <SelectTrigger className="bg-slate-800/50 border-slate-700 text-white">
+                <SelectTrigger aria-label="Market" className="bg-app-raised border-slate-200 dark:border-slate-700 text-app-fg">
                   <SelectValue placeholder="Market" />
                 </SelectTrigger>
-                <SelectContent className="bg-slate-800 border-slate-700">
+                <SelectContent className="bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700">
                   <SelectItem value="all">All Markets</SelectItem>
                   <SelectItem value="UK">UK</SelectItem>
                   <SelectItem value="US">US</SelectItem>
@@ -412,10 +412,10 @@ export default function TradeHistory() {
                 value={filters.result}
                 onValueChange={(value) => setFilters({ ...filters, result: value })}
               >
-                <SelectTrigger className="bg-slate-800/50 border-slate-700 text-white">
+                <SelectTrigger aria-label="Result" className="bg-app-raised border-slate-200 dark:border-slate-700 text-app-fg">
                   <SelectValue placeholder="Result" />
                 </SelectTrigger>
-                <SelectContent className="bg-slate-800 border-slate-700">
+                <SelectContent className="bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700">
                   <SelectItem value="all">All Results</SelectItem>
                   <SelectItem value="win">Winners</SelectItem>
                   <SelectItem value="loss">Losers</SelectItem>
@@ -423,23 +423,23 @@ export default function TradeHistory() {
               </Select>
 
               <div className="relative">
-                <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+                <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-app-muted" />
                 <Input
                   type="date"
                   value={filters.dateFrom}
                   onChange={(e) => setFilters({ ...filters, dateFrom: e.target.value })}
-                  className="bg-slate-800/50 border-slate-700 text-white pl-10"
+                  className="bg-app-raised border-slate-200 dark:border-slate-700 text-app-fg pl-10"
                   placeholder="From"
                 />
               </div>
 
               <div className="relative">
-                <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+                <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-app-muted" />
                 <Input
                   type="date"
                   value={filters.dateTo}
                   onChange={(e) => setFilters({ ...filters, dateTo: e.target.value })}
-                  className="bg-slate-800/50 border-slate-700 text-white pl-10"
+                  className="bg-app-raised border-slate-200 dark:border-slate-700 text-app-fg pl-10"
                   placeholder="To"
                 />
               </div>
@@ -451,18 +451,18 @@ export default function TradeHistory() {
                 <div className="relative">
                   <button
                     onClick={() => setShowTagDropdown(!showTagDropdown)}
-                    className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400 hover:text-slate-200 transition-colors"
+                    className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 transition-colors"
                   >
                     <Tag className="w-4 h-4" />
                     Filter by tag
                     {selectedTags.length > 0 && (
-                      <span className="px-1.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-400 text-xs">
+                      <span className="px-1.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-800 dark:text-cyan-400 text-xs">
                         {selectedTags.length}
                       </span>
                     )}
                   </button>
                   {showTagDropdown && (
-                    <div className="absolute top-full left-0 mt-1 z-10 min-w-48 rounded-xl bg-slate-800 border border-slate-700 shadow-xl p-2">
+                    <div className="absolute top-full left-0 mt-1 z-10 min-w-48 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-xl p-2">
                       {availableTags.map((tag) => (
                         <button
                           key={tag}
@@ -470,8 +470,8 @@ export default function TradeHistory() {
                           className={cn(
                             "w-full text-left px-3 py-2 rounded-lg text-sm transition-colors",
                             selectedTags.includes(tag)
-                              ? "bg-cyan-500/20 text-cyan-400"
-                              : "text-slate-300 hover:bg-slate-700"
+                              ? "bg-cyan-500/20 text-cyan-800 dark:text-cyan-400"
+                              : "text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700"
                           )}
                         >
                           {tag}
@@ -485,7 +485,7 @@ export default function TradeHistory() {
                     {selectedTags.map((tag) => (
                       <span
                         key={tag}
-                        className="inline-flex items-center gap-1.5 px-3 py-1 text-xs rounded-full bg-cyan-500/20 text-cyan-400 border border-cyan-500/30"
+                        className="inline-flex items-center gap-1.5 px-3 py-1 text-xs rounded-full bg-cyan-500/20 text-cyan-800 dark:text-cyan-400 border border-cyan-500/30"
                       >
                         {tag}
                         <button onClick={() => handleTagToggle(tag)}>
@@ -524,7 +524,7 @@ export default function TradeHistory() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="rounded-2xl bg-slate-800/50 border border-slate-700/50 overflow-hidden"
+            className="rounded-2xl bg-app-raised border border-app-line overflow-hidden"
             data-testid="ai-journal-summary-section"
           >
             <div
@@ -533,8 +533,8 @@ export default function TradeHistory() {
               data-testid="ai-journal-summary-toggle"
             >
               <div className="flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-cyan-400" />
-                <span className="text-sm font-medium text-slate-300">AI Journal Summary</span>
+                <Sparkles className="w-4 h-4 text-cyan-700 dark:text-cyan-400" />
+                <span className="text-sm font-medium text-slate-700 dark:text-slate-300">AI Journal Summary</span>
                 <span className="text-xs text-slate-600 dark:text-slate-400 hidden sm:inline">AI-generated themes across your journal entries.</span>
               </div>
               <div className="flex items-center gap-3">
@@ -544,7 +544,7 @@ export default function TradeHistory() {
                     disabled={aiLoading || filteredTrades.length === 0}
                     variant="outline"
                     size="sm"
-                    className="bg-slate-700/50 border-slate-600 text-slate-200 hover:bg-slate-700 disabled:opacity-50 text-xs"
+                    className="bg-slate-100 dark:bg-slate-700/50 border-slate-300 dark:border-slate-600 text-slate-800 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 disabled:opacity-50 text-xs"
                     data-testid="ai-journal-summary-generate-btn"
                   >
                     {aiLoading ? (
@@ -556,8 +556,8 @@ export default function TradeHistory() {
                   </Button>
                 )}
                 {aiSummaryOpen
-                  ? <ChevronUp className="w-4 h-4 text-slate-400" />
-                  : <ChevronDown className="w-4 h-4 text-slate-400" />
+                  ? <ChevronUp className="w-4 h-4 text-app-muted" />
+                  : <ChevronDown className="w-4 h-4 text-app-muted" />
                 }
               </div>
             </div>
@@ -565,17 +565,17 @@ export default function TradeHistory() {
             {aiSummaryOpen && (
               <div className="px-6 pb-6 space-y-3">
                 <div className="flex items-start gap-2 px-4 py-3 rounded-lg bg-amber-500/10 border border-amber-500/30">
-                  <span className="text-amber-300 text-xs font-medium">
+                  <span className="text-amber-800 dark:text-amber-300 text-xs font-medium">
                     AI-generated summary — for reference only. Not a trading recommendation.
                   </span>
                 </div>
-                <div className="rounded-xl bg-slate-900/50 border border-slate-700/30 p-4 min-h-[80px] max-h-64 overflow-y-auto">
+                <div className="rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700/30 p-4 min-h-[80px] max-h-64 overflow-y-auto">
                   {aiLoading ? (
                     <div className="flex items-center justify-center py-6" data-testid="ai-journal-summary-loading">
-                      <Loader2 className="w-5 h-5 animate-spin text-slate-500" />
+                      <Loader2 className="w-5 h-5 animate-spin text-app-muted" />
                     </div>
                   ) : aiSummary ? (
-                    <p className="text-slate-300 text-sm leading-relaxed whitespace-pre-wrap" data-testid="ai-journal-summary-content">{aiSummary}</p>
+                    <p className="text-slate-700 dark:text-slate-300 text-sm leading-relaxed whitespace-pre-wrap" data-testid="ai-journal-summary-content">{aiSummary}</p>
                   ) : aiGenerated ? (
                     <p className="text-slate-600 dark:text-slate-400 text-sm" data-testid="ai-journal-summary-error">{aiMessage || "Summary unavailable. Please try again later."}</p>
                   ) : (

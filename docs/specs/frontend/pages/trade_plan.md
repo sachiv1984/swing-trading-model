@@ -1,8 +1,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 1.28
-**Last Updated:** 2026-11-16 (ST-07, EPIC-02, v9.17, BLG-FE-263 — §5g Section Index built; build notes on the jumped-to section staying current, the load-time jump waiting for data, and What-if sizing listed only while its panel renders); prior — 2026-11-13 (ST-14, EPIC-05, v9.17, BLG-FE-282 — §5a.3 pre-fill and §5f stored-stop line built; §5f wording names the signal's ATR; DEV-v9.16-ST27-01 resolved); prior — 2026-11-13 (ST-12, EPIC-05, v9.17, BLG-FE-278 — §5e: storage option (a) clear on change recorded and option (b) deleted); prior history retained — see prior entries in version control
+**Version:** 1.29
+**Last Updated:** 2026-11-17 (ST-08, EPIC-03, v9.17, BLG-FE-265 — abandoned list rows no longer faded (opacity 0.7 failed AA in light); stale-plan marker moves to `text-amber-700 dark:text-amber-400`); prior — 2026-11-16 (ST-07, EPIC-02, v9.17, BLG-FE-263 — §5g Section Index built; build notes on the jumped-to section staying current, the load-time jump waiting for data, and What-if sizing listed only while its panel renders); prior — 2026-11-13 (ST-14, EPIC-05, v9.17, BLG-FE-282 — §5a.3 pre-fill and §5f stored-stop line built; §5f wording names the signal's ATR; DEV-v9.16-ST27-01 resolved); prior history retained — see prior entries in version control
 **Design Source (v1.22 snapshot, Plan this, suggested size):** docs/design/2026-11-06__release-v9.16/plan-linked-pre-entry-checks/decision_record.md, docs/design/2026-11-06__release-v9.16/signal-to-plan-flow/decision_record.md
 **Design Source (v1.16 setup_type copy fix):** docs/design/2026-09-23__release-v9.7/trade-plan-clone-setup-type/decision_record.md
 **Design Source (v1.15 clone as new plan):** docs/design/2026-09-21__release-v9.6/trade-plan-clone/decision_record.md
@@ -91,7 +91,7 @@ Canonical contract: `docs/specs/api_contracts/trade_plan_endpoints.md`
 
 ### 4.2 List Layout
 
-One row per trade plan. Default sort: most recently updated first. Abandoned plans shown with muted row styling (opacity 0.7).
+One row per trade plan. Default sort: most recently updated first. Abandoned plans are marked by their "Abandoned" status badge; the row is not faded (v1.29, ST-08: opacity 0.7 failed WCAG AA in the light theme).
 
 | Column | Source | Notes |
 |--------|--------|-------|
@@ -154,7 +154,7 @@ A **display-only** marker on list rows for plans that have not been acted on. Sa
 | Applies to | `status` ∈ `draft`, `research_pending`, `research_complete`, `entry_conditions_set` — never `active`, `closed`, `abandoned` |
 | Age | `N = floor((now − updated_at) / 24h)`; marker shown when **`N > 14`** (first appears at 15). Threshold is one named constant, `STALE_PLAN_THRESHOLD_DAYS = 14`; not user-editable |
 | Text | `"Stale ({N} days)"` with a `Clock` icon prefix |
-| Style | `text-amber-600 dark:text-amber-400`; plain text + icon, **not** a filled pill (stays distinct from the filled amber `research_pending` badge in §9) |
+| Style | `text-amber-700 dark:text-amber-400` (v1.29, ST-08: was `text-amber-600`, 3.19:1 on white); plain text + icon, **not** a filled pill (stays distinct from the filled amber `research_pending` badge in §9) |
 | Placement | Status column, beneath (wide: beside) the status badge; the badge itself is unchanged |
 | `aria-label` / `title` | `"Last updated {N} days ago — plan is stale"` / `"Last updated {absolute date}. Display only — nothing happens automatically."` |
 | `data-testid` | `stale-plan-marker` |
@@ -553,7 +553,7 @@ In the detail view when `status = 'abandoned'`:
 - Status badge: Abandoned (red — §9)
 - Read-only field below status: "Reason for abandoning: {abandonment_reason}"
 - "Abandon" and "Edit" hidden; "Delete" remains
-- List view row: muted styling (opacity 0.7)
+- List view row: "Abandoned" status badge; no row fade (v1.29, ST-08)
 
 ---
 
@@ -758,6 +758,7 @@ User-initiated batch of the same manual mutations already available one plan at 
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.29 | 2026-11-17 | ST-08 (EPIC-03, v9.17, BLG-FE-265), semantic colour token sweep: §List View and §Abandon: abandoned rows are no longer shown at opacity 0.7, which put row text at 3.6:1 and the white-on-red "Abandoned" badge at 3.2:1 in the light theme; the badge marks the state (Head of UX & Design and Product Owner ruling in session, 2026-11-17). Stale-plan marker style `text-amber-600` → `text-amber-700 dark:text-amber-400` (amber-600 is 3.19:1 on white, design_system.md §Light-Theme Colour Tokens rule 3). |
 | 1.28 | 2026-11-16 | ST-07 (EPIC-02, v9.17, BLG-FE-263): §5g built. Build notes added: section headings, What-if sizing listed only while its panel renders, the jumped-to section stays current near the end of the page, the load-time jump waits for data, sticky offset under the mobile header. No change to the section list or labels. |
 | 1.27 | 2026-11-13 | ST-14 (EPIC-05, v9.17, BLG-FE-282): §5a.3 Stop Level pre-fill built from the shared `getSuggestedStop()` helper (signal `initial_stop`, else `current_price − 5 × atr_value`, 2 dp); a typed or cleared value is never overwritten; it applies only to the opened ticker's signal, and an untouched pre-fill is cleared if the ticker changes (agent-mediated DoQ review finding); edit mode does not pre-fill. §5f stored-stop line built; its wording now reads "about" and names the signal's ATR, because Trade Entry computes the stop from the ATR at entry time (ruling 2026-11-13, Frontend Specifications & UX Documentation Owner, the user in session). Known Deviations `DEV-v9.16-ST27-01` marked resolved. The §5 stop and the Signal Context "ATR (14d)" use the signal's native ATR (a US `atr_value` is GBP; PR #2260 review P2, BLG-FE-296). §5a.1: a "Plan this" signal whose ticker no longer matches the form's is not linked (BLG-FE-295). §5e: the reset note shows only when a tick is cleared, with "changed" and "no-snapshot" wording (BLG-FE-298, Head of UX & Design recommendation, user ruling 2026-11-16; SC-TPAR-06..09). Playwright: `tests/e2e/trade-plan-stop-prefill.spec.js` (SC-TPSP-01..09). |
 | 1.26 | 2026-11-13 | ST-12 (EPIC-05, v9.17, BLG-FE-278): §5e acknowledgement reset built. Storage is option (a), clear `pre_entry_override_acknowledged` on a key change (RISK-05, Strategy Rules & System Intent Owner, 2026-11-12); option (b) deleted. A plan saved without a snapshot starts unticked with the note on edit. The reset lives in the Trade Plan form; Trade Entry's tick does not reset (`BLG-FE-269` AC 1 stays open). Playwright: `tests/e2e/trade-plan-ack-reset.spec.js` (SC-TPAR-01..05). |

@@ -11,28 +11,28 @@ const RATE_AMBER_THRESHOLD = 40;
 const PERCENT_MULTIPLIER = 100;
 
 function rateColour(rate) {
-  if (rate >= RATE_GREEN_THRESHOLD) return "text-emerald-400";
-  if (rate >= RATE_AMBER_THRESHOLD) return "text-amber-400";
-  return "text-rose-400";
+  if (rate >= RATE_GREEN_THRESHOLD) return "text-app-positive";
+  if (rate >= RATE_AMBER_THRESHOLD) return "text-app-warning";
+  return "text-app-negative";
 }
 
 function SummaryCards({ plansCreated, completionRate, plansAbandoned, abandonedPct }) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-      <div className="p-4 rounded-lg bg-slate-900/50 border border-slate-700/30">
+      <div className="p-4 rounded-lg bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700/30">
         <div className="flex items-center gap-3 mb-3">
           <div className="p-2 rounded-lg bg-cyan-500/20">
-            <ClipboardCheck className="w-4 h-4 text-cyan-400" />
+            <ClipboardCheck className="w-4 h-4 text-cyan-700 dark:text-cyan-400" />
           </div>
           <p className="text-xs text-slate-600 dark:text-slate-400 uppercase tracking-wider">Plans Created</p>
         </div>
-        <p className="text-2xl font-bold text-white">{plansCreated}</p>
+        <p className="text-2xl font-bold text-app-fg">{plansCreated}</p>
       </div>
 
-      <div className="p-4 rounded-lg bg-slate-900/50 border border-slate-700/30">
+      <div className="p-4 rounded-lg bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700/30">
         <div className="flex items-center gap-3 mb-3">
           <div className="p-2 rounded-lg bg-emerald-500/20">
-            <TrendingUp className="w-4 h-4 text-emerald-400" />
+            <TrendingUp className="w-4 h-4 text-app-positive" />
           </div>
           <p className="text-xs text-slate-600 dark:text-slate-400 uppercase tracking-wider">Completion Rate</p>
         </div>
@@ -41,14 +41,14 @@ function SummaryCards({ plansCreated, completionRate, plansAbandoned, abandonedP
         </p>
       </div>
 
-      <div className="p-4 rounded-lg bg-slate-900/50 border border-slate-700/30">
+      <div className="p-4 rounded-lg bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700/30">
         <div className="flex items-center gap-3 mb-3">
           <div className="p-2 rounded-lg bg-rose-500/20">
-            <XCircle className="w-4 h-4 text-rose-400" />
+            <XCircle className="w-4 h-4 text-app-negative" />
           </div>
           <p className="text-xs text-slate-600 dark:text-slate-400 uppercase tracking-wider">Plans Abandoned</p>
         </div>
-        <p className="text-2xl font-bold text-white">
+        <p className="text-2xl font-bold text-app-fg">
           {plansAbandoned}{" "}
           <span className="text-sm font-normal text-slate-600 dark:text-slate-400">({abandonedPct}%)</span>
         </p>
@@ -73,23 +73,23 @@ export default function TradePlanCompletionRateSection() {
   return (
     <div
       data-testid="trade-plan-completion-rate-section"
-      className="rounded-2xl bg-slate-800/50 border border-slate-700/50 p-6 backdrop-blur-sm"
+      className="rounded-2xl bg-app-raised border border-app-line p-6 backdrop-blur-sm"
     >
-      <h2 className="text-lg font-semibold text-white mb-4">Trade Plan Completion Rate</h2>
+      <h2 className="text-lg font-semibold text-app-fg mb-4">Trade Plan Completion Rate</h2>
       <DataState
         loading={isLoading}
         error={!!error}
         onRetry={refetch}
         empty={!isLoading && !error && plansCreated === 0}
-        emptyIcon={<FileQuestion className="w-10 h-10 text-slate-500" />}
+        emptyIcon={<FileQuestion className="w-10 h-10 text-app-muted" />}
         emptyHeading="No trade plans created yet"
         emptyAction={<EmptyStateAction variant="button" to="/TradePlan">Create a trade plan</EmptyStateAction>}
         loadingVariant="skeleton"
         loadingSkeleton={
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="h-24 rounded-lg bg-slate-700/40 animate-pulse" />
-            <div className="h-24 rounded-lg bg-slate-700/40 animate-pulse" />
-            <div className="h-24 rounded-lg bg-slate-700/40 animate-pulse" />
+            <div className="h-24 rounded-lg bg-slate-100 dark:bg-slate-700/40 animate-pulse" />
+            <div className="h-24 rounded-lg bg-slate-100 dark:bg-slate-700/40 animate-pulse" />
+            <div className="h-24 rounded-lg bg-slate-100 dark:bg-slate-700/40 animate-pulse" />
           </div>
         }
       >

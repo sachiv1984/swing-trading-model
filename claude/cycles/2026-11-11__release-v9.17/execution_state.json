@@ -5,7 +5,7 @@
   "invoked_utc": "2026-11-12T13:22:26Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-16T09:05:36Z",
+  "last_updated_utc": "2026-11-17T18:30:00Z",
   "epics": {
     "EPIC-01": {
       "title": "Site Structure & Usability Phase 3: Positions Redesign (build-and-ship)",
@@ -672,6 +672,62 @@
           "notes": "First-time-right: 2026-11-16 pass A \u2014 1 N/A (navigation only, no value shown); 2/19 done (Trade Plan 'sizing' link present iff WhatIfSizingPreview renders: stop '', null, 0, -1, 'abc' \u2192 absent; 140 \u2192 present; stop cleared after load \u2192 link drops; Benchmark 'open-positions' absent when no open positions and not loading/error; parity/yearly/trade-log absent while loading or on error; ?section= ignored on the other tabs; ?section=unknown does nothing); 3 done (current-section pick: node -e over rect lists); 4 done (populated Benchmark and Trade Plan fixtures for the 390 px scroll check); 5 high (new shared module reused by ST-06); 6 done (grep tests/e2e for the 7 new headings and 4 index labels: no unscoped collisions; Strategy Benchmark h2s unchanged); 7 done (TradePlan reads only primitive ?edit/ticker/market/clone_from values, so writing ?section= re-runs no effect); 8,11,17,18 N/A (no dates, thresholds, writes); 20 done (labels as decision record \u00a73). | First-time-right: 2026-11-16 pass B \u2014 9 done (own gaps fixed in-commit: jumped-section pin, ready gate); 10 done (both specs' build notes in the same commit); 13 done (tables read back); 15 done (isStopLevelValid shared by panel and index); 18/19 re-run (stop '',0,-1,140; edit/clone populate; tab switch). /code-review high: 9 findings fixed. Deviation check vs \u00a75g/\u00a73a: none (implementation notes recorded in the specs). CI on a7af866b: 8 of 9 workflows success (Frontend Production Build 43853635637, CI Pytest Suite 43853635767); Playwright E2E Acceptance Tests 43853635979 failed SC-SIX-07 (23 px overflow at 390 px from the Performance parity stat cards, CI fonts; pre-existing, inside this story's AC). Fixed in 44736ed8. CI on 44736ed8: all 9 workflows success; Playwright E2E Acceptance Tests 43871300660 (step 4c); CI Pytest Suite 43871300145; Frontend Production Build 43871300029 (step 4d). | DoQ round 1 fixes in 09658bd6 (all 9 workflows success; Playwright 43903323106)."
         }
       }
+    },
+    "EPIC-03": {
+      "title": "Site Structure & Usability Phase 3: Semantic Colour Token Sweep (build-and-ship)",
+      "status": "done",
+      "branch": "exec/2026-11-11__release-v9.17/EPIC-03",
+      "pr_number": 2262,
+      "pr_status": "open",
+      "qa_signed_off": true,
+      "qa_evidence_log": "claude/cycles/2026-11-11__release-v9.17/qa_evidence_EPIC-03.md",
+      "test_scenarios": [
+        "tests/e2e/accessibility-axe-scan.spec.js",
+        "tests/test_page_colour_tokens.py",
+        "tests/e2e/visual-regression-baselines.spec.js"
+      ],
+      "stories": {
+        "ST-08": {
+          "title": "Move the remaining pages onto the semantic colour tokens",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 2243,
+          "branch": "exec/2026-11-11__release-v9.17/EPIC-03",
+          "commit_sha": "7b4e77361ef7ea741ba388da77e62b11b0a3b0a7",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-11-17T13:15:09Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/design_system.md#Page Colour Token Sweep",
+            "docs/specs/frontend/design_system.md#Semantic Colour Tokens",
+            "docs/specs/frontend/pages/trade_plan.md",
+            "docs/specs/frontend/pages/analytics.md",
+            "tests/e2e/accessibility-axe-scan.spec.js",
+            "tests/test_page_colour_tokens.py"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "4.merge_gate_confirmed",
+          "sign_off_record": null,
+          "notes": "STEP 0 (resume, 2026-11-17): EPIC-03 had no execution_state section; added with branch created from main b90b11b9 (all six other EPICs merged, so the RISK-02 dependency is met). Issue #2243 found open (STEP 1). First-time-right: 2026-11-17 pass A \u2014 1/7/8/11/17/18/19/21 N/A (class-only change: no value shown, written or derived; no spec premise; no replaced page); 2 done (dark values kept identical except text-slate-500\u2192app-muted, a contrast gain); 3 N/A (no src/lib logic); 4 done (light axe scans use populated fixtures per page, not only empty catch-all); 5 done (medium /code-review; no new shared module); 6 done (25 e2e specs assert colour classes; re-check each against changed elements before commit); 20 N/A (no copy change). First-time-right: 2026-11-17 pass B \u2014 9 done (XS a11y gaps on newly scanned pages fixed in-story: TradePlans/Watchlist/SystemStatus icon-button names, Signals/Cohort/StrategyBenchmark/RedFlags control labels, SystemStatus Badge on bg-primary); 10 done (design_system v1.27, trade_plan v1.29, positions v2.29, watchlist v0.10, analytics v2.5); 13 done (table pipe counts checked); 18 re-run: routed-page fixtures copied from each page's own spec, System Status checks shape from health_service.py, Signals shape from signal-card.spec.js; 20 raised (abandoned-row fade -> Head of UX & Design/PO ruling 2026-11-17: drop the fade; Signal-card fade dropped by the same ruling); 22 done (no new links/sections; heading-order unchanged); 12/14/15/16 N/A (no live read, no shared function, no stored data). /code-review medium: 8 of 9 findings fixed (tinted config-object colours, blue-900 badge, gradient-pill cyan-800, PositionCard P&L pill, SignalCard fade, two stale test guards, guard widened); 1 declined: shared themed-card constant (22 copies) kept as explicit pairs per design_system rule 2 (opacity/gradient not supported by app-* tokens); a card token would be a design-system change outside this story. Commits: 071a43f3 (sweep, specs, tests), 022f62a6 (visual baselines both themes from Update Visual Snapshot Baselines run 44073342137 artifact; the workflow's own push got 403, GITHUB_TOKEN lacks write). Deviation check vs design_system.md v1.27 and the four bumped page specs: none (specs updated in the same commit; abandoned-row fade change ruled 2026-11-17). CI on 071a43f3: all workflows success; Playwright E2E Acceptance Tests 44073301285, Frontend Production Build 44073301125, CI Pytest Suite success. CI on 022f62a6: all 8 workflows success; Playwright E2E Acceptance Tests 44073852415 (incl. Visual Regression Baselines and Visual Snapshots jobs), CI Pytest Suite 44073852310 (step 4c/4d). Local: affected-page Playwright specs 264/265 then fixed and re-run green; axe scan spec 67/67. DoQ round 1 (agent-mediated, 2026-11-17): Blocked \u2014 P1 Trade History scanned only inside its table (calendar view dark-only); P3 evidence numbers (73 not 77 offenders, 66 axe tests, 9 specs), dark-baseline drift and failed-run caveats, RiskDashboard marker. Fixed in the follow-up commit: CalendarView, TradeReflectionModal, StatsCard, TradeHistoryTable swept; whole Trade History page scanned in table and calendar view, both themes; RiskDashboard waits for 'ALPHA'; Trade History filter selects named; evidence corrected. CI on d21945db: all 10 workflows success; Playwright E2E Acceptance Tests 44077332892, CI Pytest Suite 44077332908, Frontend Production Build 44077332804; baseline regeneration 44077344561 success with no snapshot changes (committed baselines current). DoQ round 2 (agent-mediated): Approved 2026-11-17, no P0/P1; observation (CalendarView outside-month days text-slate-700 in both themes, pre-existing) left to BLG-FE-288. BLG-FE-303 fix (option a, user direction 2026-11-17). First-time-right: 2026-11-17 pass A \u2014 4 done (every conditional state of the six components given a fixture and scan: What-if panel with concentration note, Setup Thesis Digest, AI spend chart, Cash and Daily Monitor modals, Advisor chat answer and error; children StatusBadge and chat rating buttons swept); 18 done (fixtures from each component's own spec, concentration text from sizing_service.py); 23 done (dry-run first; white-on-fill restored on the Cash submit button). Pass B \u2014 3 done (SVG axis colour asserted directly, axe skips SVG text); 9 done (a11y names, Cash tabs aria-controls target, sidebar balance fade, waitForFunction timeout-argument bug in the axe helper that hung modal scans); /code-review medium on the follow-up: 8 findings, all fixed in-commit. CI on 7b4e7736: all 20 workflows success; Playwright E2E Acceptance Tests 44090887930, CI Pytest Suite 44090887901, Frontend Production Build 44090887611; baselines regenerated 44090890558, no changes. BLG-FE-303 bannered complete."
+        }
+      },
+      "sign_off_record": {
+        "status": "cleared",
+        "role": "Director of Quality",
+        "method": "agent_mediated",
+        "signed_by": "Sprint Execution Engine (agent-mediated, Director of Quality role \u2014 \u00a75.3)",
+        "date": "2026-11-17",
+        "user_directed": false,
+        "rounds": 3,
+        "first_round": "Blocked (1 P1, 4 P3)",
+        "evidence": "claude/cycles/2026-11-11__release-v9.17/qa_evidence_EPIC-03.md",
+        "third_round": "PR #2262 agent-mediated review: Changes Requested (AC 1 partly met, BLG-FE-303); fixed in 7b4e7736 (option a, user direction)"
+      }
     }
   },
   "blocked_items": [],
@@ -684,6 +740,7 @@
     "ST-05",
     "ST-06",
     "ST-07",
+    "ST-08",
     "ST-09",
     "ST-10",
     "ST-11",
@@ -753,7 +810,11 @@
     "2026-11-16T08:4xZ (timestamp corrected; it was written as an estimate): PR #2260 agent-mediated review (DoQ Changes Requested -> P2 fixed d485d9ca/084bdaac, re-review Approved; PO Approved with Comments). Follow-ups: BLG-FE-295 and BLG-FE-298 fixed in-sprint and bannered; BLG-FE-296 fixed and bannered; BLG-FE-297 and BLG-BE-220 open (P3). First-time-right skill, commit-check Check 12 and a commit-gates nudge committed to main as efd23278 [GOVERNANCE] (user direction).",
     "2026-11-16T08:54:06Z: EPIC-05 human Director of Quality QA sign-off and Product Owner acceptance given in session by the repository owner (holds both roles), before merge. They cover the post-merge ST-11 production backfill (BLG-BE-211), the ST-12 Trade Plan-only scope (BLG-FE-269 open) and the ST-14 wording ruling. Recorded in qa_evidence_EPIC-05.md Merge Gate Confirmations and on PR #2260. Not merged: the merge stays with the human, after head CI on 1f0f0007 is green.",
     "2026-11-16T09:05:36Z: EPIC-05 PR #2260 merged by sachiv1984 at 2026-11-16T09:04:48Z, merge commit cb65bb12; head e9f13c2c all 20 workflows success. Merge state recorded on main (STEP 4 steps 2-3a). Orphaned post-merge commit check: none. Sibling execution_state sync (3c): no branch exists yet for EPIC-02 or EPIC-03, nothing to sync. Issues #2246-#2249 closed. Post-merge: BLG-BE-211 production backfill count (DS-41) still to record.",
-    "2026-11-17T09:15:00Z: EPIC-02 PR #2261 merged by sachiv1984 at 2026-11-17T09:09:42Z, merge commit 28fb7239. Human DoQ sign-off and PO acceptance given in session 2026-11-17 before the merge (qa_evidence_EPIC-02.md Merge Gate Confirmations). Merge state recorded on main (STEP 4 steps 2-3a). Orphaned post-merge commit check: none. Sibling execution_state sync (3c): no branch exists yet for EPIC-03, nothing to sync."
+    "2026-11-17T09:15:00Z: EPIC-02 PR #2261 merged by sachiv1984 at 2026-11-17T09:09:42Z, merge commit 28fb7239. Human DoQ sign-off and PO acceptance given in session 2026-11-17 before the merge (qa_evidence_EPIC-02.md Merge Gate Confirmations). Merge state recorded on main (STEP 4 steps 2-3a). Orphaned post-merge commit check: none. Sibling execution_state sync (3c): no branch exists yet for EPIC-03, nothing to sync.",
+    "2026-11-17T14:10:00Z: EPIC-03 PR #2262 opened (STEP 3.2.B) after agent-mediated DoQ sign-off (round 2 Approved). Pre-PR checks: API performance baseline drift PASSED; origin/main..HEAD lists only [EPIC-03] commits. Update Visual Snapshot Baselines cannot push to exec branches (403, GITHUB_TOKEN lacks write); baselines were committed from the run artifact. Merge awaits the human Director of Quality and Product Owner.",
+    "2026-11-17T15:00:00Z: PR #2262 agent-mediated DoQ + PO review posted (user-directed; comment 6947461775). DoQ: Changes Requested \u2014 AC 1 partly met: WhatIfSizingPreview, SetupThesisDigestPanel, AiSpendTrendChart, CashManagementModal, MonitorModal, AiChatWidget still dark-only in unscanned states inside the RISK-02 boundary (BLG-FE-303, P2); evidence 'Pass' overstated pending (a) in-branch fix or (b) PO-accepted narrowing to Pass_with_deviation. PO: Approved with Comments, pending confirmation of the Signal-card fade extension and visible AA changes. Filed BLG-FE-303, BLG-OPS-220, BLG-QA-267, BLG-FE-304, BLG-FE-305 (a160ceff). Not merged.",
+    "2026-11-17T18:00:00Z: PR #2262 Head of UX & Design agent-mediated review posted (comment 6949459816): keep Signal cards unfaded; heatmap, filter pill, amber and accessible-name changes endorsed (dark heatmap note). Product Owner (repository owner, in session) ratified the Signal-card no-fade rule: signals.md v0.10 \u00a7Resolved Card States; design_system.md rule 5 reworded. Filed BLG-FE-306 (resolved-card de-emphasis) and BLG-FE-307 (dark-theme heatmap). Not merged.",
+    "2026-11-17T18:30:00Z: EPIC-03 human Director of Quality QA sign-off and Product Owner acceptance given in session by the repository owner (holds both roles) on PR #2262 head ff08a481, covering the BLG-FE-303 in-branch fix, the visible AA changes and the Signal-card no-fade rule. Recorded in qa_evidence_EPIC-03.md Merge Gate Confirmations and on PR #2262. Not merged: the merge stays with the human."
   ],
   "sealed": false,
   "sealed_utc": null

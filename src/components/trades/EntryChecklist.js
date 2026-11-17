@@ -27,7 +27,7 @@ function CheckItem({ item, onToggle, readOnly }) {
       className={cn(
         "flex items-center gap-3 px-3 py-2 rounded-lg transition-colors",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
-        !readOnly && "hover:bg-slate-700/30 cursor-pointer"
+        !readOnly && "hover:bg-slate-100 dark:hover:bg-slate-700/30 cursor-pointer"
       )}
       onClick={!readOnly ? onToggle : undefined}
       onKeyDown={handleKeyDown}
@@ -37,7 +37,7 @@ function CheckItem({ item, onToggle, readOnly }) {
           "flex-shrink-0 w-4 h-4 rounded border-2 flex items-center justify-center transition-colors",
           item.checked
             ? "bg-cyan-500 border-cyan-500"
-            : "border-slate-600 bg-transparent"
+            : "border-slate-300 dark:border-slate-600 bg-transparent"
         )}
       >
         {item.checked && (
@@ -46,7 +46,7 @@ function CheckItem({ item, onToggle, readOnly }) {
           </svg>
         )}
       </div>
-      <span className={cn("text-sm select-none", item.checked ? "text-slate-300 line-through decoration-slate-500" : "text-slate-300")}>
+      <span className={cn("text-sm select-none", item.checked ? "text-slate-700 dark:text-slate-300 line-through decoration-slate-500" : "text-slate-700 dark:text-slate-300")}>
         {item.label}
       </span>
     </div>
@@ -64,7 +64,7 @@ export default function EntryChecklist({ items, ticker, onToggle, readOnly = fal
           {checkedCount} / {items.length} complete
         </span>
         {allChecked && (
-          <span className="text-xs font-medium text-emerald-400">All complete</span>
+          <span className="text-xs font-medium text-app-positive">All complete</span>
         )}
       </div>
 
@@ -83,7 +83,7 @@ export default function EntryChecklist({ items, ticker, onToggle, readOnly = fal
         <div className="pt-2 pl-3">
           <Link
             to={`/research/${ticker}`}
-            className="inline-flex items-center gap-1.5 text-xs text-cyan-400 hover:text-cyan-300 transition-colors"
+            className="inline-flex items-center gap-1.5 text-xs text-cyan-700 dark:text-cyan-400 hover:text-cyan-800 dark:hover:text-cyan-300 transition-colors"
           >
             <ExternalLink className="w-3 h-3" />
             Review research for {ticker}

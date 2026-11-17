@@ -216,7 +216,7 @@ export default function ExportModal({ open, onClose, positions, metrics, period,
                 whileTap={{ scale: 0.98 }}
                 onClick={option.action}
                 disabled={exporting !== null}
-                className="w-full flex items-center gap-4 p-4 rounded-xl bg-slate-800/50 border border-slate-700/50 hover:border-slate-600 transition-all text-left disabled:opacity-50"
+                className="w-full flex items-center gap-4 p-4 rounded-xl bg-app-raised border border-app-line hover:border-slate-300 dark:hover:border-slate-600 transition-all text-left disabled:opacity-50"
               >
                 <div className={`p-3 rounded-xl bg-gradient-to-br ${option.color}`}>
                   {isExporting ? (
@@ -228,18 +228,18 @@ export default function ExportModal({ open, onClose, positions, metrics, period,
                   )}
                 </div>
                 <div className="flex-1">
-                  <p className="font-medium text-white">{option.title}</p>
+                  <p className="font-medium text-app-fg">{option.title}</p>
                   <p className="text-sm text-slate-600 dark:text-slate-400">{option.description}</p>
                 </div>
-                <Download className="w-5 h-5 text-slate-500" />
+                <Download className="w-5 h-5 text-app-muted" />
               </motion.button>
             );
           })}
         </div>
 
-        <div className="mt-4 p-3 rounded-lg bg-slate-800/30 border border-slate-700/30">
+        <div className="mt-4 p-3 rounded-lg bg-slate-50 dark:bg-slate-800/30 border border-slate-200 dark:border-slate-700/30">
           <p className="text-xs text-slate-600 dark:text-slate-400">
-            <strong className="text-slate-300">Included data:</strong> {positions.filter(p => p.status === "closed").length} closed trades, 
+            <strong className="text-slate-700 dark:text-slate-300">Included data:</strong> {positions.filter(p => p.status === "closed").length} closed trades, 
             performance metrics, and trade breakdown for {period.toLowerCase()}.
           </p>
         </div>

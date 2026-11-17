@@ -265,7 +265,7 @@ export default function TradeHistoryTable({ trades, tradesForCharts = [] }) {
   const SortIcon = ({ state, color = "text-cyan-700 dark:text-cyan-400" }) => {
     if (state === SORT_ASC)  return <ArrowUp   className={`w-3 h-3 ml-1 inline ${color}`} />;
     if (state === SORT_DESC) return <ArrowDown  className={`w-3 h-3 ml-1 inline ${color}`} />;
-    return <ArrowUpDown className="w-3 h-3 ml-1 inline text-slate-500" />;
+    return <ArrowUpDown className="w-3 h-3 ml-1 inline text-app-muted" />;
   };
 
   // Aliases for backwards compatibility with existing sort icons
@@ -471,7 +471,7 @@ export default function TradeHistoryTable({ trades, tradesForCharts = [] }) {
                       {formatRShared(trade.net_r_multiple)}
                     </span>
                   ) : (
-                    <span className="text-slate-600">—</span>
+                    <span className="text-app-muted">—</span>
                   )}
                 </TableCell>
               </TableRow>
@@ -520,7 +520,7 @@ export default function TradeHistoryTable({ trades, tradesForCharts = [] }) {
                             {trade.tags.map((tag) => (
                               <span
                                 key={tag}
-                                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-gradient-to-r from-cyan-500/10 to-violet-500/10 text-cyan-700 dark:text-cyan-300 border border-cyan-500/30 hover:border-cyan-400/50 transition-colors"
+                                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-gradient-to-r from-cyan-500/10 to-violet-500/10 text-cyan-800 dark:text-cyan-300 border border-cyan-500/30 hover:border-cyan-400/50 transition-colors"
                               >
                                 <span className="w-1 h-1 rounded-full bg-cyan-400" />
                                 {tag}
