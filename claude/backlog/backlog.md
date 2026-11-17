@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-17 (session — 5 new items added: BLG-UX-19, BLG-FE-320, BLG-FEAT-102, BLG-UX-20, BLG-SPEC-240; BLG-UX-08 re-review §13 competitors and best-in-class); prior — 2026-11-17 (session — 4 new items added: BLG-SEC-46, BLG-FE-318, BLG-UX-18, BLG-FE-319; BLG-UX-08 re-review §12 trust, privacy and security messaging); prior — 2026-11-17 (session — 1 new item added: BLG-UX-17; BLG-UX-08 re-review §11 AI opportunities); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-17 (session — 1 new item added: BLG-UX-21; BLG-UX-08 re-review §14 target state); prior — 2026-11-17 (session — 5 new items added: BLG-UX-19, BLG-FE-320, BLG-FEAT-102, BLG-UX-20, BLG-SPEC-240; BLG-UX-08 re-review §13 competitors and best-in-class); prior — 2026-11-17 (session — 4 new items added: BLG-SEC-46, BLG-FE-318, BLG-UX-18, BLG-FE-319; BLG-UX-08 re-review §12 trust, privacy and security messaging); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -7446,5 +7446,26 @@ Error handling differs by form: Trade Entry marks fields with `aria-invalid` and
 
 **Acceptance Criteria**
 - `design_system.md` has the section with a dated approval by the Head of UX & Design, and the non-conforming forms are listed
+
+---
+
+### BLG-UX-21 — Ratify the target-state experience as the next programme brief, including the navigation changes
+**Priority:** P3 (Low)
+**Type:** UX / Programme decision
+**Owner:** Product Owner; Head of UX & Design
+**Source:** `BLG-UX-08` re-review §14 Target State (`docs/ux/site_structure_rereview_2026-11-17.md`) — 2026-11-17
+**Effort:** S (~0.5 day decision + `navigation.md` revision)
+**Provisional-Target:** TBD
+
+**Problem**
+The re-review's §14 defines a target state: positioning, navigation, Dashboard structure, page templates, design direction and functionality to retain, remove, redesign or introduce. It also gives a suggested sequence for the 30 items filed in §1–§13. It is a recommendation, not a plan. Two navigation changes have no item yet: Strategy Benchmark becomes a "Strategy vs backtest" section of Performance, and Ticker Universe moves from Find trades to Settings. Without a decision, the 30 items will be seated one by one with no shared brief.
+
+**Scope**
+- Product Owner decides whether to adopt §14 (in whole or in part) as the brief for a "Site Structure & Usability, Phase 4" programme at the next `run roadmap`, and records the decision (decision log)
+- If adopted: revise `navigation.md` for the two moves, and record the design direction (§14.5) in `design_system.md`
+
+**Acceptance Criteria**
+- A dated Product Owner decision on §14 is in the decision log
+- If adopted: `navigation.md` and `design_system.md` reflect the decisions, with dated Head of UX & Design approval
 
 ---

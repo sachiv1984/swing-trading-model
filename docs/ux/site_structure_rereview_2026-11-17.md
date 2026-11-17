@@ -1,7 +1,7 @@
 **Owner:** Head of UX & Design
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Last Updated:** 2026-11-17 (§13 Competitors and Best-in-Class Experiences added at the user's request; 5 items filed); prior — 2026-11-17 (§12 Trust, Privacy and Security Messaging added at the user's request; 4 items filed); prior — 2026-11-17 (§11 AI opportunities review added at the user's request; 1 gated item filed); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-17 (§14 Target State added at the user's request; 1 item filed); prior — 2026-11-17 (§13 Competitors and Best-in-Class Experiences added at the user's request; 5 items filed); prior — 2026-11-17 (§12 Trust, Privacy and Security Messaging added at the user's request; 4 items filed); prior history retained — see prior entries in version control
 
 # Site Structure & Usability — First-Principles Re-Review
 
@@ -381,3 +381,122 @@ Filed, gated on that review's outcome, as `BLG-UX-17`.
 | B5 | GOV.UK: one written error-message standard | `BLG-SPEC-240` |
 
 **Sources:** [TradeZella — getting started with the Playbook](https://help.tradezella.com/en/articles/7020769-getting-started-with-the-playbook); [TradeZella — groups and rules in the Playbook](https://intercom.help/tradezella-4066d388d93c/en/articles/6986848-what-is-groups-and-rules-in-the-playbook); [Edgewonk — The Tiltmeter](https://edgewonk.zendesk.com/hc/en-us/articles/360010150259); [Edgewonk — Tiltmeter blog](https://edgewonk.com/blog/mastering-trading-discipline-with-edgewonks-tiltmeter); [TraderSync vs Tradervue (Curved Trading)](https://curvedtrading.com/articles/en/reviews/tradersync-vs-tradervue/); [Edgewonk vs TraderSync (TradingTools.review)](https://tradingtools-directory.pages.dev/compare/edgewonk-vs-tradersync/); [TradingView — long and short position tools](https://in.tradingview.com/support/solutions/43000475660-how-to-use-long-and-short-position-drawing-tools/); [Sharesight — portfolio tracker](https://sharesight.com/portfolio-tracker); [Sharesight — tax time](https://sharesight.com/blog/3-ways-sharesight-helps-investors-at-tax-time); [Koyfin review (Bullish Bears)](https://bullishbears.com/koyfin-review/); [Freetrade — new order experience](https://community.freetrade.io/t/new-improved-order-experience/23191); [Freetrade — order confirmation screen request](https://community.freetrade.io/t/feature-request-order-confirmation-screen/17151); [Trading 212 — redesigned CFD order screen](https://community.trading212.com/t/cfds-have-a-new-look-a-redesigned-order-screen-cleaner-interface-and-more/88700); [Shortform — Boeing checklist (Gawande summary)](https://www.shortform.com/blog/boeing-checklist/); [RCP — NEWS2 executive summary](https://www.rcp.ac.uk/media/ctulqqbn/news2-executive-summary_0.pdf); [NHS Scotland — NEWS2 guideline](https://rightdecisions.scot.nhs.uk/media/vhcccgq2/news2-guideline-no-fp.pdf); [MacStories — Things 3 review](https://www.macstories.net/reviews/things-3-beauty-and-delight-in-a-task-manager/); [Cultured Code — Things features](https://culturedcode.com/things/features/); [Linear — triage release](https://linear.app/changelog/2021-06-29-linear-release-and-issue-triage); [GOV.UK — error message](https://design-system.service.gov.uk/components/error-message); [GOV.UK — error summary](https://design-system.service.gov.uk/components/error-summary); [GOV.UK — validation pattern](https://design-system.service.gov.uk/patterns/validation); [Garmin — Training Readiness manual](https://www8.garmin.com/manuals/webhelp/GUID-CF6857C0-CEF9-485F-B3B4-B8DC192FA66A/EN-US/GUID-C21BE0C8-A08E-4DA1-B6C6-2E0E2DDDB372.html); [Monzo — Trends spending and balance](https://monzo.com/help/budgeting-overdrafts-savings/trends-spending-and-balance-web).
+
+---
+
+## 14. Target State: What the App Should Become (added 2026-11-17, user request)
+
+This section turns §1–§13 into one target. It is a **recommendation for Product Owner ratification**, not a committed plan: each part names the backlog items that would deliver it, and anything new is marked *new*. Terms written for a public marketing site are mapped to their in-app equivalents: the "homepage" is the Dashboard, the "hero" is the Due today list, and "proof" means evidence that the system's numbers and rules can be trusted.
+
+### 14.1 Positioning
+
+**What the app is:** *a disciplined co-pilot for one momentum strategy.* It tells the trader what the rules say to do today, makes doing it quick and checked, and shows honestly whether the rules were followed and whether they work.
+
+**What it must communicate immediately, on any page:**
+
+1. **What needs doing now, in rule order:** regime, then exits, then stops, then entries.
+2. **That the numbers can be trusted:** where each figure came from and how fresh it is.
+3. **That the human decides:** the system computes and checks; it never advises or acts (`strategy_rules.md` §13).
+
+**What it should not communicate:** a terminal, a dashboard builder or an AI adviser. It should feel closer to a pilot's checklist and instrument panel than to a trading terminal.
+
+**Name:** one product name everywhere (`BLG-UX-16`). This is a Product Owner decision. Recommendation: drop "Position Manager", which describes one page, not the job. Pick a name built on the strategy and the decision support, and avoid "Advisor" (§12).
+
+### 14.2 Information Architecture
+
+Keep the five job-based areas (they work, §3). Make three changes: the weekly review becomes the front door of Review, Strategy Benchmark joins Performance, and reference/configuration pages move to Settings.
+
+```
+Today
+├── Dashboard ("Today")                     home: Due today, then status
+└── Notifications                           → Notification History (detail)
+
+Portfolio
+├── Positions                               decision-first table/cards; grace view; Daily Monitor
+│   └── Exit (dialog), Position notes (→ Journal)
+├── Risk Dashboard
+└── Record a trade (Trade Entry)            action; also from Positions and Trade Plans
+
+Find trades
+├── Signals                                 "Plan this"
+├── Screener                                "Plan this"
+├── Watchlist
+├── Research                                → Research {TICKER}
+└── Trade Plans                             → Trade Plan (detail, section index)
+
+Review
+├── Weekly review   (was Weekly Digest)     the review journey's start; links onward (BLG-UX-12/15)
+├── Performance                             Summary · Reports · Analytics · Compliance · Strategy vs backtest*
+├── Trade History                           filters incl. rules followed/broken (BLG-FE-320)
+├── Journal                                 Reflections · Red flags · Position notes
+└── Replay
+
+Settings
+├── Settings                                fees, risk limits, preferences; strategy parameters (read-only)
+├── Notification Preferences                (Telegram, BLG-FE-318)
+├── Ticker Universe*                        configuration, moved from Find trades
+├── System Status
+└── How this works*                         purpose, daily routine, core terms, where data goes (BLG-UX-16/18)
+```
+
+\* *New or moved.* "Strategy vs backtest" absorbs Strategy Benchmark as a Performance section (one place per review concept, §5). Ticker Universe configures the screener's universe and is not a daily find-trades task. Sidebar entries: 19 → 18, still 5 areas, with Today and Portfolio expanded by default. *New* placement decisions (Strategy Benchmark merge, Ticker Universe move) need a `navigation.md` revision → `BLG-UX-21`.
+
+### 14.3 The Dashboard, Top to Bottom
+
+| # | Section | Contents | Purpose | Delivered by |
+|---|---------|----------|---------|--------------|
+| 1 | **Header / navigation** | Sidebar (5 areas); page title "Today" with the date; a compact status line: data as of {time}, market data source status | Orient: where am I, how fresh is what I see (trust signal 2) | Existing; title and subtitle copy `BLG-FE-310` |
+| 2 | **Hero: Due today** | Regime per market first, then exits due, grace ending, stops moved, new signals (with "Plan this"); each item one click from its action. Quiet day: one line, "Nothing due today · US RISK-ON · UK RISK-ON" | The primary proposition: *what the rules say to do now, in rule order* | Existing; "Plan this" `BLG-UX-13` |
+| 3 | **Positions needing attention** | Only when any exist: the top rows of Positions' urgency order, with direction of travel (closer to or further from stop) | Bring in-trade decisions forward without opening Positions | `BLG-UX-20` (direction); otherwise reuses Positions |
+| 4 | **Portfolio status strip** | One row: open positions, portfolio heat, in grace (one definition), cash | Context for today's decisions, at a glance, not as cards | Collapses Cards 1–3; `BLG-FE-308`, `BLG-UX-11` |
+| 5 | **Review prompts** | Shown only when due: weekly review ready, reflections outstanding, red flags this week | Link today's work to the review loop | *new* (part of `BLG-UX-11`'s quiet-day redesign) |
+| 6 | **Briefing (optional)** | The Morning Briefing cards with data, and the AI briefing collapsed by default; zero-state cards fold into one "All clear" line | Supporting context for those who want it, without 11 empty boxes | `BLG-UX-11`; the AI briefing's future depends on the 2027-01-03 usage review (`BLG-GOV-382`) |
+| 7 | **Proof / trust** | Rule-adherence trend (rules followed, last 4 weeks); every figure links to how it was computed | Shows the system is honest about discipline and arithmetic | Trend from existing compliance data; links `BLG-UX-14`/`BLG-UX-16` |
+| 8 | **Calls to action** | Inline on each item (Exit, Review stop, Plan this, Open review); no global marketing-style CTA. The one persistent action is "Record a trade" | Actions live where the decision is made | Existing pattern |
+| 9 | **Supporting content** | What's New (collapsed, one line when there is nothing new); trade-count progress strip | Low-priority information, below the work | Existing, demoted |
+| 10 | **Footer** | Version (real), data as-of, "How this works", "Where your data goes"; the Docs link fixed or removed | Help, transparency and version identity in one predictable place (WCAG 3.2.6 consistent help) | `BLG-FE-309`, `BLG-UX-16`, `BLG-UX-18` |
+
+### 14.4 Key Page Templates
+
+| Template | Pages | Structure (top to bottom) |
+|----------|-------|---------------------------|
+| **Triage list** | Positions, Signals, Screener, Trade Plans, Trade History, Notifications | Page header (title, one-line purpose, primary action) → one warning strip (only if any) → filters, saved views, rule-adherence filter where relevant → list sorted by urgency (the rule that orders it stated in a caption) → rows with leading decision columns, details on expand, and cards below `md` → empty state with one next step |
+| **Commit form** | Trade Entry, Exit dialog, Cash, Trade Plan save | Header with the parent link → pre-filled fields (with source shown) → system-verified checks as status (not ticks) → human-judgement confirmations (the pause point) → consequence preview (cost, risk £/R, P&L) → one primary button; errors per the written standard (summary plus inline, `BLG-SPEC-240`) |
+| **Record / detail** | Trade Plan, Research {TICKER}, Notification History | Parent link → identity line (ticker, market, status) → section index ("On this page") for long pages → sections in decision order → onward link to the next step |
+| **Review report** | Weekly review, Performance, Journal | Period selector (UK tax year, week, month) → headline figures in plain words with links to their records → sections (Summary, Reports, Analytics, Compliance, Strategy vs backtest) → drill-down to Trade History filtered → export |
+| **Reference / settings** | Settings, Notification Preferences, Ticker Universe, System Status, How this works | Grouped sections → read-only strategy parameters clearly marked → editable preferences save in place → plain-language help per setting (no "§" references, `BLG-UX-14`) |
+
+### 14.5 Design Direction
+
+| Aspect | Direction | Why (evidence) |
+|--------|-----------|----------------|
+| **Visual character** | Calm instrument panel: neutral surfaces, high information density where decisions are made, quiet everywhere else | §1–§4 quiet-day finding; Things 3 and aviation lessons (§13) |
+| **Typography** | Keep the system font stack (fast, no web fonts, §10). One heading scale, used semantically (`BLG-FE-313`). **Tabular (fixed-width) numerals for every figure** — today only 13 places use `tabular-nums` — so prices, P&L and R line up in tables | Readability of numbers; accessibility headings |
+| **Spacing** | The existing Tailwind 4 px grid; tight spacing inside tables and lists, generous spacing between page sections; spacing reflects importance, not decoration | Density only where it earns its place |
+| **Colour** | **Colour means something or is absent.** Semantic tokens only (`app-*`, v9.16–v9.17): positive, negative and warning carry rule states; regime badges keep text labels. Retire the 26 decorative cyan-to-violet gradient buttons for one solid primary colour. Both themes pass contrast (AA; focus appearance at AAA, §9.4) | §9, §13 (Things 3); `BLG-FE-288`, `BLG-FE-314` |
+| **Imagery** | No photography or illustration. Charts only where a trend matters (Performance, Risk, Strategy vs backtest), each with a text summary as its alternative. Icons always paired with text (lucide, decorative icons hidden from screen readers) | §10 (no image weight); §9 (chart alternatives) |
+| **UI components** | One component per job: one toast system, one dialog (with semantics), one table/card pattern, one status pill set, one error pattern; built on the shared `components/ui` primitives with focus rings; no bespoke clickable `div`s | §9 (keyboard failures), §10 (duplicate libraries); `BLG-FE-311`, `BLG-FE-315` |
+| **Interaction** | Keyboard-first and direct: shortcuts and the command palette remain; pre-fill everything the system knows; show consequences as values change (risk £/R while typing the stop); confirm only irreversible actions; ask for a one-line reason only where it feeds the journal | §13 (TradingView, Linear, aviation) |
+| **Motion** | Almost none. No entrance fades on headings (`BLG-FE-317`); short state transitions only (expand, open dialog); respect reduced motion everywhere (`BLG-FE-314`); never animate numbers that matter | §10 (LCP), §9 (motion) |
+
+### 14.6 Functionality
+
+| Retain | Remove | Redesign | Introduce |
+|--------|--------|----------|-----------|
+| Due today list, regime first | Legacy placeholder data in browser storage (`BLG-FE-319`) | Dashboard below the hero: quiet day as one line, status as a strip (`BLG-UX-11`, `BLG-FE-308`) | Rules followed/broken filter (`BLG-FE-320`) |
+| Pre-entry checks on every route, with acknowledgement | The dead Docs link, unless help ships (`BLG-FE-309`) | Weekly Digest → Weekly review, readable and linked (`BLG-UX-15`, `BLG-UX-12`) | Direction of travel on Positions (`BLG-UX-20`) |
+| Decision-first Positions with cards; one grace view; one warning strip | Duplicate libraries (`moment`, second toast system) and the public source map (`BLG-FE-315`, `BLG-OPS-221`) | Trade Plan checklist: machine-known items as automatic status (`BLG-UX-19`) | Price vs FX effect on US trades (`BLG-FEAT-102`) |
+| "Plan this" and pre-filled plans; suggested size | Decorative gradients (fold into the colour work) | Notifications: say Telegram and show when an alert was not sent (`BLG-FE-318`) | "How this works" and "Where your data goes" (`BLG-UX-16`, `BLG-UX-18`) |
+| Stop provenance, fee and P&L previews, data-freshness indicators | AI features still unused after the 2027-01-03 review (decision via `BLG-GOV-382`) | Rule references ("§7.2") → plain language (`BLG-UX-14`) | Web Vitals measurement and a modern performance budget (`BLG-QA-271`) |
+| One Journal, one Performance page, section indexes | | Error handling to one standard (`BLG-SPEC-240`) | Chat opened from a trade, if chat is kept (`BLG-UX-17`) |
+| Semantic colour tokens; CI accessibility scan | | Access to the site: re-review the accepted open-access risk (`BLG-SEC-46`) | Wider accessibility scan and one manual pass (`BLG-QA-269`, `BLG-QA-270`) |
+| Replay; CSV and PDF exports | | Bundle split by page; Dashboard fetches each dataset once (`BLG-FE-315`, `BLG-FE-316`) | |
+
+### 14.7 Suggested Sequence
+
+1. **Correct and safe first:** the security re-review (`BLG-SEC-46`, P2), the Level A accessibility failures (`BLG-FE-311`, `BLG-FE-312`, P2), the Telegram/email truth fix (`BLG-FE-318`), and measurement before changes (`BLG-QA-271`).
+2. **Home and review loop:** `BLG-UX-11`, `BLG-FE-308`, `BLG-UX-12`/`15`, `BLG-UX-19`, `BLG-FE-320`, `BLG-UX-21` (IA changes).
+3. **Clarity:** `BLG-UX-14`, `BLG-UX-16`, `BLG-UX-18`, `BLG-FE-310`, `BLG-SPEC-240`, `BLG-FE-313`, `BLG-FE-314`.
+4. **Speed and polish:** `BLG-FE-315`, `BLG-FE-316`, `BLG-FE-317`, `BLG-OPS-221`, `BLG-FEAT-102`, `BLG-UX-20`.
+
+This is advice for the next `run roadmap`, which owns sequencing. Ratifying the target state as the brief for a "Site Structure & Usability, Phase 4" programme is the Product Owner's decision → `BLG-UX-21`.
