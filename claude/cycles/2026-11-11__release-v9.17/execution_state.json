@@ -573,10 +573,10 @@
     },
     "EPIC-02": {
       "title": "Site Structure & Usability Phase 3: Journal & Performance Consolidation (build-and-ship)",
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-11-11__release-v9.17/EPIC-02",
       "pr_number": 2261,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-11-11__release-v9.17/qa_evidence_EPIC-02.md",
       "test_scenarios": [
@@ -718,10 +718,10 @@
       "EPIC-04",
       "EPIC-07",
       "EPIC-06",
-      "EPIC-05"
+      "EPIC-05",
+      "EPIC-02"
     ],
     "epics_pending": [
-      "EPIC-02",
       "EPIC-03"
     ],
     "all_merged": false
@@ -752,7 +752,8 @@
     "2026-11-16T08:35:00Z: EPIC-05 PR #2260 opened after the pre-PR gates passed: no foreign-EPIC commits in origin/main..HEAD; API performance baseline drift PASSED; backlog item integrity OK; no governance file changed. Session resumed 2026-11-16 after a 3-day gap; main had not moved and the branch matched origin. DoQ agent-mediated review round 1 Approved; findings 1-2 (P3) fixed in-story in f2749a24 (rule: fix own XS gaps) rather than filed.",
     "2026-11-16T08:4xZ (timestamp corrected; it was written as an estimate): PR #2260 agent-mediated review (DoQ Changes Requested -> P2 fixed d485d9ca/084bdaac, re-review Approved; PO Approved with Comments). Follow-ups: BLG-FE-295 and BLG-FE-298 fixed in-sprint and bannered; BLG-FE-296 fixed and bannered; BLG-FE-297 and BLG-BE-220 open (P3). First-time-right skill, commit-check Check 12 and a commit-gates nudge committed to main as efd23278 [GOVERNANCE] (user direction).",
     "2026-11-16T08:54:06Z: EPIC-05 human Director of Quality QA sign-off and Product Owner acceptance given in session by the repository owner (holds both roles), before merge. They cover the post-merge ST-11 production backfill (BLG-BE-211), the ST-12 Trade Plan-only scope (BLG-FE-269 open) and the ST-14 wording ruling. Recorded in qa_evidence_EPIC-05.md Merge Gate Confirmations and on PR #2260. Not merged: the merge stays with the human, after head CI on 1f0f0007 is green.",
-    "2026-11-16T09:05:36Z: EPIC-05 PR #2260 merged by sachiv1984 at 2026-11-16T09:04:48Z, merge commit cb65bb12; head e9f13c2c all 20 workflows success. Merge state recorded on main (STEP 4 steps 2-3a). Orphaned post-merge commit check: none. Sibling execution_state sync (3c): no branch exists yet for EPIC-02 or EPIC-03, nothing to sync. Issues #2246-#2249 closed. Post-merge: BLG-BE-211 production backfill count (DS-41) still to record."
+    "2026-11-16T09:05:36Z: EPIC-05 PR #2260 merged by sachiv1984 at 2026-11-16T09:04:48Z, merge commit cb65bb12; head e9f13c2c all 20 workflows success. Merge state recorded on main (STEP 4 steps 2-3a). Orphaned post-merge commit check: none. Sibling execution_state sync (3c): no branch exists yet for EPIC-02 or EPIC-03, nothing to sync. Issues #2246-#2249 closed. Post-merge: BLG-BE-211 production backfill count (DS-41) still to record.",
+    "2026-11-17T09:15:00Z: EPIC-02 PR #2261 merged by sachiv1984 at 2026-11-17T09:09:42Z, merge commit 28fb7239. Human DoQ sign-off and PO acceptance given in session 2026-11-17 before the merge (qa_evidence_EPIC-02.md Merge Gate Confirmations). Merge state recorded on main (STEP 4 steps 2-3a). Orphaned post-merge commit check: none. Sibling execution_state sync (3c): no branch exists yet for EPIC-03, nothing to sync."
   ],
   "sealed": false,
   "sealed_utc": null
