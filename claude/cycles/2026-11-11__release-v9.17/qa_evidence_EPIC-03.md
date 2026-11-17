@@ -40,11 +40,11 @@
 
 ## Standard Sign-Off Block
 
-- [ ] All acceptance criteria verified against canonical spec
-- [ ] No unresolved P0 or P1 deviations
-- [ ] Regression areas checked
-- [ ] For any frontend component making direct URL construction (not via api.* wrapper): confirm the URL-base variable is exposed on the imported object
-- [ ] **Strategy values checked (conditional):** N/A — no stop/grace/ATR/exit/sizing logic touched
-- Signed off by:
-- Date:
-- Comments:
+- [x] All acceptance criteria verified against canonical spec
+- [x] No unresolved P0 or P1 deviations
+- [x] Regression areas checked
+- [x] For any frontend component making direct URL construction (not via api.* wrapper): confirm the URL-base variable is exposed on the imported object — no new URL construction (the only fetch added is a test fixture route)
+- [x] **Strategy values checked (conditional):** N/A — no stop/grace/ATR/exit/sizing logic touched
+- Signed off by: Sprint Execution Engine (agent-mediated, Director of Quality role — §5.3)
+- Date: 2026-11-17
+- Comments: Two review rounds. Round 1 Blocked: P1, Trade History was scanned only inside its table (calendar view, cards and reflection modal still dark-only, inside the RISK-02 boundary); P3s on three evidence numbers, the dark-baseline drift and failed-run caveats, and the Risk Dashboard data marker. All fixed in `d21945db`. Round 2 Approved: checks re-run (73 `text-white` offenders on `main`, 66 axe tests with 37 for ST-08, 9 updated specs; CalendarView has no unpaired dark-only class; Trade History table and calendar views pass in light and dark in CI shard logs). Final CI, head `d21945db`: all 10 workflows green, including Playwright E2E Acceptance Tests 44077332892 (axe scan spec, Visual Regression Baselines and Visual Snapshots jobs), CI Pytest Suite 44077332908 and Frontend Production Build 44077332804; baseline regeneration 44077344561 found no snapshot changes. Observation, not a regression: CalendarView days outside the current month keep `text-slate-700` in both themes (dark on dark in the dark theme, as before ST-08; axe passes it); it belongs with the component remainder in `BLG-FE-288`. The always-human merge gate (Director of Quality and Product Owner) still applies.
