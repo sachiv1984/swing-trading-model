@@ -123,7 +123,7 @@ export default function WhatIfSizingPreview({ ticker, market, stopLevel, fxRate,
   return (
     <div
       data-testid="what-if-sizing-preview-panel"
-      className="rounded-xl border border-slate-700/50 bg-slate-800/30 overflow-hidden"
+      className="rounded-xl border border-app-line bg-white dark:bg-slate-800/30 overflow-hidden"
     >
       <button
         type="button"
@@ -132,14 +132,14 @@ export default function WhatIfSizingPreview({ ticker, market, stopLevel, fxRate,
         onClick={() => setCollapsed((c) => !c)}
       >
         <div className="flex items-center gap-2">
-          <Sliders className="w-3.5 h-3.5 text-slate-400" />
-          <span className="text-xs font-medium text-slate-300 uppercase tracking-wide">What-If Sizing Preview</span>
+          <Sliders className="w-3.5 h-3.5 text-app-muted" />
+          <span className="text-xs font-medium text-slate-700 dark:text-slate-300 uppercase tracking-wide">What-If Sizing Preview</span>
         </div>
-        {collapsed ? <ChevronDown className="w-4 h-4 text-slate-500" /> : <ChevronUp className="w-4 h-4 text-slate-500" />}
+        {collapsed ? <ChevronDown className="w-4 h-4 text-app-muted" /> : <ChevronUp className="w-4 h-4 text-app-muted" />}
       </button>
 
       {!collapsed && (
-        <div className="px-4 pb-4 space-y-3 border-t border-slate-700/50 pt-3">
+        <div className="px-4 pb-4 space-y-3 border-t border-app-line pt-3">
           <div className={`grid gap-3 ${market === "US" ? "grid-cols-3" : "grid-cols-2"}`}>
             <div className="space-y-1.5">
               <Label className="text-slate-600 dark:text-slate-400 text-xs">Planned Entry Price</Label>
@@ -150,20 +150,21 @@ export default function WhatIfSizingPreview({ ticker, market, stopLevel, fxRate,
                 value={plannedEntryPrice}
                 onChange={(e) => setPlannedEntryPrice(e.target.value)}
                 placeholder="e.g. 150.00"
-                className="bg-slate-900/60 border-slate-700 text-white h-9 text-sm"
+                className="bg-slate-100 dark:bg-slate-900/60 border-slate-300 dark:border-slate-700 text-app-fg placeholder:text-slate-600 dark:placeholder:text-slate-400 h-9 text-sm"
               />
             </div>
             <div className="space-y-1.5">
-              <Label className="text-slate-600 dark:text-slate-400 text-xs">Risk %</Label>
+              <Label htmlFor="what-if-risk-percent" className="text-slate-600 dark:text-slate-400 text-xs">Risk %</Label>
               <Input
                 type="number"
                 step="0.01"
                 min="0.01"
                 max="100"
+                id="what-if-risk-percent"
                 data-testid="what-if-risk-percent-input"
                 value={riskPercent}
                 onChange={(e) => setRiskPercent(e.target.value)}
-                className="bg-slate-900/60 border-slate-700 text-white h-9 text-sm"
+                className="bg-slate-100 dark:bg-slate-900/60 border-slate-300 dark:border-slate-700 text-app-fg placeholder:text-slate-600 dark:placeholder:text-slate-400 h-9 text-sm"
               />
             </div>
             {market === "US" && (
@@ -179,7 +180,7 @@ export default function WhatIfSizingPreview({ ticker, market, stopLevel, fxRate,
                   value={fxRateOverride}
                   onChange={(e) => setFxRateOverride(e.target.value)}
                   placeholder="Live rate"
-                  className="bg-slate-900/60 border-slate-700 text-white h-9 text-sm"
+                  className="bg-slate-100 dark:bg-slate-900/60 border-slate-300 dark:border-slate-700 text-app-fg placeholder:text-slate-600 dark:placeholder:text-slate-400 h-9 text-sm"
                 />
                 <p id="what-if-fx-rate-hint" data-testid="fx-rate-hint" className="text-xs text-slate-600 dark:text-slate-400">How many US dollars £1 buys.</p>
               </div>
@@ -197,9 +198,9 @@ export default function WhatIfSizingPreview({ ticker, market, stopLevel, fxRate,
               <div className="grid grid-cols-3 gap-3">
                 <div className="space-y-1">
                   <Label className="text-slate-600 dark:text-slate-400 text-xs">Suggested Size</Label>
-                  <div className="text-sm font-medium text-white" data-testid="what-if-suggested-shares">
+                  <div className="text-sm font-medium text-app-fg" data-testid="what-if-suggested-shares">
                     {sizingLoading ? (
-                      <Loader2 className="w-4 h-4 text-slate-400 animate-spin" />
+                      <Loader2 className="w-4 h-4 text-app-muted animate-spin" />
                     ) : isValid && suggestedShares != null ? (
                       `${suggestedShares} shares`
                     ) : (
@@ -209,9 +210,9 @@ export default function WhatIfSizingPreview({ ticker, market, stopLevel, fxRate,
                 </div>
                 <div className="space-y-1">
                   <Label className="text-slate-600 dark:text-slate-400 text-xs">R at Risk</Label>
-                  <div className="text-sm font-medium text-white" data-testid="what-if-r-at-risk">
+                  <div className="text-sm font-medium text-app-fg" data-testid="what-if-r-at-risk">
                     {sizingLoading ? (
-                      <Loader2 className="w-4 h-4 text-slate-400 animate-spin" />
+                      <Loader2 className="w-4 h-4 text-app-muted animate-spin" />
                     ) : rAtRisk != null ? (
                       formatCurrency(rAtRisk)
                     ) : (
@@ -221,9 +222,9 @@ export default function WhatIfSizingPreview({ ticker, market, stopLevel, fxRate,
                 </div>
                 <div className="space-y-1">
                   <Label className="text-slate-600 dark:text-slate-400 text-xs">Portfolio Heat Impact</Label>
-                  <div className="text-sm font-medium text-white" data-testid="what-if-heat-impact">
+                  <div className="text-sm font-medium text-app-fg" data-testid="what-if-heat-impact">
                     {sizingLoading ? (
-                      <Loader2 className="w-4 h-4 text-slate-400 animate-spin" />
+                      <Loader2 className="w-4 h-4 text-app-muted animate-spin" />
                     ) : heatImpact != null ? (
                       `${formatPercent(heatImpact, { signed: true })} heat`
                     ) : (
@@ -235,14 +236,14 @@ export default function WhatIfSizingPreview({ ticker, market, stopLevel, fxRate,
 
               {/* ST-04 (§10.7) concentration reason — same amber inline-note treatment. */}
               {isValid && sizingResult?.concentration_reason && (
-                <p className="flex items-start gap-1.5 text-amber-600 dark:text-amber-400 text-xs">
+                <p className="flex items-start gap-1.5 text-amber-700 dark:text-amber-400 text-xs">
                   <AlertTriangle className="w-3.5 h-3.5 text-amber-500 shrink-0 mt-0.5" />
                   <span>{sizingResult.concentration_reason}</span>
                 </p>
               )}
 
               {status?.type === "amber" && (
-                <p className="text-amber-400 text-xs">{status.text}</p>
+                <p className="text-app-warning text-xs">{status.text}</p>
               )}
               {status?.type === "grey" && (
                 <p className="text-slate-600 dark:text-slate-400 text-xs">{status.text}</p>

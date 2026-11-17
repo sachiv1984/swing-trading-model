@@ -202,7 +202,8 @@ test.describe('ST-22 — AI chat answer rating', () => {
       expect(unrated.violations.filter((v) => v.id === 'color-contrast')).toEqual([]);
 
       await page.getByTestId('chat-rating-useful').click();
-      await expect(page.getByTestId('chat-rating-useful')).toHaveCSS('color', 'rgb(52, 211, 153)'); // emerald-400
+      // app-positive: emerald-400 in dark; emerald-700 in light, now the chat panel is themed (ST-08, BLG-FE-303).
+      await expect(page.getByTestId('chat-rating-useful')).toHaveCSS('color', theme === 'dark' ? 'rgb(52, 211, 153)' : 'rgb(4, 120, 87)');
       const rated = await new AxeBuilder({ page }).include('[data-testid="chat-rating"]').withRules(['color-contrast']).analyze();
       // Disabled controls are exempt from WCAG contrast; axe skips them, so check the enabled state above.
       expect(rated.violations.filter((v) => v.id === 'color-contrast')).toEqual([]);

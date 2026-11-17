@@ -4,27 +4,27 @@ export default function StatusBadge({ status, className }) {
   const statusConfig = {
     risk_on: {
       label: "Risk On",
-      className: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30"
+      className: "bg-emerald-500/20 text-emerald-800 dark:text-emerald-400 border-emerald-500/30"
     },
     risk_off: {
       label: "Risk Off",
-      className: "bg-rose-500/20 text-rose-400 border-rose-500/30"
+      className: "bg-rose-500/20 text-rose-800 dark:text-rose-400 border-rose-500/30"
     },
     open: {
       label: "Open",
-      className: "bg-cyan-500/20 text-cyan-400 border-cyan-500/30"
+      className: "bg-cyan-500/20 text-cyan-800 dark:text-cyan-400 border-cyan-500/30"
     },
     closed: {
       label: "Closed",
-      className: "bg-slate-500/20 text-slate-600 dark:text-slate-400 border-slate-500/30"
+      className: "bg-slate-500/20 text-slate-600 dark:text-slate-400 border-slate-300 dark:border-slate-500/30"
     },
     hold: {
       label: "Hold",
-      className: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30"
+      className: "bg-emerald-500/20 text-emerald-800 dark:text-emerald-400 border-emerald-500/30"
     },
     exit: {
       label: "Exit",
-      className: "bg-amber-500/20 text-amber-400 border-amber-500/30"
+      className: "bg-amber-500/20 text-amber-800 dark:text-amber-400 border-amber-500/30"
     }
   };
 

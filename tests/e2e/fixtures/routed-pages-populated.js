@@ -16,6 +16,10 @@
  *   Risk Dashboard      mocks/portfolio-mock-data.js (TD_02, PROSPECTIVE_HEAT_GENERIC)
  *   Notifications       mocks/smoke-mock-data.js (SMOKE_NOTIFICATIONS)
  *   Signals             signal-card.spec.js (WL_MOCK_SIGNAL, WL_MARKET_STATUS, WL_CASH_SUMMARY)
+ *   Page states (BLG-FE-303): what-if-sizing-preview.spec.js (V-WHATIF-02 size payload),
+ *     setup-thesis-digest.spec.js (PLAN_WITH_THESIS), ai-usage-costs.spec.js
+ *     (SPEND_TREND_DATA), cash-management-global-trigger.spec.js (MOCK_PORTFOLIO),
+ *     monitor-exit-queue.spec.js (makePosition), epic02-v62-ai-briefing-chat.spec.js (chat reply)
  *
  * Every helper installs the generic catch-all first, so any other request the
  * page makes gets an empty `{status, data: []}` envelope.
@@ -278,7 +282,89 @@ async function mockNotifications(page) {
   await page.route(/localhost:8000\/notifications\?/, (r) => r.fulfill(ok(SMOKE_NOTIFICATIONS)));
 }
 
+// --- Page states reached by an action (BLG-FE-303) ---------------------------
+async function mockWhatIfSizing(page) {
+  await catchAll(page);
+  await page.route(`${API}/settings`, (r) => r.fulfill(envelope([{ id: 'settings-1', default_risk_percent: 1.0 }])));
+  // concentration_reason is set so the amber note renders too; the text follows
+  // sizing_service.py's "approaching the limit" format (concentration_adjusted false).
+  await page.route(new RegExp(`${API}/portfolio/size`), (r) =>
+    r.fulfill(envelope({
+      valid: true, suggested_shares: 17.8571, risk_amount: 125.0, stop_distance: 70.0, estimated_cost: 15178.57,
+      estimated_fees: 0.0, fx_rate_used: 1.3642, cash_sufficient: true, available_cash: 20000.0,
+      concentration_adjusted: false,
+      concentration_reason: '2 open positions already in Technology (31.5% of portfolio value) — approaching 40% concentration limit.',
+      heat_impact_percent: 0.8,
+    })));
+}
+
+const PLAN_WITH_THESIS = {
+  id: 'plan-tsd-01', ticker: 'AAPL', market: 'US', status: 'draft', position_id: null, r_target: 2.5,
+  setup_thesis: 'Breakout above the 50-day moving average with rising volume. Sector momentum is strong.',
+  early_exit_conditions: 'Close below the 20-day moving average. Volume dries up on the breakout attempt.',
+  confirmation_criteria: 'Price holds above resistance for two consecutive closes.',
+  updated_at: '2026-08-11T10:00:00Z', planned_entry_price: 150.0, planned_stop_price: 140.0, planned_quantity: 10,
+};
+async function mockSetupThesisDigest(page) {
+  await catchAll(page);
+  await page.route(`${API}/trade-plans`, (r) => r.fulfill(envelope([PLAN_WITH_THESIS])));
+  await page.route(new RegExp(`${API}/trade-plans/${PLAN_WITH_THESIS.id}$`), (r) => r.fulfill(envelope(PLAN_WITH_THESIS)));
+}
+
+async function mockAiSpendTrend(page) {
+  await catchAll(page);
+  await page.route(`${API}/settings`, (r) => r.fulfill(envelope([{ id: 'settings-1', default_risk_percent: 1.0 }])));
+  await page.route(`${API}/ai/monthly-cost`, (r) => r.fulfill(envelope({ total_cost_usd: 7.42, request_count: 12 })));
+  await page.route(`${API}/ai/spend-trend`, (r) =>
+    r.fulfill(envelope([
+      { version: 'v7.3', spend_usd: 4.12 }, { version: 'v7.4', spend_usd: 2.87 }, { version: 'v7.5', spend_usd: 5.03 },
+      { version: 'v7.6', spend_usd: 3.91 }, { version: 'v7.7', spend_usd: 6.2 }, { version: 'v7.8', spend_usd: 1.45 },
+    ])));
+}
+
+async function mockCashManagement(page) {
+  await catchAll(page);
+  await page.route(`${API}/portfolio`, (r) => r.fulfill(envelope({ cash_balance: 500.25, id: 'portfolio-1' })));
+}
+
+const monitorPosition = (overrides = {}) => ({
+  id: 'pos-stop', ticker: 'STOP', market: 'US', status: 'open',
+  entry_price: 100, current_price: 85, current_price_native: 85,
+  stop_price: 90, stop_price_native: 90, current_trailing_stop: 90, current_trailing_stop_native: 90,
+  shares: 10, fx_rate: 1.27, live_fx_rate: 1.27,
+  holding_days: 20, grace_period: false, grace_days_remaining: null,
+  risk_off_exit: false, entry_date: '2026-09-01', pnl: -150, pnl_percent: -15,
+  ...overrides,
+});
+async function mockDailyMonitor(page) {
+  await catchAll(page);
+  await page.route(new RegExp(`${API}/positions(\\?|$)`), (r) =>
+    r.fulfill(ok([
+      monitorPosition(),
+      monitorPosition({ id: 'pos-ro', ticker: 'RISK.L', market: 'UK', current_price: 120, current_price_native: 120, stop_price: 90, fx_rate: 1, live_fx_rate: 1, risk_off_exit: true }),
+    ])));
+}
+
+async function mockAdvisorChatError(page) {
+  await catchAll(page);
+  // As epic02-v62-ai-briefing-chat.spec.js SC-AC-05.
+  await page.route('**/ai/chat', (r) => r.fulfill(ok({ detail: 'Internal error' }, 500)));
+}
+
+async function mockAdvisorChat(page) {
+  await catchAll(page);
+  await page.route('**/ai/chat', (r) =>
+    r.fulfill(ok({ response: 'You currently have 0 open positions.', advisory: true, model: 'claude-sonnet-4-6' })));
+}
+
 module.exports = {
+  mockWhatIfSizing,
+  mockSetupThesisDigest,
+  mockAiSpendTrend,
+  mockCashManagement,
+  mockDailyMonitor,
+  mockAdvisorChat,
+  mockAdvisorChatError,
   catchAll,
   mockStrategyBenchmark,
   mockSystemStatus,

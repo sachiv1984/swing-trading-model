@@ -108,6 +108,10 @@ const KNOWN_VIOLATIONS = {
   'TradeEntry:light': new Set(['label', 'button-name']),
   // EPIC-03 review pass 2: the pre-entry advisory badges, rendered.
   'TradeEntryPreEntry:light': new Set([]),
+  // ST-08 / BLG-FE-303: Trade Entry with the Setup Thesis Digest rendered. Same
+  // pre-existing, theme-independent Trade Entry findings as above (BLG-FE-286).
+  'TradeEntrySetupThesisDigest:light': new Set(['label', 'button-name']),
+  'TradeEntrySetupThesisDigest:dark': new Set(['label', 'button-name']),
 };
 
 async function mockRoutes(page) {
@@ -168,6 +172,10 @@ async function waitForEntranceAnimations(page) {
         });
         return !stillAnimating;
       },
+      // ST-08: waitForFunction's second argument is the page-function argument;
+      // options go third. Passed second, the 3s cap was ignored, so a page with a
+      // persistent low-opacity element (an open Radix dialog) waited out the test.
+      undefined,
       { timeout: 3000 },
     );
   } catch (e) {
@@ -775,6 +783,51 @@ const ST08_PAGES = [
   ['ResearchTicker', '/#/research/AAPL', routed.mockResearch, 'Apple reports record quarterly revenue'],
   ['RiskDashboard', '/#/RiskDashboard', routed.mockRiskDashboard, 'ALPHA'],
   ['TradeHistory', '/#/TradeHistory', mockTradeHistoryPopulated, 'AAPL'],
+  // Page states reached by an action (BLG-FE-303): each component only renders
+  // once the user does something, so the step drives the page into that state.
+  ['TradePlanWhatIfSizing', '/#/TradePlan?ticker=AAPL&market=US', routed.mockWhatIfSizing, null, async (page) => {
+    await page.getByTestId('planned-stop-price-input').fill('780.00');
+    await expect(page.getByTestId('what-if-sizing-preview-panel')).toBeVisible({ timeout: 10000 });
+    await page.getByTestId('what-if-entry-price-input').fill('850.00');
+    await expect(page.getByTestId('what-if-suggested-shares')).toHaveText('17.8571 shares', { timeout: 10000 });
+    await expect(page.getByText(/approaching 40% concentration limit/)).toBeVisible({ timeout: 10000 });
+  }],
+  ['TradeEntrySetupThesisDigest', '/#/TradePlans', routed.mockSetupThesisDigest, null, async (page) => {
+    await page.getByTestId('start-trade-from-plan-plan-tsd-01').click();
+    await expect(page).toHaveURL(/#\/TradeEntry/, { timeout: 10000 });
+    await expect(page.getByTestId('setup-thesis-digest-panel')).toBeVisible({ timeout: 10000 });
+  }],
+  ['SettingsAiSpendTrend', '/#/Settings', routed.mockAiSpendTrend, null, async (page) => {
+    const chart = page.getByTestId('ai-spend-trend-chart');
+    await expect(chart).toBeVisible({ timeout: 10000 });
+    // axe skips SVG <text>, so the axis label colour is asserted: --app-muted is
+    // slate-600 in light (7.58:1 on white) and slate-400 in dark.
+    const dark = await page.evaluate(() => document.documentElement.classList.contains('dark'));
+    await expect(chart.locator('.recharts-cartesian-axis-tick-value').first())
+      .toHaveCSS('fill', dark ? 'rgb(148, 163, 184)' : 'rgb(71, 85, 105)');
+  }],
+  ['CashManagementModal', '/#/Positions', routed.mockCashManagement, null, async (page) => {
+    await page.getByTestId('cash-management-trigger-desktop').click();
+    await expect(page.getByRole('dialog').getByText('Cash Management')).toBeVisible({ timeout: 10000 });
+  }],
+  ['DailyMonitorModal', '/#/Positions', routed.mockDailyMonitor, null, async (page) => {
+    await page.getByTestId('daily-monitor-button').click();
+    await expect(page.getByRole('heading', { name: 'Daily Position Monitor' })).toBeVisible({ timeout: 10000 });
+    await expect(page.getByRole('dialog').getByText('RISK.L', { exact: true })).toBeVisible({ timeout: 10000 });
+  }],
+  ['AdvisorChatError', '/#/Positions', routed.mockAdvisorChatError, null, async (page) => {
+    await page.getByTestId('ai-chat-open-btn').click();
+    await page.getByTestId('ai-chat-input').fill('What is my portfolio value?');
+    await page.getByTestId('ai-chat-submit').click();
+    await expect(page.getByTestId('ai-chat-error')).toBeVisible({ timeout: 10000 });
+  }],
+  ['AdvisorChatOpen', '/#/Positions', routed.mockAdvisorChat, null, async (page) => {
+    await page.getByTestId('ai-chat-open-btn').click();
+    await expect(page.getByTestId('ai-chat-panel')).toBeVisible({ timeout: 10000 });
+    await page.getByTestId('ai-chat-input').fill('How many positions do I have?');
+    await page.getByTestId('ai-chat-submit').click();
+    await expect(page.getByText('You currently have 0 open positions.')).toBeVisible({ timeout: 10000 });
+  }],
   ['TradeHistoryCalendar', '/#/TradeHistory', mockTradeHistoryPopulated, null, async (page) => {
     await expect(page.locator('main').getByText('AAPL').first()).toBeVisible({ timeout: 15000 });
     await page.getByRole('button', { name: 'Calendar' }).click();
@@ -793,11 +846,18 @@ const ST08_PAGES = [
 for (const theme of ['light', 'dark']) {
   test.describe(`Every routed page, populated — ${theme} theme (ST-08)`, () => {
     test.beforeEach(async ({ page }) => {
-      await page.addInitScript((t) => window.localStorage.setItem('theme', t), theme);
+      await page.addInitScript((t) => {
+        window.localStorage.setItem('theme', t);
+        // The first-session ⌘K hint (Layout.js) is a toast shown 1.2s after load;
+        // a scan that lands while it fades in reads it mid-animation (flaky).
+        window.localStorage.setItem('command-palette-tooltip-seen', 'true');
+      }, theme);
     });
 
     for (const [name, route, mock, marker, step] of ST08_PAGES) {
       test(`${name} (${theme})`, async ({ page }) => {
+        // The two modal states take longer than the 30s default; every other entry keeps it.
+        if (name.endsWith('Modal')) test.setTimeout(60000);
         await mock(page);
         await page.goto(route);
         await expect(page.locator('main h1').first()).toBeVisible({ timeout: 15000 });

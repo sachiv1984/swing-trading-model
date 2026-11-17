@@ -38,6 +38,9 @@ SWEPT_COMPONENT_FILES = [
     "trades/TradeReflectionModal.js", "trades/TradeHistoryTable.js", "ui/StatsCard.js", "trades/SignalContextPanel.js",
     "trades/SetupQualityScorePanel.js", "positions/PositionCard.js", "positions/PaperAccountPanel.js",
     "positions/StrategyCompliancePanel.js", "positions/ComplianceRecheckModal.js",
+    # BLG-FE-303 (PR #2262 review): components shown in page states (panel, modal, chat).
+    "trades/WhatIfSizingPreview.js", "trades/SetupThesisDigestPanel.js", "charts/AiSpendTrendChart.js",
+    "cash/CashManagementModal.js", "monitor/MonitorModal.js", "AiChatWidget.js", "ui/StatusBadge.js",
 ]
 COMPONENTS = ROOT / "src" / "components"
 SWEPT = PAGES + sorted(

@@ -41,7 +41,7 @@ export default function SetupThesisDigestPanel({ plan }) {
   return (
     <div
       data-testid="setup-thesis-digest-panel"
-      className="rounded-xl bg-slate-800/40 border border-slate-700/60 p-4 space-y-3"
+      className="rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/60 p-4 space-y-3"
       aria-label="Setup Thesis Digest"
     >
       <div className="flex items-center justify-between">
@@ -49,7 +49,7 @@ export default function SetupThesisDigestPanel({ plan }) {
           <FileText className="w-3.5 h-3.5" />
           Setup Thesis Digest
           {plan?.is_ai_draft && (
-            <span data-testid="ai-draft-badge" className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs bg-violet-500/20 text-violet-300 border border-violet-500/30 normal-case tracking-normal">
+            <span data-testid="ai-draft-badge" className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs bg-violet-500/20 text-violet-800 dark:text-violet-300 border border-violet-500/30 normal-case tracking-normal">
               <Sparkles size={10} />
               AI draft
             </span>
@@ -58,7 +58,7 @@ export default function SetupThesisDigestPanel({ plan }) {
         <button
           type="button"
           onClick={() => setExpanded((v) => !v)}
-          className="text-slate-600 dark:text-slate-400 hover:text-slate-300 transition-colors"
+          className="text-slate-600 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 transition-colors"
           aria-label={expanded ? "Collapse details" : "Expand details"}
         >
           {expanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
@@ -78,14 +78,14 @@ function DigestBody({ plan, thesisExcerpt, riskFactors }) {
       {thesisExcerpt && (
         <div>
           <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Setup Thesis</p>
-          <p className="text-sm text-slate-200">{thesisExcerpt}</p>
+          <p className="text-sm text-slate-800 dark:text-slate-200">{thesisExcerpt}</p>
         </div>
       )}
 
       {riskFactors.length > 0 && (
         <div>
           <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Key Risk Factors</p>
-          <ul className="text-sm text-slate-200 list-disc list-inside space-y-0.5">
+          <ul className="text-sm text-slate-800 dark:text-slate-200 list-disc list-inside space-y-0.5">
             {riskFactors.map((factor) => (
               <li key={factor}>{factor}</li>
             ))}
@@ -96,7 +96,7 @@ function DigestBody({ plan, thesisExcerpt, riskFactors }) {
       {plan?.id && (
         <Link
           to={`/TradePlan?edit=${plan.id}&ticker=${plan.ticker || ""}`}
-          className="inline-block text-xs text-cyan-400 hover:text-cyan-300 underline"
+          className="inline-block text-xs text-cyan-700 dark:text-cyan-400 hover:text-cyan-800 dark:hover:text-cyan-300 underline"
         >
           View full plan →
         </Link>
