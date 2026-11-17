@@ -34,7 +34,8 @@ SWEPT_COMPONENT_FILES = [
     "notifications/NotificationRow.js", "notifications/AlertThresholdsSection.js",
     "notifications/CustomPriceAlertsSection.js", "shared/BulkActionToolbar.js",
     "shared/DownloadCsvButton.js", "ui/EmptyStateAction.js", "ui/DataState.js",
-    "trades/SavedFiltersControl.js", "trades/EntryChecklist.js", "trades/SignalContextPanel.js",
+    "trades/SavedFiltersControl.js", "trades/EntryChecklist.js", "trades/CalendarView.js",
+    "trades/TradeReflectionModal.js", "trades/TradeHistoryTable.js", "ui/StatsCard.js", "trades/SignalContextPanel.js",
     "trades/SetupQualityScorePanel.js", "positions/PositionCard.js", "positions/PaperAccountPanel.js",
     "positions/StrategyCompliancePanel.js", "positions/ComplianceRecheckModal.js",
 ]

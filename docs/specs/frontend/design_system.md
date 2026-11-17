@@ -144,7 +144,7 @@ Verified by the light-theme scans in `tests/e2e/accessibility-axe-scan.spec.js` 
 
 *Added v1.27 (ST-08, EPIC-03, v9.17, BLG-FE-265).*
 
-**Scope (RISK-02, PMO Lead and Product Owner, 2026-11-12):** every file in `src/pages/`, plus any component that fails axe `color-contrast` on a routed page in the light theme. That covered the components rendered by Trade History, Trade Plan, Signals, Risk Dashboard, Journal and Performance (`analytics/`, `risk/`, `journal/`, `signals/`, `performance/`, `reports/`, `SavedFiltersControl`, `EntryChecklist`), the children of the three newly themed cards (`watchlist/`, `NotificationRow`, `BulkActionToolbar`, `EmptyStateAction`, `DataState`) and `PositionCard`. Components outside this set stay on `BLG-FE-288`.
+**Scope (RISK-02, PMO Lead and Product Owner, 2026-11-12):** every file in `src/pages/`, plus any component that fails axe `color-contrast` on a routed page in the light theme. That covered the components rendered by Trade History (its table, summary cards, filters, calendar view and reflection modal: `TradeHistoryTable`, `StatsCard`, `CalendarView`, `TradeReflectionModal`; this meets `BLG-FE-285`), Trade Plan, Signals, Risk Dashboard, Journal and Performance (`analytics/`, `risk/`, `journal/`, `signals/`, `performance/`, `reports/`, `SavedFiltersControl`, `EntryChecklist`), the children of the three newly themed cards (`watchlist/`, `NotificationRow`, `BulkActionToolbar`, `EmptyStateAction`, `DataState`) and `PositionCard`. Components outside this set stay on `BLG-FE-288`.
 
 **Mapping.** Dark values are unchanged, apart from bare `text-slate-500`, which moves to `app-muted` (slate-400 in dark, a contrast gain).
 

@@ -731,14 +731,34 @@ for (const [page_, route, heading] of [
 // ---------------------------------------------------------------------------
 // ST-08 (BLG-FE-265, EPIC-03, v9.17): every routed page in the light theme.
 // AC: "axe color-contrast passes in the light theme on every routed page".
-// Pages already scanned above (Dashboard, Positions, Trade Plan, Settings,
-// Weekly Digest, Trade History, Trade Entry, Replay, Notification preferences
-// and history) are not repeated. Each page here is scanned populated, with
-// the payloads in fixtures/routed-pages-populated.js (copied from each page's
-// own spec). No baseline entries.
+// Pages already scanned whole above (Dashboard, Positions, Trade Plan,
+// Settings, Weekly Digest, Trade Entry, Replay, Notification preferences and
+// history) are not repeated. Trade History was scanned above only inside its
+// table (BLG-FE-285), so the whole page is scanned here in both views. Each
+// page is scanned populated, with the payloads in
+// fixtures/routed-pages-populated.js (copied from each page's own spec) or
+// the ST-09 populated stubs. No baseline entries.
 // ---------------------------------------------------------------------------
 
 const routed = require('./fixtures/routed-pages-populated');
+
+// Trade History: ST-09's populated stubs plus the calendar's GET
+// /reports/daily-pnl payload from saved-filters-calendar-view.spec.js.
+async function mockTradeHistoryPopulated(page) {
+  await mockRoutes(page);
+  await mockSt09Populated(page);
+  await page.route(new RegExp(`${API}/reports/daily-pnl.*`), (route) =>
+    route.fulfill({
+      status: 200, contentType: 'application/json',
+      body: JSON.stringify({
+        status: 'ok',
+        data: [{ day: 3, realised_pnl_gbp: 100, trade_count: 1 }, { day: 17, realised_pnl_gbp: -50, trade_count: 1 }],
+        estimated_unrealised_pnl: 340.5,
+        unrealised_note: 'Indicative only — not a tax liability.',
+      }),
+    })
+  );
+}
 
 const ST08_PAGES = [
   // [name, route, mock, text that proves the data rendered, optional step]
@@ -753,7 +773,13 @@ const ST08_PAGES = [
   ['Watchlist', '/#/Watchlist', routed.mockWatchlist, 'VOD.L'],
   ['ResearchLanding', '/#/Research', routed.catchAll, null],
   ['ResearchTicker', '/#/research/AAPL', routed.mockResearch, 'Apple reports record quarterly revenue'],
-  ['RiskDashboard', '/#/RiskDashboard', routed.mockRiskDashboard, null],
+  ['RiskDashboard', '/#/RiskDashboard', routed.mockRiskDashboard, 'ALPHA'],
+  ['TradeHistory', '/#/TradeHistory', mockTradeHistoryPopulated, 'AAPL'],
+  ['TradeHistoryCalendar', '/#/TradeHistory', mockTradeHistoryPopulated, null, async (page) => {
+    await expect(page.locator('main').getByText('AAPL').first()).toBeVisible({ timeout: 15000 });
+    await page.getByRole('button', { name: 'Calendar' }).click();
+    await expect(page.getByText(/Unrealised P&L/)).toBeVisible({ timeout: 10000 });
+  }],
   ['JournalReflections', '/#/Journal?section=reflections', routed.mockJournal, 'LGEN'],
   ['JournalRedFlags', '/#/Journal?section=red-flags', routed.mockJournal, null, async (page) => {
     await expect(page.getByTestId('event-type-label')).toHaveCount(2, { timeout: 15000 });

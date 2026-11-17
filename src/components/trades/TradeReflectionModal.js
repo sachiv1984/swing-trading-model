@@ -25,7 +25,7 @@ function SummaryRow({ label, value }) {
   return (
     <div className="flex flex-col">
       <span className="text-xs text-slate-600 dark:text-slate-400 mb-0.5">{label}</span>
-      <span className="text-sm font-medium text-white">{value ?? "—"}</span>
+      <span className="text-sm font-medium text-app-fg">{value ?? "—"}</span>
     </div>
   );
 }
@@ -106,10 +106,10 @@ export default function TradeReflectionModal({ trade, open, onClose }) {
     <Dialog open={open} onOpenChange={(v) => { if (!v && !saving) onClose(); }}>
       <DialogContent
         aria-label={`Trade Reflection — ${trade.ticker}`}
-        className="bg-slate-900 border-slate-700 text-white !max-w-2xl max-h-[92vh] overflow-hidden !flex !flex-col"
+        className="bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-app-fg !max-w-2xl max-h-[92vh] overflow-hidden !flex !flex-col"
       >
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-cyan-400">
+          <DialogTitle className="flex items-center gap-2 text-cyan-700 dark:text-cyan-400">
             <BookOpen className="w-5 h-5" />
             Trade Reflection — <span className="font-bold">{trade.ticker}</span>
           </DialogTitle>
@@ -120,19 +120,19 @@ export default function TradeReflectionModal({ trade, open, onClose }) {
 
         <div className="overflow-y-auto space-y-6 pr-1" style={{ maxHeight: "calc(90vh - 200px)" }}>
           {/* Trade Summary — read-only; all values backend-sourced (spec §4) */}
-          <div className="rounded-xl bg-slate-800/60 border border-slate-700/50 p-4">
+          <div className="rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-app-line p-4">
             <p className="text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-3">
               Trade Summary
             </p>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-              <SummaryRow label="Ticker" value={<span className="text-cyan-400 font-bold">{trade.ticker}</span>} />
+              <SummaryRow label="Ticker" value={<span className="text-cyan-700 dark:text-cyan-400 font-bold">{trade.ticker}</span>} />
               <SummaryRow label="Entry Price" value={trade.entry_price != null ? formatCurrency(trade.entry_price, { currency: tradeCurrency }) : null} />
               <SummaryRow label="Exit Price"  value={trade.exit_price  != null ? formatCurrency(trade.exit_price, { currency: tradeCurrency })  : null} />
               <SummaryRow label="Hold Time"   value={holdDays != null ? `${holdDays} day${holdDays !== 1 ? "s" : ""}` : null} />
               <SummaryRow
                 label="R-Multiple"
                 value={rMultiple != null ? (
-                  <span className={rMultiple > 0 ? "text-emerald-400" : rMultiple < 0 ? "text-rose-400" : "text-slate-300"}>
+                  <span className={rMultiple > 0 ? "text-app-positive" : rMultiple < 0 ? "text-app-negative" : "text-slate-700 dark:text-slate-300"}>
                     {formatR(rMultiple)}
                   </span>
                 ) : null}
@@ -147,19 +147,19 @@ export default function TradeReflectionModal({ trade, open, onClose }) {
           <div className="space-y-4">
             {REFLECTION_FIELDS.map((field) => (
               <div key={field.id} className="space-y-1.5">
-                <label className="text-sm text-slate-300 font-medium">{field.label}</label>
+                <label className="text-sm text-slate-700 dark:text-slate-300 font-medium">{field.label}</label>
                 <Textarea
                   value={fields[field.id]}
                   onChange={(e) => handleFieldChange(field.id, e.target.value)}
                   disabled={saving || saved}
                   placeholder="Optional — write your thoughts here..."
-                  className="bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-600 focus:border-cyan-500/50 resize-none h-24 text-sm"
+                  className="bg-app-raised border-slate-200 dark:border-slate-700 text-app-fg placeholder:text-slate-600 dark:placeholder:text-slate-400 focus:border-cyan-500/50 resize-none h-24 text-sm"
                   rows={3}
                 />
                 <div className="flex justify-end">
                   <span className={cn(
                     "text-xs",
-                    fields[field.id].length > MAX_CHARS - 50 ? "text-amber-400" : "text-slate-600"
+                    fields[field.id].length > MAX_CHARS - 50 ? "text-app-warning" : "text-app-muted"
                   )}>
                     {fields[field.id].length}/{MAX_CHARS}
                   </span>
@@ -169,19 +169,19 @@ export default function TradeReflectionModal({ trade, open, onClose }) {
           </div>
 
           {error && (
-            <p className="text-sm text-rose-400 bg-rose-500/10 border border-rose-500/30 rounded-lg px-4 py-2">
+            <p className="text-sm text-rose-800 dark:text-rose-400 bg-rose-500/10 border border-rose-500/30 rounded-lg px-4 py-2">
               {error}
             </p>
           )}
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between pt-4 border-t border-slate-800 mt-2">
+        <div className="flex items-center justify-between pt-4 border-t border-slate-200 dark:border-slate-800 mt-2">
           <Button
             variant="ghost"
             onClick={onClose}
             disabled={saving}
-            className="text-slate-600 dark:text-slate-400 hover:text-white hover:bg-slate-800"
+            className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"
           >
             Skip
           </Button>

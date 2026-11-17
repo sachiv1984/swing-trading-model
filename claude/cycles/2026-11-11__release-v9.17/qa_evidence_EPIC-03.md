@@ -1,0 +1,50 @@
+**Owner:** Director of Quality
+**Class:** Planning Document (Class 4)
+**Status:** Active
+**Last Updated:** 2026-11-17 (EPIC-03 consolidation block, ST-08)
+
+# QA Evidence — EPIC-03: Semantic Colour Token Sweep
+
+**EPIC:** EPIC-03 — Site Structure & Usability Phase 3: Semantic Colour Token Sweep (build-and-ship)
+**Cycle:** 2026-11-11__release-v9.17
+**Sprint goal:** Ship Site Structure & Usability Phase 3 complete (decision-first Positions page with narrow-screen cards, one warning strip and one grace view; the single Journal area; one Performance page; section indexes on Trade Plan and Strategy Benchmark; the semantic colour token sweep), finish Phase 2's Stops moved group, and fix the four v9.16 Trade Plan found defects.
+**Test scenarios used:** `tests/e2e/accessibility-axe-scan.spec.js`, `tests/test_page_colour_tokens.py`, `tests/e2e/visual-regression-baselines.spec.js`
+
+| ST Item | Spec Reference | What was built | Acceptance criteria | Result | Deviations |
+|---------|----------------|----------------|---------------------|--------|------------|
+| ST-08 | `docs/specs/frontend/design_system.md` §Page Colour Token Sweep (v1.27) and §Semantic Colour Tokens; `trade_plan.md` v1.29, `positions.md` v2.29, `watchlist.md` v0.10, `analytics.md` v2.5 | Every `src/pages/` file, and every component that failed light-theme axe `color-contrast` on a routed page, moved onto the `app-*` tokens or light/dark pairs; the three dark-in-both cards and `PositionCard` themed; text on tinted fills at the 800 shade; heatmap tiles on AA fills; row/card fades removed (ruling below); visual baselines regenerated for both themes (`071a43f3`, `022f62a6`). | AC 1: axe `color-contrast` passes in the light theme on every routed page — **met**: `accessibility-axe-scan.spec.js` scans every routed page in the light theme with populated data: the new "Every routed page, populated" block (17 views, each in light and dark, each waiting for a populated-data marker or step; Trade History in both table and calendar view, since the earlier ST-09 scan covered only its table) plus the existing whole-page ST-09/ST-19/ST-37 light scans of Dashboard, Positions, Trade Plan, Settings, Weekly Digest, Trade Entry, Replay and Notification preferences/history; no `color-contrast` baseline entry. CI Playwright E2E: see Comments for the final run. AC 2: no bare `text-white` remains outside coloured fills (in `src/pages/`, per the RISK-02 boundary) — **met**: `tests/test_page_colour_tokens.py::test_no_bare_text_white_outside_coloured_fills` (fails on `main`'s pages with 73 offenders, passes on the branch); CI Pytest Suite 44073852310. Sequencing note (regenerate both themes' visual baselines) — **met**: PNGs from the `updated-visual-snapshots` artifact of Update Visual Snapshot Baselines run 44073342137, committed in `022f62a6`. That run's conclusion is `failure` only because its final push step was refused (403, `GITHUB_TOKEN` has no write permission); the regeneration steps passed. Visual Regression Baselines job green in 44073852415. | Pass | None |
+
+**Trade History and BLG-FE-285:** the regions of Trade History outside its table (summary cards, filters, saved-filters select, view toggle, calendar view, reflection modal) are inside the RISK-02 boundary, so ST-08 converted them (`CalendarView`, `TradeReflectionModal`, `StatsCard`, `TradeHistoryTable`) and scans the whole page in both views. This meets `BLG-FE-285`'s scope; closure is for Post-Ship Closure to record.
+
+**Dark theme and baselines:** "dark values unchanged" is supported by the dark-theme half of the ST-08 axe block (contrast, all passing) and by the class mapping (every converted class keeps its dark value); axe does not compare pixels. The regenerated dark baselines (`trade-plan-dark`, `performance-analytics-dark`) also absorb drift that predates ST-08: `main` run 44053009915 was already failing the Trade Plan and Performance Analytics baselines (EPIC-02's section index and Performance page), which this regeneration was planned to pick up (RISK-02).
+
+**AC coverage:** ST-08 has two ACs (`stage4_backlog_slice.md#ST-08`) plus the sealed sequencing note on visual baselines; each is named in the row. No staging-only or post-merge ACs (`sprint_backlog.md` "Staging-only ACs: None").
+
+**Story-level authority rulings:**
+- Head of UX & Design and Product Owner (the repository owner, in session, 2026-11-17): abandoned Trade Plans rows are no longer faded (opacity 0.7 put the row at 3.6:1 and the "Abandoned" badge at 3.2:1 in light); the status badge marks the state. Applied by the same ruling to Signal cards that are not new (`opacity-60`/`-80`). Recorded in `trade_plan.md` v1.29 and `design_system.md` §Page Colour Token Sweep rule 5.
+- RISK-02 boundary (PMO Lead and Product Owner, 2026-11-12, at seal): `src/pages/` plus failing components; component remainder `BLG-FE-288`.
+
+**Behaviour changes (visible, for the PR):** Monthly heatmap tiles use darker fills in both themes (`analytics.md` v2.5); abandoned plan rows and non-new Signal cards are not faded; the Ticker Universe active filter pill is `bg-cyan-700`; stale/flag amber text is `amber-700` in light; the Trade Plans, Watchlist and Notifications cards and Position cards are white in the light theme.
+
+**Implementation notes:** Dark values are unchanged except bare `text-slate-500` → `app-muted` (slate-400 in dark, a contrast gain), the heatmap fills, and `dark:text-slate-300` on the Journal CLOSED pill (was 4.03:1 in dark). Accessible-name gaps found on pages scanned for the first time were fixed in-story (icon buttons on Trade Plans, Watchlist and System Status; Signals, Cohort, Strategy Benchmark and Red Flags filter controls; System Status Badge moved off `bg-primary`). Pre-commit `/code-review` medium: 9 findings, 8 fixed in `071a43f3`, 1 declined (a shared themed-card constant for ~22 `bg-white dark:bg-gradient-…` copies: the `app-*` tokens do not support gradients or alpha, design_system.md rule 2, so a card token is a design-system change outside this story).
+
+**Frontend testing gate (LL-v3.1-EX-01):** every observable AC has Playwright coverage that passed in real CI (AC 1: `accessibility-axe-scan.spec.js`, "Every routed page, populated — light theme (ST-08)" and the light scans above; dark-theme regression guard in the same block). AC 2 is a static check (pytest). No AC is "code review only"; no backlog item required.
+
+**QA test coverage:**
+- Scenarios run: `accessibility-axe-scan.spec.js` (66 tests, 37 of them ST-08, light and dark); `test_page_colour_tokens.py` (3); `visual-regression-baselines.spec.js` (10 baselines, advisory job green); the 9 existing specs updated where they pinned a pre-token class or the removed row fade (`r-multiple-reflection`, `red-flag-journal`, `risk-price-integrity`, `trade-plan-completion-rate`, `visual-snapshots`, `position-review-cadence-nudge`, `trade-plan-stale-marker`, `compliance-recheck`, `epic03-v34-frontend`); full Playwright E2E suite in CI.
+- Regression areas checked: every routed page in both themes (axe); class-asserting specs (25 files, run locally), then the Journal, Signals, Trade Plans, Watchlist, Strategy Benchmark, Screener, Ticker Universe, analytics, System Status and Trade History specs.
+- Static-check limits: `test_page_colour_tokens.py` reads single-line class strings and skips strings containing `${`; `Positions.js:325` (white text on a `stateColours[...]` fill inside a template literal) is verified by code review.
+- Known deviations: None found — the ST-08 deviation check completed with nothing to file (the spec changes ship in the same commit and the one behaviour change has a ruling).
+
+---
+
+## Standard Sign-Off Block
+
+- [ ] All acceptance criteria verified against canonical spec
+- [ ] No unresolved P0 or P1 deviations
+- [ ] Regression areas checked
+- [ ] For any frontend component making direct URL construction (not via api.* wrapper): confirm the URL-base variable is exposed on the imported object
+- [ ] **Strategy values checked (conditional):** N/A — no stop/grace/ATR/exit/sizing logic touched
+- Signed off by:
+- Date:
+- Comments:

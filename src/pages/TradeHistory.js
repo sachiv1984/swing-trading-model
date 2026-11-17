@@ -398,7 +398,7 @@ export default function TradeHistory() {
                 value={filters.market}
                 onValueChange={(value) => setFilters({ ...filters, market: value })}
               >
-                <SelectTrigger className="bg-app-raised border-slate-200 dark:border-slate-700 text-app-fg">
+                <SelectTrigger aria-label="Market" className="bg-app-raised border-slate-200 dark:border-slate-700 text-app-fg">
                   <SelectValue placeholder="Market" />
                 </SelectTrigger>
                 <SelectContent className="bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700">
@@ -412,7 +412,7 @@ export default function TradeHistory() {
                 value={filters.result}
                 onValueChange={(value) => setFilters({ ...filters, result: value })}
               >
-                <SelectTrigger className="bg-app-raised border-slate-200 dark:border-slate-700 text-app-fg">
+                <SelectTrigger aria-label="Result" className="bg-app-raised border-slate-200 dark:border-slate-700 text-app-fg">
                   <SelectValue placeholder="Result" />
                 </SelectTrigger>
                 <SelectContent className="bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700">

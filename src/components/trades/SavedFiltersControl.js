@@ -120,7 +120,7 @@ export default function SavedFiltersControl({ hasActiveFilters, currentFilterSta
 
         <div className="flex items-center gap-1">
           <Select onValueChange={handleApply}>
-            <SelectTrigger className="bg-app-raised border-slate-200 dark:border-slate-700 text-app-fg h-8 text-sm w-48">
+            <SelectTrigger aria-label="Saved filters" className="bg-app-raised border-slate-200 dark:border-slate-700 text-app-fg h-8 text-sm w-48">
               <SelectValue placeholder={presets.length === 0 ? "No saved filters" : "Saved filters"} />
             </SelectTrigger>
             <SelectContent className="bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700">

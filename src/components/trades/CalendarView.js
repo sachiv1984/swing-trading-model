@@ -33,8 +33,8 @@ function makeDayButton(dailyPnlByDay, onDaySelect) {
         className={cn(
           className,
           "relative h-9 w-9 p-0 font-normal rounded-md text-sm",
-          day.outside ? "text-slate-700" : "text-slate-300",
-          hasExits ? "cursor-pointer hover:bg-slate-700/60" : "cursor-default"
+          day.outside ? "text-slate-700" : "text-slate-700 dark:text-slate-300",
+          hasExits ? "cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700/60" : "cursor-default"
         )}
       >
         {children}
@@ -81,12 +81,12 @@ export default function CalendarView({ hasAnyClosedTrades, onDaySelect }) {
 
   if (!hasAnyClosedTrades) {
     return (
-      <div className="rounded-2xl bg-slate-800/50 border border-slate-700/50 p-6">
+      <div className="rounded-2xl bg-app-raised border border-app-line p-6">
         <DataState
           loading={false}
           error={false}
           empty
-          emptyIcon={<CalendarIcon className="w-10 h-10 text-slate-600" />}
+          emptyIcon={<CalendarIcon className="w-10 h-10 text-app-muted" />}
           emptyHeading="No closed trades yet"
           emptyBody="Your trading calendar will populate as you close trades."
           emptyAction={<EmptyStateAction to="/Positions">View open positions</EmptyStateAction>}
@@ -98,13 +98,13 @@ export default function CalendarView({ hasAnyClosedTrades, onDaySelect }) {
   const dailyPnlByDay = Object.fromEntries(dailyPnl.map((d) => [d.day, d]));
 
   return (
-    <div className="rounded-2xl bg-slate-800/50 border border-slate-700/50 p-6 space-y-4">
-      <div className="rounded-lg bg-slate-900/50 border border-slate-700/30 px-4 py-2 text-sm text-slate-300">
+    <div className="rounded-2xl bg-app-raised border border-app-line p-6 space-y-4">
+      <div className="rounded-lg bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700/30 px-4 py-2 text-sm text-slate-700 dark:text-slate-300">
         Unrealised P&L (as of today): {estimatedUnrealisedPnl != null ? formatGbp(estimatedUnrealisedPnl) : "—"}
       </div>
 
       {loadError ? (
-        <p className="text-rose-400 text-sm">Unable to load calendar data. Please refresh.</p>
+        <p className="text-app-negative text-sm">Unable to load calendar data. Please refresh.</p>
       ) : (
         <DayPicker
           month={month}
@@ -118,7 +118,7 @@ export default function CalendarView({ hasAnyClosedTrades, onDaySelect }) {
           className="p-0"
           classNames={{
             months: "flex flex-col",
-            month_caption: "flex justify-center items-center py-2 text-sm font-medium text-white",
+            month_caption: "flex justify-center items-center py-2 text-sm font-medium text-app-fg",
             nav: "flex items-center justify-between absolute inset-x-0 top-0 px-2",
             weekdays: "flex",
             weekday: "text-slate-600 dark:text-slate-400 w-9 font-normal text-xs text-center",
@@ -128,9 +128,9 @@ export default function CalendarView({ hasAnyClosedTrades, onDaySelect }) {
           components={{
             Chevron: ({ orientation }) =>
               orientation === "left" ? (
-                <ChevronLeft className="h-4 w-4 text-slate-400" />
+                <ChevronLeft className="h-4 w-4 text-app-muted" />
               ) : (
-                <ChevronRight className="h-4 w-4 text-slate-400" />
+                <ChevronRight className="h-4 w-4 text-app-muted" />
               ),
             DayButton: makeDayButton(dailyPnlByDay, onDaySelect),
           }}
