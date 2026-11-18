@@ -1,8 +1,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 0.10
-**Last Updated:** 2026-11-17 (ST-08, EPIC-03, v9.17, BLG-FE-265 — stale "no action" text `text-amber-700 dark:text-amber-400`; the watchlist card is themed for the light theme); prior — 2026-09-28 (v9.8 design gate — ST-02/BLG-FE-185: new §Column Definition Architecture note — `WATCHLIST_COLUMNS` is the single source for header, body cell and CSV value; no visual change); prior — 2026-09-21 (v9.6 design gate — ST-03/BLG-FEAT-97: new §CSV Export, Page Header action group updated); prior history retained — see prior entries in version control.
+**Version:** 0.11
+**Last Updated:** 2026-11-18 (v9.18 design gate — ST-33/BLG-FE-294: Earnings Cell with Unknown state); prior — 2026-11-17 (ST-08, EPIC-03, v9.17, BLG-FE-265 — stale "no action" text `text-amber-700 dark:text-amber-400`; the watchlist card is themed for the light theme); prior — 2026-09-28 (v9.8 design gate — ST-02/BLG-FE-185: new §Column Definition Architecture note — `WATCHLIST_COLUMNS` is the single source for header, body cell and CSV value; no visual change); prior history retained — see prior entries in version control
 **Design Source (v0.9 column architecture):** docs/design/2026-09-28__release-v9.8/screener-watchlist-shared-column-definitions/decision_record.md
 **Design Source (v0.8 CSV export):** docs/design/2026-09-21__release-v9.6/screener-watchlist-csv-export/decision_record.md
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
@@ -293,10 +293,17 @@ A secondary (outline) **"Download CSV"** button with the download icon — same 
 
 ---
 
+## Earnings Cell (v0.11 — ST-33, BLG-FE-294)
+
+*(The Earnings column (`WatchlistEarningsBadge`) predates this spec's column table and was undocumented; this section documents it.)* Source: `GET /earnings/{ticker}?market=` via `useEarnings`. `days_until_earnings` 0 → "Today" (`text-app-warning`); 1–5 → "{n}d" (`text-app-warning`); 6–14 → "{n}d" (yellow); above 14 → "{n}d" (muted); null or negative → "—". **New (ST-33):** `data_status: unavailable` → "Unknown" (`text-xs text-app-muted`, tooltip "The earnings date could not be fetched. It will be retried."), not cached for the session. UK rows keep today's behaviour. Design source: `docs/design/2026-11-18__release-v9.18/position-data-states/decision_record.md` §4.
+
+---
+
 ## Changelog
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.11 | 2026-11-18 | v9.18 design gate (ST-33, BLG-FE-294): new §Earnings Cell documenting the existing badge and adding "Unknown" for a failed lookup (not cached). Design source: `docs/design/2026-11-18__release-v9.18/position-data-states/decision_record.md`. Head of UX & Design sign-off: 2026-11-18. Product Owner approved: 2026-11-18. Head of Specs Team confirmed. |
 | 0.10 | 2026-11-17 | ST-08 (EPIC-03, v9.17, BLG-FE-265), semantic colour token sweep: §Added column stale style `text-amber-600` → `text-amber-700 dark:text-amber-400` (amber-600 is 3.19:1 on white). The watchlist card is now white in the light theme (it was dark in both themes since v9.16 review pass 4). |
 | 0.9 | 2026-09-28 | v9.8 design gate — ST-02 (EPIC-01, BLG-FE-185): added §Column Definition Architecture — `WATCHLIST_COLUMNS` documented as the single source for header, body cell and CSV value. No visual change. Design source: `docs/design/2026-09-28__release-v9.8/screener-watchlist-shared-column-definitions/decision_record.md`. Authority: Head of Specs Team. |
 | 0.8 | 2026-09-21 | v9.6 design gate — ST-03 (EPIC-01, BLG-FEAT-97): added §CSV Export and updated the Page Header action group — "Download CSV" button; exports displayed rows and the `TABLE_HEADERS` columns excluding checkbox/Actions; machine-readable values; UTF-8/RFC 4180, dated filename, formula-injection guard; disabled when empty. **Note:** no row for 0.7 (the v9.5 ST-30 heading fix) was appended to this table — recoverable via version control. Authority: Head of Specs Team. |

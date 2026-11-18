@@ -1,8 +1,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Built (`BLG-FE-259`, ST-06, v9.17)
-**Version:** 1.2
-**Last Updated:** 2026-11-16 (ST-06, EPIC-02, v9.17, BLG-FE-300 — v1.2: Total P&L, Win Rate and Total Trades always show; only the statistical KPIs wait for enough trades); prior — 2026-11-16 (ST-06, EPIC-02, v9.17, BLG-FE-259 — v1.1: the Monthly "Strategy Compliance" block moves to Compliance as "Last 30 days" without its breach tile, ruling at build time); prior — 2026-11-16 (ST-06 — initial draft: one Performance page from Reports and Analytics, against the `performance-page-brief` decision record §2); prior history retained — see prior entries in version control
+**Version:** 1.3
+**Last Updated:** 2026-11-18 (v9.18 design gate — ST-08/BLG-FE-323: new Strategy vs backtest section; /StrategyBenchmark redirect); prior — 2026-11-16 (ST-06, EPIC-02, v9.17, BLG-FE-300 — v1.2: Total P&L, Win Rate and Total Trades always show; only the statistical KPIs wait for enough trades); prior — 2026-11-16 (ST-06, EPIC-02, v9.17, BLG-FE-259 — v1.1: the Monthly "Strategy Compliance" block moves to Compliance as "Last 30 days" without its breach tile, ruling at build time); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Design Source:** docs/design/2026-11-11__release-v9.17/performance-page-brief/decision_record.md §2
 **Builds on:** `reports.md` v0.26, `analytics.md` v2.3, `navigation.md` v2.3, `glossary.md` v1.4, `docs/specs/metrics_definitions.md` v1.35.0, the shared `SectionIndex` (`long-page-section-index` decision record §2; `trade_plan.md` §5g)
@@ -39,10 +39,12 @@ Metrics staleness indicator
 │ Reports  [Tax year | Monthly | Reconcil.] │ │ Reports      │
 │ Analytics                                 │ │ Analytics    │
 │ Compliance                                │ │ Compliance   │
+│ Strategy vs backtest  (v1.3)              │ │ Strategy vs  │
+│                                           │ │  backtest    │
 └───────────────────────────────────────────┘ └──────────────┘
 ```
 
-- **Section index:** the shared `SectionIndex` with ids `summary`, `reports`, `analytics`, `compliance`, in that order. Same behaviour as `trade_plan.md` §5g (instant jump, focus to the section `<h2>`, `?section=` by replace, honoured on load once the page's data is ready, `aria-current`). Each section is a `<section>` with a visible `<h2>`: "Summary", "Reports", "Analytics", "Compliance".
+- **Section index:** the shared `SectionIndex` with ids `summary`, `reports`, `analytics`, `compliance`, `strategy-vs-backtest` (v1.3, ST-08), in that order. Same behaviour as `trade_plan.md` §5g (instant jump, focus to the section `<h2>`, `?section=` by replace, honoured on load once the page's data is ready, `aria-current`). Each section is a `<section>` with a visible `<h2>`: "Summary", "Reports", "Analytics", "Compliance", "Strategy vs backtest".
 - **Period selector** (header): one selector, the Analytics options and keys (`last_7_days`, `last_month` default, `last_quarter`, `last_year`, `ytd`, `all_time`), held in `?period=` (replace). It drives Summary and Analytics, and the Discipline & Compliance component refetches when it changes (that component's endpoint takes no period today, as before; `BLG-FE-299`). The Reports section keeps its own tax-year and month selectors and ignores it.
 - **Exports** (header): Reports' **Export** (the existing `ExportModal`, period-filtered) and Analytics' **Export PDF** (the existing print report). Both unchanged.
 - **Reports sub-views:** inside the Reports section, a tablist **Tax year · Monthly · Reconciliation** (the existing three tabs, unchanged content), held in `?report=tax-year|monthly|reconciliation` (replace; default `tax-year`). The tablist scrolls sideways inside itself at narrow widths (§9).
@@ -58,6 +60,24 @@ Metrics staleness indicator
 | **Compliance** (`compliance`) | Discipline & Compliance, Arc 5 Signal Compliance (keeps its `id="strategy-compliance"` anchor), **Last 30 days** (Validation Pass Rate, Override Count, Red Flag Events — the Reports Monthly "Strategy Compliance" block, moved, without Most Frequent Breach), Trade Plan Completion Rate | Analytics §17, §19, §21; Reports Monthly `compliance_summary` (`reports_endpoints.md`), read from the current tax year's monthly report |
 
 **Removed as duplicates:** Reports' **Trade Breakdown** card (its "By Market" and "By Exit Reason" counts are shown by Market Comparison and Performance by Exit Reason); the Best Trade / Worst Trade rows of Performance Summary (Best / Worst Trades lists them with detail); Profit Factor in Analytics §1 and §3; Expectancy in Analytics §1 (moved to Summary).
+
+### 4.1 Strategy vs Backtest Section (v1.3 — ST-08, BLG-FE-323)
+
+**Design source:** `docs/design/2026-11-18__release-v9.18/navigation-phase4-moves/decision_record.md` §2
+
+The whole Strategy Benchmark page body moves here unchanged (`strategy_benchmark.md` remains the content spec): the filter bar, the Benchmark / Version Comparison / Backtest Rule Change tabs, and their panels and states. Three changes inside a section:
+
+- The filter bar sits at the top of the section and is **not sticky**.
+- The Benchmark tab's own section index (`strategy_benchmark.md` §3a) is retired; its panels become `<h3>` headings under this section's `<h2>`. This page's index is the only index.
+- The old page header is dropped. Its description becomes a one-line intro under the `<h2>`, and any header actions move to the section's tab row.
+
+The section ignores the page's period selector (it has its own filters), and it is shown even when the period has no closed trades (§6): it has its own "No import data" empty state.
+
+| ID | Behaviour | Test |
+|----|-----------|------|
+| PF-20 | The index lists five sections; "Strategy vs backtest" jumps to its `<h2>`; `?section=strategy-vs-backtest` opens there | Playwright |
+| PF-21 | `/StrategyBenchmark` → `/Performance?section=strategy-vs-backtest` (replace; other params kept) | Playwright |
+| PF-22 | The section's filter bar is not sticky, and the section renders no second section index | Playwright |
 
 ## 5. One Home per KPI
 
@@ -117,6 +137,7 @@ The Analytics section's charts and tables also group the server's `trades_for_ch
 | `/Reports` | `/Performance?section=reports` |
 | `/PerformanceAnalytics` | `/Performance?section=analytics` |
 | `/PerformanceAnalytics?section=strategy-compliance` | `/Performance?section=compliance` (the SI-05 digest link) |
+| `/StrategyBenchmark` (v1.3, ST-08) | `/Performance?section=strategy-vs-backtest` |
 
 Any other query string is kept (e.g. `period`). In-app links change in the same commit: Dashboard Signal Compliance card (`/PerformanceAnalytics` → `/Performance?section=compliance`), Strategy Benchmark onward link (→ `/Performance?section=analytics`, label "Performance"), the SI-05 digest compliance link (`backend/services/si05_digest_service.py`), and any `createPageUrl("Reports" | "PerformanceAnalytics")`. **Onward link:** the page header links to Trade History (Analytics' current onward link).
 
@@ -153,6 +174,7 @@ At 390 px the page has no page-level horizontal scroll. The section index is the
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.3 | 2026-11-18 | v9.18 design gate. (ST-08, BLG-FE-323) new fifth section "Strategy vs backtest" (§4.1) holding the Strategy Benchmark page body; filter bar not sticky, its own section index retired; `/StrategyBenchmark` redirect (§7); PF-20–PF-22. Design source: `docs/design/2026-11-18__release-v9.18/navigation-phase4-moves/decision_record.md`. Head of UX & Design sign-off: 2026-11-18. Product Owner approved: 2026-11-18. Head of Specs Team confirmed. |
 | 1.2 | 2026-11-16 | BLG-FE-300 (ST-06, EPIC-02, v9.17), Product Owner decision 2026-11-16 (the user, in session, after the agent-mediated PR #2261 review): §6 — with too few trades, Summary still shows Total P&L, Win Rate and Total Trades; only Profit Factor, Expectancy, the growth chart, Key Insights and Analytics wait for enough trades. Zero trades: Summary shows only the empty state. The empty state's wording depends on whether the period has any trades; Win Rate's subtitle counts break-even trades. PF-09 updated. The server now returns the real `win_rate` and `total_pnl` below the minimum (`analytics_endpoints.md` v2.5.2; they were 0.0, so the old Reports tab showed £0.00 and 0.0% in a quiet month). Summary cards now render in the §4 order. |
 | 1.1 | 2026-11-16 | ST-06 build-time ruling (first-time-right check 7: the v1.0 premise that the Monthly "Strategy Compliance" block only duplicated Arc 5 was false — Arc 5 shows no Validation Pass Rate and no 30-day counts). Ruling by the user as Head of UX & Design / Metrics Definitions & Analytics Canonical Owner, 2026-11-16: move the block into Compliance as "Last 30 days" (Validation Pass Rate, Override Count, Red Flag Events) and drop Most Frequent Breach, whose one home is Arc 5's Top Rule Breach. §4 and §5.1 updated. |
 | 1.0 | 2026-11-16 | Initial draft. ST-06 (EPIC-02, v9.17, BLG-FE-259) against the `performance-page-brief` §2 brief: route and label, four sections with the shared section index, one home per KPI with the scope rule, the browser-vs-server divergence list (§5.2), states, redirects incl. the SI-05 compliance link, §13 note, 390 px rule absorbing `BLG-FE-237`, ACs PF-01..PF-14. **Head of UX & Design approval: 2026-11-16** (the user, in session, acting in that role; approved as drafted, including the §5 scope rule). **Metrics Definitions & Analytics Canonical Owner KPI confirmation (§5): 2026-11-16** (the user, in session, acting in that role; every KPI keeps its canonical definition, read from its server source per §5.2). |

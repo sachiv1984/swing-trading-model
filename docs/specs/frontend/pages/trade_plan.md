@@ -1,8 +1,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 1.29
-**Last Updated:** 2026-11-17 (ST-08, EPIC-03, v9.17, BLG-FE-265 — abandoned list rows no longer faded (opacity 0.7 failed AA in light); stale-plan marker moves to `text-amber-700 dark:text-amber-400`); prior — 2026-11-16 (ST-07, EPIC-02, v9.17, BLG-FE-263 — §5g Section Index built; build notes on the jumped-to section staying current, the load-time jump waiting for data, and What-if sizing listed only while its panel renders); prior — 2026-11-13 (ST-14, EPIC-05, v9.17, BLG-FE-282 — §5a.3 pre-fill and §5f stored-stop line built; §5f wording names the signal's ATR; DEV-v9.16-ST27-01 resolved); prior history retained — see prior entries in version control
+**Version:** 1.30
+**Last Updated:** 2026-11-18 (v9.18 design gate — ST-12/BLG-UX-19: §6 checklist split into system status and judgement ticks); prior — 2026-11-17 (ST-08, EPIC-03, v9.17, BLG-FE-265 — abandoned list rows no longer faded (opacity 0.7 failed AA in light); stale-plan marker moves to `text-amber-700 dark:text-amber-400`); prior — 2026-11-16 (ST-07, EPIC-02, v9.17, BLG-FE-263 — §5g Section Index built; build notes on the jumped-to section staying current, the load-time jump waiting for data, and What-if sizing listed only while its panel renders); prior history retained — see prior entries in version control
 **Design Source (v1.22 snapshot, Plan this, suggested size):** docs/design/2026-11-06__release-v9.16/plan-linked-pre-entry-checks/decision_record.md, docs/design/2026-11-06__release-v9.16/signal-to-plan-flow/decision_record.md
 **Design Source (v1.16 setup_type copy fix):** docs/design/2026-09-23__release-v9.7/trade-plan-clone-setup-type/decision_record.md
 **Design Source (v1.15 clone as new plan):** docs/design/2026-09-21__release-v9.6/trade-plan-clone/decision_record.md
@@ -402,35 +402,52 @@ A section with no rendered field is left out of the index. The list view and the
 
 ---
 
-## 6. Pre-Trade Entry Checklist (v3.2 — PT-05)
+## 6. Pre-Trade Entry Checklist (v3.2 — PT-05; split v1.30 — ST-12, BLG-UX-19)
 
-> **§13 Compliance:** This feature has been reviewed and confirmed §13 compliant — see `docs/specs/compliance/pt05_entry_checklist_s13_review.md`. The system presents checklist items; the human confirms each condition; the system records the human-confirmed state. No automated condition evaluation or recommendation is generated. (ST-15, v3.3)
+> **§13 Compliance (amended v1.30):** Reviewed under `docs/specs/compliance/pt05_entry_checklist_s13_review.md`. From v1.30, two items show a deterministic status instead of a tick: "Position size checks" (the existing §4.2.2, §4.2.4 and §4.2.5 pre-entry checks, reviewed under SI-01) and "Stop level defined" (a form field). Both are advisory (`strategy_rules.md` §4.2.6), gate nothing and make no recommendation, so no new §13 review is needed. The Strategy Rules & System Intent Owner confirms this amendment, dated, in ST-12 before the build (`stage4_backlog_slice_addendum.md`). The human-judgement items stay human-confirmed and are recorded as before.
+
+**Design source (v1.30):** `docs/design/2026-11-18__release-v9.18/trade-plan-checklist-status/decision_record.md`
 
 The checklist is embedded as a grouped section within the Trade Plan creation and edit forms, below the core plan fields.
 
 ### 6.1 Section Header
 
-"Pre-Trade Checklist"
+"Pre-Trade Checklist", with two groups: **Checked by the system** (`data-testid="checklist-system"`) and **Your judgement** (`data-testid="checklist-human"`).
 
 ### 6.2 Checklist Items
 
-| Item ID | Label | Pre-population |
-|---------|-------|----------------|
-| CHK-01 | Strategy signal confirmed | Never auto-checked |
-| CHK-02 | Position size within heat limits | Never auto-checked |
-| CHK-03 | Stop level defined | Auto-checked if `early_exit_conditions` is non-null and non-empty |
-| CHK-04 | Pre-trade research reviewed | Auto-checked if `r_target` is non-null |
+| Item ID | Label | Group | Behaviour |
+|---------|-------|-------|-----------|
+| CHK-01 | Strategy signal confirmed | Your judgement | Tick. Never auto-checked |
+| CHK-02 | Position size checks *(v1.30; was "Position size within heat limits": `strategy_rules.md` has no heat limit to check, Product Owner decision 2026-11-18)* | Checked by the system | Status: worst of `cash_constraint`, `sector_concentration`, `sizing_validity` in the Pre-Entry Validation result (fail > warn > pass; `skipped` ignored) |
+| CHK-03 | Stop level defined | Checked by the system | Status: Stop Level (`planned_stop_price`) holds a positive number. The v0.2 pre-tick from `early_exit_conditions` is retired |
+| CHK-04 | Pre-trade research reviewed | Your judgement | Tick. Pre-ticked if `r_target` is non-null (unchanged); the user may untick |
 
-- Each item: checkbox + label
-- All items visible regardless of check state
-- Pre-population is advisory — user may uncheck any item
-- Existing user-set state is not overwritten on re-open
+**System status text** (no checkbox; not focusable; cannot be ticked; follows the inputs as they change):
 
-**Pre-population rationale (BLG-SPEC-28):** CHK-03 uses `early_exit_conditions` (not `stop_level`) because exit-condition thinking implies the trader has defined their stop logic even if no numeric stop level is set yet. CHK-04 uses `r_target` (not `risk_reward_notes`) because an explicit R target indicates the risk/reward ratio has been computed — the most meaningful signal that research has been reviewed.
+| Item | State | Text |
+|------|-------|------|
+| CHK-02 | pass | "✓ Pass" (`text-app-positive`) |
+| CHK-02 | warn | "! Warning — see Pre-Entry Checks" (`text-app-warning`) |
+| CHK-02 | fail | "✗ Fail — see Pre-Entry Checks" (`text-app-negative`) |
+| CHK-02 | no result (shares not entered, loading, error, all three skipped) | "Not checked yet" (`text-app-muted`) |
+| CHK-03 | set | "✓ Set: {stop} {currency}" (`currencyForMarket`) |
+| CHK-03 | not set (empty, 0, negative, not a number) | "✗ Not set" |
 
-**Test scenario cross-reference:** `tests/e2e/entry-checklist.spec.js` (SC-CL-01 through SC-CL-05) covers pre-population behaviour. Any change to pre-population fields must be reflected in those scenarios.
+The glyph and word always accompany the colour. Worked examples: decision record §5.
 
-**Keyboard accessibility (v1.3 — ST-06, BLG-FE-135):** Each `CheckItem` is a real `<button role="checkbox" aria-checked={item.checked}>` (or equivalent `tabIndex`/`role`/`aria-checked`/`onKeyDown` handling) — reachable via Tab in list order, toggleable via Space or Enter, `aria-checked` reflects state. Visual appearance and pre-population behaviour unchanged. Design source: `docs/design/2026-07-30__release-v8.0/entry-checklist-keyboard-accessibility/decision_record.md`.
+**Counter:** "{n} / 2 confirmed" over the two judgement items; "Both confirmed" when both are ticked (was "{n} / 4 complete" / "All complete").
+
+**Pause point unchanged:** the §5e acknowledgement stays the deliberate pause before "Create Position". The checklist never disables Save (§4.2.6).
+
+**Test scenario cross-reference:** `tests/e2e/entry-checklist.spec.js` (SC-CL-01 through SC-CL-05) covers pre-population. SC-CL scenarios for CHK-03's retired pre-tick are rewritten by ST-12 to the status rule.
+
+**Keyboard accessibility (v1.3 — ST-06, BLG-FE-135):** each judgement item is a real `<button role="checkbox" aria-checked={item.checked}>` (or equivalent `tabIndex`/`role`/`aria-checked`/`onKeyDown` handling): reachable via Tab in list order, toggled with Space or Enter, `aria-checked` reflects state. System items are plain text and not in the tab order. Design source: `docs/design/2026-07-30__release-v8.0/entry-checklist-keyboard-accessibility/decision_record.md`.
+
+| ID | Behaviour | Test |
+|----|-----------|------|
+| CL-10 | "Position size checks" and "Stop level defined" show automatic status that follows the inputs and cannot be ticked by hand | Playwright (ST-12) |
+| CL-11 | The two judgement items stay tickable; an existing plan saved with ticks loads them unchanged | Playwright + unit test (ST-12) |
 
 ### 6.3 "Review Research" Link
 
@@ -443,11 +460,14 @@ The checklist is embedded as a grouped section within the Trade Plan creation an
 
 In the trade plan detail view (not editing):
 - Checklist items shown as read-only indicators (no interactive checkboxes)
+- *(v1.30)* System items show the status computed from the plan's stored `pre_entry_validation_snapshot` and Stop Level, captioned "As checked when the plan was saved, {d MMM HH:mm}"; with no snapshot, CHK-02 reads "Not checked when saved"
 - "Review research" link remains active
 
 ### 6.5 Persistence
 
 Checklist state stored as `checklist` array on the trade plan record. Submitted with `POST /trade-plans` and `PUT /trade-plans/{id}`.
+
+*(v1.30)* The array keeps its four entries and ids (`signal_confirmed`, `heat_limit_checked`, `stop_defined`, `research_reviewed`). On save, `heat_limit_checked.checked` = CHK-02 is pass and `stop_defined.checked` = CHK-03 is set, each with `"auto": true`; judgement items save their tick. On load, the saved `checked` of the two system items is ignored for display (recomputed) but kept. ST-12 checks every reader of `checklist` against a legacy row (all four ticked, no snapshot).
 
 ---
 
@@ -758,6 +778,7 @@ User-initiated batch of the same manual mutations already available one plan at 
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.30 | 2026-11-18 | v9.18 design gate. (ST-12, BLG-UX-19) §6 split into "Checked by the system" (CHK-02 renamed "Position size checks", from the cash, sector and sizing pre-entry checks — Product Owner decision, since no heat limit exists; CHK-03 from the Stop Level field) and "Your judgement" (CHK-01, CHK-04, ticks). Counter over judgement items; §6.4 detail view status from the stored snapshot; §6.5 storage keeps four entries with `auto`; §13 note amended (owner confirmation in ST-12). CL-10, CL-11. Design source: `docs/design/2026-11-18__release-v9.18/trade-plan-checklist-status/decision_record.md`. Head of UX & Design sign-off: 2026-11-18. Product Owner approved: 2026-11-18. Head of Specs Team confirmed. |
 | 1.29 | 2026-11-17 | ST-08 (EPIC-03, v9.17, BLG-FE-265), semantic colour token sweep: §List View and §Abandon: abandoned rows are no longer shown at opacity 0.7, which put row text at 3.6:1 and the white-on-red "Abandoned" badge at 3.2:1 in the light theme; the badge marks the state (Head of UX & Design and Product Owner ruling in session, 2026-11-17). Stale-plan marker style `text-amber-600` → `text-amber-700 dark:text-amber-400` (amber-600 is 3.19:1 on white, design_system.md §Light-Theme Colour Tokens rule 3). |
 | 1.28 | 2026-11-16 | ST-07 (EPIC-02, v9.17, BLG-FE-263): §5g built. Build notes added: section headings, What-if sizing listed only while its panel renders, the jumped-to section stays current near the end of the page, the load-time jump waits for data, sticky offset under the mobile header. No change to the section list or labels. |
 | 1.27 | 2026-11-13 | ST-14 (EPIC-05, v9.17, BLG-FE-282): §5a.3 Stop Level pre-fill built from the shared `getSuggestedStop()` helper (signal `initial_stop`, else `current_price − 5 × atr_value`, 2 dp); a typed or cleared value is never overwritten; it applies only to the opened ticker's signal, and an untouched pre-fill is cleared if the ticker changes (agent-mediated DoQ review finding); edit mode does not pre-fill. §5f stored-stop line built; its wording now reads "about" and names the signal's ATR, because Trade Entry computes the stop from the ATR at entry time (ruling 2026-11-13, Frontend Specifications & UX Documentation Owner, the user in session). Known Deviations `DEV-v9.16-ST27-01` marked resolved. The §5 stop and the Signal Context "ATR (14d)" use the signal's native ATR (a US `atr_value` is GBP; PR #2260 review P2, BLG-FE-296). §5a.1: a "Plan this" signal whose ticker no longer matches the form's is not linked (BLG-FE-295). §5e: the reset note shows only when a tick is cleared, with "changed" and "no-snapshot" wording (BLG-FE-298, Head of UX & Design recommendation, user ruling 2026-11-16; SC-TPAR-06..09). Playwright: `tests/e2e/trade-plan-stop-prefill.spec.js` (SC-TPSP-01..09). |

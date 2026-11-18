@@ -1,8 +1,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 1.11
-**Last Updated:** 2026-11-06 (v9.16 design gate — ST-07/BLG-FE-255: "Plan this" on every result row); prior — 2026-10-16 (v9.13 design gate — ST-25/BLG-FE-221: "Add to Watchlist" and empty-state Scan buttons use emerald-700 with white text); prior — 2026-09-29 (ST-26, EPIC-05, v9.8, BLG-SPEC-161 — §4/§5.3 column lists corrected to match the live `SCREENER_COLUMNS`: added the missing Earnings column, and replaced the stale separate "Actions" column with the actual shape — Watchlist/Research actions live inside the News cell); prior history retained — see prior entries in version control
+**Version:** 1.12
+**Last Updated:** 2026-11-18 (v9.18 design gate — ST-33/BLG-FE-294: Earnings Unknown; no UK lookups); prior — 2026-11-06 (v9.16 design gate — ST-07/BLG-FE-255: "Plan this" on every result row); prior — 2026-10-16 (v9.13 design gate — ST-25/BLG-FE-221: "Add to Watchlist" and empty-state Scan buttons use emerald-700 with white text); prior history retained — see prior entries in version control
 **Design Source (v1.11 Plan this):** docs/design/2026-11-06__release-v9.16/signal-to-plan-flow/decision_record.md
 **Design Source (v1.10 button fills):** docs/design/2026-10-16__release-v9.13/coloured-button-fills/decision_record.md
 **Design Source (v1.8 column architecture):** docs/design/2026-09-28__release-v9.8/screener-watchlist-shared-column-definitions/decision_record.md
@@ -69,7 +69,7 @@ The screener results are displayed in a table/list with the following columns:
 | Signal | `signal_score` | Numeric score 0.0–1.0 displayed as percentage or bar indicator |
 | Sector | `sector` | Sector classification text (or em dash `—` if null) |
 | Entry Zone | `proximity_to_entry_zone` | Displayed as "Near entry" / "In zone" / "—" based on proximity value |
-| Earnings | — | Days until next earnings (badge, cached client-side per ticker/market). Hidden below the `lg` breakpoint. (ST-26, EPIC-05, v9.8, BLG-SPEC-161) |
+| Earnings | — | Days until next earnings (badge, cached client-side per ticker/market). Hidden below the `lg` breakpoint. (ST-26, EPIC-05, v9.8, BLG-SPEC-161) *(v1.12, ST-33, BLG-FE-294)* US rows only: UK rows make no earnings lookup and show nothing (`strategy_rules.md` §4.2.3 is US-only). A failed lookup (`data_status: unavailable`) shows "Unknown" (`text-xs text-app-muted`, tooltip "The earnings date could not be fetched. It will be retried.") and is not cached; `ok` with no date shows nothing. Design source: `docs/design/2026-11-18__release-v9.18/position-data-states/decision_record.md` §4 |
 | News | `news_headline_count` | Headline count badge (e.g. "3") clicking expands inline panel; also hosts the "Add to Watchlist" (see §8) and "Research" (see §11) actions in the same cell — there is no separate Actions column |
 
 **Column ordering is fixed.** The frontend must not reorder columns without a spec update.
@@ -344,6 +344,7 @@ This spec covers all DS-02 interaction patterns:
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.12 | 2026-11-18 | v9.18 design gate (ST-33, BLG-FE-294): Earnings column shows "Unknown" for a failed lookup, not cached; UK rows make no lookup (decision recorded here, per the story's AC). Design source: `docs/design/2026-11-18__release-v9.18/position-data-states/decision_record.md`. Head of UX & Design sign-off: 2026-11-18. Product Owner approved: 2026-11-18. Head of Specs Team confirmed. |
 | 1.11 | 2026-11-06 | v9.16 design gate — new §11.1 "Plan this" (ST-07, EPIC-02, BLG-FE-255): on every result row, after "Research", opens a pre-filled, unsaved Trade Plan (ticker, market, entry price). Design source: `docs/design/2026-11-06__release-v9.16/signal-to-plan-flow/decision_record.md`. |
 | 1.10 | 2026-10-16 | v9.13 design gate — ST-25 (EPIC-04, BLG-FE-221): "Add to Watchlist" and the empty-state Scan button are `bg-emerald-700 hover:bg-emerald-800 text-white`. Their authored `bg-emerald-600` never rendered and fails AA with white text. Design source: `docs/design/2026-10-16__release-v9.13/coloured-button-fills/decision_record.md`. Head of UX & Design sign-off: 2026-10-16. Product Owner approved: 2026-10-16. Head of Specs Team confirmed. |
 | 1.9 | 2026-09-29 | ST-26 (EPIC-05, v9.8, BLG-SPEC-161): §4/§5.3 corrected to match live `SCREENER_COLUMNS` — added the missing Earnings column (present in code since an earlier cycle but never documented) and replaced the stale separate "Actions" column with its actual shape (Watchlist + Research actions live inside the News cell, not a distinct column). No code change. Authority: Head of Specs Team. |
