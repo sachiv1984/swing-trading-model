@@ -1,0 +1,602 @@
+[
+ {
+  "cycle": "2026-11-18__release-v9.18",
+  "epic": "EPIC-01",
+  "story_id": "ST-01",
+  "s2_id": "S2-01",
+  "source": "BLG-FE-311",
+  "title": "Make the four mouse-only controls keyboard-operable",
+  "priority": "P2",
+  "effort": "S (~0.5-1 day)",
+  "labels": [
+   "sprint",
+   "EPIC-01",
+   "cycle:2026-11-18__release-v9.18"
+  ]
+ },
+ {
+  "cycle": "2026-11-18__release-v9.18",
+  "epic": "EPIC-01",
+  "story_id": "ST-02",
+  "s2_id": "S2-02",
+  "source": "BLG-FE-312",
+  "title": "Link the Exit dialog's labels to their inputs",
+  "priority": "P2",
+  "effort": "XS (<1h, plus a scan of the open dialog)",
+  "labels": [
+   "sprint",
+   "EPIC-01",
+   "cycle:2026-11-18__release-v9.18"
+  ]
+ },
+ {
+  "cycle": "2026-11-18__release-v9.18",
+  "epic": "EPIC-01",
+  "story_id": "ST-03",
+  "s2_id": "S2-03",
+  "source": "BLG-FE-318",
+  "title": "Say Telegram, not email, and show when an alert was not sent",
+  "priority": "P3",
+  "effort": "S (~0.5 day)",
+  "labels": [
+   "sprint",
+   "EPIC-01",
+   "cycle:2026-11-18__release-v9.18"
+  ]
+ },
+ {
+  "cycle": "2026-11-18__release-v9.18",
+  "epic": "EPIC-01",
+  "story_id": "ST-04",
+  "s2_id": "S2-04",
+  "source": "BLG-FE-228",
+  "title": "Fix Alert History compact values",
+  "priority": "P3",
+  "effort": "XS (~0.25 day)",
+  "labels": [
+   "sprint",
+   "EPIC-01",
+   "cycle:2026-11-18__release-v9.18"
+  ]
+ },
+ {
+  "cycle": "2026-11-18__release-v9.18",
+  "epic": "EPIC-01",
+  "story_id": "ST-05",
+  "s2_id": "S2-05",
+  "source": "BLG-SEC-46",
+  "title": "Re-review the accepted open-access risk",
+  "priority": "P2",
+  "effort": "S (~0.5 day review; any chosen remedy is separate)",
+  "labels": [
+   "sprint",
+   "EPIC-01",
+   "cycle:2026-11-18__release-v9.18"
+  ]
+ },
+ {
+  "cycle": "2026-11-18__release-v9.18",
+  "epic": "EPIC-01",
+  "story_id": "ST-06",
+  "s2_id": "S2-06",
+  "source": "BLG-QA-271",
+  "title": "Measure Core Web Vitals and update the performance budget",
+  "priority": "P3",
+  "effort": "M (~1-2 days)",
+  "labels": [
+   "sprint",
+   "EPIC-01",
+   "cycle:2026-11-18__release-v9.18"
+  ]
+ },
+ {
+  "cycle": "2026-11-18__release-v9.18",
+  "epic": "EPIC-02",
+  "story_id": "ST-07",
+  "s2_id": "S2-07",
+  "source": "BLG-UX-21",
+  "title": "Revise navigation.md and design_system.md for the Phase 4 target state",
+  "priority": "P3",
+  "effort": "S (~0.5 day decision + `navigation.md` revision)",
+  "labels": [
+   "sprint",
+   "EPIC-02",
+   "cycle:2026-11-18__release-v9.18"
+  ]
+ },
+ {
+  "cycle": "2026-11-18__release-v9.18",
+  "epic": "EPIC-02",
+  "story_id": "ST-08",
+  "s2_id": "S2-08",
+  "source": "BLG-FE-323",
+  "title": "Move Strategy Benchmark into Performance and Ticker Universe into Settings",
+  "priority": "P3",
+  "effort": "M (~1-1.5 days)",
+  "labels": [
+   "sprint",
+   "EPIC-02",
+   "cycle:2026-11-18__release-v9.18"
+  ]
+ },
+ {
+  "cycle": "2026-11-18__release-v9.18",
+  "epic": "EPIC-02",
+  "story_id": "ST-09",
+  "s2_id": "S2-09",
+  "source": "BLG-UX-11",
+  "title": "Make the quiet-day Dashboard a single line",
+  "priority": "P3",
+  "effort": "M (~1-2 days, spec revision then build)",
+  "labels": [
+   "sprint",
+   "EPIC-02",
+   "cycle:2026-11-18__release-v9.18"
+  ]
+ },
+ {
+  "cycle": "2026-11-18__release-v9.18",
+  "epic": "EPIC-02",
+  "story_id": "ST-10",
+  "s2_id": "S2-10",
+  "source": "BLG-FE-308",
+  "title": "Use one grace-period definition across the Dashboard",
+  "priority": "P3",
+  "effort": "S (~0.5 day)",
+  "labels": [
+   "sprint",
+   "EPIC-02",
+   "cycle:2026-11-18__release-v9.18"
+  ]
+ },
+ {
+  "cycle": "2026-11-18__release-v9.18",
+  "epic": "EPIC-02",
+  "story_id": "ST-11",
+  "s2_id": "S2-11",
+  "source": "BLG-UX-13",
+  "title": "Offer \"Plan this\" on the Today list's New signals rows",
+  "priority": "P3",
+  "effort": "XS (<1h build, after the spec line)",
+  "labels": [
+   "sprint",
+   "EPIC-02",
+   "cycle:2026-11-18__release-v9.18"
+  ]
+ },
+ {
+  "cycle": "2026-11-18__release-v9.18",
+  "epic": "EPIC-02",
+  "story_id": "ST-12",
+  "s2_id": "S2-12",
+  "source": "BLG-UX-19",
+  "title": "Show machine-checkable checklist items as automatic status",
+  "priority": "P3",
+  "effort": "S (~0.5-1 day, spec then build)",
+  "labels": [
+   "sprint",
+   "EPIC-02",
+   "cycle:2026-11-18__release-v9.18"
+  ]
+ },
+ {
+  "cycle": "2026-11-18__release-v9.18",
+  "epic": "EPIC-02",
+  "story_id": "ST-13",
+  "s2_id": "S2-13",
+  "source": "BLG-FE-320",
+  "title": "Filter Trade History and Journal by rules followed or broken",
+  "priority": "P3",
+  "effort": "M (~1-2 days)",
+  "labels": [
+   "sprint",
+   "EPIC-02",
+   "cycle:2026-11-18__release-v9.18"
+  ]
+ },
+ {
+  "cycle": "2026-11-18__release-v9.18",
+  "epic": "EPIC-03",
+  "story_id": "ST-14",
+  "s2_id": "S2-14",
+  "source": "BLG-SPEC-204",
+  "title": "Rename the Weekly Digest's journal completion figure",
+  "priority": "P3",
+  "effort": "S (~0.5 day)",
+  "labels": [
+   "sprint",
+   "EPIC-03",
+   "cycle:2026-11-18__release-v9.18"
+  ]
+ },
+ {
+  "cycle": "2026-11-18__release-v9.18",
+  "epic": "EPIC-03",
+  "story_id": "ST-15",
+  "s2_id": "S2-15",
+  "source": "BLG-UX-15",
+  "title": "Rewrite the Weekly Digest as a readable weekly summary",
+  "priority": "P3",
+  "effort": "S (~0.5-1 day)",
+  "labels": [
+   "sprint",
+   "EPIC-03",
+   "cycle:2026-11-18__release-v9.18"
+  ]
+ },
+ {
+  "cycle": "2026-11-18__release-v9.18",
+  "epic": "EPIC-03",
+  "story_id": "ST-16",
+  "s2_id": "S2-16",
+  "source": "BLG-UX-12",
+  "title": "Link the Weekly Digest figures to their pages",
+  "priority": "P3",
+  "effort": "S (~0.5 day)",
+  "labels": [
+   "sprint",
+   "EPIC-03",
+   "cycle:2026-11-18__release-v9.18"
+  ]
+ },
+ {
+  "cycle": "2026-11-18__release-v9.18",
+  "epic": "EPIC-03",
+  "story_id": "ST-17",
+  "s2_id": "S2-17",
+  "source": "BLG-FEAT-103",
+  "title": "Measure the core loop and show this week's loop on the Weekly Digest",
+  "priority": "P3",
+  "effort": "M (~2-3 days: metric definitions, one events table, digest section)",
+  "labels": [
+   "sprint",
+   "EPIC-03",
+   "cycle:2026-11-18__release-v9.18"
+  ]
+ },
+ {
+  "cycle": "2026-11-18__release-v9.18",
+  "epic": "EPIC-04",
+  "story_id": "ST-18",
+  "s2_id": "S2-18",
+  "source": "BLG-GOV-422",
+  "title": "Design gate data-source, writer and worked-example checks",
+  "priority": "P2",
+  "effort": "S (~0.5d)",
+  "labels": [
+   "sprint",
+   "EPIC-04",
+   "cycle:2026-11-18__release-v9.18"
+  ]
+ },
+ {
+  "cycle": "2026-11-18__release-v9.18",
+  "epic": "EPIC-04",
+  "story_id": "ST-19",
+  "s2_id": "S2-19",
+  "source": "BLG-QA-262",
+  "title": "Unit-test pure frontend logic in CI",
+  "priority": "P2",
+  "effort": "M (~1–2d)",
+  "labels": [
+   "sprint",
+   "EPIC-04",
+   "cycle:2026-11-18__release-v9.18"
+  ]
+ },
+ {
+  "cycle": "2026-11-18__release-v9.18",
+  "epic": "EPIC-04",
+  "story_id": "ST-20",
+  "s2_id": "S2-20",
+  "source": "BLG-QA-260",
+  "title": "Fail the axe scan on incomplete colour-contrast results",
+  "priority": "P3",
+  "effort": "XS (<1h)",
+  "labels": [
+   "sprint",
+   "EPIC-04",
+   "cycle:2026-11-18__release-v9.18"
+  ]
+ },
+ {
+  "cycle": "2026-11-18__release-v9.18",
+  "epic": "EPIC-04",
+  "story_id": "ST-21",
+  "s2_id": "S2-21",
+  "source": "BLG-QA-268",
+  "title": "Script the locator-collision check and run it from commit-check",
+  "priority": "P3",
+  "effort": "S (~0.5d)",
+  "labels": [
+   "sprint",
+   "EPIC-04",
+   "cycle:2026-11-18__release-v9.18"
+  ]
+ },
+ {
+  "cycle": "2026-11-18__release-v9.18",
+  "epic": "EPIC-04",
+  "story_id": "ST-22",
+  "s2_id": "S2-22",
+  "source": "BLG-GOV-420",
+  "title": "Require the pre-commit code review in execution_prompt.md",
+  "priority": "P2",
+  "effort": "XS (<1h)",
+  "labels": [
+   "sprint",
+   "EPIC-04",
+   "cycle:2026-11-18__release-v9.18"
+  ]
+ },
+ {
+  "cycle": "2026-11-18__release-v9.18",
+  "epic": "EPIC-04",
+  "story_id": "ST-23",
+  "s2_id": "S2-23",
+  "source": "BLG-GOV-421",
+  "title": "Enforce the prompt size budget on direct commits to main",
+  "priority": "P2",
+  "effort": "S (~0.5d)",
+  "labels": [
+   "sprint",
+   "EPIC-04",
+   "cycle:2026-11-18__release-v9.18"
+  ]
+ },
+ {
+  "cycle": "2026-11-18__release-v9.18",
+  "epic": "EPIC-04",
+  "story_id": "ST-24",
+  "s2_id": "S2-24",
+  "source": "BLG-GOV-388",
+  "title": "Count an item as shipped only on a ✅ COMPLETE banner line",
+  "priority": "P3",
+  "effort": "XS (<1h)",
+  "labels": [
+   "sprint",
+   "EPIC-04",
+   "cycle:2026-11-18__release-v9.18"
+  ]
+ },
+ {
+  "cycle": "2026-11-18__release-v9.18",
+  "epic": "EPIC-05",
+  "story_id": "ST-25",
+  "s2_id": "S2-25",
+  "source": "BLG-BE-208",
+  "title": "Use one native-entry function on every position path",
+  "priority": "P2",
+  "effort": "S (~0.5d)",
+  "labels": [
+   "sprint",
+   "EPIC-05",
+   "cycle:2026-11-18__release-v9.18"
+  ]
+ },
+ {
+  "cycle": "2026-11-18__release-v9.18",
+  "epic": "EPIC-05",
+  "story_id": "ST-26",
+  "s2_id": "S2-26",
+  "source": "BLG-BE-213",
+  "title": "Use the live FX rate, not a hard-coded 1.27",
+  "priority": "P2",
+  "effort": "S (~0.5d)",
+  "labels": [
+   "sprint",
+   "EPIC-05",
+   "cycle:2026-11-18__release-v9.18"
+  ]
+ },
+ {
+  "cycle": "2026-11-18__release-v9.18",
+  "epic": "EPIC-05",
+  "story_id": "ST-27",
+  "s2_id": "S2-27",
+  "source": "BLG-BE-223",
+  "title": "Handle a stock split on an open position",
+  "priority": "P2",
+  "effort": "M (~1.5-2 days: rule text, adjustment record, detection, tests)",
+  "labels": [
+   "sprint",
+   "EPIC-05",
+   "cycle:2026-11-18__release-v9.18"
+  ]
+ },
+ {
+  "cycle": "2026-11-18__release-v9.18",
+  "epic": "EPIC-05",
+  "story_id": "ST-28",
+  "s2_id": "S2-28",
+  "source": "BLG-BE-179",
+  "title": "Tag lifecycle transitions caused by the v9.12 currency correction",
+  "priority": "P3",
+  "effort": "S (~0.5d)",
+  "labels": [
+   "sprint",
+   "EPIC-05",
+   "cycle:2026-11-18__release-v9.18"
+  ]
+ },
+ {
+  "cycle": "2026-11-18__release-v9.18",
+  "epic": "EPIC-05",
+  "story_id": "ST-29",
+  "s2_id": "S2-29",
+  "source": "BLG-BE-181",
+  "title": "Keep GET /settings working when the change-log read fails",
+  "priority": "P3",
+  "effort": "XS (<1h)",
+  "labels": [
+   "sprint",
+   "EPIC-05",
+   "cycle:2026-11-18__release-v9.18"
+  ]
+ },
+ {
+  "cycle": "2026-11-18__release-v9.18",
+  "epic": "EPIC-05",
+  "story_id": "ST-30",
+  "s2_id": "S2-30",
+  "source": "BLG-SPEC-203",
+  "title": "Make the Reports unrealised P&L match the Positions basis",
+  "priority": "P3",
+  "effort": "S (~0.5d)",
+  "labels": [
+   "sprint",
+   "EPIC-05",
+   "cycle:2026-11-18__release-v9.18"
+  ]
+ },
+ {
+  "cycle": "2026-11-18__release-v9.18",
+  "epic": "EPIC-05",
+  "story_id": "ST-31",
+  "s2_id": "S2-31",
+  "source": "BLG-FE-225",
+  "title": "Cache the Trade Entry ATR preview per ticker and market",
+  "priority": "P3",
+  "effort": "S (~0.5 day)",
+  "labels": [
+   "sprint",
+   "EPIC-05",
+   "cycle:2026-11-18__release-v9.18"
+  ]
+ },
+ {
+  "cycle": "2026-11-18__release-v9.18",
+  "epic": "EPIC-06",
+  "story_id": "ST-32",
+  "s2_id": "S2-32",
+  "source": "BLG-OPS-217",
+  "title": "Finish the on-demand Yahoo failure diagnosis (remainder)",
+  "priority": "P2",
+  "effort": "S (~0.5d)",
+  "labels": [
+   "sprint",
+   "EPIC-06",
+   "cycle:2026-11-18__release-v9.18"
+  ]
+ },
+ {
+  "cycle": "2026-11-18__release-v9.18",
+  "epic": "EPIC-06",
+  "story_id": "ST-33",
+  "s2_id": "S2-33",
+  "source": "BLG-FE-294",
+  "title": "Show \"earnings unknown\" when an earnings or gap-risk lookup fails",
+  "priority": "P2",
+  "effort": "S (~0.5d)",
+  "labels": [
+   "sprint",
+   "EPIC-06",
+   "cycle:2026-11-18__release-v9.18"
+  ]
+ },
+ {
+  "cycle": "2026-11-18__release-v9.18",
+  "epic": "EPIC-06",
+  "story_id": "ST-34",
+  "s2_id": "S2-34",
+  "source": "BLG-OPS-220",
+  "title": "Let the visual-baseline workflow push regenerated snapshots",
+  "priority": "P3",
+  "effort": "XS (<1h)",
+  "labels": [
+   "sprint",
+   "EPIC-06",
+   "cycle:2026-11-18__release-v9.18"
+  ]
+ },
+ {
+  "cycle": "2026-11-18__release-v9.18",
+  "epic": "EPIC-06",
+  "story_id": "ST-35",
+  "s2_id": "S2-35",
+  "source": "BLG-OPS-205",
+  "title": "Seed staging's UK positions with the .L suffix",
+  "priority": "P3",
+  "effort": "XS (<1h)",
+  "labels": [
+   "sprint",
+   "EPIC-06",
+   "cycle:2026-11-18__release-v9.18"
+  ]
+ },
+ {
+  "cycle": "2026-11-18__release-v9.18",
+  "epic": "EPIC-06",
+  "story_id": "ST-36",
+  "s2_id": "S2-36",
+  "source": "BLG-OPS-206",
+  "title": "Build the E2E bundle once per Playwright run",
+  "priority": "P3",
+  "effort": "S (~0.5d)",
+  "labels": [
+   "sprint",
+   "EPIC-06",
+   "cycle:2026-11-18__release-v9.18"
+  ]
+ },
+ {
+  "cycle": "2026-11-18__release-v9.18",
+  "epic": "EPIC-06",
+  "story_id": "ST-37",
+  "s2_id": "S2-37",
+  "source": "BLG-QA-225",
+  "title": "Keep a bare root pytest out of the mutmut pilot tests",
+  "priority": "P3",
+  "effort": "XS (<0.5d)",
+  "labels": [
+   "sprint",
+   "EPIC-06",
+   "cycle:2026-11-18__release-v9.18"
+  ]
+ },
+ {
+  "cycle": "2026-11-18__release-v9.18",
+  "epic": "EPIC-06",
+  "story_id": "ST-38",
+  "s2_id": "S2-38",
+  "source": "BLG-QA-226",
+  "title": "Run the settings change-log SQL against real Postgres in CI",
+  "priority": "P3",
+  "effort": "S (~0.5d)",
+  "labels": [
+   "sprint",
+   "EPIC-06",
+   "cycle:2026-11-18__release-v9.18"
+  ]
+ },
+ {
+  "cycle": "2026-11-18__release-v9.18",
+  "epic": "EPIC-07",
+  "story_id": "ST-39",
+  "s2_id": "S2-39",
+  "source": "BLG-AI-29",
+  "title": "Check daily briefing and chat output against §13.2",
+  "priority": "P3",
+  "effort": "S (~0.5d)",
+  "labels": [
+   "sprint",
+   "EPIC-07",
+   "cycle:2026-11-18__release-v9.18"
+  ]
+ },
+ {
+  "cycle": "2026-11-18__release-v9.18",
+  "epic": "EPIC-07",
+  "story_id": "ST-40",
+  "s2_id": "S2-40",
+  "source": "BLG-GOV-378",
+  "title": "Decide whether the debrief may say more than one restating sentence",
+  "priority": "P3",
+  "effort": "S (~0.5d)",
+  "labels": [
+   "sprint",
+   "EPIC-07",
+   "cycle:2026-11-18__release-v9.18"
+  ]
+ }
+]

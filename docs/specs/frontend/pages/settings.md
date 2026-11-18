@@ -3,8 +3,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 1.10
-**Last Updated:** 2026-11-10 (ST-23, EPIC-05, v9.16, BLG-SPEC-201 — §1 names the moved display mirror `src/constants/strategy.js`); prior — 2026-10-12 (v9.12 design gate — ST-20/BLG-FE-201: Strategy Parameter helper text restated to §5–§7.2; ST-26/BLG-SEC-41: new §Last Change Line); prior — 2026-10-06 (ST-01, EPIC-01, v9.10, BLG-BE-138 — ruling (a) applied: the four Strategy Parameters are read-only §11 values; branches (b)/(c) removed); prior history retained — see prior entries in version control
+**Version:** 1.11
+**Last Updated:** 2026-11-18 (v9.18 design gate — ST-08/BLG-FE-323: Screener universe row links to Ticker Universe); prior — 2026-11-10 (ST-23, EPIC-05, v9.16, BLG-SPEC-201 — §1 names the moved display mirror `src/constants/strategy.js`); prior — 2026-10-12 (v9.12 design gate — ST-20/BLG-FE-201: Strategy Parameter helper text restated to §5–§7.2; ST-26/BLG-SEC-41: new §Last Change Line); prior history retained — see prior entries in version control
 **Design Source (§1 Strategy Parameter Editability):** docs/design/2026-10-06__release-v9.10/stop-parameter-settings-presentation/decision_record.md
 **Design Source (§6a AI Spend Trend Chart):** docs/design/2026-07-24__release-v7.8/ai-spend-trend-chart/ux_spec.md
 **Design Source (§6 AI Usage & Costs):** docs/design/2026-07-20__release-v7.6/consolidated-ai-cost-view/ux_spec.md (v1.1 addendum)
@@ -168,6 +168,8 @@ Preferences control how the interface is presented.
 
 > **`default_currency`** is a stored field (`GBP` only) that is not user-configurable via this UI. Multi-currency support is position-level (USD positions are tracked in native currency), not portfolio-level. The backend will reject any value other than `"GBP"` if submitted.
 
+- **Screener universe** *(v1.11, ST-08, BLG-FE-323)*: a read-only row, last in this group. Label "Screener universe", body "The tickers the screener scans each night.", and a link "Ticker Universe" (shared `OnwardLink` style) → `/settings/ticker-universe`, `data-testid="settings-ticker-universe-link"`. Ticker Universe has no sidebar entry from v9.18; this row and the command palette reach it (`navigation.md` v2.5). Design source: `docs/design/2026-11-18__release-v9.18/navigation-phase4-moves/decision_record.md` §3.
+
 ---
 
 ### 4. Risk Limits
@@ -327,6 +329,7 @@ Every settings write appends a change-log row (field, old value, new value, time
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.11 | 2026-11-18 | v9.18 design gate (ST-08, BLG-FE-323): §3 Preferences gains the "Screener universe" row linking to Ticker Universe, now a Settings detail page. Head of UX & Design sign-off: 2026-11-18. Product Owner approved: 2026-11-18. Head of Specs Team confirmed. |
 | 1.10 | 2026-11-10 | ST-23 (EPIC-05, v9.16, BLG-SPEC-201): §1 names the Strategy Parameter display mirror at its current path, `src/constants/strategy.js`; it still named the module's old `src/lib/` location, from before the v9.12 move (ST-21, BLG-GOV-369). Documentation only. |
 | 1.9 | 2026-10-12 | v9.12 design gate. (ST-20, BLG-FE-201) §1 helper text for the four fixed Strategy Parameters restated to the rules in force (`strategy_rules.md` §5, §6, §7.1, §7.2), "e.g." framing dropped. (ST-26, BLG-SEC-41) New §Last Change Line in the save bar from `GET /settings` `last_change`. Design source: `docs/design/2026-10-12__release-v9.12/settings-copy-and-last-change/decision_record.md`. Head of UX & Design sign-off: 2026-10-12. Product Owner approved: 2026-10-12. Head of Specs Team confirmed. |
 | 1.8 | 2026-10-06 | ST-01 (EPIC-01, BLG-BE-138): parameter-authority ruling (a), 2026-10-06 (`ESC-EXEC-20261006-01`). The four Strategy Parameters are read-only §11 values with the fixed caption; Save omits them. The ruling-conditional (b)/(c) branches are removed, as the design record requires. The Important note no longer says strategy-parameter changes take effect on the next analyze call. |

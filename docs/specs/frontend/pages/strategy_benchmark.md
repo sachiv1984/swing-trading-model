@@ -1,8 +1,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 0.11
-**Last Updated:** 2026-11-16 (ST-07, EPIC-02, v9.17, BLG-FE-263 — §3a Section Index built; build notes); prior — 2026-11-11 (v9.17 design gate — ST-07/BLG-FE-263: new §3a Section Index on the Benchmark tab); prior history retained — see prior entries in version control
+**Version:** 0.12
+**Last Updated:** 2026-11-18 (v9.18 design gate — ST-08/BLG-FE-323: becomes Performance's Strategy vs backtest section; §3a retired); prior — 2026-11-16 (ST-07, EPIC-02, v9.17, BLG-FE-263 — §3a Section Index built; build notes); prior — 2026-11-11 (v9.17 design gate — ST-07/BLG-FE-263: new §3a Section Index on the Benchmark tab); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Release:** v7.7
 **EPIC:** EPIC-01
@@ -34,6 +34,8 @@ Users should be able to:
 ---
 
 ## 2. Page Header
+
+> **v0.12 (v9.18 design gate, ST-08, BLG-FE-323):** this content becomes the "Strategy vs backtest" section of Performance (`performance.md` v1.3 §4.1); `/StrategyBenchmark` redirects to `/Performance?section=strategy-vs-backtest`. When ST-08 ships, the page header below is replaced by the section's `<h2>` "Strategy vs backtest" with the description "Compare live trading vs backtest" as its intro line; the "Benchmark data as of" line stays under it. The tab bar keeps `?tab=` (it does not collide with Performance's `?section=` or `?report=`). §3 Sticky Filter Bar is no longer sticky inside the section. The rest of this spec is unchanged and remains the content spec. Design source: `docs/design/2026-11-18__release-v9.18/navigation-phase4-moves/decision_record.md` §2.
 
 | Element | Spec |
 |---------|------|
@@ -68,6 +70,8 @@ Positioned below the page header. Remains visible while scrolling.
 ---
 
 ## 3a. Section Index (v0.10)
+
+> **Retired when ST-08 ships (v0.12, BLG-FE-323):** inside Performance, a second section index would compete with the page's own, and its `?section=` would collide. The four panels keep their headings as `<h3>` under the section's `<h2>`; `section-index.spec.js` SC-SIX-06 to SC-SIX-08 move to the Performance index or are removed by ST-08. The text below records the v0.10–v0.11 behaviour until then.
 
 **Design source:** `docs/design/2026-11-11__release-v9.17/long-page-section-index/decision_record.md`
 
@@ -384,6 +388,7 @@ All endpoints must be documented in `docs/reference/openapi.yaml` and `docs/spec
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.12 | 2026-11-18 | v9.18 design gate (ST-08, BLG-FE-323): the page becomes Performance's "Strategy vs backtest" section. §2 header replaced by the section heading and intro; §3 filter bar not sticky; §3a section index retired; content otherwise unchanged. Design source: `docs/design/2026-11-18__release-v9.18/navigation-phase4-moves/decision_record.md`. Head of UX & Design sign-off: 2026-11-18. Product Owner approved: 2026-11-18. Head of Specs Team confirmed. |
 | 0.11 | 2026-11-16 | ST-07 (EPIC-02, v9.17, BLG-FE-263): §3a built. Build notes added: only rendered panels are listed, the jumped-to section stays current near the end of the page, the load-time jump waits for data, sticky offset under the mobile header. No change to the section list or labels. |
 | 0.10 | 2026-11-11 | v9.17 design gate. (ST-07, BLG-FE-263) new §3a Section Index on the Benchmark tab (Open positions, Performance parity, Yearly breakdown, Trade log), the shared `SectionIndex`; `?section=` combines with `?tab=`. The Version Comparison and Backtest Rule Change tabs are unchanged. Design source: `docs/design/2026-11-11__release-v9.17/long-page-section-index/decision_record.md`. Approved: Head of UX & Design and Product Owner, 2026-11-11. |
 | 0.9 | 2026-11-03 | v9.15 design gate — (ST-18, EPIC-03, BLG-FE-220) §7.3 Exit Reason Badges: filled with white text ruled for every reason, matching the shipped page. Stop `bg-red-600`, Rebalance `bg-teal-600` → `bg-teal-700` (3.74:1 → 5.47:1); the unmapped-reason row records the shipped plain-text fallback. Design source: `docs/design/2026-11-03__release-v9.15/exit-reason-badges/decision_record.md`. Head of UX & Design + Product Owner approved. |

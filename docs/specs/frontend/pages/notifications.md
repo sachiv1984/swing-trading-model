@@ -1,8 +1,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 0.11
-**Last Updated:** 2026-10-12 (v9.12 design gate — ST-23/BLG-FE-200: new §Light Theme); prior — 2026-10-01 (ST-34, EPIC-05, v9.9, BLG-SPEC-169 — corrected §Section 2's and §Alert History's empty-state headings to drop the trailing period, matching already-shipped code and `design_system.md` §Data States; closed Known Deviation DEV-v9.7-ST05-01; documentation-only); prior — 2026-09-24 (ST-05/ST-06, EPIC-02, v9.7 sprint execution — added Known Deviation DEV-v9.7-ST05-01: this spec's two empty-state headings still carry a trailing period that shipped code no longer has; deviation documentation only, no spec wording changed); prior history retained — see prior entries in version control
+**Version:** 0.12
+**Last Updated:** 2026-11-18 (v9.18 design gate — ST-03/BLG-FE-318 Telegram wording and Not sent line; ST-04/BLG-FE-228 Alert History values); prior — 2026-10-12 (v9.12 design gate — ST-23/BLG-FE-200: new §Light Theme); prior — 2026-10-01 (ST-34, EPIC-05, v9.9, BLG-SPEC-169 — corrected §Section 2's and §Alert History's empty-state headings to drop the trailing period, matching already-shipped code and `design_system.md` §Data States; closed Known Deviation DEV-v9.7-ST05-01; documentation-only); prior history retained — see prior entries in version control
 **Design Source (v0.9 reflection reminder):** docs/design/2026-09-21__release-v9.6/reflection-reminder/decision_record.md
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Design Source:** docs/design/2026-03-18__release-v2.1/notification-feed/ux_spec.md | docs/design/2026-03-18__release-v2.1/notification-preferences/ux_spec.md | docs/design/2026-03-21__release-v2.2/alert-threshold-customisation/ux_spec.md | docs/design/2026-03-21__release-v2.2/alert-history-table/ux_spec.md | docs/design/2026-03-24__release-v2.3/alert-nav-badge/ux_spec.md | docs/design/2026-07-17__release-v7.5/custom-price-alerts/ux_spec.md | docs/design/2026-07-21__release-v7.7/nav-notification-digest-consolidation/ux_spec.md | docs/design/2026-07-24__release-v7.8/notification-accessibility-audit/decision_record.md
@@ -15,14 +15,14 @@
 
 The Notifications section covers four surfaces:
 1. **Notification Feed** — a chronological list of alert events triggered by the system
-2. **Notification Preferences** — per-alert-type configuration of email delivery
+2. **Notification Preferences** — per-alert-type configuration of Telegram delivery (v0.12; was "email", which the backend never sent)
 3. **Alert Rules** — per-rule threshold customisation (v2.2)
 4. **Alert History** — evaluation audit log showing every rule evaluation (v2.2)
 
 Users should be able to:
 - Review recent alert notifications at a glance
 - Mark individual notifications or all notifications as read
-- Configure which alert types trigger email delivery
+- Configure which alert types are also sent to Telegram
 - Set custom thresholds for applicable alert rules
 - Review a log of all alert rule evaluations and see which triggered
 - Navigate between surfaces via sub-navigation
@@ -79,6 +79,20 @@ Ordered newest first. Each item:
 | Timestamp | Relative time (e.g. `"2 hours ago"`); absolute datetime (ISO 8601) on hover |
 | Unread indicator | Left-border accent (design system accent colour) on unread items; absent on read items |
 | Mark as read button | Per-item; calls `PATCH /notifications/{id}`; removes unread indicator on success |
+| Delivery line *(v0.12, ST-03)* | Shown only when `delivery_status` is `not_sent`: "Not sent: Telegram not configured" or "Not sent: Telegram delivery failed", `text-xs text-app-warning` with an `AlertTriangle` icon (`aria-hidden`), `data-testid="notification-not-sent"`. Nothing for `sent`, `not_requested` or `pending` |
+
+
+**Delivery status (v0.12, ST-03, BLG-FE-318).** Design source: `docs/design/2026-11-18__release-v9.18/alert-delivery-truth/decision_record.md` §3. `GET /notifications` items gain `delivery_status` (`sent | not_requested | pending | not_sent`), derived server-side from `delivered`, `delivery_attempts` and `delivery_error` (`alerts_endpoints.md` and `openapi.yaml` in ST-03):
+
+| Stored state | `delivery_status` |
+|--------------|-------------------|
+| delivered | `sent` |
+| preference off (`delivery_attempts = 0` and not enqueued, or the "Telegram off for this alert type" error) | `not_requested` |
+| not delivered, error "Telegram not configured" | `not_sent` |
+| not delivered, `delivery_attempts ≥ 3`, other error | `not_sent` |
+| not delivered, retry still due (`delivery_attempts < 3`), or enqueued and not yet run | `pending` |
+
+With Telegram unconfigured, the backend now records `delivered = FALSE`, `delivery_error = 'Telegram not configured'` (was TRUE / 'email not configured'). Rows written before v9.18 are not rewritten and show no line.
 
 **Unread indicator:** 2px left-border in the design system accent colour. Read items render with neutral background and no border accent.
 
@@ -135,21 +149,23 @@ Full-width error panel: `"Unable to load notifications. Please refresh."`
 
 ### Page Header
 - H1: **"Notification Preferences"**
-- Subtitle: `"Configure which alerts you receive by email, and set custom thresholds."`
+- Subtitle: `"Choose which alerts are also sent to Telegram, and set custom thresholds."` (v0.12, ST-03, BLG-FE-318)
 
-### Section 1: Email Preferences
+### Section 1: Telegram Alerts
 
-A list of alert types with per-type email toggle. No Save button — each toggle persists immediately via `PATCH /notifications/preferences`.
+*(v0.12, ST-03, BLG-FE-318: was "Email Preferences". Design source: `docs/design/2026-11-18__release-v9.18/alert-delivery-truth/decision_record.md` §2. The API field and column stay `email_enabled`; it governs Telegram delivery.)*
 
-| Alert Type | Description | Email Toggle |
+A list of alert types with a per-type "Send to Telegram" toggle. No Save button — each toggle persists immediately via `PATCH /notifications/preferences`.
+
+| Alert Type | Description | Send to Telegram |
 |------------|-------------|--------------|
 | Stop Loss Approach | Notify when current stop is within threshold % of price | On / Off |
 | Grace Period Warning | Notify on days 8–9 of the grace period | On / Off |
 | Market Regime Change | Notify when market regime transitions to risk-off | On / Off |
 | Daily Portfolio Summary | Receive a daily digest of portfolio status | On / Off |
-| Reflection Reminder | Notify by email when a closed trade has no reflection after 48 hours | On / Off (**default Off**, v0.9) |
+| Reflection Reminder | Send to Telegram when a closed trade has no reflection after 48 hours | On / Off (**default Off**, v0.9) |
 
-**Reflection Reminder scope (v0.9):** like every type here, the toggle governs **email delivery only**; the in-app feed row (§Reflection Reminder Row) is always created. It defaults to Off so a newly introduced type does not start emailing the operator unasked.
+**Reflection Reminder scope (v0.9):** like every type here, the toggle governs **Telegram delivery only**; the in-app feed row (§Reflection Reminder Row) is always created. It defaults to Off so a newly introduced type does not start messaging the operator unasked.
 
 **Daily Portfolio Summary vs. Weekly Digest (v0.5, ST-02/EPIC-02/v7.7):** this row's helper text is extended to: `"Receive a daily digest of portfolio status. This is a daily notification — for a 7-day summary view, see the "` + inline link `"Weekly Digest"` (navigates to the Weekly Digest page) + `" page."` Differentiates the two easily-confused "portfolio summary" concepts (a daily push notification vs. a 7-day on-demand page) via copy and a cross-link, without merging or renaming either. See `docs/design/2026-07-21__release-v7.7/nav-notification-digest-consolidation/ux_spec.md` §2 AC4.
 
@@ -164,13 +180,13 @@ A list of alert types with per-type email toggle. No Save button — each toggle
 **Error state (load failure):** Inline error panel: `"Unable to load preferences. Please refresh."`
 
 ### Channel Scope
-Email is the only delivery channel for v2.2. SMS is not rendered.
+Telegram is the only delivery channel (v0.12). There is no email or SMS. No text on these pages says "email" (Playwright, ST-03).
 
 ---
 
 ### Section 2: Alert Rule Thresholds (v2.2)
 
-Displayed below the Email Preferences section under a sub-heading: **"Alert Thresholds"**.
+Displayed below the Telegram Alerts section under a sub-heading: **"Alert Thresholds"**.
 
 #### Supported Threshold Types
 
@@ -310,7 +326,7 @@ Notification-only — identical in kind to the existing Stop Loss Approach / Gra
 | Symbol | `symbol` | Uppercase ticker, or `—` if not symbol-specific |
 | Triggered | `triggered` | `true` → "Yes" (amber badge); `false` → "No" (grey badge) |
 | Notified | `notification_sent` | `true` → "Yes" (green badge); `false` → "No" (grey badge) |
-| Values | `values_compared` | Compact key-value summary; truncated to fit; full detail on row expand |
+| Values | `values_compared` | Compact summary per §Alert History Values (v0.12); truncated to fit; full detail on row expand |
 
 **Rule type display labels:**
 
@@ -321,6 +337,21 @@ Notification-only — identical in kind to the existing Stop Loss Approach / Gra
 | `market_regime_change` | Market Regime Change |
 | `daily_portfolio_summary` | Daily Portfolio Summary |
 | Unknown | Raw value (fallback) |
+
+#### Alert History Values (v0.12 — ST-04, BLG-FE-228)
+
+Design source: `docs/design/2026-11-18__release-v9.18/alert-delivery-truth/decision_record.md` §4. The UI reads the keys the backend writes (`alerts_service.py`); no backend rename.
+
+| Rule type | Keys written | Compact text |
+|-----------|--------------|--------------|
+| `stop_loss_approach` | `stop_price`, `current_price`, `gap_pct`, `threshold_pct` | "Price {current_price} · Stop {stop_price} · Gap {gap_pct}%" |
+| `grace_period_warning` | `holding_days`, `min_hold_days`, `days_remaining` | "Day {holding_days} of {min_hold_days} · {days_remaining} day(s) left" |
+| `market_regime_change` | `spy_risk_on`, `ftse_risk_on` (`{}` when not triggered) | "US {RISK-ON \| RISK-OFF \| UNKNOWN} · UK {…}" (true / false / null); `{}` → "—" |
+| `daily_portfolio_summary` | `open_positions` | "{open_positions} open position(s)" |
+
+- **Expanded labels:** Stop price, Current price, Gap to stop, Threshold, Days held, Grace period (days), Days left, US regime, UK regime, Open positions. Unknown keys keep the title-cased fallback.
+- **Currency:** prices use the row's market currency, not always USD. ST-04 traces whether `symbol` keeps the `.L` suffix and whether UK values are pounds or pence, derives the currency, and checks one real UK row before the commit.
+- Test: each of the four types shows its compact fields (unit or Playwright, ST-04).
 
 #### Sort
 
@@ -467,6 +498,7 @@ When the System nav group is collapsed, the badge count propagates to the group 
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.12 | 2026-11-18 | v9.18 design gate. (ST-03, BLG-FE-318) "email" → "Telegram" on Notification Preferences (Section 1 renamed "Telegram Alerts"; `email_enabled` kept); §Channel Scope; Feed rows gain a "Not sent" delivery line from a new derived `delivery_status`; unconfigured Telegram recorded as not delivered. (ST-04, BLG-FE-228) new §Alert History Values: compact text and labels mapped to the keys the backend writes (grace, regime and summary keys were all wrong), market-currency prices. Design source: `docs/design/2026-11-18__release-v9.18/alert-delivery-truth/decision_record.md`. Head of UX & Design sign-off: 2026-11-18. Product Owner approved: 2026-11-18. Head of Specs Team confirmed. |
 | 0.11 | 2026-10-12 | v9.12 design gate. (ST-23, BLG-FE-200) Light mode ruled a supported theme (resolves RISK-03). New §Light Theme: every colour on Notification Preferences and Alert History uses a light+dark pair from the light-theme token set, including the active tab and the section headings. Design source: `docs/design/2026-10-12__release-v9.12/light-theme-support/decision_record.md`. Head of UX & Design sign-off: 2026-10-12. Product Owner approved: 2026-10-12. Head of Specs Team confirmed. |
 | 0.10 | 2026-10-01 | ST-34 (EPIC-05, v9.9, BLG-SPEC-169): §Section 2's "No alert rules configured." and §Alert History's "No alert history yet." headings corrected to drop the trailing period, matching `AlertThresholdsSection.js`/`NotificationsHistory.js` (shipped v9.7, ST-05/ST-06) and `design_system.md` §Data States. Closes Known Deviation DEV-v9.7-ST05-01. `docs/testing/alert_thresholds_empty_state_scenarios.md` corrected in the same commit. Documentation only. |
 | 0.9 | 2026-09-21 | v9.6 design gate — ST-04 (EPIC-01, BLG-FEAT-98): added §Reflection Reminder Row — new `reflection_reminder` alert type reusing the standard feed row plus a "Write reflection" link to `/TradeHistory?reflect={trade_id}` (re-opens the existing reflection modal; needed because the modal has no route and is skippable), 48 h / one-per-trade / auto-read-on-completion rules; new "Reflection Reminder" row in §Email Preferences (email-only scope, default Off). **Note:** no row for 0.8 (the v9.5 ST-30 heading fix) was appended to this table — recoverable via version control. Authority: Head of Specs Team. |

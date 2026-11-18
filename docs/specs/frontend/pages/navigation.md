@@ -1,8 +1,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 2.4
-**Last Updated:** 2026-11-16 (ST-06, EPIC-02, v9.17, BLG-FE-259 — one Performance page replaces Analytics and Reports in Review; old routes redirect; onward links updated); prior — 2026-11-16 (ST-05, EPIC-02, v9.17, BLG-FE-258 — one Journal page replaces Trade Reflections and Red Flag Journal in Review; old routes redirect; Journal onward links; keyboard inventory row); prior — 2026-11-09 (ST-06/ST-07, EPIC-02, v9.16, BLG-FE-254/255 — §Onward Links: Signals and Screener gain "Plan this" to Trade Plan; Dashboard Today items built); prior history retained — see prior entries in version control
+**Version:** 2.5
+**Last Updated:** 2026-11-18 (v9.18 design gate — ST-08/BLG-FE-323 Strategy Benchmark into Performance, Ticker Universe under Settings; ST-16/BLG-UX-12 Weekly Digest onward links); prior — 2026-11-16 (ST-06, EPIC-02, v9.17, BLG-FE-259 — one Performance page replaces Analytics and Reports in Review; old routes redirect; onward links updated); prior — 2026-11-16 (ST-05, EPIC-02, v9.17, BLG-FE-258 — one Journal page replaces Trade Reflections and Red Flag Journal in Review; old routes redirect; Journal onward links; keyboard inventory row); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Design Source:** docs/design/2026-03-24__release-v2.3/sidebar-nav-groups/ux_spec.md
 **Design Source (v1.3 command palette):** docs/design/2026-07-17__release-v7.5/command-palette/ux_spec.md
@@ -69,13 +69,12 @@ Every page in `src/pages/` has one row. Labels are the glossary §UI Labels cano
 | `Research.js` | `/Research` (new landing) and `/research/:ticker` | Research | Find trades | Yes (new) | 4 | — |
 | `TradePlans.js` | `/TradePlans` | Trade Plans | Find trades | Yes (new) | 5 | — |
 | `TradePlan.js` | `/TradePlan` | Trade Plan | Find trades | No | — | Create/edit form for one plan; reached from Trade Plans, Trade Entry, Research and notifications |
-| `TickerUniverse.js` | `/TickerUniverse` | Ticker Universe | Find trades | Yes | 6 | — |
+| `TickerUniverse.js` | `/settings/ticker-universe` (v2.5; `/TickerUniverse` redirects, replace navigation) | Ticker Universe | Settings | No | — | Detail page of Settings (v2.5, ST-08, BLG-FE-323): configuration, not a daily find-trades task. Reached from Settings §3 Preferences "Screener universe" row and the command palette |
 | `TradeHistory.js` | `/TradeHistory` | Trade History | Review | Yes | 1 | — |
-| `Performance.js` | `/Performance` | Performance | Review | Yes | 2 | Summary, Reports, Analytics and Compliance sections (`performance.md`) |
-| `StrategyBenchmark.js` | `/StrategyBenchmark` | Strategy Benchmark | Review | Yes | 3 | — |
-| `Replay.js` | `/Replay` | Replay | Review | Yes | 4 | — |
-| `Journal.js` | `/Journal` | Journal | Review | Yes | 5 | Reflections, Red flags and Position notes tabs (`journal.md`) |
-| `WeeklyDigest.js` | `/WeeklyDigest` | Weekly Digest | Review | Yes | 6 | — |
+| `Performance.js` | `/Performance` | Performance | Review | Yes | 2 | Summary, Reports, Analytics, Compliance and Strategy vs backtest sections (`performance.md`) |
+| `Replay.js` | `/Replay` | Replay | Review | Yes | 3 | — |
+| `Journal.js` | `/Journal` | Journal | Review | Yes | 4 | Reflections, Red flags and Position notes tabs (`journal.md`) |
+| `WeeklyDigest.js` | `/WeeklyDigest` | Weekly Digest | Review | Yes | 5 | — |
 | `Settings.js` | `/Settings` | Settings | Settings | Yes | 1 | — |
 | `SystemStatus.js` | `/SystemStatus` | System Status | Settings | Yes | 2 | — |
 | `Dashboard.js` | `/Dashboard` | — | — | No | — | Removed by ST-12; `/Dashboard` redirects to `/` (§Legacy Dashboard Route) |
@@ -83,8 +82,9 @@ Every page in `src/pages/` has one row. Labels are the glossary §UI Labels cano
 | `RedFlagJournal.js` | `/RedFlagJournal` | — | — | No | — | Removed by ST-05 (v9.17, BLG-FE-258); redirects to `/Journal?section=red-flags` (`journal.md` §5) |
 | `PerformanceAnalytics.js` | `/PerformanceAnalytics` | — | — | No | — | Removed by ST-06 (v9.17, BLG-FE-259); redirects to `/Performance?section=analytics` (`?section=strategy-compliance` → `section=compliance`; `performance.md` §7) |
 | `Reports.js` | `/Reports` | — | — | No | — | Removed by ST-06 (v9.17, BLG-FE-259); redirects to `/Performance?section=reports` (`performance.md` §7) |
+| `StrategyBenchmark.js` | `/StrategyBenchmark` | — | — | No | — | Page route removed by ST-08 (v9.18, BLG-FE-323); redirects to `/Performance?section=strategy-vs-backtest` (`performance.md` §7). The file may remain as the section's component |
 
-**Counts:** 19 sidebar entries: the 21 of v2.0 less Trade Reflections, Red Flag Journal, Analytics and Reports, plus Journal and Performance. 3 detail pages without a sidebar entry, each with a parent. 5 page files removed, each with a redirect.
+**Counts (v2.5):** 17 sidebar entries: the 19 of v2.4 less Strategy Benchmark (now a Performance section) and Ticker Universe (now a Settings detail page). Find trades 5, Review 5, Settings 2. 4 detail pages without a sidebar entry, each with a parent. 6 page routes removed, each with a redirect.
 
 **`__StandingAlertHarness.js`** is a test-only harness on `/__test/standing-alert` (no Layout). It is not a page and has no placement or label.
 
@@ -95,7 +95,7 @@ Every page in `src/pages/` has one row. Labels are the glossary §UI Labels cano
 ## Default Expansion and Collapse
 
 - **Expanded by default:** Today and Portfolio, plus the active area if it is a different one.
-- **Active area:** the area that contains the current page, or the current page's parent for a page without a sidebar entry (Trade Plan → Find trades; Notification History and Notification Preferences → Today). The active area is always expanded and cannot be collapsed while the user is on one of its pages.
+- **Active area:** the area that contains the current page, or the current page's parent for a page without a sidebar entry (Trade Plan → Find trades; Notification History and Notification Preferences → Today; Ticker Universe → Settings). The active area is always expanded and cannot be collapsed while the user is on one of its pages.
 - **Other areas:** the user can expand or collapse them by clicking the area header.
 - **Persistence:** collapse state is kept in `sessionStorage` and resets to the default on a full page reload. A user's explicit collapse of Today or Portfolio holds for the session, the same as for any non-active area.
 - **Mobile drawer:** same areas, order and default expansion as desktop.
@@ -108,7 +108,7 @@ Every page in `src/pages/` has one row. Labels are the glossary §UI Labels cano
 
 ## Active Item
 
-The current page's sidebar entry keeps the existing highlight. A page without a sidebar entry highlights its parent's entry (Trade Plan → Trade Plans, Notification History and Notification Preferences → Notifications, `/research/:ticker` → Research).
+The current page's sidebar entry keeps the existing highlight. A page without a sidebar entry highlights its parent's entry (Trade Plan → Trade Plans, Notification History and Notification Preferences → Notifications, `/research/:ticker` → Research, Ticker Universe → Settings).
 
 ## Alert Badge Integration
 
@@ -129,6 +129,7 @@ Every page without a sidebar entry shows a parent link above its page heading: a
 | Research (`/research/:ticker`) | Research | `/Research` |
 | Notification History | Notifications | `/notifications` |
 | Notification Preferences | Notifications | `/notifications` |
+| Ticker Universe (v2.5) | Settings | `/Settings` |
 
 An existing "Back" button that calls `navigate(-1)` may stay, but it does not replace the parent link: Back depends on how the user arrived.
 
@@ -152,12 +153,11 @@ An existing "Back" button that calls `navigate(-1)` may stay, but it does not re
 | Trade Plan | Trade Entry from the plan | Exists |
 | Ticker Universe | Screener | Built — ST-03 (v9.16) |
 | Trade History | Research for a trade's ticker | Built — ST-03 (v9.16): each row has a "Research {TICKER}" icon link to `/research/:ticker` beside the ticker; clicking the ticker text still expands the row |
-| Performance | Trade History | Built — ST-06 (v9.17, `performance.md` §7); replaces the Analytics and Reports rows |
-| Strategy Benchmark | Performance (Analytics section) | Built — ST-03 (v9.16); target changed by ST-06 (v9.17) |
+| Performance | Trade History | Built — ST-06 (v9.17, `performance.md` §7); replaces the Analytics and Reports rows. v2.5: absorbs Strategy Benchmark's row (its onward link is now on the same page) |
 | Replay | Trade History | Built — ST-03 (v9.16) |
 | Journal | Trade History filtered to the item's ticker ("View trade" on each reflection and red flag); Positions for an open position's note ("Open position") | Built — ST-05 (v9.17, `journal.md` §4); replaces the Trade Reflections and Red Flag Journal rows |
-| Weekly Digest | Notifications | Exists |
-| Settings | Notification Preferences | Built — ST-03 (v9.16) |
+| Weekly Digest | Performance Summary (realised P&L), Performance Compliance (journal completion), Journal Red flags (red flags, last 7 days), Notifications (alert counts) — `weekly_digest.md` v0.3 §2 | Notifications exists; the other three ST-16 (v9.18). The journal completion link goes to Performance Compliance because no Journal section shows that rate (v9.18 design gate) |
+| Settings | Notification Preferences (header); Ticker Universe (§3 Preferences "Screener universe" row, v2.5) | Notification Preferences built — ST-03 (v9.16); Ticker Universe ST-08 (v9.18) |
 | Notification Preferences | Notifications (parent link); Weekly Digest | Parent link built — ST-02 (v9.16); Weekly Digest link exists |
 | System Status | Settings | Built — ST-03 (v9.16) |
 
@@ -284,6 +284,8 @@ Centred modal overlay (shared `Dialog` component) with a single search input and
 
 Empty input shows recent/frequent pages only (no "Your Data" group). Typing filters both groups live via fuzzy match.
 
+**Moved pages (v2.5, ST-08):** "Strategy vs backtest" (→ `/Performance?section=strategy-vs-backtest`) and "Ticker Universe" (→ `/settings/ticker-universe`) stay in the Pages group under their new targets; "Strategy Benchmark" is kept as a search alias for "Strategy vs backtest".
+
 ### Selection & Navigation
 
 - Page result → navigates to that route.
@@ -329,6 +331,7 @@ First-session-only dismissible tooltip on the nav-bar search affordance. No moda
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.5 | 2026-11-18 | v9.18 design gate, adopting re-review §14.2 (DL-089). (ST-08, BLG-FE-323) Strategy Benchmark becomes Performance's "Strategy vs backtest" section; `/StrategyBenchmark` redirects. Ticker Universe moves to `/settings/ticker-universe`, a Settings detail page with a parent link; `/TickerUniverse` redirects. Sidebar 19 → 17; Review renumbered. (ST-16, BLG-UX-12) Weekly Digest onward links. ST-07 keeps the `design_system.md` §14.5 half and dates the approval of both. Design source: `docs/design/2026-11-18__release-v9.18/navigation-phase4-moves/decision_record.md`. Head of UX & Design sign-off: 2026-11-18. Product Owner approved: 2026-11-18. Head of Specs Team confirmed. |
 | 2.4 | 2026-11-16 | ST-06 (EPIC-02, v9.17, BLG-FE-259), per `performance.md` §2 and §7. §Page Placement: one Performance row (Review, position 2) replaces Analytics and Reports; both old routes listed as removed with their redirects; counts updated; "Later merges" note closed. §Onward Links: one Performance row replaces the Analytics and Reports rows; Strategy Benchmark and the Dashboard compliance card point at Performance. |
 | 2.3 | 2026-11-16 | ST-05 (EPIC-02, v9.17, BLG-FE-258), per `journal.md` §2. §Page Placement: one Journal row (Review, position 6) replaces Trade Reflections and Red Flag Journal; both old routes listed as removed with their redirects; counts updated; "Later merges" note updated. §Onward Links: one Journal row replaces the two; Positions gains "Position notes"; Dashboard's red-flag card goes to the Journal's Red flags section. Keyboard inventory: the Red Flag Journal ticker input row is now the Journal's shared filter. |
 | 2.2 | 2026-11-09 | ST-06/ST-07 (EPIC-02, v9.16, BLG-FE-254/255). §Onward Links: Signals → Trade Plan and Screener → Trade Plan rows ("Plan this", `signal-to-plan-flow` decision record §5); Dashboard Today items marked built. No sidebar rule changes. |

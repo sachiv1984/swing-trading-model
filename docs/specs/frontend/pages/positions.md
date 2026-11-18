@@ -3,8 +3,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.29
-**Last Updated:** 2026-11-17 (ST-08, EPIC-03, v9.17, BLG-FE-265 — §Review Cadence flagged text `text-amber-700 dark:text-amber-400` in table and Grid View; Grid View card themed for the light theme); prior — 2026-11-16 (ST-05, EPIC-02, v9.17, BLG-FE-258 — Journal View removed from Positions: §View Switcher is Grid and Table plus a "Position notes" link to the Journal; §Journal View superseded by `journal.md` §4); prior — 2026-11-13 (ST-19, EPIC-07, v9.17, BLG-SPEC-202 — PROFITABLE and EXIT ZONE tooltips reworded without a number, option (b); option (a) wording removed); prior history retained — see prior entries in version control
+**Version:** 2.30
+**Last Updated:** 2026-11-18 (v9.18 design gate — ST-27/BLG-BE-223 Split Detected State (tier 0); ST-33/BLG-FE-294 Earnings Unknown); prior — 2026-11-17 (ST-08, EPIC-03, v9.17, BLG-FE-265 — §Review Cadence flagged text `text-amber-700 dark:text-amber-400` in table and Grid View; Grid View card themed for the light theme); prior — 2026-11-16 (ST-05, EPIC-02, v9.17, BLG-FE-258 — Journal View removed from Positions: §View Switcher is Grid and Table plus a "Position notes" link to the Journal; §Journal View superseded by `journal.md` §4); prior history retained — see prior entries in version control
 **Design Source (v9.14 additions):** docs/design/2026-10-29__release-v9.14/stale-price-marker/decision_record.md, docs/design/2026-10-29__release-v9.14/monitor-grace-aware-suggestions/decision_record.md, docs/design/2026-10-29__release-v9.14/last-reviewed-ended-grace/decision_record.md
 **Design Source (v9.13 additions):** docs/design/2026-10-16__release-v9.13/monitor-exit-queue/decision_record.md, docs/design/2026-10-16__release-v9.13/chat-answer-rating/decision_record.md
 **Design Source (v9.11 additions):** docs/design/2026-10-08__release-v9.11/grace-alert-calendar-days/decision_record.md
@@ -29,6 +29,7 @@
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.30 | 2026-11-18 | v9.18 design gate. (ST-27, BLG-BE-223) new urgency tier 0 "Split to confirm" and §Split Detected State: Action needed line, paused stop cells, expanded-row line, confirmation dialog with Before → After, worked example. (ST-33, BLG-FE-294) new §Earnings Unknown: muted "Earnings: unknown" for `data_status: unavailable`, no GAP RISK badge on missing data, not cached. Design source: `docs/design/2026-11-18__release-v9.18/position-data-states/decision_record.md`. Head of UX & Design sign-off: 2026-11-18. Product Owner approved: 2026-11-18. Head of Specs Team confirmed. |
 | 2.29 | 2026-11-17 | ST-08 (EPIC-03, v9.17, BLG-FE-265), semantic colour token sweep: §Review Cadence "Flagged display" `text-amber-600` → `text-amber-700 dark:text-amber-400` (amber-600 is 3.19:1 on white; the table moved in v9.16 ST-09, and the Grid View card is now themed, so both use it). No behaviour change. |
 | 2.28 | 2026-11-16 | (ST-05, EPIC-02, v9.17, BLG-FE-258, per `journal.md` §2 and §5) The Journal View leaves Positions. §View Switcher: Grid and Table only, plus a "Position notes" header link to `/Journal?section=notes` before the Daily Monitor button; the heading is always "Positions". §Journal View is marked superseded by `journal.md` §4 (its content stays here as the reference that section cites). Keyboard requirements, "Hidden in Journal View" notes, Responsive Behavior, Empty State and API Dependencies no longer name a journal view. |
 | 2.27 | 2026-11-13 | (ST-19, EPIC-07, v9.17, BLG-SPEC-202) §Position Lifecycle State Badge: PROFITABLE and EXIT ZONE tooltips take the design record §7 option (b) wording, which states no R multiple (Strategy Rules & System Intent Owner, RISK-05, 2026-11-12). The option (a) wording and its `{EXIT_ZONE_R_MULTIPLE}` placeholder are removed. No `strategy_rules.md`, constants or lint change. |
@@ -112,12 +113,24 @@ One shared module, `src/lib/positionUrgency.js` (`getUrgencyTier`, `compareByUrg
 
 | Tier | Name | Test |
 |------|------|------|
+| 0 | Split to confirm *(v2.30, ST-27, BLG-BE-223)* | A split detected on the position's ticker and not yet confirmed (§Split Detected State). Its stop and exit tests are paused, so it must not fall to tier 4 |
 | 1 | Exit condition met | `getExitCondition(position).riskOff` (`src/lib/exitCondition.js`) |
 | 2 | Stop reached | `isPostGraceStopBreach(position)` |
 | 3 | Near stop | Post-grace, not tier 1–2, stop distance ≤ 5.0% (the `risk_dashboard.md` §6 rose band) |
 | 4 | Other | Everything else, including every in-grace position |
 
 Within a tier: stop distance % ascending, then ticker A–Z; a null distance sorts last in its tier. A deep link does not change the order. Headers are not sortable. A muted caption above the table reads "Sorted by what needs attention first" (`data-testid="urgency-caption"`).
+
+### Split Detected State (v2.30 — ST-27, BLG-BE-223)
+
+**Design source:** `docs/design/2026-11-18__release-v9.18/position-data-states/decision_record.md` §2. The arithmetic is the `strategy_rules.md` split rule (ST-27 sub-step 1, Strategy Rules & System Intent Owner approval before the build); this section fixes only the display.
+
+- **Action needed:** "Split detected — confirm adjustment", a link-styled button (`text-xs font-medium text-app-warning`, `data-testid="split-detected-{ticker}"`) that opens the confirmation dialog. Same line in Grid view and the narrow-screen cards.
+- **Stop and To stop cells:** "Paused: split to confirm" (`text-xs text-app-muted`); no breach badge, no colour band. **P&L %:** the value with a muted "pre-split basis" second line.
+- **Expanded row:** "{ratio} split on {effective date} ({source}). Stop alerts and exit suggestions are paused for this position until you confirm."
+- **Confirmation dialog** (shared `Dialog`; focus trap; Escape = Cancel): title "Confirm {TICKER} {ratio} split"; a Before → After table for Shares, Entry price and Stop; "Cost unchanged: {cost}"; buttons "Confirm adjustment" (primary) and "Cancel". Confirm applies the adjustment in one request; the position then takes its normal tier.
+- No "Not a split" option in v9.18. Cancel leaves the position in tier 0.
+- **Worked example:** 10 shares at 200.00 USD, stop 180.00, 2:1 split on day D, price 104.00. Before confirm: tier 0, stop cell paused, no breach. After: 20 shares at 100.00 (cost 2,000.00 unchanged), stop 90.00, tier 4 (13.5% to stop). Without this state, 104.00 < 180.00 would read as STOP REACHED.
 
 ### Stop Distance
 
@@ -130,7 +143,7 @@ Within a tier: stop distance % ascending, then ticker A–Z; a null distance sor
 
 Expand chevron · **Ticker** (with market pill) · **Price** (with stale marker) · **Stop** (trailing stop, breach badge, frozen indicator; in grace "Not enforced (grace)") · **To stop** · **P&L %** · **Action needed** · Actions (unchanged icon buttons).
 
-**Action needed** (`data-testid="action-needed"`): tier 1 the existing "RISK OFF" pill; tier 2 the existing "STOP REACHED" pill; tier 3 "Near stop" (`text-xs font-medium text-app-negative`); in grace with `grace_days_remaining = 1` "Grace ends today" (`text-xs text-app-warning`); otherwise "—".
+**Action needed** (`data-testid="action-needed"`): tier 0 "Split detected — confirm adjustment" (§Split Detected State); tier 1 the existing "RISK OFF" pill; tier 2 the existing "STOP REACHED" pill; tier 3 "Near stop" (`text-xs font-medium text-app-negative`); in grace with `grace_days_remaining = 1` "Grace ends today" (`text-xs text-app-warning`); otherwise "—".
 
 ### Expanded Row
 
@@ -614,6 +627,19 @@ No alert: dash ("—").
 **Alert clearing:** When `risk_off_exit = false` (regime recovered), badge absent automatically. No manual dismiss.
 
 **§13 constraint:** Display-only. No automated exit triggered.
+
+### Earnings Unknown (v2.30 — ST-33, BLG-FE-294)
+
+**Design source:** `docs/design/2026-11-18__release-v9.18/position-data-states/decision_record.md` §4. `GET /earnings/{ticker}` and the gap-risk response gain `data_status: ok | unavailable` (ST-33).
+
+| `data_status` | `days_until_earnings` | Earnings cell / expanded row | Alerts cell |
+|---------------|-----------------------|------------------------------|-------------|
+| ok | n ≥ 0 | unchanged | unchanged (Gap Risk Badge when flagged) |
+| ok | null | nothing (unchanged) | unchanged |
+| unavailable | null | "Earnings: unknown" | no GAP RISK badge; "Earnings: unknown" when the gap-risk earnings input is unavailable |
+
+- "Earnings: unknown": `text-xs text-app-muted`, tooltip and `aria-describedby` "The earnings date could not be fetched. It will be retried." Muted, never the GAP RISK amber or wording: it is missing data, not a flag. Not a new gap-risk trigger under the §13 gap-risk review (`decisions--2026-09-30__release-v9.9--gap-risk-flag-section13-review.md`); ST-33 cites its binding conditions.
+- An `unavailable` answer is not cached for the session; the next render retries.
 
 ### Gap Risk Badge (v6.9 — ST-02)
 

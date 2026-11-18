@@ -1,8 +1,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 1.2
-**Last Updated:** 2026-08-14
+**Version:** 1.3
+**Last Updated:** 2026-11-18 (v9.18 design gate — ST-08/BLG-FE-323: route moves under Settings); prior — 2026-08-14 (v8.8 design gate — §10 Filtering); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Design Source (v1.2):** docs/design/2026-08-14__release-v8.8/ticker-universe-search-sector-industry-filters/decision_record.md
 **Design Source (v1.0):** docs/design/2026-05-21__release-v3.9/ticker-universe-enhancements/ux_spec.md
@@ -29,8 +29,10 @@ Users should be able to:
 
 ## 2. Navigation and Route
 
-- Route: `/ticker-universe`
+- Route *(v1.3, ST-08, BLG-FE-323)*: `/settings/ticker-universe`, a detail page of Settings with no sidebar entry (`navigation.md` v2.5). `/TickerUniverse` redirects there (replace navigation, query kept). (This section's earlier `/ticker-universe` never matched the shipped `/TickerUniverse`; corrected here.)
+- Parent link: "Settings" → `/Settings` (`navigation.md` §Parent Links). Entry point: Settings §3 Preferences "Screener universe" row (`settings.md` v1.11); command palette.
 - Page title: **"Ticker Universe"**
+- Content unchanged by the move. Design source: `docs/design/2026-11-18__release-v9.18/navigation-phase4-moves/decision_record.md` §3**
 
 ---
 
@@ -136,6 +138,7 @@ Design source: `docs/design/2026-08-14__release-v8.8/ticker-universe-search-sect
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.3 | 2026-11-18 | v9.18 design gate (ST-08, BLG-FE-323): §2 route moves under Settings (`/settings/ticker-universe`), parent link Settings, `/TickerUniverse` redirect; no content change. Design source: `docs/design/2026-11-18__release-v9.18/navigation-phase4-moves/decision_record.md`. Head of UX & Design sign-off: 2026-11-18. Product Owner approved: 2026-11-18. Head of Specs Team confirmed. |
 | 1.2 | 2026-08-14 | v8.8 design gate — §10 Filtering added (ST-15, EPIC-03, BLG-FE-163): search/sector/industry filter controls extend the existing Market/Active pill filter bar, AND-combined; "Clear filters" reset control implemented as `Badge variant="secondary"` — first live call site for that shadcn variant (see also `BLG-FE-160`/ST-17). Design source: `docs/design/2026-08-14__release-v8.8/ticker-universe-search-sector-industry-filters/decision_record.md`. Head of UX & Design + Product Owner confirmed 2026-08-14. |
 | 1.1 | 2026-05-23 | v4.0 design gate (ST-05, EPIC-02): §8 Add Ticker — validation error message specified: ticker-not-found 400/422 displays backend error message verbatim; other errors show generic fallback. Design Pre-Approved (extends existing inline-error pattern). Head of UX & Design + Product Owner 2026-05-23. |
 | 1.0 | 2026-05-21 | Initial spec. v3.9 design gate — documents v3.8 shipped page + ST-05 (.L suffix strip from display labels, §5) + ST-06 (company_name column, §4). Design source: docs/design/2026-05-21__release-v3.9/ticker-universe-enhancements/ux_spec.md. Approved: Product Owner 2026-05-21. Head of Specs Team confirmed. |

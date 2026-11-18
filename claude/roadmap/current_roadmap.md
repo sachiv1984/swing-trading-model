@@ -1,7 +1,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-11-18 (roadmap rebalance `2026-11-18__scheduled` STEP 9 — §1 Next planned release → v9.18; §3 v9.18 section added with the Site Structure & Usability Phase 4 programme plan (DL-089); §5 Full Compliance Scoring and Customisable Dashboard Layout marked killed (DL-090); Last rebalance refreshed); prior — 2026-11-17 (session, user-directed — programme plan close-out row marked done: `BLG-UX-08` re-review complete; the subsection retires at the next `manage roadmap`); prior — 2026-11-17 (post-ship closure `2026-11-11__release-v9.17` STEP 2 — v9.17 ✅ Complete; Next planned release → [TBD]; programme plan Phase 3 marked shipped; §8 row added; RA:v9.17 closure status added; STEP 11 manage roadmap — 0 retired, RA:v9.13-committed-items pointer pruned; restored the missing `**Last Updated:**` label on this line); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-18 (Release Planning `2026-11-18__release-v9.18` STEP 5 — execution notes added under the §3 v9.18 section, `RA:v9.18`); prior — 2026-11-18 (roadmap rebalance `2026-11-18__scheduled` STEP 9 — §1 Next planned release → v9.18; §3 v9.18 section added with the Site Structure & Usability Phase 4 programme plan (DL-089); §5 Full Compliance Scoring and Customisable Dashboard Layout marked killed (DL-090); Last rebalance refreshed); prior — 2026-11-17 (session, user-directed — programme plan close-out row marked done: `BLG-UX-08` re-review complete; the subsection retires at the next `manage roadmap`); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-11-18 (cycle 2026-11-18__scheduled — Standard tier, CPS=N/A (0 active initiatives, 20th consecutive cycle); STEP -1.5 clean (all 5 deferred patches from 2026-11-03 applied); full-roster intake IW-20261118-01 (27 ideas → 15 backlog items, 2 rejected); PO adopted the 2026-11-17 re-review §14 as the Site Structure & Usability Phase 4 brief (BLG-UX-21) and killed the 4 initiatives the ST-45 sunset review flagged; PVR 0.355 (Advisory, 2nd reading); Skill-Silo 60.2% pooled (above ceiling, sustained-failure clause applies); STEP 8.1 Option (a), v9.18 section added; DL-089, DL-090)
 
 > ⚠️ **Standing Notice:** This document records product intent and prioritisation thinking. All implementation detail (formulas, schemas, endpoint paths) is illustrative and indicative only. Before any feature moves to implementation, the relevant canonical specifications must be authored or updated by the appropriate domain owner. This document must not be cited as canonical intent.
@@ -563,6 +563,16 @@ Today you find stocks through external research and add them to the watchlist ma
 | `BLG-FEAT-103` — measure the core loop; show this week's loop on the Weekly Digest | Filed this run (4 ideas, incl. the Challenger's "measure first"); measures Phase 4 as it ships | P3 | M (~2-3 days) |
 
 Committed ≈ 12-20 days of the ~24–28-day band. Build-and-ship U-items for the §7.1 sustained-failure clause: `BLG-FE-311`, `BLG-FE-312`, `BLG-FE-318`, `BLG-FE-294`, `BLG-UX-11`, `BLG-FE-320`, `BLG-FE-323` (≥ 2 required). The rest of v9.18 is set by `plan release v9.18`; P2 work outside this section (for example `BLG-BE-223`, stock splits) is seated by the P1-then-P2 rule as usual.
+
+<!-- roadmap-annotation-marker: RA:v9.18:2026-11-18__release-v9.18 -->
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-11-18__release-v9.18
+- Plan published: 2026-11-18
+- Cycle folder: claude/cycles/2026-11-18__release-v9.18/
+- Backlog slice: claude/cycles/2026-11-18__release-v9.18/stage4_backlog_slice.md
+- Status at annotation: Committed
+- All 19 committed items above are seated (40 stories, 27.95 days, 7 EPICs); `BLG-QA-260` by recorded Product Owner override
 
 **Programme plan — Site Structure & Usability, Phase 4 (provisional — later stages are not committed by this section; each is seated by its own `plan release`, and a rebalance may revise it):**
 

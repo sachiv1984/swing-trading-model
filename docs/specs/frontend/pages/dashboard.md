@@ -3,8 +3,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 4.3
-**Last Updated:** 2026-11-13 (ST-10, EPIC-04, v9.17, BLG-FE-254 — §1B Known Deviations: DEV-EPIC04-ST10-01, Stops moved data source and today-or-previous-weekday window); prior — 2026-11-11 (v9.17 design gate — ST-04/BLG-FE-257: Card 3 click target is the single grace view, `/Positions?grace=open`); prior — 2026-11-09 (ST-06, EPIC-02, v9.16, BLG-FE-254 — §1B Group headers and TL-21: the Market regime header shows its name only, no count; clarification, edited on user direction); prior history retained — see prior entries in version control
+**Version:** 4.4
+**Last Updated:** 2026-11-18 (v9.18 design gate — ST-09/BLG-UX-11 §3A quiet-day collapse; ST-10/BLG-FE-308 §4B one grace definition; ST-11/BLG-UX-13 "Plan this" on New signals rows); prior — 2026-11-13 (ST-10, EPIC-04, v9.17, BLG-FE-254 — §1B Known Deviations: DEV-EPIC04-ST10-01, Stops moved data source and today-or-previous-weekday window); prior — 2026-11-11 (v9.17 design gate — ST-04/BLG-FE-257: Card 3 click target is the single grace view, `/Positions?grace=open`); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Release:** v8.8
 **EPIC:** EPIC-03
@@ -64,7 +64,7 @@ The list has five groups, always in this order. Within a group, the item order i
 | 2 | **Exits due** | `GET /positions`, filtered by the shared `getExitCondition` predicate (`positions.md` §Exit Dialog Pre-Selection and Deep Link): a post-grace stop breach or `risk_off_exit` | Ticker · reason pill ("RISK OFF" `#1E40AF` or "STOP REACHED" `#EA580C`, existing pills) · "Review exit" link | Risk-off first, then stop reached (the predicate's own precedence); A–Z by ticker within each | "Review exit" → `/Positions?exit={position_id}`, `aria-label="Review exit for {TICKER}"` |
 | 3 | **Grace ends today** | `GET /positions`: open positions in grace with `grace_days_remaining = 1` (Day 10 of 10, `positions.md` §Grace Period Alert Zone day convention) | Ticker · "Grace ends today — the trailing stop applies from the next session" | A–Z by ticker | Row links to `/Positions?position={position_id}` |
 | 4 | **Stops moved** | `GET /positions` field `stop_last_moved_date` and `previous_stop` (new, read-only; see Data dependency) | Ticker · "Stop moved from {previous} to {current}" in the position's native currency | A–Z by ticker | Row links to `/Positions?position={position_id}` |
-| 5 | **New signals** | `GET /signals`, today's rows by the same filter Card 4 uses today: `signal_date` equals the user's local date, or `created_date` starts with it (`SignalStatusCard.js`). Every status counts, as in Card 4's count | Ticker · market · "Research" link | The order the screener produced them (`signal_date DESC, rank ASC`, the API's order). The rank number is not shown | "Research" → `/research/{ticker}`, `aria-label="Research {TICKER}"` |
+| 5 | **New signals** | `GET /signals`, today's rows by the same filter Card 4 uses today: `signal_date` equals the user's local date, or `created_date` starts with it (`SignalStatusCard.js`). Every status counts, as in Card 4's count | Ticker · market · "Research" link · "Plan this" link (v4.4, `new` and `watchlisted` only) | The order the screener produced them (`signal_date DESC, rank ASC`, the API's order). The rank number is not shown | "Research" → `/research/{ticker}`, `aria-label="Research {TICKER}"`. "Plan this" → `/TradePlan?ticker={ticker}&market={market}&entry_price={current_price}&signal_id={id}` (`entry_price` omitted when null), `aria-label="Plan this: {TICKER}"`, `data-testid="today-plan-{ticker}"` — the `signals.md` §"Plan this" Action route |
 
 - **Caps:** groups 2–5 show at most 5 items. Overflow shows a "+N more" link: Exits due, Grace ends today and Stops moved → `/Positions`; New signals → `/Signals`.
 - **Exits due sub-line:** under the Exits due group header, the v9.10 muted sub-line stays: "These positions meet a strategy exit condition (§8). Nothing is exited automatically."
@@ -111,7 +111,7 @@ The five Morning Briefing cards, the AI Daily Briefing, Cards 1, 2, 3 and 5, Gat
 
 ### Strategy constraints (§13)
 
-- Display-only: every item is a link to a page; no item executes, confirms or pre-fills an action.
+- Display-only: every item is a link to a page; no item executes or confirms an action. *(v4.4, ST-11, BLG-UX-13; Product Owner decision 2026-11-18)* "Plan this" opens the Trade Plan form, which pre-fills on arrival and saves nothing until the user saves, exactly as from Signals (`signals.md` §"Plan this" Action, whose §13 note covers it). It is the same label on every eligible row, not a ranking or a "do this".
 - New signals lists signals the screener already produced, in the screener's order. The list adds no ranking, score, highlight or "do this" wording (brief §2.2 constraint), so no separate §13 confirmation is needed. Changing that needs its own §13 confirmation first.
 - Exits due reuses the v9.10 Exit Conditions Met copy, already checked. The Grace ends today and Stops moved copy is new, display-only, and covered by TL-20. All list copy must pass `scripts/check_ui_copy_forbidden_phrases.py`.
 
@@ -150,6 +150,7 @@ The five Morning Briefing cards, the AI Daily Briefing, Cards 1, 2, 3 and 5, Gat
 | TL-27 | Mobile (375px): groups stack full width in the same order | Playwright at 375px |
 | TL-28 | With Card 4 removed, Recent Activity spans the full width of its row (§3) | Playwright: Recent Activity card width equals the row width at 1440px |
 | TL-29 | New signals uses Card 4's date filter (local `signal_date`, or `created_date` starting with it) and counts every status | Playwright with one signal of each status dated today and one dated yesterday |
+| TL-30 | *(v4.4, ST-11)* A New signals row with status `new` or `watchlisted` shows "Plan this", which opens Trade Plan pre-filled with the signal's ticker and market; rows with other statuses show only "Research"; "Plan this" is a link, so TL-19 still holds | Playwright: statuses `new`, `entered`, `watchlisted` → "Plan this" on the first and third; click opens `/TradePlan` with ticker and market filled |
 
 
 ### Known Deviations
@@ -207,7 +208,7 @@ Design source: `docs/design/2026-07-15__release-v7.2/dashboard-briefing-hierarch
 | Card | Primary Metric | Sub-Label / Detail | Empty State | Data Source | Click Target |
 |------|----------------|--------------------|-------------|-------------|--------------|
 | Screener Hits | Count of new hits since last visit | "since your last visit" | "No new hits" | `GET /screener/results` | `/screener` |
-| Positions to Act On | Count in EXIT_ZONE or GRACE_PERIOD state | Up to 3 tickers with state + days-in-state; "+N more" on overflow | "All clear" | `GET /positions` filtered by state | `/positions` |
+| Positions to Watch *(v4.4, ST-10; was "Positions to Act On", never the shipped name)* | Count of in-grace positions (§4B) | "{n} in grace", plus " · {m} ending within 2 days" when any has `grace_days_remaining ≤ 2`. No "exit zone" wording | Folds into the quiet-day line (§3A) | `GET /positions` (`isInGrace`) | `/Positions?grace=open` when the count is above 0, else `/Positions` |
 | Red Flags | Count of new events since last weekly digest | "since last digest" | "No new red flags" | `GET /portfolio/red-flag-journal` | `/red-flag-journal` |
 | Earnings Alert | Count of watchlisted/open-position tickers with earnings in next 7 days | Up to 2 tickers with day-of-week; "+N more" on overflow | "No earnings this week" | `GET /earnings/{ticker}` per ticker | Earnings calendar or `/watchlist` |
 | Compliance | Current Arc 5 compliance score | Trend arrow ↑↓→ vs prior week; "vs last week" | N/A — score always present when endpoint available | `GET /analytics/arc5-compliance` | `/analytics` |
@@ -265,6 +266,39 @@ Row 2: [ Signal Status                    ] [ Recent Activity              ]
 
 All 5 cards stack vertically in order: Open Positions → Portfolio Heat → In Grace Today → Signal Status → Recent Activity. (v4.0: Signal Status is removed, so four cards stack; the Today list stacks above them, §1B.)
 
+### Quiet-Day Collapse (v4.4 — ST-09, BLG-UX-11)
+
+**Design source:** `docs/design/2026-11-18__release-v9.18/dashboard-quiet-day/decision_record.md` §2
+
+Below the Today list, an element whose data has loaded and is empty **folds**: it is not rendered, and its name joins one text line instead. "Empty" is the element's existing `empty` test; nothing new decides it.
+
+| Element | Folds when | Name in the line | Entry goes to |
+|---------|-----------|------------------|---------------|
+| Screener Hits | `newHits === 0` | Screener hits | `/Screener` |
+| Positions to Watch | in-grace count = 0 | Positions to watch | `/Positions?grace=open` |
+| Red Flags | `total === 0` | Red flags | `/Journal?section=red-flags` |
+| Earnings Alert | `count === 0` | Earnings | `/Positions` |
+| Compliance | `score == null` | Compliance | `/Performance?section=compliance` |
+| AI Daily Briefing | no briefing for today | AI briefing | disclosure (below) |
+| Card 1 Open Positions | `open.length === 0` | Open positions | `/Positions` |
+| Card 2 Portfolio Heat | `heat == null` | Portfolio heat | `/RiskDashboard` |
+| Card 3 In Grace Today | in-grace count = 0 | In grace | `/Positions?grace=open` |
+| Card 5 Recent Activity | `recent.length === 0` | Recent activity | `/TradeHistory` |
+| What's New (§6A) | `changes.length === 0` | What's new | disclosure (below) |
+
+- **The line:** directly below the Today list. "Nothing to show: " then the folded names in table order, separated by " · ", each a link. `text-sm text-app-muted`; names `text-app-fg`, underline on hover. `data-testid="dashboard-nothing-to-show"`. Not shown when nothing folds. No icon, box or illustration. Not "All clear": the page does not judge that the portfolio is safe (§13), and it is wrong for a missing compliance score.
+- **Disclosure entries:** "AI briefing" and "What's new" are `<button aria-expanded="false">`. Activating one renders that card unfolded in its normal position for the rest of the visit (not persisted), so the AI briefing's Regenerate control stays reachable.
+- **Containers:** when all six briefing elements fold, the briefing panel is not rendered; when Cards 1–3 all fold, their row is not rendered. Cards with data keep their v4.0 positions and order; the grid re-flows with no gaps.
+- **Loading and error:** an element renders its own skeleton while loading, and joins the line only once loaded and empty. An error is not empty: an element that fails shows its error state in place.
+- **Never fold:** the Today list (it has its own quiet line, §1B) and Gate Progress (§6).
+
+| ID | Behaviour | Test |
+|----|-----------|------|
+| QD-01 | With the quiet-day fixture, at most 1 empty-state element is below "Due today": the line, listing all 11 names | Playwright, light and dark |
+| QD-02 | A card with data keeps its v4.0 position (one open position: Cards 1 and 2 in Row 1; Card 3 folds) | Playwright |
+| QD-03 | Each line entry goes to its target; "AI briefing" reveals the AI Daily Briefing card with Regenerate and sets `aria-expanded="true"` | Playwright |
+| QD-04 | A failing element shows its error in place and is not in the line | Playwright: `GET /screener/results` 500 |
+
 ### Page Title (v7.0 — ST-08)
 
 `<h1>` "Dashboard" — `text-slate-900 dark:text-white` (was bare `text-white`, invisible on light theme, ~1.1:1 contrast). Reuses the app's existing primary-text pairing (`Layout.js`, dark-mode toggle), no new colour token introduced. Light: `text-slate-900` on `bg-slate-100` ≈17.9:1 (AAA). Dark: `text-white` unchanged, no regression. Sizing/weight unchanged. Design source: `docs/design/2026-07-12__release-v7.0/heading-light-theme-contrast/decision_record.md`.
@@ -276,7 +310,7 @@ All 5 cards stack vertically in order: Open Positions → Portfolio Heat → In 
 ### Card 1 — Open Positions
 
 - **Primary:** count of open positions (integer, large)
-- **Sub-label:** state breakdown: “N profitable / N losing / N in grace”
+- **Sub-label:** state breakdown: “N profitable / N losing / N in grace”. *(v4.4, ST-10)* "in grace" counts `isInGrace` (§4B), not `grace_days_remaining > 0 || status === "GRACE"`.
 - **Source:** `GET /positions` (active filter)
 - **Click target:** navigates to `/positions`
 
@@ -299,8 +333,8 @@ All 5 cards stack vertically in order: Open Positions → Portfolio Heat → In 
 
 ### Card 3 — In Grace Today
 
-- **Primary:** count of positions currently in grace period (integer)
-- **Sub-label:** “Next expires: {date}” using the earliest `grace_end_date` among grace positions; if none in grace: show “No positions in grace”
+- **Primary:** count of positions currently in grace period (integer), by `isInGrace` (§4B) *(v4.4, ST-10)*
+- **Sub-label** *(v4.4, ST-10; was “Next expires: {date}” from `grace_end_date`, a field no endpoint returns)*: the Risk Dashboard grace panel's text (`risk_dashboard.md` §5.2), from the minimum `grace_days_remaining` among in-grace positions: 1 → “Ends today”; n ≥ 2 → “Next ends in {n − 1} day(s)”; no in-grace position has a day count → no sub-label. One function, `nextEndsText` in `src/lib/positionUrgency.js`, serves both pages. If none in grace: the card folds (§3A).
 - **Source:** `GET /portfolio` or `GET /positions`
 - **Click target:** navigates to `/Positions?grace=open`, which opens the single grace view (`positions.md` v2.25 §Grace Period View) *(v4.2 — ST-04, BLG-FE-257; was `/risk`, scrolled to the grace panel)*
 
@@ -336,6 +370,31 @@ All 5 cards stack vertically in order: Open Positions → Portfolio Heat → In 
 - **Zero means "displays as £0.00" (v3.8 — ST-15, BLG-FE-204):** the three-way glyph and badge colour test the P&L **as displayed**, rounded to 2 decimal places, not the raw value. A `pnl` of `0.004` displays as "£0.00", so it gets the neutral `Minus` glyph and slate colour. A `pnl` of `0.01` still gets `TrendingUp` and emerald. This is the `design_system.md` v1.21 rule ("zero renders unsigned in the neutral tone") applied to the displayed figure, so the glyph never disagrees with the adjacent "£0.00" text.
 
 If no recent activity: show “No recent trade activity”
+
+---
+
+## 4B. One Grace Definition (v4.4 — ST-10, BLG-FE-308)
+
+**Design source:** `docs/design/2026-11-18__release-v9.18/dashboard-quiet-day/decision_record.md` §3
+
+Every Dashboard grace count uses one predicate: `isInGrace(position)` from `src/lib/positionUrgency.js` (`grace_period === true` from `GET /positions`), the predicate of `positions.md` §Grace Period View. That is Positions to Watch, Card 1's "N in grace" and Card 3. The Today list's Grace ends today group is a subset: `isInGrace` and `grace_days_remaining = 1`.
+
+`GET /positions` sets `grace_period = holding_days < 10` and `grace_days_remaining = 10 − holding_days` only when in grace (else `null`), so the two agree on that endpoint. The stored `status` and `grace_end_date` (never returned) are not used.
+
+| Position | `grace_period` | `grace_days_remaining` | stored `status` | In grace | Grace ends today |
+|----------|----------------|------------------------|-----------------|----------|------------------|
+| held 0 days | true | 10 | GRACE | Yes | No |
+| held 9 days | true | 1 | GRACE | Yes | Yes |
+| held 10 days | false | null | GRACE (stale) | No | No |
+| held 8 days | true | 2 | OPEN | Yes | No |
+| held 30 days | false | null | PROFITABLE | No | No |
+
+With these five, every grace count is 3; Card 3 reads "Ends today"; Positions to Watch reads "3 in grace · 2 ending within 2 days".
+
+| ID | Behaviour | Test |
+|----|-----------|------|
+| GD-01 | With a fixture where `grace_period` and `grace_days_remaining`/`status` disagree for one position, every Dashboard grace count shows the same number | Playwright |
+| GD-02 | Positions to Watch opens `/Positions?grace=open` when its count is above 0 | Playwright |
 
 ---
 
@@ -578,6 +637,7 @@ Cards are fully clickable (entire card surface is the click target). Visual affo
 
 | Version | Date | Change |
 |---------|------|--------|
+| 4.4 | 2026-11-18 | v9.18 design gate. (ST-09, BLG-UX-11) New §3A Quiet-Day Collapse: zero-state elements below the Today list fold into one "Nothing to show:" line with links (QD-01–QD-04). (ST-10, BLG-FE-308) New §4B One Grace Definition (`isInGrace`); §1A card renamed to the shipped "Positions to Watch" and redefined on it, linking to the grace view; Card 1 and Card 3 use it; Card 3 sub-label from `grace_days_remaining` (the `grace_end_date` it read is never returned). (ST-11, BLG-UX-13) §1B New signals rows gain "Plan this" for `new`/`watchlisted` (Product Owner decision); §13 bullet amended; TL-30. Design source: `docs/design/2026-11-18__release-v9.18/dashboard-quiet-day/decision_record.md`. Head of UX & Design sign-off: 2026-11-18. Product Owner approved: 2026-11-18. Head of Specs Team confirmed. |
 | 4.3 | 2026-11-13 | ST-10 (EPIC-04, v9.17, BLG-FE-254): §1B Known Deviations added: DEV-EPIC04-ST10-01 (Stops moved written by both stop recompute paths per the 2026-11-13 ruling; TL-09's latest nightly run date read as today or the previous weekday (UTC), ruling 2026-11-13; `BLG-SPEC-238`). Deviation documentation only; no other text changed. |
 | 4.2 | 2026-11-11 | v9.17 design gate. (ST-04, BLG-FE-257) Card 3 — In Grace Today: click target changes from `/risk` to `/Positions?grace=open`, the single grace view (`positions.md` v2.25 §Grace Period View). Count and next-expiry line unchanged. The Morning Briefing "Positions to Watch" card is already a count and a link and is unchanged. Design source: `docs/design/2026-11-11__release-v9.17/positions-decision-first/decision_record.md` §5.3. Approved: Head of UX & Design and Product Owner, 2026-11-11. |
 | 4.1 | 2026-11-09 | ST-06 (EPIC-02, v9.16, BLG-FE-254). §1B Group headers and TL-21: the Market regime header shows its name only, "Market regime", with no count, because its rows are the two markets, not items due. Clarification, no behaviour change. Recommended by the Frontend Specifications & UX Documentation Owner (agent-mediated, §5.3) after the EPIC-02 DoQ review; edited on user direction, 2026-11-09. |
