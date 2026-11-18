@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-09-19 (rebalance 2026-09-19__scheduled — DL-080; no initiative changes; 0 active initiatives (13 consecutive cycles); CPS=N/A; no displacement candidate named (no initiatives); prior: rebalance 2026-09-14__scheduled — DL-079; no initiative changes; 0 active initiatives (12 consecutive cycles); CPS=N/A; prior: rebalance 2026-08-11__scheduled — DL-078; no initiative changes; 0 active initiatives; CPS=N/A; prior history retained — see prior entries in version control (§16.14 header-history retention rule, BLG-GOV-283 — current entry plus at most 2 prior entries retained).
+**Last Updated:** 2026-11-18 (rebalance 2026-11-18__scheduled — DL-090: Position Correlation Analysis, Backtesting Module, Full Compliance Scoring and Customisable Dashboard Layout moved from Priority 3 — Deferred to Killed (ST-45 sunset review flags, BLG-GOV-408); 0 active initiatives (20th consecutive cycle); CPS=N/A; no displacement candidate named); prior — 2026-09-19 (rebalance 2026-09-19__scheduled — DL-080; no initiative changes; 0 active initiatives (13 consecutive cycles); CPS=N/A; no displacement candidate named (no initiatives); prior history retained — see prior entries in version control
 
 > ⚠️ Standing Notice: This register is a planning inventory only. It does not constitute canonical specification. All implementation detail is indicative until confirmed in canonical specs.
 
@@ -42,13 +42,9 @@ This register provides a canonical inventory of all roadmap initiatives with cur
 
 | Initiative | Rationale |
 |-----------|-----------|
-| Position Correlation Analysis | Not urgent; single-user scale |
-| Backtesting Module | High value; significant scope |
 | Multi-Portfolio Support | Low value at current scale |
 | Mobile App | Web experience sufficient |
-| Full Compliance Scoring | Lightweight version in v1.9 |
 | BLG-TECH-05 Prometheus | Defer until multi-user or operational need |
-| Customisable Dashboard Layout | High build cost; low current priority |
 
 ---
 
@@ -58,6 +54,10 @@ This register provides a canonical inventory of all roadmap initiatives with cur
 |----|-----------|------|----------|-----------------|
 | 4.1a | CSV Export of Trade History | 2026-03-01 | Superseded by BLG-FEAT-07 (shipped v1.6.1) | DL-001 |
 | 4.1c | Server-Side PDF Report | 2026-03-15 | Displaced by BLG-OPS-01 (Dev Environment). Standing displacement candidate since DL-005. Browser-print functional; structural QA gap is higher priority. | DL-008 |
+| PC-DEF | Position Correlation Analysis | 2026-11-18 | Killed — ST-45 sunset review flag (v9.15). Market Correlation Analysis (MKT-COR, v2.7) covers the portfolio-level need; a per-position remainder has no evidence of use at single-user scale. | DL-090 |
+| BT-DEF | Backtesting Module | 2026-11-18 | Killed — ST-45 sunset review flag (v9.15). Covered by PO-05 Lightweight Replay Mode (v9.7) and the strategy backtest engine (`backtest_rule_change` router, Strategy Benchmark). A future need for more is a new idea, not this initiative. | DL-090 |
+| FCS-DEF | Full Compliance Scoring | 2026-11-18 | Killed — ST-45 sunset review flag (v9.15). Delivered in substance by the Arc 5 composite compliance score (v4.1, `metrics_definitions.md` v1.11), surfaced in Reports and the SI-05 digest. | DL-090 |
+| CDL-DEF | Customisable Dashboard Layout | 2026-11-18 | Killed — ST-45 sunset review flag (v9.15). The adopted Phase 4 brief (DL-089, re-review §14.3) makes the Dashboard calmer and fixed by job, not configurable. | DL-090 |
 
 ---
 

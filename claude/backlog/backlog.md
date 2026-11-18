@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-17 (session — 1 new item added: BLG-GOV-424; AUD-2026-11-17-003); prior — 2026-11-17 (session — 1 new item added: BLG-UX-21; BLG-UX-08 re-review §14 target state); prior — 2026-11-17 (session — 5 new items added: BLG-UX-19, BLG-FE-320, BLG-FEAT-102, BLG-UX-20, BLG-SPEC-240; BLG-UX-08 re-review §13 competitors and best-in-class); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-18 (roadmap rebalance `2026-11-18__scheduled` STEP 9 and STEP 11 — 16 items added (BLG-GOV-429 is the Friction Item 1 tracking item); STEP 9 — from `IW-20261118-01` (BLG-BE-223, BLG-SEC-47, BLG-FEAT-103/104, BLG-GOV-425–428, BLG-FE-321–324, BLG-OPS-222, BLG-QA-272/273); Provisional-Target set to v9.18 (17 items) or v9.19 (17 items) for Phase 4 and the v9.18 Now section, DL-089; BLG-UX-21 decision recorded; BLG-GOV-408 ✅ COMPLETE); prior — 2026-11-17 (session — 1 new item added: BLG-GOV-424; AUD-2026-11-17-003); prior — 2026-11-17 (session — 1 new item added: BLG-UX-21; BLG-UX-08 re-review §14 target state); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -4314,7 +4314,7 @@ ST-31 adds `paths-ignore: ['claude/**', 'docs/**']` and pass-through jobs to the
 **Owner:** Product Owner; PMO Lead
 **Source:** Sprint Planning `2026-11-03__release-v9.15` STEP 6.2: post-merge tracker for ST-45 (`BLG-GOV-196`) AC 2, plus ST-44's (`BLG-GOV-195`) §2 follow-up, user-authorised — 2026-11-03
 **Effort:** XS (<1h)
-**Provisional-Target:** next `run roadmap` after v9.15
+**Provisional-Target:** ✅ COMPLETE — 2026-11-18 — resolved directly by roadmap rebalance `2026-11-18__scheduled`, not via a sprint story: both decision records are linked as run inputs in its `run_manifest.md`; ST-44 flagged nothing (4 exclusions re-confirmed); the 4 initiatives ST-45 flagged are killed (DL-090)
 **Depends on:** `BLG-GOV-195` and `BLG-GOV-196` (v9.15 ST-44, ST-45) decision records filed
 
 **Problem**
@@ -5617,7 +5617,7 @@ axe on Trade Entry finds `label` (the Risk % number input and the entry date inp
 **Owner:** QA & Testing Owner
 **Source:** EPIC-03 (2026-11-06__release-v9.16) agent-mediated Director of Quality review, pass 1 — 2026-11-10
 **Effort:** XS (<1h)
-**Provisional-Target:** v9.17
+**Provisional-Target:** v9.18 (Now-horizon section, roadmap rebalance `2026-11-18__scheduled`, DL-089)
 
 **Problem**
 `runAxeScan` in tests/e2e/accessibility-axe-scan.spec.js fails only on `violations`. axe returns contrast it cannot decide (for example text on a translucent tint) as `incomplete`, which is silently ignored: the Positions table grace pill measured 4.48:1 against AA 4.5:1 yet the light scan passed (fixed in EPIC-03 with amber-800, 6.32:1).
@@ -6210,7 +6210,7 @@ After EPIC-01, `src/pages/Positions.js` is 1,549 lines (1,211 on `main` before i
 **Owner:** Head of Specs Team; Head of UX & Design
 **Source:** EPIC-01 retrospective on its 12 backlog filings, `2026-11-11__release-v9.17`, user-directed — 2026-11-12
 **Effort:** S (~0.5d)
-**Provisional-Target:** TBD
+**Provisional-Target:** v9.18 (Now-horizon section, roadmap rebalance `2026-11-18__scheduled`, DL-089)
 
 **Problem**
 EPIC-01 filed 12 follow-up backlog items. Six were spec questions that a design gate check could have settled before any code was written. `BLG-BE-215`: the design record told `GracePeriodView` to take every row's trade plan from `GET /positions/grace-period-alerts`, but that endpoint's contract (line 12) returns only rows with `grace_days_remaining <= 2`. `BLG-SPEC-234` and `BLG-SPEC-235`: one value, `grace_days_remaining`, is shown on five surfaces (strip, grace row, Risk Dashboard panel, expanded-row pill, Today list), each specified separately. They disagreed on the last day ("ends in 1 day" next to "Grace ends today") and on counts. `BLG-SPEC-232`, `BLG-SPEC-233` and `BLG-SPEC-236` were the same kind of question: a rule written for the normal case, with its other input states not listed (the "To stop" basis, an in-grace position below its stop, a fresh staleness indicator counting as a warning). `design_gate_prompt.md` STEP 2.2 asks for "edge cases" but names neither check.
@@ -6233,7 +6233,7 @@ EPIC-01 filed 12 follow-up backlog items. Six were spec questions that a design 
 **Owner:** QA & Testing Owner; Head of Engineering
 **Source:** EPIC-01 retrospective on its 12 backlog filings, `2026-11-11__release-v9.17`, user-directed — 2026-11-12
 **Effort:** M (~1–2d)
-**Provisional-Target:** TBD
+**Provisional-Target:** v9.18 (Now-horizon section, roadmap rebalance `2026-11-18__scheduled`, DL-089)
 
 **Problem**
 The repo has no frontend unit tests (`find src -name "*.test.js"` finds none), and no CI workflow runs `npm test`, although `react-scripts test` is configured. Pure modules such as `src/lib/positionUrgency.js` and `src/lib/exitCondition.js` are tested only through Playwright, which builds the app and mocks the API and so covers few inputs. Three EPIC-01 filings were edge-input bugs in pure functions that a table-driven unit test would have caught in the ST-01 commit: `BLG-FE-289` (a null `grace_period` is treated two ways), `BLG-FE-290` (a string `"1"` for `grace_days_remaining`) and `BLG-FE-292` (`stopDistanceR` with a 0 stop).
@@ -6407,7 +6407,7 @@ The detector reports a documented index or CHECK constraint as missing without s
 **Owner:** Frontend Specifications & UX Documentation Owner; Head of Engineering
 **Source:** ST-15 (`BLG-OPS-217`), EPIC-06, cycle `2026-11-11__release-v9.17` — production `api_call_log` read (`DEL-20261113-01`) — 2026-11-13
 **Effort:** S (~0.5d)
-**Provisional-Target:** TBD
+**Provisional-Target:** v9.18 (Now-horizon section, roadmap rebalance `2026-11-18__scheduled`, DL-089)
 
 **Problem**
 `GET /earnings/{ticker}` returns the same null response when the Yahoo lookup fails as when a ticker has no upcoming earnings, and `useEarnings` (`src/hooks/useEarnings.js`) shows no badge for either. It also caches the failed null for the browser session. In production in the 7 days to 2026-11-13, 344 of the 366 failed Yahoo calls behind earnings lookups came in one burst (2026-11-09 15:37–15:38), so the earnings badge and the gap-risk warning (which depends on `get_earnings()`) disappeared for every ticker in that window, indistinguishable from "no earnings soon". ST-15 reduces the bursts (12-hour cache, at most 4 lookups at once), but a failed lookup still looks like "no earnings". Separately, the Screener looks up earnings for UK rows (about 44 of the failing symbols), although the `strategy_rules.md` §4.2.3 earnings check applies to US tickers only.
@@ -6821,7 +6821,7 @@ ST-08 moved the Monthly heatmap tile fills to emerald-800/700, slate-600 and ros
 **Owner:** Head of UX & Design; Frontend Specifications & UX Documentation Owner
 **Source:** `BLG-UX-08` re-review, finding F1 (`docs/ux/site_structure_rereview_2026-11-17.md`) — 2026-11-17
 **Effort:** M (~1-2 days, spec revision then build)
-**Provisional-Target:** TBD
+**Provisional-Target:** v9.18 (Now-horizon section, roadmap rebalance `2026-11-18__scheduled`, DL-089)
 
 **Problem**
 On a quiet day the Dashboard shows "Nothing due today" and then 11 empty-state boxes: the 5 Morning Briefing cards, the AI briefing, Open Positions, Portfolio Heat, In Grace Today, Recent Activity and What's New (`dashboard-home-light/dark-chromium.png`). The 2026-11-03 review set a target of 1. `dashboard.md` §3 v4.0 kept the briefing panel and status cards below the Today list unchanged, so the page still reports status rather than saying there is nothing to do.
@@ -6842,7 +6842,7 @@ On a quiet day the Dashboard shows "Nothing due today" and then 11 empty-state b
 **Owner:** Frontend Specifications & UX Documentation Owner; Head of Engineering
 **Source:** `BLG-UX-08` re-review, finding F2 (`docs/ux/site_structure_rereview_2026-11-17.md`) — 2026-11-17
 **Effort:** S (~0.5 day)
-**Provisional-Target:** TBD
+**Provisional-Target:** v9.18 (Now-horizon section, roadmap rebalance `2026-11-18__scheduled`, DL-089)
 
 **Problem**
 The Dashboard shows grace in 4 places with 3 definitions. "Positions to Watch" (`ExitZoneCard.js`) counts `grace_period === true` and links to `/Positions`, not the grace view. "Open Positions" (`OpenPositionsCard.js`) counts `grace_days_remaining > 0` or status `GRACE`. The Today list counts `grace_days_remaining === 1`, and "In Grace Today" links to `/Positions?grace=open`. Counts of the same thing computed differently can disagree on screen, the risk `BLG-BE-183` showed.
@@ -6863,7 +6863,7 @@ The Dashboard shows grace in 4 places with 3 definitions. "Positions to Watch" (
 **Owner:** Head of UX & Design; Frontend Specifications & UX Documentation Owner
 **Source:** `BLG-UX-08` re-review, finding F3 (`docs/ux/site_structure_rereview_2026-11-17.md`) — 2026-11-17
 **Effort:** S (~0.5 day)
-**Provisional-Target:** TBD
+**Provisional-Target:** v9.18 (Now-horizon section, roadmap rebalance `2026-11-18__scheduled`, DL-089)
 
 **Problem**
 On the Weekly Digest page, only the alert counts link anywhere (to Notifications). The P&L, compliance and red-flag figures link nowhere, so the weekly review takes 3 sidebar hops (Performance, Journal, Trade History), and the Review area is collapsed by default. The 2026-11-03 target was a weekly review in one journey.
@@ -6883,7 +6883,7 @@ On the Weekly Digest page, only the alert counts link anywhere (to Notifications
 **Owner:** Head of UX & Design; Frontend Specifications & UX Documentation Owner
 **Source:** `BLG-UX-08` re-review, finding F4 (`docs/ux/site_structure_rereview_2026-11-17.md`) — 2026-11-17
 **Effort:** XS (<1h build, after the spec line)
-**Provisional-Target:** TBD
+**Provisional-Target:** v9.18 (Now-horizon section, roadmap rebalance `2026-11-18__scheduled`, DL-089)
 
 **Problem**
 The Today list's "New signals" rows link to Research, so signal → entry from the Dashboard takes 4 pages (Dashboard → Research → Trade Plan → Trade Entry), against 3 from Signals or Screener via "Plan this".
@@ -6903,7 +6903,7 @@ The Today list's "New signals" rows link to Research, so signal → entry from t
 **Owner:** Head of UX & Design; Frontend Specifications & UX Documentation Owner
 **Source:** `BLG-UX-08` re-review §8 content review, finding C1 (`docs/ux/site_structure_rereview_2026-11-17.md`) — 2026-11-17
 **Effort:** M (~1-2 days: decision, then a copy sweep)
-**Provisional-Target:** TBD
+**Provisional-Target:** v9.19 (Site Structure & Usability Phase 4 programme plan, stages 3–4, DL-089; provisional)
 
 **Problem**
 User-visible copy cites strategy-rule sections ("§7.2", "§4.1", "§8.1 Stop-loss trigger") in 84 places across 15 files (Settings, Performance reports, Trade Entry, Positions, stop provenance, exit reasons). The user sees document references instead of plain explanations. Single instances are being fixed one at a time (`BLG-UX-06`, `BLG-UX-09`) with no site-wide rule. Some strings in `src/constants/exitReasons.js` may also be stored values, so changing their text could affect saved data.
@@ -6925,7 +6925,7 @@ User-visible copy cites strategy-rule sections ("§7.2", "§4.1", "§8.1 Stop-lo
 **Owner:** Frontend Specifications & UX Documentation Owner; Head of Engineering
 **Source:** `BLG-UX-08` re-review §8 content review, finding C2 (`docs/ux/site_structure_rereview_2026-11-17.md`) — 2026-11-17
 **Effort:** XS (<1h)
-**Provisional-Target:** TBD
+**Provisional-Target:** v9.19 (Site Structure & Usability Phase 4 programme plan, stages 3–4, DL-089; provisional)
 **Depends on:** `BLG-UX-16` (if the link is to point at in-app help)
 
 **Problem**
@@ -6945,7 +6945,7 @@ The sidebar footer shows "Docs" with an external-link icon (`Layout.js` ~line 82
 **Owner:** Head of UX & Design; Frontend Specifications & UX Documentation Owner
 **Source:** `BLG-UX-08` re-review §8 content review, finding C3 (`docs/ux/site_structure_rereview_2026-11-17.md`) — 2026-11-17
 **Effort:** S (~0.5-1 day)
-**Provisional-Target:** TBD
+**Provisional-Target:** v9.18 (Now-horizon section, roadmap rebalance `2026-11-18__scheduled`, DL-089)
 **Depends on:** `BLG-UX-12` (do together)
 
 **Problem**
@@ -6966,7 +6966,7 @@ The Weekly Digest page shows a `Field / Unit / Value` table with API-style label
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Source:** `BLG-UX-08` re-review §8 content review, finding C4 (`docs/ux/site_structure_rereview_2026-11-17.md`) — 2026-11-17
 **Effort:** S (~0.5 day)
-**Provisional-Target:** TBD
+**Provisional-Target:** v9.19 (Site Structure & Usability Phase 4 programme plan, stages 3–4, DL-089; provisional)
 
 **Problem**
 The content review found user-visible copy that is raw data, internal jargon or misleading: Trade Plan "Regime at Entry" shows the raw value `risk_on` (`TradePlan.js` ~976); Performance shows the internal ID heading "SI-02 Gate Status" (`ReportViews.js` ~502); Risk Dashboard says "showing entity data fallback" (`RiskDashboard.js` ~104); the Settings description "Configure your strategy parameters and preferences" contradicts its read-only strategy block; the Dashboard subtitle "Session summary — live data" names the data, not the job; the gate strip's "unlock quality insights" does not say which insights; page descriptions are uneven ("Pre-trade research", "Compare live trading vs backtest"); the exported Performance report uses "Executive Summary"/"Key Insights".
@@ -6985,7 +6985,7 @@ The content review found user-visible copy that is raw data, internal jargon or 
 **Owner:** Head of UX & Design; Product Owner
 **Source:** `BLG-UX-08` re-review §8 content review, finding C5 (`docs/ux/site_structure_rereview_2026-11-17.md`) — 2026-11-17
 **Effort:** M (~1-2 days)
-**Provisional-Target:** TBD
+**Provisional-Target:** v9.19 (Site Structure & Usability Phase 4 programme plan, stages 3–4, DL-089; provisional)
 
 **Problem**
 Nothing in the app says what it is for (a rules-based momentum strategy with ATR stops, where the trader decides) or explains its core terms (R, ATR, grace period, regime, heat) in one place. They are explained piecemeal in tooltips, or by citing rule sections. The product also has three names: "Position Manager" (sidebar, tab title, PDF export), "Swing Trading Position Manager" (`public/index.html`) and "Momentum Trading Assistant" (changelog, backlog).
@@ -7006,7 +7006,7 @@ Nothing in the app says what it is for (a rules-based momentum strategy with ATR
 **Owner:** Head of Engineering; Frontend Specifications & UX Documentation Owner
 **Source:** `BLG-UX-08` re-review §9 accessibility review, finding A1 (`docs/ux/site_structure_rereview_2026-11-17.md`) — 2026-11-17
 **Effort:** S (~0.5-1 day)
-**Provisional-Target:** TBD
+**Provisional-Target:** v9.18 (Now-horizon section, roadmap rebalance `2026-11-18__scheduled`, DL-089)
 
 **Problem**
 Four controls work only by mouse click (WCAG 2.2 2.1.1, Level A), because each puts `onClick` on a non-interactive element with no `tabIndex`, `role` or key handler: the Daily Position Monitor rows, which select positions to exit (`MonitorModal.js` ~94); Notification History row expansion (`NotificationsHistory.js` ~286); the Trade History AI journal summary toggle (`TradeHistory.js` ~530); and the Performance monthly heatmap tiles (`MonthlyHeatmap.js` ~66). The heatmap's month detail overlay has no `role="dialog"`/`aria-modal` (~131). The Screener "add to watchlist" popover close button is an icon with no accessible name (`Screener.js` ~339).
@@ -7028,7 +7028,7 @@ Four controls work only by mouse click (WCAG 2.2 2.1.1, Level A), because each p
 **Owner:** Head of Engineering; Frontend Specifications & UX Documentation Owner
 **Source:** `BLG-UX-08` re-review §9 accessibility review, finding A2 (`docs/ux/site_structure_rereview_2026-11-17.md`) — 2026-11-17
 **Effort:** XS (<1h, plus a scan of the open dialog)
-**Provisional-Target:** TBD
+**Provisional-Target:** v9.18 (Now-horizon section, roadmap rebalance `2026-11-18__scheduled`, DL-089)
 
 **Problem**
 In the Exit Position dialog, Shares to Exit, Exit Price, Exit Date and Exit Note show a visible `<Label>` that is not linked to its input: no `htmlFor`/`id` and no `aria-label` (`ExitModal.js` ~327–440). A screen reader announces unlabelled fields (WCAG 2.2 1.3.1, 3.3.2, 4.1.2, Level A) on the most safety-critical form in the app. Only the FX field is linked. The CI axe scan never opens this dialog, so it was not caught.
@@ -7049,7 +7049,7 @@ In the Exit Position dialog, Shares to Exit, Exit Price, Exit Date and Exit Note
 **Owner:** Frontend Specifications & UX Documentation Owner; Head of Engineering
 **Source:** `BLG-UX-08` re-review §9 accessibility review, finding A3 (`docs/ux/site_structure_rereview_2026-11-17.md`) — 2026-11-17
 **Effort:** XS (<1h, plus visual baseline check)
-**Provisional-Target:** TBD
+**Provisional-Target:** v9.19 (Site Structure & Usability Phase 4 programme plan, stages 3–4, DL-089; provisional)
 
 **Problem**
 The Dashboard has one `h1` and one `h2` ("Due today"). Its other visible section titles — Morning Briefing, the 5 briefing cards, Today's Briefing, Open Positions, Portfolio Heat, In Grace Today and Recent Activity — are `<p>` or `<span>` (`DashboardCard.js` ~27, `MorningBriefing.js` ~10, `AiDailyBriefing.js` ~121). Screen-reader users cannot move between sections by heading (WCAG 2.2 1.3.1).
@@ -7068,7 +7068,7 @@ The Dashboard has one `h1` and one `h2` ("Due today"). Its other visible section
 **Owner:** Frontend Specifications & UX Documentation Owner; Head of Engineering
 **Source:** `BLG-UX-08` re-review §9 accessibility review, finding A4 (`docs/ux/site_structure_rereview_2026-11-17.md`) — 2026-11-17
 **Effort:** S (~0.5 day)
-**Provisional-Target:** TBD
+**Provisional-Target:** v9.19 (Site Structure & Usability Phase 4 programme plan, stages 3–4, DL-089; provisional)
 
 **Problem**
 16 custom inputs and buttons (Ticker Universe, Signals controls and others) set `focus:outline-none` and show focus only as a border-colour change (for example `slate-200` → `slate-400`), which is weak and probably below 3:1 against the unfocused state (WCAG 2.2 2.4.7 AA; 2.4.13 AAA). `framer-motion` animates in 17 files, but only `Positions.js` reads `prefers-reduced-motion` (2.3.3 AAA). The review recommends adopting both AAA criteria, given the app's keyboard shortcuts and animation.
@@ -7089,7 +7089,7 @@ The Dashboard has one `h1` and one `h2` ("Due today"). Its other visible section
 **Owner:** QA & Testing Owner; Head of Engineering
 **Source:** `BLG-UX-08` re-review §9.2 CI coverage gaps, finding A5 (`docs/ux/site_structure_rereview_2026-11-17.md`) — 2026-11-17
 **Effort:** S (~0.5-1 day)
-**Provisional-Target:** TBD
+**Provisional-Target:** v9.19 (Site Structure & Usability Phase 4 programme plan, stages 3–4, DL-089; provisional)
 
 **Problem**
 `accessibility-axe-scan.spec.js` sets no rule tags, so WCAG 2.2 coverage (for example `target-size`) depends on axe-core defaults. It fails only on serious/critical impact, and never opens the dialogs and transient states where the review's observed failures sit: the Exit dialog, Daily Position Monitor, heatmap month detail and Screener popover.
@@ -7109,7 +7109,7 @@ The Dashboard has one `h1` and one `h2` ("Due today"). Its other visible section
 **Owner:** QA & Testing Owner; Head of UX & Design
 **Source:** `BLG-UX-08` re-review §9 accessibility review, "needs testing" items (`docs/ux/site_structure_rereview_2026-11-17.md` §9.1) — 2026-11-17
 **Effort:** M (~1-2 days)
-**Provisional-Target:** TBD
+**Provisional-Target:** v9.19 (Site Structure & Usability Phase 4 programme plan, stages 3–4, DL-089; provisional)
 **Depends on:** `BLG-FE-311`, `BLG-FE-312` (test after the observed failures are fixed)
 
 **Problem**
@@ -7130,7 +7130,7 @@ Several WCAG 2.2 AA criteria cannot be settled from code or by axe: tab order an
 **Owner:** Head of Engineering; Frontend Specifications & UX Documentation Owner
 **Source:** `BLG-UX-08` re-review §10 technical review, recommendations 1–2 (`docs/ux/site_structure_rereview_2026-11-17.md`) — 2026-11-17
 **Effort:** M (~1-2 days)
-**Provisional-Target:** TBD
+**Provisional-Target:** v9.19 (Site Structure & Usability Phase 4 programme plan, stages 3–4, DL-089; provisional)
 
 **Problem**
 The app ships one bundle, `main.*.js`: 1,992 KB minified, 542 KB gzipped (552 KB served). `performance_budget.md` §3.3 sets ≤ 200 KB gzipped for the main bundle and ≤ 500 KB in total, so the main bundle is 2.7× its budget. There is no code splitting (no `React.lazy` or dynamic `import()`), so every page and Recharts (about 16% of the source) load on first visit, although only Performance, Strategy Benchmark, Risk Dashboard and Settings draw charts. Two date libraries (`moment`, imported only by `SystemStatus.js`, and `date-fns`) and two toast systems (`sonner` and the Radix toaster, both mounted in `App.js`) are bundled.
@@ -7154,7 +7154,7 @@ The app ships one bundle, `main.*.js`: 1,992 KB minified, 542 KB gzipped (552 KB
 **Owner:** Head of Engineering
 **Source:** `BLG-UX-08` re-review §10 technical review, recommendations 3 and 7 (`docs/ux/site_structure_rereview_2026-11-17.md`) — 2026-11-17
 **Effort:** S (~0.5-1 day)
-**Provisional-Target:** TBD
+**Provisional-Target:** v9.19 (Site Structure & Usability Phase 4 programme plan, stages 3–4, DL-089; provisional)
 
 **Problem**
 The Dashboard makes about 16 requests on load, plus one per open position. `GET /positions` is fetched 4 times under 4 query keys (`home-open-positions`, `home-grace-period`, `today-positions`, `morning-positions`), `GET /signals` twice (`today-signals`, `morning-screener-hits`), and the earnings card makes one request per open position (`EarningsAlertCard.js` `useQueries`). The query client sets no `staleTime` (`src/lib/query-client.js`), so every page visit refetches. This slows the page, adds backend load, and adds on-demand Yahoo calls (see `BLG-OPS-217`).
@@ -7177,7 +7177,7 @@ The Dashboard makes about 16 requests on load, plus one per open position. `GET 
 **Owner:** Head of Engineering; Head of UX & Design
 **Source:** `BLG-UX-08` re-review §10 technical review, recommendation 4 (`docs/ux/site_structure_rereview_2026-11-17.md`) — 2026-11-17
 **Effort:** XS (<1h)
-**Provisional-Target:** TBD
+**Provisional-Target:** v9.19 (Site Structure & Usability Phase 4 programme plan, stages 3–4, DL-089; provisional)
 **Depends on:** `BLG-FE-314` (reduced-motion handling, do together)
 
 **Problem**
@@ -7198,7 +7198,7 @@ The Dashboard makes about 16 requests on load, plus one per open position. `GET 
 **Owner:** QA & Testing Owner; Frontend Specifications & UX Documentation Owner
 **Source:** `BLG-UX-08` re-review §10 technical review, recommendation 5 (`docs/ux/site_structure_rereview_2026-11-17.md`) — 2026-11-17
 **Effort:** M (~1-2 days)
-**Provisional-Target:** TBD
+**Provisional-Target:** v9.18 (Now-horizon section, roadmap rebalance `2026-11-18__scheduled`, DL-089)
 
 **Problem**
 LCP, INP and CLS have never been measured. There is no `web-vitals` reporting, no Lighthouse run, and `performance_budget.md` (v1.0) still says "TBD" for its baseline. The budget targets only an unthrottled desktop, has no INP or CLS target, and still uses TTI, which Lighthouse no longer reports. Without a baseline, the gains from `BLG-FE-315`, `BLG-FE-316` and `BLG-FE-317` cannot be confirmed.
@@ -7221,7 +7221,7 @@ LCP, INP and CLS have never been measured. There is no `web-vitals` reporting, n
 **Owner:** Infrastructure & Operations Owner
 **Source:** `BLG-UX-08` re-review §10 technical review, recommendation 6 (`docs/ux/site_structure_rereview_2026-11-17.md`) — 2026-11-17
 **Effort:** XS (<1h)
-**Provisional-Target:** TBD
+**Provisional-Target:** v9.19 (Site Structure & Usability Phase 4 programme plan, stages 3–4, DL-089; provisional)
 
 **Problem**
 The live site serves `static/js/main.*.js.map` (9.1 MB, HTTP 200, checked 2026-11-17), so the full front-end source, including comments, can be downloaded by anyone. Create React App emits source maps by default, and `.github/workflows/deploy.yml` does not set `GENERATE_SOURCEMAP=false`. It does not slow page loads (browsers fetch maps only with DevTools open), but it is avoidable exposure.
@@ -7265,7 +7265,7 @@ Questions about past trades come up during review (Trade History, Journal, Perfo
 **Owner:** Cybersecurity & Trust Lead; Product Owner
 **Source:** `BLG-UX-08` re-review §12.2, finding T1 (`docs/ux/site_structure_rereview_2026-11-17.md`) — 2026-11-17
 **Effort:** S (~0.5 day review; any chosen remedy is separate)
-**Provisional-Target:** TBD
+**Provisional-Target:** v9.18 (Now-horizon section, roadmap rebalance `2026-11-18__scheduled`, DL-089)
 
 **Problem**
 The front end has no sign-in (`AuthContext.js` hard-codes a single user) and is served from a public URL. The repository is public, the URL is in `package.json`, and there is no `robots.txt` or `noindex`. The backend API key it uses is embedded in the public bundle with full read and write scope. The 2026-10-15 accept-risk (`docs/operations/credential_policy.md` §1.1, ESC-EXEC-20261015-01) reasons that it is a "single-user app with no other users' data at risk", and focuses on write scope. It does not explicitly weigh that the owner's own real positions, cash, P&L and journal entries are readable by anyone who loads the URL. This follows from the documented design; it was not demonstrated against production in the review. The public source map (`BLG-OPS-221`) adds to the exposure.
@@ -7287,7 +7287,7 @@ The front end has no sign-in (`AuthContext.js` hard-codes a single user) and is 
 **Owner:** Head of Engineering; Frontend Specifications & UX Documentation Owner
 **Source:** `BLG-UX-08` re-review §12, finding T2 (`docs/ux/site_structure_rereview_2026-11-17.md`) — 2026-11-17
 **Effort:** S (~0.5 day)
-**Provisional-Target:** TBD
+**Provisional-Target:** v9.18 (Now-horizon section, roadmap rebalance `2026-11-18__scheduled`, DL-089)
 
 **Problem**
 Notification Preferences say alerts are sent "by email" (the page description, the toggles and `notifications.md` "Email Preferences"), but `deliver_notification` (`alerts_service.py` ~1053) sends via Telegram, and the backend has no email sending. When `TELEGRAM_BOT_TOKEN` or `TELEGRAM_CHAT_ID` is not set, the notification is written as `delivered = TRUE` with `delivery_error = 'email not configured'`, and no screen shows delivery status. So the UI states a channel that is not used, and the user cannot tell when alerts are not arriving.
@@ -7309,7 +7309,7 @@ Notification Preferences say alerts are sent "by email" (the page description, t
 **Owner:** Head of UX & Design; AI Compliance & Governance Officer
 **Source:** `BLG-UX-08` re-review §12, finding T3 (`docs/ux/site_structure_rereview_2026-11-17.md`) — 2026-11-17
 **Effort:** S (~0.5 day)
-**Provisional-Target:** TBD
+**Provisional-Target:** v9.19 (Site Structure & Usability Phase 4 programme plan, stages 3–4, DL-089; provisional)
 
 **Problem**
 The UI does not say that AI features send portfolio context (positions, cash, P&L, journal text) to an AI provider, or that alerts and the weekly digest (P&L and compliance figures) go to Telegram. The AI disclaimer says only that responses are advisory. The chat is titled "AI Trade Advisor" / "Ask Advisor", which may read as regulated advice, while `strategy_rules.md` §13 frames the system as decision support. Ticker Universe asks "Permanently deactivate X? (It can be re-added later.)", which contradicts itself.
@@ -7331,7 +7331,7 @@ The UI does not say that AI features send portfolio context (positions, cash, P&
 **Owner:** Head of Engineering
 **Source:** `BLG-UX-08` re-review §12, finding T4 (`docs/ux/site_structure_rereview_2026-11-17.md`) — 2026-11-17
 **Effort:** XS (<1h)
-**Provisional-Target:** TBD
+**Provisional-Target:** v9.19 (Site Structure & Usability Phase 4 programme plan, stages 3–4, DL-089; provisional)
 
 **Problem**
 `src/utils/initializeData.js`, called from `src/index.js` on every load, writes a fake £10,000 "Main Portfolio" (`portfolio_data`), empty `position_data`/`settings_data`, and both market regimes as `risk_on` (`marketregime_data`) to `localStorage`. Nothing reads them (legacy scaffolding). A stored default "risk_on" regime is the kind of fallback `BLG-BE-193` removed elsewhere, and the keys clutter browser storage.
@@ -7350,7 +7350,7 @@ The UI does not say that AI features send portfolio context (positions, cash, P&
 **Owner:** Head of UX & Design; Frontend Specifications & UX Documentation Owner
 **Source:** `BLG-UX-08` re-review §13.2 (aviation checklist design), finding B1 (`docs/ux/site_structure_rereview_2026-11-17.md`) — 2026-11-17
 **Effort:** S (~0.5-1 day, spec then build)
-**Provisional-Target:** TBD
+**Provisional-Target:** v9.18 (Now-horizon section, roadmap rebalance `2026-11-18__scheduled`, DL-089)
 
 **Problem**
 The Trade Plan "Pre-Entry Checklist" (`EntryChecklist.js`) asks the trader to tick "Position size within heat limits" and "Stop level defined", which the system already knows: the §4.2 pre-entry checks compute heat, and the stop is a form field. Aviation checklist practice (Boorman's Do-Confirm/Read-Do, reported in *The Checklist Manifesto*) keeps human checks to the few items a person must judge. Ticking facts the machine already knows trains the user to tick without reading, which weakens the items that do need judgement ("Strategy signal confirmed", "Pre-trade research reviewed").
@@ -7372,7 +7372,7 @@ The Trade Plan "Pre-Entry Checklist" (`EntryChecklist.js`) asks the trader to ti
 **Owner:** Frontend Specifications & UX Documentation Owner; Head of Engineering
 **Source:** `BLG-UX-08` re-review §13.1 (TradeZella Playbook), finding B2 (`docs/ux/site_structure_rereview_2026-11-17.md`) — 2026-11-17
 **Effort:** M (~1-2 days)
-**Provisional-Target:** TBD
+**Provisional-Target:** v9.18 (Now-horizon section, roadmap rebalance `2026-11-18__scheduled`, DL-089)
 
 **Problem**
 Trade History can filter by ticker, tags, saved filters and dates, but not by whether the strategy's rules were followed. TradeZella's journal filters by rules followed vs rules broken, which separates execution mistakes from a weak setup, but relies on manual ticks. This app already holds the rule data deterministically: pre-entry check results and acknowledgements, §8 exit reasons, and red flags. So the filter can be computed rather than self-reported.
@@ -7393,7 +7393,7 @@ Trade History can filter by ticker, tags, saved filters and dates, but not by wh
 **Owner:** Metrics Definitions & Analytics Canonical Owner; Head of Engineering
 **Source:** `BLG-UX-08` re-review §13.1 (Sharesight performance report), finding B3 (`docs/ux/site_structure_rereview_2026-11-17.md`) — 2026-11-17
 **Effort:** M (~1-2 days)
-**Provisional-Target:** TBD
+**Provisional-Target:** v9.19 (Site Structure & Usability Phase 4 programme plan, stages 3–4, DL-089; provisional)
 
 **Problem**
 For a US position, the GBP P&L mixes the share-price move with the GBP/USD move between entry and exit. Nothing in the app separates them (no FX-effect field in the front end or back end). A trade can show a GBP gain or loss mostly because of currency, which blurs whether the strategy itself worked. Sharesight reports currency movement as a separate component of return.
@@ -7414,7 +7414,7 @@ For a US position, the GBP P&L mixes the share-price move with the GBP/USD move 
 **Owner:** Head of UX & Design; Frontend Specifications & UX Documentation Owner
 **Source:** `BLG-UX-08` re-review §13.2 (NHS NEWS2 track-and-trigger), finding B4 (`docs/ux/site_structure_rereview_2026-11-17.md`) — 2026-11-17
 **Effort:** S (~1 day design + build, if data allows)
-**Provisional-Target:** TBD
+**Provisional-Target:** v9.19 (Site Structure & Usability Phase 4 programme plan, stages 3–4, DL-089; provisional)
 
 **Problem**
 The decision-first Positions table shows where each position is now ("To stop" in R and %, the action needed) but not its direction of travel. Early-warning systems such as NHS NEWS2 treat the trend between observations as being as important as the current reading. A position drifting towards its stop over several days looks the same as one that has just bounced off a low.
@@ -7435,7 +7435,7 @@ The decision-first Positions table shows where each position is now ("To stop" i
 **Owner:** Frontend Specifications & UX Documentation Owner; Head of UX & Design
 **Source:** `BLG-UX-08` re-review §13.2 (GOV.UK Design System error pattern), finding B5 (`docs/ux/site_structure_rereview_2026-11-17.md`) — 2026-11-17
 **Effort:** S (~0.5 day)
-**Provisional-Target:** TBD
+**Provisional-Target:** v9.19 (Site Structure & Usability Phase 4 programme plan, stages 3–4, DL-089; provisional)
 
 **Problem**
 Error handling differs by form: Trade Entry marks fields with `aria-invalid` and a described message, while other forms rely on disabled buttons or toasts (§9 of the review; `BLG-UX-06`). There is no written standard. The GOV.UK Design System pattern — an error summary linking to each field, plus an inline message that says what went wrong and how to fix it, avoiding "invalid" and "please" — is a proven, accessible standard.
@@ -7454,8 +7454,9 @@ Error handling differs by form: Trade Entry marks fields with `aria-invalid` and
 **Type:** UX / Programme decision
 **Owner:** Product Owner; Head of UX & Design
 **Source:** `BLG-UX-08` re-review §14 Target State (`docs/ux/site_structure_rereview_2026-11-17.md`) — 2026-11-17
+**Decision (2026-11-18):** Product Owner adopted §14 in whole as the brief for "Site Structure & Usability, Phase 4" at roadmap rebalance `2026-11-18__scheduled` (DL-089) — the first AC is met. Remaining scope: the `navigation.md` and `design_system.md` revisions, sequenced before `BLG-FE-323`.
 **Effort:** S (~0.5 day decision + `navigation.md` revision)
-**Provisional-Target:** TBD
+**Provisional-Target:** v9.18 (Now-horizon section, roadmap rebalance `2026-11-18__scheduled`, DL-089)
 
 **Problem**
 The re-review's §14 defines a target state: positioning, navigation, Dashboard structure, page templates, design direction and functionality to retain, remove, redesign or introduce. It also gives a suggested sequence for the 30 items filed in §1–§13. It is a recommendation, not a plan. Two navigation changes have no item yet: Strategy Benchmark becomes a "Strategy vs backtest" section of Performance, and Ticker Universe moves from Find trades to Settings. Without a decision, the 30 items will be seated one by one with no shared brief.
@@ -7493,5 +7494,342 @@ The re-review's §14 defines a target state: positioning, navigation, Dashboard 
 - `python3 scripts/validate_state_schema.py` reports `VALID`
 - `.claude_current_state.json` is under 15,000 bytes after migration
 - `.claude/hooks/inject_current_state.py` output is unchanged (same header fields and unresolved escalations)
+
+---
+
+### BLG-BE-223 — Handle a stock split on an open position before the split-day price reads as a stop breach
+**Priority:** P2 (Medium)
+**Type:** Backend / Data correctness
+**Owner:** Backend Engineering Patterns Owner; Data Model & Domain Schema Owner; Strategy Rules & System Intent Owner
+**Source:** Roadmap rebalance `2026-11-18__scheduled` STEP 4 — consolidates IDEA-backend-engineering-20261118-01, IDEA-data-model-20261118-01, IDEA-qa-testing-20261118-01, IDEA-strategy-owner-20261118-01 (`IW-20261118-01`) — 2026-11-18
+**Effort:** M (~1.5-2 days: rule text, adjustment record, detection, tests)
+**Provisional-Target:** TBD
+
+**Problem**
+Nothing in the system knows about stock splits. `backend/` never reads yfinance `Ticker.splits`, and `strategy_rules.md` does not say what a split does to entry price, stop, ATR or R. Positions store a pre-split entry price and stop, while the live price after a split is post-split. On the first trading day after a 2-for-1 split on a held share, the price halves: the position shows a ~50% loss, the stored stop sits far above the price, and the stop-breach path raises an exit recommendation for a position that has not moved. Replay already notes that splits make its two price bases differ (`backend/services/replay_service.py:8`).
+
+**Scope**
+- `strategy_rules.md`: state how a split adjusts entry price, quantity, stop, ATR and the position's R (Strategy Rules & System Intent Owner; §12.3 change control)
+- Record a split as an adjustment row against the position (ratio, effective date, source), not as an edit of the stored entry fields, so the original entry stays auditable (`data_model.md` migration block)
+- Detect a split on a held ticker from the market-data provider's split history on the nightly run; until it is applied, suppress the stop-breach alert and exit recommendation for that position and show "Split detected — confirm adjustment" on Positions
+- Apply the adjustment on confirmation; P&L, R and the tax-year report use adjusted values with the adjustment shown
+
+**Acceptance Criteria**
+- `strategy_rules.md` names the split adjustment for entry, quantity, stop, ATR and R
+- A fixture position with a 2:1 split on day D raises no stop breach and no exit recommendation on day D; Positions shows the "Split detected" state
+- After confirmation, quantity × adjusted entry equals the original cost, and the stop is the original stop ÷ ratio
+- The adjustment row records ratio, effective date and source; the original entry fields are unchanged
+- Backend tests cover detection, suppression and the adjustment arithmetic, including a UK (`.L`) ticker
+
+---
+
+### BLG-SEC-47 — Send `Cache-Control: no-store` on every API response that carries portfolio data
+**Priority:** P3 (Low)
+**Type:** Security / API contract
+**Owner:** Cybersecurity & Trust Lead; API Contracts & Documentation Owner
+**Source:** Roadmap rebalance `2026-11-18__scheduled` STEP 4 — consolidates IDEA-cybersecurity-20261118-01, IDEA-api-contracts-20261118-01 (`IW-20261118-01`) — 2026-11-18
+**Effort:** S (~0.5 day)
+**Provisional-Target:** TBD
+
+**Problem**
+No backend response sets `Cache-Control` (0 matches in `backend/`). Positions, trade history, cash, journal and AI answers can be kept in the browser's disk cache and by any intermediate cache, and stay readable on a shared machine after the tab is closed. The front end has no sign-in (`BLG-SEC-46`), so the cache is the remaining copy of the owner's financial data outside the database.
+
+**Scope**
+- Add `Cache-Control: no-store` (and `Pragma: no-cache`) to every response from routes returning portfolio, position, trade, cash, journal, plan or AI data, by one middleware with an explicit allow-list for public, cacheable routes (for example `/health`)
+- Declare the header in `docs/reference/openapi.yaml` as a shared response header, and in `docs/specs/api_contracts/` once
+
+**Acceptance Criteria**
+- A backend test asserts the header on a representative route from each group, and its absence on `/health`
+- `openapi.yaml` declares the header; the OpenAPI drift gate passes
+
+---
+
+### BLG-FEAT-103 — Measure the core loop and show this week's loop on the Weekly Digest
+**Priority:** P3 (Low)
+**Type:** Feature / Measurement (user-facing)
+**Owner:** Product Owner; Metrics Definitions & Analytics Owner; Data Model & Domain Schema Owner
+**Source:** Roadmap rebalance `2026-11-18__scheduled` STEP 4 — consolidates IDEA-product-owner-20261118-01, IDEA-metrics-20261118-01, IDEA-data-model-20261118-02, IDEA-challenger-20261118-01 (`IW-20261118-01`); re-review §15 "Conversion" row (`docs/ux/site_structure_rereview_2026-11-17.md`) — 2026-11-18
+**Effort:** M (~2-3 days: metric definitions, one events table, digest section)
+**Provisional-Target:** v9.18
+
+**Problem**
+The re-review's gap analysis says "nobody knows whether the app's core loop is used": signal → plan → entry → reflection → weekly review. Most steps are already recorded (signals, trade plans with `signal_id`, positions, trade reflections), but nothing counts them together, and two steps — opening the Weekly Digest and acting on a Due today row — leave no record at all. Phase 4 (DL-089) is adopted without this evidence; the Challenger's objection was answered by measuring during the programme, not before it.
+
+**Scope**
+- `metrics_definitions.md`: define the five step counts per ISO week and the step-to-step completion rates, with worked examples (quiet week, a week with no signals, a reflection written the week after the exit)
+- One small events table for the two steps no existing table records (Weekly Digest opened, Due today action taken); no other page-view tracking
+- A "This week's loop" section on the Weekly Digest page (`src/pages/WeeklyDigest.js`) showing the five counts with links to the page behind each
+
+**Acceptance Criteria**
+- The five metrics are in `metrics_definitions.md` with worked examples and owner sign-off
+- The Weekly Digest shows the five counts for the current week; each links to its page
+- Opening the Weekly Digest and taking a Due today action each write one event row; nothing else is tracked
+- Playwright covers the section's rendering and links (CLAUDE.md §2)
+
+---
+
+### BLG-GOV-425 — Measure per-story ceremony and reserve sprint capacity for it
+**Priority:** P3 (Low)
+**Type:** Governance / Capacity
+**Owner:** Director of HR; FinOps & Resource Architect
+**Source:** Roadmap rebalance `2026-11-18__scheduled` STEP 4 — consolidates IDEA-director-of-hr-20261118-01, IDEA-finops-20261118-01 (`IW-20261118-01`); `docs/governance/governance_overhead_audit_2026-11-02.md` finding 2 and question 1 — 2026-11-18
+**Effort:** S (~0.5-1 day)
+**Provisional-Target:** TBD
+
+**Problem**
+The governance overhead audit found that 58% of commits change only process files — about 1.7 per shipped story — and that this ceremony (state persistence, QA evidence, merge-gate records, escalation mirrors, lessons learnt) is not counted in any sprint's capacity. Velocity reads 1.00 every release while the real cost of a story is unmeasured, so capacity planning cannot see it, and cutting it cannot be shown to work.
+
+**Scope**
+- Add a "process-only commits" and "code-touching commits" pair to each release's row in `claude/cycles/velocity_metrics.md` (post-ship closure), using the audit's classification, scripted
+- Release Planning: state an explicit ceremony reserve in `sprint_capacity.md` (initially from the measured ratio), instead of leaving it outside the 28-day ceiling
+
+**Acceptance Criteria**
+- `velocity_metrics.md` carries both counts for the next shipped release, produced by a script
+- The next `sprint_capacity.md` names a ceremony reserve and its basis
+
+---
+
+### BLG-GOV-426 — Write each story's routine records in one commit
+**Priority:** P3 (Low)
+**Type:** Governance / Process efficiency
+**Owner:** PMO Lead; Head of Specs Team
+**Source:** Roadmap rebalance `2026-11-18__scheduled` STEP 4 — IDEA-pmo-lead-20261118-01 (`IW-20261118-01`; the Head of Specs Team's "generate them by script" topic merged in); `docs/governance/governance_overhead_audit_2026-11-02.md` question 2 — 2026-11-18
+**Effort:** M (~1-2 days)
+**Provisional-Target:** TBD
+
+**Problem**
+Sprint Execution writes `execution_state.json` persistence, the merge-gate record and the escalation mirror as separate commits around each story. The audit counted 628 process-only commits over 360 shipped stories. Records that are always written together cost a commit, a hook run and a push each.
+
+**Scope**
+- `execution_prompt.md`: write the per-story state persistence, merge-gate record and any escalation mirror in one commit at the story's close (CLAUDE.md §6 checklist)
+- A script that produces the three records from `execution_state.json`, so they cannot drift
+
+**Acceptance Criteria**
+- `execution_prompt.md` names the single combined commit
+- In the first release after the change, process-only commits per shipped story fall below the v9.13–v9.17 mean (measured as in `BLG-GOV-425`)
+
+---
+
+### BLG-GOV-427 — Apply non-urgent governance prompt patches in one batch at post-ship closure
+**Priority:** P3 (Low)
+**Type:** Governance / Process efficiency
+**Owner:** Head of Specs Team
+**Source:** Roadmap rebalance `2026-11-18__scheduled` STEP 4 — IDEA-head-of-specs-20261118-01 (`IW-20261118-01`); `docs/governance/governance_overhead_audit_2026-11-02.md` finding 3 and question 3 — 2026-11-18
+**Effort:** S (~0.5-1 day)
+**Provisional-Target:** TBD
+
+**Problem**
+Governance prompts changed about 19 times per cycle over the audit's 10 cycles. Each change triggers the CLAUDE.md §6 four-file checklist, and three of the last four releases needed a prompt-size baseline raise because changes landed outside PRs (`BLG-GOV-421`). Most of these patches are not urgent, but nothing distinguishes the ones that are.
+
+**Scope**
+- `shared_standards.md`: classify a prompt patch as urgent (a hard gate is wrong or blocks work) or batchable; batchable patches are queued and applied together at post-ship closure, one version bump per file per release
+- `lessons_learnt_prompt.md` / `post_ship_closure.md`: name the queue and the batch step
+
+**Acceptance Criteria**
+- The rule and the queue are in the named prompts (CLAUDE.md §6 checklist)
+- In the first full release after the change, each prompt file gets at most one non-urgent version bump
+
+---
+
+### BLG-GOV-428 — Re-rate the 12 gated Arc 5 items held at P1 since 2026-07-28
+**Priority:** P3 (Low)
+**Type:** Governance / Backlog hygiene
+**Owner:** Product Owner
+**Source:** Roadmap rebalance `2026-11-18__scheduled` STEP 4 — IDEA-challenger-20261118-02 (`IW-20261118-01`) — 2026-11-18
+**Effort:** XS (<1h decision)
+**Provisional-Target:** TBD
+
+**Problem**
+`BLG-FE-43/45/54/58/59/62/63/68/69/70/71` (and `BLG-FEAT-73`) were raised to P1 in a 2026-07-28 product review. Every one is gated on SI-02/SI-05 data that has not moved since (SI-02 linked trades: 0, `**Last formally confirmed:**`). They are 12 of the backlog's 13 P1 items. P1 should mean "next release when unblocked"; here it means "blocked", so the P1 tier no longer tells Release Planning or STEP 8.0 anything.
+
+**Scope**
+- Product Owner re-rates each item to the priority it would have when its gate clears, or keeps P1 with a dated reason
+
+**Acceptance Criteria**
+- Each of the 12 items carries a re-rated priority or a dated reason for P1
+
+---
+
+### BLG-FEAT-104 — Let the owner download all their records in one file
+**Priority:** P3 (Low)
+**Type:** Feature / Records (user-facing)
+**Owner:** Financial Reporting & Records Owner; Head of Engineering
+**Source:** Roadmap rebalance `2026-11-18__scheduled` STEP 4 — IDEA-financial-reporting-20261118-02 (`IW-20261118-01`) — 2026-11-18
+**Effort:** M (~1-2 days)
+**Provisional-Target:** TBD
+
+**Problem**
+The owner can export closed trades as CSV (`backend/routers/trades_export.py`) and a tax-year PDF, but not open positions, trade plans, journal entries, reflections, red-flag events or settings. The production backup (`production-db-backup.yml`) is an operator artefact, not something the owner can download. If the hosting or the database account were lost, the owner would hold no usable copy of their own trading record.
+
+**Scope**
+- One Settings action, "Download all my data", producing a zip of one CSV per record type plus a JSON manifest (export date, row counts, schema version)
+- A new endpoint with contract, `openapi.yaml` entry and endpoint-test registration (CLAUDE.md §2)
+
+**Acceptance Criteria**
+- The download contains every listed record type, with row counts matching the database on a seeded fixture
+- The endpoint is in a contract file, `openapi.yaml` and `backend/routers/test.py`
+- Playwright covers the Settings action
+
+---
+
+### BLG-FE-321 — Replace the decorative gradient buttons with one solid primary button
+**Priority:** P3 (Low)
+**Type:** Frontend / Design system (Phase 4, stage 3)
+**Owner:** Base44 Frontend Prompt Owner; Head of UX & Design
+**Source:** Roadmap rebalance `2026-11-18__scheduled` STEP 4 — IDEA-base44-frontend-20261118-01 (`IW-20261118-01`); re-review §14.5 and §15 "UI" row — 2026-11-18
+**Effort:** M (~1-2 days)
+**Provisional-Target:** v9.19
+**Depends on:** `BLG-UX-21` (design direction recorded in `design_system.md`)
+
+**Problem**
+`bg-gradient-to` appears 112 times in 54 files. `BLG-FE-304` covers the gradient card surface; the rest are mostly cyan-to-violet primary buttons (4 on `src/pages/TradeEntry.js`, 4 on `src/pages/Positions.js`). The re-review counts 26 decorative gradient buttons and recommends one solid primary colour used only for meaning (§14.5).
+
+**Scope**
+- One primary button variant in the shared `Button` component per `design_system.md`; replace every decorative gradient button with it
+
+**Acceptance Criteria**
+- `grep -rn "bg-gradient-to" src/` returns no button class strings (card surfaces are `BLG-FE-304`'s)
+- Visual baselines updated; Playwright contrast scan passes on the touched pages
+
+---
+
+### BLG-FE-322 — Use tabular (fixed-width) numerals for every price, P&L, R and % figure
+**Priority:** P3 (Low)
+**Type:** Frontend / Design system (Phase 4, stage 3)
+**Owner:** Frontend Specifications & UX Documentation Owner; Head of UX & Design
+**Source:** Roadmap rebalance `2026-11-18__scheduled` STEP 4 — IDEA-frontend-specs-20261118-01 (`IW-20261118-01`); re-review §15 "UI" row ("one fixed-width numeral treatment in only 13 places") — 2026-11-18
+**Effort:** S (~0.5-1 day)
+**Provisional-Target:** v9.19
+
+**Problem**
+`tabular-nums` is used in 14 places, none of them on `src/pages/Positions.js`. In columns of prices, P&L and R, proportional digits make values of equal magnitude different widths, so the eye cannot compare a column by its shape; values also shift sideways when a live price updates.
+
+**Scope**
+- Apply tabular numerals to every numeric figure in tables, cards and summary tiles (one shared class or a base style on the numeric cell components); record the rule in `design_system.md`
+
+**Acceptance Criteria**
+- Positions, Dashboard, Performance and Trade History numeric cells render with `font-variant-numeric: tabular-nums` (Playwright computed-style check on one cell per page)
+
+---
+
+### BLG-FE-323 — Make the two §14.2 navigation moves: Strategy Benchmark into Performance, Ticker Universe into Settings
+**Priority:** P3 (Low)
+**Type:** Frontend / Information architecture (Phase 4, stage 2)
+**Owner:** Head of UX & Design; Frontend Specifications & UX Documentation Owner; Head of Engineering
+**Source:** Roadmap rebalance `2026-11-18__scheduled` STEP 4 — consolidates IDEA-head-of-ux-20261118-01, IDEA-frontend-specs-20261118-02 (`IW-20261118-01`); re-review §14.2; `BLG-UX-21` ("two navigation changes have no item yet") — 2026-11-18
+**Effort:** M (~1-1.5 days)
+**Provisional-Target:** v9.18
+**Depends on:** `BLG-UX-21`'s `navigation.md` revision (same release, sequenced first)
+
+**Problem**
+The re-review's target IA keeps five areas but moves two entries. Strategy Benchmark (`src/pages/StrategyBenchmark.js`) compares live results with the backtest and belongs with Performance; as a separate entry it splits the review journey. Ticker Universe (`src/pages/TickerUniverse.js`) is configuration, not a way to find trades, yet sits under Find trades. Phase 4 is adopted (DL-089), and `BLG-UX-21` revises `navigation.md`; no item builds the moves.
+
+**Scope**
+- Strategy Benchmark becomes a "Strategy vs backtest" section of Performance, reachable from its section index; the old route redirects to the section
+- Ticker Universe moves under Settings; the old route redirects
+- Sidebar, command palette (`src/components/CommandPalette.js`) and `src/lib/pageLabels.js` updated
+
+**Acceptance Criteria**
+- Neither page has its own sidebar entry; both old URLs land on the new location
+- Playwright covers both redirects and the new entry points
+
+---
+
+### BLG-FE-324 — Add page-level error boundaries so one failing component does not blank the whole app
+**Priority:** P3 (Low)
+**Type:** Frontend / Resilience (user-facing)
+**Owner:** Head of Engineering
+**Source:** Roadmap rebalance `2026-11-18__scheduled` STEP 4 — IDEA-head-of-engineering-20261118-01 (`IW-20261118-01`) — 2026-11-18
+**Effort:** S (~0.5-1 day)
+**Provisional-Target:** TBD
+
+**Problem**
+There is no React error boundary anywhere in `src/` (`componentDidCatch`/`getDerivedStateFromError`: 0 matches). A render exception in any component — for example an unexpected `null` in an API response — unmounts the whole tree and leaves a blank page, including the sidebar, so the user cannot reach Positions or the exit flow until they reload, and the error is not reported anywhere.
+
+**Scope**
+- One boundary around each routed page (inside the layout, so the sidebar stays) showing "This page hit an error" with Reload and a link to Dashboard, and logging the error to the console with the route
+- One boundary around the AI chat widget so a chat failure never takes down the page under it
+
+**Acceptance Criteria**
+- A test component that throws on render shows the fallback with the sidebar still present (Playwright or React Testing Library)
+- No page renders blank on a thrown render error
+
+---
+
+### BLG-OPS-222 — Poll the GitHub Pages front end as well as the API's /health
+**Priority:** P3 (Low)
+**Type:** Operations / Monitoring
+**Owner:** Infrastructure & Operations Owner
+**Source:** Roadmap rebalance `2026-11-18__scheduled` STEP 4 — IDEA-infra-ops-20261118-01 (`IW-20261118-01`) — 2026-11-18
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`health-check-alert.yml` polls only `${API_URL}/health` every 15 minutes. If the GitHub Pages site fails to deploy, serves a stale bundle that calls a removed route, or returns 404, the owner learns of it only when opening the app — possibly at the moment they need to act on a stop.
+
+**Scope**
+- Extend the same workflow to fetch the front-end URL and check for HTTP 200 and the expected bundle marker (for example the `<div id="root">` page and a JS asset that returns 200); reuse the existing 3-consecutive-failure rule and Telegram alert
+
+**Acceptance Criteria**
+- A `workflow_dispatch` run against a deliberately wrong front-end URL sends one alert; a correct URL sends none
+
+---
+
+### BLG-QA-272 — Test the phone path: 320 px reflow on every route, and the Telegram-link → Dashboard journey on a mobile profile
+**Priority:** P3 (Low)
+**Type:** QA / Automated coverage (Phase 4, stage 4)
+**Owner:** QA Lead
+**Source:** Roadmap rebalance `2026-11-18__scheduled` STEP 4 — consolidates IDEA-qa-lead-20261118-01, IDEA-qa-lead-20261118-02 (`IW-20261118-01`); re-review §15 "Mobile" row ("the heaviest path is the least tested") — 2026-11-18
+**Effort:** M (~1-1.5 days)
+**Provisional-Target:** v9.19
+
+**Problem**
+Mobile Playwright coverage exists only for the Signals card row and the Screener action cell (`BLG-QA-255`). The most common phone journey — a Telegram alert or digest link opening the Dashboard — is never run on a mobile profile, and reflow at 320 px (WCAG 1.4.10) is untested on every page. `BLG-QA-270` is a one-off manual pass; nothing keeps it true afterwards.
+
+**Scope**
+- A Playwright project at 320 × 640 that loads every route and fails on horizontal page scroll
+- A mobile-profile spec for the Dashboard opened from a digest-style deep link: Due today visible, a position reachable, the exit dialog usable
+
+**Acceptance Criteria**
+- Both run in CI; known failures at introduction are listed with backlog IDs, not skipped silently
+
+---
+
+### BLG-QA-273 — Track escaped defects per release as a quality trend
+**Priority:** P3 (Low)
+**Type:** QA / Quality metric
+**Owner:** Director of Quality
+**Source:** Roadmap rebalance `2026-11-18__scheduled` STEP 4 — IDEA-director-of-quality-20261118-01 (`IW-20261118-01`) — 2026-11-18
+**Effort:** S (~0.5 day)
+**Provisional-Target:** TBD
+
+**Problem**
+Each release ends `Verified_with_deviations` with P2 found defects accepted at the merge gate (v9.16: 5; v9.17: 1) and P3 `DEV-*` records, and each is filed as a follow-up item. Nothing tracks the count across releases, so nobody can say whether first-time-right practice (`BLG-GOV-422`, `BLG-QA-262`) is reducing them.
+
+**Scope**
+- Add accepted-P2 and `DEV-*` counts per release to `claude/cycles/velocity_metrics.md` at post-ship closure, backfilled for v9.13–v9.17 from each `verification_report.md`
+
+**Acceptance Criteria**
+- `velocity_metrics.md` shows both counts for v9.13–v9.17 and the next shipped release
+
+---
+
+### BLG-GOV-429 — Roadmap §7.2: compute the role-share rows read-only, and append them only in the STEP 9 write
+**Priority:** P3 (Low)
+**Type:** Governance / Prompt patch (deferred)
+**Owner:** Head of Specs Team
+**Source:** Roadmap rebalance `2026-11-18__scheduled` lessons learnt Friction Item 1 (deferred patch tracking item, BLG-GOV-393) — 2026-11-18
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.18
+
+**Problem**
+At `2026-11-18__scheduled` the engine appended three rows to `claude/roadmap/role_share_history.md` while gathering diagnostics at preflight, before `run_manifest.md` existed, breaking STEP 1.1's "before any other file is written" rule. `roadmap_prompt.md` §7.2 step 1 says to run the script and "append its History row ... in this run's commit", with no reference to the STEP 8.5 write plan, so the append reads as part of computing the diagnostic rather than as a planned write.
+
+**Scope**
+- `roadmap_prompt.md` §7.2 step 1 (and §2.4 "Structured history" for the PVR row): compute the row read-only during the step; append it at STEP 9 as an item of the STEP 8.5.B write plan (CLAUDE.md §6 checklist)
+
+**Acceptance Criteria**
+- §7.2 step 1 and §2.4 name the STEP 9 append and the write-plan row
+- The next rebalance's `run_manifest.md` is the first file written in its cycle
 
 ---

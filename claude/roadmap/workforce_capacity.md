@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-11-03 (rebalance `2026-11-03__scheduled` — STEP 7 section appended: Skill-Silo 68.1%, v9.15 capacity outlook ≈11.5-13 days committed); prior — 2026-11-03 (lifecycle audit AUD-2026-11-03-007 — canonical table gains the `XS (<1h)` worked example (v9.8 deferred patch) and a dormant `VH` placeholder (v9.7 deferred patch)); prior — 2026-10-16 (rebalance `2026-10-16__scheduled` — new "Rebalance 2026-10-16__scheduled" section: Skill-Silo 69.6% pooled, above ceiling, sustained-failure clause applied (BLG-FE-226/BLG-FE-227/BLG-BE-182); §7.2 max 8.0%; §7.3 gap 26.70 d from ready_pool_history.md; PVR 0.204); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-18 (rebalance `2026-11-18__scheduled` — STEP 7 section appended: Skill-Silo 60.2%, v9.18 capacity outlook ≈12-20 days committed); prior — 2026-11-03 (rebalance `2026-11-03__scheduled` — STEP 7 section appended: Skill-Silo 68.1%, v9.15 capacity outlook ≈11.5-13 days committed); prior — 2026-11-03 (lifecycle audit AUD-2026-11-03-007 — canonical table gains the `XS (<1h)` worked example (v9.8 deferred patch) and a dormant `VH` placeholder (v9.7 deferred patch)); prior history retained — see prior entries in version control
 
 > ⚠️ Standing Notice: This document records workforce planning estimates. All effort figures are indicative. Canonical project records take precedence.
 
@@ -885,3 +885,19 @@ Both approved candidates (`BLG-FEAT-52` ungated/descoped, new `BLG-FEAT-71`) are
 **Sprint capacity:** not re-evaluated; held at ~24–28 working-day-equivalent units.
 
 **Workforce constraints:** none new. Design and spec skills (Head of UX & Design, Frontend Specifications & UX Documentation Owner) are on the critical path for Phase 1's three specs; Phase 2 build cannot start before `BLG-SPEC-214`/`215` are approved.
+
+## Rebalance 2026-11-18__scheduled
+
+**Skill-Silo Alert (STEP 7.1):** window v9.15–v9.17 (U/G/D/P proxy; `scripts/compute_rebalance_diagnostics.py`, `method: pooled`). **Pooled: 56/93 = 60.2%**. Improved from 68.3% (v9.14–v9.16) and 68.1% at `2026-11-03__scheduled`, still above the 40% ceiling, so under the v9.35 definition the reading is "unresolved" and the **sustained-failure clause applies** (≥ 2 build-and-ship U-items at the next release). Met by the v9.18 section: `BLG-FE-311`, `BLG-FE-312`, `BLG-FE-318`, `BLG-FE-294`, `BLG-UX-11`, `BLG-FE-320`, `BLG-FE-323`. **Candidate gate verification:** none of these has a `**Gate criteria:**` line. **Live-status cross-check:** all are open in `backlog.md` (STEP 8.2). Owner-field refinement not used (proxy baseline).
+
+**Cross-Role Workload Balance (STEP 7.2):** `role_share_history.md`, after appending the v9.15, v9.16 and v9.17 rows (none had been added, because no rebalance ran between them). Window v9.15–v9.17, 94 stories: Head of Engineering and the Head of Engineering; Head of UX & Design compound bucket tie at **10 (10.6%)**. Below the 40% ceiling — no advisory. Split-credit: Head of Engineering 22.33 (23.8%). Forward look: Phase 4 stages 1–2 again load Head of Engineering, Head of UX & Design and Frontend Specifications & UX Documentation Owner; `BLG-SEC-46`, `BLG-QA-262`, `BLG-QA-271` and `BLG-FEAT-103` spread v9.18 across Cybersecurity, QA and Metrics owners. Cross-Role Pairing Rotation Note read; advisory only.
+
+**Ready-Pool Capacity Gap Trend (STEP 7.3):** `claude/roadmap/ready_pool_history.md` newest row v9.17 (present; no fallback needed): 180-item / 90.75-day pool against the 28-day ceiling, gap **62.75 days**. Series v9.14 53.55 → v9.15 47.55 → v9.16 56.70 → v9.17 62.75: increased for 2 consecutive releases (v9.14→v9.15 decreased), so below the 3-release review trigger — advisory only. If v9.18's row increases again, the trigger fires at the next rebalance. Runway: N/A — pool growing (rolling Δ leftover +3.08). This run added 15 items (≈ 15-22 days), 4 of them committed or provisionally targeted in the Phase 4 plan.
+
+**Product Value Ratio (STEP 2.4):** 0.355 Advisory (window v9.13–v9.17, U=66/G=21/D=95/P=4/186) — 2nd consecutive Advisory reading, improving. Effort-weighted 0.448 (diagnostic). Sustained-Advisory clause not yet applicable (2 < 3).
+
+**v9.18 capacity outlook:** committed (19 items) ≈ 12-20 days of the ~24–28-day band — see `current_roadmap.md` §3. Release Planning fills the rest; P2 candidates outside the section include `BLG-BE-223` (new, M ~1.5-2 d), `BLG-BE-208`, `BLG-BE-213`, `BLG-OPS-217`, `BLG-TECH-21`, `BLG-GOV-420`, `BLG-GOV-421`. Provisional v9.19: Phase 4 stages 3–4 ≈ 12-19 days.
+
+**Sprint capacity:** not re-evaluated; held at ~24–28 working-day-equivalent units. `BLG-GOV-425` (filed this run) proposes an explicit ceremony reserve inside that band.
+
+**Workforce constraints:** design and spec skills are on v9.18's critical path again: `BLG-UX-21`'s `navigation.md`/`design_system.md` revision must land before `BLG-FE-323`, and `BLG-UX-11`/`BLG-UX-19` each start with a spec revision.
