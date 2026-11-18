@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-18 (roadmap rebalance `2026-11-18__scheduled` STEP 9 and STEP 11 — 16 items added (BLG-GOV-429 is the Friction Item 1 tracking item); STEP 9 — from `IW-20261118-01` (BLG-BE-223, BLG-SEC-47, BLG-FEAT-103/104, BLG-GOV-425–428, BLG-FE-321–324, BLG-OPS-222, BLG-QA-272/273); Provisional-Target set to v9.18 (17 items) or v9.19 (17 items) for Phase 4 and the v9.18 Now section, DL-089; BLG-UX-21 decision recorded; BLG-GOV-408 ✅ COMPLETE); prior — 2026-11-17 (session — 1 new item added: BLG-GOV-424; AUD-2026-11-17-003); prior — 2026-11-17 (session — 1 new item added: BLG-UX-21; BLG-UX-08 re-review §14 target state); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-18 (session — 4 new items added: BLG-UX-22, BLG-SPEC-241, BLG-BE-224, BLG-QA-274; v9.18 design gate observations, filed at Sprint Planning with PO authorisation); prior — 2026-11-18 (roadmap rebalance `2026-11-18__scheduled` STEP 9 and STEP 11 — 16 items added (BLG-GOV-429 is the Friction Item 1 tracking item); STEP 9 — from `IW-20261118-01` (BLG-BE-223, BLG-SEC-47, BLG-FEAT-103/104, BLG-GOV-425–428, BLG-FE-321–324, BLG-OPS-222, BLG-QA-272/273); Provisional-Target set to v9.18 (17 items) or v9.19 (17 items) for Phase 4 and the v9.18 Now section, DL-089; BLG-UX-21 decision recorded; BLG-GOV-408 ✅ COMPLETE); prior — 2026-11-17 (session — 1 new item added: BLG-GOV-424; AUD-2026-11-17-003); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -7831,5 +7831,87 @@ At `2026-11-18__scheduled` the engine appended three rows to `claude/roadmap/rol
 **Acceptance Criteria**
 - §7.2 step 1 and §2.4 name the STEP 9 append and the write-plan row
 - The next rebalance's `run_manifest.md` is the first file written in its cycle
+
+---
+
+### BLG-UX-22 — Decide and ship the "Weekly review" rename of the Weekly Digest
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Head of UX & Design; Frontend Specifications & UX Documentation Owner
+**Source:** Design gate `2026-11-18__release-v9.18` observation for filing (`design_gate.md` §Observations for filing), filed at Sprint Planning with Product Owner authorisation — 2026-11-18
+**Effort:** XS (<1h, plus label and test updates)
+**Provisional-Target:** v9.19
+
+**Problem**
+The 2026-11-17 re-review (§14.2, adopted by DL-089) renames the Weekly Digest to "Weekly review". No v9.18 story carries the rename: ST-15 to ST-17 rewrite and extend the page under its old name. The rename exists only in the target-state text, so the page, the sidebar, the command palette and `pageLabels.js` will keep "Weekly Digest" unless an item tracks it.
+
+**Scope**
+- Confirm the rename with the Head of UX & Design (or record why it is dropped)
+- If kept: update `weekly_digest.md`, `navigation.md`, the sidebar, `src/components/CommandPalette.js`, `src/lib/pageLabels.js` and the page heading; keep the route or redirect the old one
+
+**Acceptance Criteria**
+- A dated decision (rename or drop) is recorded in `weekly_digest.md`
+- If renamed: no visible "Weekly Digest" label remains in the app, and Playwright covers the new heading and the sidebar and palette entries
+
+---
+
+### BLG-SPEC-241 — Align dashboard.md §1A Earnings Alert click target with the shipped card
+**Priority:** P3 (Low)
+**Type:** Spec Debt
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** Design gate `2026-11-18__release-v9.18` observation for filing (`design_gate.md` §Observations for filing), filed at Sprint Planning with Product Owner authorisation — 2026-11-18
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.19
+
+**Problem**
+`dashboard.md` §1A says the Earnings Alert card's click target is "Earnings calendar or `/watchlist`". The shipped card links to `/Positions`. The spec and the build disagree, so a future story could "fix" the card to the wrong target.
+
+**Scope**
+- Decide which target is intended (the shipped `/Positions` is the likely one, as earnings alerts concern held positions)
+- Update `dashboard.md` §1A, or the card, so they agree
+
+**Acceptance Criteria**
+- `dashboard.md` §1A names the same click target as `EarningsAlertCard.js` (or the card is changed to match the spec, with a Playwright check)
+
+---
+
+### BLG-BE-224 — Check that notification re-delivery never sends rows created while a preference was off
+**Priority:** P3 (Low)
+**Type:** Backend engineering
+**Owner:** Head of Engineering; Backend Engineering Patterns Owner
+**Source:** Design gate `2026-11-18__release-v9.18` observation for filing (`design_gate.md` §Observations for filing; `alert-delivery-truth` design), filed at Sprint Planning with Product Owner authorisation — 2026-11-18
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.19
+
+**Problem**
+Re-delivery retries `delivered = false` notification rows up to 3 times. With a preference off, a generic notification is stored but never enqueued (`delivery_attempts = 0`). If the re-delivery query selects such rows, turning the preference on later would send a burst of stale alerts. The Reflection Reminder design deliberately avoids this, but the generic path has not been checked. ST-03 (v9.18) adds more stored "not sent" rows, which raises the stakes.
+
+**Scope**
+- Read the re-delivery query and state whether it selects rows with `delivery_attempts = 0` created while the preference was off
+- If it does, exclude them (for example by the recorded not-sent reason), with a pytest
+
+**Acceptance Criteria**
+- A pytest stores a notification with its preference off, turns the preference on, runs re-delivery, and asserts nothing is sent
+- The behaviour is recorded in `notifications.md` (or the alerts contract)
+
+---
+
+### BLG-QA-274 — Record whether the Performance CWV baseline includes the Strategy Benchmark section
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** QA & Testing Owner
+**Source:** Design gate `2026-11-18__release-v9.18` observation for filing (`design_gate.md` §Observations for filing), filed at Sprint Planning with Product Owner authorisation — 2026-11-18
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.18
+
+**Problem**
+v9.18 ST-08 moves Strategy Benchmark into Performance, and its data then loads with the Performance page. ST-06 records the first Core Web Vitals baseline for Performance in the same release. If the baseline does not say whether it was measured before or after ST-08 merged, a later LCP or bundle change on Performance cannot be attributed correctly.
+
+**Scope**
+- In `performance_budget.md`, note against the Performance baseline whether ST-08 had merged, and the commit measured
+- If it was measured before ST-08, re-measure Performance after ST-08 merges and record both
+
+**Acceptance Criteria**
+- The Performance baseline row in `performance_budget.md` names the commit measured and whether the Strategy Benchmark section was included
 
 ---
