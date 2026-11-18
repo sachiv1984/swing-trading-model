@@ -38,7 +38,7 @@
   "sprint2_gate_confirmed_utc": "2026-08-18T00:00:00Z",
   "sprint2_close_utc": "2026-08-20T11:58:57Z",
   "verification_utc": "2026-11-17T15:34:25Z",
-  "last_sync_utc": "2026-11-17T15:44:04Z",
+  "last_sync_utc": "2026-11-18T08:22:12Z",
   "blocked_sla_breached": false,
   "last_deviation_consolidation_review_utc": "2026-11-11T17:00:35Z",
   "deviation_consolidation_review_cycle_count": 1,
@@ -49,7 +49,7 @@
   "last_audit_overall_score": 77,
   "last_audit_open_items": 0,
   "last_audit_cycle_count": 94,
-  "next_release": "v9.17",
+  "next_release": "v9.18",
   "prior_cycle": "2026-11-11__release-v9.17",
   "lifecycle_schema": "claude/system/lifecycle_schema.json",
   "schema_version": "1.0",
@@ -725,17 +725,17 @@
       "reacknowledgement_summary": "Deferred trigger met (BLG-AI-06 shipped v9.4). Re-deferred: the live sample needs a production DB read the execution environment lacks (DATABASE_URL is staging). New trigger: DEL-20261030-04 supplies 10 production ai_output_boundary_samples rows or a read; tracked by BLG-GOV-399. See docs/ops/ai_output_boundary_sample_audit_20260910.md addendum (2026-10-30)."
     }
   },
-  "last_rebalance_cycle": "2026-11-03__scheduled",
-  "last_rebalance_utc": "2026-11-03T13:59:17Z",
-  "last_scheduled_rebalance_utc": "2026-11-03T13:59:17Z",
+  "last_rebalance_cycle": "2026-11-18__scheduled",
+  "last_rebalance_utc": "2026-11-18T08:22:12Z",
+  "last_scheduled_rebalance_utc": "2026-11-18T08:22:12Z",
   "last_ideas_housekeeping_utc": "2026-11-06T16:31:03Z",
   "last_ideas_housekeeping_outcome": "11 rows archived (Promoted-Backlog, IW-20261103-01); 1 kept; revival review all 4 Unmet; pipeline healthy (271 active)",
-  "last_rebalance_outcome": "Standard tier; CPS=N/A (0 active initiatives, 19th consecutive cycle); DL-088. STEP -1.5 halted on 1 OVERDUE deferred patch (ESC-RB-20261103-01), cleared by Head of Specs Team action-now patch (post_ship_closure.md v2.44). Reduced-roster intake IW-20261103-01 from the Head of UX & Design website review: 11 ideas -> 27 backlog items (Site Structure & Usability programme). STEP 8.0 promoted BLG-FE-244 and BLG-FE-245 (P1). STEP 8.1 Option (a): v9.15 Now section (10 committed items) + provisional programme plan v9.16-v9.18 (close-out re-review BLG-UX-08). PVR 0.307 Advisory; Skill-Silo 68.1%. ESC-RB-20261103-02 open (non-blocking, Head of Specs Team).",
-  "last_rebalance_pvr": 0.307,
-  "last_skill_silo_rolling_avg": 0.681,
+  "last_rebalance_outcome": "Standard tier; CPS=N/A (0 active initiatives, 20th consecutive cycle); DL-089, DL-090. Kill ×4 Priority 3 deferred initiatives flagged by the ST-45 sunset review (BLG-GOV-408). PO adopted the 2026-11-17 re-review §14 as the Site Structure & Usability Phase 4 brief (BLG-UX-21); STEP 8.1 Option (a) — v9.18 section with 19 committed items (Phase 4 stages 1–2, BLG-FEAT-103, BLG-GOV-422/QA-262/QA-260, BLG-FE-294); stages 3–4 provisional for v9.19. Full-roster intake IW-20261118-01: 27 ideas → 15 backlog items, 2 rejected. STEP -1.5 clean (5 patches applied). PVR 0.355 Advisory (2nd); Skill-Silo 60.2% pooled (sustained-failure clause met).",
+  "last_rebalance_pvr": 0.355,
+  "last_skill_silo_rolling_avg": 0.602,
   "last_rebalance_cps": 0,
   "last_meta_review_cycle": "2026-10-16__scheduled",
-  "rebalance_cycles_since_meta_review": 0,
+  "rebalance_cycles_since_meta_review": 2,
   "last_manage_roadmap_utc": "2026-11-17T15:46:25Z",
   "last_manage_roadmap_outcome": "0 items retired, 0 flagged stale, all remaining kept active; 1 RA: pointer pruned (RA:v9.13-committed-items); §5.5 governance version-table audit run: 29 files, 0 mismatches, marker → 2026-11-11__release-v9.17",
   "last_groom_backlog_utc": "2026-11-17T15:46:25Z",
@@ -778,5 +778,5 @@
     "cycle_id": "2026-11-06__release-v9.16",
     "published_utc": "2026-11-06T17:18:06Z"
   },
-  "_next_release_note": "Set by release_planning_prompt.md STEP 9 from --version at plan release v9.17 (2026-11-11); first set 2026-11-11 by explicit Product Owner direction after post-ship closure 2026-11-06__release-v9.16."
+  "_next_release_note": "Set advisory by roadmap rebalance 2026-11-18__scheduled STEP 12.1 from DL-089 (v9.18 Now section); release_planning_prompt.md STEP 9 overwrites it at plan release v9.18. Prior: set by plan release v9.17 (2026-11-11)."
 }

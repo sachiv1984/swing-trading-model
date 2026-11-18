@@ -1,8 +1,8 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-11-17 (session, user-directed — programme plan close-out row marked done: `BLG-UX-08` re-review complete; the subsection retires at the next `manage roadmap`); prior — 2026-11-17 (post-ship closure `2026-11-11__release-v9.17` STEP 2 — v9.17 ✅ Complete; Next planned release → [TBD]; programme plan Phase 3 marked shipped; §8 row added; RA:v9.17 closure status added; STEP 11 manage roadmap — 0 retired, RA:v9.13-committed-items pointer pruned; restored the missing `**Last Updated:**` label on this line); prior — 2026-11-11 (Release Planning `2026-11-11__release-v9.17` STEP 5 — RA:v9.17 execution notes added under the §1 Next planned release line; no scope change); prior history retained — see prior entries in version control
-**Last rebalance:** 2026-11-03 (cycle 2026-11-03__scheduled — Standard tier, CPS=N/A (0 active initiatives, 19th consecutive cycle); STEP -1.5 cleared after 1 OVERDUE deferred patch was applied (Head of Specs Team, user acting in role); reduced-roster intake IW-20261103-01 (11 ideas from the Head of UX & Design website review → 27 backlog items); STEP 8.0 Correctness Fast-Track promoted BLG-FE-244 and BLG-FE-245 (P1); PVR 0.307 (Advisory, 1st reading out of Alert); Skill-Silo 68.1% pooled (above ceiling, sustained-failure clause applies); STEP 8.1 Option (a), v9.15 section added; DL-088)
+**Last Updated:** 2026-11-18 (roadmap rebalance `2026-11-18__scheduled` STEP 9 — §1 Next planned release → v9.18; §3 v9.18 section added with the Site Structure & Usability Phase 4 programme plan (DL-089); §5 Full Compliance Scoring and Customisable Dashboard Layout marked killed (DL-090); Last rebalance refreshed); prior — 2026-11-17 (session, user-directed — programme plan close-out row marked done: `BLG-UX-08` re-review complete; the subsection retires at the next `manage roadmap`); prior — 2026-11-17 (post-ship closure `2026-11-11__release-v9.17` STEP 2 — v9.17 ✅ Complete; Next planned release → [TBD]; programme plan Phase 3 marked shipped; §8 row added; RA:v9.17 closure status added; STEP 11 manage roadmap — 0 retired, RA:v9.13-committed-items pointer pruned; restored the missing `**Last Updated:**` label on this line); prior history retained — see prior entries in version control
+**Last rebalance:** 2026-11-18 (cycle 2026-11-18__scheduled — Standard tier, CPS=N/A (0 active initiatives, 20th consecutive cycle); STEP -1.5 clean (all 5 deferred patches from 2026-11-03 applied); full-roster intake IW-20261118-01 (27 ideas → 15 backlog items, 2 rejected); PO adopted the 2026-11-17 re-review §14 as the Site Structure & Usability Phase 4 brief (BLG-UX-21) and killed the 4 initiatives the ST-45 sunset review flagged; PVR 0.355 (Advisory, 2nd reading); Skill-Silo 60.2% pooled (above ceiling, sustained-failure clause applies); STEP 8.1 Option (a), v9.18 section added; DL-089, DL-090)
 
 > ⚠️ **Standing Notice:** This document records product intent and prioritisation thinking. All implementation detail (formulas, schemas, endpoint paths) is illustrative and indicative only. Before any feature moves to implementation, the relevant canonical specifications must be authored or updated by the appropriate domain owner. This document must not be cited as canonical intent.
 
@@ -11,7 +11,7 @@
 ## 1. Current Version
 
 **v9.17** — Site Structure & Usability, Phase 3 — ✅ Complete — Shipped 2026-11-17 — cycle: 2026-11-11__release-v9.17
-**Next planned release:** [TBD] (not yet named. The §3 programme plan provisionally places the close-out re-review, `BLG-UX-08`, at v9.18; the Product Owner directed on 2026-11-12 that `BLG-GOV-422`, `BLG-QA-262` and `BLG-QA-260` be seated in the release after v9.17. Scope is set at `plan release`)
+**Next planned release:** v9.18 — Site Structure & Usability, Phase 4 (stages 1–2) and first-time-right — committed items in §3 (roadmap rebalance `2026-11-18__scheduled`, DL-089); scope is completed at `plan release v9.18`
 
 <!-- roadmap-annotation-marker: RA:v9.17:2026-11-11__release-v9.17 -->
 
@@ -534,6 +534,48 @@ Today you find stocks through external research and add them to the watchlist ma
 
 ## 3. Delivery Plan — Horizon: Now
 
+### v9.18 — Site Structure & Usability, Phase 4 (stages 1–2) and first-time-right (roadmap rebalance `2026-11-18__scheduled`, DL-089)
+
+*Added by the rebalance, not by Release Planning: the release's full scope, capacity fit and story breakdown are set at `plan release v9.18`. The items below are committed to it.*
+
+**Release focus:** the Product Owner adopted the 2026-11-17 re-review's target state (`docs/ux/site_structure_rereview_2026-11-17.md` §14) in whole as the brief for a **Site Structure & Usability, Phase 4** programme (`BLG-UX-21`, DL-089). The re-review's verdict: the app is "well organised but unexplained, unmeasured, over-featured where it matters least, and exposed". v9.18 takes its first two stages — **correct and safe** (access re-review, Level A accessibility failures, truthful alert copy, measurement before change) and **home page and review loop** (calm quiet day, one grace definition, a readable and linked weekly review, checks the system knows shown as status, rules-followed filtering, the two §14.2 navigation moves) — plus the core-loop measurement the Challenger asked for, and the first-time-right items the Product Owner directed on 2026-11-12.
+
+| Item | Why it is here | Priority | Effort |
+|------|----------------|----------|--------|
+| `BLG-GOV-422` — design gate data-source and worked-example checks | PO direction 2026-11-12; widen scope per the v9.17 `execution_state.json` process_note (`a207af77`) | P2 | S (~0.5d) |
+| `BLG-QA-262` — unit-test pure frontend logic in CI | PO direction 2026-11-12 | P2 | M (~1–2d) |
+| `BLG-QA-260` — axe "incomplete" contrast results fail the scan | PO direction 2026-11-12 (P3; committed here, so no separate override is needed for seating) | P3 | XS (<1h) |
+| `BLG-FE-294` — "earnings unknown" instead of nothing | Accepted P2 found defect from v9.17 (closure Carry-Forward #2) | P2 | S (~0.5d) |
+| `BLG-SEC-46` — re-review the accepted open-access risk | Phase 4 stage 1; its remedy decides whether Phase 4 needs a third release | P2 | S (~0.5d review) |
+| `BLG-FE-311` — four mouse-only controls keyboard-operable | Phase 4 stage 1; Level A failure | P2 | S (~0.5-1 day) |
+| `BLG-FE-312` — Exit dialog labels linked to inputs | Phase 4 stage 1; Level A failure on the most safety-critical form | P2 | XS (<1h) |
+| `BLG-FE-318` — say Telegram, not email; show when an alert was not sent | Phase 4 stage 1; the one false statement on screen | P3 | S (~0.5 day) |
+| `BLG-QA-271` — measure Core Web Vitals; update the performance budget | Phase 4 stage 1; measure before stage 4 changes | P3 | M (~1-2 days) |
+| `BLG-UX-21` — `navigation.md` and `design_system.md` revisions | Phase 4 brief adopted (DL-089); the remaining scope, sequenced before `BLG-FE-323` | P3 | S (~0.5 day) |
+| `BLG-UX-11` — quiet-day Dashboard as one line | Phase 4 stage 2 | P3 | M (~1-2 days) |
+| `BLG-FE-308` — one grace definition across the Dashboard | Phase 4 stage 2 | P3 | S (~0.5 day) |
+| `BLG-UX-15` — Weekly Digest as a readable weekly summary | Phase 4 stage 2 | P3 | S (~0.5-1 day) |
+| `BLG-UX-12` — link the Weekly Digest figures to their pages | Phase 4 stage 2 | P3 | S (~0.5 day) |
+| `BLG-UX-13` — "Plan this" on Today list New signals rows | Phase 4 stage 2 | P3 | XS (<1h) |
+| `BLG-UX-19` — machine-checkable checklist items as automatic status | Phase 4 stage 2 | P3 | S (~0.5-1 day) |
+| `BLG-FE-320` — filter Trade History and Journal by rules followed or broken | Phase 4 stage 2 | P3 | M (~1-2 days) |
+| `BLG-FE-323` — Strategy Benchmark into Performance; Ticker Universe into Settings | Phase 4 stage 2 (filed this run); depends on `BLG-UX-21` | P3 | M (~1-1.5 days) |
+| `BLG-FEAT-103` — measure the core loop; show this week's loop on the Weekly Digest | Filed this run (4 ideas, incl. the Challenger's "measure first"); measures Phase 4 as it ships | P3 | M (~2-3 days) |
+
+Committed ≈ 12-20 days of the ~24–28-day band. Build-and-ship U-items for the §7.1 sustained-failure clause: `BLG-FE-311`, `BLG-FE-312`, `BLG-FE-318`, `BLG-FE-294`, `BLG-UX-11`, `BLG-FE-320`, `BLG-FE-323` (≥ 2 required). The rest of v9.18 is set by `plan release v9.18`; P2 work outside this section (for example `BLG-BE-223`, stock splits) is seated by the P1-then-P2 rule as usual.
+
+**Programme plan — Site Structure & Usability, Phase 4 (provisional — later stages are not committed by this section; each is seated by its own `plan release`, and a rebalance may revise it):**
+
+| Stage | Provisional release | Items |
+|-------|--------------------|-------|
+| 1 — Correct and safe | v9.18 (this section) | `BLG-SEC-46`, `BLG-FE-311`, `BLG-FE-312`, `BLG-FE-318`, `BLG-QA-271` |
+| 2 — Home page and review loop | v9.18 (this section) | `BLG-UX-21`, `BLG-UX-11`, `BLG-FE-308`, `BLG-UX-15`, `BLG-UX-12`, `BLG-UX-13`, `BLG-UX-19`, `BLG-FE-320`, `BLG-FE-323`; measured by `BLG-FEAT-103` |
+| 3 — Clarity | v9.19 | `BLG-UX-14`, `BLG-UX-16`, `BLG-UX-18`, `BLG-FE-310`, `BLG-SPEC-240`, `BLG-FE-313`, `BLG-FE-314`, `BLG-QA-269`, `BLG-QA-270`, `BLG-FE-309`, `BLG-FE-321`, `BLG-FE-322` (≈ 7-11 days) |
+| 4 — Speed and polish | v9.19 | `BLG-FE-315`, `BLG-FE-316`, `BLG-FE-317`, `BLG-OPS-221`, `BLG-FE-319`, `BLG-FEAT-102`, `BLG-UX-20`, `BLG-QA-272` (≈ 5-8 days) |
+| Conditional — access remedy | v9.20 if needed | Whatever `BLG-SEC-46` decides; authentication would be a Large change (re-review §15.1) |
+
+`BLG-UX-17` (chat opened from a trade) waits on the 2027-01-03 AI usage review (`BLG-GOV-382`), which decides whether chat is kept. When this section retires at v9.18 closure, `manage roadmap` STEP 5.2 carries the programme-plan table forward (BLG-GOV-406).
+
 ### Programme plan — Site Structure & Usability (DL-088)
 
 *Carried forward from the retired v9.15 Now-horizon section by `manage roadmap` (post-ship closure `2026-11-03__release-v9.15`, `roadmap_management_prompt.md` STEP 5.2, BLG-GOV-406). Retire this subsection to `roadmap_archive.md` when its last phase ships.*
@@ -662,9 +704,9 @@ Items in this section are sequenced and ready for planning when the current vers
 |-----------------------------------------|------|--------------------------------------------------------------------------------------------|
 |Multi-Portfolio Support                  |H     |Low value at current scale                                                                  |
 |Mobile App                               |VH    |Web experience sufficient                                                                   |
-|Full Compliance Scoring                  |H     |Lightweight version shipped v1.9; Arc 5 SI-01 supersedes this                               |
+|~~Full Compliance Scoring~~                  |H     |❌ Killed 2026-11-18 (DL-090) — covered by the Arc 5 composite compliance score (v4.1); ST-45 sunset review flag |
 |BLG-TECH-05 — Prometheus metrics endpoint|L–M   |Defer until operational need or multi-user                                                  |
-|Customisable Dashboard Layout            |H     |High build cost, low current priority; defer indefinitely at current scale                  |
+|~~Customisable Dashboard Layout~~            |H     |❌ Killed 2026-11-18 (DL-090) — the adopted Phase 4 brief makes the Dashboard calmer, not configurable (re-review §14.3); ST-45 sunset review flag |
 *BLG-GOV-08 — Engine prompt compression — ❌ Retired 2026-05-13 (DL-026): 9+ consecutive deferrals; primary value delivered by roadmap_prompt.md v6.0 refactor (AUD-2026-05-13). Archived in backlog_archive.md.*
 
 -----
