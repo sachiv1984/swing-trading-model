@@ -6,7 +6,7 @@
   "invoked_utc": "2026-11-19T08:07:14Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-19T11:21:00Z",
+  "last_updated_utc": "2026-11-19T11:42:06Z",
   "epics": {
     "EPIC-01": {
       "title": "Site Structure & Usability Phase 4, Stage 1: Correct and Safe (build-and-ship)",
@@ -1002,7 +1002,8 @@
     "all_merged": false
   },
   "process_notes": [
-    "2026-11-19T08:07:14Z STEP 0 initialised by `run sprint --epic EPIC-01` (standard mode). All 40 GitHub issues found (#2266–#2305); no process gap."
+    "2026-11-19T08:07:14Z STEP 0 initialised by `run sprint --epic EPIC-01` (standard mode). All 40 GitHub issues found (#2266–#2305); no process gap.",
+    "2026-11-19T11:42:06Z BLG-FE-325 (filed in ST-06, 9847fb03) fixed out-of-sprint on governance/2026-11-19-csp-redirect-script, PR #2306 (commit 99fb6ffa), Product Owner direction in session 2026-11-19: redirect script moved to public/spa-redirect.js, script-src 'self' only, build-output CSP check in frontend-production-build.yml and deploy.yml, SC-CSPS-01/02. After #2306 and this EPIC merge, add the ✅ COMPLETE banner to BLG-FE-325 citing 99fb6ffa. Not merged by the engine."
   ],
   "sealed": false,
   "sealed_utc": null
