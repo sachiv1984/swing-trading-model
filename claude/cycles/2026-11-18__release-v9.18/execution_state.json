@@ -6,7 +6,7 @@
   "invoked_utc": "2026-11-19T08:07:14Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-19T08:07:49Z",
+  "last_updated_utc": "2026-11-19T09:05:00Z",
   "epics": {
     "EPIC-01": {
       "title": "Site Structure & Usability Phase 4, Stage 1: Correct and Safe (build-and-ship)",
@@ -24,16 +24,16 @@
         "ST-01": {
           "title": "Make the four mouse-only controls keyboard-operable",
           "classification": "autonomous",
-          "status": "in_progress",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 2266,
           "branch": "exec/2026-11-18__release-v9.18/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "a89a66b29aeb6f691509a74f2d1c478427488bc2",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-11-19T09:02:38Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/specs/frontend/design_system.md#Accessibility",
             "tests/e2e/keyboard-operable-controls.spec.js",
@@ -41,10 +41,10 @@
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": "3.1.A.ftr_pass_b",
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.done",
           "sign_off_record": null,
-          "notes": "First-time-right: 2026-11-19 pass A — 4 done (conditional states listed per page: heatmap dialog, Screener watchlist popover and news panel, Alert History expanded row, AI summary panel open, monitor modal already scanned; each given a fixture and a scan; the popover's unlinked 'Target entry' label is in AC 2 scope and fixed); 6 done (aspect-square/heatmap-*/ai-journal-summary-toggle/monitor-row selectors kept; tile <p>→<span> has no test reader; 'Date / Time' has no test reader); 19 done (heatmap opener removed while open → focus restore skipped); 20 done (new names 'Select <ticker> for exit', 'Close add to watchlist', 'Close news for <ticker>', 'Close'); 5 medium; 1,2,3,7,8,11,17,18,21,23 N/A (no data values, state or thresholds change). | First-time-right: 2026-11-19 pass B — 9 done (Alert History 'Triggered' badge text-amber-700→800, 4.32:1 on the expanded row, found by the new state scan; fixed in-file); 13 done (new name 'Close add to watchlist' collided with /confirm|add|save/ in SC-SCR-11/12/13, SC-UK-04, VS-06 → renamed 'Cancel'; reran: 100 passed); 18/19 re-run (tests use keyboard only; focus trap after a text click, scroll region, focus return asserted); 22 done (no link handlers; dialog h2 under page outline); 10,12,14,15,16 N/A. /code-review medium: 10 findings, 8 fixed (window-level Tab trap, focusable trade-list region, monitor row aria-describedby, keyed Fragment, tooltip on focus, header click area restored, Tile hoisted, useId), 2 declined (Radix Dialog migration: specs depend on heatmap-backdrop and the trap is now fixed; Enter on the exit checkbox: AC says Enter/Space and the dialog has no Enter default action)."
+          "notes": "First-time-right: 2026-11-19 pass A — 4 done (conditional states listed per page: heatmap dialog, Screener watchlist popover and news panel, Alert History expanded row, AI summary panel open, monitor modal already scanned; each given a fixture and a scan; the popover's unlinked 'Target entry' label is in AC 2 scope and fixed); 6 done (aspect-square/heatmap-*/ai-journal-summary-toggle/monitor-row selectors kept; tile <p>→<span> has no test reader; 'Date / Time' has no test reader); 19 done (heatmap opener removed while open → focus restore skipped); 20 done (new names 'Select <ticker> for exit', 'Close add to watchlist', 'Close news for <ticker>', 'Close'); 5 medium; 1,2,3,7,8,11,17,18,21,23 N/A (no data values, state or thresholds change). | First-time-right: 2026-11-19 pass B — 9 done (Alert History 'Triggered' badge text-amber-700→800, 4.32:1 on the expanded row, found by the new state scan; fixed in-file); 13 done (new name 'Close add to watchlist' collided with /confirm|add|save/ in SC-SCR-11/12/13, SC-UK-04, VS-06 → renamed 'Cancel'; reran: 100 passed); 18/19 re-run (tests use keyboard only; focus trap after a text click, scroll region, focus return asserted); 22 done (no link handlers; dialog h2 under page outline); 10,12,14,15,16 N/A. /code-review medium: 10 findings, 8 fixed (window-level Tab trap, focusable trade-list region, monitor row aria-describedby, keyed Fragment, tooltip on focus, header click area restored, Tile hoisted, useId), 2 declined (Radix Dialog migration: specs depend on heatmap-backdrop and the trap is now fixed; Enter on the exit checkbox: AC says Enter/Space and the dialog has no Enter default action). | Deviation check vs design_system.md §Accessibility (full keyboard navigation; focus trapping and restoration in modals): none. ci_pending: Playwright E2E 44492801159, Smoke 44492801134, CI Pytest 44492800909, Frontend Build 44492801109 (and Golden Output, Portfolio Integration, Service Layer Coverage) on a89a66b2 — clear before DoQ (STEP 3.2.A)."
         },
         "ST-02": {
           "title": "Link the Exit dialog's labels to their inputs",
@@ -946,7 +946,9 @@
     "ST-05"
   ],
   "delegated_items": [],
-  "completed_items": [],
+  "completed_items": [
+    "ST-01"
+  ],
   "open_escalations": {
     "ESC-EXEC-20261119-01": {
       "cycle": "2026-11-18__release-v9.18",
