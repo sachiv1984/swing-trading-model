@@ -1,8 +1,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 0.13
-**Last Updated:** 2026-11-19 (ST-03, EPIC-01, v9.18 — Feed delivery line text chosen by the new derived `delivery_reason`; pre-v9.18 unconfigured rows report `sent`; rulings 2026-11-19); prior — 2026-11-18 (v9.18 design gate — ST-03/BLG-FE-318 Telegram wording and Not sent line; ST-04/BLG-FE-228 Alert History values); prior — 2026-10-12 (v9.12 design gate — ST-23/BLG-FE-200: new §Light Theme); prior history retained — see prior entries in version control
+**Version:** 0.14
+**Last Updated:** 2026-11-19 (ST-04, EPIC-01, v9.18, BLG-FE-228 — §Alert History Values currency bullet records the trace: `.L` symbol → GBP, UK values in pounds; staging check result); prior — 2026-11-19 (ST-03, EPIC-01, v9.18 — Feed delivery line text chosen by the new derived `delivery_reason`; pre-v9.18 unconfigured rows report `sent`; rulings 2026-11-19); prior — 2026-11-18 (v9.18 design gate — ST-03/BLG-FE-318 Telegram wording and Not sent line; ST-04/BLG-FE-228 Alert History values); prior history retained — see prior entries in version control
 **Design Source (v0.9 reflection reminder):** docs/design/2026-09-21__release-v9.6/reflection-reminder/decision_record.md
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Design Source:** docs/design/2026-03-18__release-v2.1/notification-feed/ux_spec.md | docs/design/2026-03-18__release-v2.1/notification-preferences/ux_spec.md | docs/design/2026-03-21__release-v2.2/alert-threshold-customisation/ux_spec.md | docs/design/2026-03-21__release-v2.2/alert-history-table/ux_spec.md | docs/design/2026-03-24__release-v2.3/alert-nav-badge/ux_spec.md | docs/design/2026-07-17__release-v7.5/custom-price-alerts/ux_spec.md | docs/design/2026-07-21__release-v7.7/nav-notification-digest-consolidation/ux_spec.md | docs/design/2026-07-24__release-v7.8/notification-accessibility-audit/decision_record.md
@@ -352,7 +352,7 @@ Design source: `docs/design/2026-11-18__release-v9.18/alert-delivery-truth/decis
 | `daily_portfolio_summary` | `open_positions` | "{open_positions} open position(s)" |
 
 - **Expanded labels:** Stop price, Current price, Gap to stop, Threshold, Days held, Grace period (days), Days left, US regime, UK regime, Open positions. Unknown keys keep the title-cased fallback.
-- **Currency:** prices use the row's market currency, not always USD. ST-04 traces whether `symbol` keeps the `.L` suffix and whether UK values are pounds or pence, derives the currency, and checks one real UK row before the commit.
+- **Currency:** prices use the row's market currency, not always USD. *(v0.14, ST-04 trace)* `symbol` is the position's `ticker`, which keeps the `.L` suffix for UK (`position_service.add_position` appends it; `data_model.md` positions.ticker), and the prices are the position's native `current_price`/`current_stop`, so UK values are pounds. Rule: `symbol` ending `.L` (any case) → GBP, otherwise USD (`src/lib/alertHistoryValues.js` `currencyForSymbol`). Staging check (read-only, user-authorised, 2026-11-19): no stop-loss evaluation on staging has a `.L` symbol yet; its two UK positions were seeded without the suffix (`BLG-OPS-205`, ST-35), and their 8 evaluations show `$` until ST-35 corrects them.
 - Test: each of the four types shows its compact fields (unit or Playwright, ST-04).
 
 #### Sort
@@ -500,6 +500,7 @@ When the System nav group is collapsed, the badge count propagates to the group 
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.14 | 2026-11-19 | (ST-04, EPIC-01, v9.18, BLG-FE-228) §Alert History Values: the currency bullet records the writer trace (`symbol` is the position ticker, `.L` kept for UK; prices native, UK pounds; rule `.L` → GBP else USD, `src/lib/alertHistoryValues.js`) and the 2026-11-19 staging check (no `.L` row yet; two UK seed positions lack the suffix, ST-35). |
 | 0.13 | 2026-11-19 | (ST-03, EPIC-01, v9.18, BLG-FE-318) Feed delivery line: the text comes from a new derived `delivery_reason`; pre-v9.18 unconfigured rows report `sent` (no line); a failed row that will not be retried (read, or preference now off) is `not_sent`. Rulings: API Contracts & Documentation Owner and Head of UX & Design (the user, in session), 2026-11-19. |
 | 0.12 | 2026-11-18 | v9.18 design gate. (ST-03, BLG-FE-318) "email" → "Telegram" on Notification Preferences (Section 1 renamed "Telegram Alerts"; `email_enabled` kept); §Channel Scope; Feed rows gain a "Not sent" delivery line from a new derived `delivery_status`; unconfigured Telegram recorded as not delivered. (ST-04, BLG-FE-228) new §Alert History Values: compact text and labels mapped to the keys the backend writes (grace, regime and summary keys were all wrong), market-currency prices. Design source: `docs/design/2026-11-18__release-v9.18/alert-delivery-truth/decision_record.md`. Head of UX & Design sign-off: 2026-11-18. Product Owner approved: 2026-11-18. Head of Specs Team confirmed. |
 | 0.11 | 2026-10-12 | v9.12 design gate. (ST-23, BLG-FE-200) Light mode ruled a supported theme (resolves RISK-03). New §Light Theme: every colour on Notification Preferences and Alert History uses a light+dark pair from the light-theme token set, including the active tab and the section headings. Design source: `docs/design/2026-10-12__release-v9.12/light-theme-support/decision_record.md`. Head of UX & Design sign-off: 2026-10-12. Product Owner approved: 2026-10-12. Head of Specs Team confirmed. |
