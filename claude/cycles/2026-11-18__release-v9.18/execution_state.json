@@ -6,7 +6,7 @@
   "invoked_utc": "2026-11-19T08:07:14Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-19T09:05:00Z",
+  "last_updated_utc": "2026-11-19T09:26:00Z",
   "epics": {
     "EPIC-01": {
       "title": "Site Structure & Usability Phase 4, Stage 1: Correct and Safe (build-and-ship)",
@@ -53,11 +53,11 @@
           "assigned_to": "engine",
           "github_issue": 2267,
           "branch": "exec/2026-11-18__release-v9.18/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "dc803dc1d5535f3f8d318e98d73a4c30f5f4213f",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
+          "completed_utc": "2026-11-19T09:25:07Z",
           "acceptance_verified": true,
           "spec_references": [
             "docs/specs/frontend/design_system.md#Accessibility",
@@ -66,9 +66,9 @@
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": true,
-          "last_completed_substep": "3.1.A.commit",
+          "last_completed_substep": "3.1.A.done",
           "sign_off_record": null,
-          "notes": "First-time-right: 2026-11-19 pass A — 4 done (US position so the conditional FX field is in the scan; Exit Reason select also linked via htmlFor/id); 6 done (no getByLabel on Exit fields in tests/e2e; ids exit-shares/price/date/note/reason unique in src); 1,2,3,5 (medium),7,8,11,17–21,23 N/A (markup-only, no data or state). | First-time-right: 2026-11-19 pass B — 13 done (no new visible text); 18/19 N/A; tests assert each label → input id and type through one label; local: 30 passed (ST-02 both themes, SC-PEM, monitor-exit-queue, exit-condition-surfacing, monitor-grace, watchlist exit filters). | /code-review medium: 4 ST-02 findings, all fixed (useId per-instance ids since ExitModal mounts in Positions and DailyMonitor; test covers all 6 labels with exact names and the label's for attribute; Exit Reason select named by its visible label, aria-label removed; Exit Price matched by anchored regex). Local after fixes: 121 passed across every spec that opens the Exit dialog. Deviation check vs design_system.md §Accessibility: none."
+          "notes": "First-time-right: 2026-11-19 pass A — 4 done (US position so the conditional FX field is in the scan; Exit Reason select also linked via htmlFor/id); 6 done (no getByLabel on Exit fields in tests/e2e; ids exit-shares/price/date/note/reason unique in src); 1,2,3,5 (medium),7,8,11,17–21,23 N/A (markup-only, no data or state). | First-time-right: 2026-11-19 pass B — 13 done (no new visible text); 18/19 N/A; tests assert each label → input id and type through one label; local: 30 passed (ST-02 both themes, SC-PEM, monitor-exit-queue, exit-condition-surfacing, monitor-grace, watchlist exit filters). | /code-review medium: 4 ST-02 findings, all fixed (useId per-instance ids since ExitModal mounts in Positions and DailyMonitor; test covers all 6 labels with exact names and the label's for attribute; Exit Reason select named by its visible label, aria-label removed; Exit Price matched by anchored regex). Local after fixes: 121 passed across every spec that opens the Exit dialog. Deviation check vs design_system.md §Accessibility: none. | ci_pending: all workflows on dc803dc1 (Playwright E2E incl.) — clear before DoQ (STEP 3.2.A)."
         },
         "ST-03": {
           "title": "Say Telegram, not email, and show when an alert was not sent",
