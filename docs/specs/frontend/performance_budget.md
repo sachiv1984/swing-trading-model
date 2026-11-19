@@ -100,7 +100,7 @@ BUILD_PATH=build-perf CI=false PUBLIC_URL=/ REACT_APP_API_URL=http://localhost:4
   REACT_APP_DEV_FAKE_AUTH=true DISABLE_ESLINT_PLUGIN=true GENERATE_SOURCEMAP=false npm run build
 python3 scripts/perf/check_bundle_size.py build-perf
 node scripts/perf/mock_api_server.js --port 4173 --static build-perf &
-# in a directory with `npm install lighthouse@13.6.0`, copy scripts/perf/run_lighthouse.mjs there, then:
+# copy scripts/perf/lighthouse/package*.json and scripts/perf/run_lighthouse.mjs to a temp dir, run `npm ci` there, then:
 node run_lighthouse.mjs --base http://localhost:4173 --runs 3
 ```
 

@@ -88,12 +88,15 @@ jobs:
           python3 scripts/perf/check_bundle_size.py build-perf \
             --summary "$GITHUB_STEP_SUMMARY" --json perf-results/bundle-size.json
 
-      - name: Install Lighthouse 13.6.0 (outside the app's lockfile)
+      # Pinned tree (scripts/perf/lighthouse/package-lock.json), installed with npm ci:
+      # an unpinned `npm install lighthouse@13.6.0` failed on 2026-11-19 when a
+      # transitive @sentry package resolved to a version not yet on the registry.
+      - name: Install Lighthouse 13.6.0 from its lockfile (outside the app's lockfile)
         run: |
           mkdir -p "$RUNNER_TEMP/lh"
+          cp scripts/perf/lighthouse/package.json scripts/perf/lighthouse/package-lock.json "$RUNNER_TEMP/lh/"
           cd "$RUNNER_TEMP/lh"
-          npm init -y > /dev/null
-          npm install --no-audit --no-fund lighthouse@13.6.0
+          npm ci --no-audit --no-fund
           cp "$GITHUB_WORKSPACE/scripts/perf/run_lighthouse.mjs" .
 
       - name: Start the build and mock API on localhost:4173
