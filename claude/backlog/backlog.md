@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-19 (session — 2 new items added: BLG-SEC-48, BLG-SEC-49; ST-05/EPIC-01 v9.18 re-review remedies); prior — 2026-11-19 (session — 1 new item added: BLG-GOV-430; v9.18 EPIC-01 PR #2306 CI finding); prior — 2026-11-19 (session — 1 new item added: BLG-FE-325; ST-06/EPIC-01 v9.18 finding); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-19 (session — 3 new items added: BLG-FE-326, BLG-FE-327, BLG-SPEC-242; PR #2307 agent-mediated DoQ and PO review findings); prior — 2026-11-19 (session — 2 new items added: BLG-SEC-48, BLG-SEC-49; ST-05/EPIC-01 v9.18 re-review remedies); prior — 2026-11-19 (session — 1 new item added: BLG-GOV-430; v9.18 EPIC-01 PR #2306 CI finding); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -7821,6 +7821,49 @@ There is no React error boundary anywhere in `src/` (`componentDidCatch`/`getDer
 
 ---
 
+### BLG-FE-326 — Show on Notification Preferences when Telegram is not configured
+**Priority:** P3 (Low)
+**Type:** Frontend / Backend correctness of user-facing status
+**Owner:** Head of Engineering; Frontend Specifications & UX Documentation Owner
+**Source:** PR #2307 (`2026-11-18__release-v9.18` EPIC-01) agent-mediated Product Owner review — 2026-11-19
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v9.19
+
+**Problem**
+With `TELEGRAM_BOT_TOKEN` or `TELEGRAM_CHAT_ID` unset, Notification Preferences still shows "Send to Telegram: On", so the page suggests alerts are going out when none are. Since v9.18 ST-03 the user learns this only afterwards, from "Not sent" lines on individual Feed rows.
+
+**Scope**
+- Add a derived, non-secret `telegram_configured` boolean to an existing endpoint (e.g. `GET /notifications/preferences`), with the contract and `openapi.yaml` in the same commit
+- Show a muted notice under the Telegram Alerts heading when it is false (wording ruled by Head of UX & Design)
+- Update `notifications.md` §Section 1
+
+**Acceptance Criteria**
+- With Telegram unconfigured, the notice shows and the toggles stay usable (Playwright, both themes, axe)
+- With Telegram configured, no notice shows (Playwright); a pytest covers the field and confirms no token value is exposed
+
+---
+
+### BLG-FE-327 — Make the Notification History "Notified" column match actual delivery
+**Priority:** P3 (Low)
+**Type:** Frontend / Backend correctness of user-facing status
+**Owner:** Head of Engineering; Frontend Specifications & UX Documentation Owner
+**Source:** PR #2307 (`2026-11-18__release-v9.18` EPIC-01) agent-mediated Director of Quality review — 2026-11-19
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v9.19
+
+**Problem**
+`alert_evaluations.notification_sent` is set when delivery is queued (preference on), not when it succeeds, so with Telegram unconfigured Notification History shows "Notified: Yes" for an alert the Feed marks "Not sent: Telegram not configured". The design record (`alert-delivery-truth/decision_record.md` §3) describes the column as "whether a notification was created", which the code does not match either.
+
+**Scope**
+- Decide (Head of UX & Design, with the API contract owner) whether to relabel the column (e.g. "Telegram requested") or derive it from the linked notification's `delivery_status`
+- Update `notifications.md` §Notification History and the decision record; contract and `openapi.yaml` if the response changes
+
+**Acceptance Criteria**
+- With Telegram unconfigured, History and the Feed no longer contradict each other for the same alert (Playwright)
+- The spec's column definition matches what the backend writes
+
+---
+
 ### BLG-OPS-222 — Poll the GitHub Pages front end as well as the API's /health
 **Priority:** P3 (Low)
 **Type:** Operations / Monitoring
@@ -7958,6 +8001,27 @@ The 2026-11-17 re-review (§14.2, adopted by DL-089) renames the Weekly Digest t
 
 **Acceptance Criteria**
 - `dashboard.md` §1A names the same click target as `EarningsAlertCard.js` (or the card is changed to match the spec, with a Playwright check)
+
+---
+
+### BLG-SPEC-242 — Give a final delivery status to read rows that were never attempted
+**Priority:** P4 (Very Low)
+**Type:** Spec Debt / API contract
+**Owner:** API Contracts & Documentation Owner; Head of Engineering
+**Source:** PR #2307 (`2026-11-18__release-v9.18` EPIC-01) agent-mediated Director of Quality review — 2026-11-19
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.19
+
+**Problem**
+`derive_delivery_status` (v9.18 ST-03) returns `pending` for a row with `delivered = false`, `delivery_attempts = 0` and the preference on even when the row is read, but re-delivery never retries read rows, so the status never resolves. Nothing shows `pending` in the UI today, but any future reader of the field would be misled; the contract table (`alerts_endpoints.md` §Delivery status derivation) has the same gap.
+
+**Scope**
+- Rule (contract owner) whether such a row is `not_requested` or `not_sent`
+- Amend the derivation table, mirror it in `derive_delivery_status`, and add a pytest case
+
+**Acceptance Criteria**
+- A read row with `delivered = false`, `attempts = 0` and the preference on derives a final (non-`pending`) status (pytest)
+- The contract table and the code agree
 
 ---
 
