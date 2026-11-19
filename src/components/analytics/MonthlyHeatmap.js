@@ -31,13 +31,34 @@ export default function MonthlyHeatmap({ monthlyData, trades = [] }) {
   // non-focusable text inside the dialog has moved focus elsewhere.
   useEffect(() => {
     if (!selectedMonth) return;
+    const trapTab = (e) => {
+      if (e.key !== "Tab" || !modalRef.current) return;
+      const focusable = Array.from(
+        modalRef.current.querySelectorAll(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        )
+      ).filter((el) => !el.disabled && el.getClientRects().length > 0);
+      if (focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (!modalRef.current.contains(document.activeElement)) {
+        e.preventDefault();
+        (e.shiftKey ? last : first).focus();
+      } else if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    };
     const handler = (e) => {
       if (e.key === "Escape") setSelectedMonth(null);
       else trapTab(e);
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
-  }, [selectedMonth]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [selectedMonth]);
 
   const isOpen = !!selectedMonth;
   useEffect(() => {
@@ -48,28 +69,6 @@ export default function MonthlyHeatmap({ monthlyData, trades = [] }) {
       if (opener && document.contains(opener)) opener.focus();
     };
   }, [isOpen]);
-
-  const trapTab = (e) => {
-    if (e.key !== "Tab" || !modalRef.current) return;
-    const focusable = Array.from(
-      modalRef.current.querySelectorAll(
-        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-      )
-    ).filter((el) => !el.disabled);
-    if (focusable.length === 0) return;
-    const first = focusable[0];
-    const last = focusable[focusable.length - 1];
-    if (!modalRef.current.contains(document.activeElement)) {
-      e.preventDefault();
-      (e.shiftKey ? last : first).focus();
-    } else if (e.shiftKey && document.activeElement === first) {
-      e.preventDefault();
-      last.focus();
-    } else if (!e.shiftKey && document.activeElement === last) {
-      e.preventDefault();
-      first.focus();
-    }
-  };
 
   const getColor = (pnl) => {
     // ST-08 (v9.17): tile fills carry white text, so each one meets 4.5:1 in

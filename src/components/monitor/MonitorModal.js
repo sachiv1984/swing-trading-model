@@ -110,6 +110,7 @@ export default function MonitorModal({
                       "aria-describedby": `monitor-row-detail-${position.id}`,
                       tabIndex: 0,
                       onKeyDown: (e) => {
+                        if (e.target !== e.currentTarget) return;
                         if (e.key === " " || e.key === "Enter") {
                           e.preventDefault();
                           toggleExit(position.id);
