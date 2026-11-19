@@ -527,16 +527,26 @@ export default function TradeHistory() {
             className="rounded-2xl bg-app-raised border border-app-line overflow-hidden"
             data-testid="ai-journal-summary-section"
           >
+            {/* ST-01 (BLG-FE-311, v9.18): the header row still opens and
+                closes on a click anywhere, but the control itself is the
+                title button, reachable with Tab and exposing aria-expanded.
+                The Generate button stays a sibling, not nested inside it. */}
             <div
               className="flex items-center justify-between p-6 cursor-pointer select-none"
               onClick={() => setAiSummaryOpen(!aiSummaryOpen)}
-              data-testid="ai-journal-summary-toggle"
             >
-              <div className="flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-cyan-700 dark:text-cyan-400" />
+              <button
+                type="button"
+                aria-expanded={aiSummaryOpen}
+                aria-controls="ai-journal-summary-panel"
+                onClick={(e) => { e.stopPropagation(); setAiSummaryOpen(!aiSummaryOpen); }}
+                className="flex items-center gap-2 rounded text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                data-testid="ai-journal-summary-toggle"
+              >
+                <Sparkles className="w-4 h-4 text-cyan-700 dark:text-cyan-400" aria-hidden="true" />
                 <span className="text-sm font-medium text-slate-700 dark:text-slate-300">AI Journal Summary</span>
                 <span className="text-xs text-slate-600 dark:text-slate-400 hidden sm:inline">AI-generated themes across your journal entries.</span>
-              </div>
+              </button>
               <div className="flex items-center gap-3">
                 {aiSummaryOpen && (
                   <Button
@@ -556,14 +566,14 @@ export default function TradeHistory() {
                   </Button>
                 )}
                 {aiSummaryOpen
-                  ? <ChevronUp className="w-4 h-4 text-app-muted" />
-                  : <ChevronDown className="w-4 h-4 text-app-muted" />
+                  ? <ChevronUp className="w-4 h-4 text-app-muted" aria-hidden="true" />
+                  : <ChevronDown className="w-4 h-4 text-app-muted" aria-hidden="true" />
                 }
               </div>
             </div>
 
             {aiSummaryOpen && (
-              <div className="px-6 pb-6 space-y-3">
+              <div id="ai-journal-summary-panel" className="px-6 pb-6 space-y-3">
                 <div className="flex items-start gap-2 px-4 py-3 rounded-lg bg-amber-500/10 border border-amber-500/30">
                   <span className="text-amber-800 dark:text-amber-300 text-xs font-medium">
                     AI-generated summary — for reference only. Not a trading recommendation.

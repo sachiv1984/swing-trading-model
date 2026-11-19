@@ -97,8 +97,27 @@ export default function MonitorModal({
                     data-ticker={position.ticker}
                     data-suggestion={status}
                     onClick={() => isExitSuggested && toggleExit(position.id)}
+                    // ST-01 (BLG-FE-311, v9.18): an exit-suggested row is a
+                    // checkbox for the exit selection, reachable with Tab and
+                    // toggled with Space or Enter (WCAG 2.1.1).
+                    {...(isExitSuggested && {
+                      role: "checkbox",
+                      "aria-checked": isSelected,
+                      "aria-label": `Select ${position.ticker} for exit`,
+                      // The checkbox role makes the row's content
+                      // presentational; describe it so the reason and prices
+                      // are still announced.
+                      "aria-describedby": `monitor-row-detail-${position.id}`,
+                      tabIndex: 0,
+                      onKeyDown: (e) => {
+                        if (e.key === " " || e.key === "Enter") {
+                          e.preventDefault();
+                          toggleExit(position.id);
+                        }
+                      },
+                    })}
                     className={cn(
-                      "p-4 rounded-xl border transition-all",
+                      "p-4 rounded-xl border transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
                       isExitSuggested && "cursor-pointer",
                       isSelected 
                         ? "bg-rose-500/10 border-rose-500/30" 
@@ -131,7 +150,14 @@ export default function MonitorModal({
                               {position.market}
                             </span>
                           </div>
-                          <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">{reason}</p>
+                          <p id={`monitor-row-detail-${position.id}`} className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">
+                            {reason}
+                            {isExitSuggested && (
+                              <span className="sr-only">
+                                {`. Current ${position.current_price != null ? formatCurrency(position.current_price, { currency: positionCurrency }) : "not available"}, stop ${position.stop_price != null ? formatCurrency(position.stop_price, { currency: positionCurrency }) : "not available"}, entry ${formatCurrency(position.entry_price, { currency: positionCurrency })}.`}
+                              </span>
+                            )}
+                          </p>
                         </div>
                       </div>
                       <StatusBadge status={status} />

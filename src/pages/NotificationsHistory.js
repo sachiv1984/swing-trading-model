@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, Fragment } from "react";
 import { cn } from "../lib/utils";
 import PageHeader from "../components/ui/PageHeader";
 import { PAGE_LABELS } from "../lib/pageLabels";
@@ -89,7 +89,7 @@ function formatValuesExpanded(obj) {
 
 function TriggeredBadge({ value }) {
   return value ? (
-    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-500/20 text-amber-700 dark:text-amber-400 border border-amber-500/30">
+    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-500/20 text-amber-800 dark:text-amber-400 border border-amber-500/30">
       Yes
     </span>
   ) : (
@@ -235,17 +235,22 @@ export default function NotificationsHistory() {
                 <tr className="border-b border-slate-200 dark:border-slate-700/50">
                   {/* Date / Time — sortable */}
                   <th
-                    className="px-5 py-3.5 text-left text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider whitespace-nowrap cursor-pointer select-none hover:text-slate-900 dark:hover:text-white transition-colors"
+                    className="px-5 py-3.5 text-left text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider whitespace-nowrap cursor-pointer select-none"
+                    aria-sort={sortDir === "desc" ? "descending" : "ascending"}
                     onClick={toggleSort}
                   >
-                    <span className="inline-flex items-center gap-1">
+                    <button
+                      type="button"
+                      onClick={(e) => { e.stopPropagation(); toggleSort(); }}
+                      className="inline-flex items-center gap-1 uppercase tracking-wider rounded hover:text-slate-900 dark:hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    >
                       Date / Time
                       {sortDir === "desc" ? (
-                        <ChevronDown className="w-3.5 h-3.5" />
+                        <ChevronDown className="w-3.5 h-3.5" aria-hidden="true" />
                       ) : (
-                        <ChevronUp className="w-3.5 h-3.5" />
+                        <ChevronUp className="w-3.5 h-3.5" aria-hidden="true" />
                       )}
-                    </span>
+                    </button>
                   </th>
                   {["Alert Type", "Symbol", "Triggered", "Notified", "Values"].map((h) => (
                     <th key={h} className="px-5 py-3.5 text-left text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider whitespace-nowrap">
@@ -282,9 +287,8 @@ export default function NotificationsHistory() {
                   sorted.map((ev) => {
                     const isExpanded = expandedId === ev.id;
                     return (
-                      <>
+                      <Fragment key={ev.id}>
                         <tr
-                          key={ev.id}
                           onClick={() => toggleExpand(ev.id)}
                           className={cn(
                             "cursor-pointer transition-colors",
@@ -294,9 +298,26 @@ export default function NotificationsHistory() {
                           )}
                         >
                           <td className="px-5 py-4 text-sm text-slate-800 dark:text-slate-300 whitespace-nowrap">
-                            <span title={ev.evaluation_timestamp}>
-                              {formatTimestamp(ev.evaluation_timestamp)}
-                            </span>
+                            {/* ST-01 (BLG-FE-311, v9.18): the row's expand
+                                control is a real button so it can be reached
+                                with Tab and operated with Enter/Space. */}
+                            <button
+                              type="button"
+                              aria-expanded={isExpanded}
+                              aria-controls={`alert-history-detail-${ev.id}`}
+                              onClick={(e) => { e.stopPropagation(); toggleExpand(ev.id); }}
+                              className="inline-flex items-center gap-1 rounded text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                              data-testid="alert-history-expand"
+                            >
+                              {isExpanded ? (
+                                <ChevronUp className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
+                              ) : (
+                                <ChevronDown className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
+                              )}
+                              <span title={ev.evaluation_timestamp}>
+                                {formatTimestamp(ev.evaluation_timestamp)}
+                              </span>
+                            </button>
                           </td>
                           <td className="px-5 py-4 text-sm text-slate-900 dark:text-white font-medium whitespace-nowrap">
                             {TYPE_LABELS[ev.rule_type] ?? ev.rule_type}
@@ -317,7 +338,7 @@ export default function NotificationsHistory() {
 
                         {/* Expanded row */}
                         {isExpanded && (
-                          <tr key={`${ev.id}-expanded`} className="bg-white dark:bg-slate-800/60">
+                          <tr id={`alert-history-detail-${ev.id}`} className="bg-white dark:bg-slate-800/60">
                             <td colSpan={6} className="px-8 pb-5 pt-0">
                               <div className="font-mono text-xs text-slate-800 dark:text-slate-300 space-y-1 pt-1">
                                 {formatValuesExpanded(ev.values_compared).map(({ label, value, isNegative }) => (
@@ -330,7 +351,7 @@ export default function NotificationsHistory() {
                             </td>
                           </tr>
                         )}
-                      </>
+                      </Fragment>
                     );
                   })
                 )}

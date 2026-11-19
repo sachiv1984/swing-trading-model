@@ -869,3 +869,102 @@ for (const theme of ['light', 'dark']) {
     }
   });
 }
+
+// ---------------------------------------------------------------------------
+// ST-01 (BLG-FE-311, EPIC-01, v9.18): the open states of the four formerly
+// mouse-only controls, both themes. AC 2: axe passes with the heatmap detail
+// and the Screener popover open, with no `button-name` or `aria-dialog-name`
+// violation. The Screener news panel, an expanded Alert History row and the
+// open AI Journal Summary are the other conditional states the story touches
+// (first-time-right check 4), so they are scanned too. Keyboard behaviour is
+// in keyboard-operable-controls.spec.js.
+// ---------------------------------------------------------------------------
+
+const { mockAnalyticsMetrics: st01MockAnalyticsMetrics } = require('./fixtures/analytics-metrics');
+const { ALL_TRADES: ST01_TRADES, ANALYTICS_SETTINGS: ST01_SETTINGS } = require('./mocks/analytics-mock-data');
+
+async function st01MockHeatmap(page) {
+  await page.route(new RegExp(`${API}/`), (route) =>
+    route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok', data: [] }) }));
+  await page.route(`${API}/trades`, (route) =>
+    route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(ST01_TRADES) }));
+  await page.route(`${API}/settings`, (route) =>
+    route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(ST01_SETTINGS) }));
+  await st01MockAnalyticsMetrics(page, { trades: ST01_TRADES });
+}
+
+async function st01MockAlertHistory(page) {
+  await routed.catchAll(page);
+  await page.route(/\/alerts\/history/, (route) =>
+    route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(HISTORY) }));
+}
+
+async function st01MockTradeHistory(page) {
+  await routed.catchAll(page);
+  await page.route(/\/trades$/, (route) => route.fulfill({
+    status: 200,
+    contentType: 'application/json',
+    body: JSON.stringify({
+      status: 'ok',
+      trades: [{
+        id: 'st01-t1', ticker: 'AAPL', market: 'US', entry_date: '2026-03-01', exit_date: '2026-03-15',
+        entry_price: 200, exit_price: 220, shares: 10, pnl: 199.5, pnl_pct: 9.95, exit_reason: 'Target Reached', tags: [],
+      }],
+      total_pnl: 199.5, total_trades: 1, win_rate: 100,
+    }),
+  }));
+}
+
+// [name, route, mock, step that opens the state]
+const ST01_STATES = [
+  ['HeatmapDetailOpen', '/#/Performance?section=analytics', st01MockHeatmap, async (page) => {
+    await expect(page.locator('[class*="animate-spin"]')).toHaveCount(0, { timeout: 20000 });
+    await page.locator('button[role="combobox"]').first().click();
+    await page.locator('[role="option"]').filter({ hasText: 'All Time' }).click();
+    await page.getByRole('button').filter({ hasText: '2026-01' }).click();
+    await expect(page.getByRole('dialog', { name: /Trades\s*—\s*Jan 2026/ })).toBeVisible({ timeout: 5000 });
+  }],
+  ['ScreenerWatchlistPopoverOpen', '/#/Screener', routed.mockScreener, async (page) => {
+    await expect(page.locator('main').getByText('BARC').first()).toBeVisible({ timeout: 15000 });
+    await page.locator('main').getByRole('button', { name: 'Watchlist', exact: true }).first().click();
+    await expect(page.getByRole('button', { name: 'Cancel', exact: true })).toBeVisible();
+  }],
+  ['ScreenerNewsPanelOpen', '/#/Screener', routed.mockScreener, async (page) => {
+    await expect(page.locator('main').getByText('BARC').first()).toBeVisible({ timeout: 15000 });
+    await page.locator('main').getByTitle('Show news headlines').first().click();
+    await expect(page.getByRole('button', { name: /^Close news for / })).toBeVisible();
+  }],
+  ['AlertHistoryRowExpanded', '/#/notifications/history', st01MockAlertHistory, async (page) => {
+    await page.getByTestId('alert-history-expand').first().click();
+    await expect(page.locator('#alert-history-detail-eval-1')).toBeVisible({ timeout: 10000 });
+  }],
+  ['AiJournalSummaryOpen', '/#/TradeHistory', st01MockTradeHistory, async (page) => {
+    await page.getByTestId('ai-journal-summary-toggle').click();
+    await expect(page.locator('#ai-journal-summary-panel')).toBeVisible({ timeout: 10000 });
+  }],
+];
+
+for (const theme of ['light', 'dark']) {
+  test.describe(`Keyboard-operable controls, open states — ${theme} theme (ST-01)`, () => {
+    test.beforeEach(async ({ page }) => {
+      await page.addInitScript((t) => {
+        window.localStorage.setItem('theme', t);
+        window.localStorage.setItem('command-palette-tooltip-seen', 'true');
+      }, theme);
+    });
+
+    for (const [name, route, mock, step] of ST01_STATES) {
+      test(`${name} (${theme})`, async ({ page }) => {
+        test.setTimeout(60000);
+        await mock(page);
+        await page.goto(route);
+        await step(page);
+        await expectThemeApplied(page, theme);
+        const results = await runAxeScan(page, `${name}:${theme}`);
+        // AC 2 names these two rules; neither may appear at any impact.
+        const named = results.violations.filter((v) => v.id === 'button-name' || v.id === 'aria-dialog-name');
+        expect(named.map((v) => v.id)).toEqual([]);
+      });
+    }
+  });
+}
