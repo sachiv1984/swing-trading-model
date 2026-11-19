@@ -85,7 +85,7 @@ Unchanged from v1.0: route transition to a visible skeleton ≤ 200 ms; with dat
 
 ### 4.1 CI: Lighthouse and bundle size on every PR
 
-Workflow: `.github/workflows/lighthouse-ci.yml` (job "Lighthouse (mobile + desktop) and bundle size"), on every pull request to `main` that changes anything the build or the measurement reads (`package*.json`, `src/**`, `public/**`, `scripts/perf/**`, the workflow), and on pushes to `exec/**` branches with the same paths. A push and its PR share one concurrency group, so a change runs once. A backend- or docs-only PR cannot move these values and does not run it.
+Workflow: `.github/workflows/lighthouse-ci.yml` (job "Lighthouse (mobile + desktop) and bundle size"), on every pull request to `main` (no path filter, so no build input can be missed), and on pushes to `exec/**` branches that touch `package*.json`, `src/**`, `public/**`, `scripts/perf/**` or the workflow. A push and its PR share one concurrency group, so a change runs once.
 
 1. Builds the app with `REACT_APP_API_URL=http://localhost:4173/api` and fake auth.
 2. `scripts/perf/check_bundle_size.py` reports §3.3.
@@ -160,5 +160,5 @@ Both the main-bundle and the total budget are exceeded; there are no split chunk
 
 | Version | Date | Change |
 |---------|------|--------|
-| 2.0 | 2026-11-19 | ST-06 (BLG-QA-271, v9.18 EPIC-01). Targets become Core Web Vitals (LCP ≤ 2.5 s, INP ≤ 200 ms with TBT ≤ 200/150 ms mobile/desktop as the lab proxy, CLS ≤ 0.1) on a mobile and a desktop profile; TTI and the FCP target dropped. New CI workflow `lighthouse-ci.yml` runs Lighthouse (4 pages × 2 profiles) and the bundle-size check on every PR and reports the values (report only, §3.5). `web-vitals` field reporting added. Dated baseline in §5 from the first CI run, measured before ST-08 (BLG-QA-274). |
+| 2.0 | 2026-11-19 | ST-06 (BLG-QA-271, v9.18 EPIC-01). Targets become Core Web Vitals (LCP ≤ 2.5 s, INP ≤ 200 ms with TBT ≤ 200/150 ms mobile/desktop as the lab proxy, CLS ≤ 0.1) on a mobile and a desktop profile; TTI and the FCP target dropped. New CI workflow `lighthouse-ci.yml` runs Lighthouse (4 pages × 2 profiles) and the bundle-size check on every PR (unfiltered) and reports the values (report only, §3.5). `web-vitals` field reporting added. Dated baseline in §5 from the first CI run, measured before ST-08 (BLG-QA-274). |
 | 1.0 | 2026-04-11 | Initial version — ST-15 (BLG-FE-09, v2.6 EPIC-04). Page load targets (FCP ≤ 1,500ms, LCP ≤ 2,500ms, TTI ≤ 3,000ms), bundle size targets (main ≤ 200KB gzip, total ≤ 500KB gzip), route transition overhead ≤ 200ms. Aligned to BLG-OPS-05 API latency baseline (staging p95 1,300–6,200ms floor documented). |

@@ -15,18 +15,13 @@ name: Lighthouse CI and Bundle Size
 
 on:
   workflow_dispatch: {}
-  # Every PR that can change the measured values: the paths below are everything that
-  # goes into the build or the measurement. A backend- or docs-only PR cannot move them.
+  # Every PR to main, unfiltered (ST-06 AC 2: "on each PR"). A path list would have to
+  # track every build input (tailwind/postcss/jsconfig/.env files as well as src/public)
+  # and silently skip a PR that misses one. Pushes to exec/** stay path-filtered; the
+  # shared concurrency group below keeps a push and its PR to one run.
   pull_request:
     branches:
       - main
-    paths:
-      - 'package.json'
-      - 'package-lock.json'
-      - 'src/**'
-      - 'public/**'
-      - 'scripts/perf/**'
-      - '.github/workflows/lighthouse-ci.yml'
   push:
     branches:
       - 'exec/**'
