@@ -1,0 +1,125 @@
+name: Lighthouse CI and Bundle Size
+
+# ST-06 (BLG-QA-271, EPIC-01, v9.18): Core Web Vitals lab run and JS bundle-size
+# check on every PR (docs/specs/frontend/performance_budget.md §4).
+#
+# - Lighthouse 13.6.0 measures Dashboard, Positions, Trade Plan and Performance on
+#   the mobile and desktop profiles, median of 3 runs, against a production build
+#   served with the mock API on one origin (scripts/perf/mock_api_server.js). One
+#   origin because the app's CSP allows connect-src 'self' and https: only.
+# - scripts/perf/check_bundle_size.py reports gzipped JS against §3.3.
+# Both REPORT the values in the job summary and do not fail on a budget miss
+# (§3.5): the single main bundle is over budget until Phase 4 stage 4
+# (BLG-FE-315/316/317). The job fails only if a measurement itself fails.
+# Read-only: no comment, push or deploy, so no write permission is needed.
+
+on:
+  workflow_dispatch: {}
+  # Every PR that can change the measured values: the paths below are everything that
+  # goes into the build or the measurement. A backend- or docs-only PR cannot move them.
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'package.json'
+      - 'package-lock.json'
+      - 'src/**'
+      - 'public/**'
+      - 'scripts/perf/**'
+      - '.github/workflows/lighthouse-ci.yml'
+  push:
+    branches:
+      - 'exec/**'
+    paths:
+      - 'package.json'
+      - 'package-lock.json'
+      - 'src/**'
+      - 'public/**'
+      - 'scripts/perf/**'
+      - '.github/workflows/lighthouse-ci.yml'
+
+permissions:
+  contents: read
+
+# One group per branch for both the push and the pull_request run (ref_name is the
+# branch on push; head_ref is the branch on pull_request), so a push to an EPIC branch
+# with an open PR runs once, not twice.
+concurrency:
+  group: lighthouse-${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: true
+
+jobs:
+  lighthouse:
+    name: Lighthouse (mobile + desktop) and bundle size
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build for measurement (API on the same origin, /api)
+        env:
+          CI: 'false'
+          BUILD_PATH: build-perf
+          PUBLIC_URL: /
+          REACT_APP_API_URL: http://localhost:4173/api
+          REACT_APP_DEV_FAKE_AUTH: 'true'
+          DISABLE_ESLINT_PLUGIN: 'true'
+          GENERATE_SOURCEMAP: 'false'
+        run: npm run build
+
+      - name: Bundle size (report only)
+        env:
+          # On pull_request, GITHUB_SHA is the temporary merge commit; report the PR head.
+          MEASURED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          {
+            echo "## Performance budget report"
+            echo ""
+            echo "Commit: \`${MEASURED_SHA::8}\` · performance_budget.md §3–§4 · values reported, not enforced (§3.5)"
+            echo ""
+          } >> "$GITHUB_STEP_SUMMARY"
+          mkdir -p perf-results
+          python3 scripts/perf/check_bundle_size.py build-perf \
+            --summary "$GITHUB_STEP_SUMMARY" --json perf-results/bundle-size.json
+
+      - name: Install Lighthouse 13.6.0 (outside the app's lockfile)
+        run: |
+          mkdir -p "$RUNNER_TEMP/lh"
+          cd "$RUNNER_TEMP/lh"
+          npm init -y > /dev/null
+          npm install --no-audit --no-fund lighthouse@13.6.0
+          cp "$GITHUB_WORKSPACE/scripts/perf/run_lighthouse.mjs" .
+
+      - name: Start the build and mock API on localhost:4173
+        run: |
+          node scripts/perf/mock_api_server.js --port 4173 --static build-perf > "$RUNNER_TEMP/mock.log" 2>&1 &
+          for i in $(seq 1 30); do
+            if curl -sf http://localhost:4173/api/positions > /dev/null; then echo "server ready"; exit 0; fi
+            sleep 1
+          done
+          echo "::error::mock server did not start"; cat "$RUNNER_TEMP/mock.log"; exit 1
+
+      - name: Lighthouse (median of 3 runs per page and profile)
+        working-directory: ${{ runner.temp }}/lh
+        run: |
+          node run_lighthouse.mjs --base http://localhost:4173 --runs 3 \
+            --out "$GITHUB_WORKSPACE/perf-results" --summary "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload Lighthouse reports and summaries
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-results-${{ github.run_id }}
+          path: perf-results/
+          retention-days: 14

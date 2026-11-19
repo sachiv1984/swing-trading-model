@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-19 (session — 1 new item added: BLG-BE-225; ST-03/EPIC-01 v9.18 pre-commit review finding); prior — 2026-11-18 (session — 4 new items added: BLG-UX-22, BLG-SPEC-241, BLG-BE-224, BLG-QA-274; v9.18 design gate observations, filed at Sprint Planning with PO authorisation); prior — 2026-11-18 (roadmap rebalance `2026-11-18__scheduled` STEP 9 and STEP 11 — 16 items added (BLG-GOV-429 is the Friction Item 1 tracking item); STEP 9 — from `IW-20261118-01` (BLG-BE-223, BLG-SEC-47, BLG-FEAT-103/104, BLG-GOV-425–428, BLG-FE-321–324, BLG-OPS-222, BLG-QA-272/273); Provisional-Target set to v9.18 (17 items) or v9.19 (17 items) for Phase 4 and the v9.18 Now section, DL-089; BLG-UX-21 decision recorded; BLG-GOV-408 ✅ COMPLETE); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-19 (session — 1 new item added: BLG-FE-325; ST-06/EPIC-01 v9.18 finding); prior — 2026-11-19 (session — 1 new item added: BLG-BE-225; ST-03/EPIC-01 v9.18 pre-commit review finding); prior — 2026-11-18 (session — 4 new items added: BLG-UX-22, BLG-SPEC-241, BLG-BE-224, BLG-QA-274; v9.18 design gate observations, filed at Sprint Planning with PO authorisation); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -7753,6 +7753,27 @@ There is no React error boundary anywhere in `src/` (`componentDidCatch`/`getDer
 **Acceptance Criteria**
 - A test component that throws on render shows the fallback with the sidebar still present (Playwright or React Testing Library)
 - No page renders blank on a thrown render error
+
+---
+
+### BLG-FE-325 — Fix the CSP hash for the GitHub Pages redirect script
+**Priority:** P3 (Low)
+**Type:** Frontend / Security
+**Owner:** Frontend Specifications & UX Documentation Owner; Cybersecurity & Trust Lead
+**Source:** ST-06/EPIC-01 (`2026-11-18__release-v9.18`) Lighthouse validation — 2026-11-19
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.19
+
+**Problem**
+`public/index.html`'s Content-Security-Policy allows the GitHub Pages SPA-redirect inline script by hash (`sha256-5Oi7…`, added by ST-18/BLG-SEC-12 in `8bc208ce`). The production build minifies `index.html`, so the built script hashes to `sha256-QMm9…`: every page load logs a CSP violation, and the redirect script never runs, so a GitHub Pages 404 deep link (`/?/path`) is not restored.
+
+**Scope**
+- Compute the hash from the built `index.html` (or exclude that script from HTML minification)
+- Add a check that the built script's hash is in `script-src`
+
+**Acceptance Criteria**
+- No CSP inline-script violation on a production build (Playwright console check)
+- A CI check fails when the built script's hash is not in `script-src`
 
 ---
 
