@@ -66,6 +66,11 @@ jobs:
         fi
         echo "Asset paths correctly scoped to /swing-trading-model."
 
+    # BLG-FE-325 (2026-11-19): do not publish a page whose own CSP blocks one of its
+    # inline scripts, or whose <script src> file is missing from the build.
+    - name: CSP allows every inline script and every script file exists
+      run: python3 scripts/check_csp_inline_scripts.py build
+
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v4
       with:

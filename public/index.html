@@ -9,22 +9,11 @@
          ChartStyle renders a <style> element via dangerouslySetInnerHTML with per-render, per-chart-config CSS
          custom properties (--color-<key>), scoped under [data-chart=<id>] and conditionally under .dark for
          theme-reactive colours. Content is dynamic (varies per chart config), so a static sha256/nonce source
-         is not viable; script-src carries no such exception — see the sha256 hash below, the only inline
-         <script> in this document, content-hashed instead of 'unsafe-inline'. -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-5Oi72KUZ3LaSR2N9JWbDZVUqXP38QIpVD1g9wfJx/HA='; style-src 'self' 'unsafe-inline'; connect-src 'self' https:; img-src 'self' data: blob:; font-src 'self' data:;" />
+         is not viable; script-src carries no such exception. The SPA redirect is an external file
+         (spa-redirect.js, BLG-FE-325), so script-src is 'self' only: no inline <script> in this document. -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'self' https:; img-src 'self' data: blob:; font-src 'self' data:;" />
     <title>Position Manager</title>
-    <script type="text/javascript">
-      (function(l) {
-        if (l.search[1] === '/' ) {
-          var decoded = l.search.slice(1).split('&').map(function(s) { 
-            return s.replace(/~and~/g, '&')
-          }).join('?');
-          window.history.replaceState(null, null,
-              l.pathname.slice(0, -1) + decoded + l.hash
-          );
-        }
-      }(window.location))
-    </script>
+    <script defer src="%PUBLIC_URL%/spa-redirect.js"></script>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>

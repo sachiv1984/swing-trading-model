@@ -1,8 +1,8 @@
 **Owner:** Cybersecurity & Trust Lead; Infrastructure & Operations Owner
 **Class:** Class 2 (Reference Document / Security Policy)
 **Status:** Active
-**Version:** 1.0
-**Last Updated:** 2026-07-09
+**Version:** 1.1
+**Last Updated:** 2026-11-19 (BLG-FE-325 — React SPA row: script-src is 'self' only; the redirect script is an external file and the built page is checked against its CSP); prior — 2026-07-09 (initial version, ST-17, BLG-OPS-71); prior history retained — see prior entries in version control
 **Story:** ST-17 (BLG-OPS-71, EPIC-03, v6.8)
 
 ---
@@ -28,7 +28,7 @@ FastAPI backend (Render) + React SPA frontend (Render static site) + Supabase-ho
 | Surface | Description | Auth coverage |
 |---|---|---|
 | Public REST API (`backend/main.py` + routers) | ~85 endpoints across positions, trades, signals, portfolio, analytics, AI, digest | Global `api_key_middleware` requires `X-API-Key` on every route except `OPTIONS` and `GET /health`. `POST /digest/si05/send` additionally carries an explicit `Depends(_verify_api_key)` (`backend/routers/digest.py:240`) — confirmed fixed (BLG-BE-35, shipped v5.3 ST-08); no open auth gap on this endpoint. |
-| React SPA (static assets) | Public, served from Render static hosting | No auth at the CDN/static level (expected — the SPA itself calls the authenticated API); CSP configured in `public/index.html` restricts script/style/connect sources, but permits `'unsafe-inline'` for `script-src`/`style-src` — see §5, BLG-SEC-12 (new). |
+| React SPA (static assets) | Public, served from Render static hosting | No auth at the CDN/static level (expected — the SPA itself calls the authenticated API); CSP configured in `public/index.html` restricts script/style/connect sources. *(Updated 2026-11-19, BLG-FE-325:)* `script-src` is `'self'` only — BLG-SEC-12 (v8.4) removed `'unsafe-inline'`, and the GitHub Pages redirect is now an external file, `public/spa-redirect.js`; `scripts/check_csp_inline_scripts.py` checks the built page in CI and before deploy. `style-src` still allows `'unsafe-inline'` (chart theming, see `docs/ops/csp_unsafe_inline_audit_2026-08-08.md`). |
 | Supabase Postgres | All application state | Reached only via `DATABASE_URL` (Supavisor pooler, `sslmode=require`); not directly internet-exposed outside the backend's connection. |
 | Alpaca API | Trading data + order placement (paper and, per credential scope, potentially live) | `APCA_API_KEY_ID`/`APCA_API_SECRET_KEY`, Render env vars. |
 | Anthropic Claude API | AI briefing/chat/thesis generation | `ANTHROPIC_API_KEY`, Render env var; cannot be scope-restricted at the Anthropic platform level (confirmed in `docs/security/anthropic_api_key_scope_review.md`) — app-level cost audit logging (`claude_audit_log`) is the primary compensating control. |
