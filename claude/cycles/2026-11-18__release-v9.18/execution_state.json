@@ -6,7 +6,7 @@
   "invoked_utc": "2026-11-19T08:07:14Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-19T10:36:00Z",
+  "last_updated_utc": "2026-11-19T10:49:00Z",
   "epics": {
     "EPIC-01": {
       "title": "Site Structure & Usability Phase 4, Stage 1: Correct and Safe (build-and-ship)",
@@ -107,11 +107,11 @@
           "assigned_to": "engine",
           "github_issue": 2269,
           "branch": "exec/2026-11-18__release-v9.18/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "24e7bc76195a2c781f0a28aeb17c7ec4f6e65b24",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
+          "completed_utc": "2026-11-19T10:47:52Z",
           "acceptance_verified": true,
           "spec_references": [
             "docs/specs/frontend/pages/notifications.md#Alert History Values (v0.12 — ST-04, BLG-FE-228)",
@@ -121,9 +121,9 @@
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": true,
-          "last_completed_substep": "3.1.A.commit",
+          "last_completed_substep": "3.1.A.done",
           "sign_off_record": null,
-          "notes": "First-time-right: 2026-11-19 pass A — 1 done (values_compared keys traced to alerts_service.evaluate_alerts per rule type; symbol = positions.ticker, UK keeps .L (add_position appends it); prices native current_price/current_stop, UK pounds per data_model.md); 2 done (worked examples: BARC.L 182.5/180/1.37 → 'Price £182.50 · Stop £180.00 · Gap 1.4%', negative gap −0.3%, grace 8/10/2 and 9/10/1, regime true/false/null and {} → '—', summary 0 and 3, null/non-object → '—', legacy grace keys → generic fallback); 3 done (node run of src/lib/alertHistoryValues.js on all of the above incl. null symbol, numeric symbol, lowercase .l); 12 done (staging read approved by the user, 2026-11-19T10:41:23Z: Q1 no stop_loss_approach row with a .L symbol (0 of 4); Q3 2 UK positions without .L, 8 evaluations on those symbols — staging seed defect BLG-OPS-205/ST-35, not app data); 4,6,7,8,11,17–21,23 N/A or done (no new fetch or state; no test asserts the old compact text). Addendum staging step (one real UK row before commit): OPEN — no .L row exists on staging until ST-35 corrects the two seed positions; re-run Q1 after ST-35 and record in qa_evidence_EPIC-01.md. | First-time-right: 2026-11-19 pass B — 9 done (grace/summary nulls now '—' via formatValue); 10 done (notifications.md v0.14 currency trace in this commit); 13 done (no test asserted the old compact text); 18 done (fixtures from alerts_service writer keys, writer-rounded gap_pct). /code-review medium: 8 findings — fixed: v0.14 bump with its own Last Updated entry (was folded into ST-03's 0.13), null grace values, duplicate empty-regime branch, blank lines; no change: currency from a positions.market join (record allows suffix or join; app always writes .L; a join would not fix the 8 legacy staging rows either, whose symbols won't match ST-35's corrected .L tickers), untracked build/ (explicit-path staging), open staging step (recorded here and to the user). Local: 27 passed (SC-AHV-01..04, SC-KOP, alert-history/badge specs, notification axe scans). Deviation check vs notifications.md v0.14 §Alert History Values: none."
+          "notes": "First-time-right: 2026-11-19 pass A — 1 done (values_compared keys traced to alerts_service.evaluate_alerts per rule type; symbol = positions.ticker, UK keeps .L (add_position appends it); prices native current_price/current_stop, UK pounds per data_model.md); 2 done (worked examples: BARC.L 182.5/180/1.37 → 'Price £182.50 · Stop £180.00 · Gap 1.4%', negative gap −0.3%, grace 8/10/2 and 9/10/1, regime true/false/null and {} → '—', summary 0 and 3, null/non-object → '—', legacy grace keys → generic fallback); 3 done (node run of src/lib/alertHistoryValues.js on all of the above incl. null symbol, numeric symbol, lowercase .l); 12 done (staging read approved by the user, 2026-11-19T10:41:23Z: Q1 no stop_loss_approach row with a .L symbol (0 of 4); Q3 2 UK positions without .L, 8 evaluations on those symbols — staging seed defect BLG-OPS-205/ST-35, not app data); 4,6,7,8,11,17–21,23 N/A or done (no new fetch or state; no test asserts the old compact text). Addendum staging step (one real UK row before commit): OPEN — no .L row exists on staging until ST-35 corrects the two seed positions; re-run Q1 after ST-35 and record in qa_evidence_EPIC-01.md. | First-time-right: 2026-11-19 pass B — 9 done (grace/summary nulls now '—' via formatValue); 10 done (notifications.md v0.14 currency trace in this commit); 13 done (no test asserted the old compact text); 18 done (fixtures from alerts_service writer keys, writer-rounded gap_pct). /code-review medium: 8 findings — fixed: v0.14 bump with its own Last Updated entry (was folded into ST-03's 0.13), null grace values, duplicate empty-regime branch, blank lines; no change: currency from a positions.market join (record allows suffix or join; app always writes .L; a join would not fix the 8 legacy staging rows either, whose symbols won't match ST-35's corrected .L tickers), untracked build/ (explicit-path staging), open staging step (recorded here and to the user). Local: 27 passed (SC-AHV-01..04, SC-KOP, alert-history/badge specs, notification axe scans). Deviation check vs notifications.md v0.14 §Alert History Values: none. | ci_pending: all workflows on 24e7bc76 — clear before DoQ (STEP 3.2.A)."
         },
         "ST-05": {
           "title": "Re-review the accepted open-access risk",
