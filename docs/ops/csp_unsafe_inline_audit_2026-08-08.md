@@ -1,8 +1,8 @@
 **Owner:** Cybersecurity & Trust Lead
 **Class:** Operational Policy (Class 2)
 **Status:** Active
-**Version:** 1.0
-**Last Updated:** 2026-08-08
+**Version:** 1.1
+**Last Updated:** 2026-11-19 (BLG-FE-325 — addendum: the script-src hash never matched the built page; the redirect script is now an external file and script-src is 'self' only); prior — 2026-08-08 (initial audit, ST-18, BLG-SEC-12); prior history retained — see prior entries in version control
 **Cycle:** 2026-08-07__release-v8.4 (ST-18 — BLG-SEC-12, RISK-02)
 
 ---
@@ -45,3 +45,11 @@ Playwright + a real headless Chromium (`/usr/bin/chromium-browser`, this environ
 ## Sign-off
 
 **Cybersecurity & Trust Lead:** Confirmed — 2026-08-08
+
+---
+
+## Addendum — 2026-11-19: the script hash never matched the built page
+
+BLG-FE-325. The `sha256-5Oi7…` hash above was computed from the script text in `public/index.html`. The production build minifies `index.html`, so the script the browser receives hashes to `sha256-QMm9…`, and the CSP blocked it in every build from this audit until 2026-11-19. Nothing caught it because Playwright runs with `bypassCSP: true` (the API mocks need it), and the verification above used the source page.
+
+Fix: the SPA redirect moved to `public/spa-redirect.js`, loaded with `<script src>`, so `script-src 'self'` covers it and no hash is needed; `script-src` is now `'self'` only. Guards: `scripts/check_csp_inline_scripts.py` checks the **built** `index.html` in the Frontend Production Build workflow and before every GitHub Pages deploy (`deploy.yml`), and `tests/e2e/csp-script-policy.spec.js` runs with the CSP enforced (SC-CSPS-01/02). The policy is otherwise unchanged and still meets this audit's intent: no `'unsafe-inline'` in `script-src`.
