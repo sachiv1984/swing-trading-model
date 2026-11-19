@@ -17,8 +17,10 @@
       "qa_signed_off": false,
       "qa_evidence_log": "claude/cycles/2026-11-18__release-v9.18/qa_evidence_EPIC-01.md",
       "test_scenarios": [
+        "tests/e2e/accessibility-axe-scan.spec.js",
         "tests/e2e/keyboard-operable-controls.spec.js",
-        "tests/e2e/accessibility-axe-scan.spec.js"
+        "tests/e2e/notification-delivery-truth.spec.js",
+        "tests/test_notification_delivery_status.py"
       ],
       "stories": {
         "ST-01": {
@@ -44,7 +46,7 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.done",
           "sign_off_record": null,
-          "notes": "First-time-right: 2026-11-19 pass A — 4 done (conditional states listed per page: heatmap dialog, Screener watchlist popover and news panel, Alert History expanded row, AI summary panel open, monitor modal already scanned; each given a fixture and a scan; the popover's unlinked 'Target entry' label is in AC 2 scope and fixed); 6 done (aspect-square/heatmap-*/ai-journal-summary-toggle/monitor-row selectors kept; tile <p>→<span> has no test reader; 'Date / Time' has no test reader); 19 done (heatmap opener removed while open → focus restore skipped); 20 done (new names 'Select <ticker> for exit', 'Close add to watchlist', 'Close news for <ticker>', 'Close'); 5 medium; 1,2,3,7,8,11,17,18,21,23 N/A (no data values, state or thresholds change). | First-time-right: 2026-11-19 pass B — 9 done (Alert History 'Triggered' badge text-amber-700→800, 4.32:1 on the expanded row, found by the new state scan; fixed in-file); 13 done (new name 'Close add to watchlist' collided with /confirm|add|save/ in SC-SCR-11/12/13, SC-UK-04, VS-06 → renamed 'Cancel'; reran: 100 passed); 18/19 re-run (tests use keyboard only; focus trap after a text click, scroll region, focus return asserted); 22 done (no link handlers; dialog h2 under page outline); 10,12,14,15,16 N/A. /code-review medium: 10 findings, 8 fixed (window-level Tab trap, focusable trade-list region, monitor row aria-describedby, keyed Fragment, tooltip on focus, header click area restored, Tile hoisted, useId), 2 declined (Radix Dialog migration: specs depend on heatmap-backdrop and the trap is now fixed; Enter on the exit checkbox: AC says Enter/Space and the dialog has no Enter default action). | Deviation check vs design_system.md §Accessibility (full keyboard navigation; focus trapping and restoration in modals): none. ci_pending: Playwright E2E 44492801159, Smoke 44492801134, CI Pytest 44492800909, Frontend Build 44492801109 (and Golden Output, Portfolio Integration, Service Layer Coverage) on a89a66b2 — clear before DoQ (STEP 3.2.A). | Follow-up commit 912bb48a (second review pass: trap inside effect, hidden-element filter, row-only key handler); ci_pending also covers 912bb48a."
+          "notes": "First-time-right: 2026-11-19 pass A — 4 done (conditional states listed per page: heatmap dialog, Screener watchlist popover and news panel, Alert History expanded row, AI summary panel open, monitor modal already scanned; each given a fixture and a scan; the popover's unlinked 'Target entry' label is in AC 2 scope and fixed); 6 done (aspect-square/heatmap-*/ai-journal-summary-toggle/monitor-row selectors kept; tile <p>→<span> has no test reader; 'Date / Time' has no test reader); 19 done (heatmap opener removed while open → focus restore skipped); 20 done (new names 'Select <ticker> for exit', 'Close add to watchlist', 'Close news for <ticker>', 'Close'); 5 medium; 1,2,3,7,8,11,17,18,21,23 N/A (no data values, state or thresholds change). | First-time-right: 2026-11-19 pass B — 9 done (Alert History 'Triggered' badge text-amber-700→800, 4.32:1 on the expanded row, found by the new state scan; fixed in-file); 13 done (new name 'Close add to watchlist' collided with /confirm|add|save/ in SC-SCR-11/12/13, SC-UK-04, VS-06 → renamed 'Cancel'; reran: 100 passed); 18/19 re-run (tests use keyboard only; focus trap after a text click, scroll region, focus return asserted); 22 done (no link handlers; dialog h2 under page outline); 10,12,14,15,16 N/A. /code-review medium: 10 findings, 8 fixed (window-level Tab trap, focusable trade-list region, monitor row aria-describedby, keyed Fragment, tooltip on focus, header click area restored, Tile hoisted, useId), 2 declined (Radix Dialog migration: specs depend on heatmap-backdrop and the trap is now fixed; Enter on the exit checkbox: AC says Enter/Space and the dialog has no Enter default action). | Deviation check vs design_system.md §Accessibility (full keyboard navigation; focus trapping and restoration in modals): none. ci cleared (was ci_pending): Playwright E2E 44492801159, Smoke 44492801134, CI Pytest 44492800909, Frontend Build 44492801109 (and Golden Output, Portfolio Integration, Service Layer Coverage) on a89a66b2 — clear before DoQ (STEP 3.2.A). | Follow-up commit 912bb48a (second review pass: trap inside effect, hidden-element filter, row-only key handler); ci_pending also covers 912bb48a. | CI cleared 2026-11-19: all 9 workflows success on a89a66b2 (Playwright E2E 44492801159); 912bb48a covered by the dc803dc1 head runs (all success, Playwright 44496233109)."
         },
         "ST-02": {
           "title": "Link the Exit dialog's labels to their inputs",
@@ -68,12 +70,12 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.done",
           "sign_off_record": null,
-          "notes": "First-time-right: 2026-11-19 pass A — 4 done (US position so the conditional FX field is in the scan; Exit Reason select also linked via htmlFor/id); 6 done (no getByLabel on Exit fields in tests/e2e; ids exit-shares/price/date/note/reason unique in src); 1,2,3,5 (medium),7,8,11,17–21,23 N/A (markup-only, no data or state). | First-time-right: 2026-11-19 pass B — 13 done (no new visible text); 18/19 N/A; tests assert each label → input id and type through one label; local: 30 passed (ST-02 both themes, SC-PEM, monitor-exit-queue, exit-condition-surfacing, monitor-grace, watchlist exit filters). | /code-review medium: 4 ST-02 findings, all fixed (useId per-instance ids since ExitModal mounts in Positions and DailyMonitor; test covers all 6 labels with exact names and the label's for attribute; Exit Reason select named by its visible label, aria-label removed; Exit Price matched by anchored regex). Local after fixes: 121 passed across every spec that opens the Exit dialog. Deviation check vs design_system.md §Accessibility: none. | ci_pending: all workflows on dc803dc1 (Playwright E2E incl.) — clear before DoQ (STEP 3.2.A)."
+          "notes": "First-time-right: 2026-11-19 pass A — 4 done (US position so the conditional FX field is in the scan; Exit Reason select also linked via htmlFor/id); 6 done (no getByLabel on Exit fields in tests/e2e; ids exit-shares/price/date/note/reason unique in src); 1,2,3,5 (medium),7,8,11,17–21,23 N/A (markup-only, no data or state). | First-time-right: 2026-11-19 pass B — 13 done (no new visible text); 18/19 N/A; tests assert each label → input id and type through one label; local: 30 passed (ST-02 both themes, SC-PEM, monitor-exit-queue, exit-condition-surfacing, monitor-grace, watchlist exit filters). | /code-review medium: 4 ST-02 findings, all fixed (useId per-instance ids since ExitModal mounts in Positions and DailyMonitor; test covers all 6 labels with exact names and the label's for attribute; Exit Reason select named by its visible label, aria-label removed; Exit Price matched by anchored regex). Local after fixes: 121 passed across every spec that opens the Exit dialog. Deviation check vs design_system.md §Accessibility: none. | ci cleared (was ci_pending): all workflows on dc803dc1 (Playwright E2E incl.) — clear before DoQ (STEP 3.2.A). | CI cleared 2026-11-19: all 9 workflows success on dc803dc1 (Playwright E2E 44496233109)."
         },
         "ST-03": {
           "title": "Say Telegram, not email, and show when an alert was not sent",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 2268,
           "branch": "exec/2026-11-18__release-v9.18/EPIC-01",
@@ -82,14 +84,20 @@
           "blocked_since_utc": null,
           "unblock_criteria": null,
           "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/alerts_endpoints.md#GET /notifications",
+            "docs/specs/frontend/pages/notifications.md#Notification List",
+            "docs/design/2026-11-18__release-v9.18/alert-delivery-truth/decision_record.md",
+            "tests/test_notification_delivery_status.py",
+            "tests/e2e/notification-delivery-truth.spec.js"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "First-time-right: 2026-11-19 pass A — 1 raised (notifications.md v0.12 gives not_sent two texts but the planned contract adds only delivery_status; legacy delivered=TRUE/'email not configured' rows unmapped) → rulings by the user in session as API Contracts & Documentation Owner / Head of UX & Design, 2026-11-19T10:02:14Z: (a) add derived delivery_reason ('telegram_not_configured' | 'delivery_failed' | null, set only when delivery_status is not_sent; raw delivery_error stays server-side); (b) legacy unconfigured rows report sent (derived from stored delivered=TRUE; no line). 2 done (worked examples per stored state incl. reminder-off 'disabled' error old+new strings, attempts 0 pref on/off, 1–2 failed attempts, ≥3, read rows stop retrying but stay pending — shows nothing); 7 done (writers of delivered/delivery_error: deliver_notification, reflection reminder insert, exception path only); 17 done (readers of the error strings and delivered: redelivery loop, tests). | First-time-right: 2026-11-19 pass B — 9 done (SC-NDT-01 fixture lacked the reflection_reminder row the real endpoint seeds; fixed); 10 done (alerts_endpoints.md v0.15, openapi 3.50.0, api_changelog 1.34.0, notifications.md v0.13 in this commit); 13 done (new text 'Telegram Alerts'/'Send to Telegram'/'Not sent: …' — reflection-reminder.spec.js wording updated; no other collisions; derivation tables read back); 18 done (fixtures from get_notifications' item shape); 15/17 done (readers of delivered/delivery_error: re-delivery loop, PATCH, tests). /code-review medium: 8 findings — fixed: no-retry failed rows report not_sent (read or preference off), PATCH returns the delivery fields, retry SQL uses MAX_DELIVERY_ATTEMPTS, shared _load_delivery_preferences with the loop's fallback; filed BLG-BE-225 (unconfigured backlog re-sent once Telegram configured; the preference-off half is existing BLG-BE-224); no change: Last Updated chains (re-counted: current + 2 prior), status following the current preference (mirrors what re-delivery will actually do). Local: pytest 3675 passed/41 skipped/9 xfailed; Playwright 257 passed across every notification spec + SC-NDT-01..04 4/4 + notification axe scans 18/18 (3 repeats)."
         },
         "ST-04": {
           "title": "Fix Alert History compact values",
@@ -951,7 +959,8 @@
   "delegated_items": [],
   "completed_items": [
     "ST-01",
-    "ST-02"
+    "ST-02",
+    "ST-03"
   ],
   "open_escalations": {
     "ESC-EXEC-20261119-01": {

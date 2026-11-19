@@ -24,11 +24,11 @@ const ALERT_META = {
     label: "Market Regime Change",
     description: "Notify when market regime transitions to risk-off",
   },
-  // ST-04 (EPIC-01, v9.6, BLG-FEAT-98): governs email delivery only — the in-app feed row is
-  // always created. Defaults Off (server-side) so a new type never starts emailing unasked.
+  // ST-04 (EPIC-01, v9.6, BLG-FEAT-98): governs Telegram delivery only — the in-app feed row is
+  // always created. Defaults Off (server-side) so a new type never starts messaging unasked.
   reflection_reminder: {
     label: "Reflection Reminder",
-    description: "Notify by email when a closed trade has no reflection after 48 hours",
+    description: "Send to Telegram when a closed trade has no reflection after 48 hours",
   },
   daily_portfolio_summary: {
     label: "Daily Portfolio Summary",
@@ -113,12 +113,18 @@ export default function NotificationPreferences() {
       <PageHeader
         title={PAGE_LABELS.NotificationPreferences}
         parent={{ label: PAGE_LABELS.notifications, to: "/notifications" }}
-        description="Configure which alerts you receive by email, and set custom thresholds."
+        description="Choose which alerts are also sent to Telegram, and set custom thresholds."
       />
 
       <NotificationTabBar />
 
-      <div className="rounded-2xl bg-gradient-to-br from-white dark:from-slate-900 to-slate-50 dark:to-slate-800 border border-slate-200 dark:border-slate-700/50 divide-y divide-slate-200 dark:divide-slate-700/50">
+      {/* ST-03 (BLG-FE-318, v9.18): Section 1 "Telegram Alerts" (notifications.md v0.12).
+          The API field stays email_enabled; it governs Telegram delivery. */}
+      <section aria-labelledby="telegram-alerts-heading" className="rounded-2xl bg-gradient-to-br from-white dark:from-slate-900 to-slate-50 dark:to-slate-800 border border-slate-200 dark:border-slate-700/50 divide-y divide-slate-200 dark:divide-slate-700/50">
+        <div className="flex items-center justify-between gap-4 px-6 py-4">
+          <h2 id="telegram-alerts-heading" className="text-base font-semibold text-slate-900 dark:text-white">Telegram Alerts</h2>
+          <span className="text-xs font-medium text-slate-600 dark:text-slate-400">Send to Telegram</span>
+        </div>
         {loadError ? (
           <div className="p-6 text-rose-700 dark:text-rose-400 text-sm">
             Unable to load preferences. Please refresh.
@@ -150,7 +156,7 @@ export default function NotificationPreferences() {
             );
           })
         )}
-      </div>
+      </section>
 
       <AlertThresholdsSection />
 

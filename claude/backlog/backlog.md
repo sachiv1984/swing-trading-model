@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-18 (session — 4 new items added: BLG-UX-22, BLG-SPEC-241, BLG-BE-224, BLG-QA-274; v9.18 design gate observations, filed at Sprint Planning with PO authorisation); prior — 2026-11-18 (roadmap rebalance `2026-11-18__scheduled` STEP 9 and STEP 11 — 16 items added (BLG-GOV-429 is the Friction Item 1 tracking item); STEP 9 — from `IW-20261118-01` (BLG-BE-223, BLG-SEC-47, BLG-FEAT-103/104, BLG-GOV-425–428, BLG-FE-321–324, BLG-OPS-222, BLG-QA-272/273); Provisional-Target set to v9.18 (17 items) or v9.19 (17 items) for Phase 4 and the v9.18 Now section, DL-089; BLG-UX-21 decision recorded; BLG-GOV-408 ✅ COMPLETE); prior — 2026-11-17 (session — 1 new item added: BLG-GOV-424; AUD-2026-11-17-003); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-19 (session — 1 new item added: BLG-BE-225; ST-03/EPIC-01 v9.18 pre-commit review finding); prior — 2026-11-18 (session — 4 new items added: BLG-UX-22, BLG-SPEC-241, BLG-BE-224, BLG-QA-274; v9.18 design gate observations, filed at Sprint Planning with PO authorisation); prior — 2026-11-18 (roadmap rebalance `2026-11-18__scheduled` STEP 9 and STEP 11 — 16 items added (BLG-GOV-429 is the Friction Item 1 tracking item); STEP 9 — from `IW-20261118-01` (BLG-BE-223, BLG-SEC-47, BLG-FEAT-103/104, BLG-GOV-425–428, BLG-FE-321–324, BLG-OPS-222, BLG-QA-272/273); Provisional-Target set to v9.18 (17 items) or v9.19 (17 items) for Phase 4 and the v9.18 Now section, DL-089; BLG-UX-21 decision recorded; BLG-GOV-408 ✅ COMPLETE); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -7893,6 +7893,27 @@ Re-delivery retries `delivered = false` notification rows up to 3 times. With a 
 **Acceptance Criteria**
 - A pytest stores a notification with its preference off, turns the preference on, runs re-delivery, and asserts nothing is sent
 - The behaviour is recorded in `notifications.md` (or the alerts contract)
+
+---
+
+### BLG-BE-225 — Stop re-delivery from sending a backlog of alerts once Telegram is configured
+**Priority:** P3 (Low)
+**Type:** Backend engineering
+**Owner:** Head of Engineering; Backend Engineering Patterns Owner
+**Source:** ST-03/EPIC-01 (`2026-11-18__release-v9.18`) pre-commit `/code-review` finding — 2026-11-19
+**Effort:** XS (~1–2h)
+**Provisional-Target:** v9.19
+
+**Problem**
+Since ST-03 (v9.18), a notification written while `TELEGRAM_BOT_TOKEN`/`TELEGRAM_CHAT_ID` are unset is stored `delivered = FALSE`, `delivery_error = 'Telegram not configured'`, and stays retryable for up to 3 evaluate runs. If Telegram is configured inside that window, the next evaluate sends every such unread row, including stop-loss or regime alerts that may be days old. The preference-off case is `BLG-BE-224`.
+
+**Scope**
+- Add an age cap to the re-delivery query (or skip rows whose error is 'Telegram not configured' once the config is present), with a pytest
+- Record the rule in `alerts_endpoints.md` §Delivery status derivation
+
+**Acceptance Criteria**
+- A pytest stores an unconfigured row older than the cap, configures Telegram, runs re-delivery and asserts nothing is sent
+- The contract states the rule and what `delivery_status` the row reports
 
 ---
 

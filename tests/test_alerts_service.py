@@ -543,12 +543,14 @@ class TestEvaluateAlerts(unittest.TestCase):
 
             evaluate_alerts("portfolio-1", lambda nid: None)
 
-        redelivery_sql = next(
-            c.args[0] for c in cur.execute.call_args_list
-            if "delivered = FALSE" in c.args[0] and "delivery_attempts < 3" in c.args[0]
+        # ST-03 (v9.18): the cap is the MAX_DELIVERY_ATTEMPTS parameter (3), not a literal.
+        redelivery_call = next(
+            c for c in cur.execute.call_args_list
+            if "delivered = FALSE" in c.args[0] and "delivery_attempts < %s" in c.args[0]
         )
+        redelivery_sql, redelivery_params = redelivery_call.args
         self.assertIn("read = FALSE", redelivery_sql)
-        self.assertIn("delivery_attempts < 3", redelivery_sql)  # unread retry-up-to-3 unchanged
+        self.assertEqual(redelivery_params, ("portfolio-1", 3))  # unread retry-up-to-3 unchanged
 
     def test_stop_loss_fires_for_position_within_threshold(self):
         """Verify stop_loss proximity formula via evaluate_alerts path."""

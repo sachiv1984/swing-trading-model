@@ -1022,3 +1022,36 @@ for (const theme of ['light', 'dark']) {
     expect(results.violations.filter((v) => v.id === 'label').map((v) => v.id)).toEqual([]);
   });
 }
+
+// ---------------------------------------------------------------------------
+// ST-03 (BLG-FE-318, EPIC-01, v9.18): the Feed with the new "Not sent" line
+// (both texts) and Notification Preferences with its new "Telegram Alerts"
+// heading, light and dark. Preferences is already scanned by the ST-19 block;
+// the Feed state with the delivery line is new.
+// ---------------------------------------------------------------------------
+
+for (const theme of ['light', 'dark']) {
+  test(`Notifications feed with Not sent lines (${theme}) (ST-03)`, async ({ page }) => {
+    await page.addInitScript((t) => {
+      window.localStorage.setItem('theme', t);
+      window.localStorage.setItem('command-palette-tooltip-seen', 'true');
+    }, theme);
+    await routed.catchAll(page);
+    const feed = [
+      ['n-1', 'Stop Loss Approach — AAA', 'not_sent', 'telegram_not_configured'],
+      ['n-2', 'Stop Loss Approach — BBB', 'not_sent', 'delivery_failed'],
+      ['n-3', 'Stop Loss Approach — CCC', 'sent', null],
+    ].map(([id, title, delivery_status, delivery_reason]) => ({
+      id, alert_type: 'stop_loss_approach', title, message: `${title} message`, read: false,
+      created_at: new Date(Date.now() - 3600 * 1000).toISOString(), context: null, delivery_status, delivery_reason,
+    }));
+    await page.route(/localhost:8000\/notifications\?/, (route) => route.fulfill({
+      status: 200, contentType: 'application/json',
+      body: JSON.stringify({ status: 'ok', data: { notifications: feed, total: 3, page: 1, per_page: 50, has_more: false } }),
+    }));
+    await page.goto('/#/notifications');
+    await expect(page.getByTestId('notification-not-sent')).toHaveCount(2, { timeout: 10000 });
+    await expectThemeApplied(page, theme);
+    await runAxeScan(page, `NotificationsNotSent:${theme}`);
+  });
+}

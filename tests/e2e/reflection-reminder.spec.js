@@ -3,7 +3,7 @@
  * (ST-04, EPIC-01, v9.6, BLG-FEAT-98)
  *
  * Design source: docs/design/2026-09-21__release-v9.6/reflection-reminder/decision_record.md §5
- * Spec: docs/specs/frontend/pages/notifications.md v0.9 (§Reflection Reminder Row, §Email Preferences)
+ * Spec: docs/specs/frontend/pages/notifications.md v0.9 (§Reflection Reminder Row, §Email Preferences — renamed Telegram Alerts in v0.12)
  *
  * Covers observable AC (ST-04 AC-01, AC-02, AC-03):
  *   SC-RR-01  A reflection_reminder feed row renders its title, message and a "Write reflection" link
@@ -144,7 +144,7 @@ test('SC-RR-05: Preferences lists "Reflection Reminder" defaulting Off; toggling
 
   const row = page.locator('div.px-6.py-5', { hasText: 'Reflection Reminder' }).first();
   await expect(row).toBeVisible({ timeout: 10000 });
-  await expect(row).toContainText('Notify by email when a closed trade has no reflection after 48 hours');
+  await expect(row).toContainText('Send to Telegram when a closed trade has no reflection after 48 hours');
   const toggle = row.locator('button[role="switch"]').first();
   await expect(toggle).toHaveAttribute('aria-checked', 'false'); // default Off
   await toggle.click();

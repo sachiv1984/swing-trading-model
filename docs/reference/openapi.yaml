@@ -2,7 +2,9 @@ openapi: 3.0.3
 
 info:
   title: Momentum Trading Assistant API
-  version: 3.49.0
+  version: 3.50.0
+  # v3.50.0 (2026-11-19, ST-03, EPIC-01, v9.18): GET /notifications items gain derived delivery_status
+  # (sent | not_requested | pending | not_sent) and delivery_reason (BLG-FE-318). No new endpoint.
   # v3.49.0 (2026-11-12, ST-09, EPIC-04, v9.17): GET /positions gains stop_last_moved_date and
   # previous_stop (read-only, DS-40; BLG-BE-205), written by either recompute path when it raises a stop. No new endpoint.
   # v3.48.0 (2026-11-09, ST-05, EPIC-02, v9.16): POST and PUT /trade-plans document the optional
@@ -1731,7 +1733,8 @@ paths:
       summary: Get notification feed
       description: >
         Return notifications newest first. Page-based pagination, 50 items per page.
-        Canonical contract: docs/specs/api_contracts/alerts_endpoints.md v0.6.
+        Each item carries a derived delivery_status and delivery_reason (v0.15).
+        Canonical contract: docs/specs/api_contracts/alerts_endpoints.md v0.15.
       parameters:
         - in: query
           name: page
@@ -6824,6 +6827,17 @@ components:
         created_at:
           type: string
           format: date-time
+        delivery_status:
+          type: string
+          enum: [sent, not_requested, pending, not_sent]
+          description: >
+            Derived from the stored delivered, delivery_attempts and delivery_error and the alert type's
+            Telegram preference (alerts_endpoints.md v0.15 §Delivery status derivation; ST-03, v9.18).
+        delivery_reason:
+          type: string
+          nullable: true
+          enum: [telegram_not_configured, delivery_failed, null]
+          description: Why a not_sent notification was not sent; null for every other delivery_status.
         context:
           type: object
           nullable: true
@@ -6855,7 +6869,7 @@ components:
           enum: [stop_loss_approach, grace_period_warning, market_regime_change, daily_portfolio_summary, reflection_reminder]
         email_enabled:
           type: boolean
-          description: Governs delivery only; the in-app feed row is always created. reflection_reminder defaults to false.
+          description: Governs Telegram delivery only (the name is historical); the in-app feed row is always created. reflection_reminder defaults to false.
 
     NotificationPreferencesResponse:
       type: object

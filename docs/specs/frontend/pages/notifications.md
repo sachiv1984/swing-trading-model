@@ -1,8 +1,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 0.12
-**Last Updated:** 2026-11-18 (v9.18 design gate — ST-03/BLG-FE-318 Telegram wording and Not sent line; ST-04/BLG-FE-228 Alert History values); prior — 2026-10-12 (v9.12 design gate — ST-23/BLG-FE-200: new §Light Theme); prior — 2026-10-01 (ST-34, EPIC-05, v9.9, BLG-SPEC-169 — corrected §Section 2's and §Alert History's empty-state headings to drop the trailing period, matching already-shipped code and `design_system.md` §Data States; closed Known Deviation DEV-v9.7-ST05-01; documentation-only); prior history retained — see prior entries in version control
+**Version:** 0.13
+**Last Updated:** 2026-11-19 (ST-03, EPIC-01, v9.18 — Feed delivery line text chosen by the new derived `delivery_reason`; pre-v9.18 unconfigured rows report `sent`; rulings 2026-11-19); prior — 2026-11-18 (v9.18 design gate — ST-03/BLG-FE-318 Telegram wording and Not sent line; ST-04/BLG-FE-228 Alert History values); prior — 2026-10-12 (v9.12 design gate — ST-23/BLG-FE-200: new §Light Theme); prior history retained — see prior entries in version control
 **Design Source (v0.9 reflection reminder):** docs/design/2026-09-21__release-v9.6/reflection-reminder/decision_record.md
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Design Source:** docs/design/2026-03-18__release-v2.1/notification-feed/ux_spec.md | docs/design/2026-03-18__release-v2.1/notification-preferences/ux_spec.md | docs/design/2026-03-21__release-v2.2/alert-threshold-customisation/ux_spec.md | docs/design/2026-03-21__release-v2.2/alert-history-table/ux_spec.md | docs/design/2026-03-24__release-v2.3/alert-nav-badge/ux_spec.md | docs/design/2026-07-17__release-v7.5/custom-price-alerts/ux_spec.md | docs/design/2026-07-21__release-v7.7/nav-notification-digest-consolidation/ux_spec.md | docs/design/2026-07-24__release-v7.8/notification-accessibility-audit/decision_record.md
@@ -79,7 +79,7 @@ Ordered newest first. Each item:
 | Timestamp | Relative time (e.g. `"2 hours ago"`); absolute datetime (ISO 8601) on hover |
 | Unread indicator | Left-border accent (design system accent colour) on unread items; absent on read items |
 | Mark as read button | Per-item; calls `PATCH /notifications/{id}`; removes unread indicator on success |
-| Delivery line *(v0.12, ST-03)* | Shown only when `delivery_status` is `not_sent`: "Not sent: Telegram not configured" or "Not sent: Telegram delivery failed", `text-xs text-app-warning` with an `AlertTriangle` icon (`aria-hidden`), `data-testid="notification-not-sent"`. Nothing for `sent`, `not_requested` or `pending` |
+| Delivery line *(v0.12, ST-03; v0.13)* | Shown only when `delivery_status` is `not_sent`: "Not sent: Telegram not configured" when `delivery_reason` is `telegram_not_configured`, otherwise "Not sent: Telegram delivery failed" (v0.13), `text-xs text-app-warning` with an `AlertTriangle` icon (`aria-hidden`), `data-testid="notification-not-sent"`. Nothing for `sent`, `not_requested` or `pending` |
 
 
 **Delivery status (v0.12, ST-03, BLG-FE-318).** Design source: `docs/design/2026-11-18__release-v9.18/alert-delivery-truth/decision_record.md` §3. `GET /notifications` items gain `delivery_status` (`sent | not_requested | pending | not_sent`), derived server-side from `delivered`, `delivery_attempts` and `delivery_error` (`alerts_endpoints.md` and `openapi.yaml` in ST-03):
@@ -89,10 +89,12 @@ Ordered newest first. Each item:
 | delivered | `sent` |
 | preference off (`delivery_attempts = 0` and not enqueued, or the "Telegram off for this alert type" error) | `not_requested` |
 | not delivered, error "Telegram not configured" | `not_sent` |
-| not delivered, `delivery_attempts ≥ 3`, other error | `not_sent` |
+| not delivered, `delivery_attempts ≥ 1`, other error, and no retry will run (`delivery_attempts ≥ 3`, or read, or the preference now off; v0.13) | `not_sent` |
 | not delivered, retry still due (`delivery_attempts < 3`), or enqueued and not yet run | `pending` |
 
-With Telegram unconfigured, the backend now records `delivered = FALSE`, `delivery_error = 'Telegram not configured'` (was TRUE / 'email not configured'). Rows written before v9.18 are not rewritten and show no line.
+With Telegram unconfigured, the backend now records `delivered = FALSE`, `delivery_error = 'Telegram not configured'` (was TRUE / 'email not configured'). Rows written before v9.18 are not rewritten and show no line: they report `sent` (v0.13).
+
+**Delivery reason (v0.13, ST-03).** A second derived field, `delivery_reason` (`telegram_not_configured` | `delivery_failed` | `null`, set only for `not_sent`), picks the line's text; the stored error text is not sent to the browser. Ruled by the API Contracts & Documentation Owner and Head of UX & Design (the user, in session), 2026-11-19, because one status could not choose between the two texts above. Full derivation: `alerts_endpoints.md` v0.15 §Delivery status derivation.
 
 **Unread indicator:** 2px left-border in the design system accent colour. Read items render with neutral background and no border accent.
 
@@ -498,6 +500,7 @@ When the System nav group is collapsed, the badge count propagates to the group 
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.13 | 2026-11-19 | (ST-03, EPIC-01, v9.18, BLG-FE-318) Feed delivery line: the text comes from a new derived `delivery_reason`; pre-v9.18 unconfigured rows report `sent` (no line); a failed row that will not be retried (read, or preference now off) is `not_sent`. Rulings: API Contracts & Documentation Owner and Head of UX & Design (the user, in session), 2026-11-19. |
 | 0.12 | 2026-11-18 | v9.18 design gate. (ST-03, BLG-FE-318) "email" → "Telegram" on Notification Preferences (Section 1 renamed "Telegram Alerts"; `email_enabled` kept); §Channel Scope; Feed rows gain a "Not sent" delivery line from a new derived `delivery_status`; unconfigured Telegram recorded as not delivered. (ST-04, BLG-FE-228) new §Alert History Values: compact text and labels mapped to the keys the backend writes (grace, regime and summary keys were all wrong), market-currency prices. Design source: `docs/design/2026-11-18__release-v9.18/alert-delivery-truth/decision_record.md`. Head of UX & Design sign-off: 2026-11-18. Product Owner approved: 2026-11-18. Head of Specs Team confirmed. |
 | 0.11 | 2026-10-12 | v9.12 design gate. (ST-23, BLG-FE-200) Light mode ruled a supported theme (resolves RISK-03). New §Light Theme: every colour on Notification Preferences and Alert History uses a light+dark pair from the light-theme token set, including the active tab and the section headings. Design source: `docs/design/2026-10-12__release-v9.12/light-theme-support/decision_record.md`. Head of UX & Design sign-off: 2026-10-12. Product Owner approved: 2026-10-12. Head of Specs Team confirmed. |
 | 0.10 | 2026-10-01 | ST-34 (EPIC-05, v9.9, BLG-SPEC-169): §Section 2's "No alert rules configured." and §Alert History's "No alert history yet." headings corrected to drop the trailing period, matching `AlertThresholdsSection.js`/`NotificationsHistory.js` (shipped v9.7, ST-05/ST-06) and `design_system.md` §Data States. Closes Known Deviation DEV-v9.7-ST05-01. `docs/testing/alert_thresholds_empty_state_scenarios.md` corrected in the same commit. Documentation only. |

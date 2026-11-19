@@ -239,7 +239,7 @@ def test_eligibility_idempotence_and_preference_off_rows_never_redelivered(seede
         rows = _reminders(cur)
     assert {by_trade[r["trade_id"]] for r in rows} == EXPECTED_FIRST_RUN
     assert reflection["notifications_created"] == len(EXPECTED_FIRST_RUN)
-    assert all(r["delivered"] is True and r["delivery_error"] == "email disabled" for r in rows)
+    assert all(r["delivered"] is True and r["delivery_error"] == "Telegram off for this alert type" for r in rows)
     enqueue.assert_not_called()
 
     # Run 2 -- nothing new: at most one reminder per trade.
