@@ -6,14 +6,14 @@
   "invoked_utc": "2026-11-19T08:07:14Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-19T14:16:18Z",
+  "last_updated_utc": "2026-11-19T14:30:25Z",
   "epics": {
     "EPIC-01": {
       "title": "Site Structure & Usability Phase 4, Stage 1: Correct and Safe (build-and-ship)",
       "status": "done",
       "branch": "exec/2026-11-18__release-v9.18/EPIC-01",
-      "pr_number": null,
-      "pr_status": "none",
+      "pr_number": 2307,
+      "pr_status": "open",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-11-18__release-v9.18/qa_evidence_EPIC-01.md",
       "test_scenarios": [
@@ -1026,7 +1026,8 @@
     "2026-11-19T11:42:06Z BLG-FE-325 (filed in ST-06, 9847fb03) fixed out-of-sprint on governance/2026-11-19-csp-redirect-script, PR #2306 (commit 99fb6ffa), Product Owner direction in session 2026-11-19: redirect script moved to public/spa-redirect.js, script-src 'self' only, build-output CSP check in frontend-production-build.yml and deploy.yml, SC-CSPS-01/02. After #2306 and this EPIC merge, add the ✅ COMPLETE banner to BLG-FE-325 citing 99fb6ffa. Not merged by the engine.",
     "2026-11-19T13:37:32Z main carried status Executing without execution_state.json (EPIC-01-only), failing test_execution_state_path_file_exists on PR #2306. User-directed fix: f4b642d3 copied this file to main; 795deee7 merged main into EPIC-01 (clean, identical); #2306 updated from main (f1112a5d). Filed BLG-GOV-430 (STEP 0 should commit the file to main with the Executing status).",
     "2026-11-19T13:50:29Z PR #2306 (BLG-FE-325) merged to main by sachiv1984, merge commit f2596999 (from gh pr view). DoQ QA sign-off and PO acceptance given by the user in session and recorded on the PR (issuecomment-7008122463) before merge; branch protection required a human merge (review rule). main merged into EPIC-01 afterwards. Remaining: ✅ COMPLETE banner on BLG-FE-325 once EPIC-01 (which carries the item) merges.",
-    "2026-11-19T14:08:03Z Staging write by the user (Supabase SQL editor, staging project): positions 0c1edd49… BARC → BARC.L and 7aca4a88… LGEN → LGEN.L (market UK, status open; pre-checks: exactly 2 rows, no existing .L rows). This is ST-35's 'correct the two existing staging rows' scope item, done early to unblock ST-04's staging check; ST-35's seed-script change and its AC 2 (price_is_stale false) remain with EPIC-06. Seed stores UK prices in pounds (current_price 2.18/2.52, stop 1.90/2.20), confirming ST-04's units premise. Do not run reset-and-seed-staging.yml until ST-35's seed fix lands."
+    "2026-11-19T14:08:03Z Staging write by the user (Supabase SQL editor, staging project): positions 0c1edd49… BARC → BARC.L and 7aca4a88… LGEN → LGEN.L (market UK, status open; pre-checks: exactly 2 rows, no existing .L rows). This is ST-35's 'correct the two existing staging rows' scope item, done early to unblock ST-04's staging check; ST-35's seed-script change and its AC 2 (price_is_stale false) remain with EPIC-06. Seed stores UK prices in pounds (current_price 2.18/2.52, stop 1.90/2.20), confirming ST-04's units premise. Do not run reset-and-seed-staging.yml until ST-35's seed fix lands.",
+    "2026-11-19T14:30:25Z EPIC-01 PR #2307 opened (STEP 3.2.B). Pre-PR gates: DoQ Date non-blank; signer format agent-mediated; qa_evidence committed (4c1da2ac); check_api_performance_baseline_drift.py PASSED; origin/main..HEAD carries only [EPIC-01] and [GOVERNANCE] commits. Awaiting human DoQ QA sign-off and PO acceptance (incl. BLG-SEC-48, BLG-SEC-49, BLG-GOV-430 rationale)."
   ],
   "sealed": false,
   "sealed_utc": null
