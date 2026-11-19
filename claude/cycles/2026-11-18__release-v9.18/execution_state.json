@@ -6,7 +6,7 @@
   "invoked_utc": "2026-11-19T08:07:14Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-19T11:42:06Z",
+  "last_updated_utc": "2026-11-19T13:56:00Z",
   "epics": {
     "EPIC-01": {
       "title": "Site Structure & Usability Phase 4, Stage 1: Correct and Safe (build-and-ship)",
@@ -128,26 +128,33 @@
         },
         "ST-05": {
           "title": "Re-review the accepted open-access risk",
-          "classification": "delegated_decision",
-          "status": "blocked_decision",
-          "assigned_to": "Cybersecurity & Trust Lead; Product Owner",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
           "github_issue": 2270,
           "branch": "exec/2026-11-18__release-v9.18/EPIC-01",
           "commit_sha": null,
           "delegation_record_id": null,
           "blocked_since_utc": "2026-11-19T08:07:49Z",
-          "unblock_criteria": "Dated decision by both owners in credential_policy.md §1.1 covering read access; any remedy filed as its own backlog item (ESC-EXEC-20261119-01).",
+          "unblock_criteria": null,
           "completed_utc": null,
-          "acceptance_verified": false,
+          "acceptance_verified": true,
           "spec_references": [
             "docs/operations/credential_policy.md#1.1 Frontend API Key: Write Scope and Accepted Risk"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": {
+            "status": "cleared",
+            "role": "Cybersecurity & Trust Lead; Product Owner",
+            "method": "human",
+            "signed_by": "the user (holds both roles), in session",
+            "date": "2026-11-19",
+            "evidence": "docs/operations/credential_policy.md §1.1 (Re-review, v1.2); ESC-EXEC-20261119-01"
+          },
+          "notes": "Reclassified delegated_decision → autonomous on resolution of ESC-EXEC-20261119-01 (2026-11-19T13:56:00Z): decision given by the user in session as Cybersecurity & Trust Lead and Product Owner. AC 1 met: credential_policy.md §1.1 v1.2 records the dated re-review covering read access to the owner's data. AC 2 met: remedies filed as BLG-SEC-48 (access control in front of site + API, v9.20) and BLG-SEC-49 (noindex + robots.txt, v9.19). Blocked 2026-11-19T08:07:49Z → resolved 2026-11-19T13:56:00Z. Deviation check vs BLG-SEC-46 AC: none. No code change (decision story); first-time-right N/A."
         },
         "ST-06": {
           "title": "Measure Core Web Vitals and update the performance budget",
@@ -965,15 +972,14 @@
       }
     }
   },
-  "blocked_items": [
-    "ST-05"
-  ],
+  "blocked_items": [],
   "delegated_items": [],
   "completed_items": [
     "ST-01",
     "ST-02",
     "ST-03",
     "ST-04",
+    "ST-05",
     "ST-06"
   ],
   "open_escalations": {
@@ -985,7 +991,10 @@
       "raised_utc": "2026-11-19T08:07:49Z",
       "sla_due_utc": "2026-11-20T08:07:49Z",
       "blocks_execution": false,
-      "disposition": "Open"
+      "disposition": "Resolved",
+      "resolved_utc": "2026-11-19T13:56:00Z",
+      "resolved_by": "Cybersecurity & Trust Lead; Product Owner (the user, in session)",
+      "resolution_summary": "Read access no longer accepted; remedy BLG-SEC-48 (access control, v9.20); interim BLG-SEC-49 (noindex/robots.txt); recorded in credential_policy.md §1.1 v1.2."
     }
   },
   "merge_gate": {

@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-19 (session — 1 new item added: BLG-GOV-430; v9.18 EPIC-01 PR #2306 CI finding); prior — 2026-11-19 (session — 1 new item added: BLG-FE-325; ST-06/EPIC-01 v9.18 finding); prior — 2026-11-19 (session — 1 new item added: BLG-BE-225; ST-03/EPIC-01 v9.18 pre-commit review finding); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-19 (session — 2 new items added: BLG-SEC-48, BLG-SEC-49; ST-05/EPIC-01 v9.18 re-review remedies); prior — 2026-11-19 (session — 1 new item added: BLG-GOV-430; v9.18 EPIC-01 PR #2306 CI finding); prior — 2026-11-19 (session — 1 new item added: BLG-FE-325; ST-06/EPIC-01 v9.18 finding); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -7541,6 +7541,50 @@ No backend response sets `Cache-Control` (0 matches in `backend/`). Positions, t
 **Acceptance Criteria**
 - A backend test asserts the header on a representative route from each group, and its absence on `/health`
 - `openapi.yaml` declares the header; the OpenAPI drift gate passes
+
+---
+
+### BLG-SEC-48 — Put access control in front of the front end and the API
+**Priority:** P2 (Medium)
+**Type:** Security / Access control
+**Owner:** Cybersecurity & Trust Lead; Infrastructure & Operations Owner
+**Source:** ST-05/EPIC-01 (`2026-11-18__release-v9.18`) re-review decision, `credential_policy.md` §1.1 v1.2 — 2026-11-19
+**Effort:** M (~1–2 days)
+**Provisional-Target:** v9.20
+
+**Problem**
+The front end has no sign-in and is served from a public URL named in the public repository, and the API key in its bundle authorises every route. Anyone who finds the URL can read the owner's real positions, cash, P&L and journal, and can call every write. The 2026-11-19 re-review (`credential_policy.md` §1.1) withdrew the acceptance for read access; a narrower key would not help, because reads stay open.
+
+**Scope**
+- Choose and set up an authenticating layer in front of the GitHub Pages site and the Render API (for example Cloudflare Access, or an authenticating proxy), so only the owner can load the app or call the API
+- Keep CI, scheduled workflows and health checks working (service tokens or an allowlist), and document how they authenticate
+- Update `credential_policy.md` §1.1, the threat model and the deploy/runbook docs; end the write-scope acceptance
+
+**Acceptance Criteria**
+- An unauthenticated request to the site URL and to an API route is refused (recorded check, dated)
+- The owner's browser, CI workflows and scheduled jobs still work (each listed with evidence)
+- `credential_policy.md` §1.1 records the remedy as in place and the 2026-10-15 acceptance as ended
+
+---
+
+### BLG-SEC-49 — Add noindex and a disallow-all robots.txt to the front end
+**Priority:** P2 (Medium)
+**Type:** Security / Discoverability
+**Owner:** Cybersecurity & Trust Lead; Frontend Specifications & UX Documentation Owner
+**Source:** ST-05/EPIC-01 (`2026-11-18__release-v9.18`) re-review decision (interim step), `credential_policy.md` §1.1 v1.2 — 2026-11-19
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.19
+
+**Problem**
+Until access control (`BLG-SEC-48`) ships, the public site has no `robots.txt` and no `noindex`, so a search engine can list it and make the owner's data easier to find. This reduces discoverability only; it is not access control.
+
+**Scope**
+- Add `<meta name="robots" content="noindex, nofollow">` to `public/index.html` and `public/404.html`
+- Add `public/robots.txt` with `User-agent: *` and `Disallow: /`
+
+**Acceptance Criteria**
+- The built site serves `robots.txt` disallowing all paths, and both HTML pages carry the `noindex` meta tag (build-output check or Playwright)
+- `credential_policy.md` §1.1 notes the interim step as done
 
 ---
 

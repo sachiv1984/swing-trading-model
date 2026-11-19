@@ -19,4 +19,5 @@ Last Updated: 2026-11-19
 - **Unblock criteria:** a dated decision from both owners, recorded in `credential_policy.md` §1.1 (with review triggers updated), covering read access; any remedy filed as its own backlog item.
 - **SLA due-by:** 2026-11-20T08:07:49Z (24h — Lifecycle)
 - **Blocks execution:** No
-- **Disposition:** Open
+- **Disposition:** Resolved
+- **Resolution summary (2026-11-19T13:56:00Z):** Decision by the Cybersecurity & Trust Lead and the Product Owner (both held by the user, given in session, 2026-11-19): the 2026-10-15 acceptance no longer covers read access to the owner's data. Remedy: access control in front of the site and the API (BLG-SEC-48, provisional v9.20). Interim: `noindex` and a disallow-all `robots.txt` (BLG-SEC-49, provisional v9.19). Write-scope acceptance stands until BLG-SEC-48 ships. Recorded in `docs/operations/credential_policy.md` §1.1 v1.2 with updated review triggers. ST-05 reclassified `autonomous` and completed.
