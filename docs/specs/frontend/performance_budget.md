@@ -2,8 +2,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Frontend Specification (Class 2)
 **Status:** Active
-**Version:** 2.0
-**Last Updated:** 2026-11-19 (ST-06, EPIC-01, v9.18, BLG-QA-271 — Core Web Vitals targets on mobile and desktop, TTI dropped, Lighthouse CI and bundle-size check, web-vitals reporting, first baseline); prior — 2026-04-11 (ST-15, BLG-FE-09, v2.6 — initial version); prior history retained — see prior entries in version control
+**Version:** 2.1
+**Last Updated:** 2026-11-19 (PR #2307 review — §5 baseline re-recorded with gzip-served assets and a pinned Lighthouse install; the v2.0 recording served the bundle uncompressed); prior — 2026-11-19 (ST-06, EPIC-01, v9.18, BLG-QA-271 — Core Web Vitals targets on mobile and desktop, TTI dropped, Lighthouse CI and bundle-size check, web-vitals reporting, first baseline); prior — 2026-04-11 (ST-15, BLG-FE-09, v2.6 — initial version); prior history retained — see prior entries in version control
 **Story:** ST-06 (BLG-QA-271, v9.18 EPIC-01); originally ST-15 (BLG-FE-09, v2.6 EPIC-04)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 ---
@@ -89,8 +89,8 @@ Workflow: `.github/workflows/lighthouse-ci.yml` (job "Lighthouse (mobile + deskt
 
 1. Builds the app with `REACT_APP_API_URL=http://localhost:4173/api` and fake auth.
 2. `scripts/perf/check_bundle_size.py` reports §3.3.
-3. `scripts/perf/mock_api_server.js` serves the build and a populated mock API on one origin (the app's Content-Security-Policy allows `connect-src 'self'` and `https:` only, so a mock on another port would be blocked).
-4. `scripts/perf/run_lighthouse.mjs` (Lighthouse 13.6.0) runs Dashboard (`/#/DashboardHome`), Positions (`/#/Positions`), Trade Plan (`/#/TradePlan`) and Performance (`/#/Performance`) on both profiles, 3 runs each, and reports the median of each metric.
+3. `scripts/perf/mock_api_server.js` serves the build (text assets gzip, as GitHub Pages does) and a populated mock API on one origin (the app's Content-Security-Policy allows `connect-src 'self'` and `https:` only, so a mock on another port would be blocked).
+4. `scripts/perf/run_lighthouse.mjs` (Lighthouse 13.6.0, installed with `npm ci` from `scripts/perf/lighthouse/`) runs Dashboard (`/#/DashboardHome`), Positions (`/#/Positions`), Trade Plan (`/#/TradePlan`) and Performance (`/#/Performance`) on both profiles, 3 runs each, and reports the median of each metric.
 5. Both tables go to the job summary of the run; the raw Lighthouse JSON is the `lighthouse-results-<run id>` artifact (14 days).
 
 ### 4.2 Locally
@@ -119,22 +119,24 @@ Local numbers vary with the machine; compare like with like, and use the CI run 
 
 ## 5. Baseline
 
-**Baseline 2026-11-19** — measured by `lighthouse-ci.yml` run [44513135043](https://github.com/sachiv1984/swing-trading-model/actions/runs/44513135043) on commit `9847fb03` (branch `exec/2026-11-18__release-v9.18/EPIC-01`), GitHub `ubuntu-latest` runner, Lighthouse 13.6.0, median of 3 runs, mocked API (§4.1). Measured **before** ST-08 (EPIC-02, v9.18) merged: the Performance page does **not** yet include the Strategy Benchmark section (BLG-QA-274). Re-measure Performance once ST-08 is on `main` and add that row here.
+**Baseline 2026-11-19 (re-recorded, v2.1)** — measured by `lighthouse-ci.yml` run [44560607996](https://github.com/sachiv1984/swing-trading-model/actions/runs/44560607996) (`pull_request`, PR #2307) on commit `31008092`, GitHub `ubuntu-latest` runner, Lighthouse 13.6.0 (pinned tree, `scripts/perf/lighthouse/`), median of 3 runs, mocked API, **static assets served gzip** as GitHub Pages serves them (the main bundle transfers 563 KB, not its 2.0 MB raw size). Measured **before** ST-08 (EPIC-02, v9.18) merged: the Performance page does **not** yet include the Strategy Benchmark section (BLG-QA-274). Re-measure Performance once ST-08 is on `main` and add that row here.
+
+*Superseded:* the first recording (run 44513135043 on `9847fb03`, v2.0) served the bundle uncompressed, which added about 7 s of simulated mobile download (mobile LCP 12.8 s Dashboard, 11.9 s Performance). Found in the PR #2307 review; do not compare against those figures.
 
 ### 5.1 Lab values
 
 | Page | Profile | Score | FCP ms | LCP ms | CLS | TBT ms | Speed Index ms |
 |------|---------|-------|--------|--------|-----|--------|----------------|
-| Dashboard | Mobile | 69 | 1,351 | **12,830** ⚠ | 0.060 | **278** ⚠ | 1,351 |
-| Positions | Mobile | 93 | 1,351 | 1,351 | 0.000 | 178 | 5,352 |
-| Trade Plan | Mobile | 93 | 1,351 | 1,351 | 0.000 | 177 | 5,218 |
-| Performance | Mobile | 36 | 11,855 | **11,855** ⚠ | 0.088 | **697** ⚠ | 11,855 |
-| Dashboard | Desktop | 88 | 321 | 2,256 | 0.049 | 2 | 321 |
-| Positions | Desktop | 100 | 321 | 321 | 0.000 | 0 | 321 |
-| Trade Plan | Desktop | 99 | 321 | 321 | 0.000 | 0 | 1,157 |
-| Performance | Desktop | 74 | 2,002 | 2,002 | **0.145** ⚠ | 59 | 2,002 |
+| Dashboard | Mobile | 74 | 901 | **4,926** ⚠ | 0.060 | **324** ⚠ | 901 |
+| Positions | Mobile | 96 | 901 | 901 | 0.000 | **216** ⚠ | 2,272 |
+| Trade Plan | Mobile | 96 | 901 | 901 | 0.000 | **225** ⚠ | 2,145 |
+| Performance | Mobile | 52 | 3,918 | **5,026** ⚠ | 0.088 | **778** ⚠ | 3,918 |
+| Dashboard | Desktop | 98 | 240 | 1,026 | 0.049 | 5 | 295 |
+| Positions | Desktop | 100 | 241 | 241 | 0.000 | 2 | 301 |
+| Trade Plan | Desktop | 100 | 241 | 241 | 0.000 | 1 | 578 |
+| Performance | Desktop | 93 | 765 | 765 | **0.145** ⚠ | 70 | 765 |
 
-⚠ = over the §3.1 target. On mobile, Dashboard and Performance miss LCP by about 5×, and their TBT is over the INP proxy; on desktop only Performance's CLS misses. Positions and Trade Plan meet every target on both profiles.
+⚠ = over the §3.1 target. On mobile, Dashboard and Performance miss LCP by about 2×, and every page's TBT is over the 200 ms INP proxy (Positions and Trade Plan only just); on desktop only Performance's CLS misses.
 
 ### 5.2 Bundle
 
@@ -160,5 +162,6 @@ Both the main-bundle and the total budget are exceeded; there are no split chunk
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.1 | 2026-11-19 | ST-06 follow-up (PR #2307 agent-mediated DoQ review, finding 1): the mock server now serves static assets gzip, as GitHub Pages does, and Lighthouse installs from a pinned lockfile. §5 re-recorded from run 44560607996 on `31008092`; the v2.0 figures (uncompressed bundle, mobile LCP ~12 s) are superseded. |
 | 2.0 | 2026-11-19 | ST-06 (BLG-QA-271, v9.18 EPIC-01). Targets become Core Web Vitals (LCP ≤ 2.5 s, INP ≤ 200 ms with TBT ≤ 200/150 ms mobile/desktop as the lab proxy, CLS ≤ 0.1) on a mobile and a desktop profile; TTI and the FCP target dropped. New CI workflow `lighthouse-ci.yml` runs Lighthouse (4 pages × 2 profiles) and the bundle-size check on every PR (unfiltered) and reports the values (report only, §3.5). `web-vitals` field reporting added. Dated baseline in §5 from the first CI run, measured before ST-08 (BLG-QA-274). |
 | 1.0 | 2026-04-11 | Initial version — ST-15 (BLG-FE-09, v2.6 EPIC-04). Page load targets (FCP ≤ 1,500ms, LCP ≤ 2,500ms, TTI ≤ 3,000ms), bundle size targets (main ≤ 200KB gzip, total ≤ 500KB gzip), route transition overhead ≤ 200ms. Aligned to BLG-OPS-05 API latency baseline (staging p95 1,300–6,200ms floor documented). |
