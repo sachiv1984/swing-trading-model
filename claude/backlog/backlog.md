@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-19 (session — 1 new item added: BLG-FE-325; ST-06/EPIC-01 v9.18 finding); prior — 2026-11-19 (session — 1 new item added: BLG-BE-225; ST-03/EPIC-01 v9.18 pre-commit review finding); prior — 2026-11-18 (session — 4 new items added: BLG-UX-22, BLG-SPEC-241, BLG-BE-224, BLG-QA-274; v9.18 design gate observations, filed at Sprint Planning with PO authorisation); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-19 (session — 1 new item added: BLG-GOV-430; v9.18 EPIC-01 PR #2306 CI finding); prior — 2026-11-19 (session — 1 new item added: BLG-FE-325; ST-06/EPIC-01 v9.18 finding); prior — 2026-11-19 (session — 1 new item added: BLG-BE-225; ST-03/EPIC-01 v9.18 pre-commit review finding); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -7852,6 +7852,27 @@ At `2026-11-18__scheduled` the engine appended three rows to `claude/roadmap/rol
 **Acceptance Criteria**
 - §7.2 step 1 and §2.4 name the STEP 9 append and the write-plan row
 - The next rebalance's `run_manifest.md` is the first file written in its cycle
+
+---
+
+### BLG-GOV-430 — Commit execution_state.json to main with the Executing status at sprint start
+**Priority:** P2 (Medium)
+**Type:** Governance Process
+**Owner:** Head of Specs Team; PMO Lead
+**Source:** v9.18 EPIC-01 (`2026-11-18__release-v9.18`), PR #2306 CI failure — 2026-11-19
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.19
+
+**Problem**
+`execution_prompt.md` STEP 0 sets `.claude_current_state.json` to `Executing` on `main` but creates `execution_state.json` only on the owning EPIC branch. Until that EPIC merges, `main` claims execution has started with no state file, so `tests/test_state_execution_path_consistency.py::test_execution_state_path_file_exists` fails on every PR cut from `main`. At v9.18 this blocked out-of-sprint PR #2306 and was fixed by hand (`f4b642d3`, then main merged into EPIC-01); v9.17 had the same gap for about 8 hours (`bafcbdab` to the EPIC-01 merge), unnoticed only because no PR opened in that window.
+
+**Scope**
+- In STEP 0, commit the newly created `execution_state.json` to `main` in the same `[GOVERNANCE]` commit as the `Executing` status, and cut the owning EPIC branch from that commit (CLAUDE.md §6 checklist applies)
+- Update the "execution_state.json Ownership" note to say the owner branch starts from main's copy
+
+**Acceptance Criteria**
+- `execution_prompt.md` STEP 0 names the single commit that sets `Executing` and adds `execution_state.json` on `main`
+- At the next sprint start, a PR opened from `main` before the first EPIC merges passes `test_execution_state_path_file_exists`
 
 ---
 
