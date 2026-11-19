@@ -1004,7 +1004,8 @@
   "process_notes": [
     "2026-11-19T08:07:14Z STEP 0 initialised by `run sprint --epic EPIC-01` (standard mode). All 40 GitHub issues found (#2266–#2305); no process gap.",
     "2026-11-19T11:42:06Z BLG-FE-325 (filed in ST-06, 9847fb03) fixed out-of-sprint on governance/2026-11-19-csp-redirect-script, PR #2306 (commit 99fb6ffa), Product Owner direction in session 2026-11-19: redirect script moved to public/spa-redirect.js, script-src 'self' only, build-output CSP check in frontend-production-build.yml and deploy.yml, SC-CSPS-01/02. After #2306 and this EPIC merge, add the ✅ COMPLETE banner to BLG-FE-325 citing 99fb6ffa. Not merged by the engine.",
-    "2026-11-19T13:37:32Z main carried status Executing without execution_state.json (EPIC-01-only), failing test_execution_state_path_file_exists on PR #2306. User-directed fix: f4b642d3 copied this file to main; 795deee7 merged main into EPIC-01 (clean, identical); #2306 updated from main (f1112a5d). Filed BLG-GOV-430 (STEP 0 should commit the file to main with the Executing status)."
+    "2026-11-19T13:37:32Z main carried status Executing without execution_state.json (EPIC-01-only), failing test_execution_state_path_file_exists on PR #2306. User-directed fix: f4b642d3 copied this file to main; 795deee7 merged main into EPIC-01 (clean, identical); #2306 updated from main (f1112a5d). Filed BLG-GOV-430 (STEP 0 should commit the file to main with the Executing status).",
+    "2026-11-19T13:50:29Z PR #2306 (BLG-FE-325) merged to main by sachiv1984, merge commit f2596999 (from gh pr view). DoQ QA sign-off and PO acceptance given by the user in session and recorded on the PR (issuecomment-7008122463) before merge; branch protection required a human merge (review rule). main merged into EPIC-01 afterwards. Remaining: ✅ COMPLETE banner on BLG-FE-325 once EPIC-01 (which carries the item) merges."
   ],
   "sealed": false,
   "sealed_utc": null
