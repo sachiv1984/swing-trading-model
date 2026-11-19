@@ -7801,6 +7801,7 @@ There is no React error boundary anywhere in `src/` (`componentDidCatch`/`getDer
 ---
 
 ### BLG-FE-325 — Fix the CSP hash for the GitHub Pages redirect script
+**✅ COMPLETE — 2026-11-19, `2026-11-18__release-v9.18`: found in ST-06 (EPIC-01), fixed out-of-sprint in PR #2306 (`99fb6ffa`, merge `f2596999`) — redirect script moved to `public/spa-redirect.js`, `script-src 'self'` only, built-page CSP check in CI and deploy, SC-CSPS-01/02. Both ACs met.**
 **Priority:** P3 (Low)
 **Type:** Frontend / Security
 **Owner:** Frontend Specifications & UX Documentation Owner; Cybersecurity & Trust Lead
