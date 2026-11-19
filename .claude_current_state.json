@@ -712,7 +712,10 @@
       "raised_utc": "2026-11-19T08:07:49Z",
       "sla_due_utc": "2026-11-20T08:07:49Z",
       "blocks_execution": false,
-      "disposition": "Open"
+      "disposition": "Resolved",
+      "resolved_utc": "2026-11-19T13:56:00Z",
+      "resolved_by": "Cybersecurity & Trust Lead; Product Owner (the user, in session)",
+      "resolution_summary": "Read access no longer accepted; remedy BLG-SEC-48 (access control, v9.20); interim BLG-SEC-49 (noindex/robots.txt); recorded in credential_policy.md §1.1 v1.2 (EPIC-01 branch)."
     }
   },
   "deferred_escalations": {
