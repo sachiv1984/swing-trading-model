@@ -5,9 +5,9 @@ description: Run the first-time-right checks for a sprint story so it ships righ
 
 # First-Time-Right Checks
 
-Twenty-three checks, each learned from a real miss in v9.17 (EPIC-01 filed 12 follow-ups; EPIC-02 to -07 added the rest). Run them in two passes:
-- **Pass A, before build:** checks 1–8, 11, 17–21 and 23. These shape what you build.
-- **Pass B, before commit or review:** checks 9, 10, 12–16 and 22, plus a re-run of 18 and 19 against the tests you wrote.
+Twenty-four checks, each learned from a real miss in v9.17 (EPIC-01 filed 12 follow-ups; EPIC-02 to -07 added the rest) or v9.18 EPIC-01. Run them in two passes:
+- **Pass A, before build:** checks 1–8, 11, 17–21, 23 and 24. These shape what you build.
+- **Pass B, before commit or review:** checks 9, 10, 12–16 and 22, plus a re-run of 18, 19 and 24 against the tests and tooling you wrote.
 
 **Apply each check to everything the change touches, not only the new code.** Moved code, reused copy, child components and every reader of a renamed page count. Most of EPIC-02's follow-ups came from applying an existing check too narrowly (EPIC-02, v9.17).
 
@@ -37,6 +37,8 @@ For each check, write one line: **done**, **N/A** (with the reason), or **raised
    - For every **input** the page passes down (a period, a filter, an id), trace it through the API client to the request it actually sends. A parameter the client or endpoint drops silently is a spec question to raise now.
    - *(ST-14: a US signal's `atr_value` is GBP while `current_price` is USD. ST-06: the page period never reached `GET /analytics/compliance-metrics`, found late by a test — BLG-FE-299.)*
 2. **Worked examples.** For a value shown on more than one surface, or a rule with a threshold, write the exact text each surface shows for boundary inputs: 0, 1, 2, null, true/false/null, and a value exactly at the threshold.
+   - **List every surface that shows the concept, not only the one the story changes**, including the settings page that switches it on and any history or log page. For each surface the story leaves alone, write what it now says in the story's new edge case, and raise any contradiction. *(v9.18 ST-03: "was this alert sent?" lives on Preferences, the Feed and Notification History; only the Feed was fixed — BLG-FE-326, BLG-FE-327.)*
+   - **For a small derived-status or classification function, test the full input product,** not each input alone: one table-driven case per combination (e.g. delivered × attempts bucket × error kind × preference × read). *(v9.18 ST-03: `derive_delivery_status` missed read + never-attempted, and first missed read + failed — BLG-SPEC-242.)*
 3. **Pure logic.** Check new `src/lib` or helper functions with a quick `node -e` run on null, missing, string, 0 and negative inputs. CI has no frontend unit tests until BLG-QA-262.
    - **A new guard, lint or check script must fail on a deliberately bad sample of every form it claims to catch,** not only on the old code. For a source scanner that means at least: a multi-line string, a template literal with `${}`, and text containing an apostrophe. State any form it cannot see in its docstring and failure message. *(ST-08: the colour token check passed review but could not see multi-line or template class strings — BLG-QA-267.)*
 4. **Test data for layout.** Layout, no-scroll and axe tests use populated fixtures for every panel on the page. Axe checks also fail on `incomplete`.
@@ -45,6 +47,7 @@ For each check, write one line: **done**, **N/A** (with the reason), or **raised
 5. **Review depth.** Plan a `/code-review` at **high** when this story creates a module that later stories build on. Otherwise medium.
 6. **Collision grep.** When replacing UI, grep `tests/e2e` for the old body copy as well as headings and labels. When a page is renamed, merged or removed, grep the **whole repo** (`src`, `backend`, `tests`, `docs/specs`) for the old route **and** the old label, in every form: `#/Route`, `'/Route'`, `href*="Route"`, `createPageUrl("Route")`, link text and notification or digest copy. *(ST-05/ST-06: a test using `href*=` and the digest's link text kept the retired names — BLG-BE-222.)*
 7. **Spec premises.** For every "only X does Y" or "written by X", grep every writer of that field or behaviour. If the premise is false, raise it.
+   - **This includes the design record's own descriptions of existing fields**, even ones the story does not change ("the Notified column shows whether a notification was created"). Grep the writer and confirm the description before relying on it. *(v9.18 ST-03: `notification_sent` is set when delivery is queued, not when a notification is created — BLG-FE-327.)*
 8. **Time boundaries.** For any date, window or "latest" rule, write examples for:
    - stale data (no event for a week);
    - quiet days and weekends;
@@ -71,6 +74,12 @@ For each check, write one line: **done**, **N/A** (with the reason), or **raised
     - dry-run it and count repeated output strings; any multi-class string repeated five or more times is a candidate for one shared class, token or component. Raise it with the design owner before the sweep, not after. *(ST-08: the themed card surface was written into ~22 places — BLG-FE-304.)*
     - check both directions of the rule. A sweep that fixes light-theme failures should also flag what fails in the dark theme (for example a bare dark text colour with no `dark:` partner), because axe may not report it. *(ST-08: CalendarView outside-month days stayed dark on dark — BLG-FE-305.)*
     - review every conversion the script cannot see context for (a value supplied by a variable, an inline `style`, a parent element) by hand.
+
+24. **Harnesses, CI installs and AC quantifiers.**
+    - **A measurement or test harness serves things the way production does,** or says where it does not: compression (GitHub Pages serves gzip), the Content-Security-Policy, the public path. Check one transfer size or header against production before recording a number. *(v9.18 ST-06: the Lighthouse mock served the 2 MB bundle uncompressed, inflating mobile LCP by ~7 s; found at PR review.)*
+    - **Pin every tool CI installs** with a committed lockfile and `npm ci` (or a hashed requirements file). An unpinned `npm install tool@x.y.z` still floats its transitive dependencies. *(v9.18 ST-06: `lighthouse@13.6.0` pulled an `@sentry` version not yet on the registry and the PR run failed.)*
+    - **Read quantifiers in an AC literally.** "Each PR", "every page", "all types": no path filter, sample or allowlist may narrow them unless the narrowing is raised and ruled. *(v9.18 ST-06: a `pull_request` path filter narrowed "on each PR" and missed build inputs; DoQ round 1 blocked it.)*
+    - **A state or pointer change committed to `main` carries what it points at.** `scripts/check_staged_state_path.py` (pre-commit) now enforces this for `.claude_current_state.json`. *(v9.18 sprint start: `Executing` on `main` without `execution_state.json` failed every PR from `main` — BLG-GOV-430.)*
 
 ## Step 3 — Pass B (before commit or review)
 

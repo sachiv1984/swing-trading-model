@@ -14,6 +14,11 @@ set -e
 
 python3 scripts/check_router_test_registration.py
 
+# BLG-GOV-430 lesson (2026-11-19): a staged .claude_current_state.json must not
+# point at a missing execution_state.json (local mirror of
+# tests/test_state_execution_path_consistency.py, which only runs in CI).
+python3 scripts/check_staged_state_path.py
+
 # ST-23 (BLG-GOV-179): local mirror of the CI-level OpenAPI Drift Detection
 # gate (.github/workflows/openapi-drift.yml) — catches a new
 # `## METHOD /path` contract heading with no matching openapi.yaml entry
