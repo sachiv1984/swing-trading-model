@@ -27,6 +27,7 @@
 const fs = require('fs');
 const http = require('http');
 const path = require('path');
+const zlib = require('zlib');
 // Shared e2e fixtures, so the measured pages keep the shapes the e2e suite keeps current.
 const { makePosition } = require('../../tests/e2e/fixtures/positions-table');
 const { ANALYTICS_METRICS } = require('../../tests/e2e/fixtures/analytics-metrics');
@@ -45,13 +46,25 @@ const MIME = {
   '.woff2': 'font/woff2', '.woff': 'font/woff', '.map': 'application/json', '.txt': 'text/plain',
 };
 
-function serveStatic(pathname, res) {
+// Text assets are gzipped when the client accepts it, as GitHub Pages serves them.
+// Without this, Lighthouse's simulated slow 4G downloads the raw 2 MB bundle instead
+// of ~548 KB and the mobile baseline is inflated by several seconds (EPIC-01 PR review).
+const GZIP_TYPES = new Set(['.html', '.js', '.css', '.json', '.svg', '.map', '.txt']);
+
+function serveStatic(req, pathname, res) {
   const root = path.resolve(STATIC_DIR);
   let file = path.resolve(root, `.${decodeURIComponent(pathname)}`);
   if (!file.startsWith(root) || !fs.existsSync(file) || fs.statSync(file).isDirectory()) {
     file = path.join(root, 'index.html'); // SPA fallback
   }
-  res.writeHead(200, { 'Content-Type': MIME[path.extname(file)] || 'application/octet-stream' });
+  const ext = path.extname(file);
+  const headers = { 'Content-Type': MIME[ext] || 'application/octet-stream', Vary: 'Accept-Encoding' };
+  if (GZIP_TYPES.has(ext) && /\bgzip\b/.test(req.headers['accept-encoding'] || '')) {
+    res.writeHead(200, { ...headers, 'Content-Encoding': 'gzip' });
+    fs.createReadStream(file).pipe(zlib.createGzip({ level: 9 })).pipe(res);
+    return;
+  }
+  res.writeHead(200, headers);
   fs.createReadStream(file).pipe(res);
 }
 
@@ -126,7 +139,7 @@ const server = http.createServer((req, res) => {
   }
   const pathname = new URL(req.url, `http://localhost:${PORT}`).pathname;
   if (STATIC_DIR && !pathname.startsWith(`${API_PREFIX}/`)) {
-    serveStatic(pathname, res);
+    serveStatic(req, pathname, res);
     return;
   }
   res.writeHead(200, { ...headers, 'Content-Type': 'application/json' });
