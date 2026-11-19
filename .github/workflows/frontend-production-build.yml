@@ -30,6 +30,7 @@ on:
       - 'tailwind.config.js'
       - 'postcss.config.js'
       - '.github/workflows/frontend-production-build.yml'
+      - 'scripts/check_csp_inline_scripts.py'
   push:
     branches:
       - main
@@ -44,6 +45,7 @@ on:
       - 'tailwind.config.js'
       - 'postcss.config.js'
       - '.github/workflows/frontend-production-build.yml'
+      - 'scripts/check_csp_inline_scripts.py'
 
 jobs:
   production-build:
@@ -73,3 +75,9 @@ jobs:
 
       - name: Build (same command as deploy.yml and render.yaml)
         run: CI=false npm run build
+
+      # BLG-FE-325 (2026-11-19): the built index.html must not carry an inline
+      # script its own CSP blocks. Playwright runs with bypassCSP, so no E2E test
+      # sees this; the build output is what the browser receives.
+      - name: CSP allows every inline script in the built index.html
+        run: python3 scripts/check_csp_inline_scripts.py build
