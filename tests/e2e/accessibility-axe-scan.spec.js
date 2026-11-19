@@ -968,3 +968,57 @@ for (const theme of ['light', 'dark']) {
     }
   });
 }
+
+// ---------------------------------------------------------------------------
+// ST-02 (BLG-FE-312, EPIC-01, v9.18): the open Exit dialog, light and dark.
+// AC 1: each visible label resolves to its input with getByLabel. AC 2: axe
+// passes on the open dialog with no `label` violation at any impact. A US
+// position is used so the US-only FX rate field is also present.
+// ---------------------------------------------------------------------------
+
+for (const theme of ['light', 'dark']) {
+  test(`Exit dialog open, labels linked to inputs (${theme}) (ST-02)`, async ({ page }) => {
+    test.setTimeout(60000);
+    await page.addInitScript((t) => {
+      window.localStorage.setItem('theme', t);
+      window.localStorage.setItem('command-palette-tooltip-seen', 'true');
+    }, theme);
+    await mockRoutes(page);
+    await mockSt09PopulatedPositions(page);
+    await page.goto('/#/positions');
+    const tableBtn = page.locator('[aria-label="Table view"]');
+    await tableBtn.waitFor({ state: 'visible', timeout: 10000 });
+    await tableBtn.click();
+    await page.getByRole('button', { name: 'Exit WDC' }).click();
+    const dialog = page.getByRole('dialog', { name: 'Exit Position' });
+    await expect(dialog).toBeVisible({ timeout: 5000 });
+
+    // Every visible label: its `for` points at a control, and getByLabel with
+    // the exact label text resolves to that one control.
+    for (const label of [
+      'Shares to Exit',
+      /^Exit Price \(\$\)$/,
+      'Exit Date',
+      'FX rate — USD per £1 (GBP/USD)',
+      'Exit Reason',
+      'Exit Note (Optional)',
+    ]) {
+      const labelEl = dialog.locator('label').filter({ hasText: label });
+      await expect(labelEl).toHaveCount(1);
+      const forId = await labelEl.getAttribute('for');
+      expect(forId).toBeTruthy();
+      const field = dialog.getByLabel(label, { exact: true });
+      await expect(field).toHaveCount(1);
+      await expect(field).toHaveAttribute('id', forId);
+    }
+    // The Exit Reason select's accessible name comes from its visible label.
+    await expect(dialog.getByRole('combobox', { name: 'Exit Reason', exact: true })).toHaveCount(1);
+    // Typing through a label reaches its input.
+    await dialog.getByLabel('Exit Note (Optional)', { exact: true }).fill('Target reached');
+    await expect(dialog.getByRole('textbox', { name: 'Exit Note (Optional)' })).toHaveValue('Target reached');
+
+    await expectThemeApplied(page, theme);
+    const results = await runAxeScan(page, `ExitDialogOpen:${theme}`);
+    expect(results.violations.filter((v) => v.id === 'label').map((v) => v.id)).toEqual([]);
+  });
+}

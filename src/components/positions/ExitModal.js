@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useId, useMemo, useState } from "react";
 import {Dialog,DialogContent,DialogHeader,DialogTitle,DialogFooter,DialogDescription,} from "../ui/dialog";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
@@ -23,6 +23,9 @@ import { todayLocal } from "../../lib/localDate";
 // "Exiting…" while in flight, and a rejection keeps the modal open with an
 // inline error so the user can retry.
 export default function ExitModal({ position, open, onClose, onConfirm, preselect = null, queue = null }) {
+  // ST-02 (BLG-FE-312, v9.18): label/input ids are per instance, because
+  // ExitModal is mounted by both Positions and DailyMonitor.
+  const fieldId = useId();
   // Unconditional hooks
   const [exitData, setExitData] = useState({
     shares: "",
@@ -324,8 +327,9 @@ export default function ExitModal({ position, open, onClose, onConfirm, preselec
               <div className="space-y-3">
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-1">
-                    <Label className="text-xs text-slate-600 dark:text-slate-400">Shares to Exit</Label>
+                    <Label htmlFor={`${fieldId}-shares`} className="text-xs text-slate-600 dark:text-slate-400">Shares to Exit</Label>
                     <Input
+                      id={`${fieldId}-shares`}
                       type="number"
                       step="0.01"
                       min="0.01"
@@ -343,10 +347,11 @@ export default function ExitModal({ position, open, onClose, onConfirm, preselec
                     )}
                   </div>
                   <div className="space-y-1">
-                    <Label className="text-xs text-slate-600 dark:text-slate-400">
+                    <Label htmlFor={`${fieldId}-price`} className="text-xs text-slate-600 dark:text-slate-400">
                       Exit Price ({currencySymbol})
                     </Label>
                     <Input
+                      id={`${fieldId}-price`}
                       type="number"
                       step="0.01"
                       min="0.01"
@@ -366,8 +371,9 @@ export default function ExitModal({ position, open, onClose, onConfirm, preselec
 
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-1">
-                    <Label className="text-xs text-slate-600 dark:text-slate-400">Exit Date</Label>
+                    <Label htmlFor={`${fieldId}-date`} className="text-xs text-slate-600 dark:text-slate-400">Exit Date</Label>
                     <Input
+                      id={`${fieldId}-date`}
                       type="date"
                       value={exitData.exit_date}
                       onChange={(e) =>
@@ -379,10 +385,10 @@ export default function ExitModal({ position, open, onClose, onConfirm, preselec
                   {position.market === "US" ? (
                     <div className="space-y-1">
                       {/* ST-03 (BLG-FE-246, v9.15): one FX label and hint on every FX input */}
-                      <Label htmlFor="exit-fx-rate" className="text-xs text-slate-600 dark:text-slate-400">FX rate — USD per £1 (GBP/USD)</Label>
+                      <Label htmlFor={`${fieldId}-fx-rate`} className="text-xs text-slate-600 dark:text-slate-400">FX rate — USD per £1 (GBP/USD)</Label>
                       <Input
-                        id="exit-fx-rate"
-                        aria-describedby="exit-fx-rate-hint"
+                        id={`${fieldId}-fx-rate`}
+                        aria-describedby={`${fieldId}-fx-rate-hint`}
                         type="number"
                         step="0.0001"
                         min="0.0001"
@@ -395,20 +401,20 @@ export default function ExitModal({ position, open, onClose, onConfirm, preselec
                         }
                         className="bg-slate-100 dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white h-9"
                       />
-                      <p id="exit-fx-rate-hint" data-testid="fx-rate-hint" className="text-xs text-slate-600 dark:text-slate-400">How many US dollars £1 buys.</p>
+                      <p id={`${fieldId}-fx-rate-hint`} data-testid="fx-rate-hint" className="text-xs text-slate-600 dark:text-slate-400">How many US dollars £1 buys.</p>
                     </div>
                   ) : null}
                 </div>
 
                 <div className="space-y-1">
-                  <Label className="text-xs text-slate-600 dark:text-slate-400">Exit Reason</Label>
+                  <Label htmlFor={`${fieldId}-reason`} className="text-xs text-slate-600 dark:text-slate-400">Exit Reason</Label>
                   <Select
                     value={exitData.exit_reason}
                     onValueChange={(value) =>
                       setExitData({ ...exitData, exit_reason: value })
                     }
                   >
-                    <SelectTrigger aria-label="Exit reason" data-testid="exit-reason-select" className="bg-slate-100 dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white h-9">
+                    <SelectTrigger id={`${fieldId}-reason`} data-testid="exit-reason-select" className="bg-slate-100 dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white h-9">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent className="bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700">
@@ -430,8 +436,9 @@ export default function ExitModal({ position, open, onClose, onConfirm, preselec
 
                 {/* ✅ NEW: Exit Note Field */}
                 <div className="space-y-1">
-                  <Label className="text-xs text-slate-600 dark:text-slate-400">Exit Note (Optional)</Label>
+                  <Label htmlFor={`${fieldId}-note`} className="text-xs text-slate-600 dark:text-slate-400">Exit Note (Optional)</Label>
                   <Textarea
+                    id={`${fieldId}-note`}
                     value={exitData.exit_note}
                     onChange={(e) => {
                       if (e.target.value.length <= 500) {
