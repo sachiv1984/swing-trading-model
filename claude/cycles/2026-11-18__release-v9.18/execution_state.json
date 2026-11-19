@@ -133,11 +133,11 @@
           "assigned_to": "engine",
           "github_issue": 2270,
           "branch": "exec/2026-11-18__release-v9.18/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "08d73563e49d07175a4d98c88390a2aad4bc5d9d",
           "delegation_record_id": null,
           "blocked_since_utc": "2026-11-19T08:07:49Z",
           "unblock_criteria": null,
-          "completed_utc": null,
+          "completed_utc": "2026-11-19T13:56:01Z",
           "acceptance_verified": true,
           "spec_references": [
             "docs/operations/credential_policy.md#1.1 Frontend API Key: Write Scope and Accepted Risk"
@@ -145,7 +145,7 @@
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": true,
-          "last_completed_substep": "3.1.A.commit",
+          "last_completed_substep": "3.1.A.done",
           "sign_off_record": {
             "status": "cleared",
             "role": "Cybersecurity & Trust Lead; Product Owner",
