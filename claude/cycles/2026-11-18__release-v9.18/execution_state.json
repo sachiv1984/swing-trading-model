@@ -152,7 +152,7 @@
         "ST-06": {
           "title": "Measure Core Web Vitals and update the performance budget",
           "classification": "autonomous",
-          "status": "in_progress",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 2271,
           "branch": "exec/2026-11-18__release-v9.18/EPIC-01",
@@ -161,7 +161,7 @@
           "blocked_since_utc": null,
           "unblock_criteria": null,
           "completed_utc": null,
-          "acceptance_verified": false,
+          "acceptance_verified": true,
           "spec_references": [
             "docs/specs/frontend/performance_budget.md",
             "scripts/perf/run_lighthouse.mjs",
@@ -171,10 +171,10 @@
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": "First-time-right: 2026-11-19 pass A — 1 done (bundle measured: single unsplit main.*.js 545 KB gzip, over §3.3 main and total → check is report-only, matching AC 'reports the values'); 3 done (check_bundle_size.py fails/flags deliberately bad samples of every form: main over, chunk over, total over with each file within, missing dir → 2, maps-only → 2; recordMetric node-checked on null/nameless/repeat); 5 high (new workflow); 8 N/A; 9 done (workflow writes nothing: job summary + artifact only, permissions contents: read); 18 done (mock API shapes from e2e fixtures/writers); 1,2,4,6,7,11,17,19–23 N/A. Found while validating: the app's CSP (connect-src 'self' https:) blocks a mock API on another http port in a real browser (e2e route interception hides this) → build + mock served on one origin under /api; and the built index.html's GitHub Pages SPA-redirect inline script hashes to sha256-QMm9…, not the CSP's sha256-5Oi7…, so it is blocked in production builds too (pre-existing; to file). BLG-QA-274: baseline measured before ST-08 (EPIC-02) merges — Strategy Benchmark not in Performance. | First-time-right: 2026-11-19 pass B — 9 done (workflow writes nothing; permissions contents: read); 10 done (performance_budget.md v2.0 in this commit); 18 done (mock reuses makePosition and ANALYTICS_METRICS from the e2e fixtures). /code-review high: 10 findings — 8 fixed (web-vitals reportAllChanges; one run per change via shared concurrency group + PR paths filter; pathToFileURL entry guard; desktop TBT 150 ms; report the PR head SHA; non-finite audit values fail the run; field p75 claim removed; mock reuses shared fixtures); no change: untracked build/ (pre-existing at session start; staged by explicit path); baseline placeholder (filled from the first CI run in the follow-up commit, before sign-off). Filed BLG-FE-325 (built index.html's redirect-script hash ≠ CSP hash; pre-existing, user-confirmed). Local: pytest test_check_bundle_size 8/8, ci-usage tests 34/34; Lighthouse 8/8 page-profile runs complete against populated pages; window.__WEB_VITALS__ has LCP/CLS while open."
+          "notes": "First-time-right: 2026-11-19 pass A — 1 done (bundle measured: single unsplit main.*.js 545 KB gzip, over §3.3 main and total → check is report-only, matching AC 'reports the values'); 3 done (check_bundle_size.py fails/flags deliberately bad samples of every form: main over, chunk over, total over with each file within, missing dir → 2, maps-only → 2; recordMetric node-checked on null/nameless/repeat); 5 high (new workflow); 8 N/A; 9 done (workflow writes nothing: job summary + artifact only, permissions contents: read); 18 done (mock API shapes from e2e fixtures/writers); 1,2,4,6,7,11,17,19–23 N/A. Found while validating: the app's CSP (connect-src 'self' https:) blocks a mock API on another http port in a real browser (e2e route interception hides this) → build + mock served on one origin under /api; and the built index.html's GitHub Pages SPA-redirect inline script hashes to sha256-QMm9…, not the CSP's sha256-5Oi7…, so it is blocked in production builds too (pre-existing; to file). BLG-QA-274: baseline measured before ST-08 (EPIC-02) merges — Strategy Benchmark not in Performance. | First-time-right: 2026-11-19 pass B — 9 done (workflow writes nothing; permissions contents: read); 10 done (performance_budget.md v2.0 in this commit); 18 done (mock reuses makePosition and ANALYTICS_METRICS from the e2e fixtures). /code-review high: 10 findings — 8 fixed (web-vitals reportAllChanges; one run per change via shared concurrency group + PR paths filter; pathToFileURL entry guard; desktop TBT 150 ms; report the PR head SHA; non-finite audit values fail the run; field p75 claim removed; mock reuses shared fixtures); no change: untracked build/ (pre-existing at session start; staged by explicit path); baseline placeholder (filled from the first CI run in the follow-up commit, before sign-off). Filed BLG-FE-325 (built index.html's redirect-script hash ≠ CSP hash; pre-existing, user-confirmed). Local: pytest test_check_bundle_size 8/8, ci-usage tests 34/34; Lighthouse 8/8 page-profile runs complete against populated pages; window.__WEB_VITALS__ has LCP/CLS while open. | Baseline from lighthouse-ci.yml run 44513135043 (success) on 9847fb03, recorded in performance_budget.md §5 (before ST-08; BLG-QA-274 note included). AC 1 met (CWV targets + dated baseline per page and profile); AC 2 met (CI runs Lighthouse and the bundle check and reports the values in the job summary; PR-trigger paths filter covers every input to the build/measurement). Deviation check vs performance_budget.md v2.0: none."
         }
       }
     },
@@ -973,7 +973,8 @@
     "ST-01",
     "ST-02",
     "ST-03",
-    "ST-04"
+    "ST-04",
+    "ST-06"
   ],
   "open_escalations": {
     "ESC-EXEC-20261119-01": {
