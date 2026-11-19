@@ -6,7 +6,7 @@
   "invoked_utc": "2026-11-19T08:07:14Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-19T09:26:00Z",
+  "last_updated_utc": "2026-11-19T10:36:00Z",
   "epics": {
     "EPIC-01": {
       "title": "Site Structure & Usability Phase 4, Stage 1: Correct and Safe (build-and-ship)",
@@ -79,11 +79,11 @@
           "assigned_to": "engine",
           "github_issue": 2268,
           "branch": "exec/2026-11-18__release-v9.18/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "74ff6a5eb9d8a706a63de906be5dc4a983fe4ea9",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
+          "completed_utc": "2026-11-19T10:34:47Z",
           "acceptance_verified": true,
           "spec_references": [
             "docs/specs/api_contracts/alerts_endpoints.md#GET /notifications",
@@ -95,9 +95,9 @@
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": true,
-          "last_completed_substep": "3.1.A.commit",
+          "last_completed_substep": "3.1.A.done",
           "sign_off_record": null,
-          "notes": "First-time-right: 2026-11-19 pass A — 1 raised (notifications.md v0.12 gives not_sent two texts but the planned contract adds only delivery_status; legacy delivered=TRUE/'email not configured' rows unmapped) → rulings by the user in session as API Contracts & Documentation Owner / Head of UX & Design, 2026-11-19T10:02:14Z: (a) add derived delivery_reason ('telegram_not_configured' | 'delivery_failed' | null, set only when delivery_status is not_sent; raw delivery_error stays server-side); (b) legacy unconfigured rows report sent (derived from stored delivered=TRUE; no line). 2 done (worked examples per stored state incl. reminder-off 'disabled' error old+new strings, attempts 0 pref on/off, 1–2 failed attempts, ≥3, read rows stop retrying but stay pending — shows nothing); 7 done (writers of delivered/delivery_error: deliver_notification, reflection reminder insert, exception path only); 17 done (readers of the error strings and delivered: redelivery loop, tests). | First-time-right: 2026-11-19 pass B — 9 done (SC-NDT-01 fixture lacked the reflection_reminder row the real endpoint seeds; fixed); 10 done (alerts_endpoints.md v0.15, openapi 3.50.0, api_changelog 1.34.0, notifications.md v0.13 in this commit); 13 done (new text 'Telegram Alerts'/'Send to Telegram'/'Not sent: …' — reflection-reminder.spec.js wording updated; no other collisions; derivation tables read back); 18 done (fixtures from get_notifications' item shape); 15/17 done (readers of delivered/delivery_error: re-delivery loop, PATCH, tests). /code-review medium: 8 findings — fixed: no-retry failed rows report not_sent (read or preference off), PATCH returns the delivery fields, retry SQL uses MAX_DELIVERY_ATTEMPTS, shared _load_delivery_preferences with the loop's fallback; filed BLG-BE-225 (unconfigured backlog re-sent once Telegram configured; the preference-off half is existing BLG-BE-224); no change: Last Updated chains (re-counted: current + 2 prior), status following the current preference (mirrors what re-delivery will actually do). Local: pytest 3675 passed/41 skipped/9 xfailed; Playwright 257 passed across every notification spec + SC-NDT-01..04 4/4 + notification axe scans 18/18 (3 repeats)."
+          "notes": "First-time-right: 2026-11-19 pass A — 1 raised (notifications.md v0.12 gives not_sent two texts but the planned contract adds only delivery_status; legacy delivered=TRUE/'email not configured' rows unmapped) → rulings by the user in session as API Contracts & Documentation Owner / Head of UX & Design, 2026-11-19T10:02:14Z: (a) add derived delivery_reason ('telegram_not_configured' | 'delivery_failed' | null, set only when delivery_status is not_sent; raw delivery_error stays server-side); (b) legacy unconfigured rows report sent (derived from stored delivered=TRUE; no line). 2 done (worked examples per stored state incl. reminder-off 'disabled' error old+new strings, attempts 0 pref on/off, 1–2 failed attempts, ≥3, read rows stop retrying but stay pending — shows nothing); 7 done (writers of delivered/delivery_error: deliver_notification, reflection reminder insert, exception path only); 17 done (readers of the error strings and delivered: redelivery loop, tests). | First-time-right: 2026-11-19 pass B — 9 done (SC-NDT-01 fixture lacked the reflection_reminder row the real endpoint seeds; fixed); 10 done (alerts_endpoints.md v0.15, openapi 3.50.0, api_changelog 1.34.0, notifications.md v0.13 in this commit); 13 done (new text 'Telegram Alerts'/'Send to Telegram'/'Not sent: …' — reflection-reminder.spec.js wording updated; no other collisions; derivation tables read back); 18 done (fixtures from get_notifications' item shape); 15/17 done (readers of delivered/delivery_error: re-delivery loop, PATCH, tests). /code-review medium: 8 findings — fixed: no-retry failed rows report not_sent (read or preference off), PATCH returns the delivery fields, retry SQL uses MAX_DELIVERY_ATTEMPTS, shared _load_delivery_preferences with the loop's fallback; filed BLG-BE-225 (unconfigured backlog re-sent once Telegram configured; the preference-off half is existing BLG-BE-224); no change: Last Updated chains (re-counted: current + 2 prior), status following the current preference (mirrors what re-delivery will actually do). Local: pytest 3675 passed/41 skipped/9 xfailed; Playwright 257 passed across every notification spec + SC-NDT-01..04 4/4 + notification axe scans 18/18 (3 repeats). | Deviation check vs alerts_endpoints.md v0.15 / notifications.md v0.13 / decision record §2–§3: none (the two 2026-11-19 rulings are recorded in the specs). ci_pending: all workflows on 74ff6a5e — clear before DoQ (STEP 3.2.A)."
         },
         "ST-04": {
           "title": "Fix Alert History compact values",
