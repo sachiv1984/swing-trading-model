@@ -703,6 +703,16 @@
       "resolved_utc": "2026-11-16T13:03:54Z",
       "resolved_by": "Head of UX & Design; Metrics Definitions & Analytics Canonical Owner (the user, in session)",
       "resolution_summary": "performance.md v1.0 approved as drafted (scope rule) and KPI definitions confirmed (server-canonical values), 2026-11-16; ST-06 build unblocked."
+    },
+    "ESC-EXEC-20261119-01": {
+      "cycle": "2026-11-18__release-v9.18",
+      "summary": "ST-05/EPIC-01 — dated re-review decision on the open-access accept-risk (credential_policy.md §1.1), covering read access to the owner's data",
+      "trigger_type": "Lifecycle",
+      "owning_authority": "Cybersecurity & Trust Lead; Product Owner",
+      "raised_utc": "2026-11-19T08:07:49Z",
+      "sla_due_utc": "2026-11-20T08:07:49Z",
+      "blocks_execution": false,
+      "disposition": "Open"
     }
   },
   "deferred_escalations": {
