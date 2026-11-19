@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useRef, useId } from "react";
 import { useNavigate } from "react-router-dom";
 import { apiFetch } from "../api/base44Client";
 import { useEarnings, getCachedEarningsDays } from "../hooks/useEarnings";
@@ -273,6 +273,7 @@ function WatchlistPopover({ result, onClose, onAdded }) {
   );
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(null);
+  const targetInputId = useId();
 
   const handleAdd = async () => {
     setSubmitting(true);
@@ -315,8 +316,9 @@ function WatchlistPopover({ result, onClose, onAdded }) {
               {formatPrice(result.price, result.currency)}
             </span>
             <div className="flex items-center gap-2">
-              <label className="text-xs text-slate-600 dark:text-slate-400">Target entry</label>
+              <label htmlFor={targetInputId} className="text-xs text-slate-600 dark:text-slate-400">Target entry</label>
               <input
+                id={targetInputId}
                 type="number"
                 step="0.01"
                 className="w-24 px-2 py-1 text-sm bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded text-app-fg focus:outline-none focus:border-emerald-500"
@@ -337,10 +339,12 @@ function WatchlistPopover({ result, onClose, onAdded }) {
               {submitting ? <Loader2 className="w-3 h-3 animate-spin" /> : "Add to Watchlist"}
             </Button>
             <button
+              type="button"
               onClick={onClose}
+              aria-label="Cancel"
               className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white p-1 rounded"
             >
-              <X className="w-4 h-4" />
+              <X className="w-4 h-4" aria-hidden="true" />
             </button>
           </div>
         </div>
@@ -363,8 +367,8 @@ function NewsPanel({ ticker, cache, onClose }) {
             <Newspaper className="w-3 h-3 inline mr-1" />
             Recent news — {ticker}
           </span>
-          <button onClick={onClose} className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">
-            <X className="w-3 h-3" />
+          <button type="button" onClick={onClose} aria-label={`Close news for ${ticker}`} className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">
+            <X className="w-3 h-3" aria-hidden="true" />
           </button>
         </div>
         {loading ? (

@@ -85,6 +85,7 @@ ARTIFACT_NAME_PREFIX_TO_WORKFLOW = {
     "smoke-test-report": "Critical-Path Smoke Tests (Playwright)",
     "db-backup-": "Production Database Backup",
     "updated-visual-snapshots": "Update Visual Snapshot Baselines",
+    "lighthouse-results-": "Lighthouse CI and Bundle Size",
 }
 
 # Each prefix's own `retention-days:` (.github/workflows/*.yml), used only to
@@ -99,6 +100,7 @@ ARTIFACT_NAME_PREFIX_TO_RETENTION_DAYS = {
     "smoke-test-report": 14,
     "db-backup-": 90,
     "updated-visual-snapshots": 7,
+    "lighthouse-results-": 14,
 }
 
 

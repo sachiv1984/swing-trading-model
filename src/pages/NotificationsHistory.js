@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, Fragment } from "react";
 import { cn } from "../lib/utils";
 import PageHeader from "../components/ui/PageHeader";
 import { PAGE_LABELS } from "../lib/pageLabels";
@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { ChevronUp, ChevronDown } from "lucide-react";
 import { format, parseISO } from "date-fns";
 import { apiFetch } from "../api/base44Client";
-import { formatCurrency, formatPercent } from "../lib/format";
+import { compactValues, formatValuesExpanded } from "../lib/alertHistoryValues";
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
 
@@ -19,34 +19,6 @@ const TYPE_LABELS = {
   daily_portfolio_summary: "Daily Portfolio Summary",
 };
 
-// Human-readable labels for values_compared keys
-const VALUE_LABELS = {
-  stop_price:        "Stop Price",
-  current_price:     "Current Price",
-  gap_pct:           "Gap to Stop",
-  threshold_pct:     "Threshold",
-  days_remaining:    "Days Left",
-  grace_period_days: "Grace Period",
-  regime:            "Regime",
-  previous_regime:   "Previous Regime",
-  positions_count:   "Positions",
-  total_pnl:         "Total P&L",
-};
-
-// Keys to show in the compact cell, per rule type (max 3)
-const COMPACT_PRIORITY = {
-  stop_loss_approach:      ["current_price", "stop_price", "gap_pct"],
-  grace_period_warning:    ["days_remaining", "grace_period_days"],
-  market_regime_change:    ["regime", "previous_regime"],
-  daily_portfolio_summary: ["positions_count", "total_pnl"],
-};
-
-function labelFor(key) {
-  if (VALUE_LABELS[key]) return VALUE_LABELS[key];
-  // Fallback: title-case the snake_case key
-  return key.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
-}
-
 function formatTimestamp(iso) {
   try {
     return format(parseISO(iso), "yyyy-MM-dd HH:mm");
@@ -55,41 +27,9 @@ function formatTimestamp(iso) {
   }
 }
 
-function formatValue(key, value) {
-  if (value === null || value === undefined) return "—";
-  const k = key.toLowerCase();
-  if (typeof value === "number") {
-    if (k.includes("_price") || k === "price" || k === "total_pnl") return formatCurrency(value, { currency: "USD", signed: k === "total_pnl" });
-    if (k.includes("_pct") || k.endsWith("pct")) return formatPercent(value);
-  }
-  if (typeof value === "boolean") return value ? "Yes" : "No";
-  return String(value);
-}
-
-function compactValues(obj, ruleType) {
-  if (!obj || typeof obj !== "object") return "—";
-  const keys = Object.keys(obj);
-  const priority = COMPACT_PRIORITY[ruleType] || keys.slice(0, 3);
-  const selected = priority.filter((k) => k in obj);
-  const display = selected.length > 0 ? selected : keys.slice(0, 3);
-  return display
-    .map((k) => `${labelFor(k)} ${formatValue(k, obj[k])}`)
-    .join(" · ");
-}
-
-function formatValuesExpanded(obj) {
-  if (!obj || typeof obj !== "object") return [];
-  const labelWidth = Math.max(...Object.keys(obj).map((k) => labelFor(k).length));
-  return Object.entries(obj).map(([k, v]) => ({
-    label: labelFor(k).padEnd(labelWidth, " "),
-    value: formatValue(k, v),
-    isNegative: k === "gap_pct" && typeof v === "number" && v < 0,
-  }));
-}
-
 function TriggeredBadge({ value }) {
   return value ? (
-    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-500/20 text-amber-700 dark:text-amber-400 border border-amber-500/30">
+    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-500/20 text-amber-800 dark:text-amber-400 border border-amber-500/30">
       Yes
     </span>
   ) : (
@@ -235,17 +175,22 @@ export default function NotificationsHistory() {
                 <tr className="border-b border-slate-200 dark:border-slate-700/50">
                   {/* Date / Time — sortable */}
                   <th
-                    className="px-5 py-3.5 text-left text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider whitespace-nowrap cursor-pointer select-none hover:text-slate-900 dark:hover:text-white transition-colors"
+                    className="px-5 py-3.5 text-left text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider whitespace-nowrap cursor-pointer select-none"
+                    aria-sort={sortDir === "desc" ? "descending" : "ascending"}
                     onClick={toggleSort}
                   >
-                    <span className="inline-flex items-center gap-1">
+                    <button
+                      type="button"
+                      onClick={(e) => { e.stopPropagation(); toggleSort(); }}
+                      className="inline-flex items-center gap-1 uppercase tracking-wider rounded hover:text-slate-900 dark:hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    >
                       Date / Time
                       {sortDir === "desc" ? (
-                        <ChevronDown className="w-3.5 h-3.5" />
+                        <ChevronDown className="w-3.5 h-3.5" aria-hidden="true" />
                       ) : (
-                        <ChevronUp className="w-3.5 h-3.5" />
+                        <ChevronUp className="w-3.5 h-3.5" aria-hidden="true" />
                       )}
-                    </span>
+                    </button>
                   </th>
                   {["Alert Type", "Symbol", "Triggered", "Notified", "Values"].map((h) => (
                     <th key={h} className="px-5 py-3.5 text-left text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider whitespace-nowrap">
@@ -282,9 +227,8 @@ export default function NotificationsHistory() {
                   sorted.map((ev) => {
                     const isExpanded = expandedId === ev.id;
                     return (
-                      <>
+                      <Fragment key={ev.id}>
                         <tr
-                          key={ev.id}
                           onClick={() => toggleExpand(ev.id)}
                           className={cn(
                             "cursor-pointer transition-colors",
@@ -294,9 +238,26 @@ export default function NotificationsHistory() {
                           )}
                         >
                           <td className="px-5 py-4 text-sm text-slate-800 dark:text-slate-300 whitespace-nowrap">
-                            <span title={ev.evaluation_timestamp}>
-                              {formatTimestamp(ev.evaluation_timestamp)}
-                            </span>
+                            {/* ST-01 (BLG-FE-311, v9.18): the row's expand
+                                control is a real button so it can be reached
+                                with Tab and operated with Enter/Space. */}
+                            <button
+                              type="button"
+                              aria-expanded={isExpanded}
+                              aria-controls={`alert-history-detail-${ev.id}`}
+                              onClick={(e) => { e.stopPropagation(); toggleExpand(ev.id); }}
+                              className="inline-flex items-center gap-1 rounded text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                              data-testid="alert-history-expand"
+                            >
+                              {isExpanded ? (
+                                <ChevronUp className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
+                              ) : (
+                                <ChevronDown className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
+                              )}
+                              <span title={ev.evaluation_timestamp}>
+                                {formatTimestamp(ev.evaluation_timestamp)}
+                              </span>
+                            </button>
                           </td>
                           <td className="px-5 py-4 text-sm text-slate-900 dark:text-white font-medium whitespace-nowrap">
                             {TYPE_LABELS[ev.rule_type] ?? ev.rule_type}
@@ -311,16 +272,16 @@ export default function NotificationsHistory() {
                             <NotifiedBadge value={ev.notification_sent} />
                           </td>
                           <td className="px-5 py-4 text-sm text-slate-600 dark:text-slate-400 max-w-xs truncate">
-                            {isExpanded ? null : compactValues(ev.values_compared, ev.rule_type)}
+                            {isExpanded ? null : compactValues(ev.values_compared, ev.rule_type, ev.symbol)}
                           </td>
                         </tr>
 
                         {/* Expanded row */}
                         {isExpanded && (
-                          <tr key={`${ev.id}-expanded`} className="bg-white dark:bg-slate-800/60">
+                          <tr id={`alert-history-detail-${ev.id}`} className="bg-white dark:bg-slate-800/60">
                             <td colSpan={6} className="px-8 pb-5 pt-0">
                               <div className="font-mono text-xs text-slate-800 dark:text-slate-300 space-y-1 pt-1">
-                                {formatValuesExpanded(ev.values_compared).map(({ label, value, isNegative }) => (
+                                {formatValuesExpanded(ev.values_compared, ev.symbol).map(({ label, value, isNegative }) => (
                                   <div key={label} className="flex gap-3">
                                     <span className="text-slate-600 dark:text-slate-400 whitespace-pre">{label}</span>
                                     <span className={isNegative ? "text-amber-700 dark:text-amber-400" : undefined}>{String(value)}</span>
@@ -330,7 +291,7 @@ export default function NotificationsHistory() {
                             </td>
                           </tr>
                         )}
-                      </>
+                      </Fragment>
                     );
                   })
                 )}

@@ -1,0 +1,8 @@
+{
+  "name": "perf-lighthouse",
+  "private": true,
+  "description": "Pinned Lighthouse install for .github/workflows/lighthouse-ci.yml (npm ci). Kept out of the app's package.json so the app's installs stay small.",
+  "dependencies": {
+    "lighthouse": "13.6.0"
+  }
+}

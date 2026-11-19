@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 0.14
-**Last Updated:** 2026-11-04 (ST-19, EPIC-03, v9.15, BLG-BE-170 — POST /price-alerts rounds threshold_price to 4 dp before de-dup, insert and fallback; Idempotency note now names DS-28's unique index); prior — 2026-10-01 (ST-09, EPIC-02, v9.9, BLG-OPS-174 — POST /price-alerts's Idempotency subsection updated: a double-submit of the same active (ticker, condition, threshold_price) now returns the existing alert instead of the previously-undefined duplicate-creation behaviour); prior — 2026-09-29 (ST-21, EPIC-05, v9.8, BLG-API-05 — added error examples to GET /alerts/rules (500) and GET /notifications (400)); prior history retained — see prior entries in version control
+**Version:** 0.15
+**Last Updated:** 2026-11-19 (ST-03, EPIC-01, v9.18, BLG-FE-318 — GET /notifications items gain derived `delivery_status` and `delivery_reason`; Telegram unconfigured now recorded as not delivered with 'Telegram not configured'; 'email disabled' → 'Telegram off for this alert type'); prior — 2026-11-04 (ST-19, EPIC-03, v9.15, BLG-BE-170 — POST /price-alerts rounds threshold_price to 4 dp before de-dup, insert and fallback; Idempotency note now names DS-28's unique index); prior — 2026-10-01 (ST-09, EPIC-02, v9.9, BLG-OPS-174 — POST /price-alerts's Idempotency subsection updated: a double-submit of the same active (ticker, condition, threshold_price) now returns the existing alert instead of the previously-undefined duplicate-creation behaviour); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **ADR Reference:** `docs/adr/ADR-003-notification-delivery-architecture.md` — FastAPI BackgroundTasks delivery architecture
 **Design Gate:** `claude/cycles/2026-03-18__release-v2.1/` — EPIC-02
@@ -22,12 +22,12 @@ The domain covers five concerns:
 1. **Alert rule configuration** — per-type enable/disable and threshold settings (`/alerts/rules`)
 2. **Alert evaluation** — trigger evaluation of all active rules against current portfolio state (`/alerts/evaluate`)
 3. **Notification feed** — the log of triggered alert instances, with read/unread state (`/notifications`)
-4. **Notification preferences** — per-type email delivery configuration (`/notifications/preferences`)
+4. **Notification preferences** — per-type Telegram delivery configuration (`/notifications/preferences`; the field is still named `email_enabled`, v0.15)
 5. **Custom price alerts** — user-defined, per-ticker threshold alerts, unconstrained by open positions (`/price-alerts`, v7.5 / ST-02 / BLG-FE-116)
 
 ### Architecture mode
 
-Notification delivery uses **FastAPI `BackgroundTasks`** (ADR-003, Option C). Email delivery is enqueued as a background task after the triggering API response is returned. No Redis, Celery, or external worker infrastructure is required.
+Notification delivery uses **FastAPI `BackgroundTasks`** (ADR-003, Option C). Telegram delivery (the only channel; v0.15) is enqueued as a background task after the triggering API response is returned. No Redis, Celery, or external worker infrastructure is required.
 
 Delivery tracking fields (`delivered`, `delivery_attempted_at`, `delivery_attempts`, `delivery_error`) are stored on the `notifications` table. Re-delivery is attempted on the next evaluation cycle if `delivered = false`, `delivery_attempts < 3`, **and `read = false`** (v0.9, BLG-BE-124 — a notification the operator has already read in the feed is never re-enqueued for delivery, regardless of its delivery outcome).
 
@@ -622,6 +622,8 @@ Return the notification feed for the portfolio, newest first. Supports page-base
         "message": "AAPL stop (210.00) is within 4.2% of current price (219.05). Consider reviewing your stop.",
         "read": false,
         "created_at": "2026-03-20T09:15:00Z",
+        "delivery_status": "not_sent",
+        "delivery_reason": "telegram_not_configured",
         "context": null
       },
       {
@@ -631,6 +633,8 @@ Return the notification feed for the portfolio, newest first. Supports page-base
         "message": "TSLA crossed above your threshold of 250.00 (current: 251.30).",
         "read": false,
         "created_at": "2026-08-14T14:00:00Z",
+        "delivery_status": "sent",
+        "delivery_reason": null,
         "context": {
           "ticker": "TSLA",
           "condition": "above",
@@ -668,7 +672,27 @@ Return the notification feed for the portfolio, newest first. Supports page-base
 | `message` | string | No | One-line description of the event |
 | `read` | boolean | No | `false` for unread; `true` after mark-read |
 | `created_at` | string (ISO 8601) | No | Timestamp the notification was created |
+| `delivery_status` | string | No | *(v0.15 — ST-03, EPIC-01, v9.18, BLG-FE-318)* `sent` \| `not_requested` \| `pending` \| `not_sent`, derived server-side from the stored `delivered`, `delivery_attempts`, `delivery_error` and the alert type's preference — see §Delivery status derivation below. |
+| `delivery_reason` | string | Yes | *(v0.15)* `telegram_not_configured` \| `delivery_failed` when `delivery_status` is `not_sent`; `null` otherwise. The stored `delivery_error` text is not returned. |
 | `context` | object | Yes | *(v0.7 — ST-09, EPIC-02, v8.8, BLG-BE-84)* Alert-type-specific metadata, stored at creation time. Was already persisted but never exposed by this endpoint before this story. For `custom_price_alert`: `{ticker, condition, threshold_price, current_price, price_alert_id}` — `price_alert_id` is the triggering `price_alerts` row's id, used by the frontend's "create trade plan from this alert" path (`trade_plan_endpoints.md`'s `triggered_by_price_alert_id`). Null/absent for other alert types (no context is written for them today). |
+
+##### Delivery status derivation (v0.15)
+
+Design source: `docs/design/2026-11-18__release-v9.18/alert-delivery-truth/decision_record.md` §3.2, with two rulings by the API Contracts & Documentation Owner and Head of UX & Design (user, in session, 2026-11-19): the cause is exposed as `delivery_reason`, and pre-v9.18 rows stored `delivered = TRUE` with `'email not configured'` report `sent` (they are not rewritten). Evaluated top to bottom; first match wins:
+
+| Stored state | `delivery_status` | `delivery_reason` |
+|--------------|-------------------|-------------------|
+| `delivery_error` is `'Telegram off for this alert type'` (or the pre-v9.18 `'email disabled'`) | `not_requested` | `null` |
+| `delivered = true` | `sent` | `null` |
+| `delivery_error = 'Telegram not configured'` | `not_sent` | `telegram_not_configured` |
+| `delivery_attempts = 0` and the alert type's preference is off | `not_requested` | `null` |
+| `delivery_attempts = 0` (preference on) | `pending` | `null` |
+| `delivery_attempts ≥ 1` and no retry will run: `delivery_attempts ≥ 3`, or the row is read, or the preference is now off (re-delivery retries only unread rows of an enabled type) | `not_sent` | `delivery_failed` |
+| otherwise (a retry is due) | `pending` | `null` |
+
+A type with no preference row (`custom_price_alert`) counts as preference on, as in `POST /alerts/evaluate`. `PATCH /notifications/{id}` returns the same item shape, including both fields.
+
+**Unconfigured Telegram (v0.15):** with `TELEGRAM_BOT_TOKEN` or `TELEGRAM_CHAT_ID` unset, delivery records `delivered = false`, `delivery_error = 'Telegram not configured'` and counts the attempt (was `delivered = true`, `'email not configured'`). Re-delivery retries it up to 3 times, each failing the same way.
 
 #### Error Responses
 
@@ -1009,6 +1033,7 @@ Delivery tracking columns on `notifications` (`delivered`, `delivery_attempted_a
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.15 | 2026-11-19 | ST-03 (v9.18, EPIC-01, BLG-FE-318): `GET /notifications` items gain derived `delivery_status` (`sent \| not_requested \| pending \| not_sent`) and `delivery_reason` (`telegram_not_configured \| delivery_failed \| null`); §Delivery status derivation added; `PATCH /notifications/{id}` returns them too; the re-delivery cap is one constant (3). Unconfigured Telegram is recorded `delivered = false`, `'Telegram not configured'` (was `true`, `'email not configured'`); the reflection reminder's preference-off error is `'Telegram off for this alert type'` (was `'email disabled'`). "Email" wording replaced by Telegram (field `email_enabled` unchanged). Design source: `docs/design/2026-11-18__release-v9.18/alert-delivery-truth/decision_record.md` §2–§3; `delivery_reason` and the legacy-row rule ruled 2026-11-19 (API Contracts & Documentation Owner, Head of UX & Design — the user, in session). |
 | 0.14 | 2026-11-04 | ST-19 (v9.15, EPIC-03, BLG-BE-170): `POST /price-alerts` rounds `threshold_price` to 4 dp (half away from zero) before the de-dup SELECT, the insert and the unique-violation fallback SELECT, so a 5+ dp threshold resubmit returns the existing alert instead of `500`. If the fallback still finds no row, a clear error is raised rather than serialising `None`. A threshold that rounds to 0, or is not finite (NaN/infinity), returns `400`. Also corrected the Idempotency note, which still said no DB-level unique constraint existed (DS-28 added one at v9.11). No request or response shape change, so no `openapi.yaml` change. |
 | 0.10 | 2026-09-24 | ST-10 (v9.7, EPIC-03, BLG-BE-124): Generic alert re-delivery (`POST /alerts/evaluate`) now also requires `read = false`, in addition to the existing `delivered = false` and `delivery_attempts < 3` — a notification the operator has already read in the feed is never re-enqueued for delivery just because its earlier delivery attempt failed. Unread, undelivered notifications are still retried up to 3 times (unchanged). No new endpoint. |
 | 0.9 | 2026-09-24 | ST-09 (v9.7, EPIC-03, BLG-BE-123): Documented that `reflection_reminder` evaluation is portfolio-scoped, so a `trade_history` row with a `NULL` `portfolio_id` is permanently excluded from reflection reminders (expected behaviour, not a gap). Documented the `_evaluate_reflection_reminders` rollback-consistency fix: on a mid-loop failure the step's `SAVEPOINT` rollback now leaves `notifications_created`/`delivery_tasks_enqueued` reset to `0` (previously left at pre-failure partial counts), and delivery scheduling (`enqueue_delivery`) is deferred until after the `SAVEPOINT` releases so nothing is scheduled for a row that is subsequently rolled back. No new endpoint. |

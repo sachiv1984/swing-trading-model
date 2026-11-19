@@ -13,7 +13,7 @@ Alert types:
     Not a configurable rule — it has no alert_rules row; it is governed only by the
     notification preference (email delivery, default OFF). The in-app feed row is always created.
 
-Delivery: FastAPI BackgroundTasks per ADR-003. Email delivery is a post-response background task.
+Delivery: FastAPI BackgroundTasks per ADR-003. Telegram delivery is a post-response background task.
 Re-delivery: on each evaluate call, notifications with delivered=false and delivery_attempts<3
 are re-enqueued.
 
@@ -60,6 +60,68 @@ REFLECTION_REMINDER_DELAY_HOURS = 48
 REFLECTION_REMINDER_LOOKBACK_DAYS = 30
 PREFERENCE_TYPES = ALERT_TYPES + [REFLECTION_REMINDER_TYPE]
 PREFERENCE_DEFAULTS = {**{t: True for t in ALERT_TYPES}, REFLECTION_REMINDER_TYPE: False}
+
+# ST-03 (BLG-FE-318, EPIC-01, v9.18): delivery error strings that reach the UI. Telegram is
+# the only delivery channel; the pre-v9.18 strings said "email". Design source:
+# docs/design/2026-11-18__release-v9.18/alert-delivery-truth/decision_record.md §2–§3.
+DELIVERY_ERROR_NOT_CONFIGURED = "Telegram not configured"
+DELIVERY_ERROR_DISABLED = "Telegram off for this alert type"
+# Rows written before v9.18 carry the old strings; they are not rewritten.
+_LEGACY_DELIVERY_ERROR_DISABLED = "email disabled"
+_DISABLED_DELIVERY_ERRORS = {DELIVERY_ERROR_DISABLED, _LEGACY_DELIVERY_ERROR_DISABLED}
+MAX_DELIVERY_ATTEMPTS = 3
+
+
+def derive_delivery_status(delivered, delivery_attempts, delivery_error, preference_on, read=False):
+    """Return (delivery_status, delivery_reason) for a notification row.
+
+    ST-03 (BLG-FE-318, v9.18), alerts_endpoints.md §GET /notifications:
+      - the "disabled" error (old or new string)            -> not_requested
+      - delivered = TRUE                                    -> sent (includes pre-v9.18
+        unconfigured rows stored TRUE/'email not configured' — ruling 2026-11-19)
+      - not delivered, 'Telegram not configured'            -> not_sent / telegram_not_configured
+      - not delivered, attempts = 0, preference off         -> not_requested
+      - not delivered, attempts >= 1 and no retry will run  -> not_sent / delivery_failed
+        (attempts >= MAX_DELIVERY_ATTEMPTS, or the row is read, or the preference is
+        now off: evaluate_alerts retries only unread rows of an enabled type)
+      - otherwise (retry due, or enqueued not yet run)      -> pending
+    delivery_reason is set only for not_sent.
+    """
+    if delivery_error in _DISABLED_DELIVERY_ERRORS:
+        return "not_requested", None
+    if delivered:
+        return "sent", None
+    if delivery_error == DELIVERY_ERROR_NOT_CONFIGURED:
+        return "not_sent", "telegram_not_configured"
+    attempts = delivery_attempts or 0
+    if attempts == 0:
+        return ("pending", None) if preference_on else ("not_requested", None)
+    if attempts >= MAX_DELIVERY_ATTEMPTS or read or not preference_on:
+        return "not_sent", "delivery_failed"
+    return "pending", None
+
+
+def _load_delivery_preferences(cur, portfolio_id: str) -> Dict:
+    """Map alert_type -> email_enabled (governs Telegram delivery) for a portfolio."""
+    cur.execute(
+        "SELECT alert_type, email_enabled FROM notification_preferences WHERE portfolio_id = %s",
+        (portfolio_id,)
+    )
+    return {p["alert_type"]: p["email_enabled"] for p in cur.fetchall()}
+
+
+def _with_delivery_fields(row, prefs: Dict) -> Dict:
+    """_notif_row plus the derived delivery_status / delivery_reason (ST-03, v9.18).
+
+    A type with no preference row counts as on, matching the re-delivery loop in
+    evaluate_alerts (prefs.get(alert_type, True)).
+    """
+    item = _notif_row(row)
+    item["delivery_status"], item["delivery_reason"] = derive_delivery_status(
+        row.get("delivered"), row.get("delivery_attempts"), row.get("delivery_error"),
+        prefs.get(row["alert_type"], True), row.get("read"),
+    )
+    return item
 
 PRICE_ALERT_TICKER_RE = re.compile(r'^[A-Z0-9.]{1,10}$')
 PRICE_ALERT_CAP = 50
@@ -827,10 +889,10 @@ def evaluate_alerts(portfolio_id: str, enqueue_delivery) -> Dict:
                 SELECT id, alert_type FROM notifications
                 WHERE portfolio_id = %s
                   AND delivered = FALSE
-                  AND delivery_attempts < 3
+                  AND delivery_attempts < %s
                   AND created_at < NOW() - INTERVAL '10 seconds'
                   AND read = FALSE
-            """, (portfolio_id,))
+            """, (portfolio_id, MAX_DELIVERY_ATTEMPTS))
             stale = cur.fetchall()
             for row in stale:
                 if prefs.get(row["alert_type"], True):
@@ -908,7 +970,8 @@ def _evaluate_reflection_reminders(cur, portfolio_id: str, prefs: Dict, enqueue_
             context = {"trade_id": str(trade["id"]), "ticker": ticker, "exit_date": exit_str}
             email_on = bool(prefs.get(REFLECTION_REMINDER_TYPE, PREFERENCE_DEFAULTS[REFLECTION_REMINDER_TYPE]))
             # When the preference is OFF the feed row is created already-settled
-            # (delivered = TRUE, delivery_error = 'email disabled'). Left as delivered = FALSE it
+            # (delivered = TRUE, delivery_error = DELIVERY_ERROR_DISABLED; 'email disabled'
+            # before v9.18, ST-03). Left as delivered = FALSE it
             # would be picked up by evaluate_alerts()'s generic re-delivery loop (which only
             # checks the preference, not read/reflected state) and every accumulated reminder —
             # including read ones — would be sent the first time the operator turns the toggle
@@ -921,7 +984,7 @@ def _evaluate_reflection_reminders(cur, portfolio_id: str, prefs: Dict, enqueue_
                 DO NOTHING
                 RETURNING id
             """, (portfolio_id, title, message, json.dumps(context),
-                  not email_on, None if email_on else "email disabled"))
+                  not email_on, None if email_on else DELIVERY_ERROR_DISABLED))
             created = cur.fetchone()
             if created is None:
                 continue  # a concurrent run already created this trade's reminder
@@ -1060,8 +1123,10 @@ def deliver_notification(notification_id: str) -> None:
     delivered=False and delivery_attempts < 3.
 
     Required env vars: TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID.
-    If any are unset, the notification is logged and marked delivered to avoid
-    infinite retry loops on misconfigured deployments.
+    If any are unset, the notification is recorded as NOT delivered with
+    delivery_error = 'Telegram not configured' (ST-03, BLG-FE-318, v9.18; it was
+    marked delivered with 'email not configured'). Re-delivery retries it at most
+    MAX_DELIVERY_ATTEMPTS times, so there is no infinite loop.
     """
     try:
         with get_db() as conn:
@@ -1078,16 +1143,16 @@ def deliver_notification(notification_id: str) -> None:
                 if not TELEGRAM_BOT_TOKEN or not TELEGRAM_CHAT_ID:
                     logger.warning(
                         "deliver_notification: TELEGRAM_BOT_TOKEN or TELEGRAM_CHAT_ID not set — "
-                        "marking delivered without sending. notification_id=%s", notification_id
+                        "recording not delivered. notification_id=%s", notification_id
                     )
                     cur.execute("""
                         UPDATE notifications
-                        SET delivered = TRUE,
+                        SET delivered = FALSE,
                             delivery_attempted_at = NOW(),
                             delivery_attempts = delivery_attempts + 1,
-                            delivery_error = 'email not configured'
+                            delivery_error = %s
                         WHERE id = %s
-                    """, (notification_id,))
+                    """, (DELIVERY_ERROR_NOT_CONFIGURED, notification_id))
                     return
 
                 _send_via_telegram(notif)
@@ -1223,7 +1288,8 @@ def get_notifications(
             total = cur.fetchone()["cnt"]
 
             cur.execute(f"""
-                SELECT id, alert_type, title, message, read, created_at, context
+                SELECT id, alert_type, title, message, read, created_at, context,
+                       delivered, delivery_attempts, delivery_error
                 FROM notifications
                 WHERE {where_sql}
                 ORDER BY created_at DESC
@@ -1231,7 +1297,11 @@ def get_notifications(
             """, tuple(params) + (per_page, offset))
             rows = cur.fetchall()
 
-    notifications = [_notif_row(r) for r in rows]
+            # ST-03 (BLG-FE-318, v9.18): the per-type Telegram preference decides whether a
+            # row is pending, not requested or no longer retried.
+            prefs = _load_delivery_preferences(cur, portfolio_id)
+
+    notifications = [_with_delivery_fields(r, prefs) for r in rows]
     return {
         "notifications": notifications,
         "total": total,
@@ -1249,12 +1319,14 @@ def mark_notification_read(portfolio_id: str, notification_id: str) -> Dict:
                 UPDATE notifications
                 SET read = TRUE
                 WHERE id = %s AND portfolio_id = %s
-                RETURNING id, alert_type, title, message, read, created_at, context
+                RETURNING id, alert_type, title, message, read, created_at, context,
+                          delivered, delivery_attempts, delivery_error
             """, (notification_id, portfolio_id))
             row = cur.fetchone()
             if not row:
                 raise LookupError(f"Notification {notification_id} not found")
-            return _notif_row(row)
+            # ST-03 (v9.18): same item shape as GET /notifications.
+            return _with_delivery_fields(row, _load_delivery_preferences(cur, portfolio_id))
 
 
 def mark_all_notifications_read(portfolio_id: str) -> Dict:

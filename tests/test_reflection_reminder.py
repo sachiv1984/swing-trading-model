@@ -173,13 +173,13 @@ class TestEvaluateReflectionReminders(unittest.TestCase):
         _evaluate(cur, PORTFOLIO, {"reflection_reminder": False}, MagicMock())
         insert_sql, params = [c for c in _sql_calls(cur) if "INSERT INTO notifications" in c[0]][0]
         self.assertIn("delivered, delivery_error", insert_sql)
-        self.assertEqual(params[-2:], (True, "email disabled"))
+        self.assertEqual(params[-2:], (True, "Telegram off for this alert type"))
 
     def test_default_preference_also_creates_the_row_settled(self):
         cur = _cur([{"id": TRADE_A, "ticker": "NVDA", "exit_date": date(2026, 9, 17)}])
         _evaluate(cur, PORTFOLIO, {}, MagicMock())  # key missing -> default OFF
         _, params = [c for c in _sql_calls(cur) if "INSERT INTO notifications" in c[0]][0]
-        self.assertEqual(params[-2:], (True, "email disabled"))
+        self.assertEqual(params[-2:], (True, "Telegram off for this alert type"))
 
     def test_preference_on_creates_the_row_pending_delivery(self):
         cur = _cur([{"id": TRADE_A, "ticker": "NVDA", "exit_date": date(2026, 9, 17)}], [{"id": "notif-9"}])

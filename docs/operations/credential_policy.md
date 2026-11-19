@@ -1,8 +1,8 @@
 **Owner:** Cybersecurity & Trust Lead
 **Class:** Supporting Document (Class 2) — Living Reference
 **Status:** Active
-**Version:** 1.1
-**Last Updated:** 2026-10-15 (ST-27, EPIC-04, v9.12, BLG-SEC-42 — `REACT_APP_API_KEY` reclassified: full write scope, public bundle; Product Owner accept-risk recorded, ESC-EXEC-20261015-01); prior — 2026-05-06 (initial version)
+**Version:** 1.2
+**Last Updated:** 2026-11-19 (ST-05, EPIC-01, v9.18, BLG-SEC-46 — §1.1 re-review: read access to the owner's data is no longer accepted; remedy access control in front of the site (BLG-SEC-48, v9.20), interim noindex/robots.txt (BLG-SEC-49); review triggers updated); prior — 2026-10-15 (ST-27, EPIC-04, v9.12, BLG-SEC-42 — `REACT_APP_API_KEY` reclassified: full write scope, public bundle; Product Owner accept-risk recorded, ESC-EXEC-20261015-01); prior — 2026-05-06 (initial version)
 **Source:** BLG-SEC-05 (v3.2 ST-15)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
@@ -49,6 +49,14 @@ Frontend secrets (`REACT_APP_API_KEY`) are embedded in the built JS bundle, whic
 - **What the acceptance covers:** anyone who reads the bundle can call any authenticated route, including the writes above. Settings writes are audit-logged in `settings_change_log` (DS-33, BLG-SEC-41) with `request_source` `api` for non-UI callers, so a settings change made outside the Settings page is visible.
 - **Review triggers:** revisit this decision, and treat option (a) as required, if any of these occurs: a second user or shared access; a live (non-paper) broker or real-money integration; any sign of calls not made by the owner (unexpected settings-log `api` rows, unexplained positions or cash transactions, Render logs from unknown clients); or at each quarterly dependency/security review.
 - **Rotation note:** the §2 trigger "public exposure" cannot apply literally to a key that is public by design. Read it as "evidence of use by anyone other than the owner", one of the review triggers above.
+
+**Re-review: Cybersecurity & Trust Lead and Product Owner, 2026-11-19 (ST-05, BLG-SEC-46, `ESC-EXEC-20261119-01`).** Both roles held by the user, decided in session.
+- **What the 2026-10-15 acceptance did not weigh:** read access. The front end has no sign-in (`AuthContext.js` hard-codes one user), its URL is public and named in the public repository's `package.json`, there is no `robots.txt` or `noindex`, and the bundle's key authorises every read. Anyone who finds the URL can read the owner's real positions, cash, P&L and journal entries. The public source map (`BLG-OPS-221`) makes the bundle easier to read.
+- **Decision: the acceptance no longer covers read access.** "Single-user app with no other users' data at risk" is true but misses the point: the data at risk is the owner's own financial record. A read-only or allowlisted key (option (a)) does not help, because it still exposes every read.
+- **Remedy:** put access control in front of the static site and the API, so only the owner can load the app or call it (for example Cloudflare Access or an authenticating proxy) — filed as `BLG-SEC-48`, provisional target v9.20 (the roadmap's conditional v9.20 access row).
+- **Interim, until the remedy ships:** add `noindex` and a disallow-all `robots.txt` so search engines do not list the site — filed as `BLG-SEC-49`. This reduces discoverability only; it is not access control.
+- **Write access:** the 2026-10-15 acceptance of write scope stands until `BLG-SEC-48` ships, and ends with it.
+- **Review triggers (updated):** in addition to the triggers above, revisit at once if `BLG-SEC-48` slips past v9.20, if the URL is found indexed or linked anywhere public, or if any read of the API from a client other than the owner's is seen in Render logs.
 
 ---
 
@@ -116,5 +124,6 @@ If a credential is suspected compromised:
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.2 | 2026-11-19 | ST-05 (BLG-SEC-46, EPIC-01, v9.18): §1.1 re-review by the Cybersecurity & Trust Lead and the Product Owner. Read access to the owner's data is no longer accepted; remedy is access control in front of the site and API (BLG-SEC-48, v9.20); interim `noindex`/`robots.txt` (BLG-SEC-49); write-scope acceptance ends when BLG-SEC-48 ships; review triggers extended. `ESC-EXEC-20261119-01` resolved. |
 | 1.1 | 2026-10-15 | ST-27 (BLG-SEC-42, EPIC-04, v9.12): `REACT_APP_API_KEY` reclassified from low-sensitivity to full write scope (all 150 routes, 61 writes, one shared `API_KEY`), exposed in the public bundle. New §1.1 records the scope, the Product Owner accept-risk decision (ESC-EXEC-20261015-01 option (b)), and review triggers. |
 | 1.0 | 2026-05-06 | Initial credential policy document. v3.2 ST-15 (BLG-SEC-05). All known production credentials inventoried. |

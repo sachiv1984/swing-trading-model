@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ShieldAlert, Clock, TrendingDown, BarChart2, Bell, NotebookPen } from "lucide-react";
+import { ShieldAlert, Clock, TrendingDown, BarChart2, Bell, NotebookPen, AlertTriangle } from "lucide-react";
 import { cn } from "../../lib/utils";
 import { createPageUrl } from "../../utils";
 import { formatDistanceToNow } from "date-fns";
@@ -31,6 +31,7 @@ export default function NotificationRow({ notification, onMarkRead }) {
 
   return (
     <div
+      data-testid="notification-row"
       className={cn(
         "flex gap-4 px-6 py-5 transition-all",
         !notification.read && "border-l-2 border-cyan-400"
@@ -47,6 +48,19 @@ export default function NotificationRow({ notification, onMarkRead }) {
           <div className="min-w-0">
             <p className="text-sm font-medium text-slate-900 dark:text-white truncate">{notification.title}</p>
             <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5 truncate">{notification.message}</p>
+            {/* ST-03 (BLG-FE-318, v9.18): only a not_sent row says so (notifications.md v0.13);
+                sent, not_requested and pending show nothing. */}
+            {notification.delivery_status === "not_sent" && (
+              <p
+                data-testid="notification-not-sent"
+                className="mt-1 flex items-center gap-1 text-xs text-app-warning"
+              >
+                <AlertTriangle className="w-3 h-3 shrink-0" aria-hidden="true" />
+                {notification.delivery_reason === "telegram_not_configured"
+                  ? "Not sent: Telegram not configured"
+                  : "Not sent: Telegram delivery failed"}
+              </p>
+            )}
           </div>
           <span
             className="text-xs text-slate-600 dark:text-slate-400 shrink-0 mt-0.5 cursor-default"

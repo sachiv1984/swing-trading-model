@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-18 (session — 4 new items added: BLG-UX-22, BLG-SPEC-241, BLG-BE-224, BLG-QA-274; v9.18 design gate observations, filed at Sprint Planning with PO authorisation); prior — 2026-11-18 (roadmap rebalance `2026-11-18__scheduled` STEP 9 and STEP 11 — 16 items added (BLG-GOV-429 is the Friction Item 1 tracking item); STEP 9 — from `IW-20261118-01` (BLG-BE-223, BLG-SEC-47, BLG-FEAT-103/104, BLG-GOV-425–428, BLG-FE-321–324, BLG-OPS-222, BLG-QA-272/273); Provisional-Target set to v9.18 (17 items) or v9.19 (17 items) for Phase 4 and the v9.18 Now section, DL-089; BLG-UX-21 decision recorded; BLG-GOV-408 ✅ COMPLETE); prior — 2026-11-17 (session — 1 new item added: BLG-GOV-424; AUD-2026-11-17-003); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-19 (session — 3 new items added: BLG-FE-326, BLG-FE-327, BLG-SPEC-242; PR #2307 agent-mediated DoQ and PO review findings); prior — 2026-11-19 (session — 2 new items added: BLG-SEC-48, BLG-SEC-49; ST-05/EPIC-01 v9.18 re-review remedies); prior — 2026-11-19 (session — 1 new item added: BLG-GOV-430; v9.18 EPIC-01 PR #2306 CI finding); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -7544,6 +7544,50 @@ No backend response sets `Cache-Control` (0 matches in `backend/`). Positions, t
 
 ---
 
+### BLG-SEC-48 — Put access control in front of the front end and the API
+**Priority:** P2 (Medium)
+**Type:** Security / Access control
+**Owner:** Cybersecurity & Trust Lead; Infrastructure & Operations Owner
+**Source:** ST-05/EPIC-01 (`2026-11-18__release-v9.18`) re-review decision, `credential_policy.md` §1.1 v1.2 — 2026-11-19
+**Effort:** M (~1–2 days)
+**Provisional-Target:** v9.20
+
+**Problem**
+The front end has no sign-in and is served from a public URL named in the public repository, and the API key in its bundle authorises every route. Anyone who finds the URL can read the owner's real positions, cash, P&L and journal, and can call every write. The 2026-11-19 re-review (`credential_policy.md` §1.1) withdrew the acceptance for read access; a narrower key would not help, because reads stay open.
+
+**Scope**
+- Choose and set up an authenticating layer in front of the GitHub Pages site and the Render API (for example Cloudflare Access, or an authenticating proxy), so only the owner can load the app or call the API
+- Keep CI, scheduled workflows and health checks working (service tokens or an allowlist), and document how they authenticate
+- Update `credential_policy.md` §1.1, the threat model and the deploy/runbook docs; end the write-scope acceptance
+
+**Acceptance Criteria**
+- An unauthenticated request to the site URL and to an API route is refused (recorded check, dated)
+- The owner's browser, CI workflows and scheduled jobs still work (each listed with evidence)
+- `credential_policy.md` §1.1 records the remedy as in place and the 2026-10-15 acceptance as ended
+
+---
+
+### BLG-SEC-49 — Add noindex and a disallow-all robots.txt to the front end
+**Priority:** P2 (Medium)
+**Type:** Security / Discoverability
+**Owner:** Cybersecurity & Trust Lead; Frontend Specifications & UX Documentation Owner
+**Source:** ST-05/EPIC-01 (`2026-11-18__release-v9.18`) re-review decision (interim step), `credential_policy.md` §1.1 v1.2 — 2026-11-19
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.19
+
+**Problem**
+Until access control (`BLG-SEC-48`) ships, the public site has no `robots.txt` and no `noindex`, so a search engine can list it and make the owner's data easier to find. This reduces discoverability only; it is not access control.
+
+**Scope**
+- Add `<meta name="robots" content="noindex, nofollow">` to `public/index.html` and `public/404.html`
+- Add `public/robots.txt` with `User-agent: *` and `Disallow: /`
+
+**Acceptance Criteria**
+- The built site serves `robots.txt` disallowing all paths, and both HTML pages carry the `noindex` meta tag (build-output check or Playwright)
+- `credential_policy.md` §1.1 notes the interim step as done
+
+---
+
 ### BLG-FEAT-103 — Measure the core loop and show this week's loop on the Weekly Digest
 **Priority:** P3 (Low)
 **Type:** Feature / Measurement (user-facing)
@@ -7756,6 +7800,70 @@ There is no React error boundary anywhere in `src/` (`componentDidCatch`/`getDer
 
 ---
 
+### BLG-FE-325 — Fix the CSP hash for the GitHub Pages redirect script
+**Priority:** P3 (Low)
+**Type:** Frontend / Security
+**Owner:** Frontend Specifications & UX Documentation Owner; Cybersecurity & Trust Lead
+**Source:** ST-06/EPIC-01 (`2026-11-18__release-v9.18`) Lighthouse validation — 2026-11-19
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.19
+
+**Problem**
+`public/index.html`'s Content-Security-Policy allows the GitHub Pages SPA-redirect inline script by hash (`sha256-5Oi7…`, added by ST-18/BLG-SEC-12 in `8bc208ce`). The production build minifies `index.html`, so the built script hashes to `sha256-QMm9…`: every page load logs a CSP violation, and the redirect script never runs, so a GitHub Pages 404 deep link (`/?/path`) is not restored.
+
+**Scope**
+- Compute the hash from the built `index.html` (or exclude that script from HTML minification)
+- Add a check that the built script's hash is in `script-src`
+
+**Acceptance Criteria**
+- No CSP inline-script violation on a production build (Playwright console check)
+- A CI check fails when the built script's hash is not in `script-src`
+
+---
+
+### BLG-FE-326 — Show on Notification Preferences when Telegram is not configured
+**Priority:** P3 (Low)
+**Type:** Frontend / Backend correctness of user-facing status
+**Owner:** Head of Engineering; Frontend Specifications & UX Documentation Owner
+**Source:** PR #2307 (`2026-11-18__release-v9.18` EPIC-01) agent-mediated Product Owner review — 2026-11-19
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v9.19
+
+**Problem**
+With `TELEGRAM_BOT_TOKEN` or `TELEGRAM_CHAT_ID` unset, Notification Preferences still shows "Send to Telegram: On", so the page suggests alerts are going out when none are. Since v9.18 ST-03 the user learns this only afterwards, from "Not sent" lines on individual Feed rows.
+
+**Scope**
+- Add a derived, non-secret `telegram_configured` boolean to an existing endpoint (e.g. `GET /notifications/preferences`), with the contract and `openapi.yaml` in the same commit
+- Show a muted notice under the Telegram Alerts heading when it is false (wording ruled by Head of UX & Design)
+- Update `notifications.md` §Section 1
+
+**Acceptance Criteria**
+- With Telegram unconfigured, the notice shows and the toggles stay usable (Playwright, both themes, axe)
+- With Telegram configured, no notice shows (Playwright); a pytest covers the field and confirms no token value is exposed
+
+---
+
+### BLG-FE-327 — Make the Notification History "Notified" column match actual delivery
+**Priority:** P3 (Low)
+**Type:** Frontend / Backend correctness of user-facing status
+**Owner:** Head of Engineering; Frontend Specifications & UX Documentation Owner
+**Source:** PR #2307 (`2026-11-18__release-v9.18` EPIC-01) agent-mediated Director of Quality review — 2026-11-19
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v9.19
+
+**Problem**
+`alert_evaluations.notification_sent` is set when delivery is queued (preference on), not when it succeeds, so with Telegram unconfigured Notification History shows "Notified: Yes" for an alert the Feed marks "Not sent: Telegram not configured". The design record (`alert-delivery-truth/decision_record.md` §3) describes the column as "whether a notification was created", which the code does not match either.
+
+**Scope**
+- Decide (Head of UX & Design, with the API contract owner) whether to relabel the column (e.g. "Telegram requested") or derive it from the linked notification's `delivery_status`
+- Update `notifications.md` §Notification History and the decision record; contract and `openapi.yaml` if the response changes
+
+**Acceptance Criteria**
+- With Telegram unconfigured, History and the Feed no longer contradict each other for the same alert (Playwright)
+- The spec's column definition matches what the backend writes
+
+---
+
 ### BLG-OPS-222 — Poll the GitHub Pages front end as well as the API's /health
 **Priority:** P3 (Low)
 **Type:** Operations / Monitoring
@@ -7834,6 +7942,27 @@ At `2026-11-18__scheduled` the engine appended three rows to `claude/roadmap/rol
 
 ---
 
+### BLG-GOV-430 — Commit execution_state.json to main with the Executing status at sprint start
+**Priority:** P2 (Medium)
+**Type:** Governance Process
+**Owner:** Head of Specs Team; PMO Lead
+**Source:** v9.18 EPIC-01 (`2026-11-18__release-v9.18`), PR #2306 CI failure — 2026-11-19
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.19
+
+**Problem**
+`execution_prompt.md` STEP 0 sets `.claude_current_state.json` to `Executing` on `main` but creates `execution_state.json` only on the owning EPIC branch. Until that EPIC merges, `main` claims execution has started with no state file, so `tests/test_state_execution_path_consistency.py::test_execution_state_path_file_exists` fails on every PR cut from `main`. At v9.18 this blocked out-of-sprint PR #2306 and was fixed by hand (`f4b642d3`, then main merged into EPIC-01); v9.17 had the same gap for about 8 hours (`bafcbdab` to the EPIC-01 merge), unnoticed only because no PR opened in that window.
+
+**Scope**
+- In STEP 0, commit the newly created `execution_state.json` to `main` in the same `[GOVERNANCE]` commit as the `Executing` status, and cut the owning EPIC branch from that commit (CLAUDE.md §6 checklist applies)
+- Update the "execution_state.json Ownership" note to say the owner branch starts from main's copy
+
+**Acceptance Criteria**
+- `execution_prompt.md` STEP 0 names the single commit that sets `Executing` and adds `execution_state.json` on `main`
+- At the next sprint start, a PR opened from `main` before the first EPIC merges passes `test_execution_state_path_file_exists`
+
+---
+
 ### BLG-UX-22 — Decide and ship the "Weekly review" rename of the Weekly Digest
 **Priority:** P3 (Low)
 **Type:** Frontend / UX
@@ -7875,6 +8004,27 @@ The 2026-11-17 re-review (§14.2, adopted by DL-089) renames the Weekly Digest t
 
 ---
 
+### BLG-SPEC-242 — Give a final delivery status to read rows that were never attempted
+**Priority:** P4 (Very Low)
+**Type:** Spec Debt / API contract
+**Owner:** API Contracts & Documentation Owner; Head of Engineering
+**Source:** PR #2307 (`2026-11-18__release-v9.18` EPIC-01) agent-mediated Director of Quality review — 2026-11-19
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.19
+
+**Problem**
+`derive_delivery_status` (v9.18 ST-03) returns `pending` for a row with `delivered = false`, `delivery_attempts = 0` and the preference on even when the row is read, but re-delivery never retries read rows, so the status never resolves. Nothing shows `pending` in the UI today, but any future reader of the field would be misled; the contract table (`alerts_endpoints.md` §Delivery status derivation) has the same gap.
+
+**Scope**
+- Rule (contract owner) whether such a row is `not_requested` or `not_sent`
+- Amend the derivation table, mirror it in `derive_delivery_status`, and add a pytest case
+
+**Acceptance Criteria**
+- A read row with `delivered = false`, `attempts = 0` and the preference on derives a final (non-`pending`) status (pytest)
+- The contract table and the code agree
+
+---
+
 ### BLG-BE-224 — Check that notification re-delivery never sends rows created while a preference was off
 **Priority:** P3 (Low)
 **Type:** Backend engineering
@@ -7893,6 +8043,27 @@ Re-delivery retries `delivered = false` notification rows up to 3 times. With a 
 **Acceptance Criteria**
 - A pytest stores a notification with its preference off, turns the preference on, runs re-delivery, and asserts nothing is sent
 - The behaviour is recorded in `notifications.md` (or the alerts contract)
+
+---
+
+### BLG-BE-225 — Stop re-delivery from sending a backlog of alerts once Telegram is configured
+**Priority:** P3 (Low)
+**Type:** Backend engineering
+**Owner:** Head of Engineering; Backend Engineering Patterns Owner
+**Source:** ST-03/EPIC-01 (`2026-11-18__release-v9.18`) pre-commit `/code-review` finding — 2026-11-19
+**Effort:** XS (~1–2h)
+**Provisional-Target:** v9.19
+
+**Problem**
+Since ST-03 (v9.18), a notification written while `TELEGRAM_BOT_TOKEN`/`TELEGRAM_CHAT_ID` are unset is stored `delivered = FALSE`, `delivery_error = 'Telegram not configured'`, and stays retryable for up to 3 evaluate runs. If Telegram is configured inside that window, the next evaluate sends every such unread row, including stop-loss or regime alerts that may be days old. The preference-off case is `BLG-BE-224`.
+
+**Scope**
+- Add an age cap to the re-delivery query (or skip rows whose error is 'Telegram not configured' once the config is present), with a pytest
+- Record the rule in `alerts_endpoints.md` §Delivery status derivation
+
+**Acceptance Criteria**
+- A pytest stores an unconfigured row older than the cap, configures Telegram, runs re-delivery and asserts nothing is sent
+- The contract states the rule and what `delivery_status` the row reports
 
 ---
 
