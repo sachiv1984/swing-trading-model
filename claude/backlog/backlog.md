@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-20 (session — 5 new items added: BLG-BE-226, BLG-BE-227, BLG-BE-228, BLG-AI-35, BLG-AI-36; ST-40/EPIC-07 v9.18 debrief sample review); prior — 2026-11-20 (session — 1 new item added: BLG-AI-34; ST-39/EPIC-07 v9.18 detector misses); prior — 2026-11-19 (session — 3 new items added: BLG-FE-326, BLG-FE-327, BLG-SPEC-242; PR #2307 agent-mediated DoQ and PO review findings); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-20 (session — 3 new items added: BLG-GOV-431, BLG-QA-275, BLG-AI-37; EPIC-07 v9.18 retrospective); prior — 2026-11-20 (session — 5 new items added: BLG-BE-226, BLG-BE-227, BLG-BE-228, BLG-AI-35, BLG-AI-36; ST-40/EPIC-07 v9.18 debrief sample review); prior — 2026-11-20 (session — 1 new item added: BLG-AI-34; ST-39/EPIC-07 v9.18 detector misses); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -2927,6 +2927,30 @@ STX (2026-07-02) gapped through its stop: stop $1,045.26, exit $900.00, −2.92R
 - The ruling is recorded before the code change
 - The STX 2026-07-02 sentence gets the ruled result, in a test
 - Existing debrief check tests keep their results
+
+---
+
+### BLG-AI-37 — One shared set of advice and non-advice sentences for every §13.2 output check
+**Priority:** P3 (Low)
+**Type:** AI Compliance / Test Automation
+**Owner:** AI Compliance & Governance Officer; QA & Testing Owner
+**Source:** EPIC-07 retrospective (cycle `2026-11-18__release-v9.18`, ST-39/ST-40): which check would have caught this EPIC's backlog items earlier; filed on the user's direction — 2026-11-20
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+**Depends on:** BLG-AI-32, BLG-AI-34 (their rulings set the expected results for the new forms)
+
+**Problem**
+The journal summary, debrief, monthly narrative and (since v9.18) the daily briefing and chat each enforce `strategy_rules.md` §13.2 with checks tested by their own sentence lists, and `scripts/run_ai_output_boundary_sample_audit.py` has its own scanners. Gaps keep being found one checker at a time: BLG-AI-30, -31, -32, -33 and -34 are five items on one detector, and on 2026-11-20 the audit script's `scan_prescriptive` missed "Consider tightening your stop on NVDA." which the briefing check catches.
+
+**Scope**
+- Create one fixture of labelled sentences: advice that must fail (with the §13.2 subject), and near misses that must pass (negations, refusals, reported or past-tense wording, rule-based recommendations)
+- Run every §13.2 checker and the audit script against it in CI, with each checker's known exceptions listed explicitly
+- Seed it from the B-JS-04, B-DB-06 and B-CH-07 cases and the sentences in BLG-AI-32 and BLG-AI-34
+
+**Acceptance Criteria**
+- Every checker and the audit script run against the shared fixture in CI
+- A sentence a checker gets wrong is either fixed or listed as a named exception with a backlog ID
+- Adding a sentence to the fixture is the documented way to record a newly found phrasing
 
 ---
 
@@ -8037,6 +8061,29 @@ At `2026-11-18__scheduled` the engine appended three rows to `claude/roadmap/rol
 
 ---
 
+### BLG-GOV-431 — Review a sample of real output soon after any change to AI-generated text ships
+**Priority:** P2 (Medium)
+**Type:** Governance Process / AI Compliance
+**Owner:** AI Compliance & Governance Officer; Head of Specs Team
+**Source:** EPIC-07 retrospective (cycle `2026-11-18__release-v9.18`, ST-39/ST-40): which check would have caught this EPIC's backlog items earlier; filed on the user's direction — 2026-11-20
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.19
+
+**Problem**
+Four of the six items filed during v9.18 EPIC-07 (BLG-BE-226, BLG-BE-227, BLG-AI-35, BLG-AI-36) were visible in the first real debriefs produced after BLG-BE-152 shipped on 2026-10-12. BLG-GOV-378 asked for a sample review then, but debriefs are generated on demand and none was generated for five weeks, so a wrong R comparison (MU: 0.59R shown, 2.24R on the plan's stop) and a number check dropping every went-to-plan focus sentence went unseen. No step in post-ship closure asks anyone to look at real output from a changed AI feature.
+
+**Scope**
+- Add a step (post-ship closure or delivery verification, as the Head of Specs Team decides) that, for any story changing an AI prompt, an AI output check or the inputs an AI feature receives, generates or collects 5–10 real outputs within a set number of days of release and reviews them against the feature's §13 review conditions
+- Say who generates on-demand outputs (for example the debrief) when none occur naturally, and where the review is recorded
+- Record a missed review as a carried action, not silence
+
+**Acceptance Criteria**
+- The step exists in the chosen governance prompt, with the four EPIC-07 items cited as its origin
+- A worked example shows the step applied to BLG-BE-152's release and finding the BLG-BE-226 MU case
+- The CLAUDE.md §6 governance file edit checklist is completed for the prompt change
+
+---
+
 ### BLG-UX-22 — Decide and ship the "Weekly review" rename of the Weekly Digest
 **Priority:** P3 (Low)
 **Type:** Frontend / UX
@@ -8229,3 +8276,28 @@ v9.18 ST-08 moves Strategy Benchmark into Performance, and its data then loads w
 - The Performance baseline row in `performance_budget.md` names the commit measured and whether the Strategy Benchmark section was included
 
 ---
+
+### BLG-QA-275 — Test the post-trade debrief against recorded real trades and model sentences
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** QA & Testing Owner; Backend Engineering Patterns Owner
+**Source:** EPIC-07 retrospective (cycle `2026-11-18__release-v9.18`, ST-39/ST-40): which check would have caught this EPIC's backlog items earlier; filed on the user's direction — 2026-11-20
+**Effort:** M (~1–2d)
+**Provisional-Target:** TBD
+**Depends on:** BLG-BE-228 (so the fixture set has no duplicate trade)
+
+**Problem**
+The debrief summary and its number check are tested with made-up trades and sentences. Real trades differ in the ways that broke them: a plan stop different from the position's starting stop (BLG-BE-226), stops rewritten after exit (BLG-BE-227), and model sentences that real figures make fail the number check (BLG-AI-35). None of these needs a live model to catch once a real trade and a real model sentence are recorded.
+
+**Scope**
+- Record a fixture set from production: the 10 trades sampled on 2026-11-20 (inputs only, figures as stored) and the model sentences generated for them, including the ones rejected (once BLG-AI-35 logs them)
+- Run the deterministic summary and the number check over the set in CI, asserting the agreed result for each
+- Document how to add a trade to the set when a new debrief defect is found
+
+**Acceptance Criteria**
+- The fixture set runs in CI with no live API call
+- MU 2026-09-30 reports R on one consistent basis (after BLG-BE-226), and STX 2026-05-06 shows no stop above the exit (after BLG-BE-227), in tests from the set
+- Each recorded sentence gets its agreed number-check result
+
+---
+
