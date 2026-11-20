@@ -930,7 +930,7 @@
     },
     "EPIC-07": {
       "title": "AI Output Boundary",
-      "status": "not_started",
+      "status": "in_progress",
       "branch": "exec/2026-11-18__release-v9.18/EPIC-07",
       "pr_number": null,
       "pr_status": "none",
@@ -941,14 +941,14 @@
         "ST-39": {
           "title": "Check daily briefing and chat output against §13.2",
           "classification": "delegated_decision",
-          "status": "not_started",
+          "status": "blocked_decision",
           "assigned_to": "human",
           "github_issue": 2304,
           "branch": "exec/2026-11-18__release-v9.18/EPIC-07",
           "commit_sha": null,
           "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
+          "blocked_since_utc": "2026-11-20T08:49:02Z",
+          "unblock_criteria": "AI Compliance & Governance Officer ruling on check form (1) and failure handling (2), dated, recorded in ESC-EXEC-20261120-01, citing strategy_rules.md §13.2 and the §13.5 BLG-FEAT-50/51 row.",
           "completed_utc": null,
           "acceptance_verified": false,
           "spec_references": [],
@@ -957,19 +957,19 @@
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Blocked on ESC-EXEC-20261120-01 (ruling before code, sealed sprint_backlog.md ST-39 Dependencies)."
         },
         "ST-40": {
           "title": "Decide whether the debrief may say more than one restating sentence",
           "classification": "delegated_decision",
-          "status": "not_started",
+          "status": "blocked_decision",
           "assigned_to": "human",
           "github_issue": 2305,
           "branch": "exec/2026-11-18__release-v9.18/EPIC-07",
           "commit_sha": null,
-          "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
+          "delegation_record_id": "DEL-20261120-01",
+          "blocked_since_utc": "2026-11-20T08:49:02Z",
+          "unblock_criteria": "Keep-or-amend decision with rationale from AI Compliance & Governance Officer and Product Owner, recorded in ESC-EXEC-20261120-02, citing §13.2 and the §13.5 ST-06 row; production debrief sample via DEL-20261120-01, else AC 1 post-merge (BLG-GOV-378).",
           "completed_utc": null,
           "acceptance_verified": false,
           "spec_references": [],
@@ -978,13 +978,17 @@
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Blocked on ESC-EXEC-20261120-02; production debrief sample Human-Delegation DEL-20261120-01."
         }
       }
     }
   },
-  "blocked_items": [],
-  "delegated_items": [],
+  "blocked_items": [
+    "ST-39"
+  ],
+  "delegated_items": [
+    "ST-40"
+  ],
   "completed_items": [
     "ST-01",
     "ST-02",
@@ -1006,6 +1010,26 @@
       "resolved_utc": "2026-11-19T13:56:00Z",
       "resolved_by": "Cybersecurity & Trust Lead; Product Owner (the user, in session)",
       "resolution_summary": "Read access no longer accepted; remedy BLG-SEC-48 (access control, v9.20); interim BLG-SEC-49 (noindex/robots.txt); recorded in credential_policy.md §1.1 v1.2."
+    },
+    "ESC-EXEC-20261120-01": {
+      "cycle": "2026-11-18__release-v9.18",
+      "summary": "ST-39/EPIC-07 — AI Compliance & Governance Officer ruling: §13.2 output check form and failure handling for the daily briefing and chat",
+      "trigger_type": "Lifecycle",
+      "owning_authority": "AI Compliance & Governance Officer",
+      "raised_utc": "2026-11-20T08:49:02Z",
+      "sla_due_utc": "2026-11-21T08:49:02Z",
+      "blocks_execution": false,
+      "disposition": "Open"
+    },
+    "ESC-EXEC-20261120-02": {
+      "cycle": "2026-11-18__release-v9.18",
+      "summary": "ST-40/EPIC-07 — keep-or-amend decision on the debrief focus-area length, against a production debrief sample (DEL-20261120-01)",
+      "trigger_type": "Lifecycle",
+      "owning_authority": "AI Compliance & Governance Officer; Product Owner",
+      "raised_utc": "2026-11-20T08:49:02Z",
+      "sla_due_utc": "2026-11-21T08:49:02Z",
+      "blocks_execution": false,
+      "disposition": "Open"
     }
   },
   "merge_gate": {
@@ -1030,7 +1054,8 @@
     "2026-11-19T14:08:03Z Staging write by the user (Supabase SQL editor, staging project): positions 0c1edd49… BARC → BARC.L and 7aca4a88… LGEN → LGEN.L (market UK, status open; pre-checks: exactly 2 rows, no existing .L rows). This is ST-35's 'correct the two existing staging rows' scope item, done early to unblock ST-04's staging check; ST-35's seed-script change and its AC 2 (price_is_stale false) remain with EPIC-06. Seed stores UK prices in pounds (current_price 2.18/2.52, stop 1.90/2.20), confirming ST-04's units premise. Do not run reset-and-seed-staging.yml until ST-35's seed fix lands.",
     "2026-11-19T14:30:25Z EPIC-01 PR #2307 opened (STEP 3.2.B). Pre-PR gates: DoQ Date non-blank; signer format agent-mediated; qa_evidence committed (4c1da2ac); check_api_performance_baseline_drift.py PASSED; origin/main..HEAD carries only [EPIC-01] and [GOVERNANCE] commits. Awaiting human DoQ QA sign-off and PO acceptance (incl. BLG-SEC-48, BLG-SEC-49, BLG-GOV-430 rationale).",
     "2026-11-19T16:04:06Z PR #2307 agent-mediated DoQ + PO review (user-directed): both 'Approved with Comments', posted as one labelled comment (issuecomment-7014573316). DoQ finding 1 (Lighthouse baseline served uncompressed) fixed in-PR: 51dc5e68 gzip, 0014dab0 pinned Lighthouse lockfile (unpinned install had failed on run 44560085658), 979fe743 baseline re-recorded (run 44560607996, performance_budget.md v2.1). Filed BLG-FE-326, BLG-FE-327, BLG-SPEC-242 (31008092). Not merged; awaiting human DoQ/PO and merge.",
-    "2026-11-19T16:37:34Z EPIC-01 PR #2307 merged by sachiv1984 at 2026-11-19T16:36:27Z (merge 3a07684e); PR #2308 merged 16:36:06Z (b5b646ae). Human DoQ QA sign-off and PO acceptance given by the user in session (2026-11-19T16:37:34Z), arriving just after the merge; the merge is also confirmation by the holder of both roles (ESC-CLOSE-20261103-01). Recorded on main (PR already merged, LL-v9.12-P3-02). Orphaned post-merge commit check: git log origin/main..origin/exec/…/EPIC-01 empty — nothing to reconcile. No sibling EPIC branches exist, so the 3c sync was not needed. BLG-FE-325 ✅ COMPLETE banner added."
+    "2026-11-19T16:37:34Z EPIC-01 PR #2307 merged by sachiv1984 at 2026-11-19T16:36:27Z (merge 3a07684e); PR #2308 merged 16:36:06Z (b5b646ae). Human DoQ QA sign-off and PO acceptance given by the user in session (2026-11-19T16:37:34Z), arriving just after the merge; the merge is also confirmation by the holder of both roles (ESC-CLOSE-20261103-01). Recorded on main (PR already merged, LL-v9.12-P3-02). Orphaned post-merge commit check: git log origin/main..origin/exec/…/EPIC-01 empty — nothing to reconcile. No sibling EPIC branches exist, so the 3c sync was not needed. BLG-FE-325 ✅ COMPLETE banner added.",
+    "2026-11-20T08:49:02Z EPIC-07 started (run sprint --epic EPIC-07; merge sequence allows EPIC-07 at any point). Session-start divergence check: main == origin/main. Sealed-file check clean. Issues #2304/#2305 open. Branch exec/2026-11-18__release-v9.18/EPIC-07 cut from main e36bbca7. ST-39 and ST-40 blocked_decision on ESC-EXEC-20261120-01/-02; DEL-20261120-01 raised for the ST-40 production debrief sample."
   ],
   "sealed": false,
   "sealed_utc": null
