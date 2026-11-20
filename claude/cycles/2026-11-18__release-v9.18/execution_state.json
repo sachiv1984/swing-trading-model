@@ -930,7 +930,7 @@
     },
     "EPIC-07": {
       "title": "AI Output Boundary",
-      "status": "in_progress",
+      "status": "done",
       "branch": "exec/2026-11-18__release-v9.18/EPIC-07",
       "pr_number": null,
       "pr_status": "none",
@@ -977,24 +977,24 @@
         "ST-40": {
           "title": "Decide whether the debrief may say more than one restating sentence",
           "classification": "autonomous",
-          "status": "in_progress",
+          "status": "done",
           "assigned_to": "human",
           "github_issue": 2305,
           "branch": "exec/2026-11-18__release-v9.18/EPIC-07",
-          "commit_sha": null,
+          "commit_sha": "ad42bc878eec8a8760fd847940e88bce5b42c797",
           "delegation_record_id": "DEL-20261120-01",
           "blocked_since_utc": null,
           "unblock_criteria": "Keep-or-amend decision with rationale from AI Compliance & Governance Officer and Product Owner, recorded in ESC-EXEC-20261120-02, citing §13.2 and the §13.5 ST-06 row; production debrief sample via DEL-20261120-01, else AC 1 post-merge (BLG-GOV-378).",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-11-20T14:14:49Z",
+          "acceptance_verified": true,
           "spec_references": [
             "claude/strategy/strategy_rules.md#13.2",
             "docs/product/decisions/decisions--2026-08-17__release-v8.9--ST-06-section13-review.md"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": {
             "status": "cleared",
             "role": "AI Compliance & Governance Officer; Product Owner",
@@ -1017,7 +1017,8 @@
     "ST-04",
     "ST-05",
     "ST-06",
-    "ST-39"
+    "ST-39",
+    "ST-40"
   ],
   "open_escalations": {
     "ESC-EXEC-20261119-01": {
