@@ -219,6 +219,14 @@ class TestChat:
     "I cannot suggest whether stops should be tightened; that is your decision.",
     "The stop should stay where it is; it does not need to be tightened.",
     "There is no need to adjust your stop.",
+    "I can't say whether your stop should be tightened.",
+    "I can't say whether your stop should be tightened, but the exit rule applies to NVDA.",
+    "I can't advise if stops should be tightened.",
+    "I cannot suggest whether your stop or position size should be changed, as the rules set them.",
+    "MU is near its stop but the stop has not moved since Monday.",
+    "Stops should never be loosened under the strategy's rules.",
+    "The position size should not be reduced, and the stop should not be moved.",
+    "Your stop and position size do not need to be changed.",
 ])
 def test_negated_or_declined_change_passes(text):
     assert parameter_change_failures(text) == []
@@ -326,6 +334,15 @@ def test_briefing_exemption_logged_with_field(db, caplog):
     "There is no need to exit yet, though your stop should be raised to lock in gains.",
     "No need to panic, but consider tightening your stop.",
     "I can't say for sure, but your stop should be tightened.",
+    # Round 2 (Product Owner): advice after a declined suggestion and a contrast.
+    "I can't say whether NVDA will recover, but your stop should be tightened.",
+    "I won't recommend that you sell, but consider tightening your stop.",
+    "I cannot say that the trend is over, but tightening stops could help.",
+    "I can't say whether it rebounds \u2014 consider tightening your stop.",
+    # Round 2 (Director of Quality R1).
+    "I can't say whether NVDA will rise, but consider tightening your stop.",
+    "I can't say that enough: consider tightening your stop on NVDA.",
+    "I won't suggest that the trend is over, but you might consider reducing your position size.",
 ])
 def test_advice_beside_a_negation_or_disclaimer_fails(text, caplog):
     with caplog.at_level(logging.WARNING, logger="services.ai_service"):

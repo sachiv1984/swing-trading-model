@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-20 (session — 3 new items added: BLG-FE-328, BLG-AI-38, BLG-AI-39; EPIC-07 v9.18 agent-mediated PR review); prior — 2026-11-20 (session — 3 new items added: BLG-GOV-431, BLG-QA-275, BLG-AI-37; EPIC-07 v9.18 retrospective); prior — 2026-11-20 (session — 5 new items added: BLG-BE-226, BLG-BE-227, BLG-BE-228, BLG-AI-35, BLG-AI-36; ST-40/EPIC-07 v9.18 debrief sample review); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-20 (session — 1 new item added: BLG-AI-40; EPIC-07 v9.18 PR review round 2); prior — 2026-11-20 (session — 3 new items added: BLG-FE-328, BLG-AI-38, BLG-AI-39; EPIC-07 v9.18 agent-mediated PR review); prior — 2026-11-20 (session — 3 new items added: BLG-GOV-431, BLG-QA-275, BLG-AI-37; EPIC-07 v9.18 retrospective); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -2992,6 +2992,30 @@ Ruling `ESC-EXEC-20261120-01` (1)(a) intends recommendations under the existing 
 **Scope**
 - Ask the AI Compliance & Governance Officer whether wording that cites the strategy's own rule for a deterministic change passes, and on what evidence (for example the figure matches the computed trailing stop)
 - Implement the ruled result and add the sentences to B-DB-06/B-CH-07 and the BLG-AI-37 shared set
+
+**Acceptance Criteria**
+- The ruling is recorded before the code change
+- Each sentence above gets the ruled result, in a test
+- Every existing briefing, chat and journal-summary test keeps its result
+
+---
+
+### BLG-AI-40 — Briefing and chat check: two-verb negations withheld, and pronoun or "just" advice missed
+**Priority:** P3 (Low)
+**Type:** AI Compliance / Correctness
+**Owner:** AI Compliance & Governance Officer; Backend Engineering Patterns Owner
+**Source:** Agent-mediated EPIC-07 PR review round 2 (cycle `2026-11-18__release-v9.18`, ST-39), Director of Quality findings R2 and R3, user-directed — 2026-11-20
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+**Depends on:** BLG-AI-34, BLG-AI-37 (rule with the other form changes; add to the shared sentence set)
+
+**Problem**
+After the v9.18 narrowing of the negation exemption, some genuine negations are still withheld (safe side: regenerated, then withheld): "Your stop should not be moved or tightened." (removing "not be moved" leaves "should … or tightened") and "I'm not able to advise on whether your stop should be tightened." (the declined form does not cover "not able to advise on whether"). Separately the base detector misses advice with a pronoun subject or "just": "Your stop should not be widened; it should be tightened." and "There is no need to move your stop, just tighten it." (verified 2026-11-20).
+
+**Scope**
+- Ask the AI Compliance & Governance Officer to rule on each sentence
+- Extend the negation removal to coordinated verbs ("not be moved or tightened") and the declined form to "not able to advise on whether", if ruled
+- Resolve a pronoun subject ("it", "them") to the stop or position size named earlier in the same sentence or the one before, if ruled
 
 **Acceptance Criteria**
 - The ruling is recorded before the code change

@@ -617,8 +617,9 @@ CHAT_WITHHELD_MESSAGE = (
 # negation still fails ("Consider tightening stops since NVDA has not
 # moved.", "Your stop should be raised, not lowered."). A declined
 # suggestion counts only as "can't/won't/don't ... suggest/recommend/advise/
-# say whether/if/that", and the text before it is still checked ("I can't
-# recommend changes, but your stop could be tightened." fails). PR review,
+# say whether/if/that", and the text before it, and after any following
+# "but/though/however/yet", is still checked ("I can't recommend changes,
+# but your stop could be tightened." fails). PR review,
 # Director of Quality and Product Owner finding 1, 2026-11-20.
 _NEGATED_CHANGE_RE = re.compile(
     rf"(?:\bnot|\bnever|n't)\s+(?:need\s+to\s+)?(?:be\s+)?{_TC_VERB}\b"
@@ -629,13 +630,22 @@ _DECLINED_SUGGESTION_RE = re.compile(
     r"\s+(?:suggest|recommend|advise|say)\s+(?:whether|if|that)\b",
     re.IGNORECASE)
 
+_CONTRAST_RE = re.compile(r"\b(?:but|though|although|however|yet|still)\b|[\u2014:]", re.IGNORECASE)
+
 
 def _sentence_suggests_change(sentence: str) -> bool:
     """Whether one sentence suggests a change once negated phrases and a
     declined suggestion are set aside (see _NEGATED_CHANGE_RE)."""
     declined = _DECLINED_SUGGESTION_RE.search(sentence)
     if declined:
-        return _trading_change_found(sentence[:declined.start()])
+        if _sentence_suggests_change(sentence[:declined.start()]):
+            return True
+        # Text after a contrast that follows the declined phrase is checked
+        # too: "I can't say whether NVDA will recover, but your stop should
+        # be tightened." fails (PR review round 2, Product Owner).
+        after = sentence[declined.end():]
+        contrast = _CONTRAST_RE.search(after)
+        return bool(contrast) and _sentence_suggests_change(after[contrast.end():])
     return _trading_change_found(_NEGATED_CHANGE_RE.sub(" ", sentence))
 
 
