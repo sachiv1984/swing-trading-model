@@ -976,32 +976,40 @@
         },
         "ST-40": {
           "title": "Decide whether the debrief may say more than one restating sentence",
-          "classification": "delegated_decision",
-          "status": "blocked_decision",
+          "classification": "autonomous",
+          "status": "in_progress",
           "assigned_to": "human",
           "github_issue": 2305,
           "branch": "exec/2026-11-18__release-v9.18/EPIC-07",
           "commit_sha": null,
           "delegation_record_id": "DEL-20261120-01",
-          "blocked_since_utc": "2026-11-20T08:49:02Z",
+          "blocked_since_utc": null,
           "unblock_criteria": "Keep-or-amend decision with rationale from AI Compliance & Governance Officer and Product Owner, recorded in ESC-EXEC-20261120-02, citing §13.2 and the §13.5 ST-06 row; production debrief sample via DEL-20261120-01, else AC 1 post-merge (BLG-GOV-378).",
           "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": [],
+          "spec_references": [
+            "claude/strategy/strategy_rules.md#13.2",
+            "docs/product/decisions/decisions--2026-08-17__release-v8.9--ST-06-section13-review.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
           "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "Blocked on ESC-EXEC-20261120-02; production debrief sample Human-Delegation DEL-20261120-01."
+          "sign_off_record": {
+            "status": "cleared",
+            "role": "AI Compliance & Governance Officer; Product Owner",
+            "method": "human",
+            "signed_by": "the user (holds both roles), in session",
+            "date": "2026-11-20",
+            "evidence": "ESC-EXEC-20261120-02 resolution"
+          },
+          "notes": "Reclassified delegated_decision → autonomous on resolution of ESC-EXEC-20261120-02 (2026-11-20T14:14:19Z): keep one sentence, decided by the user as AI Compliance & Governance Officer and Product Owner on an agent-mediated recommendation. Blocked 2026-11-20T08:49:02Z → resolved 2026-11-20T14:14:19Z. DEL-20261120-01 unblocked in-session (10 v1.1 production debriefs). AC 1 met: recorded decision (keep) with rationale and re-review trigger. AC 2 met: cites §13.2 and the §13.5 ST-06 row, each answered. AC 1 was not post-merge: the sample was supplied in-sprint, so BLG-GOV-378's decision is made (its AC met). Follow-ups filed: BLG-BE-226 (P2), BLG-AI-35 (P2), BLG-BE-228 (P2), BLG-BE-227 (P3), BLG-AI-36 (P3). Decision story: no code; first-time-right N/A. Deviation check: none (no spec changed)."
         }
       }
     }
   },
   "blocked_items": [],
-  "delegated_items": [
-    "ST-40"
-  ],
+  "delegated_items": [],
   "completed_items": [
     "ST-01",
     "ST-02",
@@ -1046,7 +1054,10 @@
       "raised_utc": "2026-11-20T08:49:02Z",
       "sla_due_utc": "2026-11-21T08:49:02Z",
       "blocks_execution": false,
-      "disposition": "Open"
+      "disposition": "Resolved",
+      "resolved_utc": "2026-11-20T14:14:19Z",
+      "resolved_by": "AI Compliance & Governance Officer; Product Owner (the user, in session)",
+      "resolution_summary": "Keep one observational sentence; re-review after BLG-BE-226 and BLG-AI-35 ship. Filed BLG-BE-226, BLG-AI-35, BLG-BE-228 (P2), BLG-BE-227, BLG-AI-36 (P3)."
     }
   },
   "merge_gate": {

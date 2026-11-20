@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-20 (session — 1 new item added: BLG-AI-34; ST-39/EPIC-07 v9.18 detector misses); prior — 2026-11-19 (session — 3 new items added: BLG-FE-326, BLG-FE-327, BLG-SPEC-242; PR #2307 agent-mediated DoQ and PO review findings); prior — 2026-11-19 (session — 2 new items added: BLG-SEC-48, BLG-SEC-49; ST-05/EPIC-01 v9.18 re-review remedies); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-20 (session — 5 new items added: BLG-BE-226, BLG-BE-227, BLG-BE-228, BLG-AI-35, BLG-AI-36; ST-40/EPIC-07 v9.18 debrief sample review); prior — 2026-11-20 (session — 1 new item added: BLG-AI-34; ST-39/EPIC-07 v9.18 detector misses); prior — 2026-11-19 (session — 3 new items added: BLG-FE-326, BLG-FE-327, BLG-SPEC-242; PR #2307 agent-mediated DoQ and PO review findings); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -2881,6 +2881,52 @@ Since v9.18 (ST-39) the daily briefing and chat use the journal summary's `_trad
 - The descriptive past-tense cases pass
 - Every existing journal-summary, briefing and chat test keeps its result
 - The sample audit reports the new forms
+
+---
+
+### BLG-AI-35 — Debrief number check leaves out the focus sentence on every trade that went to plan
+**Priority:** P2 (Medium)
+**Type:** AI Compliance / Correctness
+**Owner:** AI Compliance & Governance Officer; Backend Engineering Patterns Owner
+**Source:** ST-40 / EPIC-07, cycle `2026-11-18__release-v9.18` — production debrief sample review (10 `v1.1` debriefs generated 2026-11-20), agent-mediated AI Compliance & Governance Officer review; filed on the user's direction as AI Compliance & Governance Officer and Product Owner — 2026-11-20
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.19
+
+**Problem**
+In the 10-debrief production sample, 6 focus sentences were left out with `focus_area_omitted_reason = numeric_cross_check_failed` (twice each: first output and regeneration), including all 4 trades that exited on the trailing stop as planned (INTC 2026-07-01 and 2026-09-08, SNDK 2026-06-23, WDC 2026-06-22), plus DELL 2026-09-24 and WDC 2026-08-24. So the user sees a code-written summary only, which is the "not really an AI debrief" complaint behind BLG-GOV-378. The rejected text is not stored, so the failing number cannot be seen.
+
+**Scope**
+- Log the numbers that fail the cross-check (numbers only, never the sentence), so the cause can be seen
+- Find why the check fails on these trades and fix it within ST-06 review Condition 2 (numbers sourced from the inputs)
+- Regenerate the six debriefs and record how many focus sentences now pass
+
+**Acceptance Criteria**
+- The failing numbers for the six trades are recorded before the fix
+- The fix keeps Condition 2: a number not in the inputs still fails, in a test
+- Most of the six regenerated debriefs show a focus sentence, or the reason they cannot is recorded
+
+---
+
+### BLG-AI-36 — Debrief focus sentence on a gap through the stop implies the unmoved stop caused the loss
+**Priority:** P3 (Low)
+**Type:** AI Compliance / Correctness
+**Owner:** AI Compliance & Governance Officer; Backend Engineering Patterns Owner
+**Source:** ST-40 / EPIC-07, cycle `2026-11-18__release-v9.18` — production debrief sample review (10 `v1.1` debriefs generated 2026-11-20), agent-mediated AI Compliance & Governance Officer review; filed on the user's direction as AI Compliance & Governance Officer and Product Owner — 2026-11-20
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+**Depends on:** BLG-AI-34 (rule the forms together)
+
+**Problem**
+STX (2026-07-02) gapped through its stop: stop $1,045.26, exit $900.00, −2.92R. The focus sentence said "The trade's stop-loss level at 1045.26 remained unchanged throughout the 10-day holding period, allowing the position to decline 20.61% before triggering an exit." It passes the checks, but it misses that the exit was about 14% below the stop, and "allowing" frames the unmoved stop as the cause, which is close to suggesting a stop change (`strategy_rules.md` §13.2). Under the strategy, stops only move up with the trailing rule.
+
+**Scope**
+- Ask the AI Compliance & Governance Officer whether causal framing of an unmoved stop is a §13.2 failure, and rule a check form or prompt wording
+- Pass the gap (exit below stop) to the prompt as a computed input so the sentence can state it
+
+**Acceptance Criteria**
+- The ruling is recorded before the code change
+- The STX 2026-07-02 sentence gets the ruled result, in a test
+- Existing debrief check tests keep their results
 
 ---
 
@@ -8092,6 +8138,75 @@ Since ST-03 (v9.18), a notification written while `TELEGRAM_BOT_TOKEN`/`TELEGRAM
 **Acceptance Criteria**
 - A pytest stores an unconfigured row older than the cap, configures Telegram, runs re-delivery and asserts nothing is sent
 - The contract states the rule and what `delivery_status` the row reports
+
+---
+
+### BLG-BE-226 — Debrief "R achieved" uses the position's starting stop but is compared with the plan's R target
+**Priority:** P2 (Medium)
+**Type:** Backend / Correctness
+**Owner:** Backend Engineering Patterns Owner; Metrics Definitions & Analytics Owner
+**Source:** ST-40 / EPIC-07, cycle `2026-11-18__release-v9.18` — production debrief sample review (10 `v1.1` debriefs generated 2026-11-20), agent-mediated AI Compliance & Governance Officer review; filed on the user's direction as AI Compliance & Governance Officer and Product Owner — 2026-11-20
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.19
+
+**Problem**
+`debrief_service.py` computes R achieved as `(exit − entry) / (entry − positions.initial_stop)`, but the summary puts it "against a 2.2R target" taken from the trade plan, whose target is set against the plan's own stop. Where the two stops differ, the debrief understates the result. MU (exit 2026-09-30): entry $926.80, exit $1,058.60, position initial stop $702.85, plan stop $868.00. The debrief shows +0.59R "against a 2.2R target"; on the plan's stop it is +2.24R, so the target was met. SNDK (2026-09-28: 0.22R shown, 0.86R on the plan stop) and INTC (2026-09-08: 0.38R shown, 1.52R on the plan stop) are the same. The AI focus sentence then repeats the wrong comparison ("captured only 0.59R of your planned 2.2R target").
+
+**Scope**
+- Decide (Metrics Definitions & Analytics Owner) which stop R achieved uses when a plan exists, or whether the summary shows both, and why the position's initial stop differs from the plan stop on these trades
+- Make the R achieved figure and the R target in the summary use the same basis, and pass the same figures to the focus-area prompt
+- Update the debrief spec and `metrics_definitions.md` if the definition changes
+
+**Acceptance Criteria**
+- The basis ruling is recorded before the code change
+- MU (2026-09-30) is reported against its target on one consistent basis, in a test built from its real figures
+- A trade with no plan keeps its current R achieved
+- Existing debrief tests keep their results, or change only as the ruling states
+
+---
+
+### BLG-BE-227 — Debrief summary shows stops that do not fit the exit
+**Priority:** P3 (Low)
+**Type:** Backend / Correctness
+**Owner:** Backend Engineering Patterns Owner
+**Source:** ST-40 / EPIC-07, cycle `2026-11-18__release-v9.18` — production debrief sample review (10 `v1.1` debriefs generated 2026-11-20), agent-mediated AI Compliance & Governance Officer review; filed on the user's direction as AI Compliance & Governance Officer and Product Owner — 2026-11-20
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+In the 2026-11-20 sample, the deterministic summary shows stops that cannot be right for the exit it describes. STX (2026-05-06, manual exit at $767.20) has a trailing stop at exit of $811.88, above the exit price; the focus sentence then says the gain came "before the trailing stop at exit (811.88) could be triggered". SNDK (2026-06-23) says the trailing stop was raised to $2,048.82 with an exit at $2,003.01. INTC (2026-09-08) says it "exited at $105.50 when the stop at $60.83 was hit". These figures come from `positions.current_stop`/`initial_stop` as stored, which may have been recalculated after exit.
+
+**Scope**
+- Find where each shown stop comes from and when it was last written, for these three trades
+- Show the stop in force at exit, or leave the figure out when it cannot be known, and say which in the summary
+- Do not pass an unreliable stop to the focus-area prompt
+
+**Acceptance Criteria**
+- For STX 2026-05-06, SNDK 2026-06-23 and INTC 2026-09-08, the summary shows no stop that contradicts the exit, in tests built from their real figures
+- The cause of each case is recorded in the item before the fix
+
+---
+
+### BLG-BE-228 — INTC 2026-09-08 trade appears twice in trade history
+**Priority:** P2 (Medium)
+**Type:** Backend / Data Integrity
+**Owner:** Backend Engineering Patterns Owner; Data Model & Domain Schema Owner
+**Source:** ST-40 / EPIC-07, cycle `2026-11-18__release-v9.18` — production debrief sample review (10 `v1.1` debriefs generated 2026-11-20), agent-mediated AI Compliance & Governance Officer review; filed on the user's direction as AI Compliance & Governance Officer and Product Owner — 2026-11-20; the user confirmed it looks like a duplicate
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.19
+
+**Problem**
+Production `trade_history` has two rows for INTC with the same exit date (2026-09-08), exit reason (Trailing Stop) and P&L (+13.48%): ids `cad2bd50-60f9-4ca0-8783-bcc46c4a2e1f` and `6572f8da-c8d5-4065-b089-2e02560fe5ae`. The user did not sell INTC in two lots that day. A duplicate doubles that trade in realised P&L, win rate, trade counts and every analytics view that reads `trade_history`.
+
+**Scope**
+- Compare the two rows in full (position id, quantities, prices, created times) and confirm the duplicate
+- Find which write path created the second row, and whether any other trades are affected (a query for rows sharing position, exit date and exit price)
+- Remove the duplicate with the user's go-ahead, and stop the write path from creating another (for example a unique constraint or an idempotent exit)
+
+**Acceptance Criteria**
+- The cause is recorded before any data change
+- Production has one INTC 2026-09-08 row, and the query finds no other duplicates
+- A test shows the write path cannot create a second row for the same exit
 
 ---
 
