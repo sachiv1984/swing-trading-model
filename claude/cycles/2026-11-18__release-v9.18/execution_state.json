@@ -936,21 +936,23 @@
       "pr_status": "none",
       "qa_signed_off": false,
       "qa_evidence_log": "claude/cycles/2026-11-18__release-v9.18/qa_evidence_EPIC-07.md",
-      "test_scenarios": [],
+      "test_scenarios": [
+        "tests/test_briefing_chat_parameter_change_check.py"
+      ],
       "stories": {
         "ST-39": {
           "title": "Check daily briefing and chat output against §13.2",
           "classification": "autonomous",
-          "status": "in_progress",
+          "status": "done",
           "assigned_to": "human",
           "github_issue": 2304,
           "branch": "exec/2026-11-18__release-v9.18/EPIC-07",
-          "commit_sha": null,
+          "commit_sha": "5e91c0e87bf91dda0f3b14c2be907638d27717e5",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": "AI Compliance & Governance Officer ruling on check form (1) and failure handling (2), dated, recorded in ESC-EXEC-20261120-01, citing strategy_rules.md §13.2 and the §13.5 BLG-FEAT-50/51 row.",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-11-20T09:21:36Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/specs/api_contracts/ai_endpoints.md#POST /ai/daily-briefing",
             "docs/specs/api_contracts/ai_endpoints.md#POST /ai/chat",
@@ -960,8 +962,8 @@
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": {
             "status": "cleared",
             "role": "AI Compliance & Governance Officer",
@@ -970,7 +972,7 @@
             "date": "2026-11-20",
             "evidence": "ESC-EXEC-20261120-01 resolution"
           },
-          "notes": "Reclassified delegated_decision → autonomous on resolution of ESC-EXEC-20261120-01 (2026-11-20T09:02:57Z): ruling (1)(a) trading_change only, (2)(A) regenerate once then code-written fallback, given by the user in session as AI Compliance & Governance Officer. Blocked 2026-11-20T08:49:02Z → resolved 2026-11-20T09:02:57Z. First-time-right: 2026-11-20 pass A — 2 done (worked examples: tighten-stop advice fails; EXIT/HOLD/ENTER/MONITOR rule wording incl. \"You should exit NVDA…\" passes; second failure per field); 3 done (detector run on 15 sentences: misses \"You may want to tighten stops…\" and \"Your stops look too loose…\" → raised to AI Compliance & Governance Officer, shared journal-summary detector); 5 high review (shared ai_service module); 7 done (premise \"briefing/chat check only stop times and tickers\" confirmed in code); 17 done (readers of new result values: chat rating answer_id, cost/anomaly per-row sums; monthly-narrative and debrief counters are endpoint-scoped — unaffected); 18 done (fixtures from generate_daily_briefing/ai_chat code paths); 20 done (withheld copy read per edge case); 24 done (golden prompt fixtures and version pins); 1,4,6,8,11,19,21,22,23 N/A (backend only: no displayed figures, UI, time rule, rename or sweep)."
+          "notes": "Reclassified delegated_decision → autonomous on resolution of ESC-EXEC-20261120-01 (2026-11-20T09:02:57Z): ruling (1)(a) trading_change only, (2)(A) regenerate once then code-written fallback, given by the user in session as AI Compliance & Governance Officer. Blocked 2026-11-20T08:49:02Z → resolved 2026-11-20T09:02:57Z. First-time-right: 2026-11-20 pass A — 2 done (worked examples: tighten-stop advice fails; EXIT/HOLD/ENTER/MONITOR rule wording incl. \"You should exit NVDA…\" passes; second failure per field); 3 done (detector run on 15 sentences: misses \"You may want to tighten stops…\" and \"Your stops look too loose…\" → raised to AI Compliance & Governance Officer, shared journal-summary detector); 5 high review (shared ai_service module); 7 done (premise \"briefing/chat check only stop times and tickers\" confirmed in code); 17 done (readers of new result values: chat rating answer_id, cost/anomaly per-row sums; monthly-narrative and debrief counters are endpoint-scoped — unaffected); 18 done (fixtures from generate_daily_briefing/ai_chat code paths); 20 done (withheld copy read per edge case); 24 done (golden prompt fixtures and version pins); 1,4,6,8,11,19,21,22,23 N/A (backend only: no displayed figures, UI, time rule, rename or sweep). First-time-right: 2026-11-20 pass B — 9 done (high code review: 2 important + 4 nits; 5 fixed in-story: negated-sentence false positives (per-sentence check + _NEGATED_CHANGE_RE), failed regeneration now keeps the first output with the fallback, null actions guard, withheld chat rows excluded from rating/acceptance rate, two stale contract lines); detector misses (\"You may want to tighten stops\", \"Your stops look too loose\", \"Halve the position size\", \"Trail the stop higher\", \"Don't hesitate to tighten your stop\") raised to AI Compliance & Governance Officer — shared journal-summary detector, outside ST-39's ruling; 10 done (ai_endpoints.md 1.42, api_changelog.md 1.35.0, ai_s13_boundary_test_suite.md 1.7 in the code commit); 13 done (matrix and changelog rows read back); 15 N/A (_trading_change_found reused unchanged); 16 N/A (new result values only; existing rows keep their meaning). AC 1: ruling 263fb657 precedes code 5e91c0e8. AC 2: test_briefing_chat_parameter_change_check.py (tighten-stop advice regenerated then withheld; EXIT/HOLD rule wording passes first time). AC 3: all existing briefing/chat tests pass (version pins updated for the prompt bump); full suite 3749 passed. AC 4: ruling and tests cite §13.2 and the §13.5 BLG-FEAT-50/51 row. CI on 5e91c0e8: all 7 workflows success (CI Pytest 44710051573). Deviation check vs ruling and ai_endpoints.md 1.42: none."
         },
         "ST-40": {
           "title": "Decide whether the debrief may say more than one restating sentence",
@@ -1006,7 +1008,8 @@
     "ST-03",
     "ST-04",
     "ST-05",
-    "ST-06"
+    "ST-06",
+    "ST-39"
   ],
   "open_escalations": {
     "ESC-EXEC-20261119-01": {
@@ -1069,7 +1072,8 @@
     "2026-11-19T14:30:25Z EPIC-01 PR #2307 opened (STEP 3.2.B). Pre-PR gates: DoQ Date non-blank; signer format agent-mediated; qa_evidence committed (4c1da2ac); check_api_performance_baseline_drift.py PASSED; origin/main..HEAD carries only [EPIC-01] and [GOVERNANCE] commits. Awaiting human DoQ QA sign-off and PO acceptance (incl. BLG-SEC-48, BLG-SEC-49, BLG-GOV-430 rationale).",
     "2026-11-19T16:04:06Z PR #2307 agent-mediated DoQ + PO review (user-directed): both 'Approved with Comments', posted as one labelled comment (issuecomment-7014573316). DoQ finding 1 (Lighthouse baseline served uncompressed) fixed in-PR: 51dc5e68 gzip, 0014dab0 pinned Lighthouse lockfile (unpinned install had failed on run 44560085658), 979fe743 baseline re-recorded (run 44560607996, performance_budget.md v2.1). Filed BLG-FE-326, BLG-FE-327, BLG-SPEC-242 (31008092). Not merged; awaiting human DoQ/PO and merge.",
     "2026-11-19T16:37:34Z EPIC-01 PR #2307 merged by sachiv1984 at 2026-11-19T16:36:27Z (merge 3a07684e); PR #2308 merged 16:36:06Z (b5b646ae). Human DoQ QA sign-off and PO acceptance given by the user in session (2026-11-19T16:37:34Z), arriving just after the merge; the merge is also confirmation by the holder of both roles (ESC-CLOSE-20261103-01). Recorded on main (PR already merged, LL-v9.12-P3-02). Orphaned post-merge commit check: git log origin/main..origin/exec/…/EPIC-01 empty — nothing to reconcile. No sibling EPIC branches exist, so the 3c sync was not needed. BLG-FE-325 ✅ COMPLETE banner added.",
-    "2026-11-20T08:49:02Z EPIC-07 started (run sprint --epic EPIC-07; merge sequence allows EPIC-07 at any point). Session-start divergence check: main == origin/main. Sealed-file check clean. Issues #2304/#2305 open. Branch exec/2026-11-18__release-v9.18/EPIC-07 cut from main e36bbca7. ST-39 and ST-40 blocked_decision on ESC-EXEC-20261120-01/-02; DEL-20261120-01 raised for the ST-40 production debrief sample."
+    "2026-11-20T08:49:02Z EPIC-07 started (run sprint --epic EPIC-07; merge sequence allows EPIC-07 at any point). Session-start divergence check: main == origin/main. Sealed-file check clean. Issues #2304/#2305 open. Branch exec/2026-11-18__release-v9.18/EPIC-07 cut from main e36bbca7. ST-39 and ST-40 blocked_decision on ESC-EXEC-20261120-01/-02; DEL-20261120-01 raised for the ST-40 production debrief sample.",
+    "2026-11-20T09:25:56Z ST-39 done at 5e91c0e8 (ruling 263fb657 first). High code review run before commit; findings fixed in-story; detector misses raised to the AI Compliance & Governance Officer."
   ],
   "sealed": false,
   "sealed_utc": null
