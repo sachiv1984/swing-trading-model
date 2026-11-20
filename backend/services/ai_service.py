@@ -110,16 +110,19 @@ def _prompt_hash(system_prompt: str, user_message: str) -> str:
 
 
 def _audit_failed_model_call(create_claude_audit_entry, endpoint: str, prompt_version: str,
-                             prompt_hash: str, t0: float) -> None:
+                             prompt_hash: str, t0: float, result: str = "model_call_failed") -> None:
     """ST-06 (BLG-AI-08, v9.11): a model call that fails after retries still
     writes an audit row, marked compliance_check_result='model_call_failed'.
-    Never raises: the endpoint's own fallback path continues."""
+    ST-39 (v9.18): a failed §13.2 regeneration is the terminal row of a
+    withheld output and is marked 'fail_fallback:model_call_failed', the
+    monthly narrative's convention, so counting fail_fallback rows counts
+    every withheld output. Never raises: the endpoint's own fallback path continues."""
     try:
         create_claude_audit_entry(
             endpoint=endpoint,
             model_id=MODEL_BRIEFING,
             prompt_version=prompt_version,
-            compliance_check_result="model_call_failed",
+            compliance_check_result=result,
             latency_ms=int((time.time() - t0) * 1000),
             prompt_hash=prompt_hash,
         )
@@ -608,16 +611,32 @@ CHAT_WITHHELD_MESSAGE = (
 # does not suggest a change ("Your stop should not be moved.", "I cannot
 # suggest whether stops should be tightened."). Briefing and chat only: the
 # new prompt line invites exactly this wording (ST-39 code review). The
-# negation must govern the change verb directly ("not be moved", "doesn't
-# need to be tightened"), so "Don't hesitate to tighten your stop." still
-# fails. Known limit: one sentence that both negates and advises ("Do not
-# move it; rather tighten it" is two clauses and is checked per clause).
+# exemption covers only the negated phrase itself: each "not/never/n't
+# [need to] [be] <change verb>" and "no need to <change verb>" phrase is
+# removed and the rest of the sentence is checked again, so advice beside a
+# negation still fails ("Consider tightening stops since NVDA has not
+# moved.", "Your stop should be raised, not lowered."). A declined
+# suggestion counts only as "can't/won't/don't ... suggest/recommend/advise/
+# say whether/if/that", and the text before it is still checked ("I can't
+# recommend changes, but your stop could be tightened." fails). PR review,
+# Director of Quality and Product Owner finding 1, 2026-11-20.
 _NEGATED_CHANGE_RE = re.compile(
     rf"(?:\bnot|\bnever|n't)\s+(?:need\s+to\s+)?(?:be\s+)?{_TC_VERB}\b"
-    r"|\bno\s+need\s+to\b"
-    r"|(?:\bcannot|\bcan\s+not|\bcan't|\bwon't|\bwill\s+not|\bdo\s+not|\bdon't|\bdoes\s+not|\bdoesn't)"
-    r"\s+(?:suggest|recommend|advise|say)\b",
+    rf"|\bno\s+need\s+to\s+{_TC_VERB}\b",
     re.IGNORECASE)
+_DECLINED_SUGGESTION_RE = re.compile(
+    r"(?:\bcannot|\bcan\s+not|\bcan't|\bwon't|\bwill\s+not|\bdo\s+not|\bdon't|\bdoes\s+not|\bdoesn't)"
+    r"\s+(?:suggest|recommend|advise|say)\s+(?:whether|if|that)\b",
+    re.IGNORECASE)
+
+
+def _sentence_suggests_change(sentence: str) -> bool:
+    """Whether one sentence suggests a change once negated phrases and a
+    declined suggestion are set aside (see _NEGATED_CHANGE_RE)."""
+    declined = _DECLINED_SUGGESTION_RE.search(sentence)
+    if declined:
+        return _trading_change_found(sentence[:declined.start()])
+    return _trading_change_found(_NEGATED_CHANGE_RE.sub(" ", sentence))
 
 
 def parameter_change_failures(text, endpoint: Optional[str] = None, field: Optional[str] = None) -> list:
@@ -633,10 +652,10 @@ def parameter_change_failures(text, endpoint: Optional[str] = None, field: Optio
     for sentence in re.split(r"(?<=[.!?;\n])", text):
         if not _trading_change_found(sentence):
             continue
-        if _NEGATED_CHANGE_RE.search(sentence):
-            logger.warning("§13.2 check: endpoint=%s field=%s action=negation_exempt", endpoint, field)
-        else:
+        if _sentence_suggests_change(sentence):
             failed = True
+        else:
+            logger.warning("§13.2 check: endpoint=%s field=%s action=negation_exempt", endpoint, field)
     return ["trading_change"] if failed else []
 
 
@@ -930,9 +949,13 @@ def generate_daily_briefing() -> dict:
                     messages=[{"role": "user", "content": context}],
                 )
             except Exception:
-                _audit_failed_model_call(create_claude_audit_entry, "POST /ai/daily-briefing", BRIEFING_PROMPT_VERSION, prompt_hash, t0)
                 if first_failed is None:
+                    _audit_failed_model_call(create_claude_audit_entry, "POST /ai/daily-briefing",
+                                             BRIEFING_PROMPT_VERSION, prompt_hash, t0)
                     raise
+                _audit_failed_model_call(create_claude_audit_entry, "POST /ai/daily-briefing",
+                                         BRIEFING_PROMPT_VERSION, prompt_hash, t0,
+                                         result="fail_fallback:model_call_failed")
                 # The regeneration failed: the first output takes the terminal
                 # fallback instead of losing the whole briefing.
                 logger.error("daily briefing regeneration failed; first output returned with the §13.2 "
@@ -1170,9 +1193,12 @@ def ai_chat(question: str, context_opts: Optional[dict] = None) -> dict:
                     messages=[{"role": "user", "content": question}],
                 )
             except Exception:
-                _audit_failed_model_call(create_claude_audit_entry, "POST /ai/chat", CHAT_PROMPT_VERSION, prompt_hash, t0)
                 if attempt == 1:
+                    _audit_failed_model_call(create_claude_audit_entry, "POST /ai/chat", CHAT_PROMPT_VERSION,
+                                             prompt_hash, t0)
                     raise
+                _audit_failed_model_call(create_claude_audit_entry, "POST /ai/chat", CHAT_PROMPT_VERSION,
+                                         prompt_hash, t0, result="fail_fallback:model_call_failed")
                 # The regeneration failed after a failing first answer: that
                 # answer is still withheld, never shown.
                 logger.error("chat regeneration failed; returning the §13.2 withheld message", exc_info=True)

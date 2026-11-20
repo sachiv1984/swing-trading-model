@@ -245,7 +245,7 @@ class TestRegenerationFailure:
         assert "error" not in result
         assert result["summary"] == BRIEFING_SUMMARY_WITHHELD
         assert result["actions"] == actions
-        assert _results(db) == ["fail_regenerate:trading_change", "model_call_failed"]
+        assert _results(db) == ["fail_regenerate:trading_change", "fail_fallback:model_call_failed"]
 
     def test_briefing_keeps_first_output_with_fallback_when_regeneration_unparseable(self, db):
         actions = [{"type": "HOLD", "ticker": "VOD.L", "description": HOLD_TEXT}]
@@ -262,7 +262,7 @@ class TestRegenerationFailure:
             result = ai_service.ai_chat("Should I tighten my stop?")
         assert result["response"] == CHAT_WITHHELD_MESSAGE
         assert "answer_id" not in result
-        assert _results(db) == ["fail_regenerate:trading_change", "model_call_failed"]
+        assert _results(db) == ["fail_regenerate:trading_change", "fail_fallback:model_call_failed"]
 
     def test_briefing_null_actions_with_failing_summary_does_not_error(self, db):
         result, _, _ = _run("generate_daily_briefing",
@@ -305,3 +305,29 @@ def test_briefing_exemption_logged_with_field(db, caplog):
     assert result["actions"] == actions
     assert any("endpoint=POST /ai/daily-briefing field=actions[0].description action=negation_exempt"
                in r.getMessage() for r in caplog.records)
+
+
+# ─── PR review (Director of Quality and Product Owner finding 1, 2026-11-20) ─
+# The exemption covers only the negated phrase or a declined suggestion; any
+# advice elsewhere in the sentence still fails.
+
+@pytest.mark.parametrize("text", [
+    "Consider tightening stops since NVDA has not moved.",
+    "Consider tightening your stop on NVDA, and do not widen it.",
+    "Your stop should be raised, not lowered.",
+    "There's no need to wait: consider tightening your stop on NVDA.",
+    "If the stop is not moved, consider reducing your position size.",
+    "I don't say this lightly, but consider tightening your stop.",
+    "I can't recommend strongly enough that you consider tightening your stop.",
+    "Consider tightening your stop on NVDA before earnings, which are not reviewed here.",
+    "I can't recommend changes to your strategy, but your stop on NVDA could be tightened.",
+    "I cannot advise on trades, but you should consider tightening your stop on NVDA.",
+    "While I don't recommend acting hastily, reducing position size would be prudent.",
+    "There is no need to exit yet, though your stop should be raised to lock in gains.",
+    "No need to panic, but consider tightening your stop.",
+    "I can't say for sure, but your stop should be tightened.",
+])
+def test_advice_beside_a_negation_or_disclaimer_fails(text, caplog):
+    with caplog.at_level(logging.WARNING, logger="services.ai_service"):
+        assert parameter_change_failures(text, "POST /ai/chat", "response") == ["trading_change"]
+    assert not any("negation_exempt" in r.getMessage() for r in caplog.records)

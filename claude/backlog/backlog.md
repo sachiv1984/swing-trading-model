@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-20 (session — 3 new items added: BLG-GOV-431, BLG-QA-275, BLG-AI-37; EPIC-07 v9.18 retrospective); prior — 2026-11-20 (session — 5 new items added: BLG-BE-226, BLG-BE-227, BLG-BE-228, BLG-AI-35, BLG-AI-36; ST-40/EPIC-07 v9.18 debrief sample review); prior — 2026-11-20 (session — 1 new item added: BLG-AI-34; ST-39/EPIC-07 v9.18 detector misses); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-20 (session — 3 new items added: BLG-FE-328, BLG-AI-38, BLG-AI-39; EPIC-07 v9.18 agent-mediated PR review); prior — 2026-11-20 (session — 3 new items added: BLG-GOV-431, BLG-QA-275, BLG-AI-37; EPIC-07 v9.18 retrospective); prior — 2026-11-20 (session — 5 new items added: BLG-BE-226, BLG-BE-227, BLG-BE-228, BLG-AI-35, BLG-AI-36; ST-40/EPIC-07 v9.18 debrief sample review); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -2951,6 +2951,52 @@ The journal summary, debrief, monthly narrative and (since v9.18) the daily brie
 - Every checker and the audit script run against the shared fixture in CI
 - A sentence a checker gets wrong is either fixed or listed as a named exception with a backlog ID
 - Adding a sentence to the fixture is the documented way to record a newly found phrasing
+
+---
+
+### BLG-AI-38 — Withheld briefing and chat copy hints at the advice it hides and invites rephrasing
+**Priority:** P3 (Low)
+**Type:** AI Compliance / UX Copy
+**Owner:** AI Compliance & Governance Officer; Frontend Specifications & UX Owner
+**Source:** Agent-mediated EPIC-07 PR review (cycle `2026-11-18__release-v9.18`, ST-39), user-directed, Product Owner findings 2 and 3 — 2026-11-20
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+The ruled copy (`ESC-EXEC-20261120-01`) tells the user the AI "suggested changing a stop, position size or setup". On the Dashboard card a withheld action reads "[EXIT] NVDA — Description withheld because it suggested changing a stop, position size or setup.", which tells the user the AI thinks NVDA's stop should change (a softened §13.2 suggestion in code-written text), names three subjects when one triggered, and drops the reason for a rule-based EXIT. When every action is withheld the card shows identical lines. The withheld summary sits under "Market Context" and does not mention Regenerate. The chat message ends "Please ask again or rephrase your question.", which invites wording around the control; each retry costs two model calls.
+
+**Scope**
+- Ask the AI Compliance & Governance Officer to re-rule the three strings (the copy is ruled verbatim)
+- For a withheld action, use a code-written reason from the deterministic data where one exists (for example "stop breached" for EXIT)
+- Chat: say what the assistant cannot do and what it can help with instead, without inviting a rephrase
+
+**Acceptance Criteria**
+- The re-ruling is recorded before the change
+- Backend tests assert the new strings; the Dashboard card and chat widget show them, checked by Playwright or a recorded staging run
+- No withheld string implies which parameter the AI wanted to change
+
+---
+
+### BLG-AI-39 — Rule-cited trailing-stop and sizing wording is withheld by the briefing and chat check
+**Priority:** P3 (Low)
+**Type:** AI Compliance / Correctness
+**Owner:** AI Compliance & Governance Officer; Backend Engineering Patterns Owner
+**Source:** Agent-mediated EPIC-07 PR review (cycle `2026-11-18__release-v9.18`, ST-39), user-directed, Director of Quality finding 3 and Product Owner verification note — 2026-11-20
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+**Depends on:** BLG-AI-34, BLG-AI-37 (rule with the other form changes; add to the shared sentence set)
+
+**Problem**
+Ruling `ESC-EXEC-20261120-01` (1)(a) intends recommendations under the existing rules to pass, but these are flagged `trading_change` and so regenerated, then withheld (verified 2026-11-20): "Under the trailing rule, NVDA's stop should be raised to £460.00 at today's recalculation.", "The trailing stop on NVDA should move up to £460.00 per the strategy's ATR rule.", "AAPL stop should be raised to 150 under the trailing rule.", "Review position sizing for the new ENTER signal against the 1% risk rule before entering." A correct note about a deterministic stop ratchet is lost.
+
+**Scope**
+- Ask the AI Compliance & Governance Officer whether wording that cites the strategy's own rule for a deterministic change passes, and on what evidence (for example the figure matches the computed trailing stop)
+- Implement the ruled result and add the sentences to B-DB-06/B-CH-07 and the BLG-AI-37 shared set
+
+**Acceptance Criteria**
+- The ruling is recorded before the code change
+- Each sentence above gets the ruled result, in a test
+- Every existing briefing, chat and journal-summary test keeps its result
 
 ---
 
@@ -7959,6 +8005,28 @@ With `TELEGRAM_BOT_TOKEN` or `TELEGRAM_CHAT_ID` unset, Notification Preferences 
 **Acceptance Criteria**
 - With Telegram unconfigured, History and the Feed no longer contradict each other for the same alert (Playwright)
 - The spec's column definition matches what the backend writes
+
+---
+
+### BLG-FE-328 — Dashboard briefing "Ask the AI" sends the summary as a string, so every question is rejected
+**Priority:** P2 (Medium)
+**Type:** Frontend / Correctness
+**Owner:** Frontend Specifications & UX Owner; Backend Engineering Patterns Owner
+**Source:** Agent-mediated EPIC-07 PR review (cycle `2026-11-18__release-v9.18`, ST-39), user-directed, Product Owner finding 4 — 2026-11-20
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.19
+
+**Problem**
+`src/components/dashboard/home/AiDailyBriefing.js` line 101 calls `api.ai.chat(chatQuestion.trim(), briefing?.summary || null)`, so `context` is the briefing summary string. `POST /ai/chat`'s `ChatRequest.context` is `Optional[dict]` (`backend/routers/ai.py`), and pydantic rejects a string ("Input should be a valid dictionary", reproduced 2026-11-20 against the model class, not a live server). The question box shows only once a briefing has loaded, so every question asked from the Dashboard card should fail with "Unable to get a response". The e2e specs stub `/ai/chat`, so CI cannot see it. Pre-existing (ST-12, `8680d28f`).
+
+**Scope**
+- Confirm the failure on staging
+- Decide whether the card should send no context, or a dict the contract allows, and fix the call
+- Add a test that sends the card's real request body to the real `ChatRequest` model (an API contract test, not a stubbed route)
+
+**Acceptance Criteria**
+- A question asked from the Dashboard briefing card gets a model answer on staging
+- A test fails on the old request body and passes on the new one
 
 ---
 

@@ -1,7 +1,7 @@
 {
   "_metadata": {
     "description": "Golden-fixture registry for AI prompt templates (ST-09, BLG-AI-07, EPIC-03, v9.8). Each entry pins the exact template text (via sha256) to the prompt_version recorded in the source at fixture-authoring time. tests/test_ai_prompt_template_golden_fixtures.py fails a covered template's drift check if its text changes without prompt_version also changing. When intentionally editing a covered template: bump the source's prompt_version/PROMPT_VERSION constant AND update this fixture's sha256 + prompt_version for that entry in the same commit.",
-    "disallowed_phrase_source": "scripts/run_ai_output_boundary_sample_audit.py::scan_prescriptive / scan_prediction (implements strategy_rules.md §13.2 boundary)"
+    "disallowed_phrase_source": "scripts/run_ai_output_boundary_sample_audit.py::scan_prescriptive / scan_prediction (implements strategy_rules.md \u00a713.2 boundary)"
   },
   "templates": {
     "daily-briefing (POST /ai/daily-briefing)": {
