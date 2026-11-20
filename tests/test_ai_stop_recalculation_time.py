@@ -97,6 +97,6 @@ def test_stop_time_date_uses_the_utc_date():
 
 def test_prompt_versions_bumped_for_st08():
     from services import ai_service
-    # Briefing v1.3 is ST-02/ST-03 (v9.12); chat v1.2 is ST-19 (v9.13).
-    assert ai_service.BRIEFING_PROMPT_VERSION == "v1.3"
-    assert ai_service.CHAT_PROMPT_VERSION == "v1.2"
+    # Briefing v1.3 was ST-02/ST-03 (v9.12) and chat v1.2 ST-19 (v9.13); both bumped by ST-39 (v9.18).
+    assert ai_service.BRIEFING_PROMPT_VERSION == "v1.4"  # ST-39 (v9.18) bump
+    assert ai_service.CHAT_PROMPT_VERSION == "v1.3"  # ST-39 (v9.18) bump

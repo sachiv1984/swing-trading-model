@@ -1,8 +1,8 @@
 **Owner:** AI Compliance & Governance Officer; QA & Testing Owner
 **Class:** Canonical (Class 1)
 **Status:** Canonical
-**Version:** 1.6
-**Last Updated:** 2026-11-05 (ST-25/ST-27, EPIC-04, v9.15, BLG-AI-24/BLG-AI-26 — B-JS-04 adds the six missed advisory sentences as caught cases and the "can", reported-speech and "help explain" sentences as passing; ruling `ESC-EXEC-20261105-01` (A″)); prior — 2026-10-30 (ST-15, EPIC-03, v9.14, BLG-AI-20 — B-JS-04 adds the seven advisory phrasings as caught cases and four past-tense negatives; ruling `ESC-EXEC-20261030-02`); prior — 2026-10-27 (ST-18, EPIC-03, v9.13, BLG-AI-15 — `POST /ai/journal-summary` added: scenarios B-JS-01 to B-JS-04 and a compliance-matrix row); prior history retained — see prior entries in version control
+**Version:** 1.7
+**Last Updated:** 2026-11-20 (ST-39, EPIC-07, v9.18, BLG-AI-29 — B-DB-06 and B-CH-07 added: §13.2 parameter-change check on the daily briefing and chat; ruling `ESC-EXEC-20261120-01` (1)(a)/(2)(A)); prior — 2026-11-05 (ST-25/ST-27, EPIC-04, v9.15, BLG-AI-24/BLG-AI-26 — B-JS-04 adds the six missed advisory sentences as caught cases and the "can", reported-speech and "help explain" sentences as passing; ruling `ESC-EXEC-20261105-01` (A″)); prior — 2026-10-30 (ST-15, EPIC-03, v9.14, BLG-AI-20 — B-JS-04 adds the seven advisory phrasings as caught cases and four past-tense negatives; ruling `ESC-EXEC-20261030-02`); prior history retained — see prior entries in version control
 **Story:** ST-10 (BLG-QA-68, EPIC-02, v6.3)
 **Implements:** §13 Advisory-Only Constraint (SRB-v1.7 §13)
 
@@ -138,6 +138,19 @@ For each endpoint, §13 compliance is assessed across four dimensions:
 
 ---
 
+### Scenario B-DB-06 — No suggestion to change stops, sizing or setups in output
+
+**Dimension:** D1, D4
+**Method:** unit tests in `tests/test_briefing_chat_parameter_change_check.py` (model call mocked); the journal summary's `trading_change` category (`parameter_change_failures()`) applied to the raw `summary` and each `actions[].description`; regenerate once, then code-written replacement per failing field (ruling `ESC-EXEC-20261120-01` (1)(a), (2)(A))
+**Test type:** Automated (CI)
+**Cites:** `strategy_rules.md` §13.2 (the AI-text sentence naming the daily briefing and chat) and the §13.5 attestation row for the BLG-FEAT-50/51 §13 review (`docs/product/decisions/decisions--2026-06-24__release-v6.2--BLG-FEAT-50-51-section13-review.md`). The check enforces the §13.2 sentence on output; the review's clearance stands, with this output-side control added (no new write path, memory or automation).
+
+**Pass criterion:** a summary suggesting tightening a stop ("Consider tightening your stop on NVDA to lock in gains.") triggers one regeneration, and the second output is shown (`fail_regenerate:trading_change`, then `pass_on_regenerate`); a second failure replaces the summary with the code-written withheld line, and a failing EXIT action keeps `type` EXIT and `ticker` with the code-written description (`fail_fallback:trading_change`, combined with the stop-time and ticker results of the kept text). Deterministic actions under the existing rules pass on the first call with no regeneration: "NVDA closed below its trailing stop of £450.00 (…); the exit rule applies." (EXIT), "VOD.L is holding above its stop of £66.00 (…)." (HOLD), "You should exit NVDA because it breached its stop." Sentences that negate or decline a change pass ("Your stop should not be moved; the strategy's rules set it.", "I cannot suggest whether stops should be tightened.", "There is no need to adjust your stop."), while advice beside a negated clause still fails ("I would not move the stop; however, consider tightening stops on the rest."). If the regeneration call raises or is unparseable, the first output is returned with the fallback (no generic error). Every existing briefing test passes.
+
+**Fail criterion:** text suggesting a stop, sizing or setup change reaches the response, or a rule-based EXIT/HOLD action is regenerated or replaced.
+
+---
+
 ## Endpoint: POST /ai/chat
 
 ### Scenario B-CH-01 — Advisory language in system prompt
@@ -218,6 +231,19 @@ For each endpoint, §13 compliance is assessed across four dimensions:
 
 ---
 
+### Scenario B-CH-07 — No suggestion to change stops, sizing or setups in output
+
+**Dimension:** D1, D4
+**Method:** unit tests in `tests/test_briefing_chat_parameter_change_check.py` (model call mocked); same check as B-DB-06 applied to `response`
+**Test type:** Automated (CI)
+**Cites:** `strategy_rules.md` §13.2 (the AI-text sentence naming the daily briefing and chat) and the §13.5 attestation row for the BLG-FEAT-50/51 §13 review (`docs/product/decisions/decisions--2026-06-24__release-v6.2--BLG-FEAT-50-51-section13-review.md`). The check enforces the §13.2 sentence on output; the review's clearance stands, with this output-side control added (no new write path, memory or automation).
+
+**Pass criterion:** an answer suggesting tightening a stop triggers one regeneration, the second answer is shown and its `answer_id` is the second audit row; a second failure returns the fixed withheld message with `advisory: true` and no `answer_id` (`fail_fallback:trading_change`); a rule-based answer ("You should exit NVDA because it breached its stop, …") passes first time with `answer_id`. Every existing chat test passes.
+
+**Fail criterion:** text suggesting a stop, sizing or setup change reaches the response, or the withheld message carries an `answer_id`.
+
+---
+
 ## Endpoint: POST /reports/monthly-pnl/narrative
 
 **Added:** v1.1 (ST-25, EPIC-04, v9.11, BLG-FEAT-59). §13 CONDITIONAL: `docs/product/decisions/decisions--2026-10-08__release-v9.11--ST-25-monthly-pnl-narrative-section13-review.md` (Condition 6 requires this entry). Automated tests: `tests/test_monthly_pnl_narrative.py::TestS13BoundarySuite`, plus the output-check classes in the same file. The endpoint's `GET` sibling never calls the model and returns the stored text, with `advisory: true`.
@@ -286,8 +312,8 @@ For each endpoint, §13 compliance is assessed across four dimensions:
 
 | Endpoint | D1 — Advisory language | D2 — No auto action | D3 — Disclaimer rendered | D4 — No instrument directive |
 |----------|------------------------|---------------------|--------------------------|------------------------------|
-| POST /ai/daily-briefing | B-DB-01 | B-DB-03 | B-DB-02, B-DB-05 | B-DB-04 |
-| POST /ai/chat | B-CH-01 | B-CH-03 | B-CH-02, B-CH-05, B-CH-06 | B-CH-04 |
+| POST /ai/daily-briefing | B-DB-01, B-DB-06 | B-DB-03 | B-DB-02, B-DB-05 | B-DB-04, B-DB-06 |
+| POST /ai/chat | B-CH-01, B-CH-07 | B-CH-03 | B-CH-02, B-CH-05, B-CH-06 | B-CH-04, B-CH-07 |
 | POST /reports/monthly-pnl/narrative | B-MPN-01 | B-MPN-03 | B-MPN-02, B-MPN-05 | B-MPN-04 |
 | POST /ai/journal-summary | B-JS-01 | B-JS-03 | B-JS-02 | B-JS-04 |
 

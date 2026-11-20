@@ -63,7 +63,7 @@ def test_starting_capital_omitted_when_zero_or_missing(database_stub, initial_ca
 def test_chat_prompt_version_bumped_and_recorded(database_stub):
     from services import ai_service
     fixtures = json.loads((Path(__file__).parent / "fixtures" / "ai_prompt_template_golden_fixtures.json").read_text())["templates"]
-    assert ai_service.CHAT_PROMPT_VERSION == "v1.2"
-    assert fixtures["chat (POST /ai/chat)"]["prompt_version"] == "v1.2"
+    assert ai_service.CHAT_PROMPT_VERSION == "v1.3"  # ST-39 (v9.18) bump
+    assert fixtures["chat (POST /ai/chat)"]["prompt_version"] == "v1.3"  # ST-39 (v9.18) bump
     _chat_system_prompt(database_stub, 10000)
-    assert database_stub.create_claude_audit_entry.call_args.kwargs["prompt_version"] == "v1.2"
+    assert database_stub.create_claude_audit_entry.call_args.kwargs["prompt_version"] == "v1.3"

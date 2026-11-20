@@ -1,20 +1,20 @@
 {
   "_metadata": {
     "description": "Golden-fixture registry for AI prompt templates (ST-09, BLG-AI-07, EPIC-03, v9.8). Each entry pins the exact template text (via sha256) to the prompt_version recorded in the source at fixture-authoring time. tests/test_ai_prompt_template_golden_fixtures.py fails a covered template's drift check if its text changes without prompt_version also changing. When intentionally editing a covered template: bump the source's prompt_version/PROMPT_VERSION constant AND update this fixture's sha256 + prompt_version for that entry in the same commit.",
-    "disallowed_phrase_source": "scripts/run_ai_output_boundary_sample_audit.py::scan_prescriptive / scan_prediction (implements strategy_rules.md \u00a713.2 boundary)"
+    "disallowed_phrase_source": "scripts/run_ai_output_boundary_sample_audit.py::scan_prescriptive / scan_prediction (implements strategy_rules.md §13.2 boundary)"
   },
   "templates": {
     "daily-briefing (POST /ai/daily-briefing)": {
       "file": "backend/services/ai_service.py",
       "function": "generate_daily_briefing",
-      "prompt_version": "v1.3",
-      "sha256": "49783dc82a87ab617cd708f5384ab08276c3f8ba5973ed62d99b0da23a991962"
+      "prompt_version": "v1.4",
+      "sha256": "3f7a2bcf49379a031a8b1752cc62e231b1ebd7f2de9c6f5f478912f96127400f"
     },
     "chat (POST /ai/chat)": {
       "file": "backend/services/ai_service.py",
       "function": "ai_chat",
-      "prompt_version": "v1.2",
-      "sha256": "4f827e8c91b07994adac43147385fa25b2a133373ba1a504b0e0b40e6046dc09"
+      "prompt_version": "v1.3",
+      "sha256": "bc417e63f7b884914531d42edf3028c6d99c18b612fff130a4a35a05ae0f8b9b"
     },
     "generate-plan system (POST /trade-plans/generate-plan)": {
       "file": "backend/services/gemini_service.py",
