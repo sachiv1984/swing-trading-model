@@ -932,8 +932,8 @@
       "title": "AI Output Boundary",
       "status": "done",
       "branch": "exec/2026-11-18__release-v9.18/EPIC-07",
-      "pr_number": null,
-      "pr_status": "none",
+      "pr_number": 2309,
+      "pr_status": "open",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-11-18__release-v9.18/qa_evidence_EPIC-07.md",
       "test_scenarios": [
@@ -1087,7 +1087,8 @@
     "2026-11-20T08:49:02Z EPIC-07 started (run sprint --epic EPIC-07; merge sequence allows EPIC-07 at any point). Session-start divergence check: main == origin/main. Sealed-file check clean. Issues #2304/#2305 open. Branch exec/2026-11-18__release-v9.18/EPIC-07 cut from main e36bbca7. ST-39 and ST-40 blocked_decision on ESC-EXEC-20261120-01/-02; DEL-20261120-01 raised for the ST-40 production debrief sample.",
     "2026-11-20T09:25:56Z ST-39 done at 5e91c0e8 (ruling 263fb657 first). High code review run before commit; findings fixed in-story; detector misses raised to the AI Compliance & Governance Officer.",
     "2026-11-20T09:53:38Z ST-40 sample check (user ran read-only queries on production): trade_debriefs holds 2 rows, both prompt v1.0 (latest 2026-10-07); no trades closed since 2026-10-12, so no v1.1 debrief exists (debriefs are on demand only). Options put to the user: generate v1.1 debriefs on older closed trades now, or take the sealed post-merge path (BLG-GOV-378 stays open). DEL-20261120-01 remains Pending.",
-    "2026-11-20T16:34:33Z EPIC-07 agent-mediated DoQ sign-off recorded (qa_evidence_EPIC-07.md) after 3 review rounds; §5.3 retry limit reached and the user directed sign-off on the round-3 fix (0c442abe) without a fourth review. PO review round 3: Approved with Comments."
+    "2026-11-20T16:34:33Z EPIC-07 agent-mediated DoQ sign-off recorded (qa_evidence_EPIC-07.md) after 3 review rounds; §5.3 retry limit reached and the user directed sign-off on the round-3 fix (0c442abe) without a fourth review. PO review round 3: Approved with Comments.",
+    "2026-11-20T16:36:25Z EPIC-07 PR #2309 opened (STEP 3.2.B). Pre-PR gates: DoQ Date non-blank; signer format agent-mediated (Director of Quality role — §5.3); qa_evidence committed (7b410f0b); check_api_performance_baseline_drift.py PASSED; origin/main..HEAD carries only [EPIC-07] and [GOVERNANCE] commits. Agent-mediated DoQ + PO review posted as one labelled comment (issuecomment-7044974409). Awaiting human DoQ QA sign-off and PO acceptance, incl. P2 found defects BLG-BE-226, BLG-AI-35, BLG-BE-228, BLG-FE-328."
   ],
   "sealed": false,
   "sealed_utc": null
