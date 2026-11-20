@@ -142,7 +142,7 @@ class TestBriefing:
         assert result["actions"][0]["type"] == "MONITOR" and result["actions"][0]["ticker"] == "NVDA"
         assert _audit_result(db) == "stop_time_missing_appended"
         warnings = [r.getMessage() for r in caplog.records if "stop-time check" in r.getMessage()]
-        assert any("field=summary ticker=NVDA action=appended prompt_version=v1.3" in w for w in warnings)
+        assert any("field=summary ticker=NVDA action=appended prompt_version=v1.4" in w for w in warnings)
         assert any("field=actions[0].description ticker=NVDA action=appended" in w for w in warnings)
         assert not any("actions[1]" in w for w in warnings)
         # Condition 2: the sampling hook gets the raw model output.
@@ -183,7 +183,7 @@ class TestChat:
         assert result["response"] == f"{raw} {NVDA_NOTE}"
         assert result["response"].count(NVDA_NOTE) == 1
         assert _audit_result(db) == "stop_time_missing_appended"
-        assert any("endpoint=POST /ai/chat field=response ticker=NVDA action=appended prompt_version=v1.2"
+        assert any("endpoint=POST /ai/chat field=response ticker=NVDA action=appended prompt_version=v1.3"
                    in r.getMessage() for r in caplog.records)
         assert sample.call_args[0][1] == raw
 
@@ -206,7 +206,7 @@ def test_prompt_versions_unchanged_by_st04():
     # ST-04 left chat at v1.1; ST-19 (BLG-AI-14, v9.13) bumped it to v1.2
     # for the cash relabelling, not for this check.
     from services import ai_service
-    assert ai_service.CHAT_PROMPT_VERSION == "v1.2"
+    assert ai_service.CHAT_PROMPT_VERSION == "v1.3"  # ST-39 (v9.18) bump
 
 
 # ─── Boundary-sample audit scores the check (AC 3) ────────────────────────

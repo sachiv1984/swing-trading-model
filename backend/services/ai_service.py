@@ -19,6 +19,11 @@ Every miss is logged and counted in claude_audit_log.compliance_check_result.
 Summary ticker check (ST-17, BLG-AI-16, v9.13; ruling ESC-EXEC-20261027-02):
 a ticker named in the briefing summary that is outside the context gets a
 code-written caveat appended the same way, logged and counted.
+
+§13.2 parameter-change check (ST-39, BLG-AI-29, v9.18; ruling
+ESC-EXEC-20261120-01): briefing summary, action descriptions and chat
+answers that suggest changing stops, sizing or setups are regenerated once,
+then replaced by code-written text; logged and counted the same way.
 """
 
 import hashlib
@@ -77,8 +82,10 @@ MODEL_BRIEFING = CLAUDE_SONNET_4_6
 # actions may name only tickers from the snapshot; the context labels
 # available cash and starting capital separately.
 # Chat v1.2 (ST-19, BLG-AI-14, v9.13): the chat context labels cash the same way.
-BRIEFING_PROMPT_VERSION = "v1.3"
-CHAT_PROMPT_VERSION = "v1.2"
+# Briefing v1.4 / chat v1.3 (ST-39, BLG-AI-29, v9.18): both prompts say not to
+# suggest changing stops, position sizing, setups or any other strategy setting.
+BRIEFING_PROMPT_VERSION = "v1.4"
+CHAT_PROMPT_VERSION = "v1.3"
 # Journal summary v1.0 (ST-06, BLG-OPS-183, v9.12): first recorded version of
 # the existing, unchanged prompt, now that its calls are logged to
 # claude_audit_log.
@@ -103,16 +110,19 @@ def _prompt_hash(system_prompt: str, user_message: str) -> str:
 
 
 def _audit_failed_model_call(create_claude_audit_entry, endpoint: str, prompt_version: str,
-                             prompt_hash: str, t0: float) -> None:
+                             prompt_hash: str, t0: float, result: str = "model_call_failed") -> None:
     """ST-06 (BLG-AI-08, v9.11): a model call that fails after retries still
     writes an audit row, marked compliance_check_result='model_call_failed'.
-    Never raises: the endpoint's own fallback path continues."""
+    ST-39 (v9.18): a failed §13.2 regeneration is the terminal row of a
+    withheld output and is marked 'fail_fallback:model_call_failed', the
+    monthly narrative's convention, so counting fail_fallback rows counts
+    every withheld output. Never raises: the endpoint's own fallback path continues."""
     try:
         create_claude_audit_entry(
             endpoint=endpoint,
             model_id=MODEL_BRIEFING,
             prompt_version=prompt_version,
-            compliance_check_result="model_call_failed",
+            compliance_check_result=result,
             latency_ms=int((time.time() - t0) * 1000),
             prompt_hash=prompt_hash,
         )
@@ -574,6 +584,132 @@ def journal_summary_language_failures(text: Optional[str]) -> list:
     return found
 
 
+# ─── ST-39 (BLG-AI-29, v9.18): §13.2 check on the daily briefing and chat ──
+# strategy_rules.md §13.2: AI-written text describing the user's data,
+# naming the daily briefing and chat, must not suggest changing stops,
+# position sizing, setups or any other strategy parameter. AI Compliance &
+# Governance Officer ruling ESC-EXEC-20261120-01: (1)(a) the trading_change
+# category only (the journal summary's _trading_change_found), so a
+# recommendation under the existing rules ("EXIT NVDA: the stop was
+# breached") passes; action type and ticker are never checked, only text.
+# (2)(A) regenerate once, then a code-written fallback per failing field.
+# Extends the BLG-FEAT-50/51 §13 review (Criterion 3, Binding Condition 5)
+# with an output-side control; no new write path, memory or automation.
+BRIEFING_SUMMARY_WITHHELD = (
+    "The AI summary was withheld because it suggested changing a stop, position size or setup."
+)
+BRIEFING_ACTION_WITHHELD = (
+    "Description withheld because it suggested changing a stop, position size or setup."
+)
+CHAT_WITHHELD_MESSAGE = (
+    "The answer was withheld because it suggested changing a stop, position size or setup. "
+    "Please ask again or rephrase your question."
+)
+
+
+# A sentence that says a parameter should NOT change, or declines to advise,
+# does not suggest a change ("Your stop should not be moved.", "I cannot
+# suggest whether stops should be tightened."). Briefing and chat only: the
+# new prompt line invites exactly this wording (ST-39 code review). The
+# exemption covers only the negated phrase itself: each "not/never/n't
+# [need to] [be] <change verb>" and "no need to <change verb>" phrase is
+# removed and the rest of the sentence is checked again, so advice beside a
+# negation still fails ("Consider tightening stops since NVDA has not
+# moved.", "Your stop should be raised, not lowered."). A declined
+# suggestion counts only as "can't/won't/don't ... suggest/recommend/advise/
+# say whether/if/that", and the text before it, and after any following
+# "but/though/however/yet", is still checked ("I can't recommend changes,
+# but your stop could be tightened." fails). PR review,
+# Director of Quality and Product Owner finding 1, 2026-11-20.
+_NEGATED_CHANGE_RE = re.compile(
+    rf"(?:\bnot|\bnever|n't)\s+(?:need\s+to\s+)?(?:be\s+)?{_TC_VERB}\b"
+    rf"|\bno\s+need\s+to\s+{_TC_VERB}\b",
+    re.IGNORECASE)
+_DECLINED_SUGGESTION_RE = re.compile(
+    r"(?:\bcannot|\bcan\s+not|\bcan't|\bwon't|\bwill\s+not|\bdo\s+not|\bdon't|\bdoes\s+not|\bdoesn't)"
+    r"\s+(?:suggest|recommend|advise|say)\s+(?:whether|if|that)\b",
+    re.IGNORECASE)
+
+# A clause break after a declined phrase: a contrast or result word
+# (but, though, however, yet, still, so, instead, which, then, therefore),
+# a comma, dash, colon or opening bracket, or a spaced hyphen. A bare "and"
+# is not one, so "whether stops and position size should be changed" stays
+# declined. Errs toward withholding: "whether your stop, or your position
+# size, should be reduced" is checked after the comma and fails (PR review
+# round 3, Director of Quality R1b).
+_CONTRAST_RE = re.compile(r"\b(?:but|though|although|however|yet|still|so|instead|which|then|therefore)\b"
+                          r"|[\u2014\u2013:,(]|\s-\s", re.IGNORECASE)
+
+
+def _sentence_suggests_change(sentence: str) -> bool:
+    """Whether one sentence suggests a change once negated phrases and a
+    declined suggestion are set aside (see _NEGATED_CHANGE_RE)."""
+    declined = _DECLINED_SUGGESTION_RE.search(sentence)
+    if declined:
+        if _sentence_suggests_change(sentence[:declined.start()]):
+            return True
+        # Text after a contrast that follows the declined phrase is checked
+        # too: "I can't say whether NVDA will recover, but your stop should
+        # be tightened." fails (PR review round 2, Product Owner).
+        after = sentence[declined.end():]
+        contrast = _CONTRAST_RE.search(after)
+        return bool(contrast) and _sentence_suggests_change(after[contrast.end():])
+    return _trading_change_found(_NEGATED_CHANGE_RE.sub(" ", sentence))
+
+
+def parameter_change_failures(text, endpoint: Optional[str] = None, field: Optional[str] = None) -> list:
+    """The failed §13.2 categories for one briefing or chat text ([] passes).
+    Checked per sentence (";" ends a clause, as in _TC_GAP); a sentence that
+    only negates or declines a change passes. Each exempted sentence is
+    logged (endpoint, field, action=negation_exempt; never model text), as
+    the AI Compliance & Governance Officer's confirmation of the exemption
+    requires (ESC-EXEC-20261120-01, 2026-11-20)."""
+    if not isinstance(text, str) or not text:
+        return []
+    failed = False
+    for sentence in re.split(r"(?<=[.!?;\n])", text):
+        if not _trading_change_found(sentence):
+            continue
+        if _sentence_suggests_change(sentence):
+            failed = True
+        else:
+            logger.warning("§13.2 check: endpoint=%s field=%s action=negation_exempt", endpoint, field)
+    return ["trading_change"] if failed else []
+
+
+def _briefing_failing_fields(summary, actions) -> dict:
+    """{field name: categories} for the raw briefing summary and each action
+    description that fails the §13.2 check."""
+    failing = {}
+    cats = parameter_change_failures(summary, "POST /ai/daily-briefing", "summary")
+    if cats:
+        failing["summary"] = cats
+    for i, action in enumerate(actions or []):
+        if isinstance(action, dict):
+            cats = parameter_change_failures(action.get("description"), "POST /ai/daily-briefing",
+                                             f"actions[{i}].description")
+            if cats:
+                failing[f"actions[{i}].description"] = cats
+    return failing
+
+
+def _categories(failing: dict) -> str:
+    return "+".join(sorted({c for cats in failing.values() for c in cats}))
+
+
+def _with_regenerate_result(result: Optional[str], attempt: int, fallback_cats: Optional[str] = None) -> str:
+    """Prefix the stop-time/ticker result with the §13.2 outcome (ruling
+    ESC-EXEC-20261120-01): pass on the first attempt leaves it unchanged."""
+    result = result or "pass"
+    if fallback_cats:
+        prefix = f"fail_fallback:{fallback_cats}"
+    elif attempt == 2:
+        prefix = "pass_on_regenerate"
+    else:
+        return result
+    return prefix if result == "pass" else f"{prefix}+{result}"
+
+
 def summarise_journal_notes(notes: list[str]) -> dict:
     """
     Call the Anthropic API to summarise a list of journal note strings.
@@ -786,84 +922,135 @@ def generate_daily_briefing() -> dict:
         "never invent a ticker or use a placeholder. "
         "Whenever you mention a position's stop or a stop breach, state when that stop was last "
         "recalculated, using the time given for that position in the snapshot. "
+        "Recommend actions under the strategy's existing rules only: do not suggest changing stops, "
+        "position sizing, setups or any other strategy setting. "
         "Respond with JSON only, no markdown fences, in this exact shape: "
         '{"summary": "...", "actions": [{"type": "EXIT|ENTER|MONITOR|HOLD", "ticker": "...", "description": "..."}]}'
     )
 
     prompt_hash = _prompt_hash(system_prompt, context)
     try:
-        t0 = time.time()
-        try:
-            response = _create_message(
-                api_key,
-                model=MODEL_BRIEFING,
-                max_tokens=1024,
-                system=system_prompt,
-                messages=[{"role": "user", "content": context}],
-            )
-        except Exception:
-            _audit_failed_model_call(create_claude_audit_entry, "POST /ai/daily-briefing", BRIEFING_PROMPT_VERSION, prompt_hash, t0)
-            raise
-        # ST-13 (BLG-BE-128, v9.7): includes retry backoff sleep time by design -- see ai_endpoints.md Implementation constraints
-        elapsed_ms = int((time.time() - t0) * 1000)
+        # ST-39 (ruling ESC-EXEC-20261120-01 (2)(A)): one audit row per model
+        # call; a §13.2 failure on the first output regenerates once.
+        context_tickers = [p.get("ticker") for p in positions] + [s.get("ticker") for s in top_signals]
 
-        content = response.content[0].text if response.content else "{}"
-        usage = response.usage
-        input_tokens = usage.input_tokens if usage else None
-        output_tokens = usage.output_tokens if usage else None
-
-        # Parsed before the audit write so the row carries the stop-time
-        # result; an unparseable response still gets its audit row and then
-        # takes the fallback path below, as before.
-        try:
-            parsed = json.loads(content)
-        except ValueError:
-            parsed = None
-        stop_time_result = None
-        if isinstance(parsed, dict):
-            actions = parsed.get("actions", [])
-            try:
-                allowed_tickers = {str(t).strip().upper() for t in
-                                   [p.get("ticker") for p in positions] + [s.get("ticker") for s in top_signals] if t}
-                actions = _filter_actions_to_context(actions, allowed_tickers)
-            except Exception:
-                # Fail open, as the stop-time check does: never turn a valid
-                # briefing into the fallback or skip its audit row.
-                logger.error("daily briefing ticker filter failed; actions returned unfiltered", exc_info=True)
-            summary, actions, stop_time_result = _check_briefing_stop_times(
-                {"summary": parsed.get("summary", ""), "actions": actions}, positions)
-            caveat, ticker_outcome = _summary_ticker_caveat(
-                parsed.get("summary", ""),
-                [p.get("ticker") for p in positions] + [s.get("ticker") for s in top_signals], context)
+        def _finalise(raw_summary, actions, failing, attempt):
+            """Terminal output: each failing field is replaced by code-written
+            text (action type and ticker kept). The stop-time and ticker checks
+            run on the kept model text only, never on the replacement."""
+            if "summary" in failing:
+                raw_summary = ""
+            withheld = {i for i in range(len(actions)) if f"actions[{i}].description" in failing}
+            actions = [{**a, "description": ""} if i in withheld else a for i, a in enumerate(actions)]
+            summary, actions, result = _check_briefing_stop_times(
+                {"summary": raw_summary, "actions": actions}, positions)
+            caveat, ticker_outcome = _summary_ticker_caveat(raw_summary, context_tickers, context)
             if caveat:
                 summary = f"{summary} {caveat}"
-            stop_time_result = _with_ticker_result(stop_time_result, ticker_outcome)
+            if "summary" in failing:
+                summary = BRIEFING_SUMMARY_WITHHELD
+            actions = [{**a, "description": BRIEFING_ACTION_WITHHELD} if i in withheld else a
+                       for i, a in enumerate(actions)]
+            result = _with_regenerate_result(_with_ticker_result(result, ticker_outcome), attempt,
+                                             _categories(failing) if failing else None)
+            return summary, actions, result
 
-        try:
-            cost_usd = None
-            if input_tokens and output_tokens:
-                cost_usd = (input_tokens * 3.0 + output_tokens * 15.0) / 1_000_000
-            create_claude_audit_entry(
-                endpoint="POST /ai/daily-briefing",
-                model_id=MODEL_BRIEFING,
-                prompt_version=BRIEFING_PROMPT_VERSION,
-                input_tokens=input_tokens,
-                output_tokens=output_tokens,
-                cost_usd=cost_usd,
-                latency_ms=elapsed_ms,
-                prompt_hash=prompt_hash,
-                response_length=len(content) if content else 0,
-                compliance_check_result=stop_time_result,
-            )
-        except Exception:
-            pass
+        first_failed = None  # (raw_summary, actions, failing) of a failing first output
+        for attempt in (1, 2):
+            t0 = time.time()
+            try:
+                response = _create_message(
+                    api_key,
+                    model=MODEL_BRIEFING,
+                    max_tokens=1024,
+                    system=system_prompt,
+                    messages=[{"role": "user", "content": context}],
+                )
+            except Exception:
+                if first_failed is None:
+                    _audit_failed_model_call(create_claude_audit_entry, "POST /ai/daily-briefing",
+                                             BRIEFING_PROMPT_VERSION, prompt_hash, t0)
+                    raise
+                _audit_failed_model_call(create_claude_audit_entry, "POST /ai/daily-briefing",
+                                         BRIEFING_PROMPT_VERSION, prompt_hash, t0,
+                                         result="fail_fallback:model_call_failed")
+                # The regeneration failed: the first output takes the terminal
+                # fallback instead of losing the whole briefing.
+                logger.error("daily briefing regeneration failed; first output returned with the §13.2 "
+                             "fallback", exc_info=True)
+                summary, actions, _ = _finalise(*first_failed, 2)
+                break
+            # ST-13 (BLG-BE-128, v9.7): includes retry backoff sleep time by design -- see ai_endpoints.md Implementation constraints
+            elapsed_ms = int((time.time() - t0) * 1000)
 
-        if not isinstance(parsed, dict):
-            raise ValueError("daily briefing response is not a JSON object")
+            content = response.content[0].text if response.content else "{}"
+            usage = response.usage
+            input_tokens = usage.input_tokens if usage else None
+            output_tokens = usage.output_tokens if usage else None
 
-        # Raw model output, before any code-written addition (ST-04 Condition 2).
-        if content and content != "{}":
-            sample_ai_output("daily-briefing (POST /ai/daily-briefing)", content, MODEL_BRIEFING)
+            # Parsed before the audit write so the row carries the check
+            # results; an unparseable response still gets its audit row and
+            # then takes the fallback path below, as before.
+            try:
+                parsed = json.loads(content)
+            except ValueError:
+                parsed = None
+            stop_time_result = None
+            failing = {}
+            if isinstance(parsed, dict):
+                actions = parsed.get("actions", [])
+                try:
+                    allowed_tickers = {str(t).strip().upper() for t in context_tickers if t}
+                    actions = _filter_actions_to_context(actions, allowed_tickers)
+                except Exception:
+                    # Fail open, as the stop-time check does: never turn a valid
+                    # briefing into the fallback or skip its audit row.
+                    logger.error("daily briefing ticker filter failed; actions returned unfiltered", exc_info=True)
+                if not isinstance(actions, list):
+                    actions = []
+                raw_summary = parsed.get("summary", "")
+                failing = _briefing_failing_fields(raw_summary, actions)
+                if failing:
+                    logger.warning("daily briefing failed the §13.2 check (attempt %d, fields=%s, categories=%s, "
+                                   "prompt_version=%s)", attempt, ",".join(failing), _categories(failing),
+                                   BRIEFING_PROMPT_VERSION)
+                if failing and attempt == 1:
+                    stop_time_result = f"fail_regenerate:{_categories(failing)}"
+                    first_failed = (raw_summary, actions, failing)
+                else:
+                    summary, actions, stop_time_result = _finalise(raw_summary, actions, failing, attempt)
+            elif first_failed is not None:
+                # Unparseable regeneration: the first output takes the fallback.
+                summary, actions, stop_time_result = _finalise(*first_failed, 2)
+
+            try:
+                cost_usd = None
+                if input_tokens and output_tokens:
+                    cost_usd = (input_tokens * 3.0 + output_tokens * 15.0) / 1_000_000
+                create_claude_audit_entry(
+                    endpoint="POST /ai/daily-briefing",
+                    model_id=MODEL_BRIEFING,
+                    prompt_version=BRIEFING_PROMPT_VERSION,
+                    input_tokens=input_tokens,
+                    output_tokens=output_tokens,
+                    cost_usd=cost_usd,
+                    latency_ms=elapsed_ms,
+                    prompt_hash=prompt_hash,
+                    response_length=len(content) if content else 0,
+                    compliance_check_result=stop_time_result,
+                )
+            except Exception:
+                pass
+
+            if not isinstance(parsed, dict) and first_failed is None:
+                raise ValueError("daily briefing response is not a JSON object")
+
+            # Each attempt's raw model output, before any code-written
+            # addition or replacement (ST-04 Condition 2; ST-39).
+            if content and content != "{}":
+                sample_ai_output("daily-briefing (POST /ai/daily-briefing)", content, MODEL_BRIEFING)
+            if not (failing and attempt == 1):
+                break
         return {
             "summary": summary,
             "actions": actions,
@@ -1003,66 +1190,93 @@ def ai_chat(question: str, context_opts: Optional[dict] = None) -> dict:
         "Do not fabricate data. Your responses are advisory only — you cannot execute trades. "
         "Whenever you mention a position's stop or a stop breach, state when that stop was last "
         "recalculated, using the time given for that position in the snapshot. "
+        "Do not suggest changing stops, position sizing, setups or any other strategy setting. "
         "Keep responses to 2-4 sentences unless more detail is genuinely needed.\n\n"
         f"Portfolio context:\n{portfolio_context}"
     )
 
     prompt_hash = _prompt_hash(system_prompt, question)
     try:
-        t0 = time.time()
-        try:
-            response = _create_message(
-                api_key,
-                model=MODEL_BRIEFING,
-                max_tokens=512,
-                system=system_prompt,
-                messages=[{"role": "user", "content": question}],
-            )
-        except Exception:
-            _audit_failed_model_call(create_claude_audit_entry, "POST /ai/chat", CHAT_PROMPT_VERSION, prompt_hash, t0)
-            raise
-        # ST-13 (BLG-BE-128, v9.7): includes retry backoff sleep time by design -- see ai_endpoints.md Implementation constraints
-        elapsed_ms = int((time.time() - t0) * 1000)
+        # ST-39 (ruling ESC-EXEC-20261120-01 (2)(A)): one audit row per model
+        # call; a §13.2 failure on the first answer regenerates once, and a
+        # second failure returns the fixed withheld message (no answer_id).
+        for attempt in (1, 2):
+            t0 = time.time()
+            try:
+                response = _create_message(
+                    api_key,
+                    model=MODEL_BRIEFING,
+                    max_tokens=512,
+                    system=system_prompt,
+                    messages=[{"role": "user", "content": question}],
+                )
+            except Exception:
+                if attempt == 1:
+                    _audit_failed_model_call(create_claude_audit_entry, "POST /ai/chat", CHAT_PROMPT_VERSION,
+                                             prompt_hash, t0)
+                    raise
+                _audit_failed_model_call(create_claude_audit_entry, "POST /ai/chat", CHAT_PROMPT_VERSION,
+                                         prompt_hash, t0, result="fail_fallback:model_call_failed")
+                # The regeneration failed after a failing first answer: that
+                # answer is still withheld, never shown.
+                logger.error("chat regeneration failed; returning the §13.2 withheld message", exc_info=True)
+                return {"response": CHAT_WITHHELD_MESSAGE, "advisory": True, "model": MODEL_BRIEFING}
+            # ST-13 (BLG-BE-128, v9.7): includes retry backoff sleep time by design -- see ai_endpoints.md Implementation constraints
+            elapsed_ms = int((time.time() - t0) * 1000)
 
-        content = response.content[0].text if response.content else "I was unable to generate a response."
-        usage = response.usage
-        input_tokens = usage.input_tokens if usage else None
-        output_tokens = usage.output_tokens if usage else None
+            content = response.content[0].text if response.content else "I was unable to generate a response."
+            usage = response.usage
+            input_tokens = usage.input_tokens if usage else None
+            output_tokens = usage.output_tokens if usage else None
+            model_answered = bool(content) and content != "I was unable to generate a response."
 
-        checked, outcome = _append_missing_stop_times(content, positions, "POST /ai/chat", "response",
-                                                      CHAT_PROMPT_VERSION,
-                                                      focus_ticker=(context_opts or {}).get("ticker"))
+            failures = parameter_change_failures(content, "POST /ai/chat", "response") if model_answered else []
+            if failures:
+                logger.warning("chat answer failed the §13.2 check (attempt %d, categories=%s, prompt_version=%s)",
+                               attempt, "+".join(failures), CHAT_PROMPT_VERSION)
+            if failures and attempt == 1:
+                checked, result_value = content, "fail_regenerate:" + "+".join(failures)
+            elif failures:
+                checked, result_value = CHAT_WITHHELD_MESSAGE, "fail_fallback:" + "+".join(failures)
+            else:
+                checked, outcome = _append_missing_stop_times(content, positions, "POST /ai/chat", "response",
+                                                              CHAT_PROMPT_VERSION,
+                                                              focus_ticker=(context_opts or {}).get("ticker"))
+                result_value = _with_regenerate_result(_stop_time_check_result([outcome]), attempt)
 
-        answer_id = None
-        try:
-            cost_usd = None
-            if input_tokens and output_tokens:
-                cost_usd = (input_tokens * 3.0 + output_tokens * 15.0) / 1_000_000
-            # ST-22 (BLG-FE-208, v9.13): the audit row's id is the answer_id a
-            # rating attaches to.
-            answer_id = create_claude_audit_entry(
-                endpoint="POST /ai/chat",
-                model_id=MODEL_BRIEFING,
-                prompt_version=CHAT_PROMPT_VERSION,
-                input_tokens=input_tokens,
-                output_tokens=output_tokens,
-                cost_usd=cost_usd,
-                latency_ms=elapsed_ms,
-                prompt_hash=prompt_hash,
-                response_length=len(content) if content else 0,
-                compliance_check_result=_stop_time_check_result([outcome]),
-            )
-        except Exception:
-            pass
+            answer_id = None
+            try:
+                cost_usd = None
+                if input_tokens and output_tokens:
+                    cost_usd = (input_tokens * 3.0 + output_tokens * 15.0) / 1_000_000
+                # ST-22 (BLG-FE-208, v9.13): the audit row's id is the answer_id a
+                # rating attaches to.
+                answer_id = create_claude_audit_entry(
+                    endpoint="POST /ai/chat",
+                    model_id=MODEL_BRIEFING,
+                    prompt_version=CHAT_PROMPT_VERSION,
+                    input_tokens=input_tokens,
+                    output_tokens=output_tokens,
+                    cost_usd=cost_usd,
+                    latency_ms=elapsed_ms,
+                    prompt_hash=prompt_hash,
+                    response_length=len(content) if content else 0,
+                    compliance_check_result=result_value,
+                )
+            except Exception:
+                pass
 
-        # Raw model output, before any code-written addition (ST-04 Condition 2).
-        model_answered = bool(content) and content != "I was unable to generate a response."
-        if model_answered:
-            sample_ai_output("chat (POST /ai/chat)", content, MODEL_BRIEFING)
+            # Each attempt's raw model output, before any code-written
+            # addition or replacement (ST-04 Condition 2; ST-39).
+            if model_answered:
+                sample_ai_output("chat (POST /ai/chat)", content, MODEL_BRIEFING)
+            if not (failures and attempt == 1):
+                break
         result = {"response": checked, "advisory": True, "model": MODEL_BRIEFING}
         # Only a model answer with a stored audit row can be rated (fixed
-        # messages carry no answer_id; decision record §2.1).
-        if model_answered and isinstance(answer_id, str):
+        # messages, including the ST-39 withheld message, carry no answer_id;
+        # decision record §2.1).
+        if model_answered and not failures and isinstance(answer_id, str):
             result["answer_id"] = answer_id
         return result
     except Exception:

@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Class 2
 **Status:** Canonical
-**Version:** 1.34.0
-**Last Updated:** 2026-11-19 (ST-03, EPIC-01, v9.18, BLG-FE-318 — new v9.18.0 entry: alerts_endpoints.md v0.15, GET /notifications delivery_status/delivery_reason); prior — 2026-11-13 (ST-11, EPIC-05, v9.17, BLG-BE-211 — v9.17.0 entry adds position_endpoints.md v2.22.0: a full exit closes the linked trade plan); prior — 2026-11-12 (ST-09, EPIC-04, v9.17, BLG-BE-205 — new v9.17.0 entry: position_endpoints.md v2.21.0, openapi.yaml 3.49.0); prior history retained — see prior entries in version control
+**Version:** 1.35.0
+**Last Updated:** 2026-11-20 (ST-39, EPIC-07, v9.18, BLG-AI-29 — v9.18.0 entry adds ai_endpoints.md v1.42: §13.2 parameter-change check on POST /ai/daily-briefing and POST /ai/chat); prior — 2026-11-19 (ST-03, EPIC-01, v9.18, BLG-FE-318 — new v9.18.0 entry: alerts_endpoints.md v0.15, GET /notifications delivery_status/delivery_reason); prior — 2026-11-13 (ST-11, EPIC-05, v9.17, BLG-BE-211 — v9.17.0 entry adds position_endpoints.md v2.22.0: a full exit closes the linked trade plan); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 # API Changelog
@@ -48,6 +48,16 @@ Rules:
 | Change | Details |
 |--------|---------|
 | Updated endpoint: GET /notifications | Each item gains derived `delivery_status` (`sent \| not_requested \| pending \| not_sent`) and `delivery_reason` (`telegram_not_configured \| delivery_failed \| null`), so the Feed can show when an alert was not sent (BLG-FE-318). Unconfigured Telegram is now stored as not delivered with `'Telegram not configured'`; `'email disabled'` becomes `'Telegram off for this alert type'`. |
+
+### ai_endpoints.md — v1.42 (UPDATED)
+
+**EPIC:** EPIC-07
+**ST:** ST-39
+
+| Change | Details |
+|--------|---------|
+| Updated endpoint: POST /ai/daily-briefing | §13.2 parameter-change check (BLG-AI-29, ruling `ESC-EXEC-20261120-01`): a summary or action description suggesting changing stops, sizing or setups is regenerated once, then replaced by code-written text (action `type`/`ticker` kept); new `compliance_check_result` values `fail_regenerate:`, `pass_on_regenerate`, `fail_fallback:`; prompt v1.4. Response shape unchanged. |
+| Updated endpoint: POST /ai/chat | Same check on `response`: regenerated once, then a fixed withheld message without `answer_id`; same result values; prompt v1.3. Response shape unchanged. |
 
 ## v9.17.0 (2026-11-12 — Release v9.17)
 

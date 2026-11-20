@@ -4047,7 +4047,10 @@ def create_chat_answer_rating(answer_id: str, rating: str) -> Optional[Dict]:
         with conn.cursor() as cur:
             cur.execute(
                 "SELECT 1 FROM claude_audit_log WHERE id = %s AND endpoint = 'POST /ai/chat' "
-                "AND compliance_check_result IS DISTINCT FROM 'model_call_failed'",
+                "AND compliance_check_result IS DISTINCT FROM 'model_call_failed' "
+                # ST-39 (v9.18): an answer withheld by the §13.2 check (fail_regenerate:,
+                # fail_fallback:) was never shown, so it cannot be rated.
+                "AND COALESCE(compliance_check_result, '') NOT LIKE 'fail\\_%%'",
                 (answer_id,),
             )
             if cur.fetchone() is None:
@@ -4090,7 +4093,8 @@ def get_response_acceptance_rate(date_from=None, date_to=None) -> Dict:
         "FROM chat_answer_ratings r "
         "JOIN claude_audit_log a ON a.id = r.answer_id "
         "WHERE a.endpoint = 'POST /ai/chat' "
-        "AND a.compliance_check_result IS DISTINCT FROM 'model_call_failed'"
+        "AND a.compliance_check_result IS DISTINCT FROM 'model_call_failed' "
+        "AND COALESCE(a.compliance_check_result, '') NOT LIKE 'fail\\_%%'"
     )
     params = []
     if date_from is not None:
