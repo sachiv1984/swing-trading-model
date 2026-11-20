@@ -716,6 +716,26 @@
       "resolved_utc": "2026-11-19T13:56:00Z",
       "resolved_by": "Cybersecurity & Trust Lead; Product Owner (the user, in session)",
       "resolution_summary": "Read access no longer accepted; remedy BLG-SEC-48 (access control, v9.20); interim BLG-SEC-49 (noindex/robots.txt); recorded in credential_policy.md §1.1 v1.2 (EPIC-01 branch)."
+    },
+    "ESC-EXEC-20261120-01": {
+      "cycle": "2026-11-18__release-v9.18",
+      "summary": "ST-39/EPIC-07 — AI Compliance & Governance Officer ruling: §13.2 output check form and failure handling for the daily briefing and chat",
+      "trigger_type": "Lifecycle",
+      "owning_authority": "AI Compliance & Governance Officer",
+      "raised_utc": "2026-11-20T08:49:02Z",
+      "sla_due_utc": "2026-11-21T08:49:02Z",
+      "blocks_execution": false,
+      "disposition": "Open"
+    },
+    "ESC-EXEC-20261120-02": {
+      "cycle": "2026-11-18__release-v9.18",
+      "summary": "ST-40/EPIC-07 — keep-or-amend decision on the debrief focus-area length, against a production debrief sample (DEL-20261120-01)",
+      "trigger_type": "Lifecycle",
+      "owning_authority": "AI Compliance & Governance Officer; Product Owner",
+      "raised_utc": "2026-11-20T08:49:02Z",
+      "sla_due_utc": "2026-11-21T08:49:02Z",
+      "blocks_execution": false,
+      "disposition": "Open"
     }
   },
   "deferred_escalations": {
