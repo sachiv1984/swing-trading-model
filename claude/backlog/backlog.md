@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-19 (session — 3 new items added: BLG-FE-326, BLG-FE-327, BLG-SPEC-242; PR #2307 agent-mediated DoQ and PO review findings); prior — 2026-11-19 (session — 2 new items added: BLG-SEC-48, BLG-SEC-49; ST-05/EPIC-01 v9.18 re-review remedies); prior — 2026-11-19 (session — 1 new item added: BLG-GOV-430; v9.18 EPIC-01 PR #2306 CI finding); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-20 (session — 1 new item added: BLG-AI-34; ST-39/EPIC-07 v9.18 detector misses); prior — 2026-11-19 (session — 3 new items added: BLG-FE-326, BLG-FE-327, BLG-SPEC-242; PR #2307 agent-mediated DoQ and PO review findings); prior — 2026-11-19 (session — 2 new items added: BLG-SEC-48, BLG-SEC-49; ST-05/EPIC-01 v9.18 re-review remedies); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -2854,6 +2854,33 @@ The reported-speech exemption also misses attribution placed after the clause. B
 - 100 KB of reported matches is checked in under 0.5 s, in a test
 - Each untested path above has a test with the ruled (A″) result
 - All existing journal-summary tests pass
+
+---
+
+### BLG-AI-34 — Daily briefing and chat check: catch "too loose/tight", halve/double/trail and "don't hesitate to"
+**Priority:** P3 (Low)
+**Type:** AI Compliance / Correctness
+**Owner:** AI Compliance & Governance Officer; Backend Engineering Patterns Owner
+**Source:** ST-39 / EPIC-07, cycle `2026-11-18__release-v9.18` — high code review finding 4 and first-time-right pass A; AI Compliance & Governance Officer confirmation, `ESC-EXEC-20261120-01` (not widened in-sprint) — 2026-11-20
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.19
+**Depends on:** BLG-AI-32 (same detector; "You may want to tighten your stops." is already listed there) — rule and build the two together
+
+**Problem**
+Since v9.18 (ST-39) the daily briefing and chat use the journal summary's `_trading_change_found` detector to enforce `strategy_rules.md` §13.2. These sentences return no failure (verified 2026-11-20): "Your stops look too loose for this market.", "Halve the position size on NVDA.", "Trail the stop higher.", "Don't hesitate to tighten your stop on NVDA.". The detector was not widened in v9.18 because it is shared with the journal summary and each widening has had its own ruling. Meanwhile the risk is limited by the prompt instruction (briefing v1.4, chat v1.3) and advisory-only output.
+
+**Scope**
+- Ask the AI Compliance & Governance Officer to rule on the forms above, together with BLG-AI-32's sentences
+- Extend the detector for the ruled forms
+- Add them as caught cases, and nearby descriptive sentences as passing cases (e.g. "The stop trailed higher as price rose.", "Position size was halved after the loss."), to B-JS-04, B-DB-06 and B-CH-07 in `ai_s13_boundary_test_suite.md`
+- Add the forms to `scripts/run_ai_output_boundary_sample_audit.py`
+
+**Acceptance Criteria**
+- The ruling is recorded before the code change
+- Each sentence above gets the ruled result in the journal summary, briefing and chat checks, in tests
+- The descriptive past-tense cases pass
+- Every existing journal-summary, briefing and chat test keeps its result
+- The sample audit reports the new forms
 
 ---
 

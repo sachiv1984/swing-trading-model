@@ -620,28 +620,37 @@ _NEGATED_CHANGE_RE = re.compile(
     re.IGNORECASE)
 
 
-def parameter_change_failures(text) -> list:
+def parameter_change_failures(text, endpoint: Optional[str] = None, field: Optional[str] = None) -> list:
     """The failed §13.2 categories for one briefing or chat text ([] passes).
     Checked per sentence (";" ends a clause, as in _TC_GAP); a sentence that
-    only negates or declines a change passes."""
+    only negates or declines a change passes. Each exempted sentence is
+    logged (endpoint, field, action=negation_exempt; never model text), as
+    the AI Compliance & Governance Officer's confirmation of the exemption
+    requires (ESC-EXEC-20261120-01, 2026-11-20)."""
     if not isinstance(text, str) or not text:
         return []
+    failed = False
     for sentence in re.split(r"(?<=[.!?;\n])", text):
-        if _trading_change_found(sentence) and not _NEGATED_CHANGE_RE.search(sentence):
-            return ["trading_change"]
-    return []
+        if not _trading_change_found(sentence):
+            continue
+        if _NEGATED_CHANGE_RE.search(sentence):
+            logger.warning("§13.2 check: endpoint=%s field=%s action=negation_exempt", endpoint, field)
+        else:
+            failed = True
+    return ["trading_change"] if failed else []
 
 
 def _briefing_failing_fields(summary, actions) -> dict:
     """{field name: categories} for the raw briefing summary and each action
     description that fails the §13.2 check."""
     failing = {}
-    cats = parameter_change_failures(summary)
+    cats = parameter_change_failures(summary, "POST /ai/daily-briefing", "summary")
     if cats:
         failing["summary"] = cats
     for i, action in enumerate(actions or []):
         if isinstance(action, dict):
-            cats = parameter_change_failures(action.get("description"))
+            cats = parameter_change_failures(action.get("description"), "POST /ai/daily-briefing",
+                                             f"actions[{i}].description")
             if cats:
                 failing[f"actions[{i}].description"] = cats
     return failing
@@ -1177,7 +1186,7 @@ def ai_chat(question: str, context_opts: Optional[dict] = None) -> dict:
             output_tokens = usage.output_tokens if usage else None
             model_answered = bool(content) and content != "I was unable to generate a response."
 
-            failures = parameter_change_failures(content) if model_answered else []
+            failures = parameter_change_failures(content, "POST /ai/chat", "response") if model_answered else []
             if failures:
                 logger.warning("chat answer failed the §13.2 check (attempt %d, categories=%s, prompt_version=%s)",
                                attempt, "+".join(failures), CHAT_PROMPT_VERSION)

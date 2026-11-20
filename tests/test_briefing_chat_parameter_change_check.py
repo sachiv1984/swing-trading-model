@@ -277,3 +277,31 @@ def test_rating_queries_exclude_withheld_chat_rows():
     real_db = load_real_database("_st39_real_database")
     for fn in (real_db.create_chat_answer_rating, real_db.get_response_acceptance_rate):
         assert "NOT LIKE 'fail\\\\_%%'" in inspect.getsource(fn)
+
+
+# ─── Exemption logging (ruling ESC-EXEC-20261120-01 confirmation, 2026-11-20) ─
+
+def test_exempted_sentence_is_logged_without_model_text(caplog):
+    text = "Your stop should not be moved; the strategy's rules set it."
+    with caplog.at_level(logging.WARNING, logger="services.ai_service"):
+        assert parameter_change_failures(text, "POST /ai/chat", "response") == []
+    msgs = [r.getMessage() for r in caplog.records]
+    assert msgs == ["§13.2 check: endpoint=POST /ai/chat field=response action=negation_exempt"]
+
+
+def test_failing_and_plain_sentences_log_no_exemption(caplog):
+    with caplog.at_level(logging.WARNING, logger="services.ai_service"):
+        parameter_change_failures(ADVICE, "POST /ai/chat", "response")
+        parameter_change_failures(HOLD_TEXT, "POST /ai/chat", "response")
+    assert not any("negation_exempt" in r.getMessage() for r in caplog.records)
+
+
+def test_briefing_exemption_logged_with_field(db, caplog):
+    actions = [{"type": "HOLD", "ticker": "VOD.L",
+                "description": f"VOD.L's stop should not be moved ({TIME})."}]
+    with caplog.at_level(logging.WARNING, logger="services.ai_service"):
+        result, create, _ = _run("generate_daily_briefing", outputs=[_body(HOLD_TEXT, actions)])
+    assert create.call_count == 1
+    assert result["actions"] == actions
+    assert any("endpoint=POST /ai/daily-briefing field=actions[0].description action=negation_exempt"
+               in r.getMessage() for r in caplog.records)
