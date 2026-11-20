@@ -738,7 +738,10 @@
       "raised_utc": "2026-11-20T08:49:02Z",
       "sla_due_utc": "2026-11-21T08:49:02Z",
       "blocks_execution": false,
-      "disposition": "Open"
+      "disposition": "Resolved",
+      "resolved_utc": "2026-11-20T14:14:19Z",
+      "resolved_by": "AI Compliance & Governance Officer; Product Owner (the user, in session)",
+      "resolution_summary": "Keep one observational sentence; re-review after BLG-BE-226 and BLG-AI-35 ship. Filed BLG-BE-226, BLG-AI-35, BLG-BE-228 (P2), BLG-BE-227, BLG-AI-36 (P3)."
     }
   },
   "deferred_escalations": {
