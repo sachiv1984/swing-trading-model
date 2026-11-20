@@ -630,7 +630,15 @@ _DECLINED_SUGGESTION_RE = re.compile(
     r"\s+(?:suggest|recommend|advise|say)\s+(?:whether|if|that)\b",
     re.IGNORECASE)
 
-_CONTRAST_RE = re.compile(r"\b(?:but|though|although|however|yet|still)\b|[\u2014:]", re.IGNORECASE)
+# A clause break after a declined phrase: a contrast or result word
+# (but, though, however, yet, still, so, instead, which, then, therefore),
+# a comma, dash, colon or opening bracket, or a spaced hyphen. A bare "and"
+# is not one, so "whether stops and position size should be changed" stays
+# declined. Errs toward withholding: "whether your stop, or your position
+# size, should be reduced" is checked after the comma and fails (PR review
+# round 3, Director of Quality R1b).
+_CONTRAST_RE = re.compile(r"\b(?:but|though|although|however|yet|still|so|instead|which|then|therefore)\b"
+                          r"|[\u2014\u2013:,(]|\s-\s", re.IGNORECASE)
 
 
 def _sentence_suggests_change(sentence: str) -> bool:

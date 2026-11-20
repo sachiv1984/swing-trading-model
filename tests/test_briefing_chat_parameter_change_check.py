@@ -227,6 +227,10 @@ class TestChat:
     "Stops should never be loosened under the strategy's rules.",
     "The position size should not be reduced, and the stop should not be moved.",
     "Your stop and position size do not need to be changed.",
+    # A list inside the declined clause is not a clause break.
+    "I can't say whether stops and sizing should be tightened.",
+    "I cannot suggest whether stops should be tightened so soon.",
+    "I can't say whether your stop should be tightened, but that is your call.",
 ])
 def test_negated_or_declined_change_passes(text):
     assert parameter_change_failures(text) == []
@@ -343,8 +347,31 @@ def test_briefing_exemption_logged_with_field(db, caplog):
     "I can't say whether NVDA will rise, but consider tightening your stop.",
     "I can't say that enough: consider tightening your stop on NVDA.",
     "I won't suggest that the trend is over, but you might consider reducing your position size.",
+    # Round 3 (Product Owner): other clause joiners after a declined phrase.
+    "I can't say whether NVDA will recover, and you should consider tightening your stop.",
+    "I can't say whether NVDA will recover, so consider tightening your stop.",
+    "I can't say whether NVDA will recover, which is why tightening stops could help.",
+    "I don't recommend that you exit, rather consider tightening your stop.",
+    # Round 3 (Director of Quality R1b): any clause break after a declined phrase.
+    "I can't say whether NVDA will rise, so consider tightening your stop.",
+    "I can't say that for sure, consider tightening your stop.",
+    "I can't say whether NVDA will rise \u2013 consider tightening your stop.",
+    "I can't say whether NVDA will rise - consider tightening your stop.",
+    "I can't say whether NVDA will rise (consider tightening your stop).",
+    "I can't say whether it will hold, which is why you should consider tightening your stop.",
 ])
 def test_advice_beside_a_negation_or_disclaimer_fails(text, caplog):
     with caplog.at_level(logging.WARNING, logger="services.ai_service"):
         assert parameter_change_failures(text, "POST /ai/chat", "response") == ["trading_change"]
     assert not any("negation_exempt" in r.getMessage() for r in caplog.records)
+
+
+@pytest.mark.parametrize("text", [
+    # Known false positives on the safe side (withheld): the declined clause
+    # contains a comma, so its tail is checked. Accepted at PR review round 3.
+    "I can't say whether your stop, or your position size, should be reduced.",
+    "I can't suggest whether, given the trend, your stop should still be tightened.",
+    "I cannot suggest whether, although NVDA is up, your stop should be tightened.",
+])
+def test_declined_clause_with_inner_comma_errs_toward_withholding(text):
+    assert parameter_change_failures(text) == ["trading_change"]
