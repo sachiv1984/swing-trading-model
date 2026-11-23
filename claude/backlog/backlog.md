@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-23 (session — 1 new item added: BLG-FE-329; EPIC-04 v9.18 ST-20 axe incomplete contrast log); prior — 2026-11-23 (session — 1 new item added: BLG-QA-276; EPIC-04 v9.18 ST-19 pre-commit code review); prior — 2026-11-23 (session — 1 new item added: BLG-SPEC-243; EPIC-04 v9.18 ST-18 agent-mediated Head of UX & Design review); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-23 (session — 3 new items added: BLG-QA-277, BLG-QA-278, BLG-QA-279; EPIC-04 v9.18 PR #2311 review and retrospective); prior — 2026-11-23 (session — 1 new item added: BLG-FE-329; EPIC-04 v9.18 ST-20 axe incomplete contrast log); prior — 2026-11-23 (session — 1 new item added: BLG-QA-276; EPIC-04 v9.18 ST-19 pre-commit code review); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -8454,6 +8454,73 @@ ST-20 made `runAxeScan` log the color-contrast results axe cannot decide (`incom
 **Acceptance Criteria**
 - A full-page scan logs "0 app shell" incomplete color-contrast nodes in both themes, or each remaining node has a recorded measured contrast of at least 4.5:1
 - `runAxeScan` judges shell nodes like page content on strict scans
+
+---
+
+### BLG-QA-277 — Triage page-content incomplete colour-contrast on the non-strict axe scans and widen the strict set
+**Priority:** P2 (Medium)
+**Type:** QA / Test Automation
+**Owner:** QA & Testing Owner; Head of UX & Design
+**Source:** PR #2311 agent-mediated Product Owner review, finding 1 (EPIC-04, `2026-11-18__release-v9.18`, ST-20) — 2026-11-23
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.19
+
+**Problem**
+ST-20 made every axe scan log the colour-contrast results axe cannot decide, and made 19 of 96 scans fail on them. The other 77 scans only log. They include every Positions scan, where the 4.48:1 grace pill that prompted BLG-QA-260 was found. The 2026-11-23 run logged page-content incomplete nodes on those scans (for example Settings 1, TradePlan 1, Positions and Performance many). No one has triaged them, so a real contrast failure there still passes. BLG-FE-329 covers only the app shell.
+
+**Scope**
+- Triage the page-content incomplete nodes logged by `runAxeScan` on the non-strict scans, Positions first. For each, measure the real contrast, fix it if below AA, or give it a solid background so axe can decide
+- Add each scan to `STRICT_INCOMPLETE_CONTRAST` once its log shows "0 page content"
+- File a frontend item for any fix too large for this item
+
+**Acceptance Criteria**
+- Every Positions scan is in `STRICT_INCOMPLETE_CONTRAST` and passes in CI
+- The strict set covers at least half of all scans, or each excluded scan has a recorded reason
+- Every page-content node found below 4.5:1 is fixed or has a filed item
+
+---
+
+### BLG-QA-278 — Make the ESLint feedback hook's findings reach the agent
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** Head of Specs Team; Head of Engineering
+**Source:** EPIC-04 retrospective (`2026-11-18__release-v9.18`, ST-19), PR #2311 review — 2026-11-23
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+`.claude/hooks/lint-feedback.sh` runs ESLint after every Edit or Write of a `.js` file, but it returns `{"decision": "approve", "reason": …}`. For a PostToolUse hook, that reason is not shown to the agent. During ST-19 it found 161 errors in the new unit tests (no Jest globals, "Comments are forbidden") and nobody saw them. The missing Jest override surfaced only at the pre-commit review and was filed as BLG-QA-276, instead of being raised with the Product Owner in the same turn. The hook also counts attempts per file in `/tmp`, so its "3 attempts" limit carries over between sessions.
+
+**Scope**
+- Return the findings in a form the agent sees (for example `hookSpecificOutput.additionalContext`, or `decision: "block"` with the reason). Check with a hand-run Write that the text arrives
+- Decide with the Product Owner whether the `no-comments` rule should report on files that already carry comments, since every existing `src/` file does; otherwise the feedback will be noise
+- Key the attempt counter by session, or drop it
+
+**Acceptance Criteria**
+- Writing a `src/` file with an ESLint error shows the error to the agent in the same turn
+- Writing a clean file shows nothing
+- The `no-comments` decision is recorded in the hook or in `eslint.config.mjs`
+
+---
+
+### BLG-QA-279 — Check at commit time that every backlog ID the diff mentions exists
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** Head of Specs Team
+**Source:** EPIC-04 retrospective (`2026-11-18__release-v9.18`, ST-19) — 2026-11-23
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`.claude/skills/lessons_learnt.md` records seven times since 2026-10-27 that a guessed backlog ID was typed into a spec, test or registry before the `/backlog-add` ID scan. The latest was ST-19's `BLG-FE-329`, which happened to be free. Each was caught by hand before commit. The lesson has not stopped the slip, because nothing checks it mechanically.
+
+**Scope**
+- A script, run from `.githooks/pre-commit`, that lists every `BLG-<NS>-<n>` in the staged diff's added lines and fails when one exists in neither `claude/backlog/backlog.md` nor `backlog_archive.md` (staged versions), naming each
+- Tests: an existing ID passes, a missing ID fails, an ID added to `backlog.md` in the same commit passes
+
+**Acceptance Criteria**
+- A commit that adds a reference to a backlog ID that does not exist is blocked, naming the ID
+- A commit that files the item and references it in the same commit passes
 
 ---
 

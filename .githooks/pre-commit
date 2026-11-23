@@ -24,7 +24,9 @@ python3 scripts/check_staged_state_path.py
 # (shared_standards.md §11) on the staged prompts. Before this, only the PR
 # workflow checked it, so a direct commit to main could raise a prompt past its
 # baseline unseen. Runs when a claude/system/*.md file, the baseline or the
-# script itself is staged.
+# script itself is staged. It measures every staged prompt, not only the ones
+# this commit changes (as CI does), so a prompt already over budget blocks any
+# commit that touches claude/system/ until it is fixed.
 if git diff --cached --name-only | grep -qE '^claude/system/[^/]+\.md$|^scripts/prompt_size_baseline\.json$|^scripts/check_prompt_size_budget\.py$'; then
     python3 scripts/check_prompt_size_budget.py --staged
 fi

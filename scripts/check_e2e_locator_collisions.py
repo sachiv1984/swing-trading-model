@@ -11,8 +11,9 @@ asserted. Both failed CI on the story commit. This script does the grep.
 
 What it reads from a diff of src/**/*.js(x):
   1. changed text: string literals and JSX text on added or removed lines;
-  2. changed attributes: aria-*, role, title, placeholder, alt, data-testid
-     and name attributes on added lines;
+  2. changed attributes: aria-*, role, title, placeholder, alt and name
+     attributes on added lines (data-testid is skipped: a test-ID locator is
+     the scoped form, so it is the fix, not a collision);
   3. moved text: every string inside a component whose JSX usage (<Name ...>)
      is on an added or removed line. A component placed in a collapsed panel,
      another page or a new parent keeps its own lines unchanged, so (1) cannot
@@ -51,9 +52,21 @@ SRC_FILE = re.compile(r"^src/.*\.jsx?$")
 # Unit tests and their helpers live under src/ but never render.
 NOT_RENDERED = re.compile(r"(?:\.(?:test|spec)\.jsx?$|/__tests__/|^src/test-utils/|^src/setupTests\.js$)")
 STRING_LIT = re.compile(r'"((?:[^"\\\n]|\\.)*)"|\'((?:[^\'\\\n]|\\.)*)\'|`((?:[^`\\]|\\.)*)`', re.S)
-ATTR = re.compile(r"\b(aria-[a-z]+|role|title|placeholder|alt|name)\s*=\s*(?:\"([^\"]*)\"|'([^']*)'|\{)")
+ATTR = re.compile(r"(?<![\w-])(aria-[a-z]+|role|title|placeholder|alt|name)\s*=\s*(?:\"([^\"]*)\"|'([^']*)'|\{)")
 JSX_TAG = re.compile(r"<([A-Z][A-Za-z0-9_]*)\b")
 CLASS_TOKEN = re.compile(r"^[!-]?[a-z0-9]+(?:[:/.\-\[\]%#()][a-z0-9.\[\]%#()/:-]*)*$")
+SNAKE_CASE = re.compile(r"^[a-z0-9]+(?:_[a-z0-9]+)+$")
+ARBITRARY_VARIANT = re.compile(r"\[[^\]\s]*\]")
+
+
+def is_code_token(token):
+    """A class name, Tailwind arbitrary variant, snake_case key or lowercase id."""
+    if SNAKE_CASE.match(token):
+        return True  # an API field or dict key: open_positions, current_price
+    stripped = ARBITRARY_VARIANT.sub("", token).lstrip(":")
+    if not stripped:
+        return token.startswith("[")  # a bare arbitrary value: [&>span]
+    return bool(CLASS_TOKEN.match(stripped))
 PLACEHOLDER = "\x00"
 
 
@@ -143,7 +156,7 @@ def looks_visible(text):
     if s.startswith(("./", "../", "/", "@", "http", "#/", "data:")) or re.fullmatch(r"#[0-9A-Fa-f]{3,8}", s):
         return False
     tokens = s.replace(PLACEHOLDER, "x").split()
-    if all(CLASS_TOKEN.match(t) for t in tokens) and (len(tokens) > 1 or not s[0].isupper()):
+    if all(is_code_token(t) for t in tokens) and (len(tokens) > 1 or not s[0].isupper()):
         return False  # a class list, test id, key or lowercase identifier
     return True
 
@@ -345,7 +358,11 @@ def text_matches(kind, value, exact, candidates):
                 continue
             i = text.lower().find(v.lower()) if v else -1
             if i < 0 and v.lower() in t.lower():
-                return sum(c.isalpha() for c in v) >= MIN_LITERAL_LETTERS
+                # Found only after whitespace normalisation, where the literal
+                # mask no longer lines up: count the locator's own letters.
+                if sum(c.isalpha() for c in v) >= MIN_LITERAL_LETTERS:
+                    return True
+                continue
             if i >= 0 and _literal_letters(text, mask, i, i + len(v)) >= MIN_LITERAL_LETTERS:
                 return True
     return False
@@ -363,8 +380,13 @@ def find_collisions(src, diff_text):
     pools = []  # (tier, parts, origin)
     attrs = []  # (name, literal value or None, origin)
     for path, ch in files.items():
-        for tier, lines in (("added", ch["added"]), ("removed", ch["removed"])):
-            pools.extend((tier, parts, path) for parts in strings_in(lines))
+        added, removed = strings_in(ch["added"]), strings_in(ch["removed"])
+        # Text on both sides of the same file's diff is unchanged: the line
+        # changed around it (a class sweep, a re-indent), not the text.
+        key = lambda parts: norm(display(parts))
+        same = {key(p) for p in added} & {key(p) for p in removed}
+        pools.extend(("added", parts, path) for parts in added if key(parts) not in same)
+        pools.extend(("removed", parts, path) for parts in removed if key(parts) not in same)
         for line in ch["added"]:
             if is_comment(line):
                 continue
@@ -459,7 +481,7 @@ def main(argv=None):
             diff_text = f.read()
         src = Source("dir", src_root=args.src_root, tests_dir=args.tests_dir)
     elif args.commit:
-        diff_text = git("show", "--format=", args.commit, "--", "src")
+        diff_text = git("show", "--format=", "--diff-merges=first-parent", args.commit, "--", "src")  # a merge: its change against main
         src = Source("commit", rev=args.commit, tests_dir=args.tests_dir)
     else:
         diff_text = git("diff", "--cached", "--", "src")

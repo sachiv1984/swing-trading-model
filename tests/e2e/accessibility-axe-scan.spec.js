@@ -301,7 +301,10 @@ async function nodesInAppShell(page, nodes) {
     if (!sel) return false;
     const el = document.querySelector(sel);
     if (!el) return false;
-    return Boolean(el.closest('aside') || (el.closest('header') && !el.closest('main')));
+    // Only the layout's own aside/header: never inside <main> or a dialog
+    // (PR #2311 review — an aside in page content or a dialog's header is content).
+    if (el.closest('main') || el.closest('[role="dialog"], [role="alertdialog"]')) return false;
+    return Boolean(el.closest('aside') || el.closest('header'));
   }), selectors);
 }
 

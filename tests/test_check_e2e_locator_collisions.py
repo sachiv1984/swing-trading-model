@@ -97,10 +97,25 @@ SPEC_HEAD = "test('SC-X-01: a case', async ({ page }) => {\n"
     (['<button title="Zoom in">'], "page.locator('button[title=\"Zoom in\"]')", True),
     # data-testid is the scoped form, never a collision
     (['<div data-testid="grace-view">'], "page.locator('[data-testid=\"grace-view\"]')", False),
+    # data-title is not title
+    (['<div data-title="Zoom in">'], "page.locator('button[title=\"Zoom in\"]')", False),
+    # snake_case keys are not visible text (PR #2311 DoQ review: 'Price' vs current_price)
+    (["const v = row['current_price'];"], "page.getByText('Price')", False),
+    (["const k = 'open_positions';"], "page.getByRole('columnheader', { name: 'Positions' })", False),
+    # a Tailwind arbitrary-variant class list is not visible text
+    (['<SelectTrigger className="[&>span]:line-clamp-1 flex h-9 w-full">'], "page.getByText(/line-clamp/)", False),
 ])
 def test_synthetic_forms(tmp_path, added, locator, flagged):
     code, out = make_case(tmp_path, added, spec=SPEC_HEAD + f"  await expect({locator}).toBeVisible();\n}});\n")
     assert (code == 1) is flagged, out
+
+
+def test_text_unchanged_on_both_sides_is_not_flagged(tmp_path):
+    # A class sweep rewrites the line, not the text (PR #2311 DoQ review: 249 hits on 071a43f3).
+    code, out = make_case(tmp_path, added=['<p className="text-app-muted">Unable to load heat data</p>'],
+                          removed=['<p className="text-slate-400">Unable to load heat data</p>'],
+                          spec=SPEC_HEAD + "  await expect(page.getByText('Unable to load heat data')).toBeVisible();\n});\n")
+    assert code == 0, out
 
 
 def test_removed_text_is_flagged(tmp_path):

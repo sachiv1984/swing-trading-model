@@ -219,6 +219,17 @@ This check fires when any staged file matches `src/**/*.js` or `src/**/*.jsx`. A
 
 ---
 
+### Check 14 — Unit tests for changed src/lib modules
+
+This check fires when any staged file matches `src/lib/*.js` and is not itself a test. Added 2026-11-23 from the PR #2311 Product Owner review: the `src/lib` unit-test convention (`docs/development/frontend_development_guide.md` §14) had no mechanical check.
+
+1. For each staged `src/lib/<module>.js`, look for a staged or existing `src/lib/<module>.test.js` or `src/lib/<module>.*.test.js`.
+2. If the module is new and has no test file, or changed and no test file is staged with it, report it.
+
+**FAIL if:** a new `src/lib` module has no unit test file. **WARN** (not fail) if a changed module has tests but none is staged: say in the commit body why the existing tests still cover the change.
+
+---
+
 ## Step 4 — Render the result
 
 ```
@@ -243,6 +254,7 @@ Staged files ({n}):
   ✅ Check 11 — Code review and change impact (N/A — no implementation files staged)
   ✅ Check 12 — First-time-right record (N/A — no implementation files staged)
   ✅ Check 13 — E2E locator collisions (N/A — no src/**/*.js(x) staged)
+  ✅ Check 14 — src/lib unit tests (N/A — no src/lib module staged)
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 RESULT: ❌ NOT READY — 1 check failed
