@@ -48,6 +48,8 @@ import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SRC_FILE = re.compile(r"^src/.*\.jsx?$")
+# Unit tests and their helpers live under src/ but never render.
+NOT_RENDERED = re.compile(r"(?:\.(?:test|spec)\.jsx?$|/__tests__/|^src/test-utils/|^src/setupTests\.js$)")
 STRING_LIT = re.compile(r'"((?:[^"\\\n]|\\.)*)"|\'((?:[^\'\\\n]|\\.)*)\'|`((?:[^`\\]|\\.)*)`', re.S)
 ATTR = re.compile(r"\b(aria-[a-z]+|role|title|placeholder|alt|name)\s*=\s*(?:\"([^\"]*)\"|'([^']*)'|\{)")
 JSX_TAG = re.compile(r"<([A-Z][A-Za-z0-9_]*)\b")
@@ -114,7 +116,7 @@ def parse_diff(text):
         elif line.startswith("+++ "):
             path = line[4:].strip()
             path = path[2:] if path.startswith("b/") else path
-            current = files.setdefault(path, {"added": [], "removed": []}) if SRC_FILE.match(path) else None
+            current = files.setdefault(path, {"added": [], "removed": []}) if SRC_FILE.match(path) and not NOT_RENDERED.search(path) else None
         elif line.startswith("--- "):
             continue
         elif current is not None and line.startswith("+"):

@@ -125,6 +125,18 @@ def test_moved_component_text_is_flagged(tmp_path):
     assert code == 1 and "<Banner>" in out
 
 
+@pytest.mark.parametrize("path", ["src/lib/positionUrgency.test.js", "src/test-utils/knownFailing.js", "src/lib/__tests__/x.js", "src/setupTests.js"])
+def test_unit_test_files_are_not_rendered_source(tmp_path, path):
+    diff = f"diff --git a/{path} b/{path}\n--- a/{path}\n+++ b/{path}\n@@ -1 +1 @@\n+        Review your open trades\n"
+    (tmp_path / "diff.txt").write_text(diff)
+    (tmp_path / "src").mkdir()
+    tests = tmp_path / "tests"
+    tests.mkdir()
+    (tests / "a.spec.js").write_text("test('SC-X-01: a', async ({ page }) => {\n  await page.getByText('open trades');\n});\n")
+    code, out = run(str(tmp_path / "diff.txt"), str(tmp_path / "src"), str(tests))
+    assert code == 0 and "not needed" in out
+
+
 def test_no_src_change_exits_zero(tmp_path):
     (tmp_path / "diff.txt").write_text("diff --git a/README.md b/README.md\n+++ b/README.md\n+hello\n")
     (tmp_path / "src").mkdir()
