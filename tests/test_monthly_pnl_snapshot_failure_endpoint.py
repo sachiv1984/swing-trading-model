@@ -48,7 +48,7 @@ def test_monthly_pnl_returns_200_without_restated_when_snapshot_read_fails(caplo
         "ensure_monthly_pnl_snapshots_table": MagicMock(),
         "get_monthly_pnl_snapshot": MagicMock(side_effect=RuntimeError("snapshot read failed")),
         "insert_monthly_pnl_snapshot_if_absent": MagicMock(),
-        "get_estimated_unrealised_pnl": MagicMock(return_value=None),
+        "get_estimated_unrealised_pnl": MagicMock(return_value=(None, 0)),
         "datetime": fake_datetime,
     }), patch.object(main, "get_arc5_compliance_summary", return_value={}):
         with caplog.at_level("ERROR"):

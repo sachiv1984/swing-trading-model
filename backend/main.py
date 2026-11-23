@@ -1133,6 +1133,8 @@ def get_daily_pnl_endpoint(year: int, month: int):
             "data": report["days"],
             "estimated_unrealised_pnl": report["estimated_unrealised_pnl"],
             "unrealised_note": report["unrealised_note"],
+            # ST-30 (BLG-SPEC-203, v9.18): positions valued at a stale price.
+            "unrealised_price_stale_count": report.get("unrealised_price_stale_count", 0),
         }
     except HTTPException:
         raise
@@ -1186,6 +1188,8 @@ def get_monthly_pnl_endpoint(year: Optional[int] = None, format: Optional[str] =
             "data": report["months"],
             "estimated_unrealised_pnl": report["estimated_unrealised_pnl"],
             "unrealised_note": report["unrealised_note"],
+            # ST-30 (BLG-SPEC-203, v9.18): positions valued at a stale price.
+            "unrealised_price_stale_count": report.get("unrealised_price_stale_count", 0),
             "compliance_summary": compliance_summary,
         }
     except ValueError as e:

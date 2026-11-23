@@ -35,10 +35,10 @@ const TAX_YEAR_REPORT_EMPTY = {
       total_gross_loss: 0,
       win_rate: 0,
       total_closed_trades: 0,
+      estimated_unrealised_pnl: null,
+      unrealised_note: '',
     },
     trades: [],
-    estimated_unrealised_pnl: null,
-    unrealised_note: '',
   },
 };
 

@@ -44,10 +44,10 @@ const TAX_YEAR_REPORT_WITH_UNREALISED = {
       total_gross_loss: -300,
       win_rate: 0.6,
       total_closed_trades: 5,
+      estimated_unrealised_pnl: 250,
+      unrealised_note: 'Based on current open positions at last close.',
     },
     trades: [],
-    estimated_unrealised_pnl: 250,
-    unrealised_note: 'Based on current open positions at last close.',
   },
 };
 

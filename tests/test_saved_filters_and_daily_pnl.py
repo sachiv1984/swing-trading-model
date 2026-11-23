@@ -179,7 +179,7 @@ class TestGetDailyPnlReport(unittest.TestCase):
                  {"day": 3, "realised_pnl_gbp": 240.5, "trade_count": 3},
                  {"day": 17, "realised_pnl_gbp": -85.0, "trade_count": 1},
              ]), \
-             patch.object(reports_service, "get_estimated_unrealised_pnl", return_value=340.5):
+             patch.object(reports_service, "get_estimated_unrealised_pnl", return_value=(340.5, 2)):
             result = reports_service.get_daily_pnl_report(2026, 7)
 
         self.assertEqual(len(result["days"]), 2)
@@ -187,11 +187,13 @@ class TestGetDailyPnlReport(unittest.TestCase):
         self.assertEqual(result["days"][1], {"day": 17, "realised_pnl_gbp": -85.0, "trade_count": 1})
         self.assertEqual(result["estimated_unrealised_pnl"], 340.5)
         self.assertIn("Indicative only", result["unrealised_note"])
+        # ST-30 (BLG-SPEC-203, v9.18): positions valued at a stale price.
+        self.assertEqual(result["unrealised_price_stale_count"], 2)
 
     def test_empty_month_returns_empty_days_not_none(self):
         with patch.object(reports_service, "get_portfolio", return_value={"id": "portfolio-1"}), \
              patch.object(reports_service, "get_daily_pnl", return_value=[]), \
-             patch.object(reports_service, "get_estimated_unrealised_pnl", return_value=0.0):
+             patch.object(reports_service, "get_estimated_unrealised_pnl", return_value=(0.0, 0)):
             result = reports_service.get_daily_pnl_report(2026, 8)
         self.assertEqual(result["days"], [])
         self.assertEqual(result["estimated_unrealised_pnl"], 0.0)

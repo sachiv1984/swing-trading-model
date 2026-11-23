@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Class 2
 **Status:** Canonical
-**Version:** 1.35.2
-**Last Updated:** 2026-11-23 (ST-29, EPIC-05, v9.18, BLG-BE-181 — v9.18.0 entry adds settings_endpoints.md v1.6.1: GET /settings survives a failed change-log read); prior — 2026-11-23 (ST-26, EPIC-05, v9.18, BLG-BE-213 — v9.18.0 entry adds position_endpoints.md v2.22.1: GET /positions/compliance native entry and live FX fallback); prior — 2026-11-20 (ST-39, EPIC-07, v9.18, BLG-AI-29 — v9.18.0 entry adds ai_endpoints.md v1.42: §13.2 parameter-change check on POST /ai/daily-briefing and POST /ai/chat); prior history retained — see prior entries in version control
+**Version:** 1.35.3
+**Last Updated:** 2026-11-23 (ST-30, EPIC-05, v9.18, BLG-SPEC-203 — v9.18.0 entry adds reports_endpoints.md v0.21: live unrealised P&L and unrealised_price_stale_count); prior — 2026-11-23 (ST-29, EPIC-05, v9.18, BLG-BE-181 — v9.18.0 entry adds settings_endpoints.md v1.6.1: GET /settings survives a failed change-log read); prior — 2026-11-23 (ST-26, EPIC-05, v9.18, BLG-BE-213 — v9.18.0 entry adds position_endpoints.md v2.22.1: GET /positions/compliance native entry and live FX fallback); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 # API Changelog
@@ -76,6 +76,17 @@ Rules:
 | Change | Details |
 |--------|---------|
 | Updated endpoint: GET /settings | A failed `settings_change_log` read logs a warning and returns the settings with `last_change: null` and `200`, instead of `500` (BLG-BE-181). Response shape unchanged. |
+
+### reports_endpoints.md — v0.21 (UPDATED)
+
+**EPIC:** EPIC-05
+**ST:** ST-30
+
+| Change | Details |
+|--------|---------|
+| Updated endpoint: GET /reports/tax-year | `summary.estimated_unrealised_pnl` is the live sum of `get_positions_with_prices()` `pnl` (GBP), the `GET /positions` basis, instead of the nightly `positions.pnl` (BLG-SPEC-203); `null` if the live path fails. New `summary.unrealised_price_stale_count`. `unrealised_note` gains "Calculated live at current prices, on the same basis as the Positions page." |
+| Updated endpoint: GET /reports/monthly-pnl | Same live `estimated_unrealised_pnl`, new top-level `unrealised_price_stale_count`. |
+| Updated endpoint: GET /reports/daily-pnl | Same live `estimated_unrealised_pnl`, new top-level `unrealised_price_stale_count`. |
 
 ## v9.17.0 (2026-11-12 — Release v9.17)
 

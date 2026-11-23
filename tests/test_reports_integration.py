@@ -26,6 +26,7 @@ CLIENT = TestClient(app, raise_server_exceptions=False)
 
 PATCH_GET_PORTFOLIO     = "services.reports_service.get_portfolio"
 PATCH_GET_POSITIONS     = "services.reports_service.get_positions"
+PATCH_LIVE_POSITIONS    = "services.position_service.get_positions_with_prices"
 PATCH_GET_TAX_TRADES    = "services.reports_service.get_trade_history_by_tax_year"
 
 MOCK_PORTFOLIO = {"id": "portfolio-test-001", "cash": 5000.0, "last_updated": "2026-03-17T10:00:00"}
@@ -87,6 +88,14 @@ MOCK_OPEN_POSITIONS = [
     {"pnl": 50.00, "status": "open"},
 ]
 
+# Rows shaped as get_positions_with_prices() returns them (position_service.py):
+# pnl is GBP, rounded to 2 dp; price_is_stale is true when the live fetch failed.
+LIVE_OPEN_POSITIONS = [
+    {"id": "pos-1", "ticker": "VOD", "market": "UK", "pnl": 210.37, "price_is_stale": False},
+    {"id": "pos-2", "ticker": "MU", "market": "US", "pnl": 45.18, "price_is_stale": True},
+]
+
+
 
 # ---------------------------------------------------------------------------
 # 1. Validation — missing / invalid / future year
@@ -139,8 +148,11 @@ class TestTaxYearValidation(unittest.TestCase):
 class TestTaxYearEmpty(unittest.TestCase):
 
     def _call(self, year=2025):
+        # ST-30 (BLG-SPEC-203, v9.18): the unrealised figure is live, from the
+        # Positions page's path; one of the two positions has a stale price.
         with patch(PATCH_GET_PORTFOLIO, return_value=MOCK_PORTFOLIO), \
              patch(PATCH_GET_POSITIONS, return_value=MOCK_OPEN_POSITIONS), \
+             patch(PATCH_LIVE_POSITIONS, return_value=LIVE_OPEN_POSITIONS), \
              patch(PATCH_GET_TAX_TRADES, return_value=[]):
             return CLIENT.get(f"/reports/tax-year?year={year}").json()
 
@@ -166,8 +178,14 @@ class TestTaxYearEmpty(unittest.TestCase):
 
     def test_unrealised_pnl_from_open_positions(self):
         summary = self._call()["data"]["summary"]
-        # MOCK_OPEN_POSITIONS has pnl 200 + 50 = 250
-        self.assertAlmostEqual(summary["estimated_unrealised_pnl"], 250.0, places=2)
+        # LIVE_OPEN_POSITIONS has live pnl 210.37 + 45.18 = 255.55; the nightly
+        # positions.pnl (200 + 50) is no longer read.
+        self.assertAlmostEqual(summary["estimated_unrealised_pnl"], 255.55, places=2)
+        self.assertEqual(summary["unrealised_price_stale_count"], 1)
+
+    def test_unrealised_note_states_the_live_basis(self):
+        note = self._call()["data"]["summary"]["unrealised_note"]
+        self.assertTrue(note.endswith("Calculated live at current prices, on the same basis as the Positions page."))
 
     def test_unrealised_note_present(self):
         summary = self._call()["data"]["summary"]
@@ -569,3 +587,26 @@ class TestMonthlyPnlValidation(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestEstimatedUnrealisedPnlLiveBasis(unittest.TestCase):
+    """ST-30 (BLG-SPEC-203, v9.18): Reports and Positions use the same live basis."""
+
+    def test_equals_the_sum_of_the_positions_page_pnl(self):
+        from services import reports_service
+        with patch(PATCH_LIVE_POSITIONS, return_value=LIVE_OPEN_POSITIONS):
+            total, stale = reports_service.get_estimated_unrealised_pnl("portfolio-test-001")
+        self.assertEqual(total, round(sum(p["pnl"] for p in LIVE_OPEN_POSITIONS), 2))
+        self.assertEqual(stale, 1)
+
+    def test_no_open_positions_is_zero_with_no_stale_prices(self):
+        from services import reports_service
+        with patch(PATCH_LIVE_POSITIONS, return_value=[]):
+            self.assertEqual(reports_service.get_estimated_unrealised_pnl("p"), (0.0, 0))
+
+    def test_live_path_failure_omits_the_figure_rather_than_using_the_nightly_basis(self):
+        from services import reports_service
+        with patch(PATCH_LIVE_POSITIONS, side_effect=RuntimeError("price service down")), \
+             patch(PATCH_GET_POSITIONS, return_value=MOCK_OPEN_POSITIONS) as nightly:
+            self.assertEqual(reports_service.get_estimated_unrealised_pnl("p"), (None, 0))
+        nightly.assert_not_called()

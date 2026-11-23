@@ -620,7 +620,9 @@
       "qa_evidence_log": "claude/cycles/2026-11-18__release-v9.18/qa_evidence_EPIC-05.md",
       "test_scenarios": [
         "tests/test_fx_market_matrix.py",
-        "tests/test_settings_change_log.py"
+        "tests/test_settings_change_log.py",
+        "tests/test_reports_integration.py",
+        "tests/e2e/reports-unrealised-live-basis.spec.js"
       ],
       "stories": {
         "ST-25": {
@@ -716,31 +718,31 @@
         "ST-29": {
           "title": "Keep GET /settings working when the change-log read fails",
           "classification": "autonomous",
-          "status": "in_progress",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 2294,
           "branch": "exec/2026-11-18__release-v9.18/EPIC-05",
-          "commit_sha": null,
+          "commit_sha": "21a0df094507c110b6e5f0294ac5293bd0468c6f",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-11-23T09:16:14Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/specs/api_contracts/settings_endpoints.md#GET /settings",
             "tests/test_settings_change_log.py"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.push",
           "sign_off_record": null,
-          "notes": "First-time-right: 2026-11-23 pass A — 1 done (last_change from get_last_settings_change, database.py:801); 17 done (readers of last_change: Settings page 'last change' line handles null already, e2e settings-last-change.spec.js); 2-8,11,18-24 N/A (one try/except, no UI change). Pass B — 9 done; 10 done (settings_endpoints.md v1.6.1, api_changelog); 15/16 N/A."
+          "notes": "First-time-right: 2026-11-23 pass A — 1 done (last_change from get_last_settings_change, database.py:801); 17 done (readers of last_change: Settings page 'last change' line handles null already, e2e settings-last-change.spec.js); 2-8,11,18-24 N/A (one try/except, no UI change). Pass B — 9 done; 10 done (settings_endpoints.md v1.6.1, api_changelog); 15/16 N/A. Deviation check: none."
         },
         "ST-30": {
           "title": "Make the Reports unrealised P&L match the Positions basis",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "in_progress",
           "assigned_to": "engine",
           "github_issue": 2295,
           "branch": "exec/2026-11-18__release-v9.18/EPIC-05",
@@ -750,13 +752,18 @@
           "unblock_criteria": null,
           "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": [],
+          "spec_references": [
+            "docs/specs/frontend/pages/reports.md#Unrealised P&L Card",
+            "docs/specs/api_contracts/reports_endpoints.md#GET /reports/tax-year",
+            "tests/e2e/reports-unrealised-live-basis.spec.js",
+            "tests/test_reports_integration.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": ""
+          "notes": "First-time-right: 2026-11-23 pass A — 1 done (pnl GBP 2dp per position from get_positions_with_prices, position_service.py; tax-year fields sit in data.summary, frontend read data — pre-existing bug, card never rendered; fixed in-story); 2 done (surfaces: Tax Year card, Monthly card, Trade History Calendar banner 'as of today' — banner value now live, no stale line there: raised to user 2026-11-23); 7 done (decision record says text-app-warning, reports.md v0.28 says amber-700/400 = actual Dashboard Card 2 code; followed reports.md); 15 done (Positions per-position pnl GBP = Reports summed field); 18 done (e2e tax-year mocks moved unrealised fields into summary, the writer's shape, 6 specs); 19 done (live path fails -> null, card hidden; stale price -> count line); 20 done (note sentence per spec; pluralisation as Dashboard). Pass B — 9 done (Tax Year read bug fixed, not filed); 10 done (reports.md v0.29, reports_endpoints.md v0.21, openapi 3.50.1, api_changelog); 13 done; 22 N/A; local Playwright 37/37 + Reports axe 10/10 passed; full suite 3810 passed. AC 1 staging pending."
         },
         "ST-31": {
           "title": "Cache the Trade Entry ATR preview per ticker and market",
@@ -1031,6 +1038,7 @@
     "ST-06",
     "ST-25",
     "ST-26",
+    "ST-29",
     "ST-39",
     "ST-40"
   ],

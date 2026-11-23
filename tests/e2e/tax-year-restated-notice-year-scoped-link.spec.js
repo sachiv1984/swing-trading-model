@@ -45,10 +45,10 @@ function taxYearReportResponse({ restatedMonthCount = 0 } = {}) {
       summary: {
         total_realised_pnl: 0, total_gross_profit: 0, total_gross_loss: 0,
         win_rate: 0, total_closed_trades: 0, restated_month_count: restatedMonthCount,
+        estimated_unrealised_pnl: 0,
+        unrealised_note: null,
       },
       trades: [],
-      estimated_unrealised_pnl: 0,
-      unrealised_note: null,
     },
   };
 }

@@ -146,7 +146,7 @@ class TestGetTaxYearReportRealFunctionBoundaryCases:
     def _run(self, trades):
         with patch.object(reports_service, "get_portfolio", return_value={"id": "port-1"}), \
              patch.object(reports_service, "get_trade_history_by_tax_year", return_value=trades), \
-             patch.object(reports_service, "get_estimated_unrealised_pnl", return_value=0.0), \
+             patch.object(reports_service, "get_estimated_unrealised_pnl", return_value=(0.0, 0)), \
              patch.object(reports_service, "_get_restated_month_count", return_value=0):
             return reports_service.get_tax_year_report(2025)
 
