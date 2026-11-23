@@ -580,7 +580,18 @@ def get_settings_endpoint():
         
         settings_list = [decimal_to_float(s) for s in settings]
         # ST-26 (BLG-SEC-41, v9.12): the most recent logged save, or None.
-        settings_list[0]["last_change"] = get_last_settings_change()
+        # ST-29 (BLG-BE-181, v9.18): a failed change-log read must not fail the
+        # settings read; it logs a warning and returns last_change: null.
+        try:
+            last_change = get_last_settings_change()
+        except Exception as change_log_error:
+            import logging as _logging
+            _logging.getLogger(__name__).warning(
+                "GET /settings: settings change-log read failed; returning last_change null: %s",
+                change_log_error,
+            )
+            last_change = None
+        settings_list[0]["last_change"] = last_change
         return {
             "status": "ok",
             "data": settings_list
