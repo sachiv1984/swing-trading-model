@@ -207,6 +207,18 @@ This check fires on the same files as Check 11, on an `exec/**` branch. It was a
 
 ---
 
+### Check 13 — E2E locator collisions (frontend diffs)
+
+This check fires when any staged file matches `src/**/*.js` or `src/**/*.jsx`. Added 2026-11-23 (ST-21, BLG-QA-268, v9.18) as the scripted form of `execution_prompt.md` §3.1.A step 13.
+
+1. Run `python3 scripts/check_e2e_locator_collisions.py` (it reads the staged diff).
+2. Report every match it lists: the locator, the scenario ID, and whether the diff adds, removes or moves the text, or adds the attribute.
+3. For each match, either scope the locator in this commit (a test ID, a region, `exact: true` or an accessible name) or state in the commit body why it still finds the intended element, as `Locators: <scenario> unchanged — <reason>`.
+
+**FAIL if:** the script exits 1 and a listed match is neither scoped in this commit nor explained in the body. Exit 0 is a pass. The script cannot see text that comes from API data or from a constant in another module (its docstring lists the limits), so a pass does not replace reading a moved component's tests.
+
+---
+
 ## Step 4 — Render the result
 
 ```
@@ -230,6 +242,7 @@ Staged files ({n}):
   ✅ Check 7 — E2E coverage declaration (N/A — no frontend files staged)
   ✅ Check 11 — Code review and change impact (N/A — no implementation files staged)
   ✅ Check 12 — First-time-right record (N/A — no implementation files staged)
+  ✅ Check 13 — E2E locator collisions (N/A — no src/**/*.js(x) staged)
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 RESULT: ❌ NOT READY — 1 check failed
@@ -252,6 +265,7 @@ Don't just report failures — help resolve them:
 - **Check 2 fail (message):** Draft the correct commit message
 - **Check 1 fail (branch):** Explain the correct branch and how to move the changes there
 - **Check 11 fail (review/impact):** Run `/code-review` on the staged diff, fix or file each finding, then draft the `Review:` and `Impact:` lines from the findings and a grep of the changed behaviour's callers
+- **Check 13 fail (locator collisions):** For each listed match, open the spec at the line given and scope the locator (prefer `getByTestId`, a region, `exact: true` or an accessible name); re-run the script until the only matches left are ones explained in the commit body
 - **Check 7 fail (E2E):** Ask whether the story has interaction/API-call AC (if yes, identify which scenario IDs need spec coverage and whether a spec file exists or needs creating); if all AC is visual-only, add `E2E: N/A — visual-only AC` to the commit message body
 
 Re-run the checklist after fixes are applied to confirm the commit is clean.

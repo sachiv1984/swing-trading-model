@@ -6,7 +6,7 @@
   "invoked_utc": "2026-11-19T08:07:14Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-23T15:20:04Z",
+  "last_updated_utc": "2026-11-23T15:44:03Z",
   "epics": {
     "EPIC-01": {
       "title": "Site Structure & Usability Phase 4, Stage 1: Correct and Safe (build-and-ship)",
@@ -539,7 +539,7 @@
         "ST-21": {
           "title": "Script the locator-collision check and run it from commit-check",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "in_progress",
           "assigned_to": "engine",
           "github_issue": 2286,
           "branch": "exec/2026-11-18__release-v9.18/EPIC-04",
@@ -549,13 +549,17 @@
           "unblock_criteria": null,
           "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": [],
+          "spec_references": [
+            "scripts/check_e2e_locator_collisions.py",
+            "claude/system/execution_prompt.md#3.1.A step 13",
+            ".claude/skills/commit-check/SKILL.md#Check 13"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": ""
+          "notes": "First-time-right: 2026-11-23 pass A/B — 3 done (the new check fails on a bad sample of every form it claims: 14 synthetic cases incl. template literal, JSX inline and own-line text, attribute presence/value, scoped/exact negatives; limits stated in its docstring and Check 13); 24 done (AC targets replayed from fixtures since CI is a shallow clone); 9 done (noise cut from 334/316 to 62/46 grouped hits before commit); 13 done (skill section order read back); 1,2,4-8,10-12,14-23 N/A (tooling, no UI/data)"
         },
         "ST-22": {
           "title": "Require the pre-commit code review in execution_prompt.md",
