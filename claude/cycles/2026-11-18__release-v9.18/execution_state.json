@@ -614,8 +614,8 @@
       "title": "Position Data Correctness",
       "status": "done",
       "branch": "exec/2026-11-18__release-v9.18/EPIC-05",
-      "pr_number": null,
-      "pr_status": "none",
+      "pr_number": 2310,
+      "pr_status": "open",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-11-18__release-v9.18/qa_evidence_EPIC-05.md",
       "test_scenarios": [
@@ -1140,7 +1140,8 @@
     "2026-11-20T16:34:33Z EPIC-07 agent-mediated DoQ sign-off recorded (qa_evidence_EPIC-07.md) after 3 review rounds; §5.3 retry limit reached and the user directed sign-off on the round-3 fix (0c442abe) without a fourth review. PO review round 3: Approved with Comments.",
     "2026-11-20T16:36:25Z EPIC-07 PR #2309 opened (STEP 3.2.B). Pre-PR gates: DoQ Date non-blank; signer format agent-mediated (Director of Quality role — §5.3); qa_evidence committed (7b410f0b); check_api_performance_baseline_drift.py PASSED; origin/main..HEAD carries only [EPIC-07] and [GOVERNANCE] commits. Agent-mediated DoQ + PO review posted as one labelled comment (issuecomment-7044974409). Awaiting human DoQ QA sign-off and PO acceptance, incl. P2 found defects BLG-BE-226, BLG-AI-35, BLG-BE-228, BLG-FE-328.",
     "2026-11-23T08:51:09Z EPIC-07 merge-gate confirmations recorded (qa_evidence_EPIC-07.md \"Merge Gate Confirmations\"): human DoQ QA sign-off and PO acceptance given by the user in session at 2026-11-20T16:38:02Z, including acceptance with rationale of the P2 found defects BLG-BE-226, BLG-AI-35, BLG-BE-228 (priority left at P2; P1 recommendation not taken up) and BLG-FE-328. PR #2309 open, all checks passing; merge pending (human).",
-    "2026-11-23T08:59:36Z EPIC-07 PR #2309 merged by sachiv1984 at 2026-11-23T08:59:23Z (merge a83f8595); reported by the user in session. Human DoQ QA sign-off and PO acceptance recorded before the merge (5b180757). Orphaned post-merge commit check: git log origin/main..origin/exec/…/EPIC-07 empty — nothing to reconcile. No pending sibling EPIC branches exist, so the 3c sync was not needed. EPIC-07 and ST-39/ST-40 set merged; recorded on main."
+    "2026-11-23T08:59:36Z EPIC-07 PR #2309 merged by sachiv1984 at 2026-11-23T08:59:23Z (merge a83f8595); reported by the user in session. Human DoQ QA sign-off and PO acceptance recorded before the merge (5b180757). Orphaned post-merge commit check: git log origin/main..origin/exec/…/EPIC-07 empty — nothing to reconcile. No pending sibling EPIC branches exist, so the 3c sync was not needed. EPIC-07 and ST-39/ST-40 set merged; recorded on main.",
+    "2026-11-23T13:42:31Z EPIC-05: PR #2310 opened. Merge order per sprint_backlog.md puts EPIC-04 (not started) before EPIC-05; rebase after EPIC-04 merges. Human DoQ confirmation and PO acceptance pending."
   ],
   "sealed": false,
   "sealed_utc": null
