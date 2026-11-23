@@ -1,7 +1,7 @@
 Owner: Director of Quality
 Class: Planning Document (Class 4)
 Status: Active
-Last Updated: 2026-11-20
+Last Updated: 2026-11-23
 
 # QA Evidence — EPIC-07 — AI Output Boundary
 
@@ -40,3 +40,15 @@ Last Updated: 2026-11-20
 - Signed off by: Sprint Execution Engine (agent-mediated, Director of Quality role — §5.3)
 - Date: 2026-11-20
 - Comments: Agent-mediated Director of Quality review against `claude/agents/director_of_quality.md`, at the user's direction (2026-11-20), alongside an agent-mediated Product Owner review. Round 1 (at `27cc8107`): **Changes Requested** — P2 finding 1, the negation exemption exempted any sentence containing a negation or disclaimer (8 DoQ and 6 PO bypass sentences); P3 findings 2 (no terminal row when the regeneration raises), 3 (rule-cited stop wording withheld → BLG-AI-39), 4 (contract implied "Don't hesitate…" fails), 5 (QA evidence counts). Fixed in `584099ec`. Round 2: **Changes Requested** — R1, a declined suggestion exempted everything after it; R2/R3 → BLG-AI-40. Fixed in `c4184b3f`. Round 3: **Changes Requested** — R1b, advice after other clause breaks (", so", dash, bracket) after a declined phrase; the reviewer's suggested regex applied verbatim in `0c442abe` and verified with the reviewer's own probe script (13 must-fail sentences fail; must-pass set passes except 2 predicted safe-side false positives, pinned as tests and listed in the contract). The §5.3 retry limit was reached; on the user's direction (2026-11-20) this sign-off records the round-3 fix as applied and verified without a fourth review. Product Owner review: round 3 **Approved with Comments**, nothing blocking. Final CI at `0c442abe`: all 7 workflows success (CI Pytest 44768582314); 89 ST-39 tests, full suite 3797 passed. Story-level authority sign-offs (AI Compliance & Governance Officer; Product Owner) cleared, listed above. Human Director of Quality QA sign-off and Product Owner acceptance, including the four P2 found defects, remain required at the merge gate.
+
+## Merge Gate Confirmations
+
+- **Director of Quality QA sign-off (human):** Given by the user, who holds the Director of Quality role, in the Claude Code session ("give DOQ and PO acceptance", for PR #2309), 2026-11-20T16:38:02Z. This is in addition to the agent-mediated sign-off block above, which does not satisfy this row by itself.
+- **Product Owner acceptance (human):** Given by the user, who holds the Product Owner role, in the same message, 2026-11-20T16:38:02Z.
+- **Merge:** pending. PR #2309 is open at head `b491bad5` with all checks passing (39 pass, 5 skipping, re-checked 2026-11-23T08:51:09Z). The merge is the human's; this section is updated when it happens.
+- **P1/P2 found defects — PO and DoQ acceptance with rationale** (LL-v9.16-P3-05). The user accepted the rationale in the agent-mediated PO review (PR #2309 comment `issuecomment-7044974409`). All four are pre-existing, none was introduced by EPIC-07, and none blocks this merge:
+  - **BLG-BE-226** (debrief R achieved measured from the position's starting stop but compared with the plan's target) — **accepted, v9.19.** It misstates a result already shown since v9.11; the fix needs a Metrics Definitions ruling on the R basis, so it cannot be done safely inside this PR.
+  - **BLG-AI-35** (debrief number check drops the focus sentence on every went-to-plan trade) — **accepted, v9.19.** It fails safe (no wrong sentence is shown), and the cause cannot be found until the failing numbers are logged; the ST-40 keep decision's re-review waits on it.
+  - **BLG-BE-228** (duplicate INTC 2026-09-08 `trade_history` row) — **accepted at P2, v9.19.** It double-counts one trade in realised P&L and win rate. Any data fix needs the cause and the user's go-ahead first. The agent-mediated PO review recommends raising it to P1; the user has not changed its priority, so it stays P2 until they do.
+  - **BLG-FE-328** (Dashboard briefing "Ask the AI" sends a string `context` and is rejected) — **accepted, v9.19.** In-card chat has failed since ST-12; the floating chat widget works, and this PR does not touch the card.
+- **P3 items, for the record:** BLG-AI-34, BLG-AI-36, BLG-AI-37, BLG-AI-38, BLG-AI-39, BLG-AI-40, BLG-BE-227, BLG-QA-275 (open); BLG-GOV-431 (P2 process item, v9.19, not a found defect).
