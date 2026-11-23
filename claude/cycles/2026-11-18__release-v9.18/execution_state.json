@@ -6,7 +6,7 @@
   "invoked_utc": "2026-11-19T08:07:14Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-23T15:55:34Z",
+  "last_updated_utc": "2026-11-23T15:56:30Z",
   "epics": {
     "EPIC-01": {
       "title": "Site Structure & Usability Phase 4, Stage 1: Correct and Safe (build-and-ship)",
@@ -524,7 +524,7 @@
         "ST-20": {
           "title": "Fail the axe scan on incomplete colour-contrast results",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "in_progress",
           "assigned_to": "engine",
           "github_issue": 2285,
           "branch": "exec/2026-11-18__release-v9.18/EPIC-04",
@@ -534,13 +534,17 @@
           "unblock_criteria": null,
           "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": [],
+          "spec_references": [
+            "tests/e2e/accessibility-axe-scan.spec.js#runAxeScan",
+            "tests/e2e/accessibility-axe-scan.spec.js#SC-AXEINC-01",
+            "tests/e2e/accessibility-axe-scan.spec.js#SC-AXEINC-02"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": ""
+          "notes": "First-time-right: 2026-11-23 pass A/B — 4 done (measured every scan before choosing the strict set: all 96 have 6-8 incomplete nodes in the app shell, so the strict rule judges page content and logs the shell; 19 scans with 0 page-content nodes form the strict set); 3 done (probe on a gradient inside main: logged on a non-strict name, fails a strict one; full spec locally 95 passed + the corrected SC-AXEINC-02, then 2/2); 9 done (shell contrast filed as BLG-FE-329, a UI change outside this story); 24 done (AC \"every scan\" kept literal: logging is in runAxeScan, used by every scan)"
         },
         "ST-21": {
           "title": "Script the locator-collision check and run it from commit-check",

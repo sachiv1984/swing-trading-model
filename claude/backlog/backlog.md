@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-23 (session — 1 new item added: BLG-QA-276; EPIC-04 v9.18 ST-19 pre-commit code review); prior — 2026-11-23 (session — 1 new item added: BLG-SPEC-243; EPIC-04 v9.18 ST-18 agent-mediated Head of UX & Design review); prior — 2026-11-20 (session — 1 new item added: BLG-AI-40; EPIC-07 v9.18 PR review round 2); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-23 (session — 1 new item added: BLG-FE-329; EPIC-04 v9.18 ST-20 axe incomplete contrast log); prior — 2026-11-23 (session — 1 new item added: BLG-QA-276; EPIC-04 v9.18 ST-19 pre-commit code review); prior — 2026-11-23 (session — 1 new item added: BLG-SPEC-243; EPIC-04 v9.18 ST-18 agent-mediated Head of UX & Design review); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -8432,6 +8432,28 @@ The debrief summary and its number check are tested with made-up trades and sent
 **Acceptance Criteria**
 - `npx eslint src/lib/*.test.js src/test-utils/` reports no `no-undef` or comment errors
 - Non-test `src/` files keep their current rules
+
+---
+
+### BLG-FE-329 — Give the app shell's gradient and overlapped text a contrast axe can decide
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Head of UX & Design; Head of Engineering
+**Source:** ST-20 (EPIC-04, `2026-11-18__release-v9.18`), first run of the axe incomplete color-contrast log — 2026-11-23
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+ST-20 made `runAxeScan` log the color-contrast results axe cannot decide (`incomplete`). Every full-page scan reports the same 6–8 such nodes in the app shell (`src/Layout.js`, the sidebar and top header). They are the "Position Manager" logo text (`bg-gradient-to-r from-cyan-400 to-violet-400 bg-clip-text text-transparent`), the active nav item's gradient background, nav links and area headers that axe reads as partly covered, and the theme toggle. In the light theme the logo is cyan-400 to violet-400 text on white, which is likely below AA 4.5:1. Because these nodes are on every page, `STRICT_INCOMPLETE_CONTRAST` has to exclude the shell, so no scan checks the shell's contrast.
+
+**Scope**
+- Measure the light and dark contrast of each shell node by hand or with a computed-style check, and fix any below AA (the logo is the likely one)
+- Remove the cause of the "partly covered" readings, or record why it is a false reading
+- Once the shell logs no incomplete nodes, stop excluding it in `runAxeScan` (`nodesInAppShell`) and widen `STRICT_INCOMPLETE_CONTRAST`
+
+**Acceptance Criteria**
+- A full-page scan logs "0 app shell" incomplete color-contrast nodes in both themes, or each remaining node has a recorded measured contrast of at least 4.5:1
+- `runAxeScan` judges shell nodes like page content on strict scans
 
 ---
 
