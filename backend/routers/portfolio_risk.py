@@ -77,13 +77,13 @@ def _get_portfolio_heat_and_positions():
         shares = float(pos.get("shares", 0))
         entry_price = float(pos.get("entry_price", 0))
         market = pos.get("market", "UK")
-        fx_rate = float(pos.get("fx_rate") or 1.27)
+        fx_rate = float(pos.get("fx_rate") or live_fx_rate)  # ST-26 (BLG-BE-213): live rate, not 1.27
         initial_stop = pos.get("initial_stop")
         sector = _lookup_sector(ticker_sector_map, pos.get("ticker"), market)
 
         if market == "US":
             # fill_price is USD native; entry_price is GBP-converted
-            entry_price_native = float(native_entry_price(pos, fx_rate))  # ST-25 (BLG-BE-208)
+            entry_price_native = float(native_entry_price(pos, live_fx_rate))  # ST-25/ST-26 (BLG-BE-208, BLG-BE-213)
             current_price_native = float(pos.get("current_price") or entry_price_native)
             current_price_gbp = current_price_native / live_fx_rate
         else:
@@ -309,10 +309,10 @@ def compute_sector_exposure(raw_positions, ticker_sector_map: dict, live_fx_rate
         market = pos.get("market", "UK")
         sector = _lookup_sector(ticker_sector_map, pos.get("ticker"), market) or "Unclassified"
         entry_price = float(pos.get("entry_price", 0))
-        fx_rate = float(pos.get("fx_rate") or 1.27)
+        fx_rate = float(pos.get("fx_rate") or live_fx_rate)  # ST-26 (BLG-BE-213): live rate, not 1.27
 
         if market == "US":
-            entry_price_native = float(native_entry_price(pos, fx_rate))  # ST-25 (BLG-BE-208)
+            entry_price_native = float(native_entry_price(pos, live_fx_rate))  # ST-25/ST-26 (BLG-BE-208, BLG-BE-213)
             current_price_native = float(pos.get("current_price") or entry_price_native)
             current_value_gbp = (current_price_native / live_fx_rate) * shares
         else:

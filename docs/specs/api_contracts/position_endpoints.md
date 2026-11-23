@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 2.22.0
-**Last Updated:** 2026-11-13 (ST-11, EPIC-05, v9.17, BLG-BE-211 — POST /positions/{position_id}/exit: a full exit moves the linked `active` trade plan to `closed`, best-effort; partial exit unchanged; response unchanged); prior — 2026-11-12 (ST-09, EPIC-04, v9.17, BLG-BE-205 — GET /positions gains stop_last_moved_date and previous_stop; both recompute paths write them when they raise a stop); prior — 2026-11-10 (ST-18, EPIC-05, v9.16, BLG-BE-177 — GET /positions/analyze writes stop_frozen_reason for a post-grace stop kept for lack of ATR even without a live price); prior history retained — see prior entries in version control
+**Version:** 2.22.1
+**Last Updated:** 2026-11-23 (ST-26, EPIC-05, v9.18, BLG-BE-213 — GET /positions/compliance uses the native entry and the live rate for a NULL fx_rate); prior — 2026-11-13 (ST-11, EPIC-05, v9.17, BLG-BE-211 — POST /positions/{position_id}/exit: a full exit moves the linked `active` trade plan to `closed`, best-effort; partial exit unchanged; response unchanged); prior — 2026-11-12 (ST-09, EPIC-04, v9.17, BLG-BE-205 — GET /positions gains stop_last_moved_date and previous_stop; both recompute paths write them when they raise a stop); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Overview
@@ -28,6 +28,7 @@ Global response envelopes, error shape, defaults, and multi-currency/stop rules 
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.22.1 | 2026-11-23 | ST-26 (BLG-BE-213, EPIC-05, v9.18): `GET /positions/compliance` measures stop distance from the native entry (`native_entry_price()`) and converts a US risk at the position's `fx_rate`, or the live rate when it is NULL. Before, a US position's GBP `entry_price` was compared with its native stops, and a NULL `fx_rate` used a hard-coded 1.27. Response shape unchanged; US flags can change. |
 | 2.22.0 | 2026-11-13 | ST-11 (BLG-BE-211, EPIC-05, v9.17): `POST /positions/{position_id}/exit` gains a Side effects subsection. A full exit moves every `active` trade plan linked to the position to `closed` (best-effort, audit-logged); a partial exit leaves it `active`; other statuses are not changed. Request and response unchanged. Existing `active` plans whose position was already closed are closed by a startup backfill (`data_model.md` DS-41). |
 | 2.21.0 | 2026-11-12 | ST-09 (BLG-BE-205, EPIC-04, v9.17): `GET /positions` gains `stop_last_moved_date` (`YYYY-MM-DD` \| `null`) and `previous_stop` (native, 2 dp \| `null`), both read-only (DS-40). `POST /positions/nightly-stop-update` and `GET /positions/analyze` write them only when the stop they store is above a stored (non-null) stop by an amount visible at 2 dp; an unchanged stop leaves both as they were. A second raise on the same UTC day keeps that day's first `previous_stop`. The nightly job's response shape is unchanged. The on-load path records moves too (ruling 2026-11-13, the user acting as Head of Specs Team and Data Model & Domain Schema Owner): the 16:00 UTC snapshot's call usually raises a stop before the nightly run. |
 | 2.20.1 | 2026-11-10 | ST-18 (BLG-BE-177, EPIC-05, v9.16): `GET /positions/analyze` writes `stop_frozen_reason = "atr_unavailable"` for a post-grace position whose stop is kept for lack of ATR even when no live price was fetched. It writes only that field in this case, as `POST /positions/nightly-stop-update` does; before, the marker was written only alongside a live-price update, so such a stop stayed unmarked until the nightly job. |
@@ -855,9 +856,9 @@ Response uses the standard success envelope from **conventions.md**.
 | `position_id` | string (UUID) | Matches the `id` field in `GET /positions`. |
 | `ticker` | string | Display ticker (no `.L` suffix for UK stocks). |
 | `market` | string | `"UK"` or `"US"`. |
-| `stop_compliant` | boolean \| null | `true` if `(entry_price − current_stop) / atr ≤ 2.5`. `false` if stop is missing or too wide. `null` if position is in grace period (stop not yet active) or ATR is unavailable. |
+| `stop_compliant` | boolean \| null | `true` if `(native entry − current_stop) / atr ≤ 2.5`, where the native entry is `entry_price` for UK and `fill_price` for US (else `entry_price` × `fx_rate`, else × the live rate). `false` if stop is missing or too wide. `null` if position is in grace period (stop not yet active) or ATR is unavailable. |
 | `stop_age_days` | integer \| null | Approximate days since the stop was last set. `null` for grace-period positions. Note: this is a conservative approximation using `holding_days` as the positions table does not record a dedicated `stop_updated_at` timestamp. |
-| `size_compliant` | boolean \| null | `true` if initial risk amount (stop distance × shares, in GBP) is within `risk_percent` of portfolio value × 1.10 tolerance. `null` if no portfolio snapshot is available or risk data is insufficient. |
+| `size_compliant` | boolean \| null | `true` if initial risk amount (native stop distance × shares, converted to GBP at the position's `fx_rate`, or the live rate when it is NULL) is within `risk_percent` of portfolio value × 1.10 tolerance. `null` if no portfolio snapshot is available or risk data is insufficient. |
 
 **`overall_status` derivation:**
 
