@@ -6,7 +6,7 @@
   "invoked_utc": "2026-11-19T08:07:14Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-23T15:15:24Z",
+  "last_updated_utc": "2026-11-23T15:20:04Z",
   "epics": {
     "EPIC-01": {
       "title": "Site Structure & Usability Phase 4, Stage 1: Correct and Safe (build-and-ship)",
@@ -464,24 +464,24 @@
         "ST-18": {
           "title": "Design gate data-source, writer and worked-example checks",
           "classification": "autonomous",
-          "status": "in_progress",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 2283,
           "branch": "exec/2026-11-18__release-v9.18/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "ec1d6eedd7e8908dd1a32933a466f1b2555a4ed3",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-11-23T15:15:24Z",
+          "acceptance_verified": true,
           "spec_references": [
             "claude/system/design_gate_prompt.md#2.2 Design work (if needed)",
             "docs/ops/design_gate_preapproval_checks_dry_run_2026-11-23.md"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": "3.1.A.signoff",
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.done",
           "sign_off_record": {
             "status": "cleared",
             "role": "Head of UX & Design",
@@ -492,12 +492,12 @@
             "first_round": "Blocked (1 P1, 1 P2, 3 P3) — all applied; BLG-SPEC-243 filed",
             "evidence": "docs/ops/design_gate_preapproval_checks_dry_run_2026-11-23.md"
           },
-          "notes": "First-time-right: 2026-11-23 pass A — governance-prompt story; 1 (data source) applied to the dry runs: GracePeriodView plan block ← GET /positions/grace-period-alerts, contract line 12 `<= 2`; 2 done (grace 0/1/2/null across 5 surfaces, quoted from bafcbdab specs); 7 done (§1B \"only the nightly job\": writers analyze_positions() position_service.py:576 and run_nightly_trailing_stop_update(), at b901ce91); 8 done (TL-09 \"latest nightly run date\" has no source in GET /positions); 3 done (each new check is shown to catch a known miss: both dry runs); 24 done (AC quantifiers \"every field\", \"any value\" kept literal in the prompt text); 4,5,6,11,17-21,23 N/A (no UI, no code, no fixtures)"
+          "notes": "First-time-right: 2026-11-23 pass A — governance-prompt story; 1 (data source) applied to the dry runs: GracePeriodView plan block ← GET /positions/grace-period-alerts, contract line 12 `<= 2`; 2 done (grace 0/1/2/null across 5 surfaces, quoted from bafcbdab specs); 7 done (§1B \"only the nightly job\": writers analyze_positions() position_service.py:576 and run_nightly_trailing_stop_update(), at b901ce91); 8 done (TL-09 \"latest nightly run date\" has no source in GET /positions); 3 done (each new check is shown to catch a known miss: both dry runs); 24 done (AC quantifiers \"every field\", \"any value\" kept literal in the prompt text); 4,5,6,11,17-21,23 N/A (no UI, no code, no fixtures) | Commits c6ae7223 + ec1d6eed (review follow-up). CI on ec1d6eed: all 7 workflows success (CI Pytest 45203182909, Playwright smoke 45203182687). Deviation check: none (the prompt is its own spec). First-time-right: 2026-11-23 pass B — 9 done (review P3 nits fixed, not filed; only the strip query-fails spec gap filed as BLG-SPEC-243); 13 done (template tables read back); 10,12,14-16,22 N/A."
         },
         "ST-19": {
           "title": "Unit-test pure frontend logic in CI",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "in_progress",
           "assigned_to": "engine",
           "github_issue": 2284,
           "branch": "exec/2026-11-18__release-v9.18/EPIC-04",
@@ -513,7 +513,7 @@
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": ""
+          "notes": "First-time-right: 2026-11-23 pass A (recorded after drafting the test files, before the first commit) — 3 done (165 cases; knownFailing proven to flip by simulating the BLG-FE-292 guard); 1 done (fixture units traced: GBP current_price/current_trailing_stop vs native *_native, as GET /positions sends; 0 native price unreachable — falls back to stored/entry price, position_service.py:209, so not tested); 2 done (5% band at exactly 5.0, 5.01, 4.99; tier vs cell display for grace null/missing/true/false); 24 done (AC \"every PR touching src/**\" kept literal, path list only widened; npm ci from lockfile); 18 done (fixture fields derived: R = (130−117)/(120−110)); 4-8,11,17,19-21,23 N/A (no UI, no state)"
         },
         "ST-20": {
           "title": "Fail the axe scan on incomplete colour-contrast results",
@@ -1029,6 +1029,7 @@
     "ST-04",
     "ST-05",
     "ST-06",
+    "ST-18",
     "ST-39",
     "ST-40"
   ],
