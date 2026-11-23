@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-20 (session — 1 new item added: BLG-AI-40; EPIC-07 v9.18 PR review round 2); prior — 2026-11-20 (session — 3 new items added: BLG-FE-328, BLG-AI-38, BLG-AI-39; EPIC-07 v9.18 agent-mediated PR review); prior — 2026-11-20 (session — 3 new items added: BLG-GOV-431, BLG-QA-275, BLG-AI-37; EPIC-07 v9.18 retrospective); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-23 (session — 1 new item added: BLG-SPEC-243; EPIC-04 v9.18 ST-18 agent-mediated Head of UX & Design review); prior — 2026-11-20 (session — 1 new item added: BLG-AI-40; EPIC-07 v9.18 PR review round 2); prior — 2026-11-20 (session — 3 new items added: BLG-FE-328, BLG-AI-38, BLG-AI-39; EPIC-07 v9.18 agent-mediated PR review); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -8390,6 +8390,27 @@ The debrief summary and its number check are tested with made-up trades and sent
 - The fixture set runs in CI with no live API call
 - MU 2026-09-30 reports R on one consistent basis (after BLG-BE-226), and STX 2026-05-06 shows no stop above the exit (after BLG-BE-227), in tests from the set
 - Each recorded sentence gets its agreed number-check result
+
+---
+
+### BLG-SPEC-243 — State what a Positions warning strip entry shows when its source query fails
+**Priority:** P3 (Low)
+**Type:** Spec Debt
+**Owner:** Frontend Specifications & UX Documentation Owner; Head of UX & Design
+**Source:** ST-18 (EPIC-04, `2026-11-18__release-v9.18`), design gate dependent-state dry run on the v9.17 `positions-decision-first` record (`docs/ops/design_gate_preapproval_checks_dry_run_2026-11-23.md`), agent-mediated Head of UX & Design review finding 5 — 2026-11-23
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`positions.md` §Warning Strip makes three entries depend on another component's state (the "would render" rule is written in `docs/design/2026-11-11__release-v9.17/positions-decision-first/decision_record.md` §6): Drawdown is active when `DrawdownReviewPrompt` would render, Concentration when `ConcentrationLimitsWarning` would render, and Metrics staleness when `MetricsStalenessIndicator` would render. The spec states each entry's result when the component renders and when it does not, but not when its source query fails (for example `GET /portfolio/drawdown-status` returning an error). A failed check then silently looks the same as "no warning", which a quiet strip cannot distinguish.
+
+**Scope**
+- Decide, for each of the three entries, what the strip shows when the source query fails (hidden, or an entry saying the check could not run)
+- Record the rule in `positions.md` §Warning Strip, and file a frontend item if the code must change
+
+**Acceptance Criteria**
+- `positions.md` §Warning Strip states each entry's result when its source query fails
+- If the result differs from the shipped behaviour, a frontend item is filed
 
 ---
 

@@ -165,9 +165,9 @@ Constraints:
 - **Any item introducing a new AI-calling endpoint (backend or frontend) must complete the mandatory security review checklist at `docs/specs/security/ai_endpoint_security_checklist.md` (rate limiting, cost gating, prompt-injection awareness) before its design artefact is approved (ST-05, BLG-SEC-23, EPIC-02, v8.0).**
 - These artefacts become authoritative for STEP 3 spec updates
 
-**Pre-approval checks (BLG-GOV-422, ST-18, v9.18).** Before STEP 2.3, run these four checks on every Design Required item's artefact, whether it is new under this step or confirmed under STEP 2.1. Record each in the gate record's `## Pre-Approval Checks` section (STEP 4). A gap is settled before the gate passes: either a story in the slice closes it (raise it through the §4.1 addendum if the slice lacks one) or the artefact or spec changes. A gap still open blocks the item.
+**Pre-approval checks (BLG-GOV-422, ST-18, v9.18).** Before STEP 2.3, run these four checks on every Design Required item's artefact, whether it is new under this step or confirmed under STEP 2.1. Record each in the gate record's `## Pre-Approval Checks` section (STEP 4). A gap is closed before the gate passes, by a story in the slice or by a change to the artefact or spec. If no story in the slice covers it, raise an amendment cycle (`amend cycle`) or change the artefact or spec; use the §4.1 addendum only for a correction within an item's existing scope. Filing a backlog item does not close a gap. A gap still open blocks the item.
 1. **Data source.** For every field a new or changed view displays, name the endpoint and quote the contract line (`docs/specs/api_contracts/`) showing that the endpoint returns the field for the whole population the view lists. A filter in the contract ("returns positions with `grace_days_remaining <= 2`") that is narrower than the view's list is a gap.
-2. **Writers.** For any claim in the artefact or the spec it relies on that a field is "written by X", or that "only X does Y", grep every writer of that field or behaviour in `backend/` and cite each as `file:line`. A claim that a grep contradicts is a gap.
+2. **Writers.** For any claim in the artefact or the spec it relies on that a field is "written by X", or that "only X does Y", grep every writer of that field or behaviour in `backend/` (including migrations), `scripts/`, scheduled workflows in `.github/workflows/` and `src/`, and cite each as `file:line`. A claim that a grep contradicts is a gap.
 3. **Worked examples.** For any value displayed on two or more surfaces, or any rule with a threshold, write a table: one row per boundary input (for example 0, 1, 2 and null days; true, false and null flags; a value exactly at the threshold) and one column per surface, giving the exact text each surface shows. List every surface that shows the value, not only the ones the item changes. For any date, window or "latest" rule, add rows for **time boundaries**: stale data (no event for a week), a quiet day, a weekend, UTC midnight, and the latest row closing or disappearing. Name the source of any run date or "latest" date the rule uses; if no endpoint returns it, that is a gap. Two surfaces that disagree on one row are a gap.
 4. **Dependent states.** For any rule that depends on another component's state ("active when X would render", "shown while Y is open"), list every state of X and the rule's result in each.
 
@@ -231,19 +231,19 @@ One block per Design Required item (STEP 2.2). Write "None in scope" under a hea
 
 **Data sources**
 
-| Field shown | View and the population it lists | Endpoint | Contract line (quoted) | Whole population? | Gap disposition |
-|-------------|----------------------------------|----------|------------------------|-------------------|-----------------|
+| Field shown | View and the population it lists | Endpoint | Contract line (quoted) | Whole population? | How the gap is closed |
+|-------------|----------------------------------|----------|------------------------|-------------------|-----------------------|
 
 **Writers**
 
-| Claim ("written by X", "only X does Y") | Writers found (`file:line`) | Claim holds? | Gap disposition |
-|-----------------------------------------|-----------------------------|--------------|-----------------|
+| Claim ("written by X", "only X does Y") | Writers found (`file:line`) | Claim holds? | How the gap is closed |
+|-----------------------------------------|-----------------------------|--------------|-----------------------|
 
 **Worked examples** — <value or rule>; run-date source: <endpoint and field, or "none — gap">
 
 | Input | <surface 1> | <surface 2> | … |
 |-------|-------------|-------------|---|
-| 0 / 1 / 2 / null (one row each) | | | |
+| <each boundary input: the threshold value, one either side, 0, null> (one row each) | | | |
 | Stale data · quiet day · weekend · UTC midnight · latest row closes (one row each) | | | |
 
 **Dependent states**
@@ -257,8 +257,8 @@ One block per Design Required item (STEP 2.2). Write "None in scope" under a hea
 ```
 
 **Gate status rules:**
-- **PASSED**: all Design Required items have approved artefacts and updated specs, and every STEP 2.2 pre-approval check gap has a disposition; all items classified
-- **BLOCKED**: one or more Design Required items have no approved artefact or unupdated spec, or a STEP 2.2 pre-approval check gap with no disposition
+- **PASSED**: all Design Required items have approved artefacts and updated specs, and every STEP 2.2 pre-approval check gap is closed by a story in the slice or an artefact or spec change; all items classified
+- **BLOCKED**: one or more Design Required items have no approved artefact or unupdated spec, or a STEP 2.2 pre-approval check gap not closed by a story in the slice or an artefact or spec change
 
 ### 4.1 Post-Gate-Correction Addendum Mechanism (ST-20, EPIC-04, v9.2, BLG-GOV-287)
 

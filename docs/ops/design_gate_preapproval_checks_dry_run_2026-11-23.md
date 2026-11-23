@@ -21,15 +21,15 @@ Artefact: `docs/design/2026-11-11__release-v9.17/positions-decision-first/decisi
 
 ### Data sources
 
-| Field shown | View and the population it lists | Endpoint | Contract line (quoted) | Whole population? | Gap disposition |
-|-------------|----------------------------------|----------|------------------------|-------------------|-----------------|
+| Field shown | View and the population it lists | Endpoint | Contract line (quoted) | Whole population? | Found as |
+|-------------|----------------------------------|----------|------------------------|-------------------|----------|
 | Ticker, day label, days-left sentence | `GracePeriodView`: **every** open position in grace (§5.1) | `GET /positions` (`grace_period === true`) | `grace_period`, `grace_days_remaining` per open position | Yes | — |
 | Trade plan block (Thesis, Stop, R-target), "View Trade Plan" link | Same list: every in-grace position | `GET /positions/grace-period-alerts` | `grace_period_alert_endpoint.md` line 12: "Returns positions in `GRACE` lifecycle state with `grace_days_remaining <= 2` … Includes linked trade plan summary if available." | **No.** A position with 3 or more days left has no plan data, so its row shows no plan block and no link | **Gap → BLG-BE-215** (found) |
 
 ### Writers
 
-| Claim | Writers found | Claim holds? | Gap disposition |
-|-------|---------------|--------------|-----------------|
+| Claim | Writers found | Claim holds? | Found as |
+|-------|---------------|--------------|----------|
 | None in scope: §5–§6 make no "written by" or "only X" claim | — | — | — |
 
 ### Worked examples: grace days remaining
@@ -57,7 +57,7 @@ The surfaces that show the concept are the grace view row (`positions.md` §Grac
 | Strip entry 3 active | "One or more positions in grace" | ≥ 1 with `grace_period === true` / only a 0-day alert row / none | shown / **not stated**: the same 0-day case as BLG-SPEC-235 / hidden |
 | Strip entry 4 active | `MetricsStalenessIndicator` would render | renders / does not | entry shown / hidden |
 
-The "query fails" state for entry 1 is also unstated. It is outside ST-18's acceptance criteria and is recorded here only as an example of what the check prompts.
+The "query fails" state is also unstated for entries 1, 2 and 4, and today's `positions.md` §Warning Strip still does not state it. It is outside ST-18's acceptance criteria and is filed as **BLG-SPEC-243**.
 
 **Result:** the checks find BLG-BE-215 (data source) and the BLG-SPEC-234/235 last-day contradiction (worked examples, confirmed by the dependent-state list). AC 2 is met.
 
@@ -67,8 +67,8 @@ Artefact: `docs/specs/frontend/pages/dashboard.md` at `b901ce91` (v4.0), §1B "S
 
 ### Writers
 
-| Claim | Writers found (at `b901ce91`) | Claim holds? | Gap disposition |
-|-------|-------------------------------|--------------|-----------------|
+| Claim | Writers found (at `b901ce91`) | Claim holds? | Found as |
+|-------|-------------------------------|--------------|----------|
 | "stops are moved only by the nightly trailing-stop job" (§1B, "Stops moved, why it is here"); "written by the nightly job" (Data dependency) | `backend/services/position_service.py:576` in `analyze_positions()` (served by `GET /positions/analyze`, `backend/main.py:795`) writes `position_updates['current_stop']`; `run_nightly_trailing_stop_update()` (`position_service.py:645`) also writes it. The comment at line 253 names both. | **No.** Two paths move the stop | **Gap → BLG-SPEC-238** first half (found; v9.17 ST-09 ruling 2026-11-13, DEV-EPIC04-ST10-01) |
 
 ### Worked examples (time boundaries): "Stops moved since the last run"

@@ -6,7 +6,7 @@
   "invoked_utc": "2026-11-19T08:07:14Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-23T15:10:46Z",
+  "last_updated_utc": "2026-11-23T15:15:24Z",
   "epics": {
     "EPIC-01": {
       "title": "Site Structure & Usability Phase 4, Stage 1: Correct and Safe (build-and-ship)",
@@ -474,12 +474,24 @@
           "unblock_criteria": null,
           "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": [],
+          "spec_references": [
+            "claude/system/design_gate_prompt.md#2.2 Design work (if needed)",
+            "docs/ops/design_gate_preapproval_checks_dry_run_2026-11-23.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
-          "last_completed_substep": "3.1.A.start",
-          "sign_off_record": null,
+          "last_completed_substep": "3.1.A.signoff",
+          "sign_off_record": {
+            "status": "cleared",
+            "role": "Head of UX & Design",
+            "method": "agent_mediated",
+            "signed_by": "Sprint Execution Engine (agent-mediated, Head of UX & Design role — §5.3)",
+            "date": "2026-11-23",
+            "rounds": 2,
+            "first_round": "Blocked (1 P1, 1 P2, 3 P3) — all applied; BLG-SPEC-243 filed",
+            "evidence": "docs/ops/design_gate_preapproval_checks_dry_run_2026-11-23.md"
+          },
           "notes": "First-time-right: 2026-11-23 pass A — governance-prompt story; 1 (data source) applied to the dry runs: GracePeriodView plan block ← GET /positions/grace-period-alerts, contract line 12 `<= 2`; 2 done (grace 0/1/2/null across 5 surfaces, quoted from bafcbdab specs); 7 done (§1B \"only the nightly job\": writers analyze_positions() position_service.py:576 and run_nightly_trailing_stop_update(), at b901ce91); 8 done (TL-09 \"latest nightly run date\" has no source in GET /positions); 3 done (each new check is shown to catch a known miss: both dry runs); 24 done (AC quantifiers \"every field\", \"any value\" kept literal in the prompt text); 4,5,6,11,17-21,23 N/A (no UI, no code, no fixtures)"
         },
         "ST-19": {
