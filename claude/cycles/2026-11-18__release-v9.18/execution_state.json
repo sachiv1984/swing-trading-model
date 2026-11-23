@@ -930,10 +930,10 @@
     },
     "EPIC-07": {
       "title": "AI Output Boundary",
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-11-18__release-v9.18/EPIC-07",
       "pr_number": 2309,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-11-18__release-v9.18/qa_evidence_EPIC-07.md",
       "test_scenarios": [
@@ -943,7 +943,7 @@
         "ST-39": {
           "title": "Check daily briefing and chat output against §13.2",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "human",
           "github_issue": 2304,
           "branch": "exec/2026-11-18__release-v9.18/EPIC-07",
@@ -977,7 +977,7 @@
         "ST-40": {
           "title": "Decide whether the debrief may say more than one restating sentence",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "human",
           "github_issue": 2305,
           "branch": "exec/2026-11-18__release-v9.18/EPIC-07",
@@ -1063,15 +1063,15 @@
   },
   "merge_gate": {
     "epics_merged": [
-      "EPIC-01"
+      "EPIC-01",
+      "EPIC-07"
     ],
     "epics_pending": [
       "EPIC-02",
       "EPIC-03",
       "EPIC-04",
       "EPIC-05",
-      "EPIC-06",
-      "EPIC-07"
+      "EPIC-06"
     ],
     "all_merged": false
   },
@@ -1089,7 +1089,8 @@
     "2026-11-20T09:53:38Z ST-40 sample check (user ran read-only queries on production): trade_debriefs holds 2 rows, both prompt v1.0 (latest 2026-10-07); no trades closed since 2026-10-12, so no v1.1 debrief exists (debriefs are on demand only). Options put to the user: generate v1.1 debriefs on older closed trades now, or take the sealed post-merge path (BLG-GOV-378 stays open). DEL-20261120-01 remains Pending.",
     "2026-11-20T16:34:33Z EPIC-07 agent-mediated DoQ sign-off recorded (qa_evidence_EPIC-07.md) after 3 review rounds; §5.3 retry limit reached and the user directed sign-off on the round-3 fix (0c442abe) without a fourth review. PO review round 3: Approved with Comments.",
     "2026-11-20T16:36:25Z EPIC-07 PR #2309 opened (STEP 3.2.B). Pre-PR gates: DoQ Date non-blank; signer format agent-mediated (Director of Quality role — §5.3); qa_evidence committed (7b410f0b); check_api_performance_baseline_drift.py PASSED; origin/main..HEAD carries only [EPIC-07] and [GOVERNANCE] commits. Agent-mediated DoQ + PO review posted as one labelled comment (issuecomment-7044974409). Awaiting human DoQ QA sign-off and PO acceptance, incl. P2 found defects BLG-BE-226, BLG-AI-35, BLG-BE-228, BLG-FE-328.",
-    "2026-11-23T08:51:09Z EPIC-07 merge-gate confirmations recorded (qa_evidence_EPIC-07.md \"Merge Gate Confirmations\"): human DoQ QA sign-off and PO acceptance given by the user in session at 2026-11-20T16:38:02Z, including acceptance with rationale of the P2 found defects BLG-BE-226, BLG-AI-35, BLG-BE-228 (priority left at P2; P1 recommendation not taken up) and BLG-FE-328. PR #2309 open, all checks passing; merge pending (human)."
+    "2026-11-23T08:51:09Z EPIC-07 merge-gate confirmations recorded (qa_evidence_EPIC-07.md \"Merge Gate Confirmations\"): human DoQ QA sign-off and PO acceptance given by the user in session at 2026-11-20T16:38:02Z, including acceptance with rationale of the P2 found defects BLG-BE-226, BLG-AI-35, BLG-BE-228 (priority left at P2; P1 recommendation not taken up) and BLG-FE-328. PR #2309 open, all checks passing; merge pending (human).",
+    "2026-11-23T08:59:36Z EPIC-07 PR #2309 merged by sachiv1984 at 2026-11-23T08:59:23Z (merge a83f8595); reported by the user in session. Human DoQ QA sign-off and PO acceptance recorded before the merge (5b180757). Orphaned post-merge commit check: git log origin/main..origin/exec/…/EPIC-07 empty — nothing to reconcile. No pending sibling EPIC branches exist, so the 3c sync was not needed. EPIC-07 and ST-39/ST-40 set merged; recorded on main."
   ],
   "sealed": false,
   "sealed_utc": null
