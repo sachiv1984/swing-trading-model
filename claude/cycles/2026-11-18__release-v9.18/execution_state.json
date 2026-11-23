@@ -622,7 +622,8 @@
         "tests/test_fx_market_matrix.py",
         "tests/test_settings_change_log.py",
         "tests/test_reports_integration.py",
-        "tests/e2e/reports-unrealised-live-basis.spec.js"
+        "tests/e2e/reports-unrealised-live-basis.spec.js",
+        "tests/e2e/trade-entry-atr-preview.spec.js"
       ],
       "stories": {
         "ST-25": {
@@ -746,11 +747,11 @@
           "assigned_to": "engine",
           "github_issue": 2295,
           "branch": "exec/2026-11-18__release-v9.18/EPIC-05",
-          "commit_sha": null,
+          "commit_sha": "729a9f624267c9ff753510e7679e52989680316f",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
+          "completed_utc": "2026-11-23T09:33:27Z",
           "acceptance_verified": false,
           "spec_references": [
             "docs/specs/frontend/pages/reports.md#Unrealised P&L Card",
@@ -761,14 +762,14 @@
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
-          "last_completed_substep": null,
+          "last_completed_substep": "3.1.A.push",
           "sign_off_record": null,
           "notes": "First-time-right: 2026-11-23 pass A — 1 done (pnl GBP 2dp per position from get_positions_with_prices, position_service.py; tax-year fields sit in data.summary, frontend read data — pre-existing bug, card never rendered; fixed in-story); 2 done (surfaces: Tax Year card, Monthly card, Trade History Calendar banner 'as of today' — banner value now live, no stale line there: raised to user 2026-11-23); 7 done (decision record says text-app-warning, reports.md v0.28 says amber-700/400 = actual Dashboard Card 2 code; followed reports.md); 15 done (Positions per-position pnl GBP = Reports summed field); 18 done (e2e tax-year mocks moved unrealised fields into summary, the writer's shape, 6 specs); 19 done (live path fails -> null, card hidden; stale price -> count line); 20 done (note sentence per spec; pluralisation as Dashboard). Pass B — 9 done (Tax Year read bug fixed, not filed); 10 done (reports.md v0.29, reports_endpoints.md v0.21, openapi 3.50.1, api_changelog); 13 done; 22 N/A; local Playwright 37/37 + Reports axe 10/10 passed; full suite 3810 passed. AC 1 staging pending."
         },
         "ST-31": {
           "title": "Cache the Trade Entry ATR preview per ticker and market",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "in_progress",
           "assigned_to": "engine",
           "github_issue": 2296,
           "branch": "exec/2026-11-18__release-v9.18/EPIC-05",
@@ -778,13 +779,16 @@
           "unblock_criteria": null,
           "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": [],
+          "spec_references": [
+            "docs/specs/frontend/components/position_form.md#ATR (14-day)",
+            "tests/e2e/trade-entry-atr-preview.spec.js"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": ""
+          "notes": "First-time-right: 2026-11-23 pass A — 1 done (api.market.getAtr returns data {atr, as_of}; key uses the normalised ticker and market); 19 done (change matrix: ticker change -> new key; market change -> new key; typed ATR -> idle, cleared -> cached ready after debounce; fetch fails -> none, not cached, one attempt; null atr -> none cached 5 min; window focus -> no refetch); 2,4,6-8,11,17,18,20-24 N/A (no new copy, no layout). Pass B — 3 N/A (no src/lib); 9 done; 10 done (position_form.md v1.15 §ATR preview cache); 22 N/A; re-run 19: SC-TAP-09/10 type key by key (pressSequentially), assert request counts; local Playwright trade-entry* + sizing widget 50/50 and ATR preview 10/10 passed."
         }
       }
     },
