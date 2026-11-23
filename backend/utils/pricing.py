@@ -102,7 +102,9 @@ def _yahoo_fetch_split_events(ticker: str, since: date) -> Dict:
 
 
 def parse_split_events(events: Dict, since: date) -> list:
-    """[{effective_date, ratio}] from Yahoo `events.splits`, on or after `since`,
+    """[{effective_date, ratio}] from Yahoo `events.splits`, strictly after `since`
+    (the entry date: a position bought on the ex-date is already post-split;
+    strategy_rules.md §9.1, ruling 2026-11-23),
     oldest first. ratio = numerator / denominator: new shares per old share, so a
     2:1 split is 2.0 and a 1:10 reverse split is 0.1 (strategy_rules.md §9.1).
     Entries with a missing or non-positive part are skipped."""
@@ -117,14 +119,14 @@ def parse_split_events(events: Dict, since: date) -> list:
         if num <= 0 or den <= 0 or num == den:
             continue
         effective = datetime.fromtimestamp(ts, tz=timezone.utc).date()
-        if effective < since:
+        if effective <= since:
             continue
         out.append({"effective_date": effective, "ratio": num / den})
     return sorted(out, key=lambda e: e["effective_date"])
 
 
 def get_split_history(ticker: str, market: Optional[str], since: date) -> Optional[list]:
-    """Splits for a held ticker effective on or after `since` (ST-27, BLG-BE-223,
+    """Splits for a held ticker effective after `since` (ST-27, BLG-BE-223,
     strategy_rules.md §9.1), from Yahoo Finance chart events. None when the
     provider call fails, so a failed lookup is never read as "no split"."""
     symbol = market_symbol(ticker, market)

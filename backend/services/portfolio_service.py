@@ -29,6 +29,7 @@ from strategy_parameters import GRACE_PERIOD_DAYS
 from utils.calculations import live_holding_days
 from utils.formatting import decimal_to_float
 from services.position_service import native_entry_price
+from utils.split_adjustments import valuation_price
 from utils.position_lifecycle_states import GRACE, PROFITABLE, LOSING
 
 
@@ -129,6 +130,11 @@ def get_portfolio_summary() -> Dict:
                 native_entry = native_entry_price(pos, live_fx_rate)
                 current_price_native = pos.get('current_price') or native_entry
                 price_is_stale = True
+
+            # ST-27 (BLG-BE-223, v9.18): while a split is pending the stored
+            # shares and entry are pre-split, so value and P&L use the live
+            # price in pre-split units (strategy_rules.md §9.1).
+            current_price_native = valuation_price(pos, current_price_native)
 
             shares = pos['shares']
             market = pos['market']

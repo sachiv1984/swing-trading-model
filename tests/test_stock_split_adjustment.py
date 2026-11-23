@@ -104,11 +104,14 @@ class TestParseSplitEvents:
             (date(2026, 3, 2), 0.1), (date(2026, 6, 10), 2.0), (date(2026, 9, 1), 1.5),
         ]
 
-    def test_before_entry_date_is_ignored_on_the_day_is_kept(self):
+    def test_only_splits_after_the_entry_date_count(self):
+        # §9.1 (ruling 2026-11-23): a position bought on the ex-date is already
+        # post-split, so a split effective on the entry date is ignored.
         since = date(2026, 6, 10)
         events = {"old": {"date": _ts(date(2026, 6, 9)), "numerator": 2, "denominator": 1},
-                  "same": {"date": _ts(date(2026, 6, 10)), "numerator": 4, "denominator": 1}}
-        assert [e["ratio"] for e in parse_split_events(events, since)] == [4.0]
+                  "same": {"date": _ts(date(2026, 6, 10)), "numerator": 4, "denominator": 1},
+                  "next": {"date": _ts(date(2026, 6, 11)), "numerator": 3, "denominator": 1}}
+        assert [e["ratio"] for e in parse_split_events(events, since)] == [3.0]
 
     @pytest.mark.parametrize("bad", [
         {"date": None, "numerator": 2, "denominator": 1},
@@ -118,7 +121,7 @@ class TestParseSplitEvents:
         {"date": 1, "numerator": "x", "denominator": 1},
     ])
     def test_unusable_entries_are_skipped(self, bad):
-        assert parse_split_events({"e": bad}, date(1970, 1, 1)) == []
+        assert parse_split_events({"e": bad}, date(1969, 12, 31)) == []
 
     def test_empty(self):
         assert parse_split_events({}, date(2026, 1, 1)) == []
@@ -265,10 +268,25 @@ class TestConfirm:
         result, confirm_db = self._confirm(_with_pending(_us_position(previous_stop=175.0)))
         adj_id, pos_id, before, after, updates = confirm_db.call_args.args
         assert (adj_id, pos_id, before, after) == ("split-1", "pos-mu", 10.0, 20.0)
-        assert updates == {"current_stop": 90.0, "previous_stop": 87.5, "atr": 2.0}
+        # current_price moves with the stop: nothing wrote it while pending.
+        assert updates == {"current_stop": 90.0, "previous_stop": 87.5, "atr": 2.0, "current_price": 52.0}
         assert result["shares_after"] == 20.0
         assert result["entry_price"] == pytest.approx(100.0)
         assert result["initial_stop"] == pytest.approx(90.0)
+
+    def test_partial_exit_remainder_snaps_back_to_whole_shares(self):
+        # 10 stored, 3:1 confirmed (30 shown); sell 10 -> 20 written as 6.6667
+        # (DECIMAL(10,4)); re-read must be 20, not 20.0001.
+        stored = _uk_position(shares=10.0)
+        adjusted = adjust_position_for_splits(stored, [_confirmed("pos-vod", 3.0, 10.0, 30.0)])
+        written = round(stored_units_for_split(adjusted, {"shares": 20.0})["shares"], 4)
+        assert written == 6.6667
+        reread = adjust_position_for_splits(dict(stored, shares=written), [_confirmed("pos-vod", 3.0, 10.0, 30.0)])
+        assert reread["shares"] == 20.0
+
+    def test_fractional_holdings_are_not_snapped(self):
+        adjusted = adjust_position_for_splits(_uk_position(shares=5.125), [_confirmed("pos-vod", 2.0, 5.125, 10.25)])
+        assert adjusted["shares"] == 10.25
 
     def test_entry_fields_are_not_in_the_update(self):
         _, confirm_db = self._confirm(_with_pending(_uk_position()))
@@ -388,6 +406,7 @@ class TestNoExitOnDayD(_Patcher):
             result = ps.run_nightly_risk_off_alerts()
         assert sorted(c.args for c in flag.call_args_list) == [("pos-2", True), ("pos-mu", False)]
         assert result["us_positions_flagged"] == 1
+        assert result["us_positions_cleared"] == 1
 
     def test_exit_is_refused_while_pending(self):
         ps = position_service
@@ -471,3 +490,125 @@ class TestConfirmEndpoint:
             r = CLIENT.post("/positions/nightly-stop-update")
         assert r.status_code == 200 and order == ["detect", "recompute"]
         assert r.json()["data"]["splits"] == {"detected": 1}
+
+
+class TestReviewFollowUps(_Patcher):
+    """High code review of ST-27 (2026-11-23)."""
+
+    def test_analyze_detects_a_split_before_comparing_prices(self):
+        # Ex-date load before the nightly run: the first read has no pending
+        # split; detection records one and the path re-reads.
+        ps = position_service
+        reads = [[_us_position()], [_with_pending(_us_position())]]
+        self._patch(ps, "get_portfolio", return_value={"id": "portfolio-1"})
+        self._patch(ps, "get_positions", side_effect=lambda *a, **k: reads.pop(0))
+        detect = self._patch(ps, "ensure_splits_detected", return_value=True)
+        self._patch(ps, "get_settings", return_value=_settings())
+        self._patch(ps, "get_live_fx_rate", return_value=1.3)
+        self._patch(ps, "get_current_price", return_value=104.0)
+        self._patch(ps, "calculate_atr", return_value=2.0)
+        self._patch(ps, "check_market_regime", return_value={"spy_risk_on": True, "ftse_risk_on": True})
+        update = self._patch(ps, "update_position")
+        result = ps.analyze_positions()
+        detect.assert_called_once()
+        assert result["actions"][0]["action"] == "HOLD"
+        update.assert_not_called()
+
+    def test_pending_position_is_valued_in_pre_split_units(self):
+        # UK: 1000 shares at 2.00, 2:1 pending, live 1.04 -> pre-split 2.08:
+        # P&L (2.08 - 2.00) x 1000 = 80, not (1.04 - 2.00) x 1000 = -960.
+        ps = position_service
+        self._patch(ps, "get_portfolio", return_value={"id": "portfolio-1"})
+        self._patch(ps, "get_positions", return_value=[_with_pending(_uk_position())])
+        self._patch(ps, "ensure_splits_detected", return_value=False)
+        self._patch(ps, "get_settings", return_value=_settings())
+        self._patch(ps, "get_live_fx_rate", return_value=1.3)
+        self._patch(ps, "get_current_price", return_value=1.04)
+        self._patch(ps, "calculate_atr", return_value=0.02)
+        self._patch(ps, "check_market_regime", return_value={"spy_risk_on": True, "ftse_risk_on": True})
+        self._patch(ps, "update_position")
+        action = ps.analyze_positions()["actions"][0]
+        assert action["pnl"] == pytest.approx(80.0)
+
+    def test_valuation_price(self):
+        from utils.split_adjustments import valuation_price
+        assert valuation_price(_us_position(), 104.0) == 104.0
+        assert valuation_price(_with_pending(_us_position()), 104.0) == 208.0
+        assert valuation_price(_with_pending(_us_position(), ratio=0.1), 50.0) == pytest.approx(5.0)
+        assert valuation_price(_with_pending(_us_position()), None) is None
+
+    def test_lifecycle_is_not_recomputed_while_pending(self):
+        from services import position_lifecycle_service as lc
+        refresh = self._patch(lc, "refresh_position_lifecycle")
+        pos = dict(_with_pending(_us_position()), position_state="PROFITABLE",
+                   state_entered_at="2026-11-01T00:00:00")
+        fields = lc.get_lifecycle_fields_for_position(pos)
+        refresh.assert_not_called()
+        assert fields["position_state"] == "PROFITABLE"
+        assert fields["state_entered_at"] == "2026-11-01T00:00:00"
+
+
+class _FakeCursor:
+    def __init__(self, row):
+        self.row = row
+    def __enter__(self):
+        return self
+    def __exit__(self, *a):
+        return False
+    def execute(self, *a, **k):
+        pass
+    def fetchone(self):
+        return self.row
+
+
+class _FakeConn:
+    def __init__(self, row):
+        self.row = row
+    def __enter__(self):
+        return self
+    def __exit__(self, *a):
+        return False
+    def cursor(self):
+        return _FakeCursor(self.row)
+
+
+class TestStopTrail:
+    def _get(self, row, live=180.0, fx=1.25):
+        import database as real_db
+        with patch.object(main, "get_portfolio", return_value={"id": "portfolio-1"}), \
+             patch.object(real_db, "get_db", lambda: _FakeConn(row)), \
+             patch.object(main, "apply_split_adjustments", side_effect=lambda cur, rows: rows), \
+             patch.object(main, "get_current_price", return_value=live), \
+             patch.object(main, "get_live_fx_rate", return_value=fx), \
+             patch("database.log_trailing_stop_recommendation"):
+            return CLIENT.get("/positions/pos-mu/stop-trail")
+
+    def test_409_while_a_split_is_pending(self):
+        row = dict(_with_pending(_us_position()), trade_plan_id=None, r_target=None)
+        r = self._get(row)
+        assert r.status_code == 409 and "waiting for confirmation" in r.json()["detail"]
+
+    def test_us_trail_uses_the_native_entry(self):
+        # BLG-BE-229: fill_price 200 (native), entry_price 160 (GBP), live 180:
+        # the trade is losing in USD, so the initial multiplier applies and R uses 200 - 180 = 20.
+        row = dict(_us_position(current_stop=150.0, initial_stop=180.0 - 0.0), trade_plan_id=None, r_target=None)
+        row["initial_stop"] = 170.0
+        r = self._get(row, live=180.0)
+        assert r.status_code == 200, r.text
+        data = r.json()["data"] if "data" in r.json() else r.json()
+        expected, _, _ = real_calcs.calculate_trailing_stop(
+            current_price=180.0, atr=4.0, is_profitable=False, current_stop=float("-inf"),
+            entry_price=200.0, settings=__import__("strategy_parameters").stop_multiplier_settings())
+        assert data["atr_trail_stop"] == pytest.approx(round(expected, 4))
+        assert data["trail_r_terms"] == pytest.approx(round((round(expected, 4) - 150.0) / (200.0 - 170.0), 2))
+
+    def test_uk_trail_is_unchanged(self):
+        # BLG-BE-229 AC 2: UK entry_price is already native.
+        row = dict(_uk_position(current_stop=1.70, initial_stop=1.60), trade_plan_id=None, r_target=None)
+        r = self._get(row, live=2.20, fx=1.3)
+        assert r.status_code == 200, r.text
+        data = r.json()["data"] if "data" in r.json() else r.json()
+        expected, _, _ = real_calcs.calculate_trailing_stop(
+            current_price=2.20, atr=0.04, is_profitable=True, current_stop=float("-inf"),
+            entry_price=2.00, settings=__import__("strategy_parameters").stop_multiplier_settings())
+        assert data["atr_trail_stop"] == pytest.approx(round(expected, 4))

@@ -73,31 +73,64 @@ def _entry_date(position: Dict) -> Optional[date]:
         return None
 
 
-def detect_position_splits() -> Dict:
-    """Record new splits on open positions as pending (nightly run).
+# (provider symbol, UTC date) -> split history, so the analyze, alert and
+# risk-off paths can check before they act without a provider call per load.
+_HISTORY_CACHE: Dict = {}
 
-    A split counts when it is effective on or after the position's entry date
-    (§9.1). A split already recorded for the position on that date (pending or
+
+def _cached_split_history(ticker, market, since):
+    key = (ticker, market, str(since), datetime.utcnow().date().isoformat())
+    if key not in _HISTORY_CACHE:
+        history = get_split_history(ticker, market, since)
+        if history is None:
+            return None  # a failure is not cached; the next path asks again
+        if len(_HISTORY_CACHE) > 2000:
+            _HISTORY_CACHE.clear()
+        _HISTORY_CACHE[key] = history
+    return _HISTORY_CACHE[key]
+
+
+def ensure_splits_detected(positions) -> bool:
+    """Detect splits for positions a path already holds, before it acts on
+    their prices (analyze, stop alerts, risk-off). Provider history is cached
+    per ticker per UTC day. Returns True if a new split was recorded, so the
+    caller re-reads its positions. Never raises."""
+    try:
+        return detect_position_splits(positions=positions)["detected"] > 0
+    except Exception:
+        logger.warning("Split check failed", exc_info=True)
+        return False
+
+
+def detect_position_splits(positions=None) -> Dict:
+    """Record new splits on open positions as pending (nightly run, and before
+    the analyze, alert and risk-off paths act).
+
+    A split counts when it is effective after the position's entry date
+    (§9.1; a position bought on the ex-date is already post-split). A split already recorded for the position on that date (pending or
     confirmed) is not recorded again. A provider failure for one ticker is
     reported and skipped; it is never read as "no split". Never raises.
     """
     summary = {"checked": 0, "detected": 0, "failed": [], "pending": []}
-    try:
-        portfolio = get_portfolio()
-        if not portfolio:
+    if positions is None:
+        try:
+            portfolio = get_portfolio()
+            if not portfolio:
+                return summary
+            positions = list(get_positions(str(portfolio["id"]), status="open") or [])
+        except Exception:
+            logger.warning("Split detection could not read open positions", exc_info=True)
+            summary["error"] = "positions unavailable"
             return summary
-        positions = get_positions(str(portfolio["id"]), status="open")
-    except Exception:
-        logger.warning("Split detection could not read open positions", exc_info=True)
-        summary["error"] = "positions unavailable"
-        return summary
 
     for pos in positions or []:
+        if pos.get("status", "open") != "open":
+            continue
         entry = _entry_date(pos)
         if entry is None:
             continue
         summary["checked"] += 1
-        history = get_split_history(pos["ticker"], pos.get("market"), entry)
+        history = _cached_split_history(pos["ticker"], pos.get("market"), entry)
         if history is None:
             summary["failed"].append(pos["ticker"])
             continue
@@ -226,8 +259,11 @@ def confirm_split(position_id: str, shares: Optional[float] = None) -> Dict:
         raise SplitSharesError("The position has no shares to adjust")
     shares_after = _validate_shares_after(shares_before * ratio, shares)
 
+    # current_price too: no write touched it while the split was pending, so
+    # it is the last pre-split price and must move to post-split units with
+    # the stop (the next live fetch overwrites it).
     updates = {}
-    for field in ("current_stop", "previous_stop", "atr"):
+    for field in ("current_stop", "previous_stop", "atr", "current_price"):
         if pos.get(field) is not None:
             updates[field] = round(float(pos[field]) / ratio, 4)
     if not confirm_split_adjustment(str(pending["id"]), position_id, shares_before, shares_after, updates):

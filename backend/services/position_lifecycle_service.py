@@ -359,6 +359,18 @@ def get_lifecycle_fields_for_position(position: dict) -> dict:
         return {"position_state": UNKNOWN, "state_entered_at": None, "days_in_state": 0,
                 "lifecycle_reason": REASON_MISSING_DATA}
 
+    # ST-27 (BLG-BE-223, v9.18; strategy_rules.md §9.1): while a split is
+    # pending the stored entry is pre-split and the live price post-split, so
+    # the state is not recomputed (no spurious transition is stored).
+    if position.get("split_pending"):
+        state_entered_at = position.get("state_entered_at")
+        return {
+            "position_state": position.get("position_state") or UNKNOWN,
+            "state_entered_at": state_entered_at.isoformat() if hasattr(state_entered_at, "isoformat") else (str(state_entered_at) if state_entered_at else None),
+            "days_in_state": compute_days_in_state(state_entered_at),
+            "lifecycle_reason": None,
+        }
+
     try:
         updated = refresh_position_lifecycle(position_id, prefetched_position=position)
         if updated:

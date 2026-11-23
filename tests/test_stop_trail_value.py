@@ -51,7 +51,12 @@ def _stop_trail(*, entry, price, atr, current_stop, initial_stop=None, market="U
     client, main = _client()
     row = {
         "id": "pos-1", "ticker": "AAPL" if market == "US" else "LGEN.L", "market": market,
-        "entry_price": entry, "initial_stop": initial_stop, "current_stop": current_stop, "atr": atr,
+        # BLG-BE-229 (ST-27, v9.18): the writer's shape. entry_price is GBP for a
+        # US row and fill_price is the native entry; `entry` here is native.
+        "entry_price": entry / 1.25 if market == "US" else entry,
+        "fill_price": entry if market == "US" else None,
+        "fx_rate": 1.25 if market == "US" else 1.0,
+        "initial_stop": initial_stop, "current_stop": current_stop, "atr": atr,
         "trade_plan_id": None, "r_target": None,
     }
     import database

@@ -2222,6 +2222,12 @@ def get_position_gap_risk_endpoint(position_id: str):
         raise HTTPException(status_code=500, detail="Internal server error")
 
 
+SPLIT_PENDING_TRAIL_ERROR = (
+    "A stock split on this position is waiting for confirmation; the trail is shown "
+    "after it is confirmed (strategy_rules.md §9.1)."
+)
+
+
 @app.get("/positions/{position_id}/stop-trail")
 def get_stop_trail_endpoint(position_id: str):
     """
@@ -2255,8 +2261,8 @@ def get_stop_trail_endpoint(position_id: str):
             with conn.cursor() as cur:
                 cur.execute(
                     """
-                    SELECT p.id, p.ticker, p.market, p.entry_price, p.initial_stop,
-                           p.current_stop, p.atr,
+                    SELECT p.id, p.ticker, p.market, p.entry_price, p.fill_price, p.fx_rate,
+                           p.initial_stop, p.current_stop, p.atr,
                            tp.id AS trade_plan_id, tp.r_target
                     FROM positions p
                     LEFT JOIN trade_plans tp ON tp.position_id = p.id
@@ -2272,6 +2278,12 @@ def get_stop_trail_endpoint(position_id: str):
 
         if not row:
             raise HTTPException(status_code=404, detail=f"Position {position_id} not found")
+
+        # ST-27 (BLG-BE-223, v9.18; strategy_rules.md §9.1): with a split
+        # pending, the stored entry, stop and ATR are pre-split while the live
+        # price is post-split, so no trail is computed or logged.
+        if row.get("split_pending"):
+            raise HTTPException(status_code=409, detail=SPLIT_PENDING_TRAIL_ERROR)
 
         ticker = str(row.get("ticker") or "")
         if row.get("market") == "UK":
@@ -2291,7 +2303,12 @@ def get_stop_trail_endpoint(position_id: str):
         # multiplier. The candidate is not ratcheted against current_stop
         # (-inf), so trail_difference compares it with the stored stop.
         from strategy_parameters import stop_multiplier_settings
-        entry_price = float(row.get("entry_price") or 0)
+        # BLG-BE-229 (fixed in ST-27, v9.18): the native entry, as every other
+        # stop path uses (BLG-BE-208). entry_price is GBP for a US row, so the
+        # profit test, breakeven floor and R compared GBP with the USD price.
+        from services.position_service import native_entry_price
+        row = decimal_to_float(dict(row))
+        entry_price = float(native_entry_price(row, get_live_fx_rate())) if row.get("entry_price") is not None else 0.0
         atr_trail_stop, _reason, _mult = calculate_trailing_stop(
             current_price=current_price,
             atr=atr,

@@ -418,3 +418,21 @@ from tests.mock_harness.conftest_extension import (  # noqa: F401, E402
     screener_mocks,
     scenario_mocks,
 )
+
+
+@pytest.fixture(autouse=True)
+def _no_live_split_history():
+    """ST-27 (BLG-BE-223, v9.18): analyze_positions, the risk-off job and the
+    alert run check Yahoo split history before they act. No test may make that
+    call live: stub it to "no splits" and clear the per-day cache. A test that
+    exercises detection patches get_split_history itself, which overrides this.
+    Plain setattr/restore, not monkeypatch: requesting monkeypatch here would
+    tear it down after the utils leak guard runs (ST-41)."""
+    mod = sys.modules.get("services.split_service")
+    original = getattr(mod, "get_split_history", None) if mod is not None else None
+    if mod is not None:
+        mod.get_split_history = lambda *a, **k: []
+        mod._HISTORY_CACHE.clear()
+    yield
+    if mod is not None and original is not None:
+        mod.get_split_history = original

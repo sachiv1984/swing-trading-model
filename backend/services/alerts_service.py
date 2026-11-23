@@ -652,6 +652,15 @@ def _price_alert_row(r) -> Dict:
 # Alert Evaluation Engine
 # ---------------------------------------------------------------------------
 
+def _detect_splits_first(portfolio_id: str) -> None:
+    """Record any new split before stop alerts are evaluated (ST-27). Never raises."""
+    try:
+        from services.split_service import ensure_splits_detected
+        ensure_splits_detected(get_positions(portfolio_id, status="open"))
+    except Exception:
+        logger.warning("Split check before alerts failed", exc_info=True)
+
+
 def _pending_split_ids(portfolio_id: str, conn) -> set:
     """Open positions with an unconfirmed split (ST-27); empty on any failure,
     so the alert run never depends on the split table."""
@@ -712,6 +721,8 @@ def evaluate_alerts(portfolio_id: str, enqueue_delivery) -> Dict:
             # ST-27 (BLG-BE-223, v9.18; strategy_rules.md §9.1): no stop alert
             # for a position whose detected split is unconfirmed; its stored
             # stop is in pre-split units.
+            # Check for a split before reading the stops (cached per ticker per day).
+            _detect_splits_first(portfolio_id)
             split_pending_ids = _pending_split_ids(portfolio_id, conn)
 
             # ST-01 (BLG-BE-138, v9.10, ruling (a)): grace length is the fixed

@@ -2332,7 +2332,7 @@ Registered by: Sprint Execution Engine — 2026-10-27. Measured by: the user (In
 
 ---
 
-## 54. POST /positions/{position_id}/split-adjustment/confirm (ST-27, EPIC-05, v9.18, BLG-BE-223)
+## 54. POST /positions/{position_id}/split-adjustment/confirm
 
 **Date:** 2026-11-23
 **Story:** ST-27 (EPIC-05, v9.18, BLG-BE-223). Registered in the same commit that adds the path to `openapi.yaml`, as the API Performance Baseline Drift Detection CI gate requires.

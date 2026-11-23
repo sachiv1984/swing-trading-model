@@ -8417,6 +8417,7 @@ ST-30 (BLG-SPEC-203) moved the Reports `estimated_unrealised_pnl` to the live `g
 ---
 
 ### BLG-BE-229 — View Trail compares a US position's GBP entry price with its native price
+**✅ COMPLETE — 2026-11-23, cycle `2026-11-18__release-v9.18`, found by ST-27's work, resolved in-sprint on EPIC-05 (commit: this branch's ST-27 code-review follow-up commit; tests `TestStopTrail::test_us_trail_uses_the_native_entry`, `test_uk_trail_is_unchanged` in `tests/test_stock_split_adjustment.py`).**
 **Priority:** P2 (Medium)
 **Type:** Backend Engineering
 **Owner:** Head of Engineering; Backend Engineering Patterns Owner

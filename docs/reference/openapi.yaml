@@ -2,7 +2,9 @@ openapi: 3.0.3
 
 info:
   title: Momentum Trading Assistant API
-  version: 3.51.0
+  version: 3.51.1
+  # v3.51.1 (2026-11-23, ST-27, EPIC-05, v9.18): GET /positions/{position_id}/stop-trail returns 409 while a split
+  # is pending, and uses the native entry for US positions (BLG-BE-229).
   # v3.51.0 (2026-11-23, ST-27, EPIC-05, v9.18): new POST /positions/{position_id}/split-adjustment/confirm;
   # Position gains split_pending and split_adjustments (BLG-BE-223).
   # v3.50.1 (2026-11-23, ST-30, EPIC-05, v9.18): GET /reports/tax-year (summary), /reports/monthly-pnl and
@@ -2699,6 +2701,8 @@ paths:
                         type: string
         "404":
           $ref: "#/components/responses/NotFound"
+        "409":
+          description: v9.18 ST-27 — a stock split on the position is waiting for confirmation.
         "422":
           description: ATR not available for position.
         "503":

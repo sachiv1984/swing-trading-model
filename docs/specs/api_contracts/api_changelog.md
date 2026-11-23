@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Class 2
 **Status:** Canonical
-**Version:** 1.36.0
-**Last Updated:** 2026-11-23 (ST-27, EPIC-05, v9.18, BLG-BE-223 — v9.18.0 entry adds position_endpoints.md v2.23.0: new POST /positions/{position_id}/split-adjustment/confirm); prior — 2026-11-23 (ST-30, EPIC-05, v9.18, BLG-SPEC-203 — v9.18.0 entry adds reports_endpoints.md v0.21: live unrealised P&L and unrealised_price_stale_count); prior — 2026-11-23 (ST-29, EPIC-05, v9.18, BLG-BE-181 — v9.18.0 entry adds settings_endpoints.md v1.6.1: GET /settings survives a failed change-log read); prior history retained — see prior entries in version control
+**Version:** 1.36.1
+**Last Updated:** 2026-11-23 (ST-27, EPIC-05, v9.18, BLG-BE-223/BLG-BE-229 — v9.18.0 entry adds stop_trail_endpoint.md v1.2.0); prior — 2026-11-23 (ST-27, EPIC-05, v9.18, BLG-BE-223 — v9.18.0 entry adds position_endpoints.md v2.23.0: new POST /positions/{position_id}/split-adjustment/confirm); prior — 2026-11-23 (ST-30, EPIC-05, v9.18, BLG-SPEC-203 — v9.18.0 entry adds reports_endpoints.md v0.21: live unrealised P&L and unrealised_price_stale_count); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 # API Changelog
@@ -58,6 +58,15 @@ Rules:
 |--------|---------|
 | Updated endpoint: POST /ai/daily-briefing | §13.2 parameter-change check (BLG-AI-29, ruling `ESC-EXEC-20261120-01`): a summary or action description suggesting changing stops, sizing or setups is regenerated once, then replaced by code-written text (action `type`/`ticker` kept); new `compliance_check_result` values `fail_regenerate:`, `pass_on_regenerate`, `fail_fallback:`; prompt v1.4. Response shape unchanged. |
 | Updated endpoint: POST /ai/chat | Same check on `response`: regenerated once, then a fixed withheld message without `answer_id`; same result values; prompt v1.3. Response shape unchanged. |
+
+### stop_trail_endpoint.md — v1.2.0 (UPDATED)
+
+**EPIC:** EPIC-05
+**ST:** ST-27
+
+| Change | Details |
+|--------|---------|
+| Updated endpoint: GET /positions/{position_id}/stop-trail | `409` while a stock split is pending (BLG-BE-223). The profit test, breakeven floor and `trail_r_terms` use the native entry, so US positions are no longer compared on a GBP entry (BLG-BE-229). Response shape unchanged. |
 
 ### position_endpoints.md — v2.23.0 (UPDATED)
 

@@ -43,6 +43,35 @@ def split_factors(adjustments) -> Dict:
     }
 
 
+# A share count within this of a whole number is that whole number. Stored
+# shares are DECIMAL(10,4), so a remainder written back after a partial exit
+# (e.g. 20 / 3 = 6.6667) reads back as 20.0001; without the snap the user
+# could never close the last 0.0001 share.
+_SHARE_SNAP = 0.0005
+
+
+def snap_shares(value: float) -> float:
+    nearest = round(value)
+    return float(nearest) if abs(value - nearest) < _SHARE_SNAP else round(value, 4)
+
+
+def valuation_price(position: Dict, live_price_native):
+    """The live price in the units the stored shares and entry are in.
+
+    While a split is pending (strategy_rules.md §9.1) the stored shares and
+    entry are pre-split and the provider's price is post-split, so the price
+    is converted back (× ratio) for value and P&L; once confirmed, nothing
+    changes. Returns the input unchanged when no split is pending or the
+    price is missing."""
+    pending = position.get("split_pending")
+    if not pending or live_price_native is None:
+        return live_price_native
+    try:
+        return float(live_price_native) * float(pending["ratio"])
+    except (TypeError, ValueError, KeyError):
+        return live_price_native
+
+
 def adjust_position_for_splits(row: Dict, adjustments) -> Dict:
     """The row with confirmed splits applied (a copy). Adds `split_pending`
     (the unconfirmed row or None), `split_adjustments` (confirmed rows) and,
@@ -65,7 +94,7 @@ def adjust_position_for_splits(row: Dict, adjustments) -> Dict:
         if row.get(k) is not None:
             out[k] = float(row[k]) / f["price_factor"]
     if row.get("shares") is not None:
-        out["shares"] = round(float(row["shares"]) * f["shares_factor"], 4)
+        out["shares"] = snap_shares(float(row["shares"]) * f["shares_factor"])
     if row.get("total_cost") is not None and f["cost_factor"] != 1.0:
         fees = float(row.get("fees_paid") or 0)
         out["total_cost"] = round((float(row["total_cost"]) - fees) * f["cost_factor"] + fees, 2)

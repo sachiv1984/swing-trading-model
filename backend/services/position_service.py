@@ -15,7 +15,7 @@ from datetime import datetime, timezone
 from decimal import Decimal
 from services.grace_service import compute_grace_days_remaining
 from services.sector_service import get_sector_and_industry
-from services.split_service import is_split_pending, split_preview
+from services.split_service import ensure_splits_detected, is_split_pending, split_preview
 from utils.position_lifecycle_states import GRACE, PROFITABLE, LOSING
 
 
@@ -41,7 +41,7 @@ from database import (
     mark_position_reviewed as db_mark_position_reviewed,
     create_position_audit_log_entry,
 )
-from utils.split_adjustments import stored_units_for_split
+from utils.split_adjustments import stored_units_for_split, valuation_price
 from strategy_version_registry import get_current_strategy_version
 
 from utils.pricing import (
@@ -217,9 +217,11 @@ def get_positions_with_prices() -> List[Dict]:
         # Calculate P&L
         entry_price_display = native_entry_price(pos, live_fx_rate)
         
+        # ST-27 (BLG-BE-223, v9.18): while a split is pending, P&L is on the
+        # pre-split basis (live price × ratio), matching the stored shares and entry.
         pnl_native, pnl_gbp, pnl_pct = calculate_position_pnl(
             entry_price=entry_price_display,
-            current_price=current_price_native,
+            current_price=valuation_price(pos, current_price_native),
             shares=pos['shares'],
             market=pos['market'],
             live_fx_rate=live_fx_rate
@@ -456,6 +458,11 @@ def analyze_positions() -> Dict:
     
     portfolio_id = str(portfolio['id'])
     positions = get_positions(portfolio_id, status='open')
+    # ST-27 (BLG-BE-223, v9.18; strategy_rules.md §9.1): check for a split
+    # before comparing prices, so an ex-date load before the nightly run does
+    # not read a split as a stop breach. Cached per ticker per day.
+    if positions and ensure_splits_detected(positions):
+        positions = get_positions(portfolio_id, status='open')
     
     if not positions:
         print("✓ No open positions to analyze")
@@ -519,9 +526,11 @@ def analyze_positions() -> Dict:
         
         # Calculate metrics
         shares = pos['shares']
+        # ST-27 (BLG-BE-223, v9.18): pre-split units while a split is pending.
+        value_price = valuation_price(pos, current_price)
         
         # Calculate value and P&L
-        current_value_native = current_price * shares
+        current_value_native = value_price * shares
         if pos['market'] == 'US':
             current_value_gbp = current_value_native / live_fx_rate
             print(f"   💱 Converting USD to GBP (LIVE rate): ${current_value_native:.2f} / {live_fx_rate:.4f} = £{current_value_gbp:.2f}")
@@ -530,7 +539,7 @@ def analyze_positions() -> Dict:
         
         pnl_native, pnl_gbp, pnl_pct = calculate_position_pnl(
             entry_price=entry_price,
-            current_price=current_price,
+            current_price=value_price,
             shares=shares,
             market=pos['market'],
             live_fx_rate=live_fx_rate
@@ -921,6 +930,9 @@ def run_nightly_risk_off_alerts() -> Dict:
 
     portfolio_id = str(portfolio['id'])
     positions = get_positions(portfolio_id, status='open')
+    # ST-27 (BLG-BE-223, v9.18): a split recorded first is not flagged below.
+    if positions and ensure_splits_detected(positions):
+        positions = get_positions(portfolio_id, status='open')
     market_regime = check_market_regime()
 
     spy_risk_on = market_regime.get('spy_risk_on')
@@ -966,8 +978,10 @@ def run_nightly_risk_off_alerts() -> Dict:
             new_flag = False
             if market == 'US':
                 flagged_us -= 1
+                cleared_us += 1
             else:
                 flagged_uk -= 1
+                cleared_uk += 1
 
         update_positions_risk_off_exit(position_id, new_flag)
 
