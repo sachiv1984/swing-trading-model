@@ -44,6 +44,97 @@ GRACE_PERIOD_DAYS = 10
 # ST-11 (v9.10) removed "flat_after_grace": §9 has no neutral post-grace zone.
 REASON_MISSING_DATA = "missing_data"
 
+# ST-28 (BLG-BE-179, v9.18): the v9.12 currency correction (ST-13, PR #2025)
+# made classify_position() compare a US position's native entry with its native
+# price. On the first recompute after it reached production, affected US
+# positions changed state with no market move. Those transitions are tagged, not
+# rewritten: a reader of state_history / position_state_history that measures
+# real lifecycle behaviour (days in state, transition counts) excludes them.
+# Cut-off: PR #2025's merge to main, 2026-10-13T19:04:30Z (Product Owner, in
+# session, 2026-11-23; the production deploy time is not recorded). data_model.md
+# §Lifecycle Transition Reasons documents the convention.
+BASIS_CORRECTION_CUTOFF_UTC = datetime(2026, 10, 13, 19, 4, 30)
+REASON_BASIS_CORRECTION = "basis_correction"
+# A transition from or to these states cannot come from the basis change:
+# GRACE ignores price (ST-12) and UNKNOWN means missing data.
+_NOT_PRICE_STATES = (GRACE, UNKNOWN)
+
+
+def _naive_utc(value) -> Optional[datetime]:
+    """A datetime or ISO string as a naive UTC datetime, or None."""
+    if value is None:
+        return None
+    if isinstance(value, str):
+        try:
+            value = datetime.fromisoformat(value.replace("Z", "+00:00"))
+        except ValueError:
+            return None
+    if not isinstance(value, datetime):
+        return None
+    if value.tzinfo is not None:
+        from datetime import timezone as _tz
+        value = value.astimezone(_tz.utc).replace(tzinfo=None)
+    return value
+
+
+def _entered_before_cutoff(position: dict) -> bool:
+    try:
+        entry = date.fromisoformat(str(position.get("entry_date")).split("T")[0].split(" ")[0])
+    except (ValueError, AttributeError):
+        return False
+    return entry < BASIS_CORRECTION_CUTOFF_UTC.date()
+
+
+def _first_correction_index(position: dict, transitions: list) -> Optional[int]:
+    """Index into `transitions` (each (from_state, to_state, at), oldest first) of
+    the basis-correction transition, or None.
+
+    It is the position's first transition at or after the cut-off, for a US
+    position entered before it, when neither side is GRACE or UNKNOWN. Only that
+    first transition is tagged: later ones are real moves. If the first
+    post-cut-off transition involves GRACE or UNKNOWN, none is tagged.
+    """
+    if position.get("market") != "US" or not _entered_before_cutoff(position):
+        return None
+    for i, (from_state, to_state, at) in enumerate(transitions):
+        when = _naive_utc(at)
+        if when is None or when < BASIS_CORRECTION_CUTOFF_UTC:
+            continue
+        if from_state is None or from_state in _NOT_PRICE_STATES or to_state in _NOT_PRICE_STATES:
+            return None
+        return i
+    return None
+
+
+def tag_basis_correction_transitions(position: dict) -> list:
+    """The position's state_history with the basis-correction entry, if any,
+    carrying "reason": "basis_correction" (ST-28, BLG-BE-179). A copy; the
+    stored column is not changed. Entry 0 is the seed, not a transition."""
+    history = position.get("state_history") or []
+    if isinstance(history, str):
+        import json
+        history = json.loads(history)
+    history = [dict(h) for h in history]
+    transitions = [
+        (history[i - 1].get("state"), history[i].get("state"), history[i].get("entered_at"))
+        for i in range(1, len(history))
+    ]
+    idx = _first_correction_index(position, transitions)
+    if idx is not None:
+        history[idx + 1]["reason"] = REASON_BASIS_CORRECTION
+    return history
+
+
+def basis_correction_history_row_id(position: dict, rows: list):
+    """The id of the position_state_history row that is the basis correction, or
+    None. `rows` are that position's rows (id, from_state, to_state, entered_at),
+    in any order; a NULL from_state is the first-seen row, not a transition."""
+    ordered = sorted(rows, key=lambda r: _naive_utc(r.get("entered_at")) or datetime.min)
+    idx = _first_correction_index(
+        position, [(r.get("from_state"), r.get("to_state"), r.get("entered_at")) for r in ordered]
+    )
+    return ordered[idx].get("id") if idx is not None else None
+
 
 def _count_calendar_days(entry_date_str: str) -> Optional[int]:
     """Calendar days from entry_date to today (0 on the entry day), or None if unparseable.

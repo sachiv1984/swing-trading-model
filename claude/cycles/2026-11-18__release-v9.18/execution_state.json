@@ -623,7 +623,8 @@
         "tests/test_settings_change_log.py",
         "tests/test_reports_integration.py",
         "tests/e2e/reports-unrealised-live-basis.spec.js",
-        "tests/e2e/trade-entry-atr-preview.spec.js"
+        "tests/e2e/trade-entry-atr-preview.spec.js",
+        "tests/test_lifecycle_basis_correction.py"
       ],
       "stories": {
         "ST-25": {
@@ -698,7 +699,7 @@
         "ST-28": {
           "title": "Tag lifecycle transitions caused by the v9.12 currency correction",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "in_progress",
           "assigned_to": "engine",
           "github_issue": 2293,
           "branch": "exec/2026-11-18__release-v9.18/EPIC-05",
@@ -708,13 +709,16 @@
           "unblock_criteria": null,
           "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": [],
+          "spec_references": [
+            "docs/specs/data_model.md#Lifecycle Transition Reasons",
+            "tests/test_lifecycle_basis_correction.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Cut-off ruling: Product Owner (the user, in session, AskUserQuestion) 2026-11-23 — use PR #2025's merge time 2026-10-13T19:04:30Z (production deploy time not recorded). First-time-right: 2026-11-23 pass A — 8 raised (no deploy timestamp -> Product Owner ruling above); 7 done (writers of state_history/position_state_history: refresh_position_lifecycle only; recompute runs on GET /positions only, so 'first post-deploy recompute' is not observable -> known limit documented); 17 done (readers: GET /positions pops state_history; days_in_state reads state_entered_at, unchanged; no analytics reader yet); 2 done (table-driven product: market x entry before/on cut-off day x transition kind x time at/just before cut-off x tz form x seed/JSON text); 18 done (state_history {state, entered_at} and position_state_history (id, from_state, to_state, entered_at) shapes from the writers). Pass B — 9 done; 10 done (data_model.md v2.71 §Lifecycle Transition Reasons); 16 N/A (derived on read; no stored value changes)."
         },
         "ST-29": {
           "title": "Keep GET /settings working when the change-log read fails",
@@ -769,26 +773,26 @@
         "ST-31": {
           "title": "Cache the Trade Entry ATR preview per ticker and market",
           "classification": "autonomous",
-          "status": "in_progress",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 2296,
           "branch": "exec/2026-11-18__release-v9.18/EPIC-05",
-          "commit_sha": null,
+          "commit_sha": "315887ec2d6a3d99f837d57fcaa196e754b39087",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-11-23T09:40:37Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/specs/frontend/components/position_form.md#ATR (14-day)",
             "tests/e2e/trade-entry-atr-preview.spec.js"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.push",
           "sign_off_record": null,
-          "notes": "First-time-right: 2026-11-23 pass A — 1 done (api.market.getAtr returns data {atr, as_of}; key uses the normalised ticker and market); 19 done (change matrix: ticker change -> new key; market change -> new key; typed ATR -> idle, cleared -> cached ready after debounce; fetch fails -> none, not cached, one attempt; null atr -> none cached 5 min; window focus -> no refetch); 2,4,6-8,11,17,18,20-24 N/A (no new copy, no layout). Pass B — 3 N/A (no src/lib); 9 done; 10 done (position_form.md v1.15 §ATR preview cache); 22 N/A; re-run 19: SC-TAP-09/10 type key by key (pressSequentially), assert request counts; local Playwright trade-entry* + sizing widget 50/50 and ATR preview 10/10 passed."
+          "notes": "First-time-right: 2026-11-23 pass A — 1 done (api.market.getAtr returns data {atr, as_of}; key uses the normalised ticker and market); 19 done (change matrix: ticker change -> new key; market change -> new key; typed ATR -> idle, cleared -> cached ready after debounce; fetch fails -> none, not cached, one attempt; null atr -> none cached 5 min; window focus -> no refetch); 2,4,6-8,11,17,18,20-24 N/A (no new copy, no layout). Pass B — 3 N/A (no src/lib); 9 done; 10 done (position_form.md v1.15 §ATR preview cache); 22 N/A; re-run 19: SC-TAP-09/10 type key by key (pressSequentially), assert request counts; local Playwright trade-entry* + sizing widget 50/50 and ATR preview 10/10 passed. Deviation check: none (position_form.md v1.15 updated in the same commit)."
         }
       }
     },
@@ -1043,6 +1047,7 @@
     "ST-25",
     "ST-26",
     "ST-29",
+    "ST-31",
     "ST-39",
     "ST-40"
   ],
