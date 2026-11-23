@@ -14,6 +14,8 @@ import TrailingStopExplainerIcon from "./TrailingStopExplainerIcon";
 import { StopProvenanceLine, StopDetailsTrigger } from "./StopProvenance";
 import { formatCurrency, formatPercent, currencyForMarket } from "../../lib/format";
 import StaleMarker, { STALE_EXPLANATION_POSITIONS } from "../ui/StaleMarker";
+import { SplitDetectedButton, splitPausedLine } from "./SplitConfirmDialog";
+import { isSplitPending } from "../../lib/exitCondition";
 
 const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:8000";
 
@@ -127,7 +129,7 @@ function LastReviewedRow({ position, drawdownActive }) {
   );
 }
 
-export default function PositionCard({ position, onEdit, onExit, onRecheck, drawdownActive, highlighted = false }) {
+export default function PositionCard({ position, onEdit, onExit, onRecheck, onConfirmSplit, drawdownActive, highlighted = false }) {
   const [showNoteModal, setShowNoteModal] = useState(false);
   const pnl = position.pnl || 0;
   const pnlPercent = position.pnl_percent || 0;
@@ -148,7 +150,9 @@ export default function PositionCard({ position, onEdit, onExit, onRecheck, draw
   const trailStop = position.current_trailing_stop;
   const trailStopNative = position.current_trailing_stop_native;
   const currentPriceGbp = position.current_price;
-  const trailBreached = trailStop > 0 && currentPriceGbp > 0 && currentPriceGbp <= trailStop;
+  // ST-27 (BLG-BE-223, v9.18): a pending split pauses the stop (positions.md §Split Detected State).
+  const splitPending = isSplitPending(position);
+  const trailBreached = !splitPending && trailStop > 0 && currentPriceGbp > 0 && currentPriceGbp <= trailStop;
   const displayTrailStop = trailStopNative > 0 ? trailStopNative : (position.stop_price_native || position.stop_price);
 
   return (
@@ -193,11 +197,19 @@ export default function PositionCard({ position, onEdit, onExit, onRecheck, draw
           )}>
             {formatPercent(pnlPercent, { signed: true })}
           </span>
+          {splitPending && <span className="block text-xs text-app-muted text-right">pre-split basis</span>}
         </div>
       </div>
 
       {/* ST-01/ST-02/ST-05 (v7.0): dedicated alert row — RISK OFF stacked above GAP RISK when both apply */}
       <PositionCardAlertsRow position={position} />
+
+      {splitPending && (
+        <div className="mb-4 space-y-1" data-testid="split-detected-card-line">
+          <SplitDetectedButton position={position} onOpen={onConfirmSplit} />
+          <p className="text-xs text-app-muted">{splitPausedLine(position.split_pending)}</p>
+        </div>
+      )}
 
       <div className="grid grid-cols-3 gap-4 mb-4">
         <div className="p-3 rounded-xl bg-app-raised">
@@ -221,9 +233,13 @@ export default function PositionCard({ position, onEdit, onExit, onRecheck, draw
           </p>
           <p className="text-sm font-semibold text-app-negative flex items-center gap-1">
             {/* ST-06 (BLG-FE-193, v9.10): per-row stop details tooltip */}
-            <StopDetailsTrigger position={position} currency={currency}>
-              {formatCurrency(displayTrailStop, { currency })}
-            </StopDetailsTrigger>
+            {splitPending ? (
+              <span className="text-xs font-normal text-app-muted" data-testid="stop-value">Paused: split to confirm</span>
+            ) : (
+              <StopDetailsTrigger position={position} currency={currency}>
+                {formatCurrency(displayTrailStop, { currency })}
+              </StopDetailsTrigger>
+            )}
             {trailBreached && (
               <AlertTriangle
                 className="w-3.5 h-3.5 flex-shrink-0"

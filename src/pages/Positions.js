@@ -73,6 +73,8 @@ import AiChatWidget from "../components/AiChatWidget";
 import { toast } from "sonner";
 import { GRACE_PERIOD_DAYS, ATR_PERIOD_DAYS } from "../constants/strategy";
 import StaleMarker, { STALE_EXPLANATION_POSITIONS } from "../components/ui/StaleMarker";
+import SplitConfirmDialog, { SplitDetectedButton, splitPausedLine } from "../components/positions/SplitConfirmDialog";
+import { isSplitPending } from "../lib/exitCondition";
 
 const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:8000";
 
@@ -738,10 +740,15 @@ function StopReachedPill() {
   );
 }
 
-function ActionNeeded({ position }) {
+// ST-27 (BLG-BE-223, v9.18; positions.md §Split Detected State): the stop and
+// to-stop cells while a detected split waits for confirmation.
+const SPLIT_PAUSED = "Paused: split to confirm";
+
+function ActionNeeded({ position, onConfirmSplit }) {
   const tier = getUrgencyTier(position);
   let content;
-  if (tier === URGENCY_TIER.EXIT_CONDITION) content = <RiskOffPill />;
+  if (tier === URGENCY_TIER.SPLIT_TO_CONFIRM) content = <SplitDetectedButton position={position} onOpen={onConfirmSplit} />;
+  else if (tier === URGENCY_TIER.EXIT_CONDITION) content = <RiskOffPill />;
   else if (tier === URGENCY_TIER.STOP_REACHED) content = <StopReachedPill />;
   else if (tier === URGENCY_TIER.NEAR_STOP) content = <span className="text-xs font-medium text-app-negative">Near stop</span>;
   else if (isInGrace(position) && position.grace_days_remaining === 1) content = <span className="text-xs text-app-warning">Grace ends today</span>;
@@ -750,6 +757,9 @@ function ActionNeeded({ position }) {
 }
 
 function StopDistance({ position }) {
+  if (isSplitPending(position)) {
+    return <span data-testid="stop-distance" className="text-xs text-app-muted">{SPLIT_PAUSED}</span>;
+  }
   if (isInGrace(position)) {
     return <span data-testid="stop-distance" className="text-xs text-app-muted">{NOT_ENFORCED_GRACE}</span>;
   }
@@ -772,6 +782,9 @@ function StopValue({ position, currency }) {
   const currentPriceGbp = position.current_price;
   const trailBreached = trailStop > 0 && currentPriceGbp > 0 && currentPriceGbp <= trailStop;
 
+  if (isSplitPending(position)) {
+    return <span className="text-xs text-app-muted font-normal" data-testid="stop-value">{SPLIT_PAUSED}</span>;
+  }
   if (isInGrace(position)) {
     return (
       <span className="text-xs text-app-muted font-normal" data-testid="stop-value">
@@ -817,9 +830,16 @@ function PriceValue({ position, currency }) {
 
 function PnlPercent({ position }) {
   const isProfit = (position.pnl || 0) >= 0;
-  return (
+  const value = (
     <span className={cn("text-sm font-medium", isProfit ? "text-app-positive" : "text-app-negative")}>
       {formatPercent(position.pnl_percent || 0, { signed: true })}
+    </span>
+  );
+  if (!isSplitPending(position)) return value;
+  return (
+    <span className="inline-flex flex-col items-end leading-tight" data-testid="pnl-pre-split">
+      {value}
+      <span className="text-xs text-app-muted">pre-split basis</span>
     </span>
   );
 }
@@ -849,6 +869,10 @@ function PositionDetailGrid({ position, currency, drawdownActive }) {
   const daysHeld = differenceInDays(new Date(), new Date(position.entry_date));
   const state = position.lifecycle_state || position.position_state;
   return (
+    <>
+    {isSplitPending(position) && (
+      <p className="text-sm text-app-warning mb-3" data-testid="split-paused-line">{splitPausedLine(position.split_pending)}</p>
+    )}
     <dl className="grid grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-3">
       <DetailItem label="Entry price">{formatCurrency(position.entry_price, { currency })}</DetailItem>
       <DetailItem label="Initial stop">{formatCurrency(position.initial_stop, { currency })}</DetailItem>
@@ -888,6 +912,7 @@ function PositionDetailGrid({ position, currency, drawdownActive }) {
         {isStopFrozen(position) ? <span className="text-app-muted text-xs">—</span> : <StopProvenanceLine position={position} currency={currency} />}
       </DetailItem>
     </dl>
+    </>
   );
 }
 
@@ -999,7 +1024,7 @@ function PositionDecisionCard({ position, expanded, highlighted, onToggle, drawd
             <span className="font-semibold text-slate-900 dark:text-white">{position.ticker}</span>
             <MarketPill market={position.market} />
           </div>
-          <ActionNeeded position={position} />
+          <ActionNeeded position={position} onConfirmSplit={actionProps?.onConfirmSplit} />
         </div>
 
         <dl className="grid grid-cols-3 gap-3">
@@ -1065,6 +1090,13 @@ export default function Positions() {
   const [viewMode, setViewMode] = useState("grid");
   const [editingPosition, setEditingPosition] = useState(null);
   const [exitingPosition, setExitingPosition] = useState(null);
+  // ST-27 (BLG-BE-223, v9.18): the position whose detected split is being confirmed.
+  const [splitConfirmPosition, setSplitConfirmPosition] = useState(null);
+  const splitTriggerRef = useRef(null);
+  const openSplitConfirm = (position, trigger) => {
+    splitTriggerRef.current = trigger || null;
+    setSplitConfirmPosition(position);
+  };
   const [reflectionTrade, setReflectionTrade] = useState(null);
   const [trailStopPosition, setTrailStopPosition] = useState(null);
   const [recheckingPosition, setRecheckingPosition] = useState(null);
@@ -1345,6 +1377,7 @@ export default function Positions() {
               onEdit={setEditingPosition}
               onExit={setExitingPosition}
               onRecheck={setRecheckingPosition}
+              onConfirmSplit={openSplitConfirm}
               drawdownActive={drawdownActive}
               highlighted={highlightedPositionId === String(position.id)}
             />
@@ -1374,6 +1407,7 @@ export default function Positions() {
                     onTrail: setTrailStopPosition,
                     onRecheck: setRecheckingPosition,
                     onTradePlan: openTradePlan,
+                    onConfirmSplit: openSplitConfirm,
                   }}
                 />
               );
@@ -1443,7 +1477,7 @@ export default function Positions() {
                       </TableCell>
 
                       <TableCell>
-                        <ActionNeeded position={position} />
+                        <ActionNeeded position={position} onConfirmSplit={openSplitConfirm} />
                       </TableCell>
 
                       <TableCell>
@@ -1493,6 +1527,13 @@ export default function Positions() {
         open={!!editingPosition}
         onClose={() => setEditingPosition(null)}
         onSave={handleSave}
+      />
+
+      <SplitConfirmDialog
+        position={splitConfirmPosition}
+        open={!!splitConfirmPosition}
+        onClose={() => setSplitConfirmPosition(null)}
+        returnFocusTo={splitTriggerRef.current}
       />
 
       <ExitModal

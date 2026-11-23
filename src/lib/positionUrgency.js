@@ -7,9 +7,13 @@
 // (risk_dashboard.md §6). No new score, ranking signal or recommendation.
 // Used by the Table view, the narrow-screen cards and the Grid view.
 
-import { getExitCondition, isPostGraceStopBreach } from "./exitCondition";
+import { getExitCondition, isPostGraceStopBreach, isSplitPending } from "./exitCondition";
 
 export const URGENCY_TIER = {
+  // ST-27 (BLG-BE-223, v9.18): a detected split to confirm (positions.md v2.30
+  // §Split Detected State). Above tier 1: the position's stop and exit tests
+  // are suppressed until it is confirmed, so it must not sort as healthy.
+  SPLIT_TO_CONFIRM: 0,
   EXIT_CONDITION: 1,
   STOP_REACHED: 2,
   NEAR_STOP: 3,
@@ -30,6 +34,8 @@ export function isInGrace(position) {
 // (current_price − current_trailing_stop) ÷ current_price × 100, on the GBP
 // basis the breach test uses. Negative when the price is below the stop.
 export function stopDistancePct(position) {
+  // A pending split pauses the stop (§9.1): pre-split stop, post-split price.
+  if (isSplitPending(position)) return null;
   const price = toNumber(position?.current_price);
   const stop = toNumber(position?.current_trailing_stop);
   if (price == null || stop == null || !(price > 0) || !(stop > 0)) return null;
@@ -39,6 +45,7 @@ export function stopDistancePct(position) {
 // (current_price_native − current_trailing_stop_native) ÷ (entry_price − initial_stop).
 // null when the denominator is ≤ 0 or an input is missing.
 export function stopDistanceR(position) {
+  if (isSplitPending(position)) return null;
   const price = toNumber(position?.current_price_native);
   const stop = toNumber(position?.current_trailing_stop_native);
   const entry = toNumber(position?.entry_price);
@@ -50,6 +57,7 @@ export function stopDistanceR(position) {
 }
 
 export function getUrgencyTier(position) {
+  if (isSplitPending(position)) return URGENCY_TIER.SPLIT_TO_CONFIRM;
   if (getExitCondition(position).riskOff) return URGENCY_TIER.EXIT_CONDITION;
   if (isPostGraceStopBreach(position)) return URGENCY_TIER.STOP_REACHED;
   if (position?.grace_period === false) {

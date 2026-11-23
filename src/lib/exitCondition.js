@@ -8,16 +8,24 @@ import { EXIT_REASON_RISK_OFF, EXIT_REASON_STOP } from "../constants/exitReasons
 
 export { EXIT_REASON_RISK_OFF, EXIT_REASON_STOP, EXIT_REASON_MANUAL } from "../constants/exitReasons";
 
+// ST-27 (BLG-BE-223, v9.18; strategy_rules.md §9.1): a detected stock split
+// not yet confirmed. Until it is, the stored entry and stop are in pre-split
+// units, so no stop breach and no exit condition is shown for the position.
+export function isSplitPending(position) {
+  return position?.split_pending != null && typeof position.split_pending === "object";
+}
+
 // Same GBP-basis comparison as the Positions breach badge.
 export function isPostGraceStopBreach(position) {
   if (!position || position.grace_period !== false) return false;
+  if (isSplitPending(position)) return false;
   const stop = Number(position.current_trailing_stop);
   const price = Number(position.current_price);
   return stop > 0 && price > 0 && price <= stop;
 }
 
 export function getExitCondition(position) {
-  const riskOff = position?.risk_off_exit === true;
+  const riskOff = position?.risk_off_exit === true && !isSplitPending(position);
   const stopBreach = isPostGraceStopBreach(position);
   let reason = null;
   if (riskOff) reason = EXIT_REASON_RISK_OFF;

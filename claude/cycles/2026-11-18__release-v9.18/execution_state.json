@@ -625,7 +625,9 @@
         "tests/e2e/reports-unrealised-live-basis.spec.js",
         "tests/e2e/trade-entry-atr-preview.spec.js",
         "tests/test_lifecycle_basis_correction.py",
-        "tests/test_stock_split_adjustment.py"
+        "tests/test_stock_split_adjustment.py",
+        "tests/e2e/positions-split-detected.spec.js",
+        "src/lib/positionUrgency.split.test.js"
       ],
       "stories": {
         "ST-25": {
@@ -694,7 +696,8 @@
             "docs/specs/data_model.md#DS-42",
             "docs/specs/api_contracts/position_endpoints.md#POST /positions/{position_id}/split-adjustment/confirm",
             "docs/specs/frontend/pages/positions.md#Split Detected State",
-            "tests/test_stock_split_adjustment.py"
+            "tests/test_stock_split_adjustment.py",
+            "tests/e2e/positions-split-detected.spec.js"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
@@ -707,7 +710,7 @@
             "date": "2026-11-23",
             "evidence": "AskUserQuestion 2026-11-23: '§9.1 text' = 'Approve as drafted'; odd lots = 'Entry ÷ r, cost moves'. RISK-05 direction 2026-11-18 (sprint_backlog.md sign-off)."
           },
-          "notes": "Reclassified delegated_decision -> autonomous 2026-11-23 (LL-v2.3-EX-02): the decision (AC 6, dated approval of the §9.1 text) was given in session by the user holding the Strategy Rules & System Intent Owner role, before any build; no delegation record or escalation had been raised, so none is cancelled. §15 re-run 2026-11-23: version citations outside strategy_rules.md are all dated historical rows (System_status_report delivery row, current_roadmap shipped rows, decision_log, cycle and scope records) — 0 actionable. First-time-right: 2026-11-23 pass A — 1 done (entry_price GBP for every market, fill_price native, stops/ATR native; Yahoo chart events.splits numerator/denominator; UK via market_symbol .L); 2 raised (odd lots: rule gap -> user ruling 2026-11-23 entry ÷ r, cost moves); 7 done (writers of shares/total_cost: partial exit -> stored_units_for_split; current_stop/atr writers: nightly, on-load -> paused while pending); 17 done (readers of the new adjusted rows: get_positions, get_position_by_id, tag search, correlation; raw SQL readers main.py grace/trail-stop views read entry/initial_stop unadjusted -> trail-stop view note below); 18 done (fixtures from the writer: US entry_price GBP + fill_price native, worked example 10@200 stop 180 price 104); 8 done (split effective on entry day counts, per §9.1 'on or after'); 11 N/A; 19/20/21/22 -> frontend pass. Exit while pending -> 409 (P&L would mix units), raised to user at story report."
+          "notes": "Reclassified delegated_decision -> autonomous 2026-11-23 (LL-v2.3-EX-02): the decision (AC 6, dated approval of the §9.1 text) was given in session by the user holding the Strategy Rules & System Intent Owner role, before any build; no delegation record or escalation had been raised, so none is cancelled. §15 re-run 2026-11-23: version citations outside strategy_rules.md are all dated historical rows (System_status_report delivery row, current_roadmap shipped rows, decision_log, cycle and scope records) — 0 actionable. First-time-right: 2026-11-23 pass A — 1 done (entry_price GBP for every market, fill_price native, stops/ATR native; Yahoo chart events.splits numerator/denominator; UK via market_symbol .L); 2 raised (odd lots: rule gap -> user ruling 2026-11-23 entry ÷ r, cost moves); 7 done (writers of shares/total_cost: partial exit -> stored_units_for_split; current_stop/atr writers: nightly, on-load -> paused while pending); 17 done (readers of the new adjusted rows: get_positions, get_position_by_id, tag search, correlation; raw SQL readers main.py grace/trail-stop views read entry/initial_stop unadjusted -> trail-stop view note below); 18 done (fixtures from the writer: US entry_price GBP + fill_price native, worked example 10@200 stop 180 price 104); 8 done (split effective on entry day counts, per §9.1 'on or after'); 11 N/A; 19/20/21/22 -> frontend pass. Exit while pending -> 409 (P&L would mix units), raised to user at story report. First-time-right: 2026-11-23 pass B (frontend) — 2 done (surfaces: table row, narrow card, Grid card, expanded row, dialog, Monitor/Dashboard exit suggestions via getExitCondition, ExitModal 409); 3 done (src/lib unit tests: full product pending x breach x riskOff x grace, null/undefined/string/0 split_pending); 4 done (axe on table with split rows + open dialog, light and dark; conditional states: odd-lot input, error); 19 done (change matrix: confirm success refetch, failure message, Escape/Cancel keep tier 0, odd-lot input empty/entered/out of range); 20 done (copy per spec; odd-lot hint and cost line added to positions.md v2.31); 22 done (focus returns to trigger; dialog focus trap via shared Dialog); 10 done (positions.md v2.31); local Playwright Positions + SystemStatus 94 passed; unit 26 passed."
         },
         "ST-28": {
           "title": "Tag lifecycle transitions caused by the v9.12 currency correction",
