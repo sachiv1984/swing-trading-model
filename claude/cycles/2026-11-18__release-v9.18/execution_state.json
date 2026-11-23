@@ -699,26 +699,26 @@
         "ST-28": {
           "title": "Tag lifecycle transitions caused by the v9.12 currency correction",
           "classification": "autonomous",
-          "status": "in_progress",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 2293,
           "branch": "exec/2026-11-18__release-v9.18/EPIC-05",
-          "commit_sha": null,
+          "commit_sha": "05bef3247dedc15e866d68cee2f67eadc54d0453",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-11-23T09:48:37Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/specs/data_model.md#Lifecycle Transition Reasons",
             "tests/test_lifecycle_basis_correction.py"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.push",
           "sign_off_record": null,
-          "notes": "Cut-off ruling: Product Owner (the user, in session, AskUserQuestion) 2026-11-23 — use PR #2025's merge time 2026-10-13T19:04:30Z (production deploy time not recorded). First-time-right: 2026-11-23 pass A — 8 raised (no deploy timestamp -> Product Owner ruling above); 7 done (writers of state_history/position_state_history: refresh_position_lifecycle only; recompute runs on GET /positions only, so 'first post-deploy recompute' is not observable -> known limit documented); 17 done (readers: GET /positions pops state_history; days_in_state reads state_entered_at, unchanged; no analytics reader yet); 2 done (table-driven product: market x entry before/on cut-off day x transition kind x time at/just before cut-off x tz form x seed/JSON text); 18 done (state_history {state, entered_at} and position_state_history (id, from_state, to_state, entered_at) shapes from the writers). Pass B — 9 done; 10 done (data_model.md v2.71 §Lifecycle Transition Reasons); 16 N/A (derived on read; no stored value changes)."
+          "notes": "Cut-off ruling: Product Owner (the user, in session, AskUserQuestion) 2026-11-23 — use PR #2025's merge time 2026-10-13T19:04:30Z (production deploy time not recorded). First-time-right: 2026-11-23 pass A — 8 raised (no deploy timestamp -> Product Owner ruling above); 7 done (writers of state_history/position_state_history: refresh_position_lifecycle only; recompute runs on GET /positions only, so 'first post-deploy recompute' is not observable -> known limit documented); 17 done (readers: GET /positions pops state_history; days_in_state reads state_entered_at, unchanged; no analytics reader yet); 2 done (table-driven product: market x entry before/on cut-off day x transition kind x time at/just before cut-off x tz form x seed/JSON text); 18 done (state_history {state, entered_at} and position_state_history (id, from_state, to_state, entered_at) shapes from the writers). Pass B — 9 done; 10 done (data_model.md v2.71 §Lifecycle Transition Reasons); 16 N/A (derived on read; no stored value changes). Deviation check: none."
         },
         "ST-29": {
           "title": "Keep GET /settings working when the change-log read fails",
@@ -747,7 +747,7 @@
         "ST-30": {
           "title": "Make the Reports unrealised P&L match the Positions basis",
           "classification": "autonomous",
-          "status": "in_progress",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 2295,
           "branch": "exec/2026-11-18__release-v9.18/EPIC-05",
@@ -756,7 +756,7 @@
           "blocked_since_utc": null,
           "unblock_criteria": null,
           "completed_utc": "2026-11-23T09:33:27Z",
-          "acceptance_verified": false,
+          "acceptance_verified": true,
           "spec_references": [
             "docs/specs/frontend/pages/reports.md#Unrealised P&L Card",
             "docs/specs/api_contracts/reports_endpoints.md#GET /reports/tax-year",
@@ -765,10 +765,10 @@
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": "3.1.A.push",
           "sign_off_record": null,
-          "notes": "First-time-right: 2026-11-23 pass A — 1 done (pnl GBP 2dp per position from get_positions_with_prices, position_service.py; tax-year fields sit in data.summary, frontend read data — pre-existing bug, card never rendered; fixed in-story); 2 done (surfaces: Tax Year card, Monthly card, Trade History Calendar banner 'as of today' — banner value now live, no stale line there: raised to user 2026-11-23); 7 done (decision record says text-app-warning, reports.md v0.28 says amber-700/400 = actual Dashboard Card 2 code; followed reports.md); 15 done (Positions per-position pnl GBP = Reports summed field); 18 done (e2e tax-year mocks moved unrealised fields into summary, the writer's shape, 6 specs); 19 done (live path fails -> null, card hidden; stale price -> count line); 20 done (note sentence per spec; pluralisation as Dashboard). Pass B — 9 done (Tax Year read bug fixed, not filed); 10 done (reports.md v0.29, reports_endpoints.md v0.21, openapi 3.50.1, api_changelog); 13 done; 22 N/A; local Playwright 37/37 + Reports axe 10/10 passed; full suite 3810 passed. AC 1 staging pending."
+          "notes": "First-time-right: 2026-11-23 pass A — 1 done (pnl GBP 2dp per position from get_positions_with_prices, position_service.py; tax-year fields sit in data.summary, frontend read data — pre-existing bug, card never rendered; fixed in-story); 2 done (surfaces: Tax Year card, Monthly card, Trade History Calendar banner 'as of today' — banner value now live, no stale line there: raised to user 2026-11-23); 7 done (decision record says text-app-warning, reports.md v0.28 says amber-700/400 = actual Dashboard Card 2 code; followed reports.md); 15 done (Positions per-position pnl GBP = Reports summed field); 18 done (e2e tax-year mocks moved unrealised fields into summary, the writer's shape, 6 specs); 19 done (live path fails -> null, card hidden; stale price -> count line); 20 done (note sentence per spec; pluralisation as Dashboard). Pass B — 9 done (Tax Year read bug fixed, not filed); 10 done (reports.md v0.29, reports_endpoints.md v0.21, openapi 3.50.1, api_changelog); 13 done; 22 N/A; local Playwright 37/37 + Reports axe 10/10 passed; full suite 3810 passed. AC 1 staging pending. AC 1 (staging match) deferred post-merge by Product Owner 2026-11-23 (AskUserQuestion); tracked BLG-QA-276, filed before PR open (CLAUDE.md §2). ACs 2 (n/a, option b) and 3 (DEV-REPORTS-ST06-01 resolved, reports.md v0.29) met. Deviation check: none beyond the tracked staging AC."
         },
         "ST-31": {
           "title": "Cache the Trade Entry ATR preview per ticker and market",
@@ -1046,7 +1046,9 @@
     "ST-06",
     "ST-25",
     "ST-26",
+    "ST-28",
     "ST-29",
+    "ST-30",
     "ST-31",
     "ST-39",
     "ST-40"
