@@ -7,14 +7,14 @@
     "daily-briefing (POST /ai/daily-briefing)": {
       "file": "backend/services/ai_service.py",
       "function": "generate_daily_briefing",
-      "prompt_version": "v1.3",
-      "sha256": "49783dc82a87ab617cd708f5384ab08276c3f8ba5973ed62d99b0da23a991962"
+      "prompt_version": "v1.4",
+      "sha256": "3f7a2bcf49379a031a8b1752cc62e231b1ebd7f2de9c6f5f478912f96127400f"
     },
     "chat (POST /ai/chat)": {
       "file": "backend/services/ai_service.py",
       "function": "ai_chat",
-      "prompt_version": "v1.2",
-      "sha256": "4f827e8c91b07994adac43147385fa25b2a133373ba1a504b0e0b40e6046dc09"
+      "prompt_version": "v1.3",
+      "sha256": "bc417e63f7b884914531d42edf3028c6d99c18b612fff130a4a35a05ae0f8b9b"
     },
     "generate-plan system (POST /trade-plans/generate-plan)": {
       "file": "backend/services/gemini_service.py",

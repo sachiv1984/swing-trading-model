@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-19 (session — 3 new items added: BLG-FE-326, BLG-FE-327, BLG-SPEC-242; PR #2307 agent-mediated DoQ and PO review findings); prior — 2026-11-19 (session — 2 new items added: BLG-SEC-48, BLG-SEC-49; ST-05/EPIC-01 v9.18 re-review remedies); prior — 2026-11-19 (session — 1 new item added: BLG-GOV-430; v9.18 EPIC-01 PR #2306 CI finding); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-20 (session — 1 new item added: BLG-AI-40; EPIC-07 v9.18 PR review round 2); prior — 2026-11-20 (session — 3 new items added: BLG-FE-328, BLG-AI-38, BLG-AI-39; EPIC-07 v9.18 agent-mediated PR review); prior — 2026-11-20 (session — 3 new items added: BLG-GOV-431, BLG-QA-275, BLG-AI-37; EPIC-07 v9.18 retrospective); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -2854,6 +2854,173 @@ The reported-speech exemption also misses attribution placed after the clause. B
 - 100 KB of reported matches is checked in under 0.5 s, in a test
 - Each untested path above has a test with the ruled (A″) result
 - All existing journal-summary tests pass
+
+---
+
+### BLG-AI-34 — Daily briefing and chat check: catch "too loose/tight", halve/double/trail and "don't hesitate to"
+**Priority:** P3 (Low)
+**Type:** AI Compliance / Correctness
+**Owner:** AI Compliance & Governance Officer; Backend Engineering Patterns Owner
+**Source:** ST-39 / EPIC-07, cycle `2026-11-18__release-v9.18` — high code review finding 4 and first-time-right pass A; AI Compliance & Governance Officer confirmation, `ESC-EXEC-20261120-01` (not widened in-sprint) — 2026-11-20
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.19
+**Depends on:** BLG-AI-32 (same detector; "You may want to tighten your stops." is already listed there) — rule and build the two together
+
+**Problem**
+Since v9.18 (ST-39) the daily briefing and chat use the journal summary's `_trading_change_found` detector to enforce `strategy_rules.md` §13.2. These sentences return no failure (verified 2026-11-20): "Your stops look too loose for this market.", "Halve the position size on NVDA.", "Trail the stop higher.", "Don't hesitate to tighten your stop on NVDA.". The detector was not widened in v9.18 because it is shared with the journal summary and each widening has had its own ruling. Meanwhile the risk is limited by the prompt instruction (briefing v1.4, chat v1.3) and advisory-only output.
+
+**Scope**
+- Ask the AI Compliance & Governance Officer to rule on the forms above, together with BLG-AI-32's sentences
+- Extend the detector for the ruled forms
+- Add them as caught cases, and nearby descriptive sentences as passing cases (e.g. "The stop trailed higher as price rose.", "Position size was halved after the loss."), to B-JS-04, B-DB-06 and B-CH-07 in `ai_s13_boundary_test_suite.md`
+- Add the forms to `scripts/run_ai_output_boundary_sample_audit.py`
+
+**Acceptance Criteria**
+- The ruling is recorded before the code change
+- Each sentence above gets the ruled result in the journal summary, briefing and chat checks, in tests
+- The descriptive past-tense cases pass
+- Every existing journal-summary, briefing and chat test keeps its result
+- The sample audit reports the new forms
+
+---
+
+### BLG-AI-35 — Debrief number check leaves out the focus sentence on every trade that went to plan
+**Priority:** P2 (Medium)
+**Type:** AI Compliance / Correctness
+**Owner:** AI Compliance & Governance Officer; Backend Engineering Patterns Owner
+**Source:** ST-40 / EPIC-07, cycle `2026-11-18__release-v9.18` — production debrief sample review (10 `v1.1` debriefs generated 2026-11-20), agent-mediated AI Compliance & Governance Officer review; filed on the user's direction as AI Compliance & Governance Officer and Product Owner — 2026-11-20
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.19
+
+**Problem**
+In the 10-debrief production sample, 6 focus sentences were left out with `focus_area_omitted_reason = numeric_cross_check_failed` (twice each: first output and regeneration), including all 4 trades that exited on the trailing stop as planned (INTC 2026-07-01 and 2026-09-08, SNDK 2026-06-23, WDC 2026-06-22), plus DELL 2026-09-24 and WDC 2026-08-24. So the user sees a code-written summary only, which is the "not really an AI debrief" complaint behind BLG-GOV-378. The rejected text is not stored, so the failing number cannot be seen.
+
+**Scope**
+- Log the numbers that fail the cross-check (numbers only, never the sentence), so the cause can be seen
+- Find why the check fails on these trades and fix it within ST-06 review Condition 2 (numbers sourced from the inputs)
+- Regenerate the six debriefs and record how many focus sentences now pass
+
+**Acceptance Criteria**
+- The failing numbers for the six trades are recorded before the fix
+- The fix keeps Condition 2: a number not in the inputs still fails, in a test
+- Most of the six regenerated debriefs show a focus sentence, or the reason they cannot is recorded
+
+---
+
+### BLG-AI-36 — Debrief focus sentence on a gap through the stop implies the unmoved stop caused the loss
+**Priority:** P3 (Low)
+**Type:** AI Compliance / Correctness
+**Owner:** AI Compliance & Governance Officer; Backend Engineering Patterns Owner
+**Source:** ST-40 / EPIC-07, cycle `2026-11-18__release-v9.18` — production debrief sample review (10 `v1.1` debriefs generated 2026-11-20), agent-mediated AI Compliance & Governance Officer review; filed on the user's direction as AI Compliance & Governance Officer and Product Owner — 2026-11-20
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+**Depends on:** BLG-AI-34 (rule the forms together)
+
+**Problem**
+STX (2026-07-02) gapped through its stop: stop $1,045.26, exit $900.00, −2.92R. The focus sentence said "The trade's stop-loss level at 1045.26 remained unchanged throughout the 10-day holding period, allowing the position to decline 20.61% before triggering an exit." It passes the checks, but it misses that the exit was about 14% below the stop, and "allowing" frames the unmoved stop as the cause, which is close to suggesting a stop change (`strategy_rules.md` §13.2). Under the strategy, stops only move up with the trailing rule.
+
+**Scope**
+- Ask the AI Compliance & Governance Officer whether causal framing of an unmoved stop is a §13.2 failure, and rule a check form or prompt wording
+- Pass the gap (exit below stop) to the prompt as a computed input so the sentence can state it
+
+**Acceptance Criteria**
+- The ruling is recorded before the code change
+- The STX 2026-07-02 sentence gets the ruled result, in a test
+- Existing debrief check tests keep their results
+
+---
+
+### BLG-AI-37 — One shared set of advice and non-advice sentences for every §13.2 output check
+**Priority:** P3 (Low)
+**Type:** AI Compliance / Test Automation
+**Owner:** AI Compliance & Governance Officer; QA & Testing Owner
+**Source:** EPIC-07 retrospective (cycle `2026-11-18__release-v9.18`, ST-39/ST-40): which check would have caught this EPIC's backlog items earlier; filed on the user's direction — 2026-11-20
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+**Depends on:** BLG-AI-32, BLG-AI-34 (their rulings set the expected results for the new forms)
+
+**Problem**
+The journal summary, debrief, monthly narrative and (since v9.18) the daily briefing and chat each enforce `strategy_rules.md` §13.2 with checks tested by their own sentence lists, and `scripts/run_ai_output_boundary_sample_audit.py` has its own scanners. Gaps keep being found one checker at a time: BLG-AI-30, -31, -32, -33 and -34 are five items on one detector, and on 2026-11-20 the audit script's `scan_prescriptive` missed "Consider tightening your stop on NVDA." which the briefing check catches.
+
+**Scope**
+- Create one fixture of labelled sentences: advice that must fail (with the §13.2 subject), and near misses that must pass (negations, refusals, reported or past-tense wording, rule-based recommendations)
+- Run every §13.2 checker and the audit script against it in CI, with each checker's known exceptions listed explicitly
+- Seed it from the B-JS-04, B-DB-06 and B-CH-07 cases and the sentences in BLG-AI-32 and BLG-AI-34
+
+**Acceptance Criteria**
+- Every checker and the audit script run against the shared fixture in CI
+- A sentence a checker gets wrong is either fixed or listed as a named exception with a backlog ID
+- Adding a sentence to the fixture is the documented way to record a newly found phrasing
+
+---
+
+### BLG-AI-38 — Withheld briefing and chat copy hints at the advice it hides and invites rephrasing
+**Priority:** P3 (Low)
+**Type:** AI Compliance / UX Copy
+**Owner:** AI Compliance & Governance Officer; Frontend Specifications & UX Owner
+**Source:** Agent-mediated EPIC-07 PR review (cycle `2026-11-18__release-v9.18`, ST-39), user-directed, Product Owner findings 2 and 3 — 2026-11-20
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+The ruled copy (`ESC-EXEC-20261120-01`) tells the user the AI "suggested changing a stop, position size or setup". On the Dashboard card a withheld action reads "[EXIT] NVDA — Description withheld because it suggested changing a stop, position size or setup.", which tells the user the AI thinks NVDA's stop should change (a softened §13.2 suggestion in code-written text), names three subjects when one triggered, and drops the reason for a rule-based EXIT. When every action is withheld the card shows identical lines. The withheld summary sits under "Market Context" and does not mention Regenerate. The chat message ends "Please ask again or rephrase your question.", which invites wording around the control; each retry costs two model calls.
+
+**Scope**
+- Ask the AI Compliance & Governance Officer to re-rule the three strings (the copy is ruled verbatim)
+- For a withheld action, use a code-written reason from the deterministic data where one exists (for example "stop breached" for EXIT)
+- Chat: say what the assistant cannot do and what it can help with instead, without inviting a rephrase
+
+**Acceptance Criteria**
+- The re-ruling is recorded before the change
+- Backend tests assert the new strings; the Dashboard card and chat widget show them, checked by Playwright or a recorded staging run
+- No withheld string implies which parameter the AI wanted to change
+
+---
+
+### BLG-AI-39 — Rule-cited trailing-stop and sizing wording is withheld by the briefing and chat check
+**Priority:** P3 (Low)
+**Type:** AI Compliance / Correctness
+**Owner:** AI Compliance & Governance Officer; Backend Engineering Patterns Owner
+**Source:** Agent-mediated EPIC-07 PR review (cycle `2026-11-18__release-v9.18`, ST-39), user-directed, Director of Quality finding 3 and Product Owner verification note — 2026-11-20
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+**Depends on:** BLG-AI-34, BLG-AI-37 (rule with the other form changes; add to the shared sentence set)
+
+**Problem**
+Ruling `ESC-EXEC-20261120-01` (1)(a) intends recommendations under the existing rules to pass, but these are flagged `trading_change` and so regenerated, then withheld (verified 2026-11-20): "Under the trailing rule, NVDA's stop should be raised to £460.00 at today's recalculation.", "The trailing stop on NVDA should move up to £460.00 per the strategy's ATR rule.", "AAPL stop should be raised to 150 under the trailing rule.", "Review position sizing for the new ENTER signal against the 1% risk rule before entering." A correct note about a deterministic stop ratchet is lost.
+
+**Scope**
+- Ask the AI Compliance & Governance Officer whether wording that cites the strategy's own rule for a deterministic change passes, and on what evidence (for example the figure matches the computed trailing stop)
+- Implement the ruled result and add the sentences to B-DB-06/B-CH-07 and the BLG-AI-37 shared set
+
+**Acceptance Criteria**
+- The ruling is recorded before the code change
+- Each sentence above gets the ruled result, in a test
+- Every existing briefing, chat and journal-summary test keeps its result
+
+---
+
+### BLG-AI-40 — Briefing and chat check: two-verb negations withheld, and pronoun or "just" advice missed
+**Priority:** P3 (Low)
+**Type:** AI Compliance / Correctness
+**Owner:** AI Compliance & Governance Officer; Backend Engineering Patterns Owner
+**Source:** Agent-mediated EPIC-07 PR review round 2 (cycle `2026-11-18__release-v9.18`, ST-39), Director of Quality findings R2 and R3, user-directed — 2026-11-20
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+**Depends on:** BLG-AI-34, BLG-AI-37 (rule with the other form changes; add to the shared sentence set)
+
+**Problem**
+After the v9.18 narrowing of the negation exemption, some genuine negations are still withheld (safe side: regenerated, then withheld): "Your stop should not be moved or tightened." (removing "not be moved" leaves "should … or tightened") and "I'm not able to advise on whether your stop should be tightened." (the declined form does not cover "not able to advise on whether"). Separately the base detector misses advice with a pronoun subject or "just": "Your stop should not be widened; it should be tightened." and "There is no need to move your stop, just tighten it." (verified 2026-11-20).
+
+**Scope**
+- Ask the AI Compliance & Governance Officer to rule on each sentence
+- Extend the negation removal to coordinated verbs ("not be moved or tightened") and the declined form to "not able to advise on whether", if ruled
+- Resolve a pronoun subject ("it", "them") to the stop or position size named earlier in the same sentence or the one before, if ruled
+
+**Acceptance Criteria**
+- The ruling is recorded before the code change
+- Each sentence above gets the ruled result, in a test
+- Every existing briefing, chat and journal-summary test keeps its result
 
 ---
 
@@ -7865,6 +8032,28 @@ With `TELEGRAM_BOT_TOKEN` or `TELEGRAM_CHAT_ID` unset, Notification Preferences 
 
 ---
 
+### BLG-FE-328 — Dashboard briefing "Ask the AI" sends the summary as a string, so every question is rejected
+**Priority:** P2 (Medium)
+**Type:** Frontend / Correctness
+**Owner:** Frontend Specifications & UX Owner; Backend Engineering Patterns Owner
+**Source:** Agent-mediated EPIC-07 PR review (cycle `2026-11-18__release-v9.18`, ST-39), user-directed, Product Owner finding 4 — 2026-11-20
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.19
+
+**Problem**
+`src/components/dashboard/home/AiDailyBriefing.js` line 101 calls `api.ai.chat(chatQuestion.trim(), briefing?.summary || null)`, so `context` is the briefing summary string. `POST /ai/chat`'s `ChatRequest.context` is `Optional[dict]` (`backend/routers/ai.py`), and pydantic rejects a string ("Input should be a valid dictionary", reproduced 2026-11-20 against the model class, not a live server). The question box shows only once a briefing has loaded, so every question asked from the Dashboard card should fail with "Unable to get a response". The e2e specs stub `/ai/chat`, so CI cannot see it. Pre-existing (ST-12, `8680d28f`).
+
+**Scope**
+- Confirm the failure on staging
+- Decide whether the card should send no context, or a dict the contract allows, and fix the call
+- Add a test that sends the card's real request body to the real `ChatRequest` model (an API contract test, not a stubbed route)
+
+**Acceptance Criteria**
+- A question asked from the Dashboard briefing card gets a model answer on staging
+- A test fails on the old request body and passes on the new one
+
+---
+
 ### BLG-OPS-222 — Poll the GitHub Pages front end as well as the API's /health
 **Priority:** P3 (Low)
 **Type:** Operations / Monitoring
@@ -7961,6 +8150,29 @@ At `2026-11-18__scheduled` the engine appended three rows to `claude/roadmap/rol
 **Acceptance Criteria**
 - `execution_prompt.md` STEP 0 names the single commit that sets `Executing` and adds `execution_state.json` on `main`
 - At the next sprint start, a PR opened from `main` before the first EPIC merges passes `test_execution_state_path_file_exists`
+
+---
+
+### BLG-GOV-431 — Review a sample of real output soon after any change to AI-generated text ships
+**Priority:** P2 (Medium)
+**Type:** Governance Process / AI Compliance
+**Owner:** AI Compliance & Governance Officer; Head of Specs Team
+**Source:** EPIC-07 retrospective (cycle `2026-11-18__release-v9.18`, ST-39/ST-40): which check would have caught this EPIC's backlog items earlier; filed on the user's direction — 2026-11-20
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.19
+
+**Problem**
+Four of the six items filed during v9.18 EPIC-07 (BLG-BE-226, BLG-BE-227, BLG-AI-35, BLG-AI-36) were visible in the first real debriefs produced after BLG-BE-152 shipped on 2026-10-12. BLG-GOV-378 asked for a sample review then, but debriefs are generated on demand and none was generated for five weeks, so a wrong R comparison (MU: 0.59R shown, 2.24R on the plan's stop) and a number check dropping every went-to-plan focus sentence went unseen. No step in post-ship closure asks anyone to look at real output from a changed AI feature.
+
+**Scope**
+- Add a step (post-ship closure or delivery verification, as the Head of Specs Team decides) that, for any story changing an AI prompt, an AI output check or the inputs an AI feature receives, generates or collects 5–10 real outputs within a set number of days of release and reviews them against the feature's §13 review conditions
+- Say who generates on-demand outputs (for example the debrief) when none occur naturally, and where the review is recorded
+- Record a missed review as a carried action, not silence
+
+**Acceptance Criteria**
+- The step exists in the chosen governance prompt, with the four EPIC-07 items cited as its origin
+- A worked example shows the step applied to BLG-BE-152's release and finding the BLG-BE-226 MU case
+- The CLAUDE.md §6 governance file edit checklist is completed for the prompt change
 
 ---
 
@@ -8068,6 +8280,75 @@ Since ST-03 (v9.18), a notification written while `TELEGRAM_BOT_TOKEN`/`TELEGRAM
 
 ---
 
+### BLG-BE-226 — Debrief "R achieved" uses the position's starting stop but is compared with the plan's R target
+**Priority:** P2 (Medium)
+**Type:** Backend / Correctness
+**Owner:** Backend Engineering Patterns Owner; Metrics Definitions & Analytics Owner
+**Source:** ST-40 / EPIC-07, cycle `2026-11-18__release-v9.18` — production debrief sample review (10 `v1.1` debriefs generated 2026-11-20), agent-mediated AI Compliance & Governance Officer review; filed on the user's direction as AI Compliance & Governance Officer and Product Owner — 2026-11-20
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.19
+
+**Problem**
+`debrief_service.py` computes R achieved as `(exit − entry) / (entry − positions.initial_stop)`, but the summary puts it "against a 2.2R target" taken from the trade plan, whose target is set against the plan's own stop. Where the two stops differ, the debrief understates the result. MU (exit 2026-09-30): entry $926.80, exit $1,058.60, position initial stop $702.85, plan stop $868.00. The debrief shows +0.59R "against a 2.2R target"; on the plan's stop it is +2.24R, so the target was met. SNDK (2026-09-28: 0.22R shown, 0.86R on the plan stop) and INTC (2026-09-08: 0.38R shown, 1.52R on the plan stop) are the same. The AI focus sentence then repeats the wrong comparison ("captured only 0.59R of your planned 2.2R target").
+
+**Scope**
+- Decide (Metrics Definitions & Analytics Owner) which stop R achieved uses when a plan exists, or whether the summary shows both, and why the position's initial stop differs from the plan stop on these trades
+- Make the R achieved figure and the R target in the summary use the same basis, and pass the same figures to the focus-area prompt
+- Update the debrief spec and `metrics_definitions.md` if the definition changes
+
+**Acceptance Criteria**
+- The basis ruling is recorded before the code change
+- MU (2026-09-30) is reported against its target on one consistent basis, in a test built from its real figures
+- A trade with no plan keeps its current R achieved
+- Existing debrief tests keep their results, or change only as the ruling states
+
+---
+
+### BLG-BE-227 — Debrief summary shows stops that do not fit the exit
+**Priority:** P3 (Low)
+**Type:** Backend / Correctness
+**Owner:** Backend Engineering Patterns Owner
+**Source:** ST-40 / EPIC-07, cycle `2026-11-18__release-v9.18` — production debrief sample review (10 `v1.1` debriefs generated 2026-11-20), agent-mediated AI Compliance & Governance Officer review; filed on the user's direction as AI Compliance & Governance Officer and Product Owner — 2026-11-20
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+In the 2026-11-20 sample, the deterministic summary shows stops that cannot be right for the exit it describes. STX (2026-05-06, manual exit at $767.20) has a trailing stop at exit of $811.88, above the exit price; the focus sentence then says the gain came "before the trailing stop at exit (811.88) could be triggered". SNDK (2026-06-23) says the trailing stop was raised to $2,048.82 with an exit at $2,003.01. INTC (2026-09-08) says it "exited at $105.50 when the stop at $60.83 was hit". These figures come from `positions.current_stop`/`initial_stop` as stored, which may have been recalculated after exit.
+
+**Scope**
+- Find where each shown stop comes from and when it was last written, for these three trades
+- Show the stop in force at exit, or leave the figure out when it cannot be known, and say which in the summary
+- Do not pass an unreliable stop to the focus-area prompt
+
+**Acceptance Criteria**
+- For STX 2026-05-06, SNDK 2026-06-23 and INTC 2026-09-08, the summary shows no stop that contradicts the exit, in tests built from their real figures
+- The cause of each case is recorded in the item before the fix
+
+---
+
+### BLG-BE-228 — INTC 2026-09-08 trade appears twice in trade history
+**Priority:** P2 (Medium)
+**Type:** Backend / Data Integrity
+**Owner:** Backend Engineering Patterns Owner; Data Model & Domain Schema Owner
+**Source:** ST-40 / EPIC-07, cycle `2026-11-18__release-v9.18` — production debrief sample review (10 `v1.1` debriefs generated 2026-11-20), agent-mediated AI Compliance & Governance Officer review; filed on the user's direction as AI Compliance & Governance Officer and Product Owner — 2026-11-20; the user confirmed it looks like a duplicate
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.19
+
+**Problem**
+Production `trade_history` has two rows for INTC with the same exit date (2026-09-08), exit reason (Trailing Stop) and P&L (+13.48%): ids `cad2bd50-60f9-4ca0-8783-bcc46c4a2e1f` and `6572f8da-c8d5-4065-b089-2e02560fe5ae`. The user did not sell INTC in two lots that day. A duplicate doubles that trade in realised P&L, win rate, trade counts and every analytics view that reads `trade_history`.
+
+**Scope**
+- Compare the two rows in full (position id, quantities, prices, created times) and confirm the duplicate
+- Find which write path created the second row, and whether any other trades are affected (a query for rows sharing position, exit date and exit price)
+- Remove the duplicate with the user's go-ahead, and stop the write path from creating another (for example a unique constraint or an idempotent exit)
+
+**Acceptance Criteria**
+- The cause is recorded before any data change
+- Production has one INTC 2026-09-08 row, and the query finds no other duplicates
+- A test shows the write path cannot create a second row for the same exit
+
+---
+
 ### BLG-QA-274 — Record whether the Performance CWV baseline includes the Strategy Benchmark section
 **Priority:** P3 (Low)
 **Type:** QA / Test Automation
@@ -8087,3 +8368,28 @@ v9.18 ST-08 moves Strategy Benchmark into Performance, and its data then loads w
 - The Performance baseline row in `performance_budget.md` names the commit measured and whether the Strategy Benchmark section was included
 
 ---
+
+### BLG-QA-275 — Test the post-trade debrief against recorded real trades and model sentences
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** QA & Testing Owner; Backend Engineering Patterns Owner
+**Source:** EPIC-07 retrospective (cycle `2026-11-18__release-v9.18`, ST-39/ST-40): which check would have caught this EPIC's backlog items earlier; filed on the user's direction — 2026-11-20
+**Effort:** M (~1–2d)
+**Provisional-Target:** TBD
+**Depends on:** BLG-BE-228 (so the fixture set has no duplicate trade)
+
+**Problem**
+The debrief summary and its number check are tested with made-up trades and sentences. Real trades differ in the ways that broke them: a plan stop different from the position's starting stop (BLG-BE-226), stops rewritten after exit (BLG-BE-227), and model sentences that real figures make fail the number check (BLG-AI-35). None of these needs a live model to catch once a real trade and a real model sentence are recorded.
+
+**Scope**
+- Record a fixture set from production: the 10 trades sampled on 2026-11-20 (inputs only, figures as stored) and the model sentences generated for them, including the ones rejected (once BLG-AI-35 logs them)
+- Run the deterministic summary and the number check over the set in CI, asserting the agreed result for each
+- Document how to add a trade to the set when a new debrief defect is found
+
+**Acceptance Criteria**
+- The fixture set runs in CI with no live API call
+- MU 2026-09-30 reports R on one consistent basis (after BLG-BE-226), and STX 2026-05-06 shows no stop above the exit (after BLG-BE-227), in tests from the set
+- Each recorded sentence gets its agreed number-check result
+
+---
+

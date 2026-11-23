@@ -119,5 +119,5 @@ class TestCashLabels:
 def test_briefing_prompt_version_bumped_once_for_st02_and_st03():
     from services import ai_service
     fixtures = json.loads((Path(__file__).parent / "fixtures" / "ai_prompt_template_golden_fixtures.json").read_text())["templates"]
-    assert ai_service.BRIEFING_PROMPT_VERSION == "v1.3"
-    assert fixtures["daily-briefing (POST /ai/daily-briefing)"]["prompt_version"] == "v1.3"
+    assert ai_service.BRIEFING_PROMPT_VERSION == "v1.4"  # ST-39 (v9.18) bump
+    assert fixtures["daily-briefing (POST /ai/daily-briefing)"]["prompt_version"] == "v1.4"  # ST-39 (v9.18) bump
