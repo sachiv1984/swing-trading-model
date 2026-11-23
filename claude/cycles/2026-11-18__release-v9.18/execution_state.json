@@ -6,7 +6,7 @@
   "invoked_utc": "2026-11-19T08:07:14Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-23T16:35:30Z",
+  "last_updated_utc": "2026-11-23T16:36:07Z",
   "epics": {
     "EPIC-01": {
       "title": "Site Structure & Usability Phase 4, Stage 1: Correct and Safe (build-and-ship)",
@@ -455,8 +455,8 @@
       "title": "First-Time-Right Checks (Product Owner direction, 2026-11-12)",
       "status": "done",
       "branch": "exec/2026-11-18__release-v9.18/EPIC-04",
-      "pr_number": null,
-      "pr_status": "none",
+      "pr_number": 2311,
+      "pr_status": "open",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-11-18__release-v9.18/qa_evidence_EPIC-04.md",
       "test_scenarios": [
