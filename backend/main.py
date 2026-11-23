@@ -116,7 +116,8 @@ from database import (
     update_position_note,
     update_position_tags,
     get_all_tags,
-    search_positions_by_tags
+    search_positions_by_tags,
+    apply_split_adjustments,
 )
 
 from utils.pricing import (
@@ -1945,7 +1946,8 @@ def get_grace_period_alerts_endpoint():
                     """,
                     (portfolio_id, GRACE),
                 )
-                rows = cur.fetchall()
+                # ST-27 (BLG-BE-223, v9.18): confirmed splits applied on read.
+                rows = apply_split_adjustments(cur, cur.fetchall())
 
         alerts = []
         for row in rows:
@@ -2263,6 +2265,10 @@ def get_stop_trail_endpoint(position_id: str):
                     (position_id, portfolio_id),
                 )
                 row = cur.fetchone()
+                # ST-27 (BLG-BE-223, v9.18): confirmed splits applied on read, so
+                # entry and initial stop match the rescaled current_stop and atr.
+                if row:
+                    row = apply_split_adjustments(cur, [row])[0]
 
         if not row:
             raise HTTPException(status_code=404, detail=f"Position {position_id} not found")

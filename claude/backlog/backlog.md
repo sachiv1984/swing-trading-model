@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-23 (session — 1 new item added: BLG-QA-276; EPIC-05 v9.18 ST-30 post-merge staging check); prior — 2026-11-20 (session — 1 new item added: BLG-AI-40; EPIC-07 v9.18 PR review round 2); prior — 2026-11-20 (session — 3 new items added: BLG-FE-328, BLG-AI-38, BLG-AI-39; EPIC-07 v9.18 agent-mediated PR review); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-23 (session — 2 new items added: BLG-BE-229, BLG-FE-329; EPIC-05 v9.18 ST-27 follow-ups); prior — 2026-11-23 (session — 1 new item added: BLG-QA-276; EPIC-05 v9.18 ST-30 post-merge staging check); prior — 2026-11-20 (session — 1 new item added: BLG-AI-40; EPIC-07 v9.18 PR review round 2); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -8413,5 +8413,48 @@ ST-30 (BLG-SPEC-203) moved the Reports `estimated_unrealised_pnl` to the live `g
 **Acceptance Criteria**
 - The figures match to the penny at the same moment, or differ only because prices refreshed between the two requests (shown by reloading both)
 - The result, the date and any stale-price case are recorded in `claude/cycles/2026-11-18__release-v9.18/qa_evidence_EPIC-05.md`
+
+---
+
+### BLG-BE-229 — View Trail compares a US position's GBP entry price with its native price
+**Priority:** P2 (Medium)
+**Type:** Backend Engineering
+**Owner:** Head of Engineering; Backend Engineering Patterns Owner
+**Source:** ST-27, EPIC-05, cycle `2026-11-18__release-v9.18` (found while applying split adjustments to the `GET /positions/{position_id}/stop-trail` read, first-time-right check 17) — 2026-11-23
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+`GET /positions/{position_id}/stop-trail` (`backend/main.py`) passes `positions.entry_price` to `calculate_trailing_stop()` as the entry, with the live native price. `entry_price` is GBP for every market (`data_model_positions_dictionary.md` v0.4), so for a US position the profitability test and the §7.2 breakeven floor use a GBP entry against a USD price. The View Trail modal can then show a wrong candidate stop and difference. Every other stop path uses `native_entry_price()` (BLG-BE-208, ST-25).
+
+**Scope**
+- Use `native_entry_price()` for the entry in `GET /positions/{position_id}/stop-trail`
+- Add the endpoint to `tests/test_fx_market_matrix.py`
+
+**Acceptance Criteria**
+- For the matrix's US rows, the stop-trail candidate equals `calculate_trailing_stop()` run on the native entry (test)
+- UK rows are unchanged (test)
+
+---
+
+### BLG-FE-329 — Show a confirmed stock split on Positions, Trade History and the tax-year report
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Frontend Specifications & UX Documentation Owner; Head of UX & Design
+**Source:** ST-27, EPIC-05, cycle `2026-11-18__release-v9.18` (slice scope "P&L, R and the tax-year report use adjusted values with the adjustment shown"; the v9.18 design gate specified only the pending state) — 2026-11-23
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+After a split is confirmed, Positions, Trade History and the tax-year report show the split-adjusted shares, entry and stop with no sign that they were adjusted. `GET /positions` returns `split_adjustments` (ratio, effective date, source, share counts), but no page shows it, and a user comparing with the original broker contract note sees different figures with no explanation. `positions.md` §Split Detected State covers only the pending state.
+
+**Scope**
+- Design the confirmed-state display (e.g. one expanded-row line "2:1 split on 23 Nov 2026 applied: 10 → 20 shares, entry 200.00 → 100.00") and its tax-year and Trade History equivalent
+- Return the adjustment with the trade row where the report needs it
+- Implement and cover with Playwright
+
+**Acceptance Criteria**
+- A position with a confirmed split shows the applied split and the original figures on Positions (Playwright)
+- A trade closed after a confirmed split shows the adjustment on Trade History and the tax-year report (Playwright)
 
 ---
