@@ -15,12 +15,19 @@ To accept growth, raise the file's baseline in the same PR and say why in the
 bump's prompt_change_log.md row. .github/workflows/prompt-size-budget.yml runs
 this on every PR touching claude/system/.
 
-Usage: python3 scripts/check_prompt_size_budget.py [--write-baseline]
+--staged (ST-23, BLG-GOV-421, v9.18) measures the prompts and the baseline as
+they are in the git index, for .githooks/pre-commit: a commit is judged on
+what it will contain, not on unstaged edits. The workflow also runs on pushes
+to main, so a commit that skipped the hook (--no-verify) shows a red run.
+
+Usage: python3 scripts/check_prompt_size_budget.py [--staged | --write-baseline]
 Exit 0 = budget holds (or baseline written); 1 = violations (one per line).
 """
+import fnmatch
 import glob
 import json
 import os
+import subprocess
 import sys
 
 CAP = 68_500
@@ -33,10 +40,49 @@ PATTERNS = [
 ]
 
 
-def prompt_sizes():
+def _git(*args):
+    return subprocess.run(["git", "-C", ROOT, *args], check=True, capture_output=True, text=True).stdout
+
+
+def _matches(rel):
+    """The same files glob() finds: top-level claude/system/ only."""
+    return os.path.dirname(rel) == "claude/system" and any(
+        fnmatch.fnmatchcase(os.path.basename(rel), os.path.basename(pat)) for pat in PATTERNS)
+
+
+def prompt_sizes(staged=False):
+    if staged:
+        # -s -z: stage numbers and NUL-separated, unquoted paths. A path with a
+        # non-zero stage is an unresolved merge conflict, not a size to check.
+        unmerged = set()
+        for entry in sorted(_git("ls-files", "-s", "-z", "--", "claude/system").split("\0")):
+            if not entry:
+                continue
+            meta, rel = entry.split("\t", 1)
+            if not _matches(rel):
+                continue
+            if meta.split()[2] != "0":
+                unmerged.add(rel)
+                continue
+            yield rel, int(_git("cat-file", "-s", f":{rel}"))
+        for rel in sorted(unmerged):
+            print(f"Skipped {rel}: unresolved merge conflict in the index; resolve it and re-run.")
+        return
     for pat in PATTERNS:
         for path in sorted(glob.glob(os.path.join(ROOT, pat))):
             yield os.path.relpath(path, ROOT), os.path.getsize(path)
+
+
+def load_baseline(staged=False):
+    if staged:
+        try:
+            return json.loads(_git("show", ":scripts/prompt_size_baseline.json"))
+        except subprocess.CalledProcessError:
+            return {}
+    if os.path.exists(BASELINE):
+        with open(BASELINE) as f:
+            return json.load(f)
+    return {}
 
 
 def main():
@@ -48,24 +94,24 @@ def main():
         print(f"Wrote {len(out)} baseline(s) to {os.path.relpath(BASELINE, ROOT)}")
         return 0
 
-    baseline = {}
-    if os.path.exists(BASELINE):
-        with open(BASELINE) as f:
-            baseline = json.load(f)
+    staged = "--staged" in sys.argv
+    baseline = load_baseline(staged)
 
     failures = []
-    for rel, size in prompt_sizes():
+    for rel, size in prompt_sizes(staged):
         limit = baseline.get(rel, CAP)
         if size > limit:
             kind = "baseline" if rel in baseline else "cap"
             failures.append(f"{rel}: {size} bytes > limit {limit} ({kind})")
 
     if failures:
-        print("Engine prompt size budget exceeded (shared_standards.md §11):")
+        where = " (staged)" if staged else ""
+        print(f"Engine prompt size budget exceeded{where} (shared_standards.md §11):")
         print("\n".join("  " + f for f in failures))
-        print("Move rationale to an appendix, or raise the baseline in "
-              "scripts/prompt_size_baseline.json in this PR with a reason in its "
-              "prompt_change_log.md row.")
+        print("Move an equal amount of rationale or history to the file's changelog or "
+              "appendix (headroom rule), or raise the baseline in "
+              "scripts/prompt_size_baseline.json in the same commit with a Head of "
+              "Specs Team reason in its prompt_change_log.md row.")
         return 1
     print("OK: engine prompt size budget holds")
     return 0

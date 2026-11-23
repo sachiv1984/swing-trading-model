@@ -7,6 +7,12 @@ name: "Prompt Size Budget"
 # its entry in scripts/prompt_size_baseline.json. Raising a baseline is a
 # deliberate edit in the same PR.
 
+#
+# ST-23 (BLG-GOV-421, EPIC-04, v9.18): also runs on pushes to main. Post-ship
+# closure and roadmap action-now patches are committed straight to main, where
+# no PR runs this check; a commit that skipped .githooks/pre-commit now shows a
+# red run on that commit.
+
 on:
   pull_request:
     branches:
@@ -15,6 +21,16 @@ on:
       - 'claude/system/**'
       - 'scripts/prompt_size_baseline.json'
       - 'scripts/check_prompt_size_budget.py'
+  push:
+    branches:
+      - main
+    paths:
+      - 'claude/system/**'
+      - 'scripts/prompt_size_baseline.json'
+      - 'scripts/check_prompt_size_budget.py'
+
+permissions:
+  contents: read
 
 jobs:
   prompt_size_budget:

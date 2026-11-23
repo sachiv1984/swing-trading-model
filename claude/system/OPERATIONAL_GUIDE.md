@@ -4,8 +4,8 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.265
-**Last Updated:** 2026-11-23 (sprint execution `2026-11-18__release-v9.18` EPIC-04/ST-22, BLG-GOV-420 — `execution_prompt.md` v3.97; §14 row and §8 source-prompt line updated); prior — 2026-11-23 (sprint execution `2026-11-18__release-v9.18` EPIC-04/ST-21, BLG-QA-268 — `execution_prompt.md` v3.96; §14 row and §8 source-prompt line updated); prior — 2026-11-23 (sprint execution `2026-11-18__release-v9.18` EPIC-04/ST-18, BLG-GOV-422 — `design_gate_prompt.md` v1.12; §14 row and §6.5 source-prompt line updated); prior history retained — see prior entries in version control
+**Version:** 4.266
+**Last Updated:** 2026-11-23 (sprint execution `2026-11-18__release-v9.18` EPIC-04/ST-23, BLG-GOV-421 — `post_ship_closure.md` v2.50 and `roadmap_prompt.md` v9.38; §14 rows and §6/§10 source-prompt lines updated); prior — 2026-11-23 (sprint execution `2026-11-18__release-v9.18` EPIC-04/ST-22, BLG-GOV-420 — `execution_prompt.md` v3.97; §14 row and §8 source-prompt line updated); prior — 2026-11-23 (sprint execution `2026-11-18__release-v9.18` EPIC-04/ST-21, BLG-QA-268 — `execution_prompt.md` v3.96; §14 row and §8 source-prompt line updated); prior history retained — see prior entries in version control
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -398,7 +398,7 @@ The idea template includes a "What Would You Stop?" field as a thinking prompt �
 
 ## 6. Phase 1 — Roadmap Rebalance (Optional)
 
-**Source prompt:** `claude/system/roadmap_prompt.md` (v9.37) + `claude/system/roadmap_prompt_appendix.md` (STEP 9 onward, plus detailed rationale for the core's compacted rules)
+**Source prompt:** `claude/system/roadmap_prompt.md` (v9.38) + `claude/system/roadmap_prompt_appendix.md` (STEP 9 onward, plus detailed rationale for the core's compacted rules)
 **Invoke when:** A roadmap item completes and a priority reassessment is warranted before proceeding to release planning, or on a scheduled review cadence without a completion event.
 
 ### 6.1 Invocation
@@ -1068,7 +1068,7 @@ If test scenario gaps are found (scenarios that exist in `docs/testing/` but wer
 
 ## 10. Post-Ship Closure
 
-**Source prompt:** `claude/system/post_ship_closure.md` (v2.49)
+**Source prompt:** `claude/system/post_ship_closure.md` (v2.50)
 **Process document:** None — the former process document `docs/team_skills/pmo/processess/post-ship_closure.md` was retired 2026-03-13 (commit `11db3666`, deleted with its whole `processess/` directory); `claude/system/post_ship_closure.md` is the sole authority.
 **Owner:** PMO Lead
 **Trigger:** Phase 4 complete — `.claude_current_state.json` status = `Verified` or `Verified_with_deviations`
@@ -1387,7 +1387,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 4.265 |
+| Version | 4.266 |
 | Last Updated | 2026-11-23 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.13 |
@@ -1401,8 +1401,8 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Shared Lock Recovery Procedure | `claude/system/shared/lock_recovery_procedure.md` v1.0 |
 | Shared Preflight Common Checks | `claude/system/shared/preflight_common.md` v1.1 |
 | Shared Publish Gate | `claude/system/shared/publish_gate.md` v1.1 |
-| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v9.37 (+ `roadmap_prompt_appendix.md`) |
-| Roadmap Engine Appendix | `claude/system/roadmap_prompt_appendix.md` v1.2 |
+| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v9.38 (+ `roadmap_prompt_appendix.md`) |
+| Roadmap Engine Appendix | `claude/system/roadmap_prompt_appendix.md` v1.3 |
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.75 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.24 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.9 |
@@ -1410,7 +1410,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | QA Evidence Template | `claude/system/templates/qa_evidence_template.md` v1.18 |
 | Verification Engine Source | `claude/system/delivery_verification_prompt.md` v3.18 |
 | Ideas Housekeeping Engine | `claude/system/ideas_housekeeping_prompt.md` v1.2 |
-| Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.49 |
+| Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.50 |
 | Shared Standards | `claude/system/shared_standards.md` v3.43 |
 | Governance Invariants | `claude/system/invariants.md` v1.0 |
 | Lessons Learnt Prompt | `claude/system/lessons_learnt_prompt.md` v1.17 |
@@ -1528,6 +1528,7 @@ Living references introduced in v3.2: `component_inventory.md`, `design_system.m
 **Header-drift prevention (added v4.85, roadmap rebalance 2026-07-08__scheduled, Friction Item — 4th recurrence of this exact pattern per the 4.79/4.80/4.81 entries below):** Before bumping the top `**Version:**`/`**Last Updated:**` header fields, read the highest version number already present in this table's top row — do not increment from the header field alone, since it has drifted below the table's actual latest entry on at least 4 prior occasions.
 
 | Version | Date | Change Summary |
+| 4.266 | 2026-11-23 | **Sprint execution `2026-11-18__release-v9.18` EPIC-04/ST-23 (BLG-GOV-421) — 2 source prompts bumped.** `post_ship_closure.md` v2.49→v2.50: STEP 8 runs the prompt size budget check before committing an immediate prompt change and applies the headroom rule if it fails; two history passages moved to the changelog, net −135 bytes. `roadmap_prompt.md` v9.37→v9.38: the STEP 11 action-now line carries the same check; companion `roadmap_prompt_appendix.md` v1.2→v1.3, Part A STEP 11.2 action-now step. Both prompts run the check with `--staged`. Also `.githooks/pre-commit` runs `check_prompt_size_budget.py --staged` and `prompt-size-budget.yml` runs on pushes to `main`. §10 and §6 source-prompt headers and §14 Post-Ship Closure Engine, Roadmap Engine Source and Roadmap Engine Appendix rows updated; §14 self-row and header bumped. Authority: Head of Specs Team (Sprint Execution Engine, ST-23 sealed AC). |
 | 4.265 | 2026-11-23 | **Sprint execution `2026-11-18__release-v9.18` EPIC-04/ST-22 (BLG-GOV-420) — 1 source prompt bumped.** `execution_prompt.md` v3.96→v3.97: new §3.1.A step 2c requires the `commit-check` skill, including Check 11 (`/code-review`, `Review:`/`Impact:` lines), before every implementation commit; three origin sentences (steps 2a, 2b, 4c) moved to the changelog, net −102 bytes. §8 source-prompt header and §14 Execution Engine Source row updated; §14 self-row and header bumped. Authority: Head of Specs Team (Sprint Execution Engine, ST-22 sealed AC). |
 | 4.264 | 2026-11-23 | **Sprint execution `2026-11-18__release-v9.18` EPIC-04/ST-21 (BLG-QA-268) — 1 source prompt bumped.** `execution_prompt.md` v3.95→v3.96: §3.1.A step 13 names `scripts/check_e2e_locator_collisions.py` (run from `commit-check` Check 13); step 13's origin examples moved to the changelog, net −265 bytes. §8 source-prompt header and §14 Execution Engine Source row updated; §14 self-row and header bumped. Authority: Head of Specs Team (Sprint Execution Engine, ST-21 sealed AC; `.claude/skills/commit-check` edit under `shared_standards.md` §17). |
 | 4.263 | 2026-11-23 | **Sprint execution `2026-11-18__release-v9.18` EPIC-04/ST-18 (BLG-GOV-422) — 1 source prompt bumped.** `design_gate_prompt.md` v1.11→v1.12: STEP 2.2 pre-approval checks (data source, writers, worked examples with time boundaries, dependent states) recorded in a new gate record section; a gap not closed by a story in the slice or an artefact or spec change blocks the item. §6.5 source-prompt header and §14 Design Gate Engine row updated; §14 self-row and header bumped. Authority: Head of Specs Team (Sprint Execution Engine, ST-18 sealed AC); Head of UX & Design agent-mediated (§5.3). |
