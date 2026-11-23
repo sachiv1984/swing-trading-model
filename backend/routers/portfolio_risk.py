@@ -14,6 +14,7 @@ from fastapi.responses import JSONResponse
 from database import get_db, get_portfolio, get_positions, get_portfolio_snapshots, get_gate_metrics, get_sector_regime_history
 from services.concentration_service import get_ticker_sector_map as _get_ticker_sector_map
 from utils.formatting import decimal_to_float
+from services.position_service import native_entry_price
 from utils.position_lifecycle_states import EXIT_ZONE, PROFITABLE, LOSING, GRACE, UNKNOWN
 
 router = APIRouter(prefix="/portfolio", tags=["Portfolio"])
@@ -82,7 +83,7 @@ def _get_portfolio_heat_and_positions():
 
         if market == "US":
             # fill_price is USD native; entry_price is GBP-converted
-            entry_price_native = float(pos.get("fill_price") or (entry_price * fx_rate))
+            entry_price_native = float(native_entry_price(pos, fx_rate))  # ST-25 (BLG-BE-208)
             current_price_native = float(pos.get("current_price") or entry_price_native)
             current_price_gbp = current_price_native / live_fx_rate
         else:
@@ -311,7 +312,7 @@ def compute_sector_exposure(raw_positions, ticker_sector_map: dict, live_fx_rate
         fx_rate = float(pos.get("fx_rate") or 1.27)
 
         if market == "US":
-            entry_price_native = float(pos.get("fill_price") or (entry_price * fx_rate))
+            entry_price_native = float(native_entry_price(pos, fx_rate))  # ST-25 (BLG-BE-208)
             current_price_native = float(pos.get("current_price") or entry_price_native)
             current_value_gbp = (current_price_native / live_fx_rate) * shares
         else:

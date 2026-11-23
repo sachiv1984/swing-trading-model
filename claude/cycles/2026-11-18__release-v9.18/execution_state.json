@@ -623,7 +623,7 @@
         "ST-25": {
           "title": "Use one native-entry function on every position path",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "in_progress",
           "assigned_to": "engine",
           "github_issue": 2290,
           "branch": "exec/2026-11-18__release-v9.18/EPIC-05",
@@ -633,13 +633,16 @@
           "unblock_criteria": null,
           "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": [],
+          "spec_references": [
+            "docs/specs/data_model_positions_dictionary.md",
+            "tests/test_fx_market_matrix.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": ""
+          "notes": "First-time-right: 2026-11-23 pass A — 1 done (entry_price GBP all markets, fill_price USD native, fx_rate stored; data_model_positions_dictionary.md v0.4); 7 done (one-fallback premise: 5 copies found — _native_entry, portfolio_service x2, portfolio_risk x2); 15 done (native_entry_price callers all pass floats; .get('market') and float() conversion are type-safe for them); 17/18/19 N/A (no new state, no fixtures, no UI); 2,3,4,6,8,11,20-24 N/A (backend refactor, no copy); 5 medium review. First-time-right: 2026-11-23 pass B — 9 done; 10 N/A (no behaviour change, no spec edit); 15 done (5 callers worked through, identical outputs; full suite 3797 passed); 16 N/A (no stored-value meaning change)."
         },
         "ST-26": {
           "title": "Use the live FX rate, not a hard-coded 1.27",

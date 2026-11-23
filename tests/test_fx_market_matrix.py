@@ -187,10 +187,7 @@ class TestNetRMultiple:
 
 # Each entry is (file, number of inline copies). BLG-BE-208 replaces them with
 # one function; when a copy is removed, lower its count here.
-KNOWN_INLINE_NATIVE_ENTRY_COPIES = {
-    "backend/services/portfolio_service.py": 2,
-    "backend/routers/portfolio_risk.py": 2,
-}
+KNOWN_INLINE_NATIVE_ENTRY_COPIES = {}  # ST-25 (BLG-BE-208, v9.18): all callers use native_entry_price()
 _INLINE_PATTERN = re.compile(
     r"fill_price['\"]\)?\s*or\s*\(?\s*(?:[a-z_]+(?:\[|\.get\()['\"])?entry_price"
 )

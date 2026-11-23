@@ -76,15 +76,16 @@ def _native_entry(position: dict) -> Optional[float]:
     entry_price = position.get("entry_price")
     if position.get("market") != "US":
         return entry_price
-    if position.get("fill_price"):
-        return position["fill_price"]
-    if not entry_price:
+    if not position.get("fill_price") and not entry_price:
         return None
-    fx_rate = position.get("fx_rate") or position.get("live_fx_rate")
-    if not fx_rate:
+    # ST-25 (BLG-BE-208, v9.18): the fallback itself lives in native_entry_price().
+    # The live rate is fetched only when the row has neither fill_price nor fx_rate.
+    live_fx_rate = position.get("live_fx_rate")
+    if not position.get("fill_price") and not position.get("fx_rate") and not live_fx_rate:
         from utils.pricing import get_live_fx_rate
-        fx_rate = get_live_fx_rate()
-    return float(entry_price) * float(fx_rate)
+        live_fx_rate = get_live_fx_rate()
+    from services.position_service import native_entry_price
+    return native_entry_price(position, live_fx_rate)
 
 
 def classify_position(position: dict) -> Tuple[str, Optional[str]]:

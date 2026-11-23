@@ -142,13 +142,17 @@ def native_entry_price(pos: Dict, live_fx_rate: float) -> float:
     NULL fill_price is converted back with its stored fx_rate, or the live rate if
     that is NULL too. pos.get('fill_price', ...) used to return None for such a
     row, which crashed both stop recompute paths.
+
+    The single implementation of this fallback (ST-25, BLG-BE-208, v9.18): the
+    lifecycle badge, the portfolio summary and both portfolio_risk functions
+    call it. A row with no market is treated as UK, as those callers did.
     """
-    if pos['market'] != 'US':
+    if pos.get('market') != 'US':
         return pos['entry_price']
     fill_price = pos.get('fill_price')
     if fill_price:
         return fill_price
-    return pos['entry_price'] * (pos.get('fx_rate') or live_fx_rate)
+    return float(pos['entry_price']) * float(pos.get('fx_rate') or live_fx_rate)
 
 
 def get_positions_with_prices() -> List[Dict]:
