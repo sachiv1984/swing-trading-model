@@ -6,7 +6,7 @@
   "invoked_utc": "2026-11-19T08:07:14Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-23T15:44:03Z",
+  "last_updated_utc": "2026-11-23T15:45:16Z",
   "epics": {
     "EPIC-01": {
       "title": "Site Structure & Usability Phase 4, Stage 1: Correct and Safe (build-and-ship)",
@@ -564,7 +564,7 @@
         "ST-22": {
           "title": "Require the pre-commit code review in execution_prompt.md",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "in_progress",
           "assigned_to": "engine",
           "github_issue": 2287,
           "branch": "exec/2026-11-18__release-v9.18/EPIC-04",
@@ -574,13 +574,15 @@
           "unblock_criteria": null,
           "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": [],
+          "spec_references": [
+            "claude/system/execution_prompt.md#3.1.A step 2c"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": ""
+          "notes": "First-time-right: 2026-11-23 pass A/B — governance text only; 24 done (AC \"every implementation commit\" kept literal, Check 11 file list quoted); 13 done (steps 2a-3 read back in order); others N/A. governance-drift: 28 tracked, 0 mismatches, self-consistent 4.265."
         },
         "ST-23": {
           "title": "Enforce the prompt size budget on direct commits to main",
