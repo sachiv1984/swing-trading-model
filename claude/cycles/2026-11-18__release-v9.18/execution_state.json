@@ -6,7 +6,7 @@
   "invoked_utc": "2026-11-19T08:07:14Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-23T15:50:24Z",
+  "last_updated_utc": "2026-11-23T15:55:34Z",
   "epics": {
     "EPIC-01": {
       "title": "Site Structure & Usability Phase 4, Stage 1: Correct and Safe (build-and-ship)",
@@ -507,13 +507,19 @@
           "unblock_criteria": null,
           "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": [],
+          "spec_references": [
+            "src/lib/positionUrgency.test.js",
+            "src/lib/exitCondition.test.js",
+            "src/test-utils/knownFailing.js",
+            ".github/workflows/frontend-unit-tests.yml",
+            "docs/development/frontend_development_guide.md#14. Unit Tests for Pure Modules"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "First-time-right: 2026-11-23 pass A (recorded after drafting the test files, before the first commit) — 3 done (165 cases; knownFailing proven to flip by simulating the BLG-FE-292 guard); 1 done (fixture units traced: GBP current_price/current_trailing_stop vs native *_native, as GET /positions sends; 0 native price unreachable — falls back to stored/entry price, position_service.py:209, so not tested); 2 done (5% band at exactly 5.0, 5.01, 4.99; tier vs cell display for grace null/missing/true/false); 24 done (AC \"every PR touching src/**\" kept literal, path list only widened; npm ci from lockfile); 18 done (fixture fields derived: R = (130−117)/(120−110)); 4-8,11,17,19-21,23 N/A (no UI, no state)"
+          "notes": "First-time-right: 2026-11-23 pass A (recorded after drafting the test files, before the first commit) — 3 done (165 cases; knownFailing proven to flip by simulating the BLG-FE-292 guard); 1 done (fixture units traced: GBP current_price/current_trailing_stop vs native *_native, as GET /positions sends; 0 native price unreachable — falls back to stored/entry price, position_service.py:209, so not tested); 2 done (5% band at exactly 5.0, 5.01, 4.99; tier vs cell display for grace null/missing/true/false); 24 done (AC \"every PR touching src/**\" kept literal, path list only widened; npm ci from lockfile); 18 done (fixture fields derived: R = (130−117)/(120−110)); 4-8,11,17,19-21,23 N/A (no UI, no state) | First-time-right: 2026-11-23 pass B — 9 done (high review: 2 important + 4 nits; 5 fixed here incl. direction-agnostic BLG-FE-289 cases proven to flip both ways, rethrow of non-assertion errors, missing rows, jsconfig path; 1 filed: BLG-QA-276, eslint.config.mjs is PO-protected); 18 done (fixtures on GET /positions GBP/native split); 2a build exit 0; 167 unit tests pass"
         },
         "ST-20": {
           "title": "Fail the axe scan on incomplete colour-contrast results",

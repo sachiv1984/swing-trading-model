@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-23 (session — 1 new item added: BLG-SPEC-243; EPIC-04 v9.18 ST-18 agent-mediated Head of UX & Design review); prior — 2026-11-20 (session — 1 new item added: BLG-AI-40; EPIC-07 v9.18 PR review round 2); prior — 2026-11-20 (session — 3 new items added: BLG-FE-328, BLG-AI-38, BLG-AI-39; EPIC-07 v9.18 agent-mediated PR review); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-23 (session — 1 new item added: BLG-QA-276; EPIC-04 v9.18 ST-19 pre-commit code review); prior — 2026-11-23 (session — 1 new item added: BLG-SPEC-243; EPIC-04 v9.18 ST-18 agent-mediated Head of UX & Design review); prior — 2026-11-20 (session — 1 new item added: BLG-AI-40; EPIC-07 v9.18 PR review round 2); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -8411,6 +8411,27 @@ The debrief summary and its number check are tested with made-up trades and sent
 **Acceptance Criteria**
 - `positions.md` §Warning Strip states each entry's result when its source query fails
 - If the result differs from the shipped behaviour, a frontend item is filed
+
+---
+
+### BLG-QA-276 — Give src unit tests a Jest override in eslint.config.mjs
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** QA & Testing Owner; Product Owner (eslint.config.mjs is protected)
+**Source:** ST-19 (EPIC-04, `2026-11-18__release-v9.18`), pre-commit `/code-review` at high — 2026-11-23
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`eslint.config.mjs` applies the browser globals and `no-comments/disallowComments: error` to every `src/**/*.{js,jsx}` file, with no override for Jest tests. ST-19's new unit tests and `src/test-utils/knownFailing.js` therefore report 161 errors (`no-undef` on `test`, `describe` and `expect`, and "Comments are forbidden") under `npx eslint`. No CI step runs this config on test files, since the production build lints only imported files, so nothing fails today. However, the editor lint hook and any future lint step flag every unit test. The config is protected (`.claude/hooks/protect-eslint-config.sh`), so the engine cannot add the override itself.
+
+**Scope**
+- Add an override for `src/**/*.test.js` and `src/test-utils/**` with Jest globals and comments allowed, as the Playwright block already does for `tests/e2e`
+- Product Owner sign-off for the protected file
+
+**Acceptance Criteria**
+- `npx eslint src/lib/*.test.js src/test-utils/` reports no `no-undef` or comment errors
+- Non-test `src/` files keep their current rules
 
 ---
 

@@ -1,0 +1,62 @@
+name: Frontend Unit Tests
+
+# ST-19 (BLG-QA-262, EPIC-04, v9.18): runs the Jest unit tests under src/
+# (react-scripts test) on every PR and push that touches src/**. Before this
+# workflow no CI job ran them: Playwright covers rendered pages, and pure
+# src/lib logic (urgency tiers, the exit predicate) was checked by hand.
+# Convention: docs/development/frontend_development_guide.md §14 — a new or
+# changed pure module under src/lib/ ships with unit tests in the same commit.
+#
+# package.json, package-lock.json, .npmrc and jsconfig.json (read by the CRA
+# Jest config for module paths) are in the path list too, because a change to
+# any of them can break the tests without touching src/**.
+# Dependencies install with `npm ci` from the committed lockfile.
+
+on:
+  workflow_dispatch: {}
+  pull_request:
+    paths:
+      - 'src/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.npmrc'
+      - 'jsconfig.json'
+      - '.github/workflows/frontend-unit-tests.yml'
+  push:
+    branches:
+      - main
+      - 'exec/**'
+    paths:
+      - 'src/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.npmrc'
+      - 'jsconfig.json'
+      - '.github/workflows/frontend-unit-tests.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  unit-tests:
+    name: Jest unit tests (src/)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      # --passWithNoTests is deliberately absent: if the test files go missing,
+      # the job fails instead of passing on zero tests.
+      - name: Run unit tests
+        run: CI=true npm test -- --watchAll=false
