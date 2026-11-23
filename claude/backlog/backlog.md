@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-23 (session — 1 new item added: BLG-BE-230; EPIC-05 v9.18 DoQ review); prior — 2026-11-23 (session — 2 new items added: BLG-BE-229, BLG-FE-329; EPIC-05 v9.18 ST-27 follow-ups); prior — 2026-11-23 (session — 1 new item added: BLG-QA-276; EPIC-05 v9.18 ST-30 post-merge staging check); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-23 (session — 6 new items added: BLG-BE-231, BLG-BE-232, BLG-QA-277, BLG-FE-330, BLG-FE-331, BLG-SPEC-243; PR #2310 agent-mediated review); prior — 2026-11-23 (session — 1 new item added: BLG-BE-230; EPIC-05 v9.18 DoQ review); prior — 2026-11-23 (session — 2 new items added: BLG-BE-229, BLG-FE-329; EPIC-05 v9.18 ST-27 follow-ups); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -8477,5 +8477,127 @@ After a split is confirmed, Positions, Trade History and the tax-year report sho
 **Acceptance Criteria**
 - With a confirmed 2:1 split, the grace-period alert's `stop_level` is half the stored `planned_stop_price` (test)
 - With no split, it is unchanged (test)
+
+---
+
+### BLG-BE-231 — Tell the user when a stock split is detected on a held position
+**Priority:** P2 (Medium)
+**Type:** Backend Engineering / Frontend
+**Owner:** Product Owner; Head of Engineering; Frontend Specifications & UX Documentation Owner
+**Source:** Agent-mediated Product Owner review of PR #2310 (ST-27, EPIC-05, cycle `2026-11-18__release-v9.18`), gap A — 2026-11-23
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+While a detected split is unconfirmed, `strategy_rules.md` §9.1 pauses the position's stop: no stop alert, no exit suggestion, no trailing recompute. The only signal is the tier-0 row on Positions. A user who does not open Positions for a few days holds a position with no working stop and is not told. The Dashboard Today list leaves the position out (its exit condition is suppressed), and no notification is written.
+
+**Scope**
+- Write a "split to confirm" notification when the nightly run records a new pending split (once per split), delivered like the other alert types
+- Add a "Split to confirm" item to the Dashboard Today list that deep-links to the Positions dialog
+- Design and copy through the Head of UX & Design; §13: display and notification only, no recommendation
+
+**Acceptance Criteria**
+- A newly detected split writes exactly one notification naming the ticker, ratio and date (test)
+- The Dashboard Today list shows the item while the split is pending and not after confirmation (Playwright)
+
+---
+
+### BLG-BE-232 — Tidy the split read path: internal keys in tag search, and the lifecycle reason while pending
+**Priority:** P3 (Low)
+**Type:** Backend Engineering
+**Owner:** Head of Engineering; API Contracts & Documentation Owner
+**Source:** Agent-mediated Director of Quality review of PR #2310 (ST-27, EPIC-05, cycle `2026-11-18__release-v9.18`), findings 2 and 3 — 2026-11-23
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`GET /positions/search/tags` returns raw position rows. Since ST-27, a position with a split carries the internal read-path keys `split_pending`, `split_adjustments`, `split_original` and `split_factors`, which are not in `position_endpoints.md` or `openapi.yaml`. Separately, `get_lifecycle_fields_for_position()` returns `lifecycle_reason: null` while a split is pending, even when the stored state is `UNKNOWN`, so that badge loses its reason tooltip.
+
+**Scope**
+- Remove the four internal keys from the tag-search response (or document them)
+- While a split is pending, return the stored state's reason (`missing_data` for `UNKNOWN`)
+
+**Acceptance Criteria**
+- The tag-search response for a position with a confirmed split has no `split_original` or `split_factors` key (test)
+- A pending-split position whose stored state is `UNKNOWN` returns `lifecycle_reason: "missing_data"` (test)
+
+---
+
+### BLG-QA-277 — Replace the source-text checks for split suppression with behavioural tests
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** QA & Testing Owner
+**Source:** Agent-mediated Director of Quality review of PR #2310 (ST-27, EPIC-05, cycle `2026-11-18__release-v9.18`), finding 1 — 2026-11-23
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+`tests/test_stock_split_adjustment.py` `TestMonthEndSkipsPending` and `TestStopAlertSkipsPending.test_stop_loss_approach_loop_skips_pending_ids` assert that a line of source text exists. A refactor that keeps the text but changes the behaviour would still pass, so the §8.4 and stop-alert suppression in slice AC 2 are not tested by behaviour.
+
+**Scope**
+- Test `evaluate_alerts()` with a fake cursor returning a position whose stop is within the threshold and whose split is pending
+- Test `generate_rebalance_exit_signals()` on a month-end day with a pending-split position outside the top 5
+
+**Acceptance Criteria**
+- With a pending split, no `stop_loss_approach` notification is inserted; without it, one is (test)
+- With a pending split, no rebalance exit signal is created; without it, one is (test)
+
+---
+
+### BLG-FE-330 — Split dialog: word a cost increase correctly when the entered share count is above the exact result
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Frontend Specifications & UX Documentation Owner; Head of UX & Design
+**Source:** Agent-mediated Director of Quality review of PR #2310 (ST-27, EPIC-05, cycle `2026-11-18__release-v9.18`), finding 4 — 2026-11-23
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+For a non-whole result, `SplitConfirmDialog` shows "Cost: {before} → {after} (cash in lieu: {before − after})". The confirm endpoint accepts a count up to 1 share above quantity × ratio (e.g. 11 for 10.5). The line then reads "cash in lieu: -£1.00", which is wrong: no cash is paid in lieu when the count rounds up.
+
+**Scope**
+- Show "cash in lieu" only when the cost falls. Otherwise word it as a cost change, or limit the input to floor(exact) if the Strategy Rules & System Intent Owner rules that brokers only round down
+- `positions.md` §Split Detected State copy updated
+
+**Acceptance Criteria**
+- Entering a count above the exact result shows no negative "cash in lieu" (Playwright)
+
+---
+
+### BLG-FE-331 — Trade History calendar: show the stale-price caveat with the live unrealised figure
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** Agent-mediated Product Owner review of PR #2310 (ST-30, EPIC-05, cycle `2026-11-18__release-v9.18`), gap C — 2026-11-23
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+ST-30 made `estimated_unrealised_pnl` live on `GET /reports/daily-pnl` and added `unrealised_price_stale_count`. The Reports Tax Year and Monthly cards show "⚠ N position price(s) stale". The Trade History calendar banner ("Unrealised P&L (as of today)", `CalendarView.js`) shows the same figure with no caveat.
+
+**Scope**
+- Show the same stale line under the calendar banner when `unrealised_price_stale_count > 0`; `trade_history.md` updated
+
+**Acceptance Criteria**
+- With a stale count of 2, the calendar banner shows "⚠ 2 position prices stale"; with 0, no line (Playwright)
+
+---
+
+### BLG-SPEC-243 — Cross-reference §9.1's exit refusal from §8.3 manual exit
+**Priority:** P3 (Low)
+**Type:** Spec Debt
+**Owner:** Strategy Rules & System Intent Owner; Product Owner
+**Source:** Agent-mediated Product Owner review of PR #2310 (ST-27, EPIC-05, cycle `2026-11-18__release-v9.18`), gap D — 2026-11-23
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+ST-27 refuses an exit (`409`) while a detected split is unconfirmed, so that the realised P&L is not recorded with pre-split shares and a post-split price. `strategy_rules.md` §8.3 says a manual exit is "available at any time" and does not mention this. The behaviour is in `position_endpoints.md` v2.23.0 and `positions.md` v2.31, but not in the rules.
+
+**Scope**
+- Strategy Rules & System Intent Owner rules whether the refusal stands. If it does, add a §8.3 line ("not while a detected split is unconfirmed; confirm it first, §9.1"); if not, file the code change
+
+**Acceptance Criteria**
+- §8.3 and the shipped behaviour agree, with a dated ruling recorded in the Change log
 
 ---
