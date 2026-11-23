@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-23 (session — 2 new items added: BLG-BE-229, BLG-FE-329; EPIC-05 v9.18 ST-27 follow-ups); prior — 2026-11-23 (session — 1 new item added: BLG-QA-276; EPIC-05 v9.18 ST-30 post-merge staging check); prior — 2026-11-20 (session — 1 new item added: BLG-AI-40; EPIC-07 v9.18 PR review round 2); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-23 (session — 1 new item added: BLG-BE-230; EPIC-05 v9.18 DoQ review); prior — 2026-11-23 (session — 2 new items added: BLG-BE-229, BLG-FE-329; EPIC-05 v9.18 ST-27 follow-ups); prior — 2026-11-23 (session — 1 new item added: BLG-QA-276; EPIC-05 v9.18 ST-30 post-merge staging check); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -8417,7 +8417,7 @@ ST-30 (BLG-SPEC-203) moved the Reports `estimated_unrealised_pnl` to the live `g
 ---
 
 ### BLG-BE-229 — View Trail compares a US position's GBP entry price with its native price
-**✅ COMPLETE — 2026-11-23, cycle `2026-11-18__release-v9.18`, found by ST-27's work, resolved in-sprint on EPIC-05 (commit: this branch's ST-27 code-review follow-up commit; tests `TestStopTrail::test_us_trail_uses_the_native_entry`, `test_uk_trail_is_unchanged` in `tests/test_stock_split_adjustment.py`).**
+**✅ COMPLETE — 2026-11-23, cycle `2026-11-18__release-v9.18`, found by ST-27's work, resolved in-sprint on EPIC-05 (commit: this branch's ST-27 code-review follow-up commit; tests `TestStopTrail::test_us_trail_uses_the_native_entry`, `test_uk_trail_is_unchanged` in `tests/test_stock_split_adjustment.py`, not `tests/test_fx_market_matrix.py` as the Scope suggested; both ACs met).**
 **Priority:** P2 (Medium)
 **Type:** Backend Engineering
 **Owner:** Head of Engineering; Backend Engineering Patterns Owner
@@ -8457,5 +8457,25 @@ After a split is confirmed, Positions, Trade History and the tax-year report sho
 **Acceptance Criteria**
 - A position with a confirmed split shows the applied split and the original figures on Positions (Playwright)
 - A trade closed after a confirmed split shows the adjustment on Trade History and the tax-year report (Playwright)
+
+---
+
+### BLG-BE-230 — Split-adjust the trade plan stop in the grace-period alert read
+**Priority:** P3 (Low)
+**Type:** Backend Engineering
+**Owner:** Head of Engineering
+**Source:** Agent-mediated Director of Quality review of EPIC-05 (ST-27, cycle `2026-11-18__release-v9.18`) — 2026-11-23
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`GET /positions/grace-period-alerts` (`backend/main.py`) now applies confirmed stock splits to the position's entry and initial stop (ST-27, `data_model.md` DS-42), but it also selects the linked trade plan's `planned_stop_price` (`stop_level`) raw. After a confirmed split, the grace view could show the adjusted entry beside a plan stop still in pre-split units.
+
+**Scope**
+- Divide `stop_level` by the position's split price factor in that read (`split_factors` from `utils/split_adjustments.py`), or return it with the factor applied wherever a plan price is shown next to adjusted position figures
+
+**Acceptance Criteria**
+- With a confirmed 2:1 split, the grace-period alert's `stop_level` is half the stored `planned_stop_price` (test)
+- With no split, it is unchanged (test)
 
 ---
