@@ -4,8 +4,8 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.262
-**Last Updated:** 2026-11-17 (AUD-2026-11-17 fixes, Head of Specs Team ruling, user-directed — `post_ship_closure.md` v2.49 and `shared_standards.md` v3.43; §14 rows and §10 source-prompt line updated); prior — 2026-11-17 (post-ship closure `2026-11-11__release-v9.17` STEP 8 — `execution_prompt.md` v3.95 and `post_ship_closure.md` v2.48; §14 rows and source-prompt lines updated); prior — 2026-11-13 (sprint execution `2026-11-11__release-v9.17` EPIC-07/ST-18, BLG-GOV-419 — `release_planning_prompt.md` v2.75; §14 row and source-prompt line updated); prior history retained — see prior entries in version control
+**Version:** 4.263
+**Last Updated:** 2026-11-23 (sprint execution `2026-11-18__release-v9.18` EPIC-04/ST-18, BLG-GOV-422 — `design_gate_prompt.md` v1.12; §14 row and §6.5 source-prompt line updated); prior — 2026-11-17 (AUD-2026-11-17 fixes, Head of Specs Team ruling, user-directed — `post_ship_closure.md` v2.49 and `shared_standards.md` v3.43; §14 rows and §10 source-prompt line updated); prior — 2026-11-17 (post-ship closure `2026-11-11__release-v9.17` STEP 8 — `execution_prompt.md` v3.95 and `post_ship_closure.md` v2.48; §14 rows and source-prompt lines updated); prior history retained — see prior entries in version control
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -569,7 +569,7 @@ Keeps `claude/ideas/ideas_register.md` lean and surfaces revival opportunities.
 
 ## 6.5 Phase 1.5 — Design Gate (Required*)
 
-**Source prompt:** `claude/system/design_gate_prompt.md` (v1.11)  
+**Source prompt:** `claude/system/design_gate_prompt.md` (v1.12)  
 **Owner:** Head of UX & Design (artefacts), PMO Lead (gate record)  
 **Pre-condition:** Phase 1B Publish Gate passed; `sprint_sealed = false`  
 **\*Required** unless all sprint items are confirmed Design Not Applicable
@@ -1387,14 +1387,14 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 4.262 |
-| Last Updated | 2026-11-17 |
+| Version | 4.263 |
+| Last Updated | 2026-11-23 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.13 |
 | Idea Template | `claude/system/idea_template.md` |
 | Roadmap Management Engine | `claude/system/roadmap_management_prompt.md` v1.7 |
 | Backlog Management Engine | `claude/system/backlog_management_prompt.md` v1.19 |
-| Design Gate Engine | `claude/system/design_gate_prompt.md` v1.11 |
+| Design Gate Engine | `claude/system/design_gate_prompt.md` v1.12 |
 | Governance Preamble | `claude/system/shared/governance_preamble.md` v1.0 |
 | Shared Escalation Subroutine | `claude/system/shared/escalation_subroutine.md` v1.0 |
 | Shared Governance Stack | `claude/system/shared/governance_stack.md` v1.0 |
@@ -1528,6 +1528,7 @@ Living references introduced in v3.2: `component_inventory.md`, `design_system.m
 **Header-drift prevention (added v4.85, roadmap rebalance 2026-07-08__scheduled, Friction Item — 4th recurrence of this exact pattern per the 4.79/4.80/4.81 entries below):** Before bumping the top `**Version:**`/`**Last Updated:**` header fields, read the highest version number already present in this table's top row — do not increment from the header field alone, since it has drifted below the table's actual latest entry on at least 4 prior occasions.
 
 | Version | Date | Change Summary |
+| 4.263 | 2026-11-23 | **Sprint execution `2026-11-18__release-v9.18` EPIC-04/ST-18 (BLG-GOV-422) — 1 source prompt bumped.** `design_gate_prompt.md` v1.11→v1.12: STEP 2.2 pre-approval checks (data source, writers, worked examples with time boundaries, dependent states) recorded in a new gate record section; a gap without a disposition blocks the item. §6.5 source-prompt header and §14 Design Gate Engine row updated; §14 self-row and header bumped. Authority: Head of Specs Team (Sprint Execution Engine, ST-18 sealed AC); Head of UX & Design agent-mediated (§5.3). |
 | 4.262 | 2026-11-17 | **Lifecycle audit `AUD-2026-11-17`, Head of Specs Team ruling (agent-mediated, user-directed: "the 4 fixes") — 2 source prompts bumped.** `post_ship_closure.md` v2.48→v2.49: Carry-Forward age limit (AUD-2026-11-17-001); STEP 0 AUDIT DUE / REBALANCE DUE advisories also recorded in `closure_record.md` §1 (AUD-2026-11-17-004). `shared_standards.md` v3.42→v3.43: §11 cumulative-raise rule (AUD-2026-11-17-002). Both offset per `BLG-GOV-405` by moving history text to their changelogs; both files shrank. AUD-2026-11-17-003 filed as a backlog item. §10 source-prompt line and §14 rows updated; §14 self-row 4.262. |
 | 4.261 | 2026-11-17 | **Post-ship closure `2026-11-11__release-v9.17` STEP 8 — 2 source prompts bumped (immediate lessons-learnt actions).** `execution_prompt.md` v3.94→v3.95: §3.1.A step 13 hidden/moved text (LL-v9.17-P3-01); §9.2 timestamps are clock reads (LL-v9.17-P3-04); STEP 4 step 2 sets the EPIC's `done` stories to `merged` (LL-v9.17-P3-05); STEP 5.3A spec cell derived from `spec_references` (LL-v9.17-P4-01). `post_ship_closure.md` v2.47→v2.48: STEP 2 item 5a programme phase rows with an open remainder (LL-v9.17-Release-01); STEP 3.1 case (i) remainder estimate note (LL-v9.17-Release-02); STEP 7.2 spec registry check (LL-v9.17-Closure-01). §8 and §10 source-prompt lines and §14 rows updated; §14 self-row and header 4.260→4.261. |
 | 4.260 | 2026-11-13 | **Sprint execution `2026-11-11__release-v9.17` EPIC-07/ST-18 (BLG-GOV-419) — 1 source prompt bumped.** `release_planning_prompt.md` v2.74→v2.75: §1.3a bound 2 — a gate clearance also sets a gate-worded `Provisional-Target` to `TBD`, with the old value in the dated note and `run_manifest.md`. §6B source-prompt line and §14 Release Engine Source row updated; §14 self-row and header 4.259→4.260. |

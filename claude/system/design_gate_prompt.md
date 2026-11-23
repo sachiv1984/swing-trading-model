@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.11
-**Last Updated:** 2026-10-08 (ST-35, EPIC-06, v9.11, BLG-GOV-359 — §13 pre-check cites every §13 clause naming the feature's subject, per release_planning_prompt.md STEP 4); prior — 2026-09-08 (ST-20, EPIC-04, v9.2, BLG-GOV-287 — new §4.1 Post-Gate-Correction Addendum Mechanism); prior history retained — see prior entries in version control
+**Version:** 1.12
+**Last Updated:** 2026-11-23 (ST-18, EPIC-04, v9.18, BLG-GOV-422 — STEP 2.2 pre-approval checks: data source, writers, worked examples with time boundaries, dependent states; gate record template section); prior — 2026-10-08 (ST-35, EPIC-06, v9.11, BLG-GOV-359 — §13 pre-check cites every §13 clause naming the feature's subject, per release_planning_prompt.md STEP 4); prior — 2026-09-08 (ST-20, EPIC-04, v9.2, BLG-GOV-287 — new §4.1 Post-Gate-Correction Addendum Mechanism); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -165,6 +165,12 @@ Constraints:
 - **Any item introducing a new AI-calling endpoint (backend or frontend) must complete the mandatory security review checklist at `docs/specs/security/ai_endpoint_security_checklist.md` (rate limiting, cost gating, prompt-injection awareness) before its design artefact is approved (ST-05, BLG-SEC-23, EPIC-02, v8.0).**
 - These artefacts become authoritative for STEP 3 spec updates
 
+**Pre-approval checks (BLG-GOV-422, ST-18, v9.18).** Before STEP 2.3, run these four checks on every Design Required item's artefact, whether it is new under this step or confirmed under STEP 2.1. Record each in the gate record's `## Pre-Approval Checks` section (STEP 4). A gap is settled before the gate passes: either a story in the slice closes it (raise it through the §4.1 addendum if the slice lacks one) or the artefact or spec changes. A gap still open blocks the item.
+1. **Data source.** For every field a new or changed view displays, name the endpoint and quote the contract line (`docs/specs/api_contracts/`) showing that the endpoint returns the field for the whole population the view lists. A filter in the contract ("returns positions with `grace_days_remaining <= 2`") that is narrower than the view's list is a gap.
+2. **Writers.** For any claim in the artefact or the spec it relies on that a field is "written by X", or that "only X does Y", grep every writer of that field or behaviour in `backend/` and cite each as `file:line`. A claim that a grep contradicts is a gap.
+3. **Worked examples.** For any value displayed on two or more surfaces, or any rule with a threshold, write a table: one row per boundary input (for example 0, 1, 2 and null days; true, false and null flags; a value exactly at the threshold) and one column per surface, giving the exact text each surface shows. List every surface that shows the value, not only the ones the item changes. For any date, window or "latest" rule, add rows for **time boundaries**: stale data (no event for a week), a quiet day, a weekend, UTC midnight, and the latest row closing or disappearing. Name the source of any run date or "latest" date the rule uses; if no endpoint returns it, that is a gap. Two surfaces that disagree on one row are a gap.
+4. **Dependent states.** For any rule that depends on another component's state ("active when X would render", "shown while Y is open"), list every state of X and the rule's result in each.
+
 ### 2.3 Product Owner approval
 
 Product Owner reviews and approves all artefacts before STEP 3. One item may not block others.
@@ -217,14 +223,42 @@ Product Owner: confirmed
 |---------|---------|-------|-------------|
 | <id> | Frontend spec not updated | Frontend Specs owner | Before plan sprint |
 
+## Pre-Approval Checks
+
+One block per Design Required item (STEP 2.2). Write "None in scope" under a heading only with the reason.
+
+### <id> — <title>
+
+**Data sources**
+
+| Field shown | View and the population it lists | Endpoint | Contract line (quoted) | Whole population? | Gap disposition |
+|-------------|----------------------------------|----------|------------------------|-------------------|-----------------|
+
+**Writers**
+
+| Claim ("written by X", "only X does Y") | Writers found (`file:line`) | Claim holds? | Gap disposition |
+|-----------------------------------------|-----------------------------|--------------|-----------------|
+
+**Worked examples** — <value or rule>; run-date source: <endpoint and field, or "none — gap">
+
+| Input | <surface 1> | <surface 2> | … |
+|-------|-------------|-------------|---|
+| 0 / 1 / 2 / null (one row each) | | | |
+| Stale data · quiet day · weekend · UTC midnight · latest row closes (one row each) | | | |
+
+**Dependent states**
+
+| Rule | Depends on | State of the dependency | Rule result |
+|------|------------|-------------------------|-------------|
+
 ## Notes
 
 <Any process notes, disagreements, or escalations>
 ```
 
 **Gate status rules:**
-- **PASSED**: all Design Required items have approved artefacts and updated specs; all items classified
-- **BLOCKED**: one or more Design Required items have no approved artefact or unupdated spec
+- **PASSED**: all Design Required items have approved artefacts and updated specs, and every STEP 2.2 pre-approval check gap has a disposition; all items classified
+- **BLOCKED**: one or more Design Required items have no approved artefact or unupdated spec, or a STEP 2.2 pre-approval check gap with no disposition
 
 ### 4.1 Post-Gate-Correction Addendum Mechanism (ST-20, EPIC-04, v9.2, BLG-GOV-287)
 

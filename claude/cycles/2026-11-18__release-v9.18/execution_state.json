@@ -6,7 +6,7 @@
   "invoked_utc": "2026-11-19T08:07:14Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-19T16:37:34Z",
+  "last_updated_utc": "2026-11-23T15:10:46Z",
   "epics": {
     "EPIC-01": {
       "title": "Site Structure & Usability Phase 4, Stage 1: Correct and Safe (build-and-ship)",
@@ -453,7 +453,7 @@
     },
     "EPIC-04": {
       "title": "First-Time-Right Checks (Product Owner direction, 2026-11-12)",
-      "status": "not_started",
+      "status": "in_progress",
       "branch": "exec/2026-11-18__release-v9.18/EPIC-04",
       "pr_number": null,
       "pr_status": "none",
@@ -464,7 +464,7 @@
         "ST-18": {
           "title": "Design gate data-source, writer and worked-example checks",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "in_progress",
           "assigned_to": "engine",
           "github_issue": 2283,
           "branch": "exec/2026-11-18__release-v9.18/EPIC-04",
@@ -478,9 +478,9 @@
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
-          "last_completed_substep": null,
+          "last_completed_substep": "3.1.A.start",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "First-time-right: 2026-11-23 pass A — governance-prompt story; 1 (data source) applied to the dry runs: GracePeriodView plan block ← GET /positions/grace-period-alerts, contract line 12 `<= 2`; 2 done (grace 0/1/2/null across 5 surfaces, quoted from bafcbdab specs); 7 done (§1B \"only the nightly job\": writers analyze_positions() position_service.py:576 and run_nightly_trailing_stop_update(), at b901ce91); 8 done (TL-09 \"latest nightly run date\" has no source in GET /positions); 3 done (each new check is shown to catch a known miss: both dry runs); 24 done (AC quantifiers \"every field\", \"any value\" kept literal in the prompt text); 4,5,6,11,17-21,23 N/A (no UI, no code, no fixtures)"
         },
         "ST-19": {
           "title": "Unit-test pure frontend logic in CI",
