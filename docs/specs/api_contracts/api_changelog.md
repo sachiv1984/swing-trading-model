@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Class 2
 **Status:** Canonical
-**Version:** 1.35.3
-**Last Updated:** 2026-11-23 (ST-30, EPIC-05, v9.18, BLG-SPEC-203 — v9.18.0 entry adds reports_endpoints.md v0.21: live unrealised P&L and unrealised_price_stale_count); prior — 2026-11-23 (ST-29, EPIC-05, v9.18, BLG-BE-181 — v9.18.0 entry adds settings_endpoints.md v1.6.1: GET /settings survives a failed change-log read); prior — 2026-11-23 (ST-26, EPIC-05, v9.18, BLG-BE-213 — v9.18.0 entry adds position_endpoints.md v2.22.1: GET /positions/compliance native entry and live FX fallback); prior history retained — see prior entries in version control
+**Version:** 1.36.0
+**Last Updated:** 2026-11-23 (ST-27, EPIC-05, v9.18, BLG-BE-223 — v9.18.0 entry adds position_endpoints.md v2.23.0: new POST /positions/{position_id}/split-adjustment/confirm); prior — 2026-11-23 (ST-30, EPIC-05, v9.18, BLG-SPEC-203 — v9.18.0 entry adds reports_endpoints.md v0.21: live unrealised P&L and unrealised_price_stale_count); prior — 2026-11-23 (ST-29, EPIC-05, v9.18, BLG-BE-181 — v9.18.0 entry adds settings_endpoints.md v1.6.1: GET /settings survives a failed change-log read); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 # API Changelog
@@ -58,6 +58,18 @@ Rules:
 |--------|---------|
 | Updated endpoint: POST /ai/daily-briefing | §13.2 parameter-change check (BLG-AI-29, ruling `ESC-EXEC-20261120-01`): a summary or action description suggesting changing stops, sizing or setups is regenerated once, then replaced by code-written text (action `type`/`ticker` kept); new `compliance_check_result` values `fail_regenerate:`, `pass_on_regenerate`, `fail_fallback:`; prompt v1.4. Response shape unchanged. |
 | Updated endpoint: POST /ai/chat | Same check on `response`: regenerated once, then a fixed withheld message without `answer_id`; same result values; prompt v1.3. Response shape unchanged. |
+
+### position_endpoints.md — v2.23.0 (UPDATED)
+
+**EPIC:** EPIC-05
+**ST:** ST-27
+
+| Change | Details |
+|--------|---------|
+| New endpoint: POST /positions/{position_id}/split-adjustment/confirm | Confirms a detected stock split (`strategy_rules.md` §9.1, `data_model.md` DS-42). Optional `shares` for a non-whole result. `409` when nothing is pending, `400` for a bad count (BLG-BE-223). |
+| Updated endpoint: GET /positions | Each position gains `split_pending` (dialog figures, or `null`) and `split_adjustments` (confirmed splits); `risk_off_exit` is `false` while a split is pending. |
+| Updated endpoint: POST /positions/{position_id}/exit | `409` while a split is pending. |
+| Updated endpoint: POST /positions/nightly-stop-update | Detects splits first (`splits` summary); pending positions are skipped (`"split to confirm"`). |
 
 ### position_endpoints.md — v2.22.1 (UPDATED)
 

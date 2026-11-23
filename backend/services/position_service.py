@@ -15,6 +15,7 @@ from datetime import datetime, timezone
 from decimal import Decimal
 from services.grace_service import compute_grace_days_remaining
 from services.sector_service import get_sector_and_industry
+from services.split_service import is_split_pending, split_preview
 from utils.position_lifecycle_states import GRACE, PROFITABLE, LOSING
 
 
@@ -40,6 +41,7 @@ from database import (
     mark_position_reviewed as db_mark_position_reviewed,
     create_position_audit_log_entry,
 )
+from utils.split_adjustments import stored_units_for_split
 from strategy_version_registry import get_current_strategy_version
 
 from utils.pricing import (
@@ -288,6 +290,23 @@ def get_positions_with_prices() -> List[Dict]:
 
         # risk_off_exit — per-position alert flag, set by nightly risk-off job (ST-05)
         risk_off_exit = bool(pos.get('risk_off_exit', False))
+        # ST-27 (BLG-BE-223, v9.18; strategy_rules.md §9.1): a detected split not
+        # yet confirmed. No exit is recommended for it, and the confirmation
+        # dialog's Before -> After figures travel with the row.
+        split_pending = split_preview(pos, live_fx_rate) if is_split_pending(pos) else None
+        if split_pending:
+            risk_off_exit = False
+        split_adjustments = [
+            {
+                "ratio": float(a["ratio"]),
+                "effective_date": str(a["effective_date"]),
+                "source": a.get("source"),
+                "confirmed_at": a["confirmed_at"].isoformat() if hasattr(a.get("confirmed_at"), "isoformat") else a.get("confirmed_at"),
+                "shares_before": float(a["shares_before"]) if a.get("shares_before") is not None else None,
+                "shares_after": float(a["shares_after"]) if a.get("shares_after") is not None else None,
+            }
+            for a in (pos.get("split_adjustments") or [])
+        ]
 
         # last_reviewed_at — position review cadence nudge (ST-15, BLG-FEAT-68, v7.0)
         last_reviewed_at = pos.get('last_reviewed_at')
@@ -358,6 +377,9 @@ def get_positions_with_prices() -> List[Dict]:
             "current_price": round(current_price_gbp, 2),
             "current_price_native": round(current_price_native, 2),
             "price_is_stale": price_is_stale,
+            # ST-27 (BLG-BE-223, v9.18): split to confirm / splits applied.
+            "split_pending": split_pending,
+            "split_adjustments": split_adjustments,
             "stop_price": round(stop_price_gbp, 2),
             "stop_price_native": round(stop_price_native, 2),
             "pnl": round(pnl_gbp, 2),
@@ -597,13 +619,21 @@ def analyze_positions() -> Dict:
         is_uk = pos['market'] == 'UK'
         market_risk_on = market_regime['ftse_risk_on'] if is_uk else market_regime['spy_risk_on']
         
-        should_exit, exit_reason = should_exit_position(
-            current_price=current_price,
-            stop_price=trailing_stop_native,
-            holding_days=holding_days,
-            market_risk_on=market_risk_on,
-            grace_period_days=GRACE_PERIOD_DAYS
-        )
+        # ST-27 (BLG-BE-223, v9.18; strategy_rules.md §9.1): while a detected
+        # split is unconfirmed, no exit is recommended and nothing about the
+        # stop is written: the stored entry and stop are in pre-split units.
+        split_pending = is_split_pending(pos)
+        if split_pending:
+            should_exit, exit_reason = False, None
+            stop_reason = "Split to confirm: stop paused (strategy_rules.md §9.1)"
+        else:
+            should_exit, exit_reason = should_exit_position(
+                current_price=current_price,
+                stop_price=trailing_stop_native,
+                holding_days=holding_days,
+                market_risk_on=market_risk_on,
+                grace_period_days=GRACE_PERIOD_DAYS
+            )
         
         if should_exit:
             action = "EXIT"
@@ -618,8 +648,8 @@ def analyze_positions() -> Dict:
             action = "HOLD"
             print(f"   ✅ HOLD: {stop_reason}")
         
-        # Update position in database
-        if live_price:
+        # Update position in database (not while a split is pending, §9.1)
+        if live_price and not split_pending:
             print(f"   💾 Updating position in database...")
             position_updates = {
                 'current_price': round(current_price, 4),
@@ -648,7 +678,7 @@ def analyze_positions() -> Dict:
             if not grace_period:
                 position_updates['stop_frozen_reason'] = 'atr_unavailable' if atr_unavailable else None
             update_position(str(pos['id']), position_updates)
-        elif not grace_period and atr_unavailable:
+        elif not grace_period and atr_unavailable and not split_pending:
             # ST-18 (BLG-BE-177, v9.16): no live price, and the stop was kept for
             # lack of ATR. Nothing else is written without a live price, but the
             # stop is still frozen, so record it now rather than waiting for the
@@ -671,6 +701,7 @@ def analyze_positions() -> Dict:
             "stop_reason": stop_reason,
             "grace_period": grace_period,
             "atr_unavailable": atr_unavailable,
+            "split_pending": split_pending,
         })
     
     exit_count = len([a for a in actions if a['action'] == 'EXIT'])
@@ -745,6 +776,14 @@ def run_nightly_trailing_stop_update() -> Dict:
     for pos in positions:
         pos = decimal_to_float(pos)
         position_id = str(pos['id'])
+
+        # ST-27 (BLG-BE-223, v9.18; strategy_rules.md §9.1): a pending split
+        # pauses the recompute. The provider's history is split-adjusted, so
+        # an ATR or stop computed now would be stored in post-split units
+        # against a pre-split entry and stop.
+        if is_split_pending(pos):
+            results.append({"ticker": pos['ticker'], "market": pos.get('market'), "status": "skipped", "reason": "split to confirm"})
+            continue
 
         live_price = get_current_price(pos['ticker'], pos.get('market'))
         if not live_price:
@@ -919,6 +958,16 @@ def run_nightly_risk_off_alerts() -> Dict:
                 flagged_uk += 1
             else:
                 cleared_uk += 1
+
+        # ST-27 (BLG-BE-223, v9.18; strategy_rules.md §9.1): no exit
+        # recommendation while a detected split is unconfirmed. The flag is
+        # cleared; the first run after confirmation sets it again if it applies.
+        if new_flag and is_split_pending(pos):
+            new_flag = False
+            if market == 'US':
+                flagged_us -= 1
+            else:
+                flagged_uk -= 1
 
         update_positions_risk_off_exit(position_id, new_flag)
 
@@ -1275,6 +1324,13 @@ def _close_linked_trade_plans(position_id: str, portfolio_id: str) -> List[str]:
     return closed_ids
 
 
+SPLIT_PENDING_EXIT_ERROR = (
+    "A stock split on this position is waiting for confirmation. Confirm the split "
+    "on Positions first, so the exit is recorded in post-split shares and prices "
+    "(strategy_rules.md §9.1)."
+)
+
+
 def exit_position(
     position_id: str,
     exit_price: float,
@@ -1336,6 +1392,13 @@ def exit_position(
     
     if position['status'] == 'closed':
         raise ValueError("Position already closed")
+
+    # ST-27 (BLG-BE-223, v9.18; strategy_rules.md §9.1): with a split pending,
+    # the stored shares and entry are in pre-split units while the broker's
+    # exit price is post-split, so the realised P&L would be wrong. The
+    # split is confirmed first (one click on Positions).
+    if is_split_pending(position):
+        raise ValueError(SPLIT_PENDING_EXIT_ERROR)
     
     # Validate exit price
     if exit_price <= 0:
@@ -1534,11 +1597,13 @@ def exit_position(
 
         print(f"   📝 Partial exit: {remaining_shares} shares remaining")
 
-        update_position(position_id, {
+        # ST-27 (BLG-BE-223, v9.18): after a confirmed split the row read here
+        # is in adjusted units; the stored columns stay in their original units.
+        update_position(position_id, stored_units_for_split(position, {
             'shares': remaining_shares,
             'total_cost': remaining_cost,
             'fees_paid': remaining_fees
-        })
+        }))
         
         print(f"   ✓ Position updated: {remaining_shares} shares remaining")
     else:

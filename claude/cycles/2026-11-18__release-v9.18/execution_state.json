@@ -624,7 +624,8 @@
         "tests/test_reports_integration.py",
         "tests/e2e/reports-unrealised-live-basis.spec.js",
         "tests/e2e/trade-entry-atr-preview.spec.js",
-        "tests/test_lifecycle_basis_correction.py"
+        "tests/test_lifecycle_basis_correction.py",
+        "tests/test_stock_split_adjustment.py"
       ],
       "stories": {
         "ST-25": {
@@ -688,11 +689,17 @@
           "unblock_criteria": null,
           "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": [],
+          "spec_references": [
+            "claude/strategy/strategy_rules.md#9.1 Stock split on an open position",
+            "docs/specs/data_model.md#DS-42",
+            "docs/specs/api_contracts/position_endpoints.md#POST /positions/{position_id}/split-adjustment/confirm",
+            "docs/specs/frontend/pages/positions.md#Split Detected State",
+            "tests/test_stock_split_adjustment.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
-          "last_completed_substep": null,
+          "last_completed_substep": "3.1.A.backend_commit",
           "sign_off_record": {
             "role": "Strategy Rules & System Intent Owner",
             "status": "cleared",
@@ -700,7 +707,7 @@
             "date": "2026-11-23",
             "evidence": "AskUserQuestion 2026-11-23: '§9.1 text' = 'Approve as drafted'; odd lots = 'Entry ÷ r, cost moves'. RISK-05 direction 2026-11-18 (sprint_backlog.md sign-off)."
           },
-          "notes": "Reclassified delegated_decision -> autonomous 2026-11-23 (LL-v2.3-EX-02): the decision (AC 6, dated approval of the §9.1 text) was given in session by the user holding the Strategy Rules & System Intent Owner role, before any build; no delegation record or escalation had been raised, so none is cancelled. §15 re-run 2026-11-23: version citations outside strategy_rules.md are all dated historical rows (System_status_report delivery row, current_roadmap shipped rows, decision_log, cycle and scope records) — 0 actionable."
+          "notes": "Reclassified delegated_decision -> autonomous 2026-11-23 (LL-v2.3-EX-02): the decision (AC 6, dated approval of the §9.1 text) was given in session by the user holding the Strategy Rules & System Intent Owner role, before any build; no delegation record or escalation had been raised, so none is cancelled. §15 re-run 2026-11-23: version citations outside strategy_rules.md are all dated historical rows (System_status_report delivery row, current_roadmap shipped rows, decision_log, cycle and scope records) — 0 actionable. First-time-right: 2026-11-23 pass A — 1 done (entry_price GBP for every market, fill_price native, stops/ATR native; Yahoo chart events.splits numerator/denominator; UK via market_symbol .L); 2 raised (odd lots: rule gap -> user ruling 2026-11-23 entry ÷ r, cost moves); 7 done (writers of shares/total_cost: partial exit -> stored_units_for_split; current_stop/atr writers: nightly, on-load -> paused while pending); 17 done (readers of the new adjusted rows: get_positions, get_position_by_id, tag search, correlation; raw SQL readers main.py grace/trail-stop views read entry/initial_stop unadjusted -> trail-stop view note below); 18 done (fixtures from the writer: US entry_price GBP + fill_price native, worked example 10@200 stop 180 price 104); 8 done (split effective on entry day counts, per §9.1 'on or after'); 11 N/A; 19/20/21/22 -> frontend pass. Exit while pending -> 409 (P&L would mix units), raised to user at story report."
         },
         "ST-28": {
           "title": "Tag lifecycle transitions caused by the v9.12 currency correction",

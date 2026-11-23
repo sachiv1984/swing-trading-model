@@ -122,7 +122,8 @@ def get_positions(portfolio_id: str, status: str = None, conn=None) -> List[Dict
                 "SELECT * FROM positions WHERE portfolio_id = %s ORDER BY entry_date DESC",
                 (portfolio_id,)
             )
-        return cur.fetchall()
+        # ST-27 (BLG-BE-223, v9.18): confirmed splits applied on read.
+        return apply_split_adjustments(cur, cur.fetchall())
 
     if conn is not None:
         with conn.cursor() as cur:
@@ -1407,8 +1408,9 @@ def search_positions_by_tags(portfolio_id: str, tags: List[str]) -> List[Dict]:
                 AND tags && %s
                 ORDER BY entry_date DESC
             """, (portfolio_id, tags))
-            
-            positions = cur.fetchall()
+
+            # ST-27 (BLG-BE-223, v9.18): confirmed splits applied on read.
+            positions = apply_split_adjustments(cur, cur.fetchall())
             return [dict(p) for p in positions]
 
 # ---------------------------------------------------------------------------
@@ -2026,7 +2028,10 @@ def get_position_by_id(position_id: str) -> Optional[Dict]:
         with conn.cursor() as cur:
             cur.execute("SELECT * FROM positions WHERE id = %s", (position_id,))
             row = cur.fetchone()
-            return dict(row) if row else None
+            if not row:
+                return None
+            # ST-27 (BLG-BE-223, v9.18): confirmed splits applied on read.
+            return dict(apply_split_adjustments(cur, [row])[0])
 
 
 def update_position_lifecycle_state(
@@ -4232,6 +4237,166 @@ def ensure_position_state_history_table() -> None:
         conn.commit()
 
 
+# ---------------------------------------------------------------------------
+# position_split_adjustments — stock splits on open positions
+# ST-27 (BLG-BE-223, EPIC-05, v9.18; strategy_rules.md §9.1, data_model.md DS-42).
+# A split is recorded beside the position, never by editing its entry fields:
+# a row is written 'pending' when the nightly run detects a split, and is
+# confirmed by the user. Confirmed rows are applied on read by
+# apply_split_adjustments(); pending rows only suppress stop and exit signals.
+# ---------------------------------------------------------------------------
+
+@ensure_once
+def ensure_position_split_adjustments_table() -> None:
+    """Create position_split_adjustments if it does not exist (DS-42)."""
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS position_split_adjustments (
+                    id                 UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                    position_id        UUID NOT NULL REFERENCES positions(id) ON DELETE CASCADE,
+                    ratio              NUMERIC(12,6) NOT NULL CHECK (ratio > 0),
+                    effective_date     DATE NOT NULL,
+                    source             VARCHAR(20) NOT NULL,
+                    detected_at        TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+                    confirmed_at       TIMESTAMPTZ,
+                    shares_before      NUMERIC(14,4),
+                    shares_after       NUMERIC(14,4),
+                    UNIQUE (position_id, effective_date)
+                )
+            """)
+            cur.execute("""
+                CREATE INDEX IF NOT EXISTS idx_position_split_adjustments_position_id
+                ON position_split_adjustments(position_id)
+            """)
+        conn.commit()
+
+
+# The split arithmetic is pure and lives in utils.split_adjustments (so test
+# stubs of this module never replace it); it is re-exported here for readers.
+from utils.split_adjustments import (  # noqa: E402
+    adjust_position_for_splits,
+    split_factors,
+    stored_units_for_split,
+)
+
+
+def apply_split_adjustments(cur, rows) -> list:
+    """Apply each row's confirmed splits, reading position_split_adjustments on
+    the caller's cursor inside a savepoint. Fail-open: if the table cannot be
+    read (not yet created), the rows are returned unchanged, so a lookup
+    failure never breaks a positions read."""
+    rows = list(rows or [])
+    ids = [str(r["id"]) for r in rows if r and r.get("id") is not None]
+    if not ids:
+        return rows
+    try:
+        ensure_position_split_adjustments_table()
+    except Exception:
+        return rows
+    by_position: Dict[str, list] = {}
+    try:
+        cur.execute("SAVEPOINT split_lookup")
+        cur.execute(
+            "SELECT * FROM position_split_adjustments WHERE position_id::text = ANY(%s)",
+            (ids,),
+        )
+        for a in cur.fetchall() or []:
+            by_position.setdefault(str(a["position_id"]), []).append(dict(a))
+        cur.execute("RELEASE SAVEPOINT split_lookup")
+    except Exception:
+        try:
+            cur.execute("ROLLBACK TO SAVEPOINT split_lookup")
+        except Exception:
+            pass
+        return rows
+    if not by_position:
+        return rows
+    return [adjust_position_for_splits(r, by_position.get(str(r["id"]), [])) if r else r for r in rows]
+
+
+def create_pending_split_adjustment(position_id: str, ratio: float, effective_date, source: str) -> bool:
+    """Record a detected split as pending. Returns True if a new row was written
+    (a split already recorded for that position and date is left as it is)."""
+    ensure_position_split_adjustments_table()
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                """
+                INSERT INTO position_split_adjustments (position_id, ratio, effective_date, source)
+                VALUES (%s, %s, %s, %s)
+                ON CONFLICT (position_id, effective_date) DO NOTHING
+                RETURNING id
+                """,
+                (position_id, ratio, effective_date, source),
+            )
+            created = cur.fetchone() is not None
+        conn.commit()
+    return created
+
+
+def confirm_split_adjustment(adjustment_id: str, position_id: str, shares_before: float,
+                             shares_after: float, position_updates: Dict) -> bool:
+    """Confirm a pending split and write the live (non-entry) fields it moves
+    (current_stop, previous_stop, atr) in one transaction. Returns False if the
+    row is not pending for that position (already confirmed or not found)."""
+    ensure_position_split_adjustments_table()
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                """
+                UPDATE position_split_adjustments
+                SET confirmed_at = NOW(), shares_before = %s, shares_after = %s
+                WHERE id = %s AND position_id = %s AND confirmed_at IS NULL
+                RETURNING id
+                """,
+                (shares_before, shares_after, adjustment_id, position_id),
+            )
+            if cur.fetchone() is None:
+                conn.rollback()
+                return False
+            if position_updates:
+                cols = ", ".join(f"{k} = %s" for k in position_updates)
+                cur.execute(
+                    f"UPDATE positions SET {cols} WHERE id = %s",
+                    tuple(position_updates.values()) + (position_id,),
+                )
+        conn.commit()
+    return True
+
+
+def get_pending_split_position_ids(portfolio_id: str, conn=None) -> set:
+    """Open positions in the portfolio with an unconfirmed split (fail-open: empty)."""
+    def _run(cur):
+        cur.execute(
+            """
+            SELECT DISTINCT s.position_id::text AS position_id
+            FROM position_split_adjustments s
+            JOIN positions p ON p.id = s.position_id
+            WHERE p.portfolio_id = %s AND p.status = 'open' AND s.confirmed_at IS NULL
+            """,
+            (portfolio_id,),
+        )
+        return {r["position_id"] for r in cur.fetchall() or []}
+    try:
+        ensure_position_split_adjustments_table()
+        if conn is not None:
+            with conn.cursor() as cur:
+                cur.execute("SAVEPOINT pending_split_lookup")
+                try:
+                    ids = _run(cur)
+                    cur.execute("RELEASE SAVEPOINT pending_split_lookup")
+                    return ids
+                except Exception:
+                    cur.execute("ROLLBACK TO SAVEPOINT pending_split_lookup")
+                    return set()
+        with get_db() as c:
+            with c.cursor() as cur:
+                return _run(cur)
+    except Exception:
+        return set()
+
+
 def create_position_state_history_entry(
     position_id: str,
     from_state,
@@ -6069,7 +6234,9 @@ def get_open_positions_for_correlation(conn=None) -> list:
                 WHERE p.status = 'open'
                   AND p.shares > 0
             """)
-            return cur.fetchall()
+            # ST-27 (BLG-BE-223, v9.18): shares × a post-split price needs the
+            # split-adjusted share count.
+            return apply_split_adjustments(cur, cur.fetchall())
     if conn is not None:
         return _fetch(conn)
     with get_db() as conn:

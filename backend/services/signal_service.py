@@ -531,6 +531,11 @@ def generate_rebalance_exit_signals() -> Dict:
         if ticker in top5_tickers:
             continue
 
+        # ST-27 (BLG-BE-223, v9.18; strategy_rules.md §9.1): no exit
+        # recommendation while a detected split is unconfirmed.
+        if pos.get('split_pending'):
+            continue
+
         # §8.4 precedence: §8.2 governs a position whose market is risk-off.
         if pos.get('risk_off_exit'):
             continue

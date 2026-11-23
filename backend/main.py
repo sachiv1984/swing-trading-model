@@ -160,6 +160,13 @@ from utils.calculations import (
 from services.alerts_service import ensure_alerts_tables
 from services.compliance_service import get_position_compliance
 from services.compliance_recheck_service import get_compliance_recheck
+from services.position_service import SPLIT_PENDING_EXIT_ERROR
+from services.split_service import (
+    SplitNotPendingError,
+    SplitSharesError,
+    confirm_split,
+    detect_position_splits,
+)
 from services.gap_risk_service import get_gap_risk
 from services.position_lifecycle_service import (
     get_lifecycle_fields_for_position,
@@ -733,6 +740,9 @@ def exit_position_endpoint(position_id: str, request: ExitPositionRequest):
         )
     except ValueError as e:
         status_code = 404 if str(e) in EXIT_NOT_FOUND_ERRORS else 400
+        # ST-27 (BLG-BE-223, v9.18): a pending split is a state conflict.
+        if str(e) == SPLIT_PENDING_EXIT_ERROR:
+            status_code = 409
         raise HTTPException(status_code=status_code, detail=str(e))
     if result.get("market") == "US" and not result.get("is_partial_exit"):
         try:
@@ -847,7 +857,12 @@ def nightly_stop_update_endpoint():
     Spec: docs/specs/api_contracts/position_endpoints.md#POST /positions/nightly-stop-update
     """
     try:
+        # ST-27 (BLG-BE-223, v9.18; strategy_rules.md §9.1): detect splits on
+        # held tickers first, so a newly split position is paused this run.
+        # Never raises; a provider failure is reported per ticker.
+        split_summary = detect_position_splits()
         result = run_nightly_trailing_stop_update()
+        result["splits"] = split_summary
         record_nightly_job("trailing_stop", "ok", detail=result)
         return {"status": "ok", "data": result}
     except ValueError as e:
@@ -2087,6 +2102,31 @@ def get_position_by_id_endpoint(position_id: str):
         import traceback
         traceback.print_exc()
         raise HTTPException(status_code=500, detail="Internal server error")
+
+
+class SplitConfirmRequest(BaseModel):
+    """ST-27 (BLG-BE-223, v9.18): `shares` is the post-split share count, needed
+    only when quantity × ratio is not whole (strategy_rules.md §9.1)."""
+    shares: Optional[float] = None
+
+
+@app.post("/positions/{position_id}/split-adjustment/confirm")
+def confirm_split_adjustment_endpoint(position_id: str, request: SplitConfirmRequest = None):
+    """Confirm a detected stock split on an open position (ST-27, BLG-BE-223, v9.18).
+
+    Spec: docs/specs/api_contracts/position_endpoints.md#POST /positions/{position_id}/split-adjustment/confirm
+    """
+    try:
+        result = confirm_split(position_id, shares=(request.shares if request else None))
+        return {"status": "ok", "data": result}
+    except SplitNotPendingError as e:
+        raise HTTPException(status_code=409, detail=str(e))
+    except SplitSharesError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception:
+        import traceback
+        traceback.print_exc()
+        return JSONResponse(status_code=500, content={"status": "error", "message": "Internal server error"})
 
 
 @app.post("/positions/{position_id}/refresh-state")
