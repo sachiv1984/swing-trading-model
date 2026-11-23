@@ -677,9 +677,9 @@
         },
         "ST-27": {
           "title": "Handle a stock split on an open position",
-          "classification": "delegated_decision",
-          "status": "not_started",
-          "assigned_to": "human",
+          "classification": "autonomous",
+          "status": "in_progress",
+          "assigned_to": "engine",
           "github_issue": 2292,
           "branch": "exec/2026-11-18__release-v9.18/EPIC-05",
           "commit_sha": null,
@@ -693,8 +693,14 @@
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
           "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "sign_off_record": {
+            "role": "Strategy Rules & System Intent Owner",
+            "status": "cleared",
+            "method": "human_in_session",
+            "date": "2026-11-23",
+            "evidence": "AskUserQuestion 2026-11-23: '§9.1 text' = 'Approve as drafted'; odd lots = 'Entry ÷ r, cost moves'. RISK-05 direction 2026-11-18 (sprint_backlog.md sign-off)."
+          },
+          "notes": "Reclassified delegated_decision -> autonomous 2026-11-23 (LL-v2.3-EX-02): the decision (AC 6, dated approval of the §9.1 text) was given in session by the user holding the Strategy Rules & System Intent Owner role, before any build; no delegation record or escalation had been raised, so none is cancelled. §15 re-run 2026-11-23: version citations outside strategy_rules.md are all dated historical rows (System_status_report delivery row, current_roadmap shipped rows, decision_log, cycle and scope records) — 0 actionable."
         },
         "ST-28": {
           "title": "Tag lifecycle transitions caused by the v9.12 currency correction",

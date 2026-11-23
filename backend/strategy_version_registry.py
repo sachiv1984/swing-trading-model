@@ -87,6 +87,11 @@ STRATEGY_VERSION_REGISTRY = [
     # Behavioural (Trade Entry keeps Save disabled until a WARN/FAIL pre-entry
     # check is acknowledged on every route in), so registered.
     {"version": "1.23", "effective_date": date(2026, 11, 4)},
+    # ST-27 (BLG-BE-223, EPIC-05, v9.18): §9.1 stock split on an open position.
+    # Behavioural (an unconfirmed split suppresses the stop-loss trigger and exit
+    # recommendations; a confirmed split adjusts quantity, entry and stops), so
+    # registered. Effective date = the PR's merge date (move both dates if later).
+    {"version": "1.28", "effective_date": date(2026, 11, 23)},
 ]
 
 # Change Log versions classified as documentation-only under the 2026-10-06

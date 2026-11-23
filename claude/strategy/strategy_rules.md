@@ -2,8 +2,8 @@
 
 **Owner:** Strategy Rules & System Intent Owner  
 **Status:** Canonical  
-**Version:** 1.27
-**Last Updated:** 2026-11-09 (ST-05, EPIC-02, v9.16, BLG-FE-271 — §4.2.1 Known deviation (v1.26) marked resolved: plan-linked Trade Entry now re-runs the checks and requires the acknowledgement; documentation only); prior — 2026-11-06 (`ESC-CLOSE-20261106-01` ruling, option (a) — §4.2.1 Known deviation for the plan-linked Trade Entry route, `BLG-FE-271`; documentation only); prior — 2026-11-05 (ST-28, EPIC-04, v9.15, BLG-GOV-194 — §13.2 states that AI-written text describing the user's data must not suggest changing strategy parameters, and §13.5 adds the AI journal summary to the re-attestation roster. Strategy Rules & System Intent Owner ruling ESC-EXEC-20261105-02, outcome (1); documentation-only); prior history retained — see prior entries in version control
+**Version:** 1.28
+**Last Updated:** 2026-11-23 (ST-27, EPIC-05, v9.18, BLG-BE-223 — new §9.1 stock split on an open position and §8.1 cross-reference; behavioural); prior — 2026-11-09 (ST-05, EPIC-02, v9.16, BLG-FE-271 — §4.2.1 Known deviation (v1.26) marked resolved: plan-linked Trade Entry now re-runs the checks and requires the acknowledgement; documentation only); prior — 2026-11-06 (`ESC-CLOSE-20261106-01` ruling, option (a) — §4.2.1 Known deviation for the plan-linked Trade Entry route, `BLG-FE-271`; documentation only); prior history retained — see prior entries in version control
 **Applies to:** Production backtests, live system, and documentation  
 
 ---
@@ -12,6 +12,7 @@
 
 | Version | Date | Summary |
 |---|---|---|
+| 1.28 | 23 November 2026 | New §9.1 "Stock split on an open position" (ratio r: quantity × r; entry, initial and trailing stop ÷ r; ATR from split-adjusted history; per-share risk ÷ r so cost, currency risk and R are unchanged; no stop-breach alert or exit recommendation until the user confirms; a unit change, not a §7.3 movement; original entry fields kept; non-whole quantities entered by the user, entry ÷ r) and a §8.1 cross-reference (ST-27, EPIC-05, v9.18, `BLG-BE-223`) — Behavioural. Rationale: a split on a held ticker made the stored entry and stop read as a stop breach (e.g. price 104 against a 180 stop after a 2:1 split); the rule makes the adjustment explicit and auditable. Impact: live logic (detection, suppression, confirmed adjustment) and documentation; backtests use split-adjusted history and are unaffected, so results stay comparable. Approved by the Strategy Rules & System Intent Owner under §12.3 on 23 November 2026 (RISK-05 direction 18 November 2026). If the PR merges after this date, this row's date and the registry's effective date move to the merge date (effective-date rule, `backend/strategy_version_registry.py`). |
 | 1.27 | 9 November 2026 | §4.2.1 Known deviation (v1.26) marked resolved: a plan-linked Trade Entry whose plan snapshot is more than 24 hours old, or holds a WARN/FAIL the plan did not acknowledge, now re-runs the checks on Trade Entry and disables Submit until the acknowledgement is ticked; the save writes one `pre_entry_override` event (`source: trade_entry`) (ST-05, EPIC-02, v9.16, `BLG-FE-271`) — Documentation only. Rationale: the code fix this entry was waiting for has shipped, so the entry records its resolution, as the v1.21 entry did for v1.19. Impact: documentation only. No §4–§13 rule, parameter, backtest or live-logic change, so §12.3's comparability acknowledgement does not apply; the rule (§4.2.1 v1.23, §4.2.6) is unchanged and the frontend now meets it (`position_form.md` v1.14, `trade_plan.md` v1.22 §5e). §13 reference: none (the acknowledgement is not a hard gate under §4.2.6). §15 re-run: 39 files cite a `strategy_rules.md` version; 1 cites v1.26 (the dated `2026-11-03__release-v9.15` closure escalations record), none cites v1.27; 0 actionable findings. Written under `execution_prompt.md` §7 named-file rule case (c), authorised by ST-05 AC 3 in the sealed `2026-11-06__release-v9.16` sprint backlog, Strategy Rules & System Intent Owner confirmation 2026-11-09. |
 | 1.26 | 6 November 2026 | §4.2.1 gains a Known deviation entry: a plan-linked Trade Entry over a stored WARN/FAIL snapshot saves without the acknowledgement this section requires (post-ship closure `2026-11-03__release-v9.15`, `ESC-CLOSE-20261106-01`, `BLG-FE-271`) — Documentation only. Rationale: the Strategy Rules & System Intent Owner ruled that §4.2.1's "blocked" rule (v1.23) covers the plan-linked route, since §4.2.6 applies acknowledge-to-proceed to every route into Trade Entry. The shipped v9.15 behaviour therefore diverges, and the PO + DoQ P2 acceptance needs a recorded entry. Impact: documentation only. No §4–§13 rule, parameter, backtest or live-logic change, so §12.3's comparability acknowledgement does not apply; the code fix ships under `BLG-FE-271` (v9.16). §13 reference: none (no AI or automation boundary touched; §4.2.6 already classes the acknowledgement as not a hard gate). §15 re-run: 73 files cite a `strategy_rules.md` version; 2 cite v1.25 (a dated backlog item and the dated ST-28 decision record), none cites v1.26; 0 actionable findings. Written by the Strategy Rules & System Intent Owner under `ESC-CLOSE-20261106-01` option (a), agent-mediated (§5.3), user-directed, 2026-11-06. |
 | 1.25 | 5 November 2026 | §13.2 gains a sentence stating that AI-written text describing the user's data (daily briefing, chat, post-trade debrief, monthly P&L narrative, journal summary) must not suggest changing stops, position sizing, setups or any other strategy parameter, and §13.5 adds the AI journal summary (`POST /ai/journal-summary`) to the re-attestation roster (ST-28, EPIC-04, v9.15, `BLG-GOV-194`) — Documentation-only. Rationale: the dated re-read (`docs/product/decisions/decisions--2026-11-03__release-v9.15--ST-28-journal-summary-section13-reread.md`) found that §13.1 and §13.2 hold for the journal summary, but three rulings (`ESC-EXEC-20261027-03`, `ESC-EXEC-20261030-02`, `ESC-EXEC-20261105-01`) had each inferred this exclusion from §13.2's "discretionary or adaptive rule system" because the text did not state it, and the summary was missing from the roster. Impact: documentation only. No rule, parameter, backtest or live behaviour changes, so results stay comparable (§12.3). The journal summary, debrief and monthly narrative already have output checks. The daily briefing and chat have no check enforcing the sentence yet, tracked by `BLG-AI-29`. §13 gate: this is a §13.2 clarification. The journal summary enters the §13.5 roster for the 2027-02-06 re-attestation. §15 re-run: 27 files outside this one cite a `strategy_rules.md` version (`strategy_rules.md v[0-9]` in `*.md`), all dated, point-in-time records (decision records, cycle artefacts, scope documents, dated roadmap and status rows); 0 actionable findings. Strategy Rules & System Intent Owner ruling `ESC-EXEC-20261105-02`, outcome (1), given in session by the user acting in that role, 2026-11-05; written under case (c) of the plan-authorised named-file rule (confirmed at seal, 2026-11-03). |
@@ -424,6 +425,7 @@ A position may exit under exactly four conditions.
 - Active only after the grace period.  
 - Triggered when the market price breaches the trailing stop.  
 - Exit is recommended and requires manual confirmation.
+- Not triggered while a detected split on the position is unconfirmed (§9.1).
 
 ### 8.2 Market risk-off override
 - Positions are exited when the relevant market enters a risk-off regime.  
@@ -458,6 +460,26 @@ Each position exists in exactly one state at any time.
 | EXITED | Position closed |
 
 States are mutually exclusive and deterministic.
+
+### 9.1 Stock split on an open position
+
+*(v1.28 — ST-27, EPIC-05, v9.18, `BLG-BE-223`. Text approved by the Strategy Rules & System Intent Owner under §12.3, 23 November 2026, following the RISK-05 direction of 18 November 2026.)*
+
+A split is read from the market-data provider's split history for a held ticker, effective on or after the position's entry date. The ratio r is new shares per old share (2:1 gives r = 2; a 1:10 reverse split gives r = 0.1).
+
+On the user's confirmation:
+- quantity × r;
+- entry price, initial stop and trailing stop ÷ r;
+- ATR from split-adjusted price history;
+- per-share risk ÷ r, so the position's cost, currency risk and R-multiples are unchanged.
+
+Until the user confirms, the position gets no stop-breach alert (§8.1) and no exit recommendation (§8).
+
+The adjustment is a unit change, not a §7.3 stop movement: dividing the stop by r does not loosen it. The original entry fields stay stored, and the adjustment is recorded beside them (ratio, effective date, source).
+
+If quantity × r is not a whole number, the adjustment is not confirmed automatically: Positions asks the user for the post-split share count. Entry price and stops are still ÷ r, so the cost becomes the entered count × the adjusted entry, and the difference from the original cost (cash in lieu of a fractional share) is shown before confirmation.
+
+Worked example: 10 shares at 200.00 USD, initial stop 180.00, 2:1 split. After confirmation: 20 shares at 100.00 (cost 2,000.00 unchanged), stop 90.00, per-share risk 10.00 (was 20.00), currency risk 200.00 (unchanged). A UK (`.L`) position follows the same arithmetic in GBP.
 
 ---
 

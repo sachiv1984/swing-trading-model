@@ -110,9 +110,16 @@ def test_resolve_version_window_returns_none_for_unknown_version():
 
 
 def test_resolve_version_window_open_ended_for_latest_version():
+    # ST-27 (BLG-BE-223, v9.18): 1.28 (§9.1 stock split) is the latest behavioural version.
+    start, end = resolve_version_window("1.28")
+    assert start == date(2026, 11, 23)
+    assert end is None
+
+
+def test_resolve_version_window_1_23_closed_by_1_28():
     start, end = resolve_version_window("1.23")
     assert start == date(2026, 11, 4)
-    assert end is None
+    assert end == date(2026, 11, 23)
 
 
 def test_resolve_version_window_1_21_closed_by_1_23():
