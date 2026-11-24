@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-24 (merge of main into EPIC-05, CLAUDE.md §8 step 2c — EPIC-04's 6 items appended whole after EPIC-05's 10; no ID shared); prior — 2026-11-23 (session — 6 new items added: BLG-BE-231, BLG-BE-232, BLG-QA-277, BLG-FE-330, BLG-FE-331, BLG-SPEC-243; PR #2310 agent-mediated review); prior — 2026-11-23 (session — 3 new items added: BLG-QA-281, BLG-QA-278, BLG-QA-279; EPIC-04 v9.18 PR #2311 review and retrospective); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-24 (session — 1 new item added: BLG-QA-282; ST-37/EPIC-06 v9.18); prior — 2026-11-24 (merge of main into EPIC-05, CLAUDE.md §8 step 2c — EPIC-04's 6 items appended whole after EPIC-05's 10; no ID shared); prior — 2026-11-23 (session — 6 new items added: BLG-BE-231, BLG-BE-232, BLG-QA-277, BLG-FE-330, BLG-FE-331, BLG-SPEC-243; PR #2310 agent-mediated review); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -8735,3 +8735,24 @@ ST-20 made every axe scan log the colour-contrast results axe cannot decide, and
 
 ---
 
+
+### BLG-QA-282 — Fix the stale mutmut pilot sizing test so the pilot can run
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** QA & Testing Owner
+**Source:** ST-37/EPIC-06 (`2026-11-18__release-v9.18`), found while verifying the mutmut pilot's test selection — 2026-11-24
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`backend/mutmut_pilot_tests/test_pilot.py::TestSizeBatchInvVol::test_weights_capped_then_renormalised` asserts `suggested_shares == [36, 73, 263]`, but `size_batch` returns `[36, 73, 260]` on `main` as of 2026-11-24, with or without ST-37's root `conftest.py`. The expectation is probably stale since `7b3b59e8` ("Fit batch sizing fees inside each signal's allocation") changed `size_batch`. Because the clean run fails, `cd backend && python3 -m mutmut run` stops with "failed to collect stats. runner returned 1", so the mutation pilot cannot run. The pilot is not run in CI, so nothing caught this.
+
+**Scope**
+- Check the expected value against the fees-inside-allocation rule and the canonical `size_batch` tests in `tests/`
+- Fix the pilot test's expectation, or the code if the pilot is right
+
+**Acceptance Criteria**
+- `cd backend && python3 -m pytest mutmut_pilot_tests/test_pilot.py` passes
+- A clean `cd backend && python3 -m mutmut run` gets past stats collection
+
+---
