@@ -9,22 +9,75 @@ name: Update Visual Snapshot Baselines
 #
 # After running: set continue-on-error: false in playwright.yml to make the
 # visual job a blocking gate.
+#
+# Permission it relies on (ST-34, BLG-OPS-220, v9.18): the job's own
+# `permissions: contents: write` block below. This repository's default
+# GITHUB_TOKEN permission is read-only (Settings → Actions → General →
+# Workflow permissions = "Read repository contents"), so without that block
+# the push step fails with HTTP 403. No repository setting change is needed.
+#
+# It runs only on `exec/**` branches: the first step fails the run for any
+# other target (including `main`, a tag or a commit SHA), so the write token
+# can never push baselines to `main` without a PR.
+#
+# The commit subject starts with the `commit_tag` input: `[GOVERNANCE]` by
+# default, or a story tag such as `[EPIC-06][ST-34]` so governance_sync.yml
+# links it to the story (CLAUDE.md §2). Both forms pass `.githooks/commit-msg`
+# on `exec/**` branches, and the first step rejects any other tag.
+# `quality_gate.yml` checks PR titles only.
+#
+# A push made with GITHUB_TOKEN starts no other workflows, and re-running an
+# earlier Playwright run reuses that run's old SHA. After this workflow pushes,
+# start a new run on the branch: `gh workflow run playwright.yml --ref <branch>`
+# (or push another commit), so the new head gets its checks.
 
 on:
   workflow_dispatch:
     inputs:
       branch:
-        description: 'Branch to update snapshots on'
+        # Empty by default, so the run uses the branch it was dispatched on
+        # (github.ref_name). The old default 'main' made a dispatch on an
+        # exec/** branch check out, and push to, main (ST-34, v9.18).
+        description: 'Branch to update snapshots on (default: the branch this run is dispatched on)'
         required: false
-        default: 'main'
+        default: ''
+      commit_tag:
+        description: 'Commit subject tag: [GOVERNANCE] or a story tag such as [EPIC-06][ST-34]'
+        required: false
+        default: '[GOVERNANCE]'
+
+concurrency:
+  # One run per target branch at a time, so two runs never rebase the same
+  # binary PNGs onto each other.
+  group: update-visual-snapshots-${{ github.event.inputs.branch || github.ref_name }}
+  cancel-in-progress: false
 
 jobs:
   update-snapshots:
     name: Regenerate Visual Snapshot Baselines
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    permissions:
+      contents: write
 
     steps:
+      - name: Refuse any target that is not an exec/** branch
+        env:
+          TARGET: ${{ github.event.inputs.branch || github.ref_name }}
+          COMMIT_TAG: ${{ github.event.inputs.commit_tag || '[GOVERNANCE]' }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          case "$TARGET" in
+            exec/*) ;;
+            *) echo "::error::Target '$TARGET' is not an exec/** branch. This workflow pushes only to exec/** branches; regenerate baselines there and merge them through the PR."; exit 1 ;;
+          esac
+          if ! gh api "repos/${{ github.repository }}/git/ref/heads/$TARGET" > /dev/null 2>&1; then
+            echo "::error::'$TARGET' is not a branch on origin (a tag or commit SHA cannot be pushed to)."; exit 1
+          fi
+          if ! echo "$COMMIT_TAG" | grep -qE '^(\[EPIC-[0-9]+\](\[ST-[0-9]+\])+|\[GOVERNANCE\])$'; then
+            echo "::error::commit_tag '$COMMIT_TAG' must be [GOVERNANCE] or [EPIC-xx][ST-xx] (.githooks/commit-msg)."; exit 1
+          fi
+
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
@@ -60,6 +113,8 @@ jobs:
           BROWSER: none
 
       - name: Commit and push updated baselines
+        env:
+          COMMIT_TAG: ${{ github.event.inputs.commit_tag || '[GOVERNANCE]' }}
         run: |
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
@@ -67,8 +122,19 @@ jobs:
           if git diff --staged --quiet; then
             echo "No snapshot changes to commit"
           else
-            git commit -m "[GOVERNANCE] Regenerate visual snapshot baselines on CI runner ($(date -u +%Y-%m-%d))"
-            git push
+            BRANCH=$(git branch --show-current)
+            if [ -z "$BRANCH" ]; then
+              echo "::error::Checkout is a detached HEAD; nothing can be pushed."; exit 1
+            fi
+            git commit -m "$COMMIT_TAG Regenerate visual snapshot baselines on CI runner ($(date -u +%Y-%m-%d))"
+            # Rebase onto any commit pushed to this branch while the job ran,
+            # fetching only this branch (a bare pull fetches every branch).
+            if ! git pull --rebase origin "$BRANCH"; then
+              git rebase --abort || true
+              echo "::error::Rebase onto origin/$BRANCH conflicted (the branch's baselines changed during this run). Nothing was pushed; the regenerated PNGs are in the updated-visual-snapshots artifact."
+              exit 1
+            fi
+            git push origin "HEAD:$BRANCH"
           fi
 
       - name: Upload snapshot diff artifacts
