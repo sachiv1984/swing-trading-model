@@ -742,6 +742,45 @@
       "resolved_utc": "2026-11-20T14:14:19Z",
       "resolved_by": "AI Compliance & Governance Officer; Product Owner (the user, in session)",
       "resolution_summary": "Keep one observational sentence; re-review after BLG-BE-226 and BLG-AI-35 ship. Filed BLG-BE-226, BLG-AI-35, BLG-BE-228 (P2), BLG-BE-227, BLG-AI-36 (P3)."
+    },
+    "ESC-EXEC-20261124-01": {
+      "cycle": "2026-11-18__release-v9.18",
+      "summary": "ST-07/EPIC-02 — dated Head of UX & Design approval of design_system.md §Design Direction (v1.28) and navigation.md v2.5",
+      "trigger_type": "Lifecycle",
+      "owning_authority": "Head of UX & Design",
+      "raised_utc": "2026-11-24T14:36:01Z",
+      "sla_due_utc": "2026-11-25T14:36:01Z",
+      "blocks_execution": false,
+      "disposition": "Resolved",
+      "resolved_utc": "2026-11-24T14:36:34Z",
+      "resolved_by": "Head of UX & Design (the user, in session)",
+      "resolution_summary": "Both files approved 2026-11-24; ST-07 reclassified autonomous."
+    },
+    "ESC-EXEC-20261124-02": {
+      "cycle": "2026-11-18__release-v9.18",
+      "summary": "ST-12/EPIC-02 — dated Strategy Rules & System Intent Owner confirmation of the trade_plan.md v1.30 §6 §13-note amendment",
+      "trigger_type": "Lifecycle",
+      "owning_authority": "Strategy Rules & System Intent Owner",
+      "raised_utc": "2026-11-24T14:36:01Z",
+      "sla_due_utc": "2026-11-25T14:36:01Z",
+      "blocks_execution": false,
+      "disposition": "Resolved",
+      "resolved_utc": "2026-11-24T14:36:34Z",
+      "resolved_by": "Strategy Rules & System Intent Owner (the user, in session)",
+      "resolution_summary": "Amendment confirmed 2026-11-24 (advisory under §4.2.6, no new §13 review); ST-12 reclassified autonomous."
+    },
+    "ESC-EXEC-20261124-03": {
+      "cycle": "2026-11-18__release-v9.18",
+      "summary": "ST-13/EPIC-02 — Metrics Definitions & Analytics Owner definition of rules followed / broken per closed trade",
+      "trigger_type": "Lifecycle",
+      "owning_authority": "Metrics Definitions & Analytics Owner",
+      "raised_utc": "2026-11-24T14:36:01Z",
+      "sla_due_utc": "2026-11-25T14:36:01Z",
+      "blocks_execution": false,
+      "disposition": "Resolved",
+      "resolved_utc": "2026-11-24T14:36:34Z",
+      "resolved_by": "Metrics Definitions & Analytics Owner (the user, in session)",
+      "resolution_summary": "Engine draft approved as written 2026-11-24; recorded in metrics_definitions.md §Rules Followed; ST-13 reclassified autonomous."
     }
   },
   "deferred_escalations": {
