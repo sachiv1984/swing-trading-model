@@ -175,6 +175,26 @@ EMBEDDED_GATE_SIGNAL_RE = re.compile(
 # convention the original v9.6 sibling check looked for.
 GATE_BLG_REF_RE = re.compile(r"\bBLG-[A-Z]+-\d+\b")
 COMPLETE_BANNER = "✅ COMPLETE"
+# ST-24 (BLG-GOV-388, EPIC-04, v9.18): an item counts as shipped only when the
+# banner is in a conventional position, not when its prose mentions it (as
+# BLG-GOV-388's own title does). Positions, each anchored to the line start:
+#   - a line opening with the banner, optionally quoted or bold:
+#     "> ✅ COMPLETE …", "**✅ COMPLETE — 2026-11-23 …**";
+#   - a Status, Provisional-Target or Shipped field whose value opens with it:
+#     "**Provisional-Target:** ✅ COMPLETE — …";
+#   - the ### heading, with the banner at its end or followed by a version,
+#     a date, "(" or "—": "### BLG-FE-60 — … ✅ COMPLETE v5.0 (2026-06-03)".
+COMPLETE_BANNER_LINE_RE = re.compile(
+    r"^\s*(?:>\s*)?(?:\*\*)?✅ COMPLETE"
+    r"|^\s*(?:>\s*)?\*\*(?:Status|Provisional-Target|Shipped):\*\*\s*✅ COMPLETE"
+    r"|^###\s.*✅ COMPLETE(?:\s*$|\s+(?:v\d|\(|—|–|-|\d{4}-))",
+    re.MULTILINE,
+)
+
+
+def is_bannered_complete(body):
+    """True when the item carries a ✅ COMPLETE banner in a conventional position."""
+    return bool(COMPLETE_BANNER_LINE_RE.search(body))
 # ST-37 (BLG-GOV-404): roadmap feature IDs a gate may name.
 GATE_FEATURE_REF_RE = re.compile(r"\b(?:PT|SI|PO)-\d+\b")
 ROADMAP_SHIPPED_RE = re.compile(r"✅\s*(?:Shipped|[^|]*?\bComplete)", re.IGNORECASE)
@@ -383,7 +403,7 @@ def gating_item_shipped(results, items, shipped_features=frozenset()):
 
     ST-37 (BLG-GOV-404): feature IDs (PT/SI/PO-xx) named in the gate count
     too; each must be in shipped_features (see shipped_feature_ids)."""
-    active_open = {item_id for item_id, title, body in items if COMPLETE_BANNER not in body}
+    active_open = {item_id for item_id, title, body in items if not is_bannered_complete(body)}
     shipped = []
     for r in results:
         if not r["gated"]:

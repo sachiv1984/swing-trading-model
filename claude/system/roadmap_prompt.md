@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 9.37
-**Last Updated:** 2026-11-03 (BLG-GOV-393, Head of Specs Team, user-directed — STEP -1.5: a deferred patch whose tracking backlog item is seated counts as carried, not OVERDUE); prior — 2026-11-03 (AUD-2026-11-03-006 — STEP 2.4 product-value-ratio history append skips when a row for this cycle_id is already present (resumed run)); prior — 2026-10-16 (Head of Specs Team action-now patches, user-directed, roadmap rebalance `2026-10-16__scheduled` STEP -1.5, clearing 3 OVERDUE deferred patches — STEP 7.3 reads `claude/roadmap/ready_pool_history.md` (BLG-GOV-374); §7.1 defines "worsened or remained unresolved" (ESC-RB-20261008-01); rationale moved to appendix Part B so the core fits under 24k tokens); prior history retained — see prior entries in version control
+**Version:** 9.38
+**Last Updated:** 2026-11-23 (sprint execution `2026-11-18__release-v9.18` ST-23, BLG-GOV-421 — STEP 11 action-now patches run the size budget check before commit); prior — 2026-11-03 (BLG-GOV-393, Head of Specs Team, user-directed — STEP -1.5: a deferred patch whose tracking backlog item is seated counts as carried, not OVERDUE); prior — 2026-11-03 (AUD-2026-11-03-006 — STEP 2.4 product-value-ratio history append skips when a row for this cycle_id is already present (resumed run)); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -75,7 +75,7 @@ Agent definitions: `claude/agents/*.md`. Switch agent perspective explicitly whe
 - `claude/scoring/*` (scoring artefacts only)
 - `claude/economics/*` (economics artefacts only)
 - `claude/evidence/gates/*` (PoG documents only — STEP 5.3)
-- `claude/system/*` (STEP 11 action-now patches only, Head of Specs Team sign-off required)
+- `claude/system/*` (STEP 11 action-now patches only, Head of Specs Team sign-off required). **Size budget (ST-23, BLG-GOV-421, v9.18):** stage an action-now patch and run `python3 scripts/check_prompt_size_budget.py --staged` before committing it; if it fails, apply `shared_standards.md` §11's headroom rule in the same commit (move an equal amount of rationale or history to the file's changelog or appendix), so no later PR raises the baseline. `.githooks/pre-commit` and a CI run on pushes to `main` repeat the check.
 - `claude/system/prompt_change_log.md` (STEP 11 — append only)
 - `.claude_current_state.json` (STEP 12 only)
 

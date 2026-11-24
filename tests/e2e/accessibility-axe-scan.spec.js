@@ -114,6 +114,38 @@ const KNOWN_VIOLATIONS = {
   'TradeEntrySetupThesisDigest:dark': new Set(['label', 'button-name']),
 };
 
+// ST-20 (BLG-QA-260, EPIC-04, v9.18): axe returns contrast it cannot decide
+// (text on a translucent tint, a gradient or an image, or partly covered) as
+// `incomplete`, not as a violation, so a 4.48:1 grace pill once passed the
+// light scan (v9.16 EPIC-03). Every scan logs its incomplete color-contrast
+// nodes, split into page content and the app shell (sidebar and top header,
+// whose 6-8 nodes repeat on every full-page scan: gradient logo text, the
+// gradient active nav item, nav links axe calls partly covered). A scan whose
+// name is in this set also fails on any page-content node. The set is every
+// scan whose page content had none on 2026-11-23; add a scan once its log shows
+// "0 page content".
+const STRICT_INCOMPLETE_CONTRAST = new Set([
+  'DashboardPopulated:light',
+  'JournalNotes:light',
+  'JournalRedFlags:dark',
+  'JournalRedFlags:light',
+  'JournalReflections:light',
+  'Notifications:light',
+  'NotificationsEmpty:light',
+  'NotificationsNotSent:light',
+  'ReplayDateRange:dark',
+  'ReplayDateRange:light',
+  'ReplayTradeSet:dark',
+  'ReplayTradeSet:light',
+  'ResearchLanding:dark',
+  'ResearchLanding:light',
+  'StrategyBenchmark:dark',
+  'StrategyBenchmark:light',
+  'TickerUniverse:dark',
+  'TickerUniverse:light',
+  'WeeklyDigest:light',
+]);
+
 async function mockRoutes(page) {
   // Broad catch-all: every API call not given a more specific mock below
   // gets a generic 200 empty-envelope response — sufficient for a
@@ -224,16 +256,62 @@ async function runAxeScan(page, pageName, { include } = {}) {
     }
   }
 
+  const incompleteContrast = results.incomplete
+    .filter((r) => r.id === 'color-contrast')
+    .flatMap((r) => r.nodes);
+  const inShell = await nodesInAppShell(page, incompleteContrast);
+  const shellIncomplete = incompleteContrast.filter((_, i) => inShell[i]);
+  const contentIncomplete = incompleteContrast.filter((_, i) => !inShell[i]);
+  const strictIncomplete = STRICT_INCOMPLETE_CONTRAST.has(pageName);
+  if (incompleteContrast.length > 0) {
+    console.log(`[axe-core] ${pageName}: ${incompleteContrast.length} incomplete color-contrast node(s), contrast not decided by axe (${contentIncomplete.length} page content, ${shellIncomplete.length} app shell)${strictIncomplete ? '' : '; logged only, not in STRICT_INCOMPLETE_CONTRAST'}:`);
+    for (const n of contentIncomplete) console.log(`  - ${describeNode(n)}`);
+    for (const n of shellIncomplete) console.log(`  - [shell] ${describeNode(n)}`);
+  }
+
+  const failures = [];
   if (blocking.length > 0) {
     const detail = blocking
       .map((v) => `  - [${v.impact}] ${v.id}: ${v.help} (${v.nodes.length} node(s)) — ${v.helpUrl}\n`
         // ST-08: name the first nodes, so a CI failure says which element to fix.
-        + v.nodes.slice(0, 5).map((n) => `      ${n.target.join(' ')} | ${n.html.slice(0, 140)} | ${(n.any[0] || {}).message || ''}`.slice(0, 400)).join('\n'))
+        + v.nodes.slice(0, 5).map((n) => `      ${describeNode(n)}`).join('\n'))
       .join('\n');
-    throw new Error(`[axe-core] ${pageName}: ${blocking.length} NEW serious/critical accessibility violation(s) (not in the KNOWN_VIOLATIONS baseline):\n${detail}`);
+    failures.push(`${blocking.length} NEW serious/critical accessibility violation(s) (not in the KNOWN_VIOLATIONS baseline):\n${detail}`);
+  }
+  if (strictIncomplete && contentIncomplete.length > 0) {
+    const detail = contentIncomplete.slice(0, 5).map((n) => `      ${describeNode(n)}`).join('\n');
+    failures.push(`${contentIncomplete.length} incomplete color-contrast node(s) in page content on a STRICT_INCOMPLETE_CONTRAST page; give the text a solid background or a definite contrast:\n${detail}`);
+  }
+  if (failures.length > 0) {
+    throw new Error(`[axe-core] ${pageName}: ${failures.join('\n')}`);
   }
 
   return results;
+}
+
+// For each axe node, whether it sits in the app shell (Layout.js: the sidebar
+// <aside> or the top <header>, both outside <main>). Shell nodes repeat on
+// every full-page scan, so the strict rule judges page content only and the
+// shell's nodes are logged. Dialogs portal outside <main> but are not in the
+// shell, so they count as page content. A node axe targets inside an iframe
+// or shadow root (target length > 1) counts as content.
+async function nodesInAppShell(page, nodes) {
+  const selectors = nodes.map((n) => (n.target.length === 1 ? n.target[0] : null));
+  return page.evaluate((sels) => sels.map((sel) => {
+    if (!sel) return false;
+    const el = document.querySelector(sel);
+    if (!el) return false;
+    // Only the layout's own aside/header: never inside <main> or a dialog
+    // (PR #2311 review — an aside in page content or a dialog's header is content).
+    if (el.closest('main') || el.closest('[role="dialog"], [role="alertdialog"]')) return false;
+    return Boolean(el.closest('aside') || el.closest('header'));
+  }), selectors);
+}
+
+// One line per axe node: selector | markup | axe's reason (truncated).
+function describeNode(n) {
+  const reason = (n.any[0] || n.all[0] || n.none[0] || {}).message || '';
+  return `${n.target.join(' ')} | ${n.html.slice(0, 140)} | ${reason}`.slice(0, 400);
 }
 
 test.describe('Standalone axe-core Accessibility Scan (ST-21)', () => {
@@ -1055,3 +1133,48 @@ for (const theme of ['light', 'dark']) {
     await runAxeScan(page, `NotificationsNotSent:${theme}`);
   });
 }
+
+// ST-20 (BLG-QA-260, EPIC-04, v9.18): the incomplete color-contrast rule itself.
+// A probe paragraph on a gradient, inside <main>, is a contrast axe cannot
+// decide, so it comes back as `incomplete` page content. ResearchLanding:dark
+// is in STRICT_INCOMPLETE_CONTRAST and has no such node of its own.
+test.describe('axe incomplete color-contrast (ST-20)', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.addInitScript(() => {
+      window.localStorage.setItem('theme', 'dark');
+      window.localStorage.setItem('command-palette-tooltip-seen', 'true');
+    });
+    await routed.catchAll(page);
+    await page.goto('/#/Research');
+    await expect(page.locator('main h1').first()).toBeVisible({ timeout: 15000 });
+    await expectThemeApplied(page, 'dark');
+    await page.evaluate(() => {
+      const probe = document.createElement('p');
+      probe.id = 'axe-incomplete-probe';
+      probe.textContent = 'Contrast probe on a gradient';
+      probe.style.backgroundImage = 'linear-gradient(90deg, #ffffff, #000000)';
+      probe.style.color = '#777777';
+      document.querySelector('main').appendChild(probe);
+    });
+  });
+
+  test('SC-AXEINC-01: a scan logs its incomplete color-contrast nodes', async ({ page }) => {
+    const lines = [];
+    const log = console.log;
+    console.log = (...args) => { lines.push(args.join(' ')); log(...args); };
+    try {
+      // A name outside the strict set: logged, not failed.
+      await runAxeScan(page, 'ResearchLandingProbe:dark');
+    } finally {
+      console.log = log;
+    }
+    const output = lines.join('\n');
+    expect(output).toMatch(/ResearchLandingProbe:dark: \d+ incomplete color-contrast node\(s\).*\(1 page content, \d+ app shell\)/);
+    expect(output).toContain('#axe-incomplete-probe');
+  });
+
+  test('SC-AXEINC-02: a strict-set scan fails on an incomplete color-contrast node', async ({ page }) => {
+    expect(STRICT_INCOMPLETE_CONTRAST.has('ResearchLanding:dark')).toBe(true);
+    await expect(runAxeScan(page, 'ResearchLanding:dark')).rejects.toThrow(/1 incomplete color-contrast node\(s\) in page content on a STRICT_INCOMPLETE_CONTRAST page[\s\S]*#axe-incomplete-probe/);
+  });
+});
