@@ -31,6 +31,52 @@ export function isInGrace(position) {
   return position?.grace_period === true;
 }
 
+// dashboard.md v4.4 §4B (ST-10, BLG-FE-308, v9.18): one grace definition for
+// every Dashboard grace count. A day count is only read for an in-grace
+// position, and only when it is a finite number (`GET /positions` sends
+// `grace_days_remaining` only while in grace, else null).
+export function graceDaysRemaining(position) {
+  if (!isInGrace(position)) return null;
+  const v = position.grace_days_remaining;
+  // A number, or a numeric string; whitespace, booleans and other values are
+  // not a day count (Number(" ") is 0 and Number(true) is 1).
+  if (typeof v === "number") return Number.isFinite(v) ? v : null;
+  if (typeof v === "string" && /^-?\d+(\.\d+)?$/.test(v.trim())) return Number(v);
+  return null;
+}
+
+// Grace ends today: in grace with 1 day left (Day 10 of 10). The Today list's
+// "Grace ends today" group.
+export function isGraceEndingToday(position) {
+  return graceDaysRemaining(position) === 1;
+}
+
+// In grace with between 1 and `days` days left (Positions to Watch: "ending
+// within 2 days"). 0 or below means grace has already ended ("Grace period has
+// ended" on Card 3), so it is not "ending".
+export function isGraceEndingWithin(position, days) {
+  const n = graceDaysRemaining(position);
+  return n !== null && n >= 1 && n <= days;
+}
+
+// The smallest day count among in-grace positions, or null when none has one.
+export function minGraceDaysRemaining(positions) {
+  const days = (Array.isArray(positions) ? positions : []).map(graceDaysRemaining).filter((d) => d !== null);
+  return days.length ? Math.min(...days) : null;
+}
+
+// risk_dashboard.md §5.2 and dashboard.md §4 Card 3 (moved here from
+// GracePeriodPanel.js, ST-10). grace_days_remaining 1 is the last day of grace
+// ("Ends today", Day 10 of 10), so a value n ends in n − 1 days. 0 means grace
+// has just ended; the position moves on at the next refresh.
+export function nextEndsText(days) {
+  if (days === null || days === undefined) return null;
+  if (days <= 0) return "Grace period has ended";
+  if (days === 1) return "Ends today";
+  const n = days - 1;
+  return `Next ends in ${n} day${n === 1 ? "" : "s"}`;
+}
+
 // (current_price − current_trailing_stop) ÷ current_price × 100, on the GBP
 // basis the breach test uses. Negative when the price is below the stop.
 export function stopDistancePct(position) {

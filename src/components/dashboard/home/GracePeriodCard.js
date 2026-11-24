@@ -1,8 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
-import { format } from "date-fns";
 import { Clock } from "lucide-react";
 import { api } from "../../../api/base44Client";
 import DashboardCard from "./DashboardCard";
+import { isInGrace, minGraceDaysRemaining, nextEndsText } from "../../../lib/positionUrgency";
 
 export default function GracePeriodCard() {
   const { data, isLoading, error } = useQuery({
@@ -12,11 +12,12 @@ export default function GracePeriodCard() {
   });
 
   const positions = Array.isArray(data) ? data : [];
-  const gracePositions = positions.filter(p => p.grace_days_remaining > 0 || p.grace_end_date || p.status === "GRACE");
-
-  const nextExpiry = gracePositions
-    .filter(p => p.grace_end_date)
-    .sort((a, b) => new Date(a.grace_end_date) - new Date(b.grace_end_date))[0];
+  // dashboard.md v4.4 §4B and Card 3 (ST-10, BLG-FE-308): the one grace
+  // definition, and the Risk Dashboard grace panel's "next ends" text from the
+  // smallest grace_days_remaining. The old line read grace_end_date, which no
+  // endpoint returns, so it always said "No expiry date set".
+  const gracePositions = positions.filter(isInGrace);
+  const nextEnds = nextEndsText(minGraceDaysRemaining(gracePositions));
 
   return (
     <DashboardCard
@@ -33,11 +34,9 @@ export default function GracePeriodCard() {
       emptyBody="Positions approaching grace deadlines will show here."
     >
       <p className="text-4xl font-bold text-amber-700 dark:text-amber-400 mb-2">{gracePositions.length}</p>
-      <p className="text-sm text-slate-600 dark:text-slate-400">
-        {nextExpiry
-          ? `Next expiry: ${format(new Date(nextExpiry.grace_end_date), "d MMM")}`
-          : "No expiry date set"}
-      </p>
+      {nextEnds && (
+        <p className="text-sm text-slate-600 dark:text-slate-400" data-testid="dashboard-grace-next-ends">{nextEnds}</p>
+      )}
     </DashboardCard>
   );
 }

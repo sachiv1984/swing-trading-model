@@ -232,8 +232,10 @@ test.describe('SC-MB-04 — Positions to Watch card (AC-03)', () => {
     await gotoDashboard(page);
 
     await expect(page.getByText('Morning Briefing')).toBeVisible({ timeout: 10000 });
-    // 1 position has grace_period=true
-    await expect(page.getByText(/in grace/)).toBeVisible({ timeout: 5000 });
+    // 1 position has grace_period=true. Scoped to the Morning Briefing: since
+    // ST-10 (v9.18) Card 1's "N in grace" counts the same rows, so the text can
+    // appear there as well.
+    await expect(page.getByTestId('morning-briefing').getByText(/in grace/)).toBeVisible({ timeout: 5000 });
   });
 });
 

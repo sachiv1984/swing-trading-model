@@ -3,8 +3,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 4.5
-**Last Updated:** 2026-11-24 (ST-09, EPIC-02, v9.18, BLG-UX-11 — §3A built; build notes; QD-04 names the request the Screener Hits card actually makes); prior — 2026-11-18 (v9.18 design gate — ST-09/BLG-UX-11 §3A quiet-day collapse; ST-10/BLG-FE-308 §4B one grace definition; ST-11/BLG-UX-13 "Plan this" on New signals rows); prior — 2026-11-13 (ST-10, EPIC-04, v9.17, BLG-FE-254 — §1B Known Deviations: DEV-EPIC04-ST10-01, Stops moved data source and today-or-previous-weekday window); prior history retained — see prior entries in version control
+**Version:** 4.6
+**Last Updated:** 2026-11-24 (ST-10, EPIC-02, v9.18, BLG-FE-308 — §4B built; build notes); prior — 2026-11-24 (ST-09, EPIC-02, v9.18, BLG-UX-11 — §3A built; build notes; QD-04 names the request the Screener Hits card actually makes); prior — 2026-11-18 (v9.18 design gate — ST-09/BLG-UX-11 §3A quiet-day collapse; ST-10/BLG-FE-308 §4B one grace definition; ST-11/BLG-UX-13 "Plan this" on New signals rows); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Release:** v8.8
 **EPIC:** EPIC-03
@@ -398,6 +398,8 @@ With these five, every grace count is 3; Card 3 reads "Ends today"; Positions to
 | GD-01 | With a fixture where `grace_period` and `grace_days_remaining`/`status` disagree for one position, every Dashboard grace count shows the same number | Playwright |
 | GD-02 | Positions to Watch opens `/Positions?grace=open` when its count is above 0 | Playwright |
 
+**Build notes (v4.6, ST-10, built 2026-11-24):** The predicate and its helpers are in `src/lib/positionUrgency.js` (`isInGrace`, `graceDaysRemaining`, `isGraceEndingToday`, `isGraceEndingWithin`, `minGraceDaysRemaining`, `nextEndsText`), with unit tests in `positionUrgency.grace.test.js`. A day count is read only for an in-grace position and only when it is a finite number. The Risk Dashboard grace panel uses the same `nextEndsText`, so a minimum of 0 or below reads "Grace period has ended" on both. The "stored `status`" in the table above is `position_state`: `GET /positions` sends `status: "open"` for every open position (`position_service.py`), so Card 1's old `status === "GRACE"` branch never matched. Positions to Watch no longer calls `GET /positions/grace-period-alerts`. Tests: `tests/e2e/dashboard-grace-definition.spec.js` (SC-GD-01 to SC-GD-03).
+
 ---
 
 ## 4A. Card Empty States (v7.2 — ST-05)
@@ -639,6 +641,7 @@ Cards are fully clickable (entire card surface is the click target). Visual affo
 
 | Version | Date | Change |
 |---------|------|--------|
+| 4.6 | 2026-11-24 | ST-10 (EPIC-02, v9.18, BLG-FE-308): §4B built; build notes added (helpers in `positionUrgency.js`, shared `nextEndsText`, `status` vs `position_state`, the grace-period-alerts query dropped). No behaviour change to the spec. |
 | 4.5 | 2026-11-24 | ST-09 (EPIC-02, v9.18, BLG-UX-11): §3A built; build notes added; QD-04's failing request corrected to `GET /signals`, the request the Screener Hits card makes. No behaviour change to the spec. |
 | 4.4 | 2026-11-18 | v9.18 design gate. (ST-09, BLG-UX-11) New §3A Quiet-Day Collapse: zero-state elements below the Today list fold into one "Nothing to show:" line with links (QD-01–QD-04). (ST-10, BLG-FE-308) New §4B One Grace Definition (`isInGrace`); §1A card renamed to the shipped "Positions to Watch" and redefined on it, linking to the grace view; Card 1 and Card 3 use it; Card 3 sub-label from `grace_days_remaining` (the `grace_end_date` it read is never returned). (ST-11, BLG-UX-13) §1B New signals rows gain "Plan this" for `new`/`watchlisted` (Product Owner decision); §13 bullet amended; TL-30. Design source: `docs/design/2026-11-18__release-v9.18/dashboard-quiet-day/decision_record.md`. Head of UX & Design sign-off: 2026-11-18. Product Owner approved: 2026-11-18. Head of Specs Team confirmed. |
 | 4.3 | 2026-11-13 | ST-10 (EPIC-04, v9.17, BLG-FE-254): §1B Known Deviations added: DEV-EPIC04-ST10-01 (Stops moved written by both stop recompute paths per the 2026-11-13 ruling; TL-09's latest nightly run date read as today or the previous weekday (UTC), ruling 2026-11-13; `BLG-SPEC-238`). Deviation documentation only; no other text changed. |

@@ -19,7 +19,6 @@ const DASHBOARD_QUERY_KEYS = [
   ...TODAY_QUERY_KEYS,
   "home-recent-activity",
   "morning-screener-hits",
-  "morning-grace-alerts",
   "morning-positions",
   "morning-red-flags",
   "morning-compliance-7d",

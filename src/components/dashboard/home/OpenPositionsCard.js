@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Inbox } from "lucide-react";
 import { api } from "../../../api/base44Client";
 import DashboardCard from "./DashboardCard";
+import { isInGrace } from "../../../lib/positionUrgency";
 
 export default function OpenPositionsCard() {
   const { data, isLoading, error } = useQuery({
@@ -14,7 +15,10 @@ export default function OpenPositionsCard() {
   const open = positions.filter(p => p.status === "open" || p.status === "ACTIVE" || p.status === "GRACE");
   const profitable = open.filter(p => (p.pnl ?? 0) > 0).length;
   const losing = open.filter(p => (p.pnl ?? 0) < 0).length;
-  const grace = open.filter(p => p.grace_days_remaining > 0 || p.status === "GRACE").length;
+  // dashboard.md v4.4 §4B (ST-10, BLG-FE-308): the one grace definition, over
+  // the same GET /positions rows Card 3 and Positions to Watch count (that
+  // endpoint returns open positions only).
+  const grace = positions.filter(isInGrace).length;
 
   return (
     <DashboardCard
