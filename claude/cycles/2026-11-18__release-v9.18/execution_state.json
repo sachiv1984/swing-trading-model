@@ -6,7 +6,7 @@
   "invoked_utc": "2026-11-19T08:07:14Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-24T08:17:53Z",
+  "last_updated_utc": "2026-11-24T08:40:16Z",
   "epics": {
     "EPIC-01": {
       "title": "Site Structure & Usability Phase 4, Stage 1: Correct and Safe (build-and-ship)",
@@ -669,10 +669,10 @@
     },
     "EPIC-05": {
       "title": "Position Data Correctness",
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-11-18__release-v9.18/EPIC-05",
       "pr_number": 2310,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-11-18__release-v9.18/qa_evidence_EPIC-05.md",
       "test_scenarios": [
@@ -690,7 +690,7 @@
         "ST-25": {
           "title": "Use one native-entry function on every position path",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2290,
           "branch": "exec/2026-11-18__release-v9.18/EPIC-05",
@@ -714,7 +714,7 @@
         "ST-26": {
           "title": "Use the live FX rate, not a hard-coded 1.27",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2291,
           "branch": "exec/2026-11-18__release-v9.18/EPIC-05",
@@ -738,7 +738,7 @@
         "ST-27": {
           "title": "Handle a stock split on an open position",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2292,
           "branch": "exec/2026-11-18__release-v9.18/EPIC-05",
@@ -772,7 +772,7 @@
         "ST-28": {
           "title": "Tag lifecycle transitions caused by the v9.12 currency correction",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2293,
           "branch": "exec/2026-11-18__release-v9.18/EPIC-05",
@@ -796,7 +796,7 @@
         "ST-29": {
           "title": "Keep GET /settings working when the change-log read fails",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2294,
           "branch": "exec/2026-11-18__release-v9.18/EPIC-05",
@@ -820,7 +820,7 @@
         "ST-30": {
           "title": "Make the Reports unrealised P&L match the Positions basis",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2295,
           "branch": "exec/2026-11-18__release-v9.18/EPIC-05",
@@ -846,7 +846,7 @@
         "ST-31": {
           "title": "Cache the Trade Entry ATR preview per ticker and market",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2296,
           "branch": "exec/2026-11-18__release-v9.18/EPIC-05",
@@ -1179,12 +1179,12 @@
     "epics_merged": [
       "EPIC-01",
       "EPIC-04",
+      "EPIC-05",
       "EPIC-07"
     ],
     "epics_pending": [
       "EPIC-02",
       "EPIC-03",
-      "EPIC-05",
       "EPIC-06"
     ],
     "all_merged": false
@@ -1208,7 +1208,8 @@
     "2026-11-23T13:42:31Z EPIC-05: PR #2310 opened. Merge order per sprint_backlog.md puts EPIC-04 (not started) before EPIC-05; rebase after EPIC-04 merges. Human DoQ confirmation and PO acceptance pending.",
     "2026-11-23T15:05:40Z EPIC-05: human Director of Quality QA sign-off and Product Owner acceptance given by the user in session for PR #2310; recorded in qa_evidence_EPIC-05.md §Merge Gate Confirmations. Not merged: EPIC-04 merges first per sprint_backlog.md.",
     "2026-11-24T07:59:51Z EPIC-04: human Director of Quality QA sign-off and Product Owner acceptance given by the user in session for PR #2311 (head a82923c8, 68/68 checks green); recorded in qa_evidence_EPIC-04.md §Merge Gate Confirmations. Four backlog IDs renumbered first (collision with the open EPIC-05 branch): BLG-SPEC-243→244, BLG-QA-276→280, BLG-QA-277→281, BLG-FE-329→332. Not merged: merge is the user's.",
-    "2026-11-24T08:16:19Z EPIC-04: PR #2311 merged by the user (sachiv1984) at 2026-11-24T08:15:39Z, merge commit 7f07c18e. Stories ST-18 to ST-24 set to merged. Orphaned post-merge commit check: none. Next: EPIC-05 (#2310) per sprint_backlog.md §Merge Order."
+    "2026-11-24T08:16:19Z EPIC-04: PR #2311 merged by the user (sachiv1984) at 2026-11-24T08:15:39Z, merge commit 7f07c18e. Stories ST-18 to ST-24 set to merged. Orphaned post-merge commit check: none. Next: EPIC-05 (#2310) per sprint_backlog.md §Merge Order.",
+    "2026-11-24T08:40:16Z EPIC-05: PR #2310 merged by the user (sachiv1984) at 2026-11-24T08:39:33Z, merge commit 97cdd2de, after main (EPIC-04) was merged into the branch in dd27391c (CLAUDE.md §8; backlog.md rebuilt from both parents). Stories ST-25 to ST-31 set to merged. Orphaned post-merge commit check: none. Step 3c: EPIC-02, EPIC-03, EPIC-06 have no branches yet, so no sibling sync."
   ],
   "sealed": false,
   "sealed_utc": null
