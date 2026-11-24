@@ -46,3 +46,13 @@ The consolidation block and sign-off are added when every story is done (STEP 3.
 - **AC 2 pending:** authenticated staging `GET /positions` (DEL-20261124-02).
 
 ---
+
+## ST-32 — Finish the on-demand Yahoo failure diagnosis (remainder)
+
+- **Evidence supplied in session by the user (Infrastructure & Operations Owner), 2026-11-24 (`DEL-20261124-01`):** (1) production `GET /ops/api-call-attribution?window=weekly` (7 days to 2026-11-24, all after PR #2259); (2) a production `api_call_log` read of every Yahoo call from `GET /positions` in the same 7 days (28 rows).
+- **AC 2 (one post-fix weekly report: each feature below 10%, or the rest documented as expected):** earnings badge, gap risk and research made 0 Yahoo calls and had 0 failures (served from the shared `Ticker.info` cache, or not opened). `GET /positions` had 7 of 28 Yahoo calls fail (25%): all in one page load at 2026-11-19 16:42 UTC, where Yahoo refused its session token (`getcrumb` 3 of 3) and the two token calls failed; the other three loads in the week succeeded in full. Documented as expected (an external, transient token refusal) in `data_pipeline_cost_baseline.md` §4. Yahoo failures overall fell from 665 to 21 a week.
+- **AC 3 (§4 reflects the post-fix state):** §4 re-recorded from the report (v1.4); `alpaca_news` kept at 1 with the reason stated (a 0 baseline would flag every news view). `scripts/check_market_data_volume.py` reads the new table (`tests/test_market_data_volume_check.py` 20 passed, including the real-document read).
+- **BLG-OPS-217** (the source item, filed v9.17): all its ACs are now met by ST-15 (AC 1) and ST-32 (AC 2, AC 3). It was not filed this cycle, so its ✅ COMPLETE banner is left to post-ship closure.
+- **BLG-OPS-223 note:** the report call took 0.88 s on a warm service, so the scheduled check's 60 s timeouts point to a Render cold start rather than a slow query.
+
+---

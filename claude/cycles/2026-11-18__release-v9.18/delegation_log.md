@@ -33,7 +33,7 @@ Last Updated: 2026-11-20
 - **Workflow-viability pre-check (LL-v9.10-P3-01):** the report is supplied by hand, so no workflow is needed. Related: `market-data-volume-check.yml` (the scheduled reader of the same report) has no success in its last 10 runs. Both runs (43925655395, 2026-11-16; 45254364709, 2026-11-23) failed with a 60 s read timeout on the production report call; filed as BLG-OPS-223.
 - **Unblock criteria:** the report is pasted in session or supplied as a file; or the owner confirms it is not available in-sprint, in which case ST-32 returns to backlog at sprint close (sealed plan: conditional, §1.4b; BLG-OPS-217 stays open).
 - **Commit format required:** `[EPIC-06][ST-32] <description>` pushed to `exec/2026-11-18__release-v9.18/EPIC-06`
-- **Status:** Pending — the user chose "I'll paste it in session" (2026-11-24).
+- **Status:** Unblocked — unblocked in-session: the user (Infrastructure & Operations Owner) supplied the production weekly attribution report and a production `api_call_log` read of `GET /positions` Yahoo calls, same session as delegation, 2026-11-24. Sign-off cleared on the supplied evidence; commit SHA: see ST-32 `commit_sha` in execution_state.json.
 
 ## DEL-20261124-02
 
