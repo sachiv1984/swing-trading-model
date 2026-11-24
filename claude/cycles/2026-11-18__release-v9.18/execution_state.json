@@ -6,7 +6,7 @@
   "invoked_utc": "2026-11-19T08:07:14Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-24T13:59:59Z",
+  "last_updated_utc": "2026-11-24T14:14:34Z",
   "epics": {
     "EPIC-01": {
       "title": "Site Structure & Usability Phase 4, Stage 1: Correct and Safe (build-and-ship)",
@@ -871,10 +871,10 @@
     },
     "EPIC-06": {
       "title": "Market-Data Reliability and CI",
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-11-18__release-v9.18/EPIC-06",
       "pr_number": 2312,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-11-18__release-v9.18/qa_evidence_EPIC-06.md",
       "test_scenarios": [
@@ -889,7 +889,7 @@
         "ST-32": {
           "title": "Finish the on-demand Yahoo failure diagnosis (remainder)",
           "classification": "delegated_backend",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "human",
           "github_issue": 2297,
           "branch": "exec/2026-11-18__release-v9.18/EPIC-06",
@@ -918,7 +918,7 @@
         "ST-33": {
           "title": "Show \"earnings unknown\" when an earnings or gap-risk lookup fails",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2298,
           "branch": "exec/2026-11-18__release-v9.18/EPIC-06",
@@ -946,7 +946,7 @@
         "ST-34": {
           "title": "Let the visual-baseline workflow push regenerated snapshots",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2299,
           "branch": "exec/2026-11-18__release-v9.18/EPIC-06",
@@ -969,7 +969,7 @@
         "ST-35": {
           "title": "Seed staging's UK positions with the .L suffix",
           "classification": "delegated_backend",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "human",
           "github_issue": 2300,
           "branch": "exec/2026-11-18__release-v9.18/EPIC-06",
@@ -999,7 +999,7 @@
         "ST-36": {
           "title": "Build the E2E bundle once per Playwright run",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2301,
           "branch": "exec/2026-11-18__release-v9.18/EPIC-06",
@@ -1024,7 +1024,7 @@
         "ST-37": {
           "title": "Keep a bare root pytest out of the mutmut pilot tests",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2302,
           "branch": "exec/2026-11-18__release-v9.18/EPIC-06",
@@ -1048,7 +1048,7 @@
         "ST-38": {
           "title": "Run the settings change-log SQL against real Postgres in CI",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2303,
           "branch": "exec/2026-11-18__release-v9.18/EPIC-06",
@@ -1237,12 +1237,12 @@
       "EPIC-01",
       "EPIC-04",
       "EPIC-05",
+      "EPIC-06",
       "EPIC-07"
     ],
     "epics_pending": [
       "EPIC-02",
-      "EPIC-03",
-      "EPIC-06"
+      "EPIC-03"
     ],
     "all_merged": false
   },
@@ -1268,7 +1268,8 @@
     "2026-11-24T08:16:19Z EPIC-04: PR #2311 merged by the user (sachiv1984) at 2026-11-24T08:15:39Z, merge commit 7f07c18e. Stories ST-18 to ST-24 set to merged. Orphaned post-merge commit check: none. Next: EPIC-05 (#2310) per sprint_backlog.md §Merge Order.",
     "2026-11-24T08:40:16Z EPIC-05: PR #2310 merged by the user (sachiv1984) at 2026-11-24T08:39:33Z, merge commit 97cdd2de, after main (EPIC-04) was merged into the branch in dd27391c (CLAUDE.md §8; backlog.md rebuilt from both parents). Stories ST-25 to ST-31 set to merged. Orphaned post-merge commit check: none. Step 3c: EPIC-02, EPIC-03, EPIC-06 have no branches yet, so no sibling sync.",
     "2026-11-24T13:10:04Z — EPIC-06 Phase 3 lesson candidates for STEP 5.4 (from the user's question which backlog items a check would have prevented): (1) a new or changed scheduled workflow is not done until one workflow_dispatch run against its real target succeeds (v9.17 ST-16 shipped market-data-volume-check.yml untried; BLG-OPS-223) — candidate for execution_prompt.md §3.1.A; (2) the design gate lists every caller of a changed shared function, not only the story's pages (get_earnings(): Dashboard card BLG-FE-333, pre-entry/Research BLG-BE-233, UK parity BLG-FE-334) — candidate for design_gate_prompt.md; (3) one shared guard for real-database (Phase B) tests that allows only localhost or CI (BLG-QA-284); (4) run the mutmut pilot's pytest in CI so it cannot go stale (BLG-QA-282); (5) data dictionary records which tables store UK tickers as .L and which bare (ST-35 AC premise was false for the watchlist; BLG-BE-234). Per-story check sharpenings applied to .claude/skills/first-time-right/SKILL.md (checks 9, 17, 18, 19) the same day.",
-    "2026-11-24T13:59:59Z — EPIC-06 PR #2312 opened after pre-PR checks (branch current with main, no foreign EPIC commits, API performance baseline clean, DoQ sign-off dated); combined agent-mediated DoQ + PO review posted as one comment (issuecomment-7133665764). Not merged by the engine."
+    "2026-11-24T13:59:59Z — EPIC-06 PR #2312 opened after pre-PR checks (branch current with main, no foreign EPIC commits, API performance baseline clean, DoQ sign-off dated); combined agent-mediated DoQ + PO review posted as one comment (issuecomment-7133665764). Not merged by the engine.",
+    "2026-11-24T14:14:34Z — EPIC-06 PR #2312 merged 2026-11-24T14:14:07Z by sachiv1984, merge commit 7c7bea76. Orphaned post-merge commit check: none (origin/main..EPIC-06 empty). Sibling execution_state sync (STEP 4 3c): N/A, EPIC-02/EPIC-03 branches not yet created."
   ],
   "sealed": false,
   "sealed_utc": null
