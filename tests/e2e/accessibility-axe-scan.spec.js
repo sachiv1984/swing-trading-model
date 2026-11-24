@@ -720,6 +720,11 @@ test.describe('Shell consumers axe scan, populated — light theme (ST-09)', () 
   });
 
   test('Dashboard with populated cards (light)', async ({ page }) => {
+    // v9.18 EPIC-02 ST-09: empty cards now fold (dashboard.md §3A), so Card 1's
+    // text sits at the viewport's lower edge at 720 px, where axe reports it
+    // undecided (elmPartiallyObscuring, no related node). A viewport that holds
+    // the whole page keeps the scan independent of where the fold leaves it.
+    await page.setViewportSize({ width: 1280, height: 1600 });
     await page.goto('/#/DashboardHome');
     await expect(page.getByText('Heat elevated — monitor closely')).toBeVisible({ timeout: 10000 });
     await page.waitForLoadState('networkidle');

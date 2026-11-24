@@ -22,6 +22,7 @@ export default function RedFlagsCard() {
 
   return (
     <DashboardCard
+      foldKey="red-flags"
       title="Red Flags"
       to="/Journal?section=red-flags"
       isLoading={isLoading}

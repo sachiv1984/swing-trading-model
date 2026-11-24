@@ -18,6 +18,7 @@ export default function OpenPositionsCard() {
 
   return (
     <DashboardCard
+      foldKey="open-positions"
       title="Open Positions"
       to="/Positions"
       isLoading={isLoading}

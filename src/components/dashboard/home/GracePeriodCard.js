@@ -20,6 +20,7 @@ export default function GracePeriodCard() {
 
   return (
     <DashboardCard
+      foldKey="in-grace"
       title="In Grace Today"
       // ST-04 (BLG-FE-257, v9.17): the card opens the single grace view
       // (dashboard.md v4.2 Card 3; positions.md §Grace Period View).

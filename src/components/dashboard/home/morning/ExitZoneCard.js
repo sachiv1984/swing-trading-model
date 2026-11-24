@@ -10,7 +10,7 @@ export default function ExitZoneCard() {
     retry: 1,
   });
 
-  const { data: positions = [], isLoading: posLoading } = useQuery({
+  const { data: positions = [], isLoading: posLoading, error: posError } = useQuery({
     queryKey: ["morning-positions"],
     queryFn: () => api.positions.list(),
     retry: 1,
@@ -31,10 +31,12 @@ export default function ExitZoneCard() {
 
   return (
     <DashboardCard
+      foldKey="positions-to-watch"
       title="Positions to Watch"
       to="/Positions"
       isLoading={alertsLoading || posLoading}
-      error={alertsError}
+      // §3A (ST-09): either source failing is an error, never "nothing to show".
+      error={alertsError || posError}
       empty={total === 0}
       emptyIcon={<Eye className="w-8 h-8 text-slate-600" />}
       emptyHeading="No positions to watch"

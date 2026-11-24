@@ -3,8 +3,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 4.4
-**Last Updated:** 2026-11-18 (v9.18 design gate — ST-09/BLG-UX-11 §3A quiet-day collapse; ST-10/BLG-FE-308 §4B one grace definition; ST-11/BLG-UX-13 "Plan this" on New signals rows); prior — 2026-11-13 (ST-10, EPIC-04, v9.17, BLG-FE-254 — §1B Known Deviations: DEV-EPIC04-ST10-01, Stops moved data source and today-or-previous-weekday window); prior — 2026-11-11 (v9.17 design gate — ST-04/BLG-FE-257: Card 3 click target is the single grace view, `/Positions?grace=open`); prior history retained — see prior entries in version control
+**Version:** 4.5
+**Last Updated:** 2026-11-24 (ST-09, EPIC-02, v9.18, BLG-UX-11 — §3A built; build notes; QD-04 names the request the Screener Hits card actually makes); prior — 2026-11-18 (v9.18 design gate — ST-09/BLG-UX-11 §3A quiet-day collapse; ST-10/BLG-FE-308 §4B one grace definition; ST-11/BLG-UX-13 "Plan this" on New signals rows); prior — 2026-11-13 (ST-10, EPIC-04, v9.17, BLG-FE-254 — §1B Known Deviations: DEV-EPIC04-ST10-01, Stops moved data source and today-or-previous-weekday window); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Release:** v8.8
 **EPIC:** EPIC-03
@@ -297,7 +297,9 @@ Below the Today list, an element whose data has loaded and is empty **folds**: i
 | QD-01 | With the quiet-day fixture, at most 1 empty-state element is below "Due today": the line, listing all 11 names | Playwright, light and dark |
 | QD-02 | A card with data keeps its v4.0 position (one open position: Cards 1 and 2 in Row 1; Card 3 folds) | Playwright |
 | QD-03 | Each line entry goes to its target; "AI briefing" reveals the AI Daily Briefing card with Regenerate and sets `aria-expanded="true"` | Playwright |
-| QD-04 | A failing element shows its error in place and is not in the line | Playwright: `GET /screener/results` 500 |
+| QD-04 | A failing element shows its error in place and is not in the line | Playwright: `GET /signals` 500 (v4.5: the Screener Hits card reads `GET /signals` via `api.signals.list()`, not `GET /screener/results`) |
+
+**Build notes (v4.5, ST-09, built 2026-11-24):** Each element reports its fold state to the page (`src/components/dashboard/home/QuietDay.js`); the rules (fold test, table order, container counts) are in `src/lib/quietDay.js` with unit tests. A folded element stays mounted and renders nothing, so its query keeps running and a Refresh can unfold it. A container whose elements have all folded (the briefing panel, the Morning Briefing grid, the Cards 1–3 row, the Recent Activity row) is hidden with the `hidden` class rather than removed, and a grid with fewer cards shown uses that many columns from `md` up, so no gap is left. The two disclosure buttons toggle: a second activation folds the card again (`aria-expanded` follows); neither state is persisted. Folded entries keep `data-testid="nothing-to-show-{key}"`. Tests: `tests/e2e/dashboard-quiet-day.spec.js` (SC-QD-01 to SC-QD-06).
 
 ### Page Title (v7.0 — ST-08)
 
@@ -637,6 +639,7 @@ Cards are fully clickable (entire card surface is the click target). Visual affo
 
 | Version | Date | Change |
 |---------|------|--------|
+| 4.5 | 2026-11-24 | ST-09 (EPIC-02, v9.18, BLG-UX-11): §3A built; build notes added; QD-04's failing request corrected to `GET /signals`, the request the Screener Hits card makes. No behaviour change to the spec. |
 | 4.4 | 2026-11-18 | v9.18 design gate. (ST-09, BLG-UX-11) New §3A Quiet-Day Collapse: zero-state elements below the Today list fold into one "Nothing to show:" line with links (QD-01–QD-04). (ST-10, BLG-FE-308) New §4B One Grace Definition (`isInGrace`); §1A card renamed to the shipped "Positions to Watch" and redefined on it, linking to the grace view; Card 1 and Card 3 use it; Card 3 sub-label from `grace_days_remaining` (the `grace_end_date` it read is never returned). (ST-11, BLG-UX-13) §1B New signals rows gain "Plan this" for `new`/`watchlisted` (Product Owner decision); §13 bullet amended; TL-30. Design source: `docs/design/2026-11-18__release-v9.18/dashboard-quiet-day/decision_record.md`. Head of UX & Design sign-off: 2026-11-18. Product Owner approved: 2026-11-18. Head of Specs Team confirmed. |
 | 4.3 | 2026-11-13 | ST-10 (EPIC-04, v9.17, BLG-FE-254): §1B Known Deviations added: DEV-EPIC04-ST10-01 (Stops moved written by both stop recompute paths per the 2026-11-13 ruling; TL-09's latest nightly run date read as today or the previous weekday (UTC), ruling 2026-11-13; `BLG-SPEC-238`). Deviation documentation only; no other text changed. |
 | 4.2 | 2026-11-11 | v9.17 design gate. (ST-04, BLG-FE-257) Card 3 — In Grace Today: click target changes from `/risk` to `/Positions?grace=open`, the single grace view (`positions.md` v2.25 §Grace Period View). Count and next-expiry line unchanged. The Morning Briefing "Positions to Watch" card is already a count and a link and is unchanged. Design source: `docs/design/2026-11-11__release-v9.17/positions-decision-first/decision_record.md` §5.3. Approved: Head of UX & Design and Product Owner, 2026-11-11. |

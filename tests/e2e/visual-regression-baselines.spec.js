@@ -153,6 +153,26 @@ test.describe('Visual regression baselines — contrast-sensitive pages (ST-18)'
       await expect(page).toHaveScreenshot(`dashboard-home-${theme}.png`, { fullPage: true });
     });
 
+    // ST-09 (EPIC-02, v9.18, BLG-UX-11): the baseline above is the quiet day
+    // (every source empty), so every element folds into the "Nothing to show"
+    // line. This one pins a card with data in its v4.0 position (dashboard.md
+    // §3A QD-02; design record dashboard-quiet-day §2.5).
+    test(`DashboardHome populated baseline — ${theme} theme`, async ({ page }) => {
+      await setTheme(page, theme);
+      await page.route(new RegExp(`${API}/positions(\\?|$)`), (route) =>
+        route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify([
+          { id: 'p1', ticker: 'AAPL', market: 'US', status: 'open', pnl: 12.5, grace_period: false, grace_days_remaining: null, current_price: 190, current_trailing_stop: 170 },
+        ]) })
+      );
+      await page.route(new RegExp(`${API}/portfolio(\\?|$)`), (route) =>
+        route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok', data: { portfolio_heat_percent: 0.8, positions: [] } }) })
+      );
+      await page.goto('/#/DashboardHome');
+      await page.waitForLoadState('networkidle');
+      await expect(page.getByTestId('dashboard-status-row')).toBeVisible({ timeout: 15000 });
+      await expect(page).toHaveScreenshot(`dashboard-home-populated-${theme}.png`, { fullPage: true });
+    });
+
     test(`Positions baseline — ${theme} theme`, async ({ page }) => {
       await setTheme(page, theme);
       await page.goto('/#/positions');

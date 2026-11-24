@@ -19,6 +19,15 @@
 
 const { test, expect } = require('./fixtures/api-status-guard');
 
+// ST-09 (EPIC-02, v9.18, BLG-UX-11): with no briefing for today the AI Daily
+// Briefing card folds into the Dashboard's "Nothing to show" line
+// (dashboard.md v4.4 §3A). Its "AI briefing" entry reveals the card, with
+// Regenerate, for the rest of the visit.
+async function revealBriefing(page) {
+  await page.getByTestId('nothing-to-show-ai-briefing').click({ timeout: 15000 });
+  await expect(page.getByTestId('ai-daily-briefing-card')).toBeVisible({ timeout: 8000 });
+}
+
 // v9.12 ST-24 (BLG-FE-210): axe color-contrast scoped to one badge.
 const AxeBuilder = require('@axe-core/playwright').default;
 async function expectNoContrastViolation(page, selector) {
@@ -99,7 +108,7 @@ async function stubRoutes(page) {
 
 async function loadDashboardWithBriefing(page) {
   await page.goto('/#/');
-  await expect(page.getByTestId('ai-daily-briefing-card')).toBeVisible({ timeout: 8000 });
+  await revealBriefing(page);
   // Trigger briefing generation
   await page.getByTestId('regenerate-briefing-btn').click();
   await expect(page.getByTestId('briefing-content')).toBeVisible({ timeout: 8000 });
@@ -240,7 +249,7 @@ test.describe('SC-PD-05 — Collapse state persists via localStorage (AC-05)', (
 
     // Reload so React reads the now-clean localStorage → all sections default to expanded.
     await page.reload();
-    await expect(page.getByTestId('ai-daily-briefing-card')).toBeVisible({ timeout: 8000 });
+    await revealBriefing(page);
     await page.getByTestId('regenerate-briefing-btn').click();
     await expect(page.getByTestId('briefing-content')).toBeVisible({ timeout: 8000 });
 
@@ -262,7 +271,7 @@ test.describe('SC-PD-05 — Collapse state persists via localStorage (AC-05)', (
     // Reload — routes persist (page.route() survives reload); localStorage is NOT cleared
     // because we are no longer using addInitScript.
     await page.reload();
-    await expect(page.getByTestId('ai-daily-briefing-card')).toBeVisible({ timeout: 8000 });
+    await revealBriefing(page);
     await page.getByTestId('regenerate-briefing-btn').click();
     await expect(page.getByTestId('briefing-content')).toBeVisible({ timeout: 8000 });
 

@@ -156,29 +156,36 @@ test.describe('SC-MB-01 — Morning Briefing section renders', () => {
 // ---------------------------------------------------------------------------
 
 test.describe('SC-MB-02 — All 5 cards render without error', () => {
-  test('SC-MB-02: All 5 card titles visible in empty state', async ({ page }) => {
+  // ST-09 (EPIC-02, v9.18, BLG-UX-11): with no data, each Morning Briefing
+  // card folds into the Dashboard's "Nothing to show" line (dashboard.md §3A),
+  // so the empty cards (and, with all five folded, the section) are not shown.
+  test('SC-MB-02: with no data, the empty cards fold into the "Nothing to show" line', async ({ page }) => {
     await mockFallback(page);
     await mockAllMorningBriefingEndpoints(page);
     await gotoDashboard(page);
 
-    await expect(page.getByText('Morning Briefing')).toBeVisible({ timeout: 10000 });
-    await expect(page.getByText('Screener Hits', { exact: true })).toBeVisible({ timeout: 5000 });
-    await expect(page.getByText('Positions to Watch', { exact: true })).toBeVisible({ timeout: 5000 });
-    await expect(page.getByText('Red Flags', { exact: true })).toBeVisible({ timeout: 5000 });
-    await expect(page.getByText('Earnings', { exact: true })).toBeVisible({ timeout: 5000 });
-    await expect(page.getByText('Signal Compliance', { exact: true })).toBeVisible({ timeout: 5000 });
+    const line = page.getByTestId('dashboard-nothing-to-show');
+    await expect(line).toBeVisible({ timeout: 10000 });
+    for (const key of ['screener-hits', 'positions-to-watch', 'red-flags', 'earnings']) {
+      await expect(page.getByTestId(`nothing-to-show-${key}`)).toBeVisible();
+    }
+    // This fixture's compliance endpoint has data, so that card stays, alone
+    // in the section, and is not in the line.
+    const briefing = page.locator('[data-testid="morning-briefing"]');
+    await expect(briefing.getByText('Signal Compliance', { exact: true })).toBeVisible();
+    await expect(page.getByTestId('nothing-to-show-compliance')).toHaveCount(0);
+    await expect(briefing.getByText('Screener Hits', { exact: true })).toHaveCount(0);
   });
 
-  test('SC-MB-02b: Empty state text renders for all cards with no data', async ({ page }) => {
+  test('SC-MB-02b: no empty-state card text is shown for the folded cards', async ({ page }) => {
     await mockFallback(page);
     await mockAllMorningBriefingEndpoints(page);
     await gotoDashboard(page);
 
-    await expect(page.getByText('Morning Briefing')).toBeVisible({ timeout: 10000 });
-    await expect(page.getByText('No new signals', { exact: true })).toBeVisible({ timeout: 5000 });
-    await expect(page.getByText('No positions to watch', { exact: true })).toBeVisible({ timeout: 5000 });
-    await expect(page.getByText('No red flags this week')).toBeVisible({ timeout: 5000 });
-    await expect(page.getByText('No earnings in 7 days')).toBeVisible({ timeout: 5000 });
+    await expect(page.getByTestId('dashboard-nothing-to-show')).toBeVisible({ timeout: 10000 });
+    for (const text of ['No new signals', 'No positions to watch', 'No red flags this week', 'No earnings in 7 days']) {
+      await expect(page.getByText(text, { exact: true })).toHaveCount(0);
+    }
   });
 });
 
@@ -200,11 +207,12 @@ test.describe('SC-MB-03 — Screener Hits card (AC-02)', () => {
 
   test('SC-MB-03b: Screener Hits card links to /Screener', async ({ page }) => {
     await mockFallback(page);
-    await mockAllMorningBriefingEndpoints(page);
+    // With data, so the card is shown (an empty card folds, ST-09).
+    await mockAllMorningBriefingEndpoints(page, { signals: SIGNALS_WITH_NEW });
     await gotoDashboard(page);
 
     await expect(page.getByText('Morning Briefing')).toBeVisible({ timeout: 10000 });
-    await expect(page.getByText('Screener Hits')).toBeVisible({ timeout: 5000 });
+    await expect(page.getByText('Screener Hits', { exact: true })).toBeVisible({ timeout: 5000 });
     const screenerLink = page.locator('[data-testid="morning-briefing"] a[href*="Screener"]');
     await expect(screenerLink.first()).toBeVisible({ timeout: 5000 });
   });

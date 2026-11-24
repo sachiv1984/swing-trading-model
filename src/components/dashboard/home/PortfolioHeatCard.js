@@ -36,6 +36,7 @@ export default function PortfolioHeatCard() {
 
   return (
     <DashboardCard
+      foldKey="portfolio-heat"
       title="Portfolio Heat"
       to="/RiskDashboard"
       isLoading={isLoading}

@@ -3,6 +3,7 @@ import { Sparkles } from "lucide-react";
 import { api } from "../../../api/base44Client";
 import { formatReleaseVersion } from "../../../lib/releaseVersion";
 import DataState from "../../ui/DataState";
+import { useQuietDayFold } from "./QuietDay";
 
 const MAX_BULLETS = 8;
 
@@ -30,10 +31,15 @@ export default function WhatsNewCard() {
   const changes = entry?.changes || [];
   const visible = changes.slice(0, MAX_BULLETS);
   const overflowCount = changes.length - MAX_BULLETS;
+  // dashboard.md v4.4 §3A (ST-09, BLG-UX-11): an empty panel folds into the
+  // "Nothing to show" line; its "What's new" button reveals it.
+  const hidden = useQuietDayFold("whats-new", { isLoading, error, empty: changes.length === 0 });
+  if (hidden) return null;
 
   return (
     <div
       className="rounded-2xl bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 backdrop-blur-sm p-6"
+      id="dashboard-whats-new"
       data-testid="whats-new-card"
     >
       <div className="flex items-center gap-2 mb-4">

@@ -237,42 +237,56 @@ async function gotoDashboard(page) {
   await expect(page.locator('h1').filter({ hasText: 'Dashboard' })).toBeVisible({ timeout: 10000 });
 }
 
+// ST-09 (EPIC-02, v9.18, BLG-UX-11): dashboard.md v4.4 §3A. On the Dashboard
+// an empty card folds into the "Nothing to show" line instead of showing its
+// compact empty state, so these scenarios now check the fold.
 test.describe('Dashboard empty states', () => {
-  test('SC-DES-01: OpenPositionsCard shows compact empty state, not a raw 0, when no positions — dark theme', async ({ page }) => {
+  test('SC-DES-01: an empty Open Positions card folds into the line, not a raw 0 — dark theme', async ({ page }) => {
     await mockFallback(page);
     await mockDashboardEmptyEndpoints(page);
     await gotoDashboard(page);
 
-    await expect(page.getByText('No open positions')).toBeVisible({ timeout: 10000 });
-    await expect(page.getByText('Open a position to see it here.')).toBeVisible({ timeout: 5000 });
+    await expect(page.getByTestId('nothing-to-show-open-positions')).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText('No open positions')).toHaveCount(0);
+    await expect(page.getByText('Open Positions', { exact: true })).toHaveCount(0);
   });
 
-  test('SC-DES-02: OpenPositionsCard empty state renders in light theme too', async ({ page }) => {
+  test('SC-DES-02: the fold applies in light theme too', async ({ page }) => {
     await mockFallback(page);
     await mockDashboardEmptyEndpoints(page);
     await page.addInitScript(() => window.localStorage.setItem('theme', 'light'));
     await gotoDashboard(page);
 
-    await expect(page.getByText('No open positions')).toBeVisible({ timeout: 10000 });
+    await expect(page.getByTestId('nothing-to-show-open-positions')).toBeVisible({ timeout: 10000 });
   });
 
-  test('SC-DES-03: GracePeriodCard shows "No positions in grace" empty state when none in grace', async ({ page }) => {
+  test('SC-DES-03: In Grace Today folds when none in grace', async ({ page }) => {
     await mockFallback(page);
     await mockDashboardEmptyEndpoints(page);
     await gotoDashboard(page);
 
-    await expect(page.getByText('No positions in grace')).toBeVisible({ timeout: 10000 });
+    await expect(page.getByTestId('nothing-to-show-in-grace')).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText('No positions in grace')).toHaveCount(0);
   });
 
-  test('SC-DES-04: RecentActivityCard shows "No recent activity" empty state when trade history is empty', async ({ page }) => {
+  test('SC-DES-04: Recent Activity folds when trade history is empty', async ({ page }) => {
     await mockFallback(page);
     await mockDashboardEmptyEndpoints(page);
     await gotoDashboard(page);
 
-    await expect(page.getByText('No recent activity')).toBeVisible({ timeout: 10000 });
-    await expect(page.getByText('Trades and stop updates will appear here.')).toBeVisible({ timeout: 5000 });
+    await expect(page.getByTestId('nothing-to-show-recent-activity')).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText('No recent activity')).toHaveCount(0);
   });
 });
+
+// One open position, so Card 1 renders (an empty card folds, ST-09).
+async function mockOneOpenPosition(page) {
+  await page.route(`${API}/positions`, (route) =>
+    route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify([
+      { id: 'p1', ticker: 'AAPL', market: 'US', status: 'open', pnl: 12.5, grace_period: false, grace_days_remaining: null },
+    ]) })
+  );
+}
 
 // ---------------------------------------------------------------------------
 // describe("Dashboard briefing hierarchy") — ST-03, AC-01, AC-03
@@ -282,9 +296,11 @@ test.describe('Dashboard briefing hierarchy', () => {
   test('SC-DBH-01: Briefing section renders above the status-card grid on page load — dark theme', async ({ page }) => {
     await mockFallback(page);
     await mockDashboardEmptyEndpoints(page);
+    await mockOneOpenPosition(page);
     await gotoDashboard(page);
+    await page.getByTestId('nothing-to-show-ai-briefing').click({ timeout: 10000 });
 
-    const briefingSection = page.locator('[data-testid="morning-briefing"]').locator('xpath=..');
+    const briefingSection = page.getByTestId('dashboard-briefing-panel');
     const openPositionsCard = page.getByText('Open Positions', { exact: true }).locator('xpath=../..');
 
     await expect(briefingSection).toBeVisible({ timeout: 10000 });
@@ -313,9 +329,11 @@ test.describe('Dashboard briefing hierarchy', () => {
   test('SC-DBH-03: AI Daily Briefing card renders within the briefing section, above the status-card grid', async ({ page }) => {
     await mockFallback(page);
     await mockDashboardEmptyEndpoints(page);
+    await mockOneOpenPosition(page);
     await gotoDashboard(page);
+    await page.getByTestId('nothing-to-show-ai-briefing').click({ timeout: 10000 });
 
-    const briefingSection = page.locator('[data-testid="morning-briefing"]').locator('xpath=..');
+    const briefingSection = page.getByTestId('dashboard-briefing-panel');
     const aiBriefingCard = page.getByTestId('ai-daily-briefing-card');
     await expect(aiBriefingCard).toBeVisible({ timeout: 10000 });
 

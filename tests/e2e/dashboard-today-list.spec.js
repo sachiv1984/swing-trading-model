@@ -350,6 +350,13 @@ for (const theme of ['dark', 'light']) {
     test(`SC-TL-28 (${theme}): with Card 4 removed, Recent Activity spans its row at 1440px`, async ({ page }) => {
       await page.setViewportSize({ width: 1440, height: 900 });
       await mockSources(page);
+      // ST-09 (v9.18): an empty Recent Activity card folds into the "Nothing to
+      // show" line (dashboard.md §3A), so the card is given one trade here.
+      await page.route(/localhost:8000\/trades(\?|$)/, (route) =>
+        route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok', data: { trades: [
+          { id: 't1', ticker: 'AAPL', status: 'closed', entry_date: '2026-11-01', exit_date: '2026-11-20', r_multiple: 1.2 },
+        ] } }) })
+      );
       await gotoDashboard(page);
       const card = page.getByText('Recent Activity', { exact: true }).locator('xpath=ancestor::a[1]');
       await expect(card).toBeVisible();

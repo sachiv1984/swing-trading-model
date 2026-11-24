@@ -7,7 +7,7 @@
  *
  *   SC-WN-01  Ready state: header shows version, bullets render, in order
  *   SC-WN-02  Truncation: >8 changes shows first 8 + "+N more" trailer
- *   SC-WN-03  Empty state: data null renders "Nothing to show"
+ *   SC-WN-03  Empty state: data null folds into the Dashboard line; revealed, it renders "Nothing to show" (ST-09, v9.18)
  *   SC-WN-04  Error state: request failure renders "Unable to load release notes"
  *   SC-WN-05  Loading state: spinner visible before response resolves
  *   SC-WN-06  Curated User Impact copy (ST-15, BLG-QA-152, EPIC-04, v8.9):
@@ -98,13 +98,19 @@ test('SC-WN-02: truncates to 8 bullets with a "+N more" trailer', async ({ page 
   await expect(overflowItem).toHaveClass(/dark:text-slate-400/);
 });
 
-test('SC-WN-03: empty state (data null) shows "Nothing to show"', async ({ page }) => {
+test('SC-WN-03: empty state (data null) folds into the line; "What\'s new" reveals "Nothing to show"', async ({ page }) => {
   await mockFallback(page);
   await mockChangelogLatest(page, { status: 'ok', data: null });
 
-  await gotoDashboard(page);
+  await page.goto('/#/DashboardHome');
+  await expect(page.getByTestId('nothing-to-show-whats-new')).toBeVisible({ timeout: 10000 });
 
+  // ST-09 (EPIC-02, v9.18, BLG-UX-11): an empty panel folds into the
+  // Dashboard's "Nothing to show" line (dashboard.md §3A); its "What's new"
+  // entry reveals the panel with its own empty state.
   const card = page.locator('[data-testid="whats-new-card"]');
+  await expect(card).toHaveCount(0, { timeout: 8000 });
+  await page.getByTestId('nothing-to-show-whats-new').click();
   await expect(card.getByText('Nothing to show')).toBeVisible({ timeout: 8000 });
   await expect(card.getByText('Check back after the next release.')).toBeVisible();
 });

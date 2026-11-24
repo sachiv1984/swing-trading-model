@@ -14,6 +14,7 @@ export default function ScreenerHitsCard() {
 
   return (
     <DashboardCard
+      foldKey="screener-hits"
       title="Screener Hits"
       to="/Screener"
       isLoading={isLoading}
