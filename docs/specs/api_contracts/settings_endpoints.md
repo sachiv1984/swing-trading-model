@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 1.6.0
-**Last Updated:** 2026-10-17 (ST-08, EPIC-02, v9.13, BLG-API-07 — POST /settings and PATCH /settings/{settings_id} reject the four §11-fixed strategy fields with 400); prior — 2026-10-15 (ST-26, EPIC-04, v9.12, BLG-SEC-41 — settings writes are logged to settings_change_log; GET /settings returns last_change; X-Request-Source header); prior — 2026-10-13 (ST-16, EPIC-02, v9.12, BLG-BE-144 — POST /settings keeps column defaults for omitted or null fields); prior history retained — see prior entries in version control
+**Version:** 1.6.1
+**Last Updated:** 2026-11-23 (ST-29, EPIC-05, v9.18, BLG-BE-181 — GET /settings returns last_change null when the change-log read fails); prior — 2026-10-17 (ST-08, EPIC-02, v9.13, BLG-API-07 — POST /settings and PATCH /settings/{settings_id} reject the four §11-fixed strategy fields with 400); prior — 2026-10-15 (ST-26, EPIC-04, v9.12, BLG-SEC-41 — settings writes are logged to settings_change_log; GET /settings returns last_change; X-Request-Source header); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 # settings_endpoints.md
@@ -116,7 +116,7 @@ Response uses the standard success envelope from **conventions.md**.
 | `concentration_sector_threshold_pct` | float | `30.0` | Alert threshold: fires when a single sector's combined heat exceeds this percentage of total portfolio heat. Read by `GET /portfolio/concentration-status` |
 | `created_at` | string (ISO-8601) | — | Timestamp the settings row was created (single global row, set once) |
 | `updated_at` | string (ISO-8601) | — | Timestamp of the most recent `PATCH /settings/{settings_id}` / `POST /settings` write |
-| `last_change` | object \| null | `null` | v1.5.0 (ST-26, BLG-SEC-41): the most recent logged save from `settings_change_log` (`data_model.md` DS-33), or `null` when nothing is logged. `field`, `old_value`, `new_value` describe the first field changed in that save; `changes` lists every field changed in it. Values are text as stored (numbers without trailing zeros; `old_value` is `null` for a field set on creation). `changed_at` is the database time of the write. `request_source` is `settings_page` or `api` (see §Settings change log below). Read-only: not accepted on `POST`/`PATCH`, and ignored if sent |
+| `last_change` | object \| null | `null` | v1.5.0 (ST-26, BLG-SEC-41): the most recent logged save from `settings_change_log` (`data_model.md` DS-33), or `null` when nothing is logged. Also `null` when the change-log read fails: the failure is logged at warning level and the rest of the settings payload is returned unchanged with `200` (v1.6.1, ST-29, BLG-BE-181). `field`, `old_value`, `new_value` describe the first field changed in that save; `changes` lists every field changed in it. Values are text as stored (numbers without trailing zeros; `old_value` is `null` for a field set on creation). `changed_at` is the database time of the write. `request_source` is `settings_page` or `api` (see §Settings change log below). Read-only: not accepted on `POST`/`PATCH`, and ignored if sent |
 
 #### Settings change log
 
@@ -355,6 +355,7 @@ Errors use the standard error envelope from **conventions.md**.
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.6.1 | 2026-11-23 | ST-29 (BLG-BE-181, EPIC-05, v9.18): `GET /settings` no longer returns `500` when the `settings_change_log` read fails; it logs a warning and returns the settings with `last_change: null`. Response shape unchanged. |
 | 1.6.0 | 2026-10-17 | ST-08 (BLG-API-07, EPIC-02, v9.13): behavioural change — `POST /settings` and `PATCH /settings/{settings_id}` return `400` when the body sets `min_hold_days`, `atr_period`, `atr_multiplier_initial` or `atr_multiplier_trailing` to a non-null value (fixed by `strategy_rules.md` §11); previously stored and ignored. Absent or `null` is a no-op. The four fields are removed from the request examples and stay in `GET /settings` responses. The Settings page already omits them. API Contracts & Documentation Owner ruling (A), ESC-EXEC-20261017-04. |
 | 1.5.0 | 2026-10-15 | ST-26 (BLG-SEC-41, EPIC-04, v9.12): every `POST /settings` and `PATCH /settings/{settings_id}` write is logged to `settings_change_log` (DS-33), tagged by the optional `X-Request-Source` header. `GET /settings` returns `last_change` on the settings object. Additive; no new endpoint. |
 | 1.4.1 | 2026-10-13 | ST-16 (BLG-BE-144, EPIC-02, v9.12): `POST /settings` no longer inserts omitted or `null` fields, so a first-time save keeps the column defaults for `min_hold_days`, `atr_period`, `atr_multiplier_initial` and `atr_multiplier_trailing`. No shape change. |

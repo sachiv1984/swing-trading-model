@@ -28,6 +28,10 @@ import { todayLocal } from "../lib/localDate";
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:8000";
 
+// ST-31 (BLG-FE-225, v9.18): how long a fetched ATR preview is reused for the
+// same ticker and market before Trade Entry asks GET /market/atr again.
+export const ATR_PREVIEW_STALE_TIME_MS = 5 * 60 * 1000;
+
 // ST-05 (BLG-FE-271, EPIC-02, v9.16): position_form.md v1.14 §Pre-Entry Checks
 // "When it shows" table for a linked plan. `linkedAtMs` is when the plan was
 // linked; the snapshot is stale when captured more than 24 hours before it.
@@ -139,36 +143,48 @@ export default function TradeEntry() {
   // into the input: the field is submitted blank, so the backend still fetches
   // the ATR itself at save. A typed ATR always takes precedence.
   // status: idle | loading | ready | none
-  const [atrPreview, setAtrPreview] = useState({ status: "idle" });
   // ST-05 (BLG-FE-222, v9.15): one normalised ticker (trim, upper-case) for
   // the ATR preview, the pre-entry checks and the submit.
   const normalizedTicker = formData.ticker.trim().toUpperCase();
   const previewTicker = normalizedTicker;
   const atrBlank = String(formData.atr_value).trim() === "";
 
+  // ST-31 (BLG-FE-225, v9.18): the preview is a query keyed on
+  // ["market-atr", ticker, market] with a 5-minute staleTime, so entering the
+  // same ticker again within that window makes no second GET /market/atr call.
+  // The 300 ms debounce stays: the key only takes the ticker once typing pauses.
+  const [debouncedAtrKey, setDebouncedAtrKey] = useState({ ticker: "", market: formData.market });
   useEffect(() => {
-    if (!previewTicker || !atrBlank) {
-      setAtrPreview({ status: "idle" });
-      return undefined;
-    }
-    let cancelled = false;
-    setAtrPreview({ status: "loading" });
-    const timer = setTimeout(async () => {
-      try {
-        const res = await api.market.getAtr(previewTicker, formData.market);
-        if (cancelled) return;
-        const atr = typeof res?.atr === "number" && res.atr > 0 ? res.atr : null;
-        setAtrPreview(atr != null ? { status: "ready", atr, asOf: res.as_of } : { status: "none" });
-      } catch {
-        // No error banner: a failed fetch falls back to "Calculated on save".
-        if (!cancelled) setAtrPreview({ status: "none" });
-      }
-    }, INPUT_DEBOUNCE_MS);
-    return () => {
-      cancelled = true;
-      clearTimeout(timer);
-    };
-  }, [previewTicker, formData.market, atrBlank]);
+    const timer = setTimeout(
+      () => setDebouncedAtrKey({ ticker: previewTicker, market: formData.market }),
+      INPUT_DEBOUNCE_MS,
+    );
+    return () => clearTimeout(timer);
+  }, [previewTicker, formData.market]);
+  const atrKeySettled =
+    debouncedAtrKey.ticker === previewTicker && debouncedAtrKey.market === formData.market;
+  const atrQuery = useQuery({
+    queryKey: ["market-atr", debouncedAtrKey.ticker, debouncedAtrKey.market],
+    queryFn: () => api.market.getAtr(debouncedAtrKey.ticker, debouncedAtrKey.market),
+    enabled: Boolean(debouncedAtrKey.ticker) && atrBlank && atrKeySettled,
+    staleTime: ATR_PREVIEW_STALE_TIME_MS,
+    // One attempt, as before: a failed fetch falls back to "Calculated on save".
+    retry: false,
+    refetchOnWindowFocus: false,
+  });
+  let atrPreview;
+  if (!previewTicker || !atrBlank) {
+    atrPreview = { status: "idle" };
+  } else if (!atrKeySettled || atrQuery.isPending) {
+    atrPreview = { status: "loading" };
+  } else if (atrQuery.isError) {
+    // No error banner: a failed fetch falls back to "Calculated on save".
+    atrPreview = { status: "none" };
+  } else {
+    const res = atrQuery.data;
+    const atr = typeof res?.atr === "number" && res.atr > 0 ? res.atr : null;
+    atrPreview = atr != null ? { status: "ready", atr, asOf: res.as_of } : { status: "none" };
+  }
 
   // ST-18 (BLG-FE-203, v9.12): a typed ATR where 5× ATR ≥ entry puts the stop
   // at or below zero (usually an ATR typed in pence or cents). The inline error

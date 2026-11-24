@@ -116,7 +116,8 @@ from database import (
     update_position_note,
     update_position_tags,
     get_all_tags,
-    search_positions_by_tags
+    search_positions_by_tags,
+    apply_split_adjustments,
 )
 
 from utils.pricing import (
@@ -160,6 +161,13 @@ from utils.calculations import (
 from services.alerts_service import ensure_alerts_tables
 from services.compliance_service import get_position_compliance
 from services.compliance_recheck_service import get_compliance_recheck
+from services.position_service import SPLIT_PENDING_EXIT_ERROR
+from services.split_service import (
+    SplitNotPendingError,
+    SplitSharesError,
+    confirm_split,
+    detect_position_splits,
+)
 from services.gap_risk_service import get_gap_risk
 from services.position_lifecycle_service import (
     get_lifecycle_fields_for_position,
@@ -580,7 +588,18 @@ def get_settings_endpoint():
         
         settings_list = [decimal_to_float(s) for s in settings]
         # ST-26 (BLG-SEC-41, v9.12): the most recent logged save, or None.
-        settings_list[0]["last_change"] = get_last_settings_change()
+        # ST-29 (BLG-BE-181, v9.18): a failed change-log read must not fail the
+        # settings read; it logs a warning and returns last_change: null.
+        try:
+            last_change = get_last_settings_change()
+        except Exception as change_log_error:
+            import logging as _logging
+            _logging.getLogger(__name__).warning(
+                "GET /settings: settings change-log read failed; returning last_change null: %s",
+                change_log_error,
+            )
+            last_change = None
+        settings_list[0]["last_change"] = last_change
         return {
             "status": "ok",
             "data": settings_list
@@ -722,6 +741,9 @@ def exit_position_endpoint(position_id: str, request: ExitPositionRequest):
         )
     except ValueError as e:
         status_code = 404 if str(e) in EXIT_NOT_FOUND_ERRORS else 400
+        # ST-27 (BLG-BE-223, v9.18): a pending split is a state conflict.
+        if str(e) == SPLIT_PENDING_EXIT_ERROR:
+            status_code = 409
         raise HTTPException(status_code=status_code, detail=str(e))
     if result.get("market") == "US" and not result.get("is_partial_exit"):
         try:
@@ -836,7 +858,12 @@ def nightly_stop_update_endpoint():
     Spec: docs/specs/api_contracts/position_endpoints.md#POST /positions/nightly-stop-update
     """
     try:
+        # ST-27 (BLG-BE-223, v9.18; strategy_rules.md §9.1): detect splits on
+        # held tickers first, so a newly split position is paused this run.
+        # Never raises; a provider failure is reported per ticker.
+        split_summary = detect_position_splits()
         result = run_nightly_trailing_stop_update()
+        result["splits"] = split_summary
         record_nightly_job("trailing_stop", "ok", detail=result)
         return {"status": "ok", "data": result}
     except ValueError as e:
@@ -1122,6 +1149,8 @@ def get_daily_pnl_endpoint(year: int, month: int):
             "data": report["days"],
             "estimated_unrealised_pnl": report["estimated_unrealised_pnl"],
             "unrealised_note": report["unrealised_note"],
+            # ST-30 (BLG-SPEC-203, v9.18): positions valued at a stale price.
+            "unrealised_price_stale_count": report.get("unrealised_price_stale_count", 0),
         }
     except HTTPException:
         raise
@@ -1175,6 +1204,8 @@ def get_monthly_pnl_endpoint(year: Optional[int] = None, format: Optional[str] =
             "data": report["months"],
             "estimated_unrealised_pnl": report["estimated_unrealised_pnl"],
             "unrealised_note": report["unrealised_note"],
+            # ST-30 (BLG-SPEC-203, v9.18): positions valued at a stale price.
+            "unrealised_price_stale_count": report.get("unrealised_price_stale_count", 0),
             "compliance_summary": compliance_summary,
         }
     except ValueError as e:
@@ -1915,7 +1946,8 @@ def get_grace_period_alerts_endpoint():
                     """,
                     (portfolio_id, GRACE),
                 )
-                rows = cur.fetchall()
+                # ST-27 (BLG-BE-223, v9.18): confirmed splits applied on read.
+                rows = apply_split_adjustments(cur, cur.fetchall())
 
         alerts = []
         for row in rows:
@@ -2074,6 +2106,31 @@ def get_position_by_id_endpoint(position_id: str):
         raise HTTPException(status_code=500, detail="Internal server error")
 
 
+class SplitConfirmRequest(BaseModel):
+    """ST-27 (BLG-BE-223, v9.18): `shares` is the post-split share count, needed
+    only when quantity × ratio is not whole (strategy_rules.md §9.1)."""
+    shares: Optional[float] = None
+
+
+@app.post("/positions/{position_id}/split-adjustment/confirm")
+def confirm_split_adjustment_endpoint(position_id: str, request: SplitConfirmRequest = None):
+    """Confirm a detected stock split on an open position (ST-27, BLG-BE-223, v9.18).
+
+    Spec: docs/specs/api_contracts/position_endpoints.md#POST /positions/{position_id}/split-adjustment/confirm
+    """
+    try:
+        result = confirm_split(position_id, shares=(request.shares if request else None))
+        return {"status": "ok", "data": result}
+    except SplitNotPendingError as e:
+        raise HTTPException(status_code=409, detail=str(e))
+    except SplitSharesError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception:
+        import traceback
+        traceback.print_exc()
+        return JSONResponse(status_code=500, content={"status": "error", "message": "Internal server error"})
+
+
 @app.post("/positions/{position_id}/refresh-state")
 def refresh_position_state_endpoint(position_id: str):
     """Explicitly refresh lifecycle state for a position."""
@@ -2165,6 +2222,12 @@ def get_position_gap_risk_endpoint(position_id: str):
         raise HTTPException(status_code=500, detail="Internal server error")
 
 
+SPLIT_PENDING_TRAIL_ERROR = (
+    "A stock split on this position is waiting for confirmation; the trail is shown "
+    "after it is confirmed (strategy_rules.md §9.1)."
+)
+
+
 @app.get("/positions/{position_id}/stop-trail")
 def get_stop_trail_endpoint(position_id: str):
     """
@@ -2198,8 +2261,8 @@ def get_stop_trail_endpoint(position_id: str):
             with conn.cursor() as cur:
                 cur.execute(
                     """
-                    SELECT p.id, p.ticker, p.market, p.entry_price, p.initial_stop,
-                           p.current_stop, p.atr,
+                    SELECT p.id, p.ticker, p.market, p.entry_price, p.fill_price, p.fx_rate,
+                           p.initial_stop, p.current_stop, p.atr,
                            tp.id AS trade_plan_id, tp.r_target
                     FROM positions p
                     LEFT JOIN trade_plans tp ON tp.position_id = p.id
@@ -2208,9 +2271,19 @@ def get_stop_trail_endpoint(position_id: str):
                     (position_id, portfolio_id),
                 )
                 row = cur.fetchone()
+                # ST-27 (BLG-BE-223, v9.18): confirmed splits applied on read, so
+                # entry and initial stop match the rescaled current_stop and atr.
+                if row:
+                    row = apply_split_adjustments(cur, [row])[0]
 
         if not row:
             raise HTTPException(status_code=404, detail=f"Position {position_id} not found")
+
+        # ST-27 (BLG-BE-223, v9.18; strategy_rules.md §9.1): with a split
+        # pending, the stored entry, stop and ATR are pre-split while the live
+        # price is post-split, so no trail is computed or logged.
+        if row.get("split_pending"):
+            raise HTTPException(status_code=409, detail=SPLIT_PENDING_TRAIL_ERROR)
 
         ticker = str(row.get("ticker") or "")
         if row.get("market") == "UK":
@@ -2230,7 +2303,12 @@ def get_stop_trail_endpoint(position_id: str):
         # multiplier. The candidate is not ratcheted against current_stop
         # (-inf), so trail_difference compares it with the stored stop.
         from strategy_parameters import stop_multiplier_settings
-        entry_price = float(row.get("entry_price") or 0)
+        # BLG-BE-229 (fixed in ST-27, v9.18): the native entry, as every other
+        # stop path uses (BLG-BE-208). entry_price is GBP for a US row, so the
+        # profit test, breakeven floor and R compared GBP with the USD price.
+        from services.position_service import native_entry_price
+        row = decimal_to_float(dict(row))
+        entry_price = float(native_entry_price(row, get_live_fx_rate())) if row.get("entry_price") is not None else 0.0
         atr_trail_stop, _reason, _mult = calculate_trailing_stop(
             current_price=current_price,
             atr=atr,

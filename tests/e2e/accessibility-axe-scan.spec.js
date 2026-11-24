@@ -395,8 +395,8 @@ async function mockSt19Routes(page) {
         status: 'ok',
         data: {
           tax_year_label: '2026/27',
-          summary: { total_realised_pnl: 115, total_gross_profit: 175, total_gross_loss: -60, win_rate: 50, total_closed_trades: 7, restated_month_count: 1 },
-          trades: [], estimated_unrealised_pnl: 0, unrealised_note: null,
+          summary: { total_realised_pnl: 115, total_gross_profit: 175, total_gross_loss: -60, win_rate: 50, total_closed_trades: 7, restated_month_count: 1, estimated_unrealised_pnl: 0, unrealised_note: null, unrealised_price_stale_count: 1 },
+          trades: [],
         },
       }),
     })

@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 0.20
-**Last Updated:** 2026-11-04 (ST-21, EPIC-03, v9.15, BLG-BE-172 — POST /reports/monthly-pnl/narrative returns the code-written fallback when the regeneration call fails; 503 only for a first-call failure); prior — 2026-11-02 (ST-24, EPIC-04, v9.14, BLG-FEAT-99 — `GET /reports/monthly-pnl` adds `by_exit_condition` per month); prior — 2026-10-17 (ST-09, EPIC-02, v9.13, BLG-BE-156 — `GET /reports/monthly-pnl` returns 200 with realised P&L and no restatement fields when `monthly_pnl_snapshots` fails); prior history retained — see prior entries in version control
+**Version:** 0.21
+**Last Updated:** 2026-11-23 (ST-30, EPIC-05, v9.18, BLG-SPEC-203 — unrealised P&L on the three report endpoints is live, the GET /positions basis; new unrealised_price_stale_count); prior — 2026-11-04 (ST-21, EPIC-03, v9.15, BLG-BE-172 — POST /reports/monthly-pnl/narrative returns the code-written fallback when the regeneration call fails; 503 only for a first-call failure); prior — 2026-11-02 (ST-24, EPIC-04, v9.14, BLG-FEAT-99 — `GET /reports/monthly-pnl` adds `by_exit_condition` per month); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Overview
@@ -138,8 +138,9 @@ Response uses the standard success envelope from **conventions.md**.
 | `win_count` | integer | Number of trades with `realised_pnl_gbp > 0` |
 | `loss_count` | integer | Number of trades with `realised_pnl_gbp ≤ 0` |
 | `win_rate` | float | `win_count / total_closed_trades × 100`. `0.0` when `total_closed_trades = 0`. |
-| `estimated_unrealised_pnl` | float | Sum of `pnl` from currently open positions (from `positions` table). GBP. See `unrealised_note`. |
-| `unrealised_note` | string | Fixed explanatory note on the provenance and limitations of `estimated_unrealised_pnl` |
+| `estimated_unrealised_pnl` | float \| null | *(v0.21 — ST-30, BLG-SPEC-203)* Sum of the live GBP `pnl` that `get_positions_with_prices()` computes for each open position, the `GET /positions` basis, so it matches the Positions page at the same moment. Before v0.21 it summed the nightly `positions.pnl`. `null` if the live path fails (the figure is omitted, never taken from the nightly column). A position with a pending stock split is included on the pre-split basis (live price × ratio, `strategy_rules.md` §9.1), so its P&L is not distorted by the split. See `unrealised_note`. |
+| `unrealised_note` | string | Fixed explanatory note on the provenance and limitations of `estimated_unrealised_pnl`; ends "Calculated live at current prices, on the same basis as the Positions page." (v0.21) |
+| `unrealised_price_stale_count` | integer | *(v0.21 — ST-30)* Open positions valued at their stored price because the live price fetch failed (`price_is_stale` on `GET /positions`). `0` when every price is live. |
 | `restated_month_count` | integer | *(v0.13 — ST-08, BLG-FR-05)* Count of this tax year's calendar months whose live-computed Monthly P&L total now disagrees with its stored `monthly_pnl_snapshots` baseline. `0` if no month in range has a snapshot yet, or none have drifted. Derived, not a stored figure — see `metrics_definitions.md` and `data_model.md` DS-20 for the disclosed April/tax-year boundary approximation (calendar-month overlap, not day-exact) and for why no live action can currently trigger a restatement. |
 | `restated_months_notice` | string \| null | `"Includes N restated month(s)"` when `restated_month_count > 0`, else `null`. Shown on the Tax Year summary bar. |
 
@@ -513,8 +514,9 @@ Top-level siblings of `data`, same field/computation as `GET /reports/tax-year`'
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `estimated_unrealised_pnl` | float \| null | Sum of `pnl` across all currently open positions. `null` when there is no portfolio yet. |
+| `estimated_unrealised_pnl` | float \| null | Same field/computation as `GET /reports/tax-year`'s `summary.estimated_unrealised_pnl`: live, the `GET /positions` basis (v0.21, ST-30). `null` when there is no portfolio yet or the live path fails. |
 | `unrealised_note` | string | Static disclaimer text — same value as the Tax Year report's `unrealised_note`. |
+| `unrealised_price_stale_count` | integer | *(v0.21 — ST-30)* Same as the Tax Year report's: positions valued at a stale price. `0` when there is no portfolio yet. |
 
 ---
 
@@ -740,8 +742,9 @@ Day-granularity sibling of `GET /reports/monthly-pnl` — returns day-by-day rea
 | `data[].day` | integer | Day of month (1–31) |
 | `data[].realised_pnl_gbp` | float | Sum of `pnl` for closed trades with `exit_date` on this day. GBP. Negative if net loss. |
 | `data[].trade_count` | integer | Count of closed trades exiting this day |
-| `estimated_unrealised_pnl` | float \| null | Same field/computation as `GET /reports/monthly-pnl` — current-snapshot only, never attributed to any individual day (readiness pass AC-03). `null` when there is no portfolio yet. |
+| `estimated_unrealised_pnl` | float \| null | Same field/computation as `GET /reports/monthly-pnl` — current open positions only (live since v0.21), never attributed to any individual day (readiness pass AC-03). `null` when there is no portfolio yet. |
 | `unrealised_note` | string | Same static disclaimer text as `GET /reports/monthly-pnl` / `GET /reports/tax-year`. |
+| `unrealised_price_stale_count` | integer | *(v0.21 — ST-30)* Same field/computation as `GET /reports/monthly-pnl`. |
 
 **Scope:** Only days with 1+ closed-trade exits are included in `data`. Empty array if no closed trades in the given month.
 
@@ -833,6 +836,7 @@ GET /reports/reconciliation?year=2025
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.21 | 2026-11-23 | ST-30 (EPIC-05, v9.18, BLG-SPEC-203; Product Owner decision 2026-11-18, option (a)): `estimated_unrealised_pnl` on `GET /reports/tax-year` (`summary`), `GET /reports/monthly-pnl` and `GET /reports/daily-pnl` is the live sum of `get_positions_with_prices()` `pnl` (GBP), the `GET /positions` basis, instead of the nightly `positions.pnl`; `null` if the live path fails. New `unrealised_price_stale_count` on all three. `unrealised_note` gains its live-basis sentence. Agrees with `reports.md` v0.29; `openapi.yaml` 3.50.1. |
 | 0.20 | 2026-11-04 | ST-21 (EPIC-03, v9.15, BLG-BE-172): `POST /reports/monthly-pnl/narrative` — when attempt 1 fails its checks and the regeneration call raises, the code-written summary is stored and returned (`200`, `source: "fallback"`) with the terminal audit result `fail_fallback:model_call_failed`, instead of `503`. A model failure on attempt 1 still returns `503`. The 503 row and the audit result list say so. No shape change; `openapi.yaml` 3.47.2 updates the descriptions. |
 | 0.19 | 2026-11-02 | ST-24 (EPIC-04, v9.14, BLG-FEAT-99): `GET /reports/monthly-pnl` adds `by_exit_condition` per month (realised P&L and trade count by §8 exit condition: `stop_loss`, `risk_off`, `manual`), summing to the month's figures; omitted from every month when the breakdown fails or does not reconcile. JSON only. Agrees with `reports.md` v0.26. |
 | 0.18 | 2026-10-17 | ST-09 (EPIC-02, v9.13, BLG-BE-156): `GET /reports/monthly-pnl` no longer fails when `monthly_pnl_snapshots` cannot be read or written. It returns `200` with realised P&L for every month and none of the four restatement fields, and logs the failure with `exc_info`. Response shape on success unchanged. Agrees with `reports.md` v0.25. |

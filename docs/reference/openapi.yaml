@@ -2,7 +2,14 @@ openapi: 3.0.3
 
 info:
   title: Momentum Trading Assistant API
-  version: 3.50.0
+  version: 3.51.1
+  # v3.51.1 (2026-11-23, ST-27, EPIC-05, v9.18): GET /positions/{position_id}/stop-trail returns 409 while a split
+  # is pending, and uses the native entry for US positions (BLG-BE-229).
+  # v3.51.0 (2026-11-23, ST-27, EPIC-05, v9.18): new POST /positions/{position_id}/split-adjustment/confirm;
+  # Position gains split_pending and split_adjustments (BLG-BE-223).
+  # v3.50.1 (2026-11-23, ST-30, EPIC-05, v9.18): GET /reports/tax-year (summary), /reports/monthly-pnl and
+  # /reports/daily-pnl estimated_unrealised_pnl is live (GET /positions basis) and gains unrealised_price_stale_count
+  # (BLG-SPEC-203). No new endpoint.
   # v3.50.0 (2026-11-19, ST-03, EPIC-01, v9.18): GET /notifications items gain derived delivery_status
   # (sent | not_requested | pending | not_sent) and delivery_reason (BLG-FE-318). No new endpoint.
   # v3.49.0 (2026-11-12, ST-09, EPIC-04, v9.17): GET /positions gains stop_last_moved_date and
@@ -900,12 +907,16 @@ paths:
                           estimated_unrealised_pnl:
                             type: number
                             nullable: true
-                            description: v7.0 ST-14 (BLG-FEAT-70) — sum of pnl across currently open positions, computed on-read at request time (not stored). Same field/computation as GET /reports/monthly-pnl's value.
+                            description: v7.0 ST-14 (BLG-FEAT-70) — sum of pnl across currently open positions. v9.18 ST-30 (BLG-SPEC-203) — the live GBP pnl from get_positions_with_prices(), the GET /positions basis; null if the live path fails. Same field/computation as GET /reports/monthly-pnl's value.
                             example: 340.50
                           unrealised_note:
                             type: string
                             description: v7.0 ST-14 (BLG-FEAT-70) — static disclaimer text, same value as GET /reports/monthly-pnl's unrealised_note.
-                            example: "Reflects current open positions at time of report generation, not positions open during the specified tax year. Indicative only — not a tax liability."
+                            example: "Reflects current open positions at time of report generation, not positions open during the specified tax year. Indicative only — not a tax liability. Calculated live at current prices, on the same basis as the Positions page."
+                          unrealised_price_stale_count:
+                            type: integer
+                            description: v9.18 ST-30 (BLG-SPEC-203) — open positions valued at their stored price because the live price fetch failed (price_is_stale on GET /positions).
+                            example: 0
                       trades:
                         type: array
                         items:
@@ -1055,12 +1066,16 @@ paths:
                   estimated_unrealised_pnl:
                     type: number
                     nullable: true
-                    description: v7.0 ST-14 (BLG-FEAT-70) — sum of pnl across currently open positions. null if no portfolio yet.
+                    description: v7.0 ST-14 (BLG-FEAT-70) — sum of pnl across currently open positions. v9.18 ST-30 (BLG-SPEC-203) — live, the GET /positions basis. null if no portfolio yet or the live path fails.
                     example: 340.50
                   unrealised_note:
                     type: string
                     description: v7.0 ST-14 (BLG-FEAT-70) — static disclaimer text, same value as GET /reports/tax-year's unrealised_note.
-                    example: "Reflects current open positions at time of report generation, not positions open during the specified tax year. Indicative only — not a tax liability."
+                    example: "Reflects current open positions at time of report generation, not positions open during the specified tax year. Indicative only — not a tax liability. Calculated live at current prices, on the same basis as the Positions page."
+                  unrealised_price_stale_count:
+                    type: integer
+                    description: v9.18 ST-30 (BLG-SPEC-203) — open positions valued at a stale price.
+                    example: 0
                   compliance_summary:
                     type: object
                     nullable: true
@@ -1308,7 +1323,11 @@ paths:
                     example: 340.50
                   unrealised_note:
                     type: string
-                    example: "Reflects current open positions at time of report generation, not positions open during the specified tax year. Indicative only — not a tax liability."
+                    example: "Reflects current open positions at time of report generation, not positions open during the specified tax year. Indicative only — not a tax liability. Calculated live at current prices, on the same basis as the Positions page."
+                  unrealised_price_stale_count:
+                    type: integer
+                    description: v9.18 ST-30 (BLG-SPEC-203) — open positions valued at a stale price.
+                    example: 0
         "400":
           $ref: "#/components/responses/BadRequest"
         "500":
@@ -2126,6 +2145,65 @@ paths:
         "500":
           $ref: "#/components/responses/InternalError"
 
+  /positions/{position_id}/split-adjustment/confirm:
+    post:
+      tags: [Positions]
+      summary: Confirm a detected stock split on an open position
+      description: |
+        v9.18 ST-27 (BLG-BE-223; strategy_rules.md §9.1 v1.28; data_model.md DS-42). Applies the
+        position's pending split: quantity × ratio; entry, initial and trailing stop ÷ ratio; ATR ÷ ratio
+        until the next recalculation. The stored entry fields are not edited; the adjustment row records
+        the confirmation. `shares` is required only when quantity × ratio is not whole.
+        Canonical: position_endpoints.md §POST /positions/{position_id}/split-adjustment/confirm.
+      parameters:
+        - in: path
+          name: position_id
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Position UUID
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                shares:
+                  type: number
+                  nullable: true
+                  description: Post-split share count, within 1 share of quantity × ratio.
+      responses:
+        "200":
+          description: Split confirmed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  data:
+                    type: object
+                    properties:
+                      position_id: { type: string, format: uuid }
+                      ticker: { type: string }
+                      ratio: { type: number, example: 2.0 }
+                      ratio_label: { type: string, example: "2:1" }
+                      effective_date: { type: string, format: date }
+                      shares_before: { type: number }
+                      shares_after: { type: number }
+                      entry_price: { type: number, nullable: true, description: Native entry after the split }
+                      initial_stop: { type: number, nullable: true }
+                      current_stop: { type: number, nullable: true }
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "409":
+          description: No split to confirm (not pending, already confirmed, or position not open)
+        "500":
+          $ref: "#/components/responses/InternalError"
   /positions/{position_id}/refresh-state:
     post:
       tags: [Positions]
@@ -2623,6 +2701,8 @@ paths:
                         type: string
         "404":
           $ref: "#/components/responses/NotFound"
+        "409":
+          description: v9.18 ST-27 — a stock split on the position is waiting for confirmation.
         "422":
           description: ATR not available for position.
         "503":
@@ -7059,6 +7139,24 @@ components:
             GET /portfolio (v9.11 ST-10, BLG-BE-154); GET /positions carries the same flag (v9.14 ST-07,
             BLG-BE-168). True when the live price fetch failed and
             current_price is the last stored native price converted at live_fx_rate (no FX estimate).
+        split_pending:
+          type: object
+          nullable: true
+          additionalProperties: true
+          description: >
+            v9.18 ST-27 (BLG-BE-223, strategy_rules.md §9.1). GET /positions only. A detected, unconfirmed
+            stock split with the confirmation dialog's figures (id, ratio, ratio_label, effective_date, source,
+            detected_at, shares_before, shares_after, shares_after_exact, shares_after_is_whole, entry_before,
+            entry_after, stop_before, stop_after, cost_before, cost_after). While set, no exit is recommended
+            and stop alerts are not sent. Canonical: position_endpoints.md §GET /positions.
+        split_adjustments:
+          type: array
+          description: >
+            v9.18 ST-27. GET /positions only. Confirmed splits, oldest first; shares, entry and stops are
+            already adjusted (data_model.md DS-42).
+          items:
+            type: object
+            additionalProperties: true
         stop_distance_pct:
           type: number
           nullable: true

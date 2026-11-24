@@ -35,7 +35,7 @@ PATCH_GET_UNREALISED = "services.reports_service.get_estimated_unrealised_pnl"
 class TestGetMonthlyPnlReportYearScoping(unittest.TestCase):
     """Service-level: get_monthly_pnl_report(year=...) routing and date-range shape."""
 
-    @patch(PATCH_GET_UNREALISED, return_value=None)
+    @patch(PATCH_GET_UNREALISED, return_value=(None, 0))
     @patch(PATCH_GET_MONTHLY_BY_TAX_YEAR)
     @patch(PATCH_GET_MONTHLY)
     @patch(PATCH_GET_PORTFOLIO, return_value=MOCK_PORTFOLIO)
@@ -47,7 +47,7 @@ class TestGetMonthlyPnlReportYearScoping(unittest.TestCase):
         rolling_fn.assert_called_once_with(MOCK_PORTFOLIO["id"])
         tax_year_fn.assert_not_called()
 
-    @patch(PATCH_GET_UNREALISED, return_value=None)
+    @patch(PATCH_GET_UNREALISED, return_value=(None, 0))
     @patch(PATCH_GET_MONTHLY_BY_TAX_YEAR)
     @patch(PATCH_GET_MONTHLY)
     @patch(PATCH_GET_PORTFOLIO, return_value=MOCK_PORTFOLIO)
@@ -71,7 +71,7 @@ class TestGetMonthlyPnlReportYearScoping(unittest.TestCase):
 class TestMonthlyPnlEndpointYearParam(unittest.TestCase):
     """Endpoint-level: GET /reports/monthly-pnl?year=<n>."""
 
-    @patch(PATCH_GET_UNREALISED, return_value=None)
+    @patch(PATCH_GET_UNREALISED, return_value=(None, 0))
     @patch(PATCH_GET_MONTHLY_BY_TAX_YEAR, return_value=[])
     @patch(PATCH_GET_PORTFOLIO, return_value=MOCK_PORTFOLIO)
     def test_year_param_returns_200_with_scoped_data(self, _port, _tax_year_fn, _unreal):
@@ -87,7 +87,7 @@ class TestMonthlyPnlEndpointYearParam(unittest.TestCase):
         self.assertEqual(resp.status_code, 400)
         self.assertIn("not started yet", resp.json()["message"])
 
-    @patch(PATCH_GET_UNREALISED, return_value=None)
+    @patch(PATCH_GET_UNREALISED, return_value=(None, 0))
     @patch(PATCH_GET_MONTHLY, return_value=[])
     @patch(PATCH_GET_PORTFOLIO, return_value=MOCK_PORTFOLIO)
     def test_no_year_param_returns_200_unchanged(self, _port, _rolling_fn, _unreal):

@@ -20,6 +20,7 @@ from typing import Dict, List, Optional
 
 from database import get_portfolio, get_positions, get_settings, get_latest_snapshot
 from utils.formatting import decimal_to_float
+from services.position_service import native_entry_price
 
 # ---------------------------------------------------------------------------
 # Compliance thresholds
@@ -177,6 +178,7 @@ def get_position_compliance() -> Dict:
             risk_percent = float(rp)
 
     results: List[Dict] = []
+    live_fx_rate: Optional[float] = None
     for pos in raw_positions:
         pos = decimal_to_float(pos)
 
@@ -184,13 +186,20 @@ def get_position_compliance() -> Dict:
         holding_days = live_holding_days(pos)
         in_grace = holding_days < GRACE_PERIOD_DAYS
 
-        entry_price = float(pos.get("entry_price") or 0)
+        market = pos.get("market", "UK")
+        # ST-26 (BLG-BE-213, v9.18): native entry and the buy-time rate. entry_price
+        # is GBP for every market while the stops are native, and a NULL fx_rate
+        # used a hard-coded 1.27. A NULL fx_rate now uses the live rate, as every
+        # other position path does; it is fetched only when a US row needs it.
+        if market == "US" and not pos.get("fx_rate") and live_fx_rate is None:
+            from utils.pricing import get_live_fx_rate
+            live_fx_rate = get_live_fx_rate()
+        fx_rate = float(pos.get("fx_rate") or live_fx_rate) if market == "US" else 1.0
+        entry_price = float(native_entry_price(pos, fx_rate)) if pos.get("entry_price") else 0.0
         current_stop = float(pos.get("current_stop") or 0)
         initial_stop = float(pos.get("initial_stop") or 0)
         atr = float(pos.get("atr") or 0)
         shares = float(pos.get("shares") or 0)
-        market = pos.get("market", "UK")
-        fx_rate = float(pos.get("fx_rate") or 1.27)
 
         ticker_raw = pos.get("ticker", "")
         display_ticker = ticker_raw.replace(".L", "") if market == "UK" else ticker_raw

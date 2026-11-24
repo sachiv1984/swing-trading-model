@@ -3,8 +3,8 @@
 **Owner:** Data Model & Domain Schema Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.70
-**Last Updated:** 2026-11-16 (BLG-BE-211, EPIC-05 post-merge, v9.17 — DS-41 staging and production Live Confirmations recorded: production 3 plans closed, verification 0 / 3; staging 0; no schema change); prior — 2026-11-13 (ST-11, EPIC-05, v9.17, BLG-BE-211 — DS-41 (v2.70): startup backfill closes `active` trade plans whose linked position is closed; the full-exit path now closes the linked plan; no schema change); prior — 2026-11-13 (ST-15, EPIC-06, v9.17, BLG-OPS-217 — DS-36 `success` note: a 404 from `fc.yahoo.com` is a success on attribution rows from 2026-11-13; no schema change); prior history retained — see prior entries in version control; prior history retained — see prior entries in version control
+**Version:** 2.72
+**Last Updated:** 2026-11-23 (ST-27, EPIC-05, v9.18, BLG-BE-223 — DS-42 (v2.72): new `position_split_adjustments` table; confirmed splits applied on read, entry fields unchanged); prior — 2026-11-23 (ST-28, EPIC-05, v9.18, BLG-BE-179 — v2.71: §Lifecycle Transition Reasons, `basis_correction` transitions from the v9.12 currency correction are tagged on read; no schema change); prior — 2026-11-16 (BLG-BE-211, EPIC-05 post-merge, v9.17 — DS-41 staging and production Live Confirmations recorded: production 3 plans closed, verification 0 / 3; staging 0; no schema change); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 This document describes the complete database schema and data structures used in the **Position Manager Web App**.
@@ -699,6 +699,21 @@ stateDiagram-v2
 ```
 
 Plain-text equivalent: `positions.status` is `open` or `closed` — a position row is never deleted, just transitioned (the "Lifecycle note" at the top of the Positions Table section above). While `open`, `position_state` (DS-05) is recomputed on every `GET /positions` call by `PositionLifecycleService.compute_position_state()` (`backend/services/position_lifecycle_service.py`) in priority order `GRACE` (fewer than 10 calendar days, any price — v9.10 ST-12) → `LOSING` (native price ≤ entry) → `EXIT ZONE` (price ≥ entry + 2R) → `PROFITABLE` (price > entry), with `UNKNOWN` only when entry price, current price or entry date is missing. Post-grace states follow `strategy_rules.md` §9's P&L sign; `EXIT ZONE` is a display sub-state of §9 PROFITABLE (v9.10 ST-11, BLG-SPEC-196, `docs/specs/position_lifecycle_states_registry.md`). The diagram above shows the transitions this order permits between consecutive recomputations; a position never returns to `GRACE` once the grace window elapses (calendar days only increase), except from `UNKNOWN` if the missing data is restored while still in grace. `state_history` (DS-05) is an append-only audit trail of every transition, never truncated. `EXIT ZONE` and `UNKNOWN` are both display-only — §13: no automated action is taken on any `position_state` value. On `open` → `closed`, `POST /positions/{id}/exit` creates the corresponding `trade_history` row (§3 above) — the position row itself is retained, not deleted, matching the Positions Table's own "serves both open and closed positions" convention.
+
+### Lifecycle Transition Reasons (`state_history`, `position_state_history`)
+
+*(v2.71 — ST-28, EPIC-05, v9.18, BLG-BE-179. Convention only; no schema change, no stored value is rewritten.)*
+
+A transition written to `state_history` or `position_state_history` normally records a price move. One set did not: the v9.12 currency correction (ST-13, BLG-BE-149, PR #2025) made the badge compare a US position's native entry with its native price, so on the first recompute after it, an affected US position could change state with no market move. Those transitions have the reason **`basis_correction`**, derived on read by `services/position_lifecycle_service.py`:
+
+- `tag_basis_correction_transitions(position)` returns `state_history` with `"reason": "basis_correction"` on that entry (a copy; the column is not changed).
+- `basis_correction_history_row_id(position, rows)` returns the `position_state_history` row id.
+
+**Rule:** for a US position whose `entry_date` is before 2026-10-13, the first transition at or after **2026-10-13T19:04:30Z** (`BASIS_CORRECTION_CUTOFF_UTC`, PR #2025's merge to `main`; the production deploy time is not recorded, so this is the Product Owner's cut-off, 2026-11-23). If either side of that transition is `GRACE` (grace ignores price) or `UNKNOWN` (missing data), no transition is tagged. A first-seen row (`state_history` entry 0, or a `position_state_history` row with `from_state` NULL) is not a transition. Later transitions are real.
+
+**Readers:** lifecycle analytics that count transitions or measure days in a state exclude `basis_correction` transitions. `days_in_state` on `GET /positions` is not changed: it reads `state_entered_at`, and any position still in the state it entered at the correction has since re-entered or held it through real prices.
+
+**Known limit:** the cut-off is the merge time, and a recompute only runs when `GET /positions` is called. If an affected position's first post-cut-off recompute changed nothing and its next transition was a real move, that move is tagged. The tag is a reading aid, not a correction of stored data.
 
 ### How the two lifecycles connect
 
@@ -3871,6 +3886,71 @@ Expect `active_plans_on_closed_positions` = 0 after the first startup, and `back
 
 ---
 
+## DS-42 — Add position_split_adjustments (v2.72, 2026-11-23)
+
+**Story:** ST-27 (EPIC-05, v9.18) — `BLG-BE-223`. Rule: `strategy_rules.md` §9.1 (v1.28). Display: `positions.md` §Split Detected State. Contract: `position_endpoints.md` v2.23.0.
+
+**Rationale:** a stock split on a held ticker left the stored entry and stop in pre-split units against a post-split price, so a 2:1 split read as a stop breach. §9.1 records a split as an adjustment row against the position, not as an edit of its entry fields, so the original entry stays auditable.
+
+**Deploy order:** not a risk. `database.ensure_position_split_adjustments_table()` runs the Up Migration's `CREATE TABLE IF NOT EXISTS` on first use (the same lazy pattern as `position_state_history`). Every reader is fail-open: if the table cannot be read, positions are returned unadjusted. Applying the migration on production at deploy is a Human-Delegation deploy step (Infrastructure & Operations Owner), not an acceptance criterion (`sprint_backlog.md` ST-27 Notes).
+
+### Up Migration (v2.71 → v2.72)
+
+```sql
+CREATE TABLE IF NOT EXISTS position_split_adjustments (
+    id                 UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    position_id        UUID NOT NULL REFERENCES positions(id) ON DELETE CASCADE,
+    ratio              NUMERIC(12,6) NOT NULL CHECK (ratio > 0),
+    effective_date     DATE NOT NULL,
+    source             VARCHAR(20) NOT NULL,
+    detected_at        TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    confirmed_at       TIMESTAMPTZ,
+    shares_before      NUMERIC(14,4),
+    shares_after       NUMERIC(14,4),
+    UNIQUE (position_id, effective_date)
+);
+CREATE INDEX IF NOT EXISTS idx_position_split_adjustments_position_id
+    ON position_split_adjustments(position_id);
+```
+
+| Column | Meaning |
+|--------|---------|
+| `ratio` | New shares per old share: 2:1 is `2`, a 1:10 reverse split is `0.1` |
+| `effective_date` | The provider's split date, after the position's entry date (a split on the entry date is ignored). One row per position and date |
+| `source` | Where the split was read: `yahoo` (Yahoo Finance chart split events) |
+| `detected_at` | When the nightly run recorded it |
+| `confirmed_at` | NULL while pending; set when the user confirms (`POST /positions/{position_id}/split-adjustment/confirm`) |
+| `shares_before`, `shares_after` | The position's share count before and after this split, written at confirmation. Equal to quantity and quantity × ratio unless the user entered an odd-lot count |
+
+**How readers apply it:** `get_positions()`, `get_position_by_id()`, `search_positions_by_tags()`, `get_open_positions_for_correlation()` and the two raw reads in `main.py` (`GET /positions/grace-period-alerts`, `GET /positions/{position_id}/stop-trail`) apply the position's **confirmed** rows on read (`database.apply_split_adjustments`, arithmetic in `utils/split_adjustments.py`): `entry_price`, `fill_price`, `user_fill_price` and `initial_stop` ÷ the product of ratios; `shares` × the product of `shares_after / shares_before`; `total_cost` less fees × (shares factor ÷ price factor), which is 1 unless an odd-lot count was entered. The stored columns are not edited. On confirmation the live fields `current_stop`, `previous_stop`, `atr` and `current_price` (none written while pending) are divided by the ratio in the same transaction, so the §7.3 ratchet continues in post-split units. A partial exit after a confirmed split writes its remainder back in stored units (`stored_units_for_split`). A **pending** row is not applied; value and P&L use the live price × ratio (pre-split units, `valuation_price`); the lifecycle state is not recomputed; and the position gets no stop alert, no exit recommendation (§8.1, §8.2, §8.4 paths), no stop or ATR recalculation, and an exit is refused (`409`).
+
+### Down Migration (v2.72 → v2.71)
+
+```sql
+DROP TABLE IF EXISTS position_split_adjustments;
+```
+
+Roll back the code first: v2.72's readers would recreate the table. Dropping it removes every confirmation, so a confirmed position reverts to its stored, pre-split figures.
+
+### Verification
+
+```sql
+SELECT column_name, data_type, is_nullable
+FROM information_schema.columns
+WHERE table_name = 'position_split_adjustments'
+ORDER BY ordinal_position;
+
+SELECT COUNT(*) AS pending FROM position_split_adjustments WHERE confirmed_at IS NULL;
+```
+
+Expect 9 columns (`id` … `shares_after`; `confirmed_at`, `shares_before`, `shares_after` nullable). `pending` is 0 until the first split is detected.
+
+**Sign-off:**
+- Data Model & Domain Schema Owner: additive table, reversible, created at runtime by an idempotent ensure-function; no backfill; entry fields unchanged by design (§9.1 "original entry fields stay stored"). Pending agent-mediated review at the EPIC-05 DoQ.
+- **Live Confirmation — staging and production:** pending, Human-Delegation deploy step (Infrastructure & Operations Owner).
+
+---
+
 ## Drift Detector Triage (2026-10-13, v2.60)
 
 **Story:** ST-34 (EPIC-05, `2026-10-12__release-v9.12`), BLG-SPEC-178. Triage of the findings `scripts/check_data_model_drift.py` reported on its first run (ST-28, v9.9, 2026-10-01) beyond the 5 known divergence classes.
@@ -3905,6 +3985,6 @@ Expect `active_plans_on_closed_positions` = 0 after the first startup, and `back
 
 ---
 
-**Document Version:** 2.70
+**Document Version:** 2.72
 **Maintained By:** Data Model & Domain Schema Owner
-**Last Review:** 2026-11-13 (ST-11, EPIC-05, v9.17, BLG-BE-211 — DS-41 (v2.70): startup backfill closes `active` trade plans whose linked position is closed; the full-exit path now closes the linked plan; no schema change); prior — 2026-11-12 (ST-09, EPIC-04, v9.17, BLG-BE-205 — DS-40 (v2.69): `stop_last_moved_date` and `previous_stop` on positions); prior — 2026-11-05 (ST-30/ST-32, EPIC-05, v9.15, BLG-OPS-190/BLG-OPS-192 — DS-39 (v2.68): new `momentum_signal_runs` table, one completion marker per momentum signal run); prior history retained — see prior entries in version control
+**Last Review:** 2026-11-23 (ST-27, EPIC-05, v9.18, BLG-BE-223 — DS-42 (v2.72): new `position_split_adjustments` table; confirmed splits applied on read, entry fields unchanged); prior — 2026-11-23 (ST-28, EPIC-05, v9.18, BLG-BE-179 — v2.71: §Lifecycle Transition Reasons, `basis_correction` transitions from the v9.12 currency correction are tagged on read; no schema change); prior — 2026-11-13 (ST-11, EPIC-05, v9.17, BLG-BE-211 — DS-41 (v2.70): startup backfill closes `active` trade plans whose linked position is closed; the full-exit path now closes the linked plan; no schema change); prior history retained — see prior entries in version control

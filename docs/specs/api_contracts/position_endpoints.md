@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 2.22.0
-**Last Updated:** 2026-11-13 (ST-11, EPIC-05, v9.17, BLG-BE-211 — POST /positions/{position_id}/exit: a full exit moves the linked `active` trade plan to `closed`, best-effort; partial exit unchanged; response unchanged); prior — 2026-11-12 (ST-09, EPIC-04, v9.17, BLG-BE-205 — GET /positions gains stop_last_moved_date and previous_stop; both recompute paths write them when they raise a stop); prior — 2026-11-10 (ST-18, EPIC-05, v9.16, BLG-BE-177 — GET /positions/analyze writes stop_frozen_reason for a post-grace stop kept for lack of ATR even without a live price); prior history retained — see prior entries in version control
+**Version:** 2.23.0
+**Last Updated:** 2026-11-23 (ST-27, EPIC-05, v9.18, BLG-BE-223 — new POST /positions/{position_id}/split-adjustment/confirm; split_pending/split_adjustments on GET /positions; exit 409 while a split is pending; nightly split detection); prior — 2026-11-23 (ST-26, EPIC-05, v9.18, BLG-BE-213 — GET /positions/compliance uses the native entry and the live rate for a NULL fx_rate); prior — 2026-11-13 (ST-11, EPIC-05, v9.17, BLG-BE-211 — POST /positions/{position_id}/exit: a full exit moves the linked `active` trade plan to `closed`, best-effort; partial exit unchanged; response unchanged); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Overview
@@ -28,6 +28,8 @@ Global response envelopes, error shape, defaults, and multi-currency/stop rules 
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.23.0 | 2026-11-23 | ST-27 (BLG-BE-223, EPIC-05, v9.18; `strategy_rules.md` §9.1 v1.28): new `POST /positions/{position_id}/split-adjustment/confirm`. `GET /positions` gains `split_pending` and `split_adjustments`; `risk_off_exit` is `false` while a split is pending. `POST /positions/{position_id}/exit` returns `409` while a split is pending. `POST /positions/nightly-stop-update` detects splits first (`splits` summary) and skips pending positions (`"split to confirm"`). `GET /positions/analyze` recommends no exit and writes nothing for a pending position (`split_pending: true` on its action). `data_model.md` DS-42. |
+| 2.22.1 | 2026-11-23 | ST-26 (BLG-BE-213, EPIC-05, v9.18): `GET /positions/compliance` measures stop distance from the native entry (`native_entry_price()`) and converts a US risk at the position's `fx_rate`, or the live rate when it is NULL. Before, a US position's GBP `entry_price` was compared with its native stops, and a NULL `fx_rate` used a hard-coded 1.27. Response shape unchanged; US flags can change. |
 | 2.22.0 | 2026-11-13 | ST-11 (BLG-BE-211, EPIC-05, v9.17): `POST /positions/{position_id}/exit` gains a Side effects subsection. A full exit moves every `active` trade plan linked to the position to `closed` (best-effort, audit-logged); a partial exit leaves it `active`; other statuses are not changed. Request and response unchanged. Existing `active` plans whose position was already closed are closed by a startup backfill (`data_model.md` DS-41). |
 | 2.21.0 | 2026-11-12 | ST-09 (BLG-BE-205, EPIC-04, v9.17): `GET /positions` gains `stop_last_moved_date` (`YYYY-MM-DD` \| `null`) and `previous_stop` (native, 2 dp \| `null`), both read-only (DS-40). `POST /positions/nightly-stop-update` and `GET /positions/analyze` write them only when the stop they store is above a stored (non-null) stop by an amount visible at 2 dp; an unchanged stop leaves both as they were. A second raise on the same UTC day keeps that day's first `previous_stop`. The nightly job's response shape is unchanged. The on-load path records moves too (ruling 2026-11-13, the user acting as Head of Specs Team and Data Model & Domain Schema Owner): the 16:00 UTC snapshot's call usually raises a stop before the nightly run. |
 | 2.20.1 | 2026-11-10 | ST-18 (BLG-BE-177, EPIC-05, v9.16): `GET /positions/analyze` writes `stop_frozen_reason = "atr_unavailable"` for a post-grace position whose stop is kept for lack of ATR even when no live price was fetched. It writes only that field in this case, as `POST /positions/nightly-stop-update` does; before, the marker was written only alongside a live-price update, so such a stop stayed unmarked until the nightly job. |
@@ -76,6 +78,7 @@ Global response envelopes, error shape, defaults, and multi-currency/stop rules 
 - [GET /positions/tags](#get-positionstags)
 - [GET /positions/{position_id}/compliance-recheck](#get-positionsposition_idcompliance-recheck)
 - [GET /positions/{position_id}/gap-risk](#get-positionsposition_idgap-risk)
+- [POST /positions/{position_id}/split-adjustment/confirm](#post-positionsposition_idsplit-adjustmentconfirm)
 
 ---
 
@@ -165,6 +168,8 @@ This endpoint does **not** use the standard `{ status, data }` response envelope
 | `current_price` | GBP — used for portfolio calculations |
 | `current_price_native` | USD or GBP — used for display (what the trader sees in their broker) |
 | `price_is_stale` | *(v2.19.0, ST-07, BLG-BE-168)* `true` when the live price fetch failed and `current_price_native` is the last stored price (`positions.current_price`, or the entry price when none is stored); `current_price`, `pnl` and `pnl_percent` are derived from it. `false` when a live price was used. Same meaning as `GET /portfolio`'s field. The Positions page table and grid show the stale marker for it (`positions.md` §Stale Price Marker) |
+| `split_pending` | *(v2.23.0, ST-27, BLG-BE-223)* `null`, or the detected, unconfirmed stock split (`strategy_rules.md` §9.1) with the confirmation dialog's figures: `id`, `ratio` (new shares per old share), `ratio_label` (e.g. `"2:1"`), `effective_date`, `source` (`yahoo`), `detected_at`, `shares_before`, `shares_after` (`null` when quantity × ratio is not whole: the user enters the count), `shares_after_exact`, `shares_after_is_whole`, `entry_before`/`entry_after` and `stop_before`/`stop_after` (native), `cost_before`/`cost_after` (native; `cost_after` `null` until the count is known). While it is set: no exit is recommended (`risk_off_exit` is `false`), stop alerts are not sent, and the stop and ATR are not recalculated. `current_price_native` is the live post-split price, while `entry_price`, `shares` and the stops are still pre-split; `pnl` and `pnl_percent` are on the pre-split basis (live price × ratio), so they are economically correct. The lifecycle state is not recomputed while pending. Detection also runs (cached per ticker per day) before `GET /positions/analyze`, the stop alert run and the risk-off run act, so an ex-date load before the nightly run is not read as a breach |
+| `split_adjustments` | *(v2.23.0, ST-27)* Confirmed splits, oldest first: `ratio`, `effective_date`, `source`, `confirmed_at`, `shares_before`, `shares_after`. When present, `shares`, `entry_price`, `initial_stop` and the P&L are already split-adjusted (the stored entry fields are unchanged; `data_model.md` DS-42). `[]` when none |
 | `stop_price` | Current trailing stop in GBP. `0.0` during grace period |
 | `stop_price_native` | Current trailing stop in native currency. `0.0` during grace period |
 | `initial_stop` | The stop calculated at entry (`entry_price − (5 × ATR)`), in GBP. Informational; used to show how far the stop has trailed |
@@ -280,10 +285,18 @@ No body required.
         "status": "skipped",
         "reason": "grace period"
       }
-    ]
+    ],
+    "splits": {
+      "checked": 2,
+      "detected": 0,
+      "failed": [],
+      "pending": []
+    }
   }
 }
 ```
+
+*(v2.23.0, ST-27, BLG-BE-223)* Before the stop recompute, the run reads each open position's split history from Yahoo Finance and records any split effective after the entry date as pending (a split on the entry date is ignored: the position was bought post-split) (`strategy_rules.md` §9.1; `data_model.md` DS-42). `splits.pending` lists the new ones (`ticker`, `ratio`, `effective_date`); `splits.failed` the tickers whose lookup failed (never read as "no split"). A position with a pending split is `skipped` with reason `"split to confirm"`: its stop and ATR are not recalculated.
 
 ### Errors
 
@@ -537,6 +550,7 @@ Errors use the standard error envelope from **conventions.md**. Each carries a `
 | `400` | `Shares to exit must be greater than 0` | `shares` < 0 (omitted or `0` exits all shares) |
 | `400` | `Insufficient shares. Position has <n> shares, exit requested <m>` | `shares` exceeds the position size |
 | `400` | `FX rate is required for US stock exits. Please provide the GBP/USD rate from your broker statement.` | US position without a positive `exit_fx_rate` |
+| `409` | `A stock split on this position is waiting for confirmation. Confirm the split on Positions first, so the exit is recorded in post-split shares and prices (strategy_rules.md §9.1).` | *(v2.23.0, ST-27)* The position has a detected, unconfirmed split (`split_pending`) |
 | `400` | `exit_reason must be one of: …` | Invalid `exit_reason` (see Validation rules) |
 
 ---
@@ -855,9 +869,9 @@ Response uses the standard success envelope from **conventions.md**.
 | `position_id` | string (UUID) | Matches the `id` field in `GET /positions`. |
 | `ticker` | string | Display ticker (no `.L` suffix for UK stocks). |
 | `market` | string | `"UK"` or `"US"`. |
-| `stop_compliant` | boolean \| null | `true` if `(entry_price − current_stop) / atr ≤ 2.5`. `false` if stop is missing or too wide. `null` if position is in grace period (stop not yet active) or ATR is unavailable. |
+| `stop_compliant` | boolean \| null | `true` if `(native entry − current_stop) / atr ≤ 2.5`, where the native entry is `entry_price` for UK and `fill_price` for US (else `entry_price` × `fx_rate`, else × the live rate). `false` if stop is missing or too wide. `null` if position is in grace period (stop not yet active) or ATR is unavailable. |
 | `stop_age_days` | integer \| null | Approximate days since the stop was last set. `null` for grace-period positions. Note: this is a conservative approximation using `holding_days` as the positions table does not record a dedicated `stop_updated_at` timestamp. |
-| `size_compliant` | boolean \| null | `true` if initial risk amount (stop distance × shares, in GBP) is within `risk_percent` of portfolio value × 1.10 tolerance. `null` if no portfolio snapshot is available or risk data is insufficient. |
+| `size_compliant` | boolean \| null | `true` if initial risk amount (native stop distance × shares, converted to GBP at the position's `fx_rate`, or the live rate when it is NULL) is within `risk_percent` of portfolio value × 1.10 tolerance. `null` if no portfolio snapshot is available or risk data is insufficient. |
 
 **`overall_status` derivation:**
 
@@ -973,6 +987,64 @@ Returns the position object enriched with live price data and Arc 3 lifecycle fi
 |-------------|-----------|
 | `404` | Position not found |
 | `500` | Internal server error |
+
+---
+
+## POST /positions/{position_id}/split-adjustment/confirm
+
+**Added:** v2.23.0 (ST-27, EPIC-05, v9.18, BLG-BE-223)
+**Spec:** `claude/strategy/strategy_rules.md` §9.1, `docs/specs/data_model.md` DS-42, `docs/specs/frontend/pages/positions.md` §Split Detected State, `backend/services/split_service.py`
+
+Applies the position's detected, unconfirmed stock split (`split_pending` on `GET /positions`). Quantity × ratio; entry price, initial stop and trailing stop ÷ ratio; ATR ÷ ratio until the next recalculation from split-adjusted history; per-share risk ÷ ratio, so cost, currency risk and R are unchanged. The stored entry fields are not edited: the adjustment row records the confirmation and the share counts, and readers apply it (`data_model.md` DS-42). The live fields `current_stop`, `previous_stop`, `atr` and `current_price` (none of which is written while the split is pending) are rescaled in the same transaction, so the §7.3 ratchet continues in post-split units. This is a unit change, not a stop movement.
+
+### Path Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `position_id` | string (UUID) | Yes | Position identifier |
+
+### Request Body (optional)
+
+```json
+{ "shares": 10 }
+```
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `shares` | number | Only when quantity × ratio is not whole | The post-split share count from the broker. Must be within 1 share of quantity × ratio. When the result is whole, omit it or send that exact value. Entry and stops are still ÷ ratio, so the cost becomes `shares` × the adjusted entry (cash in lieu) |
+
+### Response (200 OK)
+
+```json
+{
+  "status": "ok",
+  "data": {
+    "position_id": "<uuid>",
+    "ticker": "MU",
+    "ratio": 2.0,
+    "ratio_label": "2:1",
+    "effective_date": "2026-11-20",
+    "shares_before": 10.0,
+    "shares_after": 20.0,
+    "entry_price": 100.0,
+    "initial_stop": 90.0,
+    "current_stop": 90.0
+  }
+}
+```
+
+`entry_price` is the native entry after the split; `initial_stop` and `current_stop` are native.
+
+### Errors
+
+| HTTP Status | `detail` | Condition |
+|-------------|----------|-----------|
+| `400` | `Quantity × ratio is <x>, not a whole number: enter the post-split share count your broker shows (strategy_rules.md §9.1).` | Non-whole result and no `shares` |
+| `400` | `The post-split share count must be within 1 share of <x> (quantity × ratio).` | `shares` too far from quantity × ratio |
+| `400` | `Quantity × ratio is <n>; a different share count is only accepted when the result is not a whole number.` | Whole result and a different `shares` |
+| `400` | `shares must be greater than 0` | `shares` ≤ 0 |
+| `409` | `This position has no split to confirm` / `Position not found or not open` / `This split was already confirmed` | Nothing pending (also a repeat request) |
+| `500` | Internal server error | |
 
 ---
 

@@ -74,6 +74,69 @@ def _yahoo_fetch_price(ticker: str) -> float:
     raise ValueError(f"No valid price in Yahoo Finance response for {ticker}")
 
 
+@bounded_upstream_call(
+    "yfinance",
+    retryable_exceptions=(requests.exceptions.RequestException,),
+)
+def _yahoo_fetch_split_events(ticker: str, since: date) -> Dict:
+    """Raw Yahoo chart `events.splits` for a ticker since a date (internal)."""
+    time.sleep(0.3)
+    url = f"https://query1.finance.yahoo.com/v8/finance/chart/{ticker}"
+    start = int(datetime(since.year, since.month, since.day, tzinfo=timezone.utc).timestamp())
+    params = {
+        "interval": "1d",
+        "period1": start,
+        "period2": int(time.time()) + 86400,
+        "events": "split",
+    }
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+        'Accept': 'application/json',
+    }
+    response = requests.get(url, params=params, headers=headers, timeout=get_timeout("yfinance"))
+    data = response.json()
+    result = ((data.get("chart") or {}).get("result") or [None])[0]
+    if result is None:
+        raise ValueError(f"No chart result in Yahoo Finance response for {ticker}")
+    return (result.get("events") or {}).get("splits") or {}
+
+
+def parse_split_events(events: Dict, since: date) -> list:
+    """[{effective_date, ratio}] from Yahoo `events.splits`, strictly after `since`
+    (the entry date: a position bought on the ex-date is already post-split;
+    strategy_rules.md §9.1, ruling 2026-11-23),
+    oldest first. ratio = numerator / denominator: new shares per old share, so a
+    2:1 split is 2.0 and a 1:10 reverse split is 0.1 (strategy_rules.md §9.1).
+    Entries with a missing or non-positive part are skipped."""
+    out = []
+    for ev in (events or {}).values():
+        try:
+            num = float(ev.get("numerator"))
+            den = float(ev.get("denominator"))
+            ts = int(ev.get("date"))
+        except (TypeError, ValueError, AttributeError):
+            continue
+        if num <= 0 or den <= 0 or num == den:
+            continue
+        effective = datetime.fromtimestamp(ts, tz=timezone.utc).date()
+        if effective <= since:
+            continue
+        out.append({"effective_date": effective, "ratio": num / den})
+    return sorted(out, key=lambda e: e["effective_date"])
+
+
+def get_split_history(ticker: str, market: Optional[str], since: date) -> Optional[list]:
+    """Splits for a held ticker effective after `since` (ST-27, BLG-BE-223,
+    strategy_rules.md §9.1), from Yahoo Finance chart events. None when the
+    provider call fails, so a failed lookup is never read as "no split"."""
+    symbol = market_symbol(ticker, market)
+    try:
+        return parse_split_events(_yahoo_fetch_split_events(symbol, since), since)
+    except Exception as exc:
+        logger.warning("Yahoo Finance split history failed for %s: %s", symbol, exc)
+        return None
+
+
 # Yahoo quote currencies given in pence (ST-15, BLG-OPS-217, v9.17).
 _PENCE_CURRENCIES = frozenset({"GBp", "GBX"})
 

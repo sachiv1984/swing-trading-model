@@ -17,6 +17,10 @@
  *              (position_form.md v1.11 §Initial Stop, Branch A — ESC-EXEC-20261017-02)
  *   SC-TAP-07  ST-06: the boundary 5 × ATR == entry is also "No valid stop"
  *   SC-TAP-08  ST-06: a 400 at save (ATR moved between preview and save) shows the server's message
+ *   SC-TAP-09  ST-31 (BLG-FE-225, v9.18): entering the same ticker twice within the 5-minute
+ *              staleTime makes one GET /market/atr request (query key ["market-atr", ticker, market])
+ *   SC-TAP-10  ST-31: a different ticker is a different key and is fetched; returning to the
+ *              first ticker reuses its cached ATR without a third request
  *
  * Backend AC 2 (preview stop == saved initial_stop) is pinned in tests/test_market_atr_preview_endpoint.py.
  *
@@ -226,3 +230,45 @@ test('SC-TAP-08: a 400 at save (the ATR moved after the preview) shows the serve
   await expect(page.getByText(/strategy_rules\.md §5 gives no stop/)).toBeVisible({ timeout: 8000 });
 });
 
+test('SC-TAP-09: entering the same ticker twice within the staleTime makes one ATR request', async ({ page }) => {
+  await mockFallback(page);
+  const atrCalls = await mockAtrPreview(page, { atr: 2 });
+  await mockPortfolioSize(page);
+  await gotoTradeEntry(page);
+  const ticker = page.getByPlaceholder('e.g., AAPL or VOD.L');
+
+  // Typed key by key, as a user does, so the 300 ms debounce is exercised.
+  await ticker.pressSequentially('LGEN');
+  await page.getByPlaceholder('0.00').first().fill('100');
+  await expect(page.getByTestId('atr-fetched-hint')).toHaveText('Fetched: £2.00 (14-day, 13 Oct)');
+
+  await ticker.clear();
+  await expect(page.getByTestId('atr-fetched-hint')).toHaveCount(0);
+  await ticker.pressSequentially('lgen'); // normalised to LGEN: the same key
+  await expect(page.getByTestId('atr-fetched-hint')).toHaveText('Fetched: £2.00 (14-day, 13 Oct)');
+  await expect(page.getByTestId('system-initial-stop-value')).toHaveText('£90.00');
+
+  const lgenCalls = atrCalls.filter((u) => /\/market\/atr\/LGEN\?market=UK$/.test(u));
+  expect(lgenCalls).toHaveLength(1);
+});
+
+test('SC-TAP-10: a different ticker is fetched; returning to the first reuses its cached ATR', async ({ page }) => {
+  await mockFallback(page);
+  const atrCalls = await mockAtrPreview(page, { atr: 2 });
+  await mockPortfolioSize(page);
+  await gotoTradeEntry(page);
+  const ticker = page.getByPlaceholder('e.g., AAPL or VOD.L');
+
+  await ticker.pressSequentially('LGEN');
+  await expect(page.getByTestId('atr-fetched-hint')).toBeVisible();
+  await ticker.clear();
+  await ticker.pressSequentially('BARC');
+  await expect.poll(() => atrCalls.filter((u) => /\/market\/atr\/BARC\?/.test(u)).length).toBe(1);
+  await expect(page.getByTestId('atr-fetched-hint')).toBeVisible();
+  await ticker.clear();
+  await ticker.pressSequentially('LGEN');
+  await expect(page.getByTestId('atr-fetched-hint')).toBeVisible();
+
+  expect(atrCalls.filter((u) => /\/market\/atr\/LGEN\?/.test(u))).toHaveLength(1);
+  expect(atrCalls).toHaveLength(2);
+});

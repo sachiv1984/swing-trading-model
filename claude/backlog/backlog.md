@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-23 (session — 3 new items added: BLG-QA-281, BLG-QA-278, BLG-QA-279; EPIC-04 v9.18 PR #2311 review and retrospective); prior — 2026-11-23 (session — 1 new item added: BLG-FE-332; EPIC-04 v9.18 ST-20 axe incomplete contrast log); prior — 2026-11-23 (session — 1 new item added: BLG-QA-280; EPIC-04 v9.18 ST-19 pre-commit code review); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-24 (merge of main into EPIC-05, CLAUDE.md §8 step 2c — EPIC-04's 6 items appended whole after EPIC-05's 10; no ID shared); prior — 2026-11-23 (session — 6 new items added: BLG-BE-231, BLG-BE-232, BLG-QA-277, BLG-FE-330, BLG-FE-331, BLG-SPEC-243; PR #2310 agent-mediated review); prior — 2026-11-23 (session — 3 new items added: BLG-QA-281, BLG-QA-278, BLG-QA-279; EPIC-04 v9.18 PR #2311 review and retrospective); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -8390,6 +8390,215 @@ The debrief summary and its number check are tested with made-up trades and sent
 - The fixture set runs in CI with no live API call
 - MU 2026-09-30 reports R on one consistent basis (after BLG-BE-226), and STX 2026-05-06 shows no stop above the exit (after BLG-BE-227), in tests from the set
 - Each recorded sentence gets its agreed number-check result
+
+---
+
+
+### BLG-QA-276 — Verify on staging that the Reports and Positions unrealised P&L match at the same moment
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** QA & Testing Owner; Frontend Specifications & UX Documentation Owner
+**Source:** ST-30, EPIC-05, cycle `2026-11-18__release-v9.18` (post-merge staging AC, CLAUDE.md §2) — 2026-11-23
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.18 (post-merge)
+
+**Problem**
+ST-30 (BLG-SPEC-203) moved the Reports `estimated_unrealised_pnl` to the live `get_positions_with_prices()` basis, the Positions page's path. Slice AC 1 requires the two pages' figures to be shown matching on staging. Mocked Playwright tests cannot show two endpoints agreeing on live prices, and the Product Owner chose (2026-11-23) to run the check after merge.
+
+**Scope**
+- After EPIC-05 deploys to staging, load Positions and the Reports Tax Year and Monthly tabs within the same minute
+- Compare the sum of the Positions per-position GBP P&L with the Unrealised P&L card on both tabs
+- Note any "⚠ N position price(s) stale" line seen, and whether Positions marked the same positions stale
+
+**Acceptance Criteria**
+- The figures match to the penny at the same moment, or differ only because prices refreshed between the two requests (shown by reloading both)
+- The result, the date and any stale-price case are recorded in `claude/cycles/2026-11-18__release-v9.18/qa_evidence_EPIC-05.md`
+
+---
+
+### BLG-BE-229 — View Trail compares a US position's GBP entry price with its native price
+**✅ COMPLETE — 2026-11-23, cycle `2026-11-18__release-v9.18`, found by ST-27's work, resolved in-sprint on EPIC-05 (commit: this branch's ST-27 code-review follow-up commit; tests `TestStopTrail::test_us_trail_uses_the_native_entry`, `test_uk_trail_is_unchanged` in `tests/test_stock_split_adjustment.py`, not `tests/test_fx_market_matrix.py` as the Scope suggested; both ACs met).**
+**Priority:** P2 (Medium)
+**Type:** Backend Engineering
+**Owner:** Head of Engineering; Backend Engineering Patterns Owner
+**Source:** ST-27, EPIC-05, cycle `2026-11-18__release-v9.18` (found while applying split adjustments to the `GET /positions/{position_id}/stop-trail` read, first-time-right check 17) — 2026-11-23
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+`GET /positions/{position_id}/stop-trail` (`backend/main.py`) passes `positions.entry_price` to `calculate_trailing_stop()` as the entry, with the live native price. `entry_price` is GBP for every market (`data_model_positions_dictionary.md` v0.4), so for a US position the profitability test and the §7.2 breakeven floor use a GBP entry against a USD price. The View Trail modal can then show a wrong candidate stop and difference. Every other stop path uses `native_entry_price()` (BLG-BE-208, ST-25).
+
+**Scope**
+- Use `native_entry_price()` for the entry in `GET /positions/{position_id}/stop-trail`
+- Add the endpoint to `tests/test_fx_market_matrix.py`
+
+**Acceptance Criteria**
+- For the matrix's US rows, the stop-trail candidate equals `calculate_trailing_stop()` run on the native entry (test)
+- UK rows are unchanged (test)
+
+---
+
+### BLG-FE-329 — Show a confirmed stock split on Positions, Trade History and the tax-year report
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Frontend Specifications & UX Documentation Owner; Head of UX & Design
+**Source:** ST-27, EPIC-05, cycle `2026-11-18__release-v9.18` (slice scope "P&L, R and the tax-year report use adjusted values with the adjustment shown"; the v9.18 design gate specified only the pending state) — 2026-11-23
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+After a split is confirmed, Positions, Trade History and the tax-year report show the split-adjusted shares, entry and stop with no sign that they were adjusted. `GET /positions` returns `split_adjustments` (ratio, effective date, source, share counts), but no page shows it, and a user comparing with the original broker contract note sees different figures with no explanation. `positions.md` §Split Detected State covers only the pending state.
+
+**Scope**
+- Design the confirmed-state display (e.g. one expanded-row line "2:1 split on 23 Nov 2026 applied: 10 → 20 shares, entry 200.00 → 100.00") and its tax-year and Trade History equivalent
+- Return the adjustment with the trade row where the report needs it
+- Implement and cover with Playwright
+
+**Acceptance Criteria**
+- A position with a confirmed split shows the applied split and the original figures on Positions (Playwright)
+- A trade closed after a confirmed split shows the adjustment on Trade History and the tax-year report (Playwright)
+
+---
+
+### BLG-BE-230 — Split-adjust the trade plan stop in the grace-period alert read
+**Priority:** P3 (Low)
+**Type:** Backend Engineering
+**Owner:** Head of Engineering
+**Source:** Agent-mediated Director of Quality review of EPIC-05 (ST-27, cycle `2026-11-18__release-v9.18`) — 2026-11-23
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`GET /positions/grace-period-alerts` (`backend/main.py`) now applies confirmed stock splits to the position's entry and initial stop (ST-27, `data_model.md` DS-42), but it also selects the linked trade plan's `planned_stop_price` (`stop_level`) raw. After a confirmed split, the grace view could show the adjusted entry beside a plan stop still in pre-split units.
+
+**Scope**
+- Divide `stop_level` by the position's split price factor in that read (`split_factors` from `utils/split_adjustments.py`), or return it with the factor applied wherever a plan price is shown next to adjusted position figures
+
+**Acceptance Criteria**
+- With a confirmed 2:1 split, the grace-period alert's `stop_level` is half the stored `planned_stop_price` (test)
+- With no split, it is unchanged (test)
+
+---
+
+### BLG-BE-231 — Tell the user when a stock split is detected on a held position
+**Priority:** P2 (Medium)
+**Type:** Backend Engineering / Frontend
+**Owner:** Product Owner; Head of Engineering; Frontend Specifications & UX Documentation Owner
+**Source:** Agent-mediated Product Owner review of PR #2310 (ST-27, EPIC-05, cycle `2026-11-18__release-v9.18`), gap A — 2026-11-23
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+While a detected split is unconfirmed, `strategy_rules.md` §9.1 pauses the position's stop: no stop alert, no exit suggestion, no trailing recompute. The only signal is the tier-0 row on Positions. A user who does not open Positions for a few days holds a position with no working stop and is not told. The Dashboard Today list leaves the position out (its exit condition is suppressed), and no notification is written.
+
+**Scope**
+- Write a "split to confirm" notification when the nightly run records a new pending split (once per split), delivered like the other alert types
+- Add a "Split to confirm" item to the Dashboard Today list that deep-links to the Positions dialog
+- Design and copy through the Head of UX & Design; §13: display and notification only, no recommendation
+
+**Acceptance Criteria**
+- A newly detected split writes exactly one notification naming the ticker, ratio and date (test)
+- The Dashboard Today list shows the item while the split is pending and not after confirmation (Playwright)
+
+---
+
+### BLG-BE-232 — Tidy the split read path: internal keys in tag search, and the lifecycle reason while pending
+**Priority:** P3 (Low)
+**Type:** Backend Engineering
+**Owner:** Head of Engineering; API Contracts & Documentation Owner
+**Source:** Agent-mediated Director of Quality review of PR #2310 (ST-27, EPIC-05, cycle `2026-11-18__release-v9.18`), findings 2 and 3 — 2026-11-23
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`GET /positions/search/tags` returns raw position rows. Since ST-27, a position with a split carries the internal read-path keys `split_pending`, `split_adjustments`, `split_original` and `split_factors`, which are not in `position_endpoints.md` or `openapi.yaml`. Separately, `get_lifecycle_fields_for_position()` returns `lifecycle_reason: null` while a split is pending, even when the stored state is `UNKNOWN`, so that badge loses its reason tooltip.
+
+**Scope**
+- Remove the four internal keys from the tag-search response (or document them)
+- While a split is pending, return the stored state's reason (`missing_data` for `UNKNOWN`)
+
+**Acceptance Criteria**
+- The tag-search response for a position with a confirmed split has no `split_original` or `split_factors` key (test)
+- A pending-split position whose stored state is `UNKNOWN` returns `lifecycle_reason: "missing_data"` (test)
+
+---
+
+### BLG-QA-277 — Replace the source-text checks for split suppression with behavioural tests
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** QA & Testing Owner
+**Source:** Agent-mediated Director of Quality review of PR #2310 (ST-27, EPIC-05, cycle `2026-11-18__release-v9.18`), finding 1 — 2026-11-23
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+`tests/test_stock_split_adjustment.py` `TestMonthEndSkipsPending` and `TestStopAlertSkipsPending.test_stop_loss_approach_loop_skips_pending_ids` assert that a line of source text exists. A refactor that keeps the text but changes the behaviour would still pass, so the §8.4 and stop-alert suppression in slice AC 2 are not tested by behaviour.
+
+**Scope**
+- Test `evaluate_alerts()` with a fake cursor returning a position whose stop is within the threshold and whose split is pending
+- Test `generate_rebalance_exit_signals()` on a month-end day with a pending-split position outside the top 5
+
+**Acceptance Criteria**
+- With a pending split, no `stop_loss_approach` notification is inserted; without it, one is (test)
+- With a pending split, no rebalance exit signal is created; without it, one is (test)
+
+---
+
+### BLG-FE-330 — Split dialog: word a cost increase correctly when the entered share count is above the exact result
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Frontend Specifications & UX Documentation Owner; Head of UX & Design
+**Source:** Agent-mediated Director of Quality review of PR #2310 (ST-27, EPIC-05, cycle `2026-11-18__release-v9.18`), finding 4 — 2026-11-23
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+For a non-whole result, `SplitConfirmDialog` shows "Cost: {before} → {after} (cash in lieu: {before − after})". The confirm endpoint accepts a count up to 1 share above quantity × ratio (e.g. 11 for 10.5). The line then reads "cash in lieu: -£1.00", which is wrong: no cash is paid in lieu when the count rounds up.
+
+**Scope**
+- Show "cash in lieu" only when the cost falls. Otherwise word it as a cost change, or limit the input to floor(exact) if the Strategy Rules & System Intent Owner rules that brokers only round down
+- `positions.md` §Split Detected State copy updated
+
+**Acceptance Criteria**
+- Entering a count above the exact result shows no negative "cash in lieu" (Playwright)
+
+---
+
+### BLG-FE-331 — Trade History calendar: show the stale-price caveat with the live unrealised figure
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** Agent-mediated Product Owner review of PR #2310 (ST-30, EPIC-05, cycle `2026-11-18__release-v9.18`), gap C — 2026-11-23
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+ST-30 made `estimated_unrealised_pnl` live on `GET /reports/daily-pnl` and added `unrealised_price_stale_count`. The Reports Tax Year and Monthly cards show "⚠ N position price(s) stale". The Trade History calendar banner ("Unrealised P&L (as of today)", `CalendarView.js`) shows the same figure with no caveat.
+
+**Scope**
+- Show the same stale line under the calendar banner when `unrealised_price_stale_count > 0`; `trade_history.md` updated
+
+**Acceptance Criteria**
+- With a stale count of 2, the calendar banner shows "⚠ 2 position prices stale"; with 0, no line (Playwright)
+
+---
+
+### BLG-SPEC-243 — Cross-reference §9.1's exit refusal from §8.3 manual exit
+**Priority:** P3 (Low)
+**Type:** Spec Debt
+**Owner:** Strategy Rules & System Intent Owner; Product Owner
+**Source:** Agent-mediated Product Owner review of PR #2310 (ST-27, EPIC-05, cycle `2026-11-18__release-v9.18`), gap D — 2026-11-23
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+ST-27 refuses an exit (`409`) while a detected split is unconfirmed, so that the realised P&L is not recorded with pre-split shares and a post-split price. `strategy_rules.md` §8.3 says a manual exit is "available at any time" and does not mention this. The behaviour is in `position_endpoints.md` v2.23.0 and `positions.md` v2.31, but not in the rules.
+
+**Scope**
+- Strategy Rules & System Intent Owner rules whether the refusal stands. If it does, add a §8.3 line ("not while a detected split is unconfirmed; confirm it first, §9.1"); if not, file the code change
+
+**Acceptance Criteria**
+- §8.3 and the shipped behaviour agree, with a dated ruling recorded in the Change log
 
 ---
 

@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Class 2
 **Status:** Canonical
-**Version:** 1.35.0
-**Last Updated:** 2026-11-20 (ST-39, EPIC-07, v9.18, BLG-AI-29 — v9.18.0 entry adds ai_endpoints.md v1.42: §13.2 parameter-change check on POST /ai/daily-briefing and POST /ai/chat); prior — 2026-11-19 (ST-03, EPIC-01, v9.18, BLG-FE-318 — new v9.18.0 entry: alerts_endpoints.md v0.15, GET /notifications delivery_status/delivery_reason); prior — 2026-11-13 (ST-11, EPIC-05, v9.17, BLG-BE-211 — v9.17.0 entry adds position_endpoints.md v2.22.0: a full exit closes the linked trade plan); prior history retained — see prior entries in version control
+**Version:** 1.36.1
+**Last Updated:** 2026-11-23 (ST-27, EPIC-05, v9.18, BLG-BE-223/BLG-BE-229 — v9.18.0 entry adds stop_trail_endpoint.md v1.2.0); prior — 2026-11-23 (ST-27, EPIC-05, v9.18, BLG-BE-223 — v9.18.0 entry adds position_endpoints.md v2.23.0: new POST /positions/{position_id}/split-adjustment/confirm); prior — 2026-11-23 (ST-30, EPIC-05, v9.18, BLG-SPEC-203 — v9.18.0 entry adds reports_endpoints.md v0.21: live unrealised P&L and unrealised_price_stale_count); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 # API Changelog
@@ -58,6 +58,56 @@ Rules:
 |--------|---------|
 | Updated endpoint: POST /ai/daily-briefing | §13.2 parameter-change check (BLG-AI-29, ruling `ESC-EXEC-20261120-01`): a summary or action description suggesting changing stops, sizing or setups is regenerated once, then replaced by code-written text (action `type`/`ticker` kept); new `compliance_check_result` values `fail_regenerate:`, `pass_on_regenerate`, `fail_fallback:`; prompt v1.4. Response shape unchanged. |
 | Updated endpoint: POST /ai/chat | Same check on `response`: regenerated once, then a fixed withheld message without `answer_id`; same result values; prompt v1.3. Response shape unchanged. |
+
+### stop_trail_endpoint.md — v1.2.0 (UPDATED)
+
+**EPIC:** EPIC-05
+**ST:** ST-27
+
+| Change | Details |
+|--------|---------|
+| Updated endpoint: GET /positions/{position_id}/stop-trail | `409` while a stock split is pending (BLG-BE-223). The profit test, breakeven floor and `trail_r_terms` use the native entry, so US positions are no longer compared on a GBP entry (BLG-BE-229). Response shape unchanged. |
+
+### position_endpoints.md — v2.23.0 (UPDATED)
+
+**EPIC:** EPIC-05
+**ST:** ST-27
+
+| Change | Details |
+|--------|---------|
+| New endpoint: POST /positions/{position_id}/split-adjustment/confirm | Confirms a detected stock split (`strategy_rules.md` §9.1, `data_model.md` DS-42). Optional `shares` for a non-whole result. `409` when nothing is pending, `400` for a bad count (BLG-BE-223). |
+| Updated endpoint: GET /positions | Each position gains `split_pending` (dialog figures, or `null`) and `split_adjustments` (confirmed splits); `risk_off_exit` is `false` while a split is pending. |
+| Updated endpoint: POST /positions/{position_id}/exit | `409` while a split is pending. |
+| Updated endpoint: POST /positions/nightly-stop-update | Detects splits first (`splits` summary); pending positions are skipped (`"split to confirm"`). |
+
+### position_endpoints.md — v2.22.1 (UPDATED)
+
+**EPIC:** EPIC-05
+**ST:** ST-26
+
+| Change | Details |
+|--------|---------|
+| Updated endpoint: GET /positions/compliance | Stop distance is measured from the native entry (`native_entry_price()`), and a US risk is converted at the position's `fx_rate`, or the live rate when it is NULL, instead of a hard-coded 1.27 (BLG-BE-213). Before, a US position's GBP `entry_price` was compared with its native stops. Response shape unchanged; US flags can change. |
+
+### settings_endpoints.md — v1.6.1 (UPDATED)
+
+**EPIC:** EPIC-05
+**ST:** ST-29
+
+| Change | Details |
+|--------|---------|
+| Updated endpoint: GET /settings | A failed `settings_change_log` read logs a warning and returns the settings with `last_change: null` and `200`, instead of `500` (BLG-BE-181). Response shape unchanged. |
+
+### reports_endpoints.md — v0.21 (UPDATED)
+
+**EPIC:** EPIC-05
+**ST:** ST-30
+
+| Change | Details |
+|--------|---------|
+| Updated endpoint: GET /reports/tax-year | `summary.estimated_unrealised_pnl` is the live sum of `get_positions_with_prices()` `pnl` (GBP), the `GET /positions` basis, instead of the nightly `positions.pnl` (BLG-SPEC-203); `null` if the live path fails. New `summary.unrealised_price_stale_count`. `unrealised_note` gains "Calculated live at current prices, on the same basis as the Positions page." |
+| Updated endpoint: GET /reports/monthly-pnl | Same live `estimated_unrealised_pnl`, new top-level `unrealised_price_stale_count`. |
+| Updated endpoint: GET /reports/daily-pnl | Same live `estimated_unrealised_pnl`, new top-level `unrealised_price_stale_count`. |
 
 ## v9.17.0 (2026-11-12 — Release v9.17)
 

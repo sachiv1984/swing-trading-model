@@ -31,6 +31,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from routers import portfolio_risk
+from services import compliance_service
 from services import portfolio_service
 from services.position_lifecycle_service import _native_entry
 from services.position_service import native_entry_price
@@ -64,21 +65,6 @@ MATRIX = [
 ]
 IDS = [m[0] for m in MATRIX]
 CASES = [m[1:] for m in MATRIX]
-
-# portfolio_risk.py falls back to a hard-coded 1.27 for a NULL fx_rate, where
-# every other path uses the live rate (found 2026-11-12 by this matrix).
-_HARDCODED_127 = pytest.mark.xfail(
-    strict=True,
-    reason="BLG-BE-213: portfolio_risk.py uses a hard-coded 1.27 when fx_rate is NULL; other paths use the live rate",
-)
-
-
-def _with_marks(case_ids_to_mark, mark):
-    return [
-        pytest.param(*case, id=case_id, marks=[mark] if case_id in case_ids_to_mark else [])
-        for case_id, case in zip(IDS, CASES)
-    ]
-
 
 @contextmanager
 def _fake_db():
@@ -129,7 +115,7 @@ class TestNativeEntryAgreesOnEveryPath:
         assert position["price_is_stale"] is True
         assert position["current_price"] == pytest.approx(round(expected_native / fx, 2))
 
-    @pytest.mark.parametrize("row,expected_native,buy_rate", _with_marks({"US-nofill-nofx"}, _HARDCODED_127))
+    @pytest.mark.parametrize("row,expected_native,buy_rate", CASES, ids=IDS)
     def test_sector_exposure_values_a_priceless_position_at_its_native_entry(self, row, expected_native, buy_rate):
         uk_anchor = {**_row("UK", None, 1.0, 100.0), "ticker": "BP.L", "current_price": 100.0}
         sectors = {"MU": "Technology", "VOD.L": "Telecom", "BP.L": "Energy"}
@@ -151,8 +137,7 @@ class TestPositionRiskAgreesOnEveryPath:
         _, risk = _portfolio_summary_position(row, 120.0)
         assert risk == pytest.approx(_expected_risk_gbp(expected_native, buy_rate), abs=0.01)
 
-    @pytest.mark.parametrize("row,expected_native,buy_rate",
-                             _with_marks({"US-fill-nofx", "US-nofill-nofx"}, _HARDCODED_127))
+    @pytest.mark.parametrize("row,expected_native,buy_rate", CASES, ids=IDS)
     def test_risk_page_position_risk(self, row, expected_native, buy_rate):
         with patch("utils.pricing.get_live_fx_rate", return_value=LIVE_FX), \
              patch.object(portfolio_risk, "get_db", _fake_db), \
@@ -162,6 +147,28 @@ class TestPositionRiskAgreesOnEveryPath:
             _, _, positions, *_ = portfolio_risk._get_portfolio_heat_and_positions()
         assert positions[0]["position_risk_gbp"] == pytest.approx(
             _expected_risk_gbp(expected_native, buy_rate), abs=0.01)
+
+
+    @pytest.mark.parametrize("row,expected_native,buy_rate", CASES, ids=IDS)
+    def test_compliance_size_check_uses_the_native_entry_and_buy_rate(self, row, expected_native, buy_rate):
+        # ST-26 (BLG-BE-213): compliance_service converts a risk to GBP, so it is
+        # in the matrix. It used entry_price (GBP) against native stops and a
+        # hard-coded 1.27 for a NULL fx_rate.
+        seen = {}
+
+        def _capture(**kwargs):
+            seen.update(kwargs)
+            return True
+
+        with patch.object(compliance_service, "get_portfolio", return_value={"id": "pf-1"}), \
+             patch.object(compliance_service, "get_positions", return_value=[row]), \
+             patch.object(compliance_service, "get_latest_snapshot", return_value={"total_value": 10000.0}), \
+             patch.object(compliance_service, "get_settings", return_value=[]), \
+             patch.object(compliance_service, "_compute_size_compliance", side_effect=_capture), \
+             patch("utils.pricing.get_live_fx_rate", return_value=LIVE_FX):
+            compliance_service.get_position_compliance()
+        assert seen["entry_price"] == pytest.approx(expected_native)
+        assert seen["fx_rate"] == pytest.approx(buy_rate)
 
 
 class TestNetRMultiple:
@@ -187,10 +194,7 @@ class TestNetRMultiple:
 
 # Each entry is (file, number of inline copies). BLG-BE-208 replaces them with
 # one function; when a copy is removed, lower its count here.
-KNOWN_INLINE_NATIVE_ENTRY_COPIES = {
-    "backend/services/portfolio_service.py": 2,
-    "backend/routers/portfolio_risk.py": 2,
-}
+KNOWN_INLINE_NATIVE_ENTRY_COPIES = {}  # ST-25 (BLG-BE-208, v9.18): all callers use native_entry_price()
 _INLINE_PATTERN = re.compile(
     r"fill_price['\"]\)?\s*or\s*\(?\s*(?:[a-z_]+(?:\[|\.get\()['\"])?entry_price"
 )

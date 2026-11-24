@@ -67,7 +67,7 @@ def _report(month_rows, exit_rows, year=None):
          patch(PATCH_GET_MONTHLY, return_value=[dict(r) for r in month_rows]), \
          patch(PATCH_GET_MONTHLY_BY_TAX_YEAR, return_value=[dict(r) for r in month_rows]), \
          patch(PATCH_GET_BY_EXIT_REASON, return_value=exit_rows) as by_reason, \
-         patch(PATCH_GET_UNREALISED, return_value=None), \
+         patch(PATCH_GET_UNREALISED, return_value=(None, 0)), \
          patch(PATCH_GET_DB), patch(PATCH_ENSURE_SNAPSHOTS), \
          patch(PATCH_SNAPSHOT_MONTH, return_value=dict(SNAPSHOT_FIELDS)):
         return get_monthly_pnl_report(year=year), by_reason
@@ -164,7 +164,7 @@ class TestByExitConditionUnavailable(unittest.TestCase):
         with patch(PATCH_GET_PORTFOLIO, return_value=MOCK_PORTFOLIO), \
              patch(PATCH_GET_MONTHLY, return_value=[dict(r) for r in MONTH_ROWS]), \
              patch(PATCH_GET_BY_EXIT_REASON, side_effect=RuntimeError("db down")), \
-             patch(PATCH_GET_UNREALISED, return_value=None), \
+             patch(PATCH_GET_UNREALISED, return_value=(None, 0)), \
              patch(PATCH_GET_DB), patch(PATCH_ENSURE_SNAPSHOTS), \
              patch(PATCH_SNAPSHOT_MONTH, return_value=dict(SNAPSHOT_FIELDS)), \
              self.assertLogs("services.reports_service", level="ERROR"):
@@ -178,7 +178,7 @@ class TestMonthlyPnlEndpointByExitCondition(unittest.TestCase):
         with patch(PATCH_GET_PORTFOLIO, return_value=MOCK_PORTFOLIO), \
              patch(PATCH_GET_MONTHLY_BY_TAX_YEAR, return_value=[dict(r) for r in MONTH_ROWS]), \
              patch(PATCH_GET_BY_EXIT_REASON, return_value=EXIT_REASON_ROWS), \
-             patch(PATCH_GET_UNREALISED, return_value=None), \
+             patch(PATCH_GET_UNREALISED, return_value=(None, 0)), \
              patch(PATCH_GET_DB), patch(PATCH_ENSURE_SNAPSHOTS), \
              patch(PATCH_SNAPSHOT_MONTH, return_value=dict(SNAPSHOT_FIELDS)), \
              patch("main.get_arc5_compliance_summary", return_value=None):
@@ -191,7 +191,7 @@ class TestMonthlyPnlEndpointByExitCondition(unittest.TestCase):
         with patch(PATCH_GET_PORTFOLIO, return_value=MOCK_PORTFOLIO), \
              patch(PATCH_GET_MONTHLY_BY_TAX_YEAR, return_value=[dict(r) for r in MONTH_ROWS]), \
              patch(PATCH_GET_BY_EXIT_REASON, return_value=EXIT_REASON_ROWS), \
-             patch(PATCH_GET_UNREALISED, return_value=None), \
+             patch(PATCH_GET_UNREALISED, return_value=(None, 0)), \
              patch(PATCH_GET_DB), patch(PATCH_ENSURE_SNAPSHOTS), \
              patch(PATCH_SNAPSHOT_MONTH, return_value=dict(SNAPSHOT_FIELDS)):
             resp = CLIENT.get("/reports/monthly-pnl?year=2025&format=csv")

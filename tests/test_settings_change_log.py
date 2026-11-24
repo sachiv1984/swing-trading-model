@@ -7,6 +7,7 @@ The write paths run through the real backend/database.py create_settings() and
 update_settings() with a fake connection that records the SQL, as in
 tests/test_settings_create_and_plan_snapshot.py. No database or network is touched.
 """
+import logging
 import re
 import sys
 from contextlib import contextmanager
@@ -187,6 +188,20 @@ class TestLastChange:
              patch.object(main, "get_last_settings_change", return_value=None):
             body = CLIENT.get("/settings").json()
         assert body["data"][0]["last_change"] is None
+
+    def test_get_settings_survives_a_failed_change_log_read(self, caplog):
+        # ST-29 (BLG-BE-181, v9.18): the settings payload is unaffected.
+        caplog.set_level(logging.WARNING, logger="main")
+        with patch.object(main, "get_settings", return_value=[{"id": "settings-1", "theme": "light"}]), \
+             patch.object(main, "get_last_settings_change", side_effect=RuntimeError("relation does not exist")):
+            response = CLIENT.get("/settings")
+        assert response.status_code == 200
+        body = response.json()
+        assert body["status"] == "ok"
+        assert body["data"][0]["id"] == "settings-1" and body["data"][0]["theme"] == "light"
+        assert body["data"][0]["last_change"] is None
+        warnings = [r for r in caplog.records if r.levelno >= logging.WARNING and "change-log read failed" in r.getMessage()]
+        assert warnings, "the failed change-log read must be logged at warning level or above"
 
 
 class TestMigrationRecorded:

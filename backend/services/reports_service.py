@@ -159,19 +159,36 @@ def get_arc5_compliance_summary(period_days: int = 30) -> Optional[dict]:
 UNREALISED_NOTE = (
     "Reflects current open positions at time of report generation, "
     "not positions open during the specified tax year. "
-    "Indicative only — not a tax liability."
+    "Indicative only — not a tax liability. "
+    "Calculated live at current prices, on the same basis as the Positions page."
 )
 
 
-def get_estimated_unrealised_pnl(portfolio_id: str) -> float:
-    """Sum of `pnl` across all currently open positions.
+def get_estimated_unrealised_pnl(portfolio_id: str):
+    """(live unrealised P&L in GBP, number of positions priced from a stale price).
 
-    Shared by the Tax Year and Monthly P&L reports (ST-14, BLG-FEAT-70, v7.0) —
-    same field/computation, reused rather than duplicated per the locked
-    design decision (docs/design/2026-07-12__release-v7.0/realized-unrealized-split/ux_spec.md).
+    Shared by the Tax Year, Monthly and Daily P&L reports (ST-14, BLG-FEAT-70, v7.0).
+
+    ST-30 (BLG-SPEC-203, v9.18; Product Owner decision 2026-11-18, option (a)):
+    the sum of the GBP `pnl` that get_positions_with_prices() computes for each
+    open position, the Positions page's path, so both pages show the same figure
+    at the same moment. Before, this summed positions.pnl, written once a night
+    (DEV-REPORTS-ST06-01). A position whose live price fetch fails is valued at
+    its stored price and flagged price_is_stale, as on Positions; the count is
+    returned so the card can say so. If the live path fails entirely the figure
+    is None and the card is hidden, rather than falling back to the nightly basis.
+    `portfolio_id` is kept for callers; get_positions_with_prices() reads the
+    single portfolio itself.
     """
-    open_positions = get_positions(portfolio_id, status='open')
-    return round(sum(float(p.get('pnl', 0) or 0) for p in open_positions), 2)
+    from services.position_service import get_positions_with_prices
+    try:
+        open_positions = get_positions_with_prices()
+    except Exception:
+        logger.warning("Live unrealised P&L failed; the report omits it", exc_info=True)
+        return None, 0
+    total = round(sum(float(p.get('pnl') or 0) for p in open_positions), 2)
+    stale_count = sum(1 for p in open_positions if p.get('price_is_stale') is True)
+    return total, stale_count
 
 
 def _get_restated_month_count(portfolio_id: str, start_date: date, end_date: date) -> int:
@@ -274,7 +291,7 @@ def get_tax_year_report(year: int) -> Dict:
     win_rate = round(win_count / total_count * 100, 1) if total_count else 0.0
 
     # --- Estimated unrealised P&L from currently open positions ---
-    estimated_unrealised_pnl = get_estimated_unrealised_pnl(portfolio_id)
+    estimated_unrealised_pnl, unrealised_price_stale_count = get_estimated_unrealised_pnl(portfolio_id)
 
     # --- Restated-month notice (ST-08, EPIC-02, v9.6, BLG-FR-05) ---
     # Derived from monthly_pnl_snapshots -- no separate tax-year snapshot
@@ -300,6 +317,7 @@ def get_tax_year_report(year: int) -> Dict:
             "win_rate": win_rate,
             "estimated_unrealised_pnl": estimated_unrealised_pnl,
             "unrealised_note": UNREALISED_NOTE,
+            "unrealised_price_stale_count": unrealised_price_stale_count,
             "restated_month_count": restated_month_count,
             "restated_months_notice": restated_months_notice,
         },
@@ -482,7 +500,7 @@ def get_monthly_pnl_report(year: Optional[int] = None) -> dict:
     """
     portfolio = get_portfolio()
     if not portfolio:
-        return {"months": [], "estimated_unrealised_pnl": None, "unrealised_note": UNREALISED_NOTE}
+        return {"months": [], "estimated_unrealised_pnl": None, "unrealised_note": UNREALISED_NOTE, "unrealised_price_stale_count": 0}
     portfolio_id = str(portfolio['id'])
     tax_year_start = tax_year_end = None
     if year is not None:
@@ -564,10 +582,12 @@ def get_monthly_pnl_report(year: Optional[int] = None) -> dict:
         else:
             for m, breakdown in zip(months, breakdowns):
                 m["by_exit_condition"] = breakdown
+    unrealised_pnl, unrealised_price_stale_count = get_estimated_unrealised_pnl(portfolio_id)
     return {
         "months": months,
-        "estimated_unrealised_pnl": get_estimated_unrealised_pnl(portfolio_id),
+        "estimated_unrealised_pnl": unrealised_pnl,
         "unrealised_note": UNREALISED_NOTE,
+        "unrealised_price_stale_count": unrealised_price_stale_count,
     }
 
 
@@ -588,7 +608,7 @@ def get_daily_pnl_report(year: int, month: int) -> dict:
     """
     portfolio = get_portfolio()
     if not portfolio:
-        return {"days": [], "estimated_unrealised_pnl": None, "unrealised_note": UNREALISED_NOTE}
+        return {"days": [], "estimated_unrealised_pnl": None, "unrealised_note": UNREALISED_NOTE, "unrealised_price_stale_count": 0}
     portfolio_id = str(portfolio['id'])
     rows = get_daily_pnl(portfolio_id, year, month)
     days = [
@@ -599,10 +619,12 @@ def get_daily_pnl_report(year: int, month: int) -> dict:
         }
         for r in rows
     ]
+    unrealised_pnl, unrealised_price_stale_count = get_estimated_unrealised_pnl(portfolio_id)
     return {
         "days": days,
-        "estimated_unrealised_pnl": get_estimated_unrealised_pnl(portfolio_id),
+        "estimated_unrealised_pnl": unrealised_pnl,
         "unrealised_note": UNREALISED_NOTE,
+        "unrealised_price_stale_count": unrealised_price_stale_count,
     }
 
 

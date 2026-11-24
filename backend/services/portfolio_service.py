@@ -28,6 +28,8 @@ from services.grace_service import compute_grace_days_remaining
 from strategy_parameters import GRACE_PERIOD_DAYS
 from utils.calculations import live_holding_days
 from utils.formatting import decimal_to_float
+from services.position_service import native_entry_price
+from utils.split_adjustments import valuation_price
 from utils.position_lifecycle_states import GRACE, PROFITABLE, LOSING
 
 
@@ -125,9 +127,14 @@ def get_portfolio_summary() -> Dict:
                 # treated a US price below 500 as GBP and multiplied it by a
                 # hard-coded constant. The position is flagged price_is_stale.
                 print(f"   ⚠️  Live price unavailable for {pos['ticker']}; using stored native price")
-                native_entry = (pos.get('fill_price') or pos['entry_price'] * (pos.get('fx_rate') or live_fx_rate)) if pos['market'] == 'US' else pos['entry_price']
+                native_entry = native_entry_price(pos, live_fx_rate)
                 current_price_native = pos.get('current_price') or native_entry
                 price_is_stale = True
+
+            # ST-27 (BLG-BE-223, v9.18): while a split is pending the stored
+            # shares and entry are pre-split, so value and P&L use the live
+            # price in pre-split units (strategy_rules.md §9.1).
+            current_price_native = valuation_price(pos, current_price_native)
 
             shares = pos['shares']
             market = pos['market']
@@ -146,10 +153,7 @@ def get_portfolio_summary() -> Dict:
             # Calculate P&L
             # ST-13 (BLG-BE-149, v9.12): native entry. entry_price is GBP for every
             # market, so a US row with a NULL fill_price converts it back.
-            if market == 'US':
-                entry_price = pos.get('fill_price') or pos['entry_price'] * (pos.get('fx_rate') or live_fx_rate)
-            else:
-                entry_price = pos['entry_price']
+            entry_price = native_entry_price(pos, live_fx_rate)  # ST-25 (BLG-BE-208)
             pnl_native = (current_price_native - entry_price) * shares
 
             if market == 'US':

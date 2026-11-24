@@ -23,6 +23,18 @@ import { motion } from "framer-motion";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
+// ST-30 (BLG-SPEC-203, v9.18, reports.md v0.28 §Unrealised P&L Card): the live
+// figure values a position whose price fetch failed at its stored price; say so,
+// in the Dashboard Card 2 wording (PortfolioHeatCard.js).
+function UnrealisedStaleNotice({ count, testId }) {
+  if (!(count > 0)) return null;
+  return (
+    <p className="text-xs text-amber-700 dark:text-amber-400 mt-1" data-testid={testId}>
+      ⚠ {count} position price{count === 1 ? "" : "s"} stale
+    </p>
+  );
+}
+
 export function getCurrentUKTaxYear() {
   const today = new Date();
   const year = today.getFullYear();
@@ -407,17 +419,21 @@ export function TaxYearReport({ onViewMonthly }) {
           )}
 
           {/* Unrealised P&L Card */}
-          {(reportData?.estimated_unrealised_pnl != null) && (
-            <div className="rounded-xl border border-slate-300 dark:border-slate-600/50 bg-white dark:bg-slate-800/30 p-5">
+          {/* ST-30 (BLG-SPEC-203, v9.18): GET /reports/tax-year returns the unrealised
+              fields under data.summary (reports_service.py); the card read them from data,
+              so it never rendered. */}
+          {(reportData?.summary?.estimated_unrealised_pnl != null) && (
+            <div data-testid="tax-year-unrealised-pnl-card" className="rounded-xl border border-slate-300 dark:border-slate-600/50 bg-white dark:bg-slate-800/30 p-5">
               <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3">
                 Indicative Unrealised P&L (current positions)
               </h3>
-              <p className={`text-2xl font-bold mb-3 ${(reportData.estimated_unrealised_pnl ?? 0) > 0 ? "text-emerald-700 dark:text-emerald-400" : (reportData.estimated_unrealised_pnl ?? 0) < 0 ? "text-rose-700 dark:text-rose-400" : "text-slate-600 dark:text-slate-400"}`}>
-                {formatGBP(reportData.estimated_unrealised_pnl)}
+              <p className={`text-2xl font-bold mb-3 ${(reportData.summary.estimated_unrealised_pnl ?? 0) > 0 ? "text-emerald-700 dark:text-emerald-400" : (reportData.summary.estimated_unrealised_pnl ?? 0) < 0 ? "text-rose-700 dark:text-rose-400" : "text-slate-600 dark:text-slate-400"}`}>
+                {formatGBP(reportData.summary.estimated_unrealised_pnl)}
               </p>
               <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-                {reportData.unrealised_note}
+                {reportData.summary.unrealised_note}
               </p>
+              <UnrealisedStaleNotice count={reportData.summary.unrealised_price_stale_count} testId="tax-year-unrealised-stale-notice" />
             </div>
           )}
 
@@ -973,6 +989,7 @@ export function MonthlyPnlTable({ initialYear }) {
           <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
             {unrealisedNote}
           </p>
+          <UnrealisedStaleNotice count={response?.unrealised_price_stale_count} testId="monthly-unrealised-stale-notice" />
           {/* Combined Total line (satisfies AC-02 regression check) */}
           <p data-testid="monthly-combined-total" className="text-sm font-semibold text-slate-900 dark:text-white mt-4 pt-3 border-t border-slate-300 dark:border-slate-700/50">
             Total (Realised + Unrealised): {formatGBP(combinedTotal)}

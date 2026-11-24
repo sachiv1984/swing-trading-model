@@ -42,6 +42,8 @@ const TAX_YEAR_REPORT = {
       total_gross_loss: -549.50,
       win_rate: 62.5,
       total_closed_trades: 8,
+      estimated_unrealised_pnl: 340.0,
+      unrealised_note: 'Estimated from currently open positions; not tax-year scoped.',
     },
     trades: [
       {
@@ -51,8 +53,6 @@ const TAX_YEAR_REPORT = {
         pnl_pct: 8.33, tags: [],
       },
     ],
-    estimated_unrealised_pnl: 340.0,
-    unrealised_note: 'Estimated from currently open positions; not tax-year scoped.',
   },
 };
 
@@ -60,10 +60,8 @@ const TAX_YEAR_REPORT_EMPTY = {
   status: 'ok',
   data: {
     tax_year_label: '2026/27',
-    summary: { total_realised_pnl: 0, total_gross_profit: 0, total_gross_loss: 0, win_rate: 0, total_closed_trades: 0 },
+    summary: { total_realised_pnl: 0, total_gross_profit: 0, total_gross_loss: 0, win_rate: 0, total_closed_trades: 0, estimated_unrealised_pnl: null, unrealised_note: '' },
     trades: [],
-    estimated_unrealised_pnl: null,
-    unrealised_note: '',
   },
 };
 

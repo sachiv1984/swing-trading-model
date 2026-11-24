@@ -65,7 +65,7 @@ def _capture_real_year_bounds(year):
     # needing to fake "today".
     with patch.object(reports_service, "get_portfolio", return_value={"id": "port-1"}), \
          patch.object(reports_service, "get_trade_history_by_tax_year", side_effect=fake_get_trade_history_by_tax_year), \
-         patch.object(reports_service, "get_estimated_unrealised_pnl", return_value=0.0):
+         patch.object(reports_service, "get_estimated_unrealised_pnl", return_value=(0.0, 0)):
         reports_service.get_tax_year_report(year)
 
     return captured["year_start"], captured["year_end"]
@@ -219,7 +219,7 @@ def test_boundary_row_from_mocked_db_cursor_appears_exactly_once_in_correct_year
         # Pinning it here makes the test correct regardless of suite-wide
         # ordering/pollution.
         with patch.object(reports_service, "get_portfolio", return_value={"id": "port-1"}), \
-             patch.object(reports_service, "get_estimated_unrealised_pnl", return_value=0.0), \
+             patch.object(reports_service, "get_estimated_unrealised_pnl", return_value=(0.0, 0)), \
              patch.object(reports_service, "get_trade_history_by_tax_year", side_effect=database.get_trade_history_by_tax_year), \
              patch.object(database, "get_db", return_value=mock_conn):
             return reports_service.get_tax_year_report(year)
