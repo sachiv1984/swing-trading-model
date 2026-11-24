@@ -94,8 +94,8 @@ SELECT
 FROM portfolio p
 CROSS JOIN (VALUES
     -- ticker   mkt   entry_date    entry_p shares  total_cost fees    fee_type     init_stp curr_stp curr_p  atr   hdays pnl    pnl_pct
-    ('LGEN', 'UK', '2026-03-01', 2.45,   1000.0, 2461.95,  11.95, 'commission', 2.15,    2.20,    2.52,   0.08, 24,   70.05, 2.85),
-    ('BARC', 'UK', '2026-03-10', 2.10,   1200.0, 2531.95,  11.95, 'commission', 1.85,    1.90,    2.18,   0.06, 15,   96.05, 3.79)
+    ('LGEN.L', 'UK', '2026-03-01', 2.45,   1000.0, 2461.95,  11.95, 'commission', 2.15,    2.20,    2.52,   0.08, 24,   70.05, 2.85),
+    ('BARC.L', 'UK', '2026-03-10', 2.10,   1200.0, 2531.95,  11.95, 'commission', 1.85,    1.90,    2.18,   0.06, 15,   96.05, 3.79)
 ) AS pos(
     ticker, market, entry_date, entry_price, shares,
     total_cost, fees_paid, fee_type,
@@ -158,9 +158,9 @@ FROM portfolio p
 CROSS JOIN (VALUES
     -- ticker  mkt   entry_date    exit_date     shares entry_p exit_p  total_cost gross_proc net_proc   entry_f exit_f  pnl     pnl_pct hdays exit_reason      entry_note                exit_note                    tags
     -- ULVR: gross=80×27.80=2224.00, exit_fee=11.95, net=2224.00-11.95=2212.05, pnl=2212.05-1915.95=296.10
-    ('ULVR', 'UK', '2026-01-15', '2026-02-20', 80.0,  23.80,  27.80,  1915.95,   2224.00,   2212.05,   11.95,  11.95,  296.10, 15.45,  36,   'Trailing Stop', 'Breakout above 200 DMA', 'Trailing stop triggered.',  '{momentum}'),
+    ('ULVR.L', 'UK', '2026-01-15', '2026-02-20', 80.0,  23.80,  27.80,  1915.95,   2224.00,   2212.05,   11.95,  11.95,  296.10, 15.45,  36,   'Trailing Stop', 'Breakout above 200 DMA', 'Trailing stop triggered.',  '{momentum}'),
     -- VOD:  gross=500×0.70=350.00, exit_fee=11.95, net=350.00-11.95=338.05, pnl=338.05-361.95=-23.90
-    ('VOD',  'UK', '2026-02-01', '2026-03-05', 500.0,  0.70,   0.70,   361.95,    350.00,    338.05,    11.95,  11.95,  -23.90, -6.60,  32,   'Stop Loss Hit', 'Reversal attempt',       'Stop triggered on gap down.', '{mean_reversion}')
+    ('VOD.L',  'UK', '2026-02-01', '2026-03-05', 500.0,  0.70,   0.70,   361.95,    350.00,    338.05,    11.95,  11.95,  -23.90, -6.60,  32,   'Stop Loss Hit', 'Reversal attempt',       'Stop triggered on gap down.', '{mean_reversion}')
 ) AS t(
     ticker, market, entry_date, exit_date,
     shares, entry_price, exit_price,

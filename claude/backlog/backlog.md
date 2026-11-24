@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-24 (session — 2 new items added: BLG-FE-333, BLG-BE-233; ST-33/EPIC-06 v9.18); prior — 2026-11-24 (session — 1 new item added: BLG-QA-282; ST-37/EPIC-06 v9.18); prior — 2026-11-24 (merge of main into EPIC-05, CLAUDE.md §8 step 2c — EPIC-04's 6 items appended whole after EPIC-05's 10; no ID shared); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-24 (session — 3 new items added: BLG-OPS-223, BLG-BE-234, BLG-QA-283; ST-32/ST-35 EPIC-06 v9.18); prior — 2026-11-24 (session — 2 new items added: BLG-FE-333, BLG-BE-233; ST-33/EPIC-06 v9.18); prior — 2026-11-24 (session — 1 new item added: BLG-QA-282; ST-37/EPIC-06 v9.18); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -8796,5 +8796,67 @@ ST-33 added `data_status: ok | unavailable` to `get_earnings()`. Two other calle
 **Acceptance Criteria**
 - A failed lookup gives the pre-entry earnings rule a detail that differs from "no upcoming date" (unit test)
 - `GET /research/{ticker}` carries `earnings.data_status`, and an `unavailable` earnings block is not served from cache for the full TTL (unit test)
+
+---
+
+### BLG-OPS-223 — Stop the weekly market-data volume check timing out on the production report
+**Priority:** P2 (Medium)
+**Type:** Operations / Infrastructure
+**Owner:** Infrastructure & Operations Owner
+**Source:** ST-32/EPIC-06 (`2026-11-18__release-v9.18`), found while preparing the ST-32 production-report delegation — 2026-11-24
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+`.github/workflows/market-data-volume-check.yml` (BLG-OPS-195, v9.17) has never completed. Both scheduled runs so far failed with exit 2: run 43925655395 (2026-11-16) and run 45254364709 (2026-11-23) each logged `report call failed: … Read timed out. (read timeout=60)` against production `GET /ops/api-call-attribution?window=weekly`. The check sends a failure Telegram message, so nothing is silent, but the §4 baseline in `docs/ops/data_pipeline_cost_baseline.md` has not been compared once. The weekly report is also what ST-32 (BLG-OPS-217) needs.
+
+**Scope**
+- Find whether the 60 s is a Render cold start, the attribution query itself, or both: time a warm call and the query
+- Fix the cause (for example a warm-up `GET /health` with retry before the report call, a longer read timeout, or an index or cheaper query for the weekly window)
+
+**Acceptance Criteria**
+- A scheduled or `workflow_dispatch` run completes the comparison and concludes `success` (or reports a real exceedance)
+- The run's log records the report call's duration
+
+---
+
+### BLG-BE-234 — Match UK watchlist rows to their signals
+**Priority:** P3 (Low)
+**Type:** Backend Engineering
+**Owner:** Head of Engineering
+**Source:** ST-35/EPIC-06 (`2026-11-18__release-v9.18`), code review of the seed sweep (pre-existing) — 2026-11-24
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+The watchlist stores UK tickers bare (`LGEN`), and its read joins `ticker_universe` on `ticker || '.L'` for UK rows. The same query's signal-status lookup (`backend/services/watchlist_service.py`, `LEFT JOIN LATERAL ... WHERE ticker = w.ticker`) compares the bare watchlist ticker with `signals.ticker`, which `signal_service.py` writes as the Yahoo symbol (`LGEN.L`). A UK watchlist row therefore never finds its signal and always shows `no_signal`.
+
+**Scope**
+- Apply the same UK `.L` mapping in the signal-status lookup as in the `ticker_universe` join
+
+**Acceptance Criteria**
+- A UK watchlist row `LGEN` with a `new` signal for `LGEN.L` shows signal status `active` (unit test against the query)
+- US rows are unchanged
+
+---
+
+### BLG-QA-283 — Give the chart test-data seeds UK prices in pounds
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** QA & Testing Owner
+**Source:** ST-35/EPIC-06 (`2026-11-18__release-v9.18`), high code review of the seed sweep (pre-existing) — 2026-11-24
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+`backend/test_data/seed_chart_test_data.py` and `seed_chart_test_data.sql` give UK entry and exit prices in pence (AZN.L entry 11500, BP.L 430), but the app has priced UK stocks in pounds since v9.17 (`utils/pricing.get_current_price` converts GBp). Now that ST-35 gives the seeds real Yahoo symbols (`BP.L`, `BT-A.L`), `add_position` can fetch a real ATR in pounds and set the stop just under a pence entry, so the R-multiples the seed is built to spread across all 7 buckets come out wrong (an exit at 400 against a 429.8 stop reads as about −150R). Separately, `seed-preview.yml` skips the chart seed whenever a `[SEED]` row exists, so a staging database seeded before v9.18 keeps its bare `AZN`/`BP.`/`BT.A` rows until a full reset.
+
+**Scope**
+- Convert the seeds' UK prices to pounds (or pass an explicit stop and ATR in the same units)
+- Add a one-off cleanup of bare-ticker `[SEED]` rows to `seed-preview.yml`, or document that a reset is needed
+
+**Acceptance Criteria**
+- A fresh chart seed fills all 7 R-multiple buckets with the R values its docstring lists
+- A preview database seeded before v9.18 ends with `.L` tickers after the workflow runs, or the runbook says to reset it
 
 ---

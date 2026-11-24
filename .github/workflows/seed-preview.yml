@@ -98,11 +98,11 @@ jobs:
             INSERT INTO alert_evaluations
               (portfolio_id, evaluation_timestamp, rule_type, symbol, triggered, notification_sent, values_compared)
             VALUES
-              (v_portfolio_id, NOW() - INTERVAL '20 hours', 'stop_loss_approach',      'AZN',  true, true, '{"stop_price": 11000, "current_price": 11400, "gap_pct": 3.5, "threshold_pct": 5.0}'),
-              (v_portfolio_id, NOW() - INTERVAL '16 hours', 'grace_period_warning',    'HSBA', true, true, '{"days_remaining": 2, "grace_period_days": 7}'),
+              (v_portfolio_id, NOW() - INTERVAL '20 hours', 'stop_loss_approach',      'AZN.L',  true, true, '{"stop_price": 11000, "current_price": 11400, "gap_pct": 3.5, "threshold_pct": 5.0}'),
+              (v_portfolio_id, NOW() - INTERVAL '16 hours', 'grace_period_warning',    'HSBA.L', true, true, '{"days_remaining": 2, "grace_period_days": 7}'),
               (v_portfolio_id, NOW() - INTERVAL '12 hours', 'market_regime_change',    NULL,   true, true, '{"regime": "bearish", "previous_regime": "neutral"}'),
               (v_portfolio_id, NOW() - INTERVAL '6 hours',  'daily_portfolio_summary', NULL,   true, true, '{"positions_count": 3, "total_pnl": -45.50}'),
-              (v_portfolio_id, NOW() - INTERVAL '1 hour',   'stop_loss_approach',      'MKS',  true, true, '{"stop_price": 340, "current_price": 355, "gap_pct": 4.2, "threshold_pct": 5.0}');
+              (v_portfolio_id, NOW() - INTERVAL '1 hour',   'stop_loss_approach',      'MKS.L',  true, true, '{"stop_price": 340, "current_price": 355, "gap_pct": 4.2, "threshold_pct": 5.0}');
             RAISE NOTICE 'Seeded 5 alert_evaluations rows.';
           END $$;
           SQL

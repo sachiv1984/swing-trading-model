@@ -204,7 +204,12 @@ def get_watchlist(portfolio_id: str) -> List[Dict]:
                     SELECT status
                     FROM signals
                     WHERE portfolio_id = w.portfolio_id
-                      AND ticker = w.ticker
+                      -- ST-35 (BLG-BE-234, v9.18): the watchlist stores UK
+                      -- tickers bare (LGEN); signal_service writes the Yahoo
+                      -- symbol (LGEN.L). Match either, so legacy bare signal
+                      -- rows still match too.
+                      AND (ticker = w.ticker
+                           OR (w.market = 'UK' AND ticker = w.ticker || '.L'))
                     ORDER BY signal_date DESC
                     LIMIT 1
                 ) s ON true

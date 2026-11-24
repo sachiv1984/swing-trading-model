@@ -51,10 +51,10 @@ DEFAULT_TRADE_COUNT = 25  # comfortably above both thresholds above
 # convention (test fixtures in this repo use real market symbols with prices
 # chosen for the test scenario — not live-traded amounts).
 TICKER_POOL = [
-    ("AZN", "UK"), ("SHEL", "UK"), ("ULVR", "UK"), ("BP.", "UK"),
-    ("HSBA", "UK"), ("VOD", "UK"), ("GSK", "UK"), ("RIO", "UK"),
-    ("LGEN", "UK"), ("BT.A", "UK"), ("MKS", "UK"), ("BATS", "UK"),
-    ("BARC", "UK"), ("TSCO", "UK"), ("NG.", "UK"), ("PRU", "UK"),
+    ("AZN.L", "UK"), ("SHEL.L", "UK"), ("ULVR.L", "UK"), ("BP.L", "UK"),
+    ("HSBA.L", "UK"), ("VOD.L", "UK"), ("GSK.L", "UK"), ("RIO.L", "UK"),
+    ("LGEN.L", "UK"), ("BT-A.L", "UK"), ("MKS.L", "UK"), ("BATS.L", "UK"),
+    ("BARC.L", "UK"), ("TSCO.L", "UK"), ("NG.L", "UK"), ("PRU.L", "UK"),
 ]
 
 # R-multiple targets to cycle through so the generated set spans winners,
@@ -191,7 +191,7 @@ def main():
 
     created = 0
     for i, trade in enumerate(trades, 1):
-        label = f"{trade['ticker']:<5} entry={trade['entry_price']}p exit={trade['exit_price']}p"
+        label = f"{trade['ticker']:<7} entry={trade['entry_price']}p exit={trade['exit_price']}p"
         print(f"  [{i:02d}/{len(trades)}] {label} ... ", end="", flush=True)
         try:
             _create_and_close(base_url, trade, requests)
