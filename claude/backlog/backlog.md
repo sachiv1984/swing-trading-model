@@ -8884,6 +8884,7 @@ ST-33 stopped the Screener looking up earnings for UK rows (`strategy_rules.md` 
 ---
 
 ### BLG-FE-335 — Do not blame earnings when a UK gap-risk request fails
+**✅ COMPLETE — 2026-11-24, `2026-11-18__release-v9.18`, found by the EPIC-06 pre-PR review, resolved in-sprint on EPIC-06, commit `c4359076` (Playwright SC-EUNK-09c (UK) and SC-EUNK-09b (US unchanged)).**
 **Priority:** P3 (Low)
 **Type:** Frontend / UX
 **Owner:** Frontend Specifications & UX Documentation Owner
@@ -8904,6 +8905,7 @@ Since ST-33, `src/hooks/useGapRisk.js` turns any failed `GET /positions/{id}/gap
 ---
 
 ### BLG-BE-235 — Do not cache "no earnings date" when the calendar call came back empty
+**✅ COMPLETE — 2026-11-24, `2026-11-18__release-v9.18`, found by the EPIC-06 pre-PR review, resolved in-sprint on EPIC-06, commit `c4359076` (empty calendar cached 30 min, not 12 h; fund unchanged — `tests/test_yahoo_on_demand_failures.py`).**
 **Priority:** P3 (Low)
 **Type:** Backend Engineering
 **Owner:** Head of Engineering
@@ -8944,6 +8946,7 @@ In `backend/services/earnings_service.py`, a usable `Ticker.info` (with `quoteTy
 ---
 
 ### BLG-BE-236 — Filter the watchlist signal lookup by market
+**✅ COMPLETE — 2026-11-24, `2026-11-18__release-v9.18`, found by the EPIC-06 pre-PR review, resolved in-sprint on EPIC-06, commit `0231cf32` (Phase B `tests/test_watchlist_uk_signal_match_postgres.py`).**
 **Priority:** P3 (Low)
 **Type:** Backend Engineering
 **Owner:** Head of Engineering
