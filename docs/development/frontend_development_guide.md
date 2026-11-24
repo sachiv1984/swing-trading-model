@@ -406,3 +406,21 @@ setEntries((prev) => sortEntries(prev.map((e) => (e.id === entry.id ? entry : e)
 5. **Register the route** — update `pages.config.js`, `utils/index.js`, `Layout.js`.
 6. **Preserve existing behaviour** — when touching shared files like `Layout.js` or `TradeEntry.js`, read the whole file first and identify what must be preserved (e.g. `fill_price` field, `NOTIFICATIONS_PAGES` isActive logic).
 7. **Test the prefill flow** — if the page navigates to another page with state, verify the receiving page reads it correctly and cleans up on success.
+
+---
+
+## 14. Unit Tests for Pure Modules
+
+*Added 2026-11-23 (ST-19, BLG-QA-262, EPIC-04, v9.18).*
+
+**Rule:** a new or changed pure module under `src/lib/` ships with unit tests in the same commit. A pure module is one that takes values and returns values: no React, no fetch, no storage, no clock unless the time is passed in.
+
+- **Where:** next to the module, `src/lib/<module>.test.js`. A second file for one story's cases is fine (`<module>.<topic>.test.js`), so parallel EPICs do not conflict.
+- **How:** table-driven with `test.each`. For each input the function reads, include null, missing (the key deleted), a numeric string, a non-numeric string, 0 and a negative number, plus every threshold value and one either side of it. Build fixtures from the writer's own fields and units (`GET /positions` sends GBP `current_price` beside native `current_price_native`), not invented shapes.
+- **Known bugs:** if a correct expectation fails because of a filed bug, write it with `knownFailing(name, ["BLG-xx-nnn"], fn)` from `src/test-utils/knownFailing.js`, not `test.skip`. The case passes while the bug exists and fails once it is fixed, naming the item, so the fix must turn it into a plain `test`. Only a failed `expect()` counts as the known failure; any other error is rethrown. When the bug's fix could go either way, assert that the two places agree rather than pinning one answer. (Jest 27 in react-scripts 5 has no `test.failing`.)
+- **Run locally:** `CI=true npm test -- --watchAll=false`, or `CI=true npx react-scripts test --watchAll=false src/lib/<module>` for one file.
+- **CI:** `.github/workflows/frontend-unit-tests.yml` runs the same command on every PR and push touching `src/**`, `package.json`, `package-lock.json`, `.npmrc` or `jsconfig.json`. A failing unit test fails the PR.
+
+`eslint.config.mjs` has no Jest override yet, so `npx eslint` reports the test globals and comments as errors; no CI step lints test files (BLG-QA-280).
+
+Unit tests do not replace Playwright for rendered behaviour (CLAUDE.md §2). They cover the logic the page calls, so a page test does not have to reach every input combination.

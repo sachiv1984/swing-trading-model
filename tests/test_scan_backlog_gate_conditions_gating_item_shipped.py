@@ -8,6 +8,8 @@ lists gated items whose gate names only BLG-* items that have shipped
 import datetime
 import importlib.util
 import json
+
+import pytest
 import subprocess
 import sys
 from pathlib import Path
@@ -168,3 +170,51 @@ def test_live_backlog_lists_the_six_pt04_gated_items():
     features = sbgc.shipped_feature_ids((ROOT / p).read_text() for p in sbgc.ROADMAP_PATHS)
     listed = {r["id"] for r, _ in sbgc.gating_item_shipped(results, items, features)}
     assert still_gated <= listed, sorted(still_gated - listed)
+
+
+# --- ST-24 (BLG-GOV-388, EPIC-04, v9.18): banner position, not a prose mention ---
+
+def _gate_on(target_item):
+    """Whether a gate naming only target_item is listed as shipped."""
+    text = target_item + _item("BLG-OPS-500", gate="BLG-OPS-400 complete.")
+    return "BLG-OPS-500" in _shipped(text)
+
+
+def _target(heading_tail="", body=""):
+    return f"### BLG-OPS-400 — Title{heading_tail}\n**Priority:** P3\n{body}\n**Problem**\nx\n\n---\n\n"
+
+
+def test_prose_mention_of_the_banner_is_still_open():
+    body = "**Problem**\nThe closure step banners a partly-shipped item ✅ COMPLETE when its ACs move.\n"
+    assert not _gate_on(_target(body=body))
+
+
+def test_heading_prose_mention_is_still_open():
+    # BLG-GOV-388's own title: the banner text followed by prose.
+    assert not _gate_on(_target(heading_tail=": count an item as shipped only on a ✅ COMPLETE banner line"))
+
+
+def test_banner_in_a_list_item_or_code_span_is_still_open():
+    assert not _gate_on(_target(body="- Match the banner `✅ COMPLETE` only in its positions\n"))
+
+
+@pytest.mark.parametrize("heading_tail,body", [
+    ("", "> ✅ COMPLETE — shipped v9.17\n"),
+    ("", "**✅ COMPLETE — 2026-11-23, `2026-11-18__release-v9.18`: fixed in ST-18 (abc123)**\n"),
+    ("", "✅ COMPLETE — shipped\n"),
+    ("", "**Status:** ✅ COMPLETE (v9.10)\n"),
+    ("", "**Provisional-Target:** ✅ COMPLETE — resolved in-sprint\n"),
+    ("", "**Shipped:** ✅ COMPLETE v9.2\n"),
+    (" ✅ COMPLETE", ""),
+    (" ✅ COMPLETE v5.0 (2026-06-03)", ""),
+    (" — ✅ COMPLETE (2026-07-12 — see BLG-GOV-105)", ""),
+])
+def test_banner_in_a_conventional_position_counts_as_shipped(heading_tail, body):
+    assert _gate_on(_target(heading_tail=heading_tail, body=body))
+
+
+def test_live_backlog_bannered_set_excludes_prose_mentions():
+    items = sbgc.parse_items((ROOT / "claude" / "backlog" / "backlog.md").read_text())
+    bannered = {i for i, _t, b in items if sbgc.is_bannered_complete(b)}
+    assert "BLG-GOV-388" not in bannered  # its title mentions the banner
+    assert "BLG-GOV-417" not in bannered  # its Problem text mentions the banner
