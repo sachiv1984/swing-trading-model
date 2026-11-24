@@ -6,7 +6,7 @@
   "invoked_utc": "2026-11-19T08:07:14Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-24T08:58:51Z",
+  "last_updated_utc": "2026-11-24T09:42:28Z",
   "epics": {
     "EPIC-01": {
       "title": "Site Structure & Usability Phase 4, Stage 1: Correct and Safe (build-and-ship)",
@@ -878,50 +878,64 @@
       "qa_signed_off": false,
       "qa_evidence_log": "claude/cycles/2026-11-18__release-v9.18/qa_evidence_EPIC-06.md",
       "test_scenarios": [
-        "tests/test_settings_change_log_postgres.py"
+        "tests/e2e/earnings-unknown.spec.js",
+        "tests/test_gap_risk.py",
+        "tests/test_seed_uk_ticker_suffix.py",
+        "tests/test_settings_change_log_postgres.py",
+        "tests/test_watchlist_uk_signal_match_postgres.py",
+        "tests/test_yahoo_on_demand_failures.py"
       ],
       "stories": {
         "ST-32": {
           "title": "Finish the on-demand Yahoo failure diagnosis (remainder)",
           "classification": "delegated_backend",
-          "status": "not_started",
+          "status": "blocked_backend",
           "assigned_to": "human",
           "github_issue": 2297,
           "branch": "exec/2026-11-18__release-v9.18/EPIC-06",
           "commit_sha": null,
-          "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
+          "delegation_record_id": "DEL-20261124-01",
+          "blocked_since_utc": "2026-11-24T09:42:28Z",
+          "unblock_criteria": "Production weekly report (GET /ops/api-call-attribution?window=weekly, week ending >= 2026-11-20) supplied in session; else returns to backlog at sprint close (conditional, §1.4b).",
           "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": [],
+          "spec_references": [
+            "docs/ops/data_pipeline_cost_baseline.md#4. Weekly Baseline"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Conditional (gate 2026-11-20 passed). 2026-11-24: user chose to paste the production report in session. market-data-volume-check.yml failed both runs on a 60 s read timeout (BLG-OPS-223)."
         },
         "ST-33": {
           "title": "Show \"earnings unknown\" when an earnings or gap-risk lookup fails",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 2298,
           "branch": "exec/2026-11-18__release-v9.18/EPIC-06",
-          "commit_sha": null,
+          "commit_sha": "b865cad40773112753dbdf83d4648530eec752f0",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-11-24T09:50:02Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/earnings_endpoints.md#GET /earnings/{ticker}",
+            "docs/specs/api_contracts/position_endpoints.md#GET /positions/{position_id}/gap-risk",
+            "docs/specs/frontend/pages/positions.md#Earnings Unknown (v2.30 — ST-33, BLG-FE-294)",
+            "docs/specs/frontend/pages/screener_results.md",
+            "docs/specs/frontend/pages/watchlist.md#Earnings Cell (v0.11 — ST-33, BLG-FE-294)",
+            "tests/e2e/earnings-unknown.spec.js"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "First-time-right: 2026-11-24 pass A — 1 done (failure modes traced to the writer: exception, YahooInfoBusy slot timeout, throttled info without quoteType; a calendar date after a throttled info is ok); 2 done (surfaces: Screener/Watchlist/Positions expanded row/Alerts cell/Grid card changed; pre-entry §4.2.3 check already skipped on null, neutral; Research passes fields through; Dashboard EarningsAlertCard silently undercounts on a failed lookup, pre-existing, filed; data_status full product table-tested); 3 done (src/lib/earningsDataStatus.js with table tests); 4 done (axe on each new unknown state); 5 done (high: shared hook); 7 done (§13 gap-risk review BC 1-7 read: unknown line is display-only, on-request, factual, not a trigger); 17 done (readers of data_status: hooks, badges, gap-risk service); 18 done (fixtures copied from _empty and gap_risk_service return shape); 19 done (late/fail rows: loading shows …, fetch error shows —, unavailable shows unknown); 20 raised in report (expanded row reads Earnings · Earnings: unknown per approved spec); 6,8,11,21-24 N/A. pass B — 9 done; 10 done (earnings_endpoints v0.4, position_endpoints v2.24.0, openapi 3.52.0, api_changelog); 13 done; locators: SC-EARN-01/04 columnheader matches explained. pass B (after reviews) — 9 done: high review 9 findings (fixed: HTTP failure as unavailable, calendar past date, double screen-reader read, deterministic SC-EUNK-08, slot release count; ruled by PO: 60 s hold, expanded-row Unknown; filed: BLG-BE-233 pre-entry/Research); medium re-review 9 findings (fixed: yfinance 1.7 dict calendar never read — pre-existing, fixtures used the DataFrame shape; one answered rule; gap-risk request failure; headings/Last Updated; Screener comment; kept per decision record §4: Positions/Watchlist UK lookups; not taken: tooltip focus, matches existing cells); 18 done (calendar fixtures moved to the yfinance 1.7 dict shape; old code fails the new fixture); 10 done (three page specs carry the two Known Deviations). AC 1 unit tests (test_yahoo_on_demand_failures.py data_status table; test_gap_risk.py). AC 2 Playwright SC-EUNK-01..07, 09, 09b. AC 3 SC-EUNK-08 (60 s hold, PO ruling). AC 4 screener_results.md v1.12 (UK rows: no lookup; SC-EUNK-03). CI all success for b865cad4: Playwright 45368947624, CI Pytest, Frontend Unit Tests, Build, Lighthouse. Deviations: DEV-EPIC06-ST33-01/02 (P3, PO-accepted), Known Deviations in positions.md/watchlist.md/screener_results.md."
         },
         "ST-34": {
           "title": "Let the visual-baseline workflow push regenerated snapshots",
@@ -949,37 +963,40 @@
         "ST-35": {
           "title": "Seed staging's UK positions with the .L suffix",
           "classification": "delegated_backend",
-          "status": "not_started",
+          "status": "blocked_backend",
           "assigned_to": "human",
           "github_issue": 2300,
           "branch": "exec/2026-11-18__release-v9.18/EPIC-06",
-          "commit_sha": null,
-          "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
+          "commit_sha": "e0879873dbb594fd8f8d53964e18539fb0181afc",
+          "delegation_record_id": "DEL-20261124-02",
+          "blocked_since_utc": "2026-11-24T09:42:28Z",
+          "unblock_criteria": "Authenticated staging GET /positions shows price_is_stale false for BARC.L and LGEN.L, pasted in session; else AC 2 deferred post-merge with a backlog item before the PR opens.",
           "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": [],
+          "spec_references": [
+            "tests/test_seed_uk_ticker_suffix.py",
+            "scripts/seeds/seed_portfolio_trades.sql"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
-          "last_completed_substep": null,
+          "last_completed_substep": "3.1.B.commit",
           "sign_off_record": null,
-          "notes": " | 2026-11-19T14:08:03Z Staging write by the user (Supabase SQL editor, staging project): positions 0c1edd49… BARC → BARC.L and 7aca4a88… LGEN → LGEN.L (market UK, status open; pre-checks: exactly 2 rows, no existing .L rows). This is ST-35's 'correct the two existing staging rows' scope item, done early to unblock ST-04's staging check; ST-35's seed-script change and its AC 2 (price_is_stale false) remain with EPIC-06. Seed stores UK prices in pounds (current_price 2.18/2.52, stop 1.90/2.20), confirming ST-04's units premise. Do not run reset-and-seed-staging.yml until ST-35's seed fix lands."
+          "notes": " | 2026-11-19T14:08:03Z Staging write by the user (Supabase SQL editor, staging project): positions 0c1edd49… BARC → BARC.L and 7aca4a88… LGEN → LGEN.L (market UK, status open; pre-checks: exactly 2 rows, no existing .L rows). This is ST-35's 'correct the two existing staging rows' scope item, done early to unblock ST-04's staging check; ST-35's seed-script change and its AC 2 (price_is_stale false) remain with EPIC-06. Seed stores UK prices in pounds (current_price 2.18/2.52, stop 1.90/2.20), confirming ST-04's units premise. Do not run reset-and-seed-staging.yml until ST-35's seed fix lands. First-time-right: 2026-11-24 pass A — 7 done (premise \"staging rows lack .L\" checked by a read with permission: already corrected, BARC.L/LGEN.L); 17 done (readers of the seeded ticker: seed_analytics cleanup DELETE list matched bare names, updated to both forms; seed_alerts payload ticker); 18 done (canonical form from ticker_universe_service: BP.L, BT-A.L, NG.L); 3 done (guard test fails on each bad form and on the pre-change seeds, 7 files); 1,2,4-6,8,11,19-24 N/A (seed data only). Seed sweep done (8 files); AC 2 waits on an authenticated staging GET /positions (401 without a token). pass B — high review 8 findings: fixed BLG-BE-234 in-story (watchlist signal lookup matches LGEN and LGEN.L; Phase B test fails on old query), alert seed copy matches alerts_service writer (LGEN.L, pounds), header/docstring tickers, scanner covers market-first dicts and 3-tuples; filed BLG-QA-283 (pence prices; seed-preview skip on pre-seeded DBs, pre-existing); not taken: ID headings in delegation_log/backlog (every existing ledger entry uses them). Seed sweep and BLG-BE-234 fix committed e0879873; AC 1 met (guard test). AC 2 awaits DEL-20261124-02."
         },
         "ST-36": {
           "title": "Build the E2E bundle once per Playwright run",
           "classification": "autonomous",
-          "status": "in_progress",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 2301,
           "branch": "exec/2026-11-18__release-v9.18/EPIC-06",
-          "commit_sha": null,
+          "commit_sha": "bb821fe2116cd9204302918af252a9c02d840239",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-11-24T09:01:07Z",
+          "acceptance_verified": true,
           "spec_references": [
             ".github/workflows/playwright.yml",
             "playwright.config.js",
@@ -987,10 +1004,10 @@
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": "First-time-right: 2026-11-24 pass A — 24 done (harness parity: the bundle is built by a script reading webServer.env, so build env has one source; CI=false and PUBLIC_URL=/ kept; AC quantifier \"the 8 shards\" read literally, and the two visual jobs moved too; no new tool installs, actions pinned to the same majors); 9 done (local build + serve checked: assets at /, API URL baked in, system-status.spec.js 28/28 in prebuilt mode); 1-8,11,17-23 N/A (CI-only)."
+          "notes": "First-time-right: 2026-11-24 pass A — 24 done (harness parity: the bundle is built by a script reading webServer.env, so build env has one source; CI=false and PUBLIC_URL=/ kept; AC quantifier \"the 8 shards\" read literally, and the two visual jobs moved too; no new tool installs, actions pinned to the same majors); 9 done (local build + serve checked: assets at /, API URL baked in, system-status.spec.js 28/28 in prebuilt mode); 1-8,11,17-23 N/A (CI-only). First-time-right: 2026-11-24 pass B — 9 done (high review: 7 findings; fixed 6 in-commit — 7-day artifact retention for shard re-runs, dependents run on build failure so a broken build fails rather than skips them, timings section started, strict E2E_PREBUILT_BUNDLE===\"1\", spawn error logged, inert step REACT_APP_* removed; skipped the build/ gitignore nit: build/404.html is tracked); 10 done (ci_pipeline_baseline.md §10 started); 24 done. AC 1: shards serve the downloaded bundle; only the build job compiles (run 45361210363 log); E2E passes in CI (45361210363, 45368947624 success). AC 2: ci_pipeline_baseline.md v1.6 §10, commit 2ffd0ef1. CI all success for bb821fe2. Deviation check: none."
         },
         "ST-37": {
           "title": "Keep a bare root pytest out of the mutmut pilot tests",
@@ -1123,7 +1140,10 @@
     }
   },
   "blocked_items": [],
-  "delegated_items": [],
+  "delegated_items": [
+    "ST-32",
+    "ST-35"
+  ],
   "completed_items": [
     "ST-01",
     "ST-02",
@@ -1145,7 +1165,9 @@
     "ST-29",
     "ST-30",
     "ST-31",
+    "ST-33",
     "ST-34",
+    "ST-36",
     "ST-37",
     "ST-38",
     "ST-39",

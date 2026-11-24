@@ -8821,6 +8821,7 @@ ST-33 added `data_status: ok | unavailable` to `get_earnings()`. Two other calle
 ---
 
 ### BLG-BE-234 — Match UK watchlist rows to their signals
+**✅ COMPLETE — 2026-11-24, `2026-11-18__release-v9.18`, found by ST-35, resolved in-sprint on EPIC-06, commit `e0879873` (Phase B test `tests/test_watchlist_uk_signal_match_postgres.py`).**
 **Priority:** P3 (Low)
 **Type:** Backend Engineering
 **Owner:** Head of Engineering
