@@ -1,8 +1,8 @@
 **Owner:** QA Lead
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Version:** 1.5
-**Last Updated:** 2026-09-10 (ST-15, v9.3 EPIC-03, BLG-OPS-97 — new §9 Shard Count Increase 4→8 Before/After Evidence added; Document History renumbered §9→§10); prior — 2026-09-08 (ST-12, v9.2 EPIC-03, BLG-QA-147 — §8.5 first trend re-measurement added)
+**Version:** 1.6
+**Last Updated:** 2026-11-24 (ST-36, v9.18 EPIC-06, BLG-OPS-206 — new §10 Build the E2E Bundle Once per Run before/after evidence; Document History renumbered §10→§11); prior — 2026-09-10 (ST-15, v9.3 EPIC-03, BLG-OPS-97 — new §9 Shard Count Increase 4→8 Before/After Evidence added; Document History renumbered §9→§10); prior — 2026-09-08 (ST-12, v9.2 EPIC-03, BLG-QA-147 — §8.5 first trend re-measurement added); prior history retained — see prior entries in version control
 **Cycle:** 2026-05-29__release-v4.3 (ST-11 — BLG-QA-38)
 
 ---
@@ -333,12 +333,29 @@ Signed: Sprint Execution Engine (agent-mediated, Infrastructure & Operations Own
 | 44568006295 | 2026-11-19 | 286s | 1890s | 1671s | 249s |
 | 44537473069 | 2026-11-19 | 324s | 2059s | 1759s | 319s |
 
-**After:** recorded below from this branch's runs once they complete.
+**After** (`exec/2026-11-18__release-v9.18/EPIC-06`, 11 jobs: one build plus the 10 that serve it; every job `success`):
+
+| Run | Commit | Date | Wall time | Runner time (all jobs) | E2E shards' runner time | Slowest shard | Build job |
+|-----|--------|------|-----------|------------------------|-------------------------|---------------|-----------|
+| 45361210363 | `bb821fe2` | 2026-11-24 | 334s | 1582s | 1385s | 268s | 58s |
+| 45368947624 | `b865cad4` | 2026-11-24 | 277s | 1436s | 1267s | 223s | 47s |
+
+**Result (means):**
+
+| Measure | Before (4 runs) | After (2 runs) | Change |
+|---------|-----------------|----------------|--------|
+| Wall time | 399s | 306s | −23% |
+| Runner time, all jobs | 2322s | 1509s | −35% |
+| E2E shards' runner time | 2007s | 1326s | −34% |
+| Slowest shard | 385s | 246s | −36% |
+
+The build now runs once (≈50s) before the shards start, so the critical path is the build plus the slowest shard (≈298s after, against ≈385s before). The runner-time saving is the 10 builds no longer run, less the one build job. Only the build job's log contains "Creating an optimized production build" (checked on run 45361210363). Samples are small and the before runs vary by 270s, so treat the percentages as indicative; the sign of every change is the same in every before/after pair.
 
 ## 11. Document History
 
 | Version | Date | Author | Change |
 |---------|------|--------|--------|
+| 1.6 | 2026-11-24 | Sprint Execution Engine (agent-mediated, Infrastructure & Operations Owner role — §5.3) | ST-36 (EPIC-06, v9.18, BLG-OPS-206) — new §10: the E2E bundle is built once per Playwright run and served by the 8 shards and both visual jobs. Mean wall time 399s → 306s, runner time 2322s → 1509s (4 before, 2 after runs). Former §10 Document History renumbered to §11. |
 | 1.5 | 2026-09-10 | Sprint Execution Engine (agent-mediated, Infrastructure & Operations Owner role — §5.3) | ST-15 (EPIC-03, v9.3, BLG-OPS-97) — new §9 Shard Count Increase 4→8 Before/After Evidence: `playwright-e2e` shard count doubled (4→8); critical path 198.5s (prior §8.5 baseline) → 163.0s (8-shard, 2-run sample), a ~17.9% reduction. Former §9 Document History renumbered to §10. |
 | 1.4 | 2026-09-08 | Sprint Execution Engine (agent-mediated, QA & Testing Owner role — §5.3) | ST-12 (EPIC-03, v9.2, BLG-QA-147) — new §8.5 first trend re-measurement (day 0 → day 1 against the §8.2 budget). Playwright critical path flat/improved (210.6s → 198.5s excl. one investigated non-suite outlier); backend pytest unchanged (86.75s). No breach. |
 | 1.0 | 2026-05-29 | Sprint Execution Engine | Initial CI pipeline baseline (ST-11, v4.3 EPIC-02, BLG-QA-38). p50=444s. BLG-QA-27 gate cleared. |
