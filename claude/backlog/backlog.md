@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-23 (session — 3 new items added: BLG-QA-277, BLG-QA-278, BLG-QA-279; EPIC-04 v9.18 PR #2311 review and retrospective); prior — 2026-11-23 (session — 1 new item added: BLG-FE-329; EPIC-04 v9.18 ST-20 axe incomplete contrast log); prior — 2026-11-23 (session — 1 new item added: BLG-QA-276; EPIC-04 v9.18 ST-19 pre-commit code review); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-23 (session — 3 new items added: BLG-QA-281, BLG-QA-278, BLG-QA-279; EPIC-04 v9.18 PR #2311 review and retrospective); prior — 2026-11-23 (session — 1 new item added: BLG-FE-332; EPIC-04 v9.18 ST-20 axe incomplete contrast log); prior — 2026-11-23 (session — 1 new item added: BLG-QA-280; EPIC-04 v9.18 ST-19 pre-commit code review); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -8393,7 +8393,7 @@ The debrief summary and its number check are tested with made-up trades and sent
 
 ---
 
-### BLG-SPEC-243 — State what a Positions warning strip entry shows when its source query fails
+### BLG-SPEC-244 — State what a Positions warning strip entry shows when its source query fails
 **Priority:** P3 (Low)
 **Type:** Spec Debt
 **Owner:** Frontend Specifications & UX Documentation Owner; Head of UX & Design
@@ -8414,7 +8414,7 @@ The debrief summary and its number check are tested with made-up trades and sent
 
 ---
 
-### BLG-QA-276 — Give src unit tests a Jest override in eslint.config.mjs
+### BLG-QA-280 — Give src unit tests a Jest override in eslint.config.mjs
 **Priority:** P3 (Low)
 **Type:** QA / Test Automation
 **Owner:** QA & Testing Owner; Product Owner (eslint.config.mjs is protected)
@@ -8435,7 +8435,7 @@ The debrief summary and its number check are tested with made-up trades and sent
 
 ---
 
-### BLG-FE-329 — Give the app shell's gradient and overlapped text a contrast axe can decide
+### BLG-FE-332 — Give the app shell's gradient and overlapped text a contrast axe can decide
 **Priority:** P3 (Low)
 **Type:** Frontend / UX
 **Owner:** Head of UX & Design; Head of Engineering
@@ -8457,7 +8457,7 @@ ST-20 made `runAxeScan` log the color-contrast results axe cannot decide (`incom
 
 ---
 
-### BLG-QA-277 — Triage page-content incomplete colour-contrast on the non-strict axe scans and widen the strict set
+### BLG-QA-281 — Triage page-content incomplete colour-contrast on the non-strict axe scans and widen the strict set
 **Priority:** P2 (Medium)
 **Type:** QA / Test Automation
 **Owner:** QA & Testing Owner; Head of UX & Design
@@ -8466,7 +8466,7 @@ ST-20 made `runAxeScan` log the color-contrast results axe cannot decide (`incom
 **Provisional-Target:** v9.19
 
 **Problem**
-ST-20 made every axe scan log the colour-contrast results axe cannot decide, and made 19 of 96 scans fail on them. The other 77 scans only log. They include every Positions scan, where the 4.48:1 grace pill that prompted BLG-QA-260 was found. The 2026-11-23 run logged page-content incomplete nodes on those scans (for example Settings 1, TradePlan 1, Positions and Performance many). No one has triaged them, so a real contrast failure there still passes. BLG-FE-329 covers only the app shell.
+ST-20 made every axe scan log the colour-contrast results axe cannot decide, and made 19 of 96 scans fail on them. The other 77 scans only log. They include every Positions scan, where the 4.48:1 grace pill that prompted BLG-QA-260 was found. The 2026-11-23 run logged page-content incomplete nodes on those scans (for example Settings 1, TradePlan 1, Positions and Performance many). No one has triaged them, so a real contrast failure there still passes. BLG-FE-332 covers only the app shell.
 
 **Scope**
 - Triage the page-content incomplete nodes logged by `runAxeScan` on the non-strict scans, Positions first. For each, measure the real contrast, fix it if below AA, or give it a solid background so axe can decide
@@ -8489,7 +8489,7 @@ ST-20 made every axe scan log the colour-contrast results axe cannot decide, and
 **Provisional-Target:** TBD
 
 **Problem**
-`.claude/hooks/lint-feedback.sh` runs ESLint after every Edit or Write of a `.js` file, but it returns `{"decision": "approve", "reason": …}`. For a PostToolUse hook, that reason is not shown to the agent. During ST-19 it found 161 errors in the new unit tests (no Jest globals, "Comments are forbidden") and nobody saw them. The missing Jest override surfaced only at the pre-commit review and was filed as BLG-QA-276, instead of being raised with the Product Owner in the same turn. The hook also counts attempts per file in `/tmp`, so its "3 attempts" limit carries over between sessions.
+`.claude/hooks/lint-feedback.sh` runs ESLint after every Edit or Write of a `.js` file, but it returns `{"decision": "approve", "reason": …}`. For a PostToolUse hook, that reason is not shown to the agent. During ST-19 it found 161 errors in the new unit tests (no Jest globals, "Comments are forbidden") and nobody saw them. The missing Jest override surfaced only at the pre-commit review and was filed as BLG-QA-280, instead of being raised with the Product Owner in the same turn. The hook also counts attempts per file in `/tmp`, so its "3 attempts" limit carries over between sessions.
 
 **Scope**
 - Return the findings in a form the agent sees (for example `hookSpecificOutput.additionalContext`, or `decision: "block"` with the reason). Check with a hand-run Write that the text arrives
@@ -8512,15 +8512,17 @@ ST-20 made every axe scan log the colour-contrast results axe cannot decide, and
 **Provisional-Target:** TBD
 
 **Problem**
-`.claude/skills/lessons_learnt.md` records seven times since 2026-10-27 that a guessed backlog ID was typed into a spec, test or registry before the `/backlog-add` ID scan. The latest was ST-19's `BLG-FE-329`, which happened to be free. Each was caught by hand before commit. The lesson has not stopped the slip, because nothing checks it mechanically.
+`.claude/skills/lessons_learnt.md` records seven times since 2026-10-27 that a guessed backlog ID was typed into a spec, test or registry before the `/backlog-add` ID scan. The latest was ST-19's `BLG-FE-332`, which happened to be free. Each was caught by hand before commit. The lesson has not stopped the slip, because nothing checks it mechanically. A second gap appeared on 2026-11-24: the `/backlog-add` scan reads only the current branch, so EPIC-04 and the still-open EPIC-05 branch filed BLG-SPEC-243, BLG-QA-276, BLG-QA-277 and BLG-FE-329 for different items, found only when EPIC-05's merge-gate record was read. EPIC-04 renumbered its four (to BLG-SPEC-244, BLG-QA-280, BLG-QA-281, BLG-FE-332).
 
 **Scope**
 - A script, run from `.githooks/pre-commit`, that lists every `BLG-<NS>-<n>` in the staged diff's added lines and fails when one exists in neither `claude/backlog/backlog.md` nor `backlog_archive.md` (staged versions), naming each
-- Tests: an existing ID passes, a missing ID fails, an ID added to `backlog.md` in the same commit passes
+- Also fail when a `### BLG-` heading the commit adds already exists, with a different title, on `origin/main` or any open `origin/exec/**` branch (the `/backlog-add` skill's Step 1 scan should read those too)
+- Tests: an existing ID passes, a missing ID fails, an ID added to `backlog.md` in the same commit passes, an ID another open branch already uses fails
 
 **Acceptance Criteria**
 - A commit that adds a reference to a backlog ID that does not exist is blocked, naming the ID
 - A commit that files the item and references it in the same commit passes
+- A commit that files an ID already used on another open EPIC branch is blocked, naming the branch
 
 ---
 

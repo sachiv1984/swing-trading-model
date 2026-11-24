@@ -57,7 +57,7 @@ The surfaces that show the concept are the grace view row (`positions.md` §Grac
 | Strip entry 3 active | "One or more positions in grace" | ≥ 1 with `grace_period === true` / only a 0-day alert row / none | shown / **not stated**: the same 0-day case as BLG-SPEC-235 / hidden |
 | Strip entry 4 active | `MetricsStalenessIndicator` would render | renders / does not | entry shown / hidden |
 
-The "query fails" state is also unstated for entries 1, 2 and 4, and today's `positions.md` §Warning Strip still does not state it. It is outside ST-18's acceptance criteria and is filed as **BLG-SPEC-243**.
+The "query fails" state is also unstated for entries 1, 2 and 4, and today's `positions.md` §Warning Strip still does not state it. It is outside ST-18's acceptance criteria and is filed as **BLG-SPEC-244**.
 
 **Result:** the checks find BLG-BE-215 (data source) and the BLG-SPEC-234/235 last-day contradiction (worked examples, confirmed by the dependent-state list). AC 2 is met.
 

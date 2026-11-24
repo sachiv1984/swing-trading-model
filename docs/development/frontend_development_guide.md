@@ -421,6 +421,6 @@ setEntries((prev) => sortEntries(prev.map((e) => (e.id === entry.id ? entry : e)
 - **Run locally:** `CI=true npm test -- --watchAll=false`, or `CI=true npx react-scripts test --watchAll=false src/lib/<module>` for one file.
 - **CI:** `.github/workflows/frontend-unit-tests.yml` runs the same command on every PR and push touching `src/**`, `package.json`, `package-lock.json`, `.npmrc` or `jsconfig.json`. A failing unit test fails the PR.
 
-`eslint.config.mjs` has no Jest override yet, so `npx eslint` reports the test globals and comments as errors; no CI step lints test files (BLG-QA-276).
+`eslint.config.mjs` has no Jest override yet, so `npx eslint` reports the test globals and comments as errors; no CI step lints test files (BLG-QA-280).
 
 Unit tests do not replace Playwright for rendered behaviour (CLAUDE.md §2). They cover the logic the page calls, so a page test does not have to reach every input combination.
