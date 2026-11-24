@@ -871,7 +871,7 @@
     },
     "EPIC-06": {
       "title": "Market-Data Reliability and CI",
-      "status": "in_progress",
+      "status": "done",
       "branch": "exec/2026-11-18__release-v9.18/EPIC-06",
       "pr_number": null,
       "pr_status": "none",
@@ -969,7 +969,7 @@
         "ST-35": {
           "title": "Seed staging's UK positions with the .L suffix",
           "classification": "delegated_backend",
-          "status": "blocked_backend",
+          "status": "done",
           "assigned_to": "human",
           "github_issue": 2300,
           "branch": "exec/2026-11-18__release-v9.18/EPIC-06",
@@ -977,18 +977,24 @@
           "delegation_record_id": "DEL-20261124-02",
           "blocked_since_utc": "2026-11-24T09:42:28Z",
           "unblock_criteria": "Authenticated staging GET /positions shows price_is_stale false for BARC.L and LGEN.L, pasted in session; else AC 2 deferred post-merge with a backlog item before the PR opens.",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-11-24T10:03:36Z",
+          "acceptance_verified": true,
           "spec_references": [
             "tests/test_seed_uk_ticker_suffix.py",
             "scripts/seeds/seed_portfolio_trades.sql"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": "3.1.B.commit",
-          "sign_off_record": null,
-          "notes": " | 2026-11-19T14:08:03Z Staging write by the user (Supabase SQL editor, staging project): positions 0c1edd49… BARC → BARC.L and 7aca4a88… LGEN → LGEN.L (market UK, status open; pre-checks: exactly 2 rows, no existing .L rows). This is ST-35's 'correct the two existing staging rows' scope item, done early to unblock ST-04's staging check; ST-35's seed-script change and its AC 2 (price_is_stale false) remain with EPIC-06. Seed stores UK prices in pounds (current_price 2.18/2.52, stop 1.90/2.20), confirming ST-04's units premise. Do not run reset-and-seed-staging.yml until ST-35's seed fix lands. First-time-right: 2026-11-24 pass A — 7 done (premise \"staging rows lack .L\" checked by a read with permission: already corrected, BARC.L/LGEN.L); 17 done (readers of the seeded ticker: seed_analytics cleanup DELETE list matched bare names, updated to both forms; seed_alerts payload ticker); 18 done (canonical form from ticker_universe_service: BP.L, BT-A.L, NG.L); 3 done (guard test fails on each bad form and on the pre-change seeds, 7 files); 1,2,4-6,8,11,19-24 N/A (seed data only). Seed sweep done (8 files); AC 2 waits on an authenticated staging GET /positions (401 without a token). pass B — high review 8 findings: fixed BLG-BE-234 in-story (watchlist signal lookup matches LGEN and LGEN.L; Phase B test fails on old query), alert seed copy matches alerts_service writer (LGEN.L, pounds), header/docstring tickers, scanner covers market-first dicts and 3-tuples; filed BLG-QA-283 (pence prices; seed-preview skip on pre-seeded DBs, pre-existing); not taken: ID headings in delegation_log/backlog (every existing ledger entry uses them). Seed sweep and BLG-BE-234 fix committed e0879873; AC 1 met (guard test). AC 2 awaits DEL-20261124-02."
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.B.unblocked",
+          "sign_off_record": {
+            "status": "cleared",
+            "method": "in_session_evidence",
+            "role": "Infrastructure & Operations Owner; QA & Testing Owner",
+            "date": "2026-11-24",
+            "evidence": "staging read with permission + authenticated staging GET /positions (BARC/LGEN price_is_stale false), supplied in session (DEL-20261124-02)"
+          },
+          "notes": " | 2026-11-19T14:08:03Z Staging write by the user (Supabase SQL editor, staging project): positions 0c1edd49… BARC → BARC.L and 7aca4a88… LGEN → LGEN.L (market UK, status open; pre-checks: exactly 2 rows, no existing .L rows). This is ST-35's 'correct the two existing staging rows' scope item, done early to unblock ST-04's staging check; ST-35's seed-script change and its AC 2 (price_is_stale false) remain with EPIC-06. Seed stores UK prices in pounds (current_price 2.18/2.52, stop 1.90/2.20), confirming ST-04's units premise. Do not run reset-and-seed-staging.yml until ST-35's seed fix lands. First-time-right: 2026-11-24 pass A — 7 done (premise \"staging rows lack .L\" checked by a read with permission: already corrected, BARC.L/LGEN.L); 17 done (readers of the seeded ticker: seed_analytics cleanup DELETE list matched bare names, updated to both forms; seed_alerts payload ticker); 18 done (canonical form from ticker_universe_service: BP.L, BT-A.L, NG.L); 3 done (guard test fails on each bad form and on the pre-change seeds, 7 files); 1,2,4-6,8,11,19-24 N/A (seed data only). Seed sweep done (8 files); AC 2 waits on an authenticated staging GET /positions (401 without a token). pass B — high review 8 findings: fixed BLG-BE-234 in-story (watchlist signal lookup matches LGEN and LGEN.L; Phase B test fails on old query), alert seed copy matches alerts_service writer (LGEN.L, pounds), header/docstring tickers, scanner covers market-first dicts and 3-tuples; filed BLG-QA-283 (pence prices; seed-preview skip on pre-seeded DBs, pre-existing); not taken: ID headings in delegation_log/backlog (every existing ledger entry uses them). Seed sweep and BLG-BE-234 fix committed e0879873; AC 1 met (guard test). AC 2 awaits DEL-20261124-02. AC 2 met 2026-11-24: authenticated staging GET /positions, BARC and LGEN price_is_stale false (display tickers; stored BARC.L/LGEN.L). CI all success for e0879873 (CI Pytest 45371097451). Deviation check: none (watchlist seed stays bare by app convention, recorded in the guard test; AC 1 intent met)."
         },
         "ST-36": {
           "title": "Build the E2E bundle once per Playwright run",
@@ -1146,9 +1152,7 @@
     }
   },
   "blocked_items": [],
-  "delegated_items": [
-    "ST-35"
-  ],
+  "delegated_items": [],
   "completed_items": [
     "ST-01",
     "ST-02",
@@ -1173,6 +1177,7 @@
     "ST-32",
     "ST-33",
     "ST-34",
+    "ST-35",
     "ST-36",
     "ST-37",
     "ST-38",
