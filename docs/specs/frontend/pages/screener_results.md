@@ -2,7 +2,7 @@
 **Class:** Supporting Document (Class 2)
 **Status:** Active
 **Version:** 1.12
-**Last Updated:** 2026-11-18 (v9.18 design gate — ST-33/BLG-FE-294: Earnings Unknown; no UK lookups); prior — 2026-11-06 (v9.16 design gate — ST-07/BLG-FE-255: "Plan this" on every result row); prior — 2026-10-16 (v9.13 design gate — ST-25/BLG-FE-221: "Add to Watchlist" and empty-state Scan buttons use emerald-700 with white text); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-24 (ST-33, EPIC-06, v9.18, BLG-FE-294 — Known Deviations row: a failed earnings lookup is held 60 s, Product Owner ruling); prior — 2026-11-18 (v9.18 design gate — ST-33/BLG-FE-294: Earnings Unknown; no UK lookups); prior — 2026-11-06 (v9.16 design gate — ST-07/BLG-FE-255: "Plan this" on every result row); prior history retained — see prior entries in version control
 **Design Source (v1.11 Plan this):** docs/design/2026-11-06__release-v9.16/signal-to-plan-flow/decision_record.md
 **Design Source (v1.10 button fills):** docs/design/2026-10-16__release-v9.13/coloured-button-fills/decision_record.md
 **Design Source (v1.8 column architecture):** docs/design/2026-09-28__release-v9.8/screener-watchlist-shared-column-definitions/decision_record.md
@@ -337,6 +337,7 @@ This spec covers all DS-02 interaction patterns:
 | ID | Description | Canonical requirement | Priority | Target resolution | Owner | Backlog reference |
 |----|-------------|----------------------|----------|------------------|-------|------------------|
 | DEV-01 | News panel not displayed on screener results page (DS-02 portion of DS-06 AC-1). The `GET /news/{ticker}` backend endpoint is available; UI attachment to the screener results page is deferred pending DS-02 page implementation in v3.0. | §9 News Panel: "display on screener results page" (ST-07 AC-1). DS-02 implementation is a prerequisite. | P3 | v3.0 (DS-02 — screener results page implementation) | Backend Engineering Patterns Owner + Frontend Specifications & UX Documentation Owner | BLG-FE-18 |
+| DEV-EPIC06-ST33-01 | A failed earnings lookup (`data_status: unavailable`, or a failed request) is held 60 seconds in the session cache, so the first render after that retries; it is still never cached for the session (`src/hooks/useEarnings.js`). Product Owner ruling 2026-11-24, after the ST-33 code review found every remount re-sent every failed lookup while Yahoo throttled. | §4 Earnings: "A failed lookup … is not cached" | P3 | Next design gate touching §4 | Frontend Specifications & UX Documentation Owner | Accepted as-is (PO ruling); `qa_evidence_EPIC-06.md` (v9.18) |
 
 ---
 

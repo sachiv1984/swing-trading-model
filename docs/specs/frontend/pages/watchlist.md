@@ -2,7 +2,7 @@
 **Class:** Supporting Document (Class 2)
 **Status:** Active
 **Version:** 0.11
-**Last Updated:** 2026-11-18 (v9.18 design gate — ST-33/BLG-FE-294: Earnings Cell with Unknown state); prior — 2026-11-17 (ST-08, EPIC-03, v9.17, BLG-FE-265 — stale "no action" text `text-amber-700 dark:text-amber-400`; the watchlist card is themed for the light theme); prior — 2026-09-28 (v9.8 design gate — ST-02/BLG-FE-185: new §Column Definition Architecture note — `WATCHLIST_COLUMNS` is the single source for header, body cell and CSV value; no visual change); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-24 (ST-33, EPIC-06, v9.18, BLG-FE-294 — new Known Deviations section: a failed earnings lookup is held 60 s, Product Owner ruling); prior — 2026-11-18 (v9.18 design gate — ST-33/BLG-FE-294: Earnings Cell with Unknown state); prior — 2026-11-17 (ST-08, EPIC-03, v9.17, BLG-FE-265 — stale "no action" text `text-amber-700 dark:text-amber-400`; the watchlist card is themed for the light theme); prior history retained — see prior entries in version control
 **Design Source (v0.9 column architecture):** docs/design/2026-09-28__release-v9.8/screener-watchlist-shared-column-definitions/decision_record.md
 **Design Source (v0.8 CSV export):** docs/design/2026-09-21__release-v9.6/screener-watchlist-csv-export/decision_record.md
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
@@ -296,6 +296,21 @@ A secondary (outline) **"Download CSV"** button with the download icon — same 
 ## Earnings Cell (v0.11 — ST-33, BLG-FE-294)
 
 *(The Earnings column (`WatchlistEarningsBadge`) predates this spec's column table and was undocumented; this section documents it.)* Source: `GET /earnings/{ticker}?market=` via `useEarnings`. `days_until_earnings` 0 → "Today" (`text-app-warning`); 1–5 → "{n}d" (`text-app-warning`); 6–14 → "{n}d" (yellow); above 14 → "{n}d" (muted); null or negative → "—". **New (ST-33):** `data_status: unavailable` → "Unknown" (`text-xs text-app-muted`, tooltip "The earnings date could not be fetched. It will be retried."), not cached for the session. UK rows keep today's behaviour. Design source: `docs/design/2026-11-18__release-v9.18/position-data-states/decision_record.md` §4.
+
+---
+
+
+## Known Deviations
+
+### Failed earnings lookup is held 60 seconds
+
+- **ID:** DEV-EPIC06-ST33-01
+- **Description:** §Earnings Cell says an `unavailable` answer is "not cached for the session". The shipped hook holds it for 60 seconds, so the first render after that retries; it is never cached for the session. A failed request is treated as `unavailable` too (`src/hooks/useEarnings.js`).
+- **Canonical requirement:** §Earnings Cell: `data_status: unavailable` → "Unknown" … "not cached for the session".
+- **Priority:** P3
+- **Target resolution release:** next design gate that touches §Earnings Cell
+- **Owner:** Frontend Specifications & UX Documentation Owner
+- **Backlog reference:** Accepted as-is (Product Owner ruling 2026-11-24); `claude/cycles/2026-11-18__release-v9.18/qa_evidence_EPIC-06.md`
 
 ---
 

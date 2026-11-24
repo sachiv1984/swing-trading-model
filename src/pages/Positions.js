@@ -2,6 +2,8 @@ import { Fragment, useState, useEffect, useMemo, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEarnings } from "../hooks/useEarnings";
 import { useGapRisk } from "../hooks/useGapRisk";
+import { isEarningsUnavailable } from "../lib/earningsDataStatus";
+import EarningsUnknown from "../components/shared/EarningsUnknown";
 import { useIsMobile } from "../hooks/use-mobile";
 import { base44, api, apiFetch } from "../api/base44Client";
 import {
@@ -563,6 +565,10 @@ function PositionsWarningStrip({ positions, graceDeepLink }) {
 function PositionEarningsValue({ ticker, market }) {
   const { data, loading } = useEarnings(ticker, market);
   if (loading) return <span className="text-app-muted text-xs">…</span>;
+  // ST-33 (BLG-FE-294, v9.18; positions.md §Earnings Unknown): a failed lookup.
+  // The row already carries the "Earnings" label, so the value is "Unknown"
+  // (Product Owner ruling 2026-11-24; the Alerts cell keeps "Earnings: unknown").
+  if (isEarningsUnavailable(data)) return <EarningsUnknown />;
   if (!data || data.days_until_earnings == null) return <span className="text-app-muted text-xs">—</span>;
   const days = data.days_until_earnings;
   if (days < 0) return <span className="text-app-muted text-xs">—</span>;
@@ -648,6 +654,10 @@ function AlertsCell({ position }) {
     <span className="inline-block h-4 w-20 rounded bg-slate-100 dark:bg-slate-700/50 animate-pulse" data-testid="gap-risk-skeleton" />
   ) : gapRisk?.flagged ? (
     <GapRiskBadge ticker={position.ticker} gapRisk={gapRisk} />
+  ) : isEarningsUnavailable(gapRisk) ? (
+    // ST-33 (BLG-FE-294, v9.18): the gap-risk earnings input failed. No data,
+    // no flag: muted missing-data text, never the GAP RISK badge or wording.
+    <EarningsUnknown label="Earnings: unknown" testId="gap-risk-earnings-unknown" />
   ) : null;
 
   if (!riskOffBadge && !gapBadge) {

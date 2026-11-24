@@ -4,7 +4,7 @@
 **Class:** Class 1
 **Status:** Canonical
 **Version:** 2.31
-**Last Updated:** 2026-11-23 (ST-27, EPIC-05, v9.18, BLG-BE-223 — §Split Detected State shipped: odd-lot share count input, Grid view, focus return, exit refused while pending); prior — 2026-11-18 (v9.18 design gate — ST-27/BLG-BE-223 Split Detected State (tier 0); ST-33/BLG-FE-294 Earnings Unknown); prior — 2026-11-17 (ST-08, EPIC-03, v9.17, BLG-FE-265 — §Review Cadence flagged text `text-amber-700 dark:text-amber-400` in table and Grid View; Grid View card themed for the light theme); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-24 (ST-33, EPIC-06, v9.18, BLG-FE-294 — two Known Deviations from Product Owner rulings: a failed earnings lookup is held 60 s; the expanded row shows "Unknown"); prior — 2026-11-23 (ST-27, EPIC-05, v9.18, BLG-BE-223 — §Split Detected State shipped: odd-lot share count input, Grid view, focus return, exit refused while pending); prior — 2026-11-18 (v9.18 design gate — ST-27/BLG-BE-223 Split Detected State (tier 0); ST-33/BLG-FE-294 Earnings Unknown); prior history retained — see prior entries in version control
 **Design Source (v9.14 additions):** docs/design/2026-10-29__release-v9.14/stale-price-marker/decision_record.md, docs/design/2026-10-29__release-v9.14/monitor-grace-aware-suggestions/decision_record.md, docs/design/2026-10-29__release-v9.14/last-reviewed-ended-grace/decision_record.md
 **Design Source (v9.13 additions):** docs/design/2026-10-16__release-v9.13/monitor-exit-queue/decision_record.md, docs/design/2026-10-16__release-v9.13/chat-answer-rating/decision_record.md
 **Design Source (v9.11 additions):** docs/design/2026-10-08__release-v9.11/grace-alert-calendar-days/decision_record.md
@@ -996,6 +996,28 @@ Documentation-only requirements baseline for this table-based page — no implem
 ---
 
 ## Known Deviations
+
+### Failed earnings lookup is held 60 seconds, not retried on every render
+
+- **ID:** DEV-EPIC06-ST33-01
+- **Description:** §Earnings Unknown says an `unavailable` answer "is not cached for the session; the next render retries." The shipped hooks (`src/hooks/useEarnings.js`, `src/hooks/useGapRisk.js`, via `createAnswerCache` in `src/lib/earningsDataStatus.js`) hold an `unavailable` answer for 60 seconds, so the first render after that retries. It is still never cached for the session. A non-2xx response or a failed request is treated as `unavailable` too.
+- **Canonical requirement:** §Earnings Unknown: "An `unavailable` answer is not cached for the session; the next render retries."
+- **Reason:** the ST-33 high code review found no backoff anywhere (the backend does not cache failures either), so every remount re-sent every failed lookup while Yahoo throttled, each holding a worker up to 30 s for one of 4 Yahoo slots: the 2026-11-09 burst pattern ST-15 fixed. Product Owner ruling, in session, 2026-11-24: hold 60 s, then retry.
+- **Priority:** P3
+- **Target resolution release:** next design gate that touches this section (fold the 60-second wording into §Earnings Unknown)
+- **Owner:** Frontend Specifications & UX Documentation Owner
+- **Backlog reference:** Accepted as-is (Product Owner ruling); recorded in `claude/cycles/2026-11-18__release-v9.18/qa_evidence_EPIC-06.md`
+
+### Expanded row shows "Unknown", not "Earnings: unknown"
+
+- **ID:** DEV-EPIC06-ST33-02
+- **Description:** §Earnings Unknown gives "Earnings: unknown" for the Earnings cell / expanded row. The expanded row already labels the value "Earnings", so the shipped row shows "Unknown" there (`PositionEarningsValue`, `src/pages/Positions.js`). The Alerts cell and the Grid view card keep "Earnings: unknown", which have no label.
+- **Canonical requirement:** §Earnings Unknown table, row `unavailable`: Earnings cell / expanded row "Earnings: unknown".
+- **Reason:** "Earnings  Earnings: unknown" repeats the label. Product Owner ruling, in session, 2026-11-24.
+- **Priority:** P3
+- **Target resolution release:** next design gate that touches this section
+- **Owner:** Frontend Specifications & UX Documentation Owner
+- **Backlog reference:** Accepted as-is (Product Owner ruling); recorded in `qa_evidence_EPIC-06.md`
 
 ### DEV-EPIC01-ST05-01 — Positions Table View: RISK OFF badge colour/label diverges from spec
 

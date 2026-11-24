@@ -170,15 +170,25 @@ def get_gap_risk(ticker: str, market: str, today: Optional[date] = None,
         "reasons": [] or ["earnings"],
         "avg_gap_pct": float | None,
         "event_count": int,
-        "insufficient_history": bool
+        "insufficient_history": bool,
+        "data_status": "ok" | "unavailable"
       }
+
+    ST-33 (BLG-FE-294, v9.18): data_status is the earnings input's own
+    data_status. "unavailable" means the earnings lookup failed, so the
+    position is not flagged (no data, no flag) and the frontend shows a muted
+    "Earnings: unknown". That line is missing data, not a trigger: Binding
+    Conditions 1-7 of the §13 review record cited above are unchanged. A UK
+    position makes no earnings lookup and is "ok".
     """
     # T: the US market date (injectable for tests as `today` or an aware `now`).
     today = today or us_market_date(now)
     reasons = []
+    data_status = "ok"
 
     if market in _EARNINGS_TRIGGER_MARKETS:
         earnings = get_earnings(ticker, market)
+        data_status = earnings.get("data_status", "ok")
         days_until = _days_until(earnings.get("next_earnings_date"), today)
         if _earnings_before_next_session(days_until, today):
             reasons.append("earnings")
@@ -190,6 +200,7 @@ def get_gap_risk(ticker: str, market: str, today: Optional[date] = None,
             "avg_gap_pct": None,
             "event_count": 0,
             "insufficient_history": False,
+            "data_status": data_status,
         }
 
     # ST-22 (BLG-BE-174, v9.15): the weekend statistic when the next session
@@ -203,4 +214,5 @@ def get_gap_risk(ticker: str, market: str, today: Optional[date] = None,
         "avg_gap_pct": stats["avg_gap_pct"],
         "event_count": stats["event_count"],
         "insufficient_history": stats["insufficient_history"],
+        "data_status": data_status,
     }

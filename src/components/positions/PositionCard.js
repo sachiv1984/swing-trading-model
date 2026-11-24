@@ -8,6 +8,8 @@ import { cn } from "../../lib/utils";
 import { differenceInDays } from "date-fns";
 import { getReviewCadenceState } from "../../lib/reviewCadence";
 import { useGapRisk } from "../../hooks/useGapRisk";
+import { isEarningsUnavailable } from "../../lib/earningsDataStatus";
+import EarningsUnknown from "../shared/EarningsUnknown";
 import { apiFetch } from "../../api/base44Client";
 import { toast } from "sonner";
 import TrailingStopExplainerIcon from "./TrailingStopExplainerIcon";
@@ -73,13 +75,17 @@ function PositionCardAlertsRow({ position }) {
   const { data: gapRisk, loading: gapRiskLoading } = useGapRisk(position.id);
   const riskOffExit = position.risk_off_exit === true;
   const showGap = !gapRiskLoading && gapRisk?.flagged;
+  // ST-33 (BLG-FE-294, v9.18): the gap-risk earnings input failed. Muted
+  // missing-data text, never the GAP RISK badge or wording.
+  const showUnknown = !gapRiskLoading && !showGap && isEarningsUnavailable(gapRisk);
 
-  if (!riskOffExit && !showGap) return null;
+  if (!riskOffExit && !showGap && !showUnknown) return null;
 
   return (
     <div className="flex flex-col gap-1 mb-3" data-testid="grid-alerts-row">
       {riskOffExit && <RiskOffCardBadge />}
       {showGap && <GapRiskCardBadge gapRisk={gapRisk} ticker={position.ticker} positionId={position.id} />}
+      {showUnknown && <EarningsUnknown label="Earnings: unknown" testId="gap-risk-earnings-unknown" />}
     </div>
   );
 }

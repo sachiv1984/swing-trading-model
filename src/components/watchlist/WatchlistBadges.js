@@ -1,6 +1,8 @@
 import PropTypes from "prop-types";
 import { cn } from "../../lib/utils";
 import { useEarnings } from "../../hooks/useEarnings";
+import { isEarningsUnavailable } from "../../lib/earningsDataStatus";
+import EarningsUnknown from "../shared/EarningsUnknown";
 import { formatCurrency, currencyForMarket } from "../../lib/format";
 
 const EARNINGS_DUE_SOON_DAYS = 5;
@@ -46,6 +48,8 @@ export function priceDisplay(value, market) {
 export function WatchlistEarningsBadge({ ticker, market }) {
   const { data, loading } = useEarnings(ticker, market);
   if (loading) return <span className="text-app-muted text-xs">…</span>;
+  // ST-33 (BLG-FE-294, v9.18; watchlist.md §Earnings Cell): a failed lookup.
+  if (isEarningsUnavailable(data)) return <EarningsUnknown />;
   if (!data || data.days_until_earnings == null) return <span className="text-app-muted text-xs">—</span>;
   const days = data.days_until_earnings;
   if (days < 0) return <span className="text-app-muted text-xs">—</span>;

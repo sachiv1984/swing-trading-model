@@ -21,6 +21,8 @@ from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 from unittest.mock import patch, MagicMock
 
+import pytest
+
 sys.path.insert(0, str(Path(__file__).parent.parent / "backend"))
 
 from fastapi.testclient import TestClient
@@ -438,3 +440,50 @@ def test_pre_entry_earnings_check_warns_on_the_evening_of_the_release():
     with patch("services.earnings_service.get_earnings", return_value=earnings):
         result = pre_entry_validation._check_earnings_proximity("AAPL", "US")
     assert result["status"] == "warn"
+
+
+# --- ST-33 (BLG-FE-294, EPIC-06, v9.18): data_status ---------------------------
+
+def _run_status(earnings_status, days_until, today, market="US"):
+    next_date = None if days_until is None else (today + timedelta(days=days_until)).isoformat()
+    earnings = {**NO_EARNINGS, "next_earnings_date": next_date, "data_status": earnings_status}
+    with (
+        patch("services.gap_risk_service.get_earnings", return_value=earnings),
+        patch("services.gap_risk_service._compute_gap_stats", return_value=STATS),
+    ):
+        return get_gap_risk("AAPL" if market == "US" else "VOD", market, today=today)
+
+
+@pytest.mark.parametrize("earnings_status, days_until, market, flagged, status", [
+    ("ok", 1, "US", True, "ok"),             # flagged as before
+    ("ok", None, "US", False, "ok"),         # no upcoming date
+    ("ok", 10, "US", False, "ok"),           # date too far out
+    ("unavailable", None, "US", False, "unavailable"),  # failed lookup: no data, no flag
+    ("unavailable", None, "UK", False, "ok"),  # UK makes no lookup, so nothing failed
+])
+def test_data_status_follows_the_earnings_input(earnings_status, days_until, market, flagged, status):
+    result = _run_status(earnings_status, days_until, THURSDAY, market=market)
+    assert result["flagged"] is flagged
+    assert result["data_status"] == status
+
+
+def test_earnings_answer_without_data_status_reads_as_ok():
+    """A cached or older earnings dict without the key is treated as ok."""
+    with (
+        patch("services.gap_risk_service.get_earnings", return_value=dict(NO_EARNINGS)),
+        patch("services.gap_risk_service._compute_gap_stats", return_value=STATS),
+    ):
+        assert get_gap_risk("AAPL", "US", today=THURSDAY)["data_status"] == "ok"
+
+
+def test_endpoint_passes_data_status_through():
+    with (
+        patch("main.get_position_by_id", return_value=OPEN_POSITION),
+        patch("main.get_gap_risk", return_value={
+            "flagged": False, "reasons": [], "avg_gap_pct": None, "event_count": 0,
+            "insufficient_history": False, "data_status": "unavailable",
+        }),
+    ):
+        resp = CLIENT.get("/positions/pos-001/gap-risk")
+    assert resp.status_code == 200
+    assert resp.json()["data"]["data_status"] == "unavailable"

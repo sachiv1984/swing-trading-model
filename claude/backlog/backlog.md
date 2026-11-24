@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-24 (session — 1 new item added: BLG-QA-282; ST-37/EPIC-06 v9.18); prior — 2026-11-24 (merge of main into EPIC-05, CLAUDE.md §8 step 2c — EPIC-04's 6 items appended whole after EPIC-05's 10; no ID shared); prior — 2026-11-23 (session — 6 new items added: BLG-BE-231, BLG-BE-232, BLG-QA-277, BLG-FE-330, BLG-FE-331, BLG-SPEC-243; PR #2310 agent-mediated review); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-24 (session — 2 new items added: BLG-FE-333, BLG-BE-233; ST-33/EPIC-06 v9.18); prior — 2026-11-24 (session — 1 new item added: BLG-QA-282; ST-37/EPIC-06 v9.18); prior — 2026-11-24 (merge of main into EPIC-05, CLAUDE.md §8 step 2c — EPIC-04's 6 items appended whole after EPIC-05's 10; no ID shared); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -8754,5 +8754,47 @@ ST-20 made every axe scan log the colour-contrast results axe cannot decide, and
 **Acceptance Criteria**
 - `cd backend && python3 -m pytest mutmut_pilot_tests/test_pilot.py` passes
 - A clean `cd backend && python3 -m mutmut run` gets past stats collection
+
+---
+
+### BLG-FE-333 — Show failed earnings lookups on the Dashboard Earnings card
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Frontend Specifications & UX Documentation Owner; Head of Engineering
+**Source:** ST-33/EPIC-06 (`2026-11-18__release-v9.18`), first-time-right check 2 (every surface showing the concept) — 2026-11-24
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+ST-33 added `data_status: ok | unavailable` to `GET /earnings/{ticker}`, and the Screener, Watchlist and Positions badges now show "unknown" for a failed lookup. The Dashboard morning Earnings card (`src/components/dashboard/home/morning/EarningsAlertCard.js`) counts open positions with earnings within 7 days and skips any answer with a null `days_until_earnings`, so a failed lookup is silently left out of the count. On a day when Yahoo throttles, the card can say fewer positions report this week than really do, with nothing to say the count is incomplete.
+
+**Scope**
+- Decide (Head of UX & Design) what the card shows when one or more lookups return `unavailable`, for example "+1 unknown"
+- Implement it and spec it in the Dashboard page spec
+
+**Acceptance Criteria**
+- With one position `ok` within 7 days and one `unavailable`, the card shows the one dated position and states that one lookup failed (Playwright)
+- With every lookup `ok`, the card is unchanged
+
+---
+
+### BLG-BE-233 — Tell a failed earnings lookup apart in the pre-entry check and Research
+**Priority:** P3 (Low)
+**Type:** Backend Engineering
+**Owner:** Head of Engineering; Backend Engineering Patterns Owner
+**Source:** ST-33/EPIC-06 (`2026-11-18__release-v9.18`), high code review of the staged diff (pre-existing, outside ST-33's badge scope) — 2026-11-24
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+ST-33 added `data_status: ok | unavailable` to `get_earnings()`. Two other callers still ignore it. `backend/routers/pre_entry_validation.py` `_check_earnings_proximity` returns `skipped` with "Earnings date not available" for both a failed lookup and "no upcoming date", so during Yahoo throttling the trader cannot tell that the `strategy_rules.md` §4.2.3 check never ran. `backend/routers/research.py` `_get_earnings` drops `data_status`, and the research response, failed lookup included, is kept in `_research_cache` for its full TTL, so a recovered Yahoo is not used until it expires.
+
+**Scope**
+- Pre-entry: a distinct detail for `unavailable` (for example "Earnings lookup failed; try again"), status still `skipped`; update `pre_entry_validation` contract wording
+- Research: pass `data_status` through in the earnings block (contract and OpenAPI), and do not cache, or cache briefly, a response whose earnings block is `unavailable`
+
+**Acceptance Criteria**
+- A failed lookup gives the pre-entry earnings rule a detail that differs from "no upcoming date" (unit test)
+- `GET /research/{ticker}` carries `earnings.data_status`, and an `unavailable` earnings block is not served from cache for the full TTL (unit test)
 
 ---

@@ -2,6 +2,8 @@ import { useState, useEffect, useCallback, useRef, useId } from "react";
 import { useNavigate } from "react-router-dom";
 import { apiFetch } from "../api/base44Client";
 import { useEarnings, getCachedEarningsDays } from "../hooks/useEarnings";
+import { isEarningsUnavailable } from "../lib/earningsDataStatus";
+import EarningsUnknown from "../components/shared/EarningsUnknown";
 import DownloadCsvButton from "../components/shared/DownloadCsvButton";
 import EmptyStateAction from "../components/ui/EmptyStateAction";
 import { buildCsv, csvFilename, downloadCsv } from "../utils/csvExport";
@@ -229,9 +231,13 @@ function RegimeHistoryPanel({ onRun, running }) {
   );
 }
 
+// ST-33 (BLG-FE-294, v9.18; screener_results.md v1.12): UK rows make no earnings
+// lookup (strategy_rules.md §4.2.3 is US-only) and show the empty "—", as a row
+// with no date does; a failed lookup shows a muted "Unknown", held 60 seconds.
 function EarningsBadge({ ticker, market }) {
-  const { data, loading } = useEarnings(ticker, market);
+  const { data, loading } = useEarnings(market === "UK" ? null : ticker, market);
   if (loading) return <span className="text-app-muted text-xs">…</span>;
+  if (isEarningsUnavailable(data)) return <EarningsUnknown />;
   if (!data || data.days_until_earnings == null) return <span className="text-app-muted text-xs">—</span>;
   const days = data.days_until_earnings;
   if (days < 0) return <span className="text-app-muted text-xs">—</span>;

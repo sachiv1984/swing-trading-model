@@ -1,8 +1,8 @@
 **Owner:** Head of Specs Team
 **Class:** Specification (Class 2)
 **Status:** Active
-**Version:** 0.3
-**Last Updated:** 2026-11-13 (ST-15, EPIC-06, v9.17, BLG-OPS-217 — next_earnings_date is the earliest upcoming Yahoo earnings date, not the last report; funds skip the calendar lookup); prior — 2026-11-04 (ST-22, EPIC-03, v9.15, BLG-BE-174/BLG-BE-204 — next_earnings_date is the America/New_York date and days_until_earnings counts from the US market date); prior — 2026-04-30 (initial contract, ST-07, DS-04); prior history retained — see prior entries in version control
+**Version:** 0.4
+**Last Updated:** 2026-11-24 (ST-33, EPIC-06, v9.18, BLG-FE-294 — data_status: ok | unavailable tells a failed lookup from no upcoming date); prior — 2026-11-13 (ST-15, EPIC-06, v9.17, BLG-OPS-217 — next_earnings_date is the earliest upcoming Yahoo earnings date, not the last report; funds skip the calendar lookup); prior — 2026-11-04 (ST-22, EPIC-03, v9.15, BLG-BE-174/BLG-BE-204 — next_earnings_date is the America/New_York date and days_until_earnings counts from the US market date); prior history retained — see prior entries in version control
 **Cycle:** 2026-04-29__release-v3.1 (ST-07)
 
 ---
@@ -45,11 +45,12 @@ Returns the next scheduled earnings date for a given ticker.
   "next_earnings_date": "2026-07-29",
   "days_until_earnings": 90,
   "fiscal_quarter": null,
-  "data_source": "yahoo_finance"
+  "data_source": "yahoo_finance",
+  "data_status": "ok"
 }
 ```
 
-**Response when date unavailable:**
+**Response when Yahoo has no upcoming date** (`data_status: "ok"`):
 
 ```json
 {
@@ -57,7 +58,21 @@ Returns the next scheduled earnings date for a given ticker.
   "next_earnings_date": null,
   "days_until_earnings": null,
   "fiscal_quarter": null,
-  "data_source": "yahoo_finance"
+  "data_source": "yahoo_finance",
+  "data_status": "ok"
+}
+```
+
+**Response when the lookup failed** (`data_status: "unavailable"`, v0.4):
+
+```json
+{
+  "ticker": "AAPL",
+  "next_earnings_date": null,
+  "days_until_earnings": null,
+  "fiscal_quarter": null,
+  "data_source": "yahoo_finance",
+  "data_status": "unavailable"
 }
 ```
 
@@ -70,14 +85,15 @@ Returns the next scheduled earnings date for a given ticker.
 | days_until_earnings | integer \| null | Calendar days from the current US market date (America/New_York) to `next_earnings_date`, or null. `0` throughout ET day D for a release on D, whatever the UTC date (v0.2, BLG-BE-204; was counted from the server date) |
 | fiscal_quarter | string \| null | Fiscal quarter identifier if available from Yahoo Finance, otherwise null |
 | data_source | string | Always `"yahoo_finance"` |
+| data_status | string | *(v0.4, ST-33, BLG-FE-294)* `"ok"` when Yahoo answered: a usable `Ticker.info` (one carrying `quoteType`), a cached answer, or a calendar date. `next_earnings_date` may still be null (no upcoming date, a fund, only past dates). `"unavailable"` when the lookup failed: an exception, no free lookup slot within 30 seconds, or a throttled answer with no `quoteType` and no date. The frontend shows "Unknown" for `unavailable` and does not cache it, so the next render retries; `GET /positions/{position_id}/gap-risk` passes it on as its own `data_status`. An `unavailable` answer is never cached here either (Known Limitations, Caching). |
 
 ### Known Limitations
 
 - Yahoo Finance does not provide a reliable `fiscal_quarter` field via `yfinance.Ticker.info`; this field will typically be null.
 - Earnings dates beyond ~4 weeks are subject to revision.
-- Some tickers (especially smaller UK stocks) may have no earnings date data; null is returned gracefully.
+- Some tickers (especially smaller UK stocks) may have no earnings date data; null is returned gracefully with `data_status: "ok"`.
 - Yahoo often keeps only the last report date for UK tickers until it publishes the next one, so a UK ticker shortly after its report returns null (v0.3).
-- **Caching (v0.3, ST-15, BLG-OPS-217).** Results are cached per Yahoo symbol for 12 hours after a usable Yahoo answer (one that carries `quoteType`), so a new or rescheduled date can take up to 12 hours to appear. A failed or throttled lookup is not cached. `days_until_earnings` is counted on every call, and a cached date that has passed is looked up again. The `Ticker.info` answer is shared with the sector lookup and the research market cap (`backend/utils/yahoo_info.py`), and at most 4 Yahoo lookups run at once across the server; a request that waits more than 30 seconds for a slot returns the null response. Production evidence: on 2026-11-09 15:37–15:38 a page firing one lookup per row made 471 Yahoo calls in two minutes and 418 failed.
+- **Caching (v0.3, ST-15, BLG-OPS-217).** Results are cached per Yahoo symbol for 12 hours after a usable Yahoo answer (one that carries `quoteType`), so a new or rescheduled date can take up to 12 hours to appear. A failed or throttled lookup is not cached. `days_until_earnings` is counted on every call, and a cached date that has passed is looked up again. The `Ticker.info` answer is shared with the sector lookup and the research market cap (`backend/utils/yahoo_info.py`), and at most 4 Yahoo lookups run at once across the server; a request that waits more than 30 seconds for a slot returns the null response with `data_status: "unavailable"` (v0.4). Production evidence: on 2026-11-09 15:37–15:38 a page firing one lookup per row made 471 Yahoo calls in two minutes and 418 failed.
 
 ---
 
@@ -85,6 +101,7 @@ Returns the next scheduled earnings date for a given ticker.
 
 | Version | Date | Summary |
 |---------|------|---------|
+| 0.4 | 2026-11-24 | ST-33 (EPIC-06, v9.18, BLG-FE-294): new `data_status` (`ok` \| `unavailable`), so a failed lookup is distinguishable from a successful lookup with no upcoming date (both return a null date). Additive. The Screener makes no lookup for UK rows (`screener_results.md` v1.12). |
 | 0.3 | 2026-11-13 | ST-15 (EPIC-06, v9.17, BLG-OPS-217): results cached 12 hours per symbol after a usable answer, and at most 4 Yahoo lookups at once (Known Limitations). `next_earnings_date` is the earliest upcoming of `earningsDate`, `earningsTimestampStart`, `earningsTimestampEnd` and `earningsTimestamp`, or null when all are past. Before v0.3 it was `earningsTimestamp`, which keeps the past report after it happens, so the badge (which hides negative days) and the `strategy_rules.md` §4.2.3 pre-entry check missed the next report. Funds skip the calendar fallback, whose two 404 calls counted as provider failures. No shape change. |
 | 0.2 | 2026-11-04 | ST-22 (EPIC-03, v9.15, BLG-BE-174) and BLG-BE-204 (PR #2190 review): `next_earnings_date` from a timestamp is its America/New_York date, and `days_until_earnings` counts from the US market date, so both share one basis. The server-date count gave `-1` on the evening of an ET-evening release before it happened, which turned the `strategy_rules.md` §4.2.3 pre-entry earnings check from WARN to PASS. No shape change. |
 | 0.1 | 2026-04-30 | Initial contract — ST-07 DS-04 |
