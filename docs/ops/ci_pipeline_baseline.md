@@ -318,7 +318,24 @@ Signed: Sprint Execution Engine (agent-mediated, Infrastructure & Operations Own
 
 ---
 
-## 10. Document History
+## 10. Build the E2E Bundle Once per Run — Before/After Evidence (ST-36, EPIC-06, v9.18, BLG-OPS-206)
+
+**Change:** `.github/workflows/playwright.yml` gains a `build-e2e-bundle` job that runs `scripts/build_e2e_bundle.js` once (the env comes from `playwright.config.js` `webServer.env`) and uploads `build/` as the `e2e-bundle` artifact. The 8 E2E shards and both visual jobs download it and run only `npx serve -s build -l 3000` (`E2E_PREBUILT_BUNDLE=1`). Before, each of those 10 jobs ran `npm run build` inside its test step.
+
+**Method:** GitHub Actions API (`/actions/runs/{id}` and `/jobs`). Wall time = run start to last update. Runner time = sum of every job's started-to-completed duration. Slowest shard = the longest E2E shard job (the critical path before ST-36; after it, the build job plus the slowest shard).
+
+**Before** (successful `main` runs, all 10 jobs building):
+
+| Run | Date | Wall time | Runner time (all jobs) | E2E shards' runner time | Slowest shard |
+|-----|------|-----------|------------------------|-------------------------|---------------|
+| 45358052367 | 2026-11-24 | 430s | 2202s | 2021s | 418s |
+| 45354571072 | 2026-11-24 | 556s | 3136s | 2576s | 552s |
+| 44568006295 | 2026-11-19 | 286s | 1890s | 1671s | 249s |
+| 44537473069 | 2026-11-19 | 324s | 2059s | 1759s | 319s |
+
+**After:** recorded below from this branch's runs once they complete.
+
+## 11. Document History
 
 | Version | Date | Author | Change |
 |---------|------|--------|--------|

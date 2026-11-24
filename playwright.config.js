@@ -96,9 +96,16 @@ module.exports = defineConfig({
     //   (for the real gh-pages deploy) — which 404s when served at the
     //   webServer's actual root (http://localhost:3000/). PUBLIC_URL=/
     //   overrides this for the throwaway E2E build only.
-    command: process.env.CI
-      ? 'CI=false PUBLIC_URL=/ npm run build && npx serve -s build -l 3000'
-      : 'npm start',
+    // ST-36 (BLG-OPS-206, v9.18): in CI, playwright.yml builds the bundle
+    // once (build-e2e-bundle job) and every shard serves the downloaded
+    // build/ (E2E_PREBUILT_BUNDLE=1; any other value builds). Without it, CI builds here with the same
+    // env (scripts/build_e2e_bundle.js reads webServer.env below). Local runs
+    // keep `npm start`.
+    command: !process.env.CI
+      ? 'npm start'
+      : process.env.E2E_PREBUILT_BUNDLE === '1'
+        ? 'npx serve -s build -l 3000'
+        : 'node scripts/build_e2e_bundle.js && npx serve -s build -l 3000',
     port: 3000,
     reuseExistingServer: !process.env.CI,
     // CI needs a longer timeout: a fresh production build (react-scripts build)
