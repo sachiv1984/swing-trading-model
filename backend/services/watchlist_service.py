@@ -210,6 +210,9 @@ def get_watchlist(portfolio_id: str) -> List[Dict]:
                       -- rows still match too.
                       AND (ticker = w.ticker
                            OR (w.market = 'UK' AND ticker = w.ticker || '.L'))
+                      -- BLG-BE-236 (v9.18): a UK row never takes a US signal
+                      -- for the same bare symbol (GSK, BP, RIO, SHEL ADRs).
+                      AND market = w.market
                     ORDER BY signal_date DESC
                     LIMIT 1
                 ) s ON true

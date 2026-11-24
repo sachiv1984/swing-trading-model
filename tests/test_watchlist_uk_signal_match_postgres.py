@@ -129,3 +129,12 @@ def test_us_row_does_not_match_a_dot_l_signal(schema):
     """A US ticker is never mapped to a .L symbol."""
     _seed(schema, [("BP", "US")], [("BP.L", "UK", "new")])
     assert _status(watchlist_service.get_watchlist(PORTFOLIO)) == {"BP": "no_signal"}
+
+
+def test_uk_row_does_not_take_a_us_signal_for_the_same_symbol(schema):
+    """BLG-BE-236: the lookup is filtered by market."""
+    _seed(schema, [("GSK", "UK"), ("GSK", "US")], [("GSK", "US", "new")])
+    rows = watchlist_service.get_watchlist(PORTFOLIO)
+    assert sorted((r["ticker"], r["market"], r["signal_status"]) for r in rows) == [
+        ("GSK", "UK", "no_signal"), ("GSK", "US", "active"),
+    ]
