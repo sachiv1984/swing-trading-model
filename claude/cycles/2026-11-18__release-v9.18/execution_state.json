@@ -6,7 +6,7 @@
   "invoked_utc": "2026-11-19T08:07:14Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-24T08:40:16Z",
+  "last_updated_utc": "2026-11-24T08:58:51Z",
   "epics": {
     "EPIC-01": {
       "title": "Site Structure & Usability Phase 4, Stage 1: Correct and Safe (build-and-ship)",
@@ -871,13 +871,15 @@
     },
     "EPIC-06": {
       "title": "Market-Data Reliability and CI",
-      "status": "not_started",
+      "status": "in_progress",
       "branch": "exec/2026-11-18__release-v9.18/EPIC-06",
       "pr_number": null,
       "pr_status": "none",
       "qa_signed_off": false,
       "qa_evidence_log": "claude/cycles/2026-11-18__release-v9.18/qa_evidence_EPIC-06.md",
-      "test_scenarios": [],
+      "test_scenarios": [
+        "tests/test_settings_change_log_postgres.py"
+      ],
       "stories": {
         "ST-32": {
           "title": "Finish the on-demand Yahoo failure diagnosis (remainder)",
@@ -924,23 +926,25 @@
         "ST-34": {
           "title": "Let the visual-baseline workflow push regenerated snapshots",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 2299,
           "branch": "exec/2026-11-18__release-v9.18/EPIC-06",
-          "commit_sha": null,
+          "commit_sha": "b6f03ef4ff1966a0ecc0dfe3b12fbdff08b25ec8",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-11-24T08:46:03Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            ".github/workflows/update-visual-snapshots.yml"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "First-time-right: 2026-11-24 pass A — 9 done (workflow write checked: repo default_workflow_permissions=read, no job permissions block, so push 403s; also found the branch input defaulted to main, so a dispatch on exec/** checked out and would push to main — fixed in-story); 24 done (no new tool installs; AC 1 read literally: needs a run with changed baselines, so a baseline is removed on the branch to force one); 1-8,11,17-23 N/A (workflow-only, no UI, data or spec premise). First-time-right: 2026-11-24 pass B — 9 done (high review: 6 findings, all fixed in-commit — exec/**-only guard, targeted rebase, concurrency, re-run advice, commit_tag input, detached-HEAD check); 10 N/A (no spec/contract); 18/19 N/A. AC 1: workflow_dispatch run 45359018059 on exec/2026-11-18__release-v9.18/EPIC-06 regenerated settings-light-chromium.png, pushed 5cb726db ([EPIC-06][ST-34]) and concluded success. AC 2: header states permissions: contents: write. CI for b6f03ef4 all success (Playwright 45359006704, CI Pytest 45359006759). Deviation check: none (no spec governs)."
         },
         "ST-35": {
           "title": "Seed staging's UK positions with the .L suffix",
@@ -966,7 +970,7 @@
         "ST-36": {
           "title": "Build the E2E bundle once per Playwright run",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "in_progress",
           "assigned_to": "engine",
           "github_issue": 2301,
           "branch": "exec/2026-11-18__release-v9.18/EPIC-06",
@@ -976,55 +980,65 @@
           "unblock_criteria": null,
           "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": [],
+          "spec_references": [
+            ".github/workflows/playwright.yml",
+            "playwright.config.js",
+            "scripts/build_e2e_bundle.js"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": ""
+          "notes": "First-time-right: 2026-11-24 pass A — 24 done (harness parity: the bundle is built by a script reading webServer.env, so build env has one source; CI=false and PUBLIC_URL=/ kept; AC quantifier \"the 8 shards\" read literally, and the two visual jobs moved too; no new tool installs, actions pinned to the same majors); 9 done (local build + serve checked: assets at /, API URL baked in, system-status.spec.js 28/28 in prebuilt mode); 1-8,11,17-23 N/A (CI-only)."
         },
         "ST-37": {
           "title": "Keep a bare root pytest out of the mutmut pilot tests",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 2302,
           "branch": "exec/2026-11-18__release-v9.18/EPIC-06",
-          "commit_sha": null,
+          "commit_sha": "400a4395e38661a67bbfbcbe14e4bde8b237d646",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-11-24T08:50:25Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "conftest.py",
+            "backend/setup.cfg"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "First-time-right: 2026-11-24 pass A — 24 done (local gate vs CI: CI always passes tests/ explicitly, so a root config must not move any rootdir; a root pytest.ini would move the backend pilot rootdir to the repo root via upward search, so a root conftest collect_ignore is used); 7 done (premise \"confcutdir = rootdir with no ini\" checked by running the pilot from backend/: rootdir backend, same 30 node IDs); 1-6,8,11,17-23 N/A (test config only). pass B — 9 done (real mutmut 3.8.1 run from backend/ selects mutmut_pilot_tests/test_pilot.py with unchanged node IDs; its clean run fails on a pre-existing stale expectation, test_weights_capped_then_renormalised, same with and without this change — filed, not this story); 18/19 N/A. AC 1: root collect exits 0 (3988 tests = pytest tests/). AC 2: mutmut 3.8.1 from backend/ selects mutmut_pilot_tests/test_pilot.py, rootdir backend, node IDs unchanged. CI Pytest 45359639858 success. Deviation check: none. Found pre-existing BLG-QA-282 (stale pilot expectation)."
         },
         "ST-38": {
           "title": "Run the settings change-log SQL against real Postgres in CI",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 2303,
           "branch": "exec/2026-11-18__release-v9.18/EPIC-06",
-          "commit_sha": null,
+          "commit_sha": "1781aa29608561a9a7bce2390c86896631a4760c",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-11-24T08:53:14Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "tests/test_settings_change_log_postgres.py",
+            "docs/specs/data_model.md#DS-33 — Add settings_change_log (v2.62, 2026-10-15)"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "First-time-right: 2026-11-24 pass A — 18 done (tables built from data_model.md §6 and DS-33 SQL, not a copy; expected log text built by hand from _settings_value_text and the column defaults, incl. DECIMAL round trip 7.5 stored as 7.50, read back \"7.5\"); 17 done (readers of settings_change_log: get_last_settings_change only, asserted); 7 done (premise \"Phase B skips cleanly without a real DATABASE_URL\": Phase A URL ci_stub contains stub, skipped; unreachable URL skipped); 1-6,8,11,19-24 N/A (test-only). pass B — 9 done; AC 2 checked locally: column renamed to field_name in database.py fails 2 of the new tests with UndefinedColumn while tests/test_settings_change_log.py still passes 16/16; CI probe to follow. AC 1: tests/test_settings_change_log_postgres.py (4 tests) passes in CI Phase B (CI Pytest 45360043835 success). AC 2: probe branch commit 02563ee2 renamed the insert column to field_name; CI Pytest run 45360051025 Phase B failed on exactly the 3 ST-38 tests (3976 other tests passed); probe branch deleted. Deviation check: none."
         }
       }
     },
@@ -1131,6 +1145,9 @@
     "ST-29",
     "ST-30",
     "ST-31",
+    "ST-34",
+    "ST-37",
+    "ST-38",
     "ST-39",
     "ST-40"
   ],
