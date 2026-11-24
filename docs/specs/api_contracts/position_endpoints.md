@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 2.23.0
-**Last Updated:** 2026-11-23 (ST-27, EPIC-05, v9.18, BLG-BE-223 — new POST /positions/{position_id}/split-adjustment/confirm; split_pending/split_adjustments on GET /positions; exit 409 while a split is pending; nightly split detection); prior — 2026-11-23 (ST-26, EPIC-05, v9.18, BLG-BE-213 — GET /positions/compliance uses the native entry and the live rate for a NULL fx_rate); prior — 2026-11-13 (ST-11, EPIC-05, v9.17, BLG-BE-211 — POST /positions/{position_id}/exit: a full exit moves the linked `active` trade plan to `closed`, best-effort; partial exit unchanged; response unchanged); prior history retained — see prior entries in version control
+**Version:** 2.24.0
+**Last Updated:** 2026-11-24 (ST-33, EPIC-06, v9.18, BLG-FE-294 — GET /positions/{position_id}/gap-risk gains data_status: ok | unavailable for its earnings input); prior — 2026-11-23 (ST-27, EPIC-05, v9.18, BLG-BE-223 — new POST /positions/{position_id}/split-adjustment/confirm; split_pending/split_adjustments on GET /positions; exit 409 while a split is pending; nightly split detection); prior — 2026-11-23 (ST-26, EPIC-05, v9.18, BLG-BE-213 — GET /positions/compliance uses the native entry and the live rate for a NULL fx_rate); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Overview
@@ -28,6 +28,7 @@ Global response envelopes, error shape, defaults, and multi-currency/stop rules 
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.24.0 | 2026-11-24 | ST-33 (BLG-FE-294, EPIC-06, v9.18): `GET /positions/{position_id}/gap-risk` gains `data_status` (`ok` \| `unavailable`), the earnings input's own `data_status` from `GET /earnings/{ticker}`. `unavailable` means the earnings lookup failed: `flagged` is `false` (no data, no flag) and the Positions page shows a muted "Earnings: unknown" (`positions.md` v2.30 §Earnings Unknown). A UK position makes no lookup and is `ok`. Not a new trigger: §13 review Binding Conditions 1–7 unchanged. Additive. |
 | 2.23.0 | 2026-11-23 | ST-27 (BLG-BE-223, EPIC-05, v9.18; `strategy_rules.md` §9.1 v1.28): new `POST /positions/{position_id}/split-adjustment/confirm`. `GET /positions` gains `split_pending` and `split_adjustments`; `risk_off_exit` is `false` while a split is pending. `POST /positions/{position_id}/exit` returns `409` while a split is pending. `POST /positions/nightly-stop-update` detects splits first (`splits` summary) and skips pending positions (`"split to confirm"`). `GET /positions/analyze` recommends no exit and writes nothing for a pending position (`split_pending: true` on its action). `data_model.md` DS-42. |
 | 2.22.1 | 2026-11-23 | ST-26 (BLG-BE-213, EPIC-05, v9.18): `GET /positions/compliance` measures stop distance from the native entry (`native_entry_price()`) and converts a US risk at the position's `fx_rate`, or the live rate when it is NULL. Before, a US position's GBP `entry_price` was compared with its native stops, and a NULL `fx_rate` used a hard-coded 1.27. Response shape unchanged; US flags can change. |
 | 2.22.0 | 2026-11-13 | ST-11 (BLG-BE-211, EPIC-05, v9.17): `POST /positions/{position_id}/exit` gains a Side effects subsection. A full exit moves every `active` trade plan linked to the position to `closed` (best-effort, audit-logged); a partial exit leaves it `active`; other statuses are not changed. Request and response unchanged. Existing `active` plans whose position was already closed are closed by a startup backfill (`data_model.md` DS-41). |
@@ -1216,7 +1217,8 @@ Response uses the standard success envelope from **conventions.md**.
   "reasons": ["earnings"],
   "avg_gap_pct": 2.3,
   "event_count": 14,
-  "insufficient_history": false
+  "insufficient_history": false,
+  "data_status": "ok"
 }
 ```
 
@@ -1229,6 +1231,7 @@ Response uses the standard success envelope from **conventions.md**.
 | `avg_gap_pct` | `float \| null`. Historical average gap magnitude for the ticker: the weekend gap (consecutive sessions with one or more non-session days between them: Friday close to Monday open, and any holiday or closure) when the next NYSE session follows a non-session day (a Friday to Sunday view, or a Thursday view before Good Friday), the overnight gap otherwise. Sessions are the ST-14 NYSE calendar (`backend/services/us_market_calendar.py`). `null` when `insufficient_history = true`. *(v2.19.2, ST-22, BLG-BE-174: previously a gap counted as a weekend gap only when more than 3 calendar days apart, which left every ordinary Friday-to-Monday gap in the overnight set, and the statistic was picked by weekday alone.)* |
 | `event_count` | `integer`. Number of historical gap events used to compute `avg_gap_pct`. |
 | `insufficient_history` | `boolean`. `true` when fewer than the backend-defined minimum event count (currently 10) is available. The flag is still shown when `true` — insufficient history does not suppress the flag, only the numeric average. |
+| `data_status` | `"ok" \| "unavailable"`. *(v2.24.0, ST-33, BLG-FE-294)* The earnings input's `data_status` from `GET /earnings/{ticker}`. `"unavailable"`: the earnings lookup failed (Yahoo error, throttled answer or no free lookup slot), so `flagged` is `false` and the frontend shows a muted "Earnings: unknown", never the GAP RISK badge or its wording. It is missing data, not a trigger (§13 review Binding Conditions 1–7 unchanged). `"ok"` otherwise, including a UK position, for which no lookup is made. |
 
 **Determinism note (v9.10, ST-13 ruling; revised v2.15.0, ST-14 — Revised Ruling 3, `ESC-EXEC-20261013-07`):** "Today" is the current US market date (America/New_York), so a request at 02:00 UTC uses the previous US day. "Before the position's next trading session" is `days_until` in `[1, d]`, where `days_until` is the earnings date minus that US date (computed by this endpoint, not taken from `GET /earnings/{ticker}`'s server-date `days_until_earnings`) and `d` is the calendar days to the next NYSE session. Weekends, NYSE full-closure holidays and a dated in-code list of one-off closures are not sessions; early-close days are. A Friday view therefore flags Monday earnings, or Tuesday's when Monday is a holiday. The calendar is computed in code from fixed rules (`backend/services/us_market_calendar.py`), with no network call; unannounced closures are not anticipated, and an unlisted closure can only shorten the window. Last checked against the NYSE's published 2026–2027 schedule on 2026-10-13. Day 0 (earnings today) is not flagged: a before-open release has already gapped, and the upstream earnings data does not reliably say whether a release is before the open or after the close. The previous session's view already flagged that date. The trigger applies to `market = "US"` only, matching `strategy_rules.md` §4.2.3; no earnings lookup is made for a UK position. All of this is computed server-side; the frontend renders the flag as returned.
 

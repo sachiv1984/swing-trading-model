@@ -91,9 +91,9 @@ FROM portfolio p
 CROSS JOIN (VALUES
     (
         'stop_loss_approach',
-        'Stop Loss Approaching: LGEN',
-        'LGEN is within 5% of your stop loss (220p). Current price: 225p.',
-        '{"ticker":"LGEN","stop_price":2.20,"current_price":2.25,"proximity_percent":2.22}'
+        'Stop Loss Approaching: LGEN.L',
+        'LGEN.L is within 5% of your stop loss (£2.20). Current price: £2.25.',
+        '{"ticker":"LGEN.L","stop_price":2.20,"current_price":2.25,"proximity_percent":2.22}'
     ),
     (
         'daily_portfolio_summary',

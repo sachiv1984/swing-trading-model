@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-24 (merge of main into EPIC-05, CLAUDE.md §8 step 2c — EPIC-04's 6 items appended whole after EPIC-05's 10; no ID shared); prior — 2026-11-23 (session — 6 new items added: BLG-BE-231, BLG-BE-232, BLG-QA-277, BLG-FE-330, BLG-FE-331, BLG-SPEC-243; PR #2310 agent-mediated review); prior — 2026-11-23 (session — 3 new items added: BLG-QA-281, BLG-QA-278, BLG-QA-279; EPIC-04 v9.18 PR #2311 review and retrospective); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-24 (session — 5 new items added: BLG-FE-334, BLG-FE-335, BLG-BE-235, BLG-QA-284, BLG-BE-236; EPIC-06 v9.18 pre-PR agent-mediated reviews); prior — 2026-11-24 (session — 3 new items added: BLG-OPS-223, BLG-BE-234, BLG-QA-283; ST-32/ST-35 EPIC-06 v9.18); prior — 2026-11-24 (session — 2 new items added: BLG-FE-333, BLG-BE-233; ST-33/EPIC-06 v9.18); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -8735,3 +8735,233 @@ ST-20 made every axe scan log the colour-contrast results axe cannot decide, and
 
 ---
 
+
+### BLG-QA-282 — Fix the stale mutmut pilot sizing test so the pilot can run
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** QA & Testing Owner
+**Source:** ST-37/EPIC-06 (`2026-11-18__release-v9.18`), found while verifying the mutmut pilot's test selection — 2026-11-24
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`backend/mutmut_pilot_tests/test_pilot.py::TestSizeBatchInvVol::test_weights_capped_then_renormalised` asserts `suggested_shares == [36, 73, 263]`, but `size_batch` returns `[36, 73, 260]` on `main` as of 2026-11-24, with or without ST-37's root `conftest.py`. The expectation is probably stale since `7b3b59e8` ("Fit batch sizing fees inside each signal's allocation") changed `size_batch`. Because the clean run fails, `cd backend && python3 -m mutmut run` stops with "failed to collect stats. runner returned 1", so the mutation pilot cannot run. The pilot is not run in CI, so nothing caught this.
+
+**Scope**
+- Check the expected value against the fees-inside-allocation rule and the canonical `size_batch` tests in `tests/`
+- Fix the pilot test's expectation, or the code if the pilot is right
+
+**Acceptance Criteria**
+- `cd backend && python3 -m pytest mutmut_pilot_tests/test_pilot.py` passes
+- A clean `cd backend && python3 -m mutmut run` gets past stats collection
+
+---
+
+### BLG-FE-333 — Show failed earnings lookups on the Dashboard Earnings card
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Frontend Specifications & UX Documentation Owner; Head of Engineering
+**Source:** ST-33/EPIC-06 (`2026-11-18__release-v9.18`), first-time-right check 2 (every surface showing the concept) — 2026-11-24
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+ST-33 added `data_status: ok | unavailable` to `GET /earnings/{ticker}`, and the Screener, Watchlist and Positions badges now show "unknown" for a failed lookup. The Dashboard morning Earnings card (`src/components/dashboard/home/morning/EarningsAlertCard.js`) counts open positions with earnings within 7 days and skips any answer with a null `days_until_earnings`, so a failed lookup is silently left out of the count. On a day when Yahoo throttles, the card can say fewer positions report this week than really do, with nothing to say the count is incomplete.
+
+**Scope**
+- Decide (Head of UX & Design) what the card shows when one or more lookups return `unavailable`, for example "+1 unknown"
+- Implement it and spec it in the Dashboard page spec
+
+**Acceptance Criteria**
+- With one position `ok` within 7 days and one `unavailable`, the card shows the one dated position and states that one lookup failed (Playwright)
+- With every lookup `ok`, the card is unchanged
+
+---
+
+### BLG-BE-233 — Tell a failed earnings lookup apart in the pre-entry check and Research
+**Priority:** P3 (Low)
+**Type:** Backend Engineering
+**Owner:** Head of Engineering; Backend Engineering Patterns Owner
+**Source:** ST-33/EPIC-06 (`2026-11-18__release-v9.18`), high code review of the staged diff (pre-existing, outside ST-33's badge scope) — 2026-11-24
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+ST-33 added `data_status: ok | unavailable` to `get_earnings()`. Two other callers still ignore it. `backend/routers/pre_entry_validation.py` `_check_earnings_proximity` returns `skipped` with "Earnings date not available" for both a failed lookup and "no upcoming date", so during Yahoo throttling the trader cannot tell that the `strategy_rules.md` §4.2.3 check never ran. `backend/routers/research.py` `_get_earnings` drops `data_status`, and the research response, failed lookup included, is kept in `_research_cache` for its full TTL, so a recovered Yahoo is not used until it expires.
+
+**Scope**
+- Pre-entry: a distinct detail for `unavailable` (for example "Earnings lookup failed; try again"), status still `skipped`; update `pre_entry_validation` contract wording
+- Research: pass `data_status` through in the earnings block (contract and OpenAPI), and do not cache, or cache briefly, a response whose earnings block is `unavailable`
+
+**Acceptance Criteria**
+- A failed lookup gives the pre-entry earnings rule a detail that differs from "no upcoming date" (unit test)
+- `GET /research/{ticker}` carries `earnings.data_status`, and an `unavailable` earnings block is not served from cache for the full TTL (unit test)
+
+---
+
+### BLG-OPS-223 — Stop the weekly market-data volume check timing out on the production report
+**Priority:** P2 (Medium)
+**Type:** Operations / Infrastructure
+**Owner:** Infrastructure & Operations Owner
+**Source:** ST-32/EPIC-06 (`2026-11-18__release-v9.18`), found while preparing the ST-32 production-report delegation — 2026-11-24
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+`.github/workflows/market-data-volume-check.yml` (BLG-OPS-195, v9.17) has never completed. Both scheduled runs so far failed with exit 2: run 43925655395 (2026-11-16) and run 45254364709 (2026-11-23) each logged `report call failed: … Read timed out. (read timeout=60)` against production `GET /ops/api-call-attribution?window=weekly`. The check sends a failure Telegram message, so nothing is silent, but the §4 baseline in `docs/ops/data_pipeline_cost_baseline.md` has not been compared once. The weekly report is also what ST-32 (BLG-OPS-217) needs.
+
+**Scope**
+- Find whether the 60 s is a Render cold start, the attribution query itself, or both: time a warm call and the query
+- Fix the cause (for example a warm-up `GET /health` with retry before the report call, a longer read timeout, or an index or cheaper query for the weekly window)
+
+**Acceptance Criteria**
+- A scheduled or `workflow_dispatch` run completes the comparison and concludes `success` (or reports a real exceedance)
+- The run's log records the report call's duration
+
+---
+
+### BLG-BE-234 — Match UK watchlist rows to their signals
+**✅ COMPLETE — 2026-11-24, `2026-11-18__release-v9.18`, found by ST-35, resolved in-sprint on EPIC-06, commit `e0879873` (Phase B test `tests/test_watchlist_uk_signal_match_postgres.py`).**
+**Priority:** P3 (Low)
+**Type:** Backend Engineering
+**Owner:** Head of Engineering
+**Source:** ST-35/EPIC-06 (`2026-11-18__release-v9.18`), code review of the seed sweep (pre-existing) — 2026-11-24
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+The watchlist stores UK tickers bare (`LGEN`), and its read joins `ticker_universe` on `ticker || '.L'` for UK rows. The same query's signal-status lookup (`backend/services/watchlist_service.py`, `LEFT JOIN LATERAL ... WHERE ticker = w.ticker`) compares the bare watchlist ticker with `signals.ticker`, which `signal_service.py` writes as the Yahoo symbol (`LGEN.L`). A UK watchlist row therefore never finds its signal and always shows `no_signal`.
+
+**Scope**
+- Apply the same UK `.L` mapping in the signal-status lookup as in the `ticker_universe` join
+
+**Acceptance Criteria**
+- A UK watchlist row `LGEN` with a `new` signal for `LGEN.L` shows signal status `active` (unit test against the query)
+- US rows are unchanged
+
+---
+
+### BLG-QA-283 — Give the chart test-data seeds UK prices in pounds
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** QA & Testing Owner
+**Source:** ST-35/EPIC-06 (`2026-11-18__release-v9.18`), high code review of the seed sweep (pre-existing) — 2026-11-24
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+`backend/test_data/seed_chart_test_data.py` and `seed_chart_test_data.sql` give UK entry and exit prices in pence (AZN.L entry 11500, BP.L 430), but the app has priced UK stocks in pounds since v9.17 (`utils/pricing.get_current_price` converts GBp). Now that ST-35 gives the seeds real Yahoo symbols (`BP.L`, `BT-A.L`), `add_position` can fetch a real ATR in pounds and set the stop just under a pence entry, so the R-multiples the seed is built to spread across all 7 buckets come out wrong (an exit at 400 against a 429.8 stop reads as about −150R). Separately, `seed-preview.yml` skips the chart seed whenever a `[SEED]` row exists, so a staging database seeded before v9.18 keeps its bare `AZN`/`BP.`/`BT.A` rows until a full reset.
+
+**Scope**
+- Convert the seeds' UK prices to pounds (or pass an explicit stop and ATR in the same units)
+- Add a one-off cleanup of bare-ticker `[SEED]` rows to `seed-preview.yml`, or document that a reset is needed
+
+**Acceptance Criteria**
+- A fresh chart seed fills all 7 R-multiple buckets with the R values its docstring lists
+- A preview database seeded before v9.18 ends with `.L` tickers after the workflow runs, or the runbook says to reset it
+
+---
+
+### BLG-FE-334 — Make UK earnings behave the same on the Screener, Watchlist and Positions
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Head of UX & Design; Frontend Specifications & UX Documentation Owner
+**Source:** EPIC-06 (`2026-11-18__release-v9.18`) pre-PR agent-mediated Product Owner review, finding F4 — 2026-11-24
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+ST-33 stopped the Screener looking up earnings for UK rows (`strategy_rules.md` §4.2.3 is US-only), so a UK Screener row shows "—". The Watchlist and the Positions expanded row still look up UK earnings, as the v9.18 decision record §4 left them, so during Yahoo throttling the same UK ticker reads "—" on the Screener and "Unknown" on the Watchlist. About 44 of the failing symbols before v9.17's fix were UK.
+
+**Scope**
+- Decide at the next design gate whether UK rows on the Watchlist and Positions keep their earnings lookup, and record it in `watchlist.md` and `positions.md`
+- Implement the decision
+
+**Acceptance Criteria**
+- One recorded rule for UK earnings across the three surfaces
+- Playwright covers a UK row on each surface under the rule
+
+---
+
+### BLG-FE-335 — Do not blame earnings when a UK gap-risk request fails
+**✅ COMPLETE — 2026-11-24, `2026-11-18__release-v9.18`, found by the EPIC-06 pre-PR review, resolved in-sprint on EPIC-06, commit `c4359076` (Playwright SC-EUNK-09c (UK) and SC-EUNK-09b (US unchanged)).**
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** EPIC-06 (`2026-11-18__release-v9.18`) pre-PR agent-mediated Director of Quality review, finding F5 — 2026-11-24
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+Since ST-33, `src/hooks/useGapRisk.js` turns any failed `GET /positions/{id}/gap-risk` request (non-2xx or network error) into `data_status: unavailable`, so the Alerts cell shows "Earnings: unknown". A UK position makes no earnings lookup (`position_endpoints.md` v2.24.0), so a 500 for a UK position, or an OHLCV failure, is labelled as an earnings failure it is not.
+
+**Scope**
+- Show "Earnings: unknown" for a failed request only for a US position, or use neutral wording for a request failure
+
+**Acceptance Criteria**
+- A 500 from gap risk for a UK position does not show "Earnings: unknown" (Playwright)
+- A 500 for a US position still does (SC-EUNK-09b unchanged)
+
+---
+
+### BLG-BE-235 — Do not cache "no earnings date" when the calendar call came back empty
+**✅ COMPLETE — 2026-11-24, `2026-11-18__release-v9.18`, found by the EPIC-06 pre-PR review, resolved in-sprint on EPIC-06, commit `c4359076` (empty calendar cached 30 min, not 12 h; fund unchanged — `tests/test_yahoo_on_demand_failures.py`).**
+**Priority:** P3 (Low)
+**Type:** Backend Engineering
+**Owner:** Head of Engineering
+**Source:** EPIC-06 (`2026-11-18__release-v9.18`) pre-PR agent-mediated Director of Quality review, finding F6 — 2026-11-24
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+In `backend/services/earnings_service.py`, a usable `Ticker.info` (with `quoteType`) that has no earnings fields, followed by a `Ticker.calendar` call that returns `{}`, gives `data_status: ok` with a null date, cached for 12 hours. yfinance 1.x returns `{}` when its calendar quoteSummary call fails, so a partly throttled equity can show "—" and get no gap-risk flag for 12 hours: the failed-versus-no-date confusion ST-33 removed elsewhere.
+
+**Scope**
+- For an equity with no info dates and an empty calendar answer, do not cache the result (or return `unavailable`), and document the rule in `earnings_endpoints.md`
+
+**Acceptance Criteria**
+- A unit test with usable info, no dates and `calendar == {}` shows the answer is not cached for 12 hours
+- A usable fund (no calendar call) is unchanged
+
+---
+
+### BLG-QA-284 — Make Phase B tests refuse a database that is not the CI or a local throwaway one
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** QA & Testing Owner
+**Source:** EPIC-06 (`2026-11-18__release-v9.18`) pre-PR agent-mediated Director of Quality review, finding F8 — 2026-11-24
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+`tests/test_settings_change_log_postgres.py`, `tests/test_watchlist_uk_signal_match_postgres.py` and the older `tests/test_chat_answer_rating_db.py` run `CREATE SCHEMA` / `DROP SCHEMA` against any reachable `DATABASE_URL` that does not contain "stub". `tests/conftest.py` forces a stub outside CI unless `PYTEST_ALLOW_REAL_DB=1`, but with that flag set by mistake while `DATABASE_URL` points at staging (as it does in the sandbox), these tests would run DDL on staging.
+
+**Scope**
+- One shared guard for Phase B tests: run only when the host is `localhost`/`127.0.0.1` or an explicit CI-only flag is set, and skip otherwise
+
+**Acceptance Criteria**
+- With a non-localhost `DATABASE_URL` and no CI flag, every Phase B test skips
+- CI Phase B still runs them
+
+---
+
+### BLG-BE-236 — Filter the watchlist signal lookup by market
+**✅ COMPLETE — 2026-11-24, `2026-11-18__release-v9.18`, found by the EPIC-06 pre-PR review, resolved in-sprint on EPIC-06, commit `0231cf32` (Phase B `tests/test_watchlist_uk_signal_match_postgres.py`).**
+**Priority:** P3 (Low)
+**Type:** Backend Engineering
+**Owner:** Head of Engineering
+**Source:** EPIC-06 (`2026-11-18__release-v9.18`) pre-PR agent-mediated Director of Quality review, finding F9 (pre-existing) — 2026-11-24
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`get_watchlist()`'s signal lookup (`backend/services/watchlist_service.py`) matches on ticker only. The legacy bare branch kept by BLG-BE-234 lets a UK watchlist row match a US signal with the same bare symbol (UK `GSK`, `BP`, `RIO` or `SHEL` against an NYSE ADR signal), and the other way round. This was true before v9.18.
+
+**Scope**
+- Add `AND market = w.market` to the lookup, and extend `tests/test_watchlist_uk_signal_match_postgres.py`
+
+**Acceptance Criteria**
+- A UK `GSK` watchlist row does not take a US `GSK` signal's status (Phase B test)
+- The UK `.L` and legacy bare matches still work
+
+---

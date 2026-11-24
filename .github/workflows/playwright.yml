@@ -37,6 +37,13 @@ name: Playwright E2E Acceptance Tests
 #    this job to blocking (drop continue-on-error), matching how visual-snapshots.spec.js
 #    itself was handled before it became a blocking gate.
 #
+# ST-36 (BLG-OPS-206, EPIC-06, v9.18): the production bundle is built once per
+# run by the build-e2e-bundle job (scripts/build_e2e_bundle.js, which reads
+# playwright.config.js's webServer.env so the env has one source) and uploaded
+# as the e2e-bundle artifact. The 8 E2E shards and both visual jobs download it
+# and only run `npx serve -s build -l 3000` (E2E_PREBUILT_BUNDLE=1), instead of
+# each running `npm run build`. Before/after timings: docs/ops/ci_pipeline_baseline.md.
+#
 # Spec registration: automatic via glob (BLG-QA-62, v6.2 ST-13), except the one
 # explicit testIgnore exception above.
 
@@ -59,6 +66,7 @@ on:
       - 'playwright.config.js'
       - 'playwright.visual-regression.config.js'
       - '.github/workflows/playwright.yml'
+      - 'scripts/build_e2e_bundle.js'
       # ST-06 (BLG-OPS-149, EPIC-03, v9.2): a dependency bump can change
       # resolved package versions the E2E suite exercises (Playwright itself
       # included) without touching any src/ or tests/e2e/ file — the job must
@@ -82,12 +90,47 @@ on:
       - 'playwright.config.js'
       - 'playwright.visual-regression.config.js'
       - '.github/workflows/playwright.yml'
+      - 'scripts/build_e2e_bundle.js'
       # ST-06 (BLG-OPS-149, EPIC-03, v9.2): see push.paths comment above.
       - 'package.json'
       - 'package-lock.json'
 
 jobs:
+  build-e2e-bundle:
+    name: Build E2E bundle (once per run)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
+
+      - name: Build the bundle with playwright.config.js's webServer.env
+        run: node scripts/build_e2e_bundle.js
+
+      - name: Upload the bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-bundle
+          path: build/
+          if-no-files-found: error
+          # Kept 7 days so "Re-run failed jobs" on a shard (which does not
+          # re-run this job) still finds the bundle.
+          retention-days: 7
+
   playwright-e2e:
+    needs: build-e2e-bundle
+    # Runs when the build failed too, so the download step fails this job
+    # instead of the job being skipped (a skipped job passes a required check).
+    if: ${{ !cancelled() }}
     name: Playwright E2E Acceptance Tests (${{ matrix.shardIndex }}/${{ strategy.job-total }})
     runs-on: ubuntu-latest
     timeout-minutes: 20
@@ -100,6 +143,15 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Download the E2E bundle
+        uses: actions/download-artifact@v4
+        with:
+          name: e2e-bundle
+          path: build/
+
+      - name: Confirm the bundle is present
+        run: test -f build/index.html
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -163,9 +215,9 @@ jobs:
         run: npx playwright test --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
         env:
           CI: true
-          REACT_APP_API_URL: http://localhost:8000
-          REACT_APP_DEV_FAKE_AUTH: 'true'
-          BROWSER: none
+          # Serves the prebuilt bundle. Build-time env (REACT_APP_*) belongs in
+          # playwright.config.js webServer.env, which the build job reads.
+          E2E_PREBUILT_BUNDLE: '1'
 
       - name: Upload Playwright report
         uses: actions/upload-artifact@v4
@@ -176,6 +228,10 @@ jobs:
           retention-days: 14
 
   playwright-visual:
+    needs: build-e2e-bundle
+    # Runs when the build failed too, so the download step fails this job
+    # instead of the job being skipped (a skipped job passes a required check).
+    if: ${{ !cancelled() }}
     name: Playwright Visual Snapshots
     runs-on: ubuntu-latest
     timeout-minutes: 20
@@ -183,6 +239,15 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Download the E2E bundle
+        uses: actions/download-artifact@v4
+        with:
+          name: e2e-bundle
+          path: build/
+
+      - name: Confirm the bundle is present
+        run: test -f build/index.html
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -246,9 +311,9 @@ jobs:
         run: npx playwright test tests/e2e/visual-snapshots.spec.js
         env:
           CI: true
-          REACT_APP_API_URL: http://localhost:8000
-          REACT_APP_DEV_FAKE_AUTH: 'true'
-          BROWSER: none
+          # Serves the prebuilt bundle. Build-time env (REACT_APP_*) belongs in
+          # playwright.config.js webServer.env, which the build job reads.
+          E2E_PREBUILT_BUNDLE: '1'
 
       - name: Upload visual diff artifacts
         uses: actions/upload-artifact@v4
@@ -261,6 +326,10 @@ jobs:
           retention-days: 30
 
   playwright-visual-regression:
+    needs: build-e2e-bundle
+    # Runs when the build failed too, so the download step fails this job
+    # instead of the job being skipped (a skipped job passes a required check).
+    if: ${{ !cancelled() }}
     name: Playwright Visual Regression Baselines (pixel-level, advisory)
     runs-on: ubuntu-latest
     timeout-minutes: 20
@@ -268,6 +337,15 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Download the E2E bundle
+        uses: actions/download-artifact@v4
+        with:
+          name: e2e-bundle
+          path: build/
+
+      - name: Confirm the bundle is present
+        run: test -f build/index.html
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -312,9 +390,9 @@ jobs:
         run: npx playwright test --config=playwright.visual-regression.config.js
         env:
           CI: true
-          REACT_APP_API_URL: http://localhost:8000
-          REACT_APP_DEV_FAKE_AUTH: 'true'
-          BROWSER: none
+          # Serves the prebuilt bundle. Build-time env (REACT_APP_*) belongs in
+          # playwright.config.js webServer.env, which the build job reads.
+          E2E_PREBUILT_BUNDLE: '1'
 
       - name: Upload visual regression diff artifacts
         uses: actions/upload-artifact@v4

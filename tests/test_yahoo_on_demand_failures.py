@@ -143,16 +143,17 @@ def test_fund_skips_the_calendar_lookup():
 
 
 def test_equity_without_info_dates_still_uses_the_calendar():
-    import pandas as pd
-    cal = pd.DataFrame({"Earnings Date": [pd.Timestamp("2026-12-01")]})
+    # ST-33 (v9.18): yfinance 1.7's real shape, a dict with a list of dates. These
+    # two tests used a DataFrame, the pre-1.x shape, which hid that the fallback
+    # never read a date under the pinned yfinance.
+    cal = {"Earnings Date": [date(2026, 12, 1)], "Earnings Average": 1.2}
     out, calendar_prop = _earnings({"quoteType": "EQUITY"}, date(2026, 11, 13), calendar=cal)
     assert out["next_earnings_date"] == "2026-12-01"
     assert calendar_prop.called
 
 
 def test_past_calendar_date_is_not_returned():
-    import pandas as pd
-    cal = pd.DataFrame({"Earnings Date": [pd.Timestamp("2026-10-22")]})
+    cal = {"Earnings Date": [date(2026, 10, 22)]}
     out, _ = _earnings({"quoteType": "EQUITY"}, date(2026, 11, 13), calendar=cal)
     assert out["next_earnings_date"] is None
 
@@ -448,3 +449,105 @@ def test_research_price_uses_the_quote_currency(symbol, price, currency, expecte
          patch.object(research.time, "sleep", lambda *_: None):
         out = research._get_price_data(symbol, "UK")
     assert out["price"] == pytest.approx(expected)
+
+
+# --- ST-33 (BLG-FE-294, EPIC-06, v9.18): data_status ---------------------------
+# A failed lookup and a successful lookup with no upcoming date both return a
+# null date; data_status tells them apart. One case per lookup outcome.
+# (tests/conftest.py clears the Yahoo caches before each test.)
+
+def _calendar(*values):
+    """Ticker.calendar as yfinance 1.7 returns it: a dict whose "Earnings Date"
+    is a list of dates ({} when its quoteSummary call fails)."""
+    return {"Earnings Date": [date.fromisoformat(v) for v in values], "Earnings Average": 1.2}
+
+
+def _calendar_frame(value):
+    """The DataFrame shape older yfinance returned (still read)."""
+    import pandas as pd
+    return pd.DataFrame({"Earnings Date": [pd.Timestamp(value)]})
+
+
+@pytest.mark.parametrize("label, info, calendar, today, expected_date, expected_status", [
+    ("usable, upcoming date", {"quoteType": "EQUITY", "earningsTimestampStart": _ts(2027, 1, 28)}, None,
+     date(2026, 11, 13), "2027-01-28", "ok"),
+    ("usable, only past dates", {"quoteType": "EQUITY", "earningsTimestamp": _ts(2026, 11, 2)}, None,
+     date(2026, 11, 13), None, "ok"),
+    ("usable fund, no earnings", {"quoteType": "ETF"}, None, date(2026, 11, 13), None, "ok"),
+    ("usable equity, no dates, calendar empty", {"quoteType": "EQUITY"}, None, date(2026, 11, 13), None, "ok"),
+    ("usable equity, calendar date", {"quoteType": "EQUITY"}, _calendar("2027-02-01"),
+     date(2026, 11, 13), "2027-02-01", "ok"),
+    ("throttled: no quoteType, no date", {}, None, date(2026, 11, 13), None, "unavailable"),
+    ("throttled: no quoteType, calendar date", {}, _calendar("2027-02-01"),
+     date(2026, 11, 13), "2027-02-01", "ok"),
+    ("throttled: no quoteType, only past dates (Yahoo answered)", {"earningsTimestamp": _ts(2026, 11, 2)}, None,
+     date(2026, 11, 13), None, "ok"),
+    ("throttled: no quoteType, calendar answers a past date", {}, _calendar("2026-11-02"),
+     date(2026, 11, 13), None, "ok"),
+    ("throttled: no quoteType, calendar call failed ({})", {}, {}, date(2026, 11, 13), None, "unavailable"),
+    ("usable equity, calendar of two dates: earliest upcoming", {"quoteType": "EQUITY"},
+     _calendar("2026-11-02", "2027-02-01", "2027-01-29"), date(2026, 11, 13), "2027-01-29", "ok"),
+    ("usable equity, older DataFrame calendar", {"quoteType": "EQUITY"}, _calendar_frame("2027-02-01"),
+     date(2026, 11, 13), "2027-02-01", "ok"),
+])
+def test_data_status_for_each_lookup_outcome(label, info, calendar, today, expected_date, expected_status):
+    out, _ = _earnings(info, today, calendar=calendar)
+    assert out["next_earnings_date"] == expected_date, label
+    assert out["data_status"] == expected_status, label
+    if expected_status == "unavailable":
+        assert out["days_until_earnings"] is None
+
+
+def test_exception_is_unavailable_and_a_retry_after_recovery_is_ok():
+    fake = _CountingTicker(fail=True)
+    out = _with_fake(fake, lambda: earnings_service.get_earnings("AAPL", "US"))
+    assert (out["next_earnings_date"], out["data_status"]) == (None, "unavailable")
+    fake.fail = False
+    out = _with_fake(fake, lambda: earnings_service.get_earnings("AAPL", "US"))
+    assert (out["next_earnings_date"], out["data_status"]) == ("2027-01-28", "ok")
+
+
+def test_cached_answer_is_ok():
+    fake = _CountingTicker(info={"quoteType": "EQUITY"})
+    _with_fake(fake, lambda: earnings_service.get_earnings("AAPL", "US"))
+    out = _with_fake(fake, lambda: earnings_service.get_earnings("AAPL", "US"))
+    assert fake.fetches == 1
+    assert (out["next_earnings_date"], out["data_status"]) == (None, "ok")
+
+
+def test_no_free_slot_is_unavailable():
+    held = 0
+    with patch.object(yahoo_info, "SLOT_WAIT_SECONDS", 0.05):
+        try:
+            for _ in range(yahoo_info.MAX_CONCURRENT_LOOKUPS):
+                assert yahoo_info._slots.acquire(timeout=1)
+                held += 1
+            out = _with_fake(_CountingTicker(), lambda: earnings_service.get_earnings("AAPL", "US"))
+        finally:
+            for _ in range(held):  # release only what was acquired
+                yahoo_info._slots.release()
+    assert (out["next_earnings_date"], out["data_status"]) == (None, "unavailable")
+
+
+# --- BLG-BE-235 (EPIC-06, v9.18): an empty calendar answer is cached briefly --
+
+@pytest.mark.parametrize("calendar, ttl", [
+    ({}, "short"),                                 # empty: failed or no events, cannot tell
+    (None, "short"),                               # nothing returned
+    (_calendar("2026-11-02"), "long"),             # Yahoo answered (only a past date)
+    (_calendar("2027-02-01"), "long"),             # Yahoo answered with a date
+])
+def test_empty_calendar_answer_is_cached_briefly(calendar, ttl):
+    with patch.object(earnings_service._result_cache, "set", wraps=earnings_service._result_cache.set) as cache_set:
+        out, _ = _earnings({"quoteType": "EQUITY"}, date(2026, 11, 13), calendar=calendar)
+    assert out["data_status"] == "ok"
+    expected = earnings_service.EMPTY_CALENDAR_TTL_SECONDS if ttl == "short" else earnings_service.RESULT_TTL_SECONDS
+    assert cache_set.call_args.args[2] == expected
+    assert earnings_service.EMPTY_CALENDAR_TTL_SECONDS == 1800 < earnings_service.RESULT_TTL_SECONDS
+
+
+def test_fund_with_no_calendar_call_is_cached_for_the_full_ttl():
+    with patch.object(earnings_service._result_cache, "set", wraps=earnings_service._result_cache.set) as cache_set:
+        _, calendar_prop = _earnings({"quoteType": "ETF"}, date(2026, 11, 13), calendar={})
+    assert not calendar_prop.called
+    assert cache_set.call_args.args[2] == earnings_service.RESULT_TTL_SECONDS

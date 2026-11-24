@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 1.5
-**Last Updated:** 2026-09-29 (ST-21, EPIC-05, v9.8, BLG-API-05 — added an Errors subsection with a 401 error example to GET /watchlist); prior — 2026-09-29 (ST-20, EPIC-05, v9.8, BLG-API-04 — added Idempotency subsections to all 5 mutating endpoints in this file); prior — 2026-08-07
+**Version:** 1.5.1
+**Last Updated:** 2026-11-24 (ST-35, EPIC-06, v9.18, BLG-BE-234/BLG-BE-236 — signal_status matching rule for UK rows stated: bare or .L signal ticker, same market); prior — 2026-09-29 (ST-21, EPIC-05, v9.8, BLG-API-05 — added an Errors subsection with a 401 error example to GET /watchlist); prior — 2026-09-29 (ST-20, EPIC-05, v9.8, BLG-API-04 — added Idempotency subsections to all 5 mutating endpoints in this file); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Sprint:** 2026-06-08__release-v5.3 — ST-07 (BLG-SPEC-52, EPIC-01)
 **Signed off by:** API Contracts & Documentation Owner; Head of Specs Team
@@ -67,7 +67,7 @@ No parameters.
 | `data[].target_entry_price` | float or null | Target entry price (optional) |
 | `data[].initial_stop_price` | float or null | Initial stop loss price (optional) |
 | `data[].current_stop_price` | float or null | Current (trailed) stop price (optional) |
-| `data[].signal_status` | string or null | Signal list status for this ticker (`active`, `watchlisted`, or `null`) |
+| `data[].signal_status` | string or null | Signal list status for this ticker (`active`, `watchlisted`, or `null`). *(v1.5.1, BLG-BE-234/BLG-BE-236, v9.18)* Read from the latest signal for the same market whose ticker equals the watchlist ticker, or, for a UK row, the ticker with `.L` (the watchlist stores UK tickers bare, signals store the Yahoo symbol). A UK row never takes a US signal for the same bare symbol. |
 | `data[].tags` | array of string | Watchlist tags (v1.1, ST-03/BLG-FE-117) — populated only via `POST /watchlist/bulk-tag`; empty array if none |
 | `data[].created_at` | string (ISO 8601) | Entry creation timestamp |
 | `data[].added_at` | string (ISO 8601) or null | (v1.2, ST-01/BLG-FEAT-66) API-level alias for `created_at` — no separate column; exposed under this name to match the Staleness Indicator's naming in `watchlist.md`. |
@@ -372,6 +372,7 @@ Update price fields on an existing watchlist entry, or reset its staleness clock
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.5.1 | 2026-11-24 | BLG-BE-234 / BLG-BE-236 (EPIC-06, v9.18): `GET /watchlist` `signal_status` for a UK row matches the signal ticker bare or with `.L`, and only signals of the same market. No shape change. |
 | 1.3 | 2026-08-07 | ST-06 (BLG-SPEC-115, EPIC-02, v8.4): `GET /watchlist` illustrative JSON example was stale relative to the field table (already correct as of v1.2) — example was missing `company_name`, `tags`, `updated_at`, `added_at`, `days_on_watchlist`, `is_stale`, and incorrectly included `portfolio_id`, which is not actually returned by `_row_to_dict()`. Example corrected to match the live response shape; field table and version history left unchanged (already correct per the 2026-08-06 correction note on this item). |
 | 1.2 | 2026-07-27 | ST-01 (BLG-FEAT-66, EPIC-01, v7.9): `GET /watchlist` response gains `added_at` (API-level alias for `created_at`), `days_on_watchlist`, `is_stale`. `PATCH /watchlist/{entry_id}` request body gains `added_at` (reset trigger, not a client-supplied timestamp — server-authoritative CURRENT_TIMESTAMP write) for the "Keep" staleness-review action. No `data_model.md` change — no new column, per ux_spec.md's "no backend schema change required" premise, held by exposing the existing `created_at` column under the spec's field name at the serialisation boundary. |
 | 1.1 | 2026-07-17 | ST-03 (BLG-FE-117, EPIC-03, v7.5): Added `## GET /watchlist/tags`, `## POST /watchlist/bulk-tag`, `## DELETE /watchlist/bulk`. New `tags` column on `watchlist` (data_model.md v2.12→v2.13), populated only via bulk-tag. `GET /watchlist` response schema updated with `data[].tags`. Router ordering note: bulk routes declared before `PATCH/DELETE /watchlist/{entry_id}` to avoid wildcard capture. |

@@ -2,7 +2,9 @@ openapi: 3.0.3
 
 info:
   title: Momentum Trading Assistant API
-  version: 3.51.1
+  version: 3.52.0
+  # v3.52.0 (2026-11-24, ST-33, EPIC-06, v9.18): GET /earnings/{ticker} and GET /positions/{position_id}/gap-risk
+  # gain data_status: ok | unavailable (BLG-FE-294).
   # v3.51.1 (2026-11-23, ST-27, EPIC-05, v9.18): GET /positions/{position_id}/stop-trail returns 409 while a split
   # is pending, and uses the native entry for US positions (BLG-BE-229).
   # v3.51.0 (2026-11-23, ST-27, EPIC-05, v9.18): new POST /positions/{position_id}/split-adjustment/confirm;
@@ -2496,6 +2498,14 @@ paths:
                         type: integer
                       insufficient_history:
                         type: boolean
+                      data_status:
+                        type: string
+                        enum: [ok, unavailable]
+                        description: >-
+                          The earnings input's data_status from GET /earnings/{ticker}
+                          (v9.18 ST-33, BLG-FE-294). unavailable: the lookup failed, so
+                          flagged is false and the page shows "Earnings: unknown". A UK
+                          position makes no lookup and is ok.
         "404":
           $ref: "#/components/responses/NotFound"
         "500":
@@ -6102,6 +6112,13 @@ paths:
                   days_until_earnings: { type: integer, nullable: true }
                   fiscal_quarter: { type: string, nullable: true }
                   data_source: { type: string, example: "yahoo_finance" }
+                  data_status:
+                    type: string
+                    enum: [ok, unavailable]
+                    description: >-
+                      v9.18 ST-33 (BLG-FE-294): ok when Yahoo answered (next_earnings_date
+                      may still be null); unavailable when the lookup failed (error,
+                      throttled answer, or no free lookup slot). Never cached by the backend; the frontend holds it 60 s.
 
   /research/{ticker}:
     get:
