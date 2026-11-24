@@ -6118,7 +6118,7 @@ paths:
                     description: >-
                       v9.18 ST-33 (BLG-FE-294): ok when Yahoo answered (next_earnings_date
                       may still be null); unavailable when the lookup failed (error,
-                      throttled answer, or no free lookup slot). Not cached as unavailable.
+                      throttled answer, or no free lookup slot). Never cached by the backend; the frontend holds it 60 s.
 
   /research/{ticker}:
     get:

@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-24 (session — 3 new items added: BLG-OPS-223, BLG-BE-234, BLG-QA-283; ST-32/ST-35 EPIC-06 v9.18); prior — 2026-11-24 (session — 2 new items added: BLG-FE-333, BLG-BE-233; ST-33/EPIC-06 v9.18); prior — 2026-11-24 (session — 1 new item added: BLG-QA-282; ST-37/EPIC-06 v9.18); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-24 (session — 5 new items added: BLG-FE-334, BLG-FE-335, BLG-BE-235, BLG-QA-284, BLG-BE-236; EPIC-06 v9.18 pre-PR agent-mediated reviews); prior — 2026-11-24 (session — 3 new items added: BLG-OPS-223, BLG-BE-234, BLG-QA-283; ST-32/ST-35 EPIC-06 v9.18); prior — 2026-11-24 (session — 2 new items added: BLG-FE-333, BLG-BE-233; ST-33/EPIC-06 v9.18); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -8859,5 +8859,106 @@ The watchlist stores UK tickers bare (`LGEN`), and its read joins `ticker_univer
 **Acceptance Criteria**
 - A fresh chart seed fills all 7 R-multiple buckets with the R values its docstring lists
 - A preview database seeded before v9.18 ends with `.L` tickers after the workflow runs, or the runbook says to reset it
+
+---
+
+### BLG-FE-334 — Make UK earnings behave the same on the Screener, Watchlist and Positions
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Head of UX & Design; Frontend Specifications & UX Documentation Owner
+**Source:** EPIC-06 (`2026-11-18__release-v9.18`) pre-PR agent-mediated Product Owner review, finding F4 — 2026-11-24
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+ST-33 stopped the Screener looking up earnings for UK rows (`strategy_rules.md` §4.2.3 is US-only), so a UK Screener row shows "—". The Watchlist and the Positions expanded row still look up UK earnings, as the v9.18 decision record §4 left them, so during Yahoo throttling the same UK ticker reads "—" on the Screener and "Unknown" on the Watchlist. About 44 of the failing symbols before v9.17's fix were UK.
+
+**Scope**
+- Decide at the next design gate whether UK rows on the Watchlist and Positions keep their earnings lookup, and record it in `watchlist.md` and `positions.md`
+- Implement the decision
+
+**Acceptance Criteria**
+- One recorded rule for UK earnings across the three surfaces
+- Playwright covers a UK row on each surface under the rule
+
+---
+
+### BLG-FE-335 — Do not blame earnings when a UK gap-risk request fails
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** EPIC-06 (`2026-11-18__release-v9.18`) pre-PR agent-mediated Director of Quality review, finding F5 — 2026-11-24
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+Since ST-33, `src/hooks/useGapRisk.js` turns any failed `GET /positions/{id}/gap-risk` request (non-2xx or network error) into `data_status: unavailable`, so the Alerts cell shows "Earnings: unknown". A UK position makes no earnings lookup (`position_endpoints.md` v2.24.0), so a 500 for a UK position, or an OHLCV failure, is labelled as an earnings failure it is not.
+
+**Scope**
+- Show "Earnings: unknown" for a failed request only for a US position, or use neutral wording for a request failure
+
+**Acceptance Criteria**
+- A 500 from gap risk for a UK position does not show "Earnings: unknown" (Playwright)
+- A 500 for a US position still does (SC-EUNK-09b unchanged)
+
+---
+
+### BLG-BE-235 — Do not cache "no earnings date" when the calendar call came back empty
+**Priority:** P3 (Low)
+**Type:** Backend Engineering
+**Owner:** Head of Engineering
+**Source:** EPIC-06 (`2026-11-18__release-v9.18`) pre-PR agent-mediated Director of Quality review, finding F6 — 2026-11-24
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+In `backend/services/earnings_service.py`, a usable `Ticker.info` (with `quoteType`) that has no earnings fields, followed by a `Ticker.calendar` call that returns `{}`, gives `data_status: ok` with a null date, cached for 12 hours. yfinance 1.x returns `{}` when its calendar quoteSummary call fails, so a partly throttled equity can show "—" and get no gap-risk flag for 12 hours: the failed-versus-no-date confusion ST-33 removed elsewhere.
+
+**Scope**
+- For an equity with no info dates and an empty calendar answer, do not cache the result (or return `unavailable`), and document the rule in `earnings_endpoints.md`
+
+**Acceptance Criteria**
+- A unit test with usable info, no dates and `calendar == {}` shows the answer is not cached for 12 hours
+- A usable fund (no calendar call) is unchanged
+
+---
+
+### BLG-QA-284 — Make Phase B tests refuse a database that is not the CI or a local throwaway one
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** QA & Testing Owner
+**Source:** EPIC-06 (`2026-11-18__release-v9.18`) pre-PR agent-mediated Director of Quality review, finding F8 — 2026-11-24
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+`tests/test_settings_change_log_postgres.py`, `tests/test_watchlist_uk_signal_match_postgres.py` and the older `tests/test_chat_answer_rating_db.py` run `CREATE SCHEMA` / `DROP SCHEMA` against any reachable `DATABASE_URL` that does not contain "stub". `tests/conftest.py` forces a stub outside CI unless `PYTEST_ALLOW_REAL_DB=1`, but with that flag set by mistake while `DATABASE_URL` points at staging (as it does in the sandbox), these tests would run DDL on staging.
+
+**Scope**
+- One shared guard for Phase B tests: run only when the host is `localhost`/`127.0.0.1` or an explicit CI-only flag is set, and skip otherwise
+
+**Acceptance Criteria**
+- With a non-localhost `DATABASE_URL` and no CI flag, every Phase B test skips
+- CI Phase B still runs them
+
+---
+
+### BLG-BE-236 — Filter the watchlist signal lookup by market
+**Priority:** P3 (Low)
+**Type:** Backend Engineering
+**Owner:** Head of Engineering
+**Source:** EPIC-06 (`2026-11-18__release-v9.18`) pre-PR agent-mediated Director of Quality review, finding F9 (pre-existing) — 2026-11-24
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`get_watchlist()`'s signal lookup (`backend/services/watchlist_service.py`) matches on ticker only. The legacy bare branch kept by BLG-BE-234 lets a UK watchlist row match a US signal with the same bare symbol (UK `GSK`, `BP`, `RIO` or `SHEL` against an NYSE ADR signal), and the other way round. This was true before v9.18.
+
+**Scope**
+- Add `AND market = w.market` to the lookup, and extend `tests/test_watchlist_uk_signal_match_postgres.py`
+
+**Acceptance Criteria**
+- A UK `GSK` watchlist row does not take a US `GSK` signal's status (Phase B test)
+- The UK `.L` and legacy bare matches still work
 
 ---

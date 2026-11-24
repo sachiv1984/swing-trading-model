@@ -318,7 +318,9 @@ Signed: Sprint Execution Engine (agent-mediated, Infrastructure & Operations Own
 
 ---
 
-## 10. Build the E2E Bundle Once per Run — Before/After Evidence (ST-36, EPIC-06, v9.18, BLG-OPS-206)
+## 10. Build the E2E Bundle Once per Run — Before/After Evidence
+
+**Story:** ST-36, EPIC-06, v9.18 (`BLG-OPS-206`).
 
 **Change:** `.github/workflows/playwright.yml` gains a `build-e2e-bundle` job that runs `scripts/build_e2e_bundle.js` once (the env comes from `playwright.config.js` `webServer.env`) and uploads `build/` as the `e2e-bundle` artifact. The 8 E2E shards and both visual jobs download it and run only `npx serve -s build -l 3000` (`E2E_PREBUILT_BUNDLE=1`). Before, each of those 10 jobs ran `npm run build` inside its test step.
 

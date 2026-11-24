@@ -116,7 +116,7 @@ Rules:
 
 | Change | Details |
 |--------|---------|
-| Updated endpoint: GET /earnings/{ticker} | New `data_status` (`ok \| unavailable`): `unavailable` for a failed lookup (error, throttled answer, no free lookup slot), `ok` when Yahoo answered, with or without an upcoming date (BLG-FE-294). Additive. |
+| Updated endpoint: GET /earnings/{ticker} | New `data_status` (`ok \| unavailable`): `unavailable` for a failed lookup (error, throttled answer, no free lookup slot), `ok` when Yahoo answered, with or without an upcoming date (BLG-FE-294). Additive. Also fixed: the `Ticker.calendar` fallback now reads yfinance 1.7's dict shape (it never found a date before), so some equities now get a date from it. |
 
 ### position_endpoints.md — v2.24.0 (UPDATED)
 
