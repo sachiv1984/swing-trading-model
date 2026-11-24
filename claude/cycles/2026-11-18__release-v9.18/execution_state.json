@@ -875,7 +875,7 @@
       "branch": "exec/2026-11-18__release-v9.18/EPIC-06",
       "pr_number": null,
       "pr_status": "none",
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-11-18__release-v9.18/qa_evidence_EPIC-06.md",
       "test_scenarios": [
         "tests/e2e/earnings-unknown.spec.js",
@@ -1069,6 +1069,13 @@
           "sign_off_record": null,
           "notes": "First-time-right: 2026-11-24 pass A — 18 done (tables built from data_model.md §6 and DS-33 SQL, not a copy; expected log text built by hand from _settings_value_text and the column defaults, incl. DECIMAL round trip 7.5 stored as 7.50, read back \"7.5\"); 17 done (readers of settings_change_log: get_last_settings_change only, asserted); 7 done (premise \"Phase B skips cleanly without a real DATABASE_URL\": Phase A URL ci_stub contains stub, skipped; unreachable URL skipped); 1-6,8,11,19-24 N/A (test-only). pass B — 9 done; AC 2 checked locally: column renamed to field_name in database.py fails 2 of the new tests with UndefinedColumn while tests/test_settings_change_log.py still passes 16/16; CI probe to follow. AC 1: tests/test_settings_change_log_postgres.py (4 tests) passes in CI Phase B (CI Pytest 45360043835 success). AC 2: probe branch commit 02563ee2 renamed the insert column to field_name; CI Pytest run 45360051025 Phase B failed on exactly the 3 ST-38 tests (3976 other tests passed); probe branch deleted. Deviation check: none."
         }
+      },
+      "sign_off_record": {
+        "status": "cleared",
+        "method": "agent_mediated_user_directed",
+        "role": "Director of Quality; Product Owner",
+        "date": "2026-11-24",
+        "by": "the user (holds both roles), in session"
       }
     },
     "EPIC-07": {

@@ -89,24 +89,23 @@ The ST-34 acceptance run regenerated `tests/e2e/__snapshots__/visual-regression-
 
 **[Agent-mediated review — on behalf of Product Owner, pending human confirmation]** ⚠️ Approved with Comments. Every AC met as scoped; both PO rulings implemented and recorded. Fixed before the PR: this consolidation block; the `earnings_endpoints.md` / `api_changelog.md` note on the calendar fallback fix. Filed: BLG-FE-334 (UK earnings differ across Screener, Watchlist and Positions). Decisions for the human Product Owner listed below.
 
-### Decisions needed from the human Product Owner before merge
+### Product Owner and Director of Quality acceptance (the user, in session, 2026-11-24T13:01:53Z)
 
-1. Accept ST-32 AC 2 on a week in which earnings, gap risk and research made no Yahoo calls, or keep a watch item until a week with that traffic.
-2. Priority of BLG-BE-233 (the §4.2.3 pre-entry earnings check reads "skipped" when the lookup fails), filed P3; the review suggests P2 for v9.19.
-3. Accept the watchlist-seed exception to ST-35 AC 1, and the two out-of-scope changes: the BLG-BE-234 watchlist query fix and the `exec/**`-only guard on the visual-baseline workflow.
-4. Acknowledge the staging `signals` read made without its own permission.
+The user, who holds the Product Owner and Director of Quality roles, gave both acceptances in session ("give DOQ and PO acceptance"). Recorded as given:
 
-### P1/P2 found defects filed during this EPIC
-
-- **BLG-OPS-223 (P2):** the weekly market-data volume check has timed out on both runs (cold start). Needs Product Owner and Director of Quality acceptance, with rationale, at the merge gate.
+1. **ST-32 AC 2 accepted** on the 2026-11-24 report, in which earnings, gap risk and research made no Yahoo calls (0 failures) and `GET /positions`' 7 failures are one documented token refusal. No watch item.
+2. **BLG-BE-233** (§4.2.3 pre-entry earnings check reads "skipped" when the lookup fails) stays at its filed priority, P3. The review's P2 suggestion is left to backlog grooming; this record does not change a backlog priority.
+3. **Accepted:** the watchlist-seed exception to ST-35 AC 1; the BLG-BE-234 watchlist query fix; the `exec/**`-only guard on the visual-baseline workflow.
+4. **Acknowledged:** the read-only staging `signals` query made without its own permission.
+5. **P2 found defect BLG-OPS-223 accepted** by the Product Owner and the Director of Quality. Rationale: the check fails loudly (exit 2 plus a Telegram failure message), so nothing is silently missed; ST-32 got the same report by hand; the cause is very likely a Render cold start (0.88 s warm), a small fix for the next cycle.
 
 ## Standard Sign-Off Block
 
-- [ ] All acceptance criteria verified against canonical spec
-- [ ] No unresolved P0 or P1 deviations
-- [ ] Regression areas checked
-- [ ] For any frontend component making direct URL construction (not via api.* wrapper): confirm the URL-base variable is exposed on the imported object
-- [ ] **Strategy values checked:** N/A — no stop/grace/ATR/exit/sizing logic touched (ST-33 changes how an earnings date is fetched and shown; the gap-risk trigger rule and §4.2.3 window are unchanged)
-- Signed off by:
-- Date:
-- Comments: Frontend-visible changes (ST-33): Playwright SC-EUNK-01..09b, observed passing in CI run 45368947624 at `b865cad4`. Autonomous class unavailable (src/pages and src/components changed). Awaiting the Director of Quality.
+- [x] All acceptance criteria verified against canonical spec
+- [x] No unresolved P0 or P1 deviations
+- [x] Regression areas checked
+- [x] For any frontend component making direct URL construction (not via api.* wrapper): confirm the URL-base variable is exposed on the imported object — `useEarnings`/`useGapRisk` use `API_BASE` from `process.env.REACT_APP_API_URL`, as before
+- [x] **Strategy values checked:** N/A — no stop/grace/ATR/exit/sizing logic touched (ST-33 changes how an earnings date is fetched and shown; the gap-risk trigger rule and the §4.2.3 window are unchanged)
+- Signed off by: Sprint Execution Engine (agent-mediated, Director of Quality role — §5.3)
+- Date: 2026-11-24
+- Comments: Entered at the explicit direction of the user, who holds the Director of Quality role, in session at 2026-11-24T13:01:53Z after the pre-PR agent-mediated reviews (both ⚠️ Approved with Comments). Results per the Consolidation Block: ST-33 Pass_with_deviation (DEV-EPIC06-ST33-01/02, P3, Product Owner rulings); ST-32 and ST-35 Pass with notes; ST-34, ST-36, ST-37, ST-38 Pass. Frontend-visible changes (ST-33): Playwright SC-EUNK-01..09b observed passing in real CI run 45368947624 at `b865cad4`, including the 60 s hold (SC-EUNK-08, fake clock). Autonomous class unavailable (src/pages and src/components changed). Review follow-ups filed: BLG-FE-334, BLG-FE-335, BLG-BE-235, BLG-QA-284, BLG-BE-236.
