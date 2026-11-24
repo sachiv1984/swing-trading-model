@@ -3,7 +3,7 @@
  * ST-06 (EPIC-02, v9.17, BLG-FE-259). Spec: docs/specs/frontend/pages/performance.md v1.1 §10.
  *
  * Covers:
- *   SC-PERF-01  PF-01        h1, four sections in order with h2s, tab title
+ *   SC-PERF-01  PF-01        h1, five sections in order with h2s (v1.3, ST-08: + Strategy vs backtest), tab title
  *   SC-PERF-02  PF-02        section index: one-click reach, ?section=compliance on load
  *   SC-PERF-03  PF-03        /Reports, /PerformanceAnalytics(+?section=strategy-compliance) redirect (replace), params kept
  *   SC-PERF-05  PF-05        each period-level KPI label once; Trade Breakdown and Best/Worst Trade rows gone
@@ -104,11 +104,11 @@ async function expectReached(page, id) {
   await expect(h).toBeFocused();
 }
 
-test('SC-PERF-01: /Performance shows the heading, four sections in order and the tab title', async ({ page }) => {
+test('SC-PERF-01: /Performance shows the heading, five sections in order and the tab title', async ({ page }) => {
   await stub(page);
   await page.goto('/#/Performance');
   await expect(heading(page)).toBeVisible({ timeout: 15000 });
-  await expect(main(page).locator('section > h2')).toHaveText(['Summary', 'Reports', 'Analytics', 'Compliance']);
+  await expect(main(page).locator('section > h2')).toHaveText(['Summary', 'Reports', 'Analytics', 'Compliance', 'Strategy vs backtest']);
   await expect(page).toHaveTitle('Performance · Position Manager');
   // Summary cards in performance.md §4 order.
   const cards = page.getByTestId('performance-summary-cards');
@@ -119,7 +119,7 @@ test('SC-PERF-01: /Performance shows the heading, four sections in order and the
 test('SC-PERF-02: the section index reaches each section in one click; ?section=compliance opens there', async ({ page }) => {
   await stub(page);
   await page.goto('/#/Performance');
-  await expect(page.getByTestId('section-index').getByRole('link')).toHaveText(['Summary', 'Reports', 'Analytics', 'Compliance'], { timeout: 15000 });
+  await expect(page.getByTestId('section-index').getByRole('link')).toHaveText(['Summary', 'Reports', 'Analytics', 'Compliance', 'Strategy vs backtest'], { timeout: 15000 });
   for (const id of ['compliance', 'analytics', 'reports', 'summary']) {
     await page.getByTestId(`section-link-${id}`).click();
     await expectReached(page, id);

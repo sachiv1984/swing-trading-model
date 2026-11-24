@@ -18,9 +18,12 @@
  * SC-SB-08 (v9.15 ST-18, BLG-FE-220: Trade Log exit-reason badges pass axe
  * color-contrast in both themes, strategy_benchmark.md v0.9 §7.3)
  *
- * Component: src/pages/StrategyBenchmark.js
- * ROUTING NOTE: App uses HashRouter. Navigate via page.goto('/#/StrategyBenchmark')
- * or via the sidebar nav link (SC-SB-01).
+ * Component: src/pages/StrategyBenchmark.js (from v9.18 ST-08, BLG-FE-323, the
+ * "Strategy vs backtest" section of Performance — performance.md v1.3 §4.1).
+ * ROUTING NOTE: App uses HashRouter. The section is reached at
+ * /#/Performance?section=strategy-vs-backtest; the old route redirects there
+ * (SC-SB-01b). SC-SB-08b covers PF-22 (no sticky filter bar, no second
+ * section index).
  */
 
 'use strict';
@@ -111,7 +114,15 @@ const OPEN_POSITIONS_WITH_DATA = {
 // Shared mock setup
 // ---------------------------------------------------------------------------
 
+const SECTION_URL = '/#/Performance?section=strategy-vs-backtest';
+
 async function mockBaseEndpoints(page, { summary = SUMMARY_WITH_ACTUAL, trades = TRADES_RESPONSE, openPositions = OPEN_POSITIONS_EMPTY } = {}) {
+  // The section now sits on Performance, whose other sections call their own
+  // endpoints: answer those with an empty envelope (registered first, so the
+  // benchmark routes below take precedence).
+  await page.route(/localhost:8000\//, (route) =>
+    route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok', data: [] }) })
+  );
   await page.route(/\/strategy\/benchmark\/open-positions/, (route) =>
     route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(openPositions) })
   );
@@ -123,56 +134,35 @@ async function mockBaseEndpoints(page, { summary = SUMMARY_WITH_ACTUAL, trades =
   );
 }
 
-// Minimal Positions-page route set (same shape as the proven-in-CI
-// stubPositionsRoutes helper in epic02-v62-ai-briefing-chat.spec.js) — used
-// as the navigation origin for SC-SB-01a instead of DashboardHome, which
-// requires a much larger stub surface (market/status, signals, ai/*,
-// red-flag-journal, etc.) that this spec has no reason to duplicate.
-async function mockPositionsOrigin(page) {
-  await page.route('**/positions*', (route) => {
-    const url = route.request().url();
-    if (url.includes('/compliance') || url.includes('/grace-period-alerts')) {
-      return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok', data: [] }) });
-    }
-    return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify([]) });
-  });
-  await page.route('**/portfolio**', (route) =>
-    route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok', data: { cash: 10000, initial_cash: 50000 } }) })
-  );
-  await page.route('**/analytics/**', (route) =>
-    route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok', data: { last_sync_at: null } }) })
-  );
-  await page.route('**/alerts/history**', (route) =>
-    route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ data: { evaluations: [] } }) })
-  );
-  await page.route('**/watchlist**', (route) =>
-    route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ items: [] }) })
-  );
-  await page.route('**/earnings/**', (route) =>
-    route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ next_earnings_date: null }) })
-  );
-}
-
 // ---------------------------------------------------------------------------
 // SC-SB-01 — Page accessible from navigation
 // ---------------------------------------------------------------------------
 
-test.describe('SC-SB-01 — Strategy Benchmark page accessible from navigation', () => {
-  test('SC-SB-01a: clicking the sidebar "Strategy Benchmark" link navigates to the page', async ({ page }) => {
-    await mockPositionsOrigin(page);
+test.describe('SC-SB-01 — Strategy vs backtest reachable from Performance', () => {
+  test('SC-SB-01a: the Performance section index opens the "Strategy vs backtest" section', async ({ page }) => {
     await mockBaseEndpoints(page);
-    await page.goto('/#/Positions');
-    await page.waitForSelector('h1', { timeout: 10000 });
+    await page.goto('/#/Performance');
+    await page.getByTestId('section-link-strategy-vs-backtest').click({ timeout: 15000 });
 
-    // navigation.md v2.0 (ST-01, BLG-FE-250, v9.16): "Strategy Benchmark" lives
-    // in the Review area, which is collapsed by default when the current page
-    // (Positions) is in Portfolio. Expand it before clicking the link.
-    await page.getByTestId('nav-area-review').first().click();
+    await expect(page).toHaveURL(/section=strategy-vs-backtest/);
+    await expect(page.locator('#strategy-vs-backtest > h2')).toBeFocused();
+    await expect(page.getByTestId('strategy-vs-backtest-content')).toBeVisible({ timeout: 10000 });
+  });
 
-    await page.getByRole('link', { name: 'Strategy Benchmark' }).first().click();
-
-    await expect(page).toHaveURL(/#\/StrategyBenchmark/);
-    await expect(page.getByTestId('strategy-benchmark-page')).toBeVisible({ timeout: 10000 });
+  test('SC-SB-01b: /StrategyBenchmark redirects to the section (replace), keeping ?tab=', async ({ page }) => {
+    await mockBaseEndpoints(page);
+    await page.goto('/#/Performance');
+    await expect(page.getByRole('heading', { level: 1, name: 'Performance', exact: true })).toBeVisible({ timeout: 15000 });
+    await page.goto('/#/StrategyBenchmark?tab=version-comparison');
+    await expect(page).toHaveURL(/#\/Performance\?tab=version-comparison&section=strategy-vs-backtest$/);
+    await expect(page.getByTestId('benchmark-tab-version-comparison')).toHaveAttribute('aria-selected', 'true', { timeout: 15000 });
+    await page.goBack();
+    await expect(page).toHaveURL(/#\/Performance$/);
+    // The retired panel index's ?section= is replaced by the Performance section.
+    await page.goto('/#/StrategyBenchmark?section=parity');
+    await expect(page).toHaveURL(/#\/Performance\?section=strategy-vs-backtest$/);
+    // No sidebar entry is left.
+    await expect(page.getByRole('complementary').getByRole('link', { name: 'Strategy Benchmark' })).toHaveCount(0);
   });
 });
 
@@ -195,7 +185,7 @@ test.describe('SC-SB-02 — Year and Market filters apply simultaneously', () =>
       route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(TRADES_RESPONSE) });
     });
 
-    await page.goto('/#/StrategyBenchmark');
+    await page.goto(SECTION_URL);
     await expect(page.getByTestId('benchmark-year-filter')).toBeVisible({ timeout: 10000 });
 
     await page.getByTestId('benchmark-year-filter').selectOption('2023');
@@ -219,7 +209,7 @@ test.describe('SC-SB-02 — Year and Market filters apply simultaneously', () =>
       route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(TRADES_RESPONSE) });
     });
 
-    await page.goto('/#/StrategyBenchmark');
+    await page.goto(SECTION_URL);
     await expect(page.getByTestId('benchmark-market-uk')).toBeVisible({ timeout: 10000 });
 
     await page.getByTestId('benchmark-market-uk').click();
@@ -237,7 +227,7 @@ test.describe('SC-SB-02 — Year and Market filters apply simultaneously', () =>
 test.describe('SC-SB-03 — Panel 1 Actual column placeholder', () => {
   test('SC-SB-03a: Actual column shows "—" for all stat cards when actual_stats is null', async ({ page }) => {
     await mockBaseEndpoints(page, { summary: SUMMARY_NO_ACTUAL });
-    await page.goto('/#/StrategyBenchmark');
+    await page.goto(SECTION_URL);
 
     const statCards = page.getByTestId('benchmark-stat-cards');
     await expect(statCards).toBeVisible({ timeout: 10000 });
@@ -251,7 +241,7 @@ test.describe('SC-SB-03 — Panel 1 Actual column placeholder', () => {
 
   test('SC-SB-03b: Actual column shows real figures when actual_stats is present', async ({ page }) => {
     await mockBaseEndpoints(page, { summary: SUMMARY_WITH_ACTUAL });
-    await page.goto('/#/StrategyBenchmark');
+    await page.goto(SECTION_URL);
 
     const statCards = page.getByTestId('benchmark-stat-cards');
     await expect(statCards).toBeVisible({ timeout: 10000 });
@@ -266,7 +256,7 @@ test.describe('SC-SB-03 — Panel 1 Actual column placeholder', () => {
 test.describe('SC-SB-04 — Panel 3 toggle modes and exit reason badges', () => {
   test.beforeEach(async ({ page }) => {
     await mockBaseEndpoints(page);
-    await page.goto('/#/StrategyBenchmark');
+    await page.goto(SECTION_URL);
     await expect(page.getByTestId('benchmark-panel-3')).toBeVisible({ timeout: 10000 });
   });
 
@@ -321,7 +311,7 @@ test.describe('SC-SB-08 — Trade Log exit-reason badge contrast', () => {
     test(`SC-SB-08${theme === 'dark' ? 'a' : 'b'}: every exit-reason badge passes color-contrast (${theme} theme)`, async ({ page }) => {
       await page.addInitScript((t) => window.localStorage.setItem('theme', t), theme);
       await mockBaseEndpoints(page);
-      await page.goto('/#/StrategyBenchmark');
+      await page.goto(SECTION_URL);
       await expect(page.getByTestId('benchmark-panel-3')).toBeVisible({ timeout: 10000 });
       await page.getByTestId('benchmark-mode-side-by-side').click();
 
@@ -344,7 +334,7 @@ test.describe('SC-SB-08 — Trade Log exit-reason badge contrast', () => {
 test.describe('SC-SB-05 — Panel 0 conditional rendering', () => {
   test('SC-SB-05a: panel is omitted entirely when there are 0 open positions', async ({ page }) => {
     await mockBaseEndpoints(page, { openPositions: OPEN_POSITIONS_EMPTY });
-    await page.goto('/#/StrategyBenchmark');
+    await page.goto(SECTION_URL);
     await expect(page.getByTestId('benchmark-panel-1')).toBeVisible({ timeout: 10000 });
 
     await expect(page.getByTestId('benchmark-panel-0')).toHaveCount(0);
@@ -352,7 +342,7 @@ test.describe('SC-SB-05 — Panel 0 conditional rendering', () => {
 
   test('SC-SB-05b: panel renders with the position row when ≥1 open position exists', async ({ page }) => {
     await mockBaseEndpoints(page, { openPositions: OPEN_POSITIONS_WITH_DATA });
-    await page.goto('/#/StrategyBenchmark');
+    await page.goto(SECTION_URL);
 
     const panel = page.getByTestId('benchmark-panel-0');
     await expect(panel).toBeVisible({ timeout: 10000 });
@@ -375,7 +365,7 @@ test.describe('SC-SB-06 — Panel 0 Market-filter-only interaction', () => {
       route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(OPEN_POSITIONS_WITH_DATA) });
     });
 
-    await page.goto('/#/StrategyBenchmark');
+    await page.goto(SECTION_URL);
     await expect(page.getByTestId('benchmark-market-uk')).toBeVisible({ timeout: 10000 });
 
     await page.getByTestId('benchmark-market-uk').click();
@@ -393,7 +383,7 @@ test.describe('SC-SB-06 — Panel 0 Market-filter-only interaction', () => {
       route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(OPEN_POSITIONS_WITH_DATA) });
     });
 
-    await page.goto('/#/StrategyBenchmark');
+    await page.goto(SECTION_URL);
     await expect(page.getByTestId('benchmark-year-filter')).toBeVisible({ timeout: 10000 });
 
     await page.getByTestId('benchmark-year-filter').selectOption('2023');
@@ -423,7 +413,7 @@ test.describe('SC-SB-07 — Panel 0 API-error state', () => {
       route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(TRADES_RESPONSE) })
     );
 
-    await page.goto('/#/StrategyBenchmark');
+    await page.goto(SECTION_URL);
 
     const panel = page.getByTestId('benchmark-panel-0');
     await expect(panel).toBeVisible({ timeout: 10000 });
@@ -439,42 +429,47 @@ test.describe('SC-SB-07 — Panel 0 API-error state', () => {
 // v7.10, BLG-FE-106)
 // ---------------------------------------------------------------------------
 
-test.describe('SC-SB-08 — Page header consolidated onto PageHeader', () => {
-  test('SC-SB-08a: title and description render via PageHeader, matching strategy_benchmark.md §2', async ({ page }) => {
+test.describe('SC-SB-08 — Section heading, intro and filter bar (performance.md v1.3 §4.1)', () => {
+  test('SC-SB-08a: the section has the <h2> "Strategy vs backtest" with the old description as its intro', async ({ page }) => {
     await mockBaseEndpoints(page);
-    await page.goto('/#/StrategyBenchmark');
+    await page.goto(SECTION_URL);
 
-    const heading = page.locator('h1', { hasText: 'Strategy Benchmark' });
-    await expect(heading).toBeVisible({ timeout: 10000 });
-    await expect(page.getByText('Compare live trading vs backtest')).toBeVisible();
+    const heading = page.locator('#strategy-vs-backtest > h2');
+    await expect(heading).toHaveText('Strategy vs backtest', { timeout: 10000 });
+    await expect(page.getByTestId('benchmark-intro')).toHaveText('Compare live trading vs backtest');
+    // Panel headings sit one level below the section heading.
+    await expect(page.getByTestId('benchmark-panel-1').getByRole('heading', { level: 3, name: 'Performance Parity' })).toBeVisible();
   });
 
-  test('SC-SB-08b: BarChart2 icon is preserved alongside the consolidated header', async ({ page }) => {
+  test('SC-SB-08b: PF-22 — the filter bar is not sticky and the section renders no second section index', async ({ page }) => {
     await mockBaseEndpoints(page);
-    await page.goto('/#/StrategyBenchmark');
+    await page.goto(SECTION_URL);
 
-    await expect(page.getByTestId('benchmark-header-icon')).toBeVisible({ timeout: 10000 });
+    const filters = page.getByTestId('benchmark-filters');
+    await expect(filters).toBeVisible({ timeout: 10000 });
+    await expect.poll(() => filters.evaluate((el) => getComputedStyle(el).position)).toBe('static');
+    await expect(page.getByTestId('section-index')).toHaveCount(1);
+    await expect(page.getByTestId('strategy-vs-backtest-content').getByTestId('section-index')).toHaveCount(0);
   });
 
   test('SC-SB-08c: "Benchmark data as of DD Mon YYYY" last-updated line is preserved, sourced from last_imported_at', async ({ page }) => {
     await mockBaseEndpoints(page); // SUMMARY_WITH_ACTUAL.last_imported_at = '2026-06-30T10:15:00Z'
-    await page.goto('/#/StrategyBenchmark');
+    await page.goto(SECTION_URL);
 
     await expect(page.getByTestId('benchmark-last-imported')).toHaveText('Benchmark data as of 30 Jun 2026', { timeout: 10000 });
   });
 
   test('SC-SB-08d: last-updated line is absent when no import data exists', async ({ page }) => {
     await mockBaseEndpoints(page, { summary: { ...SUMMARY_WITH_ACTUAL, last_imported_at: null } });
-    await page.goto('/#/StrategyBenchmark');
+    await page.goto(SECTION_URL);
 
-    const heading = page.locator('h1', { hasText: 'Strategy Benchmark' });
-    await expect(heading).toBeVisible({ timeout: 10000 });
+    await expect(page.getByTestId('benchmark-intro')).toBeVisible({ timeout: 10000 });
     await expect(page.getByTestId('benchmark-last-imported')).toHaveCount(0);
   });
 
   test('SC-SB-08e: Refresh button still functions after consolidation (no regression)', async ({ page }) => {
     await mockBaseEndpoints(page);
-    await page.goto('/#/StrategyBenchmark');
+    await page.goto(SECTION_URL);
 
     const refreshBtn = page.getByTestId('benchmark-refresh-btn');
     await expect(refreshBtn).toBeVisible({ timeout: 10000 });

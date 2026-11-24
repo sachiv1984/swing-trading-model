@@ -139,8 +139,8 @@ const STRICT_INCOMPLETE_CONTRAST = new Set([
   'ReplayTradeSet:light',
   'ResearchLanding:dark',
   'ResearchLanding:light',
-  'StrategyBenchmark:dark',
-  'StrategyBenchmark:light',
+  'StrategyVsBacktest:dark',
+  'StrategyVsBacktest:light',
   'TickerUniverse:dark',
   'TickerUniverse:light',
   'WeeklyDigest:light',
@@ -847,15 +847,19 @@ async function mockTradeHistoryPopulated(page) {
 }
 
 const ST08_PAGES = [
-  // [name, route, mock, text that proves the data rendered, optional step]
+  // [name, route, mock, text that proves the data rendered, optional step, optional scan scope]
   ['TradePlans', '/#/TradePlans', routed.mockTradePlans, 'AAA'],
   ['Signals', '/#/Signals', routed.mockSignals, 'VOD'],
   ['Screener', '/#/Screener', routed.mockScreener, 'BARC'],
-  ['StrategyBenchmark', '/#/StrategyBenchmark', routed.mockStrategyBenchmark, 'TSLA'],
+  // v9.18 ST-08 (BLG-FE-323): Strategy Benchmark is Performance's "Strategy vs
+  // backtest" section. Scanned on its own (scoped to the section) so it keeps
+  // its strict incomplete-contrast rule; the full Performance scan below
+  // covers it again inside the page.
+  ['StrategyVsBacktest', '/#/Performance?section=strategy-vs-backtest', routed.mockPerformance, 'TSLA', null, '#strategy-vs-backtest'],
   ['SystemStatus', '/#/SystemStatus', routed.mockSystemStatus, 'GET /signals', async (page) => {
     await page.getByRole('button', { name: /Run Tests/ }).click();
   }],
-  ['TickerUniverse', '/#/TickerUniverse', routed.mockTickerUniverse, 'British American Tobacco'],
+  ['TickerUniverse', '/#/settings/ticker-universe', routed.mockTickerUniverse, 'British American Tobacco'],
   ['Watchlist', '/#/Watchlist', routed.mockWatchlist, 'VOD.L'],
   ['ResearchLanding', '/#/Research', routed.catchAll, null],
   ['ResearchTicker', '/#/research/AAPL', routed.mockResearch, 'Apple reports record quarterly revenue'],
@@ -932,7 +936,7 @@ for (const theme of ['light', 'dark']) {
       }, theme);
     });
 
-    for (const [name, route, mock, marker, step] of ST08_PAGES) {
+    for (const [name, route, mock, marker, step, include] of ST08_PAGES) {
       test(`${name} (${theme})`, async ({ page }) => {
         // The two modal states take longer than the 30s default; every other entry keeps it.
         if (name.endsWith('Modal')) test.setTimeout(60000);
@@ -942,7 +946,7 @@ for (const theme of ['light', 'dark']) {
         if (step) await step(page);
         if (marker) await expect(page.locator('main').getByText(marker, { exact: false }).first()).toBeVisible({ timeout: 15000 });
         await expectThemeApplied(page, theme);
-        await runAxeScan(page, `${name}:${theme}`);
+        await runAxeScan(page, `${name}:${theme}`, { include });
       });
     }
   });

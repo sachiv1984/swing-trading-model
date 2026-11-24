@@ -59,8 +59,9 @@ test('SC-FVE-01: StrategyBenchmark "To" version field error uses canonical colou
       body: JSON.stringify({ status: 'error', code: 'version_order_error', message: "Must be chronologically after the 'From' version." }),
     })
   );
-  await page.goto('/#/StrategyBenchmark');
-  await page.getByTestId('benchmark-tab-version-comparison').click();
+  // v9.18 ST-08: Strategy Benchmark is Performance's Strategy vs backtest section.
+  await page.goto('/#/Performance?section=strategy-vs-backtest');
+  await page.getByTestId('benchmark-tab-version-comparison').click({ timeout: 15000 });
 
   const compareButton = page.getByTestId('version-compare-btn');
   await expect(compareButton).toBeVisible({ timeout: 10000 });

@@ -24,7 +24,9 @@ export const PAGE_LABELS = {
   TickerUniverse: "Ticker Universe",
   TradeHistory: "Trade History",
   Performance: "Performance",
-  StrategyBenchmark: "Strategy Benchmark",
+  // navigation.md v2.5 (ST-08): a Performance section, reached from the
+  // palette; "Strategy Benchmark" stays a palette search alias.
+  StrategyVsBacktest: "Strategy vs backtest",
   Replay: "Replay",
   Journal: "Journal",
   WeeklyDigest: "Weekly Digest",
@@ -51,13 +53,18 @@ export const PALETTE_PAGE_KEYS = [
   "TickerUniverse",
   "TradeHistory",
   "Performance",
-  "StrategyBenchmark",
+  "StrategyVsBacktest",
   "Replay",
   "Journal",
   "WeeklyDigest",
   "Settings",
   "SystemStatus",
 ];
+
+// Extra palette search words for a page entry (navigation.md v2.5 §Moved pages).
+export const PALETTE_ALIASES = {
+  StrategyVsBacktest: ["Strategy Benchmark"],
+};
 
 export function pageLabel(key) {
   return PAGE_LABELS[key];

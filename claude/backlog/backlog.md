@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-24 (session — 5 new items added: BLG-FE-334, BLG-FE-335, BLG-BE-235, BLG-QA-284, BLG-BE-236; EPIC-06 v9.18 pre-PR agent-mediated reviews); prior — 2026-11-24 (session — 3 new items added: BLG-OPS-223, BLG-BE-234, BLG-QA-283; ST-32/ST-35 EPIC-06 v9.18); prior — 2026-11-24 (session — 2 new items added: BLG-FE-333, BLG-BE-233; ST-33/EPIC-06 v9.18); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-24 (session — 2 new items added: BLG-FE-336, BLG-FE-337; ST-08 EPIC-02 v9.18 pre-commit code review); prior — 2026-11-24 (session — 5 new items added: BLG-FE-334, BLG-FE-335, BLG-BE-235, BLG-QA-284, BLG-BE-236; EPIC-06 v9.18 pre-PR agent-mediated reviews); prior — 2026-11-24 (session — 3 new items added: BLG-OPS-223, BLG-BE-234, BLG-QA-283; ST-32/ST-35 EPIC-06 v9.18); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -8901,6 +8901,49 @@ Since ST-33, `src/hooks/useGapRisk.js` turns any failed `GET /positions/{id}/gap
 **Acceptance Criteria**
 - A 500 from gap risk for a UK position does not show "Earnings: unknown" (Playwright)
 - A 500 for a US position still does (SC-EUNK-09b unchanged)
+
+---
+
+### BLG-FE-336 — Keep the page's params and jump again when the palette opens a Performance section
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Frontend Specifications & UX Documentation Owner; Head of Engineering
+**Source:** ST-08 (EPIC-02, `2026-11-18__release-v9.18`) pre-commit medium code review, finding 5 — 2026-11-24
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v9.19
+
+**Problem**
+The palette's page entries go to a fixed URL. The "Strategy vs backtest" entry opens `/Performance?section=strategy-vs-backtest` and drops the user's `?period=` and `?report=`. When the URL already has `section=strategy-vs-backtest`, choosing the entry does not scroll, because `SectionIndex` jumps only when `?section=` changes (`jumpedFor`). Example: on `/Performance?period=ytd&section=strategy-vs-backtest`, scroll to Summary and pick "Strategy vs backtest": the period resets to last month and the page does not move.
+
+**Scope**
+- Decide in `navigation.md` §Global Command Palette whether a page entry for the current page keeps its params
+- Make `SectionIndex` jump again on a new navigation to the same `?section=` (for example, on a new location key) without re-jumping after its own link clicks; it is shared by Trade Plan, Performance and Journal, so review it at high
+
+**Acceptance Criteria**
+- The palette rule is recorded in `navigation.md`
+- From the scenario above, picking "Strategy vs backtest" ends at the section heading with the params the rule says to keep (Playwright)
+- Index-link clicks on Trade Plan, Performance and Journal still jump once (existing `section-index.spec.js` scenarios pass)
+
+---
+
+### BLG-FE-337 — Decide how Settings handles unsaved edits when the user follows a link
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Frontend Specifications & UX Documentation Owner; Head of UX & Design
+**Source:** ST-08 (EPIC-02, `2026-11-18__release-v9.18`) pre-commit medium code review, finding 7 — 2026-11-24
+**Effort:** S (~0.5 day, spec line then build)
+**Provisional-Target:** v9.19
+
+**Problem**
+Settings saves only on "Save" and has no unsaved-changes guard. A user who changes Theme, Currency or a strategy field and then follows a link loses the edit without warning. This was already possible from the sidebar. ST-08 adds the "Screener universe" row, which links to Ticker Universe from inside the Preferences card, so the case is now easier to hit.
+
+**Scope**
+- Decide in `settings.md` whether leaving with unsaved edits warns, saves first, or is accepted as is
+- Build the decision if it changes behaviour
+
+**Acceptance Criteria**
+- `settings.md` records the decision
+- If a warning or save is chosen: changing Theme and then clicking the "Ticker Universe" link behaves as recorded (Playwright)
 
 ---
 

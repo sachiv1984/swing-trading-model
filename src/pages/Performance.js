@@ -23,10 +23,11 @@ import Last30DaysCompliance from "../components/performance/Last30DaysCompliance
 import { PAGE_LABELS } from "../lib/pageLabels";
 import { formatCurrency, formatPercent } from "../lib/format";
 import { toMetricsProps, toSummary } from "../lib/performanceMetrics";
+import StrategyVsBacktestSection from "./StrategyBenchmark";
 
 // Performance (performance.md v1.2; ST-06, BLG-FE-259, EPIC-02, v9.17): one
 // page for Reports and Analytics. Sections Summary · Reports · Analytics ·
-// Compliance with the shared section index (?section=). ?period= drives
+// Compliance · Strategy vs backtest (v1.3, ST-08) with the shared section index (?section=). ?period= drives
 // Summary, Analytics and Discipline & Compliance; ?report= picks the Reports
 // view. Every period-level KPI has one home (§5) and is read from
 // GET /analytics/metrics (§5.2). No new AI call (§8).
@@ -50,6 +51,7 @@ const SECTIONS = [
   { id: "reports", label: "Reports" },
   { id: "analytics", label: "Analytics" },
   { id: "compliance", label: "Compliance" },
+  { id: "strategy-vs-backtest", label: PAGE_LABELS.StrategyVsBacktest },
 ];
 
 function periodDatesFor(period) {
@@ -125,7 +127,11 @@ export default function Performance() {
   // that fill in later (tax year, charts, compliance) do not move the target.
   const fetching = useIsFetching();
   const [pageSettled, setPageSettled] = useState(false);
-  if (!pageSettled && !isLoading && fetching === 0) setPageSettled(true);
+  // The Strategy vs backtest section loads with its own fetches, which
+  // useIsFetching does not see; it reports when its first load has settled.
+  const [benchmarkSettled, setBenchmarkSettled] = useState(false);
+  const onBenchmarkSettled = useCallback(() => setBenchmarkSettled(true), []);
+  if (!pageSettled && !isLoading && fetching === 0 && benchmarkSettled) setPageSettled(true);
   const metrics = useMemo(() => (analyticsData ? toMetricsProps(analyticsData) : null), [analyticsData]);
   const openCount = Array.isArray(positions) ? positions.filter((p) => p.status === "open").length : 0;
 
@@ -345,6 +351,12 @@ export default function Performance() {
             <Arc5ComplianceSection />
             <Last30DaysCompliance />
             <TradePlanCompletionRateSection />
+          </Section>
+
+          {/* §4.1 (v1.3, ST-08, BLG-FE-323): the Strategy Benchmark body, moved in.
+              It has its own filters and ignores the period selector. */}
+          <Section id="strategy-vs-backtest" label={PAGE_LABELS.StrategyVsBacktest}>
+            <StrategyVsBacktestSection onSettled={onBenchmarkSettled} />
           </Section>
         </div>
       </div>

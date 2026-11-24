@@ -6,6 +6,7 @@ import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
+import OnwardLink from "../components/ui/OnwardLink";
 import PageHeader from "../components/ui/PageHeader";
 import { PAGE_LABELS } from "../lib/pageLabels";
 import { Save, Loader2, CheckCircle2, Sliders, CreditCard, Palette, TrendingUp, ShieldAlert, DollarSign } from "lucide-react";
@@ -363,6 +364,15 @@ export default function Settings() {
               </SelectContent>
             </Select>
           </div>
+        </div>
+        {/* settings.md v1.11 §3 (ST-08, BLG-FE-323, v9.18): Ticker Universe is a
+            Settings detail page with no sidebar entry; this row reaches it. */}
+        <div className="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-app-line pt-4" data-testid="settings-screener-universe">
+          <div>
+            <p className="text-sm font-medium text-app-fg">Screener universe</p>
+            <p className="text-sm text-app-muted">The tickers the screener scans each night.</p>
+          </div>
+          <OnwardLink to="/settings/ticker-universe" label={PAGE_LABELS.TickerUniverse} testId="settings-ticker-universe-link" />
         </div>
       </SectionCard>
 

@@ -11,7 +11,7 @@ import {
 } from "./ui/command";
 import { createPageUrl } from "../utils";
 import { apiFetch, API_BASE_URL, api } from "../api/base44Client";
-import { PAGE_LABELS, PALETTE_PAGE_KEYS } from "../lib/pageLabels";
+import { PAGE_LABELS, PALETTE_ALIASES, PALETTE_PAGE_KEYS } from "../lib/pageLabels";
 import { Briefcase, Eye, FileText } from "lucide-react";
 
 // Page labels come from the single label source (ST-11, BLG-FE-248, v9.15;
@@ -178,6 +178,7 @@ export default function CommandPalette() {
                 <CommandItem
                   key={key}
                   value={label}
+                  keywords={PALETTE_ALIASES[key]}
                   onSelect={() => handleSelectPage(key)}
                   data-testid={`command-palette-page-${key}`}
                 >

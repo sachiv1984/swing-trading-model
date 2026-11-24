@@ -1,8 +1,8 @@
 **Owner:** Head of Specs Team
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 1.5
-**Last Updated:** 2026-11-16 (ST-06, EPIC-02, v9.17, BLG-FE-259 — §UI Labels: one "Performance" row replaces "Analytics" and "Reports"); prior — 2026-11-16 (ST-05, EPIC-02, v9.17, BLG-FE-258 — §UI Labels: one "Journal" row replaces "Trade Reflections" and "Red Flag Journal"; the Positions "Trade Journal" deliberate difference removed); prior — 2026-11-04 (ST-08, EPIC-02, v9.15, BLG-SPEC-214 — new §UI Labels); prior history retained — see prior entries in version control
+**Version:** 1.6
+**Last Updated:** 2026-11-24 (ST-08, EPIC-02, v9.18, BLG-FE-323 — §UI Labels: Ticker Universe is a Settings detail page; Strategy Benchmark becomes the palette entry "Strategy vs backtest", a Performance section); prior — 2026-11-16 (ST-06, EPIC-02, v9.17, BLG-FE-259 — §UI Labels: one "Performance" row replaces "Analytics" and "Reports"); prior — 2026-11-16 (ST-05, EPIC-02, v9.17, BLG-FE-258 — §UI Labels: one "Journal" row replaces "Trade Reflections" and "Red Flag Journal"; the Positions "Trade Journal" deliberate difference removed); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -301,10 +301,10 @@ Page labels are in Title Case. The browser-tab title is `{Canonical label} · Po
 | `Research` | Research | Find trades | Yes | Yes | Yes | The sidebar and palette entries open the `/Research` landing (`navigation.md` §Page Placement). With a ticker, the heading is `{TICKER} — Research` and the tab title is `{TICKER} · Research · Position Manager`. |
 | `TradePlans` | Trade Plans | Find trades | Yes | Yes | Yes | — |
 | `TradePlan` | Trade Plan | Find trades | No (detail) | Yes | Yes | Detail page: no sidebar entry. Its parent is Trade Plans. |
-| `TickerUniverse` | Ticker Universe | Find trades | Yes | Yes | Yes | — |
+| `TickerUniverse` | Ticker Universe | Settings | No (detail) | Yes | Yes | Detail page from v9.18 (ST-08, `navigation.md` v2.5): route `/settings/ticker-universe`, parent Settings, reached from the Settings "Screener universe" row and the palette. `/TickerUniverse` redirects. |
 | `TradeHistory` | Trade History | Review | Yes | Yes | Yes | — |
-| `Performance` | Performance | Review | Yes | Yes | Yes | Replaces "Analytics" and "Reports" (ST-06, v9.17); sections "Summary", "Reports", "Analytics", "Compliance" (`performance.md` §3). |
-| `StrategyBenchmark` | Strategy Benchmark | Review | Yes | Yes | Yes | — |
+| `Performance` | Performance | Review | Yes | Yes | Yes | Replaces "Analytics" and "Reports" (ST-06, v9.17); sections "Summary", "Reports", "Analytics", "Compliance", "Strategy vs backtest" (`performance.md` §3; the last added by ST-08, v9.18). |
+| `StrategyVsBacktest` (`StrategyBenchmark.js`) | Strategy vs backtest | Review | No (Performance section) | Yes (`<h2>`) | Yes | Was the Strategy Benchmark page (ST-08, v9.18, `performance.md` §4.1). The palette entry opens `/Performance?section=strategy-vs-backtest`; "Strategy Benchmark" is kept as its search alias. `/StrategyBenchmark` redirects. |
 | `Replay` | Replay | Review | Yes | Yes | Yes | — |
 | `Journal` | Journal | Review | Yes | Yes | Yes | Replaces "Trade Reflections" and "Red Flag Journal" (ST-05, v9.17); their tabs are "Reflections", "Red flags" and "Position notes" (`journal.md` §3). |
 | `WeeklyDigest` | Weekly Digest | Review | Yes | Yes | Yes | — |

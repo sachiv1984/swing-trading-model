@@ -16,9 +16,12 @@ export const createPageUrl = (pageName) => {
     Watchlist: '/Watchlist',
     WeeklyDigest: '/WeeklyDigest',
     Screener: '/Screener',
-    TickerUniverse: '/TickerUniverse',
+    // navigation.md v2.5 (ST-08, BLG-FE-323, v9.18): Ticker Universe is a
+    // Settings detail page; Strategy Benchmark is Performance's
+    // "Strategy vs backtest" section.
+    TickerUniverse: '/settings/ticker-universe',
     Journal: '/Journal',
-    StrategyBenchmark: '/StrategyBenchmark',
+    StrategyVsBacktest: '/Performance?section=strategy-vs-backtest',
     Replay: '/Replay',
     TradePlan: '/TradePlan',
     TradePlans: '/TradePlans',

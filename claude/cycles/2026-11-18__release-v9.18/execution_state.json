@@ -6,7 +6,7 @@
   "invoked_utc": "2026-11-19T08:07:14Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-24T14:36:34Z",
+  "last_updated_utc": "2026-11-24T14:39:55Z",
   "epics": {
     "EPIC-01": {
       "title": "Site Structure & Usability Phase 4, Stage 1: Correct and Safe (build-and-ship)",
@@ -239,7 +239,7 @@
         "ST-08": {
           "title": "Move Strategy Benchmark into Performance and Ticker Universe into Settings",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "in_progress",
           "assigned_to": "engine",
           "github_issue": 2273,
           "branch": "exec/2026-11-18__release-v9.18/EPIC-02",
@@ -255,7 +255,7 @@
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": ""
+          "notes": "First-time-right: 2026-11-24 pass A — 6 done (old routes/labels grepped across src, backend, tests, docs/specs: 15 e2e specs + routed-pages fixture reference /StrategyBenchmark or /TickerUniverse; backend refs are comments/API names; glossary §UI Labels rows need the move); 21 done (old SB page states: header icon + title dropped per spec, Refresh action moves to tab row, 'Benchmark data as of' kept under intro, loading/error/empty panels unchanged; TU page unchanged but gains parent link); 22 done (panel h2s become h3 under the section h2; page-wide heading-order scan planned; ?section= jump to the new section via the existing index); 4 done (Performance axe/no-scroll fixtures must now mock the strategy-benchmark endpoints); 19 done (SB fetch is plain async, outside the index's useIsFetching gate — last section, so earlier sections settle first; tab switch keeps ?section/?period/?report); 1,2,3,7,8,11,17,18,20,23,24 N/A (no new value shown, written or derived; moved copy reread in place: intro 'Compare live trading vs backtest' fits); 5 medium review (no shared module created). No raise. | First-time-right: 2026-11-24 pass B — 9 done (review findings 1, 2, 6 fixed in this commit: jump waits for the section's own load, label from PAGE_LABELS, /StrategyBenchmark redirect no longer maps ?section=strategy-compliance; 5 and 7 filed as BLG-FE-336/337, outside this diff's own behaviour; 3 accepted per decision record §2 'fetches when the page loads'; 4 no generator exists, Research/Notifications precedent); 10 done (glossary v1.6, navigation.md v2.6 synced); 13 done (navigation tables read back, 5 columns each); 22 done (section h2/panel h3 order; slow-load jump SC-SIX-06c); locator check: staleness spec scoped, rest explained; 12,14,15,16 N/A."
         },
         "ST-09": {
           "title": "Make the quiet-day Dashboard a single line",

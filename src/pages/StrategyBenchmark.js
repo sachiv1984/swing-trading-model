@@ -3,11 +3,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { api } from '../api/base44Client';
-import { BarChart2, RefreshCw, Upload, ChevronDown, ChevronUp, Play, Loader2 } from 'lucide-react';
+import { RefreshCw, Upload, ChevronDown, ChevronUp, Play, Loader2 } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
-import SectionIndex, { SECTION_SCROLL_MARGIN_UNDER_STICKY_BAR as SECTION_SCROLL_MARGIN } from '../components/ui/SectionIndex';
-import PageHeader from '../components/ui/PageHeader';
-import { PAGE_LABELS } from '../lib/pageLabels';
 import { formatCurrency, formatPercent, formatR } from '../lib/format';
 
 // ---------------------------------------------------------------------------
@@ -126,7 +123,7 @@ function Panel0({ openPositions, loading, error, showMarketBadge }) {
   if (error) {
     return (
       <section data-testid="benchmark-panel-0">
-        <h2 className="text-sm font-semibold text-app-fg mb-3">Open Positions</h2>
+        <h3 className="text-sm font-semibold text-app-fg mb-3">Open Positions</h3>
         <p className="text-sm text-slate-600 dark:text-slate-400" data-testid="benchmark-open-positions-error">
           Open positions temporarily unavailable.
         </p>
@@ -137,7 +134,7 @@ function Panel0({ openPositions, loading, error, showMarketBadge }) {
   if (loading) {
     return (
       <section data-testid="benchmark-panel-0">
-        <h2 className="text-sm font-semibold text-app-fg mb-3">Open Positions</h2>
+        <h3 className="text-sm font-semibold text-app-fg mb-3">Open Positions</h3>
         <div className="space-y-2 animate-pulse" data-testid="benchmark-open-positions-loading">
           {[1, 2, 3].map(i => <div key={i} className="h-8 bg-slate-100 dark:bg-slate-800 rounded-md" />)}
         </div>
@@ -158,7 +155,7 @@ function Panel0({ openPositions, loading, error, showMarketBadge }) {
   return (
     <section data-testid="benchmark-panel-0">
       <div className="flex items-center justify-between mb-3">
-        <h2 className="text-sm font-semibold text-app-fg">Open Positions</h2>
+        <h3 className="text-sm font-semibold text-app-fg">Open Positions</h3>
       </div>
       <p className={`text-sm mb-3 ${summaryColour}`} data-testid="benchmark-open-positions-summary">
         {count} open position{count === 1 ? '' : 's'} · {fmtGbpSigned(total)} unrealized
@@ -239,7 +236,7 @@ function Panel1({ backtest, actual, lastImportedAt }) {
   return (
     <section data-testid="benchmark-panel-1">
       <div className="flex items-center justify-between mb-3">
-        <h2 className="text-sm font-semibold text-app-fg">Performance Parity</h2>
+        <h3 className="text-sm font-semibold text-app-fg">Performance Parity</h3>
         {lastImportedAt && (
           <span className="text-xs text-slate-600 dark:text-slate-400">
             Last updated {new Date(lastImportedAt).toLocaleDateString('en-GB')}
@@ -294,7 +291,7 @@ function Panel2({ rows }) {
   if (!rows || rows.length === 0) {
     return (
       <section data-testid="benchmark-panel-2">
-        <h2 className="text-sm font-semibold text-app-fg mb-3">Yearly Breakdown</h2>
+        <h3 className="text-sm font-semibold text-app-fg mb-3">Yearly Breakdown</h3>
         <p className="text-sm text-slate-600 dark:text-slate-400 italic">No yearly data available.</p>
       </section>
     );
@@ -302,7 +299,7 @@ function Panel2({ rows }) {
 
   return (
     <section data-testid="benchmark-panel-2">
-      <h2 className="text-sm font-semibold text-app-fg mb-3">Yearly Breakdown</h2>
+      <h3 className="text-sm font-semibold text-app-fg mb-3">Yearly Breakdown</h3>
       <div className="overflow-x-auto">
         <table className="w-full text-sm" data-testid="benchmark-yearly-table">
           <thead>
@@ -385,7 +382,7 @@ function Panel3({ backtestTrades, actualTrades, toggleMode, onToggleMode }) {
   return (
     <section data-testid="benchmark-panel-3">
       <div className="flex items-center justify-between mb-3">
-        <h2 className="text-sm font-semibold text-app-fg">Trade Log</h2>
+        <h3 className="text-sm font-semibold text-app-fg">Trade Log</h3>
         <div className="flex gap-1" data-testid="benchmark-toggle-modes">
           {TOGGLE_MODES.map(mode => (
             <button
@@ -892,7 +889,13 @@ function BacktestRuleChangeTab() {
 // Main page
 // ---------------------------------------------------------------------------
 
-export default function StrategyBenchmark() {
+// performance.md v1.3 §4.1 (ST-08, BLG-FE-323, v9.18): the Strategy Benchmark
+// page body is Performance's "Strategy vs backtest" section. The page header
+// is dropped (its description is the intro line under the section <h2>, its
+// Refresh action sits on the tab row), the filter bar is not sticky, and the
+// Benchmark tab's own section index (strategy_benchmark.md §3a) is retired:
+// its panels are <h3>s under the section heading.
+export default function StrategyVsBacktestSection({ onSettled } = {}) {
   const [searchParams, setSearchParams] = useSearchParams();
   const tabParam = searchParams.get('tab');
   const activeTab =
@@ -900,10 +903,8 @@ export default function StrategyBenchmark() {
     tabParam === 'backtest-rule-change' ? 'backtest-rule-change' :
     'benchmark';
   const setActiveTab = (tab) => {
+    // Keeps Performance's own params (?section=, ?period=, ?report=).
     const next = new URLSearchParams(searchParams);
-    // A tab switch drops ?section= so returning to Benchmark does not jump
-    // back to an old section (strategy_benchmark.md §3a).
-    next.delete('section');
     if (tab === 'version-comparison' || tab === 'backtest-rule-change') next.set('tab', tab);
     else next.delete('tab');
     setSearchParams(next, { replace: true });
@@ -960,59 +961,33 @@ export default function StrategyBenchmark() {
     fetchData();
   }, [fetchData]);
 
+  // Tells Performance when the first load has settled, so a ?section= jump to
+  // this section waits for its panels (performance.md §3: "honoured on load
+  // once the page's data is ready").
+  const settled = !loading && !openPositionsLoading && (summary !== null || error !== null);
+  useEffect(() => {
+    if (settled && onSettled) onSettled();
+  }, [settled, onSettled]);
+
   const availableYears = summary?.available_years || [];
 
-  // ST-07 (BLG-FE-263, v9.17): strategy_benchmark.md §3a — section index on
-  // the Benchmark tab only, listing the panels that render right now.
   const showOpenPositions = openPositionsLoading || openPositionsError || openPositions?.open_positions?.length > 0;
   const showMainPanels = !loading && !error;
-  const benchmarkSections = [
-    ...(showOpenPositions ? [{ id: 'open-positions', label: 'Open positions' }] : []),
-    ...(showMainPanels
-      ? [
-          { id: 'parity', label: 'Performance parity' },
-          { id: 'yearly', label: 'Yearly breakdown' },
-          { id: 'trade-log', label: 'Trade log' },
-        ]
-      : []),
-  ];
 
   return (
-    <div className="p-4 md:p-6 space-y-6 max-w-7xl mx-auto" data-testid="strategy-benchmark-page">
-
-      {/* Page header — ST-19 (EPIC-05, v7.10, BLG-FE-106): consolidated onto the
-          shared PageHeader component (strategy_benchmark.md §2). BarChart2 icon
-          and the "Benchmark data as of" last-updated line are preserved as
-          adjacent elements — PageHeader has no icon/subtitle-line prop. */}
-      <div className="flex items-start gap-3">
-        <BarChart2 className="w-5 h-5 text-app-muted mt-1.5 shrink-0" data-testid="benchmark-header-icon" />
-        <div className="flex-1">
-          <PageHeader
-            title={PAGE_LABELS.StrategyBenchmark}
-            onward={{ label: PAGE_LABELS.Performance, to: "/Performance?section=analytics" }}
-            description="Compare live trading vs backtest"
-            actions={
-              <button
-                onClick={fetchData}
-                disabled={loading}
-                className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-md border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-50"
-                data-testid="benchmark-refresh-btn"
-              >
-                <RefreshCw className={`w-3 h-3 ${loading ? 'animate-spin' : ''}`} />
-                Refresh
-              </button>
-            }
-          />
-          {summary?.last_imported_at && (
-            <p className="text-xs text-slate-600 dark:text-slate-400 -mt-6" data-testid="benchmark-last-imported">
-              Benchmark data as of {fmtDateLong(summary.last_imported_at)}
-            </p>
-          )}
-        </div>
+    <div className="space-y-6" data-testid="strategy-vs-backtest-content">
+      <div className="space-y-1">
+        <p className="text-sm text-app-muted" data-testid="benchmark-intro">Compare live trading vs backtest</p>
+        {summary?.last_imported_at && (
+          <p className="text-xs text-app-muted" data-testid="benchmark-last-imported">
+            Benchmark data as of {fmtDateLong(summary.last_imported_at)}
+          </p>
+        )}
       </div>
 
       {/* Sub-navigation (v0.4 — ST-01, EPIC-01, v7.7) */}
-      <div className="flex gap-1 border-b border-slate-200 dark:border-slate-700" role="tablist" data-testid="benchmark-subnav">
+      <div className="flex flex-wrap items-end justify-between gap-2 border-b border-slate-200 dark:border-slate-700">
+      <div className="flex gap-1" role="tablist" data-testid="benchmark-subnav">
         <button
           role="tab"
           aria-selected={activeTab === 'benchmark'}
@@ -1053,6 +1028,16 @@ export default function StrategyBenchmark() {
           Backtest Rule Change
         </button>
       </div>
+      <button
+        onClick={fetchData}
+        disabled={loading}
+        className="mb-1.5 flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-md border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-50"
+        data-testid="benchmark-refresh-btn"
+      >
+        <RefreshCw className={`w-3 h-3 ${loading ? 'animate-spin' : ''}`} />
+        Refresh
+      </button>
+      </div>
 
       {activeTab === 'version-comparison' ? (
         <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4">
@@ -1061,16 +1046,10 @@ export default function StrategyBenchmark() {
       ) : activeTab === 'backtest-rule-change' ? (
         <BacktestRuleChangeTab />
       ) : (
-      <div className="space-y-6 lg:space-y-0 lg:grid lg:grid-cols-[minmax(0,1fr)_12rem] lg:gap-6">
-      <SectionIndex
-        sections={benchmarkSections}
-        className="lg:order-2"
-        ready={!loading && !openPositionsLoading && (summary !== null || error !== null)}
-      />
-      <div className="lg:order-1 min-w-0 space-y-6">
-      {/* Sticky filters */}
+      <div className="space-y-6">
+      {/* Filters — not sticky inside the Performance section (performance.md §4.1) */}
       <div
-        className="sticky top-0 z-10 bg-slate-50 dark:bg-slate-900/95 backdrop-blur-sm border border-slate-200 dark:border-slate-700 rounded-lg p-3 flex flex-wrap gap-3 items-center"
+        className="bg-slate-50 dark:bg-slate-900/95 border border-slate-200 dark:border-slate-700 rounded-lg p-3 flex flex-wrap gap-3 items-center"
         data-testid="benchmark-filters"
       >
         {/* Year filter */}
@@ -1118,7 +1097,7 @@ export default function StrategyBenchmark() {
       {/* Panel 0 — Open Positions (independent loading/error state; renders even if
           Panel 1-3's fetch fails, per ux_spec.md "does not break rest of page") */}
       {showOpenPositions && (
-        <div id="open-positions" className={`rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 ${SECTION_SCROLL_MARGIN}`}>
+        <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4">
           <Panel0
             openPositions={openPositions}
             loading={openPositionsLoading}
@@ -1149,7 +1128,7 @@ export default function StrategyBenchmark() {
       {showMainPanels && (
         <div className="space-y-6">
           {/* Panel 1 */}
-          <div id="parity" className={`rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 ${SECTION_SCROLL_MARGIN}`}>
+          <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4">
             <Panel1
               backtest={summary?.backtest_stats}
               actual={summary?.actual_stats}
@@ -1158,12 +1137,12 @@ export default function StrategyBenchmark() {
           </div>
 
           {/* Panel 2 */}
-          <div id="yearly" className={`rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 ${SECTION_SCROLL_MARGIN}`}>
+          <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4">
             <Panel2 rows={summary?.yearly_breakdown || []} />
           </div>
 
           {/* Panel 3 */}
-          <div id="trade-log" className={`rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 ${SECTION_SCROLL_MARGIN}`}>
+          <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4">
             <Panel3
               backtestTrades={trades?.backtest_trades || []}
               actualTrades={trades?.actual_trades || []}
@@ -1173,7 +1152,6 @@ export default function StrategyBenchmark() {
           </div>
         </div>
       )}
-      </div>
       </div>
       )}
     </div>

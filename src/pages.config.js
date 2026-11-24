@@ -61,9 +61,7 @@ import WeeklyDigest from './pages/WeeklyDigest';
 import Screener from './pages/Screener';
 import TradePlan from './pages/TradePlan';
 import TradePlans from './pages/TradePlans';
-import TickerUniverse from './pages/TickerUniverse';
 import Journal from './pages/Journal';
-import StrategyBenchmark from './pages/StrategyBenchmark';
 import Replay from './pages/Replay';
 import __Layout from './Layout.js';
 
@@ -83,9 +81,7 @@ export const PAGES = {
     "Screener": Screener,
     "TradePlan": TradePlan,
     "TradePlans": TradePlans,
-    "TickerUniverse": TickerUniverse,
     "Journal": Journal,
-    "StrategyBenchmark": StrategyBenchmark,
     "Replay": Replay,
 }
 

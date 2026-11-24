@@ -298,6 +298,7 @@ export default function TickerUniverse() {
     <div className="p-4 md:p-6 max-w-5xl mx-auto">
       <PageHeader
         title={PAGE_LABELS.TickerUniverse}
+        parent={{ label: PAGE_LABELS.Settings, to: "/Settings" }}
         onward={{ label: PAGE_LABELS.Screener, to: "/Screener" }}
         description={`${tickers.filter((t) => t.active).length} active tickers`}
         actions={

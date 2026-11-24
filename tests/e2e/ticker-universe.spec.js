@@ -12,11 +12,14 @@
  *   SC-TU-07: Search filter narrows by ticker/company substring, debounced
  *   SC-TU-08: Sector and Industry filters narrow rows; options derived from loaded list
  *   SC-TU-09: "Clear filters" control shown when any filter active; resets all 5, then hides
+ *   SC-TU-10: (v9.18 ST-08, BLG-FE-323) /settings/ticker-universe is a Settings detail page: parent link
+ *             "Settings", Settings highlighted in the sidebar, no Ticker Universe sidebar entry;
+ *             /TickerUniverse redirects there (replace), keeping its query string
  *
  * Spec ref: docs/specs/frontend/pages/ticker_universe.md §10
  * Infrastructure:
  * - Playwright page.route() network interception — no live backend required.
- * - ROUTING NOTE: App uses HashRouter — navigate via page.goto('/#/TickerUniverse').
+ * - ROUTING NOTE: App uses HashRouter — navigate via page.goto('/#/settings/ticker-universe') (v9.18 ST-08).
  * - LIFO ordering: catch-all registered FIRST so specific mocks take precedence.
  */
 
@@ -87,7 +90,7 @@ async function setup(page) {
   await mockDeleteTicker(page);
   await mockAddTicker(page);
   await mockTickerUniverse(page);
-  await page.goto('/#/TickerUniverse');
+  await page.goto('/#/settings/ticker-universe');
 }
 
 // ---------------------------------------------------------------------------
@@ -111,6 +114,37 @@ test.describe('SC-TU-01 — Page renders', () => {
     await expect(page.getByTestId('ticker-row-MSFT')).toBeVisible({ timeout: 8000 });
     await expect(page.getByTestId('ticker-row-BATS.L')).toBeVisible({ timeout: 8000 });
     await expect(page.getByTestId('ticker-row-TSLA')).toBeVisible({ timeout: 8000 });
+  });
+});
+
+// ---------------------------------------------------------------------------
+// SC-TU-10 — Settings detail page and redirect (navigation.md v2.5)
+// ---------------------------------------------------------------------------
+
+test.describe('SC-TU-10 — Settings detail page', () => {
+  test('SC-TU-10a: parent link "Settings", Settings active in the sidebar, no Ticker Universe entry', async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await setup(page);
+    await expect(page.getByRole('heading', { level: 1, name: 'Ticker Universe', exact: true })).toBeVisible({ timeout: 8000 });
+    const parent = page.getByTestId('parent-link');
+    await expect(parent).toHaveText('Settings');
+    await expect(parent).toHaveAttribute('href', '#/Settings');
+    await expect(page).toHaveTitle('Ticker Universe · Position Manager');
+    const nav = page.getByTestId('desktop-sidebar-nav');
+    await expect(nav.getByRole('link', { name: 'Settings', exact: true })).toHaveAttribute('aria-current', 'page');
+    await expect(nav.getByRole('link', { name: 'Ticker Universe', exact: true })).toHaveCount(0);
+  });
+
+  test('SC-TU-10b: /TickerUniverse redirects to /settings/ticker-universe (replace), keeping the query', async ({ page }) => {
+    await mockFallback(page);
+    await mockTickerUniverse(page);
+    await page.goto('/#/Settings');
+    await expect(page.getByRole('heading', { level: 1, name: 'Settings', exact: true })).toBeVisible({ timeout: 15000 });
+    await page.goto('/#/TickerUniverse?market=UK');
+    await expect(page).toHaveURL(/#\/settings\/ticker-universe\?market=UK$/);
+    await expect(page.getByRole('heading', { level: 1, name: 'Ticker Universe', exact: true })).toBeVisible({ timeout: 8000 });
+    await page.goBack();
+    await expect(page).toHaveURL(/#\/Settings$/);
   });
 });
 
