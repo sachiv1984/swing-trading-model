@@ -28,6 +28,7 @@
  *   SC-EUNK-08  An unavailable answer is held 60 s, then retried on the next mount; an ok answer is cached
  *   SC-EUNK-09  A 500 from GET /earnings shows "Unknown" (a failed request is a failed lookup)
  *   SC-EUNK-09b A 500 from GET /positions/{id}/gap-risk shows "Earnings: unknown" in the Alerts cell
+ *   SC-EUNK-09c The same 500 for a UK position shows nothing and is held 60 s (no earnings lookup is made; BLG-FE-335)
  *
  * Every "unknown" element is also scanned with axe color-contrast: any violation
  * fails, and any incomplete result fails unless axe gives a background gradient as
@@ -127,7 +128,9 @@ async function stubPositions(page, positions, gapRisk) {
     if (url.includes('/positions/compliance')) return json(route, { status: 'ok', data: [] });
     return json(route, positions);
   });
-  await page.route('**/positions/*/gap-risk', (r) => json(r, { status: 'ok', data: gapRisk }));
+  // gapRisk: an answer, or a route handler for tests that fail the request.
+  await page.route('**/positions/*/gap-risk', (r) => (typeof gapRisk === 'function'
+    ? gapRisk(r) : json(r, { status: 'ok', data: gapRisk })));
   await page.route('**/portfolio*', (r) => json(r, { status: 'ok', data: { cash: 10000, initial_cash: 50000 } }));
   await page.route('**/analytics/**', (r) => json(r, { status: 'ok', data: { last_sync_at: null } }));
   await page.route('**/compliance/**', (r) => json(r, { status: 'ok', data: [] }));
@@ -298,12 +301,32 @@ test.describe('Request failure', () => {
   });
 
   test('SC-EUNK-09b: a 500 from GET /positions/{id}/gap-risk shows "Earnings: unknown", not an empty Alerts cell', async ({ page }) => {
-    await stubPositions(page, [position()], GAP_OK);
-    await page.route('**/positions/*/gap-risk', (r) => json(r, { detail: 'Internal server error' }, 500));
+    await stubPositions(page, [position()], (r) => json(r, { detail: 'Internal server error' }, 500));
     await stubEarnings(page, OK_NO_DATE);
     await gotoPositionsTable(page);
     await expectMutedUnknown(page.getByTestId('gap-risk-earnings-unknown'), 'Earnings: unknown');
     await expect(page.getByTestId('gap-risk-badge')).toHaveCount(0);
+  });
+
+  test('SC-EUNK-09c: a 500 from gap risk for a UK position shows nothing and is held, not re-sent on remount', async ({ page }) => {
+    const calls = [];
+    await stubPositions(page, [position({ ticker: 'BARC', market: 'UK' })], (r) => {
+      calls.push(r.request().url());
+      return json(r, { detail: 'Internal server error' }, 500);
+    });
+    await stubEarnings(page, OK_NO_DATE);
+    await gotoPositionsTable(page, 'BARC');
+    await expect.poll(() => calls.length).toBe(1);
+    await expect(page.getByTestId('gap-risk-skeleton')).toHaveCount(0);
+    await expect(page.getByTestId('gap-risk-earnings-unknown')).toHaveCount(0);
+    await expect(page.getByTestId('gap-risk-badge')).toHaveCount(0);
+    // Remount the Alerts cell (Grid view, then Table again): the failure is held 60 s.
+    await page.locator('[aria-label="Grid view"]').click();
+    await page.locator('[aria-label="Table view"]').click();
+    await page.waitForSelector('table', { timeout: 5000 });
+    await page.waitForLoadState('networkidle');
+    expect(calls.length).toBe(1);
+    await expect(page.getByTestId('gap-risk-earnings-unknown')).toHaveCount(0);
   });
 });
 

@@ -626,7 +626,7 @@ function GapRiskBadge({ ticker, gapRisk }) {
 }
 
 function AlertsCell({ position }) {
-  const { data: gapRisk, loading: gapRiskLoading } = useGapRisk(position.id);
+  const { data: gapRisk, loading: gapRiskLoading } = useGapRisk(position.id, position.market);
   const riskOffExit = position.risk_off_exit === true;
 
   // ST-03 (v7.1, BLG-FE-107): spec compliance fix — Table View had drifted to

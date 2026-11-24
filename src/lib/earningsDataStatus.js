@@ -24,6 +24,21 @@ export const GAP_RISK_UNAVAILABLE = Object.freeze({
   data_status: "unavailable",
 });
 
+// A failed gap-risk request for a UK position (BLG-FE-335). Held 60 s like any
+// unavailable answer, but never shown: a UK position makes no earnings lookup
+// and gap risk never flags one, so the Alerts cell shows nothing, as before.
+export const GAP_RISK_UK_FAILED = Object.freeze({
+  flagged: false,
+  reasons: [],
+  data_status: "unavailable",
+  hidden: true,
+});
+
+// What the hook returns for a held answer: hidden answers render as nothing.
+export function visibleAnswer(answer) {
+  return answer && answer.hidden ? null : answer;
+}
+
 export function isEarningsUnavailable(answer) {
   return Boolean(answer) && typeof answer === "object" && answer.data_status === "unavailable";
 }

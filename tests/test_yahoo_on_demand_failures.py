@@ -527,3 +527,27 @@ def test_no_free_slot_is_unavailable():
             for _ in range(held):  # release only what was acquired
                 yahoo_info._slots.release()
     assert (out["next_earnings_date"], out["data_status"]) == (None, "unavailable")
+
+
+# --- BLG-BE-235 (EPIC-06, v9.18): an empty calendar answer is cached briefly --
+
+@pytest.mark.parametrize("calendar, ttl", [
+    ({}, "short"),                                 # empty: failed or no events, cannot tell
+    (None, "short"),                               # nothing returned
+    (_calendar("2026-11-02"), "long"),             # Yahoo answered (only a past date)
+    (_calendar("2027-02-01"), "long"),             # Yahoo answered with a date
+])
+def test_empty_calendar_answer_is_cached_briefly(calendar, ttl):
+    with patch.object(earnings_service._result_cache, "set", wraps=earnings_service._result_cache.set) as cache_set:
+        out, _ = _earnings({"quoteType": "EQUITY"}, date(2026, 11, 13), calendar=calendar)
+    assert out["data_status"] == "ok"
+    expected = earnings_service.EMPTY_CALENDAR_TTL_SECONDS if ttl == "short" else earnings_service.RESULT_TTL_SECONDS
+    assert cache_set.call_args.args[2] == expected
+    assert earnings_service.EMPTY_CALENDAR_TTL_SECONDS == 1800 < earnings_service.RESULT_TTL_SECONDS
+
+
+def test_fund_with_no_calendar_call_is_cached_for_the_full_ttl():
+    with patch.object(earnings_service._result_cache, "set", wraps=earnings_service._result_cache.set) as cache_set:
+        _, calendar_prop = _earnings({"quoteType": "ETF"}, date(2026, 11, 13), calendar={})
+    assert not calendar_prop.called
+    assert cache_set.call_args.args[2] == earnings_service.RESULT_TTL_SECONDS

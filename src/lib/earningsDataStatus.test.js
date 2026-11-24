@@ -1,5 +1,6 @@
 import {
-  isEarningsUnavailable, isCacheableAnswer, UNAVAILABLE_ANSWER, GAP_RISK_UNAVAILABLE, createAnswerCache,
+  isEarningsUnavailable, isCacheableAnswer, UNAVAILABLE_ANSWER, GAP_RISK_UNAVAILABLE, GAP_RISK_UK_FAILED,
+  visibleAnswer, createAnswerCache,
   UNAVAILABLE_HOLD_MS,
 } from "./earningsDataStatus";
 
@@ -92,5 +93,26 @@ describe("GAP_RISK_UNAVAILABLE (a failed gap-risk request)", () => {
     cache.set("p1", GAP_RISK_UNAVAILABLE, 0);
     expect(cache.get("p1", 59999)).toBe(GAP_RISK_UNAVAILABLE);
     expect(cache.get("p1", 60000)).toBeUndefined();
+  });
+});
+
+describe("GAP_RISK_UK_FAILED (a failed gap-risk request for a UK position)", () => {
+  test("is held 60 s but rendered as nothing", () => {
+    const cache = createAnswerCache();
+    cache.set("p1", GAP_RISK_UK_FAILED, 0);
+    expect(visibleAnswer(cache.get("p1", 1))).toBeNull();
+    expect(cache.get("p1", 59999)).toBe(GAP_RISK_UK_FAILED);
+    expect(cache.get("p1", 60000)).toBeUndefined();
+  });
+
+  test.each([
+    ["ok answer", { flagged: false, data_status: "ok" }],
+    ["US unavailable", GAP_RISK_UNAVAILABLE],
+  ])("visibleAnswer keeps a %s", (_label, answer) => {
+    expect(visibleAnswer(answer)).toBe(answer);
+  });
+
+  test("visibleAnswer of null is null", () => {
+    expect(visibleAnswer(null)).toBeNull();
   });
 });

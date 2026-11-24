@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Class 2
 **Status:** Canonical
-**Version:** 1.37.0
-**Last Updated:** 2026-11-24 (ST-33, EPIC-06, v9.18, BLG-FE-294 — v9.18.0 entry adds earnings_endpoints.md v0.4 and position_endpoints.md v2.24.0: data_status); prior — 2026-11-23 (ST-27, EPIC-05, v9.18, BLG-BE-223/BLG-BE-229 — v9.18.0 entry adds stop_trail_endpoint.md v1.2.0); prior — 2026-11-23 (ST-27, EPIC-05, v9.18, BLG-BE-223 — v9.18.0 entry adds position_endpoints.md v2.23.0: new POST /positions/{position_id}/split-adjustment/confirm); prior history retained — see prior entries in version control
+**Version:** 1.37.1
+**Last Updated:** 2026-11-24 (EPIC-06, v9.18, pre-PR review follow-ups — earnings_endpoints.md v0.4.1 (BLG-BE-235) and watchlist_endpoints.md v1.5.1 (BLG-BE-234/236)); prior — 2026-11-24 (ST-33, EPIC-06, v9.18, BLG-FE-294 — v9.18.0 entry adds earnings_endpoints.md v0.4 and position_endpoints.md v2.24.0: data_status); prior — 2026-11-23 (ST-27, EPIC-05, v9.18, BLG-BE-223/BLG-BE-229 — v9.18.0 entry adds stop_trail_endpoint.md v1.2.0); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 # API Changelog
@@ -109,7 +109,7 @@ Rules:
 | Updated endpoint: GET /reports/monthly-pnl | Same live `estimated_unrealised_pnl`, new top-level `unrealised_price_stale_count`. |
 | Updated endpoint: GET /reports/daily-pnl | Same live `estimated_unrealised_pnl`, new top-level `unrealised_price_stale_count`. |
 
-### earnings_endpoints.md — v0.4 (UPDATED)
+### earnings_endpoints.md — v0.4.1 (UPDATED)
 
 **EPIC:** EPIC-06
 **ST:** ST-33
@@ -117,6 +117,16 @@ Rules:
 | Change | Details |
 |--------|---------|
 | Updated endpoint: GET /earnings/{ticker} | New `data_status` (`ok \| unavailable`): `unavailable` for a failed lookup (error, throttled answer, no free lookup slot), `ok` when Yahoo answered, with or without an upcoming date (BLG-FE-294). Additive. Also fixed: the `Ticker.calendar` fallback now reads yfinance 1.7's dict shape (it never found a date before), so some equities now get a date from it. |
+| Updated endpoint: GET /earnings/{ticker} | v0.4.1 (BLG-BE-235): an equity whose calendar fallback came back empty is cached 30 minutes, not 12 hours. No shape change. |
+
+### watchlist_endpoints.md — v1.5.1 (UPDATED)
+
+**EPIC:** EPIC-06
+**ST:** ST-35
+
+| Change | Details |
+|--------|---------|
+| Updated endpoint: GET /watchlist | `signal_status` for a UK row matches the signal ticker bare or with `.L`, same market only (BLG-BE-234, BLG-BE-236). No shape change. |
 
 ### position_endpoints.md — v2.24.0 (UPDATED)
 

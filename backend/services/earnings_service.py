@@ -82,6 +82,8 @@ def _empty(ticker: str, data_status: str = DATA_STATUS_OK) -> Dict[str, Any]:
 # fiscal_quarter), kept RESULT_TTL_SECONDS and only after a usable Yahoo answer.
 # A page that shows one badge per row then costs Yahoo nothing on a reload.
 RESULT_TTL_SECONDS = yahoo_info.INFO_TTL_SECONDS
+# BLG-BE-235 (v9.18): an equity whose calendar fallback came back empty.
+EMPTY_CALENDAR_TTL_SECONDS = 30 * 60
 _result_cache = yahoo_info.TTLCache()
 
 
@@ -110,7 +112,7 @@ def _calendar_dates(cal):
 
 
 def _lookup(yf_symbol: str, today: date):
-    """(next earnings date or None, fiscal_quarter, usable, answered) from Yahoo.
+    """(next earnings date or None, fiscal_quarter, usable, answered, calendar_empty) from Yahoo.
 
     answered (ST-33): Yahoo gave at least one date, or calendar data, so the
     lookup did not fail even when `Ticker.info` lacked quoteType (throttled).
@@ -142,7 +144,9 @@ def _lookup(yf_symbol: str, today: date):
     no_earnings_type = info.get("quoteType") in _NO_EARNINGS_QUOTE_TYPES
 
     calendar_answered = False
+    calendar_called = False
     if earnings_date is None and not candidates and not no_earnings_type:
+        calendar_called = True
         cal = yahoo_info.call_with_slot(lambda: getattr(t, "calendar", None))
         cal_dates, calendar_answered = _calendar_dates(cal)
         upcoming = [d for d in cal_dates if d >= today]
@@ -159,7 +163,11 @@ def _lookup(yf_symbol: str, today: date):
     # ST-33: Yahoo answered when it gave any date (past ones included) or
     # calendar data, even if `Ticker.info` lacked quoteType.
     answered = bool(candidates) or calendar_answered
-    return earnings_date, fiscal_quarter, yahoo_info.is_usable_info(info), answered
+    # BLG-BE-235 (v9.18): yfinance returns {} both when its calendar call fails
+    # and when there are no calendar events, so an empty answer cannot be told
+    # apart from a failure. It reads as "no date" (ok), cached only briefly.
+    calendar_empty = calendar_called and not calendar_answered
+    return earnings_date, fiscal_quarter, yahoo_info.is_usable_info(info), answered, calendar_empty
 
 
 def get_earnings(ticker: str, market: str = "US") -> Dict[str, Any]:
@@ -186,9 +194,13 @@ def get_earnings(ticker: str, market: str = "US") -> Dict[str, Any]:
         if cached is not None and (cached[0] is None or cached[0] >= today):
             earnings_date, fiscal_quarter = cached
         else:
-            earnings_date, fiscal_quarter, usable, answered = _lookup(yf_symbol, today)
+            earnings_date, fiscal_quarter, usable, answered, calendar_empty = _lookup(yf_symbol, today)
             if usable:
-                _result_cache.set(key, (earnings_date, fiscal_quarter), RESULT_TTL_SECONDS)
+                # BLG-BE-235: an empty calendar answer is kept 30 minutes, not
+                # 12 hours, so a failed calendar call is retried within the
+                # hour without every page load re-sending it.
+                ttl = EMPTY_CALENDAR_TTL_SECONDS if calendar_empty else RESULT_TTL_SECONDS
+                _result_cache.set(key, (earnings_date, fiscal_quarter), ttl)
             else:
                 _result_cache.delete(key)
                 if earnings_date is None and not answered:

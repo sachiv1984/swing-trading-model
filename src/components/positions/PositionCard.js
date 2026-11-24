@@ -72,7 +72,7 @@ function RiskOffCardBadge() {
 // Stacks RISK OFF above GAP RISK per positions.md §Alerts Column "Stacked-state spacing"
 // (4px min gap, RISK OFF above GAP RISK) — same rule Table View's AlertsCell already applies.
 function PositionCardAlertsRow({ position }) {
-  const { data: gapRisk, loading: gapRiskLoading } = useGapRisk(position.id);
+  const { data: gapRisk, loading: gapRiskLoading } = useGapRisk(position.id, position.market);
   const riskOffExit = position.risk_off_exit === true;
   const showGap = !gapRiskLoading && gapRisk?.flagged;
   // ST-33 (BLG-FE-294, v9.18): the gap-risk earnings input failed. Muted
