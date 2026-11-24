@@ -57,3 +57,54 @@ Last Updated: 2026-11-20
 - **Blocks execution:** No
 - **Disposition:** Resolved
 - **Resolution summary (2026-11-20T14:14:19Z):** Decision by the AI Compliance & Governance Officer and the Product Owner (both held by the user, given in session, 2026-11-20), on an agent-mediated recommendation: **keep** the debrief focus area at one observational sentence. **Evidence:** 10 production debriefs generated with prompt v1.1 on 2026-11-20 (DEL-20261120-01; production had held only 2 debriefs, both v1.0, and no trade had closed since 2026-10-12). 6 of 10 focus sentences were left out by the numeric cross-check, including all 4 trades that exited on the trailing stop as planned; the 4 shown repeat an R figure computed against the position's starting stop but compared with the plan's target (MU 2026-09-30: 0.59R shown, 2.24R on the plan stop, target 2.2R), and 3 summaries show stops that do not fit the exit. **Rationale:** the one-sentence limit is not what makes the debrief feel empty; the omitted sentences and wrong inputs are. Allowing 2–3 sentences now would widen AI commentary on figures shown to be wrong. **Citations, each answered:** `strategy_rules.md` §13.2 (the AI-text sentence naming the post-trade debrief): unchanged and still enforced; the current limit keeps the debrief within it, and one sampled sentence (STX 2026-07-02, "allowing the position to decline") is close to suggesting a stop change, filed as BLG-AI-36. The §13.5 row for the ST-06 debrief review (`decisions--2026-08-17__release-v8.9--ST-06-section13-review.md`, CONDITIONAL): no amendment, since the limits are kept; Conditions 1, 2, 3 and 9 stand, and the sample shows Condition 9's checks working as fail-safe (no non-compliant sentence shown) but over-rejecting. No `strategy_rules.md` §13.5 change. **Re-review trigger:** once BLG-BE-226 (R basis) and BLG-AI-35 (number check) ship, review a fresh 10-debrief sample and reopen the question. **Filed:** BLG-BE-226 (P2), BLG-AI-35 (P2), BLG-BE-227 (P3), BLG-AI-36 (P3), and BLG-BE-228 (P2, duplicate INTC 2026-09-08 trade_history row, confirmed by the user as looking like a duplicate). ST-40 reclassified `autonomous`.
+
+## ESC-EXEC-20261124-01
+
+- **Raised at:** 2026-11-24T14:36:01Z
+- **Routine:** Sprint Execution
+- **Cycle ID:** 2026-11-18__release-v9.18
+- **Step:** STEP 3.1.D (EPIC-02; ST-07 is `delegated_decision` at seal)
+- **ST/EPIC item:** ST-07 / EPIC-02 (BLG-UX-21)
+- **Trigger type:** Lifecycle
+- **Blocking statement:** ST-07's remaining AC needs dated Head of UX & Design approval that `navigation.md` (v2.5, the two §14.2 moves, written at the design gate) and `design_system.md` (the §14.5 design direction) reflect DL-089's adoption of the 2026-11-17 re-review §14. The engine wrote `design_system.md` v1.28 §Design Direction from §14.5, with each gap naming its backlog item (BLG-UX-11, BLG-FE-288, BLG-FE-311, BLG-FE-313, BLG-FE-314, BLG-FE-315, BLG-FE-317).
+- **Engine recommendation (non-binding):** approve both files.
+- **Owning authority:** Head of UX & Design
+- **Unblock criteria:** a dated Head of UX & Design approval of both files, recorded in `design_system.md` and the ST-07 QA evidence.
+- **SLA due-by:** 2026-11-25T14:36:01Z (24h — Lifecycle)
+- **Blocks execution:** No
+- **Disposition:** Resolved
+- **Resolution summary (2026-11-24T14:36:34Z):** Head of UX & Design approval, given by the user in session (holds the role), 2026-11-24: `design_system.md` v1.28 §Design Direction and `navigation.md` v2.5 both approved. Recorded in `design_system.md` §Design Direction. ST-07 reclassified `autonomous` and completed.
+
+## ESC-EXEC-20261124-02
+
+- **Raised at:** 2026-11-24T14:36:01Z
+- **Routine:** Sprint Execution
+- **Cycle ID:** 2026-11-18__release-v9.18
+- **Step:** STEP 3.1.D (EPIC-02; ST-12 is `delegated_decision` at seal, "Strategy Rules & System Intent Owner confirmation (dated) of the `trade_plan.md` v1.30 §6 §13-note amendment, before the build")
+- **ST/EPIC item:** ST-12 / EPIC-02 (BLG-UX-19)
+- **Trigger type:** Lifecycle
+- **Blocking statement:** `trade_plan.md` v1.30 §6 amends the PT-05 §13 note (`docs/specs/compliance/pt05_entry_checklist_s13_review.md`, "no automated condition evaluation") so that "Position size checks" (worst of the §4.2.2 sector-concentration, §4.2.4 cash and §4.2.5 sizing-validity pre-entry checks) and "Stop level defined" (Stop Level holds a positive number) show a deterministic status instead of a tick. Both are advisory under `strategy_rules.md` §4.2.6, gate nothing and make no recommendation, so the spec states no new §13 review is needed. The build cannot start until the owner confirms.
+- **Engine recommendation (non-binding):** confirm.
+- **Owning authority:** Strategy Rules & System Intent Owner
+- **Unblock criteria:** a dated confirmation of the `trade_plan.md` v1.30 §6 §13-note amendment.
+- **SLA due-by:** 2026-11-25T14:36:01Z (24h — Lifecycle)
+- **Blocks execution:** No
+- **Disposition:** Resolved
+- **Resolution summary (2026-11-24T14:36:34Z):** Strategy Rules & System Intent Owner confirmation, given by the user in session (holds the role), 2026-11-24: the `trade_plan.md` v1.30 §6 §13-note amendment is confirmed; the two items stay advisory under §4.2.6, gate nothing and make no recommendation; no new §13 review. Recorded in `trade_plan.md` §6. ST-12 reclassified `autonomous`.
+
+## ESC-EXEC-20261124-03
+
+- **Raised at:** 2026-11-24T14:36:01Z
+- **Routine:** Sprint Execution
+- **Cycle ID:** 2026-11-18__release-v9.18
+- **Step:** STEP 3.1.D (EPIC-02; ST-13 is `delegated_decision` at seal, "Metrics Definitions & Analytics Owner definition in `metrics_definitions.md`, before the build")
+- **ST/EPIC item:** ST-13 / EPIC-02 (BLG-FE-320)
+- **Trigger type:** Lifecycle
+- **Blocking statement:** ST-13 needs the "rules followed" definition per closed trade before `GET /trades` can return `rules_followed`/`rules_broken`. Data facts: `red_flag_events` (`pre_entry_override`, `checklist_skipped`, `stop_prompt_dismissed`, `drawdown_prompt_dismissed`) carries a nullable `position_id`; a plan-time `pre_entry_override` is written before the position exists, so its `position_id` is usually null, but the plan stores `pre_entry_override_acknowledged` and is later linked by `trade_plans.position_id`; `pre_entry_validation_log` has no position link; the checks run on every Trade Entry route from 2026-11-04 (v9.15, `e0a78667`); `strategy_rules.md` §8.3 allows a manual exit at any time. Draft put to the owner: Not known with no `position_id`; Broken on any `red_flag_events` row with the position's id, or a linked plan with `pre_entry_override_acknowledged = true`; Followed when nothing is broken and the checks provably ran (a linked plan with a `pre_entry_validation_snapshot`, or `entry_date` on or after 2026-11-04); otherwise Not known; the exit reason never counts.
+- **Engine recommendation (non-binding):** approve the draft.
+- **Owning authority:** Metrics Definitions & Analytics Owner
+- **Unblock criteria:** a dated definition approved by the owner and recorded in `metrics_definitions.md`.
+- **SLA due-by:** 2026-11-25T14:36:01Z (24h — Lifecycle)
+- **Blocks execution:** No
+- **Disposition:** Resolved
+- **Resolution summary (2026-11-24T14:36:34Z):** Metrics Definitions & Analytics Owner approval, given by the user in session (holds the role), 2026-11-24: the draft is approved as written (all four red-flag event types count). The engine records it in `metrics_definitions.md` §Rules Followed with worked examples. ST-13 reclassified `autonomous`.

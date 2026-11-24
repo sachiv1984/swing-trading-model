@@ -3,9 +3,10 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 1.27
-**Last Updated:** 2026-11-17 (ST-08, EPIC-03, v9.17, BLG-FE-265 — page colour token sweep: every `src/pages/` file and the components that failed light-theme axe on a routed page moved onto the tokens or light/dark pairs; three dark-in-both cards and `PositionCard` themed; new §Page Colour Token Sweep); prior — 2026-11-10 (ST-09/ST-10, EPIC-03, v9.16, BLG-FE-264/223 — §Semantic Colour Tokens and §Input Text Colours built: tokens in `src/index.css`/`tailwind.config.js`, four shells converted, 18 input sites moved to the pair); prior — 2026-11-06 (v9.16 design gate — ST-09/ST-10, BLG-FE-264/223: new §Semantic Colour Tokens and §Input Text Colours under §Theme & Colors); prior history retained — see prior entries in version control
+**Version:** 1.28
+**Last Updated:** 2026-11-24 (ST-07, EPIC-02, v9.18, BLG-UX-21 — new §Design Direction: the Phase 4 target-state direction adopted by DL-089, from the 2026-11-17 re-review §14.5); prior — 2026-11-17 (ST-08, EPIC-03, v9.17, BLG-FE-265 — page colour token sweep: every `src/pages/` file and the components that failed light-theme axe on a routed page moved onto the tokens or light/dark pairs; three dark-in-both cards and `PositionCard` themed; new §Page Colour Token Sweep); prior — 2026-11-10 (ST-09/ST-10, EPIC-03, v9.16, BLG-FE-264/223 — §Semantic Colour Tokens and §Input Text Colours built: tokens in `src/index.css`/`tailwind.config.js`, four shells converted, 18 input sites moved to the pair); prior history retained — see prior entries in version control
 **Header remediation note (v6.7 ST-03, shared_standards.md §9):** this document previously had no lifecycle header. Header applied now (version stamped at 1.0, reflecting no prior tracked version history) rather than backfilling an assumed version — content itself is unchanged by this remediation.
+**v1.28 (ST-07, EPIC-02, v9.18, BLG-UX-21):** new **§Design Direction** after §Overview. It records the Phase 4 target-state design direction (visual character, typography, spacing, colour, imagery, components, interaction, motion) adopted in whole by DL-089 from `docs/ux/site_structure_rereview_2026-11-17.md` §14.5. It is a direction for new and revised work, not a description of what is built today; each gap names the backlog item that closes it. No existing rule in this document changes.
 **v1.27 (ST-08, EPIC-03, v9.17, BLG-FE-265):** new **§Page Colour Token Sweep** under §Semantic Colour Tokens. Every page in `src/pages/`, and every component that failed axe `color-contrast` on a routed page in the light theme, now uses the `app-*` tokens or a light/dark pair; bare `text-white` remains only on coloured fills. The three cards that review pass 4 kept dark in both themes (`TradePlans`, `Watchlist`, `Notifications`) and `PositionCard` are now themed, so the `dark`-class rule is no longer used by any page. Rule 5 and review passes 2 and 4 below are updated to match. No token value changes.
 **v1.26 (ST-09/ST-10, EPIC-03, v9.16, BLG-FE-264/BLG-FE-223):** §Semantic Colour Tokens and §Input Text Colours are now built, so their "spec ahead of the code" notes are removed. §Semantic Colour Tokens gains the **content fixes** made in ST-09: the design record's §5 rule (light-theme axe findings inside the converted shells on the four AC pages) and the Product Owner's 2026-11-10 ruling extending them to every other shell consumer (Trade History table, Weekly Digest, the nine Dashboard cards), all fixed with explicit pairs or tokens and notes that the `PageHeader` title is now solid `app-fg` text rather than a gradient. No token value changes.
 **v1.25 (v9.16 design gate, ST-09/ST-10, BLG-FE-264/BLG-FE-223):** added **§Semantic Colour Tokens** and **§Input Text Colours** under §Theme & Colors. There are eight `app-*` tokens built from the v1.23 measured pairs, with no new colours, and the placeholder and typed-text pair for inputs. The code is built by ST-09 and ST-10 (design source `docs/design/2026-11-06__release-v9.16/semantic-colour-tokens/decision_record.md`).
@@ -34,6 +35,27 @@
 
 ## Overview
 The Design System defines the shared visual language, interaction patterns, and reusable UI elements for the Position Manager Web App. Its purpose is to ensure consistency, clarity, and accessibility across all pages and components.
+
+---
+
+## Design Direction
+
+**Source:** `docs/ux/site_structure_rereview_2026-11-17.md` §14.5, adopted in whole by the Product Owner in DL-089 (`claude/roadmap/decision_log.md`, roadmap rebalance `2026-11-18__scheduled`) as the brief for Site Structure & Usability Phase 4.
+
+This section sets the direction for every new or revised page and component. It describes where the app is going, not what is built today: where the code does not yet match, the gap is named with the backlog item that closes it. When a rule elsewhere in this document is more specific, that rule applies; when a new rule is written, it should follow this direction.
+
+| Aspect | Direction | Today's gap and tracking item |
+|--------|-----------|-------------------------------|
+| **Visual character** | A calm instrument panel: neutral surfaces, dense information where decisions are made (tables, the Today list, the trade plan), and quiet everywhere else. A quiet day looks quiet. | The quiet-day Dashboard folds empty cards into one line (`dashboard.md` §3A, BLG-UX-11) |
+| **Typography** | Keep the system font stack: no web fonts. One heading scale, used semantically (one `h1` per page, sections in order). **Every figure uses tabular (fixed-width) numerals** (`tabular-nums`), so prices, P&L and R line up in tables and lists. | Heading levels: BLG-FE-313. `tabular-nums` is used in only 13 places today; new and revised figure displays add it |
+| **Spacing** | The existing Tailwind 4 px grid. Tight spacing inside tables and lists, generous spacing between page sections. Spacing shows importance, not decoration. | None |
+| **Colour** | **Colour means something or is absent.** Use the semantic tokens only (§Semantic Colour Tokens): positive, negative and warning carry rule states; regime badges keep their text labels. One solid primary colour for primary buttons, in place of the decorative cyan-to-violet gradients. Both themes pass AA contrast; focus appearance meets AAA. | Gradient buttons: BLG-FE-288. Focus and reduced-motion: BLG-FE-314 |
+| **Imagery** | No photography or illustration. Charts only where a trend matters (Performance, Risk, Strategy vs backtest), each with a text summary as its alternative. Icons (lucide) are always paired with text; decorative icons are hidden from screen readers. | None new |
+| **UI components** | One component per job: one toast system, one dialog (with dialog semantics), one table/card pattern, one status pill set, one error pattern. Build on the shared `components/ui` primitives, which carry focus rings. No clickable `div`s. | BLG-FE-311, BLG-FE-315 |
+| **Interaction** | Keyboard-first and direct. Keyboard shortcuts and the command palette stay. Pre-fill everything the system already knows. Show consequences as values change (for example risk in £ and R while the stop is typed). Confirm only irreversible actions. Ask for a one-line reason only where it feeds the journal. | None new |
+| **Motion** | Almost none. No entrance fades on headings. Short state transitions only (expand, open a dialog). Respect reduced motion everywhere. Never animate a number that matters. | Heading fades: BLG-FE-317. Reduced motion: BLG-FE-314 |
+
+**Head of UX & Design approval:** approved 2026-11-24 (the user, in session, holding the role; ST-07, EPIC-02, v9.18, `ESC-EXEC-20261124-01`). The same approval covers `navigation.md` v2.5 (the two §14.2 moves).
 
 ---
 

@@ -404,7 +404,7 @@ A section with no rendered field is left out of the index. The list view and the
 
 ## 6. Pre-Trade Entry Checklist (v3.2 — PT-05; split v1.30 — ST-12, BLG-UX-19)
 
-> **§13 Compliance (amended v1.30):** Reviewed under `docs/specs/compliance/pt05_entry_checklist_s13_review.md`. From v1.30, two items show a deterministic status instead of a tick: "Position size checks" (the existing §4.2.2, §4.2.4 and §4.2.5 pre-entry checks, reviewed under SI-01) and "Stop level defined" (a form field). Both are advisory (`strategy_rules.md` §4.2.6), gate nothing and make no recommendation, so no new §13 review is needed. The Strategy Rules & System Intent Owner confirms this amendment, dated, in ST-12 before the build (`stage4_backlog_slice_addendum.md`). The human-judgement items stay human-confirmed and are recorded as before.
+> **§13 Compliance (amended v1.30):** Reviewed under `docs/specs/compliance/pt05_entry_checklist_s13_review.md`. From v1.30, two items show a deterministic status instead of a tick: "Position size checks" (the existing §4.2.2, §4.2.4 and §4.2.5 pre-entry checks, reviewed under SI-01) and "Stop level defined" (a form field). Both are advisory (`strategy_rules.md` §4.2.6), gate nothing and make no recommendation, so no new §13 review is needed. Strategy Rules & System Intent Owner confirmation: 2026-11-24, given in session by the user holding the role, before the build (ST-12, `ESC-EXEC-20261124-02`). The human-judgement items stay human-confirmed and are recorded as before.
 
 **Design source (v1.30):** `docs/design/2026-11-18__release-v9.18/trade-plan-checklist-status/decision_record.md`
 

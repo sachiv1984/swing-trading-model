@@ -6,7 +6,7 @@
   "invoked_utc": "2026-11-19T08:07:14Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-24T14:14:34Z",
+  "last_updated_utc": "2026-11-24T14:36:34Z",
   "epics": {
     "EPIC-01": {
       "title": "Site Structure & Usability Phase 4, Stage 1: Correct and Safe (build-and-ship)",
@@ -198,7 +198,7 @@
     },
     "EPIC-02": {
       "title": "Site Structure & Usability Phase 4, Stage 2: Home Page and Navigation (build-and-ship)",
-      "status": "not_started",
+      "status": "in_progress",
       "branch": "exec/2026-11-18__release-v9.18/EPIC-02",
       "pr_number": null,
       "pr_status": "none",
@@ -208,9 +208,9 @@
       "stories": {
         "ST-07": {
           "title": "Revise navigation.md and design_system.md for the Phase 4 target state",
-          "classification": "delegated_decision",
+          "classification": "autonomous",
           "status": "not_started",
-          "assigned_to": "human",
+          "assigned_to": "engine",
           "github_issue": 2272,
           "branch": "exec/2026-11-18__release-v9.18/EPIC-02",
           "commit_sha": null,
@@ -225,7 +225,7 @@
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Reclassified delegated_decision -> autonomous 2026-11-24T14:36:34Z: ESC-EXEC-20261124-01 resolved in session. "
         },
         "ST-08": {
           "title": "Move Strategy Benchmark into Performance and Ticker Universe into Settings",
@@ -313,9 +313,9 @@
         },
         "ST-12": {
           "title": "Show machine-checkable checklist items as automatic status",
-          "classification": "delegated_decision",
+          "classification": "autonomous",
           "status": "not_started",
-          "assigned_to": "human",
+          "assigned_to": "engine",
           "github_issue": 2277,
           "branch": "exec/2026-11-18__release-v9.18/EPIC-02",
           "commit_sha": null,
@@ -330,13 +330,13 @@
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Reclassified delegated_decision -> autonomous 2026-11-24T14:36:34Z: ESC-EXEC-20261124-02 resolved in session. "
         },
         "ST-13": {
           "title": "Filter Trade History and Journal by rules followed or broken",
-          "classification": "delegated_decision",
+          "classification": "autonomous",
           "status": "not_started",
-          "assigned_to": "human",
+          "assigned_to": "engine",
           "github_issue": 2278,
           "branch": "exec/2026-11-18__release-v9.18/EPIC-02",
           "commit_sha": null,
@@ -351,7 +351,7 @@
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Reclassified delegated_decision -> autonomous 2026-11-24T14:36:34Z: ESC-EXEC-20261124-03 resolved in session. "
         }
       }
     },
@@ -1230,6 +1230,45 @@
       "resolved_utc": "2026-11-20T14:14:19Z",
       "resolved_by": "AI Compliance & Governance Officer; Product Owner (the user, in session)",
       "resolution_summary": "Keep one observational sentence; re-review after BLG-BE-226 and BLG-AI-35 ship. Filed BLG-BE-226, BLG-AI-35, BLG-BE-228 (P2), BLG-BE-227, BLG-AI-36 (P3)."
+    },
+    "ESC-EXEC-20261124-01": {
+      "cycle": "2026-11-18__release-v9.18",
+      "summary": "ST-07/EPIC-02 — dated Head of UX & Design approval of design_system.md §Design Direction (v1.28) and navigation.md v2.5",
+      "trigger_type": "Lifecycle",
+      "owning_authority": "Head of UX & Design",
+      "raised_utc": "2026-11-24T14:36:01Z",
+      "sla_due_utc": "2026-11-25T14:36:01Z",
+      "blocks_execution": false,
+      "disposition": "Resolved",
+      "resolved_utc": "2026-11-24T14:36:34Z",
+      "resolved_by": "Head of UX & Design (the user, in session)",
+      "resolution_summary": "Both files approved 2026-11-24; ST-07 reclassified autonomous."
+    },
+    "ESC-EXEC-20261124-02": {
+      "cycle": "2026-11-18__release-v9.18",
+      "summary": "ST-12/EPIC-02 — dated Strategy Rules & System Intent Owner confirmation of the trade_plan.md v1.30 §6 §13-note amendment",
+      "trigger_type": "Lifecycle",
+      "owning_authority": "Strategy Rules & System Intent Owner",
+      "raised_utc": "2026-11-24T14:36:01Z",
+      "sla_due_utc": "2026-11-25T14:36:01Z",
+      "blocks_execution": false,
+      "disposition": "Resolved",
+      "resolved_utc": "2026-11-24T14:36:34Z",
+      "resolved_by": "Strategy Rules & System Intent Owner (the user, in session)",
+      "resolution_summary": "Amendment confirmed 2026-11-24 (advisory under §4.2.6, no new §13 review); ST-12 reclassified autonomous."
+    },
+    "ESC-EXEC-20261124-03": {
+      "cycle": "2026-11-18__release-v9.18",
+      "summary": "ST-13/EPIC-02 — Metrics Definitions & Analytics Owner definition of rules followed / broken per closed trade",
+      "trigger_type": "Lifecycle",
+      "owning_authority": "Metrics Definitions & Analytics Owner",
+      "raised_utc": "2026-11-24T14:36:01Z",
+      "sla_due_utc": "2026-11-25T14:36:01Z",
+      "blocks_execution": false,
+      "disposition": "Resolved",
+      "resolved_utc": "2026-11-24T14:36:34Z",
+      "resolved_by": "Metrics Definitions & Analytics Owner (the user, in session)",
+      "resolution_summary": "Engine draft approved as written 2026-11-24; recorded in metrics_definitions.md §Rules Followed; ST-13 reclassified autonomous."
     }
   },
   "merge_gate": {
@@ -1269,7 +1308,8 @@
     "2026-11-24T08:40:16Z EPIC-05: PR #2310 merged by the user (sachiv1984) at 2026-11-24T08:39:33Z, merge commit 97cdd2de, after main (EPIC-04) was merged into the branch in dd27391c (CLAUDE.md §8; backlog.md rebuilt from both parents). Stories ST-25 to ST-31 set to merged. Orphaned post-merge commit check: none. Step 3c: EPIC-02, EPIC-03, EPIC-06 have no branches yet, so no sibling sync.",
     "2026-11-24T13:10:04Z — EPIC-06 Phase 3 lesson candidates for STEP 5.4 (from the user's question which backlog items a check would have prevented): (1) a new or changed scheduled workflow is not done until one workflow_dispatch run against its real target succeeds (v9.17 ST-16 shipped market-data-volume-check.yml untried; BLG-OPS-223) — candidate for execution_prompt.md §3.1.A; (2) the design gate lists every caller of a changed shared function, not only the story's pages (get_earnings(): Dashboard card BLG-FE-333, pre-entry/Research BLG-BE-233, UK parity BLG-FE-334) — candidate for design_gate_prompt.md; (3) one shared guard for real-database (Phase B) tests that allows only localhost or CI (BLG-QA-284); (4) run the mutmut pilot's pytest in CI so it cannot go stale (BLG-QA-282); (5) data dictionary records which tables store UK tickers as .L and which bare (ST-35 AC premise was false for the watchlist; BLG-BE-234). Per-story check sharpenings applied to .claude/skills/first-time-right/SKILL.md (checks 9, 17, 18, 19) the same day.",
     "2026-11-24T13:59:59Z — EPIC-06 PR #2312 opened after pre-PR checks (branch current with main, no foreign EPIC commits, API performance baseline clean, DoQ sign-off dated); combined agent-mediated DoQ + PO review posted as one comment (issuecomment-7133665764). Not merged by the engine.",
-    "2026-11-24T14:14:34Z — EPIC-06 PR #2312 merged 2026-11-24T14:14:07Z by sachiv1984, merge commit 7c7bea76. Orphaned post-merge commit check: none (origin/main..EPIC-06 empty). Sibling execution_state sync (STEP 4 3c): N/A, EPIC-02/EPIC-03 branches not yet created."
+    "2026-11-24T14:14:34Z — EPIC-06 PR #2312 merged 2026-11-24T14:14:07Z by sachiv1984, merge commit 7c7bea76. Orphaned post-merge commit check: none (origin/main..EPIC-06 empty). Sibling execution_state sync (STEP 4 3c): N/A, EPIC-02/EPIC-03 branches not yet created.",
+    "2026-11-24T14:34:13Z — EPIC-02 session start (run sprint --epic EPIC-02). origin/main in sync (0/0). Branch exec/2026-11-18__release-v9.18/EPIC-02 created from main 8916d935 and pushed. Issues #2272-#2278 present (STEP 1). ST-07/ST-12/ST-13 delegated_decision: ESC-EXEC-20261124-01/02/03 raised 14:36:01Z and resolved in session 14:36:34Z by the user holding each role; all three reclassified autonomous."
   ],
   "sealed": false,
   "sealed_utc": null
