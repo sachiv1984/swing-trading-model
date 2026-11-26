@@ -781,6 +781,19 @@
       "resolved_utc": "2026-11-24T14:36:34Z",
       "resolved_by": "Metrics Definitions & Analytics Owner (the user, in session)",
       "resolution_summary": "Engine draft approved as written 2026-11-24; recorded in metrics_definitions.md §Rules Followed; ST-13 reclassified autonomous."
+    },
+    "ESC-EXEC-20261126-01": {
+      "cycle": "2026-11-18__release-v9.18",
+      "summary": "ST-12/EPIC-02 — how checklist_skipped counts the Trade Plan checklist's two automatic items",
+      "trigger_type": "Lifecycle",
+      "owning_authority": "Product Owner; Head of UX & Design",
+      "raised_utc": "2026-11-26T16:26:09Z",
+      "sla_due_utc": "2026-11-27T16:26:09Z",
+      "blocks_execution": false,
+      "disposition": "Resolved",
+      "resolved_utc": "2026-11-26T16:26:09Z",
+      "resolved_by": "Product Owner; Head of UX & Design (the user, in session)",
+      "resolution_summary": "Judgement items only: items saved with auto: true are not counted by checklist_skipped; size warnings/fails stay pre_entry_override."
     }
   },
   "deferred_escalations": {
