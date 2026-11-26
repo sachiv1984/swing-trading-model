@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 1.1.0
-**Last Updated:** 2026-10-16 (ST-04, EPIC-01, v9.13, BLG-BE-182 — `checklist_skipped` written on incomplete-checklist plan saves; unwritten types marked); prior — 2026-05-22
+**Version:** 1.2.0
+**Last Updated:** 2026-11-26 (ST-12, EPIC-02, v9.18, BLG-UX-19 — `checklist_skipped` counts judgement items only; items saved with `"auto": true` are not counted); prior — 2026-10-16 (ST-04, EPIC-01, v9.13, BLG-BE-182 — `checklist_skipped` written on incomplete-checklist plan saves; unwritten types marked); prior — 2026-05-22; prior history retained — see prior entries in version control
 **Shipped:** v3.9 — ST-07, EPIC-03, cycle 2026-05-21__release-v3.9
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
@@ -36,7 +36,7 @@ Global response envelopes, error shape, and defaults are defined in **convention
 
 Returns a paginated log of strategy deviation events. Events are written when the operator:
 - Acknowledges a pre-entry validation override (rule status `fail` or `warn`) via the SI-01 advisory panel
-- Saves a trade plan with a non-empty, incomplete entry checklist (`checklist_skipped`, v1.1.0)
+- Saves a trade plan with a non-empty, incomplete entry checklist (`checklist_skipped`, v1.1.0). *(v1.2.0, ST-12, `ESC-EXEC-20261126-01`)* Only judgement items count: an item saved with `"auto": true` (the Trade Plan's system statuses "Position size checks" and "Stop level defined", `trade_plan.md` v1.30 §6.5) is left out of both `unchecked_items` and `total_items`, so the event fires only when "Strategy signal confirmed" or "Pre-trade research reviewed" is unticked. A size-check warning or fail is recorded as `pre_entry_override` when acknowledged. Items with no `auto` key (plans saved before v9.18) count as before.
 - Dismisses a stop loss prompt (`stop_prompt_dismissed`) — **not yet recorded**: no writer exists
 - Dismisses a drawdown prompt (`drawdown_prompt_dismissed`) — **not yet recorded**: no writer exists
 
@@ -170,5 +170,6 @@ Indexes: `event_type`, `UPPER(ticker)`, `created_at DESC`.
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.2.0 | 2026-11-26 | ST-12 (BLG-UX-19, EPIC-02, v9.18): `checklist_skipped` counts only items without `"auto": true` (judgement items), per `ESC-EXEC-20261126-01` (Product Owner and Head of UX & Design, 2026-11-26). Tests: `tests/test_red_flag_checklist_skipped.py`. No endpoint change. |
 | 1.1.0 | 2026-10-16 | ST-04 (BLG-BE-182, EPIC-01, v9.13): `checklist_skipped` is now written, once per trade-plan create or update that saves a non-empty, incomplete checklist; context `source`, `plan_id`, `unchecked_items`, `total_items`. `stop_prompt_dismissed` and `drawdown_prompt_dismissed` are marked not yet recorded. No endpoint change. |
 | 1.0.0 | 2026-05-22 | Initial contract authored — spec debt closure for SI-03 (shipped v3.9). Content extracted from portfolio_endpoints.md §GET /portfolio/red-flag-journal and expanded with data model, context field notes, and write path documentation. BLG-SPEC-33. Authority: API Contracts & Documentation Owner (OA-02, 2026-05-22__scheduled). |

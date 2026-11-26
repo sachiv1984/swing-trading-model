@@ -13,10 +13,20 @@
  *   SC-CL-09  Space key toggles the focused item; aria-checked updates (ST-06)
  *   SC-CL-10  Enter key toggles the focused item; aria-checked updates (ST-06)
  *   SC-CL-11  Read-only checklist items are not Tab-reachable (tabindex="-1") (ST-06)
+ *   SC-CL-12  CL-10 (v9.18 ST-12): "Position size checks" and "Stop level defined" show automatic status
+ *             that follows the inputs, and cannot be ticked or focused
+ *   SC-CL-13  CL-11: the two judgement items stay tickable; a v1.29 plan saved with four ticks loads its
+ *             judgement ticks, and re-saving stores the system items with "auto": true
+ *   SC-CL-13b A v9.18 plan saved with both judgement items unticked reopens unticked (no r_target pre-tick)
+ *   SC-CL-14  Saved shape: system items carry auto: true and checked = status; checklist_completed = judgement items
+ *   SC-CL-15  Read-only (Research): status from the stored snapshot and stop, captioned; no snapshot → "Not checked when saved"
  *
- * Note (SC-CL-04/05): Pre-population checks match the current implementation in
- * TradePlan.js (buildPrePopulatedItems): stop_defined ← early_exit_conditions presence;
- * research_reviewed ← r_target presence. The spec (trade_plan.md §6.2) references
+ * v9.18 ST-12 (BLG-UX-19, trade_plan.md v1.30 §6): the counter covers the two judgement items
+ * ("{n} / 2 confirmed", "Both confirmed"); the stop_defined pre-tick from early_exit_conditions is
+ * retired (SC-CL-04 rewritten to the status rule).
+ *
+ * Note (SC-CL-05): Pre-population matches TradePlan.js (buildPrePopulatedItems):
+ * research_reviewed ← r_target presence (the stop_defined pre-tick was retired by ST-12, v9.18). The spec (trade_plan.md §6.2) references
  * stop_level and risk_reward_notes — this is a known spec/impl discrepancy recorded
  * in the Known Deviations log (implementation takes precedence for test purposes).
  *
@@ -198,13 +208,12 @@ test('SC-CL-01: Pre-entry checklist renders 4 default items in new trade plan fo
   await gotoNewTradePlan(page);
 
   await expect(page.getByText('Strategy signal confirmed')).toBeVisible({ timeout: 5000 });
-  await expect(page.getByText('Position size within heat limits')).toBeVisible();
-  await expect(page.getByText('Stop level defined')).toBeVisible();
+  await expect(page.getByTestId('checklist-system')).toContainText('Position size checks');
+  await expect(page.getByTestId('checklist-system')).toContainText('Stop level defined');
   await expect(page.getByText('Pre-trade research reviewed')).toBeVisible();
-
-  // Verify 4 checklist items total
-  const checkboxes = page.locator('[data-checklist-item], input[type="checkbox"]').filter({ has: page.locator('xpath=ancestor::*[contains(@class,"checklist") or @data-checklist]') });
-  // At minimum the 4 label texts are visible
+  // v9.18 ST-12: two groups — two status rows and two tickable items.
+  await expect(page.getByTestId('checklist-human').getByRole('checkbox')).toHaveCount(2);
+  await expect(page.getByText('Position size within heat limits')).toHaveCount(0);
 });
 
 // ---------------------------------------------------------------------------
@@ -218,16 +227,16 @@ test('SC-CL-02: Checklist items can be checked and unchecked', async ({ page }) 
   await gotoNewTradePlan(page);
 
   // EntryChecklist.js renders a custom checkbox (styled div, no real <input>) —
-  // observe toggled state via the "N / total complete" counter instead.
-  const counter = page.getByText(/^\d+ \/ \d+ complete$/);
-  await expect(counter).toHaveText('0 / 4 complete');
+  // observe toggled state via the "N / 2 confirmed" counter (v9.18 ST-12).
+  const counter = page.getByTestId('checklist-counter');
+  await expect(counter).toHaveText('0 / 2 confirmed');
 
   const signalLabel = page.getByText('Strategy signal confirmed');
   await signalLabel.click();
-  await expect(counter).toHaveText('1 / 4 complete');
+  await expect(counter).toHaveText('1 / 2 confirmed');
 
   await signalLabel.click();
-  await expect(counter).toHaveText('0 / 4 complete');
+  await expect(counter).toHaveText('0 / 2 confirmed');
 });
 
 // ---------------------------------------------------------------------------
@@ -272,38 +281,22 @@ test('SC-CL-03: Checklist state is included in POST body when saving', async ({ 
 });
 
 // ---------------------------------------------------------------------------
-// SC-CL-04 — stop_defined pre-checked when early_exit_conditions present
+// SC-CL-04 — (v9.18 ST-12) early_exit_conditions no longer pre-ticks anything;
+// "Stop level defined" is a status from the Stop Level field
 // ---------------------------------------------------------------------------
 
-test('SC-CL-04: stop_defined pre-checked when editing plan with early_exit_conditions', async ({ page }) => {
+test('SC-CL-04: a plan with early_exit_conditions but no stop shows "Stop level defined" as not set', async ({ page }) => {
   await mockFallback(page);
   await mockMarketStatus(page);
   await mockTradePlanGet(page, PLAN_WITH_EXIT_CONDITIONS);
-
-  // Mock the list fetch to return the plan
   await page.route(new RegExp(`${API}/trade-plans$`), (route) =>
     route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok', data: [PLAN_WITH_EXIT_CONDITIONS.data] }) })
   );
 
   await gotoEditTradePlan(page);
 
-  // "Stop level defined" should be pre-checked
-  const stopLabel = page.getByText('Stop level defined');
-  await stopLabel.waitFor({ timeout: 5000 });
-
-  // Find the checkbox associated with "Stop level defined"
-  const stopCheckbox = page.locator('input[type="checkbox"]').filter({
-    has: page.locator('xpath=following-sibling::*[contains(text(),"Stop level defined")] | preceding-sibling::*[contains(text(),"Stop level defined")]'),
-  }).first();
-
-  // The label should be visible and the associated row should reflect checked state
-  // We check via aria or visual indicator — use a more robust locator
-  const checkedIndicator = page.locator('[data-checked="true"], .checked, input:checked').filter({
-    has: page.locator('xpath=ancestor::*[contains(@class,"checklist-item") or @data-checklist-item]'),
-  });
-
-  // At minimum: "Stop level defined" text is visible and rendered
-  await expect(stopLabel).toBeVisible();
+  await expect(page.getByTestId('entry-checklist-status-stop_defined-text')).toHaveText('✗ Not set', { timeout: 5000 });
+  await expect(page.getByTestId('entry-checklist-item-stop_defined')).toHaveCount(0);
 });
 
 // ---------------------------------------------------------------------------
@@ -410,7 +403,9 @@ test('SC-CL-08: Checklist items are real checkboxes, reachable via Tab in list o
   await gotoNewTradePlan(page);
 
   const signalItem = page.getByTestId('entry-checklist-item-signal_confirmed');
-  const heatItem = page.getByTestId('entry-checklist-item-heat_limit_checked');
+  // v9.18 ST-12: the next tickable item is "Pre-trade research reviewed"; the
+  // two system rows are not focusable.
+  const heatItem = page.getByTestId('entry-checklist-item-research_reviewed');
   await expect(signalItem).toBeVisible({ timeout: 5000 });
   await expect(signalItem).toHaveAttribute('role', 'checkbox');
   await expect(signalItem).toHaveAttribute('aria-checked', 'false');
@@ -439,8 +434,8 @@ test('SC-CL-09: Space key toggles the focused checklist item and aria-checked up
   await gotoNewTradePlan(page);
 
   const signalItem = page.getByTestId('entry-checklist-item-signal_confirmed');
-  const counter = page.getByText(/^\d+ \/ \d+ complete$/);
-  await expect(counter).toHaveText('0 / 4 complete');
+  const counter = page.getByTestId('checklist-counter');
+  await expect(counter).toHaveText('0 / 2 confirmed');
 
   await page.getByPlaceholder(/What would prove this thesis wrong/i).focus();
   await page.keyboard.press('Tab');
@@ -448,11 +443,11 @@ test('SC-CL-09: Space key toggles the focused checklist item and aria-checked up
 
   await page.keyboard.press('Space');
   await expect(signalItem).toHaveAttribute('aria-checked', 'true');
-  await expect(counter).toHaveText('1 / 4 complete');
+  await expect(counter).toHaveText('1 / 2 confirmed');
 
   await page.keyboard.press('Space');
   await expect(signalItem).toHaveAttribute('aria-checked', 'false');
-  await expect(counter).toHaveText('0 / 4 complete');
+  await expect(counter).toHaveText('0 / 2 confirmed');
 });
 
 test('SC-CL-10: Enter key toggles the focused checklist item and aria-checked updates', async ({ page }) => {
@@ -462,22 +457,23 @@ test('SC-CL-10: Enter key toggles the focused checklist item and aria-checked up
   await gotoNewTradePlan(page);
 
   const signalItem = page.getByTestId('entry-checklist-item-signal_confirmed');
-  const stopItem = page.getByTestId('entry-checklist-item-stop_defined');
-  const counter = page.getByText(/^\d+ \/ \d+ complete$/);
-  await expect(counter).toHaveText('0 / 4 complete');
+  // v9.18 ST-12: the two system rows are not in the tab order, so the second
+  // tickable item, research_reviewed, follows signal_confirmed directly.
+  const stopItem = page.getByTestId('entry-checklist-item-research_reviewed');
+  const counter = page.getByTestId('checklist-counter');
+  await expect(counter).toHaveText('0 / 2 confirmed');
 
-  // Tab through the full list order to reach the 3rd item (stop_defined),
-  // proving list-order traversal rather than jumping straight to the target.
+  // Tab through the list order to reach the 2nd tickable item, proving
+  // list-order traversal rather than jumping straight to the target.
   await page.getByPlaceholder(/What would prove this thesis wrong/i).focus();
   await page.keyboard.press('Tab'); // -> signal_confirmed
   await expect(signalItem).toBeFocused();
-  await page.keyboard.press('Tab'); // -> heat_limit_checked
-  await page.keyboard.press('Tab'); // -> stop_defined
+  await page.keyboard.press('Tab'); // -> research_reviewed (system rows skipped)
   await expect(stopItem).toBeFocused();
 
   await page.keyboard.press('Enter');
   await expect(stopItem).toHaveAttribute('aria-checked', 'true');
-  await expect(counter).toHaveText('1 / 4 complete');
+  await expect(counter).toHaveText('1 / 2 confirmed');
 });
 
 test('SC-CL-11: Read-only checklist items are skipped by Tab traversal (not focusable)', async ({ page }) => {
@@ -521,3 +517,192 @@ test('SC-CL-11: Read-only checklist items are skipped by Tab traversal (not focu
   }
   expect(focusMoved).toBe(true);
 });
+
+// ---------------------------------------------------------------------------
+// SC-CL-12 to SC-CL-15 — system status and judgement ticks (v9.18 ST-12,
+// BLG-UX-19, trade_plan.md v1.30 §6; ESC-EXEC-20261126-01)
+// ---------------------------------------------------------------------------
+
+function preEntry(cash, sector, sizing) {
+  return {
+    status: 'ok',
+    data: {
+      ticker: TICKER, market: 'US', quantity: 10,
+      advisory_status: [cash, sector, sizing].includes('fail') ? 'fail' : [cash, sector, sizing].includes('warn') ? 'warn' : 'pass',
+      override_required: [cash, sector, sizing].some((x) => x === 'warn' || x === 'fail'),
+      checks: [
+        { rule: 'regime_gate', status: 'pass', detail: 'Risk-on' },
+        { rule: 'cash_constraint', status: cash, detail: 'cash' },
+        { rule: 'sector_concentration', status: sector, detail: 'sector' },
+        { rule: 'earnings_proximity', status: 'skipped', detail: 'n/a' },
+        { rule: 'sizing_validity', status: sizing, detail: 'sizing' },
+      ],
+    },
+  };
+}
+
+const sizeText = (page) => page.getByTestId('entry-checklist-status-heat_limit_checked-text');
+const stopStatus = (page) => page.getByTestId('entry-checklist-status-stop_defined-text');
+
+test('SC-CL-12: CL-10 — the two system items follow the inputs and cannot be ticked', async ({ page }) => {
+  await mockFallback(page);
+  await mockMarketStatus(page);
+  await mockTradePlansListEmpty(page);
+  // 10 shares pass; 20 shares warn on sector concentration.
+  await page.route(/\/portfolio\/pre-entry-validation/, (route) => {
+    const q = new URL(route.request().url()).searchParams.get('quantity');
+    route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(q === '20' ? preEntry('pass', 'warn', 'pass') : preEntry('pass', 'pass', 'skipped')) });
+  });
+  await gotoNewTradePlan(page);
+
+  await expect(sizeText(page)).toHaveText('Not checked yet', { timeout: 5000 });
+  await expect(stopStatus(page)).toHaveText('✗ Not set');
+
+  await page.getByTestId('planned-quantity-input').fill('10');
+  await expect(sizeText(page)).toHaveText('✓ Pass', { timeout: 10000 });
+  await page.getByTestId('planned-quantity-input').fill('20');
+  await expect(sizeText(page)).toHaveText('! Warning — see Pre-Entry Checks', { timeout: 10000 });
+
+  await page.getByTestId('planned-stop-price-input').fill('142');
+  await expect(stopStatus(page)).toHaveText('✓ Set: 142.00 USD');
+  await page.getByTestId('planned-stop-price-input').fill('0');
+  await expect(stopStatus(page)).toHaveText('✗ Not set');
+
+  // Not a checkbox, not focusable; clicking changes nothing.
+  const system = page.getByTestId('checklist-system');
+  await expect(system.getByRole('checkbox')).toHaveCount(0);
+  await expect(system.locator('[tabindex]')).toHaveCount(0);
+  await page.getByTestId('entry-checklist-status-stop_defined').click();
+  await expect(stopStatus(page)).toHaveText('✗ Not set');
+  await expect(page.getByTestId('checklist-counter')).toHaveText('0 / 2 confirmed');
+});
+
+// A v1.29 plan: four ticks, no "auto" flag, no snapshot, Stop Level 142 (record §4 worked example).
+const LEGACY_PLAN = {
+  status: 'ok',
+  data: {
+    ...EMPTY_CHECKLIST_PLAN.data,
+    planned_stop_price: 142,
+    pre_entry_validation_snapshot: null,
+    checklist_completed: true,
+    checklist_items: [
+      { id: 'signal_confirmed', label: 'Strategy signal confirmed', checked: true },
+      { id: 'heat_limit_checked', label: 'Position size within heat limits', checked: true },
+      { id: 'stop_defined', label: 'Stop level defined', checked: true },
+      { id: 'research_reviewed', label: 'Pre-trade research reviewed', checked: true },
+    ],
+  },
+};
+
+test('SC-CL-13: CL-11 — a v1.29 plan loads its judgement ticks; they stay tickable', async ({ page }) => {
+  await mockFallback(page);
+  await mockMarketStatus(page);
+  await mockTradePlanGet(page, LEGACY_PLAN);
+  await page.route(new RegExp(`${API}/trade-plans$`), (route) =>
+    route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok', data: [LEGACY_PLAN.data] }) })
+  );
+  await gotoEditTradePlan(page);
+
+  await expect(page.getByTestId('entry-checklist-item-signal_confirmed')).toHaveAttribute('aria-checked', 'true', { timeout: 5000 });
+  await expect(page.getByTestId('entry-checklist-item-research_reviewed')).toHaveAttribute('aria-checked', 'true');
+  await expect(page.getByTestId('checklist-counter')).toHaveText('Both confirmed');
+  // The saved ticks of the system items are not shown as ticks: status is recomputed.
+  await expect(sizeText(page)).toHaveText('Not checked yet');
+  await expect(stopStatus(page)).toHaveText('✓ Set: 142.00 USD');
+
+  await page.getByTestId('entry-checklist-item-research_reviewed').click();
+  await expect(page.getByTestId('checklist-counter')).toHaveText('1 / 2 confirmed');
+});
+
+// Review fix: a v9.18 plan saved with both judgement items unticked (system items auto).
+const V918_UNTICKED = {
+  status: 'ok',
+  data: {
+    ...EMPTY_CHECKLIST_PLAN.data,
+    r_target: 2,
+    planned_stop_price: 142,
+    checklist_completed: false,
+    checklist_items: [
+      { id: 'signal_confirmed', label: 'Strategy signal confirmed', checked: false },
+      { id: 'heat_limit_checked', label: 'Position size checks', checked: false, auto: true },
+      { id: 'stop_defined', label: 'Stop level defined', checked: true, auto: true },
+      { id: 'research_reviewed', label: 'Pre-trade research reviewed', checked: false },
+    ],
+  },
+};
+
+test('SC-CL-13b: a saved v9.18 plan keeps its unticked judgement items (no r_target pre-tick on reopen)', async ({ page }) => {
+  await mockFallback(page);
+  await mockMarketStatus(page);
+  await mockTradePlanGet(page, V918_UNTICKED);
+  await page.route(new RegExp(`${API}/trade-plans$`), (route) =>
+    route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok', data: [V918_UNTICKED.data] }) })
+  );
+  await gotoEditTradePlan(page);
+  await expect(stopStatus(page)).toHaveText('✓ Set: 142.00 USD', { timeout: 5000 });
+  await expect(page.getByTestId('entry-checklist-item-research_reviewed')).toHaveAttribute('aria-checked', 'false');
+  await expect(page.getByTestId('checklist-counter')).toHaveText('0 / 2 confirmed');
+});
+
+test('SC-CL-14: the saved checklist marks the system items auto with checked = status', async ({ page }) => {
+  let body = null;
+  await mockFallback(page);
+  await mockMarketStatus(page);
+  await mockTradePlansListEmpty(page);
+  await page.route(/\/portfolio\/pre-entry-validation/, (route) =>
+    route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(preEntry('pass', 'warn', 'pass')) })
+  );
+  await page.route(`${API}/trade-plans`, (route) => {
+    if (route.request().method() !== 'POST') return route.fallback();
+    body = route.request().postDataJSON();
+    return route.fulfill({ status: 201, contentType: 'application/json', body: JSON.stringify({ status: 'ok', data: { id: PLAN_ID, ...body } }) });
+  });
+  await gotoNewTradePlan(page);
+  await page.getByTestId('planned-quantity-input').fill('10');
+  await page.getByTestId('planned-stop-price-input').fill('142');
+  await expect(sizeText(page)).toHaveText('! Warning — see Pre-Entry Checks', { timeout: 10000 });
+  await page.getByTestId('entry-checklist-item-signal_confirmed').click();
+  await page.getByTestId('entry-checklist-item-research_reviewed').click();
+  // A warning needs the existing acknowledgement before saving (§5e, unchanged).
+  const ack = page.getByRole('checkbox', { name: /acknowledge/i });
+  if (await ack.count()) await ack.first().check();
+  await page.getByRole('button', { name: /save/i }).first().click();
+  await expect.poll(() => body).not.toBeNull();
+
+  const byId = Object.fromEntries(body.checklist_items.map((i) => [i.id, i]));
+  expect(byId.heat_limit_checked).toMatchObject({ label: 'Position size checks', checked: false, auto: true });
+  expect(byId.stop_defined).toMatchObject({ checked: true, auto: true });
+  expect(byId.signal_confirmed.checked).toBe(true);
+  expect(byId.signal_confirmed.auto).toBeUndefined();
+  expect(byId.research_reviewed.checked).toBe(true);
+  expect(body.checklist_completed).toBe(true);
+});
+
+test('SC-CL-15: read-only on Research shows status from the stored snapshot, captioned; no snapshot says so', async ({ page }) => {
+  await mockFallback(page);
+  await page.route(new RegExp(`${API}/research/`), (route) =>
+    route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(RESEARCH_WITH_PLAN) })
+  );
+  const withSnapshot = {
+    ...TRADE_PLANS_WITH_ACTIVE.data[0],
+    planned_stop_price: 175,
+    pre_entry_validation_snapshot: { captured_at: '2026-11-20T09:05:00', advisory_status: 'fail', checks: [{ rule: 'cash_constraint', status: 'fail' }] },
+  };
+  let plans = [withSnapshot];
+  await page.route(new RegExp(`${API}/trade-plans`), (route) =>
+    route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok', data: plans }) })
+  );
+  await page.route(new RegExp(`${API}/portfolio/prospective-heat`), (route) =>
+    route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok', data: null }) })
+  );
+  await gotoResearch(page);
+  await expect(sizeText(page)).toHaveText('✗ Fail — see Pre-Entry Checks', { timeout: 10000 });
+  await expect(stopStatus(page)).toHaveText('✓ Set: 175.00 USD');
+  await expect(page.getByTestId('checklist-captured-at')).toHaveText('As checked when the plan was saved, 20 Nov 09:05');
+
+  plans = [{ ...withSnapshot, pre_entry_validation_snapshot: null }];
+  await page.reload();
+  await expect(sizeText(page)).toHaveText('Not checked when saved', { timeout: 10000 });
+  await expect(page.getByTestId('checklist-captured-at')).toHaveCount(0);
+});
+

@@ -24,7 +24,9 @@
 const { test, expect } = require('./fixtures/api-status-guard');
 const { mockBackend } = require('./mocks/trade-plan-lifecycle-backend');
 
-const CHECKLIST_IDS = ['signal_confirmed', 'heat_limit_checked', 'stop_defined', 'research_reviewed'];
+// v9.18 ST-12 (trade_plan.md v1.30 §6): two judgement items are ticked; the
+// two system items are statuses, saved with "auto": true.
+const CHECKLIST_IDS = ['signal_confirmed', 'research_reviewed'];
 const THESIS = 'Momentum leader breaking out above its 50-day range with the regime risk-on.';
 
 test('SC-ARC2-01..05: Screener → Research → Trade Plan (quality score, checklist) → linked position', async ({ page }) => {
@@ -67,7 +69,14 @@ test('SC-ARC2-01..05: Screener → Research → Trade Plan (quality score, check
     ticker: 'AAPL', market: 'US', status: 'draft', setup_thesis: THESIS, r_target: 2,
     planned_entry_price: 182.3, planned_stop_price: 165.05, planned_quantity: 10, checklist_completed: true,
   });
-  expect(saved.checklist_items.map((i) => [i.id, i.checked])).toEqual(CHECKLIST_IDS.map((id) => [id, true]));
+  // No pre-entry result in this mock, so Position size checks saves unchecked;
+  // the stop (165.05) is set, so Stop level defined saves checked.
+  expect(saved.checklist_items.map((i) => [i.id, i.checked, i.auto === true])).toEqual([
+    ['signal_confirmed', true, false],
+    ['heat_limit_checked', false, true],
+    ['stop_defined', true, true],
+    ['research_reviewed', true, false],
+  ]);
 
   // ── SC-ARC2-04: the Research View shows the new plan ──
   await page.goto('/#/research/AAPL');

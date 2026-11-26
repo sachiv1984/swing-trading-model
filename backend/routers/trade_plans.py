@@ -189,12 +189,23 @@ def _maybe_write_override_event(ticker: str, position_id=None) -> None:
 
 
 def _unchecked_count(checklist_items) -> tuple:
-    """(unchecked, total) for a saved checklist; (0, 0) when there is none."""
+    """(unchecked, total) for a saved checklist; (0, 0) when there is none.
+
+    ST-12 (BLG-UX-19, v9.18; ESC-EXEC-20261126-01, judgement items only):
+    items saved with "auto": true are system statuses (trade_plan.md v1.30
+    §6.5: Position size checks, Stop level defined) that the trader cannot
+    tick, so they are not counted. Their failures are recorded elsewhere
+    (pre_entry_override). Legacy items have no "auto" key and count as before.
+    """
     if not isinstance(checklist_items, list) or not checklist_items:
         return 0, 0
-    total = len(checklist_items)
+    judged = [
+        item for item in checklist_items
+        if not (isinstance(item, dict) and item.get("auto") is True)
+    ]
+    total = len(judged)
     unchecked = sum(
-        1 for item in checklist_items
+        1 for item in judged
         if not (isinstance(item, dict) and item.get("checked") is True)
     )
     return unchecked, total

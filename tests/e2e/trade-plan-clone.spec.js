@@ -135,9 +135,12 @@ test('SC-TPC-03: Price levels, position link and checklist completion are not ca
   await expect(page.getByPlaceholder(/e\.g\. 142\.00/i)).toHaveValue('');
   await expect(page.getByPlaceholder(/e\.g\. 50/i)).toHaveValue('');
   // Checklist template kept, completion reset
-  for (const id of ['signal_confirmed', 'heat_limit_checked', 'stop_defined', 'research_reviewed']) {
+  // v9.18 ST-12: the two judgement items are the tickable ones; the system
+  // items are statuses (no stop on a clone → "Not set").
+  for (const id of ['signal_confirmed', 'research_reviewed']) {
     await expect(page.getByTestId(`entry-checklist-item-${id}`)).toHaveAttribute('aria-checked', 'false');
   }
+  await expect(page.getByTestId('entry-checklist-status-stop_defined-text')).toHaveText('✗ Not set');
   // Status starts as Draft (there is no "planned" status)
   await expect(page.getByText('Draft', { exact: true }).first()).toBeVisible();
 });

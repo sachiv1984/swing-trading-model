@@ -329,31 +329,31 @@
         "ST-11": {
           "title": "Offer \"Plan this\" on the Today list's New signals rows",
           "classification": "autonomous",
-          "status": "in_progress",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 2276,
           "branch": "exec/2026-11-18__release-v9.18/EPIC-02",
-          "commit_sha": null,
+          "commit_sha": "d758184d7f14b8df20959ecbfac4e8aa3255146b",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-11-26T16:29:12Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/specs/frontend/pages/dashboard.md#1B. Today List",
             "docs/specs/frontend/pages/signals.md"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": "First-time-right: 2026-11-24 pass A — 1 done (GET /signals returns id, ticker, market, status, current_price per signal_endpoints.md; the link reuses planThisUrl with current_price exactly as SignalCard.js, so entry_price units match the Signals route); 2 done (statuses new/watchlisted → 'Plan this'; entered, dismissed, already_held, allocation_insufficient → Research only; null current_price → no entry_price param); 6 done (no rename; 'Plan this' text exists on Signals/Screener — Today-list locators scoped by today-plan-{ticker}); 7 done (TL-19 'no button' premise: it is a Link); 20 done (same label as Signals); 22 done (react-router Link: modifier clicks open a new tab); 3 N/A (no src/lib change; planThisUrl reused unchanged); 4,5,8,11,17,18,19,21,23,24 N/A. No raise. | First-time-right: 2026-11-26 pass B — 9 done (review: no code findings; UK/no-price click-through added to SC-TL-30; spec_references filled; the commit carries [ST-10] too for its closure record); pre-existing: today-item-signals-{ticker}/today-plan-{ticker} ids repeat if a ticker is signalled twice in one day (both links still correct; not changed here); 10 done (dashboard.md v4.7); 12-16 N/A."
+          "notes": "First-time-right: 2026-11-24 pass A — 1 done (GET /signals returns id, ticker, market, status, current_price per signal_endpoints.md; the link reuses planThisUrl with current_price exactly as SignalCard.js, so entry_price units match the Signals route); 2 done (statuses new/watchlisted → 'Plan this'; entered, dismissed, already_held, allocation_insufficient → Research only; null current_price → no entry_price param); 6 done (no rename; 'Plan this' text exists on Signals/Screener — Today-list locators scoped by today-plan-{ticker}); 7 done (TL-19 'no button' premise: it is a Link); 20 done (same label as Signals); 22 done (react-router Link: modifier clicks open a new tab); 3 N/A (no src/lib change; planThisUrl reused unchanged); 4,5,8,11,17,18,19,21,23,24 N/A. No raise. | First-time-right: 2026-11-26 pass B — 9 done (review: no code findings; UK/no-price click-through added to SC-TL-30; spec_references filled; the commit carries [ST-10] too for its closure record); pre-existing: today-item-signals-{ticker}/today-plan-{ticker} ids repeat if a ticker is signalled twice in one day (both links still correct; not changed here); 10 done (dashboard.md v4.7); 12-16 N/A. | ci_pending: runs for d758184d. Deviation check: matches dashboard.md §1B/TL-30 and signals.md §'Plan this' Action; no deviation."
         },
         "ST-12": {
           "title": "Show machine-checkable checklist items as automatic status",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "in_progress",
           "assigned_to": "engine",
           "github_issue": 2277,
           "branch": "exec/2026-11-18__release-v9.18/EPIC-02",
@@ -369,7 +369,7 @@
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "Reclassified delegated_decision -> autonomous 2026-11-24T14:36:34Z: ESC-EXEC-20261124-02 resolved in session.  ESC-EXEC-20261126-01 (2026-11-26): checklist_skipped counts judgement items only — ruling by the user (Product Owner; Head of UX & Design) before the build."
+          "notes": "Reclassified delegated_decision -> autonomous 2026-11-24T14:36:34Z: ESC-EXEC-20261124-02 resolved in session.  ESC-EXEC-20261126-01 (2026-11-26): checklist_skipped counts judgement items only — ruling by the user (Product Owner; Head of UX & Design) before the build. | First-time-right: 2026-11-26 pass A — 1 done (pre-entry result: PreEntryValidationPanel snapshot checks[] {rule,status} per portfolio_endpoints.md; rules cash_constraint, sector_concentration, sizing_validity; skipped excluded; stop from planned_stop_price, native currency via currencyForMarket); 2 done (record §5 six worked rows + legacy row; Research read-only view: snapshot captured_at caption, 'Not checked when saved'); 3 done (new src/lib/checklistStatus.js, table-driven tests); 7 raised and resolved (premise 'saved checked mirrors status' vs the checklist_skipped writer and ST-13's definition → ESC-EXEC-20261126-01, judgement items only); 17 done (readers of checklist_items: TradePlan load/save, Research read-only, trade_plans.py _unchecked_count → changed per ruling, RedFlagsSection context text; checklist_completed has no reader outside TradePlan.js — set from judgement items); 18 done (legacy fixture: four ticked, no auto flag, no snapshot); 19 done (inputs: shares, entry, stop, ticker, market, panel loading/error/refetch → status follows the panel result each refetch); 20 done (record §3 copy); 21 done (old pre-tick of stop_defined from early_exit_conditions retired); 22 done (system rows not focusable); 5 medium; 4,6,8,11,23,24 N/A. | First-time-right: 2026-11-26 pass B — 9 done (review: reopening a saved plan re-ticked 'research reviewed' from r_target — fixed, SC-CL-13b; stop parse aligned with isStopLevelValid/save; caption under the size row only; accepted: edit form shows 'Not checked yet' until the panel result (§6.2, and the save sends only the live snapshot); legacy-only frontend/backend judgement-rule difference for items without auto saved by an old client); 10 done (trade_plan.md v1.31, red_flag_journal.md contract v1.2.0, no endpoint change, OpenAPI drift PASSED); 13 done (changelog tables read back); 17 re-run (legacy row through every reader); 18/19 re-run (pre-entry fixture from portfolio_endpoints.md shape; quantity/stop changes asserted with fill per field); 12,14,15 N/A; 16 N/A (no stored value reinterpreted: legacy items have no auto key and count as before)."
         },
         "ST-13": {
           "title": "Filter Trade History and Journal by rules followed or broken",
@@ -1210,6 +1210,7 @@
     "ST-08",
     "ST-09",
     "ST-10",
+    "ST-11",
     "ST-18",
     "ST-19",
     "ST-20",
