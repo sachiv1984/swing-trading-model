@@ -794,6 +794,19 @@
       "resolved_utc": "2026-11-26T16:26:09Z",
       "resolved_by": "Product Owner; Head of UX & Design (the user, in session)",
       "resolution_summary": "Judgement items only: items saved with auto: true are not counted by checklist_skipped; size warnings/fails stay pre_entry_override."
+    },
+    "ESC-EXEC-20261126-02": {
+      "cycle": "2026-11-18__release-v9.18",
+      "summary": "ST-13/EPIC-02 — rules-followed definition revision: plan-time events join through the plan; evidence date is positions.created_at",
+      "trigger_type": "Lifecycle",
+      "owning_authority": "Metrics Definitions & Analytics Owner",
+      "raised_utc": "2026-11-26T17:11:43Z",
+      "sla_due_utc": "2026-11-27T17:11:43Z",
+      "blocks_execution": false,
+      "disposition": "Resolved",
+      "resolved_utc": "2026-11-26T17:11:43Z",
+      "resolved_by": "Metrics Definitions & Analytics Owner (the user, in session)",
+      "resolution_summary": "Both revisions approved: join plan-time events via context.plan_id; use positions.created_at for the 2026-11-04 evidence date."
     }
   },
   "deferred_escalations": {
