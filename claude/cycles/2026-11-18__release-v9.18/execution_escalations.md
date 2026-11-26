@@ -125,3 +125,20 @@ Last Updated: 2026-11-20
 - **Blocks execution:** No
 - **Disposition:** Resolved
 - **Resolution summary (2026-11-26T16:26:09Z):** Decision by the user in session (holds the Product Owner and Head of UX & Design roles), 2026-11-26: **judgement items only**. `checklist_skipped` counts unchecked items among entries without `"auto": true`, so it fires only when "Strategy signal confirmed" or "Pre-trade research reviewed" is unticked ("{n} of 2 checklist items unchecked"). Size warnings and fails stay recorded as `pre_entry_override`. Built in ST-12 with tests and notes in `trade_plan.md` §6.5 and `red_flag_journal.md`. Legacy plans (no `auto` flag) are counted as before.
+
+## ESC-EXEC-20261126-02
+
+- **Raised at:** 2026-11-26T17:11:43Z
+- **Routine:** Sprint Execution
+- **Cycle ID:** 2026-11-18__release-v9.18
+- **Step:** STEP 3.1.A, ST-13 pre-commit code review (commit-check Check 11)
+- **ST/EPIC item:** ST-13 / EPIC-02 (BLG-FE-320)
+- **Trigger type:** Lifecycle
+- **Blocking statement:** the review of the staged ST-13 build found two gaps in the definition approved under `ESC-EXEC-20261124-03`. (1) A `checklist_skipped` event written when a plan is saved has no `position_id` (the position does not exist yet), so it never joins, and a trade whose plan skipped checklist items shows as "Followed"; the event names its plan in `context.plan_id`, and the plan later links to the position. (2) The "checks provably ran" fallback used the user-entered `entry_date`, which can be back- or forward-dated; `positions.created_at` records when the position was entered in the app.
+- **Engine recommendation (non-binding):** join plan-time events through `context.plan_id` → `trade_plans.position_id`; use `positions.created_at` for the 2026-11-04 test.
+- **Owning authority:** Metrics Definitions & Analytics Owner
+- **Unblock criteria:** a dated choice for each gap.
+- **SLA due-by:** 2026-11-27T17:11:43Z (24h — Lifecycle)
+- **Blocks execution:** No
+- **Disposition:** Resolved
+- **Resolution summary (2026-11-26T17:11:43Z):** Metrics Definitions & Analytics Owner decision, given by the user in session (holds the role), 2026-11-26: (1) **yes** — plan-time events join through the plan; (2) **`positions.created_at`**. Recorded in `metrics_definitions.md` v1.36.0 §Rules Followed (rows C2 and F2 added) and `trade_endpoints.md` v2.7.0; built in ST-13 with tests `tests/test_rules_followed.py` and `tests/test_rules_followed_db.py`.

@@ -8,13 +8,17 @@ All functions are independent of FastAPI for maximum testability.
 
 import csv
 import io
+import logging
 
 from typing import Dict, List, Optional
 from database import (
     get_portfolio, get_trade_history, get_trade_reflection, upsert_trade_reflection,
-    get_trade_history_with_stops, update_trade_costs,
+    get_trade_history_with_stops, update_trade_costs, get_rules_followed_evidence,
 )
+from services.rules_followed import classify_rules
 from utils.formatting import decimal_to_float
+
+logger = logging.getLogger(__name__)
 
 
 def _compute_net_r(pnl: float, commission_gbp: Optional[float], spread_cost_gbp: Optional[float],
@@ -79,6 +83,19 @@ def get_trade_history_with_stats() -> Dict:
             "trades": []
         }
     
+    # metrics_definitions.md §Rules Followed (ST-13, BLG-FE-320, v9.18): evidence
+    # for these trades' positions only. If the query fails, every trade is
+    # "not known" and the list still loads.
+    try:
+        rules_evidence = get_rules_followed_evidence(
+            portfolio_id, [t.get('position_id') for t in trades if t.get('position_id')]
+        )
+        if not isinstance(rules_evidence, dict):
+            rules_evidence = None
+    except Exception:
+        logger.warning("rules-followed evidence query failed; classifying every trade as not known", exc_info=True)
+        rules_evidence = None
+
     # Calculate statistics
     total_pnl = sum(t.get('pnl', 0) for t in trades)
     wins = len([t for t in trades if t.get('pnl', 0) > 0])
@@ -114,6 +131,11 @@ def get_trade_history_with_stats() -> Dict:
             entry_fx_rate=float(t['entry_fx_rate']) if t.get('entry_fx_rate') is not None else None,
         )
 
+        if rules_evidence is None:
+            rules_followed, rules_broken = None, []
+        else:
+            rules_followed, rules_broken = classify_rules(t, rules_evidence)
+
         formatted_trades.append({
             "id": str(t.get('id', '')),
             "ticker": t['ticker'],
@@ -137,6 +159,8 @@ def get_trade_history_with_stats() -> Dict:
             "commission_gbp": float(commission_gbp) if commission_gbp is not None else None,
             "spread_cost_gbp": float(spread_cost_gbp) if spread_cost_gbp is not None else None,
             "net_r_multiple": net_r_multiple,
+            "rules_followed": rules_followed,
+            "rules_broken": rules_broken,
         })
 
     slippage_values = [t['slippage_pct'] for t in formatted_trades if t['slippage_pct'] is not None]

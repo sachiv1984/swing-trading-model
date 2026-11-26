@@ -2,8 +2,8 @@
 **Owner:** Metrics Definitions & Analytics Canonical Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 1.35.1
-**Last Updated:** 2026-11-16 (ST-06, EPIC-02, v9.17, BLG-FE-300 — §Minimum Trades Threshold: summary total_trades, win_rate and total_pnl stay real below the minimum; no formula change); prior — 2026-11-04 (ST-23, EPIC-03, v9.15, BLG-SPEC-198 — §Position Risk Data Sources names fill_price (US) and entry_price (UK) as the native entry; no formula change); prior — 2026-11-04 (ST-21, EPIC-03, v9.15, BLG-BE-172 — AI Monthly P&L Narrative Usage: a failed regeneration call is one fallback generation, fail_fallback:model_call_failed; query unchanged); prior history retained — see prior entries in version control
+**Version:** 1.36.0
+**Last Updated:** 2026-11-26 (ST-13, EPIC-02, v9.18, BLG-FE-320 — new §Rules Followed (per closed trade)); prior — 2026-11-16 (ST-06, EPIC-02, v9.17, BLG-FE-300 — §Minimum Trades Threshold: summary total_trades, win_rate and total_pnl stay real below the minimum; no formula change); prior — 2026-11-04 (ST-23, EPIC-03, v9.15, BLG-SPEC-198 — §Position Risk Data Sources names fill_price (US) and entry_price (UK) as the native entry; no formula change); prior history retained — see prior entries in version control
 **Review Cycle:** Monthly
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
@@ -884,6 +884,69 @@ avg_position_size_pct = mean(position_size_pct(t))
 
 ---
 
+## Rules Followed (per closed trade)
+
+*(v1.36.0, ST-13, BLG-FE-320, EPIC-02, v9.18. Definition approved by the Metrics Definitions & Analytics Owner, the user in session, 2026-11-24 — `ESC-EXEC-20261124-03`; revised by the same owner, 2026-11-26 — `ESC-EXEC-20261126-02`: plan-time events join through the plan, and the evidence date is when the position row was created. Design source: `docs/design/2026-11-18__release-v9.18/rules-followed-filter/decision_record.md`.)*
+
+### Definition
+For each closed trade, whether the recorded evidence shows the strategy's entry rules were followed. A deterministic classification of the user's own recorded events: no score, ranking or advice (§13).
+
+### Fields
+Served per trade on `GET /trades` (`trade_endpoints.md`):
+- `rules_followed`: `true` | `false` | `null`
+- `rules_broken`: `string[]` — the distinct reason codes, sorted; `[]` unless `rules_followed` is `false`
+
+### Canonical Rule
+Evaluated in this order, for a `trade_history` row `t`:
+
+```text
+if t.position_id is null:
+    rules_followed = null                      # Not known: no position link
+
+broken = distinct event_type of red_flag_events e where e.position_id = t.position_id
+         (pre_entry_override, checklist_skipped, stop_prompt_dismissed, drawdown_prompt_dismissed)
+       ∪ distinct event_type of red_flag_events e where e.position_id is null
+         and e.context->>'plan_id' names a trade_plans p with p.position_id = t.position_id
+       ∪ {"pre_entry_override"} if any trade_plans p with p.position_id = t.position_id
+                                    has p.pre_entry_override_acknowledged = true
+if broken is not empty:
+    rules_followed = false; rules_broken = sorted(broken)
+
+else if (any trade_plans p with p.position_id = t.position_id
+          and p.pre_entry_validation_snapshot is not null)
+     or date(positions.created_at of t.position_id) >= 2026-11-04:
+    rules_followed = true                      # nothing broken, and the checks provably ran
+
+else:
+    rules_followed = null                      # Not known: no evidence the checks ran
+```
+
+- **Why the plan join:** events written when a Trade Plan is saved (a `pre_entry_override` acknowledged on the plan, a `checklist_skipped`) are written before the position exists, so their `red_flag_events.position_id` is usually null. `checklist_skipped` names its plan in `context.plan_id`, and the plan's own `pre_entry_override_acknowledged` records the override; the plan's later `position_id` link joins both to the trade. An event stays on the record if the plan is later re-saved complete.
+- **Why 2026-11-04, and why `created_at`:** from that date (v9.15 ST-01, commit `e0a78667`) the pre-entry checks run on every Trade Entry route. `positions.created_at` is when the position was entered in the app; `entry_date` is typed by the user and can be back- or forward-dated, so it is not used. A position created outside Trade Entry (setup or programmatic add) still passes the date test; no per-entry marker of the checks exists today.
+- **Exit reason never counts as broken:** `strategy_rules.md` §8.3 allows a manual exit at any time.
+- **`checklist_skipped`** counts only judgement items from v9.18 (`ESC-EXEC-20261126-01`, `red_flag_journal.md` contract v1.2.0).
+- **`pre_entry_validation_log`** is not used: it has no position link.
+- Partial exits of one position share the position's evidence, so they classify the same.
+
+### Worked Examples
+| Trade | Evidence | `rules_followed` | `rules_broken` |
+|---|---|---|---|
+| A | position linked; linked plan has a snapshot; no red flags; stop exit | `true` | `[]` |
+| B | position linked; `pre_entry_override` event with its `position_id` | `false` | `["pre_entry_override"]` |
+| C | position linked; linked plan with `pre_entry_override_acknowledged = true`; event `position_id` null | `false` | `["pre_entry_override"]` |
+| C2 | position linked; `checklist_skipped` written at plan save (`position_id` null, `context.plan_id` = the linked plan) | `false` | `["checklist_skipped"]` |
+| D | no `position_id` (legacy trade) | `null` | `[]` |
+| E | position linked; red flag with `position_id` null for the same ticker the same day; no plan; position created 2026-10-01 | `null` | `[]` (never joined by ticker) |
+| F | position linked; no plan; no red flags; position created 2026-11-10 (after 2026-11-04) | `true` | `[]` |
+| F2 | as F, but `entry_date` typed as 2026-10-01 (back-dated); position created 2026-11-10 | `true` | `[]` |
+| G | position linked; `checklist_skipped` and `stop_prompt_dismissed` events | `false` | `["checklist_skipped", "stop_prompt_dismissed"]` |
+| H | position linked; manual exit; nothing else; position created 2026-11-05 | `true` | `[]` |
+
+### Failure Behaviour
+- The evidence query fails: every trade returns `rules_followed: null`, `rules_broken: []`, and the trades list still loads. A missing `trade_plans` table (created on first use) means no plans exist: the plan evidence is empty and the event evidence still counts.
+
+---
+
 # Cohort Analysis Metrics
 
 Served via `GET /analytics/cohort?period={month|quarter|year}`. Groups closed trades by entry period and returns aggregate performance per cohort.
@@ -1491,6 +1554,7 @@ Validation is performed by `POST /validate/calculations` comparing computed metr
 ## Appendix D — Change Log
 | Date | Version | Change | Author |
 |---|---|---|---|
+| 2026-11-26 | 1.36.0 | ST-13 (EPIC-02, v9.18, `BLG-FE-320`): new §Rules Followed (per closed trade) under Discipline & Compliance Metrics — `rules_followed` true/false/null and `rules_broken` on `GET /trades`, from `red_flag_events` by `position_id`, the linked plan's override acknowledgement and snapshot, and the 2026-11-04 pre-entry-check date. Definition approved by the Metrics Definitions & Analytics Owner (the user in session, 2026-11-24, `ESC-EXEC-20261124-03`), revised 2026-11-26 (`ESC-EXEC-20261126-02`: plan-time events join through `context.plan_id`; evidence date is `positions.created_at`). | Sprint Execution Engine (ST-13) |
 | 2026-11-16 | 1.35.1 | ST-06 (EPIC-02, v9.17, `BLG-FE-300`): §Minimum Trades Threshold — below the minimum, `summary.total_trades`, `win_rate` and `total_pnl` are still the period's real figures (the service returned 0.0 for the last two); the flag sits in `summary`. No formula change. Product Owner decision 2026-11-16; Metrics Definitions & Analytics Canonical Owner role held by the same user in session. | Sprint Execution Engine (ST-06) |
 | 2026-11-04 | 1.35.0 | ST-23 (EPIC-03, v9.15, `BLG-SPEC-198`): §Position Risk Data Sources names the native entry for both markets — `fill_price` (US) and `entry_price` (UK) — so `(entry − stop)` never mixes the GBP US `entry_price` with the native `initial_stop`. Open-position `pnl` basis (live FX, not net of fees) is recorded in `data_model_positions_dictionary.md` v0.7 §5.2 (ruling `ESC-EXEC-20261104-04`). No formula change. | Metrics Definitions & Analytics Owner |
 | 2026-11-04 | 1.34.4 | ST-21 (EPIC-03, v9.15, `BLG-BE-172`): § AI Monthly P&L Narrative Usage — a failed regeneration call stores the fallback and ends with `fail_fallback:model_call_failed`, counted once as a fallback generation. The terminal-result set and the query are unchanged. | Metrics Definitions & Analytics Owner |

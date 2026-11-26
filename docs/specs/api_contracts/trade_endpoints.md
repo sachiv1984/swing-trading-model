@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 2.6.2
-**Last Updated:** 2026-10-30 (ST-19, EPIC-03, v9.14, BLG-BE-164 — a debrief whose first output fails compliance and whose regeneration raises writes one `model_call_failed` audit row, not two); prior — 2026-10-08 (ST-09, EPIC-01, v9.11, BLG-BE-142 — model IDs pinned in backend/ai_models.py; examples show the pinned Haiku 4.5 snapshot claude-haiku-4-5-20251001); prior — 2026-10-08 (ST-01, EPIC-01, v9.11, BLG-BE-152 — debrief `summary_text` states R achieved vs target and the stop at exit; focus-area prompt receives code-derived figures; `prompt_version` v1.1); prior history retained — see prior entries in version control
+**Version:** 2.7.0
+**Last Updated:** 2026-11-26 (ST-13, EPIC-02, v9.18, BLG-FE-320 — `GET /trades` gains server-computed `rules_followed` and `rules_broken` per trade); prior — 2026-10-30 (ST-19, EPIC-03, v9.14, BLG-BE-164 — a debrief whose first output fails compliance and whose regeneration raises writes one `model_call_failed` audit row, not two); prior — 2026-10-08 (ST-09, EPIC-01, v9.11, BLG-BE-142 — model IDs pinned in backend/ai_models.py; examples show the pinned Haiku 4.5 snapshot claude-haiku-4-5-20251001); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Overview
@@ -86,7 +86,9 @@ Response uses the standard success envelope from **conventions.md**.
       "tags": ["momentum", "winner"],
       "commission_gbp": 12.50,
       "spread_cost_gbp": 3.20,
-      "net_r_multiple": 2.145
+      "net_r_multiple": 2.145,
+      "rules_followed": false,
+      "rules_broken": ["pre_entry_override"]
     }
   ]
 }
@@ -105,6 +107,8 @@ Response uses the standard success envelope from **conventions.md**.
 | `commission_gbp` | Commission paid at entry and exit (GBP). `null` until recorded via `PATCH /trades/{id}/costs` |
 | `spread_cost_gbp` | Bid-ask spread cost estimate (GBP). `null` until recorded via `PATCH /trades/{id}/costs` |
 | `net_r_multiple` | Net-of-costs R-multiple: `(pnl − commission_gbp − spread_cost_gbp) / initial_risk_gbp`. `null` when `commission_gbp` or `spread_cost_gbp` is absent, or when `stop_price_at_entry` is unavailable. Rounded to 3 decimal places |
+| `rules_followed` | *(v2.7.0, ST-13, BLG-FE-320)* `true` \| `false` \| `null`, server-computed per `metrics_definitions.md` §Rules Followed (per closed trade): `null` when the trade has no `position_id` or there is no evidence the pre-entry checks ran; `false` when a `red_flag_events` row has the trade's `position_id`, or a plan-time event names (`context.plan_id`) a plan linked to the position, or a linked plan acknowledged a pre-entry override; `true` otherwise when a linked plan holds a `pre_entry_validation_snapshot` or the position row was created (`positions.created_at`) on or after 2026-11-04. The exit reason never counts. If the evidence query fails, every trade returns `null` and the list still loads |
+| `rules_broken` | *(v2.7.0)* `string[]`: the distinct reason codes, sorted (`pre_entry_override`, `checklist_skipped`, `stop_prompt_dismissed`, `drawdown_prompt_dismissed`). `[]` unless `rules_followed` is `false` |
 | `pnl_pct` and `pnl_percent` | Both fields are returned with the same value for compatibility |
 | `holding_days` | Number of calendar days from `entry_date` to `exit_date` inclusive |
 | `exit_reason` | The reason recorded at exit. `null` values are normalised to `"Manual Exit"` in the analytics service but stored as-is here |
@@ -503,6 +507,7 @@ Same shape as `GET /trades/{trade_id}/debrief` above.
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.7.0 | 2026-11-26 | ST-13 (EPIC-02, v9.18, BLG-FE-320): `GET /trades` gains `rules_followed` (true/false/null) and `rules_broken` (string[]) per trade, computed server-side per `metrics_definitions.md` v1.36.0 §Rules Followed (Metrics Definitions & Analytics Owner approval, `ESC-EXEC-20261124-03`). Additive; no other field changes. Tests: `tests/test_rules_followed.py`, `tests/test_rules_followed_db.py`, `tests/test_pilot_contract_schemas.py`. |
 | 2.6.2 | 2026-10-30 | ST-19 (EPIC-03, v9.14, BLG-BE-164): `POST /trades/{trade_id}/debrief` writes exactly one `claude_audit_log` row per request. A first output that fails compliance followed by a regeneration that raises now writes a single `model_call_failed` row with the first attempt's tokens and cost, instead of that row plus a second row with `compliance_check_result` null. No response change. |
 | 2.6.1 | 2026-10-08 | ST-09 (EPIC-01, v9.11, BLG-BE-142): Debrief `model_version` example shows the pinned snapshot `claude-haiku-4-5-20251001` (`backend/ai_models.py`). |
 | 2.6.0 | 2026-10-08 | ST-01 (EPIC-01, v9.11, BLG-BE-152): Debrief `summary_text` states R achieved vs target and the stop at exit in plain language; focus-area prompt receives code-derived figures; `prompt_version` v1.1. |

@@ -219,7 +219,11 @@
         "tests/e2e/v7.2-dashboard-tradeplan-ux-hardening.spec.js",
         "src/lib/quietDay.test.js",
         "tests/e2e/dashboard-grace-definition.spec.js",
-        "src/lib/positionUrgency.grace.test.js"
+        "src/lib/positionUrgency.grace.test.js",
+        "tests/e2e/entry-checklist.spec.js",
+        "src/lib/checklistStatus.test.js",
+        "tests/test_red_flag_checklist_skipped.py",
+        "tests/e2e/dashboard-today-list.spec.js"
       ],
       "stories": {
         "ST-07": {
@@ -324,7 +328,7 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": "First-time-right: 2026-11-24 pass A — 1 done (GET /positions writer position_service.py:390-394: status is always 'open', lifecycle in position_state, grace_period + grace_days_remaining (null out of grace); grace_end_date written nowhere, confirmed); 2 done (§4B rows A–E + a disagreeing row G; every surface listed: Card 1, Card 3, Positions to Watch, Today list Grace ends today, Risk Dashboard grace panel (shares nextEndsText), Positions grace view/strip (already isInGrace)); 3 done (src/lib/positionUrgency.grace.test.js, full input product incl. numeric/non-numeric strings, 0, −1, null, disagreeing flags); 7 done (premise 'grace_period ⇔ days ≥ 1 on this endpoint' checked in the writer); 17 done (readers of the changed predicate: the four Dashboard surfaces and GracePeriodPanel; old status==='GRACE' branch never matched real data); 18 done (fixtures status 'open' + position_state, per the writer); 19 done (one source, GET /positions; loading/fail handled by DashboardCard; Positions to Watch link flips with the count); 20 done ('exit zone' removed; empty body reworded to grace); 21 done (Card 3 old 'No expiry date set' always shown → now the real next-ends line or none); 5 medium; 4,6,8,11,22,23,24 N/A (no layout/route/time-window change beyond the existing 1-day rule). No raise. | First-time-right: 2026-11-24 pass B — 9 done (review, 6 nits: Card 1 now counts grace over the same full list (SC-GD-01b no-status row); 'ending within 2 days' excludes 0/negative; day count accepts only numbers/numeric strings (whitespace, booleans rejected); SC-MB-04 comment corrected; Today list needing grace_period true is §4B as intended); 10 done (dashboard.md v4.6 build notes); 18 re-run (fixtures status 'open' + position_state per position_service.py); 19 re-run (one source, Positions to Watch link flips with count, asserted); 12,13,14,15,16 N/A. | CI for 8ff17e93: 9 of 11 success; CI Pytest 45456088579 failed (strategy-copy lint matched a unit-test title) and Playwright 45456088330 failed (ReplayTradeSet:dark, the ⌘K hint toast fading in during the scan — unrelated race). Both fixed in 6b193c24 (test-only). ci_pending: runs for 6b193c24. Deviation check: matches dashboard.md §4B, §1A, §4 Cards 1/3; no deviation."
+          "notes": "First-time-right: 2026-11-24 pass A — 1 done (GET /positions writer position_service.py:390-394: status is always 'open', lifecycle in position_state, grace_period + grace_days_remaining (null out of grace); grace_end_date written nowhere, confirmed); 2 done (§4B rows A–E + a disagreeing row G; every surface listed: Card 1, Card 3, Positions to Watch, Today list Grace ends today, Risk Dashboard grace panel (shares nextEndsText), Positions grace view/strip (already isInGrace)); 3 done (src/lib/positionUrgency.grace.test.js, full input product incl. numeric/non-numeric strings, 0, −1, null, disagreeing flags); 7 done (premise 'grace_period ⇔ days ≥ 1 on this endpoint' checked in the writer); 17 done (readers of the changed predicate: the four Dashboard surfaces and GracePeriodPanel; old status==='GRACE' branch never matched real data); 18 done (fixtures status 'open' + position_state, per the writer); 19 done (one source, GET /positions; loading/fail handled by DashboardCard; Positions to Watch link flips with the count); 20 done ('exit zone' removed; empty body reworded to grace); 21 done (Card 3 old 'No expiry date set' always shown → now the real next-ends line or none); 5 medium; 4,6,8,11,22,23,24 N/A (no layout/route/time-window change beyond the existing 1-day rule). No raise. | First-time-right: 2026-11-24 pass B — 9 done (review, 6 nits: Card 1 now counts grace over the same full list (SC-GD-01b no-status row); 'ending within 2 days' excludes 0/negative; day count accepts only numbers/numeric strings (whitespace, booleans rejected); SC-MB-04 comment corrected; Today list needing grace_period true is §4B as intended); 10 done (dashboard.md v4.6 build notes); 18 re-run (fixtures status 'open' + position_state per position_service.py); 19 re-run (one source, Positions to Watch link flips with count, asserted); 12,13,14,15,16 N/A. | CI for 8ff17e93: 9 of 11 success; CI Pytest 45456088579 failed (strategy-copy lint matched a unit-test title) and Playwright 45456088330 failed (ReplayTradeSet:dark, the ⌘K hint toast fading in during the scan — unrelated race). Both fixed in 6b193c24 (test-only). CI cleared on d758184d (contains 6b193c24; 6b193c24 itself had no runs): all 9 workflows success incl. CI Pytest and Playwright E2E. Deviation check: matches dashboard.md §4B, §1A, §4 Cards 1/3; no deviation."
         },
         "ST-11": {
           "title": "Offer \"Plan this\" on the Today list's New signals rows",
@@ -348,33 +352,42 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": "First-time-right: 2026-11-24 pass A — 1 done (GET /signals returns id, ticker, market, status, current_price per signal_endpoints.md; the link reuses planThisUrl with current_price exactly as SignalCard.js, so entry_price units match the Signals route); 2 done (statuses new/watchlisted → 'Plan this'; entered, dismissed, already_held, allocation_insufficient → Research only; null current_price → no entry_price param); 6 done (no rename; 'Plan this' text exists on Signals/Screener — Today-list locators scoped by today-plan-{ticker}); 7 done (TL-19 'no button' premise: it is a Link); 20 done (same label as Signals); 22 done (react-router Link: modifier clicks open a new tab); 3 N/A (no src/lib change; planThisUrl reused unchanged); 4,5,8,11,17,18,19,21,23,24 N/A. No raise. | First-time-right: 2026-11-26 pass B — 9 done (review: no code findings; UK/no-price click-through added to SC-TL-30; spec_references filled; the commit carries [ST-10] too for its closure record); pre-existing: today-item-signals-{ticker}/today-plan-{ticker} ids repeat if a ticker is signalled twice in one day (both links still correct; not changed here); 10 done (dashboard.md v4.7); 12-16 N/A. | ci_pending: runs for d758184d. Deviation check: matches dashboard.md §1B/TL-30 and signals.md §'Plan this' Action; no deviation."
+          "notes": "First-time-right: 2026-11-24 pass A — 1 done (GET /signals returns id, ticker, market, status, current_price per signal_endpoints.md; the link reuses planThisUrl with current_price exactly as SignalCard.js, so entry_price units match the Signals route); 2 done (statuses new/watchlisted → 'Plan this'; entered, dismissed, already_held, allocation_insufficient → Research only; null current_price → no entry_price param); 6 done (no rename; 'Plan this' text exists on Signals/Screener — Today-list locators scoped by today-plan-{ticker}); 7 done (TL-19 'no button' premise: it is a Link); 20 done (same label as Signals); 22 done (react-router Link: modifier clicks open a new tab); 3 N/A (no src/lib change; planThisUrl reused unchanged); 4,5,8,11,17,18,19,21,23,24 N/A. No raise. | First-time-right: 2026-11-26 pass B — 9 done (review: no code findings; UK/no-price click-through added to SC-TL-30; spec_references filled; the commit carries [ST-10] too for its closure record); pre-existing: today-item-signals-{ticker}/today-plan-{ticker} ids repeat if a ticker is signalled twice in one day (both links still correct; not changed here); 10 done (dashboard.md v4.7); 12-16 N/A. | CI for d758184d: all 9 workflows success. Deviation check: matches dashboard.md §1B/TL-30 and signals.md §'Plan this' Action; no deviation."
         },
         "ST-12": {
           "title": "Show machine-checkable checklist items as automatic status",
           "classification": "autonomous",
-          "status": "in_progress",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 2277,
           "branch": "exec/2026-11-18__release-v9.18/EPIC-02",
-          "commit_sha": null,
+          "commit_sha": "d5b2acc36744a78d58ab24005fbadcbc780d210c",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-11-26T16:50:14Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/pages/trade_plan.md#6. Pre-Trade Entry Checklist (v3.2 — PT-05; split v1.30 — ST-12, BLG-UX-19)",
+            "docs/specs/api_contracts/red_flag_journal.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "Reclassified delegated_decision -> autonomous 2026-11-24T14:36:34Z: ESC-EXEC-20261124-02 resolved in session.  ESC-EXEC-20261126-01 (2026-11-26): checklist_skipped counts judgement items only — ruling by the user (Product Owner; Head of UX & Design) before the build. | First-time-right: 2026-11-26 pass A — 1 done (pre-entry result: PreEntryValidationPanel snapshot checks[] {rule,status} per portfolio_endpoints.md; rules cash_constraint, sector_concentration, sizing_validity; skipped excluded; stop from planned_stop_price, native currency via currencyForMarket); 2 done (record §5 six worked rows + legacy row; Research read-only view: snapshot captured_at caption, 'Not checked when saved'); 3 done (new src/lib/checklistStatus.js, table-driven tests); 7 raised and resolved (premise 'saved checked mirrors status' vs the checklist_skipped writer and ST-13's definition → ESC-EXEC-20261126-01, judgement items only); 17 done (readers of checklist_items: TradePlan load/save, Research read-only, trade_plans.py _unchecked_count → changed per ruling, RedFlagsSection context text; checklist_completed has no reader outside TradePlan.js — set from judgement items); 18 done (legacy fixture: four ticked, no auto flag, no snapshot); 19 done (inputs: shares, entry, stop, ticker, market, panel loading/error/refetch → status follows the panel result each refetch); 20 done (record §3 copy); 21 done (old pre-tick of stop_defined from early_exit_conditions retired); 22 done (system rows not focusable); 5 medium; 4,6,8,11,23,24 N/A. | First-time-right: 2026-11-26 pass B — 9 done (review: reopening a saved plan re-ticked 'research reviewed' from r_target — fixed, SC-CL-13b; stop parse aligned with isStopLevelValid/save; caption under the size row only; accepted: edit form shows 'Not checked yet' until the panel result (§6.2, and the save sends only the live snapshot); legacy-only frontend/backend judgement-rule difference for items without auto saved by an old client); 10 done (trade_plan.md v1.31, red_flag_journal.md contract v1.2.0, no endpoint change, OpenAPI drift PASSED); 13 done (changelog tables read back); 17 re-run (legacy row through every reader); 18/19 re-run (pre-entry fixture from portfolio_endpoints.md shape; quantity/stop changes asserted with fill per field); 12,14,15 N/A; 16 N/A (no stored value reinterpreted: legacy items have no auto key and count as before)."
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
+          "sign_off_record": {
+            "role": "Strategy Rules & System Intent Owner",
+            "status": "cleared",
+            "method": "human_in_session",
+            "date": "2026-11-24",
+            "reference": "ESC-EXEC-20261124-02"
+          },
+          "notes": "Reclassified delegated_decision -> autonomous 2026-11-24T14:36:34Z: ESC-EXEC-20261124-02 resolved in session.  ESC-EXEC-20261126-01 (2026-11-26): checklist_skipped counts judgement items only — ruling by the user (Product Owner; Head of UX & Design) before the build. | First-time-right: 2026-11-26 pass A — 1 done (pre-entry result: PreEntryValidationPanel snapshot checks[] {rule,status} per portfolio_endpoints.md; rules cash_constraint, sector_concentration, sizing_validity; skipped excluded; stop from planned_stop_price, native currency via currencyForMarket); 2 done (record §5 six worked rows + legacy row; Research read-only view: snapshot captured_at caption, 'Not checked when saved'); 3 done (new src/lib/checklistStatus.js, table-driven tests); 7 raised and resolved (premise 'saved checked mirrors status' vs the checklist_skipped writer and ST-13's definition → ESC-EXEC-20261126-01, judgement items only); 17 done (readers of checklist_items: TradePlan load/save, Research read-only, trade_plans.py _unchecked_count → changed per ruling, RedFlagsSection context text; checklist_completed has no reader outside TradePlan.js — set from judgement items); 18 done (legacy fixture: four ticked, no auto flag, no snapshot); 19 done (inputs: shares, entry, stop, ticker, market, panel loading/error/refetch → status follows the panel result each refetch); 20 done (record §3 copy); 21 done (old pre-tick of stop_defined from early_exit_conditions retired); 22 done (system rows not focusable); 5 medium; 4,6,8,11,23,24 N/A. | First-time-right: 2026-11-26 pass B — 9 done (review: reopening a saved plan re-ticked 'research reviewed' from r_target — fixed, SC-CL-13b; stop parse aligned with isStopLevelValid/save; caption under the size row only; accepted: edit form shows 'Not checked yet' until the panel result (§6.2, and the save sends only the live snapshot); legacy-only frontend/backend judgement-rule difference for items without auto saved by an old client); 10 done (trade_plan.md v1.31, red_flag_journal.md contract v1.2.0, no endpoint change, OpenAPI drift PASSED); 13 done (changelog tables read back); 17 re-run (legacy row through every reader); 18/19 re-run (pre-entry fixture from portfolio_endpoints.md shape; quantity/stop changes asserted with fill per field); 12,14,15 N/A; 16 N/A (no stored value reinterpreted: legacy items have no auto key and count as before). | ci_pending: runs for d5b2acc3. Deviation check: matches trade_plan.md v1.30 §6 with the §6.5 ruling recorded in v1.31; no deviation."
         },
         "ST-13": {
           "title": "Filter Trade History and Journal by rules followed or broken",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "in_progress",
           "assigned_to": "engine",
           "github_issue": 2278,
           "branch": "exec/2026-11-18__release-v9.18/EPIC-02",
@@ -390,7 +403,7 @@
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "Reclassified delegated_decision -> autonomous 2026-11-24T14:36:34Z: ESC-EXEC-20261124-03 resolved in session. "
+          "notes": "Reclassified delegated_decision -> autonomous 2026-11-24T14:36:34Z: ESC-EXEC-20261124-03 resolved in session.  | First-time-right: 2026-11-26 pass A — 1 done (GET /trades writer trade_service.get_trade_history_with_stats ← database.get_trade_history_with_stops; trade_history.position_id UUID nullable; red_flag_events.position_id UUID nullable, no portfolio column; trade_plans.position_id/portfolio_id UUID, pre_entry_override_acknowledged BOOLEAN, pre_entry_validation_snapshot JSONB); 2 done (metrics_definitions.md §Rules Followed worked rows A–H incl. ticker/date red flag with null position never joined); 7 done (premises checked in code: plan-time override written with position_id from the request body, usually null; pre_entry_validation_log has no position link); 8 done (entry_date on 2026-11-04 → evidence date met; 2026-11-03 → not; DATE column, no time zone); 17 done (readers of GET /trades: TradeHistory, RecentActivityCard, Performance charts, AI journal summary — new fields additive); 18 done (pytest fixtures shaped as the SQL rows; Playwright fixture includes followed/broken/not-known/legacy); 19 done (filter + saved presets + ?rules= + other filters AND-combined; evidence query failure → all null, list still loads); 20 done (record §3 copy); 3 done (classifier pure, table-driven pytest); 5 medium; 4 done (axe on Trade History with the new control); 6,11,21,22,23,24 N/A. No raise. ESC-EXEC-20261126-02 (2026-11-26): definition revised by the Metrics Definitions & Analytics Owner — plan-time events join through context.plan_id; evidence date is positions.created_at. | First-time-right: 2026-11-26 pass B — 9 done (review: plan-time checklist_skipped never joined and entry_date was user-typed → both raised and ruled (ESC-EXEC-20261126-02), built; one plan-query failure discarded the event evidence → the plan queries now tolerate a missing trade_plans table and the event query runs first; evidence fetched after the empty-trades return and only for the trades' position_ids; rules option kept in the stored filter envelope (SC-RF-08); accepted: Calendar view ignores the rules option, as it does every filter (pre-existing, noted in trade_history.md)); 10 done (metrics_definitions.md v1.36.0 rows C2/F2, trade_endpoints.md v2.7.0, OpenAPI 3.53.0, api_changelog 1.38.0, trade_history.md v1.19; drift PASSED); 13 done (tables read back); 17 re-run (GET /trades readers unaffected by additive fields; position_created_at added to the shared query, read only by the classifier); 18 done (DB test rows shaped as the writers: plan-time checklist_skipped context with plan_id); 12,14,15,16 N/A."
         }
       }
     },
@@ -1211,6 +1224,7 @@
     "ST-09",
     "ST-10",
     "ST-11",
+    "ST-12",
     "ST-18",
     "ST-19",
     "ST-20",
@@ -1326,6 +1340,19 @@
       "resolved_utc": "2026-11-26T16:26:09Z",
       "resolved_by": "Product Owner; Head of UX & Design (the user, in session)",
       "resolution_summary": "Judgement items only: items saved with auto: true are not counted by checklist_skipped; size warnings/fails stay pre_entry_override."
+    },
+    "ESC-EXEC-20261126-02": {
+      "cycle": "2026-11-18__release-v9.18",
+      "summary": "ST-13/EPIC-02 — rules-followed definition revision: plan-time events join through the plan; evidence date is positions.created_at",
+      "trigger_type": "Lifecycle",
+      "owning_authority": "Metrics Definitions & Analytics Owner",
+      "raised_utc": "2026-11-26T17:11:43Z",
+      "sla_due_utc": "2026-11-27T17:11:43Z",
+      "blocks_execution": false,
+      "disposition": "Resolved",
+      "resolved_utc": "2026-11-26T17:11:43Z",
+      "resolved_by": "Metrics Definitions & Analytics Owner (the user, in session)",
+      "resolution_summary": "Both revisions approved: join plan-time events via context.plan_id; use positions.created_at for the 2026-11-04 evidence date."
     }
   },
   "merge_gate": {

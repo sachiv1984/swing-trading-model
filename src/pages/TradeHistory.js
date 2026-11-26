@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { api, apiFetch } from "../api/base44Client";
@@ -17,6 +17,7 @@ import TradeReflectionModal from "../components/trades/TradeReflectionModal";
 import { formatCurrency, formatPercent } from "../lib/format";
 import { motion } from "framer-motion";
 import { localDateString } from "../lib/localDate";
+import { RULES_OPTIONS, matchesRules, parseRulesParam, rulesCounts } from "../lib/rulesFilter";
 
 // ST-04 (BLG-FE-118, EPIC-04, v7.5): ephemeral, device-local active-filter
 // persistence — reuses the BLG-FE-40 versioned-localStorage-envelope pattern
@@ -61,16 +62,6 @@ export default function TradeHistory() {
   const [aiGenerated, setAiGenerated] = useState(false);
   const [view, setView] = useState("table");
 
-  useEffect(() => {
-    try {
-      localStorage.setItem(
-        FILTER_STORAGE_KEY,
-        JSON.stringify({ version: FILTER_STORAGE_VERSION, data: { filters, selectedTags } })
-      );
-    } catch {
-      // ignore — localStorage unavailable (e.g. private browsing)
-    }
-  }, [filters, selectedTags]);
 
   const API_URL = process.env.REACT_APP_API_URL || "http://localhost:8000";
 
@@ -119,6 +110,34 @@ export default function TradeHistory() {
   // (navigation.md §Onward Links). Matches with or without the UK ".L" suffix.
   const tickerParam = (searchParams.get("ticker") || "").trim().toUpperCase();
   const tickerParamBase = tickerParam.replace(/\.L$/, "");
+  // trade_history.md v1.18 §Rules Filter (ST-13, BLG-FE-320): the rules option
+  // lives in ?rules=followed|broken|unknown (absent = All), set by replace.
+  const rulesFilter = parseRulesParam(searchParams.get("rules"));
+  const setRulesFilter = (value) => {
+    const next = new URLSearchParams(searchParams);
+    if (value === "all") next.delete("rules");
+    else next.set("rules", value);
+    setSearchParams(next, { replace: true });
+  };
+  // The rules option is kept with the other device-local filters (ST-13 review):
+  // ?rules= wins; with none, the stored option is restored once on arrival.
+  // An envelope saved before v9.18 has no `rules` (All).
+  const storedRules = useRef(loadStoredFilters()?.rules);
+  useEffect(() => {
+    const stored = parseRulesParam(storedRules.current);
+    if (!searchParams.get("rules") && stored !== "all") setRulesFilter(stored);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  useEffect(() => {
+    try {
+      localStorage.setItem(
+        FILTER_STORAGE_KEY,
+        JSON.stringify({ version: FILTER_STORAGE_VERSION, data: { filters, selectedTags, rules: rulesFilter } })
+      );
+    } catch {
+      // ignore — localStorage unavailable (e.g. private browsing)
+    }
+  }, [filters, selectedTags, rulesFilter]);
   const clearTickerParam = () => {
     const next = new URLSearchParams(searchParams);
     next.delete("ticker");
@@ -155,7 +174,7 @@ export default function TradeHistory() {
   };
 
   // ── Filter logic ─────────────────────────────────────────────────────────────
-  const filteredTrades = trades.filter((trade) => {
+  const otherFilteredTrades = trades.filter((trade) => {
     if (tickerParamBase && (trade.ticker || "").toUpperCase().replace(/\.L$/, "") !== tickerParamBase) return false;
     if (filters.market !== "all" && trade.market?.toUpperCase() !== filters.market) return false;
     // ST-15 (BLG-FE-239, v9.15): a win is pnl > 0 (metrics_definitions.md §Win Rate),
@@ -169,6 +188,21 @@ export default function TradeHistory() {
     }
     return true;
   });
+  // The rules option AND-combines with the others; the summary counts are over
+  // the trades the other filters leave (§Rules Filter).
+  const rulesSummary = rulesCounts(otherFilteredTrades);
+  const filteredTrades = otherFilteredTrades.filter((trade) => matchesRules(trade, rulesFilter));
+  const anyFilterActive =
+    filters.market !== "all" || filters.result !== "all" || !!filters.dateFrom || !!filters.dateTo ||
+    selectedTags.length > 0 || rulesFilter !== "all" || !!tickerParamBase;
+  const clearAllFilters = () => {
+    setFilters({ market: "all", result: "all", dateFrom: "", dateTo: "" });
+    setSelectedTags([]);
+    const next = new URLSearchParams(searchParams);
+    next.delete("rules");
+    next.delete("ticker");
+    setSearchParams(next, { replace: true });
+  };
 
   // ── Summary stats ─────────────────────────────────────────────────────────
   const totalPnL = filteredTrades.reduce((sum, t) => sum + (t.pnl || 0), 0);
@@ -445,6 +479,28 @@ export default function TradeHistory() {
               </div>
             </div>
 
+            {/* Rules filter — trade_history.md v1.18 §Rules Filter (ST-13, BLG-FE-320) */}
+            <div className="flex flex-wrap items-center gap-2" data-testid="rules-filter" role="group" aria-label="Rules">
+              <span className="text-sm text-slate-600 dark:text-slate-400">Rules</span>
+              <div className="inline-flex rounded-lg border border-app-line bg-app-raised p-0.5">
+                {RULES_OPTIONS.map((opt) => (
+                  <button
+                    key={opt.value}
+                    type="button"
+                    aria-pressed={rulesFilter === opt.value}
+                    onClick={() => setRulesFilter(opt.value)}
+                    data-testid={`rules-filter-${opt.value}`}
+                    className={cn(
+                      "px-3 py-1 text-sm rounded-md transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500",
+                      rulesFilter === opt.value ? "bg-app-surface text-app-fg font-medium" : "text-slate-600 dark:text-slate-400 hover:text-app-fg"
+                    )}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
             {/* Tag filter */}
             {availableTags.length > 0 && (
               <div className="space-y-2">
@@ -506,9 +562,10 @@ export default function TradeHistory() {
               filters.result !== "all" ||
               !!filters.dateFrom ||
               !!filters.dateTo ||
-              selectedTags.length > 0
+              selectedTags.length > 0 ||
+              rulesFilter !== "all"
             }
-            currentFilterState={{ ...filters, tags: selectedTags }}
+            currentFilterState={{ ...filters, tags: selectedTags, rules: rulesFilter }}
             onApply={(filterState) => {
               setFilters({
                 market: filterState.market ?? "all",
@@ -517,6 +574,9 @@ export default function TradeHistory() {
                 dateTo: filterState.dateTo ?? "",
               });
               setSelectedTags(filterState.tags ?? []);
+              // §Rules Filter: saved with presets like the other filters
+              // (a preset saved before v9.18 has no rules value: All).
+              setRulesFilter(parseRulesParam(filterState.rules));
             }}
           />
 
@@ -608,8 +668,41 @@ export default function TradeHistory() {
             />
           ) : (
             <>
+              {/* §Rules Filter summary counts, over the trades the other filters leave;
+                  each number selects its option. */}
+              {trades.length > 0 && (
+                <p className="text-sm text-slate-600 dark:text-slate-400" data-testid="rules-summary">
+                  {[
+                    ["followed", rulesSummary.followed, "followed"],
+                    ["broken", rulesSummary.broken, "broken"],
+                    ["unknown", rulesSummary.unknown, "not known"],
+                  ].map(([value, count, word], i) => (
+                    <span key={value}>
+                      {i > 0 && " · "}
+                      <button
+                        type="button"
+                        onClick={() => setRulesFilter(value)}
+                        aria-label={`Show ${count} ${word === "not known" ? "not known" : `rules ${word}`} trades`}
+                        data-testid={`rules-summary-${value}`}
+                        className="font-medium text-app-fg underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500 rounded-sm"
+                      >
+                        {count}
+                      </button>{" "}
+                      {word}
+                    </span>
+                  ))}
+                </p>
+              )}
+
               {/* Trade table — BLG-FEAT-02: tradesForCharts passed for R-multiple join */}
-              <TradeHistoryTable trades={filteredTrades} tradesForCharts={tradesForCharts} />
+              {filteredTrades.length === 0 && trades.length > 0 && anyFilterActive ? (
+                <div className="rounded-2xl bg-app-raised border border-app-line p-12 text-center space-y-3" data-testid="trades-filtered-empty">
+                  <p className="text-slate-600 dark:text-slate-400">No trades match these filters.</p>
+                  <Button variant="outline" onClick={clearAllFilters}>Clear filters</Button>
+                </div>
+              ) : (
+                <TradeHistoryTable trades={filteredTrades} tradesForCharts={tradesForCharts} />
+              )}
 
               {filteredTrades.length > 0 && (
                 <p className="text-center text-sm text-slate-600 dark:text-slate-400">
