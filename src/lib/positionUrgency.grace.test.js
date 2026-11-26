@@ -76,7 +76,7 @@ describe("isGraceEndingToday and isGraceEndingWithin at the boundaries", () => {
     expect(isGraceEndingToday(p)).toBe(today);
     expect(isGraceEndingWithin(p, 2)).toBe(within2);
   });
-  test("a row with grace_period false and 1 day left is neither", () => {
+  test("grace_period false with grace_days_remaining 1: neither", () => {
     const p = { grace_period: false, grace_days_remaining: 1 };
     expect(isGraceEndingToday(p)).toBe(false);
     expect(isGraceEndingWithin(p, 2)).toBe(false);

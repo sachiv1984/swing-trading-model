@@ -513,7 +513,13 @@ async function mockReplayRoutes(page) {
 for (const theme of ['dark', 'light']) {
   test.describe(`Replay page axe scan — ${theme} theme (ST-37)`, () => {
     test.beforeEach(async ({ page }) => {
-      await page.addInitScript((t) => window.localStorage.setItem('theme', t), theme);
+      await page.addInitScript((t) => {
+        window.localStorage.setItem('theme', t);
+        // The first-session ⌘K hint toast (Layout.js) fades in 1.2s after load;
+        // a scan that lands while it fades reads it as undecided page content
+        // (ReplayTradeSet:dark, run 45456088330). Same suppression as the ST-08 scans.
+        window.localStorage.setItem('command-palette-tooltip-seen', 'true');
+      }, theme);
       await mockRoutes(page);
       await mockReplayRoutes(page);
       await page.goto('/#/Replay');
