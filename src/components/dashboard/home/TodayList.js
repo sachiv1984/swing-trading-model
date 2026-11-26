@@ -8,6 +8,7 @@ import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "../../
 import { REGIME_RISK_ON, REGIME_UNKNOWN, regimeStatusOf, unknownRegimeExplanation } from "../../../lib/regime";
 import { getExitCondition } from "../../../lib/exitCondition";
 import { isGraceEndingToday } from "../../../lib/positionUrgency";
+import { planThisUrl, PLAN_THIS_SIGNAL_STATUSES } from "../../../lib/planThis";
 import { formatCurrency, currencyForMarket } from "../../../lib/format";
 
 // ST-06 (BLG-FE-254, EPIC-02, v9.16): dashboard.md v4.0 §1B Today list ("Due today").
@@ -377,6 +378,19 @@ export default function TodayList() {
                     >
                       Research
                     </Link>
+                    {/* dashboard.md v4.4 §1B, TL-30 (ST-11, BLG-UX-13): "Plan this" on the
+                        statuses Signals shows it on, with the signals.md route. A link,
+                        so TL-19 (no data-changing button) holds. */}
+                    {PLAN_THIS_SIGNAL_STATUSES.includes(s.status) && (
+                      <Link
+                        to={planThisUrl({ ticker: s.ticker, market: s.market, price: s.current_price, signalId: s.id })}
+                        aria-label={`Plan this: ${s.ticker}`}
+                        data-testid={`today-plan-${s.ticker}`}
+                        className={LINK}
+                      >
+                        Plan this
+                      </Link>
+                    )}
                   </li>
                 ))}
               </ul>

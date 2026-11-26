@@ -108,3 +108,20 @@ Last Updated: 2026-11-20
 - **Blocks execution:** No
 - **Disposition:** Resolved
 - **Resolution summary (2026-11-24T14:36:34Z):** Metrics Definitions & Analytics Owner approval, given by the user in session (holds the role), 2026-11-24: the draft is approved as written (all four red-flag event types count). The engine records it in `metrics_definitions.md` §Rules Followed with worked examples. ST-13 reclassified `autonomous`.
+
+## ESC-EXEC-20261126-01
+
+- **Raised at:** 2026-11-26T16:26:09Z (first raised in session on 2026-11-24; that question went unanswered when the session ended, and was asked again on 2026-11-26)
+- **Routine:** Sprint Execution
+- **Cycle ID:** 2026-11-18__release-v9.18
+- **Step:** STEP 3.1.A, ST-12 first-time-right pass A, check 17 (readers of a new state)
+- **ST/EPIC item:** ST-12 / EPIC-02 (BLG-UX-19)
+- **Trigger type:** Lifecycle
+- **Blocking statement:** `trade_plan.md` v1.30 §6.5 and design record `trade-plan-checklist-status` §4 save the two system items as `heat_limit_checked.checked` = (Position size checks is pass) and `stop_defined.checked` = (stop set). `backend/routers/trade_plans.py` `_maybe_write_checklist_skipped_event` writes a `checklist_skipped` red flag when a saved checklist has any unchecked item, and the `metrics_definitions.md` rules-followed definition approved for ST-13 (`ESC-EXEC-20261124-03`) counts `checklist_skipped` as broken. A plan saved before shares are entered ("Not checked yet") or with an acknowledged size warning would log "Checklist Skipped" and mark the trade "rules broken" although the trader ticked every item they can tick.
+- **Engine recommendation (non-binding):** count only judgement items: ignore items saved with `"auto": true` when counting unchecked items.
+- **Owning authority:** Product Owner; Head of UX & Design
+- **Unblock criteria:** a dated choice of how `checklist_skipped` counts the system items.
+- **SLA due-by:** 2026-11-27T16:26:09Z (24h — Lifecycle)
+- **Blocks execution:** No
+- **Disposition:** Resolved
+- **Resolution summary (2026-11-26T16:26:09Z):** Decision by the user in session (holds the Product Owner and Head of UX & Design roles), 2026-11-26: **judgement items only**. `checklist_skipped` counts unchecked items among entries without `"auto": true`, so it fires only when "Strategy signal confirmed" or "Pre-trade research reviewed" is unticked ("{n} of 2 checklist items unchecked"). Size warnings and fails stay recorded as `pre_entry_override`. Built in ST-12 with tests and notes in `trade_plan.md` §6.5 and `red_flag_journal.md`. Legacy plans (no `auto` flag) are counted as before.

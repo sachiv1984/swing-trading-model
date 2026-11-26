@@ -384,6 +384,40 @@ for (const theme of ['dark', 'light']) {
       await expect(signals.getByTestId('today-item-signals-DIS')).toBeVisible();
     });
 
+    // ST-11 (EPIC-02, v9.18, BLG-UX-13): dashboard.md v4.4 §1B, TL-30.
+    test(`SC-TL-30 (${theme}): "Plan this" shows on new and watchlisted rows and opens a pre-filled Trade Plan`, async ({ page }) => {
+      await mockSources(page, {
+        signals: {
+          body: [
+            signal('NEWA', { status: 'new', current_price: 182.3 }),
+            signal('ENTB', { status: 'entered', current_price: 50 }),
+            signal('WATC', { status: 'watchlisted', market: 'UK', current_price: null }),
+          ],
+        },
+      });
+      await gotoDashboard(page);
+      const signals = group(page, 'signals');
+      await expect(signals.getByTestId('today-plan-NEWA')).toBeVisible();
+      await expect(signals.getByTestId('today-plan-ENTB')).toHaveCount(0);
+      await expect(signals.getByTestId('today-item-signals-ENTB').getByRole('link', { name: 'Research ENTB' })).toBeVisible();
+      await expect(signals.getByTestId('today-plan-WATC')).toHaveAttribute('href', '#/TradePlan?ticker=WATC&market=UK&signal_id=sig-WATC');
+      // TL-19 still holds: "Plan this" is a link, not a button.
+      await expect(signals.getByRole('link', { name: 'Plan this: NEWA' })).toHaveAttribute(
+        'href', '#/TradePlan?ticker=NEWA&market=US&entry_price=182.3&signal_id=sig-NEWA'
+      );
+      await signals.getByTestId('today-plan-NEWA').click();
+      await expect(page).toHaveURL(/#\/TradePlan\?ticker=NEWA&market=US/);
+      await expect(page.getByTestId('planned-entry-price-input')).toHaveValue('182.3', { timeout: 10000 });
+      await expect(page.getByText(/NEWA — US/)).toBeVisible();
+
+      // A UK row with no price opens Trade Plan for the UK market with no entry price.
+      await page.goBack();
+      await group(page, 'signals').getByTestId('today-plan-WATC').click({ timeout: 15000 });
+      await expect(page).toHaveURL(/#\/TradePlan\?ticker=WATC&market=UK&signal_id=sig-WATC$/);
+      await expect(page.getByText(/WATC — UK/)).toBeVisible({ timeout: 10000 });
+      await expect(page.getByTestId('planned-entry-price-input')).toHaveValue('');
+    });
+
     test(`SC-TL-09 (${theme}): stops moved lists today's and the previous weekday's moves A–Z, "Stop moved from {previous} to {current}" in native currency`, async ({ page }) => {
       await mockSources(page, {
         positions: {

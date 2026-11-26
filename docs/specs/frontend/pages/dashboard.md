@@ -3,8 +3,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 4.6
-**Last Updated:** 2026-11-24 (ST-10, EPIC-02, v9.18, BLG-FE-308 — §4B built; build notes); prior — 2026-11-24 (ST-09, EPIC-02, v9.18, BLG-UX-11 — §3A built; build notes; QD-04 names the request the Screener Hits card actually makes); prior — 2026-11-18 (v9.18 design gate — ST-09/BLG-UX-11 §3A quiet-day collapse; ST-10/BLG-FE-308 §4B one grace definition; ST-11/BLG-UX-13 "Plan this" on New signals rows); prior history retained — see prior entries in version control
+**Version:** 4.7
+**Last Updated:** 2026-11-24 (ST-11, EPIC-02, v9.18, BLG-UX-13 — §1B "Plan this" built); prior — 2026-11-24 (ST-10, EPIC-02, v9.18, BLG-FE-308 — §4B built; build notes); prior — 2026-11-24 (ST-09, EPIC-02, v9.18, BLG-UX-11 — §3A built; build notes; QD-04 names the request the Screener Hits card actually makes); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Release:** v8.8
 **EPIC:** EPIC-03
@@ -641,6 +641,7 @@ Cards are fully clickable (entire card surface is the click target). Visual affo
 
 | Version | Date | Change |
 |---------|------|--------|
+| 4.7 | 2026-11-24 | ST-11 (EPIC-02, v9.18, BLG-UX-13): §1B "Plan this" built on `new` and `watchlisted` New signals rows with the shared `planThisUrl` and `PLAN_THIS_SIGNAL_STATUSES` (`src/lib/planThis.js`), the same route and parameters as the Signals card; `data-testid="today-plan-{ticker}"`. TL-30: `dashboard-today-list.spec.js` SC-TL-30. No behaviour change to the spec. |
 | 4.6 | 2026-11-24 | ST-10 (EPIC-02, v9.18, BLG-FE-308): §4B built; build notes added (helpers in `positionUrgency.js`, shared `nextEndsText`, `status` vs `position_state`, the grace-period-alerts query dropped). No behaviour change to the spec. |
 | 4.5 | 2026-11-24 | ST-09 (EPIC-02, v9.18, BLG-UX-11): §3A built; build notes added; QD-04's failing request corrected to `GET /signals`, the request the Screener Hits card makes. No behaviour change to the spec. |
 | 4.4 | 2026-11-18 | v9.18 design gate. (ST-09, BLG-UX-11) New §3A Quiet-Day Collapse: zero-state elements below the Today list fold into one "Nothing to show:" line with links (QD-01–QD-04). (ST-10, BLG-FE-308) New §4B One Grace Definition (`isInGrace`); §1A card renamed to the shipped "Positions to Watch" and redefined on it, linking to the grace view; Card 1 and Card 3 use it; Card 3 sub-label from `grace_days_remaining` (the `grace_end_date` it read is never returned). (ST-11, BLG-UX-13) §1B New signals rows gain "Plan this" for `new`/`watchlisted` (Product Owner decision); §13 bullet amended; TL-30. Design source: `docs/design/2026-11-18__release-v9.18/dashboard-quiet-day/decision_record.md`. Head of UX & Design sign-off: 2026-11-18. Product Owner approved: 2026-11-18. Head of Specs Team confirmed. |
