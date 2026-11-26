@@ -142,3 +142,20 @@ Last Updated: 2026-11-20
 - **Blocks execution:** No
 - **Disposition:** Resolved
 - **Resolution summary (2026-11-26T17:11:43Z):** Metrics Definitions & Analytics Owner decision, given by the user in session (holds the role), 2026-11-26: (1) **yes** — plan-time events join through the plan; (2) **`positions.created_at`**. Recorded in `metrics_definitions.md` v1.36.0 §Rules Followed (rows C2 and F2 added) and `trade_endpoints.md` v2.7.0; built in ST-13 with tests `tests/test_rules_followed.py` and `tests/test_rules_followed_db.py`.
+
+## ESC-EXEC-20261126-03
+
+- **Raised at:** 2026-11-26T17:52:25Z
+- **Routine:** Sprint Execution
+- **Cycle ID:** 2026-11-18__release-v9.18
+- **Step:** STEP 3.2.A, pre-PR agent-mediated review on behalf of the Product Owner (findings 1 and 2)
+- **ST/EPIC item:** ST-13 / EPIC-02 (BLG-FE-320)
+- **Trigger type:** Lifecycle
+- **Blocking statement:** under the definition as revised by `ESC-EXEC-20261126-02`, any `checklist_skipped` event for a linked plan marks the trade broken permanently. The event is written on every plan save with an unticked judgement item, drafts included (`trade_plans.py`), so a draft saved before research and completed later marks the trade "Broken: Checklist Skipped" for good; events written before v9.18 also counted the two old system ticks, which `ESC-EXEC-20261126-01` no longer counts.
+- **Engine recommendation (non-binding):** judge by the linked plan's last saved checklist (judgement items only) instead of past events; old events then stop mattering.
+- **Owning authority:** Product Owner; Metrics Definitions & Analytics Owner
+- **Unblock criteria:** a dated choice for drafts and for pre-v9.18 events.
+- **SLA due-by:** 2026-11-27T17:52:25Z (24h — Lifecycle)
+- **Blocks execution:** No
+- **Disposition:** Resolved
+- **Resolution summary (2026-11-26T17:52:25Z):** Decision by the user in session (holds the Product Owner and Metrics Definitions & Analytics Owner roles), 2026-11-26: **the plan's final state** — `checklist_skipped` is a reason when a plan linked to the position has, in its last saved `checklist_items`, an unticked judgement item (not `heat_limit_checked` / `stop_defined`, not `"auto": true`); past `checklist_skipped` events are not read, which also settles pre-v9.18 events. Recorded in `metrics_definitions.md` v1.36.0 §Rules Followed (rows C2–C4, G) and `trade_endpoints.md` v2.7.0; built in ST-13 (`database._checklist_has_unticked_judgement_item`, tests in `tests/test_rules_followed.py` and `tests/test_rules_followed_db.py`).

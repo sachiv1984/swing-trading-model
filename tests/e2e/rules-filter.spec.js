@@ -172,8 +172,10 @@ test('SC-RF-08: the rules option is kept with the stored filters and restored on
   await expect(page.getByTestId('rules-summary')).toBeVisible({ timeout: 15000 });
   await page.getByTestId('rules-filter-broken').click();
   await expect(page).toHaveURL(/rules=broken/);
-  // Leave and come back by the sidebar route, with no query string.
-  await page.goto('/#/Positions');
+  // Leave and come back by the sidebar route, with no query string. Journal
+  // renders on the catch-all mock (Positions does not: it needs an array).
+  await page.goto('/#/Journal');
+  await expect(page.getByRole('heading', { level: 1, name: 'Journal', exact: true })).toBeVisible({ timeout: 15000 });
   await page.goto('/#/TradeHistory');
   await expect(page.getByTestId('rules-filter-broken')).toHaveAttribute('aria-pressed', 'true', { timeout: 15000 });
   await expect(page).toHaveURL(/rules=broken/);

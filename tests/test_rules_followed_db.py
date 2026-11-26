@@ -49,6 +49,9 @@ def _real_database_module():
     return module
 
 
+# search_path is the scratch schema only (no `public`): a dropped scratch
+# table must not fall through to a public.trade_plans another Phase B test made.
+# gen_random_uuid lives in pg_catalog, so it still resolves.
 @pytest.fixture
 def scratch_db():
     name = f"st13_{uuid.uuid4().hex[:8]}"
@@ -56,7 +59,7 @@ def scratch_db():
     conn.autocommit = True
     with conn.cursor() as cur:
         cur.execute(f"CREATE SCHEMA {name}")
-        cur.execute(f"SET search_path TO {name}, public")
+        cur.execute(f"SET search_path TO {name}")
         cur.execute(
             """CREATE TABLE red_flag_events (
                 id UUID PRIMARY KEY DEFAULT gen_random_uuid(), event_type TEXT NOT NULL,
@@ -67,7 +70,7 @@ def scratch_db():
             """CREATE TABLE trade_plans (
                 id UUID PRIMARY KEY DEFAULT gen_random_uuid(), portfolio_id UUID NOT NULL,
                 position_id UUID, ticker TEXT, pre_entry_override_acknowledged BOOLEAN,
-                pre_entry_validation_snapshot JSONB)"""
+                pre_entry_validation_snapshot JSONB, checklist_items JSONB NOT NULL DEFAULT '[]'::JSONB)"""
         )
 
     @contextmanager
@@ -75,7 +78,7 @@ def scratch_db():
         c = _connect()
         try:
             with c.cursor() as cur:
-                cur.execute(f"SET search_path TO {name}, public")
+                cur.execute(f"SET search_path TO {name}")
             yield c
             c.commit()
         except Exception:
@@ -118,11 +121,17 @@ def _seed(get_db):
                        pre_entry_validation_snapshot) VALUES (%s, %s, 'AAPL', %s, %s)""",
                     (port, pid, ack, snap),
                 )
-            # A plan saved with a skipped checklist before its position existed: the
-            # event has no position_id but names the plan, later linked to P_PLAN_SKIP.
+            # A plan whose last saved checklist still has an unticked judgement item
+            # (ESC-EXEC-20261126-03), linked to P_PLAN_SKIP; its draft-time event
+            # (position_id null, naming the plan) is not read.
             cur.execute(
-                "INSERT INTO trade_plans (id, portfolio_id, position_id, ticker) VALUES (%s, %s, %s, 'AAPL')",
-                (PLAN_SKIP_ID, PORT, P_PLAN_SKIP),
+                """INSERT INTO trade_plans (id, portfolio_id, position_id, ticker, checklist_items)
+                   VALUES (%s, %s, %s, 'AAPL', %s)""",
+                (PLAN_SKIP_ID, PORT, P_PLAN_SKIP, Json([
+                    {"id": "signal_confirmed", "checked": True},
+                    {"id": "heat_limit_checked", "checked": False, "auto": True},
+                    {"id": "research_reviewed", "checked": False},
+                ])),
             )
             cur.execute(
                 "INSERT INTO red_flag_events (event_type, ticker, position_id, context) VALUES ('checklist_skipped', 'AAPL', NULL, %s)",
@@ -135,11 +144,14 @@ def test_evidence_by_position(scratch_db):
     _seed(get_db)
     ev = database.get_rules_followed_evidence(PORT, ALL)
 
-    assert ev[P_EVENTS]["events"] == {"pre_entry_override", "checklist_skipped"}
+    # checklist_skipped events are not read; the plan's saved checklist decides.
+    assert ev[P_EVENTS]["events"] == {"pre_entry_override"}
     assert ev[P_EVENTS]["override_acknowledged"] is False
-    assert ev[P_PLAN_OVERRIDE] == {"events": set(), "override_acknowledged": True, "has_snapshot": False}
-    assert ev[P_PLAN_SNAPSHOT] == {"events": set(), "override_acknowledged": False, "has_snapshot": True}
-    assert ev[P_PLAN_SKIP]["events"] == {"checklist_skipped"}
+    assert ev[P_EVENTS]["checklist_incomplete"] is True  # no linked plan: its position-linked event counts
+    assert ev[P_PLAN_OVERRIDE] == {"events": set(), "override_acknowledged": True, "has_snapshot": False, "checklist_incomplete": False}
+    assert ev[P_PLAN_SNAPSHOT] == {"events": set(), "override_acknowledged": False, "has_snapshot": True, "checklist_incomplete": False}
+    assert ev[P_PLAN_SKIP]["events"] == set()
+    assert ev[P_PLAN_SKIP]["checklist_incomplete"] is True
     # Another portfolio's plan is not read; null position_ids are never keys.
     assert P_OTHER_PORT not in ev
     assert "None" not in ev and None not in ev
@@ -174,5 +186,33 @@ def test_missing_trade_plans_table_keeps_the_event_evidence(scratch_db):
         with c.cursor() as cur:
             cur.execute("DROP TABLE trade_plans")
     ev = database.get_rules_followed_evidence(PORT, ALL)
-    assert ev[P_EVENTS]["events"] == {"pre_entry_override", "checklist_skipped"}
+    assert ev[P_EVENTS]["events"] == {"pre_entry_override"}
     assert P_PLAN_SKIP not in ev
+
+
+def test_with_no_linked_plan_a_position_checklist_skipped_event_still_counts(scratch_db):
+    database, get_db = scratch_db
+    _seed(get_db)
+    # P_EVENTS has a checklist_skipped event with its id and no linked plan.
+    ev = database.get_rules_followed_evidence(PORT, ALL)
+    assert ev[P_EVENTS]["checklist_incomplete"] is True
+    # Once a complete plan is linked, the plan's saved checklist decides instead.
+    with get_db() as c:
+        with c.cursor() as cur:
+            cur.execute(
+                "INSERT INTO trade_plans (portfolio_id, position_id, ticker, checklist_items) VALUES (%s, %s, 'AAPL', %s)",
+                (PORT, P_EVENTS, Json([{"id": "signal_confirmed", "checked": True}, {"id": "research_reviewed", "checked": True}])),
+            )
+    assert database.get_rules_followed_evidence(PORT, ALL)[P_EVENTS]["checklist_incomplete"] is False
+
+
+def test_missing_red_flag_events_table_keeps_the_plan_evidence(scratch_db):
+    database, get_db = scratch_db
+    _seed(get_db)
+    with get_db() as c:
+        with c.cursor() as cur:
+            cur.execute("DROP TABLE red_flag_events")
+    ev = database.get_rules_followed_evidence(PORT, ALL)
+    assert ev[P_PLAN_OVERRIDE]["override_acknowledged"] is True
+    assert ev[P_PLAN_SKIP]["checklist_incomplete"] is True
+

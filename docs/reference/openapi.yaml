@@ -3,6 +3,8 @@ openapi: 3.0.3
 info:
   title: Momentum Trading Assistant API
   version: 3.53.0
+  # v3.53.0 (2026-11-26, ST-13, EPIC-02, v9.18): GET /trades items gain rules_followed (boolean, nullable) and
+  # rules_broken (string[]), per metrics_definitions.md §Rules Followed (BLG-FE-320).
   # v3.52.0 (2026-11-24, ST-33, EPIC-06, v9.18): GET /earnings/{ticker} and GET /positions/{position_id}/gap-risk
   # gain data_status: ok | unavailable (BLG-FE-294).
   # v3.51.1 (2026-11-23, ST-27, EPIC-05, v9.18): GET /positions/{position_id}/stop-trail returns 409 while a split

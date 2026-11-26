@@ -4,7 +4,9 @@ metrics_definitions.md §Rules Followed (per closed trade) — ST-13, BLG-FE-320
 EPIC-02, v9.18. Definition approved by the Metrics Definitions & Analytics
 Owner (ESC-EXEC-20261124-03), revised ESC-EXEC-20261126-02: plan-time events
 join through the plan, and the evidence date is when the position row was
-created (positions.created_at), not the user-entered entry_date. A deterministic classification of the user's
+created (positions.created_at), not the user-entered entry_date; revised
+ESC-EXEC-20261126-03: checklist_skipped is judged by the linked plan's last
+saved checklist (judgement items), not by past events. A deterministic classification of the user's
 own recorded events: no score, ranking or advice (strategy_rules.md §13).
 """
 from datetime import date, datetime
@@ -47,7 +49,11 @@ def classify_rules(trade: Dict, evidence: Dict[str, Dict]) -> Tuple[Optional[boo
     if position_id is None or str(position_id) == "":
         return None, []
     ev = evidence.get(str(position_id)) or {}
-    broken = {e for e in ev.get("events", set()) if e in RED_FLAG_REASONS}
+    # checklist_skipped comes from the linked plan's last saved checklist, not
+    # from past events (ESC-EXEC-20261126-03).
+    broken = {e for e in ev.get("events", set()) if e in RED_FLAG_REASONS and e != "checklist_skipped"}
+    if ev.get("checklist_incomplete"):
+        broken.add("checklist_skipped")
     if ev.get("override_acknowledged"):
         broken.add("pre_entry_override")
     if broken:

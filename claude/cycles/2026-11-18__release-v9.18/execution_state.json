@@ -198,7 +198,7 @@
     },
     "EPIC-02": {
       "title": "Site Structure & Usability Phase 4, Stage 2: Home Page and Navigation (build-and-ship)",
-      "status": "in_progress",
+      "status": "done",
       "branch": "exec/2026-11-18__release-v9.18/EPIC-02",
       "pr_number": null,
       "pr_status": "none",
@@ -223,7 +223,11 @@
         "tests/e2e/entry-checklist.spec.js",
         "src/lib/checklistStatus.test.js",
         "tests/test_red_flag_checklist_skipped.py",
-        "tests/e2e/dashboard-today-list.spec.js"
+        "tests/e2e/dashboard-today-list.spec.js",
+        "tests/e2e/rules-filter.spec.js",
+        "tests/test_rules_followed.py",
+        "tests/test_rules_followed_db.py",
+        "src/lib/rulesFilter.test.js"
       ],
       "stories": {
         "ST-07": {
@@ -387,23 +391,33 @@
         "ST-13": {
           "title": "Filter Trade History and Journal by rules followed or broken",
           "classification": "autonomous",
-          "status": "in_progress",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 2278,
           "branch": "exec/2026-11-18__release-v9.18/EPIC-02",
-          "commit_sha": null,
+          "commit_sha": "47b79ca047493a5bbc7fb4735bec13b82616ffc8",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-11-26T17:25:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/metrics_definitions.md#Rules Followed (per closed trade)",
+            "docs/specs/api_contracts/trade_endpoints.md#GET /trades",
+            "docs/specs/frontend/pages/trade_history.md#Rules Filter (v1.18 — ST-13, BLG-FE-320)"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "Reclassified delegated_decision -> autonomous 2026-11-24T14:36:34Z: ESC-EXEC-20261124-03 resolved in session.  | First-time-right: 2026-11-26 pass A — 1 done (GET /trades writer trade_service.get_trade_history_with_stats ← database.get_trade_history_with_stops; trade_history.position_id UUID nullable; red_flag_events.position_id UUID nullable, no portfolio column; trade_plans.position_id/portfolio_id UUID, pre_entry_override_acknowledged BOOLEAN, pre_entry_validation_snapshot JSONB); 2 done (metrics_definitions.md §Rules Followed worked rows A–H incl. ticker/date red flag with null position never joined); 7 done (premises checked in code: plan-time override written with position_id from the request body, usually null; pre_entry_validation_log has no position link); 8 done (entry_date on 2026-11-04 → evidence date met; 2026-11-03 → not; DATE column, no time zone); 17 done (readers of GET /trades: TradeHistory, RecentActivityCard, Performance charts, AI journal summary — new fields additive); 18 done (pytest fixtures shaped as the SQL rows; Playwright fixture includes followed/broken/not-known/legacy); 19 done (filter + saved presets + ?rules= + other filters AND-combined; evidence query failure → all null, list still loads); 20 done (record §3 copy); 3 done (classifier pure, table-driven pytest); 5 medium; 4 done (axe on Trade History with the new control); 6,11,21,22,23,24 N/A. No raise. ESC-EXEC-20261126-02 (2026-11-26): definition revised by the Metrics Definitions & Analytics Owner — plan-time events join through context.plan_id; evidence date is positions.created_at. | First-time-right: 2026-11-26 pass B — 9 done (review: plan-time checklist_skipped never joined and entry_date was user-typed → both raised and ruled (ESC-EXEC-20261126-02), built; one plan-query failure discarded the event evidence → the plan queries now tolerate a missing trade_plans table and the event query runs first; evidence fetched after the empty-trades return and only for the trades' position_ids; rules option kept in the stored filter envelope (SC-RF-08); accepted: Calendar view ignores the rules option, as it does every filter (pre-existing, noted in trade_history.md)); 10 done (metrics_definitions.md v1.36.0 rows C2/F2, trade_endpoints.md v2.7.0, OpenAPI 3.53.0, api_changelog 1.38.0, trade_history.md v1.19; drift PASSED); 13 done (tables read back); 17 re-run (GET /trades readers unaffected by additive fields; position_created_at added to the shared query, read only by the classifier); 18 done (DB test rows shaped as the writers: plan-time checklist_skipped context with plan_id); 12,14,15,16 N/A."
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
+          "sign_off_record": {
+            "role": "Metrics Definitions & Analytics Owner",
+            "status": "cleared",
+            "method": "human_in_session",
+            "date": "2026-11-26",
+            "reference": "ESC-EXEC-20261124-03; ESC-EXEC-20261126-02"
+          },
+          "notes": "Reclassified delegated_decision -> autonomous 2026-11-24T14:36:34Z: ESC-EXEC-20261124-03 resolved in session.  | First-time-right: 2026-11-26 pass A — 1 done (GET /trades writer trade_service.get_trade_history_with_stats ← database.get_trade_history_with_stops; trade_history.position_id UUID nullable; red_flag_events.position_id UUID nullable, no portfolio column; trade_plans.position_id/portfolio_id UUID, pre_entry_override_acknowledged BOOLEAN, pre_entry_validation_snapshot JSONB); 2 done (metrics_definitions.md §Rules Followed worked rows A–H incl. ticker/date red flag with null position never joined); 7 done (premises checked in code: plan-time override written with position_id from the request body, usually null; pre_entry_validation_log has no position link); 8 done (entry_date on 2026-11-04 → evidence date met; 2026-11-03 → not; DATE column, no time zone); 17 done (readers of GET /trades: TradeHistory, RecentActivityCard, Performance charts, AI journal summary — new fields additive); 18 done (pytest fixtures shaped as the SQL rows; Playwright fixture includes followed/broken/not-known/legacy); 19 done (filter + saved presets + ?rules= + other filters AND-combined; evidence query failure → all null, list still loads); 20 done (record §3 copy); 3 done (classifier pure, table-driven pytest); 5 medium; 4 done (axe on Trade History with the new control); 6,11,21,22,23,24 N/A. No raise. ESC-EXEC-20261126-02 (2026-11-26): definition revised by the Metrics Definitions & Analytics Owner — plan-time events join through context.plan_id; evidence date is positions.created_at. | First-time-right: 2026-11-26 pass B — 9 done (review: plan-time checklist_skipped never joined and entry_date was user-typed → both raised and ruled (ESC-EXEC-20261126-02), built; one plan-query failure discarded the event evidence → the plan queries now tolerate a missing trade_plans table and the event query runs first; evidence fetched after the empty-trades return and only for the trades' position_ids; rules option kept in the stored filter envelope (SC-RF-08); accepted: Calendar view ignores the rules option, as it does every filter (pre-existing, noted in trade_history.md)); 10 done (metrics_definitions.md v1.36.0 rows C2/F2, trade_endpoints.md v2.7.0, OpenAPI 3.53.0, api_changelog 1.38.0, trade_history.md v1.19; drift PASSED); 13 done (tables read back); 17 re-run (GET /trades readers unaffected by additive fields; position_created_at added to the shared query, read only by the classifier); 18 done (DB test rows shaped as the writers: plan-time checklist_skipped context with plan_id); 12,14,15,16 N/A. | ci_pending: runs for 47b79ca0. Deviation check: matches metrics_definitions.md v1.36.0 §Rules Followed (as revised), trade_endpoints.md v2.7.0, trade_history.md §Rules Filter; no deviation."
         }
       }
     },
@@ -1225,6 +1239,7 @@
     "ST-10",
     "ST-11",
     "ST-12",
+    "ST-13",
     "ST-18",
     "ST-19",
     "ST-20",
@@ -1353,6 +1368,19 @@
       "resolved_utc": "2026-11-26T17:11:43Z",
       "resolved_by": "Metrics Definitions & Analytics Owner (the user, in session)",
       "resolution_summary": "Both revisions approved: join plan-time events via context.plan_id; use positions.created_at for the 2026-11-04 evidence date."
+    },
+    "ESC-EXEC-20261126-03": {
+      "cycle": "2026-11-18__release-v9.18",
+      "summary": "ST-13/EPIC-02 — checklist_skipped judged by the linked plan's last saved checklist, not past events (drafts, pre-v9.18 events)",
+      "trigger_type": "Lifecycle",
+      "owning_authority": "Product Owner; Metrics Definitions & Analytics Owner",
+      "raised_utc": "2026-11-26T17:52:25Z",
+      "sla_due_utc": "2026-11-27T17:52:25Z",
+      "blocks_execution": false,
+      "disposition": "Resolved",
+      "resolved_utc": "2026-11-26T17:52:25Z",
+      "resolved_by": "Product Owner; Metrics Definitions & Analytics Owner (the user, in session)",
+      "resolution_summary": "Plan's final state: an unticked judgement item in the linked plan's saved checklist; checklist_skipped events not read."
     }
   },
   "merge_gate": {

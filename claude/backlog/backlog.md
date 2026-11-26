@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-24 (session — 2 new items added: BLG-FE-336, BLG-FE-337; ST-08 EPIC-02 v9.18 pre-commit code review); prior — 2026-11-24 (session — 5 new items added: BLG-FE-334, BLG-FE-335, BLG-BE-235, BLG-QA-284, BLG-BE-236; EPIC-06 v9.18 pre-PR agent-mediated reviews); prior — 2026-11-24 (session — 3 new items added: BLG-OPS-223, BLG-BE-234, BLG-QA-283; ST-32/ST-35 EPIC-06 v9.18); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-26 (session — 1 new item added: BLG-BE-237; EPIC-02 v9.18 ST-13 review); prior — 2026-11-26 (session — 1 new item added: BLG-FE-338; EPIC-02 v9.18 pre-PR Product Owner review); prior — 2026-11-24 (session — 2 new items added: BLG-FE-336, BLG-FE-337; ST-08 EPIC-02 v9.18 pre-commit code review); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -8944,6 +8944,48 @@ Settings saves only on "Save" and has no unsaved-changes guard. A user who chang
 **Acceptance Criteria**
 - `settings.md` records the decision
 - If a warning or save is chosen: changing Theme and then clicking the "Ticker Universe" link behaves as recorded (Playwright)
+
+---
+
+### BLG-BE-237 — Record or block checklist edits on a plan linked to a position
+**Priority:** P3 (Low)
+**Type:** Backend Engineering
+**Owner:** Head of Engineering; Metrics Definitions & Analytics Owner
+**Source:** ST-13 (EPIC-02, `2026-11-18__release-v9.18`) pre-commit code review of the `ESC-EXEC-20261126-03` revision — 2026-11-26
+**Effort:** S (~0.5 day, decision then build)
+**Provisional-Target:** v9.19
+
+**Problem**
+From v9.18, "rules followed" judges a skipped checklist by the linked plan's last saved checklist (`metrics_definitions.md` §Rules Followed, `ESC-EXEC-20261126-03`). `PUT /trade-plans/{id}` still lets `checklist_items` change on a plan linked to a position, open or closed, and `update_trade_plan` leaves `checklist_items` out of the post-entry audit log. A trade marked "Broken: Checklist Skipped" can be turned into "Followed" after entry, or after exit, by re-saving the plan, with no record of the change.
+
+**Scope**
+- Decide (Metrics Definitions & Analytics Owner, Product Owner): block `checklist_items` edits once a plan is linked, audit-log them, or snapshot the checklist when the plan is linked and judge from the snapshot
+- Build the decision; update `trade_plan.md` §6.5 and `metrics_definitions.md` §Rules Followed
+
+**Acceptance Criteria**
+- The decision is recorded in both specs
+- Editing a linked plan's checklist after entry behaves as decided (pytest), and the rules-followed result for that trade follows the recorded rule
+
+---
+
+### BLG-FE-338 — Word "Not known" on Trade History by its reason
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** ST-13 (EPIC-02, `2026-11-18__release-v9.18`) pre-PR agent-mediated review on behalf of the Product Owner, finding 5 — 2026-11-26
+**Effort:** XS (<1h, after the spec line)
+**Provisional-Target:** v9.19
+
+**Problem**
+The expanded row's "Not known (no entry check recorded)" (`trade_history.md` §Rules Filter, `rulesFilter.js` `rulesLine`) is also shown for a legacy trade with no position link and for every trade when the evidence query fails. In those cases the reason it gives is wrong: a check may have run, or the classification simply could not be read.
+
+**Scope**
+- Decide in `trade_history.md` §Rules Filter either one neutral wording ("Not known") or a reason per case; if per case, `GET /trades` needs a reason field (`trade_endpoints.md`)
+- Build it
+
+**Acceptance Criteria**
+- `trade_history.md` records the wording
+- A trade with no position link and a trade in a failed-evidence response show the recorded wording (Playwright)
 
 ---
 

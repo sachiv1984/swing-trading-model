@@ -17,7 +17,8 @@ EV = {
     "pos-a": {"events": set(), "override_acknowledged": False, "has_snapshot": True},
     "pos-b": {"events": {"pre_entry_override"}, "override_acknowledged": False, "has_snapshot": False},
     "pos-c": {"events": set(), "override_acknowledged": True, "has_snapshot": True},
-    "pos-g": {"events": {"stop_prompt_dismissed", "checklist_skipped"}, "override_acknowledged": False, "has_snapshot": True},
+    # G: checklist_skipped comes from the plan's saved checklist (checklist_incomplete), not events.
+    "pos-g": {"events": {"stop_prompt_dismissed"}, "override_acknowledged": False, "has_snapshot": True, "checklist_incomplete": True},
 }
 
 
@@ -67,6 +68,18 @@ def test_override_from_both_sources_is_listed_once():
     assert classify_rules({"position_id": "p", "position_created_at": "2026-09-01"}, ev) == (False, ["pre_entry_override"])
 
 
+def test_a_past_checklist_skipped_event_alone_does_not_break():
+    # ESC-EXEC-20261126-03: a draft saved with an unticked item and completed
+    # later, or a pre-v9.18 event that counted the old system ticks.
+    ev = {"p": {"events": {"checklist_skipped"}, "override_acknowledged": False, "has_snapshot": True, "checklist_incomplete": False}}
+    assert classify_rules({"position_id": "p", "position_created_at": "2026-09-01"}, ev) == (True, [])
+
+
+def test_a_plan_still_incomplete_is_broken():
+    ev = {"p": {"events": set(), "override_acknowledged": False, "has_snapshot": True, "checklist_incomplete": True}}
+    assert classify_rules({"position_id": "p", "position_created_at": "2026-09-01"}, ev) == (False, ["checklist_skipped"])
+
+
 def test_unknown_event_types_are_ignored():
     ev = {"p": {"events": {"compliance_recheck"}, "override_acknowledged": False, "has_snapshot": True}}
     assert classify_rules({"position_id": "p", "position_created_at": "2026-09-01"}, ev) == (True, [])
@@ -75,8 +88,8 @@ def test_unknown_event_types_are_ignored():
 def test_uuid_position_ids_match_string_keys():
     import uuid
     pid = uuid.UUID("00000000-0000-0000-0000-0000000000b0")
-    ev = {str(pid): {"events": {"checklist_skipped"}, "override_acknowledged": False, "has_snapshot": False}}
-    assert classify_rules({"position_id": pid, "position_created_at": "2026-09-01"}, ev) == (False, ["checklist_skipped"])
+    ev = {str(pid): {"events": {"pre_entry_override"}, "override_acknowledged": False, "has_snapshot": False}}
+    assert classify_rules({"position_id": pid, "position_created_at": "2026-09-01"}, ev) == (False, ["pre_entry_override"])
 
 
 def test_empty_string_position_id_is_not_known():
@@ -132,3 +145,48 @@ def test_failed_or_missing_evidence_marks_every_trade_not_known(failure):
     assert out["trades"][0]["rules_followed"] is None
     assert out["trades"][0]["rules_broken"] == []
     assert out["total_trades"] == 1
+
+
+# ---------------------------------------------------------------------------
+# The plan's saved checklist (database._checklist_has_unticked_judgement_item)
+# ---------------------------------------------------------------------------
+
+def _real_database_module():
+    import importlib.util
+    from pathlib import Path
+    path = Path(__file__).parent.parent / "backend" / "database.py"
+    spec = importlib.util.spec_from_file_location("database_real_st13_unit", path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+J = [{"id": "signal_confirmed", "checked": True}, {"id": "research_reviewed", "checked": True}]
+
+
+@pytest.mark.parametrize("label, items, expected", [
+    ("both judgement items ticked", J, False),
+    ("one judgement item unticked", [J[0], {"id": "research_reviewed", "checked": False}], True),
+    ("legacy: only the old heat tick unticked (no auto key)", J + [{"id": "heat_limit_checked", "checked": False}], False),
+    ("legacy: stop tick unticked", J + [{"id": "stop_defined", "checked": False}], False),
+    ("v9.18 system items saved auto and unticked", J + [{"id": "heat_limit_checked", "checked": False, "auto": True}], False),
+    ("an unknown item without auto counts as judgement", J + [{"id": "custom", "checked": False}], True),
+    ("checked must be a real true", [{"id": "signal_confirmed", "checked": "true"}], True),
+    ("empty checklist", [], False),
+    ("missing checklist", None, False),
+    ("JSON string", '[{"id": "signal_confirmed", "checked": false}]', True),
+    ("bad JSON string", "not json", False),
+    ("non-dict entries count as unticked, as the event writer counts them", ["x", 3], True),
+])
+def test_plan_checklist_judgement(label, items, expected):
+    assert _real_database_module()._checklist_has_unticked_judgement_item(items) is expected
+
+
+def test_the_writer_and_the_evidence_use_one_rule():
+    # routers/trade_plans._unchecked_count and the evidence helper agree.
+    from utils.checklist import count_unchecked_judgement_items
+    legacy = J + [{"id": "heat_limit_checked", "checked": False}, {"id": "stop_defined", "checked": False}]
+    assert count_unchecked_judgement_items(legacy) == (0, 2)
+    assert count_unchecked_judgement_items([J[0], {"id": "research_reviewed", "checked": False}, "x"]) == (2, 3)
+    assert count_unchecked_judgement_items("not json") == (0, 0)
+    assert count_unchecked_judgement_items({"id": "a"}) == (0, 0)

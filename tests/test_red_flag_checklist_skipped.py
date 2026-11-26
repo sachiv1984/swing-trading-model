@@ -182,10 +182,24 @@ class TestChecklistSkippedWriter:
         assert calls[0].kwargs["context"]["unchecked_items"] == 1
         assert calls[0].kwargs["context"]["total_items"] == 2
 
+    def test_a_legacy_plan_with_only_the_old_system_ticks_unticked_writes_nothing(self, tp):
+        # ST-13 review: one rule with the rules-followed evidence (utils/checklist.py);
+        # the two system ids never count, with or without an auto flag.
+        client, write = tp
+        items = [
+            {"id": "signal_confirmed", "checked": True},
+            {"id": "heat_limit_checked", "checked": False},
+            {"id": "stop_defined", "checked": False},
+            {"id": "research_reviewed", "checked": True},
+        ]
+        resp = client.post("/trade-plans", json={"ticker": "AAPL", "market": "US", "checklist_items": items})
+        assert resp.status_code == 201
+        assert _checklist_calls(write) == []
+
     @pytest.mark.parametrize("auto", [False, "true", 1, None])
     def test_only_a_real_true_auto_flag_excludes_an_item(self, tp, auto):
         client, write = tp
-        items = [{"id": "signal_confirmed", "checked": True}, {"id": "stop_defined", "checked": False, "auto": auto}]
+        items = [{"id": "signal_confirmed", "checked": True}, {"id": "custom_check", "checked": False, "auto": auto}]
         resp = client.post("/trade-plans", json={"ticker": "AAPL", "market": "US", "checklist_items": items})
         assert resp.status_code == 201
         assert len(_checklist_calls(write)) == 1
