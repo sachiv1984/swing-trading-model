@@ -75,10 +75,12 @@ def scratch_db():
 
     @contextmanager
     def get_db():
-        c = _connect()
+        # search_path as a connection option, not a SET: the code under test
+        # rolls back after a missing table, and a rollback would undo a SET made
+        # in the transaction, sending later queries to public.
+        c = psycopg2.connect(DB_URL, cursor_factory=RealDictCursor, connect_timeout=3,
+                             options=f"-c search_path={name}")
         try:
-            with c.cursor() as cur:
-                cur.execute(f"SET search_path TO {name}")
             yield c
             c.commit()
         except Exception:
