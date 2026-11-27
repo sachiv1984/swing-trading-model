@@ -12,7 +12,8 @@
  *   SC-ONW-02  Trade History → Research for a trade's ticker
  *   SC-ONW-03  Analytics → Trade History (populated state)
  *   SC-ONW-04  Performance (old /Reports route) → Trade History (ST-06, v9.17)
- *   SC-ONW-05  Strategy Benchmark → Performance's Analytics section (ST-06, v9.17)
+ *   SC-ONW-05  Settings → Ticker Universe from the §3 "Screener universe" row (ST-08, v9.18; replaces
+ *              the Strategy Benchmark → Performance link, removed when the page became a Performance section)
  *   SC-ONW-06  Replay → Trade History
  *   SC-ONW-07  Journal Reflections → Trade History filtered to the trade's ticker ("View trade"; ST-05, v9.17)
  *   SC-ONW-08  Journal Red flags → Trade History filtered to the event's ticker ("View trade"; ST-05, v9.17)
@@ -103,7 +104,7 @@ async function checkOnward(page, { from, heading, label, href, lands, targetHead
 }
 
 test('SC-ONW-01: Ticker Universe links onward to Screener', async ({ page }) => {
-  await checkOnward(page, { from: '/#/TickerUniverse', heading: 'Ticker Universe', label: 'Screener', href: '#/Screener', lands: /#\/Screener$/, targetHeading: 'Screener' });
+  await checkOnward(page, { from: '/#/settings/ticker-universe', heading: 'Ticker Universe', label: 'Screener', href: '#/Screener', lands: /#\/Screener$/, targetHeading: 'Screener' });
 });
 
 test('SC-ONW-02: a Trade History row links its ticker to Research', async ({ page }) => {
@@ -142,8 +143,18 @@ test('SC-ONW-04: the old Reports route lands on Performance, which links onward 
   await checkOnward(page, { from: '/#/Reports', heading: 'Performance', label: 'Trade History', href: '#/TradeHistory', lands: /#\/TradeHistory$/, targetHeading: 'Trade History' });
 });
 
-test('SC-ONW-05: Strategy Benchmark links onward to Performance (Analytics section)', async ({ page }) => {
-  await checkOnward(page, { from: '/#/StrategyBenchmark', heading: 'Strategy Benchmark', label: 'Performance', href: '#/Performance?section=analytics', lands: /#\/Performance\?section=analytics$/, targetHeading: 'Performance' });
+test('SC-ONW-05: Settings links to Ticker Universe from the Screener universe row', async ({ page }) => {
+  await page.goto('/#/Settings');
+  await expect(page.getByRole('heading', { level: 1, name: 'Settings', exact: true })).toBeVisible({ timeout: 15000 });
+  const row = page.getByTestId('settings-screener-universe');
+  await expect(row).toContainText('Screener universe');
+  await expect(row).toContainText('The tickers the screener scans each night.');
+  const link = row.getByTestId('settings-ticker-universe-link');
+  await expect(link).toHaveText('Ticker Universe');
+  await expect(link).toHaveAttribute('href', '#/settings/ticker-universe');
+  await link.click();
+  await expect(page).toHaveURL(/#\/settings\/ticker-universe$/);
+  await expect(page.getByRole('heading', { level: 1, name: 'Ticker Universe', exact: true })).toBeVisible({ timeout: 15000 });
 });
 
 test('SC-ONW-06: Replay links onward to Trade History', async ({ page }) => {
@@ -213,10 +224,10 @@ test('SC-ONW-11: System Status links onward to Settings', async ({ page }) => {
 // ---------------------------------------------------------------------------
 
 const DEAD_END_PAGES = [
-  '/#/notifications/history', '/#/TickerUniverse', '/#/TradeHistory', '/#/Performance?section=analytics',
-  '/#/Performance?section=reports', '/#/StrategyBenchmark', '/#/Replay', '/#/Journal',
+  '/#/notifications/history', '/#/settings/ticker-universe', '/#/TradeHistory', '/#/Performance?section=analytics',
+  '/#/Performance?section=reports', '/#/Replay', '/#/Journal',
   '/#/Settings', '/#/SystemStatus',
-]; // ST-05 (v9.17): '/#/Journal' replaces '/#/TradeReflection' and '/#/RedFlagJournal' (both now redirect there)
+]; // ST-05 (v9.17): '/#/Journal' replaces '/#/TradeReflection' and '/#/RedFlagJournal' (both now redirect there). ST-08 (v9.18): Strategy Benchmark is a Performance section and leaves the list; Ticker Universe moves to /settings/ticker-universe
 
 // Hash-route path of a link, or of the page itself (query string and case ignored).
 function routeOf(hash) {

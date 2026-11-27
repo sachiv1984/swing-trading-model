@@ -152,6 +152,58 @@ class TestChecklistSkippedWriter:
         assert resp.status_code == 201
         assert _checklist_calls(write) == []
 
+    def test_auto_items_are_not_counted(self, tp):
+        # ST-12 (ESC-EXEC-20261126-01): the two system items, saved unchecked
+        # because the size checks are not Pass and no stop is set, do not make
+        # a checklist "skipped"; only the judgement items count.
+        client, write = tp
+        items = [
+            {"id": "signal_confirmed", "checked": True},
+            {"id": "heat_limit_checked", "checked": False, "auto": True},
+            {"id": "stop_defined", "checked": False, "auto": True},
+            {"id": "research_reviewed", "checked": True},
+        ]
+        resp = client.post("/trade-plans", json={"ticker": "AAPL", "market": "US", "checklist_items": items})
+        assert resp.status_code == 201
+        assert _checklist_calls(write) == []
+
+    def test_an_unticked_judgement_item_counts_out_of_the_judgement_items(self, tp):
+        client, write = tp
+        items = [
+            {"id": "signal_confirmed", "checked": False},
+            {"id": "heat_limit_checked", "checked": True, "auto": True},
+            {"id": "stop_defined", "checked": False, "auto": True},
+            {"id": "research_reviewed", "checked": True},
+        ]
+        resp = client.post("/trade-plans", json={"ticker": "AAPL", "market": "US", "checklist_items": items})
+        assert resp.status_code == 201
+        calls = _checklist_calls(write)
+        assert len(calls) == 1
+        assert calls[0].kwargs["context"]["unchecked_items"] == 1
+        assert calls[0].kwargs["context"]["total_items"] == 2
+
+    def test_a_legacy_plan_with_only_the_old_system_ticks_unticked_writes_nothing(self, tp):
+        # ST-13 review: one rule with the rules-followed evidence (utils/checklist.py);
+        # the two system ids never count, with or without an auto flag.
+        client, write = tp
+        items = [
+            {"id": "signal_confirmed", "checked": True},
+            {"id": "heat_limit_checked", "checked": False},
+            {"id": "stop_defined", "checked": False},
+            {"id": "research_reviewed", "checked": True},
+        ]
+        resp = client.post("/trade-plans", json={"ticker": "AAPL", "market": "US", "checklist_items": items})
+        assert resp.status_code == 201
+        assert _checklist_calls(write) == []
+
+    @pytest.mark.parametrize("auto", [False, "true", 1, None])
+    def test_only_a_real_true_auto_flag_excludes_an_item(self, tp, auto):
+        client, write = tp
+        items = [{"id": "signal_confirmed", "checked": True}, {"id": "custom_check", "checked": False, "auto": auto}]
+        resp = client.post("/trade-plans", json={"ticker": "AAPL", "market": "US", "checklist_items": items})
+        assert resp.status_code == 201
+        assert len(_checklist_calls(write)) == 1
+
     def test_failed_write_does_not_block_the_save(self, tp):
         client, write = tp
         write.side_effect = RuntimeError("red_flag_events unavailable")

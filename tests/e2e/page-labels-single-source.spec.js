@@ -7,6 +7,7 @@
  *   SC-PL-01  For each page with a sidebar entry, the sidebar link text equals the page heading (AC 1)
  *   SC-PL-02  The command palette lists each palette page under the same label (AC 1), including
  *             the new Replay and Notifications entries
+ *   SC-PL-02b The palette opens Strategy vs backtest (alias "Strategy Benchmark") and Ticker Universe at their new routes (ST-08, v9.18)
  *   SC-PL-03  The keyboard-shortcut legend uses "New position", not "New trade" (glossary trade/position rule)
  *
  * Infrastructure: page.route() network interception — no live backend required.
@@ -23,7 +24,8 @@ const API = 'http://localhost:8000';
 // (navigation.md v2.3 §Page Placement — 20 entries; ST-01, BLG-FE-250, v9.16
 // added Research and Trade Plans; ST-05, BLG-FE-258, v9.17 replaced Trade
 // Reflections and Red Flag Journal with Journal; ST-06, BLG-FE-259, v9.17
-// replaced Analytics and Reports with Performance — 19 entries).
+// replaced Analytics and Reports with Performance — 19 entries; ST-08, BLG-FE-323,
+// v9.18 moved Strategy Benchmark and Ticker Universe out of the sidebar — 17).
 const SIDEBAR_PAGES = [
   ['/#/', 'Dashboard'],
   ['/#/Positions', 'Positions'],
@@ -31,7 +33,6 @@ const SIDEBAR_PAGES = [
   ['/#/TradeHistory', 'Trade History'],
   ['/#/Journal', 'Journal'],
   ['/#/Performance', 'Performance'],
-  ['/#/StrategyBenchmark', 'Strategy Benchmark'],
   ['/#/Replay', 'Replay'],
   ['/#/RiskDashboard', 'Risk Dashboard'],
   ['/#/Signals', 'Signals'],
@@ -39,7 +40,6 @@ const SIDEBAR_PAGES = [
   ['/#/Watchlist', 'Watchlist'],
   ['/#/Research', 'Research'],
   ['/#/TradePlans', 'Trade Plans'],
-  ['/#/TickerUniverse', 'Ticker Universe'],
   ['/#/Settings', 'Settings'],
   ['/#/SystemStatus', 'System Status'],
   ['/#/WeeklyDigest', 'Weekly Digest'],
@@ -48,6 +48,9 @@ const SIDEBAR_PAGES = [
 
 const PALETTE_ONLY_PAGES = [
   ['TradePlan', 'Trade Plan'],
+  // navigation.md v2.5 (ST-08, v9.18): no sidebar entry, still in the palette.
+  ['TickerUniverse', 'Ticker Universe'],
+  ['StrategyVsBacktest', 'Strategy vs backtest'],
 ];
 
 test.beforeEach(async ({ page }) => {
@@ -91,6 +94,24 @@ test('SC-PL-02: the palette lists every palette page under its canonical label',
     await input.fill(old);
     await expect(page.getByRole('option', { name: old, exact: true })).toHaveCount(0);
   }
+});
+
+test('SC-PL-02b: the palette opens the moved pages at their new homes; "Strategy Benchmark" is a search alias', async ({ page }) => {
+  await page.goto('/#/Positions');
+  await page.waitForLoadState('domcontentloaded');
+  await page.keyboard.press('Control+k');
+  const input = page.getByTestId('command-palette-input');
+  await input.fill('Strategy Benchmark');
+  await expect(page.getByRole('option', { name: 'Strategy vs backtest', exact: true })).toHaveCount(1);
+  await page.getByRole('option', { name: 'Strategy vs backtest', exact: true }).click();
+  await expect(page).toHaveURL(/#\/Performance\?section=strategy-vs-backtest$/);
+  await expect(page.locator('#strategy-vs-backtest > h2')).toBeVisible({ timeout: 15000 });
+
+  await page.keyboard.press('Control+k');
+  await page.getByTestId('command-palette-input').fill('Ticker Universe');
+  await page.getByRole('option', { name: 'Ticker Universe', exact: true }).click();
+  await expect(page).toHaveURL(/#\/settings\/ticker-universe$/);
+  await expect(page.getByRole('heading', { level: 1, name: 'Ticker Universe', exact: true })).toBeVisible({ timeout: 15000 });
 });
 
 test('SC-PL-03: the shortcut legend says "New position"', async ({ page }) => {

@@ -13,7 +13,8 @@
  * found), SC-SI04-05 (invalid version order).
  *
  * Component: src/pages/StrategyBenchmark.js (VersionComparisonTab)
- * ROUTING NOTE: App uses HashRouter. Navigate via page.goto('/#/StrategyBenchmark').
+ * ROUTING NOTE: App uses HashRouter. From v9.18 (ST-08) the tab lives in Performance's
+ * Strategy vs backtest section: page.goto('/#/Performance?section=strategy-vs-backtest').
  */
 
 'use strict';
@@ -71,7 +72,7 @@ async function mockBaseEndpoints(page) {
 test.describe('SI-04 Strategy Version Comparison', () => {
   test.beforeEach(async ({ page }) => {
     await mockBaseEndpoints(page);
-    await page.goto('/#/StrategyBenchmark');
+    await page.goto('/#/Performance?section=strategy-vs-backtest');
   });
 
   test('SC-SI04-01: Version Comparison tab shows controls and idle state', async ({ page }) => {

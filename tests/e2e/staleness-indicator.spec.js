@@ -30,6 +30,9 @@
 
 'use strict';
 
+// v9.18 ST-08: "Data as of" is matched case-sensitively, so the Strategy vs
+// backtest section's "Benchmark data as of …" line on Performance is never taken
+// for the staleness indicator.
 const { test, expect } = require('./fixtures/api-status-guard');
 const {
   ANALYTICS_FRESH,
@@ -148,7 +151,7 @@ test('SC-STALE-01: analytics page shows fresh staleness indicator when data is r
   await page.goto('/#/Performance?section=analytics');
 
   // Fresh indicator present: "Data as of N mins ago" (no "may be outdated")
-  const freshIndicator = page.getByText(/Data as of/i).first();
+  const freshIndicator = page.getByText(/Data as of/).first();
   await expect(freshIndicator).toBeVisible({ timeout: 5000 });
 
   // Stale badge absent
@@ -179,7 +182,7 @@ test('SC-STALE-03: analytics page hides indicator when last_sync_at is null', as
   await page.goto('/#/Performance?section=analytics');
 
   // Indicator must not appear at all
-  await expect(page.getByText(/Data as of/i)).not.toBeVisible({ timeout: 5000 });
+  await expect(page.getByText(/Data as of/)).not.toBeVisible({ timeout: 5000 });
   await expect(page.getByText(/may be outdated/i)).not.toBeVisible();
 });
 
@@ -193,7 +196,7 @@ test('SC-STALE-04: positions page shows staleness indicator', async ({ page }) =
   await page.goto('/#/Positions');
 
   // Fresh indicator visible on positions page
-  const freshIndicator = page.getByText(/Data as of/i).first();
+  const freshIndicator = page.getByText(/Data as of/).first();
   await expect(freshIndicator).toBeVisible({ timeout: 5000 });
 });
 
@@ -207,7 +210,7 @@ test('SC-STALE-05: indicator carries absolute UTC timestamp as title attribute',
   await page.goto('/#/Performance?section=analytics');
 
   // Wait for indicator to appear
-  const indicator = page.getByText(/Data as of/i).first();
+  const indicator = page.getByText(/Data as of/).first();
   await expect(indicator).toBeVisible({ timeout: 5000 });
 
   // Tooltip is delivered via native title attribute — assert its value.

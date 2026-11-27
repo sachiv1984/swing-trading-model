@@ -46,6 +46,7 @@ export default function ComplianceCard() {
 
   return (
     <DashboardCard
+      foldKey="compliance"
       title="Signal Compliance"
       to="/Performance?section=compliance"
       isLoading={loading7d || loading30d}

@@ -23,8 +23,6 @@ import {
   CalendarDays,
   ChevronRight,
   ScanSearch,
-  Globe,
-  BarChart2,
   Search,
   Wallet,
   RotateCcw,
@@ -88,7 +86,6 @@ const NAV_AREAS = [
       { name: PAGE_LABELS.Watchlist,      icon: Eye,           page: "Watchlist" },
       { name: PAGE_LABELS.Research,       icon: BookOpen,      page: "Research" },
       { name: PAGE_LABELS.TradePlans,     icon: ClipboardList, page: "TradePlans" },
-      { name: PAGE_LABELS.TickerUniverse, icon: Globe,         page: "TickerUniverse" },
     ],
   },
   {
@@ -97,7 +94,6 @@ const NAV_AREAS = [
     items: [
       { name: PAGE_LABELS.TradeHistory,         icon: History,      page: "TradeHistory" },
       { name: PAGE_LABELS.Performance,          icon: TrendingUp,   page: "Performance" },
-      { name: PAGE_LABELS.StrategyBenchmark,    icon: BarChart2,    page: "StrategyBenchmark" },
       { name: PAGE_LABELS.Replay,               icon: RotateCcw,    page: "Replay" },
       { name: PAGE_LABELS.Journal,              icon: NotebookPen,  page: "Journal" },
       { name: PAGE_LABELS.WeeklyDigest,         icon: CalendarDays, page: "WeeklyDigest" },
@@ -123,6 +119,8 @@ const NAV_PARENT_PAGE = {
   TradePlan: "TradePlans",
   NotificationPreferences: "notifications",
   NotificationsHistory: "notifications",
+  // navigation.md v2.5 (ST-08, BLG-FE-323): Ticker Universe is a Settings detail page.
+  TickerUniverse: "Settings",
 };
 
 function navPageFor(pageName) {

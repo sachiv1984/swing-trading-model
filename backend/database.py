@@ -2483,12 +2483,14 @@ def get_trade_history_with_stops(portfolio_id: str) -> List[Dict]:
 
     LEFT JOINs positions on position_id to add stop_price_at_entry.
     Records without a linked position have stop_price_at_entry = NULL.
-    ST-03 (EPIC-02, v6.0) — BLG-FEAT-20.
+    ST-03 (EPIC-02, v6.0) — BLG-FEAT-20. ST-13 (v9.18) also selects the
+    position row's created_at (position_created_at) for §Rules Followed.
     """
     with get_db() as conn:
         with conn.cursor() as cur:
             cur.execute(
-                """SELECT th.*, p.initial_stop AS stop_price_at_entry
+                """SELECT th.*, p.initial_stop AS stop_price_at_entry,
+                          p.created_at AS position_created_at
                    FROM trade_history th
                    LEFT JOIN positions p ON th.position_id = p.id
                    WHERE th.portfolio_id = %s
@@ -2496,6 +2498,124 @@ def get_trade_history_with_stops(portfolio_id: str) -> List[Dict]:
                 (portfolio_id,)
             )
             return cur.fetchall()
+
+
+def _checklist_has_unticked_judgement_item(checklist_items) -> bool:
+    """True when a saved checklist has an unticked judgement item, by the same
+    rule the checklist_skipped writer uses (utils/checklist.py)."""
+    from utils.checklist import count_unchecked_judgement_items
+    return count_unchecked_judgement_items(checklist_items)[0] > 0
+
+
+def get_rules_followed_evidence(portfolio_id: str, position_ids: List[str]) -> Dict[str, Dict]:
+    """Per-position evidence for the rules-followed classification.
+
+    metrics_definitions.md §Rules Followed (ST-13, BLG-FE-320, v9.18; revised
+    ESC-EXEC-20261126-02 and -03). Returns {position_id: {"events": set of
+    red-flag event types, "override_acknowledged": bool, "has_snapshot": bool,
+    "checklist_incomplete": bool}} for the given positions only:
+    - events written with the position's id (red_flag_events.position_id);
+    - events written at plan save, before the position existed, that name a
+      plan (context->>'plan_id') now linked to the position
+      (trade_plans.position_id);
+    - checklist_skipped events are not read while a plan is linked
+      (ESC-EXEC-20261126-03): the linked plan's last saved checklist decides —
+      "checklist_incomplete" is true when a judgement item (utils/checklist.py)
+      is unticked, so a draft saved before research and completed later does
+      not count, and pre-v9.18 events that counted the old system ticks no
+      longer matter. With no linked plan (deleted or unlinked), a
+      checklist_skipped event written with the position's id still counts;
+    - a linked plan's pre_entry_override_acknowledged and whether it holds a
+      pre_entry_validation_snapshot.
+    Events with no position link and no linked plan are never joined (not by
+    ticker either). A missing trade_plans table means no plans exist yet, so
+    the plan evidence is empty; any other failure raises, and the caller marks
+    every trade "not known" rather than guessing.
+    """
+    ids = sorted({str(pid) for pid in position_ids if pid})
+    evidence: Dict[str, Dict] = {}
+    if not ids:
+        return evidence
+
+    def entry(pid):
+        return evidence.setdefault(str(pid), {
+            "events": set(), "override_acknowledged": False, "has_snapshot": False, "checklist_incomplete": False,
+        })
+
+    position_skip_events = set()
+    with get_db() as conn:
+        try:
+            with conn.cursor() as cur:
+                cur.execute(
+                    """SELECT position_id, ARRAY_AGG(DISTINCT event_type) AS event_types
+                       FROM red_flag_events
+                       WHERE position_id::text = ANY(%s)
+                       GROUP BY position_id""",
+                    (ids,)
+                )
+                for row in cur.fetchall():
+                    types = set(row["event_types"] or [])
+                    if "checklist_skipped" in types:
+                        position_skip_events.add(str(row["position_id"]))
+                    types.discard("checklist_skipped")
+                    if types:
+                        entry(row["position_id"])["events"].update(types)
+        except psycopg2.errors.UndefinedTable:
+            # red_flag_events is created on first use: no table means no events.
+            conn.rollback()
+        linked_plan_positions = set()
+        try:
+            with conn.cursor() as cur:
+                cur.execute(
+                    """SELECT tp.position_id, ARRAY_AGG(DISTINCT e.event_type) AS event_types
+                       FROM red_flag_events e
+                       JOIN trade_plans tp ON tp.id::text = e.context->>'plan_id'
+                       WHERE e.position_id IS NULL
+                         AND e.event_type <> 'checklist_skipped'
+                         AND tp.portfolio_id = %s
+                         AND tp.position_id::text = ANY(%s)
+                       GROUP BY tp.position_id""",
+                    (portfolio_id, ids)
+                )
+                for row in cur.fetchall():
+                    entry(row["position_id"])["events"].update(row["event_types"] or [])
+        except psycopg2.errors.UndefinedTable:
+            # Either table missing (created on first use): nothing to join.
+            conn.rollback()
+        try:
+            with conn.cursor() as cur:
+                cur.execute(
+                    """SELECT position_id,
+                              BOOL_OR(pre_entry_override_acknowledged IS TRUE) AS override_acknowledged,
+                              BOOL_OR(pre_entry_validation_snapshot IS NOT NULL) AS has_snapshot
+                       FROM trade_plans
+                       WHERE portfolio_id = %s AND position_id::text = ANY(%s)
+                       GROUP BY position_id""",
+                    (portfolio_id, ids)
+                )
+                for row in cur.fetchall():
+                    e = entry(row["position_id"])
+                    e["override_acknowledged"] = bool(row["override_acknowledged"])
+                    e["has_snapshot"] = bool(row["has_snapshot"])
+                cur.execute(
+                    """SELECT position_id, checklist_items
+                       FROM trade_plans
+                       WHERE portfolio_id = %s AND position_id::text = ANY(%s)""",
+                    (portfolio_id, ids)
+                )
+                for row in cur.fetchall():
+                    linked_plan_positions.add(str(row["position_id"]))
+                    if _checklist_has_unticked_judgement_item(row["checklist_items"]):
+                        entry(row["position_id"])["checklist_incomplete"] = True
+        except psycopg2.errors.UndefinedTable:
+            # A missing table (created on first use) means no plans or no events
+            # to join through a plan.
+            conn.rollback()
+    # With no linked plan to read (deleted or unlinked), a checklist_skipped
+    # event written with the position's id is the remaining record.
+    for pid in position_skip_events - linked_plan_positions:
+        entry(pid)["checklist_incomplete"] = True
+    return evidence
 
 
 def get_database_size_bytes() -> int:

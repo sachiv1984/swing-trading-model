@@ -206,6 +206,9 @@ TRADE_RECORD_SCHEMA = {
     "commission_gbp": NUM_OR_NONE,
     "spread_cost_gbp": NUM_OR_NONE,
     "net_r_multiple": NUM_OR_NONE,
+    # ST-13 (BLG-FE-320, v9.18): metrics_definitions.md §Rules Followed.
+    "rules_followed": (bool, type(None)),
+    "rules_broken": list,
 }
 
 TRADE_TOP_LEVEL_SCHEMA = {
@@ -247,6 +250,8 @@ MOCK_TRADE_STATS = {
             "commission_gbp": 4.50,
             "spread_cost_gbp": 1.20,
             "net_r_multiple": 1.842,
+            "rules_followed": False,
+            "rules_broken": ["pre_entry_override"],
         }
     ],
 }

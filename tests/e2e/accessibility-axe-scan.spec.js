@@ -139,8 +139,8 @@ const STRICT_INCOMPLETE_CONTRAST = new Set([
   'ReplayTradeSet:light',
   'ResearchLanding:dark',
   'ResearchLanding:light',
-  'StrategyBenchmark:dark',
-  'StrategyBenchmark:light',
+  'StrategyVsBacktest:dark',
+  'StrategyVsBacktest:light',
   'TickerUniverse:dark',
   'TickerUniverse:light',
   'WeeklyDigest:light',
@@ -513,7 +513,13 @@ async function mockReplayRoutes(page) {
 for (const theme of ['dark', 'light']) {
   test.describe(`Replay page axe scan — ${theme} theme (ST-37)`, () => {
     test.beforeEach(async ({ page }) => {
-      await page.addInitScript((t) => window.localStorage.setItem('theme', t), theme);
+      await page.addInitScript((t) => {
+        window.localStorage.setItem('theme', t);
+        // The first-session ⌘K hint toast (Layout.js) fades in 1.2s after load;
+        // a scan that lands while it fades reads it as undecided page content
+        // (ReplayTradeSet:dark, run 45456088330). Same suppression as the ST-08 scans.
+        window.localStorage.setItem('command-palette-tooltip-seen', 'true');
+      }, theme);
       await mockRoutes(page);
       await mockReplayRoutes(page);
       await page.goto('/#/Replay');
@@ -720,6 +726,11 @@ test.describe('Shell consumers axe scan, populated — light theme (ST-09)', () 
   });
 
   test('Dashboard with populated cards (light)', async ({ page }) => {
+    // v9.18 EPIC-02 ST-09: empty cards now fold (dashboard.md §3A), so Card 1's
+    // text sits at the viewport's lower edge at 720 px, where axe reports it
+    // undecided (elmPartiallyObscuring, no related node). A viewport that holds
+    // the whole page keeps the scan independent of where the fold leaves it.
+    await page.setViewportSize({ width: 1280, height: 1600 });
     await page.goto('/#/DashboardHome');
     await expect(page.getByText('Heat elevated — monitor closely')).toBeVisible({ timeout: 10000 });
     await page.waitForLoadState('networkidle');
@@ -847,15 +858,19 @@ async function mockTradeHistoryPopulated(page) {
 }
 
 const ST08_PAGES = [
-  // [name, route, mock, text that proves the data rendered, optional step]
+  // [name, route, mock, text that proves the data rendered, optional step, optional scan scope]
   ['TradePlans', '/#/TradePlans', routed.mockTradePlans, 'AAA'],
   ['Signals', '/#/Signals', routed.mockSignals, 'VOD'],
   ['Screener', '/#/Screener', routed.mockScreener, 'BARC'],
-  ['StrategyBenchmark', '/#/StrategyBenchmark', routed.mockStrategyBenchmark, 'TSLA'],
+  // v9.18 ST-08 (BLG-FE-323): Strategy Benchmark is Performance's "Strategy vs
+  // backtest" section. Scanned on its own (scoped to the section) so it keeps
+  // its strict incomplete-contrast rule; the full Performance scan below
+  // covers it again inside the page.
+  ['StrategyVsBacktest', '/#/Performance?section=strategy-vs-backtest', routed.mockPerformance, 'TSLA', null, '#strategy-vs-backtest'],
   ['SystemStatus', '/#/SystemStatus', routed.mockSystemStatus, 'GET /signals', async (page) => {
     await page.getByRole('button', { name: /Run Tests/ }).click();
   }],
-  ['TickerUniverse', '/#/TickerUniverse', routed.mockTickerUniverse, 'British American Tobacco'],
+  ['TickerUniverse', '/#/settings/ticker-universe', routed.mockTickerUniverse, 'British American Tobacco'],
   ['Watchlist', '/#/Watchlist', routed.mockWatchlist, 'VOD.L'],
   ['ResearchLanding', '/#/Research', routed.catchAll, null],
   ['ResearchTicker', '/#/research/AAPL', routed.mockResearch, 'Apple reports record quarterly revenue'],
@@ -932,7 +947,7 @@ for (const theme of ['light', 'dark']) {
       }, theme);
     });
 
-    for (const [name, route, mock, marker, step] of ST08_PAGES) {
+    for (const [name, route, mock, marker, step, include] of ST08_PAGES) {
       test(`${name} (${theme})`, async ({ page }) => {
         // The two modal states take longer than the 30s default; every other entry keeps it.
         if (name.endsWith('Modal')) test.setTimeout(60000);
@@ -942,7 +957,7 @@ for (const theme of ['light', 'dark']) {
         if (step) await step(page);
         if (marker) await expect(page.locator('main').getByText(marker, { exact: false }).first()).toBeVisible({ timeout: 15000 });
         await expectThemeApplied(page, theme);
-        await runAxeScan(page, `${name}:${theme}`);
+        await runAxeScan(page, `${name}:${theme}`, { include });
       });
     }
   });

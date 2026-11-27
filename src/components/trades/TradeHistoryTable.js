@@ -8,6 +8,7 @@ import PlanVsReality from "./PlanVsReality";
 import TradeDebrief from "./TradeDebrief";
 import { formatCurrency, formatPercent, formatR as formatRShared } from "../../lib/format";
 import { exitReasonBadgeClass, exitReasonShortLabel } from "../../constants/exitReasons";
+import { rulesLine, rulesState } from "../../lib/rulesFilter";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // R-multiple helpers
@@ -485,6 +486,15 @@ export default function TradeHistoryTable({ trades, tradesForCharts = [] }) {
                         <div className="w-1 h-4 bg-gradient-to-b from-cyan-500 to-violet-500 rounded-full" />
                         <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300">Trade Journal</h3>
                       </div>
+
+                      {/* trade_history.md v1.18 §Rules Filter (ST-13, BLG-FE-320): the
+                          server's classification; the word always shows, colour is extra. */}
+                      <p className="text-sm" data-testid={`trade-rules-line-${tradeId}`}>
+                        <span className="font-semibold text-slate-700 dark:text-slate-300">Rules: </span>
+                        <span className={rulesState(trade) === "broken" ? "text-app-negative" : "text-slate-700 dark:text-slate-300"}>
+                          {rulesLine(trade)}
+                        </span>
+                      </p>
 
                       {trade.entry_note && (
                         <div className="space-y-2.5">

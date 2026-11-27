@@ -1,29 +1,17 @@
 import { ShieldAlert, AlertCircle, ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "../../utils";
-import { isInGrace } from "../../lib/positionUrgency";
+import { isInGrace, minGraceDaysRemaining, nextEndsText } from "../../lib/positionUrgency";
 
 // ST-04 (BLG-FE-257, v9.17): grace detail lives only in the Positions grace view
 // (positions.md §Grace Period View). This panel shows the heading, the count
 // badge, when the next grace period ends, and a link to that view
 // (risk_dashboard.md v0.1.16 §5.2). The per-position rows are removed.
-// grace_days_remaining 1 is the last day of grace ("Ends today", Day 10 of 10),
-// so a value n ends in n − 1 days, matching the Positions strip's "next ends"
-// date. 0 means grace has just ended; the position moves on at the next refresh.
-function nextEndsText(days) {
-  if (days === null) return null;
-  if (days <= 0) return "Grace period has ended";
-  if (days === 1) return "Ends today";
-  const n = days - 1;
-  return `Next ends in ${n} day${n === 1 ? "" : "s"}`;
-}
-
+// The "next ends" text is nextEndsText in src/lib/positionUrgency.js (moved there
+// by ST-10, BLG-FE-308, v9.18, so Dashboard Card 3 uses the same function).
 export default function GracePeriodPanel({ positions = [], error }) {
   const gracePosts = positions.filter(isInGrace);
-  const days = gracePosts
-    .map((p) => p.grace_days_remaining)
-    .filter((d) => d !== null && d !== undefined);
-  const nextEnds = nextEndsText(days.length ? Math.min(...days) : null);
+  const nextEnds = nextEndsText(minGraceDaysRemaining(gracePosts));
 
   return (
     <div className="rounded-2xl bg-white dark:bg-gradient-to-br dark:from-slate-800/50 dark:to-slate-900/50 border border-app-line backdrop-blur-sm p-6">

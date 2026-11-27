@@ -4,6 +4,7 @@ import NotificationPreferences from "./pages/NotificationPreferences"
 import Notifications from "./pages/Notifications"
 import NotificationsHistory from "./pages/NotificationsHistory"
 import Research from "./pages/Research"
+import TickerUniverse from "./pages/TickerUniverse"
 import StandingAlertHarness from "./pages/__StandingAlertHarness"
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClientInstance } from './lib/query-client'
@@ -26,12 +27,12 @@ const LayoutWrapper = ({ children, currentPageName }) => Layout ?
 // /PerformanceAnalytics redirect to their Performance section (replace),
 // keeping other query params. ?section=strategy-compliance (the SI-05 digest
 // link) maps to the Compliance section.
-const PerformanceRedirect = ({ section }) => {
+const PerformanceRedirect = ({ section, mapDigestSection = true }) => {
   const location = useLocation();
   const params = new URLSearchParams(location.search);
   const old = params.get('section');
   params.delete('section');
-  params.set('section', old === 'strategy-compliance' ? 'compliance' : section);
+  params.set('section', mapDigestSection && old === 'strategy-compliance' ? 'compliance' : section);
   return <Navigate to={`/Performance?${params.toString()}`} replace />;
 };
 
@@ -44,6 +45,13 @@ const JournalRedirect = ({ section }) => {
   params.delete('section');
   const rest = params.toString();
   return <Navigate to={`/Journal?section=${section}${rest ? `&${rest}` : ''}`} replace />;
+};
+
+// navigation.md v2.5 (ST-08, BLG-FE-323, v9.18): Ticker Universe moved under
+// Settings. /TickerUniverse redirects (replace), keeping its query string.
+const TickerUniverseRedirect = () => {
+  const location = useLocation();
+  return <Navigate to={`/settings/ticker-universe${location.search}`} replace />;
 };
 
 const AuthenticatedApp = () => {
@@ -96,6 +104,16 @@ const AuthenticatedApp = () => {
       <Route path="/RedFlagJournal" element={<JournalRedirect section="red-flags" />} />
       <Route path="/Reports" element={<PerformanceRedirect section="reports" />} />
       <Route path="/PerformanceAnalytics" element={<PerformanceRedirect section="analytics" />} />
+      {/* performance.md v1.3 §7 (ST-08, BLG-FE-323, v9.18): Strategy Benchmark is
+          the "Strategy vs backtest" section; its own ?section= (the retired
+          panel index) is replaced, ?tab= and other params are kept. */}
+      <Route path="/StrategyBenchmark" element={<PerformanceRedirect section="strategy-vs-backtest" mapDigestSection={false} />} />
+      <Route path="/TickerUniverse" element={<TickerUniverseRedirect />} />
+      <Route path="/settings/ticker-universe" element={
+        <LayoutWrapper currentPageName="TickerUniverse">
+          <TickerUniverse />
+        </LayoutWrapper>
+      } />
       <Route path="/notifications" element={
         <LayoutWrapper currentPageName="notifications">
           <Notifications />

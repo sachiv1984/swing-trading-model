@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Class 2
 **Status:** Canonical
-**Version:** 1.37.1
-**Last Updated:** 2026-11-24 (EPIC-06, v9.18, pre-PR review follow-ups — earnings_endpoints.md v0.4.1 (BLG-BE-235) and watchlist_endpoints.md v1.5.1 (BLG-BE-234/236)); prior — 2026-11-24 (ST-33, EPIC-06, v9.18, BLG-FE-294 — v9.18.0 entry adds earnings_endpoints.md v0.4 and position_endpoints.md v2.24.0: data_status); prior — 2026-11-23 (ST-27, EPIC-05, v9.18, BLG-BE-223/BLG-BE-229 — v9.18.0 entry adds stop_trail_endpoint.md v1.2.0); prior history retained — see prior entries in version control
+**Version:** 1.38.0
+**Last Updated:** 2026-11-26 (ST-13, EPIC-02, v9.18 — trade_endpoints.md v2.7.0: `GET /trades` rules_followed / rules_broken); prior — 2026-11-24 (EPIC-06, v9.18, pre-PR review follow-ups — earnings_endpoints.md v0.4.1 (BLG-BE-235) and watchlist_endpoints.md v1.5.1 (BLG-BE-234/236)); prior — 2026-11-24 (ST-33, EPIC-06, v9.18, BLG-FE-294 — v9.18.0 entry adds earnings_endpoints.md v0.4 and position_endpoints.md v2.24.0: data_status); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 # API Changelog
@@ -39,6 +39,15 @@ Rules:
 ---
 
 ## v9.18.0 (2026-11-19 — Release v9.18)
+
+### trade_endpoints.md — v2.7.0 (UPDATED)
+
+**EPIC:** EPIC-02
+**ST:** ST-13
+
+| Change | Details |
+|--------|---------|
+| Updated endpoint: GET /trades | Each trade gains server-computed `rules_followed` (`true \| false \| null`) and `rules_broken` (`string[]`), per `metrics_definitions.md` v1.36.0 §Rules Followed, so Trade History can filter by rules followed or broken (BLG-FE-320). Additive. |
 
 ### alerts_endpoints.md — v0.15 (UPDATED)
 

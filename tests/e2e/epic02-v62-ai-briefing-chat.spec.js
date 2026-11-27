@@ -27,6 +27,15 @@
 
 const { test, expect } = require('./fixtures/api-status-guard');
 
+// ST-09 (EPIC-02, v9.18, BLG-UX-11): with no briefing for today the AI Daily
+// Briefing card folds into the Dashboard's "Nothing to show" line
+// (dashboard.md v4.4 §3A). Its "AI briefing" entry reveals the card, with
+// Regenerate, for the rest of the visit.
+async function revealBriefing(page) {
+  await page.getByTestId('nothing-to-show-ai-briefing').click({ timeout: 15000 });
+  await expect(page.getByTestId('ai-daily-briefing-card')).toBeVisible({ timeout: 8000 });
+}
+
 // v9.12 ST-24 (BLG-FE-210): axe color-contrast scoped to one badge.
 const AxeBuilder = require('@axe-core/playwright').default;
 async function expectNoContrastViolation(page, selector) {
@@ -158,6 +167,7 @@ test.describe('ST-07 — AI Daily Briefing Card', () => {
       model: null,
     });
     await page.goto('/#/');
+    await revealBriefing(page);
     await expect(page.getByTestId('ai-daily-briefing-card')).toBeVisible({ timeout: 8000 });
     await expect(page.getByText("Today's Briefing")).toBeVisible({ timeout: 5000 });
   });
@@ -176,6 +186,7 @@ test.describe('ST-07 — AI Daily Briefing Card', () => {
 
     await stubDashboardRoutes(page, briefingPayload);
     await page.goto('/#/');
+    await revealBriefing(page);
 
     // Click Regenerate to trigger the API call
     const regenBtn = page.getByTestId('regenerate-briefing-btn');
@@ -200,6 +211,7 @@ test.describe('ST-07 — AI Daily Briefing Card', () => {
       advisory: true,
     });
     await page.goto('/#/');
+    await revealBriefing(page);
 
     // Regenerate button is visible before any generation
     const regenBtn = page.getByTestId('regenerate-briefing-btn');
@@ -241,6 +253,7 @@ test.describe('ST-07 — AI Daily Briefing Card', () => {
     });
 
     await page.goto('/#/');
+    await revealBriefing(page);
 
     const regenBtn = page.getByTestId('regenerate-briefing-btn');
     await regenBtn.waitFor({ state: 'visible', timeout: 8000 });
@@ -270,6 +283,7 @@ test.describe('ST-07 — AI Daily Briefing Card', () => {
       model: null,
     });
     await page.goto('/#/');
+    await revealBriefing(page);
     await expect(page.getByTestId('ai-daily-briefing-card')).toBeVisible({ timeout: 8000 });
 
     const badge = page.getByTestId('ai-daily-briefing-card').getByText('AI Advisory', { exact: true });

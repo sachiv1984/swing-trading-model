@@ -3,8 +3,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 1.18
-**Last Updated:** 2026-11-18 (v9.18 design gate — ST-13/BLG-FE-320: Rules filter (followed, broken, not known)); prior — 2026-11-04 (ST-15, EPIC-03, v9.15, BLG-FE-239 — §Summary Stats and §Filters state the pnl > 0 win test; break-even trades are neither wins nor losses); prior — 2026-10-16 (v9.13 design gate — ST-03/BLG-FE-227: new §Exit Reason Labels and Badges; ST-21/BLG-FE-212: §Post-Trade Debrief error text and card surface get light-theme tokens); prior history retained — see prior entries in version control
+**Version:** 1.19
+**Last Updated:** 2026-11-26 (ST-13, EPIC-02, v9.18, BLG-FE-320 — §Rules Filter built; build notes); prior — 2026-11-18 (v9.18 design gate — ST-13/BLG-FE-320: Rules filter (followed, broken, not known)); prior — 2026-11-04 (ST-15, EPIC-03, v9.15, BLG-FE-239 — §Summary Stats and §Filters state the pnl > 0 win test; break-even trades are neither wins nor losses); prior history retained — see prior entries in version control
 **Design Source (v1.16):** docs/design/2026-10-16__release-v9.13/exit-reason-badges/decision_record.md; light-theme tokens per docs/design/2026-10-12__release-v9.12/light-theme-support/decision_record.md §3
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Design Source (v1.15 Debrief Regenerate):** docs/design/2026-10-08__release-v9.11/debrief-regenerate-feedback/decision_record.md
@@ -111,6 +111,8 @@ When no trades have tags, the tag filter does not appear.
 |----|-----------|------|
 | RF-01 | With a fixture of followed, broken and not-known closed trades, each option shows only its trades, and the counts match | Playwright (ST-13) |
 | RF-02 | A legacy trade with `rules_followed: null` appears only under "Not known" | Playwright (ST-13) |
+
+**Build notes (v1.19, ST-13, built 2026-11-26):** the definition is `metrics_definitions.md` v1.36.0 §Rules Followed and the fields are `trade_endpoints.md` v2.7.0. The page reads only the two fields (`src/lib/rulesFilter.js`, with unit tests): anything other than a real `true`/`false`, including a payload with no field, is "Not known". The control's options are buttons with `aria-pressed` (`rules-filter-{all|followed|broken|unknown}`); each summary number is a button (`rules-summary-{followed|broken|unknown}`). Choosing All removes `?rules=`. The option is also kept in the device-local filter envelope (`tradeHistory.filters`, with the market, result, date and tag filters): `?rules=` wins, and with none the stored option is restored once on arrival. A preset, or a stored envelope, saved before v9.18 has no `rules` value and applies as All. As with the other filters, the Calendar view does not apply the rules option (pre-existing: `CalendarView` reads its own daily P&L, not the filtered list). "Clear filters" on the filtered empty state (`trades-filtered-empty`) resets every filter, the `?ticker=` filter and the rules option; the empty state shows only when trades exist and some filter is active (otherwise the table's "No trade history yet"). The expanded row's line is `trade-rules-line-{id}`. Tests: `tests/e2e/rules-filter.spec.js` SC-RF-01 to SC-RF-08; pytest `tests/test_rules_followed.py`, `tests/test_rules_followed_db.py` (real Postgres, CI Phase B).
 
 ---
 
@@ -613,6 +615,7 @@ Documentation-only requirements baseline for this table-based page — no implem
 
 | Version | Date | Change |
 | --- | --- | --- |
+| 1.19 | 2026-11-26 | ST-13 (EPIC-02, v9.18, BLG-FE-320): §Rules Filter built; build notes (field reading, test ids, `?rules=` and preset behaviour, filtered empty state). No behaviour change to the spec. |
 | 1.18 | 2026-11-18 | v9.18 design gate (ST-13, BLG-FE-320): new §Rules Filter — All / Followed / Broken / Not known, summary counts, expanded-row Rules line, from new `GET /trades` fields `rules_followed`/`rules_broken` (the definition is written in ST-13). RF-01, RF-02. Design source: `docs/design/2026-11-18__release-v9.18/rules-followed-filter/decision_record.md`. Head of UX & Design sign-off: 2026-11-18. Product Owner approved: 2026-11-18. Head of Specs Team confirmed. |
 | 1.17 | 2026-11-04 | ST-15 (EPIC-03, v9.15, `BLG-FE-239`): §Summary Stats and §Filters state the win test, `pnl > 0` per `metrics_definitions.md` §Win Rate. A break-even trade is in Total trades but in neither the W/L counts, the averages nor the Win/Loss filters. Implementation-only fix to match the canonical metric; Design Pre-Approved (`sprint_backlog.md` ST-15). |
 | 1.16 | 2026-10-16 | v9.13 design gate. (ST-03, BLG-FE-227) New §Exit Reason Labels and Badges: one shared module, six stored values, legacy aliases, light/dark badge tokens. (ST-21, BLG-FE-212) §Post-Trade Debrief: error text `text-rose-700 dark:text-rose-400`, and a new §Light Theme token table for the section. Design sources: `docs/design/2026-10-16__release-v9.13/exit-reason-badges/decision_record.md`; light-theme tokens per `docs/design/2026-10-12__release-v9.12/light-theme-support/decision_record.md` §3. Head of UX & Design sign-off: 2026-10-16. Product Owner approved: 2026-10-16. Head of Specs Team confirmed. |

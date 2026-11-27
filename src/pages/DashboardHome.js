@@ -9,6 +9,8 @@ import AiDailyBriefing from "../components/dashboard/home/AiDailyBriefing";
 import { PAGE_LABELS } from "../lib/pageLabels";
 import WhatsNewCard from "../components/dashboard/home/WhatsNewCard";
 import TodayList, { TODAY_QUERY_KEYS } from "../components/dashboard/home/TodayList";
+import { NothingToShowLine, QuietDayProvider, useQuietDay } from "../components/dashboard/home/QuietDay";
+import { BRIEFING_PANEL_KEYS, STATUS_ROW_KEYS, mdGridCols, shownCount } from "../lib/quietDay";
 
 const DASHBOARD_QUERY_KEYS = [
   "home-open-positions",
@@ -17,7 +19,6 @@ const DASHBOARD_QUERY_KEYS = [
   ...TODAY_QUERY_KEYS,
   "home-recent-activity",
   "morning-screener-hits",
-  "morning-grace-alerts",
   "morning-positions",
   "morning-red-flags",
   "morning-compliance-7d",
@@ -26,7 +27,21 @@ const DASHBOARD_QUERY_KEYS = [
 ];
 
 export default function DashboardHome() {
+  return (
+    <QuietDayProvider>
+      <DashboardHomeContent />
+    </QuietDayProvider>
+  );
+}
+
+function DashboardHomeContent() {
   const queryClient = useQueryClient();
+  // dashboard.md v4.4 §3A (ST-09, BLG-UX-11): containers whose elements have
+  // all folded are hidden (kept mounted, so their queries keep running), and
+  // the Cards 1–3 row re-flows to the cards still shown.
+  const { folded, revealed } = useQuietDay();
+  const briefingShown = shownCount(BRIEFING_PANEL_KEYS, folded, revealed);
+  const statusRowShown = shownCount(STATUS_ROW_KEYS, folded, revealed);
 
   const handleRetry = () => {
     DASHBOARD_QUERY_KEYS.forEach(key => queryClient.invalidateQueries({ queryKey: [key] }));
@@ -44,23 +59,29 @@ export default function DashboardHome() {
           Morning Briefing's Exit Conditions Met row. */}
       <TodayList />
 
+      {/* §3A: folded elements' names, directly below the Today list. */}
+      <NothingToShowLine />
+
       {/* ST-03 (EPIC-01, v7.3): briefing section — visually distinguished from the
           status-card grid below via an accent border/tint, and placed first so
           it is visible on page load without scrolling past other cards. */}
-      <div className="rounded-2xl border border-indigo-500/30 bg-indigo-500/5 dark:bg-indigo-500/10 p-4 md:p-6 space-y-4">
+      <div
+        data-testid="dashboard-briefing-panel"
+        className={briefingShown === 0 ? "hidden" : "rounded-2xl border border-indigo-500/30 bg-indigo-500/5 dark:bg-indigo-500/10 p-4 md:p-6 space-y-4"}
+      >
         <MorningBriefing />
         <AiDailyBriefing />
       </div>
 
       {/* Top row: Open Positions, Portfolio Heat, In Grace Today */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div data-testid="dashboard-status-row" className={statusRowShown === 0 ? "hidden" : `grid grid-cols-1 ${mdGridCols(statusRowShown)} gap-4`}>
         <OpenPositionsCard />
         <PortfolioHeatCard />
         <GracePeriodCard />
       </div>
 
       {/* Bottom row (v4.0): Recent Activity alone, full width — Card 4 moved into the Today list */}
-      <div className="grid grid-cols-1 gap-4">
+      <div className={shownCount(["recent-activity"], folded, revealed) === 0 ? "hidden" : "grid grid-cols-1 gap-4"}>
         <RecentActivityCard />
       </div>
 

@@ -7,6 +7,7 @@ import { Input } from "../components/ui/input";
 import PageHeader from "../components/ui/PageHeader";
 import { PAGE_LABELS } from "../lib/pageLabels";
 import EntryChecklist from "../components/trades/EntryChecklist";
+import { positionSizeStatus } from "../lib/checklistStatus";
 import SetupQualityScorePanel from "../components/trades/SetupQualityScorePanel";
 import { ArrowLeft, TrendingUp, TrendingDown } from "lucide-react";
 import { cn } from "../lib/utils";
@@ -418,10 +419,16 @@ export default function Research() {
             {Array.isArray(activePlan.checklist_items) && activePlan.checklist_items.length > 0 && (
               <div>
                 <p className="text-xs text-slate-600 dark:text-slate-400 mb-2">Pre-Entry Checklist</p>
+                {/* trade_plan.md v1.30 §6.4 (ST-12): system items from the plan's
+                    stored snapshot and Stop Level, captioned with when it was saved. */}
                 <EntryChecklist
                   items={activePlan.checklist_items}
                   ticker={ticker}
                   readOnly
+                  sizeStatus={positionSizeStatus(activePlan.pre_entry_validation_snapshot)}
+                  stopValue={activePlan.planned_stop_price}
+                  market={activePlan.market}
+                  savedAt={activePlan.pre_entry_validation_snapshot?.captured_at}
                 />
               </div>
             )}

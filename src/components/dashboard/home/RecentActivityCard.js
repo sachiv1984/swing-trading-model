@@ -34,6 +34,7 @@ export default function RecentActivityCard() {
 
   return (
     <DashboardCard
+      foldKey="recent-activity"
       title="Recent Activity"
       to="/TradeHistory"
       isLoading={isLoading}

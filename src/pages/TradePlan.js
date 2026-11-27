@@ -9,6 +9,7 @@ import { PAGE_LABELS } from "../lib/pageLabels";
 import SectionIndex, { SECTION_SCROLL_MARGIN } from "../components/ui/SectionIndex";
 import DataState from "../components/ui/DataState";
 import EntryChecklist, { DEFAULT_CHECKLIST_ITEMS } from "../components/trades/EntryChecklist";
+import { judgementComplete, positionSizeStatus, withSystemStatus } from "../lib/checklistStatus";
 import SignalContextPanel, { buildSignalPrePopulation, getSuggestedStop, getSignalAtr } from "../components/trades/SignalContextPanel";
 import { formatCurrency, currencyForMarket } from "../lib/format";
 import { INITIAL_ATR_MULTIPLIER } from "../constants/strategy";
@@ -155,12 +156,13 @@ function generateThesisTemplate({ setupType, ticker, market, signal, headlines }
   return parts.join("\n\n");
 }
 
+// trade_plan.md v1.30 §6.2 (ST-12): only "Pre-trade research reviewed" is
+// pre-ticked (r_target set). The v0.2 stop_defined pre-tick from
+// early_exit_conditions is retired: Stop level defined is a status now.
 function buildPrePopulatedItems(plan) {
   return DEFAULT_CHECKLIST_ITEMS.map((item) => ({
     ...item,
-    checked:
-      (item.id === "stop_defined" && !!plan.early_exit_conditions) ||
-      (item.id === "research_reviewed" && plan.r_target != null),
+    checked: item.id === "research_reviewed" && plan.r_target != null,
   }));
 }
 
@@ -432,7 +434,10 @@ export default function TradePlan() {
   useEffect(() => {
     if (existingPlan && !hasUnsavedAiChanges.current) {
       const existingItems = Array.isArray(existingPlan.checklist_items) ? existingPlan.checklist_items : [];
-      const hasUserState = existingItems.some((i) => i.checked);
+      // §6.5 (ST-12): a plan saved from v9.18 carries "auto" on its system items,
+      // so its judgement ticks (even both unticked) are the trader's choices and
+      // are kept; only an untouched legacy checklist is pre-populated.
+      const hasUserState = existingItems.some((i) => i.checked || i.auto === true);
       const checklistItems = hasUserState
         ? existingItems
         : buildPrePopulatedItems(existingPlan);
@@ -452,7 +457,7 @@ export default function TradePlan() {
         confirmation_criteria: existingPlan.confirmation_criteria || "",
         invalidation_condition: existingPlan.invalidation_condition || "",
         checklist_items: checklistItems,
-        checklist_completed: checklistItems.every((i) => i.checked),
+        checklist_completed: judgementComplete(checklistItems),
         status: existingPlan.status || "draft",
         thesis_feedback: existingPlan.thesis_feedback || null,
         trade_tags: Array.isArray(existingPlan.trade_tags) ? existingPlan.trade_tags : [],
@@ -757,7 +762,7 @@ export default function TradePlan() {
       const items = prev.checklist_items.map((item, i) =>
         i === idx ? { ...item, checked: !item.checked } : item
       );
-      return { ...prev, checklist_items: items, checklist_completed: items.every((i) => i.checked) };
+      return { ...prev, checklist_items: items, checklist_completed: judgementComplete(items) };
     });
   };
 
@@ -765,8 +770,17 @@ export default function TradePlan() {
     if (submitInFlight.current) return;
     submitInFlight.current = true;
     const toNum = (v, parse) => (v === "" || v == null ? null : (n => isNaN(n) ? null : n)(parse(v)));
+    // §6.5 (ST-12): the two system items are saved with "auto": true and
+    // checked = their status; checklist_completed covers the judgement items
+    // (ESC-EXEC-20261126-01).
+    const checklistItems = withSystemStatus(form.checklist_items, {
+      sizeStatus: positionSizeStatus(preEntrySnapshot),
+      stopValue: form.planned_stop_price,
+    });
     const payload = {
       ...form,
+      checklist_items: checklistItems,
+      checklist_completed: judgementComplete(checklistItems),
       regime_context_at_entry: form.regime_context_at_entry || regimeFromHealth || null,
       r_target: toNum(form.r_target, parseFloat),
       planned_quantity: toNum(form.planned_quantity, v => parseInt(v, 10)),
@@ -1376,6 +1390,9 @@ export default function TradePlan() {
             items={form.checklist_items}
             ticker={form.ticker}
             onToggle={handleChecklistToggle}
+            sizeStatus={positionSizeStatus(preEntrySnapshot)}
+            stopValue={form.planned_stop_price}
+            market={form.market}
           />
         </Field>
         </PlanSection>

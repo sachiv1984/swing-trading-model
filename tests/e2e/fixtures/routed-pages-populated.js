@@ -74,12 +74,6 @@ const BENCHMARK_OPEN = {
   ],
   summary: { count: 1, total_unrealized_pnl_gbp: 18.5 },
 };
-async function mockStrategyBenchmark(page) {
-  await catchAll(page);
-  await page.route(/\/strategy\/benchmark\/open-positions/, (r) => r.fulfill(ok(BENCHMARK_OPEN)));
-  await page.route(/\/strategy\/benchmark\/summary/, (r) => r.fulfill(ok(BENCHMARK_SUMMARY)));
-  await page.route(/\/strategy\/benchmark\/trades/, (r) => r.fulfill(ok(BENCHMARK_TRADES)));
-}
 
 // --- System Status ----------------------------------------------------------
 async function mockSystemStatus(page) {
@@ -254,6 +248,10 @@ async function mockPerformance(page) {
     })));
   await page.route(/localhost:8000\/analytics\/arc5-compliance/, (r) =>
     r.fulfill(envelope({ events_per_week: 1.2, override_rate: 0.15, top_rule_breach: 'stop_widened', trade_plan_adherence_rate: 0.9, validation_pass_rate_by_rule: [] })));
+  // v9.18 ST-08 (BLG-FE-323): the Strategy vs backtest section, populated.
+  await page.route(/\/strategy\/benchmark\/open-positions/, (r) => r.fulfill(ok(BENCHMARK_OPEN)));
+  await page.route(/\/strategy\/benchmark\/summary/, (r) => r.fulfill(ok(BENCHMARK_SUMMARY)));
+  await page.route(/\/strategy\/benchmark\/trades/, (r) => r.fulfill(ok(BENCHMARK_TRADES)));
 }
 
 // --- Signals ----------------------------------------------------------------
@@ -366,7 +364,6 @@ module.exports = {
   mockAdvisorChat,
   mockAdvisorChatError,
   catchAll,
-  mockStrategyBenchmark,
   mockSystemStatus,
   mockWatchlist,
   mockTickerUniverse,

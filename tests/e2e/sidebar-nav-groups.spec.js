@@ -52,8 +52,10 @@ const { test, expect } = require('./fixtures/api-status-guard');
 const AREAS = [
   { key: 'today',     label: 'Today',       items: ['Dashboard', 'Notifications'] },
   { key: 'portfolio', label: 'Portfolio',   items: ['Positions', 'Trade Entry', 'Risk Dashboard'] },
-  { key: 'find',      label: 'Find trades', items: ['Signals', 'Screener', 'Watchlist', 'Research', 'Trade Plans', 'Ticker Universe'] },
-  { key: 'review',    label: 'Review',      items: ['Trade History', 'Performance', 'Strategy Benchmark', 'Replay', 'Journal', 'Weekly Digest'] },
+  { key: 'find',      label: 'Find trades', items: ['Signals', 'Screener', 'Watchlist', 'Research', 'Trade Plans'] },
+  { key: 'review',    label: 'Review',      items: ['Trade History', 'Performance', 'Replay', 'Journal', 'Weekly Digest'] },
+  // navigation.md v2.5 (ST-08, v9.18): Ticker Universe is a Settings detail
+  // page and Strategy Benchmark a Performance section; neither has an entry.
   { key: 'settings',  label: 'Settings',    items: ['Settings', 'System Status'] },
 ];
 
@@ -69,10 +71,8 @@ const HREFS = {
   'Watchlist': '#/Watchlist',
   'Research': '#/Research',
   'Trade Plans': '#/TradePlans',
-  'Ticker Universe': '#/TickerUniverse',
   'Trade History': '#/TradeHistory',
   'Performance': '#/Performance',
-  'Strategy Benchmark': '#/StrategyBenchmark',
   'Replay': '#/Replay',
   'Journal': '#/Journal',
   'Weekly Digest': '#/WeeklyDigest',
@@ -257,7 +257,7 @@ test('SC-SNV-08: every area lists exactly its spec entries in order, with the ri
     await expectExpanded(nav, area.key, true);
   }
   const links = nav.getByRole('link');
-  await expect(links).toHaveCount(19); // ST-05 (v9.17): Journal replaces two entries; ST-06: Performance replaces two
+  await expect(links).toHaveCount(17); // ST-05 (v9.17): Journal replaces two entries; ST-06: Performance replaces two; ST-08 (v9.18): Strategy Benchmark and Ticker Universe leave the sidebar
   const got = await links.evaluateAll((els) =>
     els.map((e) => [e.textContent.trim(), e.getAttribute('href')])
   );

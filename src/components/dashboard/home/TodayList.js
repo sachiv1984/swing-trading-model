@@ -7,6 +7,8 @@ import { Skeleton } from "../../ui/skeleton";
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "../../ui/tooltip";
 import { REGIME_RISK_ON, REGIME_UNKNOWN, regimeStatusOf, unknownRegimeExplanation } from "../../../lib/regime";
 import { getExitCondition } from "../../../lib/exitCondition";
+import { isGraceEndingToday } from "../../../lib/positionUrgency";
+import { planThisUrl, PLAN_THIS_SIGNAL_STATUSES } from "../../../lib/planThis";
 import { formatCurrency, currencyForMarket } from "../../../lib/format";
 
 // ST-06 (BLG-FE-254, EPIC-02, v9.16): dashboard.md v4.0 §1B Today list ("Due today").
@@ -153,8 +155,10 @@ export function selectExitsDue(positions) {
   ];
 }
 
+// dashboard.md v4.4 §4B (ST-10, BLG-FE-308): a subset of the one grace
+// definition — in grace (isInGrace) with 1 day left.
 export function selectGraceEndsToday(positions) {
-  return positions.filter((p) => Number(p.grace_days_remaining) === 1 && p.grace_days_remaining != null).sort(byTicker);
+  return positions.filter(isGraceEndingToday).sort(byTicker);
 }
 
 // Stops moved (dashboard.md §1B, TL-09; DEV-EPIC04-ST10-01). GET /positions has no run
@@ -374,6 +378,19 @@ export default function TodayList() {
                     >
                       Research
                     </Link>
+                    {/* dashboard.md v4.4 §1B, TL-30 (ST-11, BLG-UX-13): "Plan this" on the
+                        statuses Signals shows it on, with the signals.md route. A link,
+                        so TL-19 (no data-changing button) holds. */}
+                    {PLAN_THIS_SIGNAL_STATUSES.includes(s.status) && (
+                      <Link
+                        to={planThisUrl({ ticker: s.ticker, market: s.market, price: s.current_price, signalId: s.id })}
+                        aria-label={`Plan this: ${s.ticker}`}
+                        data-testid={`today-plan-${s.ticker}`}
+                        className={LINK}
+                      >
+                        Plan this
+                      </Link>
+                    )}
                   </li>
                 ))}
               </ul>

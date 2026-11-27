@@ -2,6 +2,7 @@ import { AlertCircle, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { cn } from "../../../lib/utils";
 import DataState from "../../ui/DataState";
+import { useQuietDayFold } from "./QuietDay";
 
 export default function DashboardCard({
   title,
@@ -15,7 +16,12 @@ export default function DashboardCard({
   children,
   className,
   descriptions = [],
+  foldKey,
 }) {
+  // dashboard.md v4.4 §3A (ST-09, BLG-UX-11): on the Dashboard, a card whose
+  // data has loaded and is empty folds into the "Nothing to show" line.
+  const hidden = useQuietDayFold(foldKey, { isLoading, error, empty });
+
   // ST-09 (BLG-FE-264, EPIC-03, v9.16): shell on the semantic colour tokens
   // (design_system.md v1.25 §Semantic Colour Tokens rule 5). The hover fill
   // keeps an explicit pair because tokens take no opacity modifier (rule 2).
@@ -55,6 +61,8 @@ export default function DashboardCard({
       ))}
     </div>
   );
+
+  if (hidden) return null;
 
   const describedBy = descriptions.map(({ id }) => id).join(" ") || undefined;
   return to ? <Link to={to} className="block h-full" aria-describedby={describedBy}>{content}</Link> : content;

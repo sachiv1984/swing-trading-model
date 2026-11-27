@@ -11,6 +11,7 @@ from pydantic import BaseModel
 from services.rate_limiter import _ai_limiter
 from typing import Optional, List, Any
 from datetime import timezone, datetime
+from utils.checklist import count_unchecked_judgement_items
 from database import (
     get_portfolio,
     create_trade_plan,
@@ -189,15 +190,21 @@ def _maybe_write_override_event(ticker: str, position_id=None) -> None:
 
 
 def _unchecked_count(checklist_items) -> tuple:
-    """(unchecked, total) for a saved checklist; (0, 0) when there is none."""
+    """(unchecked, total) for a saved checklist; (0, 0) when there is none.
+
+    ST-12 (BLG-UX-19, v9.18; ESC-EXEC-20261126-01, judgement items only):
+    items saved with "auto": true are system statuses (trade_plan.md v1.30
+    §6.5: Position size checks, Stop level defined) that the trader cannot
+    tick, so they are not counted. Their failures are recorded elsewhere
+    (pre_entry_override). Legacy items have no "auto" key; their two system
+    ids (heat_limit_checked, stop_defined) are not counted either.
+    """
+    # One rule with the rules-followed evidence (utils/checklist.py): the two
+    # system ids also never count, so a pre-v9.18 plan re-saved with only the
+    # old heat tick unticked writes no event.
     if not isinstance(checklist_items, list) or not checklist_items:
         return 0, 0
-    total = len(checklist_items)
-    unchecked = sum(
-        1 for item in checklist_items
-        if not (isinstance(item, dict) and item.get("checked") is True)
-    )
-    return unchecked, total
+    return count_unchecked_judgement_items(checklist_items)
 
 
 def _maybe_write_checklist_skipped_event(plan: dict, checklist_items) -> None:

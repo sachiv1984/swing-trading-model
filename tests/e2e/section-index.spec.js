@@ -10,12 +10,18 @@
  *   SC-SIX-03  Trade Plan: ?section=rules opens at Rules; an unknown id does nothing
  *   SC-SIX-04  aria-current moves after scrolling to a later section (IntersectionObserver)
  *   SC-SIX-05  Trade Plan at 390 px: sticky pill row (44 px links), no page-level horizontal scroll
- *   SC-SIX-06  Strategy Benchmark: index on the Benchmark tab only, four sections, one-click reach,
- *              ?section=trade-log on load, ignored on the other tabs; Open positions left out when empty
- *   SC-SIX-07  Strategy Benchmark at 390 px: no page-level horizontal scroll
- *   SC-SIX-08  axe: the index has no violation and no unrated colour contrast (light and dark)
+ *   SC-SIX-06  (moved to the Performance index, v9.18 ST-08, BLG-FE-323 — strategy_benchmark.md v0.12
+ *              retires the Benchmark tab's own index) Performance lists five sections ending with
+ *              "Strategy vs backtest"; one-click reach; the benchmark tabs keep ?section= and the index;
+ *              the section renders no second index (PF-20, PF-22)
+ *   SC-SIX-06b ?section=strategy-vs-backtest opens Performance at that section (PF-20)
+ *   SC-SIX-06c the same with a slow benchmark summary: the jump waits for the section's own load
+ *   SC-SIX-07  Performance at 390 px, jumped to Strategy vs backtest: no page-level horizontal scroll
+ *   SC-SIX-08  axe: the Performance index (five links) has no violation and no unrated colour contrast (light and dark)
  *   SC-SIX-09  link hrefs are real hash-router URLs; the What-if panel keeps its inputs across a stop edit;
- *              a reachable jump does not pin aria-current; a tab switch drops ?section=
+ *              a reachable jump does not pin aria-current
+ *   (SC-SIX-09b, a benchmark tab switch dropping ?section=, is removed with the retired index:
+ *    inside Performance a tab switch keeps ?section=; asserted in SC-SIX-06.)
  *
  * "Reaches its heading": the heading is in the viewport, and in the top quarter
  * unless the page is already scrolled to its end (the last sections of a page
@@ -193,43 +199,58 @@ test('SC-SIX-05: at 390 px the Trade Plan index is a sticky pill row and the pag
 });
 
 // ---------------------------------------------------------------------------
-// Strategy Benchmark
+// Strategy vs backtest on Performance (v9.18 ST-08, BLG-FE-323). The Benchmark
+// tab's own index is retired (strategy_benchmark.md v0.12 §3a); these
+// scenarios now cover the section on the Performance index.
 // ---------------------------------------------------------------------------
 
-test('SC-SIX-06: Strategy Benchmark has the index on the Benchmark tab only, with one-click reach', async ({ page }) => {
-  await mockBenchmark(page);
-  await page.goto('/#/StrategyBenchmark');
-  const links = index(page).getByRole('link');
-  await expect(links).toHaveText(['Open positions', 'Performance parity', 'Yearly breakdown', 'Trade log'], { timeout: 15000 });
-  for (const id of ['trade-log', 'yearly', 'parity', 'open-positions']) {
-    await page.getByTestId(`section-link-${id}`).click();
-    await expectReached(page, id);
-    await expect(page).toHaveURL(new RegExp(`section=${id}(&|$)`));
-  }
+const PERF_SECTIONS = ['Summary', 'Reports', 'Analytics', 'Compliance', 'Strategy vs backtest'];
 
+test('SC-SIX-06: Performance lists five sections ending with Strategy vs backtest, with one-click reach', async ({ page }) => {
+  await mockBenchmark(page);
+  await page.goto('/#/Performance');
+  await expect(index(page).getByRole('link')).toHaveText(PERF_SECTIONS, { timeout: 15000 });
+  await page.getByTestId('section-link-strategy-vs-backtest').click();
+  await expectReached(page, 'strategy-vs-backtest');
+  await expect(page).toHaveURL(/section=strategy-vs-backtest(&|$)/);
+  // The section renders no index of its own.
+  await expect(index(page)).toHaveCount(1);
+  await expect(page.getByTestId('strategy-vs-backtest-content').getByTestId('section-index')).toHaveCount(0);
+
+  // A benchmark tab switch keeps the Performance params and the page index.
   await page.getByTestId('benchmark-tab-version-comparison').click();
   await expect(page).toHaveURL(/tab=version-comparison/);
-  await expect(index(page)).toHaveCount(0);
-
-  await page.goto('/#/StrategyBenchmark?tab=backtest-rule-change&section=trade-log');
-  await expect(page.getByTestId('benchmark-tab-backtest-rule-change')).toHaveAttribute('aria-selected', 'true', { timeout: 15000 });
-  await expect(index(page)).toHaveCount(0);
+  await expect(page).toHaveURL(/section=strategy-vs-backtest/);
+  await expect(index(page).getByRole('link')).toHaveText(PERF_SECTIONS);
 });
 
-test('SC-SIX-06b: ?section=trade-log opens the Benchmark tab at the trade log; empty Open positions is left out', async ({ page }) => {
-  await mockBenchmark(page, { openPositions: { filters: { market: 'ALL' }, open_positions: [], summary: { count: 0, total_unrealized_pnl_gbp: null } } });
-  await page.goto('/#/StrategyBenchmark?section=trade-log');
-  await expect(index(page).getByRole('link')).toHaveText(['Performance parity', 'Yearly breakdown', 'Trade log'], { timeout: 15000 });
-  await expectReached(page, 'trade-log');
+test('SC-SIX-06b: ?section=strategy-vs-backtest opens Performance at the section', async ({ page }) => {
+  await mockBenchmark(page);
+  await page.goto('/#/Performance?section=strategy-vs-backtest');
+  await expect(index(page).getByRole('link')).toHaveCount(5, { timeout: 15000 });
+  await expectReached(page, 'strategy-vs-backtest');
 });
 
-test('SC-SIX-07: Strategy Benchmark at 390 px has no page-level horizontal scroll', async ({ page }) => {
+test('SC-SIX-06c: a slow benchmark load still ends at the section heading (the jump waits for it)', async ({ page }) => {
+  await mockBenchmark(page);
+  // Registered last, so it wins: the summary answers 2 s after the rest of the page.
+  await page.route(/\/strategy\/benchmark\/summary/, async (r) => {
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+    await r.fulfill(json(SUMMARY));
+  });
+  await page.goto('/#/Performance?section=strategy-vs-backtest');
+  await expect(page.getByTestId('benchmark-panel-3')).toBeVisible({ timeout: 15000 });
+  await expectReached(page, 'strategy-vs-backtest');
+});
+
+test('SC-SIX-07: Performance at 390 px, at Strategy vs backtest, has no page-level horizontal scroll', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await mockBenchmark(page);
-  await page.goto('/#/StrategyBenchmark');
-  await expect(index(page).getByRole('link')).toHaveCount(4, { timeout: 15000 });
-  await page.getByTestId('section-link-trade-log').click();
-  await expectReached(page, 'trade-log');
+  await page.goto('/#/Performance');
+  await expect(index(page).getByRole('link')).toHaveCount(5, { timeout: 15000 });
+  await page.getByTestId('section-link-strategy-vs-backtest').click();
+  await expectReached(page, 'strategy-vs-backtest');
+  await expect(page.getByTestId('benchmark-panel-3')).toBeVisible();
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
   expect(overflow).toBeLessThanOrEqual(0);
 });
@@ -238,8 +259,8 @@ for (const theme of ['light', 'dark']) {
   test(`SC-SIX-08: the section index passes axe with every contrast check rated (${theme})`, async ({ page }) => {
     await page.addInitScript((t) => window.localStorage.setItem('theme', t), theme);
     await mockBenchmark(page);
-    await page.goto('/#/StrategyBenchmark');
-    await expect(index(page).getByRole('link')).toHaveCount(4, { timeout: 15000 });
+    await page.goto('/#/Performance');
+    await expect(index(page).getByRole('link')).toHaveCount(5, { timeout: 15000 });
     const results = await new AxeBuilder({ page }).include('[data-testid="section-index"]').analyze();
     expect(results.violations).toEqual([]);
     expect(results.incomplete.filter((r) => r.id === 'color-contrast')).toEqual([]);
@@ -265,18 +286,4 @@ test('SC-SIX-09: real link hrefs; What-if inputs survive a stop edit; no pin aft
   await expect(page.getByTestId('section-link-rules')).toHaveAttribute('aria-current', 'true');
   await page.locator('#thesis h2').evaluate((el) => el.scrollIntoView({ block: 'start' }));
   await expect(page.getByTestId('section-link-thesis')).toHaveAttribute('aria-current', 'true');
-});
-
-test('SC-SIX-09b: switching Strategy Benchmark tabs drops ?section=, so returning does not jump', async ({ page }) => {
-  await mockBenchmark(page);
-  await page.goto('/#/StrategyBenchmark');
-  await page.getByTestId('section-link-trade-log').click({ timeout: 15000 });
-  await expect(page).toHaveURL(/section=trade-log/);
-  await page.getByTestId('benchmark-tab-version-comparison').click();
-  await expect(page).not.toHaveURL(/section=/);
-  await page.evaluate(() => window.scrollTo(0, 0));
-  await page.getByTestId('benchmark-tab-benchmark').click();
-  await expect(index(page).getByRole('link')).toHaveCount(4, { timeout: 15000 });
-  await page.waitForTimeout(300);
-  expect(await page.evaluate(() => window.scrollY)).toBe(0);
 });

@@ -9,7 +9,7 @@
  *   SC-ESN-00  the audit table covers EVERY `emptyHeading` call site under src/ (a new, unaudited
  *              empty state fails here), and the two exclusions carry their stated reason
  *   SC-ESN-01…10  each page/section empty state renders exactly ONE primary action to the right place
- *   SC-ESN-11  each of the 9 dashboard cards' empty state is covered by the card's own `to` link
+ *   SC-ESN-11  (v9.18 ST-09) each of the 9 dashboard cards folds when empty; its "Nothing to show" line entry links to the card's target
  *
  * Infrastructure: Playwright page.route() network interception. No live backend required.
  * ROUTING NOTE: App uses HashRouter — navigate via page.goto('/#/…').
@@ -214,7 +214,10 @@ test('SC-ESN-06: Trade History calendar empty state offers "View open positions"
 // Dashboard cards: the card's own `to` link is the next action (no second inner CTA)
 // ---------------------------------------------------------------------------
 
-test('SC-ESN-11: all 9 dashboard cards render their empty state inside their own `to` link, with no inner action', async ({ page }) => {
+test('SC-ESN-11: on the Dashboard, each empty card folds into the "Nothing to show" line, whose entry links to the card\'s target', async ({ page }) => {
+  // ST-09 (EPIC-02, v9.18, BLG-UX-11): dashboard.md v4.4 §3A. A card whose data
+  // has loaded and is empty is no longer rendered with its empty state; its
+  // name in the line is the next action, a plain link with the §3A target.
   await base(page);
   await page.route(`${API}/signals`, (route) => route.fulfill(json([])));
   await page.route(`${API}/positions`, (route) => route.fulfill(json([])));
@@ -226,12 +229,25 @@ test('SC-ESN-11: all 9 dashboard cards render their empty state inside their own
     route.fulfill(json({ status: 'ok', data: { period: '7d', validation_pass_rate_by_rule: {}, events_per_week: null, override_rate: null, top_rule_breach: null, trade_plan_adherence_rate: null } })));
   await page.goto('/#/DashboardHome');
 
+  const LINE = {
+    'Open Positions': ['open-positions', '/Positions'],
+    'Portfolio Heat': ['portfolio-heat', '/RiskDashboard'],
+    'In Grace Today': ['in-grace', '/Positions?grace=open'],
+    'Recent Activity': ['recent-activity', '/TradeHistory'],
+    'Positions to Watch': ['positions-to-watch', '/Positions?grace=open'],
+    'Screener Hits': ['screener-hits', '/Screener'],
+    'Red Flags': ['red-flags', '/Journal?section=red-flags'],
+    Earnings: ['earnings', '/Positions'],
+    'Signal Compliance': ['compliance', '/Performance?section=compliance'],
+  };
+  await expect(page.getByTestId('dashboard-nothing-to-show')).toBeVisible({ timeout: 15000 });
   for (const card of AUDIT.filter((a) => a.kind === 'card')) {
-    const link = page.locator('a', { has: page.getByText(card.heading, { exact: true }) }).first();
-    await expect(link, `${card.title}: empty state inside a link`).toBeVisible({ timeout: 15000 });
-    await expect(link, `${card.title}: link target`).toHaveAttribute('href', `#${card.to}`);
-    await expect(link.getByText(card.title, { exact: true }), `${card.title}: card title`).toBeVisible();
-    // no second, inner CTA competing with the card's own click-through (§2.1)
-    await expect(link.locator('button, a')).toHaveCount(0);
+    const entry = LINE[card.title];
+    expect(entry, `${card.title}: listed in dashboard.md §3A`).toBeTruthy();
+    const [key, to] = entry;
+    const link = page.getByTestId(`nothing-to-show-${key}`);
+    await expect(link, `${card.title}: line entry`).toBeVisible({ timeout: 15000 });
+    await expect(link, `${card.title}: line target`).toHaveAttribute('href', `#${to}`);
+    await expect(page.getByText(card.heading, { exact: true }), `${card.title}: no empty-state card`).toHaveCount(0);
   }
 });

@@ -108,7 +108,7 @@ async function mockBaseEndpoints(page) {
 test.describe('Backtest Rule Change Tab (V-BACKTEST-01..04)', () => {
   test.beforeEach(async ({ page }) => {
     await mockBaseEndpoints(page);
-    await page.goto('/#/StrategyBenchmark');
+    await page.goto('/#/Performance?section=strategy-vs-backtest');
     await page.getByTestId('benchmark-tab-backtest-rule-change').click();
     await expect(page.getByTestId('backtest-rule-change-tab')).toBeVisible();
   });

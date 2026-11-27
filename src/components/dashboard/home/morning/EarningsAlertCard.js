@@ -35,15 +35,23 @@ export default function EarningsAlertCard() {
   const count = earningsInWindow.length;
   const tickers = earningsInWindow.map(q => q.data.ticker).slice(0, 2);
   const earningsLoading = posArr.length > 0 && earningsQueries.some(q => q.isLoading);
+  // dashboard.md §3A (ST-09): an error is not empty. With no dated earnings in
+  // the window, a failed lookup (request error, or `data_status: unavailable`
+  // since ST-33) means the card does not know, so it shows its error in place
+  // instead of folding into "Nothing to show". What the card shows beside dated
+  // results when some lookups fail is BLG-FE-333.
+  const lookupFailed = earningsQueries.some(q => q.isError || q.data?.data_status === "unavailable");
+  const cardError = posError || (count === 0 && lookupFailed ? new Error("earnings lookup failed") : null);
 
   const subtext = tickers.join(", ") + (earningsInWindow.length > 2 ? ` +${earningsInWindow.length - 2} more` : "");
 
   return (
     <DashboardCard
+      foldKey="earnings"
       title="Earnings"
       to="/Positions"
       isLoading={posLoading || earningsLoading}
-      error={posError}
+      error={cardError}
       empty={count === 0}
       emptyIcon={<Calendar className="w-8 h-8 text-slate-600" />}
       emptyHeading="No earnings in 7 days"

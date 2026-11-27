@@ -219,7 +219,7 @@ test.describe('SC-TOK-05 — secondary token (TickerUniverse.js "Clear filters" 
     await page.route(`${API}/ticker-universe?active_only=false`, (route) =>
       route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok', data: TICKERS }) })
     );
-    await page.goto('/#/TickerUniverse');
+    await page.goto('/#/settings/ticker-universe');
     await expect(page.getByTestId('ticker-table')).toBeVisible({ timeout: 10000 });
 
     // No filter is active by default — the badge (Badge variant="secondary")

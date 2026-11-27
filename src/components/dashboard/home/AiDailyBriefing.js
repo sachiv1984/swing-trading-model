@@ -5,6 +5,7 @@ import { api } from '../../../api/base44Client';
 import { RefreshCw, ChevronDown, ChevronRight, Send, MessageSquare } from 'lucide-react';
 import DataState from '../../ui/DataState';
 import AiDisclaimer from '../../shared/AiDisclaimer';
+import { useQuietDayFold } from "./QuietDay";
 
 const STORAGE_KEY = 'ai-briefing-collapsed-sections-v1';
 
@@ -107,6 +108,12 @@ export default function AiDailyBriefing() {
     }
   };
 
+  // dashboard.md v4.4 §3A (ST-09, BLG-UX-11): with no briefing for today the
+  // card folds into the "Nothing to show" line, whose "AI briefing" button
+  // reveals it (with Regenerate) for the rest of the visit.
+  const hidden = useQuietDayFold("ai-briefing", { isLoading: loading, error, empty: !briefing });
+  if (hidden) return null;
+
   const generatedTime = briefing?.generated_at
     ? new Date(briefing.generated_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     : null;
@@ -114,6 +121,7 @@ export default function AiDailyBriefing() {
   return (
     <div
       className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 space-y-3"
+      id="dashboard-ai-briefing"
       data-testid="ai-daily-briefing-card"
     >
       {/* Header */}

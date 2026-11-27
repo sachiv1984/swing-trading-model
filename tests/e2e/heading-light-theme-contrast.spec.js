@@ -7,8 +7,9 @@
  *
  *   SC-HTC-01  Dashboard "Dashboard" h1 — dark theme: resolves to white (unchanged)
  *   SC-HTC-02  Dashboard "Dashboard" h1 — light theme: resolves to slate-900 (fixed)
- *   SC-HTC-03  StrategyBenchmark "Strategy Benchmark" h1 — dark theme: resolves to white (unchanged)
- *   SC-HTC-04  StrategyBenchmark "Strategy Benchmark" h1 — light theme: resolves to slate-900 (fixed)
+ *   SC-HTC-03  "Strategy vs backtest" section h2 on Performance — dark theme: resolves to white
+ *   SC-HTC-04  "Strategy vs backtest" section h2 on Performance — light theme: resolves to slate-900
+ *              (v9.18 ST-08, BLG-FE-323: the Strategy Benchmark page h1 became this section heading)
  *              (SC-HTC-03/04 checked gradient stops from v7.10 to v9.16; the
  *              solid text-app-fg title (ST-09, BLG-FE-264) restores the
  *              text-colour check — see test body comment)
@@ -70,28 +71,30 @@ test.describe('Dashboard heading contrast (SC-HTC-01/02)', () => {
   });
 });
 
-test.describe('Strategy Benchmark heading contrast (SC-HTC-03/04)', () => {
+test.describe('Strategy vs backtest heading contrast (SC-HTC-03/04)', () => {
+  // v9.18 ST-08 (BLG-FE-323): Strategy Benchmark is now Performance's
+  // "Strategy vs backtest" section; its old page <h1> is the section <h2>.
   // ST-09 (EPIC-03, v9.16, BLG-FE-264): PageHeader's title moved from a
   // gradient-clipped (`bg-clip-text text-transparent`) <h1> to the solid
   // `text-app-fg` semantic token (design_system.md v1.25 §Semantic Colour
   // Tokens rule 5), so these tests check the computed text colour again
   // instead of the gradient's background-image stops (v7.10 form, in git
   // history).
-  test('SC-HTC-03: Strategy Benchmark h1 resolves to white in dark theme (unchanged)', async ({ page }) => {
+  test('SC-HTC-03: Strategy vs backtest h2 resolves to white in dark theme', async ({ page }) => {
     await mockFallback(page);
-    await page.goto('/#/StrategyBenchmark');
+    await page.goto('/#/Performance?section=strategy-vs-backtest');
 
-    const heading = page.locator('h1', { hasText: 'Strategy Benchmark' });
+    const heading = page.locator('#strategy-vs-backtest > h2');
     await expect(heading).toBeVisible({ timeout: 8000 });
     await expect(heading).toHaveCSS('color', WHITE_RGB);
   });
 
-  test('SC-HTC-04: Strategy Benchmark h1 resolves to slate-900 in light theme (fixed)', async ({ page }) => {
+  test('SC-HTC-04: Strategy vs backtest h2 resolves to slate-900 in light theme', async ({ page }) => {
     await mockFallback(page);
     await page.addInitScript(() => window.localStorage.setItem('theme', 'light'));
-    await page.goto('/#/StrategyBenchmark');
+    await page.goto('/#/Performance?section=strategy-vs-backtest');
 
-    const heading = page.locator('h1', { hasText: 'Strategy Benchmark' });
+    const heading = page.locator('#strategy-vs-backtest > h2');
     await expect(heading).toBeVisible({ timeout: 8000 });
     await expect(heading).toHaveCSS('color', SLATE_900_RGB);
   });
