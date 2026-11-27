@@ -6,7 +6,7 @@
   "invoked_utc": "2026-11-19T08:07:14Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-24T14:39:55Z",
+  "last_updated_utc": "2026-11-27T09:13:51Z",
   "epics": {
     "EPIC-01": {
       "title": "Site Structure & Usability Phase 4, Stage 1: Correct and Safe (build-and-ship)",
@@ -198,10 +198,10 @@
     },
     "EPIC-02": {
       "title": "Site Structure & Usability Phase 4, Stage 2: Home Page and Navigation (build-and-ship)",
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-11-18__release-v9.18/EPIC-02",
       "pr_number": 2313,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-11-18__release-v9.18/qa_evidence_EPIC-02.md",
       "test_scenarios": [
@@ -233,7 +233,7 @@
         "ST-07": {
           "title": "Revise navigation.md and design_system.md for the Phase 4 target state",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2272,
           "branch": "exec/2026-11-18__release-v9.18/EPIC-02",
@@ -263,7 +263,7 @@
         "ST-08": {
           "title": "Move Strategy Benchmark into Performance and Ticker Universe into Settings",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2273,
           "branch": "exec/2026-11-18__release-v9.18/EPIC-02",
@@ -290,7 +290,7 @@
         "ST-09": {
           "title": "Make the quiet-day Dashboard a single line",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2274,
           "branch": "exec/2026-11-18__release-v9.18/EPIC-02",
@@ -313,7 +313,7 @@
         "ST-10": {
           "title": "Use one grace-period definition across the Dashboard",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2275,
           "branch": "exec/2026-11-18__release-v9.18/EPIC-02",
@@ -337,7 +337,7 @@
         "ST-11": {
           "title": "Offer \"Plan this\" on the Today list's New signals rows",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2276,
           "branch": "exec/2026-11-18__release-v9.18/EPIC-02",
@@ -361,7 +361,7 @@
         "ST-12": {
           "title": "Show machine-checkable checklist items as automatic status",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2277,
           "branch": "exec/2026-11-18__release-v9.18/EPIC-02",
@@ -391,7 +391,7 @@
         "ST-13": {
           "title": "Filter Trade History and Journal by rules followed or broken",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2278,
           "branch": "exec/2026-11-18__release-v9.18/EPIC-02",
@@ -1386,13 +1386,13 @@
   "merge_gate": {
     "epics_merged": [
       "EPIC-01",
+      "EPIC-02",
       "EPIC-04",
       "EPIC-05",
       "EPIC-06",
       "EPIC-07"
     ],
     "epics_pending": [
-      "EPIC-02",
       "EPIC-03"
     ],
     "all_merged": false
@@ -1423,7 +1423,8 @@
     "2026-11-24T14:14:34Z — EPIC-06 PR #2312 merged 2026-11-24T14:14:07Z by sachiv1984, merge commit 7c7bea76. Orphaned post-merge commit check: none (origin/main..EPIC-06 empty). Sibling execution_state sync (STEP 4 3c): N/A, EPIC-02/EPIC-03 branches not yet created.",
     "2026-11-24T14:34:13Z — EPIC-02 session start (run sprint --epic EPIC-02). origin/main in sync (0/0). Branch exec/2026-11-18__release-v9.18/EPIC-02 created from main 8916d935 and pushed. Issues #2272-#2278 present (STEP 1). ST-07/ST-12/ST-13 delegated_decision: ESC-EXEC-20261124-01/02/03 raised 14:36:01Z and resolved in session 14:36:34Z by the user holding each role; all three reclassified autonomous.",
     "2026-11-26 — EPIC-02 ST-13 follow-up commits after 47b79ca0: 86130e54 (ESC-EXEC-20261126-03 revision, pre-PR review fixes, qa_evidence_EPIC-02.md), 774650db (CI baseline regeneration, Trade Plan), 518b1214 (Phase B fixture fix). ST-13 commit_sha points at the final head 518b1214.",
-    "2026-11-27T09:04:29Z — EPIC-02 DoQ sign-off (agent-mediated at the user's direction, Director of Quality) and Product Owner acceptance given in session; qa_evidence_EPIC-02.md sign-off block dated 2026-11-27."
+    "2026-11-27T09:04:29Z — EPIC-02 DoQ sign-off (agent-mediated at the user's direction, Director of Quality) and Product Owner acceptance given in session; qa_evidence_EPIC-02.md sign-off block dated 2026-11-27.",
+    "2026-11-27T09:13:51Z — EPIC-02 PR #2313 merged 2026-11-27T09:12:41Z by sachiv1984, merge commit 81d7155b. Orphaned post-merge commit check: none (origin/main..EPIC-02 empty). Sibling execution_state sync (STEP 4 3c): N/A, the EPIC-03 branch does not exist yet. Merge Gate Confirmations written to qa_evidence_EPIC-02.md on main."
   ],
   "sealed": false,
   "sealed_utc": null

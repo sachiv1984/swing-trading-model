@@ -95,4 +95,6 @@ No P1 or P2 defect was filed during this EPIC.
 
 ## Merge Gate Confirmations
 
-To be written when the PR merges (STEP 4).
+- **QA sign-off and PO acceptance:** confirmed by merge — sachiv1984 (holds the Director of Quality and Product Owner roles), 2026-11-27T09:12:41Z, merge commit `81d7155b`. Before the merge, the same person directed the Director of Quality sign-off and gave the Product Owner acceptance recorded above, in session at 2026-11-27T09:04:29Z.
+- **Merge:** PR #2313 merged by sachiv1984 at 2026-11-27T09:12:41Z, merge commit `81d7155b`.
+- **P1/P2 found defects filed during this EPIC:** none. Follow-ups BLG-FE-336, BLG-FE-337, BLG-FE-338 and BLG-BE-237 are P3; BLG-BE-237 was accepted until v9.19 in the Product Owner acceptance above.
