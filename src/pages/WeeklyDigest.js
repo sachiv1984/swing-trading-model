@@ -1,80 +1,119 @@
 /**
- * WeeklyDigest — ST-09 (BLG-FEAT-14 FE component, v2.4)
+ * WeeklyDigest — ST-09 (BLG-FEAT-14 FE component, v2.4); rewritten as a
+ * readable weekly summary in v9.18 (ST-15, BLG-UX-15) with onward links
+ * (ST-16, BLG-UX-12).
  *
- * Renders GET /digest/weekly response as a structured data table.
- * All displayed values are raw numeric — no narrative or interpretation.
+ * GET /digest/weekly as a list of plain-language figures, each linked to the
+ * page where it is reviewed, with a freshness caption. Raw figures only, no
+ * narrative or advice. Row building lives in src/lib/weeklyDigest.js.
  *
- * Spec: docs/specs/frontend/pages/weekly_digest.md v0.4;
- *       docs/specs/api_contracts/digest_endpoints.md v0.6
+ * Spec: docs/specs/frontend/pages/weekly_digest.md v0.5;
+ *       docs/specs/api_contracts/digest_endpoints.md v0.7
  */
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
-import { CalendarDays, RefreshCw, Printer } from "lucide-react";
+import { RefreshCw, Printer } from "lucide-react";
 import { apiFetch } from "../api/base44Client";
-import { createPageUrl } from "../utils";
 import PageHeader from "../components/ui/PageHeader";
 import { PAGE_LABELS } from "../lib/pageLabels";
 import DataState from "../components/ui/DataState";
 import { Button } from "../components/ui/button";
-import { formatCurrency, formatPercent } from "../lib/format";
-import {
-  DataTable,
-  TableHeader,
-  TableHead,
-  TableBody,
-  TableRow,
-  TableCell,
-} from "../components/ui/DataTable";
-
-// Alert-count deep-links (v0.2, ST-02/EPIC-02/v7.7) — both source from the
-// `notifications` table (same table backing the Notification Feed), so both
-// deep-link into the Feed with a filter query, not Alert History.
-const ALERT_COUNT_LINKS = {
-  alerts_fired_7d: `${createPageUrl("notifications")}?since_days=7`,
-  alerts_dismissed_7d: `${createPageUrl("notifications")}?since_days=7&read=true`,
-};
+import { digestFigures, freshnessCaption } from "../lib/weeklyDigest";
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:8000";
 
-// ST-14 (v9.18, BLG-SPEC-204): the journal completion rates are 0.0 both
-// for "no closed trades" and "no notes", so the trade counts decide the text.
-function formatJournalValue(field, data) {
-  const isCurrent = field === "journal_completion_rate_current";
-  const count = data[isCurrent ? "closed_trades_total" : "closed_trades_total_7d_ago"];
-  const rate = data[field];
-  if (rate === null || rate === undefined || count === null || count === undefined) return "Not available";
-  if (count === 0) return isCurrent ? "No closed trades yet" : "No closed trades";
-  return formatPercent(rate);
+const LINK_CLASS =
+  "text-cyan-700 dark:text-cyan-400 hover:text-cyan-800 dark:hover:text-cyan-300 underline underline-offset-2";
+
+function FigureValue({ row }) {
+  const text = row.muted ? (
+    <span className="text-app-muted">{row.value}</span>
+  ) : (
+    row.value
+  );
+  if (!row.href) return text;
+  return (
+    <Link
+      to={row.href}
+      data-testid={`digest-link-${row.field}`}
+      aria-label={`${row.label}: ${row.value}`}
+      className={LINK_CLASS}
+    >
+      {row.value}
+    </Link>
+  );
 }
 
-function formatValue(field, value, data) {
-  if (field === "journal_completion_rate_current" || field === "journal_completion_rate_7d_ago") {
-    return formatJournalValue(field, data);
-  }
-  if (value === null || value === undefined) return "—";
-  switch (field) {
-    case "realised_pnl_7d":
-    case "unrealised_pnl_delta_7d":
-      return formatCurrency(value);
-    case "staleness_hours":
-      return `${value.toFixed(1)} h`;
-    case "as_of_utc":
-      return value;
-    default:
-      return String(value);
-  }
+function SecondLine({ row }) {
+  const { text, href } = row.secondLine;
+  return (
+    <span className="block text-xs text-app-muted mt-0.5">
+      {href ? (
+        <Link to={href} data-testid={`digest-second-link-${row.field}`} className={LINK_CLASS}>
+          {text}
+        </Link>
+      ) : (
+        text
+      )}
+    </span>
+  );
 }
 
-const FIELD_LABELS = [
-  { field: "realised_pnl_7d",           label: "Realised P&L (7d)",            unit: "GBP" },
-  { field: "unrealised_pnl_delta_7d",    label: "Unrealised P&L Delta (7d)",     unit: "GBP" },
-  { field: "alerts_fired_7d",            label: "Alerts Fired (7d)",             unit: "count" },
-  { field: "alerts_dismissed_7d",        label: "Alerts Dismissed (7d)",         unit: "count" },
-  { field: "journal_completion_rate_current", label: "Journal completion (all closed trades)", unit: "%" },
-  { field: "journal_completion_rate_7d_ago",  label: "Journal completion (a week ago)",        unit: "%" },
-  { field: "staleness_hours",            label: "Data Staleness",                unit: "hours" },
-  { field: "as_of_utc",                  label: "As of (UTC)",                   unit: "timestamp" },
-];
+function DigestFigures({ data }) {
+  return (
+    <div className="space-y-3">
+      <dl
+        data-testid="digest-figures"
+        className="divide-y divide-app-line rounded-2xl border border-app-line bg-app-raised"
+      >
+        {digestFigures(data).map((row) => (
+          <div
+            key={row.field}
+            data-testid={`digest-figure-${row.field}`}
+            className="flex items-start justify-between gap-4 px-4 py-3"
+          >
+            <dt className="font-medium text-app-fg">{row.label}</dt>
+            <dd className="text-right tabular-nums text-app-fg">
+              <FigureValue row={row} />
+              {row.secondLine && <SecondLine row={row} />}
+            </dd>
+          </div>
+        ))}
+      </dl>
+      <p data-testid="digest-as-of" className="text-xs text-app-muted">
+        {freshnessCaption(data)}
+      </p>
+    </div>
+  );
+}
+
+function DigestActions({ canPrint, onRefresh }) {
+  return (
+    <div className="flex items-center gap-2">
+      {canPrint && (
+        <Button
+          variant="outline"
+          size="sm"
+          data-testid="print-export-pdf-btn"
+          onClick={() => window.print()}
+          className="border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+        >
+          <Printer className="w-4 h-4 mr-2" />
+          Print / Export PDF
+        </Button>
+      )}
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => onRefresh()}
+        className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"
+      >
+        <RefreshCw className="w-4 h-4 mr-2" />
+        Refresh
+      </Button>
+    </div>
+  );
+}
 
 export default function WeeklyDigest() {
   const { data, isLoading, isError, refetch } = useQuery({
@@ -92,32 +131,8 @@ export default function WeeklyDigest() {
     <div className="space-y-6">
       <PageHeader
         title={PAGE_LABELS.WeeklyDigest}
-        description="7-day trading summary"
-        actions={
-          <div className="flex items-center gap-2">
-            {!isLoading && !isError && (
-              <Button
-                variant="outline"
-                size="sm"
-                data-testid="print-export-pdf-btn"
-                onClick={() => window.print()}
-                className="border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
-              >
-                <Printer className="w-4 h-4 mr-2" />
-                Print / Export PDF
-              </Button>
-            )}
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => refetch()}
-              className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"
-            >
-              <RefreshCw className="w-4 h-4 mr-2" />
-              Refresh
-            </Button>
-          </div>
-        }
+        description="Your last 7 days in figures. Most figures link to the page where you review them."
+        actions={<DigestActions canPrint={!isLoading && !isError} onRefresh={refetch} />}
       />
 
       <DataState
@@ -126,39 +141,7 @@ export default function WeeklyDigest() {
         onRetry={refetch}
         className="min-h-[300px]"
       >
-        <DataTable>
-          <TableHeader>
-            <TableHead>Field</TableHead>
-            <TableHead>Unit</TableHead>
-            <TableHead className="text-right">Value</TableHead>
-          </TableHeader>
-          <TableBody>
-            {FIELD_LABELS.map(({ field, label, unit }) => {
-              const value = data ? formatValue(field, data[field], data) : "—";
-              const linkTo = ALERT_COUNT_LINKS[field];
-              const isLinkable = linkTo && value !== "—";
-              return (
-                <TableRow key={field}>
-                  <TableCell className="font-medium text-slate-800 dark:text-slate-200">{label}</TableCell>
-                  <TableCell className="text-slate-600 dark:text-slate-400 text-sm">{unit}</TableCell>
-                  <TableCell className="text-right font-mono text-slate-700 dark:text-slate-300">
-                    {isLinkable ? (
-                      <Link
-                        to={linkTo}
-                        data-testid={`digest-link-${field}`}
-                        className="text-cyan-700 dark:text-cyan-400 hover:text-cyan-800 dark:hover:text-cyan-300 underline underline-offset-2"
-                      >
-                        {value}
-                      </Link>
-                    ) : (
-                      value
-                    )}
-                  </TableCell>
-                </TableRow>
-              );
-            })}
-          </TableBody>
-        </DataTable>
+        {data && <DigestFigures data={data} />}
       </DataState>
     </div>
   );

@@ -63,12 +63,13 @@ def get_weekly_digest():
     - closed_trades_total / closed_trades_total_7d_ago: the two denominators
     - compliance_score_current / compliance_score_7d_ago: deprecated aliases of
       journal_completion_rate_* (ST-14, v9.18, BLG-SPEC-204)
+    - red_flags_7d: count of red_flag_events created in the last 7 days (ST-16; null on query failure)
     - staleness_hours: hours since last portfolio snapshot (null if no snapshots)
     - as_of_utc: UTC timestamp this response was computed
 
     Scope constraint: no generated text, narrative, or interpretation in any field.
 
-    Spec: docs/specs/api_contracts/digest_endpoints.md v0.6
+    Spec: docs/specs/api_contracts/digest_endpoints.md v0.7
     """
     try:
         data = get_weekly_digest_data()

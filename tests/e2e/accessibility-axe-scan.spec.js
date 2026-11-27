@@ -144,6 +144,8 @@ const STRICT_INCOMPLETE_CONTRAST = new Set([
   'TickerUniverse:dark',
   'TickerUniverse:light',
   'WeeklyDigest:light',
+  'WeeklyDigestFigures:dark',
+  'WeeklyDigestFigures:light',
 ]);
 
 async function mockRoutes(page) {
@@ -710,7 +712,7 @@ async function mockSt09Populated(page) {
         status: 'ok',
         data: {
           realised_pnl_7d: 166.1, unrealised_pnl_delta_7d: -42.8, alerts_fired_7d: 5, alerts_dismissed_7d: 3,
-          journal_completion_rate_current: 80.0, journal_completion_rate_7d_ago: 75.0, closed_trades_total: 20, closed_trades_total_7d_ago: 16,
+          journal_completion_rate_current: 80.0, journal_completion_rate_7d_ago: 75.0, closed_trades_total: 20, closed_trades_total_7d_ago: 16, red_flags_7d: 2,
           compliance_score_current: 80.0, compliance_score_7d_ago: 75.0, staleness_hours: 18.5,
           as_of_utc: '2026-04-01T10:30:00+00:00',
         },
@@ -793,7 +795,7 @@ test.describe('Shell consumers axe scan, populated — light theme (ST-09)', () 
 
   test('Weekly Digest (light)', async ({ page }) => {
     await page.goto('/#/WeeklyDigest');
-    await expect(page.getByText('Realised P&L (7d)')).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText('Realised P&L, last 7 days')).toBeVisible({ timeout: 10000 });
     await expectThemeApplied(page, 'light');
     await runAxeScan(page, 'WeeklyDigest:light');
   });
@@ -934,6 +936,8 @@ const ST08_PAGES = [
   ['JournalNotes', '/#/Journal?section=notes', routed.mockJournal, 'NVDA'],
   ['Performance', '/#/Performance', routed.mockPerformance, 'Profit Factor'],
   ['Notifications', '/#/notifications', routed.mockNotifications, 'Stop Loss Approaching: LGEN'],
+  // v9.18 ST-15/ST-16 (EPIC-03): the rewritten Weekly Digest figure list, both themes.
+  ['WeeklyDigestFigures', '/#/WeeklyDigest', mockRoutes, 'Realised P&L, last 7 days'],
 ];
 
 // The dark run guards the sweep's promise that dark values are unchanged.

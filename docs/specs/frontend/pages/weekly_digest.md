@@ -3,8 +3,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 0.4
-**Last Updated:** 2026-11-27 (ST-14, v9.18 — "A week ago" second line reads `closed_trades_total_7d_ago`; ruling 2026-11-27); prior — 2026-11-18 (v9.18 design gate — ST-14/15/16/17: readable weekly summary, journal completion label, onward links, this week's loop); prior — 2026-07-21 (v7.7 design gate — nav placement and alert-count links); prior history retained — see prior entries in version control
+**Version:** 0.5
+**Last Updated:** 2026-11-27 (ST-15/ST-16, v9.18 — built; rulings: "Alerts, last 7 days", realised P&L link on Last 7 Days, red flags list newest first); prior — 2026-11-27 (ST-14, v9.18 — "A week ago" second line reads `closed_trades_total_7d_ago`; ruling 2026-11-27); prior — 2026-11-18 (v9.18 design gate — ST-14/15/16/17: readable weekly summary, journal completion label, onward links, this week's loop); prior history retained — see prior entries in version control
 **Design Source (v0.1 print/export PDF):** docs/design/2026-07-20__release-v7.6/print-pdf-export/ux_spec.md
 **Design Source (v0.2 nav placement + alert-count links):** docs/design/2026-07-21__release-v7.7/nav-notification-digest-consolidation/ux_spec.md
 **Design Source (v0.3 weekly summary, links, loop):** docs/design/2026-11-18__release-v9.18/weekly-review/decision_record.md
@@ -33,7 +33,7 @@ Users should be able to:
 
 ### Page Header
 - **Title:** `Weekly Digest` (unchanged; the re-review's "Weekly review" rename is not in v9.18)
-- **Description:** "Your last 7 days in figures. Each figure links to the page where you review it." (v0.3, ST-15; was "7-day trading summary")
+- **Description:** "Your last 7 days in figures. Most figures link to the page where you review them." (v0.5 wording ruling 2026-11-27: "Most figures", since the open P&L change and any "Not available" figure are not linked; v0.3 was "Each figure links…"; before that "7-day trading summary")
 - **Actions:** "Print / Export PDF" (§4) and "Refresh" (icon `RefreshCw`, refetches the digest query)
 
 ### Figures (v0.3 — ST-15, ST-16)
@@ -42,14 +42,14 @@ A definition list (`<dl>`, `data-testid="digest-figures"`), one row per figure: 
 
 | Order | Label | Value | Second line | Link on the value |
 |-------|-------|-------|-------------|-------------------|
-| 1 | Realised P&L, last 7 days | `realised_pnl_7d`, GBP, signed (`formatCurrency`) | — | `/Performance?section=summary` |
+| 1 | Realised P&L, last 7 days | `realised_pnl_7d`, GBP, signed (`formatCurrency`) | — | `/Performance?section=summary&period=last_7_days` (v0.5: the period makes Summary show the same 7-day figure) |
 | 2 | Change in open P&L, last 7 days | `unrealised_pnl_delta_7d`, GBP, signed; `null` → "Not enough history yet" (muted) | — | none |
-| 3 | Alerts sent, last 7 days | `alerts_fired_7d` | "{n} marked read" from `alerts_dismissed_7d`, linked to `/notifications?since_days=7&read=true` | `/notifications?since_days=7` |
+| 3 | Alerts, last 7 days (v0.5; was "Alerts sent": the count is every alert raised, and a Feed row can be "Not sent") | `alerts_fired_7d` | "{n} marked read" from `alerts_dismissed_7d`, linked to `/notifications?since_days=7&read=true` | `/notifications?since_days=7` |
 | 4 | Journal completion (all closed trades) | `journal_completion_rate_current`, 1 dp %; when `closed_trades_total` is 0 → "No closed trades yet" (muted, unlinked); `null` (query failed) → "Not available" (muted, unlinked) (v0.4) | "A week ago: {journal_completion_rate_7d_ago}%"; when `closed_trades_total_7d_ago` is 0 → "A week ago: no closed trades" (v0.4, ruling 2026-11-27); `null` → line hidden | `/Performance?section=compliance` (Discipline & Compliance shows the same rate) |
-| 5 | Red flags, last 7 days | `red_flags_7d` (new field, ST-16) | — | `/Journal?section=red-flags` |
+| 5 | Red flags, last 7 days | `red_flags_7d` (new field, ST-16) | — | `/Journal?section=red-flags` (the list is unfiltered, newest first, each row with its age; accepted, v0.5) |
 
 - Links: the value is the link, `data-testid="digest-link-{field}"`, accessible name "{label}: {value}". A null value is never linked. Each link lands on its section heading (Performance `?section=` via `SectionIndex`; Journal tab selected).
-- Zero renders as a value ("£0.00" unsigned and neutral, "0"), never "—".
+- Zero renders as a value ("£0.00" unsigned and neutral, "0"), never "—". A count or realised P&L that is `null` (its query failed) shows "Not available" (muted, unlinked) (v0.5).
 - **Label rule (ST-14):** no label on this page says "compliance" for the journal completion rate.
 
 ### Freshness Caption (v0.3 — ST-15)
@@ -71,7 +71,7 @@ A section below the caption, `<h2>` "This week's loop", `data-testid="digest-loo
 ## 3. API Reference
 
 - `GET /digest/weekly` — returns `{ status: "ok" | error, data: {...}, message? }`. On `status !== "ok"`, the query throws and the error state (§5) is shown.
-- **Fields this page reads (v0.4):** `realised_pnl_7d`, `unrealised_pnl_delta_7d`, `alerts_fired_7d`, `alerts_dismissed_7d`, `journal_completion_rate_current`, `journal_completion_rate_7d_ago`, `closed_trades_total` and `closed_trades_total_7d_ago` (ST-14: new names; the old `compliance_score_*` stay as deprecated aliases), `red_flags_7d` (ST-16: `red_flag_events` rows created in the last 7 UTC days), `staleness_hours`, `as_of_utc`; plus the five loop counts (ST-17 names their endpoint and fields in `digest_endpoints.md`). Each addition goes in `digest_endpoints.md` and `openapi.yaml` in its story's commit.
+- **Fields this page reads (v0.5):** `realised_pnl_7d`, `unrealised_pnl_delta_7d`, `alerts_fired_7d`, `alerts_dismissed_7d`, `journal_completion_rate_current`, `journal_completion_rate_7d_ago`, `closed_trades_total` and `closed_trades_total_7d_ago` (ST-14: new names; the old `compliance_score_*` stay as deprecated aliases), `red_flags_7d` (ST-16: `red_flag_events` rows created in the last 7 × 24h; `null` when its query fails), `staleness_hours`, `as_of_utc`; plus the five loop counts (ST-17 names their endpoint and fields in `digest_endpoints.md`). Each addition goes in `digest_endpoints.md` and `openapi.yaml` in its story's commit.
 - **Same value, two surfaces:** the journal completion rate here and on Performance → Compliance (`GET /analytics/compliance-metrics` `journal_completion_rate`) must be the same figure for the same data (ST-14 confirms the predicates match).
 
 ---
@@ -123,6 +123,7 @@ None.
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.5 | 2026-11-27 | ST-15/ST-16 (EPIC-03) built. Head of UX & Design rulings (the user in session, 2026-11-27): row 3 is "Alerts, last 7 days", not "Alerts sent"; the realised P&L link adds `period=last_7_days`; the Red flags list behind row 5 stays unfiltered, newest first. A null count or realised P&L shows "Not available". The description says "Most figures link…" (was "Each figure links…"). The realised P&L link and the digest share an `exit_date` cutoff only while the server runs on UTC (analytics uses the server date; BLG-BE-239). Figure rows are built in `src/lib/weeklyDigest.js` (unit-tested). |
 | 0.4 | 2026-11-27 | ST-14 (EPIC-03, BLG-SPEC-204): row 4's "A week ago" line reads the new `closed_trades_total_7d_ago`; at 0 it says "A week ago: no closed trades" instead of "0.0%". The journal fields are `null` when their query fails: row 4 says "Not available" and hides the second line. Metrics Definitions & Analytics Owner / Product Owner ruling (the user in session, 2026-11-27). |
 | 0.3 | 2026-11-18 | v9.18 design gate — rewritten as a readable weekly summary. (ST-15, BLG-UX-15) plain-language figure list, no Field/Unit table, freshness caption, new description. (ST-14, BLG-SPEC-204) "Journal completion" label; `journal_completion_rate_*` and `closed_trades_total` fields. (ST-16, BLG-UX-12) figures link to Performance Summary, Performance Compliance and Journal Red flags; new `red_flags_7d` field (Product Owner decision). (ST-17, BLG-FEAT-103) "This week's loop" section, counts only, and the two events. WD-01–WD-06. Design source: `docs/design/2026-11-18__release-v9.18/weekly-review/decision_record.md`. Approved: Product Owner 2026-11-18. Head of UX & Design sign-off 2026-11-18. Head of Specs Team confirmed. |
 | 0.2 | 2026-07-21 | v7.7 design gate — ST-02 (EPIC-02, BLG-FE-114): nav item moved from Analytics to System group (adjacent to Notifications); `Alerts Fired (7d)` / `Alerts Dismissed (7d)` values now link to filtered Notification Feed views (`/notifications?since_days=7[&read=true]`). Design source: nav-notification-digest-consolidation/ux_spec.md. Approved: Product Owner 2026-07-21. Design gate: 2026-07-21__release-v7.7. Head of Specs Team confirmed. |

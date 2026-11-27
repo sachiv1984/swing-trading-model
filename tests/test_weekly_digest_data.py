@@ -36,6 +36,8 @@ def _conn(all_trades, before_window):
     def execute(sql, params=None):
         if "SUM(pnl)" in sql:
             state["row"] = {"realised_pnl_7d": 0}
+        elif "FROM red_flag_events" in sql:
+            state["row"] = {"red_flags": 2}
         elif "FROM notifications" in sql:
             state["row"] = {"fired": 0, "dismissed": 0}
         elif "with_notes" in sql and "exit_date <" in sql:
@@ -110,3 +112,33 @@ def test_failed_journal_query_is_null_not_zero():
 
 # The predicate match with GET /analytics/compliance-metrics (AC 2) is checked
 # against real Postgres in tests/test_weekly_digest_postgres.py.
+
+
+def test_red_flags_7d_counts_the_rolling_window():
+    """ST-16: red_flag_events created at or after now − 7 days (same window as alerts)."""
+    conn = _conn((0, 0), (0, 0))
+    cur = conn.cursor.return_value
+    data = real_database.get_weekly_digest_data(conn=conn)
+    assert data["red_flags_7d"] == 2
+    flag_calls = [c for c in cur.execute.call_args_list if "FROM red_flag_events" in c.args[0]]
+    alert_calls = [c for c in cur.execute.call_args_list if "FROM notifications" in c.args[0]]
+    assert len(flag_calls) == 1
+    assert "created_at >= %s" in flag_calls[0].args[0]
+    assert flag_calls[0].args[1] == alert_calls[0].args[1]  # one shared cutoff
+
+
+def test_red_flags_7d_null_on_failure():
+    conn = _conn((0, 0), (0, 0))
+    cur = conn.cursor.return_value
+    answer = cur.execute.side_effect
+
+    def execute(sql, params=None):
+        if "FROM red_flag_events" in sql:
+            raise RuntimeError("relation does not exist")
+        answer(sql, params)
+
+    cur.execute.side_effect = execute
+    data = real_database.get_weekly_digest_data(conn=conn)
+    assert data["red_flags_7d"] is None
+    assert data["closed_trades_total"] == 0  # later queries still ran
+

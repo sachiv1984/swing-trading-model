@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-27 (session — 1 new item added: BLG-BE-238; EPIC-03 v9.18 ST-14 first-time-right check 8); prior — 2026-11-26 (session — 1 new item added: BLG-BE-237; EPIC-02 v9.18 ST-13 review); prior — 2026-11-26 (session — 1 new item added: BLG-FE-338; EPIC-02 v9.18 pre-PR Product Owner review); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-27 (session — 1 new item added: BLG-BE-239; EPIC-03 v9.18 ST-16 review); prior — 2026-11-27 (session — 1 new item added: BLG-BE-238; EPIC-03 v9.18 ST-14 first-time-right check 8); prior — 2026-11-26 (session — 1 new item added: BLG-BE-237; EPIC-02 v9.18 ST-13 review); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -9070,5 +9070,26 @@ In `backend/services/earnings_service.py`, a usable `Ticker.info` (with `quoteTy
 - The decision is recorded in `digest_endpoints.md` and `metrics_definitions.md`
 - A pytest with a trade closed exactly 7 and exactly 8 dates ago shows which window each digest figure uses, matching the decision
 - The Weekly Digest label for realised P&L matches its window
+
+---
+
+### BLG-BE-239 — Use the UTC date for the analytics period cutoffs
+**Priority:** P3 (Low)
+**Type:** Backend Engineering
+**Owner:** Head of Engineering; Metrics Definitions & Analytics Owner
+**Source:** ST-16 (EPIC-03, `2026-11-18__release-v9.18`) pre-commit code review (medium) — 2026-11-27
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.19
+
+**Problem**
+`_period_to_since_date` in `backend/routers/analytics.py` and `backend/services/analytics_service.py` computes the period cutoff from `date.today()`, the server's local date. `GET /digest/weekly` uses the UTC date (`(datetime.now(timezone.utc) - 7 days).date()`). From v9.18 the Weekly Digest's realised P&L links to Performance on "Last 7 Days" so that both pages show the same figure. On a server not running in UTC, near midnight, the two cutoffs differ by a day and the linked page can show a different realised P&L.
+
+**Scope**
+- Compute both `_period_to_since_date` cutoffs from the UTC date
+- Note the UTC basis in `metrics_definitions.md` for the period filter
+
+**Acceptance Criteria**
+- A pytest with a frozen clock just after UTC midnight, in a non-UTC local zone, shows the analytics cutoff equal to the digest's
+- `weekly_digest.md`'s UTC caveat on the realised P&L link is removed
 
 ---

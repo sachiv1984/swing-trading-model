@@ -436,6 +436,7 @@ class TestDigestEndpoints(unittest.TestCase):
         "closed_trades_total_7d_ago": 0,
         "compliance_score_current": 0.0,
         "compliance_score_7d_ago": 0.0,
+        "red_flags_7d": 0,
         "staleness_hours": None,
         "as_of_utc": "2026-01-01T00:00:00+00:00",
     })

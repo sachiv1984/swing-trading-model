@@ -6005,6 +6005,22 @@ def _fetch_weekly_digest_data(conn) -> Dict:
         logger.warning("Could not compute alert counts: %s", e)
         _rollback_quietly(conn)
 
+    # 3b. Red flags in the last 7 days (ST-16, v9.18, Product Owner decision
+    #     2026-11-18): red_flag_events rows created in the same rolling window
+    #     as the alert counts. Null, not 0, when the query fails.
+    red_flags_7d = None
+    try:
+        cursor.execute("""
+            SELECT COUNT(*) AS red_flags
+            FROM red_flag_events
+            WHERE created_at >= %s
+        """, (cutoff_7d,))
+        flag_row = cursor.fetchone()
+        red_flags_7d = int(flag_row["red_flags"]) if flag_row else 0
+    except Exception as e:
+        logger.warning("Could not compute red_flags_7d: %s", e)
+        _rollback_quietly(conn)
+
     # 4. Journal completion rate (ST-14, v9.18, BLG-SPEC-204) — same predicate
     #    as get_compliance_core_counts (metrics_definitions.md §Journal
     #    Completion Rate), so the digest and Performance → Compliance agree.
@@ -6082,6 +6098,7 @@ def _fetch_weekly_digest_data(conn) -> Dict:
         # except that they keep their old 0.0 (never null) on a failed query.
         "compliance_score_current": journal_completion_rate_current if journal_completion_rate_current is not None else 0.0,
         "compliance_score_7d_ago": journal_completion_rate_7d_ago if journal_completion_rate_7d_ago is not None else 0.0,
+        "red_flags_7d": red_flags_7d,
         "staleness_hours": staleness_hours,
         "as_of_utc": now_utc.isoformat(),
     }

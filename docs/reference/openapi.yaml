@@ -2,7 +2,8 @@ openapi: 3.0.3
 
 info:
   title: Momentum Trading Assistant API
-  version: 3.54.0
+  version: 3.55.0
+  # v3.55.0 (2026-11-27, ST-16, EPIC-03, v9.18): GET /digest/weekly gains red_flags_7d (BLG-UX-12).
   # v3.54.0 (2026-11-27, ST-14, EPIC-03, v9.18): GET /digest/weekly gains journal_completion_rate_current,
   # journal_completion_rate_7d_ago, closed_trades_total and closed_trades_total_7d_ago; compliance_score_* deprecated (BLG-SPEC-204).
   # v3.53.0 (2026-11-26, ST-13, EPIC-02, v9.18): GET /trades items gain rules_followed (boolean, nullable) and
@@ -4470,9 +4471,10 @@ paths:
       summary: Get 7-day weekly trading digest
       description: |
         Returns a 7-day summary of realised P&L, unrealised P&L delta, alert counts,
-        compliance score (current and 7-day baseline), and data staleness.
+        journal completion rates with their closed-trade counts (the compliance_score_*
+        names are deprecated aliases), red flags in the last 7 days, and data staleness.
         All fields are raw numeric or boolean values — no generated text or interpretation.
-        Canonical contract: docs/specs/api_contracts/digest_endpoints.md v0.6
+        Canonical contract: docs/specs/api_contracts/digest_endpoints.md v0.7
       responses:
         "200":
           description: Weekly digest data
@@ -4530,6 +4532,10 @@ paths:
                         format: float
                         deprecated: true
                         description: Deprecated alias of journal_completion_rate_7d_ago (same value)
+                      red_flags_7d:
+                        type: integer
+                        nullable: true
+                        description: Count of red_flag_events created in the last 7 x 24h; null when the query fails
                       staleness_hours:
                         type: number
                         format: float

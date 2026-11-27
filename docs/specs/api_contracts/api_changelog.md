@@ -2,7 +2,7 @@
 **Class:** Class 2
 **Status:** Canonical
 **Version:** 1.39.0
-**Last Updated:** 2026-11-27 (ST-14, EPIC-03, v9.18 — digest_endpoints.md v0.6: `GET /digest/weekly` journal_completion_rate_* and closed_trades_total*); prior — 2026-11-26 (ST-13, EPIC-02, v9.18 — trade_endpoints.md v2.7.0: `GET /trades` rules_followed / rules_broken); prior — 2026-11-24 (EPIC-06, v9.18, pre-PR review follow-ups — earnings_endpoints.md v0.4.1 (BLG-BE-235) and watchlist_endpoints.md v1.5.1 (BLG-BE-234/236)); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-27 (ST-14/ST-16, EPIC-03, v9.18 — digest_endpoints.md v0.6–v0.7: `GET /digest/weekly` journal_completion_rate_*, closed_trades_total*, red_flags_7d); prior — 2026-11-26 (ST-13, EPIC-02, v9.18 — trade_endpoints.md v2.7.0: `GET /trades` rules_followed / rules_broken); prior — 2026-11-24 (EPIC-06, v9.18, pre-PR review follow-ups — earnings_endpoints.md v0.4.1 (BLG-BE-235) and watchlist_endpoints.md v1.5.1 (BLG-BE-234/236)); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 # API Changelog
@@ -39,6 +39,15 @@ Rules:
 ---
 
 ## v9.18.0 (2026-11-19 — Release v9.18)
+
+### digest_endpoints.md — v0.7 (UPDATED)
+
+**EPIC:** EPIC-03
+**ST:** ST-16
+
+| Change | Details |
+|--------|---------|
+| Updated endpoint: GET /digest/weekly | Adds `red_flags_7d`, the count of `red_flag_events` created in the last 7 × 24h, so the Weekly Digest can show and link the week's red flags (BLG-UX-12; Product Owner decision 2026-11-18). |
 
 ### digest_endpoints.md — v0.6 (UPDATED)
 
