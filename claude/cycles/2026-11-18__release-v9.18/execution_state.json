@@ -6,7 +6,7 @@
   "invoked_utc": "2026-11-19T08:07:14Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-27T16:29:08Z",
+  "last_updated_utc": "2026-11-27T16:29:43Z",
   "epics": {
     "EPIC-01": {
       "title": "Site Structure & Usability Phase 4, Stage 1: Correct and Safe (build-and-ship)",
@@ -423,7 +423,7 @@
     },
     "EPIC-03": {
       "title": "Site Structure & Usability Phase 4, Stage 2: Weekly Review Loop (build-and-ship)",
-      "status": "in_progress",
+      "status": "done",
       "branch": "exec/2026-11-18__release-v9.18/EPIC-03",
       "pr_number": null,
       "pr_status": "none",
@@ -527,16 +527,16 @@
         "ST-17": {
           "title": "Measure the core loop and show this week's loop on the Weekly Digest",
           "classification": "autonomous",
-          "status": "in_progress",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 2282,
           "branch": "exec/2026-11-18__release-v9.18/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "544ebe49fa6c8c0f6bd81a06508590980470c726",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-11-27T16:29:29Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/specs/metrics_definitions.md#Core Loop Metrics",
             "docs/specs/api_contracts/digest_endpoints.md#POST /digest/events",
@@ -550,10 +550,10 @@
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": "3.1.A.review",
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.push",
           "sign_off_record": null,
-          "notes": "Reclassified delegated_decision → autonomous 2026-11-27 (§5.1 mid-sprint reclassification): ESC-EXEC-20261127-01 raised 2026-11-27T15:44:13Z and resolved the same minute — Metrics Definitions & Analytics Owner (the user, in session) approved metrics_definitions.md §Core Loop Metrics as drafted after choosing distinct-ticker Signals, distinct-day Reviews, Due today recorded not counted, and created_at dating. No DEL record was created (decision escalation, resolved in session). | First-time-right: 2026-11-27 pass A — 1 done (signals.signal_date DATE; trade_plans.created_at TIMESTAMPTZ; positions.created_at and trade_reflections.created_at naive TIMESTAMP read as UTC; week_start computed server-side and returned, so the caption and counts share one window); 2 done (worked examples in metrics_definitions §Core Loop Metrics: quiet week, no signals, reflection after the exit week, repeats, UTC midnight, two markets); 8 done (Monday 00:00 UTC boundary in pytest; Monday shows Monday only); 17 done (loop_events read only by the digest; legacy: table missing before DS-43 → reviews null); 7 done (System Status 'Run Tests' calls every registered route and passes only on 2xx → the test.py entry sends dry_run: true so it never writes an opened event that would count as a review); 19 done (opened event once per mount, not on refetch/Refresh; event POST failure never blocks the page; Today list click logs then navigates, modifier clicks unaffected); 22 done (no preventDefault on Today links); 3 done (loop rows in src/lib/weeklyDigest.js with unit tests); 18 planned (real-Postgres test with rows either side of Monday 00:00 UTC); 4 done (axe fixture gets a populated loop); 6 done (Today list specs grepped for request counting); 5 high (new table + write endpoint); 11,20,21,23,24 N/A or covered. | First-time-right: 2026-11-27 pass B — 9 done (review findings fixed in-branch); 10 done (data_model v2.73 DS-43, digest_endpoints v0.8, openapi 3.56.0, api_changelog, api_performance_baseline §55, metrics_definitions 1.38.0, weekly_digest v0.6, dashboard v4.8 in this commit); 13 done; 18 re-run (real-Postgres rows either side of Monday 00:00 UTC on DATE/TIMESTAMP/TIMESTAMPTZ columns; unit fake keyed by SQL; clock taken from as_of_utc); 19 re-run (event settles before the digest GET, capped 1.5 s; failed write leaves the page; Refresh writes none — SC-DIG-13/13b); 22 done (no preventDefault; modifier clicks unaffected); 4 done (axe light+dark strict, arrow is an aria-hidden SVG because axe reports a text glyph as incomplete); 12,14,15,16 N/A. Review (high): 8 findings — fixed 7: System Status POST /trade-plans now deletes its draft (cleanup_delete) so test runs add no plans; digest GET waits for the opened event so Reviews include the visit; first-call table creation behind a lock; loop links use the visible text as their name (label in name); loopCaption rejects calendar-invalid dates; fixed month names (no 'Sept'); unit test clock from as_of_utc. No change 1: unauthenticated POST — the global X-API-Key middleware (main.py) already covers /digest/events when API_KEY is set."
+          "notes": "Reclassified delegated_decision → autonomous 2026-11-27 (§5.1 mid-sprint reclassification): ESC-EXEC-20261127-01 raised 2026-11-27T15:44:13Z and resolved the same minute — Metrics Definitions & Analytics Owner (the user, in session) approved metrics_definitions.md §Core Loop Metrics as drafted after choosing distinct-ticker Signals, distinct-day Reviews, Due today recorded not counted, and created_at dating. No DEL record was created (decision escalation, resolved in session). | First-time-right: 2026-11-27 pass A — 1 done (signals.signal_date DATE; trade_plans.created_at TIMESTAMPTZ; positions.created_at and trade_reflections.created_at naive TIMESTAMP read as UTC; week_start computed server-side and returned, so the caption and counts share one window); 2 done (worked examples in metrics_definitions §Core Loop Metrics: quiet week, no signals, reflection after the exit week, repeats, UTC midnight, two markets); 8 done (Monday 00:00 UTC boundary in pytest; Monday shows Monday only); 17 done (loop_events read only by the digest; legacy: table missing before DS-43 → reviews null); 7 done (System Status 'Run Tests' calls every registered route and passes only on 2xx → the test.py entry sends dry_run: true so it never writes an opened event that would count as a review); 19 done (opened event once per mount, not on refetch/Refresh; event POST failure never blocks the page; Today list click logs then navigates, modifier clicks unaffected); 22 done (no preventDefault on Today links); 3 done (loop rows in src/lib/weeklyDigest.js with unit tests); 18 planned (real-Postgres test with rows either side of Monday 00:00 UTC); 4 done (axe fixture gets a populated loop); 6 done (Today list specs grepped for request counting); 5 high (new table + write endpoint); 11,20,21,23,24 N/A or covered. | First-time-right: 2026-11-27 pass B — 9 done (review findings fixed in-branch); 10 done (data_model v2.73 DS-43, digest_endpoints v0.8, openapi 3.56.0, api_changelog, api_performance_baseline §55, metrics_definitions 1.38.0, weekly_digest v0.6, dashboard v4.8 in this commit); 13 done; 18 re-run (real-Postgres rows either side of Monday 00:00 UTC on DATE/TIMESTAMP/TIMESTAMPTZ columns; unit fake keyed by SQL; clock taken from as_of_utc); 19 re-run (event settles before the digest GET, capped 1.5 s; failed write leaves the page; Refresh writes none — SC-DIG-13/13b); 22 done (no preventDefault; modifier clicks unaffected); 4 done (axe light+dark strict, arrow is an aria-hidden SVG because axe reports a text glyph as incomplete); 12,14,15,16 N/A. Review (high): 8 findings — fixed 7: System Status POST /trade-plans now deletes its draft (cleanup_delete) so test runs add no plans; digest GET waits for the opened event so Reviews include the visit; first-call table creation behind a lock; loop links use the visible text as their name (label in name); loopCaption rejects calendar-invalid dates; fixed month names (no 'Sept'); unit test clock from as_of_utc. No change 1: unauthenticated POST — the global X-API-Key middleware (main.py) already covers /digest/events when API_KEY is set. | Deviation check: none (matches metrics_definitions §Core Loop Metrics, digest_endpoints v0.8, weekly_digest v0.6, dashboard v4.8). ci_pending: CI for 544ebe49 (to clear before DoQ)."
         }
       }
     },
@@ -1283,6 +1283,7 @@
     "ST-14",
     "ST-15",
     "ST-16",
+    "ST-17",
     "ST-18",
     "ST-19",
     "ST-20",
