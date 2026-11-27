@@ -46,6 +46,7 @@ The user, who holds the Product Owner and Director of Quality roles, gave both i
 3. **Accepted:** `loop_events` self-creates on first use; the deploy migration (Human-Delegation, Infrastructure & Operations Owner) only confirms it.
 4. **BLG-FE-339 (P2), accepted for v9.19 by both the Product Owner and the Director of Quality.** Rationale: pre-existing in EPIC-02's Trade History code, not caused by EPIC-03 (EPIC-03 does not touch `TradeHistory.js` or `rules-filter.spec.js`); reproduces about 1 run in 4 against main's own build; no data loss (the Rules filter only resets to All); EPIC-03's final Playwright run passed.
 5. Follow-ups BLG-BE-238 and BLG-BE-239 are P3.
+6. Confirmed again by the user ("give DOQ and PO acceptance") at 2026-11-27T16:49:15Z and posted on PR #2314 at their direction: https://github.com/sachiv1984/swing-trading-model/pull/2314#issuecomment-7223712359
 
 ## Rulings and decisions recorded during execution
 
