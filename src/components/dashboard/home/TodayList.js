@@ -10,6 +10,12 @@ import { getExitCondition } from "../../../lib/exitCondition";
 import { isGraceEndingToday } from "../../../lib/positionUrgency";
 import { planThisUrl, PLAN_THIS_SIGNAL_STATUSES } from "../../../lib/planThis";
 import { formatCurrency, currencyForMarket } from "../../../lib/format";
+import { recordLoopEvent } from "../../../api/loopEvents";
+
+// A click on a Today list item link records one "Due today action" (ST-17,
+// metrics_definitions.md §Core Loop Metrics): Review exit, a Grace or Stops
+// row, Research, Plan this. It never prevents or delays the navigation.
+const logDueTodayAction = () => recordLoopEvent("due_today_action");
 
 // ST-06 (BLG-FE-254, EPIC-02, v9.16): dashboard.md v4.0 §1B Today list ("Due today").
 // Display-only: every item is a link to the page where the user acts; nothing
@@ -120,6 +126,7 @@ function PositionLinkGroup({ group, items, text }) {
           <li key={p.id}>
             <Link
               to={`/Positions?position=${encodeURIComponent(p.id)}`}
+              onClick={logDueTodayAction}
               data-testid={`today-item-${group}-${p.ticker}`}
               className="flex items-center gap-3 text-sm rounded hover:bg-slate-100 dark:hover:bg-slate-700/40"
             >
@@ -329,6 +336,7 @@ export default function TodayList() {
                         )}
                         <Link
                           to={`/Positions?exit=${encodeURIComponent(position.id)}`}
+                          onClick={logDueTodayAction}
                           aria-label={`Review exit for ${position.ticker}`}
                           className={`ml-auto ${LINK}`}
                         >
@@ -373,6 +381,7 @@ export default function TodayList() {
                     <span className={MUTED}>{s.market}</span>
                     <Link
                       to={`/research/${encodeURIComponent(s.ticker)}`}
+                      onClick={logDueTodayAction}
                       aria-label={`Research ${s.ticker}`}
                       className={`ml-auto ${LINK}`}
                     >
@@ -384,6 +393,7 @@ export default function TodayList() {
                     {PLAN_THIS_SIGNAL_STATUSES.includes(s.status) && (
                       <Link
                         to={planThisUrl({ ticker: s.ticker, market: s.market, price: s.current_price, signalId: s.id })}
+                        onClick={logDueTodayAction}
                         aria-label={`Plan this: ${s.ticker}`}
                         data-testid={`today-plan-${s.ticker}`}
                         className={LINK}

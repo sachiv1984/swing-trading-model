@@ -3,8 +3,8 @@
 **Owner:** Data Model & Domain Schema Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.72
-**Last Updated:** 2026-11-23 (ST-27, EPIC-05, v9.18, BLG-BE-223 — DS-42 (v2.72): new `position_split_adjustments` table; confirmed splits applied on read, entry fields unchanged); prior — 2026-11-23 (ST-28, EPIC-05, v9.18, BLG-BE-179 — v2.71: §Lifecycle Transition Reasons, `basis_correction` transitions from the v9.12 currency correction are tagged on read; no schema change); prior — 2026-11-16 (BLG-BE-211, EPIC-05 post-merge, v9.17 — DS-41 staging and production Live Confirmations recorded: production 3 plans closed, verification 0 / 3; staging 0; no schema change); prior history retained — see prior entries in version control
+**Version:** 2.73
+**Last Updated:** 2026-11-27 (ST-17, EPIC-03, v9.18, BLG-FEAT-103 — DS-43 (v2.73): new `loop_events` table for the Weekly Digest loop counts); prior — 2026-11-23 (ST-27, EPIC-05, v9.18, BLG-BE-223 — DS-42 (v2.72): new `position_split_adjustments` table; confirmed splits applied on read, entry fields unchanged); prior — 2026-11-23 (ST-28, EPIC-05, v9.18, BLG-BE-179 — v2.71: §Lifecycle Transition Reasons, `basis_correction` transitions from the v9.12 currency correction are tagged on read; no schema change); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 This document describes the complete database schema and data structures used in the **Position Manager Web App**.
@@ -3951,6 +3951,61 @@ Expect 9 columns (`id` … `shares_after`; `confirmed_at`, `shares_before`, `sha
 
 ---
 
+## DS-43 — Add loop_events (v2.73, 2026-11-27)
+
+**Story:** ST-17 (EPIC-03, v9.18) — `BLG-FEAT-103`. Definitions: `metrics_definitions.md` §Core Loop Metrics (v1.38.0). Contract: `digest_endpoints.md` v0.8 (`POST /digest/events`, `GET /digest/weekly` `loop`). Display: `weekly_digest.md` §2 This Week's Loop.
+
+**Rationale:** two steps of the core loop leave no record in any existing table: opening the Weekly Digest and acting on a Today list row. This table records only those two events, so the Weekly Digest can count this week's reviews. There is no other page-view tracking.
+
+**Deploy order:** not a risk. `database.ensure_loop_events_table()` runs the Up Migration's `CREATE TABLE IF NOT EXISTS` on the first `POST /digest/events` per process. Until the table exists, `GET /digest/weekly` returns `loop.reviews: null` and its other fields are unaffected (the failed query is rolled back). The production migration at deploy is a Human-Delegation step (Infrastructure & Operations Owner), not an AC.
+
+### Up Migration (v2.72 → v2.73)
+
+```sql
+CREATE TABLE IF NOT EXISTS loop_events (
+    id          BIGSERIAL PRIMARY KEY,
+    event_type  VARCHAR(40) NOT NULL
+                CHECK (event_type IN ('weekly_digest_opened', 'due_today_action')),
+    created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS idx_loop_events_type_created
+    ON loop_events (event_type, created_at);
+```
+
+| Column | Meaning |
+|--------|---------|
+| `event_type` | `weekly_digest_opened`: one Weekly Digest page load (written once on mount, not on a refetch or Refresh). `due_today_action`: one click on a Today list link (recorded for analysis, not counted on the page) |
+| `created_at` | When the event was written (UTC). `reviews` counts distinct UTC dates of `weekly_digest_opened` rows in the current ISO week |
+
+No user, page or context columns: the app is single-user and nothing beyond the event and its time is needed.
+
+### Down Migration (v2.73 → v2.72)
+
+```sql
+DROP TABLE IF EXISTS loop_events;
+```
+
+Roll back the code first: v2.73's `POST /digest/events` would recreate the table. Dropping it loses the recorded events; `loop.reviews` reads `null` until the table returns.
+
+### Verification
+
+```sql
+SELECT column_name, data_type, is_nullable
+FROM information_schema.columns
+WHERE table_name = 'loop_events'
+ORDER BY ordinal_position;
+
+SELECT event_type, COUNT(*) FROM loop_events GROUP BY event_type;
+```
+
+Expect 3 columns (`id`, `event_type`, `created_at`; none nullable). Counts are 0 until the first page load or Today list click after deploy.
+
+**Sign-off:**
+- Data Model & Domain Schema Owner: additive table, reversible, created at runtime by an idempotent ensure-function; no backfill; no existing table changed. Pending agent-mediated review at the EPIC-03 DoQ.
+- **Live Confirmation — staging and production:** pending, Human-Delegation deploy step (Infrastructure & Operations Owner).
+
+---
+
 ## Drift Detector Triage (2026-10-13, v2.60)
 
 **Story:** ST-34 (EPIC-05, `2026-10-12__release-v9.12`), BLG-SPEC-178. Triage of the findings `scripts/check_data_model_drift.py` reported on its first run (ST-28, v9.9, 2026-10-01) beyond the 5 known divergence classes.
@@ -3985,6 +4040,6 @@ Expect 9 columns (`id` … `shares_after`; `confirmed_at`, `shares_before`, `sha
 
 ---
 
-**Document Version:** 2.72
+**Document Version:** 2.73
 **Maintained By:** Data Model & Domain Schema Owner
-**Last Review:** 2026-11-23 (ST-27, EPIC-05, v9.18, BLG-BE-223 — DS-42 (v2.72): new `position_split_adjustments` table; confirmed splits applied on read, entry fields unchanged); prior — 2026-11-23 (ST-28, EPIC-05, v9.18, BLG-BE-179 — v2.71: §Lifecycle Transition Reasons, `basis_correction` transitions from the v9.12 currency correction are tagged on read; no schema change); prior — 2026-11-13 (ST-11, EPIC-05, v9.17, BLG-BE-211 — DS-41 (v2.70): startup backfill closes `active` trade plans whose linked position is closed; the full-exit path now closes the linked plan; no schema change); prior history retained — see prior entries in version control
+**Last Review:** 2026-11-27 (ST-17, EPIC-03, v9.18, BLG-FEAT-103 — DS-43 (v2.73): new `loop_events` table for the Weekly Digest loop counts); prior — 2026-11-23 (ST-27, EPIC-05, v9.18, BLG-BE-223 — DS-42 (v2.72): new `position_split_adjustments` table; confirmed splits applied on read, entry fields unchanged); prior — 2026-11-23 (ST-28, EPIC-05, v9.18, BLG-BE-179 — v2.71: §Lifecycle Transition Reasons, `basis_correction` transitions from the v9.12 currency correction are tagged on read; no schema change); prior history retained — see prior entries in version control

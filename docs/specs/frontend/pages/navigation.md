@@ -1,8 +1,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 2.6
-**Last Updated:** 2026-11-24 (ST-08, EPIC-02, v9.18, BLG-FE-323 — the two moves built; §Onward Links Settings row and §Implementation Status updated); prior — 2026-11-18 (v9.18 design gate — ST-08/BLG-FE-323 Strategy Benchmark into Performance, Ticker Universe under Settings; ST-16/BLG-UX-12 Weekly Digest onward links); prior — 2026-11-16 (ST-06, EPIC-02, v9.17, BLG-FE-259 — one Performance page replaces Analytics and Reports in Review; old routes redirect; onward links updated); prior history retained — see prior entries in version control
+**Version:** 2.7
+**Last Updated:** 2026-11-27 (ST-16, EPIC-03, v9.18, BLG-UX-12 — Weekly Digest onward links built; realised P&L opens Performance on Last 7 Days); prior — 2026-11-24 (ST-08, EPIC-02, v9.18, BLG-FE-323 — the two moves built; §Onward Links Settings row and §Implementation Status updated); prior — 2026-11-18 (v9.18 design gate — ST-08/BLG-FE-323 Strategy Benchmark into Performance, Ticker Universe under Settings; ST-16/BLG-UX-12 Weekly Digest onward links); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Design Source:** docs/design/2026-03-24__release-v2.3/sidebar-nav-groups/ux_spec.md
 **Design Source (v1.3 command palette):** docs/design/2026-07-17__release-v7.5/command-palette/ux_spec.md
@@ -157,7 +157,7 @@ An existing "Back" button that calls `navigate(-1)` may stay, but it does not re
 | Performance | Trade History | Built — ST-06 (v9.17, `performance.md` §7); replaces the Analytics and Reports rows. v2.5: absorbs Strategy Benchmark's row (its onward link is now on the same page) |
 | Replay | Trade History | Built — ST-03 (v9.16) |
 | Journal | Trade History filtered to the item's ticker ("View trade" on each reflection and red flag); Positions for an open position's note ("Open position") | Built — ST-05 (v9.17, `journal.md` §4); replaces the Trade Reflections and Red Flag Journal rows |
-| Weekly Digest | Performance Summary (realised P&L), Performance Compliance (journal completion), Journal Red flags (red flags, last 7 days), Notifications (alert counts) — `weekly_digest.md` v0.3 §2 | Notifications exists; the other three ST-16 (v9.18). The journal completion link goes to Performance Compliance because no Journal section shows that rate (v9.18 design gate) |
+| Weekly Digest | Performance Summary on the "Last 7 Days" period (realised P&L, `/Performance?section=summary&period=last_7_days`, v2.7), Performance Compliance (journal completion), Journal Red flags (red flags, last 7 days), Notifications (alert counts) — `weekly_digest.md` v0.5 §2 | Built — ST-16 (v9.18). The journal completion link goes to Performance Compliance because no Journal section shows that rate (v9.18 design gate). The realised P&L link names the period so Summary shows the same 7-day figure (Head of UX & Design ruling, 2026-11-27) |
 | Settings | Notification Preferences (header); Ticker Universe (§3 Preferences "Screener universe" row, v2.5) | Notification Preferences built — ST-03 (v9.16); Ticker Universe built — ST-08 (v9.18) |
 | Notification Preferences | Notifications (parent link); Weekly Digest | Parent link built — ST-02 (v9.16); Weekly Digest link exists |
 | System Status | Settings | Built — ST-03 (v9.16) |
@@ -332,6 +332,7 @@ First-session-only dismissible tooltip on the nav-bar search affordance. No moda
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.7 | 2026-11-27 | ST-16 (EPIC-03, v9.18, BLG-UX-12) built the Weekly Digest onward links. The realised P&L link adds `period=last_7_days`, because Performance opens on Last Month and would show a different realised P&L (Head of UX & Design ruling, the user in session, 2026-11-27). |
 | 2.6 | 2026-11-24 | ST-08 (EPIC-02, v9.18, BLG-FE-323) built the two v2.5 moves as specified: Strategy Benchmark is Performance's "Strategy vs backtest" section (`/StrategyBenchmark` redirects, keeping `?tab=`); Ticker Universe is at `/settings/ticker-universe` with parent Settings and the Settings "Screener universe" row (`/TickerUniverse` redirects, query kept); sidebar 17 entries; palette "Strategy vs backtest" with the alias "Strategy Benchmark". §Onward Links Settings row marked built. No rule change. |
 | 2.5 | 2026-11-18 | v9.18 design gate, adopting re-review §14.2 (DL-089). (ST-08, BLG-FE-323) Strategy Benchmark becomes Performance's "Strategy vs backtest" section; `/StrategyBenchmark` redirects. Ticker Universe moves to `/settings/ticker-universe`, a Settings detail page with a parent link; `/TickerUniverse` redirects. Sidebar 19 → 17; Review renumbered. (ST-16, BLG-UX-12) Weekly Digest onward links. ST-07 keeps the `design_system.md` §14.5 half and dates the approval of both. Design source: `docs/design/2026-11-18__release-v9.18/navigation-phase4-moves/decision_record.md`. Head of UX & Design sign-off: 2026-11-18. Product Owner approved: 2026-11-18. Head of Specs Team confirmed. |
 | 2.4 | 2026-11-16 | ST-06 (EPIC-02, v9.17, BLG-FE-259), per `performance.md` §2 and §7. §Page Placement: one Performance row (Review, position 2) replaces Analytics and Reports; both old routes listed as removed with their redirects; counts updated; "Later merges" note closed. §Onward Links: one Performance row replaces the Analytics and Reports rows; Strategy Benchmark and the Dashboard compliance card point at Performance. |

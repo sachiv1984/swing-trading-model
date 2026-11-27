@@ -430,13 +430,43 @@ class TestDigestEndpoints(unittest.TestCase):
         "unrealised_pnl_delta_7d": None,
         "alerts_fired_7d": 0,
         "alerts_dismissed_7d": 0,
+        "journal_completion_rate_current": 0.0,
+        "journal_completion_rate_7d_ago": 0.0,
+        "closed_trades_total": 0,
+        "closed_trades_total_7d_ago": 0,
         "compliance_score_current": 0.0,
         "compliance_score_7d_ago": 0.0,
+        "red_flags_7d": 0,
         "staleness_hours": None,
         "as_of_utc": "2026-01-01T00:00:00+00:00",
     })
     def test_get_digest_weekly_returns_200(self, _):
         assert CLIENT.get("/digest/weekly").status_code == 200
+
+    @patch("routers.digest.get_weekly_digest_data", return_value={
+        "loop": {"week_start": "2026-11-23", "signals": None, "plans": 0, "entries": 0, "reflections": 0, "reviews": None},
+        "realised_pnl_7d": 0.0,
+        "unrealised_pnl_delta_7d": None,
+        "alerts_fired_7d": None,
+        "alerts_dismissed_7d": None,
+        "journal_completion_rate_current": None,
+        "journal_completion_rate_7d_ago": None,
+        "closed_trades_total": None,
+        "closed_trades_total_7d_ago": None,
+        "compliance_score_current": 0.0,
+        "compliance_score_7d_ago": 0.0,
+        "red_flags_7d": None,
+        "staleness_hours": None,
+        "as_of_utc": "2026-01-01T00:00:00+00:00",
+    })
+    def test_get_digest_weekly_passes_null_counts_through(self, _):
+        """EPIC-03: a failed count is null in the response, never coerced to 0."""
+        resp = CLIENT.get("/digest/weekly")
+        assert resp.status_code == 200
+        data = resp.json()["data"]
+        for field in ("alerts_fired_7d", "alerts_dismissed_7d", "red_flags_7d", "closed_trades_total"):
+            assert data[field] is None
+        assert data["loop"]["signals"] is None and data["loop"]["reviews"] is None
 
     def test_post_digest_si05_send_returns_401_without_api_key(self):
         """ST-08 (BLG-BE-35): unauthenticated POST /digest/si05/send returns 401."""

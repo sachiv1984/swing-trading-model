@@ -9,7 +9,7 @@
  *   SC-PRINT-01  WeeklyDigest: Print button present and clickable once data loads
  *   SC-PRINT-02  WeeklyDigest: Print button hidden while loading / on error
  *   SC-PRINT-03  WeeklyDigest: print-media emulation hides nav/sidebar/actions,
- *                keeps table content
+ *                keeps the figures (v9.18 ST-15: a figure list, not a table)
  *   SC-PRINT-04  TradePlan: Print button present and clickable in detail view
  *   SC-PRINT-05  TradePlan: Print button absent on the creation form (no editId)
  *   SC-PRINT-06  TradePlan: print-media emulation hides nav/sidebar/actions,
@@ -33,6 +33,10 @@ const DIGEST_SEED = {
     unrealised_pnl_delta_7d: -42.80,
     alerts_fired_7d: 5,
     alerts_dismissed_7d: 3,
+    journal_completion_rate_current: 80.0,
+    journal_completion_rate_7d_ago: 75.0,
+    closed_trades_total: 20,
+    closed_trades_total_7d_ago: 16,
     compliance_score_current: 80.0,
     compliance_score_7d_ago: 75.0,
     staleness_hours: 18.5,
@@ -116,7 +120,7 @@ test.describe('WeeklyDigest — Print / Export PDF', () => {
     await expect(page.getByTestId('print-export-pdf-btn')).toHaveCount(0);
   });
 
-  test('SC-PRINT-03: print-media emulation hides nav/sidebar/actions, keeps table content', async ({ page }) => {
+  test('SC-PRINT-03: print-media emulation hides nav/sidebar/actions, keeps the figures', async ({ page }) => {
     await page.route('**/digest/weekly', (route) =>
       route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(DIGEST_SEED) })
     );
@@ -130,9 +134,10 @@ test.describe('WeeklyDigest — Print / Export PDF', () => {
 
     await expect(page.locator('aside').first()).not.toBeVisible();
     await expect(page.getByTestId('print-export-pdf-btn')).not.toBeVisible();
-    // Table content remains
-    await expect(page.getByText('Realised P&L (7d)')).toBeVisible();
-    await expect(page.locator('td').filter({ hasText: /^£166\.10$/ }).first()).toBeVisible();
+    // The figures remain (ST-15: a figure list, signed GBP)
+    await expect(page.getByTestId('digest-figures').getByText('Realised P&L, last 7 days')).toBeVisible();
+    await expect(page.getByTestId('digest-link-realised_pnl_7d')).toHaveText('+£166.10');
+    await expect(page.getByTestId('digest-as-of')).toBeVisible();
   });
 });
 

@@ -2,8 +2,8 @@
 **Owner:** Infrastructure & Operations Owner
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Version:** 2.45
-**Date:** 2026-11-23
+**Version:** 2.46
+**Date:** 2026-11-27
 **Story:** ST-11 (BLG-OPS-05) — initial baseline; ST-06 (v2.5 EPIC-02) — outlier investigation; ST-01 (v2.7 EPIC-01) — Supavisor baseline re-run; ST-05 (v6.1 EPIC-02) — PATCH /trades/{id}/costs registration; ST-11 (v6.4 EPIC-03, BLG-OPS-82) — v6.3 endpoint registration; ST-04 (v6.5 EPIC-02, BLG-OPS-83) — v6.4 endpoint registration; ST-01 (v6.9 EPIC-01, BLG-FEAT-64) — GET /positions/{id}/compliance-recheck registration; ST-02 (v6.9 EPIC-02, BLG-FEAT-65) — GET /positions/{id}/gap-risk registration; ST-15 (v7.0 EPIC-03, BLG-FEAT-68) — PATCH /positions/{id}/mark-reviewed registration; ST-02 (v7.5 EPIC-02, BLG-FE-116) — GET/POST /price-alerts, DELETE /price-alerts/{id} registration; ST-03 (v7.5 EPIC-03, BLG-FE-117) — bulk actions toolbar endpoint registration; ST-04 (v7.5 EPIC-04, BLG-FE-118) — saved filters & daily P&L endpoint registration; ST-09 (v9.4 EPIC-03, BLG-OPS-151) — POST /ai/check-endpoint-anomalies registration; ST-09/ST-06 (v9.5 EPIC-02, BLG-OPS-156/BLG-OPS-153) — GET /positions/{id}, GET /ai/spend-trend-by-feature registration; ST-01b (v9.7 EPIC-01, BLG-FEAT-74) — POST /replay/run registration; ST-17 (v9.12 EPIC-03, BLG-BE-146) — GET /market/atr/{ticker} registration
 **Cycle:** 2026-03-31__release-v2.4 (baseline); 2026-04-05__release-v2.5 (ST-06 update); 2026-04-13__release-v2.7 (Supavisor re-run)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
@@ -2362,10 +2362,42 @@ Registered by: Sprint Execution Engine — 2026-11-23. Infrastructure & Operatio
 
 ---
 
+## 55. POST /digest/events
+
+**Date:** 2026-11-27
+**Story:** ST-17 (EPIC-03, v9.18, BLG-FEAT-103). Registered in the same commit that adds the path to `openapi.yaml`, as the API Performance Baseline Drift Detection CI gate requires.
+
+### 55.1 Endpoint Profile
+
+| Endpoint | Added in | Method | p50 (ms) | p95 (ms) | Flag |
+|----------|----------|--------|----------|----------|------|
+| POST /digest/events | v9.18 | Write — pending live timing run | 20–60ms (est.) | 60–150ms (est.) | Pending next baseline re-run |
+
+**Endpoint characteristics:**
+- One `INSERT` into the small `loop_events` table (DS-43); the first call per process also runs `CREATE TABLE IF NOT EXISTS`. `dry_run: true` (the System Status endpoint test) validates and writes nothing.
+- Called once per Weekly Digest page load and once per Today list link click, fire-and-forget: the page never waits for it.
+- `GET /digest/weekly` gains five count queries (one indexed `loop_events` lookup on `idx_loop_events_type_created`, four `COUNT`s on `created_at`/`signal_date`); its row in this document is unchanged until the next baseline re-run measures it.
+- **Estimation methodology:** no live timing run is possible in this execution environment, consistent with §46–§54. The estimate follows the single-insert write paths (§20).
+
+### 55.2 Sign-Off
+
+```
+ST-17 (v9.18 EPIC-03, BLG-FEAT-103) — Baseline Registration
+
+AC: api_performance_baseline.md has a row for POST /digest/events. PASS (§55.1)
+Registered in the same commit as the openapi.yaml path, per the API Performance Baseline Drift Detection CI gate. PASS
+Estimation methodology documented; no live timing run in this execution environment.
+
+Registered by: Sprint Execution Engine — 2026-11-27. Infrastructure & Operations Owner review pending (next baseline re-run).
+```
+
+---
+
 ## 9. Document History
 
 | Version | Date | Author | Change |
 |---------|------|--------|--------|
+| 2.46 | 2026-11-27 | Sprint Execution Engine | ST-17 (v9.18 EPIC-03, BLG-FEAT-103): §55 added — POST /digest/events registered pending live measurement (estimate p50 20–60ms, p95 60–150ms). |
 | 2.45 | 2026-11-23 | Sprint Execution Engine | ST-27 (v9.18 EPIC-05, BLG-BE-223): §54 added — POST /positions/{id}/split-adjustment/confirm registered pending live measurement (estimate p50 150–350ms, p95 300–700ms). |
 | 2.44 | 2026-11-11 | Sprint Execution Engine | ST-14 (v9.16 EPIC-04, BLG-OPS-198): §53.2 filled from production — p50 237.6 s, p95 249.2 s, threshold 356.4 s over 10 runs (2026-10-29 to 2026-11-11); window note on the DS-36 deploy date; §53.4 p50/p95 AC PASS. |
 | 2.43 | 2026-10-27 | Sprint Execution Engine | ST-31 (v9.13 EPIC-05, BLG-OPS-19): §52 added — GET /ops/api-call-attribution registered pending live timing run. ST-32 (BLG-OPS-23): §53 added — full screener run benchmark method and the >1.5× regression threshold; p50/p95 pending live measurement. |

@@ -2,8 +2,8 @@
 **Owner:** Metrics Definitions & Analytics Canonical Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 1.36.0
-**Last Updated:** 2026-11-26 (ST-13, EPIC-02, v9.18, BLG-FE-320 — new §Rules Followed (per closed trade)); prior — 2026-11-16 (ST-06, EPIC-02, v9.17, BLG-FE-300 — §Minimum Trades Threshold: summary total_trades, win_rate and total_pnl stay real below the minimum; no formula change); prior — 2026-11-04 (ST-23, EPIC-03, v9.15, BLG-SPEC-198 — §Position Risk Data Sources names fill_price (US) and entry_price (UK) as the native entry; no formula change); prior history retained — see prior entries in version control
+**Version:** 1.38.0
+**Last Updated:** 2026-11-27 (ST-17, EPIC-03, v9.18, BLG-FEAT-103 — new §Core Loop Metrics: this ISO week's five loop counts; owner approval ESC-EXEC-20261127-01); prior — 2026-11-27 (ST-14, EPIC-03, v9.18, BLG-SPEC-204 — §Journal Completion Rate: also served by `GET /digest/weekly` as `journal_completion_rate_*` with its trade counts; no formula change); prior — 2026-11-26 (ST-13, EPIC-02, v9.18, BLG-FE-320 — new §Rules Followed (per closed trade)); prior history retained — see prior entries in version control
 **Review Cycle:** Monthly
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
@@ -778,8 +778,27 @@ Returned in `GET /analytics/compliance-metrics` data object:
 { "journal_completion_rate": 72.5, "trade_count": 40 }
 ```
 
+Also returned by `GET /digest/weekly` (Weekly Digest) with the same formula and predicate, so both surfaces show the same figure for the same data (v1.37.0, ST-14, BLG-SPEC-204):
+
+| Digest field | Meaning | Equals |
+|--------------|---------|--------|
+| `journal_completion_rate_current` | rate over all closed trades | `journal_completion_rate` |
+| `closed_trades_total` | its denominator | `trade_count` |
+| `journal_completion_rate_7d_ago` | rate over trades with `exit_date` before the digest's 7-day cutoff, using today's notes | — |
+| `closed_trades_total_7d_ago` | its denominator | — |
+
+The digest's older `compliance_score_current`/`_7d_ago` names are deprecated aliases of the same values. This figure is a journal completion rate; no surface labels it a compliance score.
+
+### Worked Examples
+| Closed trades (with a note) | Before the cutoff (with a note) | `journal_completion_rate_current` | `journal_completion_rate_7d_ago` | Weekly Digest shows |
+|---|---|---|---|---|
+| 0 (0) | 0 (0) | 0.0 | 0.0 | "No closed trades yet" |
+| 3 (0) | 3 (0) | 0.0 | 0.0 | "0.0%", "A week ago: 0.0%" |
+| 3 (2) | 0 (0) | 66.7 | 0.0 | "66.7%", "A week ago: no closed trades" (ruling 2026-11-27) |
+| 40 (29) | 37 (26) | 72.5 | 70.3 | "72.5%", "A week ago: 70.3%" |
+
 ### Failure Behaviour
-- No trades: `journal_completion_rate = 0.0`, `trade_count = 0`.
+- No trades: `journal_completion_rate = 0.0`, `trade_count = 0` (digest: `closed_trades_total = 0`).
 
 ---
 
@@ -1498,6 +1517,65 @@ Profit `text-emerald-400`, loss `text-rose-400` — aligned with (not distinct f
 
 ---
 
+# Core Loop Metrics
+
+## This Week's Loop (per ISO week)
+
+*(v1.38.0, ST-17, BLG-FEAT-103, EPIC-03, v9.18. Shown on the Weekly Digest (`weekly_digest.md` §2 This Week's Loop) and served by `GET /digest/weekly` `loop` (`digest_endpoints.md`). Rulings by the Metrics Definitions & Analytics Owner, the user in session, 2026-11-27: Signals count distinct tickers; Reviews count distinct UTC days; the Due today action is recorded, not counted; steps are dated by when they were recorded.)*
+
+### Definition
+How much of the core loop (signal → plan → entry → reflection → review) the user used in the current ISO week. Five counts, one per step, in loop order. They are counts of the user's own activity in the app, not a judgement of it.
+
+### Window
+The current ISO week in UTC: from Monday 00:00 UTC (`week_start`) to the time of the request. On a Monday the window is Monday so far. Timestamps stored without a time zone (`TIMESTAMP`) are read as UTC, the database and server time zone. A date column (`signal_date`) is in the window when it is on or after `week_start`'s date.
+
+### The five step counts
+
+| Step | Field | Counts | Source |
+|------|-------|--------|--------|
+| 1 Signals | `signals` | Distinct (`ticker`, `market`) pairs with a `signal_date` in the window. A ticker that signals on several days counts once. | `signals.ticker`, `signals.market`, `signals.signal_date` |
+| 2 Plans | `plans` | Trade plans created in the window, any status (drafts included). A System Status "Run Tests" run deletes the draft its `POST /trade-plans` check creates (`backend/routers/test.py` `cleanup_delete`), so test runs add no plans. | `trade_plans.created_at` |
+| 3 Entries | `entries` | Positions recorded in the window. A back-dated entry counts in the week it was recorded. | `positions.created_at` |
+| 4 Reflections | `reflections` | Trade reflections written in the window, whichever week the trade closed. | `trade_reflections.created_at` |
+| 5 Reviews | `reviews` | Distinct UTC days in the window with at least one `weekly_digest_opened` event. Several opens on one day count once. Range 0–7. | `loop_events` (`data_model.md` DS-43) |
+
+Each count is a non-negative integer, or `null` when its query fails (never 0 for a failure).
+
+### Step-to-step completion rates (analysis only, not shown)
+
+```text
+rate(step n → step n+1) = count(n+1) / count(n)   for the same ISO week
+if count(n) = 0: null
+```
+
+The four rates are plans ÷ signals, entries ÷ plans, reflections ÷ entries and reviews ÷ reflections. They compare counts in one week, not the same items moving through the loop (a reflection this week may be on a trade entered last month), so a rate can exceed 1. With weekly counts of 0–5 a rate is noise, so the Weekly Digest shows counts only (`weekly_digest.md` §2).
+
+### Recorded, not counted: Due today action
+`loop_events` also records `due_today_action`: one row per click on a Today list link (Review exit, a Grace or Stops row, Research, Plan this). It is defined here for analysis and is not one of the five counts and not shown in v9.18. Nothing else is tracked; there is no other page-view tracking.
+
+### Events
+- `weekly_digest_opened`: one row per Weekly Digest page load, written by the page once on mount, not on a refetch or a Refresh click.
+- `due_today_action`: one row per Today list link click.
+
+### Worked Examples
+
+Week of Monday 23 Nov 2026 (`week_start` 2026-11-23T00:00Z):
+
+| Case | Activity in the window | signals | plans | entries | reflections | reviews | Rates |
+|------|------------------------|---------|-------|---------|-------------|---------|-------|
+| Quiet week | No activity | 0 | 0 | 0 | 0 | 0 | all null |
+| Week with no signals | No signals; 1 plan from last week's signal; 1 entry; the digest opened Tue and Thu | 0 | 1 | 1 | 0 | 2 | plans÷signals null; entries÷plans 1.0; reflections÷entries 0.0; reviews÷reflections null |
+| Reflection written the week after the exit | Trade closed Fri 20 Nov; its reflection written Mon 23 Nov | 0 | 0 | 0 | 1 | 0 | reflections÷entries null; reviews÷reflections 0.0 |
+| Repeated signal and opens | VOD (UK) signals Mon–Fri (5 rows); AAPL (US) on Wed; the digest opened 3 times on Wed | 2 | 0 | 0 | 0 | 1 | plans÷signals 0.0 |
+| UTC midnight | A plan created Sun 22 Nov 23:59 UTC; another Mon 23 Nov 00:00 UTC | 0 | 1 | 0 | 0 | 0 | — |
+| Same ticker, two markets | GSK (US) and GSK.L (UK) both signal | 2 | 0 | 0 | 0 | 0 | — |
+
+### Failure Behaviour
+- A failed count query returns `null` for that count only; the other counts and the rest of the digest still compute.
+- No `loop_events` table yet (before the DS-43 migration runs): `reviews` is `null`.
+
+---
+
 # Gate-Metric Naming (ST-48, BLG-SPEC-128, v9.2)
 
 **Canonical term:** the **SI-02 Data-Sufficiency Gate** — the `closed_trades >= 20` (and, per `reports.md`'s Gate Condition 2, `linked closed_trades >= 20`) threshold that must be met before SI-02 drift-detection metrics (`docs/specs/metrics/si02_drift_score.md`) have enough data to compute. Backed by `GET /portfolio/gate-metrics` (`gate_threshold`, `gate_met` fields).
@@ -1564,6 +1642,8 @@ Validation is performed by `POST /validate/calculations` comparing computed metr
 ## Appendix D — Change Log
 | Date | Version | Change | Author |
 |---|---|---|---|
+| 2026-11-27 | 1.38.0 | ST-17 (EPIC-03, v9.18, `BLG-FEAT-103`): new §Core Loop Metrics — five step counts per ISO week in UTC (signals as distinct ticker and market, plans, entries, reflections by `created_at`, reviews as distinct UTC days with a `weekly_digest_opened` event), step-to-step rates for analysis only, the recorded-not-counted `due_today_action`, worked examples. Approved by the Metrics Definitions & Analytics Owner (the user in session, 2026-11-27, `ESC-EXEC-20261127-01`). | Sprint Execution Engine (ST-17) |
+| 2026-11-27 | 1.37.0 | ST-14 (EPIC-03, v9.18, `BLG-SPEC-204`): §Journal Completion Rate names its second surface, `GET /digest/weekly` (`journal_completion_rate_current`/`_7d_ago`, `closed_trades_total`, `closed_trades_total_7d_ago`; `compliance_score_*` deprecated aliases), confirms the same predicate as `get_compliance_core_counts`, and adds worked examples. No formula change. `closed_trades_total_7d_ago` per Metrics Definitions & Analytics Owner / Product Owner ruling (the user in session, 2026-11-27). | Sprint Execution Engine (ST-14) |
 | 2026-11-26 | 1.36.0 | ST-13 (EPIC-02, v9.18, `BLG-FE-320`): new §Rules Followed (per closed trade) under Discipline & Compliance Metrics — `rules_followed` true/false/null and `rules_broken` on `GET /trades`, from `red_flag_events` by `position_id`, the linked plan's override acknowledgement and snapshot, and the 2026-11-04 pre-entry-check date. Definition approved by the Metrics Definitions & Analytics Owner (the user in session, 2026-11-24, `ESC-EXEC-20261124-03`), revised 2026-11-26 (`ESC-EXEC-20261126-02`: plan-time events join through `context.plan_id`; evidence date is `positions.created_at`; `ESC-EXEC-20261126-03`: `checklist_skipped` from the linked plan's last saved checklist, judgement items only). | Sprint Execution Engine (ST-13) |
 | 2026-11-16 | 1.35.1 | ST-06 (EPIC-02, v9.17, `BLG-FE-300`): §Minimum Trades Threshold — below the minimum, `summary.total_trades`, `win_rate` and `total_pnl` are still the period's real figures (the service returned 0.0 for the last two); the flag sits in `summary`. No formula change. Product Owner decision 2026-11-16; Metrics Definitions & Analytics Canonical Owner role held by the same user in session. | Sprint Execution Engine (ST-06) |
 | 2026-11-04 | 1.35.0 | ST-23 (EPIC-03, v9.15, `BLG-SPEC-198`): §Position Risk Data Sources names the native entry for both markets — `fill_price` (US) and `entry_price` (UK) — so `(entry − stop)` never mixes the GBP US `entry_price` with the native `initial_stop`. Open-position `pnl` basis (live FX, not net of fees) is recorded in `data_model_positions_dictionary.md` v0.7 §5.2 (ruling `ESC-EXEC-20261104-04`). No formula change. | Metrics Definitions & Analytics Owner |

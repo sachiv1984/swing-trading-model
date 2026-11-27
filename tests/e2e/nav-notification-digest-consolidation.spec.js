@@ -6,9 +6,10 @@
  *   SC-NND-01  No nav entry named "Alerts" remains (duplicate of Notifications removed)
  *   SC-NND-02  Notifications is in Today and Weekly Digest in Review (navigation.md v2.0;
  *              superseded the v1.4 "same System group" rule — ST-01, EPIC-01, v9.16, BLG-FE-250)
- *   SC-NND-03  Weekly Digest's "Alerts Fired (7d)" value links to /notifications?since_days=7
- *   SC-NND-04  Weekly Digest's "Alerts Dismissed (7d)" value links to /notifications?since_days=7&read=true
- *   SC-NND-05  Clicking the "Alerts Fired (7d)" link navigates to the filtered Notification Feed
+ *   SC-NND-03  Weekly Digest's "Alerts, last 7 days" value links to /notifications?since_days=7
+ *   SC-NND-04  Its "{n} marked read" line links to /notifications?since_days=7&read=true
+ *              (v9.18 ST-15: the old "Alerts Dismissed (7d)" row is this second line)
+ *   SC-NND-05  Clicking the alerts link navigates to the filtered Notification Feed
  *   SC-NND-06  Notification Feed applies since_days/read query params from the URL to its API call
  *   SC-NND-07  Daily Portfolio Summary preference row links to the Weekly Digest page
  *
@@ -47,6 +48,10 @@ const DIGEST_SEED = {
     unrealised_pnl_delta_7d: -42.80,
     alerts_fired_7d: 5,
     alerts_dismissed_7d: 3,
+    journal_completion_rate_current: 80.0,
+    journal_completion_rate_7d_ago: 75.0,
+    closed_trades_total: 20,
+    closed_trades_total_7d_ago: 16,
     compliance_score_current: 80.0,
     compliance_score_7d_ago: 75.0,
     staleness_hours: 18.5,
@@ -112,7 +117,7 @@ test('SC-NND-02: Notifications is in the Today area and Weekly Digest in the Rev
 // SC-NND-03 / 04 — Alert-count deep-links point at the filtered Notification Feed
 // ---------------------------------------------------------------------------
 
-test('SC-NND-03: "Alerts Fired (7d)" links to /notifications?since_days=7', async ({ page }) => {
+test('SC-NND-03: "Alerts, last 7 days" links to /notifications?since_days=7', async ({ page }) => {
   await stubLayout(page);
   await stubDigest(page);
   await page.goto('/#/WeeklyDigest');
@@ -122,12 +127,12 @@ test('SC-NND-03: "Alerts Fired (7d)" links to /notifications?since_days=7', asyn
   await expect(link).toHaveAttribute('href', /#\/notifications\?since_days=7$/);
 });
 
-test('SC-NND-04: "Alerts Dismissed (7d)" links to /notifications?since_days=7&read=true', async ({ page }) => {
+test('SC-NND-04: "{n} marked read" links to /notifications?since_days=7&read=true', async ({ page }) => {
   await stubLayout(page);
   await stubDigest(page);
   await page.goto('/#/WeeklyDigest');
 
-  const link = page.getByTestId('digest-link-alerts_dismissed_7d');
+  const link = page.getByTestId('digest-second-link-alerts_fired_7d');
   await expect(link).toBeVisible({ timeout: 8000 });
   await expect(link).toHaveAttribute('href', /#\/notifications\?since_days=7&read=true$/);
 });
@@ -136,7 +141,7 @@ test('SC-NND-04: "Alerts Dismissed (7d)" links to /notifications?since_days=7&re
 // SC-NND-05 — Clicking the link navigates to the Notification Feed
 // ---------------------------------------------------------------------------
 
-test('SC-NND-05: clicking "Alerts Fired (7d)" navigates to the Notification Feed', async ({ page }) => {
+test('SC-NND-05: clicking the alerts link navigates to the Notification Feed', async ({ page }) => {
   await stubLayout(page);
   await stubDigest(page);
   await stubNotificationsFeed(page);

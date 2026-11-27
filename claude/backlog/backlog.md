@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-26 (session — 1 new item added: BLG-BE-237; EPIC-02 v9.18 ST-13 review); prior — 2026-11-26 (session — 1 new item added: BLG-FE-338; EPIC-02 v9.18 pre-PR Product Owner review); prior — 2026-11-24 (session — 2 new items added: BLG-FE-336, BLG-FE-337; ST-08 EPIC-02 v9.18 pre-commit code review); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-27 (session — 1 new item added: BLG-FE-339; EPIC-03 v9.18 CI, SC-RF-08 restore race); prior — 2026-11-27 (session — 1 new item added: BLG-BE-239; EPIC-03 v9.18 ST-16 review); prior — 2026-11-27 (session — 1 new item added: BLG-BE-238; EPIC-03 v9.18 ST-14 first-time-right check 8); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -9048,5 +9048,69 @@ In `backend/services/earnings_service.py`, a usable `Ticker.info` (with `quoteTy
 **Acceptance Criteria**
 - A UK `GSK` watchlist row does not take a US `GSK` signal's status (Phase B test)
 - The UK `.L` and legacy bare matches still work
+
+---
+
+### BLG-BE-238 — Make the Weekly Digest's realised P&L window 7 dates, or name it
+**Priority:** P3 (Low)
+**Type:** Backend Engineering
+**Owner:** Head of Engineering; Metrics Definitions & Analytics Owner
+**Source:** ST-14 (EPIC-03, `2026-11-18__release-v9.18`) first-time-right pass A, check 8 (time boundaries); Product Owner ruling in session: keep the "last 7 days" labels, file a P3 follow-up — 2026-11-27
+**Effort:** S (~0.5 day, decision then build)
+**Provisional-Target:** v9.19
+
+**Problem**
+`GET /digest/weekly` `realised_pnl_7d` and the journal-completion "7 days ago" cutoff compare `trade_history.exit_date` with `date(now − 7 days)` (`exit_date >= cutoff` and `exit_date < cutoff`). On Thursday 27 Nov that covers 20–27 Nov, which is 8 calendar dates. `alerts_fired_7d`, `alerts_dismissed_7d` and `red_flags_7d` use a rolling 7 × 24h timestamp window. The Weekly Digest labels every row "last 7 days", so the realised P&L row can include a trade closed 8 dates ago.
+
+**Scope**
+- Decide (Metrics Definitions & Analytics Owner, Product Owner): change the date window to 7 dates (`exit_date > today − 7`), or keep it and name it on the page
+- Build the decision; update `digest_endpoints.md`, `metrics_definitions.md` §Journal Completion Rate (digest cutoff) and `weekly_digest.md` §2
+
+**Acceptance Criteria**
+- The decision is recorded in `digest_endpoints.md` and `metrics_definitions.md`
+- A pytest with a trade closed exactly 7 and exactly 8 dates ago shows which window each digest figure uses, matching the decision
+- The Weekly Digest label for realised P&L matches its window
+
+---
+
+### BLG-BE-239 — Use the UTC date for the analytics period cutoffs
+**Priority:** P3 (Low)
+**Type:** Backend Engineering
+**Owner:** Head of Engineering; Metrics Definitions & Analytics Owner
+**Source:** ST-16 (EPIC-03, `2026-11-18__release-v9.18`) pre-commit code review (medium) — 2026-11-27
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.19
+
+**Problem**
+`_period_to_since_date` in `backend/routers/analytics.py` and `backend/services/analytics_service.py` computes the period cutoff from `date.today()`, the server's local date. `GET /digest/weekly` uses the UTC date (`(datetime.now(timezone.utc) - 7 days).date()`). From v9.18 the Weekly Digest's realised P&L links to Performance on "Last 7 Days" so that both pages show the same figure. On a server not running in UTC, near midnight, the two cutoffs differ by a day and the linked page can show a different realised P&L.
+
+**Scope**
+- Compute both `_period_to_since_date` cutoffs from the UTC date
+- Note the UTC basis in `metrics_definitions.md` for the period filter
+
+**Acceptance Criteria**
+- A pytest with a frozen clock just after UTC midnight, in a non-UTC local zone, shows the analytics cutoff equal to the digest's
+- `weekly_digest.md`'s UTC caveat on the realised P&L link is removed
+
+---
+
+### BLG-FE-339 — Make Trade History restore the stored rules option every time
+**Priority:** P2 (Medium)
+**Type:** Frontend / UX
+**Owner:** Head of Engineering; QA & Testing Owner
+**Source:** EPIC-03 (`2026-11-18__release-v9.18`) CI: Playwright SC-RF-08 (`tests/e2e/rules-filter.spec.js`, EPIC-02 ST-13) failed on the EPIC-03 branch at d64cc465 (run 46018942348, both attempts) and fails about 1 run in 4 locally against main's own build (e156a6f7) — not caused by EPIC-03 — 2026-11-27
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v9.19
+
+**Problem**
+Trade History restores the stored rules option once on arrival: a mount effect calls `setRulesFilter(stored)`, which does `setSearchParams` from the `searchParams` captured at render, while the save effect writes `rules: "all"` to `tradeHistory.filters` on the same mount. Other `setSearchParams` calls built from a stale `searchParams` (`TradeHistory.js` lines 144, 153, 204) can also drop `?rules=`. The result is intermittent: on a later visit the "Broken" option is sometimes not restored, and the stored value is overwritten with All. SC-RF-08 catches it intermittently and turns the Playwright workflow red on unrelated branches.
+
+**Scope**
+- Restore the rules option without racing the save (for example read the stored value into the initial state, or skip the save until the restore has applied), and build every `setSearchParams` from the current params (functional update)
+- Make SC-RF-08 deterministic (wait for the stored envelope to hold `rules: "broken"` before leaving the page)
+
+**Acceptance Criteria**
+- SC-RF-08 passes 20 consecutive local runs (`--repeat-each=20`)
+- A unit or Playwright case shows the stored option survives arrival with no `?rules=` and is not overwritten with All
 
 ---

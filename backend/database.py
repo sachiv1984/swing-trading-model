@@ -5927,6 +5927,98 @@ def get_weekly_digest_data(conn=None) -> Dict:
         return _fetch_weekly_digest_data(conn)
 
 
+LOOP_EVENT_TYPES = ("weekly_digest_opened", "due_today_action")
+
+
+def iso_week_start_utc(now_utc: datetime) -> datetime:
+    """Monday 00:00 UTC of the ISO week containing `now_utc` (§Core Loop Metrics)."""
+    day = now_utc.astimezone(timezone.utc).date()
+    monday = day - timedelta(days=day.weekday())
+    return datetime.combine(monday, datetime.min.time(), tzinfo=timezone.utc)
+
+
+def _fetch_weekly_loop_counts(conn, cursor, now_utc: datetime) -> Dict:
+    """The five core-loop step counts for the current ISO week (ST-17).
+
+    Each count is an int, or None when its query fails (never 0 for a
+    failure); a failed query is rolled back so the next one can run. Naive
+    TIMESTAMP columns are compared with a naive UTC value, TIMESTAMPTZ
+    columns with an aware one, and signal_date (DATE) with the Monday date.
+    """
+    week_start = iso_week_start_utc(now_utc)
+    week_start_naive = week_start.replace(tzinfo=None)
+    queries = {
+        "signals": ("SELECT COUNT(DISTINCT (ticker, market)) AS n FROM signals WHERE signal_date >= %s",
+                    week_start.date()),
+        "plans": ("SELECT COUNT(*) AS n FROM trade_plans WHERE created_at >= %s", week_start),
+        "entries": ("SELECT COUNT(*) AS n FROM positions WHERE created_at >= %s", week_start_naive),
+        "reflections": ("SELECT COUNT(*) AS n FROM trade_reflections WHERE created_at >= %s", week_start_naive),
+        "reviews": ("SELECT COUNT(DISTINCT (created_at AT TIME ZONE 'UTC')::date) AS n FROM loop_events "
+                    "WHERE event_type = 'weekly_digest_opened' AND created_at >= %s", week_start),
+    }
+    loop = {"week_start": week_start.date().isoformat()}
+    for step, (sql, param) in queries.items():
+        try:
+            cursor.execute(sql, (param,))
+            row = cursor.fetchone()
+            loop[step] = int(row["n"]) if row else 0
+        except Exception as e:
+            logger.warning("Could not compute loop count %s: %s", step, e)
+            _rollback_quietly(conn)
+            loop[step] = None
+    return loop
+
+
+def ensure_loop_events_table(conn=None) -> None:
+    """Create loop_events if it does not exist (DS-43, ST-17)."""
+    def _create(c):
+        with c.cursor() as cur:
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS loop_events (
+                    id          BIGSERIAL PRIMARY KEY,
+                    event_type  VARCHAR(40) NOT NULL
+                                CHECK (event_type IN ('weekly_digest_opened', 'due_today_action')),
+                    created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
+                )
+            """)
+            cur.execute("""
+                CREATE INDEX IF NOT EXISTS idx_loop_events_type_created
+                ON loop_events (event_type, created_at)
+            """)
+        c.commit()
+    if conn is not None:
+        return _create(conn)
+    with get_db() as conn:
+        _create(conn)
+
+
+def record_loop_event(event_type: str, conn=None) -> None:
+    """Write one loop_events row (ST-17). Raises ValueError for an unknown type."""
+    if event_type not in LOOP_EVENT_TYPES:
+        raise ValueError(f"unknown event_type: {event_type}")
+
+    def _insert(c):
+        with c.cursor() as cur:
+            cur.execute("INSERT INTO loop_events (event_type) VALUES (%s)", (event_type,))
+        c.commit()
+    if conn is not None:
+        return _insert(conn)
+    with get_db() as conn:
+        _insert(conn)
+
+
+def _rollback_quietly(conn) -> None:
+    """Clear an aborted transaction so the digest's later queries can run.
+
+    On Postgres one failed statement aborts the transaction; every later query
+    then fails with "current transaction is aborted". The digest's queries are
+    read-only, so rolling back loses nothing."""
+    try:
+        conn.rollback()
+    except Exception as e:  # pragma: no cover — a closed connection
+        logger.warning("Weekly digest rollback failed: %s", e)
+
+
 def _fetch_weekly_digest_data(conn) -> Dict:
     cursor = conn.cursor()
     now_utc = datetime.now(timezone.utc)
@@ -5972,10 +6064,12 @@ def _fetch_weekly_digest_data(conn) -> Dict:
             )
     except Exception as e:
         logger.warning("Could not compute unrealised_pnl_delta_7d: %s", e)
+        _rollback_quietly(conn)
 
-    # 3. Alerts fired and dismissed in last 7 days
-    alerts_fired_7d = 0
-    alerts_dismissed_7d = 0
+    # 3. Alerts fired and dismissed in last 7 days. Null, not 0, when the
+    #    query fails (EPIC-03 pre-PR review: the page shows "Not available").
+    alerts_fired_7d = None
+    alerts_dismissed_7d = None
     try:
         cursor.execute("""
             SELECT
@@ -5985,49 +6079,69 @@ def _fetch_weekly_digest_data(conn) -> Dict:
             WHERE created_at >= %s
         """, (cutoff_7d,))
         alert_row = cursor.fetchone()
-        if alert_row:
-            alerts_fired_7d = int(alert_row["fired"])
-            alerts_dismissed_7d = int(alert_row["dismissed"])
+        alerts_fired_7d = int(alert_row["fired"]) if alert_row else 0
+        alerts_dismissed_7d = int(alert_row["dismissed"]) if alert_row else 0
     except Exception as e:
         logger.warning("Could not compute alert counts: %s", e)
+        _rollback_quietly(conn)
 
-    # 4. Compliance score — journal_completion_rate
-    #    current: all closed trades; 7d ago: trades closed BEFORE the window
-    compliance_score_current = 0.0
-    compliance_score_7d_ago = 0.0
+    # 3b. Red flags in the last 7 days (ST-16, v9.18, Product Owner decision
+    #     2026-11-18): red_flag_events rows created in the same rolling window
+    #     as the alert counts. Null, not 0, when the query fails.
+    red_flags_7d = None
     try:
         cursor.execute("""
-            SELECT
-                COUNT(*) AS total,
-                COUNT(CASE
-                    WHEN (entry_note IS NOT NULL AND entry_note != '')
-                      OR (exit_note  IS NOT NULL AND exit_note  != '')
-                    THEN 1 END) AS with_notes
-            FROM trade_history
-        """)
-        comp_row = cursor.fetchone()
-        if comp_row and int(comp_row["total"]) > 0:
-            compliance_score_current = round(
-                int(comp_row["with_notes"]) / int(comp_row["total"]) * 100, 1
-            )
-
-        cursor.execute("""
-            SELECT
-                COUNT(*) AS total,
-                COUNT(CASE
-                    WHEN (entry_note IS NOT NULL AND entry_note != '')
-                      OR (exit_note  IS NOT NULL AND exit_note  != '')
-                    THEN 1 END) AS with_notes
-            FROM trade_history
-            WHERE exit_date < %s
-        """, (cutoff_7d_date,))
-        comp_base = cursor.fetchone()
-        if comp_base and int(comp_base["total"]) > 0:
-            compliance_score_7d_ago = round(
-                int(comp_base["with_notes"]) / int(comp_base["total"]) * 100, 1
-            )
+            SELECT COUNT(*) AS red_flags
+            FROM red_flag_events
+            WHERE created_at >= %s
+        """, (cutoff_7d,))
+        flag_row = cursor.fetchone()
+        red_flags_7d = int(flag_row["red_flags"]) if flag_row else 0
     except Exception as e:
-        logger.warning("Could not compute compliance scores: %s", e)
+        logger.warning("Could not compute red_flags_7d: %s", e)
+        _rollback_quietly(conn)
+
+    # 4. Journal completion rate (ST-14, v9.18, BLG-SPEC-204) — same predicate
+    #    as get_compliance_core_counts (metrics_definitions.md §Journal
+    #    Completion Rate), so the digest and Performance → Compliance agree.
+    #    current: all closed trades; 7d ago: trades closed BEFORE the window.
+    #    The trade counts let the page tell "no closed trades" from "no notes"
+    #    (both rates are 0.0 then).
+    #    On a failed query the rate and its count are None (null), never 0:
+    #    the contract reads closed_trades_total = 0 as "no closed trades".
+    journal_completion_rate_current = None
+    journal_completion_rate_7d_ago = None
+    closed_trades_total = None
+    closed_trades_total_7d_ago = None
+    journal_sql = """
+            SELECT
+                COUNT(*) AS total,
+                COUNT(CASE
+                    WHEN (entry_note IS NOT NULL AND entry_note != '')
+                      OR (exit_note  IS NOT NULL AND exit_note  != '')
+                    THEN 1 END) AS with_notes
+            FROM trade_history
+        """
+
+    def _journal_rate(where_sql="", params=None):
+        cursor.execute(journal_sql + where_sql, params)
+        row = cursor.fetchone()
+        total = int(row["total"]) if row else 0
+        rate = round(int(row["with_notes"]) / total * 100, 1) if total > 0 else 0.0
+        return rate, total
+
+    try:
+        journal_completion_rate_current, closed_trades_total = _journal_rate()
+    except Exception as e:
+        logger.warning("Could not compute journal completion rate: %s", e)
+        _rollback_quietly(conn)
+    try:
+        journal_completion_rate_7d_ago, closed_trades_total_7d_ago = _journal_rate(
+            "WHERE exit_date < %s", (cutoff_7d_date,)
+        )
+    except Exception as e:
+        logger.warning("Could not compute journal completion rate 7 days ago: %s", e)
+        _rollback_quietly(conn)
 
     # 5. Staleness — hours since last portfolio snapshot
     staleness_hours = None
@@ -6049,14 +6163,27 @@ def _fetch_weekly_digest_data(conn) -> Dict:
             staleness_hours = round(delta.total_seconds() / 3600, 1)
     except Exception as e:
         logger.warning("Could not compute staleness_hours: %s", e)
+        _rollback_quietly(conn)
+
+    # 6. This week's loop (ST-17, v9.18, BLG-FEAT-103) — metrics_definitions.md
+    #    §Core Loop Metrics: five counts for the current ISO week in UTC.
+    loop = _fetch_weekly_loop_counts(conn, cursor, now_utc)
 
     return {
+        "loop": loop,
         "realised_pnl_7d": realised_pnl_7d,
         "unrealised_pnl_delta_7d": unrealised_pnl_delta_7d,
         "alerts_fired_7d": alerts_fired_7d,
         "alerts_dismissed_7d": alerts_dismissed_7d,
-        "compliance_score_current": compliance_score_current,
-        "compliance_score_7d_ago": compliance_score_7d_ago,
+        "journal_completion_rate_current": journal_completion_rate_current,
+        "journal_completion_rate_7d_ago": journal_completion_rate_7d_ago,
+        "closed_trades_total": closed_trades_total,
+        "closed_trades_total_7d_ago": closed_trades_total_7d_ago,
+        # Deprecated aliases (ST-14): same values as journal_completion_rate_*,
+        # except that they keep their old 0.0 (never null) on a failed query.
+        "compliance_score_current": journal_completion_rate_current if journal_completion_rate_current is not None else 0.0,
+        "compliance_score_7d_ago": journal_completion_rate_7d_ago if journal_completion_rate_7d_ago is not None else 0.0,
+        "red_flags_7d": red_flags_7d,
         "staleness_hours": staleness_hours,
         "as_of_utc": now_utc.isoformat(),
     }

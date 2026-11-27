@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Class 2
 **Status:** Canonical
-**Version:** 1.38.0
-**Last Updated:** 2026-11-26 (ST-13, EPIC-02, v9.18 — trade_endpoints.md v2.7.0: `GET /trades` rules_followed / rules_broken); prior — 2026-11-24 (EPIC-06, v9.18, pre-PR review follow-ups — earnings_endpoints.md v0.4.1 (BLG-BE-235) and watchlist_endpoints.md v1.5.1 (BLG-BE-234/236)); prior — 2026-11-24 (ST-33, EPIC-06, v9.18, BLG-FE-294 — v9.18.0 entry adds earnings_endpoints.md v0.4 and position_endpoints.md v2.24.0: data_status); prior history retained — see prior entries in version control
+**Version:** 1.39.0
+**Last Updated:** 2026-11-27 (ST-14/ST-16/ST-17, EPIC-03, v9.18 — digest_endpoints.md v0.6–v0.8: `GET /digest/weekly` journal completion, red_flags_7d and loop; new `POST /digest/events`); prior — 2026-11-26 (ST-13, EPIC-02, v9.18 — trade_endpoints.md v2.7.0: `GET /trades` rules_followed / rules_broken); prior — 2026-11-24 (EPIC-06, v9.18, pre-PR review follow-ups — earnings_endpoints.md v0.4.1 (BLG-BE-235) and watchlist_endpoints.md v1.5.1 (BLG-BE-234/236)); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 # API Changelog
@@ -39,6 +39,34 @@ Rules:
 ---
 
 ## v9.18.0 (2026-11-19 — Release v9.18)
+
+### digest_endpoints.md — v0.8 (UPDATED)
+
+**EPIC:** EPIC-03
+**ST:** ST-17
+
+| Change | Details |
+|--------|---------|
+| New endpoint: POST /digest/events | Records one core-loop event (`weekly_digest_opened` or `due_today_action`) in the new `loop_events` table; `dry_run` writes nothing (BLG-FEAT-103). |
+| Updated endpoint: GET /digest/weekly | Adds `loop`: this ISO week's signals, plans, entries, reflections and reviews counts, per `metrics_definitions.md` §Core Loop Metrics. `alerts_fired_7d` and `alerts_dismissed_7d` become integer \| null: `null` (was 0) when their query fails. |
+
+### digest_endpoints.md — v0.7 (UPDATED)
+
+**EPIC:** EPIC-03
+**ST:** ST-16
+
+| Change | Details |
+|--------|---------|
+| Updated endpoint: GET /digest/weekly | Adds `red_flags_7d`, the count of `red_flag_events` created in the last 7 × 24h, so the Weekly Digest can show and link the week's red flags (BLG-UX-12; Product Owner decision 2026-11-18). |
+
+### digest_endpoints.md — v0.6 (UPDATED)
+
+**EPIC:** EPIC-03
+**ST:** ST-14
+
+| Change | Details |
+|--------|---------|
+| Updated endpoint: GET /digest/weekly | Adds `journal_completion_rate_current`, `journal_completion_rate_7d_ago`, `closed_trades_total` and `closed_trades_total_7d_ago`; `compliance_score_current`/`_7d_ago` become deprecated aliases with the same values, because the figure is a journal completion rate, not a compliance score (BLG-SPEC-204). |
 
 ### trade_endpoints.md — v2.7.0 (UPDATED)
 
