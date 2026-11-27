@@ -6,7 +6,7 @@
   "invoked_utc": "2026-11-19T08:07:14Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-27T16:43:46Z",
+  "last_updated_utc": "2026-11-27T16:44:13Z",
   "epics": {
     "EPIC-01": {
       "title": "Site Structure & Usability Phase 4, Stage 1: Correct and Safe (build-and-ship)",
@@ -425,8 +425,8 @@
       "title": "Site Structure & Usability Phase 4, Stage 2: Weekly Review Loop (build-and-ship)",
       "status": "done",
       "branch": "exec/2026-11-18__release-v9.18/EPIC-03",
-      "pr_number": null,
-      "pr_status": "none",
+      "pr_number": 2314,
+      "pr_status": "open",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-11-18__release-v9.18/qa_evidence_EPIC-03.md",
       "test_scenarios": [
@@ -1485,7 +1485,8 @@
     "2026-11-27T09:13:51Z — EPIC-02 PR #2313 merged 2026-11-27T09:12:41Z by sachiv1984, merge commit 81d7155b. Orphaned post-merge commit check: none (origin/main..EPIC-02 empty). Sibling execution_state sync (STEP 4 3c): N/A, the EPIC-03 branch does not exist yet. Merge Gate Confirmations written to qa_evidence_EPIC-02.md on main.",
     "2026-11-27T14:46:17Z — ST-14 (EPIC-03): governance_sync skipped the #2279 auto-close because commit a5438839's own execution_state.json recorded ST-14 in_progress; closed by the engine after CI passed. Later EPIC-03 stories get a state commit carrying their tag after push.",
     "2026-11-27T16:29:08Z — EPIC-03: Playwright E2E failed at d64cc465 on SC-RF-08 (EPIC-02's rules-filter.spec.js), reproduced 1/4 against main e156a6f7 locally; diagnosed as a Trade History restore/save race, filed BLG-FE-339 (P2). Not caused by EPIC-03.",
-    "2026-11-27T16:43:28Z — EPIC-03 DoQ sign-off (agent-mediated, Director of Quality role — §5.3, at the user's direction 2026-11-27T16:43:07Z) and Product Owner acceptance (the user, in session) recorded in qa_evidence_EPIC-03.md; BLG-FE-339 (P2) accepted for v9.19 by both."
+    "2026-11-27T16:43:28Z — EPIC-03 DoQ sign-off (agent-mediated, Director of Quality role — §5.3, at the user's direction 2026-11-27T16:43:07Z) and Product Owner acceptance (the user, in session) recorded in qa_evidence_EPIC-03.md; BLG-FE-339 (P2) accepted for v9.19 by both.",
+    "2026-11-27T16:44:13Z — EPIC-03 PR #2314 opened."
   ],
   "sealed": false,
   "sealed_utc": null
