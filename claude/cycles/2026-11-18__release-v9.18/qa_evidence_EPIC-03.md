@@ -91,4 +91,6 @@ All given by the user in session, holding the named role, on 2026-11-27:
 
 ## Merge Gate Confirmations
 
-Written when the merge is recorded.
+- **QA sign-off and PO acceptance:** confirmed by merge — sachiv1984 (holds the Director of Quality and Product Owner roles), 2026-11-27T17:05:08Z, merge commit `43d01fc4`. Before the merge, the same person directed the Director of Quality sign-off and gave the Product Owner acceptance recorded above, in session at 2026-11-27T16:43:07Z.
+- **Merge:** PR #2314 merged by sachiv1984 at 2026-11-27T17:05:08Z, merge commit `43d01fc4`.
+- **P1/P2 found defects filed during this EPIC:** BLG-FE-339 (P2), accepted for v9.19 by the Product Owner and the Director of Quality, 2026-11-27; rationale in Decisions and Escalations item 4 (pre-existing in EPIC-02's Trade History code, about 1 run in 4 on main's own build, no data loss). BLG-BE-238 and BLG-BE-239 are P3.

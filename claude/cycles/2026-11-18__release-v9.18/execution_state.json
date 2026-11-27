@@ -6,7 +6,7 @@
   "invoked_utc": "2026-11-19T08:07:14Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-27T16:44:13Z",
+  "last_updated_utc": "2026-11-27T17:20:00Z",
   "epics": {
     "EPIC-01": {
       "title": "Site Structure & Usability Phase 4, Stage 1: Correct and Safe (build-and-ship)",
@@ -423,10 +423,10 @@
     },
     "EPIC-03": {
       "title": "Site Structure & Usability Phase 4, Stage 2: Weekly Review Loop (build-and-ship)",
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-11-18__release-v9.18/EPIC-03",
       "pr_number": 2314,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-11-18__release-v9.18/qa_evidence_EPIC-03.md",
       "test_scenarios": [
@@ -446,7 +446,7 @@
         "ST-14": {
           "title": "Rename the Weekly Digest's journal completion figure",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2279,
           "branch": "exec/2026-11-18__release-v9.18/EPIC-03",
@@ -474,7 +474,7 @@
         "ST-15": {
           "title": "Rewrite the Weekly Digest as a readable weekly summary",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2280,
           "branch": "exec/2026-11-18__release-v9.18/EPIC-03",
@@ -500,7 +500,7 @@
         "ST-16": {
           "title": "Link the Weekly Digest figures to their pages",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2281,
           "branch": "exec/2026-11-18__release-v9.18/EPIC-03",
@@ -528,7 +528,7 @@
         "ST-17": {
           "title": "Measure the core loop and show this week's loop on the Weekly Digest",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2282,
           "branch": "exec/2026-11-18__release-v9.18/EPIC-03",
@@ -1445,15 +1445,14 @@
     "epics_merged": [
       "EPIC-01",
       "EPIC-02",
+      "EPIC-03",
       "EPIC-04",
       "EPIC-05",
       "EPIC-06",
       "EPIC-07"
     ],
-    "epics_pending": [
-      "EPIC-03"
-    ],
-    "all_merged": false
+    "epics_pending": [],
+    "all_merged": true
   },
   "process_notes": [
     "2026-11-19T08:07:14Z STEP 0 initialised by `run sprint --epic EPIC-01` (standard mode). All 40 GitHub issues found (#2266–#2305); no process gap.",
@@ -1486,7 +1485,8 @@
     "2026-11-27T14:46:17Z — ST-14 (EPIC-03): governance_sync skipped the #2279 auto-close because commit a5438839's own execution_state.json recorded ST-14 in_progress; closed by the engine after CI passed. Later EPIC-03 stories get a state commit carrying their tag after push.",
     "2026-11-27T16:29:08Z — EPIC-03: Playwright E2E failed at d64cc465 on SC-RF-08 (EPIC-02's rules-filter.spec.js), reproduced 1/4 against main e156a6f7 locally; diagnosed as a Trade History restore/save race, filed BLG-FE-339 (P2). Not caused by EPIC-03.",
     "2026-11-27T16:43:28Z — EPIC-03 DoQ sign-off (agent-mediated, Director of Quality role — §5.3, at the user's direction 2026-11-27T16:43:07Z) and Product Owner acceptance (the user, in session) recorded in qa_evidence_EPIC-03.md; BLG-FE-339 (P2) accepted for v9.19 by both.",
-    "2026-11-27T16:44:13Z — EPIC-03 PR #2314 opened."
+    "2026-11-27T16:44:13Z — EPIC-03 PR #2314 opened.",
+    "2026-11-27T17:20:00Z — EPIC-03 PR #2314 merged 2026-11-27T17:05:08Z by sachiv1984, merge commit 43d01fc4 (resume sync at run sprint). Orphaned post-merge commit check: none (origin/main..EPIC-03 empty). Sibling execution_state sync (STEP 4 3c): N/A, no EPIC pending. Merge Gate Confirmations written to qa_evidence_EPIC-03.md on main (confirmed by merge). All 7 EPICs merged; proceeding to STEP 5."
   ],
   "sealed": false,
   "sealed_utc": null
