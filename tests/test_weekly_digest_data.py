@@ -217,3 +217,22 @@ def test_loop_counts_and_failure_isolation():
 def test_record_loop_event_rejects_unknown_type():
     with pytest.raises(ValueError):
         real_database.record_loop_event("page_view", conn=MagicMock())
+
+
+def test_failed_alert_query_is_null_not_zero():
+    """EPIC-03 pre-PR review: a failed alerts query must read "Not available", not 0."""
+    conn = _conn((0, 0), (0, 0))
+    cur = conn.cursor.return_value
+    answer = cur.execute.side_effect
+
+    def execute(sql, params=None):
+        if "FROM notifications" in sql:
+            raise RuntimeError("connection reset")
+        answer(sql, params)
+
+    cur.execute.side_effect = execute
+    data = real_database.get_weekly_digest_data(conn=conn)
+    assert data["alerts_fired_7d"] is None
+    assert data["alerts_dismissed_7d"] is None
+    assert data["closed_trades_total"] == 0  # later queries still ran
+    assert conn.rollback.called  # the aborted transaction was cleared

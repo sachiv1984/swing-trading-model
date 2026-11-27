@@ -6066,9 +6066,10 @@ def _fetch_weekly_digest_data(conn) -> Dict:
         logger.warning("Could not compute unrealised_pnl_delta_7d: %s", e)
         _rollback_quietly(conn)
 
-    # 3. Alerts fired and dismissed in last 7 days
-    alerts_fired_7d = 0
-    alerts_dismissed_7d = 0
+    # 3. Alerts fired and dismissed in last 7 days. Null, not 0, when the
+    #    query fails (EPIC-03 pre-PR review: the page shows "Not available").
+    alerts_fired_7d = None
+    alerts_dismissed_7d = None
     try:
         cursor.execute("""
             SELECT
@@ -6078,9 +6079,8 @@ def _fetch_weekly_digest_data(conn) -> Dict:
             WHERE created_at >= %s
         """, (cutoff_7d,))
         alert_row = cursor.fetchone()
-        if alert_row:
-            alerts_fired_7d = int(alert_row["fired"])
-            alerts_dismissed_7d = int(alert_row["dismissed"])
+        alerts_fired_7d = int(alert_row["fired"]) if alert_row else 0
+        alerts_dismissed_7d = int(alert_row["dismissed"]) if alert_row else 0
     except Exception as e:
         logger.warning("Could not compute alert counts: %s", e)
         _rollback_quietly(conn)

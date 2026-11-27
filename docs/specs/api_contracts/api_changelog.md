@@ -48,7 +48,7 @@ Rules:
 | Change | Details |
 |--------|---------|
 | New endpoint: POST /digest/events | Records one core-loop event (`weekly_digest_opened` or `due_today_action`) in the new `loop_events` table; `dry_run` writes nothing (BLG-FEAT-103). |
-| Updated endpoint: GET /digest/weekly | Adds `loop`: this ISO week's signals, plans, entries, reflections and reviews counts, per `metrics_definitions.md` §Core Loop Metrics. |
+| Updated endpoint: GET /digest/weekly | Adds `loop`: this ISO week's signals, plans, entries, reflections and reviews counts, per `metrics_definitions.md` §Core Loop Metrics. `alerts_fired_7d` and `alerts_dismissed_7d` become integer \| null: `null` (was 0) when their query fails. |
 
 ### digest_endpoints.md — v0.7 (UPDATED)
 

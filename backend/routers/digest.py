@@ -65,8 +65,8 @@ def get_weekly_digest():
     - realised_pnl_7d: sum of P&L for trades closed in the last 7 calendar days (GBP)
     - unrealised_pnl_delta_7d: change in total unrealised P&L over the last 7 days
       (current unrealised P&L minus unrealised P&L 7 days ago from portfolio snapshots)
-    - alerts_fired_7d: count of notifications created in the last 7 days
-    - alerts_dismissed_7d: count of notifications marked read in the last 7 days
+    - alerts_fired_7d: count of notifications created in the last 7 days (null on query failure)
+    - alerts_dismissed_7d: count of notifications marked read in the last 7 days (null on query failure)
     - journal_completion_rate_current: % of all closed trades with an entry or exit note
     - journal_completion_rate_7d_ago: the same rate for trades closed before the 7-day window
     - closed_trades_total / closed_trades_total_7d_ago: the two denominators
