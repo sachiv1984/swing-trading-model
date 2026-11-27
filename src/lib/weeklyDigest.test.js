@@ -1,4 +1,4 @@
-import { digestFigures, formatAsOfUtc, freshnessCaption, DIGEST_LINKS } from "./weeklyDigest";
+import { digestFigures, formatAsOfUtc, freshnessCaption, DIGEST_LINKS, loopSteps, loopCaption } from "./weeklyDigest";
 
 // Real-shaped: the keys and types _fetch_weekly_digest_data returns.
 const BASE = {
@@ -139,3 +139,51 @@ describe("freshnessCaption", () => {
     expect(text).not.toMatch(/T\d\d:|\+00:00|timestamp/i);
   });
 });
+
+describe("loopSteps (ST-17)", () => {
+  const LOOP = { week_start: "2026-11-23", signals: 3, plans: 1, entries: 1, reflections: 0, reviews: 2 };
+
+  test("five steps in loop order, review step unlinked", () => {
+    expect(loopSteps(LOOP)).toEqual([
+      { key: "signals", label: "Signals", value: "3", muted: false, href: "/Signals" },
+      { key: "plans", label: "Plans", value: "1", muted: false, href: "/TradePlans" },
+      { key: "entries", label: "Entries", value: "1", muted: false, href: "/Positions" },
+      { key: "reflections", label: "Reflections", value: "0", muted: false, href: "/Journal?section=reflections" },
+      { key: "reviews", label: "Reviews", value: "2", muted: false, href: null },
+    ]);
+  });
+
+  test("zero week: five zeros, still linked", () => {
+    const steps = loopSteps({ week_start: "2026-11-23", signals: 0, plans: 0, entries: 0, reflections: 0, reviews: 0 });
+    expect(steps.map((s) => s.value)).toEqual(["0", "0", "0", "0", "0"]);
+    expect(steps.filter((s) => s.href).length).toBe(4);
+  });
+
+  test.each([
+    ["null count", { ...LOOP, plans: null }],
+    ["missing count", { ...LOOP, plans: undefined }],
+    ["numeric string", { ...LOOP, plans: "1" }],
+  ])("%s is Not available and unlinked", (_l, loop) => {
+    expect(loopSteps(loop)[1]).toEqual({ key: "plans", label: "Plans", value: "Not available", muted: true, href: null });
+  });
+
+  test.each([[null], [undefined]])("no loop object (%p): every step Not available", (loop) => {
+    expect(loopSteps(loop).every((s) => s.value === "Not available" && s.href === null)).toBe(true);
+  });
+});
+
+describe("loopCaption (ST-17)", () => {
+  test.each([
+    ["Monday", "2026-11-23", "Monday 23 Nov to today (UTC)"],
+    ["year boundary ISO week", "2025-12-29", "Monday 29 Dec to today (UTC)"],
+    ["single-digit day", "2026-03-02", "Monday 2 Mar to today (UTC)"],
+    ["null", null, null],
+    ["garbage", "23/11/2026", null],
+    ["invalid date", "2026-13-40", null],
+    ["calendar-invalid date does not roll over", "2026-02-30", null],
+    ["September is three letters", "2026-09-07", "Monday 7 Sep to today (UTC)"],
+  ])("%s", (_l, ws, text) => {
+    expect(loopCaption(ws)).toBe(text);
+  });
+});
+

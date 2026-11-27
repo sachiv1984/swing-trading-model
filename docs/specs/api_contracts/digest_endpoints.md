@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 0.7
-**Last Updated:** 2026-11-27 (ST-16, EPIC-03, v9.18, BLG-UX-12 — `GET /digest/weekly` gains `red_flags_7d`); prior — 2026-11-27 (ST-14, EPIC-03, v9.18, BLG-SPEC-204 — `GET /digest/weekly` gains `journal_completion_rate_*`, `closed_trades_total`, `closed_trades_total_7d_ago`; `compliance_score_*` deprecated); prior — 2026-09-29 (ST-20, EPIC-05, v9.8, BLG-API-04 — added an Idempotency subsection to POST /digest/si05/send); prior history retained — see prior entries in version control
+**Version:** 0.8
+**Last Updated:** 2026-11-27 (ST-17, EPIC-03, v9.18, BLG-FEAT-103 — `GET /digest/weekly` gains `loop`; new `POST /digest/events`); prior — 2026-11-27 (ST-16, EPIC-03, v9.18, BLG-UX-12 — `GET /digest/weekly` gains `red_flags_7d`); prior — 2026-11-27 (ST-14, EPIC-03, v9.18, BLG-SPEC-204 — `GET /digest/weekly` gains `journal_completion_rate_*`, `closed_trades_total`, `closed_trades_total_7d_ago`; `compliance_score_*` deprecated); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Sprint:** 2026-03-31__release-v2.4 — ST-08 (BLG-FEAT-14 BE component)
 **Signed off by:** Head of Specs Team
@@ -49,6 +49,14 @@ Response uses the standard success envelope from **conventions.md**.
 
 ```json
 {
+  "loop": {
+    "week_start": "2026-11-23",
+    "signals": 3,
+    "plans": 1,
+    "entries": 1,
+    "reflections": 0,
+    "reviews": 2
+  },
   "realised_pnl_7d": 166.10,
   "unrealised_pnl_delta_7d": -42.80,
   "alerts_fired_7d": 5,
@@ -69,6 +77,7 @@ Response uses the standard success envelope from **conventions.md**.
 
 | Field | Type | Notes |
 |-------|------|-------|
+| `loop` | object | This ISO week's core-loop counts (v0.8, ST-17), per `metrics_definitions.md` §Core Loop Metrics. `week_start` (string, `YYYY-MM-DD`): the Monday of the current ISO week in UTC; the window runs from its 00:00 UTC to now. `signals`: distinct (`ticker`, `market`) with a `signal_date` in the window. `plans`: `trade_plans` created in the window (drafts included). `entries`: `positions` created in the window. `reflections`: `trade_reflections` created in the window. `reviews`: distinct UTC days in the window with a `weekly_digest_opened` event. Each count is integer \| null; `null` when its query fails (e.g. `loop_events` not created yet). |
 | `realised_pnl_7d` | float | Sum of `trade_history.pnl` for trades with `exit_date >= today − 7 days`. In GBP. |
 | `unrealised_pnl_delta_7d` | float \| null | Change in total unrealised P&L over 7 days: most recent `portfolio_history.unrealised_pnl` minus the closest snapshot on or before the 7-day cutoff. Null if insufficient snapshot history. |
 | `alerts_fired_7d` | integer | Count of `notifications` rows created in the last 7 days. |
@@ -107,9 +116,61 @@ Errors use the standard error envelope from **conventions.md §13**.
 | `alerts_dismissed_7d` | `notifications` | `read`, `created_at` |
 | `journal_completion_rate_*`, `closed_trades_total*` (and the deprecated `compliance_score_*`) | `trade_history` | `entry_note`, `exit_note`, `exit_date` |
 | `red_flags_7d` | `red_flag_events` | `created_at` |
+| `loop.signals` | `signals` | `ticker`, `market`, `signal_date` |
+| `loop.plans` | `trade_plans` | `created_at` |
+| `loop.entries` | `positions` | `created_at` |
+| `loop.reflections` | `trade_reflections` | `created_at` |
+| `loop.reviews` | `loop_events` (DS-43) | `event_type`, `created_at` |
 | `staleness_hours` | `portfolio_history` | `snapshot_date` |
 
 ---
+
+---
+
+## POST /digest/events
+
+**Purpose**
+
+Record one core-loop event for `metrics_definitions.md` §Core Loop Metrics (v0.8, ST-17, BLG-FEAT-103): the Weekly Digest was opened, or a Today list action was taken. These are the only two events recorded; there is no other page-view tracking.
+
+**Method & Path**
+
+- `POST /digest/events`
+
+**Idempotency**
+
+- Not idempotent: each successful call writes one row. The Weekly Digest page calls it once per page load (not on a refetch or Refresh); the Dashboard Today list calls it once per link click. A repeat open on the same UTC day writes another row but does not add a review (`reviews` counts distinct days).
+
+### Request
+
+```json
+{ "event_type": "weekly_digest_opened", "dry_run": false }
+```
+
+| Field | Type | Required | Notes |
+|-------|------|----------|-------|
+| `event_type` | string | Yes | `weekly_digest_opened` or `due_today_action`. |
+| `dry_run` | boolean | No (default `false`) | `true` validates the request and writes nothing. Used by the System Status endpoint test (`backend/routers/test.py`), so a test run never adds an event that would count as a review. |
+
+### Response (200)
+
+```json
+{ "status": "ok", "data": { "event_type": "weekly_digest_opened", "written": true } }
+```
+
+`written` is `false` for a `dry_run` request.
+
+### Error responses
+
+| HTTP Status | Condition |
+|-------------|-----------|
+| `400` | `event_type` is not one of the two values (`{"status": "error", "message": "event_type must be one of: ..."}`) |
+| `422` | Body missing or not JSON (FastAPI validation) |
+| `500` | The table could not be created or the insert failed |
+
+**Data model:** `loop_events` (`data_model.md` DS-43). Created on first use (`CREATE TABLE IF NOT EXISTS`); the production migration runs at deploy (Human-Delegation, Infrastructure & Operations Owner).
+
+**Backend:** `backend/routers/digest.py` → `database.record_loop_event`.
 
 ---
 
@@ -200,6 +261,7 @@ This endpoint is intended for internal cron/scheduled invocation only. The sched
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.8 | 2026-11-27 | v9.18 ST-17 (EPIC-03, BLG-FEAT-103): `GET /digest/weekly` adds `loop` (this ISO week's five core-loop counts, per `metrics_definitions.md` §Core Loop Metrics, approved by the Metrics Definitions & Analytics Owner 2026-11-27, `ESC-EXEC-20261127-01`). New `POST /digest/events` records `weekly_digest_opened` and `due_today_action` in `loop_events` (DS-43); `dry_run` for the endpoint test. |
 | 0.7 | 2026-11-27 | v9.18 ST-16 (EPIC-03, BLG-UX-12): `GET /digest/weekly` adds `red_flags_7d` (`red_flag_events` created in the last 7 × 24h; null on a failed query), per the Product Owner decision of 2026-11-18. |
 | 0.6 | 2026-11-27 | v9.18 ST-14 (EPIC-03, BLG-SPEC-204): `GET /digest/weekly` adds `journal_completion_rate_current`, `journal_completion_rate_7d_ago`, `closed_trades_total` and `closed_trades_total_7d_ago`; `compliance_score_current`/`_7d_ago` kept as deprecated aliases with the same values. Each new field is `null` when its query fails (no longer read as 0), and a failed optional query is rolled back so later fields still compute. Predicate confirmed the same as `GET /analytics/compliance-metrics` (real-Postgres test). `closed_trades_total_7d_ago` per Metrics Definitions & Analytics Owner / Product Owner ruling 2026-11-27. |
 | 0.5 | 2026-09-29 | v9.8 ST-20 (EPIC-05, BLG-API-04): Idempotency subsection added to POST /digest/si05/send. (Row restored at v0.6; it was missing from this table.) |

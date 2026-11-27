@@ -713,6 +713,7 @@ async function mockSt09Populated(page) {
         data: {
           realised_pnl_7d: 166.1, unrealised_pnl_delta_7d: -42.8, alerts_fired_7d: 5, alerts_dismissed_7d: 3,
           journal_completion_rate_current: 80.0, journal_completion_rate_7d_ago: 75.0, closed_trades_total: 20, closed_trades_total_7d_ago: 16, red_flags_7d: 2,
+          loop: { week_start: '2026-11-23', signals: 3, plans: 1, entries: 1, reflections: 0, reviews: 2 },
           compliance_score_current: 80.0, compliance_score_7d_ago: 75.0, staleness_hours: 18.5,
           as_of_utc: '2026-04-01T10:30:00+00:00',
         },

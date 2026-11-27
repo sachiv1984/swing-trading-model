@@ -2,7 +2,9 @@ openapi: 3.0.3
 
 info:
   title: Momentum Trading Assistant API
-  version: 3.55.0
+  version: 3.56.0
+  # v3.56.0 (2026-11-27, ST-17, EPIC-03, v9.18): GET /digest/weekly gains loop (this ISO week's core-loop counts);
+  # new POST /digest/events (BLG-FEAT-103).
   # v3.55.0 (2026-11-27, ST-16, EPIC-03, v9.18): GET /digest/weekly gains red_flags_7d (BLG-UX-12).
   # v3.54.0 (2026-11-27, ST-14, EPIC-03, v9.18): GET /digest/weekly gains journal_completion_rate_current,
   # journal_completion_rate_7d_ago, closed_trades_total and closed_trades_total_7d_ago; compliance_score_* deprecated (BLG-SPEC-204).
@@ -4472,9 +4474,10 @@ paths:
       description: |
         Returns a 7-day summary of realised P&L, unrealised P&L delta, alert counts,
         journal completion rates with their closed-trade counts (the compliance_score_*
-        names are deprecated aliases), red flags in the last 7 days, and data staleness.
+        names are deprecated aliases), red flags in the last 7 days, data staleness, and this
+        ISO week's core-loop counts (loop).
         All fields are raw numeric or boolean values — no generated text or interpretation.
-        Canonical contract: docs/specs/api_contracts/digest_endpoints.md v0.7
+        Canonical contract: docs/specs/api_contracts/digest_endpoints.md v0.8
       responses:
         "200":
           description: Weekly digest data
@@ -4489,6 +4492,34 @@ paths:
                   data:
                     type: object
                     properties:
+                      loop:
+                        type: object
+                        description: This ISO week's core-loop counts (metrics_definitions.md Core Loop Metrics); each count null when its query fails
+                        properties:
+                          week_start:
+                            type: string
+                            format: date
+                            description: Monday of the current ISO week (UTC); the window runs from its 00:00 UTC to now
+                          signals:
+                            type: integer
+                            nullable: true
+                            description: Distinct (ticker, market) with a signal_date in the window
+                          plans:
+                            type: integer
+                            nullable: true
+                            description: Trade plans created in the window (drafts included)
+                          entries:
+                            type: integer
+                            nullable: true
+                            description: Positions created in the window
+                          reflections:
+                            type: integer
+                            nullable: true
+                            description: Trade reflections created in the window
+                          reviews:
+                            type: integer
+                            nullable: true
+                            description: Distinct UTC days in the window with a weekly_digest_opened event
                       realised_pnl_7d:
                         type: number
                         format: float
@@ -4545,6 +4576,74 @@ paths:
                         type: string
                         format: date-time
                         description: UTC timestamp this response was computed
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /digest/events:
+    post:
+      tags: [Digest]
+      summary: Record one core-loop event
+      description: |
+        Records weekly_digest_opened (once per Weekly Digest page load) or due_today_action
+        (a Today list link click) in loop_events. Nothing else is tracked. dry_run validates
+        and writes nothing (used by the System Status endpoint test).
+        Canonical contract: docs/specs/api_contracts/digest_endpoints.md v0.8
+        ST-17 (BLG-FEAT-103, EPIC-03, v9.18)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [event_type]
+              properties:
+                event_type:
+                  type: string
+                  enum: [weekly_digest_opened, due_today_action]
+                dry_run:
+                  type: boolean
+                  default: false
+                  description: Validate only; write nothing
+            example:
+              event_type: weekly_digest_opened
+      responses:
+        "200":
+          description: Event recorded (or validated, for dry_run)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  data:
+                    type: object
+                    properties:
+                      event_type:
+                        type: string
+                      written:
+                        type: boolean
+                        description: false for a dry_run request
+                example:
+                  status: "ok"
+                  data:
+                    event_type: "weekly_digest_opened"
+                    written: true
+        "400":
+          description: event_type is not one of the two values
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+                  message:
+                    type: string
+        "422":
+          description: Body missing or invalid
         "500":
           $ref: "#/components/responses/InternalError"
 

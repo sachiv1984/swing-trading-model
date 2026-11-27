@@ -121,3 +121,35 @@ export function freshnessCaption(data) {
     : `portfolio snapshot ${Number(d.staleness_hours).toFixed(1)} hours old`;
   return asOf ? `Figures as of ${asOf} UTC · ${snapshot}` : `Figures as of now · ${snapshot}`;
 }
+
+// This week's loop (ST-17, metrics_definitions.md §Core Loop Metrics;
+// weekly_digest.md §2 This Week's Loop): five counts in loop order, each
+// linked to its step's list page except the review step (this page).
+const LOOP_STEPS = [
+  { key: "signals", label: "Signals", href: "/Signals" },
+  { key: "plans", label: "Plans", href: "/TradePlans" },
+  { key: "entries", label: "Entries", href: "/Positions" },
+  { key: "reflections", label: "Reflections", href: "/Journal?section=reflections" },
+  { key: "reviews", label: "Reviews", href: null },
+];
+
+/** The five loop steps for display; a null or missing count is "Not available" and unlinked. */
+export function loopSteps(loop) {
+  const l = loop || {};
+  return LOOP_STEPS.map(({ key, label, href }) => {
+    const n = l[key];
+    const known = typeof n === "number";
+    return { key, label, value: known ? String(n) : "Not available", muted: !known, href: known ? href : null };
+  });
+}
+
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+/** "Monday 23 Nov to today (UTC)" from the API's week_start (YYYY-MM-DD), or null. */
+export function loopCaption(weekStart) {
+  if (typeof weekStart !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(weekStart)) return null;
+  const d = new Date(`${weekStart}T00:00:00Z`);
+  // A calendar-invalid date (2026-02-30) rolls over; reject it by round trip.
+  if (Number.isNaN(d.getTime()) || d.toISOString().slice(0, 10) !== weekStart) return null;
+  return `Monday ${d.getUTCDate()} ${MONTHS[d.getUTCMonth()]} to today (UTC)`;
+}

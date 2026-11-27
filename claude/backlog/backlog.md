@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-27 (session — 1 new item added: BLG-BE-239; EPIC-03 v9.18 ST-16 review); prior — 2026-11-27 (session — 1 new item added: BLG-BE-238; EPIC-03 v9.18 ST-14 first-time-right check 8); prior — 2026-11-26 (session — 1 new item added: BLG-BE-237; EPIC-02 v9.18 ST-13 review); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-27 (session — 1 new item added: BLG-FE-339; EPIC-03 v9.18 CI, SC-RF-08 restore race); prior — 2026-11-27 (session — 1 new item added: BLG-BE-239; EPIC-03 v9.18 ST-16 review); prior — 2026-11-27 (session — 1 new item added: BLG-BE-238; EPIC-03 v9.18 ST-14 first-time-right check 8); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -9091,5 +9091,26 @@ In `backend/services/earnings_service.py`, a usable `Ticker.info` (with `quoteTy
 **Acceptance Criteria**
 - A pytest with a frozen clock just after UTC midnight, in a non-UTC local zone, shows the analytics cutoff equal to the digest's
 - `weekly_digest.md`'s UTC caveat on the realised P&L link is removed
+
+---
+
+### BLG-FE-339 — Make Trade History restore the stored rules option every time
+**Priority:** P2 (Medium)
+**Type:** Frontend / UX
+**Owner:** Head of Engineering; QA & Testing Owner
+**Source:** EPIC-03 (`2026-11-18__release-v9.18`) CI: Playwright SC-RF-08 (`tests/e2e/rules-filter.spec.js`, EPIC-02 ST-13) failed on the EPIC-03 branch at d64cc465 (run 46018942348, both attempts) and fails about 1 run in 4 locally against main's own build (e156a6f7) — not caused by EPIC-03 — 2026-11-27
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v9.19
+
+**Problem**
+Trade History restores the stored rules option once on arrival: a mount effect calls `setRulesFilter(stored)`, which does `setSearchParams` from the `searchParams` captured at render, while the save effect writes `rules: "all"` to `tradeHistory.filters` on the same mount. Other `setSearchParams` calls built from a stale `searchParams` (`TradeHistory.js` lines 144, 153, 204) can also drop `?rules=`. The result is intermittent: on a later visit the "Broken" option is sometimes not restored, and the stored value is overwritten with All. SC-RF-08 catches it intermittently and turns the Playwright workflow red on unrelated branches.
+
+**Scope**
+- Restore the rules option without racing the save (for example read the stored value into the initial state, or skip the save until the restore has applied), and build every `setSearchParams` from the current params (functional update)
+- Make SC-RF-08 deterministic (wait for the stored envelope to hold `rules: "broken"` before leaving the page)
+
+**Acceptance Criteria**
+- SC-RF-08 passes 20 consecutive local runs (`--repeat-each=20`)
+- A unit or Playwright case shows the stored option survives arrival with no `?rules=` and is not overwritten with All
 
 ---

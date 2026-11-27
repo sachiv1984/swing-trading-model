@@ -5,11 +5,32 @@ Tests all API endpoints to verify system health
 
 from fastapi import APIRouter, HTTPException, Request
 import httpx
+import logging
 import time
 import os
 
 router = APIRouter(prefix="/test", tags=["Testing"])
+logger = logging.getLogger(__name__)
 
+
+async def _cleanup_created_row(client, test, response, headers):
+    """Delete the row a test call created (ST-17, v9.18).
+
+    A test entry with `cleanup_delete` (a URL containing `{id}`) has the id
+    from the response's `data.id` substituted and is called with DELETE, so a
+    System Status run leaves no test data behind (a draft AAPL plan would
+    otherwise count in the Weekly Digest's loop). Best effort: a failed
+    cleanup never changes the test's result.
+    """
+    template = test.get("cleanup_delete")
+    if not template:
+        return
+    try:
+        created_id = (response.json().get("data") or {}).get("id")
+        if created_id:
+            await client.request("DELETE", template.replace("{id}", str(created_id)), headers=headers)
+    except Exception as e:  # noqa: BLE001 — cleanup must not fail the run
+        logger.warning("Test cleanup for %s failed: %s", test.get("name"), e)
 
 @router.post("/endpoints")
 async def test_all_endpoints(request: Request):
@@ -96,6 +117,8 @@ async def test_all_endpoints(request: Request):
 
         # Digest (v2.3+)
         {"name": "GET /digest/weekly", "method": "GET", "url": f"{base_url}/digest/weekly", "critical": False},
+        # ST-17 (v9.18): dry_run validates without writing, so a test run never adds a review.
+        {"name": "POST /digest/events", "method": "POST", "url": f"{base_url}/digest/events", "body": {"event_type": "weekly_digest_opened", "dry_run": True}, "critical": False},
 
         # Analytics
         {"name": "GET /analytics/metrics (all_time)", "method": "GET", "url": f"{base_url}/analytics/metrics?period=all_time", "critical": True},
@@ -146,7 +169,9 @@ async def test_all_endpoints(request: Request):
         # Trade Plans (v3.1 / ST-02)
         {"name": "GET /trade-plans", "method": "GET", "url": f"{base_url}/trade-plans", "critical": False},
         {"name": "GET /trade-plans/tags", "method": "GET", "url": f"{base_url}/trade-plans/tags", "critical": False},
-        {"name": "POST /trade-plans", "method": "POST", "url": f"{base_url}/trade-plans", "body": {"ticker": "AAPL", "market": "US"}, "critical": False},
+        # ST-17 (v9.18): the plan this creates is deleted after the call (cleanup_delete),
+        # so a test run never adds a draft that this week's loop would count as a plan.
+        {"name": "POST /trade-plans", "method": "POST", "url": f"{base_url}/trade-plans", "body": {"ticker": "AAPL", "market": "US"}, "critical": False, "cleanup_delete": f"{base_url}/trade-plans/{{id}}"},
         {"name": "GET /trade-plans/by-position/00000000-0000-0000-0000-000000000000", "method": "GET", "url": f"{base_url}/trade-plans/by-position/00000000-0000-0000-0000-000000000000", "critical": False},
         {"name": "GET /trade-plans/00000000-0000-0000-0000-000000000001", "method": "GET", "url": f"{base_url}/trade-plans/00000000-0000-0000-0000-000000000001", "critical": False},
         {"name": "PUT /trade-plans/00000000-0000-0000-0000-000000000001", "method": "PUT", "url": f"{base_url}/trade-plans/00000000-0000-0000-0000-000000000001", "body": {"status": "active"}, "critical": False},
@@ -379,6 +404,7 @@ async def test_all_endpoints(request: Request):
                 if 200 <= response.status_code < 300:
                     result["status"] = "pass"
                     passed += 1
+                    await _cleanup_created_row(client, test, response, forward_headers)
                 else:
                     result["status"] = "fail"
                     result["error"] = f"HTTP {response.status_code}: {response.text[:100]}"

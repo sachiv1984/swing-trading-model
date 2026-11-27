@@ -2,7 +2,7 @@
 **Class:** Class 2
 **Status:** Canonical
 **Version:** 1.39.0
-**Last Updated:** 2026-11-27 (ST-14/ST-16, EPIC-03, v9.18 — digest_endpoints.md v0.6–v0.7: `GET /digest/weekly` journal_completion_rate_*, closed_trades_total*, red_flags_7d); prior — 2026-11-26 (ST-13, EPIC-02, v9.18 — trade_endpoints.md v2.7.0: `GET /trades` rules_followed / rules_broken); prior — 2026-11-24 (EPIC-06, v9.18, pre-PR review follow-ups — earnings_endpoints.md v0.4.1 (BLG-BE-235) and watchlist_endpoints.md v1.5.1 (BLG-BE-234/236)); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-27 (ST-14/ST-16/ST-17, EPIC-03, v9.18 — digest_endpoints.md v0.6–v0.8: `GET /digest/weekly` journal completion, red_flags_7d and loop; new `POST /digest/events`); prior — 2026-11-26 (ST-13, EPIC-02, v9.18 — trade_endpoints.md v2.7.0: `GET /trades` rules_followed / rules_broken); prior — 2026-11-24 (EPIC-06, v9.18, pre-PR review follow-ups — earnings_endpoints.md v0.4.1 (BLG-BE-235) and watchlist_endpoints.md v1.5.1 (BLG-BE-234/236)); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 # API Changelog
@@ -39,6 +39,16 @@ Rules:
 ---
 
 ## v9.18.0 (2026-11-19 — Release v9.18)
+
+### digest_endpoints.md — v0.8 (UPDATED)
+
+**EPIC:** EPIC-03
+**ST:** ST-17
+
+| Change | Details |
+|--------|---------|
+| New endpoint: POST /digest/events | Records one core-loop event (`weekly_digest_opened` or `due_today_action`) in the new `loop_events` table; `dry_run` writes nothing (BLG-FEAT-103). |
+| Updated endpoint: GET /digest/weekly | Adds `loop`: this ISO week's signals, plans, entries, reflections and reviews counts, per `metrics_definitions.md` §Core Loop Metrics. |
 
 ### digest_endpoints.md — v0.7 (UPDATED)
 

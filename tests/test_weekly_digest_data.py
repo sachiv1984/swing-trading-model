@@ -142,3 +142,78 @@ def test_red_flags_7d_null_on_failure():
     assert data["red_flags_7d"] is None
     assert data["closed_trades_total"] == 0  # later queries still ran
 
+
+
+# ---------------------------------------------------------------------------
+# ST-17 (EPIC-03, v9.18, BLG-FEAT-103): this week's loop.
+# ---------------------------------------------------------------------------
+from datetime import datetime, timezone  # noqa: E402
+
+
+@pytest.mark.parametrize(
+    "now, monday",
+    [
+        (datetime(2026, 11, 27, 14, 15, tzinfo=timezone.utc), "2026-11-23"),  # Friday
+        (datetime(2026, 11, 23, 0, 0, tzinfo=timezone.utc), "2026-11-23"),    # Monday 00:00
+        (datetime(2026, 11, 22, 23, 59, 59, tzinfo=timezone.utc), "2026-11-16"),  # Sunday 23:59:59
+        (datetime(2026, 1, 1, 9, 0, tzinfo=timezone.utc), "2025-12-29"),      # ISO week across a year
+        # A non-UTC input is read in UTC: Mon 00:30 at +01:00 is Sun 23:30 UTC.
+        (datetime.fromisoformat("2026-11-23T00:30:00+01:00"), "2026-11-16"),
+    ],
+)
+def test_iso_week_start_utc(now, monday):
+    start = real_database.iso_week_start_utc(now)
+    assert start.isoformat() == f"{monday}T00:00:00+00:00"
+
+
+def test_loop_counts_and_failure_isolation():
+    conn = _conn((0, 0), (0, 0))
+    cur = conn.cursor.return_value
+    answer = cur.execute.side_effect
+    counts = {"FROM signals": 3, "FROM trade_plans": 1, "FROM positions": 1, "FROM trade_reflections": 0}
+    seen = []
+    state = {}
+
+    def execute(sql, params=None):
+        seen.append((sql, params))
+        if "FROM loop_events" in sql:
+            raise RuntimeError('relation "loop_events" does not exist')
+        for key, n in counts.items():
+            if key in sql and "COUNT" in sql and "with_notes" not in sql:
+                state["row"] = {"n": n}
+                return
+        answer(sql, params)
+        state["row"] = None
+
+    base_fetch = cur.fetchone.side_effect
+
+    def fetchone():
+        if state.get("row") is not None:
+            row, state["row"] = state["row"], None
+            return row
+        return base_fetch()
+
+    cur.execute.side_effect = execute
+    cur.fetchone.side_effect = fetchone
+    data = real_database.get_weekly_digest_data(conn=conn)
+    loop = data["loop"]
+    assert loop["signals"] == 3 and loop["plans"] == 1 and loop["entries"] == 1 and loop["reflections"] == 0
+    assert loop["reviews"] is None  # table missing → null, not 0
+    # The window comes from the same clock read as as_of_utc (no second now()).
+    as_of = datetime.fromisoformat(data["as_of_utc"])
+    assert loop["week_start"] == real_database.iso_week_start_utc(as_of).date().isoformat()
+    assert conn.rollback.called
+    # Signals count distinct (ticker, market) by signal_date (a date param).
+    sig_sql, sig_params = next(x for x in seen if "FROM signals" in x[0])
+    assert "COUNT(DISTINCT (ticker, market))" in sig_sql and "signal_date >= %s" in sig_sql
+    assert type(sig_params[0]).__name__ == "date"
+    # Naive TIMESTAMP columns get a naive UTC value, TIMESTAMPTZ an aware one.
+    pos_params = next(x for x in seen if "FROM positions" in x[0])[1]
+    plan_params = next(x for x in seen if "FROM trade_plans" in x[0])[1]
+    assert pos_params[0].tzinfo is None
+    assert plan_params[0].tzinfo is not None
+
+
+def test_record_loop_event_rejects_unknown_type():
+    with pytest.raises(ValueError):
+        real_database.record_loop_event("page_view", conn=MagicMock())

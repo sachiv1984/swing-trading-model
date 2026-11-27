@@ -625,7 +625,7 @@ export default function SystemStatus() {
             <div className="text-center">
               <Play className="w-10 h-10 text-app-muted mx-auto mb-3" />
               <p className="text-slate-600 dark:text-slate-400">Click 'Run Tests' to verify all endpoints</p>
-              <p className="text-slate-600 dark:text-slate-400 text-sm mt-1">Tests {totalTests || '132'} endpoints</p>
+              <p className="text-slate-600 dark:text-slate-400 text-sm mt-1">Tests {totalTests || '133'} endpoints</p>
             </div>
           </div>
         ) : (

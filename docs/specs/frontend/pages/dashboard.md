@@ -3,8 +3,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 4.7
-**Last Updated:** 2026-11-24 (ST-11, EPIC-02, v9.18, BLG-UX-13 — §1B "Plan this" built); prior — 2026-11-24 (ST-10, EPIC-02, v9.18, BLG-FE-308 — §4B built; build notes); prior — 2026-11-24 (ST-09, EPIC-02, v9.18, BLG-UX-11 — §3A built; build notes; QD-04 names the request the Screener Hits card actually makes); prior history retained — see prior entries in version control
+**Version:** 4.8
+**Last Updated:** 2026-11-27 (ST-17, EPIC-03, v9.18, BLG-FEAT-103 — §1B item links record a Due today action; TL-31); prior — 2026-11-24 (ST-11, EPIC-02, v9.18, BLG-UX-13 — §1B "Plan this" built); prior — 2026-11-24 (ST-10, EPIC-02, v9.18, BLG-FE-308 — §4B built; build notes); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Release:** v8.8
 **EPIC:** EPIC-03
@@ -151,6 +151,7 @@ The five Morning Briefing cards, the AI Daily Briefing, Cards 1, 2, 3 and 5, Gat
 | TL-28 | With Card 4 removed, Recent Activity spans the full width of its row (§3) | Playwright: Recent Activity card width equals the row width at 1440px |
 | TL-29 | New signals uses Card 4's date filter (local `signal_date`, or `created_date` starting with it) and counts every status | Playwright with one signal of each status dated today and one dated yesterday |
 | TL-30 | *(v4.4, ST-11)* A New signals row with status `new` or `watchlisted` shows "Plan this", which opens Trade Plan pre-filled with the signal's ticker and market; rows with other statuses show only "Research"; "Plan this" is a link, so TL-19 still holds | Playwright: statuses `new`, `entered`, `watchlisted` → "Plan this" on the first and third; click opens `/TradePlan` with ticker and market filled |
+| TL-31 | *(v4.8, ST-17)* A click on a Today list item link (Review exit, a Grace ends today or Stops moved row, Research, Plan this) writes one `due_today_action` event (`POST /digest/events`, `metrics_definitions.md` §Core Loop Metrics) and navigates as before; the regime rows and "+N more" links write nothing. The write is fire-and-forget: it never prevents, delays or changes the navigation, and a failed write shows nothing | Playwright: each of the four links sends exactly one `due_today_action` POST and lands on its target; a regime row and an overflow link send none |
 
 
 ### Known Deviations
@@ -641,6 +642,7 @@ Cards are fully clickable (entire card surface is the click target). Visual affo
 
 | Version | Date | Change |
 |---------|------|--------|
+| 4.8 | 2026-11-27 | ST-17 (EPIC-03, v9.18, BLG-FEAT-103): §1B item links (Review exit, Grace ends today and Stops moved rows, Research, Plan this) record one `due_today_action` event per click through `POST /digest/events`, fire-and-forget; regime rows and overflow links record nothing (TL-31). The event is recorded for analysis and not shown anywhere (Metrics Definitions & Analytics Owner ruling 2026-11-27). |
 | 4.7 | 2026-11-24 | ST-11 (EPIC-02, v9.18, BLG-UX-13): §1B "Plan this" built on `new` and `watchlisted` New signals rows with the shared `planThisUrl` and `PLAN_THIS_SIGNAL_STATUSES` (`src/lib/planThis.js`), the same route and parameters as the Signals card; `data-testid="today-plan-{ticker}"`. TL-30: `dashboard-today-list.spec.js` SC-TL-30. No behaviour change to the spec. |
 | 4.6 | 2026-11-24 | ST-10 (EPIC-02, v9.18, BLG-FE-308): §4B built; build notes added (helpers in `positionUrgency.js`, shared `nextEndsText`, `status` vs `position_state`, the grace-period-alerts query dropped). No behaviour change to the spec. |
 | 4.5 | 2026-11-24 | ST-09 (EPIC-02, v9.18, BLG-UX-11): §3A built; build notes added; QD-04's failing request corrected to `GET /signals`, the request the Screener Hits card makes. No behaviour change to the spec. |

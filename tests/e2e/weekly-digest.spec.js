@@ -15,6 +15,9 @@
  *   SC-DIG-09      Journal completion lands on Performance Compliance (WD-03)
  *   SC-DIG-10      Red flags lands on Journal → Red flags (WD-03)
  *   SC-DIG-11      A failed figure shows "Not available" and is not linked
+ *   SC-DIG-12      This week's loop: five counts in order, caption, four links, review unlinked (WD-05; ST-17)
+ *   SC-DIG-13      Opening the page writes one event; a Refresh writes none (WD-06; ST-17)
+ *   SC-DIG-14      Loop counts: zero week, a null count, and no loop object (ST-17)
  */
 import { test, expect } from "./fixtures/api-status-guard";
 
@@ -33,12 +36,17 @@ const SEED = {
     compliance_score_current: 80.0,
     compliance_score_7d_ago: 75.0,
     red_flags_7d: 2,
+    loop: { week_start: "2026-11-23", signals: 3, plans: 1, entries: 1, reflections: 0, reviews: 2 },
     staleness_hours: 18.5,
     as_of_utc: "2026-04-01T10:30:00+00:00",
   },
 };
 
 test.beforeEach(async ({ page }) => {
+  await page.route("**/digest/events", (route) =>
+    route.fulfill({ status: 200, contentType: "application/json",
+      body: JSON.stringify({ status: "ok", data: { event_type: "weekly_digest_opened", written: true } }) })
+  );
   await page.route("**/digest/weekly", (route) =>
     route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(SEED) })
   );
@@ -256,3 +264,103 @@ test("SC-DIG-11: a failed figure shows Not available and is not linked", async (
   await expect(link(page, "alerts_fired_7d")).toHaveCount(0);
   await expect(link(page, "realised_pnl_7d")).toHaveCount(1);
 });
+
+// SC-DIG-12 (ST-17, WD-05): this week's loop.
+test("SC-DIG-12: this week's loop shows five counts in loop order with links", async ({ page }) => {
+  await gotoDigest(page);
+  const loop = page.getByTestId("digest-loop");
+  await expect(loop.getByRole("heading", { level: 2, name: "This week's loop" })).toBeVisible();
+  await expect(page.getByTestId("digest-loop-caption")).toHaveText("Monday 23 Nov to today (UTC)");
+  await expect(loop.locator("li")).toHaveText([
+    "Signals: 3", "Plans: 1", "Entries: 1", "Reflections: 0", "Reviews: 2",
+  ]);
+  const hrefs = { signals: "#/Signals", plans: "#/TradePlans", entries: "#/Positions", reflections: "#/Journal?section=reflections" };
+  for (const [key, href] of Object.entries(hrefs)) {
+    await expect(page.getByTestId(`digest-loop-${key}`)).toHaveAttribute("href", href);
+  }
+  await expect(page.getByTestId("digest-loop-reviews")).not.toHaveAttribute("href", /.*/);
+  await expect(loop.getByRole("link")).toHaveCount(4);
+  await expect(page.getByRole("link", { name: "Plans: 1", exact: true })).toBeVisible();
+  // The four arrows between steps are decorative.
+  await expect(loop.getByTestId("digest-loop-arrow")).toHaveCount(4);
+  for (const arrow of await loop.getByTestId("digest-loop-arrow").all()) {
+    await expect(arrow).toHaveAttribute("aria-hidden", "true");
+  }
+  // A count lands on its page.
+  await page.route(new RegExp(`${API}/`), (route) =>
+    route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ status: "ok", data: [] }) })
+  );
+  await page.getByTestId("digest-loop-reflections").click();
+  await expect(page).toHaveURL(/#\/Journal\?section=reflections$/);
+  await expect(page.getByRole("tab", { name: /^Reflections( \(\d+\))?$/ })).toHaveAttribute("aria-selected", "true", { timeout: 15000 });
+});
+
+// SC-DIG-13 (ST-17, WD-06): one opened event per page load; Refresh writes none.
+test("SC-DIG-13: opening writes one event, Refresh writes none", async ({ page }) => {
+  const posts = [];
+  const order = [];
+  await page.unroute("**/digest/events");
+  await page.route("**/digest/events", (route) => {
+    order.push("event");
+    posts.push(route.request().postDataJSON());
+    return route.fulfill({ status: 200, contentType: "application/json",
+      body: JSON.stringify({ status: "ok", data: { event_type: "weekly_digest_opened", written: true } }) });
+  });
+  let digestGets = 0;
+  await page.unroute("**/digest/weekly");
+  await page.route("**/digest/weekly", (route) => {
+    order.push("digest");
+    digestGets += 1;
+    return route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(SEED) });
+  });
+  await gotoDigest(page);
+  await expect.poll(() => posts.length).toBe(1);
+  expect(posts[0]).toEqual({ event_type: "weekly_digest_opened" });
+  // The digest is requested after the event, so Reviews include this visit.
+  expect(order.slice(0, 2)).toEqual(["event", "digest"]);
+
+  await page.getByRole("button", { name: "Refresh" }).click();
+  await expect.poll(() => digestGets).toBe(2);
+  await page.waitForTimeout(300);
+  expect(posts).toHaveLength(1);
+
+  // A new page load writes one more.
+  await page.reload();
+  await expect(figures(page)).toBeVisible({ timeout: 8000 });
+  await expect.poll(() => posts.length).toBe(2);
+});
+
+// SC-DIG-13b: a failed event write never changes the page.
+test("SC-DIG-13b: a failed event write leaves the page as it is", async ({ page }) => {
+  await page.unroute("**/digest/events");
+  await page.route("**/digest/events", (route) =>
+    route.fulfill({ status: 500, contentType: "application/json", body: JSON.stringify({ status: "error", message: "Failed to record event" }) })
+  );
+  await gotoDigest(page);
+  await expect(page.getByTestId("digest-loop")).toBeVisible();
+  await expect(page.getByRole("button", { name: /try again/i })).toHaveCount(0);
+});
+
+// SC-DIG-14 (ST-17): zero week, a null count, and no loop object.
+test("SC-DIG-14: loop counts for a zero week, a null count and no loop", async ({ page }) => {
+  const items = () => page.getByTestId("digest-loop").locator("li");
+
+  await serveDigest(page, { loop: { week_start: "2026-11-23", signals: 0, plans: 0, entries: 0, reflections: 0, reviews: 0 } });
+  await gotoDigest(page);
+  await expect(items()).toHaveText(["Signals: 0", "Plans: 0", "Entries: 0", "Reflections: 0", "Reviews: 0"]);
+  await expect(page.getByTestId("digest-loop").getByRole("link")).toHaveCount(4);
+
+  await serveDigest(page, { loop: { week_start: "2026-11-23", signals: 3, plans: 1, entries: 1, reflections: 0, reviews: null } });
+  await page.reload();
+  await expect(page.getByTestId("digest-loop-reviews")).toHaveText("Reviews: Not available", { timeout: 8000 });
+
+  await serveDigest(page, { loop: undefined });
+  await page.reload();
+  await expect(items()).toHaveText(
+    ["Signals: Not available", "Plans: Not available", "Entries: Not available", "Reflections: Not available", "Reviews: Not available"],
+    { timeout: 8000 }
+  );
+  await expect(page.getByTestId("digest-loop").getByRole("link")).toHaveCount(0);
+  await expect(page.getByTestId("digest-loop-caption")).toHaveCount(0);
+});
+

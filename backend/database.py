@@ -5927,6 +5927,86 @@ def get_weekly_digest_data(conn=None) -> Dict:
         return _fetch_weekly_digest_data(conn)
 
 
+LOOP_EVENT_TYPES = ("weekly_digest_opened", "due_today_action")
+
+
+def iso_week_start_utc(now_utc: datetime) -> datetime:
+    """Monday 00:00 UTC of the ISO week containing `now_utc` (§Core Loop Metrics)."""
+    day = now_utc.astimezone(timezone.utc).date()
+    monday = day - timedelta(days=day.weekday())
+    return datetime.combine(monday, datetime.min.time(), tzinfo=timezone.utc)
+
+
+def _fetch_weekly_loop_counts(conn, cursor, now_utc: datetime) -> Dict:
+    """The five core-loop step counts for the current ISO week (ST-17).
+
+    Each count is an int, or None when its query fails (never 0 for a
+    failure); a failed query is rolled back so the next one can run. Naive
+    TIMESTAMP columns are compared with a naive UTC value, TIMESTAMPTZ
+    columns with an aware one, and signal_date (DATE) with the Monday date.
+    """
+    week_start = iso_week_start_utc(now_utc)
+    week_start_naive = week_start.replace(tzinfo=None)
+    queries = {
+        "signals": ("SELECT COUNT(DISTINCT (ticker, market)) AS n FROM signals WHERE signal_date >= %s",
+                    week_start.date()),
+        "plans": ("SELECT COUNT(*) AS n FROM trade_plans WHERE created_at >= %s", week_start),
+        "entries": ("SELECT COUNT(*) AS n FROM positions WHERE created_at >= %s", week_start_naive),
+        "reflections": ("SELECT COUNT(*) AS n FROM trade_reflections WHERE created_at >= %s", week_start_naive),
+        "reviews": ("SELECT COUNT(DISTINCT (created_at AT TIME ZONE 'UTC')::date) AS n FROM loop_events "
+                    "WHERE event_type = 'weekly_digest_opened' AND created_at >= %s", week_start),
+    }
+    loop = {"week_start": week_start.date().isoformat()}
+    for step, (sql, param) in queries.items():
+        try:
+            cursor.execute(sql, (param,))
+            row = cursor.fetchone()
+            loop[step] = int(row["n"]) if row else 0
+        except Exception as e:
+            logger.warning("Could not compute loop count %s: %s", step, e)
+            _rollback_quietly(conn)
+            loop[step] = None
+    return loop
+
+
+def ensure_loop_events_table(conn=None) -> None:
+    """Create loop_events if it does not exist (DS-43, ST-17)."""
+    def _create(c):
+        with c.cursor() as cur:
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS loop_events (
+                    id          BIGSERIAL PRIMARY KEY,
+                    event_type  VARCHAR(40) NOT NULL
+                                CHECK (event_type IN ('weekly_digest_opened', 'due_today_action')),
+                    created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
+                )
+            """)
+            cur.execute("""
+                CREATE INDEX IF NOT EXISTS idx_loop_events_type_created
+                ON loop_events (event_type, created_at)
+            """)
+        c.commit()
+    if conn is not None:
+        return _create(conn)
+    with get_db() as conn:
+        _create(conn)
+
+
+def record_loop_event(event_type: str, conn=None) -> None:
+    """Write one loop_events row (ST-17). Raises ValueError for an unknown type."""
+    if event_type not in LOOP_EVENT_TYPES:
+        raise ValueError(f"unknown event_type: {event_type}")
+
+    def _insert(c):
+        with c.cursor() as cur:
+            cur.execute("INSERT INTO loop_events (event_type) VALUES (%s)", (event_type,))
+        c.commit()
+    if conn is not None:
+        return _insert(conn)
+    with get_db() as conn:
+        _insert(conn)
+
+
 def _rollback_quietly(conn) -> None:
     """Clear an aborted transaction so the digest's later queries can run.
 
@@ -6085,7 +6165,12 @@ def _fetch_weekly_digest_data(conn) -> Dict:
         logger.warning("Could not compute staleness_hours: %s", e)
         _rollback_quietly(conn)
 
+    # 6. This week's loop (ST-17, v9.18, BLG-FEAT-103) — metrics_definitions.md
+    #    §Core Loop Metrics: five counts for the current ISO week in UTC.
+    loop = _fetch_weekly_loop_counts(conn, cursor, now_utc)
+
     return {
+        "loop": loop,
         "realised_pnl_7d": realised_pnl_7d,
         "unrealised_pnl_delta_7d": unrealised_pnl_delta_7d,
         "alerts_fired_7d": alerts_fired_7d,

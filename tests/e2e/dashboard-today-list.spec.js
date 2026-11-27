@@ -1,7 +1,7 @@
 /**
  * Dashboard "Today" list — ST-06 (BLG-FE-254, EPIC-02, v9.16)
  *
- * Spec: docs/specs/frontend/pages/dashboard.md v4.0 §1B (TL-01..TL-29)
+ * Spec: docs/specs/frontend/pages/dashboard.md v4.0 §1B (TL-01..TL-29); TL-30 (v4.4); TL-31 (v4.8, ST-17)
  * Design brief: docs/design/2026-11-03__release-v9.15/site-structure-phase1/decision_record.md §2.2
  *
  * Every scenario runs in the dark and the light theme. TL-09 and TL-10 (Stops moved) were added by
@@ -385,6 +385,53 @@ for (const theme of ['dark', 'light']) {
     });
 
     // ST-11 (EPIC-02, v9.18, BLG-UX-13): dashboard.md v4.4 §1B, TL-30.
+    // SC-TL-31 (dashboard.md v4.8 TL-31; ST-17, EPIC-03, v9.18): each of the four item links
+    // writes one due_today_action event and still navigates; regime rows and overflow links write none.
+    test(`SC-TL-31 (${theme}): Today list item links record one Due today action each`, async ({ page }) => {
+      await mockSources(page, {
+        positions: {
+          body: [
+            breached('BRC'), graceLeft('GRC', 1), moved('MOV', TODAY, 80, 85),
+            ...['A', 'B', 'C', 'D', 'E'].map((t) => breached(`X${t}`)),
+          ],
+        },
+        signals: { body: [signal('NEWA', { status: 'new', current_price: 182.3 })] },
+      });
+      const events = [];
+      await page.route(`${API}/digest/events`, async (route) => {
+        events.push(route.request().postDataJSON());
+        await route.fulfill(json({ status: 'ok', data: { event_type: 'due_today_action', written: true } }));
+      });
+      // [link, its href, where the click lands]. Positions consumes ?exit= and ?position=
+      // once it acts on them, so the landing check is the path (and the exit dialog).
+      const clicks = [
+        [(p) => group(p, 'exits').getByRole('link', { name: 'Review exit for BRC' }), '#/Positions?exit=pos-BRC', /#\/Positions/, (p) => p.getByRole('dialog')],
+        [(p) => group(p, 'grace').getByTestId('today-item-grace-GRC'), '#/Positions?position=pos-GRC', /#\/Positions/],
+        [(p) => group(p, 'stops').getByTestId('today-item-stops-MOV'), '#/Positions?position=pos-MOV', /#\/Positions/],
+        [(p) => group(p, 'signals').getByRole('link', { name: 'Research NEWA' }), '#/research/NEWA', /#\/research\/NEWA/],
+        [(p) => group(p, 'signals').getByRole('link', { name: 'Plan this: NEWA' }), /#\/TradePlan\?ticker=NEWA/, /#\/TradePlan\?ticker=NEWA/],
+      ];
+      for (const [i, [target, href, url, landed]] of clicks.entries()) {
+        await gotoDashboard(page);
+        await expect(target(page)).toHaveAttribute('href', href);
+        await target(page).click();
+        await expect(page).toHaveURL(url);
+        if (landed) await expect(landed(page)).toBeVisible({ timeout: 8000 });
+        await expect.poll(() => events.length).toBe(i + 1);
+      }
+      expect(events.every((e) => e.event_type === 'due_today_action')).toBe(true);
+
+      // A regime row and a "+N more" link record nothing.
+      await gotoDashboard(page);
+      await group(page, 'exits').getByTestId('today-overflow-exits').click();
+      await expect(page).toHaveURL(/#\/Positions$/);
+      await gotoDashboard(page);
+      await group(page, 'regime').getByTestId('today-item-regime-US').click();
+      await expect(page).toHaveURL(/#\/Signals$/);
+      await page.waitForTimeout(300);
+      expect(events).toHaveLength(clicks.length);
+    });
+
     test(`SC-TL-30 (${theme}): "Plan this" shows on new and watchlisted rows and opens a pre-filled Trade Plan`, async ({ page }) => {
       await mockSources(page, {
         signals: {
