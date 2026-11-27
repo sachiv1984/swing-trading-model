@@ -2540,6 +2540,7 @@ The read-only credential available to sprint-execution sessions is for **staging
 ---
 
 ### BLG-GOV-378 — Decide whether the debrief focus area may be longer than one strictly restating sentence
+**✅ COMPLETE — 2026-11-27, `2026-11-18__release-v9.18`: post-merge tracker met in-sprint by ST-40 (EPIC-07), recorded in `qa_evidence_EPIC-07.md` (2026-11-20): keep one observational sentence, decided by the AI Compliance & Governance Officer and the Product Owner on `ESC-EXEC-20261120-02` against 10 production debriefs (`DEL-20261120-01`, `ad42bc87`); re-review after BLG-BE-226 and BLG-AI-35. All ACs met.**
 **Priority:** P3 (Low)
 **Type:** Governance / AI Compliance
 **Owner:** AI Compliance Governance Officer; Product Owner
@@ -5735,6 +5736,7 @@ The two Arc 2 journey tests added by ST-24/ST-26 (`arc2-happy-path.spec.js`, `tr
 ---
 
 ### BLG-OPS-217 — Find out why most on-demand Yahoo calls fail on production (earnings, positions, gap risk, research)
+**✅ COMPLETE — 2026-11-27, `2026-11-18__release-v9.18`: post-merge tracker met in-sprint by conditional story ST-32 (EPIC-06), recorded in `qa_evidence_EPIC-06.md` (2026-11-24): AC 1 met in v9.17 (ST-15); AC 2 production weekly report (Yahoo failures 665 → 21 a week); AC 3 `data_pipeline_cost_baseline.md` v1.4 §4 re-recorded (`229a851b`). All ACs met.**
 **Priority:** P2 (Medium)
 **Type:** Operations / Backend
 **Owner:** Infrastructure & Operations Owner; Head of Engineering
