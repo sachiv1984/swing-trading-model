@@ -1,7 +1,7 @@
 Owner: Director of Quality
 Class: Planning Document (Class 4)
 Status: Active
-Last Updated: 2026-11-26
+Last Updated: 2026-11-27
 
 # QA Evidence — Home Page and Navigation
 
@@ -40,6 +40,15 @@ Last Updated: 2026-11-26
 
 **[Agent-mediated review — on behalf of Product Owner, pending human confirmation]** ⚠️ Approved with Comments. Decisions taken to the user and ruled (`ESC-EXEC-20261126-03`): a draft plan's skipped checklist no longer marks the trade broken permanently, and pre-v9.18 events no longer count. Fixed: the behaviour-change list above now covers the Stop pre-tick, the remembered Rules option, "Not known" for older trades, and the navigation changes. Filed: BLG-FE-338. To reconfirm at acceptance: the AI briefing folding on every Dashboard arrival.
 
+### Product Owner and Director of Quality acceptance (the user, in session, 2026-11-27T09:04:29Z)
+
+The user, who holds the Product Owner and Director of Quality roles, gave both in session: Director of Quality "Sign off"; Product Owner "Accept all". Recorded as given:
+
+1. **Accepted:** the AI Daily Briefing card folds into the "Nothing to show" line on every Dashboard arrival (it loads no briefing on mount); the "AI briefing" entry reveals it with Regenerate.
+2. **Accepted until v9.19:** BLG-BE-237 — editing a linked plan's checklist after entry changes that trade's rules-followed result, and the edit is not audit-logged.
+3. **Accepted:** the other behaviour changes listed above.
+4. No P1 or P2 defect was filed during this EPIC; follow-ups BLG-FE-336, BLG-FE-337, BLG-FE-338 and BLG-BE-237 are P3.
+
 ## Rulings and decisions recorded during execution
 
 All given by the user in session, holding the named role:
@@ -75,14 +84,14 @@ No P1 or P2 defect was filed during this EPIC.
 
 ## Standard Sign-Off Block
 
-- [ ] All acceptance criteria verified against canonical spec
-- [ ] No unresolved P0 or P1 deviations
-- [ ] Regression areas checked
-- [ ] For any frontend component making direct URL construction (not via api.* wrapper): confirm the URL-base variable is exposed on the imported object
-- [ ] **Strategy values checked:** ST-10 — §6 grace period (grace length 10 days via `grace_service.compute_grace_days_remaining`; the Dashboard reads the server's `grace_period`/`grace_days_remaining`, and 1 day left is "Ends today", Day 10 of 10, as §6.1/§11); ST-12 — §4.2.2 sector concentration, §4.2.4 cash constraint, §4.2.5 sizing validity, §4.2.6 advisory (no new rule, statuses from the existing checks). Other stories touch no stop, grace, ATR, exit or sizing logic.
-- Signed off by:
-- Date:
-- Comments:
+- [x] All acceptance criteria verified against canonical spec
+- [x] No unresolved P0 or P1 deviations
+- [x] Regression areas checked
+- [x] For any frontend component making direct URL construction (not via api.* wrapper): confirm the URL-base variable is exposed on the imported object (none added: the new fetches go through `api.*` and `database`/service paths)
+- [x] **Strategy values checked:** ST-10 — §6 grace period (grace length 10 days via `grace_service.compute_grace_days_remaining`; the Dashboard reads the server's `grace_period`/`grace_days_remaining`, and 1 day left is "Ends today", Day 10 of 10, as §6.1/§11); ST-12 — §4.2.2 sector concentration, §4.2.4 cash constraint, §4.2.5 sizing validity, §4.2.6 advisory (no new rule, statuses from the existing checks). Other stories touch no stop, grace, ATR, exit or sizing logic.
+- Signed off by: Sprint Execution Engine (agent-mediated, Director of Quality role — §5.3)
+- Date: 2026-11-27
+- Comments: Entered at the explicit direction of the user, who holds the Director of Quality role, in session at 2026-11-27T09:04:29Z, after the pre-PR agent-mediated reviews (Director of Quality ❌ Blocked then cleared; Product Owner ⚠️ Approved with Comments, decisions ruled in `ESC-EXEC-20261126-03`). Results per the Consolidation Block: ST-07 to ST-13 Pass. Frontend-visible changes: every observable AC has Playwright coverage, observed passing in real CI — Playwright E2E 45872238856 on `86130e54` (all shards and both visual jobs; frontend unchanged after it); post-open CI fixes restated: ST-10's two failures (CI Pytest 45456088579, Playwright 45456088330) cleared on `d758184d` (Playwright 45859218434, CI Pytest 45859218389); ST-13's (Playwright 45867564450, CI Pytest 45867564435, 45872238877) cleared on `86130e54`/`518b1214` (Playwright 45872238856; CI Pytest 45897742478, Phase B 7 of 7). Autonomous class unavailable (src/pages and src/components changed). Story-level authority sign-offs, all cleared: Head of UX & Design (ST-07, `ESC-EXEC-20261124-01`), Strategy Rules & System Intent Owner (ST-12, `ESC-EXEC-20261124-02`), Metrics Definitions & Analytics Owner (ST-13, `ESC-EXEC-20261124-03`, `ESC-EXEC-20261126-02`, `-03`), Product Owner and Head of UX & Design (ST-12, `ESC-EXEC-20261126-01`). Follow-ups filed: BLG-FE-336, BLG-FE-337, BLG-FE-338, BLG-BE-237 (all P3).
 
 ## Merge Gate Confirmations
 
