@@ -4,7 +4,8 @@
  * Renders GET /digest/weekly response as a structured data table.
  * All displayed values are raw numeric — no narrative or interpretation.
  *
- * Spec: docs/specs/api_contracts/digest_endpoints.md v0.1
+ * Spec: docs/specs/frontend/pages/weekly_digest.md v0.4;
+ *       docs/specs/api_contracts/digest_endpoints.md v0.6
  */
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
@@ -35,15 +36,26 @@ const ALERT_COUNT_LINKS = {
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:8000";
 
-function formatValue(field, value) {
+// ST-14 (v9.18, BLG-SPEC-204): the journal completion rates are 0.0 both
+// for "no closed trades" and "no notes", so the trade counts decide the text.
+function formatJournalValue(field, data) {
+  const isCurrent = field === "journal_completion_rate_current";
+  const count = data[isCurrent ? "closed_trades_total" : "closed_trades_total_7d_ago"];
+  const rate = data[field];
+  if (rate === null || rate === undefined || count === null || count === undefined) return "Not available";
+  if (count === 0) return isCurrent ? "No closed trades yet" : "No closed trades";
+  return formatPercent(rate);
+}
+
+function formatValue(field, value, data) {
+  if (field === "journal_completion_rate_current" || field === "journal_completion_rate_7d_ago") {
+    return formatJournalValue(field, data);
+  }
   if (value === null || value === undefined) return "—";
   switch (field) {
     case "realised_pnl_7d":
     case "unrealised_pnl_delta_7d":
       return formatCurrency(value);
-    case "compliance_score_current":
-    case "compliance_score_7d_ago":
-      return formatPercent(value);
     case "staleness_hours":
       return `${value.toFixed(1)} h`;
     case "as_of_utc":
@@ -58,8 +70,8 @@ const FIELD_LABELS = [
   { field: "unrealised_pnl_delta_7d",    label: "Unrealised P&L Delta (7d)",     unit: "GBP" },
   { field: "alerts_fired_7d",            label: "Alerts Fired (7d)",             unit: "count" },
   { field: "alerts_dismissed_7d",        label: "Alerts Dismissed (7d)",         unit: "count" },
-  { field: "compliance_score_current",   label: "Compliance Score (current)",    unit: "%" },
-  { field: "compliance_score_7d_ago",    label: "Compliance Score (7d ago)",     unit: "%" },
+  { field: "journal_completion_rate_current", label: "Journal completion (all closed trades)", unit: "%" },
+  { field: "journal_completion_rate_7d_ago",  label: "Journal completion (a week ago)",        unit: "%" },
   { field: "staleness_hours",            label: "Data Staleness",                unit: "hours" },
   { field: "as_of_utc",                  label: "As of (UTC)",                   unit: "timestamp" },
 ];
@@ -122,7 +134,7 @@ export default function WeeklyDigest() {
           </TableHeader>
           <TableBody>
             {FIELD_LABELS.map(({ field, label, unit }) => {
-              const value = data ? formatValue(field, data[field]) : "—";
+              const value = data ? formatValue(field, data[field], data) : "—";
               const linkTo = ALERT_COUNT_LINKS[field];
               const isLinkable = linkTo && value !== "—";
               return (

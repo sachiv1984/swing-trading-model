@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-11-26 (session — 1 new item added: BLG-BE-237; EPIC-02 v9.18 ST-13 review); prior — 2026-11-26 (session — 1 new item added: BLG-FE-338; EPIC-02 v9.18 pre-PR Product Owner review); prior — 2026-11-24 (session — 2 new items added: BLG-FE-336, BLG-FE-337; ST-08 EPIC-02 v9.18 pre-commit code review); prior history retained — see prior entries in version control
+**Last Updated:** 2026-11-27 (session — 1 new item added: BLG-BE-238; EPIC-03 v9.18 ST-14 first-time-right check 8); prior — 2026-11-26 (session — 1 new item added: BLG-BE-237; EPIC-02 v9.18 ST-13 review); prior — 2026-11-26 (session — 1 new item added: BLG-FE-338; EPIC-02 v9.18 pre-PR Product Owner review); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -9048,5 +9048,27 @@ In `backend/services/earnings_service.py`, a usable `Ticker.info` (with `quoteTy
 **Acceptance Criteria**
 - A UK `GSK` watchlist row does not take a US `GSK` signal's status (Phase B test)
 - The UK `.L` and legacy bare matches still work
+
+---
+
+### BLG-BE-238 — Make the Weekly Digest's realised P&L window 7 dates, or name it
+**Priority:** P3 (Low)
+**Type:** Backend Engineering
+**Owner:** Head of Engineering; Metrics Definitions & Analytics Owner
+**Source:** ST-14 (EPIC-03, `2026-11-18__release-v9.18`) first-time-right pass A, check 8 (time boundaries); Product Owner ruling in session: keep the "last 7 days" labels, file a P3 follow-up — 2026-11-27
+**Effort:** S (~0.5 day, decision then build)
+**Provisional-Target:** v9.19
+
+**Problem**
+`GET /digest/weekly` `realised_pnl_7d` and the journal-completion "7 days ago" cutoff compare `trade_history.exit_date` with `date(now − 7 days)` (`exit_date >= cutoff` and `exit_date < cutoff`). On Thursday 27 Nov that covers 20–27 Nov, which is 8 calendar dates. `alerts_fired_7d`, `alerts_dismissed_7d` and `red_flags_7d` use a rolling 7 × 24h timestamp window. The Weekly Digest labels every row "last 7 days", so the realised P&L row can include a trade closed 8 dates ago.
+
+**Scope**
+- Decide (Metrics Definitions & Analytics Owner, Product Owner): change the date window to 7 dates (`exit_date > today − 7`), or keep it and name it on the page
+- Build the decision; update `digest_endpoints.md`, `metrics_definitions.md` §Journal Completion Rate (digest cutoff) and `weekly_digest.md` §2
+
+**Acceptance Criteria**
+- The decision is recorded in `digest_endpoints.md` and `metrics_definitions.md`
+- A pytest with a trade closed exactly 7 and exactly 8 dates ago shows which window each digest figure uses, matching the decision
+- The Weekly Digest label for realised P&L matches its window
 
 ---

@@ -6,7 +6,7 @@
   "invoked_utc": "2026-11-19T08:07:14Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-27T09:13:51Z",
+  "last_updated_utc": "2026-11-27T14:14:43Z",
   "epics": {
     "EPIC-01": {
       "title": "Site Structure & Usability Phase 4, Stage 1: Correct and Safe (build-and-ship)",
@@ -429,12 +429,16 @@
       "pr_status": "none",
       "qa_signed_off": false,
       "qa_evidence_log": "claude/cycles/2026-11-18__release-v9.18/qa_evidence_EPIC-03.md",
-      "test_scenarios": [],
+      "test_scenarios": [
+        "tests/e2e/weekly-digest.spec.js",
+        "tests/test_weekly_digest_data.py",
+        "tests/test_weekly_digest_postgres.py"
+      ],
       "stories": {
         "ST-14": {
           "title": "Rename the Weekly Digest's journal completion figure",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "in_progress",
           "assigned_to": "engine",
           "github_issue": 2279,
           "branch": "exec/2026-11-18__release-v9.18/EPIC-03",
@@ -444,13 +448,20 @@
           "unblock_criteria": null,
           "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": [],
+          "spec_references": [
+            "docs/specs/api_contracts/digest_endpoints.md#GET /digest/weekly",
+            "docs/specs/metrics_definitions.md#Journal Completion Rate",
+            "docs/specs/frontend/pages/weekly_digest.md",
+            "tests/test_weekly_digest_data.py",
+            "tests/test_weekly_digest_postgres.py",
+            "tests/e2e/weekly-digest.spec.js"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
-          "last_completed_substep": null,
+          "last_completed_substep": "3.1.A.review",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "First-time-right: 2026-11-27 pass A — 1 done (digest journal rate = % of trade_history rows with entry or exit note, all closed trades; 7d-ago = rows with exit_date < date(now−7d); predicate identical to get_compliance_core_counts, so Performance → Compliance shows the same figure; only reader of compliance_score_* is WeeklyDigest.js + 4 E2E fixtures + test_api_contracts.py); 2 raised → ruled: all closed trades in the window gave 'A week ago: 0.0%' → Metrics Owner/PO ruled 2026-11-27 (in session) add closed_trades_total_7d_ago, page says 'A week ago: no closed trades'; Performance shows '—' at 0 trades, digest 'No closed trades yet' (same meaning); 8 raised → ruled: realised_pnl_7d covers 8 calendar dates (exit_date ≥ date(now−7d)) while alerts/red flags are rolling 7×24h; PO ruled keep labels, file P3 follow-up; 17 done (aliases keep same values, no reader breaks); 18 done (fixtures from _fetch_weekly_digest_data's return dict); 5 medium; 20 done; 3,4,6,7,11,19,21,23,24 N/A (no src/lib, no layout, no rename of routes, no thresholds). Note: BLG-FE-299 (§17 ignores the page period) would break 'same figure on two surfaces' if fixed by following the period — noted for its owner. | First-time-right: 2026-11-27 pass B — 9 done (P3 window follow-up filed as BLG-BE-238 per PO ruling, not this story's own gap); 10 done (digest_endpoints v0.6, openapi 3.54.0, api_changelog 1.39.0, metrics_definitions 1.37.0, weekly_digest v0.4 in one commit); 13 done (new rows column-checked; 3 pre-existing mismatched changelog rows in metrics_definitions.md untouched); 15 done (get_weekly_digest_data's only caller is routers/digest.py); 18 re-run (pytest fake answers by SQL text, real query bodies unchanged; E2E SEED adds the new fields; SC-DIG-06 sets the deprecated alias to a different value to prove the page reads the new field); 12,14,16,22 N/A (no live read, no stored meaning change, no links). | Review (medium, 2026-11-27): 8 findings — fixed 7: page now reads closed_trades_total/_7d_ago ('No closed trades yet', 'No closed trades', null → 'Not available'; SC-DIG-07); journal fields null on a failed query, not 0 (contract/openapi nullable; aliases keep 0.0); rollback after each failed optional query (pre-existing abort cascade, in-file; real-Postgres test fails without it); stale v0.1 pointers; v0.3→v0.4 heading; source-text predicate test replaced by tests/test_weekly_digest_postgres.py (real Postgres, run locally against a scratch PG 18 cluster: pass); missing digest_endpoints 0.5 changelog row restored. Declined 1 (nit): 'a week ago' is still its own row in the interim table — ST-15 (next commit, same PR) builds the second-line layout."
         },
         "ST-15": {
           "title": "Rewrite the Weekly Digest as a readable weekly summary",

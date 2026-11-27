@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 0.5
-**Last Updated:** 2026-09-29 (ST-20, EPIC-05, v9.8, BLG-API-04 — added an Idempotency subsection to POST /digest/si05/send); prior — 2026-06-09
+**Version:** 0.6
+**Last Updated:** 2026-11-27 (ST-14, EPIC-03, v9.18, BLG-SPEC-204 — `GET /digest/weekly` gains `journal_completion_rate_*`, `closed_trades_total`, `closed_trades_total_7d_ago`; `compliance_score_*` deprecated); prior — 2026-09-29 (ST-20, EPIC-05, v9.8, BLG-API-04 — added an Idempotency subsection to POST /digest/si05/send); prior — 2026-06-09; prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Sprint:** 2026-03-31__release-v2.4 — ST-08 (BLG-FEAT-14 BE component)
 **Signed off by:** Head of Specs Team
@@ -53,8 +53,12 @@ Response uses the standard success envelope from **conventions.md**.
   "unrealised_pnl_delta_7d": -42.80,
   "alerts_fired_7d": 5,
   "alerts_dismissed_7d": 3,
-  "compliance_score_current": 80.0,
-  "compliance_score_7d_ago": 75.0,
+  "journal_completion_rate_current": 72.5,
+  "journal_completion_rate_7d_ago": 70.3,
+  "closed_trades_total": 40,
+  "closed_trades_total_7d_ago": 37,
+  "compliance_score_current": 72.5,
+  "compliance_score_7d_ago": 70.3,
   "staleness_hours": 18.5,
   "as_of_utc": "2026-04-01T10:30:00+00:00"
 }
@@ -68,8 +72,12 @@ Response uses the standard success envelope from **conventions.md**.
 | `unrealised_pnl_delta_7d` | float \| null | Change in total unrealised P&L over 7 days: most recent `portfolio_history.unrealised_pnl` minus the closest snapshot on or before the 7-day cutoff. Null if insufficient snapshot history. |
 | `alerts_fired_7d` | integer | Count of `notifications` rows created in the last 7 days. |
 | `alerts_dismissed_7d` | integer | Count of `notifications` rows with `read = TRUE` created in the last 7 days. |
-| `compliance_score_current` | float | Journal completion rate across all closed trades: `(trades_with_notes / total_trades) × 100`. Range 0–100. |
-| `compliance_score_7d_ago` | float | Journal completion rate for trades closed before the 7-day window (baseline for trend). Range 0–100. |
+| `journal_completion_rate_current` | float \| null | Journal completion rate across all closed trades: `(trades_with_notes / total_trades) × 100`, 1 dp, range 0–100. Same formula and predicate as `GET /analytics/compliance-metrics` `journal_completion_rate` (`metrics_definitions.md` §Journal Completion Rate), so both surfaces show the same figure. `0.0` when there are no closed trades; read `closed_trades_total`. `null` when its query fails. (v0.6, ST-14) |
+| `journal_completion_rate_7d_ago` | float \| null | The same rate over trades with `exit_date` before the 7-day cutoff (baseline for trend), using today's notes. `0.0` when no trade closed before the cutoff; read `closed_trades_total_7d_ago`. `null` when its query fails. (v0.6, ST-14) |
+| `closed_trades_total` | integer \| null | Count of all `trade_history` rows: the denominator of `journal_completion_rate_current`. `0` means "no closed trades", not "no notes"; `null` (query failed) means unknown, never "none". (v0.6, ST-14) |
+| `closed_trades_total_7d_ago` | integer \| null | Count of `trade_history` rows with `exit_date` before the cutoff: the denominator of `journal_completion_rate_7d_ago`; `null` when its query fails. (v0.6, ST-14; Metrics Definitions & Analytics Owner / Product Owner ruling 2026-11-27) |
+| `compliance_score_current` | float | **Deprecated (v0.6)** alias of `journal_completion_rate_current`, same value, except `0.0` (never null) when the query fails, as before v0.6. It is a journal completion rate, not a compliance score; kept for existing callers. |
+| `compliance_score_7d_ago` | float | **Deprecated (v0.6)** alias of `journal_completion_rate_7d_ago`, same value, except `0.0` (never null) when the query fails. |
 | `staleness_hours` | float \| null | Hours elapsed since the most recent `portfolio_history` snapshot. Null if no snapshots exist. |
 | `as_of_utc` | string (ISO 8601 UTC) | Timestamp this response was computed. |
 
@@ -95,7 +103,7 @@ Errors use the standard error envelope from **conventions.md §13**.
 | `unrealised_pnl_delta_7d` | `portfolio_history` | `unrealised_pnl`, `snapshot_date` |
 | `alerts_fired_7d` | `notifications` | `created_at` |
 | `alerts_dismissed_7d` | `notifications` | `read`, `created_at` |
-| `compliance_score_*` | `trade_history` | `entry_note`, `exit_note`, `exit_date` |
+| `journal_completion_rate_*`, `closed_trades_total*` (and the deprecated `compliance_score_*`) | `trade_history` | `entry_note`, `exit_note`, `exit_date` |
 | `staleness_hours` | `portfolio_history` | `snapshot_date` |
 
 ---
@@ -189,6 +197,8 @@ This endpoint is intended for internal cron/scheduled invocation only. The sched
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.6 | 2026-11-27 | v9.18 ST-14 (EPIC-03, BLG-SPEC-204): `GET /digest/weekly` adds `journal_completion_rate_current`, `journal_completion_rate_7d_ago`, `closed_trades_total` and `closed_trades_total_7d_ago`; `compliance_score_current`/`_7d_ago` kept as deprecated aliases with the same values. Each new field is `null` when its query fails (no longer read as 0), and a failed optional query is rolled back so later fields still compute. Predicate confirmed the same as `GET /analytics/compliance-metrics` (real-Postgres test). `closed_trades_total_7d_ago` per Metrics Definitions & Analytics Owner / Product Owner ruling 2026-11-27. |
+| 0.5 | 2026-09-29 | v9.8 ST-20 (EPIC-05, BLG-API-04): Idempotency subsection added to POST /digest/si05/send. (Row restored at v0.6; it was missing from this table.) |
 | 0.4 | 2026-06-09 | v5.3 ST-08 (BLG-BE-35): API key authentication implemented on POST /digest/si05/send via _verify_api_key Depends injection; unauthenticated requests now return 401. Authentication requirements section updated to reflect shipped state. Cybersecurity & Trust Lead and Head of Engineering sign-off. |
 | 0.3 | 2026-06-08 | v5.2 ST-04 (BLG-SPEC-48): Authentication requirements section added — POST /digest/si05/send is currently unauthenticated (security gap per security_register.md Review 003); BLG-BE-35 filed for fix. Consistent with ST-11 security review findings. API Contracts & Documentation Owner and Head of Specs Team sign-off. |
 | 0.2 | 2026-06-21 | Add POST /digest/si05/send endpoint: SI-05 Phase 1 weekly strategy integrity Telegram digest. Data from SI-01 (pre_entry_validation_log) + SI-03 (red_flag_events). Format per BLG-GOV-86. ST-01 (EPIC-01, v5.1). |

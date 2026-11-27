@@ -2,7 +2,7 @@
 Weekly Trading Digest Router
 
 GET /digest/weekly — 7-day summary of realised P&L, unrealised P&L delta,
-alert activity, compliance score, and staleness.
+alert activity, journal completion rate, and staleness.
 
 POST /digest/si05/send — Trigger the SI-05 Phase 1 strategy integrity digest
 via Telegram. Intended for weekly cron/scheduled invocation.
@@ -58,14 +58,17 @@ def get_weekly_digest():
       (current unrealised P&L minus unrealised P&L 7 days ago from portfolio snapshots)
     - alerts_fired_7d: count of notifications created in the last 7 days
     - alerts_dismissed_7d: count of notifications marked read in the last 7 days
-    - compliance_score_current: journal_completion_rate from all closed trades (%)
-    - compliance_score_7d_ago: journal_completion_rate for trades closed before 7 days ago (%)
+    - journal_completion_rate_current: % of all closed trades with an entry or exit note
+    - journal_completion_rate_7d_ago: the same rate for trades closed before the 7-day window
+    - closed_trades_total / closed_trades_total_7d_ago: the two denominators
+    - compliance_score_current / compliance_score_7d_ago: deprecated aliases of
+      journal_completion_rate_* (ST-14, v9.18, BLG-SPEC-204)
     - staleness_hours: hours since last portfolio snapshot (null if no snapshots)
     - as_of_utc: UTC timestamp this response was computed
 
     Scope constraint: no generated text, narrative, or interpretation in any field.
 
-    Spec: docs/specs/api_contracts/digest_endpoints.md v0.1
+    Spec: docs/specs/api_contracts/digest_endpoints.md v0.6
     """
     try:
         data = get_weekly_digest_data()

@@ -5927,6 +5927,18 @@ def get_weekly_digest_data(conn=None) -> Dict:
         return _fetch_weekly_digest_data(conn)
 
 
+def _rollback_quietly(conn) -> None:
+    """Clear an aborted transaction so the digest's later queries can run.
+
+    On Postgres one failed statement aborts the transaction; every later query
+    then fails with "current transaction is aborted". The digest's queries are
+    read-only, so rolling back loses nothing."""
+    try:
+        conn.rollback()
+    except Exception as e:  # pragma: no cover — a closed connection
+        logger.warning("Weekly digest rollback failed: %s", e)
+
+
 def _fetch_weekly_digest_data(conn) -> Dict:
     cursor = conn.cursor()
     now_utc = datetime.now(timezone.utc)
@@ -5972,6 +5984,7 @@ def _fetch_weekly_digest_data(conn) -> Dict:
             )
     except Exception as e:
         logger.warning("Could not compute unrealised_pnl_delta_7d: %s", e)
+        _rollback_quietly(conn)
 
     # 3. Alerts fired and dismissed in last 7 days
     alerts_fired_7d = 0
@@ -5990,44 +6003,49 @@ def _fetch_weekly_digest_data(conn) -> Dict:
             alerts_dismissed_7d = int(alert_row["dismissed"])
     except Exception as e:
         logger.warning("Could not compute alert counts: %s", e)
+        _rollback_quietly(conn)
 
-    # 4. Compliance score — journal_completion_rate
-    #    current: all closed trades; 7d ago: trades closed BEFORE the window
-    compliance_score_current = 0.0
-    compliance_score_7d_ago = 0.0
+    # 4. Journal completion rate (ST-14, v9.18, BLG-SPEC-204) — same predicate
+    #    as get_compliance_core_counts (metrics_definitions.md §Journal
+    #    Completion Rate), so the digest and Performance → Compliance agree.
+    #    current: all closed trades; 7d ago: trades closed BEFORE the window.
+    #    The trade counts let the page tell "no closed trades" from "no notes"
+    #    (both rates are 0.0 then).
+    #    On a failed query the rate and its count are None (null), never 0:
+    #    the contract reads closed_trades_total = 0 as "no closed trades".
+    journal_completion_rate_current = None
+    journal_completion_rate_7d_ago = None
+    closed_trades_total = None
+    closed_trades_total_7d_ago = None
+    journal_sql = """
+            SELECT
+                COUNT(*) AS total,
+                COUNT(CASE
+                    WHEN (entry_note IS NOT NULL AND entry_note != '')
+                      OR (exit_note  IS NOT NULL AND exit_note  != '')
+                    THEN 1 END) AS with_notes
+            FROM trade_history
+        """
+
+    def _journal_rate(where_sql="", params=None):
+        cursor.execute(journal_sql + where_sql, params)
+        row = cursor.fetchone()
+        total = int(row["total"]) if row else 0
+        rate = round(int(row["with_notes"]) / total * 100, 1) if total > 0 else 0.0
+        return rate, total
+
     try:
-        cursor.execute("""
-            SELECT
-                COUNT(*) AS total,
-                COUNT(CASE
-                    WHEN (entry_note IS NOT NULL AND entry_note != '')
-                      OR (exit_note  IS NOT NULL AND exit_note  != '')
-                    THEN 1 END) AS with_notes
-            FROM trade_history
-        """)
-        comp_row = cursor.fetchone()
-        if comp_row and int(comp_row["total"]) > 0:
-            compliance_score_current = round(
-                int(comp_row["with_notes"]) / int(comp_row["total"]) * 100, 1
-            )
-
-        cursor.execute("""
-            SELECT
-                COUNT(*) AS total,
-                COUNT(CASE
-                    WHEN (entry_note IS NOT NULL AND entry_note != '')
-                      OR (exit_note  IS NOT NULL AND exit_note  != '')
-                    THEN 1 END) AS with_notes
-            FROM trade_history
-            WHERE exit_date < %s
-        """, (cutoff_7d_date,))
-        comp_base = cursor.fetchone()
-        if comp_base and int(comp_base["total"]) > 0:
-            compliance_score_7d_ago = round(
-                int(comp_base["with_notes"]) / int(comp_base["total"]) * 100, 1
-            )
+        journal_completion_rate_current, closed_trades_total = _journal_rate()
     except Exception as e:
-        logger.warning("Could not compute compliance scores: %s", e)
+        logger.warning("Could not compute journal completion rate: %s", e)
+        _rollback_quietly(conn)
+    try:
+        journal_completion_rate_7d_ago, closed_trades_total_7d_ago = _journal_rate(
+            "WHERE exit_date < %s", (cutoff_7d_date,)
+        )
+    except Exception as e:
+        logger.warning("Could not compute journal completion rate 7 days ago: %s", e)
+        _rollback_quietly(conn)
 
     # 5. Staleness — hours since last portfolio snapshot
     staleness_hours = None
@@ -6049,14 +6067,21 @@ def _fetch_weekly_digest_data(conn) -> Dict:
             staleness_hours = round(delta.total_seconds() / 3600, 1)
     except Exception as e:
         logger.warning("Could not compute staleness_hours: %s", e)
+        _rollback_quietly(conn)
 
     return {
         "realised_pnl_7d": realised_pnl_7d,
         "unrealised_pnl_delta_7d": unrealised_pnl_delta_7d,
         "alerts_fired_7d": alerts_fired_7d,
         "alerts_dismissed_7d": alerts_dismissed_7d,
-        "compliance_score_current": compliance_score_current,
-        "compliance_score_7d_ago": compliance_score_7d_ago,
+        "journal_completion_rate_current": journal_completion_rate_current,
+        "journal_completion_rate_7d_ago": journal_completion_rate_7d_ago,
+        "closed_trades_total": closed_trades_total,
+        "closed_trades_total_7d_ago": closed_trades_total_7d_ago,
+        # Deprecated aliases (ST-14): same values as journal_completion_rate_*,
+        # except that they keep their old 0.0 (never null) on a failed query.
+        "compliance_score_current": journal_completion_rate_current if journal_completion_rate_current is not None else 0.0,
+        "compliance_score_7d_ago": journal_completion_rate_7d_ago if journal_completion_rate_7d_ago is not None else 0.0,
         "staleness_hours": staleness_hours,
         "as_of_utc": now_utc.isoformat(),
     }

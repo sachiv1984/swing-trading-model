@@ -2,8 +2,8 @@
 **Owner:** Metrics Definitions & Analytics Canonical Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 1.36.0
-**Last Updated:** 2026-11-26 (ST-13, EPIC-02, v9.18, BLG-FE-320 — new §Rules Followed (per closed trade)); prior — 2026-11-16 (ST-06, EPIC-02, v9.17, BLG-FE-300 — §Minimum Trades Threshold: summary total_trades, win_rate and total_pnl stay real below the minimum; no formula change); prior — 2026-11-04 (ST-23, EPIC-03, v9.15, BLG-SPEC-198 — §Position Risk Data Sources names fill_price (US) and entry_price (UK) as the native entry; no formula change); prior history retained — see prior entries in version control
+**Version:** 1.37.0
+**Last Updated:** 2026-11-27 (ST-14, EPIC-03, v9.18, BLG-SPEC-204 — §Journal Completion Rate: also served by `GET /digest/weekly` as `journal_completion_rate_*` with its trade counts; no formula change); prior — 2026-11-26 (ST-13, EPIC-02, v9.18, BLG-FE-320 — new §Rules Followed (per closed trade)); prior — 2026-11-16 (ST-06, EPIC-02, v9.17, BLG-FE-300 — §Minimum Trades Threshold: summary total_trades, win_rate and total_pnl stay real below the minimum; no formula change); prior history retained — see prior entries in version control
 **Review Cycle:** Monthly
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
@@ -778,8 +778,27 @@ Returned in `GET /analytics/compliance-metrics` data object:
 { "journal_completion_rate": 72.5, "trade_count": 40 }
 ```
 
+Also returned by `GET /digest/weekly` (Weekly Digest) with the same formula and predicate, so both surfaces show the same figure for the same data (v1.37.0, ST-14, BLG-SPEC-204):
+
+| Digest field | Meaning | Equals |
+|--------------|---------|--------|
+| `journal_completion_rate_current` | rate over all closed trades | `journal_completion_rate` |
+| `closed_trades_total` | its denominator | `trade_count` |
+| `journal_completion_rate_7d_ago` | rate over trades with `exit_date` before the digest's 7-day cutoff, using today's notes | — |
+| `closed_trades_total_7d_ago` | its denominator | — |
+
+The digest's older `compliance_score_current`/`_7d_ago` names are deprecated aliases of the same values. This figure is a journal completion rate; no surface labels it a compliance score.
+
+### Worked Examples
+| Closed trades (with a note) | Before the cutoff (with a note) | `journal_completion_rate_current` | `journal_completion_rate_7d_ago` | Weekly Digest shows |
+|---|---|---|---|---|
+| 0 (0) | 0 (0) | 0.0 | 0.0 | "No closed trades yet" |
+| 3 (0) | 3 (0) | 0.0 | 0.0 | "0.0%", "A week ago: 0.0%" |
+| 3 (2) | 0 (0) | 66.7 | 0.0 | "66.7%", "A week ago: no closed trades" (ruling 2026-11-27) |
+| 40 (29) | 37 (26) | 72.5 | 70.3 | "72.5%", "A week ago: 70.3%" |
+
 ### Failure Behaviour
-- No trades: `journal_completion_rate = 0.0`, `trade_count = 0`.
+- No trades: `journal_completion_rate = 0.0`, `trade_count = 0` (digest: `closed_trades_total = 0`).
 
 ---
 
@@ -1564,6 +1583,7 @@ Validation is performed by `POST /validate/calculations` comparing computed metr
 ## Appendix D — Change Log
 | Date | Version | Change | Author |
 |---|---|---|---|
+| 2026-11-27 | 1.37.0 | ST-14 (EPIC-03, v9.18, `BLG-SPEC-204`): §Journal Completion Rate names its second surface, `GET /digest/weekly` (`journal_completion_rate_current`/`_7d_ago`, `closed_trades_total`, `closed_trades_total_7d_ago`; `compliance_score_*` deprecated aliases), confirms the same predicate as `get_compliance_core_counts`, and adds worked examples. No formula change. `closed_trades_total_7d_ago` per Metrics Definitions & Analytics Owner / Product Owner ruling (the user in session, 2026-11-27). | Sprint Execution Engine (ST-14) |
 | 2026-11-26 | 1.36.0 | ST-13 (EPIC-02, v9.18, `BLG-FE-320`): new §Rules Followed (per closed trade) under Discipline & Compliance Metrics — `rules_followed` true/false/null and `rules_broken` on `GET /trades`, from `red_flag_events` by `position_id`, the linked plan's override acknowledgement and snapshot, and the 2026-11-04 pre-entry-check date. Definition approved by the Metrics Definitions & Analytics Owner (the user in session, 2026-11-24, `ESC-EXEC-20261124-03`), revised 2026-11-26 (`ESC-EXEC-20261126-02`: plan-time events join through `context.plan_id`; evidence date is `positions.created_at`; `ESC-EXEC-20261126-03`: `checklist_skipped` from the linked plan's last saved checklist, judgement items only). | Sprint Execution Engine (ST-13) |
 | 2026-11-16 | 1.35.1 | ST-06 (EPIC-02, v9.17, `BLG-FE-300`): §Minimum Trades Threshold — below the minimum, `summary.total_trades`, `win_rate` and `total_pnl` are still the period's real figures (the service returned 0.0 for the last two); the flag sits in `summary`. No formula change. Product Owner decision 2026-11-16; Metrics Definitions & Analytics Canonical Owner role held by the same user in session. | Sprint Execution Engine (ST-06) |
 | 2026-11-04 | 1.35.0 | ST-23 (EPIC-03, v9.15, `BLG-SPEC-198`): §Position Risk Data Sources names the native entry for both markets — `fill_price` (US) and `entry_price` (UK) — so `(entry − stop)` never mixes the GBP US `entry_price` with the native `initial_stop`. Open-position `pnl` basis (live FX, not net of fees) is recorded in `data_model_positions_dictionary.md` v0.7 §5.2 (ruling `ESC-EXEC-20261104-04`). No formula change. | Metrics Definitions & Analytics Owner |
