@@ -820,6 +820,19 @@
       "resolved_utc": "2026-11-26T17:52:25Z",
       "resolved_by": "Product Owner; Metrics Definitions & Analytics Owner (the user, in session)",
       "resolution_summary": "Plan's final state: an unticked judgement item in the linked plan's saved checklist; checklist_skipped events not read while a plan is linked."
+    },
+    "ESC-EXEC-20261127-01": {
+      "cycle": "2026-11-18__release-v9.18",
+      "summary": "ST-17/EPIC-03 — Metrics Definitions & Analytics Owner sign-off of the five core-loop step definitions (metrics_definitions.md §Core Loop Metrics)",
+      "trigger_type": "Lifecycle",
+      "owning_authority": "Metrics Definitions & Analytics Owner",
+      "raised_utc": "2026-11-27T15:44:13Z",
+      "sla_due_utc": "2026-11-28T15:44:13Z",
+      "blocks_execution": false,
+      "disposition": "Resolved",
+      "resolved_utc": "2026-11-27T15:44:13Z",
+      "resolved_by": "Metrics Definitions & Analytics Owner (the user, in session)",
+      "resolution_summary": "Definitions approved as drafted (metrics_definitions.md §Core Loop Metrics); ST-17 reclassified autonomous."
     }
   },
   "deferred_escalations": {
