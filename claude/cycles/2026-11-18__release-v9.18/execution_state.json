@@ -200,8 +200,8 @@
       "title": "Site Structure & Usability Phase 4, Stage 2: Home Page and Navigation (build-and-ship)",
       "status": "done",
       "branch": "exec/2026-11-18__release-v9.18/EPIC-02",
-      "pr_number": null,
-      "pr_status": "none",
+      "pr_number": 2313,
+      "pr_status": "open",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-11-18__release-v9.18/qa_evidence_EPIC-02.md",
       "test_scenarios": [
