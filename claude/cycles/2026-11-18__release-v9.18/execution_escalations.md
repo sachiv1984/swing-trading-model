@@ -159,3 +159,20 @@ Last Updated: 2026-11-20
 - **Blocks execution:** No
 - **Disposition:** Resolved
 - **Resolution summary (2026-11-26T17:52:25Z):** Decision by the user in session (holds the Product Owner and Metrics Definitions & Analytics Owner roles), 2026-11-26: **the plan's final state** — `checklist_skipped` is a reason when a plan linked to the position has, in its last saved `checklist_items`, an unticked judgement item (not `heat_limit_checked` / `stop_defined`, not `"auto": true`); past `checklist_skipped` events are not read, which also settles pre-v9.18 events. Recorded in `metrics_definitions.md` v1.36.0 §Rules Followed (rows C2–C4, G) and `trade_endpoints.md` v2.7.0; built in ST-13 (`database._checklist_has_unticked_judgement_item`, tests in `tests/test_rules_followed.py` and `tests/test_rules_followed_db.py`).
+
+## ESC-EXEC-20261127-01
+
+- **Raised at:** 2026-11-27T15:44:13Z
+- **Routine:** Sprint Execution
+- **Cycle ID:** 2026-11-18__release-v9.18
+- **Step:** STEP 3.1.D (ST-17 classified `delegated_decision` at sprint planning: "Metrics Definitions & Analytics Owner sign-off of the five step definitions")
+- **ST/EPIC item:** ST-17 / EPIC-03 (BLG-FEAT-103)
+- **Trigger type:** Lifecycle
+- **Blocking statement:** ST-17 AC 1 needs the five core-loop step counts defined in `metrics_definitions.md`, with worked examples and owner sign-off, before the events table, the counts and the Weekly Digest section are built. Four points were open: what a Signals count counts (the table has one row per ticker per day); whether Reviews counts page loads or days; where the "Due today action" event sits (it is not one of the five steps); and which timestamp dates Plans, Entries and Reflections.
+- **Engine recommendation (non-binding):** distinct (ticker, market) signals; distinct UTC days with an open; record the Due today action without counting it; date steps by when they were recorded (`created_at`).
+- **Owning authority:** Metrics Definitions & Analytics Owner
+- **Unblock criteria:** a dated owner approval of the drafted `metrics_definitions.md` §Core Loop Metrics.
+- **SLA due-by:** 2026-11-28T15:44:13Z (24h — Lifecycle)
+- **Blocks execution:** No
+- **Disposition:** Resolved
+- **Resolution summary (2026-11-27T15:44:13Z):** Decision by the user in session (holds the Metrics Definitions & Analytics Owner role), 2026-11-27: all four recommendations chosen, then the drafted §Core Loop Metrics approved as written (ISO week in UTC; Signals = distinct (ticker, market) by `signal_date`; Plans, Entries, Reflections by `created_at`; Reviews = distinct UTC days with a `weekly_digest_opened` event; failed counts null; rates analysis only; `due_today_action` recorded, not counted). Recorded in `metrics_definitions.md` v1.38.0. ST-17 reclassified `autonomous` for the build.

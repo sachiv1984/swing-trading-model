@@ -6,7 +6,7 @@
   "invoked_utc": "2026-11-19T08:07:14Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-11-27T14:46:17Z",
+  "last_updated_utc": "2026-11-27T15:44:37Z",
   "epics": {
     "EPIC-01": {
       "title": "Site Structure & Usability Phase 4, Stage 1: Correct and Safe (build-and-ship)",
@@ -470,16 +470,16 @@
         "ST-15": {
           "title": "Rewrite the Weekly Digest as a readable weekly summary",
           "classification": "autonomous",
-          "status": "in_progress",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 2280,
           "branch": "exec/2026-11-18__release-v9.18/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "d64cc46510e6aff26ea240608818444397c0c4a7",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-11-27T14:46:30Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/specs/frontend/pages/weekly_digest.md",
             "src/lib/weeklyDigest.js",
@@ -488,24 +488,24 @@
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": "3.1.A.review",
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.push",
           "sign_off_record": null,
-          "notes": "First-time-right: 2026-11-27 pass A (with ST-16) — 1 done (all figures traced to _fetch_weekly_digest_data: realised P&L GBP 2 dp from trade_history.pnl; delta GBP or null; counts int; as_of_utc UTC ISO; staleness hours 1 dp or null); 2 done (zero → '£0.00' unsigned via signOf, −0.004 → '£0.00'; null delta → 'Not enough history yet'; null staleness → 'no portfolio snapshot yet'; journal per ST-14); 7+20 raised → ruled: 'Alerts sent' overcounts since ST-03 ('Not sent' Feed rows) → Head of UX & Design ruled 2026-11-27 (in session) 'Alerts, last 7 days'; 8 done (as-of shown in UTC via Intl timeZone UTC, not the browser zone; window labels per BLG-BE-238 ruling); 3 done (new src/lib/weeklyDigest.js ships with table-driven unit tests); 19 done (one query; Refresh refetch keeps figures; loading/error via DataState); 21 done (old table states: loading, error, null delta '—', null staleness '—' → new: same DataState, 'Not enough history yet', 'no portfolio snapshot yet'; behaviour changes listed in PR); 4 done (axe digest scan uses a populated fixture; no conditional panels); 6 done (old labels grepped in tests/e2e: weekly-digest, print-export-pdf, nav-notification-digest-consolidation, axe); 5 medium; 11,17,18,23,24 N/A. | First-time-right: 2026-11-27 pass B — 9 done (review nits fixed in-branch; BLG-BE-239 filed for the analytics server-date cutoff, outside this story's files); 10 done (digest_endpoints v0.7, openapi 3.55.0, api_changelog, weekly_digest v0.5, navigation v2.7 in this commit); 13 done (tables read back); 18 re-run (E2E SEED from _fetch_weekly_digest_data's dict incl. red_flags_7d; unit-test BASE real-shaped; real-Postgres rows either side of the 7×24h boundary); 19 re-run (Refresh keeps figures; null per field asserted in SC-DIG-11/07); 22 done (Link handles modifier clicks; landing asserted by SC-DIG-08/09/10; page-wide axe light+dark strict, 0 page-content incomplete); 12,14,15,16 N/A. Review (medium): 6 findings — fixed 4 (hourCycle h23; page header v0.7; openapi summary; description → 'Most figures link…' per Head of UX & Design wording ruling 2026-11-27), 1 accepted ruling (red-flags list unfiltered), 1 pre-existing filed BLG-BE-239 (analytics uses server date; UTC caveat in weekly_digest.md v0.5)."
+          "notes": "First-time-right: 2026-11-27 pass A (with ST-16) — 1 done (all figures traced to _fetch_weekly_digest_data: realised P&L GBP 2 dp from trade_history.pnl; delta GBP or null; counts int; as_of_utc UTC ISO; staleness hours 1 dp or null); 2 done (zero → '£0.00' unsigned via signOf, −0.004 → '£0.00'; null delta → 'Not enough history yet'; null staleness → 'no portfolio snapshot yet'; journal per ST-14); 7+20 raised → ruled: 'Alerts sent' overcounts since ST-03 ('Not sent' Feed rows) → Head of UX & Design ruled 2026-11-27 (in session) 'Alerts, last 7 days'; 8 done (as-of shown in UTC via Intl timeZone UTC, not the browser zone; window labels per BLG-BE-238 ruling); 3 done (new src/lib/weeklyDigest.js ships with table-driven unit tests); 19 done (one query; Refresh refetch keeps figures; loading/error via DataState); 21 done (old table states: loading, error, null delta '—', null staleness '—' → new: same DataState, 'Not enough history yet', 'no portfolio snapshot yet'; behaviour changes listed in PR); 4 done (axe digest scan uses a populated fixture; no conditional panels); 6 done (old labels grepped in tests/e2e: weekly-digest, print-export-pdf, nav-notification-digest-consolidation, axe); 5 medium; 11,17,18,23,24 N/A. | First-time-right: 2026-11-27 pass B — 9 done (review nits fixed in-branch; BLG-BE-239 filed for the analytics server-date cutoff, outside this story's files); 10 done (digest_endpoints v0.7, openapi 3.55.0, api_changelog, weekly_digest v0.5, navigation v2.7 in this commit); 13 done (tables read back); 18 re-run (E2E SEED from _fetch_weekly_digest_data's dict incl. red_flags_7d; unit-test BASE real-shaped; real-Postgres rows either side of the 7×24h boundary); 19 re-run (Refresh keeps figures; null per field asserted in SC-DIG-11/07); 22 done (Link handles modifier clicks; landing asserted by SC-DIG-08/09/10; page-wide axe light+dark strict, 0 page-content incomplete); 12,14,15,16 N/A. Review (medium): 6 findings — fixed 4 (hourCycle h23; page header v0.7; openapi summary; description → 'Most figures link…' per Head of UX & Design wording ruling 2026-11-27), 1 accepted ruling (red-flags list unfiltered), 1 pre-existing filed BLG-BE-239 (analytics uses server date; UTC caveat in weekly_digest.md v0.5). | Deviation check: none (matches weekly_digest.md v0.5 / navigation.md v2.7 / digest_endpoints.md v0.7 as ruled). ci_pending: CI for d64cc465 (to clear before DoQ)."
         },
         "ST-16": {
           "title": "Link the Weekly Digest figures to their pages",
           "classification": "autonomous",
-          "status": "in_progress",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 2281,
           "branch": "exec/2026-11-18__release-v9.18/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "d64cc46510e6aff26ea240608818444397c0c4a7",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-11-27T14:46:30Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/specs/frontend/pages/weekly_digest.md",
             "docs/specs/frontend/pages/navigation.md#Onward Links",
@@ -516,16 +516,16 @@
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": "3.1.A.review",
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.push",
           "sign_off_record": null,
-          "notes": "First-time-right: 2026-11-27 pass A (with ST-15) — 1 done (red_flags_7d = COUNT red_flag_events.created_at TIMESTAMPTZ ≥ now−7d, same table and no default filter as GET /portfolio/red-flag-journal behind Journal → Red flags); 2 raised → ruled: /Performance?section=summary opens on Last Month, a different realised P&L → Head of UX & Design ruled 2026-11-27 add period=last_7_days (same exit_date ≥ today−7 cutoff as the digest); Journal Red flags list is unfiltered, newest first → ruled accept; 22 done (react-router Link: modifier/middle-click open new tabs natively; Performance ?section= via SectionIndex, Journal ?section= tab; null values never linked); 17 done (red_flags_7d null on a failed query, like ST-14's fields); 7 done (navigation.md v2.5 §Onward Links already lists the three targets); 5 medium; 3,4,6,8,11,18,19,20,21,23,24 covered by ST-15's line or N/A. | First-time-right: 2026-11-27 pass B — 9 done (review nits fixed in-branch; BLG-BE-239 filed for the analytics server-date cutoff, outside this story's files); 10 done (digest_endpoints v0.7, openapi 3.55.0, api_changelog, weekly_digest v0.5, navigation v2.7 in this commit); 13 done (tables read back); 18 re-run (E2E SEED from _fetch_weekly_digest_data's dict incl. red_flags_7d; unit-test BASE real-shaped; real-Postgres rows either side of the 7×24h boundary); 19 re-run (Refresh keeps figures; null per field asserted in SC-DIG-11/07); 22 done (Link handles modifier clicks; landing asserted by SC-DIG-08/09/10; page-wide axe light+dark strict, 0 page-content incomplete); 12,14,15,16 N/A. Review (medium): 6 findings — fixed 4 (hourCycle h23; page header v0.7; openapi summary; description → 'Most figures link…' per Head of UX & Design wording ruling 2026-11-27), 1 accepted ruling (red-flags list unfiltered), 1 pre-existing filed BLG-BE-239 (analytics uses server date; UTC caveat in weekly_digest.md v0.5)."
+          "notes": "First-time-right: 2026-11-27 pass A (with ST-15) — 1 done (red_flags_7d = COUNT red_flag_events.created_at TIMESTAMPTZ ≥ now−7d, same table and no default filter as GET /portfolio/red-flag-journal behind Journal → Red flags); 2 raised → ruled: /Performance?section=summary opens on Last Month, a different realised P&L → Head of UX & Design ruled 2026-11-27 add period=last_7_days (same exit_date ≥ today−7 cutoff as the digest); Journal Red flags list is unfiltered, newest first → ruled accept; 22 done (react-router Link: modifier/middle-click open new tabs natively; Performance ?section= via SectionIndex, Journal ?section= tab; null values never linked); 17 done (red_flags_7d null on a failed query, like ST-14's fields); 7 done (navigation.md v2.5 §Onward Links already lists the three targets); 5 medium; 3,4,6,8,11,18,19,20,21,23,24 covered by ST-15's line or N/A. | First-time-right: 2026-11-27 pass B — 9 done (review nits fixed in-branch; BLG-BE-239 filed for the analytics server-date cutoff, outside this story's files); 10 done (digest_endpoints v0.7, openapi 3.55.0, api_changelog, weekly_digest v0.5, navigation v2.7 in this commit); 13 done (tables read back); 18 re-run (E2E SEED from _fetch_weekly_digest_data's dict incl. red_flags_7d; unit-test BASE real-shaped; real-Postgres rows either side of the 7×24h boundary); 19 re-run (Refresh keeps figures; null per field asserted in SC-DIG-11/07); 22 done (Link handles modifier clicks; landing asserted by SC-DIG-08/09/10; page-wide axe light+dark strict, 0 page-content incomplete); 12,14,15,16 N/A. Review (medium): 6 findings — fixed 4 (hourCycle h23; page header v0.7; openapi summary; description → 'Most figures link…' per Head of UX & Design wording ruling 2026-11-27), 1 accepted ruling (red-flags list unfiltered), 1 pre-existing filed BLG-BE-239 (analytics uses server date; UTC caveat in weekly_digest.md v0.5). | Deviation check: none (matches weekly_digest.md v0.5 / navigation.md v2.7 / digest_endpoints.md v0.7 as ruled). ci_pending: CI for d64cc465 (to clear before DoQ)."
         },
         "ST-17": {
           "title": "Measure the core loop and show this week's loop on the Weekly Digest",
-          "classification": "delegated_decision",
-          "status": "not_started",
-          "assigned_to": "human",
+          "classification": "autonomous",
+          "status": "in_progress",
+          "assigned_to": "engine",
           "github_issue": 2282,
           "branch": "exec/2026-11-18__release-v9.18/EPIC-03",
           "commit_sha": null,
@@ -538,9 +538,9 @@
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
-          "last_completed_substep": null,
+          "last_completed_substep": "3.1.D.resolved",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Reclassified delegated_decision → autonomous 2026-11-27 (§5.1 mid-sprint reclassification): ESC-EXEC-20261127-01 raised 2026-11-27T15:44:13Z and resolved the same minute — Metrics Definitions & Analytics Owner (the user, in session) approved metrics_definitions.md §Core Loop Metrics as drafted after choosing distinct-ticker Signals, distinct-day Reviews, Due today recorded not counted, and created_at dating. No DEL record was created (decision escalation, resolved in session)."
         }
       }
     },
@@ -1268,6 +1268,8 @@
     "ST-12",
     "ST-13",
     "ST-14",
+    "ST-15",
+    "ST-16",
     "ST-18",
     "ST-19",
     "ST-20",
@@ -1409,6 +1411,19 @@
       "resolved_utc": "2026-11-26T17:52:25Z",
       "resolved_by": "Product Owner; Metrics Definitions & Analytics Owner (the user, in session)",
       "resolution_summary": "Plan's final state: an unticked judgement item in the linked plan's saved checklist; checklist_skipped events not read."
+    },
+    "ESC-EXEC-20261127-01": {
+      "cycle": "2026-11-18__release-v9.18",
+      "summary": "ST-17/EPIC-03 — Metrics Definitions & Analytics Owner sign-off of the five core-loop step definitions (metrics_definitions.md §Core Loop Metrics)",
+      "trigger_type": "Lifecycle",
+      "owning_authority": "Metrics Definitions & Analytics Owner",
+      "raised_utc": "2026-11-27T15:44:13Z",
+      "sla_due_utc": "2026-11-28T15:44:13Z",
+      "blocks_execution": false,
+      "disposition": "Resolved",
+      "resolved_utc": "2026-11-27T15:44:13Z",
+      "resolved_by": "Metrics Definitions & Analytics Owner (the user, in session)",
+      "resolution_summary": "Definitions approved as drafted: ISO week UTC; Signals distinct (ticker, market); Plans/Entries/Reflections by created_at; Reviews distinct UTC days; failed counts null; rates analysis only; due_today_action recorded, not counted. ST-17 reclassified autonomous."
     }
   },
   "merge_gate": {
